@@ -2,16 +2,12 @@
 
 import type { SimulateBridgeResult } from '@kinesis-bridge/kinesis-sdk/dist/types'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
-import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
-  type Dispatch,
   type FC,
-  type SetStateAction,
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from 'react'
@@ -22,11 +18,11 @@ import { isEvmChainId } from 'sushi/evm'
 import { type KvmChainId, isKvmChainId } from 'sushi/kvm'
 import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
-import { useXChainSwapSimulate } from '~kadena/_common/lib/hooks/use-x-swap-simulate'
+import { useXChainSwapSimulate } from '~kadena/_common/lib/hooks/x-chain-swap/use-x-chain-simulate'
 import {
   type XSwapToken,
-  useXChainSwapTokenInfo,
-} from '~kadena/_common/lib/hooks/use-x-swap-token-info'
+  useXChainTokenInfo,
+} from '~kadena/_common/lib/hooks/x-chain-swap/use-x-chain-token-info'
 import type { EthereumChainId } from '~kadena/_common/ui/General/x-chain-token-selector'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 
@@ -36,19 +32,16 @@ interface State {
     setToken1(token1: XSwapToken | string): void
     setSwapAmount(swapAmount: string): void
     switchTokens(): void
-    setTradeId: Dispatch<SetStateAction<string>>
-    setSelectedBridge(bridge: string | undefined): void
   }
   state: {
-    tradeId: string
     token0: XSwapToken | undefined
     token1: XSwapToken | undefined
     chainId0: EthereumChainId | KvmChainId
     chainId1: EthereumChainId | KvmChainId
     swapAmountString: string
     swapAmount: Amount<XSwapToken> | undefined
+    bridgeAmount: Amount<XSwapToken> | undefined
     recipient: Address | undefined
-    selectedBridge: string | undefined
     simulateBridgeTx: SimulateBridgeResult | undefined
     isLoadingSimulateBridgeTx: boolean
   }
@@ -63,22 +56,14 @@ interface DerivedStateCrossChainSwapProviderProps {
   children: React.ReactNode
 }
 
-/* Parses the URL and provides the chainId, token0, and token1 globally.
- * URL example:
- * /swap?chainId1=2token0=NATIVE&token1=0x6b3595068778dd592e39a122f4f5a5cf09c90fe2
- *
- * If no chainId is provided, it defaults to current connected chainId or Ethereum if wallet is not connected.
- */
 const DerivedstateCrossChainSwapProvider: FC<
   DerivedStateCrossChainSwapProviderProps
 > = ({ children }) => {
   const { push } = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const [tradeId, setTradeId] = useState(nanoid())
-  const [selectedBridge, setSelectedBridge] = useState<string | undefined>(
-    undefined,
-  )
+
+  // const [isTxPending, setIsTxPending] = useState(false)
 
   const rawChainId0 = decodeChainId(searchParams.get('chainId0'))
   const rawChainId1 = decodeChainId(searchParams.get('chainId1'))
@@ -90,12 +75,10 @@ const DerivedstateCrossChainSwapProvider: FC<
     return isKvmChainId(id) || isEvmChainId(id)
   }
 
-  // Resolve chainId0 with fallback
   const chainId0: KvmChainId | EthereumChainId = isValidChainId(rawChainId0)
     ? rawChainId0
     : ChainId.KADENA
 
-  // Resolve chainId1 with fallback depending on chainId0
   const chainId1: KvmChainId | EthereumChainId = isValidChainId(rawChainId1)
     ? rawChainId1
     : chainId0 === ChainId.KADENA
@@ -135,11 +118,6 @@ const DerivedstateCrossChainSwapProvider: FC<
     return params
   }, [chainId0, searchParams])
 
-  // Get the searchParams and complete with defaults.
-  // This handles the case where some params might not be provided by the user
-
-  // Get a new searchParams string by merging the current
-  // searchParams with a provided key/value pair
   const createQueryString = useCallback(
     (values: { name: string; value: string | null }[]) => {
       const params = new URLSearchParams(defaultedParams.toString()) // use raw
@@ -155,23 +133,28 @@ const DerivedstateCrossChainSwapProvider: FC<
     [defaultedParams],
   )
 
-  // Switch token0 and token1
   const switchTokens = useCallback(() => {
     const params = new URLSearchParams(defaultedParams.toString()) // use raw
-    const chainId1 = decodeChainId(params.get('chainId1')) || ChainId.KADENA
+    const chainId1 = decodeChainId(params.get('chainId1'))
     const token0 = params.get('token0')
     const token1 = params.get('token1')
 
-    if (!isEvmChainId(chainId1) && !isKvmChainId(chainId1)) {
-      console.error('[switchTokens] Invalid chainId1:', chainId1)
+    if (!chainId0 || (!isEvmChainId(chainId0) && !isKvmChainId(chainId0))) {
       return
     }
 
-    // Instead of changing the pathname, update the chainId0 query string
+    if (!chainId1 || (!isEvmChainId(chainId1) && !isKvmChainId(chainId1))) {
+      return
+    }
+
+    if (!token0 || !token1) {
+      return
+    }
+
     const newQueryString = createQueryString([
       { name: 'swapAmount', value: null },
-      { name: 'token0', value: token1 as string },
-      { name: 'token1', value: token0 as string },
+      { name: 'token0', value: token1 },
+      { name: 'token1', value: token0 },
       { name: 'chainId1', value: encodeChainId(chainId0) },
       { name: 'chainId0', value: encodeChainId(chainId1) },
     ])
@@ -180,10 +163,8 @@ const DerivedstateCrossChainSwapProvider: FC<
     push(url, { scroll: false })
   }, [pathname, defaultedParams, chainId0, createQueryString, push])
 
-  // Update the URL with a new token0
   const setToken0 = useCallback(
     (_token0: XSwapToken) => {
-      // If entity is provided, parse it to a string
       const token0 = _token0.address
       const url = `${pathname}?${createQueryString([
         { name: 'token0', value: token0 },
@@ -197,7 +178,6 @@ const DerivedstateCrossChainSwapProvider: FC<
     [createQueryString, pathname, push],
   )
 
-  // Update the URL with a new token1
   const setToken1 = useCallback(
     (_token1: XSwapToken) => {
       const url = `${pathname}?${createQueryString([
@@ -212,7 +192,6 @@ const DerivedstateCrossChainSwapProvider: FC<
     [createQueryString, pathname, push],
   )
 
-  // Update the URL with a new swapAmount
   const setSwapAmount = useCallback(
     (swapAmount: string) => {
       push(
@@ -225,30 +204,19 @@ const DerivedstateCrossChainSwapProvider: FC<
     [createQueryString, pathname, push],
   )
 
-  const { data: token0, isLoading: token0Loading } = useXChainSwapTokenInfo({
+  const { data: token0, isLoading: token0Loading } = useXChainTokenInfo({
     chainId: chainId0 as KvmChainId | EthereumChainId,
     address: defaultedParams.get('token0') as string,
     enabled: isKvmChainId(chainId0) || isEvmChainId(chainId0),
   })
 
-  // token1
-  const { data: token1, isLoading: token1Loading } = useXChainSwapTokenInfo({
+  const { data: token1, isLoading: token1Loading } = useXChainTokenInfo({
     chainId: chainId1 as KvmChainId | EthereumChainId,
     address: defaultedParams.get('token1') as string,
     enabled: isKvmChainId(chainId1) || isEvmChainId(chainId1),
   })
 
   const swapAmountString = defaultedParams.get('swapAmount') || ''
-
-  const swapAmount = useMemo(
-    () => (token0 ? Amount.tryFromHuman(token0, swapAmountString) : undefined),
-    [token0, swapAmountString],
-  )
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    setSelectedBridge(undefined)
-  }, [swapAmount])
 
   const { data: simulateBridgeTx, isLoading: isLoadingSimulateBridgeTx } =
     _useXChainSwapSimulate({
@@ -259,6 +227,17 @@ const DerivedstateCrossChainSwapProvider: FC<
       token1,
     })
 
+  const swapAmount = useMemo(
+    () => (token0 ? Amount.tryFromHuman(token0, swapAmountString) : undefined),
+    [token0, swapAmountString],
+  )
+
+  const bridgeAmount = useMemo(() => {
+    if (!token1) return
+    if (!simulateBridgeTx?.amountMinReceived) return
+    return Amount.tryFromHuman(token1, simulateBridgeTx.amountMinReceived)
+  }, [token1, simulateBridgeTx?.amountMinReceived])
+
   return (
     <DerivedStateCrossChainSwapContext.Provider
       value={useMemo(() => {
@@ -266,21 +245,18 @@ const DerivedstateCrossChainSwapProvider: FC<
           mutate: {
             setToken0,
             setToken1,
-            setTradeId,
             switchTokens,
             setSwapAmount,
-            setSelectedBridge,
           },
           state: {
-            tradeId,
             recipient: undefined,
             chainId0,
             chainId1,
             swapAmountString,
             swapAmount,
+            bridgeAmount,
             token0,
             token1,
-            selectedBridge,
             simulateBridgeTx,
             isLoadingSimulateBridgeTx,
           },
@@ -301,10 +277,9 @@ const DerivedstateCrossChainSwapProvider: FC<
         token0Loading,
         token1,
         token1Loading,
-        tradeId,
-        selectedBridge,
         simulateBridgeTx,
         isLoadingSimulateBridgeTx,
+        bridgeAmount,
       ])}
     >
       {children}
@@ -381,7 +356,7 @@ const _useXChainSwapSimulate = ({
     tokenAddressOut: token1?.address ?? '',
   })
 
-  console.log('useXChainSwapSimulate res', res)
+  console.log('useXChainSwapSimulate res', res.data)
 
   return res
 }

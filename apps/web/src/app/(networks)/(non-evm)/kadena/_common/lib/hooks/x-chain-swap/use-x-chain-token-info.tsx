@@ -4,7 +4,7 @@ import type { EvmChainId, EvmToken } from 'sushi/evm'
 import { isEvmChainId } from 'sushi/evm'
 import type { KvmChainId, KvmToken, KvmTokenAddress } from 'sushi/kvm'
 import { isKvmChainId } from 'sushi/kvm'
-import { useXSwapTokenList } from './use-x-swap-token-list'
+import { useXChainTokenList } from './use-x-chain-token-list'
 
 export type XSwapToken = KvmToken | EvmToken
 
@@ -14,15 +14,15 @@ type Params = {
   enabled?: boolean
 }
 
-export const useXChainSwapTokenInfo = ({
+export const useXChainTokenInfo = ({
   chainId,
   address,
   enabled = true,
 }: Params) => {
-  const { data: tokenLists } = useXSwapTokenList()
+  const { data: tokenLists } = useXChainTokenList()
 
   return useQuery<XSwapToken | undefined>({
-    queryKey: ['xswap-token-info', chainId, address, enabled],
+    queryKey: ['x-chain-token-info', chainId, address, enabled],
     enabled: Boolean(enabled && address && chainId && tokenLists),
     queryFn: async () => {
       if (!tokenLists) return
@@ -50,7 +50,7 @@ export const useXChainSwapTokenInfo = ({
   })
 }
 
-export function findCrossChainEquivalentToken(
+export function findXChainEquivalentToken(
   token: XSwapToken,
   tokenLists: { kadena: KvmToken[]; ethereum: EvmToken[] },
 ): XSwapToken | undefined {

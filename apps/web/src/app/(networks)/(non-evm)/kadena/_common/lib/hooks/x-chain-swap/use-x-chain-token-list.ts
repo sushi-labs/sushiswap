@@ -18,13 +18,13 @@ export type XSwapTokenList = {
   ethereum: EvmToken[]
 }
 
-export const useXSwapTokenList = () => {
+export const useXChainTokenList = () => {
   const { data, isLoading, isError } = useQuery<
     [GetTokenListResponse, GetTokenListResponse],
     Error,
     XSwapTokenList
   >({
-    queryKey: ['xswap-token-list'],
+    queryKey: ['x-chain-token-list'],
     queryFn: async () => {
       return Promise.all([
         kinesisClient.getTokenList({

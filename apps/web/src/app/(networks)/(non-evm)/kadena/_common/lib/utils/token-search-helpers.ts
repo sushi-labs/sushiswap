@@ -1,5 +1,5 @@
 import type { KvmToken } from 'sushi/kvm'
-import type { XSwapToken } from '../hooks/use-x-swap-token-list'
+import type { XSwapToken } from '../hooks/x-chain-swap/use-x-chain-token-list'
 
 const alwaysTrue = () => true
 

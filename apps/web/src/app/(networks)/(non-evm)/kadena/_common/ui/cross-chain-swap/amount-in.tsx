@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react'
 import { Amount } from 'sushi'
 import { EvmChainId } from 'sushi/evm'
 import { KvmChainId } from 'sushi/kvm'
-import { findCrossChainEquivalentToken } from '~kadena/_common/lib/hooks/use-x-swap-token-info'
-import { useXSwapTokenList } from '~kadena/_common/lib/hooks/use-x-swap-token-list'
+import { findXChainEquivalentToken } from '~kadena/_common/lib/hooks/x-chain-swap/use-x-chain-token-info'
+import { useXChainTokenList } from '~kadena/_common/lib/hooks/x-chain-swap/use-x-chain-token-list'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { TokenInput } from './token-input'
 
 export const AmountIn = () => {
-  const { data: tokenLists } = useXSwapTokenList()
+  const { data: tokenLists } = useXChainTokenList()
 
   const { state, mutate } = useDerivedStateCrossChainSwap()
   const queryClient = useQueryClient()
@@ -45,7 +45,7 @@ export const AmountIn = () => {
         if (!tokenLists) return
 
         mutate?.setToken0(token)
-        const crossChainEquivalentToken = findCrossChainEquivalentToken(
+        const crossChainEquivalentToken = findXChainEquivalentToken(
           token,
           tokenLists,
         )

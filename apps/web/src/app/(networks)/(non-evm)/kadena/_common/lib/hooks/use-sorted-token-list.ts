@@ -7,7 +7,7 @@ import {
   getSortedTokensByQuery,
   tokenComparator,
 } from '~kadena/_common/lib/utils/token-search-helpers'
-import type { XSwapToken } from './use-x-swap-token-list'
+import type { XSwapToken } from './x-chain-swap/use-x-chain-token-list'
 
 interface Params {
   query: string

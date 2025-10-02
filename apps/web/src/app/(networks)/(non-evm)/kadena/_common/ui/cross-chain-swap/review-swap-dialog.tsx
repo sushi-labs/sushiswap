@@ -1,4 +1,8 @@
 import {
+  SlippageToleranceStorageKey,
+  useSlippageTolerance,
+} from '@sushiswap/hooks'
+import {
   DialogConfirm,
   DialogDescription,
   DialogFooter,
@@ -24,9 +28,13 @@ export const ReviewSwapDialog = () => {
     'pending',
   )
 
+  const [slippageTolerance] = useSlippageTolerance(
+    SlippageToleranceStorageKey.Swap,
+  )
+  const slippage =
+    slippageTolerance === 'AUTO' ? 0.005 : Number(slippageTolerance) / 100
+
   const isConnected = true
-  const priceImpactPercentage = 0.01
-  const severityClass = 'red'
 
   const executionDurationSeconds =
     state.simulateBridgeTx?.estimatedBridgeTimeInSeconds ?? 0
@@ -71,13 +79,8 @@ export const ReviewSwapDialog = () => {
                       title="Price Impact"
                       subtitle="The impact your trade has on the market price of this pool."
                     >
-                      <span
-                        style={{ color: severityClass }}
-                        className={classNames(
-                          'text-right text-gray-700 dark:text-slate-400',
-                        )}
-                      >
-                        -{formatPercent(priceImpactPercentage / 100)}
+                      <span className={classNames('text-right')}>
+                        -{formatPercent(0)}
                       </span>
                     </List.KeyValue>
                     <List.KeyValue
@@ -96,7 +99,7 @@ export const ReviewSwapDialog = () => {
                       {state.simulateBridgeTx?.estimatedAmountReceived}
                     </List.KeyValue>
                     <List.KeyValue
-                      title={`Min. received after slippage (${'0.5'}%)`}
+                      title={`Min. received after slippage (${formatPercent(slippage)})`}
                       subtitle="The minimum amount you are guaranteed to receive."
                     >
                       {state.simulateBridgeTx?.amountMinReceived}{' '}

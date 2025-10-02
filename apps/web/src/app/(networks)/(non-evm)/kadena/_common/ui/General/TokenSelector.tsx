@@ -32,7 +32,7 @@ import { useCustomTokens } from '~kadena/_common/lib/hooks/use-custom-tokens'
 import { useSortedTokenList } from '~kadena/_common/lib/hooks/use-sorted-token-list'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenInfo } from '~kadena/_common/lib/hooks/use-token-info'
-import type { XSwapToken } from '~kadena/_common/lib/hooks/use-x-swap-token-list'
+import type { XSwapToken } from '~kadena/_common/lib/hooks/x-chain-swap/use-x-chain-token-list'
 import { useKadena } from '../../../kadena-wallet-provider'
 import { Icon } from './Icon'
 

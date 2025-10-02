@@ -18,7 +18,7 @@ import { useBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
-import type { XSwapToken } from '~kadena/_common/lib/hooks/use-x-swap-token-info'
+import type { XSwapToken } from '~kadena/_common/lib/hooks/x-chain-swap/use-x-chain-token-info'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { Icon } from '../General/Icon'
 import {
@@ -75,12 +75,15 @@ export const TokenInput = ({
     ? (currency!.address as KvmTokenAddress)
     : undefined
   const kadenaToken = isKadena ? (currency as KvmToken) : undefined
+  const tokenAddresses = useMemo(
+    () => (kadenaTokenAddress ? [kadenaTokenAddress] : []),
+    [kadenaTokenAddress],
+  )
 
   const kadenaBalances = useTokenBalances({
     account: activeAccount?.accountName ?? '',
-    tokenAddresses: kadenaTokenAddress ? [kadenaTokenAddress] : [],
+    tokenAddresses,
   })
-
   const kadenaPrice = useTokenPrice({
     token: kadenaToken,
     enabled: Boolean(isKadena && amount),
@@ -288,26 +291,3 @@ export const TokenInput = ({
     </div>
   )
 }
-
-/*{
-  {hasTokenListSelect ? (
-          <TokenListSelect setToken={setToken} token={token} />
-        ) : (
-          <Button
-            icon={() =>
-              token ? <Icon currency={token} width={26} height={26} /> : <></>
-            }
-            size="sm"
-            variant="ghost"
-            className={`!rounded-full flex items-center !p-5 !text-xl focus:bg-transparent hover:bg-transparent !cursor-default`}
-          >
-            <span>{token?.symbol ?? 'Select Token'}</span>
-          </Button>
-        )}
-
-      <div className="flex items-center justify-between gap-2">
-        
-        
-      </div>
-    </div>
-}*/

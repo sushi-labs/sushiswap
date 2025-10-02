@@ -35,8 +35,8 @@ import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenInfo } from '~kadena/_common/lib/hooks/use-token-info'
 import {
   type XSwapToken,
-  useXSwapTokenList,
-} from '~kadena/_common/lib/hooks/use-x-swap-token-list'
+  useXChainTokenList,
+} from '~kadena/_common/lib/hooks/x-chain-swap/use-x-chain-token-list'
 import { useKadena } from '../../../kadena-wallet-provider'
 import { Icon } from './Icon'
 import { DesktopNetworkSelector } from './desktop-network-selector'
@@ -69,7 +69,7 @@ export const XChainTokenSelector = ({
     }
   }, [selected])
 
-  const { data: tokenLists, isLoading } = useXSwapTokenList()
+  const { data: tokenLists, isLoading } = useXChainTokenList()
 
   const baseTokens = useMemo(() => {
     if (!tokenLists) return []

@@ -6,7 +6,7 @@ import {
 } from '@sushiswap/ui'
 import { KadenaCircle } from '@sushiswap/ui/icons/network/circle/KadenaCircle'
 import Image from 'next/image'
-import type { XSwapToken } from '~kadena/_common/lib/hooks/use-x-swap-token-info'
+import type { XSwapToken } from '~kadena/_common/lib/hooks/x-chain-swap/use-x-chain-token-info'
 
 type IconProps = {
   currency: XSwapToken | undefined

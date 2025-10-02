@@ -9,14 +9,22 @@ import { kinesisClient } from '~kadena/_common/constants/client'
 export const useXChainSwapSimulate = (
   params: SimulateBridgeParams | undefined,
 ) => {
+  const {
+    amountIn,
+    tokenAddressIn,
+    tokenAddressOut,
+    receiverAddress,
+    senderAddress,
+  } = params ?? {}
+
   return useQuery<SimulateBridgeResult, Error>({
     queryKey: ['x-chain-swap-simulate', params],
     enabled: Boolean(
-      params?.amountIn &&
-        params?.tokenAddressIn &&
-        params?.tokenAddressOut &&
-        params?.receiverAddress &&
-        params?.senderAddress,
+      amountIn &&
+        tokenAddressIn &&
+        tokenAddressOut &&
+        receiverAddress &&
+        senderAddress,
     ),
     queryFn: async () => {
       if (!params) throw new Error('Missing params for simulation')

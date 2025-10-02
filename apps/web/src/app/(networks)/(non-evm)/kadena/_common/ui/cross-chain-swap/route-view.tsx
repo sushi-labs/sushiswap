@@ -3,34 +3,19 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { useMemo } from 'react'
 import type { FC } from 'react'
 import type { CrossChainToolDetails } from 'src/lib/swap/cross-chain/types'
-import { Amount, ChainId } from 'sushi'
-import type { XSwapToken } from '~kadena/_common/lib/hooks/use-x-swap-token-list'
+import { type Amount, ChainId } from 'sushi'
+import type { XSwapToken } from '~kadena/_common/lib/hooks/x-chain-swap/use-x-chain-token-list'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapRouteView = () => {
   const { state } = useDerivedStateCrossChainSwap()
-
-  const sendAmount = useMemo(() => {
-    if (!state.token0) return
-
-    return Amount.tryFromHuman(state?.token0, state.swapAmountString)
-  }, [state.token0, state.swapAmountString])
-
-  const bridgeAmount = useMemo(() => {
-    if (!state.token1) return
-    if (!state.simulateBridgeTx?.amountMinReceived) return
-
-    return Amount.tryFromHuman(
-      state.token1,
-      state.simulateBridgeTx?.amountMinReceived,
-    )
-  }, [state.token1, state.simulateBridgeTx?.amountMinReceived])
+  const { swapAmount, bridgeAmount } = state
 
   return (
     <div className="flex gap-4">
       <VerticalDivider count={2} className="pt-1.5 pl-1" />
       <div className="flex flex-col gap-8">
-        {sendAmount && <SendAction label="From" amount={sendAmount} />}
+        {swapAmount && <SendAction label="From" amount={swapAmount} />}
         <BridgeAction
           toolDetails={{
             key: 'kinesis',
