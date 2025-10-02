@@ -11,7 +11,7 @@ import { Widget, WidgetHeader, classNames } from '@sushiswap/ui'
 import React, { type FC, type ReactNode, useMemo } from 'react'
 import { NativeAddress } from 'src/lib/constants'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import type { EvmChainId, EvmCurrency } from 'sushi/evm'
+import { type EvmChainId, type EvmCurrency, EvmNative } from 'sushi/evm'
 
 interface TokenInput {
   token: EvmCurrency | undefined
@@ -148,7 +148,7 @@ export const BladeAddSectionWidget: FC<BladeAddSectionWidgetProps> = ({
             )}
             {hasNativeToken && (
               <p className="text-sm text-center text-muted-foreground pt-2 pb-4">
-                {input.token?.symbol ?? 'Native token'} can only be deposited as
+                {EvmNative.fromChainId(chainId).symbol} can only be deposited as
                 a single asset
               </p>
             )}
