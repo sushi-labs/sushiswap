@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
   Dots,
+  List,
 } from '@sushiswap/ui'
 import {
   type FC,
@@ -246,8 +247,8 @@ export const BladeAddLiquidityReviewModal: FC<
                 </DialogHeader>
               </div>
 
-              <div className="flex flex-col gap-3 p-4 bg-white rounded-xl dark:bg-secondary border border-accent">
-                <div className="flex flex-col gap-4">
+              <List>
+                <List.Control>
                   {validInputs.map((input, index) => {
                     const parsedAmount = Amount.tryFromHuman(
                       input.token,
@@ -259,25 +260,26 @@ export const BladeAddLiquidityReviewModal: FC<
                     const usdValue = Number(parsedAmount.toString()) * price
 
                     return (
-                      <div
+                      <List.KeyValue
                         key={index}
-                        className="flex items-center justify-between"
-                      >
-                        <div className="flex items-center gap-3">
-                          <Currency.Icon
-                            currency={input.token}
-                            width={18}
-                            height={18}
-                          />
-                          <div>
-                            <div className="font-semibold text-sm text-gray-900 dark:text-slate-50">
-                              {input.token.symbol}
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                              {input.token.name}
+                        title={
+                          <div className="flex items-center gap-3">
+                            <Currency.Icon
+                              currency={input.token}
+                              width={18}
+                              height={18}
+                            />
+                            <div>
+                              <div className="font-semibold text-sm text-gray-900 dark:text-slate-50">
+                                {input.token.symbol}
+                              </div>
+                              <div className="text-sm text-muted-foreground">
+                                {input.token.name}
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        }
+                      >
                         <div className="flex flex-col items-end">
                           <span className="text-sm text-gray-900 dark:text-slate-50 font-semibold">
                             {parsedAmount.toSignificant(6)}
@@ -286,34 +288,26 @@ export const BladeAddLiquidityReviewModal: FC<
                             ${usdValue.toFixed(2)}
                           </span>
                         </div>
-                      </div>
+                      </List.KeyValue>
                     )
                   })}
-                </div>
-              </div>
+                </List.Control>
+              </List>
 
               {depositRequest.data ? (
-                <div className="flex flex-col gap-3 p-4 bg-white rounded-xl dark:bg-secondary border border-accent">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-400 dark:text-slate-400">
-                      Estimated Value
-                    </span>
-                    <span className="text-sm font-semibold text-gray-900 dark:text-slate-50">
+                <List>
+                  <List.Control>
+                    <List.KeyValue title="Estimated Value">
                       {formatUSD(estimatedValue || 0)}
-                    </span>
-                  </div>
+                    </List.KeyValue>
 
-                  {lockTime?.message ? (
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-400 dark:text-slate-400">
-                        Lock time
-                      </span>
-                      <span className="text-sm font-semibold text-gray-900 dark:text-slate-50">
+                    {lockTime?.message ? (
+                      <List.KeyValue title="Lock time">
                         {lockTime.message}
-                      </span>
-                    </div>
-                  ) : null}
-                </div>
+                      </List.KeyValue>
+                    ) : null}
+                  </List.Control>
+                </List>
               ) : null}
 
               <DialogFooter>
