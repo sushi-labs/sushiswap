@@ -16,7 +16,10 @@ import { ADAPTER_INSTALL_URLS, useKadena } from '~kadena/kadena-wallet-provider'
 import { useKadenaAdapterContext } from '~kadena/providers'
 import { KADENA_WALLET_ADAPTER_ICONS } from '../../../kadena-wallet-provider'
 
-export function ConnectButton(props: ButtonProps) {
+export function ConnectButton({
+  btnText = 'Connect Wallet',
+  ...props
+}: ButtonProps & { btnText?: string }) {
   const { adapters, handleConnect, isConnecting } = useKadena()
   const { isMobile } = useIsMobile()
   const { refreshSnapAdapter } = useKadenaAdapterContext()
@@ -61,7 +64,7 @@ export function ConnectButton(props: ButtonProps) {
           ) : (
             <>
               <span className="sm:hidden block">Connect</span>
-              <span className="hidden sm:block">Connect Wallet</span>
+              <span className="hidden sm:block">{btnText}</span>
             </>
           )}
         </Button>

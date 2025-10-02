@@ -253,7 +253,7 @@ const DerivedstateCrossChainSwapProvider: FC<
   }, [token1, simulateBridgeTx?.amountMinReceived])
 
   const { data: token0Price } = useKinesisTokenPrice({
-    network: 'mainnet01',
+    network: chainId0 === ChainId.KADENA ? 'mainnet01' : 'ethereum',
     tokenAddress: token0?.address ?? '',
   })
 

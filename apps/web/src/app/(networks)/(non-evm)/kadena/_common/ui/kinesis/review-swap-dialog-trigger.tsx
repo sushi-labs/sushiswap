@@ -1,6 +1,5 @@
 import { Button, DialogTrigger } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { type EvmChainId, isEvmChainId } from 'sushi/evm'
 import { type KvmTokenAddress, isKvmChainId } from 'sushi/kvm'
 import { formatUnits } from 'viem'
@@ -11,6 +10,7 @@ import { MIN_GAS_FEE } from '~kadena/_common/constants/gas'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { useKadena } from '~kadena/kadena-wallet-provider'
+import { WalletConnector } from '../WalletConnector/WalletConnector'
 
 export const ReviewSwapDialogTrigger = () => {
   const { state } = useDerivedStateCrossChainSwap()
@@ -106,27 +106,28 @@ export const ReviewSwapDialogTrigger = () => {
 
   return (
     <>
-      {
-        <DialogTrigger className="w-full" disabled={isDisabled}>
-          <Checker.Guard
-            guardWhen={!address}
-            guardText="Connect Ethereum Wallet"
-            onClick={() => {
-              connectAsync({ connector: injected() })
-            }}
-            disabled={false}
-          >
-            <Checker.Guard
-              guardWhen={!activeAccount?.accountName}
-              guardText="Connect Kadena Wallet"
-            >
-              <Button size="xl" fullWidth disabled={isDisabled}>
-                {buttonText}
-              </Button>
-            </Checker.Guard>
-          </Checker.Guard>
+      {!address ? (
+        <Button
+          size="xl"
+          fullWidth
+          onClick={() => connectAsync({ connector: injected() })}
+        >
+          Connect Ethereum Wallet
+        </Button>
+      ) : !activeAccount?.accountName ? (
+        <WalletConnector
+          variant="default"
+          fullWidth
+          size="xl"
+          btnText="Connect Kadena Wallet"
+        />
+      ) : (
+        <DialogTrigger asChild>
+          <Button size="xl" fullWidth disabled={isDisabled}>
+            {buttonText}
+          </Button>
         </DialogTrigger>
-      }
+      )}
     </>
   )
 }

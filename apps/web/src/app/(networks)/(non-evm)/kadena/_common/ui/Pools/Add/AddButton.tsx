@@ -103,7 +103,6 @@ export const AddButton = ({
         const preflightResult = await kadenaClient.preflight(
           Array.isArray(signedTxn) ? signedTxn[0] : signedTxn,
         )
-        // console.log("preflightResult", preflightResult);
 
         if (preflightResult.result.status !== 'success') {
           throw new Error(
@@ -172,7 +171,6 @@ export const AddButton = ({
       const preflightResult = await kadenaClient.preflight(
         Array.isArray(signedTxn) ? signedTxn[0] : signedTxn,
       )
-      // console.log("preflightResult", preflightResult);
 
       if (preflightResult.result.status === 'failure') {
         throw new Error(
@@ -181,8 +179,6 @@ export const AddButton = ({
       }
 
       const res = await kadenaClient.submit(signedTxn as ICommand)
-
-      // console.log("add liquidity res", res);
 
       const txId = res.requestKey
       createInfoToast({

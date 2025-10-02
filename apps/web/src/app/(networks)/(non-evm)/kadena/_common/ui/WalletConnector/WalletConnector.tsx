@@ -15,13 +15,13 @@ import { ConnectButton } from './connect-button'
 
 export type IProfileView = 'default' | 'settings'
 
-export const WalletConnector = (props: ButtonProps) => {
+export const WalletConnector = (props: ButtonProps & { btnText?: string }) => {
   const { isConnected, activeAccount } = useKadena()
 
   const [view, setView] = useState<IProfileView>('default')
 
   if (!isConnected || !activeAccount?.accountName) {
-    return <ConnectButton {...props} />
+    return <ConnectButton btnText={props.btnText} {...props} />
   }
 
   return (

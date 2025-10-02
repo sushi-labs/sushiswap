@@ -17,7 +17,12 @@ export const useKinesisTokenPrice = ({
     queryKey: ['kinesis-token-price', network, tokenAddress],
     enabled: Boolean(enabled && network && tokenAddress),
     queryFn: async () => {
-      return fetchTokenPrice(network, tokenAddress)
+      const response = await fetch(
+        `http://localhost:3000/kadena/api/price/kinesis?network=${network}&tokenAddress=${tokenAddress}`,
+      )
+      const data = await response.json()
+      console.log('useKinesisTokenPrice', data)
+      return data.price
     },
     staleTime: ms('30s'),
   })
