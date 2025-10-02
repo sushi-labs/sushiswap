@@ -21,7 +21,7 @@ export const PoolsTable = () => {
 
   // Sort state
   const [sorting, setSorting] = useState<SortingState>([
-    { id: 'totalLiquidity', desc: true },
+    { id: 'liquidity', desc: true },
   ])
 
   // Get the pool data

@@ -68,8 +68,15 @@ export const POOL_CONFIGS: Record<
  */
 export function getPoolConfig(poolAddress: string) {
   const config = POOL_CONFIGS[poolAddress as keyof typeof POOL_CONFIGS]
+
+  if (!config) {
+    console.error('No pool configuration found for address:', poolAddress)
+    return null
+  }
+
   const token0 = getTokenByCode(config.token0.code)
   const token1 = getTokenByCode(config.token1.code)
+
   return {
     ...config,
     token0,

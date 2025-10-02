@@ -19,8 +19,6 @@ export default function PoolPage({ params }: PoolPageProps) {
   const address = decodeURIComponent(resolvedParams.address)
   const { data: pool, isLoading, error } = usePoolInfo(address)
 
-  console.log({ pool })
-
   if (isLoading) {
     return (
       <Container maxWidth="5xl" className="px-4">

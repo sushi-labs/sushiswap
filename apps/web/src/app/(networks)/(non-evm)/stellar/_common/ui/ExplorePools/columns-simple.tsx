@@ -94,21 +94,16 @@ const TVL_COLUMN: ColumnDef<PoolInfo, unknown> = {
  * Total liquidity column showing the pool's total liquidity
  */
 const TOTAL_LIQUIDITY_COLUMN: ColumnDef<PoolInfo, unknown> = {
-  id: 'totalLiquidity',
+  id: 'liquidity',
   header: 'Total Liquidity',
-  accessorFn: (row) => row.totalLiquidity,
+  accessorFn: (row) => row.liquidity.formatted,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number(rowA.totalLiquidity) - Number(rowB.totalLiquidity),
+    Number(rowA.liquidity.formatted) - Number(rowB.liquidity.formatted),
   cell: (props) => {
-    const liquidity = props.row.original.totalLiquidity
-    const formattedLiquidity = Number(liquidity) / 10 ** 7 // Convert from smallest units
     return (
       <div className="flex items-center gap-1">
         <span className="text-sm font-medium">
-          {formattedLiquidity.toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
+          {props.row.original.liquidity.formatted}
         </span>
       </div>
     )
@@ -127,23 +122,16 @@ const TOKEN0_RESERVES_COLUMN: ColumnDef<PoolInfo, unknown> = {
   id: 'token0Reserves',
   header: (props) => {
     const pool = props.table.options.data[0] as PoolInfo
-    return `Reserves (${pool.token0.code})`
+    return `Reserves (${pool.reserves.token0.code})`
   },
-  accessorFn: (row) => row.token0Reserve,
+  accessorFn: (row) => row.reserves.token0.formatted,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number(rowA.token0Reserve) - Number(rowB.token0Reserve),
+    Number(rowA.reserves.token0.amount) - Number(rowB.reserves.token0.amount),
   cell: (props) => {
-    const pool = props.row.original
-    const token0Reserve =
-      Number(pool.token0Reserve) / 10 ** pool.token0.decimals
-
     return (
       <div className="flex items-center gap-1">
         <span className="text-sm font-medium">
-          {token0Reserve.toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
+          {props.row.original.reserves.token0.formatted}
         </span>
       </div>
     )
@@ -162,23 +150,16 @@ const TOKEN1_RESERVES_COLUMN: ColumnDef<PoolInfo, unknown> = {
   id: 'token1Reserves',
   header: (props) => {
     const pool = props.table.options.data[0] as PoolInfo
-    return `Reserves (${pool.token1.code})`
+    return `Reserves (${pool.reserves.token1.code})`
   },
-  accessorFn: (row) => row.token1Reserve,
+  accessorFn: (row) => row.reserves.token1.formatted,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number(rowA.token1Reserve) - Number(rowB.token1Reserve),
+    Number(rowA.reserves.token1.amount) - Number(rowB.reserves.token1.amount),
   cell: (props) => {
-    const pool = props.row.original
-    const token1Reserve =
-      Number(pool.token1Reserve) / 10 ** pool.token1.decimals
-
     return (
       <div className="flex items-center gap-1">
         <span className="text-sm font-medium">
-          {token1Reserve.toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
+          {props.row.original.reserves.token1.formatted}
         </span>
       </div>
     )
@@ -220,15 +201,14 @@ const FEE_COLUMN: ColumnDef<PoolInfo, unknown> = {
 const TICK_SPACING_COLUMN: ColumnDef<PoolInfo, unknown> = {
   id: 'spacing',
   header: 'Tick Spacing',
-  accessorFn: (row) => row.spacing,
+  accessorFn: (row) => row.tickSpacing,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    rowA.spacing - rowB.spacing,
+    rowA.tickSpacing - rowB.tickSpacing,
   cell: (props) => {
-    const spacing = props.row.original.spacing
     return (
       <div className="flex items-center gap-1">
         <span className="text-sm font-mono text-gray-600 dark:text-slate-400">
-          {spacing}
+          {props.row.original.tickSpacing}
         </span>
       </div>
     )

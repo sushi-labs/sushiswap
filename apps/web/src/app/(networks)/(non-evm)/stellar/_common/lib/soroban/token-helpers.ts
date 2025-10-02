@@ -56,15 +56,24 @@ export async function getTokenBalance(
 
     // Simulate and parse results
     const result = await SorobanClient.simulateTransaction(balanceTx)
+
+    // Check for errors first
+    if ('error' in result) {
+      console.error('Simulation error:', result.error)
+      return 0n
+    }
+
     if ('result' in result && result.result) {
       const simResult = result.result as any
 
       // The retval contains the ScVal data directly
       if (simResult.retval) {
-        // Check if it's a u128 ScVal
+        // Check if it's a u128 or i128 ScVal
         if (
-          simResult.retval._switch?.name === 'scvU128' &&
-          simResult.retval._arm === 'u128'
+          (simResult.retval._switch?.name === 'scvU128' &&
+            simResult.retval._arm === 'u128') ||
+          (simResult.retval._switch?.name === 'scvI128' &&
+            simResult.retval._arm === 'i128')
         ) {
           const balance = simResult.retval._value._attributes.lo._value
           return BigInt(balance)
@@ -128,10 +137,12 @@ export async function getTokenAllowance(
 
       // The retval contains the ScVal data directly
       if (simResult.retval) {
-        // Check if it's a u128 ScVal
+        // Check if it's a u128 or i128 ScVal
         if (
-          simResult.retval._switch?.name === 'scvU128' &&
-          simResult.retval._arm === 'u128'
+          (simResult.retval._switch?.name === 'scvU128' &&
+            simResult.retval._arm === 'u128') ||
+          (simResult.retval._switch?.name === 'scvI128' &&
+            simResult.retval._arm === 'i128')
         ) {
           const allowance = simResult.retval._value._attributes.lo._value
           return BigInt(allowance)

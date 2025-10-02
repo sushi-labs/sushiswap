@@ -7,7 +7,7 @@ interface LiquidityItemProps {
   isLoading: boolean
   token: Token
   amount: string
-  usdAmount: string
+  usdAmount?: string
 }
 
 export const LiquidityItem = ({
@@ -31,9 +31,11 @@ export const LiquidityItem = ({
     >
       <span className="flex gap-1 font-semibold">
         {amount}{' '}
-        <span className="font-normal text-gray-400 dark:text-slate-600">
-          {formatUSD(Number(usdAmount))}
-        </span>
+        {usdAmount && (
+          <span className="font-normal text-gray-400 dark:text-slate-600">
+            {formatUSD(Number(usdAmount))}
+          </span>
+        )}
       </span>
     </CardItem>
   )

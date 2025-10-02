@@ -15,6 +15,11 @@ export interface PoolReserves {
   token1: TokenReserve
 }
 
+export interface PoolBalances {
+  token0: PoolLiquidity
+  token1: PoolLiquidity
+}
+
 export interface PoolInfo {
   name: string
   address: string
@@ -24,7 +29,7 @@ export interface PoolInfo {
   tickSpacing: number
   liquidity: PoolLiquidity
   reserves: PoolReserves
-  tvl: number
+  tvl: string
   slot0?: {
     sqrtPriceX96: bigint
     tick: number
