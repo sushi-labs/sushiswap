@@ -2,13 +2,13 @@ import { Badge, TooltipContent } from '@sushiswap/ui'
 import { Tooltip, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import React, { type FC } from 'react'
-import type { IPool } from '~stellar/_common/lib/hooks/use-pools'
+import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import { formatPoolFee } from '~stellar/_common/lib/utils/formatters'
 import { TokenIcon } from '../../General/TokenIcon'
 
 type Row<T> = { row: T }
 
-export const PoolNameCell: FC<Row<IPool>> = ({ row: pool }) => (
+export const PoolNameCell: FC<Row<PoolInfo>> = ({ row: pool }) => (
   <div className="flex items-center gap-5">
     <div className="flex min-w-[54px]">
       <Badge

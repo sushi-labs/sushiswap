@@ -1,18 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
-import { formatTokenBalance } from '~stellar/_common/lib/utils/formatters'
+import { formatXLM } from '~stellar/_common/lib/utils/formatters'
 import { useStellarWallet } from '~stellar/providers'
-import { getTokenBalance } from '../soroban/token-helpers'
-import type { Token } from '../types/token.type'
+import { getXlmBalance } from '../../soroban/xlm-helpers'
 
-export const useTokenBalance = (token: Token) => {
+export const useXlmBalance = () => {
   const { connectedAddress } = useStellarWallet()
 
   return useQuery({
-    queryKey: ['useTokenBalance', connectedAddress],
+    queryKey: ['useXlmBalance', connectedAddress],
     queryFn: async () => {
       if (!connectedAddress) return { balance: 0n, formattedBalance: '-' }
-      const balance = await getTokenBalance(connectedAddress, token)
-      const formattedBalance = formatTokenBalance(balance, token)
+      const balance = await getXlmBalance(connectedAddress)
+      const formattedBalance = formatXLM(balance)
       return { balance, formattedBalance }
     },
     refetchOnMount: true,

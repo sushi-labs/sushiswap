@@ -1,6 +1,5 @@
 import { Container } from '@sushiswap/ui'
 import { headers } from 'next/headers'
-import { usePoolDetails } from '~stellar/_common/lib/hooks/use-pool-details'
 import { PoolHeader } from '~stellar/_common/ui/PoolDetails/PoolHeader'
 import Providers from './providers'
 

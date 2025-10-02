@@ -9,3 +9,8 @@ export interface Token {
   icon?: string
   decimals: number
 }
+
+export interface TokenWithBalance extends Token {
+  balance: bigint
+  balanceFormatted: string
+}

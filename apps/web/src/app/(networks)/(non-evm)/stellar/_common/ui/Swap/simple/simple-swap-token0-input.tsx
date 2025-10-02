@@ -1,5 +1,6 @@
 import React, { useEffect, useTransition } from 'react'
-import { useQuote } from '~stellar/_common/lib/hooks/use-quote'
+import { useQuoteExactInput } from '~stellar/_common/lib/hooks/router'
+
 import {
   useSimpleSwapActions,
   useSimpleSwapState,
@@ -26,9 +27,7 @@ export const SimpleSwapToken0Input = () => {
     data: quoteAmount,
     isError: isQuoteError,
     error: quoteError,
-  } = useQuote({
-    zeroForOne: true,
-  })
+  } = useQuoteExactInput()
 
   useEffect(() => {
     startTransition(async () => {

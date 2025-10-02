@@ -21,7 +21,7 @@ import type {
   Typepoint,
   Duration,
 } from '@stellar/stellar-sdk/contract';
-import { SqrtPriceX96 } from '../common-types.js';
+import { SqrtPriceX96 } from '../../common-types.js';
 export * from '@stellar/stellar-sdk'
 export * as contract from '@stellar/stellar-sdk/contract'
 export * as rpc from '@stellar/stellar-sdk/rpc'
@@ -35,7 +35,7 @@ if (typeof window !== 'undefined') {
 export const networks = {
   testnet: {
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CA2JOF3QORUAMLLENA3GNOA4INMTH4WDFHX77IGDOCIA4QW2LTO5LYLJ",
+    contractId: "CCYJJ2A2BAQHKKSNJ3NHRV66GA6XCHHBLROFBBR7J33YIYMWDL57XOUL",
   }
 } as const
 
@@ -232,48 +232,6 @@ export interface StepComputations {
   tick_next: i32;
 }
 
-export const Errors = {
-  1: {message:"Unauthorized"},
-  10: {message:"InvalidTickRange"},
-  11: {message:"InvalidLiquidity"},
-  12: {message:"InvalidAmount"},
-  13: {message:"InvalidSqrtPrice"},
-  14: {message:"InvalidFee"},
-  15: {message:"InvalidTickSpacing"},
-  20: {message:"TickOutOfBounds"},
-  21: {message:"PriceOutOfBounds"},
-  22: {message:"LiquidityOverflow"},
-  23: {message:"LiquidityUnderflow"},
-  24: {message:"DivisionByZero"},
-  25: {message:"MulDivOverflow"},
-  30: {message:"U128Overflow"},
-  31: {message:"I128Overflow"},
-  32: {message:"U64Overflow"},
-  33: {message:"U32Overflow"},
-  40: {message:"PoolNotInitialized"},
-  41: {message:"PoolAlreadyInitialized"},
-  42: {message:"PositionNotFound"},
-  43: {message:"InsufficientLiquidity"},
-  50: {message:"TickNotInitialized"},
-  51: {message:"InvalidWordPosition"},
-  52: {message:"TickNotSpacedCorrectly"},
-  60: {message:"OracleNotInitialized"},
-  61: {message:"InvalidObservation"},
-  62: {message:"ObservationTooOld"},
-  63: {message:"NotInitialized"},
-  64: {message:"AlreadyInitialized"},
-  65: {message:"TickLowerNotLessThanUpper"},
-  66: {message:"TickLowerTooLow"},
-  67: {message:"TickUpperTooHigh"},
-  68: {message:"Locked"},
-  69: {message:"InvalidPriceLimit"},
-  70: {message:"AmountShouldBeGreaterThanZero"},
-  71: {message:"NegativeAmount"},
-  72: {message:"InsufficientToken0"},
-  73: {message:"InsufficientToken1"},
-  74: {message:"InvalidFeeProtocol"}
-}
-
 /**
  * Q128.128 fixed-point number
  *
@@ -397,6 +355,53 @@ export interface Client {
      */
     simulate?: boolean;
   }) => Promise<AssembledTransaction<Result<SwapResult>>>
+
+  /**
+   * Construct and simulate a swap_prefunded transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Swap using prefunded input already held by the pool.
+   *
+   * This variant assumes the input tokens have been transferred to the pool
+   * before calling. It performs no incoming transfer and only sends output
+   * tokens to the recipient, after verifying sufficient prefunded balance.
+   */
+  swap_prefunded: ({router, recipient, zero_for_one, amount_specified, sqrt_price_limit_x96}: {router: string, recipient: string, zero_for_one: boolean, amount_specified: i128, sqrt_price_limit_x96: u256}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<Result<SwapResult>>>
+
+  /**
+   * Construct and simulate a set_router_authorized transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Manage authorization for routers allowed to call `swap_prefunded`.
+   * Only the pool's factory may call this.
+   */
+  set_router_authorized: ({factory, router, allowed}: {factory: string, router: string, allowed: boolean}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<Result<void>>>
 
   /**
    * Construct and simulate a burn transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
@@ -931,6 +936,8 @@ export class Client extends ContractClient {
         "AAAAAAAAAAAAAAAPYmxvY2tfdGltZXN0YW1wAAAAAAAAAAABAAAABg==",
         "AAAAAAAAACtJbml0aWFsaXplIHRoZSBwb29sIHdpdGggaW5pdGlhbCBzcXJ0IHByaWNlAAAAAAppbml0aWFsaXplAAAAAAABAAAAAAAAAA5zcXJ0X3ByaWNlX3g5NgAAAAAADAAAAAEAAAPpAAAD7QAAAAAAAAAD",
         "AAAAAAAAAAtTd2FwIHRva2VucwAAAAAEc3dhcAAAAAUAAAAAAAAABnNlbmRlcgAAAAAAEwAAAAAAAAAJcmVjaXBpZW50AAAAAAAAEwAAAAAAAAAMemVyb19mb3Jfb25lAAAAAQAAAAAAAAAQYW1vdW50X3NwZWNpZmllZAAAAAsAAAAAAAAAFHNxcnRfcHJpY2VfbGltaXRfeDk2AAAADAAAAAEAAAPpAAAH0AAAAApTd2FwUmVzdWx0AAAAAAAD",
+        "AAAAAAAAAQtTd2FwIHVzaW5nIHByZWZ1bmRlZCBpbnB1dCBhbHJlYWR5IGhlbGQgYnkgdGhlIHBvb2wuCgpUaGlzIHZhcmlhbnQgYXNzdW1lcyB0aGUgaW5wdXQgdG9rZW5zIGhhdmUgYmVlbiB0cmFuc2ZlcnJlZCB0byB0aGUgcG9vbApiZWZvcmUgY2FsbGluZy4gSXQgcGVyZm9ybXMgbm8gaW5jb21pbmcgdHJhbnNmZXIgYW5kIG9ubHkgc2VuZHMgb3V0cHV0CnRva2VucyB0byB0aGUgcmVjaXBpZW50LCBhZnRlciB2ZXJpZnlpbmcgc3VmZmljaWVudCBwcmVmdW5kZWQgYmFsYW5jZS4AAAAADnN3YXBfcHJlZnVuZGVkAAAAAAAFAAAAAAAAAAZyb3V0ZXIAAAAAABMAAAAAAAAACXJlY2lwaWVudAAAAAAAABMAAAAAAAAADHplcm9fZm9yX29uZQAAAAEAAAAAAAAAEGFtb3VudF9zcGVjaWZpZWQAAAALAAAAAAAAABRzcXJ0X3ByaWNlX2xpbWl0X3g5NgAAAAwAAAABAAAD6QAAB9AAAAAKU3dhcFJlc3VsdAAAAAAAAw==",
+        "AAAAAAAAAGlNYW5hZ2UgYXV0aG9yaXphdGlvbiBmb3Igcm91dGVycyBhbGxvd2VkIHRvIGNhbGwgYHN3YXBfcHJlZnVuZGVkYC4KT25seSB0aGUgcG9vbCdzIGZhY3RvcnkgbWF5IGNhbGwgdGhpcy4AAAAAAAAVc2V0X3JvdXRlcl9hdXRob3JpemVkAAAAAAAAAwAAAAAAAAAHZmFjdG9yeQAAAAATAAAAAAAAAAZyb3V0ZXIAAAAAABMAAAAAAAAAB2FsbG93ZWQAAAAAAQAAAAEAAAPpAAAD7QAAAAAAAAAD",
         "AAAAAAAAAAAAAAAEYnVybgAAAAQAAAAAAAAABW93bmVyAAAAAAAAEwAAAAAAAAAKdGlja19sb3dlcgAAAAAABQAAAAAAAAAKdGlja191cHBlcgAAAAAABQAAAAAAAAAGYW1vdW50AAAAAAAKAAAAAQAAA+kAAAPtAAAAAgAAAAoAAAAKAAAAAw==",
         "AAAAAAAAAKpDb2xsZWN0IGZlZXMgYWNjdW11bGF0ZWQgYnkgYSBsaXF1aWRpdHkgcG9zaXRpb24KCkRvZXMgbm90IHJlY29tcHV0ZSBmZWVzIGVhcm5lZCAtIGZlZXMgbXVzdCBiZSBjb21wdXRlZCB2aWEgbWludCBvciBidXJuLgpNYXRjaGVzIFVuaXN3YXAgVjMncyBjb2xsZWN0IGZ1bmN0aW9uIGJlaGF2aW9yLgAAAAAAB2NvbGxlY3QAAAAABQAAAAAAAAAJcmVjaXBpZW50AAAAAAAAEwAAAAAAAAAKdGlja19sb3dlcgAAAAAABQAAAAAAAAAKdGlja191cHBlcgAAAAAABQAAAAAAAAARYW1vdW50MF9yZXF1ZXN0ZWQAAAAAAAAKAAAAAAAAABFhbW91bnQxX3JlcXVlc3RlZAAAAAAAAAoAAAABAAAD7QAAAAIAAAAKAAAACg==",
         "AAAAAAAAAAAAAAAQc2V0X2ZlZV9wcm90b2NvbAAAAAIAAAAAAAAADWZlZV9wcm90b2NvbDAAAAAAAAAEAAAAAAAAAA1mZWVfcHJvdG9jb2wxAAAAAAAABAAAAAEAAAPpAAAD7QAAAAAAAAAD",
@@ -954,7 +961,6 @@ export class Client extends ContractClient {
         "AAAAAAAAAAAAAAAWZ2V0X3RpY2tfYml0bWFwX3B1YmxpYwAAAAAAAQAAAAAAAAAId29yZF9wb3MAAAAFAAAAAQAAAAw=",
         "AAAAAAAAAGtRdW90ZSBleGFjdCBpbnB1dCBzd2FwIHdpdGhvdXQgZXhlY3V0aW5nIHRyYW5zZmVycwpSZXR1cm5zIHRoZSBhbW91bnQgb2Ygb3V0cHV0IHRva2VucyBhbmQgZmluYWwgcG9vbCBzdGF0ZQAAAAARcXVvdGVfZXhhY3RfaW5wdXQAAAAAAAADAAAAAAAAAAx6ZXJvX2Zvcl9vbmUAAAABAAAAAAAAAAlhbW91bnRfaW4AAAAAAAALAAAAAAAAABRzcXJ0X3ByaWNlX2xpbWl0X3g5NgAAAAwAAAABAAAD6QAAB9AAAAAKU3dhcFJlc3VsdAAAAAAAAw==",
         "AAAAAAAAAHRRdW90ZSBleGFjdCBvdXRwdXQgc3dhcCB3aXRob3V0IGV4ZWN1dGluZyB0cmFuc2ZlcnMKUmV0dXJucyB0aGUgYW1vdW50IG9mIGlucHV0IHRva2VucyByZXF1aXJlZCBhbmQgZmluYWwgcG9vbCBzdGF0ZQAAABJxdW90ZV9leGFjdF9vdXRwdXQAAAAAAAMAAAAAAAAADHplcm9fZm9yX29uZQAAAAEAAAAAAAAACmFtb3VudF9vdXQAAAAAAAsAAAAAAAAAFHNxcnRfcHJpY2VfbGltaXRfeDk2AAAADAAAAAEAAAPpAAAH0AAAAApTd2FwUmVzdWx0AAAAAAAD",
-        "AAAABAAAAAAAAAAAAAAABUVycm9yAAAAAAAAJwAAAAAAAAAMVW5hdXRob3JpemVkAAAAAQAAAAAAAAAQSW52YWxpZFRpY2tSYW5nZQAAAAoAAAAAAAAAEEludmFsaWRMaXF1aWRpdHkAAAALAAAAAAAAAA1JbnZhbGlkQW1vdW50AAAAAAAADAAAAAAAAAAQSW52YWxpZFNxcnRQcmljZQAAAA0AAAAAAAAACkludmFsaWRGZWUAAAAAAA4AAAAAAAAAEkludmFsaWRUaWNrU3BhY2luZwAAAAAADwAAAAAAAAAPVGlja091dE9mQm91bmRzAAAAABQAAAAAAAAAEFByaWNlT3V0T2ZCb3VuZHMAAAAVAAAAAAAAABFMaXF1aWRpdHlPdmVyZmxvdwAAAAAAABYAAAAAAAAAEkxpcXVpZGl0eVVuZGVyZmxvdwAAAAAAFwAAAAAAAAAORGl2aXNpb25CeVplcm8AAAAAABgAAAAAAAAADk11bERpdk92ZXJmbG93AAAAAAAZAAAAAAAAAAxVMTI4T3ZlcmZsb3cAAAAeAAAAAAAAAAxJMTI4T3ZlcmZsb3cAAAAfAAAAAAAAAAtVNjRPdmVyZmxvdwAAAAAgAAAAAAAAAAtVMzJPdmVyZmxvdwAAAAAhAAAAAAAAABJQb29sTm90SW5pdGlhbGl6ZWQAAAAAACgAAAAAAAAAFlBvb2xBbHJlYWR5SW5pdGlhbGl6ZWQAAAAAACkAAAAAAAAAEFBvc2l0aW9uTm90Rm91bmQAAAAqAAAAAAAAABVJbnN1ZmZpY2llbnRMaXF1aWRpdHkAAAAAAAArAAAAAAAAABJUaWNrTm90SW5pdGlhbGl6ZWQAAAAAADIAAAAAAAAAE0ludmFsaWRXb3JkUG9zaXRpb24AAAAAMwAAAAAAAAAWVGlja05vdFNwYWNlZENvcnJlY3RseQAAAAAANAAAAAAAAAAUT3JhY2xlTm90SW5pdGlhbGl6ZWQAAAA8AAAAAAAAABJJbnZhbGlkT2JzZXJ2YXRpb24AAAAAAD0AAAAAAAAAEU9ic2VydmF0aW9uVG9vT2xkAAAAAAAAPgAAAAAAAAAOTm90SW5pdGlhbGl6ZWQAAAAAAD8AAAAAAAAAEkFscmVhZHlJbml0aWFsaXplZAAAAAAAQAAAAAAAAAAZVGlja0xvd2VyTm90TGVzc1RoYW5VcHBlcgAAAAAAAEEAAAAAAAAAD1RpY2tMb3dlclRvb0xvdwAAAABCAAAAAAAAABBUaWNrVXBwZXJUb29IaWdoAAAAQwAAAAAAAAAGTG9ja2VkAAAAAABEAAAAAAAAABFJbnZhbGlkUHJpY2VMaW1pdAAAAAAAAEUAAAAAAAAAHUFtb3VudFNob3VsZEJlR3JlYXRlclRoYW5aZXJvAAAAAAAARgAAAAAAAAAOTmVnYXRpdmVBbW91bnQAAAAAAEcAAAAAAAAAEkluc3VmZmljaWVudFRva2VuMAAAAAAASAAAAAAAAAASSW5zdWZmaWNpZW50VG9rZW4xAAAAAABJAAAAAAAAABJJbnZhbGlkRmVlUHJvdG9jb2wAAAAAAEo=",
         "AAAAAQAAALpRMTI4LjEyOCBmaXhlZC1wb2ludCBudW1iZXIKClJlcHJlc2VudHMgYSBudW1iZXIgYXM6IHZhbHVlIC8gMl4xMjgKClVzZWQgZXhjbHVzaXZlbHkgZm9yIGZlZSBncm93dGggdHJhY2tpbmcgaW4gVW5pc3dhcCBWMyBhcmNoaXRlY3R1cmUuCkZvciBwcmljZSBjYWxjdWxhdGlvbnMsIHVzZSBGaXhlZFBvaW50OTYgaW5zdGVhZC4AAAAAAAAAAAANRml4ZWRQb2ludDEyOAAAAAAAAAEAAAAAAAAAATAAAAAAAAAM",
         "AAAAAQAAAHdRNjQuOTYgZml4ZWQtcG9pbnQgbnVtYmVyCgpJbnRlcm5hbGx5IHN0b3JlZCBhcyBhIFUyNTYgd2hlcmUgdGhlIHZhbHVlIHJlcHJlc2VudHM6CmBhY3R1YWxfdmFsdWUgPSBzdG9yZWRfdmFsdWUgLyAyXjk2YAAAAAAAAAAADEZpeGVkUG9pbnQ5NgAAAAEAAAAAAAAAATAAAAAAAAAM",
         "AAAAAQAAAAAAAAAAAAAADlN3YXBTdGVwUmVzdWx0AAAAAAAEAAAAAAAAAAlhbW91bnRfaW4AAAAAAAAMAAAAAAAAAAphbW91bnRfb3V0AAAAAAAMAAAAAAAAAApmZWVfYW1vdW50AAAAAAAMAAAAAAAAAA9zcXJ0X3JhdGlvX25leHQAAAAH0AAAAAxTcXJ0UHJpY2VYOTY=",
@@ -967,6 +973,8 @@ export class Client extends ContractClient {
         block_timestamp: this.txFromJSON<u64>,
         initialize: this.txFromJSON<Result<void>>,
         swap: this.txFromJSON<Result<SwapResult>>,
+        swap_prefunded: this.txFromJSON<Result<SwapResult>>,
+        set_router_authorized: this.txFromJSON<Result<void>>,
         burn: this.txFromJSON<Result<readonly [u128, u128]>>,
         collect: this.txFromJSON<readonly [u128, u128]>,
         set_fee_protocol: this.txFromJSON<Result<void>>,

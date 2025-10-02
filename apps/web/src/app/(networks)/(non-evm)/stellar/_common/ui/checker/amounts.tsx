@@ -3,8 +3,12 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { ZERO } from 'sushi/math'
-import { useTokenBalances } from '~stellar/_common/lib/hooks/use-token-balances'
-import type { Token } from '~stellar/_common/lib/types/token.type'
+import { useTokenBalances } from '~stellar/_common/lib/hooks/token/use-token-balance'
+import type {
+  Token,
+  TokenWithBalance,
+} from '~stellar/_common/lib/types/token.type'
+import { useStellarWallet } from '~stellar/providers'
 
 interface AmountsProps extends ButtonProps {
   amounts: {
@@ -19,6 +23,7 @@ const Amounts: FC<AmountsProps> = ({
   children,
   ...props
 }) => {
+  const { connectedAddress } = useStellarWallet()
   const amountsAreDefined = useMemo(
     () => amounts.every((el) => el.amount > ZERO),
     [amounts],
@@ -28,18 +33,23 @@ const Amounts: FC<AmountsProps> = ({
     [amounts],
   )
 
-  const { data: balances } = useTokenBalances(tokens)
+  const { data: tokensWithBalances } = useTokenBalances(
+    connectedAddress,
+    tokens,
+  )
 
   const sufficientBalance = useMemo(() => {
-    if (!balances) return true
+    if (!tokensWithBalances) return true
 
     return amounts.every((amount) => {
-      const balance = balances[amount.token.code]
-      if (typeof balance.balance !== 'bigint') return true
+      const balance = tokensWithBalances.find(
+        (token: TokenWithBalance) => token.code === amount.token.code,
+      )?.balance
+      if (typeof balance !== 'bigint') return true
 
-      return balance.balance >= amount.amount
+      return balance >= amount.amount
     })
-  }, [amounts, balances])
+  }, [amounts, tokensWithBalances])
 
   if (!amountsAreDefined) {
     return (

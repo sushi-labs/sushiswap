@@ -1,16 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { tokens } from '~stellar/_common/lib/assets/token-assets'
 import type { Token } from '~stellar/_common/lib/types/token.type'
-import { NETWORK_NAME } from '../constants'
-
-/**
- * Gets the tokens without any alteration
- * @returns An array of Tokens
- */
-export const getBaseTokens = () => {
-  const baseTokens: Token[] = tokens[NETWORK_NAME]
-  return baseTokens
-}
+import { NETWORK_NAME } from '../../constants'
 
 /**
  * Constructs a list of tokens based off the network

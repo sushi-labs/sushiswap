@@ -151,3 +151,25 @@ export const formatPoolFee = (
 
   return Intl.NumberFormat('en-US', options).format(feeValue)
 }
+
+/**
+ * Formats token amount from smallest units to human-readable format
+ * @param amount The amount in smallest units (bigint)
+ * @param decimals Number of decimal places for the token
+ * @param displayDecimals Number of decimal places to display (default: 2)
+ * @returns A formatted string
+ */
+export const formatTokenAmount = (
+  amount: bigint | number | string | null,
+  decimals: number,
+  displayDecimals = 2,
+): string => {
+  if (!amount) return '0.00'
+
+  const tokenAmount = Number(amount) / 10 ** decimals
+
+  return tokenAmount.toLocaleString('en-US', {
+    minimumFractionDigits: displayDecimals,
+    maximumFractionDigits: displayDecimals,
+  })
+}

@@ -1,13 +1,12 @@
 import { Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
 import React, { useCallback, useEffect, useState } from 'react'
-// import { useStablePrice } from '~aptos/_common/lib/common/use-stable-price'
-import { useTokenBalance } from '~stellar/_common/lib/hooks/use-token-balance'
+import { useTokenBalance } from '~stellar/_common/lib/hooks/token/use-token-balance'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 import TokenSelector from '~stellar/_common/ui/token-selector/token-selector'
+
 import { useStellarWallet } from '~stellar/providers'
 import { CurrencyIcon } from '../currency-icon'
 import { CurrencyInputBalancePanel } from './currency-input-balance-panel'
-import { CurrencyInputPricePanel } from './currency-input-price-panel'
 
 type CurrencyInput = {
   id: string
@@ -36,10 +35,13 @@ export function CurrencyInput({
   disableInsufficientBalanceError = false,
   label,
 }: CurrencyInput) {
+  const { connectedAddress } = useStellarWallet()
   const [insufficientBalance, setInsufficientBalance] = useState<boolean>(false)
 
-  const { data, isLoading: isBalanceLoading } = useTokenBalance(token)
-  const balance = data?.balance
+  const { data: balance, isLoading: isBalanceLoading } = useTokenBalance(
+    connectedAddress,
+    token.contract,
+  )
 
   const onUserInput = useCallback(
     (amount: string) => {

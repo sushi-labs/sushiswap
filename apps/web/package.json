@@ -38,7 +38,7 @@
     "@rainbow-me/rainbowkit": "2.2.2",
     "@rise-wallet/wallet-adapter": "0.1.2",
     "@snapshot-labs/snapshot.js": "0.9.9",
-    "@stellar/stellar-sdk": "^13.3.0",
+    "@stellar/stellar-sdk": "^14.2.0",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",

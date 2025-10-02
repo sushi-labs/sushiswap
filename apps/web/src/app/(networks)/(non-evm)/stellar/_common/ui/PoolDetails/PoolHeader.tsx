@@ -10,23 +10,23 @@ import {
   SkeletonText,
   typographyVariants,
 } from '@sushiswap/ui'
-import { usePoolDetails } from '../../lib/hooks/use-pool-details'
-import type { IPool } from '../../lib/hooks/use-pools'
+import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
+import { usePoolInfo } from '../../lib/hooks/pool/use-pool-info'
 import { formatPoolFee } from '../../lib/utils/formatters'
 import { getStellarContractLink } from '../../lib/utils/stellarchain-helpers'
 import { TokenIcon } from '../General/TokenIcon'
 
 interface PoolHeaderProps {
-  pool?: IPool | null
+  pool?: PoolInfo | null
   backUrl: string
   address?: string
 }
 
 export const PoolHeader = ({ pool, backUrl, address }: PoolHeaderProps) => {
   // If pool is not provided, fetch it using the address
-  const { data: fetchedPool, isLoading: isFetching } = usePoolDetails({
-    address: address || '',
-  })
+  const { data: fetchedPool, isLoading: isFetching } = usePoolInfo(
+    address || null,
+  )
 
   const actualPool = pool || fetchedPool
   const isLoading = !pool && isFetching
@@ -69,9 +69,6 @@ export const PoolHeader = ({ pool, backUrl, address }: PoolHeaderProps) => {
                 {actualPool.token0.code}/{actualPool.token1.code}
               </LinkExternal>
             </Button>
-            <div className="bg-pink/20 text-pink text-sm px-2 py-1 font-semibold rounded-full mt-0.5">
-              V2
-            </div>
           </div>
         ) : null}
       </div>

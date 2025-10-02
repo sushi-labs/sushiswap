@@ -19,7 +19,7 @@ import React, {
 } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
-import { getBaseTokens } from '~stellar/_common/lib/hooks/use-base-tokens'
+import { getBaseTokens } from '~stellar/_common/lib/soroban/token-helpers'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 // import { useCommonTokens } from '~aptos/_common/lib/common/use-common-tokens'
 // import { useCustomTokens } from '~aptos/_common/lib/common/use-custom-tokens'

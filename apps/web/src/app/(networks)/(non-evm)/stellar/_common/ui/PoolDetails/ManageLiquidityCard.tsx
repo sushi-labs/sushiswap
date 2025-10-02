@@ -16,12 +16,12 @@ import {
 } from '@sushiswap/ui'
 import type React from 'react'
 import { useState } from 'react'
+import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import { useStellarWallet } from '~stellar/providers'
-import type { IPool } from '../../lib/hooks/use-pools'
 import { ConnectWalletButton } from '../ConnectWallet/ConnectWalletButton'
 
 interface ManageLiquidityCardProps {
-  pool: IPool
+  pool: PoolInfo
 }
 
 export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
@@ -37,7 +37,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     amount0 !== '' && amount0 !== '0' && Number.parseFloat(amount0) > 0
 
   return (
-    <Card className="bg-slate-900/50 border-slate-700">
+    <Card className="bg-slate-900/50 border-slate-800">
       <CardHeader>
         <div className="flex justify-between items-center">
           <div>
@@ -73,6 +73,19 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
         </div>
 
         <TabsContent value="add">
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle>Add Liquidity</CardTitle>
+                <CardDescription>
+                  Provide liquidity to receive SLP tokens.
+                </CardDescription>
+              </div>
+              <Button variant="ghost" size="sm">
+                <Cog6ToothIcon className="w-4 h-4" />
+              </Button>
+            </div>
+          </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {!isConnected ? (

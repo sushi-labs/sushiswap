@@ -1,4 +1,3 @@
-import { networks } from '@sushiswap/stellar/xlm'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 
 // These are MAINNET tokens (curated by StellarExpert)

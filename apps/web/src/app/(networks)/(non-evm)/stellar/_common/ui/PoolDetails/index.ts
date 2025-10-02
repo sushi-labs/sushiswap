@@ -1,4 +1,3 @@
-export { PoolDetails } from './PoolDetails'
 export { PoolHeader } from './PoolHeader'
 export { PoolLiquidity } from './PoolLiquidity'
 export { LiquidityItem } from './LiquidityItem'

@@ -9,25 +9,27 @@ import {
 } from '@sushiswap/ui'
 import type { SortingState, TableState } from '@tanstack/react-table'
 import { useCallback, useMemo, useState } from 'react'
-import { type IPool, usePools } from '~stellar/_common/lib/hooks/use-pools'
-import { COLUMNS } from './columns'
+import { useAllPools } from '~stellar/_common/lib/hooks/pool/use-pool-info'
+import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
+import { SIMPLE_COLUMNS } from './columns-simple'
 
 export const PoolsTable = () => {
   // Dynamic page links
-  const rowLink = useCallback((row: IPool) => {
+  const rowLink = useCallback((row: PoolInfo) => {
     return `/stellar/pool/${row.address}`
   }, [])
 
   // Sort state
   const [sorting, setSorting] = useState<SortingState>([
-    { id: 'liquidityUSD', desc: true },
+    { id: 'totalLiquidity', desc: true },
   ])
 
   // Get the pool data
-  const { data: pools, isLoading } = usePools()
-  const filteredPools = useMemo(() => {
-    if (!pools) return [] as IPool[]
+  const { data: pools, isLoading } = useAllPools()
+  console.log('PoolsTable.tsx', { pools })
 
+  const filteredPools = useMemo(() => {
+    if (!pools) return [] as PoolInfo[]
     return pools
     // TODO: apply filtering
     // return pools?.filter((pool) => {
@@ -44,6 +46,8 @@ export const PoolsTable = () => {
       },
     }
   }, [sorting, filteredPools])
+
+  if (!pools || pools.length === 0) return null
 
   return (
     <Card>
@@ -68,8 +72,8 @@ export const PoolsTable = () => {
         onSortingChange={setSorting}
         loading={isLoading}
         linkFormatter={rowLink}
-        columns={COLUMNS}
-        data={filteredPools}
+        columns={SIMPLE_COLUMNS}
+        data={pools}
       />
     </Card>
   )

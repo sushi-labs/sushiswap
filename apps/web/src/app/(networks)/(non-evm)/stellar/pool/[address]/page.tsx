@@ -1,9 +1,12 @@
 'use client'
 import { Container } from '@sushiswap/ui'
 import React, { use } from 'react'
+import { usePoolInfo } from '~stellar/_common/lib/hooks/pool/use-pool-info'
+import {
+  ManageLiquidityCard,
+  PoolLiquidity,
+} from '~stellar/_common/ui/PoolDetails'
 import { MyPosition } from '~stellar/_common/ui/PoolDetails/MyPosition'
-import { PoolDetails } from '~stellar/_common/ui/PoolDetails/PoolDetails'
-import { usePoolDetails } from '../../_common/lib/hooks/use-pool-details'
 
 interface PoolPageProps {
   params: Promise<{
@@ -14,7 +17,9 @@ interface PoolPageProps {
 export default function PoolPage({ params }: PoolPageProps) {
   const resolvedParams = use(params)
   const address = decodeURIComponent(resolvedParams.address)
-  const { data: pool, isLoading, error } = usePoolDetails({ address })
+  const { data: pool, isLoading, error } = usePoolInfo(address)
+
+  console.log({ pool })
 
   if (isLoading) {
     return (
@@ -49,14 +54,12 @@ export default function PoolPage({ params }: PoolPageProps) {
   return (
     <Container maxWidth="5xl" className="px-4">
       <div className="flex flex-col gap-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column */}
-          <div className="lg:col-span-2 flex flex-col gap-6">
-            <PoolDetails pool={pool} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-col gap-6">
+            <ManageLiquidityCard pool={pool} />
+            <PoolLiquidity pool={pool} />
           </div>
-
-          {/* Right Column */}
-          <div className="lg:col-span-1">
+          <div>
             <MyPosition pool={pool} />
           </div>
         </div>

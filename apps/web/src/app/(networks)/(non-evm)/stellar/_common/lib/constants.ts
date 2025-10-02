@@ -11,6 +11,10 @@ export const RPC_URL = IS_TESTNET
   ? 'https://soroban-testnet.stellar.org'
   : 'https://soroban.stellar.org'
 
+const _rpcUrl = IS_TESTNET
+  ? 'https://testnet.sorobanrpc.com'
+  : 'https://mainnet.sorobanrpc.com'
+
 export const NETWORK_PASSPHRASE = IS_TESTNET
   ? Networks.TESTNET
   : Networks.PUBLIC

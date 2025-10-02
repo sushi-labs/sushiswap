@@ -1,4 +1,4 @@
-import { Client, networks } from '@sushiswap/stellar/xlm'
+import { Client, networks } from '@sushiswap/stellar/tokens/xlm'
 import { NETWORK_PASSPHRASE, RPC_URL } from '../constants'
 
 /**

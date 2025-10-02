@@ -34,11 +34,11 @@ if (typeof window !== 'undefined') {
 export const networks = {
   testnet: {
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CAE3VXI2NFYEP4AFBH6XYDM2OD5OMSRHA2G53DRWRJFMB56P4QU7H4IW",
+    contractId: "CBZHXZBNABBQRFBNQXYXMJ3NKETUKDIBSILNQUWHVV3RXMRP3AZYLK66",
   }
 } as const
 
-export type StorageKey = {tag: "Owner", values: void} | {tag: "FeeAmtTickSpacing", values: readonly [u32]} | {tag: "GetPool", values: readonly [string, string, u32]} | {tag: "WasmHash", values: void};
+export type StorageKey = {tag: "Owner", values: void} | {tag: "FeeAmtTickSpacing", values: readonly [u32]} | {tag: "GetPool", values: readonly [string, string, u32]} | {tag: "WasmHash", values: void} | {tag: "DefaultRouter", values: void};
 
 export interface Client {
   /**
@@ -122,6 +122,71 @@ export interface Client {
   }) => Promise<AssembledTransaction<Option<string>>>
 
   /**
+   * Construct and simulate a set_default_router transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Set a default router that will be auto-authorized on every newly created pool.
+   * This keeps `create_pool` permissionless; the owner authorizes this policy once.
+   */
+  set_default_router: ({router}: {router: string}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<null>>
+
+  /**
+   * Construct and simulate a clear_default_router transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Clear the default router.
+   */
+  clear_default_router: (options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<null>>
+
+  /**
+   * Construct and simulate a set_pool_router_authorized transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Configure whether a router is authorized to call `swap_prefunded` on a given pool.
+   * Requires factory owner authorization and factory-level subcontract auth.
+   */
+  set_pool_router_authorized: ({pool, router, allowed}: {pool: string, router: string, allowed: boolean}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<null>>
+
+  /**
    * Construct and simulate a e_fee_amt transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
   e_fee_amt: ({fee, tick_spacing}: {fee: u32, tick_spacing: i32}, options?: {
@@ -164,12 +229,15 @@ export class Client extends ContractClient {
       new ContractSpec([ "AAAAAgAAAAAAAAAAAAAAClN0b3JhZ2VLZXkAAAAAAAQAAAAAAAAAAAAAAAVPd25lcgAAAAAAAAEAAAAAAAAAEUZlZUFtdFRpY2tTcGFjaW5nAAAAAAAAAQAAAAQAAAABAAAAAAAAAAdHZXRQb29sAAAAAAMAAAATAAAAEwAAAAQAAAAAAAAAAAAAAAhXYXNtSGFzaA==",
         "AAAABQAAAAAAAAAAAAAAFUZlZUFtb3VudEVuYWJsZWRFdmVudAAAAAAAAAEAAAAYZmVlX2Ftb3VudF9lbmFibGVkX2V2ZW50AAAAAgAAAAAAAAADZmVlAAAAAAQAAAAAAAAAAAAAAAx0aWNrX3NwYWNpbmcAAAAFAAAAAAAAAAI=",
         "AAAABQAAAAAAAAAAAAAAEFBvb2xDcmVhdGVkRXZlbnQAAAABAAAAEnBvb2xfY3JlYXRlZF9ldmVudAAAAAAABgAAAAAAAAAGc2VuZGVyAAAAAAATAAAAAAAAAAAAAAAGdG9rZW4wAAAAAAATAAAAAAAAAAAAAAAGdG9rZW4xAAAAAAATAAAAAAAAAAAAAAADZmVlAAAAAAQAAAAAAAAAAAAAAAx0aWNrX3NwYWNpbmcAAAAFAAAAAAAAAAAAAAAMcG9vbF9hZGRyZXNzAAAAEwAAAAAAAAAC",
-        "AAAAAgAAAAAAAAAAAAAAClN0b3JhZ2VLZXkAAAAAAAQAAAAAAAAAAAAAAAVPd25lcgAAAAAAAAEAAAAAAAAAEUZlZUFtdFRpY2tTcGFjaW5nAAAAAAAAAQAAAAQAAAABAAAAAAAAAAdHZXRQb29sAAAAAAMAAAATAAAAEwAAAAQAAAAAAAAAAAAAAAhXYXNtSGFzaA==",
+        "AAAAAgAAAAAAAAAAAAAAClN0b3JhZ2VLZXkAAAAAAAUAAAAAAAAAAAAAAAVPd25lcgAAAAAAAAEAAAAAAAAAEUZlZUFtdFRpY2tTcGFjaW5nAAAAAAAAAQAAAAQAAAABAAAAAAAAAAdHZXRQb29sAAAAAAMAAAATAAAAEwAAAAQAAAAAAAAAAAAAAAhXYXNtSGFzaAAAAAAAAAAAAAAADURlZmF1bHRSb3V0ZXIAAAA=",
         "AAAAAAAAADVDb25zdHJ1Y3QgdGhlIGRlcGxveWVyIHdpdGggYSBwcm92aWRlZCBhZG1pbmlzdHJhdG9yLgAAAAAAAA1fX2NvbnN0cnVjdG9yAAAAAAAAAgAAAAAAAAAFYWRtaW4AAAAAAAATAAAAAAAAAAl3YXNtX2hhc2gAAAAAAAPuAAAAIAAAAAA=",
         "AAAAAAAAAAAAAAAJc2V0X293bmVyAAAAAAAAAQAAAAAAAAAJbmV3X2FkbWluAAAAAAAAEwAAAAA=",
         "AAAAAAAAAAAAAAAJZ2V0X293bmVyAAAAAAAAAAAAAAEAAAAT",
         "AAAAAAAAAAAAAAALY3JlYXRlX3Bvb2wAAAAAAwAAAAAAAAAHdG9rZW5fYQAAAAATAAAAAAAAAAd0b2tlbl9iAAAAABMAAAAAAAAAA2ZlZQAAAAAEAAAAAQAAABM=",
         "AAAAAAAAAAAAAAAIZ2V0X3Bvb2wAAAADAAAAAAAAAAd0b2tlbl9hAAAAABMAAAAAAAAAB3Rva2VuX2IAAAAAEwAAAAAAAAADZmVlAAAAAAQAAAABAAAD6AAAABM=",
+        "AAAAAAAAAJ5TZXQgYSBkZWZhdWx0IHJvdXRlciB0aGF0IHdpbGwgYmUgYXV0by1hdXRob3JpemVkIG9uIGV2ZXJ5IG5ld2x5IGNyZWF0ZWQgcG9vbC4KVGhpcyBrZWVwcyBgY3JlYXRlX3Bvb2xgIHBlcm1pc3Npb25sZXNzOyB0aGUgb3duZXIgYXV0aG9yaXplcyB0aGlzIHBvbGljeSBvbmNlLgAAAAAAEnNldF9kZWZhdWx0X3JvdXRlcgAAAAAAAQAAAAAAAAAGcm91dGVyAAAAAAATAAAAAA==",
+        "AAAAAAAAABlDbGVhciB0aGUgZGVmYXVsdCByb3V0ZXIuAAAAAAAAFGNsZWFyX2RlZmF1bHRfcm91dGVyAAAAAAAAAAA=",
+        "AAAAAAAAAJtDb25maWd1cmUgd2hldGhlciBhIHJvdXRlciBpcyBhdXRob3JpemVkIHRvIGNhbGwgYHN3YXBfcHJlZnVuZGVkYCBvbiBhIGdpdmVuIHBvb2wuClJlcXVpcmVzIGZhY3Rvcnkgb3duZXIgYXV0aG9yaXphdGlvbiBhbmQgZmFjdG9yeS1sZXZlbCBzdWJjb250cmFjdCBhdXRoLgAAAAAac2V0X3Bvb2xfcm91dGVyX2F1dGhvcml6ZWQAAAAAAAMAAAAAAAAABHBvb2wAAAATAAAAAAAAAAZyb3V0ZXIAAAAAABMAAAAAAAAAB2FsbG93ZWQAAAAAAQAAAAA=",
         "AAAAAAAAAAAAAAAJZV9mZWVfYW10AAAAAAAAAgAAAAAAAAADZmVlAAAAAAQAAAAAAAAADHRpY2tfc3BhY2luZwAAAAUAAAAA" ]),
       options
     )
@@ -179,6 +247,9 @@ export class Client extends ContractClient {
         get_owner: this.txFromJSON<string>,
         create_pool: this.txFromJSON<string>,
         get_pool: this.txFromJSON<Option<string>>,
+        set_default_router: this.txFromJSON<null>,
+        clear_default_router: this.txFromJSON<null>,
+        set_pool_router_authorized: this.txFromJSON<null>,
         e_fee_amt: this.txFromJSON<null>
   }
 }

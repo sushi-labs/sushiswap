@@ -7,15 +7,16 @@ import {
   CardTitle,
   SkeletonText,
 } from '@sushiswap/ui'
-import { formatUSD } from 'sushi/format'
-import type { IPool } from '../../lib/hooks/use-pools'
+// import { formatUSD } from 'sushi/format'
+import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 
 interface StatisticsProps {
-  pool: IPool
+  pool: PoolInfo
   isLoading?: boolean
 }
 
 export const Statistics = ({ pool, isLoading = false }: StatisticsProps) => {
+  console.log({ pool })
   if (isLoading) {
     return (
       <Card>
@@ -57,21 +58,24 @@ export const Statistics = ({ pool, isLoading = false }: StatisticsProps) => {
             <div className="space-y-2">
               <div className="text-sm text-muted-foreground">Liquidity</div>
               <div className="text-lg font-semibold">
-                {formatUSD(pool.liquidityUSD)}
+                {/* TODO: {formatUSD(pool.liquidityUSD)} */}
+                [tbd: liquidityUSD]
                 <span className="text-sm text-green-600 ml-2">+2.08%</span>
               </div>
             </div>
             <div className="space-y-2">
               <div className="text-sm text-muted-foreground">Volume (24h)</div>
               <div className="text-lg font-semibold">
-                {formatUSD(pool.volumeUSD1d)}
+                {/* TODO: {formatUSD(pool.volumeUSD1d)} */}
+                [tbd: volumeUSD1d]
                 <span className="text-sm text-red-600 ml-2">-168.69%</span>
               </div>
             </div>
             <div className="space-y-2">
               <div className="text-sm text-muted-foreground">Fees (24h)</div>
               <div className="text-lg font-semibold">
-                {formatUSD(pool.feeUSD1d)}
+                {/* TODO: {formatUSD(pool.feeUSD1d)} */}
+                [tbd: feeUSD1d]
                 <span className="text-sm text-red-600 ml-2">-168.69%</span>
               </div>
             </div>
@@ -80,7 +84,8 @@ export const Statistics = ({ pool, isLoading = false }: StatisticsProps) => {
                 Transactions (24h)
               </div>
               <div className="text-lg font-semibold">
-                {pool.txCount1d}
+                {/* TODO: {pool.txCount1d} */}
+                [tbd: txCount1d]
                 <span className="text-sm text-red-600 ml-2">-52.69%</span>
               </div>
             </div>
