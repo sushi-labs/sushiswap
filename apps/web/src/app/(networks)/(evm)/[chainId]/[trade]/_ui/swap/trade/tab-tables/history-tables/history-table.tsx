@@ -18,15 +18,15 @@ import { MarketTable } from './market-history-table/market-history-table'
 export const HistoryTable = () => {
   const { historyTableTab, setHistoryTableTab } = useTradeTablesContext()
   return (
-    <Card className="overflow-hidden border-none !shadow-none md:px-3 md:pt-3 xl:bg-red-white dark:md:bg-slate-800 rounded-t-none xl:rounded-lg">
+    <Card className="overflow-hidden border-none !shadow-none lg:px-3 lg:pt-3 xl:bg-red-white dark:lg:bg-slate-800 !rounded-lg">
       <Tabs
         value={historyTableTab}
         onValueChange={(value: string) => {
           setHistoryTableTab(value as typeof historyTableTab)
         }}
-        className="border-none bg-[#F9FAFB] dark:bg-slate-900 dark:md:!bg-slate-800 md:bg-white"
+        className="border-none bg-background dark:bg-slate-900 dark:lg:!bg-slate-800 lg:bg-white"
       >
-        <TabsList className="w-full gap-2 flex !bg-[#F9FAFB] md:!bg-white dark:!bg-slate-900 dark:md:!bg-slate-800 rounded-none md:rounded-lg !justify-start border-none">
+        <TabsList className="w-full gap-2 flex !bg-background lg:!bg-white dark:!bg-slate-900 dark:lg:!bg-slate-800 !rounded-lg !justify-start border-none">
           {HISTORY_TABLE_TABS.map((tab) => (
             <TabsTrigger
               key={tab.value}
@@ -48,7 +48,7 @@ export const HistoryTable = () => {
             </TabsTrigger>
           ))}
         </TabsList>
-        <div className="py-2 bg-[#F9FAFB] md:bg-white dark:bg-slate-900 dark:md:!bg-slate-800" />
+        <div className="py-2 bg-background lg:bg-white dark:bg-slate-900 dark:lg:!bg-slate-800" />
 
         <TabsContent
           value={HISTORY_TABLE_TABS[0].value}

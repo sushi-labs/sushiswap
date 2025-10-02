@@ -12,7 +12,7 @@ export const Search = () => {
   } = useSearchContext()
   return (
     <Wrapper>
-      <div className="flex flex-col gap-4 md:hidden">
+      <div className="flex flex-col gap-4 lg:hidden">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-1">
             <Button variant="quaternary">Available</Button>
@@ -27,7 +27,7 @@ export const Search = () => {
         </div>
       </div>
 
-      <div className="hidden md:flex flex-col gap-4">
+      <div className="hidden lg:flex flex-col gap-4">
         <SearchBar />
         {searchValue === '' ? <AvailableTokens /> : null}
       </div>

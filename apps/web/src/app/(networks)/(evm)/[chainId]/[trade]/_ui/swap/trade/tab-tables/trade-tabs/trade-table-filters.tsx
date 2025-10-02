@@ -37,7 +37,7 @@ export const TradeTableFilters = () => {
   const remainingChainIds = networkOptions.slice(2)
 
   return (
-    <div className="flex items-center w-full justify-between xl:justify-end gap-3 px-5 pt-3 pb-1 md:px-3 xl:px-0 md:pt-0 md:pb-0 bg-[#F9FAFB] xl:!bg-background md:bg-white md:dark:bg-slate-800 dark:bg-background  overflow-x-auto hide-scrollbar">
+    <div className="flex items-center w-full justify-between flex-wrap xl:justify-end gap-3 px-8 pb-1 lg:px-6 xl:px-0 lg:pb-0 xl:!bg-background bg-background lg:bg-white lg:dark:bg-slate-800 dark:bg-background overflow-x-auto hide-scrollbar">
       <div className="flex items-center gap-2">
         <span className="text-sm whitespace-nowrap dark:text-slate-500">
           Show Current Pair Only

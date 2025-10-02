@@ -40,7 +40,7 @@ export const BUY_COLUMN: ColumnDef<MarketTrade> = {
           })
 
     return (
-      <div className="w-full min-w-[150px] flex items-center gap-1 md:gap-2 whitespace-nowrap">
+      <div className="w-full min-w-[150px] flex items-center gap-1 lg:gap-2 whitespace-nowrap">
         <Currency.Icon currency={token} width={24} height={24} />
         <span>
           {formatNumber(row.original.amountOut)} {token.symbol}
@@ -77,7 +77,7 @@ export const SELL_COLUMN: ColumnDef<MarketTrade> = {
             name: row.original.tokenIn.name,
           })
     return (
-      <div className="flex items-center gap-1 md:gap-2 whitespace-nowrap">
+      <div className="flex items-center gap-1 lg:gap-2 whitespace-nowrap">
         <Currency.Icon currency={token} width={24} height={24} />
         <span>
           {formatNumber(row.original.amountIn)} {token.symbol}
@@ -108,15 +108,15 @@ export const CHAIN_COLUMN: ColumnDef<MarketTrade> = {
 
     return (
       <div className="flex items-center gap-2">
-        <div className="flex items-center gap-1 md:gap-2">
+        <div className="flex items-center gap-1 lg:gap-2">
           <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
             <NetworkIcon
               type="square"
               chainId={row.original.tokenIn.chainId as EvmChainId}
-              className="w-3 h-3 md:w-5 md:h-5"
+              className="w-3 h-3 lg:w-5 lg:h-5"
             />
           </div>
-          <span className="block text-xs md:hidden">
+          <span className="block text-xs lg:hidden">
             {getNetworkName(row.original.tokenIn.chainId as EvmChainId)}
           </span>
           {isCrossChain ? (
@@ -126,10 +126,10 @@ export const CHAIN_COLUMN: ColumnDef<MarketTrade> = {
                 <NetworkIcon
                   type="square"
                   chainId={row.original.tokenOut.chainId as EvmChainId}
-                  className="w-3 h-3 md:w-5 md:h-5"
+                  className="w-3 h-3 lg:w-5 lg:h-5"
                 />
               </div>
-              <span className="block text-xs md:hidden">
+              <span className="block text-xs lg:hidden">
                 {getNetworkName(row.original.tokenOut.chainId as EvmChainId)}
               </span>
             </>
@@ -274,7 +274,7 @@ export const TX_HASH_COLUMN: ColumnDef<MarketTrade> = {
 
 export const DATE_COLUMN: ColumnDef<MarketTrade> = {
   id: 'timestamp',
-  header: () => <span className="md:text-right md:block">Date</span>,
+  header: () => <span className="lg:text-right lg:block">Date</span>,
   enableSorting: false,
   accessorFn: (row) => row.time,
   cell: ({ row }) => (

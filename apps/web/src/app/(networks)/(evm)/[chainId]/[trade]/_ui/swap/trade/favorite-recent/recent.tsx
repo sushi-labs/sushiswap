@@ -82,7 +82,7 @@ export const Recent = ({ onClose }: { onClose?: () => void }) => {
 
   return (
     <div className="grid grid-cols-3 col-span-3 gap-0">
-      <div className="sticky top-0 z-[19  ] grid grid-cols-5 col-span-5 text-xs bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800 text-slate-700 dark:text-pink-100">
+      <div className="sticky top-0 z-[19  ] grid grid-cols-5 col-span-5 text-xs bg-white lg:bg-slate-50 dark:bg-slate-900 lg:dark:bg-slate-800 text-slate-700 dark:text-pink-100">
         <div className="w-full col-span-3 pl-2 font-medium">Token Pair</div>
         <div className="w-full font-medium text-left whitespace-nowrap">
           Amount Traded
@@ -261,7 +261,7 @@ const ActionButtons = ({
   const { handleTokenInput, handleTokenOutput } = useSwapTokenSelect()
 
   return (
-    <div className="flex items-center justify-end w-full col-span-5 gap-2 md:col-span-2">
+    <div className="flex items-center justify-end w-full col-span-5 gap-2 lg:col-span-2">
       <Button
         onClick={async () => {
           await handleTokenOutput({
@@ -276,7 +276,7 @@ const ActionButtons = ({
           onClose?.()
         }}
         size="xs"
-        className="text-slate-50 w-full md:w-fit !rounded-full bg-green-500 font-semibold hover:bg-green-500 active:bg-green-500/95 focus:bg-green-500"
+        className="text-slate-50 w-full lg:w-fit !rounded-full bg-green-500 font-semibold hover:bg-green-500 active:bg-green-500/95 focus:bg-green-500"
       >
         BUY {recentSwap.tokenIn.symbol}
       </Button>
@@ -295,7 +295,7 @@ const ActionButtons = ({
           onClose?.()
         }}
         size="xs"
-        className="text-slate-50 w-full md:w-fit bg-red-100 !rounded-full font-semibold hover:bg-red-100 active:bg-red-100/95 focus:bg-red-500"
+        className="text-slate-50 w-full lg:w-fit bg-red-100 !rounded-full font-semibold hover:bg-red-100 active:bg-red-100/95 focus:bg-red-500"
       >
         SELL {recentSwap.tokenIn.symbol}
       </Button>

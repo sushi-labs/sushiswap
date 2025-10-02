@@ -27,17 +27,17 @@ export const AvailableTokens = () => {
 
   return (
     <div className="flex flex-col w-full gap-2">
-      <h4 className="hidden md:block text-[#535263] font-medium dark:text-[#E4DDEC] text-sm">
+      <h4 className="hidden lg:block text-[#535263] font-medium dark:text-[#E4DDEC] text-sm">
         Available
       </h4>
-      <div className="flex items-center  gap-2 overflow-x-auto whitespace-nowrap md:flex md:flex-wrap md:gap-3 hide-scrollbar">
+      <div className="flex items-center  gap-2 overflow-x-auto whitespace-nowrap lg:flex lg:flex-wrap lg:gap-3 hide-scrollbar">
         {isLoading ? (
           new Array(6)
             .fill(null)
             .map((_, index) => (
               <SkeletonBox
                 key={index}
-                className="!bg-secondary min-w-[120px] md:min-w-fit !rounded-full h-[40px]"
+                className="!bg-secondary min-w-[120px] lg:min-w-fit !rounded-full h-[40px]"
               />
             ))
         ) : isError ? (

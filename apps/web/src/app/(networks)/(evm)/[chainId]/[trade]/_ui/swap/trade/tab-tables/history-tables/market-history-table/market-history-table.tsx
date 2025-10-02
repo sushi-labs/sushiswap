@@ -100,7 +100,7 @@ export const MarketTable = () => {
 
   return (
     <>
-      <Card className="hidden overflow-hidden !border-none !shadow-none bg-slate-50 dark:bg-slate-800 md:block">
+      <Card className="hidden overflow-hidden !border-none !shadow-none bg-slate-50 dark:bg-slate-800 lg:block">
         <DataTable
           columns={COLUMNS}
           data={rowData}
@@ -114,7 +114,7 @@ export const MarketTable = () => {
         />
       </Card>
 
-      <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden">
+      <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 lg:hidden">
         {isLoading ? (
           <SkeletonBox className="w-full h-52" />
         ) : !rowData?.length ? (

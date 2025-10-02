@@ -26,7 +26,7 @@ export const Rate = () => {
   const isLoading = isPrice0Loading
 
   return (
-    <div className="flex items-center xl:flex-wrap text-base md:text-xl font-medium text-[#0F172A] dark:text-white">
+    <div className="flex items-center xl:flex-wrap text-base lg:text-xl font-medium text-[#0F172A] dark:text-white">
       {isLoading ? (
         <SkeletonBox className="w-20 h-4 mr-1 rounded-md" />
       ) : (

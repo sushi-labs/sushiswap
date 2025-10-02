@@ -17,7 +17,7 @@ import { useAccount } from 'wagmi'
 import { SearchItem } from './search-item'
 import { useSearchContext } from './search-provider'
 
-export const SearchContent = () => {
+export const SearchContent = ({ onClose }: { onClose: () => void }) => {
   const [open, setOpen] = useState(false)
   const {
     state: { searchValue },
@@ -69,7 +69,7 @@ export const SearchContent = () => {
           variant="naked"
           placeholder="Search by name or address"
           className={classNames(
-            'pl-4 pr-8 placeholder:text-slate-450 !dark:text-slate-500 placeholder:dark:text-slate-450 rounded-lg py-1 w-full dark:!bg-slate-800 md:dark:!bg-slate-900 !bg-gray-100',
+            'pl-4 pr-8 placeholder:text-slate-450 !dark:text-slate-500 placeholder:dark:text-slate-450 rounded-lg py-1 w-full dark:!bg-slate-800 lg:dark:!bg-slate-900 !bg-gray-100',
           )}
         />
         {searchValue ? (
@@ -115,7 +115,7 @@ export const SearchContent = () => {
             </div>
           ) : (
             <div className="text-xs grid grid-cols-[30px_auto_auto_auto] gap-2">
-              <div className="sticky font-medium grid grid-cols-[30px_190px_auto_auto] col-span-4 top-0 z-[19] bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800 text-xs text-[#535263] dark:text-[#E4DDEC]">
+              <div className="sticky font-medium grid grid-cols-[30px_190px_auto_auto] col-span-4 top-0 z-[19] bg-white lg:bg-slate-50 dark:bg-slate-900 lg:dark:bg-slate-800 text-xs text-[#535263] dark:text-[#E4DDEC]">
                 <div />
                 <div className="w-full mr-auto">Token</div>
                 <div className="w-full ml-auto text-right">Price</div>
@@ -124,6 +124,7 @@ export const SearchContent = () => {
 
               {tokens?.map((token) => (
                 <SearchItem
+                  onClose={onClose}
                   key={`search-token-${token.chainId}-${token.address}`}
                   token={token}
                 />
@@ -139,7 +140,7 @@ export const SearchContent = () => {
 const SearchSkeleton = () => {
   return (
     <div className="text-xs flex items-center gap-2 justify-between">
-      <div className="max-w-[25px] py-3 md:py-4">
+      <div className="max-w-[25px] py-3 lg:py-4">
         <SkeletonBox className="w-3 h-3 rounded-sm" />
       </div>
       <div className="flex items-center gap-3.5">
@@ -166,10 +167,10 @@ const SearchSkeleton = () => {
       <div>
         <div className="flex flex-col gap-0.5 items-end ml-auto">
           <span className="text-slate-900 dark:text-pink-100 !font-medium">
-            <SkeletonBox className="w-12 md:w-16 h-3 rounded-sm" />
+            <SkeletonBox className="w-12 lg:w-16 h-3 rounded-sm" />
           </span>
           <span className="text-muted-foreground">
-            <SkeletonBox className="w-16 md:w-20 h-3 rounded-sm" />
+            <SkeletonBox className="w-16 lg:w-20 h-3 rounded-sm" />
           </span>
         </div>
       </div>

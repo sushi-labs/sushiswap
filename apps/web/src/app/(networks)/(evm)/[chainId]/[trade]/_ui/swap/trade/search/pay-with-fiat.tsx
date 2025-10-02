@@ -65,7 +65,7 @@ export const PayWithFiat = () => {
           variant={'secondary'}
           type="button"
           className={classNames(
-            '!rounded-full md:overflow-hidden focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent',
+            '!rounded-full lg:overflow-hidden focus-visible:!ring-0 focus-visible:!ring-offset-0 !ring-transparent',
           )}
         >
           <div className="flex items-center gap-0.5">

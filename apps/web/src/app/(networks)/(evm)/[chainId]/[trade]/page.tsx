@@ -49,7 +49,7 @@ export default function TradePage() {
   } = useDerivedStateSimpleTrade()
   useHeaderNetworkSelector(chainIdsByTradeMode[tradeMode])
   useSkaleEuropaFaucet()
-  const { isMd: isMdScreen } = useBreakpoint('md')
+  const { isLg } = useBreakpoint('lg')
   const hasMounted = useIsMounted()
   const isKatana = chainId === ChainId.KATANA
 
@@ -57,7 +57,8 @@ export default function TradePage() {
     <>
       <div
         className={classNames(
-          'dark:bg-background md:bg-background',
+          'dark:bg-background lg:bg-background',
+          'mb-[56px]',
           isKatana
             ? '!bg-transparent'
             : tradeView === 'advanced'
@@ -67,21 +68,21 @@ export default function TradePage() {
       >
         <TradeViewSwitch />
         {tradeView === 'simple' && (
-          <main className="lg:p-4 mt-16 mb-[86px] animate-slide">
+          <main className="md:p-4 mt-16 animate-slide">
             <Container maxWidth="lg" className="px-4">
               <TradeWidget />
             </Container>
           </main>
         )}
         {tradeView === 'advanced' && (
-          <main className="lg:p-4 md:p-2 pt-9 md:mb-[86px] animate-slide bg-white dark:bg-background md:bg-background">
+          <main className="xl:p-4 lg:p-2 pt-9 animate-slide dark:bg-background bg-background">
             <Container maxWidth="screen-2xl" className="px-4">
-              <div className="flex flex-col-reverse w-full gap-4 md:flex-row">
-                <div className="flex w-full flex-col gap-4 md:min-w-[calc(100%-480px)] md:w-full">
-                  <div className="w-full md:h-[654px] flex flex-col md:p-5 md:gap-3">
+              <div className="flex flex-col-reverse w-full gap-4 lg:flex-row ">
+                <div className="flex w-full flex-col gap-4 lg:min-w-[calc(100%-480px)] lg:w-full max-w-[480px] mx-auto">
+                  <div className="w-full lg:h-[654px] flex flex-col lg:p-5 lg:gap-3">
                     <ChartProvider>
                       {hasMounted ? (
-                        isMdScreen ? (
+                        isLg ? (
                           <>
                             <ChartHeader />
                             <Chart widgetProps={defaultWidgetProps} />
@@ -89,16 +90,16 @@ export default function TradePage() {
                         ) : (
                           <MobileChart widgetProps={defaultWidgetProps} />
                         )
-                      ) : !isMdScreen && hasMounted ? (
+                      ) : !isLg && hasMounted ? (
                         <SkeletonBox className="w-full h-[36px]" />
                       ) : null}
                     </ChartProvider>
                   </div>
-                  <div className="w-full md:h-[320px] pt-0 md:pt-4">
+                  <div className="w-full pt-0 lg:pt-4">
                     <TradeTableTabs />
                   </div>
                 </div>
-                <div className="flex w-full flex-col gap-4 md:min-w-[480px] md:w-[480px]">
+                <div className="flex w-full flex-col gap-4 lg:min-w-[480px] lg:w-[480px] max-w-[480px] mx-auto">
                   <NetworkProvider>
                     <Search />
                     <TradeWidget />

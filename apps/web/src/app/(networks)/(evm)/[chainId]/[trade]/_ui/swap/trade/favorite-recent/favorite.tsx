@@ -6,10 +6,9 @@ import { getChangeSign, getTextColor } from 'src/lib/helpers'
 import { useCurrentChainId } from 'src/lib/hooks/useCurrentChainId'
 import { useFavorites } from 'src/lib/hooks/useFavorites'
 import { useSwapTokenSelect } from 'src/lib/hooks/useTokenSelect'
-import { getNetworkKey } from 'src/lib/network'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { TokenSelectorV2 } from 'src/lib/wagmi/components/token-selector/token-selector-v2'
-import { formatUSD, unwrapToken } from 'sushi'
+import { formatUSD, getChainById, unwrapToken } from 'sushi'
 import { formatNumber, formatPercent } from 'sushi'
 import type { EvmChainId } from 'sushi/evm'
 import type { EvmCurrency } from 'sushi/evm'
@@ -62,17 +61,17 @@ export const Favorite = () => {
         </div>
       ) : favorites?.length !== 0 ? (
         <table className="w-full">
-          <thead className="sticky top-0 z-[19] bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800">
+          <thead className="sticky top-0 z-[19] bg-white dark:bg-slate-900 lg:dark:bg-slate-800">
             <tr className="text-xs text-slate-700 dark:text-pink-100">
               <th />
               <th className="font-medium text-left">Token</th>
-              <th className="hidden font-medium text-left md:table-cell">
+              <th className="hidden font-medium text-left lg:table-cell">
                 Price
               </th>
-              <th className="hidden font-medium text-left md:table-cell">
+              <th className="hidden font-medium text-left lg:table-cell">
                 24h%
               </th>
-              <th className="table-cell font-medium text-left md:hidden">
+              <th className="table-cell font-medium text-left lg:hidden">
                 Price/24%
               </th>
               <th className="font-medium text-right">Holdings</th>
@@ -90,7 +89,7 @@ export const Favorite = () => {
           selected={undefined}
           selectedNetwork={
             selectedNetwork
-              ? (selectedNetwork as EvmChainId)
+              ? selectedNetwork
               : chainId
                 ? (chainId as EvmChainId)
                 : undefined
@@ -108,10 +107,7 @@ export const Favorite = () => {
         {!isLoading && !isError && favorites?.length === 0 ? (
           <p className="text-sm italic text-muted-foreground dark:text-pink-200">
             You haven&apos;t selected any favorite tokens{' '}
-            {selectedNetwork
-              ? `on ${getNetworkKey(selectedNetwork as EvmChainId)}`
-              : ''}
-            .
+            {selectedNetwork ? `on ${getChainById(selectedNetwork).name}` : ''}.
           </p>
         ) : null}
       </div>
@@ -150,7 +146,7 @@ const FavoriteItem = ({ token }: { token: SearchToken }) => {
         }
       }}
     >
-      <td className="max-w-[35px] py-3 md:py-4">
+      <td className="max-w-[35px] py-3 lg:py-4">
         <FavoriteButton
           currencyId={
             `${token.chainId}:${token.address === wrappedAddress ? 'NATIVE' : getAddress(token.address)}:${
@@ -162,12 +158,12 @@ const FavoriteItem = ({ token }: { token: SearchToken }) => {
       <td>
         <TokenNetworkIcon token={token} />
       </td>
-      <td className="hidden md:table-cell">
+      <td className="hidden lg:table-cell">
         <span className="text-slate-900 dark:text-pink-100">
           {formatUSD(token.priceUSD)}
         </span>
       </td>
-      <td className="hidden md:table-cell">
+      <td className="hidden lg:table-cell">
         <span
           className={classNames(
             'font-medium',
@@ -179,7 +175,7 @@ const FavoriteItem = ({ token }: { token: SearchToken }) => {
         </span>
       </td>
 
-      <td className="table-cell text-left md:hidden">
+      <td className="table-cell text-left lg:hidden">
         <div className="flex flex-col items-start">
           <span className="text-slate-900 dark:text-pink-100">
             {formatUSD(token.priceUSD)}
@@ -212,7 +208,7 @@ const FavoriteItem = ({ token }: { token: SearchToken }) => {
 const FavoriteSkeleton = () => {
   return (
     <div className="text-xs flex items-center gap-2 justify-between">
-      <div className="max-w-[25px] py-3 md:py-4">
+      <div className="max-w-[25px] py-3 lg:py-4">
         <SkeletonBox className="w-3 h-3 rounded-sm" />
       </div>
       <div className="flex items-center gap-3.5">
@@ -225,16 +221,16 @@ const FavoriteSkeleton = () => {
           <SkeletonBox className="w-24 h-3 rounded-sm" />
         </div>
       </div>
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         <SkeletonBox className="w-12 h-3 rounded-sm" />
       </div>
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         <span className={classNames('font-medium')}>
           <SkeletonBox className="w-12 h-3 rounded-sm" />
         </span>
       </div>
 
-      <div className="block text-left md:hidden mx-auto">
+      <div className="block text-left lg:hidden mx-auto">
         <div className="flex flex-col items-start gap-0.5">
           <span className="text-slate-900 dark:text-pink-100">
             <SkeletonBox className="w-10 h-3 rounded-sm" />
@@ -247,10 +243,10 @@ const FavoriteSkeleton = () => {
       <div>
         <div className="flex flex-col gap-0.5 items-end ml-auto">
           <span className="text-slate-900 dark:text-pink-100 !font-medium">
-            <SkeletonBox className="w-12 md:w-16 h-3 rounded-sm" />
+            <SkeletonBox className="w-12 lg:w-16 h-3 rounded-sm" />
           </span>
           <span className="text-muted-foreground">
-            <SkeletonBox className="w-16 md:w-20 h-3 rounded-sm" />
+            <SkeletonBox className="w-16 lg:w-20 h-3 rounded-sm" />
           </span>
         </div>
       </div>

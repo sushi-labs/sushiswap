@@ -32,7 +32,7 @@ export const BUY_COLUMN: ColumnDef<TwapOrder> = {
     const { buyToken, buyTokenExpectedAmount } = useParsedOrder(row.original)
     if (!buyToken) return null
     return (
-      <div className="flex items-center gap-1 md:gap-2 min-w-[130px]">
+      <div className="flex items-center gap-1 lg:gap-2 min-w-[130px]">
         <Currency.Icon disableLink currency={buyToken} width={24} height={24} />{' '}
         <span className="whitespace-nowrap">
           {formatNumber(buyTokenExpectedAmount)} ${buyToken.symbol}
@@ -61,7 +61,7 @@ export const SELL_COLUMN: ColumnDef<TwapOrder> = {
     const { sellToken, sellTokenTotalAmount } = useParsedOrder(row.original)
     if (!sellToken) return null
     return (
-      <div className="flex items-center gap-1 md:gap-2">
+      <div className="flex items-center gap-1 lg:gap-2">
         <Currency.Icon
           disableLink
           currency={sellToken}
@@ -94,15 +94,15 @@ export const CHAIN_COLUMN: ColumnDef<TwapOrder> = {
   cell: ({ row }) => {
     const { chainInfo } = useParsedOrder(row.original)
     return (
-      <div className="flex items-center gap-1 md:gap-2">
+      <div className="flex items-center gap-1 lg:gap-2">
         <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
           <NetworkIcon
             type="square"
             chainId={chainInfo.id}
-            className="w-3 h-3 md:w-5 md:h-5"
+            className="w-3 h-3 lg:w-5 lg:h-5"
           />
         </div>
-        <span className="block text-xs md:hidden">{chainInfo.name}</span>
+        <span className="block text-xs lg:hidden">{chainInfo.name}</span>
       </div>
     )
   },
@@ -143,7 +143,7 @@ export const VALUE_PNL_COLUMN: ColumnDef<TwapOrder> = {
     )
 
     return (
-      <div className="flex items-center md:items-start font-medium gap-1 md:flex-col">
+      <div className="flex items-center lg:items-start font-medium gap-1 lg:flex-col">
         <span>{formatUSD(sellTokenTotalUsdValue)}</span>
         {profitAndLoss === null ? (
           <span className="text-xs text-muted-foreground">N/A</span>
@@ -283,7 +283,7 @@ export const TIME_COLUMN: ColumnDef<TwapOrder> = {
 
 export const ACTION_COLUMN: ColumnDef<TwapOrder> = {
   id: 'action',
-  header: () => <span className="hidden md:text-right md:block">Action</span>,
+  header: () => <span className="hidden lg:text-right lg:block">Action</span>,
   enableSorting: false,
   accessorFn: (row) => row.id,
   cell: (row) => {
@@ -298,7 +298,7 @@ export const ACTION_COLUMN: ColumnDef<TwapOrder> = {
           <Loader size={18} />
         ) : (
           <XMarkIcon
-            className="hidden w-4 h-4 ml-auto cursor-pointer text-red md:block"
+            className="hidden w-4 h-4 ml-auto cursor-pointer text-red lg:block"
             aria-label="Cancel order"
             onClick={() => {
               write?.()

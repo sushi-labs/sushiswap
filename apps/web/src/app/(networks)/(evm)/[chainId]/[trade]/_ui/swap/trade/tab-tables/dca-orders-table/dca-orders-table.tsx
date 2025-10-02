@@ -90,7 +90,7 @@ export const DCAOrdersTable = () => {
           </div>
         }
       >
-        <Card className="hidden overflow-hidden border-none bg-slate-50 dark:bg-slate-800 md:block !rounded-t-none xl:!rounded-lg px-2">
+        <Card className="hidden overflow-hidden border-none bg-slate-50 dark:bg-slate-800 lg:block !rounded-t-none xl:!rounded-lg px-2">
           <DataTable
             columns={COLUMNS}
             data={data}
@@ -105,7 +105,7 @@ export const DCAOrdersTable = () => {
           />
         </Card>
 
-        <Card className="p-5 space-y-6 border-accent !shadow-none border bg-slate-50 dark:bg-slate-800 md:hidden">
+        <Card className="p-5 space-y-6 border-accent !shadow-none border bg-slate-50 dark:bg-slate-800 lg:hidden">
           {ordersLoading ? (
             <SkeletonBox className="w-full h-52" />
           ) : !data?.length ? (

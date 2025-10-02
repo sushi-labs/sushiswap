@@ -99,9 +99,9 @@ const Content = ({ order }: { order: TwapOrder }) => {
               columns={COLUMNS}
               data={fills ?? []}
               loading={false}
-              className="hidden md:block"
+              className="hidden lg:block"
             />
-            <div className="md:hidden">
+            <div className="lg:hidden">
               {fills?.map((row, index) => (
                 <div key={index} className="pb-6">
                   <MobileDataCard

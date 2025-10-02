@@ -12,7 +12,10 @@ import { FavoriteButton } from '../favorite-button'
 import { TokenNetworkIcon } from '../token-network-icon'
 import { SearchItemBridgeView } from './search-item-bridge-view'
 
-export const SearchItem = ({ token }: { token: SearchToken }) => {
+export const SearchItem = ({
+  token,
+  onClose,
+}: { token: SearchToken; onClose: () => void }) => {
   const [isHovered, setIsHovered] = useState(false)
   const [isBridgeViewOpen, setIsBridgeViewOpen] = useState(false)
 
@@ -49,15 +52,15 @@ export const SearchItem = ({ token }: { token: SearchToken }) => {
         />
         <TokenNetworkIcon token={token} />
         {isHovered ? (
-          <div className="flex items-center col-span-4 gap-2 px-8 mt-3 md:col-span-2 md:mt-0 md:ml-auto md:px-0">
-            <ActionButtons token={token} />
+          <div className="flex items-center col-span-4 gap-2 px-8 mt-3 lg:col-span-2 lg:mt-0 lg:ml-auto lg:px-0">
+            <ActionButtons token={token} onClose={onClose} />
             {token?.bridgeInfo?.length > 0 ? (
               <Button
                 onClick={() => {
                   toggleBridgeView('open')
                 }}
                 size="xs"
-                className="text-slate-50 w-full md:w-fit !rounded-full bg-blue font-semibold"
+                className="text-slate-50 w-full lg:w-fit !rounded-full bg-blue font-semibold"
               >
                 Bridge
               </Button>
@@ -105,7 +108,7 @@ const ActionButtons = ({
   const { handleTokenInput, handleTokenOutput } = useSwapTokenSelect()
 
   return (
-    <div className="flex items-center justify-end w-full col-span-5 gap-2 md:col-span-2">
+    <div className="flex items-center justify-end w-full col-span-5 gap-2 lg:col-span-2">
       <Button
         onClick={async () => {
           await handleTokenOutput({
@@ -120,7 +123,7 @@ const ActionButtons = ({
           onClose?.()
         }}
         size="xs"
-        className="text-slate-50 w-full md:w-fit !rounded-full bg-green-500 font-semibold hover:bg-green-500 active:bg-green-500/95 focus:bg-green-500"
+        className="text-slate-50 w-full lg:w-fit !rounded-full bg-green-500 font-semibold hover:bg-green-500 active:bg-green-500/95 focus:bg-green-500"
       >
         BUY
       </Button>
@@ -139,7 +142,7 @@ const ActionButtons = ({
           onClose?.()
         }}
         size="xs"
-        className="text-slate-50 w-full md:w-fit bg-red-100 !rounded-full font-semibold hover:bg-red-100 active:bg-red-100/95 focus:bg-red-500"
+        className="text-slate-50 w-full lg:w-fit bg-red-100 !rounded-full font-semibold hover:bg-red-100 active:bg-red-100/95 focus:bg-red-500"
       >
         SELL
       </Button>

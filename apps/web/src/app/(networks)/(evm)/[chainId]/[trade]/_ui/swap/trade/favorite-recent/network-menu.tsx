@@ -36,7 +36,7 @@ export const NetworkMenu = ({
         <Button
           variant="ghost"
           className={classNames(
-            'flex items-center font-medium !gap-1 !px-2 !pl-4',
+            'flex items-center font-medium !gap-1 !px-2 !pl-3',
             className,
           )}
           testId={testId ?? 'network-menu-dropdown-trigger'}
@@ -51,7 +51,7 @@ export const NetworkMenu = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="max-h-[205px] overflow-y-auto hide-scrollbar !bg-slate-50 dark:!bg-slate-900 !backdrop-blur-none"
+        className="max-h-[205px] overflow-y-auto !bg-slate-50 dark:!bg-slate-900 !backdrop-blur-none"
       >
         <DropdownMenuGroup className="font-medium">
           <DropdownMenuItem

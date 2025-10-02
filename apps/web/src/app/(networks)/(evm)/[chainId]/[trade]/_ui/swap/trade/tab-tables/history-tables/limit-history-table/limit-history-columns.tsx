@@ -113,15 +113,15 @@ export const CHAIN_COLUMN: ColumnDef<TwapOrder> = {
   cell: ({ row }) => {
     const { chainInfo } = useParsedOrder(row.original)
     return (
-      <div className="flex items-center gap-1 md:gap-2">
+      <div className="flex items-center gap-1 lg:gap-2">
         <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
           <NetworkIcon
             type="square"
             chainId={chainInfo.id}
-            className="w-3 h-3 md:w-5 md:h-5"
+            className="w-3 h-3 lg:w-5 lg:h-5"
           />
         </div>
-        <span className="block text-xs md:hidden">{chainInfo.name}</span>
+        <span className="block text-xs lg:hidden">{chainInfo.name}</span>
       </div>
     )
   },
@@ -161,7 +161,7 @@ export const VALUE_PNL_COLUMN: ColumnDef<TwapOrder> = {
       row.original,
     )
     return (
-      <div className="flex items-center md:items-start gap-1 md:flex-col">
+      <div className="flex items-center lg:items-start gap-1 lg:flex-col">
         {sellTokenTotalUsdValue ? (
           <>
             <span>{formatUSD(sellTokenTotalUsdValue)}</span>
@@ -300,7 +300,7 @@ export const FILLED_COLUMN: ColumnDef<TwapOrder> = {
 /** Status column */
 export const STATUS_COLUMN: ColumnDef<TwapOrder> = {
   id: 'status',
-  header: () => <span className="md:text-right md:block">Status</span>,
+  header: () => <span className="lg:text-right lg:block">Status</span>,
   enableSorting: false,
   accessorFn: (row) => row.status,
   cell: ({ row }) => {
@@ -313,7 +313,7 @@ export const STATUS_COLUMN: ColumnDef<TwapOrder> = {
     const chainId = row.original.chainId
     const txnHash = row.original.txHash as `0x${string}`
     return (
-      <div className="w-full flex md:justify-end">
+      <div className="w-full flex lg:justify-end">
         <LinkExternal
           href={getChainById(chainId as ChainId)?.getTransactionUrl(txnHash)}
           className={`${color} flex items-center gap-1 w-full justify-end text-[14px]`}

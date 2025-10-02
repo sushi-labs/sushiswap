@@ -34,7 +34,7 @@ export const FavoriteRecentTabView = () => {
   }, [tab])
 
   return (
-    <Wrapper className="hidden md:block">
+    <Wrapper className="hidden lg:block">
       <div className="flex items-center gap-2 justify-between">
         <div className="flex gap-x-2">
           {Object.values(FavoriteRecentTab).map((_tab) => (

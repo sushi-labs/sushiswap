@@ -70,10 +70,10 @@ const Content = () => {
 
         setHistoryTableTab(value === TABS.HISTORY ? 'market' : undefined)
       }}
-      className="-mx-5 md:mx-0"
+      className="-mx-5 lg:mx-0"
     >
       <div className="flex flex-col xl:pb-2 items-start justify-between xl:items-center xl:flex-row overflow-x-auto hide-scrollbar">
-        <TabsList className="md:border-none !border-t-transparent border-b pb-4 md:pb-0 !px-5 md:!px-3 !md:border-b-none !h-fit rounded-b-none xl:!bg-background bg-white dark:bg-slate-900 !justify-start md:dark:bg-slate-800 w-full xl:w-fit gap-2">
+        <TabsList className="border-none !border-t-transparent border-b pb-2 lg:pb-0 !px-5 lg:!px-3 !md:border-b-none !h-fit rounded-b-none xl:!bg-background bg-background lg:bg-white dark:bg-slate-900 !justify-start lg:dark:bg-slate-800 w-full xl:w-fit gap-2">
           {tabs.map((tab) => (
             <TabsTrigger
               key={tab.value}
@@ -100,7 +100,7 @@ const Content = () => {
           <TabsContent
             key={tab.value}
             value={tab.value}
-            className="px-5 !mt-0 !pt-2 md:!pt-0 xl:!pt-2 bg-[#F9FAFB] dark:bg-slate-900 md:px-0 pb-[86px] md:bg-white xl:bg-transparent md:pb-0 rounded-b-xl"
+            className="px-5 !mt-0 !pt-2 lg:!pt-0 xl:!pt-2 dark:bg-slate-900 lg:px-0  bg-background lg:bg-white xl:bg-transparent lg:pb-0 rounded-b-xl"
           >
             {tab.component}
           </TabsContent>

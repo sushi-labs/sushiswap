@@ -14,21 +14,25 @@ import { SearchContent } from './search-content'
 import { useSearchContext } from './search-provider'
 
 export const SearchBar = () => {
-  const { isMd } = useBreakpoint('md')
+  const { isLg } = useBreakpoint('lg')
   const {
     state: { isOpen },
     mutate: { setIsOpen },
   } = useSearchContext()
 
   useEffect(() => {
-    if (isMd && isOpen) {
+    if (isLg && isOpen) {
       setIsOpen(false)
     }
-  }, [isMd, isOpen, setIsOpen])
+  }, [isLg, isOpen, setIsOpen])
+
+  const onClose = () => {
+    setIsOpen(false)
+  }
 
   return (
     <>
-      <div className="md:hidden">
+      <div className="lg:hidden">
         <Dialog
           open={isOpen}
           onOpenChange={(open) => {
@@ -52,13 +56,13 @@ export const SearchBar = () => {
                 <XIcon width={20} height={20} />
               </DialogClose>
             </div>
-            <SearchContent />
+            <SearchContent onClose={onClose} />
           </DialogContent>
         </Dialog>
       </div>
 
-      <div className="hidden md:block">
-        <SearchContent />
+      <div className="hidden lg:block">
+        <SearchContent onClose={onClose} />
       </div>
     </>
   )

@@ -117,7 +117,7 @@ export const DCAOrdersHistoryTable = () => {
           </div>
         }
       >
-        <Card className="hidden overflow-hidden border-none md:block bg-slate-50 dark:bg-slate-800">
+        <Card className="hidden overflow-hidden border-none lg:block bg-slate-50 dark:bg-slate-800">
           <DataTable
             columns={COLUMNS}
             data={data}
@@ -132,7 +132,7 @@ export const DCAOrdersHistoryTable = () => {
           />
         </Card>
 
-        <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden">
+        <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 lg:hidden">
           {ordersLoading ? (
             <SkeletonBox className="w-full h-52" />
           ) : !data?.length ? (

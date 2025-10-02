@@ -8,7 +8,7 @@ import { useChartContext } from './chart-provider'
 import { Rate } from './rate'
 
 export const ChartHeader = () => {
-  const { isMd: isMdScreen } = useBreakpoint('md')
+  const { isLg: isLgScreen } = useBreakpoint('lg')
   const {
     state: { token1 },
     mutate: { setToken1 },
@@ -22,7 +22,7 @@ export const ChartHeader = () => {
         onSelect={(token) => {
           setToken1(token)
         }}
-        variant={isMdScreen ? 'default' : 'semi-opaque'}
+        variant={isLgScreen ? 'default' : 'semi-opaque'}
       >
         <Button
           size="lg"
@@ -67,10 +67,10 @@ export const ChartHeader = () => {
         </Button>
       </TokenSelectorV2>
     )
-  }, [token1, isMdScreen, setToken1])
+  }, [token1, isLgScreen, setToken1])
 
   return (
-    <div className="flex flex-col items-start justify-between w-full gap-4 lg:items-center md:flex-col lg:flex-row lg:gap-0">
+    <div className="flex flex-col items-start justify-between w-full gap-4 lg:items-center lg:flex-row lg:gap-0">
       <div>{selector}</div>
       <div>
         <Rate />

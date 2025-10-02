@@ -9,18 +9,24 @@ import {
   DialogTrigger,
 } from '@sushiswap/ui'
 import { useEffect, useState } from 'react'
+import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { Favorite } from './favorite'
 import { NetworkMenu } from './network-menu'
+import { useNetworkContext } from './network-provider'
 
 export const FavoriteDialog = () => {
-  const { isMd } = useBreakpoint('md')
+  const { isLg } = useBreakpoint('lg')
   const [isOpen, setIsOpen] = useState(false)
+  const {
+    state: { selectedNetwork },
+    mutate: { setSelectedNetwork },
+  } = useNetworkContext()
 
   useEffect(() => {
-    if (isMd && isOpen) {
+    if (isLg && isOpen) {
       setIsOpen(false)
     }
-  }, [isMd, isOpen])
+  }, [isLg, isOpen])
 
   return (
     <Dialog
@@ -43,7 +49,13 @@ export const FavoriteDialog = () => {
             <DialogTitle className="!mr-0 text-xl font-medium">
               Favorite
             </DialogTitle>
-            <NetworkMenu testId="favorite-network-menu-trigger" />
+            <NetworkMenu
+              testId="favorite-network-menu-trigger"
+              selectedNetwork={selectedNetwork}
+              onNetworkSelect={setSelectedNetwork}
+              className="!px-1"
+              networkOptions={SUPPORTED_CHAIN_IDS}
+            />
           </div>
           <DialogClose className="mr-2">
             <XIcon width={20} height={20} />

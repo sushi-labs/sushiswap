@@ -20,7 +20,7 @@ export const Chart = ({
   const chartContainerRef = useRef<HTMLDivElement>(
     null,
   ) as React.MutableRefObject<HTMLInputElement>
-  const { isMd: isMdScreen } = useBreakpoint('md')
+  const { isLg: isLgScreen } = useBreakpoint('lg')
   const { resolvedTheme } = useTheme()
   const isMounted = useIsMounted()
   const {
@@ -57,7 +57,7 @@ export const Chart = ({
       library_path: widgetProps.library_path,
       locale: widgetProps.locale as LanguageCode,
       disabled_features: [
-        ...(!isMdScreen ? ['legend_widget' as const] : []),
+        ...(!isLgScreen ? ['legend_widget' as const] : []),
         'header_settings' as const,
         'header_fullscreen_button' as const,
         'header_screenshot' as const,
@@ -91,7 +91,7 @@ export const Chart = ({
       ],
 
       enabled_features: [
-        ...(!isMdScreen ? [] : ['study_templates' as const]),
+        ...(!isLgScreen ? [] : ['study_templates' as const]),
 
         'hide_unresolved_symbols_in_legend',
         'hide_main_series_symbol_from_indicator_legend',
@@ -105,7 +105,7 @@ export const Chart = ({
       custom_css_url: '/static/chart.css',
       theme: resolvedTheme === 'dark' ? 'dark' : 'light',
       overrides: {
-        'paneProperties.background': !isMdScreen
+        'paneProperties.background': !isLgScreen
           ? resolvedTheme === 'dark'
             ? '#15152b'
             : '#ffffff'
@@ -283,7 +283,7 @@ export const Chart = ({
             '#636300',
             '#4f4f00',
           ],
-          white: isMdScreen ? '#F3F2F4' : '#ffffff',
+          white: isLgScreen ? '#F3F2F4' : '#ffffff',
           black: '#421b50',
         },
         dark: {
@@ -327,11 +327,11 @@ export const Chart = ({
             '#15152B', // tooltip background
             '#ffffff0a', // tooltip row bg hover
             '#15152B', // modal background
-            isMdScreen && resolvedTheme === 'dark'
+            isLgScreen && resolvedTheme === 'dark'
               ? '#0D1227'
-              : isMdScreen && resolvedTheme === 'light'
+              : isLgScreen && resolvedTheme === 'light'
                 ? '#F3F2F4'
-                : !isMdScreen && resolvedTheme === 'dark'
+                : !isLgScreen && resolvedTheme === 'dark'
                   ? '#15152b'
                   : '#ffffff',
             '#381212',
@@ -461,7 +461,7 @@ export const Chart = ({
       tvWidget.remove()
       tvWidgetRef.current = null
     }
-  }, [chartContainerRef, resolvedTheme, isMdScreen, isMounted, token1])
+  }, [chartContainerRef, resolvedTheme, isLgScreen, isMounted, token1])
 
   return (
     <div className="flex flex-col flex-grow rounded-xl">

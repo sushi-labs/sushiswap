@@ -13,14 +13,14 @@ import { NetworkMenu } from './network-menu'
 import { Recent } from './recent'
 
 export const RecentDialog = () => {
-  const { isMd } = useBreakpoint('md')
+  const { isLg } = useBreakpoint('lg')
   const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
-    if (isMd && isOpen) {
+    if (isLg && isOpen) {
       setIsOpen(false)
     }
-  }, [isMd, isOpen])
+  }, [isLg, isOpen])
 
   return (
     <Dialog

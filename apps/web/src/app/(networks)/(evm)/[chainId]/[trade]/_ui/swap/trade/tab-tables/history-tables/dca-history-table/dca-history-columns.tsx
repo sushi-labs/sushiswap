@@ -103,15 +103,15 @@ export const CHAIN_COLUMN: ColumnDef<TwapOrder> = {
   cell: ({ row }) => {
     const { chainInfo } = useParsedOrder(row.original)
     return (
-      <div className="flex items-center gap-1 md:gap-2">
+      <div className="flex items-center gap-1 lg:gap-2">
         <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
           <NetworkIcon
             type="square"
             chainId={chainInfo.id}
-            className="w-3 h-3 md:w-5 md:h-5"
+            className="w-3 h-3 lg:w-5 lg:h-5"
           />
         </div>
-        <span className="block text-xs md:hidden">{chainInfo.name}</span>
+        <span className="block text-xs lg:hidden">{chainInfo.name}</span>
       </div>
     )
   },
@@ -284,7 +284,7 @@ export const ACTION_COLUMN: ColumnDef<TwapOrder> = {
   enableSorting: false,
   accessorFn: (row) => row.id,
   cell: () => (
-    <Button className="w-full md:hidden" variant="tradePrimary">
+    <Button className="w-full lg:hidden" variant="tradePrimary">
       View Orders
     </Button>
   ),
