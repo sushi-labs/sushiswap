@@ -68,14 +68,15 @@ const TVL_COLUMN: ColumnDef<PoolInfo, unknown> = {
   id: 'tvl',
   header: 'TVL',
   accessorFn: (row) => row.tvl,
-  sortingFn: ({ original: rowA }, { original: rowB }) => rowA.tvl - rowB.tvl,
+  sortingFn: ({ original: rowA }, { original: rowB }) =>
+    Number.parseFloat(rowA.tvl) - Number.parseFloat(rowB.tvl),
   cell: (props) => {
     const tvl = props.row.original.tvl
     return (
       <div className="flex items-center gap-1">
         <span className="text-sm font-medium">
           $
-          {tvl.toLocaleString('en-US', {
+          {Number.parseFloat(tvl).toLocaleString('en-US', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })}
