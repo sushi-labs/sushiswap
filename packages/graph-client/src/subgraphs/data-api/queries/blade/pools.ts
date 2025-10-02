@@ -33,6 +33,7 @@ export const BladePoolFragment = graphql(
     feeApr1d
     totalApr1d
     feeUSD1d
+    incentiveApr
     isDeprecated
     isSingleAssetWithdrawEnabled
     newPoolAddress

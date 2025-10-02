@@ -31,8 +31,7 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
     [tokens, hasStablecoin, showStableTypes, stablecoinUsdTokens],
   )
   const baseApr = pool.totalApr1d
-  // TODO-BLADE: Get rewards APR
-  const rewardsApr = 0
+  const rewardsApr = pool.incentiveApr
   const basisApr = baseApr + rewardsApr
 
   const poolExplorerLink = getEvmChainById(pool.chainId).getAccountUrl(
