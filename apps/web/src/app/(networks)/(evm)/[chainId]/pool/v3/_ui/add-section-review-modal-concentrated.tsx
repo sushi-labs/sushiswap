@@ -310,7 +310,6 @@ export const AddSectionReviewModalConcentrated: FC<
     return async (confirm: () => void) => {
       try {
         await sendTransactionAsync(prepare)
-
         confirm()
       } catch {}
     }

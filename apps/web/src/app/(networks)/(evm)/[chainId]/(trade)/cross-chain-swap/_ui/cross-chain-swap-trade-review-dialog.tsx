@@ -385,8 +385,8 @@ const _CrossChainSwapTradeReviewDialog: FC<{
         dest: StepState.NotStarted,
       })
 
-      confirm()
       try {
+        confirm()
         await sendTransactionAsync(preparedTx)
       } catch {}
     }
