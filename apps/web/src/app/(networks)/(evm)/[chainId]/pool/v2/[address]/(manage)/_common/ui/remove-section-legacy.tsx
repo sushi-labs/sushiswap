@@ -22,7 +22,12 @@ import {
 } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Amount, Percent, subtractSlippage } from 'sushi'
-import { EvmNative, type SushiSwapV2ChainId, addGasMargin } from 'sushi/evm'
+import {
+  EvmNative,
+  SUSHISWAP_V2_ROUTER_ADDRESS,
+  type SushiSwapV2ChainId,
+  addGasMargin,
+} from 'sushi/evm'
 import {
   type SendTransactionReturnType,
   UserRejectedRequestError,
@@ -35,10 +40,7 @@ import {
   type PermitInfo,
   PermitType,
 } from 'src/lib/wagmi/hooks/approvals/hooks/useTokenPermit'
-import {
-  getSushiSwapRouterContractConfig,
-  useSushiSwapRouterContract,
-} from 'src/lib/wagmi/hooks/contracts/useSushiSwapRouter'
+import { useSushiSwapRouterContract } from 'src/lib/wagmi/hooks/contracts/useSushiSwapRouter'
 import {
   SushiSwapV2PoolState,
   useSushiSwapV2Pool,
@@ -483,11 +485,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                       id="approve-remove-liquidity-slp"
                       chainId={_pool.chainId}
                       amount={amountToRemove}
-                      contract={
-                        getSushiSwapRouterContractConfig(
-                          _pool.chainId as SushiSwapV2ChainId,
-                        ).address
-                      }
+                      contract={SUSHISWAP_V2_ROUTER_ADDRESS[_pool.chainId]}
                       permitInfo={REMOVE_V2_LIQUIDITY_PERMIT_INFO}
                       tag={APPROVE_TAG_REMOVE_LEGACY}
                       ttlStorageKey={TTLStorageKey.RemoveLiquidity}
