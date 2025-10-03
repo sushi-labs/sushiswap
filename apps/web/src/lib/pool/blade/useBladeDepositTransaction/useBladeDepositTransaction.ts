@@ -2,6 +2,7 @@
 
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { useMutation } from '@tanstack/react-query'
+import { useMemo } from 'react'
 import type { PublicWagmiConfig } from 'src/lib/wagmi/config/public'
 import type { Abi, AbiStateMutability, Hex } from 'viem'
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
@@ -78,18 +79,31 @@ export const useBladeDepositTransaction = ({
     },
   })
 
-  return {
-    ...depositTransaction,
-    writeContract,
-    hash,
-    isWritePending,
-    isConfirming,
-    isConfirmed,
-    isPending: isWritePending || isConfirming,
-    error: writeError || confirmError || depositTransaction.error,
-    reset: () => {
-      reset()
-      depositTransaction.reset()
-    },
-  }
+  return useMemo(
+    () => ({
+      ...depositTransaction,
+      writeContract,
+      hash,
+      isWritePending,
+      isConfirming,
+      isConfirmed,
+      isPending: isWritePending || isConfirming,
+      error: writeError || confirmError || depositTransaction.error,
+      reset: () => {
+        reset()
+        depositTransaction.reset()
+      },
+    }),
+    [
+      depositTransaction,
+      writeContract,
+      hash,
+      isWritePending,
+      isConfirming,
+      isConfirmed,
+      writeError,
+      confirmError,
+      reset,
+    ],
+  )
 }

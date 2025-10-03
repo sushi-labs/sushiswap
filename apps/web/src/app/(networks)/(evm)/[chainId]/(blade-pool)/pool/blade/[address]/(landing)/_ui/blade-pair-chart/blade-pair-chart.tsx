@@ -20,21 +20,21 @@ enum BladePairsChartType {
   Swaps = 'Pair Swaps',
 }
 
+type BladePoolChartPeriod = Exclude<PoolChartPeriod, PoolChartPeriod.Year>
+
 const pairsChartTypes = [BladePairsChartType.Volume, BladePairsChartType.Swaps]
 const periods = [
   PoolChartPeriod.Day,
   PoolChartPeriod.Week,
   PoolChartPeriod.Month,
   PoolChartPeriod.All,
-]
+] as BladePoolChartPeriod[]
 const durationByPeriod = {
   [PoolChartPeriod.Day]: 'DAY' as const,
   [PoolChartPeriod.Week]: 'WEEK' as const,
   [PoolChartPeriod.Month]: 'MONTH' as const,
   [PoolChartPeriod.All]: 'ALL' as const,
-  // Year is not supported. Map it to Day.
-  [PoolChartPeriod.Year]: 'DAY' as const,
-} satisfies Record<PoolChartPeriod, string>
+} satisfies Record<BladePoolChartPeriod, string>
 
 export function BladePoolPairsChart({
   poolAddress,
@@ -47,7 +47,9 @@ export function BladePoolPairsChart({
   const [chartType, setChartType] = useState<BladePairsChartType>(
     BladePairsChartType.Volume,
   )
-  const [period, setPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Day)
+  const [period, setPeriod] = useState<BladePoolChartPeriod>(
+    PoolChartPeriod.Day,
+  )
 
   const { data, isLoading } = usePoolPairsChartData({
     poolAddress,

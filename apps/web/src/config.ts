@@ -2,7 +2,6 @@ import { PoolChainIds } from '@sushiswap/graph-client/data-api'
 import { ChainId } from 'sushi'
 import {
   AGGREGATOR_ONLY_CHAIN_IDS,
-  BLADE_SUPPORTED_CHAIN_IDS,
   type BladeChainId,
   type EvmAddress,
   EvmChainId,
@@ -10,12 +9,10 @@ import {
   SUSHISWAP_SUPPORTED_CHAIN_IDS,
   SWAP_API_SUPPORTED_CHAIN_IDS,
   type SushiSwapV3ChainId,
-  isBladeChainId,
   isEvmTestnetChainId,
 } from 'sushi/evm'
 import { MvmChainId } from 'sushi/mvm'
 import { TvmChainId } from 'sushi/tvm'
-import { showBladeFlag, showHiddenBladeChainsFlag } from './flags'
 
 export type SwapApiEnabledChainId =
   (typeof SWAP_API_SUPPORTED_CHAIN_IDS)[number]

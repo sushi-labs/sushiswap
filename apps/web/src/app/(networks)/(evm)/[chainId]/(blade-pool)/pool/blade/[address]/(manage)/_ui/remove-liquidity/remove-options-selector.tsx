@@ -85,24 +85,17 @@ export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
                 selectedOption !== 'multiple' &&
                 selectedOption?.id === currency.id
 
-              const tokenAmount =
-                tokenAmountValue > 0
-                  ? Amount.fromHuman(currency, tokenAmountValue)
-                  : new Amount(currency, 0n)
+              const tokenAmount = Amount.fromHuman(currency, tokenAmountValue)
               return (
                 <SingleAssetOption
                   ref={(el) => {
                     tokenRefs.current.set(currency, el)
                   }}
-                  key={
-                    currency.isNative
-                      ? currency.symbol
-                      : currency.wrap().address
-                  }
+                  key={currency.id}
                   currency={currency}
                   tokenAmount={tokenAmount}
                   estimatedValue={estimatedValue}
-                  isSelected={!!isSelected}
+                  isSelected={isSelected}
                   onSelect={() => setSelectedOption(currency)}
                 />
               )

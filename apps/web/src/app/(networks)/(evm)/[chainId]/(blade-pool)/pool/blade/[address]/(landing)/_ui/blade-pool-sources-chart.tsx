@@ -98,7 +98,7 @@ export function BladePoolSourcesChart({
         curr,
       ) => {
         const sourceName = curr.source.toLowerCase()
-        const volumeUSD = Number(curr.volumeUSD) || 0
+        const volumeUSD = curr.volumeUSD || 0
         const transactionCount = curr.txCount || 0
 
         if (sourceName.includes('clipper')) {

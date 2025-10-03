@@ -1,10 +1,14 @@
+'use client'
+
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid'
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { createErrorToast } from '@sushiswap/notifications'
 import { Button, Currency, Dots, List, Message } from '@sushiswap/ui'
 import { type FC, useCallback, useMemo } from 'react'
+import { logger } from 'src/lib/logger'
 import type { useBladeWithdrawTransaction } from 'src/lib/pool/blade/useBladeWithdraw'
 import { useBladeWithdrawRequest } from 'src/lib/pool/blade/useBladeWithdrawRequest'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 
 import { Amount, formatUSD } from 'sushi'
 import { type EvmCurrency, EvmNative } from 'sushi/evm'
@@ -31,6 +35,10 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
   const { address } = useAccount()
 
   const onError = useCallback((e: Error) => {
+    if (isUserRejectedError(e)) return
+    logger.error(e, {
+      location: 'SingleAssetWithdrawal',
+    })
     createErrorToast(e?.message, true)
   }, [])
 
@@ -42,7 +50,7 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
     }
 
     const tokenMismatch =
-      selectedToken.wrap().address.toLowerCase() !==
+      selectedToken.wrap().address !==
       withdrawRequest.data.asset_address.toLowerCase()
 
     if (tokenMismatch) {

@@ -35,12 +35,7 @@ export const ManageBladeLiquidityCard: FC<ManageBladeLiquidityCardProps> = ({
         <CardTitle>Manage</CardTitle>
         <CardDescription>Manage your position</CardDescription>
       </CardHeader>
-      <Tabs
-        value={tab}
-        onValueChange={() => {}}
-        className="w-full"
-        defaultValue={tab}
-      >
+      <Tabs value={tab} className="w-full" defaultValue={tab}>
         <CardContent>
           <TabsList className="!flex">
             <Link

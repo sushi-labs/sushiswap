@@ -1,3 +1,5 @@
+'use client'
+
 import { Button, Dots } from '@sushiswap/ui'
 import { type FC, useCallback } from 'react'
 import type { useBladeWithdrawTransaction } from 'src/lib/pool/blade/useBladeWithdraw'

@@ -9,7 +9,7 @@ import {
   WidgetTitle,
 } from '@sushiswap/ui'
 import { Widget, WidgetHeader, classNames } from '@sushiswap/ui'
-import React, { type FC, type ReactNode, useMemo } from 'react'
+import React, { type FC, type ReactNode, useCallback, useMemo } from 'react'
 import { NativeAddress } from 'src/lib/constants'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { type EvmChainId, type EvmCurrency, EvmNative } from 'sushi/evm'
@@ -68,26 +68,31 @@ export const BladeAddSectionWidget: FC<BladeAddSectionWidgetProps> = ({
     ],
   )
 
-  const getTokenOptionsForInput = (inputIndex: number) => {
-    const selectedTokenAddresses = inputs
-      .filter((input, index) => index !== inputIndex && input.token)
-      .map((input) => input.token!.wrap().address)
+  const getTokenOptionsForInput = useCallback(
+    (inputIndex: number) => {
+      const selectedTokenAddresses = inputs
+        .filter((input, index) => index !== inputIndex && input.token)
+        .map((input) => input.token!.wrap().address)
 
-    return availableTokens
-      .filter((token) => !selectedTokenAddresses.includes(token.wrap().address))
-      .reduce(
-        (acc, token) => {
-          const wrappedToken = token.wrap()
-          acc[wrappedToken.address] = wrappedToken
-          // Only include native tokens if there's only one input (single asset mode)
-          if (token.isNative && inputs.length === 1) {
-            acc[NativeAddress] = token
-          }
-          return acc
-        },
-        {} as Record<string, EvmCurrency>,
-      )
-  }
+      return availableTokens
+        .filter(
+          (token) => !selectedTokenAddresses.includes(token.wrap().address),
+        )
+        .reduce(
+          (acc, token) => {
+            const wrappedToken = token.wrap()
+            acc[wrappedToken.address] = wrappedToken
+            // Only include native tokens if there's only one input (single asset mode)
+            if (token.isNative && inputs.length === 1) {
+              acc[NativeAddress] = token
+            }
+            return acc
+          },
+          {} as Record<string, EvmCurrency>,
+        )
+    },
+    [inputs, availableTokens],
+  )
 
   return (
     <Widget id="addLiquidity" variant="empty">

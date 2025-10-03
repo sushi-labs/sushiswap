@@ -29,7 +29,7 @@ export type RfqWithdrawPayload = {
   pool_address: string
 }
 
-export type RfqWithdrawResponse = z.infer<typeof rfqWithdrawResponseSchema>
+export type RfqWithdrawResponse = z.output<typeof rfqWithdrawResponseSchema>
 
 export const useBladeWithdrawRequest = ({
   onError,

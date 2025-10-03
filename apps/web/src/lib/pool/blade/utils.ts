@@ -16,7 +16,7 @@ export type BladePoolTokensGrouped = {
 
 export function getPoolTokensGrouped(pool: BladePool): BladePoolTokensGrouped {
   const chainId = pool.chainId as BladeChainId
-  const stablecoinSet = new Set<string>(
+  const stablecoinSet = new Set<EvmAddress>(
     BLADE_STABLES[chainId]?.map((s) => s.address) || [],
   )
 
@@ -35,7 +35,9 @@ export function getPoolTokensGrouped(pool: BladePool): BladePoolTokensGrouped {
               name: tokenData.token.name,
             })
 
-      if (stablecoinSet.has(tokenData.token.address.toLowerCase())) {
+      if (
+        stablecoinSet.has(tokenData.token.address.toLowerCase() as EvmAddress)
+      ) {
         acc.stablecoinUsdTokens.push(token)
       } else {
         acc.tokens.push(token)
@@ -62,7 +64,7 @@ export function getPoolAssets(
   const { showStableTypes = true } = options ?? {}
   const chainId = pool.chainId
   const stablecoinSet = new Set<EvmAddress>(
-    BLADE_STABLES[chainId]?.map((s) => s.address.toLowerCase()) || [],
+    BLADE_STABLES[chainId]?.map((s) => s.address) || [],
   )
 
   const assets: BladePoolAsset[] = []

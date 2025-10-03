@@ -1,3 +1,5 @@
+'use client'
+
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
@@ -11,12 +13,14 @@ import {
   DialogTrigger,
 } from '@sushiswap/ui'
 import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
+import { logger } from 'src/lib/logger'
 import { useBladeWithdrawTransaction } from 'src/lib/pool/blade/useBladeWithdraw'
 import { getPoolAssets } from 'src/lib/pool/blade/utils'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
 import { Amount, Percent } from 'sushi'
 import { type EvmCurrency, getEvmChainById } from 'sushi/evm'
+import type { Hex } from 'viem'
 import {
   useAccount,
   usePublicClient,
@@ -100,11 +104,7 @@ export const BladeRemoveLiquidityReviewModal: FC<
         }
         return null
       })
-      .filter(Boolean) as Array<{
-      usdValue: number
-      weight: number
-      amount: Amount<EvmCurrency>
-    }>
+      .filter((asset): asset is NonNullable<typeof asset> => Boolean(asset))
   }, [poolAssets, userPositionValue, percentage, prices])
 
   const [selectedOption, setSelectedOption] = useState<RemoveOptionType>(() => {
@@ -132,7 +132,7 @@ export const BladeRemoveLiquidityReviewModal: FC<
   }, [])
 
   const onSuccess = useCallback(
-    (hash: `0x${string}`) => {
+    (hash: Hex) => {
       _onSuccess()
 
       const receipt = client.waitForTransactionReceipt({ hash })
@@ -161,6 +161,9 @@ export const BladeRemoveLiquidityReviewModal: FC<
 
   const onError = useCallback((e: Error) => {
     if (!isUserRejectedError(e)) {
+      logger.error(e, {
+        location: 'BladeRemoveLiquidityReviewModal',
+      })
       createErrorToast(e?.message, true)
     }
   }, [])

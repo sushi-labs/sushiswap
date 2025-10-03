@@ -81,8 +81,7 @@ export const PRICE_COLUMN: ColumnDef<BladePoolAsset, unknown> = {
   id: 'price',
   header: 'Price',
   cell: (props) => {
-    const meta: BladePoolAssetsTableMeta = props.table.options
-      .meta as BladePoolAssetsTableMeta
+    const meta = props.table.options.meta as BladePoolAssetsTableMeta
     return <PriceCell row={props.row.original} chainId={meta.chainId} />
   },
   meta: {

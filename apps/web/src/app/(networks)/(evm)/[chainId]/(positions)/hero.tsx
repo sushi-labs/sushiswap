@@ -43,8 +43,10 @@ export const Hero: FC<{ chainId: EvmChainId }> = async ({ chainId }) => {
     [chainId],
   )
 
-  const isBladeChain = await isPublicBladeChainId(chainId)
-  const showBlade = await showBladeFlag()
+  const [isBladeChain, showBlade] = await Promise.all([
+    isPublicBladeChainId(chainId),
+    showBladeFlag(),
+  ])
 
   return (
     <section className="flex flex-col gap-6">

@@ -3,6 +3,7 @@
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo, useState } from 'react'
+import { logger } from 'src/lib/logger'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import {
   useAccount,
@@ -75,6 +76,9 @@ export const useUnlockDeposit = ({
 
   const onError = useCallback((e: Error) => {
     if (!isUserRejectedError(e)) {
+      logger.error(e, {
+        location: 'useUnlockDeposit',
+      })
       createErrorToast(e.message, true)
     }
   }, [])
