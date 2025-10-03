@@ -1,4 +1,4 @@
-import { Currency, List } from '@sushiswap/ui'
+import { Currency, List, classNames } from '@sushiswap/ui'
 import { type FC, useCallback, useEffect, useMemo, useRef } from 'react'
 import { Amount, formatUSD } from 'sushi'
 import type { EvmCurrency } from 'sushi/evm'
@@ -114,24 +114,25 @@ export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
       <div ref={multipleAssetsRef} className="flex flex-col gap-2">
         <h3 className="font-medium text-sm">Receive multiple assets</h3>
 
-        <div
-          className={`p-4 rounded-xl cursor-pointer transition-all ${
-            selectedOption === 'multiple'
-              ? 'bg-blue-50 dark:bg-blue-950/20 border border-blue-500'
-              : 'bg-white dark:bg-gray-800 border border-white dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
-          }`}
+        <List.Control
           onClick={() => setSelectedOption('multiple')}
-          onKeyDown={(e) => {
+          onKeyDown={(e: React.KeyboardEvent) => {
             if (e.key === 'Enter' || e.key === ' ') {
               setSelectedOption('multiple')
             }
           }}
           role="button"
           tabIndex={0}
+          className={classNames(
+            'cursor-pointer transition-all',
+            selectedOption === 'multiple'
+              ? 'bg-blue-50 dark:bg-blue-950/20 border border-blue-500'
+              : 'hover:bg-gray-50 dark:hover:bg-gray-700',
+          )}
         >
           <List.Item
             as="div"
-            className="!bg-transparent !cursor-default !p-0 !justify-between"
+            className="justify-between"
             iconProps={{}}
             title={
               <div className="flex items-center gap-3 flex-wrap">
@@ -161,7 +162,7 @@ export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
           />
 
           {selectedOption === 'multiple' && (
-            <div className="mt-4 space-y-3">
+            <div className="space-y-3 px-3 pb-3">
               <div className="text-sm text-gray-500 dark:text-slate-500">
                 Composition
               </div>
@@ -171,7 +172,7 @@ export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
                   <List.Item
                     key={index}
                     as="div"
-                    className="!bg-transparent !cursor-default !p-0 !justify-between"
+                    className="!p-0 !justify-between"
                     iconProps={{}}
                     title={
                       <div className="flex items-center gap-2">
@@ -201,7 +202,7 @@ export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
               })}
             </div>
           )}
-        </div>
+        </List.Control>
       </div>
     </div>
   )

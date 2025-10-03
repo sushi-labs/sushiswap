@@ -1,5 +1,5 @@
-import { Currency } from '@sushiswap/ui'
-import { forwardRef } from 'react'
+import { Currency, List, classNames } from '@sushiswap/ui'
+import type { Ref } from 'react'
 import { type Amount, formatUSD } from 'sushi'
 import type { EvmCurrency } from 'sushi/evm'
 
@@ -9,48 +9,61 @@ interface SingleAssetOptionProps {
   estimatedValue: number
   isSelected: boolean
   onSelect: () => void
+  ref: Ref<HTMLDivElement>
 }
 
-export const SingleAssetOption = forwardRef<
-  HTMLDivElement,
-  SingleAssetOptionProps
->(({ currency, tokenAmount, estimatedValue, isSelected, onSelect }, ref) => {
+export const SingleAssetOption = ({
+  currency,
+  tokenAmount,
+  estimatedValue,
+  isSelected,
+  onSelect,
+  ref,
+}: SingleAssetOptionProps) => {
   return (
-    <div
+    <List.Control
       ref={ref}
-      className={`flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all ${
-        isSelected
-          ? 'bg-blue-50 dark:bg-blue-950/20 border border-blue-500'
-          : 'bg-white dark:bg-gray-800 border border-white dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
-      }`}
       onClick={onSelect}
-      onKeyDown={(e) => {
+      onKeyDown={(e: React.KeyboardEvent) => {
         if (e.key === 'Enter' || e.key === ' ') {
           onSelect()
         }
       }}
       role="button"
       tabIndex={0}
+      className={classNames(
+        'cursor-pointer transition-all',
+        isSelected
+          ? 'bg-blue-50 dark:bg-blue-950/20 border border-blue-500'
+          : 'hover:bg-gray-50 dark:hover:bg-gray-700',
+      )}
     >
-      <div className="flex items-center gap-3">
-        <Currency.Icon currency={currency} width={24} height={24} />
-        <div>
-          <div className="font-semibold text-sm text-gray-900 dark:text-slate-50">
-            {currency.symbol}
+      <List.Item
+        as="div"
+        className="p-0 justify-between"
+        iconProps={{}}
+        title={
+          <div className="flex items-center gap-3">
+            <Currency.Icon currency={currency} width={24} height={24} />
+            <div>
+              <div className="font-semibold text-sm">{currency.symbol}</div>
+              <div className="text-sm text-muted-foreground">
+                {currency.name}
+              </div>
+            </div>
           </div>
-          <div className="text-sm text-muted-foreground">{currency.name}</div>
-        </div>
-      </div>
-      <div className="text-right">
-        <div className="font-semibold text-sm text-gray-900 dark:text-slate-50">
-          ~{tokenAmount.toSignificant(4)} {currency.symbol}
-        </div>
-        <div className="text-sm text-muted-foreground">
-          ~{formatUSD(estimatedValue)}
-        </div>
-      </div>
-    </div>
+        }
+        value={
+          <div className="text-right">
+            <div className="font-semibold text-sm">
+              ~{tokenAmount.toSignificant(4)} {currency.symbol}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              ~{formatUSD(estimatedValue)}
+            </div>
+          </div>
+        }
+      />
+    </List.Control>
   )
-})
-
-SingleAssetOption.displayName = 'SingleAssetOption'
+}

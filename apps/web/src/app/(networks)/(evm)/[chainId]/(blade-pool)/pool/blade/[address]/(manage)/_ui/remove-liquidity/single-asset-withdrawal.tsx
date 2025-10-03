@@ -1,7 +1,7 @@
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid'
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { createErrorToast } from '@sushiswap/notifications'
-import { Button, Currency, Dots, Message } from '@sushiswap/ui'
+import { Button, Currency, Dots, List, Message } from '@sushiswap/ui'
 import { type FC, useCallback, useMemo } from 'react'
 import type { useBladeWithdrawTransaction } from 'src/lib/pool/blade/useBladeWithdraw'
 import { useBladeWithdrawRequest } from 'src/lib/pool/blade/useBladeWithdrawRequest'
@@ -153,31 +153,38 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
 
   return (
     <div className="space-y-3">
-      <div className="rounded-lg p-4 bg-white dark:bg-gray-800 border border-white dark:border-gray-700">
-        <div className="text-sm text-gray-600 mb-3">You will receive:</div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Currency.Icon currency={selectedToken} width={24} height={24} />
-            <div>
-              <div className="font-semibold text-sm text-gray-900">
+      <List.Control>
+        <div className="text-sm text-gray-600 pt-3 px-3">You will receive:</div>
+        <List.Item
+          as="div"
+          className="justify-between"
+          iconProps={{}}
+          title={
+            <div className="flex items-center gap-3">
+              <Currency.Icon currency={selectedToken} width={24} height={24} />
+              <div>
+                <div className="font-semibold text-sm">
+                  {selectedToken.symbol}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {selectedToken.name}
+                </div>
+              </div>
+            </div>
+          }
+          value={
+            <div className="text-right">
+              <div className="font-semibold text-sm">
+                {singleAssetData.exactAmount.toSignificant(6)}{' '}
                 {selectedToken.symbol}
               </div>
               <div className="text-sm text-muted-foreground">
-                {selectedToken.name}
+                {formatUSD(singleAssetData.usdValue)}
               </div>
             </div>
-          </div>
-          <div className="text-right">
-            <div className="font-semibold text-sm text-gray-900">
-              {singleAssetData.exactAmount.toSignificant(6)}{' '}
-              {selectedToken.symbol}
-            </div>
-            <div className="text-sm text-muted-foreground">
-              {formatUSD(singleAssetData.usdValue)}
-            </div>
-          </div>
-        </div>
-      </div>
+          }
+        />
+      </List.Control>
       <Button
         size="xl"
         fullWidth
