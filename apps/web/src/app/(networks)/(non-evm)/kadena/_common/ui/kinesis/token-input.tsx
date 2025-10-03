@@ -26,10 +26,7 @@ import { useKadena } from '~kadena/kadena-wallet-provider'
 import { Icon } from '../General/Icon'
 import { DollarAmountDisplay } from '../Shared/DollarAmountDisplay'
 import { TokenBalanceDisplay } from '../Shared/TokenBalanceDisplay'
-import {
-  type EthereumChainId,
-  KinesisTokenSelector,
-} from './kinesis-token-selector'
+import { type EthereumChainId, KinesisTokenSelector } from './token-selector'
 
 const themes = {
   default: 'bg-white dark:bg-slate-800',

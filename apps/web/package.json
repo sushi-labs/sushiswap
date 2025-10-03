@@ -32,7 +32,7 @@
     "@kadena/wallet-adapter-metamask-snap": "0.1.1",
     "@kadena/wallet-adapter-react": "0.0.4",
     "@kadena/wallet-adapter-walletconnect": "0.1.0",
-    "@kinesis-bridge/kinesis-sdk": "^1.4.0",
+    "@kinesis-bridge/kinesis-sdk": "^1.5.0",
     "@layerzerolabs/scan-client": "0.0.6",
     "@martianwallet/aptos-wallet-adapter": "0.0.5",
     "@msafe/aptos-wallet-adapter": "1.1.3",

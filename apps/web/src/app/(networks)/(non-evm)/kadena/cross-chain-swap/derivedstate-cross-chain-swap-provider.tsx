@@ -25,7 +25,7 @@ import {
 } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-token-info'
 import { useKinesisTokenList } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-token-list'
 import { useKinesisTokenPrice } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-token-price'
-import type { EthereumChainId } from '~kadena/_common/ui/kinesis/kinesis-token-selector'
+import type { EthereumChainId } from '~kadena/_common/ui/kinesis/token-selector'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 
 export type KinesisChainId = KvmChainId | EthereumChainId

@@ -17,9 +17,9 @@ import { useState } from 'react'
 import { ChainId, formatPercent } from 'sushi'
 import { WalletConnector } from '~kadena/_common/ui/WalletConnector/WalletConnector'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
-import { KinesisSwapButton } from './kinesis-swap-button'
 import { ReviewSwapDialogTrigger } from './review-swap-dialog-trigger'
 import { CrossChainSwapRouteView } from './route-view'
+import { KinesisSwapButton } from './swap-button'
 
 export const ReviewSwapDialog = () => {
   const { state } = useDerivedStateCrossChainSwap()

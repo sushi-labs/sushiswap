@@ -39,6 +39,7 @@ import type { KinesisToken } from '~kadena/cross-chain-swap/derivedstate-cross-c
 import { useKadena } from '../../../kadena-wallet-provider'
 import { Icon } from '../General/Icon'
 import { DesktopNetworkSelector } from './desktop-network-selector'
+import { MobileNetworkSelector } from './mobile-network-selector'
 
 export type EthereumChainId = Extract<EvmChainId, 1>
 
@@ -165,7 +166,8 @@ export const KinesisTokenSelector = ({
           />
         ) : null}
 
-        <div className="flex flex-col gap-4 overflow-y-auto relative p-6">
+        <div className="flex flex-col flex-1 gap-4 overflow-y-auto relative p-6">
+          {' '}
           <DialogHeader className="!text-left">
             <DialogTitle>Select a token</DialogTitle>
             <DialogDescription>
@@ -173,6 +175,15 @@ export const KinesisTokenSelector = ({
               symbol or address.
             </DialogDescription>
           </DialogHeader>
+          {networks && selectedNetwork && !isMd && (
+            <MobileNetworkSelector
+              networks={networks}
+              selectedNetwork={selectedNetwork}
+              onSelect={(network) => {
+                setSelectedNetwork(network as KvmChainId | EthereumChainId)
+              }}
+            />
+          )}
           <div className="flex gap-2">
             <TextField
               placeholder="Search by token or address"
