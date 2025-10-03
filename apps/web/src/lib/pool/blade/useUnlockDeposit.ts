@@ -3,7 +3,7 @@
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo, useState } from 'react'
-import { UserRejectedRequestError } from 'viem'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import {
   useAccount,
   usePublicClient,
@@ -74,10 +74,8 @@ export const useUnlockDeposit = ({
   )
 
   const onError = useCallback((e: Error) => {
-    if (e instanceof Error) {
-      if (!(e.cause instanceof UserRejectedRequestError)) {
-        createErrorToast(e.message, true)
-      }
+    if (!isUserRejectedError(e)) {
+      createErrorToast(e.message, true)
     }
   }, [])
 
@@ -93,7 +91,7 @@ export const useUnlockDeposit = ({
 
     return async () => {
       try {
-        await writeContractAsync(simulation.request as any)
+        await writeContractAsync(simulation.request)
       } catch {}
     }
   }, [simulation?.request, writeContractAsync])
