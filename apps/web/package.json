@@ -77,7 +77,7 @@
     "@vercel/functions": "1.5.2",
     "@vercel/otel": "1.13.0",
     "@vercel/speed-insights": "1.0.12",
-    "@wagmi/connectors": "5.9.0",
+    "@wagmi/connectors": "5.11.2",
     "@wagmi/core": "catalog:web3",
     "@zitadel/client": "1.0.2",
     "@zitadel/proto": "1.0.2",
