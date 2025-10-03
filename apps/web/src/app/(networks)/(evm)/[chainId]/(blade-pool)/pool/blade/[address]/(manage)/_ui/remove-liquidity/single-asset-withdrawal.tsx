@@ -1,6 +1,7 @@
+import { ExclamationTriangleIcon } from '@heroicons/react/20/solid'
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { createErrorToast } from '@sushiswap/notifications'
-import { Button, Currency, Dots } from '@sushiswap/ui'
+import { Button, Currency, Dots, Message } from '@sushiswap/ui'
 import { type FC, useCallback, useMemo } from 'react'
 import type { useBladeWithdrawTransaction } from 'src/lib/pool/blade/useBladeWithdraw'
 import { useBladeWithdrawRequest } from 'src/lib/pool/blade/useBladeWithdrawRequest'
@@ -110,24 +111,12 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
   if (hasTokenMismatch) {
     return (
       <div className="space-y-3">
-        <div className="rounded-lg p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800">
-          <div className="flex items-center gap-2 text-yellow-600 dark:text-yellow-400 mb-2">
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L3.232 19c-.77.833.192 2.5 1.732 2.5z"
-              />
-            </svg>
+        <Message variant="warning" size="sm">
+          <div className="flex items-center gap-2 mb-2">
+            <ExclamationTriangleIcon width={20} height={20} />
             <span className="font-medium">Token mismatch</span>
           </div>
-          <p className="text-sm text-yellow-600 dark:text-yellow-400 mb-3">
+          <p className="text-sm mb-3">
             The quote returned a different token than selected. Please try
             getting a new quote or select a different token.
           </p>
@@ -135,7 +124,7 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
             size="sm"
             onClick={handleGetQuote}
             disabled={withdrawRequest.isPending}
-            className="bg-yellow-600 hover:bg-yellow-700 text-white"
+            variant="warning"
           >
             {withdrawRequest.isPending ? (
               <Dots>Getting quote</Dots>
@@ -143,7 +132,7 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
               'Get New Quote'
             )}
           </Button>
-        </div>
+        </Message>
       </div>
     )
   }
