@@ -8,14 +8,14 @@ import {
   SushiSwapV3Pool,
   computeSushiSwapV3PoolAddress,
   slot0Abi_slot0,
-  v3baseAbi_liquidity,
+  sushiSwapV3PoolAbi_liquidity,
 } from 'sushi/evm'
 import type { Address, ContractFunctionReturnType } from 'viem'
 import type { PublicWagmiConfig } from '../../../config/public'
 
 type Slot0 = ContractFunctionReturnType<typeof slot0Abi_slot0, 'view', 'slot0'>
 type Liquidity = ContractFunctionReturnType<
-  typeof v3baseAbi_liquidity,
+  typeof sushiSwapV3PoolAbi_liquidity,
   'view',
   'liquidity'
 >
@@ -76,7 +76,7 @@ export const getConcentratedLiquidityPools = async ({
       {
         chainId,
         address: address as Address,
-        abi: v3baseAbi_liquidity,
+        abi: sushiSwapV3PoolAbi_liquidity,
         functionName: 'liquidity',
       } as const,
     ]),

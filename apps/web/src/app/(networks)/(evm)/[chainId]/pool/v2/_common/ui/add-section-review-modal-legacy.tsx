@@ -28,7 +28,6 @@ import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { NativeAddress } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { logger } from 'src/lib/logger'
-import { getSushiSwapRouterContractConfig } from 'src/lib/wagmi/hooks/contracts/useSushiSwapRouter'
 import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
 import {
   getDefaultTTL,
@@ -38,9 +37,12 @@ import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
 import { type Amount, ZERO, subtractSlippage } from 'sushi'
 import {
   type EvmCurrency,
+  SUSHISWAP_V2_ROUTER_ADDRESS,
   type SushiSwapV2ChainId,
   addGasMargin,
   getEvmChainById,
+  sushiSwapV2RouterAbi_addLiquidity,
+  sushiSwapV2RouterAbi_addLiquidityETH,
 } from 'sushi/evm'
 import {
   type Address,
@@ -121,13 +123,11 @@ function useWriteWithNative({
       deadline,
     ] as const
 
-    const contract = getSushiSwapRouterContractConfig(chainId)
-
     return {
       account: address,
-      address: contract.address,
+      address: SUSHISWAP_V2_ROUTER_ADDRESS[chainId],
       chainId,
-      abi: contract.abi,
+      abi: sushiSwapV2RouterAbi_addLiquidityETH,
       functionName: 'addLiquidityETH',
       args,
       value,
@@ -225,13 +225,11 @@ function useWriteWithoutNative({
       deadline,
     ] as const
 
-    const contract = getSushiSwapRouterContractConfig(chainId)
-
     return {
       account: address,
-      address: contract.address,
+      address: SUSHISWAP_V2_ROUTER_ADDRESS[chainId],
       chainId: chainId,
-      abi: contract.abi,
+      abi: sushiSwapV2RouterAbi_addLiquidity,
       functionName: 'addLiquidity',
       args,
     } as const
