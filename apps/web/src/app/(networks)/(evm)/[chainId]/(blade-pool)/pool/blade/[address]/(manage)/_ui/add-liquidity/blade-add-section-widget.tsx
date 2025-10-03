@@ -1,6 +1,7 @@
 import { Cog6ToothIcon, MinusCircleIcon } from '@heroicons/react/24/outline'
 import { PlusIcon } from '@heroicons/react/24/solid'
 import {
+  Button,
   IconButton,
   WidgetAction,
   WidgetDescription,
@@ -157,14 +158,9 @@ export const BladeAddSectionWidget: FC<BladeAddSectionWidgetProps> = ({
 
         {shouldShowAddButton && (
           <div className="flex justify-center mt-6">
-            <button
-              onClick={onAddToken}
-              className="flex items-center gap-2 text-blue-500 hover:text-blue-600 font-medium transition-colors"
-              type="button"
-            >
-              <PlusIcon width={16} height={16} />
+            <Button icon={PlusIcon} onClick={onAddToken} variant="link">
               Add Another Asset
-            </button>
+            </Button>
           </div>
         )}
       </div>
