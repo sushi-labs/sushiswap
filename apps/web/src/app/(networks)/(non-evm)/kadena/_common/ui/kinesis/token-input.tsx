@@ -8,25 +8,22 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
-import { ChainId } from 'sushi'
 import { EvmChainId, isEvmChainId } from 'sushi/evm'
-import {
-  type KvmChainId,
-  type KvmToken,
-  type KvmTokenAddress,
-  isKvmChainId,
-} from 'sushi/kvm'
+import { type KvmToken, type KvmTokenAddress, isKvmChainId } from 'sushi/kvm'
 import { formatUnits } from 'viem'
 import { useBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
-import type { KinesisToken } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
+import type {
+  KinesisChainId,
+  KinesisToken,
+} from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 import { Icon } from '../General/Icon'
 import { DollarAmountDisplay } from '../Shared/DollarAmountDisplay'
 import { TokenBalanceDisplay } from '../Shared/TokenBalanceDisplay'
-import { type EthereumChainId, KinesisTokenSelector } from './token-selector'
+import { KinesisTokenSelector } from './token-selector'
 
 const themes = {
   default: 'bg-white dark:bg-slate-800',
@@ -46,7 +43,7 @@ type TokenInputProps = {
   theme?: keyof typeof themes
   isLoadingAmount?: boolean
   isTxnPending?: boolean
-  networks?: (KvmChainId | EthereumChainId)[]
+  networks?: KinesisChainId[]
   onNetworkSelect?: (network: number) => void
 }
 

@@ -84,18 +84,16 @@ const DerivedstateCrossChainSwapProvider: FC<
   const rawChainId0 = decodeChainId(searchParams.get('chainId0'))
   const rawChainId1 = decodeChainId(searchParams.get('chainId1'))
 
-  const isValidChainId = (
-    id: number | undefined,
-  ): id is KvmChainId | EthereumChainId => {
+  const isValidChainId = (id: number | undefined): id is KinesisChainId => {
     if (id === undefined) return false
     return isKvmChainId(id) || isEvmChainId(id)
   }
 
-  const chainId0: KvmChainId | EthereumChainId = isValidChainId(rawChainId0)
+  const chainId0: KinesisChainId = isValidChainId(rawChainId0)
     ? rawChainId0
     : ChainId.KADENA
 
-  const chainId1: KvmChainId | EthereumChainId = isValidChainId(rawChainId1)
+  const chainId1: KinesisChainId = isValidChainId(rawChainId1)
     ? rawChainId1
     : chainId0 === ChainId.KADENA
       ? ChainId.ETHEREUM
@@ -217,13 +215,13 @@ const DerivedstateCrossChainSwapProvider: FC<
   )
 
   const { data: token0, isLoading: token0Loading } = useKinesisTokenInfo({
-    chainId: chainId0 as KvmChainId | EthereumChainId,
+    chainId: chainId0 as KinesisChainId,
     address: defaultedParams.get('token0') as string,
     enabled: isKvmChainId(chainId0) || isEvmChainId(chainId0),
   })
 
   const { data: token1, isLoading: token1Loading } = useKinesisTokenInfo({
-    chainId: chainId1 as KvmChainId | EthereumChainId,
+    chainId: chainId1 as KinesisChainId,
     address: defaultedParams.get('token1') as string,
     enabled: isKvmChainId(chainId1) || isEvmChainId(chainId1),
   })
@@ -248,9 +246,9 @@ const DerivedstateCrossChainSwapProvider: FC<
 
   const bridgeAmount = useMemo(() => {
     if (!token1) return
-    if (!simulateBridgeTx?.amountMinReceived) return
-    return Amount.tryFromHuman(token1, simulateBridgeTx.amountMinReceived)
-  }, [token1, simulateBridgeTx?.amountMinReceived])
+    if (!simulateBridgeTx?.estimatedAmountReceived) return
+    return Amount.tryFromHuman(token1, simulateBridgeTx.estimatedAmountReceived)
+  }, [token1, simulateBridgeTx])
 
   const { data: token0Price } = useKinesisTokenPrice({
     network: chainId0 === ChainId.KADENA ? 'mainnet01' : 'ethereum',

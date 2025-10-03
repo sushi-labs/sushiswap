@@ -35,7 +35,10 @@ import { useKinesisTokenList } from '~kadena/_common/lib/hooks/kinesis-swap/use-
 import { useSortedTokenList } from '~kadena/_common/lib/hooks/use-sorted-token-list'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenInfo } from '~kadena/_common/lib/hooks/use-token-info'
-import type { KinesisToken } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
+import type {
+  KinesisChainId,
+  KinesisToken,
+} from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { useKadena } from '../../../kadena-wallet-provider'
 import { Icon } from '../General/Icon'
 import { DesktopNetworkSelector } from './desktop-network-selector'
@@ -52,20 +55,20 @@ export const KinesisTokenSelector = ({
   selected: KinesisToken | undefined
   onSelect: (token: KinesisToken) => void
   children: ReactNode
-  networks?: (KvmChainId | EthereumChainId)[]
+  networks?: KinesisChainId[]
 }) => {
   const { isMd } = useBreakpoint('md')
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const { activeAccount } = useKadena()
 
-  const [selectedNetwork, setSelectedNetwork] = useState<
-    KvmChainId | EthereumChainId
-  >(KvmChainId.KADENA)
+  const [selectedNetwork, setSelectedNetwork] = useState<KinesisChainId>(
+    KvmChainId.KADENA,
+  )
 
   useEffect(() => {
     if (selected) {
-      setSelectedNetwork(selected.chainId as KvmChainId | EthereumChainId)
+      setSelectedNetwork(selected.chainId as KinesisChainId)
     }
   }, [selected])
 
@@ -161,7 +164,7 @@ export const KinesisTokenSelector = ({
             networks={networks}
             selectedNetwork={selectedNetwork}
             onSelect={(network) => {
-              setSelectedNetwork(network as KvmChainId | EthereumChainId)
+              setSelectedNetwork(network as KinesisChainId)
             }}
           />
         ) : null}
@@ -180,7 +183,7 @@ export const KinesisTokenSelector = ({
               networks={networks}
               selectedNetwork={selectedNetwork}
               onSelect={(network) => {
-                setSelectedNetwork(network as KvmChainId | EthereumChainId)
+                setSelectedNetwork(network as KinesisChainId)
               }}
             />
           )}

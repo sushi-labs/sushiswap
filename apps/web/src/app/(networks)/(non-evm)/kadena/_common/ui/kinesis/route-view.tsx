@@ -20,7 +20,7 @@ export const CrossChainSwapRouteView = () => {
           toolDetails={{
             key: 'kinesis',
             name: 'Kinesis',
-            logoURI: 'https://kinesis.com/logo.png',
+            logoURI: '/kinesis.svg',
           }}
         />
         {bridgeAmount && <SendAction label="To" amount={bridgeAmount} />}

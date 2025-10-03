@@ -15,10 +15,11 @@ import { type FC, useCallback } from 'react'
 import { ChainId, getChainById } from 'sushi'
 import type { EvmChainId } from 'sushi/evm'
 import type { KvmChainId } from 'sushi/kvm'
+import type { KinesisChainId } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import type { EthereumChainId } from './token-selector'
 
 interface DesktopNetworkSelector {
-  networks: (KvmChainId | EvmChainId)[]
+  networks: KinesisChainId[]
   onSelect?: (network: number) => void
   selectedNetwork: EthereumChainId | KvmChainId
 }
@@ -76,6 +77,16 @@ export const DesktopNetworkSelector: FC<DesktopNetworkSelector> = ({
                 >
                   <NetworkIcon chainId={network} width={22} height={22} />
                 </Badge>
+                {/* <div className="relative">
+                  <div
+                    className={classNames(
+                      'rounded-full w-2 h-2 mr-0.5 mb-0.5',
+                      network === ChainId.KADENA && 'bg-green',
+                      'absolute -right-[20%] -bottom-[8%]',
+                    )}
+                  />
+                  <NetworkIcon chainId={network} width={22} height={22} />
+                </div> */}
                 {name}
               </Button>
             </CommandItem>

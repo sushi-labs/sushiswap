@@ -4,14 +4,12 @@ import { Badge, Button, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { FC } from 'react'
 import { ChainId } from 'sushi'
-import type { EvmChainId } from 'sushi/evm'
-import type { KvmChainId } from 'sushi/kvm'
-import type { EthereumChainId } from './token-selector'
+import type { KinesisChainId } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 
 interface MobileNetworkSelector {
-  networks: (KvmChainId | EvmChainId)[]
+  networks: KinesisChainId[]
   onSelect: (chainId: number) => void
-  selectedNetwork: KvmChainId | EthereumChainId
+  selectedNetwork: KinesisChainId
 }
 
 export const MobileNetworkSelector: FC<MobileNetworkSelector> = ({
@@ -47,6 +45,16 @@ export const MobileNetworkSelector: FC<MobileNetworkSelector> = ({
             >
               <NetworkIcon chainId={network} width={32} height={32} />
             </Badge>
+            {/* <div className="relative">
+              <div
+                className={classNames(
+                  'rounded-full w-2 h-2 mr-0.5 mb-0.5',
+                  network === ChainId.KADENA && 'bg-green',
+                  'absolute -right-[8%] -bottom-[5%]',
+                )}
+              />
+              <NetworkIcon chainId={network} width={32} height={32} />
+            </div> */}
           </Button>
         ))}
       </div>
