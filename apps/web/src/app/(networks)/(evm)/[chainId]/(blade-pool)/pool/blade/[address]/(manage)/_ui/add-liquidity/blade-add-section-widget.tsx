@@ -123,17 +123,17 @@ export const BladeAddSectionWidget: FC<BladeAddSectionWidgetProps> = ({
             {index === inputs.length - 1 &&
               inputs.length > 1 &&
               !hasNativeToken && (
-                <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 bottom-[-30px] z-10">
-                  <button
+                <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 bottom-[-30px] z-10 bg-background rounded-full">
+                  <Button
                     onClick={() => onRemoveToken(index)}
-                    className="bg-neutral-100 dark:bg-neutral-800 relative rounded-full flex flex-row items-center justify-center pl-2 pr-3 py-2 gap-1.5 text-black dark:text-white hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                    icon={MinusCircleIcon}
+                    variant="secondary"
+                    size="sm"
+                    className="!rounded-full"
                     type="button"
                   >
-                    <MinusCircleIcon className="w-5 h-5" />
-                    <span className="font-['Inter'] font-medium text-[14px] leading-[14px] whitespace-nowrap">
-                      Remove
-                    </span>
-                  </button>
+                    Remove
+                  </Button>
                 </div>
               )}
             {index !== inputs.length - 1 && (
