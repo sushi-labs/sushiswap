@@ -3,7 +3,7 @@
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { Button } from '@sushiswap/ui'
 import { type FC, useCallback, useMemo, useState } from 'react'
-import { APPROVE_TAG_REMOVE_LEGACY } from 'src/lib/constants'
+import { APPROVE_TAG_REMOVE_BLADE } from 'src/lib/constants'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {
@@ -55,7 +55,7 @@ export const BladeRemoveSection: FC<BladeRemoveSectionProps> = withCheckerRoot(
         >
           <Checker.Connect fullWidth>
             <Checker.Network fullWidth chainId={pool.chainId}>
-              <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
+              <Checker.Success tag={APPROVE_TAG_REMOVE_BLADE}>
                 <BladeRemoveLiquidityReviewModal
                   pool={pool}
                   percentage={percentage}
