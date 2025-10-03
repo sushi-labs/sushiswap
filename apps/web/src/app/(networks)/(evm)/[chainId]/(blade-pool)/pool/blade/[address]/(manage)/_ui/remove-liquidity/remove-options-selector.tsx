@@ -1,4 +1,4 @@
-import { Currency } from '@sushiswap/ui'
+import { Currency, List } from '@sushiswap/ui'
 import { type FC, useCallback, useEffect, useMemo, useRef } from 'react'
 import { Amount, formatUSD } from 'sushi'
 import type { EvmCurrency } from 'sushi/evm'
@@ -129,60 +129,74 @@ export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
           role="button"
           tabIndex={0}
         >
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-3 flex-wrap">
-              <div className="flex -space-x-1">
-                <Currency.IconList iconWidth={30} iconHeight={30}>
-                  {tokensToReceive.map((tokenData, index) => (
-                    <Currency.Icon
-                      key={index}
-                      currency={tokenData.amount.currency}
-                    />
-                  ))}
-                </Currency.IconList>
+          <List.Item
+            as="div"
+            className="!bg-transparent !cursor-default !p-0 !justify-between"
+            iconProps={{}}
+            title={
+              <div className="flex items-center gap-3 flex-wrap">
+                <div className="flex -space-x-1">
+                  <Currency.IconList iconWidth={30} iconHeight={30}>
+                    {tokensToReceive.map((tokenData, index) => (
+                      <Currency.Icon
+                        key={index}
+                        currency={tokenData.amount.currency}
+                      />
+                    ))}
+                  </Currency.IconList>
+                </div>
+                <span className="font-semibold text-sm break-all">
+                  {allSymbolsCombined}
+                </span>
               </div>
-              <div className="font-semibold text-sm text-gray-900 break-all">
-                {allSymbolsCombined}
+            }
+            value={
+              <div className="text-right flex-shrink-0">
+                <div className="font-semibold text-sm">
+                  ~{formatUSD(estimatedValue)}
+                </div>
+                <div className="text-sm text-muted-foreground">In Total</div>
               </div>
-            </div>
-            <div className="text-right flex-shrink-0">
-              <div className="font-semibold text-sm text-gray-900">
-                ~{formatUSD(estimatedValue)}
-              </div>
-              <div className="text-sm text-muted-foreground">In Total</div>
-            </div>
-          </div>
+            }
+          />
 
           {selectedOption === 'multiple' && (
             <div className="mt-4 space-y-3">
-              <div className="text-sm text-gray-400">Composition</div>
+              <div className="text-sm text-gray-500 dark:text-slate-500">
+                Composition
+              </div>
               {tokensToReceive.map((tokenData, index) => {
                 const wrappedCurrency = tokenData.amount.currency.wrap()
                 return (
-                  <div
+                  <List.Item
                     key={index}
-                    className="flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Currency.Icon
-                        currency={wrappedCurrency}
-                        width={18}
-                        height={18}
-                      />
-                      <span className="text-sm font-medium text-gray-500">
-                        {wrappedCurrency.symbol}
-                      </span>
-                    </div>
-                    <div className="text-right flex gap-1">
-                      <div className="text-sm font-semibold text-gray-900">
-                        ~{tokenData.amount.toSignificant(4)}{' '}
-                        {wrappedCurrency.symbol}
+                    as="div"
+                    className="!bg-transparent !cursor-default !p-0 !justify-between"
+                    iconProps={{}}
+                    title={
+                      <div className="flex items-center gap-2">
+                        <Currency.Icon
+                          currency={wrappedCurrency}
+                          width={18}
+                          height={18}
+                        />
+                        <span className="text-sm font-medium">
+                          {wrappedCurrency.symbol}
+                        </span>
                       </div>
-                      <div className="text-sm text-gray-400">
-                        ~{formatUSD(tokenData.usdValue)}
+                    }
+                    value={
+                      <div className="text-right flex gap-1">
+                        <div className="text-sm font-semibold">
+                          ~{tokenData.amount.toSignificant(4)}{' '}
+                          {wrappedCurrency.symbol}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          ~{formatUSD(tokenData.usdValue)}
+                        </div>
                       </div>
-                    </div>
-                  </div>
+                    }
+                  />
                 )
               })}
             </div>
