@@ -3,17 +3,12 @@
 import { LinkInternal } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
 import { PathnameButton } from 'src/app/_ui/pathname-button'
-import {
-  type EvmChainId,
-  getEvmChainById,
-  isSushiSwapV2ChainId,
-  isSushiSwapV3ChainId,
-} from 'sushi/evm'
+import { isV3MigrateChainId } from 'src/lib/wagmi/hooks/migrate/types'
+import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 
 export function NavigationItems({ chainId }: { chainId: EvmChainId }) {
   const searchParams = useSearchParams()
-  const canMigrate =
-    isSushiSwapV2ChainId(chainId) || isSushiSwapV3ChainId(chainId)
+  const canMigrate = isV3MigrateChainId(chainId)
 
   return (
     <>
