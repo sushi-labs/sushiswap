@@ -12,7 +12,8 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
-import React, { type FC, useMemo, useState } from 'react'
+import type React from 'react'
+import { type FC, useMemo, useState } from 'react'
 
 import { BladeIcon } from '@sushiswap/ui/icons/BladeIcon'
 import {
@@ -107,14 +108,6 @@ export const PositionsTab: FC<{
 
   const [tab, setTab] = useState(defaultTab)
   const [hideClosedPositions, setHideClosedPositions] = useState(true)
-
-  // Update tab if current selection becomes disabled
-  React.useEffect(() => {
-    const currentItem = items.find((item) => item.value === tab)
-    if (currentItem?.disabled) {
-      setTab(defaultTab)
-    }
-  }, [tab, items, defaultTab])
 
   return (
     <div className="flex flex-col gap-4">
