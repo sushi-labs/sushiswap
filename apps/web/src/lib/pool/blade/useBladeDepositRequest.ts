@@ -41,12 +41,16 @@ const daysToLockMixin = z.object({
 })
 
 export const rfqDepositResponseSchema = z.union([
-  rfqDepositResponseBaseSchema.merge(multipleDepositMixin).merge(lockTimeMixin),
   rfqDepositResponseBaseSchema
-    .merge(multipleDepositMixin)
-    .merge(daysToLockMixin),
-  rfqDepositResponseBaseSchema.merge(singleDepositMixin).merge(lockTimeMixin),
-  rfqDepositResponseBaseSchema.merge(singleDepositMixin).merge(daysToLockMixin),
+    .extend(multipleDepositMixin)
+    .extend(lockTimeMixin),
+  rfqDepositResponseBaseSchema
+    .extend(multipleDepositMixin)
+    .extend(daysToLockMixin),
+  rfqDepositResponseBaseSchema.extend(singleDepositMixin).extend(lockTimeMixin),
+  rfqDepositResponseBaseSchema
+    .extend(singleDepositMixin)
+    .extend(daysToLockMixin),
 ])
 
 export interface RfqDepositPayload {
