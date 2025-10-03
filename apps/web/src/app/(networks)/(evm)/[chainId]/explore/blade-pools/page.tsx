@@ -38,8 +38,8 @@ export default async function BladePoolsPage(props: {
   const poolsToDisplay = bladePools.length > 0 ? bladePools : activePools
 
   const featuredPool =
-    activePools.length > 0
-      ? activePools.reduce((prev, current) =>
+    poolsToDisplay.length > 0
+      ? poolsToDisplay.reduce((prev, current) =>
           current.liquidityUSD > prev.liquidityUSD ? current : prev,
         )
       : null
