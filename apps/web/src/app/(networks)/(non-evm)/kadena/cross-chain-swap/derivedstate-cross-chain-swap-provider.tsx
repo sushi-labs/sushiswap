@@ -14,7 +14,7 @@ import {
 import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Amount, ChainId } from 'sushi'
-import { type EvmToken, isEvmChainId } from 'sushi/evm'
+import { type EvmChainId, type EvmToken, isEvmChainId } from 'sushi/evm'
 import { type KvmChainId, type KvmToken, isKvmChainId } from 'sushi/kvm'
 import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
@@ -25,9 +25,9 @@ import {
 } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-token-info'
 import { useKinesisTokenList } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-token-list'
 import { useKinesisTokenPrice } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-token-price'
-import type { EthereumChainId } from '~kadena/_common/ui/kinesis/token-selector'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 
+export type EthereumChainId = Extract<EvmChainId, 1>
 export type KinesisChainId = KvmChainId | EthereumChainId
 export type KinesisToken = KvmToken | EvmToken
 

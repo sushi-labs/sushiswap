@@ -14,6 +14,7 @@ import { WalletConnector } from '../WalletConnector/WalletConnector'
 
 export const ReviewSwapDialogTrigger = () => {
   const { state } = useDerivedStateCrossChainSwap()
+  const { isLoadingSimulateBridgeTx } = state
 
   const { address } = useAccount()
   const { connectAsync } = useConnect()
@@ -84,6 +85,7 @@ export const ReviewSwapDialogTrigger = () => {
     // if (isTxnPending) {
     //   return 'Swapping'
     // }
+
     if (!state.swapAmountString || state.swapAmountString === '0') {
       return 'Enter Amount'
     }
@@ -100,9 +102,14 @@ export const ReviewSwapDialogTrigger = () => {
   const isDisabled = useMemo(() => {
     return (
       !(state.swapAmountString && Number(state.swapAmountString) > 0) ||
-      hasInsufficientToken0Balance
+      hasInsufficientToken0Balance ||
+      isLoadingSimulateBridgeTx
     )
-  }, [state.swapAmountString, hasInsufficientToken0Balance])
+  }, [
+    state.swapAmountString,
+    hasInsufficientToken0Balance,
+    isLoadingSimulateBridgeTx,
+  ])
 
   return (
     <>
