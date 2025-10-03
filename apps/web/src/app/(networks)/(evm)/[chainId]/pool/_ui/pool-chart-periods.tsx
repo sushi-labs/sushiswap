@@ -17,17 +17,17 @@ export const chartPeriods: Record<PoolChartPeriod, number> = {
   [PoolChartPeriod.All]: Number.POSITIVE_INFINITY,
 }
 
-interface PoolChartPeriodsProps {
-  periods: PoolChartPeriod[]
-  selectedPeriod: PoolChartPeriod
-  setPeriod: (period: PoolChartPeriod) => void
+interface PoolChartPeriods<T extends PoolChartPeriod> {
+  periods: T[]
+  selectedPeriod: T
+  setPeriod: (period: T) => void
 }
 
-const PoolChartPeriods: FC<PoolChartPeriodsProps> = ({
+export function PoolChartPeriods<T extends PoolChartPeriod>({
   periods,
   selectedPeriod,
   setPeriod,
-}) => {
+}: PoolChartPeriods<T>) {
   return (
     <div className="flex items-center gap-1">
       {periods.map((period) => (
@@ -43,5 +43,3 @@ const PoolChartPeriods: FC<PoolChartPeriodsProps> = ({
     </div>
   )
 }
-
-export { PoolChartPeriods }

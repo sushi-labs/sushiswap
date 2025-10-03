@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Select,
   SelectContent,
@@ -11,47 +13,105 @@ import {
   TabsTrigger,
 } from '@sushiswap/ui'
 import type React from 'react'
-import { type FC, useState } from 'react'
+import { type FC, useMemo, useState } from 'react'
 
-import { type SushiSwapChainId, getEvmChainById } from 'sushi/evm'
+import { BladeIcon } from '@sushiswap/ui/icons/BladeIcon'
+import {
+  type BladeChainId,
+  type SushiSwapChainId,
+  SushiSwapProtocol,
+  getEvmChainById,
+  isBladeChainId,
+  isSushiSwapChainId,
+  isSushiSwapV2ChainId,
+  isSushiSwapV3ChainId,
+} from 'sushi/evm'
 import { ConcentratedPositionsTable } from '~evm/[chainId]/pool/_ui/ConcentratedPositionsTable/concentrated-positions-table'
+import { BladePositionsTable } from './blade-positions-table'
 import { PositionsTable } from './positions-table'
 
-const ITEMS: { id: string; value: string; children: React.ReactNode }[] = [
-  {
-    id: 'sushiswap-v3',
-    value: 'v3',
-    children: (
-      <div className="flex items-center gap-2">
-        <span>🍣</span>{' '}
-        <span>
-          SushiSwap <sup>v3</sup>
-        </span>
-      </div>
-    ),
-  },
-  {
-    id: 'sushiswap-v2',
-    value: 'v2',
-    children: (
-      <div className="flex items-center gap-2">
-        <span>🍣</span>{' '}
-        <span>
-          SushiSwap <sup>v2</sup>
-        </span>
-      </div>
-    ),
-  },
-]
+type TabItem = {
+  id: string
+  value: string
+  protocol: SushiSwapProtocol
+  children: React.ReactNode
+  disabled: boolean
+}
 
-export const PositionsTab: FC<{ chainId: SushiSwapChainId }> = ({
-  chainId,
-}) => {
-  const [tab, setTab] = useState('v3')
+const createItems = (
+  chainId: SushiSwapChainId | BladeChainId,
+  supportedProtocols: SushiSwapProtocol[],
+): TabItem[] => {
+  const allItems: TabItem[] = [
+    {
+      id: 'sushiswap-v3',
+      value: 'v3',
+      protocol: SushiSwapProtocol.SUSHISWAP_V3,
+      disabled: !isSushiSwapV3ChainId(chainId),
+      children: (
+        <div className="flex items-center gap-2">
+          <span>🍣</span>{' '}
+          <span>
+            SushiSwap <sup>v3</sup>
+          </span>
+        </div>
+      ),
+    },
+    {
+      id: 'sushiswap-v2',
+      value: 'v2',
+      protocol: SushiSwapProtocol.SUSHISWAP_V2,
+      disabled: !isSushiSwapV2ChainId(chainId),
+      children: (
+        <div className="flex items-center gap-2">
+          <span>🍣</span>{' '}
+          <span>
+            SushiSwap <sup>v2</sup>
+          </span>
+        </div>
+      ),
+    },
+    {
+      id: 'blade',
+      value: 'blade',
+      protocol: SushiSwapProtocol.BLADE,
+      disabled: false, // Blade is only included if supported, so never disabled
+      children: (
+        <div className="flex items-center gap-2">
+          <span>
+            <BladeIcon className="h-3.5" />
+          </span>
+          <span>Blade</span>
+        </div>
+      ),
+    },
+  ]
+
+  // Filter items based on supported protocols
+  return allItems.filter((item) => supportedProtocols.includes(item.protocol))
+}
+
+export const PositionsTab: FC<{
+  chainId: SushiSwapChainId | BladeChainId
+  supportedProtocols: SushiSwapProtocol[]
+}> = ({ chainId, supportedProtocols }) => {
+  const items = useMemo(
+    () => createItems(chainId, supportedProtocols),
+    [chainId, supportedProtocols],
+  )
+
+  // Find the first non-disabled tab as default
+  const defaultTab = useMemo(() => {
+    const firstAvailable = items.find((item) => !item.disabled)
+    return firstAvailable?.value || 'v3'
+  }, [items])
+
+  const [tab, setTab] = useState(defaultTab)
   const [hideClosedPositions, setHideClosedPositions] = useState(true)
+
   return (
     <div className="flex flex-col gap-4">
-      <Tabs value={tab} onValueChange={setTab} defaultValue="v3">
+      <Tabs value={tab} onValueChange={setTab} defaultValue={defaultTab}>
         <div className="flex justify-between mb-4">
           <div className="block sm:hidden">
             <Select value={tab} onValueChange={setTab}>
@@ -59,8 +119,12 @@ export const PositionsTab: FC<{ chainId: SushiSwapChainId }> = ({
                 <SelectValue placeholder="Pool type" />
               </SelectTrigger>
               <SelectContent>
-                {ITEMS.map((item) => (
-                  <SelectItem key={item.value} value={item.value}>
+                {items.map((item) => (
+                  <SelectItem
+                    key={item.value}
+                    value={item.value}
+                    disabled={item.disabled}
+                  >
                     {item.children}
                   </SelectItem>
                 ))}
@@ -68,11 +132,12 @@ export const PositionsTab: FC<{ chainId: SushiSwapChainId }> = ({
             </Select>
           </div>
           <TabsList className="hidden sm:inline-flex">
-            {ITEMS.map((item) => (
+            {items.map((item) => (
               <TabsTrigger
                 key={item.value}
                 value={item.value}
                 testdata-id={item.id}
+                disabled={item.disabled}
               >
                 {item.children}
               </TabsTrigger>
@@ -90,6 +155,11 @@ export const PositionsTab: FC<{ chainId: SushiSwapChainId }> = ({
             </div>
           ) : null}
         </div>
+        {isBladeChainId(chainId) && (
+          <TabsContent value="blade">
+            <BladePositionsTable chainId={chainId} />
+          </TabsContent>
+        )}
         <TabsContent value="v3">
           <ConcentratedPositionsTable
             chainId={chainId}
@@ -98,12 +168,14 @@ export const PositionsTab: FC<{ chainId: SushiSwapChainId }> = ({
           />
         </TabsContent>
         <TabsContent value="v2">
-          <PositionsTable
-            chainId={chainId}
-            rowLink={(row) =>
-              `/${getEvmChainById(chainId).key}/pool/v2/${row.pool.address}/add`
-            }
-          />
+          {isSushiSwapChainId(chainId) && (
+            <PositionsTable
+              chainId={chainId}
+              rowLink={(row) =>
+                `/${getEvmChainById(chainId).key}/pool/v2/${row.pool.address}/add`
+              }
+            />
+          )}
         </TabsContent>
       </Tabs>
     </div>

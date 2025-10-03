@@ -22,12 +22,7 @@ import {
   useTransition,
 } from 'react'
 import { Amount, type Percent } from 'sushi'
-import {
-  type EvmChainId,
-  type EvmCurrency,
-  type EvmToken,
-  getEvmChainById,
-} from 'sushi/evm'
+import { type EvmChainId, type EvmCurrency, getEvmChainById } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
@@ -51,7 +46,7 @@ interface CurrencyInputProps {
   type: 'INPUT' | 'OUTPUT'
   fetching?: boolean
   currencyLoading?: boolean
-  currencies?: Record<string, EvmToken>
+  currencies?: Record<string, EvmCurrency>
   allowNative?: boolean
   error?: string
   hidePinnedTokens?: boolean
