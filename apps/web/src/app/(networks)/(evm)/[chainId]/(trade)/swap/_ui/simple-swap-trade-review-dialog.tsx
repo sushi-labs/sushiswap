@@ -293,13 +293,15 @@ const _SimpleSwapTradeReviewDialog: FC<{
     const { to, gas, data, value } = trade.tx
 
     return async (confirm: () => void) => {
-      await sendTransactionAsync({
-        to,
-        data,
-        value,
-        gas: gas ? addGasMargin(BigInt(gas)) : undefined,
-      })
-      confirm()
+      try {
+        await sendTransactionAsync({
+          to,
+          data,
+          value,
+          gas: gas ? addGasMargin(BigInt(gas)) : undefined,
+        })
+        confirm()
+      } catch {}
     }
   }, [address, trade?.tx, sendTransactionAsync])
 

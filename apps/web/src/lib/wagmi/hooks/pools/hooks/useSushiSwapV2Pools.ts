@@ -11,7 +11,7 @@ import {
   SushiSwapV2Pool,
   computeSushiSwapV2PoolAddress,
   isSushiSwapV2ChainId,
-  uniswapV2PairAbi_getReserves,
+  sushiSwapV2PairAbi_getReserves,
 } from 'sushi/evm'
 import type { Address } from 'viem'
 import {
@@ -64,7 +64,7 @@ function getSushiSwapV2Pools(
       tokenA: currencyA.wrap(),
       tokenB: currencyB.wrap(),
     }) as Address,
-    abi: uniswapV2PairAbi_getReserves,
+    abi: sushiSwapV2PairAbi_getReserves,
     functionName: 'getReserves' as const,
   }))
 
