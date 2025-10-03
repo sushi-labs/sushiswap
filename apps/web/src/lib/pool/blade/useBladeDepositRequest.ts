@@ -1,7 +1,8 @@
 'use client'
 
+import { useTimeout } from '@sushiswap/hooks'
 import { useMutation } from '@tanstack/react-query'
-import { useEffect } from 'react'
+import { useState } from 'react'
 import { BLADE_API_HOST, BLADE_API_KEY } from 'src/lib/constants'
 import { sz } from 'sushi'
 import { isAddress } from 'viem'
@@ -65,6 +66,8 @@ export const useBladeDepositRequest = ({
 }: {
   onError?: (e: Error) => void
 } = {}) => {
+  const [refreshDelay, setRefreshDelay] = useState<number | null>(null)
+
   const mutation = useMutation({
     mutationFn: async (
       payload: RfqDepositPayload,
@@ -85,28 +88,28 @@ export const useBladeDepositRequest = ({
       const responseData = await response.json()
       return rfqDepositResponseSchema.parse(responseData)
     },
-    onError,
-  })
-
-  useEffect(() => {
-    if (mutation.isSuccess && mutation.data) {
+    onMutate: () => {
+      setRefreshDelay(null)
+    },
+    onSuccess: (data, variables) => {
       const now = Date.now()
-      const goodUntil = mutation.data.good_until * 1000
+      const goodUntil = data.good_until * 1000
       const remainingTime = goodUntil - now
 
       if (remainingTime > 0) {
-        const timerId = setTimeout(() => {
-          mutation.reset()
-        }, remainingTime)
-
-        return () => {
-          clearTimeout(timerId)
-        }
+        setRefreshDelay(remainingTime)
       } else {
-        mutation.reset()
+        mutation.mutate(variables)
       }
+    },
+    onError,
+  })
+
+  useTimeout(() => {
+    if (mutation.variables) {
+      mutation.mutate(mutation.variables)
     }
-  }, [mutation.isSuccess, mutation.data, mutation.reset])
+  }, refreshDelay)
 
   return mutation
 }
