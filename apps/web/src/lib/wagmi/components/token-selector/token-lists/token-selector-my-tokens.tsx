@@ -4,10 +4,9 @@ import type { EvmCurrency } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useMyTokens } from '../hooks/use-my-tokens'
-import {
-  TokenSelectorCurrencyList,
-  TokenSelectorCurrencyListLoading,
-} from './common/token-selector-currency-list'
+
+import { TokenSelectorCurrencyList } from './common/token-selector-currency-list'
+import { TokenSelectorCurrencyListLoadingV2 } from './common/token-selector-currency-list-v2'
 
 interface TokenSelectorMyTokens {
   chainId: TokenListChainId
@@ -18,14 +17,7 @@ interface TokenSelectorMyTokens {
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex flex-col space-y-2">
-      <div className="text-sm">My Tokens</div>
-      <List.Control className="flex flex-1">
-        <div className="flex-1 block">{children}</div>
-      </List.Control>
-    </div>
-  )
+  return <div className="flex-1 flex flex-col">{children}</div>
 }
 
 export function TokenSelectorMyTokens({
@@ -50,7 +42,7 @@ export function TokenSelectorMyTokens({
   if (isLoading)
     return (
       <Shell>
-        <TokenSelectorCurrencyListLoading count={10} />
+        <TokenSelectorCurrencyListLoadingV2 count={10} />
       </Shell>
     )
 

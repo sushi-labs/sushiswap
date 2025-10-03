@@ -1,0 +1,20 @@
+.footer-PhMf7PhQ {
+  border-top: 1px solid var(--themed-color-properties-dialog-borders, #ebebeb);
+  display: flex;
+  flex: 0 0 auto;
+  padding: 16px 20px;
+}
+html.theme-dark .footer-PhMf7PhQ {
+  border-top: 1px solid var(--themed-color-properties-dialog-borders, #4a4a4a);
+}
+@media (max-height: 360px) {
+  .footer-PhMf7PhQ {
+    padding: 10px 20px;
+  }
+}
+.footer-PhMf7PhQ .submitButton-PhMf7PhQ {
+  padding-left: 12px;
+}
+.footer-PhMf7PhQ .buttons-PhMf7PhQ {
+  margin-left: auto;
+}

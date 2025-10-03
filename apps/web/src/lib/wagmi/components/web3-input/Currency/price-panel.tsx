@@ -23,48 +23,30 @@ export const PricePanel: FC<PricePanel> = ({
   value,
   priceImpact,
   error,
-  className,
 }) => {
   const parsedValue = useMemo(
     () => (currency ? Amount.tryFromHuman(currency, value) : undefined),
     [currency, value],
   )
-  const [big, portion] = (
+  const currencyValueStr =
     parsedValue && price
-      ? `${(
-          (price * Number(parsedValue.amount)) /
-            10 ** parsedValue.currency.decimals
-        ).toFixed(2)}`
+      ? `${((price * Number(parsedValue.amount)) / 10 ** parsedValue.currency.decimals).toFixed(2)}`
       : '0.00'
-  ).split('.')
 
   if (loading)
     return (
       <div className="w-1/5 flex items-center">
-        <SkeletonText fontSize="lg" className="w-full" />
+        <SkeletonText fontSize="sm" className="w-full" />
       </div>
     )
 
   if (error) {
-    return (
-      <p className="font-medium text-lg py-1 select-none text-red">{error}</p>
-    )
+    return <p className="font-medium text-sm select-none text-red">{error}</p>
   }
 
   return (
-    <p
-      className={classNames(
-        'font-medium text-lg flex items-baseline select-none text-gray-500 dark:text-slate-400',
-        className,
-      )}
-    >
-      {!loading && price === 0 ? (
-        <span className="text-sm flex items-center">Price not available</span>
-      ) : (
-        <>
-          $ {big}.<span className="text-sm font-semibold">{portion}</span>
-        </>
-      )}
+    <p className="font-medium text-sm flex items-baseline select-none text-gray-500 dark:text-slate-400">
+      {!loading && price === 0 ? 'Price not available' : `$${currencyValueStr}`}
       {!(!loading && price === 0) && priceImpact && (
         <span
           className={classNames(

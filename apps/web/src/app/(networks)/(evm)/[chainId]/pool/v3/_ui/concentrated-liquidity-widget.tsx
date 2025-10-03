@@ -103,7 +103,10 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = (
   const [isZapModeEnabled, setIsZapModeEnabled] = useState(false)
 
   const { data: owner, isInitialLoading: isOwnerLoading } =
-    useConcentratedPositionOwner({ chainId, tokenId })
+    useConcentratedPositionOwner({
+      chainId,
+      tokenId,
+    })
 
   const isOwner = owner === account
 
