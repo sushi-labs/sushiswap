@@ -105,8 +105,7 @@ export const BladePoolLiquidityHeader: FC<PoolHeader> = ({
                   {hasStablecoin && (
                     <Button
                       onClick={() => setShowStableTypes(!showStableTypes)}
-                      variant="blank"
-                      className="!p-0 !h-[unset] !min-h-[unset] font-medium text-blue text-sm hover:text-blue-700 sm:text-base"
+                      variant="link"
                     >
                       Show stablecoin types
                     </Button>

@@ -86,8 +86,7 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
             </h1>
             <Button
               onClick={() => setShowStableTypes(!showStableTypes)}
-              variant="blank"
-              className="!p-0 !h-[unset] !min-h-[unset] font-medium text-blue dark:text-blue-400 text-sm hover:text-blue-700 dark:hover:text-blue-300 sm:text-base"
+              variant="link"
             >
               Show stablecoin types
             </Button>

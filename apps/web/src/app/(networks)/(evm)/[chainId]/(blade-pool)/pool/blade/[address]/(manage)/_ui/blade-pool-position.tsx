@@ -236,10 +236,9 @@ const PoolPositionConnected: FC<PoolPositionProps> = ({ pool }) => {
           {hasStablecoins && (
             <Button
               onClick={() => setShowStableTypes(!showStableTypes)}
-              variant="blank"
-              className="!p-0 !h-auto !min-h-0 font-medium text-blue text-xs hover:text-blue-700"
+              variant="link"
             >
-              Show Stablecoin types
+              Show stablecoin types
             </Button>
           )}
         </div>
