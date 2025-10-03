@@ -3,7 +3,7 @@
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { useMutation } from '@tanstack/react-query'
 import type { PublicWagmiConfig } from 'src/lib/wagmi/config/public'
-import type { Abi, AbiStateMutability } from 'viem'
+import type { Abi, AbiStateMutability, Hex } from 'viem'
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 import type { WriteContractVariables } from 'wagmi/query'
 import type { DepositVariablesGetterArgs } from './types'
@@ -44,7 +44,7 @@ export const useBladeDepositTransaction = ({
   onError,
 }: {
   pool: BladePool
-  onSuccess?: (hash: `0x${string}`) => void
+  onSuccess?: (hash: Hex) => void
   onError?: (error: Error) => void
 }) => {
   const {
