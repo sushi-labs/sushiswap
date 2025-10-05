@@ -36,8 +36,6 @@ function applyPoolExclusion(
       ...(excludePoolsByToken[toToken.id] || []),
     ]
 
-    console.log(excludePools, fromToken.id, toToken.id)
-
     searchParams.set('excludePools', excludePools.join(','))
   }
 }
