@@ -1,9 +1,8 @@
-import { type V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
-import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 
-import { type EvmChainId, isSushiSwapV2ChainId } from 'sushi/evm'
+import { isSushiSwapV2ChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
+import { getCachedV2Pool } from '../_lib/get-cached-v2-pool'
 import { PoolPageV2 } from './_ui/pool-page-v2'
 
 export default async function PoolPage(props: {
@@ -12,7 +11,7 @@ export default async function PoolPage(props: {
   const params = await props.params
   const { chainId: _chainId, address } = params
 
-  const chainId = +_chainId as EvmChainId
+  const chainId = +_chainId
 
   if (
     !isSushiSwapV2ChainId(chainId) ||
@@ -21,13 +20,7 @@ export default async function PoolPage(props: {
     return notFound()
   }
 
-  const pool = (await unstable_cache(
-    async () => await getV2Pool({ chainId, address }, { retries: 3 }),
-    ['v2', 'pool', `${chainId}:${address}`],
-    {
-      revalidate: 60 * 15,
-    },
-  )()) as V2Pool
+  const pool = (await getCachedV2Pool({ chainId, address }))!
 
   return <PoolPageV2 pool={pool} />
 }

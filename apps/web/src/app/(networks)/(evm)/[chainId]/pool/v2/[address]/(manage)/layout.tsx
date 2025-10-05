@@ -1,12 +1,10 @@
-import { type V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import { Container, LinkExternal, Message } from '@sushiswap/ui'
-import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import type React from 'react'
-import { getEvmChainById, isSushiSwapV2ChainId } from 'sushi/evm'
-import { isAddress } from 'viem'
+import { getEvmChainById, isEvmAddress, isSushiSwapV2ChainId } from 'sushi/evm'
 import { PoolHeader } from '~evm/[chainId]/pool/_ui/pool-header'
+import { getCachedV2Pool } from '../_lib/get-cached-v2-pool'
 
 export default async function Layout(props: {
   children: React.ReactNode
@@ -19,20 +17,11 @@ export default async function Layout(props: {
   const { chainId: _chainId, address } = params
   const chainId = +_chainId
 
-  if (
-    !isSushiSwapV2ChainId(chainId) ||
-    !isAddress(address, { strict: false })
-  ) {
+  if (!isSushiSwapV2ChainId(chainId) || !isEvmAddress(address)) {
     return notFound()
   }
 
-  const pool = (await unstable_cache(
-    async () => getV2Pool({ chainId, address }, { retries: 3 }),
-    ['v2', 'pool', `${chainId}:${address}`],
-    {
-      revalidate: 60 * 15,
-    },
-  )()) as V2Pool
+  const pool = (await getCachedV2Pool({ chainId, address }))!
 
   const headersList = await headers()
   const referer = headersList.get('referer')

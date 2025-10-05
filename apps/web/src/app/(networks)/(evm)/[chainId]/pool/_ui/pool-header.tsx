@@ -1,5 +1,5 @@
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
-import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
+import type { RawV2Pool, RawV3Pool } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Currency,
@@ -22,7 +22,7 @@ import { APRHoverCard } from '~evm/[chainId]/_ui/apr-hover-card'
 type PoolHeader = {
   backUrl: string
   address: EvmAddress
-  pool: V2Pool | V3Pool
+  pool: RawV2Pool | RawV3Pool
   apy?: {
     fees: number | undefined
     rewards: number | undefined
@@ -40,25 +40,8 @@ export const PoolHeader: FC<PoolHeader> = ({
   priceRange,
   showAddLiquidityButton = false,
 }) => {
-  const token0 = unwrapEvmToken(
-    new EvmToken({
-      chainId: pool.chainId,
-      address: pool.token0.address,
-      decimals: pool.token0.decimals,
-      symbol: pool.token0.symbol,
-      name: pool.token0.name,
-    }),
-  )
-
-  const token1 = unwrapEvmToken(
-    new EvmToken({
-      chainId: pool.chainId,
-      address: pool.token1.address,
-      decimals: pool.token1.decimals,
-      symbol: pool.token1.symbol,
-      name: pool.token1.name,
-    }),
-  )
+  const token0 = unwrapEvmToken(new EvmToken(pool.token0))
+  const token1 = unwrapEvmToken(new EvmToken(pool.token1))
 
   return (
     <div className="flex flex-col gap-6">
