@@ -9,7 +9,6 @@ import {
   XSUSHI_ADDRESS,
   xsushiAbi_enter,
 } from 'sushi/evm'
-import { UserRejectedRequestError } from 'viem'
 import {
   useAccount,
   usePublicClient,
@@ -19,6 +18,7 @@ import {
 import type { SendTransactionReturnType } from 'wagmi/actions'
 
 import { logger } from 'src/lib/logger'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 
 interface UseBarDepositParams {
@@ -61,7 +61,7 @@ export function useBarDeposit({ amount, enabled = true }: UseBarDepositParams) {
   )
 
   const onError = useCallback((e: Error) => {
-    if (e.cause instanceof UserRejectedRequestError) {
+    if (isUserRejectedError(e)) {
       return
     }
 
