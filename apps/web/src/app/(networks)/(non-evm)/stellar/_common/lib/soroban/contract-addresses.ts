@@ -1,37 +1,25 @@
 /**
  * Contract addresses for Stellar/Soroban DEX contracts
- * Using official addresses from packages/stellar
+ * Using deployed contract addresses from stellar-auth-test
  */
 
-// Import official contract addresses from packages
-import {
-  Account,
-  networks as factoryNetworks,
-} from '@sushiswap/stellar/dex-factory'
-import { networks as routerNetworks } from '@sushiswap/stellar/dex-router'
-import { networks as poolHypeaXlmNetworks } from '@sushiswap/stellar/pools/hypea-xlm'
-import { networks as poolHypebXlmNetworks } from '@sushiswap/stellar/pools/hypeb-xlm'
-import { networks as tokenHypeaNetworks } from '@sushiswap/stellar/tokens/hypea'
-import { networks as tokenHypebNetworks } from '@sushiswap/stellar/tokens/hypeb'
-import { networks as xlmNetworks } from '@sushiswap/stellar/tokens/xlm'
-import { getTokenByCode } from './token-helpers'
-
+// Deployed contract addresses (from stellar-auth-test app.js)
 export const CONTRACT_ADDRESSES = {
   // Core DEX contracts
-  FACTORY: factoryNetworks.testnet.contractId,
-  ROUTER: routerNetworks.testnet.contractId,
+  FACTORY: 'CBZHXZBNABBQRFBNQXYXMJ3NKETUKDIBSILNQUWHVV3RXMRP3AZYLK66',
+  ROUTER: 'CAVSGXMRXOCASPTKMLCFCPEKOLNMSQRFTLTLHYIBXBP22K2GUEIN5IN7',
 
   // Tokens
   TOKENS: {
-    XLM: xlmNetworks.testnet.contractId, // native XLM token
-    HYPEA: tokenHypeaNetworks.testnet.contractId, // HYPEa
-    HYPEB: tokenHypebNetworks.testnet.contractId, // HYPEb
+    XLM: 'CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC', // native XLM token
+    HYPEA: 'CCUYO46LKVYRQL63LIIMGWVURVBQVETKO26G5OK5XVB5S4GKMGPKXNYJ', // HYPEa
+    HYPEB: 'CBQMJZL4U4MAQNHKNZZ2CAAKOJEDKL4J4C6AVFQL4CSKNLZU6H3PD5O7', // HYPEb
   },
 
   // Pools
   POOLS: {
-    HYPEA_XLM: poolHypeaXlmNetworks.testnet.contractId, // HYPEa/XLM
-    HYPEB_XLM: poolHypebXlmNetworks.testnet.contractId, // HYPEb/XLM
+    HYPEA_XLM: 'CCYJJ2A2BAQHKKSNJ3NHRV66GA6XCHHBLROFBBR7J33YIYMWDL57XOUL', // HYPEa/XLM
+    HYPEB_XLM: 'CDLPBPLMZGQHVRDMZAOMOQXWUUBGP5PWSLIAPTJVXC3WTAK6FAR3FQSQ', // HYPEb/XLM
   },
 } as const
 

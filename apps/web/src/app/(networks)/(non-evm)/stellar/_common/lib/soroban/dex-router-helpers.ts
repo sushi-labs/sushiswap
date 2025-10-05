@@ -1,5 +1,6 @@
-import { Client, networks } from '@sushiswap/stellar/dex-router'
+import { Client } from '@stellar/stellar-sdk'
 import { NETWORK_PASSPHRASE, RPC_URL } from '../constants'
+import { CONTRACT_ADDRESSES } from './contract-addresses'
 import type { Token } from '../types/token.type'
 import { ZERO_ADDRESS } from './constants'
 import { getFees, getPool } from './dex-factory-helpers'
@@ -19,7 +20,7 @@ interface Route {
  * @see https://stellar.github.io/js-stellar-sdk/module-contract.Client.html
  */
 const DexRouterClient = new Client({
-  contractId: networks.testnet.contractId,
+  contractId: CONTRACT_ADDRESSES.ROUTER,
   networkPassphrase: NETWORK_PASSPHRASE,
   rpcUrl: RPC_URL,
 })

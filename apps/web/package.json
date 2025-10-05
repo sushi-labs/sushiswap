@@ -43,7 +43,6 @@
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",
     "@sushiswap/notifications": "workspace:*",
-    "@sushiswap/stellar": "workspace:*",
     "@sushiswap/styro-client": "0.0.36",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/telemetry": "workspace:*",

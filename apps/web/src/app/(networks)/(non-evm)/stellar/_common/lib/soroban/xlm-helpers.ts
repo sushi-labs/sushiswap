@@ -1,12 +1,13 @@
-import { Client, networks } from '@sushiswap/stellar/tokens/xlm'
+import { Client } from '@stellar/stellar-sdk'
 import { NETWORK_PASSPHRASE, RPC_URL } from '../constants'
+import { CONTRACT_ADDRESSES } from './contract-addresses'
 
 /**
  * The XLM client
  * @see https://stellar.github.io/js-stellar-sdk/module-contract.Client.html
  */
 const XLMClient = new Client({
-  contractId: networks.testnet.contractId,
+  contractId: CONTRACT_ADDRESSES.TOKENS.XLM,
   networkPassphrase: NETWORK_PASSPHRASE,
   rpcUrl: RPC_URL,
 })

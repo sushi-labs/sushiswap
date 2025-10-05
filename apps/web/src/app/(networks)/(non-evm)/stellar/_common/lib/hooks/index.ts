@@ -16,3 +16,6 @@ export * from './pool'
 
 // Token hooks
 export * from './token'
+
+// Swap hooks
+export * from './swap'

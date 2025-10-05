@@ -5,7 +5,8 @@ import {
   TransactionBuilder,
   xdr,
 } from '@stellar/stellar-sdk'
-import { Client } from '@sushiswap/stellar/pools/hypea-xlm'
+import { Client } from '@stellar/stellar-sdk'
+import { CONTRACT_ADDRESSES } from './contract-addresses'
 import { NETWORK_PASSPHRASE, RPC_URL } from '../constants'
 import type { PoolInfo, PoolLiquidity, PoolReserves } from '../types/pool.type'
 import type { Token } from '../types/token.type'

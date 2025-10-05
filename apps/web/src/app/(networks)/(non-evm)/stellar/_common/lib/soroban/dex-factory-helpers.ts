@@ -4,22 +4,12 @@ import {
   TransactionBuilder,
   xdr,
 } from '@stellar/stellar-sdk'
-import { Client, networks } from '@sushiswap/stellar/dex-factory'
 import { NETWORK_PASSPHRASE, RPC_URL } from '../constants'
+import { CONTRACT_ADDRESSES } from './contract-addresses'
 import { SorobanClient } from './client'
 import { SIMULATION_ACCOUNT, ZERO_ADDRESS } from './constants'
 import { handleResult } from './handle-result'
 import { getBaseTokens } from './token-helpers'
-
-/**
- * The DEX Factory client
- * @see https://stellar.github.io/js-stellar-sdk/module-contract.Client.html
- */
-const DexFactoryClient = new Client({
-  contractId: networks.testnet.contractId,
-  networkPassphrase: NETWORK_PASSPHRASE,
-  rpcUrl: RPC_URL,
-})
 
 /**
  * Create a new pool with the specified tokens and fee tier
@@ -37,13 +27,43 @@ export async function createPool({
   tokenB: string
   fee: number
 }): Promise<string> {
-  const { result } = await DexFactoryClient.create_pool({
-    token_a: tokenA,
-    token_b: tokenB,
-    fee: fee,
-  })
+  try {
+    const factory = new Contract(CONTRACT_ADDRESSES.FACTORY)
+    
+    // Build transaction
+    const tx = new TransactionBuilder(SIMULATION_ACCOUNT, {
+      fee: '100000',
+      networkPassphrase: NETWORK_PASSPHRASE,
+    })
+      .addOperation(
+        factory.call(
+          'create_pool',
+          Address.fromString(tokenA).toScVal(),
+          Address.fromString(tokenB).toScVal(),
+          xdr.ScVal.scvU32(fee),
+        ),
+      )
+      .setTimeout(30)
+      .build()
 
-  return handleResult(result as any)
+    // Simulate the transaction
+    const simResult = await SorobanClient.simulateTransaction(tx)
+
+    if ('result' in simResult && simResult.result) {
+      const result = simResult.result as any
+      if (result.results?.[0]) {
+        const poolAddress = Address.fromScVal(
+          xdr.ScVal.fromXDR(result.results[0].xdr, 'base64'),
+        )
+        return poolAddress.toString()
+      }
+    }
+
+    throw new Error('Failed to create pool')
+  } catch (error) {
+    console.error('Error creating pool:', error)
+    throw error
+  }
 }
 
 /**
@@ -62,18 +82,8 @@ export async function getPool({
   tokenB: string
   fee: number
 }): Promise<string | null> {
-  console.log(tokenA, tokenB, fee)
-
-  // const { result } = await DexFactoryClient.get_pool({
-  //   token_a: tokenA,
-  //   token_b: tokenB,
-  //   fee: fee,
-  // })
-  // const poolResult = handleResult(result as any)
-  // return typeof poolResult === 'string' ? poolResult : null
-
-  // Temporary return for testing
-  return null
+  // Use the transaction builder approach which is already implemented
+  return await getPoolTransactionBuilder({ tokenA, tokenB, fee })
 }
 
 /**
@@ -96,7 +106,7 @@ export async function getPoolDirectSDK({
     console.log('Direct SDK approach - checking pool:', tokenA, tokenB, fee)
 
     // Create contract instance using direct SDK approach
-    const contract = new Contract(networks.testnet.contractId)
+    const contract = new Contract(CONTRACT_ADDRESSES.FACTORY)
 
     // Call get_pool method directly
     const result = await contract.call(
@@ -146,7 +156,7 @@ export async function getPoolTransactionBuilder({
       tokenA < tokenB ? [tokenA, tokenB] : [tokenB, tokenA]
 
     // Get account for transaction building
-    const factory = new Contract(networks.testnet.contractId)
+    const factory = new Contract(CONTRACT_ADDRESSES.FACTORY)
 
     // Build transaction
     const tx = new TransactionBuilder(SIMULATION_ACCOUNT, {
@@ -255,12 +265,34 @@ export async function enableFeeAmount({
   fee: number
   tickSpacing: number
 }): Promise<void> {
-  const { result } = await DexFactoryClient.e_fee_amt({
-    fee: fee,
-    tick_spacing: tickSpacing,
-  })
+  try {
+    const factory = new Contract(CONTRACT_ADDRESSES.FACTORY)
+    
+    // Build transaction
+    const tx = new TransactionBuilder(SIMULATION_ACCOUNT, {
+      fee: '100000',
+      networkPassphrase: NETWORK_PASSPHRASE,
+    })
+      .addOperation(
+        factory.call(
+          'e_fee_amt',
+          xdr.ScVal.scvU32(fee),
+          xdr.ScVal.scvI32(tickSpacing),
+        ),
+      )
+      .setTimeout(30)
+      .build()
 
-  handleResult(result as any)
+    // Simulate the transaction
+    const simResult = await SorobanClient.simulateTransaction(tx)
+
+    if (!('result' in simResult) || !simResult.result) {
+      throw new Error('Failed to enable fee amount')
+    }
+  } catch (error) {
+    console.error('Error enabling fee amount:', error)
+    throw error
+  }
 }
 
 /**
