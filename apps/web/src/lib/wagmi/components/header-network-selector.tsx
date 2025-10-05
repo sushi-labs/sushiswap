@@ -5,6 +5,7 @@ import { Button } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { type FC, Suspense, useCallback } from 'react'
 import { getNetworkName } from 'src/lib/network'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { ChainId } from 'sushi'
 import { isEvmChainId } from 'sushi/evm'
 import { ProviderRpcError } from 'viem'
@@ -13,7 +14,6 @@ import {
   NetworkSelector,
   type NetworkSelectorOnSelectCallback,
 } from './network-selector'
-import { isUserRejectedError } from 'src/lib/wagmi/errors'
 
 export const HeaderNetworkSelector: FC<{
   networks?: readonly ChainId[]
