@@ -29,10 +29,8 @@ export default function CrossChainSwapPage() {
           <SwitchSwapDirection />
           <div className="flex flex-col">
             <AmountOut />
-
             <ReviewSwapDialog />
           </div>
-          {/* <SwapStats /> */}
         </div>
         <SimpleSwapBanner />
       </div>
