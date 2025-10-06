@@ -41,6 +41,30 @@ export const KINESIS_BRIDGE_EVM_KADENA = new EvmToken({
   },
 })
 
+export const KINESIS_BRIDGE_EVM_ETH = new EvmToken({
+  chainId: EvmChainId.ETHEREUM,
+  address: '0xbddb58bf21b12d70eed91b939ae061572010b11d',
+  symbol: 'ETH',
+  decimals: 18,
+  name: 'Ethereum',
+  metadata: {
+    imageUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+    validated: false,
+  },
+})
+
+const KINESIS_BRIDGE_EVM_USDC = new EvmToken({
+  chainId: EvmChainId.ETHEREUM,
+  address: '0x81c2813aa88f66bca1e55838045aaceb72febfc1',
+  symbol: 'USDC',
+  decimals: 6,
+  name: 'USDC',
+  metadata: {
+    imageUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+    validated: false,
+  },
+})
+
 export const COMMON_KADENA_TOKENS: KvmToken[] = [
   KADENA,
   new KvmToken({
@@ -74,3 +98,9 @@ export const COMMON_KADENA_TOKENS: KvmToken[] = [
 export const STABLE_TOKENS = COMMON_KADENA_TOKENS.filter(
   (token) => token.symbol === 'kb-USDC',
 )
+
+export const COMMON_ETHEREUM_TOKENS: EvmToken[] = [
+  KINESIS_BRIDGE_EVM_KADENA,
+  KINESIS_BRIDGE_EVM_ETH,
+  KINESIS_BRIDGE_EVM_USDC,
+]

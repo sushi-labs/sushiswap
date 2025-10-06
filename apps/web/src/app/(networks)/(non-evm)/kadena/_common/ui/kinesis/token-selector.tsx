@@ -29,8 +29,10 @@ import { Amount } from 'sushi'
 import type { EvmChainId } from 'sushi/evm'
 import { KvmChainId, type KvmTokenAddress } from 'sushi/kvm'
 import { formatUnits } from 'viem'
-import { COMMON_ETHEREUM_TOKENS } from '~kadena/_common/constants/kinesis-token-list'
-import { COMMON_KADENA_TOKENS } from '~kadena/_common/constants/token-list'
+import {
+  COMMON_ETHEREUM_TOKENS,
+  COMMON_KADENA_TOKENS,
+} from '~kadena/_common/constants/token-list'
 import { useKinesisTokenList } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-token-list'
 import { useSortedTokenList } from '~kadena/_common/lib/hooks/use-sorted-token-list'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'

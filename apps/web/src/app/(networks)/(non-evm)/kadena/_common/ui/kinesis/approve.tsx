@@ -5,7 +5,7 @@ import { Amount } from 'sushi'
 import { type EvmChainId, EvmToken } from 'sushi/evm'
 import { KvmChainId } from 'sushi/kvm'
 import type { Address } from 'viem'
-import { KINESIS_BRIDGE_EVM_ETH } from '~kadena/_common/constants/kinesis-token-list'
+import { KINESIS_BRIDGE_EVM_ETH } from '~kadena/_common/constants/token-list'
 import { useKinesisWrappedToken } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-wrapped-token'
 import type { KinesisToken } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 
