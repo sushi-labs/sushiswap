@@ -7,7 +7,7 @@ import { AmountIn } from '~kadena/_common/ui/kinesis/amount-in'
 import { AmountOut } from '~kadena/_common/ui/kinesis/amount-out'
 import { ReviewSwapDialog } from '~kadena/_common/ui/kinesis/review-swap-dialog'
 import { SwitchSwapDirection } from '~kadena/_common/ui/kinesis/switch-swap-direction'
-import { SwapModeButtons } from '../swap/swap-mode-buttons'
+import { SwapModeButtons } from '~kadena/_common/ui/swap-mode-buttons'
 
 export default function CrossChainSwapPage() {
   return (

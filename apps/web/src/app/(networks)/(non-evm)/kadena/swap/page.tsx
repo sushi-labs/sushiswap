@@ -14,8 +14,8 @@ import { SimpleSwapBanner } from '~kadena/_common/ui/Swap/Banner/SwapBanner'
 import { ReviewSwapDialog } from '~kadena/_common/ui/Swap/ReviewSwapDialog'
 import { SwapStats } from '~kadena/_common/ui/Swap/SwapStats'
 import { SwitchSwapDirection } from '~kadena/_common/ui/Swap/SwitchSwapDirection'
+import { SwapModeButtons } from '~kadena/_common/ui/swap-mode-buttons'
 import { useKadena } from '~kadena/kadena-wallet-provider'
-import { SwapModeButtons } from './swap-mode-buttons'
 import { useSwapState } from './swap-provider'
 
 export default function SwapSimplePage() {
