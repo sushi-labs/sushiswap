@@ -18,13 +18,16 @@ import { type EvmChainId, type EvmToken, isEvmChainId } from 'sushi/evm'
 import { type KvmChainId, type KvmToken, isKvmChainId } from 'sushi/kvm'
 import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
+import {
+  KINESIS_BRIDGE_EVM_KADENA,
+  KINESIS_BRIDGE_KVM_KADENA,
+} from '~kadena/_common/constants/token-list'
 import { useKinesisSwapSimulate } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-simulate'
 import {
   findKinesisEquivalentToken,
   useKinesisTokenInfo,
 } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-token-info'
 import { useKinesisTokenList } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-token-list'
-import { useKinesisTokenPrice } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-token-price'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 
 export type EthereumChainId = Extract<EvmChainId, 1>
@@ -117,15 +120,15 @@ const DerivedstateCrossChainSwapProvider: FC<
       params.set(
         'token0',
         chainId0 === ChainId.KADENA
-          ? 'n_e595727b657fbbb3b8e362a05a7bb8d12865c1ff.KDA'
-          : '0x7786f1eb2ec198a04d8f5e3fc36fab14da370076',
+          ? KINESIS_BRIDGE_KVM_KADENA.address
+          : KINESIS_BRIDGE_EVM_KADENA.address,
       )
 
       params.set(
         'token1',
         chainId0 === ChainId.KADENA
-          ? '0x7786f1eb2ec198a04d8f5e3fc36fab14da370076'
-          : 'n_e595727b657fbbb3b8e362a05a7bb8d12865c1ff.KDA',
+          ? KINESIS_BRIDGE_EVM_KADENA.address
+          : KINESIS_BRIDGE_KVM_KADENA.address,
       )
     }
 
@@ -249,11 +252,6 @@ const DerivedstateCrossChainSwapProvider: FC<
     if (!simulateBridgeTx?.estimatedAmountReceived) return
     return Amount.tryFromHuman(token1, simulateBridgeTx.estimatedAmountReceived)
   }, [token1, simulateBridgeTx])
-
-  // const { data: token0Price } = useKinesisTokenPrice({
-  //   network: chainId0 === ChainId.KADENA ? 'mainnet01' : 'ethereum',
-  //   tokenAddress: token0?.address ?? '',
-  // })
 
   return (
     <DerivedStateCrossChainSwapContext.Provider

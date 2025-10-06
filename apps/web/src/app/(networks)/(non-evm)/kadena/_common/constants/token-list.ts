@@ -1,3 +1,4 @@
+import { EvmChainId, EvmToken } from 'sushi/evm'
 import { KvmChainId, KvmToken } from 'sushi/kvm'
 import { KADENA_TOKEN_IMAGE_BASE_URL } from '../lib/hooks/use-base-tokens'
 import { KADENA_CHAIN_ID, KADENA_NETWORK_ID } from './network'
@@ -13,6 +14,30 @@ export const KADENA = new KvmToken({
     validated: true,
     kadenaChainId: KADENA_CHAIN_ID,
     kadenaNetworkId: KADENA_NETWORK_ID,
+  },
+})
+export const KINESIS_BRIDGE_KVM_KADENA = new KvmToken({
+  chainId: KvmChainId.KADENA,
+  address: 'n_e595727b657fbbb3b8e362a05a7bb8d12865c1ff.KDA',
+  symbol: 'KDA',
+  decimals: 12,
+  name: 'Kadena',
+  metadata: {
+    imageUrl: `${KADENA_TOKEN_IMAGE_BASE_URL}img/kda.svg`,
+    validated: true,
+    kadenaChainId: KADENA_CHAIN_ID,
+    kadenaNetworkId: KADENA_NETWORK_ID,
+  },
+})
+export const KINESIS_BRIDGE_EVM_KADENA = new EvmToken({
+  chainId: EvmChainId.ETHEREUM,
+  address: '0x7786f1eb2ec198a04d8f5e3fc36fab14da370076',
+  symbol: 'KDA',
+  decimals: 18,
+  name: 'Kadena',
+  metadata: {
+    imageUrl: `${KADENA_TOKEN_IMAGE_BASE_URL}img/kda.svg`,
+    validated: true,
   },
 })
 

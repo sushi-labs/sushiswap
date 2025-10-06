@@ -1,7 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import type { KvmToken } from 'sushi/kvm'
 import { z } from 'zod'
-import { STABLE_TOKENS } from '~kadena/_common/constants/token-list'
+import {
+  KINESIS_BRIDGE_KVM_KADENA,
+  STABLE_TOKENS,
+} from '~kadena/_common/constants/token-list'
 import { getKdaPrice } from './use-kda-price'
 
 const tokenPriceResponseSchema = z.object({
@@ -28,8 +31,11 @@ const getPrice = async (token: KvmToken | undefined) => {
 
   //if native coin, return native usd price
   const isNative = token.address?.toLowerCase() === 'coin'
+  const isBridgeKda =
+    token.address?.toLowerCase() ===
+    KINESIS_BRIDGE_KVM_KADENA.address.toLowerCase()
 
-  if (isNative) {
+  if (isNative || isBridgeKda) {
     const kdaInUsd = await getKdaPrice()
     return kdaInUsd.priceUsd
   }

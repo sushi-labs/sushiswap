@@ -4,6 +4,7 @@ import type { EvmChainId, EvmToken } from 'sushi/evm'
 import { isEvmChainId } from 'sushi/evm'
 import type { KvmChainId, KvmToken, KvmTokenAddress } from 'sushi/kvm'
 import { isKvmChainId } from 'sushi/kvm'
+import { KINESIS_BRIDGE_KVM_KADENA } from '~kadena/_common/constants/token-list'
 import type { KinesisToken } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { useKinesisTokenList } from './use-kinesis-token-list'
 
@@ -28,9 +29,7 @@ export const useKinesisTokenInfo = ({
 
       if (isKvmChainId(chainId)) {
         const _address =
-          address === 'coin'
-            ? 'n_e595727b657fbbb3b8e362a05a7bb8d12865c1ff.KDA'
-            : address
+          address === 'coin' ? KINESIS_BRIDGE_KVM_KADENA.address : address
         return (
           tokenLists.kadena.find(
             (t) =>
