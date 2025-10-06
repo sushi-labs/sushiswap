@@ -1,8 +1,8 @@
 import { classNames } from '@sushiswap/ui'
+import { KinesisBridgeIcon } from '@sushiswap/ui/icons/KinesisBridgeIcon'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { useMemo } from 'react'
 import type { FC } from 'react'
-import type { CrossChainToolDetails } from 'src/lib/swap/cross-chain/types'
 import { type Amount, ChainId } from 'sushi'
 import type { KinesisToken } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
@@ -16,13 +16,11 @@ export const CrossChainSwapRouteView = () => {
       <VerticalDivider count={2} className="pt-1.5 pl-1" />
       <div className="flex flex-col gap-8">
         {swapAmount && <SendAction label="From" amount={swapAmount} />}
-        <BridgeAction
-          toolDetails={{
-            key: 'kinesis',
-            name: 'Kinesis',
-            logoURI: '/kinesis.svg',
-          }}
-        />
+        <span className="inline-flex items-center gap-1 text-xs leading-3 text-muted-foreground whitespace-nowrap">
+          Via
+          <KinesisBridgeIcon width={10} height={10} />
+          <span className="font-semibold">Kinesis</span>
+        </span>
         {bridgeAmount && <SendAction label="To" amount={bridgeAmount} />}
       </div>
     </div>
@@ -87,28 +85,8 @@ const SendAction: FC<{
         <span className="font-semibold leading-[17px]">{chain}</span>
       </span>
       <span className="text-sm leading-4 decoration-dotted">
-        {`${label === 'From' ? 'Send' : 'Receive'} ${amount.toSignificant(6)} ${
-          amount.currency.symbol
-        }`}
+        {`${label === 'From' ? 'Send' : 'Receive'} ${amount.toSignificant(6)} ${amount.currency.symbol}`}
       </span>
     </div>
-  )
-}
-
-const BridgeAction: FC<{
-  toolDetails: CrossChainToolDetails
-}> = ({ toolDetails }) => {
-  return (
-    <span className="inline-flex items-center gap-1 text-xs leading-3 text-muted-foreground whitespace-nowrap">
-      Via
-      <img
-        src={toolDetails.logoURI}
-        className="rounded-full"
-        width={10}
-        height={10}
-        alt={toolDetails.name}
-      />{' '}
-      <span className="font-semibold">{toolDetails.name}</span>
-    </span>
   )
 }
