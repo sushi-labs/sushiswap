@@ -1,24 +1,22 @@
 import { Button, DialogTrigger } from '@sushiswap/ui'
 import { useMemo } from 'react'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Amount } from 'sushi'
 import { type EvmChainId, isEvmChainId } from 'sushi/evm'
 import { type KvmTokenAddress, isKvmChainId } from 'sushi/kvm'
 import { formatUnits } from 'viem'
-import { injected } from 'wagmi'
-import { useAccount, useConnect } from 'wagmi'
 import { useBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { MIN_GAS_FEE } from '~kadena/_common/constants/gas'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { useKadena } from '~kadena/kadena-wallet-provider'
-import { WalletConnector } from '../WalletConnector/WalletConnector'
+import { ConnectButton } from '../WalletConnector/connect-button'
+import { Approve } from './approve'
 
 export const ReviewSwapDialogTrigger = () => {
   const {
     state: { token0, swapAmountString, isLoadingSimulateBridgeTx },
   } = useDerivedStateCrossChainSwap()
-
-  const { address } = useAccount()
-  const { connectAsync } = useConnect()
 
   const { activeAccount } = useKadena()
 
@@ -78,10 +76,6 @@ export const ReviewSwapDialogTrigger = () => {
   }, [swapAmountString, kadenaLoading, token0Balance])
 
   const buttonText = useMemo(() => {
-    // if (isTxnPending) {
-    //   return 'Swapping'
-    // }
-
     if (!swapAmountString || swapAmountString === '0') {
       return 'Enter Amount'
     }
@@ -107,30 +101,27 @@ export const ReviewSwapDialogTrigger = () => {
     isLoadingSimulateBridgeTx,
   ])
 
+  if (!activeAccount?.accountName) {
+    return (
+      <ConnectButton btnText={'Connect Kadena Wallet'} fullWidth size="xl" />
+    )
+  }
+
   return (
-    <>
-      {!address ? (
-        <Button
-          size="xl"
-          fullWidth
-          onClick={() => connectAsync({ connector: injected() })}
-        >
-          Connect Ethereum Wallet
-        </Button>
-      ) : !activeAccount?.accountName ? (
-        <WalletConnector
-          variant="default"
-          fullWidth
-          size="xl"
-          btnText="Connect Kadena Wallet"
-        />
-      ) : (
+    <Checker.Connect fullWidth size="xl">
+      <Approve
+        amount={
+          token0 ? Amount.fromHuman(token0, swapAmountString || '0') : undefined
+        }
+        contract={token0?.address as `0x${string}` | undefined}
+        enabled={true}
+      >
         <DialogTrigger asChild>
           <Button size="xl" fullWidth disabled={isDisabled}>
             {buttonText}
           </Button>
         </DialogTrigger>
-      )}
-    </>
+      </Approve>
+    </Checker.Connect>
   )
 }

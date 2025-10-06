@@ -73,7 +73,6 @@ const _ApproveERC20: FC<ApproveERC20Props> = ({
     ApprovalState.LOADING,
     ApprovalState.PENDING,
   ].includes(state)
-
   return (
     <Select value={`${max}`} onValueChange={(val) => setMax(val === 'true')}>
       <HoverCard openDelay={0} closeDelay={0}>
