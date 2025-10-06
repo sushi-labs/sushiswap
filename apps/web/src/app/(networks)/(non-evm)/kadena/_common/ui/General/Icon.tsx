@@ -6,6 +6,7 @@ import {
 } from '@sushiswap/ui'
 import { KadenaCircle } from '@sushiswap/ui/icons/network/circle/KadenaCircle'
 import Image from 'next/image'
+import { KINESIS_BRIDGE_EVM_KADENA } from '~kadena/_common/constants/token-list'
 import type { KinesisToken } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 
 type IconProps = {
@@ -15,7 +16,11 @@ type IconProps = {
 }
 
 export const Icon = ({ currency, height = 40, width = 40 }: IconProps) => {
-  if (currency?.address === 'coin') {
+  if (
+    currency?.address === 'coin' ||
+    currency?.address?.toLowerCase() ===
+      KINESIS_BRIDGE_EVM_KADENA.address.toLowerCase()
+  ) {
     return <KadenaCircle height={height} width={width} />
   }
 

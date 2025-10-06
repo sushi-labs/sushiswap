@@ -48,7 +48,7 @@ export const KINESIS_BRIDGE_EVM_ETH = new EvmToken({
   decimals: 18,
   name: 'Ethereum',
   metadata: {
-    imageUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+    imageUrl: `${KADENA_TOKEN_IMAGE_BASE_URL}img/kb-eth.svg`,
     validated: false,
   },
 })
@@ -60,7 +60,7 @@ const KINESIS_BRIDGE_EVM_USDC = new EvmToken({
   decimals: 6,
   name: 'USDC',
   metadata: {
-    imageUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+    imageUrl: `${KADENA_TOKEN_IMAGE_BASE_URL}img/kb-usdc.svg`,
     validated: false,
   },
 })
