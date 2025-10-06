@@ -17,10 +17,8 @@ import {
 import type React from 'react'
 import { useState } from 'react'
 import { usePoolBalances } from '~stellar/_common/lib/hooks/pool/use-pool-balances'
-import {
-  useAddLiquidity,
-  useRemoveLiquidity,
-} from '~stellar/_common/lib/hooks/pool/use-pool-liquidity-management'
+import { useRemoveLiquidity } from '~stellar/_common/lib/hooks/pool/use-pool-liquidity-management'
+import { useAddLiquidity } from '~stellar/_common/lib/hooks/swap'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import { useStellarWallet } from '~stellar/providers'
 import { ConnectWalletButton } from '../ConnectWallet/ConnectWalletButton'
@@ -54,17 +52,14 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     if (!connectedAddress || !hasAmount) return
 
     try {
-      const amount0BigInt = BigInt(
-        Math.floor(Number.parseFloat(amount0) * 10 ** pool.token0.decimals),
-      )
-      // const amount1BigInt = BigInt(Math.floor(Number.parseFloat(amount1) * 10 ** pool.token1.decimals))
-
       await addLiquidityMutation.mutateAsync({
-        address: pool.address,
-        recipient: connectedAddress,
+        userAddress: connectedAddress,
+        poolAddress: pool.address,
+        token0Amount: amount0,
+        token1Amount: amount1 || '0', // Use amount1 if provided, otherwise '0'
         tickLower: -60000,
         tickUpper: 60000,
-        amount: amount0BigInt,
+        recipient: connectedAddress,
       })
 
       // Reset form

@@ -1,4 +1,18 @@
-export { useAddLiquidity as useSwapAddLiquidity, type UseAddLiquidityParams } from './use-add-liquidity'
-export { useSwapWithRouting, type UseSwapWithRoutingParams } from './use-swap-with-routing'
+export {
+  useAddLiquidity,
+  type UseAddLiquidityParams,
+} from './use-add-liquidity'
+export {
+  useSwapWithRouting,
+  type UseSwapWithRoutingParams,
+} from './use-swap-with-routing'
 export { useGetQuote, type UseGetQuoteParams } from './use-get-quote'
-export { usePoolsBetween, type UsePoolsBetweenParams } from './use-pools-between'
+export {
+  usePoolsBetween,
+  type UsePoolsBetweenParams,
+} from './use-pools-between'
+export {
+  useExecuteSwap,
+  useExecuteMultiHopSwap,
+  type UseExecuteSwapParams,
+} from './use-execute-swap'

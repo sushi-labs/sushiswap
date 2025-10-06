@@ -1,8 +1,7 @@
-import { Client } from '@stellar/stellar-sdk'
 import { NETWORK_PASSPHRASE, RPC_URL } from '../constants'
-import { CONTRACT_ADDRESSES } from './contract-addresses'
 import type { Token } from '../types/token.type'
 import { ZERO_ADDRESS } from './constants'
+import { CONTRACT_ADDRESSES, getPoolConfig } from './contract-addresses'
 import { getFees, getPool } from './dex-factory-helpers'
 import { handleResult } from './handle-result'
 import type { PoolBasicInfo } from './pool-helpers'
@@ -15,23 +14,57 @@ interface Route {
   fees: number[]
 }
 
-/**
- * The DEX Router client
- * @see https://stellar.github.io/js-stellar-sdk/module-contract.Client.html
- */
-const DexRouterClient = new Client({
-  contractId: CONTRACT_ADDRESSES.ROUTER,
-  networkPassphrase: NETWORK_PASSPHRASE,
-  rpcUrl: RPC_URL,
-})
-
 // Find all pools between two tokens
 export async function findPoolsBetweenTokens(
   tokenA: Token,
   tokenB: Token,
 ): Promise<PoolBasicInfo[]> {
+  console.log('=== findPoolsBetweenTokens START ===')
+  console.log('Looking for pools between:', tokenA.code, tokenB.code)
+
   const pools: PoolBasicInfo[] = []
 
+  // First, check known pools from CONTRACT_ADDRESSES
+  // This ensures we find the deployed pools quickly
+  const knownPools = Object.entries(CONTRACT_ADDRESSES.POOLS)
+  for (const [poolName, poolAddress] of knownPools) {
+    const config = getPoolConfig(poolAddress)
+    if (!config) continue
+
+    const poolToken0 = getTokenByCode(config.token0.code)
+    const poolToken1 = getTokenByCode(config.token1.code)
+
+    if (!poolToken0 || !poolToken1) continue
+
+    // Check if this pool matches our token pair (in either order)
+    const matchesForward =
+      poolToken0.contract === tokenA.contract &&
+      poolToken1.contract === tokenB.contract
+    const matchesReverse =
+      poolToken0.contract === tokenB.contract &&
+      poolToken1.contract === tokenA.contract
+
+    if (matchesForward || matchesReverse) {
+      console.log(
+        `✅ Found known pool ${poolName} at ${poolAddress} with fee ${config.fee}`,
+      )
+      pools.push({
+        address: poolAddress,
+        tokenA: matchesForward ? poolToken0 : poolToken1,
+        tokenB: matchesForward ? poolToken1 : poolToken0,
+        fee: config.fee,
+      })
+    }
+  }
+
+  // If we found known pools, return them
+  if (pools.length > 0) {
+    console.log('=== findPoolsBetweenTokens END ===')
+    console.log('Total pools found from known pools:', pools.length)
+    return pools
+  }
+
+  // Fall back to dynamic discovery
   for (const fee of getFees()) {
     try {
       const pool = await getPool({
@@ -46,13 +79,16 @@ export async function findPoolsBetweenTokens(
           tokenB: tokenB,
           fee: fee,
         })
+        console.log(`✅ Found pool at ${pool} for fee ${fee}`)
       }
-    } catch {
+    } catch (error) {
       // Pool doesn't exist for this fee tier
-      console.warn(`Pool doesn't exist for fee tier ${fee}`)
+      console.warn(`Pool doesn't exist for fee tier ${fee}:`, error)
     }
   }
 
+  console.log('=== findPoolsBetweenTokens END ===')
+  console.log('Total pools found:', pools.length)
   return pools
 }
 
@@ -115,16 +151,17 @@ export interface QuoteExactInputParams {
  * @param params - Quote parameters
  * @returns Quote result
  */
+// TODO: Refactor to use Contract directly instead of Client
 export async function quoteExactInput({
-  userAddress = ZERO_ADDRESS,
-  fromToken,
-  toToken,
-  amountIn,
+  userAddress: _userAddress = ZERO_ADDRESS,
+  fromToken: _fromToken,
+  toToken: _toToken,
+  amountIn: _amountIn,
 }: QuoteExactInputParams): Promise<{
   amount0: bigint
   amount1: bigint
 }> {
-  const route = await findBestPath(fromToken, toToken)
+  const route = await findBestPath(_fromToken, _toToken)
   console.log({ route })
 
   if (!route) {
@@ -146,22 +183,24 @@ export async function quoteExactInput({
     )
   }
 
-  const { result } = await DexRouterClient.quote_exact_input({
-    params: {
-      amount_in: amountIn,
-      amount_out_minimum: 0n,
-      sender: userAddress,
-      recipient: userAddress,
-      deadline: calculateDeadline(10),
-      path: route.path.map((t) => t.contract),
-      fees: route.fees,
-    },
-  })
-  const quoteResult = handleResult(result as any) as any
-  console.log({ quoteResult })
+  // TODO: Implement quote_exact_input using Contract class
+  // const { result } = await DexRouterClient.quote_exact_input({
+  //   params: {
+  //     amount_in: amountIn,
+  //     amount_out_minimum: 0n,
+  //     sender: userAddress,
+  //     recipient: userAddress,
+  //     deadline: calculateDeadline(10),
+  //     path: route.path.map((t) => t.contract),
+  //     fees: route.fees,
+  //   },
+  // })
+  // const quoteResult = handleResult(result as any) as any
+  // console.log({ quoteResult })
+  // Placeholder return - needs implementation
   return {
-    amount0: quoteResult[0] || 0n,
-    amount1: quoteResult[1] || 0n,
+    amount0: 0n,
+    amount1: 0n,
   }
 }
 
@@ -212,35 +251,38 @@ export interface ExecuteSwapParams {
  * @param params - Swap parameters
  * @returns The result of the swap
  */
+// TODO: Refactor to use Contract directly instead of Client
 export async function executeSwap({
-  amountIn,
-  amountOutMinimum,
-  deadline,
-  fee,
-  recipient,
-  sender,
-  sqrtPriceLimitX96,
-  tokenIn,
-  tokenOut,
+  amountIn: _amountIn,
+  amountOutMinimum: _amountOutMinimum,
+  deadline: _deadline,
+  fee: _fee,
+  recipient: _recipient,
+  sender: _sender,
+  sqrtPriceLimitX96: _sqrtPriceLimitX96,
+  tokenIn: _tokenIn,
+  tokenOut: _tokenOut,
 }: ExecuteSwapParams): Promise<{
   amountIn: bigint
   amountOut: bigint
 }> {
-  const { result } = await DexRouterClient.swap_exact_input_single({
-    params: {
-      amount_in: amountIn,
-      amount_out_minimum: amountOutMinimum,
-      deadline: calculateDeadline(deadline),
-      fee: fee,
-      recipient: recipient,
-      sender: sender,
-      sqrt_price_limit_x96: sqrtPriceLimitX96,
-      token_in: tokenIn,
-      token_out: tokenOut,
-    },
-  })
-
-  return handleResult(result as any)
+  // TODO: Implement swap_exact_input_single using Contract class
+  // const { result } = await DexRouterClient.swap_exact_input_single({
+  //   params: {
+  //     amount_in: amountIn,
+  //     amount_out_minimum: amountOutMinimum,
+  //     deadline: calculateDeadline(deadline),
+  //     fee: fee,
+  //     recipient: recipient,
+  //     sender: sender,
+  //     sqrt_price_limit_x96: sqrtPriceLimitX96,
+  //     token_in: tokenIn,
+  //     token_out: tokenOut,
+  //   },
+  // })
+  // return handleResult(result as any)
+  // Placeholder return - needs implementation
+  return { amountIn: _amountIn, amountOut: 0n }
 }
 
 /**
@@ -248,16 +290,17 @@ export async function executeSwap({
  * @param params - Swap parameters
  * @returns The result of the swap
  */
+// TODO: Refactor to use Contract directly instead of Client
 export async function executeSwapExactOutput({
-  amountInMaximum,
-  amountOut,
-  deadline,
-  fee,
-  recipient,
-  sender,
-  sqrtPriceLimitX96,
-  tokenIn,
-  tokenOut,
+  amountInMaximum: _amountInMaximum,
+  amountOut: _amountOut,
+  deadline: _deadline,
+  fee: _fee,
+  recipient: _recipient,
+  sender: _sender,
+  sqrtPriceLimitX96: _sqrtPriceLimitX96,
+  tokenIn: _tokenIn,
+  tokenOut: _tokenOut,
 }: {
   amountInMaximum: bigint
   amountOut: bigint
@@ -272,21 +315,23 @@ export async function executeSwapExactOutput({
   amountIn: bigint
   amountOut: bigint
 }> {
-  const { result } = await DexRouterClient.swap_exact_output_single({
-    params: {
-      amount_in_maximum: amountInMaximum,
-      amount_out: amountOut,
-      deadline: BigInt(deadline),
-      fee: fee,
-      recipient: recipient,
-      sender: sender,
-      sqrt_price_limit_x96: sqrtPriceLimitX96,
-      token_in: tokenIn,
-      token_out: tokenOut,
-    },
-  })
-
-  return handleResult(result as any)
+  // TODO: Implement swap_exact_output_single using Contract class
+  // const { result } = await DexRouterClient.swap_exact_output_single({
+  //   params: {
+  //     amount_in_maximum: amountInMaximum,
+  //     amount_out: amountOut,
+  //     deadline: BigInt(deadline),
+  //     fee: fee,
+  //     recipient: recipient,
+  //     sender: sender,
+  //     sqrt_price_limit_x96: sqrtPriceLimitX96,
+  //     token_in: tokenIn,
+  //     token_out: tokenOut,
+  //   },
+  // })
+  // return handleResult(result as any)
+  // Placeholder return - needs implementation
+  return { amountIn: 0n, amountOut: _amountOut }
 }
 
 /**
@@ -294,14 +339,15 @@ export async function executeSwapExactOutput({
  * @param params - Multi-hop swap parameters
  * @returns The result of the swap
  */
+// TODO: Refactor to use Contract directly instead of Client
 export async function executeSwapExactInputMulti({
-  amountIn,
-  amountOutMinimum,
-  deadline,
-  fees,
-  path,
-  recipient,
-  sender,
+  amountIn: _amountIn,
+  amountOutMinimum: _amountOutMinimum,
+  deadline: _deadline,
+  fees: _fees,
+  path: _path,
+  recipient: _recipient,
+  sender: _sender,
 }: {
   amountIn: bigint
   amountOutMinimum: bigint
@@ -314,19 +360,21 @@ export async function executeSwapExactInputMulti({
   amountIn: bigint
   amountOut: bigint
 }> {
-  const { result } = await DexRouterClient.swap_exact_input({
-    params: {
-      amount_in: amountIn,
-      amount_out_minimum: amountOutMinimum,
-      deadline: BigInt(deadline),
-      fees: fees,
-      path: path,
-      recipient: recipient,
-      sender: sender,
-    },
-  })
-
-  return handleResult(result as any)
+  // TODO: Implement swap_exact_input using Contract class
+  // const { result } = await DexRouterClient.swap_exact_input({
+  //   params: {
+  //     amount_in: amountIn,
+  //     amount_out_minimum: amountOutMinimum,
+  //     deadline: BigInt(deadline),
+  //     fees: fees,
+  //     path: path,
+  //     recipient: recipient,
+  //     sender: sender,
+  //   },
+  // })
+  // return handleResult(result as any)
+  // Placeholder return - needs implementation
+  return { amountIn: _amountIn, amountOut: 0n }
 }
 
 /**
@@ -334,14 +382,15 @@ export async function executeSwapExactInputMulti({
  * @param params - Multi-hop swap parameters
  * @returns The result of the swap
  */
+// TODO: Refactor to use Contract directly instead of Client
 export async function executeSwapExactOutputMulti({
-  amountInMaximum,
-  amountOut,
-  deadline,
-  fees,
-  path,
-  recipient,
-  sender,
+  amountInMaximum: _amountInMaximum,
+  amountOut: _amountOut,
+  deadline: _deadline,
+  fees: _fees,
+  path: _path,
+  recipient: _recipient,
+  sender: _sender,
 }: {
   amountInMaximum: bigint
   amountOut: bigint
@@ -354,19 +403,21 @@ export async function executeSwapExactOutputMulti({
   amountIn: bigint
   amountOut: bigint
 }> {
-  const { result } = await DexRouterClient.swap_exact_output({
-    params: {
-      amount_in_maximum: amountInMaximum,
-      amount_out: amountOut,
-      deadline: BigInt(deadline),
-      fees: fees,
-      path: path,
-      recipient: recipient,
-      sender: sender,
-    },
-  })
-
-  return handleResult(result as any)
+  // TODO: Implement swap_exact_output using Contract class
+  // const { result } = await DexRouterClient.swap_exact_output({
+  //   params: {
+  //     amount_in_maximum: amountInMaximum,
+  //     amount_out: amountOut,
+  //     deadline: BigInt(deadline),
+  //     fees: fees,
+  //     path: path,
+  //     recipient: recipient,
+  //     sender: sender,
+  //   },
+  // })
+  // return handleResult(result as any)
+  // Placeholder return - needs implementation
+  return { amountIn: 0n, amountOut: _amountOut }
 }
 
 /**

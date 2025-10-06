@@ -65,9 +65,28 @@ export const SimpleSwapToken0Input = () => {
   }, [isQuoteError, quoteError, setError])
 
   useEffect(() => {
-    if (isQuoteSuccess) {
-      setOutputAmount(BigInt(Math.abs(Number(quoteAmount))))
-      setSlippageAmount(Math.abs(Number(quoteAmount)))
+    if (isQuoteSuccess && quoteAmount) {
+      try {
+        const amountBigInt =
+          typeof quoteAmount === 'bigint' ? quoteAmount : BigInt(quoteAmount)
+        const absAmountBigInt = amountBigInt < 0n ? -amountBigInt : amountBigInt
+
+        setOutputAmount(absAmountBigInt)
+
+        if (absAmountBigInt <= BigInt(Number.MAX_SAFE_INTEGER)) {
+          setSlippageAmount(Number(absAmountBigInt))
+        } else {
+          console.warn(
+            'Quote exceeds safe numeric range:',
+            absAmountBigInt.toString(),
+          )
+          setSlippageAmount(0)
+        }
+      } catch {
+        console.warn('Invalid quote amount:', quoteAmount)
+        setOutputAmount(0n)
+        setSlippageAmount(0)
+      }
     }
   }, [isQuoteSuccess, quoteAmount, setOutputAmount, setSlippageAmount])
 

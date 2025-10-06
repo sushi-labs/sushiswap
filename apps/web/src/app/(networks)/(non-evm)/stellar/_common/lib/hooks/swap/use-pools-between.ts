@@ -14,10 +14,17 @@ export const usePoolsBetween = (params: UsePoolsBetweenParams) => {
   const service = createSushiStellarService()
 
   return useQuery({
-    queryKey: ['swap', 'poolsBetween', params.tokenA.contract, params.tokenB.contract],
+    queryKey: [
+      'swap',
+      'poolsBetween',
+      params.tokenA.contract,
+      params.tokenB.contract,
+    ],
     queryFn: async () => {
       const pools = await service.getPoolsBetween(params.tokenA, params.tokenB)
-      console.log(`Found ${pools.length} pools between ${params.tokenA.code} and ${params.tokenB.code}`)
+      console.log(
+        `Found ${pools.length} pools between ${params.tokenA.code} and ${params.tokenB.code}`,
+      )
       return pools
     },
     enabled: params.enabled !== false,

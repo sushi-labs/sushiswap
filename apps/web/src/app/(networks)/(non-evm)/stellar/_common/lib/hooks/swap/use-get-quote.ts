@@ -15,14 +15,24 @@ export const useGetQuote = (params: UseGetQuoteParams) => {
   const service = createSushiStellarService()
 
   return useQuery({
-    queryKey: ['swap', 'quote', params.tokenIn.contract, params.tokenOut.contract, params.amountIn.toString()],
+    queryKey: [
+      'swap',
+      'quote',
+      params.tokenIn.contract,
+      params.tokenOut.contract,
+      params.amountIn.toString(),
+    ],
     queryFn: async () => {
-      const route = await service.findBestRoute(params.tokenIn, params.tokenOut, params.amountIn)
+      const route = await service.findBestRoute(
+        params.tokenIn,
+        params.tokenOut,
+        params.amountIn,
+      )
       if (route) {
         console.log('Quote received:', {
           amountOut: route.amountOut,
           route: service.formatRoute(route),
-          priceImpact: route.priceImpact
+          priceImpact: route.priceImpact,
         })
       }
       return route

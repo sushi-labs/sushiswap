@@ -15,7 +15,7 @@ export interface ExecuteSwapParams {
   tokenOut: string
 }
 
-export const useExecuteSwap = () => {
+export const useRouterExecuteSwap = () => {
   return useMutation({
     mutationKey: ['router', 'executeSwap'],
     mutationFn: async (params: ExecuteSwapParams) => {

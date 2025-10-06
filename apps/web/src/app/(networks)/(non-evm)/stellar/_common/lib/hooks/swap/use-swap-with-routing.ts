@@ -1,6 +1,7 @@
 'use client'
 
 import { useMutation } from '@tanstack/react-query'
+import { useStellarWallet } from '~stellar/providers'
 import { createSushiStellarService } from '../../services/sushi-stellar-service'
 import type { Token } from '../../types/token.type'
 
@@ -13,6 +14,7 @@ export interface UseSwapWithRoutingParams {
 }
 
 export const useSwapWithRouting = () => {
+  const { signTransaction } = useStellarWallet()
   const service = createSushiStellarService()
 
   return useMutation({
@@ -23,7 +25,8 @@ export const useSwapWithRouting = () => {
         params.tokenIn,
         params.tokenOut,
         params.amountIn,
-        params.slippage || 0.005
+        signTransaction,
+        params.slippage || 0.005,
       )
     },
     onSuccess: (result) => {

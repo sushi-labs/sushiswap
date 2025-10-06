@@ -1,21 +1,26 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import * as StellarSdk from '@stellar/stellar-sdk'
 import {
+  Account,
   Address,
+  Horizon,
   Operation,
   TransactionBuilder,
   xdr,
 } from '@stellar/stellar-sdk'
-import { Client } from '@stellar/stellar-sdk'
-import { CONTRACT_ADDRESSES } from './contract-addresses'
 import { NETWORK_PASSPHRASE, RPC_URL } from '../constants'
 import type { PoolInfo, PoolLiquidity, PoolReserves } from '../types/pool.type'
 import type { Token } from '../types/token.type'
 import { formatTokenAmount } from '../utils/formatters'
 import { SorobanClient } from './client'
 import { DEFAULT_TIMEOUT, SIMULATION_ACCOUNT } from './constants'
-import { CONTRACT_ADDRESSES, getPoolConfig } from './contract-addresses'
+import {
+  CONTRACT_ADDRESSES,
+  NETWORK_CONFIG,
+  getPoolConfig,
+} from './contract-addresses'
 import { handleResult } from './handle-result'
-import { getTokenBalance } from './token-helpers'
+import { getTokenBalance, getTokenByCode } from './token-helpers'
 import {
   buildTransaction,
   submitTransaction,
@@ -34,13 +39,25 @@ export interface PoolBasicInfo {
  * @returns Array of pool information with actual liquidity and reserves
  */
 export async function getAllPools(): Promise<PoolInfo[]> {
-  // const pools = await getPoolsForBaseTokenPairs()
-  const pools = Object.values(CONTRACT_ADDRESSES.POOLS)
-  const poolPromises = pools.map((address) => {
-    return getPoolInfo(address)
-  })
+  console.log('getAllPools called')
+  try {
+    // const pools = await getPoolsForBaseTokenPairs()
+    const pools = Object.values(CONTRACT_ADDRESSES.POOLS)
+    console.log('Pool addresses:', pools)
+    const poolPromises = pools.map((address) => {
+      return getPoolInfo(address).catch((error) => {
+        console.error(`Error getting pool info for ${address}:`, error)
+        return null
+      })
+    })
 
-  return (await Promise.all(poolPromises)).filter((pool) => pool !== null)
+    const results = await Promise.all(poolPromises)
+    console.log('Pool results:', results)
+    return results.filter((pool) => pool !== null)
+  } catch (error) {
+    console.error('Error in getAllPools:', error)
+    return []
+  }
 }
 
 /**
@@ -49,14 +66,26 @@ export async function getAllPools(): Promise<PoolInfo[]> {
  * @returns Complete pool information with all fields populated
  */
 export async function getPoolInfo(address: string): Promise<PoolInfo | null> {
-  const config = getPoolConfig(address)
-  if (!config || !config.token0 || !config.token1) {
-    throw new Error(`No configuration found for pool: ${address}`)
-  }
-
-  const { token0, token1 } = config
-
+  console.log(`getPoolInfo called for ${address}`)
   try {
+    const config = getPoolConfig(address)
+    if (!config) {
+      console.error(`No configuration found for pool: ${address}`)
+      throw new Error(`No configuration found for pool: ${address}`)
+    }
+
+    console.log(`Pool config for ${address}:`, config)
+
+    const token0 = getTokenByCode(config.token0.code)
+    const token1 = getTokenByCode(config.token1.code)
+
+    console.log(`Tokens for ${address}:`, { token0, token1 })
+
+    if (!token0 || !token1) {
+      console.error(`Token configuration not found for pool: ${address}`)
+      throw new Error(`Token configuration not found for pool: ${address}`)
+    }
+
     // Fetch liquidity and reserves
     const [liquidity, reserves] = await Promise.all([
       fetchPoolLiquidity(address),
@@ -169,11 +198,16 @@ export async function fetchPoolReserves(
 ): Promise<PoolReserves | null> {
   try {
     const config = getPoolConfig(address)
-    if (!config || !config.token0 || !config.token1) {
+    if (!config) {
       throw new Error(`No configuration found for pool: ${address}`)
     }
 
-    const { token0, token1 } = config
+    const token0 = getTokenByCode(config.token0.code)
+    const token1 = getTokenByCode(config.token1.code)
+
+    if (!token0 || !token1) {
+      throw new Error(`Token configuration not found for pool: ${address}`)
+    }
 
     // Fetch token balances using token-helpers
     // Get the balance of the pool address for each token
@@ -223,10 +257,16 @@ export async function getPoolBalances(
   connectedAddress: string,
 ): Promise<PoolReserves | null> {
   const config = getPoolConfig(address)
-  if (!config || !config.token0 || !config.token1) {
+  if (!config) {
     throw new Error(`No configuration found for pool: ${address}`)
   }
-  const { token0, token1 } = config
+
+  const token0 = getTokenByCode(config.token0.code)
+  const token1 = getTokenByCode(config.token1.code)
+
+  if (!token0 || !token1) {
+    throw new Error(`Token configuration not found for pool: ${address}`)
+  }
 
   const [balance0, balance1] = await Promise.all([
     getTokenBalance(connectedAddress, token0.contract),
@@ -248,7 +288,8 @@ export async function getPoolBalances(
 }
 
 /**
- * Add liquidity to a pool - simplified single function
+ * Add liquidity to a pool (exactly like stellar-auth-test)
+ * Uses proper transaction preparation with authorization
  * @param params - Add liquidity parameters including signer
  * @returns Transaction result
  */
@@ -305,6 +346,11 @@ export async function addLiquidity({
   const lo = liquidityBigInt & ((BigInt(1) << BigInt(64)) - BigInt(1)) // Lower 64 bits
   const hi = liquidityBigInt >> BigInt(64) // Upper 64 bits
 
+  console.log(`💧 Adding liquidity with ${liquidityAmount} units`)
+  console.log(
+    'No approvals needed — your signature authorizes pool.mint() to pull tokens.',
+  )
+
   // Build the transaction
   const operation = Operation.invokeContractFunction({
     contract: address,
@@ -322,25 +368,90 @@ export async function addLiquidity({
     ],
   })
 
-  const transaction = await buildTransaction(sourceAccount, operation)
+  // Load account from Horizon
+  const horizon = new Horizon.Server(NETWORK_CONFIG.HORIZON_URL)
+  const account = await horizon.loadAccount(sourceAccount)
+
+  // Build transaction
+  const transaction = new TransactionBuilder(account, {
+    fee: '100000',
+    networkPassphrase: NETWORK_PASSPHRASE,
+  })
+    .addOperation(operation)
+    .setTimeout(180)
+    .build()
+
+  console.log(
+    'Transaction type:',
+    typeof transaction,
+    transaction.constructor.name,
+  )
+  console.log('Transaction has toXDR:', typeof transaction.toXDR)
+  console.log('Simulating transaction to calculate resources and auth...')
+
+  const sorobanServer = new StellarSdk.rpc.Server(RPC_URL)
+
+  let prepared
+  try {
+    console.log('About to call prepareTransaction...')
+    prepared = await sorobanServer.prepareTransaction(transaction)
+    console.log('prepareTransaction succeeded')
+  } catch (error) {
+    console.error('prepareTransaction failed:', error)
+    if (error instanceof Error) {
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+      })
+    }
+    throw error
+  }
+
+  console.log('Transaction prepared. Waiting for wallet signature...')
+  console.log('Prepared transaction for mint')
+
+  // Debug: Check if auth entries were added
+  const preparedOps = prepared.operations
+  console.log('Number of operations after prepare:', preparedOps.length)
+  if (preparedOps.length > 0) {
+    const op = preparedOps[0] as any
+    if (op.type === 'invokeHostFunction' && op.auth) {
+      console.log('Auth entries found:', op.auth.length)
+    } else {
+      console.log('No auth entries found in prepared transaction')
+    }
+  }
 
   // Convert to XDR for signing
-  const transactionXdr = transaction.toXDR()
+  const transactionXdr = prepared.toXDR()
 
-  console.log({ transactionXdr })
+  console.log('Transaction XDR:', { transactionXdr })
 
   // Sign the transaction
   const signedXdr = await signTransaction(transactionXdr)
 
+  console.log('Transaction signed. Submitting to network...')
+
   // Submit the transaction
   const result = await submitTransaction(signedXdr)
 
-  // Wait for confirmation
-  await waitForTransaction(result.hash)
+  console.log(`Transaction submitted: ${result.hash}`)
+  console.log('Waiting for confirmation...')
 
-  return {
-    hash: result.hash,
-    result: result.result,
+  // Wait for confirmation
+  const txResult = await waitForTransaction(result.hash)
+
+  if (txResult.status === 'SUCCESS') {
+    console.log('✅ Transaction confirmed!')
+    console.log('🎉 Liquidity added!')
+    return {
+      hash: result.hash,
+      result: txResult,
+    }
+  } else {
+    console.error('Transaction failed:', txResult)
+    throw new Error(`Transaction failed: ${JSON.stringify(txResult)}`)
   }
 }
 
@@ -554,20 +665,26 @@ export async function testPoolReserves(poolAddress: string) {
     console.log(`💧 Pool Liquidity:`, liquidity)
     console.log(`💰 Pool Reserves:`, reserves)
 
-    if (liquidity && reserves && config.token0 && config.token1) {
-      // Calculate total value locked (simplified)
-      const token0Amount =
-        Number(reserves.token0.amount) / 10 ** config.token0.decimals
-      const token1Amount =
-        Number(reserves.token1.amount) / 10 ** config.token1.decimals
+    if (liquidity && reserves) {
+      const token0 = getTokenByCode(config.token0.code)
+      const token1 = getTokenByCode(config.token1.code)
 
-      console.log(`📊 Reserve Breakdown:`)
-      console.log(
-        `  ${config.token0.code}: ${token0Amount.toFixed(6)} (${reserves.token0.formatted})`,
-      )
-      console.log(
-        `  ${config.token1.code}: ${token1Amount.toFixed(6)} (${reserves.token1.formatted})`,
-      )
+      let token0Amount = 0
+      let token1Amount = 0
+
+      if (token0 && token1) {
+        // Calculate total value locked (simplified)
+        token0Amount = Number(reserves.token0.amount) / 10 ** token0.decimals
+        token1Amount = Number(reserves.token1.amount) / 10 ** token1.decimals
+
+        console.log(`📊 Reserve Breakdown:`)
+        console.log(
+          `  ${token0.code}: ${token0Amount.toFixed(6)} (${reserves.token0.formatted})`,
+        )
+        console.log(
+          `  ${token1.code}: ${token1Amount.toFixed(6)} (${reserves.token1.formatted})`,
+        )
+      }
       console.log(`  Total Liquidity: ${liquidity.formatted}`)
 
       return {
@@ -673,11 +790,12 @@ export async function runPoolReservesTest() {
     let token0Amount = 0
     let token1Amount = 0
 
-    if (config.token0 && config.token1) {
-      token0Amount =
-        Number(reserves.token0.amount) / 10 ** config.token0.decimals
-      token1Amount =
-        Number(reserves.token1.amount) / 10 ** config.token1.decimals
+    const test4Token0 = getTokenByCode(config.token0.code)
+    const test4Token1 = getTokenByCode(config.token1.code)
+
+    if (test4Token0 && test4Token1) {
+      token0Amount = Number(reserves.token0.amount) / 10 ** test4Token0.decimals
+      token1Amount = Number(reserves.token1.amount) / 10 ** test4Token1.decimals
 
       console.log('✅ Reserve breakdown calculated:')
       console.log(
@@ -730,7 +848,10 @@ export async function debugTokenBalance() {
     console.log('Token0:', config.token0)
     console.log('Token1:', config.token1)
 
-    if (!config.token0 || !config.token1) {
+    const testToken0 = getTokenByCode(config.token0.code)
+    const testToken1 = getTokenByCode(config.token1.code)
+
+    if (!testToken0 || !testToken1) {
       console.error('❌ Token configuration missing')
       return
     }
@@ -738,21 +859,21 @@ export async function debugTokenBalance() {
     // Step 3: Test token balance for XLM (should be easier to test)
     console.log('\n💰 Step 3: Testing XLM Balance')
     console.log('Pool address:', HYPEA_XLM_POOL)
-    console.log('XLM token contract:', config.token1.contract)
+    console.log('XLM token contract:', testToken1.contract)
 
     const xlmBalance = await getTokenBalance(
       HYPEA_XLM_POOL,
-      config.token1.contract,
+      testToken1.contract,
     )
     console.log('XLM Balance result:', xlmBalance)
 
     // Step 4: Test token balance for HYPEa
     console.log('\n🪙 Step 4: Testing HYPEa Balance')
-    console.log('HYPEa token contract:', config.token0.contract)
+    console.log('HYPEa token contract:', testToken0.contract)
 
     const hypeaBalance = await getTokenBalance(
       HYPEA_XLM_POOL,
-      config.token0.contract,
+      testToken0.contract,
     )
     console.log('HYPEa Balance result:', hypeaBalance)
 
@@ -783,21 +904,96 @@ export function calculatePriceFromTick(tick: number): number {
 }
 
 /**
- * Get current sqrt price from pool
+ * Get current sqrt price from pool (exactly like stellar-auth-test)
  * @param poolAddress - The pool contract address
  * @returns Current sqrt price as BigInt
  */
 async function getCurrentSqrtPrice(poolAddress: string): Promise<bigint> {
   try {
-    // For now, return a default price (1:1 ratio)
-    // In a real implementation, you would call the contract to get the current price
-    console.log('Using default sqrt price for pool:', poolAddress)
-    return BigInt('79228162514264337593543950336') // sqrt(1) * 2^96
+    const simulationAccount = new Account(
+      'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF',
+      '0',
+    )
+    const getSlot0Op = Operation.invokeContractFunction({
+      contract: poolAddress,
+      function: 'slot0',
+      args: [],
+    })
+
+    const tx = new TransactionBuilder(simulationAccount, {
+      fee: '100',
+      networkPassphrase: NETWORK_PASSPHRASE,
+    })
+      .addOperation(getSlot0Op)
+      .setTimeout(30)
+      .build()
+
+    const request = {
+      jsonrpc: '2.0',
+      id: Date.now(),
+      method: 'simulateTransaction',
+      params: { transaction: tx.toXDR() },
+    }
+
+    const response = await fetch(RPC_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    })
+
+    const result = await response.json()
+    if (result.result?.results?.[0]) {
+      const slot0Val = xdr.ScVal.fromXDR(result.result.results[0].xdr, 'base64')
+      const slot0Map = scMapToObject(slot0Val)
+
+      console.log('slot0Map:', slot0Map)
+      console.log('Raw slot0 result:', result.result.results[0])
+
+      // Try to get sqrt_price_x96 directly
+      if (slot0Map.sqrt_price_x96) {
+        const u256Val = slot0Map.sqrt_price_x96
+        if (u256Val && typeof u256Val.u256 === 'function') {
+          const parts = u256Val.u256()
+
+          // Access _attributes directly (camelCase properties) - exactly like stellar-auth-test
+          const attrs = parts._attributes || parts
+          const hiHi = BigInt(attrs.hiHi || '0')
+          const hiLo = BigInt(attrs.hiLo || '0')
+          const loHi = BigInt(attrs.loHi || '0')
+          const loLo = BigInt(attrs.loLo || '0')
+
+          const sqrtPrice =
+            (hiHi << 192n) | (hiLo << 128n) | (loHi << 64n) | loLo
+          console.log('Fetched sqrt price from slot0:', sqrtPrice.toString())
+          return sqrtPrice
+        }
+      }
+
+      // Fallback: if sqrt_price_x96 parsing failed, use tick to calculate it
+      if (slot0Map.tick !== undefined) {
+        const tickVal = slot0Map.tick
+        const tick =
+          typeof tickVal.i32 === 'function' ? tickVal.i32() : Number(tickVal)
+        const calculatedSqrtPrice = tickToSqrtPrice(tick)
+        console.log(
+          `Using sqrt price calculated from tick ${tick}:`,
+          calculatedSqrtPrice.toString(),
+        )
+        return calculatedSqrtPrice
+      }
+    }
   } catch (error) {
-    console.error('Error getting current sqrt price:', error)
-    // Return a default price (1:1 ratio)
-    return BigInt('79228162514264337593543950336') // sqrt(1) * 2^96
+    console.error('Failed to fetch sqrt price from pool:', error)
+    console.error(
+      'Error details:',
+      error instanceof Error ? error.message : String(error),
+      error instanceof Error ? error.stack : '',
+    )
   }
+
+  throw new Error(
+    'Could not fetch current price from pool. Please make sure a pool is selected.',
+  )
 }
 
 /**
@@ -810,6 +1006,10 @@ function tickToSqrtPrice(tick: number): bigint {
   return BigInt(Math.floor(sqrtPrice * 2 ** 96))
 }
 
+/**
+ * Calculate liquidity from desired token amounts using Uniswap V3 formulas
+ * Based on the working stellar-auth-test implementation
+ */
 async function calculateLiquidityFromAmounts(
   poolAddress: string,
   desiredAmount0: number,
@@ -817,19 +1017,54 @@ async function calculateLiquidityFromAmounts(
   tickLower: number,
   tickUpper: number,
 ): Promise<string> {
+  console.log('=== calculateLiquidityFromAmounts START ===')
+  console.log('Input params:', {
+    poolAddress,
+    desiredAmount0,
+    desiredAmount1,
+    tickLower,
+    tickUpper,
+  })
+
   try {
     // Get current sqrt price from pool using helper
+    console.log('Fetching current sqrt price from pool...')
     const currentSqrtPriceX96 = await getCurrentSqrtPrice(poolAddress)
+    console.log('Fetched currentSqrtPriceX96:', currentSqrtPriceX96.toString())
 
+    // Calculate sqrt prices for tick boundaries
     const sqrtPriceLowerX96 = tickToSqrtPrice(tickLower)
     const sqrtPriceUpperX96 = tickToSqrtPrice(tickUpper)
+    console.log('Calculated sqrt prices:', {
+      lower: sqrtPriceLowerX96.toString(),
+      upper: sqrtPriceUpperX96.toString(),
+      current: currentSqrtPriceX96.toString(),
+    })
+
+    // Determine price position
+    let pricePosition = 'within'
+    if (currentSqrtPriceX96 < sqrtPriceLowerX96) {
+      pricePosition = 'below'
+      console.log('Price is BELOW range')
+    } else if (currentSqrtPriceX96 >= sqrtPriceUpperX96) {
+      pricePosition = 'above'
+      console.log('Price is ABOVE range')
+    } else {
+      console.log('Price is WITHIN range')
+    }
 
     // Scale desired amounts to contract units (Stellar uses 7 decimals)
     const scaledAmount0 = BigInt(Math.floor(desiredAmount0 * 1e7))
+    console.log('Scaling amounts:', {
+      desiredAmount0,
+      scaledAmount0: scaledAmount0.toString(),
+      calculation: `${desiredAmount0} * 1e7 = ${scaledAmount0}`,
+    })
 
     // Calculate liquidity from token0 amount only
     // This ensures the user gets exactly the token0 amount they requested
     // The contract will then calculate the exact token1 amount needed
+    console.log('Calling calculateLiquidityFromAmount0...')
     const liquidity = calculateLiquidityFromAmount0(
       scaledAmount0,
       currentSqrtPriceX96,
@@ -842,27 +1077,42 @@ async function calculateLiquidityFromAmounts(
       scaledAmount0: scaledAmount0.toString(),
       currentSqrtPrice: currentSqrtPriceX96.toString(),
       liquidity: liquidity.toString(),
+      pricePosition,
     })
 
+    console.log('=== calculateLiquidityFromAmounts END ===')
     // Convert to string for contract call
     return liquidity.toString()
   } catch (error) {
     console.error('Error calculating liquidity:', error)
+    console.error('Error stack:', error instanceof Error ? error.stack : '')
     // Fallback to a simple calculation
     const avgAmount = Math.sqrt(desiredAmount0 * desiredAmount1)
-    return Math.floor(avgAmount * 1e7).toString()
+    const fallback = Math.floor(avgAmount * 1e7).toString()
+    console.log('Using fallback calculation:', fallback)
+    return fallback
   }
 }
 
-// Helper function to calculate liquidity from token0 amount
-// Note: The contract rounds UP when calculating amounts, which can increase the amount by ~1-2 units per division
-// We need to account for this by reducing our liquidity request slightly
+/**
+ * Calculate liquidity from token0 amount (exactly like stellar-auth-test)
+ * Note: The contract rounds UP when calculating amounts, which can increase the amount by ~1-2 units per division
+ * We need to account for this by reducing our liquidity request slightly
+ */
 function calculateLiquidityFromAmount0(
   scaledAmount0: bigint,
   currentSqrtPriceX96: bigint,
   sqrtPriceLowerX96: bigint,
   sqrtPriceUpperX96: bigint,
 ): bigint {
+  console.log('=== calculateLiquidityFromAmount0 START ===')
+  console.log('Input params:', {
+    scaledAmount0: scaledAmount0.toString(),
+    currentSqrtPriceX96: currentSqrtPriceX96.toString(),
+    sqrtPriceLowerX96: sqrtPriceLowerX96.toString(),
+    sqrtPriceUpperX96: sqrtPriceUpperX96.toString(),
+  })
+
   // The contract does two operations with rounding up:
   // 1. product = mul_div_rounding_up(L << 96, price_diff, upper)
   // 2. amount = div_rounding_up(product, lower_or_current)
@@ -870,18 +1120,33 @@ function calculateLiquidityFromAmount0(
   // But in practice with large numbers, it's proportional to the divisions
 
   if (currentSqrtPriceX96 < sqrtPriceLowerX96) {
+    console.log('Price is BELOW range - only token0 needed')
     // Below range
     // Work backwards from: amount0 = ((L << 96) * (upper - lower) / upper) / lower
     // Without rounding: L = (amount0 * lower * upper) / ((upper - lower) * 2^96)
     const numerator = scaledAmount0 * sqrtPriceLowerX96 * sqrtPriceUpperX96
     const denominator = (sqrtPriceUpperX96 - sqrtPriceLowerX96) << BigInt(96)
+    console.log('Calculation:', {
+      numerator: numerator.toString(),
+      denominator: denominator.toString(),
+      rawLiquidity: (numerator / denominator).toString(),
+    })
     // Reduce liquidity by ~0.2% to account for rounding up (empirical adjustment)
     const liquidity = numerator / denominator
-    return (liquidity * BigInt(998)) / BigInt(1000) // Reduce by 0.2%
+    const adjustedLiquidity = (liquidity * BigInt(998)) / BigInt(1000) // Reduce by 0.2%
+    console.log(
+      'Adjusted liquidity (reduced by 0.2%):',
+      adjustedLiquidity.toString(),
+    )
+    console.log('=== calculateLiquidityFromAmount0 END ===')
+    return adjustedLiquidity
   } else if (currentSqrtPriceX96 >= sqrtPriceUpperX96) {
+    console.log('Price is ABOVE range - only token1 needed, returning 0')
+    console.log('=== calculateLiquidityFromAmount0 END ===')
     // Above range: only token1 needed, return 0
     return BigInt(0)
   } else {
+    console.log('Price is WITHIN range')
     // Within range
     // Contract does: product = (L << 96) * (upper - current) / upper, then amount0 = product / current
     // Reverse step 2: product = amount0 * current
@@ -889,6 +1154,43 @@ function calculateLiquidityFromAmount0(
     // Combined: L = (amount0 * current * upper) / ((upper - current) << 96)
     const numerator = scaledAmount0 * currentSqrtPriceX96 * sqrtPriceUpperX96
     const denominator = (sqrtPriceUpperX96 - currentSqrtPriceX96) << BigInt(96)
-    return numerator / denominator
+    const liquidity = numerator / denominator
+    console.log('Calculation:', {
+      numerator: numerator.toString(),
+      denominator: denominator.toString(),
+      liquidity: liquidity.toString(),
+    })
+    console.log('=== calculateLiquidityFromAmount0 END ===')
+    return liquidity
   }
+}
+
+/**
+ * Convert SCVal map to object (exactly like stellar-auth-test)
+ */
+function scMapToObject(scVal: any): any {
+  if (!scVal || typeof scVal.map !== 'function') {
+    return {}
+  }
+  const entries = scVal.map()
+  const result: any = {}
+  entries.forEach((entry: any) => {
+    const keyVal = entry.key()
+    let key = 'unknown'
+    if (keyVal && typeof keyVal.sym === 'function') {
+      key = scSymbolToString(keyVal.sym())
+    }
+    result[key] = entry.val()
+  })
+  return result
+}
+
+/**
+ * Convert SC symbol to string (exactly like stellar-auth-test)
+ */
+function scSymbolToString(symbol: any): string {
+  if (!symbol) return ''
+  const raw = symbol.toString()
+  const match = raw.match(/Symbol\((.*)\)/)
+  return match ? match[1] : raw
 }

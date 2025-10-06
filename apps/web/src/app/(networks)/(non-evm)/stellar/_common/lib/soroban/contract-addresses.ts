@@ -62,14 +62,8 @@ export function getPoolConfig(poolAddress: string) {
     return null
   }
 
-  const token0 = getTokenByCode(config.token0.code)
-  const token1 = getTokenByCode(config.token1.code)
-
-  return {
-    ...config,
-    token0,
-    token1,
-  }
+  // Return the config with address and code, token objects will be resolved by the caller
+  return config
 }
 
 /**

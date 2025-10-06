@@ -5,9 +5,9 @@ import {
   xdr,
 } from '@stellar/stellar-sdk'
 import { NETWORK_PASSPHRASE, RPC_URL } from '../constants'
-import { CONTRACT_ADDRESSES } from './contract-addresses'
 import { SorobanClient } from './client'
 import { SIMULATION_ACCOUNT, ZERO_ADDRESS } from './constants'
+import { CONTRACT_ADDRESSES } from './contract-addresses'
 import { handleResult } from './handle-result'
 import { getBaseTokens } from './token-helpers'
 
@@ -29,7 +29,7 @@ export async function createPool({
 }): Promise<string> {
   try {
     const factory = new Contract(CONTRACT_ADDRESSES.FACTORY)
-    
+
     // Build transaction
     const tx = new TransactionBuilder(SIMULATION_ACCOUNT, {
       fee: '100000',
@@ -51,9 +51,11 @@ export async function createPool({
 
     if ('result' in simResult && simResult.result) {
       const result = simResult.result as any
-      if (result.results?.[0]) {
+      // Parse from retval, not results[0].xdr
+      const returnVal = result.retval
+      if (returnVal) {
         const poolAddress = Address.fromScVal(
-          xdr.ScVal.fromXDR(result.results[0].xdr, 'base64'),
+          xdr.ScVal.fromXDR(returnVal, 'base64'),
         )
         return poolAddress.toString()
       }
@@ -267,7 +269,7 @@ export async function enableFeeAmount({
 }): Promise<void> {
   try {
     const factory = new Contract(CONTRACT_ADDRESSES.FACTORY)
-    
+
     // Build transaction
     const tx = new TransactionBuilder(SIMULATION_ACCOUNT, {
       fee: '100000',

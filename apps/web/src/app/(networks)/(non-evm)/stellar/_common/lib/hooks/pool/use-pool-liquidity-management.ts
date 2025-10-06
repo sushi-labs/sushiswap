@@ -2,19 +2,8 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import {
-  addLiquidity,
-  removeLiquidity,
-} from '~stellar/_common/lib/soroban/pool-helpers'
+import { removeLiquidity } from '~stellar/_common/lib/soroban/pool-helpers'
 import { useStellarWallet } from '~stellar/providers'
-
-export interface AddPoolLiquidityParams {
-  address: string
-  recipient: string
-  tickLower: number
-  tickUpper: number
-  amount: bigint
-}
 
 export interface RemovePoolLiquidityParams {
   address: string
@@ -22,59 +11,6 @@ export interface RemovePoolLiquidityParams {
   amount0Min: bigint
   amount1Min: bigint
   recipient: string
-}
-
-export const useAddLiquidity = () => {
-  const { signTransaction, connectedAddress } = useStellarWallet()
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationKey: ['pool', 'addLiquidity'],
-    mutationFn: async (params: AddPoolLiquidityParams) => {
-      if (!connectedAddress) {
-        throw new Error('Wallet not connected')
-      }
-
-      return await addLiquidity({
-        ...params,
-        sourceAccount: connectedAddress,
-        signTransaction,
-      })
-    },
-    onSuccess: (result, variables) => {
-      console.log('Liquidity added successfully:', result)
-
-      // Show success toast
-      createToast({
-        account: connectedAddress || undefined,
-        type: 'mint',
-        chainId: 1, // Stellar testnet
-        txHash: result.hash,
-        promise: Promise.resolve(result),
-        summary: {
-          pending: 'Adding liquidity...',
-          completed: 'Liquidity added successfully',
-          failed: 'Failed to add liquidity',
-        },
-        groupTimestamp: Date.now(),
-        timestamp: Date.now(),
-      })
-
-      // Invalidate and refetch pool balances
-      queryClient.invalidateQueries({
-        queryKey: ['pool', 'balances', variables.address, connectedAddress],
-      })
-
-      // Invalidate pool info to refresh reserves
-      queryClient.invalidateQueries({
-        queryKey: ['pool', 'info', variables.address],
-      })
-    },
-    onError: (error) => {
-      console.error('Failed to add liquidity:', error)
-      createErrorToast(error.message || 'Failed to add liquidity', false)
-    },
-  })
 }
 
 export const useRemoveLiquidity = () => {

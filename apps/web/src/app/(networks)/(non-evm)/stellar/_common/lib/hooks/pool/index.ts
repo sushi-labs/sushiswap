@@ -6,5 +6,8 @@
  */
 
 export * from './use-pool-liquidity'
-export * from './use-pool-liquidity-management'
+export {
+  useRemoveLiquidity,
+  type RemovePoolLiquidityParams,
+} from './use-pool-liquidity-management'
 export * from './use-pool-info'
