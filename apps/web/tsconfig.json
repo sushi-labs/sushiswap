@@ -1,41 +1,36 @@
 {
-  "compilerOptions": {
-    "baseUrl": ".",
-    "target": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "paths": {
-      "~aptos/*": ["src/app/(networks)/(non-evm)/aptos/*"],
-      "~tron/*": ["src/app/(networks)/(non-evm)/tron/*"],
-      "~evm/*": ["src/app/(networks)/(evm)/*"],
-    },
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
-  },
-  "include": [
-    "next-env.d.ts",
-    "**/*.png",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": ["node_modules"],
-  "paths": {
-    "~web/*": ["./src/*"],
-    "~test/*": ["./test/*"]
-  }
+	"compilerOptions": {
+		"baseUrl": ".",
+		"target": "ESNext",
+		"lib": ["DOM", "DOM.Iterable", "ESNext"],
+		"paths": {
+			"~aptos/*": ["src/app/(networks)/(non-evm)/aptos/*"],
+			"~tron/*": ["src/app/(networks)/(non-evm)/tron/*"],
+			"~kadena/*": ["src/app/(networks)/(non-evm)/kadena/*"],
+			"~evm/*": ["src/app/(networks)/(evm)/*"]
+		},
+		"allowJs": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"noEmit": true,
+		"esModuleInterop": true,
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"jsx": "preserve",
+		"incremental": true,
+		"plugins": [
+			{
+				"name": "next"
+			}
+		]
+	},
+	"include": ["next-env.d.ts", "**/*.png", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+	"exclude": ["node_modules"],
+	"paths": {
+		"~web/*": ["./src/*"],
+		"~test/*": ["./test/*"]
+	}
 }

@@ -9,7 +9,7 @@ import {
   type SushiSwapV2ChainId,
   SushiSwapV2Pool,
   sushiSwapV2FactoryAbi_feeTo,
-  uniswapV2PairAbi_kLast,
+  sushiSwapV2PairAbi_kLast,
 } from 'sushi/evm'
 import { zeroAddress } from 'viem'
 import { useReadContracts } from 'wagmi'
@@ -41,7 +41,7 @@ export const useUnderlyingTokenBalanceFromPool: UseUnderlyingTokenBalanceFromPai
         },
         {
           address: totalSupply?.currency.address,
-          abi: uniswapV2PairAbi_kLast,
+          abi: sushiSwapV2PairAbi_kLast,
           functionName: 'kLast',
           chainId: totalSupply?.currency?.chainId,
         },
