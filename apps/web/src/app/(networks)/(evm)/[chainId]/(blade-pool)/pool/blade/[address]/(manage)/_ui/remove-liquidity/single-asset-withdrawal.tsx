@@ -162,7 +162,9 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
   return (
     <div className="space-y-3">
       <List.Control>
-        <div className="text-sm text-gray-600 pt-3 px-3">You will receive:</div>
+        <div className="text-sm text-muted-foreground pt-3 px-3">
+          You will receive:
+        </div>
         <List.Item
           as="div"
           className="justify-between"
