@@ -13,8 +13,8 @@ import {
 } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
 import { DialogContent, classNames } from '@sushiswap/ui'
-import { useState } from 'react'
-import { ChainId, formatPercent } from 'sushi'
+import { useEffect, useRef, useState } from 'react'
+import { Amount, ChainId, formatPercent } from 'sushi'
 import { WalletConnector } from '~kadena/_common/ui/WalletConnector/WalletConnector'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { ReviewSwapDialogTrigger } from './review-swap-dialog-trigger'
@@ -22,11 +22,33 @@ import { CrossChainSwapRouteView } from './route-view'
 import { KinesisSwapButton } from './swap-button'
 
 export const ReviewSwapDialog = () => {
-  const { state } = useDerivedStateCrossChainSwap()
+  const {
+    state: { swapAmountString, chainId0, token1, simulateBridgeTx, token0 },
+  } = useDerivedStateCrossChainSwap()
   const [txHash, setTxHash] = useState<string | undefined>(undefined)
   const [status, setStatus] = useState<'pending' | 'success' | 'error'>(
     'pending',
   )
+
+  const amountInRef = useRef<Amount | null>(null)
+  const amountOutRef = useRef<Amount | null>(null)
+
+  useEffect(() => {
+    if (swapAmountString && token0) {
+      amountInRef.current = Amount.fromHuman(token0, swapAmountString)
+    }
+    if (simulateBridgeTx?.estimatedAmountReceived && token1) {
+      amountOutRef.current = Amount.fromHuman(
+        token1,
+        simulateBridgeTx.estimatedAmountReceived,
+      )
+    }
+  }, [
+    swapAmountString,
+    simulateBridgeTx?.estimatedAmountReceived,
+    token0,
+    token1,
+  ])
 
   const [slippageTolerance] = useSlippageTolerance(
     SlippageToleranceStorageKey.Swap,
@@ -37,7 +59,7 @@ export const ReviewSwapDialog = () => {
   const isConnected = true
 
   const executionDurationSeconds =
-    state.simulateBridgeTx?.estimatedBridgeTimeInSeconds ?? 0
+    simulateBridgeTx?.estimatedBridgeTimeInSeconds ?? 0
   const executionDurationMinutes = Math.floor(executionDurationSeconds / 60)
 
   const executionDuration =
@@ -61,12 +83,11 @@ export const ReviewSwapDialog = () => {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>
-                  Receive{' '}
-                  {state.simulateBridgeTx?.amountMinReceived?.toString()}{' '}
-                  {state.token1?.symbol}
+                  Receive {simulateBridgeTx?.amountMinReceived?.toString()}{' '}
+                  {token1?.symbol}
                 </DialogTitle>
                 <DialogDescription>
-                  Swap {state.swapAmountString} {state.token0?.symbol}
+                  Swap {swapAmountString} {token0?.symbol}
                 </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col gap-4">
@@ -88,22 +109,21 @@ export const ReviewSwapDialog = () => {
                       subtitle="The transaction fee charged by the origin blockchain."
                     >
                       <>
-                        {state.simulateBridgeTx?.networkFeeInToken ?? '0'}{' '}
-                        {state.chainId0 === ChainId.KADENA ? 'KDA' : 'ETH'}
+                        {simulateBridgeTx?.networkFeeInToken ?? '0'}{' '}
+                        {chainId0 === ChainId.KADENA ? 'KDA' : 'ETH'}
                       </>
                     </List.KeyValue>
                     <List.KeyValue
                       title="Est. received"
                       subtitle="The estimated output amount."
                     >
-                      {state.simulateBridgeTx?.estimatedAmountReceived}
+                      {simulateBridgeTx?.estimatedAmountReceived}
                     </List.KeyValue>
                     <List.KeyValue
                       title={`Min. received after slippage (${formatPercent(slippage)})`}
                       subtitle="The minimum amount you are guaranteed to receive."
                     >
-                      {state.simulateBridgeTx?.amountMinReceived}{' '}
-                      {state.token1?.symbol}
+                      {simulateBridgeTx?.amountMinReceived} {token1?.symbol}
                     </List.KeyValue>
                   </List.Control>
                 </List>
@@ -121,14 +141,14 @@ export const ReviewSwapDialog = () => {
         )}
       </DialogReview>
       <DialogConfirm
-        chainId={state.chainId0}
+        chainId={chainId0}
         status={status}
         testId="make-another-swap-kadena"
         buttonText="Make another swap"
         txHash={txHash as `0x${string}`}
-        successMessage={`You sold ${state.swapAmountString} ${
-          state.token0?.symbol
-        } for ${state.simulateBridgeTx?.amountMinReceived?.toString()} ${state.token1?.symbol}`}
+        successMessage={`You sold ${amountInRef.current?.toSignificant(6)} ${
+          amountInRef.current?.currency?.symbol
+        } for ${amountOutRef.current?.toSignificant(6)} ${amountOutRef.current?.currency?.symbol}`}
       />
     </DialogProvider>
   )
