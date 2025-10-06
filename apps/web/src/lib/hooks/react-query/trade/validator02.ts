@@ -1,5 +1,5 @@
-import { PoolType } from 'sushi/router'
-import { isAddressFast } from 'sushi/validate'
+import { sz } from 'sushi'
+import { PoolType, isEvmAddress } from 'sushi/evm'
 import type { Address } from 'viem'
 import z from 'zod'
 
@@ -49,14 +49,8 @@ const routeExistValidator = z.object({
 
   tx: z.optional(
     z.object({
-      from: z.custom<Address>(
-        (val) => isAddressFast(val),
-        (val) => ({ message: `Incorrect address for 'from': ${val}` }),
-      ),
-      to: z.custom<Address>(
-        (val) => isAddressFast(val),
-        (val) => ({ message: `Incorrect address for 'to': ${val}` }),
-      ),
+      from: sz.evm.address(),
+      to: sz.evm.address(),
       gas: z.string().optional(),
       gasPrice: z.number().optional(),
       data: z.string(),

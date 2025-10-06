@@ -1,15 +1,15 @@
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import React from 'react'
-import { TableFiltersSearchToken } from 'src/ui/token/TableFiltersSearchToken'
-import { TokensTable } from 'src/ui/token/TokensTable'
-import { type SushiSwapChainId, isSushiSwapChainId } from 'sushi/config'
+import { isSushiSwapChainId } from 'sushi/evm'
+import { TableFiltersSearchToken } from './_ui/table-filters-search-token'
+import { TokensTable } from './_ui/tokens-table'
 
 export default async function TokensPage(props: {
   params: Promise<{ chainId: string }>
 }) {
   const params = await props.params
-  const chainId = +params.chainId as SushiSwapChainId
+  const chainId = +params.chainId
 
   if (!isSushiSwapChainId(chainId)) {
     return notFound()

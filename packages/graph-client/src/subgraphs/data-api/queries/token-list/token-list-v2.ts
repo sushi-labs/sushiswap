@@ -1,7 +1,7 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
-import { getIdFromChainIdAddress } from 'sushi'
+import { type ChainId, getIdFromChainIdAddress } from 'sushi'
 // import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
@@ -41,6 +41,7 @@ export async function getTokenListV2(
   options?: RequestOptions,
 ) {
   // const url = `${SUSHI_DATA_API_HOST}/graphql`;
+  // const url = `https://data-api-feature-balance-v2.data-gcp.sushi.com/graphql`
   const url = `https://data-api-154-merge.data-gcp.sushi.com/graphql`
 
   const result = await request(
@@ -55,7 +56,7 @@ export async function getTokenListV2(
 
   if (result) {
     return result.tokenListV2.map((token) => ({
-      id: getIdFromChainIdAddress(token.chainId as number, token.address),
+      id: getIdFromChainIdAddress(token.chainId as ChainId, token.address),
       ...token,
     }))
   }

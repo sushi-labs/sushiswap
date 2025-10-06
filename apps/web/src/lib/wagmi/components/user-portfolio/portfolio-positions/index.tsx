@@ -2,11 +2,11 @@ import { getPortfolioPositions } from '@sushiswap/graph-client/data-api'
 import { Accordion, SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import React from 'react'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
-import { PortfolioV2Positions } from './PortfolioV2Positions'
-import { PortfolioV3Positions } from './PortfolioV3Positions'
+import { PortfolioV2Positions } from './portfolio-v2-positions'
+import { PortfolioV3Positions } from './portfolio-v3-positions'
 
 function usePortfolioPositions(
   address: Address | undefined,

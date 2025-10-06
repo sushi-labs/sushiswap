@@ -1,7 +1,7 @@
 import { classNames } from '@sushiswap/ui'
-import type { FC } from 'react'
-import { useMemo } from 'react'
-import { EvmChain } from 'sushi/chain'
+import { type FC, useMemo } from 'react'
+import { getChainById } from 'sushi'
+
 import type { ResolvedNotification } from '../../types'
 import { ToastContent } from './toast-content'
 import { ICONS } from './toast-icons'
@@ -22,7 +22,7 @@ export const ToastCompleted: FC<ToastCompleted> = ({
   const txUrl = href
     ? href
     : txHash
-      ? EvmChain.from(chainId)?.getTxUrl(txHash)
+      ? getChainById(chainId).getTransactionUrl(txHash as `0x${string}`)
       : ''
 
   const icon = useMemo(() => {

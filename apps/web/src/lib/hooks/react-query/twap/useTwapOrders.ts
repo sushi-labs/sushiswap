@@ -9,8 +9,8 @@ import { useQueries, useQueryClient } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import type { TwapSupportedChainId } from 'src/config'
 import { TwapSDK } from 'src/lib/swap/twap'
-import type { Token, Type } from 'sushi/currency'
-import type { Address } from 'sushi/types'
+import { twapAbi_status } from 'src/lib/swap/twap/abi'
+import type { EvmAddress, EvmCurrency, EvmToken } from 'sushi/evm'
 import { formatUnits } from 'viem'
 import { useConfig } from 'wagmi'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
@@ -20,7 +20,7 @@ export type TwapOrder = Order & {
 }
 
 interface TwapOrdersStoreParams {
-  account: Address | undefined
+  account: EvmAddress | undefined
 }
 
 export const usePersistedOrdersStore = ({ account }: TwapOrdersStoreParams) => {
@@ -62,8 +62,8 @@ export const usePersistedOrdersStore = ({ account }: TwapOrdersStoreParams) => {
       orderId: number,
       txHash: string,
       params: string[],
-      srcToken: Token,
-      dstToken: Type,
+      srcToken: EvmToken,
+      dstToken: EvmCurrency,
       srcTokenUsdPrice: number,
     ) => {
       if (!account) return
@@ -83,7 +83,8 @@ export const usePersistedOrdersStore = ({ account }: TwapOrdersStoreParams) => {
       const order = buildOrder({
         srcAmount: params[3],
         srcTokenAddress: srcToken.address,
-        dstTokenAddress: dstToken.isToken ? dstToken.address : zeroAddress,
+        dstTokenAddress:
+          dstToken.type === 'token' ? dstToken.address : zeroAddress,
         srcAmountPerChunk: params[4],
         deadline: Number(params[6]) * 1000,
         dstMinAmountPerChunk: params[5],
@@ -183,7 +184,7 @@ export const usePersistedOrdersStore = ({ account }: TwapOrdersStoreParams) => {
 
 interface TwapOrdersQueryParams {
   chainIds: TwapSupportedChainId[]
-  account: Address | undefined
+  account: EvmAddress | undefined
   enabled?: boolean
 }
 

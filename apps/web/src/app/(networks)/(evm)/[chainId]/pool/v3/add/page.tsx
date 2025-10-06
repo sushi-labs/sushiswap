@@ -3,24 +3,25 @@
 import { useRouter } from 'next/navigation'
 import { type FC, use, useMemo, useState } from 'react'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
-import { ConcentratedLiquidityProvider } from 'src/ui/pool/ConcentratedLiquidityProvider'
-import {
-  ConcentratedLiquidityURLStateProvider,
-  useConcentratedLiquidityURLState,
-} from 'src/ui/pool/ConcentratedLiquidityURLStateProvider'
-import { ConcentratedLiquidityWidget } from 'src/ui/pool/ConcentratedLiquidityWidget'
-import { SelectFeeConcentratedWidget } from 'src/ui/pool/SelectFeeConcentratedWidget'
-import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
-import { SelectPricesWidget } from 'src/ui/pool/SelectPricesWidget'
-import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
-import { ChainKey, computeSushiSwapV3PoolAddress } from 'sushi'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
   type SushiSwapV3ChainId,
+  computeSushiSwapV3PoolAddress,
+  getEvmChainById,
   isWNativeSupported,
-} from 'sushi/config'
+} from 'sushi/evm'
 import { useAccount } from 'wagmi'
+import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
+import { SelectPricesWidget } from '~evm/[chainId]/_ui/select-prices-widget'
+import {
+  ConcentratedLiquidityURLStateProvider,
+  useConcentratedLiquidityURLState,
+} from '../../_ui/concentrated-liquidity-url-state-provider'
+import { SelectFeeConcentratedWidget } from '../../_ui/select-fee-concentrated-widget'
+import { SelectNetworkWidget } from '../../_ui/select-network-widget'
+import { SelectTokensWidget } from '../../_ui/select-tokens-widget'
+import { ConcentratedLiquidityWidget } from '../_ui/concentrated-liquidity-widget'
 
 export default function Page(props: { params: Promise<{ chainId: string }> }) {
   const params = use(props.params)
@@ -62,11 +63,11 @@ const _Add: FC = () => {
 
   const poolAddress = useMemo(
     () =>
-      token0 && token1 && feeAmount && chainId
+      token0 && token1 && feeAmount
         ? computeSushiSwapV3PoolAddress({
             factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
-            tokenA: token0.wrapped,
-            tokenB: token1.wrapped,
+            tokenA: token0.wrap(),
+            tokenB: token1.wrap(),
             fee: feeAmount,
           })
         : undefined,
@@ -77,7 +78,9 @@ const _Add: FC = () => {
     <>
       <SelectNetworkWidget
         selectedNetwork={chainId}
-        onSelect={(chainId) => router.push(`/${ChainKey[chainId]}/pool/v3/add`)}
+        onSelect={(chainId) =>
+          router.push(`/${getEvmChainById(chainId).key}/pool/v3/add`)
+        }
         networks={SUSHISWAP_V3_SUPPORTED_CHAIN_IDS}
       />
       <SelectTokensWidget
@@ -114,7 +117,7 @@ const _Add: FC = () => {
         tokensLoading={tokensLoading}
         existingPosition={position ?? undefined}
         tokenId={tokenId}
-        successLink={`/${ChainKey[chainId]}/pool/v3/${poolAddress}/${tokenId ?? 'positions'}`}
+        successLink={`/${getEvmChainById(chainId).key}/pool/v3/${poolAddress}/${tokenId ?? 'positions'}`}
       />
     </>
   )

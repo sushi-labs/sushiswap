@@ -1,7 +1,11 @@
 import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
 import type { ReactNode } from 'react'
-import { type Amount, type Type, unwrapToken } from 'sushi/currency'
+import {
+  type Amount,
+  type Currency as GenericCurrency,
+  unwrapToken,
+} from 'sushi'
 
 import classNames from 'classnames'
 import { Currency } from './currency'
@@ -197,7 +201,7 @@ CardItem.displayName = 'CardItem'
 interface CardCurrencyAmountItemProps
   extends React.HTMLAttributes<HTMLDivElement> {
   isLoading?: boolean
-  amount?: Amount<Type>
+  amount?: Amount<GenericCurrency>
   fiatValue?: string
   unwrap?: boolean
   amountClassName?: string
@@ -223,7 +227,8 @@ const CardCurrencyAmountItem = React.forwardRef<
     }
 
     if (amount) {
-      const currency = unwrap ? unwrapToken(amount?.currency) : amount?.currency
+      const currency =
+        unwrap && amount ? unwrapToken(amount.currency) : amount?.currency
 
       return (
         <CardItem

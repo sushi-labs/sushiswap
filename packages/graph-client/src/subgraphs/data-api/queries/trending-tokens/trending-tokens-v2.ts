@@ -29,7 +29,7 @@ export async function getTrendingTokensV2(
   options?: RequestOptions,
 ) {
   // const url = `${SUSHI_DATA_API_HOST}/graphql`;
-  const url = `https://data-api-154-merge.data-gcp.sushi.com/graphql`
+  const url = `https://data-api-feature-balance-v2.data-gcp.sushi.com/graphql`
 
   const result = await request(
     {

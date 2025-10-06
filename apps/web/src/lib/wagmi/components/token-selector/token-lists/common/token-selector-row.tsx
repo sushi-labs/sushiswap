@@ -25,19 +25,17 @@ import { Currency } from '@sushiswap/ui'
 import type React from 'react'
 import { type CSSProperties, type FC, memo, useCallback } from 'react'
 import { NativeAddress } from 'src/lib/constants'
-import { FavoriteButton } from 'src/ui/swap/trade/favorite-button'
-import { EvmChain } from 'sushi/chain'
-import type { Amount, Type } from 'sushi/currency'
-import { type Fraction, ZERO } from 'sushi/math'
+import { type Amount, type Fraction, ZERO } from 'sushi'
+import { type EvmCurrency, getEvmChainById } from 'sushi/evm'
 import { zeroAddress } from 'viem'
 
 export interface TokenSelectorRow {
   account?: `0x${string}`
-  currency: Type
+  currency: EvmCurrency
   style?: CSSProperties
   className?: string
-  onSelect(currency: Type): void
-  balance?: Amount<Type> | undefined
+  onSelect(currency: EvmCurrency): void
+  balance?: Amount<EvmCurrency> | undefined
   showWarning: boolean
   price?: Fraction
   pin?: {
@@ -67,7 +65,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
       onSelect(currency)
     }, [currency, onSelect])
 
-    const onPin = useCallback(
+    const _onPin = useCallback(
       (e: React.MouseEvent | React.KeyboardEvent) => {
         e.stopPropagation()
         pin?.onPin()
@@ -89,17 +87,18 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
         name={InterfaceEventName.TOKEN_SELECTED}
         properties={{
           token_symbol: currency?.symbol,
-          token_address: currency?.isNative ? NativeAddress : currency?.address,
-          total_balances_usd: balance?.quotient,
+          token_address:
+            currency?.type === 'native' ? NativeAddress : currency?.address,
+          total_balances_usd: balance?.amount,
         }}
         element={InterfaceElementName.TOKEN_SELECTOR_ROW}
       >
         <div className="relative py-0.5 h-[64px]" style={style}>
           <div
             testdata-id={`token-selector-row-${
-              currency.isNative
+              currency.type === 'native'
                 ? zeroAddress
-                : currency.wrapped.address.toLowerCase()
+                : currency.wrap().address.toLowerCase()
             }`}
             onClick={onClick}
             onKeyDown={onClick}
@@ -110,11 +109,6 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
             )}
           >
             <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
-              <FavoriteButton
-                currencyId={`${currency?.id}:${currency?.symbol}`}
-                onClick={onPin}
-                className="!px-0.5"
-              />
               <div className="flex flex-row items-center flex-grow gap-4">
                 {selected ? (
                   <Badge
@@ -184,8 +178,8 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
                         <a
                           target="_blank"
                           rel="noopener noreferrer"
-                          href={EvmChain.from(currency.chainId)?.getTokenUrl(
-                            currency.wrapped.address,
+                          href={getEvmChainById(currency.chainId).getTokenUrl(
+                            currency.wrap().address,
                           )}
                           className="text-blue hover:underline flex gap-1"
                         >
@@ -209,7 +203,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
                     />
                   </div>
                 ) : (
-                  balance?.greaterThan(ZERO) && (
+                  balance?.gt(ZERO) && (
                     <div className="flex flex-col max-w-[140px]">
                       <span
                         className={classNames(
@@ -221,7 +215,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
                       </span>
                       <span className="text-sm font-medium text-right text-gray-500 dark:text-slate-400">
                         {price
-                          ? `$${balance?.multiply(price).toFixed(2)}`
+                          ? `$${balance?.mul(price).toString({ fixed: 2 })}`
                           : '-'}
                       </span>
                     </div>

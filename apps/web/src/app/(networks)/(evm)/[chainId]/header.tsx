@@ -4,24 +4,23 @@ import { Navigation, SushiNavigationDropdown, classNames } from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import React, { type FC } from 'react'
-import { type NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
+import { headerElements } from 'src/app/_common/header-elements'
+import { SUPPORTED_NETWORKS } from 'src/config'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
-import { useDerivedStateSimpleTrade } from 'src/ui/swap/trade/derivedstate-simple-trade-provider'
-import { ChainId, type EvmChainId } from 'sushi/chain'
-import type { ChainId as ChainIdType } from 'sushi/chain'
+import { EvmChainId } from 'sushi/evm'
 import { useChainId } from 'wagmi'
-import { headerElements } from '../_common/header-elements'
+import { useDerivedStateSimpleTrade } from './[trade]/_ui/swap/trade/derivedstate-simple-trade-provider'
 
 interface HeaderProps {
-  chainId?: ChainIdType
-  supportedNetworks?: readonly (EvmChainId | NonStandardChainId)[]
+  chainId?: EvmChainId
+  supportedNetworks?: readonly EvmChainId[]
 }
 
 export const Header: FC<HeaderProps> = ({ chainId, supportedNetworks }) => {
   const {
     state: { tradeView },
   } = useDerivedStateSimpleTrade()
-  return chainId === ChainId.KATANA && tradeView === 'simple' ? (
+  return chainId === EvmChainId.KATANA && tradeView === 'simple' ? (
     <TransparentHeader
       chainId={chainId}
       supportedNetworks={supportedNetworks}
@@ -31,10 +30,7 @@ export const Header: FC<HeaderProps> = ({ chainId, supportedNetworks }) => {
   )
 }
 
-const TransparentHeader: FC<HeaderProps> = ({
-  chainId: _chainId,
-  supportedNetworks,
-}) => {
+const TransparentHeader: FC<HeaderProps> = ({ chainId: _chainId }) => {
   const connectedChainId = useChainId()
   const chainId = _chainId ?? connectedChainId
 
@@ -59,7 +55,6 @@ const TransparentHeader: FC<HeaderProps> = ({
             <WagmiHeaderComponents
               networks={SUPPORTED_NETWORKS}
               selectedNetwork={chainId as EvmChainId}
-              supportedNetworks={supportedNetworks}
             />
           }
         />
@@ -95,9 +90,8 @@ const _Header: FC<HeaderProps> = ({ chainId: _chainId, supportedNetworks }) => {
           leftElements={headerElements({ chainId })}
           rightElement={
             <WagmiHeaderComponents
-              networks={SUPPORTED_NETWORKS}
-              selectedNetwork={chainId as EvmChainId}
-              supportedNetworks={supportedNetworks}
+              networks={supportedNetworks}
+              selectedNetwork={chainId}
             />
           }
         />

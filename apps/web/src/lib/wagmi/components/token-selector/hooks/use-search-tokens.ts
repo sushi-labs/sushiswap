@@ -5,7 +5,7 @@ import {
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { Token } from 'sushi/currency'
+import { EvmToken } from 'sushi/evm'
 
 type UseSearchTokens = {
   chainId: TokenListChainId | undefined
@@ -61,7 +61,12 @@ export function useSearchTokens({
   return useMemo(
     () => ({
       ...query,
-      data: query.data?.pages.flat().map((token) => new Token(token)),
+      data: query.data?.pages
+        .flat()
+        .map(
+          (token) =>
+            new EvmToken({ ...token, metadata: { approved: token.approved } }),
+        ),
       hasMore:
         query.data?.pages[query.data.pages.length - 1].length ===
         pagination.pageSize,

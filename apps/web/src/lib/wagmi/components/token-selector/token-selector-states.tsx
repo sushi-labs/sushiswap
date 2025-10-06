@@ -1,13 +1,10 @@
 'use client'
 
-import type { EvmChainId } from 'sushi/chain'
-import type { Type } from 'sushi/currency'
-
 import {
   isTokenListChainId,
   isTrendingTokensChainId,
 } from '@sushiswap/graph-client/data-api'
-import { EVM_DEFAULT_BASES } from 'sushi/config'
+import { EVM_DEFAULT_BASES, type EvmChainId, type EvmCurrency } from 'sushi/evm'
 import type { Address } from 'viem'
 import { useMyTokens } from './hooks/use-my-tokens'
 import { useSearchTokens } from './hooks/use-search-tokens'
@@ -19,12 +16,12 @@ import { TokenSelectorSearch } from './token-lists/token-selector-search'
 import { TokenSelectorTrendingTokens } from './token-lists/token-selector-trending-tokens'
 
 interface TokenSelectorStates {
-  selected: Type | undefined
+  selected: EvmCurrency | undefined
   chainId: EvmChainId
   account?: Address
-  onSelect(currency: Type): void
-  onShowInfo(currency: Type | false): void
-  currencies?: Type[]
+  onSelect(currency: EvmCurrency): void
+  onShowInfo(currency: EvmCurrency | false): void
+  currencies?: EvmCurrency<{ approved?: boolean }>[]
   includeNative?: boolean
   hidePinnedTokens?: boolean
   search?: string

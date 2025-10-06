@@ -3,8 +3,9 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { useCallback, useMemo } from 'react'
-import { weth9Abi_deposit } from 'sushi/abi'
-import type { Amount, Type } from 'sushi/currency'
+import { logger } from 'src/lib/logger'
+import type { Amount } from 'sushi'
+import { type EvmCurrency, weth9Abi_deposit } from 'sushi/evm'
 import { type SendTransactionReturnType, UserRejectedRequestError } from 'viem'
 import {
   useAccount,
@@ -14,7 +15,7 @@ import {
 } from 'wagmi'
 
 interface UseWrapNativeParams {
-  amount: Amount<Type> | undefined
+  amount: Amount<EvmCurrency> | undefined
   enabled?: boolean
 }
 
@@ -26,9 +27,15 @@ export const useWrapNative = ({
   const client = usePublicClient()
 
   const onError = useCallback((e: Error) => {
-    if (!(e.cause instanceof UserRejectedRequestError)) {
-      createErrorToast(e?.message, true)
+    if (e.cause instanceof UserRejectedRequestError) {
+      return
     }
+
+    logger.error(e, {
+      location: 'useWrapNative',
+      action: 'mutationError',
+    })
+    createErrorToast(e?.message, true)
   }, [])
 
   const onSuccess = useCallback(
@@ -37,7 +44,7 @@ export const useWrapNative = ({
 
       sendAnalyticsEvent(InterfaceEventName.WRAP_TOKEN_TXN_SUBMITTED, {
         chain_id: amount.currency.chainId,
-        token_address: amount.currency.wrapped.address,
+        token_address: amount.currency.wrap().address,
         token_symbol: amount.currency.symbol,
       })
       try {
@@ -62,19 +69,24 @@ export const useWrapNative = ({
         })
 
         await receiptPromise
-      } catch {}
+      } catch (error) {
+        logger.error(error, {
+          location: 'useWrapNative',
+          action: 'waitForReceipt',
+        })
+      }
     },
     [client, amount, address],
   )
 
   const { data: simulation } = useSimulateContract({
     chainId: amount?.currency.chainId,
-    address: amount?.currency.wrapped.address,
+    address: amount?.currency.wrap().address,
     abi: weth9Abi_deposit,
     functionName: 'deposit',
-    value: amount?.quotient,
+    value: amount?.amount,
     query: {
-      enabled: Boolean(enabled && amount && amount.currency.isNative),
+      enabled: Boolean(enabled && amount && amount.currency.type === 'native'),
     },
   })
 
@@ -95,7 +107,18 @@ export const useWrapNative = ({
     return async () => {
       try {
         await writeContractAsync(simulation.request)
-      } catch {}
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          error.cause instanceof UserRejectedRequestError
+        ) {
+          return
+        }
+        logger.error(error, {
+          location: 'useWrapNative',
+          action: 'sendTransaction',
+        })
+      }
     }
   }, [simulation, writeContractAsync])
 

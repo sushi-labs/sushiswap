@@ -1,7 +1,7 @@
 'use client'
 
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
-import type { TokenListV2ChainId } from '@sushiswap/graph-client/data-api'
+import { isTokenListV2ChainId } from '@sushiswap/graph-client/data-api-181'
 import {
   Dialog,
   DialogContent,
@@ -20,26 +20,23 @@ import React, {
   useState,
 } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
-import { ChainOptionsSelector } from 'src/ui/swap/chain-options-selector'
-import { NetworkMenu } from 'src/ui/swap/trade/favorite-recent/network-menu'
-import type { EvmChainId } from 'sushi/chain'
-import type { Currency, Token, Type } from 'sushi/currency'
+import type { EvmChainId } from 'sushi/evm'
+import type { EvmCurrency, EvmToken } from 'sushi/evm'
 import { useAccount } from 'wagmi'
+import { ChainOptionsSelector } from '~evm/[chainId]/[trade]/_ui/swap/chain-options-selector'
+import { NetworkMenu } from '~evm/[chainId]/[trade]/_ui/swap/trade/favorite-recent/network-menu'
 import { CurrencyInfo } from './currency-info'
 import { TokenSelectorStatesV2 } from './token-selector-states-v2'
 
 export type TokenSelectorV2Type = 'buy' | 'sell'
 
 interface TokenSelectorV2Props {
-  selected: Type | undefined
-  chainId: EvmChainId
-  onSelect(currency: Type): void
+  selected: EvmCurrency | undefined
+  onSelect(currency: EvmCurrency): void
   children: ReactNode
-  currencies?: Record<string, Token>
+  currencies?: Record<string, EvmToken>
   includeNative?: boolean
   hidePinnedTokens?: boolean
-  hideSearch?: boolean
-  networks?: readonly EvmChainId[]
   selectedNetwork?: EvmChainId
   onNetworkSelect?: (network: number) => void
   isBrowse?: boolean
@@ -52,14 +49,9 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   includeNative = true,
   selected,
   onSelect,
-  // biome-ignore lint/correctness/noUnusedVariables: will remove once all props are for sure not going to be used
-  chainId,
   children,
   currencies: _currencies,
   hidePinnedTokens,
-  // biome-ignore lint/correctness/noUnusedVariables: will remove once all props are for sure not going to be used
-  hideSearch,
-  networks,
   selectedNetwork,
   onNetworkSelect,
   isBrowse,
@@ -68,14 +60,18 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   variant,
 }) => {
   const { address } = useAccount()
-  //@dev using `number | null` for now until types decalred
-  const [_selectedNetwork, setSelectedNetwork] = useState<number | null>(
+  const [_selectedNetwork, setSelectedNetwork] = useState<EvmChainId | null>(
     selectedNetwork ?? null,
   )
 
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
-  const [currencyInfo, showCurrencyInfo] = useState<Currency | false>(false)
+  const [currencyInfo, showCurrencyInfo] = useState<EvmCurrency | false>(false)
+  const [showMoreCurrencyInfo, setShowMoreCurrencyInfo] = useState(true)
+
+  const toggleShowMore = useCallback(() => {
+    setShowMoreCurrencyInfo((prev) => !prev)
+  }, [])
 
   // Clear the query when the dialog is closed
   useEffect(() => {
@@ -91,7 +87,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   }, [_currencies])
 
   const _onSelect = useCallback(
-    (currency: Type) => {
+    (currency: EvmCurrency) => {
       if (onSelect) {
         onSelect(currency)
       }
@@ -102,7 +98,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
   )
 
   const _onNetworkSelect = useCallback(
-    (network: number) => {
+    (network: EvmChainId | null) => {
       if (currencyInfo) {
         showCurrencyInfo(false)
       }
@@ -125,14 +121,20 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
         aria-describedby={undefined}
         className={classNames(
           'h-[80vh] !flex !flex-col md:!flex-row w-fit !p-0 md:min-w-[580px]',
+          !showMoreCurrencyInfo ? '!h-[440px]' : '',
         )}
         variant={variant ?? undefined}
       >
         <div className="relative flex flex-col w-full gap-4 p-6 overflow-x-hidden overflow-y-auto hide-scrollbar">
           {currencyInfo ? (
             <CurrencyInfo
+              showMoreCurrencyInfo={showMoreCurrencyInfo}
+              toggleShowMore={toggleShowMore}
               currency={currencyInfo}
-              onBack={() => showCurrencyInfo(false)}
+              onBack={() => {
+                showCurrencyInfo(false)
+                setShowMoreCurrencyInfo(true)
+              }}
             />
           ) : null}
           <DialogHeader className="!text-left mb-4">
@@ -149,13 +151,11 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
               <ChainOptionsSelector
                 onNetworkSelect={_onNetworkSelect}
                 size="lg"
-                selectedNetwork={_selectedNetwork as EvmChainId}
+                selectedNetwork={_selectedNetwork}
                 canShowMessage={true}
-                networks={
-                  networks && networks?.length > 0
-                    ? (networks as unknown as number[])
-                    : undefined
-                }
+                networkSelectedClassName="border-blue dark:!border-skyblue bg-[#4217FF14] dark:!bg-[#3DB1FF14]"
+                networkClassName="dark:bg-slate-900"
+                includeAllOption={true}
               />
             </div>
           ) : null}
@@ -176,6 +176,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
                   onNetworkSelect={_onNetworkSelect}
                   networkOptions={isBrowse ? SUPPORTED_CHAIN_IDS : undefined}
                   className="bg-slate-50 border !rounded-md !px-2 border-black/10 dark:bg-slate-800 dark:border-white/10"
+                  testId="token-selector-network-menu-trigger"
                 />
               </div>
             ) : null}
@@ -186,7 +187,11 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
           >
             <TokenSelectorStatesV2
               selected={selected}
-              selectedNetwork={_selectedNetwork as TokenListV2ChainId}
+              selectedNetwork={
+                _selectedNetwork && isTokenListV2ChainId(_selectedNetwork)
+                  ? _selectedNetwork
+                  : undefined
+              }
               account={address}
               onSelect={_onSelect}
               currencies={currencies}

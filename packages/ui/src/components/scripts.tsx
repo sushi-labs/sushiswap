@@ -24,6 +24,8 @@ export const GoogleAnalytics = ({ enabled }: { enabled: boolean }) => {
             page_path: window.location.pathname,
             cookie_flags: 'max-age=7200;secure;samesite=none'
           });
+          gtag('set', 'allow_ad_personalization_signals', false);
+          gtag('set', 'allow_google_signals', false);
         `,
         }}
       />
@@ -43,14 +45,16 @@ export const GoogleTagManager = ({ enabled }: { enabled: boolean }) => {
         src="https://www.googletagmanager.com/ns.html?id=GTM-M24NNGHP"
         height="0"
         width="0"
-        style={{ display: "none", visibility: "hidden" }}
+        style="display: none; visibility: hidden;"
       ></iframe>
     `
     document.body.appendChild(noscript)
 
     return () => {
-      // Cleanup to prevent duplicate noscript elements
-      document.body.removeChild(noscript)
+      // Cleanup to prevent duplicate noscript elements - check if node still exists
+      if (noscript && noscript.parentNode === document.body) {
+        document.body.removeChild(noscript)
+      }
     }
   }, [])
 

@@ -1,6 +1,6 @@
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
-import { formatPercent, formatUSD } from 'sushi/format'
+import { formatPercent, formatUSD } from 'sushi'
 import type { TopPool } from '~aptos/pool/lib/use-top-pools'
 import { PoolNameCell } from './cells/pool-name-cell'
 

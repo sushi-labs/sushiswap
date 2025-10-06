@@ -12,8 +12,13 @@ import {
 import ms from 'ms'
 import { NativeAddress } from 'src/lib/constants'
 import { publicWagmiConfig } from 'src/lib/wagmi/config/public'
-import { type EvmChainId, LowercaseMap } from 'sushi'
-import { erc20Abi_balanceOf, multicall3Abi_getEthBalance } from 'sushi/abi'
+import { LowercaseMap } from 'sushi'
+import {
+  type EvmChainId,
+  erc20Abi_balanceOf,
+  getEvmChainById,
+  multicall3Abi_getEthBalance,
+} from 'sushi/evm'
 import type { Address } from 'viem'
 import { multicall } from 'viem/actions'
 import { useAccount, useConfig } from 'wagmi'
@@ -166,9 +171,8 @@ export function BalanceProvider({ children }: BalanceProviderContextProps) {
 
       // Multicall should be available everywhere
       // Worse case the native balance doesn't show up
-      const multicallAddress = publicWagmiConfig.chains.find(
-        (chain) => chain.id === chainId,
-      )?.contracts.multicall3.address
+      const multicallAddress =
+        getEvmChainById(chainId).viemChain.contracts.multicall3.address
 
       if (multicallAddress) {
         contracts.push({
@@ -192,7 +196,7 @@ export function BalanceProvider({ children }: BalanceProviderContextProps) {
         }
 
         if (result.status === 'failure') {
-          console.error(
+          console.warn(
             `Failed to fetch balance for ${address} on chain ${chainId}`,
           )
 

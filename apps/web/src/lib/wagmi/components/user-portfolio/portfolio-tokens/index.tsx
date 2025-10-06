@@ -2,10 +2,10 @@ import { getPortfolioWallet } from '@sushiswap/graph-client/data-api'
 import { SkeletonCircle, SkeletonText, classNames } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import React from 'react'
-import { formatPercent, formatUSD } from 'sushi/format'
+import { formatPercent, formatUSD } from 'sushi'
 import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
-import { PortfolioTokensList } from './PortfolioTokensList'
+import { PortfolioTokensList } from './portfolio-tokens-list'
 
 function usePortfolioWallet(
   address: Address | undefined,

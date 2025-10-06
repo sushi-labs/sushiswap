@@ -1,7 +1,7 @@
 import type { VariablesOf } from 'gql.tada'
 import { type RequestOptions, request } from 'src/lib/request.js'
-import type { EvmChainId } from 'sushi'
-import { Token } from 'sushi/currency'
+import type { EvmChainId } from 'sushi/evm'
+import { EvmToken } from 'sushi/evm'
 import { SUSHI_REQUEST_HEADERS } from '../../../data-api/request-headers.js'
 import { graphql } from '../../graphql.js'
 
@@ -91,6 +91,8 @@ export async function getMultiChainPools(
 ) {
   // const url = `${SUSHI_DATA_API_HOST}/graphql`
   const url = 'https://data-api-feat-new-db-fields.data-gcp.sushi.com/graphql'
+  // const chainIds = variables.chainIds as EvmChainId[]
+
   try {
     const result = await request(
       {
@@ -101,7 +103,6 @@ export async function getMultiChainPools(
       },
       options,
     )
-
     if (result) {
       return {
         count: result.multiChainPools.count,
@@ -110,9 +111,10 @@ export async function getMultiChainPools(
           incentives: pool.incentives.map((incentive) => {
             return {
               ...incentive,
-              rewardToken: new Token({
+              rewardToken: new EvmToken({
                 ...incentive.rewardToken,
                 chainId: incentive.rewardToken.chainId as EvmChainId,
+                address: incentive.rewardToken.address as `0x${string}`,
               }),
             }
           }),

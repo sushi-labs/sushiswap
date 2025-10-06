@@ -1,25 +1,23 @@
-import type { Incentive } from 'sushi'
-import type { EvmChainId } from 'sushi/chain'
-import { type SushiSwapV3FeeAmount, TICK_SPACINGS } from 'sushi/config'
+import { Amount, Price } from 'sushi'
 import {
   DAI,
-  Native,
-  Price,
-  Token,
+  type EvmChainId,
+  EvmNative,
+  EvmToken,
+  type Incentive,
+  type Position,
+  SushiSwapV2Pool,
+  type SushiSwapV3FeeAmount,
+  TICK_SPACINGS,
+  TickMath,
   USDC,
   USDT,
   WBTC,
-  tryParseAmount,
-} from 'sushi/currency'
-import { SushiSwapV2Pool } from 'sushi/pool/sushiswap-v2'
-import {
-  type Position,
-  TickMath,
   encodeSqrtRatioX96,
   nearestUsableTick,
   priceToClosestTick,
   tickToPrice,
-} from 'sushi/pool/sushiswap-v3'
+} from 'sushi/evm'
 import { Bound } from './constants'
 import type { useTicks } from './hooks'
 import type { TickProcessed } from './pool/v3/use-concentrated-active-liquidity'
@@ -33,20 +31,21 @@ export const isSushiSwapV2Pool = (
 export const incentiveRewardToToken = (
   chainId: EvmChainId,
   incentive: Incentive,
-): Token => {
-  return new Token({
+): EvmToken => {
+  return new EvmToken({
     chainId,
     address: incentive.rewardToken.address,
     symbol: incentive.rewardToken.symbol,
     decimals: incentive.rewardToken.decimals,
+    name: incentive.rewardToken.name,
   })
 }
 
 export function getTickToPrice(
-  baseToken?: Token,
-  quoteToken?: Token,
+  baseToken?: EvmToken,
+  quoteToken?: EvmToken,
   tick?: number,
-): Price<Token, Token> | undefined {
+): Price<EvmToken, EvmToken> | undefined {
   if (!baseToken || !quoteToken || typeof tick !== 'number') {
     return undefined
   }
@@ -54,8 +53,8 @@ export function getTickToPrice(
 }
 
 export function tryParsePrice(
-  baseToken?: Token,
-  quoteToken?: Token,
+  baseToken?: EvmToken,
+  quoteToken?: EvmToken,
   value?: string,
 ) {
   if (!baseToken || !quoteToken || !value) {
@@ -71,17 +70,17 @@ export function tryParsePrice(
   const decimals = fraction?.length ?? 0
   const withoutDecimals = BigInt((whole ?? '') + (fraction ?? ''))
 
-  return new Price(
-    baseToken,
-    quoteToken,
-    BigInt(10 ** decimals) * BigInt(10 ** baseToken.decimals),
-    withoutDecimals * BigInt(10 ** quoteToken.decimals),
-  )
+  return new Price({
+    base: baseToken,
+    quote: quoteToken,
+    numerator: withoutDecimals * BigInt(10 ** quoteToken.decimals),
+    denominator: BigInt(10 ** decimals) * BigInt(10 ** baseToken.decimals),
+  })
 }
 
 export function tryParseTick(
-  baseToken?: Token,
-  quoteToken?: Token,
+  baseToken?: EvmToken,
+  quoteToken?: EvmToken,
   feeAmount?: SushiSwapV3FeeAmount,
   value?: string,
 ): number | undefined {
@@ -113,10 +112,10 @@ export function tryParseTick(
 }
 
 export function getPriceOrderingFromPositionForUI(position?: Position): {
-  priceLower?: Price<Token, Token>
-  priceUpper?: Price<Token, Token>
-  quote?: Token
-  base?: Token
+  priceLower?: Price<EvmToken, EvmToken>
+  priceUpper?: Price<EvmToken, EvmToken>
+  quote?: EvmToken
+  base?: EvmToken
 } {
   if (!position) {
     return {}
@@ -131,8 +130,9 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
     DAI[chainId as keyof typeof DAI],
     USDC[chainId as keyof typeof USDC],
     USDT[chainId as keyof typeof USDT],
-  ]
-  if (stables.some((stable) => stable?.equals(token0))) {
+  ].filter(Boolean)
+
+  if (stables.some((stable) => stable.isSame(token0))) {
     return {
       priceLower: position.token0PriceUpper.invert(),
       priceUpper: position.token0PriceLower.invert(),
@@ -143,10 +143,11 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
 
   // if token1 is an ETH-/BTC-stable asset, set it as the base token
   const bases = [
-    Native.onChain(chainId).wrapped,
+    EvmNative.fromChainId(chainId).wrap(),
     WBTC[chainId as keyof typeof WBTC],
-  ]
-  if (bases.some((base) => base?.equals(token1))) {
+  ].filter(Boolean)
+
+  if (bases.some((base) => base.isSame(token1))) {
     return {
       priceLower: position.token0PriceUpper.invert(),
       priceUpper: position.token0PriceLower.invert(),
@@ -156,7 +157,7 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
   }
 
   // if both prices are below 1, invert
-  if (position.token0PriceUpper.lessThan(1)) {
+  if (position.token0PriceUpper.lt(1)) {
     return {
       priceLower: position.token0PriceUpper.invert(),
       priceUpper: position.token0PriceLower.invert(),
@@ -178,8 +179,8 @@ const PRICE_FIXED_DIGITS = 8
 
 // Computes the numSurroundingTicks above or below the active tick.
 export default function computeSurroundingTicks(
-  token0: Token,
-  token1: Token,
+  token0: EvmToken,
+  token1: EvmToken,
   activeTickProcessed: TickProcessed,
   sortedTickData: NonNullable<ReturnType<typeof useTicks>['data']>,
   pivot: number,
@@ -201,8 +202,14 @@ export default function computeSurroundingTicks(
       liquidityActive: previousTickProcessed.liquidityActive,
       tick,
       liquidityNet: sortedTickData[i].liquidityNet,
+<<<<<<< HEAD
       price0: tickToPrice(token0, token1, tick).toFixed(PRICE_FIXED_DIGITS),
       price1: tickToPrice(token1, token0, tick).toFixed(PRICE_FIXED_DIGITS),
+=======
+      price0: tickToPrice(token0, token1, tick).toString({
+        fixed: PRICE_FIXED_DIGITS,
+      }),
+>>>>>>> df7a32b4da917e27c2a98e477806c02fe28c56c5
     }
 
     // Update the active liquidity.
@@ -231,7 +238,7 @@ export default function computeSurroundingTicks(
 }
 
 interface FormatTickPriceArgs {
-  price: Price<Token, Token> | undefined
+  price: Price<EvmToken, EvmToken> | undefined
   atLimit: { [_bound in Bound]?: boolean | undefined }
   direction: Bound
   placeholder?: string
@@ -263,10 +270,10 @@ export const rewardPerDay = ({
   start: number
   end: number
   amount: number
-  token: Token
+  token: EvmToken
 }) => {
   const days = (end - start) / 3600 / 24
-  return tryParseAmount((amount / days).toFixed(8), token)
+  return Amount.fromHuman(token, (amount / days).toFixed(8))
 }
 
 export function parseArgs<T>(args?: Partial<T>) {

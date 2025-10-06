@@ -1,4 +1,5 @@
-import type { EvmChainId, ID, LowercaseMap } from 'sushi'
+import type { LowercaseMap } from 'sushi'
+import type { EvmChainId, EvmID } from 'sushi/evm'
 import type { Address } from 'viem'
 
 export interface Balance {
@@ -22,7 +23,7 @@ export interface ProviderState {
   chains: Map<EvmChainId, ProviderChainState>
 }
 
-export type TokenId = ID | { address: Address; chainId: EvmChainId }
+export type TokenId = EvmID | { address: Address; chainId: EvmChainId }
 
 export interface ProviderMutations {
   incrementToken: (tokenId: TokenId | TokenId[]) => void

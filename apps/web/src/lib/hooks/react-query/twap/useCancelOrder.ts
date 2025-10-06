@@ -2,9 +2,13 @@ import { OrderType } from '@orbs-network/twap-sdk'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
 import type { TwapSupportedChainId } from 'src/config'
+import {
+  type TwapOrder,
+  usePersistedOrdersStore,
+} from 'src/lib/hooks/react-query/twap'
+import { logger } from 'src/lib/logger'
 import { TwapSDK } from 'src/lib/swap/twap'
 import { twapAbi_cancel } from 'src/lib/swap/twap/abi'
-import { publicClientConfig } from 'src/lib/wagmi/config/viem'
 import {
   type Address,
   type SendTransactionReturnType,
@@ -18,7 +22,6 @@ import {
   useSendTransaction,
   useWaitForTransactionReceipt,
 } from 'wagmi'
-import { type TwapOrder, usePersistedOrdersStore } from './useTwapOrders'
 
 export const useCancelOrder = (
   chainId: TwapSupportedChainId,
@@ -26,7 +29,7 @@ export const useCancelOrder = (
 ) => {
   const client = usePublicClient()
 
-  const { address, chainId: connectedChainId } = useAccount()
+  const { address } = useAccount()
 
   const { addCancelledOrderId } = usePersistedOrdersStore({
     account: address,
@@ -71,9 +74,7 @@ export const useCancelOrder = (
           summary: {
             pending: `Canceling ${isLimitOrder ? 'limit' : 'DCA'} order`,
             completed: `Canceled ${isLimitOrder ? 'limit' : 'DCA'} order`,
-            failed: `Something went wrong when canceling ${
-              isLimitOrder ? 'limit' : 'DCA'
-            } order`,
+            failed: `Something went wrong when canceling ${isLimitOrder ? 'limit' : 'DCA'} order`,
           },
           timestamp: ts,
           groupTimestamp: ts,
@@ -90,6 +91,9 @@ export const useCancelOrder = (
       return
     }
 
+    logger.error(e, {
+      location: 'TwapCancelOrderButton',
+    })
     createErrorToast(e.message, false)
   }, [])
 
@@ -108,20 +112,15 @@ export const useCancelOrder = (
     if (!sendTransactionAsync || !estGas) return undefined
 
     return async (confirm?: () => void) => {
-      if (connectedChainId !== chainId) {
-        void createErrorToast(
-          `Please switch to ${publicClientConfig[chainId].chain.name} to cancel this order`,
-          false,
-        )
-        return
-      }
-      await sendTransactionAsync({
-        ...tx,
-        gas: (estGas * 6n) / 5n,
-      })
-      confirm?.()
+      try {
+        await sendTransactionAsync({
+          ...tx,
+          gas: (estGas * 6n) / 5n,
+        })
+        confirm?.()
+      } catch {}
     }
-  }, [sendTransactionAsync, tx, estGas, connectedChainId, chainId])
+  }, [sendTransactionAsync, tx, estGas])
 
   const { isLoading: isTxLoading, isError: isTxError } =
     useWaitForTransactionReceipt({
