@@ -25,10 +25,17 @@ export const KinesisSwapButton = ({
 }) => {
   const queryClient = useQueryClient()
   const {
-    state,
+    state: {
+      token0,
+      token1,
+      swapAmount,
+      swapAmountString,
+      chainId0,
+      chainId1,
+      simulateBridgeTx,
+    },
     mutate: { setSwapAmount },
   } = useDerivedStateCrossChainSwap()
-  const { token0, token1, swapAmount, swapAmountString } = state
   const [isTxnPending, setIsTxnPending] = useState(false)
   const { address } = useAccount()
   const { activeAccount } = useKadena()
@@ -37,23 +44,21 @@ export const KinesisSwapButton = ({
     if (!token0 || !token1 || !swapAmount || !swapAmountString) return
 
     const senderAddress =
-      state.chainId0 === ChainId.KADENA
+      chainId0 === ChainId.KADENA
         ? (activeAccount?.accountName ?? '')
         : (address ?? '')
     const receiverAddress =
-      state.chainId1 === ChainId.KADENA
+      chainId1 === ChainId.KADENA
         ? (activeAccount?.accountName ?? '')
         : (address ?? '')
 
     try {
       setIsTxnPending(true)
 
-      const networkIn =
-        state.chainId0 === ChainId.KADENA ? 'mainnet01' : 'ethereum'
-      const networkOut =
-        state.chainId1 === ChainId.KADENA ? 'mainnet01' : 'ethereum'
-      const chainIdIn = state.chainId0 === ChainId.KADENA ? 2 : 1
-      const chainIdOut = state.chainId1 === ChainId.KADENA ? 2 : 1
+      const networkIn = chainId0 === ChainId.KADENA ? 'mainnet01' : 'ethereum'
+      const networkOut = chainId1 === ChainId.KADENA ? 'mainnet01' : 'ethereum'
+      const chainIdIn = chainId0 === ChainId.KADENA ? 2 : 1
+      const chainIdOut = chainId1 === ChainId.KADENA ? 2 : 1
 
       const params: ExecuteBridgeParams = {
         tokenAddressIn: token0.address,
@@ -62,8 +67,8 @@ export const KinesisSwapButton = ({
         chainIdIn: chainIdIn,
         senderAddress: senderAddress,
         tokenAddressOut: token1.address,
-        amountOut: state.simulateBridgeTx?.estimatedAmountReceived ?? '',
-        minAmountOut: state.simulateBridgeTx?.amountMinReceived ?? '',
+        amountOut: simulateBridgeTx?.estimatedAmountReceived ?? '',
+        minAmountOut: simulateBridgeTx?.amountMinReceived ?? '',
         networkOut: networkOut,
         chainIdOut: chainIdOut,
         receiverAddress: receiverAddress,
@@ -76,9 +81,9 @@ export const KinesisSwapButton = ({
 
       createInfoToast({
         summary: 'Bridge swap initiated...',
-        type: 'swap',
+        type: 'xswap',
         account: senderAddress,
-        chainId: state.chainId0,
+        chainId: chainId0,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
         txHash: txnHash,
@@ -100,9 +105,9 @@ export const KinesisSwapButton = ({
 
       createSuccessToast({
         summary: 'Bridge swap executed successfully',
-        type: 'swap',
+        type: 'xswap',
         account: senderAddress,
-        chainId: state.chainId0,
+        chainId: chainId0,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
         txHash: txnHash,
@@ -116,9 +121,9 @@ export const KinesisSwapButton = ({
           typeof err === 'string'
             ? err
             : ((err as Error)?.message ?? 'Bridge swap failed'),
-        type: 'swap',
+        type: 'xswap',
         account: senderAddress,
-        chainId: state.chainId0,
+        chainId: chainId0,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
       })
