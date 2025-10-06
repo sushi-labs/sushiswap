@@ -18,7 +18,7 @@ export const useKinesisSwapSimulate = (
   } = params ?? {}
 
   return useQuery<SimulateBridgeResult, Error>({
-    queryKey: ['x-chain-swap-simulate', params],
+    queryKey: ['kinesis-x-chain-swap-simulate', params],
     enabled: Boolean(
       amountIn &&
         Number(amountIn) > 0 &&
