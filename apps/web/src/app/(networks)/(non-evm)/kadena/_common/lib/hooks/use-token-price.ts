@@ -54,7 +54,10 @@ const getPrice = async (token: KvmToken | undefined) => {
 export const useTokenPrice = ({
   token,
   enabled = true,
-}: { token: KvmToken | undefined; enabled?: boolean }) => {
+}: {
+  token: KvmToken | undefined
+  enabled?: boolean
+}) => {
   return useQuery({
     queryKey: ['use-token-price-kadena', { token: token?.address }],
     queryFn: async () => {

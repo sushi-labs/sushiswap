@@ -75,8 +75,8 @@ export const publicTransports = {
     `https://lb.drpc.org/ogrpc?network=scroll&dkey=${drpcId}`,
   ),
   [EvmChainId.FILECOIN]: http(
-    `https://lb.drpc.org/ogrpc?network=filecoin&dkey=${drpcId}`,
-    // 'https://fil-mainnet-1.rpc.laconic.com/rpc/v1'
+    'https://api.node.glif.io/rpc/v1',
+    // `https://lb.drpc.org/ogrpc?network=filecoin&dkey=${drpcId}`,
   ),
   [EvmChainId.ZETACHAIN]: http(
     `https://lb.drpc.org/ogrpc?network=zeta-chain&dkey=${drpcId}`,

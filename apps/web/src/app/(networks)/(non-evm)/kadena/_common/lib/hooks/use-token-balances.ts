@@ -31,7 +31,6 @@ export const useTokenBalances = ({
         preflight: false,
         signatureVerification: false,
       })
-
       if (res.result.status !== 'success') {
         throw new Error(res.result.error?.message || 'Failed to fetch balances')
       }
