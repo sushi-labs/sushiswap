@@ -12,7 +12,7 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { type FC, useCallback } from 'react'
-import { ChainId, getChainById } from 'sushi'
+import { getChainById } from 'sushi'
 import type { KvmChainId } from 'sushi/kvm'
 import type { KinesisChainId } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import type { EthereumChainId } from './token-selector'
@@ -69,7 +69,7 @@ export const DesktopNetworkSelector: FC<DesktopNetworkSelector> = ({
                     <div
                       className={classNames(
                         'rounded-full w-2 h-2 mr-0.5 mb-0.5',
-                        network === ChainId.KADENA && 'bg-green',
+                        network === selectedNetwork && 'bg-green',
                       )}
                     />
                   }
