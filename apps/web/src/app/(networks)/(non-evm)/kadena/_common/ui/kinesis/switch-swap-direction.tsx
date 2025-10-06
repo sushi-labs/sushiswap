@@ -3,12 +3,14 @@ import React from 'react'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 
 export const SwitchSwapDirection = () => {
-  const { mutate } = useDerivedStateCrossChainSwap()
+  const {
+    mutate: { switchTokens },
+  } = useDerivedStateCrossChainSwap()
 
   return (
     <div className="left-0 right-0 mt-[-26px] mb-[-26px] flex items-center justify-center">
       <button
-        onClick={mutate?.switchTokens}
+        onClick={switchTokens}
         type="button"
         className="z-10 p-2 transition-all border rounded-full cursor-pointer hover:shadow-sm transition-border group bg-background border-accent"
       >
