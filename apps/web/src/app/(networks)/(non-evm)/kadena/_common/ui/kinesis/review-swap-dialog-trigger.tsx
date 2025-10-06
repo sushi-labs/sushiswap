@@ -13,8 +13,9 @@ import { useKadena } from '~kadena/kadena-wallet-provider'
 import { WalletConnector } from '../WalletConnector/WalletConnector'
 
 export const ReviewSwapDialogTrigger = () => {
-  const { state } = useDerivedStateCrossChainSwap()
-  const { isLoadingSimulateBridgeTx } = state
+  const {
+    state: { token0, swapAmountString, isLoadingSimulateBridgeTx },
+  } = useDerivedStateCrossChainSwap()
 
   const { address } = useAccount()
   const { connectAsync } = useConnect()
@@ -22,14 +23,11 @@ export const ReviewSwapDialogTrigger = () => {
   const { activeAccount } = useKadena()
 
   const tokenAddresses = useMemo(() => {
-    if (state.token0 && isKvmChainId(state.token0.chainId)) {
-      return [
-        state.token0.address as KvmTokenAddress,
-        'coin' as KvmTokenAddress,
-      ]
+    if (token0 && isKvmChainId(token0.chainId)) {
+      return [token0.address as KvmTokenAddress, 'coin' as KvmTokenAddress]
     }
     return []
-  }, [state.token0])
+  }, [token0])
 
   const { data: kadenaBalances, isLoading: kadenaLoading } = useTokenBalances({
     account: activeAccount?.accountName ?? '',
@@ -37,56 +35,54 @@ export const ReviewSwapDialogTrigger = () => {
   })
 
   const ethBalanceChainId =
-    state.token0?.chainId && isEvmChainId(state.token0?.chainId)
-      ? (state.token0.chainId as EvmChainId)
+    token0?.chainId && isEvmChainId(token0?.chainId)
+      ? (token0.chainId as EvmChainId)
       : undefined
 
   const ethBalanceAddress =
-    state.token0?.address && isEvmChainId(state.token0?.chainId)
-      ? (state.token0?.address as `0x${string}`)
+    token0?.address && isEvmChainId(token0?.chainId)
+      ? (token0?.address as `0x${string}`)
       : undefined
 
   const ethBalance = useBalance(ethBalanceChainId, ethBalanceAddress)
 
   const hasInsufficientGas = useMemo(() => {
-    if (state.token0 && isKvmChainId(state.token0.chainId)) {
+    if (token0 && isKvmChainId(token0.chainId)) {
       const kdaBalance = Number.parseFloat(
         kadenaBalances?.balanceMap['coin'] ?? '0',
       )
       return kdaBalance < MIN_GAS_FEE
     }
-    if (state.token0 && isEvmChainId(state.token0.chainId)) {
-      return (
-        Number(formatUnits(ethBalance.data ?? 0n, state.token0.decimals)) === 0
-      )
+    if (token0 && isEvmChainId(token0.chainId)) {
+      return Number(formatUnits(ethBalance.data ?? 0n, token0.decimals)) === 0
     }
     return true
-  }, [state.token0, kadenaBalances, ethBalance.data])
+  }, [token0, kadenaBalances, ethBalance.data])
 
   const token0Balance = useMemo(() => {
-    if (!state.token0) return 0
-    if (isKvmChainId(state.token0.chainId)) {
+    if (!token0) return 0
+    if (isKvmChainId(token0.chainId)) {
       return Number.parseFloat(
-        kadenaBalances?.balanceMap[state.token0.address] ?? '0',
+        kadenaBalances?.balanceMap[token0.address] ?? '0',
       )
     }
-    if (isEvmChainId(state.token0.chainId)) {
-      return Number(formatUnits(ethBalance.data ?? 0n, state.token0.decimals))
+    if (isEvmChainId(token0.chainId)) {
+      return Number(formatUnits(ethBalance.data ?? 0n, token0.decimals))
     }
     return 0
-  }, [state.token0, kadenaBalances, ethBalance.data])
+  }, [token0, kadenaBalances, ethBalance.data])
 
   const hasInsufficientToken0Balance = useMemo(() => {
     if (kadenaLoading) return true
-    return token0Balance < Number(state.swapAmountString)
-  }, [state.swapAmountString, kadenaLoading, token0Balance])
+    return token0Balance < Number(swapAmountString)
+  }, [swapAmountString, kadenaLoading, token0Balance])
 
   const buttonText = useMemo(() => {
     // if (isTxnPending) {
     //   return 'Swapping'
     // }
 
-    if (!state.swapAmountString || state.swapAmountString === '0') {
+    if (!swapAmountString || swapAmountString === '0') {
       return 'Enter Amount'
     }
     if (hasInsufficientToken0Balance) {
@@ -97,16 +93,16 @@ export const ReviewSwapDialogTrigger = () => {
       return 'Insufficient Gas Balance'
     }
     return 'Swap'
-  }, [state.swapAmountString, hasInsufficientToken0Balance, hasInsufficientGas])
+  }, [swapAmountString, hasInsufficientToken0Balance, hasInsufficientGas])
 
   const isDisabled = useMemo(() => {
     return (
-      !(state.swapAmountString && Number(state.swapAmountString) > 0) ||
+      !(swapAmountString && Number(swapAmountString) > 0) ||
       hasInsufficientToken0Balance ||
       isLoadingSimulateBridgeTx
     )
   }, [
-    state.swapAmountString,
+    swapAmountString,
     hasInsufficientToken0Balance,
     isLoadingSimulateBridgeTx,
   ])
