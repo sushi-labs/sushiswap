@@ -80,7 +80,7 @@ export const ReviewSwapDialog = () => {
                       subtitle="The impact your trade has on the market price of this pool."
                     >
                       <span className={classNames('text-right')}>
-                        -{formatPercent(0)}
+                        {formatPercent(0)}
                       </span>
                     </List.KeyValue>
                     <List.KeyValue
@@ -128,9 +128,7 @@ export const ReviewSwapDialog = () => {
         txHash={txHash as `0x${string}`}
         successMessage={`You sold ${state.swapAmountString} ${
           state.token0?.symbol
-        } for ${state.simulateBridgeTx?.amountMinReceived?.toString()} ${
-          state.token1?.symbol
-        }`}
+        } for ${state.simulateBridgeTx?.amountMinReceived?.toString()} ${state.token1?.symbol}`}
       />
     </DialogProvider>
   )

@@ -1,43 +1,35 @@
-import { useDebounce } from '@sushiswap/hooks'
 import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
-import { Amount } from 'sushi'
+import { useEffect } from 'react'
 import { EvmChainId } from 'sushi/evm'
 import { KvmChainId } from 'sushi/kvm'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { TokenInput } from './token-input'
 
 export const AmountIn = () => {
-  const { state, mutate } = useDerivedStateCrossChainSwap()
+  const {
+    state: { swapAmountString, token0 },
+    mutate: { setSwapAmount, setTokens },
+  } = useDerivedStateCrossChainSwap()
   const queryClient = useQueryClient()
 
-  const [amountIn, setAmountIn] = useState<string | undefined>(
-    state?.swapAmountString,
-  )
-
-  const debouncedAmountIn = useDebounce<string | undefined>(amountIn, 250)
-
   useEffect(() => {
-    if (debouncedAmountIn && state?.token0) {
-      const parsed = Amount.fromHuman(state.token0, debouncedAmountIn)
-      mutate?.setSwapAmount(parsed.toString())
-    } else {
-      mutate?.setSwapAmount('')
+    if (!swapAmountString || !token0) {
+      setSwapAmount('')
       queryClient.invalidateQueries({
         queryKey: ['simulate-bridge-tx'],
         exact: false,
       })
     }
-  }, [debouncedAmountIn, state?.token0, mutate, queryClient])
+  }, [swapAmountString, token0, setSwapAmount, queryClient])
 
   return (
     <TokenInput
       className="border border-accent"
       type="input"
-      amount={amountIn ?? ''}
-      setAmount={setAmountIn}
-      currency={state?.token0}
-      setToken={mutate?.setTokens}
+      amount={swapAmountString ?? ''}
+      setAmount={setSwapAmount}
+      currency={token0}
+      setToken={setTokens}
       label="Sell"
       isLoadingAmount={false}
       isTxnPending={false}

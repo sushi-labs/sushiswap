@@ -24,7 +24,10 @@ export const KinesisSwapButton = ({
   setStatus: (status: 'pending' | 'success' | 'error') => void
 }) => {
   const queryClient = useQueryClient()
-  const { state, mutate } = useDerivedStateCrossChainSwap()
+  const {
+    state,
+    mutate: { setSwapAmount },
+  } = useDerivedStateCrossChainSwap()
   const { token0, token1, swapAmount, swapAmountString } = state
   const [isTxnPending, setIsTxnPending] = useState(false)
   const { address } = useAccount()
@@ -65,8 +68,6 @@ export const KinesisSwapButton = ({
         chainIdOut: chainIdOut,
         receiverAddress: receiverAddress,
       }
-
-      console.log('executeBridge', params)
 
       const tx = await kinesisClient.executeBridgeTransaction(params)
       const txnHash = tx.txnHash
@@ -129,7 +130,7 @@ export const KinesisSwapButton = ({
   }
 
   const onSuccess = () => {
-    mutate.setSwapAmount?.('')
+    setSwapAmount('')
     closeModal()
     queryClient.invalidateQueries()
   }

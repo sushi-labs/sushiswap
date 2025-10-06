@@ -28,7 +28,7 @@ export default function CrossChainSwapPage() {
           <AmountIn />
           <SwitchSwapDirection />
           <div className="flex flex-col">
-            <AmountOut isLoading={false} />
+            <AmountOut />
 
             <ReviewSwapDialog />
           </div>
