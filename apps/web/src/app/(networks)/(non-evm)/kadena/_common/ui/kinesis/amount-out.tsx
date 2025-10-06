@@ -4,18 +4,20 @@ import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/deriveds
 import { TokenInput } from './token-input'
 
 export const AmountOut = ({ isLoading = false }: { isLoading?: boolean }) => {
-  const { state } = useDerivedStateCrossChainSwap()
+  const {
+    state: { simulateBridgeTx, token1, isLoadingSimulateBridgeTx },
+  } = useDerivedStateCrossChainSwap()
 
   return (
     <TokenInput
       className="border border-accent"
-      amount={state.simulateBridgeTx?.estimatedAmountReceived ?? ''}
+      amount={simulateBridgeTx?.estimatedAmountReceived ?? ''}
       setAmount={() => {}}
       networks={[KvmChainId.KADENA, EvmChainId.ETHEREUM]}
       type="output"
-      currency={state?.token1}
+      currency={token1}
       label="Buy"
-      isLoadingAmount={isLoading || state.isLoadingSimulateBridgeTx}
+      isLoadingAmount={isLoading || isLoadingSimulateBridgeTx}
     />
   )
 }
