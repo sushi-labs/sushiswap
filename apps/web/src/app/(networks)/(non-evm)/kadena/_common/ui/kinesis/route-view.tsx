@@ -8,8 +8,9 @@ import type { KinesisToken } from '~kadena/cross-chain-swap/derivedstate-cross-c
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapRouteView = () => {
-  const { state } = useDerivedStateCrossChainSwap()
-  const { swapAmount, bridgeAmount } = state
+  const {
+    state: { swapAmount, bridgeAmount },
+  } = useDerivedStateCrossChainSwap()
 
   return (
     <div className="flex gap-4">
