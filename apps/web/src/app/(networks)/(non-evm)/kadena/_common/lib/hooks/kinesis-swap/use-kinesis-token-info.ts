@@ -21,15 +21,21 @@ export const useKinesisTokenInfo = ({
   const { data: tokenLists } = useKinesisTokenList()
 
   return useQuery<KinesisToken | undefined>({
-    queryKey: ['x-chain-token-info', chainId, address, enabled],
+    queryKey: ['kinesis-x-chain-token-info', chainId, address, enabled],
     enabled: Boolean(enabled && address && chainId && tokenLists),
     queryFn: async () => {
       if (!tokenLists) return
 
       if (isKvmChainId(chainId)) {
+        const _address =
+          address === 'coin'
+            ? 'n_e595727b657fbbb3b8e362a05a7bb8d12865c1ff.KDA'
+            : address
         return (
           tokenLists.kadena.find(
-            (t) => t.address === (address as KvmTokenAddress),
+            (t) =>
+              t.address.toLowerCase() ===
+              (_address as KvmTokenAddress).toLowerCase(),
           ) ?? undefined
         )
       }
@@ -53,16 +59,19 @@ export function findKinesisEquivalentToken(
   token: KinesisToken,
   tokenLists: { kadena: KvmToken[]; ethereum: EvmToken[] },
 ): KinesisToken | undefined {
+  let tokenSymbol = token.symbol.toLowerCase()
+  if (tokenSymbol.includes('kb-')) {
+    tokenSymbol = tokenSymbol.replace('kb-', '')
+  }
+
   if (token.chainId === ChainId.KADENA) {
     return tokenLists.ethereum.find(
-      (t) => t.symbol.toLowerCase() === token.symbol.toLowerCase(),
+      (t) => t.symbol.toLowerCase() === tokenSymbol,
     )
   }
 
   if (token.chainId === ChainId.ETHEREUM) {
-    return tokenLists.kadena.find(
-      (t) => t.symbol.toLowerCase() === token.symbol.toLowerCase(),
-    )
+    return tokenLists.kadena.find((t) => t.symbol.toLowerCase() === tokenSymbol)
   }
 
   return undefined

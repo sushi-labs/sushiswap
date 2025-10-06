@@ -183,17 +183,19 @@ const DerivedstateCrossChainSwapProvider: FC<
         _token0,
         tokenLists ?? { kadena: [], ethereum: [] },
       )
-
+      if (!crossChainEquivalentToken) {
+        throw new Error('No cross chain equivalent token found')
+      }
       const url = `${pathname}?${createQueryString([
         { name: 'token0', value: _token0.address },
-        { name: 'token1', value: crossChainEquivalentToken?.address ?? null },
+        { name: 'token1', value: crossChainEquivalentToken?.address },
         {
           name: 'chainId0',
           value: encodeChainId(_token0.chainId),
         },
         {
           name: 'chainId1',
-          value: encodeChainId(crossChainEquivalentToken?.chainId ?? 0),
+          value: encodeChainId(crossChainEquivalentToken?.chainId),
         },
       ])}`
 
@@ -205,10 +207,10 @@ const DerivedstateCrossChainSwapProvider: FC<
   const setSwapAmount = useCallback(
     (swapAmount: string) => {
       push(
-        `${pathname}?${createQueryString([
-          { name: 'swapAmount', value: swapAmount },
-        ])}`,
-        { scroll: false },
+        `${pathname}?${createQueryString([{ name: 'swapAmount', value: swapAmount }])}`,
+        {
+          scroll: false,
+        },
       )
     },
     [createQueryString, pathname, push],
@@ -237,8 +239,6 @@ const DerivedstateCrossChainSwapProvider: FC<
       token1,
     })
 
-  console.log('simulateBridgeTx.data', simulateBridgeTx)
-
   const swapAmount = useMemo(
     () => (token0 ? Amount.tryFromHuman(token0, swapAmountString) : undefined),
     [token0, swapAmountString],
@@ -250,12 +250,10 @@ const DerivedstateCrossChainSwapProvider: FC<
     return Amount.tryFromHuman(token1, simulateBridgeTx.estimatedAmountReceived)
   }, [token1, simulateBridgeTx])
 
-  const { data: token0Price } = useKinesisTokenPrice({
-    network: chainId0 === ChainId.KADENA ? 'mainnet01' : 'ethereum',
-    tokenAddress: token0?.address ?? '',
-  })
-
-  console.log('token0Price', token0Price)
+  // const { data: token0Price } = useKinesisTokenPrice({
+  //   network: chainId0 === ChainId.KADENA ? 'mainnet01' : 'ethereum',
+  //   tokenAddress: token0?.address ?? '',
+  // })
 
   return (
     <DerivedStateCrossChainSwapContext.Provider

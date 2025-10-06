@@ -18,7 +18,7 @@ export type KinesisTokenList = {
 
 export const useKinesisTokenList = () => {
   const { data, isLoading, isError } = useQuery<KinesisTokenList, Error>({
-    queryKey: ['x-chain-token-list'],
+    queryKey: ['kinesis-x-chain-token-list'],
     queryFn: getKinesisTokenList,
   })
 
