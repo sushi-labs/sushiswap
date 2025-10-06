@@ -7,8 +7,8 @@ import {
   unwrapToken,
 } from 'sushi'
 
+import classNames from 'classnames'
 import { twMerge } from 'tailwind-merge'
-import { cn } from '../lib/cn'
 import { Currency } from './currency'
 import { SkeletonText } from './skeleton'
 
@@ -49,7 +49,7 @@ const CardOverlay = React.forwardRef<HTMLDivElement, CardOverlayProps>(
     <div
       data-state={show ? 'active' : 'inactive'}
       ref={ref}
-      className={cn(
+      className={classNames(
         'data-[state=active]:flex data-[state=inactive]:hidden rounded-xl z-10 pointer-events-none absolute inset-0 justify-center items-center',
         'bg-white/[0.8]',
         'dark:bg-slate-900/[0.8]',
@@ -68,7 +68,7 @@ const CardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn(
+    className={classNames(
       'flex flex-col space-y-1.5 p-6 whitespace-pre-wrap',
       className,
     )}
@@ -83,7 +83,7 @@ const CardTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h3
     ref={ref}
-    className={cn(
+    className={classNames(
       'text-lg font-semibold leading-none tracking-tight',
       className,
     )}
@@ -98,7 +98,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('text-sm text-muted-foreground', className)}
+    className={classNames('text-sm text-muted-foreground', className)}
     {...props}
   />
 ))
@@ -108,7 +108,11 @@ const CardGroup = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn('flex flex-col gap-3', className)} {...props} />
+  <div
+    ref={ref}
+    className={classNames('flex flex-col gap-3', className)}
+    {...props}
+  />
 ))
 CardGroup.displayName = 'CardGroup'
 
@@ -118,7 +122,7 @@ const CardLabel = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <span
     ref={ref}
-    className={cn(
+    className={classNames(
       'font-normal text-xs',
       'text-gray-400',
       'dark:text-slate-600',
@@ -167,7 +171,7 @@ const CardItem = React.forwardRef<HTMLDivElement, CardItemProps>(
     return (
       <div
         ref={ref}
-        className={cn(
+        className={classNames(
           className,
           flex ? 'flex justify-between items-center' : 'grid grid-cols-2',
           'gap-2',
@@ -244,7 +248,7 @@ const CardContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('p-6 pt-0 flex flex-col gap-6', className)}
+    className={classNames('p-6 pt-0 flex flex-col gap-6', className)}
     {...props}
   />
 ))
@@ -256,7 +260,7 @@ const CardFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn(' flex items-center p-6 pt-0', className)}
+    className={classNames(' flex items-center p-6 pt-0', className)}
     {...props}
   />
 ))
