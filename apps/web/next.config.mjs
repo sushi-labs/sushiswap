@@ -146,7 +146,12 @@ const nextConfig = bundleAnalyzer({
     ]
   },
   async rewrites() {
-    return []
+    return [
+      {
+        source: '/:chainId/:trade/advanced',
+        destination: '/:chainId/:trade',
+      },
+    ]
   },
 })
 

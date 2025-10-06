@@ -13,12 +13,14 @@ export interface IconListProps {
   children: ReactNode
   iconWidth: number
   iconHeight: number
+  className?: string
 }
 
 export const IconList: FC<IconListProps> = ({
   children,
   iconWidth,
   iconHeight,
+  className,
 }) => {
   return (
     <div className="flex items-center">
@@ -27,7 +29,10 @@ export const IconList: FC<IconListProps> = ({
           if (isValidElement<ComponentProps<typeof Icon>>(child)) {
             return (
               <div
-                className="rounded-full inline-flex z-10 border-2 ring-gray-50 dark:ring-slate-950"
+                className={classNames(
+                  'rounded-full inline-flex z-10 border-2 ring-gray-50 dark:ring-slate-950',
+                  className,
+                )}
                 style={{ marginLeft: index > 0 ? -iconWidth / 3 : 0 }}
               >
                 {cloneElement(child, {

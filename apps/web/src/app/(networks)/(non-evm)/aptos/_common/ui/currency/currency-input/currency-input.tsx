@@ -86,7 +86,7 @@ export function CurrencyInput({
     <div
       className={classNames(
         error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
-        'relative space-y-2 overflow-hidden pb-2',
+        'relative overflow-hidden',
         className,
       )}
     >
@@ -94,24 +94,44 @@ export function CurrencyInput({
         data-state={fetching ? 'active' : 'inactive'}
         className="transition-all data-[state=inactive]:hidden data-[state=active]:block absolute inset-0 overflow-hidden p-4 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_.5s_infinite] before:bg-gradient-to-r before:from-transparent dark:before:via-slate-50/10 before:via-gray-900/[0.07] before:to-transparent"
       />
-      {label ? (
-        <span className="text-sm text-muted-foreground">{label}</span>
-      ) : null}
-      <div className="relative flex items-center gap-4">
-        <div className="flex flex-1 items-center">
-          <TextField
-            testdata-id={`${id}-input`}
-            type="number"
-            variant="naked"
-            disabled={disabled}
-            onValueChange={(value) => {
-              if (onUserInput) {
-                onUserInput(value)
-              }
-            }}
-            value={value}
-            readOnly={disabled}
-            className={classNames('p-0 py-1 !text-3xl font-medium')}
+      <div className="flex items-center justify-between">
+        {label ? (
+          <span className="text-sm text-muted-foreground">{label}</span>
+        ) : (
+          <span />
+        )}
+
+        <CurrencyInputBalancePanel
+          coinData={balance ? balance : 0}
+          isLoading={isBalanceLoading}
+          decimals={token?.decimals}
+          onClick={balanceClick}
+          type={type}
+        />
+      </div>
+      <div className="relative flex items-center gap-4 mt-1">
+        <div className="w-full">
+          <div className="flex flex-1 items-center">
+            <TextField
+              testdata-id={`${id}-input`}
+              type="number"
+              variant="naked"
+              disabled={disabled}
+              onValueChange={(value) => {
+                if (onUserInput) {
+                  onUserInput(value)
+                }
+              }}
+              value={value}
+              readOnly={disabled}
+              className={classNames('p-0 py-1 !text-2xl font-medium')}
+            />
+          </div>
+
+          <CurrencyInputPricePanel
+            isLoading={typeof tokenPrice === 'undefined'}
+            error={error}
+            value={String(amountUSD)}
           />
         </div>
 
@@ -162,20 +182,6 @@ export function CurrencyInput({
             )}
           </div>
         )}
-      </div>
-      <div className="flex flex-row items-center justify-between h-[36px]">
-        <CurrencyInputPricePanel
-          isLoading={typeof tokenPrice === 'undefined'}
-          error={error}
-          value={String(amountUSD)}
-        />
-        <CurrencyInputBalancePanel
-          coinData={balance ? balance : 0}
-          isLoading={isBalanceLoading}
-          decimals={token?.decimals}
-          onClick={balanceClick}
-          type={type}
-        />
       </div>
     </div>
   )
