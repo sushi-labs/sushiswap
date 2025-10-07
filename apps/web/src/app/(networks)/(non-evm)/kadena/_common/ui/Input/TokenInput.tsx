@@ -215,8 +215,8 @@ export const TokenInput = ({
       </div>
       <div className="flex flex-row items-center justify-between h-[36px]">
         <DollarAmountDisplay
-          isLoading={!amount && isLoadingPrice}
-          error={undefined}
+          isLoading={Boolean(amount !== '' && isLoadingPrice)}
+          error={_error}
           value={usdAmount}
         />
         <TokenBalanceDisplay
