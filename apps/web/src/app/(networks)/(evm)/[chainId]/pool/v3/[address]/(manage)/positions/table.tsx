@@ -1,16 +1,18 @@
 'use client'
 
-import type { V3Pool } from '@sushiswap/graph-client/data-api'
+import { type RawV3Pool, hydrateV3Pool } from '@sushiswap/graph-client/data-api'
 import { Switch } from '@sushiswap/ui'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ConcentratedPositionsTable } from '~evm/[chainId]/pool/_ui/ConcentratedPositionsTable/concentrated-positions-table'
 
 export function ManageV3PoolPositionsTable({
-  pool,
+  pool: rawPool,
 }: {
-  pool: V3Pool
+  pool: RawV3Pool
 }) {
+  const pool = useMemo(() => hydrateV3Pool(rawPool), [rawPool])
   const [hideClosed, setHideClosed] = useState(true)
+
   return (
     <ConcentratedPositionsTable
       chainId={pool.chainId}

@@ -1,6 +1,10 @@
 'use client'
 
-import type { V2Pool } from '@sushiswap/graph-client/data-api'
+import {
+  type RawV2Pool,
+  type V2Pool,
+  hydrateV2Pool,
+} from '@sushiswap/graph-client/data-api'
 import {
   Card,
   CardContent,
@@ -14,21 +18,23 @@ import {
   TabsTrigger,
 } from '@sushiswap/ui'
 import Link from 'next/link'
-import type { FC } from 'react'
+import { type FC, useMemo } from 'react'
 import { getEvmChainById } from 'sushi/evm'
 import { PoolPositionProvider } from '../../../_common/ui/pool-position-provider'
 import { AddSectionLegacy } from './add-section-legacy'
 import { RemoveSectionLegacy } from './remove-section-legacy'
 
 interface ManageV2LiquidityCardProps {
-  pool: V2Pool
+  pool: RawV2Pool
   tab?: 'add' | 'remove'
 }
 
 export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
-  pool,
+  pool: rawPool,
   tab = 'add',
 }) => {
+  const pool = useMemo(() => hydrateV2Pool(rawPool), [rawPool])
+
   return (
     <Card>
       <CardHeader>

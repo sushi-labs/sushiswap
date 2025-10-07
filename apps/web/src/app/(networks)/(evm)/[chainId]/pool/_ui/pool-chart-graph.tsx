@@ -1,6 +1,11 @@
 'use client'
 
-import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
+import type {
+  RawV2Pool,
+  RawV3Pool,
+  V2Pool,
+  V3Pool,
+} from '@sushiswap/graph-client/data-api'
 import {
   CardContent,
   CardDescription,
@@ -24,7 +29,7 @@ import { CanvasRenderer } from 'echarts/renderers'
 import { type FC, useCallback, useMemo } from 'react'
 import { usePoolGraphData } from 'src/lib/hooks'
 import { formatUSD } from 'sushi'
-import type { SushiSwapProtocol } from 'sushi/evm'
+import type { PoolBase, PoolId, SushiSwapProtocol } from 'sushi/evm'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import { PoolChartPeriod, chartPeriods } from './pool-chart-periods'
@@ -33,7 +38,7 @@ import { PoolChartType } from './pool-chart-types'
 interface PoolChartProps {
   chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL
   period: PoolChartPeriod
-  pool: V2Pool | V3Pool
+  pool: RawV2Pool | V2Pool | RawV3Pool | V3Pool
   protocol: SushiSwapProtocol
 }
 

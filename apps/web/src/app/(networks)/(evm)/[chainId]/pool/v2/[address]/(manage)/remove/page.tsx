@@ -1,9 +1,7 @@
-import { type V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
-import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import { isSushiSwapV2ChainId } from 'sushi/evm'
-import { isAddress } from 'viem'
+import { isEvmAddress, isSushiSwapV2ChainId } from 'sushi/evm'
 import { PoolPositionProvider } from '../../_common/ui/pool-position-provider'
+import { getCachedV2Pool } from '../../_lib/get-cached-v2-pool'
 import { ManageV2LiquidityCard } from '../_common/ui/manage-v2-liquidity-card'
 import { PoolPosition } from '../_common/ui/pool-position'
 
@@ -14,20 +12,11 @@ export default async function ManageV2PoolPage(props: {
   const { chainId: _chainId, address } = params
   const chainId = +_chainId
 
-  if (
-    !isSushiSwapV2ChainId(chainId) ||
-    !isAddress(address, { strict: false })
-  ) {
+  if (!isSushiSwapV2ChainId(chainId) || !isEvmAddress(address)) {
     return notFound()
   }
 
-  const pool = (await unstable_cache(
-    async () => getV2Pool({ chainId, address }, { retries: 3 }),
-    ['v2', 'pool', `${chainId}:${address}`],
-    {
-      revalidate: 60 * 15,
-    },
-  )()) as V2Pool
+  const pool = (await getCachedV2Pool({ chainId, address }))!
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -36,7 +25,7 @@ export default async function ManageV2PoolPage(props: {
       </div>
       <div className="flex flex-col gap-6">
         <PoolPositionProvider pool={pool}>
-          <PoolPosition pool={pool} />
+          <PoolPosition />
         </PoolPositionProvider>
       </div>
     </div>

@@ -1,6 +1,10 @@
 'use client'
 
-import type { V3Pool } from '@sushiswap/graph-client/data-api'
+import {
+  type RawV3Pool,
+  type V3Pool,
+  hydrateV3Pool,
+} from '@sushiswap/graph-client/data-api'
 import {
   Card,
   CardContent,
@@ -11,13 +15,11 @@ import {
   CardLabel,
   CardTitle,
   Container,
-  LinkInternal,
-  Message,
   Separator,
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import type { FC } from 'react'
+import { type FC, useMemo } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPoolReserves'
@@ -27,7 +29,7 @@ import { PoolRewardDistributionsCard } from './pool-reward-distributions-card'
 import { PoolTransactionsV3 } from './pool-transactions-v3'
 import { StatisticsChartsV3 } from './statistics-chart-v3'
 
-const PoolPageV3: FC<{ pool: V3Pool }> = ({ pool }) => {
+const PoolPageV3: FC<{ pool: RawV3Pool }> = ({ pool }) => {
   return (
     <ConcentratedLiquidityProvider>
       <Pool pool={pool} />
@@ -35,7 +37,9 @@ const PoolPageV3: FC<{ pool: V3Pool }> = ({ pool }) => {
   )
 }
 
-const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
+const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
+  const pool = useMemo(() => hydrateV3Pool(rawPool), [rawPool])
+
   const { chainId, address } = pool
 
   const { data: poolStats } = useConcentratedLiquidityPoolStats({
