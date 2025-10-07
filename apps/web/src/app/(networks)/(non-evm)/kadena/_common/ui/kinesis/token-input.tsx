@@ -127,8 +127,6 @@ export const TokenInput = ({
 
   const isLoadingPrice = evmPrice.isLoading || kadenaPrice.isLoading
   const isLoadingTokenBalance = kadenaBalances.isLoading || evmBalance.isLoading
-  const currencyLoading = false
-  const fetching = false
 
   const insufficientBalance =
     type === 'input' && Number(amount) > Number.parseFloat(tokenBalance ?? '0')
@@ -163,14 +161,13 @@ export const TokenInput = ({
         networks={networks}
       >
         <Button
-          data-state={currencyLoading ? 'inactive' : 'active'}
           size="lg"
           variant={currency ? 'secondary' : 'default'}
           id={id}
           type="button"
           className={classNames(
             currency ? 'pl-2 pr-3 text-xl' : '',
-            '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex',
+            '!rounded-full flex',
           )}
         >
           {currency ? (
@@ -201,7 +198,6 @@ export const TokenInput = ({
     )
   }, [currency, id, setToken, networks])
 
-  const isLoading = false
   return (
     <div
       className={classNames(
@@ -211,30 +207,11 @@ export const TokenInput = ({
         className,
       )}
     >
-      <div
-        data-state={fetching ? 'active' : 'inactive'}
-        className="transition-all data-[state=inactive]:hidden data-[state=active]:block absolute inset-0 overflow-hidden p-4 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_.5s_infinite] before:bg-gradient-to-r before:from-transparent dark:before:via-slate-50/10 before:via-gray-900/[0.07] before:to-transparent"
-      />
       {label ? (
         <span className="text-sm text-muted-foreground">{label}</span>
       ) : null}
       <div className="relative flex items-center gap-4">
-        <div
-          data-state={isLoading ? 'active' : 'inactive'}
-          className={classNames(
-            'data-[state=inactive]:hidden data-[state=active]:flex',
-            'gap-4 items-center justify-between flex-grow h-[44px]',
-          )}
-        >
-          <SkeletonBox className="w-2/3 h-[32px] rounded-lg" />
-          {currencyLoading ? (
-            <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />
-          ) : null}
-        </div>
-        <div
-          data-state={isLoading ? 'inactive' : 'active'}
-          className="data-[state=inactive]:hidden data-[state=active]:flex flex-1 items-center"
-        >
+        <div className="flex flex-1 items-center">
           {isLoadingAmount ? (
             <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />
           ) : (
@@ -247,7 +224,7 @@ export const TokenInput = ({
               onValueChange={_onChange}
               value={pending ? localValue : amount}
               readOnly={type === 'output'}
-              data-state={isLoading ? 'inactive' : 'active'}
+              data-state={'active'}
               className={classNames('p-0 py-1 !text-3xl font-medium')}
             />
           )}
@@ -291,7 +268,9 @@ export const TokenInput = ({
       </div>
       <div className="flex flex-row items-center justify-between h-[36px]">
         <DollarAmountDisplay
-          isLoading={Boolean(amount !== '' && isLoadingPrice)}
+          isLoading={Boolean(
+            (amount !== '' && isLoadingPrice) || isLoadingAmount,
+          )}
           error={_error}
           value={usdAmount}
         />

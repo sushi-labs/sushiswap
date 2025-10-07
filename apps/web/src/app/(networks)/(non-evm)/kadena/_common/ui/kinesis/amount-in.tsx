@@ -31,8 +31,6 @@ export const AmountIn = () => {
       currency={token0}
       setToken={setTokens}
       label="Sell"
-      isLoadingAmount={false}
-      isTxnPending={false}
       networks={[KvmChainId.KADENA, EvmChainId.ETHEREUM]}
     />
   )
