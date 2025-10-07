@@ -8,11 +8,18 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
-import { EvmChainId, isEvmChainId } from 'sushi/evm'
+import {
+  EvmChainId,
+  type EvmToken,
+  WETH9_ADDRESS,
+  isEvmChainId,
+} from 'sushi/evm'
 import { type KvmToken, type KvmTokenAddress, isKvmChainId } from 'sushi/kvm'
 import { formatUnits } from 'viem'
 import { useBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
+import { KINESIS_BRIDGE_EVM_ETH } from '~kadena/_common/constants/token-list'
+import { useKinesisWrappedToken } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-wrapped-token'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import type {
@@ -92,10 +99,27 @@ export const TokenInput = ({
 
   const evmBalance = useBalance(evmChainId, evmAddress)
 
+  const { data: wrappedToken, isLoading: isLoadingWrappedToken } =
+    useKinesisWrappedToken({
+      token: currency as EvmToken | undefined,
+      enabled: Boolean(currency && isEvm),
+    })
+
+  const tokenToGetPriceFor = useMemo(() => {
+    if (
+      evmAddress?.toLowerCase() === KINESIS_BRIDGE_EVM_ETH.address.toLowerCase()
+    ) {
+      return WETH9_ADDRESS[EvmChainId.ETHEREUM]
+    }
+    return wrappedToken ? wrappedToken : evmAddress
+  }, [wrappedToken, evmAddress])
+
   const evmPrice = usePrice({
     chainId: evmChainId,
-    address: evmAddress,
-    enabled: Boolean(evmChainId && evmAddress),
+    address: tokenToGetPriceFor,
+    enabled: Boolean(
+      evmChainId && !isLoadingWrappedToken && tokenToGetPriceFor,
+    ),
   })
 
   const priceUsd =
