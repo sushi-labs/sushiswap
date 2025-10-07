@@ -25,10 +25,12 @@ import {
 } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
-import { Amount } from 'sushi'
-import type { EvmChainId } from 'sushi/evm'
+import { useBalancesWeb3 } from 'src/lib/wagmi/hooks/balances/useBalancesWeb3'
+import { Amount, ChainId } from 'sushi'
+import type { EvmChainId, EvmToken } from 'sushi/evm'
 import { KvmChainId, type KvmTokenAddress } from 'sushi/kvm'
 import { formatUnits } from 'viem'
+import { useAccount } from 'wagmi'
 import {
   COMMON_ETHEREUM_TOKENS,
   COMMON_KADENA_TOKENS,
@@ -63,6 +65,7 @@ export const KinesisTokenSelector = ({
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const { activeAccount } = useKadena()
+  const { address } = useAccount()
 
   const [selectedNetwork, setSelectedNetwork] = useState<KinesisChainId>(
     KvmChainId.KADENA,
@@ -88,15 +91,45 @@ export const KinesisTokenSelector = ({
     enabled: Boolean(query),
   })
 
-  const tokenArray = useMemo(() => {
-    if (!baseTokens) return []
+  const kadenaTokenArray = useMemo(() => {
+    if (!baseTokens || selectedNetwork === ChainId.ETHEREUM) return []
     return baseTokens.map((token) => token.address) as KvmTokenAddress[]
-  }, [baseTokens])
+  }, [baseTokens, selectedNetwork])
+
+  const ethereumTokensArray = useMemo(() => {
+    if (!tokenLists || selectedNetwork === ChainId.KADENA) return []
+    return tokenLists.ethereum as EvmToken[]
+  }, [tokenLists, selectedNetwork])
+
+  const { data: evmBalances } = useBalancesWeb3({
+    chainId: ChainId.ETHEREUM,
+    currencies: ethereumTokensArray,
+    account: address,
+    enabled: Boolean(
+      selectedNetwork === ChainId.ETHEREUM && ethereumTokensArray.length > 0,
+    ),
+  })
 
   const { data: tokenBalances } = useTokenBalances({
     account: activeAccount?.accountName ?? '',
-    tokenAddresses: !isLoading && tokenArray.length > 0 ? tokenArray : [],
+    tokenAddresses:
+      !isLoading && kadenaTokenArray.length > 0 ? kadenaTokenArray : [],
   })
+
+  const balanceMap = useMemo(() => {
+    if (selectedNetwork === ChainId.KADENA) {
+      return tokenBalances?.balanceMap
+    }
+    if (selectedNetwork === ChainId.ETHEREUM) {
+      return Object.entries(evmBalances ?? {}).reduce(
+        (acc, [key, value]) => {
+          acc[key] = value.amount.toString()
+          return acc
+        },
+        {} as Record<string, string>,
+      )
+    }
+  }, [tokenBalances?.balanceMap, evmBalances, selectedNetwork])
 
   const baseTokenMap = useMemo(() => {
     if (!baseTokens) return undefined
@@ -110,7 +143,7 @@ export const KinesisTokenSelector = ({
   const { data: sortedTokens } = useSortedTokenList({
     tokenMap: baseTokenMap,
     customTokenMap: {},
-    balanceMap: tokenBalances?.balanceMap,
+    balanceMap: balanceMap,
     query: query,
   })
 
