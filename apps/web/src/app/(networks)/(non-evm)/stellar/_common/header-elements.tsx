@@ -1,4 +1,5 @@
 import {
+  LinkInternal,
   type NavigationElement,
   NavigationElementType,
   NavigationListItem,
@@ -20,10 +21,11 @@ export const headerElements: NavigationElement[] = [
   {
     show: 'desktop',
     type: NavigationElementType.Custom,
-    href: '/swap',
     item: (
       <NavigationMenuItem className={NavigationElementType.Custom}>
-        <NavigationMenuTrigger>Trade</NavigationMenuTrigger>
+        <NavigationMenuTrigger>
+          <LinkInternal href={'/stellar/swap'}>Trade</LinkInternal>
+        </NavigationMenuTrigger>
         <NavigationMenuContent>
           <ul className="w-[400px] gap-3 p-4">
             <NavigationListItem title={'Swap'} href={'/stellar/swap'}>
@@ -45,16 +47,9 @@ export const headerElements: NavigationElement[] = [
     show: 'desktop',
     type: NavigationElementType.Single,
   },
-
   {
     title: 'Pool',
     href: `/stellar/pool`,
-    show: 'desktop',
-    type: NavigationElementType.Single,
-  },
-  {
-    title: 'Stake',
-    href: '/stake',
     show: 'desktop',
     type: NavigationElementType.Single,
   },
