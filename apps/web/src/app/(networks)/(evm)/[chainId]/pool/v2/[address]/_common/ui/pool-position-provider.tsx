@@ -1,6 +1,13 @@
 'use client'
 
-import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
+import {
+  type RawV2Pool,
+  type RawV3Pool,
+  type V2Pool,
+  type V3Pool,
+  hydrateV2Pool,
+  hydrateV3Pool,
+} from '@sushiswap/graph-client/data-api'
 import {
   type FC,
   type ReactNode,
@@ -9,7 +16,7 @@ import {
   useMemo,
 } from 'react'
 import {
-  getTokensFromPool,
+  getLiquidityTokenFromPool,
   useTokenAmountDollarValues,
   useUnderlyingTokenBalanceFromPool,
 } from 'src/lib/hooks'
@@ -30,28 +37,26 @@ interface PoolPositionContext {
 const Context = createContext<PoolPositionContext | undefined>(undefined)
 
 export const PoolPositionProvider: FC<{
-  pool: NonNullable<V2Pool | V3Pool>
+  pool: RawV2Pool | V2Pool | RawV3Pool | V3Pool
   children: ReactNode
   watch?: boolean
-}> = ({ pool, children }) => {
-  const { liquidityToken, reserve0, reserve1, totalSupply } = useMemo(() => {
-    if (!pool)
-      return {
-        token0: undefined,
-        token1: undefined,
-        liquidityToken: undefined,
-      }
+}> = ({ pool: rawPool, children }) => {
+  const pool = useMemo(
+    () =>
+      rawPool.protocol === 'SUSHISWAP_V2'
+        ? hydrateV2Pool(rawPool)
+        : hydrateV3Pool(rawPool),
+    [rawPool],
+  )
 
-    const { token0, token1, liquidityToken } = getTokensFromPool(pool)
+  const { liquidityToken, reserve0, reserve1, totalSupply } = useMemo(() => {
+    const liquidityToken = getLiquidityTokenFromPool(pool)
 
     return {
       liquidityToken,
-      reserve0: token0 && pool ? new Amount(token0, pool.reserve0) : null,
-      reserve1: token1 && pool ? new Amount(token1, pool.reserve1) : null,
-      totalSupply:
-        liquidityToken && pool
-          ? new Amount(liquidityToken, pool.liquidity)
-          : null,
+      reserve0: new Amount(pool.token0, pool.reserve0),
+      reserve1: new Amount(pool.token1, pool.reserve1),
+      totalSupply: new Amount(liquidityToken, pool.liquidity),
     }
   }, [pool])
 

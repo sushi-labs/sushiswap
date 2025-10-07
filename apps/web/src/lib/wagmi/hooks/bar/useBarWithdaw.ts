@@ -3,6 +3,7 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
 import { logger } from 'src/lib/logger'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { Amount } from 'sushi'
 import {
   EvmChainId,
@@ -10,7 +11,6 @@ import {
   XSUSHI_ADDRESS,
   xsushiAbi_leave,
 } from 'sushi/evm'
-import { UserRejectedRequestError } from 'viem'
 import {
   useAccount,
   usePublicClient,
@@ -63,7 +63,7 @@ export function useBarWithdraw({
   )
 
   const onError = useCallback((e: Error) => {
-    if (e.cause instanceof UserRejectedRequestError) {
+    if (isUserRejectedError(e)) {
       return
     }
 

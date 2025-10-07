@@ -1,6 +1,6 @@
 'use client'
 
-import type { V2Pool } from '@sushiswap/graph-client/data-api'
+import { type RawV2Pool, hydrateV2Pool } from '@sushiswap/graph-client/data-api'
 import {
   Card,
   CardContent,
@@ -11,11 +11,13 @@ import {
   CardLabel,
   CardTitle,
 } from '@sushiswap/ui'
-import type { FC } from 'react'
+import { type FC, useMemo } from 'react'
 import { incentiveRewardToToken } from 'src/lib/functions'
 import { Amount } from 'sushi'
 
-export const PoolRewards: FC<{ pool: V2Pool }> = ({ pool }) => {
+export const PoolRewards: FC<{ pool: RawV2Pool }> = ({ pool: rawPool }) => {
+  const pool = useMemo(() => hydrateV2Pool(rawPool), [rawPool])
+
   const incentives = pool.incentives.filter(
     (incentive) => incentive.rewardPerDay > 0,
   )

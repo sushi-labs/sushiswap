@@ -3,12 +3,9 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo, useState } from 'react'
 import { logger } from 'src/lib/logger'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { type EvmToken, erc20Abi_approve } from 'sushi/evm'
-import {
-  type Address,
-  ContractFunctionZeroDataError,
-  UserRejectedRequestError,
-} from 'viem'
+import { type Address, ContractFunctionZeroDataError } from 'viem'
 import { usePublicClient, useSimulateContract, useWriteContract } from 'wagmi'
 import type { SendTransactionReturnType } from 'wagmi/actions'
 import {
@@ -121,7 +118,7 @@ export const useTokenRevokeApproval = ({
   )
 
   const onError = useCallback((e: Error) => {
-    if (e.cause instanceof UserRejectedRequestError) {
+    if (isUserRejectedError(e)) {
       return
     }
 

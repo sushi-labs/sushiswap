@@ -31,6 +31,7 @@ import { NativeAddress } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { logger } from 'src/lib/logger'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import {
   getDefaultTTL,
   useTransactionDeadline,
@@ -46,11 +47,7 @@ import {
   getEvmChainById,
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
-import {
-  type Hex,
-  type SendTransactionReturnType,
-  UserRejectedRequestError,
-} from 'viem'
+import type { Hex, SendTransactionReturnType } from 'viem'
 import {
   type UseCallParameters,
   useAccount,
@@ -223,7 +220,7 @@ export const AddSectionReviewModalConcentrated: FC<
   )
 
   const onError = useCallback((e: Error) => {
-    if (e.cause instanceof UserRejectedRequestError) {
+    if (isUserRejectedError(e)) {
       return
     }
 

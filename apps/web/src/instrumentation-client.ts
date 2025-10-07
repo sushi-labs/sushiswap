@@ -160,7 +160,7 @@ import {
   initializeFaro,
 } from '@grafana/faro-react'
 import { LogLevel } from '@grafana/faro-web-sdk'
-import { TracingInstrumentation } from '@grafana/faro-web-tracing'
+// import { TracingInstrumentation } from '@grafana/faro-web-tracing'
 
 const faroConfig = {
   url: 'https://faro.analytics-fe.sushi.com/collect',
@@ -204,7 +204,7 @@ if (!faro.api && !process.env.CI) {
           captureConsoleDisabledLevels: [LogLevel.DEBUG, LogLevel.INFO],
         }),
         // Tracing package to get end-to-end visibility for HTTP requests.
-        new TracingInstrumentation(),
+        // new TracingInstrumentation(),
         new ReactIntegration(),
       ],
     })
