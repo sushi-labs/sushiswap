@@ -23,7 +23,6 @@ export const ReviewSwapDialogTrigger = () => {
       simulateBridgeError,
     },
   } = useDerivedStateCrossChainSwap()
-  console.log(simulateBridgeError)
 
   const { activeAccount } = useKadena()
 
