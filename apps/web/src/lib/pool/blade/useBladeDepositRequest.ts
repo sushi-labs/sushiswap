@@ -27,9 +27,7 @@ const multipleDepositMixin = z.object({
 
 const singleDepositMixin = z.object({
   amount: z.string(),
-  token: z.string().refine((address) => isAddress(address), {
-    message: 'token does not conform to Address',
-  }),
+  token: sz.evm.address(),
 })
 
 const lockTimeMixin = z.object({

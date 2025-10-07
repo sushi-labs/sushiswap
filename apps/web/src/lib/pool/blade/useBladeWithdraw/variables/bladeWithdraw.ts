@@ -16,6 +16,12 @@ export function bladeWithdraw({
   const abi = bladeApproximateExchangeAbi
 
   if (withdraw && token) {
+    if (!withdraw.extra_data) {
+      throw new Error(
+        'Extra data is required for blade single asset withdrawal',
+      )
+    }
+
     // Single asset withdrawal
     const mutability = 'nonpayable' as const
     const functionName =
