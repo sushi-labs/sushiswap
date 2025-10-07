@@ -2,19 +2,20 @@ import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import React from 'react'
-import { PoolsTableV2 } from 'src/ui/pool/PoolsTableV2'
-import { TableFiltersAPR } from 'src/ui/pool/TableFiltersAPR'
-import { TableFiltersNetworkV2 } from 'src/ui/pool/TableFiltersNetworkV2'
-import { TableFiltersPoolTypeV2 } from 'src/ui/pool/TableFiltersPoolTypeV2'
-import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
-import { TableFiltersTVL } from 'src/ui/pool/TableFiltersTVL'
-import type { ChainId } from 'sushi/chain'
+import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/table-filters-search-token'
+import { PoolsTableV2 } from '~evm/[chainId]/_ui/PoolsTableV2'
+import { TableFiltersAPR } from '~evm/[chainId]/_ui/TableFiltersAPR'
+import { TableFiltersNetworkV2 } from '~evm/[chainId]/_ui/TableFiltersNetworkV2'
+import { TableFiltersPoolTypeV2 } from '~evm/[chainId]/_ui/TableFiltersPoolTypeV2'
+import { TableFiltersTVL } from '~evm/[chainId]/_ui/TableFiltersTVL'
+import { PoolsTable } from '~evm/[chainId]/_ui/pools-table'
+import { TableFiltersFarmsOnly } from '~evm/[chainId]/_ui/table-filters-farms-only'
 
 export default async function PoolsPage(props: {
   params: Promise<{ chainId: string }>
 }) {
   const params = await props.params
-  const chainId = +params.chainId as ChainId
+  const chainId = +params.chainId
 
   if (!isPoolChainId(chainId)) {
     return notFound()
@@ -29,12 +30,14 @@ export default async function PoolsPage(props: {
         <div className="flex gap-3 flex-wrap">
           <TableFiltersSearchToken />
           <TableFiltersPoolTypeV2 />
+          <TableFiltersFarmsOnly />
           <TableFiltersTVL />
           <TableFiltersAPR />
+
           <TableFiltersNetworkV2 />
         </div>
       </div>
-      <PoolsTableV2 chainId={chainId} />
+      <PoolsTableV2 />
     </Container>
   )
 }

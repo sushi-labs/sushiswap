@@ -1,19 +1,18 @@
 import { type V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import { PoolPositionProvider } from 'src/ui/pool'
-import { ConcentratedLiquidityProvider } from 'src/ui/pool/ConcentratedLiquidityProvider'
-import { MigrateTab } from 'src/ui/pool/MigrateTab'
-import type { EvmChainId } from 'sushi/chain'
-import { isSushiSwapV2ChainId } from 'sushi/config'
+import { isSushiSwapV2ChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
+import { ConcentratedLiquidityProvider } from '../../../../_ui/concentrated-liquidity-provider'
+import { PoolPositionProvider } from '../_common/ui/pool-position-provider'
+import { MigrateTab } from './_common/ui/migrate-tab'
 
 export default async function MigrateV2PoolPage(props: {
   params: Promise<{ chainId: string; address: string }>
 }) {
   const params = await props.params
   const { chainId: _chainId, address } = params
-  const chainId = +_chainId as EvmChainId
+  const chainId = +_chainId
 
   if (
     !isSushiSwapV2ChainId(chainId) ||

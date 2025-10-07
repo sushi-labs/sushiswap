@@ -72,7 +72,7 @@ export function TeamChangePlanDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="!max-w-[70vw] !w-max !min-w-0">
+      <DialogContent className="lg:!max-w-[70vw] !w-max !min-w-0">
         <DialogHeader>
           <DialogTitle>Change Plan</DialogTitle>
           <DialogDescription>

@@ -1,13 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import type { EvmChainId } from 'sushi/chain'
-import { Token } from 'sushi/currency'
-import type { Address } from 'sushi/types'
+import { type EvmAddress, type EvmChainId, EvmToken } from 'sushi/evm'
 import { getAddress } from 'viem/utils'
 import type { z } from 'zod'
 import { merklCampaignsValidator } from './validator'
 
 interface UseRewardCampaignsParams {
-  pool: Address | undefined
+  pool: EvmAddress | undefined
   chainId: EvmChainId | undefined
   enabled?: boolean
 }
@@ -17,7 +15,7 @@ export type RewardCampaign = Omit<
   'rewardToken' | 'amount'
 > & {
   isLive: boolean
-  rewardToken: Token
+  rewardToken: EvmToken
   amount: number
 }
 
@@ -44,7 +42,7 @@ export const useRewardCampaigns = ({
 
       return parsed.map((parsed) => ({
         ...parsed,
-        rewardToken: new Token(parsed.rewardToken),
+        rewardToken: new EvmToken(parsed.rewardToken),
         isLive: now >= +parsed.startTimestamp && now <= +parsed.endTimestamp,
         amount: +parsed.amount / 10 ** parsed.rewardToken.decimals,
       }))

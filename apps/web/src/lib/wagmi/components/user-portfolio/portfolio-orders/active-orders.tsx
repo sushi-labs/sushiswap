@@ -8,8 +8,8 @@ import {
   isSupportedChainId,
 } from 'src/config'
 import { useTwapOrders } from 'src/lib/hooks/react-query/twap'
-import { EvmChainId, EvmChainKey } from 'sushi/chain'
-import { formatUSD } from 'sushi/format'
+import { formatUSD, getChainById } from 'sushi'
+import { EvmChainId } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import {
   DCA_KEYS,
@@ -25,9 +25,13 @@ export const ActiveOrders = () => {
       : EvmChainId.ETHEREUM
 
   const { address } = useAccount()
+  const twapChainIds = useMemo(
+    () => TWAP_SUPPORTED_CHAIN_IDS.map((chainId) => chainId),
+    [],
+  )
   const { data: orders, isLoading } = useTwapOrders({
     account: address,
-    chainIds: TWAP_SUPPORTED_CHAIN_IDS.map((chainId) => chainId),
+    chainIds: twapChainIds,
     enabled: Boolean(address),
   })
 
@@ -95,7 +99,7 @@ export const ActiveOrders = () => {
         details={`${formatUSD(data?.totalValueFilledOfLimitOrders || 0)} / ${formatUSD(
           data?.totalValueOfLimitOrders || 0,
         )} Filled`}
-        href={`/${EvmChainKey[chainId]}/limit/advanced#trade-table`}
+        href={`/${getChainById(chainId).key}/limit/advanced#trade-table`}
       />
       <OrderItem
         title="DCA Orders"
@@ -104,7 +108,7 @@ export const ActiveOrders = () => {
         details={`${formatUSD(data?.totalValueFilledOfDcaOrders || 0)} / ${formatUSD(
           data?.totalValueOfDcaOrders || 0,
         )} Filled`}
-        href={`/${EvmChainKey[chainId]}/dca/advancede#trade-table`}
+        href={`/${getChainById(chainId).key}/dca/advancede#trade-table`}
       />
     </div>
   )

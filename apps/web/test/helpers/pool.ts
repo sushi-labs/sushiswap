@@ -2,24 +2,25 @@ import { type Page, expect } from '@playwright/test'
 import type { NextFixture } from 'next/experimental/testmode/playwright'
 import { isZapSupportedChainId } from 'src/config'
 import { NativeAddress } from 'src/lib/constants'
-import type { EvmChainId } from 'sushi'
+import { getChainById } from 'sushi'
 import {
+  type EvmChainId,
+  type EvmCurrency,
+  EvmNative,
+  type EvmToken,
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SUSHISWAP_V3_FACTORY_ADDRESS,
   type SushiSwapV2ChainId,
   type SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
-} from 'sushi/config'
-import { Native, type Token, type Type } from 'sushi/currency'
-import {
   computeSushiSwapV2PoolAddress,
   computeSushiSwapV3PoolAddress,
-} from 'sushi/pool'
+} from 'sushi/evm'
 import { BaseActions } from './base' // Adjust the import path as necessary
 
 interface CreateV3PoolArgs {
-  token0: Type
-  token1: Type
+  token0: EvmCurrency
+  token1: EvmCurrency
   startPrice: string
   minPrice: string
   maxPrice: string
@@ -28,8 +29,8 @@ interface CreateV3PoolArgs {
 }
 
 interface AddV3LiquidityArgs {
-  token0: Type
-  token1: Type
+  token0: EvmCurrency
+  token1: EvmCurrency
   minPrice: string
   maxPrice: string
   amount: string
@@ -37,14 +38,14 @@ interface AddV3LiquidityArgs {
 }
 
 interface CreateV2PoolArgs {
-  token0: Type
-  token1: Type
+  token0: EvmCurrency
+  token1: EvmCurrency
   amount0: string
   amount1: string
 }
 interface AddV2LiquidityArgs {
-  token0: Type
-  token1: Type
+  token0: EvmCurrency
+  token1: EvmCurrency
   amount0: string
   amount1: string
 }
@@ -52,11 +53,11 @@ const BASE_URL = 'http://localhost:3000'
 
 export class PoolPage extends BaseActions {
   readonly chainId: EvmChainId
-  readonly nativeToken: Native
+  readonly nativeToken: EvmNative
   constructor(page: Page, chainId: EvmChainId) {
     super(page)
     this.chainId = chainId
-    this.nativeToken = Native.onChain(chainId)
+    this.nativeToken = EvmNative.fromChainId(chainId)
   }
 
   async goTo(url: string) {
@@ -93,8 +94,8 @@ export class PoolPage extends BaseActions {
     await this.switchNetwork(this.chainId)
 
     if (
-      (args.amountBelongsToToken0 && !args.token0.isNative) ||
-      (!args.amountBelongsToToken0 && !args.token1.isNative)
+      (args.amountBelongsToToken0 && args.token0.type === 'token') ||
+      (!args.amountBelongsToToken0 && args.token1.type === 'token')
     ) {
       const approveTokenLocator = this.page.locator(
         `[testdata-id=${`approve-erc20-${tokenOrderNumber}-button`}]`,
@@ -134,9 +135,7 @@ export class PoolPage extends BaseActions {
 
     await this.switchNetwork(this.chainId)
 
-    const approveTokenId = `approve-token-${
-      args.token0.isNative ? 1 : 0
-    }-button`
+    const approveTokenId = `approve-token-${args.token0.type === 'native' ? 1 : 0}-button`
     const approveTokenLocator = this.page.locator(
       `[testdata-id=${approveTokenId}]`,
     )
@@ -177,18 +176,18 @@ export class PoolPage extends BaseActions {
 
     // Only fill in the token that is not native if we are adding liquidity to an existing pool.
     const input = this.page.locator(
-      `[testdata-id=add-liquidity-token${args.token0.isNative ? 1 : 0}-input]`,
+      `[testdata-id=add-liquidity-token${args.token0.type === 'native' ? 1 : 0}-input]`,
     )
     await expect(input).toHaveAttribute('data-state', 'active')
     await expect(input).toBeEnabled()
-    await input.fill(args.token0.isNative ? args.amount1 : args.amount0)
+    await input.fill(
+      args.token0.type === 'native' ? args.amount1 : args.amount0,
+    )
     expect(input).toHaveValue(
-      args.token0.isNative ? args.amount1 : args.amount0,
+      args.token0.type === 'native' ? args.amount1 : args.amount0,
     )
 
-    const approveTokenId = `approve-token-${
-      args.token0.isNative ? 1 : 0
-    }-button`
+    const approveTokenId = `approve-token-${args.token0.type === 'native' ? 1 : 0}-button`
     const approveTokenLocator = this.page.locator(
       `[testdata-id=${approveTokenId}]`,
     )
@@ -241,8 +240,8 @@ export class PoolPage extends BaseActions {
       .fill(args.amount)
 
     if (
-      (args.amountBelongsToToken0 && !args.token0.isNative) ||
-      (!args.amountBelongsToToken0 && !args.token1.isNative)
+      (args.amountBelongsToToken0 && args.token0.type === 'token') ||
+      (!args.amountBelongsToToken0 && args.token1.type === 'token')
     ) {
       const approveTokenLocator = this.page.locator(
         `[testdata-id=${`approve-erc20-${tokenOrderNumber}-button`}]`,
@@ -267,16 +266,16 @@ export class PoolPage extends BaseActions {
     expect(this.page.getByText(regex))
   }
 
-  async removeLiquidityV3(fakeToken: Token) {
+  async removeLiquidityV3(fakeToken: EvmToken) {
     const poolAddress = computeSushiSwapV3PoolAddress({
       factoryAddress:
         SUSHISWAP_V3_FACTORY_ADDRESS[this.chainId as SushiSwapV3ChainId],
-      tokenA: this.nativeToken.wrapped,
+      tokenA: this.nativeToken.wrap(),
       tokenB: fakeToken,
       fee: SushiSwapV3FeeAmount.HIGH,
     })
     const url = BASE_URL.concat(
-      `/${this.chainId.toString()}/pool/v3/${poolAddress.toLowerCase()}/positions`,
+      `/${getChainById(this.chainId).key}/pool/v3/${poolAddress.toLowerCase()}/positions`,
     )
     await this.page.goto(url)
     await this.connect()
@@ -318,16 +317,16 @@ export class PoolPage extends BaseActions {
     expect(this.page.getByText(regex))
   }
 
-  async removeLiquidityV2(fakeToken: Token) {
+  async removeLiquidityV2(fakeToken: EvmToken) {
     const poolAddress = computeSushiSwapV2PoolAddress({
       factoryAddress:
         SUSHISWAP_V2_FACTORY_ADDRESS[this.chainId as SushiSwapV2ChainId],
-      tokenA: this.nativeToken.wrapped,
+      tokenA: this.nativeToken.wrap(),
       tokenB: fakeToken,
     })
 
     const url = BASE_URL.concat(
-      `/${this.chainId.toString()}/pool/v2/${poolAddress.toLowerCase()}/remove`,
+      `/${getChainById(this.chainId).key}/pool/v2/${poolAddress.toLowerCase()}/remove`,
     )
     await this.page.goto(url)
     await this.connect()
@@ -377,7 +376,7 @@ export class PoolPage extends BaseActions {
   }
 
   // Private helper methods for internal class use
-  private async handleToken(currency: Type, order: 'FIRST' | 'SECOND') {
+  private async handleToken(currency: EvmCurrency, order: 'FIRST' | 'SECOND') {
     const selectorInfix = `token${order === 'FIRST' ? 0 : 1}`
     const tokenSelector = this.page.locator(
       `[testdata-id=${selectorInfix}-select-button]`,
@@ -385,7 +384,7 @@ export class PoolPage extends BaseActions {
     await expect(tokenSelector).toBeVisible()
     await tokenSelector.click()
 
-    if (currency.isNative) {
+    if (currency.type === 'native') {
       const chipToSelect = this.page.locator(
         `[testdata-id=token-selector-chip-${NativeAddress}]`,
       )
@@ -413,8 +412,8 @@ export class PoolPage extends BaseActions {
 
   async mockPoolApi(
     next: NextFixture,
-    token0: Token,
-    token1: Token,
+    token0: EvmToken,
+    token1: EvmToken,
     fee: number,
     protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3',
   ) {
@@ -517,7 +516,6 @@ export class PoolPage extends BaseActions {
                     name: tokenA.name,
                     symbol: tokenA.symbol,
                     decimals: tokenA.decimals,
-                    chainId: tokenA.chainId,
                   },
                   token1: {
                     id: `${tokenB.chainId}:${tokenB.address}`.toLowerCase(),
@@ -525,7 +523,6 @@ export class PoolPage extends BaseActions {
                     name: tokenB.name,
                     symbol: tokenB.symbol,
                     decimals: tokenB.decimals,
-                    chainId: tokenB.chainId,
                   },
                   source: 'SUBGRAPH',
                   reserve0: '97138000822798992',
@@ -608,12 +605,12 @@ export class PoolPage extends BaseActions {
               data: {
                 tokenListBalances: [
                   {
-                    ...tokenA,
+                    ...tokenA.toJSON(),
                     approved: true,
                     balance: '10000000000000000000000',
                   },
                   {
-                    ...tokenB,
+                    ...tokenB.toJSON(),
                     approved: true,
                     balance: '10000000000000000000000',
                   },

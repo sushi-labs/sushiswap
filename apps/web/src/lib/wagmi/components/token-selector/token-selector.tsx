@@ -26,8 +26,8 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import type { EvmChainId } from 'sushi/chain'
-import type { Currency, Token, Type } from 'sushi/currency'
+import type { EvmCurrency, EvmNative, EvmToken } from 'sushi/evm'
+import type { EvmChainId } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { CurrencyInfo } from './currency-info'
 import { DesktopNetworkSelector } from './desktop-network-selector'
@@ -35,11 +35,11 @@ import { MobileNetworkSelector } from './mobile-network-selector'
 import { TokenSelectorStates } from './token-selector-states'
 
 interface TokenSelectorProps {
-  selected: Type | undefined
+  selected: EvmCurrency | undefined
   chainId: EvmChainId
-  onSelect(currency: Type): void
+  onSelect(currency: EvmCurrency): void
   children: ReactNode
-  currencies?: Record<string, Token>
+  currencies?: Record<string, EvmToken<{ approved?: boolean }>>
   includeNative?: boolean
   hidePinnedTokens?: boolean
   hideSearch?: boolean
@@ -65,7 +65,12 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
 
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
-  const [currencyInfo, showCurrencyInfo] = useState<Currency | false>(false)
+  const [currencyInfo, showCurrencyInfo] = useState<EvmCurrency | false>(false)
+  const [showMoreCurrencyInfo, setShowMoreCurrencyInfo] = useState(true)
+
+  const toggleShowMore = useCallback(() => {
+    setShowMoreCurrencyInfo((prev) => !prev)
+  }, [])
 
   const debouncedQuery = useDebounce(query, 250)
 
@@ -87,7 +92,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   }, [_currencies])
 
   const _onSelect = useCallback(
-    (currency: Type) => {
+    (currency: EvmCurrency) => {
       if (onSelect) {
         onSelect(currency)
       }
@@ -136,8 +141,13 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
           <div className="flex flex-col gap-4 overflow-y-auto relative p-6">
             {currencyInfo ? (
               <CurrencyInfo
+                showMoreCurrencyInfo={showMoreCurrencyInfo}
+                toggleShowMore={toggleShowMore}
                 currency={currencyInfo}
-                onBack={() => showCurrencyInfo(false)}
+                onBack={() => {
+                  showCurrencyInfo(false)
+                  setShowMoreCurrencyInfo(true)
+                }}
               />
             ) : null}
             <DialogHeader className="!text-left">

@@ -1,6 +1,6 @@
 'use client'
 
-import type { Type } from 'sushi/currency'
+import type { EvmCurrency } from 'sushi/evm'
 
 import {
   type TokenListV2ChainId,
@@ -9,6 +9,7 @@ import {
   isTrendingTokensChainId,
 } from '@sushiswap/graph-client/data-api'
 import { classNames } from '@sushiswap/ui'
+import { useMemo } from 'react'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import type { Address } from 'viem'
 import { useMyTokensV2 } from './hooks/use-my-tokens-v2'
@@ -22,12 +23,12 @@ import { TokenSelectorTrendingTokensV2 } from './token-lists/token-selector-tren
 import type { TokenSelectorV2Type } from './token-selector-v2'
 
 interface TokenSelectorStates {
-  selected: Type | undefined
+  selected: EvmCurrency | undefined
   selectedNetwork?: TokenListV2ChainId
   account?: Address
-  onSelect(currency: Type): void
-  onShowInfo(currency: Type | false): void
-  currencies?: Type[]
+  onSelect(currency: EvmCurrency): void
+  onShowInfo(currency: EvmCurrency | false): void
+  currencies?: EvmCurrency[]
   includeNative?: boolean
   hidePinnedTokens?: boolean
   search?: string
@@ -47,32 +48,38 @@ export function TokenSelectorStatesV2({
   type,
 }: TokenSelectorStates) {
   const { networkOptions } = useNetworkOptions()
-  // Ensure that the user's tokens are loaded
-  useMyTokensV2({
-    chainIds:
+  const tokenListChainIds = useMemo(
+    () =>
       selectedNetwork && isTokenListV2ChainId(selectedNetwork)
         ? [selectedNetwork]
         : networkOptions.filter(isTokenListV2ChainId),
+    [networkOptions, selectedNetwork],
+  )
+  const trendingListChainIds = useMemo(
+    () =>
+      selectedNetwork && isTrendingTokensChainId(selectedNetwork)
+        ? [selectedNetwork]
+        : (networkOptions.filter(
+            isTrendingTokensChainId,
+          ) as TrendingTokensChainId[]),
+    [networkOptions, selectedNetwork],
+  )
+
+  // Ensure that the user's tokens are loaded
+  useMyTokensV2({
+    chainIds: tokenListChainIds,
     account,
     includeNative,
   })
 
   // Ensure that the trending tokens are loaded
   useTrendingTokensV2({
-    chainIds:
-      selectedNetwork && isTrendingTokensChainId(selectedNetwork)
-        ? [selectedNetwork]
-        : (networkOptions.filter(
-            isTrendingTokensChainId,
-          ) as TrendingTokensChainId[]),
+    chainIds: trendingListChainIds,
   })
 
   // Ensure that the search list is loaded if it's the first thing the user sees
   useSearchTokensV2({
-    chainIds:
-      selectedNetwork && isTokenListV2ChainId(selectedNetwork)
-        ? [selectedNetwork]
-        : networkOptions.filter(isTokenListV2ChainId),
+    chainIds: tokenListChainIds,
     search: '',
   })
 
@@ -95,7 +102,7 @@ export function TokenSelectorStatesV2({
   if (search) {
     return (
       <>
-        <Title />
+        <Title className="!mt-0" />
         <TokenSelectorSearchV2
           chainId={selectedNetwork}
           onSelect={onSelect}
@@ -123,7 +130,7 @@ export function TokenSelectorStatesV2({
             showPinnedTokens={!hidePinnedTokens}
           />
         ) : null}
-        <Title />
+        <Title className={type === 'sell' ? '!mt-0' : ''} />
 
         <TokenSelectorTrendingTokensV2
           chainId={selectedNetwork}
@@ -151,7 +158,7 @@ export function TokenSelectorStatesV2({
             showPinnedTokens={!hidePinnedTokens}
           />
         ) : null}
-        <Title />
+        <Title className={type === 'sell' ? '!mt-0' : ''} />
 
         {account ? (
           <TokenSelectorMyTokensV2
@@ -160,6 +167,7 @@ export function TokenSelectorStatesV2({
             onShowInfo={onShowInfo}
             selected={selected}
             showChainOptions={type === 'buy'}
+            includeNative={includeNative}
           />
         ) : null}
 

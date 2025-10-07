@@ -1,13 +1,11 @@
 'use client'
 
-import { useMemo } from 'react'
-import { Amount } from 'sushi/currency'
-
 import { type V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
-import { stringify } from 'src/instrumentation'
-import type { PoolId } from 'sushi'
-import { isSushiSwapV2ChainId } from 'sushi/config'
+import { useMemo } from 'react'
+import { stringify } from 'src/instrumentation/bigint-json'
+import { Amount } from 'sushi'
+import { type PoolId, isSushiSwapV2ChainId } from 'sushi/evm'
 import { getTokensFromPool } from '../useTokensFromPool'
 
 export const useV2Pool = (poolId: PoolId) => {
@@ -53,13 +51,11 @@ export const useV2Pool = (poolId: PoolId) => {
         token1,
         liquidityToken,
         liquidityUSD: pool ? Number(pool?.liquidityUSD) : null,
-        reserve0:
-          token0 && pool ? Amount.fromRawAmount(token0, pool.reserve0) : null,
-        reserve1:
-          token1 && pool ? Amount.fromRawAmount(token1, pool.reserve1) : null,
+        reserve0: token0 && pool ? new Amount(token0, pool.reserve0) : null,
+        reserve1: token1 && pool ? new Amount(token1, pool.reserve1) : null,
         totalSupply:
           liquidityToken && pool
-            ? Amount.fromRawAmount(liquidityToken, pool.liquidity)
+            ? new Amount(liquidityToken, pool.liquidity)
             : null,
       },
     }

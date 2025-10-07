@@ -1,5 +1,5 @@
 import type { TrendingTokensChainId } from '@sushiswap/graph-client/data-api'
-import type { Type } from 'sushi/currency'
+import type { EvmCurrency } from 'sushi/evm'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useTrendingTokens } from '../hooks/use-trending-tokens'
 import { TokenSelectorCurrencyList } from './common/token-selector-currency-list'
@@ -7,9 +7,9 @@ import { TokenSelectorCurrencyListLoadingV2 } from './common/token-selector-curr
 
 interface TokenSelectorTrendingTokens {
   chainId: TrendingTokensChainId
-  onSelect(currency: Type): void
-  onShowInfo(currency: Type | false): void
-  selected: Type | undefined
+  onSelect(currency: EvmCurrency): void
+  onShowInfo(currency: EvmCurrency | false): void
+  selected: EvmCurrency | undefined
 }
 
 function Shell({ children }: { children: React.ReactNode }) {

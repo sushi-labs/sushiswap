@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import type { EvmChainId } from 'sushi/chain'
-import type { Type } from 'sushi/currency'
+import type { EvmChainId, EvmCurrency } from 'sushi/evm'
 import { type Address, zeroAddress } from 'viem'
 
 import { serialize, useBalance, useConfig } from 'wagmi'
@@ -9,7 +8,7 @@ import { queryFnUseBalances } from './useBalancesWeb3'
 
 interface UseBalanceParams {
   chainId: EvmChainId | undefined
-  currency: Type | undefined
+  currency: EvmCurrency | undefined
   account: Address | undefined
   enabled?: boolean
 }
@@ -45,8 +44,9 @@ export const useBalanceWeb3 = ({
         nativeBalance,
       })
       return (
-        data?.[currency.isNative ? zeroAddress : currency.wrapped.address] ??
-        null
+        data?.[
+          currency.type === 'native' ? zeroAddress : currency.wrap().address
+        ] ?? null
       )
     },
     refetchInterval: 10000,

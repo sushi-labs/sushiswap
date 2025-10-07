@@ -13,9 +13,9 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { type FC, useMemo } from 'react'
-import { EvmChain } from 'sushi/chain'
-import { Token, unwrapToken } from 'sushi/currency'
-import { AddLiquidityDialog } from './add-liquidity/add-liquidity-dialog'
+import { EvmToken, getEvmChainById, unwrapEvmToken } from 'sushi/evm'
+import { AddLiquidityDialog } from '~evm/[chainId]/_ui/add-liquidity/add-liquidity-dialog'
+import { ProtocolBadge } from '~evm/[chainId]/_ui/protocol-badge'
 
 type PoolHeader = {
   backUrl: string
@@ -43,20 +43,22 @@ export const PoolHeader: FC<PoolHeader> = ({
     if (!pool) return [undefined, undefined]
 
     return [
-      unwrapToken(
-        new Token({
+      unwrapEvmToken(
+        new EvmToken({
           chainId: pool.chainId,
           address: pool.token0.address,
           decimals: pool.token0.decimals,
           symbol: pool.token0.symbol,
+          name: pool.token0.name,
         }),
       ),
-      unwrapToken(
-        new Token({
+      unwrapEvmToken(
+        new EvmToken({
           chainId: pool.chainId,
           address: pool.token1.address,
           decimals: pool.token1.decimals,
           symbol: pool.token1.symbol,
+          name: pool.token1.name,
         }),
       ),
     ]
@@ -102,7 +104,9 @@ export const PoolHeader: FC<PoolHeader> = ({
               >
                 <LinkExternal
                   className="text-gray-900 dark:text-slate-50"
-                  href={EvmChain.from(pool.chainId)?.getAccountUrl(address)}
+                  href={getEvmChainById(pool.chainId)?.getAccountUrl(
+                    address as `0x${string}`,
+                  )}
                 >
                   {token0.symbol}/{token1.symbol}
                 </LinkExternal>
@@ -145,6 +149,7 @@ export const PoolHeader: FC<PoolHeader> = ({
                     <PlusIcon className="w-4 h-4" />
                   </Button>
                 }
+                chainId={pool.chainId}
               />
             ) : null}
           </div>

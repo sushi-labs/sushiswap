@@ -5,17 +5,20 @@ packages:
   - 'packages/*'
 
 catalog:
-  "typescript": 5.7.2
+  "typescript": 5.8.3
+  "utf-8-validate": 6.0.3
+  "zod": 4.1.11
 
 catalogs:
   web3:
-    "sushi": 5.1.30
-    "wagmi": 2.12.10
-    "@wagmi/core": 2.13.5
-    "viem": 2.21.55
+    "abitype": 1.0.8
+    "sushi": 6.2.0
+    "wagmi": 2.16.0
+    "@wagmi/core": 2.18.0
+    "viem": 2.33.0
 
   react:
-    "next": 15.1.4
+    "next": 15.5.3
     "react": 19.0.0
     "@types/react": 19.0.1
     "react-dom": 19.0.0

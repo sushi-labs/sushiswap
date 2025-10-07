@@ -118,7 +118,7 @@ const TableCellAsLink = React.forwardRef<
       href={href}
       target={external ? '_blank' : '_self'}
       className={classNames(
-        'flex items-center text-sm font-medium p-4 align-middle [&:has([role=checkbox])]:pr-0',
+        'flex items-center text-sm font-medium p-4 py-1 align-middle [&:has([role=checkbox])]:pr-0',
         className,
       )}
     >

@@ -1,18 +1,18 @@
 import { LinkInternal } from '@sushiswap/ui'
-import { PathnameButton } from 'src/ui/pathname-button'
-import { type ChainId, ChainKey } from 'sushi/chain'
+import { PathnameButton } from 'src/app/_ui/pathname-button'
+import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 
-export function NavigationItems({ chainId }: { chainId: ChainId }) {
+export function NavigationItems({ chainId }: { chainId: EvmChainId }) {
   return (
     <>
       <LinkInternal
         shallow={true}
         scroll={false}
-        href={`/${ChainKey[chainId]}/explore/tokens`}
+        href={`/${getEvmChainById(chainId).key}/explore/tokens`}
       >
         <PathnameButton
           id="tokens"
-          pathname={`/${ChainKey[chainId]}/explore/tokens`}
+          pathname={`/${getEvmChainById(chainId).key}/explore/tokens`}
           asChild
           size="sm"
         >
@@ -22,11 +22,11 @@ export function NavigationItems({ chainId }: { chainId: ChainId }) {
       <LinkInternal
         shallow={true}
         scroll={false}
-        href={`/${ChainKey[chainId]}/explore/pools`}
+        href={`/${getEvmChainById(chainId).key}/explore/pools`}
       >
         <PathnameButton
           id="pools"
-          pathname={`/${ChainKey[chainId]}/explore/pools`}
+          pathname={`/${getEvmChainById(chainId).key}/explore/pools`}
           asChild
           size="sm"
         >

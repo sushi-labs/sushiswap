@@ -3,8 +3,9 @@ import {
   isTokenListV2ChainId,
 } from '@sushiswap/graph-client/data-api'
 
+import { useMemo } from 'react'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
-import type { Type } from 'sushi/currency'
+import type { EvmCurrency } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { useMyTokensV2 } from '../hooks/use-my-tokens-v2'
 import {
@@ -14,9 +15,9 @@ import {
 
 interface TokenSelectorMyTokens {
   chainId?: TokenListV2ChainId
-  onSelect(currency: Type): void
-  onShowInfo(currency: Type | false): void
-  selected: Type | undefined
+  onSelect(currency: EvmCurrency): void
+  onShowInfo(currency: EvmCurrency | false): void
+  selected: EvmCurrency | undefined
   includeNative?: boolean
   showChainOptions: boolean
 }
@@ -35,10 +36,15 @@ export function TokenSelectorMyTokensV2({
 }: TokenSelectorMyTokens) {
   const { address } = useAccount()
   const { networkOptions } = useNetworkOptions()
+  const myTokensChainIds = useMemo(
+    () =>
+      chainId && isTokenListV2ChainId(chainId)
+        ? [chainId]
+        : networkOptions.filter(isTokenListV2ChainId),
+    [chainId, networkOptions],
+  )
   const { data, isError, isLoading } = useMyTokensV2({
-    chainIds: (chainId && isTokenListV2ChainId(chainId)
-      ? [chainId]
-      : networkOptions.filter(isTokenListV2ChainId)) as TokenListV2ChainId[],
+    chainIds: myTokensChainIds,
     account: address,
     includeNative,
   })
@@ -46,7 +52,7 @@ export function TokenSelectorMyTokensV2({
   if (isLoading)
     return (
       <Shell>
-        <TokenSelectorCurrencyListLoadingV2 count={10} />
+        <TokenSelectorCurrencyListLoadingV2 count={20} />
       </Shell>
     )
 

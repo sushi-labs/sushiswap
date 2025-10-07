@@ -1,11 +1,13 @@
 import '@sushiswap/ui/index.css'
 
+import '@funkit/connect/styles.css'
+
 import { ToastContainer } from '@sushiswap/notifications'
 import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
 import type React from 'react'
-import { CookieDialogContainer } from './_common/cookies/cookie-dialog-container'
 import { Trackers } from './trackers'
+import { UtilityButtons } from './utility-buttons'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -28,8 +30,8 @@ export const metadata: Metadata = {
     'A Decentralised Finance (DeFi) app with features such as swap, cross chain swap, streaming, vesting, and permissionless market making for liquidity providers.',
   icons: {
     apple: '/apple-touch-icon.png?v=1',
-    icon: '/favicon-32x-32.png?v=1',
-    shortcut: '/favicon-16x-16.png?v=1',
+    icon: '/favicon-32x32.png?v=1',
+    shortcut: '/favicon-16x16.png?v=1',
   },
   openGraph: {
     type: 'website',
@@ -47,7 +49,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: { children: React.ReactNode }) {
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html
       lang="en"
@@ -65,7 +69,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col">
         <ToastContainer />
-        <CookieDialogContainer />
+        <UtilityButtons />
         {children}
         <Trackers />
       </body>

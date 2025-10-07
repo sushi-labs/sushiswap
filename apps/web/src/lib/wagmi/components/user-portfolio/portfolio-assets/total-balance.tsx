@@ -1,5 +1,5 @@
 import { SkeletonText, classNames } from '@sushiswap/ui'
-import { formatPercent, formatUSD } from 'sushi/format'
+import { formatPercent, formatUSD } from 'sushi'
 import { useAccount } from 'wagmi'
 import { useTotalBalance } from '../hooks/use-total-balance'
 

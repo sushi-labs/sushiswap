@@ -1,56 +1,17 @@
 import { PoolChainIds } from '@sushiswap/graph-client/data-api'
-import { ChainId, EVM_TESTNET_CHAIN_IDS, type EvmChain } from 'sushi/chain'
+import { ChainId } from 'sushi'
 import {
   AGGREGATOR_ONLY_CHAIN_IDS,
-  EXTRACTOR_SUPPORTED_CHAIN_IDS,
+  type EvmAddress,
+  EvmChainId,
+  type EvmTestnetChainId,
   SUSHISWAP_SUPPORTED_CHAIN_IDS,
+  SWAP_API_SUPPORTED_CHAIN_IDS,
   type SushiSwapV3ChainId,
-} from 'sushi/config'
-import type { Address } from 'sushi/types'
-
-export const NonStandardChainId = {
-  APTOS: 'aptos',
-  TRON: 'tron',
-} as const
-
-export type NonStandardChainId =
-  (typeof NonStandardChainId)[keyof typeof NonStandardChainId]
-
-export const isNonStandardChainId = (
-  nonStandardChainId: string,
-): nonStandardChainId is NonStandardChainId =>
-  Object.values(NonStandardChainId).includes(
-    nonStandardChainId as NonStandardChainId,
-  )
-
-interface NonStandardChain extends Omit<EvmChain, 'chainId'> {
-  chainId: string
-}
-
-export const NonStandardChain = {
-  [NonStandardChainId.APTOS]: {
-    name: 'Aptos',
-    nativeCurrency: {
-      name: 'Aptos',
-      symbol: 'APT',
-      decimals: 8,
-    },
-    shortName: 'aptos',
-    chainId: 'aptos',
-  },
-  [NonStandardChainId.TRON]: {
-    name: 'Tron',
-    nativeCurrency: {
-      name: 'Tron',
-      symbol: 'TRX',
-      decimals: 6,
-    },
-    shortName: 'tron',
-    chainId: 'tron',
-  },
-} as Record<NonStandardChainId, NonStandardChain>
-
-export const SWAP_API_SUPPORTED_CHAIN_IDS = EXTRACTOR_SUPPORTED_CHAIN_IDS
+  isEvmTestnetChainId,
+} from 'sushi/evm'
+import { MvmChainId } from 'sushi/mvm'
+import { TvmChainId } from 'sushi/tvm'
 
 export type SwapApiEnabledChainId =
   (typeof SWAP_API_SUPPORTED_CHAIN_IDS)[number]
@@ -60,32 +21,32 @@ export const isSwapApiEnabledChainId = (
   SWAP_API_SUPPORTED_CHAIN_IDS.includes(chainId as SwapApiEnabledChainId)
 
 export const DISABLED_CHAIN_IDS = [
-  ChainId.MOONBEAM,
-  ChainId.MOONRIVER,
+  ChainId.BOBA_BNB,
   ChainId.HARMONY,
   ChainId.POLYGON_ZKEVM,
-  ChainId.FUSE,
   ChainId.TATARA,
-  ChainId.HYPEREVM,
+  ChainId.SEPOLIA,
 ] as const
 
-export const NEW_CHAIN_IDS = [ChainId.KATANA] as const
+export const NEW_CHAIN_IDS = [EvmChainId.KATANA] as const
 
 export const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
   ChainId.ETHEREUM,
-  NonStandardChainId.TRON,
+  TvmChainId.TRON,
   ChainId.BSC,
   ChainId.ARBITRUM,
   ChainId.BASE,
   ChainId.AVALANCHE,
   ChainId.POLYGON,
   ChainId.HYPEREVM,
+  ChainId.BERACHAIN,
+  ChainId.PLASMA,
   ChainId.SCROLL,
   ChainId.BLAST,
   ChainId.OPTIMISM,
   ChainId.KATANA,
-  NonStandardChainId.APTOS,
+  MvmChainId.APTOS,
   ChainId.LINEA,
   ChainId.MANTLE,
   ChainId.CORE,
@@ -100,20 +61,17 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.FANTOM,
   ChainId.CELO,
   ChainId.FILECOIN,
-  ChainId.TELOS,
   ChainId.METIS,
   ChainId.MANTA,
   ChainId.ZKLINK,
   ChainId.APE,
   ChainId.POLYGON_ZKEVM,
-  ChainId.MOONBEAM,
   ChainId.ZETACHAIN,
   ChainId.TAIKO,
   ChainId.BOBA,
   ChainId.HARMONY,
   ChainId.ARBITRUM_NOVA,
   ChainId.HAQQ,
-  ChainId.FUSE,
   ChainId.THUNDERCORE,
   ChainId.SKALE_EUROPA,
   ChainId.BOBA_BNB,
@@ -142,11 +100,10 @@ export const AMM_SUPPORTED_CHAIN_IDS = SUSHISWAP_SUPPORTED_CHAIN_IDS.filter(
     c,
   ): c is Exclude<
     (typeof SUSHISWAP_SUPPORTED_CHAIN_IDS)[number],
-    (typeof EVM_TESTNET_CHAIN_IDS)[number] | (typeof DISABLED_CHAIN_IDS)[number]
+    EvmTestnetChainId | (typeof DISABLED_CHAIN_IDS)[number]
   > =>
-    !EVM_TESTNET_CHAIN_IDS.includes(
-      c as (typeof EVM_TESTNET_CHAIN_IDS)[number],
-    ) && !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
+    !isEvmTestnetChainId(c as EvmTestnetChainId) &&
+    !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
 
 export const SUPPORTED_CHAIN_IDS = Array.from(
@@ -161,11 +118,10 @@ export const SUPPORTED_CHAIN_IDS = Array.from(
     c,
   ): c is Exclude<
     (typeof CHAIN_IDS)[number],
-    (typeof EVM_TESTNET_CHAIN_IDS)[number] | (typeof DISABLED_CHAIN_IDS)[number]
+    EvmTestnetChainId | (typeof DISABLED_CHAIN_IDS)[number]
   > =>
-    !EVM_TESTNET_CHAIN_IDS.includes(
-      c as (typeof EVM_TESTNET_CHAIN_IDS)[number],
-    ) && !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
+    !isEvmTestnetChainId(c as EvmTestnetChainId) &&
+    !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
 
 export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
@@ -176,8 +132,8 @@ export const isSupportedChainId = (
 
 const UNSORTED_SUPPORTED_NETWORKS = [
   ...SUPPORTED_CHAIN_IDS,
-  NonStandardChainId.APTOS,
-  NonStandardChainId.TRON,
+  MvmChainId.APTOS,
+  TvmChainId.TRON,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
@@ -195,8 +151,8 @@ export const SUPPORTED_NETWORKS = Array.from(
 
 const UNSORTED_POOL_SUPPORTED_NETWORKS = [
   ...PoolChainIds,
-  NonStandardChainId.APTOS,
-  NonStandardChainId.TRON,
+  MvmChainId.APTOS,
+  TvmChainId.TRON,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
@@ -234,6 +190,9 @@ export const ZAP_SUPPORTED_CHAIN_IDS = [
   ChainId.BASE,
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
+  ChainId.KATANA,
+  ChainId.SONIC,
+  ChainId.LINEA,
 ] as const
 
 export type ZapSupportedChainId = (typeof ZAP_SUPPORTED_CHAIN_IDS)[number]
@@ -246,17 +205,18 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.APE,
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
-  ChainId.BSC,
   ChainId.BASE,
+  // ChainId.BERACHAIN,
   ChainId.BLAST,
   ChainId.BOBA,
+  ChainId.BSC,
   ChainId.CELO,
   ChainId.CRONOS,
   ChainId.ETHEREUM,
-  // ChainId.FUSE,
   ChainId.FANTOM,
+  // ChainId.FUSE,
   ChainId.GNOSIS,
-  ChainId.HYPEREVM,
+  // ChainId.HYPEREVM,
   ChainId.KATANA,
   ChainId.LINEA,
   ChainId.MANTLE,
@@ -265,6 +225,7 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   // ChainId.MOONBEAM,
   // ChainId.MOONRIVER,
   ChainId.OPTIMISM,
+  // ChainId.PLASMA
   ChainId.POLYGON,
   // ChainId.POLYGON_ZKEVM,
   ChainId.ROOTSTOCK,
@@ -280,40 +241,43 @@ export const isXSwapSupportedChainId = (
 ): chainId is XSwapSupportedChainId =>
   XSWAP_SUPPORTED_CHAIN_IDS.includes(chainId as XSwapSupportedChainId)
 
-export const SUSHISWAP_V3_POSITION_HELPER: Record<SushiSwapV3ChainId, Address> =
-  {
-    [ChainId.ARBITRUM_NOVA]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.ARBITRUM]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.AVALANCHE]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.BSC]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.BTTC]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    // [ChainId.CELO]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.ETHEREUM]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.FANTOM]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.GNOSIS]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.KAVA]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.METIS]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.OPTIMISM]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.POLYGON]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.BOBA]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.THUNDERCORE]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.HAQQ]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.CORE]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.LINEA]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.BASE]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.SCROLL]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.FILECOIN]: '0xc85C59A05EC888aa055Ec3b3A7263d173cc6E111',
-    [ChainId.ZETACHAIN]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.BLAST]: '0xc85C59A05EC888aa055Ec3b3A7263d173cc6E111',
-    [ChainId.SKALE_EUROPA]: '0x4f6086BC5bd944080EFA6Eb54f11E2b6229e7333',
-    [ChainId.ROOTSTOCK]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.SONIC]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.HEMI]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    [ChainId.KATANA]: '0xc85C59A05EC888aa055Ec3b3A7263d173cc6E111',
-    [ChainId.TATARA]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    // DEPRECATED
-    // [ChainId.FUSE]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    // [ChainId.MOONBEAM]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    // [ChainId.MOONRIVER]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-    // [ChainId.POLYGON_ZKEVM]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
-  } as const
+export const SUSHISWAP_V3_POSITION_HELPER: Record<
+  SushiSwapV3ChainId,
+  EvmAddress
+> = {
+  [ChainId.ARBITRUM_NOVA]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.ARBITRUM]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.AVALANCHE]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.BSC]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.BTTC]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  // [ChainId.CELO]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.ETHEREUM]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.FANTOM]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.GNOSIS]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.KAVA]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.METIS]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.OPTIMISM]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.POLYGON]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.BOBA]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.THUNDERCORE]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.HAQQ]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.CORE]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.LINEA]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.BASE]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.SCROLL]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.FILECOIN]: '0xc85C59A05EC888aa055Ec3b3A7263d173cc6E111',
+  [ChainId.ZETACHAIN]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.BLAST]: '0xc85C59A05EC888aa055Ec3b3A7263d173cc6E111',
+  [ChainId.SKALE_EUROPA]: '0x4f6086BC5bd944080EFA6Eb54f11E2b6229e7333',
+  [ChainId.ROOTSTOCK]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.SONIC]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.HEMI]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.KATANA]: '0xc85C59A05EC888aa055Ec3b3A7263d173cc6E111',
+  [ChainId.TATARA]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  [ChainId.SEPOLIA]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  // DEPRECATED
+  // [ChainId.FUSE]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  // [ChainId.MOONBEAM]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  // [ChainId.MOONRIVER]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+  // [ChainId.POLYGON_ZKEVM]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
+} as const

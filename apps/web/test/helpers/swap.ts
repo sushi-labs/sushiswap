@@ -1,19 +1,20 @@
 import { type Page, expect } from '@playwright/test'
 import { NativeAddress } from 'src/lib/constants'
+import { getNetworkName } from 'src/lib/network'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
-import type { EvmChainId } from 'sushi/chain'
-import { type Amount, Native, type Type } from 'sushi/currency'
+import { type Amount, getChainById } from 'sushi'
+import { type EvmChainId, type EvmCurrency, EvmNative } from 'sushi/evm'
 import { BaseActions } from './base' // Adjust the import path as necessary
 
 type InputType = 'INPUT' | 'OUTPUT'
 
 export class SwapPage extends BaseActions {
   readonly chainId: EvmChainId
-  readonly nativeToken: Native
+  readonly nativeToken: EvmNative
   constructor(page: Page, chainId: EvmChainId) {
     super(page)
     this.chainId = chainId
-    this.nativeToken = Native.onChain(chainId)
+    this.nativeToken = EvmNative.fromChainId(chainId)
   }
 
   async goTo(url: string) {
@@ -21,15 +22,15 @@ export class SwapPage extends BaseActions {
   }
 
   async wrap(
-    inputCurrency: Type,
-    outputCurrency: Type,
-    amount: Amount<Native> | 'max',
+    inputCurrency: EvmCurrency,
+    outputCurrency: EvmCurrency,
+    amount: Amount<EvmNative> | 'max',
   ) {
     await this.handleToken(inputCurrency, 'INPUT')
     await this.handleToken(outputCurrency, 'OUTPUT')
     await this.inputAmount(amount)
 
-    if (!inputCurrency.isNative) {
+    if (inputCurrency.type === 'token') {
       const approveButton = this.page.locator(
         '[testdata-id=approve-erc20-button]',
         {
@@ -56,7 +57,7 @@ export class SwapPage extends BaseActions {
     await expect(swapButton).toBeVisible()
     await expect(swapButton).toBeEnabled()
     await expect(swapButton).toHaveText(
-      inputCurrency.isNative ? 'Wrap' : 'Unwrap',
+      inputCurrency.type === 'native' ? 'Wrap' : 'Unwrap',
     )
     await swapButton.click()
 
@@ -69,9 +70,9 @@ export class SwapPage extends BaseActions {
 
     // If this text is duplicated elsewhere it could false positive
     const expectedText = new RegExp(
-      `(${inputCurrency.isNative ? 'Wrap' : 'Unwrap'} .* ${
-        inputCurrency.symbol
-      } to .* ${outputCurrency.symbol})`,
+      `(${inputCurrency.type === 'native' ? 'Wrap' : 'Unwrap'} .* ${inputCurrency.symbol} to .* ${
+        outputCurrency.symbol
+      })`,
     )
     expect(this.page.getByText(expectedText)).toBeVisible()
 
@@ -87,9 +88,9 @@ export class SwapPage extends BaseActions {
   }
 
   async swap(
-    inputCurrency: Type,
-    outputCurrency: Type,
-    amount: Amount<Type> | 'max',
+    inputCurrency: EvmCurrency,
+    outputCurrency: EvmCurrency,
+    amount: Amount<EvmCurrency> | 'max',
   ) {
     await this.handleToken(inputCurrency, 'INPUT')
     await this.handleToken(outputCurrency, 'OUTPUT')
@@ -167,8 +168,8 @@ export class SwapPage extends BaseActions {
     // expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
   }
 
-  async approve(currency: Type) {
-    if (!currency.isNative) {
+  async approve(currency: EvmCurrency) {
+    if (currency.type === 'token') {
       const approveButton = this.page.locator(
         '[testdata-id=approve-erc20-button]',
         {
@@ -189,7 +190,7 @@ export class SwapPage extends BaseActions {
     }
   }
 
-  async handleToken(currency: Type, type: InputType) {
+  async handleToken(currency: EvmCurrency, type: InputType) {
     const selectorInfix = `${type === 'INPUT' ? 'from' : 'to'}`
 
     // Open token list
@@ -200,13 +201,48 @@ export class SwapPage extends BaseActions {
     await expect(tokenSelector).toBeEnabled()
     await tokenSelector.click()
 
-    if (currency.isNative) {
-      const chipToSelect = this.page.locator(
-        `[testdata-id=token-selector-chip-${NativeAddress}]`,
+    if (type === 'INPUT') {
+      const networkOption = this.page.locator(
+        `[testdata-id=network-option-${this.chainId}-button]`,
       )
-      await expect(chipToSelect).toBeVisible()
+      await expect(networkOption).toBeVisible()
+      await expect(networkOption).toBeEnabled()
+      await networkOption.click()
+      await expect(networkOption).toHaveClass(/border-blue/)
+    }
 
-      await chipToSelect.click()
+    if (type === 'OUTPUT') {
+      const networkMenu = this.page.locator(
+        '[testdata-id=token-selector-network-menu-trigger-button]',
+      )
+      await expect(networkMenu).toBeVisible()
+      await expect(networkMenu).toBeEnabled()
+      await networkMenu.click()
+      const selectNetwork = this.page.locator(
+        `[testdata-id=network-menu-dropdown-menu-item-${this.chainId}]`,
+      )
+      await expect(selectNetwork).toBeVisible()
+      await expect(selectNetwork).toBeEnabled()
+      await selectNetwork.click()
+    }
+    // 	await expect(networkMenu).toContainText(getNetworkName(this.chainId));
+    // 	const chipSelector = this.page.locator(
+    // 		`[testdata-id=token-selector-chip-${
+    // 			currency.isNative ? NativeAddress : currency.address.toLowerCase()
+    // 		}]`
+    // 	);
+    // 	await expect(chipSelector).toBeVisible();
+    // 	await expect(chipSelector).toBeEnabled();
+    // 	await chipSelector.click();
+    // 	return;
+
+    if (currency.isNative) {
+      const rowToSelect = this.page.locator(
+        `[testdata-id=token-selector-row-${NativeAddress}]`,
+      )
+      await expect(rowToSelect).toBeVisible()
+
+      await rowToSelect.click()
       await expect(tokenSelector).toContainText(currency.symbol as string)
     } else {
       const tokenSearch = this.page.locator(
@@ -214,10 +250,10 @@ export class SwapPage extends BaseActions {
       )
       await expect(tokenSearch).toBeVisible()
       await expect(tokenSearch).toBeEnabled()
-      await tokenSearch.fill(currency.address)
+      await tokenSearch.fill(currency.wrap().address)
 
       const tokenToSelect = this.page.locator(
-        `[testdata-id=token-selector-row-${currency.address.toLowerCase()}]`,
+        `[testdata-id=token-selector-row-${currency.wrap().address.toLowerCase()}]`,
       )
       await expect(tokenToSelect).toBeVisible()
 
@@ -235,7 +271,7 @@ export class SwapPage extends BaseActions {
     await maxButton.click()
   }
 
-  async inputAmount(amount: Amount<Type> | 'max') {
+  async inputAmount(amount: Amount<EvmCurrency> | 'max') {
     if (amount === 'max') {
       const maxButton = this.page.locator(
         '[testdata-id=swap-from-balance-button]',
@@ -248,7 +284,7 @@ export class SwapPage extends BaseActions {
       // Inputs are not rendered until the trade is found
       await expect(input0).toBeVisible()
       await expect(input0).toBeEnabled()
-      await input0.fill(amount.toExact())
+      await input0.fill(amount.toString())
     }
   }
 

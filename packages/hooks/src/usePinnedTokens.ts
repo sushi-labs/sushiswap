@@ -1,8 +1,7 @@
 'use client'
 
 import { useCallback, useMemo } from 'react'
-import type { ID } from 'sushi'
-import type { Currency } from 'sushi/currency'
+import type { EvmCurrency, EvmID } from 'sushi/evm'
 import { getAddress as _getAddress, isAddress } from 'viem/utils'
 import { useLocalStorage } from './useLocalStorage'
 
@@ -11,7 +10,7 @@ function getAddress(address: string) {
   return _getAddress(address)
 }
 
-export type PinnedTokenId = `${ID}:${string}` | `${string}:NATIVE:${string}` //ID:symbol
+export type PinnedTokenId = `${EvmID}:${string}` //ID:symbol
 
 export const usePinnedTokens = () => {
   const [pinnedTokens, setPinnedTokens] = useLocalStorage(
@@ -54,7 +53,7 @@ export const usePinnedTokens = () => {
   )
 
   const hasToken = useCallback(
-    (currency: Currency | string) => {
+    (currency: EvmCurrency | string) => {
       if (typeof currency === 'string') {
         if (!currency.includes(':')) {
           throw new Error('Address provided instead of id')

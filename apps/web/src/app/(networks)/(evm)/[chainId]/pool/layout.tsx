@@ -1,7 +1,6 @@
 import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { notFound } from 'next/navigation'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import type { ChainId } from 'sushi/chain'
 import { Header } from '../header'
 
 export default async function PoolLayout(props: {
@@ -12,14 +11,15 @@ export default async function PoolLayout(props: {
 
   const { children } = props
 
-  const chainId = +params.chainId as ChainId
+  const chainId = +params.chainId
+
   if (!isPoolChainId(chainId)) {
     return notFound()
   }
 
   return (
     <>
-      <Header chainId={chainId} supportedNetworks={POOL_SUPPORTED_NETWORKS} />
+      <Header chainId={chainId} networks={POOL_SUPPORTED_NETWORKS} />
       <main className="flex flex-col h-full flex-1 animate-slide">
         {children}
       </main>

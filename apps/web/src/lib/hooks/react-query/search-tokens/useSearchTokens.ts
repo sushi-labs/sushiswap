@@ -3,6 +3,7 @@ import {
   getSearchTokens,
 } from '@sushiswap/graph-client/data-api'
 import { useInfiniteQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
 import type { Address } from 'viem'
 
 type TokenListEntry = NonNullable<
@@ -14,7 +15,7 @@ interface UseSearchTokens {
   chainIds: TokenListV2ChainId[] | undefined
   search?: string
   first?: number
-  tokens?: { address: Address; chainId: unknown }[]
+  tokens?: { address: Address; chainId: TokenListV2ChainId }[]
 }
 
 export const useSearchTokens = ({
@@ -55,8 +56,11 @@ export const useSearchTokens = ({
     },
   })
 
-  return {
-    ...result,
-    data: result.data?.pages.flat() ?? [],
-  }
+  return useMemo(
+    () => ({
+      ...result,
+      data: result.data?.pages.flat() ?? [],
+    }),
+    [result, result.data],
+  )
 }

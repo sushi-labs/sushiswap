@@ -6,13 +6,12 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { usePinnedTokens } from '@sushiswap/hooks'
 import { useMemo } from 'react'
-import { useNetworkContext } from 'src/ui/swap/trade/favorite-recent/network-provider'
 import type { ChainId } from 'sushi'
-import type { EvmChainId } from 'sushi/chain'
-import { Native, WNATIVE } from 'sushi/currency'
+import { type EvmChainId, EvmNative } from 'sushi/evm'
 import type { Address } from 'viem'
-import { formatUnits } from 'viem/utils'
+import { formatUnits, isAddress } from 'viem/utils'
 import { useAccount } from 'wagmi'
+import { useNetworkContext } from '~evm/[chainId]/[trade]/_ui/swap/trade/favorite-recent/network-provider'
 import { NativeAddress } from '../constants'
 import { useMyTokensV2 } from '../wagmi/components/token-selector/hooks/use-my-tokens-v2'
 import { useSearchTokens } from './react-query/search-tokens/useSearchTokens'
@@ -33,13 +32,15 @@ export const useFavorites = () => {
           const [chainId, _contractAddress, symbol] = currencyId.split(':')
           const contractAddress =
             _contractAddress === 'NATIVE' ? NativeAddress : _contractAddress
+          if (!isAddress(contractAddress)) {
+            throw new Error(`Invalid address: ${contractAddress}`)
+          }
 
           return {
-            // chainId: Number(chainId) as TokenListV2ChainId,
-            chainId: Number(chainId) as unknown,
-            address: contractAddress as Address,
+            chainId: Number(chainId) as EvmChainId,
+            address: contractAddress,
             isSupported:
-              isTokenListV2ChainId(Number(chainId) as ChainId) &&
+              isTokenListV2ChainId(Number(chainId) as EvmChainId) &&
               contractAddress !== NativeAddress,
             symbol: symbol,
           }
@@ -48,7 +49,7 @@ export const useFavorites = () => {
 
       const uniqueChainIds = Array.from(
         new Set(tokens.map((token) => Number(token.chainId))),
-      ).filter((chainId) => isTokenListV2ChainId(chainId as ChainId))
+      ).filter((chainId) => isTokenListV2ChainId(chainId))
 
       const supportedTokens = tokens
         .filter((token) => token.isSupported)
@@ -63,16 +64,18 @@ export const useFavorites = () => {
         )
         .map((token) => ({
           address: token.address,
-          chainId: token.chainId as TokenListV2ChainId,
+          chainId: token.chainId,
           symbol: token.symbol,
         }))
 
       const natives = tokens
         .filter((token) => token.address === NativeAddress)
         .map((token) => ({
-          address: WNATIVE[token.chainId as EvmChainId].address,
-          chainId: token.chainId as TokenListV2ChainId,
-          symbol: WNATIVE[token.chainId as EvmChainId].symbol,
+          address: EvmNative.fromChainId(token.chainId as EvmChainId).wrap()
+            .address,
+          chainId: token.chainId,
+          symbol: EvmNative.fromChainId(token.chainId as EvmChainId).wrap()
+            .symbol,
         }))
 
       return { supportedTokens, uniqueChainIds, unsupportedTokens, natives }
@@ -84,7 +87,7 @@ export const useFavorites = () => {
     isError: isErrorTokens,
   } = useSearchTokens({
     walletAddress: address,
-    chainIds: uniqueChainIds as TokenListV2ChainId[],
+    chainIds: uniqueChainIds,
     search: '',
     tokens: supportedTokens,
     first: supportedTokens?.length,
@@ -95,8 +98,8 @@ export const useFavorites = () => {
     isLoading: isLoadingNative,
     isError: isErrorMyTokens,
   } = useMyTokensV2({
-    chainIds: uniqueChainIds as TokenListV2ChainId[],
-    account: address as Address,
+    chainIds: uniqueChainIds,
+    account: address,
     includeNative: true,
   })
 
@@ -111,10 +114,11 @@ export const useFavorites = () => {
       const balance =
         _nativeTokens?.balanceMap
           ?.get(`${token.chainId}:${token.address}`)
-          ?.toFixed(6) ?? '0'
+          ?.toString({ fixed: 6 }) ?? '0'
       const balanceUsd = priceUsd * Number(balance)
       favArr.push({
-        chainId: token.chainId,
+        //need to typecast here, need to satify SearchToken chainId type
+        chainId: token.chainId as TokenListV2ChainId,
         address: token.address,
         decimals: 18,
         name: '',
@@ -137,18 +141,19 @@ export const useFavorites = () => {
 
     nativesOnList.forEach((token) => {
       if (token.isNative) {
-        const _native = Native.onChain(token.chainId)
+        const _native = EvmNative.fromChainId(token.chainId)
         const priceUsd =
           _nativeTokens?.priceMap?.get(`${token.chainId}:NATIVE`) ?? 0
         const balance =
           _nativeTokens?.balanceMap
             ?.get(`${token.chainId}:NATIVE`)
-            ?.toFixed(6) ?? '0'
+            ?.toString({ fixed: 6 }) ?? '0'
         const balanceUsd = priceUsd * Number(balance)
         favArr.push({
-          chainId: token.chainId,
-          address: _native.wrapped.address,
-          decimals: _native.wrapped.decimals,
+          //need to typecast here, need to satify SearchToken chainId type
+          chainId: token.chainId as TokenListV2ChainId,
+          address: _native.wrap().address,
+          decimals: _native.wrap().decimals,
           name: _native.name,
           symbol: _native.symbol,
           bridgeInfo: [],

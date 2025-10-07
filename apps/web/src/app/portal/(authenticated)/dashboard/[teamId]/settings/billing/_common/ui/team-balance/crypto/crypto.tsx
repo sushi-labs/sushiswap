@@ -1,13 +1,8 @@
 'use client'
 
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
-import { StyroClient } from '@sushiswap/styro-client'
 import {
   Button,
-  Card,
-  CardContent,
-  CardFooter,
   Dots,
   SkeletonBox,
   SkeletonText,
@@ -20,18 +15,23 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useQuery } from '@tanstack/react-query'
 import type { SendTransactionReturnType } from '@wagmi/core'
 import { useRouter } from 'next/navigation'
+import type { GetServicesErc20DepositsConfig200Response } from 'node_modules/@sushiswap/styro-client/dist/generated'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useStyroClient } from 'src/app/portal/_common/ui/auth-provider/auth-provider'
+import { logger } from 'src/lib/logger'
 import { getNetworkName } from 'src/lib/network'
 import { NetworkSelector } from 'src/lib/wagmi/components/network-selector'
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/Currency'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
+import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
 import { WagmiProvider } from 'src/providers/wagmi-provider'
-import type { EvmChainId } from 'sushi'
-import { erc20Abi_transfer } from 'sushi/abi'
-import { type Amount, Token, tryParseAmount } from 'sushi/currency'
-import { shortenAddress } from 'sushi/format'
+import { Amount } from 'sushi'
+import {
+  type EvmChainId,
+  EvmToken,
+  erc20Abi_transfer,
+  shortenEvmAddress,
+} from 'sushi/evm'
 import type { Address, Hex } from 'viem'
 import { UserRejectedRequestError } from 'viem'
 import { encodePacked } from 'viem/utils'
@@ -48,29 +48,31 @@ function useErc20BillingServiceConfig() {
     queryKey: ['portal-getServicesErc20DepositsConfig'],
     queryFn: async () => {
       const response = await client.getServicesErc20DepositsConfig()
-
       return response
     },
-    select: (response) => ({
-      chainIds: response.data.chains.map(
-        (chain) => chain.chainId as EvmChainId,
-      ),
-      configs: response.data.chains.map((chain) => ({
-        ...chain,
-        chainId: chain.chainId as EvmChainId,
-        stables: chain.stables.reduce(
-          (acc, token) => {
-            acc[token.address.toLowerCase() as Address] = new Token({
-              ...token,
-              chainId: chain.chainId as EvmChainId,
-            })
-
-            return acc
-          },
-          {} as Record<Address, Token>,
+    select: useCallback(
+      (response: GetServicesErc20DepositsConfig200Response) => ({
+        chainIds: response.data.chains.map(
+          (chain) => chain.chainId as EvmChainId,
         ),
-      })),
-    }),
+        configs: response.data.chains.map((chain) => ({
+          ...chain,
+          chainId: chain.chainId as EvmChainId,
+          stables: chain.stables.reduce(
+            (acc, token) => {
+              acc[token.address.toLowerCase() as Address] = new EvmToken({
+                ...token,
+                chainId: chain.chainId as EvmChainId,
+              })
+
+              return acc
+            },
+            {} as Record<Address, EvmToken>,
+          ),
+        })),
+      }),
+      [],
+    ),
   })
 }
 
@@ -82,7 +84,7 @@ function Deposit({
 }: {
   treasury: Address
   teamId: string
-  amount: Amount<Token>
+  amount: Amount<EvmToken>
   onTxConfirmed: (txData: TxData) => void
 }) {
   const { address } = useAccount()
@@ -116,9 +118,15 @@ function Deposit({
   )
 
   const onError = useCallback((e: Error) => {
-    if (!(e.cause instanceof UserRejectedRequestError)) {
-      createErrorToast(e?.message, true)
+    if (e.cause instanceof UserRejectedRequestError) {
+      return
     }
+
+    logger.error(e, {
+      location: 'TeamBalanceCrypto',
+      action: 'mutationError',
+    })
+    createErrorToast(e?.message, true)
   }, [])
 
   const { data: simulation } = useSimulateContract({
@@ -126,9 +134,9 @@ function Deposit({
     abi: erc20Abi_transfer,
     functionName: 'transfer',
     chainId: amount.currency.chainId as 1,
-    args: [treasury, amount.quotient],
+    args: [treasury, amount.amount],
     dataSuffix: encodePacked(
-      ['int128'],
+      ['uint128'],
       [BigInt(`0x${teamId.replaceAll('-', '')}`)],
     ),
   })
@@ -176,7 +184,7 @@ function DepositTab({
   const { switchChainAsync } = useSwitchChain()
 
   const [value, setValue] = useState('')
-  const [_token, setToken] = useState<Token | undefined>(undefined)
+  const [_token, setToken] = useState<EvmToken | undefined>(undefined)
 
   const { data, isLoading } = useErc20BillingServiceConfig()
 
@@ -190,7 +198,9 @@ function DepositTab({
 
   const amount = useMemo(
     () =>
-      isChainIdSupported && token ? tryParseAmount(value, token) : undefined,
+      isChainIdSupported && token
+        ? Amount.tryFromHuman(token, value)
+        : undefined,
     [isChainIdSupported, token, value],
   )
 
@@ -237,11 +247,12 @@ function DepositTab({
           type="INPUT"
           value={value}
           onChange={setValue}
-          onSelect={(address) => setToken(address as Token)}
+          onSelect={(currency) => setToken(currency as EvmToken)}
           hidePricing
           currencies={activeConfig?.stables}
           currencyClassName="!rounded-xl"
           className="rounded-xl !px-3 py-2 bg-muted"
+          disableInsufficientBalanceError
           loading={isLoading}
         />
         <div className="flex justify-between px-3 text-sm py-2 rounded-xl bg-muted">
@@ -252,7 +263,7 @@ function DepositTab({
                 address ? 'bg-green-500' : 'bg-red-500',
               )}
             />
-            <span>{address ? shortenAddress(address) : 'None'}</span>
+            <span>{address ? shortenEvmAddress(address) : 'None'}</span>
           </span>
           {address && (
             <span
