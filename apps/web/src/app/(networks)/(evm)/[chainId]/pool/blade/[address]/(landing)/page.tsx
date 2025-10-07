@@ -2,10 +2,9 @@ import { type V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import ms from 'ms'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import { PoolPageBlade } from 'src/ui/pool/PoolPageBlade'
-import type { EvmChainId } from 'sushi'
-import { isSushiSwapV2ChainId } from 'sushi/config'
+import { type EvmChainId, isSushiSwapV2ChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
+import { PoolPageBlade } from '~evm/[chainId]/_ui/PoolPageBlade'
 
 export default async function PoolPage(props: {
   params: Promise<{ chainId: string; address: string }>

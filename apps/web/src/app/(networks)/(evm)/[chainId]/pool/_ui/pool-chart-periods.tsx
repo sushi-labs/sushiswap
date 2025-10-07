@@ -13,7 +13,7 @@ export enum PoolChartPeriod {
 export const chartPeriods: Record<PoolChartPeriod, number> = {
   [PoolChartPeriod.Day]: ms('1d'),
   [PoolChartPeriod.Week]: ms('1w'),
-  [PoolChartPeriod.Month]: ms('1M'),
+  [PoolChartPeriod.Month]: ms('30d'),
   [PoolChartPeriod.Year]: ms('1y'),
   [PoolChartPeriod.All]: Number.POSITIVE_INFINITY,
 }

@@ -29,6 +29,7 @@ import {
   EvmChain,
   type EvmChainId,
   EvmToken,
+  SushiSwapProtocol,
   getEvmChainById,
   uniswapV3PoolAbi_setFeeProtocol,
 } from 'sushi/evm'
@@ -85,7 +86,7 @@ const NAME_COLUMN_POOL: ColumnDef<V3Pool, unknown> = {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <ProtocolBadge protocol={'SUSHISWAP_V3'} />
+                {ProtocolBadge[SushiSwapProtocol.SUSHISWAP_V3]}
               </TooltipTrigger>
               <TooltipContent>
                 <p>Protocol version</p>

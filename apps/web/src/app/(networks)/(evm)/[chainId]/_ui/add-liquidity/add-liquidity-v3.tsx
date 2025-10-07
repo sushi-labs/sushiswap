@@ -6,21 +6,22 @@ import { useEffect, useMemo, useState } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { usePoolsByTokenPair } from 'src/lib/hooks/usePoolsByTokenPair'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
-import { ConcentratedLiquidityProvider } from 'src/ui/pool/ConcentratedLiquidityProvider'
+import {
+  type EvmChainId,
+  type EvmCurrency,
+  SUSHISWAP_V3_FACTORY_ADDRESS,
+  type SushiSwapV3FeeAmount,
+  computeSushiSwapV3PoolAddress,
+  getEvmChainById,
+  isSushiSwapV3ChainId,
+  isWNativeSupported,
+} from 'sushi/evm'
+import { useAccount } from 'wagmi'
 import {
   ConcentratedLiquidityURLStateProvider,
   useConcentratedLiquidityURLState,
-} from 'src/ui/pool/ConcentratedLiquidityURLStateProvider'
-import { computeSushiSwapV3PoolAddress } from 'sushi'
-import { ChainKey, type EvmChainId } from 'sushi/chain'
-import {
-  SUSHISWAP_V3_FACTORY_ADDRESS,
-  isSushiSwapV3ChainId,
-  isWNativeSupported,
-} from 'sushi/config'
-import type { SushiSwapV3FeeAmount } from 'sushi/config'
-import type { Type } from 'sushi/currency'
-import { useAccount } from 'wagmi'
+} from '~evm/[chainId]/pool/_ui/concentrated-liquidity-url-state-provider'
+import { ConcentratedLiquidityProvider } from '../concentrated-liquidity-provider'
 import { ConcentratedLiquidityWidget } from './conentrated-liquidity-widget'
 import { DoesNotExistMessage } from './does-not-exist-message'
 import { SelectFeeConcentratedWidget } from './select-fee-concentrated-widget'
@@ -34,8 +35,8 @@ export const AddLiquidityV3 = ({
   feeAmount,
   chainId,
 }: {
-  initToken0: Type | undefined
-  initToken1: Type | undefined
+  initToken0: EvmCurrency | undefined
+  initToken1: EvmCurrency | undefined
   hideTokenSelectors?: boolean
   feeAmount?: SushiSwapV3FeeAmount
   chainId: EvmChainId
@@ -64,8 +65,8 @@ const _Add = ({
   hideTokenSelectors,
   initFeeAmount,
 }: {
-  initToken0: Type | undefined
-  initToken1: Type | undefined
+  initToken0: EvmCurrency | undefined
+  initToken1: EvmCurrency | undefined
   hideTokenSelectors?: boolean
   initFeeAmount?: SushiSwapV3FeeAmount
 }) => {
@@ -94,8 +95,8 @@ const _Add = ({
     token1,
   })
   const { data: pools, isLoading: isLoadingPools } = usePoolsByTokenPair(
-    token0?.wrapped.id,
-    token1?.wrapped.id,
+    token0?.wrap().id,
+    token1?.wrap().id,
   )
 
   const poolExists = useMemo(() => {
@@ -103,11 +104,11 @@ const _Add = ({
     return pools?.some((pool) => {
       return (
         (pool.swapFee === feeAmount / 1000000 &&
-          pool.token0.id.toLowerCase() === token0?.wrapped.id.toLowerCase() &&
-          pool.token1.id.toLowerCase() === token1?.wrapped.id.toLowerCase()) ||
+          pool.token0.id.toLowerCase() === token0?.wrap().id.toLowerCase() &&
+          pool.token1.id.toLowerCase() === token1?.wrap().id.toLowerCase()) ||
         (pool.swapFee === feeAmount / 1000000 &&
-          pool.token0.id.toLowerCase() === token1?.wrapped.id.toLowerCase() &&
-          pool.token1.id.toLowerCase() === token0?.wrapped.id.toLowerCase())
+          pool.token0.id.toLowerCase() === token1?.wrap().id.toLowerCase() &&
+          pool.token1.id.toLowerCase() === token0?.wrap().id.toLowerCase())
       )
     })
   }, [feeAmount, pools, token0, token1, isLoadingPools])
@@ -117,8 +118,8 @@ const _Add = ({
       token0 && token1 && feeAmount && chainId
         ? computeSushiSwapV3PoolAddress({
             factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
-            tokenA: token0.wrapped,
-            tokenB: token1.wrapped,
+            tokenA: token0.wrap(),
+            tokenB: token1.wrap(),
             fee: feeAmount,
           })
         : undefined,
@@ -233,7 +234,7 @@ const _Add = ({
             tokensLoading={tokensLoading}
             existingPosition={position ?? undefined}
             tokenId={tokenId}
-            successLink={`/${ChainKey[chainId]}/pool/v3/${poolAddress}/${tokenId ?? 'positions'}`}
+            successLink={`/${getEvmChainById(chainId).key}/pool/v3/${poolAddress}/${tokenId ?? 'positions'}`}
           />
         </>
       ) : null}

@@ -18,17 +18,17 @@ export const TableFiltersPoolTypeV2: FC = () => {
   const setFilters = useSetPoolFilters()
 
   const handleProtocolSelect = useCallback(
-    (item: SushiSwapProtocol) => {
-      let _newValues: SushiSwapProtocol[] = []
+    (item: Exclude<SushiSwapProtocol, 'BLADE'>) => {
+      // @TODO: remove this once we have a proper way to handle this
+      let _newValues: Exclude<SushiSwapProtocol, 'BLADE'>[] = []
 
       if (protocols.includes(item) && protocols.length === 1) {
         _newValues = POOL_TYPES
       } else {
         _newValues = [item]
       }
-      setFilters((prev) => {
-        return { ...prev, protocols: _newValues }
-      })
+
+      setFilters((prev) => ({ ...prev, protocols: _newValues }))
     },
     [setFilters, protocols],
   )

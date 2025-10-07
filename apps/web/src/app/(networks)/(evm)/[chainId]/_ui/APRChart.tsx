@@ -27,7 +27,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useCallback } from 'react'
 import type { FC, MouseEventHandler, ReactNode } from 'react'
 import { ChainId } from 'sushi'
-import { ETHEREUM } from 'sushi/evm'
+import { SUSHI } from 'sushi/evm'
 import tailwindConfig from 'tailwind.config'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import { Wrapper } from '../[trade]/_ui/swap/trade/wrapper'
@@ -419,7 +419,7 @@ export const APRChart = () => {
                   iconHeight={26}
                   className="!border-none"
                 >
-                  <Currency.Icon currency={ETHEREUM[ChainId.ETHEREUM]} />
+                  <Currency.Icon currency={SUSHI[ChainId.ETHEREUM]} />
                 </Currency.IconList>
               </div>
             </div>
@@ -467,7 +467,7 @@ export const APRChart = () => {
             iconHeight={20}
             className="!border-none"
           >
-            <Currency.Icon currency={ETHEREUM[ChainId.ETHEREUM]} />
+            <Currency.Icon currency={SUSHI[ChainId.ETHEREUM]} />
           </Currency.IconList>
         </div>
         {isLoading ? (

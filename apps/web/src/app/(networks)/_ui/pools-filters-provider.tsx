@@ -10,21 +10,14 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { z } from 'zod'
-
-<<<<<<< HEAD:apps/web/src/ui/pool/PoolsFiltersProvider.tsx
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { parseArgs } from 'src/lib/functions'
-import { isEvmChainId } from 'sushi'
-import type { ChainId } from 'sushi/chain'
-import { useTypedSearchParams } from '../../lib/hooks'
-import { POOL_TYPES } from './TableFiltersPoolTypeV2'
-=======
 import type { SushiSwapCmsProtocol } from 'src/lib/constants'
 import { parseArgs } from 'src/lib/functions'
 import { useTypedSearchParams } from 'src/lib/hooks'
+import type { ChainId } from 'sushi'
+import { isEvmChainId } from 'sushi/evm'
+import { z } from 'zod'
 import { POOL_TYPES } from '~evm/[chainId]/_ui/table-filters-pool-type'
->>>>>>> df7a32b4da917e27c2a98e477806c02fe28c56c5:apps/web/src/app/(networks)/_ui/pools-filters-provider.tsx
 
 export const poolFiltersSchema = z.object({
   tokenSymbols: z.coerce.string().transform((symbols) => {

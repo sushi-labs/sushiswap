@@ -13,7 +13,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { useMultichainPoolsInfinite } from 'src/lib/hooks/api/useMultichainPoolsInfinite'
 import { chains } from 'sushi'
-import { SushiSwapProtocol } from 'sushi/evm'
+import { type EvmChainId, SushiSwapProtocol, getEvmChainById } from 'sushi/evm'
 import {
   ACTION_COLUMN,
   APR_SPARKLINE_COLUMN,
@@ -41,7 +41,7 @@ const COLUMNS = [
 ]
 
 interface PoolsTableV2Props {
-  onRowClick: ((row: MultiChainPools[number]) => void) | undefined
+  onRowClick?: (row: MultiChainPools[number]) => void
   forcedTokenSymbols?: string[]
 }
 
@@ -145,7 +145,7 @@ export const PoolsTableV2: FC<PoolsTableV2Props> = ({
           onSortingChange={setSorting}
           loading={isLoading}
           linkFormatter={(row) =>
-            `/${chains[row.chainId].blockExplorers.default}/pool/${
+            `/${getEvmChainById(row.chainId as EvmChainId).key}/pool/${
               row.protocol === SushiSwapProtocol.SUSHISWAP_V2 ? 'v2' : 'v3'
             }/${row.address}`
           }

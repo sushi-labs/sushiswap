@@ -134,7 +134,7 @@ export function DataTable<TData, TValue>({
           pagination
             ? 'border-b border-secondary  black:border-white/[0.1]'
             : '',
-          'dark:bg-slate-800 bg-slate-50 rounded-xl',
+          'dark:bg-slate-800 bg-white rounded-xl',
         )}
       >
         {showColumnHeaders ? (

@@ -13,14 +13,9 @@ import {
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-<<<<<<< HEAD:apps/web/src/ui/pool/PoolComposition.tsx
-import { Amount, Token } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
-import { Wrapper } from '../swap/trade/wrapper'
-=======
 import { Amount, formatUSD } from 'sushi'
 import { EvmToken } from 'sushi/evm'
->>>>>>> df7a32b4da917e27c2a98e477806c02fe28c56c5:apps/web/src/app/(networks)/(evm)/[chainId]/pool/v2/[address]/(landing)/_ui/pool-composition.tsx
+import { Wrapper } from '~evm/[chainId]/[trade]/_ui/swap/trade/wrapper'
 
 interface PoolCompositionProps {
   pool: V2Pool

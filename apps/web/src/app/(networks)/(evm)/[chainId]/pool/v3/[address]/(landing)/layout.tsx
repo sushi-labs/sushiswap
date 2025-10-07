@@ -3,9 +3,9 @@ import { Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
+import { PoolHeader } from 'src/ui/pool/PoolHeader'
 import { getEvmChainById, isSushiSwapV3ChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
-import { PoolHeader } from '~evm/[chainId]/pool/_ui/pool-header'
 
 export default async function Layout(props: {
   children: React.ReactNode

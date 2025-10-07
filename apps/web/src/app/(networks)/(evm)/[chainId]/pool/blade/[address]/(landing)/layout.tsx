@@ -6,8 +6,11 @@ import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import type React from 'react'
 import { PoolHeader } from 'src/ui/pool/PoolHeader'
-import { ChainKey, type EvmChainId } from 'sushi'
-import { isSushiSwapV2ChainId } from 'sushi/config'
+import {
+  type EvmChainId,
+  getEvmChainById,
+  isSushiSwapV2ChainId,
+} from 'sushi/evm'
 import { isAddress } from 'viem'
 
 export default async function Layout(props: {
@@ -45,7 +48,7 @@ export default async function Layout(props: {
           backUrl={
             referer?.includes('/pool')
               ? referer?.toString()
-              : `/${ChainKey[chainId]}/explore/pools`
+              : `/${getEvmChainById(chainId)?.key}/explore/pools`
           }
           address={pool.address}
           pool={{

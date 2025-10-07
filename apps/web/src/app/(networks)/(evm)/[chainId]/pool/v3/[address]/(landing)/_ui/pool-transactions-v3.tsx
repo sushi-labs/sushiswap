@@ -29,6 +29,7 @@ import {
 } from 'sushi/evm'
 import type { Address, Hex } from 'viem'
 import { useAccount } from 'wagmi'
+import { Wrapper } from '~evm/[chainId]/[trade]/_ui/swap/trade/wrapper'
 import {
   TX_AMOUNT_IN_V3_COLUMN,
   TX_AMOUNT_OUT_V3_COLUMN,
@@ -96,6 +97,8 @@ const fetchSwaps = async (
   chainId: SushiSwapV3ChainId,
   user: Address | undefined,
 ) => {
+  console.log('fetchSwaps', address, chainId, user)
+
   const swaps = await getSushiV3Swaps({
     chainId,
     address,
@@ -332,7 +335,7 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
   const toggleClass =
     'data-[state=on]:!border-blue data-[state=on]:!bg-[#4217FF14] dark:data-[state=on]:!bg-[#3DB1FF14] dark:data-[state=on]:!border-skyblue border border-accent'
   return (
-    <Card className="dark:!bg-[#15152B] !bg-slate-50">
+    <Wrapper className="!p-0" enableBorder>
       <CardHeader>
         <CardTitle>
           <div className="flex flex-col gap-y-4 justify-between md:flex-row">
@@ -402,11 +405,11 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
             columns={COLUMNS}
             data={_data}
             externalLink={true}
-            className="!text-slate-900 dark:!text-[#FFF5FA] !px-6 !border-t-0"
+            className="!text-slate-900 dark:!text-[#FFF5FA] !bg-white dark:!bg-slate-800 !px-6 !border-t-0"
           />
         </InfiniteScroll>
       </CardContent>
-    </Card>
+    </Wrapper>
   )
 }
 

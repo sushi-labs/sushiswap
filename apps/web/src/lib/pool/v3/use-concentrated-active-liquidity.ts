@@ -125,18 +125,12 @@ export const useConcentratedActiveLiquidity = ({
         Number(ticks[pivot].tickIdx) === activeTick
           ? ticks[pivot].liquidityNet
           : 0n,
-<<<<<<< HEAD
-      price0: tickToPrice(_token0, _token1, activeTick).toFixed(
-        PRICE_FIXED_DIGITS,
-      ),
-      price1: tickToPrice(_token1, _token0, activeTick).toFixed(
-        PRICE_FIXED_DIGITS,
-      ),
-=======
       price0: tickToPrice(_token0, _token1, activeTick).toString({
         fixed: PRICE_FIXED_DIGITS,
       }),
->>>>>>> df7a32b4da917e27c2a98e477806c02fe28c56c5
+      price1: tickToPrice(_token1, _token0, activeTick).toString({
+        fixed: PRICE_FIXED_DIGITS,
+      }),
     }
 
     const subsequentTicks = computeSurroundingTicks(

@@ -1,6 +1,7 @@
 import { Button } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
-import { Amount, type Type, tryParseAmount } from 'sushi/currency'
+import { Amount, ZERO } from 'sushi'
+import type { EvmCurrency } from 'sushi/evm'
 
 export const InitialPrice = ({
   token0,
@@ -8,8 +9,8 @@ export const InitialPrice = ({
   input0,
   input1,
 }: {
-  token0: Type
-  token1: Type
+  token0: EvmCurrency
+  token1: EvmCurrency
   input0: string
   input1: string
 }) => {
@@ -23,8 +24,8 @@ export const InitialPrice = ({
     }
 
     return [
-      tryParseAmount(input0, token0) || Amount.fromRawAmount(token0, 0),
-      tryParseAmount(input1, token1) || Amount.fromRawAmount(token1, 0),
+      Amount.tryFromHuman(token0, input0) || Amount.tryFromHuman(token0, '0'),
+      Amount.tryFromHuman(token1, input1) || Amount.tryFromHuman(token1, '0'),
     ]
   }, [input0, input1, token0, token1])
 
@@ -32,20 +33,20 @@ export const InitialPrice = ({
     if (
       !token0Input ||
       !token1Input ||
-      token0Input?.equalTo(0) ||
-      token1Input?.equalTo(0)
+      token0Input?.eq(ZERO) ||
+      token1Input?.eq(ZERO)
     ) {
       return [0, 0]
     }
 
     const token1Per0 = token1Input
-      .divide(token0Input)
-      .multiply(10n ** BigInt(token0.decimals))
+      .div(token0Input.amount)
+      .mul(10n ** BigInt(token0.decimals))
       .toSignificant(6)
 
     const token0Per1 = token0Input
-      .divide(token1Input)
-      .multiply(10n ** BigInt(token1.decimals))
+      .div(token1Input.amount)
+      .mul(10n ** BigInt(token1.decimals))
       .toSignificant(6)
 
     return [token1Per0, token0Per1]

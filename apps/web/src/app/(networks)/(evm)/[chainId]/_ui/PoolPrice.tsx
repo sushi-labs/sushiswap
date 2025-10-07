@@ -10,7 +10,9 @@ import {
   Currency,
   classNames,
 } from '@sushiswap/ui'
+import { Amount } from 'sushi'
 import { EvmToken } from 'sushi/evm'
+import { formatUnits, parseUnits } from 'viem'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { Wrapper } from '../[trade]/_ui/swap/trade/wrapper'
 
@@ -31,16 +33,37 @@ export const PoolPrice = ({
     address: reserveToken1.address,
   })
 
-  const reserve1To2 = price1
-    ? price0
-      ? new Decimal(price1).div(price0).toFixed(2)
+  const reserve1To2 =
+    price1 && price0
+      ? (() => {
+          const a0 = Amount.tryFromHuman(reserveToken0, price0)
+          const a1 = Amount.tryFromHuman(reserveToken1, price1)
+          if (!a0 || !a1) return '0.00'
+
+          const a1Human = Number(a1.amount) / 10 ** reserveToken1.decimals
+          const ratio = a0.div(a1Human)
+
+          const ratioHuman = Number(ratio.amount) / 10 ** reserveToken0.decimals
+
+          return ratioHuman.toFixed(2)
+        })()
       : '0.00'
-    : '0.00'
-  const reserve2To1 = price0
-    ? price1
-      ? new Decimal(price0).div(price1).toFixed(2)
+
+  const reserve2To1 =
+    price0 && price1
+      ? (() => {
+          const a0 = Amount.tryFromHuman(reserveToken0, price0)
+          const a1 = Amount.tryFromHuman(reserveToken1, price1)
+          if (!a0 || !a1) return '0.00'
+
+          const a0Human = Number(a0.amount) / 10 ** reserveToken0.decimals
+          const ratio = a1.div(a0Human)
+
+          const ratioHuman = Number(ratio.amount) / 10 ** reserveToken1.decimals
+
+          return ratioHuman.toFixed(2)
+        })()
       : '0.00'
-    : '0.00'
 
   return (
     <Wrapper enableBorder className="!p-4 flex flex-col gap-5">

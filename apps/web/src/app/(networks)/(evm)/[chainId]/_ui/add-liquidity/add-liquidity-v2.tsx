@@ -56,6 +56,7 @@ import {
   useSendTransaction,
 } from 'wagmi'
 import { ToggleZapCard } from '~evm/[chainId]/pool/_ui/toggle-zap-card'
+import { V2ZapInfoCard } from '~evm/[chainId]/pool/v2/_common/ui/v2-zap-info-card'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { AddLiquidityV2Button } from './add-liquidity-v2-button'
@@ -542,10 +543,11 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
           setChecked={setChecked}
         />
       )}
-      <ZapInfoCard
+      <V2ZapInfoCard
         zapResponse={zapResponse}
         inputCurrencyAmount={parsedInputAmount}
         pool={pool}
+        isZapError={isZapError}
       />
     </>
   )

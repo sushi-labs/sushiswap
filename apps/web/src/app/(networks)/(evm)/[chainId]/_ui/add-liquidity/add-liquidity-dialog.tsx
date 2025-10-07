@@ -61,7 +61,6 @@ export const AddLiquidityDialog = ({
             chainId={chainId}
           />
         )
-      // @ts-expect-error - ok until we have a blade pool type
       case 'BLADE':
         return (
           <AddLiquidityBlade

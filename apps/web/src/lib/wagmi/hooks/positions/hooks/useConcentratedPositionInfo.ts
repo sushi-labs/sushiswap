@@ -2,6 +2,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { type EvmCurrency, Position, type SushiSwapV3ChainId } from 'sushi/evm'
 import { stringify } from 'viem'
 
+import ms from 'ms'
 import { useConfig } from 'wagmi'
 import { getConcentratedLiquidityPool } from '../../pools/actions/getConcentratedLiquidityPool'
 import { useConcentratedLiquidityPositionsFromTokenId } from './useConcentratedPositionsFromTokenId'
@@ -57,7 +58,7 @@ export const useConcentratedPositionInfo = ({
 
       return position
     },
-    refetchInterval: 10000,
+    refetchInterval: ms('10s'),
     enabled: Boolean(token0 && token1 && chainId && enabled && positionDetails),
     placeholderData: keepPreviousData,
     queryKeyHashFn: stringify,
