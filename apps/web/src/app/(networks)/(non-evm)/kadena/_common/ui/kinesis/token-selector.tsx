@@ -25,12 +25,11 @@ import {
 } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
-import { useBalancesWeb3 } from 'src/lib/wagmi/hooks/balances/useBalancesWeb3'
 import { Amount, ChainId } from 'sushi'
-import type { EvmChainId, EvmToken } from 'sushi/evm'
+import type { EvmChainId } from 'sushi/evm'
 import { KvmChainId, type KvmTokenAddress } from 'sushi/kvm'
 import { formatUnits } from 'viem'
-import { useAccount } from 'wagmi'
+import { useBalances } from '~evm/_common/ui/balance-provider/use-balances'
 import {
   COMMON_ETHEREUM_TOKENS,
   COMMON_KADENA_TOKENS,
@@ -65,7 +64,6 @@ export const KinesisTokenSelector = ({
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const { activeAccount } = useKadena()
-  const { address } = useAccount()
 
   const [selectedNetwork, setSelectedNetwork] = useState<KinesisChainId>(
     KvmChainId.KADENA,
@@ -98,17 +96,13 @@ export const KinesisTokenSelector = ({
 
   const ethereumTokensArray = useMemo(() => {
     if (!tokenLists || selectedNetwork === ChainId.KADENA) return []
-    return tokenLists.ethereum as EvmToken[]
+    return tokenLists.ethereum.map((token) => token.address)
   }, [tokenLists, selectedNetwork])
 
-  const { data: evmBalances } = useBalancesWeb3({
-    chainId: ChainId.ETHEREUM,
-    currencies: ethereumTokensArray,
-    account: address,
-    enabled: Boolean(
-      selectedNetwork === ChainId.ETHEREUM && ethereumTokensArray.length > 0,
-    ),
-  })
+  const { data: evmBalances } = useBalances(
+    ChainId.ETHEREUM,
+    ethereumTokensArray,
+  )
 
   const { data: tokenBalances } = useTokenBalances({
     account: activeAccount?.accountName ?? '',
@@ -121,9 +115,9 @@ export const KinesisTokenSelector = ({
       return tokenBalances?.balanceMap
     }
     if (selectedNetwork === ChainId.ETHEREUM) {
-      return Object.entries(evmBalances ?? {}).reduce(
-        (acc, [key, value]) => {
-          acc[key] = value.amount.toString()
+      return evmBalances?.entries().reduce(
+        (acc, [address, balance]) => {
+          acc[address] = balance.toString()
           return acc
         },
         {} as Record<string, string>,
@@ -205,7 +199,6 @@ export const KinesisTokenSelector = ({
         ) : null}
 
         <div className="flex flex-col flex-1 gap-4 overflow-y-auto relative p-6">
-          {' '}
           <DialogHeader className="!text-left">
             <DialogTitle>Select a token</DialogTitle>
             <DialogDescription>
