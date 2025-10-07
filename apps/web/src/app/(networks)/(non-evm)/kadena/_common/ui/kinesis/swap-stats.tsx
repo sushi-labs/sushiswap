@@ -1,7 +1,8 @@
 'use client'
 
+import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
-import { Collapsible, SkeletonBox, classNames } from '@sushiswap/ui'
+import { Collapsible, IconButton, SkeletonBox, classNames } from '@sushiswap/ui'
 import React, { type FC, useMemo } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
@@ -15,8 +16,10 @@ import {
 import { EvmNative, getEvmChainById, shortenEvmAddress } from 'sushi/evm'
 import { getKvmChainById } from 'sushi/kvm'
 import { isAddress } from 'viem'
+import { useAccount, useDisconnect } from 'wagmi'
 import { KADENA } from '~kadena/_common/constants/token-list'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
+import { useKadena } from '~kadena/kadena-wallet-provider'
 
 export const SwapStats: FC = () => {
   const {
@@ -34,6 +37,10 @@ export const SwapStats: FC = () => {
   const [slippageTolerance] = useSlippageTolerance(
     SlippageToleranceStorageKey.Swap,
   )
+  const { isConnected: isEvmConnected } = useAccount()
+  const { disconnectAsync } = useDisconnect()
+  const { isConnected: isKvmConnected } = useKadena()
+  const isConnected = isEvmConnected && isKvmConnected
 
   const isAllowanceError = useMemo(() => {
     if (
@@ -90,7 +97,11 @@ export const SwapStats: FC = () => {
 
   return (
     <Collapsible
-      open={+swapAmountString > 0 && (!simulateBridgeError || isAllowanceError)}
+      open={
+        +swapAmountString > 0 &&
+        (!simulateBridgeError || isAllowanceError) &&
+        isConnected
+      }
     >
       <div className="pt-4 w-full px-2 flex flex-col gap-1">
         <div className="flex justify-between items-center gap-2">
@@ -171,7 +182,17 @@ export const SwapStats: FC = () => {
             <span className="font-medium text-sm text-gray-700 dark:text-slate-300">
               Recipient
             </span>
-            <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
+            <div className="font-semibold flex items-center gap-1 text-gray-700 text-right dark:text-slate-400">
+              {chainId1 === ChainId.ETHEREUM && isAddress(recipient) ? (
+                // currently only way to edit evm wallet
+                <IconButton
+                  onClick={async () => await disconnectAsync()}
+                  icon={ArrowLeftOnRectangleIcon}
+                  name={'edit evm recipient'}
+                  variant="ghost"
+                  size="xs"
+                />
+              ) : null}
               <a
                 target="_blank"
                 href={
@@ -203,7 +224,7 @@ export const SwapStats: FC = () => {
                   <>{truncateString(recipient, 10, 'middle')}</>
                 )}
               </a>
-            </span>
+            </div>
           </div>
         )}
       </div>
