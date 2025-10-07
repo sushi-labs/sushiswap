@@ -15,8 +15,14 @@ import { Approve } from './approve'
 
 export const ReviewSwapDialogTrigger = () => {
   const {
-    state: { token0, swapAmountString, isLoadingSimulateBridgeTx },
+    state: {
+      token0,
+      swapAmountString,
+      isLoadingSimulateBridgeTx,
+      simulateBridgeTx,
+    },
   } = useDerivedStateCrossChainSwap()
+  console.log(simulateBridgeTx)
 
   const { activeAccount } = useKadena()
 
@@ -93,12 +99,14 @@ export const ReviewSwapDialogTrigger = () => {
     return (
       !(swapAmountString && Number(swapAmountString) > 0) ||
       hasInsufficientToken0Balance ||
-      isLoadingSimulateBridgeTx
+      isLoadingSimulateBridgeTx ||
+      !simulateBridgeTx
     )
   }, [
     swapAmountString,
     hasInsufficientToken0Balance,
     isLoadingSimulateBridgeTx,
+    simulateBridgeTx,
   ])
 
   if (!activeAccount?.accountName) {

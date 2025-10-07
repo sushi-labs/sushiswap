@@ -190,6 +190,7 @@ const DerivedstateCrossChainSwapProvider: FC<
         throw new Error('No cross chain equivalent token found')
       }
       const url = `${pathname}?${createQueryString([
+        { name: 'swapAmount', value: null },
         { name: 'token0', value: _token0.address },
         { name: 'token1', value: crossChainEquivalentToken?.address },
         {

@@ -21,6 +21,8 @@ export const useKinesisWrappedToken = ({
     args: [],
     query: {
       enabled: Boolean(token && enabled),
+      //dont retry on error, not every contract contains wrappedToken function and will not need approval
+      retry: false,
     },
   })
 }

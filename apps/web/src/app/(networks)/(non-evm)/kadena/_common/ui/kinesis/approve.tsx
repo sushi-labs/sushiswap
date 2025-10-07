@@ -5,7 +5,6 @@ import { Amount } from 'sushi'
 import { type EvmChainId, EvmToken } from 'sushi/evm'
 import { KvmChainId } from 'sushi/kvm'
 import type { Address } from 'viem'
-import { KINESIS_BRIDGE_EVM_ETH } from '~kadena/_common/constants/token-list'
 import { useKinesisWrappedToken } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-wrapped-token'
 import type { KinesisToken } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 
@@ -16,10 +15,7 @@ interface ApproveProps extends ButtonProps {
 }
 
 export const Approve: FC<ApproveProps> = (props) => {
-  if (
-    props.amount?.currency.chainId === KvmChainId.KADENA ||
-    props.amount?.currency.isSame(KINESIS_BRIDGE_EVM_ETH)
-  ) {
+  if (props.amount?.currency.chainId === KvmChainId.KADENA) {
     return <>{props.children}</>
   }
   return (
@@ -37,16 +33,17 @@ export const Approve: FC<ApproveProps> = (props) => {
 }
 
 const _ApproveERC20: FC<ApproveProps> = (props) => {
-  const { data: underlyingToken, isLoading } = useKinesisWrappedToken({
+  const { data: wrappedToken, isLoading } = useKinesisWrappedToken({
     token: props.amount?.currency as EvmToken | undefined,
     enabled: Boolean(props.amount),
   })
+
   const tokenAmount = useMemo(() => {
-    if (underlyingToken && props.amount) {
+    if (wrappedToken && props.amount) {
       return new Amount(
         new EvmToken({
           chainId: props.amount.currency.chainId as EvmChainId,
-          address: underlyingToken as `0x${string}`,
+          address: wrappedToken as `0x${string}`,
           decimals: props.amount.currency.decimals,
           symbol: props.amount.currency.symbol,
           name: props.amount.currency.name,
@@ -54,7 +51,7 @@ const _ApproveERC20: FC<ApproveProps> = (props) => {
         props.amount.amount,
       )
     }
-  }, [underlyingToken, props.amount])
+  }, [wrappedToken, props.amount])
 
   return (
     <Checker.Network
@@ -69,7 +66,7 @@ const _ApproveERC20: FC<ApproveProps> = (props) => {
         amount={tokenAmount}
         contract={props.amount?.currency.address as `0x${string}` | undefined}
         enabled={Boolean(
-          props.enabled && !isLoading && underlyingToken && tokenAmount,
+          props.enabled && !isLoading && wrappedToken && tokenAmount,
         )}
       >
         {props.children}
