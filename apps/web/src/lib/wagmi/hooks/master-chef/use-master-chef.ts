@@ -3,6 +3,7 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { keepPreviousData, useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo } from 'react'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Amount } from 'sushi'
 import {
   ChefType,
@@ -20,11 +21,7 @@ import {
   masterChefV2Abi_harvestFromMasterChef,
   miniChefV2Abi_harvest,
 } from 'sushi/evm'
-import {
-  type Address,
-  UserRejectedRequestError,
-  encodeFunctionData,
-} from 'viem'
+import { type Address, encodeFunctionData } from 'viem'
 import {
   useAccount,
   useBlockNumber,
@@ -269,7 +266,7 @@ export const useMasterChef: UseMasterChef = ({
   )
 
   const onError = useCallback((e: SendTransactionErrorType) => {
-    if (!(e.cause instanceof UserRejectedRequestError)) {
+    if (!isUserRejectedError(e)) {
       createErrorToast(e?.message, true)
     }
   }, [])
