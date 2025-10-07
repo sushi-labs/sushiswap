@@ -28,6 +28,7 @@ import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { NativeAddress } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { logger } from 'src/lib/logger'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
 import {
   getDefaultTTL,
@@ -44,11 +45,7 @@ import {
   sushiSwapV2RouterAbi_addLiquidity,
   sushiSwapV2RouterAbi_addLiquidityETH,
 } from 'sushi/evm'
-import {
-  type Address,
-  type SendTransactionReturnType,
-  UserRejectedRequestError,
-} from 'viem'
+import type { Address, SendTransactionReturnType } from 'viem'
 import {
   type UseSimulateContractParameters,
   usePublicClient,
@@ -378,7 +375,7 @@ export const AddSectionReviewModalLegacy: FC<
   )
 
   const onError = useCallback((e: Error) => {
-    if (e.cause instanceof UserRejectedRequestError) {
+    if (isUserRejectedError(e)) {
       return
     }
 

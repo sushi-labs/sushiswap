@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
+import { getFeeString } from 'src/lib/swap/fee'
 import { Amount, Fraction, Percent, Price, ZERO, subtractSlippage } from 'sushi'
 import {
   type EvmAddress,
@@ -35,8 +36,6 @@ function applyPoolExclusion(
       ...(excludePoolsByToken[fromToken.id] || []),
       ...(excludePoolsByToken[toToken.id] || []),
     ]
-
-    console.log(excludePools, fromToken.id, toToken.id)
 
     searchParams.set('excludePools', excludePools.join(','))
   }
@@ -233,15 +232,12 @@ export const useTradeQuote = (variables: UseTradeParams) => {
             nativePrice && gasSpent
               ? gasSpent.mul(nativePrice.asFraction).toSignificant(4)
               : undefined,
-          fee:
-            !isWrapOrUnwrap({ from: fromToken, to: toToken }) &&
-            !(isStable(fromToken) && isStable(toToken)) &&
-            !(isLsd(fromToken) && isLsd(toToken))
-              ? `${tokenOutPrice ? '$' : ''}${minAmountOut
-                  .mul(new Percent({ numerator: 25, denominator: 10000 }))
-                  .mul(tokenOutPrice ? tokenOutPrice.asFraction : 1n)
-                  .toSignificant(4)} ${!tokenOutPrice ? toToken.symbol : ''}`
-              : '$0',
+          fee: getFeeString({
+            fromToken,
+            toToken,
+            tokenOutPrice,
+            minAmountOut,
+          }),
           route: data.route,
           tx: undefined,
           tokenTax,

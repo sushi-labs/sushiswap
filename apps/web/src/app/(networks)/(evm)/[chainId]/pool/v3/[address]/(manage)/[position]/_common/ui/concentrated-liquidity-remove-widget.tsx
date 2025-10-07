@@ -43,6 +43,7 @@ import React, { type FC, useCallback, useMemo, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { logger } from 'src/lib/logger'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import {
   getDefaultTTL,
@@ -61,11 +62,7 @@ import {
   isSushiSwapV3ChainId,
   unwrapEvmToken,
 } from 'sushi/evm'
-import {
-  type Hex,
-  type SendTransactionReturnType,
-  UserRejectedRequestError,
-} from 'viem'
+import type { Hex, SendTransactionReturnType } from 'viem'
 import {
   useCall,
   useSendTransaction,
@@ -166,7 +163,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
   )
 
   const onError = useCallback((e: Error) => {
-    if (e.cause instanceof UserRejectedRequestError) {
+    if (isUserRejectedError(e)) {
       return
     }
 

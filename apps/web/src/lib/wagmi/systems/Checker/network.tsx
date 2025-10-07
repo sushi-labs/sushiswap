@@ -1,6 +1,7 @@
 'use client'
 
 import { InformationCircleIcon } from '@heroicons/react/24/solid'
+import { createErrorToast } from '@sushiswap/notifications'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import type { FC, ReactElement, ReactNode } from 'react'
@@ -23,7 +24,13 @@ const Network: FC<NetworkProps> = ({
   ...rest
 }): ReactElement<any, any> | null => {
   const { chain } = useAccount()
-  const { switchChainAsync } = useSwitchChain()
+  const { switchChainAsync } = useSwitchChain({
+    mutation: {
+      onError: (e) => {
+        createErrorToast(e.message, false)
+      },
+    },
+  })
 
   if (!chainId) return null
 

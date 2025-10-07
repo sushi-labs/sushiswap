@@ -28,14 +28,11 @@ import {
   type SushiSwapV2ChainId,
   addGasMargin,
 } from 'sushi/evm'
-import {
-  type SendTransactionReturnType,
-  UserRejectedRequestError,
-  encodeFunctionData,
-} from 'viem'
+import { type SendTransactionReturnType, encodeFunctionData } from 'viem'
 
 import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import { logger } from 'src/lib/logger'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import {
   type PermitInfo,
   PermitType,
@@ -422,7 +419,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
         mutation: {
           onSuccess,
           onError: (error) => {
-            if (error instanceof UserRejectedRequestError) {
+            if (isUserRejectedError(error)) {
               return
             }
 
