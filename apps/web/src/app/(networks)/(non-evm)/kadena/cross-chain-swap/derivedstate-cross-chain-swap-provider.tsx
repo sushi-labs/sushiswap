@@ -58,7 +58,7 @@ interface State {
     swapAmountString: string
     swapAmount: Amount<KinesisToken> | undefined
     bridgeAmount: Amount<KinesisToken> | undefined
-    recipient: Address | undefined
+    recipient: string | Address | undefined
     simulateBridgeTx: SimulateBridgeResult | undefined
     isLoadingSimulateBridgeTx: boolean
     simulateBridgeError: Error | null
@@ -80,10 +80,10 @@ const DerivedstateCrossChainSwapProvider: FC<
   const { push } = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const { address } = useAccount()
+  const { activeAccount } = useKadena()
 
   const { data: tokenLists } = useKinesisTokenList()
-
-  // const [isTxPending, setIsTxPending] = useState(false)
 
   const rawChainId0 = decodeChainId(searchParams.get('chainId0'))
   const rawChainId1 = decodeChainId(searchParams.get('chainId1'))
@@ -258,6 +258,12 @@ const DerivedstateCrossChainSwapProvider: FC<
     return Amount.tryFromHuman(token1, simulateBridgeTx.estimatedAmountReceived)
   }, [token1, simulateBridgeTx])
 
+  const recipient = useMemo(() => {
+    return token1?.chainId === ChainId.KADENA
+      ? activeAccount?.accountName
+      : address
+  }, [address, activeAccount, token1])
+
   return (
     <DerivedStateCrossChainSwapContext.Provider
       value={useMemo(() => {
@@ -268,7 +274,7 @@ const DerivedstateCrossChainSwapProvider: FC<
             setSwapAmount,
           },
           state: {
-            recipient: undefined,
+            recipient,
             chainId0,
             chainId1,
             swapAmountString,
@@ -300,6 +306,7 @@ const DerivedstateCrossChainSwapProvider: FC<
         isLoadingSimulateBridgeTx,
         bridgeAmount,
         simulateBridgeError,
+        recipient,
       ])}
     >
       {children}
