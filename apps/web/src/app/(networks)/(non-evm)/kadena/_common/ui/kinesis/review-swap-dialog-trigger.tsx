@@ -20,9 +20,10 @@ export const ReviewSwapDialogTrigger = () => {
       swapAmountString,
       isLoadingSimulateBridgeTx,
       simulateBridgeTx,
+      simulateBridgeError,
     },
   } = useDerivedStateCrossChainSwap()
-  console.log(simulateBridgeTx)
+  console.log(simulateBridgeError)
 
   const { activeAccount } = useKadena()
 
@@ -95,18 +96,28 @@ export const ReviewSwapDialogTrigger = () => {
     return 'Swap'
   }, [swapAmountString, hasInsufficientToken0Balance, hasInsufficientGas])
 
+  const isAllowanceError = useMemo(() => {
+    if (
+      simulateBridgeError?.message.includes('transfer amount exceeds allowance')
+    ) {
+      return true
+    }
+    return false
+  }, [simulateBridgeError])
+
   const isDisabled = useMemo(() => {
     return (
       !(swapAmountString && Number(swapAmountString) > 0) ||
       hasInsufficientToken0Balance ||
       isLoadingSimulateBridgeTx ||
-      !simulateBridgeTx
+      (!simulateBridgeTx && !isAllowanceError)
     )
   }, [
     swapAmountString,
     hasInsufficientToken0Balance,
     isLoadingSimulateBridgeTx,
     simulateBridgeTx,
+    isAllowanceError,
   ])
 
   if (!activeAccount?.accountName) {
@@ -122,7 +133,7 @@ export const ReviewSwapDialogTrigger = () => {
           token0 ? Amount.fromHuman(token0, swapAmountString || '0') : undefined
         }
         contract={token0?.address as `0x${string}` | undefined}
-        enabled={true}
+        enabled={!isDisabled}
       >
         <DialogTrigger asChild>
           <Button size="xl" fullWidth disabled={isDisabled}>

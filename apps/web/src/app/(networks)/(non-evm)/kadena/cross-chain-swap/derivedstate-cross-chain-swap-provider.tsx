@@ -61,6 +61,7 @@ interface State {
     recipient: Address | undefined
     simulateBridgeTx: SimulateBridgeResult | undefined
     isLoadingSimulateBridgeTx: boolean
+    simulateBridgeError: Error | null
   }
   isLoading: boolean
   isToken0Loading: boolean
@@ -234,14 +235,17 @@ const DerivedstateCrossChainSwapProvider: FC<
 
   const swapAmountString = defaultedParams.get('swapAmount') || ''
 
-  const { data: simulateBridgeTx, isLoading: isLoadingSimulateBridgeTx } =
-    _useKinesisSwapSimulate({
-      chainId0,
-      chainId1,
-      swapAmountString,
-      token0,
-      token1,
-    })
+  const {
+    data: simulateBridgeTx,
+    isLoading: isLoadingSimulateBridgeTx,
+    error: simulateBridgeError,
+  } = _useKinesisSwapSimulate({
+    chainId0,
+    chainId1,
+    swapAmountString,
+    token0,
+    token1,
+  })
 
   const swapAmount = useMemo(
     () => (token0 ? Amount.tryFromHuman(token0, swapAmountString) : undefined),
@@ -274,6 +278,7 @@ const DerivedstateCrossChainSwapProvider: FC<
             token1,
             simulateBridgeTx,
             isLoadingSimulateBridgeTx,
+            simulateBridgeError,
           },
           isLoading: token0Loading || token1Loading,
           isToken0Loading: token0Loading,
@@ -294,6 +299,7 @@ const DerivedstateCrossChainSwapProvider: FC<
         simulateBridgeTx,
         isLoadingSimulateBridgeTx,
         bridgeAmount,
+        simulateBridgeError,
       ])}
     >
       {children}

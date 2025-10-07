@@ -31,6 +31,8 @@ export const useKinesisSwapSimulate = (
       if (!params) throw new Error('Missing params for simulation')
       return kinesisClient.simulateBridgeTransaction(params)
     },
-    staleTime: ms('30s'),
+    retry: false,
+    staleTime: ms('15s'),
+    refetchInterval: ms('15s'),
   })
 }
