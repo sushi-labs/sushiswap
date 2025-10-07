@@ -21,6 +21,7 @@ export const useAppVersion = () => {
         client: commitRef.current as string,
       }
     },
-    refetchInterval: ms('1m'),
+    refetchInterval: ms('5m'),
+    enabled: Boolean(process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_ID),
   })
 }
