@@ -15,12 +15,11 @@ import { DialogContent, classNames } from '@sushiswap/ui'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import Link from 'next/link'
 import { useEffect, useMemo } from 'react'
-import { formatPercent } from 'sushi'
+import { formatPercent, truncateString } from 'sushi'
 import { usePriceImpact } from '~tron/_common/lib/hooks/usePriceImpact'
 import { useReserves } from '~tron/_common/lib/hooks/useReserves'
 import { useRoutes } from '~tron/_common/lib/hooks/useRoutes'
 import { useSwapNetworkFee } from '~tron/_common/lib/hooks/useSwapNetworkFee'
-import { truncateText } from '~tron/_common/lib/utils/formatters'
 import { getIfWrapOrUnwrap } from '~tron/_common/lib/utils/helpers'
 import { getTronscanAddressLink } from '~tron/_common/lib/utils/tronscan-helpers'
 import {
@@ -189,7 +188,7 @@ export const ReviewSwapDialog = () => {
                           )}
                           rel="noreferrer"
                         >
-                          {truncateText(address)}
+                          {truncateString(address, 10, 'middle')}
                         </Link>
                       </List.KeyValue>
                     </List.Control>

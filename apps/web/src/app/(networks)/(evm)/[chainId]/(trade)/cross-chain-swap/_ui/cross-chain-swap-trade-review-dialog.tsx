@@ -56,15 +56,12 @@ import {
   useLiFiStatus,
 } from 'src/lib/swap/cross-chain'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/slippage'
 import { Amount, ZERO, formatNumber, formatUSD } from 'sushi'
 import { EvmNative, getEvmChainById, shortenEvmAddress } from 'sushi/evm'
-import {
-  type SendTransactionReturnType,
-  UserRejectedRequestError,
-  stringify,
-} from 'viem'
+import { type SendTransactionReturnType, stringify } from 'viem'
 import {
   useAccount,
   useEstimateGas,
@@ -343,7 +340,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
       dest: StepState.NotStarted,
     })
 
-    if (e.cause instanceof UserRejectedRequestError) {
+    if (isUserRejectedError(e)) {
       return
     }
 
@@ -385,8 +382,8 @@ const _CrossChainSwapTradeReviewDialog: FC<{
         dest: StepState.NotStarted,
       })
 
-      confirm()
       try {
+        confirm()
         await sendTransactionAsync(preparedTx)
       } catch {}
     }

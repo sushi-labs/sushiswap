@@ -3,9 +3,10 @@
 import type { TTLStorageKey } from '@sushiswap/hooks'
 import { createErrorToast } from '@sushiswap/notifications'
 import { useCallback, useMemo, useState } from 'react'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { Amount } from 'sushi'
 import { type EvmChainId, type EvmCurrency, eip2612Abi_nonces } from 'sushi/evm'
-import { type Address, UserRejectedRequestError, hexToSignature } from 'viem'
+import { type Address, hexToSignature } from 'viem'
 import { useAccount, useReadContract, useSignTypedData } from 'wagmi'
 import {
   useApprovedActions,
@@ -150,7 +151,7 @@ export const useTokenPermit = ({
       setSignature({ ...hexToSignature(signedData), message, domain })
     } catch (e) {
       if (e instanceof Error) {
-        if (!(e.cause instanceof UserRejectedRequestError)) {
+        if (!isUserRejectedError(e)) {
           createErrorToast(e.message, true)
         }
       }

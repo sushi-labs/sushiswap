@@ -6,7 +6,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
-import { getFeeString } from 'src/lib/swap/fee'
+import { getFeeString, isAddressFeeWhitelisted } from 'src/lib/swap/fee'
 import { Amount, Fraction, Percent, Price, ZERO, subtractSlippage } from 'sushi'
 import {
   type EvmCurrency,
@@ -41,6 +41,7 @@ export const useTradeQuery = (
 ) => {
   const trace = useTrace()
   const { address } = useAccount()
+
   return useQuery({
     queryKey: [
       'getTrade',
@@ -59,6 +60,8 @@ export const useTradeQuery = (
       },
     ],
     queryFn: async () => {
+      if (!address) throw new Error('No address')
+
       const params = new URL(`${API_BASE_URL}/swap/v7/${chainId}`)
       params.searchParams.set('referrer', 'sushi')
       params.searchParams.set(
@@ -81,16 +84,23 @@ export const useTradeQuery = (
       params.searchParams.set('maxSlippage', `${+slippagePercentage / 100}`)
       params.searchParams.set('sender', `${address}`)
       recipient && params.searchParams.set('recipient', `${recipient}`)
-      params.searchParams.set('fee', `${fee}`)
-      if (fee > 0) {
-        params.searchParams.set('feeBy', 'output')
-        params.searchParams.set(
-          'feeReceiver',
-          isUIFeeCollectorChainId(chainId)
-            ? UI_FEE_COLLECTOR_ADDRESS[chainId]
-            : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
-        )
+
+      if (
+        !isAddressFeeWhitelisted(address) ||
+        (recipient && !isAddressFeeWhitelisted(recipient))
+      ) {
+        params.searchParams.set('fee', `${fee}`)
+        if (fee > 0) {
+          params.searchParams.set('feeBy', 'output')
+          params.searchParams.set(
+            'feeReceiver',
+            isUIFeeCollectorChainId(chainId)
+              ? UI_FEE_COLLECTOR_ADDRESS[chainId]
+              : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
+          )
+        }
       }
+
       if (source !== undefined) params.searchParams.set('source', `${source}`)
       if (process.env.NEXT_PUBLIC_APP_ENV === 'test')
         params.searchParams.set('simulate', 'false')
@@ -123,9 +133,15 @@ export const useTradeQuery = (
     gcTime: 0, // the length of time before inactive data gets removed from the cache
     retry: false, // dont retry on failure, immediately fallback
     select,
-    enabled:
+    enabled: Boolean(
       enabled &&
-      Boolean(address && chainId && fromToken && toToken && amount && gasPrice),
+        address &&
+        chainId &&
+        fromToken &&
+        toToken &&
+        amount &&
+        gasPrice,
+    ),
     queryKeyHashFn: stringify,
   })
 }

@@ -4,9 +4,10 @@ import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { useCallback, useMemo } from 'react'
 import { logger } from 'src/lib/logger'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { Amount } from 'sushi'
 import { type EvmCurrency, weth9Abi_deposit } from 'sushi/evm'
-import { type SendTransactionReturnType, UserRejectedRequestError } from 'viem'
+import type { SendTransactionReturnType } from 'viem'
 import {
   useAccount,
   usePublicClient,
@@ -27,7 +28,7 @@ export const useWrapNative = ({
   const client = usePublicClient()
 
   const onError = useCallback((e: Error) => {
-    if (e.cause instanceof UserRejectedRequestError) {
+    if (isUserRejectedError(e)) {
       return
     }
 
@@ -108,10 +109,7 @@ export const useWrapNative = ({
       try {
         await writeContractAsync(simulation.request)
       } catch (error) {
-        if (
-          error instanceof Error &&
-          error.cause instanceof UserRejectedRequestError
-        ) {
+        if (isUserRejectedError(error)) {
           return
         }
         logger.error(error, {

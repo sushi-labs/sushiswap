@@ -196,7 +196,7 @@ export function BalanceProvider({ children }: BalanceProviderContextProps) {
         }
 
         if (result.status === 'failure') {
-          console.error(
+          console.warn(
             `Failed to fetch balance for ${address} on chain ${chainId}`,
           )
 

@@ -12,6 +12,7 @@ import {
   type PoolWithAprs,
   type PoolWithIncentives,
   type RewarderType,
+  type SerializedEvmToken,
   SushiSwapProtocol,
   isSushiSwapV2ChainId,
 } from 'sushi/evm'
@@ -127,20 +128,20 @@ export async function getV2Pool(
         volumeUSD: pool.volumeUSD,
         feesUSD: pool.volumeUSD * pool.swapFee,
 
-        token0: new EvmToken({
+        token0: {
           address: pool.token0.address as Address,
           chainId,
           decimals: pool.token0.decimals,
           name: pool.token0.name,
           symbol: pool.token0.symbol,
-        }),
-        token1: new EvmToken({
+        } satisfies Omit<SerializedEvmToken, 'type' | 'metadata'>,
+        token1: {
           address: pool.token1.address as Address,
           chainId,
           decimals: pool.token1.decimals,
           name: pool.token1.name,
           symbol: pool.token1.symbol,
-        }),
+        } satisfies Omit<SerializedEvmToken, 'type' | 'metadata'>,
         token0Price: pool.token0Price,
         token1Price: pool.token1Price,
         txCount: pool.txCount1d,
@@ -164,22 +165,20 @@ export async function getV2Pool(
           chainId,
           chefType: incentive.chefType as ChefType,
           apr: incentive.apr,
-          rewardToken: new EvmToken({
+          rewardToken: {
             address: incentive.rewardToken.address as Address,
             chainId,
             decimals: incentive.rewardToken.decimals,
             name: incentive.rewardToken.name,
             symbol: incentive.rewardToken.symbol,
-          }),
+          } satisfies Omit<SerializedEvmToken, 'type' | 'metadata'>,
           rewardPerDay: incentive.rewardPerDay,
-          poolAddress: incentive.poolAddress as Address,
+          poolAddress: incentive.poolAddress,
           pid: incentive.pid,
-          rewarderAddress: incentive.rewarderAddress as Address,
+          rewarderAddress: incentive.rewarderAddress,
           rewarderType: incentive.rewarderType as RewarderType,
         })),
-      } satisfies PoolWithAprs<
-        PoolWithIncentives<PoolHistory1D<PoolV2<PoolBase>>>
-      >
+      }
     }
   } catch (error) {
     console.error('getV2Pool error', error)
@@ -187,4 +186,23 @@ export async function getV2Pool(
   return null
 }
 
-export type V2Pool = NonNullable<Awaited<ReturnType<typeof getV2Pool>>>
+export type RawV2Pool = NonNullable<Awaited<ReturnType<typeof getV2Pool>>>
+export type V2Pool = PoolWithAprs<
+  PoolWithIncentives<PoolHistory1D<PoolV2<PoolBase>>>
+>
+
+export function hydrateV2Pool(pool: RawV2Pool | V2Pool) {
+  if (pool.token0 instanceof EvmToken) {
+    return pool as V2Pool
+  }
+
+  return {
+    ...pool,
+    token0: new EvmToken(pool.token0),
+    token1: new EvmToken(pool.token1),
+    incentives: pool.incentives.map((incentive) => ({
+      ...incentive,
+      rewardToken: new EvmToken(incentive.rewardToken),
+    })),
+  } satisfies V2Pool
+}

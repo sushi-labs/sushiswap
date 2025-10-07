@@ -160,8 +160,7 @@ import {
   initializeFaro,
 } from '@grafana/faro-react'
 import { LogLevel } from '@grafana/faro-web-sdk'
-import { TracingInstrumentation } from '@grafana/faro-web-tracing'
-import { logger } from 'src/lib/logger'
+// import { TracingInstrumentation } from '@grafana/faro-web-tracing'
 
 const faroConfig = {
   url: 'https://faro.analytics-fe.sushi.com/collect',
@@ -173,6 +172,7 @@ const ignoreUrls = [
   'https://cca-lite.coinbase.com/*',
   'google-analytics.com',
   'https://cdn.sushi.com',
+  'lb.drpc.org',
   '/_next/static',
   '/_next/data',
   '/_next/image',
@@ -204,7 +204,7 @@ if (!faro.api && !process.env.CI) {
           captureConsoleDisabledLevels: [LogLevel.DEBUG, LogLevel.INFO],
         }),
         // Tracing package to get end-to-end visibility for HTTP requests.
-        new TracingInstrumentation(),
+        // new TracingInstrumentation(),
         new ReactIntegration(),
       ],
     })
@@ -219,5 +219,12 @@ export function onRouterTransitionStart(
 
   faro.api.setView({
     name: `${window.location.protocol}//${window.location.host}${url}`,
+  })
+}
+
+if (!('structuredClone' in globalThis)) {
+  import('@ungap/structured-clone').then((mod) => {
+    // @ts-ignore
+    globalThis.structuredClone = mod.default
   })
 }

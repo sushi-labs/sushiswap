@@ -8,7 +8,6 @@ import { isZapSupportedChainId } from 'src/config'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { useTokensFromPool } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { getSushiSwapRouterContractConfig } from 'src/lib/wagmi/hooks/contracts/useSushiSwapRouter'
 import {
   SushiSwapV2PoolState,
   useSushiSwapV2Pool,
@@ -16,10 +15,11 @@ import {
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
 import { Amount } from 'sushi'
-import type {
-  EvmCurrency,
-  SushiSwapV2ChainId,
-  SushiSwapV2Pool,
+import {
+  type EvmCurrency,
+  SUSHISWAP_V2_ROUTER_ADDRESS,
+  type SushiSwapV2ChainId,
+  type SushiSwapV2Pool,
 } from 'sushi/evm'
 import { AddSectionReviewModalLegacy } from '~evm/[chainId]/pool/v2/_common/ui/add-section-review-modal-legacy'
 import { AddSectionWidget } from './add-section-widget'
@@ -182,16 +182,14 @@ const _AddSectionLegacy: FC<AddSectionLegacyProps> = ({
                     id="approve-token-0"
                     className="whitespace-nowrap"
                     amount={parsedInput0}
-                    contract={getSushiSwapRouterContractConfig(chainId).address}
+                    contract={SUSHISWAP_V2_ROUTER_ADDRESS[chainId]}
                   >
                     <Checker.ApproveERC20
                       fullWidth
                       id="approve-token-1"
                       className="whitespace-nowrap"
                       amount={parsedInput1}
-                      contract={
-                        getSushiSwapRouterContractConfig(chainId).address
-                      }
+                      contract={SUSHISWAP_V2_ROUTER_ADDRESS[chainId]}
                     >
                       <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
                         <AddSectionReviewModalLegacy

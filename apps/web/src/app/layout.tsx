@@ -28,8 +28,8 @@ export const metadata: Metadata = {
     'A Decentralised Finance (DeFi) app with features such as swap, cross chain swap, streaming, vesting, and permissionless market making for liquidity providers.',
   icons: {
     apple: '/apple-touch-icon.png?v=1',
-    icon: '/favicon-32x-32.png?v=1',
-    shortcut: '/favicon-16x-16.png?v=1',
+    icon: '/favicon-32x32.png?v=1',
+    shortcut: '/favicon-16x16.png?v=1',
   },
   openGraph: {
     type: 'website',

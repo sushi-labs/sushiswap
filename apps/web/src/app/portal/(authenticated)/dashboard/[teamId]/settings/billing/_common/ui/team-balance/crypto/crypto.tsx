@@ -22,6 +22,7 @@ import { logger } from 'src/lib/logger'
 import { getNetworkName } from 'src/lib/network'
 import { NetworkSelector } from 'src/lib/wagmi/components/network-selector'
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/Currency'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
 import { WagmiProvider } from 'src/providers/wagmi-provider'
@@ -33,7 +34,6 @@ import {
   shortenEvmAddress,
 } from 'sushi/evm'
 import type { Address, Hex } from 'viem'
-import { UserRejectedRequestError } from 'viem'
 import { encodePacked } from 'viem/utils'
 import { useWriteContract } from 'wagmi'
 import { usePublicClient, useSimulateContract } from 'wagmi'
@@ -118,7 +118,7 @@ function Deposit({
   )
 
   const onError = useCallback((e: Error) => {
-    if (e.cause instanceof UserRejectedRequestError) {
+    if (isUserRejectedError(e)) {
       return
     }
 

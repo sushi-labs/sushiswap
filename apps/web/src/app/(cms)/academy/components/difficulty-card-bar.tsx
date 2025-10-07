@@ -10,7 +10,7 @@ import {
 import { classNames } from '@sushiswap/ui'
 import { AcademyIcon } from '../../components/icons'
 import { DOCS_URL } from '../../constants'
-import { DIFFICULTY_ELEMENTS } from '../contants'
+import { DIFFICULTY_ELEMENTS } from '../constants'
 
 function DifficultyCard({ difficulty }: { difficulty: Difficulty }) {
   const slug = difficulty.slug as keyof typeof DIFFICULTY_ELEMENTS

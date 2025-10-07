@@ -5,6 +5,7 @@ import { Button, Dots } from '@sushiswap/ui'
 import { useCallback, useMemo, useState } from 'react'
 import { useTrade, useTradeQuote } from 'src/lib/hooks/react-query'
 import { logger } from 'src/lib/logger'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {
   useApproved,
@@ -19,7 +20,7 @@ import {
   XSUSHI,
   addGasMargin,
 } from 'sushi/evm'
-import { type SendTransactionReturnType, UserRejectedRequestError } from 'viem'
+import type { SendTransactionReturnType } from 'viem'
 import { useAccount, usePublicClient, useSendTransaction } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { BarSectionWidget } from './BarSectionWidget'
@@ -76,7 +77,7 @@ export const BarSection = withCheckerRoot(
     )
 
     const onError = useCallback((e: Error) => {
-      if (e.cause instanceof UserRejectedRequestError) {
+      if (isUserRejectedError(e)) {
         return
       }
 

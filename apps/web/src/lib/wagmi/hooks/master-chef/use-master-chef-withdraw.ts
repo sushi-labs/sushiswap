@@ -3,6 +3,7 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
 import { logger } from 'src/lib/logger'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { Amount, Token } from 'sushi'
 import {
   ChefType,
@@ -11,7 +12,6 @@ import {
   masterChefV2Abi_withdraw,
   miniChefV2Abi_withdrawAndHarvest,
 } from 'sushi/evm'
-import { UserRejectedRequestError } from 'viem'
 import {
   type UseSimulateContractParameters,
   useAccount,
@@ -68,7 +68,7 @@ export const useMasterChefWithdraw = ({
   )
 
   const onError = useCallback((e: Error) => {
-    if (e.cause instanceof UserRejectedRequestError) {
+    if (isUserRejectedError(e)) {
       return
     }
 

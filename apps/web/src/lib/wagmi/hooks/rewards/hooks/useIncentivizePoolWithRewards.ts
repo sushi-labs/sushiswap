@@ -1,7 +1,7 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback } from 'react'
 import type { EvmChainId } from 'sushi/evm'
-import { type Address, UserRejectedRequestError } from 'viem'
+import type { Address } from 'viem'
 import {
   type UseSimulateContractParameters,
   useAccount,
@@ -11,6 +11,7 @@ import {
 } from 'wagmi'
 
 import { logger } from 'src/lib/logger'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { SendTransactionReturnType } from 'wagmi/actions'
 import type { DistributionCreator } from '../abis/DistributionCreator'
 
@@ -102,7 +103,7 @@ export const useIncentivizePoolWithRewards = ({
   const client = usePublicClient()
 
   const onError = useCallback((e: Error) => {
-    if (e.cause instanceof UserRejectedRequestError) {
+    if (isUserRejectedError(e)) {
       return
     }
 
