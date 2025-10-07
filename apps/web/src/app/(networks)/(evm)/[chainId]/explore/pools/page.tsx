@@ -8,7 +8,6 @@ import { TableFiltersAPR } from '~evm/[chainId]/_ui/TableFiltersAPR'
 import { TableFiltersNetworkV2 } from '~evm/[chainId]/_ui/TableFiltersNetworkV2'
 import { TableFiltersPoolTypeV2 } from '~evm/[chainId]/_ui/TableFiltersPoolTypeV2'
 import { TableFiltersTVL } from '~evm/[chainId]/_ui/TableFiltersTVL'
-import { PoolsTable } from '~evm/[chainId]/_ui/pools-table'
 import { TableFiltersFarmsOnly } from '~evm/[chainId]/_ui/table-filters-farms-only'
 
 export default async function PoolsPage(props: {
