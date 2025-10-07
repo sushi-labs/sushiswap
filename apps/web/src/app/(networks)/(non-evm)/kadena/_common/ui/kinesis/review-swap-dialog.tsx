@@ -13,9 +13,23 @@ import {
 } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
 import { DialogContent, classNames } from '@sushiswap/ui'
-import { useEffect, useRef, useState } from 'react'
-import { Amount, ChainId, formatPercent } from 'sushi'
-import { WalletConnector } from '~kadena/_common/ui/WalletConnector/WalletConnector'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Amount, ChainId, formatPercent, formatUSD } from 'sushi'
+import {
+  EvmChainId,
+  EvmNative,
+  type EvmToken,
+  WETH9_ADDRESS,
+  isEvmChainId,
+} from 'sushi/evm'
+import { type KvmToken, isKvmChainId } from 'sushi/kvm'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
+import {
+  KADENA,
+  KINESIS_BRIDGE_EVM_ETH,
+} from '~kadena/_common/constants/token-list'
+import { useKinesisWrappedToken } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-wrapped-token'
+import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { ReviewSwapDialogTrigger } from './review-swap-dialog-trigger'
 import { CrossChainSwapRouteView } from './route-view'
@@ -29,9 +43,45 @@ export const ReviewSwapDialog = () => {
   const [status, setStatus] = useState<'pending' | 'success' | 'error'>(
     'pending',
   )
-
   const amountInRef = useRef<Amount | null>(null)
   const amountOutRef = useRef<Amount | null>(null)
+
+  const isEvm = isEvmChainId(chainId0)
+  const evmChainId = isEvm ? (token0?.chainId as EvmChainId) : undefined
+  const evmAddress = isEvm ? (token0?.address as `0x${string}`) : undefined
+
+  const { data: wrappedToken, isLoading: isLoadingWrappedToken } =
+    useKinesisWrappedToken({
+      token: token0 as EvmToken | undefined,
+      enabled: Boolean(token0 && isEvm),
+    })
+
+  const tokenToGetPriceFor = useMemo(() => {
+    if (
+      evmAddress?.toLowerCase() === KINESIS_BRIDGE_EVM_ETH.address.toLowerCase()
+    ) {
+      return WETH9_ADDRESS[EvmChainId.ETHEREUM]
+    }
+    return wrappedToken ? wrappedToken : evmAddress
+  }, [wrappedToken, evmAddress])
+
+  const evmPrice = usePrice({
+    chainId: evmChainId,
+    address: tokenToGetPriceFor,
+    enabled: Boolean(
+      evmChainId && !isLoadingWrappedToken && tokenToGetPriceFor,
+    ),
+  })
+  const isKvm = isKvmChainId(chainId0)
+
+  const kadenaPrice = useTokenPrice({
+    token: token0 as KvmToken | undefined,
+    enabled: Boolean(isKvm && token0),
+  })
+
+  const priceUsd = useMemo(() => {
+    return chainId0 && isEvmChainId(chainId0) ? evmPrice.data : kadenaPrice.data
+  }, [chainId0, evmPrice, kadenaPrice])
 
   useEffect(() => {
     if (swapAmountString && token0) {
@@ -56,8 +106,6 @@ export const ReviewSwapDialog = () => {
   const slippage =
     slippageTolerance === 'AUTO' ? 0.005 : Number(slippageTolerance) / 100
 
-  const isConnected = true
-
   const executionDurationSeconds =
     simulateBridgeTx?.estimatedBridgeTimeInSeconds ?? 0
   const executionDurationMinutes = Math.floor(executionDurationSeconds / 60)
@@ -67,27 +115,55 @@ export const ReviewSwapDialog = () => {
       ? `${executionDurationSeconds} seconds`
       : `${executionDurationMinutes} minutes`
 
+  const amountIn = useMemo(() => {
+    if (token0) {
+      return Amount.tryFromHuman(token0, swapAmountString)
+    }
+  }, [swapAmountString, token0])
+
+  const amountOut = useMemo(() => {
+    const stringAmount = simulateBridgeTx?.estimatedAmountReceived ?? ''
+    if (token1) {
+      return Amount.tryFromHuman(token1, stringAmount)
+    }
+  }, [simulateBridgeTx, token1])
+
+  const minAmountOut = useMemo(() => {
+    const stringAmount = simulateBridgeTx?.amountMinReceived ?? ''
+    if (token1) {
+      return Amount.tryFromHuman(token1, stringAmount)
+    }
+  }, [simulateBridgeTx, token1])
+
+  const feeInToken = useMemo(() => {
+    if (simulateBridgeTx?.networkFeeInToken && chainId0 === ChainId.ETHEREUM) {
+      return Amount.tryFromHuman(
+        EvmNative.fromChainId(ChainId.ETHEREUM),
+        simulateBridgeTx?.networkFeeInToken,
+      )
+    }
+    if (simulateBridgeTx?.networkFeeInToken && chainId0 === ChainId.KADENA) {
+      return Amount.tryFromHuman(KADENA, simulateBridgeTx?.networkFeeInToken)
+    }
+  }, [simulateBridgeTx, chainId0])
+
   return (
     <DialogProvider>
       <DialogReview>
         {({ confirm }) => (
           <>
             <div className="mt-4">
-              {isConnected ? (
-                <ReviewSwapDialogTrigger />
-              ) : (
-                <WalletConnector variant="default" fullWidth size="xl" />
-              )}
+              <ReviewSwapDialogTrigger />
             </div>
 
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>
-                  Receive {simulateBridgeTx?.amountMinReceived?.toString()}{' '}
-                  {token1?.symbol}
+                  Receive {amountOut?.toSignificant(6)}{' '}
+                  {amountOut?.currency?.symbol}
                 </DialogTitle>
                 <DialogDescription>
-                  Swap {swapAmountString} {token0?.symbol}
+                  Swap {amountIn?.toSignificant(6)} {amountIn?.currency?.symbol}
                 </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col gap-4">
@@ -108,22 +184,49 @@ export const ReviewSwapDialog = () => {
                       title="Network fee"
                       subtitle="The transaction fee charged by the origin blockchain."
                     >
-                      <>
-                        {simulateBridgeTx?.networkFeeInToken ?? '0'}{' '}
-                        {chainId0 === ChainId.KADENA ? 'KDA' : 'ETH'}
-                      </>
+                      <div className="flex flex-col gap-0.5">
+                        <div>
+                          {feeInToken?.toSignificant(6) ?? '0'}{' '}
+                          {feeInToken?.currency.symbol}
+                        </div>
+                        <span className="text-xs text-muted-foreground">
+                          {formatUSD(simulateBridgeTx?.networkFeeInUsd ?? 0)}
+                        </span>
+                      </div>
                     </List.KeyValue>
                     <List.KeyValue
                       title="Est. received"
                       subtitle="The estimated output amount."
                     >
-                      {simulateBridgeTx?.estimatedAmountReceived}
+                      <div className="flex flex-col gap-0.5">
+                        <div>
+                          {amountOut?.toSignificant(6) ?? '0'}{' '}
+                          {amountOut?.currency.symbol}
+                        </div>
+                        <span className="text-xs text-muted-foreground">
+                          {formatUSD(
+                            amountOut?.mulHuman(priceUsd ?? 0)?.toString() ??
+                              '0',
+                          )}
+                        </span>
+                      </div>
                     </List.KeyValue>
                     <List.KeyValue
                       title={`Min. received after slippage (${formatPercent(slippage)})`}
                       subtitle="The minimum amount you are guaranteed to receive."
                     >
-                      {simulateBridgeTx?.amountMinReceived} {token1?.symbol}
+                      <div className="flex flex-col gap-0.5">
+                        <div>
+                          {minAmountOut?.toSignificant(6) ?? '0'}{' '}
+                          {minAmountOut?.currency.symbol}
+                        </div>
+                        <span className="text-xs text-muted-foreground">
+                          {formatUSD(
+                            minAmountOut?.mulHuman(priceUsd ?? 0)?.toString() ??
+                              '0',
+                          )}
+                        </span>
+                      </div>
                     </List.KeyValue>
                   </List.Control>
                 </List>
