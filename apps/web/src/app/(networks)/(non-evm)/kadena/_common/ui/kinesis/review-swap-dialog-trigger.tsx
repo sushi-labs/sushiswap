@@ -64,22 +64,24 @@ export const ReviewSwapDialogTrigger = () => {
   }, [token0, kadenaBalances, ethBalance.data])
 
   const token0Balance = useMemo(() => {
-    if (!token0) return 0
+    if (!token0) return undefined
     if (isKvmChainId(token0.chainId)) {
-      return Number.parseFloat(
+      return new Amount(
+        token0,
         kadenaBalances?.balanceMap[token0.address] ?? '0',
       )
     }
     if (isEvmChainId(token0.chainId)) {
-      return Number(formatUnits(ethBalance.data ?? 0n, token0.decimals))
+      return new Amount(token0, ethBalance.data ?? 0n)
     }
-    return 0
+    return new Amount(token0, 0n)
   }, [token0, kadenaBalances, ethBalance.data])
 
   const hasInsufficientToken0Balance = useMemo(() => {
-    if (kadenaLoading) return true
-    return token0Balance < Number(swapAmountString)
-  }, [swapAmountString, kadenaLoading, token0Balance])
+    if (kadenaLoading || !token0) return true
+    const amount = Amount.tryFromHuman(token0, swapAmountString || '0')
+    return token0Balance?.lt(amount?.amount || 0n)
+  }, [swapAmountString, kadenaLoading, token0Balance, token0])
 
   const buttonText = useMemo(() => {
     if (!swapAmountString || swapAmountString === '0') {

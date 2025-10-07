@@ -6,6 +6,7 @@ import { SimpleSwapBanner } from '~kadena/_common/ui/Swap/Banner/SwapBanner'
 import { AmountIn } from '~kadena/_common/ui/kinesis/amount-in'
 import { AmountOut } from '~kadena/_common/ui/kinesis/amount-out'
 import { ReviewSwapDialog } from '~kadena/_common/ui/kinesis/review-swap-dialog'
+import { SwapStats } from '~kadena/_common/ui/kinesis/swap-stats'
 import { SwitchSwapDirection } from '~kadena/_common/ui/kinesis/switch-swap-direction'
 import { SwapModeButtons } from '~kadena/_common/ui/swap-mode-buttons'
 
@@ -30,6 +31,7 @@ export default function CrossChainSwapPage() {
           <div className="flex flex-col">
             <AmountOut />
             <ReviewSwapDialog />
+            <SwapStats />
           </div>
         </div>
         <SimpleSwapBanner />
