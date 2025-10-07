@@ -12,9 +12,15 @@ import {
   EvmChainId,
   type EvmToken,
   WETH9_ADDRESS,
+  getEvmChainById,
   isEvmChainId,
 } from 'sushi/evm'
-import { type KvmToken, type KvmTokenAddress, isKvmChainId } from 'sushi/kvm'
+import {
+  type KvmToken,
+  type KvmTokenAddress,
+  getKvmChainById,
+  isKvmChainId,
+} from 'sushi/kvm'
 import { formatUnits } from 'viem'
 import { useBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
@@ -175,6 +181,16 @@ export const TokenInput = ({
     }
   }, [setAmount, currency, amount])
 
+  const networkName = useMemo(() => {
+    if (!currency) return ''
+    if (isEvmChainId(currency.chainId)) {
+      return getEvmChainById(currency.chainId).name
+    }
+    if (isKvmChainId(currency.chainId)) {
+      return getKvmChainById(currency.chainId).name
+    }
+  }, [currency])
+
   const selector = useMemo(() => {
     if (!setToken) return null
 
@@ -211,7 +227,12 @@ export const TokenInput = ({
                   <Icon currency={currency} width={28} height={28} />
                 </Badge>
               </div>
-              {currency.symbol}
+              <div className="flex flex-col items-start">
+                <span className="text-xl leading-5">{currency.symbol}</span>
+                <span className="text-xs leading-3 text-muted-foreground">
+                  {networkName}
+                </span>
+              </div>
               <SelectIcon />
             </>
           ) : (
@@ -220,7 +241,7 @@ export const TokenInput = ({
         </Button>
       </KinesisTokenSelector>
     )
-  }, [currency, id, setToken, networks])
+  }, [currency, id, setToken, networks, networkName])
 
   return (
     <div
@@ -280,7 +301,12 @@ export const TokenInput = ({
                     </Badge>
                   </div>
                 )}
-                {currency.symbol}
+                <div className="flex flex-col items-start">
+                  <span className="text-xl leading-5">{currency.symbol}</span>
+                  <span className="text-xs leading-3 text-muted-foreground">
+                    {networkName}
+                  </span>
+                </div>
               </>
             ) : (
               <span className="text-gray-400 dark:text-slate-500">
