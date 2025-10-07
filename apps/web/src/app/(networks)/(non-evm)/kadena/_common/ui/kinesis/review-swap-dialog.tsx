@@ -3,6 +3,7 @@ import {
   useSlippageTolerance,
 } from '@sushiswap/hooks'
 import {
+  Button,
   DialogConfirm,
   DialogDescription,
   DialogFooter,
@@ -10,19 +11,28 @@ import {
   DialogProvider,
   DialogReview,
   DialogTitle,
+  SelectIcon,
 } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
 import { DialogContent, classNames } from '@sushiswap/ui'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Amount, ChainId, formatPercent, formatUSD } from 'sushi'
+import {
+  Amount,
+  ChainId,
+  formatPercent,
+  formatUSD,
+  truncateString,
+} from 'sushi'
 import {
   EvmChainId,
   EvmNative,
   type EvmToken,
   WETH9_ADDRESS,
+  getEvmChainById,
   isEvmChainId,
 } from 'sushi/evm'
-import { type KvmToken, isKvmChainId } from 'sushi/kvm'
+import { type KvmToken, getKvmChainById, isKvmChainId } from 'sushi/kvm'
+import { isAddress } from 'viem'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import {
   KADENA,
@@ -37,8 +47,17 @@ import { KinesisSwapButton } from './swap-button'
 
 export const ReviewSwapDialog = () => {
   const {
-    state: { swapAmountString, chainId0, token1, simulateBridgeTx, token0 },
+    state: {
+      swapAmountString,
+      chainId0,
+      chainId1,
+      token1,
+      simulateBridgeTx,
+      token0,
+      recipient,
+    },
   } = useDerivedStateCrossChainSwap()
+  const [showMore, setShowMore] = useState<boolean>(false)
   const [txHash, setTxHash] = useState<string | undefined>(undefined)
   const [status, setStatus] = useState<'pending' | 'success' | 'error'>(
     'pending',
@@ -172,14 +191,16 @@ export const ReviewSwapDialog = () => {
                     <List.KeyValue title="Estimated arrival">
                       {executionDuration}
                     </List.KeyValue>
-                    <List.KeyValue
-                      title="Price Impact"
-                      subtitle="The impact your trade has on the market price of this pool."
-                    >
-                      <span className={classNames('text-right')}>
-                        {formatPercent(0)}
-                      </span>
-                    </List.KeyValue>
+                    {showMore ? (
+                      <List.KeyValue
+                        title="Price Impact"
+                        subtitle="The impact your trade has on the market price of this pool."
+                      >
+                        <span className={classNames('text-right')}>
+                          {formatPercent(0)}
+                        </span>
+                      </List.KeyValue>
+                    ) : null}
                     <List.KeyValue
                       title="Network fee"
                       subtitle="The transaction fee charged by the origin blockchain."
@@ -211,27 +232,73 @@ export const ReviewSwapDialog = () => {
                         </span>
                       </div>
                     </List.KeyValue>
-                    <List.KeyValue
-                      title={`Min. received after slippage (${formatPercent(slippage)})`}
-                      subtitle="The minimum amount you are guaranteed to receive."
-                    >
-                      <div className="flex flex-col gap-0.5">
-                        <div>
-                          {minAmountOut?.toSignificant(6) ?? '0'}{' '}
-                          {minAmountOut?.currency.symbol}
+                    {showMore ? (
+                      <List.KeyValue
+                        title={`Min. received after slippage (${formatPercent(slippage)})`}
+                        subtitle="The minimum amount you are guaranteed to receive."
+                      >
+                        <div className="flex flex-col gap-0.5">
+                          <div>
+                            {minAmountOut?.toSignificant(6) ?? '0'}{' '}
+                            {minAmountOut?.currency.symbol}
+                          </div>
+                          <span className="text-xs text-muted-foreground">
+                            {formatUSD(
+                              minAmountOut
+                                ?.mulHuman(priceUsd ?? 0)
+                                ?.toString() ?? '0',
+                            )}
+                          </span>
                         </div>
-                        <span className="text-xs text-muted-foreground">
-                          {formatUSD(
-                            minAmountOut?.mulHuman(priceUsd ?? 0)?.toString() ??
-                              '0',
-                          )}
-                        </span>
-                      </div>
-                    </List.KeyValue>
+                      </List.KeyValue>
+                    ) : null}
+
+                    <div className="p-3">
+                      <Button
+                        size="xs"
+                        fullWidth
+                        onClick={() => setShowMore(!showMore)}
+                        variant="ghost"
+                      >
+                        {showMore ? (
+                          <>
+                            <SelectIcon className="rotate-180" />
+                          </>
+                        ) : (
+                          <>
+                            <SelectIcon />
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </List.Control>
                 </List>
               </div>
               <CrossChainSwapRouteView />
+              {recipient && (
+                <List className="!pt-2">
+                  <List.Control>
+                    <List.KeyValue title="Recipient">
+                      <a
+                        target="_blank"
+                        href={
+                          chainId1 === ChainId.ETHEREUM && isAddress(recipient)
+                            ? getEvmChainById(chainId1).getAccountUrl(recipient)
+                            : chainId1 === ChainId.KADENA
+                              ? getKvmChainById(chainId1).getAccountUrl(
+                                  recipient,
+                                )
+                              : ''
+                        }
+                        className="flex items-center gap-2 cursor-pointer text-blue"
+                        rel="noreferrer"
+                      >
+                        {truncateString(recipient, 10, 'middle')}
+                      </a>
+                    </List.KeyValue>
+                  </List.Control>
+                </List>
+              )}
               <DialogFooter>
                 <KinesisSwapButton
                   closeModal={confirm}
