@@ -1,4 +1,4 @@
-import { classNames } from '@sushiswap/ui'
+import { List, classNames } from '@sushiswap/ui'
 import { KinesisBridgeIcon } from '@sushiswap/ui/icons/KinesisBridgeIcon'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { useMemo } from 'react'
@@ -13,18 +13,22 @@ export const CrossChainSwapRouteView = () => {
   } = useDerivedStateCrossChainSwap()
 
   return (
-    <div className="flex gap-4">
-      <VerticalDivider count={2} className="pt-1.5 pl-1" />
-      <div className="flex flex-col gap-8">
-        {swapAmount && <SendAction label="From" amount={swapAmount} />}
-        <span className="inline-flex items-center gap-1 text-xs leading-3 text-muted-foreground whitespace-nowrap">
-          Via
-          <KinesisBridgeIcon width={10} height={10} />
-          <span className="font-semibold">Kinesis</span>
-        </span>
-        {bridgeAmount && <SendAction label="To" amount={bridgeAmount} />}
-      </div>
-    </div>
+    <List className="!pt-2">
+      <List.Control className="!p-5">
+        <div className="flex gap-4">
+          <VerticalDivider count={2} className="pt-1.5 pl-1" />
+          <div className="flex flex-col gap-8">
+            {swapAmount && <SendAction label="From" amount={swapAmount} />}
+            <span className="inline-flex items-center gap-1 text-xs leading-3 text-muted-foreground whitespace-nowrap">
+              Via
+              <KinesisBridgeIcon width={10} height={10} />
+              <span className="font-semibold">Kinesis</span>
+            </span>
+            {bridgeAmount && <SendAction label="To" amount={bridgeAmount} />}
+          </div>
+        </div>
+      </List.Control>
+    </List>
   )
 }
 
