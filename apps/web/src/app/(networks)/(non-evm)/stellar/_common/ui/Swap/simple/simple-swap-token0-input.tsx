@@ -17,8 +17,6 @@ export const SimpleSwapToken0Input = () => {
     setSlippageAmount,
     setPriceFetching,
     setError,
-    // setBestRoutes,
-    // setNoRouteFound,
   } = useSimpleSwapActions()
   const {
     mutateAsync: getQuote,
@@ -30,22 +28,14 @@ export const SimpleSwapToken0Input = () => {
   } = useQuoteExactInput()
 
   useEffect(() => {
-    startTransition(async () => {
-      setOutputAmount(0n)
-      setSlippageAmount(0)
-      // setNoRouteFound('')
-      if (Number(amount) > 0) {
-        const result = await getQuote()
-        console.log('quote result', result)
-        // if (route?.route) {
-        //   setBestRoutes(route?.route)
-        //   setNoRouteFound('')
-        // } else if (!isPriceFetching) {
-        //   setBestRoutes([])
-        //   setNoRouteFound('No trade found')
-        // }
-      }
-    })
+    setOutputAmount(0n)
+    setSlippageAmount(0)
+
+    if (Number(amount) > 0) {
+      startTransition(async () => {
+        await getQuote()
+      })
+    }
   }, [amount, getQuote, setOutputAmount, setSlippageAmount])
 
   useEffect(() => {
@@ -65,7 +55,7 @@ export const SimpleSwapToken0Input = () => {
   }, [isQuoteError, quoteError, setError])
 
   useEffect(() => {
-    if (isQuoteSuccess && quoteAmount) {
+    if (isQuoteSuccess && quoteAmount && Number(amount) > 0) {
       try {
         const amountBigInt =
           typeof quoteAmount === 'bigint' ? quoteAmount : BigInt(quoteAmount)
@@ -76,19 +66,14 @@ export const SimpleSwapToken0Input = () => {
         if (absAmountBigInt <= BigInt(Number.MAX_SAFE_INTEGER)) {
           setSlippageAmount(Number(absAmountBigInt))
         } else {
-          console.warn(
-            'Quote exceeds safe numeric range:',
-            absAmountBigInt.toString(),
-          )
           setSlippageAmount(0)
         }
       } catch {
-        console.warn('Invalid quote amount:', quoteAmount)
         setOutputAmount(0n)
         setSlippageAmount(0)
       }
     }
-  }, [isQuoteSuccess, quoteAmount, setOutputAmount, setSlippageAmount])
+  }, [isQuoteSuccess, quoteAmount, amount, setOutputAmount, setSlippageAmount])
 
   return (
     <CurrencyInput
