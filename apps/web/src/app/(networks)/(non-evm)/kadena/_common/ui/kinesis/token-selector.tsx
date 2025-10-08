@@ -9,8 +9,6 @@ import {
   DialogTitle,
   DialogTrigger,
   List,
-  SkeletonCircle,
-  SkeletonText,
   TextField,
   classNames,
   useBreakpoint,
@@ -37,7 +35,6 @@ import {
 import { useKinesisTokenList } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-token-list'
 import { useSortedTokenList } from '~kadena/_common/lib/hooks/use-sorted-token-list'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
-import { useTokenInfo } from '~kadena/_common/lib/hooks/use-token-info'
 import type {
   KinesisChainId,
   KinesisToken,
@@ -83,11 +80,6 @@ export const KinesisTokenSelector = ({
       ? tokenLists.kadena
       : tokenLists.ethereum
   }, [tokenLists, selectedNetwork])
-
-  const { data: queryToken, isLoading: isQueryTokenLoading } = useTokenInfo({
-    tokenContract: query,
-    enabled: Boolean(query),
-  })
 
   const kadenaTokenArray = useMemo(() => {
     if (!baseTokens || selectedNetwork === ChainId.ETHEREUM) return []
@@ -149,13 +141,6 @@ export const KinesisTokenSelector = ({
     [onSelect],
   )
 
-  const isOnDefaultList = useCallback(
-    (tokenAddress: string) => {
-      return Boolean(baseTokenMap?.[tokenAddress ?? ''])
-    },
-    [baseTokenMap],
-  )
-
   const Row = useCallback(
     ({ index, style }: { index: number; style: CSSProperties }) => {
       return (
@@ -168,16 +153,11 @@ export const KinesisTokenSelector = ({
           isSelected={
             sortedTokens?.[index]?.currency.address === selected?.address
           }
-          isOnDefaultList={isOnDefaultList}
         />
       )
     },
-    [selected, _onSelect, sortedTokens, isOnDefaultList],
+    [selected, _onSelect, sortedTokens],
   )
-
-  const isKinesisSwap = useMemo(() => {
-    return networks && selectedNetwork
-  }, [networks, selectedNetwork])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -185,7 +165,7 @@ export const KinesisTokenSelector = ({
       <DialogContent
         className={classNames(
           '!flex flex-col md:flex-row justify-start min-h-[85vh] !p-0',
-          isKinesisSwap && 'md:min-w-[720px]',
+          'md:min-w-[720px]',
         )}
       >
         {networks && selectedNetwork && isMd ? (
@@ -246,51 +226,7 @@ export const KinesisTokenSelector = ({
             </div>
           )}
           <List.Control className="relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 min-h-[128px]">
-            <div
-              data-state={isQueryTokenLoading ? 'active' : 'inactive'}
-              className={classNames(
-                'data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden',
-                'py-0.5 h-[64px] -mb-3',
-              )}
-            >
-              <div className="flex items-center w-full h-full px-3 rounded-lg">
-                <div className="flex items-center justify-between flex-grow gap-2 rounded">
-                  <div className="flex flex-row items-center flex-grow gap-4">
-                    <SkeletonCircle radius={40} />
-                    <div className="flex flex-col items-start">
-                      <SkeletonText className="w-full min-w-[100px]" />
-                      <SkeletonText
-                        fontSize="sm"
-                        className="w-full min-w-[60px]"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-col w-full">
-                    <SkeletonText className="w-[80px]" />
-                    <SkeletonText
-                      fontSize="sm"
-                      align="right"
-                      className="w-[40px]"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div
-              data-state={isQueryTokenLoading ? 'inactive' : 'active'}
-              className={classNames(
-                'data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden',
-              )}
-            >
-              {queryToken && (
-                <TokenButton
-                  token={queryToken}
-                  selectToken={_onSelect}
-                  key={queryToken.address}
-                  isOnDefaultList={isOnDefaultList}
-                  isSelected={queryToken.address === selected?.address}
-                />
-              )}
+            <div className={classNames('flex-1')}>
               <AutoSizer disableWidth>
                 {({ height }: { height: number }) => (
                   <FixedSizeList
@@ -334,30 +270,21 @@ const TokenButton = ({
   tokenAmount,
   selectToken,
   isSelected,
-  hasToken,
-  addOrRemoveToken,
-  isOnDefaultList,
 }: {
   style?: CSSProperties
   token?: KinesisToken
   tokenAmount?: Amount<KinesisToken>
   selectToken: (_token: KinesisToken) => void
   isSelected: boolean
-  hasToken?: (currency: string | KinesisToken) => boolean
-  addOrRemoveToken?: (type: 'add' | 'remove', currency: KinesisToken[]) => void
-  isOnDefaultList: (currency: string) => boolean
 }) => {
   if (!token) return null
-
-  const isNewCustom = !hasToken?.(token.address)
-
-  const isDefaultToken = isOnDefaultList(token.address)
 
   const balance = useMemo(() => {
     const amount = formatUnits(tokenAmount?.amount ?? 0n, token.decimals)
     if (Number(amount) < 0.001) return '<0.001'
     return Amount.fromHuman(token, amount).toSignificant(3)
   }, [tokenAmount, token])
+
   return (
     <div
       className="flex w-full justify-between items-center gap-2 pr-2 h-[64px]"
@@ -412,23 +339,6 @@ const TokenButton = ({
           </div>
         ) : null}
       </Button>
-      {!isDefaultToken ? (
-        <Button
-          onClick={() => {
-            if (isNewCustom) {
-              addOrRemoveToken?.('add', [token])
-              selectToken(token)
-            } else {
-              addOrRemoveToken?.('remove', [token])
-            }
-          }}
-          className="z-[1]"
-          variant={isNewCustom ? 'default' : 'destructive'}
-          size="xs"
-        >
-          {isNewCustom ? 'Import' : 'Remove'}
-        </Button>
-      ) : null}
     </div>
   )
 }

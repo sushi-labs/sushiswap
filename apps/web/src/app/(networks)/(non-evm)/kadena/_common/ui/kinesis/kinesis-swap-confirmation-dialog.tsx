@@ -15,7 +15,7 @@ import { CheckMarkIcon } from '@sushiswap/ui/icons/CheckMarkIcon'
 import { FailedMarkIcon } from '@sushiswap/ui/icons/FailedMarkIcon'
 import { type ChainId, getChainById } from 'sushi'
 
-export const SwapConfirmationDialog = ({
+export const KinesisSwapConfirmationDialog = ({
   onClose,
   dstChainId,
   successMessage,

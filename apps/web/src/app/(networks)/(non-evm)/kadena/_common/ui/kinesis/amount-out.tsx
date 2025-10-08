@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { EvmChainId } from 'sushi/evm'
 import { KvmChainId } from 'sushi/kvm'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
@@ -10,19 +9,10 @@ export const AmountOut = ({ isLoading = false }: { isLoading?: boolean }) => {
       simulateBridgeTx,
       token1,
       isLoadingSimulateBridgeTx,
-      simulateBridgeError,
       swapAmountString,
+      isAllowanceError,
     },
   } = useDerivedStateCrossChainSwap()
-
-  const isAllowanceError = useMemo(() => {
-    if (
-      simulateBridgeError?.message.includes('transfer amount exceeds allowance')
-    ) {
-      return true
-    }
-    return false
-  }, [simulateBridgeError])
 
   return (
     <TokenInput

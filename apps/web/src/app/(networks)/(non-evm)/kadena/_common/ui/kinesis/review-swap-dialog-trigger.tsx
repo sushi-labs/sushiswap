@@ -4,9 +4,11 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Amount } from 'sushi'
 import { type EvmChainId, isEvmChainId } from 'sushi/evm'
 import { type KvmTokenAddress, isKvmChainId } from 'sushi/kvm'
-import { formatUnits } from 'viem'
 import { useBalance } from '~evm/_common/ui/balance-provider/use-balance'
-import { MIN_GAS_FEE } from '~kadena/_common/constants/gas'
+import {
+  KADENA,
+  KINESIS_BRIDGE_KVM_KADENA,
+} from '~kadena/_common/constants/token-list'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
 import { useKadena } from '~kadena/kadena-wallet-provider'
@@ -19,23 +21,24 @@ export const ReviewSwapDialogTrigger = () => {
       token0,
       swapAmountString,
       isLoadingSimulateBridgeTx,
-      simulateBridgeTx,
       simulateBridgeError,
+      simulateBridgeTx,
+      isAllowanceError,
     },
   } = useDerivedStateCrossChainSwap()
 
   const { activeAccount } = useKadena()
 
-  const tokenAddresses = useMemo(() => {
+  const kvmTokenAddresses = useMemo(() => {
     if (token0 && isKvmChainId(token0.chainId)) {
-      return [token0.address as KvmTokenAddress, 'coin' as KvmTokenAddress]
+      return [token0.address as KvmTokenAddress, 'coin' as const]
     }
     return []
   }, [token0])
 
   const { data: kadenaBalances, isLoading: kadenaLoading } = useTokenBalances({
     account: activeAccount?.accountName ?? '',
-    tokenAddresses,
+    tokenAddresses: kvmTokenAddresses,
   })
 
   const ethBalanceChainId =
@@ -51,17 +54,35 @@ export const ReviewSwapDialogTrigger = () => {
   const ethBalance = useBalance(ethBalanceChainId, ethBalanceAddress)
 
   const hasInsufficientGas = useMemo(() => {
-    if (token0 && isKvmChainId(token0.chainId)) {
-      const kdaBalance = Number.parseFloat(
+    if (
+      token0 &&
+      isKvmChainId(token0.chainId) &&
+      token0.isSame(KINESIS_BRIDGE_KVM_KADENA)
+    ) {
+      const kdaBal = new Amount(
+        KADENA,
         kadenaBalances?.balanceMap['coin'] ?? '0',
       )
-      return kdaBalance < MIN_GAS_FEE
+      const totalAmountIn = Amount.fromHuman(KADENA, swapAmountString || '0')
+      if (
+        totalAmountIn
+          .addHuman(simulateBridgeTx?.networkFeeInToken ?? '0')
+          .gt(kdaBal)
+      ) {
+        return true
+      }
     }
-    if (token0 && isEvmChainId(token0.chainId)) {
-      return Number(formatUnits(ethBalance.data ?? 0n, token0.decimals)) === 0
+    if (simulateBridgeError?.message.includes('insufficient funds')) {
+      return true
     }
-    return true
-  }, [token0, kadenaBalances, ethBalance.data])
+    return false
+  }, [
+    simulateBridgeError,
+    token0,
+    simulateBridgeTx,
+    swapAmountString,
+    kadenaBalances?.balanceMap['coin'],
+  ])
 
   const token0Balance = useMemo(() => {
     if (!token0) return undefined
@@ -97,21 +118,13 @@ export const ReviewSwapDialogTrigger = () => {
     return 'Swap'
   }, [swapAmountString, hasInsufficientToken0Balance, hasInsufficientGas])
 
-  const isAllowanceError = useMemo(() => {
-    if (
-      simulateBridgeError?.message.includes('transfer amount exceeds allowance')
-    ) {
-      return true
-    }
-    return false
-  }, [simulateBridgeError])
-
   const isDisabled = useMemo(() => {
     return (
       !(swapAmountString && Number(swapAmountString) > 0) ||
       hasInsufficientToken0Balance ||
       isLoadingSimulateBridgeTx ||
-      (!simulateBridgeTx && !isAllowanceError)
+      (!simulateBridgeTx && !isAllowanceError) ||
+      hasInsufficientGas
     )
   }, [
     swapAmountString,
@@ -119,6 +132,7 @@ export const ReviewSwapDialogTrigger = () => {
     isLoadingSimulateBridgeTx,
     simulateBridgeTx,
     isAllowanceError,
+    hasInsufficientGas,
   ])
 
   if (!activeAccount?.accountName) {

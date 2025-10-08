@@ -25,7 +25,6 @@ import {
 } from 'sushi'
 import {
   EvmChainId,
-  EvmNative,
   type EvmToken,
   WETH9_ADDRESS,
   getEvmChainById,
@@ -34,29 +33,30 @@ import {
 import { type KvmToken, getKvmChainById, isKvmChainId } from 'sushi/kvm'
 import { isAddress } from 'viem'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
-import {
-  KADENA,
-  KINESIS_BRIDGE_EVM_ETH,
-} from '~kadena/_common/constants/token-list'
+import { KINESIS_BRIDGE_EVM_ETH } from '~kadena/_common/constants/token-list'
 import { useKinesisMessage } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-message'
 import { useKinesisWrappedToken } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-wrapped-token'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
+import { KinesisSwapConfirmationDialog } from './kinesis-swap-confirmation-dialog'
 import { ReviewSwapDialogTrigger } from './review-swap-dialog-trigger'
 import { CrossChainSwapRouteView } from './route-view'
 import { KinesisSwapButton } from './swap-button'
-import { SwapConfirmationDialog } from './swap-confirmation-dialog'
 
 export const ReviewSwapDialog = () => {
   const {
     state: {
       swapAmountString,
+      minAmountOut,
       chainId0,
       chainId1,
       token1,
       simulateBridgeTx,
       token0,
       recipient,
+      amountOut,
+      feeInToken,
+      executionDuration,
     },
   } = useDerivedStateCrossChainSwap()
   const [showMore, setShowMore] = useState<boolean>(false)
@@ -64,6 +64,11 @@ export const ReviewSwapDialog = () => {
   const [srcStatus, setSrcStatus] = useState<'pending' | 'success' | 'error'>(
     'pending',
   )
+  const [slippageTolerance] = useSlippageTolerance(
+    SlippageToleranceStorageKey.Swap,
+  )
+  const slippage =
+    slippageTolerance === 'AUTO' ? 0.005 : Number(slippageTolerance) / 100
 
   const { data: dstData } = useKinesisMessage({
     txHash,
@@ -72,6 +77,23 @@ export const ReviewSwapDialog = () => {
 
   const amountInRef = useRef<Amount | null>(null)
   const amountOutRef = useRef<Amount | null>(null)
+
+  useEffect(() => {
+    if (swapAmountString && token0) {
+      amountInRef.current = Amount.fromHuman(token0, swapAmountString)
+    }
+    if (simulateBridgeTx?.estimatedAmountReceived && token1) {
+      amountOutRef.current = Amount.fromHuman(
+        token1,
+        simulateBridgeTx.estimatedAmountReceived,
+      )
+    }
+  }, [
+    swapAmountString,
+    simulateBridgeTx?.estimatedAmountReceived,
+    token0,
+    token1,
+  ])
 
   const isEvm = isEvmChainId(chainId0)
   const evmChainId = isEvm ? (token0?.chainId as EvmChainId) : undefined
@@ -110,69 +132,11 @@ export const ReviewSwapDialog = () => {
     return chainId0 && isEvmChainId(chainId0) ? evmPrice.data : kadenaPrice.data
   }, [chainId0, evmPrice, kadenaPrice])
 
-  useEffect(() => {
-    if (swapAmountString && token0) {
-      amountInRef.current = Amount.fromHuman(token0, swapAmountString)
-    }
-    if (simulateBridgeTx?.estimatedAmountReceived && token1) {
-      amountOutRef.current = Amount.fromHuman(
-        token1,
-        simulateBridgeTx.estimatedAmountReceived,
-      )
-    }
-  }, [
-    swapAmountString,
-    simulateBridgeTx?.estimatedAmountReceived,
-    token0,
-    token1,
-  ])
-
-  const [slippageTolerance] = useSlippageTolerance(
-    SlippageToleranceStorageKey.Swap,
-  )
-  const slippage =
-    slippageTolerance === 'AUTO' ? 0.005 : Number(slippageTolerance) / 100
-
-  const executionDurationSeconds =
-    simulateBridgeTx?.estimatedBridgeTimeInSeconds ?? 0
-  const executionDurationMinutes = Math.floor(executionDurationSeconds / 60)
-
-  const executionDuration =
-    executionDurationSeconds < 60
-      ? `${executionDurationSeconds} seconds`
-      : `${executionDurationMinutes} minutes`
-
   const amountIn = useMemo(() => {
     if (token0) {
       return Amount.tryFromHuman(token0, swapAmountString)
     }
   }, [swapAmountString, token0])
-
-  const amountOut = useMemo(() => {
-    const stringAmount = simulateBridgeTx?.estimatedAmountReceived ?? ''
-    if (token1) {
-      return Amount.tryFromHuman(token1, stringAmount)
-    }
-  }, [simulateBridgeTx, token1])
-
-  const minAmountOut = useMemo(() => {
-    const stringAmount = simulateBridgeTx?.amountMinReceived ?? ''
-    if (token1) {
-      return Amount.tryFromHuman(token1, stringAmount)
-    }
-  }, [simulateBridgeTx, token1])
-
-  const feeInToken = useMemo(() => {
-    if (simulateBridgeTx?.networkFeeInToken && chainId0 === ChainId.ETHEREUM) {
-      return Amount.tryFromHuman(
-        EvmNative.fromChainId(ChainId.ETHEREUM),
-        simulateBridgeTx?.networkFeeInToken,
-      )
-    }
-    if (simulateBridgeTx?.networkFeeInToken && chainId0 === ChainId.KADENA) {
-      return Amount.tryFromHuman(KADENA, simulateBridgeTx?.networkFeeInToken)
-    }
-  }, [simulateBridgeTx, chainId0])
 
   const status = useMemo(
     () =>
@@ -324,7 +288,7 @@ export const ReviewSwapDialog = () => {
           </>
         )}
       </DialogReview>
-      <SwapConfirmationDialog
+      <KinesisSwapConfirmationDialog
         onClose={() => {
           setTxHash(undefined)
           setSrcStatus('pending')

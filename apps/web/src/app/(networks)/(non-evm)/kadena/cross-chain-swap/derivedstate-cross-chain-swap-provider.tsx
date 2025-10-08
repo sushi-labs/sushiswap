@@ -14,11 +14,18 @@ import {
 import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Amount, ChainId } from 'sushi'
-import { type EvmChainId, type EvmToken, isEvmChainId } from 'sushi/evm'
+import {
+  type EvmChainId,
+  type EvmCurrency,
+  EvmNative,
+  type EvmToken,
+  isEvmChainId,
+} from 'sushi/evm'
 import { type KvmChainId, type KvmToken, isKvmChainId } from 'sushi/kvm'
 import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 import {
+  KADENA,
   KINESIS_BRIDGE_EVM_KADENA,
   KINESIS_BRIDGE_KVM_KADENA,
 } from '~kadena/_common/constants/token-list'
@@ -62,6 +69,11 @@ interface State {
     simulateBridgeTx: SimulateBridgeResult | undefined
     isLoadingSimulateBridgeTx: boolean
     simulateBridgeError: Error | null
+    isAllowanceError: boolean
+    amountOut: Amount<KinesisToken> | undefined
+    minAmountOut: Amount<KinesisToken> | undefined
+    feeInToken: Amount<EvmCurrency | KvmToken> | undefined
+    executionDuration: string
   }
   isLoading: boolean
   isToken0Loading: boolean
@@ -82,6 +94,9 @@ const DerivedstateCrossChainSwapProvider: FC<
   const searchParams = useSearchParams()
   const { address } = useAccount()
   const { activeAccount } = useKadena()
+  const [slippageTolerance] = useSlippageTolerance(
+    SlippageToleranceStorageKey.Swap,
+  )
 
   const { data: tokenLists } = useKinesisTokenList()
 
@@ -247,6 +262,15 @@ const DerivedstateCrossChainSwapProvider: FC<
     token1,
   })
 
+  const isAllowanceError = useMemo(() => {
+    if (
+      simulateBridgeError?.message.includes('transfer amount exceeds allowance')
+    ) {
+      return true
+    }
+    return false
+  }, [simulateBridgeError])
+
   const swapAmount = useMemo(
     () => (token0 ? Amount.tryFromHuman(token0, swapAmountString) : undefined),
     [token0, swapAmountString],
@@ -263,6 +287,60 @@ const DerivedstateCrossChainSwapProvider: FC<
       ? activeAccount?.accountName
       : address
   }, [address, activeAccount, token1])
+
+  const amountOut = useMemo(() => {
+    const stringAmount = isAllowanceError
+      ? swapAmountString
+      : (simulateBridgeTx?.estimatedAmountReceived ?? '')
+    if (token1) {
+      return Amount.tryFromHuman(token1, stringAmount)
+    }
+  }, [simulateBridgeTx, swapAmountString, isAllowanceError, token1])
+
+  const minAmountOut = useMemo(() => {
+    const stringAmount = simulateBridgeTx?.amountMinReceived ?? ''
+    if (stringAmount && token1) {
+      return Amount.tryFromHuman(token1, stringAmount)
+    } else if (token1) {
+      const totalAmount = isAllowanceError
+        ? swapAmountString
+        : (simulateBridgeTx?.estimatedAmountReceived ?? '')
+      const slippageAmount = Amount.tryFromHuman(token1, totalAmount)?.mulHuman(
+        slippageTolerance.toNumber(),
+      )
+      return Amount.tryFromHuman(token1, totalAmount)?.subHuman(
+        slippageAmount?.toString() ?? '0',
+      )
+    }
+  }, [
+    simulateBridgeTx,
+    swapAmountString,
+    isAllowanceError,
+    token1,
+    slippageTolerance,
+  ])
+
+  const feeInToken = useMemo(() => {
+    if (simulateBridgeTx?.networkFeeInToken && chainId0 === ChainId.ETHEREUM) {
+      return Amount.tryFromHuman(
+        EvmNative.fromChainId(ChainId.ETHEREUM),
+        simulateBridgeTx?.networkFeeInToken,
+      )
+    }
+    if (simulateBridgeTx?.networkFeeInToken && chainId0 === ChainId.KADENA) {
+      return Amount.tryFromHuman(KADENA, simulateBridgeTx?.networkFeeInToken)
+    }
+  }, [simulateBridgeTx, chainId0])
+
+  const executionDuration = useMemo(() => {
+    const executionDurationSeconds =
+      simulateBridgeTx?.estimatedBridgeTimeInSeconds ?? 0
+    const executionDurationMinutes = Math.floor(executionDurationSeconds / 60)
+
+    return executionDurationSeconds < 60
+      ? `${executionDurationSeconds} seconds`
+      : `${executionDurationMinutes} minutes`
+  }, [simulateBridgeTx?.estimatedBridgeTimeInSeconds])
 
   return (
     <DerivedStateCrossChainSwapContext.Provider
@@ -285,6 +363,11 @@ const DerivedstateCrossChainSwapProvider: FC<
             simulateBridgeTx,
             isLoadingSimulateBridgeTx,
             simulateBridgeError,
+            isAllowanceError,
+            amountOut,
+            minAmountOut,
+            feeInToken,
+            executionDuration,
           },
           isLoading: token0Loading || token1Loading,
           isToken0Loading: token0Loading,
@@ -307,6 +390,11 @@ const DerivedstateCrossChainSwapProvider: FC<
         bridgeAmount,
         simulateBridgeError,
         recipient,
+        isAllowanceError,
+        amountOut,
+        minAmountOut,
+        feeInToken,
+        executionDuration,
       ])}
     >
       {children}
