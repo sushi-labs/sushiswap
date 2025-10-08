@@ -99,10 +99,10 @@ export const ReviewSwapDialogTrigger = () => {
   }, [token0, kadenaBalances, ethBalance.data])
 
   const hasInsufficientToken0Balance = useMemo(() => {
-    if (kadenaLoading || !token0) return true
+    if (kadenaLoading || !token0 || ethBalance?.isLoading) return true
     const amount = Amount.tryFromHuman(token0, swapAmountString || '0')
     return token0Balance?.lt(amount?.amount || 0n)
-  }, [swapAmountString, kadenaLoading, token0Balance, token0])
+  }, [swapAmountString, kadenaLoading, token0Balance, token0, ethBalance])
 
   const buttonText = useMemo(() => {
     if (!swapAmountString || swapAmountString === '0') {
