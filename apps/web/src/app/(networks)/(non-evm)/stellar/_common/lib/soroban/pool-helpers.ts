@@ -462,7 +462,8 @@ export async function addLiquidity({
  * @returns Burn result
  */
 /**
- * Remove liquidity from a pool - simplified single function
+ * Remove liquidity from a pool (exactly like addLiquidity pattern)
+ * Uses proper transaction preparation with authorization
  * @param params - Remove liquidity parameters including signer
  * @returns Transaction result
  */
@@ -497,37 +498,113 @@ export async function removeLiquidity({
     throw new Error('Minimum amounts must be non-negative')
   }
 
-  // Build the transaction
+  console.log(`🔥 Removing liquidity: ${liquidity} units`)
+
+  // Build the transaction with burn operation
   const operation = Operation.invokeContractFunction({
     contract: address,
     function: 'burn',
     args: [
       Address.fromString(recipient).toScVal(),
-      xdr.ScVal.scvI32(60000),
-      xdr.ScVal.scvI32(60000),
-      xdr.ScVal.scvI64(xdr.Int64.fromString(liquidity.toString())),
+      xdr.ScVal.scvI32(-60000), // tickLower
+      xdr.ScVal.scvI32(60000), // tickUpper
+      xdr.ScVal.scvU128(
+        new xdr.UInt128Parts({
+          hi: xdr.Uint64.fromString((liquidity >> BigInt(64)).toString()),
+          lo: xdr.Uint64.fromString(
+            (liquidity & ((BigInt(1) << BigInt(64)) - BigInt(1))).toString(),
+          ),
+        }),
+      ),
     ],
   })
 
-  const transaction = await buildTransaction(sourceAccount, operation)
+  // Load account from Horizon
+  const horizon = new Horizon.Server(NETWORK_CONFIG.HORIZON_URL)
+  const account = await horizon.loadAccount(sourceAccount)
+
+  // Build transaction
+  const transaction = new TransactionBuilder(account, {
+    fee: '100000',
+    networkPassphrase: NETWORK_PASSPHRASE,
+  })
+    .addOperation(operation)
+    .setTimeout(180)
+    .build()
+
+  console.log(
+    'Transaction type:',
+    typeof transaction,
+    transaction.constructor.name,
+  )
+  console.log('Transaction has toXDR:', typeof transaction.toXDR)
+  console.log('Simulating transaction to calculate resources and auth...')
+
+  const sorobanServer = new StellarSdk.rpc.Server(RPC_URL)
+
+  let prepared
+  try {
+    console.log('About to call prepareTransaction...')
+    prepared = await sorobanServer.prepareTransaction(transaction)
+    console.log('prepareTransaction succeeded')
+  } catch (error) {
+    console.error('prepareTransaction failed:', error)
+    if (error instanceof Error) {
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+      })
+    }
+    throw error
+  }
+
+  console.log('Transaction prepared. Waiting for wallet signature...')
+  console.log('Prepared transaction for burn')
+
+  // Debug: Check if auth entries were added
+  const preparedOps = prepared.operations
+  console.log('Number of operations after prepare:', preparedOps.length)
+  if (preparedOps.length > 0) {
+    const op = preparedOps[0] as any
+    if (op.type === 'invokeHostFunction' && op.auth) {
+      console.log('Auth entries found:', op.auth.length)
+    } else {
+      console.log('No auth entries found in prepared transaction')
+    }
+  }
 
   // Convert to XDR for signing
-  const transactionXdr = transaction.toXDR()
+  const transactionXdr = prepared.toXDR()
+
+  console.log('Transaction XDR:', { transactionXdr })
 
   // Sign the transaction
   const signedXdr = await signTransaction(transactionXdr)
 
+  console.log('Transaction signed. Submitting to network...')
+
   // Submit the transaction
   const result = await submitTransaction(signedXdr)
 
-  // Wait for confirmation
-  await waitForTransaction(result.hash)
+  console.log(`Transaction submitted: ${result.hash}`)
+  console.log('Waiting for confirmation...')
 
-  return {
-    hash: result.hash,
-    result: result.result,
-    amount0: 0n,
-    amount1: 0n,
+  // Wait for confirmation
+  const txResult = await waitForTransaction(result.hash)
+
+  if (txResult.status === 'SUCCESS') {
+    console.log('✅ Transaction confirmed!')
+    console.log('🎉 Liquidity removed!')
+    return {
+      hash: result.hash,
+      result: txResult,
+      amount0: 0n,
+      amount1: 0n,
+    }
+  } else {
+    console.error('Transaction failed:', txResult)
+    throw new Error(`Transaction failed: ${JSON.stringify(txResult)}`)
   }
 }
 

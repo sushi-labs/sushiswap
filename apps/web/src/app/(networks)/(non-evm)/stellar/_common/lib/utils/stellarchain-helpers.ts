@@ -1,14 +1,14 @@
 import { IS_TESTNET } from '~stellar/_common/lib/constants'
 
-export const getStellarAddressLink = (address: string) => {
+export const getStellarAddressLink = (address: string): string => {
   if (IS_TESTNET) {
-    return `https://testnet.stellarchain.io/accounts/${address}`
+    return `https://stellar.expert/explorer/testnet/account/${address}`
   } else {
-    return `https://stellarchain.io/accounts/${address}`
+    return `https://stellar.expert/explorer/public/account/${address}`
   }
 }
 
-export const getStellarContractLink = (contractId: string) => {
+export const getStellarContractLink = (contractId: string): string => {
   if (IS_TESTNET) {
     return `https://stellar.expert/explorer/testnet/contract/${contractId}`
   } else {
@@ -16,7 +16,7 @@ export const getStellarContractLink = (contractId: string) => {
   }
 }
 
-export const getStellarAssetLink = (code: string) => {
+export const getStellarAssetLink = (code: string): string => {
   if (IS_TESTNET) {
     return `https://stellar.expert/explorer/testnet/asset/${code}`
   } else {
@@ -24,10 +24,10 @@ export const getStellarAssetLink = (code: string) => {
   }
 }
 
-export const getStellarTxnLink = (txnHash: string) => {
+export const getStellarTxnLink = (txnHash: string): string => {
   if (IS_TESTNET) {
-    return `https://testnet.stellarchain.io/transactions/${txnHash}`
+    return `https://stellar.expert/explorer/testnet/tx/${txnHash}`
   } else {
-    return `https://stellarchain.io/transactions/${txnHash}`
+    return `https://stellar.expert/explorer/public/tx/${txnHash}`
   }
 }

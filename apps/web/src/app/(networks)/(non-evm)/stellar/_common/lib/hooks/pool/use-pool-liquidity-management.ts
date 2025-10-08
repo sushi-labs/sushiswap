@@ -3,6 +3,7 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { removeLiquidity } from '~stellar/_common/lib/soroban/pool-helpers'
+import { getStellarTxnLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
 import { useStellarWallet } from '~stellar/providers'
 
 export interface RemovePoolLiquidityParams {
@@ -33,12 +34,13 @@ export const useRemoveLiquidity = () => {
     onSuccess: (result, variables) => {
       console.log('Liquidity removed successfully:', result)
 
-      // Show success toast
+      // Show success toast with Stellar explorer link
       createToast({
         account: connectedAddress || undefined,
         type: 'burn',
         chainId: 1, // Stellar testnet
         txHash: result.hash,
+        href: getStellarTxnLink(result.hash),
         promise: Promise.resolve(result),
         summary: {
           pending: 'Removing liquidity...',
