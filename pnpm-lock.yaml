@@ -244,7 +244,7 @@ importers:
         specifier: 0.2.0
         version: 0.2.0(@types/react@19.0.1)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11)
       '@kinesis-bridge/kinesis-sdk':
-        specifier: ^1.6.0
+        specifier: 1.6.0
         version: 1.6.0(@types/react@19.0.1)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@6.0.3)(webextension-polyfill@0.10.0)(zod@4.1.11)
       '@layerzerolabs/scan-client':
         specifier: 0.0.6
