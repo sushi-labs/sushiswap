@@ -38,6 +38,7 @@ import {
   KADENA,
   KINESIS_BRIDGE_EVM_ETH,
 } from '~kadena/_common/constants/token-list'
+import { useKinesisMessage } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-message'
 import { useKinesisWrappedToken } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-wrapped-token'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
 import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/derivedstate-cross-chain-swap-provider'
@@ -62,6 +63,13 @@ export const ReviewSwapDialog = () => {
   const [status, setStatus] = useState<'pending' | 'success' | 'error'>(
     'pending',
   )
+
+  const { data } = useKinesisMessage({
+    txHash,
+    enabled: Boolean(txHash),
+  })
+  console.log('kinesis message data', data)
+
   const amountInRef = useRef<Amount | null>(null)
   const amountOutRef = useRef<Amount | null>(null)
 
