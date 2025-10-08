@@ -1,0 +1,183 @@
+export const makerAbi = [
+  {
+    inputs: [
+      { internalType: 'address', name: 'owner', type: 'address' },
+      { internalType: 'address', name: 'user', type: 'address' },
+      { internalType: 'address', name: 'factory', type: 'address' },
+      { internalType: 'address', name: '_weth', type: 'address' },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'constructor',
+  },
+  { inputs: [], name: 'OnlyOwner', type: 'error' },
+  { inputs: [], name: 'OnlyTrusted', type: 'error' },
+  { inputs: [], name: 'SlippageProtection', type: 'error' },
+  { inputs: [], name: 'TransferFailed', type: 'error' },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'token',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'bridge',
+        type: 'address',
+      },
+    ],
+    name: 'SetBridge',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'owner',
+        type: 'address',
+      },
+    ],
+    name: 'SetOwner',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: 'address', name: 'user', type: 'address' },
+      { indexed: false, internalType: 'bool', name: 'isTrusted', type: 'bool' },
+    ],
+    name: 'SetTrusted',
+    type: 'event',
+  },
+  {
+    inputs: [{ internalType: 'address', name: '', type: 'address' }],
+    name: 'bridges',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'contract IUniV2[]',
+        name: 'lpTokens',
+        type: 'address[]',
+      },
+      { internalType: 'uint256[]', name: 'amounts', type: 'uint256[]' },
+      { internalType: 'uint256[]', name: 'minimumOut0', type: 'uint256[]' },
+      { internalType: 'uint256[]', name: 'minimumOut1', type: 'uint256[]' },
+    ],
+    name: 'burnPairs',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address[]', name: 'tokens', type: 'address[]' },
+      { internalType: 'uint256[]', name: 'amountsIn', type: 'uint256[]' },
+      { internalType: 'uint256[]', name: 'minimumOuts', type: 'uint256[]' },
+    ],
+    name: 'buyWeth',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: 'to', type: 'address' },
+      { internalType: 'uint256', name: '_value', type: 'uint256' },
+      { internalType: 'bytes', name: 'data', type: 'bytes' },
+    ],
+    name: 'doAction',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'factory',
+    outputs: [
+      { internalType: 'contract IUniV2Factory', name: '', type: 'address' },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'owner',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: 'token', type: 'address' },
+      { internalType: 'address', name: 'bridge', type: 'address' },
+    ],
+    name: 'setBridge',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'newOwner', type: 'address' }],
+    name: 'setOwner',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: 'user', type: 'address' },
+      { internalType: 'bool', name: 'isTrusted', type: 'bool' },
+    ],
+    name: 'setTrusted',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: '', type: 'address' }],
+    name: 'trusted',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address[]', name: 'tokensA', type: 'address[]' },
+      { internalType: 'address[]', name: 'tokensB', type: 'address[]' },
+      { internalType: 'uint256[]', name: 'amounts', type: 'uint256[]' },
+      { internalType: 'uint256[]', name: 'minimumOuts', type: 'uint256[]' },
+    ],
+    name: 'unwindPairs',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'weth',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: 'token', type: 'address' },
+      { internalType: 'address', name: 'to', type: 'address' },
+      { internalType: 'uint256', name: '_value', type: 'uint256' },
+    ],
+    name: 'withdraw',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  { stateMutability: 'payable', type: 'receive' },
+] as const
