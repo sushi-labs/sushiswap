@@ -30,34 +30,30 @@ import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import { useTransactionDeadline } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Amount, Percent, ZERO } from 'sushi'
 import {
+  type EvmCurrency,
+  EvmNative,
+  NonfungiblePositionManager,
+  type Position,
   SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
   isSushiSwapV3ChainId,
-} from 'sushi/config'
-import { Amount, Native, type Type, unwrapToken } from 'sushi/currency'
-import { Percent, ZERO } from 'sushi/math'
-import {
-  NonfungiblePositionManager,
-  type Position,
-} from 'sushi/pool/sushiswap-v3'
+  unwrapEvmToken,
+} from 'sushi/evm'
 import {
   type Hex,
   type SendTransactionReturnType,
   UserRejectedRequestError,
 } from 'viem'
-import {
-  useCall,
-  useSendTransaction,
-  useWaitForTransactionReceipt,
-} from 'wagmi'
+import { useCall, useSendTransaction } from 'wagmi'
 import { useAccount } from 'wagmi'
 import { usePublicClient } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 
 interface ConcentratedLiquidityRemoveWidget {
-  token0: Type | undefined
-  token1: Type | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
   account: string | undefined
   chainId: SushiSwapV3ChainId
   positionDetails: ConcentratedLiquidityPosition | undefined
@@ -151,19 +147,19 @@ export const RemoveLiquidity: FC<ConcentratedLiquidityRemoveWidget> = ({
 
   const [expectedToken0, expectedToken1] = useMemo(() => {
     const expectedToken0 =
-      !token0 || receiveWrapped ? token0?.wrapped : unwrapToken(token0)
+      !token0 || receiveWrapped ? token0?.wrap() : unwrapEvmToken(token0)
     const expectedToken1 =
-      !token1 || receiveWrapped ? token1?.wrapped : unwrapToken(token1)
+      !token1 || receiveWrapped ? token1?.wrap() : unwrapEvmToken(token1)
     return [expectedToken0, expectedToken1]
   }, [token0, token1, receiveWrapped])
 
   const [feeValue0, feeValue1] = useMemo(() => {
     if (positionDetails && expectedToken0 && expectedToken1) {
       const feeValue0 = positionDetails.fees
-        ? Amount.fromRawAmount(expectedToken0, positionDetails.fees[0])
+        ? new Amount(expectedToken0, positionDetails.fees[0])
         : undefined
       const feeValue1 = positionDetails.fees
-        ? Amount.fromRawAmount(expectedToken1, positionDetails.fees[1])
+        ? new Amount(expectedToken1, positionDetails.fees[1])
         : undefined
 
       return [feeValue0, feeValue1]
@@ -172,34 +168,37 @@ export const RemoveLiquidity: FC<ConcentratedLiquidityRemoveWidget> = ({
     return [undefined, undefined]
   }, [positionDetails, expectedToken0, expectedToken1])
 
-  const nativeToken = useMemo(() => Native.onChain(chainId), [chainId])
+  const nativeToken = useMemo(() => EvmNative.fromChainId(chainId), [chainId])
 
   const positionHasNativeToken = useMemo(() => {
     if (!nativeToken || !token0 || !token1) return false
     return (
       token0.isNative ||
       token1.isNative ||
-      token0.address === nativeToken?.wrapped?.address ||
-      token1.address === nativeToken?.wrapped?.address
+      token0.address === nativeToken?.wrap()?.address ||
+      token1.address === nativeToken?.wrap()?.address
     )
   }, [token0, token1, nativeToken])
 
   const prepare = useMemo(() => {
-    const liquidityPercentage = new Percent(debouncedValue, 100)
+    const liquidityPercentage = new Percent({
+      numerator: Number(debouncedValue),
+      denominator: 100,
+    })
     const discountedAmount0 = position
-      ? liquidityPercentage.multiply(position.amount0.quotient).quotient
+      ? liquidityPercentage.mul(position.amount0.amount).quotient
       : undefined
     const discountedAmount1 = position
-      ? liquidityPercentage.multiply(position.amount1.quotient).quotient
+      ? liquidityPercentage.mul(position.amount1.amount).quotient
       : undefined
 
     const liquidityValue0 =
       expectedToken0 && typeof discountedAmount0 === 'bigint'
-        ? Amount.fromRawAmount(expectedToken0, discountedAmount0)
+        ? new Amount(expectedToken0, discountedAmount0)
         : undefined
     const liquidityValue1 =
       expectedToken1 && typeof discountedAmount1 === 'bigint'
-        ? Amount.fromRawAmount(expectedToken1, discountedAmount1)
+        ? new Amount(expectedToken1, discountedAmount1)
         : undefined
 
     if (
@@ -211,7 +210,7 @@ export const RemoveLiquidity: FC<ConcentratedLiquidityRemoveWidget> = ({
       deadline &&
       liquidityValue0 &&
       liquidityValue1 &&
-      liquidityPercentage.greaterThan(ZERO) &&
+      liquidityPercentage.gt(ZERO) &&
       isSushiSwapV3ChainId(chainId)
     ) {
       const { calldata, value: _value } =
@@ -222,9 +221,9 @@ export const RemoveLiquidity: FC<ConcentratedLiquidityRemoveWidget> = ({
           deadline: deadline.toString(),
           collectOptions: {
             expectedCurrencyOwed0:
-              feeValue0 ?? Amount.fromRawAmount(liquidityValue0.currency, 0),
+              feeValue0 ?? new Amount(liquidityValue0.currency, 0),
             expectedCurrencyOwed1:
-              feeValue1 ?? Amount.fromRawAmount(liquidityValue1.currency, 0),
+              feeValue1 ?? new Amount(liquidityValue1.currency, 0),
             recipient: account,
           },
         })
@@ -236,9 +235,9 @@ export const RemoveLiquidity: FC<ConcentratedLiquidityRemoveWidget> = ({
         deadline: deadline.toString(),
         collectOptions: {
           expectedCurrencyOwed0:
-            feeValue0 ?? Amount.fromRawAmount(liquidityValue0.currency, 0),
+            feeValue0 ?? Amount.tryFromHuman(liquidityValue0.currency, 0),
           expectedCurrencyOwed1:
-            feeValue1 ?? Amount.fromRawAmount(liquidityValue1.currency, 0),
+            feeValue1 ?? Amount.tryFromHuman(liquidityValue1.currency, 0),
           recipient: account,
         },
       })
@@ -302,11 +301,11 @@ export const RemoveLiquidity: FC<ConcentratedLiquidityRemoveWidget> = ({
   // const positionPlusFees = useMemo(() => {
   // 	return [
   // 		position?.amount0
-  // 			.add(Amount.fromRawAmount(position.amount0.currency, feeValue0 ? feeValue0.quotient.toString() : "0"))
+  // 			.add(Amount.tryFromHuman(position.amount0.currency, feeValue0 ? feeValue0.quotient.toString() : "0"))
   // 			.multiply(value)
   // 			.divide(100),
   // 		position?.amount1
-  // 			.add(Amount.fromRawAmount(position.amount1.currency, feeValue1 ? feeValue1.quotient.toString() : "0"))
+  // 			.add(Amount.tryFromHuman(position.amount1.currency, feeValue1 ? feeValue1.quotient.toString() : "0"))
   // 			.multiply(value)
   // 			.divide(100),
   // 	];
@@ -383,28 +382,24 @@ export const RemoveLiquidity: FC<ConcentratedLiquidityRemoveWidget> = ({
               {"You'll"} receive at least
             </CardLabel>
             <CardCurrencyAmountItem
-              amount={position?.amount0.multiply(value).divide(100)}
+              amount={position?.amount0.mul(value).div(100)}
             />
             <CardCurrencyAmountItem
-              amount={position?.amount1.multiply(value).divide(100)}
+              amount={position?.amount1.mul(value).div(100)}
             />
           </CardGroup>
           <CardGroup>
             <CardLabel className="dark:text-[#9CA3AF]">
               {"You'll"} receive collected fees
             </CardLabel>
-            <CardCurrencyAmountItem
-              amount={feeValue0?.multiply(value).divide(100)}
-            />
-            <CardCurrencyAmountItem
-              amount={feeValue1?.multiply(value).divide(100)}
-            />
+            <CardCurrencyAmountItem amount={feeValue0?.mul(value).div(100)} />
+            <CardCurrencyAmountItem amount={feeValue1?.mul(value).div(100)} />
           </CardGroup>
         </Card>
         {positionHasNativeToken ? (
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground">
-              {`Receive ${nativeToken.wrapped.symbol} instead of ${nativeToken.symbol}`}
+              {`Receive ${nativeToken.wrap()?.symbol} instead of ${nativeToken.symbol}`}
             </span>
             <Switch
               checked={receiveWrapped}

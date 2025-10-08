@@ -13,14 +13,14 @@ import {
   getTwapLimitOrders,
 } from 'src/lib/hooks/react-query/twap'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
-import { DCAOrdersTable } from 'src/ui/swap/trade/tab-tables/dca-orders-table/dca-orders-table'
-import { HistoryTable } from 'src/ui/swap/trade/tab-tables/history-tables/history-table'
-import { LimitOrdersTable } from 'src/ui/swap/trade/tab-tables/limit-orders-table/limit-orders-table'
+import { DCAOrdersTable } from '~evm/[chainId]/[trade]/_ui/swap/trade/tab-tables/dca-orders-table/dca-orders-table'
+import { HistoryTable } from '~evm/[chainId]/[trade]/_ui/swap/trade/tab-tables/history-tables/history-table'
+import { LimitOrdersTable } from '~evm/[chainId]/[trade]/_ui/swap/trade/tab-tables/limit-orders-table/limit-orders-table'
 import {
   TABS,
   TradeTablesProvider,
   useTradeTablesContext,
-} from 'src/ui/swap/trade/tab-tables/trade-tables-context'
+} from '~evm/[chainId]/[trade]/_ui/swap/trade/tab-tables/trade-tables-context'
 import { OpenOrdersTableFilters } from './open-order-table-filters'
 import { OpenOrdersTableHeader } from './open-orders-table-header'
 
@@ -107,6 +107,7 @@ const Content = () => {
   return (
     <Tabs
       id="open-orders-table"
+      value={currentTab}
       defaultValue={tabs[0].value}
       onValueChange={(value) => setCurrentTab(value as TABS)}
     >

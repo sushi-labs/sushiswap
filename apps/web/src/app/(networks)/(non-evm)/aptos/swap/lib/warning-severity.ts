@@ -4,10 +4,22 @@ import { Percent } from 'sushi'
 const BIPS_BASE = 10000n
 
 // used for warning states
-const ALLOWED_PRICE_IMPACT_LOW: Percent = new Percent(100, BIPS_BASE) // 1%
-const ALLOWED_PRICE_IMPACT_MEDIUM: Percent = new Percent(300, BIPS_BASE) // 3%
-const ALLOWED_PRICE_IMPACT_HIGH: Percent = new Percent(500, BIPS_BASE) // 5%
-const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(1500, BIPS_BASE) // 15%
+const ALLOWED_PRICE_IMPACT_LOW: Percent = new Percent({
+  numerator: 100,
+  denominator: BIPS_BASE,
+}) // 1%
+const ALLOWED_PRICE_IMPACT_MEDIUM: Percent = new Percent({
+  numerator: 300,
+  denominator: BIPS_BASE,
+}) // 3%
+const ALLOWED_PRICE_IMPACT_HIGH: Percent = new Percent({
+  numerator: 500,
+  denominator: BIPS_BASE,
+}) // 5%
+const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent({
+  numerator: 1500,
+  denominator: BIPS_BASE,
+}) // 15%
 
 const IMPACT_TIERS = [
   BLOCKED_PRICE_IMPACT_NON_EXPERT,
@@ -23,7 +35,7 @@ export function warningSeverity(
   if (!priceImpact) return 0
   let impact: WarningSeverity = IMPACT_TIERS.length as WarningSeverity
   for (const impactLevel of IMPACT_TIERS) {
-    if (Number(impactLevel.toFixed(2)) < priceImpact) return impact
+    if (Number(impactLevel.toString({ fixed: 2 })) < priceImpact) return impact
     impact--
   }
   return 0

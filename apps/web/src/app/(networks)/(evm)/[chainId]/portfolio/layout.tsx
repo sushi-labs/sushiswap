@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import type { ChainId as ChainIdType } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/evm'
 import { Header } from '../header'
 import { Providers } from './providers'
 
@@ -17,7 +17,7 @@ export default async function PortfolioLayout(props: {
 }) {
   const params = await props.params
   const { children } = props
-  const chainId = +params.chainId as ChainIdType
+  const chainId = +params.chainId as EvmChainId
 
   return (
     <Providers>

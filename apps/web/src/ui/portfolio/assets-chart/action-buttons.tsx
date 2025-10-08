@@ -1,12 +1,11 @@
-import { Button, classNames } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import Link from 'next/link'
-import { evmChains } from 'sushi/chain'
-import type { Type } from 'sushi/currency'
+import { type EvmCurrency, getEvmChainById } from 'sushi/evm'
 import { SendWidget } from '../wallet-holdings/send-widget'
 import { TradeModal } from '../wallet-holdings/trade-modal'
 
 interface ActionButtonsProps {
-  token: Type
+  token: EvmCurrency
   splitRows?: boolean
   renderSendWidget?: boolean
   className?: string
@@ -45,7 +44,7 @@ export const ActionButtons = ({
         isModalOpen={isModalOpen}
       />
       <Link
-        href={`/${evmChains[token.chainId].name.toLowerCase()}/explore/pools?tokenSymbols=${token.symbol}`}
+        href={`/${getEvmChainById(token.chainId).key}/explore/pools?tokenSymbols=${token.symbol}`}
         className={classNames(
           '!bg-blue-500/100 hover:!bg-blue-500/90 focus:!bg-blue-500/90 active:!bg-blue-500/80',
           baseBtnClasses,

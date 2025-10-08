@@ -2,39 +2,38 @@
 
 import { Transition } from '@headlessui/react'
 import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
+import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { DialogTrigger, FormSection, Message, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { type FC, Fragment, useCallback, useMemo } from 'react'
-import {
-  SUSHISWAP_V3_POSITION_MANAGER,
-  type SushiSwapV3ChainId,
-  type SushiSwapV3FeeAmount,
-  isWNativeSupported,
-} from 'sushi/config'
-import type { Type } from 'sushi/currency'
-import type { Position } from 'sushi/pool/sushiswap-v3'
-
-import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { Bound, Field } from '../../lib/constants'
-import { AddSectionReviewModalConcentrated } from './AddSectionReviewModalConcentrated'
+import {
+  type EvmCurrency,
+  type Position,
+  SUSHISWAP_V3_POSITION_MANAGER,
+  type SushiSwapV3ChainId,
+  type SushiSwapV3FeeAmount,
+  isWNativeSupported,
+} from 'sushi/evm'
 import {
   useConcentratedDerivedMintInfo,
   useConcentratedMintActionHandlers,
   useConcentratedMintState,
-} from './ConcentratedLiquidityProvider'
+} from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
+import { AddSectionReviewModalConcentrated } from '~evm/[chainId]/pool/v3/_ui/add-section-review-modal-concentrated'
+import { Bound, Field } from '../../lib/constants'
 
 interface ConcentratedLiquidityWidget {
   chainId: SushiSwapV3ChainId
   account: string | undefined
-  token0: Type | undefined
-  token1: Type | undefined
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
   feeAmount: SushiSwapV3FeeAmount | undefined
-  setToken0?(token: Type): void
-  setToken1?(token: Type): void
+  setToken0?(token: EvmCurrency): void
+  setToken1?(token: EvmCurrency): void
   tokensLoading: boolean
   tokenId: number | string | undefined
   existingPosition: Position | undefined

@@ -8,7 +8,7 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useEffect, useState } from 'react'
 import { useSwapTokenSelect } from 'src/lib/hooks/useTokenSelect'
-import type { Currency } from 'sushi/currency'
+import type { EvmCurrency } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { useQuickSelectTokens } from '../hooks/use-quick-select-tokens'
 import { useQuickSelectContext } from './quick-select-provider'
@@ -19,7 +19,7 @@ export const QuickSelect = ({ type }: { type: 'INPUT' | 'OUTPUT' }) => {
     query: `(max-width: 400px)`,
   })
 
-  const optionCount = isXs ? 2 : isSmScreen ? 3 : 4
+  const optionCount = isXs ? 2 : isSmScreen ? 3 : 3
 
   const { address } = useAccount()
   const { quickSelectTokens, isLoading } = useQuickSelectTokens({
@@ -48,7 +48,7 @@ export const QuickSelect = ({ type }: { type: 'INPUT' | 'OUTPUT' }) => {
 const QuickSelectItem = ({
   currencies,
   type,
-}: { currencies: Currency[]; type: 'INPUT' | 'OUTPUT' }) => {
+}: { currencies: EvmCurrency[]; type: 'INPUT' | 'OUTPUT' }) => {
   const {
     state: { isOpen, selectedSymbol },
     mutate: { onValueChange },
@@ -90,7 +90,7 @@ const QuickSelectItem = ({
     }
   }, [isSelected])
 
-  const onSelectToken = async (currency: Currency) => {
+  const onSelectToken = async (currency: EvmCurrency) => {
     setExpanded(false)
     setTimeout(() => {
       onValueChange(false, currency?.symbol ?? undefined)
@@ -119,12 +119,13 @@ const QuickSelectItem = ({
             {currencies?.map((currency, index) => {
               return (
                 <TokenChainItem
-                  key={currency?.wrapped.address + index}
+                  key={currency?.wrap().address + index}
                   currency={currency}
                   expanded={expanded}
                   index={index}
                   totalCurrencies={totalCurrencies}
                   onSelectToken={onSelectToken}
+                  type={type}
                 />
               )
             })}
@@ -142,6 +143,9 @@ const QuickSelectItem = ({
         type="button"
         onClick={select}
         className={classNames('opacity-80', isSelected && '!opacity-100')}
+        testdata-id={`quick-select-${
+          type === 'INPUT' ? 'from' : 'to'
+        }-${mainCurrency?.symbol.toLowerCase()}-button`}
       >
         <div className="rounded-full p-0.5 sm:p-1">
           <CurrencyComp.Icon
@@ -163,13 +167,15 @@ const TokenChainItem = ({
   totalCurrencies,
   expanded,
   onSelectToken,
+  type,
 }: {
-  currency: Currency
+  currency: EvmCurrency
   className?: string
   index: number
   totalCurrencies: number
   expanded: boolean
-  onSelectToken: (currency: Currency) => void
+  onSelectToken: (currency: EvmCurrency) => void
+  type: 'INPUT' | 'OUTPUT'
 }) => {
   const isSm = useIsSmScreen()
   const radius = 50
@@ -224,6 +230,9 @@ const TokenChainItem = ({
         // transitionDelay: `${index * 50}ms`, // stagger the animation, if you turn this on update the `setTimeout` in `QuickSelectItem` to match
       }}
       onClick={() => onSelectToken(currency)}
+      testdata-id={`quick-select-token-${type === 'INPUT' ? 'from' : 'to'}-${currency.chainId}-${
+        currency.isNative ? 'native' : currency.wrap().address
+      }-button`}
     >
       <Badge
         className="z-[11] bottom-[3%] -right-[10%]"

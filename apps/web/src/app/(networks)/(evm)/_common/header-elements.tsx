@@ -1,11 +1,10 @@
 import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { type NavigationElement, NavigationElementType } from '@sushiswap/ui'
 import { EXPLORE_NAVIGATION_LINKS } from 'src/app/_common/header-elements'
-import { isEvmChainId } from 'sushi'
-import { type ChainId, ChainKey } from 'sushi/chain'
+import { type EvmChainId, getEvmChainById, isEvmChainId } from 'sushi/evm'
 
 interface HeaderElements {
-  chainId?: ChainId
+  chainId?: EvmChainId
   includeOnramper?: boolean
 }
 
@@ -21,7 +20,7 @@ export const headerElements = ({
   },
   {
     title: 'Trade',
-    href: `/${chainId ? ChainKey[chainId] : 'ethereum'}/swap`,
+    href: `/${chainId ? getEvmChainById(chainId).key : 'ethereum'}/swap`,
     show: 'desktop',
     type: NavigationElementType.Single,
   },
@@ -29,7 +28,7 @@ export const headerElements = ({
     ? ([
         {
           title: 'Explore',
-          href: `/${chainId ? ChainKey[chainId] : 'ethereum'}/explore/pools`,
+          href: `/${chainId ? getEvmChainById(chainId).key : 'ethereum'}/explore/pools`,
           show: 'desktop',
           type: NavigationElementType.Single,
         },
@@ -39,7 +38,7 @@ export const headerElements = ({
     ? ([
         {
           title: 'Portfolio',
-          href: `/${chainId ? ChainKey[chainId] : 'ethereum'}/portfolio`,
+          href: `/${chainId ? getEvmChainById(chainId).key : 'ethereum'}/portfolio`,
           show: 'desktop',
           type: NavigationElementType.Single,
         },
@@ -55,7 +54,7 @@ export const headerElements = ({
     ? ([
         {
           title: 'Buy Crypto',
-          href: `/${chainId ? ChainKey[chainId] : 'ethereum'}/fiat/advanced`,
+          href: `/${chainId ? getEvmChainById(chainId).key : 'ethereum'}/fiat/advanced`,
           show: 'desktop',
           type: NavigationElementType.Single,
         },

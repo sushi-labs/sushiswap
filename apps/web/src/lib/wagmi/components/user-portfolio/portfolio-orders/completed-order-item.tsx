@@ -7,15 +7,9 @@ import { type ReactNode, useMemo } from 'react'
 import { NativeAddress } from 'src/lib/constants'
 import { getChangeSign, getTextColor } from 'src/lib/helpers'
 import { type TwapOrder, useParsedOrder } from 'src/lib/hooks/react-query/twap'
-import { evmChains } from 'sushi'
-import type { EvmChainId } from 'sushi/chain'
-import { Native, Token } from 'sushi/currency'
-import {
-  formatNumber,
-  formatPercent,
-  formatUSD,
-  shortenHash,
-} from 'sushi/format'
+import { formatNumber, formatPercent, formatUSD, getChainById } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
+import { EvmNative, EvmToken, shortenHash } from 'sushi/evm'
 import { getNetworkName } from '../../../../network'
 import type { OrderItemType } from './completed-orders'
 
@@ -37,8 +31,8 @@ const MarketItem = ({ order }: { order: RecentSwap }) => {
   const isCrossChain = order.tokenIn.chainId !== order.tokenOut.chainId
   const tokenIn = useMemo(() => {
     return order.tokenIn.address === NativeAddress
-      ? Native.onChain(order.tokenIn.chainId as EvmChainId)
-      : new Token({
+      ? EvmNative.fromChainId(order.tokenIn.chainId as EvmChainId)
+      : new EvmToken({
           chainId: order.tokenIn.chainId as EvmChainId,
           address: order.tokenIn.address,
           decimals: order.tokenIn.decimals,
@@ -49,8 +43,8 @@ const MarketItem = ({ order }: { order: RecentSwap }) => {
 
   const tokenOut = useMemo(() => {
     return order.tokenOut.address === NativeAddress
-      ? Native.onChain(order.tokenOut.chainId as EvmChainId)
-      : new Token({
+      ? EvmNative.fromChainId(order.tokenOut.chainId as EvmChainId)
+      : new EvmToken({
           chainId: order.tokenOut.chainId as EvmChainId,
           address: order.tokenOut.address,
           decimals: order.tokenOut.decimals,
@@ -103,7 +97,9 @@ const MarketItem = ({ order }: { order: RecentSwap }) => {
           </Item>
           <Item title="Price USD">{formatUSD(order.amountOutUSD)}</Item>
           <Item title="TX Hash">
-            <LinkExternal href={evmChains[tokenIn.chainId]?.getTxUrl('')}>
+            <LinkExternal
+              href={getChainById(tokenIn.chainId).getTransactionUrl('0x')}
+            >
               {'-'}
             </LinkExternal>
           </Item>

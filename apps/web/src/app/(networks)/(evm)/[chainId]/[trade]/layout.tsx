@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { SimpleSwapBanner } from 'src/ui/swap/simple/simple-swap-banner'
+import type { ChainId as ChainIdType } from 'sushi'
+import { SimpleSwapBanner } from './_ui/swap/simple-swap-banner'
 import {
   type TradeMode,
   isSupportedTradeModeOnChainId,
-} from 'src/ui/swap/trade/config'
-import type { ChainId as ChainIdType } from 'sushi/chain'
-import { Header } from '../header'
+} from './_ui/swap/trade/config'
+import { Header } from './header'
 import { KatanaBackground } from './katana-background'
 import { Providers } from './providers'
 
@@ -20,9 +20,7 @@ export default async function TradeLayout(props: {
   children: React.ReactNode
   params: Promise<{
     chainId: string
-    chainId0: string
     trade: string
-    tradeView?: string
   }>
 }) {
   const params = await props.params

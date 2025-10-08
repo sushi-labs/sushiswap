@@ -2,9 +2,8 @@ import { Collapsible, SkeletonBox } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useAverageBlockTime } from 'src/lib/wagmi/hooks/block/use-average-blocktime'
-import type { EvmChainId } from 'sushi'
-import { Amount } from 'sushi/currency'
-import { Native } from 'sushi/currency'
+import { Amount } from 'sushi'
+import { EvmNative } from 'sushi/evm'
 import { formatUnits } from 'viem'
 import { useEstimateGas, useGasPrice } from 'wagmi'
 import { useSendTokens } from './send-token-provider'
@@ -54,7 +53,7 @@ export const SendDetails = ({
   const nativeToken = useMemo(() => {
     if (state.token0?.chainId === undefined) return undefined
 
-    const token = Native.onChain(state.token0.chainId)
+    const token = EvmNative.fromChainId(state.token0.chainId)
     return token
   }, [state.token0?.chainId])
 
@@ -73,7 +72,7 @@ export const SendDetails = ({
     chainId: state.token0?.chainId,
     amounts:
       formattedGasCost?.raw && nativeToken
-        ? [Amount.fromRawAmount(nativeToken, formattedGasCost.raw)]
+        ? [Amount.tryFromHuman(nativeToken, formattedGasCost.formatted)]
         : [],
   })
 

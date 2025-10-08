@@ -1,33 +1,37 @@
-import type { EvmChainId } from 'sushi/chain'
-import type { MerklChainId } from 'sushi/config'
-import { sz } from 'sushi/validate'
+import { sz } from 'sushi'
+import { type MerklChainId, isMerklChainId } from 'sushi/evm'
 import z from 'zod'
 
 const merklRewardsTokenValidator = z.object({
-  address: sz.address(),
+  address: sz.evm.address(),
   decimals: z.number().optional(),
   symbol: z.string().optional(),
   minimumAmountPerHour: z.string().transform((amount) => BigInt(amount)),
   isTest: z.boolean().optional(),
 })
 
+const merklChainIdValidator = z
+  .number()
+  .refine((chainId) => isMerklChainId(chainId))
+  .transform((chainId) => chainId as MerklChainId)
+
 export const merklRewardsTokensValidator = z.array(merklRewardsTokenValidator)
 
 const merklRewardValidator = z.object({
   chain: z.object({
-    id: z.number().transform((chainId) => chainId as MerklChainId),
+    id: merklChainIdValidator,
   }),
   rewards: z.array(
     z.object({
       root: sz.hex(),
-      recipient: sz.address(),
+      recipient: sz.evm.address(),
       amount: z.string().transform((value) => BigInt(value)),
       claimed: z.string().transform((value) => BigInt(value)),
       pending: z.string().transform((value) => BigInt(value)),
       proofs: z.array(sz.hex()),
       token: z.object({
-        address: z.string(),
-        chainId: z.number().transform((chainId) => chainId as EvmChainId),
+        address: sz.evm.address(),
+        chainId: merklChainIdValidator,
         symbol: z.string(),
         decimals: z.number(),
         price: z.coerce.number().optional(),
@@ -40,8 +44,8 @@ export const merklRewardsValidator = z.array(merklRewardValidator)
 
 const merklCampaignValidator = z.object({
   id: z.string(),
-  computeChainId: z.number().transform((chainId) => chainId as EvmChainId),
-  distributionChainId: z.number().transform((chainId) => chainId as EvmChainId),
+  computeChainId: merklChainIdValidator,
+  distributionChainId: merklChainIdValidator,
   campaignId: z.string(),
   amount: z.string(),
   startTimestamp: z.coerce.number(),
@@ -52,10 +56,11 @@ const merklCampaignValidator = z.object({
     isOutOfRangeIncentivized: z.boolean(),
   }),
   rewardToken: z.object({
-    address: z.string(),
-    chainId: z.number().transform((chainId) => chainId as EvmChainId),
+    address: sz.evm.address(),
+    chainId: merklChainIdValidator,
     symbol: z.string(),
     decimals: z.number(),
+    name: z.string(),
   }),
 })
 

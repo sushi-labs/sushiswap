@@ -13,9 +13,15 @@ import { useMemo, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { ConcentratedLiquidityCollectButton } from 'src/ui/pool/ConcentratedLiquidityCollectButton'
-import { type Address, type EvmChainId, type Position, formatUSD } from 'sushi'
-import { Amount, type Type, unwrapToken } from 'sushi/currency'
+import { Amount, formatUSD } from 'sushi'
+import {
+  type EvmChainId,
+  type EvmCurrency,
+  type Position,
+  unwrapEvmToken,
+} from 'sushi/evm'
+import type { Address } from 'viem'
+import { ConcentratedLiquidityCollectButton } from '~evm/[chainId]/pool/v3/[address]/(manage)/[position]/_common/ui/concentrated-liquidity-collect-button'
 
 export const Fees = ({
   position,
@@ -28,9 +34,9 @@ export const Fees = ({
 }: {
   position: Position | undefined
   chainId: EvmChainId
-  token0: Type | undefined
-  token1: Type | undefined
-  amounts: Amount<Type>[] | undefined[]
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
+  amounts: Amount<EvmCurrency>[] | undefined[]
   positionDetails: ConcentratedLiquidityPosition | undefined
   account: Address | undefined
 }) => {
@@ -38,16 +44,16 @@ export const Fees = ({
 
   const expectedAmount0 = useMemo(() => {
     const expectedToken0 =
-      !token0 || receiveWrapped ? token0?.wrapped : unwrapToken(token0)
+      !token0 || receiveWrapped ? token0?.wrap() : unwrapEvmToken(token0)
     if (amounts[0] === undefined || !expectedToken0) return undefined
-    return Amount.fromRawAmount(expectedToken0, amounts[0].quotient)
+    return new Amount(expectedToken0, amounts[0].amount)
   }, [token0, receiveWrapped, amounts])
 
   const expectedAmount1 = useMemo(() => {
     const expectedToken1 =
-      !token1 || receiveWrapped ? token1?.wrapped : unwrapToken(token1)
+      !token1 || receiveWrapped ? token1?.wrap() : unwrapEvmToken(token1)
     if (amounts[1] === undefined || !expectedToken1) return undefined
-    return Amount.fromRawAmount(expectedToken1, amounts[1].quotient)
+    return new Amount(expectedToken1, amounts[1].amount)
   }, [token1, receiveWrapped, amounts])
 
   const fiatValuesAmounts = useTokenAmountDollarValues({ chainId, amounts })

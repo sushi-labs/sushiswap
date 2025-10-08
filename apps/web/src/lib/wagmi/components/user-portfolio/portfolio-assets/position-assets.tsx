@@ -1,13 +1,13 @@
 import { Accordion } from '@sushiswap/ui'
 import React, { useMemo } from 'react'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import { useAccount } from 'wagmi'
 import { usePortfolioPositions } from '../hooks/use-portfolio-positions'
 import { NotificationBadge } from '../notification-badge'
 import { PortfolfioAccordion } from '../portfolio-accordion'
 import { PortfolioInfoRowSkeleton } from '../portfolio-info-row-skeleton'
-import { PortfolioV2Positions } from '../portfolio-positions/PortfolioV2Positions'
-import { PortfolioV3Positions } from '../portfolio-positions/PortfolioV3Positions'
+import { PortfolioV2Positions } from '../portfolio-positions/portfolio-v2-positions'
+import { PortfolioV3Positions } from '../portfolio-positions/portfolio-v3-positions'
 import type { PortfolioAssetsProps } from './portfolio-assets'
 
 export const PositionAssets = (props: PortfolioAssetsProps) => {

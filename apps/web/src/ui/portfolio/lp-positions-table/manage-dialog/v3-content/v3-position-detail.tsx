@@ -1,9 +1,8 @@
 import { useMemo } from 'react'
 import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { Amount } from 'sushi/currency'
-import { unwrapToken } from 'sushi/currency'
-import type { Position } from 'sushi/pool/sushiswap-v3'
+import { Amount } from 'sushi'
+import { unwrapEvmToken } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { PriceRangeSparklineCLMM } from '../../price-range-sparkline-clmm'
 import { Positions } from '../positions'
@@ -34,8 +33,8 @@ export const V3PositionDetail = ({ position }: { position: any }) => {
 
   const [_token0, _token1] = useMemo(
     () => [
-      token0 ? unwrapToken(token0) : undefined,
-      token1 ? unwrapToken(token1) : undefined,
+      token0 ? unwrapEvmToken(token0) : undefined,
+      token1 ? unwrapEvmToken(token1) : undefined,
     ],
     [token0, token1],
   )
@@ -43,8 +42,8 @@ export const V3PositionDetail = ({ position }: { position: any }) => {
   const amounts = useMemo(() => {
     if (positionDetails?.fees && _token0 && _token1)
       return [
-        Amount.fromRawAmount(_token0, BigInt(positionDetails.fees[0])),
-        Amount.fromRawAmount(_token1, BigInt(positionDetails.fees[1])),
+        new Amount(_token0, BigInt(positionDetails.fees[0])),
+        new Amount(_token1, BigInt(positionDetails.fees[1])),
       ]
 
     return [undefined, undefined]

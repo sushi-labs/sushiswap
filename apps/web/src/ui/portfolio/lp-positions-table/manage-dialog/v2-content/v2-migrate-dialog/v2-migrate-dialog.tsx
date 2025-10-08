@@ -18,46 +18,42 @@ import {
   Toggle,
 } from '@sushiswap/ui'
 import { useEffect, useMemo, useState } from 'react'
-import { usePoolsByTokenPair } from 'src/lib/hooks/usePoolsByTokenPair'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { SelectFeeConcentratedWidget } from 'src/ui/pool/add-liquidity/select-fee-concentrated-widget'
-import { type SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
-import { ManageDialogHeader } from '../../manage-dialog-header'
-import { Positions } from '../../positions'
-
 import { APPROVE_TAG_MIGRATE, Bound } from 'src/lib/constants'
 import { useTokenAmountDollarValues, useV2Pool } from 'src/lib/hooks'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import {
   V3MigrateContractConfig,
   useV3Migrate,
-} from 'src/lib/wagmi/hooks/migrate/hooks/useV3Migrate'
+} from 'src/lib/wagmi/hooks/migrate/hooks/use-v3-migrate'
 import type { V3MigrateChainId } from 'src/lib/wagmi/hooks/migrate/types'
 import { useSushiSwapV2Pool } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
 import { useTransactionDeadline } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
-import { usePoolPosition } from 'src/ui/pool'
-import { useConcentratedDerivedMintInfo } from 'src/ui/pool/ConcentratedLiquidityProvider'
-import { CustomMessage } from 'src/ui/pool/add-liquidity/custom-message'
-import { DoesNotExistMessage } from 'src/ui/pool/add-liquidity/does-not-exist-message'
-import { SelectPriceWidget } from 'src/ui/pool/add-liquidity/select-price-widget'
-import { formatUSD } from 'sushi'
-import type { SushiSwapV2ChainId } from 'sushi/config'
-import { Amount, Price } from 'sushi/currency'
-import type { Type } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
+import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
+import { Amount, Price, ZERO, formatUSD } from 'sushi'
 import {
+  type EvmCurrency,
   Position,
+  SushiSwapProtocol,
+  type SushiSwapV2ChainId,
+  type SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
   SushiSwapV3Pool,
   TickMath,
   priceToClosestTick,
-} from 'sushi/pool/sushiswap-v3'
-import { SushiSwapProtocol } from 'sushi/types'
-import type { Address } from 'viem'
+} from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { useWaitForTransactionReceipt } from 'wagmi'
+import { CustomMessage } from '~evm/[chainId]/_ui/add-liquidity/custom-message'
+import { DoesNotExistMessage } from '~evm/[chainId]/_ui/add-liquidity/does-not-exist-message'
+import { SelectFeeConcentratedWidget } from '~evm/[chainId]/_ui/add-liquidity/select-fee-concentrated-widget'
+import { SelectPriceWidget } from '~evm/[chainId]/_ui/add-liquidity/select-price-widget'
+import { useConcentratedDerivedMintInfo } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
+import { usePoolPosition } from '~evm/[chainId]/pool/v2/[address]/_common/ui/pool-position-provider'
 import { usePrices } from '../../../../../../app/(networks)/(evm)/_common/ui/price-provider/price-provider/use-prices'
+import { ManageDialogHeader } from '../../manage-dialog-header'
+import { Positions } from '../../positions'
 
 //@DEV @TODO - typed as any until real type is known
 export const V2MigrateDialog = ({
@@ -122,12 +118,12 @@ export const V2MigrateDialog = ({
   const v2SpotPrice = useMemo(
     () =>
       _token0 && _token1 && pair?.[1]?.reserve0 && pair?.[1]?.reserve1
-        ? new Price(
-            _token0.wrapped,
-            _token1.wrapped,
-            pair[1].reserve0.quotient,
-            pair[1].reserve1.quotient,
-          )
+        ? new Price({
+            base: _token0.wrap(),
+            quote: _token1.wrap(),
+            denominator: pair[1].reserve0.amount,
+            numerator: pair[1].reserve1.amount,
+          })
         : undefined,
     [_token0, _token1, pair],
   )
@@ -160,13 +156,13 @@ export const V2MigrateDialog = ({
   const token0Value = useMemo(
     () =>
       token0 && pair?.[1] && totalSupply && balance
-        ? Amount.fromRawAmount(
-            token0?.wrapped,
-            (balance.quotient *
-              (token0.wrapped.equals(pair[1].token0)
-                ? pair[1].reserve0.quotient
-                : pair[1].reserve1.quotient)) /
-              totalSupply.quotient,
+        ? new Amount(
+            token0?.wrap(),
+            (balance.amount *
+              (token0.wrap().isSame(pair[1].token0)
+                ? pair[1].reserve0.amount
+                : pair[1].reserve1.amount)) /
+              totalSupply.amount,
           )
         : undefined,
     [token0, pair, totalSupply, balance],
@@ -175,13 +171,13 @@ export const V2MigrateDialog = ({
   const token1Value = useMemo(
     () =>
       token1 && pair?.[1]?.reserve1 && totalSupply && balance
-        ? Amount.fromRawAmount(
-            token1?.wrapped,
-            (balance.quotient *
-              (token1.wrapped.equals(pair[1].token1)
-                ? pair[1].reserve1.quotient
-                : pair[1].reserve0.quotient)) /
-              totalSupply.quotient,
+        ? new Amount(
+            token1?.wrap(),
+            (balance.amount *
+              (token1.wrap().isSame(pair[1].token1)
+                ? pair[1].reserve1.amount
+                : pair[1].reserve0.amount)) /
+              totalSupply.amount,
           )
         : undefined,
     [token1, pair, totalSupply, balance],
@@ -189,7 +185,7 @@ export const V2MigrateDialog = ({
 
   const v3Address =
     token0 && token1 && feeAmount
-      ? SushiSwapV3Pool.getAddress(token0.wrapped, token1.wrapped, feeAmount)
+      ? SushiSwapV3Pool.getAddress(token0.wrap(), token1.wrap(), feeAmount)
       : undefined
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
   // the v3 tick is either the pool's tickCurrent, or the tick closest to the v2 spot price
@@ -216,8 +212,8 @@ export const V2MigrateDialog = ({
             pool:
               v3Pool ??
               new SushiSwapV3Pool(
-                token0.wrapped,
-                token1.wrapped,
+                token0.wrap(),
+                token1.wrap(),
                 feeAmount,
                 sqrtPrice,
                 0,
@@ -226,12 +222,12 @@ export const V2MigrateDialog = ({
               ),
             tickLower,
             tickUpper,
-            amount0: token0.wrapped.sortsBefore(token1.wrapped)
-              ? token0Value.quotient
-              : token1Value.quotient,
-            amount1: token0.wrapped.sortsBefore(token1.wrapped)
-              ? token1Value.quotient
-              : token0Value.quotient,
+            amount0: token0.wrap().sortsBefore(token1.wrap())
+              ? token0Value.amount
+              : token1Value.amount,
+            amount1: token0.wrap().sortsBefore(token1.wrap())
+              ? token1Value.amount
+              : token0Value.amount,
             useFullPrecision: true, // we want full precision for the theoretical position
           })
         : undefined,
@@ -267,10 +263,7 @@ export const V2MigrateDialog = ({
       positionAmount0 &&
       token0 &&
       token0Value &&
-      Amount.fromRawAmount(
-        token0,
-        token0Value.quotient - positionAmount0.quotient,
-      ),
+      new Amount(token0, token0Value.amount - positionAmount0.amount),
     [positionAmount0, token0, token0Value],
   )
 
@@ -279,10 +272,7 @@ export const V2MigrateDialog = ({
       positionAmount1 &&
       token1 &&
       token1Value &&
-      Amount.fromRawAmount(
-        token1,
-        token1Value.quotient - positionAmount1.quotient,
-      ),
+      new Amount(token1, token1Value.amount - positionAmount1.amount),
     [positionAmount1, token1, token1Value],
   )
 
@@ -317,8 +307,8 @@ export const V2MigrateDialog = ({
       pair: pool.address,
       liquidityToMigrate: balance,
       percentageToMigrate: 100,
-      token0: _token0?.wrapped,
-      token1: _token1?.wrapped,
+      token0: _token0?.wrap(),
+      token1: _token1?.wrap(),
       fee: feeAmount,
       tickLower: tickLower,
       tickUpper: tickUpper,
@@ -411,10 +401,10 @@ export const V2MigrateDialog = ({
                         = 1 {invertPrice ? _token1!.symbol : _token0!.symbol} (
                         {invertPrice
                           ? formatUSD(
-                              priceMap?.get(_token1?.wrapped.address!) || 0,
+                              priceMap?.get(_token1?.wrap().address!) || 0,
                             )
                           : formatUSD(
-                              priceMap?.get(_token0?.wrapped.address!) || 0,
+                              priceMap?.get(_token0?.wrap().address!) || 0,
                             )}
                         )
                       </div>
@@ -436,10 +426,10 @@ export const V2MigrateDialog = ({
                         = 1 {invertPrice ? _token1!.symbol : _token0!.symbol} (
                         {invertPrice
                           ? formatUSD(
-                              priceMap?.get(_token1?.wrapped.address!) || 0,
+                              priceMap?.get(_token1?.wrap().address!) || 0,
                             )
                           : formatUSD(
-                              priceMap?.get(_token0?.wrapped.address!) || 0,
+                              priceMap?.get(_token0?.wrap().address!) || 0,
                             )}
                         )
                       </div>
@@ -532,15 +522,15 @@ export const V2MigrateDialog = ({
                 >
                   <Checker.Guard
                     size="default"
-                    guardWhen={!balance?.greaterThan(ZERO)}
+                    guardWhen={!balance?.gt(ZERO)}
                     guardText="Not enough balance"
                   >
                     <Checker.Guard
                       size="default"
                       guardWhen={Boolean(
                         !position ||
-                          positionAmount0?.equalTo(ZERO) ||
-                          positionAmount1?.equalTo(ZERO),
+                          positionAmount0?.eq(ZERO) ||
+                          positionAmount1?.eq(ZERO),
                       )}
                       guardText="Enter valid range"
                     >
@@ -606,8 +596,8 @@ const TokenPriceToggle = ({
   invertPrice,
   setInvertPrice,
 }: {
-  token0: Type
-  token1: Type
+  token0: EvmCurrency
+  token1: EvmCurrency
   invertPrice: boolean
   setInvertPrice: (val: boolean) => void
 }) => {

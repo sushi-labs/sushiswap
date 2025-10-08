@@ -1,10 +1,9 @@
 import { useMemo } from 'react'
-import { Amounts } from 'src/lib/wagmi/systems/Checker/Amounts'
-import { Guard } from 'src/lib/wagmi/systems/Checker/Guard'
-import { Network } from 'src/lib/wagmi/systems/Checker/Network'
 import { TransferToken } from 'src/lib/wagmi/systems/Checker/TransferToken'
-import { Amount } from 'sushi/currency'
-import { Decimal } from 'sushi/math'
+import { Amounts } from 'src/lib/wagmi/systems/Checker/amounts'
+import { Guard } from 'src/lib/wagmi/systems/Checker/guard'
+import { Network } from 'src/lib/wagmi/systems/Checker/network'
+import { Amount } from 'sushi'
 import { useRecentRecipients } from '../../../lib/wagmi/hooks/hooks/use-recent-recipients'
 import { useSendTokens } from './send-token-provider'
 
@@ -18,14 +17,7 @@ export const SendButton = ({
     if (!state.token0) return []
     if (!state.amount || Number.isNaN(Number(state.amount))) return []
 
-    return [
-      Amount.fromRawAmount(
-        state.token0,
-        BigInt(
-          new Decimal(state.amount).mul(10 ** state.token0.decimals).toFixed(0),
-        ),
-      ),
-    ]
+    return [new Amount(state.token0, state.amount)]
   }, [state.token0, state.amount])
 
   return (

@@ -43,26 +43,30 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {
   useApproved,
   withCheckerRoot,
-} from 'src/lib/wagmi/systems/Checker/Provider'
-import { ConcentratedLiquidityProvider } from 'src/ui/pool/ConcentratedLiquidityProvider'
+} from 'src/lib/wagmi/systems/Checker/provider'
+import { Amount } from 'sushi'
+import {
+  type EvmAddress,
+  EvmChainId,
+  type EvmCurrency,
+  type EvmToken,
+  MERKL_SUPPORTED_CHAIN_IDS,
+  type SushiSwapV3ChainId,
+  SushiSwapV3Pool,
+  getEvmChainById,
+  isMerklChainId,
+  isWNativeSupported,
+} from 'sushi/evm'
+import { zeroAddress } from 'viem'
+import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
+import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
 import {
   ConcentratedLiquidityURLStateProvider,
   useConcentratedLiquidityURLState,
-} from 'src/ui/pool/ConcentratedLiquidityURLStateProvider'
-import { SelectFeeConcentratedWidget } from 'src/ui/pool/SelectFeeConcentratedWidget'
-import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
-import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
-import { ChainKey, EvmChain, EvmChainId } from 'sushi/chain'
-import {
-  MERKL_SUPPORTED_CHAIN_IDS,
-  type SushiSwapV3ChainId,
-  isMerklChainId,
-  isWNativeSupported,
-} from 'sushi/config'
-import { type Token, type Type, tryParseAmount } from 'sushi/currency'
-import { SushiSwapV3Pool } from 'sushi/pool/sushiswap-v3'
-import { type Address, zeroAddress } from 'viem'
-import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
+} from '../_ui/concentrated-liquidity-url-state-provider'
+import { SelectFeeConcentratedWidget } from '../_ui/select-fee-concentrated-widget'
+import { SelectNetworkWidget } from '../_ui/select-network-widget'
+import { SelectTokensWidget } from '../_ui/select-tokens-widget'
 
 const APPROVE_TAG = 'approve-incentivize'
 
@@ -101,15 +105,15 @@ const Incentivize = withCheckerRoot(() => {
   const [includeBlacklist, setIncludeBlacklist] = useState(false)
   const [startDate, setStartDate] = useState<Date | null>()
   const [endDate, setEndDate] = useState<Date | null>()
-  const [rewardToken, setRewardToken] = useState<Type>()
-  const [blacklist, setBlacklist] = useState<string[]>([])
+  const [rewardToken, setRewardToken] = useState<EvmCurrency>()
+  const [blacklist, setBlacklist] = useState<EvmAddress[]>([])
   const [distro1, setDistro1] = useState<number[]>([0])
   const [distro2, setDistro2] = useState<number[]>([0])
   const [distro3, setDistro3] = useState<number[]>([100])
   const totalDistro = distro1[0] + distro2[0] + distro3[0]
 
   const amount = useMemo(
-    () => [tryParseAmount(value, rewardToken)],
+    () => (rewardToken ? [Amount.tryFromHuman(rewardToken, value)] : []),
     [value, rewardToken],
   )
   const { data: pool } = useConcentratedLiquidityPool({
@@ -121,7 +125,7 @@ const Incentivize = withCheckerRoot(() => {
 
   const v3Address =
     token0 && token1 && feeAmount
-      ? SushiSwapV3Pool.getAddress(token0.wrapped, token1.wrapped, feeAmount)
+      ? SushiSwapV3Pool.getAddress(token0.wrap(), token1.wrap(), feeAmount)
       : undefined
 
   const numHours = useMemo(() => {
@@ -138,9 +142,9 @@ const Incentivize = withCheckerRoot(() => {
   const minAmount = useMemo(() => {
     if (!angleRewardTokens) return undefined
     const token = angleRewardTokens.find(
-      (el) => el.token.wrapped.address === rewardToken?.wrapped.address,
+      (el) => el.token.wrap().address === rewardToken?.wrap().address,
     )
-    if (token && numHours) return token.minimumAmountPerHour?.multiply(numHours)
+    if (token && numHours) return token.minimumAmountPerHour?.mul(`${numHours}`)
   }, [angleRewardTokens, numHours, rewardToken])
 
   const {
@@ -152,11 +156,10 @@ const Incentivize = withCheckerRoot(() => {
       amount[0] && v3Address && rewardToken && numHours && startDate
         ? [
             {
-              uniV3Pool: v3Address as Address,
-              rewardToken: rewardToken.wrapped.address as Address,
-              amount: amount[0].quotient,
-              positionWrappers:
-                blacklist.length > 0 ? (blacklist as Address[]) : [],
+              uniV3Pool: v3Address,
+              rewardToken: rewardToken.wrap().address,
+              amount: amount[0].amount,
+              positionWrappers: blacklist.length > 0 ? blacklist : [],
               wrapperTypes: blacklist.length > 0 ? [3] : [],
               propToken0: customize ? distro1[0] * 100 : 2000,
               propToken1: customize ? distro2[0] * 100 : 2000,
@@ -190,8 +193,8 @@ const Incentivize = withCheckerRoot(() => {
   const rewardTokens = useMemo(
     () =>
       angleRewardTokens
-        ? angleRewardTokens.reduce<Record<string, Token>>((acc, cur) => {
-            acc[cur.token.wrapped.address] = cur.token
+        ? angleRewardTokens.reduce<Record<string, EvmToken>>((acc, cur) => {
+            acc[cur.token.wrap().address] = cur.token
             return acc
           }, {})
         : {},
@@ -209,7 +212,7 @@ const Incentivize = withCheckerRoot(() => {
           title="On which network would you like to add rewards?"
           selectedNetwork={chainId}
           onSelect={(chainId) =>
-            router.push(`/${ChainKey[chainId]}/pool/incentivize`)
+            router.push(`/${getEvmChainById(chainId).key}/pool/incentivize`)
           }
           networks={MERKL_SUPPORTED_CHAIN_IDS}
         />
@@ -296,15 +299,12 @@ const Incentivize = withCheckerRoot(() => {
             currencyLoading={angleRewardTokensLoading}
             allowNative={false}
             hidePinnedTokens={true}
-            hideSearch={true}
             {...(numHours &&
               rewardToken &&
               amount[0] &&
               minAmount &&
-              amount[0].lessThan(minAmount) && {
-                error: `Min. ${minAmount.toSignificant(4)} ${
-                  rewardToken.symbol
-                }`,
+              amount[0].lt(minAmount) && {
+                error: `Min. ${minAmount.toSignificant(4)} ${rewardToken.symbol}`,
               })}
           />
           <p
@@ -469,7 +469,7 @@ const Incentivize = withCheckerRoot(() => {
               <ChipInput
                 delimiters={[',', ' ', ';', ':']}
                 values={blacklist}
-                onValueChange={setBlacklist}
+                onValueChange={(value) => setBlacklist(value as EvmAddress[])}
                 placeholder="Address"
               />
               <p
@@ -479,9 +479,7 @@ const Incentivize = withCheckerRoot(() => {
                 })}
               >
                 {blacklist.length > 0
-                  ? `${blacklist.length} address${
-                      blacklist.length > 1 ? 'es' : ''
-                    } blacklisted.`
+                  ? `${blacklist.length} address${blacklist.length > 1 ? 'es' : ''} blacklisted.`
                   : 'The addresses to blacklist, use commas to separate addresses.'}
               </p>
             </div>
@@ -586,8 +584,8 @@ const Incentivize = withCheckerRoot(() => {
                                                 title="Network"
                                               >
                                                 {
-                                                  EvmChain.from(pool.chainId)
-                                                    ?.name
+                                                  getEvmChainById(pool.chainId)
+                                                    .name
                                                 }
                                               </List.KeyValue>
                                             ) : null}
@@ -737,7 +735,7 @@ const Incentivize = withCheckerRoot(() => {
           testId="incentivize-confirmation-modal"
           successMessage={`Successfully incentivized the ${token0.symbol}/${token1.symbol} V3 pool`}
           buttonText="Go to pool"
-          buttonLink={`/${ChainKey[pool.chainId]}/pool/v3/${v3Address}`}
+          buttonLink={`/${getEvmChainById(pool.chainId).key}/pool/v3/${v3Address}`}
           txHash={data}
         />
       ) : null}

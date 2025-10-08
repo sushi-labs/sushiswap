@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { ChainId } from 'sushi/chain'
+import type { ChainId } from 'sushi'
 
 export interface BaseNotification {
   account: string | `0x${string}` | undefined

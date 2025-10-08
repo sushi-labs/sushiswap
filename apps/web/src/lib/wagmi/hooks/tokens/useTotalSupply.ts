@@ -2,24 +2,25 @@
 
 import { keepPreviousData, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
-import { Amount, type Token } from 'sushi/currency'
+import { Amount } from 'sushi'
+import type { EvmToken } from 'sushi/evm'
 import { type Address, erc20Abi } from 'viem'
 import { useReadContracts } from 'wagmi'
 
-function bigIntToCurrencyAmount(totalSupply?: bigint, token?: Token) {
-  return token?.isToken && totalSupply
-    ? Amount.fromRawAmount(token, totalSupply.toString())
+function bigIntToCurrencyAmount(totalSupply?: bigint, token?: EvmToken) {
+  return token?.type === 'token' && totalSupply
+    ? new Amount(token, totalSupply.toString())
     : undefined
 }
 
 export const useMultipleTotalSupply = (
-  tokens?: Token[],
-): Record<string, Amount<Token> | undefined> | undefined => {
+  tokens?: EvmToken[],
+): Record<string, Amount<EvmToken> | undefined> | undefined => {
   const contracts = useMemo(() => {
     return (
       tokens?.map((token) => {
         return {
-          address: token.wrapped.address as Address,
+          address: token.wrap().address as Address,
           chainId: token.chainId,
           abi: erc20Abi,
           functionName: 'totalSupply' as const,
@@ -50,9 +51,9 @@ export const useMultipleTotalSupply = (
   return useMemo(() => {
     return data
       ?.map((cs, i) => bigIntToCurrencyAmount(cs.result, tokens?.[i]))
-      .reduce<Record<string, Amount<Token> | undefined>>((acc, curr, i) => {
+      .reduce<Record<string, Amount<EvmToken> | undefined>>((acc, curr, i) => {
         if (curr && tokens?.[i]) {
-          acc[tokens[i]?.wrapped.address] = curr
+          acc[tokens[i]?.wrap().address] = curr
         }
         return acc
       }, {})
@@ -61,11 +62,13 @@ export const useMultipleTotalSupply = (
 
 // returns undefined if input token is undefined, or fails to get token contract,
 // or contract total supply cannot be fetched
-export const useTotalSupply = (token?: Token): Amount<Token> | undefined => {
+export const useTotalSupply = (
+  token?: EvmToken,
+): Amount<EvmToken> | undefined => {
   const tokens = useMemo(() => (token ? [token] : undefined), [token])
   const resultMap = useMultipleTotalSupply(tokens)
   return useMemo(
-    () => (token ? resultMap?.[token.wrapped.address] : undefined),
+    () => (token ? resultMap?.[token.wrap().address] : undefined),
     [resultMap, token],
   )
 }

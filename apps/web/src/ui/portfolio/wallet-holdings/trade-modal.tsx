@@ -15,12 +15,12 @@ import {
 } from '@sushiswap/ui'
 import { useState } from 'react'
 import { QuickSelectProvider } from 'src/lib/wagmi/components/token-selector/quick-select/quick-select-provider'
-import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
-import { TradeWidget } from 'src/ui/swap/trade/trade-widget'
-import type { Type } from 'sushi/currency'
+import type { EvmCurrency } from 'sushi/evm'
+import { useDerivedStateSimpleSwap } from '~evm/[chainId]/[trade]/_ui/swap/derivedstate-simple-swap-provider'
+import { TradeWidget } from '~evm/[chainId]/[trade]/_ui/swap/trade/trade-widget'
 
 interface TradeModalProps {
-  token: Type
+  token: EvmCurrency
   side: 'buy' | 'sell'
   triggerClassName?: string
   setIsModalOpen?: (isOpen: boolean) => void

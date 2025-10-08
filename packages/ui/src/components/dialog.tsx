@@ -15,7 +15,8 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { type ChainId, EvmChain } from 'sushi/chain'
+import { type ChainId, getChainById } from 'sushi'
+
 import { CheckMarkIcon } from '../icons/CheckMarkIcon'
 import { FailedMarkIcon } from '../icons/FailedMarkIcon'
 import {
@@ -36,7 +37,7 @@ const dialogVariants = cva(
           'rounded-b-none md:rounded-b-2xl bottom-0 md:bottom-[unset] fixed left-[50%] md:top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] md:translate-y-[-50%] gap-4 bg-white dark:bg-slate-800 black:bg-secondary p-6 shadow-lg rounded-2xl md:w-full data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-bottom-[48%] md:data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-bottom-[48%] md:data-[state=open]:slide-in-from-top-[48%]',
         opaque: 'px-4 fixed z-50 top-4 grid w-full max-w-xl',
         'semi-opaque':
-          'rounded-none bottom-0 md:bottom-[unset] fixed left-[50%] md:top-[50%] z-50 grid w-full translate-x-[-50%] md:translate-y-[-50%] gap-4 bg-white dark:bg-slate-900 p-6 md:w-full data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-bottom-[48%] md:data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-bottom-[48%] md:data-[state=open]:slide-in-from-top-[48%]',
+          'rounded-none bottom-0 lg:bottom-[unset] fixed left-[50%] lg:top-[50%] z-50 grid w-full translate-x-[-50%] lg:translate-y-[-50%] gap-4 bg-white dark:bg-slate-900 p-6 lg:w-full data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-bottom-[48%] lg:data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-bottom-[48%] lg:data-[state=open]:slide-in-from-top-[48%]',
       },
     },
     defaultVariants: {
@@ -244,7 +245,7 @@ interface DialogConfirmProps extends DialogContentProps {
   successMessage: ReactNode
   buttonLink?: string
   buttonText?: string
-  txHash: string | undefined
+  txHash: `0x${string}` | undefined
   status: 'pending' | 'success' | 'error'
 }
 
@@ -279,7 +280,11 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
                 Waiting for your{' '}
                 <a
                   target="_blank"
-                  href={txHash ? EvmChain.from(chainId)?.getTxUrl(txHash) : ''}
+                  href={
+                    txHash
+                      ? getChainById(chainId).getTransactionUrl(txHash)
+                      : ''
+                  }
                   className="cursor-pointer text-blue hover:underline"
                   rel="noreferrer"
                 >
@@ -290,7 +295,9 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
             ) : status === 'success' ? (
               <a
                 target="_blank"
-                href={txHash ? EvmChain.from(chainId)?.getTxUrl(txHash) : ''}
+                href={
+                  txHash ? getChainById(chainId).getTransactionUrl(txHash) : ''
+                }
                 className="cursor-pointer text-blue hover:underline"
                 rel="noreferrer"
               >
@@ -299,7 +306,9 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
             ) : (
               <a
                 target="_blank"
-                href={txHash ? EvmChain.from(chainId)?.getTxUrl(txHash) : ''}
+                href={
+                  txHash ? getChainById(chainId).getTransactionUrl(txHash) : ''
+                }
                 className="cursor-pointer text-blue hover:underline"
                 rel="noreferrer"
               >

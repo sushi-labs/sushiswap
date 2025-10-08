@@ -1,9 +1,8 @@
-import { QuickSelectProvider } from 'src/lib/wagmi/components/token-selector/quick-select/quick-select-provider'
-import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
+import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
 import { EdgeProvider } from 'src/providers/edge-config-provider'
 import { SendTokensProvider } from 'src/ui/portfolio/wallet-holdings/send-token-provider'
-import { DerivedstateSimpleSwapProvider } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
-import { getTradeEdgeConfig } from 'src/ui/swap/trade/trade-edge-config'
+import { DerivedstateSimpleSwapProvider } from '../[trade]/_ui/swap/derivedstate-simple-swap-provider'
+import { getTradeEdgeConfig } from '../[trade]/_ui/swap/trade/trade-edge-config'
 
 export const Providers = async ({
   children,

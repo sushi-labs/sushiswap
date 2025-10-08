@@ -1,6 +1,8 @@
 import { usePathname } from 'next/navigation'
-import type { TradeMode } from 'src/ui/swap/trade/config'
-import { TRADE_MODES } from 'src/ui/swap/trade/config'
+import {
+  TRADE_MODES,
+  type TradeMode,
+} from '~evm/[chainId]/[trade]/_ui/swap/trade/config'
 
 export const useTradeMode = (): { tradeMode: TradeMode } => {
   const pathname = usePathname()

@@ -5,9 +5,8 @@ import {
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useMemo } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { TempChainIds } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
-import type { Type } from 'sushi/currency'
+import type { EvmCurrency } from 'sushi/evm'
 import type { Address } from 'viem'
 import { useSearchTokensV2 } from '../hooks/use-search-tokens-v2'
 import {
@@ -18,9 +17,9 @@ import {
 interface TokenSelectorSearch {
   chainId?: TokenListV2ChainId
   search: string
-  onSelect(currency: Type): void
-  onShowInfo(currency: Type | false): void
-  selected: Type | undefined
+  onSelect(currency: EvmCurrency): void
+  onShowInfo(currency: EvmCurrency | false): void
+  selected: EvmCurrency | undefined
   showChainOptions: boolean
 }
 
@@ -40,14 +39,18 @@ export function TokenSelectorSearchV2({
   showChainOptions,
 }: TokenSelectorSearch) {
   const { networkOptions } = useNetworkOptions()
+  const searchChainIds = useMemo(
+    () =>
+      chainId && isTokenListV2ChainId(chainId)
+        ? [chainId]
+        : chainId && !isTokenListV2ChainId(chainId)
+          ? []
+          : networkOptions.filter(isTokenListV2ChainId),
+    [chainId, networkOptions],
+  )
   const { data, priceMap, isError, isLoading, fetchNextPage, hasMore } =
     useSearchTokensV2({
-      chainIds:
-        chainId && isTokenListV2ChainId(chainId)
-          ? [chainId]
-          : chainId && !isTokenListV2ChainId(chainId)
-            ? []
-            : networkOptions.filter(isTokenListV2ChainId),
+      chainIds: searchChainIds,
       search,
       pagination: {
         initialPage: 0,
@@ -71,8 +74,11 @@ export function TokenSelectorSearchV2({
 
     if (data) {
       data.forEach((token) => {
-        if (!customTokens.includes(token.address) && token.approved === false) {
-          set.add(token.address.toLowerCase() as Address)
+        if (
+          !customTokens.includes(token.address) &&
+          token?.metadata?.approved === false
+        ) {
+          set.add(token.address)
         }
       })
     }

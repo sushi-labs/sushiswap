@@ -21,9 +21,6 @@ import {
   useUnderlyingTokenBalanceFromPool,
 } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { gasMargin, slippageAmount } from 'sushi/calculate'
-import { Amount, Native } from 'sushi/currency'
-import { Percent } from 'sushi/math'
 import { type SendTransactionReturnType, encodeFunctionData } from 'viem'
 
 import type { V2Pool } from '@sushiswap/graph-client/data-api'
@@ -46,8 +43,9 @@ import {
   useApproved,
   useSignature,
   withCheckerRoot,
-} from 'src/lib/wagmi/systems/Checker/Provider'
-import { usePoolPosition } from 'src/ui/pool'
+} from 'src/lib/wagmi/systems/Checker/provider'
+import { Amount, Percent, subtractSlippage } from 'sushi'
+import { EvmNative, addGasMargin } from 'sushi/evm'
 import {
   type UseCallParameters,
   useAccount,
@@ -55,6 +53,7 @@ import {
   usePublicClient,
   useSendTransaction,
 } from 'wagmi'
+import { usePoolPosition } from '~evm/[chainId]/pool/v2/[address]/_common/ui/pool-position-provider'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { RemoveSectionWidget } from './remove-section-widget'
 
@@ -87,7 +86,11 @@ export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
 
     const [percentage, setPercentage] = useState<string>('0')
     const percentToRemove = useMemo(
-      () => new Percent(percentage, 100),
+      () =>
+        new Percent({
+          numerator: Number(percentage),
+          denominator: 100,
+        }),
       [percentage],
     )
     const percentToRemoveDebounced = useDebounce(percentToRemove, 300)
@@ -115,13 +118,13 @@ export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
     const currencyAToRemove = useMemo(
       () =>
         token0
-          ? percentToRemoveDebounced?.greaterThan('0') && underlying0
-            ? Amount.fromRawAmount(
+          ? percentToRemoveDebounced?.gt('0') && underlying0
+            ? Amount.tryFromHuman(
                 token0,
-                percentToRemoveDebounced.multiply(underlying0.quotient)
-                  .quotient || '0',
+                percentToRemoveDebounced.mul(underlying0.amount).toString() ||
+                  '0',
               )
-            : Amount.fromRawAmount(token0, '0')
+            : Amount.tryFromHuman(token0, '0')
           : undefined,
       [percentToRemoveDebounced, token0, underlying0],
     )
@@ -129,13 +132,13 @@ export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
     const currencyBToRemove = useMemo(
       () =>
         token1
-          ? percentToRemoveDebounced?.greaterThan('0') && underlying1
-            ? Amount.fromRawAmount(
+          ? percentToRemoveDebounced?.gt('0') && underlying1
+            ? Amount.tryFromHuman(
                 token1,
-                percentToRemoveDebounced.multiply(underlying1.quotient)
-                  .quotient || '0',
+                percentToRemoveDebounced.mul(underlying1.amount).toString() ||
+                  '0',
               )
-            : Amount.fromRawAmount(token1, '0')
+            : Amount.tryFromHuman(token1, '0')
           : undefined,
       [percentToRemoveDebounced, token1, underlying1],
     )
@@ -143,15 +146,21 @@ export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
     const [minAmount0, minAmount1] = useMemo(() => {
       return [
         currencyAToRemove
-          ? Amount.fromRawAmount(
+          ? Amount.tryFromHuman(
               currencyAToRemove.currency,
-              slippageAmount(currencyAToRemove, slippageTolerance)[0],
+              subtractSlippage(
+                currencyAToRemove,
+                slippageTolerance.toNumber(),
+              ).toString(),
             )
           : undefined,
         currencyBToRemove
-          ? Amount.fromRawAmount(
+          ? Amount.tryFromHuman(
               currencyBToRemove.currency,
-              slippageAmount(currencyBToRemove, slippageTolerance)[0],
+              subtractSlippage(
+                currencyBToRemove,
+                slippageTolerance.toNumber(),
+              ).toString(),
             )
           : undefined,
       ]
@@ -163,10 +172,10 @@ export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
     const amountToRemove = useMemo(() => {
       return balance &&
         percentToRemoveDebounced &&
-        percentToRemoveDebounced.greaterThan('0')
-        ? Amount.fromRawAmount(
+        percentToRemoveDebounced.gt('0')
+        ? Amount.tryFromHuman(
             balance.currency,
-            percentToRemoveDebounced.multiply(balance.quotient).quotient,
+            percentToRemoveDebounced.mul(balance.amount).toString() || '0',
           )
         : undefined
     }, [balance, percentToRemoveDebounced])
@@ -247,12 +256,13 @@ export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
         }
 
         const token1IsNative =
-          Native.onChain(_pool.chainId).wrapped.address ===
-          pool.token1.wrapped.address
+          EvmNative.fromChainId(_pool.chainId).wrap().address ===
+          pool.token1.wrap().address
 
         const withNative =
           token1IsNative ||
-          Native.onChain(_pool.chainId).wrapped.address === pool.token0.address
+          EvmNative.fromChainId(_pool.chainId).wrap().address ===
+            pool.token0.wrap().address
 
         const config = (() => {
           if (signature?.message?.deadline) {
@@ -264,15 +274,15 @@ export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
                 ],
                 args: [
                   token1IsNative
-                    ? pool.token0.wrapped.address
-                    : pool.token1.wrapped.address,
-                  amountToRemove.quotient,
+                    ? pool.token0.wrap().address
+                    : pool.token1.wrap().address,
+                  amountToRemove.amount,
                   token1IsNative
-                    ? debouncedMinAmount0.quotient
-                    : debouncedMinAmount1.quotient,
+                    ? debouncedMinAmount0.amount
+                    : debouncedMinAmount1.amount,
                   token1IsNative
-                    ? debouncedMinAmount1.quotient
-                    : debouncedMinAmount0.quotient,
+                    ? debouncedMinAmount1.amount
+                    : debouncedMinAmount0.amount,
                   address,
                   signature.message.deadline,
                   false,
@@ -286,11 +296,11 @@ export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
             return {
               functionNames: ['removeLiquidityWithPermit'],
               args: [
-                pool.token0.wrapped.address,
-                pool.token1.wrapped.address,
-                amountToRemove.quotient,
-                debouncedMinAmount0.quotient,
-                debouncedMinAmount1.quotient,
+                pool.token0.wrap().address,
+                pool.token1.wrap().address,
+                amountToRemove.amount,
+                debouncedMinAmount0.amount,
+                debouncedMinAmount1.amount,
                 address,
                 signature.message.deadline,
                 false,
@@ -309,15 +319,15 @@ export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
               ],
               args: [
                 token1IsNative
-                  ? pool.token0.wrapped.address
-                  : pool.token1.wrapped.address,
-                amountToRemove.quotient,
+                  ? pool.token0.wrap().address
+                  : pool.token1.wrap().address,
+                amountToRemove.amount,
                 token1IsNative
-                  ? debouncedMinAmount0.quotient
-                  : debouncedMinAmount1.quotient,
+                  ? debouncedMinAmount0.amount
+                  : debouncedMinAmount1.amount,
                 token1IsNative
-                  ? debouncedMinAmount1.quotient
-                  : debouncedMinAmount0.quotient,
+                  ? debouncedMinAmount1.amount
+                  : debouncedMinAmount0.amount,
                 address,
                 deadline,
               ],
@@ -327,11 +337,11 @@ export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
           return {
             functionNames: ['removeLiquidity'],
             args: [
-              pool.token0.wrapped.address,
-              pool.token1.wrapped.address,
-              amountToRemove.quotient,
-              debouncedMinAmount0.quotient,
-              debouncedMinAmount1.quotient,
+              pool.token0.wrap().address,
+              pool.token1.wrap().address,
+              amountToRemove.amount,
+              debouncedMinAmount0.amount,
+              debouncedMinAmount1.amount,
               address,
               deadline,
             ],
@@ -344,7 +354,7 @@ export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
               const estimatedGas: bigint = await (
                 contract.estimateGas[methodName] as any
               )(config.args)
-              return gasMargin(estimatedGas)
+              return addGasMargin(estimatedGas)
             } catch (e) {
               console.error(e)
               return undefined

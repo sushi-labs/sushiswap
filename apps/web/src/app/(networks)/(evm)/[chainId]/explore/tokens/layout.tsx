@@ -2,12 +2,11 @@ import { Container } from '@sushiswap/ui'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type React from 'react'
-import { GlobalStatsCharts } from 'src/ui/explore/global-stats-charts'
-import { TokensFiltersProvider } from 'src/ui/token/TokensFiltersProvider'
-import type { EvmChainId } from 'sushi/chain'
-import { SUSHISWAP_SUPPORTED_CHAIN_IDS, isSushiSwapChainId } from 'sushi/config'
+import { SUSHISWAP_SUPPORTED_CHAIN_IDS, isSushiSwapChainId } from 'sushi/evm'
 import { Header } from '../../header'
+import { GlobalStatsCharts } from '../_ui/global-stats-charts'
 import { NavigationItems } from '../navigation-items'
+import { TokensFiltersProvider } from './_ui/tokens-filters-provider'
 
 export const metadata: Metadata = {
   title: 'Tokens',
@@ -22,7 +21,7 @@ export default async function ExploreLayout(props: {
 
   const { children } = props
 
-  const chainId = +params.chainId as EvmChainId
+  const chainId = +params.chainId
 
   if (!isSushiSwapChainId(chainId)) {
     return notFound()
@@ -30,10 +29,7 @@ export default async function ExploreLayout(props: {
 
   return (
     <>
-      <Header
-        chainId={chainId}
-        supportedNetworks={SUSHISWAP_SUPPORTED_CHAIN_IDS}
-      />
+      <Header chainId={chainId} networks={SUSHISWAP_SUPPORTED_CHAIN_IDS} />
       <main className="flex flex-col h-full flex-1 animate-slide">
         <Container maxWidth="7xl" className="px-4 py-4">
           <GlobalStatsCharts chainId={chainId} />

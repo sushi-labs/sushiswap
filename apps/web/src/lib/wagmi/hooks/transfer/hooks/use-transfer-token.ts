@@ -2,8 +2,8 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo, useState } from 'react'
-import { erc20Abi_transfer } from 'sushi/abi'
-import type { Amount, Type } from 'sushi/currency'
+import { type Amount, ZERO } from 'sushi'
+import { type EvmCurrency, erc20Abi_transfer } from 'sushi/evm'
 import {
   type Address,
   ContractFunctionZeroDataError,
@@ -12,7 +12,6 @@ import {
 } from 'viem'
 import {
   useAccount,
-  useFeeHistory,
   usePublicClient,
   useSendTransaction,
   useSimulateContract,
@@ -28,7 +27,7 @@ export enum TransferState {
 
 interface UseTokenTransferParams {
   sendTo: Address | undefined
-  amount: Amount<Type> | undefined
+  amount: Amount<EvmCurrency> | undefined
   enabled?: boolean
 }
 
@@ -47,7 +46,7 @@ export const useTransferToken = ({
 
   const simulationEnabled = Boolean(
     amount?.currency?.isToken &&
-      amount?.greaterThan(0) &&
+      amount?.gt(ZERO) &&
       sendTo &&
       address &&
       enabled,
@@ -60,9 +59,9 @@ export const useTransferToken = ({
   >({
     chainId: amount?.currency.chainId,
     abi: erc20Abi_transfer,
-    address: amount?.currency?.wrapped?.address,
+    address: amount?.currency?.wrap()?.address,
     functionName: 'transfer',
-    args: [sendTo as Address, amount ? amount.quotient : 0n],
+    args: [sendTo as Address, amount ? amount.amount : 0n],
     scopeKey: 'transfer-std',
     query: {
       enabled: simulationEnabled,
@@ -96,7 +95,7 @@ export const useTransferToken = ({
           promise: receiptPromise,
           summary: {
             pending: `Sending ${amount.currency.symbol}`,
-            completed: `Successfully sent ${amount.toExact()} ${amount.currency.symbol}`,
+            completed: `Successfully sent ${amount.toString()} ${amount.currency.symbol}`,
             failed: `Something went wrong sending ${amount.currency.symbol}`,
           },
           groupTimestamp: ts,
@@ -142,7 +141,7 @@ export const useTransferToken = ({
       return () => {
         nativeTx.sendTransaction({
           to: sendTo,
-          value: amount.quotient,
+          value: amount.amount,
           account: address,
         })
         setSuccess(false)

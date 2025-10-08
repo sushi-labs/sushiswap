@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { NetworkFilterSelector } from 'src/ui/common/network-filter-selector'
+import { NetworkFilterSelector } from 'src/app/(networks)/_ui/network-filter-selector'
 import type { ChainId } from 'sushi'
 
 //@dev these will come from lp holdings

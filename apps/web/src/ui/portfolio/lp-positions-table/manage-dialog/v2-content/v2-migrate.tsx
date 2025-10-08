@@ -3,9 +3,9 @@ import { type V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import { Button } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
-import { PoolPositionProvider } from 'src/ui/pool'
-import { ConcentratedLiquidityProvider } from 'src/ui/pool/ConcentratedLiquidityProvider'
+import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
+import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
+import { PoolPositionProvider } from '~evm/[chainId]/pool/v2/[address]/_common/ui/pool-position-provider'
 import { V2MigrateDialog } from './v2-migrate-dialog/v2-migrate-dialog'
 
 export const V2Migrate = ({ position }: { position: any }) => {

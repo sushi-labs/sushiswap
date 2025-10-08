@@ -1,15 +1,14 @@
 import { getV2Pool } from '@sushiswap/graph-client/data-api'
+import ms from 'ms'
 import type { Metadata } from 'next'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import type { EvmChainId } from 'sushi'
-import { isSushiSwapV2ChainId } from 'sushi/config'
+import { type EvmChainId, isSushiSwapV2ChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
 
 export async function generateMetadata(props: {
   params: Promise<{ chainId: string; address: string }>
 }): Promise<Metadata> {
-  console.log('generateMetadata')
   const params = await props.params
   const { chainId: _chainId, address } = params
   const chainId = +_chainId as EvmChainId
@@ -25,7 +24,7 @@ export async function generateMetadata(props: {
     async () => getV2Pool({ chainId, address }, { retries: 3 }),
     ['v2', 'pool', `${chainId}:${address}`],
     {
-      revalidate: 60 * 15,
+      revalidate: ms('15m'),
     },
   )()
 
@@ -60,7 +59,7 @@ export default async function Layout(props: {
     async () => getV2Pool({ chainId, address }, { retries: 3 }),
     ['v2', 'pool', `${chainId}:${address}`],
     {
-      revalidate: 60 * 15,
+      revalidate: ms('15m'),
     },
   )()
 

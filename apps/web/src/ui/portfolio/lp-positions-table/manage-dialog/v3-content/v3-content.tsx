@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import type { Position } from 'sushi'
+import type { Position } from 'sushi/evm'
 import type { LPTabValueType } from '../manage-dialog'
 import { V3Manage } from './v3-manage'
 import { V3PositionDetail } from './v3-position-detail'

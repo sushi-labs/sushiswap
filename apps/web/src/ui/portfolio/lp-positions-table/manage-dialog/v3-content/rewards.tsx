@@ -13,9 +13,9 @@ import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useClaimableRewards } from 'src/lib/hooks/react-query'
 import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { ClaimRewardsButton } from 'src/ui/pool/ClaimRewardsButton'
 import { formatUSD } from 'sushi'
-import { type MerklChainId, isMerklChainId } from 'sushi/config'
+import { type MerklChainId, isMerklChainId } from 'sushi/evm'
+import { ClaimRewardsButton } from '~evm/claim/rewards/_common/ui/claim-rewards-button'
 
 export const Rewards = ({ position }: { position: any }) => {
   const { data: owner } = useConcentratedPositionOwner({

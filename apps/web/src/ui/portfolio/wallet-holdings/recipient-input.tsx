@@ -1,6 +1,6 @@
 import { IdentificationIcon } from '@heroicons/react/24/solid'
 import { Button, classNames } from '@sushiswap/ui'
-import { shortenAddress } from 'sushi/format'
+import { shortenEvmAddress } from 'sushi/evm'
 import { useSendTokens } from './send-token-provider'
 
 export const RecipientInput = ({
@@ -27,7 +27,7 @@ export const RecipientInput = ({
             className="p-0 m-0 w-full font-medium bg-transparent border-none outline-none focus:ring-0 text-[20px] !text-slate-900 dark:!text-slate-200 placeholder:text-slate-900 placeholder:dark:text-slate-200"
             value={
               isRecipientValid && !isEnsName
-                ? shortenAddress(state.resolvedRecipientAddress, 12)
+                ? shortenEvmAddress(state.resolvedRecipientAddress, 9)
                 : state.rawRecipientInput
             }
             onChange={(e) => mutate.setRawRecipientInput(e.target.value.trim())}

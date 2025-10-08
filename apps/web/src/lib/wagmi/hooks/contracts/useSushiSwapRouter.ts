@@ -1,11 +1,11 @@
 'use client'
 
 import { useMemo } from 'react'
-import { uniswapV2RouterAbi } from 'sushi/abi'
 import {
   SUSHISWAP_V2_ROUTER_ADDRESS,
   type SushiSwapV2ChainId,
-} from 'sushi/config'
+  uniswapV2RouterAbi,
+} from 'sushi/evm'
 import { type PublicClient, getContract } from 'viem'
 import { usePublicClient, useWalletClient } from 'wagmi'
 

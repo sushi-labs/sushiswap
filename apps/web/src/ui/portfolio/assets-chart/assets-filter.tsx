@@ -12,11 +12,10 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useState } from 'react'
-import { PopoverDrawer } from 'src/ui/common/popover-drawer'
-import { NetworkMenu } from 'src/ui/swap/trade/favorite-recent/network-menu'
-import type { EvmChainId } from 'sushi/chain'
-import { Token, type Type } from 'sushi/currency'
-import { formatPercent, formatUSD } from 'sushi/format'
+import { PopoverDrawer } from 'src/app/(networks)/_ui/popover-drawer'
+import { formatPercent, formatUSD } from 'sushi'
+import { type EvmChainId, type EvmCurrency, EvmToken } from 'sushi/evm'
+import { NetworkMenu } from '~evm/[chainId]/[trade]/_ui/swap/trade/favorite-recent/network-menu'
 
 const PLACEHOLDER_ASSETS = [
   {
@@ -70,10 +69,12 @@ export const AssetsFilter = ({
   setSelectedToken,
   selectedToken,
 }: {
-  setSelectedToken: (token: Type | null) => void
-  selectedToken: Type | null
+  setSelectedToken: (token: EvmCurrency | null) => void
+  selectedToken: EvmCurrency | null
 }) => {
-  const [selectedNetwork, setSelectedNetwork] = useState<number | null>(null)
+  const [selectedNetwork, setSelectedNetwork] = useState<EvmChainId | null>(
+    null,
+  )
   const [open, setOpen] = useState(false)
 
   const token = {
@@ -127,8 +128,8 @@ export const AssetsFilter = ({
                   <Currency.Icon
                     disableLink
                     currency={
-                      new Token({
-                        address: selectedToken?.wrapped.address,
+                      new EvmToken({
+                        address: selectedToken?.wrap().address,
                         name: selectedToken?.name,
                         symbol: selectedToken?.symbol,
                         chainId: selectedToken?.chainId as EvmChainId,
@@ -187,9 +188,9 @@ export const AssetsFilter = ({
                   value={`${asset.currency.name}__${asset.chainId}`}
                   onSelect={() => {
                     setSelectedToken(
-                      new Token({
+                      new EvmToken({
                         chainId: asset.chainId as EvmChainId,
-                        address: asset.currency.address,
+                        address: asset.currency.address as `0x${string}`,
                         decimals: asset.currency.decimals,
                         symbol: asset.currency.symbol,
                         name: asset.currency.name,
@@ -216,9 +217,10 @@ export const AssetsFilter = ({
                             width={28}
                             height={28}
                             currency={
-                              new Token({
+                              new EvmToken({
                                 chainId: asset.chainId as EvmChainId,
-                                address: asset.currency.address,
+                                address: asset.currency
+                                  .address as `0x${string}`,
                                 decimals: asset.currency.decimals,
                                 symbol: asset.currency.symbol,
                                 name: asset.currency.name,

@@ -5,8 +5,7 @@ import { FourSquaresIcon } from '@sushiswap/ui/icons/FourSquaresIcon'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useRef, useState } from 'react'
 import { formatUSD } from 'sushi'
-import type { EvmChainId } from 'sushi/chain'
-import { evmChains } from 'sushi/chain'
+import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 import { useOverflow } from '../lp-positions-table/trending'
 
 export const PortfolioSubHeader = () => {
@@ -108,7 +107,7 @@ const AssetItem = ({
       />
 
       <div className="flex gap-1 items-start">
-        <span>{evmChains[chainId].name}</span>
+        <span>{getEvmChainById(chainId).name}</span>
         <span>{formatUSD(usdValue)}</span>
       </div>
     </Button>

@@ -14,7 +14,7 @@ export const VerifyContact = ({
 
   return (
     <Collapsible open={isRecipientValid && !isContact}>
-      <div className="flex justify-between items-center -mt-2 -mb-1">
+      <div className="flex justify-between items-center">
         <span className="text-sm font-medium text-muted-foreground">
           This address is not in your contact. Please review carefully.
         </span>

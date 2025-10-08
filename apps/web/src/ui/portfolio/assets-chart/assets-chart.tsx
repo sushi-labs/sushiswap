@@ -26,11 +26,11 @@ import { useTheme } from 'next-themes'
 import { useEffect, useMemo, useState } from 'react'
 import { useCallback } from 'react'
 import type { FC, MouseEventHandler, ReactNode } from 'react'
-import type { Type } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
+import type { EvmCurrency } from 'sushi/evm'
 import tailwindConfig from 'tailwind.config'
 import resolveConfig from 'tailwindcss/resolveConfig'
-import { Wrapper } from '../../swap/trade/wrapper'
+import { Wrapper } from '~evm/[chainId]/[trade]/_ui/swap/trade/wrapper'
 import { ActionButtons } from './action-buttons'
 import { AssetsFilter } from './assets-filter'
 
@@ -192,7 +192,7 @@ export const MOCK_TRANSACTIONS = [
 const tailwind = resolveConfig(tailwindConfig)
 
 export const AssetsChart = () => {
-  const [selectedToken, setSelectedToken] = useState<Type | null>(null)
+  const [selectedToken, setSelectedToken] = useState<EvmCurrency | null>(null)
 
   const [period, setPeriod] = useState<AssetsChartPeriod>(
     AssetsChartPeriod.OneDay,

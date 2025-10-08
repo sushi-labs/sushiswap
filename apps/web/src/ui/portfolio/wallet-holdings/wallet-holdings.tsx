@@ -19,9 +19,8 @@ import {
 } from '@sushiswap/ui'
 import type { TableState } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from 'react'
-import { Wrapper } from 'src/ui/swap/trade/wrapper'
-import { ChainKey, type EvmChainId } from 'sushi'
-import { Token, type Type } from 'sushi/currency'
+import { type EvmChainId, type EvmCurrency, EvmToken } from 'sushi/evm'
+import { Wrapper } from '~evm/[chainId]/[trade]/_ui/swap/trade/wrapper'
 import { ActionButtons } from '../assets-chart/action-buttons'
 import { useSendTokens } from './send-token-provider'
 import {
@@ -37,7 +36,7 @@ import { WalletHoldingsHeader } from './wallet-holdings-header'
 
 export type PortfolioRow = {
   chainId: EvmChainId
-  token: Token
+  token: EvmToken
   percentageOfPort: number
   price: number
   amount: number
@@ -49,7 +48,7 @@ export type PortfolioRow = {
 const data: PortfolioRow[] = [
   {
     chainId: 1 as EvmChainId,
-    token: new Token({
+    token: new EvmToken({
       chainId: 1,
       address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
       decimals: 18,
@@ -69,7 +68,7 @@ const data: PortfolioRow[] = [
   },
   {
     chainId: 1 as EvmChainId,
-    token: new Token({
+    token: new EvmToken({
       chainId: 1,
       address: '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2', // SUSHI
       decimals: 18,
@@ -90,7 +89,7 @@ const data: PortfolioRow[] = [
   },
   {
     chainId: 1 as EvmChainId,
-    token: new Token({
+    token: new EvmToken({
       chainId: 1,
       address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
       decimals: 6,
@@ -109,7 +108,7 @@ const data: PortfolioRow[] = [
   },
   {
     chainId: 1 as EvmChainId,
-    token: new Token({
+    token: new EvmToken({
       chainId: 1,
       address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', // USDT
       decimals: 6,
@@ -131,7 +130,7 @@ const data: PortfolioRow[] = [
 export const WalletHoldings = () => {
   const { mutate } = useSendTokens()
   const [openMenu, setOpenMenu] = useState(false)
-  const [selectedToken, setSelectedToken] = useState<Type | null>(null)
+  const [selectedToken, setSelectedToken] = useState<EvmCurrency | null>(null)
   const isSmallScreen = useIsSmScreen()
 
   useEffect(() => {

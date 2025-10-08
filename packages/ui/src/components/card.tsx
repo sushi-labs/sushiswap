@@ -1,7 +1,11 @@
 import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
 import type { ReactNode } from 'react'
-import { type Amount, type Type, unwrapToken } from 'sushi/currency'
+import {
+  type Amount,
+  type Currency as GenericCurrency,
+  unwrapToken,
+} from 'sushi'
 
 import classNames from 'classnames'
 import { Currency } from './currency'
@@ -120,7 +124,7 @@ const CardLabel = React.forwardRef<
   <span
     ref={ref}
     className={classNames(
-      'text-xs font-normal',
+      'font-normal text-xs',
       'text-gray-400',
       'dark:text-slate-600',
       'black:text-muted-foreground',
@@ -197,7 +201,7 @@ CardItem.displayName = 'CardItem'
 interface CardCurrencyAmountItemProps
   extends React.HTMLAttributes<HTMLDivElement> {
   isLoading?: boolean
-  amount?: Amount<Type>
+  amount?: Amount<GenericCurrency>
   fiatValue?: string
   unwrap?: boolean
   amountClassName?: string
@@ -223,7 +227,8 @@ const CardCurrencyAmountItem = React.forwardRef<
     }
 
     if (amount) {
-      const currency = unwrap ? unwrapToken(amount?.currency) : amount?.currency
+      const currency =
+        unwrap && amount ? unwrapToken(amount.currency) : amount?.currency
 
       return (
         <CardItem
@@ -259,7 +264,7 @@ const CardContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={classNames('flex flex-col gap-6 p-6 pt-0', className)}
+    className={classNames('p-6 pt-0 flex flex-col gap-6', className)}
     {...props}
   />
 ))

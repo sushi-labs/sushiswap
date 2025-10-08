@@ -15,13 +15,12 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { NativeAddress } from 'src/lib/constants'
-import type { EvmChainId } from 'sushi/chain'
-import type { Type } from 'sushi/currency'
+import type { EvmChainId, EvmCurrency } from 'sushi/evm'
 import { useChipTokens } from '../hooks/use-chip-tokens'
 
 interface TokenSelectorChipBar {
   chainId: EvmChainId
-  onSelect(currency: Type): void
+  onSelect(currency: EvmCurrency): void
   includeNative?: boolean
   showPinnedTokens?: boolean
 }
@@ -44,7 +43,8 @@ export function TokenSelectorChipBar({
           name={InterfaceEventName.TOKEN_SELECTED}
           properties={{
             token_symbol: token?.symbol,
-            token_address: token?.isNative ? NativeAddress : token?.address,
+            token_address:
+              token.type === 'native' ? NativeAddress : token.address,
           }}
           element={InterfaceElementName.COMMON_BASES_CURRENCY_BUTTON}
           key={token.id}
@@ -52,7 +52,9 @@ export function TokenSelectorChipBar({
           <div
             className="group"
             testdata-id={`token-selector-chip-${
-              token.isNative ? NativeAddress : token.address.toLowerCase()
+              token.type === 'native'
+                ? NativeAddress
+                : token.address.toLowerCase()
             }`}
           >
             <Button
@@ -86,6 +88,8 @@ export function TokenSelectorChipBar({
                   variant="ghost"
                   onClick={(e) => {
                     e.stopPropagation()
+                    // Native tokens should always be default
+                    if (token.type === 'native') return
                     mutate('remove', `${token.id}:${token.symbol}`)
                   }}
                 />

@@ -1,5 +1,5 @@
 import { Currency } from '@sushiswap/ui'
-import { SUSHI } from 'sushi/currency'
+import { SUSHI } from 'sushi/evm'
 
 export const TotalClaimableRewards = () => {
   return (

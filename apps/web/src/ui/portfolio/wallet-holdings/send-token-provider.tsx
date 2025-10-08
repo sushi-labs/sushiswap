@@ -1,7 +1,7 @@
 'use client'
 
 import { type FC, createContext, useContext, useMemo, useState } from 'react'
-import type { Type } from 'sushi/currency'
+import type { EvmCurrency } from 'sushi/evm'
 import { isAddress } from 'viem'
 import { normalize } from 'viem/ens'
 import { useEnsAddress } from 'wagmi'
@@ -15,14 +15,14 @@ export type SendViewStep =
 
 interface State {
   mutate: {
-    setToken0(token: Type | undefined): void
+    setToken0(token: EvmCurrency | undefined): void
     setRawRecipientInput(address: string): void
     setAmount(amount: string | undefined): void
     goTo(step: SendViewStep): void
     setContactToEdit(contact: Contact | undefined): void
   }
   state: {
-    token0: Type | undefined
+    token0: EvmCurrency | undefined
     amount: string | undefined
     currentStep: SendViewStep
     contactToEdit: Contact | undefined
@@ -38,7 +38,7 @@ interface SendTokensProviderProps {
 }
 
 const SendTokensProvider: FC<SendTokensProviderProps> = ({ children }) => {
-  const [token0, setToken0] = useState<Type | undefined>()
+  const [token0, setToken0] = useState<EvmCurrency | undefined>()
   const [amount, setAmount] = useState<string | undefined>()
   const [rawRecipientInput, setRawRecipientInput] = useState('')
   const [contactToEdit, setContactToEdit] = useState<Contact | undefined>()

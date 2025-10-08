@@ -5,8 +5,8 @@ import type { ScaleLinear } from 'd3'
 import ms from 'ms'
 import { useTheme } from 'next-themes'
 import { useId, useMemo } from 'react'
-import { Sparkline } from 'src/ui/pool/add-liquidity/active-liquidity-chart/svg'
-import type { ChartEntry } from 'src/ui/pool/add-liquidity/active-liquidity-chart/types'
+import { Sparkline } from '~evm/[chainId]/_ui/add-liquidity/active-liquidity-chart/svg'
+import type { ChartEntry } from '~evm/[chainId]/_ui/add-liquidity/active-liquidity-chart/types'
 
 const xAccessor = (d: ChartEntry) => d.activeLiquidity
 // const yAccessor = (d: ChartEntry) => d.price0;
@@ -19,6 +19,10 @@ const sparklineData = new Array(100).fill(0).map((_, i) => ({
 const series = new Array(100).fill(0).map((_) => ({
   activeLiquidity: Math.random() * 1000,
   price0: Math.random() * 100,
+  price1: Math.random() * 100,
+  tick: Math.random() * 100,
+  amount0Locked: Math.random() * 100,
+  amount1Locked: Math.random() * 100,
 }))
 
 export const PriceRangeSparklineCLMM = ({

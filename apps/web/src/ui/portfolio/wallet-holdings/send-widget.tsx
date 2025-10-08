@@ -7,7 +7,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useEffect, useMemo } from 'react'
-import type { Type } from 'sushi/currency'
+import type { EvmCurrency } from 'sushi/evm'
 import { isAddress } from 'viem'
 import { BrowseContactView } from './browse-contact-view'
 import { useSendTokens } from './send-token-provider'
@@ -21,7 +21,7 @@ export const SendWidget = ({
 }: {
   triggerClassName?: string
   hideTriggerIcon?: boolean
-  initialToken?: Type
+  initialToken?: EvmCurrency
 }) => {
   const { state, mutate } = useSendTokens()
 
@@ -67,7 +67,7 @@ export const SendWidget = ({
       <DialogContent
         hideClose
         className={classNames(
-          'max-w-none md:!max-w-[467px] !rounded-none md:!rounded-xl md:h-auto h-[100dvh] !flex flex-col !p-5',
+          'max-w-none md:!max-w-[500px] !rounded-none md:!rounded-xl md:h-auto h-[100dvh] !flex flex-col !p-5',
           isBrowseView && 'md:!h-[470px]',
         )}
       >

@@ -11,17 +11,17 @@ import {
 import { Button } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui'
 import React, { type FC, type ReactNode } from 'react'
-import { usePoolPosition } from 'src/ui/pool'
-import type { Amount, Type } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
+import { type Amount, ZERO } from 'sushi'
+import type { EvmCurrency } from 'sushi/evm'
+import { usePoolPosition } from '~evm/[chainId]/pool/v2/[address]/_common/ui/pool-position-provider'
 
 interface RemoveSectionWidgetProps {
   isFarm: boolean
   percentage: string
-  token0: Type
-  token1: Type
-  token0Minimum?: Amount<Type>
-  token1Minimum?: Amount<Type>
+  token0: EvmCurrency
+  token1: EvmCurrency
+  token0Minimum?: Amount<EvmCurrency>
+  token1Minimum?: Amount<EvmCurrency>
   setPercentage(percentage: string): void
   children: ReactNode
 }
@@ -37,15 +37,13 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
 
   return (
     <Widget id="removeLiquidity" variant="empty">
-      {balance?.equalTo(ZERO) ? (
+      {balance?.eq(ZERO) ? (
         <Message variant="warning" size="sm" className="mb-4">
           No LP tokens found. Are you sure you unstaked your LP tokens?
         </Message>
       ) : null}
       <div
-        className={
-          balance?.equalTo(ZERO) ? 'opacity-40 pointer-events-none' : ''
-        }
+        className={balance?.eq(ZERO) ? 'opacity-40 pointer-events-none' : ''}
       >
         <div className="flex flex-col gap-3">
           <Card

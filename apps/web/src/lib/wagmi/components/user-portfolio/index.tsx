@@ -16,12 +16,12 @@ import {
 import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
 import Image from 'next/image'
 import { type FC, type ReactNode, useMemo, useState } from 'react'
-import { ChainId, shortenAddress } from 'sushi'
+import { EvmChainId, shortenEvmAddress } from 'sushi/evm'
 import { useAccount, useEnsAvatar, useEnsName } from 'wagmi'
 import { ConnectButton } from '../connect-button'
-import { PortfolioDefaultView } from './PortfolioDefaultView'
-import { PortfolioSettingsView } from './PortfolioSettingsView'
 import { useAccountDrawer } from './hooks/use-account-drawer'
+import { PortfolioDefaultView } from './portfolio-default-view'
+import { PortfolioSettingsView } from './portfolio-settings-view'
 import { TwapOrdersBadge } from './twap-orders-badge'
 
 export enum PortfolioView {
@@ -74,13 +74,13 @@ export const UserPortfolio = () => {
   const [view, setView] = useState(PortfolioView.Default)
 
   const { data: ensName, isLoading: isENSNameLoading } = useEnsName({
-    chainId: ChainId.ETHEREUM,
+    chainId: EvmChainId.ETHEREUM,
     address,
   })
 
   const { data: avatar } = useEnsAvatar({
     name: ensName || undefined,
-    chainId: ChainId.ETHEREUM,
+    chainId: EvmChainId.ETHEREUM,
   })
 
   const content = useMemo(() => {
@@ -128,7 +128,7 @@ export const UserPortfolio = () => {
           ) : (
             <JazzIcon diameter={20} address={address} />
           )}
-          <span className="hidden sm:block">{shortenAddress(address)}</span>
+          <span className="hidden sm:block">{shortenEvmAddress(address)}</span>
           <TwapOrdersBadge type="all-active" />
         </Button>
       }

@@ -17,8 +17,8 @@ import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
-import { PoolPositionProvider } from 'src/ui/pool'
-import { AddLiquidityV2 } from 'src/ui/pool/add-liquidity/add-liquidity-v2'
+import { AddLiquidityV2 } from '~evm/[chainId]/_ui/add-liquidity/add-liquidity-v2'
+import { PoolPositionProvider } from '~evm/[chainId]/pool/v2/[address]/_common/ui/pool-position-provider'
 import { RemoveLiquidity } from './remove-liquidity'
 
 type LPManageTabValueType = 'add' | 'remove'
@@ -61,7 +61,7 @@ export const V2Manage = ({ position }: { position: any }) => {
           <AddLiquidityV2
             initToken0={position.token0}
             initToken1={position.token1}
-            initChainId={position.chainId}
+            chainId={position.chainId}
             hideTokenSelectors={true}
             hideEstimatedValue={true}
           />

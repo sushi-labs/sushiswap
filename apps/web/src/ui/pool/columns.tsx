@@ -17,48 +17,43 @@ import formatDistance from 'date-fns/formatDistance'
 import React, { useMemo } from 'react'
 import type { ClaimableRewards } from 'src/lib/hooks/react-query'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
-import type {
-  MaybeNestedPool,
-  PoolBase,
-  PoolIfIncentivized,
-  PoolWithAprs,
-  PoolWithIncentives,
-  SushiPositionStaked,
-  SushiPositionWithPool,
-  SushiSwapProtocol,
-} from 'sushi'
-import type { SushiSwapV3ChainId } from 'sushi/config'
-import { Token } from 'sushi/currency'
+import { formatNumber, formatPercent, formatUSD } from 'sushi'
 import {
-  formatNumber,
-  formatPercent,
-  formatUSD,
-  shortenAddress,
-} from 'sushi/format'
-import { unnestPool } from 'sushi/types'
-import { APRHoverCard } from './APRHoverCard'
-import { APRWithRewardsHoverCard } from './APRWithRewardsHoverCard'
-import { ClaimableFeesActionCell } from './ClaimableFeesActionCell'
-import { ClaimableFeesAmountCell } from './ClaimableFeesAmountCell'
-import { ClaimableFeesChainCell } from './ClaimableFeesChainCell'
-import type { ClaimableFees } from './ClaimableFeesTab'
-import { ClaimableRewardsActionCell } from './ClaimableRewardsActionCell'
-import { ClaimableRewardsAmountCell } from './ClaimableRewardsAmountCell'
-import { ClaimableRewardsChainCell } from './ClaimableRewardsChainCell'
-import { ConcentratedLiquidityPositionAPRCell } from './ConcentratedLiquidityPositionAPRCell'
-import { PoolNameCell, ProtocolBadge } from './PoolNameCell'
-import { PoolNameCellV3 } from './PoolNameCellV3'
+  EvmToken,
+  type MaybeNestedPool,
+  type PoolBase,
+  type PoolIfIncentivized,
+  type PoolWithAprs,
+  type PoolWithIncentives,
+  type SushiPositionStaked,
+  type SushiPositionWithPool,
+  type SushiSwapProtocol,
+  shortenEvmAddress,
+  unnestPool,
+} from 'sushi/evm'
+import { PoolNameCell } from '~evm/[chainId]/(positions)/pool/_ui/pool-name-cell'
+import { APRHoverCard } from '~evm/[chainId]/_ui/apr-hover-card'
+import { APRWithRewardsHoverCard } from '~evm/[chainId]/_ui/apr-with-rewards-hover-card'
+import { ProtocolBadge } from '~evm/[chainId]/_ui/protocol-badge'
+import { PoolNameCellV3 } from '~evm/[chainId]/pool/_ui/ConcentratedPositionsTable/pool-name-cell-v3'
+import { PriceRangeCell } from '~evm/[chainId]/pool/_ui/ConcentratedPositionsTable/price-range-cell'
 import {
   type Transaction,
   TransactionType,
   type useTransactionsV2,
-} from './PoolTransactionsV2'
+} from '~evm/[chainId]/pool/v2/[address]/(landing)/_ui/pool-transactions-v2'
 import {
   TransactionTypeV3,
   type TransactionV3,
   type useTransactionsV3,
-} from './PoolTransactionsV3'
-import { PriceRangeCell } from './PriceRangeCell'
+} from '~evm/[chainId]/pool/v3/[address]/(landing)/_ui/pool-transactions-v3'
+import { ClaimableFeesActionCell } from '~evm/claim/(fees)/_ui/claimable-fees-action-cell'
+import { ClaimableFeesAmountCell } from '~evm/claim/(fees)/_ui/claimable-fees-amount-cell'
+import { ClaimableFeesChainCell } from '~evm/claim/(fees)/_ui/claimable-fees-chain-cell'
+import type { ClaimableFees } from '~evm/claim/(fees)/_ui/claimable-fees-tab'
+import { ClaimableRewardsActionCell } from '~evm/claim/rewards/_common/ui/claimable-rewards-action-cell'
+import { ClaimableRewardsAmountCell } from '~evm/claim/rewards/_common/ui/claimable-rewards-amount-cell'
+import { ClaimableRewardsChainCell } from '~evm/claim/rewards/_common/ui/claimable-rewards-chain-cell'
 
 export const REWARDS_CHAIN_COLUMN: ColumnDef<ClaimableRewards, unknown> = {
   id: 'chain',
@@ -196,12 +191,16 @@ export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
   cell: (props) => {
     const [token0, token1] = useMemo(
       () => [
-        new Token({
+        new EvmToken({
+          name: '',
+          symbol: '',
           chainId: props.row.original.chainId,
           address: props.row.original.token0Address,
           decimals: 0,
         }),
-        new Token({
+        new EvmToken({
+          name: '',
+          symbol: '',
           chainId: props.row.original.chainId,
           address: props.row.original.token1Address,
           decimals: 0,
@@ -240,9 +239,11 @@ export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <ProtocolBadge
-                    protocol={props.row.original.protocol as SushiSwapProtocol}
-                  />
+                  {
+                    ProtocolBadge[
+                      props.row.original.protocol as SushiSwapProtocol
+                    ]
+                  }
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Protocol version</p>
@@ -537,19 +538,19 @@ export const PRICE_RANGE_COLUMN: ColumnDef<
   },
 }
 
-export const CLIQ_APR_COLUMN: ColumnDef<
-  ConcentratedLiquidityPositionWithV3Pool,
-  unknown
-> = {
-  id: 'priceRange',
-  header: 'Price Range',
-  cell: (props) => <ConcentratedLiquidityPositionAPRCell {...props.row} />,
-  meta: {
-    body: {
-      skeleton: <SkeletonText fontSize="lg" />,
-    },
-  },
-}
+// export const CLIQ_APR_COLUMN: ColumnDef<
+//   ConcentratedLiquidityPositionWithV3Pool,
+//   unknown
+// > = {
+//   id: 'priceRange',
+//   header: 'Price Range',
+//   cell: (props) => <ConcentratedLiquidityPositionAPRCell {...props.row} />,
+//   meta: {
+//     body: {
+//       skeleton: <SkeletonText fontSize="lg" />,
+//     },
+//   },
+// }
 
 export const POSITION_SIZE_CELL: ColumnDef<
   ConcentratedLiquidityPositionWithV3Pool,
@@ -584,7 +585,7 @@ export const POSITION_UNCLAIMED_CELL: ColumnDef<
 export const TX_SENDER_V2_COLUMN: ColumnDef<Transaction, unknown> = {
   id: 'sender',
   header: 'Maker',
-  cell: (props) => shortenAddress(props.row.original.sender),
+  cell: (props) => shortenEvmAddress(props.row.original.sender),
   meta: {
     body: {
       skeleton: <SkeletonText fontSize="lg" />,
@@ -709,7 +710,7 @@ export const TX_TYPE_COLUMN: ColumnDef<Transaction, unknown> = {
 export const TX_ORIGIN_V3_COLUMN: ColumnDef<TransactionV3, unknown> = {
   id: 'sender',
   header: 'Maker',
-  cell: (props) => shortenAddress(props.row.original.origin),
+  cell: (props) => shortenEvmAddress(props.row.original.origin),
   meta: {
     body: {
       skeleton: <SkeletonText fontSize="lg" />,

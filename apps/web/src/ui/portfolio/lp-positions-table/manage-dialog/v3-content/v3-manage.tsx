@@ -16,10 +16,10 @@ import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
 import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
-import { ConcentratedLiquidityProvider } from 'src/ui/pool/ConcentratedLiquidityProvider'
 import { ConcentratedLiquidityWidget } from 'src/ui/pool/ConcentratedLiquidityWidget'
-import { SushiSwapV3FeeAmount } from 'sushi/config'
-import { Native, SUSHI } from 'sushi/currency'
+import { ChainId } from 'sushi'
+import { EvmNative, SUSHI, SushiSwapV3FeeAmount } from 'sushi/evm'
+import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
 import { RemoveLiquidity } from './remove-liquidity'
 
 type LPManageTabValueType = 'add' | 'remove'
@@ -48,7 +48,7 @@ export const V3Manage = ({ position }: { position: any }) => {
     chainId: 1,
     token0: SUSHI[1],
     tokenId: '1942',
-    token1: Native.onChain(1),
+    token1: EvmNative.fromChainId(ChainId.ETHEREUM),
   })
 
   const { data: positionDetails, isLoading: _isPositionDetailsLoading } =
@@ -66,7 +66,7 @@ export const V3Manage = ({ position }: { position: any }) => {
             chainId={1}
             account={'0x47Ef3bF350F70724F2fd34206990cdE9C3A6B6F0'}
             token0={SUSHI[1]}
-            token1={Native.onChain(1)}
+            token1={EvmNative.fromChainId(ChainId.ETHEREUM)}
             feeAmount={SushiSwapV3FeeAmount.MEDIUM}
             // tokensLoading={token0Loading || token1Loading}
             tokensLoading={false}
@@ -79,7 +79,7 @@ export const V3Manage = ({ position }: { position: any }) => {
         return (
           <RemoveLiquidity
             token0={SUSHI[1]}
-            token1={Native.onChain(1)}
+            token1={EvmNative.fromChainId(ChainId.ETHEREUM)}
             chainId={1}
             account={'0x47Ef3bF350F70724F2fd34206990cdE9C3A6B6F0'}
             position={_position ?? undefined}

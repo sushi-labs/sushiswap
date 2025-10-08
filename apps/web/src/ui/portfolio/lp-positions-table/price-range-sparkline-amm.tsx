@@ -1,7 +1,7 @@
 import { scaleLinear, scaleTime } from 'd3'
 import ms from 'ms'
 import { useId, useMemo } from 'react'
-import { Sparkline } from 'src/ui/pool/add-liquidity/active-liquidity-chart/svg'
+import { Sparkline } from '~evm/[chainId]/_ui/add-liquidity/active-liquidity-chart/svg'
 import { HorizontalLine } from './price-range-sparkline-clmm'
 
 const sparklineData = new Array(100).fill(0).map((_, i) => ({

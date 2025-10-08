@@ -9,8 +9,7 @@ import {
   CardTitle,
 } from '@sushiswap/ui'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
-import { formatUSD } from 'sushi'
-import { Amount } from 'sushi/currency'
+import { Amount, formatUSD } from 'sushi'
 
 export const Positions = ({
   position,
@@ -19,8 +18,8 @@ export const Positions = ({
   const { createQuery } = useCreateQuery()
 
   const amounts = [
-    Amount.fromRawAmount(position.token0, 890000000000000000000n),
-    Amount.fromRawAmount(position.token1, 12344312432n),
+    new Amount(position.token0, 890000000000000000000n),
+    new Amount(position.token1, 12344312432n),
   ]
   return (
     <Card className="!bg-slate-50 dark:!bg-slate-800">

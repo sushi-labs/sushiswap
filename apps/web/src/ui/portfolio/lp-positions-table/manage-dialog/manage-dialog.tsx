@@ -12,7 +12,7 @@ import {
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
-import type { SushiSwapProtocol } from 'sushi/types'
+import type { SushiSwapProtocol } from 'sushi/evm'
 import { ManageDialogHeader } from './manage-dialog-header'
 import { V2Content } from './v2-content/v2-content'
 import { V3Content } from './v3-content/v3-content'
@@ -23,7 +23,8 @@ const LPTabValuesV2: LPTabValueType[] = ['detail', 'manage', 'migrate']
 const LPTabValuesV3: LPTabValueType[] = ['detail', 'manage']
 
 const TABS: Record<
-  SushiSwapProtocol,
+  // @TODO - switch to SushiSwapProtocol once BLADE is supported
+  Exclude<SushiSwapProtocol, 'BLADE'>,
   { label: string; value: LPTabValueType }[]
 > = {
   SUSHISWAP_V2: [

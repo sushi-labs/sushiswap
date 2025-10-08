@@ -1,7 +1,6 @@
 import { Currency, SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
-import { formatUSD } from 'sushi'
-import { formatNumber, formatPercent } from 'sushi/format'
+import { formatNumber, formatPercent, formatUSD } from 'sushi'
 import { PriceRangeCell } from './price-range-cell'
 
 export const POSITION_SIZE_COLUMN: ColumnDef<

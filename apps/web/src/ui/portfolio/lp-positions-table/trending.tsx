@@ -1,9 +1,14 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { TrendingItemMobile } from 'src/ui/explore/trending/trending-item'
-import { ChainKey, EvmChainId } from 'sushi/chain'
-import { isSushiSwapV2ChainId, isSushiSwapV3ChainId } from 'sushi/config'
+import {
+  EvmChainId,
+  SushiSwapProtocol,
+  getEvmChainById,
+  isSushiSwapV2ChainId,
+  isSushiSwapV3ChainId,
+} from 'sushi/evm'
+import { TrendingItemMobile } from '~evm/[chainId]/explore/_ui/trending/trending-item'
 import { PLACEHOLDER_POOLS_DATA } from '../../explore/trending/trending'
 
 export const Trending = () => {
@@ -21,13 +26,13 @@ export const Trending = () => {
           const fallbackChain = EvmChainId.ETHEREUM
 
           const href =
-            pool.version === 'v3'
+            pool.protocol === SushiSwapProtocol.SUSHISWAP_V3
               ? isSushiSwapV3ChainId(pool.chainId)
-                ? `/${ChainKey[pool.chainId]}/pool/v3/${pool.address}`
-                : `/${ChainKey[fallbackChain]}/pool/v3/${pool.address}`
+                ? `/${getEvmChainById(pool.chainId).key}/pool/v3/${pool.address}`
+                : `/${getEvmChainById(fallbackChain).key}/pool/v3/${pool.address}`
               : isSushiSwapV2ChainId(pool.chainId)
-                ? `/${ChainKey[pool.chainId]}/pool/v2/${pool.address}`
-                : `/${ChainKey[fallbackChain]}/pool/v2/${pool.address}`
+                ? `/${getEvmChainById(pool.chainId).key}/pool/v2/${pool.address}`
+                : `/${getEvmChainById(fallbackChain).key}/pool/v2/${pool.address}`
 
           return (
             <TrendingItemMobile

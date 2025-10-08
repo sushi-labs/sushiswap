@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation'
-import type { EvmChainId } from 'sushi/chain'
-import { isSushiSwapV2ChainId } from 'sushi/config'
+import { type EvmChainId, isSushiSwapV2ChainId } from 'sushi/evm'
 
 export default async function Layout(props: {
   children: React.ReactNode

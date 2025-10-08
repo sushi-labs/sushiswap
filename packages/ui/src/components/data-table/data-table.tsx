@@ -151,7 +151,7 @@ export function DataTable<TData, TValue>({
             : showAllToggle
               ? 'border-b dark:!border-[#FFFFFF14] !border-[#00000014]'
               : '',
-          'dark:bg-slate-800 bg-slate-50 rounded-xl',
+          'dark:bg-slate-800 bg-white rounded-xl',
         )}
       >
         {showColumnHeaders ? (

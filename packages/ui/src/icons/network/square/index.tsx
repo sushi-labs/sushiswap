@@ -1,4 +1,4 @@
-import { ChainId } from 'sushi/chain'
+import { ChainId } from 'sushi'
 
 import type { IconComponent } from '../../../types'
 import { ApeSquare } from './ApeSquare'
@@ -7,6 +7,7 @@ import { ArbitrumNovaSquare } from './ArbitrumNovaSquare'
 import { ArbitrumSquare } from './ArbitrumSquare'
 import { AvalancheSquare } from './AvalancheSquare'
 import { BaseSquare } from './BaseSquare'
+import { BeraSquare } from './BeraSquare'
 import { BinanceSquare } from './BinanceSquare'
 import { BlastSquare } from './BlastSquare'
 // import { BobaAvaxSquare } from "./BobaAvaxSquare";
@@ -19,12 +20,12 @@ import { CronosSquare } from './CronosSquare'
 import { EthereumSquare } from './EthereumSquare'
 import { FantomSquare } from './FantomSquare'
 import { FilecoinSquare } from './FilecoinSquare'
-import { FuseSquare } from './FuseSquare'
 import { GnosisSquare } from './GnosisSquare'
 import { HaqqSquare } from './HaqqSquare'
 import { HarmonySquare } from './HarmonySquare'
 // import { HecoSquare } from "./HecoSquare";
 import { HemiSquare } from './HemiSquare'
+import { HyperEVMSquare } from './HyperEVMSquare'
 import { KatanaSquare } from './KatanaSquare'
 import { KavaSquare } from './KavaSquare'
 import { LineaSquare } from './LineaSquare'
@@ -32,8 +33,6 @@ import { MantaSquare } from './MantaSquare'
 import { MantleSquare } from './MantleSquare'
 import { MetisSquare } from './MetisSquare'
 import { ModeSquare } from './ModeSquare'
-import { MoonbeamSquare } from './MoonbeamSquare'
-import { MoonriverSquare } from './MoonriverSquare'
 // import { OkexSquare } from "./OkexSquare";
 import { OptimismSquare } from './OptimismSquare'
 // import { PalmSquare } from "./PalmSquare";
@@ -44,7 +43,6 @@ import { ScrollSquare } from './ScrollSquare'
 import { SkaleSquare } from './SkaleSquare'
 import { SonicSquare } from './SonicSquare'
 import { TaikoSquare } from './TaikoSquare'
-import { TelosSquare } from './TelosSquare'
 import { ThunderCoreSquare } from './ThunderCoreSquare'
 import { TronSquare } from './TronSquare'
 import { ZKLinkSquare } from './ZKLinkSquare'
@@ -57,6 +55,7 @@ export * from './ArbitrumSquare'
 export * from './ArbitrumNovaSquare'
 export * from './AvalancheSquare'
 export * from './BaseSquare'
+export * from './BeraSquare'
 export * from './BlastSquare'
 export * from './BinanceSquare'
 export * from './BobaAvaxSquare'
@@ -75,6 +74,7 @@ export * from './HaqqSquare'
 export * from './HarmonySquare'
 export * from './HecoSquare'
 export * from './HemiSquare'
+export * from './HyperEVMSquare'
 export * from './KavaSquare'
 export * from './LineaSquare'
 export * from './MantaSquare'
@@ -118,15 +118,12 @@ export const NETWORK_SQUARE_ICON: Partial<
   [ChainId.AVALANCHE]: AvalancheSquare,
   [ChainId.HARMONY]: HarmonySquare,
   [ChainId.CELO]: CeloSquare,
-  [ChainId.MOONRIVER]: MoonriverSquare,
-  [ChainId.FUSE]: FuseSquare,
-  [ChainId.TELOS]: TelosSquare,
-  [ChainId.MOONBEAM]: MoonbeamSquare,
   [ChainId.OPTIMISM]: OptimismSquare,
   [ChainId.METIS]: MetisSquare,
   [ChainId.KAVA]: KavaSquare,
   [ChainId.ARBITRUM_NOVA]: ArbitrumNovaSquare,
-
+  [ChainId.HYPEREVM]: HyperEVMSquare,
+  [ChainId.BERACHAIN]: BeraSquare,
   [ChainId.BOBA]: BobaSquare,
   [ChainId.BOBA_BNB]: BobaBNBSquare,
   [ChainId.BTTC]: BttcSquare,
@@ -153,6 +150,6 @@ export const NETWORK_SQUARE_ICON: Partial<
   [ChainId.SONIC]: SonicSquare,
   [ChainId.HEMI]: HemiSquare,
   [ChainId.KATANA]: KatanaSquare,
-  aptos: AptosSquare,
-  tron: TronSquare,
+  [ChainId.APTOS]: AptosSquare,
+  [ChainId.TRON]: TronSquare,
 }

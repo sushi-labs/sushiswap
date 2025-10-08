@@ -1,6 +1,5 @@
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import type { EvmChainId } from 'sushi/chain'
-import { isWNativeSupported } from 'sushi/config'
+import { type EvmChainId, isWNativeSupported } from 'sushi/evm'
 import { useSendTokens } from './send-token-provider'
 
 export const SendTokenInput = () => {

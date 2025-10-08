@@ -21,25 +21,24 @@ import {
   useState,
   useTransition,
 } from 'react'
-import type { EvmChainId } from 'sushi/chain'
-import { type Token, type Type, tryParseAmount } from 'sushi/currency'
-import type { Percent } from 'sushi/math'
+import { Amount, type Percent } from 'sushi'
+import type { EvmChainId, EvmCurrency, EvmToken } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { QuickSelect } from '../../token-selector/quick-select/quick-select'
 import { TokenSelectorBlade } from '../../token-selector/token-selector-blade'
-import { BalancePanel } from './BalancePanel'
 import { PercentageInputs } from './PercentageInputs'
-import { PricePanel } from './PricePanel'
+import { BalancePanel } from './balance-panel'
+import { PricePanel } from './price-panel'
 
 interface CurrencyInputBladeProps {
   id?: string
   disabled?: boolean
   value: string
   onChange?(value: string): void
-  currency: Type | undefined
-  onSelect?(currency: Type): void
+  currency: EvmCurrency | undefined
+  onSelect?(currency: EvmCurrency): void
   chainId: EvmChainId
   currencyClassName?: string
   className?: string
@@ -49,7 +48,7 @@ interface CurrencyInputBladeProps {
   type: 'INPUT' | 'OUTPUT'
   fetching?: boolean
   currencyLoading?: boolean
-  currencies?: Record<string, Token>
+  currencies?: Record<string, EvmToken>
   allowNative?: boolean
   error?: string
   hidePinnedTokens?: boolean
@@ -111,20 +110,21 @@ const CurrencyInputBlade: FC<CurrencyInputBladeProps> = ({
 
   const { data: price, isLoading: isPriceLoading } = usePrice({
     chainId: currency?.chainId,
-    address: currency?.wrapped?.address,
+    address: currency?.wrap()?.address,
     enabled: !hidePricing,
   })
 
-  const _value = useMemo(
-    () => tryParseAmount(value, currency),
-    [value, currency],
-  )
+  const _value = useMemo(() => {
+    if (!currency) return undefined
+    return Amount.tryFromHuman(currency, value)
+  }, [value, currency])
+
   const insufficientBalance =
     address &&
     type === 'INPUT' &&
     balance &&
     _value &&
-    balance.lessThan(_value) &&
+    balance.lt(_value) &&
     !disableInsufficientBalanceError
 
   // If currency changes, trim input to decimals

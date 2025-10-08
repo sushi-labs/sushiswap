@@ -16,13 +16,13 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { SushiSwapProtocol } from 'sushi'
-import { SUSHI, USDC } from 'sushi/currency'
+import { SUSHI, SushiSwapProtocol, USDC } from 'sushi/evm'
+
 import {
   CHAIN_COLUMN,
   POOL_COLUMN,
   POOL_TYPE_COLUMN,
-} from '../../pool/columns-v2'
+} from '~evm/[chainId]/_ui/columns-v2'
 import {
   APR_COLUMN,
   POSITION_SIZE_COLUMN,

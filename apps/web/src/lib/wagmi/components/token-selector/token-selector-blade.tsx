@@ -25,20 +25,22 @@ import React, {
   useEffect,
   useState,
 } from 'react'
-import { FavoriteButton } from 'src/ui/swap/trade/favorite-button'
-import { EvmChain, type EvmChainId } from 'sushi/chain'
-import type { Token, Type } from 'sushi/currency'
-import { shortenAddress } from 'sushi/format'
-import { useAccount } from 'wagmi'
+import {
+  type EvmChainId,
+  type EvmCurrency,
+  type EvmToken,
+  getEvmChainById,
+  shortenEvmAddress,
+} from 'sushi/evm'
 
 export type TokenSelectorBladeType = 'buy' | 'sell'
 
 interface TokenSelectorBladeProps {
-  selected: Type | undefined
+  selected: EvmCurrency | undefined
   chainId: EvmChainId
-  onSelect(currency: Type): void
+  onSelect(currency: EvmCurrency): void
   children: ReactNode
-  currencies?: Record<string, Token>
+  currencies?: Record<string, EvmToken>
   includeNative?: boolean
   hidePinnedTokens?: boolean
   hideSearch?: boolean
@@ -73,7 +75,7 @@ export const TokenSelectorBlade: FC<TokenSelectorBladeProps> = ({
   // const [currencyInfo, showCurrencyInfo] = useState<Currency | false>(false)
 
   const _onSelect = useCallback(
-    (currency: Type) => {
+    (currency: EvmCurrency) => {
       if (onSelect) {
         onSelect(currency)
       }
@@ -130,12 +132,12 @@ export const TokenSelectorBlade: FC<TokenSelectorBladeProps> = ({
                   </span>
                   <LinkExternal
                     target="_blank"
-                    href={EvmChain.from(currency.chainId)?.getTokenUrl(
+                    href={getEvmChainById(currency.chainId)?.getTokenUrl(
                       currency.address,
                     )}
                     className="flex gap-1 items-center text-xs text-muted-foreground"
                   >
-                    <span>{shortenAddress(currency.address)}</span>
+                    <span>{shortenEvmAddress(currency.address)}</span>
 
                     <ArrowUpRight className="w-2 h-2" />
                   </LinkExternal>

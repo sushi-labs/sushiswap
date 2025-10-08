@@ -4,43 +4,37 @@ import { Navigation, SushiNavigationDropdown, classNames } from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import React, { type FC } from 'react'
-import { type NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
+import { SUPPORTED_NETWORKS } from 'src/config'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
-import { useDerivedStateSimpleTrade } from 'src/ui/swap/trade/derivedstate-simple-trade-provider'
-import { ChainId, type EvmChainId } from 'sushi/chain'
-import type { ChainId as ChainIdType } from 'sushi/chain'
+import type { ChainId } from 'sushi'
+import { EvmChainId } from 'sushi/evm'
 import { useChainId } from 'wagmi'
-import { headerElements } from '../_common/header-elements'
+import { headerElements } from '~evm/_common/header-elements'
+import { useDerivedStateSimpleTrade } from './[trade]/_ui/swap/trade/derivedstate-simple-trade-provider'
 
 interface HeaderProps {
-  chainId?: ChainIdType
-  supportedNetworks?: readonly (EvmChainId | NonStandardChainId)[]
+  chainId?: ChainId
+  networks?: readonly ChainId[]
 }
 
-export const Header: FC<HeaderProps> = ({ chainId, supportedNetworks }) => {
+export const Header: FC<HeaderProps> = ({ chainId, networks }) => {
   const {
     state: { tradeView },
   } = useDerivedStateSimpleTrade()
-  return chainId === ChainId.KATANA && tradeView === 'simple' ? (
-    <TransparentHeader
-      chainId={chainId}
-      supportedNetworks={supportedNetworks}
-    />
+  return chainId === EvmChainId.KATANA && tradeView === 'simple' ? (
+    <TransparentHeader chainId={chainId} networks={networks} />
   ) : (
-    <_Header chainId={chainId} supportedNetworks={supportedNetworks} />
+    <_Header chainId={chainId} networks={networks} />
   )
 }
 
-const TransparentHeader: FC<HeaderProps> = ({
-  chainId: _chainId,
-  supportedNetworks,
-}) => {
+const TransparentHeader: FC<HeaderProps> = ({ chainId: _chainId }) => {
   const connectedChainId = useChainId()
   const chainId = _chainId ?? connectedChainId
 
   return (
-    <div className="w-full h-[56px] z-20">
-      <div className="fixed w-full flex z-20">
+    <div className="w-full h-[56px] relative z-[60]">
+      <div className="fixed w-full flex z-60 border-b border-b-[#00000014] dark:border-b-[#FFFFFF14] bg-background">
         <div className="hidden lg:flex justify-between items-center px-1 h-14 flex-shrink-0 border-transparent border-b">
           <SushiNavigationDropdown className="!px-2">
             <SushiWithTextIcon width={90} />
@@ -54,12 +48,11 @@ const TransparentHeader: FC<HeaderProps> = ({
         <Navigation
           className="!pl-0 lg:!pl-4 !z-[unset] !bg-[unset] dark:!bg-[unset] !border-transparent dark:!border-transparent"
           hideSushiDropdown
-          leftElements={headerElements({ chainId })}
+          leftElements={headerElements({ chainId: chainId as EvmChainId })}
           rightElement={
             <WagmiHeaderComponents
               networks={SUPPORTED_NETWORKS}
               selectedNetwork={chainId as EvmChainId}
-              supportedNetworks={supportedNetworks}
             />
           }
         />
@@ -68,7 +61,7 @@ const TransparentHeader: FC<HeaderProps> = ({
   )
 }
 
-const _Header: FC<HeaderProps> = ({ chainId: _chainId, supportedNetworks }) => {
+const _Header: FC<HeaderProps> = ({ chainId: _chainId, networks }) => {
   const connectedChainId = useChainId()
   const chainId = _chainId ?? connectedChainId
 
@@ -92,12 +85,11 @@ const _Header: FC<HeaderProps> = ({ chainId: _chainId, supportedNetworks }) => {
         <Navigation
           className="!pl-0 lg:!pl-4 !z-[unset]"
           hideSushiDropdown
-          leftElements={headerElements({ chainId })}
+          leftElements={headerElements({ chainId: chainId as EvmChainId })}
           rightElement={
             <WagmiHeaderComponents
-              networks={SUPPORTED_NETWORKS}
-              selectedNetwork={chainId as EvmChainId}
-              supportedNetworks={supportedNetworks}
+              networks={networks}
+              selectedNetwork={chainId}
             />
           }
         />

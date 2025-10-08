@@ -1,12 +1,8 @@
 'use client'
 
 import { useEffect, useMemo } from 'react'
-import {
-  type Address,
-  type EvmChainId,
-  Fraction,
-  withoutScientificNotation,
-} from 'sushi'
+import { Fraction, withoutScientificNotation } from 'sushi'
+import type { EvmAddress, EvmChainId } from 'sushi/evm'
 import { parseUnits } from 'viem'
 import { usePriceProvider } from './price-provider'
 import type { ProviderChainState } from './types'
@@ -49,6 +45,16 @@ export function useMultiChainPrices({
     let isUpdating = false
     let isError = false
 
+    if (!enabled) {
+      return {
+        data,
+        lastModified,
+        isLoading,
+        isUpdating,
+        isError,
+      }
+    }
+
     for (const id of chainIds ?? []) {
       const chain = chains[id]
 
@@ -59,29 +65,29 @@ export function useMultiChainPrices({
 
       if (chain?.priceMap) {
         data.set(id, {
-          has: (_address: Address) => {
+          has: (_address: EvmAddress) => {
             const address = BigInt(_address)
 
             return chain.priceMap!.has(address)
           },
-          get: (_address: Address) => {
+          get: (_address: EvmAddress) => {
             const address = BigInt(_address)
 
             const price = chain.priceMap!.get(address)
             return price
           },
-          getFraction: (_address: Address) => {
+          getFraction: (_address: EvmAddress) => {
             const address = BigInt(_address)
 
             const price = chain.priceMap!.get(address)
             if (price) {
-              return new Fraction(
-                parseUnits(
+              return new Fraction({
+                numerator: parseUnits(
                   withoutScientificNotation(String(price)) || '0',
                   18,
                 ).toString(),
-                parseUnits('1', 18).toString(),
-              )
+                denominator: parseUnits('1', 18).toString(),
+              })
             }
             return undefined
           },
@@ -90,5 +96,5 @@ export function useMultiChainPrices({
     }
 
     return { data, lastModified, isLoading, isUpdating, isError }
-  }, [chainIds, chains])
+  }, [chainIds, chains, enabled])
 }

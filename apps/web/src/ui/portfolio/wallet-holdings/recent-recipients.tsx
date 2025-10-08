@@ -1,6 +1,6 @@
 import { Button, Collapsible } from '@sushiswap/ui'
 import { useRef } from 'react'
-import { shortenAddress } from 'sushi/format'
+import { shortenEvmAddress } from 'sushi/evm'
 import { isAddress } from 'viem'
 import { useRecentRecipients } from '../../../lib/wagmi/hooks/hooks/use-recent-recipients'
 import { useOverflow } from '../lp-positions-table/trending'
@@ -56,7 +56,7 @@ export const RecentRecipientItem = ({
       size="xs"
       onClick={onClick}
     >
-      {isAddress(address) ? shortenAddress(address) : address}
+      {isAddress(address) ? shortenEvmAddress(address) : address}
     </Button>
   )
 }

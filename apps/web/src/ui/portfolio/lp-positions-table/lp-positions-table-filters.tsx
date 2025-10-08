@@ -1,5 +1,5 @@
-import { ProtocolButton } from 'src/ui/common/protocol-button'
-import { SushiSwapProtocol } from 'sushi'
+import { ProtocolButton } from 'src/app/(networks)/_ui/protocol-button'
+import { SushiSwapProtocol } from 'sushi/evm'
 import { LPPositionsNetworkFilter } from './lp-positions-network-filter'
 
 export const LPPositionsTableFilters = () => {

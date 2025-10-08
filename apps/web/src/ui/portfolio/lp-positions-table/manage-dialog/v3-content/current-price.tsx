@@ -1,18 +1,19 @@
 import { Toggle } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import { type Type, tryParseAmount } from 'sushi/currency'
+import { Amount } from 'sushi'
+import type { EvmCurrency } from 'sushi/evm'
 
 export const CurrentPrice = ({
   token0,
   token1,
-}: { token0: Type; token1: Type }) => {
+}: { token0: EvmCurrency; token1: EvmCurrency }) => {
   const [invert, setInvert] = useState(false)
 
   const [_token0, _token1] = invert ? [token1, token0] : [token0, token1]
 
   const fiatAmounts = useMemo(
-    () => [tryParseAmount('1', token0), tryParseAmount('1', token1)],
+    () => [Amount.tryFromHuman(token0, '1'), Amount.tryFromHuman(token1, '1')],
     [token0, token1],
   )
 

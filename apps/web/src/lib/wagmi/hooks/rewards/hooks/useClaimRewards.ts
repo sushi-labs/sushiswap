@@ -1,6 +1,7 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
 import type { ClaimableRewards } from 'src/lib/hooks/react-query'
+import { logger } from 'src/lib/logger'
 import { UserRejectedRequestError } from 'viem'
 import {
   useAccount,
@@ -85,11 +86,15 @@ export const useClaimRewards = ({
   )
 
   const onError = useCallback((e: Error) => {
-    if (e instanceof Error) {
-      if (!(e.cause instanceof UserRejectedRequestError)) {
-        createErrorToast(e.message, true)
-      }
+    if (e.cause instanceof UserRejectedRequestError) {
+      return
     }
+
+    logger.error(e, {
+      location: 'useClaimRewards',
+      action: 'mutationError',
+    })
+    createErrorToast(e.message, true)
   }, [])
 
   const {

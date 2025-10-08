@@ -13,13 +13,13 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { type FC, useCallback } from 'react'
 import { getNetworkName } from 'src/lib/network'
-import type { ChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 
 interface DesktopNetworkSelector {
-  networks: readonly ChainId[]
+  networks: readonly EvmChainId[]
   onSelect: (chainId: number) => void
-  selectedNetwork: ChainId
+  selectedNetwork: EvmChainId
 }
 
 export const DesktopNetworkSelector: FC<DesktopNetworkSelector> = ({
