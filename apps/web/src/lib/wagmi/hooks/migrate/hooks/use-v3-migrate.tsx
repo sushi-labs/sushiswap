@@ -9,11 +9,7 @@ import type { SendTransactionReturnType } from '@wagmi/core'
 import { useCallback, useMemo } from 'react'
 import type { Amount } from 'sushi'
 import type { EvmCurrency, EvmToken, SushiSwapV3FeeAmount } from 'sushi/evm'
-import {
-  type Address,
-  UserRejectedRequestError,
-  encodeFunctionData,
-} from 'viem'
+import { type Address, encodeFunctionData } from 'viem'
 import {
   type UseSimulateContractParameters,
   usePublicClient,
@@ -22,6 +18,7 @@ import {
 } from 'wagmi'
 
 import { logger } from 'src/lib/logger'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { V3Migrator } from '../abis/V3Migrator'
 import { V3MigrateAddress } from '../constants'
@@ -220,7 +217,7 @@ export const useV3Migrate = ({
 
   const onError = useCallback((e: Error) => {
     if (e instanceof Error) {
-      if (e.cause instanceof UserRejectedRequestError) {
+      if (isUserRejectedError(e)) {
         return
       }
 

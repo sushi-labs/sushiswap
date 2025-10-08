@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  type RawV2Pool,
   type V2Pool,
   getSushiV2Burns,
   getSushiV2Mints,
@@ -90,7 +91,7 @@ const fetchSwaps = async (address: Address, chainId: SushiSwapV2ChainId) => {
 // Will only support the last 1k txs
 // The fact that there are different subtransactions aggregated under one transaction makes paging a bit difficult
 function useTransactionsV2(
-  pool: V2Pool | undefined | null,
+  pool: RawV2Pool | V2Pool | undefined | null,
   poolAddress: Address,
   opts: UseTransactionsV2Opts,
 ) {
@@ -168,7 +169,7 @@ function useTransactionsV2(
           .sort((a, b) => b.logIndex - a.logIndex)
       })
     },
-    enabled: !!pool && isSushiSwapV2ChainId(pool?.chainId),
+    enabled: Boolean(pool && isSushiSwapV2ChainId(pool?.chainId)),
     refetchInterval: opts?.refetchInterval,
   })
 }
@@ -176,7 +177,7 @@ function useTransactionsV2(
 type Transaction = NonNullable<ReturnType<typeof useTransactionsV2>['data']>[0]
 
 interface PoolTransactionsV2Props {
-  pool: V2Pool | undefined | null
+  pool: RawV2Pool
   poolAddress: Address
 }
 

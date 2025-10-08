@@ -16,15 +16,22 @@ import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 interface VolumeChart {
   data: AnalyticsDayBuckets
   chainId: EvmChainId
+  showBlade: boolean
 }
 
 echarts.use([CanvasRenderer, BarChart, TooltipComponent, GridComponent])
 
-export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
+export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
   const { resolvedTheme } = useTheme()
 
-  const [v2, v3, totalVolume] = useMemo(() => {
-    const xData = (data.v2.length > data.v3.length ? data.v2 : data.v3)
+  const [v2, v3, blade, totalVolume] = useMemo(() => {
+    const xData = (
+      data.v2.length || data.v3.length
+        ? data.v2.length > data.v3.length
+          ? data.v2
+          : data.v3
+        : data.blade
+    )
       .slice(0, 30)
       .map((data) => data.date * 1000)
 
@@ -34,12 +41,15 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
     const v3 = xData
       .map((xData, i) => [xData, data.v3[i]?.volumeUSD ?? 0])
       .reverse()
+    const blade = xData
+      .map((xData, i) => [xData, data.blade[i]?.volumeUSD ?? 0])
+      .reverse()
     const totalVolume = xData.reduce(
-      (sum, _, i) => sum + v2[i][1] + v3[i][1],
+      (sum, _, i) => sum + v2[i][1] + v3[i][1] + blade[i][1],
       0,
     )
 
-    return [v2, v3, totalVolume]
+    return [v2, v3, blade, totalVolume]
   }, [data])
 
   const onMouseOver = useCallback((params: { data?: number[] }[]) => {
@@ -48,14 +58,17 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
     const volumeNode = document.getElementById('hoveredVolume')
     const v2VolumeNode = document.getElementById('hoveredV2Volume')
     const v3VolumeNode = document.getElementById('hoveredV3Volume')
+    const bladeVolumeNode = document.getElementById('hoveredBladeVolume')
     const dateNode = document.getElementById('hoveredVolumeDate')
 
     if (volumeNode)
-      volumeNode.innerHTML = formatUSD(params[0].data[1] + params[1].data[1])
+      volumeNode.innerHTML = formatUSD(
+        params[0].data[1] + params[1].data[1] + (params[2]?.data?.[1] || 0),
+      )
     if (dateNode)
       dateNode.innerHTML = format(
         new Date(params[0].data[0]),
-        'dd MMM yyyy HH:mm aa',
+        "dd MMM yyyy'<br>'hh:mm aa",
       )
     if (v2VolumeNode)
       v2VolumeNode.innerHTML = params[0].data[1]
@@ -65,6 +78,10 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
       v3VolumeNode.innerHTML = params[1].data[1]
         ? formatUSD(params[1].data[1])
         : ''
+    if (bladeVolumeNode)
+      bladeVolumeNode.innerHTML = params[2]?.data?.[1]
+        ? formatUSD(params[2].data[1])
+        : ''
 
     return ''
   }, [])
@@ -73,12 +90,14 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
     const volumeNode = document.getElementById('hoveredVolume')
     const v2VolumeNode = document.getElementById('hoveredV2Volume')
     const v3VolumeNode = document.getElementById('hoveredV3Volume')
+    const bladeVolumeNode = document.getElementById('hoveredBladeVolume')
     const dateNode = document.getElementById('hoveredVolumeDate')
 
     if (volumeNode) volumeNode.innerHTML = formatUSD(totalVolume)
     if (dateNode) dateNode.innerHTML = 'Past month'
     if (v2VolumeNode) v2VolumeNode.innerHTML = ''
     if (v3VolumeNode) v3VolumeNode.innerHTML = ''
+    if (bladeVolumeNode) bladeVolumeNode.innerHTML = ''
   }, [totalVolume])
 
   const DEFAULT_OPTION = useMemo<EChartOption>(
@@ -158,9 +177,20 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
           data: v3,
           itemStyle: { color: '#A755DD', barBorderRadius: [2, 2, 0, 0] },
         },
+        ...(showBlade
+          ? [
+              {
+                name: 'blade',
+                type: 'bar',
+                stack: 'a',
+                data: blade,
+                itemStyle: { color: '#F23BF6', barBorderRadius: [2, 2, 0, 0] },
+              },
+            ]
+          : []),
       ],
     }),
-    [onMouseOver, resolvedTheme, v2, v3],
+    [onMouseOver, resolvedTheme, v2, v3, blade, showBlade],
   )
 
   return (
@@ -177,7 +207,7 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
             <div>
               <div
                 id="hoveredVolumeDate"
-                className="text-sm text-gray-500 dark:text-slate-500"
+                className="text-sm text-gray-500 dark:text-slate-500 min-h-[40px]"
               >
                 Past month
               </div>
@@ -198,6 +228,15 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId }) => {
                 <span className="bg-[#A755DD] rounded-[4px] w-3 h-3" />
               </span>
             </div>
+            {showBlade && (
+              <div className="flex justify-between items-center gap-2 text-sm">
+                <span id="hoveredBladeVolume" />
+                <span className="flex gap-1 items-center">
+                  <span className="font-medium">blade</span>
+                  <span className="bg-[#F23BF6] rounded-[4px] w-3 h-3" />
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>

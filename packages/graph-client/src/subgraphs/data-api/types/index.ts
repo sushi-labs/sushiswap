@@ -1,4 +1,5 @@
 export * from './SushiSwapChainId.js'
+export * from './BladeChainId.js'
 export * from './PoolChainId.js'
 export * from './TokenListChainId.js'
 export * from './TrendingTokensChainId.js'

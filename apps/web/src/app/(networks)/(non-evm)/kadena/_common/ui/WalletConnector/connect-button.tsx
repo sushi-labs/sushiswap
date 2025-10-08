@@ -1,4 +1,3 @@
-import { detectSnapProvider } from '@kadena/wallet-adapter-metamask-snap'
 import {
   Button,
   type ButtonProps,
@@ -13,7 +12,6 @@ import React from 'react'
 import { useMemo } from 'react'
 import { useIsMobile } from '~kadena/_common/lib/hooks/use-is-mobile'
 import { ADAPTER_INSTALL_URLS, useKadena } from '~kadena/kadena-wallet-provider'
-import { useKadenaAdapterContext } from '~kadena/providers'
 import { KADENA_WALLET_ADAPTER_ICONS } from '../../../kadena-wallet-provider'
 
 export function ConnectButton({
@@ -22,7 +20,6 @@ export function ConnectButton({
 }: ButtonProps & { btnText?: string }) {
   const { adapters, handleConnect, isConnecting } = useKadena()
   const { isMobile } = useIsMobile()
-  const { refreshSnapAdapter } = useKadenaAdapterContext()
 
   const _adapters = useMemo(() => {
     const hasEcko = adapters.some((a) => a.name === 'Ecko')
@@ -76,13 +73,6 @@ export function ConnectButton({
               key={adapter.name}
               disabled={adapter.name.includes('MetaMask (Desktop Only)')}
               onClick={async () => {
-                if (adapter.name === 'MetaMask') {
-                  await detectSnapProvider({ silent: false })
-
-                  await refreshSnapAdapter()
-                  window.location.reload()
-                  return
-                }
                 if (adapter.detected) {
                   await handleConnect(adapter.name)
                   return

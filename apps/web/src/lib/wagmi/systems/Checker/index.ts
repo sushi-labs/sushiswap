@@ -13,6 +13,10 @@ import {
 } from './approve-erc20-with-permit'
 import { Connect } from './connect'
 import { Custom, type CustomProps } from './custom'
+import {
+  CustomWithTooltip,
+  type CustomWithTooltipProps,
+} from './custom-with-tooltip'
 import { Guard, type GuardProps } from './guard'
 import { Network, type NetworkProps } from './network'
 import { PartialRoute, type PartialRouteProps } from './partial-route'
@@ -33,6 +37,7 @@ export type CheckerProps = {
   Network: ComponentType<NetworkProps>
   Guard: FC<GuardProps>
   Custom: FC<CustomProps>
+  CustomWithTooltip: FC<CustomWithTooltipProps>
   ApproveERC20: ComponentType<ApproveERC20Props>
   ApproveERC20Multiple: ComponentType<ApproveERC20MultipleProps>
   ApproveERC20WithPermit: ComponentType<ApproveERC20WithPermitProps>
@@ -50,6 +55,7 @@ export const Checker: CheckerProps = {
   Network,
   Guard,
   Custom,
+  CustomWithTooltip,
   ApproveERC20,
   ApproveERC20Multiple,
   ApproveERC20WithPermit,
