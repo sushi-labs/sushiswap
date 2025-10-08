@@ -47,11 +47,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
     async function initWalletConnect() {
       const wcAdapter = await detectWalletConnectProvider()
       if (wcAdapter) {
+        const projectdId =
+          process.env.NEXT_PUBLIC_KADENA_WALLET_CONNECT_PROJECT_ID
+        if (!projectdId) {
+          console.warn('No Kadena WalletConnect Project ID provided')
+        }
         const adapter = new WalletConnectAdapter({
           provider: wcAdapter,
           networkId: KADENA_NETWORK_ID,
-          projectId:
-            process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? TEST_ID,
+          projectId: projectdId ?? TEST_ID,
         })
         setWalletConnectAdapter(adapter)
       }
