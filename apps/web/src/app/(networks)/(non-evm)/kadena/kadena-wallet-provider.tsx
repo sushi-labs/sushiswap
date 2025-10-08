@@ -1,4 +1,3 @@
-import { detectEckoProvider } from '@kadena/wallet-adapter-ecko'
 import { useKadenaWallet } from '@kadena/wallet-adapter-react'
 import { useLocalStorage } from '@sushiswap/hooks'
 import React, {

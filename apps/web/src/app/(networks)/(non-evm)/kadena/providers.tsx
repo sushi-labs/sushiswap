@@ -10,20 +10,12 @@ import {
   WalletConnectAdapter,
   detectWalletConnectProvider,
 } from '@kadena/wallet-adapter-walletconnect'
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { KADENA_NETWORK_ID } from './_common/constants/network'
 import { KadenaWalletProvider } from './kadena-wallet-provider'
 
 //@dev will remove later, for testing purposes only
 const TEST_ID = '5329e5621bb8e903c0de8ad458cc8934'
-
-type AdapterContextType = {
-  refreshSnapAdapter: () => Promise<void>
-}
-
-const KadenaAdapaterContext = createContext<AdapterContextType | undefined>(
-  undefined,
-)
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [snapAdapter, setSnapAdapter] = useState<SnapAdapter | null>(null)
@@ -69,16 +61,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
     initWalletConnect()
   }, [])
 
-  const refreshSnapAdapter = async () => {
-    const snapProvider = await detectSnapProvider({ silent: true })
-    if (snapProvider) {
-      const _adapter = new SnapAdapter({
-        provider: snapProvider,
-        networkId: KADENA_NETWORK_ID,
-      })
-      setSnapAdapter(_adapter)
-    }
-  }
   const adapters = useMemo(() => {
     return [
       ...(eckoApadter ? [eckoApadter] : []),
@@ -88,20 +70,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }, [eckoApadter, snapAdapter, walletConnectAdapter])
 
   return (
-    <KadenaAdapaterContext.Provider value={{ refreshSnapAdapter }}>
-      <KadenaWalletProviderReact defaultAdapterName="Snap" adapters={adapters}>
-        <KadenaWalletProvider>{children}</KadenaWalletProvider>
-      </KadenaWalletProviderReact>
-    </KadenaAdapaterContext.Provider>
+    <KadenaWalletProviderReact defaultAdapterName="Snap" adapters={adapters}>
+      <KadenaWalletProvider>{children}</KadenaWalletProvider>
+    </KadenaWalletProviderReact>
   )
-}
-
-export const useKadenaAdapterContext = (): AdapterContextType => {
-  const context = useContext(KadenaAdapaterContext)
-
-  if (!context) {
-    throw new Error('useKadena must be used within a KadenaAdapaterContext')
-  }
-
-  return context
 }
