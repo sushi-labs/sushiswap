@@ -50,20 +50,18 @@ import { isXSwapSupportedChainId } from 'src/config'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
 import { useCrossChainTradeStep } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { logger } from 'src/lib/logger'
 import {
   getCrossChainFeesBreakdown,
   useLiFiStatus,
 } from 'src/lib/swap/cross-chain'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/slippage'
 import { Amount, ZERO, formatNumber, formatUSD } from 'sushi'
 import { EvmNative, getEvmChainById, shortenEvmAddress } from 'sushi/evm'
-import {
-  type SendTransactionReturnType,
-  UserRejectedRequestError,
-  stringify,
-} from 'viem'
+import { type SendTransactionReturnType, stringify } from 'viem'
 import {
   useAccount,
   useEstimateGas,
@@ -196,8 +194,12 @@ const _CrossChainSwapTradeReviewDialog: FC<{
   // onSimulateError
   useEffect(() => {
     if (estGasError) {
-      console.error('cross chain swap prepare error', estGasError)
       if (estGasError.message.startsWith('user rejected transaction')) return
+
+      logger.error(estGasError, {
+        location: 'CrossChainSwapTradeReviewDialog',
+        action: 'prepareTransaction',
+      })
 
       sendAnalyticsEvent(SwapEventName.XSWAP_ESTIMATE_GAS_CALL_FAILED, {
         error: estGasError.message,
@@ -304,7 +306,12 @@ const _CrossChainSwapTradeReviewDialog: FC<{
           bridge: StepState.Pending,
           dest: StepState.NotStarted,
         })
-      } catch {
+      } catch (error) {
+        logger.error(error, {
+          location: 'CrossChainSwapTradeReviewDialog',
+          action: 'waitForReceipt',
+        })
+
         setStepStates({
           source: StepState.Failed,
           bridge: StepState.NotStarted,
@@ -333,10 +340,14 @@ const _CrossChainSwapTradeReviewDialog: FC<{
       dest: StepState.NotStarted,
     })
 
-    if (e.cause instanceof UserRejectedRequestError) {
+    if (isUserRejectedError(e)) {
       return
     }
 
+    logger.error(e, {
+      location: 'CrossChainSwapTradeReviewDialog',
+      action: 'writeError',
+    })
     createErrorToast(e.message, false)
 
     sendAnalyticsEvent(SwapEventName.XSWAP_ERROR, {
@@ -371,8 +382,8 @@ const _CrossChainSwapTradeReviewDialog: FC<{
         dest: StepState.NotStarted,
       })
 
-      confirm()
       try {
+        confirm()
         await sendTransactionAsync(preparedTx)
       } catch {}
     }

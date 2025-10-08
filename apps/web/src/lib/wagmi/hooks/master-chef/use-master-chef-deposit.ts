@@ -2,6 +2,8 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
+import { logger } from 'src/lib/logger'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { Amount } from 'sushi'
 import {
   ChefType,
@@ -10,7 +12,6 @@ import {
   masterChefV1Abi_deposit,
   masterChefV2Abi_deposit,
 } from 'sushi/evm'
-import { UserRejectedRequestError } from 'viem'
 import {
   type UseSimulateContractParameters,
   useAccount,
@@ -41,9 +42,15 @@ export const useMasterChefDeposit = ({
   const contract = useMasterChefContract(chainId, chef)
 
   const onError = useCallback((e: Error) => {
-    if (!(e.cause instanceof UserRejectedRequestError)) {
-      createErrorToast(e?.message, true)
+    if (isUserRejectedError(e)) {
+      return
     }
+
+    logger.error(e, {
+      location: 'useMasterChefDeposit',
+      action: 'mutationError',
+    })
+    createErrorToast(e?.message, true)
   }, [])
 
   const onSuccess = useCallback(

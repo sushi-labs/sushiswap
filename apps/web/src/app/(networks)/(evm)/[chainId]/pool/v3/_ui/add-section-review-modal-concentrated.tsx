@@ -30,6 +30,8 @@ import { Bound } from 'src/lib/constants'
 import { NativeAddress } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { logger } from 'src/lib/logger'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import {
   getDefaultTTL,
   useTransactionDeadline,
@@ -45,11 +47,7 @@ import {
   getEvmChainById,
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
-import {
-  type Hex,
-  type SendTransactionReturnType,
-  UserRejectedRequestError,
-} from 'viem'
+import type { Hex, SendTransactionReturnType } from 'viem'
 import {
   type UseCallParameters,
   useAccount,
@@ -222,9 +220,15 @@ export const AddSectionReviewModalConcentrated: FC<
   )
 
   const onError = useCallback((e: Error) => {
-    if (!(e.cause instanceof UserRejectedRequestError)) {
-      createErrorToast(e?.message, true)
+    if (isUserRejectedError(e)) {
+      return
     }
+
+    logger.error(e, {
+      location: 'AddSectionReviewModalConcentrated',
+      action: 'mutationError',
+    })
+    createErrorToast(e?.message, true)
   }, [])
 
   const prepare = useMemo(() => {
@@ -303,7 +307,6 @@ export const AddSectionReviewModalConcentrated: FC<
     return async (confirm: () => void) => {
       try {
         await sendTransactionAsync(prepare)
-
         confirm()
       } catch {}
     }

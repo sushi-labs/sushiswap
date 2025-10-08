@@ -43,6 +43,7 @@ export async function getTokens(
       },
       options,
     )
+
     if (result) {
       return {
         count: result.exploreTokens.length,
@@ -66,6 +67,7 @@ export async function getTokens(
   } catch (error) {
     console.error('getTokens error', error)
   }
+
   return {
     count: 0,
     data: [],
@@ -73,5 +75,4 @@ export async function getTokens(
 }
 
 export type TokensResponse = Awaited<ReturnType<typeof getTokens>>
-export type Tokens = TokensResponse['data']
-export type Token = Tokens[number]
+export type Token = TokensResponse['data'][number]

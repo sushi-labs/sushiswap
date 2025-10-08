@@ -27,16 +27,17 @@ import React, {
 } from 'react'
 import { APPROVE_TAG_SWAP } from 'src/lib/constants'
 import { usePersistedOrdersStore } from 'src/lib/hooks/react-query/twap'
+import { logger } from 'src/lib/logger'
 import {
   fillDelayText,
   getOrderIdFromCreateOrderEvent,
   getTimeDurationMs,
 } from 'src/lib/swap/twap'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
 import { ZERO, formatUSD } from 'sushi'
 import { getEvmChainById, shortenEvmAddress } from 'sushi/evm'
-import { UserRejectedRequestError } from 'viem'
 import {
   useAccount,
   useEstimateGas,
@@ -137,10 +138,13 @@ export const TwapTradeReviewDialog: FC<{
   )
 
   const onSwapError = useCallback((e: Error) => {
-    if (e.cause instanceof UserRejectedRequestError) {
+    if (isUserRejectedError(e)) {
       return
     }
 
+    logger.error(e, {
+      location: 'TwapTradeReviewDialog',
+    })
     createErrorToast(e.message, false)
   }, [])
 
@@ -165,11 +169,13 @@ export const TwapTradeReviewDialog: FC<{
     if (!sendTransactionAsync || !trade?.tx || !estGas) return undefined
 
     return async (confirm: () => void) => {
-      await sendTransactionAsync({
-        ...trade?.tx,
-        gas: (estGas * 6n) / 5n,
-      })
-      confirm()
+      try {
+        await sendTransactionAsync({
+          ...trade?.tx,
+          gas: (estGas * 6n) / 5n,
+        })
+        confirm()
+      } catch {}
     }
   }, [sendTransactionAsync, trade?.tx, estGas])
 

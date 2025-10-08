@@ -7,12 +7,13 @@ import {
   type TwapOrder,
   usePersistedOrdersStore,
 } from 'src/lib/hooks/react-query/twap'
+import { logger } from 'src/lib/logger'
 import { TwapSDK } from 'src/lib/swap/twap'
 import { twapAbi_cancel } from 'src/lib/swap/twap/abi'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import {
   type Address,
   type SendTransactionReturnType,
-  UserRejectedRequestError,
   encodeFunctionData,
 } from 'viem'
 import {
@@ -88,10 +89,13 @@ export const TwapCancelOrderButton = ({
   )
 
   const onCancelError = useCallback((e: Error) => {
-    if (e.cause instanceof UserRejectedRequestError) {
+    if (isUserRejectedError(e)) {
       return
     }
 
+    logger.error(e, {
+      location: 'TwapCancelOrderButton',
+    })
     createErrorToast(e.message, false)
   }, [])
 
@@ -110,11 +114,13 @@ export const TwapCancelOrderButton = ({
     if (!sendTransactionAsync || !estGas) return undefined
 
     return async (confirm?: () => void) => {
-      await sendTransactionAsync({
-        ...tx,
-        gas: (estGas * 6n) / 5n,
-      })
-      confirm?.()
+      try {
+        await sendTransactionAsync({
+          ...tx,
+          gas: (estGas * 6n) / 5n,
+        })
+        confirm?.()
+      } catch {}
     }
   }, [sendTransactionAsync, tx, estGas])
 

@@ -7,18 +7,18 @@ packages:
 catalog:
   "typescript": 5.8.3
   "utf-8-validate": 6.0.3
-  "zod": 3.23.8
+  "zod": 4.1.11
 
 catalogs:
   web3:
-    "abitype": 1.0.8
-    "sushi": 6.1.14
-    "wagmi": 2.16.0
-    "@wagmi/core": 2.18.0
-    "viem": 2.33.0
+    "abitype": 1.1.1
+    "sushi": 6.2.4
+    "wagmi": 2.17.5
+    "@wagmi/core": 2.21.2
+    "viem": 2.37.12
 
   react:
-    "next": 15.1.4
+    "next": 15.5.3
     "react": 19.0.0
     "@types/react": 19.0.1
     "react-dom": 19.0.0

@@ -25,6 +25,7 @@ import { HarmonyNaked } from './HarmonyNaked'
 import { HecoNaked } from './HecoNaked'
 import { HemiNaked } from './HemiNaked'
 import { HyperEVMNaked } from './HyperEVMNaked'
+import { KadenaNaked } from './KadenaNaked'
 import { KatanaNaked } from './KatanaNaked'
 import { KavaNaked } from './KavaNaked'
 import { LineaNaked } from './LineaNaked'
@@ -33,6 +34,7 @@ import { MantleNaked } from './MantleNaked'
 import { MetisNaked } from './MetisNaked'
 import { ModeNaked } from './ModeNaked'
 import { OptimismNaked } from './OptimismNaked'
+import { PlasmaNaked } from './PlasmaNaked'
 import { PolygonNaked } from './PolygonNaked'
 import { PolygonZKNaked } from './PolygonZKNaked'
 import { RootstockNaked } from './RootstockNaked'
@@ -84,6 +86,7 @@ export * from './MoonriverNaked'
 export * from './OkexNaked'
 export * from './OptimismNaked'
 export * from './PalmNaked'
+export * from './PlasmaNaked'
 export * from './PolygonNaked'
 export * from './PolygonZKNaked'
 export * from './RootstockNaked'
@@ -141,6 +144,8 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.KATANA]: KatanaNaked,
   [ChainId.HYPEREVM]: HyperEVMNaked,
   [ChainId.BERACHAIN]: BeraNaked,
+  [ChainId.PLASMA]: PlasmaNaked,
   [ChainId.APTOS]: AptosNaked,
   [ChainId.TRON]: TronNaked,
+  [ChainId.KADENA]: KadenaNaked,
 }

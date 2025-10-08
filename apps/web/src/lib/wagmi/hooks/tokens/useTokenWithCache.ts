@@ -6,6 +6,7 @@ import { useCustomTokens } from '@sushiswap/hooks'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { getToken as getTokenWeb3 } from '@wagmi/core/actions'
 import { useCallback } from 'react'
+import { logger } from 'src/lib/logger'
 import { getIdFromChainIdAddress } from 'sushi'
 import { type EvmChainId, type EvmID, EvmToken } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
@@ -69,7 +70,14 @@ export const getTokenWithCacheQueryFn = async ({
           ...token,
           metadata: { approved: token.approved },
         })
-    } catch {}
+    } catch (error) {
+      logger.error(error, {
+        location: 'useTokenWithCache',
+        action: 'fetchTokenList',
+        token_chain_id: chainId,
+        token_address: address,
+      })
+    }
   }
 
   try {
@@ -89,7 +97,13 @@ export const getTokenWithCacheQueryFn = async ({
         approved: false,
       },
     })
-  } catch {
+  } catch (error) {
+    logger.error(error, {
+      location: 'useTokenWithCache',
+      action: 'fetchTokenRpc',
+      token_chain_id: chainId,
+      token_address: address,
+    })
     throw Error('Could not fetch token')
   }
 }

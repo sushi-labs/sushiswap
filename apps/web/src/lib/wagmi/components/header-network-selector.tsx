@@ -5,27 +5,24 @@ import { Button } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { type FC, Suspense, useCallback } from 'react'
 import { getNetworkName } from 'src/lib/network'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { ChainId } from 'sushi'
 import { isEvmChainId } from 'sushi/evm'
-import { ProviderRpcError, UserRejectedRequestError } from 'viem'
+import { ProviderRpcError } from 'viem'
 import { useChainId, useSwitchChain } from 'wagmi'
 import {
   NetworkSelector,
   type NetworkSelectorOnSelectCallback,
 } from './network-selector'
 
-type SupportedNetworks = readonly ChainId[]
-
 export const HeaderNetworkSelector: FC<{
-  networks: SupportedNetworks
-  supportedNetworks?: SupportedNetworks
+  networks?: readonly ChainId[]
   selectedNetwork?: ChainId
   onChange?(network: ChainId): void
   hideNetworkName?: boolean
   className?: string
 }> = ({
   networks,
-  supportedNetworks,
   selectedNetwork,
   onChange,
   className,
@@ -54,7 +51,7 @@ export const HeaderNetworkSelector: FC<{
         close()
       } catch (e) {
         console.error(`Failed to switch network: ${e}`)
-        if (e instanceof UserRejectedRequestError) return
+        if (isUserRejectedError(e)) return
         if (e instanceof ProviderRpcError) {
           createErrorToast(e.message, true)
         }
@@ -66,7 +63,6 @@ export const HeaderNetworkSelector: FC<{
   return (
     <NetworkSelector
       selected={selectedNetwork ?? chainId}
-      supportedNetworks={supportedNetworks}
       onSelect={onSwitchNetwork}
       networks={networks}
     >

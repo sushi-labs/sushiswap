@@ -10,6 +10,7 @@ import {
   type SushiSwapV3ChainId,
   isEvmTestnetChainId,
 } from 'sushi/evm'
+import { KvmChainId } from 'sushi/kvm'
 import { MvmChainId } from 'sushi/mvm'
 import { TvmChainId } from 'sushi/tvm'
 
@@ -25,9 +26,10 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.HARMONY,
   ChainId.POLYGON_ZKEVM,
   ChainId.TATARA,
+  ChainId.SEPOLIA,
 ] as const
 
-export const NEW_CHAIN_IDS = [EvmChainId.KATANA] as const
+export const NEW_CHAIN_IDS = [EvmChainId.KATANA, KvmChainId.KADENA] as const
 
 export const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
@@ -133,6 +135,7 @@ const UNSORTED_SUPPORTED_NETWORKS = [
   ...SUPPORTED_CHAIN_IDS,
   MvmChainId.APTOS,
   TvmChainId.TRON,
+  KvmChainId.KADENA,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
@@ -152,6 +155,7 @@ const UNSORTED_POOL_SUPPORTED_NETWORKS = [
   ...PoolChainIds,
   MvmChainId.APTOS,
   TvmChainId.TRON,
+  KvmChainId.KADENA,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
@@ -204,18 +208,18 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.APE,
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
-  ChainId.BSC,
   ChainId.BASE,
+  ChainId.BERACHAIN,
   ChainId.BLAST,
   ChainId.BOBA,
+  ChainId.BSC,
   ChainId.CELO,
   ChainId.CRONOS,
   ChainId.ETHEREUM,
-  // ChainId.FUSE,
   ChainId.FANTOM,
+  // ChainId.FUSE,
   ChainId.GNOSIS,
-  // ChainId.HYPEREVM,
-  // ChainId.BERACHAIN,
+  ChainId.HYPEREVM,
   ChainId.KATANA,
   ChainId.LINEA,
   ChainId.MANTLE,
@@ -224,6 +228,7 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   // ChainId.MOONBEAM,
   // ChainId.MOONRIVER,
   ChainId.OPTIMISM,
+  // ChainId.PLASMA,
   ChainId.POLYGON,
   // ChainId.POLYGON_ZKEVM,
   ChainId.ROOTSTOCK,

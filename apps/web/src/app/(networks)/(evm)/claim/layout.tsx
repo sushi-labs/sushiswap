@@ -11,7 +11,7 @@ export default function ClaimLayout({
 }) {
   return (
     <>
-      <Header supportedNetworks={SUPPORTED_CHAIN_IDS} />
+      <Header networks={SUPPORTED_CHAIN_IDS} />
       <main className="flex flex-col h-full flex-1 animate-slide">
         <Container maxWidth="7xl" className="px-4 pt-16 pb-8">
           <Hero />

@@ -1,5 +1,6 @@
 'use client'
 
+import { faro } from '@grafana/faro-web-sdk'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
   BrowserEvent,
@@ -41,10 +42,12 @@ import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { APPROVE_TAG_SWAP, NativeAddress } from 'src/lib/constants'
 import type { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { logger } from 'src/lib/logger'
 import {
   warningSeverity,
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/slippage'
 import { ChainId, ZERO } from 'sushi'
@@ -52,14 +55,11 @@ import {
   EvmNative,
   addGasMargin,
   getEvmChainById,
+  getEvmCurrencyAddress,
   nativeAddress,
   shortenEvmAddress,
 } from 'sushi/evm'
-import {
-  type SendTransactionReturnType,
-  UserRejectedRequestError,
-  stringify,
-} from 'viem'
+import { type SendTransactionReturnType, stringify } from 'viem'
 import {
   useAccount,
   usePublicClient,
@@ -238,20 +238,28 @@ const _SimpleSwapTradeReviewDialog: FC<{
 
   const onSwapError = useCallback(
     (e: Error) => {
-      if (e.cause instanceof UserRejectedRequestError) {
+      if (isUserRejectedError(e)) {
         return
       }
 
+      const tokenFrom = trade?.amountIn?.currency
+        ? getEvmCurrencyAddress(trade?.amountIn.currency)
+        : 'unknown'
+      const tokenTo = trade?.amountOut?.currency
+        ? getEvmCurrencyAddress(trade?.amountOut.currency)
+        : 'unknown'
+      const tx = stringify(trade?.tx)
+
+      logger.error(e, {
+        location: 'SimpleSwapTradeReviewDialog',
+        token_from: tokenFrom,
+        token_to: tokenTo,
+        tx,
+      })
       sendAnalyticsEvent(SwapEventName.SWAP_ERROR, {
-        token_from:
-          trade?.amountIn?.currency.type === 'token'
-            ? trade?.amountIn?.currency.address
-            : NativeAddress,
-        token_to:
-          trade?.amountOut?.currency.type === 'token'
-            ? trade?.amountOut?.currency.address
-            : NativeAddress,
-        tx: stringify(trade?.tx),
+        token_from: tokenFrom,
+        token_to: tokenTo,
+        tx,
         error: e instanceof Error ? e.message : undefined,
       })
       createErrorToast(e.message, false)
@@ -282,13 +290,15 @@ const _SimpleSwapTradeReviewDialog: FC<{
     const { to, gas, data, value } = trade.tx
 
     return async (confirm: () => void) => {
-      await sendTransactionAsync({
-        to,
-        data,
-        value,
-        gas: gas ? addGasMargin(BigInt(gas)) : undefined,
-      })
-      confirm()
+      try {
+        await sendTransactionAsync({
+          to,
+          data,
+          value,
+          gas: gas ? addGasMargin(BigInt(gas)) : undefined,
+        })
+        confirm()
+      } catch {}
     }
   }, [address, trade?.tx, sendTransactionAsync])
 
