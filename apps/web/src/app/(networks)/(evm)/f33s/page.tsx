@@ -119,7 +119,6 @@ const V3_MANAGER_ADDRESS: Record<V3ManagerChainId, Address> = {
 const MAKER_CHAIN_IDS = [
   EvmChainId.ETHEREUM,
   EvmChainId.ARBITRUM,
-  EvmChainId.ARBITRUM_NOVA,
   EvmChainId.AVALANCHE,
   EvmChainId.BASE,
   EvmChainId.BSC,
@@ -144,7 +143,6 @@ const isMakerChainId = (chainId: EvmChainId): chainId is MakerChainId =>
 const MAKER_ADDRESS: Record<MakerChainId, Address> = {
   [EvmChainId.ETHEREUM]: '0x5ad6211CD3fdE39A9cECB5df6f380b8263d1e277',
   [EvmChainId.ARBITRUM]: '0xa19b3b22f29E23e4c04678C94CFC3e8f202137d8',
-  [EvmChainId.ARBITRUM_NOVA]: '0xCc159BCb6a466DA442D254Ad934125f05DAB66b5',
   [EvmChainId.AVALANCHE]: '0x560C759A11cd026405F6f2e19c65Da1181995fA2',
   [EvmChainId.BASE]: '0xa2665dEcd00008a54428c72DC926265a6d2c40CF',
   [EvmChainId.BSC]: '0xe2d7460457f55e4786C69D2d3fa81978Bf8DD11C',
@@ -318,6 +316,7 @@ type V3FactoryInfo = {
 
 type MakerInfo = {
   owner?: Address
+  trusted?: Address
 }
 
 type RouteProcessorInfo = {
@@ -500,6 +499,16 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
                 abi: makerAbi,
                 address: MAKER_ADDRESS[chainId],
                 functionName: 'owner',
+              },
+            },
+            {
+              scope: 'maker',
+              contract: {
+                chainId,
+                abi: makerAbi,
+                address: MAKER_ADDRESS[chainId],
+                functionName: 'trusted',
+                args: [LIQUIDATOR_BOT_ADDRESS],
               },
             },
           ] as const)
@@ -847,6 +856,9 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
               <List.Control>
                 <List.KeyValue title="Owner">
                   {isLoading ? 'Loading…' : renderAccount(maker?.owner)}
+                </List.KeyValue>
+                <List.KeyValue title="Operator">
+                  {isLoading ? 'Loading…' : renderAccount(maker?.trusted)}
                 </List.KeyValue>
               </List.Control>
             </List>
