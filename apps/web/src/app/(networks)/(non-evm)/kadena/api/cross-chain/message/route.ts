@@ -5,7 +5,7 @@ const schema = z.object({
   hash: z.string(),
 })
 
-export const revalidate = 10
+export const revalidate = 20
 
 export async function GET(request: NextRequest) {
   const parsedParams = schema.safeParse({
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
   return Response.json(await response.json(), {
     status: response.status,
     headers: {
-      'Cache-Control': 's-maxage=8, stale-while-revalidate=10',
+      'Cache-Control': 's-maxage=8, stale-while-revalidate=20',
     },
   })
 }

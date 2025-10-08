@@ -4,7 +4,6 @@ import {
 } from '@sushiswap/hooks'
 import {
   Button,
-  DialogConfirm,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -21,6 +20,7 @@ import {
   ChainId,
   formatPercent,
   formatUSD,
+  getChainById,
   truncateString,
 } from 'sushi'
 import {
@@ -45,6 +45,7 @@ import { useDerivedStateCrossChainSwap } from '~kadena/cross-chain-swap/deriveds
 import { ReviewSwapDialogTrigger } from './review-swap-dialog-trigger'
 import { CrossChainSwapRouteView } from './route-view'
 import { KinesisSwapButton } from './swap-button'
+import { SwapConfirmationDialog } from './swap-confirmation-dialog'
 
 export const ReviewSwapDialog = () => {
   const {
@@ -60,15 +61,14 @@ export const ReviewSwapDialog = () => {
   } = useDerivedStateCrossChainSwap()
   const [showMore, setShowMore] = useState<boolean>(false)
   const [txHash, setTxHash] = useState<string | undefined>(undefined)
-  const [status, setStatus] = useState<'pending' | 'success' | 'error'>(
+  const [srcStatus, setSrcStatus] = useState<'pending' | 'success' | 'error'>(
     'pending',
   )
 
-  const { data } = useKinesisMessage({
+  const { data: dstData } = useKinesisMessage({
     txHash,
-    enabled: Boolean(txHash),
+    enabled: Boolean(txHash && srcStatus === 'success'),
   })
-  console.log('kinesis message data', data)
 
   const amountInRef = useRef<Amount | null>(null)
   const amountOutRef = useRef<Amount | null>(null)
@@ -173,6 +173,12 @@ export const ReviewSwapDialog = () => {
       return Amount.tryFromHuman(KADENA, simulateBridgeTx?.networkFeeInToken)
     }
   }, [simulateBridgeTx, chainId0])
+
+  const status = useMemo(
+    () =>
+      srcStatus === 'success' ? (dstData?.status ?? 'pending') : srcStatus,
+    [dstData?.status, srcStatus],
+  )
 
   return (
     <DialogProvider>
@@ -311,22 +317,29 @@ export const ReviewSwapDialog = () => {
                 <KinesisSwapButton
                   closeModal={confirm}
                   setTxHash={setTxHash}
-                  setStatus={setStatus}
+                  setSrcStatus={setSrcStatus}
                 />
               </DialogFooter>
             </DialogContent>
           </>
         )}
       </DialogReview>
-      <DialogConfirm
-        chainId={chainId0}
-        status={status}
-        testId="make-another-swap-kadena"
-        buttonText="Make another swap"
-        txHash={txHash as `0x${string}`}
-        successMessage={`You sold ${amountInRef.current?.toSignificant(6)} ${
+      <SwapConfirmationDialog
+        onClose={() => {
+          setTxHash(undefined)
+          setSrcStatus('pending')
+        }}
+        dstChainId={amountOutRef.current?.currency.chainId}
+        successMessage={`You swapped ${amountInRef.current?.toSignificant(6)} ${
           amountInRef.current?.currency?.symbol
-        } for ${amountOutRef.current?.toSignificant(6)} ${amountOutRef.current?.currency?.symbol}`}
+        } for ${amountOutRef.current?.toSignificant(6)} ${amountOutRef.current?.currency?.symbol} ${
+          amountInRef?.current && amountOutRef?.current
+            ? `from ${getChainById(amountInRef?.current?.currency?.chainId).name} to ${
+                getChainById(amountOutRef?.current?.currency?.chainId).name
+              }`
+            : ''
+        }`}
+        status={status}
       />
     </DialogProvider>
   )

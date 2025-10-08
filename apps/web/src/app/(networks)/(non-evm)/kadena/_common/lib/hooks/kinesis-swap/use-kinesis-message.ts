@@ -15,7 +15,7 @@ const messageReponseSchema = z.object({
   status: z.enum(['completed', 'pending', 'orphaned_destination']),
 })
 
-const formatStatus = (status: string) => {
+const formatStatus = (status: string): 'pending' | 'success' | 'error' => {
   switch (status) {
     case 'completed':
       return 'success'
@@ -23,6 +23,8 @@ const formatStatus = (status: string) => {
       return 'pending'
     case 'orphaned_destination':
       return 'error'
+    default:
+      return 'pending'
   }
 }
 
@@ -59,8 +61,8 @@ export const useKinesisMessage = ({
 
       return { ...parsed.data, status: formatStatus(parsed.data.status) }
     },
-    staleTime: ms('10s'),
-    refetchInterval: ms('10s'),
+    staleTime: ms('20s'),
+    refetchInterval: ms('20s'),
     enabled: Boolean(txHash && enabled),
   })
 }

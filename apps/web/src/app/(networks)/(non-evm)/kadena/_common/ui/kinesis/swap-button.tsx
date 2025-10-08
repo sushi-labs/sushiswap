@@ -7,7 +7,7 @@ import {
 import { Button, Dots } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { ChainId } from 'sushi'
+import { ChainId, getChainById } from 'sushi'
 import { getKvmChainByKey } from 'sushi/kvm'
 import { useAccount } from 'wagmi'
 import { kinesisClient } from '~kadena/_common/constants/client'
@@ -17,11 +17,11 @@ import { useKadena } from '~kadena/kadena-wallet-provider'
 export const KinesisSwapButton = ({
   closeModal,
   setTxHash,
-  setStatus,
+  setSrcStatus,
 }: {
   closeModal: () => void
   setTxHash: (txHash: `0x${string}` | string) => void
-  setStatus: (status: 'pending' | 'success' | 'error') => void
+  setSrcStatus: (status: 'pending' | 'success' | 'error') => void
 }) => {
   const queryClient = useQueryClient()
   const {
@@ -77,17 +77,19 @@ export const KinesisSwapButton = ({
       const tx = await kinesisClient.executeBridgeTransaction(params)
       const txnHash = tx.txnHash
       setTxHash(txnHash)
-      setStatus('pending')
+      setSrcStatus('pending')
 
       createInfoToast({
-        summary: 'Bridge swap initiated...',
+        summary: 'Cross-chain swap initiated...',
         type: 'xswap',
         account: senderAddress,
         chainId: chainId0,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
         txHash: txnHash,
-        href: getKvmChainByKey('kadena').getTransactionUrl(txnHash),
+        href: getChainById(chainId0).getTransactionUrl(
+          txnHash as `0x${string}`,
+        ),
       })
 
       const result = await kinesisClient.waitForTransaction({
@@ -97,21 +99,23 @@ export const KinesisSwapButton = ({
       })
 
       if (result.status !== 'success') {
-        setStatus('error')
-        throw new Error(result.message || 'Bridge transaction failed')
+        setSrcStatus('error')
+        throw new Error(result.message || 'Cross-chain transaction failed')
       }
 
-      setStatus('success')
+      setSrcStatus('success')
 
       createSuccessToast({
-        summary: 'Bridge swap executed successfully',
+        summary: 'Cross-chain swap initiated successfully',
         type: 'xswap',
         account: senderAddress,
         chainId: chainId0,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
         txHash: txnHash,
-        href: getKvmChainByKey('kadena').getTransactionUrl(txnHash),
+        href: getChainById(chainId0).getTransactionUrl(
+          txnHash as `0x${string}`,
+        ),
       })
 
       onSuccess()
@@ -120,14 +124,14 @@ export const KinesisSwapButton = ({
         summary:
           typeof err === 'string'
             ? err
-            : ((err as Error)?.message ?? 'Bridge swap failed'),
+            : ((err as Error)?.message ?? 'Cross-chain swap failed'),
         type: 'xswap',
         account: senderAddress,
         chainId: chainId0,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
       })
-      setStatus('error')
+      setSrcStatus('error')
       console.error(err)
     } finally {
       setIsTxnPending?.(false)
