@@ -1,4 +1,5 @@
 import type { ICommand } from '@kadena/client'
+import { useKadenaWallet } from '@kadena/wallet-adapter-react'
 import {
   createFailedToast,
   createInfoToast,
@@ -6,7 +7,6 @@ import {
 } from '@sushiswap/notifications'
 import { Button, Dots } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
-import { useKadenaWallet } from 'node_modules/@kadena/wallet-adapter-react/dist/esm/context'
 import { logger } from 'src/lib/logger'
 import { KvmChainId, getKvmChainByKey } from 'sushi/kvm'
 import { kadenaClient } from '~kadena/_common/constants/client'

@@ -53,7 +53,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       }
     }
     async function initWalletConnect() {
-      const wcAdapter = await detectWalletConnectProvider({ silent: true })
+      const wcAdapter = await detectWalletConnectProvider()
       if (wcAdapter) {
         const adapter = new WalletConnectAdapter({
           provider: wcAdapter,
