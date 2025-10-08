@@ -34,8 +34,8 @@ export const SingleAssetOption = ({
       className={classNames(
         'cursor-pointer transition-all',
         isSelected
-          ? 'bg-blue-50 dark:bg-blue-950/20 border border-blue-500'
-          : 'hover:bg-gray-50 dark:hover:bg-gray-700',
+          ? '!bg-blue-50 dark:!bg-blue-950/20 border !border-blue-500'
+          : 'hover:!bg-gray-50 dark:hover:!bg-gray-700',
       )}
     >
       <List.Item

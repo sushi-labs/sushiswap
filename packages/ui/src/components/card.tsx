@@ -8,7 +8,6 @@ import {
 } from 'sushi'
 
 import classNames from 'classnames'
-import { twMerge } from 'tailwind-merge'
 import { Currency } from './currency'
 import { SkeletonText } from './skeleton'
 
@@ -28,14 +27,13 @@ export interface CardProps
   extends React.ButtonHTMLAttributes<HTMLDivElement>,
     VariantProps<typeof cardVariants> {}
 
-const card = (
-  variants: VariantProps<typeof cardVariants>,
-  className?: string,
-) => twMerge(cardVariants(variants), className)
-
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ variant, className, ...props }, ref) => (
-    <div ref={ref} className={card({ variant }, className)} {...props} />
+    <div
+      ref={ref}
+      className={cardVariants({ variant, className })}
+      {...props}
+    />
   ),
 )
 Card.displayName = 'Card'
