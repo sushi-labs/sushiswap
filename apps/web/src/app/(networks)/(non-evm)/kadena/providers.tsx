@@ -14,9 +14,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { KADENA_NETWORK_ID } from './_common/constants/network'
 import { KadenaWalletProvider } from './kadena-wallet-provider'
 
-//@dev will remove later, for testing purposes only
-const TEST_ID = '5329e5621bb8e903c0de8ad458cc8934'
-
 export function Providers({ children }: { children: React.ReactNode }) {
   const [snapAdapter, setSnapAdapter] = useState<SnapAdapter | null>(null)
   const [eckoApadter, setEckoAdpater] = useState<EckoAdapter | null>(null)
@@ -55,7 +52,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         const adapter = new WalletConnectAdapter({
           provider: wcAdapter,
           networkId: KADENA_NETWORK_ID,
-          projectId: projectdId ?? TEST_ID,
+          projectId: projectdId,
         })
         setWalletConnectAdapter(adapter)
       }
