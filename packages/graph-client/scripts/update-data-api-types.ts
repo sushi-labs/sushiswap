@@ -4,6 +4,7 @@ import { getChainIdsByFeature } from '../src/subgraphs/data-api/queries/features
 
 const features: introspection['types']['ChainIdFeature']['enumValues'][] = [
   'SushiSwapChainId',
+  'BladeChainId',
   // 'SushiSwapV2ChainId',
   // 'SushiSwapV3ChainId',
   'PoolChainId',
