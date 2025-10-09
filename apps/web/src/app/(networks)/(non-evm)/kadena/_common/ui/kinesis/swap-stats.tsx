@@ -1,7 +1,7 @@
 'use client'
 
 import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline'
-import { Collapsible, IconButton, SkeletonBox, classNames } from '@sushiswap/ui'
+import { Button, Collapsible, SkeletonBox, classNames } from '@sushiswap/ui'
 import type { FC } from 'react'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
 import { ChainId, formatPercent, formatUSD, truncateString } from 'sushi'
@@ -123,13 +123,15 @@ export const SwapStats: FC = () => {
             <div className="font-semibold flex items-center gap-1 text-gray-700 text-right dark:text-slate-400">
               {chainId1 === ChainId.ETHEREUM && isAddress(recipient) ? (
                 // currently only way to edit evm wallet
-                <IconButton
+                <Button
                   onClick={async () => await disconnectAsync()}
                   icon={ArrowLeftOnRectangleIcon}
                   name={'edit evm recipient'}
                   variant="ghost"
                   size="xs"
-                />
+                >
+                  Change
+                </Button>
               ) : null}
               <a
                 target="_blank"
