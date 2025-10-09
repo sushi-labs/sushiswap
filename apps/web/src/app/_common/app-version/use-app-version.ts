@@ -22,6 +22,6 @@ export const useAppVersion = () => {
       }
     },
     refetchInterval: ms('5m'),
-    enabled: Boolean(process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_ID),
+    enabled: Boolean(process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA),
   })
 }
