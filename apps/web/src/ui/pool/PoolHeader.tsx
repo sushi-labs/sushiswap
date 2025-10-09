@@ -14,8 +14,6 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { type FC, useMemo } from 'react'
 import { EvmToken, getEvmChainById, unwrapEvmToken } from 'sushi/evm'
-import { AddLiquidityDialog } from '~evm/[chainId]/_ui/add-liquidity/add-liquidity-dialog'
-import { ProtocolBadge } from '~evm/[chainId]/_ui/protocol-badge'
 
 type PoolHeader = {
   backUrl: string
@@ -34,8 +32,6 @@ export const PoolHeader: FC<PoolHeader> = ({
   backUrl,
   address,
   pool,
-  // apy,
-  // priceRange,
   showAddLiquidityButton = false,
 }) => {
   const { isMd } = useBreakpoint('md')
@@ -133,24 +129,20 @@ export const PoolHeader: FC<PoolHeader> = ({
               </div>
             </div>
             {showAddLiquidityButton && !isMd ? (
-              <AddLiquidityDialog
-                poolType={pool.protocol}
-                hidePoolTypeToggle={true}
-                // @ts-expect-error - ok until we have a blade pool type
-                hideTokenSelectors={pool.protocol !== 'BLADE'}
-                token0={token0}
-                token1={token1}
-                initFeeAmount={pool?.swapFee * 1_000_000}
-                trigger={
-                  <Button
-                    size="sm"
-                    className="w-fit !p-2 !h-[32px] !min-h-[32px]"
-                  >
-                    <PlusIcon className="w-4 h-4" />
-                  </Button>
-                }
-                chainId={pool.chainId}
-              />
+              <LinkInternal
+                href={`/${getEvmChainById(pool.chainId).key}/pool/v3/${pool.address}/add?feeAmount=${
+                  pool.swapFee * 1000000
+                }&fromCurrency=${token0?.isNative ? 'NATIVE' : token0?.address}&toCurrency=${
+                  token1?.isNative ? 'NATIVE' : token1?.address
+                }`}
+              >
+                <Button
+                  size="sm"
+                  className="w-fit !p-2 !h-[32px] !min-h-[32px]"
+                >
+                  <PlusIcon className="w-4 h-4" />
+                </Button>
+              </LinkInternal>
             ) : null}
           </div>
         </div>

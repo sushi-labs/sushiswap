@@ -3,7 +3,6 @@
 import { ArrowLeftIcon } from '@heroicons/react-v1/solid'
 import { Button, Collapsible, classNames } from '@sushiswap/ui'
 import { useEffect, useMemo, useState } from 'react'
-import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { usePoolsByTokenPair } from 'src/lib/hooks/usePoolsByTokenPair'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
 import {
@@ -72,7 +71,6 @@ const _Add = ({
 }) => {
   const [step, setStep] = useState(0)
   const { address } = useAccount()
-  const { createQuery } = useCreateQuery()
   const [isFirstMount, setIsFirstMount] = useState(true)
   const {
     chainId,
@@ -135,19 +133,8 @@ const _Add = ({
     if (initFeeAmount && initToken0 && initToken1 && isFirstMount) {
       if (!isFirstMount) return
       setIsFirstMount(false)
-      createQuery([
-        {
-          name: 'fromCurrency',
-          value: initToken0.isNative ? 'NATIVE' : initToken0.address,
-        },
-        {
-          name: 'toCurrency',
-          value: initToken1.isNative ? 'NATIVE' : initToken1.address,
-        },
-        { name: 'feeAmount', value: initFeeAmount.toString() },
-      ])
     }
-  }, [initToken0, initToken1, initFeeAmount, createQuery, isFirstMount])
+  }, [initToken0, initToken1, initFeeAmount, isFirstMount])
 
   const nextStep = () => {
     if (step === 0) {
