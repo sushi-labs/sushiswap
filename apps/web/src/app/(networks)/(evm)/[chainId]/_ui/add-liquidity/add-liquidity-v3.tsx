@@ -1,7 +1,7 @@
 'use client'
 
 import { ArrowLeftIcon } from '@heroicons/react-v1/solid'
-import { Button, Collapsible, classNames } from '@sushiswap/ui'
+import { Button, Collapsible, LinkInternal, classNames } from '@sushiswap/ui'
 import { useEffect, useMemo, useState } from 'react'
 import { usePoolsByTokenPair } from 'src/lib/hooks/usePoolsByTokenPair'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
@@ -136,14 +136,6 @@ const _Add = ({
     }
   }, [initToken0, initToken1, initFeeAmount, isFirstMount])
 
-  const nextStep = () => {
-    if (step === 0) {
-      if (token0 && token1 && feeAmount) {
-        setStep(1)
-      }
-    }
-  }
-
   return (
     <div
       className={classNames(
@@ -189,7 +181,28 @@ const _Add = ({
               </Collapsible>
             </>
           ) : null}
-          <Button onClick={nextStep}>Next</Button>
+          <LinkInternal
+            className={classNames(
+              'w-full',
+              !feeAmount || !token0 || !token1 ? 'pointer-events-none' : '',
+            )}
+            href={
+              feeAmount
+                ? `/${
+                    getEvmChainById(chainId).key
+                  }/pool/v3/${poolAddress}/add?feeAmount=${feeAmount}&fromCurrency=${
+                    token0?.isNative ? 'NATIVE' : token0?.address
+                  }&toCurrency=${token1?.isNative ? 'NATIVE' : token1?.address}`
+                : ''
+            }
+          >
+            <Button
+              disabled={!feeAmount || !token0 || !token1}
+              className="w-full"
+            >
+              Next
+            </Button>
+          </LinkInternal>
         </>
       ) : null}
       {step === 1 ? (

@@ -1,8 +1,9 @@
 'use client'
 
 import { ArrowLeftIcon } from '@heroicons/react-v1/solid'
-import { Collapsible, Currency, LinkInternal, classNames } from '@sushiswap/ui'
+import { Button, Collapsible, Currency, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { useRouter } from 'next/navigation'
 import { use, useMemo, useState } from 'react'
 import { usePoolsByTokenPair } from 'src/lib/hooks/usePoolsByTokenPair'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
@@ -27,6 +28,7 @@ import {
 
 export default function Page(props: { params: Promise<{ chainId: string }> }) {
   const params = use(props.params)
+
   return (
     <ConcentratedLiquidityURLStateProvider
       chainId={+params.chainId as SushiSwapV3ChainId}
@@ -49,6 +51,7 @@ const _Add = () => {
     tokenId,
     switchTokens,
   } = useConcentratedLiquidityURLState()
+  const { back } = useRouter()
 
   const [_invert, _setInvert] = useState(false)
   const { data: position } = useConcentratedPositionInfo({
@@ -92,9 +95,10 @@ const _Add = () => {
   return (
     <div className={classNames('flex flex-col gap-4 pt-6')}>
       <div>
-        <LinkInternal
-          className="flex w-fit items-center gap-1 "
-          href={`/${getEvmChainById(chainId).key}/pool/v3/${poolAddress}`}
+        <Button
+          variant="ghost"
+          className="flex w-fit items-center gap-1 hover:!bg-transparent"
+          onClick={back}
         >
           <ArrowLeftIcon className="w-4 h-4" />
           {token0 && token1 ? (
@@ -125,7 +129,7 @@ const _Add = () => {
               </div>
             </div>
           ) : null}
-        </LinkInternal>
+        </Button>
         <h2 className="text-2xl font-medium">Create New Position</h2>
       </div>
 
