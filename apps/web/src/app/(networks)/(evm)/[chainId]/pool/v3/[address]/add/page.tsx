@@ -97,7 +97,7 @@ const _Add = () => {
       <div>
         <Button
           variant="ghost"
-          className="flex w-fit items-center gap-1 hover:!bg-transparent"
+          className="flex w-fit items-center gap-1 hover:!bg-transparent !px-0"
           onClick={back}
         >
           <ArrowLeftIcon className="w-4 h-4" />
