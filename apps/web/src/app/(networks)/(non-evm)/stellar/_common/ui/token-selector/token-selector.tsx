@@ -37,7 +37,7 @@ type RowCallback = (row: {
 
 interface PropType {
   id: string
-  selected: Token
+  selected: Token | undefined
   onSelect: (token: Token) => void
   children: ReactNode
 }

@@ -15,6 +15,7 @@ export interface UseAddLiquidityParams {
   tickUpper: number
   recipient?: string
   deadline?: number
+  signTransaction: (xdr: string) => Promise<string>
 }
 
 export const useAddLiquidity = () => {
@@ -34,7 +35,11 @@ export const useAddLiquidity = () => {
         deadline: params.deadline || Math.floor(Date.now() / 1000) + 300,
       }
 
-      return await service.addLiquidity(params.userAddress, addLiquidityParams)
+      return await service.addLiquidity(
+        params.userAddress,
+        addLiquidityParams,
+        params.signTransaction,
+      )
     },
     onSuccess: (result, variables) => {
       console.log('Liquidity added successfully:', result)

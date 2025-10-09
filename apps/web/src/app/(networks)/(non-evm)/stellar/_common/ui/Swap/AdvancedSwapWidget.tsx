@@ -8,6 +8,7 @@ import {
   useSwapWithRouting,
 } from '../../lib/hooks/swap'
 import type { Token } from '../../lib/types/token.type'
+import { useStellarWallet } from '~stellar/providers'
 
 interface AdvancedSwapWidgetProps {
   userAddress: string
@@ -18,6 +19,7 @@ export function AdvancedSwapWidget({
   userAddress,
   tokens,
 }: AdvancedSwapWidgetProps) {
+  const { signTransaction } = useStellarWallet()
   const [selectedTokenIn, setSelectedTokenIn] = useState<Token | null>(null)
   const [selectedTokenOut, setSelectedTokenOut] = useState<Token | null>(null)
   const [amountIn, setAmountIn] = useState('')
@@ -94,6 +96,7 @@ export function AdvancedSwapWidget({
         token1Amount: token1AmountScaled,
         tickLower: -60000,
         tickUpper: 60000,
+        signTransaction,
       })
     } catch (error) {
       console.error('Add liquidity failed:', error)

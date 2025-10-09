@@ -30,6 +30,7 @@ export class SushiStellarService {
   async addLiquidity(
     userAddress: string,
     params: AddLiquidityParams,
+    signTransaction: (xdr: string) => Promise<string>,
   ): Promise<{ txHash: string; liquidity: bigint }> {
     // Convert params to pool-helpers format
     const result = await poolAddLiquidity({
@@ -40,14 +41,7 @@ export class SushiStellarService {
       // Convert string amounts to bigint (assuming 7 decimals)
       amount: BigInt(Math.floor(Number.parseFloat(params.token0Amount) * 1e7)),
       sourceAccount: userAddress,
-      signTransaction: async (xdr: string) => {
-        // Sign with Freighter
-        const signed = await (window as any).freighterApi.signTransaction(xdr, {
-          network: 'TESTNET',
-          networkPassphrase: 'Test SDF Network ; September 2015',
-        })
-        return signed.signedTxXdr || signed
-      },
+      signTransaction,
     })
 
     return {

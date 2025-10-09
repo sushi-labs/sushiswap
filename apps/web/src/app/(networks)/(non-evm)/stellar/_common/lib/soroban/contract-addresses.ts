@@ -53,12 +53,14 @@ export const POOL_CONFIGS: Record<
 
 /**
  * Get pool configuration by address
+ * Returns null if not found (dynamic pools will be queried from contract)
  */
 export function getPoolConfig(poolAddress: string) {
   const config = POOL_CONFIGS[poolAddress as keyof typeof POOL_CONFIGS]
 
   if (!config) {
-    console.error('No pool configuration found for address:', poolAddress)
+    // This is expected for dynamically discovered pools
+    // pool-helpers will query the contract directly
     return null
   }
 

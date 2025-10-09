@@ -30,7 +30,7 @@ interface ManageLiquidityCardProps {
 export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   pool,
 }) => {
-  const { isConnected, connectedAddress } = useStellarWallet()
+  const { isConnected, connectedAddress, signTransaction } = useStellarWallet()
   const { data: balances } = usePoolBalances(pool.address, connectedAddress)
   const [tab, setTab] = useState<string>('add')
   const [amount0, setAmount0] = useState<string>('')
@@ -60,6 +60,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
         tickLower: -60000,
         tickUpper: 60000,
         recipient: connectedAddress,
+        signTransaction,
       })
 
       // Reset form

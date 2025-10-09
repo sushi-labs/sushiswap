@@ -30,6 +30,15 @@ export function getTokenByCode(code: string): Token | undefined {
 }
 
 /**
+ * Get a token by its contract address
+ * @param contract - The contract address of the token
+ * @returns A Token object
+ */
+export function getTokenByContract(contract: string): Token | undefined {
+  return tokens[NETWORK_NAME].find((token) => token.contract === contract)
+}
+
+/**
  * Get the balance of a token for an address
  * @param address - The address to get the balance of
  * @param tokenAddress - The token contract address

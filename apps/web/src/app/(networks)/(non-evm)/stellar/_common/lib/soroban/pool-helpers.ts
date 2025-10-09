@@ -3,6 +3,7 @@ import * as StellarSdk from '@stellar/stellar-sdk'
 import {
   Account,
   Address,
+  Contract,
   Horizon,
   Operation,
   TransactionBuilder,
@@ -20,12 +21,13 @@ import {
   getPoolConfig,
 } from './contract-addresses'
 import { handleResult } from './handle-result'
-import { getTokenBalance, getTokenByCode } from './token-helpers'
+import { getTokenBalance, getTokenByCode, getTokenByContract } from './token-helpers'
 import {
   buildTransaction,
   submitTransaction,
   waitForTransaction,
 } from './transaction-helpers'
+import { discoverAllPools } from './dex-factory-helpers'
 
 export interface PoolBasicInfo {
   address: string
@@ -35,27 +37,213 @@ export interface PoolBasicInfo {
 }
 
 /**
+ * Get pool configuration directly from the pool contract
+ * This is used for dynamically created pools that aren't in POOL_CONFIGS
+ * Uses separate transactions for each call (like stellar-auth-test)
+ */
+async function getPoolInfoFromContract(address: string): Promise<{
+  token0: { address: string; code: string }
+  token1: { address: string; code: string }
+  fee: number
+  description: string
+} | null> {
+  try {
+    console.log(`🔍 Querying pool contract for ${address}...`)
+
+    const contract = new Contract(address)
+
+    // Build separate transactions for each call (one operation per transaction)
+    // This matches the stellar-auth-test pattern
+
+    // Get token0
+    const token0Tx = new TransactionBuilder(SIMULATION_ACCOUNT, {
+      fee: '100',
+      networkPassphrase: NETWORK_PASSPHRASE,
+    })
+      .addOperation(contract.call('token0'))
+      .setTimeout(30)
+      .build()
+
+    // Get token1
+    const token1Tx = new TransactionBuilder(SIMULATION_ACCOUNT, {
+      fee: '100',
+      networkPassphrase: NETWORK_PASSPHRASE,
+    })
+      .addOperation(contract.call('token1'))
+      .setTimeout(30)
+      .build()
+
+    // Get fee
+    const feeTx = new TransactionBuilder(SIMULATION_ACCOUNT, {
+      fee: '100',
+      networkPassphrase: NETWORK_PASSPHRASE,
+    })
+      .addOperation(contract.call('fee'))
+      .setTimeout(30)
+      .build()
+
+    // Simulate all three transactions in parallel
+    const [token0Result, token1Result, feeResult] = await Promise.all([
+      SorobanClient.simulateTransaction(token0Tx),
+      SorobanClient.simulateTransaction(token1Tx),
+      SorobanClient.simulateTransaction(feeTx),
+    ])
+
+    // Parse token0 - use retval not results
+    if (!('result' in token0Result && token0Result.result)) {
+      console.error(`  Failed to get token0 from pool ${address}`)
+      return null
+    }
+    
+    const token0Retval = (token0Result.result as any).retval
+    if (!token0Retval) {
+      console.error(`  No retval for token0 from pool ${address}`)
+      return null
+    }
+
+    // Parse token1 - use retval not results
+    if (!('result' in token1Result && token1Result.result)) {
+      console.error(`  Failed to get token1 from pool ${address}`)
+      return null
+    }
+    
+    const token1Retval = (token1Result.result as any).retval
+    if (!token1Retval) {
+      console.error(`  No retval for token1 from pool ${address}`)
+      return null
+    }
+
+    // Parse fee - use retval not results
+    if (!('result' in feeResult && feeResult.result)) {
+      console.error(`  Failed to get fee from pool ${address}`)
+      return null
+    }
+    
+    const feeRetval = (feeResult.result as any).retval
+    if (!feeRetval) {
+      console.error(`  No retval for fee from pool ${address}`)
+      return null
+    }
+
+    const token0Address = Address.fromScVal(token0Retval).toString()
+    const token1Address = Address.fromScVal(token1Retval).toString()
+    const fee = feeRetval.u32()
+
+    console.log(
+      `  Pool contract data: token0=${token0Address}, token1=${token1Address}, fee=${fee}`,
+    )
+
+    // Get token codes from our prepopulated token list (not from contracts)
+    // This avoids the "MissingValue" error when tokens don't implement symbol()
+    const token0FromList = getTokenByContract(token0Address)
+    const token1FromList = getTokenByContract(token1Address)
+
+    const token0Code = token0FromList?.code || `Token0(${token0Address.slice(0, 6)})`
+    const token1Code = token1FromList?.code || `Token1(${token1Address.slice(0, 6)})`
+
+    console.log(`  Token codes: token0=${token0Code}, token1=${token1Code}`)
+
+    return {
+      token0: { address: token0Address, code: token0Code },
+      token1: { address: token1Address, code: token1Code },
+      fee,
+      description: `${token0Code}-${token1Code} (${fee / 10000}% fee)`,
+    }
+  } catch (error) {
+    console.error(`❌ Error getting pool info from contract ${address}:`, error)
+    return null
+  }
+}
+
+/**
+ * Get token symbol/code from token contract
+ */
+async function getTokenCodeFromContract(
+  address: string,
+): Promise<string | null> {
+  try {
+    console.log(`    🔍 Getting token symbol for ${address}`)
+    const contract = new Contract(address)
+
+    const tx = new TransactionBuilder(SIMULATION_ACCOUNT, {
+      fee: '100000',
+      networkPassphrase: NETWORK_PASSPHRASE,
+    })
+      .addOperation(contract.call('symbol'))
+      .setTimeout(30)
+      .build()
+
+    const simResult = await SorobanClient.simulateTransaction(tx)
+
+    if ('result' in simResult && simResult.result) {
+      const result = simResult.result as any
+
+      // Try retval first (newer format)
+      if (result.retval) {
+        try {
+          const symbol = result.retval.sym().toString()
+          console.log(`    ✅ Token symbol for ${address}: ${symbol}`)
+          return symbol
+        } catch (retvalError) {
+          console.error(`    Failed to parse symbol from retval:`, retvalError)
+        }
+      }
+
+      // Fallback to results array (older format)
+      if (result.results && result.results.length > 0) {
+        const firstResult = result.results[0]
+        if (firstResult) {
+          const symbol = xdr.ScVal.fromXDR(firstResult.xdr, 'base64')
+            .sym()
+            .toString()
+          console.log(`    ✅ Token symbol for ${address}: ${symbol}`)
+          return symbol
+        }
+      }
+    } else if ('error' in simResult) {
+      console.error(`    ❌ Token symbol simulation error:`, simResult.error)
+    }
+
+    console.warn(`    ⚠️ No symbol found for token ${address}`)
+    return null
+  } catch (error) {
+    console.error(`❌ Error getting token symbol from ${address}:`, error)
+    return null
+  }
+}
+
+/**
  * Get all available pools with real-time data
+ * Queries factory.get_pool() for all token pair + fee tier combinations
+ * (Factory has no "list all pools" method, so we query each combination)
  * @returns Array of pool information with actual liquidity and reserves
  */
 export async function getAllPools(): Promise<PoolInfo[]> {
-  console.log('getAllPools called')
+  console.log('🏭 getAllPools - querying factory for all token combinations')
+
   try {
-    // const pools = await getPoolsForBaseTokenPairs()
-    const pools = Object.values(CONTRACT_ADDRESSES.POOLS)
-    console.log('Pool addresses:', pools)
-    const poolPromises = pools.map((address) => {
-      return getPoolInfo(address).catch((error) => {
-        console.error(`Error getting pool info for ${address}:`, error)
-        return null
-      })
+    const poolAddresses = await discoverAllPools()
+    console.log(`🏭 Factory returned ${poolAddresses.length} pool addresses`)
+
+    if (poolAddresses.length === 0) {
+      console.warn('⚠️ No pools found from factory')
+      return []
+    }
+
+    // Fetch detailed info for each pool in parallel
+    const poolPromises = poolAddresses.map((address) => {
+      return getPoolInfo(address).catch(() => null)
     })
 
     const results = await Promise.all(poolPromises)
-    console.log('Pool results:', results)
-    return results.filter((pool) => pool !== null)
+    const validPools = results.filter((pool) => pool !== null)
+
+    console.log(
+      `✅ Successfully loaded ${validPools.length}/${poolAddresses.length} pools (${poolAddresses.length - validPools.length} empty/inactive pools skipped)`,
+    )
+    return validPools
   } catch (error) {
-    console.error('Error in getAllPools:', error)
+    console.error('❌ Error in getAllPools:', error)
     return []
   }
 }
@@ -66,37 +254,78 @@ export async function getAllPools(): Promise<PoolInfo[]> {
  * @returns Complete pool information with all fields populated
  */
 export async function getPoolInfo(address: string): Promise<PoolInfo | null> {
-  console.log(`getPoolInfo called for ${address}`)
   try {
-    const config = getPoolConfig(address)
+    let config = getPoolConfig(address)
+
+    // If no hardcoded config exists, try to get pool info from the contract itself
     if (!config) {
-      console.error(`No configuration found for pool: ${address}`)
-      throw new Error(`No configuration found for pool: ${address}`)
+      try {
+        const poolInfo = await getPoolInfoFromContract(address)
+        if (poolInfo) {
+          config = poolInfo
+          console.log(`✅ Dynamic pool config loaded for ${address}`)
+        }
+      } catch (error) {
+        console.error(
+          `Failed to get pool info from contract for ${address}:`,
+          error,
+        )
+      }
+    }
+
+    if (!config) {
+      console.warn(
+        `⚠️ Could not fetch pool configuration for: ${address} - Skipping`,
+      )
+      return null
     }
 
     console.log(`Pool config for ${address}:`, config)
 
-    const token0 = getTokenByCode(config.token0.code)
-    const token1 = getTokenByCode(config.token1.code)
+    let token0 = getTokenByCode(config.token0.code)
+    let token1 = getTokenByCode(config.token1.code)
+
+    // If tokens don't exist in base tokens, create them dynamically from the config
+    if (!token0) {
+      console.warn(
+        `Token ${config.token0.code} not found in base tokens, creating dynamically`,
+      )
+      token0 = {
+        code: config.token0.code,
+        name: config.token0.code,
+        contract: config.token0.address,
+        decimals: 7,
+        issuer: '',
+        org: 'unknown',
+      }
+    }
+
+    if (!token1) {
+      console.warn(
+        `Token ${config.token1.code} not found in base tokens, creating dynamically`,
+      )
+      token1 = {
+        code: config.token1.code,
+        name: config.token1.code,
+        contract: config.token1.address,
+        decimals: 7,
+        issuer: '',
+        org: 'unknown',
+      }
+    }
 
     console.log(`Tokens for ${address}:`, { token0, token1 })
 
-    if (!token0 || !token1) {
-      console.error(`Token configuration not found for pool: ${address}`)
-      throw new Error(`Token configuration not found for pool: ${address}`)
-    }
-
-    // Fetch liquidity and reserves
+    // Fetch liquidity and reserves (both may be null for empty pools)
     const [liquidity, reserves] = await Promise.all([
-      fetchPoolLiquidity(address),
-      fetchPoolReserves(address),
+      fetchPoolLiquidity(address).catch(() => null),
+      fetchPoolReserves(address).catch(() => null),
     ])
 
-    if (!liquidity) {
-      throw new Error(`No liquidity found for pool: ${address}`)
-    }
-    if (!reserves) {
-      throw new Error(`No reserves found for pool: ${address}`)
+    // Skip pools with no liquidity (empty/inactive pools)
+    if (!liquidity || !reserves) {
+      console.warn(`⚠️ Pool ${address} has no liquidity/reserves - Skipping`)
+      return null
     }
 
     // Calculate TVL (Total Value Locked)
@@ -138,7 +367,8 @@ export async function getPoolInfo(address: string): Promise<PoolInfo | null> {
       tvl: formatTokenAmount(tvl, 7, 2),
     }
   } catch (error) {
-    console.error(`Failed to fetch data for pool ${address}:`, error)
+    // Pools with no liquidity or missing data are expected
+    console.warn(`⚠️ Skipping pool ${address} (likely empty or inactive)`)
     return null
   }
 }
@@ -197,7 +427,26 @@ export async function fetchPoolReserves(
   address: string,
 ): Promise<PoolReserves | null> {
   try {
-    const config = getPoolConfig(address)
+    let config = getPoolConfig(address)
+
+    // If no hardcoded config exists, try to get pool info from the contract itself
+    if (!config) {
+      console.log(
+        `No hardcoded config for ${address} in fetchPoolReserves, querying contract...`,
+      )
+      try {
+        const poolInfo = await getPoolInfoFromContract(address)
+        if (poolInfo) {
+          config = poolInfo
+        }
+      } catch (error) {
+        console.error(
+          `Failed to get pool info from contract for ${address}:`,
+          error,
+        )
+      }
+    }
+
     if (!config) {
       throw new Error(`No configuration found for pool: ${address}`)
     }
@@ -256,7 +505,26 @@ export async function getPoolBalances(
   address: string,
   connectedAddress: string,
 ): Promise<PoolReserves | null> {
-  const config = getPoolConfig(address)
+  let config = getPoolConfig(address)
+
+  // If no hardcoded config exists, try to get pool info from the contract itself
+  if (!config) {
+    console.log(
+      `No hardcoded config for ${address} in getPoolBalances, querying contract...`,
+    )
+    try {
+      const poolInfo = await getPoolInfoFromContract(address)
+      if (poolInfo) {
+        config = poolInfo
+      }
+    } catch (error) {
+      console.error(
+        `Failed to get pool info from contract for ${address}:`,
+        error,
+      )
+    }
+  }
+
   if (!config) {
     throw new Error(`No configuration found for pool: ${address}`)
   }
@@ -721,7 +989,26 @@ export async function testPoolReserves(poolAddress: string) {
 
   try {
     // Get pool configuration
-    const config = getPoolConfig(poolAddress)
+    let config = getPoolConfig(poolAddress)
+
+    // If no hardcoded config exists, try to get pool info from the contract itself
+    if (!config) {
+      console.log(
+        `No hardcoded config for ${poolAddress} in testPoolReserves, querying contract...`,
+      )
+      try {
+        const poolInfo = await getPoolInfoFromContract(poolAddress)
+        if (poolInfo) {
+          config = poolInfo
+        }
+      } catch (error) {
+        console.error(
+          `Failed to get pool info from contract for ${poolAddress}:`,
+          error,
+        )
+      }
+    }
+
     if (!config) {
       console.error(`❌ No configuration found for pool: ${poolAddress}`)
       return null
@@ -833,7 +1120,26 @@ export async function runPoolReservesTest() {
   try {
     // Test 1: Check if pool configuration exists
     console.log('\n📋 Test 1: Pool Configuration')
-    const config = getPoolConfig(HYPEA_XLM_POOL)
+    let config = getPoolConfig(HYPEA_XLM_POOL)
+
+    // If no hardcoded config exists, try to get pool info from the contract itself
+    if (!config) {
+      console.log(
+        `No hardcoded config for ${HYPEA_XLM_POOL} in runPoolReservesTest, querying contract...`,
+      )
+      try {
+        const poolInfo = await getPoolInfoFromContract(HYPEA_XLM_POOL)
+        if (poolInfo) {
+          config = poolInfo
+        }
+      } catch (error) {
+        console.error(
+          `Failed to get pool info from contract for ${HYPEA_XLM_POOL}:`,
+          error,
+        )
+      }
+    }
+
     if (!config) {
       console.error('❌ Pool configuration not found')
       return false
@@ -913,7 +1219,26 @@ export async function debugTokenBalance() {
   try {
     // Step 1: Check pool configuration
     console.log('\n📋 Step 1: Pool Configuration')
-    const config = getPoolConfig(HYPEA_XLM_POOL)
+    let config = getPoolConfig(HYPEA_XLM_POOL)
+
+    // If no hardcoded config exists, try to get pool info from the contract itself
+    if (!config) {
+      console.log(
+        `No hardcoded config for ${HYPEA_XLM_POOL} in debugTokenBalance, querying contract...`,
+      )
+      try {
+        const poolInfo = await getPoolInfoFromContract(HYPEA_XLM_POOL)
+        if (poolInfo) {
+          config = poolInfo
+        }
+      } catch (error) {
+        console.error(
+          `Failed to get pool info from contract for ${HYPEA_XLM_POOL}:`,
+          error,
+        )
+      }
+    }
+
     if (!config) {
       console.error('❌ No pool configuration found')
       return
