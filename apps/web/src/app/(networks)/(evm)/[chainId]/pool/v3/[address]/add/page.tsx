@@ -124,7 +124,7 @@ const _Add = () => {
                 {token0.symbol}/{token1.symbol}
               </div>
               {ProtocolBadge[SushiSwapProtocol.SUSHISWAP_V3]}
-              <div className="bg-[#F4F5F6] text-muted-foreground dark:bg-[#252A3C] dark:text-pink-200 text-xs px-2.5 py-1 rounded-full">
+              <div className="bg-[#0000001F] text-muted-foreground dark:bg-[#252A3C] dark:text-pink-200 text-xs px-2.5 py-1 rounded-full">
                 {formatNumber(feeAmount / 10000)}%
               </div>
             </div>

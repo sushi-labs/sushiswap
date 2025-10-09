@@ -53,7 +53,7 @@ export const InitialPrice = ({
   }, [token0Input, token1Input, token0, token1])
 
   return (
-    <div className="w-full p-6 bg-gray-100 dark:bg-slate-900 rounded-xl border border-[#00000014] dark:border-[#FFFFFF14]">
+    <div className="w-full p-6 bg-slate-50 dark:bg-slate-800 rounded-xl border border-[#00000014] dark:border-[#FFFFFF14]">
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-2">
           <p className="text-lg font-semibold text-slate-900 dark:text-pink-100">

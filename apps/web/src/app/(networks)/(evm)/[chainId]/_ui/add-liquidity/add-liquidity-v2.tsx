@@ -1,10 +1,17 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
+import { SlippageToleranceStorageKey, useLocalStorage } from '@sushiswap/hooks'
 import { createToast } from '@sushiswap/notifications'
 import { ZapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
-import { Button, Collapsible, Dots, Loader, classNames } from '@sushiswap/ui'
+import {
+  Button,
+  Collapsible,
+  Dots,
+  LinkInternal,
+  Loader,
+  classNames,
+} from '@sushiswap/ui'
 import {
   type Dispatch,
   type FC,
@@ -45,6 +52,7 @@ import {
   SUSHISWAP_V2_ROUTER_ADDRESS,
   type SushiSwapV2Pool,
   defaultCurrency,
+  getEvmChainById,
   isSushiSwapV2ChainId,
   isWNativeSupported,
 } from 'sushi/evm'
@@ -86,16 +94,27 @@ export const AddLiquidityV2 = ({
     defaultCurrency[chainId],
   )
   const [token1, setToken1] = useState<EvmCurrency | undefined>(undefined)
+  const [, setToken0V2] = useLocalStorage<EvmCurrency | null>(
+    `add-liquidity-v2-token0-${chainId}`,
+    initToken0 ?? null,
+  )
+  const [, setToken1V2] = useLocalStorage<EvmCurrency | null>(
+    `add-liquidity-v2-token1-${chainId}`,
+    initToken0 ?? null,
+  )
 
   useEffect(() => {
     if (!initToken0) {
       setToken0(defaultCurrency[chainId])
+      setToken0V2(defaultCurrency[chainId])
     }
     if (initToken0 && initToken1) {
       setToken0(initToken0)
       setToken1(initToken1)
+      setToken0V2(initToken0)
+      setToken1V2(initToken1)
     }
-  }, [chainId, initToken0, initToken1])
+  }, [chainId, initToken0, initToken1, setToken0V2, setToken1V2])
 
   const [{ input0, input1 }, setTypedAmounts] = useState<{
     input0: string
@@ -117,8 +136,9 @@ export const AddLiquidityV2 = ({
       }
 
       setToken0(token)
+      setToken0V2(token ?? null)
     },
-    [token1],
+    [token1, setToken0V2],
   )
 
   const _setToken1 = useCallback(
@@ -134,8 +154,9 @@ export const AddLiquidityV2 = ({
       }
 
       setToken1(token)
+      setToken1V2(token ?? null)
     },
-    [token0],
+    [token0, setToken1V2],
   )
   const { data: price0, isLoading: isPrice0Loading } = usePrice({
     chainId: token0?.chainId,
@@ -224,66 +245,81 @@ export const AddLiquidityV2 = ({
                 <Collapsible open={doesNotExist} className="w-full">
                   <DoesNotExistMessage type="SUSHISWAP_V2" />
                 </Collapsible>
+              </>
+            ) : null}
+            {doesNotExist ? (
+              <LinkInternal
+                className="w-full"
+                href={`/${getEvmChainById(chainId).key}/pool/v2/create`}
+              >
+                <Button size="xl" className="mt-4 w-full">
+                  Next
+                </Button>
+              </LinkInternal>
+            ) : (
+              <>
                 <Collapsible open={doesNotExist} className="w-full">
                   <div className="flex flex-col gap-4">
                     <p className="text-base font-medium text-slate-900 dark:text-pink-100">
                       Set Price
                     </p>
-                    <InitialPrice
-                      token0={token0}
-                      token1={token1}
-                      input0={input0}
-                      input1={input1}
-                    />
+                    {token0 && token1 && (
+                      <InitialPrice
+                        token0={token0}
+                        token1={token1}
+                        input0={input0}
+                        input1={input1}
+                      />
+                    )}
                   </div>
                 </Collapsible>
+                <div>
+                  {hideTokenSelectors ? null : (
+                    <p className="pb-2 text-base font-medium text-slate-900 dark:text-pink-100">
+                      Deposit
+                    </p>
+                  )}
+                  <div className="flex flex-col gap-4">
+                    {isZapSupportedChainId(chainId) &&
+                    poolState === SushiSwapV2PoolState.EXISTS ? (
+                      <ToggleZapCard
+                        checked={isZapModeEnabled}
+                        onCheckedChange={setIsZapModeEnabled}
+                      />
+                    ) : null}
+                    {isZapModeEnabled ? (
+                      <ZapWidget
+                        chainId={chainId}
+                        pool={pool}
+                        poolState={poolState}
+                        title={title}
+                      />
+                    ) : (
+                      <AddLiquidityWidget
+                        chainId={token0?.chainId ?? token1?.chainId ?? chainId}
+                        pool={pool}
+                        poolState={poolState}
+                        title={title}
+                        token0={token0}
+                        token1={token1}
+                        setToken0={_setToken0}
+                        setToken1={_setToken1}
+                        input0={input0}
+                        input1={input1}
+                        setTypedAmounts={setTypedAmounts}
+                        independendField={independendField}
+                        setIndependendField={setIndependendField}
+                        hideTokenSelectors={hideTokenSelectors}
+                      />
+                    )}
+                  </div>
+                </div>
+                <EstimatedValue
+                  dollarValue={estimatedValue}
+                  isLoading={isPrice0Loading || isPrice1Loading}
+                />
               </>
-            ) : null}
-            <div>
-              {hideTokenSelectors ? null : (
-                <p className="pb-2 text-base font-medium text-slate-900 dark:text-pink-100">
-                  Deposit
-                </p>
-              )}
-              <div className="flex flex-col gap-4">
-                {isZapSupportedChainId(chainId) &&
-                poolState === SushiSwapV2PoolState.EXISTS ? (
-                  <ToggleZapCard
-                    checked={isZapModeEnabled}
-                    onCheckedChange={setIsZapModeEnabled}
-                  />
-                ) : null}
-                {isZapModeEnabled ? (
-                  <ZapWidget
-                    chainId={chainId}
-                    pool={pool}
-                    poolState={poolState}
-                    title={title}
-                  />
-                ) : (
-                  <AddLiquidityWidget
-                    chainId={token0?.chainId ?? token1?.chainId ?? chainId}
-                    pool={pool}
-                    poolState={poolState}
-                    title={title}
-                    token0={token0}
-                    token1={token1}
-                    setToken0={_setToken0}
-                    setToken1={_setToken1}
-                    input0={input0}
-                    input1={input1}
-                    setTypedAmounts={setTypedAmounts}
-                    independendField={independendField}
-                    setIndependendField={setIndependendField}
-                    hideTokenSelectors={hideTokenSelectors}
-                  />
-                )}
-              </div>
-            </div>
-            <EstimatedValue
-              dollarValue={estimatedValue}
-              isLoading={isPrice0Loading || isPrice1Loading}
-            />
+            )}
           </div>
         )
       }}
@@ -298,7 +334,7 @@ interface ZapWidgetProps {
   title: ReactNode
 }
 
-const ZapWidget: FC<ZapWidgetProps> = (props) => {
+export const ZapWidget: FC<ZapWidgetProps> = (props) => {
   return (
     <CheckerProvider>
       <_ZapWidget {...props} />
@@ -568,9 +604,10 @@ interface AddLiquidityWidgetProps {
   independendField: number
   setIndependendField: Dispatch<SetStateAction<number>>
   hideTokenSelectors?: boolean
+  inputClassNames?: string
 }
 
-const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
+export const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
   chainId,
   pool,
   poolState,
@@ -585,6 +622,7 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
   independendField,
   setIndependendField,
   hideTokenSelectors,
+  inputClassNames,
 }) => {
   const [slippagePercent] = useSlippageTolerance(
     SlippageToleranceStorageKey.AddLiquidity,
@@ -688,7 +726,10 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
         <Web3Input.Currency
           id="add-liquidity-token0"
           type="INPUT"
-          className="p-4 bg-gray-100 rounded-xl dark:bg-slate-900"
+          className={classNames(
+            'p-4 bg-gray-100 rounded-xl dark:bg-slate-900',
+            inputClassNames,
+          )}
           chainId={chainId}
           value={input0}
           onChange={onChangeToken0TypedAmount}
@@ -717,7 +758,10 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
         <Web3Input.Currency
           id="add-liquidity-token1"
           type="INPUT"
-          className="p-4 bg-gray-100 rounded-xl dark:bg-slate-900"
+          className={classNames(
+            'p-4 bg-gray-100 rounded-xl dark:bg-slate-900',
+            inputClassNames,
+          )}
           chainId={chainId}
           value={input1}
           onChange={onChangeToken1TypedAmount}
