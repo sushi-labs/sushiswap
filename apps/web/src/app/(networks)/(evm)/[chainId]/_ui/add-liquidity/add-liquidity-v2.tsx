@@ -103,6 +103,7 @@ export const AddLiquidityV2 = ({
     initToken0 ?? null,
   )
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: adding setToken0V2 and setToken1V2 causes infinite loop
   useEffect(() => {
     if (!initToken0) {
       setToken0(defaultCurrency[chainId])
@@ -114,7 +115,7 @@ export const AddLiquidityV2 = ({
       setToken0V2(initToken0)
       setToken1V2(initToken1)
     }
-  }, [chainId, initToken0, initToken1, setToken0V2, setToken1V2])
+  }, [chainId, initToken0, initToken1])
 
   const [{ input0, input1 }, setTypedAmounts] = useState<{
     input0: string
