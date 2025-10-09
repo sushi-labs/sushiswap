@@ -4,11 +4,12 @@ import { Button } from '@sushiswap/ui'
 import React, { useMemo } from 'react'
 import { useExecuteSwap } from '~stellar/_common/lib/hooks/swap'
 import { Checker } from '~stellar/_common/ui/checker'
+import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
 import { useStellarWallet } from '~stellar/providers'
 import { useSimpleSwapState } from './simple-swap-provider/simple-swap-provider'
 
 export const SimpleSwapExecuteButton = () => {
-  const { connectedAddress } = useStellarWallet()
+  const { connectedAddress, isConnected } = useStellarWallet()
   const { amount, token0, token1, outputAmount, slippageAmount } =
     useSimpleSwapState()
   const executeSwap = useExecuteSwap()
@@ -98,16 +99,22 @@ export const SimpleSwapExecuteButton = () => {
     executeSwap.isPending
 
   return (
-    <Checker.Amounts amounts={checkerAmount} disabled={isDisabled}>
-      <Button
-        fullWidth
-        size="xl"
-        onClick={handleSwap}
-        disabled={isDisabled}
-        loading={executeSwap.isPending}
-      >
-        {executeSwap.isPending ? 'Executing Swap...' : 'Swap'}
-      </Button>
-    </Checker.Amounts>
+    <div className="pt-4">
+      {!isConnected ? (
+        <ConnectWalletButton fullWidth size="xl" />
+      ) : (
+        <Checker.Amounts amounts={checkerAmount} disabled={isDisabled}>
+          <Button
+            fullWidth
+            size="xl"
+            onClick={handleSwap}
+            disabled={isDisabled}
+            loading={executeSwap.isPending}
+          >
+            {executeSwap.isPending ? 'Executing Swap...' : 'Swap'}
+          </Button>
+        </Checker.Amounts>
+      )}
+    </div>
   )
 }

@@ -1,9 +1,11 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
+import { createErrorToast, createToast } from '@sushiswap/notifications'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useStellarWallet } from '~stellar/providers'
 import { SwapService } from '../../services/swap-service'
 import type { Token } from '../../types/token.type'
+import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
 
 export interface UseExecuteSwapParams {
   userAddress: string
@@ -19,6 +21,7 @@ export interface UseExecuteSwapParams {
 
 export const useExecuteSwap = () => {
   const { signTransaction } = useStellarWallet()
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationKey: ['swap', 'executeSwap'],
@@ -41,20 +44,48 @@ export const useExecuteSwap = () => {
         signTransaction,
       )
 
-      return result
+      return { result, params }
     },
-    onSuccess: (result) => {
+    onSuccess: ({ result, params }) => {
       console.log('Swap executed successfully:', result)
       console.log('Transaction hash:', result.txHash)
+
+      // Show success toast with Stellar explorer link
+      const amountOut = result.amountOut < 0n ? -result.amountOut : result.amountOut
+      const amountOutFormatted = (Number(amountOut) / 1e7).toFixed(4)
+      const amountInFormatted = (Number(params.amountIn) / 1e7).toFixed(4)
+
+      createToast({
+        account: params.userAddress,
+        type: 'swap',
+        chainId: 1, // Stellar testnet
+        txHash: result.txHash,
+        href: getStellarTxnLink(result.txHash),
+        promise: Promise.resolve(result),
+        summary: {
+          pending: `Swapping ${amountInFormatted} ${params.tokenIn.code} for ${params.tokenOut.code}`,
+          completed: `Swapped ${amountInFormatted} ${params.tokenIn.code} for ${amountOutFormatted} ${params.tokenOut.code}`,
+          failed: 'Swap failed',
+        },
+        groupTimestamp: Date.now(),
+        timestamp: Date.now(),
+      })
+
+      // Invalidate token balances
+      queryClient.invalidateQueries({
+        queryKey: ['token', 'balance'],
+      })
     },
     onError: (error) => {
       console.error('Failed to execute swap:', error)
+      createErrorToast(error.message || 'Failed to execute swap', false)
     },
   })
 }
 
 export const useExecuteMultiHopSwap = () => {
   const { signTransaction } = useStellarWallet()
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationKey: ['swap', 'executeMultiHopSwap'],
@@ -83,14 +114,41 @@ export const useExecuteMultiHopSwap = () => {
         signTransaction,
       )
 
-      return result
+      return { result, params }
     },
-    onSuccess: (result) => {
+    onSuccess: ({ result, params }) => {
       console.log('Multi-hop swap executed successfully:', result)
       console.log('Transaction hash:', result.txHash)
+
+      // Show success toast
+      const amountOut = result.amountOut < 0n ? -result.amountOut : result.amountOut
+      const amountOutFormatted = (Number(amountOut) / 1e7).toFixed(4)
+      const amountInFormatted = (Number(params.amountIn) / 1e7).toFixed(4)
+
+      createToast({
+        account: params.userAddress,
+        type: 'swap',
+        chainId: 1,
+        txHash: result.txHash,
+        href: getStellarTxnLink(result.txHash),
+        promise: Promise.resolve(result),
+        summary: {
+          pending: `Swapping ${amountInFormatted} tokens`,
+          completed: `Swapped for ${amountOutFormatted} tokens (multi-hop)`,
+          failed: 'Multi-hop swap failed',
+        },
+        groupTimestamp: Date.now(),
+        timestamp: Date.now(),
+      })
+
+      // Invalidate token balances
+      queryClient.invalidateQueries({
+        queryKey: ['token', 'balance'],
+      })
     },
     onError: (error) => {
       console.error('Failed to execute multi-hop swap:', error)
+      createErrorToast(error.message || 'Failed to execute multi-hop swap', false)
     },
   })
 }

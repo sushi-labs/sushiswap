@@ -54,6 +54,14 @@ export const baseTokens: Token[] = [
     org: 'unknown',
     decimals: 7,
   },
+  {
+    code: 'HYPEc',
+    issuer: '',
+    contract: 'CCSG4CCSKDAZ2UWZZNFK2FLJJQ3T443SUIAPAJR436WNOSFXPYOT47C2',
+    name: 'HypeC',
+    org: 'hypotenuselabs',
+    decimals: 7,
+  },
   // {
   //   code: 'USDC',
   //   issuer: 'GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5',
