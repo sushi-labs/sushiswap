@@ -1,6 +1,6 @@
 'use client'
 
-import type { V2Pool } from '@sushiswap/graph-client/data-api'
+import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
 import type { V2PoolBuckets } from '@sushiswap/graph-client/data-api-181'
 import {
   Button,
@@ -89,7 +89,7 @@ const formatBucketData = (
 }
 
 interface APRChartProps {
-  pool: V2Pool
+  pool: V2Pool | V3Pool
 }
 
 export const APRChart: FC<APRChartProps> = ({ pool }) => {
@@ -105,7 +105,7 @@ export const APRChart: FC<APRChartProps> = ({ pool }) => {
   } = usePoolBuckets({
     chainId: pool.chainId,
     poolAddress: pool.address,
-    protocol: 'SUSHISWAP_V2',
+    protocol: pool.protocol,
   })
 
   const buckets = useMemo(() => {
