@@ -163,120 +163,125 @@ export const ReviewSwapDialog = () => {
                   Swap {amountIn?.toSignificant(6)} {amountIn?.currency?.symbol}
                 </DialogDescription>
               </DialogHeader>
-              <div className="flex flex-col gap-4">
-                <List className="!pt-0">
-                  <List.Control>
-                    <List.KeyValue title="Estimated arrival">
-                      {executionDuration}
-                    </List.KeyValue>
-                    {showMore ? (
-                      <List.KeyValue
-                        title="Price Impact"
-                        subtitle="The impact your trade has on the market price of this pool."
-                      >
-                        <span className={classNames('text-right')}>
-                          {formatPercent(0)}
-                        </span>
+              <div className="overflow-y-auto flex flex-col !gap-4 max-h-[calc(100vh-220px)]">
+                <div>
+                  <List className="!pt-0 !gap-4 flex flex-col">
+                    <List.Control>
+                      <List.KeyValue title="Estimated arrival">
+                        {executionDuration}
                       </List.KeyValue>
-                    ) : null}
-                    <List.KeyValue
-                      title="Network fee"
-                      subtitle="The transaction fee charged by the origin blockchain."
-                    >
-                      <div className="flex flex-col gap-0.5">
-                        <div>
-                          {feeInToken?.toSignificant(6) ?? '0'}{' '}
-                          {feeInToken?.currency.symbol}
-                        </div>
-                        <span className="text-xs text-muted-foreground">
-                          {formatUSD(simulateBridgeTx?.networkFeeInUsd ?? 0)}
-                        </span>
-                      </div>
-                    </List.KeyValue>
-                    <List.KeyValue
-                      title="Est. received"
-                      subtitle="The estimated output amount."
-                    >
-                      <div className="flex flex-col gap-0.5">
-                        <div>
-                          {amountOut?.toSignificant(6) ?? '0'}{' '}
-                          {amountOut?.currency.symbol}
-                        </div>
-                        <span className="text-xs text-muted-foreground">
-                          {formatUSD(
-                            amountOut?.mulHuman(priceUsd ?? 0)?.toString() ??
-                              '0',
-                          )}
-                        </span>
-                      </div>
-                    </List.KeyValue>
-                    {showMore ? (
+                      {showMore ? (
+                        <List.KeyValue
+                          title="Price Impact"
+                          subtitle="The impact your trade has on the market price of this pool."
+                        >
+                          <span className={classNames('text-right')}>
+                            {formatPercent(0)}
+                          </span>
+                        </List.KeyValue>
+                      ) : null}
                       <List.KeyValue
-                        title={`Min. received after slippage (${formatPercent(slippage)})`}
-                        subtitle="The minimum amount you are guaranteed to receive."
+                        title="Network fee"
+                        subtitle="The transaction fee charged by the origin blockchain."
                       >
                         <div className="flex flex-col gap-0.5">
                           <div>
-                            {minAmountOut?.toSignificant(6) ?? '0'}{' '}
-                            {minAmountOut?.currency.symbol}
+                            {feeInToken?.toSignificant(6) ?? '0'}{' '}
+                            {feeInToken?.currency.symbol}
+                          </div>
+                          <span className="text-xs text-muted-foreground">
+                            {formatUSD(simulateBridgeTx?.networkFeeInUsd ?? 0)}
+                          </span>
+                        </div>
+                      </List.KeyValue>
+                      <List.KeyValue
+                        title="Est. received"
+                        subtitle="The estimated output amount."
+                      >
+                        <div className="flex flex-col gap-0.5">
+                          <div>
+                            {amountOut?.toSignificant(6) ?? '0'}{' '}
+                            {amountOut?.currency.symbol}
                           </div>
                           <span className="text-xs text-muted-foreground">
                             {formatUSD(
-                              minAmountOut
-                                ?.mulHuman(priceUsd ?? 0)
-                                ?.toString() ?? '0',
+                              amountOut?.mulHuman(priceUsd ?? 0)?.toString() ??
+                                '0',
                             )}
                           </span>
                         </div>
                       </List.KeyValue>
-                    ) : null}
+                      {showMore ? (
+                        <List.KeyValue
+                          title={`Min. received after slippage (${formatPercent(slippage)})`}
+                          subtitle="The minimum amount you are guaranteed to receive."
+                        >
+                          <div className="flex flex-col gap-0.5">
+                            <div>
+                              {minAmountOut?.toSignificant(6) ?? '0'}{' '}
+                              {minAmountOut?.currency.symbol}
+                            </div>
+                            <span className="text-xs text-muted-foreground">
+                              {formatUSD(
+                                minAmountOut
+                                  ?.mulHuman(priceUsd ?? 0)
+                                  ?.toString() ?? '0',
+                              )}
+                            </span>
+                          </div>
+                        </List.KeyValue>
+                      ) : null}
 
-                    <div className="p-3">
-                      <Button
-                        size="xs"
-                        fullWidth
-                        onClick={() => setShowMore(!showMore)}
-                        variant="ghost"
-                      >
-                        {showMore ? (
-                          <>
-                            <SelectIcon className="rotate-180" />
-                          </>
-                        ) : (
-                          <>
-                            <SelectIcon />
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  </List.Control>
-                </List>
-              </div>
-              <CrossChainSwapRouteView />
-              {recipient && (
-                <List className="!pt-2">
-                  <List.Control>
-                    <List.KeyValue title="Recipient">
-                      <a
-                        target="_blank"
-                        href={
-                          chainId1 === ChainId.ETHEREUM && isAddress(recipient)
-                            ? getEvmChainById(chainId1).getAccountUrl(recipient)
-                            : chainId1 === ChainId.KADENA
-                              ? getKvmChainById(chainId1).getAccountUrl(
+                      <div className="p-3">
+                        <Button
+                          size="xs"
+                          fullWidth
+                          onClick={() => setShowMore(!showMore)}
+                          variant="ghost"
+                        >
+                          {showMore ? (
+                            <>
+                              <SelectIcon className="rotate-180" />
+                            </>
+                          ) : (
+                            <>
+                              <SelectIcon />
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </List.Control>
+                  </List>
+                </div>
+                <CrossChainSwapRouteView />
+                {recipient && (
+                  <List className="!pt-2">
+                    <List.Control>
+                      <List.KeyValue title="Recipient">
+                        <a
+                          target="_blank"
+                          href={
+                            chainId1 === ChainId.ETHEREUM &&
+                            isAddress(recipient)
+                              ? getEvmChainById(chainId1).getAccountUrl(
                                   recipient,
                                 )
-                              : ''
-                        }
-                        className="flex items-center gap-2 cursor-pointer text-blue"
-                        rel="noreferrer"
-                      >
-                        {truncateString(recipient, 10, 'middle')}
-                      </a>
-                    </List.KeyValue>
-                  </List.Control>
-                </List>
-              )}
+                              : chainId1 === ChainId.KADENA
+                                ? getKvmChainById(chainId1).getAccountUrl(
+                                    recipient,
+                                  )
+                                : ''
+                          }
+                          className="flex items-center gap-2 cursor-pointer text-blue"
+                          rel="noreferrer"
+                        >
+                          {truncateString(recipient, 10, 'middle')}
+                        </a>
+                      </List.KeyValue>
+                    </List.Control>
+                  </List>
+                )}
+              </div>
               <DialogFooter>
                 <KinesisSwapButton
                   closeModal={confirm}
