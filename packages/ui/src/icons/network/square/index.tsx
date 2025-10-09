@@ -36,6 +36,7 @@ import { ModeSquare } from './ModeSquare'
 // import { OkexSquare } from "./OkexSquare";
 import { OptimismSquare } from './OptimismSquare'
 // import { PalmSquare } from "./PalmSquare";
+import { PlasmaSquare } from './PlasmaSquare'
 import { PolygonSquare } from './PolygonSquare'
 import { PolygonZKSquare } from './PolygonZKSquare'
 import { RootstockSquare } from './RootstockSquare'
@@ -86,6 +87,7 @@ export * from './MoonriverSquare'
 export * from './OkexSquare'
 export * from './OptimismSquare'
 export * from './PalmSquare'
+export * from './PlasmaSquare'
 export * from './PolygonSquare'
 export * from './PolygonZKSquare'
 export * from './RootstockSquare'
@@ -149,6 +151,7 @@ export const NETWORK_SQUARE_ICON: Partial<
   [ChainId.APE]: ApeSquare,
   [ChainId.SONIC]: SonicSquare,
   [ChainId.HEMI]: HemiSquare,
+  [ChainId.PLASMA]: PlasmaSquare,
   [ChainId.KATANA]: KatanaSquare,
   [ChainId.APTOS]: AptosSquare,
   [ChainId.TRON]: TronSquare,
