@@ -17,7 +17,7 @@ export const SendButton = ({
     if (!state.token0) return []
     if (!state.amount || Number.isNaN(Number(state.amount))) return []
 
-    return [new Amount(state.token0, state.amount)]
+    return [Amount.tryFromHuman(state.token0, state.amount)]
   }, [state.token0, state.amount])
 
   return (

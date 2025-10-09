@@ -8,24 +8,27 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
-import { formatNumber, formatPercent, formatUSD } from 'sushi'
+import type { PortfolioV2Row } from 'src/lib/wagmi/hooks/portfolio/use-wallet-portfolio'
+import { Amount, formatNumber, formatPercent, formatUSD } from 'sushi'
+import { type EvmChainId, EvmNative, EvmToken } from 'sushi/evm'
+import { ethAddress, formatUnits, parseUnits, zeroAddress } from 'viem'
+import { SparklineCell } from '~evm/[chainId]/explore/tokens/_ui/sparkline-cell'
 import { ActionButtons } from '../assets-chart/action-buttons'
 import { MiniChart } from './mini-chart'
-import type { PortfolioRow } from './wallet-holdings'
 
-export const CHAIN_COLUMN: ColumnDef<PortfolioRow> = {
+export const CHAIN_COLUMN: ColumnDef<PortfolioV2Row> = {
   id: 'chain',
   header: () => (
     <span className="text-slate-450 dark:text-slate-500">Chain</span>
   ),
   enableSorting: false,
-  accessorFn: (row) => row.chainId,
+  accessorFn: (row) => row,
   cell: ({ row }) => (
     <div className="flex gap-1 md:gap-2">
       <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
         <NetworkIcon
           type="square"
-          chainId={row.original.chainId}
+          chainId={row.original.chains[0].chainId}
           className="w-5 h-5"
         />
       </div>
@@ -41,7 +44,7 @@ export const CHAIN_COLUMN: ColumnDef<PortfolioRow> = {
   },
 }
 
-export const ASSETS_COLUMN: ColumnDef<PortfolioRow> = {
+export const ASSETS_COLUMN: ColumnDef<PortfolioV2Row> = {
   id: 'assets',
   header: () => (
     <div className="flex gap-1 items-center">
@@ -54,18 +57,26 @@ export const ASSETS_COLUMN: ColumnDef<PortfolioRow> = {
   enableSorting: false,
   accessorFn: (row) => row,
   cell: ({ row }) => {
+    const { token } = row.original
+    const tokenAddress = token.address as `0x${string}`
+    const isNative = tokenAddress === ethAddress
+    const currency = isNative
+      ? new EvmNative({
+          ...token,
+          chainId: token.chainId as EvmChainId,
+        })
+      : new EvmToken({
+          ...token,
+          address: token.address as `0x${string}`,
+          chainId: token.chainId as EvmChainId,
+        })
     return (
       <div className="flex items-center gap-1 md:gap-2 min-w-[130px]">
-        <Currency.Icon
-          disableLink
-          currency={row.original.token}
-          width={24}
-          height={24}
-        />{' '}
+        <Currency.Icon disableLink currency={currency} width={24} height={24} />{' '}
         <span className="flex gap-1 items-center whitespace-nowrap text-slate-900 dark:text-slate-200">
           {row.original.token.symbol}
           <div className="px-2 py-1 text-xs rounded-lg bg-slate-200 dark:bg-slate-750 text-slate-450 dark:text-slate-500">
-            {formatPercent(row.original.percentageOfPort)}
+            {formatPercent(row.original.percentageOfPortfolio)}
           </div>
         </span>
       </div>
@@ -86,20 +97,21 @@ export const ASSETS_COLUMN: ColumnDef<PortfolioRow> = {
   },
 }
 
-export const PRICE_COLUMN: ColumnDef<PortfolioRow> = {
+export const PRICE_COLUMN: ColumnDef<PortfolioV2Row> = {
   id: 'price',
   header: () => (
     <span className="font-semibold text-slate-450 dark:text-slate-500">
       Price
     </span>
   ),
-  accessorFn: (row) => row.price,
+  accessorFn: (row) => row,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    rowA.price - rowB.price,
-  cell: (props) =>
-    formatUSD(props.row.original.price).includes('NaN')
+    rowA.priceUSD - rowB.priceUSD,
+  cell: (props) => {
+    return formatUSD(props.row.original.priceUSD).includes('NaN')
       ? '$0.00'
-      : formatUSD(props.row.original.price),
+      : formatUSD(props.row.original.priceUSD)
+  },
   meta: {
     body: {
       skeleton: <SkeletonText fontSize="lg" />,
@@ -110,7 +122,7 @@ export const PRICE_COLUMN: ColumnDef<PortfolioRow> = {
   },
 }
 
-export const AMOUNT_COLUMN: ColumnDef<PortfolioRow> = {
+export const AMOUNT_COLUMN: ColumnDef<PortfolioV2Row> = {
   id: 'amount',
   header: () => (
     <span className="font-semibold text-slate-450 dark:text-slate-500">
@@ -119,12 +131,15 @@ export const AMOUNT_COLUMN: ColumnDef<PortfolioRow> = {
   ),
   accessorFn: (row) => row,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    rowA.amount - rowB.amount,
+    +rowA.amount - +rowB.amount,
   cell: ({ row }) => {
+    const { token, amount } = row.original
+
+    const _amount = formatUnits(BigInt(amount), token.decimals)
     return (
       <div className="flex items-center gap-1 md:gap-2 min-w-[130px]">
         <span className="whitespace-nowrap">
-          {formatNumber(row.original.amount)} {row.original.token.symbol}
+          {formatNumber(_amount.toString())} {row.original.token.symbol}
         </span>
       </div>
     )
@@ -144,20 +159,20 @@ export const AMOUNT_COLUMN: ColumnDef<PortfolioRow> = {
   },
 }
 
-export const VALUE_COLUMN: ColumnDef<PortfolioRow> = {
+export const VALUE_COLUMN: ColumnDef<PortfolioV2Row> = {
   id: 'value',
   header: () => (
     <span className="font-semibold text-slate-450 dark:text-slate-500">
       Value
     </span>
   ),
-  accessorFn: (row) => row.value,
+  accessorFn: (row) => row,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    rowA.value - rowB.value,
+    rowA.amountUSD - rowB.amountUSD,
   cell: (props) =>
-    formatUSD(props.row.original.value).includes('NaN')
+    formatUSD(props.row.original.amountUSD).includes('NaN')
       ? '$0.00'
-      : formatUSD(props.row.original.value),
+      : formatUSD(props.row.original.amountUSD),
   meta: {
     body: {
       skeleton: <SkeletonText fontSize="lg" />,
@@ -168,7 +183,7 @@ export const VALUE_COLUMN: ColumnDef<PortfolioRow> = {
   },
 }
 
-export const UPNL_COLUMN: ColumnDef<PortfolioRow> = {
+export const UPNL_COLUMN: ColumnDef<PortfolioV2Row> = {
   id: 'uPnL',
   header: () => (
     <span className="font-semibold text-slate-450 dark:text-slate-500">
@@ -211,7 +226,7 @@ export const UPNL_COLUMN: ColumnDef<PortfolioRow> = {
   },
 }
 
-export const LAST_30_DAY_COLUMN: ColumnDef<PortfolioRow> = {
+export const LAST_30_DAY_COLUMN: ColumnDef<PortfolioV2Row> = {
   id: 'last30Days',
   header: () => (
     <span className="text-slate-450 dark:text-slate-500">Last 30 Days</span>
@@ -223,16 +238,27 @@ export const LAST_30_DAY_COLUMN: ColumnDef<PortfolioRow> = {
     const isSmallScreen = useIsSmScreen()
 
     const isHovered = table.options.meta?.getIsRowHovered(row.id) ?? false
-    const { last30Days, price } = row.original
+    const { last30Days } = row.original
 
     if (!last30Days) return null
 
-    const xData = last30Days.map((p) => p.timestamp)
     const yData = last30Days.map((p) => p.price)
+
+    const token =
+      row.original.token.address === ethAddress
+        ? new EvmNative({
+            ...row.original.token,
+            chainId: row.original.token.chainId as EvmChainId,
+          })
+        : new EvmToken({
+            ...row.original.token,
+            address: row.original.token.address as `0x${string}`,
+            chainId: row.original.token.chainId as EvmChainId,
+          })
 
     return (isHovered || isModalOpen) && !isSmallScreen ? (
       <ActionButtons
-        token={row.original.token}
+        token={token}
         renderSendWidget={false}
         buttonClassName="!w-[92px]"
         className="!flex !flex-row"
@@ -241,11 +267,7 @@ export const LAST_30_DAY_COLUMN: ColumnDef<PortfolioRow> = {
       />
     ) : (
       <div className="!w-[292px] flex justify-center">
-        <MiniChart
-          xData={xData}
-          yData={yData}
-          color={price > 0 ? '#1DA67D' : price < 0 ? '#DE5852' : '#94a3b8'}
-        />
+        <SparklineCell data={yData} width={212} height={40} />
       </div>
     )
   },

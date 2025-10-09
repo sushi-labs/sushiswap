@@ -19,7 +19,16 @@ import {
 } from '@sushiswap/ui'
 import type { TableState } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from 'react'
-import { type EvmChainId, type EvmCurrency, EvmToken } from 'sushi/evm'
+import { useWalletPortfolio } from 'src/lib/wagmi/hooks/portfolio/use-wallet-portfolio'
+import { useWalletPositions } from 'src/lib/wagmi/hooks/portfolio/use-wallet-positions'
+import {
+  type EvmChainId,
+  type EvmCurrency,
+  EvmNative,
+  EvmToken,
+} from 'sushi/evm'
+import { ethAddress } from 'viem'
+import { useAccount } from 'wagmi'
 import { Wrapper } from '~evm/[chainId]/[trade]/_ui/swap/trade/wrapper'
 import { ActionButtons } from '../assets-chart/action-buttons'
 import { useSendTokens } from './send-token-provider'
@@ -34,117 +43,46 @@ import {
 } from './wallet-holdings-columns'
 import { WalletHoldingsHeader } from './wallet-holdings-header'
 
-export type PortfolioRow = {
-  chainId: EvmChainId
-  token: EvmToken
-  percentageOfPort: number
-  price: number
-  amount: number
-  value: number
-  uPnL: number
-  last30Days: { timestamp: number; price: number }[]
-}
-
-const data: PortfolioRow[] = [
-  {
-    chainId: 1 as EvmChainId,
-    token: new EvmToken({
-      chainId: 1,
-      address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-      decimals: 18,
-      symbol: 'WETH',
-      name: 'Wrapped Ether',
-    }),
-    percentageOfPort: 0.5,
-    price: 633,
-    amount: 100,
-    value: 63300,
-    uPnL: 100,
-    last30Days: Array.from({ length: 30 }, (_, i) => ({
-      timestamp: Math.floor(Date.now() / 1000) - (29 - i) * 86400,
-      price:
-        Math.round((Math.sin(i / 5) * 100 + Math.random() * 50) * 100) / 100,
-    })),
-  },
-  {
-    chainId: 1 as EvmChainId,
-    token: new EvmToken({
-      chainId: 1,
-      address: '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2', // SUSHI
-      decimals: 18,
-      symbol: 'SUSHI',
-      name: 'SushiToken',
-    }),
-    percentageOfPort: 0.2,
-    price: 1.12,
-    amount: 5000,
-    value: 5600,
-    uPnL: -50,
-    last30Days: Array.from({ length: 30 }, (_, i) => ({
-      timestamp: Math.floor(Date.now() / 1000) - (29 - i) * 86400,
-      price:
-        Math.round((Math.cos(i / 7) * 0.5 + 1 + Math.random() * 0.2) * 100) /
-        100,
-    })),
-  },
-  {
-    chainId: 1 as EvmChainId,
-    token: new EvmToken({
-      chainId: 1,
-      address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
-      decimals: 6,
-      symbol: 'USDC',
-      name: 'USD Coin',
-    }),
-    percentageOfPort: 0.2,
-    price: 1,
-    amount: 10000,
-    value: 10000,
-    uPnL: 0,
-    last30Days: Array.from({ length: 30 }, (_, i) => ({
-      timestamp: Math.floor(Date.now() / 1000) - (29 - i) * 86400,
-      price: 1 + Math.round(Math.random() * 2) / 100, // ~1 ±0.02
-    })),
-  },
-  {
-    chainId: 1 as EvmChainId,
-    token: new EvmToken({
-      chainId: 1,
-      address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', // USDT
-      decimals: 6,
-      symbol: 'USDT',
-      name: 'Tether USD',
-    }),
-    percentageOfPort: 0.1,
-    price: 1,
-    amount: 8000,
-    value: 8000,
-    uPnL: 10,
-    last30Days: Array.from({ length: 30 }, (_, i) => ({
-      timestamp: Math.floor(Date.now() / 1000) - (29 - i) * 86400,
-      price: 1 + Math.round(Math.random() * 3) / 100, // ~1 ±0.03
-    })),
-  },
-]
-
 export const WalletHoldings = () => {
+  const { address } = useAccount()
+  // const { data } = useWalletPositions({
+  //   address: address as `0x${string}`,
+  //   chainIds: [1, 137],
+  // })
+  const chainIds = useMemo(() => {
+    return [1, 137]
+  }, [])
+  const { data, isLoading } = useWalletPortfolio({
+    address: address as `0x${string}`,
+    chainIds,
+  })
+  console.log('data', data)
+  const { tokens } = data || {}
   const { mutate } = useSendTokens()
   const [openMenu, setOpenMenu] = useState(false)
   const [selectedToken, setSelectedToken] = useState<EvmCurrency | null>(null)
   const isSmallScreen = useIsSmScreen()
 
   useEffect(() => {
-    mutate.setToken0(data[0].token)
-  }, [mutate.setToken0])
+    if (!tokens || tokens.length === 0) return
+
+    const firstToken = new EvmToken({
+      ...tokens[0].token,
+      chainId: tokens[0].token.chainId as EvmChainId,
+      address: tokens[0].token.address as `0x${string}`,
+    })
+
+    mutate.setToken0(firstToken)
+  }, [mutate.setToken0, tokens])
 
   const state: Partial<TableState> = useMemo(() => {
     return {
       pagination: {
         pageIndex: 0,
-        pageSize: data?.length,
+        pageSize: tokens?.length ?? 0,
       },
     }
-  }, [])
+  }, [tokens])
 
   useEffect(() => {
     if (!isSmallScreen) {
@@ -163,7 +101,7 @@ export const WalletHoldings = () => {
         <CardContent className="!p-0">
           <DataTable
             state={state}
-            loading={false}
+            loading={isLoading}
             rowRenderer={(row, value) => {
               if (!isSmallScreen) {
                 return value
@@ -171,12 +109,36 @@ export const WalletHoldings = () => {
               return (
                 <Slot
                   onClick={() => {
-                    setSelectedToken(row.original.token)
+                    const token =
+                      row.original.token.address === ethAddress
+                        ? new EvmNative({
+                            ...row.original.token,
+                            chainId: row.original.token.chainId as EvmChainId,
+                          })
+                        : new EvmToken({
+                            ...row.original.token,
+                            chainId: row.original.token.chainId as EvmChainId,
+                            address: row.original.token
+                              .address as `0x${string}`,
+                          })
+                    setSelectedToken(token)
                     setOpenMenu(true)
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
-                      setSelectedToken(row.original.token)
+                      const token =
+                        row.original.token.address === ethAddress
+                          ? new EvmNative({
+                              ...row.original.token,
+                              chainId: row.original.token.chainId as EvmChainId,
+                            })
+                          : new EvmToken({
+                              ...row.original.token,
+                              chainId: row.original.token.chainId as EvmChainId,
+                              address: row.original.token
+                                .address as `0x${string}`,
+                            })
+                      setSelectedToken(token)
                       setOpenMenu(true)
                     }
                   }}
@@ -194,7 +156,7 @@ export const WalletHoldings = () => {
               UPNL_COLUMN,
               LAST_30_DAY_COLUMN,
             ]}
-            data={data}
+            data={tokens ?? []}
             className="rounded-t-none dark:!border-[#FFFFFF14] !border-[#00000014] !space-y-6"
             tableRowClassName="dark:!border-[#FFFFFF14] !border-[#00000014] cursor-pointer md:cursor-default"
             showAllToggle

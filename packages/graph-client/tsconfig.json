@@ -40,6 +40,12 @@
             "schema": "./src/subgraphs/data-api-181/schema.graphql",
             "tadaOutputLocation": "./src/subgraphs/data-api-181/data-api-181-env.d.ts",
             "tadaTurboLocation": "./src/subgraphs/data-api-181/data-api-181-cache.d.ts"
+          },
+          {
+            "name": "data-api-portfolio",
+            "schema": "./src/subgraphs/data-api-portfolio/schema.graphql",
+            "tadaOutputLocation": "./src/subgraphs/data-api-portfolio/data-api-portfolio-env.d.ts",
+            "tadaTurboLocation": "./src/subgraphs/data-api-portfolio/data-api-portfolio-cache.d.ts"
           }
         ]
       }
