@@ -1,30 +1,67 @@
-import type { PortfolioV2Token } from '@sushiswap/graph-client/data-api-portfolio'
+import type {
+  PoolChainId,
+  PortfolioV2Token,
+} from '@sushiswap/graph-client/data-api-portfolio'
 import { useMemo } from 'react'
+import { useWalletFilters } from 'src/app/(networks)/(evm)/[chainId]/portfolio/wallet-filters-provider'
 import type { EvmChainId } from 'sushi/evm'
 import type { Address } from 'viem'
 import { useWalletPnL } from './use-wallet-pnl'
 import { useWalletPositions } from './use-wallet-positions'
 
+const groupByAsset = (tokens: PortfolioV2Row[]) => {
+  const map = new Map<string, PortfolioV2Row[]>()
+
+  for (const token of tokens) {
+    const canonical =
+      token.bridges?.find((b) => b.chainId === 1)?.address ??
+      token.token.address
+
+    if (!map.has(canonical)) map.set(canonical, [])
+    map.get(canonical)!.push(token)
+  }
+
+  return Array.from(map.values()).map((group) => {
+    const first = group[0]
+    const totalUSD = group.reduce((a, t) => a + (t.amountUSD ?? 0), 0)
+    const totalAmount = group.reduce((a, t) => a + Number(t.amount ?? 0), 0)
+    const totaluPnL = group.reduce((a, t) => a + (t.uPnL ?? 0), 0)
+    const totalPercentageOfPortfolio = group.reduce(
+      (a, t) => a + (t.percentageOfPortfolio ?? 0),
+      0,
+    )
+
+    return {
+      ...first,
+      amount: totalAmount.toString(),
+      amountUSD: totalUSD,
+      percentageOfPortfolio: totalPercentageOfPortfolio,
+      uPnL: totaluPnL,
+      chainIds: group.map((t) => t.token.chainId as EvmChainId),
+    }
+  })
+}
+
 export const useWalletPortfolio = ({
   address,
-  chainIds,
-}: {
-  address: Address | undefined
-  chainIds: EvmChainId[]
-}) => {
-  // 1. Load base wallet positions first (instant render)
+}: { address: Address | undefined }) => {
+  const {
+    networks: filteredChainIds,
+    groupByAssets,
+    hideSmallPositions,
+  } = useWalletFilters()
+
   const {
     data: walletData,
     isLoading: positionsLoading,
     isError: positionsError,
   } = useWalletPositions({
     address,
-    chainIds,
+    chainIds: filteredChainIds as PoolChainId[],
   })
 
   const tokens = walletData?.tokens ?? []
 
-  // 2. Build a map: chainId → token addresses[]
   const tokenMap = useMemo(() => {
     const map = new Map<EvmChainId, `0x${string}`[]>()
     for (const t of tokens) {
@@ -35,26 +72,30 @@ export const useWalletPortfolio = ({
     return map
   }, [tokens])
 
-  // 3. Fetch PnL data concurrently (non-blocking)
   const {
     data: pnlMap,
     isLoading: pnlLoading,
     isError: pnlError,
   } = useWalletPnL(address, tokenMap)
 
-  // 4. Merge PnL data into tokens (progressive hydration)
   const merged = useMemo(() => {
     if (!tokens.length) return []
-    return tokens.map((t) => {
-      const key = t.token.address
-      const pnl = pnlMap?.get(key)
-      return {
-        ...t,
-        uPnL: pnl?.upnl ?? 0,
-        last30Days: pnl?.sparkline ?? [],
-      }
-    })
-  }, [tokens, pnlMap])
+
+    const enriched = tokens
+      .map((t) => {
+        const key = t.token.address
+        const pnl = pnlMap?.get(key)
+        return {
+          ...t,
+          uPnL: pnl?.upnl ?? 0,
+          last30Days: pnl?.sparkline ?? [],
+          chainIds: [t.token.chainId as EvmChainId],
+        }
+      })
+      .filter((t) => (t.amountUSD ?? 0) >= (hideSmallPositions ? 1 : 0))
+
+    return groupByAssets ? groupByAsset(enriched) : enriched
+  }, [tokens, pnlMap, groupByAssets, hideSmallPositions])
 
   return {
     data: {
@@ -66,7 +107,10 @@ export const useWalletPortfolio = ({
   }
 }
 
-export type PortfolioV2Row = PortfolioV2Token & {
+export type PortfolioV2TokenWithChains = PortfolioV2Token & {
+  chainIds: EvmChainId[]
+}
+export type PortfolioV2Row = PortfolioV2TokenWithChains & {
   uPnL: number
   last30Days: {
     timestamp: number

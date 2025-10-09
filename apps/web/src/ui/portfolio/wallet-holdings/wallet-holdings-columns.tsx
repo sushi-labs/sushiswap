@@ -9,12 +9,11 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
 import type { PortfolioV2Row } from 'src/lib/wagmi/hooks/portfolio/use-wallet-portfolio'
-import { Amount, formatNumber, formatPercent, formatUSD } from 'sushi'
+import { formatNumber, formatPercent, formatUSD } from 'sushi'
 import { type EvmChainId, EvmNative, EvmToken } from 'sushi/evm'
-import { ethAddress, formatUnits, parseUnits, zeroAddress } from 'viem'
+import { ethAddress, formatUnits } from 'viem'
 import { SparklineCell } from '~evm/[chainId]/explore/tokens/_ui/sparkline-cell'
 import { ActionButtons } from '../assets-chart/action-buttons'
-import { MiniChart } from './mini-chart'
 
 export const CHAIN_COLUMN: ColumnDef<PortfolioV2Row> = {
   id: 'chain',
@@ -25,12 +24,26 @@ export const CHAIN_COLUMN: ColumnDef<PortfolioV2Row> = {
   accessorFn: (row) => row,
   cell: ({ row }) => (
     <div className="flex gap-1 md:gap-2">
-      <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
-        <NetworkIcon
-          type="square"
-          chainId={row.original.chains[0].chainId}
-          className="w-5 h-5"
-        />
+      <div className="flex items-center -space-x-2">
+        {row.original.chainIds.slice(0, 3).map((chainId, i) => (
+          <div
+            key={chainId}
+            className={`relative ${i !== 0 ? '-ml-[6px]' : ''}`}
+            style={{ zIndex: 30 + i }}
+          >
+            <NetworkIcon
+              type="square"
+              chainId={chainId}
+              className="w-5 h-5 rounded-md border border-slate-900 dark:border-slate-800"
+            />
+          </div>
+        ))}
+
+        {row.original.chainIds.length > 3 && (
+          <span className="ml-1 text-xs text-slate-500">
+            +{row.original.chainIds.length - 3}
+          </span>
+        )}
       </div>
     </div>
   ),
@@ -205,8 +218,8 @@ export const UPNL_COLUMN: ColumnDef<PortfolioV2Row> = {
                 : 'text-muted-foreground'
           }
         >
-          {row.original.uPnL > 0 ? '+' : ''}
-          {formatUSD(row.original.uPnL)}
+          {row.original.uPnL > 0 ? '+' : row.original.uPnL < 0 ? '-' : ''}
+          {formatUSD(row.original.uPnL).replace(/[+-]/g, '')}
         </span>
       </div>
     )

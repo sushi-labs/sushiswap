@@ -18,13 +18,7 @@ import React, { useMemo } from 'react'
 import { TooltipDrawer } from 'src/app/(networks)/_ui/tooltip-drawer'
 import { getTextColor } from 'src/lib/helpers'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import {
-  Token,
-  formatNumber,
-  formatPercent,
-  formatUSD,
-  unwrapToken,
-} from 'sushi'
+import { formatNumber, formatPercent, formatUSD } from 'sushi'
 import {
   type EvmChainId,
   EvmToken,

@@ -1,19 +1,25 @@
 'use client'
 
-import { useState } from 'react'
+import {
+  PLACEHOLDER_NETWORKS,
+  useSetWalletFilters,
+  useWalletFilters,
+} from 'src/app/(networks)/(evm)/[chainId]/portfolio/wallet-filters-provider'
 import { NetworkFilterSelector } from 'src/app/(networks)/_ui/network-filter-selector'
 import type { ChainId } from 'sushi'
 
-//@dev these will come from api
-const PLACEHOLDER_NETWORKS: ChainId[] = [747474, 1, 56, 137, 42161, 8453] // Example networks
-
 export const PnlNetworkFilter = () => {
-  const [networks, setNetworks] = useState<ChainId[]>(PLACEHOLDER_NETWORKS)
+  const { networks } = useWalletFilters()
+  const setFilters = useSetWalletFilters()
+
+  const handleSetNetworks = (ids: ChainId[]) => {
+    setFilters((prev) => ({ ...prev, networks: ids }))
+  }
 
   return (
     <NetworkFilterSelector
       selectedNetworks={networks}
-      setNetworks={setNetworks}
+      setNetworks={handleSetNetworks}
       defaultNetworks={PLACEHOLDER_NETWORKS}
       className="!bg-transparent"
     />

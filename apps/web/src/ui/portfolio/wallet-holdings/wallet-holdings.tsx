@@ -3,7 +3,6 @@
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useIsSmScreen } from '@sushiswap/hooks'
 import {
-  Button,
   CardContent,
   CardHeader,
   CardTitle,
@@ -20,7 +19,6 @@ import {
 import type { TableState } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from 'react'
 import { useWalletPortfolio } from 'src/lib/wagmi/hooks/portfolio/use-wallet-portfolio'
-import { useWalletPositions } from 'src/lib/wagmi/hooks/portfolio/use-wallet-positions'
 import {
   type EvmChainId,
   type EvmCurrency,
@@ -45,18 +43,10 @@ import { WalletHoldingsHeader } from './wallet-holdings-header'
 
 export const WalletHoldings = () => {
   const { address } = useAccount()
-  // const { data } = useWalletPositions({
-  //   address: address as `0x${string}`,
-  //   chainIds: [1, 137],
-  // })
-  const chainIds = useMemo(() => {
-    return [1, 137]
-  }, [])
+
   const { data, isLoading } = useWalletPortfolio({
     address: address as `0x${string}`,
-    chainIds,
   })
-  console.log('data', data)
   const { tokens } = data || {}
   const { mutate } = useSendTokens()
   const [openMenu, setOpenMenu] = useState(false)
