@@ -229,7 +229,7 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   // ChainId.MOONBEAM,
   // ChainId.MOONRIVER,
   ChainId.OPTIMISM,
-  // ChainId.PLASMA,
+  ChainId.PLASMA,
   ChainId.POLYGON,
   // ChainId.POLYGON_ZKEVM,
   ChainId.ROOTSTOCK,
