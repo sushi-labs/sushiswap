@@ -97,10 +97,15 @@ export const useWalletPortfolio = ({
     return groupByAssets ? groupByAsset(enriched) : enriched
   }, [tokens, pnlMap, groupByAssets, hideSmallPositions])
 
+  const totalPercentageOfPortfolio = useMemo(() => {
+    return merged.reduce((acc, t) => acc + (t.percentageOfPortfolio ?? 0), 0)
+  }, [merged])
+
   return {
     data: {
       tokens: merged,
       totalValueUSD: walletData?.totalValueUSD,
+      totalPercentageOfPortfolio,
     },
     isLoading: positionsLoading || pnlLoading,
     isError: positionsError || pnlError,

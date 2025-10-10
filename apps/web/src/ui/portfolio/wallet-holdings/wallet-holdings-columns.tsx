@@ -57,14 +57,20 @@ export const CHAIN_COLUMN: ColumnDef<PortfolioV2Row> = {
   },
 }
 
-export const ASSETS_COLUMN: ColumnDef<PortfolioV2Row> = {
+export const createAssetsColumn = (
+  totalPercentage?: number,
+): ColumnDef<PortfolioV2Row> => ({
   id: 'assets',
   header: () => (
     <div className="flex gap-1 items-center">
       <span className="text-slate-450 dark:text-slate-500">Assets</span>
-      <div className="px-2 py-1 text-xs rounded-lg bg-slate-200 dark:bg-slate-750 text-slate-450 dark:text-slate-500">
-        {formatPercent(1)}
-      </div>
+      {totalPercentage ? (
+        <div className="px-2 py-1 text-xs rounded-lg bg-slate-200 dark:bg-slate-750 text-slate-450 dark:text-slate-500">
+          {formatPercent(totalPercentage)}
+        </div>
+      ) : (
+        <SkeletonBox className="w-14 h-6 rounded-lg" />
+      )}
     </div>
   ),
   enableSorting: false,
@@ -74,18 +80,16 @@ export const ASSETS_COLUMN: ColumnDef<PortfolioV2Row> = {
     const tokenAddress = token.address as `0x${string}`
     const isNative = tokenAddress === ethAddress
     const currency = isNative
-      ? new EvmNative({
-          ...token,
-          chainId: token.chainId as EvmChainId,
-        })
+      ? new EvmNative({ ...token, chainId: token.chainId as EvmChainId })
       : new EvmToken({
           ...token,
           address: token.address as `0x${string}`,
           chainId: token.chainId as EvmChainId,
         })
+
     return (
       <div className="flex items-center gap-1 md:gap-2 min-w-[130px]">
-        <Currency.Icon disableLink currency={currency} width={24} height={24} />{' '}
+        <Currency.Icon disableLink currency={currency} width={24} height={24} />
         <span className="flex gap-1 items-center whitespace-nowrap text-slate-900 dark:text-slate-200">
           {row.original.token.symbol}
           <div className="px-2 py-1 text-xs rounded-lg bg-slate-200 dark:bg-slate-750 text-slate-450 dark:text-slate-500">
@@ -104,11 +108,9 @@ export const ASSETS_COLUMN: ColumnDef<PortfolioV2Row> = {
         </div>
       ),
     },
-    header: {
-      className: 'mt-[21.625px] mb-2',
-    },
+    header: { className: 'mt-[21.625px] mb-2' },
   },
-}
+})
 
 export const PRICE_COLUMN: ColumnDef<PortfolioV2Row> = {
   id: 'price',

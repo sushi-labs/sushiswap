@@ -3,6 +3,7 @@ import { EdgeProvider } from 'src/providers/edge-config-provider'
 import { SendTokensProvider } from 'src/ui/portfolio/wallet-holdings/send-token-provider'
 import { DerivedstateSimpleSwapProvider } from '../[trade]/_ui/swap/derivedstate-simple-swap-provider'
 import { getTradeEdgeConfig } from '../[trade]/_ui/swap/trade/trade-edge-config'
+import { ChartFiltersProvider } from './chart-filters-provider'
 import { LPPositionProvider } from './lp-position-provider'
 import { WalletFiltersProvider } from './wallet-filters-provider'
 
@@ -17,7 +18,9 @@ export const Providers = async ({
         <DerivedstateSimpleSwapProvider>
           <SendTokensProvider>
             <WalletFiltersProvider>
-              <LPPositionProvider>{children}</LPPositionProvider>
+              <ChartFiltersProvider>
+                <LPPositionProvider>{children}</LPPositionProvider>
+              </ChartFiltersProvider>
             </WalletFiltersProvider>
           </SendTokensProvider>
         </DerivedstateSimpleSwapProvider>
