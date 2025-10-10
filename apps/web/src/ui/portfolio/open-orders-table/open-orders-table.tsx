@@ -18,7 +18,6 @@ import { HistoryTable } from '~evm/[chainId]/[trade]/_ui/swap/trade/tab-tables/h
 import { LimitOrdersTable } from '~evm/[chainId]/[trade]/_ui/swap/trade/tab-tables/limit-orders-table/limit-orders-table'
 import {
   TABS,
-  TradeTablesProvider,
   useTradeTablesContext,
 } from '~evm/[chainId]/[trade]/_ui/swap/trade/tab-tables/trade-tables-context'
 import { OpenOrdersTableFilters } from './open-order-table-filters'
@@ -26,21 +25,10 @@ import { OpenOrdersTableHeader } from './open-orders-table-header'
 
 export const OpenOrdersTable = () => {
   return (
-    // <InfiniteScroll
-    //   dataLength={data.length}
-    //   next={fetchNextPage}
-    //   hasMore={data.length < (count ?? 0)}
-    //   loader={
-    //     <div className="flex justify-center py-4 w-full">
-    //       <Loader size={16} />
-    //     </div>
-    //   }
-    // >
     <Card className="overflow-hidden dark:!bg-slate-800 !bg-slate-50">
       <OpenOrdersTableHeader />
       <TradeTableTabs />
     </Card>
-    // </InfiniteScroll>
   )
 }
 
@@ -48,12 +36,18 @@ const useTabs = () => {
   const { orders, setCurrentTab, currentTab } = useTradeTablesContext()
 
   const tabs = useMemo(() => {
-    const openLimitOrdersCount = getTwapLimitOrders(orders).filter(
-      (order) => order.status === OrderStatus.Open,
-    ).length
-    const openDcaOrdersCount = getTwapDcaOrders(orders).filter(
-      (order) => order.status === OrderStatus.Open,
-    ).length
+    const openLimitOrdersCount =
+      orders && orders.length > 0
+        ? getTwapLimitOrders(orders).filter(
+            (order) => order.status === OrderStatus.Open,
+          ).length
+        : 0
+    const openDcaOrdersCount =
+      orders && orders.length > 0
+        ? getTwapDcaOrders(orders).filter(
+            (order) => order.status === OrderStatus.Open,
+          ).length
+        : 0
 
     return [
       {
@@ -94,11 +88,7 @@ const useTabs = () => {
 }
 
 const TradeTableTabs = () => {
-  return (
-    <TradeTablesProvider>
-      <Content />
-    </TradeTablesProvider>
-  )
+  return <Content />
 }
 
 const Content = () => {

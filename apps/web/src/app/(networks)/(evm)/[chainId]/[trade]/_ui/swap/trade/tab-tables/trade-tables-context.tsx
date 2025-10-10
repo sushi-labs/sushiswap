@@ -1,3 +1,4 @@
+'use client'
 import { eqIgnoreCase } from '@orbs-network/twap-sdk'
 import {
   createContext,
@@ -98,7 +99,7 @@ const Content = ({ children }: { children: React.ReactNode }) => {
   const [currentTab, setCurrentTab] = useState(TABS.LIMIT_ORDERS)
   const [historyTableTab, setHistoryTableTab] = useState<
     HistoryTableTabType | undefined
-  >(undefined)
+  >('market')
   const isMarketHistoryTabSelected = historyTableTab === 'market'
 
   const {

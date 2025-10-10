@@ -278,7 +278,9 @@ const RewardsCell = ({ data }: { data: PortfolioV2PositionPoolType }) => {
   const { data: rewardsData } = useClaimableRewards({
     chainIds: isMerklChainId(data?.pool?.chainId) ? [data?.pool?.chainId] : [],
     account: address,
-    enabled: isMerklChainId(data?.pool?.chainId as EvmChainId),
+    enabled: Boolean(
+      isMerklChainId(data?.pool?.chainId as EvmChainId) && address,
+    ),
   })
 
   const rewardsForChain = rewardsData?.[data?.pool.chainId as MerklChainId]
@@ -298,11 +300,11 @@ const RewardsCell = ({ data }: { data: PortfolioV2PositionPoolType }) => {
       </div>
       <div className="flex gap-1 items-center text-xs font-normal uppercase whitespace-nowrap text-muted-foreground dark:text-pink-200">
         {formatNumber(
-          rewardsForChain?.rewardAmounts[merkleChainId].toSignificant(6),
+          rewardsForChain?.rewardAmounts?.[merkleChainId]?.toSignificant(6),
         )}{' '}
-        {rewardsForChain?.rewardAmounts[merkleChainId].currency.symbol}
+        {rewardsForChain?.rewardAmounts?.[merkleChainId]?.currency?.symbol}
         <Currency.Icon
-          currency={rewardsForChain?.rewardAmounts[merkleChainId].currency}
+          currency={rewardsForChain?.rewardAmounts?.[merkleChainId]?.currency}
           width={16}
           height={16}
           className="rounded-full"
