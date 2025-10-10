@@ -10,14 +10,13 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
 import type { PortfolioV2Row } from 'src/lib/wagmi/hooks/portfolio/use-wallet-portfolio'
 import {
-  Amount,
   formatNumber,
   formatPercent,
   formatUSD,
   withoutScientificNotation,
 } from 'sushi'
 import { type EvmChainId, EvmNative, EvmToken } from 'sushi/evm'
-import { Address, ethAddress, formatUnits } from 'viem'
+import { ethAddress, formatUnits } from 'viem'
 import { SparklineCell } from '~evm/[chainId]/explore/tokens/_ui/sparkline-cell'
 import { ActionButtons } from '../assets-chart/action-buttons'
 
@@ -35,7 +34,7 @@ export const CHAIN_COLUMN: ColumnDef<PortfolioV2Row> = {
           <div
             key={chainId}
             className={`relative ${i !== 0 ? '-ml-[6px]' : ''}`}
-            style={{ zIndex: 30 + i }}
+            style={{ zIndex: 3 + i }}
           >
             <NetworkIcon
               type="square"
@@ -46,7 +45,7 @@ export const CHAIN_COLUMN: ColumnDef<PortfolioV2Row> = {
         ))}
 
         {row.original.chainIds.length > 3 && (
-          <span className="ml-1 text-xs text-slate-500">
+          <span className="ml-1 text-xs text-slate-500 pl-3">
             +{row.original.chainIds.length - 3}
           </span>
         )}
