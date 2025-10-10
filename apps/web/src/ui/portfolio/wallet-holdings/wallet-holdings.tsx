@@ -149,7 +149,7 @@ export const WalletHoldings = () => {
             data={tokens ?? []}
             className="rounded-t-none dark:!border-[#FFFFFF14] !border-[#00000014] !space-y-6"
             tableRowClassName="dark:!border-[#FFFFFF14] !border-[#00000014] cursor-pointer md:cursor-default"
-            showAllToggle
+            showAllToggle={data.tokens.length > 3}
           />
         </CardContent>
       </Wrapper>
