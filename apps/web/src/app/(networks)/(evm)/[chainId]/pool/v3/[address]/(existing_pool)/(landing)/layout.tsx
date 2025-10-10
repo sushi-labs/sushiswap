@@ -46,7 +46,6 @@ export default async function Layout(props: {
           }
           address={address}
           pool={pool}
-          apy={{ rewards: pool.incentiveApr, fees: pool.feeApr1d }}
           showAddLiquidityButton
         />
       </Container>

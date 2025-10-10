@@ -60,7 +60,7 @@ const AddLiquidityPopover = ({ chainId }: { chainId: EvmChainId }) => {
               <span className="md:mr-auto">Add Liquidity to V3</span>
             </Button>
           }
-          chainId={EvmChainId.ETHEREUM}
+          chainId={chainId}
         />
       </PopoverContent>
     </Popover>

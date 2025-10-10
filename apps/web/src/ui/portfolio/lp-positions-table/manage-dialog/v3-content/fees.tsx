@@ -21,7 +21,7 @@ import {
   unwrapEvmToken,
 } from 'sushi/evm'
 import type { Address } from 'viem'
-import { ConcentratedLiquidityCollectButton } from '~evm/[chainId]/pool/v3/[address]/(manage)/[position]/_common/ui/concentrated-liquidity-collect-button'
+import { ConcentratedLiquidityCollectButton } from '~evm/[chainId]/pool/v3/[address]/(existing_pool)/(manage)/[position]/_common/ui/concentrated-liquidity-collect-button'
 
 export const Fees = ({
   position,

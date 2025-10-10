@@ -1,18 +1,22 @@
 'use client'
 
-import { useState } from 'react'
 import { NetworkFilterSelector } from 'src/app/(networks)/_ui/network-filter-selector'
-import { poolChainIds } from 'src/lib/wagmi/hooks/portfolio/use-wallet-portfolio'
 import type { ChainId } from 'sushi'
+import {
+  DEFAULT_LP_CHAIN_IDS,
+  useLPPositionContext,
+} from '~evm/[chainId]/portfolio/lp-position-provider'
 
 export const LPPositionsNetworkFilter = () => {
-  const [networks, setNetworks] = useState<ChainId[]>(poolChainIds)
-
+  const {
+    state: { chainIds },
+    mutate: { setChainIds },
+  } = useLPPositionContext()
   return (
     <NetworkFilterSelector
-      selectedNetworks={networks}
-      setNetworks={setNetworks}
-      defaultNetworks={poolChainIds}
+      selectedNetworks={chainIds as ChainId[]}
+      setNetworks={setChainIds as (ids: ChainId[]) => void}
+      defaultNetworks={DEFAULT_LP_CHAIN_IDS as ChainId[]}
       className="!bg-[#00000005] dark:!bg-[#00000005]"
     />
   )

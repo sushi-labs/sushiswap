@@ -46,7 +46,7 @@ import {
   TransactionTypeV3,
   type TransactionV3,
   type useTransactionsV3,
-} from '~evm/[chainId]/pool/v3/[address]/(landing)/_ui/pool-transactions-v3'
+} from '~evm/[chainId]/pool/v3/[address]/(existing_pool)/(landing)/_ui/pool-transactions-v3'
 import { ClaimableFeesActionCell } from '~evm/claim/(fees)/_ui/claimable-fees-action-cell'
 import { ClaimableFeesAmountCell } from '~evm/claim/(fees)/_ui/claimable-fees-amount-cell'
 import { ClaimableFeesChainCell } from '~evm/claim/(fees)/_ui/claimable-fees-chain-cell'

@@ -12,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
   Container,
+  LinkInternal,
   classNames,
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
@@ -20,21 +21,14 @@ import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPoolReserves'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
 import { formatUSD } from 'sushi'
-import {
-  EvmToken,
-  SushiSwapProtocol,
-  getEvmChainById,
-  unwrapEvmToken,
-} from 'sushi/evm'
+import { EvmToken, getEvmChainById, unwrapEvmToken } from 'sushi/evm'
 import { Wrapper } from '~evm/[chainId]/[trade]/_ui/swap/trade/wrapper'
 import { APRChart } from '~evm/[chainId]/_ui/APRChart'
 import { ManagePositionButton } from '~evm/[chainId]/_ui/ManagePositionButton'
 import { Pool24HVolume } from '~evm/[chainId]/_ui/Pool24HVolume'
 import { PoolAPR } from '~evm/[chainId]/_ui/PoolAPR'
 import { PoolPrice } from '~evm/[chainId]/_ui/PoolPrice'
-import { AddLiquidityDialog } from '~evm/[chainId]/_ui/add-liquidity/add-liquidity-dialog'
 import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
-import { PoolRewardDistributionsCard } from './pool-reward-distributions-card'
 import { PoolTransactionsV3 } from './pool-transactions-v3'
 import { StatisticsChartsV3 } from './statistics-chart-v3'
 
@@ -98,7 +92,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
     >
       <div className="flex flex-col-reverse gap-4 w-full lg:gap-10 lg:flex-row">
         <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0 flex flex-col gap-4 lg:gap-6">
-          <APRChart />
+          <APRChart pool={pool} />
           <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
         </div>
         <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] h-fit min-w-0 flex flex-col gap-3">
@@ -109,21 +103,18 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
             )}
           >
             {isMd ? (
-              <AddLiquidityDialog
-                poolType={SushiSwapProtocol.SUSHISWAP_V3}
-                hidePoolTypeToggle={true}
-                hideTokenSelectors={true}
-                token0={token0}
-                token1={token1}
-                initFeeAmount={pool.swapFee * 1000000}
-                trigger={
-                  <Button size="lg" className="w-full h-[52px]">
-                    <PlusIcon className="w-4 h-4" />
-                    <span>Add Liquidity</span>
-                  </Button>
-                }
-                chainId={pool.chainId}
-              />
+              <LinkInternal
+                href={`/${getEvmChainById(pool.chainId).key}/pool/v3/${pool.address}/add?feeAmount=${
+                  pool.swapFee * 1000000
+                }&fromCurrency=${token0?.isNative ? 'NATIVE' : token0?.address}&toCurrency=${
+                  token1?.isNative ? 'NATIVE' : token1?.address
+                }`}
+              >
+                <Button size="lg" className="w-full h-[52px]">
+                  <PlusIcon className="w-4 h-4" />
+                  <span>Add Liquidity</span>
+                </Button>
+              </LinkInternal>
             ) : null}
             {positions?.length ? (
               <ManagePositionButton

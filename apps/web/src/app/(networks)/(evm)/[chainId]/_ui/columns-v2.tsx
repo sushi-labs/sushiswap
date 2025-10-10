@@ -37,7 +37,7 @@ export const CHAIN_COLUMN: ColumnDef<MultiChainPool, unknown> = {
     <span className="font-[600] text-slate-450 dark:text-slate-500">Chain</span>
   ),
   cell: (props) => (
-    <div className="px-2 md:min-w-[70px]">
+    <div className="px-2 2xl:min-w-[70px]">
       <NetworkIcon
         type="square"
         chainId={props.row.original.chainId as EvmChainId}
@@ -115,83 +115,14 @@ export const POOL_COLUMN: ColumnDef<MultiChainPool, unknown> = {
     return (
       <>
         {token0 && token1 ? (
-          <TooltipProvider>
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <div className="flex items-start gap-1 flex-col py-2 md:py-4 max-w-[160px]">
-                  <div className="flex items-center">
-                    <Currency.Icon
-                      width={24}
-                      height={24}
-                      disableLink
-                      currency={token0}
-                    />
-                    <div className="ml-1.5 mr-1">{token0.symbol}</div>
-                    <div className="bg-slate-200 text-slate-450 dark:bg-slate-750 dark:text-slate-500 text-[12px] font-medium px-1.5 rounded-lg">
-                      {formattedToken0Percent}
-                    </div>
-                  </div>
-                  <div className="flex items-center">
-                    <Currency.Icon
-                      width={24}
-                      height={24}
-                      disableLink
-                      currency={token1}
-                    />
-                    <div className="ml-1.5 mr-1">{token1.symbol}</div>
-                    <div className="bg-slate-200 text-slate-450 dark:bg-slate-750 dark:text-slate-500 text-[12px] font-medium px-1.5 rounded-lg">
-                      {formattedToken1Percent}
-                    </div>
-                  </div>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent
-                side="right"
-                sideOffset={20}
-                className="md:block hidden px-5 py-5 mb-10 !bg-[#FFFFFF24] !backdrop-blur-[40px] dark:!bg-[#00000024] border border-[#EBEBEB] dark:border-[#FFFFFF14]"
-              >
-                <div className="flex flex-col gap-3">
-                  <p className="text-xs text-slate-450 dark:text-slate-500">
-                    Token Price
-                  </p>
-                  <div className="flex items-start gap-2 min-w-[250px] text-sm flex-col">
-                    <div className="flex justify-between items-center w-full">
-                      <div className="flex items-center">
-                        <Currency.Icon
-                          width={20}
-                          height={20}
-                          disableLink
-                          currency={token0}
-                        />
-                        <div className="ml-1.5 mr-1 font-medium">
-                          {token0.symbol}
-                        </div>
-                      </div>
-                      <div className="flex gap-1 items-center">
-                        {formatUSD(priceMap?.get(token0.address) ?? 0)}
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center w-full">
-                      <div className="flex items-center">
-                        <Currency.Icon
-                          width={20}
-                          height={20}
-                          disableLink
-                          currency={token1}
-                        />
-                        <div className="ml-1.5 mr-1 font-medium">
-                          {token1.symbol}
-                        </div>
-                      </div>
-                      <div className="flex gap-1 items-center">
-                        {formatUSD(priceMap?.get(token1.address) ?? 0)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <PoolColumn
+            token0={token0}
+            token1={token1}
+            percentOfToken0={formattedToken0Percent}
+            percentOfToken1={formattedToken1Percent}
+            priceToken0={priceMap?.get(token0.address) ?? 0}
+            priceToken1={priceMap?.get(token1.address) ?? 0}
+          />
         ) : null}
       </>
     )
@@ -218,124 +149,109 @@ export const POOL_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   },
 }
 
+export const PoolColumn = ({
+  token0,
+  token1,
+  percentOfToken0,
+  percentOfToken1,
+  priceToken0,
+  priceToken1,
+}: {
+  token0: EvmToken
+  token1: EvmToken
+  percentOfToken0: string
+  percentOfToken1: string
+  priceToken0: number
+  priceToken1: number
+}) => {
+  return (
+    <TooltipProvider>
+      <Tooltip delayDuration={0}>
+        <TooltipTrigger asChild>
+          <div className="flex items-start gap-1 flex-col py-2 md:py-4 max-w-[160px]">
+            <div className="flex items-center">
+              <Currency.Icon
+                width={24}
+                height={24}
+                disableLink
+                currency={token0}
+              />
+              <div className="ml-1.5 mr-1">{token0.symbol}</div>
+              <div className="bg-slate-200 text-slate-450 dark:bg-slate-750 dark:text-slate-500 text-[12px] font-medium px-1.5 rounded-lg">
+                {percentOfToken0}
+              </div>
+            </div>
+            <div className="flex items-center">
+              <Currency.Icon
+                width={24}
+                height={24}
+                disableLink
+                currency={token1}
+              />
+              <div className="ml-1.5 mr-1">{token1.symbol}</div>
+              <div className="bg-slate-200 text-slate-450 dark:bg-slate-750 dark:text-slate-500 text-[12px] font-medium px-1.5 rounded-lg">
+                {percentOfToken1}
+              </div>
+            </div>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent
+          side="right"
+          sideOffset={20}
+          className="md:block hidden px-5 py-5 mb-10 !bg-[#FFFFFF24] !backdrop-blur-[40px] dark:!bg-[#00000024] border border-[#EBEBEB] dark:border-[#FFFFFF14]"
+        >
+          <div className="flex flex-col gap-3">
+            <p className="text-xs text-slate-450 dark:text-slate-500">
+              Token Price
+            </p>
+            <div className="flex items-start gap-2 min-w-[250px] text-sm flex-col">
+              <div className="flex justify-between items-center w-full">
+                <div className="flex items-center">
+                  <Currency.Icon
+                    width={20}
+                    height={20}
+                    disableLink
+                    currency={token0}
+                  />
+                  <div className="ml-1.5 mr-1 font-medium">{token0.symbol}</div>
+                </div>
+                <div className="flex gap-1 items-center">
+                  {formatUSD(priceToken0)}
+                </div>
+              </div>
+              <div className="flex justify-between items-center w-full">
+                <div className="flex items-center">
+                  <Currency.Icon
+                    width={20}
+                    height={20}
+                    disableLink
+                    currency={token1}
+                  />
+                  <div className="ml-1.5 mr-1 font-medium">{token1.symbol}</div>
+                </div>
+                <div className="flex gap-1 items-center">
+                  {formatUSD(priceToken1)}
+                </div>
+              </div>
+            </div>
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  )
+}
+
 export const POOL_TYPE_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   id: 'type',
   header: () => (
     <span className="font-[600] text-slate-450 dark:text-slate-500">Type</span>
   ),
   cell: (props) => {
-    const protocolContent = useMemo(() => {
-      switch (props.row.original.protocol) {
-        case 'SUSHISWAP_V2':
-          return (
-            <div className="flex flex-col gap-2 md:max-w-[275px]">
-              {ProtocolBadge[props.row.original.protocol as SushiSwapProtocol]}
-              <p className="text-sm font-normal text-slate-900 dark:text-pink-100">
-                Classic liquidity pools have a fixed fee of 0.30% that utilize a
-                constant product formula to ensure a 50/50 composition of each
-                asset in the pool.
-              </p>
-              <Link href={'#'} rel="noreferrer noopener" target="_blank">
-                <Button
-                  className="w-fit !gap-1"
-                  iconPosition="end"
-                  icon={ArrowUpIcon}
-                  iconProps={{
-                    className: ' rotate-[45deg] w-[14px] h-[14px]',
-                  }}
-                  variant="tertiary"
-                >
-                  Learn More
-                </Button>
-              </Link>
-            </div>
-          )
-        case 'SUSHISWAP_V3':
-          return (
-            <div className="flex flex-col gap-2 max-w-[275px]">
-              {ProtocolBadge[props.row.original.protocol as SushiSwapProtocol]}
-              <p className="text-sm font-normal text-slate-900 dark:text-pink-100">
-                Concentrated liquidity pools maximize capital efficiency by
-                focusing liquidity within a set price range around the current
-                pair price. If a user's position moves out of this range, it
-                stops earning fees, requiring them to adjust the range or wait
-                for the price to return.
-              </p>
-              <Link href={'#'} rel="noreferrer noopener" target="_blank">
-                <Button
-                  className="w-fit !gap-1"
-                  iconPosition="end"
-                  icon={ArrowUpIcon}
-                  iconProps={{
-                    className: ' rotate-[45deg] w-[14px] h-[14px]',
-                  }}
-                  variant="tertiary"
-                >
-                  Learn More
-                </Button>
-              </Link>
-            </div>
-          )
-
-        default:
-          return null
-      }
-    }, [props.row.original.protocol])
-
     return (
-      <div className="flex items-center gap-1 md:w-[180px]">
-        <TooltipProvider>
-          <Tooltip delayDuration={0}>
-            <TooltipTrigger>
-              {ProtocolBadge[props.row.original.protocol as SushiSwapProtocol]}
-            </TooltipTrigger>
-            <TooltipContent
-              side="right"
-              sideOffset={100}
-              className="md:block hidden px-5 py-5 mb-10 !bg-[#FFFFFF24] !backdrop-blur-[40px] dark:!bg-[#00000024] border border-[#EBEBEB] dark:border-[#FFFFFF14]"
-            >
-              {protocolContent}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <TooltipProvider>
-          <Tooltip delayDuration={0}>
-            <TooltipTrigger asChild>
-              <div className="bg-[#F4F5F6] text-muted-foreground dark:bg-[#252A3C] dark:text-pink-200 text-xs px-2.5 py-1 rounded-full">
-                {formatNumber(props.row.original.swapFee * 100)}%
-              </div>
-            </TooltipTrigger>
-            <TooltipContent
-              side="right"
-              sideOffset={70}
-              className="md:block hidden px-5 py-5 mb-10 !bg-[#FFFFFF24] !backdrop-blur-[40px] dark:!bg-[#00000024] border border-[#EBEBEB] dark:border-[#FFFFFF14]"
-            >
-              <div className="flex flex-col gap-2 max-w-[275px]">
-                <div className="bg-[#F4F5F6] w-fit text-muted-foreground dark:bg-[#252A3C] dark:text-pink-200 text-xs px-2.5 py-1 rounded-full">
-                  {formatNumber(props.row.original.swapFee * 100)}% Fee Tier
-                </div>
-                <p className="text-sm font-normal text-slate-900 dark:text-pink-100">
-                  A fee tier is the percentage of the liquidity provider fee
-                  that is applied to swaps in a liquidity pool.
-                </p>
-                <Link href={'#'} rel="noreferrer noopener" target="_blank">
-                  <Button
-                    className="w-fit !gap-1"
-                    iconPosition="end"
-                    icon={ArrowUpIcon}
-                    iconProps={{
-                      className: ' rotate-[45deg] w-[14px] h-[14px]',
-                    }}
-                    variant="tertiary"
-                  >
-                    Learn More
-                  </Button>
-                </Link>
-              </div>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
+      <PoolTypeColumn
+        protocol={props.row.original.protocol as SushiSwapProtocol}
+        swapFee={props.row.original.swapFee}
+      />
     )
   },
   size: 300,
@@ -360,6 +276,122 @@ export const POOL_TYPE_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   },
 }
 
+export const PoolTypeColumn = ({
+  protocol,
+  swapFee,
+}: { protocol: SushiSwapProtocol; swapFee: number }) => {
+  const protocolContent = useMemo(() => {
+    switch (protocol) {
+      case 'SUSHISWAP_V2':
+        return (
+          <div className="flex flex-col gap-2 md:max-w-[275px]">
+            {ProtocolBadge[protocol]}
+            <p className="text-sm font-normal text-slate-900 dark:text-pink-100">
+              Classic liquidity pools have a fixed fee of 0.30% that utilize a
+              constant product formula to ensure a 50/50 composition of each
+              asset in the pool.
+            </p>
+            <Link href={'#'} rel="noreferrer noopener" target="_blank">
+              <Button
+                className="w-fit !gap-1"
+                iconPosition="end"
+                icon={ArrowUpIcon}
+                iconProps={{
+                  className: ' rotate-[45deg] w-[14px] h-[14px]',
+                }}
+                variant="tertiary"
+              >
+                Learn More
+              </Button>
+            </Link>
+          </div>
+        )
+      case 'SUSHISWAP_V3':
+        return (
+          <div className="flex flex-col gap-2 max-w-[275px]">
+            {ProtocolBadge[protocol]}
+            <p className="text-sm font-normal text-slate-900 dark:text-pink-100">
+              Concentrated liquidity pools maximize capital efficiency by
+              focusing liquidity within a set price range around the current
+              pair price. If a user's position moves out of this range, it stops
+              earning fees, requiring them to adjust the range or wait for the
+              price to return.
+            </p>
+            <Link href={'#'} rel="noreferrer noopener" target="_blank">
+              <Button
+                className="w-fit !gap-1"
+                iconPosition="end"
+                icon={ArrowUpIcon}
+                iconProps={{
+                  className: ' rotate-[45deg] w-[14px] h-[14px]',
+                }}
+                variant="tertiary"
+              >
+                Learn More
+              </Button>
+            </Link>
+          </div>
+        )
+
+      default:
+        return null
+    }
+  }, [protocol])
+  return (
+    <div className="flex items-center gap-1 2xl:w-[180px]">
+      <TooltipProvider>
+        <Tooltip delayDuration={0}>
+          <TooltipTrigger>{ProtocolBadge[protocol]}</TooltipTrigger>
+          <TooltipContent
+            side="right"
+            sideOffset={100}
+            className="md:block hidden px-5 py-5 mb-10 !bg-[#FFFFFF24] !backdrop-blur-[40px] dark:!bg-[#00000024] border border-[#EBEBEB] dark:border-[#FFFFFF14]"
+          >
+            {protocolContent}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <TooltipProvider>
+        <Tooltip delayDuration={0}>
+          <TooltipTrigger asChild>
+            <div className="bg-[#F4F5F6] text-muted-foreground dark:bg-[#252A3C] dark:text-pink-200 text-xs px-2.5 py-1 rounded-full">
+              {formatNumber(swapFee * 100)}%
+            </div>
+          </TooltipTrigger>
+          <TooltipContent
+            side="right"
+            sideOffset={70}
+            className="md:block hidden px-5 py-5 mb-10 !bg-[#FFFFFF24] !backdrop-blur-[40px] dark:!bg-[#00000024] border border-[#EBEBEB] dark:border-[#FFFFFF14]"
+          >
+            <div className="flex flex-col gap-2 max-w-[275px]">
+              <div className="bg-[#F4F5F6] w-fit text-muted-foreground dark:bg-[#252A3C] dark:text-pink-200 text-xs px-2.5 py-1 rounded-full">
+                {formatNumber(swapFee * 100)}% Fee Tier
+              </div>
+              <p className="text-sm font-normal text-slate-900 dark:text-pink-100">
+                A fee tier is the percentage of the liquidity provider fee that
+                is applied to swaps in a liquidity pool.
+              </p>
+              <Link href={'#'} rel="noreferrer noopener" target="_blank">
+                <Button
+                  className="w-fit !gap-1"
+                  iconPosition="end"
+                  icon={ArrowUpIcon}
+                  iconProps={{
+                    className: ' rotate-[45deg] w-[14px] h-[14px]',
+                  }}
+                  variant="tertiary"
+                >
+                  Learn More
+                </Button>
+              </Link>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
+  )
+}
+
 export const VOLUME_1D_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   id: 'volumeUSD1d',
   header: () => (
@@ -371,7 +403,7 @@ export const VOLUME_1D_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     rowA.volumeUSD1d - rowB.volumeUSD1d,
   cell: (props) => (
-    <div className="flex flex-col w-[130px]">
+    <div className="flex flex-col w-[100px]">
       <span>
         {formatUSD(props.row.original.volumeUSD1d).includes('NaN')
           ? '$0.00'
@@ -412,7 +444,7 @@ export const VOLUME_1W_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     Number(rowA.volumeUSD1w) - Number(rowB.volumeUSD1w),
   cell: (props) => (
-    <div className="flex flex-col w-[130px]">
+    <div className="flex flex-col w-[100px]">
       <span>
         {formatUSD(props.row.original.volumeUSD1w).includes('NaN')
           ? '$0.00'
@@ -453,7 +485,7 @@ export const TVL_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     rowA.liquidityUSD - rowB.liquidityUSD,
   cell: (props) => (
-    <div className="flex flex-col w-[130px]">
+    <div className="flex flex-col w-[100px]">
       <span>
         {formatUSD(props.row.original.liquidityUSD).includes('NaN')
           ? '$0.00'
@@ -495,7 +527,7 @@ export const VOL_TVL_COLUMN: ColumnDef<MultiChainPool, unknown> = {
     rowA.tvlVolumeRatio - rowB.tvlVolumeRatio,
   cell: (props) => {
     return (
-      <span className="flex items-center justify-center w-[130px]">
+      <span className="flex items-center justify-center w-[100px]">
         {Number.isNaN(props.row.original.tvlVolumeRatio)
           ? '0'
           : formatNumber(props.row.original.tvlVolumeRatio)}
@@ -528,7 +560,7 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<MultiChainPool, unknown> = {
     const hasIncentives = props.row.original.incentives.length > 0
     if (!hasIncentives) {
       return (
-        <div className="flex flex-col pl-7 w-[130px]">
+        <div className="flex flex-col pl-7 w-[100px]">
           <span>
             {Number.isNaN(props.row.original.totalApr1w)
               ? '0%'
@@ -544,7 +576,7 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<MultiChainPool, unknown> = {
         dialogContentClassName="max-w-none"
         side="right"
         trigger={
-          <div className="flex flex-col cursor-pointer pl-7 w-[130px]">
+          <div className="flex flex-col cursor-pointer pl-7 w-[100px]">
             <div className="flex gap-1 items-center">
               <span className="underline decoration-dotted underline-offset-2">
                 {Number.isNaN(props.row.original.totalApr1w)
@@ -628,7 +660,7 @@ export const APR_SPARKLINE_COLUMN: ColumnDef<MultiChainPool, unknown> = {
 
   cell: (props) => {
     return (
-      <div className="px-10">
+      <div className="2xl:px-10">
         <SparklineCell
           data={props.row.original.feeApr1wSparkLine}
           width={90}

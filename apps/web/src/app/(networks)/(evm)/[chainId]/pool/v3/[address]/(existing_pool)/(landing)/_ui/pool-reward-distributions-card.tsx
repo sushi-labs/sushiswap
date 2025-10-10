@@ -17,7 +17,7 @@ import {
 import type { FC } from 'react'
 import { useRewardCampaigns } from 'src/lib/hooks/react-query'
 import { EvmNative, getEvmChainById, isMerklChainId } from 'sushi/evm'
-import { DistributionDataTable } from '../../_ui/distribution-data-table'
+import { DistributionDataTable } from '../../../_ui/distribution-data-table'
 
 interface PoolRewardDistributionsCardParams {
   pool: V3Pool

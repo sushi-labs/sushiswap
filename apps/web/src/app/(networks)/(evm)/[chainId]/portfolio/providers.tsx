@@ -4,13 +4,12 @@ import { SendTokensProvider } from 'src/ui/portfolio/wallet-holdings/send-token-
 import { DerivedstateSimpleSwapProvider } from '../[trade]/_ui/swap/derivedstate-simple-swap-provider'
 import { getTradeEdgeConfig } from '../[trade]/_ui/swap/trade/trade-edge-config'
 import { ChartFiltersProvider } from './chart-filters-provider'
+import { LPPositionProvider } from './lp-position-provider'
 import { WalletFiltersProvider } from './wallet-filters-provider'
 
 export const Providers = async ({
   children,
-}: {
-  children: React.ReactNode
-}) => {
+}: { children: React.ReactNode }) => {
   const config = await getTradeEdgeConfig()
 
   return (
@@ -19,7 +18,9 @@ export const Providers = async ({
         <DerivedstateSimpleSwapProvider>
           <SendTokensProvider>
             <WalletFiltersProvider>
-              <ChartFiltersProvider>{children}</ChartFiltersProvider>
+              <ChartFiltersProvider>
+                <LPPositionProvider>{children}</LPPositionProvider>
+              </ChartFiltersProvider>
             </WalletFiltersProvider>
           </SendTokensProvider>
         </DerivedstateSimpleSwapProvider>

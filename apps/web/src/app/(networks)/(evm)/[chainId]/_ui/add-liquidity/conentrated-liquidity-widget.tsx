@@ -158,7 +158,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
       <p className="font-medium text-slate-900 dark:text-pink-100 text-base">
         Deposit Tokens
       </p>
-      <div className={classNames('flex flex-col gap-2 md:px-4')}>
+      <div className={classNames('flex flex-col gap-2')}>
         {!!existingPosition && !isOwner && !isOwnerLoading ? (
           <Message size="sm" variant="info">
             <div className="flex items-center gap-1">
@@ -188,7 +188,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
               <Web3Input.Currency
                 id="add-liquidity-token0"
                 type="INPUT"
-                className="p-4 bg-gray-100 dark:bg-slate-900 rounded-xl"
+                className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl"
                 chainId={chainId}
                 value={formattedAmounts[Field.CURRENCY_A]}
                 onChange={_onFieldAInput}
@@ -202,7 +202,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
             )}
           </div>
           {depositADisabled || depositBDisabled ? null : (
-            <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-[21]">
+            <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-[19]">
               <button
                 type="button"
                 className="z-10 p-2 bg-gray-100 rounded-full dark:bg-slate-900 border border-slate-50 dark:border-slate-800"
@@ -219,7 +219,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
               <Web3Input.Currency
                 id="add-liquidity-token1"
                 type="INPUT"
-                className="p-4 bg-gray-100 dark:bg-slate-900 rounded-xl"
+                className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl"
                 chainId={chainId}
                 value={formattedAmounts[Field.CURRENCY_B]}
                 onChange={_onFieldBInput}

@@ -7,7 +7,6 @@ import { EvmToken, SushiSwapProtocol, unwrapEvmToken } from 'sushi/evm'
 import { PoolChartV2 } from '../pool/v2/[address]/(landing)/_ui/pool-chart-v2'
 import { PoolRewards } from '../pool/v2/[address]/(landing)/_ui/pool-rewards'
 import { PoolTransactionsV2 } from '../pool/v2/[address]/(landing)/_ui/pool-transactions-v2'
-import { APRChart } from './APRChart'
 import { Pool24HVolume } from './Pool24HVolume'
 import { PoolAPR } from './PoolAPR'
 import { PoolCompositionBlade } from './PoolCompositionBlade'
@@ -54,7 +53,6 @@ export const PoolPageBlade: FC<PoolPageBlade> = ({ pool }) => {
       {/* <UnknownTokenAlert pool={pool} /> */}
       <div className="flex flex-col-reverse gap-4 w-full lg:gap-10 lg:flex-row">
         <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0 flex flex-col gap-4 lg:gap-6">
-          <APRChart />
           <PoolsBladeSection />
           <PoolChartV2 pool={pool} />
         </div>

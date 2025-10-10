@@ -1,3 +1,6 @@
+// import { V2Content } from "./v2-content/v2-content";
+// import { V3Content } from "./v3-content/v3-content";
+import type { PortfolioV2PositionPoolType } from '@sushiswap/graph-client/data-api-portfolio'
 import {
   Button,
   Dialog,
@@ -14,8 +17,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import type { SushiSwapProtocol } from 'sushi/evm'
 import { ManageDialogHeader } from './manage-dialog-header'
-import { V2Content } from './v2-content/v2-content'
-import { V3Content } from './v3-content/v3-content'
 
 export type LPTabValueType = 'detail' | 'manage' | 'migrate'
 
@@ -38,14 +39,13 @@ const TABS: Record<
   ],
 }
 
-//@DEV @TODO - typed as any until real type is known
 export const ManageDialog = ({
   data,
   isOpen,
   setIsOpen,
   triggerChildren,
 }: {
-  data: any
+  data: PortfolioV2PositionPoolType
   isOpen: boolean
   setIsOpen: (val: boolean) => void
   triggerChildren?: React.ReactNode
@@ -60,22 +60,22 @@ export const ManageDialog = ({
   useEffect(() => {
     if (
       headTabParam &&
-      data?.protocol === 'SUSHISWAP_V2' &&
+      data?.pool?.protocol === 'SUSHISWAP_V2' &&
       LPTabValuesV2.includes(headTabParam)
     ) {
       setCurrentTab(headTabParam)
     }
     if (
       headTabParam &&
-      data?.protocol === 'SUSHISWAP_V3' &&
+      data?.pool?.protocol === 'SUSHISWAP_V3' &&
       LPTabValuesV3.includes(headTabParam)
     ) {
       setCurrentTab(headTabParam)
     }
-  }, [headTabParam, data?.protocol])
+  }, [headTabParam, data])
 
   const tabs = useMemo(() => {
-    switch (data?.protocol) {
+    switch (data?.pool?.protocol) {
       case 'SUSHISWAP_V2':
         return TABS.SUSHISWAP_V2
       case 'SUSHISWAP_V3':
@@ -84,26 +84,28 @@ export const ManageDialog = ({
       default:
         return TABS.SUSHISWAP_V3
     }
-  }, [data?.protocol])
+  }, [data?.pool?.protocol])
 
   const content = useMemo(() => {
-    switch (data?.protocol) {
+    switch (data?.pool?.protocol) {
       case 'SUSHISWAP_V2':
-        return <V2Content currentTab={currentTab} position={data} />
+        return '@dev we need more data from the backend'
+      // return <V2Content currentTab={currentTab} position={data} />
       case 'SUSHISWAP_V3':
-        return <V3Content currentTab={currentTab} position={data} />
+        return '@dev we need more data from the backend'
+      // return <V3Content currentTab={currentTab} position={data} />
 
       default:
-        return <div>{data?.protocol} unsupported.</div>
+        return <div>{data?.pool?.protocol} unsupported.</div>
     }
-  }, [currentTab, data])
+  }, [data])
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{triggerChildren}</DialogTrigger>
       <DialogContent
         aria-describedby={undefined}
-        className="!px-1 border-t h-full !flex flex-col !max-w-full md:!max-w-[520px] border-[#EBEBEB] rounded-t-none md:rounded-t-2xl !bg-slate-50 dark:border-[#FFFFFF14] dark:!bg-slate-800 w-full  max-h-[100dvh] overflow-y-auto hide-scrollbar"
+        className="!px-1 border-t !flex flex-col !max-w-full md:!max-w-[520px] border-[#EBEBEB] rounded-t-none md:rounded-t-2xl !bg-slate-50 dark:border-[#FFFFFF14] dark:!bg-slate-800 w-full max-h-[100dvh] overflow-y-auto hide-scrollbar"
       >
         <DialogTitle className="!font-medium px-3">
           <ManageDialogHeader data={data} />

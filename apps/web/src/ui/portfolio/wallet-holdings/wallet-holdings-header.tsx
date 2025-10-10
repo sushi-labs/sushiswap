@@ -3,8 +3,8 @@ import {
   useSetWalletFilters,
   useWalletFilters,
 } from 'src/app/(networks)/(evm)/[chainId]/portfolio/wallet-filters-provider'
-import { PnlNetworkFilter } from './pnl-network-filter'
 import { SendWidget } from './send-widget'
+import { WalletHoldingsNetworkFilter } from './wallet-holdings-network-filter'
 
 export const WalletHoldingsHeader = () => {
   const { hideSmallPositions, groupByAssets } = useWalletFilters()
@@ -57,7 +57,7 @@ export const WalletHoldingsHeader = () => {
             className="dark:data-[state=checked]:bg-skyblue"
           />
         </div>
-        <PnlNetworkFilter />
+        <WalletHoldingsNetworkFilter />
       </div>
     </>
   )
