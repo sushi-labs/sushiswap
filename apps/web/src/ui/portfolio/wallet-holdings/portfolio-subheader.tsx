@@ -3,18 +3,40 @@
 import { Button, classNames } from '@sushiswap/ui'
 import { FourSquaresIcon } from '@sushiswap/ui/icons/FourSquaresIcon'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { useRef, useState } from 'react'
+import { useMemo, useRef } from 'react'
 import { formatUSD } from 'sushi'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
+import {
+  DEFAULT_ASSET_NETWORKS,
+  useChartFilters,
+  useSetChartFilters,
+} from '~evm/[chainId]/portfolio/chart-filters-provider'
 import { useOverflow } from '../lp-positions-table/trending'
 
 export const PortfolioSubHeader = () => {
   const overflowRef = useRef<HTMLDivElement>(null)
   const { hasOverflow } = useOverflow(overflowRef)
+  const { chartNetworks } = useChartFilters()
+  const setFilters = useSetChartFilters()
 
-  const [selectedChainId, setSelectedChainId] = useState<
-    EvmChainId | null | 'all'
-  >('all')
+  const handleSelectAll = () => {
+    setFilters((prev) => ({ ...prev, chartNetworks: DEFAULT_ASSET_NETWORKS }))
+  }
+
+  const handleSelectChain = (chainId: EvmChainId) => {
+    // @ts-ignore
+    // @dev fix until we have correct chain types
+    setFilters((prev) => ({
+      ...prev,
+      chartNetworks: [chainId],
+    }))
+  }
+
+  const selectedChainId = useMemo(() => {
+    if (chartNetworks.length === 0) return 'all'
+    if (chartNetworks.length === DEFAULT_ASSET_NETWORKS.length) return 'all'
+    return chartNetworks[0]
+  }, [chartNetworks])
 
   return (
     <div
@@ -31,7 +53,7 @@ export const PortfolioSubHeader = () => {
             ? '!bg-[#4217FF14] dark:!bg-[#3DB1FF14] border border-blue dark:border-skyblue'
             : ' dark:!bg-slate-750',
         )}
-        onClick={() => setSelectedChainId('all')}
+        onClick={handleSelectAll}
       >
         <FourSquaresIcon
           width={16}
@@ -53,19 +75,19 @@ export const PortfolioSubHeader = () => {
         chainId={1}
         selected={selectedChainId === 1}
         usdValue={12342}
-        onSelect={(chainId) => setSelectedChainId(chainId)}
+        onSelect={handleSelectChain}
       />
       <AssetItem
         chainId={137}
         selected={selectedChainId === 137}
         usdValue={633}
-        onSelect={(chainId) => setSelectedChainId(chainId)}
+        onSelect={handleSelectChain}
       />
       <AssetItem
         chainId={10}
         selected={selectedChainId === 10}
         usdValue={3810}
-        onSelect={(chainId) => setSelectedChainId(chainId)}
+        onSelect={handleSelectChain}
       />
       {hasOverflow ? (
         <div className="h-full z-10 w-20 bg-gradient-to-r absolute right-0 top-1/2 -translate-y-1/2 from-transparent to-85% to-white dark:to-slate-900 hidden md:block" />
