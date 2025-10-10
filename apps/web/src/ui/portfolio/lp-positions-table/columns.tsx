@@ -284,6 +284,8 @@ const RewardsCell = ({ data }: { data: PortfolioV2PositionPoolType }) => {
   })
 
   const rewardsForChain = rewardsData?.[data?.pool.chainId as MerklChainId]
+  const totalRewards = rewardsForChain?.totalRewardsUSD || 0
+  const rewardTokens = Object.values(rewardsForChain?.rewardAmounts || {})
 
   if (!rewardsForChain) {
     return (
@@ -292,23 +294,21 @@ const RewardsCell = ({ data }: { data: PortfolioV2PositionPoolType }) => {
       </div>
     )
   }
-  const merkleChainId = data?.pool.chainId as MerklChainId
   return (
     <div className="flex flex-col">
-      <div className="font-medium">
-        {formatUSD(rewardsForChain?.rewardAmountsUSD[merkleChainId] || 0)}
-      </div>
+      <div className="font-medium">{formatUSD(totalRewards)}</div>
       <div className="flex gap-1 items-center text-xs font-normal uppercase whitespace-nowrap text-muted-foreground dark:text-pink-200">
-        {formatNumber(
-          rewardsForChain?.rewardAmounts?.[merkleChainId]?.toSignificant(6),
-        )}{' '}
-        {rewardsForChain?.rewardAmounts?.[merkleChainId]?.currency?.symbol}
-        <Currency.Icon
-          currency={rewardsForChain?.rewardAmounts?.[merkleChainId]?.currency}
-          width={16}
-          height={16}
-          className="rounded-full"
-        />
+        {rewardTokens?.map((token, i) => (
+          <span key={i}>
+            {formatNumber(token?.toSignificant(6))} {token?.currency?.symbol}
+            <Currency.Icon
+              currency={token?.currency}
+              width={16}
+              height={16}
+              className="rounded-full"
+            />
+          </span>
+        ))}
       </div>
     </div>
   )
