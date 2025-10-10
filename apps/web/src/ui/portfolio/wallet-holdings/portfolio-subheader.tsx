@@ -1,9 +1,10 @@
 'use client'
 
-import { Button, classNames } from '@sushiswap/ui'
+import { Button, SkeletonBox, classNames } from '@sushiswap/ui'
 import { FourSquaresIcon } from '@sushiswap/ui/icons/FourSquaresIcon'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useMemo, useRef } from 'react'
+import { useWalletPortfolioOverview } from 'src/lib/wagmi/hooks/portfolio/use-wallet-portfolio-overview'
 import { formatUSD } from 'sushi'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 import {
@@ -14,6 +15,7 @@ import {
 import { useOverflow } from '../lp-positions-table/trending'
 
 export const PortfolioSubHeader = () => {
+  const { totalValueUSD, chains, isLoading } = useWalletPortfolioOverview()
   const overflowRef = useRef<HTMLDivElement>(null)
   const { hasOverflow } = useOverflow(overflowRef)
   const { chartNetworks } = useChartFilters()
@@ -68,27 +70,22 @@ export const PortfolioSubHeader = () => {
 
         <div className="flex gap-1 items-start">
           <span>All</span>
-          <span>{formatUSD(52526.96)}</span>
+          <span>{formatUSD(totalValueUSD ?? 0)}</span>
         </div>
       </Button>
-      <AssetItem
-        chainId={1}
-        selected={selectedChainId === 1}
-        usdValue={12342}
-        onSelect={handleSelectChain}
-      />
-      <AssetItem
-        chainId={137}
-        selected={selectedChainId === 137}
-        usdValue={633}
-        onSelect={handleSelectChain}
-      />
-      <AssetItem
-        chainId={8453}
-        selected={selectedChainId === 8453}
-        usdValue={3810}
-        onSelect={handleSelectChain}
-      />
+      {isLoading
+        ? Array.from({ length: 3 }).map((_, index) => (
+            <SkeletonBox key={index} className="w-[145px] h-10" />
+          ))
+        : chains.map((chain) => (
+            <AssetItem
+              key={chain.chainId}
+              chainId={chain.chainId}
+              selected={selectedChainId === chain.chainId}
+              usdValue={chain.totalValueUSD}
+              onSelect={handleSelectChain}
+            />
+          ))}
       {hasOverflow ? (
         <div className="h-full z-10 w-20 bg-gradient-to-r absolute right-0 top-1/2 -translate-y-1/2 from-transparent to-85% to-white dark:to-slate-900 hidden md:block" />
       ) : null}

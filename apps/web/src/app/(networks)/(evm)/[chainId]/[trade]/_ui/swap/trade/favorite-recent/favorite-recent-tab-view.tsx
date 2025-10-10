@@ -55,7 +55,7 @@ export const FavoriteRecentTabView = () => {
         <NetworkMenu
           selectedNetwork={selectedNetwork}
           onNetworkSelect={setSelectedNetwork}
-          className="!px-1"
+          triggerClassName="!px-1"
           networkOptions={
             tab === FavoriteRecentTab.Recent
               ? TokenListV2ChainIds.map((i) => i)

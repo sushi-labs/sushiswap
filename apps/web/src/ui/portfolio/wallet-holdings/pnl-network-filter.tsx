@@ -1,12 +1,15 @@
 'use client'
 
 import {
-  PLACEHOLDER_NETWORKS,
   useSetWalletFilters,
   useWalletFilters,
 } from 'src/app/(networks)/(evm)/[chainId]/portfolio/wallet-filters-provider'
 import { NetworkFilterSelector } from 'src/app/(networks)/_ui/network-filter-selector'
+import { poolChainIds } from 'src/lib/wagmi/hooks/portfolio/use-wallet-portfolio'
 import type { ChainId } from 'sushi'
+
+// @dev these will come from api
+// const PLACEHOLDER_NETWORKS: ChainId[] = [747474, 1, 137, 42161, 8453]
 
 export const PnlNetworkFilter = () => {
   const { networks } = useWalletFilters()
@@ -20,7 +23,7 @@ export const PnlNetworkFilter = () => {
     <NetworkFilterSelector
       selectedNetworks={networks}
       setNetworks={handleSetNetworks}
-      defaultNetworks={PLACEHOLDER_NETWORKS}
+      defaultNetworks={poolChainIds}
       className="!bg-transparent"
     />
   )

@@ -13,57 +13,19 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useState } from 'react'
 import { PopoverDrawer } from 'src/app/(networks)/_ui/popover-drawer'
+import { usePortfolioWallet } from 'src/lib/wagmi/components/user-portfolio/hooks/use-portfolio-wallet'
+import { usePortfolioWalletTokensByChain } from 'src/lib/wagmi/hooks/portfolio/use-wallet-portfolio-by-chain'
+import { useWalletPortfolioOverview } from 'src/lib/wagmi/hooks/portfolio/use-wallet-portfolio-overview'
 import { formatPercent, formatUSD } from 'sushi'
-import { type EvmChainId, type EvmCurrency, EvmToken } from 'sushi/evm'
+import {
+  type EvmChainId,
+  type EvmCurrency,
+  EvmNative,
+  EvmToken,
+  isEvmAddress,
+} from 'sushi/evm'
+import { ethAddress } from 'viem'
 import { NetworkMenu } from '~evm/[chainId]/[trade]/_ui/swap/trade/favorite-recent/network-menu'
-
-const PLACEHOLDER_ASSETS = [
-  {
-    chainId: 1,
-    currency: {
-      address: '0x6B175474E89094C44Da98b954EedeAC495271d0F', // DAI
-      decimals: 18,
-      symbol: 'DAI',
-      name: 'DAI',
-    },
-  },
-  {
-    chainId: 1,
-    currency: {
-      address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
-      decimals: 6,
-      symbol: 'USDC',
-      name: 'USDC',
-    },
-  },
-  {
-    chainId: 1,
-    currency: {
-      address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', // USDT
-      decimals: 6,
-      symbol: 'USDT',
-      name: 'USDT',
-    },
-  },
-  {
-    chainId: 1,
-    currency: {
-      address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', // WETH
-      decimals: 18,
-      symbol: 'WETH',
-      name: 'WETH',
-    },
-  },
-  {
-    chainId: 1,
-    currency: {
-      address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', // WBTC
-      decimals: 8,
-      symbol: 'WBTC',
-      name: 'WBTC',
-    },
-  },
-]
 
 export const AssetsFilter = ({
   setSelectedToken,
@@ -72,14 +34,14 @@ export const AssetsFilter = ({
   setSelectedToken: (token: EvmCurrency | null) => void
   selectedToken: EvmCurrency | null
 }) => {
+  const { chains } = useWalletPortfolioOverview()
   const [selectedNetwork, setSelectedNetwork] = useState<EvmChainId | null>(
     null,
   )
+  const { tokens } = usePortfolioWalletTokensByChain({
+    selectedChainId: selectedNetwork,
+  })
   const [open, setOpen] = useState(false)
-
-  const token = {
-    price24hChange: 10,
-  }
 
   return (
     <PopoverDrawer
@@ -173,28 +135,32 @@ export const AssetsFilter = ({
                 className="!max-h-[39px] w-full !bg-slate-100 dark:!bg-slate-900  placeholder:text-slate-450 dark:placeholder:text-slate-500"
               />
               <NetworkMenu
-                className="border !min-h-[36px] !rounded-lg !h-[36px] !border-[#00000014] dark:border-slate-750 dark:!bg-slate-800 bg-slate-50"
+                className="!min-w-[202px]"
+                triggerClassName="border !min-h-[36px] !rounded-lg !h-[36px] !border-[#00000014] dark:border-slate-750 dark:!bg-slate-800 bg-slate-50"
                 selectedNetwork={selectedNetwork}
                 onNetworkSelect={setSelectedNetwork}
+                networkOptions={chains.map((chain) => chain.chainId)}
               />
             </div>
           </div>
 
           <CommandGroup className="!overflow-x-hidden !overflow-y-scroll scroll max-h-[300px]">
-            {PLACEHOLDER_ASSETS.map((asset) => {
+            {tokens.map((asset) => {
               return (
                 <CommandItem
-                  key={`${asset.currency.name}__${asset.chainId}`}
-                  value={`${asset.currency.name}__${asset.chainId}`}
+                  key={`${asset.name}__${asset.chainId}`}
+                  value={`${asset.name}__${asset.chainId}`}
                   onSelect={() => {
                     setSelectedToken(
-                      new EvmToken({
-                        chainId: asset.chainId as EvmChainId,
-                        address: asset.currency.address as `0x${string}`,
-                        decimals: asset.currency.decimals,
-                        symbol: asset.currency.symbol,
-                        name: asset.currency.name,
-                      }),
+                      !isEvmAddress(asset.id)
+                        ? EvmNative.fromChainId(asset.chainId as EvmChainId)
+                        : new EvmToken({
+                            chainId: asset.chainId as EvmChainId,
+                            address: asset.id as `0x${string}`,
+                            decimals: asset.decimals,
+                            symbol: asset.symbol,
+                            name: asset.name,
+                          }),
                     )
                     setOpen(false)
                   }}
@@ -217,21 +183,24 @@ export const AssetsFilter = ({
                             width={28}
                             height={28}
                             currency={
-                              new EvmToken({
-                                chainId: asset.chainId as EvmChainId,
-                                address: asset.currency
-                                  .address as `0x${string}`,
-                                decimals: asset.currency.decimals,
-                                symbol: asset.currency.symbol,
-                                name: asset.currency.name,
-                              })
+                              !isEvmAddress(asset.id)
+                                ? EvmNative.fromChainId(
+                                    asset.chainId as EvmChainId,
+                                  )
+                                : new EvmToken({
+                                    chainId: asset.chainId as EvmChainId,
+                                    address: asset.id as `0x${string}`,
+                                    decimals: asset.decimals,
+                                    symbol: asset.symbol,
+                                    name: asset.name,
+                                  })
                             }
                           />
                         </div>
                         <div className="flex flex-col">
-                          <span> {asset.currency.name}</span>
+                          <span> {asset.name}</span>
                           <span className="text-xs text-muted-foreground">
-                            {`0.35 ${asset.currency.symbol}`}
+                            {`${asset.amount} ${asset.symbol}`}
                           </span>
                         </div>
                       </div>
@@ -239,19 +208,19 @@ export const AssetsFilter = ({
 
                     <div className="flex flex-col">
                       <div className="overflow-hidden text-sm font-medium overflow-ellipsis">
-                        {formatUSD(100)}
+                        {formatUSD(asset.amountUSD)}
                       </div>
                       <div
                         className={classNames(
                           'text-[10px] ml-auto',
-                          token.price24hChange > 0
+                          asset.price24hChange > 0
                             ? 'text-green-500'
-                            : token.price24hChange < 0
+                            : asset.price24hChange < 0
                               ? 'text-red'
                               : 'text-muted-foreground',
                         )}
                       >
-                        {`${token.price24hChange > 0 ? '+' : ''}${formatPercent(token.price24hChange)}`}
+                        {`${asset.price24hChange > 0 ? '+' : ''}${formatPercent(asset.price24hChange)}`}
                       </div>
                     </div>
                   </div>

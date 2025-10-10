@@ -24,6 +24,7 @@ export const NetworkMenu = ({
   triggerIcon,
   triggerText = 'All Networks',
   testId,
+  triggerClassName,
 }: {
   className?: string
   selectedNetwork?: EvmChainId | null
@@ -33,6 +34,7 @@ export const NetworkMenu = ({
   triggerIcon?: React.ReactNode
   triggerText?: string
   testId?: string
+  triggerClassName?: string
 }) => {
   const { networkOptions: _networks } = useNetworkOptions()
 
@@ -45,7 +47,7 @@ export const NetworkMenu = ({
           variant={triggerVariant}
           className={classNames(
             'flex items-center font-medium !gap-1 !px-2 !pl-3',
-            className,
+            triggerClassName,
           )}
           testId={testId ?? 'network-menu-dropdown-trigger'}
         >
@@ -60,7 +62,10 @@ export const NetworkMenu = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="max-h-[205px] overflow-y-auto !bg-slate-50 dark:!bg-slate-900 !backdrop-blur-none"
+        className={classNames(
+          'max-h-[205px] overflow-y-auto !bg-slate-50 dark:!bg-slate-900 !backdrop-blur-none',
+          className,
+        )}
       >
         <DropdownMenuGroup className="font-medium">
           <DropdownMenuItem

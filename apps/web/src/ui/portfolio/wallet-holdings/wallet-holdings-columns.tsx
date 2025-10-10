@@ -24,7 +24,7 @@ export const CHAIN_COLUMN: ColumnDef<PortfolioV2Row> = {
   accessorFn: (row) => row,
   cell: ({ row }) => (
     <div className="flex gap-1 md:gap-2">
-      <div className="flex items-center -space-x-2">
+      <div className="flex items-center -space-x-2  min-w-[50px] px-2">
         {row.original.chainIds.slice(0, 3).map((chainId, i) => (
           <div
             key={chainId}

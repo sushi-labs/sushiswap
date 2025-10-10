@@ -53,7 +53,7 @@ export const FavoriteDialog = () => {
               testId="favorite-network-menu-trigger"
               selectedNetwork={selectedNetwork}
               onNetworkSelect={setSelectedNetwork}
-              className="!px-1"
+              triggerClassName="!px-1"
               networkOptions={SUPPORTED_CHAIN_IDS}
             />
           </div>

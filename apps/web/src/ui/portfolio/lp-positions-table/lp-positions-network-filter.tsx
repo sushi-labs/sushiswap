@@ -2,19 +2,17 @@
 
 import { useState } from 'react'
 import { NetworkFilterSelector } from 'src/app/(networks)/_ui/network-filter-selector'
+import { poolChainIds } from 'src/lib/wagmi/hooks/portfolio/use-wallet-portfolio'
 import type { ChainId } from 'sushi'
 
-//@dev these will come from lp holdings
-const PLACEHOLDER_NETWORKS: ChainId[] = [747474, 1, 56, 137, 42161, 8453] // Example networks
-
 export const LPPositionsNetworkFilter = () => {
-  const [networks, setNetworks] = useState<ChainId[]>(PLACEHOLDER_NETWORKS)
+  const [networks, setNetworks] = useState<ChainId[]>(poolChainIds)
 
   return (
     <NetworkFilterSelector
       selectedNetworks={networks}
       setNetworks={setNetworks}
-      defaultNetworks={PLACEHOLDER_NETWORKS}
+      defaultNetworks={poolChainIds}
       className="!bg-[#00000005] dark:!bg-[#00000005]"
     />
   )
