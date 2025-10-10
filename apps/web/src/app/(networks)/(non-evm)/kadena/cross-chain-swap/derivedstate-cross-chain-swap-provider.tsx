@@ -56,6 +56,7 @@ interface State {
     setTokens(token0: KinesisToken | string): void
     setSwapAmount(swapAmount: string): void
     switchTokens(): void
+    setIsTxnPending(value: boolean): void
   }
   state: {
     token0: KinesisToken | undefined
@@ -74,6 +75,7 @@ interface State {
     minAmountOut: Amount<KinesisToken> | undefined
     feeInToken: Amount<EvmCurrency | KvmToken> | undefined
     executionDuration: string
+    isTxnPending: boolean
   }
   isLoading: boolean
   isToken0Loading: boolean
@@ -99,6 +101,7 @@ const DerivedstateCrossChainSwapProvider: FC<
   )
 
   const { data: tokenLists } = useKinesisTokenList()
+  const [isTxnPending, setIsTxnPending] = useState(false)
 
   const rawChainId0 = decodeChainId(searchParams.get('chainId0'))
   const rawChainId1 = decodeChainId(searchParams.get('chainId1'))
@@ -350,6 +353,7 @@ const DerivedstateCrossChainSwapProvider: FC<
             setTokens,
             switchTokens,
             setSwapAmount,
+            setIsTxnPending,
           },
           state: {
             recipient,
@@ -368,6 +372,7 @@ const DerivedstateCrossChainSwapProvider: FC<
             minAmountOut,
             feeInToken,
             executionDuration,
+            isTxnPending,
           },
           isLoading: token0Loading || token1Loading,
           isToken0Loading: token0Loading,
@@ -395,6 +400,7 @@ const DerivedstateCrossChainSwapProvider: FC<
         minAmountOut,
         feeInToken,
         executionDuration,
+        isTxnPending,
       ])}
     >
       {children}

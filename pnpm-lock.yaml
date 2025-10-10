@@ -244,8 +244,8 @@ importers:
         specifier: 0.2.0
         version: 0.2.0(@types/react@19.0.1)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11)
       '@kinesis-bridge/kinesis-sdk':
-        specifier: 1.6.0
-        version: 1.6.0(@types/react@19.0.1)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@6.0.3)(webextension-polyfill@0.10.0)(zod@4.1.11)
+        specifier: 1.8.0
+        version: 1.8.0(@types/react@19.0.1)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@6.0.3)(webextension-polyfill@0.10.0)(zod@4.1.11)
       '@layerzerolabs/scan-client':
         specifier: 0.0.6
         version: 0.0.6(axios@1.7.7)
@@ -3197,9 +3197,6 @@ packages:
   '@kadena/chainweb-node-client@0.9.1':
     resolution: {integrity: sha512-UT3/udj/QuMM8HiN2cMqEEgX0RGRYVJm/iJgqCtXLizKMM9fpaZDl+BlrB2TM9lyC9KrFPHI3aDAmtfzBQ9ERg==}
 
-  '@kadena/chainweb-node-client@0.9.4':
-    resolution: {integrity: sha512-RIRDkKdVqD6QxN9+dfJ3xmpOs0pzy2GNj+3wosg/X5mJJEPkJh2MpADFm14jyjZ1MQa3mINQhODCmIiPBQnjgw==}
-
   '@kadena/chainweb-node-client@0.9.5':
     resolution: {integrity: sha512-PA5kQLRZ1k3LM7Oj78lUHgxmO7i4T685loc0yhZnpA9N8Q6x0ZClbhQ6g3AT4o9jh9IRCRYcfYhp2qO+jML/hg==}
 
@@ -3208,9 +3205,6 @@ packages:
 
   '@kadena/client@1.18.0':
     resolution: {integrity: sha512-H+hMdRsL9J8MHM671XQ50j3b2gGb3PCbh8VhoPioHtra9Qh8EQN00s+U7wA3H3/gqrHPEZOQxQphfBcOEj0yyg==}
-
-  '@kadena/client@1.18.2':
-    resolution: {integrity: sha512-kZ8xl7uvK8TFSwvUB2CBwfRQnO15jFEKVdTolyPLsZY+8osKNx53jZSEktGTPTXbMbUEYtk4JmiYGHAsOwmu2Q==}
 
   '@kadena/client@1.18.3':
     resolution: {integrity: sha512-g/rfNN5gMEJFYSXpJDulUN6JrnFk5V4H0IF+bkzkj2SGmb5zESjlClWewe1Aqc/FkIWCdp/5inw3qpgp81OjsA==}
@@ -3228,26 +3222,17 @@ packages:
   '@kadena/pactjs@0.4.3':
     resolution: {integrity: sha512-EYqIrhw5YbGz7+10rq4QnqC9I22OfApCRfNIvrcq6Lwg0I04grFXCspgEFrgZO1ThTvG4nN0gs8DZl72HBleGw==}
 
-  '@kadena/pactjs@0.5.0':
-    resolution: {integrity: sha512-pC7kJeC0HcrTTmSAQpEIq/ufrSQWXDF3wNgbz8yFHsHUxcz/X8Yolny4jowskCqcE4N8c5r6RMqQbyRKTge0Tg==}
-
   '@kadena/pactjs@0.6.0':
     resolution: {integrity: sha512-P1vk+gqI76VzpNUfbuW4+qTuPWSOsGm/thppabAVDA9lMBEJD1od6VgzFXcWr7jDdocSdjEMUMTaItwFn9ADcg==}
 
   '@kadena/types@0.7.0':
     resolution: {integrity: sha512-CDPuIcF/AyhqXawfIlqel3kew8UA6rEBX81PMltN8eqaVS9nXTvA1SbU6d9qzFPzEgynoJ5N3QZht8BCr2oFVQ==}
 
-  '@kadena/wallet-adapter-core@0.1.2':
-    resolution: {integrity: sha512-ggbbsOABoEamzMa3HBh6vmbRnvdLINnnzhsheYtzeuTTVT30KZJ6XJke3Fsphf5NXVesNvx+pRGI0E1632t3qw==}
-
   '@kadena/wallet-adapter-core@0.1.3':
     resolution: {integrity: sha512-prG/RjtQs7Ka0BEszLppYDsamGm+9emFzpEC9Rm5+MLobNMzJwGw1fBh7JpIOo+3YQig5cltp7xNX8Qp0qLUDQ==}
 
   '@kadena/wallet-adapter-ecko@0.0.6':
     resolution: {integrity: sha512-gDcUXvUFA5R9Jk0LedvCKqA2l5oFQZldd3im9tlX2k8jOk9AL8bDVz60Rr208ZUwfl8Kq/F1SGZLw84nInvgtg==}
-
-  '@kadena/wallet-adapter-metamask-snap@0.1.3':
-    resolution: {integrity: sha512-094r38dnDCEXCuwW1E4Y5dj+e3KwMXwryW2dQLQd7ZrTSizAAG4TzYjlXQmY5lD/RSfWtSGXiYwKQwUR0s+diQ==}
 
   '@kadena/wallet-adapter-metamask-snap@0.2.0':
     resolution: {integrity: sha512-YDb4DrZ72RLbmqCwAGDaFRgj4sKscwZ/clpqM20wFyiud9ypIv4X+lgxm/Js8RsRr5FveBlo+16tlOUKn2r0aQ==}
@@ -3258,14 +3243,11 @@ packages:
       react: ^19.1.1
       react-dom: ^19.1.1
 
-  '@kadena/wallet-adapter-walletconnect@0.1.2':
-    resolution: {integrity: sha512-SIrj95KJIi0FTgQzP4KfYInmw3zDqvXbJbGOEWMQWL1M1YUqwRd72orL/d4nSamttGH8U4NRzcjrV2TyvvkEdg==}
-
   '@kadena/wallet-adapter-walletconnect@0.2.0':
     resolution: {integrity: sha512-0tntnjmG55Bf19U34NFzMjArmf53LyPB4760GBediFkvh+UBIHZX7LFviGsv1PIVTaQTPQ3niYLIvHBqjHcsgw==}
 
-  '@kinesis-bridge/kinesis-sdk@1.6.0':
-    resolution: {integrity: sha512-Pex3MRRHE0y8VenwBvzFOZAlM7yl7jw3beTzmyEZ2a0J6ld6KP8kG7+Q/kvb9GKnMbbXpBYsjwOegYdFG3Pc7A==}
+  '@kinesis-bridge/kinesis-sdk@1.8.0':
+    resolution: {integrity: sha512-l9xDGyq13DQmUOt91fQm5ElnZJHqP77KYhj4zTbfcdbngfg9Wug6Ea84rdLcVMxwoZ/5QlS89DCliIe6crijaA==}
     engines: {node: '>=16.0.0'}
 
   '@layerzerolabs/scan-client@0.0.6':
@@ -15801,14 +15783,6 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@kadena/chainweb-node-client@0.9.4(encoding@0.1.13)':
-    dependencies:
-      '@kadena/cryptography-utils': 0.4.4
-      '@kadena/pactjs': 0.5.0
-      cross-fetch: 3.1.8(encoding@0.1.13)
-    transitivePeerDependencies:
-      - encoding
-
   '@kadena/chainweb-node-client@0.9.5(encoding@0.1.13)':
     dependencies:
       '@kadena/cryptography-utils': 0.4.4
@@ -15852,32 +15826,6 @@ snapshots:
       '@kadena/chainweb-node-client': 0.9.1(encoding@0.1.13)
       '@kadena/cryptography-utils': 0.4.4
       '@kadena/pactjs': 0.4.3
-      '@walletconnect/sign-client': 2.8.6(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(utf-8-validate@6.0.3)
-      cross-fetch: 3.1.8(encoding@0.1.13)
-      debug: 4.3.4
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-
-  '@kadena/client@1.18.2(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@6.0.3)':
-    dependencies:
-      '@kadena/chainweb-node-client': 0.9.4(encoding@0.1.13)
-      '@kadena/cryptography-utils': 0.4.4
-      '@kadena/pactjs': 0.5.0
       '@walletconnect/sign-client': 2.8.6(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(utf-8-validate@6.0.3)
       cross-fetch: 3.1.8(encoding@0.1.13)
       debug: 4.3.4
@@ -15970,41 +15918,12 @@ snapshots:
     dependencies:
       bignumber.js: 9.3.1
 
-  '@kadena/pactjs@0.5.0':
-    dependencies:
-      bignumber.js: 9.3.1
-
   '@kadena/pactjs@0.6.0':
     dependencies:
       '@kadena/types': 0.7.0
       bignumber.js: 9.3.1
 
   '@kadena/types@0.7.0': {}
-
-  '@kadena/wallet-adapter-core@0.1.2(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3)':
-    dependencies:
-      '@kadena/client': 1.18.2(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@6.0.3)
-      '@standard-schema/spec': 1.0.0
-      eventemitter3: 5.0.1
-      valibot: 1.1.0(typescript@5.8.3)
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - bufferutil
-      - encoding
-      - supports-color
-      - typescript
-      - utf-8-validate
 
   '@kadena/wallet-adapter-core@0.1.3(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3)':
     dependencies:
@@ -16052,32 +15971,6 @@ snapshots:
       - supports-color
       - typescript
       - utf-8-validate
-
-  '@kadena/wallet-adapter-metamask-snap@0.1.3(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3)(webextension-polyfill@0.10.0)':
-    dependencies:
-      '@kadena/client': 1.18.2(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@6.0.3)
-      '@kadena/types': 0.7.0
-      '@kadena/wallet-adapter-core': 0.1.2(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3)
-      '@metamask/providers': 22.1.1(webextension-polyfill@0.10.0)
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - bufferutil
-      - encoding
-      - supports-color
-      - typescript
-      - utf-8-validate
-      - webextension-polyfill
 
   '@kadena/wallet-adapter-metamask-snap@0.2.0(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3)(webextension-polyfill@0.10.0)':
     dependencies:
@@ -16129,35 +16022,6 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@kadena/wallet-adapter-walletconnect@0.1.2(@types/react@19.0.1)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11)':
-    dependencies:
-      '@kadena/client': 1.18.2(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@6.0.3)
-      '@kadena/wallet-adapter-core': 0.1.2(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3)
-      '@walletconnect/modal': 2.7.0(@types/react@19.0.1)(react@19.0.0)
-      '@walletconnect/sign-client': 2.8.6(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(utf-8-validate@6.0.3)
-      '@walletconnect/utils': 2.21.1(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11)
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@types/react'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - bufferutil
-      - encoding
-      - react
-      - supports-color
-      - typescript
-      - utf-8-validate
-      - zod
-
   '@kadena/wallet-adapter-walletconnect@0.2.0(@types/react@19.0.1)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11)':
     dependencies:
       '@kadena/client': 1.18.3(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@6.0.3)
@@ -16187,14 +16051,14 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@kinesis-bridge/kinesis-sdk@1.6.0(@types/react@19.0.1)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@6.0.3)(webextension-polyfill@0.10.0)(zod@4.1.11)':
+  '@kinesis-bridge/kinesis-sdk@1.8.0(@types/react@19.0.1)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@6.0.3)(webextension-polyfill@0.10.0)(zod@4.1.11)':
     dependencies:
       '@kadena/client': 1.18.0(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@6.0.3)
       '@kadena/client-utils': 0.13.4(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@6.0.3)
       '@kadena/pactjs': 0.4.3
       '@kadena/types': 0.7.0
-      '@kadena/wallet-adapter-metamask-snap': 0.1.3(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3)(webextension-polyfill@0.10.0)
-      '@kadena/wallet-adapter-walletconnect': 0.1.2(@types/react@19.0.1)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11)
+      '@kadena/wallet-adapter-metamask-snap': 0.2.0(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3)(webextension-polyfill@0.10.0)
+      '@kadena/wallet-adapter-walletconnect': 0.2.0(@types/react@19.0.1)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11)
       viem: 2.37.12(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11)
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -20097,7 +19961,7 @@ snapshots:
       '@typescript-eslint/parser': 7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.8.3)
       eslint-config-prettier: 9.1.0(eslint@9.18.0(jiti@1.21.6))
       eslint-import-resolver-alias: 1.1.2(eslint-plugin-import@2.31.0)
-      eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.8.3))(eslint-plugin-import@2.31.0)(eslint@9.18.0(jiti@1.21.6))
+      eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0)(eslint@9.18.0(jiti@1.21.6))
       eslint-plugin-eslint-comments: 3.2.0(eslint@9.18.0(jiti@1.21.6))
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.8.3))(eslint-import-resolver-typescript@3.6.3)(eslint@9.18.0(jiti@1.21.6))
       eslint-plugin-jest: 27.9.0(@typescript-eslint/eslint-plugin@7.18.0(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.8.3))(eslint@9.18.0(jiti@1.21.6))(typescript@5.8.3))(eslint@9.18.0(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.14)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.8.3)))(typescript@5.8.3)
@@ -23448,25 +23312,6 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.8.3))(eslint-plugin-import@2.31.0)(eslint@9.18.0(jiti@1.21.6)):
-    dependencies:
-      '@nolyfill/is-core-module': 1.0.39
-      debug: 4.4.0
-      enhanced-resolve: 5.17.1
-      eslint: 9.18.0(jiti@1.21.6)
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.8.3))(eslint-import-resolver-typescript@3.6.3)(eslint@9.18.0(jiti@1.21.6))
-      fast-glob: 3.3.2
-      get-tsconfig: 4.7.6
-      is-bun-module: 1.2.1
-      is-glob: 4.0.3
-    optionalDependencies:
-      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.8.3))(eslint-import-resolver-typescript@3.6.3)(eslint@9.18.0(jiti@1.21.6))
-    transitivePeerDependencies:
-      - '@typescript-eslint/parser'
-      - eslint-import-resolver-node
-      - eslint-import-resolver-webpack
-      - supports-color
-
   eslint-mdx@3.1.5(eslint@9.18.0(jiti@1.21.6)):
     dependencies:
       acorn: 8.14.0
@@ -23496,16 +23341,6 @@ snapshots:
       eslint: 9.18.0(jiti@1.21.6)
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0)(eslint@9.18.0(jiti@1.21.6))
-    transitivePeerDependencies:
-      - supports-color
-
-  eslint-module-utils@2.12.0(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.8.3))(eslint-import-resolver-typescript@3.6.3)(eslint@9.18.0(jiti@1.21.6)):
-    dependencies:
-      debug: 3.2.7
-    optionalDependencies:
-      '@typescript-eslint/parser': 7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.8.3)
-      eslint: 9.18.0(jiti@1.21.6)
-      eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@7.18.0(eslint@9.18.0(jiti@1.21.6))(typescript@5.8.3))(eslint-plugin-import@2.31.0)(eslint@9.18.0(jiti@1.21.6))
     transitivePeerDependencies:
       - supports-color
 

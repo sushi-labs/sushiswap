@@ -6,7 +6,6 @@ import {
 } from '@sushiswap/notifications'
 import { Button, Dots } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
 import { ChainId, getChainById } from 'sushi'
 import { useAccount } from 'wagmi'
 import { kinesisClient } from '~kadena/_common/constants/client'
@@ -32,10 +31,10 @@ export const KinesisSwapButton = ({
       chainId0,
       chainId1,
       simulateBridgeTx,
+      isTxnPending,
     },
-    mutate: { setSwapAmount },
+    mutate: { setSwapAmount, setIsTxnPending },
   } = useDerivedStateCrossChainSwap()
-  const [isTxnPending, setIsTxnPending] = useState(false)
   const { address } = useAccount()
   const { activeAccount } = useKadena()
 
@@ -118,6 +117,7 @@ export const KinesisSwapButton = ({
       })
 
       onSuccess()
+      setIsTxnPending(false)
     } catch (err) {
       createFailedToast({
         summary:
@@ -131,9 +131,8 @@ export const KinesisSwapButton = ({
         timestamp: Date.now(),
       })
       setSrcStatus('error')
+      setIsTxnPending(false)
       console.error(err)
-    } finally {
-      setIsTxnPending?.(false)
     }
   }
 
