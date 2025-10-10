@@ -9,9 +9,15 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
 import type { PortfolioV2Row } from 'src/lib/wagmi/hooks/portfolio/use-wallet-portfolio'
-import { formatNumber, formatPercent, formatUSD } from 'sushi'
+import {
+  Amount,
+  formatNumber,
+  formatPercent,
+  formatUSD,
+  withoutScientificNotation,
+} from 'sushi'
 import { type EvmChainId, EvmNative, EvmToken } from 'sushi/evm'
-import { ethAddress, formatUnits } from 'viem'
+import { Address, ethAddress, formatUnits } from 'viem'
 import { SparklineCell } from '~evm/[chainId]/explore/tokens/_ui/sparkline-cell'
 import { ActionButtons } from '../assets-chart/action-buttons'
 
@@ -150,7 +156,10 @@ export const AMOUNT_COLUMN: ColumnDef<PortfolioV2Row> = {
   cell: ({ row }) => {
     const { token, amount } = row.original
 
-    const _amount = formatUnits(BigInt(amount), token.decimals)
+    const _amount = formatUnits(
+      BigInt(withoutScientificNotation(amount) || '0'),
+      token.decimals,
+    )
     return (
       <div className="flex items-center gap-1 md:gap-2 min-w-[130px]">
         <span className="whitespace-nowrap">
