@@ -175,8 +175,6 @@ export const AssetsChart = () => {
     [xData, yData, chartRange, isDark, isSmallScreen, onMouseOver],
   )
 
-  console.log('data', data)
-
   return (
     <Wrapper className="!p-0" enableBorder>
       <CardHeader className="!px-0 !p-4 md:!py-4">
@@ -196,11 +194,12 @@ export const AssetsChart = () => {
           />
         ) : isError ? (
           <div className="h-[134px] !mb-4 w-full" />
-        ) : !data?.dataPoints.length ? (
-          <div className="flex justify-center items-center h-[246px] w-full">
-            <span className="text-sm pb-10">No data available.</span>
-          </div>
         ) : (
+          //  : !data?.dataPoints.length ? (
+          //   <div className="flex justify-center items-center h-[246px] w-full">
+          //     <span className="text-sm pb-10">No data available.</span>
+          //   </div>
+          // )
           <ReactEchartsCore
             echarts={echarts}
             option={option}

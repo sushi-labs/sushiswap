@@ -47,7 +47,6 @@ export const WalletHoldings = () => {
   const { data, isLoadingPositions, isLoadingPnl } = useWalletPortfolio({
     address: address as `0x${string}`,
   })
-  console.log('isloadingpositions', isLoadingPositions)
   const { tokens } = data || {}
   const { mutate } = useSendTokens()
   const [openMenu, setOpenMenu] = useState(false)
