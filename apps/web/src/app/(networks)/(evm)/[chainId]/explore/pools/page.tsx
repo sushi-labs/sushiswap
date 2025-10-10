@@ -3,12 +3,12 @@ import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import React from 'react'
 import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/table-filters-search-token'
-import { TableFiltersFarmsOnly } from 'src/ui/pool/TableFiltersFarmsOnly'
 import { PoolsTableV2 } from '~evm/[chainId]/_ui/PoolsTableV2'
 import { TableFiltersAPR } from '~evm/[chainId]/_ui/TableFiltersAPR'
 import { TableFiltersNetworkV2 } from '~evm/[chainId]/_ui/TableFiltersNetworkV2'
 import { TableFiltersPoolTypeV2 } from '~evm/[chainId]/_ui/TableFiltersPoolTypeV2'
 import { TableFiltersTVL } from '~evm/[chainId]/_ui/TableFiltersTVL'
+import { TableFiltersFarmsOnly } from '~evm/[chainId]/_ui/table-filters-farms-only'
 
 export default async function PoolsPage(props: {
   params: Promise<{ chainId: string }>

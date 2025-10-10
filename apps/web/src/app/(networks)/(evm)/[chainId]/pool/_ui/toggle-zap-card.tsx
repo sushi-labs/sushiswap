@@ -26,7 +26,7 @@ export const ToggleZapCard: FC<ToggleZapCardProps> = ({
   )
 
   return (
-    <Card className="!bg-[#FFFFFF14] dark:!bg-[#FFFFFF14] border-none">
+    <Card className="!bg-[#4217FF14] dark:!bg-[#FFFFFF14] border-none">
       <CardHeader className="!p-4">
         <CardTitle className="flex items-center justify-between">
           <span className="text-base tracking-tighter font-semibold flex items-center gap-2 text-blue dark:text-white">

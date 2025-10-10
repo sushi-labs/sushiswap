@@ -1,8 +1,9 @@
 'use client'
 
+import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
+import type { V2PoolBuckets } from '@sushiswap/graph-client/data-api-181'
 import {
   Button,
-  Card,
   CardContent,
   CardHeader,
   CardTitle,
@@ -23,14 +24,16 @@ import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import ms from 'ms'
 import { useTheme } from 'next-themes'
-import { useEffect, useMemo, useState } from 'react'
-import { useCallback } from 'react'
+import { useMemo, useState } from 'react'
 import type { FC, MouseEventHandler, ReactNode } from 'react'
-import { ChainId } from 'sushi'
+import { usePoolBuckets } from 'src/lib/hooks/api/use-pool-buckets'
+import { ChainId, formatPercent } from 'sushi'
 import { SUSHI } from 'sushi/evm'
+import { EvmToken } from 'sushi/evm'
 import tailwindConfig from 'tailwind.config'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import { Wrapper } from '../[trade]/_ui/swap/trade/wrapper'
+import { APRHoverCard } from './apr-hover-card'
 
 echarts.use([
   CanvasRenderer,
@@ -55,200 +58,61 @@ export const chartPeriods: Record<PoolChartPeriod, number> = {
   [PoolChartPeriod.All]: Number.POSITIVE_INFINITY,
 }
 
-export const MOCK_APR_BUCKETS = {
-  [PoolChartPeriod.SevenDay]: [
-    { date: 1752259200, apr: 12.1 }, // 2025‑07‑11
-    { date: 1752345600, apr: 11.8 }, // 2025‑07‑12
-    { date: 1752432000, apr: 12.4 }, // 2025‑07‑13
-    { date: 1752518400, apr: 11.9 }, // 2025‑07‑14
-    { date: 1752604800, apr: 11.6 }, // 2025‑07‑15
-    { date: 1752691200, apr: 12.3 }, // 2025‑07‑16
-    { date: 1752777600, apr: 12.7 }, // 2025‑07‑17
-    { date: 1752864000, apr: 12.5 }, // 2025‑07‑18
-    { date: 1752950400, apr: 12.2 }, // 2025‑07‑19
-    { date: 1753036800, apr: 11.5 }, // 2025‑07‑20
-    { date: 1753123200, apr: 11.9 }, // 2025‑07‑21
-    { date: 1753209600, apr: 12.0 }, // 2025‑07‑22
-    { date: 1753296000, apr: 12.3 }, // 2025‑07‑23
-    { date: 1753382400, apr: 12.6 }, // 2025‑07‑24
-  ],
-  [PoolChartPeriod.ThirtyDay]: [
-    { date: 1752259200, apr: 12.1 }, // 2025‑07‑11
-    { date: 1752345600, apr: 11.8 }, // 2025‑07‑12
-    { date: 1752432000, apr: 12.4 }, // 2025‑07‑13
-    { date: 1752518400, apr: 11.9 }, // 2025‑07‑14
-    { date: 1752604800, apr: 11.6 }, // 2025‑07‑15
-    { date: 1752691200, apr: 12.3 }, // 2025‑07‑16
-    { date: 1752777600, apr: 12.7 }, // 2025‑07‑17
-    { date: 1752864000, apr: 12.5 }, // 2025‑07‑18
-    { date: 1752950400, apr: 12.2 }, // 2025‑07‑19
-    { date: 1753036800, apr: 11.5 }, // 2025‑07‑20
-    { date: 1753123200, apr: 11.9 }, // 2025‑07‑21
-    { date: 1753209600, apr: 12.0 }, // 2025‑07‑22
-    { date: 1753296000, apr: 12.3 }, // 2025‑07‑23
-    { date: 1753382400, apr: 12.6 }, // 2025‑07‑24
-    { date: 1753468800, apr: 12.4 }, // 2025‑07‑25
-    { date: 1753555200, apr: 12.1 }, // 2025‑07‑26
-    { date: 1753641600, apr: 11.8 }, // 2025‑07‑27
-    { date: 1753728000, apr: 12.2 }, // 2025‑07‑28
-    { date: 1753814400, apr: 12.5 }, // 2025‑07‑29
-    { date: 1753900800, apr: 12.8 }, // 2025‑07‑30
-    { date: 1753987200, apr: 13.0 }, // 2025‑07‑31
-    { date: 1754073600, apr: 12.9 }, // 2025‑08‑01
-    { date: 1754160000, apr: 12.6 }, // 2025‑08‑02
-    { date: 1754246400, apr: 12.4 }, // 2025‑08‑03
-    { date: 1754332800, apr: 12.2 }, // 2025‑08‑04
-    { date: 1754419200, apr: 12.0 }, // 2025‑08‑05
-    { date: 1754505600, apr: 11.7 }, // 2025‑08‑06
-    { date: 1754592000, apr: 11.9 }, // 2025‑08‑07
-    { date: 1754678400, apr: 12.1 }, // 2025‑08‑08
-    { date: 1754764800, apr: 12.3 }, // 2025‑08‑09
-    { date: 1754851200, apr: 12.5 }, // 2025‑08‑10
-    { date: 1754937600, apr: 12.7 }, // 2025‑08‑11
-    { date: 1755024000, apr: 12.9 }, // 2025‑08‑12
-    { date: 1755110400, apr: 13.1 }, // 2025‑08‑13
-    { date: 1755196800, apr: 13.3 }, // 2025‑08‑14
-    { date: 1755283200, apr: 13.5 }, // 2025‑08‑15
-    { date: 1755369600, apr: 13.7 }, // 2025‑08‑16
-    { date: 1755456000, apr: 13.9 }, // 2025‑08‑17
-    { date: 1755542400, apr: 14.1 }, // 2025‑08‑18
-    { date: 1755628800, apr: 14.3 }, // 2025‑08‑19
-  ],
-  [PoolChartPeriod.ThreeMonth]: [
-    { date: 1752259200, apr: 12.1 }, // 2025‑07‑11
-    { date: 1752345600, apr: 11.8 }, // 2025‑07‑12
-
-    { date: 1754419200, apr: 12.0 }, // 2025‑08‑05
-    { date: 1754505600, apr: 11.7 }, // 2025‑08‑06
-    { date: 1754592000, apr: 11.9 }, // 2025‑08‑07
-    { date: 1754678400, apr: 12.1 }, // 2025‑08‑08
-
-    { date: 1756147200, apr: 15.5 }, // 2025‑08‑25
-    { date: 1756233600, apr: 15.7 }, // 2025‑08‑26
-    { date: 1756320000, apr: 15.9 }, // 2025‑08‑27
-    { date: 1756406400, apr: 16.1 }, // 2025‑08‑28
-    { date: 1756492800, apr: 16.3 }, // 2025‑08‑29
-    { date: 1756579200, apr: 16.5 }, // 2025‑08‑30
-    { date: 1756665600, apr: 16.7 }, // 2025‑08‑31
-    { date: 1756752000, apr: 16.9 }, // 2025‑09‑01
-    { date: 1756838400, apr: 17.1 }, // 2025‑09‑02
-    { date: 1756924800, apr: 17.3 }, // 2025‑09‑03
-    { date: 1757011200, apr: 17.5 }, // 2025‑09‑04
-    { date: 1757097600, apr: 17.7 }, // 2025‑09‑05
-    { date: 1757184000, apr: 17.9 }, // 2025‑09‑06
-    { date: 1757270400, apr: 18.1 }, // 2025‑09‑07
-
-    { date: 1758652800, apr: 21.3 }, // 2025‑09‑23
-    { date: 1758739200, apr: 21.5 }, // 2025‑09‑24
-    { date: 1758825600, apr: 21.7 }, // 2025‑09‑25
-    { date: 1758912000, apr: 21.9 }, // 2025‑09‑26
-    { date: 1758998400, apr: 22.1 }, // 2025‑09‑27
-    { date: 1759084800, apr: 22.3 }, // 2025‑09‑28
-    { date: 1759171200, apr: 22.5 }, // 2025‑09‑29
-    { date: 1759257600, apr: 22.7 }, // 2025‑09‑30
-    { date: 1759344000, apr: 22.9 }, // 2025‑10‑01
-    { date: 1759430400, apr: 23.1 }, // 2025‑10‑02
-    { date: 1759516800, apr: 23.3 }, // 2025‑10‑03
-    { date: 1759603200, apr: 23.5 }, // 2025‑10‑04
-    { date: 1759689600, apr: 23.7 }, // 2025‑10‑05
-    { date: 1759776000, apr: 23.9 }, // 2025‑10‑06
-    { date: 1759862400, apr: 24.1 }, // 2025‑10‑07
-    { date: 1759948800, apr: 24.3 }, // 2025‑10‑08
-    { date: 1760035200, apr: 24.5 }, // 2025‑10‑09
-    { date: 1760121600, apr: 24.7 }, // 2025‑10‑10
-    { date: 1760208000, apr: 24.9 }, // 2025‑10‑11
-    { date: 1760294400, apr: 25.1 }, // 2025‑10‑12
-
-    { date: 1761417600, apr: 27.7 }, // 2025‑10‑25
-    { date: 1761504000, apr: 27.9 }, // 2025‑10‑26
-    { date: 1761590400, apr: 28.1 }, // 2025‑10‑27
-    { date: 1761676800, apr: 28.3 }, // 2025‑10‑28
-    { date: 1761763200, apr: 28.5 }, // 2025‑10‑29
-    { date: 1761849600, apr: 28.7 }, // 2025‑10‑30
-    { date: 1761936000, apr: 28.9 }, // 2025‑10‑31
-  ],
-  [PoolChartPeriod.All]: [
-    // July 2025
-    { date: 1752259200, apr: 12.1 }, // Jul 11
-    { date: 1752518400, apr: 12.4 }, // Jul 14
-    { date: 1752864000, apr: 12.6 }, // Jul 18
-    { date: 1753123200, apr: 12.9 }, // Jul 21
-    { date: 1753382400, apr: 13.2 }, // Jul 24
-
-    // August 2025
-    { date: 1753747200, apr: 13.5 }, // Aug 1
-    { date: 1754073600, apr: 13.9 }, // Aug 5
-    { date: 1754419200, apr: 14.3 }, // Aug 9
-    { date: 1754755200, apr: 14.6 }, // Aug 13
-    { date: 1755091200, apr: 14.9 }, // Aug 17
-    { date: 1755379200, apr: 15.2 }, // Aug 20
-    { date: 1755715200, apr: 15.6 }, // Aug 24
-    { date: 1755974400, apr: 15.8 }, // Aug 27
-
-    // September 2025
-    { date: 1756320000, apr: 16.1 }, // Sep 1
-    { date: 1756579200, apr: 16.4 }, // Sep 4
-    { date: 1756924800, apr: 16.9 }, // Sep 8
-    { date: 1757260800, apr: 17.3 }, // Sep 12
-    { date: 1757596800, apr: 17.8 }, // Sep 16
-    { date: 1757856000, apr: 18.2 }, // Sep 19
-    { date: 1758124800, apr: 18.7 }, // Sep 22
-    { date: 1758384000, apr: 19.1 }, // Sep 25
-    { date: 1758643200, apr: 19.5 }, // Sep 28
-
-    // October 2025
-    { date: 1758912000, apr: 20.0 }, // Oct 1
-    { date: 1759171200, apr: 20.4 }, // Oct 4
-    { date: 1759507200, apr: 20.9 }, // Oct 8
-    { date: 1759766400, apr: 21.3 }, // Oct 11
-    { date: 1760025600, apr: 21.7 }, // Oct 14
-    { date: 1760371200, apr: 22.2 }, // Oct 18
-    { date: 1760630400, apr: 22.5 }, // Oct 21
-    { date: 1760899200, apr: 22.9 }, // Oct 24
-    { date: 1761158400, apr: 23.3 }, // Oct 27
-    { date: 1761417600, apr: 23.6 }, // Oct 30
-
-    // November 2025
-    { date: 1761676800, apr: 23.9 }, // Nov 2
-    { date: 1761936000, apr: 24.2 }, // Nov 5
-    { date: 1762195200, apr: 24.5 }, // Nov 8
-    { date: 1762454400, apr: 24.9 }, // Nov 11
-    { date: 1762800000, apr: 25.3 }, // Nov 15
-    { date: 1763059200, apr: 25.6 }, // Nov 18
-    { date: 1763318400, apr: 25.9 }, // Nov 21
-    { date: 1763577600, apr: 26.3 }, // Nov 24
-    { date: 1763836800, apr: 26.7 }, // Nov 27
-
-    // December 2025
-    { date: 1764096000, apr: 27.0 }, // Dec 1
-    { date: 1764355200, apr: 27.4 }, // Dec 4
-    { date: 1764614400, apr: 27.7 }, // Dec 7
-    { date: 1764873600, apr: 28.0 }, // Dec 10
-    { date: 1765132800, apr: 28.3 }, // Dec 13
-    { date: 1765392000, apr: 28.7 }, // Dec 16
-    { date: 1765651200, apr: 29.1 }, // Dec 19
-    { date: 1765910400, apr: 29.5 }, // Dec 22
-    { date: 1766169600, apr: 29.9 }, // Dec 25
-    { date: 1766342400, apr: 30.2 }, // Dec 27
-    { date: 1766438400, apr: 30.5 }, // Dec 28
-    { date: 1766524800, apr: 30.9 }, // Dec 29
-  ],
-}
-
 const tailwind = resolveConfig(tailwindConfig)
 
-export const APRChart = () => {
+const formatBucketData = (
+  bucketData: V2PoolBuckets,
+  period: PoolChartPeriod,
+) => {
+  const now = Date.now()
+  switch (period) {
+    case PoolChartPeriod.SevenDay:
+      return bucketData.hourBuckets
+        .filter((bucket) => bucket.date * 1000 >= now - chartPeriods[period])
+        .map((bucket) => ({ date: bucket.date, apr: bucket.apr }))
+    case PoolChartPeriod.ThirtyDay:
+      return bucketData.dayBuckets
+        .filter((bucket) => bucket.date * 1000 >= now - chartPeriods[period])
+        .map((bucket) => ({ date: bucket.date, apr: bucket.apr }))
+    case PoolChartPeriod.ThreeMonth:
+      return bucketData.dayBuckets
+        .filter((bucket) => bucket.date * 1000 >= now - chartPeriods[period])
+        .map((bucket) => ({ date: bucket.date, apr: bucket.apr }))
+    case PoolChartPeriod.All:
+      return bucketData.dayBuckets.map((bucket) => ({
+        date: bucket.date,
+        apr: bucket.apr,
+      }))
+    default:
+      return []
+  }
+}
+
+interface APRChartProps {
+  pool: V2Pool | V3Pool
+}
+
+export const APRChart: FC<APRChartProps> = ({ pool }) => {
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
   const [period, setPeriod] = useState<PoolChartPeriod>(
     PoolChartPeriod.ThirtyDay,
   )
-  const [isLoading, setIsLoading] = useState(true)
-  const isError = false
-  const { theme } = useTheme()
-  const isDark = theme === 'dark'
+  const {
+    data: bucketData,
+    isLoading,
+    isError,
+  } = usePoolBuckets({
+    chainId: pool.chainId,
+    poolAddress: pool.address,
+    protocol: pool.protocol,
+  })
 
-  useEffect(() => setIsLoading(false), [])
+  const buckets = useMemo(() => {
+    if (!bucketData) return []
+    return formatBucketData(bucketData, period)
+  }, [bucketData, period])
 
-  const buckets = MOCK_APR_BUCKETS[period]
   const [xData, yData]: [number[], number[]] = useMemo(() => {
     const source = buckets || []
 
@@ -268,17 +132,6 @@ export const APRChart = () => {
 
     return [x.reverse(), y.reverse()]
   }, [buckets, period])
-
-  const onMouseOver = useCallback(
-    ({ name, value }: { name: number; value: number }) => {
-      const valNode = document.querySelector<HTMLElement>('.aprHoveredValue')
-      const dateNode = document.querySelector<HTMLElement>('.aprHoveredDate')
-      if (valNode) valNode.textContent = `${value.toFixed(2)}%`
-      if (dateNode)
-        dateNode.textContent = format(new Date(name * 1000), 'dd MMM yyyy')
-    },
-    [],
-  )
 
   const formatLabel = (date: Date, period: PoolChartPeriod): string => {
     switch (period) {
@@ -319,14 +172,11 @@ export const APRChart = () => {
             ? params[0].value
             : [params[0].name, params[0].value]
 
-          onMouseOver({
-            name: timestamp,
-            value: typeof value === 'number' ? value : Number(value) || 0,
-          })
-
           const date = new Date(timestamp)
           return `<div class="flex flex-col gap-0.5 paper bg-white/50 dark:bg-slate-800/50 px-3 py-2 rounded-xl overflow-hidden shadow-lg">
-            <span class="text-sm font-medium text-gray-900 dark:text-slate-50">${value}%</span>
+            <span class="text-sm font-medium text-gray-900 dark:text-slate-50">${formatPercent(
+              value / 100,
+            )}</span>
             <span class="text-xs font-medium text-gray-500 dark:text-slate-400">${
               date instanceof Date && !Number.isNaN(date?.getTime())
                 ? format(
@@ -397,7 +247,7 @@ export const APRChart = () => {
         },
       ],
     }),
-    [xData, yData, onMouseOver, period, isDark],
+    [xData, yData, period, isDark],
   )
 
   return (
@@ -405,24 +255,40 @@ export const APRChart = () => {
       <CardHeader>
         <CardTitle className="">
           <div className="flex justify-between items-center">
-            <div className="flex flex-col gap-1">
-              {/* @DEV TODO use APRHoverCard component instead */}
-              <span className="text-sm !font-medium text-muted-foreground">
-                APR
-              </span>
-              <div className="hidden gap-1 items-center lg:flex">
-                <span className="text-base lg:text-[1.75rem] font-medium underline decoration-dotted underline-offset-[5px] text-slate-900 dark:text-slate-100">
-                  12.3%
+            <APRHoverCard pool={pool}>
+              <div className="flex flex-col gap-1">
+                <span className="text-sm !font-medium text-muted-foreground">
+                  APR
                 </span>
-                <Currency.IconList
-                  iconWidth={26}
-                  iconHeight={26}
-                  className="!border-none"
-                >
-                  <Currency.Icon currency={SUSHI[ChainId.ETHEREUM]} />
-                </Currency.IconList>
+                <div className="hidden gap-1 items-center lg:flex">
+                  <span className="text-base lg:text-[1.75rem] font-medium underline decoration-dotted underline-offset-[5px] text-slate-900 dark:text-slate-100">
+                    {formatPercent(pool.totalApr1d / 100)}
+                  </span>
+                  <Currency.IconList
+                    iconWidth={26}
+                    iconHeight={26}
+                    className="!border-none"
+                  >
+                    {pool?.incentives?.map((i) => {
+                      return (
+                        <Currency.Icon
+                          key={i.rewardToken.address}
+                          currency={
+                            new EvmToken({
+                              chainId: i.rewardToken.chainId,
+                              address: i.rewardToken.address,
+                              decimals: i.rewardToken.decimals,
+                              symbol: i.rewardToken.symbol,
+                              name: i.rewardToken.name,
+                            })
+                          }
+                        />
+                      )
+                    })}
+                  </Currency.IconList>
+                </div>
               </div>
-            </div>
+            </APRHoverCard>
             <div className="flex gap-2">
               <div className="flex gap-2">
                 <ChartPeriodButton

@@ -37,7 +37,7 @@ export const CHAIN_COLUMN: ColumnDef<MultiChainPool, unknown> = {
     <span className="font-[600] text-slate-450 dark:text-slate-500">Chain</span>
   ),
   cell: (props) => (
-    <div className="px-2 md:min-w-[70px]">
+    <div className="px-2 2xl:min-w-[70px]">
       <NetworkIcon
         type="square"
         chainId={props.row.original.chainId as EvmChainId}
@@ -403,7 +403,7 @@ export const VOLUME_1D_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     rowA.volumeUSD1d - rowB.volumeUSD1d,
   cell: (props) => (
-    <div className="flex flex-col w-[130px]">
+    <div className="flex flex-col w-[100px]">
       <span>
         {formatUSD(props.row.original.volumeUSD1d).includes('NaN')
           ? '$0.00'
@@ -444,7 +444,7 @@ export const VOLUME_1W_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     Number(rowA.volumeUSD1w) - Number(rowB.volumeUSD1w),
   cell: (props) => (
-    <div className="flex flex-col w-[130px]">
+    <div className="flex flex-col w-[100px]">
       <span>
         {formatUSD(props.row.original.volumeUSD1w).includes('NaN')
           ? '$0.00'
@@ -485,7 +485,7 @@ export const TVL_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     rowA.liquidityUSD - rowB.liquidityUSD,
   cell: (props) => (
-    <div className="flex flex-col w-[130px]">
+    <div className="flex flex-col w-[100px]">
       <span>
         {formatUSD(props.row.original.liquidityUSD).includes('NaN')
           ? '$0.00'
@@ -527,7 +527,7 @@ export const VOL_TVL_COLUMN: ColumnDef<MultiChainPool, unknown> = {
     rowA.tvlVolumeRatio - rowB.tvlVolumeRatio,
   cell: (props) => {
     return (
-      <span className="flex items-center justify-center w-[130px]">
+      <span className="flex items-center justify-center w-[100px]">
         {Number.isNaN(props.row.original.tvlVolumeRatio)
           ? '0'
           : formatNumber(props.row.original.tvlVolumeRatio)}
@@ -560,7 +560,7 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<MultiChainPool, unknown> = {
     const hasIncentives = props.row.original.incentives.length > 0
     if (!hasIncentives) {
       return (
-        <div className="flex flex-col pl-7 w-[130px]">
+        <div className="flex flex-col pl-7 w-[100px]">
           <span>
             {Number.isNaN(props.row.original.totalApr1w)
               ? '0%'
@@ -576,7 +576,7 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<MultiChainPool, unknown> = {
         dialogContentClassName="max-w-none"
         side="right"
         trigger={
-          <div className="flex flex-col cursor-pointer pl-7 w-[130px]">
+          <div className="flex flex-col cursor-pointer pl-7 w-[100px]">
             <div className="flex gap-1 items-center">
               <span className="underline decoration-dotted underline-offset-2">
                 {Number.isNaN(props.row.original.totalApr1w)
@@ -660,7 +660,7 @@ export const APR_SPARKLINE_COLUMN: ColumnDef<MultiChainPool, unknown> = {
 
   cell: (props) => {
     return (
-      <div className="px-10">
+      <div className="2xl:px-10">
         <SparklineCell
           data={props.row.original.feeApr1wSparkLine}
           width={90}

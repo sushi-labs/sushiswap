@@ -12,7 +12,6 @@ import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { useMultichainPoolsInfinite } from 'src/lib/hooks/api/useMultichainPoolsInfinite'
-import { chains } from 'sushi'
 import { type EvmChainId, SushiSwapProtocol, getEvmChainById } from 'sushi/evm'
 import {
   ACTION_COLUMN,

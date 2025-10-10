@@ -68,7 +68,7 @@ import {
 } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
 import { ConcentratedLiquidityWidget } from '~evm/[chainId]/pool/v3/_ui/concentrated-liquidity-widget'
 import { ClaimRewardsButton } from '~evm/claim/rewards/_common/ui/claim-rewards-button'
-import { DistributionDataTable } from '../../../../_ui/distribution-data-table'
+import { DistributionDataTable } from '../../../../../_ui/distribution-data-table'
 import { ConcentratedLiquidityCollectWidget } from './concentrated-liquidity-collect-widget'
 import { ConcentratedLiquidityRemoveWidget } from './concentrated-liquidity-remove-widget'
 
@@ -668,13 +668,11 @@ const Component: FC<{
                   Anyone can add distributions to this pool.{' '}
                   {_token0 && _token1 ? (
                     <LinkInternal
-                      href={`/${
-                        getEvmChainById(chainId).key
-                      }/pool/incentivize?fromCurrency=${
+                      href={`/${getEvmChainById(chainId).key}/pool/incentivize?fromCurrency=${
                         _token0.type === 'native' ? 'NATIVE' : _token0.address
-                      }&toCurrency=${
-                        _token1.type === 'native' ? 'NATIVE' : _token1.address
-                      }&feeAmount=${positionDetails?.fee}`}
+                      }&toCurrency=${_token1.type === 'native' ? 'NATIVE' : _token1.address}&feeAmount=${
+                        positionDetails?.fee
+                      }`}
                     >
                       <Button asChild variant="link">
                         Want to add one?
@@ -719,7 +717,11 @@ export const V3PositionView = ({
   chainId,
   address,
   position,
-}: { chainId: SushiSwapV3ChainId; address: EvmAddress; position: string }) => {
+}: {
+  chainId: SushiSwapV3ChainId
+  address: EvmAddress
+  position: string
+}) => {
   return (
     <ConcentratedLiquidityProvider>
       <Component chainId={chainId} address={address} position={position} />

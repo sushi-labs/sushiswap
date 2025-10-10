@@ -1,9 +1,8 @@
 'use client'
 
 import { ArrowLeftIcon } from '@heroicons/react-v1/solid'
-import { Button, Collapsible, classNames } from '@sushiswap/ui'
+import { Button, Collapsible, LinkInternal, classNames } from '@sushiswap/ui'
 import { useEffect, useMemo, useState } from 'react'
-import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { usePoolsByTokenPair } from 'src/lib/hooks/usePoolsByTokenPair'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
 import {
@@ -72,7 +71,6 @@ const _Add = ({
 }) => {
   const [step, setStep] = useState(0)
   const { address } = useAccount()
-  const { createQuery } = useCreateQuery()
   const [isFirstMount, setIsFirstMount] = useState(true)
   const {
     chainId,
@@ -135,27 +133,8 @@ const _Add = ({
     if (initFeeAmount && initToken0 && initToken1 && isFirstMount) {
       if (!isFirstMount) return
       setIsFirstMount(false)
-      createQuery([
-        {
-          name: 'fromCurrency',
-          value: initToken0.isNative ? 'NATIVE' : initToken0.address,
-        },
-        {
-          name: 'toCurrency',
-          value: initToken1.isNative ? 'NATIVE' : initToken1.address,
-        },
-        { name: 'feeAmount', value: initFeeAmount.toString() },
-      ])
     }
-  }, [initToken0, initToken1, initFeeAmount, createQuery, isFirstMount])
-
-  const nextStep = () => {
-    if (step === 0) {
-      if (token0 && token1 && feeAmount) {
-        setStep(1)
-      }
-    }
-  }
+  }, [initToken0, initToken1, initFeeAmount, isFirstMount])
 
   return (
     <div
@@ -202,7 +181,28 @@ const _Add = ({
               </Collapsible>
             </>
           ) : null}
-          <Button onClick={nextStep}>Next</Button>
+          <LinkInternal
+            className={classNames(
+              'w-full',
+              !feeAmount || !token0 || !token1 ? 'pointer-events-none' : '',
+            )}
+            href={
+              feeAmount
+                ? `/${
+                    getEvmChainById(chainId).key
+                  }/pool/v3/${poolAddress}/add?feeAmount=${feeAmount}&fromCurrency=${
+                    token0?.isNative ? 'NATIVE' : token0?.address
+                  }&toCurrency=${token1?.isNative ? 'NATIVE' : token1?.address}`
+                : ''
+            }
+          >
+            <Button
+              disabled={!feeAmount || !token0 || !token1}
+              className="w-full"
+            >
+              Next
+            </Button>
+          </LinkInternal>
         </>
       ) : null}
       {step === 1 ? (

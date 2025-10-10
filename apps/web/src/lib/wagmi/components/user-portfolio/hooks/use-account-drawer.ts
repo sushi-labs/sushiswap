@@ -8,7 +8,7 @@ export const useAccountDrawer = () => {
   const isAccountDrawerOpen = searchParams.get('accountDrawer') === 'true'
   const accountTab = searchParams.get('accountTab')
   const subAccountTab = searchParams.get('subAccountTab')
-  const { createQuery } = useCreateQuery()
+  const { createReplaceQuery } = useCreateQuery()
 
   useEffect(() => {
     if (isAccountDrawerOpen) {
@@ -32,7 +32,7 @@ export const useAccountDrawer = () => {
         : queryArray.push(params)
     }
     queryArray.push({ name: 'accountDrawer', value: state ? 'true' : 'false' })
-    createQuery(queryArray)
+    createReplaceQuery(queryArray)
 
     setIsOpen(state)
   }
