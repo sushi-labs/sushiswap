@@ -4,6 +4,7 @@ import { Button, Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { NotificationBadge } from 'src/lib/wagmi/components/user-portfolio/notification-badge'
+import { useLPPositionContext } from '~evm/[chainId]/portfolio/lp-position-provider'
 import { LPPositionsTable } from '../lp-positions-table/lp-positions-table'
 import { OpenOrdersTable } from '../open-orders-table/open-orders-table'
 import {
@@ -23,6 +24,11 @@ export const TablesView = () => {
 const useTabs = () => {
   const { tableView, setTableView } = useTablesContext()
 
+  const {
+    state: {
+      lpPositionQuery: { data: lpPositionData },
+    },
+  } = useLPPositionContext()
   const tabs = useMemo(() => {
     // const openLimitOrdersCount = getTwapLimitOrders(orders).filter(
     //   (order) => order.status === OrderStatus.Open,
@@ -31,7 +37,9 @@ const useTabs = () => {
     //   (order) => order.status === OrderStatus.Open,
     // ).length
 
-    const totalLPPositionsCount = 1 // Placeholder for actual count logic
+    //@dev currently only getting v2 and v3 positions back
+    const totalLPPositionsCount =
+      (lpPositionData?.v2?.length ?? 0) + (lpPositionData?.v3?.length ?? 0)
     const totalOpenOrdersCount = 10 // Placeholder for actual count logic
 
     return [
@@ -59,7 +67,7 @@ const useTabs = () => {
         component: <OpenOrdersTable />,
       },
     ]
-  }, [])
+  }, [lpPositionData])
 
   return { tabs, setTableView, tableView }
 }

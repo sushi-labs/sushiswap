@@ -16,15 +16,15 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { SUSHI, SushiSwapProtocol, USDC } from 'sushi/evm'
+import { SushiSwapProtocol } from 'sushi/evm'
 
+import type { PortfolioV2PositionPoolType } from '@sushiswap/graph-client/data-api-portfolio'
+import { useLPPositionContext } from '~evm/[chainId]/portfolio/lp-position-provider'
 import {
+  APR_COLUMN,
   CHAIN_COLUMN,
   POOL_COLUMN,
   POOL_TYPE_COLUMN,
-} from '~evm/[chainId]/_ui/columns-v2'
-import {
-  APR_COLUMN,
   POSITION_SIZE_COLUMN,
   POSITION_UNCOLLECTED_COLUMN,
   PRICE_RANGE_COLUMN,
@@ -34,7 +34,7 @@ import { LPPositionsTableHeader } from './lp-positions-table-header'
 import { ManageDialog } from './manage-dialog/manage-dialog'
 import { Trending } from './trending'
 
-const columns: any[] = [
+const columns = [
   CHAIN_COLUMN,
   POOL_COLUMN,
   POOL_TYPE_COLUMN,
@@ -45,63 +45,27 @@ const columns: any[] = [
   PRICE_RANGE_COLUMN,
 ]
 
-const data: any[] = [
-  {
-    chainId: 1,
-    name: 'Sushi / USDC',
-    token0Address: SUSHI[1].address,
-    token0: SUSHI[1],
-    token1Address: USDC[1].address,
-    token1: USDC[1],
-    protocol: SushiSwapProtocol.SUSHISWAP_V2,
-    swapFee: 0.0003,
-    position: {
-      positionUSD: 12345.67,
-      token0Size: 89.01,
-      token1Size: 2345.67,
-      unclaimedUSD: 0,
-    },
-    rewards: [],
-    totalRewardsUSD: 0,
-    apr: 109,
-  },
-  {
-    chainId: 42161,
-    name: 'Sushi / USDC',
-    token0Address: SUSHI[42161].address,
-    token0: SUSHI[42161],
-    token1Address: USDC[42161].address,
-    token1: USDC[42161],
-    protocol: SushiSwapProtocol.SUSHISWAP_V3,
-    swapFee: 0.001,
-    position: {
-      positionUSD: 23456.78,
-      token0Size: 123.45,
-      token1Size: 6789.01,
-      unclaimedUSD: 23.45,
-      unclaimedToken0: 1.23,
-      unclaimedToken1: 34.56,
-    },
-    rewards: [
-      {
-        token: SUSHI[1],
-        amount: 11.7,
-      },
-    ],
-    totalRewardsUSD: 20,
-    apr: 109,
-  },
-]
-
 export const LPPositionsTable = () => {
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false)
   const [isManageOpen, setIsManageOpen] = useState(false)
-  const [positionData, setPositionData] = useState<any>(null)
+  const [positionData, setPositionData] =
+    useState<PortfolioV2PositionPoolType | null>(null)
   const { isMd: isMdScreen } = useBreakpoint('md')
+  const {
+    state: { lpPositionQuery },
+  } = useLPPositionContext()
 
   const [sorting, setSorting] = useState<SortingState>([
-    { id: 'apr', desc: true },
+    { id: 'positionSize', desc: true },
   ])
+
+  const data = useMemo(() => {
+    //@dev currently only data for v2 and v3
+    const v2Data = lpPositionQuery?.data?.v2
+    const v3Data = lpPositionQuery?.data?.v3
+    return [...(v2Data ?? []), ...(v3Data ?? [])]
+  }, [lpPositionQuery?.data])
+
   const state: Partial<TableState> = useMemo(() => {
     return {
       sorting,
@@ -110,7 +74,7 @@ export const LPPositionsTable = () => {
         pageSize: data?.length,
       },
     }
-  }, [sorting])
+  }, [sorting, data])
 
   const rowRenderer = useCallback((row: Row<any>, rowNode: ReactNode) => {
     return (
@@ -141,23 +105,13 @@ export const LPPositionsTable = () => {
 
   return (
     <>
-      {/* <InfiniteScroll
-		   dataLength={data.length}
-		   next={fetchNextPage}
-		   hasMore={data.length < (count ?? 0)}
-		   loader={
-		     <div className="flex justify-center py-4 w-full">
-		       <Loader size={16} />
-		     </div>
-		   }
-		 > */}
       <Card className="overflow-hidden dark:!bg-slate-800 !bg-slate-50">
         <Trending />
         <LPPositionsTableHeader />
         <DataTable
           state={state}
           onSortingChange={setSorting}
-          loading={false}
+          loading={lpPositionQuery?.isLoading}
           rowRenderer={rowRenderer}
           columns={columns}
           data={data}
@@ -165,7 +119,6 @@ export const LPPositionsTable = () => {
           tableRowClassName="dark:!border-[#FFFFFF14] !border-[#00000014]"
         />
       </Card>
-      {/* </InfiniteScroll> */}
       {positionData && (
         <ManageDialog
           data={positionData}
@@ -181,7 +134,8 @@ export const LPPositionsTable = () => {
         >
           <div className="flex flex-col gap-4 px-3 mt-14 w-full">
             <div className="flex gap-2 items-center">
-              {positionData?.protocol === SushiSwapProtocol.SUSHISWAP_V3 ? (
+              {positionData?.pool.protocol ===
+              SushiSwapProtocol.SUSHISWAP_V3 ? (
                 <Button size="sm" className="w-full !rounded-full">
                   Claim
                 </Button>
@@ -202,7 +156,7 @@ export const LPPositionsTable = () => {
               className={classNames(
                 'dark:!bg-[#FFFFFF]/[.12] dark:hover:!bg-[#fff]/[.18] dark:active:!bg-[#fff]/[.24]',
                 '!rounded-full',
-                positionData?.protocol === SushiSwapProtocol.SUSHISWAP_V3
+                positionData?.pool.protocol === SushiSwapProtocol.SUSHISWAP_V3
                   ? 'w-1/2 mx-auto'
                   : 'w-full',
               )}

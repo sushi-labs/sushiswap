@@ -1,38 +1,43 @@
+import type { PortfolioV2PositionPoolType } from '@sushiswap/graph-client/data-api-portfolio'
 import { useIsSmScreen } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
 import { useState } from 'react'
 import { useClaimableRewards } from 'src/lib/hooks/react-query'
-import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
-import { type MerklChainId, SushiSwapProtocol, isMerklChainId } from 'sushi/evm'
+import {
+  type EvmChainId,
+  type MerklChainId,
+  SushiSwapProtocol,
+  isMerklChainId,
+} from 'sushi/evm'
+import { useAccount } from 'wagmi'
 import { ClaimRewardsButton } from '~evm/claim/rewards/_common/ui/claim-rewards-button'
 import { ManageDialog } from './manage-dialog/manage-dialog'
 import { PriceRangeSparklineAmm } from './price-range-sparkline-amm'
 import { PriceRangeSparklineCLMM } from './price-range-sparkline-clmm'
 
-//@DEV @TODO - typed as any until real type is known
 export const PriceRangeCell = ({
   data,
   isHovered,
-}: { data: any; isHovered: boolean }) => {
+}: {
+  data: PortfolioV2PositionPoolType
+  isHovered: boolean
+}) => {
   const isSmallScreen = useIsSmScreen()
   const [isManageOpen, setIsManageOpen] = useState(false)
+  const { address } = useAccount()
 
-  const { data: owner } = useConcentratedPositionOwner({
-    chainId: data.chainId,
-    tokenId: data.tokenId,
-  })
   const { data: rewardsData } = useClaimableRewards({
-    chainIds: [data.chainId],
-    account: owner,
-    enabled: isMerklChainId(data.chainId),
+    chainIds: isMerklChainId(data?.pool?.chainId) ? [data?.pool?.chainId] : [],
+    account: address,
+    enabled: isMerklChainId(data?.pool?.chainId as EvmChainId),
   })
 
-  const rewardsForChain = rewardsData?.[data.chainId as MerklChainId]
+  const rewardsForChain = rewardsData?.[data?.pool.chainId as MerklChainId]
 
   if ((isHovered || isManageOpen) && !isSmallScreen) {
     return (
       <div className="flex gap-2 justify-between items-center w-full">
-        {data.protocol === SushiSwapProtocol.SUSHISWAP_V3 ? (
+        {data?.pool?.protocol === SushiSwapProtocol.SUSHISWAP_V3 ? (
           <ClaimRewardsButton
             rewards={rewardsForChain}
             className="!rounded-full flex-auto"
@@ -54,7 +59,7 @@ export const PriceRangeCell = ({
       </div>
     )
   }
-  if (data.protocol === SushiSwapProtocol.SUSHISWAP_V2) {
+  if (data?.pool?.protocol === SushiSwapProtocol.SUSHISWAP_V2) {
     return <PriceRangeSparklineAmm />
   }
   return <PriceRangeSparklineCLMM />

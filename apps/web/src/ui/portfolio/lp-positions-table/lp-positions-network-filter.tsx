@@ -1,20 +1,22 @@
 'use client'
 
-import { useState } from 'react'
 import { NetworkFilterSelector } from 'src/app/(networks)/_ui/network-filter-selector'
 import type { ChainId } from 'sushi'
-
-//@dev these will come from lp holdings
-const PLACEHOLDER_NETWORKS: ChainId[] = [747474, 1, 56, 137, 42161, 8453] // Example networks
+import {
+  DEFAULT_LP_CHAIN_IDS,
+  useLPPositionContext,
+} from '~evm/[chainId]/portfolio/lp-position-provider'
 
 export const LPPositionsNetworkFilter = () => {
-  const [networks, setNetworks] = useState<ChainId[]>(PLACEHOLDER_NETWORKS)
-
+  const {
+    state: { chainIds },
+    mutate: { setChainIds },
+  } = useLPPositionContext()
   return (
     <NetworkFilterSelector
-      selectedNetworks={networks}
-      setNetworks={setNetworks}
-      defaultNetworks={PLACEHOLDER_NETWORKS}
+      selectedNetworks={chainIds as ChainId[]}
+      setNetworks={setChainIds as (ids: ChainId[]) => void}
+      defaultNetworks={DEFAULT_LP_CHAIN_IDS as ChainId[]}
       className="!bg-[#00000005] dark:!bg-[#00000005]"
     />
   )
