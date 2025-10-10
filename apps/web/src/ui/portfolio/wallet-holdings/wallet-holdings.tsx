@@ -32,12 +32,12 @@ import { ActionButtons } from '../assets-chart/action-buttons'
 import { useSendTokens } from './send-token-provider'
 import {
   AMOUNT_COLUMN,
-  ASSETS_COLUMN,
   CHAIN_COLUMN,
   LAST_30_DAY_COLUMN,
   PRICE_COLUMN,
   UPNL_COLUMN,
   VALUE_COLUMN,
+  createAssetsColumn,
 } from './wallet-holdings-columns'
 import { WalletHoldingsHeader } from './wallet-holdings-header'
 
@@ -139,7 +139,7 @@ export const WalletHoldings = () => {
             }}
             columns={[
               CHAIN_COLUMN,
-              ASSETS_COLUMN,
+              createAssetsColumn(data?.totalPercentageOfPortfolio),
               PRICE_COLUMN,
               AMOUNT_COLUMN,
               VALUE_COLUMN,

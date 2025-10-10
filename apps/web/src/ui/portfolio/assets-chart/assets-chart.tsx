@@ -19,7 +19,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { useCallback } from 'react'
 import { useLocalRecentSwaps } from 'src/lib/hooks/react-query/recent-swaps/useLocalRecentSwaps'
 import { usePortfolioChart } from 'src/lib/wagmi/hooks/portfolio/use-portfolio-chart'
-import { formatPercent, formatUSD } from 'sushi'
 import type { EvmCurrency } from 'sushi/evm'
 import tailwindConfig from 'tailwind.config'
 import resolveConfig from 'tailwindcss/resolveConfig'
@@ -54,7 +53,6 @@ export const AssetsChart = () => {
   })
   const { chartRange } = useChartFilters()
 
-  console.log('usePortfolioChart data', data)
   const [selectedToken, setSelectedToken] = useState<EvmCurrency | null>(null)
 
   const [isLoading, setIsLoading] = useState(true)

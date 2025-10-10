@@ -20,7 +20,7 @@ import { AssetsChartPeriod } from 'src/ui/portfolio/assets-chart/assets-chart-he
 import { isEvmChainId } from 'sushi/evm'
 import { z } from 'zod'
 
-export const PLACEHOLDER_NETWORKS: PoolChainId[] = [1, 137]
+export const PLACEHOLDER_NETWORKS: PoolChainId[] = [1, 137, 8453]
 
 export const DEFAULT_ASSET_NETWORKS = PLACEHOLDER_NETWORKS.filter(
   (n) => typeof n === 'number' && isEvmChainId(n),

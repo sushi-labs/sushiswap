@@ -84,8 +84,8 @@ export const PortfolioSubHeader = () => {
         onSelect={handleSelectChain}
       />
       <AssetItem
-        chainId={10}
-        selected={selectedChainId === 10}
+        chainId={8453}
+        selected={selectedChainId === 8453}
         usdValue={3810}
         onSelect={handleSelectChain}
       />

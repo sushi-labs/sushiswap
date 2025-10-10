@@ -96,7 +96,7 @@ export const getYAxisConfig = ({ yData, isSmallScreen, tailwind }: any) => {
     axisLabel: {
       formatter: (value: number) => formatUSD(value),
       color: (tailwind.theme?.colors?.slate as Record<string, string>)['450'],
-      fontWeight: 'bold',
+      fontWeight: 'bold' as const,
       fontSize: isSmallScreen ? 12 : 14,
       margin: isSmallScreen ? 20 : 40,
     },
@@ -126,7 +126,7 @@ export const getSeries = (
 ]
 
 function normalizeTimestamp(x: number): number {
-  if (x < 1e12) return x * 1000 // seconds → ms
-  if (x > 1e13) return x / 1000 // microseconds → ms
-  return x // already ms
+  if (x < 1e12) return x * ms('1s')
+  if (x > 1e13) return x / ms('1s')
+  return x
 }
