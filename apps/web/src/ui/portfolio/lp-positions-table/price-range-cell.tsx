@@ -4,9 +4,11 @@ import { Button } from '@sushiswap/ui'
 import { useState } from 'react'
 import { useClaimableRewards } from 'src/lib/hooks/react-query'
 import {
+  type EvmAddress,
   type EvmChainId,
   type MerklChainId,
   SushiSwapProtocol,
+  type SushiSwapV3ChainId,
   isMerklChainId,
 } from 'sushi/evm'
 import { useAccount } from 'wagmi'
@@ -60,7 +62,13 @@ export const PriceRangeCell = ({
     )
   }
   if (data?.pool?.protocol === SushiSwapProtocol.SUSHISWAP_V2) {
-    return <PriceRangeSparklineAmm />
+    return <PriceRangeSparklineAmm data={data} />
   }
-  return <PriceRangeSparklineCLMM />
+  return (
+    <PriceRangeSparklineCLMM
+      poolAddress={data?.pool?.address as EvmAddress}
+      chainId={data?.pool?.chainId as SushiSwapV3ChainId}
+      protocol={data?.pool?.protocol as SushiSwapProtocol}
+    />
+  )
 }

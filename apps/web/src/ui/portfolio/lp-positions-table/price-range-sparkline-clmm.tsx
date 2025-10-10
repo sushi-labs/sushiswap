@@ -5,16 +5,18 @@ import type { ScaleLinear } from 'd3'
 import ms from 'ms'
 import { useTheme } from 'next-themes'
 import { useId, useMemo } from 'react'
+import { usePoolBuckets } from 'src/lib/hooks/api/use-pool-buckets'
+import type {
+  EvmAddress,
+  SushiSwapProtocol,
+  SushiSwapV3ChainId,
+} from 'sushi/evm'
+import { zeroAddress } from 'viem'
 import { Sparkline } from '~evm/[chainId]/_ui/add-liquidity/active-liquidity-chart/svg'
 import type { ChartEntry } from '~evm/[chainId]/_ui/add-liquidity/active-liquidity-chart/types'
 
 const xAccessor = (d: ChartEntry) => d.activeLiquidity
 // const yAccessor = (d: ChartEntry) => d.price0;
-
-const sparklineData = new Array(100).fill(0).map((_, i) => ({
-  price: Math.random() * 100,
-  timestamp: Date.now() - i * ms('1m'),
-}))
 
 const series = new Array(100).fill(0).map((_) => ({
   activeLiquidity: Math.random() * 1000,
@@ -26,20 +28,52 @@ const series = new Array(100).fill(0).map((_) => ({
 }))
 
 export const PriceRangeSparklineCLMM = ({
+  poolAddress,
+  chainId,
+  protocol,
+
   strokeWidth,
-}: { strokeWidth?: number }) => {
+}: {
+  strokeWidth?: number
+  poolAddress?: EvmAddress
+  chainId?: SushiSwapV3ChainId
+  protocol?: SushiSwapProtocol
+}) => {
   const id = useId()
   const { theme } = useTheme()
   const isDarkMode = theme === 'dark'
   const width = 452 + 64 // Example width
   const height = 124 // Example height
+  const { data: bucketData } = usePoolBuckets({
+    chainId: chainId || 1, //only using fallbacks until all data is returned from backend
+    poolAddress: poolAddress || zeroAddress, //only using fallbacks until all data is returned from backend
+    protocol: protocol || 'SUSHISWAP_V3', //only using fallbacks until all data is returned from backend
+    enabled: Boolean(chainId && poolAddress && protocol),
+  })
+  const sparklineData = useMemo(() => {
+    if (!bucketData?.dayBuckets) return []
+    return bucketData.dayBuckets.map((bucket) => ({
+      price: bucket.token0Price,
+      timestamp: bucket.date,
+    }))
+  }, [bucketData])
 
-  const min = sparklineData.reduce((min, d) => Math.min(min, d.price), 0)
-  const max = sparklineData.reduce((max, d) => Math.max(max, d.price), 0)
+  const min = useMemo(
+    () => sparklineData.reduce((min, d) => Math.min(min, d.price), 0),
+    [sparklineData],
+  )
 
-  const current = (min + max) / 2
+  const max = useMemo(
+    () => sparklineData.reduce((max, d) => Math.max(max, d.price), 0),
+    [sparklineData],
+  )
 
-  const brushDomain: [number, number] = [min + 20, max - 20] // Example brush domain
+  const current = useMemo(
+    () => sparklineData[sparklineData.length - 1]?.price,
+    [sparklineData],
+  )
+
+  const brushDomain: [number, number] = [min, max] // need tokenId from backend to get the real range of the position for user
 
   const { yScale } = useMemo(() => {
     const activeEntries =
@@ -62,11 +96,11 @@ export const PriceRangeSparklineCLMM = ({
   const sparkLineXScale = useMemo(() => {
     return scaleTime()
       .domain([
-        new Date(sparklineData[0].timestamp),
-        new Date(sparklineData[sparklineData.length - 1].timestamp),
+        new Date(sparklineData?.[0]?.timestamp),
+        new Date(sparklineData?.[sparklineData?.length - 1]?.timestamp),
       ])
       .range([0, width])
-  }, [])
+  }, [sparklineData])
   const yA = yScale(brushDomain[0]) // bottom line
   const yB = yScale(brushDomain[1]) // top line
   const y = Math.min(yA, yB)
