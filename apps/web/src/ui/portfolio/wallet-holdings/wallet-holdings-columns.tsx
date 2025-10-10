@@ -59,20 +59,23 @@ export const CHAIN_COLUMN: ColumnDef<PortfolioV2Row> = {
 
 export const createAssetsColumn = (
   totalPercentage?: number,
+  isLoading?: boolean,
 ): ColumnDef<PortfolioV2Row> => ({
   id: 'assets',
-  header: () => (
-    <div className="flex gap-1 items-center">
-      <span className="text-slate-450 dark:text-slate-500">Assets</span>
-      {totalPercentage ? (
-        <div className="px-2 py-1 text-xs rounded-lg bg-slate-200 dark:bg-slate-750 text-slate-450 dark:text-slate-500">
-          {formatPercent(totalPercentage)}
-        </div>
-      ) : (
-        <SkeletonBox className="w-14 h-6 rounded-lg" />
-      )}
-    </div>
-  ),
+  header: () => {
+    return (
+      <div className="flex gap-1 items-center">
+        <span className="text-slate-450 dark:text-slate-500">Assets</span>
+        {isLoading ? (
+          <SkeletonBox className="w-14 h-6 rounded-lg" />
+        ) : totalPercentage ? (
+          <div className="px-2 py-1 text-xs rounded-lg bg-slate-200 dark:bg-slate-750 text-slate-450 dark:text-slate-500">
+            {formatPercent(totalPercentage)}
+          </div>
+        ) : null}
+      </div>
+    )
+  },
   enableSorting: false,
   accessorFn: (row) => row,
   cell: ({ row }) => {
@@ -241,7 +244,9 @@ export const UPNL_COLUMN: ColumnDef<PortfolioV2Row> = {
   },
 }
 
-export const LAST_30_DAY_COLUMN: ColumnDef<PortfolioV2Row> = {
+export const createLast30DaysColumn = (
+  isLoading?: boolean,
+): ColumnDef<PortfolioV2Row> => ({
   id: 'last30Days',
   header: () => (
     <span className="text-slate-450 dark:text-slate-500">Last 30 Days</span>
@@ -249,6 +254,10 @@ export const LAST_30_DAY_COLUMN: ColumnDef<PortfolioV2Row> = {
   enableSorting: false,
   accessorFn: (row) => row.last30Days,
   cell: ({ row, table }) => {
+    if (isLoading) {
+      return <SkeletonBox className="w-[212px] h-[40px]" />
+    }
+
     const [isModalOpen, setIsModalOpen] = useState(false)
     const isSmallScreen = useIsSmScreen()
 
@@ -294,4 +303,4 @@ export const LAST_30_DAY_COLUMN: ColumnDef<PortfolioV2Row> = {
       className: 'mt-[21.625px] mb-2',
     },
   },
-}
+})

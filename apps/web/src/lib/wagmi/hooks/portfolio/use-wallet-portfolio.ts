@@ -113,7 +113,8 @@ export const useWalletPortfolio = ({
       totalValueUSD: walletData?.totalValueUSD,
       totalPercentageOfPortfolio,
     },
-    isLoading: positionsLoading || pnlLoading,
+    isLoadingPositions: positionsLoading,
+    isLoadingPnl: pnlLoading,
     isError: positionsError || pnlError,
   }
 }

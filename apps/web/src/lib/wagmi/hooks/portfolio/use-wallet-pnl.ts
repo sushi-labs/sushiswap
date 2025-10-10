@@ -13,15 +13,22 @@ export const useWalletPnL = (
     queryFn: async () => {
       if (!address || tokenMap.size === 0) return new Map()
 
-      const promises = Array.from(tokenMap.entries()).map(([chainId, assets]) =>
-        getPortfolioV2PnL({
-          address,
-          chainId,
-          assets: assets,
-        }).catch((err) => {
-          console.error(`PnL fetch failed for chain ${chainId}`, err)
-          return { assets: [] }
-        }),
+      const filteredTokenMap = new Map(
+        Array.from(tokenMap.entries()).filter(
+          ([chainId]) => chainId !== 43114 && chainId !== 747474,
+        ),
+      )
+
+      const promises = Array.from(filteredTokenMap.entries()).map(
+        ([chainId, assets]) =>
+          getPortfolioV2PnL({
+            address,
+            chainId,
+            assets: assets,
+          }).catch((err) => {
+            console.error(`PnL fetch failed for chain ${chainId}`, err)
+            return { assets: [] }
+          }),
       )
 
       const results = await Promise.all(promises)

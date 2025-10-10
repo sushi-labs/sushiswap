@@ -33,20 +33,21 @@ import { useSendTokens } from './send-token-provider'
 import {
   AMOUNT_COLUMN,
   CHAIN_COLUMN,
-  LAST_30_DAY_COLUMN,
   PRICE_COLUMN,
   UPNL_COLUMN,
   VALUE_COLUMN,
   createAssetsColumn,
+  createLast30DaysColumn,
 } from './wallet-holdings-columns'
 import { WalletHoldingsHeader } from './wallet-holdings-header'
 
 export const WalletHoldings = () => {
   const { address } = useAccount()
 
-  const { data, isLoading } = useWalletPortfolio({
+  const { data, isLoadingPositions, isLoadingPnl } = useWalletPortfolio({
     address: address as `0x${string}`,
   })
+  console.log('isloadingpositions', isLoadingPositions)
   const { tokens } = data || {}
   const { mutate } = useSendTokens()
   const [openMenu, setOpenMenu] = useState(false)
@@ -80,6 +81,18 @@ export const WalletHoldings = () => {
     }
   }, [isSmallScreen])
 
+  const columns = useMemo(() => {
+    return [
+      CHAIN_COLUMN,
+      createAssetsColumn(data?.totalPercentageOfPortfolio, isLoadingPositions),
+      PRICE_COLUMN,
+      AMOUNT_COLUMN,
+      VALUE_COLUMN,
+      UPNL_COLUMN,
+      createLast30DaysColumn(isLoadingPnl),
+    ]
+  }, [data?.totalPercentageOfPortfolio, isLoadingPositions, isLoadingPnl])
+
   return (
     <>
       <Wrapper className="!p-0 rounded-lg overflow-x-auto" enableBorder>
@@ -91,7 +104,7 @@ export const WalletHoldings = () => {
         <CardContent className="!p-0">
           <DataTable
             state={state}
-            loading={isLoading}
+            loading={isLoadingPositions}
             rowRenderer={(row, value) => {
               if (!isSmallScreen) {
                 return value
@@ -137,15 +150,7 @@ export const WalletHoldings = () => {
                 </Slot>
               )
             }}
-            columns={[
-              CHAIN_COLUMN,
-              createAssetsColumn(data?.totalPercentageOfPortfolio),
-              PRICE_COLUMN,
-              AMOUNT_COLUMN,
-              VALUE_COLUMN,
-              UPNL_COLUMN,
-              LAST_30_DAY_COLUMN,
-            ]}
+            columns={columns}
             data={tokens ?? []}
             className="rounded-t-none dark:!border-[#FFFFFF14] !border-[#00000014] !space-y-6"
             tableRowClassName="dark:!border-[#FFFFFF14] !border-[#00000014] cursor-pointer md:cursor-default"
