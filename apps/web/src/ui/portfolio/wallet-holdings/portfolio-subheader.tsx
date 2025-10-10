@@ -70,7 +70,11 @@ export const PortfolioSubHeader = () => {
 
         <div className="flex gap-1 items-start">
           <span>All</span>
-          <span>{formatUSD(totalValueUSD ?? 0)}</span>
+          {isLoading ? (
+            <SkeletonBox className="w-[50px] h-4 mt-0.5" />
+          ) : (
+            <span>{formatUSD(totalValueUSD ?? 0)}</span>
+          )}
         </div>
       </Button>
       {isLoading
