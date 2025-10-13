@@ -1,7 +1,13 @@
 'use client'
 
 import { ChevronDownIcon, XIcon } from '@heroicons/react-v1/solid'
-import { Badge, Currency, DialogClose, classNames } from '@sushiswap/ui'
+import {
+  Badge,
+  Currency,
+  DialogClose,
+  FormattedNumber,
+  classNames,
+} from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import {
   Command,
@@ -200,7 +206,8 @@ export const AssetsFilter = ({
                         <div className="flex flex-col">
                           <span> {asset.name}</span>
                           <span className="text-xs text-muted-foreground">
-                            {`${asset.amount} ${asset.symbol}`}
+                            <FormattedNumber number={asset.amount.toString()} />{' '}
+                            {asset.symbol}
                           </span>
                         </div>
                       </div>

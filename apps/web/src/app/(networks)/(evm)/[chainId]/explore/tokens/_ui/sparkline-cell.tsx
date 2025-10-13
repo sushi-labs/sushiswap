@@ -19,6 +19,20 @@ export const SparklineCell: FC<SparklineCellProps> = ({
     const range = max - min
     const isPositive = data[data.length - 1] >= data[0]
 
+    // Handle flat data (no variation)
+    if (range === 0) {
+      const midY = height / 2
+      const points = data
+        .map((_, i) => {
+          const x = (i / (data.length - 1 || 1)) * width
+          const y = midY
+          return `${x},${y}`
+        })
+        .join(' ')
+      return { points, isPositive }
+    }
+
+    // Normal case
     const points = data
       .map((value, i) => {
         const x = (i / (data.length - 1)) * width

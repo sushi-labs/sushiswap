@@ -299,7 +299,11 @@ export const createLast30DaysColumn = (
       />
     ) : (
       <div className="!w-[292px] flex justify-center">
-        <SparklineCell data={yData} width={212} height={40} />
+        <SparklineCell
+          data={yData.length > 0 ? yData : [0.5, 0.5]}
+          width={212}
+          height={40}
+        />
       </div>
     )
   },
