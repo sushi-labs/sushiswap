@@ -19,7 +19,6 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useState } from 'react'
 import { PopoverDrawer } from 'src/app/(networks)/_ui/popover-drawer'
-import { usePortfolioWallet } from 'src/lib/wagmi/components/user-portfolio/hooks/use-portfolio-wallet'
 import { usePortfolioWalletTokensByChain } from 'src/lib/wagmi/hooks/portfolio/use-wallet-portfolio-by-chain'
 import { useWalletPortfolioOverview } from 'src/lib/wagmi/hooks/portfolio/use-wallet-portfolio-overview'
 import { formatPercent, formatUSD } from 'sushi'
@@ -30,7 +29,6 @@ import {
   EvmToken,
   isEvmAddress,
 } from 'sushi/evm'
-import { ethAddress } from 'viem'
 import { NetworkMenu } from '~evm/[chainId]/[trade]/_ui/swap/trade/favorite-recent/network-menu'
 
 export const AssetsFilter = ({

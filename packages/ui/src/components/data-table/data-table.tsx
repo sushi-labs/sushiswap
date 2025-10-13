@@ -24,6 +24,7 @@ import { default as React, type ReactNode } from 'react'
 
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import classNames from 'classnames'
+import { ChevronUpIcon } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -284,8 +285,12 @@ export function DataTable<TData, TValue>({
             onClick={() => setExpanded((prev) => !prev)}
             className="flex gap-1 items-center text-sm font-medium text-slate-900 dark:text-slate-100"
           >
-            {expanded ? 'Show Less' : 'Show All'}
-            <ChevronDownIcon width={16} height={16} />
+            {expanded ? 'Collapse' : 'Expand'}
+            {expanded ? (
+              <ChevronUpIcon width={16} height={16} />
+            ) : (
+              <ChevronDownIcon width={16} height={16} />
+            )}
           </button>
         </div>
       )}

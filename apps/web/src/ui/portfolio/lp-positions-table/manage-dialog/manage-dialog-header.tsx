@@ -20,12 +20,12 @@ export const ManageDialogHeader = ({
           <Currency.IconList
             iconWidth={32}
             iconHeight={32}
-            className="border-[#FFFFFF14] -mr-1"
+            className="!border-0"
           >
             <Currency.Icon currency={token0} />
             <Currency.Icon currency={token1} />
           </Currency.IconList>
-          <div className="border-[#E8E7EB] dark:border-[#222137] border rounded-[4px] overflow-hidden z-10 absolute bottom-[1px] -right-1">
+          <div className="border-[#E8E7EB] dark:border-[#252A3C] border rounded-[4px] overflow-hidden z-10 absolute -bottom-0.5 -right-1.5">
             <NetworkIcon type="square" chainId={1} className="w-3 h-3" />
           </div>
         </div>
@@ -46,7 +46,7 @@ export const ManageDialogHeader = ({
       {hideApr ? null : (
         <div
           className={
-            'bg-skyblue/10 font-medium dark:bg-blue/10 px-2 py-1 text-xs flex items-center gap-1 rounded-full'
+            'bg-skyblue/10 font-medium dark:bg-[#8A80FF08] px-2 py-1 text-xs flex items-center gap-1 rounded-full'
           }
         >
           <APRHoverCard pool={data}>

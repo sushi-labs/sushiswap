@@ -105,7 +105,7 @@ export const ManageDialog = ({
       <DialogTrigger asChild>{triggerChildren}</DialogTrigger>
       <DialogContent
         aria-describedby={undefined}
-        className="!px-1 border-t !flex flex-col !max-w-full md:!max-w-[520px] border-[#EBEBEB] rounded-t-none md:rounded-t-2xl !bg-slate-50 dark:border-[#FFFFFF14] dark:!bg-slate-800 w-full max-h-[100dvh] overflow-y-auto hide-scrollbar"
+        className="!px-1 border !flex flex-col !max-w-full md:!max-w-[520px] border-[#EBEBEB] rounded-t-none md:rounded-t-2xl !bg-slate-50 dark:border-[#FFFFFF14] dark:!bg-slate-800 w-full max-h-[100dvh] overflow-y-auto hide-scrollbar"
       >
         <DialogTitle className="!font-medium px-3">
           <ManageDialogHeader data={data} />

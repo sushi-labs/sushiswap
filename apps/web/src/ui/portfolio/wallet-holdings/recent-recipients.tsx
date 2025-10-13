@@ -1,5 +1,5 @@
-import { Button, Collapsible } from '@sushiswap/ui'
-import { useRef } from 'react'
+import { Button, Collapsible, classNames } from '@sushiswap/ui'
+import { useEffect, useRef, useState } from 'react'
 import { shortenEvmAddress } from 'sushi/evm'
 import { isAddress } from 'viem'
 import { useRecentRecipients } from '../../../lib/wagmi/hooks/hooks/use-recent-recipients'
@@ -11,6 +11,21 @@ export const RecentRecipients = () => {
   const { hasOverflow } = useOverflow(overflowRef)
   const { mutate } = useSendTokens()
   const { recents } = useRecentRecipients()
+  const [isAtEnd, setIsAtEnd] = useState(false)
+
+  useEffect(() => {
+    const el = overflowRef.current
+    if (!el) return
+    const handleScroll = () => {
+      const tolerance = 2
+      const reachedEnd =
+        el.scrollLeft + el.clientWidth >= el.scrollWidth - tolerance
+      setIsAtEnd(reachedEnd)
+    }
+    el.addEventListener('scroll', handleScroll)
+    handleScroll()
+    return () => el.removeEventListener('scroll', handleScroll)
+  }, [])
 
   if (recents.length === 0) return null
 
@@ -33,16 +48,18 @@ export const RecentRecipients = () => {
               />
             ))}
           </div>
-          {hasOverflow ? (
-            <div className="h-full z-10 w-20 bg-gradient-to-r absolute right-0 top-1/2 -translate-y-1/2 from-transparent to-85% to-white dark:to-slate-800" />
-          ) : null}
+          <div
+            className={classNames(
+              'pointer-events-none absolute top-0 right-0 h-full w-20 bg-gradient-to-r from-transparent to-white dark:to-slate-800 hidden md:block transition-opacity duration-300 ease-in-out',
+              hasOverflow && !isAtEnd ? 'opacity-100' : 'opacity-0',
+            )}
+          />
         </div>
       </div>
     </Collapsible>
   )
 }
 
-// TODO: add ENS support
 export const RecentRecipientItem = ({
   address,
   onClick,

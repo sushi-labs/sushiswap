@@ -1,5 +1,6 @@
 'use client'
 
+import { classNames } from '@sushiswap/ui'
 import { useEffect, useRef, useState } from 'react'
 import { useTrendingPools } from 'src/lib/hooks/api/use-trending-pools'
 import {
@@ -18,12 +19,32 @@ export const Trending = () => {
   const { hasOverflow } = useOverflow(overflowRef)
   const { data: trendingPools, isLoading } = useTrendingPools()
 
+  const [isAtEnd, setIsAtEnd] = useState(false)
+
+  useEffect(() => {
+    const el = overflowRef.current
+    if (!el) return
+
+    const handleScroll = () => {
+      const tolerance = 2
+      const reachedEnd =
+        el.scrollLeft + el.clientWidth >= el.scrollWidth - tolerance
+      setIsAtEnd(reachedEnd)
+    }
+
+    el.addEventListener('scroll', handleScroll)
+    handleScroll()
+
+    return () => el.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
-    <div className="flex relative gap-4 items-center px-4 py-3 border-b border-accent">
+    <div className="relative flex items-center gap-4 px-4 py-3 border-b border-accent">
       <p className="text-sm font-medium">Trending:</p>
+
       <div
         ref={overflowRef}
-        className="flex overflow-x-auto gap-2 pr-4 snap-x hide-scrollbar"
+        className="flex overflow-x-auto gap-2 snap-x hide-scrollbar"
       >
         {isLoading
           ? Array.from({ length: 6 }).map((_, i) => (
@@ -37,7 +58,7 @@ export const Trending = () => {
                     : ''
                   : isSushiSwapV2ChainId(pool.chainId)
                     ? `/${getEvmChainById(pool.chainId).key}/pool/v2/${pool.address}`
-                    : ``
+                    : ''
 
               return (
                 <TrendingItemMobile
@@ -49,13 +70,15 @@ export const Trending = () => {
               )
             })}
       </div>
-      {hasOverflow ? (
-        <div className="h-full z-10 w-20 bg-gradient-to-r absolute right-0 top-1/2 -translate-y-1/2 from-transparent to-85% to-white dark:to-slate-800" />
-      ) : null}
+      <div
+        className={classNames(
+          'pointer-events-none absolute top-0 right-0 h-full w-20 bg-gradient-to-r from-transparent to-white dark:to-slate-800 hidden md:block transition-opacity duration-300 ease-in-out',
+          hasOverflow && !isAtEnd ? 'opacity-100' : 'opacity-0',
+        )}
+      />
     </div>
   )
 }
-
 export const useOverflow = (ref: React.RefObject<HTMLDivElement | null>) => {
   const [hasOverflow, setHasOverflow] = useState(false)
 
