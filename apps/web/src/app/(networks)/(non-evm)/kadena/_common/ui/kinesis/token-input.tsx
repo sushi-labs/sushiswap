@@ -8,6 +8,7 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
+import { Amount } from 'sushi'
 import {
   EvmChainId,
   type EvmToken,
@@ -24,7 +25,10 @@ import {
 import { formatUnits } from 'viem'
 import { useBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
-import { KINESIS_BRIDGE_EVM_ETH } from '~kadena/_common/constants/token-list'
+import {
+  KINESIS_BRIDGE_EVM_ETH,
+  KINESIS_BRIDGE_KVM_KADENA,
+} from '~kadena/_common/constants/token-list'
 import { useKinesisWrappedToken } from '~kadena/_common/lib/hooks/kinesis-swap/use-kinesis-wrapped-token'
 import { useTokenBalances } from '~kadena/_common/lib/hooks/use-token-balances'
 import { useTokenPrice } from '~kadena/_common/lib/hooks/use-token-price'
@@ -191,6 +195,28 @@ export const TokenInput = ({
     }
   }, [currency])
 
+  const handleMaxAmount = useCallback(() => {
+    if (type === 'output') return
+
+    if (tokenBalance === '0') {
+      setAmount('')
+      return
+    }
+    if (currency?.isSame(KINESIS_BRIDGE_EVM_ETH)) {
+      const _amount = Amount.fromHuman(currency, tokenBalance)
+      const maxAmount = _amount.subHuman('0.0006') // Subtract an estimated gas cost of 0.0006 ETH
+      setAmount(maxAmount?.toString())
+      return
+    }
+    if (currency?.isSame(KINESIS_BRIDGE_KVM_KADENA)) {
+      const _amount = Amount.fromHuman(currency, tokenBalance)
+      const maxAmount = _amount.subHuman('0.00004') // Subtract an estimated gas cost of 0.00004 KDA
+      setAmount(maxAmount?.toString())
+      return
+    }
+    setAmount(tokenBalance)
+  }, [setAmount, tokenBalance, type, currency])
+
   const selector = useMemo(() => {
     if (!setToken) return null
 
@@ -328,14 +354,7 @@ export const TokenInput = ({
           amount={Number.parseFloat(tokenBalance ?? '0')}
           isLoading={isLoadingTokenBalance}
           type={type}
-          maxAmount={() => {
-            if (type === 'output') return
-            if (tokenBalance === '0') {
-              setAmount('')
-              return
-            }
-            setAmount(tokenBalance)
-          }}
+          maxAmount={handleMaxAmount}
         />
       </div>
     </div>
