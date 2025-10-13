@@ -2,6 +2,7 @@ import { PoolChainIds } from '@sushiswap/graph-client/data-api'
 import { ChainId } from 'sushi'
 import {
   AGGREGATOR_ONLY_CHAIN_IDS,
+  type BladeChainId,
   type EvmAddress,
   EvmChainId,
   type EvmTestnetChainId,
@@ -10,6 +11,7 @@ import {
   type SushiSwapV3ChainId,
   isEvmTestnetChainId,
 } from 'sushi/evm'
+import { KvmChainId } from 'sushi/kvm'
 import { MvmChainId } from 'sushi/mvm'
 import { TvmChainId } from 'sushi/tvm'
 
@@ -28,53 +30,52 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.SEPOLIA,
 ] as const
 
-export const NEW_CHAIN_IDS = [EvmChainId.KATANA] as const
+export const NEW_CHAIN_IDS = [EvmChainId.KATANA, KvmChainId.KADENA] as const
 
 export const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
+  ChainId.HEMI,
   ChainId.ETHEREUM,
-  TvmChainId.TRON,
-  ChainId.BSC,
   ChainId.ARBITRUM,
   ChainId.BASE,
-  ChainId.AVALANCHE,
   ChainId.POLYGON,
+  ChainId.LINEA,
+  ChainId.BSC,
+  ChainId.OPTIMISM,
+  ChainId.FILECOIN,
+  ChainId.ROOTSTOCK,
+  ChainId.FANTOM,
+  ChainId.GNOSIS,
+  ChainId.SKALE_EUROPA,
+  ChainId.CELO,
+  ChainId.HAQQ,
+  ChainId.TRON,
+  ChainId.SCROLL,
+  ChainId.THUNDERCORE,
+  ChainId.ARBITRUM_NOVA,
+  ChainId.APTOS,
+  ChainId.AVALANCHE,
+  ChainId.SONIC,
+  ChainId.CORE,
+  ChainId.BLAST,
+  ChainId.ZETACHAIN,
+  ChainId.BOBA,
+  ChainId.MANTLE,
   ChainId.HYPEREVM,
   ChainId.BERACHAIN,
   ChainId.PLASMA,
-  ChainId.SCROLL,
-  ChainId.BLAST,
-  ChainId.OPTIMISM,
   ChainId.KATANA,
-  MvmChainId.APTOS,
-  ChainId.LINEA,
-  ChainId.MANTLE,
-  ChainId.CORE,
   ChainId.CRONOS,
   ChainId.MODE,
-  ChainId.GNOSIS,
-  ChainId.ROOTSTOCK,
-  ChainId.SONIC,
-  ChainId.HEMI,
   ChainId.KAVA,
   ChainId.ZKSYNC_ERA,
-  ChainId.FANTOM,
-  ChainId.CELO,
-  ChainId.FILECOIN,
   ChainId.METIS,
   ChainId.MANTA,
   ChainId.ZKLINK,
   ChainId.APE,
   ChainId.POLYGON_ZKEVM,
-  ChainId.ZETACHAIN,
   ChainId.TAIKO,
-  ChainId.BOBA,
   ChainId.HARMONY,
-  ChainId.ARBITRUM_NOVA,
-  ChainId.HAQQ,
-  ChainId.THUNDERCORE,
-  ChainId.SKALE_EUROPA,
-  ChainId.BOBA_BNB,
 ] as const
 
 export const getSortedChainIds = <T extends ChainId>(
@@ -134,6 +135,7 @@ const UNSORTED_SUPPORTED_NETWORKS = [
   ...SUPPORTED_CHAIN_IDS,
   MvmChainId.APTOS,
   TvmChainId.TRON,
+  KvmChainId.KADENA,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
@@ -153,6 +155,7 @@ const UNSORTED_POOL_SUPPORTED_NETWORKS = [
   ...PoolChainIds,
   MvmChainId.APTOS,
   TvmChainId.TRON,
+  KvmChainId.KADENA,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
@@ -206,7 +209,7 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
   ChainId.BASE,
-  // ChainId.BERACHAIN,
+  ChainId.BERACHAIN,
   ChainId.BLAST,
   ChainId.BOBA,
   ChainId.BSC,
@@ -216,7 +219,7 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.FANTOM,
   // ChainId.FUSE,
   ChainId.GNOSIS,
-  // ChainId.HYPEREVM,
+  ChainId.HYPEREVM,
   ChainId.KATANA,
   ChainId.LINEA,
   ChainId.MANTLE,
@@ -225,7 +228,7 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   // ChainId.MOONBEAM,
   // ChainId.MOONRIVER,
   ChainId.OPTIMISM,
-  // ChainId.PLASMA
+  ChainId.PLASMA,
   ChainId.POLYGON,
   // ChainId.POLYGON_ZKEVM,
   ChainId.ROOTSTOCK,
@@ -281,3 +284,10 @@ export const SUSHISWAP_V3_POSITION_HELPER: Record<
   // [ChainId.MOONRIVER]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
   // [ChainId.POLYGON_ZKEVM]: '0x34026A9b9Cb6DF84880C4B2f778F5965F5679c16',
 } as const
+
+export const BLADE_PUBLIC_CHAIN_IDS: readonly BladeChainId[] = [
+  ChainId.KATANA,
+  ChainId.OPTIMISM,
+  ChainId.BASE,
+  ChainId.ETHEREUM,
+]

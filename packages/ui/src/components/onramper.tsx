@@ -9,6 +9,7 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useState,
 } from 'react'
 
@@ -37,12 +38,14 @@ export const OnramperButton: FC<{
   className?: string
   chainId?: number
 }> = ({ children, className, chainId }) => {
-  const { setOpen } = useOnramperContext()
+  const { setOpen, setDefaultCrypto } = useOnramperContext()
 
   const onClick = useCallback(() => {
     sendAnalyticsEvent(InterfaceEventName.FIAT_ONRAMP_WIDGET_OPENED)
+
+    if (chainId === -3) setDefaultCrypto('kda_kadena')
     setOpen(true)
-  }, [setOpen])
+  }, [chainId, setDefaultCrypto, setOpen])
 
   return isOnrampOverrideChainId(chainId) ? (
     <Link
@@ -61,13 +64,16 @@ export const OnramperButton: FC<{
 
 interface OnramperPanelProps {
   address?: string
+  defaultCrypto?: string
 }
 
-export const OnramperPanel: FC<OnramperPanelProps> = ({ address }) => {
+export const OnramperPanel: FC<OnramperPanelProps> = ({
+  address,
+  defaultCrypto = 'ETH',
+}) => {
   const { open, setOpen } = useOnramperContext()
 
-  let src =
-    'https://buy.onramper.com?themeName=sushi&apiKey=pk_prod_01GTYEN8CHRVPKES7HK2S9JXDJ&defaultCrypto=ETH'
+  let src = `https://buy.onramper.com?themeName=sushi&apiKey=pk_prod_01GTYEN8CHRVPKES7HK2S9JXDJ&defaultCrypto=${defaultCrypto}`
   if (address) {
     src += `&wallets=ETH:${address}`
   }
@@ -107,6 +113,7 @@ export const OnramperPanel: FC<OnramperPanelProps> = ({ address }) => {
 interface OnramperContext {
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
+  setDefaultCrypto: Dispatch<SetStateAction<string>>
 }
 
 const OnramperContext = createContext<OnramperContext | undefined>(undefined)
@@ -122,11 +129,12 @@ interface ProviderProps {
 
 export const OnramperProvider: FC<ProviderProps> = ({ children }) => {
   const [open, setOpen] = useState(false)
+  const [defaultCrypto, setDefaultCrypto] = useState('ETH')
 
   return (
-    <OnramperContext.Provider value={{ open, setOpen }}>
+    <OnramperContext.Provider value={{ open, setOpen, setDefaultCrypto }}>
       {typeof children === 'function' ? children({ open, setOpen }) : children}
-      <OnramperPanel />
+      <OnramperPanel defaultCrypto={defaultCrypto} />
     </OnramperContext.Provider>
   )
 }

@@ -27,6 +27,9 @@ type Query {
   bladePoolTxSourcesChart(address: Bytes!, chainId: BladeChainId!, duration: BladePoolPairsChartDuration!): [BladePoolTxSourcesStats!]!
   bladePoolBuckets(address: Bytes!, chainId: BladeChainId!): PoolBuckets!
   bladePositions(user: Bytes!, chainId: BladeChainId!): [BladePosition!]!
+  bladeMints(address: Bytes!, chainId: BladeChainId!): [BladeMint!]!
+  bladeBurns(address: Bytes!, chainId: BladeChainId!): [BladeBurn!]!
+  bladeSwaps(address: Bytes!, chainId: BladeChainId!): [BladeSwap!]!
   exploreTokens(chainId: SushiSwapChainId!): [ExploreToken!]!
   exploreTokenChart(chainId: SushiSwapChainId!, address: Bytes!, duration: ExploreTokenChartDuration!): [OHLC!]!
   exploreTokenChartV2(chainId: SushiSwapChainId!, address: Bytes!, interval: ExploreTokenChartInterval!, from: Int!, to: Int!): [OHLC!]!
@@ -142,6 +145,10 @@ type BladePool {
   feeUSD1d: Float!
   feeApr1d: Float!
   totalApr1d: Float!
+  incentiveApr: Float!
+  isIncentivized: Boolean!
+  wasIncentivized: Boolean!
+  incentives: [Incentive!]!
   isDeprecated: Boolean!
   isSingleAssetWithdrawEnabled: Boolean!
   newPoolAddress: Bytes
@@ -186,7 +193,35 @@ type BladePosition {
   user: Bytes!
   stakedBalance: BigInt!
   unstakedBalance: BigInt!
+  vestingBalance: BigInt!
   pool: BladePool!
+}
+
+type BladeBurn {
+  txHash: Bytes!
+  user: Bytes!
+  timestamp: Int!
+  amountUSD: Float!
+}
+
+type BladeMint {
+  txHash: Bytes!
+  user: Bytes!
+  timestamp: Int!
+  amountUSD: Float!
+}
+
+type BladeSwap {
+  txHash: Bytes!
+  user: Bytes!
+  timestamp: Int!
+  amountInUSD: Float!
+  amountInRaw: BigInt!
+  inToken: Token!
+  amountOutUSD: Float!
+  amountOutRaw: BigInt!
+  outToken: Token!
+  feeUSD: Float!
 }
 
 type ExploreToken {

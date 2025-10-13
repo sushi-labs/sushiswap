@@ -47,6 +47,7 @@ import {
   warningSeverity,
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/slippage'
 import { ChainId, ZERO } from 'sushi'
@@ -58,11 +59,7 @@ import {
   nativeAddress,
   shortenEvmAddress,
 } from 'sushi/evm'
-import {
-  type SendTransactionReturnType,
-  UserRejectedRequestError,
-  stringify,
-} from 'viem'
+import { type SendTransactionReturnType, stringify } from 'viem'
 import {
   useAccount,
   usePublicClient,
@@ -272,7 +269,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
 
   const onSwapError = useCallback(
     (e: Error) => {
-      if (e.cause instanceof UserRejectedRequestError) {
+      if (isUserRejectedError(e)) {
         return
       }
 
