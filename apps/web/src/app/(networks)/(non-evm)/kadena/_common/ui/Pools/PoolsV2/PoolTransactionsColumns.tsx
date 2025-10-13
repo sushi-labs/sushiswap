@@ -6,8 +6,8 @@ import type { PoolTransaction } from '~kadena/_common/lib/hooks/use-pool-transac
 export const MAKER_COLUMN: ColumnDef<PoolTransaction> = {
   id: 'maker',
   header: 'Maker',
-  accessorFn: (row) => row.maker,
-  cell: (props) => truncateString(props.getValue() as string, 10, 'middle'),
+  cell: (props) =>
+    truncateString(props?.row?.original?.maker || '', 10, 'middle'),
   meta: {
     body: {
       skeleton: <SkeletonText fontSize="lg" />,
@@ -18,7 +18,7 @@ export const MAKER_COLUMN: ColumnDef<PoolTransaction> = {
 export const AMOUNT_USD_COLUMN: ColumnDef<PoolTransaction> = {
   id: 'amountUsd',
   header: 'Amount (USD)',
-  accessorFn: (row) => row.amountUsd,
+  accessorFn: (row) => Number.parseFloat(row?.amountUsd || '0'),
   cell: (props) => formatUSD(props.row.original.amountUsd),
   meta: {
     body: {
@@ -63,6 +63,7 @@ export function createAmountColumn({
 }): ColumnDef<PoolTransaction, unknown> {
   return {
     accessorKey,
+    accessorFn: (row) => Number.parseFloat(String(row?.[accessorKey])),
     header,
     cell: ({ row }) => {
       let value = row.getValue(accessorKey) as string
@@ -87,14 +88,13 @@ export function createAmountColumn({
 
       //REMOVE_LIQUIDITY
       if (row.original.transactionType === 'REMOVE_LIQUIDITY') {
-        tokenSymbol = token1Symbol
-        if (value === '0' && accessorKey === 'amount0In') {
+        if (accessorKey === 'amount0In') {
           tokenSymbol = token0Symbol
           value = row.original.amount1Out
         }
-
-        if (value === '0' && accessorKey === 'amount1Out') {
-          value = row.original.amount1In
+        if (accessorKey === 'amount0Out') {
+          tokenSymbol = token1Symbol
+          value = row.original.amount0Out
         }
       }
 
