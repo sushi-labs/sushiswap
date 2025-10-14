@@ -187,6 +187,18 @@ export const AddLiquidityV2 = ({
     ).toFixed(2)
   }, [input0, input1, token0, token1, price0, price1])
 
+  const setMarketPrice = useCallback(() => {
+    if (token0 && token1 && price0 && price1) {
+      setIndependendField(0)
+      setTypedAmounts({
+        input0: '1',
+        input1: ((price0 / price1) * 1).toString(),
+      })
+    } else {
+      setTypedAmounts({ input0: '', input1: '' })
+    }
+  }, [token0, token1, price0, price1])
+
   return (
     <PoolFinder
       components={
@@ -270,6 +282,7 @@ export const AddLiquidityV2 = ({
                         token1={token1}
                         input0={input0}
                         input1={input1}
+                        setMarketPrice={setMarketPrice}
                       />
                     )}
                   </div>
@@ -692,7 +705,14 @@ export const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
   )
 
   useEffect(() => {
-    if (pool?.reserve0.gt(ZERO) && pool.reserve1.gt(ZERO) && token0 && token1) {
+    if (
+      pool?.reserve0.gt(ZERO) &&
+      pool.reserve1.gt(ZERO) &&
+      token0 &&
+      token1 &&
+      input0 !== '' &&
+      input1 !== ''
+    ) {
       if (independendField === 0) {
         const parsedAmount = Amount.tryFromHuman(token0, input0)
         setTypedAmounts({

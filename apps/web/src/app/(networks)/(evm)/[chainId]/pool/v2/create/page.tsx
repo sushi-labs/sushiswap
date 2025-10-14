@@ -155,6 +155,19 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
       (Number.isNaN(value0) ? 0 : value0) + (Number.isNaN(value1) ? 0 : value1)
     ).toFixed(2)
   }, [input0, input1, token0, token1, price0, price1])
+
+  const setMarketPrice = useCallback(() => {
+    if (token0 && token1 && price0 && price1) {
+      setIndependendField(0)
+      setTypedAmounts({
+        input0: '1',
+        input1: ((price0 / price1) * 1).toString(),
+      })
+    } else {
+      setTypedAmounts({ input0: '', input1: '' })
+    }
+  }, [token0, token1, price0, price1])
+
   return (
     <div className={classNames('flex flex-col gap-4 pt-6')}>
       <Button
@@ -247,6 +260,7 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
                         token1={token1}
                         input0={input0}
                         input1={input1}
+                        setMarketPrice={setMarketPrice}
                       />
                     </div>
                   </Collapsible>

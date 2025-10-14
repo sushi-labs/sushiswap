@@ -1,6 +1,6 @@
 import { Button } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
-import { Amount, ZERO } from 'sushi'
+import { Amount, Fraction, ZERO } from 'sushi'
 import type { EvmCurrency } from 'sushi/evm'
 
 export const InitialPrice = ({
@@ -8,11 +8,13 @@ export const InitialPrice = ({
   token1,
   input0,
   input1,
+  setMarketPrice,
 }: {
   token0: EvmCurrency
   token1: EvmCurrency
   input0: string
   input1: string
+  setMarketPrice: () => void
 }) => {
   const [rateDirection, setRateDirection] = useState<'token0' | 'token1'>(
     'token0',
@@ -38,16 +40,18 @@ export const InitialPrice = ({
     ) {
       return [0, 0]
     }
+    const token0Human = token0Input.toString()
+    const token1Human = token1Input.toString()
 
-    const token1Per0 = token1Input
-      .div(token0Input.amount)
-      .mul(10n ** BigInt(token0.decimals))
-      .toSignificant(6)
+    const token1Per0 = Amount.tryFromHuman(
+      token1,
+      Number.parseFloat(token1Human) / Number.parseFloat(token0Human),
+    )?.toSignificant(6)
 
-    const token0Per1 = token0Input
-      .div(token1Input.amount)
-      .mul(10n ** BigInt(token1.decimals))
-      .toSignificant(6)
+    const token0Per1 = Amount.tryFromHuman(
+      token0,
+      Number.parseFloat(token0Human) / Number.parseFloat(token1Human),
+    )?.toSignificant(6)
 
     return [token1Per0, token0Per1]
   }, [token0Input, token1Input, token0, token1])
@@ -87,7 +91,7 @@ export const InitialPrice = ({
           </div>
         </div>
         <div className="flex md:items-end justify-between flex-col md:flex-row gap-2">
-          <div className="flex gap-2 items-end">
+          <div className="flex gap-2 items-end cursor-default">
             <div className="dark:text-pink-100 text-3xl text-black">
               {rateDirection === 'token0' ? token0Per1 : token1Per0}
             </div>
@@ -97,9 +101,13 @@ export const InitialPrice = ({
                 : `${token1?.symbol} per ${token0.symbol}`}
             </div>
           </div>
-          <div className="text-blue dark:text-skyblue font-semibold text-base">
+          <Button
+            onClick={setMarketPrice}
+            variant="ghost"
+            className="text-blue dark:text-skyblue font-semibold !text-base !pr-0 focus:!bg-transparent hover:!bg-transparent !h-[25px] !min-h-[25px]"
+          >
             Market Price
-          </div>
+          </Button>
         </div>
       </div>
     </div>
