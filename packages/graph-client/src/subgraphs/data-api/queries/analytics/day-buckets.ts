@@ -65,9 +65,10 @@ export async function getAnalyticsDayBuckets(
         v3: result.sushiDayBuckets.v3.filter(
           (bucket) => bucket.date >= sixMonthsAgoTimestamp,
         ),
-        blade: result.sushiDayBuckets.blade?.filter(
-          (bucket) => bucket.date >= sixMonthsAgoTimestamp,
-        ) ?? [],
+        blade:
+          result.sushiDayBuckets.blade?.filter(
+            (bucket) => bucket.date >= sixMonthsAgoTimestamp,
+          ) ?? [],
       }
     }
   } catch {
