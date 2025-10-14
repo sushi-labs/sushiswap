@@ -12,7 +12,11 @@ import {
   DataTable,
   Toggle,
 } from '@sushiswap/ui'
-import type { PaginationState } from '@tanstack/react-table'
+import type {
+  PaginationState,
+  SortingState,
+  TableState,
+} from '@tanstack/react-table'
 import { type FC, useCallback, useMemo, useState } from 'react'
 import { getKvmChainByKey } from 'sushi/kvm'
 import {
@@ -48,10 +52,20 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
   const { data, isLoading } = usePoolTransactions({
     pairId: pool?.id,
     type: type,
-    pageSize: 100,
+    pageSize: 1000,
   })
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: 'timestamp', desc: true },
+  ])
 
   const poolTransactions = useMemo(() => data?.transactions ?? [], [data])
+
+  const state: Partial<TableState> = useMemo(() => {
+    return {
+      sorting,
+      pagination: paginationState,
+    }
+  }, [sorting, paginationState])
 
   const rowLink = useCallback((row: PoolTransaction) => {
     return getKvmChainByKey('kadena').getTransactionUrl(row.requestkey)
@@ -151,13 +165,12 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool }) => {
           loading={isLoading}
           columns={COLUMNS}
           data={poolTransactions}
+          onSortingChange={setSorting}
           linkFormatter={rowLink}
           pagination={true}
           externalLink={true}
           onPaginationChange={setPaginationState}
-          state={{
-            pagination: paginationState,
-          }}
+          state={state}
         />
       </CardContent>
     </Card>
