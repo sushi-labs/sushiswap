@@ -1,3 +1,4 @@
+import { PactNumber } from '@kadena/pactjs'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { Amount, Fraction } from 'sushi'
@@ -112,18 +113,10 @@ export const useSimulateSwap = ({
           ? (res.result.data[1].amount as PactNumberReturnType)
           : 0
 
-      let _amountOutNum = 0
-      if (typeof amount === 'object' && 'decimal' in amount) {
-        _amountOutNum = Number.parseFloat(amount?.decimal ?? '0')
-      } else {
-        _amountOutNum = amount ?? 0
-      }
+      const _amountOutNum = new PactNumber(amount ?? 0).toString()
 
       const tokenOut = token1
-      const parsedAmountOut = parseUnits(
-        _amountOutNum.toString(),
-        tokenOut.decimals,
-      )
+      const parsedAmountOut = parseUnits(_amountOutNum, tokenOut.decimals)
       const slippageFraction = new Fraction((1 - slippage) * 1e6)
 
       const minAmountOut = new Amount(tokenOut, parsedAmountOut)
@@ -132,7 +125,7 @@ export const useSimulateSwap = ({
 
       setMinAmountOut(minAmountOut)
 
-      const formatted = _amountOutNum?.toString() ?? null
+      const formatted = _amountOutNum ?? null
       const _amountOut = new Amount(tokenOut, parsedAmountOut)
       setAmountOut(_amountOut)
       setAmountOutString(_amountOut.toString({ fixed: tokenOut.decimals }))

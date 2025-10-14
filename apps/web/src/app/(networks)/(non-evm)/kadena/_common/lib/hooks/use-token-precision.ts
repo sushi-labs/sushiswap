@@ -1,3 +1,4 @@
+import { PactNumber } from '@kadena/pactjs'
 import { useQuery } from '@tanstack/react-query'
 import type { KvmTokenAddress } from 'sushi/kvm'
 import { kadenaClient } from '~kadena/_common/constants/client'
@@ -26,11 +27,10 @@ export const useTokenPrecision = ({
         )
       }
 
-      //@dev will use PactNumber once pactjs pkg is fixed
-      const decimals =
-        typeof res?.result?.data === 'object' && 'int' in res.result.data
-          ? (res?.result?.data?.int as number)
-          : 12
+      const decimals = new PactNumber(
+        res?.result?.data as { int: string },
+      ).toNumber()
+
       return decimals
     },
     enabled: Boolean(tokenContract),

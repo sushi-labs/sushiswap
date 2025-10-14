@@ -1,4 +1,5 @@
 import type { ChainId } from '@kadena/client'
+import { PactNumber } from '@kadena/pactjs'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { Amount } from 'sushi'
@@ -36,10 +37,9 @@ export const useNativeTokenBalance = ({
 
       const amount = res.result.data as PactNumberReturnType
 
-      const balance =
-        typeof amount === 'object' ? Number.parseFloat(amount.decimal) : amount
+      const balance = new PactNumber(amount).toString()
 
-      const parsedAmount = parseUnits(balance.toString(), KADENA.decimals)
+      const parsedAmount = parseUnits(balance, KADENA.decimals)
 
       return {
         chainId: KADENA_CHAIN_ID,

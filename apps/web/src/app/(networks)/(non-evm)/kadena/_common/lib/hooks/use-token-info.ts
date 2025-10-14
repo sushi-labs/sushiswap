@@ -1,3 +1,4 @@
+import { PactNumber } from '@kadena/pactjs'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { KvmChainId, KvmToken, isKvmTokenAddress } from 'sushi/kvm'
@@ -34,11 +35,9 @@ export const useTokenInfo = ({
         )
       }
 
-      const decimals =
-        typeof decimalRes?.result?.data === 'object' &&
-        'int' in decimalRes.result.data
-          ? (decimalRes?.result?.data?.int as number)
-          : 12
+      const decimals = new PactNumber(
+        decimalRes?.result?.data as { int: string },
+      ).toNumber()
 
       const symbol = tokenContract?.split('.')?.[1] || 'UNKNOWN'
 

@@ -1,3 +1,4 @@
+import { PactNumber } from '@kadena/pactjs'
 import { useQuery } from '@tanstack/react-query'
 import {
   KvmChainId,
@@ -44,12 +45,9 @@ export async function getTokenDetails({
       decimalRes.result.error?.message || 'Failed to fetch token decimals',
     )
   }
-
-  const decimals =
-    typeof decimalRes?.result?.data === 'object' &&
-    'int' in decimalRes.result.data
-      ? (decimalRes?.result?.data?.int as number)
-      : 12
+  const decimals = new PactNumber(
+    decimalRes?.result?.data as { int: string },
+  ).toNumber()
 
   const symbol = address?.split('.')?.[1] || 'UNKNOWN'
 

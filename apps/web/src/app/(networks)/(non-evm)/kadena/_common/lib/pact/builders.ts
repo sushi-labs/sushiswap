@@ -47,7 +47,7 @@ export const buildGetTokenBalanceAndPrecisionTx = (
     const code = `
       (let
         ((${name}
-          { "balance": (try -1 (${cumul}.get-balance "${account}"))
+          { "balance": (try 0 (${cumul}.get-balance "${account}"))
           , "precision": (${cumul}.precision) }
       ))`
     accum += code

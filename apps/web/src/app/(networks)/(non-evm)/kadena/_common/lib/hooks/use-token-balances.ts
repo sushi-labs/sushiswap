@@ -1,4 +1,5 @@
 import type { ChainId } from '@kadena/client'
+import { PactNumber } from '@kadena/pactjs'
 import { useQuery } from '@tanstack/react-query'
 import type { KvmTokenAddress } from 'sushi/kvm'
 import { parseUnits } from 'viem'
@@ -46,23 +47,7 @@ export const useTokenBalances = ({
             return address.replace('.', '') === name
           })
 
-          //@dev will use PactNumber once pactjs pkg is fixed
-          let amount = typeof balance === 'number' ? balance : 0 // Default to 0 if value is not a number b/c it'll the fallback of {int: -1}
-          if (balance && typeof balance === 'object' && 'decimal' in balance) {
-            //id {decimal: "123.456"}
-            amount = balance.decimal // If the value is an object with a decimal property, use that it will be a string
-          } else if (
-            balance &&
-            typeof balance === 'object' &&
-            'int' in balance
-          ) {
-            // is {int: 123456}
-            if (balance.int < 0) {
-              amount = 0 // If the balance is -1, set to 0
-            } else {
-              amount = balance.int // If the value is an object with an int property, use that
-            }
-          }
+          const amount = new PactNumber(balance).toString()
 
           cleanedBalanceMap[tokenAddress || 'coin'] = parseUnits(
             normalizeAmount(amount),
