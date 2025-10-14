@@ -1,6 +1,6 @@
 'use client'
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import type { V2Pool } from '@sushiswap/graph-client/data-api'
+import type { RawV2Pool, V2Pool } from '@sushiswap/graph-client/data-api'
 import { Button, Container, useBreakpoint } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { EvmToken, SushiSwapProtocol, unwrapEvmToken } from 'sushi/evm'
@@ -15,7 +15,7 @@ import { PoolsBladeSection } from './PoolsBladeSection'
 import { AddLiquidityDialog } from './add-liquidity/add-liquidity-dialog'
 
 interface PoolPageBlade {
-  pool: Awaited<V2Pool>
+  pool: Awaited<RawV2Pool>
 }
 
 export const PoolPageBlade: FC<PoolPageBlade> = ({ pool }) => {

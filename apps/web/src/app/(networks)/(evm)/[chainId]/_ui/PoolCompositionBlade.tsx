@@ -1,6 +1,6 @@
 'use client'
 
-import type { V2Pool } from '@sushiswap/graph-client/data-api'
+import { type RawV2Pool, hydrateV2Pool } from '@sushiswap/graph-client/data-api'
 import {
   CardContent,
   CardCurrencyAmountItem,
@@ -18,12 +18,13 @@ import { EvmToken } from 'sushi/evm'
 import { Wrapper } from '../[trade]/_ui/swap/trade/wrapper'
 
 interface PoolCompositionBladeProps {
-  pool: V2Pool
+  pool: RawV2Pool
 }
 
 export const PoolCompositionBlade: FC<PoolCompositionBladeProps> = ({
-  pool,
+  pool: rawPool,
 }) => {
+  const pool = useMemo(() => hydrateV2Pool(rawPool), [rawPool])
   const amounts = useMemo(() => {
     const token0 = new EvmToken({
       chainId: pool.chainId,

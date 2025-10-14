@@ -1,6 +1,6 @@
 'use client'
 
-import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
+import type { RawV2Pool, RawV3Pool } from '@sushiswap/graph-client/data-api'
 import type { V2PoolBuckets } from '@sushiswap/graph-client/data-api-181'
 import {
   Button,
@@ -89,7 +89,7 @@ const formatBucketData = (
 }
 
 interface APRChartProps {
-  pool: V2Pool | V3Pool
+  pool: RawV2Pool | RawV3Pool
 }
 
 export const APRChart: FC<APRChartProps> = ({ pool }) => {

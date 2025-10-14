@@ -1,11 +1,10 @@
-import { type V3Pool, getV3Pool } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
-import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { PoolHeader } from 'src/ui/pool/PoolHeader'
 import { getEvmChainById, isSushiSwapV3ChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
+import { getCachedV3Pool } from '../../_lib/get-cached-v3-pool'
 
 export default async function Layout(props: {
   children: React.ReactNode
@@ -25,13 +24,7 @@ export default async function Layout(props: {
     return notFound()
   }
 
-  const pool = (await unstable_cache(
-    async () => getV3Pool({ chainId, address }, { retries: 3 }),
-    ['v3', 'pool', `${chainId}:${address}`],
-    {
-      revalidate: 60 * 15,
-    },
-  )()) as V3Pool
+  const pool = (await getCachedV3Pool({ chainId, address }))!
 
   const headersList = await headers()
   const referer = headersList.get('referer')

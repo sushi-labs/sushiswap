@@ -1,5 +1,5 @@
 import { RadioGroup } from '@headlessui/react'
-import type { V3Pool } from '@sushiswap/graph-client/data-api'
+import { type V3Pool, hydrateV3Pool } from '@sushiswap/graph-client/data-api'
 import {
   FeePoolSelectAction,
   LiquidityEventName,
@@ -84,10 +84,13 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
         })) ?? []
       )
     }, [pools])
-    const { data: v3Pools, isLoading: isLoadingV3Pools } = useV3Pools(
+    const { data: rawV3Pools, isLoading: isLoadingV3Pools } = useV3Pools(
       poolAddressesChainIds,
       Boolean(token0 && token1),
     )
+    const v3Pools = useMemo(() => {
+      return rawV3Pools?.map((pool) => hydrateV3Pool(pool))
+    }, [rawV3Pools])
     const isLoading = isLoadingPools || isLoadingV3Pools
 
     const poolByFee = useMemo(() => {

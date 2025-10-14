@@ -1,10 +1,12 @@
 'use client'
 
 import {
+  type RawV2Pool,
   type V2Pool,
   getSushiV2Burns,
   getSushiV2Mints,
   getSushiV2Swaps,
+  hydrateV2Pool,
 } from '@sushiswap/graph-client/data-api'
 import {
   Card,
@@ -109,7 +111,7 @@ const fetchSwaps = async (
 // Will only support the last 1k txs
 // The fact that there are different subtransactions aggregated under one transaction makes paging a bit difficult
 function useTransactionsV2(
-  pool: V2Pool | undefined | null,
+  pool: RawV2Pool | V2Pool | undefined | null,
   poolAddress: Address,
   opts: UseTransactionsV2Opts,
   user: Address | undefined,
@@ -188,7 +190,7 @@ function useTransactionsV2(
           .sort((a, b) => b.logIndex - a.logIndex)
       })
     },
-    enabled: !!pool && isSushiSwapV2ChainId(pool?.chainId),
+    enabled: Boolean(pool && isSushiSwapV2ChainId(pool?.chainId)),
     refetchInterval: opts?.refetchInterval,
   })
 }
@@ -247,14 +249,15 @@ function usePaginatedTransactions(
 type Transaction = NonNullable<ReturnType<typeof useTransactionsV2>['data']>[0]
 
 interface PoolTransactionsV2Props {
-  pool: V2Pool | undefined | null
+  pool: RawV2Pool
   poolAddress: Address
 }
 
 const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
-  pool,
+  pool: rawPool,
   poolAddress,
 }) => {
+  const pool = useMemo(() => hydrateV2Pool(rawPool), [rawPool])
   const { address } = useAccount()
   const [filterByAddress, setFilterByAddress] = useState(false)
   const [type, setType] = useState<

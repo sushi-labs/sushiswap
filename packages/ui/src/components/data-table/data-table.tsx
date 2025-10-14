@@ -8,6 +8,7 @@ import {
   type Row,
   type RowData,
   type SortingState,
+  type TableMeta,
   type TableState,
   type Table as TableType,
   type VisibilityState,
@@ -68,6 +69,7 @@ interface DataTableProps<TData, TValue> {
   rowRenderer?: (row: Row<TData>, value: ReactNode) => ReactNode
   showColumnHeaders?: boolean
   className?: string
+  meta?: TableMeta<TData>
 }
 
 export function DataTable<TData, TValue>({
@@ -85,6 +87,7 @@ export function DataTable<TData, TValue>({
   rowRenderer,
   showColumnHeaders = true,
   className,
+  meta,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -106,6 +109,7 @@ export function DataTable<TData, TValue>({
       sorting: state?.sorting ? state.sorting : sorting,
       ...(state?.pagination && { pagination: state?.pagination }),
     },
+    meta,
     autoResetPageIndex: false,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,

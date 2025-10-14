@@ -1,7 +1,21 @@
 'use client'
 
-import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
-import { CardContent, SkeletonBox, classNames } from '@sushiswap/ui'
+import type {
+  BladePool,
+  RawV2Pool,
+  RawV3Pool,
+  V2Pool,
+  V3Pool,
+} from '@sushiswap/graph-client/data-api'
+import {
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  SkeletonBox,
+  SkeletonText,
+  classNames,
+} from '@sushiswap/ui'
 import format from 'date-fns/format'
 import type { EChartOption } from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
@@ -17,7 +31,7 @@ import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo } from 'react'
 import { usePoolGraphData } from 'src/lib/hooks'
 import { formatUSD } from 'sushi'
-import type { SushiSwapProtocol } from 'sushi/evm'
+import type { PoolBase, PoolId, SushiSwapProtocol } from 'sushi/evm'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import { PoolChartPeriod, chartPeriods } from './pool-chart-periods'
@@ -26,7 +40,7 @@ import { PoolChartType } from './pool-chart-types'
 interface PoolChartProps {
   chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL
   period: PoolChartPeriod
-  pool: V2Pool | V3Pool
+  pool: RawV2Pool | V2Pool | RawV3Pool | V3Pool | BladePool
   protocol: SushiSwapProtocol
 }
 
@@ -88,6 +102,8 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
     return [x.reverse(), y.reverse()]
   }, [chart, period, buckets])
 
+  const poolSwapFee = 'swapFee' in pool ? pool.swapFee : undefined
+  // Transient update for performance
   const onMouseOver = useCallback(
     ({ name, value }: { name: number; value: number }) => {
       const valueNodes = document.getElementsByClassName('hoveredItemValue')
@@ -98,8 +114,8 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
       }
 
       if (valueNodes[1]) {
-        if (chart === PoolChartType.Volume) {
-          valueNodes[1].innerHTML = formatUSD(value * Number(pool.swapFee))
+        if (chart === PoolChartType.Volume && poolSwapFee !== undefined) {
+          valueNodes[1].innerHTML = formatUSD(value * Number(poolSwapFee))
         }
       }
 
@@ -114,7 +130,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
         )
       }
     },
-    [period, chart, pool?.swapFee],
+    [period, chart, poolSwapFee],
   )
 
   const formatLabel = (date: Date, period: PoolChartPeriod): string => {

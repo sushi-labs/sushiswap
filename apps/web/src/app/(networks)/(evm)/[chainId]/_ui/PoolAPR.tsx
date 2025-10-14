@@ -1,4 +1,4 @@
-import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
+import type { RawV2Pool, RawV3Pool } from '@sushiswap/graph-client/data-api'
 import {
   CardContent,
   CardDescription,
@@ -13,7 +13,7 @@ import { Wrapper } from '../[trade]/_ui/swap/trade/wrapper'
 export const PoolAPR = ({
   version,
   pool,
-}: { version: 'v2' | 'v3'; pool: V2Pool | V3Pool }) => {
+}: { version: 'v2' | 'v3'; pool: RawV2Pool | RawV3Pool }) => {
   const totalApr = pool?.totalApr1d?.toFixed(2)
   const feeApr = pool?.feeApr1d?.toFixed(2)
   const incentivesApr = pool?.incentiveApr?.toFixed(2)

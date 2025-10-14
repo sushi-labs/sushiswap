@@ -1,4 +1,4 @@
-import { type V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
+import { type RawV2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import ms from 'ms'
 import { unstable_cache } from 'next/cache'
@@ -37,7 +37,7 @@ export default async function Layout(props: {
     {
       revalidate: ms('15m'),
     },
-  )()) as V2Pool
+  )()) as RawV2Pool
 
   const headersList = await headers()
   const referer = headersList.get('referer')

@@ -1,6 +1,6 @@
 'use client'
 
-import type { V2Pool } from '@sushiswap/graph-client/data-api'
+import type { RawV2Pool } from '@sushiswap/graph-client/data-api'
 import React, { type FC, useState } from 'react'
 import { SushiSwapProtocol } from 'sushi/evm'
 import { Wrapper } from '~evm/[chainId]/[trade]/_ui/swap/trade/wrapper'
@@ -28,7 +28,7 @@ const periods = [
 ]
 
 interface PoolChartV2Props {
-  pool: V2Pool
+  pool: RawV2Pool
 }
 
 const PoolChartV2: FC<PoolChartV2Props> = ({ pool }) => {

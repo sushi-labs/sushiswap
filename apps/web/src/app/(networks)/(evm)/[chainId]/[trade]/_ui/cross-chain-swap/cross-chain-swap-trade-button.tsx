@@ -1,6 +1,6 @@
 'use client'
 
-import { DialogTrigger, Message } from '@sushiswap/ui'
+import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import React, { type FC, useEffect, useMemo, useState } from 'react'
 import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
@@ -8,9 +8,12 @@ import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
+import { isChainIdSupportedByWallet } from 'src/lib/wagmi/config/wallet'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/slippage'
 import { ZERO } from 'sushi'
+import { useAccount } from 'wagmi'
+import { CrossChainSwapChainUnsupportedMessage } from './cross-chain-swap-chain-unsupported-message'
 import { CrossChainSwapTradeReviewDialog } from './cross-chain-swap-trade-review-dialog'
 import {
   useDerivedStateCrossChainSwap,
@@ -21,11 +24,24 @@ import { useIsCrossChainSwapMaintenance } from './use-is-cross-chain-swap-mainte
 export const CrossChainSwapTradeButton: FC = () => {
   const { data: maintenance } = useIsCrossChainSwapMaintenance()
   const {
-    state: { swapAmount, swapAmountString, chainId0 },
+    state: { swapAmount, swapAmountString, chainId0, chainId1 },
   } = useDerivedStateCrossChainSwap()
   const { data: route, isError } = useSelectedCrossChainTradeRoute()
   const [checked, setChecked] = useState(false)
   const [slippagePercent] = useSlippageTolerance()
+
+  const { connector } = useAccount()
+
+  const showChainUnsupportedWarning = useMemo(
+    () =>
+      connector?.id
+        ? !isChainIdSupportedByWallet({
+            chainId: chainId1,
+            walletId: connector.id,
+          })
+        : false,
+    [chainId1, connector?.id],
+  )
 
   const showPriceImpactWarning = useMemo(() => {
     const priceImpactSeverity = warningSeverity(route?.priceImpact)
@@ -71,7 +87,8 @@ export const CrossChainSwapTradeButton: FC = () => {
                             !route?.amountOut?.gt(ZERO) ||
                               isError ||
                               +swapAmountString === 0 ||
-                              (!checked && showPriceImpactWarning),
+                              (!checked && showPriceImpactWarning) ||
+                              showChainUnsupportedWarning,
                           )}
                           color={showPriceImpactWarning ? 'red' : 'blue'}
                           fullWidth
@@ -93,6 +110,12 @@ export const CrossChainSwapTradeButton: FC = () => {
           </Checker.Connect>
         </Checker.Guard>
       </div>
+      {showChainUnsupportedWarning && (
+        <CrossChainSwapChainUnsupportedMessage
+          className="mt-4"
+          walletName={connector?.name}
+        />
+      )}
       {showSlippageWarning && <SlippageWarning className="mt-4" />}
       {showPriceImpactWarning && (
         <PriceImpactWarning

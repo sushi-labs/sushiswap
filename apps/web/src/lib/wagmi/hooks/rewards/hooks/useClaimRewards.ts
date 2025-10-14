@@ -2,7 +2,7 @@ import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
 import type { ClaimableRewards } from 'src/lib/hooks/react-query'
 import { logger } from 'src/lib/logger'
-import { UserRejectedRequestError } from 'viem'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import {
   useAccount,
   usePublicClient,
@@ -84,7 +84,7 @@ export const useClaimRewards = ({
   )
 
   const onError = useCallback((e: Error) => {
-    if (e.cause instanceof UserRejectedRequestError) {
+    if (isUserRejectedError(e)) {
       return
     }
 

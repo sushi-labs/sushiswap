@@ -19,9 +19,10 @@ import React, {
   useState,
 } from 'react'
 import { getNetworkName } from 'src/lib/network'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { ChainId } from 'sushi'
 import { isEvmChainId } from 'sushi/evm'
-import { ProviderRpcError, UserRejectedRequestError } from 'viem'
+import { ProviderRpcError } from 'viem'
 import { useChainId, useSwitchChain } from 'wagmi'
 import {
   NetworkSelector,
@@ -121,7 +122,7 @@ export const HeaderNetworkSelector: FC<{
         close()
       } catch (e) {
         console.error(`Failed to switch network: ${e}`)
-        if (e instanceof UserRejectedRequestError) return
+        if (isUserRejectedError(e)) return
         if (e instanceof ProviderRpcError) {
           createErrorToast(e.message, true)
         }

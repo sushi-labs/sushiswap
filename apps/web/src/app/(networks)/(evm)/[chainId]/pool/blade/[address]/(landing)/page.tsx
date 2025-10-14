@@ -1,4 +1,4 @@
-import { type V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
+import { type RawV2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import ms from 'ms'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
@@ -27,7 +27,7 @@ export default async function PoolPage(props: {
     {
       revalidate: ms('15m'),
     },
-  )()) as V2Pool
+  )()) as RawV2Pool
 
   return <PoolPageBlade pool={pool} />
 }

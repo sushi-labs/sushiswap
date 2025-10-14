@@ -73,8 +73,8 @@ export const crossChainTransactionRequestSchema = z.object({
   chainId: XSwapChainIdSchema,
   data: sz.hex(),
   from: sz.evm.address(),
-  gasLimit: sz.hex().transform((gasLimit: Hex) => hexToBigInt(gasLimit)),
-  gasPrice: sz.hex().transform((gasPrice: Hex) => hexToBigInt(gasPrice)),
+  gasLimit: sz.hex().transform((gasLimit) => hexToBigInt(gasLimit)),
+  gasPrice: sz.hex().transform((gasPrice) => hexToBigInt(gasPrice)),
   to: sz.evm.address(),
   value: sz.hex().transform((value: Hex) => hexToBigInt(value)),
 })

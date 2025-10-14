@@ -1,7 +1,7 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import type { V3Pool } from '@sushiswap/graph-client/data-api'
+import { type RawV3Pool, hydrateV3Pool } from '@sushiswap/graph-client/data-api'
 import { useBreakpoint } from '@sushiswap/hooks'
 import {
   Button,
@@ -32,7 +32,7 @@ import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-l
 import { PoolTransactionsV3 } from './pool-transactions-v3'
 import { StatisticsChartsV3 } from './statistics-chart-v3'
 
-const PoolPageV3: FC<{ pool: V3Pool }> = ({ pool }) => {
+const PoolPageV3: FC<{ pool: RawV3Pool }> = ({ pool }) => {
   return (
     <ConcentratedLiquidityProvider>
       <Pool pool={pool} />
@@ -40,7 +40,8 @@ const PoolPageV3: FC<{ pool: V3Pool }> = ({ pool }) => {
   )
 }
 
-const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
+const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
+  const pool = useMemo(() => hydrateV3Pool(rawPool), [rawPool])
   const { chainId, address } = pool
   const { isMd } = useBreakpoint('md')
   const { data: poolStats } = useConcentratedLiquidityPoolStats({
@@ -92,7 +93,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
     >
       <div className="flex flex-col-reverse gap-4 w-full lg:gap-10 lg:flex-row">
         <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0 flex flex-col gap-4 lg:gap-6">
-          <APRChart pool={pool} />
+          <APRChart pool={rawPool} />
           <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
         </div>
         <div className="flex-[1_1_0%] min-[1230px]:flex-[1_1_0%] h-fit min-w-0 flex flex-col gap-3">
@@ -123,7 +124,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
               />
             ) : null}
           </div>
-          <PoolAPR version="v3" pool={pool} />
+          <PoolAPR version="v3" pool={rawPool} />
           <Wrapper enableBorder className="!p-4 flex flex-col gap-5">
             <CardHeader className="!p-0 flex !flex-row justify-between items-center lg:items-start lg:!flex-col gap-2">
               <CardTitle className="text-slate-900 dark:lg:!text-slate-500 dark:!text-slate-100">
@@ -163,8 +164,8 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
               </CardGroup>
             </CardContent>
           </Wrapper>
-          <Pool24HVolume pool={pool} />
-          <PoolPrice pool={pool} showRate />
+          <Pool24HVolume pool={rawPool} />
+          <PoolPrice pool={rawPool} showRate />
         </div>
       </div>
 

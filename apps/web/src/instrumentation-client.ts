@@ -159,8 +159,12 @@ import {
   getWebInstrumentations,
   initializeFaro,
 } from '@grafana/faro-react'
-import { LogLevel } from '@grafana/faro-web-sdk'
-import { TracingInstrumentation } from '@grafana/faro-web-tracing'
+import {
+  type LogEvent,
+  LogLevel,
+  type TransportItem,
+} from '@grafana/faro-web-sdk'
+// import { TracingInstrumentation } from '@grafana/faro-web-tracing'
 
 const faroConfig = {
   url: 'https://faro.analytics-fe.sushi.com/collect',
@@ -178,6 +182,8 @@ const ignoreUrls = [
   '/_next/image',
 ]
 
+const ignoreLogStacks: RegExp[] = [/-extension:\/\//]
+
 if (!faro.api && !process.env.CI) {
   try {
     initializeFaro({
@@ -186,6 +192,19 @@ if (!faro.api && !process.env.CI) {
         name: 'sushiswap:web',
         version: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
         environment: process.env.NEXT_PUBLIC_VERCEL_ENV || 'development',
+      },
+      beforeSend: (item) => {
+        if (item.type === 'log') {
+          const log = item as TransportItem<LogEvent>
+          if (
+            ignoreLogStacks.some((r) =>
+              r.test(log.payload?.context?.stackFrames || ''),
+            )
+          ) {
+            return null
+          }
+        }
+        return item
       },
       consoleInstrumentation: {
         consoleErrorAsLog: true,
@@ -198,13 +217,11 @@ if (!faro.api && !process.env.CI) {
       },
       ignoreUrls,
       instrumentations: [
-        // Mandatory, omits default instrumentations otherwise.
         ...getWebInstrumentations({
           captureConsole: true,
           captureConsoleDisabledLevels: [LogLevel.DEBUG, LogLevel.INFO],
         }),
-        // Tracing package to get end-to-end visibility for HTTP requests.
-        new TracingInstrumentation(),
+        // new TracingInstrumentation(),
         new ReactIntegration(),
       ],
     })

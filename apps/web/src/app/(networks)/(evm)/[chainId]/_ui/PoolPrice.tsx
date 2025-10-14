@@ -1,6 +1,11 @@
 'use client'
 
-import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
+import {
+  type RawV2Pool,
+  type RawV3Pool,
+  hydrateV2Pool,
+  hydrateV3Pool,
+} from '@sushiswap/graph-client/data-api'
 import {
   CardContent,
   CardGroup,
@@ -10,16 +15,23 @@ import {
   Currency,
   classNames,
 } from '@sushiswap/ui'
+import { useMemo } from 'react'
 import { Amount } from 'sushi'
-import { EvmToken } from 'sushi/evm'
-import { formatUnits, parseUnits } from 'viem'
+import { EvmToken, SushiSwapProtocol } from 'sushi/evm'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { Wrapper } from '../[trade]/_ui/swap/trade/wrapper'
 
 export const PoolPrice = ({
-  pool,
+  pool: rawPool,
   showRate = false,
-}: { pool: V2Pool | V3Pool; showRate?: boolean }) => {
+}: { pool: RawV2Pool | RawV3Pool; showRate?: boolean }) => {
+  const pool = useMemo(
+    () =>
+      rawPool.protocol === SushiSwapProtocol.SUSHISWAP_V2
+        ? hydrateV2Pool(rawPool)
+        : hydrateV3Pool(rawPool),
+    [rawPool],
+  )
   const reserveToken0 = pool.token0
   const reserveToken1 = pool.token1
 
