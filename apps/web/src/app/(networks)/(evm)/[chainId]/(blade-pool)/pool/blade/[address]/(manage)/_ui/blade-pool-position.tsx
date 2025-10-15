@@ -184,7 +184,7 @@ const PoolPositionConnected: FC<PoolPositionProps> = ({ pool }) => {
           <div className="space-y-3">
             {assets.map((asset, index) => {
               const percentage = asset.weight * 100
-              const assetValue = positionValue * asset.weight
+              const assetValue = totalValue * asset.weight
 
               return (
                 <div key={index} className="flex items-center justify-between">
