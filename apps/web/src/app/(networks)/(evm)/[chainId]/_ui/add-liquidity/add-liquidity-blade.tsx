@@ -204,12 +204,13 @@ export const AddLiquidityBlade = ({
                     <p className="text-base font-medium text-slate-900 dark:text-pink-100">
                       Set Price
                     </p>
-                    <InitialPrice
+                    {/* @dev the real code for this is on the blade branch soliditeam is working off of */}
+                    {/* <InitialPrice
                       token0={tokenA}
                       token1={tokenB}
                       input0={inputs[tokenA!.id] ?? ''}
                       input1={inputs[tokenB!.id] ?? ''}
-                    />
+                    /> */}
                   </div>
                 </Collapsible>
               </>
