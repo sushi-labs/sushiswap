@@ -1,6 +1,6 @@
-import type { Transaction } from '@stellar/stellar-sdk'
-import { Account, Address, TransactionBuilder } from '@stellar/stellar-sdk'
-import { NETWORK_PASSPHRASE, RPC_URL } from '../constants'
+import type { Transaction, xdr } from '@stellar/stellar-sdk'
+import { Account, TransactionBuilder } from '@stellar/stellar-sdk'
+import { NETWORK_PASSPHRASE } from '../constants'
 import { SorobanClient } from './client'
 import { DEFAULT_TIMEOUT } from './constants'
 
@@ -41,9 +41,9 @@ export async function submitTransaction(signedTxXdr: string): Promise<{
  * @param operation - The operation to include
  * @returns Built transaction ready for signing
  */
-export async function buildTransaction(
+export async function buildTransaction<T extends xdr.Operation>(
   sourceAccount: string,
-  operation: any,
+  operation: T,
 ): Promise<Transaction> {
   // Get the current account info to get the correct sequence number
   const accountInfo = await getAccountInfo(sourceAccount)

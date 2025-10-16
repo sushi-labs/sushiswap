@@ -1,16 +1,10 @@
 import * as StellarSdk from '@stellar/stellar-sdk'
-import {
-  Account,
-  Operation,
-  Address as StellarAddress,
-  TransactionBuilder,
-  xdr,
-} from '@stellar/stellar-sdk'
+import { DEFAULT_TIMEOUT } from '@stellar/stellar-sdk/contract'
+import { getRouterContractClient } from '../soroban/client'
 import {
   CONTRACT_ADDRESSES,
   NETWORK_CONFIG,
 } from '../soroban/contract-addresses'
-import type { Token } from '../types/token.type'
 
 /**
  * Parameters for adding liquidity
@@ -84,74 +78,29 @@ export class SwapService {
     params: SwapExactInputSingleParams,
     signTransaction: (xdr: string) => Promise<string>,
   ): Promise<{ txHash: string; amountOut: bigint }> {
-    const soroban = new StellarSdk.rpc.Server(this.sorobanRpcUrl)
-    const horizon = new StellarSdk.Horizon.Server(this.horizonUrl)
-    const account = await horizon.loadAccount(userAddress)
-
-    // Build path and fees vectors for single-hop swap
-    const pathVec = StellarSdk.xdr.ScVal.scvVec([
-      new StellarAddress(params.tokenIn).toScVal(),
-      new StellarAddress(params.tokenOut).toScVal(),
-    ])
-
-    const feesVec = StellarSdk.xdr.ScVal.scvVec([
-      StellarSdk.xdr.ScVal.scvU32(params.fee),
-    ])
-
-    // Create map entries and sort them by key (critical for Soroban)
-    const swapEntries = [
-      { key: 'sender', val: new StellarAddress(userAddress).toScVal() },
-      { key: 'path', val: pathVec },
-      { key: 'fees', val: feesVec },
-      { key: 'recipient', val: new StellarAddress(params.recipient).toScVal() },
-      {
-        key: 'amount_in',
-        val: StellarSdk.nativeToScVal(params.amountIn.toString(), {
-          type: 'i128',
-        }),
-      },
-      {
-        key: 'amount_out_minimum',
-        val: StellarSdk.nativeToScVal(params.amountOutMinimum.toString(), {
-          type: 'i128',
-        }),
-      },
-      {
-        key: 'deadline',
-        val: StellarSdk.xdr.ScVal.scvU64(
-          StellarSdk.xdr.Uint64.fromString(params.deadline.toString()),
-        ),
-      },
-    ]
-      .sort((a, b) => (a.key > b.key ? 1 : a.key < b.key ? -1 : 0))
-      .map(
-        ({ key, val }) =>
-          new StellarSdk.xdr.ScMapEntry({
-            key: StellarSdk.xdr.ScVal.scvSymbol(key),
-            val,
-          }),
-      )
-
-    const swapParams = StellarSdk.xdr.ScVal.scvMap(swapEntries)
-
-    const operation = Operation.invokeContractFunction({
-      contract: CONTRACT_ADDRESSES.ROUTER,
-      function: 'swap_exact_input',
-      args: [swapParams],
+    const routerContractClient = getRouterContractClient({
+      contractId: CONTRACT_ADDRESSES.ROUTER,
     })
-
-    const transaction = new TransactionBuilder(account, {
-      fee: '100000',
-      networkPassphrase: this.networkPassphrase,
-    })
-      .addOperation(operation)
-      .setTimeout(180)
-      .build()
-
-    const prepared = await soroban.prepareTransaction(transaction)
+    const assembledTransaction = await routerContractClient.swap_exact_input(
+      {
+        params: {
+          sender: userAddress,
+          path: [params.tokenIn, params.tokenOut],
+          fees: [params.fee],
+          recipient: params.recipient,
+          amount_in: params.amountIn,
+          amount_out_minimum: params.amountOutMinimum,
+          deadline: BigInt(params.deadline),
+        },
+      },
+      {
+        timeoutInSeconds: DEFAULT_TIMEOUT,
+        fee: 100000,
+      },
+    )
 
     // Sign the transaction
-    const signedXdr = await signTransaction(prepared.toXDR())
+    const signedXdr = await signTransaction(assembledTransaction.toXDR())
     const signedTx = StellarSdk.TransactionBuilder.fromXDR(
       signedXdr,
       this.networkPassphrase,
@@ -187,71 +136,29 @@ export class SwapService {
     params: SwapExactInputParams,
     signTransaction: (xdr: string) => Promise<string>,
   ): Promise<{ txHash: string; amountOut: bigint }> {
-    const soroban = new StellarSdk.rpc.Server(this.sorobanRpcUrl)
-    const horizon = new StellarSdk.Horizon.Server(this.horizonUrl)
-    const account = await horizon.loadAccount(userAddress)
-
-    const pathVec = StellarSdk.xdr.ScVal.scvVec(
-      params.path.map((addr) => new StellarAddress(addr).toScVal()),
-    )
-    const feesVec = StellarSdk.xdr.ScVal.scvVec(
-      params.fees.map((fee) => StellarSdk.xdr.ScVal.scvU32(fee)),
-    )
-
-    // Create map entries and sort them by key (critical for Soroban)
-    const swapEntries = [
-      { key: 'sender', val: new StellarAddress(userAddress).toScVal() },
-      { key: 'path', val: pathVec },
-      { key: 'fees', val: feesVec },
-      { key: 'recipient', val: new StellarAddress(params.recipient).toScVal() },
-      {
-        key: 'amount_in',
-        val: StellarSdk.nativeToScVal(params.amountIn.toString(), {
-          type: 'i128',
-        }),
-      },
-      {
-        key: 'amount_out_minimum',
-        val: StellarSdk.nativeToScVal(params.amountOutMinimum.toString(), {
-          type: 'i128',
-        }),
-      },
-      {
-        key: 'deadline',
-        val: StellarSdk.xdr.ScVal.scvU64(
-          StellarSdk.xdr.Uint64.fromString(params.deadline.toString()),
-        ),
-      },
-    ]
-      .sort((a, b) => (a.key > b.key ? 1 : a.key < b.key ? -1 : 0))
-      .map(
-        ({ key, val }) =>
-          new StellarSdk.xdr.ScMapEntry({
-            key: StellarSdk.xdr.ScVal.scvSymbol(key),
-            val,
-          }),
-      )
-
-    const swapParams = StellarSdk.xdr.ScVal.scvMap(swapEntries)
-
-    const operation = Operation.invokeContractFunction({
-      contract: CONTRACT_ADDRESSES.ROUTER,
-      function: 'swap_exact_input',
-      args: [swapParams],
+    const routerContractClient = getRouterContractClient({
+      contractId: CONTRACT_ADDRESSES.ROUTER,
     })
-
-    const transaction = new TransactionBuilder(account, {
-      fee: '100000',
-      networkPassphrase: this.networkPassphrase,
-    })
-      .addOperation(operation)
-      .setTimeout(180)
-      .build()
-
-    const prepared = await soroban.prepareTransaction(transaction)
+    const assembledTransaction = await routerContractClient.swap_exact_input(
+      {
+        params: {
+          sender: userAddress,
+          path: params.path,
+          fees: params.fees,
+          recipient: params.recipient,
+          amount_in: params.amountIn,
+          amount_out_minimum: params.amountOutMinimum,
+          deadline: BigInt(params.deadline),
+        },
+      },
+      {
+        timeoutInSeconds: DEFAULT_TIMEOUT,
+        fee: 100000,
+      },
+    )
 
     // Sign the transaction
-    const signedXdr = await signTransaction(prepared.toXDR())
+    const signedXdr = await signTransaction(assembledTransaction.toXDR())
     const signedTx = StellarSdk.TransactionBuilder.fromXDR(
       signedXdr,
       this.networkPassphrase,

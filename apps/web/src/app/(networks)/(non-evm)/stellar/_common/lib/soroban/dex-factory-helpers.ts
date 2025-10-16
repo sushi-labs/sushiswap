@@ -1,16 +1,14 @@
+import { Address, TransactionBuilder } from '@stellar/stellar-sdk'
+import { NETWORK_PASSPHRASE } from '../constants'
 import {
-  Account,
-  Address,
-  Contract,
-  TransactionBuilder,
-  xdr,
-} from '@stellar/stellar-sdk'
-import { NETWORK_PASSPHRASE, RPC_URL } from '../constants'
-import { SorobanClient } from './client'
-import { SIMULATION_ACCOUNT, ZERO_ADDRESS } from './constants'
+  SorobanClient,
+  getFactoryContractClient,
+  getPoolContractClient,
+} from './client'
+import { DEFAULT_TIMEOUT, ZERO_ADDRESS } from './constants'
 import { CONTRACT_ADDRESSES } from './contract-addresses'
-import { handleResult } from './handle-result'
 import { getBaseTokens } from './token-helpers'
+import { submitTransaction, waitForTransaction } from './transaction-helpers'
 
 /**
  * Create a new pool with the specified tokens and fee tier
@@ -64,72 +62,37 @@ export async function createPool({
       throw new Error(`Pool already exists at address: ${existingPool}`)
     }
 
-    const factory = new Contract(CONTRACT_ADDRESSES.FACTORY)
-
-    // Load account from Horizon
-    const Horizon = await import('@stellar/stellar-sdk').then((m) => m.Horizon)
-    const horizon = new Horizon.Server('https://horizon-testnet.stellar.org')
-    const account = await horizon.loadAccount(sourceAccount)
-
-    // Build transaction with properly ordered tokens
-    const transaction = new TransactionBuilder(account, {
-      fee: '100000',
-      networkPassphrase: NETWORK_PASSPHRASE,
+    // First, let's try to simulate the transaction to see what happens
+    const factoryContractClient = getFactoryContractClient({
+      contractId: CONTRACT_ADDRESSES.FACTORY,
+      publicKey: sourceAccount,
     })
-      .addOperation(
-        factory.call(
-          'create_pool',
-          Address.fromString(token0).toScVal(),
-          Address.fromString(token1).toScVal(),
-          xdr.ScVal.scvU32(fee),
-        ),
-      )
-      .setTimeout(180)
-      .build()
-
     console.log('📤 Simulating transaction to calculate resources...')
-    console.log('🏭 Factory address:', CONTRACT_ADDRESSES.FACTORY)
+    console.log('🏭 Factory address:', factoryContractClient.options.contractId)
     console.log('🏭 Token0 address:', token0)
     console.log('🏭 Token1 address:', token1)
     console.log('🏭 Fee:', fee)
-
-    // Prepare transaction with Soroban server
-    const StellarSdk = await import('@stellar/stellar-sdk')
-    const sorobanServer = new StellarSdk.rpc.Server(RPC_URL)
-
-    // First, let's try to simulate the transaction to see what happens
-    try {
-      const simulationResult =
-        await sorobanServer.simulateTransaction(transaction)
-      console.log(
-        '🔍 Simulation result:',
-        JSON.stringify(simulationResult, null, 2),
+    const assembledTransaction = await factoryContractClient
+      .create_pool(
+        {
+          token_a: token0,
+          token_b: token1,
+          fee: fee,
+        },
+        {
+          timeoutInSeconds: DEFAULT_TIMEOUT,
+          fee: 100000,
+        },
       )
-
-      if ('error' in simulationResult) {
-        console.error('❌ Simulation failed:', simulationResult.error)
+      .catch((simError) => {
+        console.error('❌ Simulation error:', simError)
         throw new Error(
-          `Simulation failed: ${JSON.stringify(simulationResult.error)}`,
+          `Simulation failed: ${simError instanceof Error ? simError.message : String(simError)}`,
         )
-      }
-    } catch (simError) {
-      console.error('❌ Simulation error:', simError)
-      throw new Error(
-        `Simulation failed: ${simError instanceof Error ? simError.message : String(simError)}`,
-      )
-    }
-
-    let prepared
-    try {
-      prepared = await sorobanServer.prepareTransaction(transaction)
-      console.log('✅ Transaction prepared')
-    } catch (error) {
-      console.error('❌ prepareTransaction failed:', error)
-      throw error
-    }
+      })
 
     // Convert to XDR for signing
-    const transactionXdr = prepared.toXDR()
+    const transactionXdr = assembledTransaction.toXDR()
 
     console.log('🔏 Waiting for wallet signature...')
 
@@ -139,12 +102,6 @@ export async function createPool({
     console.log('📨 Submitting transaction to network...')
 
     // Submit the transaction
-    const submitTransaction = await import('./transaction-helpers').then(
-      (m) => m.submitTransaction,
-    )
-    const waitForTransaction = await import('./transaction-helpers').then(
-      (m) => m.waitForTransaction,
-    )
 
     const result = await submitTransaction(signedXdr)
 
@@ -161,7 +118,7 @@ export async function createPool({
       const poolAddress = Address.fromScVal(txResult.returnValue).toString()
 
       console.log('🎉 Pool created:', poolAddress)
-      
+
       // Initialize the pool with 1:1 price (tick 0)
       console.log('🎨 Initializing pool with 1:1 price...')
       try {
@@ -176,7 +133,7 @@ export async function createPool({
         console.error('⚠️ Pool initialization failed:', initError)
         // Continue anyway - pool might already be initialized
       }
-      
+
       return {
         poolAddress,
         txHash: result.hash,
@@ -194,7 +151,7 @@ export async function createPool({
 /**
  * Encode price as sqrt(price) * 2^96 for pool initialization
  * @param amount1 - Amount of token1
- * @param amount0 - Amount of token0  
+ * @param amount0 - Amount of token0
  * @returns sqrt(amount1/amount0) * 2^96 as bigint
  */
 function encodePriceSqrt(amount1: number, amount0: number): bigint {
@@ -222,34 +179,19 @@ export async function initializePoolIfNeeded({
 }): Promise<void> {
   try {
     // Check if pool is initialized by calling slot0
-    const pool = new Contract(poolAddress)
-    const simulationAccount = new Account(
-      'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF',
-      '0',
-    )
-    
-    const tx = new TransactionBuilder(simulationAccount, {
-      fee: '100000',
-      networkPassphrase: NETWORK_PASSPHRASE,
-    })
-      .addOperation(pool.call('slot0'))
-      .setTimeout(30)
-      .build()
-
-    const StellarSdk = await import('@stellar/stellar-sdk')
-    const sorobanServer = new StellarSdk.rpc.Server(RPC_URL)
-    const simResult = await sorobanServer.simulateTransaction(tx)
-
-    // If simulation succeeds, pool is initialized
-    if ('result' in simResult && simResult.result) {
-      console.log('✅ Pool is already initialized')
-      return
-    }
-
-    // Check if error is PoolNotInitialized (error 40)
-    if ('error' in simResult && simResult.error) {
-      const errorStr = String(simResult.error)
-      if (errorStr.includes('Error(Contract, #40)') || errorStr.includes('PoolNotInitialized')) {
+    try {
+      const poolContractClient = getPoolContractClient({
+        contractId: poolAddress,
+      })
+      await poolContractClient.slot0({
+        timeoutInSeconds: 30,
+        fee: 100000,
+      })
+    } catch (error) {
+      if (
+        String(error).includes('Error(Contract, #40)') ||
+        String(error).includes('PoolNotInitialized')
+      ) {
         console.log('🎨 Pool not initialized, initializing now...')
         await initializePool({
           poolAddress,
@@ -260,10 +202,8 @@ export async function initializePoolIfNeeded({
         console.log('✅ Pool initialized')
         return
       }
+      throw error
     }
-
-    // Unknown error, log and continue
-    console.warn('⚠️ Could not determine pool initialization status:', simResult)
   } catch (error) {
     console.error('Error checking pool initialization:', error)
     // Continue anyway - addLiquidity will fail if not initialized
@@ -289,42 +229,29 @@ async function initializePool({
   signTransaction: (xdr: string) => Promise<string>
 }): Promise<void> {
   try {
-    const pool = new Contract(poolAddress)
-
-    // Load account
-    const Horizon = await import('@stellar/stellar-sdk').then((m) => m.Horizon)
-    const horizon = new Horizon.Server('https://horizon-testnet.stellar.org')
-    const account = await horizon.loadAccount(sourceAccount)
-
-    // Convert bigint to U256 ScVal
-    const StellarSdk = await import('@stellar/stellar-sdk')
-    
-    // Convert bigint to U256 using nativeToScVal
-    const u256Val = StellarSdk.nativeToScVal(sqrtPriceX96, {type: 'u256'})
-
-    // Build initialize transaction
-    const transaction = new TransactionBuilder(account, {
-      fee: '100000',
-      networkPassphrase: NETWORK_PASSPHRASE,
+    const poolContractClient = getPoolContractClient({
+      contractId: poolAddress,
+      publicKey: sourceAccount,
     })
-      .addOperation(pool.call('initialize', u256Val))
-      .setTimeout(180)
-      .build()
+    const assembledTransaction = await poolContractClient.initialize(
+      {
+        sqrt_price_x96: sqrtPriceX96,
+      },
+      {
+        timeoutInSeconds: DEFAULT_TIMEOUT,
+        fee: 100000,
+      },
+    )
 
     // Prepare and sign
-    const sorobanServer = new StellarSdk.rpc.Server(RPC_URL)
-    const prepared = await sorobanServer.prepareTransaction(transaction)
-    const signedXdr = await signTransaction(prepared.toXDR())
+    const signedXdr = await signTransaction(assembledTransaction.toXDR())
 
     // Submit
     const signedTx = TransactionBuilder.fromXDR(signedXdr, NETWORK_PASSPHRASE)
-    const submitResult = await sorobanServer.sendTransaction(signedTx)
+    const submitResult = await SorobanClient.sendTransaction(signedTx)
 
     // Wait for confirmation
     if (submitResult.status === 'PENDING') {
-      const waitForTransaction = await import('./transaction-helpers').then(
-        (m) => m.waitForTransaction,
-      )
       await waitForTransaction(submitResult.hash)
     }
 
@@ -375,26 +302,21 @@ export async function getPoolDirectSDK({
     console.log('Direct SDK approach - checking pool:', tokenA, tokenB, fee)
 
     // Create contract instance using direct SDK approach
-    const contract = new Contract(CONTRACT_ADDRESSES.FACTORY)
-
-    // Call get_pool method directly
-    const result = await contract.call(
-      'get_pool',
-      Address.fromString(tokenA).toScVal(),
-      Address.fromString(tokenB).toScVal(),
-      xdr.ScVal.scvU32(fee),
-    )
+    const factoryContractClient = getFactoryContractClient({
+      contractId: CONTRACT_ADDRESSES.FACTORY,
+    })
+    const assembledTransaction = await factoryContractClient.get_pool({
+      token_a: tokenA,
+      token_b: tokenB,
+      fee: fee,
+    })
+    const result = assembledTransaction.result
 
     console.log('Direct SDK result:', result)
 
     // Handle the result - it should be an Option<string>
-    if (result && typeof result === 'object' && 'Some' in result) {
-      return result.Some as string
-    } else if (result && typeof result === 'string') {
-      return result
-    }
-
-    return null
+    // where Option<T> is defined as T | undefined
+    return result ?? null
   } catch (error) {
     console.error('Direct SDK getPool error:', error)
     return null
@@ -425,57 +347,26 @@ export async function getPoolTransactionBuilder({
       tokenA < tokenB ? [tokenA, tokenB] : [tokenB, tokenA]
 
     // Get account for transaction building
-    const factory = new Contract(CONTRACT_ADDRESSES.FACTORY)
-
-    // Build transaction
-    const tx = new TransactionBuilder(SIMULATION_ACCOUNT, {
-      fee: '100000',
-      networkPassphrase: NETWORK_PASSPHRASE,
+    const factoryContractClient = getFactoryContractClient({
+      contractId: CONTRACT_ADDRESSES.FACTORY,
     })
-      .addOperation(
-        factory.call(
-          'get_pool',
-          Address.fromString(token0).toScVal(),
-          Address.fromString(token1).toScVal(),
-          xdr.ScVal.scvU32(fee),
-        ),
-      )
-      .setTimeout(30)
-      .build()
+    const assembledTransaction = await factoryContractClient.get_pool(
+      {
+        token_a: token0,
+        token_b: token1,
+        fee: fee,
+      },
+      {
+        timeoutInSeconds: 30,
+        fee: 100000,
+      },
+    )
+    const result = assembledTransaction.result
 
-    // Simulate the transaction
-    const simResult = await SorobanClient.simulateTransaction(tx)
-
-    // Check if simulation was successful and has retval
-    if ('result' in simResult && simResult.result) {
-      const result = simResult.result as any
-      
-      // The return value is in result.retval (not result.results)
-      if (result.retval) {
-        try {
-          // Factory returns Address for existing pools, or Void for non-existent
-          const poolAddress = Address.fromScVal(result.retval)
-          const addressStr = poolAddress.toString()
-          
-          // Only log if pool exists (not zero address)
-          if (addressStr !== ZERO_ADDRESS) {
-            console.log(`✅ Found pool: ${token0.slice(0, 8)}.../${token1.slice(0, 8)}... (fee: ${fee}) → ${addressStr}`)
-          }
-          
-          return addressStr !== ZERO_ADDRESS ? addressStr : null
-        } catch (parseError) {
-          // Factory returned Void (pool doesn't exist)
-          return null
-        }
-      }
+    if (result === undefined || result === ZERO_ADDRESS) {
+      return null
     }
-
-    // Check for errors in simulation
-    if ('error' in simResult) {
-      console.error(`Factory query error for ${token0.slice(0, 8)}/${token1.slice(0, 8)} (${fee}):`, simResult.error)
-    }
-
-    return null
+    return result
   } catch (error) {
     console.error('Transaction Builder getPool error:', error)
     return null
@@ -528,7 +419,7 @@ export async function getPoolsForBaseTokenPairs(): Promise<string[]> {
   console.log(
     `🔍 Querying factory.get_pool() for ${queries.length} combinations (in parallel)...`,
   )
-  
+
   // Log all token pair queries for debugging
   console.log('Token pairs being queried:')
   queries.forEach((query, index) => {
@@ -627,29 +518,19 @@ export async function enableFeeAmount({
   tickSpacing: number
 }): Promise<void> {
   try {
-    const factory = new Contract(CONTRACT_ADDRESSES.FACTORY)
-
-    // Build transaction
-    const tx = new TransactionBuilder(SIMULATION_ACCOUNT, {
-      fee: '100000',
-      networkPassphrase: NETWORK_PASSPHRASE,
+    const factoryContractClient = getFactoryContractClient({
+      contractId: CONTRACT_ADDRESSES.FACTORY,
     })
-      .addOperation(
-        factory.call(
-          'e_fee_amt',
-          xdr.ScVal.scvU32(fee),
-          xdr.ScVal.scvI32(tickSpacing),
-        ),
-      )
-      .setTimeout(30)
-      .build()
-
-    // Simulate the transaction
-    const simResult = await SorobanClient.simulateTransaction(tx)
-
-    if (!('result' in simResult) || !simResult.result) {
-      throw new Error('Failed to enable fee amount')
-    }
+    const _assembledTransaction = await factoryContractClient.e_fee_amt(
+      {
+        fee: fee,
+        tick_spacing: tickSpacing,
+      },
+      {
+        timeoutInSeconds: 30,
+        fee: 100000,
+      },
+    )
   } catch (error) {
     console.error('Error enabling fee amount:', error)
     throw error
@@ -720,32 +601,23 @@ export async function debugCreatePoolParams(
 
   // Test factory contract simulation
   try {
-    const factory = new Contract(CONTRACT_ADDRESSES.FACTORY)
-    const simulationAccount = new Account(
-      'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF',
-      '0',
+    const factoryContractClient = getFactoryContractClient({
+      contractId: CONTRACT_ADDRESSES.FACTORY,
+    })
+    const assembledTransaction = await factoryContractClient.create_pool(
+      {
+        token_a: token0,
+        token_b: token1,
+        fee: fee,
+      },
+      {
+        timeoutInSeconds: 30,
+        fee: 100000,
+      },
     )
 
-    const testTx = new TransactionBuilder(simulationAccount, {
-      fee: '100000',
-      networkPassphrase: NETWORK_PASSPHRASE,
-    })
-      .addOperation(
-        factory.call(
-          'create_pool',
-          Address.fromString(token0).toScVal(),
-          Address.fromString(token1).toScVal(),
-          xdr.ScVal.scvU32(fee),
-        ),
-      )
-      .setTimeout(30)
-      .build()
-
-    const { SorobanClient } = await import('./client')
-    const simResult = await SorobanClient.simulateTransaction(testTx)
-
     console.log('\n🏭 Factory simulation result:')
-    console.log(JSON.stringify(simResult, null, 2))
+    console.log(JSON.stringify(assembledTransaction.result, null, 2))
   } catch (error) {
     console.error('\n❌ Factory simulation failed:', error)
   }

@@ -1,14 +1,9 @@
-import {
-  Address,
-  Operation,
-  TransactionBuilder,
-  xdr,
-} from '@stellar/stellar-sdk'
+import type { AssembledTransaction } from '@stellar/stellar-sdk/contract'
 import { tokens } from '../assets/token-assets'
-import { NETWORK_NAME, NETWORK_PASSPHRASE, RPC_URL } from '../constants'
+import { NETWORK_NAME } from '../constants'
 import type { Token } from '../types/token.type'
-import { SorobanClient } from './client'
-import { DEFAULT_TIMEOUT, SIMULATION_ACCOUNT } from './constants'
+import { getTokenContractClient } from './client'
+import { DEFAULT_TIMEOUT } from './constants'
 import { CONTRACT_ADDRESSES } from './contract-addresses'
 
 /**
@@ -49,49 +44,22 @@ export async function getTokenBalance(
   tokenAddress: string,
 ): Promise<bigint> {
   try {
-    const balanceTx = new TransactionBuilder(SIMULATION_ACCOUNT, {
-      fee: '100',
-      networkPassphrase: NETWORK_PASSPHRASE,
+    const tokenContractClient = getTokenContractClient({
+      contractId: tokenAddress,
     })
-      .addOperation(
-        Operation.invokeContractFunction({
-          contract: tokenAddress,
-          function: 'balance',
-          args: [Address.fromString(address).toScVal()],
-        }),
-      )
-      .setTimeout(DEFAULT_TIMEOUT)
-      .build()
-
     // Simulate and parse results
-    const result = await SorobanClient.simulateTransaction(balanceTx)
-
-    // Check for errors first
-    if ('error' in result) {
-      console.error('Simulation error:', result.error)
-      return 0n
-    }
-
-    if ('result' in result && result.result) {
-      const simResult = result.result as any
-
-      // The retval contains the ScVal data directly
-      if (simResult.retval) {
-        // Check if it's a u128 or i128 ScVal
-        if (
-          (simResult.retval._switch?.name === 'scvU128' &&
-            simResult.retval._arm === 'u128') ||
-          (simResult.retval._switch?.name === 'scvI128' &&
-            simResult.retval._arm === 'i128')
-        ) {
-          const balance = simResult.retval._value._attributes.lo._value
-          return BigInt(balance)
-        }
-      }
-    }
-    return 0n
+    const { result } = await tokenContractClient.balance(
+      { id: address },
+      {
+        timeoutInSeconds: DEFAULT_TIMEOUT,
+        fee: 100,
+      },
+    )
+    return result
   } catch (error) {
-    console.error('Error fetching token balance:', error)
+    if (!String(error).includes('Error(Storage, MissingValue)')) {
+      console.error('Error fetching token balance:', String(error))
+    }
     return 0n
   }
 }
@@ -122,43 +90,20 @@ export async function getTokenAllowance(
   tokenAddress: string,
 ): Promise<bigint> {
   try {
-    const allowanceTx = new TransactionBuilder(SIMULATION_ACCOUNT, {
-      fee: '100',
-      networkPassphrase: NETWORK_PASSPHRASE,
+    const tokenContractClient = getTokenContractClient({
+      contractId: tokenAddress,
     })
-      .addOperation(
-        Operation.invokeContractFunction({
-          contract: tokenAddress,
-          function: 'allowance',
-          args: [
-            Address.fromString(owner).toScVal(),
-            Address.fromString(spender).toScVal(),
-          ],
-        }),
-      )
-      .setTimeout(DEFAULT_TIMEOUT)
-      .build()
-
-    // Simulate and parse results
-    const result = await SorobanClient.simulateTransaction(allowanceTx)
-    if ('result' in result && result.result) {
-      const simResult = result.result as any
-
-      // The retval contains the ScVal data directly
-      if (simResult.retval) {
-        // Check if it's a u128 or i128 ScVal
-        if (
-          (simResult.retval._switch?.name === 'scvU128' &&
-            simResult.retval._arm === 'u128') ||
-          (simResult.retval._switch?.name === 'scvI128' &&
-            simResult.retval._arm === 'i128')
-        ) {
-          const allowance = simResult.retval._value._attributes.lo._value
-          return BigInt(allowance)
-        }
-      }
-    }
-    return 0n
+    const { result } = await tokenContractClient.allowance(
+      {
+        from: owner,
+        spender: spender,
+      },
+      {
+        timeoutInSeconds: DEFAULT_TIMEOUT,
+        fee: 100,
+      },
+    )
+    return result
   } catch (error) {
     console.error('Error fetching token allowance:', error)
     return 0n
@@ -176,29 +121,26 @@ export async function approveToken(
   spender: string,
   amount: bigint,
   tokenAddress: string,
-): Promise<any> {
+): Promise<AssembledTransaction<null>> {
   try {
-    const approveTx = new TransactionBuilder(SIMULATION_ACCOUNT, {
-      fee: '100',
-      networkPassphrase: NETWORK_PASSPHRASE,
+    const tokenContractClient = getTokenContractClient({
+      contractId: tokenAddress,
     })
-      .addOperation(
-        Operation.invokeContractFunction({
-          contract: tokenAddress,
-          function: 'approve',
-          args: [
-            Address.fromString(spender).toScVal(),
-            Address.fromString(spender).toScVal(),
-            xdr.ScVal.scvI64(xdr.Int64.fromString(amount.toString())),
-            xdr.ScVal.scvU32(535680), // ~30 days in ledgers
-          ],
-        }),
-      )
-      .setTimeout(DEFAULT_TIMEOUT)
-      .build()
+    const assembledTransaction = await tokenContractClient.approve(
+      {
+        from: spender,
+        spender: spender,
+        amount: amount,
+        expiration_ledger: 535680, // ~30 days in ledgers
+      },
+      {
+        timeoutInSeconds: DEFAULT_TIMEOUT,
+        fee: 100,
+      },
+    )
 
     // For write operations, we return the transaction to be submitted
-    return approveTx
+    return assembledTransaction
   } catch (error) {
     console.error('Error creating approve transaction:', error)
     throw error
@@ -216,28 +158,25 @@ export async function transferToken(
   to: string,
   amount: bigint,
   tokenAddress: string,
-): Promise<any> {
+): Promise<AssembledTransaction<null>> {
   try {
-    const transferTx = new TransactionBuilder(SIMULATION_ACCOUNT, {
-      fee: '100',
-      networkPassphrase: NETWORK_PASSPHRASE,
+    const tokenContractClient = getTokenContractClient({
+      contractId: tokenAddress,
     })
-      .addOperation(
-        Operation.invokeContractFunction({
-          contract: tokenAddress,
-          function: 'transfer',
-          args: [
-            Address.fromString(to).toScVal(), // This would need to be the actual sender address
-            Address.fromString(to).toScVal(),
-            xdr.ScVal.scvI64(xdr.Int64.fromString(amount.toString())),
-          ],
-        }),
-      )
-      .setTimeout(DEFAULT_TIMEOUT)
-      .build()
+    const assembledTransaction = await tokenContractClient.transfer(
+      {
+        from: to,
+        to: to,
+        amount: amount,
+      },
+      {
+        timeoutInSeconds: DEFAULT_TIMEOUT,
+        fee: 100,
+      },
+    )
 
     // For write operations, we return the transaction to be submitted
-    return transferTx
+    return assembledTransaction
   } catch (error) {
     console.error('Error creating transfer transaction:', error)
     throw error
@@ -257,29 +196,26 @@ export async function transferFromToken(
   to: string,
   amount: bigint,
   tokenAddress: string,
-): Promise<any> {
+): Promise<AssembledTransaction<null>> {
   try {
-    const transferFromTx = new TransactionBuilder(SIMULATION_ACCOUNT, {
-      fee: '100',
-      networkPassphrase: NETWORK_PASSPHRASE,
+    const tokenContractClient = getTokenContractClient({
+      contractId: tokenAddress,
     })
-      .addOperation(
-        Operation.invokeContractFunction({
-          contract: tokenAddress,
-          function: 'transfer_from',
-          args: [
-            Address.fromString(from).toScVal(), // This would need to be the actual spender address
-            Address.fromString(from).toScVal(),
-            Address.fromString(to).toScVal(),
-            xdr.ScVal.scvI64(xdr.Int64.fromString(amount.toString())),
-          ],
-        }),
-      )
-      .setTimeout(DEFAULT_TIMEOUT)
-      .build()
+    const assembledTransaction = await tokenContractClient.transfer_from(
+      {
+        from: from,
+        spender: from, // This would need to be the actual spender address
+        to: to,
+        amount: amount,
+      },
+      {
+        timeoutInSeconds: DEFAULT_TIMEOUT,
+        fee: 100,
+      },
+    )
 
     // For write operations, we return the transaction to be submitted
-    return transferFromTx
+    return assembledTransaction
   } catch (error) {
     console.error('Error creating transferFrom transaction:', error)
     throw error
@@ -298,44 +234,47 @@ export async function getTokenMetadata(tokenAddress: string): Promise<{
   totalSupply: bigint
 }> {
   try {
-    // Helper function to simulate contract call and extract result
-    const simulateContractCall = async (
-      functionName: string,
-      args: any[] = [],
-    ) => {
-      const tx = new TransactionBuilder(SIMULATION_ACCOUNT, {
-        fee: '100',
-        networkPassphrase: NETWORK_PASSPHRASE,
-      })
-        .addOperation(
-          Operation.invokeContractFunction({
-            contract: tokenAddress,
-            function: functionName,
-            args: args,
-          }),
-        )
-        .setTimeout(DEFAULT_TIMEOUT)
-        .build()
-
-      const result = await SorobanClient.simulateTransaction(tx)
-      if ('result' in result && result.result) {
-        const simResult = result.result as any
-        if (simResult.retval) {
-          // Handle different return types
-          if (simResult.retval._switch?.name === 'scvString') {
-            return simResult.retval._value
-          } else if (simResult.retval._switch?.name === 'scvU32') {
-            return simResult.retval._value
-          }
-        }
-      }
-      return null
-    }
+    const tokenContractClient = getTokenContractClient({
+      contractId: tokenAddress,
+    })
 
     const [nameResult, symbolResult, decimalsResult] = await Promise.all([
-      simulateContractCall('name'),
-      simulateContractCall('symbol'),
-      simulateContractCall('decimals'),
+      tokenContractClient
+        .name({
+          timeoutInSeconds: DEFAULT_TIMEOUT,
+          fee: 100,
+        })
+        .then(
+          (assembledTransaction) => assembledTransaction.result,
+          (e) => {
+            console.error('Error fetching token name:', e)
+            return ''
+          },
+        ),
+      tokenContractClient
+        .symbol({
+          timeoutInSeconds: DEFAULT_TIMEOUT,
+          fee: 100,
+        })
+        .then(
+          (assembledTransaction) => assembledTransaction.result,
+          (e) => {
+            console.error('Error fetching token symbol:', e)
+            return ''
+          },
+        ),
+      tokenContractClient
+        .decimals({
+          timeoutInSeconds: DEFAULT_TIMEOUT,
+          fee: 100,
+        })
+        .then(
+          (assembledTransaction) => assembledTransaction.result,
+          (e) => {
+            console.error('Error fetching token decimals:', e)
+            return 0
+          },
+        ),
     ])
 
     return {

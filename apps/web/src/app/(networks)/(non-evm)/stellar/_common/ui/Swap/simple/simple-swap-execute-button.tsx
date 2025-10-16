@@ -3,8 +3,8 @@
 import { Button } from '@sushiswap/ui'
 import React, { useMemo } from 'react'
 import { useExecuteSwap } from '~stellar/_common/lib/hooks/swap'
-import { Checker } from '~stellar/_common/ui/checker'
 import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
+import { Checker } from '~stellar/_common/ui/checker'
 import { useStellarWallet } from '~stellar/providers'
 import { useSimpleSwapState } from './simple-swap-provider/simple-swap-provider'
 

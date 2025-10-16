@@ -51,7 +51,8 @@ export const useExecuteSwap = () => {
       console.log('Transaction hash:', result.txHash)
 
       // Show success toast with Stellar explorer link
-      const amountOut = result.amountOut < 0n ? -result.amountOut : result.amountOut
+      const amountOut =
+        result.amountOut < 0n ? -result.amountOut : result.amountOut
       const amountOutFormatted = (Number(amountOut) / 1e7).toFixed(4)
       const amountInFormatted = (Number(params.amountIn) / 1e7).toFixed(4)
 
@@ -121,7 +122,8 @@ export const useExecuteMultiHopSwap = () => {
       console.log('Transaction hash:', result.txHash)
 
       // Show success toast
-      const amountOut = result.amountOut < 0n ? -result.amountOut : result.amountOut
+      const amountOut =
+        result.amountOut < 0n ? -result.amountOut : result.amountOut
       const amountOutFormatted = (Number(amountOut) / 1e7).toFixed(4)
       const amountInFormatted = (Number(params.amountIn) / 1e7).toFixed(4)
 
@@ -148,7 +150,10 @@ export const useExecuteMultiHopSwap = () => {
     },
     onError: (error) => {
       console.error('Failed to execute multi-hop swap:', error)
-      createErrorToast(error.message || 'Failed to execute multi-hop swap', false)
+      createErrorToast(
+        error.message || 'Failed to execute multi-hop swap',
+        false,
+      )
     },
   })
 }

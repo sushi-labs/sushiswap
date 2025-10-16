@@ -10,7 +10,6 @@
     "enable-remote-caching": "turbo link",
     "format": "pnpm sort && biome format . --write",
     "generate": "dotenv -- turbo run generate --no-cache --parallel --continue",
-    "generate-stellar-bindings:testnet": "./scripts/generate-stellar-bindings.sh",
     "lint": "biome check .",
     "lint:fix": "biome check . --write",
     "lint:fix:force": "biome check . --write --unsafe",

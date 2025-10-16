@@ -1,11 +1,6 @@
 'use client'
 
-import {
-  Button,
-  FormSection,
-  SelectIcon,
-  TextField,
-} from '@sushiswap/ui'
+import { Button, FormSection, SelectIcon, TextField } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useCreatePool } from '~stellar/_common/lib/hooks/factory/use-create-pool'
@@ -23,8 +18,8 @@ const FEE_TIERS = [
 
 // Tick spacing for fee tiers (Uniswap V3 standard)
 const TICK_SPACINGS: Record<number, number> = {
-  500: 10,    // 0.05% fee
-  3000: 60,   // 0.3% fee
+  500: 10, // 0.05% fee
+  3000: 60, // 0.3% fee
   10000: 200, // 1% fee
 }
 
@@ -52,13 +47,18 @@ export default function AddPoolPage() {
     const spacing = TICK_SPACINGS[selectedFee]
     setTickLower(alignTick(tickLower, spacing))
     setTickUpper(alignTick(tickUpper, spacing))
-  }, [selectedFee])
+  }, [selectedFee, tickLower, tickUpper])
 
   const handleCreatePool = async () => {
     if (!token0 || !token1 || !connectedAddress) return
-    
+
     // Validate liquidity amounts are provided
-    if (!token0Amount || !token1Amount || Number.parseFloat(token0Amount) <= 0 || Number.parseFloat(token1Amount) <= 0) {
+    if (
+      !token0Amount ||
+      !token1Amount ||
+      Number.parseFloat(token0Amount) <= 0 ||
+      Number.parseFloat(token1Amount) <= 0
+    ) {
       console.error('Liquidity amounts are required')
       return
     }
@@ -67,7 +67,9 @@ export default function AddPoolPage() {
     const tickSpacing = TICK_SPACINGS[selectedFee]
     if (tickLower % tickSpacing !== 0 || tickUpper % tickSpacing !== 0) {
       console.error(`Tick values must be multiples of ${tickSpacing}`)
-      alert(`Tick values must be multiples of ${tickSpacing} for the selected fee tier`)
+      alert(
+        `Tick values must be multiples of ${tickSpacing} for the selected fee tier`,
+      )
       return
     }
 
@@ -92,8 +94,10 @@ export default function AddPoolPage() {
       } catch (createError: any) {
         // Check if pool already exists
         const errorMessage = createError?.message || String(createError)
-        const poolExistsMatch = errorMessage.match(/Pool already exists at address: ([A-Z0-9]{56})/)
-        
+        const poolExistsMatch = errorMessage.match(
+          /Pool already exists at address: ([A-Z0-9]{56})/,
+        )
+
         if (poolExistsMatch) {
           poolAddress = poolExistsMatch[1]
           console.log('ℹ️ Pool already exists at:', poolAddress)
@@ -124,9 +128,15 @@ export default function AddPoolPage() {
     }
   }
 
-  const hasValidAmounts = token0Amount && token1Amount && Number.parseFloat(token0Amount) > 0 && Number.parseFloat(token1Amount) > 0
-  const canCreate = token0 && token1 && token0.contract !== token1.contract && hasValidAmounts
-  const isCreating = createPoolMutation.isPending || addLiquidityMutation.isPending
+  const hasValidAmounts =
+    token0Amount &&
+    token1Amount &&
+    Number.parseFloat(token0Amount) > 0 &&
+    Number.parseFloat(token1Amount) > 0
+  const canCreate =
+    token0 && token1 && token0.contract !== token1.contract && hasValidAmounts
+  const isCreating =
+    createPoolMutation.isPending || addLiquidityMutation.isPending
 
   return (
     <>
@@ -258,10 +268,12 @@ export default function AddPoolPage() {
           </div>
 
           <p className="text-xs text-muted-foreground">
-            Tick range defines the price range for your liquidity. Default: -60000 to 60000 (full range). Ticks auto-align to spacing: {TICK_SPACINGS[selectedFee]}.
+            Tick range defines the price range for your liquidity. Default:
+            -60000 to 60000 (full range). Ticks auto-align to spacing:{' '}
+            {TICK_SPACINGS[selectedFee]}.
           </p>
         </section>
-        
+
         {token0 && token1 && !hasValidAmounts && (
           <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
             <p className="text-sm text-blue-600 dark:text-blue-400">

@@ -31,7 +31,8 @@ export const useRouterExecuteSwap = () => {
 
       // Show success toast
       const amountInFormatted = (Number(params.amountIn) / 1e7).toFixed(4)
-      const amountOut = result.amountOut < 0n ? -result.amountOut : result.amountOut
+      const amountOut =
+        result.amountOut < 0n ? -result.amountOut : result.amountOut
       const amountOutFormatted = (Number(amountOut) / 1e7).toFixed(4)
 
       createToast({

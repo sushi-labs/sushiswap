@@ -1,33 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import * as StellarSdk from '@stellar/stellar-sdk'
-import {
-  Account,
-  Address,
-  Contract,
-  Horizon,
-  Operation,
-  TransactionBuilder,
-  xdr,
-} from '@stellar/stellar-sdk'
-import { NETWORK_PASSPHRASE, RPC_URL } from '../constants'
+import type { AssembledTransaction } from '@stellar/stellar-sdk/contract'
 import type { PoolInfo, PoolLiquidity, PoolReserves } from '../types/pool.type'
 import type { Token } from '../types/token.type'
 import { formatTokenAmount } from '../utils/formatters'
-import { SorobanClient } from './client'
-import { DEFAULT_TIMEOUT, SIMULATION_ACCOUNT } from './constants'
-import {
-  CONTRACT_ADDRESSES,
-  NETWORK_CONFIG,
-  getPoolConfig,
-} from './contract-addresses'
-import { handleResult } from './handle-result'
-import { getTokenBalance, getTokenByCode, getTokenByContract } from './token-helpers'
-import {
-  buildTransaction,
-  submitTransaction,
-  waitForTransaction,
-} from './transaction-helpers'
+import { getPoolContractClient, getTokenContractClient } from './client'
+import { DEFAULT_TIMEOUT } from './constants'
+import { getPoolConfig } from './contract-addresses'
 import { discoverAllPools } from './dex-factory-helpers'
+import {
+  getTokenBalance,
+  getTokenByCode,
+  getTokenByContract,
+} from './token-helpers'
+import { submitTransaction, waitForTransaction } from './transaction-helpers'
 
 export interface PoolBasicInfo {
   address: string
@@ -50,84 +35,49 @@ async function getPoolInfoFromContract(address: string): Promise<{
   try {
     console.log(`🔍 Querying pool contract for ${address}...`)
 
-    const contract = new Contract(address)
-
-    // Build separate transactions for each call (one operation per transaction)
-    // This matches the stellar-auth-test pattern
-
-    // Get token0
-    const token0Tx = new TransactionBuilder(SIMULATION_ACCOUNT, {
-      fee: '100',
-      networkPassphrase: NETWORK_PASSPHRASE,
+    const poolContractClient = getPoolContractClient({
+      contractId: address,
     })
-      .addOperation(contract.call('token0'))
-      .setTimeout(30)
-      .build()
-
-    // Get token1
-    const token1Tx = new TransactionBuilder(SIMULATION_ACCOUNT, {
-      fee: '100',
-      networkPassphrase: NETWORK_PASSPHRASE,
-    })
-      .addOperation(contract.call('token1'))
-      .setTimeout(30)
-      .build()
-
-    // Get fee
-    const feeTx = new TransactionBuilder(SIMULATION_ACCOUNT, {
-      fee: '100',
-      networkPassphrase: NETWORK_PASSPHRASE,
-    })
-      .addOperation(contract.call('fee'))
-      .setTimeout(30)
-      .build()
 
     // Simulate all three transactions in parallel
-    const [token0Result, token1Result, feeResult] = await Promise.all([
-      SorobanClient.simulateTransaction(token0Tx),
-      SorobanClient.simulateTransaction(token1Tx),
-      SorobanClient.simulateTransaction(feeTx),
+    const [token0Address, token1Address, fee] = await Promise.all([
+      poolContractClient
+        .token0({
+          timeoutInSeconds: 30,
+          fee: 100,
+        })
+        .then(
+          (assembledTransaction) => assembledTransaction.result,
+          (e) => {
+            console.error('Error fetching pool token0:', e)
+            throw e
+          },
+        ),
+      poolContractClient
+        .token1({
+          timeoutInSeconds: 30,
+          fee: 100,
+        })
+        .then(
+          (assembledTransaction) => assembledTransaction.result,
+          (e) => {
+            console.error('Error fetching pool token1:', e)
+            throw e
+          },
+        ),
+      poolContractClient
+        .fee({
+          timeoutInSeconds: 30,
+          fee: 100,
+        })
+        .then(
+          (assembledTransaction) => assembledTransaction.result,
+          (e) => {
+            console.error('Error fetching pool fee:', e)
+            throw e
+          },
+        ),
     ])
-
-    // Parse token0 - use retval not results
-    if (!('result' in token0Result && token0Result.result)) {
-      console.error(`  Failed to get token0 from pool ${address}`)
-      return null
-    }
-    
-    const token0Retval = (token0Result.result as any).retval
-    if (!token0Retval) {
-      console.error(`  No retval for token0 from pool ${address}`)
-      return null
-    }
-
-    // Parse token1 - use retval not results
-    if (!('result' in token1Result && token1Result.result)) {
-      console.error(`  Failed to get token1 from pool ${address}`)
-      return null
-    }
-    
-    const token1Retval = (token1Result.result as any).retval
-    if (!token1Retval) {
-      console.error(`  No retval for token1 from pool ${address}`)
-      return null
-    }
-
-    // Parse fee - use retval not results
-    if (!('result' in feeResult && feeResult.result)) {
-      console.error(`  Failed to get fee from pool ${address}`)
-      return null
-    }
-    
-    const feeRetval = (feeResult.result as any).retval
-    if (!feeRetval) {
-      console.error(`  No retval for fee from pool ${address}`)
-      return null
-    }
-
-    const token0Address = Address.fromScVal(token0Retval).toString()
-    const token1Address = Address.fromScVal(token1Retval).toString()
-    const fee = feeRetval.u32()
 
     console.log(
       `  Pool contract data: token0=${token0Address}, token1=${token1Address}, fee=${fee}`,
@@ -138,8 +88,10 @@ async function getPoolInfoFromContract(address: string): Promise<{
     const token0FromList = getTokenByContract(token0Address)
     const token1FromList = getTokenByContract(token1Address)
 
-    const token0Code = token0FromList?.code || `Token0(${token0Address.slice(0, 6)})`
-    const token1Code = token1FromList?.code || `Token1(${token1Address.slice(0, 6)})`
+    const token0Code =
+      token0FromList?.code || `Token0(${token0Address.slice(0, 6)})`
+    const token1Code =
+      token1FromList?.code || `Token1(${token1Address.slice(0, 6)})`
 
     console.log(`  Token codes: token0=${token0Code}, token1=${token1Code}`)
 
@@ -158,54 +110,18 @@ async function getPoolInfoFromContract(address: string): Promise<{
 /**
  * Get token symbol/code from token contract
  */
-async function getTokenCodeFromContract(
+async function _getTokenCodeFromContract(
   address: string,
 ): Promise<string | null> {
   try {
     console.log(`    🔍 Getting token symbol for ${address}`)
-    const contract = new Contract(address)
-
-    const tx = new TransactionBuilder(SIMULATION_ACCOUNT, {
-      fee: '100000',
-      networkPassphrase: NETWORK_PASSPHRASE,
+    const tokenContractClient = getTokenContractClient({ contractId: address })
+    const { result } = await tokenContractClient.symbol({
+      timeoutInSeconds: 30,
+      fee: 100000,
     })
-      .addOperation(contract.call('symbol'))
-      .setTimeout(30)
-      .build()
 
-    const simResult = await SorobanClient.simulateTransaction(tx)
-
-    if ('result' in simResult && simResult.result) {
-      const result = simResult.result as any
-
-      // Try retval first (newer format)
-      if (result.retval) {
-        try {
-          const symbol = result.retval.sym().toString()
-          console.log(`    ✅ Token symbol for ${address}: ${symbol}`)
-          return symbol
-        } catch (retvalError) {
-          console.error(`    Failed to parse symbol from retval:`, retvalError)
-        }
-      }
-
-      // Fallback to results array (older format)
-      if (result.results && result.results.length > 0) {
-        const firstResult = result.results[0]
-        if (firstResult) {
-          const symbol = xdr.ScVal.fromXDR(firstResult.xdr, 'base64')
-            .sym()
-            .toString()
-          console.log(`    ✅ Token symbol for ${address}: ${symbol}`)
-          return symbol
-        }
-      }
-    } else if ('error' in simResult) {
-      console.error(`    ❌ Token symbol simulation error:`, simResult.error)
-    }
-
-    console.warn(`    ⚠️ No symbol found for token ${address}`)
-    return null
+    return result
   } catch (error) {
     console.error(`❌ Error getting token symbol from ${address}:`, error)
     return null
@@ -368,7 +284,7 @@ export async function getPoolInfo(address: string): Promise<PoolInfo | null> {
     }
   } catch (error) {
     // Pools with no liquidity or missing data are expected
-    console.warn(`⚠️ Skipping pool ${address} (likely empty or inactive)`)
+    console.warn(`⚠️ Skipping pool ${address} (likely empty or inactive)`, error)
     return null
   }
 }
@@ -377,41 +293,17 @@ export async function fetchPoolLiquidity(
   poolAddress: string,
 ): Promise<PoolLiquidity | null> {
   try {
-    const liqTx = new TransactionBuilder(SIMULATION_ACCOUNT, {
-      fee: '100',
-      networkPassphrase: NETWORK_PASSPHRASE,
+    const poolContractClient = getPoolContractClient({
+      contractId: poolAddress,
     })
-      .addOperation(
-        Operation.invokeContractFunction({
-          contract: poolAddress,
-          function: 'liquidity',
-          args: [],
-        }),
-      )
-      .setTimeout(DEFAULT_TIMEOUT)
-      .build()
-
-    // Simulate and parse results
-    const result = await SorobanClient.simulateTransaction(liqTx)
-    if ('result' in result && result.result) {
-      const simResult = result.result as any
-
-      // The retval contains the ScVal data directly
-      if (simResult.retval) {
-        // Check if it's a u128 or i128 ScVal
-        if (
-          (simResult.retval._switch?.name === 'scvU128' &&
-            simResult.retval._arm === 'u128') ||
-          (simResult.retval._switch?.name === 'scvI128' &&
-            simResult.retval._arm === 'i128')
-        ) {
-          const liquidity = simResult.retval._value._attributes.lo._value
-          const liquidityFormatted = formatTokenAmount(liquidity, 7, 2)
-          return { amount: liquidity, formatted: liquidityFormatted }
-        }
-      }
+    const { result } = await poolContractClient.liquidity({
+      timeoutInSeconds: DEFAULT_TIMEOUT,
+      fee: 100,
+    })
+    return {
+      amount: result.toString(),
+      formatted: formatTokenAmount(result, 7, 2),
     }
-    return null
   } catch (error) {
     console.error('Error fetching pool liquidity:', error)
     return null
@@ -581,89 +473,95 @@ export async function addLiquidity({
   hash: string
   result: any
 }> {
-  // Validate parameters
-  if (tickLower >= tickUpper) {
-    throw new Error('tickLower must be less than tickUpper')
-  }
-
-  if (tickLower < -60000 || tickUpper > 60000) {
-    throw new Error(
-      'Tick values must be within valid range (-887272 to 887272)',
-    )
-  }
-
-  if (amount <= 0n) {
-    throw new Error('Amount must be greater than 0')
-  }
-
-  // Convert liquidity amount to U128 (hi and lo parts)
-  const liquidityAmount = await calculateLiquidityFromAmounts(
-    address,
-    Number.parseFloat(amount.toString()) / 1e7, // Convert from contract units to display units
-    Number.parseFloat(amount.toString()) / 1e7, // Using same amount for both tokens as fallback
-    tickLower,
-    tickUpper,
-  )
-
-  if (!liquidityAmount || liquidityAmount === '0') {
-    throw new Error(
-      'Failed to calculate liquidity amount. Please check your inputs.',
-    )
-  }
-  const liquidityBigInt = BigInt(liquidityAmount)
-  const lo = liquidityBigInt & ((BigInt(1) << BigInt(64)) - BigInt(1)) // Lower 64 bits
-  const hi = liquidityBigInt >> BigInt(64) // Upper 64 bits
-
-  console.log(`💧 Adding liquidity with ${liquidityAmount} units`)
-  console.log(
-    'No approvals needed — your signature authorizes pool.mint() to pull tokens.',
-  )
-
-  // Build the transaction
-  const operation = Operation.invokeContractFunction({
-    contract: address,
-    function: 'mint',
-    args: [
-      Address.fromString(recipient).toScVal(),
-      xdr.ScVal.scvI32(tickLower),
-      xdr.ScVal.scvI32(tickUpper),
-      xdr.ScVal.scvU128(
-        new xdr.UInt128Parts({
-          hi: xdr.Uint64.fromString(hi.toString()),
-          lo: xdr.Uint64.fromString(lo.toString()),
-        }),
-      ),
-    ],
-  })
-
-  // Load account from Horizon
-  const horizon = new Horizon.Server(NETWORK_CONFIG.HORIZON_URL)
-  const account = await horizon.loadAccount(sourceAccount)
-
-  // Build transaction
-  const transaction = new TransactionBuilder(account, {
-    fee: '100000',
-    networkPassphrase: NETWORK_PASSPHRASE,
-  })
-    .addOperation(operation)
-    .setTimeout(180)
-    .build()
-
-  console.log(
-    'Transaction type:',
-    typeof transaction,
-    transaction.constructor.name,
-  )
-  console.log('Transaction has toXDR:', typeof transaction.toXDR)
-  console.log('Simulating transaction to calculate resources and auth...')
-
-  const sorobanServer = new StellarSdk.rpc.Server(RPC_URL)
-
-  let prepared
   try {
-    console.log('About to call prepareTransaction...')
-    prepared = await sorobanServer.prepareTransaction(transaction)
-    console.log('prepareTransaction succeeded')
+    // Validate parameters
+    if (tickLower >= tickUpper) {
+      throw new Error('tickLower must be less than tickUpper')
+    }
+
+    if (tickLower < -60000 || tickUpper > 60000) {
+      throw new Error(
+        'Tick values must be within valid range (-887272 to 887272)',
+      )
+    }
+
+    if (amount <= 0n) {
+      throw new Error('Amount must be greater than 0')
+    }
+
+    // Convert liquidity amount to U128 (hi and lo parts)
+    const liquidityAmount = await calculateLiquidityFromAmounts(
+      address,
+      Number.parseFloat(amount.toString()) / 1e7, // Convert from contract units to display units
+      Number.parseFloat(amount.toString()) / 1e7, // Using same amount for both tokens as fallback
+      tickLower,
+      tickUpper,
+    )
+
+    if (!liquidityAmount || liquidityAmount === '0') {
+      throw new Error(
+        'Failed to calculate liquidity amount. Please check your inputs.',
+      )
+    }
+    const liquidityBigInt = BigInt(liquidityAmount)
+
+    console.log(`💧 Adding liquidity with ${liquidityAmount} units`)
+    console.log(
+      'No approvals needed — your signature authorizes pool.mint() to pull tokens.',
+    )
+
+    const poolContractClient = getPoolContractClient({
+      contractId: address,
+      publicKey: sourceAccount,
+    })
+    console.log('Simulating transaction to calculate resources and auth...')
+    const assembledTransaction = await poolContractClient.mint(
+      {
+        recipient: recipient,
+        tick_lower: tickLower,
+        tick_upper: tickUpper,
+        amount: liquidityBigInt,
+      },
+      {
+        timeoutInSeconds: DEFAULT_TIMEOUT,
+        fee: 100000,
+      },
+    )
+
+    console.log('Prepared transaction for mint')
+
+    // Convert to XDR for signing
+    const transactionXdr = assembledTransaction.toXDR()
+
+    console.log('Transaction XDR:', { transactionXdr })
+
+    // Sign the transaction
+    console.log('Transaction prepared. Waiting for wallet signature...')
+
+    const signedXdr = await signTransaction(transactionXdr)
+
+    console.log('Transaction signed. Submitting to network...')
+
+    // Submit the transaction
+    const result = await submitTransaction(signedXdr)
+
+    console.log(`Transaction submitted: ${result.hash}`)
+    console.log('Waiting for confirmation...')
+
+    // Wait for confirmation
+    const txResult = await waitForTransaction(result.hash)
+
+    if (txResult.status === 'SUCCESS') {
+      console.log('✅ Transaction confirmed!')
+      console.log('🎉 Liquidity added!')
+      return {
+        hash: result.hash,
+        result: txResult,
+      }
+    } else {
+      console.error('Transaction failed:', txResult)
+      throw new Error(`Transaction failed: ${JSON.stringify(txResult)}`)
+    }
   } catch (error) {
     console.error('prepareTransaction failed:', error)
     if (error instanceof Error) {
@@ -674,52 +572,6 @@ export async function addLiquidity({
       })
     }
     throw error
-  }
-
-  console.log('Transaction prepared. Waiting for wallet signature...')
-  console.log('Prepared transaction for mint')
-
-  // Debug: Check if auth entries were added
-  const preparedOps = prepared.operations
-  console.log('Number of operations after prepare:', preparedOps.length)
-  if (preparedOps.length > 0) {
-    const op = preparedOps[0] as any
-    if (op.type === 'invokeHostFunction' && op.auth) {
-      console.log('Auth entries found:', op.auth.length)
-    } else {
-      console.log('No auth entries found in prepared transaction')
-    }
-  }
-
-  // Convert to XDR for signing
-  const transactionXdr = prepared.toXDR()
-
-  console.log('Transaction XDR:', { transactionXdr })
-
-  // Sign the transaction
-  const signedXdr = await signTransaction(transactionXdr)
-
-  console.log('Transaction signed. Submitting to network...')
-
-  // Submit the transaction
-  const result = await submitTransaction(signedXdr)
-
-  console.log(`Transaction submitted: ${result.hash}`)
-  console.log('Waiting for confirmation...')
-
-  // Wait for confirmation
-  const txResult = await waitForTransaction(result.hash)
-
-  if (txResult.status === 'SUCCESS') {
-    console.log('✅ Transaction confirmed!')
-    console.log('🎉 Liquidity added!')
-    return {
-      hash: result.hash,
-      result: txResult,
-    }
-  } else {
-    console.error('Transaction failed:', txResult)
-    throw new Error(`Transaction failed: ${JSON.stringify(txResult)}`)
   }
 }
 
@@ -757,64 +609,72 @@ export async function removeLiquidity({
   amount0: bigint
   amount1: bigint
 }> {
-  // Validate parameters
-  if (liquidity <= 0n) {
-    throw new Error('Liquidity must be greater than 0')
-  }
-
-  if (amount0Min < 0n || amount1Min < 0n) {
-    throw new Error('Minimum amounts must be non-negative')
-  }
-
-  console.log(`🔥 Removing liquidity: ${liquidity} units`)
-
-  // Build the transaction with burn operation
-  const operation = Operation.invokeContractFunction({
-    contract: address,
-    function: 'burn',
-    args: [
-      Address.fromString(recipient).toScVal(),
-      xdr.ScVal.scvI32(-60000), // tickLower
-      xdr.ScVal.scvI32(60000), // tickUpper
-      xdr.ScVal.scvU128(
-        new xdr.UInt128Parts({
-          hi: xdr.Uint64.fromString((liquidity >> BigInt(64)).toString()),
-          lo: xdr.Uint64.fromString(
-            (liquidity & ((BigInt(1) << BigInt(64)) - BigInt(1))).toString(),
-          ),
-        }),
-      ),
-    ],
-  })
-
-  // Load account from Horizon
-  const horizon = new Horizon.Server(NETWORK_CONFIG.HORIZON_URL)
-  const account = await horizon.loadAccount(sourceAccount)
-
-  // Build transaction
-  const transaction = new TransactionBuilder(account, {
-    fee: '100000',
-    networkPassphrase: NETWORK_PASSPHRASE,
-  })
-    .addOperation(operation)
-    .setTimeout(180)
-    .build()
-
-  console.log(
-    'Transaction type:',
-    typeof transaction,
-    transaction.constructor.name,
-  )
-  console.log('Transaction has toXDR:', typeof transaction.toXDR)
-  console.log('Simulating transaction to calculate resources and auth...')
-
-  const sorobanServer = new StellarSdk.rpc.Server(RPC_URL)
-
-  let prepared
   try {
-    console.log('About to call prepareTransaction...')
-    prepared = await sorobanServer.prepareTransaction(transaction)
-    console.log('prepareTransaction succeeded')
+    // Validate parameters
+    if (liquidity <= 0n) {
+      throw new Error('Liquidity must be greater than 0')
+    }
+
+    if (amount0Min < 0n || amount1Min < 0n) {
+      throw new Error('Minimum amounts must be non-negative')
+    }
+
+    console.log(`🔥 Removing liquidity: ${liquidity} units`)
+
+    // Build the transaction with burn operation
+    const poolContractClient = getPoolContractClient({
+      contractId: address,
+      publicKey: sourceAccount,
+    })
+    console.log('Simulating transaction to calculate resources and auth...')
+    const assembledTransaction = await poolContractClient.burn(
+      {
+        owner: recipient,
+        tick_lower: -60000,
+        tick_upper: 60000,
+        amount: liquidity,
+      },
+      {
+        timeoutInSeconds: DEFAULT_TIMEOUT,
+        fee: 100000,
+      },
+    )
+    console.log('Prepared transaction for burn')
+
+    // Convert to XDR for signing
+    const transactionXdr = assembledTransaction.toXDR()
+
+    console.log('Transaction XDR:', { transactionXdr })
+
+    // Sign the transaction
+    console.log('Transaction prepared. Waiting for wallet signature...')
+
+    const signedXdr = await signTransaction(transactionXdr)
+
+    console.log('Transaction signed. Submitting to network...')
+
+    // Submit the transaction
+    const result = await submitTransaction(signedXdr)
+
+    console.log(`Transaction submitted: ${result.hash}`)
+    console.log('Waiting for confirmation...')
+
+    // Wait for confirmation
+    const txResult = await waitForTransaction(result.hash)
+
+    if (txResult.status === 'SUCCESS') {
+      console.log('✅ Transaction confirmed!')
+      console.log('🎉 Liquidity removed!')
+      return {
+        hash: result.hash,
+        result: txResult,
+        amount0: 0n,
+        amount1: 0n,
+      }
+    } else {
+      console.error('Transaction failed:', txResult)
+      throw new Error(`Transaction failed: ${JSON.stringify(txResult)}`)
+    }
   } catch (error) {
     console.error('prepareTransaction failed:', error)
     if (error instanceof Error) {
@@ -825,54 +685,6 @@ export async function removeLiquidity({
       })
     }
     throw error
-  }
-
-  console.log('Transaction prepared. Waiting for wallet signature...')
-  console.log('Prepared transaction for burn')
-
-  // Debug: Check if auth entries were added
-  const preparedOps = prepared.operations
-  console.log('Number of operations after prepare:', preparedOps.length)
-  if (preparedOps.length > 0) {
-    const op = preparedOps[0] as any
-    if (op.type === 'invokeHostFunction' && op.auth) {
-      console.log('Auth entries found:', op.auth.length)
-    } else {
-      console.log('No auth entries found in prepared transaction')
-    }
-  }
-
-  // Convert to XDR for signing
-  const transactionXdr = prepared.toXDR()
-
-  console.log('Transaction XDR:', { transactionXdr })
-
-  // Sign the transaction
-  const signedXdr = await signTransaction(transactionXdr)
-
-  console.log('Transaction signed. Submitting to network...')
-
-  // Submit the transaction
-  const result = await submitTransaction(signedXdr)
-
-  console.log(`Transaction submitted: ${result.hash}`)
-  console.log('Waiting for confirmation...')
-
-  // Wait for confirmation
-  const txResult = await waitForTransaction(result.hash)
-
-  if (txResult.status === 'SUCCESS') {
-    console.log('✅ Transaction confirmed!')
-    console.log('🎉 Liquidity removed!')
-    return {
-      hash: result.hash,
-      result: txResult,
-      amount0: 0n,
-      amount1: 0n,
-    }
-  } else {
-    console.error('Transaction failed:', txResult)
-    throw new Error(`Transaction failed: ${JSON.stringify(txResult)}`)
   }
 }
 
@@ -886,30 +698,25 @@ export async function buildRemoveLiquidityTransaction({
   address,
   liquidity,
   recipient,
-  sourceAccount,
 }: {
   address: string
   liquidity: bigint
   amount0Min: bigint
   amount1Min: bigint
   recipient: string
-  sourceAccount: string
-}): Promise<any> {
+}): Promise<AssembledTransaction<unknown>> {
   const tickLower = -60000 // Minimum tick
   const tickUpper = 60000 // Maximum tick
 
-  const operation = Operation.invokeContractFunction({
-    contract: address,
-    function: 'burn',
-    args: [
-      Address.fromString(recipient).toScVal(),
-      xdr.ScVal.scvI32(tickLower),
-      xdr.ScVal.scvI32(tickUpper),
-      xdr.ScVal.scvI64(xdr.Int64.fromString(liquidity.toString())),
-    ],
+  const poolContractClient = getPoolContractClient({ contractId: address })
+  const assembledTransaction = await poolContractClient.burn({
+    owner: recipient,
+    tick_lower: tickLower,
+    tick_upper: tickUpper,
+    amount: liquidity,
   })
 
-  return buildTransaction(sourceAccount, operation)
+  return assembledTransaction
 }
 
 /**
@@ -923,7 +730,6 @@ export async function executeRemoveLiquidity({
   amount0Min,
   amount1Min,
   recipient,
-  sourceAccount,
   signTransaction,
 }: {
   address: string
@@ -931,7 +737,6 @@ export async function executeRemoveLiquidity({
   amount0Min: bigint
   amount1Min: bigint
   recipient: string
-  sourceAccount: string
   signTransaction: (xdr: string) => Promise<string>
 }): Promise<{
   hash: string
@@ -946,7 +751,6 @@ export async function executeRemoveLiquidity({
     amount0Min,
     amount1Min,
     recipient,
-    sourceAccount,
   })
 
   // Convert to XDR for signing
@@ -1312,77 +1116,33 @@ export function calculatePriceFromTick(tick: number): number {
  */
 async function getCurrentSqrtPrice(poolAddress: string): Promise<bigint> {
   try {
-    const simulationAccount = new Account(
-      'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF',
-      '0',
-    )
-    const getSlot0Op = Operation.invokeContractFunction({
-      contract: poolAddress,
-      function: 'slot0',
-      args: [],
+    const poolContractClient = getPoolContractClient({
+      contractId: poolAddress,
+    })
+    const { result: slot0Map } = await poolContractClient.slot0({
+      timeoutInSeconds: 30,
+      fee: 100,
     })
 
-    const tx = new TransactionBuilder(simulationAccount, {
-      fee: '100',
-      networkPassphrase: NETWORK_PASSPHRASE,
-    })
-      .addOperation(getSlot0Op)
-      .setTimeout(30)
-      .build()
+    console.log('slot0Map:', slot0Map)
 
-    const request = {
-      jsonrpc: '2.0',
-      id: Date.now(),
-      method: 'simulateTransaction',
-      params: { transaction: tx.toXDR() },
+    // Try to get sqrt_price_x96 directly
+    if (slot0Map.sqrt_price_x96) {
+      console.log(
+        'Fetched sqrt price from slot0:',
+        slot0Map.sqrt_price_x96.toString(),
+      )
+      return slot0Map.sqrt_price_x96
     }
 
-    const response = await fetch(RPC_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(request),
-    })
-
-    const result = await response.json()
-    if (result.result?.results?.[0]) {
-      const slot0Val = xdr.ScVal.fromXDR(result.result.results[0].xdr, 'base64')
-      const slot0Map = scMapToObject(slot0Val)
-
-      console.log('slot0Map:', slot0Map)
-      console.log('Raw slot0 result:', result.result.results[0])
-
-      // Try to get sqrt_price_x96 directly
-      if (slot0Map.sqrt_price_x96) {
-        const u256Val = slot0Map.sqrt_price_x96
-        if (u256Val && typeof u256Val.u256 === 'function') {
-          const parts = u256Val.u256()
-
-          // Access _attributes directly (camelCase properties) - exactly like stellar-auth-test
-          const attrs = parts._attributes || parts
-          const hiHi = BigInt(attrs.hiHi || '0')
-          const hiLo = BigInt(attrs.hiLo || '0')
-          const loHi = BigInt(attrs.loHi || '0')
-          const loLo = BigInt(attrs.loLo || '0')
-
-          const sqrtPrice =
-            (hiHi << 192n) | (hiLo << 128n) | (loHi << 64n) | loLo
-          console.log('Fetched sqrt price from slot0:', sqrtPrice.toString())
-          return sqrtPrice
-        }
-      }
-
-      // Fallback: if sqrt_price_x96 parsing failed, use tick to calculate it
-      if (slot0Map.tick !== undefined) {
-        const tickVal = slot0Map.tick
-        const tick =
-          typeof tickVal.i32 === 'function' ? tickVal.i32() : Number(tickVal)
-        const calculatedSqrtPrice = tickToSqrtPrice(tick)
-        console.log(
-          `Using sqrt price calculated from tick ${tick}:`,
-          calculatedSqrtPrice.toString(),
-        )
-        return calculatedSqrtPrice
-      }
+    // Fallback: if sqrt_price_x96 parsing failed, use tick to calculate it
+    if (slot0Map.tick !== undefined) {
+      const calculatedSqrtPrice = tickToSqrtPrice(slot0Map.tick)
+      console.log(
+        `Using sqrt price calculated from tick ${slot0Map.tick}:`,
+        calculatedSqrtPrice.toString(),
+      )
+      return calculatedSqrtPrice
     }
   } catch (error) {
     console.error('Failed to fetch sqrt price from pool:', error)
@@ -1392,7 +1152,6 @@ async function getCurrentSqrtPrice(poolAddress: string): Promise<bigint> {
       error instanceof Error ? error.stack : '',
     )
   }
-
   throw new Error(
     'Could not fetch current price from pool. Please make sure a pool is selected.',
   )
@@ -1565,34 +1324,4 @@ function calculateLiquidityFromAmount0(
     console.log('=== calculateLiquidityFromAmount0 END ===')
     return liquidity
   }
-}
-
-/**
- * Convert SCVal map to object (exactly like stellar-auth-test)
- */
-function scMapToObject(scVal: any): any {
-  if (!scVal || typeof scVal.map !== 'function') {
-    return {}
-  }
-  const entries = scVal.map()
-  const result: any = {}
-  entries.forEach((entry: any) => {
-    const keyVal = entry.key()
-    let key = 'unknown'
-    if (keyVal && typeof keyVal.sym === 'function') {
-      key = scSymbolToString(keyVal.sym())
-    }
-    result[key] = entry.val()
-  })
-  return result
-}
-
-/**
- * Convert SC symbol to string (exactly like stellar-auth-test)
- */
-function scSymbolToString(symbol: any): string {
-  if (!symbol) return ''
-  const raw = symbol.toString()
-  const match = raw.match(/Symbol\((.*)\)/)
-  return match ? match[1] : raw
 }

@@ -1,12 +1,5 @@
-import StellarSdk, {
-  TransactionBuilder,
-  Operation,
-  Account,
-  Address as StellarAddress,
-  xdr,
-  nativeToScVal,
-  scValToNative,
-} from '@stellar/stellar-sdk'
+import { getRouterContractClient } from '../soroban/client'
+import { DEFAULT_TIMEOUT } from '../soroban/constants'
 import {
   CONTRACT_ADDRESSES,
   NETWORK_CONFIG,
@@ -96,64 +89,42 @@ export class QuoteService {
   async getQuoteExactInputSingle(
     params: QuoteExactInputSingleParams,
   ): Promise<SwapQuote> {
-    const quoteParams = xdr.ScVal.scvMap([
-      new xdr.ScMapEntry({
-        key: xdr.ScVal.scvSymbol('token_in'),
-        val: new StellarAddress(params.tokenIn).toScVal(),
-      }),
-      new xdr.ScMapEntry({
-        key: xdr.ScVal.scvSymbol('token_out'),
-        val: new StellarAddress(params.tokenOut).toScVal(),
-      }),
-      new xdr.ScMapEntry({
-        key: xdr.ScVal.scvSymbol('fee'),
-        val: xdr.ScVal.scvU32(params.fee),
-      }),
-      new xdr.ScMapEntry({
-        key: xdr.ScVal.scvSymbol('amount_in'),
-        val: nativeToScVal(params.amountIn.toString(), { type: 'i128' }),
-      }),
-      new xdr.ScMapEntry({
-        key: xdr.ScVal.scvSymbol('sqrt_price_limit_x96'),
-        val: params.sqrtPriceLimitX96
-          ? nativeToScVal(params.sqrtPriceLimitX96.toString(), { type: 'i128' })
-          : nativeToScVal('0', { type: 'i128' }),
-      }),
-    ])
-
-    const simulationAccount = new Account(
-      'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF',
-      '0',
-    )
-    const quoteOp = Operation.invokeContractFunction({
-      contract: this.routerAddress,
-      function: 'quote_exact_input_single',
-      args: [quoteParams],
-    })
-
-    const quoteTx = new TransactionBuilder(simulationAccount, {
-      fee: '100',
-      networkPassphrase: this.networkPassphrase,
-    })
-      .addOperation(quoteOp)
-      .setTimeout(180)
-      .build()
-
     try {
-      const result = await this.simulateViaRawRPC(quoteTx.toXDR())
+      const routerContractClient = getRouterContractClient({
+        contractId: CONTRACT_ADDRESSES.ROUTER,
+      })
+      const { result } = await routerContractClient.quote_exact_input_single(
+        {
+          params: {
+            token_in: params.tokenIn,
+            token_out: params.tokenOut,
+            fee: params.fee,
+            amount_in: params.amountIn,
+            sqrt_price_limit_x96: params.sqrtPriceLimitX96 || 0n,
+            // Unused by the contract function implementation, but required
+            amount_out_minimum: 0n,
+            deadline: BigInt(Math.floor(Date.now() / 1000) + 600), // 10 minutes
+            sender: 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF', // Zero address for quote
+            recipient:
+              'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF', // Zero address for quote
+          },
+        },
+        {
+          timeoutInSeconds: DEFAULT_TIMEOUT,
+          fee: 100,
+        },
+      )
 
-      if (result.results && result.results.length > 0) {
-        const output = scValToNative(
-          xdr.ScVal.fromXDR(result.results[0].xdr, 'base64'),
-        )
+      if (result.isErr()) {
+        throw new Error(`Quote failed: ${result.unwrapErr().message}`)
+      }
 
-        return {
-          amountOut: BigInt(output.amount_out || '0'),
-          path: [params.tokenIn, params.tokenOut],
-          fees: [params.fee],
-          priceImpact: 0, // Calculate based on pool reserves
-          routeType: 'direct',
-        }
+      return {
+        amountOut: BigInt(result.unwrap().amount || '0'),
+        path: [params.tokenIn, params.tokenOut],
+        fees: [params.fee],
+        priceImpact: 0, // Calculate based on pool reserves
+        routeType: 'direct',
       }
     } catch (error) {
       console.error('Quote simulation failed:', error)
@@ -178,87 +149,42 @@ export class QuoteService {
    * Get quote for multi-hop swap
    */
   async getQuoteExactInput(params: QuoteExactInputParams): Promise<SwapQuote> {
-    const pathVec = xdr.ScVal.scvVec(
-      params.path.map((addr) => new StellarAddress(addr).toScVal()),
-    )
-    const feesVec = xdr.ScVal.scvVec(
-      params.fees.map((fee) => xdr.ScVal.scvU32(fee)),
-    )
-
-    const deadline = Math.floor(Date.now() / 1000) + 600 // 10 minutes
-    const senderAddr =
-      'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF' // Zero address for quote
-    const recipientAddr =
-      'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF'
-
-    const quoteParams = xdr.ScVal.scvMap([
-      new xdr.ScMapEntry({
-        key: xdr.ScVal.scvSymbol('sender'),
-        val: new StellarAddress(senderAddr).toScVal(),
-      }),
-      new xdr.ScMapEntry({
-        key: xdr.ScVal.scvSymbol('path'),
-        val: pathVec,
-      }),
-      new xdr.ScMapEntry({
-        key: xdr.ScVal.scvSymbol('fees'),
-        val: feesVec,
-      }),
-      new xdr.ScMapEntry({
-        key: xdr.ScVal.scvSymbol('recipient'),
-        val: new StellarAddress(recipientAddr).toScVal(),
-      }),
-      new xdr.ScMapEntry({
-        key: xdr.ScVal.scvSymbol('amount_in'),
-        val: nativeToScVal(params.amountIn.toString(), { type: 'i128' }),
-      }),
-      new xdr.ScMapEntry({
-        key: xdr.ScVal.scvSymbol('amount_out_minimum'),
-        val: nativeToScVal('0', { type: 'i128' }),
-      }),
-      new xdr.ScMapEntry({
-        key: xdr.ScVal.scvSymbol('deadline'),
-        val: xdr.ScVal.scvU64(xdr.Uint64.fromString(deadline.toString())),
-      }),
-    ])
-
-    const simulationAccount = new Account(
-      'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF',
-      '0',
-    )
-    const quoteOp = Operation.invokeContractFunction({
-      contract: this.routerAddress,
-      function: 'quote_exact_input',
-      args: [quoteParams],
-    })
-
-    const quoteTx = new TransactionBuilder(simulationAccount, {
-      fee: '100',
-      networkPassphrase: this.networkPassphrase,
-    })
-      .addOperation(quoteOp)
-      .setTimeout(180)
-      .build()
-
     try {
-      const result = await this.simulateViaRawRPC(quoteTx.toXDR())
+      const routerContractClient = getRouterContractClient({
+        contractId: CONTRACT_ADDRESSES.ROUTER,
+      })
+      const { result } = await routerContractClient.quote_exact_input(
+        {
+          params: {
+            path: params.path,
+            fees: params.fees,
+            amount_in: params.amountIn,
+            // Unused by the contract function implementation, but required
+            amount_out_minimum: 0n,
+            deadline: BigInt(Math.floor(Date.now() / 1000) + 600), // 10 minutes
+            sender: 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF', // Zero address for quote
+            recipient:
+              'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF', // Zero address for quote
+          },
+        },
+        {
+          timeoutInSeconds: DEFAULT_TIMEOUT,
+          fee: 100,
+        },
+      )
 
-      if (result.results && result.results.length > 0) {
-        const scVal = xdr.ScVal.fromXDR(result.results[0].xdr, 'base64')
-        const quoteData = this.scMapToObject(scVal)
-
-        // Router returns 'amount' not 'amount_out' for quotes (like in demo app)
-        const amountOutBigInt = this.scValToI128(
-          quoteData.amount || quoteData.amount_out,
+      if (result.isErr()) {
+        throw new Error(
+          `Multi-hop quote simulation failed: ${result.unwrapErr().message}`,
         )
+      }
 
-        return {
-          amountOut: amountOutBigInt,
-          path: params.path,
-          fees: params.fees,
-          priceImpact: 0, // Calculate based on pool reserves
-          routeType: 'multihop',
-        }
+      return {
+        amountOut: result.unwrap().amount,
+        path: params.path,
+        fees: params.fees,
+        priceImpact: 0, // Calculate based on pool reserves
+        routeType: 'multihop',
       }
     } catch (error) {
       console.error('Multi-hop quote simulation failed:', error)

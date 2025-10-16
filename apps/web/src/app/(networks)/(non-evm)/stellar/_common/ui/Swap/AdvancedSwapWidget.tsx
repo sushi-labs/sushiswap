@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useStellarWallet } from '~stellar/providers'
 import {
   useAddLiquidity,
   useGetQuote,
@@ -8,7 +9,6 @@ import {
   useSwapWithRouting,
 } from '../../lib/hooks/swap'
 import type { Token } from '../../lib/types/token.type'
-import { useStellarWallet } from '~stellar/providers'
 
 interface AdvancedSwapWidgetProps {
   userAddress: string
