@@ -1,20 +1,13 @@
 'use client'
 
 import { useMemo } from 'react'
-import { uniswapV2RouterAbi } from 'sushi/abi'
 import {
   SUSHISWAP_V2_ROUTER_ADDRESS,
   type SushiSwapV2ChainId,
-} from 'sushi/config'
+  sushiSwapV2RouterAbi,
+} from 'sushi/evm'
 import { type PublicClient, getContract } from 'viem'
 import { usePublicClient, useWalletClient } from 'wagmi'
-
-export const getSushiSwapRouterContractConfig = (
-  chainId: SushiSwapV2ChainId,
-) => ({
-  address: SUSHISWAP_V2_ROUTER_ADDRESS[chainId],
-  abi: uniswapV2RouterAbi,
-})
 
 export function useSushiSwapRouterContract(
   chainId: SushiSwapV2ChainId | undefined,
@@ -28,7 +21,8 @@ export function useSushiSwapRouterContract(
     if (!chainId || (!publicClient && !walletClient)) return null
 
     return getContract({
-      ...getSushiSwapRouterContractConfig(chainId),
+      address: SUSHISWAP_V2_ROUTER_ADDRESS[chainId],
+      abi: sushiSwapV2RouterAbi,
       client: walletClient || publicClient!,
     })
   }, [chainId, publicClient, walletClient])

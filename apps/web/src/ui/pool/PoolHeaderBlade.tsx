@@ -1,7 +1,7 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import type { BladePool } from '@sushiswap/graph-client/data-api'
+import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
 import {
   Button,
   Currency,
@@ -10,13 +10,19 @@ import {
   classNames,
   typographyVariants,
 } from '@sushiswap/ui'
+import { CurrencyFiatIcon } from '@sushiswap/ui/icons/CurrencyFiatIcon'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { USDIcon } from '@sushiswap/ui/icons/USD'
-import React, { type FC, useMemo } from 'react'
-import type { SushiSwapProtocol } from 'sushi'
-import { EvmChain } from 'sushi/chain'
-import { Token, unwrapToken } from 'sushi/currency'
-import { AddLiquidityDialog } from './add-liquidity/add-liquidity-dialog'
+import React, { type FC, useMemo, useState } from 'react'
+import { getPoolTokensGrouped } from 'src/lib/pool/blade'
+import {
+  type EvmAddress,
+  EvmToken,
+  SushiSwapProtocol,
+  getEvmChainById,
+  unwrapEvmToken,
+} from 'sushi/evm'
+import { AddLiquidityDialog } from '~evm/[chainId]/_ui/add-liquidity/add-liquidity-dialog'
 
 type PoolHeaderBlade = {
   backUrl: string
@@ -33,22 +39,11 @@ export const PoolHeaderBlade: FC<PoolHeaderBlade> = ({
   address,
   pool,
 }) => {
-  const [token0] = useMemo(() => {
-    if (!pool) return [undefined, undefined]
+  const groupedTokens = useMemo(() => getPoolTokensGrouped(pool), [pool])
+  const { tokens, stablecoinUsdTokens } = groupedTokens
+  const hasStablecoin = stablecoinUsdTokens.length > 0
 
-    return [
-      unwrapToken(
-        new Token({
-          chainId: pool.chainId,
-          address: pool.tokens[0].address,
-          decimals: pool.tokens[0].decimals,
-          symbol: pool.tokens[0].symbol,
-        }),
-      ),
-    ]
-  }, [pool])
-
-  if (pool && token0)
+  if (pool)
     return (
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
@@ -66,9 +61,15 @@ export const PoolHeaderBlade: FC<PoolHeaderBlade> = ({
                   iconHeight={36}
                   className="border-[#FFFFFF14]"
                 >
-                  <Currency.Icon currency={token0} />
-                  <USDIcon className="w-9 h-9" />
+                  {tokens.map((token) => (
+                    <Currency.Icon
+                      key={token.wrap().address}
+                      currency={token}
+                    />
+                  ))}
+                  {hasStablecoin && <CurrencyFiatIcon width={35} height={35} />}
                 </Currency.IconList>
+
                 <div className="border-[#E8E7EB] dark:border-[#222137] border rounded-[4px] overflow-hidden z-10 absolute bottom-[1px] -right-1">
                   <NetworkIcon
                     type="square"
@@ -88,9 +89,11 @@ export const PoolHeaderBlade: FC<PoolHeaderBlade> = ({
               >
                 <LinkExternal
                   className="text-gray-900 dark:text-slate-50"
-                  href={EvmChain.from(pool.chainId)?.getAccountUrl(address)}
+                  href={getEvmChainById(pool.chainId)?.getAccountUrl(
+                    address as EvmAddress,
+                  )}
                 >
-                  {token0.symbol}/USD
+                  {tokens[0].symbol}/USD
                 </LinkExternal>
               </Button>
               <div
@@ -98,21 +101,16 @@ export const PoolHeaderBlade: FC<PoolHeaderBlade> = ({
                   'text-sm px-2 py-1 font-semibold rounded-full mt-0.5 bg-[#4217FF14] dark:bg-[#3DB1FF14]',
                 )}
               >
-                {pool.protocol === 'SUSHISWAP_V3' ? (
-                  'V3'
-                ) : pool.protocol === 'SUSHISWAP_V2' ? (
-                  'V2'
-                ) : (
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4217FF] to-[#3DB1FF] dark:from-[#C3F1FB] dark:to-[#FFC9F1]">
-                    Blade
-                  </span>
-                )}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4217FF] to-[#3DB1FF] dark:from-[#C3F1FB] dark:to-[#FFC9F1]">
+                  Blade
+                </span>
               </div>
             </div>
 
             <span className="block md:hidden">
               <AddLiquidityDialog
-                poolType={'BLADE' as SushiSwapProtocol}
+                chainId={pool.chainId}
+                poolType={SushiSwapProtocol.BLADE}
                 hidePoolTypeToggle={true}
                 bladePool={pool}
                 trigger={

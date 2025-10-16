@@ -1,9 +1,9 @@
-import { getBladePool } from '@sushiswap/graph-client/data-api'
+import { getBladePool } from '@sushiswap/graph-client/data-api-blade-prod'
+import ms from 'ms'
 import type { Metadata } from 'next'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import type { EvmChainId } from 'sushi'
-import { isBladeChainId } from 'sushi/config'
+import { type EvmChainId, isBladeChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
 
 export async function generateMetadata(props: {
@@ -21,7 +21,7 @@ export async function generateMetadata(props: {
     async () => getBladePool({ chainId, address }, { retries: 3 }),
     ['blade', 'pool', `${chainId}:${address}`],
     {
-      revalidate: 60 * 15,
+      revalidate: ms('15m'),
     },
   )()
 
@@ -30,7 +30,7 @@ export async function generateMetadata(props: {
   }
 
   return {
-    title: `BUY & SELL ${pool.tokens[0]?.symbol}/${pool.tokens[1]?.symbol}`,
+    title: `BUY & SELL ${pool.tokens[0]?.token.symbol}/${pool.tokens[1]?.token.symbol}`,
   }
 }
 

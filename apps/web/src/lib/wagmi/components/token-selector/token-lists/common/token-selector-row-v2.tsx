@@ -3,6 +3,8 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/20/solid'
 import { InformationCircleIcon } from '@heroicons/react/24/outline'
+import type { TokenListBalanceV2 } from '@sushiswap/graph-client/data-api'
+import type { PinnedTokenId } from '@sushiswap/hooks'
 import {
   BrowserEvent,
   InterfaceElementName,
@@ -33,30 +35,27 @@ import {
 } from 'react'
 import { NativeAddress } from 'src/lib/constants'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
-import { NetworkButton } from 'src/ui/swap/chain-options-selector'
-import { FavoriteButton } from 'src/ui/swap/trade/favorite-button'
-import { formatUSD } from 'sushi'
-import type { EvmChainId } from 'sushi'
-import { EvmChain } from 'sushi/chain'
-import type { Amount, Type } from 'sushi/currency'
-import { Token } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
-import { formatUnits, zeroAddress } from 'viem'
+import { formatUSD, getChainById } from 'sushi'
+import { type Amount, ZERO } from 'sushi'
+import { type EvmChainId, type EvmCurrency, EvmToken } from 'sushi/evm'
+import { formatUnits } from 'viem'
+import { NetworkButton } from '~evm/[chainId]/[trade]/_ui/swap/chain-options-selector'
+import { FavoriteButton } from '~evm/[chainId]/[trade]/_ui/swap/trade/favorite-button'
 
 export interface TokenSelectorRowV2 {
   account?: `0x${string}`
-  currency: Type
+  currency: EvmCurrency
   style?: CSSProperties
   className?: string
-  onSelect(currency: Type): void
-  balance?: Amount<Type> | undefined
+  onSelect(currency: EvmCurrency): void
+  balance?: Amount<EvmCurrency> | undefined
   showWarning: boolean
   price?: number
   selected: boolean
   isBalanceLoading: boolean
   onShowInfo: () => void
   showChainOptions: boolean
-  bridgeInfo?: { address: string; chainId: unknown; decimals: number }[] | null
+  bridgeInfo?: TokenListBalanceV2['bridgeInfo'] | null
 }
 
 export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
@@ -77,7 +76,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
     const [isHovered, setIsHovered] = useState(false)
 
     const onClick = useCallback(
-      (newCurrency: Type) => {
+      (newCurrency: EvmCurrency) => {
         onSelect(newCurrency)
       },
       [onSelect],
@@ -106,7 +105,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
         properties={{
           token_symbol: currency?.symbol,
           token_address: currency?.isNative ? NativeAddress : currency?.address,
-          total_balances_usd: balance?.quotient,
+          total_balances_usd: balance?.amount,
         }}
         element={InterfaceElementName.TOKEN_SELECTOR_ROW}
       >
@@ -114,8 +113,8 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
           <div
             testdata-id={`token-selector-row-${
               currency.isNative
-                ? zeroAddress
-                : currency.wrapped.address.toLowerCase()
+                ? NativeAddress
+                : currency.wrap().address.toLowerCase()
             }`}
             onClick={() => onClick(currency)}
             onKeyDown={() => onClick(currency)}
@@ -123,12 +122,14 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
             onMouseLeave={() => setIsHovered(false)}
             className={classNames(
               className,
-              `group flex items-center w-full hover:bg-blue/10 focus:bg-bg-blue/20 dark:hover:bg-skyblue/10 dark:focus:bg-bg-skyblue/20 h-full rounded-lg px-3 token-${currency?.symbol}`,
+              `group flex items-center w-full hover:!bg-[#4217FF14] dark:hover:!bg-[#FFFFFF14] focus:bg-bg-blue/20 dark:hover:bg-skyblue/10 dark:focus:bg-bg-skyblue/20 h-full rounded-lg px-3 token-${currency?.symbol}`,
             )}
           >
             <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
               <FavoriteButton
-                currencyId={`${currency?.id}:${currency?.symbol}`}
+                currencyId={
+                  `${currency?.id}:${currency?.symbol}` as PinnedTokenId
+                }
                 className="!px-0.5"
               />
               <div className="flex flex-row items-center flex-grow gap-4">
@@ -191,8 +192,8 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                         <a
                           target="_blank"
                           rel="noopener noreferrer"
-                          href={EvmChain.from(currency.chainId)?.getTokenUrl(
-                            currency.wrapped.address,
+                          href={getChainById(currency.chainId)?.getTokenUrl(
+                            currency.wrap().address,
                           )}
                           className="text-blue hover:underline flex gap-1"
                         >
@@ -211,12 +212,12 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                     {filteredBridgeInfo?.map((info) => (
                       <NetworkButton
                         key={`${info.chainId}-${info.address}`}
-                        chainId={info.chainId as number}
+                        chainId={info.chainId}
                         iconSize={16}
                         onClick={(e) => {
                           e.stopPropagation()
                           onClick(
-                            new Token({
+                            new EvmToken({
                               address: info.address as `0x${string}`,
                               chainId: info.chainId as EvmChainId,
                               decimals: info.decimals,
@@ -238,7 +239,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                     />
                   </div>
                 ) : (
-                  balance?.greaterThan(ZERO) && (
+                  balance?.gt(ZERO) && (
                     <div className="flex flex-col max-w-[140px]">
                       <span
                         className={classNames(
@@ -246,7 +247,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                           'text-right text-gray-900 dark:text-slate-50 truncate black:text-slate-50',
                         )}
                       >
-                        {balance?.toSignificant(6)}
+                        {balance.toSignificant(6)}
                       </span>
                       <span className="text-sm font-medium text-right text-gray-500 dark:text-slate-400">
                         {price && balance
@@ -254,7 +255,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                               price *
                                 Number(
                                   formatUnits(
-                                    balance.quotient,
+                                    balance.amount,
                                     currency?.decimals,
                                   ),
                                 ),
@@ -283,20 +284,32 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
 
 export function TokenSelectorRowLoadingV2() {
   return (
-    <div className="block flex-1 py-0.5 h-[64px]">
+    <div className="block flex-1 py-2 h-[64px]">
       <div className="flex items-center w-full h-full px-3 rounded-lg">
         <div className="flex items-center justify-between flex-grow gap-2 rounded">
-          <div className="flex flex-row items-center flex-grow gap-4">
-            <SkeletonCircle radius={40} />
-            <div className="flex flex-col items-start">
-              <SkeletonText className="w-full w-[100px]" />
-              <SkeletonText fontSize="sm" className="w-full w-[60px]" />
+          <div className="flex flex-row items-center flex-grow gap-4 w-[200px]">
+            <SkeletonCircle radius={14} />
+            <SkeletonCircle radius={32} />
+            <div className="flex flex-col items-start w-full">
+              <SkeletonText className="max-w-[60px]" align="left" />
+              <SkeletonText
+                fontSize="sm"
+                align="left"
+                className="max-w-[90px]"
+              />
             </div>
           </div>
 
-          <div className="flex flex-col w-full">
-            <SkeletonText className="w-[80px]" />
-            <SkeletonText fontSize="sm" align="right" className="w-[40px]" />
+          <div className="flex items-center gap-4 w-[200px]">
+            <div className="flex flex-col w-full">
+              <SkeletonText className="max-w-[80px]" align="right" />
+              <SkeletonText
+                fontSize="sm"
+                align="right"
+                className="max-w-[40px]"
+              />
+            </div>
+            <SkeletonCircle radius={14} />
           </div>
         </div>
       </div>

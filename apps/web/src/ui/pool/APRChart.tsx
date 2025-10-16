@@ -25,13 +25,12 @@ import { useTheme } from 'next-themes'
 import { useEffect, useMemo, useState } from 'react'
 import { useCallback } from 'react'
 import type { FC, MouseEventHandler, ReactNode } from 'react'
-import type { SushiSwapProtocol } from 'sushi'
-import { Native } from 'sushi/currency'
-import { formatPercent } from 'sushi/format'
+import { formatPercent } from 'sushi'
+import { EvmNative, type SushiSwapProtocol } from 'sushi/evm'
 import tailwindConfig from 'tailwind.config'
 import resolveConfig from 'tailwindcss/resolveConfig'
-import { Wrapper } from '../swap/trade/wrapper'
-import { APRHoverCard } from './APRHoverCard'
+import { Wrapper } from '~evm/[chainId]/[trade]/_ui/swap/trade/wrapper'
+import { APRHoverCard } from '~evm/[chainId]/_ui/apr-hover-card'
 
 echarts.use([
   CanvasRenderer,
@@ -433,7 +432,7 @@ export const APRChart = ({ pool }: { pool: V2Pool | V3Pool }) => {
                     iconHeight={26}
                     className="!border-none"
                   >
-                    <Currency.Icon currency={Native.onChain(1)} />
+                    <Currency.Icon currency={EvmNative.fromChainId(1)} />
                   </Currency.IconList>
                 </div>
               </div>
@@ -483,7 +482,7 @@ export const APRChart = ({ pool }: { pool: V2Pool | V3Pool }) => {
             iconHeight={20}
             className="!border-none"
           >
-            <Currency.Icon currency={Native.onChain(1)} />
+            <Currency.Icon currency={EvmNative.fromChainId(1)} />
           </Currency.IconList>
         </div>
         {isLoading ? (

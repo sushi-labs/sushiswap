@@ -4,15 +4,18 @@ import { type RequestOptions, request } from 'src/lib/request.js'
 import {
   type ChefType,
   type EvmChainId,
+  type EvmID,
+  EvmToken,
   type PoolBase,
   type PoolHistory1D,
   type PoolV3,
   type PoolWithAprs,
   type PoolWithIncentives,
   type RewarderType,
+  type SerializedEvmToken,
   SushiSwapProtocol,
-} from 'sushi'
-import { isSushiSwapV3ChainId } from 'sushi/config'
+  isSushiSwapV3ChainId,
+} from 'sushi/evm'
 import type { Address } from 'viem'
 import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
@@ -116,8 +119,9 @@ export async function getV3Pool(
     if (result.v3Pool) {
       const incentives = result.v3Pool.incentives.filter((i) => i !== null)
       const pool = result.v3Pool
+
       return {
-        id: pool.id as `${string}:0x${string}`,
+        id: pool.id as EvmID,
         address: pool.address as Address,
         chainId,
         name: `${pool.token0.symbol}-${pool.token1.symbol}`,
@@ -138,21 +142,19 @@ export async function getV3Pool(
         feesUSD: pool.volumeUSD * pool.swapFee,
 
         token0: {
-          id: pool.token0.id as `${string}:0x${string}`,
           address: pool.token0.address as Address,
           chainId,
           decimals: pool.token0.decimals,
           name: pool.token0.name,
           symbol: pool.token0.symbol,
-        },
+        } satisfies Omit<SerializedEvmToken, 'type' | 'metadata'>,
         token1: {
-          id: pool.token1.id as `${string}:0x${string}`,
           address: pool.token1.address as Address,
           chainId,
           decimals: pool.token1.decimals,
           name: pool.token1.name,
           symbol: pool.token1.symbol,
-        },
+        } satisfies Omit<SerializedEvmToken, 'type' | 'metadata'>,
         token0Price: pool.token0Price,
         token1Price: pool.token1Price,
         txCount: pool.txCount1d,
@@ -177,22 +179,19 @@ export async function getV3Pool(
           chefType: incentive.chefType as ChefType,
           apr: incentive.apr,
           rewardToken: {
-            id: incentive.rewardToken.id as `${string}:0x${string}`,
             address: incentive.rewardToken.address as Address,
             chainId,
             decimals: incentive.rewardToken.decimals,
             name: incentive.rewardToken.name,
             symbol: incentive.rewardToken.symbol,
-          },
+          } satisfies Omit<SerializedEvmToken, 'type' | 'metadata'>,
           rewardPerDay: incentive.rewardPerDay,
-          poolAddress: incentive.poolAddress as Address,
+          poolAddress: incentive.poolAddress,
           pid: incentive.pid,
-          rewarderAddress: incentive.rewarderAddress as Address,
+          rewarderAddress: incentive.rewarderAddress,
           rewarderType: incentive.rewarderType as RewarderType,
         })),
-      } satisfies PoolWithAprs<
-        PoolWithIncentives<PoolHistory1D<PoolV3<PoolBase>>>
-      >
+      }
     }
   } catch (error) {
     console.error('getV3Pool error', error)
@@ -200,6 +199,23 @@ export async function getV3Pool(
   return null
 }
 
-export type MaybeV3Pool = Awaited<ReturnType<typeof getV3Pool>>
+export type RawV3Pool = NonNullable<Awaited<ReturnType<typeof getV3Pool>>>
+export type V3Pool = PoolWithAprs<
+  PoolWithIncentives<PoolHistory1D<PoolV3<PoolBase>>>
+>
 
-export type V3Pool = NonNullable<Awaited<ReturnType<typeof getV3Pool>>>
+export function hydrateV3Pool(pool: RawV3Pool | V3Pool) {
+  if (pool.token0 instanceof EvmToken) {
+    return pool as V3Pool
+  }
+
+  return {
+    ...pool,
+    token0: new EvmToken(pool.token0),
+    token1: new EvmToken(pool.token1),
+    incentives: pool.incentives.map((incentive) => ({
+      ...incentive,
+      rewardToken: new EvmToken(incentive.rewardToken),
+    })),
+  } satisfies V3Pool
+}

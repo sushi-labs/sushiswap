@@ -21,37 +21,38 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import { type FC, useCallback, useState } from 'react'
+import type { FC } from 'react'
 import { TriangleIcon } from 'src/app/(cms)/components/icons'
 import {
   useCoinGeckoTokenInfo,
   useTokenSecurity,
 } from 'src/lib/hooks/react-query'
-import { EvmChain } from 'sushi/chain'
-import type { Type } from 'sushi/currency'
-import { formatNumber, formatUSD, shortenAddress } from 'sushi/format'
+import { formatNumber, formatUSD } from 'sushi'
+import { type EvmCurrency, getEvmChainById, shortenEvmAddress } from 'sushi/evm'
 import { TokenSecurityView } from '../token-security-view'
 
 interface CurrencyInfoProps {
-  currency: Type
+  currency: EvmCurrency
   onBack: () => void
+  toggleShowMore: () => void
+  showMoreCurrencyInfo: boolean
 }
 
-export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
-  const [showMore, setShowMore] = useState(true)
+export const CurrencyInfo: FC<CurrencyInfoProps> = ({
+  showMoreCurrencyInfo,
+  currency,
+  onBack,
+  toggleShowMore,
+}) => {
   const { data: tokenSecurity, isLoading: isTokenSecurityLoading } =
     useTokenSecurity({
-      currency: currency.wrapped,
+      currency: currency.wrap(),
     })
 
   const { data: coinGeckoInfo, isLoading: isCoinGeckoInfoLoading } =
     useCoinGeckoTokenInfo({
-      token: currency.wrapped,
+      token: currency.wrap(),
     })
-
-  const toggleShowMore = useCallback(() => {
-    setShowMore((prev) => !prev)
-  }, [])
 
   return (
     <div className="absolute inset-0 z-20 py-6 bg-gray-50 dark:bg-slate-800 rounded-2xl">
@@ -70,8 +71,8 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
             />
             <div className="flex items-center gap-1">
               <span className="text-xl font-medium">{currency.symbol}</span>
-              <span className="text-base font-normal text-muted-foreground">
-                {EvmChain.from(currency.chainId)?.name}
+              <span className="text-muted-foreground text-base font-normal">
+                {getEvmChainById(currency.chainId).name}
               </span>
             </div>
           </DialogTitle>
@@ -204,12 +205,12 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
               </span>
               <span className="flex items-center gap-1">
                 <LinkExternal
-                  className="font-medium underline"
-                  href={EvmChain.from(currency.chainId)?.getTokenUrl(
-                    currency.wrapped.address,
+                  className="font-medium"
+                  href={getEvmChainById(currency.chainId).getTokenUrl(
+                    currency.wrap().address,
                   )}
                 >
-                  {shortenAddress(currency.wrapped.address)}
+                  {shortenEvmAddress(currency.wrap().address)}
                 </LinkExternal>
                 <ClipboardController hideTooltip>
                   {({ setCopied }) => (
@@ -217,12 +218,12 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <DocumentDuplicateIcon
-                            className="w-4 h-4 cursor-pointer"
-                            onClick={() => setCopied(currency.wrapped.address)}
+                            className="h-4 w-4 cursor-pointer"
+                            onClick={() => setCopied(currency.wrap().address)}
                           />
                         </TooltipTrigger>
                         <TooltipContent side="bottom">
-                          <p>Lorem ipsum dolor sit amet</p>
+                          <p>Copy contract address to clipboard</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -237,12 +238,13 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
             className="w-full mt-4 text-xs font-medium text-muted-foreground"
             onClick={toggleShowMore}
           >
-            {showMore ? 'View Less' : 'View More'}
+            {showMoreCurrencyInfo ? 'View Less' : 'View More'}
             <TriangleIcon
-              className={`h-3 w-3 transition-transform ${showMore ? '-rotate-90' : 'rotate-90'}`}
+              className={`h-3 w-3 transition-transform ${showMoreCurrencyInfo ? '-rotate-90' : 'rotate-90'}`}
             />
           </Button>
-          <Collapsible open={showMore}>
+
+          <Collapsible open={showMoreCurrencyInfo}>
             <Separator className="my-6" />
             <div className="flex flex-col ">
               <div className="flex items-center gap-1 py-2">
@@ -250,7 +252,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
                 <span className="font-medium">Security Info</span>
               </div>
               <TokenSecurityView
-                token={currency.wrapped}
+                token={currency.wrap()}
                 isTokenSecurityLoading={isTokenSecurityLoading}
                 tokenSecurity={tokenSecurity}
               />

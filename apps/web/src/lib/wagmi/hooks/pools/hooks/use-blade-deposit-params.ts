@@ -1,13 +1,16 @@
 import { useQuery } from '@tanstack/react-query'
-import type { IDExtended } from 'src/ui/pool/add-liquidity/add-liquidity-blade'
-import { EvmChainId } from 'sushi'
-import { isEvmChainId } from 'sushi/chain'
-import type { BladeChainId } from 'sushi/config'
-import { isBladeChainId } from 'sushi/config'
-import { type Type, tryParseAmount } from 'sushi/currency'
+import { Amount, ZERO } from 'sushi'
+import {
+  type BladeChainId,
+  EvmChainId,
+  type EvmCurrency,
+  isBladeChainId,
+  isEvmChainId,
+} from 'sushi/evm'
 import type { Address, Hex } from 'viem'
 import { isAddress } from 'viem'
 import { z } from 'zod'
+import type { IDExtended } from '~evm/[chainId]/_ui/add-liquidity/add-liquidity-blade'
 
 const toQueryString = (obj: BladeDepositParams): string => {
   const params = new URLSearchParams()
@@ -28,14 +31,17 @@ const toQueryString = (obj: BladeDepositParams): string => {
   return qs ? `?${qs}` : ''
 }
 
-const formatDeposit = (tokens: Type[], inputs: Record<IDExtended, string>) => {
+const formatDeposit = (
+  tokens: EvmCurrency[],
+  inputs: Record<IDExtended, string>,
+) => {
   //if the input string is empty or "0" skip that input and token
   return tokens.reduce(
     (acc, token) => {
       const input = inputs[token.id]
-      const parsedInput = tryParseAmount(input, token)
-      if (parsedInput?.greaterThan(0)) {
-        acc[token.wrapped.address] = parsedInput.quotient.toString()
+      const parsedInput = Amount.tryFromHuman(token, input)
+      if (parsedInput?.gt(ZERO)) {
+        acc[token.wrap().address] = parsedInput.amount.toString()
       }
       return acc
     },
@@ -55,7 +61,7 @@ export const useBladeDepositParams = ({
   sender?: Address
   poolAddress?: Address
   chainId: BladeChainId
-  tokens: Type[]
+  tokens: EvmCurrency[]
   inputs: Record<IDExtended, string>
 }) => {
   return useQuery({

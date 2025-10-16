@@ -8,7 +8,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
-import { Wrapper } from '../swap/trade/wrapper'
+import { Wrapper } from '~evm/[chainId]/[trade]/_ui/swap/trade/wrapper'
 
 type TabKey = 'profit' | 'impermanent' | 'mev'
 

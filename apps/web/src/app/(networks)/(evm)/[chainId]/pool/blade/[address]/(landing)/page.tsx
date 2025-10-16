@@ -1,10 +1,13 @@
-import { type BladePool, getBladePool } from '@sushiswap/graph-client/data-api'
+import {
+  type BladePool,
+  getBladePool,
+} from '@sushiswap/graph-client/data-api-blade-prod'
+import ms from 'ms'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import { PoolPageBlade } from 'src/ui/pool/PoolPageBlade'
-import type { EvmChainId } from 'sushi'
-import { isBladeChainId } from 'sushi/config'
+import { type EvmChainId, isBladeChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
+import { PoolPageBlade } from '~evm/[chainId]/_ui/PoolPageBlade'
 
 export default async function PoolPage(props: {
   params: Promise<{ chainId: string; address: string }>
@@ -22,7 +25,7 @@ export default async function PoolPage(props: {
     async () => await getBladePool({ chainId, address }, { retries: 3 }),
     ['blade', 'pool', `${chainId}:${address}`],
     {
-      revalidate: 60 * 15,
+      revalidate: ms('15m'),
     },
   )()) as unknown as BladePool
 

@@ -20,7 +20,7 @@ export async function TeamDetailsCard({ teamId }: TeamDetailsCard) {
   const response = await client.getTeamsTeamId({ teamId })
 
   return (
-    <Card className="w-full min-w-[470px] h-min">
+    <Card className="h-min">
       <CardHeader className="rounded-t-xl">
         <CardTitle>Team Details</CardTitle>
         <CardDescription>Useful when requesting support</CardDescription>

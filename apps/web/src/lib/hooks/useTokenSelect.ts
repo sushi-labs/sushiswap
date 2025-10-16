@@ -1,15 +1,14 @@
 import { usePathname, useSearchParams } from 'next/navigation'
 import type { ChainId } from 'sushi'
-import type { EvmChainId } from 'sushi/chain'
-import type { Type } from 'sushi/currency'
-import { useSwitchChain } from 'wagmi'
+import type { EvmCurrency } from 'sushi/evm'
+// import { useSwitchChain } from 'wagmi'
 import { NativeAddress } from '../constants'
 import { getNetworkKey } from '../network'
 import { useCreateQuery } from './useCreateQuery'
 
 export const useSwapTokenSelect = () => {
   const { createQuery } = useCreateQuery()
-  const { switchChainAsync } = useSwitchChain()
+  // const { switchChainAsync } = useSwitchChain()
   const pathname = usePathname()
   const isAdvancedSwap = pathname.includes('advanced')
 
@@ -19,12 +18,12 @@ export const useSwapTokenSelect = () => {
   const token1 = searchParams.get('token1')
   const chainId1 = searchParams.get('chainId1')
 
-  const handleTokenInput = async ({ token }: { token: Type }) => {
-    await switchChainAsync({ chainId: token?.chainId as EvmChainId })
+  const handleTokenInput = async ({ token }: { token: EvmCurrency }) => {
+    // await switchChainAsync({ chainId: token?.chainId as EvmChainId })
     const tokenAddress =
       token.isNative || token.address.toLowerCase() === NativeAddress
         ? 'NATIVE'
-        : token.wrapped.address
+        : token.wrap().address
     if (tokenAddress === token1 && chainId1 === String(token.chainId)) {
       createQuery(
         [
@@ -71,13 +70,13 @@ export const useSwapTokenSelect = () => {
       )
     }
   }
-  const handleTokenOutput = async ({ token }: { token: Type }) => {
+  const handleTokenOutput = async ({ token }: { token: EvmCurrency }) => {
     const tokenAddress =
       token.isNative || token.address.toLowerCase() === NativeAddress
         ? 'NATIVE'
-        : token.wrapped.address
+        : token.wrap().address
     if (tokenAddress === token0 && chainId0 === String(token.chainId)) {
-      await switchChainAsync({ chainId: Number(chainId1) as EvmChainId })
+      // await switchChainAsync({ chainId: Number(chainId1) as EvmChainId })
       createQuery(
         [
           {

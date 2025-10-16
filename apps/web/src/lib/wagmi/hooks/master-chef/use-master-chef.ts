@@ -3,28 +3,25 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { keepPreviousData, useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo } from 'react'
-import { ChefType } from 'sushi'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
+import { Amount } from 'sushi'
 import {
+  ChefType,
+  EvmChainId,
+  type EvmToken,
+  MASTERCHEF_ADDRESS,
+  MASTERCHEF_V2_ADDRESS,
+  MINICHEF_ADDRESS,
+  SUSHI,
+  SUSHI_ADDRESS,
   erc20Abi_balanceOf,
   masterChefV1Abi_deposit,
   masterChefV2Abi_batch,
   masterChefV2Abi_harvest,
   masterChefV2Abi_harvestFromMasterChef,
   miniChefV2Abi_harvest,
-} from 'sushi/abi'
-import { EvmChainId } from 'sushi/chain'
-import {
-  MASTERCHEF_ADDRESS,
-  MASTERCHEF_V2_ADDRESS,
-  MINICHEF_ADDRESS,
-} from 'sushi/config'
-import { SUSHI, SUSHI_ADDRESS } from 'sushi/currency'
-import { Amount, type Token } from 'sushi/currency'
-import {
-  type Address,
-  UserRejectedRequestError,
-  encodeFunctionData,
-} from 'viem'
+} from 'sushi/evm'
+import { type Address, encodeFunctionData } from 'viem'
 import {
   useAccount,
   useBlockNumber,
@@ -38,9 +35,9 @@ import { useMasterChefContract } from './use-master-chef-contract'
 
 interface UseMasterChefReturn
   extends Pick<ReturnType<typeof useReadContracts>, 'isLoading' | 'isError'> {
-  balance: Amount<Token> | undefined
+  balance: Amount<EvmToken> | undefined
   harvest: undefined | (() => void)
-  pendingSushi: Amount<Token> | undefined
+  pendingSushi: Amount<EvmToken> | undefined
   isWritePending: boolean
   isWriteError: boolean
 }
@@ -49,7 +46,7 @@ interface UseMasterChefParams {
   chainId: EvmChainId
   chef: ChefType
   pid: number
-  token: Token | undefined
+  token: EvmToken | undefined
   enabled?: boolean
   watch?: boolean
 }
@@ -230,16 +227,16 @@ export const useMasterChef: UseMasterChef = ({
 
     const _pendingSushi = data?.[2] ? data?.[2] : undefined
     const balance = token
-      ? Amount.fromRawAmount(token, _balance ? _balance.toString() : 0)
+      ? new Amount(token, _balance ? _balance.toString() : 0)
       : undefined
     const pendingSushi = SUSHI[chainId as keyof typeof SUSHI]
-      ? Amount.fromRawAmount(
+      ? new Amount(
           SUSHI[chainId as keyof typeof SUSHI],
           _pendingSushi ? _pendingSushi.toString() : 0,
         )
       : undefined
     const sushiBalance = SUSHI[chainId as keyof typeof SUSHI]
-      ? Amount.fromRawAmount(
+      ? new Amount(
           SUSHI[chainId as keyof typeof SUSHI],
           _sushiBalance ? _sushiBalance.toString() : 0,
         )
@@ -269,7 +266,7 @@ export const useMasterChef: UseMasterChef = ({
   )
 
   const onError = useCallback((e: SendTransactionErrorType) => {
-    if (!(e.cause instanceof UserRejectedRequestError)) {
+    if (!isUserRejectedError(e)) {
       createErrorToast(e?.message, true)
     }
   }, [])
@@ -289,11 +286,7 @@ export const useMasterChef: UseMasterChef = ({
           }),
         }
       case ChefType.MasterChefV2: {
-        if (
-          pendingSushi &&
-          sushiBalance &&
-          pendingSushi.greaterThan(sushiBalance)
-        ) {
+        if (pendingSushi && sushiBalance && pendingSushi.gt(sushiBalance)) {
           return {
             account: address,
             to: contract.address,

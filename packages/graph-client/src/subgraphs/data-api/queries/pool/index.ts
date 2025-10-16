@@ -1,6 +1,5 @@
 export * from './pool-addresses.js'
 export * from './pools.js'
-export * from './top-evm-pools.js'
 export * from './top-non-evm-pools.js'
 export * from './v2-pool.js'
 export * from './v3-pool.js'

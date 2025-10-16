@@ -1,12 +1,11 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql.js'
 
 export const SushiV2SwapsQuery = graphql(`
-query V2Swaps($address: Bytes!, $chainId: SushiSwapV2ChainId!) {
-  v2Swaps(address: $address, chainId: $chainId) {
+query V2Swaps($address: Bytes!, $chainId: SushiSwapV2ChainId!, $user: Bytes) {
+  v2Swaps(address: $address, chainId: $chainId, user: $user) {
     transaction {
       createdAtBlock
       createdAtTimestamp
@@ -31,7 +30,8 @@ export async function getSushiV2Swaps(
   { ...variables }: GetSushiV2Swaps,
   options?: RequestOptions,
 ) {
-  const url = `${SUSHI_DATA_API_HOST}/graphql`
+  // const url = `${SUSHI_DATA_API_HOST}/graphql`
+  const url = 'https://data-api-feat-new-db-fields.data-gcp.sushi.com/graphql'
 
   const result = await request(
     { url, document: SushiV2SwapsQuery, variables },

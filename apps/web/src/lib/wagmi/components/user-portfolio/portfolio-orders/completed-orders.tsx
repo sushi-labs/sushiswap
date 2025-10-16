@@ -18,9 +18,13 @@ export type OrderItemType = TwapOrder | RecentSwap
 
 export const CompletedOrders = ({ filter }: { filter: CompletedOrderType }) => {
   const { address } = useAccount()
+  const twapChainIds = useMemo(
+    () => TWAP_SUPPORTED_CHAIN_IDS.map((chainId) => chainId),
+    [],
+  )
   const { data: twapOrders, isLoading: isLoadingTwap } = useTwapOrders({
     account: address,
-    chainIds: TWAP_SUPPORTED_CHAIN_IDS.map((chainId) => chainId),
+    chainIds: twapChainIds,
     enabled: Boolean(address),
   })
   const { data: marketSwaps, isLoading: isMarketSwapsLoading } = useRecentSwaps(

@@ -1,4 +1,4 @@
-import type { BladeChainId } from 'sushi/config'
+import type { BladeChainId } from 'sushi/evm'
 import type { Address } from 'viem'
 import { useReadContract } from 'wagmi'
 

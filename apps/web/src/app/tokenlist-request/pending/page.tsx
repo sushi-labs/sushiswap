@@ -29,9 +29,14 @@ import {
   isTokenSecurityIssue,
 } from 'src/lib/hooks/react-query'
 import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
-import { formatNumber, formatUSD, shortenAddress } from 'sushi'
-import { EvmChain, type EvmChainId } from 'sushi/chain'
-import { Token } from 'sushi/currency'
+import { formatNumber, formatUSD } from 'sushi'
+import {
+  type EvmAddress,
+  type EvmChainId,
+  EvmToken,
+  getEvmChainById,
+  shortenEvmAddress,
+} from 'sushi/evm'
 import { NavigationItems } from '../navigation-items'
 
 const getTokenSecurity = (security: PendingTokens[number]['security']) => {
@@ -159,12 +164,12 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
           </span>
           <LinkExternal
             target="_blank"
-            href={EvmChain.from(props.row.original.token.chainId)?.getTokenUrl(
-              props.row.original.token.address,
-            )}
+            href={getEvmChainById(
+              props.row.original.token.chainId as EvmChainId,
+            )?.getTokenUrl(props.row.original.token.address as EvmAddress)}
           >
             <span className="flex items-center gap-1 flex-nowrap">
-              {shortenAddress(props.row.original.token.address)}{' '}
+              {shortenEvmAddress(props.row.original.token.address)}{' '}
               <ExternalLinkIcon width={14} height={14} />
             </span>
           </LinkExternal>
@@ -279,8 +284,9 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
                 <List.Control className="!overflow-y-auto">
                   <TokenSecurityView
                     token={
-                      new Token({
+                      new EvmToken({
                         ...props.row.original.token,
+                        address: props.row.original.token.address as EvmAddress,
                         chainId: props.row.original.token.chainId as EvmChainId,
                       })
                     }

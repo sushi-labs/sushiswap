@@ -3,7 +3,7 @@
 import type { Difficulty } from '@sushiswap/graph-client/strapi'
 import { CircleIcon } from '@sushiswap/ui/icons/CircleIcon'
 import { useCallback, useState } from 'react'
-import { DIFFICULTY_ELEMENTS } from '../../contants'
+import { DIFFICULTY_ELEMENTS } from '../../constants'
 import {
   useAcademySearch,
   useSetAcademySearch,

@@ -1,10 +1,18 @@
 'use client'
 
+import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
 import React, { type FC, useState } from 'react'
-import { Wrapper } from '../swap/trade/wrapper'
-import { PoolChartGraph } from './PoolChartGraph'
-import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'
-import { PoolChartType, PoolChartTypes } from './PoolChartTypes'
+import { SushiSwapProtocol } from 'sushi/evm'
+import { Wrapper } from '~evm/[chainId]/[trade]/_ui/swap/trade/wrapper'
+import { PoolChartGraph } from '~evm/[chainId]/pool/_ui/pool-chart-graph'
+import {
+  PoolChartPeriod,
+  PoolChartPeriods,
+} from '~evm/[chainId]/pool/_ui/pool-chart-periods'
+import {
+  PoolChartType,
+  PoolChartTypes,
+} from '~evm/[chainId]/pool/_ui/pool-chart-types'
 
 const charts = [
   PoolChartType.Volume,
@@ -19,11 +27,11 @@ const periods = [
   PoolChartPeriod.All,
 ]
 
-// interface PoolChartBladeProps {
-//   pool: BladePool
-// }
+interface BladePoolChartProps {
+  pool: BladePool
+}
 
-const PoolChartBlade = () => {
+const PoolChartBlade: FC<BladePoolChartProps> = ({ pool }) => {
   const [chart, setChart] = useState<(typeof charts)[number]>(charts[0])
   const [period, setPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Month)
 
@@ -48,12 +56,8 @@ const PoolChartBlade = () => {
       <PoolChartGraph
         chart={chart}
         period={period}
-        //@ts-expect-error - ok until we have a blade pool type in moment
-        pool={{
-          address: '0x655edce464cc797526600a462a8154650eee4b77',
-          chainId: 1,
-        }}
-        protocol={'BLADE'}
+        pool={pool}
+        protocol={SushiSwapProtocol.BLADE}
       />
     </Wrapper>
   )

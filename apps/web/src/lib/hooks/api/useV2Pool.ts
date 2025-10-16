@@ -1,14 +1,16 @@
 'use client'
 
-import { useMemo } from 'react'
-import { Amount } from 'sushi/currency'
-
-import { type V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
+import {
+  type V2Pool,
+  getV2Pool,
+  hydrateV2Pool,
+} from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
-import { stringify } from 'src/instrumentation'
-import type { PoolId } from 'sushi'
-import { isSushiSwapV2ChainId } from 'sushi/config'
-import { getTokensFromPool } from '../useTokensFromPool'
+import { useMemo } from 'react'
+import { stringify } from 'src/instrumentation/bigint-json'
+import { Amount } from 'sushi'
+import { type PoolId, isSushiSwapV2ChainId } from 'sushi/evm'
+import { getLiquidityTokenFromPool } from '../useTokensFromPool'
 
 export const useV2Pool = (poolId: PoolId) => {
   const { chainId } = poolId
@@ -24,24 +26,19 @@ export const useV2Pool = (poolId: PoolId) => {
   } = useQuery<V2Pool | null>({
     queryKey: ['v2-pool', poolId],
     queryFn: async () => {
-      const result = await getV2Pool({
+      const rawPool = await getV2Pool({
         chainId: chainId,
         address: poolId.address,
       })
-      return result
+
+      return rawPool ? hydrateV2Pool(rawPool) : null
     },
     queryKeyHashFn: stringify,
   })
 
-  const { token0, token1, liquidityToken } = useMemo(() => {
-    if (!pool)
-      return {
-        token0: undefined,
-        token1: undefined,
-        liquidityToken: undefined,
-      }
-
-    return getTokensFromPool(pool)
+  const liquidityToken = useMemo(() => {
+    if (!pool) return undefined
+    return getLiquidityTokenFromPool(pool)
   }, [pool])
 
   return useMemo(() => {
@@ -49,19 +46,17 @@ export const useV2Pool = (poolId: PoolId) => {
       isLoading,
       error,
       data: {
-        token0,
-        token1,
+        token0: pool?.token0,
+        token1: pool?.token1,
         liquidityToken,
-        liquidityUSD: pool ? Number(pool?.liquidityUSD) : null,
-        reserve0:
-          token0 && pool ? Amount.fromRawAmount(token0, pool.reserve0) : null,
-        reserve1:
-          token1 && pool ? Amount.fromRawAmount(token1, pool.reserve1) : null,
+        liquidityUSD: pool?.liquidityUSD,
+        reserve0: pool ? new Amount(pool.token0, pool.reserve0) : null,
+        reserve1: pool ? new Amount(pool.token1, pool.reserve1) : null,
         totalSupply:
           liquidityToken && pool
-            ? Amount.fromRawAmount(liquidityToken, pool.liquidity)
+            ? new Amount(liquidityToken, pool.liquidity)
             : null,
       },
     }
-  }, [error, pool, isLoading, liquidityToken, token0, token1])
+  }, [error, pool, isLoading, liquidityToken])
 }

@@ -1,4 +1,4 @@
-import { DEFAULT_SLIPPAGE } from 'sushi/config'
+import { DEFAULT_SLIPPAGE } from 'sushi/evm'
 import type { Actions, State } from '../types'
 import { setSlippageAmount0 } from './setSlippageAmount0'
 import { setSlippageAmount1 } from './setSlippageAmount1'

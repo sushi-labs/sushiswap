@@ -3,7 +3,8 @@
 import { classNames } from '@sushiswap/ui'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useEffect, useState } from 'react'
-import type { Amount, Type } from 'sushi/currency'
+import type { Amount } from 'sushi'
+import type { EvmCurrency } from 'sushi/evm'
 import type { Address } from 'viem'
 import {
   TransferState,
@@ -12,7 +13,7 @@ import {
 
 interface TransferERC20Props extends ButtonProps {
   id: string
-  amount: Amount<Type> | undefined
+  amount: Amount<EvmCurrency> | undefined
   sendTo: Address | undefined
   enabled?: boolean
   onSuccess?: () => void

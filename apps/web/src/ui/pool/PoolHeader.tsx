@@ -1,11 +1,7 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import type {
-  BladePool,
-  V2Pool,
-  V3Pool,
-} from '@sushiswap/graph-client/data-api'
+import type { RawV2Pool, RawV3Pool } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Currency,
@@ -17,15 +13,12 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { type FC, useMemo } from 'react'
-import { SushiSwapProtocol } from 'sushi'
-import { EvmChain } from 'sushi/chain'
-import { Token, unwrapToken } from 'sushi/currency'
-import { AddLiquidityDialog } from './add-liquidity/add-liquidity-dialog'
+import { EvmToken, getEvmChainById, unwrapEvmToken } from 'sushi/evm'
 
 type PoolHeader = {
   backUrl: string
   address: string
-  pool: V2Pool | V3Pool
+  pool: RawV2Pool | RawV3Pool
   apy?: {
     fees: number | undefined
     rewards: number | undefined
@@ -39,8 +32,6 @@ export const PoolHeader: FC<PoolHeader> = ({
   backUrl,
   address,
   pool,
-  // apy,
-  // priceRange,
   showAddLiquidityButton = false,
 }) => {
   const { isMd } = useBreakpoint('md')
@@ -48,20 +39,22 @@ export const PoolHeader: FC<PoolHeader> = ({
     if (!pool) return [undefined, undefined]
 
     return [
-      unwrapToken(
-        new Token({
+      unwrapEvmToken(
+        new EvmToken({
           chainId: pool.chainId,
           address: pool.token0.address,
           decimals: pool.token0.decimals,
           symbol: pool.token0.symbol,
+          name: pool.token0.name,
         }),
       ),
-      unwrapToken(
-        new Token({
+      unwrapEvmToken(
+        new EvmToken({
           chainId: pool.chainId,
           address: pool.token1.address,
           decimals: pool.token1.decimals,
           symbol: pool.token1.symbol,
+          name: pool.token1.name,
         }),
       ),
     ]
@@ -107,7 +100,9 @@ export const PoolHeader: FC<PoolHeader> = ({
               >
                 <LinkExternal
                   className="text-gray-900 dark:text-slate-50"
-                  href={EvmChain.from(pool.chainId)?.getAccountUrl(address)}
+                  href={getEvmChainById(pool.chainId)?.getAccountUrl(
+                    address as `0x${string}`,
+                  )}
                 >
                   {token0.symbol}/{token1.symbol}
                 </LinkExternal>
@@ -134,23 +129,20 @@ export const PoolHeader: FC<PoolHeader> = ({
               </div>
             </div>
             {showAddLiquidityButton && !isMd ? (
-              <AddLiquidityDialog
-                poolType={pool.protocol}
-                hidePoolTypeToggle={true}
-                // @ts-expect-error - ok until we have a blade pool type
-                hideTokenSelectors={pool.protocol !== 'BLADE'}
-                token0={token0}
-                token1={token1}
-                initFeeAmount={pool?.swapFee * 1_000_000}
-                trigger={
-                  <Button
-                    size="sm"
-                    className="w-fit !p-2 !h-[32px] !min-h-[32px]"
-                  >
-                    <PlusIcon className="w-4 h-4" />
-                  </Button>
-                }
-              />
+              <LinkInternal
+                href={`/${getEvmChainById(pool.chainId).key}/pool/v3/${pool.address}/add?feeAmount=${
+                  pool.swapFee * 1000000
+                }&fromCurrency=${token0?.isNative ? 'NATIVE' : token0?.address}&toCurrency=${
+                  token1?.isNative ? 'NATIVE' : token1?.address
+                }`}
+              >
+                <Button
+                  size="sm"
+                  className="w-fit !p-2 !h-[32px] !min-h-[32px]"
+                >
+                  <PlusIcon className="w-4 h-4" />
+                </Button>
+              </LinkInternal>
             ) : null}
           </div>
         </div>

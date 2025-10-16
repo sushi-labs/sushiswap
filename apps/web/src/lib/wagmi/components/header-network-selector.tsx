@@ -18,17 +18,18 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import type { NonStandardChainId } from 'src/config'
 import { getNetworkName } from 'src/lib/network'
-import { type EvmChainId, isEvmChainId } from 'sushi/chain'
-import { ProviderRpcError, UserRejectedRequestError } from 'viem'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
+import type { ChainId } from 'sushi'
+import { isEvmChainId } from 'sushi/evm'
+import { ProviderRpcError } from 'viem'
 import { useChainId, useSwitchChain } from 'wagmi'
 import {
   NetworkSelector,
   type NetworkSelectorOnSelectCallback,
 } from './network-selector'
 
-type SupportedNetworks = readonly (EvmChainId | NonStandardChainId)[]
+type SupportedNetworks = readonly ChainId[]
 
 interface HeaderNetworkSelectorContextType {
   supportedNetworks: SupportedNetworks | null
@@ -71,15 +72,13 @@ export const HeaderNetworkSelectorProvider: FC<{
 }
 
 export const HeaderNetworkSelector: FC<{
-  networks: SupportedNetworks
-  supportedNetworks?: SupportedNetworks
-  selectedNetwork?: EvmChainId | NonStandardChainId
-  onChange?(network: EvmChainId | NonStandardChainId): void
+  networks?: readonly ChainId[]
+  selectedNetwork?: ChainId
+  onChange?(network: ChainId): void
   hideNetworkName?: boolean
   className?: string
 }> = ({
   networks,
-  supportedNetworks: propsSupportedNetworks,
   selectedNetwork,
   onChange,
   className,
@@ -91,14 +90,14 @@ export const HeaderNetworkSelector: FC<{
     HeaderNetworkSelectorContext,
   )
   const supportedNetworks = useMemo(
-    () => propsSupportedNetworks ?? contextSupportedNetworks ?? undefined,
-    [propsSupportedNetworks, contextSupportedNetworks],
+    () => networks ?? contextSupportedNetworks ?? undefined,
+    [networks, contextSupportedNetworks],
   )
 
   const searchParams = useSearchParams()
   const chainId0 = searchParams.get('chainId0')
   const network = chainId0
-    ? (Number(chainId0) as EvmChainId)
+    ? (Number(chainId0) as ChainId)
     : selectedNetwork
       ? selectedNetwork
       : chainId
@@ -123,7 +122,7 @@ export const HeaderNetworkSelector: FC<{
         close()
       } catch (e) {
         console.error(`Failed to switch network: ${e}`)
-        if (e instanceof UserRejectedRequestError) return
+        if (isUserRejectedError(e)) return
         if (e instanceof ProviderRpcError) {
           createErrorToast(e.message, true)
         }
@@ -135,9 +134,8 @@ export const HeaderNetworkSelector: FC<{
   return (
     <NetworkSelector
       selected={network}
-      supportedNetworks={supportedNetworks}
+      networks={supportedNetworks}
       onSelect={onSwitchNetwork}
-      networks={networks}
     >
       <Button
         variant="secondary"

@@ -48,6 +48,7 @@ type Query {
   tokenListV2(chainIds: [TokenListV2ChainId!]!, first: Int = 50, skip: Int, search: String, customTokens: [MultiChainTokenInput!]): [TokenListEntryV2!]!
   tokenListBalancesV2(chainIds: [TokenListV2ChainId!]!, account: Bytes!, includeNative: Boolean = true, customTokens: [MultiChainTokenInput!]): TokenListBalancesV2Response!
   recentSwaps(account: Bytes!, chainIds: [TokenListV2ChainId!]!): [SwapPnL!]!
+  quickSelectTokens(account: Bytes!, chainIds: [TokenListV2ChainId!]!): [QuickSelectToken!]!
   searchTokens(account: Bytes!, first: Int = 50, skip: Int, chainIds: [TokenListV2ChainId!]!, search: String, tokens: [MultiChainTokenInput!]): [TokenListEntryWithBalanceV2!]!
   tokenAnalysis(chainId: Int!, address: Bytes!): TokenAnalysis!
   pendingTokens: [PendingToken!]!
@@ -638,6 +639,15 @@ type SwapPnL {
   deltaRealizedPnl: Float!
   totalPnl: Float!
   protocol: String!
+}
+
+type QuickSelectToken {
+  chainId: TokenListV2ChainId!
+  address: Bytes!
+  symbol: String!
+  name: String!
+  decimals: Int!
+  bridgeInfo: [TokenBridgeInfo!]
 }
 
 input MultiChainTokenInput {

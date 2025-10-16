@@ -1,25 +1,23 @@
-import { type ChainId, ChainKey, EvmChain } from 'sushi/chain'
-import { NonStandardChain, type NonStandardChainId } from '../config'
+import { type ChainId, getChainById } from 'sushi'
+import { isSushiSwapChainId } from 'sushi/evm'
 
-export const getNetworkName = (network: ChainId | NonStandardChainId) => {
-  return typeof network === 'number'
-    ? EvmChain.from(network)?.name
-    : NonStandardChain[network].name
+export const getNetworkName = (network: ChainId) => {
+  return getChainById(network).name
 }
 
-export const getNetworkKey = (network: ChainId | NonStandardChainId) => {
-  return typeof network === 'number' ? ChainKey[network] : network
+export const getNetworkKey = (network: ChainId) => {
+  return typeof network === 'number' ? getChainById(network).key : network
 }
 
-export const replaceNetworkSlug = (
-  network: ChainId | NonStandardChainId,
-  pathname: string,
-) => {
+export const replaceNetworkSlug = (network: ChainId, pathname: string) => {
   if (pathname.includes('/pool/')) {
     return `/${getNetworkKey(network)}/explore/pools`
   }
   if (pathname.includes('/token/')) {
-    return `/${getNetworkKey(network)}/explore/tokens`
+    if (isSushiSwapChainId(network)) {
+      return `/${getNetworkKey(network)}/explore/tokens`
+    }
+    return `/${getNetworkKey(network)}/explore/pools`
   }
   const pathSegments = pathname.split('/')
   pathSegments[1] = getNetworkKey(network)

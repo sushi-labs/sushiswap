@@ -2,8 +2,9 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo, useState } from 'react'
-import { erc20Abi_transfer } from 'sushi/abi'
-import type { Amount, Type } from 'sushi/currency'
+import type { Amount } from 'sushi'
+import { ZERO } from 'sushi'
+import { type EvmCurrency, erc20Abi_transfer } from 'sushi/evm'
 import {
   type Address,
   ContractFunctionZeroDataError,
@@ -26,7 +27,7 @@ export enum TransferState {
 
 interface UseTokenTransferParams {
   sendTo: Address | undefined
-  amount: Amount<Type> | undefined
+  amount: Amount<EvmCurrency> | undefined
   enabled?: boolean
 }
 
@@ -44,7 +45,7 @@ export const useTransferERC20 = ({
 
   const simulationEnabled = Boolean(
     amount?.currency?.isToken &&
-      amount?.greaterThan(0) &&
+      amount?.gt(ZERO) &&
       sendTo &&
       address &&
       enabled,
@@ -57,9 +58,9 @@ export const useTransferERC20 = ({
   >({
     chainId: amount?.currency.chainId,
     abi: erc20Abi_transfer,
-    address: amount?.currency?.wrapped?.address as Address,
+    address: amount?.currency?.wrap().address as Address,
     functionName: 'transfer',
-    args: [sendTo as Address, amount ? amount.quotient : 0n],
+    args: [sendTo as Address, amount ? amount.amount : 0n],
     scopeKey: 'transfer-std',
     query: {
       enabled: simulationEnabled,
@@ -93,7 +94,7 @@ export const useTransferERC20 = ({
           promise: receiptPromise,
           summary: {
             pending: `Sending ${amount.currency.symbol}`,
-            completed: `Successfully sent ${amount.toExact()} ${amount.currency.symbol}`,
+            completed: `Successfully sent ${amount.toString()} ${amount.currency.symbol}`,
             failed: `Something went wrong sending ${amount.currency.symbol}`,
           },
           groupTimestamp: ts,

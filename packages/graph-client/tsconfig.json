@@ -18,22 +18,10 @@
         "name": "@0no-co/graphqlsp",
         "schemas": [
           {
-            "name": "bentobox",
-            "schema": "./src/subgraphs/bentobox/schema.graphql",
-            "tadaOutputLocation": "./src/subgraphs/bentobox/bentobox-env.d.ts",
-            "tadaTurboLocation": "./src/subgraphs/bentobox/bentobox-cache.d.ts"
-          },
-          {
             "name": "strapi",
             "schema": "./src/subgraphs/strapi/schema.graphql",
             "tadaOutputLocation": "./src/subgraphs/strapi/strapi-env.d.ts",
             "tadaTurboLocation": "./src/subgraphs/strapi/strapi-cache.d.ts"
-          },
-          {
-            "name": "furo",
-            "schema": "./src/subgraphs/furo/schema.graphql",
-            "tadaOutputLocation": "./src/subgraphs/furo/furo-env.d.ts",
-            "tadaTurboLocation": "./src/subgraphs/furo/furo-cache.d.ts"
           },
           {
             "name": "data-api",
@@ -46,9 +34,28 @@
             "schema": "./src/subgraphs/de.fi/schema.graphql",
             "tadaOutputLocation": "./src/subgraphs/de.fi/de.fi-env.d.ts",
             "tadaTurboLocation": "./src/subgraphs/de.fi/de.fi-cache.d.ts"
-          }
+          },
+          {
+            "name": "data-api-181",
+            "schema": "./src/subgraphs/data-api-181/schema.graphql",
+            "tadaOutputLocation": "./src/subgraphs/data-api-181/data-api-181-env.d.ts",
+            "tadaTurboLocation": "./src/subgraphs/data-api-181/data-api-181-cache.d.ts"
+          },
+          {
+						"name": "kadena",
+						"schema": "./src/subgraphs/kadena/schema.graphql",
+						"tadaOutputLocation": "./src/subgraphs/kadena/kadena-env.d.ts",
+						"tadaTurboLocation": "./src/subgraphs/kadena/kadena-cache.d.ts"
+					},
+          {
+						"name": "data-api-blade-prod",
+						"schema": "./src/subgraphs/data-api-blade-prod/schema.graphql",
+						"tadaOutputLocation": "./src/subgraphs/data-api-blade-prod/data-api-blade-prod-env.d.ts",
+						"tadaTurboLocation": "./src/subgraphs/data-api-blade-prod/data-api-blade-prod-cache.d.ts"
+					}
         ]
       }
     ]
   }
+
 }

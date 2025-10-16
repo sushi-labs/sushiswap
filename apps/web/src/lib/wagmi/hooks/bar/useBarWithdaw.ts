@@ -2,9 +2,15 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
-import { xsushiAbi_leave } from 'sushi/abi'
-import { type Amount, type Token, XSUSHI_ADDRESS } from 'sushi/currency'
-import { UserRejectedRequestError } from 'viem'
+import { logger } from 'src/lib/logger'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
+import type { Amount } from 'sushi'
+import {
+  EvmChainId,
+  type EvmToken,
+  XSUSHI_ADDRESS,
+  xsushiAbi_leave,
+} from 'sushi/evm'
 import {
   useAccount,
   usePublicClient,
@@ -12,12 +18,10 @@ import {
   useWriteContract,
 } from 'wagmi'
 import type { SendTransactionReturnType } from 'wagmi/actions'
-
-import { ChainId } from 'sushi/chain'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 
 interface UseBarWithdrawParams {
-  amount?: Amount<Token>
+  amount?: Amount<EvmToken>
   enabled?: boolean
 }
 
@@ -36,14 +40,14 @@ export function useBarWithdraw({
 
       const receipt = client.waitForTransactionReceipt({ hash: data })
       receipt.then(() => {
-        refetchBalances(ChainId.ETHEREUM)
+        refetchBalances(EvmChainId.ETHEREUM)
       })
 
       const ts = new Date().getTime()
       void createToast({
         account: address,
         type: 'leaveBar',
-        chainId: ChainId.ETHEREUM,
+        chainId: EvmChainId.ETHEREUM,
         txHash: data,
         promise: receipt,
         summary: {
@@ -59,17 +63,23 @@ export function useBarWithdraw({
   )
 
   const onError = useCallback((e: Error) => {
-    if (!(e.cause instanceof UserRejectedRequestError)) {
-      createErrorToast(e?.message, true)
+    if (isUserRejectedError(e)) {
+      return
     }
+
+    logger.error(e, {
+      location: 'useBarWithdraw',
+      action: 'mutationError',
+    })
+    createErrorToast(e?.message, true)
   }, [])
 
   const { data: simulation } = useSimulateContract({
-    address: XSUSHI_ADDRESS[ChainId.ETHEREUM],
+    address: XSUSHI_ADDRESS[EvmChainId.ETHEREUM],
     abi: xsushiAbi_leave,
     functionName: 'leave',
-    chainId: ChainId.ETHEREUM,
-    args: amount ? [amount.quotient] : undefined,
+    chainId: EvmChainId.ETHEREUM,
+    args: amount ? [amount.amount] : undefined,
     query: { enabled },
   })
 

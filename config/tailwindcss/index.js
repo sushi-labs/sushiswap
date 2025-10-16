@@ -53,6 +53,7 @@ module.exports = {
       fontFamily: {
         sans: ['var(--font-inter)'],
         mono: ['var(--font-roboto-mono)'],
+        orbitron: ['var(--font-orbitron)'],
       },
       backgroundImage: () => ({
         'gradient-radial': 'radial-gradient(#13213E, #111829)',
@@ -80,9 +81,9 @@ module.exports = {
           450: '#7B7A87',
           500: '#ABA5B0',
           700: '#6B7280',
-          750: '#222137',
-          800: '#15152B',
-          900: '#0C0C23',
+          750: '#252A3C',
+          800: '#171B2F',
+          900: '#0D1227',
         },
         blue: {
           DEFAULT: '#4217ff',

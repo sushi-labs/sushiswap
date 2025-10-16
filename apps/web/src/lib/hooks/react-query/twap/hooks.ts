@@ -3,18 +3,20 @@ import type { TokenListChainId } from '@sushiswap/graph-client/data-api'
 import { useMemo } from 'react'
 import type { TwapOrder } from 'src/lib/hooks/react-query/twap'
 import { useSearchTokens } from 'src/lib/wagmi/components/token-selector/hooks/use-search-tokens'
-import type { EvmChainId } from 'sushi'
-import { Native, type Type } from 'sushi/currency'
+import { type EvmChainId, type EvmCurrency, EvmNative } from 'sushi/evm'
 import { formatDuration, getPnl, parseFill, safeFormatUnits } from './utils'
 
-const useToken = (address?: string, chainId?: number): Type | undefined => {
+const useToken = (
+  address?: string,
+  chainId?: number,
+): EvmCurrency | undefined => {
   const { data: token } = useSearchTokens({
     chainId: chainId as TokenListChainId,
     search: address,
   })
 
   if (eqIgnoreCase(address ?? '', zeroAddress) && chainId) {
-    return Native.onChain(chainId as EvmChainId)
+    return EvmNative.fromChainId(chainId as EvmChainId)
   }
 
   return token?.[0]
@@ -64,9 +66,7 @@ export const useParsedOrder = (order: TwapOrder) => {
         buyToken?.decimals,
       ),
       transactionHash: order.txHash,
-      transactionExplorerUrl: `${getNetwork(order.chainId)?.explorer}/tx/${
-        order.txHash
-      }`,
+      transactionExplorerUrl: `${getNetwork(order.chainId)?.explorer}/tx/${order.txHash}`,
       chunksCountTotal,
       fillIntervalMs: order.fillDelayMs,
       usdPerChunk: sellTokenTotalUsdValue / chunksCountTotal,

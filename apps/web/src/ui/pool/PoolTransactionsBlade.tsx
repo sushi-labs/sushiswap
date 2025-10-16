@@ -2,10 +2,10 @@
 
 import {
   type BladePool,
+  getBladeBurns,
   getBladeMints,
   getBladeSwaps,
-} from '@sushiswap/graph-client/data-api'
-import { getBladeBurns } from '@sushiswap/graph-client/data-api'
+} from '@sushiswap/graph-client/data-api-blade-prod'
 import {
   Card,
   CardContent,
@@ -20,11 +20,11 @@ import { useQuery } from '@tanstack/react-query'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { type FC, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { EvmChain } from 'sushi/chain'
-import { isBladeChainId } from 'sushi/config'
+import { type EvmChainId, getEvmChainById, isBladeChainId } from 'sushi/evm'
 import type { Address } from 'viem'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
+import { Wrapper } from '~evm/[chainId]/[trade]/_ui/swap/trade/wrapper'
 import {
   TX_AMOUNT_IN_V2_COLUMN,
   TX_AMOUNT_OUT_V2_COLUMN,
@@ -89,8 +89,8 @@ function useTransactionsBlade(
               txHash: burn.txHash,
               createdAtTimestamp: burn.timestamp,
               amountUSD: burn.amountUSD,
-              symbol0: pool.tokens[0].symbol,
-              symbol1: pool.tokens[1].symbol,
+              symbol0: pool.tokens[0].token.symbol,
+              symbol1: pool.tokens[1].token.symbol,
               type: TransactionType.Burn,
               sender: burn.user,
             }),
@@ -105,8 +105,8 @@ function useTransactionsBlade(
               txHash: mint.txHash,
               createdAtTimestamp: mint.timestamp,
               amountUSD: mint.amountUSD,
-              symbol0: pool.tokens[0].symbol,
-              symbol1: pool.tokens[1].symbol,
+              symbol0: pool.tokens[0].token.symbol,
+              symbol1: pool.tokens[1].token.symbol,
               type: TransactionType.Mint,
               sender: mint.user,
             }),
@@ -256,7 +256,7 @@ const PoolTransactionsBlade: FC<PoolTransactionsBladeProps> = ({
     'data-[state=on]:!border-blue data-[state=on]:!bg-[#4217FF14] dark:data-[state=on]:!bg-[#3DB1FF14] dark:data-[state=on]:!border-skyblue border border-accent'
 
   return (
-    <Card className="dark:!bg-[#15152B] !bg-slate-50">
+    <Wrapper className="!p-0" enableBorder>
       <CardHeader>
         <CardTitle>
           <div className="flex flex-col gap-y-4 justify-between md:flex-row">
@@ -318,7 +318,9 @@ const PoolTransactionsBlade: FC<PoolTransactionsBladeProps> = ({
           <DataTable
             state={state}
             linkFormatter={(row) =>
-              EvmChain.from(row.chainId)?.getTxUrl(row.txHash) ?? ''
+              getEvmChainById(row.chainId as EvmChainId)?.getTransactionUrl(
+                row.txHash as `0x${string}`,
+              ) ?? ''
             }
             loading={isLoading}
             columns={COLUMNS}
@@ -328,7 +330,7 @@ const PoolTransactionsBlade: FC<PoolTransactionsBladeProps> = ({
           />
         </InfiniteScroll>
       </CardContent>
-    </Card>
+    </Wrapper>
   )
 }
 

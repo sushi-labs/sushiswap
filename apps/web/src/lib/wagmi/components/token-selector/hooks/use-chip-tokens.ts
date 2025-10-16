@@ -1,7 +1,5 @@
-// import { usePinnedTokens } from '@sushiswap/hooks'
 import { useMemo } from 'react'
-import type { EvmChainId } from 'sushi/chain'
-import { EVM_DEFAULT_BASES } from 'sushi/config'
+import { EVM_DEFAULT_BASES, type EvmChainId } from 'sushi/evm'
 
 interface UseChipTokens {
   chainId: EvmChainId | EvmChainId[]
@@ -27,7 +25,7 @@ UseChipTokens) {
 
   return useMemo(() => {
     return defaultBases.flatMap((base) => {
-      if (base.isNative && !includeNative) return []
+      if (base.type === 'native' && !includeNative) return []
 
       return {
         default: true,

@@ -15,7 +15,7 @@ export async function TeamBalanceChangesCard({ teamId }: { teamId: string }) {
   })
 
   return (
-    <Card className="w-full min-w-[470px] h-min">
+    <Card>
       <CardHeader className="rounded-t-xl">
         <CardTitle>Balance Changes</CardTitle>
         <CardDescription>Deposits and deductions</CardDescription>

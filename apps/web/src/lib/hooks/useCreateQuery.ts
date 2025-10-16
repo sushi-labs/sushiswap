@@ -15,6 +15,10 @@ export const useCreateQuery = () => {
       window.history.pushState({}, '', newUrl)
     }
   }, [])
+  const replace = useCallback((path: string) => {
+    const newUrl = new URL(`${window.location.origin}${path}`).toString()
+    window.history.replaceState({}, '', newUrl)
+  }, [])
 
   const defaultedParams = useMemo(() => {
     const params = new URLSearchParams(searchParams)
@@ -43,15 +47,29 @@ export const useCreateQuery = () => {
       newPathname?: string,
       hardPush?: boolean,
     ) => {
+      const queryString = createQueryString(values)
       push(
-        `${newPathname ? newPathname : pathname}?${createQueryString(values)}`,
+        `${newPathname ? newPathname : pathname}${queryString ? `?${queryString}` : ''}`,
         hardPush,
       )
     },
     [createQueryString, pathname, push],
   )
+  const createReplaceQuery = useCallback(
+    (
+      values: { name: string; value: string | null }[],
+      newPathname?: string,
+    ) => {
+      const queryString = createQueryString(values)
+      replace(
+        `${newPathname ? newPathname : pathname}${queryString ? `?${queryString}` : ''}`,
+      )
+    },
+    [createQueryString, pathname, replace],
+  )
 
   return {
     createQuery,
+    createReplaceQuery,
   }
 }

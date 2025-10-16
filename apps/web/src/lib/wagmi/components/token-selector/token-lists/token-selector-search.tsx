@@ -2,7 +2,7 @@ import type { TokenListChainId } from '@sushiswap/graph-client/data-api'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useMemo } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import type { Type } from 'sushi/currency'
+import type { EvmCurrency } from 'sushi/evm'
 import type { Address } from 'viem'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useSearchTokens } from '../hooks/use-search-tokens'
@@ -12,9 +12,9 @@ import { TokenSelectorCurrencyListLoadingV2 } from './common/token-selector-curr
 interface TokenSelectorSearch {
   chainId: TokenListChainId
   search: string
-  onSelect(currency: Type): void
-  onShowInfo(currency: Type | false): void
-  selected: Type | undefined
+  onSelect(currency: EvmCurrency): void
+  onShowInfo(currency: EvmCurrency | false): void
+  selected: EvmCurrency | undefined
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
@@ -56,7 +56,10 @@ export function TokenSelectorSearch({
 
     if (data) {
       data.forEach((token) => {
-        if (!customTokens.includes(token.address) && token.approved === false) {
+        if (
+          !customTokens.includes(token.address) &&
+          token.metadata.approved === false
+        ) {
           set.add(token.address.toLowerCase() as Address)
         }
       })

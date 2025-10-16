@@ -1,37 +1,39 @@
-'use client'
-
-import { Container, LinkExternal, Message } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
-import React, { use } from 'react'
+import React from 'react'
+import { TableFiltersNetwork } from 'src/app/(networks)/_ui/table-filters-network'
+import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/table-filters-search-token'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { PositionsTab } from 'src/ui/pool/PositionsTab'
-import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
-import { TableFiltersResetButton } from 'src/ui/pool/TableFiltersResetButton'
-import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
-import type { EvmChainId } from 'sushi/chain'
-import { isSushiSwapChainId } from 'sushi/config'
+import { isPublicBladeChainId } from 'src/config.server'
+import {
+  SushiSwapProtocol,
+  isBladeChainId,
+  isSushiSwapChainId,
+} from 'sushi/evm'
+import { TableFiltersResetButton } from '~evm/[chainId]/_ui/table-filters-reset-button'
+import { PositionsTab } from './_ui/positions-tab'
 
-export default function MyPositionsPage(props: {
+export default async function MyPositionsPage(props: {
   params: Promise<{ chainId: string }>
 }) {
-  const params = use(props.params)
-  const chainId = +params.chainId as EvmChainId
+  const params = await props.params
+  const chainId = +params.chainId
 
-  if (!isSushiSwapChainId(chainId)) {
+  const isBladeChain =
+    isBladeChainId(chainId) && (await isPublicBladeChainId(chainId))
+
+  if (!isSushiSwapChainId(chainId) && !isBladeChain) {
     return notFound()
   }
 
+  const supportedProtocols: SushiSwapProtocol[] = [
+    SushiSwapProtocol.SUSHISWAP_V2,
+    SushiSwapProtocol.SUSHISWAP_V3,
+    ...(isBladeChain ? [SushiSwapProtocol.BLADE] : []),
+  ]
+
   return (
     <Container maxWidth="7xl" className="px-4">
-      <Message size="sm" variant="info" className="mb-4 text-center">
-        Smart Pools are no longer supported in our app. To manage your Smart
-        Pool positions, please visit:{' '}
-        <LinkExternal href="https://app.steer.finance/profile">
-          <span className="text-slate-300">
-            https://app.steer.finance/profile
-          </span>
-        </LinkExternal>
-      </Message>
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <TableFiltersSearchToken />
         <TableFiltersNetwork
@@ -42,7 +44,7 @@ export default function MyPositionsPage(props: {
         />
         <TableFiltersResetButton />
       </div>
-      <PositionsTab chainId={chainId} />
+      <PositionsTab chainId={chainId} supportedProtocols={supportedProtocols} />
     </Container>
   )
 }

@@ -1,9 +1,6 @@
 'use client'
 
-import type {
-  BladePool,
-  TokenWithLiquidity,
-} from '@sushiswap/graph-client/data-api'
+import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
 import {
   CardContent,
   CardGroup,
@@ -14,12 +11,17 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
-import type { EvmChainId } from 'sushi'
-import { Token, unwrapToken } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
+import {
+  type BladeChainId,
+  type EvmAddress,
+  type EvmChainId,
+  EvmToken,
+  unwrapEvmToken,
+} from 'sushi/evm'
+import { Wrapper } from '~evm/[chainId]/[trade]/_ui/swap/trade/wrapper'
+import { USDGroupedAmountItem } from '~evm/[chainId]/_ui/PoolCompositionBlade'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
-import { Wrapper } from '../swap/trade/wrapper'
-import { USDGroupedAmountItem } from './PoolCompositionBlade'
 
 export const BladePoolPrice: FC<{
   pool: BladePool
@@ -37,13 +39,13 @@ export const BladePoolPrice: FC<{
           {showStableTypes ? (
             <>
               {pool?.tokens?.map((token, idx) => (
-                <Item key={idx} token={token} />
+                <Item key={idx} token={token} chainId={pool.chainId} />
               ))}
             </>
           ) : (
             <>
               <USDGroupedAmountItem amount="" fiatValue={1} />
-              <Item token={token0} />
+              <Item token={token0} chainId={pool.chainId} />
             </>
           )}
         </CardGroup>
@@ -52,20 +54,23 @@ export const BladePoolPrice: FC<{
   )
 }
 
-const Item = ({ token }: { token: TokenWithLiquidity }) => {
-  const _token = unwrapToken(
-    new Token({
-      chainId: token?.chainId as EvmChainId,
-      address: token?.address,
-      decimals: token?.decimals,
-      name: token?.name,
-      symbol: token?.symbol,
+const Item = ({
+  token,
+  chainId,
+}: { token: BladePool['tokens'][number]; chainId: BladeChainId }) => {
+  const _token = unwrapEvmToken(
+    new EvmToken({
+      chainId: chainId,
+      address: token?.token.address as EvmAddress,
+      decimals: token?.token.decimals,
+      name: token?.token.name,
+      symbol: token?.token.symbol,
     }),
   )
 
   const { data: price } = usePrice({
     chainId: _token?.chainId,
-    address: _token?.wrapped.address,
+    address: _token?.wrap().address,
   })
   return (
     <CardItem

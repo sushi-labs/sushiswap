@@ -1,17 +1,15 @@
-import { getV2Pool } from '@sushiswap/graph-client/data-api'
 import type { Metadata } from 'next'
-import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import type { EvmChainId } from 'sushi'
-import { isSushiSwapV2ChainId } from 'sushi/config'
+import { isSushiSwapV2ChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
+import { getCachedV2Pool } from './_lib/get-cached-v2-pool'
 
 export async function generateMetadata(props: {
   params: Promise<{ chainId: string; address: string }>
 }): Promise<Metadata> {
   const params = await props.params
   const { chainId: _chainId, address } = params
-  const chainId = +_chainId as EvmChainId
+  const chainId = +_chainId
 
   if (
     !isSushiSwapV2ChainId(chainId) ||
@@ -20,13 +18,7 @@ export async function generateMetadata(props: {
     return {}
   }
 
-  const pool = await unstable_cache(
-    async () => getV2Pool({ chainId, address }, { retries: 3 }),
-    ['v2', 'pool', `${chainId}:${address}`],
-    {
-      revalidate: 60 * 15,
-    },
-  )()
+  const pool = await getCachedV2Pool({ chainId, address })
 
   if (!pool) {
     return {}
@@ -46,7 +38,7 @@ export default async function Layout(props: {
   const { children } = props
 
   const { chainId: _chainId, address } = params
-  const chainId = +_chainId as EvmChainId
+  const chainId = +_chainId
 
   if (
     !isSushiSwapV2ChainId(chainId) ||
@@ -55,13 +47,7 @@ export default async function Layout(props: {
     return notFound()
   }
 
-  const pool = await unstable_cache(
-    async () => getV2Pool({ chainId, address }, { retries: 3 }),
-    ['v2', 'pool', `${chainId}:${address}`],
-    {
-      revalidate: 60 * 15,
-    },
-  )()
+  const pool = await getCachedV2Pool({ chainId, address })
 
   // Rockstar C&D
   if (!pool || pool.id === '42161:0x0a4f9962e24893a4a7567e52c1ce37d5482365de') {

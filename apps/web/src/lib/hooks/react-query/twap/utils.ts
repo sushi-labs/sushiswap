@@ -1,5 +1,5 @@
 import { OrderType, type TwapFill, getNetwork } from '@orbs-network/twap-sdk'
-import type { Type } from 'sushi/currency'
+import type { EvmCurrency } from 'sushi/evm'
 import { formatUnits } from 'viem'
 import type { TwapOrder } from '.'
 
@@ -36,8 +36,8 @@ export const formatDuration = (ms: number): string => {
 export const parseFill = (
   order: TwapOrder,
   fill: TwapFill,
-  sellToken?: Type,
-  buyToken?: Type,
+  sellToken?: EvmCurrency,
+  buyToken?: EvmCurrency,
 ) => {
   return {
     timestamp: fill.timestamp,

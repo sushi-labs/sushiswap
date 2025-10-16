@@ -1,12 +1,12 @@
 'use client'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { Container, SettingsModule, SettingsOverlay } from '@sushiswap/ui'
-import { AmountIn } from '~tron/_common/ui/Swap/AmountIn'
-import { AmountOut } from '~tron/_common/ui/Swap/AmountOut'
-import { ReviewSwapDialog } from '~tron/_common/ui/Swap/ReviewSwapDialog'
-import { SwapStats } from '~tron/_common/ui/Swap/SwapStats'
-import { SwitchSwapDirection } from '~tron/_common/ui/Swap/SwitchSwapDirection'
-import { SwitchSwapType } from '~tron/_common/ui/Swap/SwitchSwapType'
+import { AmountIn } from '~tron/_common/ui/Swap/amount-in'
+import { AmountOut } from '~tron/_common/ui/Swap/amount-out'
+import { ReviewSwapDialog } from '~tron/_common/ui/Swap/review-swap-dialog'
+import { SwapStats } from '~tron/_common/ui/Swap/swap-stats'
+import { SwitchSwapDirection } from '~tron/_common/ui/Swap/switch-swap-direction'
+import { SwitchSwapType } from '~tron/_common/ui/Swap/switch-swap-type'
 
 export default function SwapSimplePage() {
   return (

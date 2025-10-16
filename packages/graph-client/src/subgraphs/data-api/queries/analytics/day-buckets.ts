@@ -1,7 +1,7 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import { SUSHI_DATA_API_HOST } from 'sushi/evm'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
@@ -17,6 +17,12 @@ export const AnalyticsDayBucketsQuery = graphql(
 
     }
     v3 {
+      id
+      date
+      volumeUSD
+      liquidityUSD
+    }
+    blade {
       id
       date
       volumeUSD
@@ -55,6 +61,7 @@ export async function getAnalyticsDayBuckets(
   return {
     v2: [],
     v3: [],
+    blade: [],
   }
 }
 

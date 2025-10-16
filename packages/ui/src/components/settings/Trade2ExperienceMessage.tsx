@@ -17,7 +17,7 @@ export const Trade2ExperienceMessage = () => {
   }
   return (
     <>
-      <div className="w-screen h-screen top-12 left-0 bottom-0 right-0 dark:bg-slate-900/80 bg-gray-100/80 fixed !z-[12]" />
+      <div className="inset-0 dark:bg-slate-900/80 bg-gray-100/80 fixed z-50" />
       <div
         onKeyDown={(e) => {
           e.stopPropagation()
@@ -25,11 +25,11 @@ export const Trade2ExperienceMessage = () => {
         onClick={(e) => {
           e.stopPropagation()
         }}
-        className="!absolute -right-5 top-12 min-w-[320px] !z-[12]"
+        className="!absolute -right-5 top-12 min-w-[320px] !z-[51]"
       >
         <Card
           className={
-            'p-5 pb-3 border-accent bg-white flex flex-col gap-3 !backdrop-blur-[20px] dark:!bg-secondary rounded-xl overflow-hidden'
+            'p-5 pb-3 border-accent bg-white flex flex-col gap-3 !backdrop-blur-[40px] dark:!bg-secondary rounded-xl overflow-hidden'
           }
         >
           <SparkleIcon width={20} height={20} />
