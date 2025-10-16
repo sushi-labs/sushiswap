@@ -506,38 +506,6 @@ export async function poolExists({
 }
 
 /**
- * Enable a fee amount and tick spacing combination
- * @param fee - Fee amount
- * @param tickSpacing - Tick spacing
- */
-export async function enableFeeAmount({
-  fee,
-  tickSpacing,
-}: {
-  fee: number
-  tickSpacing: number
-}): Promise<void> {
-  try {
-    const factoryContractClient = getFactoryContractClient({
-      contractId: CONTRACT_ADDRESSES.FACTORY,
-    })
-    const _assembledTransaction = await factoryContractClient.e_fee_amt(
-      {
-        fee: fee,
-        tick_spacing: tickSpacing,
-      },
-      {
-        timeoutInSeconds: 30,
-        fee: 100000,
-      },
-    )
-  } catch (error) {
-    console.error('Error enabling fee amount:', error)
-    throw error
-  }
-}
-
-/**
  * Get all available fee tiers and their tick spacings
  * @returns Object mapping fee amounts to tick spacings
  */

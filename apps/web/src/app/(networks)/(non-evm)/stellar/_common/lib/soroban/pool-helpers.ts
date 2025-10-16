@@ -621,7 +621,6 @@ export async function removeLiquidity({
 
     console.log(`🔥 Removing liquidity: ${liquidity} units`)
 
-    // Build the transaction with burn operation
     const poolContractClient = getPoolContractClient({
       contractId: address,
       publicKey: sourceAccount,
@@ -685,91 +684,6 @@ export async function removeLiquidity({
       })
     }
     throw error
-  }
-}
-
-/**
- * Build a transaction for removing liquidity from a pool
- * @param params - Remove liquidity parameters
- * @returns Transaction ready for signing
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function buildRemoveLiquidityTransaction({
-  address,
-  liquidity,
-  recipient,
-}: {
-  address: string
-  liquidity: bigint
-  amount0Min: bigint
-  amount1Min: bigint
-  recipient: string
-}): Promise<AssembledTransaction<unknown>> {
-  const tickLower = -60000 // Minimum tick
-  const tickUpper = 60000 // Maximum tick
-
-  const poolContractClient = getPoolContractClient({ contractId: address })
-  const assembledTransaction = await poolContractClient.burn({
-    owner: recipient,
-    tick_lower: tickLower,
-    tick_upper: tickUpper,
-    amount: liquidity,
-  })
-
-  return assembledTransaction
-}
-
-/**
- * Execute remove liquidity transaction with signing and submission
- * @param params - Remove liquidity parameters including signer
- * @returns Transaction result
- */
-export async function executeRemoveLiquidity({
-  address,
-  liquidity,
-  amount0Min,
-  amount1Min,
-  recipient,
-  signTransaction,
-}: {
-  address: string
-  liquidity: bigint
-  amount0Min: bigint
-  amount1Min: bigint
-  recipient: string
-  signTransaction: (xdr: string) => Promise<string>
-}): Promise<{
-  hash: string
-  result: any
-  amount0: bigint
-  amount1: bigint
-}> {
-  // Build the transaction
-  const transaction = await buildRemoveLiquidityTransaction({
-    address,
-    liquidity,
-    amount0Min,
-    amount1Min,
-    recipient,
-  })
-
-  // Convert to XDR for signing
-  const xdr = transaction.toXDR()
-
-  // Sign the transaction
-  const signedXdr = await signTransaction(xdr)
-
-  // Submit the transaction
-  const result = await submitTransaction(signedXdr)
-
-  // Wait for confirmation
-  await waitForTransaction(result.hash)
-
-  // For now, return mock data - in a real implementation, you'd parse the transaction result
-  return {
-    ...result,
-    amount0: 0n,
-    amount1: 0n,
   }
 }
 
