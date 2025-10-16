@@ -26,7 +26,7 @@ export default async function BladePoolsPage(props: {
   const pools = await getBladePools({ chainId })
   const bladeAbis: (typeof pools)[number]['abi'][] = [
     'BladeVerifiedExchange',
-    'BladeApproximateCaravelExchange',
+    'BladeApproximateExchange',
   ]
   const activePools = pools.filter(
     (pool) =>

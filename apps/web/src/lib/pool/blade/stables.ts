@@ -49,4 +49,14 @@ export const BLADE_STABLES: Record<BladeChainId, EvmToken[]> = {
     }),
   ],
   [EvmChainId.MANTLE]: [...STABLES[EvmChainId.MANTLE], USDT[EvmChainId.MANTLE]],
+  [EvmChainId.ETHEREUM]: [
+    ...STABLES[EvmChainId.ETHEREUM],
+    new EvmToken({
+      address: '0xdc035d45d973e3ec169d2276ddab16f1e407384f',
+      chainId: EvmChainId.ETHEREUM,
+      decimals: 18,
+      symbol: 'USDS',
+      name: 'USDS Stablecoin',
+    }),
+  ],
 }
