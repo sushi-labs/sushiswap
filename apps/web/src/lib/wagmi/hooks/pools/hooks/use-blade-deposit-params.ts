@@ -172,7 +172,7 @@ const DepositRecord = z
     z.string().regex(/^\d+$/, { message: 'Amount must be a numeric string' }),
   )
   .refine((r) => Object.keys(r).length > 0, {
-    message: 'deposit cannot be empty',
+    message: 'Deposit cannot be empty',
   })
 
 const booleanStrict = z.union([

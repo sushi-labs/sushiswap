@@ -134,7 +134,7 @@ export const AddLiquidityBlade = ({ bladePool }: { bladePool: BladePool }) => {
         isLoading={isLoadingPrices}
       />
 
-      <div className="px-4 py-2 text-sm font-medium text-blue dark:text-skyblue bg-[#4217FF14] dark:bg-[#3DB1FF14] rounded-lg">
+      <div className="px-4 py-2 text-sm font-medium text-blue dark:text-white bg-[#4217FF14] dark:bg-accent rounded-lg">
         💡 For high value deposits, it might be more profitable if you deposit
         with multiple assets.
       </div>

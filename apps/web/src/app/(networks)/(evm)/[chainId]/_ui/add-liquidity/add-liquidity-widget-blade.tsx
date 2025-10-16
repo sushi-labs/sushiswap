@@ -90,6 +90,17 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
   const lockDurationIsOver = lockedUntil
     ? Number(lockedUntil) * 1000 < Date.now()
     : true
+
+  const parsedInputs = useMemo(() => {
+    return tokens
+      .map((token) => {
+        const value = inputs[token.id]?.trim()
+        if (!value || Number(value) === 0) return null
+        return Amount.tryFromHuman(token, value)
+      })
+      .filter((a): a is Amount<EvmCurrency> => !!a)
+  }, [tokens, inputs])
+
   const {
     data: depositParams,
     error,
@@ -103,12 +114,14 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
     inputs,
   })
 
-  const parsedInputs = useMemo(() => {
-    return tokens.map((token) => {
-      const value = inputs[token.id] ?? ''
-      return Amount.tryFromHuman(token, value) || Amount.tryFromHuman(token, 0)
-    })
-  }, [tokens, inputs])
+  console.log('error', error)
+
+  // const parsedInputs = useMemo(() => {
+  //   return tokens.map((token) => {
+  //     const value = inputs[token.id] ?? ''
+  //     return Amount.tryFromHuman(token, value) || Amount.tryFromHuman(token, 0)
+  //   })
+  // }, [tokens, inputs])
 
   const parsedTokenInputs = useMemo(() => {
     return tokens.map((token) => {
@@ -364,6 +377,20 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
     )
   }
 
+  const errorMessage = useMemo(() => {
+    if (!error) return undefined
+
+    if ('issues' in (error as any) && Array.isArray((error as any).issues)) {
+      return (error as any).issues[0]?.message
+    }
+
+    if ('message' in (error as any)) {
+      return (error as any).message
+    }
+
+    return undefined
+  }, [error])
+
   return (
     <div className="flex flex-col gap-4 mb-10">
       {/* Dynamic token rows */}
@@ -421,9 +448,9 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
                 onClick={() => {}}
               >
                 <Checker.Custom
-                  showChildren={!error?.message}
-                  buttonText={error?.message || 'Deposit Param Error'}
-                  disabled={Boolean(error?.message)}
+                  showChildren={!errorMessage}
+                  buttonText={errorMessage || 'Deposit Param Error'}
+                  disabled={Boolean(errorMessage)}
                   onClick={() => {}}
                 >
                   <Checker.Amounts
