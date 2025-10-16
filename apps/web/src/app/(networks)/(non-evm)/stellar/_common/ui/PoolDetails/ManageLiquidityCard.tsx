@@ -118,12 +118,6 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
             <TabsTrigger value="remove" className="flex flex-1">
               Remove
             </TabsTrigger>
-            <TabsTrigger disabled value="stake" className="flex flex-1">
-              Stake
-            </TabsTrigger>
-            <TabsTrigger disabled value="unstake" className="flex flex-1">
-              Unstake
-            </TabsTrigger>
           </TabsList>
         </CardContent>
 
