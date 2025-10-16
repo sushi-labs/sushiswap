@@ -84,8 +84,6 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
     protocol,
   })
 
-  console.log('buckets', buckets)
-
   const [xData, yData]: [number[], number[]] = useMemo(() => {
     const data =
       (chartPeriods[period] < chartPeriods[PoolChartPeriod.Week]
