@@ -200,7 +200,7 @@ export const PoolHeader = ({ poolId }: { poolId: string }) => {
               </span>
               <LinkExternal
                 target="_blank"
-                href={getKvmChainByKey('kadena').getAccountUrl(
+                href={getKvmChainByKey('kadena').getTokenUrl(
                   token0?.address ?? '',
                 )}
               >
@@ -221,7 +221,7 @@ export const PoolHeader = ({ poolId }: { poolId: string }) => {
               </span>
               <LinkExternal
                 target="_blank"
-                href={getKvmChainByKey('kadena').getAccountUrl(
+                href={getKvmChainByKey('kadena').getTokenUrl(
                   token1?.address ?? '',
                 )}
               >
