@@ -48,7 +48,7 @@ interface CurrencyInputProps {
   type: 'INPUT' | 'OUTPUT'
   fetching?: boolean
   currencyLoading?: boolean
-  currencies?: Record<string, EvmToken>
+  currencies?: Record<string, EvmCurrency>
   allowNative?: boolean
   error?: string
   hidePinnedTokens?: boolean

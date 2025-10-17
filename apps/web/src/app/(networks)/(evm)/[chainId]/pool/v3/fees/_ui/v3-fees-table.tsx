@@ -31,7 +31,7 @@ import {
   EvmToken,
   SushiSwapProtocol,
   getEvmChainById,
-  uniswapV3PoolAbi_setFeeProtocol,
+  sushiSwapV3PoolAbi_setFeeProtocol,
 } from 'sushi/evm'
 import {
   useSwitchChain,
@@ -177,7 +177,7 @@ const EnableProtocolFeeButton: FC<{
       switchChainAsync({ chainId }).then(() =>
         writeContract({
           address: pool,
-          abi: uniswapV3PoolAbi_setFeeProtocol,
+          abi: sushiSwapV3PoolAbi_setFeeProtocol,
           functionName: 'setFeeProtocol',
           args: [4, 4],
           chainId,

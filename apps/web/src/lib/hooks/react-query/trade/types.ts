@@ -1,11 +1,5 @@
 import type { Amount, Percent, Price } from 'sushi'
-import type {
-  EvmChainId,
-  EvmCurrency,
-  RouterLiquiditySource,
-  routeProcessor2Abi_processRoute,
-  routeProcessor2Abi_transferValueAndprocessRoute,
-} from 'sushi/evm'
+import type { EvmChainId, EvmCurrency, RouterLiquiditySource } from 'sushi/evm'
 import type { Address, Hex, WriteContractParameters } from 'viem'
 import type z from 'zod'
 import type { legValidator, tradeValidator01 } from './validator01'
@@ -27,17 +21,6 @@ export interface UseTradeParams {
   onError?(e: Error): void
   tokenTax?: Percent | false | undefined
 }
-
-export type UseTradeReturnWriteArgs =
-  | WriteContractParameters<
-      typeof routeProcessor2Abi_transferValueAndprocessRoute,
-      'transferValueAndprocessRoute'
-    >['args']
-  | WriteContractParameters<
-      typeof routeProcessor2Abi_processRoute,
-      'processRoute'
-    >['args']
-  | undefined
 
 export interface UseTradeReturn {
   swapPrice: Price<EvmCurrency, EvmCurrency> | undefined

@@ -269,7 +269,7 @@ export const createLast30DaysColumn = (
     const [isModalOpen, setIsModalOpen] = useState(false)
     const isSmallScreen = useIsSmScreen()
 
-    const isHovered = table.options.meta?.getIsRowHovered(row.id) ?? false
+    const isHovered = table.options.meta?.getIsRowHovered?.(row.id) ?? false
     const { last30Days } = row.original
 
     if (!last30Days) return null

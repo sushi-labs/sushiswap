@@ -8,6 +8,7 @@ import {
 } from '@sushiswap/telemetry'
 import { type FC, type ReactElement, useCallback, useMemo } from 'react'
 import { logger } from 'src/lib/logger'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import { Amount } from 'sushi'
 import {
@@ -18,11 +19,7 @@ import {
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
 import type { EvmChainId } from 'sushi/evm'
-import {
-  type Hex,
-  type SendTransactionReturnType,
-  UserRejectedRequestError,
-} from 'viem'
+import type { Hex, SendTransactionReturnType } from 'viem'
 import {
   type UseCallParameters,
   useAccount,
@@ -127,7 +124,7 @@ export const ConcentratedLiquidityCollectButton: FC<
   )
 
   const onError = useCallback((e: Error) => {
-    if (e.cause instanceof UserRejectedRequestError) {
+    if (isUserRejectedError(e)) {
       return
     }
 

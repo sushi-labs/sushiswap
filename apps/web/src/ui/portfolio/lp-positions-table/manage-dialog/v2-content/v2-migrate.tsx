@@ -1,5 +1,5 @@
 import { ArrowRightIcon } from '@heroicons/react-v1/solid'
-import { type V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
+import { type RawV2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import { Button } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
@@ -12,7 +12,7 @@ export const V2Migrate = ({ position }: { position: any }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   // Temporary hardcoded pool data until we can fetch based on position data
-  const { data: pool, isLoading } = useQuery<V2Pool | null>({
+  const { data: pool, isLoading } = useQuery<RawV2Pool | null>({
     queryKey: ['v2-pool-testing'],
     queryFn: async () => {
       const result = await getV2Pool({

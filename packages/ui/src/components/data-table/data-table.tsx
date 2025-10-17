@@ -8,6 +8,7 @@ import {
   type Row,
   type RowData,
   type SortingState,
+  type TableMeta,
   type TableState,
   type Table as TableType,
   type VisibilityState,
@@ -72,6 +73,7 @@ interface DataTableProps<TData, TValue> {
   className?: string
   tableRowClassName?: string
   showAllToggle?: boolean
+  meta?: TableMeta<TData>
 }
 
 export function DataTable<TData, TValue>({
@@ -91,6 +93,7 @@ export function DataTable<TData, TValue>({
   className,
   tableRowClassName,
   showAllToggle,
+  meta,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -115,6 +118,10 @@ export function DataTable<TData, TValue>({
       sorting: state?.sorting ? state.sorting : sorting,
       ...(state?.pagination && { pagination: state?.pagination }),
     },
+    meta: {
+      ...meta,
+      getIsRowHovered: (rowId: string) => rowId === hoveredRowId,
+    },
     autoResetPageIndex: false,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -128,9 +135,6 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    meta: {
-      getIsRowHovered: (rowId: string) => rowId === hoveredRowId,
-    },
   })
 
   const visibleRows = table.getRowModel().rows

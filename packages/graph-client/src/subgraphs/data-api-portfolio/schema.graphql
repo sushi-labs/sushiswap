@@ -53,7 +53,7 @@ type Query {
   portfolioHistory(id: ID!): [PortfolioTransaction!]!
   portfolioV2LiquidityPositions(user: Bytes!, chainIds: [PoolChainId!]!, protocols: [PortfolioV2Protocol!]!, orderBy: PortfolioV2LiquidityPositionOrderBy = SIZE, orderDirection: OrderDirection = desc): PortfolioV2LiquidityPositions!
   portfolioV2Tokens(address: Bytes!, chainIds: [PoolChainId!]!): PortfolioTokensResponse!
-  portfolioV2Chart(address: Bytes!, chainIds: [PoolChainId!]!, range: PortfolioChartRange = THIRTY_DAYS): PortfolioChartResponse!
+  portfolioV2Chart(address: Bytes!, chainIds: [PoolChainId!]!, tokenFilter: PortfolioChartTokenFilter, range: PortfolioChartRange = THIRTY_DAYS): PortfolioChartResponse!
   portfolioV2PnL(address: Bytes!, chainId: PnLHistoryChainId!, assets: [Bytes!]!): PortfolioPnLResponse!
   featuresByChainId(chainId: ChainId!): [ChainIdFeature!]!
   chainIdsByFeature(feature: ChainIdFeature!): [ChainId!]!
@@ -725,6 +725,11 @@ enum PortfolioChartRange {
   ALL
 }
 
+input PortfolioChartTokenFilter {
+  chainId: PnLHistoryChainId!
+  address: Bytes!
+}
+
 type ClaimableRewards {
   token: Token!
   amount: Float!
@@ -732,6 +737,8 @@ type ClaimableRewards {
 }
 
 type PortfolioV2Position {
+  token0: Token!
+  token1: Token!
   amountUSD: Float!
   amount0: String!
   amount1: String!
@@ -739,6 +746,9 @@ type PortfolioV2Position {
 }
 
 type PortfolioV3Position {
+  token0: Token!
+  token1: Token!
+  tokenId: Int!
   amountUSD: Float!
   amount0: String!
   amount1: String!

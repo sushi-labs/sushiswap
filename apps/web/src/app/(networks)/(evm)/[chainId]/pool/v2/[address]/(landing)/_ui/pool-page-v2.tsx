@@ -1,6 +1,7 @@
 'use client'
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import type { V2Pool } from '@sushiswap/graph-client/data-api'
+// import { UnknownTokenAlert } from './UnknownTokenAlert'
+import type { RawV2Pool, V2Pool } from '@sushiswap/graph-client/data-api'
 import { Button, Container, useBreakpoint } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import {
@@ -15,14 +16,13 @@ import { Pool24HVolume } from '~evm/[chainId]/_ui/Pool24HVolume'
 import { PoolAPR } from '~evm/[chainId]/_ui/PoolAPR'
 import { PoolPrice } from '~evm/[chainId]/_ui/PoolPrice'
 import { AddLiquidityDialog } from '~evm/[chainId]/_ui/add-liquidity/add-liquidity-dialog'
-// import { UnknownTokenAlert } from './UnknownTokenAlert'
 import { PoolChartV2 } from './pool-chart-v2'
 import { PoolComposition } from './pool-composition'
 import { PoolRewards } from './pool-rewards'
 import { PoolTransactionsV2 } from './pool-transactions-v2'
 
 interface PoolPageV2 {
-  pool: Awaited<V2Pool>
+  pool: RawV2Pool
 }
 
 export const PoolPageV2: FC<PoolPageV2> = ({ pool }) => {

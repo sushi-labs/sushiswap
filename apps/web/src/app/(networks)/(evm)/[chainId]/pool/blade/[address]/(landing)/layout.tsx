@@ -1,4 +1,7 @@
-import { type V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
+import {
+  type BladePool,
+  getBladePool,
+} from '@sushiswap/graph-client/data-api-blade-prod'
 import { Container } from '@sushiswap/ui'
 import ms from 'ms'
 import { unstable_cache } from 'next/cache'
@@ -6,9 +9,11 @@ import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import type React from 'react'
 import { PoolHeader } from 'src/ui/pool/PoolHeader'
+import { PoolHeaderBlade } from 'src/ui/pool/PoolHeaderBlade'
 import {
   type EvmChainId,
   getEvmChainById,
+  isBladeChainId,
   isSushiSwapV2ChainId,
 } from 'sushi/evm'
 import { isAddress } from 'viem'
@@ -24,40 +29,31 @@ export default async function Layout(props: {
   const { chainId: _chainId, address } = params
   const chainId = +_chainId as EvmChainId
 
-  if (
-    !isSushiSwapV2ChainId(chainId) ||
-    !isAddress(address, { strict: false })
-  ) {
+  if (!isBladeChainId(chainId) || !isAddress(address, { strict: false })) {
     return notFound()
   }
 
   const pool = (await unstable_cache(
-    async () => getV2Pool({ chainId, address }, { retries: 3 }),
-    ['v2', 'pool', `${chainId}:${address}`],
+    async () => getBladePool({ chainId, address }, { retries: 3 }),
+    ['blade', 'pool', `${chainId}:${address}`],
     {
       revalidate: ms('15m'),
     },
-  )()) as V2Pool
+  )()) as BladePool
 
   const headersList = await headers()
   const referer = headersList.get('referer')
   return (
     <>
       <Container maxWidth="screen-3xl" className="px-4 pt-10">
-        <PoolHeader
+        <PoolHeaderBlade
           backUrl={
             referer?.includes('/pool')
               ? referer?.toString()
               : `/${getEvmChainById(chainId)?.key}/explore/pools`
           }
-          address={pool.address}
-          pool={{
-            ...pool,
-            // @ts-expect-error
-            // okay until we have a blade pool type
-            protocol: 'BLADE',
-          }}
-          apy={{ rewards: pool?.incentiveApr, fees: pool?.feeApr1d }}
+          address={pool?.address ?? ''}
+          pool={pool}
           showAddLiquidityButton={true}
         />
       </Container>

@@ -1,5 +1,5 @@
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react-v1/solid'
-import type { V2Pool } from '@sushiswap/graph-client/data-api'
+import type { RawV2Pool } from '@sushiswap/graph-client/data-api'
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   Button,
@@ -62,7 +62,7 @@ export const V2MigrateDialog = ({
   isOpen,
   setIsOpen,
 }: {
-  pool: V2Pool
+  pool: RawV2Pool
   fakePosition: any
   isOpen: boolean
   setIsOpen: (val: boolean) => void

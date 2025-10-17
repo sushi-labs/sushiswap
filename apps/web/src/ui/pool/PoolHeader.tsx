@@ -1,7 +1,7 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import type { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
+import type { RawV2Pool, RawV3Pool } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Currency,
@@ -18,7 +18,7 @@ import { EvmToken, getEvmChainById, unwrapEvmToken } from 'sushi/evm'
 type PoolHeader = {
   backUrl: string
   address: string
-  pool: V2Pool | V3Pool
+  pool: RawV2Pool | RawV3Pool
   apy?: {
     fees: number | undefined
     rewards: number | undefined

@@ -1,5 +1,6 @@
 'use client'
 
+import type { RawV2Pool } from '@sushiswap/graph-client/data-api'
 import {
   SlippageToleranceStorageKey,
   TTLStorageKey,
@@ -21,17 +22,11 @@ import {
   useUnderlyingTokenBalanceFromPool,
 } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { type SendTransactionReturnType, encodeFunctionData } from 'viem'
-
-import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import {
   type PermitInfo,
   PermitType,
 } from 'src/lib/wagmi/hooks/approvals/hooks/useTokenPermit'
-import {
-  getSushiSwapRouterContractConfig,
-  useSushiSwapRouterContract,
-} from 'src/lib/wagmi/hooks/contracts/useSushiSwapRouter'
+import { useSushiSwapRouterContract } from 'src/lib/wagmi/hooks/contracts/useSushiSwapRouter'
 import {
   SushiSwapV2PoolState,
   useSushiSwapV2Pool,
@@ -45,7 +40,8 @@ import {
   withCheckerRoot,
 } from 'src/lib/wagmi/systems/Checker/provider'
 import { Amount, Percent, subtractSlippage } from 'sushi'
-import { EvmNative, addGasMargin } from 'sushi/evm'
+import { EvmNative, SUSHISWAP_V2_ROUTER_ADDRESS, addGasMargin } from 'sushi/evm'
+import { type SendTransactionReturnType, encodeFunctionData } from 'viem'
 import {
   type UseCallParameters,
   useAccount,
@@ -64,7 +60,7 @@ const REMOVE_V2_LIQUIDITY_PERMIT_INFO: PermitInfo = {
 }
 
 interface RemoveSectionLegacyProps {
-  pool: V2Pool
+  pool: RawV2Pool
 }
 
 export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
@@ -474,9 +470,7 @@ export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
                       id="approve-remove-liquidity-slp"
                       chainId={_pool.chainId}
                       amount={amountToRemove}
-                      contract={
-                        getSushiSwapRouterContractConfig(_pool.chainId).address
-                      }
+                      contract={SUSHISWAP_V2_ROUTER_ADDRESS[_pool.chainId]}
                       permitInfo={REMOVE_V2_LIQUIDITY_PERMIT_INFO}
                       tag={APPROVE_TAG_REMOVE_LEGACY}
                       ttlStorageKey={TTLStorageKey.RemoveLiquidity}

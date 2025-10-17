@@ -33,11 +33,11 @@ import {
   getOrderIdFromCreateOrderEvent,
   getTimeDurationMs,
 } from 'src/lib/swap/twap'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
 import { ZERO, formatUSD } from 'sushi'
 import { getEvmChainById, shortenEvmAddress } from 'sushi/evm'
-import { UserRejectedRequestError } from 'viem'
 import {
   useAccount,
   useEstimateGas,
@@ -156,7 +156,7 @@ export const TwapTradeReviewDialog: FC<{
   )
 
   const onSwapError = useCallback((e: Error) => {
-    if (e.cause instanceof UserRejectedRequestError) {
+    if (isUserRejectedError(e)) {
       return
     }
 

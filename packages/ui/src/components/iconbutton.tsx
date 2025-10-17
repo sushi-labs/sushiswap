@@ -37,6 +37,7 @@ const iconButtonVariants = cva(
         networks:
           'bg-[#0000001F] dark:bg-[#FFFFFF1F] hover:bg-[#00000020] dark:hover:bg-[#FFFFFF20]',
         link: 'text-blue hover:text-blue-700 font-semibold !p-0 !h-[unset] !min-h-[unset]',
+        blank: '',
       },
       size: {
         xxs: 'min-h-[16px] h-[16px] min-w-[16px] w-[16px] text-xs',

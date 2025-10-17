@@ -1,5 +1,5 @@
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
-import { type V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
+import { type RawV2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   Button,
@@ -37,7 +37,7 @@ export const V2Manage = ({ position }: { position: any }) => {
     | LPManageTabValueType
     | undefined
 
-  const { data: pool, isLoading } = useQuery<V2Pool | null>({
+  const { data: pool, isLoading } = useQuery<RawV2Pool | null>({
     queryKey: ['v2-pool-testing'],
     queryFn: async () => {
       const result = await getV2Pool({

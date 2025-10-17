@@ -9,10 +9,10 @@ import {
 import { logger } from 'src/lib/logger'
 import { TwapSDK } from 'src/lib/swap/twap'
 import { twapAbi_cancel } from 'src/lib/swap/twap/abi'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import {
   type Address,
   type SendTransactionReturnType,
-  UserRejectedRequestError,
   encodeFunctionData,
 } from 'viem'
 import {
@@ -87,7 +87,7 @@ export const useCancelOrder = (
   )
 
   const onCancelError = useCallback((e: Error) => {
-    if (e.cause instanceof UserRejectedRequestError) {
+    if (isUserRejectedError(e)) {
       return
     }
 

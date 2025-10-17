@@ -347,7 +347,7 @@ export const PRICE_RANGE_COLUMN: ColumnDef<
   header: 'Price Range',
   cell: (props) => {
     const isHovered =
-      props.table.options.meta?.getIsRowHovered(props.row.id) ?? false
+      props.table.options.meta?.getIsRowHovered?.(props.row.id) ?? false
     return (
       <span className="flex w-[230px]">
         <PriceRangeCell data={props.row.original} isHovered={isHovered} />

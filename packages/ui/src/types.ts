@@ -2,11 +2,14 @@ import type { RowData } from '@tanstack/react-table'
 import type React from 'react'
 import type { ComponentType } from 'react'
 import type { FC, JSX } from 'react'
+import type { BladeChainId } from 'sushi/evm'
 
 declare module '@tanstack/react-table' {
   // biome-ignore lint/correctness/noUnusedVariables: correct
   interface TableMeta<TData extends RowData> {
-    getIsRowHovered: (rowId: string) => boolean
+    getIsRowHovered?: (rowId: string) => boolean
+    showStablecoinTypes?: boolean
+    chainId?: BladeChainId
   }
 }
 

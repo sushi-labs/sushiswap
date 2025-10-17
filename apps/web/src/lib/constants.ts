@@ -32,8 +32,10 @@ export enum Field {
   CURRENCY_B = 'CURRENCY_B',
 }
 
+export const APPROVE_TAG_ADD_BLADE = 'APPROVE_TAG_ADD_BLADE'
 export const APPROVE_TAG_ADD_LEGACY = 'APPROVE_TAG_ADD_LEGACY'
 export const APPROVE_TAG_REMOVE_LEGACY = 'APPROVE_TAG_REMOVE_LEGACY'
+export const APPROVE_TAG_REMOVE_BLADE = 'APPROVE_TAG_REMOVE_BLADE'
 export const APPROVE_TAG_STAKE = 'APPROVE_TAG_STAKE'
 export const APPROVE_TAG_UNSTAKE = 'APPROVE_TAG_UNSTAKE'
 export const APPROVE_TAG_MIGRATE = 'APPROVE_TAG_MIGRATE'
@@ -43,3 +45,11 @@ export const APPROVE_TAG_ZAP_LEGACY = 'APPROVE_TAG_ZAP_LEGACY'
 
 export const NativeAddress: Address =
   '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+
+export const BLADE_API_HOST =
+  process.env['BLADE_API_HOST'] ||
+  process.env['NEXT_PUBLIC_BLADE_API_HOST'] ||
+  'https://blade-api.sushi.com'
+
+export const BLADE_API_KEY =
+  process.env['BLADE_API_KEY'] || process.env['NEXT_PUBLIC_BLADE_API_KEY']

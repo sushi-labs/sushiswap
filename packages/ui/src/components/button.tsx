@@ -33,6 +33,7 @@ const buttonVariants = cva(
           '!bg-[#0000001F] dark:!bg-slate-750 dark:!text-pink-100 hover:!bg-[#000]/[.18] dark:hover:!bg-[#fff]/[.125]',
         ghost: 'hover:bg-secondary focus:bg-accent',
         link: 'text-blue hover:underline hover:text-blue-700 font-semibold !p-0 !h-[unset] !min-h-[unset]',
+        blank: '',
       },
       size: {
         xs: 'min-h-[26px] h-[26px] px-2 text-xs rounded-lg',

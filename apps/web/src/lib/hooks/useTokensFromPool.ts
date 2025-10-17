@@ -8,7 +8,19 @@ import {
   type EvmID,
   EvmNative,
   EvmToken,
+  type PoolId,
+  isEvmAddress,
 } from 'sushi/evm'
+
+export function getLiquidityTokenFromPool(pool: PoolId) {
+  return new EvmToken({
+    address: pool.address,
+    name: 'SLP Token',
+    decimals: 18,
+    symbol: 'SLP',
+    chainId: pool.chainId,
+  })
+}
 
 export const getTokensFromPool = (pool: {
   id: EvmID | EvmAddress

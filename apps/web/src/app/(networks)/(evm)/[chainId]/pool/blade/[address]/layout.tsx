@@ -1,9 +1,9 @@
-import { getV2Pool } from '@sushiswap/graph-client/data-api'
+import { getBladePool } from '@sushiswap/graph-client/data-api-blade-prod'
 import ms from 'ms'
 import type { Metadata } from 'next'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import { type EvmChainId, isSushiSwapV2ChainId } from 'sushi/evm'
+import { type EvmChainId, isBladeChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
 
 export async function generateMetadata(props: {
@@ -13,16 +13,13 @@ export async function generateMetadata(props: {
   const { chainId: _chainId, address } = params
   const chainId = +_chainId as EvmChainId
 
-  if (
-    !isSushiSwapV2ChainId(chainId) ||
-    !isAddress(address, { strict: false })
-  ) {
+  if (!isBladeChainId(chainId) || !isAddress(address, { strict: false })) {
     return {}
   }
 
   const pool = await unstable_cache(
-    async () => getV2Pool({ chainId, address }, { retries: 3 }),
-    ['v2', 'pool', `${chainId}:${address}`],
+    async () => getBladePool({ chainId, address }, { retries: 3 }),
+    ['blade', 'pool', `${chainId}:${address}`],
     {
       revalidate: ms('15m'),
     },
@@ -33,7 +30,7 @@ export async function generateMetadata(props: {
   }
 
   return {
-    title: `BUY & SELL ${pool.token0.symbol}/${pool.token1.symbol}`,
+    title: `BUY & SELL ${pool.tokens[0]?.token.symbol}/${pool.tokens[1]?.token.symbol}`,
   }
 }
 
@@ -48,23 +45,7 @@ export default async function Layout(props: {
   const { chainId: _chainId, address } = params
   const chainId = +_chainId as EvmChainId
 
-  if (
-    !isSushiSwapV2ChainId(chainId) ||
-    !isAddress(address, { strict: false })
-  ) {
-    return notFound()
-  }
-
-  const pool = await unstable_cache(
-    async () => getV2Pool({ chainId, address }, { retries: 3 }),
-    ['v2', 'pool', `${chainId}:${address}`],
-    {
-      revalidate: ms('15m'),
-    },
-  )()
-
-  // Rockstar C&D
-  if (!pool || pool.id === '42161:0x0a4f9962e24893a4a7567e52c1ce37d5482365de') {
+  if (!isBladeChainId(chainId) || !isAddress(address, { strict: false })) {
     return notFound()
   }
 

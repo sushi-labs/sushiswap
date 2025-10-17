@@ -4,21 +4,62 @@ import {
   getV2PoolBuckets,
   getV3PoolBuckets,
 } from '@sushiswap/graph-client/data-api'
+import { getBladePoolBuckets } from '@sushiswap/graph-client/data-api-blade-prod'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import {
+  type BladeChainId,
   type EvmAddress,
   SushiSwapProtocol,
   type SushiSwapV2ChainId,
   type SushiSwapV3ChainId,
+  isBladeChainId,
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
 
-interface UsePoolGraphDataParams {
+type UsePoolGraphDataParams = {
   poolAddress: EvmAddress
-  chainId: SushiSwapV2ChainId | SushiSwapV3ChainId
+  chainId: SushiSwapV2ChainId | SushiSwapV3ChainId | BladeChainId
   protocol: SushiSwapProtocol
   enabled?: boolean
+}
+
+const getPoolBuckets = async (
+  protocol: SushiSwapProtocol,
+  chainId: SushiSwapV2ChainId | SushiSwapV3ChainId | BladeChainId,
+  poolAddress: EvmAddress,
+) => {
+  if (
+    protocol === SushiSwapProtocol.SUSHISWAP_V2 &&
+    isSushiSwapV2ChainId(chainId)
+  ) {
+    return getV2PoolBuckets({
+      chainId,
+      address: poolAddress,
+    })
+  }
+
+  if (
+    protocol === SushiSwapProtocol.SUSHISWAP_V3 &&
+    isSushiSwapV3ChainId(chainId)
+  ) {
+    return getV3PoolBuckets({
+      chainId,
+      address: poolAddress,
+    })
+  }
+
+  if (protocol === SushiSwapProtocol.BLADE && isBladeChainId(chainId)) {
+    return getBladePoolBuckets({
+      chainId,
+      address: poolAddress,
+    })
+  }
+
+  return {
+    dayBuckets: [],
+    hourBuckets: [],
+  }
 }
 
 export const usePoolGraphData = ({
@@ -30,24 +71,7 @@ export const usePoolGraphData = ({
   return useQuery({
     queryKey: ['usePoolGraphData', { poolAddress, chainId }],
     queryFn: async () => {
-      const buckets =
-        protocol === SushiSwapProtocol.SUSHISWAP_V2 &&
-        isSushiSwapV2ChainId(chainId)
-          ? await getV2PoolBuckets({
-              chainId,
-              address: poolAddress,
-            })
-          : protocol === SushiSwapProtocol.SUSHISWAP_V3 &&
-              isSushiSwapV3ChainId(chainId)
-            ? await getV3PoolBuckets({
-                chainId,
-                address: poolAddress,
-              })
-            : {
-                dayBuckets: [],
-                hourBuckets: [],
-              }
-      return buckets
+      return getPoolBuckets(protocol, chainId, poolAddress)
     },
     placeholderData: keepPreviousData,
     staleTime: 0,

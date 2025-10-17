@@ -21,7 +21,7 @@ import React, {
 } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import type { EvmChainId } from 'sushi/evm'
-import type { EvmCurrency, EvmToken } from 'sushi/evm'
+import type { EvmCurrency } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { ChainOptionsSelector } from '~evm/[chainId]/[trade]/_ui/swap/chain-options-selector'
 import { NetworkMenu } from '~evm/[chainId]/[trade]/_ui/swap/trade/favorite-recent/network-menu'
@@ -34,7 +34,7 @@ interface TokenSelectorV2Props {
   selected: EvmCurrency | undefined
   onSelect(currency: EvmCurrency): void
   children: ReactNode
-  currencies?: Record<string, EvmToken>
+  currencies?: Record<string, EvmCurrency>
   includeNative?: boolean
   hidePinnedTokens?: boolean
   selectedNetwork?: EvmChainId
