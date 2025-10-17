@@ -11,6 +11,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 interface StellarWalletContextType {
   stellarWalletKit: StellarWalletsKit | null
   wallets: ISupportedWallet[]
+  isLoading: boolean
   isConnected: boolean
   connectedAddress: string | null
   connectWallet: (walletId: string) => Promise<void>
@@ -21,6 +22,7 @@ interface StellarWalletContextType {
 const StellarWalletContext = createContext<StellarWalletContextType>({
   stellarWalletKit: null,
   wallets: [],
+  isLoading: false,
   isConnected: false,
   connectedAddress: null,
   connectWallet: async () => {},
@@ -50,6 +52,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
       // Set context values
       setStellarWalletKit(kit)
       setWallets(wallets)
+
+      // Restore previous connection if it exists
+      const savedWalletId = localStorage.getItem('stellarWalletId')
+      if (savedWalletId) {
+        kit.setWallet(savedWalletId)
+        const { address } = await kit.getAddress()
+        setConnectedAddress(address)
+      }
     }
 
     setup()
@@ -76,6 +86,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     // Get/Set address
     const { address } = await stellarWalletKit.getAddress()
     setConnectedAddress(address)
+    localStorage.setItem('stellarWalletId', walletId)
   }
 
   /**
@@ -87,6 +98,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     }
     await stellarWalletKit.disconnect()
     setConnectedAddress(null)
+    localStorage.removeItem('stellarWalletId')
   }
 
   /**
@@ -112,6 +124,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       value={{
         stellarWalletKit,
         wallets,
+        isLoading: stellarWalletKit === null,
         isConnected: connectedAddress !== null,
         connectedAddress,
         signTransaction,

@@ -21,13 +21,6 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 import { getBaseTokens } from '~stellar/_common/lib/soroban/token-helpers'
 import type { Token } from '~stellar/_common/lib/types/token.type'
-// import { useCommonTokens } from '~aptos/_common/lib/common/use-common-tokens'
-// import { useCustomTokens } from '~aptos/_common/lib/common/use-custom-tokens'
-// import { useSortedTokenList } from '~aptos/_common/lib/common/use-sorted-token-list'
-// import { useTokenBalances } from '~aptos/_common/lib/common/use-token-balances'
-// import { useTokenWithCache } from '~aptos/_common/lib/common/use-token-with-cache'
-// import { CurrencyIcon } from '../currency/currency-icon'
-// import { TokenSelectorImportRow } from './token-selector-import-row'
 import { TokenListItem } from './token-selector-list-item'
 
 type RowCallback = (row: {
@@ -50,35 +43,8 @@ export default function TokenSelector({
 }: PropType) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
-  // const { data: tokens, isLoading: isTokenListLoading } = useBaseTokens()
   const tokens = getBaseTokens()
   const isTokenListLoading = false
-
-  // TODO: show token balances for connected account
-  // const { data: tokenBalances } = useTokenBalances({
-  //   account: account?.address,
-  //   currencies: Object.values(tokens ?? {})
-  //     .map((_token) => _token.address)
-  //     .concat(
-  //       Object.values(customTokens ?? {}).map((_token) => _token.address),
-  //     ),
-  //   enabled: !!tokens && !!account?.address,
-  // })
-
-  // const { data: sortedTokenList } = useSortedTokenList({
-  //   query,
-  //   tokenMap: tokens,
-  //   customTokenMap: customTokens,
-  //   balanceMap: tokenBalances ?? {},
-  // })
-
-  // const handleImport = useCallback(
-  //   (currency: Token) => {
-  //     customTokenMutate('add', [currency])
-  //     onSelect(currency)
-  //   },
-  //   [onSelect, customTokenMutate],
-  // )
 
   const _onSelect = useCallback(
     (token: Token) => {
@@ -126,11 +92,6 @@ export default function TokenSelector({
             onValueChange={setQuery}
           />
         </div>
-        {/* <div className="flex flex-wrap gap-2">
-          {Object.values(commonTokens ?? {})?.map((token, idx) => (
-            <CommonTokenButton key={idx} token={token} onSelect={_onSelect} />
-          ))}
-        </div> */}
         <List.Control className="relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 min-h-[128px]">
           <div
             data-state={isTokenListLoading ? 'active' : 'inactive'}
@@ -166,17 +127,6 @@ export default function TokenSelector({
               'data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden',
             )}
           >
-            {/* {queryToken &&
-              !customTokens[`${queryToken.address}`] &&
-              !tokens?.[`${queryToken.address}`] && (
-                <TokenSelectorImportRow
-                  token={queryToken}
-                  onImport={() => {
-                    queryToken && handleImport(queryToken)
-                    close()
-                  }}
-                />
-              )} */}
             <AutoSizer disableWidth>
               {({ height }: { height: number }) => (
                 <FixedSizeList
@@ -210,26 +160,3 @@ export default function TokenSelector({
     </Dialog>
   )
 }
-
-// const CommonTokenButton = ({
-//   token,
-//   onSelect,
-// }: { token: Token; onSelect: (token: Token) => void }) => {
-//   return (
-//     <Button
-//       onClick={() => onSelect(token)}
-//       key={token.address}
-//       size="sm"
-//       className="flex items-center justify-between w-fit"
-//       variant="secondary"
-//     >
-//       <div className="flex items-center gap-2 w-full ">
-//         <div className="w-6 h-6">
-//           <CurrencyIcon currency={token} />
-//         </div>
-
-//         <p>{token.symbol}</p>
-//       </div>
-//     </Button>
-//   )
-// }

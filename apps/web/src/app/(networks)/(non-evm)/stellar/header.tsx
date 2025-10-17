@@ -35,7 +35,7 @@ export const Header: FC<{
           hideSushiDropdown
           leftElements={headerElements}
           rightElement={
-            <Suspense>
+            <>
               <HeaderNetworkSelector
                 networks={SUPPORTED_NETWORKS}
                 supportedNetworks={supportedNetworks}
@@ -43,7 +43,7 @@ export const Header: FC<{
                 className="flex"
               />
               <ConnectWalletButton variant="secondary" />
-            </Suspense>
+            </>
           }
         />
       </div>

@@ -5,9 +5,11 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  SkeletonText,
+  classNames,
 } from '@sushiswap/ui'
 import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { IS_TESTNET } from '~stellar/_common/lib/constants'
 import { formatAddress } from '~stellar/_common/lib/utils/formatters'
 import { useStellarWallet } from '~stellar/providers'
@@ -19,15 +21,20 @@ export type IProfileView = 'default' | 'settings'
 
 export const ConnectWalletButton = (props: ButtonProps) => {
   const [view, setView] = useState<IProfileView>('default')
-  const { connectedAddress, isConnected } = useStellarWallet()
-  // TODO: tap into Stellar Wallet Kit and expose variable from context hook
-  const connecting = false
+  const { connectedAddress, isConnected, isLoading } = useStellarWallet()
 
   return (
     <Popover>
       <PopoverTrigger className="relative w-full">
-        <Button loading={connecting} disabled={connecting} asChild {...props}>
-          {isConnected && connectedAddress ? (
+        <Button
+          disabled={isLoading}
+          asChild
+          {...props}
+          className={classNames('w-44', props.className)}
+        >
+          {isLoading ? (
+            <SkeletonText />
+          ) : isConnected && connectedAddress ? (
             <>
               <JazzIcon diameter={20} address={connectedAddress} />
               <span className="hidden sm:block">
@@ -35,9 +42,10 @@ export const ConnectWalletButton = (props: ButtonProps) => {
               </span>
             </>
           ) : (
-            <>{connecting ? 'Connecting' : 'Connect Wallet'} </>
+            'Connect Wallet'
           )}
         </Button>
+
         {IS_TESTNET && isConnected ? (
           <Chip className="!text-white rounded-md h-fit absolute right-0 !px-1 !py-0 text-[8px] -top-1">
             Testnet
