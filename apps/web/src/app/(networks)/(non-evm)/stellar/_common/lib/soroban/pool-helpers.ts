@@ -1038,25 +1038,31 @@ async function getCurrentSqrtPrice(poolAddress: string): Promise<bigint> {
       fee: 100,
     })
 
-    console.log('slot0Map:', slot0Map)
+    // Handle field name confusion: the contract returns sqrt_price_x96 in the fee_protocol field
+    let sqrtPriceX96: bigint | undefined
 
-    // Try to get sqrt_price_x96 directly
-    if (slot0Map.sqrt_price_x96) {
+    if (slot0Map.sqrt_price_x96 && Number(slot0Map.sqrt_price_x96) !== 0) {
+      sqrtPriceX96 = BigInt(slot0Map.sqrt_price_x96)
       console.log(
-        'Fetched sqrt price from slot0:',
-        slot0Map.sqrt_price_x96.toString(),
+        'Fetched sqrt price from slot0 (correct field):',
+        sqrtPriceX96.toString(),
       )
-      return slot0Map.sqrt_price_x96
+    } else if (slot0Map.fee_protocol && BigInt(slot0Map.fee_protocol) !== 0n) {
+      // The contract has the fields mixed up - sqrt price is in fee_protocol
+      sqrtPriceX96 = BigInt(slot0Map.fee_protocol)
+      console.log(
+        'Fetched sqrt price from slot0 (fee_protocol field - field names swapped):',
+        sqrtPriceX96.toString(),
+      )
+    }
+
+    if (sqrtPriceX96) {
+      return sqrtPriceX96
     }
 
     // Fallback: if sqrt_price_x96 parsing failed, use tick to calculate it
     if (slot0Map.tick !== undefined) {
-      const calculatedSqrtPrice = tickToSqrtPrice(slot0Map.tick)
-      console.log(
-        `Using sqrt price calculated from tick ${slot0Map.tick}:`,
-        calculatedSqrtPrice.toString(),
-      )
-      return calculatedSqrtPrice
+      return tickToSqrtPrice(slot0Map.tick)
     }
   } catch (error) {
     console.error('Failed to fetch sqrt price from pool:', error)

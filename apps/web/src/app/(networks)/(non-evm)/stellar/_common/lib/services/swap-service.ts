@@ -5,6 +5,10 @@ import {
   CONTRACT_ADDRESSES,
   NETWORK_CONFIG,
 } from '../soroban/contract-addresses'
+import {
+  submitViaRawRPC,
+  waitForTransaction,
+} from '../soroban/rpc-transaction-helpers'
 
 /**
  * Parameters for adding liquidity
@@ -107,12 +111,12 @@ export class SwapService {
     )
 
     // Submit the signed transaction via raw RPC
-    const txHash = await this.submitViaRawRPC(signedTx)
+    const txHash = await submitViaRawRPC(signedTx)
 
     console.log(`Transaction submitted: ${txHash}`)
     console.log('Waiting for confirmation...')
 
-    const result = await this.waitForTransaction(txHash)
+    const result = await waitForTransaction(txHash)
 
     if (result.success) {
       console.log('✅ Transaction confirmed!')
@@ -165,12 +169,12 @@ export class SwapService {
     )
 
     // Submit the signed transaction via raw RPC
-    const txHash = await this.submitViaRawRPC(signedTx)
+    const txHash = await submitViaRawRPC(signedTx)
 
     console.log(`Transaction submitted: ${txHash}`)
     console.log('Waiting for confirmation...')
 
-    const result = await this.waitForTransaction(txHash)
+    const result = await waitForTransaction(txHash)
 
     if (result.success) {
       console.log('✅ Transaction confirmed!')
@@ -186,92 +190,6 @@ export class SwapService {
       console.error('Transaction failed:', result.error)
       throw new Error(`Transaction failed: ${JSON.stringify(result.error)}`)
     }
-  }
-
-  /**
-   * Wait for transaction confirmation on Soroban RPC.
-   * Polls the transaction status for up to 60 seconds (30 attempts, 2s interval).
-   * Throws on timeout or failure.
-   */
-  private async waitForTransaction(
-    txHash: string,
-  ): Promise<{ success: boolean; data?: any; error?: any }> {
-    // WHY: Poll for transaction status because Soroban RPC is async and confirmation is not immediate.
-    const maxAttempts = 30
-    const intervalMs = 2000
-
-    for (let i = 0; i < maxAttempts; i++) {
-      await new Promise((resolve) => setTimeout(resolve, intervalMs))
-
-      const statusRequest = {
-        jsonrpc: '2.0',
-        id: Date.now(),
-        method: 'getTransaction',
-        params: { hash: txHash },
-      }
-
-      const response = await fetch(this.sorobanRpcUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(statusRequest),
-      })
-
-      const result = await response.json()
-
-      if (result.result) {
-        const status = result.result.status
-
-        if (status === 'SUCCESS') {
-          // Transaction confirmed
-          return { success: true, data: result.result }
-        } else if (status === 'FAILED') {
-          // Transaction failed
-          return { success: false, error: result.result }
-        }
-      }
-    }
-
-    throw new Error('Transaction timeout')
-  }
-
-  /**
-   * Submit transaction via raw RPC (like stellar-auth-test implementation)
-   */
-  private async submitViaRawRPC(signedTx: any): Promise<string> {
-    // Handle both XDR strings and transaction objects
-    let xdr: string
-    if (typeof signedTx === 'string') {
-      xdr = signedTx
-    } else if (signedTx && typeof signedTx.toXDR === 'function') {
-      xdr = signedTx.toXDR()
-    } else {
-      throw new Error('Invalid transaction format')
-    }
-
-    const rpcRequest = {
-      jsonrpc: '2.0',
-      id: Date.now(),
-      method: 'sendTransaction',
-      params: {
-        transaction: xdr,
-      },
-    }
-
-    const response = await fetch(this.sorobanRpcUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(rpcRequest),
-    })
-
-    const result = await response.json()
-
-    if (result.error) {
-      throw new Error(result.error.message)
-    }
-
-    return result.result.hash
   }
 
   /**

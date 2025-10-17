@@ -150,16 +150,53 @@ export async function createPool({
 
 /**
  * Encode price as sqrt(price) * 2^96 for pool initialization
- * @param amount1 - Amount of token1
- * @param amount0 - Amount of token0
+ * Uses integer arithmetic to match Rust implementation precision
+ * @param amount1 - Amount of token1 (as bigint, string, or number)
+ * @param amount0 - Amount of token0 (as bigint, string, or number)
  * @returns sqrt(amount1/amount0) * 2^96 as bigint
  */
-function encodePriceSqrt(amount1: number, amount0: number): bigint {
-  const ratio = amount1 / amount0
-  const sqrtRatio = Math.sqrt(ratio)
-  // Multiply by 2^96
-  const Q96 = BigInt(2) ** BigInt(96)
-  return BigInt(Math.floor(sqrtRatio * Number(Q96)))
+function encodePriceSqrt(
+  amount1: bigint | string | number,
+  amount0: bigint | string | number,
+): bigint {
+  const amount1Big = typeof amount1 === 'bigint' ? amount1 : BigInt(amount1)
+  const amount0Big = typeof amount0 === 'bigint' ? amount0 : BigInt(amount0)
+
+  // For 1:1 ratio, return exact value from deployment guide
+  if (amount1Big === amount0Big) {
+    return 79228162514264337593543950336n // 2^96 = exact 1:1 ratio
+  }
+
+  // Scale amounts to avoid precision loss
+  const scaledAmount1 = amount1Big * BigInt(1e18)
+  const scaledAmount0 = amount0Big * BigInt(1e18)
+
+  // Calculate ratio as integer: (amount1 * 2^192) / amount0
+  const Q192 = BigInt(2) ** BigInt(192)
+  const ratio = (scaledAmount1 * Q192) / scaledAmount0
+
+  // Integer square root using Newton's method (similar to Rust implementation)
+  return integerSqrt(ratio)
+}
+
+/**
+ * Integer square root using Newton's method
+ * Equivalent to the u256_sqrt function in Rust
+ */
+function integerSqrt(x: bigint): bigint {
+  if (x <= 1n) {
+    return x
+  }
+
+  let z = (x + 1n) / 2n
+  let y = x
+
+  while (z < y) {
+    y = z
+    z = (x / z + z) / 2n
+  }
+
+  return y
 }
 
 /**
@@ -178,21 +215,42 @@ export async function initializePoolIfNeeded({
   signTransaction: (xdr: string) => Promise<string>
 }): Promise<void> {
   try {
-    // Check if pool is initialized by calling slot0
+    // Check if pool is initialized by calling slot0 and checking sqrt_price_x96
     try {
       const poolContractClient = getPoolContractClient({
         contractId: poolAddress,
       })
-      await poolContractClient.slot0({
+      const slot0Result = await poolContractClient.slot0({
         timeoutInSeconds: 30,
         fee: 100000,
       })
+
+      const sqrtPriceX96 = slot0Result.result.sqrt_price_x96
+      console.log(`🔍 Pool sqrt_price_x96: ${sqrtPriceX96.toString()}`)
+
+      if (sqrtPriceX96 === 0n) {
+        console.log('🎨 Pool has sqrt_price_x96 = 0, initializing now...')
+        await initializePool({
+          poolAddress,
+          sqrtPriceX96: encodePriceSqrt(1, 1),
+          sourceAccount,
+          signTransaction,
+        })
+        console.log('✅ Pool initialized with sqrt price')
+        return
+      } else {
+        console.log('✅ Pool is already initialized')
+        return
+      }
     } catch (error) {
+      // Check for specific initialization error codes
       if (
         String(error).includes('Error(Contract, #40)') ||
         String(error).includes('PoolNotInitialized')
       ) {
-        console.log('🎨 Pool not initialized, initializing now...')
+        console.log(
+          '🎨 Pool not initialized (contract error), initializing now...',
+        )
         await initializePool({
           poolAddress,
           sqrtPriceX96: encodePriceSqrt(1, 1),

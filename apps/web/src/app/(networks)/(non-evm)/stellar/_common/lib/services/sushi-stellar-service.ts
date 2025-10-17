@@ -1,5 +1,11 @@
 import { addLiquidity as poolAddLiquidity } from '../soroban/pool-helpers'
+import {
+  decreaseLiquidity,
+  increaseLiquidity,
+  mintPosition,
+} from '../soroban/position-manager-helpers'
 import type { Token } from '../types/token.type'
+import { type CollectParams, positionService } from './position-service'
 import { QuoteService, type SwapQuote } from './quote-service'
 import { RouterService, type SwapRoute } from './router-service'
 import {
@@ -25,9 +31,49 @@ export class SushiStellarService {
   }
 
   /**
-   * Add liquidity to a pool using pool-helpers implementation
+   * Add liquidity using Position Manager (creates a position NFT)
+   * This is the recommended way to add liquidity as it creates trackable positions
    */
   async addLiquidity(
+    userAddress: string,
+    params: AddLiquidityParams,
+    signTransaction: (xdr: string) => Promise<string>,
+  ): Promise<{ txHash: string; tokenId: number; liquidity: bigint }> {
+    // Convert string amounts to bigint (assuming 7 decimals)
+    const amount0 = BigInt(
+      Math.floor(Number.parseFloat(params.token0Amount) * 1e7),
+    )
+    const amount1 = BigInt(
+      Math.floor(Number.parseFloat(params.token1Amount) * 1e7),
+    )
+
+    // Use Position Manager's mint method
+    const result = await mintPosition({
+      poolAddress: params.poolAddress,
+      recipient: params.recipient || userAddress,
+      tickLower: params.tickLower,
+      tickUpper: params.tickUpper,
+      amount0Desired: amount0,
+      amount1Desired: amount1,
+      amount0Min: BigInt(0), // TODO: Add slippage protection
+      amount1Min: BigInt(0),
+      deadline: BigInt(params.deadline || Math.floor(Date.now() / 1000) + 300),
+      sourceAccount: userAddress,
+      signTransaction,
+    })
+
+    return {
+      txHash: result.hash,
+      tokenId: result.tokenId,
+      liquidity: result.liquidity,
+    }
+  }
+
+  /**
+   * DEPRECATED: Add liquidity directly to pool (bypasses Position Manager)
+   * Use addLiquidity() instead to create trackable positions
+   */
+  async addLiquidityDirect(
     userAddress: string,
     params: AddLiquidityParams,
     signTransaction: (xdr: string) => Promise<string>,
@@ -191,6 +237,96 @@ export class SushiStellarService {
    */
   formatRoute(route: SwapRoute): string {
     return this.routerService.formatRouteForUser(route)
+  }
+
+  // Position Management Methods
+
+  /**
+   * Get all positions owned by a user
+   */
+  async getUserPositions(userAddress: string) {
+    return await positionService.getUserPositionsWithFees(userAddress)
+  }
+
+  /**
+   * Get a specific position by token ID
+   */
+  async getPosition(tokenId: number) {
+    return await positionService.getPositionWithFees(tokenId)
+  }
+
+  /**
+   * Increase liquidity in an existing position
+   */
+  async increaseLiquidity(
+    userAddress: string,
+    params: {
+      tokenId: number
+      token0Amount: string
+      token1Amount: string
+      deadline?: number
+    },
+    signTransaction: (xdr: string) => Promise<string>,
+  ) {
+    const amount0 = BigInt(
+      Math.floor(Number.parseFloat(params.token0Amount) * 1e7),
+    )
+    const amount1 = BigInt(
+      Math.floor(Number.parseFloat(params.token1Amount) * 1e7),
+    )
+
+    return await increaseLiquidity({
+      tokenId: params.tokenId,
+      amount0Desired: amount0,
+      amount1Desired: amount1,
+      amount0Min: BigInt(0), // TODO: Add slippage protection
+      amount1Min: BigInt(0),
+      deadline: BigInt(params.deadline || Math.floor(Date.now() / 1000) + 300),
+      operator: userAddress,
+      sourceAccount: userAddress,
+      signTransaction,
+    })
+  }
+
+  /**
+   * Decrease liquidity from an existing position
+   */
+  async decreaseLiquidity(
+    userAddress: string,
+    params: {
+      tokenId: number
+      liquidity: bigint
+      deadline?: number
+    },
+    signTransaction: (xdr: string) => Promise<string>,
+  ) {
+    return await decreaseLiquidity({
+      tokenId: params.tokenId,
+      liquidity: params.liquidity,
+      amount0Min: BigInt(0), // TODO: Add slippage protection
+      amount1Min: BigInt(0),
+      deadline: BigInt(params.deadline || Math.floor(Date.now() / 1000) + 300),
+      operator: userAddress,
+      sourceAccount: userAddress,
+      signTransaction,
+    })
+  }
+
+  /**
+   * Collect fees from a position
+   */
+  async collectFees(
+    params: CollectParams,
+    signTransaction: (xdr: string) => Promise<string>,
+  ) {
+    return await positionService.collectFees(params, signTransaction)
+  }
+
+  /**
+   * Get uncollected fees for a position
+   */
+  async getUncollectedFees(tokenId: number) {
+    return await positionService.getUncollectedFees(tokenId)
   }
 }
 
