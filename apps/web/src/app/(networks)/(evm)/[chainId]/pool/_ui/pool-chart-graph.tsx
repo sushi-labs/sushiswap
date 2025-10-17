@@ -1,12 +1,12 @@
 'use client'
 
 import type {
-  BladePool,
   RawV2Pool,
   RawV3Pool,
   V2Pool,
   V3Pool,
 } from '@sushiswap/graph-client/data-api'
+import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
 import {
   CardContent,
   CardDescription,
@@ -31,7 +31,15 @@ import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo } from 'react'
 import { usePoolGraphData } from 'src/lib/hooks'
 import { formatUSD } from 'sushi'
-import type { PoolBase, PoolId, SushiSwapProtocol } from 'sushi/evm'
+import type {
+  BladeChainId,
+  EvmChainId,
+  PoolBase,
+  PoolId,
+  SushiSwapProtocol,
+  SushiSwapV2ChainId,
+  SushiSwapV3ChainId,
+} from 'sushi/evm'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import { PoolChartPeriod, chartPeriods } from './pool-chart-periods'
@@ -69,11 +77,12 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
     isError,
   } = usePoolGraphData({
     poolAddress: pool.address,
-    chainId: pool.chainId,
+    chainId: Number(pool.chainId) as
+      | SushiSwapV2ChainId
+      | SushiSwapV3ChainId
+      | BladeChainId,
     protocol,
   })
-
-  console.log('buckets', buckets)
 
   const [xData, yData]: [number[], number[]] = useMemo(() => {
     const data =
@@ -122,11 +131,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
       if (nameNodes[0]) {
         nameNodes[0].innerHTML = format(
           new Date(name * 1000),
-          `dd MMM yyyy${
-            chartPeriods[period] < chartPeriods[PoolChartPeriod.Week]
-              ? ' p'
-              : ''
-          }`,
+          `dd MMM yyyy${chartPeriods[period] < chartPeriods[PoolChartPeriod.Week] ? ' p' : ''}`,
         )
       }
     },
@@ -178,18 +183,12 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
 
           const date = new Date(timestamp)
           return `<div class="flex flex-col gap-0.5 paper bg-white/50 dark:bg-slate-800/50 px-3 py-2 rounded-xl overflow-hidden shadow-lg">
-            <span class="text-sm font-medium text-gray-900 dark:text-slate-50">${formatUSD(
-              value,
-            )}</span>
+            <span class="text-sm font-medium text-gray-900 dark:text-slate-50">${formatUSD(value)}</span>
             <span class="text-xs font-medium text-gray-500 dark:text-slate-400">${
               date instanceof Date && !Number.isNaN(date?.getTime())
                 ? format(
                     date,
-                    `dd MMM yyyy${
-                      chartPeriods[period] < chartPeriods[PoolChartPeriod.Week]
-                        ? ' p'
-                        : ''
-                    }`,
+                    `dd MMM yyyy${chartPeriods[period] < chartPeriods[PoolChartPeriod.Week] ? ' p' : ''}`,
                   )
                 : ''
             }</span>

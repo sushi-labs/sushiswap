@@ -1,6 +1,6 @@
 'use client'
 
-import type { BladePool } from '@sushiswap/graph-client/data-api'
+import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
   DialogConfirm,

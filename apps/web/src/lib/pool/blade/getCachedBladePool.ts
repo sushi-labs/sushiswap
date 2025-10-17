@@ -1,7 +1,7 @@
 import {
   type BladeChainId,
   getBladePool,
-} from '@sushiswap/graph-client/data-api'
+} from '@sushiswap/graph-client/data-api-blade-prod'
 import { unstable_cache } from 'next/cache'
 import type { EvmAddress } from 'sushi/evm'
 

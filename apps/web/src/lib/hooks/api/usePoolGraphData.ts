@@ -1,10 +1,10 @@
 'use client'
 
 import {
-  getBladePoolBuckets,
   getV2PoolBuckets,
   getV3PoolBuckets,
 } from '@sushiswap/graph-client/data-api'
+import { getBladePoolBuckets } from '@sushiswap/graph-client/data-api-blade-prod'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import {
   type BladeChainId,
@@ -17,7 +17,7 @@ import {
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
 
-interface UsePoolGraphDataParams {
+type UsePoolGraphDataParams = {
   poolAddress: EvmAddress
   chainId: SushiSwapV2ChainId | SushiSwapV3ChainId | BladeChainId
   protocol: SushiSwapProtocol

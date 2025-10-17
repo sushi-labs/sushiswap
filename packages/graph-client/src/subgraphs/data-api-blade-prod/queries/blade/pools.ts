@@ -1,9 +1,10 @@
 import type { ResultOf, VariablesOf } from 'gql.tada'
 import { type RequestOptions, request } from 'src/lib/request.js'
-import { SUSHI_DATA_API_HOST } from 'sushi/evm'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 import type { BladeChainId } from '../../types/BladeChainId.js'
+
+const SUSHI_DATA_API_HOST = 'https://data-api-staging.data-gcp.sushi.com'
 
 export const BladePoolFragment = graphql(
   `
@@ -22,6 +23,7 @@ export const BladePoolFragment = graphql(
         decimals
       }
     }
+    incentiveApr
     liquidity
     liquidityUSD
     liquidityUSDChange1d
@@ -33,7 +35,6 @@ export const BladePoolFragment = graphql(
     feeApr1d
     totalApr1d
     feeUSD1d
-    incentiveApr
     isDeprecated
     isSingleAssetWithdrawEnabled
     newPoolAddress

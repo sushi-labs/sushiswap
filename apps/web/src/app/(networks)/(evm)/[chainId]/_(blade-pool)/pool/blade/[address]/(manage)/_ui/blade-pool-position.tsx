@@ -1,18 +1,17 @@
 'use client'
 
+import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
 import { Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
 import { Button, Currency, SkeletonText } from '@sushiswap/ui'
+import { CurrencyFiatIcon } from '@sushiswap/ui/icons/CurrencyFiatIcon'
 import type { FC } from 'react'
 import { useMemo, useState } from 'react'
-import { formatPercent, formatUSD } from 'sushi'
-
-import type { BladePool } from '@sushiswap/graph-client/data-api'
-import { CurrencyFiatIcon } from '@sushiswap/ui/icons/CurrencyFiatIcon'
 import { getPoolAssets, getPoolTokensGrouped } from 'src/lib/pool/blade'
 import { useUnlockDeposit } from 'src/lib/pool/blade/useUnlockDeposit'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { formatPercent, formatUSD } from 'sushi'
 import { useAccount } from 'wagmi'
 import { useBladePoolPosition } from './blade-pool-position-provider'
 
@@ -183,8 +182,8 @@ const PoolPositionConnected: FC<PoolPositionProps> = ({ pool }) => {
 
           <div className="space-y-3">
             {assets.map((asset, index) => {
-              const percentage = asset.weight * 100
-              const assetValue = positionValue * asset.weight
+              const percentage = asset.targetWeight * 100
+              const assetValue = positionValue * asset.targetWeight
 
               return (
                 <div key={index} className="flex items-center justify-between">

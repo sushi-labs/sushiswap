@@ -1,7 +1,7 @@
 'use client'
 
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid'
-import type { BladePool } from '@sushiswap/graph-client/data-api'
+import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
 import { createErrorToast } from '@sushiswap/notifications'
 import { Button, Currency, Dots, List, Message } from '@sushiswap/ui'
 import { type FC, useCallback, useMemo } from 'react'

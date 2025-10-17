@@ -1,8 +1,11 @@
-import { type RawV2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
+import {
+  type BladePool,
+  getBladePool,
+} from '@sushiswap/graph-client/data-api-blade-prod'
 import ms from 'ms'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import { type EvmChainId, isSushiSwapV2ChainId } from 'sushi/evm'
+import { type EvmChainId, isBladeChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
 import { PoolPageBlade } from '~evm/[chainId]/_ui/PoolPageBlade'
 
@@ -14,20 +17,17 @@ export default async function PoolPage(props: {
 
   const chainId = +_chainId as EvmChainId
 
-  if (
-    !isSushiSwapV2ChainId(chainId) ||
-    !isAddress(address, { strict: false })
-  ) {
+  if (!isBladeChainId(chainId) || !isAddress(address, { strict: false })) {
     return notFound()
   }
 
   const pool = (await unstable_cache(
-    async () => await getV2Pool({ chainId, address }, { retries: 3 }),
-    ['v2', 'pool', `${chainId}:${address}`],
+    async () => await getBladePool({ chainId, address }, { retries: 3 }),
+    ['blade', 'pool', `${chainId}:${address}`],
     {
       revalidate: ms('15m'),
     },
-  )()) as RawV2Pool
+  )()) as unknown as BladePool
 
   return <PoolPageBlade pool={pool} />
 }

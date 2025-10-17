@@ -31,7 +31,7 @@ const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
   AvatarImageProps
 >(({ className, width, src }, ref) => {
-  const _width = Number(width) ?? 40
+  const _width = Number(width) || 40
 
   const useCloudinary =
     src.startsWith('native-currency') || src.startsWith('tokens')

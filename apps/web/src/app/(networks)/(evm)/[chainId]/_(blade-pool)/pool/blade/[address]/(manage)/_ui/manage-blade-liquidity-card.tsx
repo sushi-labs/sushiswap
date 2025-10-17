@@ -15,7 +15,7 @@ import {
 import Link from 'next/link'
 import type { FC } from 'react'
 
-import type { BladePool } from '@sushiswap/graph-client/data-api'
+import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
 import { getEvmChainById } from 'sushi/evm'
 import { BladeAddSection } from './add-liquidity/blade-add-section'
 import { BladeRemoveSection } from './remove-liquidity/blade-remove-section'

@@ -1,4 +1,7 @@
-import type { BladeChainId, BladePool } from '@sushiswap/graph-client/data-api'
+import type {
+  BladeChainId,
+  BladePool,
+} from '@sushiswap/graph-client/data-api-blade-prod'
 import {
   type EvmAddress,
   type EvmCurrency,
@@ -16,7 +19,7 @@ export type BladePoolTokensGrouped = {
 
 export function getPoolTokensGrouped(pool: BladePool): BladePoolTokensGrouped {
   const chainId = pool.chainId as BladeChainId
-  const stablecoinSet = new Set<EvmAddress>(
+  const stablecoinSet = new Set<string>(
     BLADE_STABLES[chainId]?.map((s) => s.address) || [],
   )
 
@@ -35,9 +38,7 @@ export function getPoolTokensGrouped(pool: BladePool): BladePoolTokensGrouped {
               name: tokenData.token.name,
             })
 
-      if (
-        stablecoinSet.has(tokenData.token.address.toLowerCase() as EvmAddress)
-      ) {
+      if (stablecoinSet.has(tokenData.token.address.toLowerCase())) {
         acc.stablecoinUsdTokens.push(token)
       } else {
         acc.tokens.push(token)
@@ -64,7 +65,7 @@ export function getPoolAssets(
   const { showStableTypes = true } = options ?? {}
   const chainId = pool.chainId
   const stablecoinSet = new Set<EvmAddress>(
-    BLADE_STABLES[chainId]?.map((s) => s.address) || [],
+    BLADE_STABLES[chainId]?.map((s) => s.address.toLowerCase()) || [],
   )
 
   const assets: BladePoolAsset[] = []

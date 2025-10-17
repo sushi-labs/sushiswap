@@ -1,6 +1,5 @@
 import type { VariablesOf } from 'gql.tada'
 import { type RequestOptions, request } from 'src/lib/request.js'
-import { SUSHI_DATA_API_HOST } from 'sushi/evm'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 import { BladePoolFragment, enhanceBladePool } from './pools.js'
@@ -28,7 +27,8 @@ export async function getBladePositions(
   variables: GetBladePositions,
   options?: RequestOptions,
 ) {
-  const url = `${SUSHI_DATA_API_HOST}/graphql`
+  // const url = `${SUSHI_DATA_API_HOST}/graphql`
+  const url = `https://data-api-staging.data-gcp.sushi.com/graphql`
   try {
     const result = await request(
       {

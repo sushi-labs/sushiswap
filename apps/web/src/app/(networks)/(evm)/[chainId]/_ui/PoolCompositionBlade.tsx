@@ -1,6 +1,6 @@
 'use client'
 
-import { type RawV2Pool, hydrateV2Pool } from '@sushiswap/graph-client/data-api'
+import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
 import {
   CardContent,
   CardCurrencyAmountItem,
@@ -11,72 +11,104 @@ import {
   Switch,
   classNames,
 } from '@sushiswap/ui'
+import { CardItem } from '@sushiswap/ui'
+import { USDIcon } from '@sushiswap/ui/icons/USD'
 import { type FC, useMemo } from 'react'
-import { useTokenAmountDollarValues } from 'src/lib/hooks'
+import { getPoolAssets } from 'src/lib/pool/blade/utils'
 import { Amount, formatUSD } from 'sushi'
-import { EvmToken } from 'sushi/evm'
+import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { Wrapper } from '../[trade]/_ui/swap/trade/wrapper'
 
 interface PoolCompositionBladeProps {
-  pool: RawV2Pool
+  pool: BladePool
+  showStableTypes: boolean
+  setShowStableTypes: (value: boolean) => void
 }
 
 export const PoolCompositionBlade: FC<PoolCompositionBladeProps> = ({
-  pool: rawPool,
+  pool,
+  showStableTypes,
+  setShowStableTypes,
 }) => {
-  const pool = useMemo(() => hydrateV2Pool(rawPool), [rawPool])
-  const amounts = useMemo(() => {
-    const token0 = new EvmToken({
-      chainId: pool.chainId,
-      address: pool.token0.address,
-      decimals: pool.token0.decimals,
-      symbol: pool.token0.symbol,
-      name: pool.token0.name,
-    })
+  // const amounts = useMemo(() => {
+  //   const stables = STABLES[pool?.chainId] ?? []
 
-    const token1 = new EvmToken({
-      chainId: pool.chainId,
-      address: pool.token1.address,
-      decimals: pool.token1.decimals,
-      symbol: pool.token1.symbol,
-      name: pool.token1.name,
-    })
-    return [
-      Amount.tryFromHuman(token0, pool.reserve0),
-      Amount.tryFromHuman(token1, pool.reserve1),
-    ]
-  }, [pool])
+  //   const parsed = pool?.tokens.map((t: BladePool['tokens'][number]) => {
+  //     const token = new EvmToken({
+  //       chainId: pool?.chainId,
+  //       address: t?.token.address as EvmAddress,
+  //       decimals: t?.token.decimals,
+  //       symbol: t?.token.symbol,
+  //       name: t?.token.name,
+  //     })
 
-  const fiatValues = useTokenAmountDollarValues({
-    chainId: pool.chainId,
-    amounts,
+  //     return {
+  //       token,
+  //       amount: new Amount(
+  //         token,
+  //         BigInt(Math.floor(t?.liquidityUSD * 10 ** t?.token.decimals)),
+  //       ),
+  //       fiatValue: t?.liquidityUSD,
+  //     }
+  //   })
+
+  //   if (showStableTypes) {
+  //     return parsed
+  //   }
+
+  //   const stablesOnly = parsed?.filter(({ token }) =>
+  //     stables.some((s) => s.isSame(token)),
+  //   )
+
+  //   const groupedUSD = stablesOnly?.reduce(
+  //     (acc, curr) => acc + curr.fiatValue,
+  //     0,
+  //   )
+
+  //   const nonStable = parsed?.find(
+  //     ({ token }) => !stables.some((s) => s.isSame(token)),
+  //   )
+
+  //   return [
+  //     {
+  //       isUSDGroup: true as const,
+  //       amount: groupedUSD?.toFixed(2),
+  //       fiatValue: groupedUSD,
+  //     },
+  //     ...(nonStable ? [nonStable] : []),
+  //   ]
+  // }, [pool, showStableTypes])
+
+  const assets = useMemo(() => {
+    return getPoolAssets(pool, { showStableTypes }).filter(
+      (asset) => asset.targetWeight > 0,
+    )
+  }, [pool, showStableTypes])
+
+  const { data: prices, isLoading: isPricesLoading } = usePrices({
+    chainId: pool?.chainId,
   })
 
-  const isLoading = fiatValues.length !== amounts.length
-
-  const [reserve0USD, reserve1USD] = useMemo(() => {
-    if (isLoading) return [0, 0]
-    return [fiatValues[0], fiatValues[1]]
-  }, [fiatValues, isLoading])
+  const tvl = useMemo(() => {
+    return pool?.tokens?.reduce((acc, t) => acc + t?.liquidityUSD, 0)
+  }, [pool])
 
   return (
-    <Wrapper enableBorder className="!p-3 flex flex-col gap-5">
-      <CardHeader className="!p-0 flex !flex-row justify-between items-center lg:flex-col gap-1">
+    <Wrapper enableBorder className="!p-4 flex flex-col gap-5">
+      <CardHeader className="!p-0 flex !flex-row justify-between items-center lg:!items-start lg:!flex-col gap-2">
         <CardTitle className="text-slate-900 dark:lg:!text-slate-500 dark:!text-slate-100">
           TVL
         </CardTitle>
 
         <CardDescription className="!mt-0 font-bold lg:font-medium text-sm  lg:!text-2xl flex items-center">
-          {formatUSD(fiatValues[0] + fiatValues[1])}{' '}
+          {formatUSD(tvl)}{' '}
           <span
             className={classNames(
               'text-sm lg:text-base font-medium',
-              pool?.liquidityUSD1dChange && pool?.liquidityUSD1dChange > 0
-                ? 'text-green'
-                : 'text-red',
+              pool?.liquidityUSDChange1d > 0 ? 'text-green' : 'text-red',
             )}
           >
-            ({pool?.liquidityUSD1dChange.toFixed(2)}%)
+            ({pool?.liquidityUSDChange1d.toFixed(2)}%)
           </span>
         </CardDescription>
       </CardHeader>
@@ -87,22 +119,66 @@ export const PoolCompositionBlade: FC<PoolCompositionBladeProps> = ({
             <span className="text-base text-gray-500 lg:flex-row dark:text-slate-500">
               Show stablecoin types
             </span>
-            <Switch />
+            <Switch
+              checked={showStableTypes}
+              onCheckedChange={setShowStableTypes}
+            />
           </div>
-          <CardCurrencyAmountItem
-            isLoading={isLoading}
-            amount={amounts[0]}
-            fiatValue={formatUSD(reserve0USD)}
-            amountClassName="!font-medium"
-          />
-          <CardCurrencyAmountItem
-            isLoading={isLoading}
-            amount={amounts[1]}
-            fiatValue={formatUSD(reserve1USD)}
-            amountClassName="!font-medium"
-          />
+
+          {assets.map((asset) => {
+            if ('stablecoin' in asset) {
+              return (
+                <USDGroupedAmountItem
+                  key="usd-group"
+                  amount={asset.liquidityUSD.toString()}
+                  fiatValue={asset.liquidityUSD}
+                />
+              )
+            }
+
+            return (
+              <CardCurrencyAmountItem
+                isLoading={isPricesLoading}
+                key={asset.token.id}
+                amount={Amount.tryFromHuman(
+                  asset.token,
+                  asset.liquidityUSD /
+                    Number(prices?.get?.(asset.token.wrap().address)),
+                )}
+                fiatValue={formatUSD(asset.liquidityUSD)}
+                amountClassName="!font-medium"
+              />
+            )
+          })}
         </CardGroup>
       </CardContent>
     </Wrapper>
+  )
+}
+
+interface USDGroupedAmountItemProps {
+  amount: string
+  fiatValue: number
+}
+
+export const USDGroupedAmountItem: FC<USDGroupedAmountItemProps> = ({
+  amount,
+  fiatValue,
+}) => {
+  return (
+    <CardItem
+      title={
+        <div className="flex gap-2 items-center font-medium text-slate-900 dark:text-slate-50">
+          <USDIcon className="w-[18px] h-[18px]" /> USD
+        </div>
+      }
+    >
+      <span className="flex gap-1 font-semibold">
+        {amount}{' '}
+        <span className="font-normal text-muted-foreground">
+          {formatUSD(fiatValue)}
+        </span>
+      </span>
+    </CardItem>
   )
 }

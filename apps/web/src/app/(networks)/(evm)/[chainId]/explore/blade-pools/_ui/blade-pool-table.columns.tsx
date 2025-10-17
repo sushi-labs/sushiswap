@@ -1,4 +1,4 @@
-import type { BladePool } from '@sushiswap/graph-client/data-api'
+import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
 import {
   Currency,
   SkeletonCircle,

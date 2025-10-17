@@ -1,5 +1,4 @@
 export * from './analytics/index.js'
-export * from './blade/index.js'
 export * from './pool/index.js'
 export * from './portfolio/index.js'
 export * from './sushi-bar/index.js'

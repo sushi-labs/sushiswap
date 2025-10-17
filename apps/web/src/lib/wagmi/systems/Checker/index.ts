@@ -1,6 +1,11 @@
 import type { ButtonProps } from '@sushiswap/ui'
 import type { ComponentType, FC } from 'react'
 
+import { TransferERC20, type TransferERC20Props } from './TransferERC20'
+import {
+  TransferERC20Multiple,
+  type TransferERC20MultipleProps,
+} from './TransferERC20Multiple'
 import { Amounts, type AmountsProps } from './amounts'
 import { ApproveERC20, type ApproveERC20Props } from './approve-erc20'
 import {
@@ -47,6 +52,8 @@ export type CheckerProps = {
   Root: FC<ProviderProps>
   PartialRoute: FC<PartialRouteProps>
   Slippage: FC<SlippageProps>
+  TransferERC20: ComponentType<TransferERC20Props>
+  TransferERC20Multiple: ComponentType<TransferERC20MultipleProps>
 }
 
 export const Checker: CheckerProps = {
@@ -64,6 +71,8 @@ export const Checker: CheckerProps = {
   Root,
   PartialRoute,
   Slippage,
+  TransferERC20,
+  TransferERC20Multiple,
 }
 
 export { SLIPPAGE_WARNING_THRESHOLD }

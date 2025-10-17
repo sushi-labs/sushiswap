@@ -1,33 +1,30 @@
 import type { VariablesOf } from 'gql.tada'
-
 import { type RequestOptions, request } from 'src/lib/request.js'
 import { type EvmChainId, SUSHI_DATA_API_HOST, isBladeChainId } from 'sushi/evm'
 import { graphql } from '../../graphql.js'
 
-export const BladePoolBucketsQuery = graphql(
-  `
-query BladePoolBuckets($address: Bytes!, $chainId: BladeChainId!) {
-  bladePoolBuckets(address: $address, chainId: $chainId) {
-    hourBuckets {
-      id
-      date
-      volumeUSD
-      liquidityUSD
-      txCount
-      feesUSD
-    }
-    dayBuckets {
-      id
-      date
-      volumeUSD
-      liquidityUSD
-      txCount
-      feesUSD
+export const BladePoolBucketsQuery = graphql(`
+  query BladePoolBuckets($address: Bytes!, $chainId: BladeChainId!) {
+    bladePoolBuckets(address: $address, chainId: $chainId) {
+      hourBuckets {
+        id
+        date
+        volumeUSD
+        liquidityUSD
+        txCount
+        feesUSD
+      }
+      dayBuckets {
+        id
+        date
+        volumeUSD
+        liquidityUSD
+        txCount
+        feesUSD
+      }
     }
   }
-}
-`,
-)
+`)
 
 export type GetBladePoolBuckets = VariablesOf<typeof BladePoolBucketsQuery>
 
@@ -41,6 +38,7 @@ export async function getBladePoolBuckets(
   if (!isBladeChainId(chainId)) {
     throw new Error('Invalid chainId')
   }
+
   try {
     const result = await request(
       { url, document: BladePoolBucketsQuery, variables },
