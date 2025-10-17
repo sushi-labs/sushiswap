@@ -19,7 +19,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { useCallback } from 'react'
 import { useLocalRecentSwaps } from 'src/lib/hooks/react-query/recent-swaps/useLocalRecentSwaps'
 import { usePortfolioChart } from 'src/lib/wagmi/hooks/portfolio/use-portfolio-chart'
-import type { EvmCurrency } from 'sushi/evm'
 import tailwindConfig from 'tailwind.config'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import { useAccount } from 'wagmi'
@@ -48,20 +47,15 @@ const tailwind = resolveConfig(tailwindConfig)
 export const AssetsChart = () => {
   const { address } = useAccount()
   const { data: recentSwaps } = useLocalRecentSwaps()
-  const { data } = usePortfolioChart({
+  const { data, isLoading } = usePortfolioChart({
     address: address,
   })
+
   const { chartRange } = useChartFilters()
 
-  const [selectedToken, setSelectedToken] = useState<EvmCurrency | null>(null)
-
-  const [isLoading, setIsLoading] = useState(true)
-  const isError = false
   const { theme } = useTheme()
   const isDark = theme === 'dark'
   const isSmallScreen = useIsSmScreen()
-
-  useEffect(() => setIsLoading(false), [])
 
   const [xData, yData] = useMemo(() => {
     const source = data?.dataPoints ?? []
@@ -178,28 +172,16 @@ export const AssetsChart = () => {
   return (
     <Wrapper className="!p-0" enableBorder>
       <CardHeader className="!px-0 !p-4 md:!py-4">
-        <AssetsChartHeader
-          setSelectedToken={setSelectedToken}
-          selectedToken={selectedToken}
-          isLoading={isLoading}
-          data={data}
-        />
+        <AssetsChartHeader isLoading={isLoading} data={data} />
       </CardHeader>
       <CardContent className="!pb-2 !px-4">
         {isLoading ? (
-          <SkeletonBox
-            className={classNames(
-              'w-full h-[230px] !mb-4 dark:via-slate-800 dark:to-slate-900',
-            )}
-          />
-        ) : isError ? (
-          <div className="h-[134px] !mb-4 w-full" />
+          <SkeletonBox className="w-full h-[230px] mb-4 dark:via-slate-800 dark:to-slate-900" />
+        ) : !data?.dataPoints?.length ? (
+          <div className="flex justify-center items-center h-[246px] w-full">
+            <span className="text-sm pb-10">No data available.</span>
+          </div>
         ) : (
-          //  : !data?.dataPoints.length ? (
-          //   <div className="flex justify-center items-center h-[246px] w-full">
-          //     <span className="text-sm pb-10">No data available.</span>
-          //   </div>
-          // )
           <ReactEchartsCore
             echarts={echarts}
             option={option}

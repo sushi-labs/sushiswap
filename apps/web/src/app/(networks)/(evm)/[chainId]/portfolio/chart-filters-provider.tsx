@@ -18,7 +18,13 @@ import {
 import { parseArgs } from 'src/lib/functions'
 import { useTypedSearchParams } from 'src/lib/hooks'
 import { AssetsChartPeriod } from 'src/ui/portfolio/assets-chart/assets-chart-header'
-import { isEvmChainId } from 'sushi/evm'
+import {
+  type EvmChainId,
+  type EvmCurrency,
+  EvmNative,
+  EvmToken,
+  isEvmChainId,
+} from 'sushi/evm'
 import { z } from 'zod'
 
 export const DEFAULT_ASSET_NETWORKS = PoolChainIds.filter(
@@ -28,6 +34,7 @@ export const DEFAULT_ASSET_NETWORKS = PoolChainIds.filter(
 export const DEFAULT_ASSETS_FILTER_STATE = {
   chartRange: AssetsChartPeriod.ThirtyDay,
   chartNetworks: DEFAULT_ASSET_NETWORKS,
+  asset: undefined as EvmCurrency | undefined,
 }
 
 export const assetsFiltersSchema = z.object({
@@ -40,9 +47,15 @@ export const assetsFiltersSchema = z.object({
     if (!networks) return DEFAULT_ASSET_NETWORKS
     return networks.split(',').map((id) => +id as PoolChainId)
   }),
+  asset: z.string().optional(),
 })
 
-export type AssetsFilters = z.infer<typeof assetsFiltersSchema>
+export type AssetsFilters = Omit<
+  z.infer<typeof assetsFiltersSchema>,
+  'asset'
+> & {
+  asset: EvmCurrency | undefined
+}
 
 type SetFilters = {
   (next: SetStateAction<AssetsFilters>): void
@@ -78,21 +91,43 @@ const ChartFiltersUrlProvider: FC<{ children?: ReactNode }> = ({
   const { replace } = useRouter()
   const urlFilters = useTypedSearchParams(assetsFiltersSchema.partial())
 
-  const state = useMemo(() => {
-    const { chartRange, chartNetworks } = urlFilters
+  // 🔹 Parse URL → state
+  const state = useMemo<AssetsFilters>(() => {
+    const { chartRange, chartNetworks, asset } = urlFilters
+
+    let parsedAsset: EvmCurrency | undefined
+    if (asset) {
+      const [chainIdStr, id] = asset.split(':')
+      const chainId = Number(chainIdStr) as EvmChainId
+      parsedAsset =
+        id.toLowerCase() === 'native'
+          ? EvmNative.fromChainId(chainId)
+          : new EvmToken({
+              chainId,
+              address: id as `0x${string}`,
+              decimals: 18, // temporary placeholder
+              symbol: 'UNKNOWN',
+              name: 'Loading...',
+            })
+    }
+
     return {
       chartRange: chartRange ?? DEFAULT_ASSETS_FILTER_STATE.chartRange,
       chartNetworks: chartNetworks ?? DEFAULT_ASSETS_FILTER_STATE.chartNetworks,
+      asset: parsedAsset,
     }
   }, [urlFilters])
 
+  // 🔹 State → URL
   const mutate = useMemo(() => {
     const setFilters: SetFilters = (filters) => {
-      if (typeof filters === 'function') {
-        void replace(parseArgs(filters(state)), { scroll: false })
-      } else {
-        void replace(parseArgs(filters ?? {}), { scroll: false })
+      const next = filters as AssetsFilters
+      typeof filters === 'function' ? filters(state) : filters
+      const serialized = {
+        ...next,
+        asset: next?.asset?.id,
       }
+      void replace(parseArgs(serialized), { scroll: false })
     }
     return { setFilters }
   }, [replace, state])

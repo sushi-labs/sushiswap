@@ -9,15 +9,29 @@ export const usePortfolioChart = ({
 }: {
   address: Address | undefined
 }) => {
-  const { chartNetworks, chartRange } = useChartFilters()
+  const { chartNetworks, chartRange, asset } = useChartFilters()
 
   return useQuery({
-    queryKey: ['portfolio-chart', address, chartNetworks, chartRange],
+    queryKey: [
+      'portfolio-chart',
+      address,
+      chartNetworks,
+      chartRange,
+      asset?.id,
+    ],
     queryFn: async () => {
       const data = await getPortfolioV2Chart({
         address: address as `0x${string}`,
         chainIds: chartNetworks,
         range: chartRange,
+        ...(asset
+          ? {
+              tokenFilter: {
+                address: asset.wrap().address,
+                chainId: asset.chainId,
+              },
+            }
+          : {}),
       })
       return data
     },
