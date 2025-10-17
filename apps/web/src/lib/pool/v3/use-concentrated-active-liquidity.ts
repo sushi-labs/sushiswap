@@ -152,7 +152,10 @@ export const useConcentratedActiveLiquidity = ({
     return {
       isLoading,
       error,
+      currentTick: pool.tickCurrent,
       activeTick,
+      liquidity: pool.liquidity,
+      sqrtPriceX96: pool.sqrtRatioX96,
       data: ticksProcessed,
     }
   }, [token0, token1, activeTick, pool, ticks, isLoading, error, isPoolLoading])

@@ -209,7 +209,7 @@ export function LiquidityChartRangeInput({
   )
 
   return (
-    <div className="grid auto-rows-auto gap-3 min-h-[300px] overflow-hidden">
+    <div className="grid auto-rows-auto gap-3 min-h-[400px] overflow-hidden">
       {isUninitialized ? (
         <div className="flex flex-col gap-2">
           {tokenToggle}
