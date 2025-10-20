@@ -1,4 +1,5 @@
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
+import type { PortfolioV2PositionV3PoolType } from '@sushiswap/graph-client/data-api-portfolio'
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   Button,
@@ -17,8 +18,14 @@ import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks
 import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { ConcentratedLiquidityWidget } from 'src/ui/pool/ConcentratedLiquidityWidget'
-import { ChainId } from 'sushi'
-import { EvmNative, SUSHI, SushiSwapV3FeeAmount } from 'sushi/evm'
+import {
+  type EvmAddress,
+  type EvmChainId,
+  EvmToken,
+  type SushiSwapV3ChainId,
+  unwrapEvmToken,
+} from 'sushi/evm'
+import { useAccount } from 'wagmi'
 import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
 import { RemoveLiquidity } from './remove-liquidity'
 
@@ -30,31 +37,58 @@ const TABS = [
   { label: 'Remove Liquidity', value: 'remove' },
 ]
 
-export const V3Manage = ({ position }: { position: any }) => {
+export const V3Manage = ({
+  position,
+}: { position: PortfolioV2PositionV3PoolType }) => {
   const { createQuery } = useCreateQuery()
   const [currentTab, setCurrentTab] = useState<LPManageTabValueType>('add')
   const searchParams = useSearchParams()
   const manageTabParam = searchParams.get('lpManageTab') as
     | LPManageTabValueType
     | undefined
-
+  const { address } = useAccount()
   useEffect(() => {
     if (manageTabParam && LPManageTabValues.includes(manageTabParam)) {
       setCurrentTab(manageTabParam)
     }
   }, [manageTabParam])
+  const chainId = position.pool.chainId as SushiSwapV3ChainId
+  const tokenId = position.position?.tokenId
 
-  const { data: _position } = useConcentratedPositionInfo({
-    chainId: 1,
-    token0: SUSHI[1],
-    tokenId: '1942',
-    token1: EvmNative.fromChainId(ChainId.ETHEREUM),
+  const [token0, token1] = useMemo(() => {
+    return [
+      unwrapEvmToken(
+        new EvmToken({
+          chainId: position.position.token0.chainId as EvmChainId,
+          address: position.position.token0.address as EvmAddress,
+          decimals: position.position.token0.decimals,
+          symbol: position.position.token0.symbol,
+          name: position.position.token0.name,
+        }),
+      ),
+      unwrapEvmToken(
+        new EvmToken({
+          chainId: position.position.token1.chainId as EvmChainId,
+          address: position.position.token1.address as EvmAddress,
+          decimals: position.position.token1.decimals,
+          symbol: position.position.token1.symbol,
+          name: position.position.token1.name,
+        }),
+      ),
+    ]
+  }, [position])
+
+  const { data: v3Position } = useConcentratedPositionInfo({
+    chainId,
+    token0,
+    tokenId,
+    token1,
   })
 
   const { data: positionDetails, isLoading: _isPositionDetailsLoading } =
     useConcentratedLiquidityPositionsFromTokenId({
-      chainId: 1,
-      tokenId: '1942',
+      chainId,
+      tokenId,
     })
 
   const content = useMemo(() => {
@@ -63,31 +97,38 @@ export const V3Manage = ({ position }: { position: any }) => {
         return (
           <ConcentratedLiquidityWidget
             withTitleAndDescription={false}
-            chainId={1}
-            account={'0x47Ef3bF350F70724F2fd34206990cdE9C3A6B6F0'}
-            token0={SUSHI[1]}
-            token1={EvmNative.fromChainId(ChainId.ETHEREUM)}
-            feeAmount={SushiSwapV3FeeAmount.MEDIUM}
-            // tokensLoading={token0Loading || token1Loading}
+            chainId={chainId}
+            account={address}
+            token0={token0}
+            token1={token1}
+            feeAmount={positionDetails?.fee}
             tokensLoading={false}
-            // existingPosition={position ?? undefined}
-            existingPosition={_position ?? undefined}
-            tokenId={'1942'}
+            existingPosition={v3Position ?? undefined}
+            tokenId={tokenId}
           />
         )
       case 'remove':
         return (
           <RemoveLiquidity
-            token0={SUSHI[1]}
-            token1={EvmNative.fromChainId(ChainId.ETHEREUM)}
-            chainId={1}
-            account={'0x47Ef3bF350F70724F2fd34206990cdE9C3A6B6F0'}
-            position={_position ?? undefined}
+            token0={token0}
+            token1={token1}
+            chainId={chainId}
+            account={address}
+            position={v3Position ?? undefined}
             positionDetails={positionDetails}
           />
         )
     }
-  }, [currentTab, positionDetails, _position])
+  }, [
+    currentTab,
+    positionDetails,
+    v3Position,
+    token0,
+    token1,
+    chainId,
+    address,
+    tokenId,
+  ])
 
   return (
     <Tabs
@@ -141,7 +182,7 @@ export const V3Manage = ({ position }: { position: any }) => {
                 currentTab === 'add'
                   ? TTLStorageKey.AddLiquidity
                   : TTLStorageKey.RemoveLiquidity,
-              defaultValue: getDefaultTTL(position.chainId).toString(),
+              defaultValue: getDefaultTTL(chainId).toString(),
             },
           }}
           modules={[
