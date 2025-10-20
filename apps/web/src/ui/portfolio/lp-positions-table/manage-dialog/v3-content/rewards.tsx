@@ -1,3 +1,4 @@
+import type { PortfolioV2PositionV3PoolType } from '@sushiswap/graph-client/data-api-portfolio'
 import {
   Button,
   Card,
@@ -14,26 +15,33 @@ import { useClaimableRewards } from 'src/lib/hooks/react-query'
 import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { formatUSD } from 'sushi'
-import { type MerklChainId, isMerklChainId } from 'sushi/evm'
+import {
+  type MerklChainId,
+  type SushiSwapV3ChainId,
+  isMerklChainId,
+} from 'sushi/evm'
 import { ClaimRewardsButton } from '~evm/claim/rewards/_common/ui/claim-rewards-button'
 
-export const Rewards = ({ position }: { position: any }) => {
+export const Rewards = ({
+  position,
+}: { position: PortfolioV2PositionV3PoolType }) => {
+  const chainId = position.pool.chainId as SushiSwapV3ChainId
   const { data: owner } = useConcentratedPositionOwner({
-    chainId: position.chainId,
-    tokenId: position.tokenId,
+    chainId: chainId,
+    tokenId: position.position.tokenId,
   })
   const { data: rewardsData, isLoading: isRewardsLoading } =
     useClaimableRewards({
-      chainIds: [position.chainId],
+      chainIds: [chainId as MerklChainId],
       account: owner,
-      enabled: isMerklChainId(position.chainId),
+      enabled: isMerklChainId(chainId),
     })
 
-  const rewardsForChain = rewardsData?.[position.chainId as MerklChainId]
+  const rewardsForChain = rewardsData?.[chainId as MerklChainId]
   const rewardAmounts = Object.entries(rewardsForChain?.rewardAmounts ?? {})
 
   const fiatValuesAmounts = useTokenAmountDollarValues({
-    chainId: position.chainId,
+    chainId: chainId,
     amounts: rewardAmounts.map(([_, amount]) => amount),
   })
 
@@ -46,7 +54,7 @@ export const Rewards = ({ position }: { position: any }) => {
             {formatUSD(rewardsForChain?.totalRewardsUSD ?? 0)}
           </CardDescription>
         </div>
-        <Checker.Network size="default" fullWidth={false} chainId={747474}>
+        <Checker.Network size="default" fullWidth={false} chainId={chainId}>
           <ClaimRewardsButton
             className="w-[128px]"
             fullWidth={false}

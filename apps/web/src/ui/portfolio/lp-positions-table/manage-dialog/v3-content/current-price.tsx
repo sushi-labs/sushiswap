@@ -1,15 +1,26 @@
-import { Toggle } from '@sushiswap/ui'
-import { useMemo, useState } from 'react'
+import { SkeletonText, Toggle } from '@sushiswap/ui'
+import { type Dispatch, type SetStateAction, useMemo } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import { Amount } from 'sushi'
-import type { EvmCurrency } from 'sushi/evm'
+import { Amount, type Price } from 'sushi'
+import type { EvmCurrency, EvmToken } from 'sushi/evm'
 
 export const CurrentPrice = ({
   token0,
   token1,
-}: { token0: EvmCurrency; token1: EvmCurrency }) => {
-  const [invert, setInvert] = useState(false)
-
+  invert,
+  setInvert,
+  token0Price,
+  token1Price,
+  isLoading,
+}: {
+  token0: EvmCurrency
+  token1: EvmCurrency
+  invert: boolean
+  setInvert: Dispatch<SetStateAction<boolean>>
+  token0Price: Price<EvmToken, EvmToken> | undefined
+  token1Price: Price<EvmToken, EvmToken> | undefined
+  isLoading: boolean
+}) => {
   const [_token0, _token1] = invert ? [token1, token0] : [token0, token1]
 
   const fiatAmounts = useMemo(
@@ -26,20 +37,20 @@ export const CurrentPrice = ({
     <div className="flex-col flex md:flex-row justify-center items-center md:justify-between gap-2 w-full">
       <div className="flex whitespace-nowrap font-medium text-sm">
         <div>Current Price </div>
-        {/* {isLoading || !pool || !token0 || !token1 ? (
-            <SkeletonText fontSize="xs" />
-          ) : ( */}
-        <div className="flex items-center gap-1.5">
-          <div className="flex items-baseline gap-1.5">
-            : 1 {_token0.symbol} ={' '}
-            {/* {pool
-              .priceOf(invert ? token1.wrapped : token0.wrapped)
-              ?.toSignificant(4)} */}
-            {invert ? '666' : '999'} {_token1.symbol}
-            <span>(${fiatAmountsAsNumber[invert ? 1 : 0].toFixed(2)})</span>
+        {isLoading || !token0 || !token1 ? (
+          <SkeletonText fontSize="xs" />
+        ) : (
+          <div className="flex items-center gap-1.5">
+            <div className="flex items-baseline gap-1.5">
+              : 1 {_token0.symbol} ={' '}
+              {invert
+                ? token1Price?.toSignificant(6)
+                : token0Price?.toSignificant(6)}{' '}
+              {_token1.symbol}
+              <span>(${fiatAmountsAsNumber[invert ? 1 : 0].toFixed(2)})</span>
+            </div>
           </div>
-        </div>
-        {/* )} */}
+        )}
       </div>
       <div className="flex gap-1">
         <Toggle

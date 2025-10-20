@@ -196,3 +196,5 @@ export type PortfolioV2LiquidityPositionOrderDirection =
 export type PortfolioV2PositionPoolType =
   | PortfolioV2LiquidityPositionsResponse['v2'][number]
   | PortfolioV2LiquidityPositionsResponse['v3'][number]
+export type PortfolioV2PositionV3PoolType =
+  PortfolioV2LiquidityPositionsResponse['v3'][number]

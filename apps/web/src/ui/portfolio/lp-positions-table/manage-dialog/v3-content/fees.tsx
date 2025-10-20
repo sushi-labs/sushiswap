@@ -32,7 +32,7 @@ export const Fees = ({
   positionDetails,
   account,
 }: {
-  position: Position | undefined
+  position: Position | undefined | null
   chainId: EvmChainId
   token0: EvmCurrency | undefined
   token1: EvmCurrency | undefined

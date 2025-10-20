@@ -66,7 +66,7 @@ export const APRHoverCard: FC<APRHoverCardProps> = ({ children, pool }) => {
           <div className="flex items-center justify-between gap-1">
             <span className="flex flex-grow text-sm font-bold">Total APR</span>
             <span className="text-sm font-bold text-right">
-              {formatPercent(totalAPR / 100)}
+              {formatPercent(totalAPR)}
             </span>
           </div>
         </div>

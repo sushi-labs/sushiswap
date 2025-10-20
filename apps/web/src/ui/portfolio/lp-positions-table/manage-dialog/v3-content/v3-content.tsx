@@ -1,5 +1,5 @@
+import type { PortfolioV2PositionV3PoolType } from '@sushiswap/graph-client/data-api-portfolio'
 import { useMemo } from 'react'
-import type { Position } from 'sushi/evm'
 import type { LPTabValueType } from '../manage-dialog'
 import { V3Manage } from './v3-manage'
 import { V3PositionDetail } from './v3-position-detail'
@@ -7,7 +7,10 @@ import { V3PositionDetail } from './v3-position-detail'
 export const V3Content = ({
   currentTab,
   position,
-}: { currentTab: LPTabValueType; position: Position }) => {
+}: {
+  currentTab: LPTabValueType
+  position: PortfolioV2PositionV3PoolType
+}) => {
   const content = useMemo(() => {
     switch (currentTab) {
       case 'detail':

@@ -1,9 +1,51 @@
-import type { PortfolioV3Position } from '@sushiswap/graph-client/data-api'
 import { classNames } from '@sushiswap/ui'
+import { useMemo } from 'react'
+import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
+import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
+import type { EvmCurrency, SushiSwapV3ChainId } from 'sushi/evm'
+import { useAccount } from 'wagmi'
+import { useConcentratedDerivedMintInfo } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
 
 export const RangeBadge = ({
-  range,
-}: { range: PortfolioV3Position['range'] }) => {
+  token0,
+  token1,
+  tokenId,
+  chainId,
+}: {
+  token0: EvmCurrency
+  token1: EvmCurrency
+  tokenId: number
+  chainId: SushiSwapV3ChainId
+}) => {
+  const { address } = useAccount()
+  const { data: positionDetails } =
+    useConcentratedLiquidityPositionsFromTokenId({
+      chainId,
+      tokenId,
+    })
+  const { data: position } = useConcentratedPositionInfo({
+    chainId,
+    token0,
+    tokenId,
+    token1,
+  })
+
+  const { outOfRange } = useConcentratedDerivedMintInfo({
+    chainId,
+    account: address,
+    token0,
+    token1,
+    baseToken: token0,
+    feeAmount: positionDetails?.fee,
+    existingPosition: position ?? undefined,
+  })
+
+  const range = useMemo(() => {
+    if (outOfRange === true) return 'OUT_OF_RANGE'
+    if (outOfRange === false) return 'IN_RANGE'
+    return 'UNKNOWN'
+  }, [outOfRange])
+
   return (
     <div
       className={classNames(

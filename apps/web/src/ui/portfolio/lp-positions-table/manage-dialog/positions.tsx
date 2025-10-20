@@ -73,8 +73,12 @@ export const Positions = ({
   const [fiatAmount0, fiatAmount1] = useMemo(() => {
     const price0 = priceMap?.get(token0.wrap().address)
     const price1 = priceMap?.get(token1.wrap().address)
-    const fiat0 = price0 ? amounts?.[0]?.mulHuman(price0) : 0
-    const fiat1 = price1 ? amounts?.[1]?.mulHuman(price1) : 0
+    const fiat0 = price0
+      ? amounts?.[0]?.mulHuman(price0)
+      : amounts?.[0]?.mulHuman(0)
+    const fiat1 = price1
+      ? amounts?.[1]?.mulHuman(price1)
+      : amounts?.[1]?.mulHuman(0)
     return [fiat0, fiat1]
   }, [amounts, priceMap, token0, token1])
 
@@ -84,7 +88,7 @@ export const Positions = ({
         <div>
           <CardTitle className="mb-1">Positions</CardTitle>
           <CardDescription className="font-medium !text-lg">
-            {formatUSD(position.position.amountUSD)}
+            {formatUSD(fiatAmount0.add(fiatAmount1).toString())}
           </CardDescription>
         </div>
         {hideButtons ? null : (

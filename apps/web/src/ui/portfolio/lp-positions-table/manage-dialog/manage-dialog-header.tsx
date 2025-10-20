@@ -8,6 +8,7 @@ import {
   type EvmChainId,
   EvmToken,
   type SushiSwapProtocol,
+  type SushiSwapV3ChainId,
   unwrapEvmToken,
 } from 'sushi/evm'
 import {
@@ -15,6 +16,7 @@ import {
   type RequiredPool,
 } from '~evm/[chainId]/_ui/apr-hover-card'
 import { ProtocolBadge } from '~evm/[chainId]/_ui/protocol-badge'
+import type { PortfolioV2PositionV3PoolType } from '../../../../../../../packages/graph-client/dist/subgraphs/data-api-portfolio/queries/portfolio/lp-positions'
 import { RangeBadge } from './range-badge'
 
 export const ManageDialogHeader = ({
@@ -78,7 +80,15 @@ export const ManageDialogHeader = ({
         </div>
       </div>
       {data?.pool?.protocol === 'SUSHISWAP_V3' ? (
-        <RangeBadge range="IN_RANGE" />
+        <RangeBadge
+          token0={token0}
+          token1={token1}
+          tokenId={
+            (data.position as PortfolioV2PositionV3PoolType['position'])
+              ?.tokenId
+          }
+          chainId={data.pool.chainId as SushiSwapV3ChainId}
+        />
       ) : null}
       {hideApr ? null : (
         <div
