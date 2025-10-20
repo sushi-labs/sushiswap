@@ -48,7 +48,7 @@ export const V2Manage = ({
     | undefined
 
   const { data: pool, isLoading } = useQuery<RawV2Pool | null>({
-    queryKey: ['v2-pool-testing'],
+    queryKey: ['v2-pool-portfolio'],
     queryFn: async () => {
       const result = await getV2Pool({
         chainId: position.pool.chainId as SushiSwapV2ChainId,
