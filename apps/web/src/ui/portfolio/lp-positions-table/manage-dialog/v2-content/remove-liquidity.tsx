@@ -115,12 +115,12 @@ export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
       () =>
         token0
           ? percentToRemoveDebounced?.gt('0') && underlying0
-            ? Amount.tryFromHuman(
+            ? new Amount(
                 token0,
-                percentToRemoveDebounced.mul(underlying0.amount).toString() ||
+                percentToRemoveDebounced.mul(underlying0.amount).quotient ||
                   '0',
               )
-            : Amount.tryFromHuman(token0, '0')
+            : new Amount(token0, '0')
           : undefined,
       [percentToRemoveDebounced, token0, underlying0],
     )
@@ -129,12 +129,12 @@ export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
       () =>
         token1
           ? percentToRemoveDebounced?.gt('0') && underlying1
-            ? Amount.tryFromHuman(
+            ? new Amount(
                 token1,
-                percentToRemoveDebounced.mul(underlying1.amount).toString() ||
+                percentToRemoveDebounced.mul(underlying1.amount).quotient ||
                   '0',
               )
-            : Amount.tryFromHuman(token1, '0')
+            : new Amount(token1, '0')
           : undefined,
       [percentToRemoveDebounced, token1, underlying1],
     )
@@ -142,22 +142,10 @@ export const RemoveLiquidity: FC<RemoveSectionLegacyProps> = withCheckerRoot(
     const [minAmount0, minAmount1] = useMemo(() => {
       return [
         currencyAToRemove
-          ? Amount.tryFromHuman(
-              currencyAToRemove.currency,
-              subtractSlippage(
-                currencyAToRemove,
-                slippageTolerance.toNumber(),
-              ).toString(),
-            )
+          ? subtractSlippage(currencyAToRemove, slippageTolerance.toNumber())
           : undefined,
         currencyBToRemove
-          ? Amount.tryFromHuman(
-              currencyBToRemove.currency,
-              subtractSlippage(
-                currencyBToRemove,
-                slippageTolerance.toNumber(),
-              ).toString(),
-            )
+          ? subtractSlippage(currencyBToRemove, slippageTolerance.toNumber())
           : undefined,
       ]
     }, [slippageTolerance, currencyAToRemove, currencyBToRemove])

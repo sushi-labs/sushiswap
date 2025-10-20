@@ -1,5 +1,6 @@
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { type RawV2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
+import type { PortfolioV2PositionPoolType } from '@sushiswap/graph-client/data-api-portfolio'
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   Button,
@@ -17,6 +18,13 @@ import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
+import {
+  type EvmAddress,
+  type EvmChainId,
+  EvmToken,
+  type SushiSwapV2ChainId,
+  unwrapEvmToken,
+} from 'sushi/evm'
 import { AddLiquidityV2 } from '~evm/[chainId]/_ui/add-liquidity/add-liquidity-v2'
 import { PoolPositionProvider } from '~evm/[chainId]/pool/v2/[address]/_common/ui/pool-position-provider'
 import { RemoveLiquidity } from './remove-liquidity'
@@ -29,7 +37,9 @@ const TABS = [
   { label: 'Remove Liquidity', value: 'remove' },
 ]
 
-export const V2Manage = ({ position }: { position: any }) => {
+export const V2Manage = ({
+  position,
+}: { position: PortfolioV2PositionPoolType }) => {
   const { createQuery } = useCreateQuery()
   const [currentTab, setCurrentTab] = useState<LPManageTabValueType>('add')
   const searchParams = useSearchParams()
@@ -41,12 +51,35 @@ export const V2Manage = ({ position }: { position: any }) => {
     queryKey: ['v2-pool-testing'],
     queryFn: async () => {
       const result = await getV2Pool({
-        chainId: 137,
-        address: '0x55ff76bffc3cdd9d5fdbbc2ece4528ecce45047e',
+        chainId: position.pool.chainId as SushiSwapV2ChainId,
+        address: position.pool.address as EvmAddress,
       })
       return result
     },
   })
+
+  const [token0, token1] = useMemo(() => {
+    return [
+      unwrapEvmToken(
+        new EvmToken({
+          chainId: position.position.token0.chainId as EvmChainId,
+          address: position.position.token0.address as EvmAddress,
+          decimals: position.position.token0.decimals,
+          symbol: position.position.token0.symbol,
+          name: position.position.token0.name,
+        }),
+      ),
+      unwrapEvmToken(
+        new EvmToken({
+          chainId: position.position.token1.chainId as EvmChainId,
+          address: position.position.token1.address as EvmAddress,
+          decimals: position.position.token1.decimals,
+          symbol: position.position.token1.symbol,
+          name: position.position.token1.name,
+        }),
+      ),
+    ]
+  }, [position])
 
   useEffect(() => {
     if (manageTabParam && LPManageTabValues.includes(manageTabParam)) {
@@ -59,9 +92,9 @@ export const V2Manage = ({ position }: { position: any }) => {
       case 'add':
         return (
           <AddLiquidityV2
-            initToken0={position.token0}
-            initToken1={position.token1}
-            chainId={position.chainId}
+            initToken0={token0}
+            initToken1={token1}
+            chainId={position.pool.chainId as EvmChainId}
             hideTokenSelectors={true}
             hideEstimatedValue={true}
           />
@@ -83,7 +116,7 @@ export const V2Manage = ({ position }: { position: any }) => {
           </PoolPositionProvider>
         )
     }
-  }, [currentTab, position, pool, isLoading])
+  }, [currentTab, position, pool, isLoading, token0, token1])
 
   return (
     <Tabs
@@ -137,7 +170,9 @@ export const V2Manage = ({ position }: { position: any }) => {
                 currentTab === 'add'
                   ? TTLStorageKey.AddLiquidity
                   : TTLStorageKey.RemoveLiquidity,
-              defaultValue: getDefaultTTL(position.chainId).toString(),
+              defaultValue: getDefaultTTL(
+                position.pool.chainId as EvmChainId,
+              ).toString(),
             },
           }}
           modules={[
