@@ -13,9 +13,12 @@
     "lint:fix": "TIMING=1 next lint --fix",
     "start": "next start",
     "test": "npx playwright test -c test/playwright.config.ts",
-    "test:unit": "vitest --watch=false src"
+    "test:unit": "vitest --watch=false src",
+    "postinstall": "npm run copy-files",
+    "copy-files": "cp -R node_modules/charting_library/ public/static/"
   },
   "dependencies": {
+    "charting_library": "https://github.com/tradingview/charting_library.git#semver:29.3.0",
     "@aptos-labs/ts-sdk": "1.27.0",
     "@aptos-labs/wallet-adapter-core": "3.10.0",
     "@aptos-labs/wallet-adapter-react": "2.3.1",

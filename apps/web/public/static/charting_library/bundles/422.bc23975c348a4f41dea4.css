@@ -1,8 +1,0 @@
-.placeholder-V6ceS6BN {
-  color: var(--themed-color-input-placeholder-text, #a8a8a8);
-  -webkit-text-fill-color: currentColor;
-  opacity: 1;
-}
-html.theme-dark .placeholder-V6ceS6BN {
-  color: var(--themed-color-input-placeholder-text, #4a4a4a);
-}

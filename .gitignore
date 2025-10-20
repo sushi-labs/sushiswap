@@ -66,3 +66,5 @@ package-lock.json
 # yarn lock file (we use pnpm)
 yarn.lock
 
+# trading view advanced charts
+**/public/static/charting_library
