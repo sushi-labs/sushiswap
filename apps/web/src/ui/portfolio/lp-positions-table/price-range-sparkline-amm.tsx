@@ -31,7 +31,7 @@ export const PriceRangeSparklineAmm = ({
   const sparklineData = useMemo(() => {
     if (!bucketData?.dayBuckets) return []
     return bucketData.dayBuckets.map((bucket) => ({
-      price: bucket.token0Price,
+      price: bucket.liquidityUSD,
       timestamp: bucket.date,
     }))
   }, [bucketData])
@@ -40,12 +40,20 @@ export const PriceRangeSparklineAmm = ({
   const height = 124
 
   const min = useMemo(
-    () => sparklineData.reduce((min, d) => Math.min(min, d.price), 0),
+    () =>
+      sparklineData.reduce(
+        (min, d) => Math.min(min, d.price),
+        sparklineData?.[0]?.price,
+      ),
     [sparklineData],
   )
 
   const max = useMemo(
-    () => sparklineData.reduce((max, d) => Math.max(max, d.price), 0),
+    () =>
+      sparklineData.reduce(
+        (max, d) => Math.max(max, d.price),
+        sparklineData?.[0]?.price,
+      ),
     [sparklineData],
   )
 

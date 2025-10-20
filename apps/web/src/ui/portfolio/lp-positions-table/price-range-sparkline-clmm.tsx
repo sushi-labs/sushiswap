@@ -163,16 +163,16 @@ export const PriceRangeSparklineCLMM = ({
 
         <g>
           <Sparkline
-            data={sparklineData}
+            data={sparklineData ?? []}
             xScale={sparkLineXScale}
             height={height}
           />
           <g clipPath={`url(#${id}-chart-clip)`}>
             <rect
               x={0} // full width
-              y={y}
-              width={width}
-              height={h}
+              y={y ?? 0}
+              width={width ?? 0}
+              height={h ?? 0}
               fill="#3DB1FF14"
               pointerEvents="none"
             />
@@ -186,6 +186,7 @@ export const PriceRangeSparklineCLMM = ({
               linePlacement="top"
               strokeWidth={strokeWidth}
             />
+
             <HorizontalLine
               value={current}
               yScale={yScale}
@@ -195,6 +196,7 @@ export const PriceRangeSparklineCLMM = ({
               linePlacement="center"
               strokeWidth={strokeWidth}
             />
+
             <HorizontalLine
               value={brushDomain[0]}
               yScale={yScale}
@@ -252,9 +254,9 @@ export const HorizontalLine = ({
       opacity={1}
       strokeWidth={strokeWidth}
       fill="none"
-      y1={yScale(value)}
-      x1={lineStart}
-      y2={yScale(value)}
+      y1={yScale(value) ?? 0}
+      x1={lineStart ?? 0}
+      y2={yScale(value) ?? 0}
       x2={lineStart + width}
     />
   )
