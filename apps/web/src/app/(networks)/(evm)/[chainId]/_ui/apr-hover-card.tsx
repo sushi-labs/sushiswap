@@ -16,7 +16,9 @@ import type {
   PoolWithIncentiveApr,
 } from 'sushi/evm'
 
-type RequiredPool = PoolIfIncentivized<PoolWithIncentiveApr<PoolWithFeeAprs>>
+export type RequiredPool = PoolIfIncentivized<
+  PoolWithIncentiveApr<PoolWithFeeAprs>
+>
 
 interface APRHoverCardProps {
   children: ReactNode
@@ -27,7 +29,7 @@ interface APRHoverCardProps {
 export const APRHoverCard: FC<APRHoverCardProps> = ({ children, pool }) => {
   const feeApr1d = pool.feeApr1d
 
-  const totalAPR = (feeApr1d + pool.incentiveApr) * 100
+  const totalAPR = feeApr1d + pool.incentiveApr
 
   const card = (
     <>
@@ -78,7 +80,7 @@ export const APRHoverCard: FC<APRHoverCardProps> = ({ children, pool }) => {
         <HoverCard openDelay={300} closeDelay={0}>
           <HoverCardTrigger asChild>{children}</HoverCardTrigger>
           <HoverCardContent
-            side="right"
+            side="bottom"
             className="!p-0 max-w-[320px] whitespace-normal text-left"
           >
             {card}

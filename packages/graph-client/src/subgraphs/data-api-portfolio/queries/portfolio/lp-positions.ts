@@ -44,9 +44,12 @@ export const PortfolioV2LiquidityPositionsQuery = graphql(`
 					feeApr1d
 					incentives {
 						rewardToken {
-							address
-							chainId
 							symbol
+							name
+							id
+							decimals
+							chainId
+							address
 						}
 						apr
 						rewardPerDay
@@ -60,6 +63,22 @@ export const PortfolioV2LiquidityPositionsQuery = graphql(`
 					amount0
 					amount1
 					source
+					token1 {
+						symbol
+						name
+						id
+						decimals
+						chainId
+						address
+					}
+					token0 {
+						symbol
+						name
+						id
+						decimals
+						chainId
+						address
+					}
 				}
 			}
 			v3 {
@@ -75,9 +94,12 @@ export const PortfolioV2LiquidityPositionsQuery = graphql(`
 					feeApr1d
 					incentives {
 						rewardToken {
-							address
-							chainId
 							symbol
+							name
+							id
+							decimals
+							chainId
+							address
 						}
 						apr
 						rewardPerDay
@@ -94,6 +116,23 @@ export const PortfolioV2LiquidityPositionsQuery = graphql(`
 					unclaimedFees1
 					unclaimedFeesUSD
 					source
+					tokenId
+					token1 {
+						symbol
+						name
+						id
+						decimals
+						chainId
+						address
+					}
+					token0 {
+						symbol
+						name
+						id
+						decimals
+						chainId
+						address
+					}
 				}
 			}
 			chains {

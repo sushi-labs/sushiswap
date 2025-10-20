@@ -96,6 +96,7 @@ export const LPPositionsTable = () => {
       setPositionData(null)
     }
   }, [isMobileDrawerOpen])
+
   useEffect(() => {
     if (isMobileDrawerOpen && isMdScreen) {
       setIsMobileDrawerOpen(false)

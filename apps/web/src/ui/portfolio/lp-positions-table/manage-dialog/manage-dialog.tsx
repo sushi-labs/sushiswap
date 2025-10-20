@@ -1,4 +1,3 @@
-// import { V2Content } from "./v2-content/v2-content";
 // import { V3Content } from "./v3-content/v3-content";
 import type { PortfolioV2PositionPoolType } from '@sushiswap/graph-client/data-api-portfolio'
 import {
@@ -17,6 +16,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import type { SushiSwapProtocol } from 'sushi/evm'
 import { ManageDialogHeader } from './manage-dialog-header'
+import { V2Content } from './v2-content/v2-content'
 
 export type LPTabValueType = 'detail' | 'manage' | 'migrate'
 
@@ -89,8 +89,7 @@ export const ManageDialog = ({
   const content = useMemo(() => {
     switch (data?.pool?.protocol) {
       case 'SUSHISWAP_V2':
-        return '@dev we need more data from the backend'
-      // return <V2Content currentTab={currentTab} position={data} />
+        return <V2Content currentTab={currentTab} position={data} />
       case 'SUSHISWAP_V3':
         return '@dev we need more data from the backend'
       // return <V3Content currentTab={currentTab} position={data} />
@@ -98,7 +97,7 @@ export const ManageDialog = ({
       default:
         return <div>{data?.pool?.protocol} unsupported.</div>
     }
-  }, [data])
+  }, [data, currentTab])
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
