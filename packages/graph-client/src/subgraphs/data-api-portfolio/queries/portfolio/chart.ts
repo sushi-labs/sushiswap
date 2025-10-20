@@ -4,12 +4,8 @@ import { SUSHI_REQUEST_HEADERS } from '../../../data-api/request-headers.js'
 import { graphql } from '../../graphql.js'
 
 export const PortfolioV2ChartQuery = graphql(`
-  query PortfolioV2Chart(
-    $address: Bytes!,
-    $chainIds: [PoolChainId!]!,
-    $range: PortfolioChartRange
-  ) {
-    portfolioV2Chart(address: $address, chainIds: $chainIds, range: $range) {
+  query PortfolioV2Chart($address: Bytes!, $chainIds: [PoolChainId!]!, $tokenFilter: PortfolioChartTokenFilter, $range: PortfolioChartRange) {
+    portfolioV2Chart(address: $address, chainIds: $chainIds, tokenFilter: $tokenFilter, range: $range) {
       dataPoints {
         timestamp
         valueUSD

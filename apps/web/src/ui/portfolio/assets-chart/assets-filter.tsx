@@ -6,6 +6,8 @@ import {
   Currency,
   DialogClose,
   FormattedNumber,
+  SkeletonCircle,
+  SkeletonText,
   classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
@@ -35,8 +37,8 @@ export const AssetsFilter = ({
   setSelectedToken,
   selectedToken,
 }: {
-  setSelectedToken: (token: EvmCurrency | null) => void
-  selectedToken: EvmCurrency | null
+  setSelectedToken: (token: EvmCurrency | undefined) => void
+  selectedToken: EvmCurrency | undefined
 }) => {
   const { chains } = useWalletPortfolioOverview()
   const [selectedNetwork, setSelectedNetwork] = useState<EvmChainId | null>(
@@ -106,7 +108,7 @@ export const AssetsFilter = ({
                     height={24}
                   />
                 </Badge>
-                <span>{selectedToken.name}</span>
+                <span>{selectedToken?.name}</span>
               </div>
             ) : (
               <span>All Assets</span>
@@ -120,7 +122,7 @@ export const AssetsFilter = ({
               type="button"
               onClick={(e) => {
                 e.stopPropagation()
-                setSelectedToken(null)
+                setSelectedToken(undefined)
               }}
             >
               Clear
