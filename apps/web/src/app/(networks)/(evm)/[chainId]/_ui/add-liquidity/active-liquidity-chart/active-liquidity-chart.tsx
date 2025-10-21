@@ -170,6 +170,7 @@ export function ActiveLiquidityChart({
     }
   }, [brushDomain, onBrushDomainChange, yScale])
 
+  //@dev @todo use v3bucket data here
   const sparklineData = useMemo(() => {
     return (
       TIME_OPTIONS.find((option) => option.value === timeSelector)?.data ?? []

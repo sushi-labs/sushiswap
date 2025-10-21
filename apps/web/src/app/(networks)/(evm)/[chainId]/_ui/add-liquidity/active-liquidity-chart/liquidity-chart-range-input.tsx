@@ -1,6 +1,6 @@
 import { ChartBarIcon, InboxIcon, StopIcon } from '@heroicons/react-v1/solid'
 import { SkeletonBox } from '@sushiswap/ui'
-import { format } from 'd3'
+import { format, max } from 'd3'
 import React, { type FC, type ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
 import type { Price } from 'sushi'
@@ -77,6 +77,19 @@ export const LiquidityChartRangeInput = ({
     token1: currencyB,
     feeAmount,
   })
+  const [minPrice0, maxPrice0] = useMemo(() => {
+    if (!data || data.length === 0) return [undefined, undefined]
+    const minPrice0 = data?.reduce(
+      (min, d) => Math.min(min, d.price0),
+      data?.[0].price0,
+    )
+    const maxPrice0 = data?.reduce(
+      (max, d) => Math.max(max, d.price0),
+      data?.[0].price0,
+    )
+
+    return [minPrice0, maxPrice0]
+  }, [data])
 
   const onBrushDomainChangeEnded = useCallback(
     (domain: [number, number], mode: string | undefined) => {
@@ -232,9 +245,8 @@ export const LiquidityChartRangeInput = ({
             data={{
               series: data,
               current: price,
-              min: price / 2, //todo: when have data lowest token price
-              // max: brushDomain?.[1] || 1, //todo: when have data highest token price
-              max: price * 2, //todo: when have data highest token price
+              min: minPrice0,
+              max: maxPrice0,
             }}
             disableBrushInteraction={false}
             brushDomain={brushDomain}
