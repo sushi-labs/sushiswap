@@ -14,17 +14,12 @@ import {
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
+import { useTokensFromPosition } from 'src/lib/wagmi/hooks/portfolio/use-tokens-from-position'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
 import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { ConcentratedLiquidityWidget } from 'src/ui/pool/ConcentratedLiquidityWidget'
-import {
-  type EvmAddress,
-  type EvmChainId,
-  EvmToken,
-  type SushiSwapV3ChainId,
-  unwrapEvmToken,
-} from 'sushi/evm'
+import type { SushiSwapV3ChainId } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
 import { RemoveLiquidity } from './remove-liquidity'
@@ -41,42 +36,23 @@ export const V3Manage = ({
   position,
 }: { position: PortfolioV2PositionV3PoolType }) => {
   const { createQuery } = useCreateQuery()
+  const { address } = useAccount()
   const [currentTab, setCurrentTab] = useState<LPManageTabValueType>('add')
   const searchParams = useSearchParams()
   const manageTabParam = searchParams.get('lpManageTab') as
     | LPManageTabValueType
     | undefined
-  const { address } = useAccount()
+
   useEffect(() => {
     if (manageTabParam && LPManageTabValues.includes(manageTabParam)) {
       setCurrentTab(manageTabParam)
     }
   }, [manageTabParam])
+
   const chainId = position.pool.chainId as SushiSwapV3ChainId
   const tokenId = position.position?.tokenId
 
-  const [token0, token1] = useMemo(() => {
-    return [
-      unwrapEvmToken(
-        new EvmToken({
-          chainId: position.position.token0.chainId as EvmChainId,
-          address: position.position.token0.address as EvmAddress,
-          decimals: position.position.token0.decimals,
-          symbol: position.position.token0.symbol,
-          name: position.position.token0.name,
-        }),
-      ),
-      unwrapEvmToken(
-        new EvmToken({
-          chainId: position.position.token1.chainId as EvmChainId,
-          address: position.position.token1.address as EvmAddress,
-          decimals: position.position.token1.decimals,
-          symbol: position.position.token1.symbol,
-          name: position.position.token1.name,
-        }),
-      ),
-    ]
-  }, [position])
+  const { token0, token1 } = useTokensFromPosition({ data: position })
 
   const { data: v3Position } = useConcentratedPositionInfo({
     chainId,
@@ -85,7 +61,7 @@ export const V3Manage = ({
     token1,
   })
 
-  const { data: positionDetails, isLoading: _isPositionDetailsLoading } =
+  const { data: positionDetails } =
     useConcentratedLiquidityPositionsFromTokenId({
       chainId,
       tokenId,

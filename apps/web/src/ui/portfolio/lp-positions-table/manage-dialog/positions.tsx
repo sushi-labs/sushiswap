@@ -11,13 +11,9 @@ import {
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
+import { useTokensFromPosition } from 'src/lib/wagmi/hooks/portfolio/use-tokens-from-position'
 import { Amount, formatUSD, withoutScientificNotation } from 'sushi'
-import {
-  type EvmAddress,
-  type EvmChainId,
-  EvmToken,
-  unwrapEvmToken,
-} from 'sushi/evm'
+import type { EvmChainId } from 'sushi/evm'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 
 export const Positions = ({
@@ -28,29 +24,7 @@ export const Positions = ({
   hideButtons?: boolean
 }) => {
   const { createQuery } = useCreateQuery()
-
-  const [token0, token1] = useMemo(() => {
-    return [
-      unwrapEvmToken(
-        new EvmToken({
-          chainId: position.position.token0.chainId as EvmChainId,
-          address: position.position.token0.address as EvmAddress,
-          decimals: position.position.token0.decimals,
-          symbol: position.position.token0.symbol,
-          name: position.position.token0.name,
-        }),
-      ),
-      unwrapEvmToken(
-        new EvmToken({
-          chainId: position.position.token1.chainId as EvmChainId,
-          address: position.position.token1.address as EvmAddress,
-          decimals: position.position.token1.decimals,
-          symbol: position.position.token1.symbol,
-          name: position.position.token1.name,
-        }),
-      ),
-    ]
-  }, [position])
+  const { token0, token1 } = useTokensFromPosition({ data: position })
 
   const { data: priceMap } = usePrices({
     chainId: position.pool.chainId as EvmChainId,

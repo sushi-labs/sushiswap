@@ -17,14 +17,9 @@ import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
+import { useTokensFromPosition } from 'src/lib/wagmi/hooks/portfolio/use-tokens-from-position'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
-import {
-  type EvmAddress,
-  type EvmChainId,
-  EvmToken,
-  type SushiSwapV2ChainId,
-  unwrapEvmToken,
-} from 'sushi/evm'
+import type { EvmAddress, EvmChainId, SushiSwapV2ChainId } from 'sushi/evm'
 import { AddLiquidityV2 } from '~evm/[chainId]/_ui/add-liquidity/add-liquidity-v2'
 import { PoolPositionProvider } from '~evm/[chainId]/pool/v2/[address]/_common/ui/pool-position-provider'
 import { RemoveLiquidity } from './remove-liquidity'
@@ -57,29 +52,7 @@ export const V2Manage = ({
       return result
     },
   })
-
-  const [token0, token1] = useMemo(() => {
-    return [
-      unwrapEvmToken(
-        new EvmToken({
-          chainId: position.position.token0.chainId as EvmChainId,
-          address: position.position.token0.address as EvmAddress,
-          decimals: position.position.token0.decimals,
-          symbol: position.position.token0.symbol,
-          name: position.position.token0.name,
-        }),
-      ),
-      unwrapEvmToken(
-        new EvmToken({
-          chainId: position.position.token1.chainId as EvmChainId,
-          address: position.position.token1.address as EvmAddress,
-          decimals: position.position.token1.decimals,
-          symbol: position.position.token1.symbol,
-          name: position.position.token1.name,
-        }),
-      ),
-    ]
-  }, [position])
+  const { token0, token1 } = useTokensFromPosition({ data: position })
 
   useEffect(() => {
     if (manageTabParam && LPManageTabValues.includes(manageTabParam)) {

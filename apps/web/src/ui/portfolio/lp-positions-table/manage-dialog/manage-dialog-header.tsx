@@ -1,7 +1,10 @@
-import type { PortfolioV2PositionPoolType } from '@sushiswap/graph-client/data-api-portfolio'
+import type {
+  PortfolioV2PositionPoolType,
+  PortfolioV2PositionV3PoolType,
+} from '@sushiswap/graph-client/data-api-portfolio'
 import { Currency } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { useMemo } from 'react'
+import { useTokensFromPosition } from 'src/lib/wagmi/hooks/portfolio/use-tokens-from-position'
 import { formatNumber, formatPercent } from 'sushi'
 import {
   type EvmAddress,
@@ -9,14 +12,12 @@ import {
   EvmToken,
   type SushiSwapProtocol,
   type SushiSwapV3ChainId,
-  unwrapEvmToken,
 } from 'sushi/evm'
 import {
   APRHoverCard,
   type RequiredPool,
 } from '~evm/[chainId]/_ui/apr-hover-card'
 import { ProtocolBadge } from '~evm/[chainId]/_ui/protocol-badge'
-import type { PortfolioV2PositionV3PoolType } from '../../../../../../../packages/graph-client/dist/subgraphs/data-api-portfolio/queries/portfolio/lp-positions'
 import { RangeBadge } from './range-badge'
 
 export const ManageDialogHeader = ({
@@ -26,28 +27,7 @@ export const ManageDialogHeader = ({
   data: PortfolioV2PositionPoolType
   hideApr?: boolean
 }) => {
-  const [token0, token1] = useMemo(() => {
-    return [
-      unwrapEvmToken(
-        new EvmToken({
-          chainId: data.position.token0.chainId as EvmChainId,
-          address: data.position.token0.address as EvmAddress,
-          decimals: data.position.token0.decimals,
-          symbol: data.position.token0.symbol,
-          name: data.position.token0.name,
-        }),
-      ),
-      unwrapEvmToken(
-        new EvmToken({
-          chainId: data.position.token1.chainId as EvmChainId,
-          address: data.position.token1.address as EvmAddress,
-          decimals: data.position.token1.decimals,
-          symbol: data.position.token1.symbol,
-          name: data.position.token1.name,
-        }),
-      ),
-    ]
-  }, [data])
+  const { token0, token1 } = useTokensFromPosition({ data })
 
   return (
     <div className="flex gap-4 items-center">

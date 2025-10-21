@@ -1,6 +1,5 @@
 import type { PortfolioV2PositionV3PoolType } from '@sushiswap/graph-client/data-api-portfolio'
 import {
-  Button,
   Card,
   CardContent,
   CardCurrencyAmountItem,
@@ -12,7 +11,6 @@ import {
 } from '@sushiswap/ui'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useClaimableRewards } from 'src/lib/hooks/react-query'
-import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { formatUSD } from 'sushi'
 import {
@@ -20,20 +18,18 @@ import {
   type SushiSwapV3ChainId,
   isMerklChainId,
 } from 'sushi/evm'
+import { useAccount } from 'wagmi'
 import { ClaimRewardsButton } from '~evm/claim/rewards/_common/ui/claim-rewards-button'
 
 export const Rewards = ({
   position,
 }: { position: PortfolioV2PositionV3PoolType }) => {
   const chainId = position.pool.chainId as SushiSwapV3ChainId
-  const { data: owner } = useConcentratedPositionOwner({
-    chainId: chainId,
-    tokenId: position.position.tokenId,
-  })
+  const { address } = useAccount()
   const { data: rewardsData, isLoading: isRewardsLoading } =
     useClaimableRewards({
       chainIds: [chainId as MerklChainId],
-      account: owner,
+      account: address,
       enabled: isMerklChainId(chainId),
     })
 

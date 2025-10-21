@@ -1,5 +1,5 @@
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
-import { classNames } from '@sushiswap/ui'
+import { SkeletonBox, classNames } from '@sushiswap/ui'
 import { max as getMax, scaleLinear, scaleTime } from 'd3'
 import type { ScaleLinear } from 'd3'
 import { useTheme } from 'next-themes'
@@ -27,23 +27,25 @@ export const PriceRangeSparklineCLMM = ({
   priceUpper,
   outOfRange,
   range,
+  isLoading,
 }: {
-  strokeWidth?: number
-  poolAddress?: EvmAddress
-  chainId?: SushiSwapV3ChainId
-  protocol?: SushiSwapProtocol
+  strokeWidth: number
+  poolAddress: EvmAddress
+  chainId: SushiSwapV3ChainId
+  protocol: SushiSwapProtocol
   priceLower: Price<EvmToken, EvmToken> | undefined
   priceUpper: Price<EvmToken, EvmToken> | undefined
   invert: boolean
   outOfRange: boolean
-  range: 'above' | 'below' | 'in-range'
+  range: 'above' | 'below' | 'in-range' | 'unknown'
+  isLoading: boolean
 }) => {
   const id = useId()
   const { theme } = useTheme()
   const isDarkMode = theme === 'dark'
   const width = 452 + 64 // Example width
   const height = 124 // Example height
-  const { data: bucketData } = usePoolBuckets({
+  const { data: bucketData, isLoading: isLoadingBucketData } = usePoolBuckets({
     chainId: chainId as SushiSwapV3ChainId,
     poolAddress: poolAddress as EvmAddress,
     protocol: protocol as SushiSwapProtocol,
@@ -143,72 +145,76 @@ export const PriceRangeSparklineCLMM = ({
           </span>
         </div>
       )}
-      <svg
-        width="100%"
-        height="100%"
-        viewBox={`0 0 ${width} ${height}`}
-        className={classNames(outOfRange ? 'grayscale opacity-40' : '')}
-      >
-        <defs>
-          <clipPath id={`${id}-chart-clip`}>
-            <rect x="0" y="0" width={width} height={height} />
-          </clipPath>
-          <style>
-            {`
+      {isLoading || isLoadingBucketData ? (
+        <SkeletonBox className="w-full h-[124px] rounded-md" />
+      ) : (
+        <svg
+          width="100%"
+          height="100%"
+          viewBox={`0 0 ${width} ${height}`}
+          className={classNames(outOfRange ? 'grayscale opacity-40' : '')}
+        >
+          <defs>
+            <clipPath id={`${id}-chart-clip`}>
+              <rect x="0" y="0" width={width} height={height} />
+            </clipPath>
+            <style>
+              {`
             .axis-right line { display: none; }
             .axis-right text { fill: ${isDarkMode ? '#ffffff8C' : '#0000008C'}; }
           `}
-          </style>
-        </defs>
+            </style>
+          </defs>
 
-        <g>
-          <Sparkline
-            data={sparklineData ?? []}
-            xScale={sparkLineXScale}
-            height={height}
-          />
-          <g clipPath={`url(#${id}-chart-clip)`}>
-            <rect
-              x={0} // full width
-              y={y ?? 0}
-              width={width ?? 0}
-              height={h ?? 0}
-              fill="#3DB1FF14"
-              pointerEvents="none"
+          <g>
+            <Sparkline
+              data={sparklineData ?? []}
+              xScale={sparkLineXScale}
+              height={height}
             />
+            <g clipPath={`url(#${id}-chart-clip)`}>
+              <rect
+                x={0} // full width
+                y={y ?? 0}
+                width={width ?? 0}
+                height={h ?? 0}
+                fill="#3DB1FF14"
+                pointerEvents="none"
+              />
 
-            <HorizontalLine
-              value={brushDomain[1]}
-              yScale={yScale}
-              width={width + 12}
-              containerWidth={width}
-              lineStyle="solid"
-              linePlacement="top"
-              strokeWidth={strokeWidth}
-            />
+              <HorizontalLine
+                value={brushDomain[1]}
+                yScale={yScale}
+                width={width + 12}
+                containerWidth={width}
+                lineStyle="solid"
+                linePlacement="top"
+                strokeWidth={strokeWidth}
+              />
 
-            <HorizontalLine
-              value={current}
-              yScale={yScale}
-              width={width + 12}
-              containerWidth={width}
-              lineStyle="dashed"
-              linePlacement="center"
-              strokeWidth={strokeWidth}
-            />
+              <HorizontalLine
+                value={current}
+                yScale={yScale}
+                width={width + 12}
+                containerWidth={width}
+                lineStyle="dashed"
+                linePlacement="center"
+                strokeWidth={strokeWidth}
+              />
 
-            <HorizontalLine
-              value={brushDomain[0]}
-              yScale={yScale}
-              width={width + 12}
-              containerWidth={width}
-              lineStyle="solid"
-              linePlacement="bottom"
-              strokeWidth={strokeWidth}
-            />
+              <HorizontalLine
+                value={brushDomain[0]}
+                yScale={yScale}
+                width={width + 12}
+                containerWidth={width}
+                lineStyle="solid"
+                linePlacement="bottom"
+                strokeWidth={strokeWidth}
+              />
+            </g>
           </g>
-        </g>
-      </svg>
+        </svg>
+      )}
     </div>
   )
 }
