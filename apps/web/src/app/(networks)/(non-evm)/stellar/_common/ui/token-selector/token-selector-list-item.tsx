@@ -1,15 +1,14 @@
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import { Badge, classNames } from '@sushiswap/ui'
 import React, { type CSSProperties } from 'react'
-// import type { TokenWithBalance } from '~aptos/_common/lib/common/use-sorted-token-list'
 import type { Token } from '~stellar/_common/lib/types/token.type'
-import { formatDecimal } from '~stellar/_common/lib/utils/formatters'
+import { formatNumberWithDecimals } from '~stellar/_common/lib/utils/formatters'
 import { CurrencyIcon } from '../currency/currency-icon'
 
 type TokenListItem = {
   id: string
   style: CSSProperties
-  token: Token // | TokenWithBalance
+  token: Token & { balance?: string }
   selected: boolean
   onSelect: (token: Token) => void
 }
@@ -66,7 +65,7 @@ export function TokenListItem({
               </span>
             </div>
           </div>
-          {/* {(token as TokenWithBalance)?.balance > 0 ? (
+          {token.balance && BigInt(token.balance) > 0n ? (
             <div className="flex flex-col max-w-[140px]">
               <span
                 className={classNames(
@@ -75,12 +74,12 @@ export function TokenListItem({
                 )}
               >
                 {formatNumberWithDecimals(
-                  (token as TokenWithBalance)?.balance,
-                  token?.decimals,
-                ) ?? '0'}
+                  Number(token.balance),
+                  token.decimals,
+                )}
               </span>
             </div>
-          ) : null} */}
+          ) : null}
         </div>
       </button>
     </div>

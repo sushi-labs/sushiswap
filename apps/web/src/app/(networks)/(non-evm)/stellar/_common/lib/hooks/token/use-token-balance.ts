@@ -68,3 +68,42 @@ export const useTokenBalances = (address: string | null, tokens: Token[]) => {
     enabled: !!address || !!tokens,
   })
 }
+
+/**
+ * Fetches token balances and returns them as a map (contract -> balance as string)
+ * Returns strings to avoid BigInt serialization issues with React Query
+ * @param address - The address to get the balances of
+ * @param contracts - Array of token contract addresses
+ * @returns A map of contract addresses to balance amounts (as strings)
+ */
+export const useTokenBalancesMap = (
+  address: string | null,
+  contracts: string[],
+) => {
+  return useQuery({
+    queryKey: ['token', 'balancesMap', address, contracts],
+    queryFn: async () => {
+      if (!address || contracts.length === 0) {
+        return contracts.reduce<Record<string, string>>((acc, contract) => {
+          acc[contract] = '0'
+          return acc
+        }, {})
+      }
+
+      const balanceMap: Record<string, string> = {}
+
+      for (const contract of contracts) {
+        try {
+          const balance = await getTokenBalance(address, contract)
+          balanceMap[contract] = balance.toString()
+        } catch (error) {
+          console.error(`Error fetching balance for ${contract}:`, error)
+          balanceMap[contract] = '0'
+        }
+      }
+
+      return balanceMap
+    },
+    enabled: !!address && contracts.length > 0,
+  })
+}
