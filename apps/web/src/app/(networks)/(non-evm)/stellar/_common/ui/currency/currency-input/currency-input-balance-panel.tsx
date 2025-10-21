@@ -1,7 +1,7 @@
 import { SkeletonText, classNames } from '@sushiswap/ui'
 import { WalletIcon } from '@sushiswap/ui/icons/WalletIcon'
 import React, { type FC, useMemo } from 'react'
-import { Fraction } from 'sushi/math'
+import { formatTokenAmount } from '~stellar/_common/lib/utils/formatters'
 
 interface CurrencyInputBalancePanel {
   coinData: number
@@ -20,10 +20,7 @@ export const CurrencyInputBalancePanel: FC<CurrencyInputBalancePanel> = ({
 }) => {
   const [big, portion] = useMemo(
     () =>
-      (coinData
-        ? `${new Fraction(coinData, 10 ** decimals).toSignificant(6)}`
-        : '0.00'
-      ).split('.'),
+      (coinData ? formatTokenAmount(coinData, decimals, 2) : '0.00').split('.'),
     [coinData, decimals],
   )
 
