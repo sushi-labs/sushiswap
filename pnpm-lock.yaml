@@ -195,9 +195,6 @@ importers:
 
   apps/web:
     dependencies:
-      '@aptos-labs/ts-sdk':
-        specifier: 1.27.0
-        version: 1.27.0
       '@aptos-labs/wallet-adapter-core':
         specifier: 3.10.0
         version: 3.10.0(@aptos-labs/ts-sdk@1.27.0)(aptos@1.22.1(got@11.8.6))
@@ -433,7 +430,7 @@ importers:
         specifier: 1.0.2
         version: 1.0.2
       charting_library:
-        specifier: https://github.com/tradingview/charting_library.git#semver:29.3.0
+        specifier: git+https://github.com/tradingview/charting_library.git#semver:29.3.0
         version: git+https://github.com/tradingview/charting_library.git#12e363f65ce9bacf552a07c14f1a4eb889bae3d8
       cors:
         specifier: 2.8.5
