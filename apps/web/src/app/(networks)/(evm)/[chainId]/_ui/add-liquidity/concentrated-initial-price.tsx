@@ -1,5 +1,7 @@
 import { Button, TextField } from '@sushiswap/ui'
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useMarketPrice } from 'src/lib/hooks/react-query/liquidity/use-market-price'
+import { Amount } from 'sushi'
 import type { EvmCurrency } from 'sushi/evm'
 
 export const ConcentratedInitialPrice = ({
@@ -29,6 +31,42 @@ export const ConcentratedInitialPrice = ({
   const [rateDirection, setRateDirection] = useState<'token0' | 'token1'>(
     'token0',
   )
+  const { data: marketPrice } = useMarketPrice({
+    token0,
+    token1,
+    enabled: Boolean(token0 && token1),
+  })
+
+  const handleMarketPrice = useCallback(
+    (_rateDirection: 'token0' | 'token1') => {
+      if (_rateDirection === 'token0') {
+        const amount = Amount.tryFromHuman(
+          token0,
+          marketPrice?.token0Per1 ?? '0',
+        )
+        onStartPriceInput(amount?.toString() ?? '0')
+      } else {
+        const amount = Amount.tryFromHuman(
+          token1,
+          marketPrice?.token1Per0 ?? '0',
+        )
+        onStartPriceInput(amount?.toString() ?? '0')
+      }
+    },
+    [marketPrice, onStartPriceInput, token0, token1],
+  )
+
+  const isUsingMarketPrice = useMemo(() => {
+    if (
+      startingPrice ===
+      (rateDirection === 'token0'
+        ? marketPrice?.token0Per1
+        : marketPrice?.token1Per0)
+    ) {
+      return true
+    }
+    return false
+  }, [startingPrice, marketPrice, rateDirection])
 
   return (
     <div className="w-full p-6 bg-gray-100 dark:bg-slate-900 rounded-xl border border-[#00000014] dark:border-[#FFFFFF14]">
@@ -44,6 +82,7 @@ export const ConcentratedInitialPrice = ({
               onClick={() => {
                 setRateDirection('token0')
                 handleSwitchTokens()
+                handleMarketPrice('token0')
               }}
               className={
                 rateDirection === 'token1'
@@ -57,6 +96,7 @@ export const ConcentratedInitialPrice = ({
               onClick={() => {
                 setRateDirection('token1')
                 handleSwitchTokens()
+                handleMarketPrice('token1')
               }}
               variant="outline"
               size="xs"
@@ -90,13 +130,22 @@ export const ConcentratedInitialPrice = ({
                 </span>
               </div>
             </div>
-            <div className="text-sm text-slate-700 dark:text-pink-200 pl-[19px]">
+            <div className="text-sm text-slate-700 dark:text-pink-200 pl-[19px] whitespace-nowrap">
               {`${token1?.symbol} per ${token0?.symbol}`}
             </div>
           </div>
-          <div className="text-blue dark:text-skyblue font-semibold text-base">
+          <Button
+            onClick={() => handleMarketPrice(rateDirection)}
+            variant="ghost"
+            disabled={
+              !marketPrice?.token0Per1 ||
+              !marketPrice?.token1Per0 ||
+              isUsingMarketPrice
+            }
+            className="text-blue dark:text-skyblue font-semibold !text-base !pr-0 focus:!bg-transparent hover:!bg-transparent !h-[25px] !min-h-[25px]"
+          >
             Market Price
-          </div>
+          </Button>
         </div>
       </div>
     </div>
