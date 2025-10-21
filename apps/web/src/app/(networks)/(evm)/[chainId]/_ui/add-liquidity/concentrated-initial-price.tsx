@@ -9,13 +9,11 @@ export const ConcentratedInitialPrice = ({
   token1,
   startingPrice,
   onStartPriceInput,
-  handleSwitchTokens,
 }: {
   token0: EvmCurrency
   token1: EvmCurrency
   startingPrice: string
   onStartPriceInput: (value: string) => void
-  handleSwitchTokens: () => void
 }) => {
   const spanRef = useRef<HTMLSpanElement>(null)
   const [inputWidth, setInputWidth] = useState(1)
@@ -81,11 +79,10 @@ export const ConcentratedInitialPrice = ({
               size="xs"
               onClick={() => {
                 setRateDirection('token0')
-                handleSwitchTokens()
                 handleMarketPrice('token0')
               }}
               className={
-                rateDirection === 'token1'
+                rateDirection === 'token0'
                   ? '!bg-[#00000014] dark:!bg-[#ffffff14]'
                   : ''
               }
@@ -95,13 +92,12 @@ export const ConcentratedInitialPrice = ({
             <Button
               onClick={() => {
                 setRateDirection('token1')
-                handleSwitchTokens()
                 handleMarketPrice('token1')
               }}
               variant="outline"
               size="xs"
               className={
-                rateDirection === 'token0'
+                rateDirection === 'token1'
                   ? '!bg-[#00000014] dark:!bg-[#ffffff14]'
                   : ''
               }
@@ -131,7 +127,9 @@ export const ConcentratedInitialPrice = ({
               </div>
             </div>
             <div className="text-sm text-slate-700 dark:text-pink-200 pl-[19px] whitespace-nowrap">
-              {`${token1?.symbol} per ${token0?.symbol}`}
+              {`${rateDirection === 'token0' ? token0?.symbol : token1?.symbol} per ${
+                rateDirection === 'token0' ? token1?.symbol : token0?.symbol
+              }`}
             </div>
           </div>
           <Button
