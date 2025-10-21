@@ -7,11 +7,7 @@ import { formatPercent, formatUSD } from 'sushi'
 import { Wrapper } from '~evm/[chainId]/[trade]/_ui/swap/trade/wrapper'
 
 type PoolType = 'v2' | 'v3' | 'all'
-export const Statistics = ({
-  stats,
-}: {
-  stats: ExplorePoolStatistics
-}) => {
+export const Statistics = ({ stats }: { stats: ExplorePoolStatistics }) => {
   const [poolType, setPoolType] = useState<PoolType>('all')
 
   const statsByPoolType = useMemo(() => {
@@ -43,11 +39,13 @@ const StatisticsHeader = ({
           variant="outline"
           className={classNames(
             'rounded-xl border-dashed bg-[#F4F5F6] dark:bg-[#252A3C] hover:!bg-[#F338C31A] hover:!border-[#F338C3] hover:!text-[#F338C3]',
-            poolType === 'v2' &&
+            (poolType === 'v2' || poolType === 'all') &&
               '!bg-[#F338C31A] !border-[#F338C3] text-[#F338C3] hover:!text-[#F338C3] !border-solid',
           )}
           onClick={() => {
-            setPoolType(poolType === 'v2' ? 'all' : 'v2')
+            const _type =
+              poolType === 'v2' ? 'v3' : poolType === 'v3' ? 'all' : 'v3'
+            setPoolType(_type)
           }}
         >
           <span>V2</span>
@@ -56,11 +54,13 @@ const StatisticsHeader = ({
           variant="outline"
           className={classNames(
             'rounded-xl border-dashed bg-[#F4F5F6] dark:bg-[#252A3C] hover:!bg-[#3B7EF61A] hover:!border-[#3B7EF6] hover:!text-[#3B7EF6]',
-            poolType === 'v3' &&
+            (poolType === 'v3' || poolType === 'all') &&
               '!bg-[#3B7EF61A] !border-[#3B7EF6] text-[#3B7EF6] hover:!text-[#3B7EF6] !border-solid',
           )}
           onClick={() => {
-            setPoolType(poolType === 'v3' ? 'all' : 'v3')
+            const _type =
+              poolType === 'v3' ? 'v2' : poolType === 'v2' ? 'all' : 'v2'
+            setPoolType(_type)
           }}
         >
           <span>V3</span>
