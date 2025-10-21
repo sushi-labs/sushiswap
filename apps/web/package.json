@@ -18,7 +18,7 @@
     "copy-files": "cp -R node_modules/charting_library/ public/static/"
   },
   "dependencies": {
-"charting_library": "git+https://${TRADINGVIEW_GH_TOKEN}@github.com/tradingview/charting_library.git#semver:29.3.0",
+    "charting_library": "git+https://github.com/tradingview/charting_library.git#semver:29.3.0",
     "@aptos-labs/wallet-adapter-core": "3.10.0",
     "@aptos-labs/wallet-adapter-react": "2.3.1",
     "@cloudinary/url-gen": "1.11.2",
