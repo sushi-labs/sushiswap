@@ -260,21 +260,10 @@ export const LiquidityChartRangeInput = ({
               domain: [number, number],
               mode?: string,
             ): void => {
-              // You can zoom out far enough to set an invalid range, so we prevent that here.
               if (domain[0] < 0) {
                 return
               }
               onBrushDomainChangeEnded(domain, mode)
-              // While scrolling we receive updates to the range because the yScale changes,
-              // but we can filter them out because they have an undefined "mode".
-              // The initial range suggestion also comes with an undefined "mode", so we allow that here.
-              // const rejectAutoRangeSuggestion =
-              //   minPrice !== undefined && maxPrice !== undefined && minPrice >= 0 && maxPrice >= 0
-              // if (!mode && rejectAutoRangeSuggestion) {
-              //   return
-              // }
-              // setMinPrice(domain[0])
-              // setMaxPrice(domain[1])
             }}
           />
         </div>

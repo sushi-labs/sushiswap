@@ -1,5 +1,5 @@
 import { Button } from '@sushiswap/ui'
-import { max as getMax, scaleLinear, scaleTime } from 'd3'
+import { type ScaleLinear, max as getMax, scaleLinear, scaleTime } from 'd3'
 import ms from 'ms'
 import { useTheme } from 'next-themes'
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
@@ -13,6 +13,22 @@ import type { ChartEntry } from './types'
 
 const xAccessor = (d: ChartEntry) => d.activeLiquidity
 const yAccessor = (d: ChartEntry) => d.price0
+
+const toClampedYExtent = (
+  extent: [number, number],
+  yScale: ScaleLinear<number, number>,
+) => {
+  const [, d1] = yScale.domain()
+  const low = extent[0]
+  let high = extent[1]
+  //needed for when using single sided top, the linear gradient wont show if that high value is used
+  //add 500 just to get the brush handle to not show
+  if (high === 3.384921318552238e38) {
+    high = d1 + 500
+  }
+
+  return [low, high] as [number, number]
+}
 
 const priceDataCache = new Map<string, ChartEntry>()
 
@@ -149,6 +165,13 @@ export function ActiveLiquidityChart({
     return scales
   }, [min, max, series, height, width, axisLabelPaneWidth, contentWidth])
 
+  const clampedBrushDomain = useMemo(() => {
+    if (!brushDomain) {
+      return undefined
+    }
+    return toClampedYExtent(brushDomain, yScale)
+  }, [brushDomain, yScale])
+
   const hoveredTick = useMemo(() => {
     if (!hoverY) {
       return undefined
@@ -166,6 +189,7 @@ export function ActiveLiquidityChart({
       const [min, max] = yScale.domain()
       const lowerBound = min + (max - min) * 0.2
       const upperBound = min + (max - min) * 0.8
+      console.log({ lowerBound, upperBound })
       onBrushDomainChange([lowerBound, upperBound], undefined)
     }
   }, [brushDomain, onBrushDomainChange, yScale])
@@ -324,7 +348,9 @@ export function ActiveLiquidityChart({
               id={id}
               yScale={yScale}
               interactive={!disableBrushInteraction}
-              brushExtent={brushDomain ?? (yScale.domain() as [number, number])}
+              brushExtent={
+                clampedBrushDomain ?? (yScale.domain() as [number, number])
+              }
               hideHandles={!brushDomain}
               width={width - axisLabelPaneWidth}
               height={height}
