@@ -1,5 +1,6 @@
 import { Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
 import React, { useCallback, useEffect, useState } from 'react'
+import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
 import { useTokenBalance } from '~stellar/_common/lib/hooks/token/use-token-balance'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 import TokenSelector from '~stellar/_common/ui/token-selector/token-selector'
@@ -7,6 +8,7 @@ import TokenSelector from '~stellar/_common/ui/token-selector/token-selector'
 import { useStellarWallet } from '~stellar/providers'
 import { CurrencyIcon } from '../currency-icon'
 import { CurrencyInputBalancePanel } from './currency-input-balance-panel'
+import { CurrencyInputPricePanel } from './currency-input-price-panel'
 
 type CurrencyInput = {
   id: string
@@ -68,12 +70,20 @@ export function CurrencyInput({
     }
   }
 
-  // const tokenPrice = useStablePrice({ currency: token })
-  // const amountUSD = tokenPrice ? tokenPrice * Number(value) : 0
+  const { price: tokenPrice, isLoading: isPriceLoading } = useStablePrice({
+    currency: token,
+  })
+  const amountUSD = tokenPrice ? tokenPrice * Number(value) : 0
 
   const showInsufficientBalance =
     insufficientBalance && !disableInsufficientBalanceError
-  const error = showInsufficientBalance ? 'Insufficient balance' : undefined
+
+  const priceError =
+    !isPriceLoading && typeof tokenPrice === 'undefined' && Number(value) > 0
+      ? 'No pool'
+      : undefined
+
+  const error = showInsufficientBalance ? 'Insufficient balance' : priceError
 
   return (
     <div
@@ -157,11 +167,11 @@ export function CurrencyInput({
         )}
       </div>
       <div className="flex flex-row items-center justify-between h-[36px]">
-        {/* <CurrencyInputPricePanel
-          isLoading={typeof tokenPrice === 'undefined'}
+        <CurrencyInputPricePanel
+          isLoading={isPriceLoading}
           error={error}
           value={String(amountUSD)}
-        /> */}
+        />
         <CurrencyInputBalancePanel
           coinData={balance ? Number(balance) : 0}
           isLoading={isBalanceLoading}
