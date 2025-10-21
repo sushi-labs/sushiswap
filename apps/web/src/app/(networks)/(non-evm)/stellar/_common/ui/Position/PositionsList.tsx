@@ -102,8 +102,8 @@ export const PositionsList: React.FC = () => {
                 ? poolConfig.token0.code
                 : poolConfig.token1.code
 
-            const fees0 = formatTokenAmount(position.tokens_owed0, 7)
-            const fees1 = formatTokenAmount(position.tokens_owed1, 7)
+            const fees0 = formatTokenAmount(position.tokensOwed0, 7)
+            const fees1 = formatTokenAmount(position.tokensOwed1, 7)
 
             return (
               <div
@@ -131,7 +131,7 @@ export const PositionsList: React.FC = () => {
                   <div>
                     <p className="text-xs text-slate-400 mb-1">Tick Range</p>
                     <p className="text-sm text-white">
-                      {position.tick_lower} to {position.tick_upper}
+                      {position.tickLower} to {position.tickUpper}
                     </p>
                   </div>
                   <div>
@@ -149,7 +149,7 @@ export const PositionsList: React.FC = () => {
                   token0Code={token0Code}
                   token1Code={token1Code}
                   disabled={
-                    position.tokens_owed0 === 0n && position.tokens_owed1 === 0n
+                    position.tokensOwed0 === 0n && position.tokensOwed1 === 0n
                   }
                 />
               </div>

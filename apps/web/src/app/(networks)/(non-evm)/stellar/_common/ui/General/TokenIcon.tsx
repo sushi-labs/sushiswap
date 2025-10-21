@@ -1,6 +1,6 @@
 import { cloudinaryLogoFetchLoader } from '@sushiswap/ui'
 import Image from 'next/image'
-import type { Token } from '../../lib/types/token.type'
+import type { Token } from '~stellar/_common/lib/types/token.type'
 
 type IconProps = {
   currency: Token | undefined

@@ -44,7 +44,7 @@ export const useTokenBalanceFromToken = (
  */
 export const useTokenBalances = (address: string | null, tokens: Token[]) => {
   return useQuery({
-    queryKey: ['token', 'balances', tokens],
+    queryKey: ['token', 'balances', tokens, address],
     queryFn: async () => {
       if (!address || tokens.length === 0 || !tokens) {
         return []

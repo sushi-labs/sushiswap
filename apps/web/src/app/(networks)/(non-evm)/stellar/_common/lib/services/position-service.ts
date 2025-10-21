@@ -17,7 +17,6 @@ import {
 
 export interface PositionInfo {
   tokenId: number
-  poolId: number
   token0: string
   token1: string
   tickLower: number
@@ -29,6 +28,7 @@ export interface PositionInfo {
   feeGrowthInside1LastX128: bigint
   nonce: bigint
   operator: string
+  fee: number
 }
 
 export interface CollectParams {
@@ -42,6 +42,26 @@ export interface CollectResult {
   amount0: bigint
   amount1: bigint
   txHash: string
+}
+
+const formatPositionInfo = (
+  contractPositionInfo: UserPositionInfo,
+): PositionInfo => {
+  return {
+    tokenId: contractPositionInfo.token_id,
+    token0: contractPositionInfo.token0,
+    token1: contractPositionInfo.token1,
+    tickLower: contractPositionInfo.tick_lower,
+    tickUpper: contractPositionInfo.tick_upper,
+    liquidity: contractPositionInfo.liquidity,
+    tokensOwed0: contractPositionInfo.tokens_owed0,
+    tokensOwed1: contractPositionInfo.tokens_owed1,
+    feeGrowthInside0LastX128: contractPositionInfo.fee_growth_inside0_last_x128,
+    feeGrowthInside1LastX128: contractPositionInfo.fee_growth_inside1_last_x128,
+    nonce: contractPositionInfo.nonce,
+    operator: contractPositionInfo.operator,
+    fee: contractPositionInfo.fee,
+  }
 }
 
 /**
@@ -72,17 +92,17 @@ export class PositionService {
   /**
    * Get a single position with live fee calculations
    */
-  async getPositionWithFees(tokenId: number): Promise<UserPositionInfo | null> {
+  async getPositionWithFees(tokenId: number): Promise<PositionInfo | null> {
     const positionManagerClient = getPositionManagerContractClient({
       contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
     })
 
     try {
-      const result = await positionManagerClient.get_position_with_fees({
+      const { result } = await positionManagerClient.get_position_with_fees({
         token_id: tokenId,
       })
 
-      return result.result || null
+      return formatPositionInfo(result)
     } catch (error) {
       console.error(`Failed to get position ${tokenId}:`, error)
       return null
@@ -92,7 +112,7 @@ export class PositionService {
   /**
    * Get multiple positions with live fee calculations
    */
-  async getPositionsWithFees(tokenIds: number[]): Promise<UserPositionInfo[]> {
+  async getPositionsWithFees(tokenIds: number[]): Promise<PositionInfo[]> {
     if (tokenIds.length === 0) return []
 
     const positionManagerClient = getPositionManagerContractClient({
@@ -100,11 +120,11 @@ export class PositionService {
     })
 
     try {
-      const result = await positionManagerClient.get_positions_with_fees({
+      const { result } = await positionManagerClient.get_positions_with_fees({
         token_ids: tokenIds,
       })
 
-      return result.result || []
+      return result.map(formatPositionInfo)
     } catch (error) {
       console.error('Failed to get positions with fees:', error)
       return []
@@ -118,34 +138,37 @@ export class PositionService {
     userAddress: string,
     skip = 0,
     take = 100,
-  ): Promise<UserPositionInfo[]> {
+  ): Promise<PositionInfo[]> {
     const positionManagerClient = getPositionManagerContractClient({
       contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
     })
 
     try {
-      const result = await positionManagerClient.get_user_positions_with_fees({
-        owner: userAddress,
-        skip,
-        take,
-      })
+      const { result } =
+        await positionManagerClient.get_user_positions_with_fees({
+          owner: userAddress,
+          skip,
+          take,
+        })
 
-      console.log('📊 Positions found:', result.result?.length || 0)
+      const formattedResults = result.map(formatPositionInfo)
 
-      if (result.result && result.result.length > 0) {
-        result.result.forEach((pos: UserPositionInfo, i: number) => {
+      console.log('📊 Positions found:', formattedResults.length || 0)
+
+      if (result.length > 0) {
+        formattedResults.forEach((pos, i) => {
           console.log(`Position ${i}:`, {
-            tokenId: pos.token_id,
+            tokenId: pos.tokenId,
             token0: pos.token0,
             token1: pos.token1,
             liquidity: pos.liquidity.toString(),
-            feesToken0: pos.tokens_owed0.toString(),
-            feesToken1: pos.tokens_owed1.toString(),
+            feesToken0: pos.tokensOwed0.toString(),
+            feesToken1: pos.tokensOwed1.toString(),
           })
         })
       }
 
-      return result.result || []
+      return formattedResults
     } catch (error) {
       console.error('❌ Failed to get user positions with fees:', error)
       if (error instanceof Error) {

@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { AssembledTransaction } from '@stellar/stellar-sdk/contract'
 import type { PoolInfo, PoolLiquidity, PoolReserves } from '../types/pool.type'
 import type { Token } from '../types/token.type'
 import { formatTokenAmount } from '../utils/formatters'
-import { getPoolContractClient, getTokenContractClient } from './client'
+import { getPoolContractClient } from './client'
 import { DEFAULT_TIMEOUT } from './constants'
 import { getPoolConfig } from './contract-addresses'
 import { discoverAllPools } from './dex-factory-helpers'
@@ -22,11 +21,9 @@ export interface PoolBasicInfo {
 }
 
 /**
- * Get pool configuration directly from the pool contract
- * This is used for dynamically created pools that aren't in POOL_CONFIGS
- * Uses separate transactions for each call (like stellar-auth-test)
+ * Query pool contract directly for its configuration
  */
-async function getPoolInfoFromContract(address: string): Promise<{
+export async function getPoolInfoFromContract(address: string): Promise<{
   token0: { address: string; code: string }
   token1: { address: string; code: string }
   fee: number
@@ -39,95 +36,59 @@ async function getPoolInfoFromContract(address: string): Promise<{
       contractId: address,
     })
 
-    // Simulate all three transactions in parallel
+    // Query pool for token addresses and fee
     const [token0Address, token1Address, fee] = await Promise.all([
       poolContractClient
         .token0({
           timeoutInSeconds: 30,
           fee: 100,
         })
-        .then(
-          (assembledTransaction) => assembledTransaction.result,
-          (e) => {
-            console.error('Error fetching pool token0:', e)
-            throw e
-          },
-        ),
+        .then((tx) => tx.result),
       poolContractClient
         .token1({
           timeoutInSeconds: 30,
           fee: 100,
         })
-        .then(
-          (assembledTransaction) => assembledTransaction.result,
-          (e) => {
-            console.error('Error fetching pool token1:', e)
-            throw e
-          },
-        ),
+        .then((tx) => tx.result),
       poolContractClient
         .fee({
           timeoutInSeconds: 30,
           fee: 100,
         })
-        .then(
-          (assembledTransaction) => assembledTransaction.result,
-          (e) => {
-            console.error('Error fetching pool fee:', e)
-            throw e
-          },
-        ),
+        .then((tx) => tx.result),
     ])
 
     console.log(
-      `  Pool contract data: token0=${token0Address}, token1=${token1Address}, fee=${fee}`,
+      `Pool contract data: token0=${token0Address}, token1=${token1Address}, fee=${fee}`,
     )
 
-    // Get token codes from our prepopulated token list (not from contracts)
-    // This avoids the "MissingValue" error when tokens don't implement symbol()
+    // Get token codes from token list
     const token0FromList = getTokenByContract(token0Address)
     const token1FromList = getTokenByContract(token1Address)
 
-    const token0Code =
-      token0FromList?.code || `Token0(${token0Address.slice(0, 6)})`
-    const token1Code =
-      token1FromList?.code || `Token1(${token1Address.slice(0, 6)})`
-
-    console.log(`  Token codes: token0=${token0Code}, token1=${token1Code}`)
+    if (!token0FromList || !token1FromList) {
+      console.warn(
+        `Tokens not found in token list, using contract addresses as codes`,
+      )
+      return {
+        token0: { address: token0Address, code: token0Address.slice(0, 8) },
+        token1: { address: token1Address, code: token1Address.slice(0, 8) },
+        fee,
+        description: `${token0Address.slice(0, 8)}-${token1Address.slice(0, 8)} (${fee / 10000}% fee)`,
+      }
+    }
 
     return {
-      token0: { address: token0Address, code: token0Code },
-      token1: { address: token1Address, code: token1Code },
+      token0: { address: token0Address, code: token0FromList.code },
+      token1: { address: token1Address, code: token1FromList.code },
       fee,
-      description: `${token0Code}-${token1Code} (${fee / 10000}% fee)`,
+      description: `${token0FromList.code}-${token1FromList.code} (${fee / 10000}% fee)`,
     }
   } catch (error) {
-    console.error(`❌ Error getting pool info from contract ${address}:`, error)
+    console.error('Failed to query pool contract:', error)
     return null
   }
 }
-
-/**
- * Get token symbol/code from token contract
- */
-async function _getTokenCodeFromContract(
-  address: string,
-): Promise<string | null> {
-  try {
-    console.log(`    🔍 Getting token symbol for ${address}`)
-    const tokenContractClient = getTokenContractClient({ contractId: address })
-    const { result } = await tokenContractClient.symbol({
-      timeoutInSeconds: 30,
-      fee: 100000,
-    })
-
-    return result
-  } catch (error) {
-    console.error(`❌ Error getting token symbol from ${address}:`, error)
-    return null
-  }
-}
-
 /**
  * Get all available pools with real-time data
  * Queries factory.get_pool() for all token pair + fee tier combinations

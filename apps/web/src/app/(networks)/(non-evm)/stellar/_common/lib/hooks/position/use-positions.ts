@@ -1,4 +1,3 @@
-import type { UserPositionInfo } from '@sushiswap/stellar-contract-binding-position-manager'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { positionService } from '../../services/position-service'
 

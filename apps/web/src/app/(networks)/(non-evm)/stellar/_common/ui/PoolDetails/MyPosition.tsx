@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
 import React from 'react'
 import { formatUSD } from 'sushi/format'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
+import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
 import { useStellarWallet } from '~stellar/providers'
 import { useMyPosition } from '../../lib/hooks/position/use-my-position'
 import { CollectFeesBox } from './CollectFeesBox'
@@ -14,24 +15,26 @@ interface MyPositionProps {
 export const MyPosition: React.FC<MyPositionProps> = ({ pool }) => {
   const { connectedAddress } = useStellarWallet()
 
-  const { totalValue, assets, isLoading, error } = useMyPosition(
-    connectedAddress || undefined,
+  const { totalValue, isLoading, positions, error } = useMyPosition(
+    connectedAddress ?? undefined,
     pool.address,
   )
 
-  // Extract token amounts from aggregated assets (principal + fees)
+  // Extract token amounts from aggregated positions (principal + fees)
   const actualAmounts = React.useMemo(() => {
-    const token0Asset = assets.find((asset) => asset.code === pool.token0.code)
-    const token1Asset = assets.find((asset) => asset.code === pool.token1.code)
-
-    return {
-      token0: token0Asset?.amount || '0.0',
-      token1: token1Asset?.amount || '0.0',
-    }
-  }, [assets, pool.token0.code, pool.token1.code])
+    return positions.reduce(
+      (acc, cur) => {
+        return {
+          token0: acc.token0 + cur.principalToken0 + cur.feesToken0,
+          token1: acc.token1 + cur.principalToken1 + cur.feesToken1,
+        }
+      },
+      { token0: 0n, token1: 0n },
+    )
+  }, [positions])
 
   // If no positions found, show empty state
-  if (!isLoading && assets.length === 0) {
+  if (!isLoading && positions.length === 0) {
     return (
       <Card className="bg-slate-900/50 border-slate-800">
         <CardHeader>
@@ -82,13 +85,19 @@ export const MyPosition: React.FC<MyPositionProps> = ({ pool }) => {
             <LiquidityItem
               isLoading={isLoading}
               token={pool.token0}
-              amount={actualAmounts.token0}
+              amount={formatTokenAmount(
+                actualAmounts.token0,
+                pool.token0.decimals,
+              )}
               usdAmount="0.00" // TODO: Calculate USD value
             />
             <LiquidityItem
               isLoading={isLoading}
               token={pool.token1}
-              amount={actualAmounts.token1}
+              amount={formatTokenAmount(
+                actualAmounts.token1,
+                pool.token1.decimals,
+              )}
               usdAmount="0.00" // TODO: Calculate USD value
             />
           </div>

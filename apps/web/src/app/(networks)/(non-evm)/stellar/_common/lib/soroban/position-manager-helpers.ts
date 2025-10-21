@@ -1,8 +1,5 @@
 import * as StellarSdk from '@stellar/stellar-sdk'
-import {
-  getPoolContractClient,
-  getPositionManagerContractClient,
-} from './client'
+import { getPositionManagerContractClient } from './client'
 import { DEFAULT_TIMEOUT } from './constants'
 import {
   CONTRACT_ADDRESSES,
@@ -10,78 +7,8 @@ import {
   getPoolConfig,
 } from './contract-addresses'
 import { initializePoolIfNeeded } from './dex-factory-helpers'
+import { getPoolInfoFromContract } from './pool-helpers'
 import { submitViaRawRPC, waitForTransaction } from './rpc-transaction-helpers'
-import { getTokenByContract } from './token-helpers'
-
-/**
- * Query pool contract directly for its configuration
- */
-export async function getPoolInfoFromContract(address: string): Promise<{
-  token0: { address: string; code: string }
-  token1: { address: string; code: string }
-  fee: number
-  description: string
-} | null> {
-  try {
-    console.log(`🔍 Querying pool contract for ${address}...`)
-
-    const poolContractClient = getPoolContractClient({
-      contractId: address,
-    })
-
-    // Query pool for token addresses and fee
-    const [token0Address, token1Address, fee] = await Promise.all([
-      poolContractClient
-        .token0({
-          timeoutInSeconds: 30,
-          fee: 100,
-        })
-        .then((tx) => tx.result),
-      poolContractClient
-        .token1({
-          timeoutInSeconds: 30,
-          fee: 100,
-        })
-        .then((tx) => tx.result),
-      poolContractClient
-        .fee({
-          timeoutInSeconds: 30,
-          fee: 100,
-        })
-        .then((tx) => tx.result),
-    ])
-
-    console.log(
-      `Pool contract data: token0=${token0Address}, token1=${token1Address}, fee=${fee}`,
-    )
-
-    // Get token codes from token list
-    const token0FromList = getTokenByContract(token0Address)
-    const token1FromList = getTokenByContract(token1Address)
-
-    if (!token0FromList || !token1FromList) {
-      console.warn(
-        `Tokens not found in token list, using contract addresses as codes`,
-      )
-      return {
-        token0: { address: token0Address, code: token0Address.slice(0, 8) },
-        token1: { address: token1Address, code: token1Address.slice(0, 8) },
-        fee,
-        description: `${token0Address.slice(0, 8)}-${token1Address.slice(0, 8)} (${fee / 10000}% fee)`,
-      }
-    }
-
-    return {
-      token0: { address: token0Address, code: token0FromList.code },
-      token1: { address: token1Address, code: token1FromList.code },
-      fee,
-      description: `${token0FromList.code}-${token1FromList.code} (${fee / 10000}% fee)`,
-    }
-  } catch (error) {
-    console.error('Failed to query pool contract:', error)
-    return null
-  }
-}
 
 /**
  * Add liquidity using Position Manager's mint method

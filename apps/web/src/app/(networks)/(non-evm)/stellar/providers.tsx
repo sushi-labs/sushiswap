@@ -30,12 +30,12 @@ const StellarWalletContext = createContext<StellarWalletContextType>({
   signTransaction: async () => '',
 })
 
-// TODO: preserved the connected state between page navigation
 export function Providers({ children }: { children: React.ReactNode }) {
   const [stellarWalletKit, setStellarWalletKit] =
     useState<StellarWalletsKit | null>(null)
   const [wallets, setWallets] = useState<ISupportedWallet[]>([])
   const [connectedAddress, setConnectedAddress] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const PREFERRED_NETWORK = WalletNetwork.TESTNET // TODO: update accordingly
 
@@ -60,6 +60,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         const { address } = await kit.getAddress()
         setConnectedAddress(address)
       }
+      setIsLoading(false)
     }
 
     setup()
@@ -68,6 +69,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       setStellarWalletKit(null)
       setWallets([])
       setConnectedAddress(null)
+      setIsLoading(true)
     }
   }, [PREFERRED_NETWORK])
 
@@ -124,7 +126,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       value={{
         stellarWalletKit,
         wallets,
-        isLoading: stellarWalletKit === null,
+        isLoading,
         isConnected: connectedAddress !== null,
         connectedAddress,
         signTransaction,

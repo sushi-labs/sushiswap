@@ -1,117 +1,137 @@
-import type { UserPositionInfo } from '@sushiswap/stellar-contract-binding-position-manager'
-import { useQueries, useQuery } from '@tanstack/react-query'
+import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { positionService } from '../../services/position-service'
-import { POOL_CONFIGS, getPoolConfig } from '../../soroban/contract-addresses'
-import { getPoolInfoFromContract } from '../../soroban/position-manager-helpers'
-import { formatTokenAmount } from '../../utils/format'
+import {
+  type PositionInfo,
+  positionService,
+} from '../../services/position-service'
+import { getPoolDirectSDK, getTokenByContract } from '../../soroban'
+import type { Token } from '../../types/token.type'
 import { useUserPositions } from './use-positions'
-
-export interface PositionAsset {
-  address: string
-  code: string
-  amount: string
-  usdAmount: string
-}
 
 export interface PositionSummary {
   tokenId: number
+  token0: Token
+  token1: Token
   liquidity: string
-  principalToken0: string
-  principalToken1: string
-  feesToken0: string
-  feesToken1: string
+  principalToken0: bigint
+  principalToken1: bigint
+  feesToken0: bigint
+  feesToken1: bigint
+  pool: string
 }
 
 export interface MyPositionData {
   totalValue: number
-  assets: PositionAsset[]
   positions: PositionSummary[]
   isLoading: boolean
   error: Error | null
 }
 
+const UNKNOWN_TOKEN: Token = {
+  code: 'unknown',
+  issuer: 'unknown',
+  contract: 'unknown',
+  name: 'unknown',
+  org: 'unknown',
+  decimals: 7,
+}
+
+const getPositionKey = (position: PositionInfo) => {
+  return `${position.token0}-${position.token1}-${position.fee}`
+}
+
 /**
  * Hook to get aggregated position data for the My Position component
  */
-export function useMyPosition(
-  userAddress: string | undefined,
-  poolAddress: string,
-) {
+export function useMyPosition(userAddress?: string, poolAddress?: string) {
   const {
     data: positions = [],
     isLoading: positionsLoading,
     error: positionsError,
   } = useUserPositions(userAddress)
 
-  // Get pool configuration (hardcoded first, then dynamic)
-  const hardcodedConfig = getPoolConfig(poolAddress)
-
-  // If no hardcoded config, fetch dynamically from contract
-  const { data: dynamicConfig, isLoading: configLoading } = useQuery({
-    queryKey: ['stellar', 'pool-config', poolAddress],
-    queryFn: async () => {
-      console.log(`🔍 Fetching dynamic pool config for ${poolAddress}`)
-      const config = await getPoolInfoFromContract(poolAddress)
-      console.log(`✅ Dynamic pool config loaded:`, config)
-      return config
-    },
-    enabled: !hardcodedConfig && !!poolAddress,
-    staleTime: 1000 * 60 * 10, // 10 minutes
-    retry: 2,
+  const positionToPoolQueries = useQueries({
+    queries: positions.map((position) => ({
+      queryKey: [
+        'stellar',
+        'position-pool',
+        position.token0,
+        position.token1,
+        position.fee,
+      ],
+      queryFn: async () => {
+        try {
+          const poolAddress = await getPoolDirectSDK({
+            tokenA: position.token0,
+            tokenB: position.token1,
+            fee: position.fee,
+          })
+          return [getPositionKey(position), poolAddress] as const
+        } catch (error) {
+          console.error(
+            'Error fetching pool address for position',
+            position.tokenId,
+            error,
+          )
+          return [getPositionKey(position), null] as const
+        }
+      },
+      enabled: !positionsLoading && !positionsError,
+      staleTime: 1000 * 60, // 1 minute
+      retry: 1,
+    })),
   })
 
-  // Use hardcoded config if available, otherwise use dynamic config
-  const poolConfig = hardcodedConfig || dynamicConfig
+  const poolsLoading = positionToPoolQueries.some((query) => query.isLoading)
+
+  const positionToPoolMap = useMemo(() => {
+    return Object.fromEntries(
+      positionToPoolQueries
+        .map((query) => query.data)
+        .filter((data) => data !== undefined),
+    )
+  }, [positionToPoolQueries])
 
   // Filter positions for the specific pool
-  const poolPositions = useMemo(() => {
-    if (!poolConfig || !positions.length) {
-      return []
+  const filteredPositions = useMemo(() => {
+    if (poolAddress === undefined) {
+      return positions
     }
-
     return positions.filter((position) => {
-      // Check if this position belongs to the current pool by matching token addresses
-      return (
-        (position.token0 === poolConfig.token0.address &&
-          position.token1 === poolConfig.token1.address) ||
-        (position.token0 === poolConfig.token1.address &&
-          position.token1 === poolConfig.token0.address)
-      )
+      // Check if this position belongs to the current pool
+      return positionToPoolMap[getPositionKey(position)] === poolAddress
     })
-  }, [positions, poolConfig])
+  }, [positions, poolAddress, positionToPoolMap])
 
   // Fetch principal amounts for each position
   console.log(
-    `🔧 [useMyPosition] Setting up ${poolPositions.length} principal queries`,
+    `🔧 [useMyPosition] Setting up ${filteredPositions.length} principal queries`,
   )
 
   const principalQueries = useQueries({
-    queries: poolPositions.map((position) => ({
-      queryKey: ['stellar', 'position-principal', position.token_id],
+    queries: filteredPositions.map((position) => ({
+      queryKey: ['stellar', 'position-principal', position.tokenId],
       queryFn: async () => {
-        console.log(
-          `🔍 Calculating principal for position ${position.token_id}`,
-        )
+        console.log(`🔍 Calculating principal for position ${position.tokenId}`)
 
         try {
           const result = await positionService.getPositionPrincipal(
-            position.token_id,
+            position.tokenId,
           )
-          console.log(`✅ Principal for position ${position.token_id}:`, {
+          console.log(`✅ Principal for position ${position.tokenId}:`, {
             amount0: result.amount0.toString(),
             amount1: result.amount1.toString(),
           })
-          return result
+          return [getPositionKey(position), result]
         } catch (error) {
           console.error(
-            `❌ Failed to get principal for position ${position.token_id}:`,
+            `❌ Failed to get principal for position ${position.tokenId}:`,
             error,
           )
-          return { amount0: 0n, amount1: 0n }
+          return [getPositionKey(position), { amount0: 0n, amount1: 0n }]
         }
       },
-      enabled: position.token_id !== undefined && position.token_id !== null,
+      enabled: position.tokenId !== undefined && position.tokenId !== null,
       staleTime: 1000 * 30, // 30 seconds
       retry: 1,
     })),
@@ -120,12 +140,23 @@ export function useMyPosition(
   // Check if any principal queries are still loading
   const principalsLoading = principalQueries.some((query) => query.isLoading)
 
+  const positionToPrincipalMap = useMemo(() => {
+    return Object.fromEntries(
+      principalQueries
+        .map((query) => query.data)
+        .filter(
+          (data): data is [string, { amount0: bigint; amount1: bigint }] =>
+            data !== undefined,
+        ),
+    )
+  }, [principalQueries])
+
   // Debug query states
   console.log(
     `🔧 [useMyPosition] Principal queries status:`,
     principalQueries.map((q, i) => ({
       index: i,
-      tokenId: poolPositions[i]?.token_id,
+      tokenId: filteredPositions[i]?.tokenId,
       isLoading: q.isLoading,
       isFetching: q.isFetching,
       isSuccess: q.isSuccess,
@@ -138,161 +169,63 @@ export function useMyPosition(
 
   // Aggregate position data with principal amounts
   const positionData = useMemo((): MyPositionData => {
-    if (!poolConfig || poolPositions.length === 0) {
+    if (positionsLoading || principalsLoading || poolsLoading) {
       return {
         totalValue: 0,
-        assets: [
-          {
-            address: poolConfig?.token0.address || '',
-            code: poolConfig?.token0.code || '',
-            amount: '0.0',
-            usdAmount: '0.0',
-          },
-          {
-            address: poolConfig?.token1.address || '',
-            code: poolConfig?.token1.code || '',
-            amount: '0.0',
-            usdAmount: '0.0',
-          },
-        ],
         positions: [],
-        isLoading: positionsLoading || principalsLoading || configLoading,
+        isLoading: true,
         error: positionsError || null,
       }
     }
 
-    // If still loading principals, show loading state
-    if (principalsLoading) {
-      return {
-        totalValue: 0,
-        assets: [
-          {
-            address: poolConfig.token0.address,
-            code: poolConfig.token0.code,
-            amount: '0.0',
-            usdAmount: '0.0',
-          },
-          {
-            address: poolConfig.token1.address,
-            code: poolConfig.token1.code,
-            amount: '0.0',
-            usdAmount: '0.0',
-          },
-        ],
-        positions: [],
-        isLoading: true,
-        error: null,
-      }
-    }
-
     // Aggregate amounts for each token across all positions (principal + fees)
-    const tokenAmounts = new Map<string, { amount: bigint; code: string }>()
     const positionSummaries: PositionSummary[] = []
 
     // Process each position with its principal amounts
-    poolPositions.forEach((position, index) => {
-      const principalData = principalQueries[index]?.data || {
-        amount0: 0n,
-        amount1: 0n,
-      }
-
-      console.log(`Processing position ${position.token_id}:`, {
+    filteredPositions.forEach((position) => {
+      const principalData = positionToPrincipalMap[getPositionKey(position)]
+      const token0 = getTokenByContract(position.token0) ?? UNKNOWN_TOKEN
+      const token1 = getTokenByContract(position.token1) ?? UNKNOWN_TOKEN
+      console.log(`Processing position ${position.tokenId}:`, {
         principal0: principalData.amount0.toString(),
         principal1: principalData.amount1.toString(),
-        fees0: position.tokens_owed0.toString(),
-        fees1: position.tokens_owed1.toString(),
+        fees0: position.tokensOwed0.toString(),
+        fees1: position.tokensOwed1.toString(),
         liquidity: position.liquidity.toString(),
+        token0: token0,
+        token1: token1,
       })
 
       // Add to position summaries
       positionSummaries.push({
-        tokenId: position.token_id,
+        tokenId: position.tokenId,
         liquidity: position.liquidity.toString(),
-        principalToken0: formatTokenAmount(principalData.amount0, 7),
-        principalToken1: formatTokenAmount(principalData.amount1, 7),
-        feesToken0: formatTokenAmount(position.tokens_owed0, 7),
-        feesToken1: formatTokenAmount(position.tokens_owed1, 7),
+        principalToken0: principalData.amount0,
+        principalToken1: principalData.amount1,
+        feesToken0: position.tokensOwed0,
+        feesToken1: position.tokensOwed1,
+        token0,
+        token1,
+        pool: positionToPoolMap[getPositionKey(position)] || '',
       })
-
-      // Calculate total for token0 (principal + fees)
-      const token0Key = position.token0
-      const token0Code =
-        position.token0 === poolConfig.token0.address
-          ? poolConfig.token0.code
-          : poolConfig.token1.code
-      const token0Total = principalData.amount0 + position.tokens_owed0
-
-      if (tokenAmounts.has(token0Key)) {
-        const existing = tokenAmounts.get(token0Key)!
-        tokenAmounts.set(token0Key, {
-          amount: existing.amount + token0Total,
-          code: existing.code,
-        })
-      } else {
-        tokenAmounts.set(token0Key, {
-          amount: token0Total,
-          code: token0Code,
-        })
-      }
-
-      // Calculate total for token1 (principal + fees)
-      const token1Key = position.token1
-      const token1Code =
-        position.token1 === poolConfig.token0.address
-          ? poolConfig.token0.code
-          : poolConfig.token1.code
-      const token1Total = principalData.amount1 + position.tokens_owed1
-
-      if (tokenAmounts.has(token1Key)) {
-        const existing = tokenAmounts.get(token1Key)!
-        tokenAmounts.set(token1Key, {
-          amount: existing.amount + token1Total,
-          code: existing.code,
-        })
-      } else {
-        tokenAmounts.set(token1Key, {
-          amount: token1Total,
-          code: token1Code,
-        })
-      }
     })
-
-    console.log(
-      '✅ Aggregated token amounts (principal + fees):',
-      Array.from(tokenAmounts.entries()).map(([addr, data]) => ({
-        address: addr,
-        code: data.code,
-        amount: data.amount.toString(),
-      })),
-    )
-
-    // Convert to assets array
-    const assets: PositionAsset[] = Array.from(tokenAmounts.entries()).map(
-      ([address, data]) => ({
-        address,
-        code: data.code,
-        amount: formatTokenAmount(data.amount, 7),
-        usdAmount: '0.0', // TODO: Calculate USD values using price feeds
-      }),
-    )
 
     // Calculate total value (placeholder - would need price data)
     const totalValue = 0 // TODO: Calculate based on token amounts and prices
 
     return {
       totalValue,
-      assets,
       positions: positionSummaries,
-      isLoading: positionsLoading || principalsLoading,
+      isLoading: false,
       error: positionsError || null,
     }
   }, [
-    poolPositions,
-    poolConfig,
-    configLoading,
+    filteredPositions,
+    positionToPoolMap,
+    positionToPrincipalMap,
+    poolsLoading,
     positionsLoading,
     positionsError,
-    principalQueries,
     principalsLoading,
   ])
 
