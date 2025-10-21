@@ -42,17 +42,29 @@ describe('getCurrencyPrice', () => {
     reserve0: number,
     reserve1: number,
   ): PoolInfo => ({
+    name: `${token0.code}/${token1.code}`,
     address: 'POOL_ADDRESS',
     token0,
     token1,
     reserves: {
-      token0: { amount: String(reserve0 * 10 ** token0.decimals) },
-      token1: { amount: String(reserve1 * 10 ** token1.decimals) },
+      token0: {
+        code: token0.code,
+        amount: String(reserve0 * 10 ** token0.decimals),
+        formatted: String(reserve0),
+      },
+      token1: {
+        code: token1.code,
+        amount: String(reserve1 * 10 ** token1.decimals),
+        formatted: String(reserve1),
+      },
     },
     liquidity: {
       amount: String((reserve0 + reserve1) * 10 ** 7),
+      formatted: String(reserve0 + reserve1),
     },
     fee: 3000,
+    tickSpacing: 60,
+    tvl: '0',
   })
 
   test('returns 1 for stablecoin itself', () => {

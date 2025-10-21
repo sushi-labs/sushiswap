@@ -989,7 +989,9 @@ export function calculatePriceFromTick(tick: number): number {
  * @param poolAddress - The pool contract address
  * @returns Current sqrt price as BigInt
  */
-async function getCurrentSqrtPrice(poolAddress: string): Promise<bigint> {
+export async function getCurrentSqrtPrice(
+  poolAddress: string,
+): Promise<bigint> {
   try {
     const poolContractClient = getPoolContractClient({
       contractId: poolAddress,
@@ -1002,7 +1004,11 @@ async function getCurrentSqrtPrice(poolAddress: string): Promise<bigint> {
     // Handle field name confusion: the contract returns sqrt_price_x96 in the fee_protocol field
     let sqrtPriceX96: bigint | undefined
 
-    if (slot0Map.sqrt_price_x96 && Number(slot0Map.sqrt_price_x96) !== 0) {
+    if (
+      slot0Map.sqrt_price_x96 &&
+      typeof slot0Map.sqrt_price_x96 === 'bigint' &&
+      Number(slot0Map.sqrt_price_x96) !== 0
+    ) {
       sqrtPriceX96 = BigInt(slot0Map.sqrt_price_x96)
       console.log(
         'Fetched sqrt price from slot0 (correct field):',
@@ -1141,7 +1147,7 @@ async function calculateLiquidityFromAmounts(
  * Note: The contract rounds UP when calculating amounts, which can increase the amount by ~1-2 units per division
  * We need to account for this by reducing our liquidity request slightly
  */
-function calculateLiquidityFromAmount0(
+export function calculateLiquidityFromAmount0(
   scaledAmount0: bigint,
   currentSqrtPriceX96: bigint,
   sqrtPriceLowerX96: bigint,
@@ -1205,4 +1211,46 @@ function calculateLiquidityFromAmount0(
     console.log('=== calculateLiquidityFromAmount0 END ===')
     return liquidity
   }
+}
+
+/**
+ * Calculate token amounts from liquidity (exactly like stellar-auth-test)
+ * IMPORTANT: Must match contract's exact calculation with TWO separate divisions
+ */
+export function calculateAmountsFromLiquidity(
+  liquidity: bigint,
+  currentSqrtPriceX96: bigint,
+  sqrtPriceLowerX96: bigint,
+  sqrtPriceUpperX96: bigint,
+): { amount0: bigint; amount1: bigint } {
+  let amount0 = BigInt(0)
+  let amount1 = BigInt(0)
+
+  if (currentSqrtPriceX96 < sqrtPriceLowerX96) {
+    // Below range: only token0
+    // Contract: product = (L << 96) * (upper - lower) / upper, then amount0 = product / lower
+    const product =
+      ((liquidity << BigInt(96)) * (sqrtPriceUpperX96 - sqrtPriceLowerX96)) /
+      sqrtPriceUpperX96
+    amount0 = product / sqrtPriceLowerX96
+  } else if (currentSqrtPriceX96 >= sqrtPriceUpperX96) {
+    // Above range: only token1
+    // amount1 = liquidity * (sqrtUpper - sqrtLower) / 2^96
+    amount1 =
+      (liquidity * (sqrtPriceUpperX96 - sqrtPriceLowerX96)) /
+      (BigInt(1) << BigInt(96))
+  } else {
+    // Within range: both tokens
+    // Contract for amount0: product = (L << 96) * (upper - current) / upper, then amount0 = product / current
+    const product =
+      ((liquidity << BigInt(96)) * (sqrtPriceUpperX96 - currentSqrtPriceX96)) /
+      sqrtPriceUpperX96
+    amount0 = product / currentSqrtPriceX96
+    // amount1 = liquidity * (sqrtPrice - sqrtLower) / 2^96
+    amount1 =
+      (liquidity * (currentSqrtPriceX96 - sqrtPriceLowerX96)) /
+      (BigInt(1) << BigInt(96))
+  }
+
+  return { amount0, amount1 }
 }

@@ -16,6 +16,7 @@ import {
 } from '@sushiswap/ui'
 import type React from 'react'
 import { useState } from 'react'
+import { useCalculatePairedAmount } from '~stellar/_common/lib/hooks/pool/use-calculate-paired-amount'
 import { usePoolBalances } from '~stellar/_common/lib/hooks/pool/use-pool-balances'
 import { useRemoveLiquidity } from '~stellar/_common/lib/hooks/pool/use-pool-liquidity-management'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/swap'
@@ -34,8 +35,20 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   const { data: balances } = usePoolBalances(pool.address, connectedAddress)
   const [tab, setTab] = useState<string>('add')
   const [amount0, setAmount0] = useState<string>('')
-  const [amount1, setAmount1] = useState<string>('')
   const [lpAmount, setLpAmount] = useState<string>('')
+
+  // Calculate paired amount based on token0 input
+  const { data: pairedAmountData } = useCalculatePairedAmount(
+    pool.address,
+    amount0,
+    -60000, // Default full range
+    60000,
+    pool.token0.decimals || 7,
+  )
+
+  const amount1 = pairedAmountData?.token1Amount
+    ? Number.parseFloat(pairedAmountData.token1Amount).toFixed(4)
+    : '0'
 
   // Liquidity management hooks
   const addLiquidityMutation = useAddLiquidity()
@@ -47,16 +60,26 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   const hasLpAmount =
     lpAmount !== '' && lpAmount !== '0' && Number.parseFloat(lpAmount) > 0
 
+  // Prevent adding liquidity when price is above range (can't provide token0)
+  const isAboveRange = pairedAmountData?.status === 'above-range'
+  const canAddLiquidity = hasAmount && !isAboveRange
+
   // Handle add liquidity
   const handleAddLiquidity = async () => {
-    if (!connectedAddress || !hasAmount) return
+    if (!connectedAddress || !canAddLiquidity) return
+
+    // Safety check: prevent adding liquidity when price is above range
+    if (isAboveRange) {
+      console.error('Cannot add liquidity: price is above range')
+      return
+    }
 
     try {
       await addLiquidityMutation.mutateAsync({
         userAddress: connectedAddress,
         poolAddress: pool.address,
         token0Amount: amount0,
-        token1Amount: amount1 || '0', // Use amount1 if provided, otherwise '0'
+        token1Amount: amount1, // Auto-calculated amount
         tickLower: -60000,
         tickUpper: 60000,
         recipient: connectedAddress,
@@ -65,7 +88,6 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
 
       // Reset form
       setAmount0('')
-      setAmount1('')
     } catch (error) {
       console.error('Failed to add liquidity:', error)
     }
@@ -131,7 +153,8 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
               <div>
                 <CardTitle>Add Liquidity</CardTitle>
                 <CardDescription>
-                  Provide liquidity to receive SLP tokens.
+                  Enter {pool.token0.code} amount - {pool.token1.code} amount
+                  will be calculated automatically.
                 </CardDescription>
               </div>
               <Button variant="ghost" size="sm">
@@ -161,6 +184,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                       <div className="flex-1 p-3 border rounded-lg">
                         <input
                           type="number"
+                          onWheel={(e) => e.currentTarget.blur()}
                           value={amount0}
                           onChange={(e) => setAmount0(e.target.value)}
                           placeholder="0.0"
@@ -180,7 +204,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                     </div>
                   </div>
 
-                  {/* Token 1 Input */}
+                  {/* Token 1 Input (Auto-calculated) */}
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">
@@ -191,33 +215,54 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                       </span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <div className="flex-1 p-3 border rounded-lg">
+                      <div className="flex-1 p-3 border rounded-lg bg-gray-50 dark:bg-gray-900/50">
                         <input
-                          type="number"
+                          type="text"
                           value={amount1}
-                          onChange={(e) => setAmount1(e.target.value)}
-                          placeholder="0.0"
-                          className="w-full text-lg font-semibold bg-transparent border-none outline-none"
+                          placeholder="Auto-calculated"
+                          readOnly
+                          disabled
+                          className="w-full text-lg font-semibold bg-transparent border-none outline-none text-muted-foreground"
                         />
                         <div className="text-sm text-muted-foreground">
                           $ 0.00
                         </div>
                       </div>
                     </div>
+                    {pairedAmountData?.status === 'below-range' && amount0 && (
+                      <p className="text-xs text-yellow-600 dark:text-yellow-400">
+                        Price below range - only {pool.token0.code} needed
+                      </p>
+                    )}
+                    {isAboveRange && amount0 && (
+                      <p className="text-xs text-red-600 dark:text-red-400">
+                        Price above range - cannot provide {pool.token0.code}{' '}
+                        liquidity
+                      </p>
+                    )}
+                    {pairedAmountData?.error && (
+                      <p className="text-xs text-red-600 dark:text-red-400">
+                        {pairedAmountData.error}
+                      </p>
+                    )}
                   </div>
 
                   {/* Submit Button */}
                   <Button
                     className="w-full"
                     size="lg"
-                    disabled={!hasAmount || addLiquidityMutation.isPending}
+                    disabled={
+                      !canAddLiquidity || addLiquidityMutation.isPending
+                    }
                     onClick={handleAddLiquidity}
                   >
                     {addLiquidityMutation.isPending
                       ? 'Adding Liquidity...'
-                      : hasAmount
-                        ? 'Add Liquidity'
-                        : 'Enter Amount'}
+                      : isAboveRange
+                        ? 'Price Above Range'
+                        : canAddLiquidity
+                          ? 'Add Liquidity'
+                          : 'Enter Amount'}
                   </Button>
                 </>
               )}

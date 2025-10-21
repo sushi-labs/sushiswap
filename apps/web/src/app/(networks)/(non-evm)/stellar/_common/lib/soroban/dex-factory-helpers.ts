@@ -14,6 +14,8 @@ import { submitTransaction, waitForTransaction } from './transaction-helpers'
  * Create a new pool with the specified tokens and fee tier
  * @param tokenA - Address of the first token
  * @param tokenB - Address of the second token
+ * @param tokenAmountA - Amount of the first token (used to calculate ratio)
+ * @param tokenAmountB - Amount of the second token (used to calculate ratio)
  * @param fee - Fee tier (e.g., 3000 for 0.3%, 10000 for 1%)
  * @param sourceAccount - User's Stellar address
  * @param signTransaction - Function to sign the transaction
@@ -22,12 +24,16 @@ import { submitTransaction, waitForTransaction } from './transaction-helpers'
 export async function createPool({
   tokenA,
   tokenB,
+  tokenAmountA,
+  tokenAmountB,
   fee,
   sourceAccount,
   signTransaction,
 }: {
   tokenA: string
   tokenB: string
+  tokenAmountA: string
+  tokenAmountB: string
   fee: number
   sourceAccount: string
   signTransaction: (xdr: string) => Promise<string>
@@ -120,11 +126,13 @@ export async function createPool({
       console.log('🎉 Pool created:', poolAddress)
 
       // Initialize the pool with 1:1 price (tick 0)
-      console.log('🎨 Initializing pool with 1:1 price...')
+      console.log(
+        `🎨 Initializing pool with ${tokenAmountA}:${tokenAmountB} price`,
+      )
       try {
         await initializePool({
           poolAddress,
-          sqrtPriceX96: encodePriceSqrt(1, 1),
+          sqrtPriceX96: encodePriceSqrt(tokenAmountB, tokenAmountA),
           sourceAccount,
           signTransaction,
         })

@@ -1,0 +1,122 @@
+'use client'
+
+import { useQuery } from '@tanstack/react-query'
+import { getPoolContractClient } from '../../soroban/client'
+import {
+  calculateAmountsFromLiquidity,
+  calculateLiquidityFromAmount0,
+  getCurrentSqrtPrice,
+} from '../../soroban/pool-helpers'
+
+/**
+ * Convert tick to sqrt price (same as pool-helpers)
+ */
+function tickToSqrtPrice(tick: number): bigint {
+  const sqrtPrice = Math.sqrt(1.0001 ** tick)
+  return BigInt(Math.floor(sqrtPrice * 2 ** 96))
+}
+
+/**
+ * Calculate the required token1 amount based on token0 input
+ * Matches the implementation from stellar-auth-test
+ */
+export function useCalculatePairedAmount(
+  poolAddress: string | null,
+  token0Amount: string,
+  tickLower: number,
+  tickUpper: number,
+  decimals = 7,
+) {
+  return useQuery({
+    queryKey: [
+      'pool',
+      'pairedAmount',
+      poolAddress,
+      token0Amount,
+      tickLower,
+      tickUpper,
+    ],
+    queryFn: async () => {
+      if (!poolAddress || !token0Amount || Number(token0Amount) <= 0) {
+        return {
+          token1Amount: '',
+          status: 'idle' as const,
+        }
+      }
+
+      try {
+        // Get current sqrt price from pool
+        const currentSqrtPriceX96 = await getCurrentSqrtPrice(poolAddress)
+
+        console.log(currentSqrtPriceX96)
+
+        // Calculate sqrt prices at boundaries
+        const sqrtPriceLowerX96 = tickToSqrtPrice(tickLower)
+        const sqrtPriceUpperX96 = tickToSqrtPrice(tickUpper)
+
+        // Check if price is below range
+        if (currentSqrtPriceX96 < sqrtPriceLowerX96) {
+          return {
+            token1Amount: '0',
+            status: 'below-range' as const,
+          }
+        }
+
+        // Check if price is above range
+        if (currentSqrtPriceX96 >= sqrtPriceUpperX96) {
+          return {
+            token1Amount: '0',
+            status: 'above-range' as const,
+            error: 'Price above range - cannot provide token0 liquidity',
+          }
+        }
+
+        // Price is within range - calculate paired amount
+        const inputAmount = Number.parseFloat(token0Amount)
+        const scaledAmount0 = BigInt(Math.floor(inputAmount * 10 ** decimals))
+
+        // Calculate liquidity from token0 amount
+        const liquidity = calculateLiquidityFromAmount0(
+          scaledAmount0,
+          currentSqrtPriceX96,
+          sqrtPriceLowerX96,
+          sqrtPriceUpperX96,
+        )
+
+        // Calculate both token amounts from this liquidity
+        const amounts = calculateAmountsFromLiquidity(
+          liquidity,
+          currentSqrtPriceX96,
+          sqrtPriceLowerX96,
+          sqrtPriceUpperX96,
+        )
+
+        // Convert token1 amount back to token units
+        const pairedAmount = Number(amounts.amount1) / 10 ** decimals
+
+        // Check for invalid results
+        if (!Number.isFinite(pairedAmount) || pairedAmount < 0) {
+          return {
+            token1Amount: '0',
+            status: 'error' as const,
+            error: 'Invalid paired amount calculated',
+          }
+        }
+
+        return {
+          token1Amount: pairedAmount.toString(),
+          status: 'within-range' as const,
+        }
+      } catch (error) {
+        console.error('Error calculating paired amount:', error)
+        return {
+          token1Amount: '0',
+          status: 'error' as const,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        }
+      }
+    },
+    enabled: !!poolAddress && !!token0Amount && Number(token0Amount) > 0,
+    staleTime: 10000, // 10 seconds
+  })
+}
