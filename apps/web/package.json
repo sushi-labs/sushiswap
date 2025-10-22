@@ -14,11 +14,11 @@
     "start": "next start",
     "test": "npx playwright test -c test/playwright.config.ts",
     "test:unit": "vitest --watch=false src",
-    "postinstall": "npm run copy-files",
-    "copy-files": "cp -R node_modules/charting_library/ public/static/"
+    "postinstall": "pnpm run copy-trading-view-files",
+    "copy-trading-view-files": "sh scripts/trading-view/copy_charting_library_files.sh"
   },
   "dependencies": {
-    "charting_library": "git+https://github.com/tradingview/charting_library.git#semver:29.3.0",
+    "@aptos-labs/ts-sdk": "1.27.0",
     "@aptos-labs/wallet-adapter-core": "3.10.0",
     "@aptos-labs/wallet-adapter-react": "2.3.1",
     "@cloudinary/url-gen": "1.11.2",

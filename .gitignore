@@ -14,9 +14,11 @@ coverage
 out/
 build
 dist
-!apps/web/public/static/datafeeds/udf/dist
 robots.txt
 analyze/
+# trading view advanced charts
+apps/web/public/trading_view/datafeeds/
+apps/web/public/trading_view/charting_library/
 
 # misc
 .DS_Store
@@ -65,6 +67,3 @@ package-lock.json
 
 # yarn lock file (we use pnpm)
 yarn.lock
-
-# trading view advanced charts
-**/public/static/charting_library

@@ -56,7 +56,6 @@ div[data-section-name="extendLeftTradingLine"] {
   display: flex !important;
 }
 
-
 /* .fadeTop-Z4M3tWHb,
 .fadeBot-Z4M3tWHb {
   display: none !important;
@@ -70,15 +69,14 @@ div[data-section-name="extendLeftTradingLine"] {
   background-color: var(--background-color) !important;
 }
 
- :root {  
+:root {
   --tv-color-popup-element-text-active: #ffffff;
   --tv-color-popup-element-background-active: #4217ff;
-  
+
   --themed-color-background-selected: #4217ff;
   --themed-color-background-special-secondary: #4217ff;
 
   --tv-color-toolbar-button-text: #535263;
-
 }
 
 .theme-dark:root {
@@ -88,10 +86,8 @@ div[data-section-name="extendLeftTradingLine"] {
   --themed-color-background-selected: #3b83f6;
   --themed-color-background-special-secondary: #3b83f6;
 
-  --tv-color-toolbar-button-text: #FFF5FA;
+  --tv-color-toolbar-button-text: #fff5fa;
 }
- 
-
 
 /* Default (light mode) */
 .common-tooltip__body-EJBD96zX {
