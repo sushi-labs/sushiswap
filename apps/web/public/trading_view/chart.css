@@ -77,17 +77,65 @@ div[data-section-name="extendLeftTradingLine"] {
   --themed-color-background-special-secondary: #4217ff;
 
   --tv-color-toolbar-button-text: #535263;
+
+  .button-GwQQdU8S.isInteractive-GwQQdU8S.isActive-GwQQdU8S:before {
+    background-color: transparent !important;
+  }
+
+  .button-GwQQdU8S.isInteractive-GwQQdU8S.isActive-GwQQdU8S {
+    color: var(
+      --tv-color-toolbar-button-text-active,
+      var(--themed-color-toolbar-button-text-active, #4217ff)
+    );
+  }
+
+  .button-GwQQdU8S.isInteractive-GwQQdU8S.isActive-GwQQdU8S:hover {
+    color: var(
+      --tv-color-toolbar-button-text-active-hover,
+      var(--themed-color-toolbar-button-text-active-hover, #4217ff)
+    );
+    background-color: var(--tv-color-toolbar-button-background-active-hover);
+  }
+
+  .scrollTop-Z4M3tWHb,
+  .scrollBot-Z4M3tWHb {
+    background-color: rgba(66, 23, 255, .1);
+    color: black;
+  }
+  
 }
 
 .theme-dark:root {
   --tv-color-popup-element-text-active: #ffffff;
-  --tv-color-popup-element-background-active: #3b83f6;
+  --tv-color-popup-element-background-active: #2962ff;
 
-  --themed-color-background-selected: #3b83f6;
-  --themed-color-background-special-secondary: #3b83f6;
+  --themed-color-background-selected: #2962ff;
+  --themed-color-background-special-secondary: #2962ff;
 
   --tv-color-toolbar-button-text: #fff5fa;
+
+  .button-GwQQdU8S.isInteractive-GwQQdU8S.isActive-GwQQdU8S {
+    color: var(
+      --tv-color-toolbar-button-text-active,
+      var(--themed-color-toolbar-button-text-active, #2962ff)
+    );
+  }
+
+  .button-GwQQdU8S.isInteractive-GwQQdU8S.isActive-GwQQdU8S:hover {
+    color: var(
+      --tv-color-toolbar-button-text-active-hover,
+      var(--themed-color-toolbar-button-text-active-hover, #2962ff)
+    );
+    background-color: var(--tv-color-toolbar-button-background-active-hover);
+  }
+
+  .scrollTop-Z4M3tWHb,
+  .scrollBot-Z4M3tWHb {
+    background-color: rgba(61, 177, 255, .1);
+    color: white;
+  }
 }
+
 
 /* Default (light mode) */
 .common-tooltip__body-EJBD96zX {
