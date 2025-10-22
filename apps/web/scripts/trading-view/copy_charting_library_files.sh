@@ -10,17 +10,17 @@ REPO_HTTPS="https://github.com/${REPO_SLUG}.git#semver:28.0.0"
 remove_if_directory_exists() { if [ -d "$1" ]; then rm -rf "$1"; fi; }
 create_if_directory_does_not_exists() { if [ ! -d "$1" ]; then mkdir -p "$1"; fi; }
 
-# Authenticated URL if GH_READ_TOKEN is set (Vercel build)
+# Authenticated URL if TRADING_VIEW_GH_READ_TOKEN is set (Vercel build)
 # Use oauth2 or x-access-token; both work for PATs
-if [ "${GH_READ_TOKEN:-}" != "" ]; then
-  AUTH_URL="https://oauth2:${GH_READ_TOKEN}@github.com/${REPO_SLUG}.git"
+if [ "${TRADING_VIEW_GH_READ_TOKEN:-}" != "" ]; then
+  AUTH_URL="https://oauth2:${TRADING_VIEW_GH_READ_TOKEN}@github.com/${REPO_SLUG}.git"
 else
   AUTH_URL="$REPO_HTTPS"
 fi
 
 # if auth_url does not contain oauth2, throw error and exit
 if [[ "$AUTH_URL" != *"oauth2"* ]]; then
-  echo "Error: AUTH_URL is not using GH_READ_TOKEN. Run 'export GH_READ_TOKEN=<your_token>' to allow the script to read the variable. Exiting." >&2
+  echo "Error: AUTH_URL is not using TRADING_VIEW_GH_READ_TOKEN. Run 'export TRADING_VIEW_GH_READ_TOKEN=<your_token>' to allow the script to read the variable. Exiting." >&2
   exit 1
 fi
   
@@ -56,8 +56,8 @@ fi
 rm -rf "$TMP_DIR"
 
 # Extra hygiene: drop token from env for the rest of the build step
-if [ "${GH_READ_TOKEN:-}" != "" ]; then
-  unset GH_READ_TOKEN
+if [ "${TRADING_VIEW_GH_READ_TOKEN:-}" != "" ]; then
+  unset TRADING_VIEW_GH_READ_TOKEN
 fi
 
 echo "TradingView Charting Library assets copied to public/trading_view."
