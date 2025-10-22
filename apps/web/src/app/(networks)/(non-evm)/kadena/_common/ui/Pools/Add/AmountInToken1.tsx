@@ -20,8 +20,12 @@ export const AmountInToken1 = ({
     inputField,
     isTxnPending,
   } = usePoolState()
-  const { setToken1, setAmountInToken1, setAmountInToken0, setInputField } =
-    usePoolDispatch()
+  const {
+    setToken1,
+    // setAmountInToken1,
+    setAmountInToken0,
+    // setInputField
+  } = usePoolDispatch()
 
   const pairExists = Boolean(poolId)
 
@@ -64,9 +68,10 @@ export const AmountInToken1 = ({
     rateOfToken0,
   ])
 
-  const setAmount = (amount: string) => {
-    setInputField('token1')
-    setAmountInToken1(amount)
+  const setAmount = (_amount: string) => {
+    return
+    // setInputField('token1')
+    // setAmountInToken1(amount)
   }
 
   return (
