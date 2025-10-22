@@ -259,21 +259,20 @@ export const AddLiquidityV2 = ({
               </LinkInternal>
             ) : (
               <>
-                <Collapsible open={doesNotExist} className="w-full">
-                  <div className="flex flex-col gap-4">
-                    <p className="text-base font-medium text-slate-900 dark:text-pink-100">
-                      Set Price
-                    </p>
-                    {token0 && token1 && (
-                      <InitialPrice
-                        token0={token0}
-                        token1={token1}
-                        input0={input0}
-                        input1={input1}
-                      />
-                    )}
-                  </div>
-                </Collapsible>
+                {/* <Collapsible open={doesNotExist} className="w-full">
+									<div className="flex flex-col gap-4">
+										<p className="text-base font-medium text-slate-900 dark:text-pink-100">Set Price</p>
+										{token0 && token1 && (
+											<InitialPrice
+												token0={token0}
+												token1={token1}
+												input0={input0}
+												input1={input1}
+												setMarketPrice={setMarketPrice}
+											/>
+										)}
+									</div>
+								</Collapsible> */}
                 <div>
                   {hideTokenSelectors ? null : (
                     <p className="pb-2 text-base font-medium text-slate-900 dark:text-pink-100">
@@ -606,6 +605,10 @@ interface AddLiquidityWidgetProps {
   setIndependendField: Dispatch<SetStateAction<number>>
   hideTokenSelectors?: boolean
   inputClassNames?: string
+  initialPrice?: {
+    token0Per1: string | undefined
+    token1Per0: string | undefined
+  }
 }
 
 export const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
@@ -624,6 +627,7 @@ export const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
   setIndependendField,
   hideTokenSelectors,
   inputClassNames,
+  initialPrice,
 }) => {
   const [slippagePercent] = useSlippageTolerance(
     SlippageToleranceStorageKey.AddLiquidity,
@@ -645,10 +649,20 @@ export const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
     (value: string) => {
       setIndependendField(0)
       if (poolState === SushiSwapV2PoolState.NOT_EXISTS || noLiquidity) {
-        setTypedAmounts((prev) => ({
-          ...prev,
-          input0: value,
-        }))
+        if (initialPrice?.token1Per0 && token1) {
+          const val = Amount.tryFromHuman(
+            token1,
+            initialPrice?.token1Per0,
+          )?.mulHuman(value ?? '0')
+
+          setTypedAmounts((prev) => ({
+            ...prev,
+            input0: value,
+            input1: val ? val.toString() : '',
+          }))
+        } else {
+          setTypedAmounts({ input0: '', input1: '' })
+        }
       } else if (token0 && pool) {
         setTypedAmounts({
           input0: value,
@@ -663,6 +677,8 @@ export const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
       token0,
       setIndependendField,
       setTypedAmounts,
+      initialPrice,
+      token1,
     ],
   )
 
@@ -670,10 +686,19 @@ export const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
     (value: string) => {
       setIndependendField(1)
       if (poolState === SushiSwapV2PoolState.NOT_EXISTS || noLiquidity) {
-        setTypedAmounts((prev) => ({
-          ...prev,
-          input1: value,
-        }))
+        if (initialPrice?.token0Per1 && token0) {
+          const val = Amount.tryFromHuman(
+            token0,
+            initialPrice?.token0Per1,
+          )?.mulHuman(value ?? '0')
+          setTypedAmounts((prev) => ({
+            ...prev,
+            input0: val ? val.toString() : '',
+            input1: value,
+          }))
+        } else {
+          setTypedAmounts({ input0: '', input1: '' })
+        }
       } else if (token1 && pool) {
         setTypedAmounts({
           input0: '',
@@ -688,11 +713,20 @@ export const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
       token1,
       setIndependendField,
       setTypedAmounts,
+      initialPrice,
+      token0,
     ],
   )
 
   useEffect(() => {
-    if (pool?.reserve0.gt(ZERO) && pool.reserve1.gt(ZERO) && token0 && token1) {
+    if (
+      pool?.reserve0.gt(ZERO) &&
+      pool.reserve1.gt(ZERO) &&
+      token0 &&
+      token1 &&
+      input0 !== '' &&
+      input1 !== ''
+    ) {
       if (independendField === 0) {
         const parsedAmount = Amount.tryFromHuman(token0, input0)
         setTypedAmounts({

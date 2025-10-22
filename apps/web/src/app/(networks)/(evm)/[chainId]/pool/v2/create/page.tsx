@@ -58,6 +58,16 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
     `add-liquidity-v2-token1-${chainId}`,
     null,
   )
+  const [{ input0, input1 }, setTypedAmounts] = useState<{
+    input0: string
+    input1: string
+  }>({ input0: '', input1: '' })
+  const [initialPrice, _setInitialPrice] = useState<{
+    token0Per1: string | undefined
+    token1Per0: string | undefined
+  }>({ token0Per1: undefined, token1Per0: undefined })
+
+  const [independendField, setIndependendField] = useState(0)
 
   useEffect(() => {
     if (token0V2) {
@@ -87,13 +97,6 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
       setToken1(_token)
     }
   }, [token0V2, token1V2, chainId])
-
-  const [{ input0, input1 }, setTypedAmounts] = useState<{
-    input0: string
-    input1: string
-  }>({ input0: '', input1: '' })
-
-  const [independendField, setIndependendField] = useState(0)
 
   const _setToken0 = useCallback(
     (token: EvmCurrency | undefined): void => {
@@ -141,20 +144,38 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
 
   const estimatedValue = useMemo(() => {
     if (!token0 || !token1) return '0'
-    const amount0 = Amount.tryFromHuman(token0, input0)?.amount
-    const amount1 = Amount.tryFromHuman(token1, input1)?.amount
+    const amount0 = Amount.tryFromHuman(token0, input0)
+    const amount1 = Amount.tryFromHuman(token1, input1)
     if (!amount0 || !amount1) return '0'
-    const value0 = price0
-      ? (price0 * Number(amount0)) / 10 ** token0.decimals
-      : 0
-    const value1 = price1
-      ? (price1 * Number(amount1)) / 10 ** token1.decimals
-      : 0
+    const value0 = amount0.mulHuman(price0 ?? 0)
+    const value1 = amount1.mulHuman(price1 ?? 0)
 
-    return (
-      (Number.isNaN(value0) ? 0 : value0) + (Number.isNaN(value1) ? 0 : value1)
-    ).toFixed(2)
+    return value0.addHuman(value1.toString()).toSignificant(6)
   }, [input0, input1, token0, token1, price0, price1])
+
+  const setInitialPrice = useCallback(
+    ({
+      token0Per1,
+      token1Per0,
+    }: { token0Per1: string | undefined; token1Per0: string | undefined }) => {
+      _setInitialPrice({ token0Per1, token1Per0 })
+      if (input0 && token0 && token0Per1 && input1 && token1 && token1Per0) {
+        const amount0 = Amount.tryFromHuman(token0, token0Per1)?.toString()
+        const amount1 = Amount.tryFromHuman(token1, '1')?.toString()
+        if (amount0 && amount1) {
+          setTypedAmounts((prev) => ({
+            ...prev,
+            input0: amount0,
+            input1: amount1,
+          }))
+        }
+      } else {
+        setTypedAmounts({ input0: '', input1: '' })
+      }
+    },
+    [input0, token0, token1, input1],
+  )
+
   return (
     <div className={classNames('flex flex-col gap-4 pt-6')}>
       <Button
@@ -245,8 +266,8 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
                       <InitialPrice
                         token0={token0}
                         token1={token1}
-                        input0={input0}
-                        input1={input1}
+                        initialPrice={initialPrice}
+                        setInitialPrice={setInitialPrice}
                       />
                     </div>
                   </Collapsible>
@@ -290,6 +311,7 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
                       setIndependendField={setIndependendField}
                       hideTokenSelectors={true}
                       inputClassNames={'!bg-slate-50 dark:!bg-slate-800'}
+                      initialPrice={initialPrice}
                     />
                   )}
                 </div>

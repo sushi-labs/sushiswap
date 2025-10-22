@@ -233,6 +233,7 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
             token1.wrap(),
             current + (invertPrice ? -1 : 0) * TICK_SPACINGS[feeAmount],
           )
+          console.log(current, newLeftPrice.toString({ fixed: 18 }))
           onLeftRangeInput(newLeftPrice.toString({ fixed: 18 }))
           break
         }
@@ -689,7 +690,6 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
                 token1={token1!}
                 onStartPriceInput={onStartPriceInput}
                 startingPrice={startPriceTypedValue}
-                handleSwitchTokens={handleSwitchTokens}
               />
             </div>
           )}

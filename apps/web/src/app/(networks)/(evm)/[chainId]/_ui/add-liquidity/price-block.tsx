@@ -103,7 +103,7 @@ export const PriceBlock: FC<PriceBlockProps> = ({
 
   return (
     <Card
-      className="!bg-gray-100 dark:!bg-slate-900 shadow-none border-0"
+      className="!bg-gray-100 dark:!bg-slate-900 shadow-none border-0 !w-full"
       onBlur={handleOnBlur}
       onFocus={handleOnFocus}
     >

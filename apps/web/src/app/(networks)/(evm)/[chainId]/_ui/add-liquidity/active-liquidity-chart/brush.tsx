@@ -62,14 +62,16 @@ export const Brush = ({
 }) => {
   const brushRef = useRef<SVGGElement | null>(null)
   const brushBehavior = useRef<BrushBehavior<SVGGElement> | null>(null)
+  const brushExtentRef = useRef(brushExtent)
+  const brushInProgressRef = useRef(false)
 
   const [localBrushExtent, setLocalBrushExtent] = useState<
     [number, number] | null
   >(brushExtent)
+  const [brushInProgress, setBrushInProgress] = useState(false)
 
   const previousBrushExtent = usePrevious(brushExtent)
 
-  const [brushInProgress, setBrushInProgress] = useState(false)
   useEffect(() => {
     if (brushInProgress) {
       return
@@ -78,61 +80,84 @@ export const Brush = ({
   }, [brushExtent, brushInProgress])
 
   useEffect(() => {
-    if (!brushRef.current || brushInProgress) {
-      return
-    }
+    brushInProgressRef.current = brushInProgress
+  }, [brushInProgress])
+
+  useEffect(() => {
+    if (!brushRef.current || brushInProgressRef.current) return
 
     const normalizedExtent = normalizeExtent(brushExtent)
     const scaledExtent = toYScale(normalizedExtent, yScale)
 
-    brushBehavior.current = brushY<SVGGElement>()
+    // Create once if not already
+    if (!brushBehavior.current) {
+      brushBehavior.current = brushY<SVGGElement>()
+        .handleSize(30)
+        .on('brush', (event: D3BrushEvent<unknown>) => {
+          // Ignore programmatic moves (transitions/initialization)
+          if (!event.sourceEvent) return
+
+          const { selection } = event
+          // Only set when user actually brushes
+          setBrushInProgress(true)
+
+          if (!selection) {
+            setLocalBrushExtent(null)
+            return
+          }
+          const priceExtent = normalizeExtent(
+            toPriceExtent(selection as [number, number], yScale),
+          )
+          setLocalBrushExtent(priceExtent)
+        })
+        .on('end', (event: D3BrushEvent<unknown>) => {
+          const { selection, mode } = event
+
+          // For programmatic moves, skip mutating React state
+          const userEvent = !!event.sourceEvent
+
+          if (!selection) {
+            if (userEvent) setLocalBrushExtent(null)
+            if (userEvent) setBrushInProgress(false)
+            return
+          }
+
+          const priceExtent = normalizeExtent(
+            toPriceExtent(selection as [number, number], yScale),
+          )
+
+          // Only update external state when it actually changed AND was user-initiated
+          if (userEvent && !compare(normalizedExtent, priceExtent, yScale)) {
+            setBrushExtent(priceExtent, mode)
+          }
+
+          if (userEvent) {
+            setLocalBrushExtent(priceExtent)
+            setBrushInProgress(false)
+          }
+        })
+
+      // Attach once
+      brushBehavior.current(select(brushRef.current))
+    }
+
+    // Always update extent + filter on changes
+    brushBehavior.current
       .extent([
         [0, BRUSH_EXTENT_MARGIN_PX],
         [width, height - BRUSH_EXTENT_MARGIN_PX],
       ])
-      .handleSize(30)
-      .filter(() => interactive)
-      .filter((event) => {
-        const target = event.target as SVGElement
+      .filter((evt) => {
+        // interactive can flip; this closure sees fresh value
+        if (!interactive) return false
+        const t = (evt.target as SVGElement) || null
         return (
-          target.classList.contains('selection') ||
-          target.classList.contains('handle')
+          !!t &&
+          (t.classList.contains('selection') || t.classList.contains('handle'))
         )
       })
-      .on('brush', (event: D3BrushEvent<unknown>) => {
-        const { selection } = event
-        setBrushInProgress(true)
 
-        if (!selection) {
-          setLocalBrushExtent(null)
-          return
-        }
-
-        const priceExtent = normalizeExtent(
-          toPriceExtent(selection as [number, number], yScale),
-        )
-        setLocalBrushExtent(priceExtent)
-      })
-      .on('end', (event: D3BrushEvent<unknown>) => {
-        const { selection, mode } = event
-
-        if (!selection) {
-          setLocalBrushExtent(null)
-          return
-        }
-
-        const priceExtent = normalizeExtent(
-          toPriceExtent(selection as [number, number], yScale),
-        )
-        if (!compare(normalizedExtent, priceExtent, yScale)) {
-          setBrushExtent(priceExtent, mode)
-        }
-        setLocalBrushExtent(priceExtent)
-        setBrushInProgress(false)
-      })
-
-    brushBehavior.current(select(brushRef.current))
-
+    // Sync selection from props (programmatic move) without triggering state
     if (
       previousBrushExtent &&
       compare(normalizedExtent, normalizeExtent(previousBrushExtent), yScale)
@@ -142,10 +167,10 @@ export const Brush = ({
         .call(brushBehavior.current.move as any, scaledExtent)
     }
 
-    select(brushRef.current).selectAll('.overlay').attr('cursor', 'default')
-
-    select(brushRef.current)
-      .selectAll('.selection')
+    // Styling tweaks (safe)
+    const g = select(brushRef.current)
+    g.selectAll('.overlay').attr('cursor', 'default')
+    g.selectAll('.selection')
       .attr('stroke', 'none')
       .attr('fill-opacity', '0.1')
       .attr('fill', `url(#${id}-gradient-selection)`)
@@ -159,35 +184,53 @@ export const Brush = ({
     yScale,
     width,
     setBrushExtent,
-    brushInProgress,
   ])
 
   useEffect(() => {
     if (!brushRef.current || !brushBehavior.current) {
       return
     }
-
+    if (compare(brushExtentRef.current, brushExtent, yScale)) {
+      return
+    }
+    brushExtentRef.current = brushExtent
     brushBehavior.current.move(
       select(brushRef.current) as any,
       normalizeExtent(toYScale(brushExtent as [number, number], yScale)),
     )
   }, [brushExtent, yScale])
 
-  const normalizedBrushExtent = normalizeExtent(localBrushExtent ?? brushExtent)
-  const flipNorthHandle =
-    yScale(normalizedBrushExtent[1]) < FLIP_HANDLE_THRESHOLD_PX
-  const flipSouthHandle =
-    yScale(normalizedBrushExtent[0]) > height - FLIP_HANDLE_THRESHOLD_PX
+  const normalizedBrushExtent = useMemo(
+    () => normalizeExtent(localBrushExtent ?? brushExtent),
+    [localBrushExtent, brushExtent],
+  )
+  const flipNorthHandle = useMemo(
+    () => yScale(normalizedBrushExtent[1]) < FLIP_HANDLE_THRESHOLD_PX,
+    [normalizedBrushExtent, yScale],
+  )
+  const flipSouthHandle = useMemo(
+    () => yScale(normalizedBrushExtent[0]) > height - FLIP_HANDLE_THRESHOLD_PX,
+    [normalizedBrushExtent, yScale, height],
+  )
 
-  const southHandleInView =
-    yScale(normalizedBrushExtent[0]) >= 0 &&
-    yScale(normalizedBrushExtent[0]) <= height
-  const northHandleInView =
-    yScale(normalizedBrushExtent[1]) >= 0 &&
-    yScale(normalizedBrushExtent[1]) <= height
+  const southHandleInView = useMemo(
+    () =>
+      yScale(normalizedBrushExtent[0]) >= 0 &&
+      yScale(normalizedBrushExtent[0]) <= height,
+    [yScale, normalizedBrushExtent, height],
+  )
+  const northHandleInView = useMemo(
+    () =>
+      yScale(normalizedBrushExtent[1]) >= 0 &&
+      yScale(normalizedBrushExtent[1]) <= height,
+    [yScale, normalizedBrushExtent, height],
+  )
   const { theme } = useTheme()
-  const isDarkMode = theme === 'dark'
-  const color = isDarkMode ? '#3DB1FF' : '#4217FF'
+
+  const color = useMemo(
+    () => (theme === 'dark' ? '#3DB1FF' : '#4217FF'),
+    [theme],
+  )
 
   return useMemo(
     () => (
@@ -196,8 +239,8 @@ export const Brush = ({
           <linearGradient
             id={`${id}-gradient-selection`}
             x1="0%"
-            y1="100%"
-            x2="100%"
+            y1="0%"
+            x2="0%"
             y2="100%"
           >
             <stop stopColor={color} />
@@ -267,31 +310,6 @@ export const Brush = ({
                 </g>
               </g>
             ) : null}
-
-            {/* {showNorthArrow && (
-							<g transform="translate(18, 16) scale(1,-1)">
-								<OffScreenHandle color={color} />
-								<text
-									x={14}
-									y={-3}
-									fill={color}
-									fontSize={10}
-									alignmentBaseline="middle"
-									transform="scale(1,-1)">
-									Range out of view
-								</text>
-							</g>
-						)}
-						{showSouthArrow && (
-							<g transform={`translate(18, ${height - 16}) `}>
-								<OffScreenHandle color={color} />
-								{!showNorthArrow && (
-									<text x={14} y={5} fill={color} fontSize={10} alignmentBaseline="middle">
-										Range out of view
-									</text>
-								)}
-							</g>
-						)} */}
           </>
         )}
       </>

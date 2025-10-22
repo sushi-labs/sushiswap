@@ -246,6 +246,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             token1.wrap(),
             current + (invertPrice ? -1 : 0) * TICK_SPACINGS[feeAmount],
           )
+          console.log(current, newLeftPrice.toString({ fixed: 18 }))
           onLeftRangeInput(newLeftPrice.toString({ fixed: 18 }))
           break
         }
@@ -653,9 +654,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                     </span>
                     <div className="flex flex-grow gap-1 items-center justify-end">
                       {valueRatio
-                        ? `${(valueRatio[0] * 100).toFixed(0)}% : ${(
-                            valueRatio[1] * 100
-                          ).toFixed(0)}%`
+                        ? `${(valueRatio[0] * 100).toFixed(0)}% : ${(valueRatio[1] * 100).toFixed(0)}%`
                         : '-'}
                       {typeof weightLockedCurrencyBase === 'number' &&
                       isTokenWeightUnmatched ? (
@@ -670,9 +669,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                             </TooltipTrigger>
                             <TooltipContent className="w-80">
                               {`We failed to adjust the price range to your wanted
-                            token ratio (${(
-                              weightLockedCurrencyBase * 100
-                            ).toFixed(0)}%:
+                            token ratio (${(weightLockedCurrencyBase * 100).toFixed(0)}%:
                             ${((1 - weightLockedCurrencyBase) * 100).toFixed(0)}%
                             ). Maybe because the price range
                             is too narrow or too wide.`}

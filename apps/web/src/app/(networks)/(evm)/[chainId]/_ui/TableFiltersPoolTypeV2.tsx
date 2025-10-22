@@ -22,11 +22,9 @@ export const TableFiltersPoolTypeV2: FC = () => {
       // @TODO: remove this once we have a proper way to handle this
       let _newValues: Exclude<SushiSwapProtocol, 'BLADE'>[] = []
 
-      if (protocols.includes(item) && protocols.length === 1) {
-        _newValues = POOL_TYPES
-      } else {
-        _newValues = [item]
-      }
+      _newValues = protocols.includes(item)
+        ? protocols.filter((protocol) => protocol !== item)
+        : [...protocols, item]
 
       setFilters((prev) => ({ ...prev, protocols: _newValues }))
     },
@@ -41,9 +39,8 @@ export const TableFiltersPoolTypeV2: FC = () => {
         }}
         variant={'outline'}
         className={classNames(
-          'rounded-xl border-dashed  hover:!bg-[#F338C31A] hover:text-[#F338C3] hover:dark:!bg-[#F338C31A]',
-          protocols.includes(SushiSwapProtocol.SUSHISWAP_V2) &&
-            protocols.length === 1
+          'rounded-xl border-dashed  hover:!bg-[#F338C31A] hover:!text-[#F338C3] hover:dark:!bg-[#F338C31A]',
+          protocols.includes(SushiSwapProtocol.SUSHISWAP_V2)
             ? '!bg-[#F338C31A] dark:!bg-[#F338C31A] !border-[#F338C3] dark:!border-[#F338C3] text-[#F338C3] !border-solid'
             : '!bg-slate-200 dark:!bg-slate-750',
         )}
@@ -57,9 +54,8 @@ export const TableFiltersPoolTypeV2: FC = () => {
         }}
         variant={'outline'}
         className={classNames(
-          'rounded-xl border-dashed  hover:!bg-[#3B7EF61A] hover:text-[#3B7EF6] hover:dark:!bg-[#3B7EF61A]',
-          protocols.includes(SushiSwapProtocol.SUSHISWAP_V3) &&
-            protocols.length === 1
+          'rounded-xl border-dashed  hover:!bg-[#3B7EF61A] hover:!text-[#3B7EF6] hover:dark:!bg-[#3B7EF61A]',
+          protocols.includes(SushiSwapProtocol.SUSHISWAP_V3)
             ? '!bg-[#3B7EF61A] dark:!bg-[#3B7EF61A] !border-[#3B7EF6] dark:!border-[#3B7EF6] text-[#3B7EF6] !border-solid'
             : '!bg-slate-200 dark:!bg-slate-750',
         )}
