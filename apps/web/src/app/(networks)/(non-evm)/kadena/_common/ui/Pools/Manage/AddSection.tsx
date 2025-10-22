@@ -49,7 +49,7 @@ export const AddSection = () => {
       </section>
       <div className="flex flex-col w-full mt-4">
         <Button size="xl" disabled>
-          Add Liquidity Is Currently Disabled
+          Adding Liquidity Is Currently Disabled
         </Button>
         {/* <ReviewAddDialog size="xl" fullWidth /> */}
       </div>
