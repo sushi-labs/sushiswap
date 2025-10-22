@@ -1,9 +1,9 @@
 'use client'
-import { FormSection } from '@sushiswap/ui'
+import { Button, FormSection } from '@sushiswap/ui'
 import { AmountInToken0 } from './AmountInToken0'
 import { AmountInToken1 } from './AmountInToken1'
 import { Plus } from './Plus'
-import { ReviewAddDialog } from './ReviewAddDialog'
+// import { ReviewAddDialog } from './ReviewAddDialog'
 
 export const DepositForm = () => {
   return (
@@ -11,13 +11,16 @@ export const DepositForm = () => {
       title="Deposit"
       description="Select the amount of tokens you want to deposit"
     >
-      <section className="relative flex flex-col w-full gap-4">
-        <AmountInToken0 />
+      <section className="relative flex flex-col w-full gap-4 opacity-40 pointer-events-none">
+        <AmountInToken0 disabled />
         <Plus />
-        <AmountInToken1 />
+        <AmountInToken1 disabled />
       </section>
       <div className="flex flex-col w-full">
-        <ReviewAddDialog size="xl" fullWidth />
+        <Button size="xl" disabled>
+          Pool Creation Is Currently Disabled
+        </Button>
+        {/* <ReviewAddDialog size="xl" fullWidth /> */}
       </div>
     </FormSection>
   )
