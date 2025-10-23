@@ -37,7 +37,7 @@ export const useConcentratedLiquidityPosition = ({
         return position.fee === feeAmount && position.address === poolAddress
       })
 
-      return position
+      return position ?? null
     },
     refetchInterval: ms('10m'),
     enabled: Boolean(account && chainId && feeAmount && poolAddress && enabled),

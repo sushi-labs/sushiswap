@@ -1,8 +1,12 @@
-import { Button } from '@sushiswap/ui'
+import type { V3PoolBuckets } from '@sushiswap/graph-client/data-api'
+import { Button, SkeletonBox } from '@sushiswap/ui'
 import { type ScaleLinear, max as getMax, scaleLinear, scaleTime } from 'd3'
 import ms from 'ms'
 import { useTheme } from 'next-themes'
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { usePoolBuckets } from 'src/lib/hooks/api/use-pool-buckets'
+import type { SushiSwapV3ChainId } from 'sushi/evm'
+import { type Address, zeroAddress } from 'viem'
 import { AxisBottomTime } from './axis-bottom-time'
 import { AxisRight } from './axis-right'
 import { Brush } from './brush'
@@ -21,10 +25,9 @@ const toClampedYExtent = (
   const [, d1] = yScale.domain()
   const low = extent[0]
   let high = extent[1]
-  //needed for when using single sided top, the linear gradient wont show if that high value is used
-  //add 500 just to get the brush handle to not show
-  if (high >= 3.384921318552238e38) {
-    high = d1 + 500
+  //needed for when using single sided top or full range, the linear gradient wont show if that high value is used
+  if (high - d1 >= 3.384921318552238e10) {
+    high = d1 * 3
   }
 
   return [low, high] as [number, number]
@@ -36,36 +39,67 @@ const TIME_OPTIONS = [
   {
     label: '1d',
     value: '1d',
-    data: new Array(12).fill(null).map((_, idx) => ({
-      timestamp: Date.now() + idx * ms('1h'),
-      price: Math.random() * 1000 + idx * 10,
-    })),
   },
   {
     label: '7d',
     value: '7d',
-    data: new Array(24).fill(null).map((_, idx) => ({
-      timestamp: Date.now() + idx * ms('1h'),
-      price: Math.random() * 1000 + idx * 10,
-    })),
   },
   {
     label: '30d',
     value: '30d',
-    data: new Array(24 * 2).fill(null).map((_, idx) => ({
-      timestamp: Date.now() + idx * ms('1h'),
-      price: Math.random() * 1000 + idx * 10,
-    })),
   },
   {
     label: 'All',
     value: 'all',
-    data: new Array(24 * 5).fill(null).map((_, idx) => ({
-      timestamp: Date.now() + idx * ms('1h'),
-      price: Math.random() * 1000 + idx * 10,
-    })),
   },
 ] as const
+
+type TimeOptions = (typeof TIME_OPTIONS)[number]['value']
+
+const chartPeriods: Record<TimeOptions, number> = {
+  '1d': ms('1d'),
+  '7d': ms('7d'),
+  '30d': ms('30d'),
+  all: ms('5d'),
+}
+
+const formatBucketData = (
+  bucketData: V3PoolBuckets,
+  period: TimeOptions,
+  isSorted: boolean,
+) => {
+  const now = Date.now()
+  switch (period) {
+    case '1d':
+      return bucketData.hourBuckets
+        .filter((bucket) => bucket.date * 1000 >= now - chartPeriods[period])
+        .map((bucket) => ({
+          timestamp: bucket.date,
+          price: isSorted ? bucket.token0Price : bucket.token1Price,
+        }))
+    case '7d':
+      return bucketData.dayBuckets
+        .filter((bucket) => bucket.date * 1000 >= now - chartPeriods[period])
+        .map((bucket) => ({
+          timestamp: bucket.date,
+          price: isSorted ? bucket.token0Price : bucket.token1Price,
+        }))
+    case '30d':
+      return bucketData.dayBuckets
+        .filter((bucket) => bucket.date * 1000 >= now - chartPeriods[period])
+        .map((bucket) => ({
+          timestamp: bucket.date,
+          price: isSorted ? bucket.token0Price : bucket.token1Price,
+        }))
+    case 'all':
+      return bucketData.dayBuckets.map((bucket) => ({
+        timestamp: bucket.date,
+        price: isSorted ? bucket.token0Price : bucket.token1Price,
+      }))
+    default:
+      return []
+  }
+}
 
 function findClosestElementBinarySearch(data: ChartEntry[], target?: number) {
   let left = 0
@@ -114,6 +148,9 @@ export function ActiveLiquidityChart({
   disableRightAxis,
   disableBrushInteraction,
   tokenToggle,
+  poolAddress,
+  chainId,
+  isSorted,
 }: {
   id?: string
   data: {
@@ -137,12 +174,24 @@ export function ActiveLiquidityChart({
     mode: string | undefined,
   ) => void
   tokenToggle?: ReactNode
+  poolAddress: Address | undefined
+  chainId: SushiSwapV3ChainId
+  isSorted: boolean
 }) {
   const svgRef = useRef<SVGSVGElement | null>(null)
   const [hoverY, setHoverY] = useState<number>()
   const [_showDiffIndicators, setShowDiffIndicators] = useState(false)
   const [timeSelector, setTimeSelector] =
     useState<(typeof TIME_OPTIONS)[number]['value']>('1d')
+  const {
+    data: bucketData,
+    isLoading,
+    isError,
+  } = usePoolBuckets({
+    chainId: chainId,
+    poolAddress: poolAddress ?? zeroAddress,
+    protocol: 'SUSHISWAP_V3',
+  })
 
   const { xScale, yScale } = useMemo(() => {
     const activeEntries =
@@ -193,18 +242,18 @@ export function ActiveLiquidityChart({
     }
   }, [brushDomain, onBrushDomainChange, yScale])
 
-  //@dev @todo use v3bucket data here
   const sparklineData = useMemo(() => {
-    return (
-      TIME_OPTIONS.find((option) => option.value === timeSelector)?.data ?? []
-    )
-  }, [timeSelector])
+    if (!bucketData) {
+      return []
+    }
+    return formatBucketData(bucketData, timeSelector, isSorted)
+  }, [timeSelector, bucketData, isSorted])
 
   const sparkLineXScale = useMemo(() => {
     return scaleTime()
       .domain([
-        new Date(sparklineData[0].timestamp),
-        new Date(sparklineData[sparklineData.length - 1].timestamp),
+        new Date(sparklineData?.[0]?.timestamp) ?? 0,
+        new Date(sparklineData?.[sparklineData?.length - 1]?.timestamp) ?? 0,
       ])
       .range([0, width * 0.875])
   }, [sparklineData, width])
@@ -229,6 +278,16 @@ export function ActiveLiquidityChart({
           ))}
         </div>
       </div>
+      {isLoading ? (
+        <SkeletonBox className="w-full h-[75%] absolute left-0 bottom-0" />
+      ) : null}
+      {isError ? (
+        <div className="w-full h-[75%] absolute flex items-center justify-center left-0 bottom-0">
+          <p className="text-sm text-red font-medium">
+            An error occurred fetching price data
+          </p>
+        </div>
+      ) : null}
       <svg
         ref={svgRef}
         width="106%"

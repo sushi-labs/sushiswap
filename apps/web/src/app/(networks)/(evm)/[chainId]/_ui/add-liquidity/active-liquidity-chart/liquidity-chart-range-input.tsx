@@ -7,8 +7,10 @@ import type { Price } from 'sushi'
 import {
   type EvmCurrency,
   type EvmToken,
+  SUSHISWAP_V3_FACTORY_ADDRESS,
   type SushiSwapV3ChainId,
   type SushiSwapV3FeeAmount,
+  computeSushiSwapV3PoolAddress,
   getPriceRangeWithTokenRatio,
 } from 'sushi/evm'
 import { ActiveLiquidityChart } from './active-liquidity-chart'
@@ -189,6 +191,19 @@ export const LiquidityChartRangeInput = ({
     [price, weightLockedCurrencyBase],
   )
 
+  const poolAddress = useMemo(
+    () =>
+      currencyA && currencyB && feeAmount && chainId
+        ? computeSushiSwapV3PoolAddress({
+            factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
+            tokenA: currencyA.wrap(),
+            tokenB: currencyB.wrap(),
+            fee: feeAmount,
+          })
+        : undefined,
+    [chainId, feeAmount, currencyA, currencyB],
+  )
+
   return (
     <div className="grid auto-rows-auto gap-3 min-h-[300px] overflow-hidden">
       {isUninitialized ? (
@@ -265,6 +280,9 @@ export const LiquidityChartRangeInput = ({
               }
               onBrushDomainChangeEnded(domain, mode)
             }}
+            poolAddress={poolAddress}
+            chainId={chainId}
+            isSorted={isSorted === undefined ? true : isSorted}
           />
         </div>
       )}
