@@ -45,6 +45,7 @@ interface UseTransactionsV2Opts {
   refetchInterval?: number
   first: number
   skip?: number
+  user?: Address
 }
 
 export type TransactionBlade = {
@@ -82,7 +83,11 @@ function useTransactionsBlade(
 
       switch (opts.type) {
         case TransactionType.Burn: {
-          const burns = await getBladeBurns({ address: poolAddress, chainId })
+          const burns = await getBladeBurns({
+            address: poolAddress,
+            chainId,
+            user: opts?.user,
+          })
           return burns.map(
             (burn): TransactionBlade => ({
               chainId,
@@ -98,7 +103,11 @@ function useTransactionsBlade(
         }
 
         case TransactionType.Mint: {
-          const mints = await getBladeMints({ address: poolAddress, chainId })
+          const mints = await getBladeMints({
+            address: poolAddress,
+            chainId,
+            user: opts?.user,
+          })
           return mints.map(
             (mint): TransactionBlade => ({
               chainId,
@@ -114,7 +123,11 @@ function useTransactionsBlade(
         }
 
         default: {
-          const swaps = await getBladeSwaps({ address: poolAddress, chainId })
+          const swaps = await getBladeSwaps({
+            address: poolAddress,
+            chainId,
+            user: opts?.user,
+          })
           return swaps.map((swap): TransactionBlade => {
             return {
               chainId,
