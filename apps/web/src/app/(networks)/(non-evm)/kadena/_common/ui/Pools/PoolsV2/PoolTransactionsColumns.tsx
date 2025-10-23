@@ -71,17 +71,17 @@ export function createAmountColumn({
 
       //SWAP
       if (row.original.transactionType === 'SWAP') {
-        if (value === '0' && accessorKey === 'amount0In') {
+        if (value.toString() === '0' && accessorKey === 'amount0In') {
           tokenSymbol = token1Symbol
           value = row.original.amount1In
-        } else if (accessorKey === 'amount0In' && value !== '0') {
+        } else if (accessorKey === 'amount0In' && value.toString() !== '0') {
           tokenSymbol = token0Symbol
         }
 
-        if (value === '0' && accessorKey === 'amount1Out') {
+        if (value.toString() === '0' && accessorKey === 'amount1Out') {
           tokenSymbol = token0Symbol
           value = row.original.amount0Out
-        } else if (accessorKey === 'amount1Out' && value !== '0') {
+        } else if (accessorKey === 'amount1Out' && value.toString() !== '0') {
           tokenSymbol = token1Symbol
         }
       }

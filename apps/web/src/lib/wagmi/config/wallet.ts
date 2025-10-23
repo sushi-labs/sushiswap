@@ -1,4 +1,4 @@
-import { all as portoChains } from 'porto/Chains'
+import { all as portoChains } from 'porto/core/Chains'
 import { EvmChainId, isEvmChainId } from 'sushi/evm'
 
 const SUPPORTED_CHAIN_IDS_BY_WALLET: Record<string, EvmChainId[]> = {

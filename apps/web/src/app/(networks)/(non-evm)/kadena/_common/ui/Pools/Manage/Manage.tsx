@@ -15,7 +15,7 @@ import { AddSection } from './AddSection'
 import { RemoveSection } from './RemoveSection'
 
 export const Manage = () => {
-  const [tab, setTab] = useState<string>('add')
+  const [tab, setTab] = useState<string>('remove')
 
   return (
     <Card>

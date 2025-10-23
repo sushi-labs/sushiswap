@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from '@sushiswap/ui'
 import { ChartIcon } from '@sushiswap/ui/icons/Chart'
-import type { ChartingLibraryWidgetOptions } from 'public/static/charting_library/charting_library'
+import type { ChartingLibraryWidgetOptions } from 'public/trading_view/charting_library/charting_library'
 import { Chart } from './chart'
 import { ChartHeader } from './chart-header'
 
