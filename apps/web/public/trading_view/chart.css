@@ -99,10 +99,9 @@ div[data-section-name="extendLeftTradingLine"] {
 
   .scrollTop-Z4M3tWHb,
   .scrollBot-Z4M3tWHb {
-    background-color: rgba(66, 23, 255, .1);
+    background-color: rgba(66, 23, 255, 0.1);
     color: black;
   }
-  
 }
 
 .theme-dark:root {
@@ -131,11 +130,10 @@ div[data-section-name="extendLeftTradingLine"] {
 
   .scrollTop-Z4M3tWHb,
   .scrollBot-Z4M3tWHb {
-    background-color: rgba(61, 177, 255, .1);
+    background-color: rgba(61, 177, 255, 0.1);
     color: white;
   }
 }
-
 
 /* Default (light mode) */
 .common-tooltip__body-EJBD96zX {
