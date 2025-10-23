@@ -51,6 +51,11 @@ type State = {
   setToken1(currency: EvmCurrency): void
   setFeeAmount(feeAmount: SushiSwapV3FeeAmount): void
   switchTokens(): void
+  initializeTokens(
+    fromCurrency: EvmCurrency,
+    toCurrency: EvmCurrency,
+    feeAmount: SushiSwapV3FeeAmount,
+  ): void
 }
 
 export const ConcentratedLiquidityUrlStateContext = createContext<State>(
@@ -141,6 +146,26 @@ export const ConcentratedLiquidityURLStateProvider: FC<
       token1 = undefined
     }
 
+    const initializeTokens = (
+      fromCurrency: EvmCurrency,
+      toCurrency: EvmCurrency,
+      feeAmount: SushiSwapV3FeeAmount,
+    ) => {
+      const _searchParams = new URLSearchParams(
+        Array.from(searchParams.entries()),
+      )
+      _searchParams.set(
+        'fromCurrency',
+        fromCurrency.type === 'native' ? 'NATIVE' : fromCurrency.wrap().address,
+      )
+      _searchParams.set(
+        'toCurrency',
+        toCurrency.type === 'native' ? 'NATIVE' : toCurrency.wrap().address,
+      )
+      _searchParams.set('feeAmount', feeAmount.toString())
+      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
+    }
+
     const setToken0 = (currency: EvmCurrency) => {
       const same = currency.wrap().address === token1?.wrap().address
       const _fromCurrency =
@@ -206,6 +231,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<
       setToken1,
       setFeeAmount,
       switchTokens,
+      initializeTokens,
     }
   }, [
     _chainId,

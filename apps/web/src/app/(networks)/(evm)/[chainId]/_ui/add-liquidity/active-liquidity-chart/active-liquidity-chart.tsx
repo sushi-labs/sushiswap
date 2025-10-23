@@ -23,7 +23,7 @@ const toClampedYExtent = (
   let high = extent[1]
   //needed for when using single sided top, the linear gradient wont show if that high value is used
   //add 500 just to get the brush handle to not show
-  if (high === 3.384921318552238e38) {
+  if (high >= 3.384921318552238e38) {
     high = d1 + 500
   }
 
@@ -189,7 +189,6 @@ export function ActiveLiquidityChart({
       const [min, max] = yScale.domain()
       const lowerBound = min + (max - min) * 0.2
       const upperBound = min + (max - min) * 0.8
-      console.log({ lowerBound, upperBound })
       onBrushDomainChange([lowerBound, upperBound], undefined)
     }
   }, [brushDomain, onBrushDomainChange, yScale])
