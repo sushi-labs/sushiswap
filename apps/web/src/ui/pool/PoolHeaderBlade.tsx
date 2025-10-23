@@ -12,16 +12,9 @@ import {
 } from '@sushiswap/ui'
 import { CurrencyFiatIcon } from '@sushiswap/ui/icons/CurrencyFiatIcon'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { USDIcon } from '@sushiswap/ui/icons/USD'
-import React, { type FC, useMemo, useState } from 'react'
+import React, { type FC, useMemo } from 'react'
 import { getPoolTokensGrouped } from 'src/lib/pool/blade'
-import {
-  type EvmAddress,
-  EvmToken,
-  SushiSwapProtocol,
-  getEvmChainById,
-  unwrapEvmToken,
-} from 'sushi/evm'
+import { type EvmAddress, SushiSwapProtocol, getEvmChainById } from 'sushi/evm'
 import { AddLiquidityDialog } from '~evm/[chainId]/_ui/add-liquidity/add-liquidity-dialog'
 
 type PoolHeaderBlade = {
@@ -84,7 +77,7 @@ export const PoolHeaderBlade: FC<PoolHeaderBlade> = ({
                 className={typographyVariants({
                   variant: 'h1',
                   className:
-                    'md:!text2-xl md:!text-4xl !font-bold text-gray-900 dark:text-slate-50 truncate overflow-x-auto',
+                    'md:!text2-xl md:!text-4xl !font-semibold text-gray-900 dark:text-slate-50 truncate overflow-x-auto',
                 })}
               >
                 <LinkExternal

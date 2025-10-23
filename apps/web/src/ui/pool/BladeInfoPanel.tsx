@@ -43,8 +43,8 @@ const TABS: {
     title: 'MEV-Proof',
     heading: 'MEV-Proof',
     description:
-      'Blade’s novel Formula Market Maker (FMM) design uses token ratios in pools and decentralized price oracles to balance assets instead of a constant function model, eliminating arbitrage trading to align pool prices with market prices, providing firm price quotes resistant to MEV, and ensuring an MEV-proof system.',
-    cta: 'Learn more about Blade’s Formula Market Maker Design',
+      "Blade's novel Formula Market Maker (FMM) design uses token ratios in pools and decentralized price oracles to balance assets instead of a constant function model, eliminating arbitrage trading to align pool prices with market prices, providing firm price quotes resistant to MEV, and ensuring an MEV-proof system.",
+    cta: "Learn more about Blade's Formula Market Maker Design",
     href: '#',
   },
 ]
@@ -60,22 +60,22 @@ export const BladeInfoPanel = () => {
             <TabsTrigger
               key={tab.key}
               value={tab.key}
-              className="
-        group w-full font-semibold !border-none text-muted-foreground
-        data-[state=active]:font-medium
-        data-[state=active]:!bg-[#4217FF14]
-        {isDarkMode ? 'dark:data-[state=active]:!bg-[#3DB1FF14]' : ''}
-        data-[state=active]:text-blue
-        dark:data-[state=active]:text-skyblue
-      "
+              className={classNames(
+                'group w-full font-semibold !border-none text-muted-foreground',
+                'data-[state=active]:font-medium',
+                'data-[state=active]:!bg-[#4217FF14]',
+                isDarkMode && 'dark:data-[state=active]:!bg-[#3DB1FF14]',
+                'data-[state=active]:text-blue',
+                'dark:data-[state=active]:text-skyblue',
+              )}
             >
               <div
-                className="
-          flex justify-center items-center w-5 rounded-full aspect-1 mr-2
-          bg-muted-foreground
-          group-data-[state=active]:bg-blue
-          dark:group-data-[state=active]:bg-skyblue
-        "
+                className={classNames(
+                  'flex justify-center items-center w-5 rounded-full aspect-1 mr-2',
+                  'bg-muted-foreground',
+                  'group-data-[state=active]:bg-blue',
+                  'dark:group-data-[state=active]:bg-skyblue',
+                )}
               >
                 <CheckIcon className="w-[12px] h-[12px] text-slate-50 dark:text-slate-800" />
               </div>
@@ -91,7 +91,7 @@ export const BladeInfoPanel = () => {
             <div className="flex flex-col gap-10 items-center w-full max-w-3xl text-center">
               <div className="flex flex-col gap-6 w-full max-w-full">
                 <div className="flex gap-2 justify-center items-center">
-                  <div className="flex justify-center items-center w-6 rounded-full bg-[#1DA67D] dark:bg-skyblue aspect-1">
+                  <div className="flex justify-center items-center w-6 rounded-full bg-green-500 aspect-1">
                     <CheckIcon className="w-[14px] h-[14px] text-slate-50 dark:text-slate-800" />
                   </div>
                   <h2 className="flex gap-2 justify-center items-center text-xl font-bold md:text-2xl text-slate-900 dark:text-slate-50">

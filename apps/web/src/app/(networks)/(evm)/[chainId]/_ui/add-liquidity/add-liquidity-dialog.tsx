@@ -47,7 +47,7 @@ export const AddLiquidityDialog = ({
 
   const content = useMemo(() => {
     switch (type) {
-      case 'SUSHISWAP_V2':
+      case SushiSwapProtocol.SUSHISWAP_V2:
         return (
           <AddLiquidityV2
             hideTokenSelectors={hideTokenSelectors}
@@ -57,7 +57,7 @@ export const AddLiquidityDialog = ({
           />
         )
 
-      case 'SUSHISWAP_V3':
+      case SushiSwapProtocol.SUSHISWAP_V3:
         return (
           <AddLiquidityV3
             hideTokenSelectors={hideTokenSelectors}
@@ -67,7 +67,7 @@ export const AddLiquidityDialog = ({
             chainId={chainId}
           />
         )
-      case 'BLADE':
+      case SushiSwapProtocol.BLADE:
         if (!bladePool) {
           return null
         }
@@ -100,6 +100,7 @@ export const AddLiquidityDialog = ({
         aria-describedby={undefined}
         className={classNames(
           '!px-3 border-t border-[#EBEBEB] rounded-t-none md:rounded-t-2xl !bg-slate-50 dark:border-[#FFFFFF14] dark:!bg-slate-800 w-full !max-w-full md:!max-w-[640px] max-h-[100dvh] overflow-y-auto hide-scrollbar',
+          type === SushiSwapProtocol.BLADE && 'md:!max-w-[480px]',
         )}
       >
         <DialogPrimitive.Close
