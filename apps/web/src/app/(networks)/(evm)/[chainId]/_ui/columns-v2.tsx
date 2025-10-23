@@ -627,13 +627,18 @@ export const APR_SPARKLINE_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   ),
 
   cell: (props) => {
+    const sparklineData = useMemo(() => {
+      if (props.row.original.feeApr1wSparkLine.every((val) => val === 0)) {
+        return [1, 1]
+      }
+      if (props.row.original.feeApr1wSparkLine?.length > 0) {
+        return props.row.original.feeApr1wSparkLine
+      }
+      return [1, 1]
+    }, [props.row.original.feeApr1wSparkLine])
     return (
       <div className="2xl:px-10">
-        <SparklineCell
-          data={props.row.original.feeApr1wSparkLine}
-          width={90}
-          height={20}
-        />
+        <SparklineCell data={sparklineData} width={90} height={20} />
       </div>
     )
   },
