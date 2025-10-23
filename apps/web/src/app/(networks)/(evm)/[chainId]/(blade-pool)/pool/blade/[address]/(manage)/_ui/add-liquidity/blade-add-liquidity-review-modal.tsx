@@ -29,7 +29,6 @@ import { useBladeDepositRequest } from 'src/lib/pool/blade/useBladeDepositReques
 import { useBladeDepositTransaction } from 'src/lib/pool/blade/useBladeDepositTransaction'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
 import { Amount, formatUSD } from 'sushi'
 import { type BladeChainId, type EvmCurrency, getEvmChainById } from 'sushi/evm'
@@ -190,19 +189,68 @@ export const BladeAddLiquidityReviewModal: FC<
     [depositRequest.data, address, transactionMutation, validInputs],
   )
 
-  const estimatedValue = useMemo(() => {
+  const depositInputsWithValue = useMemo(() => {
+    return validInputs.flatMap((input) => {
+      const parsedAmount = Amount.tryFromHuman(input.token, input.amount)
+      if (!parsedAmount) return []
+      const price = prices?.get(input.token.wrap().address) || 0
+      const usdValue = Number(parsedAmount.toString()) * price
+      return [{ input, parsedAmount, usdValue }]
+    })
+  }, [validInputs, prices])
+
+  const estimatedDepositValue = useMemo(() => {
+    return depositInputsWithValue.reduce((sum, item) => sum + item.usdValue, 0)
+  }, [depositInputsWithValue])
+
+  const estimatedApiDepositValue = useMemo(() => {
     if (!depositRequest.data?.pool_tokens) return 0
     const estimatedPoolTokens = Number(depositRequest.data.pool_tokens)
-    const poolProportion =
-      poolTotalSupply?.amount && poolTotalSupply.amount > 0
-        ? estimatedPoolTokens /
-          (Number(poolTotalSupply.amount) + estimatedPoolTokens)
-        : undefined
-    const estimatedValue = poolProportion
-      ? pool.liquidityUSD * poolProportion
+
+    const currentTotalSupply = poolTotalSupply?.amount
+      ? Number(poolTotalSupply.amount)
       : 0
+    const newTotalSupply = currentTotalSupply + estimatedPoolTokens
+
+    const poolProportion =
+      newTotalSupply > 0 ? estimatedPoolTokens / newTotalSupply : 0
+
+    const newTotalLiquidity = pool.liquidityUSD + estimatedDepositValue
+
+    const estimatedValue = poolProportion * newTotalLiquidity
     return estimatedValue
-  }, [depositRequest.data, pool.liquidityUSD, poolTotalSupply])
+  }, [
+    depositRequest.data,
+    pool.liquidityUSD,
+    poolTotalSupply,
+    estimatedDepositValue,
+  ])
+
+  /**
+   * Determines which estimated value to display to the user.
+   *
+   * We show the direct USD calculation (estimatedDepositValue) by default since it uses
+   * current price data and is predictable based on user inputs. However, we fall back to
+   * the API-calculated value (estimatedApiDepositValue) when there's a significant difference (>5%)
+   * to alert the user that something may be wrong with the price data or calculation.
+   *
+   * The 5% threshold represents a 0.05 ratio (absolute difference divided by the direct value).
+   *
+   * Note: These are only estimates and the API value uses on-chain oracle prices which may
+   * differ from current market prices used in the direct calculation.
+   */
+  const displayEstimatedValue = useMemo(() => {
+    if (estimatedApiDepositValue === 0) return estimatedDepositValue
+    if (estimatedDepositValue === 0) return estimatedApiDepositValue
+
+    const differenceRatio =
+      Math.abs(estimatedApiDepositValue - estimatedDepositValue) /
+      estimatedDepositValue
+
+    return differenceRatio > 0.05
+      ? estimatedApiDepositValue
+      : estimatedDepositValue
+  }, [estimatedApiDepositValue, estimatedDepositValue])
 
   const { status } = useWaitForTransactionReceipt({
     chainId,
@@ -249,17 +297,8 @@ export const BladeAddLiquidityReviewModal: FC<
 
               <List>
                 <List.Control>
-                  {validInputs.map((input, index) => {
-                    const parsedAmount = Amount.tryFromHuman(
-                      input.token,
-                      input.amount,
-                    )
-                    if (!parsedAmount) return null
-
-                    const price = prices?.get(input.token.wrap().address) || 0
-                    const usdValue = Number(parsedAmount.toString()) * price
-
-                    return (
+                  {depositInputsWithValue.map(
+                    ({ input, parsedAmount, usdValue }, index) => (
                       <List.KeyValue
                         key={index}
                         title={
@@ -285,12 +324,12 @@ export const BladeAddLiquidityReviewModal: FC<
                             {parsedAmount.toSignificant(6)}
                           </span>
                           <span className="text-sm text-gray-400 dark:text-slate-400">
-                            ${usdValue.toFixed(2)}
+                            {formatUSD(usdValue)}
                           </span>
                         </div>
                       </List.KeyValue>
-                    )
-                  })}
+                    ),
+                  )}
                 </List.Control>
               </List>
 
@@ -298,7 +337,7 @@ export const BladeAddLiquidityReviewModal: FC<
                 <List>
                   <List.Control>
                     <List.KeyValue title="Estimated Value">
-                      {formatUSD(estimatedValue || 0)}
+                      {formatUSD(displayEstimatedValue || 0)}
                     </List.KeyValue>
 
                     {lockTime?.message ? (
