@@ -221,6 +221,7 @@ export const BladeRemoveLiquidityReviewModal: FC<
                   prices={prices}
                   onConfirm={confirm}
                   withdrawTransaction={withdrawTransaction}
+                  estimatedValue={estimatedValue}
                 />
               )}
             </DialogContent>
