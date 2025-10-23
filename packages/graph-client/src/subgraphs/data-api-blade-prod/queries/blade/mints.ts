@@ -4,8 +4,8 @@ import { type RequestOptions, request } from 'src/lib/request.js'
 import { graphql } from '../../graphql.js'
 
 export const BladeMintsQuery = graphql(`
-  query BladeMints($address: Bytes!, $chainId: BladeChainId!) {
-    bladeMints(address: $address, chainId: $chainId) {
+  query BladeMints($address: Bytes!, $chainId: BladeChainId!, $user: Bytes) {
+    bladeMints(address: $address, chainId: $chainId, user: $user) {
       amountUSD
       timestamp
       txHash
@@ -21,7 +21,7 @@ export async function getBladeMints(
   options?: RequestOptions,
 ): Promise<BladeMint[]> {
   // const url = `${SUSHI_DATA_API_HOST}/graphql`
-  const url = `https://data-api-staging.data-gcp.sushi.com/graphql`
+  const url = `https://data-api-feat-sushi2.data-gcp.sushi.com/graphql`
   const result = await request(
     { url, document: BladeMintsQuery, variables },
     options,

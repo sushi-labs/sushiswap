@@ -29,7 +29,7 @@ export async function getSushiV2Mints(
   options?: RequestOptions,
 ) {
   // const url = `${SUSHI_DATA_API_HOST}/graphql`
-  const url = 'https://data-api-feat-new-db-fields.data-gcp.sushi.com/graphql'
+  const url = 'https://data-api-feat-sushi2.data-gcp.sushi.com/graphql'
 
   const result = await request(
     { url, document: SushiV2MintsQuery, variables },

@@ -4,8 +4,8 @@ import { type RequestOptions, request } from 'src/lib/request.js'
 import { graphql } from '../../graphql.js'
 
 export const BladeSwapsQuery = graphql(`
-query BladeSwaps($address: Bytes!, $chainId: BladeChainId!) {
-  bladeSwaps(address: $address, chainId: $chainId) {
+query BladeSwaps($address: Bytes!, $chainId: BladeChainId!, $user: Bytes) {
+  bladeSwaps(address: $address, chainId: $chainId, user: $user) {
     txHash
     user
     timestamp
@@ -41,7 +41,7 @@ export async function getBladeSwaps(
   options?: RequestOptions,
 ) {
   // const url = `${SUSHI_DATA_API_HOST}/graphql`
-  const url = `https://data-api-staging.data-gcp.sushi.com/graphql`
+  const url = `https://data-api-feat-sushi2.data-gcp.sushi.com/graphql`
 
   const result = await request(
     { url, document: BladeSwapsQuery, variables },

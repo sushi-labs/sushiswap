@@ -30,7 +30,7 @@ export async function getSushiV3Burns(
   options?: RequestOptions,
 ) {
   // const url = `${SUSHI_DATA_API_HOST}/graphql`
-  const url = 'https://data-api-feat-new-db-fields.data-gcp.sushi.com/graphql'
+  const url = 'https://data-api-feat-sushi2.data-gcp.sushi.com/graphql'
 
   const result = await request(
     { url, document: SushiV3BurnsQuery, variables },

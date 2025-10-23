@@ -4,8 +4,8 @@ import { type RequestOptions, request } from 'src/lib/request.js'
 import { graphql } from '../../graphql.js'
 
 export const BladeBurnsQuery = graphql(`
-  query BladeBurns($address: Bytes!, $chainId: BladeChainId!) {
-    bladeBurns(address: $address, chainId: $chainId) {
+  query BladeBurns($address: Bytes!, $chainId: BladeChainId!, $user: Bytes) {
+    bladeBurns(address: $address, chainId: $chainId, user: $user) {
       amountUSD
       timestamp
       txHash
@@ -21,7 +21,7 @@ export async function getBladeBurns(
   options?: RequestOptions,
 ): Promise<BladeBurn[]> {
   // const url = `${SUSHI_DATA_API_HOST}/graphql`
-  const url = `https://data-api-staging.data-gcp.sushi.com/graphql`
+  const url = `https://data-api-feat-sushi2.data-gcp.sushi.com/graphql`
 
   const result = await request(
     { url, document: BladeBurnsQuery, variables },
