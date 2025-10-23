@@ -4,7 +4,7 @@ import { PoolChainIds } from '@sushiswap/graph-client/data-api'
 import type {
   PoolChainId,
   PortfolioV2ChartRange,
-} from '@sushiswap/graph-client/data-api-portfolio'
+} from '@sushiswap/graph-client/data-api'
 import { useRouter } from 'next/navigation'
 import {
   type FC,

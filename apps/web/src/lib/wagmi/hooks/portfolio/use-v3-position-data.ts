@@ -1,4 +1,4 @@
-import type { PortfolioV2PositionV3PoolType } from '@sushiswap/graph-client/data-api-portfolio'
+import type { PortfolioV2PositionV3PoolType } from '@sushiswap/graph-client/data-api'
 import { useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
 import { getPriceOrderingFromPositionForUI } from 'src/lib/functions'

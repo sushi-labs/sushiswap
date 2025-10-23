@@ -1,6 +1,6 @@
 'use client'
 
-import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
+import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
 import { type FC, useCallback, useMemo, useState } from 'react'

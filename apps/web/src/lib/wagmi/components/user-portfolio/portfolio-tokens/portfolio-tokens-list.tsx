@@ -21,7 +21,7 @@ export const PortfolioTokensList: FC<PortfolioTokensListProps> = ({
           icon={
             <img
               className="rounded-full"
-              src={token.logoUrl}
+              src={token.logoUrl || undefined}
               width={28}
               height={28}
               alt={token.symbol ?? token.name}

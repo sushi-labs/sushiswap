@@ -1,7 +1,7 @@
 import {
   type GetMultiChainPools,
   getMultiChainPools,
-} from '@sushiswap/graph-client/data-api-181'
+} from '@sushiswap/graph-client/data-api'
 import { useInfiniteQuery } from '@tanstack/react-query'
 
 export const useMultichainPoolsInfinite = (

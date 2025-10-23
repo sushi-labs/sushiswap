@@ -1,6 +1,6 @@
 'use client'
 
-import type { PortfolioV2ChartResponse } from '@sushiswap/graph-client/data-api-portfolio'
+import type { PortfolioV2ChartResponse } from '@sushiswap/graph-client/data-api'
 import { Button, CardTitle, SkeletonText, classNames } from '@sushiswap/ui'
 import type { FC, MouseEventHandler, ReactNode } from 'react'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'

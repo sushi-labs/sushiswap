@@ -1,4 +1,4 @@
-import type { PortfolioV2PositionV3PoolType } from '@sushiswap/graph-client/data-api-portfolio'
+import type { PortfolioV2PositionV3PoolType } from '@sushiswap/graph-client/data-api'
 import { useMemo } from 'react'
 import type { LPTabValueType } from '../manage-dialog'
 import { V3Manage } from './v3-manage'

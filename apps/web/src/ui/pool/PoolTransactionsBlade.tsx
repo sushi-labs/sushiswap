@@ -5,7 +5,7 @@ import {
   getBladeBurns,
   getBladeMints,
   getBladeSwaps,
-} from '@sushiswap/graph-client/data-api-blade-prod'
+} from '@sushiswap/graph-client/data-api'
 import {
   Card,
   CardContent,

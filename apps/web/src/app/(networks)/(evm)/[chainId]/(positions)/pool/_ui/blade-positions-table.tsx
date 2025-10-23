@@ -1,6 +1,6 @@
 'use client'
 
-import type { BladePosition } from '@sushiswap/graph-client/data-api-blade-prod'
+import type { BladePosition } from '@sushiswap/graph-client/data-api'
 import {
   Badge,
   Card,

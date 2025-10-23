@@ -1,7 +1,7 @@
 import type {
   PortfolioV2PositionPoolType,
   PortfolioV2PositionV3PoolType,
-} from '@sushiswap/graph-client/data-api-portfolio'
+} from '@sushiswap/graph-client/data-api'
 import { Currency } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useTokensFromPosition } from 'src/lib/wagmi/hooks/portfolio/use-tokens-from-position'

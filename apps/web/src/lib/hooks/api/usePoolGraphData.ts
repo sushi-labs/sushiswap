@@ -4,7 +4,7 @@ import {
   getV2PoolBuckets,
   getV3PoolBuckets,
 } from '@sushiswap/graph-client/data-api'
-import { getBladePoolBuckets } from '@sushiswap/graph-client/data-api-blade-prod'
+import { getBladePoolBuckets } from '@sushiswap/graph-client/data-api'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import {
   type BladeChainId,

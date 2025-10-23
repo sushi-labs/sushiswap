@@ -9,7 +9,7 @@ import type {
   LibrarySymbolInfo,
   ResolutionString,
   SearchSymbolResultItem,
-} from 'public/static/charting_library/charting_library'
+} from 'public/trading_view/charting_library/charting_library'
 import type { Address } from 'viem'
 
 // const lastBarsCache = new Map<string, Bar>();

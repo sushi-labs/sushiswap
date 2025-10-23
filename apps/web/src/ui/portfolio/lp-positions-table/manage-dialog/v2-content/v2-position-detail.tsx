@@ -1,4 +1,4 @@
-import type { PortfolioV2PositionPoolType } from '@sushiswap/graph-client/data-api-portfolio'
+import type { PortfolioV2PositionPoolType } from '@sushiswap/graph-client/data-api'
 import { Positions } from '../positions'
 
 export const V2PositionDetail = ({

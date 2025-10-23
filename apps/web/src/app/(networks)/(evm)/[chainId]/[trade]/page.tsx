@@ -5,7 +5,7 @@ import { Container, SkeletonBox, classNames } from '@sushiswap/ui'
 import type {
   ChartingLibraryWidgetOptions,
   ResolutionString,
-} from 'public/static/charting_library/charting_library'
+} from 'public/trading_view/charting_library/charting_library'
 import { useSkaleEuropaFaucet } from 'src/lib/hooks'
 import { useHeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
 
@@ -31,6 +31,18 @@ const chainIdsByTradeMode: Record<TradeMode, readonly ChainId[] | null> = {
   swap: null,
 }
 
+const defaultWidgetProps: Partial<ChartingLibraryWidgetOptions> = {
+  interval: '1D' as ResolutionString,
+  library_path: '/trading_view/charting_library/',
+  locale: 'en',
+  charts_storage_url: 'https://saveload.tradingview.com',
+  charts_storage_api_version: '1.1',
+  client_id: 'tradingview.com',
+  user_id: 'public_user_id',
+  fullscreen: false,
+  autosize: true,
+}
+
 export default function TradePage() {
   const {
     state: { chainId, tradeMode, tradeView },
@@ -40,16 +52,6 @@ export default function TradePage() {
   const { isLg } = useBreakpoint('lg')
   const hasMounted = useIsMounted()
 
-  const defaultWidgetProps: Partial<ChartingLibraryWidgetOptions> = {
-    library_path: '/static/charting_library/',
-    locale: 'en',
-    charts_storage_url: 'https://saveload.tradingview.com',
-    charts_storage_api_version: '1.1',
-    client_id: 'tradingview.com',
-    user_id: 'public_user_id',
-    fullscreen: false,
-    autosize: true,
-  }
   const isKatana = chainId === ChainId.KATANA
 
   return (

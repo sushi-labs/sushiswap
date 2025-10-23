@@ -1,4 +1,4 @@
-import type { PortfolioV2PositionV3PoolType } from '@sushiswap/graph-client/data-api-portfolio'
+import type { PortfolioV2PositionV3PoolType } from '@sushiswap/graph-client/data-api'
 import { useState } from 'react'
 import { useV3PositionData } from 'src/lib/wagmi/hooks/portfolio/use-v3-position-data'
 import type {

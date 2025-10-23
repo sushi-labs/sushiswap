@@ -5,10 +5,11 @@ import { classNames } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
 import type {
   ChartingLibraryWidgetOptions,
+  IChartingLibraryWidget,
   LanguageCode,
   ResolutionString,
-} from 'public/static/charting_library/charting_library'
-import { widget } from 'public/static/charting_library/charting_library.esm'
+} from 'public/trading_view/charting_library/charting_library'
+import { widget } from 'public/trading_view/charting_library/charting_library.esm.js'
 import { useEffect, useRef, useState } from 'react'
 import { useChartContext } from './chart-provider'
 import Datafeed from './datafeed'
@@ -27,7 +28,7 @@ export const Chart = ({
     state: { token1 },
   } = useChartContext()
   const [hasNoData, setHasNoData] = useState(false)
-  const tvWidgetRef = useRef<any>(null)
+  const tvWidgetRef = useRef<IChartingLibraryWidget>(null)
 
   useEffect(() => {
     registerNoDataSetter((hasNoData) => {
@@ -102,7 +103,7 @@ export const Chart = ({
       user_id: widgetProps.user_id,
       fullscreen: widgetProps.fullscreen,
       autosize: widgetProps.autosize,
-      custom_css_url: '/static/chart.css',
+      custom_css_url: '/trading_view/chart.css',
       theme: resolvedTheme === 'dark' ? 'dark' : 'light',
       overrides: {
         'paneProperties.background': !isMdScreen
@@ -465,7 +466,7 @@ export const Chart = ({
 
   return (
     <div className="flex flex-col flex-grow rounded-xl">
-      <script src="/tradingview/charting_library/bundles" />
+      <script src="public/trading_view/charting_library/bundles" />
 
       <div className="flex-grow">
         <div

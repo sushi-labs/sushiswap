@@ -1,6 +1,6 @@
 'use client'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
+import type { BladePool } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Dialog,
@@ -100,6 +100,7 @@ export const AddLiquidityDialog = ({
         aria-describedby={undefined}
         className={classNames(
           '!px-3 border-t border-[#EBEBEB] rounded-t-none md:rounded-t-2xl !bg-slate-50 dark:border-[#FFFFFF14] dark:!bg-slate-800 w-full !max-w-full md:!max-w-[640px] max-h-[100dvh] overflow-y-auto hide-scrollbar',
+          type === SushiSwapProtocol.BLADE && 'md:!max-w-[480px]',
         )}
       >
         <DialogPrimitive.Close

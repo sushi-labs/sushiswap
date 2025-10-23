@@ -1,7 +1,7 @@
 import type {
   PortfolioV2LiquidityPositionsResponse,
   PortfolioV2PositionPoolType,
-} from '@sushiswap/graph-client/data-api-portfolio'
+} from '@sushiswap/graph-client/data-api'
 import {
   Currency,
   SkeletonBox,

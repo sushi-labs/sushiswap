@@ -1,6 +1,6 @@
 'use client'
 
-import type { TrendingPools } from '@sushiswap/graph-client/data-api-181'
+import type { TrendingPools } from '@sushiswap/graph-client/data-api'
 import { useTrendingPools } from 'src/lib/hooks/api/use-trending-pools'
 import { EvmChainId, SushiSwapProtocol, getEvmChainById } from 'sushi/evm'
 import { isSushiSwapV2ChainId, isSushiSwapV3ChainId } from 'sushi/evm'

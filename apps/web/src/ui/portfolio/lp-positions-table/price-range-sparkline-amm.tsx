@@ -1,4 +1,4 @@
-import type { PortfolioV2PositionPoolType } from '@sushiswap/graph-client/data-api-portfolio'
+import type { PortfolioV2PositionPoolType } from '@sushiswap/graph-client/data-api'
 import { scaleLinear, scaleTime } from 'd3'
 import { useId, useMemo } from 'react'
 import { usePoolBuckets } from 'src/lib/hooks/api/use-pool-buckets'

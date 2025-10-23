@@ -1,4 +1,4 @@
-import { getPortfolioV2Chart } from '@sushiswap/graph-client/data-api-portfolio'
+import { getPortfolioV2Chart } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import type { Address } from 'viem'

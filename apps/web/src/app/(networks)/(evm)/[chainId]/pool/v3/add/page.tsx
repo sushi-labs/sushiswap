@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { type FC, use, useMemo, useState } from 'react'
+import { type FC, use, useMemo } from 'react'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
@@ -53,7 +53,6 @@ const _Add: FC = () => {
 
   const router = useRouter()
 
-  const [_invert, _setInvert] = useState(false)
   const { data: position } = useConcentratedPositionInfo({
     chainId,
     token0,

@@ -1,4 +1,4 @@
-import type { PortfolioV2Protocol } from '@sushiswap/graph-client/data-api-portfolio'
+import type { PortfolioV2Protocol } from '@sushiswap/graph-client/data-api'
 import { ProtocolButton } from 'src/app/(networks)/_ui/protocol-button'
 import { SushiSwapProtocol } from 'sushi/evm'
 import { useLPPositionContext } from '~evm/[chainId]/portfolio/lp-position-provider'

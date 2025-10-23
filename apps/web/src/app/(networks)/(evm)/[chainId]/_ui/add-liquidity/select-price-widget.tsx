@@ -474,7 +474,7 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
   const tokenToggle = useMemo(
     () =>
       switchTokens ? (
-        <div className="flex items-center justify-between gap-2 w-full">
+        <div className="flex items-center flex-wrap justify-between gap-2 w-full">
           <div className="hidden md:flex whitespace-nowrap font-medium text-sm">
             <div>Current Price </div>
             {isLoading || !pool || !token0 || !token1 ? (
@@ -501,7 +501,7 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
           <div className="flex gap-1 w-full">
             <Toggle
               variant="outline"
-              onPressedChange={handleSwitchTokens}
+              onClick={handleSwitchTokens}
               pressed={isSorted}
               size="xs"
               className="!w-full md:!w-fit"
@@ -510,7 +510,7 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
             </Toggle>
             <Toggle
               variant="outline"
-              onPressedChange={handleSwitchTokens}
+              onClick={handleSwitchTokens}
               pressed={!isSorted}
               size="xs"
               className="!w-full md:!w-fit"
@@ -551,7 +551,7 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
         </p>
       </div>
 
-      <div className="rounded-xl flex flex-col gap-2 p-4 bg-slate-50 dark:bg-slate-800">
+      <div className="rounded-xl flex flex-col gap-2 py-4 bg-slate-50 dark:bg-slate-800">
         {isMounted && showStartPrice && token0 && token1 && (
           <div className="flex flex-col gap-3">
             {!noLiquidity && (
@@ -689,7 +689,6 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
                 token1={token1!}
                 onStartPriceInput={onStartPriceInput}
                 startingPrice={startPriceTypedValue}
-                handleSwitchTokens={handleSwitchTokens}
               />
             </div>
           )}
@@ -748,18 +747,18 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
           {outOfRange ? (
             <Message size="sm" variant="info">
               <div className="flex items-center gap-1">
-                <InformationCircleIcon className="w-3 h-3" /> Your position will
-                not earn fees or be used in trades until the market price moves
-                into your range.
+                <InformationCircleIcon className="w-4 min-w-4 h-4 min-h-4" />{' '}
+                Your position will not earn fees or be used in trades until the
+                market price moves into your range.
               </div>
             </Message>
           ) : null}
           {invalidRange ? (
             <Message size="sm" variant="info">
               <div className="flex items-center gap-1">
-                <InformationCircleIcon className="w-3 h-3" /> Invalid range
-                selected. The minimum price must be lower than the maximum
-                price.
+                <InformationCircleIcon className="w-4 min-w-4 h-4 min-h-4" />{' '}
+                Invalid range selected. The minimum price must be lower than the
+                maximum price.
               </div>
             </Message>
           ) : null}

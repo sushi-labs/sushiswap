@@ -1,4 +1,4 @@
-import { getBladePools } from '@sushiswap/graph-client/data-api-blade-prod'
+import { getBladePools } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import { isPublicBladeChainId } from 'src/config.server'

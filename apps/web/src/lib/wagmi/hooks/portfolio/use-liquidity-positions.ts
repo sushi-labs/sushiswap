@@ -4,7 +4,7 @@ import {
   type PortfolioV2LiquidityPositionOrderDirection,
   type PortfolioV2Protocol,
   getPortfolioV2LiquidityPositions,
-} from '@sushiswap/graph-client/data-api-portfolio'
+} from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import type { Address } from 'viem'

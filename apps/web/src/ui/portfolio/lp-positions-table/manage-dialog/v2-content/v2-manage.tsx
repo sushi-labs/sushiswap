@@ -1,6 +1,6 @@
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { type RawV2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
-import type { PortfolioV2PositionPoolType } from '@sushiswap/graph-client/data-api-portfolio'
+import type { PortfolioV2PositionPoolType } from '@sushiswap/graph-client/data-api'
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   Button,

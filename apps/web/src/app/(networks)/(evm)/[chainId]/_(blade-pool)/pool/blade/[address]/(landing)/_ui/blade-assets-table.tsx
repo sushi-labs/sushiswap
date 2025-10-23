@@ -1,6 +1,6 @@
 'use client'
 
-import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
+import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { Card, CardHeader, CardTitle, DataTable, Switch } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { type FC, useMemo, useState } from 'react'

@@ -1,6 +1,7 @@
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import {
+  Button,
   IconButton,
   SettingsModule,
   SettingsOverlay,
@@ -13,7 +14,7 @@ import {
 import { AmountInToken0 } from '../Add/AmountInToken0'
 import { AmountInToken1 } from '../Add/AmountInToken1'
 import { Plus } from '../Add/Plus'
-import { ReviewAddDialog } from '../Add/ReviewAddDialog'
+// import { ReviewAddDialog } from '../Add/ReviewAddDialog'
 
 export const AddSection = () => {
   return (
@@ -41,13 +42,16 @@ export const AddSection = () => {
           </SettingsOverlay>
         </WidgetAction>
       </WidgetHeader>
-      <section className="relative flex flex-col w-full gap-4">
+      <section className="relative flex flex-col w-full gap-4 opacity-40 pointer-events-none">
         <AmountInToken0 theme="outline" disabled />
         <Plus theme="outline" />
         <AmountInToken1 theme="outline" disabled />
       </section>
       <div className="flex flex-col w-full mt-4">
-        <ReviewAddDialog size="xl" fullWidth />
+        <Button size="xl" disabled>
+          Adding Liquidity Is Currently Disabled
+        </Button>
+        {/* <ReviewAddDialog size="xl" fullWidth /> */}
       </div>
     </Widget>
   )

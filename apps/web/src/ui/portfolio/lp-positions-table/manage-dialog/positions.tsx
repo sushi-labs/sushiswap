@@ -1,4 +1,4 @@
-import type { PortfolioV2PositionPoolType } from '@sushiswap/graph-client/data-api-portfolio'
+import type { PortfolioV2PositionPoolType } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Card,

@@ -1,5 +1,5 @@
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
+import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
 import { waitForTransactionReceipt } from '@wagmi/core'
@@ -364,7 +364,7 @@ export const AddLiquidityWidgetBlade: FC<AddLiquidityWidgetBladeProps> = ({
           <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
             <button
               type="button"
-              className="z-10 p-2 bg-gray-100 rounded-full border dark:bg-slate-900 border-slate-50 dark:border-slate-800"
+              className="z-10 p-2 bg-gray-100 rounded-full border dark:bg-slate-750 border-slate-50 dark:border-slate-800"
             >
               <PlusIcon
                 strokeWidth={3}

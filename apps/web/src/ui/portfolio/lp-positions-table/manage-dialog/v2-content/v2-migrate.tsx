@@ -1,6 +1,6 @@
 import { ArrowRightIcon } from '@heroicons/react-v1/solid'
 import { type RawV2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
-import type { PortfolioV2PositionPoolType } from '@sushiswap/graph-client/data-api-portfolio'
+import type { PortfolioV2PositionPoolType } from '@sushiswap/graph-client/data-api'
 import { Button } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'

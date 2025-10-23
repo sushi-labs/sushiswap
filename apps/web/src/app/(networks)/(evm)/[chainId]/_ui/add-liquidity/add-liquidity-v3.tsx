@@ -4,6 +4,7 @@ import { ArrowLeftIcon } from '@heroicons/react-v1/solid'
 import { Button, Collapsible, LinkInternal, classNames } from '@sushiswap/ui'
 import { useEffect, useMemo, useState } from 'react'
 import { usePoolsByTokenPair } from 'src/lib/hooks/usePoolsByTokenPair'
+import { useConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-liquidity-position'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
 import {
   type EvmChainId,
@@ -71,7 +72,6 @@ const _Add = ({
 }) => {
   const [step, setStep] = useState(0)
   const { address } = useAccount()
-  const [isFirstMount, setIsFirstMount] = useState(true)
   const {
     chainId,
     token0,
@@ -83,13 +83,36 @@ const _Add = ({
     tokensLoading,
     tokenId,
     switchTokens,
+    initializeTokens,
   } = useConcentratedLiquidityURLState()
+  const [isFirstMount, setIsFirstMount] = useState(true)
 
-  const [_invert, _setInvert] = useState(false)
+  const poolAddress = useMemo(
+    () =>
+      token0 && token1 && feeAmount && chainId
+        ? computeSushiSwapV3PoolAddress({
+            factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
+            tokenA: token0.wrap(),
+            tokenB: token1.wrap(),
+            fee: feeAmount,
+          })
+        : undefined,
+    [chainId, feeAmount, token0, token1],
+  )
+
+  const { data: positionData } = useConcentratedLiquidityPosition({
+    account: address,
+    chainId: chainId,
+    feeAmount: initFeeAmount,
+    poolAddress,
+    enabled: Boolean(initToken0 && initToken1 && initFeeAmount),
+  })
+  const _tokenId = positionData?.tokenId?.toString() ?? tokenId
+
   const { data: position } = useConcentratedPositionInfo({
     chainId,
     token0,
-    tokenId,
+    tokenId: _tokenId,
     token1,
   })
   const { data: pools, isLoading: isLoadingPools } = usePoolsByTokenPair(
@@ -111,30 +134,18 @@ const _Add = ({
     })
   }, [feeAmount, pools, token0, token1, isLoadingPools])
 
-  const poolAddress = useMemo(
-    () =>
-      token0 && token1 && feeAmount && chainId
-        ? computeSushiSwapV3PoolAddress({
-            factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
-            tokenA: token0.wrap(),
-            tokenB: token1.wrap(),
-            fee: feeAmount,
-          })
-        : undefined,
-    [chainId, feeAmount, token0, token1],
-  )
-
   const hasSteps = !initToken0 && !initToken1
 
   useEffect(() => {
     if (initToken0 && initToken1) {
       setStep(1)
     }
-    if (initFeeAmount && initToken0 && initToken1 && isFirstMount) {
+    if (initToken0 && initToken1 && initFeeAmount && isFirstMount) {
       if (!isFirstMount) return
+      initializeTokens(initToken0, initToken1, initFeeAmount)
       setIsFirstMount(false)
     }
-  }, [initToken0, initToken1, initFeeAmount, isFirstMount])
+  }, [initToken0, initToken1, initFeeAmount, initializeTokens, isFirstMount])
 
   return (
     <div
@@ -219,7 +230,7 @@ const _Add = ({
             token0={token0}
             token1={token1}
             poolAddress={poolAddress}
-            tokenId={tokenId}
+            tokenId={_tokenId}
             feeAmount={feeAmount}
             switchTokens={switchTokens}
           />
@@ -233,8 +244,8 @@ const _Add = ({
             feeAmount={feeAmount}
             tokensLoading={tokensLoading}
             existingPosition={position ?? undefined}
-            tokenId={tokenId}
-            successLink={`/${getEvmChainById(chainId).key}/pool/v3/${poolAddress}/${tokenId ?? 'positions'}`}
+            tokenId={_tokenId}
+            successLink={`/${getEvmChainById(chainId).key}/pool/v3/${poolAddress}/${_tokenId ?? 'positions'}`}
           />
         </>
       ) : null}

@@ -1,14 +1,16 @@
 import { ChartBarIcon, InboxIcon, StopIcon } from '@heroicons/react-v1/solid'
 import { SkeletonBox } from '@sushiswap/ui'
-import { format } from 'd3'
+import { format, max } from 'd3'
 import React, { type FC, type ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
 import type { Price } from 'sushi'
 import {
   type EvmCurrency,
   type EvmToken,
+  SUSHISWAP_V3_FACTORY_ADDRESS,
   type SushiSwapV3ChainId,
   type SushiSwapV3FeeAmount,
+  computeSushiSwapV3PoolAddress,
   getPriceRangeWithTokenRatio,
 } from 'sushi/evm'
 import { ActiveLiquidityChart } from './active-liquidity-chart'
@@ -77,6 +79,19 @@ export const LiquidityChartRangeInput = ({
     token1: currencyB,
     feeAmount,
   })
+  const [minPrice0, maxPrice0] = useMemo(() => {
+    if (!data || data.length === 0) return [undefined, undefined]
+    const minPrice0 = data?.reduce(
+      (min, d) => Math.min(min, d.price0),
+      data?.[0].price0,
+    )
+    const maxPrice0 = data?.reduce(
+      (max, d) => Math.max(max, d.price0),
+      data?.[0].price0,
+    )
+
+    return [minPrice0, maxPrice0]
+  }, [data])
 
   const onBrushDomainChangeEnded = useCallback(
     (domain: [number, number], mode: string | undefined) => {
@@ -176,6 +191,19 @@ export const LiquidityChartRangeInput = ({
     [price, weightLockedCurrencyBase],
   )
 
+  const poolAddress = useMemo(
+    () =>
+      currencyA && currencyB && feeAmount && chainId
+        ? computeSushiSwapV3PoolAddress({
+            factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
+            tokenA: currencyA.wrap(),
+            tokenB: currencyB.wrap(),
+            fee: feeAmount,
+          })
+        : undefined,
+    [chainId, feeAmount, currencyA, currencyB],
+  )
+
   return (
     <div className="grid auto-rows-auto gap-3 min-h-[300px] overflow-hidden">
       {isUninitialized ? (
@@ -232,9 +260,8 @@ export const LiquidityChartRangeInput = ({
             data={{
               series: data,
               current: price,
-              min: price / 2, //todo: when have data lowest token price
-              // max: brushDomain?.[1] || 1, //todo: when have data highest token price
-              max: price * 2, //todo: when have data highest token price
+              min: minPrice0,
+              max: maxPrice0,
             }}
             disableBrushInteraction={false}
             brushDomain={brushDomain}
@@ -248,22 +275,14 @@ export const LiquidityChartRangeInput = ({
               domain: [number, number],
               mode?: string,
             ): void => {
-              // You can zoom out far enough to set an invalid range, so we prevent that here.
               if (domain[0] < 0) {
                 return
               }
               onBrushDomainChangeEnded(domain, mode)
-              // While scrolling we receive updates to the range because the yScale changes,
-              // but we can filter them out because they have an undefined "mode".
-              // The initial range suggestion also comes with an undefined "mode", so we allow that here.
-              // const rejectAutoRangeSuggestion =
-              //   minPrice !== undefined && maxPrice !== undefined && minPrice >= 0 && maxPrice >= 0
-              // if (!mode && rejectAutoRangeSuggestion) {
-              //   return
-              // }
-              // setMinPrice(domain[0])
-              // setMaxPrice(domain[1])
             }}
+            poolAddress={poolAddress}
+            chainId={chainId}
+            isSorted={isSorted === undefined ? true : isSorted}
           />
         </div>
       )}

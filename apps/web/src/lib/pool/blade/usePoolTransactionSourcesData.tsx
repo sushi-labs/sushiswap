@@ -1,6 +1,6 @@
 'use client'
 
-import { getBladePoolTxSourcesChart } from '@sushiswap/graph-client/data-api-blade-prod'
+import { getBladePoolTxSourcesChart } from '@sushiswap/graph-client/data-api'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import type { BladeChainId, EvmAddress } from 'sushi/evm'
 

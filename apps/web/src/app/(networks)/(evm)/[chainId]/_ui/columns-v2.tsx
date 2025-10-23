@@ -1,5 +1,5 @@
 import { ArrowUpIcon, PlusIcon } from '@heroicons/react-v1/solid'
-import type { MultiChainPool } from '@sushiswap/graph-client/data-api-181'
+import type { MultiChainPool } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Currency,
@@ -18,7 +18,7 @@ import React, { useMemo } from 'react'
 import { TooltipDrawer } from 'src/app/(networks)/_ui/tooltip-drawer'
 import { getTextColor } from 'src/lib/helpers'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { formatNumber, formatPercent, formatUSD } from 'sushi'
+import { Token, formatNumber, formatPercent, formatUSD } from 'sushi'
 import {
   type EvmChainId,
   EvmToken,
@@ -659,13 +659,18 @@ export const APR_SPARKLINE_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   ),
 
   cell: (props) => {
+    const sparklineData = useMemo(() => {
+      if (props.row.original.feeApr1wSparkLine.every((val) => val === 0)) {
+        return [1, 1]
+      }
+      if (props.row.original.feeApr1wSparkLine?.length > 0) {
+        return props.row.original.feeApr1wSparkLine
+      }
+      return [1, 1]
+    }, [props.row.original.feeApr1wSparkLine])
     return (
       <div className="2xl:px-10">
-        <SparklineCell
-          data={props.row.original.feeApr1wSparkLine}
-          width={90}
-          height={20}
-        />
+        <SparklineCell data={sparklineData} width={90} height={20} />
       </div>
     )
   },

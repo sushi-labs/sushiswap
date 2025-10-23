@@ -1,6 +1,6 @@
 'use client'
 
-import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
+import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { useMutation } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import type { PublicWagmiConfig } from 'src/lib/wagmi/config/public'

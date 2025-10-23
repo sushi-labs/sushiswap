@@ -18,7 +18,7 @@ import {
 } from 'react'
 import { SushiSwapProtocol } from 'sushi/evm'
 
-import type { PortfolioV2PositionPoolType } from '@sushiswap/graph-client/data-api-portfolio'
+import type { PortfolioV2PositionPoolType } from '@sushiswap/graph-client/data-api'
 import { useLPPositionContext } from '~evm/[chainId]/portfolio/lp-position-provider'
 import {
   APR_COLUMN,

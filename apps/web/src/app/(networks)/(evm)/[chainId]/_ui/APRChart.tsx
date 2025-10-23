@@ -1,7 +1,7 @@
 'use client'
 
 import type { RawV2Pool, RawV3Pool } from '@sushiswap/graph-client/data-api'
-import type { V2PoolBuckets } from '@sushiswap/graph-client/data-api-181'
+import type { V2PoolBuckets } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   CardContent,

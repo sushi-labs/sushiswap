@@ -4,7 +4,7 @@ import {
   type PoolChainId,
   PoolChainIds,
   type PortfolioV2Protocol,
-} from '@sushiswap/graph-client/data-api-portfolio'
+} from '@sushiswap/graph-client/data-api'
 import {
   type FC,
   createContext,

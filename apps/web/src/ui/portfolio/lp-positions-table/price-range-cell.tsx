@@ -1,7 +1,7 @@
 import type {
   PortfolioV2PositionPoolType,
   PortfolioV2PositionV3PoolType,
-} from '@sushiswap/graph-client/data-api-portfolio'
+} from '@sushiswap/graph-client/data-api'
 import { useIsSmScreen } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
 import { useState } from 'react'

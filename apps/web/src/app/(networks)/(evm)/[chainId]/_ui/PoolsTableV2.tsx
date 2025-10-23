@@ -5,7 +5,7 @@ import type { PoolChainId } from '@sushiswap/graph-client/data-api'
 import type {
   GetMultiChainPools,
   MultiChainPools,
-} from '@sushiswap/graph-client/data-api-181'
+} from '@sushiswap/graph-client/data-api'
 import { Card, DataTable, Loader } from '@sushiswap/ui'
 import type { Row, SortingState, TableState } from '@tanstack/react-table'
 import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'

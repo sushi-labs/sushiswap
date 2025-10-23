@@ -2,7 +2,7 @@ import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import {
   type ExplorePoolStatistics,
   getExplorePoolStatistics,
-} from '@sushiswap/graph-client/data-api-181'
+} from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import ms from 'ms'
 import type { Metadata } from 'next'

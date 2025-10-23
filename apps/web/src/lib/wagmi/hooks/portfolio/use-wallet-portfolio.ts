@@ -1,7 +1,7 @@
 import type {
   PoolChainId,
   PortfolioV2Token,
-} from '@sushiswap/graph-client/data-api-portfolio'
+} from '@sushiswap/graph-client/data-api'
 import { useMemo } from 'react'
 import { useWalletFilters } from 'src/app/(networks)/(evm)/[chainId]/portfolio/wallet-filters-provider'
 import type { EvmChainId } from 'sushi/evm'

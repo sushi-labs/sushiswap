@@ -1,7 +1,4 @@
-import type {
-  BladeChainId,
-  BladePool,
-} from '@sushiswap/graph-client/data-api-blade-prod'
+import type { BladeChainId, BladePool } from '@sushiswap/graph-client/data-api'
 import {
   type EvmAddress,
   type EvmCurrency,
