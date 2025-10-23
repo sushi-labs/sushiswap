@@ -1,36 +1,38 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
-import {
-  type EvmChainId,
-  SUSHI_DATA_API_HOST,
-  isSushiSwapV2ChainId,
-} from 'sushi/evm'
+import { type EvmChainId, isSushiSwapV2ChainId } from 'sushi/evm'
 import { graphql } from '../../graphql.js'
 
 export const V2PoolBucketsQuery = graphql(
   `
-query V2PoolBuckets($address: Bytes!, $chainId: SushiSwapV2ChainId!) {
-  v2PoolBuckets(address: $address, chainId: $chainId) {
-    hourBuckets {
-      id
-      date
-      volumeUSD
-      liquidityUSD
-      txCount
-      feesUSD
-    }
-    dayBuckets {
-      id
-      date
-      volumeUSD
-      liquidityUSD
-      txCount
-      feesUSD
-    }
-  }
-}
-`,
+		query V2PoolBuckets($address: Bytes!, $chainId: SushiSwapV2ChainId!) {
+			v2PoolBuckets(address: $address, chainId: $chainId) {
+				dayBuckets {
+					apr
+					date
+					feesUSD
+					id
+					liquidityUSD
+					token0Price
+					token1Price
+					txCount
+					volumeUSD
+				}
+				hourBuckets {
+					apr
+					date
+					feesUSD
+					id
+					liquidityUSD
+					token0Price
+					token1Price
+					txCount
+					volumeUSD
+				}
+			}
+		}
+	`,
 )
 
 export type GetV2PoolBuckets = VariablesOf<typeof V2PoolBucketsQuery>
@@ -39,7 +41,8 @@ export async function getV2PoolBuckets(
   variables: GetV2PoolBuckets,
   options?: RequestOptions,
 ) {
-  const url = `${SUSHI_DATA_API_HOST}/graphql`
+  // const url = `${SUSHI_DATA_API_HOST}/graphql`
+  const url = 'https://data-api-feat-sushi2.data-gcp.sushi.com/graphql'
   const chainId = Number(variables.chainId) as EvmChainId
 
   if (!isSushiSwapV2ChainId(chainId)) {

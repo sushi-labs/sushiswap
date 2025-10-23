@@ -2,8 +2,8 @@ import type { VariablesOf } from 'gql.tada'
 import { type RequestOptions, request } from 'src/lib/request.js'
 import type { EvmChainId } from 'sushi/evm'
 import { EvmToken } from 'sushi/evm'
-import { SUSHI_REQUEST_HEADERS } from '../../../data-api/request-headers.js'
 import { graphql } from '../../graphql.js'
+import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
 export const MultiChainPoolsQuery = graphql(`
   query MultiChainPools(

@@ -3,7 +3,7 @@
 import {
   getV2PoolBuckets,
   getV3PoolBuckets,
-} from '@sushiswap/graph-client/data-api-181'
+} from '@sushiswap/graph-client/data-api'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import {
   type EvmAddress,

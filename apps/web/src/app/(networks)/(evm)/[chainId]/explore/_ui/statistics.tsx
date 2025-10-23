@@ -1,6 +1,6 @@
 'use client'
 
-import type { ExplorePoolStatistics } from '@sushiswap/graph-client/data-api-181'
+import type { ExplorePoolStatistics } from '@sushiswap/graph-client/data-api'
 import { Button, classNames } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { formatPercent, formatUSD } from 'sushi'

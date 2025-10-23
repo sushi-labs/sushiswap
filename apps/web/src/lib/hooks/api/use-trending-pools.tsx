@@ -1,7 +1,7 @@
 import {
   type TrendingPools,
   getTrendingPools,
-} from '@sushiswap/graph-client/data-api-181'
+} from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
-import { isTokenListV2ChainId } from '@sushiswap/graph-client/data-api-181'
+import { isTokenListV2ChainId } from '@sushiswap/graph-client/data-api'
 import {
   Dialog,
   DialogContent,

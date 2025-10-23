@@ -36,12 +36,6 @@
             "tadaTurboLocation": "./src/subgraphs/de.fi/de.fi-cache.d.ts"
           },
           {
-            "name": "data-api-181",
-            "schema": "./src/subgraphs/data-api-181/schema.graphql",
-            "tadaOutputLocation": "./src/subgraphs/data-api-181/data-api-181-env.d.ts",
-            "tadaTurboLocation": "./src/subgraphs/data-api-181/data-api-181-cache.d.ts"
-          },
-          {
 						"name": "kadena",
 						"schema": "./src/subgraphs/kadena/schema.graphql",
 						"tadaOutputLocation": "./src/subgraphs/kadena/kadena-env.d.ts",

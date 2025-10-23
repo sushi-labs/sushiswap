@@ -1,5 +1,5 @@
 import { ArrowUpIcon, PlusIcon } from '@heroicons/react-v1/solid'
-import type { MultiChainPool } from '@sushiswap/graph-client/data-api-181'
+import type { MultiChainPool } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Currency,

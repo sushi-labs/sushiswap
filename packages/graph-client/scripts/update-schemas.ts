@@ -10,7 +10,6 @@ const schemas = {
   // 'data-api-blade-prod': 'production.data-gcp.sushi.com/graphql',
   'data-api-blade-prod': 'data-api-feat-sushi2.data-gcp.sushi.com/graphql',
   'data-api': 'data-api-feat-sushi2.data-gcp.sushi.com/graphql',
-  // 'data-api-181': 'data-api-feat-new-db-fields.data-gcp.sushi.com/graphql',
 } as const satisfies Record<string, string>
 
 async function updateSchema(schema: keyof typeof schemas) {
