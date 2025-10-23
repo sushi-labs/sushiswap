@@ -98,6 +98,8 @@ export const useExecuteMultiHopSwap = () => {
       amountOutMinimum: bigint
       recipient: string
       deadline?: number
+      tokenIn?: { code: string }
+      tokenOut?: { code: string }
     }) => {
       const swapService = new SwapService()
 
@@ -135,9 +137,9 @@ export const useExecuteMultiHopSwap = () => {
         href: getStellarTxnLink(result.txHash),
         promise: Promise.resolve(result),
         summary: {
-          pending: `Swapping ${amountInFormatted} tokens`,
-          completed: `Swapped for ${amountOutFormatted} tokens (multi-hop)`,
-          failed: 'Multi-hop swap failed',
+          pending: `Swapping ${amountInFormatted} ${params.tokenIn?.code || 'tokens'} for ${params.tokenOut?.code || 'tokens'}`,
+          completed: `Swapped ${amountInFormatted} ${params.tokenIn?.code || 'tokens'} for ${amountOutFormatted} ${params.tokenOut?.code || 'tokens'}`,
+          failed: 'Swap failed',
         },
         groupTimestamp: Date.now(),
         timestamp: Date.now(),

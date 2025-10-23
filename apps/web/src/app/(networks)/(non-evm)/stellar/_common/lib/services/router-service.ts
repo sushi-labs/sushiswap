@@ -107,14 +107,16 @@ export class RouterService {
           amountIn: amountIn,
         })
 
-        quotes.push({
-          amountOut: quote.amountOut,
-          path: [pool.tokenA.contract, pool.tokenB.contract],
-          fees: [pool.fee],
-          priceImpact: quote.priceImpact,
-          routeType: 'direct',
-          pools: [pool], // Add pools to track them
-        } as SwapQuote & { pools: PoolBasicInfo[] })
+        if (quote) {
+          quotes.push({
+            amountOut: quote.amountOut,
+            path: [pool.tokenA.contract, pool.tokenB.contract],
+            fees: [pool.fee],
+            priceImpact: quote.priceImpact,
+            routeType: 'direct',
+            pools: [pool], // Add pools to track them
+          } as SwapQuote & { pools: PoolBasicInfo[] })
+        }
       } catch (_e) {
         console.error(`Failed to get quote from pool ${pool.address}`)
       }

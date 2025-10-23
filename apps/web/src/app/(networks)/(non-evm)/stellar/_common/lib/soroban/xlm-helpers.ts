@@ -13,6 +13,7 @@ export const getXlmBalance = async (address: string): Promise<bigint> => {
 
     const xlmContractClient = getTokenContractClient({
       contractId: CONTRACT_ADDRESSES.TOKENS.XLM,
+      // No publicKey needed for read-only balance queries
     })
 
     console.log('📤 Simulating balance query transaction...')

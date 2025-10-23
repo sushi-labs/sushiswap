@@ -18,11 +18,6 @@ export const CurrencyInputPricePanel: FC<CurrencyInputPricePanel> = ({
       : '0.00'
   ).split('.')
 
-  console.log({
-    isLoading,
-    error,
-    value,
-  })
   if (isLoading) {
     return (
       <div className="w-[90px] flex items-center">

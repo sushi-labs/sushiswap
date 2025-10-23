@@ -24,6 +24,7 @@ type State = {
   amount: string | null
   slippageAmount: number
   outputAmount: bigint
+  priceImpact: number | null
   error: string
   isLoadingPrice: boolean
   isPriceFetching: boolean
@@ -37,6 +38,7 @@ type SwapApi = {
   setAmount(amount: string): void
   setSlippageAmount(amount: number): void
   setOutputAmount(amount: bigint): void
+  setPriceImpact(value: number | null): void
   setError(value: string): void
   setLoadingPrice(value: boolean): void
   setPriceFetching(value: boolean): void
@@ -53,6 +55,7 @@ type Actions =
   | { type: 'setAmount'; value: string }
   | { type: 'setSlippageAmount'; value: number }
   | { type: 'setOutputAmount'; value: bigint }
+  | { type: 'setPriceImpact'; value: number | null }
   | { type: 'setError'; value: string }
   | { type: 'setLoadingPrice'; value: boolean }
   | { type: 'setPriceFetching'; value: boolean }
@@ -94,6 +97,8 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
         }
       case 'setOutputAmount':
         return { ...state, outputAmount: action.value }
+      case 'setPriceImpact':
+        return { ...state, priceImpact: action.value }
       case 'setError':
         return { ...state, error: action.value }
       case 'setLoadingPrice':
@@ -113,6 +118,7 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
     amount: '',
     slippageAmount: 0,
     outputAmount: 0n,
+    priceImpact: null,
     error: '',
     isLoadingPrice: false,
     isPriceFetching: false,
@@ -152,6 +158,8 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
       dispatch({ type: 'setSlippageAmount', value })
     const setOutputAmount = (value: bigint) =>
       dispatch({ type: 'setOutputAmount', value })
+    const setPriceImpact = (value: number | null) =>
+      dispatch({ type: 'setPriceImpact', value })
     const setError = (value: string) => dispatch({ type: 'setError', value })
     const setLoadingPrice = (value: boolean) =>
       dispatch({ type: 'setLoadingPrice', value })
@@ -167,6 +175,7 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
       setAmount,
       setSlippageAmount,
       setOutputAmount,
+      setPriceImpact,
       setError,
       setLoadingPrice,
       setPriceFetching,

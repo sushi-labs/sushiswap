@@ -2,7 +2,11 @@
 
 import { Button } from '@sushiswap/ui'
 import React, { useMemo } from 'react'
-import { useExecuteSwap } from '~stellar/_common/lib/hooks/swap'
+import {
+  useExecuteMultiHopSwap,
+  useExecuteSwap,
+} from '~stellar/_common/lib/hooks/swap'
+import { findBestPath } from '~stellar/_common/lib/soroban/dex-router-helpers'
 import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
 import { Checker } from '~stellar/_common/ui/checker'
 import { useStellarWallet } from '~stellar/providers'
@@ -13,6 +17,7 @@ export const SimpleSwapExecuteButton = () => {
   const { amount, token0, token1, outputAmount, slippageAmount } =
     useSimpleSwapState()
   const executeSwap = useExecuteSwap()
+  const executeMultiHopSwap = useExecuteMultiHopSwap()
 
   // Calculate amount out minimum with slippage
   const amountOutMinimum = useMemo(() => {
@@ -49,20 +54,52 @@ export const SimpleSwapExecuteButton = () => {
 
       const amountIn = toScaledBigInt(amount, token0.decimals)
 
-      // For now, assume single-hop swap with 0.3% fee
-      // In production, this should be determined by the route finder
-      const result = await executeSwap.mutateAsync({
-        userAddress: connectedAddress,
-        tokenIn: token0,
-        tokenOut: token1,
-        amountIn,
-        amountOutMinimum,
-        recipient: connectedAddress,
-        fee: 3000, // 0.3% fee
-        deadline: Math.floor(Date.now() / 1000) + 600, // 10 minutes
-      })
+      // Find the best route (direct or multi-hop)
+      console.log(`🔍 Finding route: ${token0.code} → ${token1.code}`)
+      const route = await findBestPath(token0, token1)
 
-      console.log('Swap executed:', result)
+      if (!route) {
+        throw new Error('No route found between tokens')
+      }
+
+      console.log(`✅ Route found: ${route.type}`, route)
+
+      if (route.type === 'direct') {
+        // Single-hop swap
+        const pool = route.pools[0]
+        await executeSwap.mutateAsync({
+          userAddress: connectedAddress,
+          tokenIn: token0,
+          tokenOut: token1,
+          amountIn,
+          amountOutMinimum,
+          recipient: connectedAddress,
+          fee: pool.fee,
+          deadline: Math.floor(Date.now() / 1000) + 600, // 10 minutes
+        })
+      } else {
+        // Multi-hop swap
+        const path = route.path.map((token) => token.contract)
+        const fees = route.fees
+
+        console.log(
+          `🔄 Executing multi-hop swap: ${route.path.map((t) => t.code).join(' → ')}`,
+        )
+        console.log(`Path: ${path.join(' → ')}`)
+        console.log(`Fees: ${fees.join(', ')}`)
+
+        await executeMultiHopSwap.mutateAsync({
+          userAddress: connectedAddress,
+          path,
+          fees,
+          amountIn,
+          amountOutMinimum,
+          recipient: connectedAddress,
+          deadline: Math.floor(Date.now() / 1000) + 600, // 10 minutes
+          tokenIn: token0,
+          tokenOut: token1,
+        })
+      }
     } catch (error) {
       console.error('Swap failed:', error)
     }
@@ -96,7 +133,8 @@ export const SimpleSwapExecuteButton = () => {
     !token1 ||
     !amount ||
     Number(amount) <= 0 ||
-    executeSwap.isPending
+    executeSwap.isPending ||
+    executeMultiHopSwap.isPending
 
   return (
     <div className="pt-4">
@@ -109,9 +147,11 @@ export const SimpleSwapExecuteButton = () => {
             size="xl"
             onClick={handleSwap}
             disabled={isDisabled}
-            loading={executeSwap.isPending}
+            loading={executeSwap.isPending || executeMultiHopSwap.isPending}
           >
-            {executeSwap.isPending ? 'Executing Swap...' : 'Swap'}
+            {executeSwap.isPending || executeMultiHopSwap.isPending
+              ? 'Executing Swap...'
+              : 'Swap'}
           </Button>
         </Checker.Amounts>
       )}

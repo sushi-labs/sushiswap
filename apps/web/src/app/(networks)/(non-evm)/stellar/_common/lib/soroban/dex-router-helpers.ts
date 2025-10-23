@@ -24,49 +24,16 @@ export async function findPoolsBetweenTokens(
 
   const pools: PoolBasicInfo[] = []
 
-  // First, check known pools from CONTRACT_ADDRESSES
-  // This ensures we find the deployed pools quickly
-  const knownPools = Object.entries(CONTRACT_ADDRESSES.POOLS)
-  for (const [poolName, poolAddress] of knownPools) {
-    const config = getPoolConfig(poolAddress)
-    if (!config) continue
-
-    const poolToken0 = getTokenByCode(config.token0.code)
-    const poolToken1 = getTokenByCode(config.token1.code)
-
-    if (!poolToken0 || !poolToken1) continue
-
-    // Check if this pool matches our token pair (in either order)
-    const matchesForward =
-      poolToken0.contract === tokenA.contract &&
-      poolToken1.contract === tokenB.contract
-    const matchesReverse =
-      poolToken0.contract === tokenB.contract &&
-      poolToken1.contract === tokenA.contract
-
-    if (matchesForward || matchesReverse) {
-      console.log(
-        `✅ Found known pool ${poolName} at ${poolAddress} with fee ${config.fee}`,
-      )
-      pools.push({
-        address: poolAddress,
-        tokenA: matchesForward ? poolToken0 : poolToken1,
-        tokenB: matchesForward ? poolToken1 : poolToken0,
-        fee: config.fee,
-      })
-    }
-  }
-
-  // If we found known pools, return them
-  if (pools.length > 0) {
-    console.log('=== findPoolsBetweenTokens END ===')
-    console.log('Total pools found from known pools:', pools.length)
-    return pools
-  }
+  // Note: CONTRACT_ADDRESSES.POOLS is not defined in the current structure
+  // Skip known pools lookup for now and go straight to dynamic discovery
 
   // Fall back to dynamic discovery
+  console.log(`🔍 Checking fees: ${getFees().join(', ')}`)
   for (const fee of getFees()) {
     try {
+      console.log(
+        `🔍 Checking pool: ${tokenA.code}(${tokenA.contract}) ↔ ${tokenB.code}(${tokenB.contract}) with fee ${fee}`,
+      )
       const pool = await getPool({
         tokenA: tokenA.contract,
         tokenB: tokenB.contract,
@@ -80,6 +47,8 @@ export async function findPoolsBetweenTokens(
           fee: fee,
         })
         console.log(`✅ Found pool at ${pool} for fee ${fee}`)
+      } else {
+        console.log(`❌ No pool found for fee ${fee}`)
       }
     } catch (error) {
       // Pool doesn't exist for this fee tier
@@ -97,13 +66,19 @@ export async function findBestPath(
   fromToken: Token,
   toToken: Token,
 ): Promise<Route | null> {
+  console.log(`🚀 findBestPath called: ${fromToken.code} → ${toToken.code}`)
+
   // Step 1: Check for direct pool
+  console.log(
+    `🔍 Step 1: Checking direct route ${fromToken.code} → ${toToken.code}`,
+  )
   const directPools = await findPoolsBetweenTokens(fromToken, toToken)
-  console.log({ directPools })
+  console.log(`Direct pools found: ${directPools.length}`)
 
   if (directPools.length > 0) {
     // Use pool with lowest fee
     const bestPool = directPools.sort((a, b) => a.fee - b.fee)[0]
+    console.log(`✅ Direct route found: ${fromToken.code} → ${toToken.code}`)
     return {
       type: 'direct',
       path: [fromToken, toToken],
@@ -112,19 +87,36 @@ export async function findBestPath(
     }
   }
 
+  console.log(`❌ No direct route found, trying multi-hop...`)
+
   // Step 2: Check multi-hop through XLM
   if (fromToken.code !== 'XLM' && toToken.code !== 'XLM') {
     const xlmToken = getTokenByCode('XLM')
 
     if (!xlmToken) return null
 
+    console.log(
+      `🔍 Trying multi-hop route: ${fromToken.code} → XLM → ${toToken.code}`,
+    )
+
     const fromToXlm = await findPoolsBetweenTokens(fromToken, xlmToken)
+    console.log(
+      `Found ${fromToXlm.length} pools between ${fromToken.code} and XLM`,
+    )
+
     const xlmToTo = await findPoolsBetweenTokens(xlmToken, toToken)
+    console.log(`Found ${xlmToTo.length} pools between XLM and ${toToken.code}`)
 
     if (fromToXlm.length > 0 && xlmToTo.length > 0) {
       // Use pools with lowest fees
       const pool1 = fromToXlm.sort((a, b) => a.fee - b.fee)[0]
       const pool2 = xlmToTo.sort((a, b) => a.fee - b.fee)[0]
+
+      console.log(
+        `✅ Multi-hop route found: ${fromToken.code} → XLM → ${toToken.code}`,
+      )
+      console.log(`Pool 1: ${pool1.address} (fee: ${pool1.fee})`)
+      console.log(`Pool 2: ${pool2.address} (fee: ${pool2.fee})`)
 
       return {
         type: 'multihop',
@@ -132,6 +124,12 @@ export async function findBestPath(
         pools: [pool1, pool2],
         fees: [pool1.fee, pool2.fee],
       }
+    } else {
+      console.log(
+        `❌ Multi-hop route not possible: ${fromToken.code} → XLM → ${toToken.code}`,
+      )
+      console.log(`  ${fromToken.code} → XLM: ${fromToXlm.length} pools`)
+      console.log(`  XLM → ${toToken.code}: ${xlmToTo.length} pools`)
     }
   }
 
@@ -161,8 +159,11 @@ export async function quoteExactInput({
   amount0: bigint
   amount1: bigint
 }> {
+  console.log(
+    `💰 quoteExactInput called: ${_fromToken.code} → ${_toToken.code}`,
+  )
   const route = await findBestPath(_fromToken, _toToken)
-  console.log({ route })
+  console.log(`Route result:`, route)
 
   if (!route) {
     console.warn('No route found between tokens')

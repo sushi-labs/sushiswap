@@ -24,10 +24,6 @@ export interface PositionInfo {
   liquidity: bigint
   tokensOwed0: bigint
   tokensOwed1: bigint
-  feeGrowthInside0LastX128: bigint
-  feeGrowthInside1LastX128: bigint
-  nonce: bigint
-  operator: string
   fee: number
 }
 
@@ -56,10 +52,6 @@ const formatPositionInfo = (
     liquidity: contractPositionInfo.liquidity,
     tokensOwed0: contractPositionInfo.tokens_owed0,
     tokensOwed1: contractPositionInfo.tokens_owed1,
-    feeGrowthInside0LastX128: contractPositionInfo.fee_growth_inside0_last_x128,
-    feeGrowthInside1LastX128: contractPositionInfo.fee_growth_inside1_last_x128,
-    nonce: contractPositionInfo.nonce,
-    operator: contractPositionInfo.operator,
     fee: contractPositionInfo.fee,
   }
 }
@@ -78,6 +70,7 @@ export class PositionService {
   ): Promise<number[]> {
     const positionManagerClient = getPositionManagerContractClient({
       contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+      publicKey: userAddress,
     })
 
     const result = await positionManagerClient.get_user_token_ids({
@@ -95,6 +88,7 @@ export class PositionService {
   async getPositionWithFees(tokenId: number): Promise<PositionInfo | null> {
     const positionManagerClient = getPositionManagerContractClient({
       contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+      // No publicKey needed for read-only operations that don't require user context
     })
 
     try {
@@ -133,6 +127,9 @@ export class PositionService {
 
   /**
    * Get all positions owned by a user with live fee calculations
+   * Uses two-step approach to avoid budget exceeded errors:
+   * 1. Get token IDs (lightweight)
+   * 2. Fetch individual position details
    */
   async getUserPositionsWithFees(
     userAddress: string,
@@ -141,9 +138,11 @@ export class PositionService {
   ): Promise<PositionInfo[]> {
     const positionManagerClient = getPositionManagerContractClient({
       contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+      // No publicKey needed for read-only position queries
     })
 
     try {
+      // Try the bulk method first
       const { result } =
         await positionManagerClient.get_user_positions_with_fees({
           owner: userAddress,
@@ -153,29 +152,44 @@ export class PositionService {
 
       const formattedResults = result.map(formatPositionInfo)
 
-      console.log('📊 Positions found:', formattedResults.length || 0)
-
       if (result.length > 0) {
-        formattedResults.forEach((pos, i) => {
-          console.log(`Position ${i}:`, {
-            tokenId: pos.tokenId,
-            token0: pos.token0,
-            token1: pos.token1,
-            liquidity: pos.liquidity.toString(),
-            feesToken0: pos.tokensOwed0.toString(),
-            feesToken1: pos.tokensOwed1.toString(),
-          })
-        })
       }
 
       return formattedResults
-    } catch (error) {
-      console.error('❌ Failed to get user positions with fees:', error)
-      if (error instanceof Error) {
-        console.error('Error message:', error.message)
-        console.error('Error stack:', error.stack)
+    } catch (_error) {
+      // Fallback: fetch token IDs first, then fetch positions individually
+      try {
+        const tokenIds = await this.getUserTokenIds(userAddress, skip, take)
+
+        if (tokenIds.length === 0) {
+          return []
+        }
+
+        // Fetch positions one at a time to avoid budget limits
+        const positions: PositionInfo[] = []
+
+        for (const tokenId of tokenIds) {
+          try {
+            const position = await this.getPositionWithFees(tokenId)
+            if (position) {
+              positions.push(position)
+            }
+          } catch (_posError) {
+            // Continue with other positions
+          }
+        }
+
+        return positions
+      } catch (fallbackError) {
+        console.error(
+          '❌ Failed to get user positions with fallback:',
+          fallbackError,
+        )
+        if (fallbackError instanceof Error) {
+          console.error('Error message:', fallbackError.message)
+        }
+        return []
       }
-      return []
     }
   }
 
@@ -186,17 +200,21 @@ export class PositionService {
   async getPositionPrincipal(
     tokenId: number,
   ): Promise<{ amount0: bigint; amount1: bigint }> {
-    const positionManagerClient = getPositionManagerContractClient({
-      contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
-    })
-
     try {
+      // Get position info first (no publicKey needed for read-only)
+      const positionManagerClient = getPositionManagerContractClient({
+        contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+        // No publicKey needed for read-only position queries
+      })
+
       const position = await positionManagerClient.get_position_with_fees({
         token_id: tokenId,
       })
 
+      // Get pool address from factory
       const factoryClient = getFactoryContractClient({
         contractId: CONTRACT_ADDRESSES.FACTORY,
+        // No publicKey needed for read-only factory queries
       })
 
       const poolAddress = await factoryClient.get_pool({
@@ -205,12 +223,13 @@ export class PositionService {
         fee: position.result.fee,
       })
 
+      // Get pool's current price
       const poolClient = getPoolContractClient({
         contractId: poolAddress.result || '',
+        // No publicKey needed for read-only pool queries
       })
 
       const slot0 = await poolClient.slot0()
-      console.log(`📊 [getPositionPrincipal] Full slot0 result:`, slot0.result)
 
       // Handle field name confusion: the contract returns sqrt_price_x96 in the fee_protocol field
       let sqrtPriceX96: bigint
@@ -220,31 +239,15 @@ export class PositionService {
         Number(slot0.result.sqrt_price_x96) !== 0
       ) {
         sqrtPriceX96 = BigInt(slot0.result.sqrt_price_x96)
-        console.log(
-          `📊 [getPositionPrincipal] Using sqrt_price_x96 from correct field:`,
-          sqrtPriceX96.toString(),
-        )
       } else if (
         slot0.result.fee_protocol &&
         BigInt(slot0.result.fee_protocol) !== 0n
       ) {
         // The contract has the fields mixed up - sqrt price is in fee_protocol
         sqrtPriceX96 = BigInt(slot0.result.fee_protocol)
-        console.log(
-          `📊 [getPositionPrincipal] Using sqrt_price_x96 from fee_protocol field (field names are swapped):`,
-          sqrtPriceX96.toString(),
-        )
       } else {
-        console.warn(
-          'Pool sqrt_price_x96 is 0 - cannot calculate principal amounts',
-        )
         return { amount0: 0n, amount1: 0n }
       }
-
-      console.log(
-        `📊 [getPositionPrincipal] Final sqrt_price_x96:`,
-        sqrtPriceX96.toString(),
-      )
 
       const result = await positionManagerClient.position_principal({
         token_id: tokenId,
@@ -265,6 +268,94 @@ export class PositionService {
   }
 
   /**
+   * Get principal amounts for multiple positions in the same pool (more efficient)
+   * Fetches slot0 once and reuses it for all positions
+   */
+  async getPositionsPrincipalBatch(
+    tokenIds: number[],
+    poolAddress: string,
+  ): Promise<Map<number, { amount0: bigint; amount1: bigint }>> {
+    const results = new Map<number, { amount0: bigint; amount1: bigint }>()
+
+    if (tokenIds.length === 0) {
+      return results
+    }
+
+    try {
+      // Get pool's current price once for all positions
+      const poolClient = getPoolContractClient({
+        contractId: poolAddress,
+        // No publicKey needed for read-only pool queries
+      })
+
+      const slot0 = await poolClient.slot0()
+
+      // Handle field name confusion
+      let sqrtPriceX96: bigint
+
+      if (
+        slot0.result.sqrt_price_x96 &&
+        Number(slot0.result.sqrt_price_x96) !== 0
+      ) {
+        sqrtPriceX96 = BigInt(slot0.result.sqrt_price_x96)
+      } else if (
+        slot0.result.fee_protocol &&
+        BigInt(slot0.result.fee_protocol) !== 0n
+      ) {
+        sqrtPriceX96 = BigInt(slot0.result.fee_protocol)
+      } else {
+        console.warn('Pool sqrt_price_x96 is 0 - cannot calculate principals')
+        // Return zeros for all positions
+        for (const tokenId of tokenIds) {
+          results.set(tokenId, { amount0: 0n, amount1: 0n })
+        }
+        return results
+      }
+
+      // Now calculate principal for each position using the same sqrt price
+      const positionManagerClient = getPositionManagerContractClient({
+        contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+        // No publicKey needed for read-only position queries
+      })
+
+      for (const tokenId of tokenIds) {
+        try {
+          const result = await positionManagerClient.position_principal({
+            token_id: tokenId,
+            sqrt_price_x96: sqrtPriceX96,
+          })
+
+          const amount0 = BigInt(result.result[0])
+          const amount1 = BigInt(result.result[1])
+
+          results.set(tokenId, {
+            amount0,
+            amount1,
+          })
+        } catch (error) {
+          console.error(
+            `Failed to calculate principal for position ${tokenId}:`,
+            error,
+          )
+          results.set(tokenId, { amount0: 0n, amount1: 0n })
+        }
+      }
+
+      return results
+    } catch (error) {
+      console.error(
+        'Failed to fetch slot0 for batch principal calculation:',
+        error,
+      )
+      // Return zeros for all positions
+      for (const tokenId of tokenIds) {
+        results.set(tokenId, { amount0: 0n, amount1: 0n })
+      }
+      return results
+    }
+  }
+
+  /**
    * Collect fees from a position
    */
   async collectFees(
@@ -275,8 +366,6 @@ export class PositionService {
       contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
       publicKey: params.recipient,
     })
-
-    console.log('Preparing collect transaction for position:', params.tokenId)
 
     const assembledTransaction = await positionManagerClient.collect(
       {
@@ -294,8 +383,6 @@ export class PositionService {
       },
     )
 
-    console.log('Transaction prepared. Waiting for wallet signature...')
-
     // Convert to XDR for signing
     const transactionXdr = assembledTransaction.toXDR()
 
@@ -306,21 +393,13 @@ export class PositionService {
       NETWORK_CONFIG.PASSPHRASE,
     )
 
-    console.log('Transaction signed. Submitting to network...')
-
     // Submit the signed transaction via raw RPC
     const txHash = await submitViaRawRPC(signedTx)
-
-    console.log(`Transaction submitted: ${txHash}`)
-    console.log('Waiting for confirmation...')
 
     // Wait for confirmation
     const result = await waitForTransaction(txHash)
 
     if (result.success) {
-      console.log('✅ Fee collection confirmed!')
-      console.log('📊 Full result data:', result.data)
-
       // TODO: Parse return value when we understand the response structure
       // For now, return placeholder values - fees are collected on-chain
 

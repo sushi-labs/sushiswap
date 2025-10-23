@@ -3,19 +3,23 @@
 // Replace your-framework with the framework you are using (e.g., react-vite, vue3-vite)
 import type { StorybookConfig } from '@storybook/react-vite'
 
-import path, { dirname, join } from 'path'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import { mergeConfig } from 'vite'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const config: StorybookConfig = {
   stories: ['../stories/**/*.stories.tsx'],
   addons: [
-    getAbsolutePath('@storybook/addon-links'),
-    getAbsolutePath('@storybook/addon-essentials'),
-    getAbsolutePath('@storybook/addon-themes'),
-    getAbsolutePath('@storybook/addon-designs'),
+    '@storybook/addon-links',
+    '@storybook/addon-essentials',
+    '@storybook/addon-themes',
+    '@storybook/addon-designs',
   ],
   framework: {
-    name: getAbsolutePath('@storybook/react-vite'),
+    name: '@storybook/react-vite',
     options: {},
   },
   docs: {
@@ -61,7 +65,3 @@ const config: StorybookConfig = {
 }
 
 export default config
-
-function getAbsolutePath(value: string): any {
-  return dirname(require.resolve(join(value, 'package.json')))
-}

@@ -75,6 +75,31 @@ export const useAddLiquidity = () => {
       queryClient.invalidateQueries({
         queryKey: ['pool', 'info', variables.poolAddress],
       })
+
+      // Invalidate position queries to refresh position data
+      queryClient.invalidateQueries({
+        queryKey: ['stellar', 'positions', 'user', variables.userAddress],
+      })
+
+      // Invalidate position-pool queries used by useMyPosition
+      queryClient.invalidateQueries({
+        queryKey: ['stellar', 'position-pool'],
+      })
+
+      // Invalidate position-principals-batch queries used by useMyPosition
+      queryClient.invalidateQueries({
+        queryKey: ['stellar', 'position-principals-batch'],
+      })
+
+      // If we know the specific token ID, invalidate that too
+      if (result.tokenId) {
+        queryClient.invalidateQueries({
+          queryKey: ['stellar', 'positions', 'token', result.tokenId],
+        })
+        queryClient.invalidateQueries({
+          queryKey: ['stellar', 'position-principal', result.tokenId],
+        })
+      }
     },
     onError: (error) => {
       console.error('Failed to add liquidity:', error)

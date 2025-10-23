@@ -1,6 +1,7 @@
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
 import type React from 'react'
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import { formatTokenAmount } from '~stellar/_common/lib/utils/formatters'
 import { useStellarWallet } from '~stellar/providers'
@@ -35,29 +36,47 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
   // Handle collect fees
   const handleCollectFees = async () => {
     if (!connectedAddress || !signTransaction) {
-      console.error('Wallet not connected')
+      toast.error('Please connect your wallet')
       return
     }
 
     if (positions.length === 0) {
-      console.error('No positions found')
+      toast.error('No positions found')
       return
     }
 
     try {
       setIsCollecting(true)
 
+      // Count positions with fees
+      const positionsWithFees = positions.filter(
+        (p) => p.feesToken0 > 0n || p.feesToken1 > 0n,
+      )
+
+      if (positionsWithFees.length === 0) {
+        toast.info('No fees to collect')
+        return
+      }
+
+      toast.info(
+        `Collecting fees from ${positionsWithFees.length} position${positionsWithFees.length > 1 ? 's' : ''}...`,
+      )
+
+      let successCount = 0
+
       // Collect from all positions that have fees
-      for (const position of positions) {
-        const hasPositionFees =
-          position.feesToken0 > 0n || position.feesToken1 > 0n
+      for (const position of positionsWithFees) {
+        console.log(`Collecting fees from position ${position.tokenId}`)
 
-        if (hasPositionFees) {
-          console.log(`Collecting fees from position ${position.tokenId}`)
+        console.log(`Position ${position.tokenId} fees:`, {
+          feesToken0: position.feesToken0.toString(),
+          feesToken1: position.feesToken1.toString(),
+        })
 
-          // Max uint128 value for collecting all available fees
-          const maxAmount = BigInt('340282366920938463463374607431768211455') // 2^128 - 1
+        // Max uint128 value for collecting all available fees
+        const maxAmount = BigInt('340282366920938463463374607431768211455') // 2^128 - 1
 
+        try {
           await collectFeesMutation.mutateAsync({
             tokenId: position.tokenId,
             recipient: connectedAddress,
@@ -66,13 +85,38 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
             signTransaction,
           })
 
+          successCount++
           console.log(
             `Successfully collected fees from position ${position.tokenId}`,
           )
+        } catch (error) {
+          console.error(
+            `Failed to collect fees from position ${position.tokenId}:`,
+            error,
+          )
+
+          // Show a concise error message
+          const errorMessage =
+            error instanceof Error
+              ? `Position #${position.tokenId}: ${error.message}`
+              : `Position #${position.tokenId}: Failed to collect fees`
+
+          toast.error(errorMessage)
         }
+      }
+
+      if (successCount === positionsWithFees.length) {
+        toast.success(
+          `Successfully collected fees from ${successCount} position${successCount > 1 ? 's' : ''}!`,
+        )
+      } else if (successCount > 0) {
+        toast.warning(
+          `Collected fees from ${successCount} of ${positionsWithFees.length} positions`,
+        )
       }
     } catch (error) {
       console.error('Failed to collect fees:', error)
+      toast.error('Failed to collect fees. Please try again.')
     } finally {
       setIsCollecting(false)
     }

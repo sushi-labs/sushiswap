@@ -1,4 +1,5 @@
 import { Buffer } from "buffer";
+import { Address } from '@stellar/stellar-sdk';
 import {
   AssembledTransaction,
   Client as ContractClient,
@@ -15,7 +16,10 @@ import type {
   u128,
   i128,
   u256,
+  i256,
   Option,
+  Typepoint,
+  Duration,
 } from '@stellar/stellar-sdk/contract';
 export * from '@stellar/stellar-sdk'
 export * as contract from '@stellar/stellar-sdk/contract'
@@ -25,6 +29,15 @@ if (typeof window !== 'undefined') {
   //@ts-ignore Buffer exists
   window.Buffer = window.Buffer || Buffer;
 }
+
+
+export const networks = {
+  testnet: {
+    networkPassphrase: "Test SDF Network ; September 2015",
+    contractId: "CC5KEYMWCZ6BCAKKATZ24MAHG2PCB2X2NGENLJXT6TXDVDAYW54EVOZV",
+  }
+} as const
+
 
 export interface Slot0Return {
   sqrt_price_x96: u256;
@@ -159,7 +172,7 @@ export interface UserPositionInfo {
 /**
  * Storage keys for the contract
  */
-export type DataKey = {tag: "Factory", values: void} | {tag: "XlmAddress", values: void} | {tag: "TokenDescriptor", values: void} | {tag: "Position", values: readonly [u32]} | {tag: "PoolIdToPoolKey", values: readonly [u32]} | {tag: "PoolIdsByAddress", values: readonly [string]} | {tag: "PoolIdToAddress", values: readonly [u32]} | {tag: "NextPoolId", values: void} | {tag: "NextTokenId", values: void} | {tag: "UserTokenIds", values: readonly [string]} | {tag: "HookModules", values: readonly [ComplianceHook]};;
+export type DataKey = {tag: "Factory", values: void} | {tag: "HookModules", values: readonly [ComplianceHook]} | {tag: "XlmAddress", values: void} | {tag: "TokenDescriptor", values: void} | {tag: "Position", values: readonly [u32]} | {tag: "PoolIdToPoolKey", values: readonly [u32]} | {tag: "PoolIdsByAddress", values: readonly [string]} | {tag: "PoolIdToAddress", values: readonly [u32]} | {tag: "NextPoolId", values: void} | {tag: "NextTokenId", values: void} | {tag: "UserTokenIds", values: readonly [string]} | {tag: "XlmAddress", values: void};;
 
 /**
  * Parameters required to construct a token URI (see original Solidity code for semantics)
@@ -179,6 +192,21 @@ export interface ConstructTokenURIParams {
   tick_spacing: i32;
   tick_upper: i32;
   token_id: u64;
+}
+
+
+/**
+ * Data structure for weighted tick aggregation across multiple pools
+ */
+export interface WeightedTickData {
+  /**
+ * Tick value from a pool
+ */
+tick: i32;
+  /**
+ * Weight for this tick (typically liquidity or volume)
+ */
+weight: u128;
 }
 
 /**
@@ -249,21 +277,11 @@ export const Errors = {
    * Tokens Not Ordered
    */
   1016: {message:"TokensNotOrdered"},
-    /**
+
+  /**
    * Hex string length is insufficient for the requested conversion
    */
   2001: {message:"HexLengthInsufficient"}
-}
-
-
-/**
- * Represents a single function call in a multicall batch
- * All calls are executed on the current contract
- */
-export interface FunctionCall {
-  approver: string;
-  args: Array<any>;
-  function: string;
 }
 
 /**
@@ -1791,8 +1809,8 @@ export class Client extends ContractClient {
         "AAAAAAAAAQpDYWxjdWxhdGUgdGhlIHRvdGFsIHZhbHVlIG9mIGEgcG9zaXRpb24gKHByaW5jaXBhbCArIGZlZXMpCk1pcnJvcnMgVW5pc3dhcCBWMydzIFBvc2l0aW9uVmFsdWUudG90YWwKQHBhcmFtIHRva2VuX2lkIFRoZSBORlQgdG9rZW4gSUQKQHBhcmFtIHNxcnRfcHJpY2VfeDk2IFRoZSBzcXJ0IHByaWNlIHRvIHVzZSBmb3IgcHJpbmNpcGFsIGNhbGN1bGF0aW9uCkByZXR1cm4gKHRvdGFsMCwgdG90YWwxKSBUaGUgdG90YWwgYW1vdW50cyBvZiB0b2tlbjAgYW5kIHRva2VuMQAAAAAADnBvc2l0aW9uX3RvdGFsAAAAAAACAAAAAAAAAAh0b2tlbl9pZAAAAAQAAAAAAAAADnNxcnRfcHJpY2VfeDk2AAAAAAAMAAAAAQAAA+0AAAACAAAACgAAAAo=",
         "AAAABAAAACdFcnJvciBjb2RlcyBmb3IgdGhlIHBlcmlwaGVyeSBsaWJyYXJpZXMAAAAAAAAAAAVFcnJvcgAAAAAAAAEAAAA+SGV4IHN0cmluZyBsZW5ndGggaXMgaW5zdWZmaWNpZW50IGZvciB0aGUgcmVxdWVzdGVkIGNvbnZlcnNpb24AAAAAABVIZXhMZW5ndGhJbnN1ZmZpY2llbnQAAAAAAAfR",
         "AAAAAQAAAFdQYXJhbWV0ZXJzIHJlcXVpcmVkIHRvIGNvbnN0cnVjdCBhIHRva2VuIFVSSSAoc2VlIG9yaWdpbmFsIFNvbGlkaXR5IGNvZGUgZm9yIHNlbWFudGljcykAAAAAAAAAABdDb25zdHJ1Y3RUb2tlblVSSVBhcmFtcwAAAAAOAAAAAAAAABJiYXNlX3Rva2VuX2FkZHJlc3MAAAAAABMAAAAAAAAAE2Jhc2VfdG9rZW5fZGVjaW1hbHMAAAAABAAAAAAAAAARYmFzZV90b2tlbl9zeW1ib2wAAAAAAAAQAAAAAAAAAANmZWUAAAAABAAAAAAAAAAKZmxpcF9yYXRpbwAAAAAAAQAAAAAAAAAMcG9vbF9hZGRyZXNzAAAAEwAAAAAAAAATcXVvdGVfdG9rZW5fYWRkcmVzcwAAAAATAAAAAAAAABRxdW90ZV90b2tlbl9kZWNpbWFscwAAAAQAAAAAAAAAEnF1b3RlX3Rva2VuX3N5bWJvbAAAAAAAEAAAAAAAAAAMdGlja19jdXJyZW50AAAABQAAAAAAAAAKdGlja19sb3dlcgAAAAAABQAAAAAAAAAMdGlja19zcGFjaW5nAAAABQAAAAAAAAAKdGlja191cHBlcgAAAAAABQAAAAAAAAAIdG9rZW5faWQAAAAG",
+        "AAAAAQAAAEJEYXRhIHN0cnVjdHVyZSBmb3Igd2VpZ2h0ZWQgdGljayBhZ2dyZWdhdGlvbiBhY3Jvc3MgbXVsdGlwbGUgcG9vbHMAAAAAAAAAAAAQV2VpZ2h0ZWRUaWNrRGF0YQAAAAIAAAAWVGljayB2YWx1ZSBmcm9tIGEgcG9vbAAAAAAABHRpY2sAAAAFAAAANFdlaWdodCBmb3IgdGhpcyB0aWNrICh0eXBpY2FsbHkgbGlxdWlkaXR5IG9yIHZvbHVtZSkAAAAGd2VpZ2h0AAAAAAAK",
         "AAAABAAAACtFcnJvciBjb2RlcyBmb3IgdGhlIHBlcmlwaGVyeSBiYXNlIGNvbnRyYWN0AAAAAAAAAAAFRXJyb3IAAAAAAAAQAAAAJVRyYW5zYWN0aW9uIGhhcyBleGNlZWRlZCB0aGUgZGVhZGxpbmUAAAAAAAARVHJhbnNhY3Rpb25Ub29PbGQAAAAAAAPpAAAAJUNvbnRyYWN0IGhhcyBhbHJlYWR5IGJlZW4gaW5pdGlhbGl6ZWQAAAAAAAASQWxyZWFkeUluaXRpYWxpemVkAAAAAAPqAAAAKEZhY3RvcnkgYWRkcmVzcyBoYXMgbm90IGJlZW4gaW5pdGlhbGl6ZWQAAAAVRmFjdG9yeU5vdEluaXRpYWxpemVkAAAAAAAD6wAAACRYTE0gYWRkcmVzcyBoYXMgbm90IGJlZW4gaW5pdGlhbGl6ZWQAAAAYWGxtQWRkcmVzc05vdEluaXRpYWxpemVkAAAD7AAAABRUb2tlbiBkb2VzIG5vdCBleGlzdAAAABFUb2tlbkRvZXNOb3RFeGlzdAAAAAAAA+0AAAAaTm90IHRoZSBvd25lciBvZiB0aGUgdG9rZW4AAAAAAA1Ob3RUb2tlbk93bmVyAAAAAAAD7gAAABZVbmF1dGhvcml6ZWQgb3BlcmF0aW9uAAAAAAAMVW5hdXRob3JpemVkAAAD7wAAAChJbnN1ZmZpY2llbnQgdG9rZW4gYmFsYW5jZSBmb3Igb3BlcmF0aW9uAAAAE0luc3VmZmljaWVudEJhbGFuY2UAAAAD8AAAACZUaWNrIHJhbmdlIGlzIGludmFsaWQgKGxvd2VyID49IHVwcGVyKQAAAAAAEEludmFsaWRUaWNrUmFuZ2UAAAPxAAAAMFRpY2sgdmFsdWVzIGFyZSBub3QgYWxpZ25lZCB0byBwb29sIHRpY2sgc3BhY2luZwAAAA5UaWNrTm90QWxpZ25lZAAAAAAD8gAAAB9UaWNrIGlzIG91dCBvZiBhbGxvd2FibGUgYm91bmRzAAAAAA9UaWNrT3V0T2ZCb3VuZHMAAAAD8wAAACdFeHBlY3RlZCBwb29sIG5vdCBmb3VuZCBvciBpbmFjY2Vzc2libGUAAAAADFBvb2xOb3RGb3VuZAAAA/QAAAArTWF0aGVtYXRpY2FsIG9wZXJhdGlvbiByZXN1bHRlZCBpbiBvdmVyZmxvdwAAAAAMTWF0aE92ZXJmbG93AAAD9QAAADtQcmljZSBzbGlwcGFnZSBjaGVjayBmYWlsZWQgKGFtb3VudCByZWNlaXZlZCBiZWxvdyBtaW5pbXVtKQAAAAASUHJpY2VTbGlwcGFnZUNoZWNrAAAAAAP2AAAAQE5vIHRva2VucyB0byBjb2xsZWN0IChib3RoIGFtb3VudDBfbWF4IGFuZCBhbW91bnQxX21heCBhcmUgemVybykAAAAQTm90aGluZ1RvQ29sbGVjdAAAA/cAAAASVG9rZW5zIE5vdCBPcmRlcmVkAAAAAAAQVG9rZW5zTm90T3JkZXJlZAAAA/g=",
-        "AAAAAQAAAGVSZXByZXNlbnRzIGEgc2luZ2xlIGZ1bmN0aW9uIGNhbGwgaW4gYSBtdWx0aWNhbGwgYmF0Y2gKQWxsIGNhbGxzIGFyZSBleGVjdXRlZCBvbiB0aGUgY3VycmVudCBjb250cmFjdAAAAAAAAAAAAAAMRnVuY3Rpb25DYWxsAAAAAwAAAAAAAAAIYXBwcm92ZXIAAAATAAAAAAAAAARhcmdzAAAD6gAAAAAAAAAAAAAACGZ1bmN0aW9uAAAAEQ==",
         "AAAAAgAAADFLZXlzIHVuZGVyIHdoaWNoIHdlJ2xsIHN0b3JlIHRoZSBpbW11dGFibGUgZmllbGRzAAAAAAAAAAAAAAdEYXRhS2V5AAAAAAIAAAAAAAAAAAAAAAdGYWN0b3J5AAAAAAAAAAAAAAAAClhsbUFkZHJlc3MAAA==",
         "AAAAAgAAAEFTdG9yYWdlIGtleXMgZm9yIHRoZSBkYXRhIGFzc29jaWF0ZWQgd2l0aCB0aGUgYWxsb3dsaXN0IGV4dGVuc2lvbgAAAAAAAAAAAAATQWxsb3dMaXN0U3RvcmFnZUtleQAAAAABAAAAAQAAACdTdG9yZXMgdGhlIGFsbG93ZWQgc3RhdHVzIG9mIGFuIGFjY291bnQAAAAAB0FsbG93ZWQAAAAAAQAAABM=",
         "AAAABQAAADhFdmVudCBlbWl0dGVkIHdoZW4gYSB1c2VyIGlzIGFsbG93ZWQgdG8gdHJhbnNmZXIgdG9rZW5zLgAAAAAAAAALVXNlckFsbG93ZWQAAAAAAQAAAAx1c2VyX2FsbG93ZWQAAAABAAAAAAAAAAR1c2VyAAAAEwAAAAEAAAAC",

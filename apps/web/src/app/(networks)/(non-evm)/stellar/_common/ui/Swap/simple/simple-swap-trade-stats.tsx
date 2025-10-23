@@ -1,55 +1,32 @@
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Transition } from '@headlessui/react'
 import { SkeletonBox, classNames } from '@sushiswap/ui'
-import React from 'react'
-import { networkNameToNetwork } from '~aptos/_common/config/chains'
-import { formatNumberWithDecimals } from '~aptos/_common/lib/common/format-number-with-decimals'
-import { useNetwork } from '~aptos/_common/lib/common/use-network'
-import { useSwap } from '~aptos/swap/lib/use-swap'
-import { useSwapNetworkFee } from '~aptos/swap/lib/use-swap-network-fee'
 import {
   warningSeverity,
   warningSeverityClassName,
-} from '~aptos/swap/lib/warning-severity'
-import { useSimpleSwapState } from '~aptos/swap/ui/simple/simple-swap-provider/simple-swap-provider'
+} from '~stellar/_common/lib/utils/warning-severity'
+import { useSimpleSwapState } from './simple-swap-provider/simple-swap-provider'
 
 export const SimpleSwapTradeStats = () => {
-  const { account } = useWallet()
   const {
     token1,
     amount,
-    bestRoutes,
     isLoadingPrice,
     isPriceFetching,
     outputAmount,
     slippageAmount,
+    priceImpact,
   } = useSimpleSwapState()
-  const { data: networkFee, isLoading: isLoadingNetworkFee } =
-    useSwapNetworkFee()
 
   const loading =
-    Boolean(isLoadingPrice && Number(amount) > 0) ||
-    isPriceFetching ||
-    isLoadingNetworkFee
+    Boolean(isLoadingPrice && Number(amount) > 0) || isPriceFetching
 
   const outputSwapTokenAmount = outputAmount
-    ? formatNumberWithDecimals(
-        Number.parseFloat(outputAmount),
-        token1 ? token1.decimals : 8,
-      )
-    : ''
-
-  const { network } = useNetwork()
-
-  const minOutput = slippageAmount
-    ? formatNumberWithDecimals(slippageAmount, token1 ? token1.decimals : 8)
-    : 0
-
-  const { data: routes } = useSwap()
+    ? (Number(outputAmount) / 10 ** token1.decimals).toFixed(6)
+    : null
 
   return (
     <Transition
-      show={Number(amount) > 0 && bestRoutes.length > 0}
+      show={Number(amount) > 0}
       enter="transition duration-300 ease-out"
       enterFrom="transform translate-y-[16px] opacity-0"
       enterTo="transform translate-y-0 opacity-100"
@@ -64,14 +41,21 @@ export const SimpleSwapTradeStats = () => {
           </span>
           <span
             className={classNames(
-              warningSeverityClassName(warningSeverity(routes?.priceImpact)),
+              warningSeverityClassName(
+                warningSeverity(priceImpact || undefined),
+              ),
               'text-sm font-semibold text-gray-700 text-right dark:text-slate-400',
             )}
           >
             {loading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
-              <>{routes?.priceImpact ? -routes?.priceImpact.toFixed(2) : 0}%</>
+              <>
+                {priceImpact !== null
+                  ? `${priceImpact > 0 ? '-' : '+'}${Math.abs(priceImpact).toFixed(2)}`
+                  : '0.00'}
+                %
+              </>
             )}
           </span>
         </div>
@@ -83,56 +67,24 @@ export const SimpleSwapTradeStats = () => {
             {loading || !outputSwapTokenAmount ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
-              `${outputSwapTokenAmount} ${token1.symbol}`
+              `${outputSwapTokenAmount} ${token1.code}`
             )}
           </span>
         </div>
         <div className="flex justify-between items-center gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
-            Min. received
+            Min. received after slippage
           </span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading || !minOutput ? (
+            {loading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
+            ) : slippageAmount !== null && slippageAmount > 0 ? (
+              `${(slippageAmount / 10 ** token1.decimals).toFixed(6)} ${token1.code}`
             ) : (
-              `${minOutput} ${token1.symbol}`
+              '0.00'
             )}
           </span>
         </div>
-        <div className="flex justify-between items-center gap-2">
-          <span className="text-sm text-gray-700 dark:text-slate-400">
-            Network fee
-          </span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading || !minOutput || !networkFee ? (
-              <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
-            ) : (
-              `${networkFee} APT`
-            )}
-          </span>
-        </div>
-        {account?.address && (
-          <div className="flex justify-between items-center border-t border-gray-200 dark:border-slate-200/5 mt-2 pt-2">
-            <span className="font-medium text-sm text-gray-700 dark:text-slate-300">
-              Recipient
-            </span>
-            <span className="font-semibold text-gray-700 text-right dark:text-slate-300">
-              <a
-                target="_blank"
-                href={`https://explorer.aptoslabs.com/account/${
-                  account?.address
-                }?network=${networkNameToNetwork(network)}`}
-                className={classNames('transition-all flex gap-1 items-center')}
-                rel="noreferrer"
-              >
-                {`${account?.address.substring(
-                  0,
-                  6,
-                )}...${account?.address.substring(66 - 4)}`}
-              </a>
-            </span>
-          </div>
-        )}
       </div>
     </Transition>
   )

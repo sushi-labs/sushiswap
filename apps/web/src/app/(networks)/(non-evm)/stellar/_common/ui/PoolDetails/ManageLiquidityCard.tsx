@@ -15,10 +15,11 @@ import {
   TabsTrigger,
 } from '@sushiswap/ui'
 import type React from 'react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useCalculatePairedAmount } from '~stellar/_common/lib/hooks/pool/use-calculate-paired-amount'
 import { usePoolBalances } from '~stellar/_common/lib/hooks/pool/use-pool-balances'
 import { useRemoveLiquidity } from '~stellar/_common/lib/hooks/pool/use-pool-liquidity-management'
+import { useUserPositions } from '~stellar/_common/lib/hooks/position/use-positions'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/swap'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import { useStellarWallet } from '~stellar/providers'
@@ -33,6 +34,9 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
 }) => {
   const { isConnected, connectedAddress, signTransaction } = useStellarWallet()
   const { data: balances } = usePoolBalances(pool.address, connectedAddress)
+  const { data: userPositions = [] } = useUserPositions(
+    connectedAddress || undefined,
+  )
   const [tab, setTab] = useState<string>('add')
   const [amount0, setAmount0] = useState<string>('')
   const [lpAmount, setLpAmount] = useState<string>('')
@@ -54,6 +58,19 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   const addLiquidityMutation = useAddLiquidity()
   const removeLiquidityMutation = useRemoveLiquidity()
 
+  // Find user's position for this pool (using full range -60000 to 60000)
+  const userPosition = useMemo(() => {
+    return userPositions.find((pos) => {
+      const tokensMatch =
+        (pos.token0 === pool.token0.contract &&
+          pos.token1 === pool.token1.contract) ||
+        (pos.token0 === pool.token1.contract &&
+          pos.token1 === pool.token0.contract)
+      const ticksMatch = pos.tickLower === -60000 && pos.tickUpper === 60000
+      return tokensMatch && ticksMatch
+    })
+  }, [userPositions, pool])
+
   // Check if any amount is entered for button state
   const hasAmount =
     amount0 !== '' && amount0 !== '0' && Number.parseFloat(amount0) > 0
@@ -74,8 +91,8 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
       return
     }
 
-    try {
-      await addLiquidityMutation.mutateAsync({
+    addLiquidityMutation.mutate(
+      {
         userAddress: connectedAddress,
         poolAddress: pool.address,
         token0Amount: amount0,
@@ -84,30 +101,39 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
         tickUpper: 60000,
         recipient: connectedAddress,
         signTransaction,
-      })
-
-      // Reset form
-      setAmount0('')
-    } catch (error) {
-      console.error('Failed to add liquidity:', error)
-    }
+      },
+      {
+        onSuccess: () => {
+          // Reset form on success
+          setAmount0('')
+        },
+        onError: (error) => {
+          console.error('Failed to add liquidity:', error)
+          // The mutation will automatically reset its pending state
+        },
+      },
+    )
   }
 
   // Handle remove liquidity
   const handleRemoveLiquidity = async () => {
-    if (!connectedAddress || !hasLpAmount) return
+    if (!connectedAddress || !hasLpAmount || !userPosition) {
+      if (!userPosition) {
+        console.error('No position found for this pool')
+      }
+      return
+    }
 
     try {
       const lpAmountBigInt = BigInt(
         Math.floor(Number.parseFloat(lpAmount) * 10 ** 7),
-      ) // Assuming 7 decimals for LP tokens
+      )
 
       await removeLiquidityMutation.mutateAsync({
-        address: pool.address,
+        tokenId: userPosition.tokenId,
         liquidity: lpAmountBigInt,
         amount0Min: 0n,
         amount1Min: 0n,
-        recipient: connectedAddress,
       })
 
       // Reset form
@@ -276,16 +302,36 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
               {!isConnected ? (
                 // Show Connect Wallet when not connected
                 <ConnectWalletButton className="w-full" size="lg" />
+              ) : !userPosition ? (
+                // Show message when no position exists
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">
+                    No position found for this pool.
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Add liquidity first to create a position.
+                  </p>
+                </div>
               ) : (
-                // Show form when connected
+                // Show form when connected and has position
                 <>
                   {/* LP Token Input */}
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium">LP Tokens</span>
-                      <span className="text-xs text-muted-foreground">
-                        {balances?.token0.formatted}
+                      <span className="text-sm font-medium">
+                        Liquidity Amount
                       </span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setLpAmount(
+                            (Number(userPosition.liquidity) / 1e7).toString(),
+                          )
+                        }
+                        className="text-xs text-blue-500 hover:text-blue-400"
+                      >
+                        Max
+                      </button>
                     </div>
                     <div className="flex items-center space-x-2">
                       <div className="flex-1 p-3 border rounded-lg">
@@ -308,7 +354,11 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                     className="w-full"
                     size="lg"
                     variant="destructive"
-                    disabled={!hasLpAmount || removeLiquidityMutation.isPending}
+                    disabled={
+                      !hasLpAmount ||
+                      !userPosition ||
+                      removeLiquidityMutation.isPending
+                    }
                     onClick={handleRemoveLiquidity}
                   >
                     {removeLiquidityMutation.isPending

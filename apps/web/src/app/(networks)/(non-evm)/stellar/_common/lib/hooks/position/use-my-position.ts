@@ -103,35 +103,64 @@ export function useMyPosition(userAddress?: string, poolAddress?: string) {
     })
   }, [positions, poolAddress, positionToPoolMap])
 
-  // Fetch principal amounts for each position
-  console.log(
-    `🔧 [useMyPosition] Setting up ${filteredPositions.length} principal queries`,
-  )
+  // Group positions by pool for efficient batched principal calculation
+  const positionsByPool = useMemo(() => {
+    const grouped = new Map<string, PositionInfo[]>()
+    for (const position of filteredPositions) {
+      const pool = positionToPoolMap[getPositionKey(position)]
+      if (pool) {
+        if (!grouped.has(pool)) {
+          grouped.set(pool, [])
+        }
+        grouped.get(pool)!.push(position)
+      }
+    }
+    return grouped
+  }, [filteredPositions, positionToPoolMap])
 
+  // Fetch principal amounts per pool (batched)
   const principalQueries = useQueries({
-    queries: filteredPositions.map((position) => ({
-      queryKey: ['stellar', 'position-principal', position.tokenId],
+    queries: Array.from(positionsByPool.entries()).map(([pool, positions]) => ({
+      queryKey: [
+        'stellar',
+        'position-principals-batch',
+        pool,
+        positions.map((p) => p.tokenId).sort(),
+      ],
       queryFn: async () => {
-        console.log(`🔍 Calculating principal for position ${position.tokenId}`)
-
         try {
-          const result = await positionService.getPositionPrincipal(
-            position.tokenId,
+          const tokenIds = positions.map((p) => p.tokenId)
+          const results = await positionService.getPositionsPrincipalBatch(
+            tokenIds,
+            pool,
           )
-          console.log(`✅ Principal for position ${position.tokenId}:`, {
-            amount0: result.amount0.toString(),
-            amount1: result.amount1.toString(),
-          })
-          return [getPositionKey(position), result]
+
+          // Convert Map to position key mapping
+          const mappedResults: [
+            string,
+            { amount0: bigint; amount1: bigint },
+          ][] = []
+          for (const position of positions) {
+            const result = results.get(position.tokenId)
+            if (result) {
+              mappedResults.push([getPositionKey(position), result])
+            }
+          }
+
+          return mappedResults
         } catch (error) {
-          console.error(
-            `❌ Failed to get principal for position ${position.tokenId}:`,
-            error,
+          console.error(`❌ Failed to get principals for pool ${pool}:`, error)
+          // Return zeros for all positions in this pool
+          return positions.map(
+            (position) =>
+              [getPositionKey(position), { amount0: 0n, amount1: 0n }] as [
+                string,
+                { amount0: bigint; amount1: bigint },
+              ],
           )
-          return [getPositionKey(position), { amount0: 0n, amount1: 0n }]
         }
       },
-      enabled: position.tokenId !== undefined && position.tokenId !== null,
+      enabled: positions.length > 0 && pool !== '',
       staleTime: 1000 * 30, // 30 seconds
       retry: 1,
     })),
@@ -141,31 +170,16 @@ export function useMyPosition(userAddress?: string, poolAddress?: string) {
   const principalsLoading = principalQueries.some((query) => query.isLoading)
 
   const positionToPrincipalMap = useMemo(() => {
-    return Object.fromEntries(
-      principalQueries
-        .map((query) => query.data)
-        .filter(
-          (data): data is [string, { amount0: bigint; amount1: bigint }] =>
-            data !== undefined,
-        ),
-    )
-  }, [principalQueries])
+    const allResults: [string, { amount0: bigint; amount1: bigint }][] = []
 
-  // Debug query states
-  console.log(
-    `🔧 [useMyPosition] Principal queries status:`,
-    principalQueries.map((q, i) => ({
-      index: i,
-      tokenId: filteredPositions[i]?.tokenId,
-      isLoading: q.isLoading,
-      isFetching: q.isFetching,
-      isSuccess: q.isSuccess,
-      isError: q.isError,
-      hasData: !!q.data,
-      data: q.data,
-      error: q.error,
-    })),
-  )
+    for (const query of principalQueries) {
+      if (query.data) {
+        allResults.push(...query.data)
+      }
+    }
+
+    return Object.fromEntries(allResults)
+  }, [principalQueries])
 
   // Aggregate position data with principal amounts
   const positionData = useMemo((): MyPositionData => {
@@ -184,17 +198,15 @@ export function useMyPosition(userAddress?: string, poolAddress?: string) {
     // Process each position with its principal amounts
     filteredPositions.forEach((position) => {
       const principalData = positionToPrincipalMap[getPositionKey(position)]
+
+      // Skip if we don't have principal data yet
+      if (!principalData) {
+        console.warn(`No principal data for position ${position.tokenId}`)
+        return
+      }
+
       const token0 = getTokenByContract(position.token0) ?? UNKNOWN_TOKEN
       const token1 = getTokenByContract(position.token1) ?? UNKNOWN_TOKEN
-      console.log(`Processing position ${position.tokenId}:`, {
-        principal0: principalData.amount0.toString(),
-        principal1: principalData.amount1.toString(),
-        fees0: position.tokensOwed0.toString(),
-        fees1: position.tokensOwed1.toString(),
-        liquidity: position.liquidity.toString(),
-        token0: token0,
-        token1: token1,
-      })
 
       // Add to position summaries
       positionSummaries.push({

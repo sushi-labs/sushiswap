@@ -41,112 +41,81 @@ function calculateAmountOut({
   route,
   vertices,
 }: CalculateAmountOut): Route | null {
-  let lastOutput = 0
-
-  const prices = []
-
-  if (route.length < 6) {
-    if (
-      vertices.has(`${route[0]}|||${route[1]}`) ||
-      vertices.has(`${route[1]}|||${route[0]}`)
-    ) {
-      const res_x =
-        vertices.get(`${route[0]}|||${route[1]}`)?.res_x ||
-        vertices.get(`${route[1]}|||${route[0]}`)!.res_y
-      const res_y =
-        vertices.get(`${route[0]}|||${route[1]}`)?.res_y ||
-        vertices.get(`${route[1]}|||${route[0]}`)!.res_x
-      lastOutput = computeExactOutput({ amountIn, res_x, res_y })
-      prices.push(res_y / res_x)
-
-      if (
-        vertices.has(`${route[1]}|||${route[2]}`) ||
-        vertices.has(`${route[2]}|||${route[1]}`)
-      ) {
-        const res_x =
-          vertices.get(`${route[1]}|||${route[2]}`)?.res_x ||
-          vertices.get(`${route[2]}|||${route[1]}`)!.res_y
-        const res_y =
-          vertices.get(`${route[1]}|||${route[2]}`)?.res_y ||
-          vertices.get(`${route[2]}|||${route[1]}`)!.res_x
-        lastOutput = computeExactOutput({
-          amountIn: lastOutput,
-          res_x,
-          res_y,
-        })
-        prices.push(res_y / res_x)
-
-        if (
-          vertices.has(`${route[2]}|||${route[3]}`) ||
-          vertices.has(`${route[3]}|||${route[2]}`)
-        ) {
-          const res_x =
-            vertices.get(`${route[2]}|||${route[3]}`)?.res_x ||
-            vertices.get(`${route[3]}|||${route[2]}`)!.res_y
-          const res_y =
-            vertices.get(`${route[2]}|||${route[3]}`)?.res_y ||
-            vertices.get(`${route[3]}|||${route[2]}`)!.res_x
-          lastOutput = computeExactOutput({
-            amountIn: lastOutput,
-            res_x,
-            res_y,
-          })
-          prices.push(res_y / res_x)
-
-          if (
-            vertices.has(`${route[3]}|||${route[4]}`) ||
-            vertices.has(`${route[4]}|||${route[3]}`)
-          ) {
-            const res_x =
-              vertices.get(`${route[3]}|||${route[4]}`)?.res_x ||
-              vertices.get(`${route[4]}|||${route[3]}`)!.res_y
-            const res_y =
-              vertices.get(`${route[3]}|||${route[4]}`)?.res_y ||
-              vertices.get(`${route[4]}|||${route[3]}`)!.res_x
-            lastOutput = computeExactOutput({
-              amountIn: lastOutput,
-              res_x,
-              res_y,
-            })
-            prices.push(res_y / res_x)
-          }
-        }
-      }
-    }
-
-    const midPrice = prices
-      .slice(1)
-      .reduce(
-        (accumulator, currentValue) => accumulator * currentValue,
-        prices[0],
-      )
-
-    const priceImpact = computePriceImpact({
-      midPrice,
-      amountIn,
-      amountOut: lastOutput,
-    })
-
-    return {
-      route: [...route],
-      amountOut: lastOutput,
-      priceImpact: priceImpact,
-    }
+  if (route.length < 2) {
+    return null
   }
 
-  return null
+  let currentAmount = amountIn
+  const prices: number[] = []
+
+  // Process each hop in the route
+  for (let i = 0; i < route.length - 1; i++) {
+    const tokenA = route[i]
+    const tokenB = route[i + 1]
+
+    // Try both directions for the pair
+    const pairKey1 = `${tokenA}|||${tokenB}`
+    const pairKey2 = `${tokenB}|||${tokenA}`
+
+    let vertex: Vertex | undefined
+    let isReversed = false
+
+    if (vertices.has(pairKey1)) {
+      vertex = vertices.get(pairKey1)!
+      isReversed = false
+    } else if (vertices.has(pairKey2)) {
+      vertex = vertices.get(pairKey2)!
+      isReversed = true
+    } else {
+      // No liquidity pair found for this hop
+      return null
+    }
+
+    if (!vertex) {
+      return null
+    }
+
+    const res_x = isReversed ? vertex.res_y : vertex.res_x
+    const res_y = isReversed ? vertex.res_x : vertex.res_y
+
+    // Calculate output for this hop
+    currentAmount = computeExactOutput({
+      amountIn: currentAmount,
+      res_x,
+      res_y,
+    })
+
+    // Store price for this hop
+    prices.push(res_y / res_x)
+  }
+
+  // Calculate mid price (geometric mean of all hop prices)
+  const midPrice =
+    prices.reduce(
+      (accumulator, currentValue) => accumulator * currentValue,
+      1,
+    ) **
+    (1 / prices.length)
+
+  const priceImpact = computePriceImpact({
+    midPrice,
+    amountIn,
+    amountOut: currentAmount,
+  })
+
+  return {
+    route: [...route],
+    amountOut: currentAmount,
+    priceImpact: priceImpact,
+  }
 }
 
 interface FindPossibleRoutes {
   tokenIn: string
   tokenOut: string
   graph: Map<string, string[]>
-  visited?: Record<string, boolean>
-  currentRoute?: string[]
-  routes?: string[][]
   amountIn: number
   vertices: Map<string, Vertex>
-  bestRoute?: { current: Route | null }
   maxDepth?: number
 }
 
@@ -154,63 +123,62 @@ function findBestRoute({
   tokenIn,
   tokenOut,
   graph,
-  visited = {},
-  currentRoute = [],
-  routes = [],
   amountIn,
   vertices,
-  bestRoute = { current: null },
-  maxDepth,
-}: FindPossibleRoutes) {
-  if (maxDepth && currentRoute.length > maxDepth) {
-    return bestRoute.current
-  }
+  maxDepth = 5,
+}: FindPossibleRoutes): Route | null {
+  let currentBestRoute: Route | null = null
 
-  // Mark the current token as visited
-  visited[tokenIn] = true
-
-  // Add the current token to the current route
-  currentRoute.push(tokenIn)
-
-  // If the current token is the desired tokenOut, add the current route to the routes vertices
-  if (tokenIn === tokenOut) {
-    const route = calculateAmountOut({
-      amountIn,
-      route: currentRoute,
-      vertices,
-    })
-
-    if (!bestRoute.current) {
-      bestRoute.current = route
-    } else if (route && route.amountOut > bestRoute.current.amountOut) {
-      bestRoute.current = route
+  function dfs(
+    currentToken: string,
+    targetToken: string,
+    visited: Set<string>,
+    currentRoute: string[],
+    depth: number,
+  ) {
+    // Check depth limit
+    if (depth > maxDepth) {
+      return
     }
-  } else {
-    // Iterate through the adjacent tokens of the current token
-    if (tokenIn) {
-      for (const adjacentToken of graph.get(tokenIn)!) {
-        // If the adjacent token is not visited, recursively find possible routes
-        if (!visited[adjacentToken]) {
-          findBestRoute({
-            tokenIn: adjacentToken,
-            tokenOut,
-            graph,
-            visited,
-            currentRoute,
-            routes,
-            amountIn,
-            vertices,
-            bestRoute,
-            maxDepth,
-          })
-        }
+
+    // Check if we've reached the target
+    if (currentToken === targetToken) {
+      const route = calculateAmountOut({
+        amountIn,
+        route: currentRoute,
+        vertices,
+      })
+
+      if (
+        route &&
+        (!currentBestRoute || route.amountOut > currentBestRoute.amountOut)
+      ) {
+        currentBestRoute = route
+      }
+      return
+    }
+
+    // Mark current token as visited
+    visited.add(currentToken)
+
+    // Explore adjacent tokens
+    const adjacentTokens = graph.get(currentToken) || []
+    for (const adjacentToken of adjacentTokens) {
+      if (!visited.has(adjacentToken)) {
+        currentRoute.push(adjacentToken)
+        dfs(adjacentToken, targetToken, visited, currentRoute, depth + 1)
+        currentRoute.pop()
       }
     }
+
+    // Backtrack: remove current token from visited
+    visited.delete(currentToken)
   }
 
-  // Remove the current token from the current route and mark it as unvisited
-  currentRoute.pop()
-  visited[tokenIn] = false
+  // Start DFS from the input token
+  const visited = new Set<string>()
+  const currentRoute = [tokenIn]
+  dfs(tokenIn, tokenOut, visited, currentRoute, 0)
 
-  return bestRoute.current
+  return currentBestRoute
 }

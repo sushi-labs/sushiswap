@@ -5,25 +5,16 @@ import { positionService } from '../../services/position-service'
  * Hook to get all positions owned by a user
  */
 export function useUserPositions(userAddress: string | undefined) {
-  console.log('useUserPositions - Hook called with userAddress:', userAddress)
-  console.log('useUserPositions - enabled:', !!userAddress)
-
   return useQuery({
     queryKey: ['stellar', 'positions', 'user', userAddress],
     queryFn: async () => {
-      console.log('useUserPositions - queryFn called')
-
       if (!userAddress) {
-        console.log('useUserPositions - No user address provided')
         return []
       }
-
-      console.log('useUserPositions - Fetching positions for:', userAddress)
 
       try {
         const result =
           await positionService.getUserPositionsWithFees(userAddress)
-        console.log('useUserPositions - Service returned:', result)
         return result
       } catch (error) {
         console.error('useUserPositions - Error fetching positions:', error)
@@ -108,6 +99,10 @@ export function useCollectFees() {
       })
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'positions', 'fees', variables.tokenId],
+      })
+      // Invalidate principal amounts for this position since collecting fees might affect them
+      queryClient.invalidateQueries({
+        queryKey: ['stellar', 'position-principal', variables.tokenId],
       })
     },
     onError: (error) => {

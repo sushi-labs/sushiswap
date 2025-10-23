@@ -4,17 +4,19 @@ import { Button, DialogTrigger } from '@sushiswap/ui'
 import React, { useEffect, useMemo, useState } from 'react'
 import { PriceImpactWarning } from 'src/ui/common'
 import { useIsSwapMaintenance } from '~stellar/_common/lib/edge/use-is-swap-maintenance'
+import { requiresPriceImpactConfirmation } from '~stellar/_common/lib/utils/warning-severity'
 import { Checker } from '~stellar/_common/ui/checker'
 import { useSimpleSwapState } from './simple-swap-provider/simple-swap-provider'
 // import { SimpleSwapTradeReviewDialog } from './simple-swap-trade-review-dialog'
 
 export const SimpleSwapTradeButton = () => {
   const { data: maintenance } = useIsSwapMaintenance()
-  const { amount, token0, error } = useSimpleSwapState()
+  const { amount, token0, error, priceImpact } = useSimpleSwapState()
   const [checked, setChecked] = useState<boolean>(false)
 
-  // TODO: create warning severity helpers for stellar, mimic aptos
-  const showPriceImpactWarning = false
+  const showPriceImpactWarning = requiresPriceImpactConfirmation(
+    priceImpact || undefined,
+  )
   const noRouteFound = ''
 
   // Reset
@@ -22,7 +24,7 @@ export const SimpleSwapTradeButton = () => {
     if (checked && !showPriceImpactWarning) {
       setChecked(false)
     }
-  }, [checked])
+  }, [checked, showPriceImpactWarning])
 
   const checkerAmount = useMemo(() => {
     if (!token0) return []

@@ -2,7 +2,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
 import type React from 'react'
 import { useStellarWallet } from '~stellar/providers'
 import { useUserPositions } from '../../lib/hooks/position/use-positions'
-import { POOL_CONFIGS } from '../../lib/soroban/contract-addresses'
 import { formatTokenAmount } from '../../lib/utils/format'
 import { CollectFeesButton } from './CollectFeesButton'
 
@@ -80,43 +79,25 @@ export const PositionsList: React.FC = () => {
       <CardContent>
         <div className="space-y-4">
           {positions.map((position) => {
-            // Find pool config for this position
-            const poolConfig = Object.values(POOL_CONFIGS).find(
-              (config) =>
-                (config.token0.address === position.token0 &&
-                  config.token1.address === position.token1) ||
-                (config.token0.address === position.token1 &&
-                  config.token1.address === position.token0),
-            )
-
-            if (!poolConfig) {
-              return null // Skip positions for unknown pools
-            }
-
-            const token0Code =
-              position.token0 === poolConfig.token0.address
-                ? poolConfig.token0.code
-                : poolConfig.token1.code
-            const token1Code =
-              position.token1 === poolConfig.token0.address
-                ? poolConfig.token0.code
-                : poolConfig.token1.code
+            // Use token addresses as display names for now
+            const token0Code = `${position.token0.slice(0, 8)}...`
+            const token1Code = `${position.token1.slice(0, 8)}...`
 
             const fees0 = formatTokenAmount(position.tokensOwed0, 7)
             const fees1 = formatTokenAmount(position.tokensOwed1, 7)
 
             return (
               <div
-                key={position.nonce.toString()}
+                key={position.tokenId.toString()}
                 className="border border-slate-700 rounded-lg p-4"
               >
                 <div className="flex justify-between items-start mb-3">
                   <div>
                     <h3 className="font-semibold text-white">
-                      Position #{position.nonce.toString()}
+                      Position #{position.tokenId}
                     </h3>
                     <p className="text-sm text-slate-400">
-                      {token0Code}/{token1Code} • {poolConfig.fee / 100}% fee
+                      {token0Code}/{token1Code}
                     </p>
                   </div>
                   <div className="text-right">
@@ -143,7 +124,7 @@ export const PositionsList: React.FC = () => {
                 </div>
 
                 <CollectFeesButton
-                  tokenId={Number(position.nonce)}
+                  tokenId={position.tokenId}
                   userAddress={connectedAddress}
                   signTransaction={signTransaction}
                   token0Code={token0Code}

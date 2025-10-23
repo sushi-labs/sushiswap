@@ -57,8 +57,12 @@ export async function getTokenBalance(
     )
     return result
   } catch (error) {
-    if (!String(error).includes('Error(Storage, MissingValue)')) {
-      console.error('Error fetching token balance:', String(error))
+    const errorStr = String(error)
+    if (
+      !errorStr.includes('Error(Storage, MissingValue)') &&
+      !errorStr.includes('trustline entry is missing')
+    ) {
+      console.error('Error fetching token balance:', errorStr)
     }
     return 0n
   }
@@ -92,6 +96,7 @@ export async function getTokenAllowance(
   try {
     const tokenContractClient = getTokenContractClient({
       contractId: tokenAddress,
+      // No publicKey needed for read-only allowance queries
     })
     const { result } = await tokenContractClient.allowance(
       {
@@ -245,8 +250,9 @@ export async function getTokenMetadata(tokenAddress: string): Promise<{
           fee: 100,
         })
         .then(
-          (assembledTransaction) => assembledTransaction.result,
-          (e) => {
+          (assembledTransaction: AssembledTransaction<string>) =>
+            assembledTransaction.result,
+          (e: any) => {
             console.error('Error fetching token name:', e)
             return ''
           },
@@ -257,8 +263,9 @@ export async function getTokenMetadata(tokenAddress: string): Promise<{
           fee: 100,
         })
         .then(
-          (assembledTransaction) => assembledTransaction.result,
-          (e) => {
+          (assembledTransaction: AssembledTransaction<string>) =>
+            assembledTransaction.result,
+          (e: any) => {
             console.error('Error fetching token symbol:', e)
             return ''
           },
@@ -269,8 +276,9 @@ export async function getTokenMetadata(tokenAddress: string): Promise<{
           fee: 100,
         })
         .then(
-          (assembledTransaction) => assembledTransaction.result,
-          (e) => {
+          (assembledTransaction: AssembledTransaction<number>) =>
+            assembledTransaction.result,
+          (e: any) => {
             console.error('Error fetching token decimals:', e)
             return 0
           },
@@ -388,7 +396,11 @@ export async function getMultipleTokenAllowances(
  * @param decimals - The number of decimals
  * @returns Formatted amount as a string
  */
-export function formatTokenAmount(amount: bigint, decimals: number): string {
+export function formatTokenAmount(
+  amount: bigint,
+  decimals: number,
+  maxDecimals = 6,
+): string {
   const divisor = BigInt(10 ** decimals)
   const wholePart = amount / divisor
   const fractionalPart = amount % divisor
@@ -398,13 +410,15 @@ export function formatTokenAmount(amount: bigint, decimals: number): string {
   }
 
   const fractionalStr = fractionalPart.toString().padStart(decimals, '0')
-  const trimmedFractional = fractionalStr.replace(/0+$/, '')
 
-  if (trimmedFractional === '') {
-    return wholePart.toString()
-  }
+  // Convert to number for rounding, then back to string
+  const fullNumber = Number(wholePart) + Number(fractionalStr) / 10 ** decimals
 
-  return `${wholePart}.${trimmedFractional}`
+  // Round to maxDecimals places and format
+  const rounded = Number(fullNumber.toFixed(maxDecimals))
+
+  // Remove trailing zeros
+  return rounded.toString().replace(/\.?0+$/, '')
 }
 
 /**
@@ -429,8 +443,11 @@ export function parseTokenAmount(amountStr: string, decimals: number): bigint {
  */
 export function getTestTokenAddresses() {
   return {
-    HYPEa: CONTRACT_ADDRESSES.TOKENS.HYPEA,
-    HYPEb: CONTRACT_ADDRESSES.TOKENS.HYPEB,
+    HYPE: CONTRACT_ADDRESSES.TOKENS.HYPE,
+    SUSHI: CONTRACT_ADDRESSES.TOKENS.SUSHI,
+    STELLA: CONTRACT_ADDRESSES.TOKENS.STELLA,
+    HYPED: CONTRACT_ADDRESSES.TOKENS.HYPED,
+    HYPEE: CONTRACT_ADDRESSES.TOKENS.HYPEE,
     XLM: CONTRACT_ADDRESSES.TOKENS.XLM,
   }
 }

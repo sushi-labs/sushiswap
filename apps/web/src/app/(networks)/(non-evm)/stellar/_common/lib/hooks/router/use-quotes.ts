@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useSimpleSwapState } from '~stellar/_common/ui/Swap/simple/simple-swap-provider/simple-swap-provider'
 import { QuoteService } from '../../services/quote-service'
 import { CONTRACT_ADDRESSES } from '../../soroban/contract-addresses'
-import { findPoolsBetweenTokens } from '../../soroban/dex-router-helpers'
+import { findBestPath } from '../../soroban/dex-router-helpers'
 
 export interface PoolQuoteParams {
   address: string
@@ -23,15 +23,13 @@ export const useQuoteExactInput = () => {
         return null
       }
 
-      // Find pools between the two tokens to get the correct fee
-      const pools = await findPoolsBetweenTokens(token0, token1)
+      // Find best route (direct or multi-hop)
+      const route = await findBestPath(token0, token1)
 
-      if (pools.length === 0) {
-        throw new Error('No pools found between these tokens')
+      if (!route) {
+        // No route found - return null to indicate no quote available
+        return null
       }
-
-      // Use the first pool (could implement better selection logic later)
-      const pool = pools[0]
 
       const quoteService = new QuoteService()
 
@@ -45,24 +43,47 @@ export const useQuoteExactInput = () => {
       const normalized = `${whole}${paddedFraction}`.replace(/^0+(?=\d)/, '')
       const amountIn = BigInt(normalized || '0')
 
-      const quote = await quoteService.getQuoteExactInputSingle({
-        tokenIn: token0.contract,
-        tokenOut: token1.contract,
-        fee: pool.fee,
-        amountIn: amountIn,
-        sqrtPriceLimitX96: undefined, // No price limit
-      })
+      if (route.type === 'direct') {
+        // Single-hop swap
+        const pool = route.pools[0]
+        const quote = await quoteService.getQuoteExactInputSingle({
+          tokenIn: token0.contract,
+          tokenOut: token1.contract,
+          fee: pool.fee,
+          amountIn: amountIn,
+          sqrtPriceLimitX96: undefined,
+        })
+        return quote?.amountOut || '0'
+      } else {
+        // Multi-hop swap - use the router's multi-hop quote function
+        console.log(
+          `🔄 Calculating multi-hop quote: ${route.path.map((t) => t.code).join(' → ')}`,
+        )
 
-      console.log('Quote result:', quote)
+        const path = route.path.map((token) => token.contract)
+        const fees = route.fees
 
-      // Return the amount out as a string
-      return quote?.amountOut || '0'
+        console.log(`Path: ${path.join(' → ')}`)
+        console.log(`Fees: ${fees.join(', ')}`)
+        console.log(`Amount in: ${amountIn}`)
+
+        const quote = await quoteService.getQuoteExactInput({
+          path: path,
+          fees: fees,
+          amountIn: amountIn,
+        })
+
+        console.log(
+          `✅ Multi-hop quote complete: ${amountIn} → ${quote.amountOut}`,
+        )
+        return quote.amountOut.toString()
+      }
     },
-    onSuccess: (result) => {
-      console.log('Pool quote executed successfully:', result)
+    onSuccess: (_result) => {
+      // Quote executed successfully
     },
-    onError: (error) => {
-      console.error('Failed to execute pool quote:', error)
+    onError: (_error) => {
+      // Quote failed - handled gracefully
     },
   })
 }

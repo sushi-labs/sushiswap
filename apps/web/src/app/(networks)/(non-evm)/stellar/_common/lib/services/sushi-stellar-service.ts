@@ -1,4 +1,7 @@
-import { addLiquidity as poolAddLiquidity } from '../soroban/pool-helpers'
+import {
+  getPoolInfoFromContract,
+  addLiquidity as poolAddLiquidity,
+} from '../soroban/pool-helpers'
 import {
   decreaseLiquidity,
   increaseLiquidity,
@@ -31,8 +34,8 @@ export class SushiStellarService {
   }
 
   /**
-   * Add liquidity using Position Manager (creates a position NFT)
-   * This is the recommended way to add liquidity as it creates trackable positions
+   * Add liquidity using Position Manager
+   * Automatically increases liquidity on existing position or creates new one
    */
   async addLiquidity(
     userAddress: string,
@@ -47,7 +50,70 @@ export class SushiStellarService {
       Math.floor(Number.parseFloat(params.token1Amount) * 1e7),
     )
 
-    // Use Position Manager's mint method
+    const deadline = BigInt(
+      params.deadline || Math.floor(Date.now() / 1000) + 300,
+    )
+
+    // Check if user has existing position for this pool with same tick range
+
+    // Always fetch pool info from contract (no more dynamic import needed)
+    const poolConfig = await getPoolInfoFromContract(params.poolAddress)
+    if (!poolConfig) {
+      throw new Error('Pool config not found')
+    }
+
+    // Fetch user positions
+    const positions =
+      await positionService.getUserPositionsWithFees(userAddress)
+
+    // Find position with matching pool tokens and tick range
+    const existingPosition = positions.find((pos) => {
+      const tokensMatch =
+        (pos.token0 === poolConfig.token0.address &&
+          pos.token1 === poolConfig.token1.address) ||
+        (pos.token0 === poolConfig.token1.address &&
+          pos.token1 === poolConfig.token0.address)
+
+      const ticksMatch =
+        pos.tickLower === params.tickLower && pos.tickUpper === params.tickUpper
+
+      console.log(`🔍 Checking position #${pos.tokenId}:`, {
+        tokensMatch,
+        ticksMatch,
+        posTokens: [pos.token0, pos.token1],
+        configTokens: [poolConfig.token0.address, poolConfig.token1.address],
+        posTicks: [pos.tickLower, pos.tickUpper],
+        paramTicks: [params.tickLower, params.tickUpper],
+        posFee: pos.fee,
+        configFee: poolConfig.fee,
+      })
+
+      return tokensMatch && ticksMatch
+    })
+
+    if (existingPosition) {
+      // Increase liquidity on existing position - NO try/catch here!
+      const result = await increaseLiquidity({
+        tokenId: existingPosition.tokenId,
+        amount0Desired: amount0,
+        amount1Desired: amount1,
+        amount0Min: BigInt(0), // TODO: Add slippage protection
+        amount1Min: BigInt(0),
+        deadline,
+        operator: userAddress,
+        sourceAccount: userAddress,
+        signTransaction,
+      })
+
+      return {
+        txHash: result.hash,
+        tokenId: existingPosition.tokenId,
+        liquidity: result.liquidity,
+      }
+    } else {
+    }
+
+    // No existing position found - mint new one
     const result = await mintPosition({
       poolAddress: params.poolAddress,
       recipient: params.recipient || userAddress,
@@ -57,7 +123,7 @@ export class SushiStellarService {
       amount1Desired: amount1,
       amount0Min: BigInt(0), // TODO: Add slippage protection
       amount1Min: BigInt(0),
-      deadline: BigInt(params.deadline || Math.floor(Date.now() / 1000) + 300),
+      deadline,
       sourceAccount: userAddress,
       signTransaction,
     })
@@ -135,7 +201,7 @@ export class SushiStellarService {
     fee: number
     amountIn: bigint
     sqrtPriceLimitX96?: bigint
-  }): Promise<SwapQuote> {
+  }): Promise<SwapQuote | null> {
     return await this.quoteService.getQuoteExactInputSingle(params)
   }
 

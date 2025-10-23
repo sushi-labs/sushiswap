@@ -84,7 +84,9 @@ export class SwapService {
   ): Promise<{ txHash: string; amountOut: bigint }> {
     const routerContractClient = getRouterContractClient({
       contractId: CONTRACT_ADDRESSES.ROUTER,
+      publicKey: userAddress,
     })
+
     const assembledTransaction = await routerContractClient.swap_exact_input(
       {
         params: {
@@ -119,8 +121,7 @@ export class SwapService {
     const result = await waitForTransaction(txHash)
 
     if (result.success) {
-      console.log('✅ Transaction confirmed!')
-      console.log('🎉 Swap executed successfully!')
+      console.log('✅ Swap executed successfully!')
 
       return {
         txHash,
@@ -142,6 +143,7 @@ export class SwapService {
   ): Promise<{ txHash: string; amountOut: bigint }> {
     const routerContractClient = getRouterContractClient({
       contractId: CONTRACT_ADDRESSES.ROUTER,
+      publicKey: userAddress,
     })
     const assembledTransaction = await routerContractClient.swap_exact_input(
       {
@@ -177,11 +179,8 @@ export class SwapService {
     const result = await waitForTransaction(txHash)
 
     if (result.success) {
-      console.log('✅ Transaction confirmed!')
-      console.log('🎉 Swap executed successfully!')
+      console.log('✅ Swap executed successfully!')
 
-      // TODO: Parse the transaction result to extract actual amount out
-      // For now, return the minimum expected amount
       return {
         txHash,
         amountOut: BigInt(params.amountOutMinimum),
@@ -497,10 +496,10 @@ export class SwapService {
     // For now, we'll use a simple mapping based on the pool addresses we know
     // In a real implementation, this would query the pool contract or factory
     const poolConfigs: { [key: string]: any } = {
-      CCYJJ2A2BAQHKKSNJ3NHRV66GA6XCHHBLROFBBR7J33YIYMWDL57XOUL: {
+      CC7ZPELSGOVPIGP25TIOYWX2NWFVHCEXFZOKWN4ENF7Z2PBPHLQMKYNS: {
         token0: {
-          address: 'CCUYO46LKVYRQL63LIIMGWVURVBQVETKO26G5OK5XVB5S4GKMGPKXNYJ',
-          symbol: 'HYPEa',
+          address: 'CCKYIGXKXH7PBIUQ4D54OIB3ZB4QKCJEAG3M7PW3KDKT5RTGMXNK2PUT',
+          symbol: 'HYPE',
         },
         token1: {
           address: 'CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC',
@@ -508,14 +507,14 @@ export class SwapService {
         },
         fee: 3000,
         spacing: 60,
-        description: '💱 HYPEa-XLM Pool (0.3% fee, 1:1)',
+        description: '💱 HYPE-XLM Pool (0.3% fee)',
         currentTick: 0,
         liquidity: 100000000000,
       },
-      CDLPBPLMZGQHVRDMZAOMOQXWUUBGP5PWSLIAPTJVXC3WTAK6FAR3FQSQ: {
+      CA6TSR6HSFIQVYAXZZGL3LP2WE75EZKM2NX3LJCX7NUPKH6H2VABTSUP: {
         token0: {
-          address: 'CBQMJZL4U4MAQNHKNZZ2CAAKOJEDKL4J4C6AVFQL4CSKNLZU6H3PD5O7',
-          symbol: 'HYPEb',
+          address: 'CAGOAU6G6JHAWABEGGUXQXOC4FMFZSY4SDKCVW47FS4ULYHEI5TSGJAT',
+          symbol: 'SUSHI',
         },
         token1: {
           address: 'CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC',
@@ -523,9 +522,39 @@ export class SwapService {
         },
         fee: 3000,
         spacing: 60,
-        description: '💱 HYPEb-XLM Pool (0.3% fee, 10:1)',
-        currentTick: 23027,
-        liquidity: 10000000000,
+        description: '💱 SUSHI-XLM Pool (0.3% fee)',
+        currentTick: 0,
+        liquidity: 100000000000,
+      },
+      CBFDRD3OMHKLUCMLB7ACAAZ2ILZP63XOYXGLOFLZHCKHUTZEWQUSXFQB: {
+        token0: {
+          address: 'CA75JDQYO5RQC6H5USNYV3J26MGS476XTYSUDMEONHLEZCKOBSTEWZ5W',
+          symbol: 'STELLA',
+        },
+        token1: {
+          address: 'CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC',
+          symbol: 'XLM',
+        },
+        fee: 3000,
+        spacing: 60,
+        description: '💱 STELLA-XLM Pool (0.3% fee)',
+        currentTick: 0,
+        liquidity: 100000000000,
+      },
+      CBHWXWMBJJ2ACGD6B35B6DNHYD2YUN34DPYTQKMGR7BNDVFQNIB3HF2W: {
+        token0: {
+          address: 'CAGOAU6G6JHAWABEGGUXQXOC4FMFZSY4SDKCVW47FS4ULYHEI5TSGJAT',
+          symbol: 'SUSHI',
+        },
+        token1: {
+          address: 'CCKYIGXKXH7PBIUQ4D54OIB3ZB4QKCJEAG3M7PW3KDKT5RTGMXNK2PUT',
+          symbol: 'HYPE',
+        },
+        fee: 3000,
+        spacing: 60,
+        description: '💱 SUSHI-HYPE Pool (0.3% fee)',
+        currentTick: 0,
+        liquidity: 100000000000,
       },
     }
 

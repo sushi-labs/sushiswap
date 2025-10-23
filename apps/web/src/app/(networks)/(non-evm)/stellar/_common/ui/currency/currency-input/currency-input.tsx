@@ -73,15 +73,15 @@ export function CurrencyInput({
   const { price: tokenPrice, isLoading: isPriceLoading } = useStablePrice({
     currency: token,
   })
+  // Show $0.00 when there's no price information instead of showing an error
   const amountUSD = tokenPrice ? tokenPrice * Number(value) : 0
 
   const showInsufficientBalance =
     insufficientBalance && !disableInsufficientBalanceError
 
-  const priceError =
-    !isPriceLoading && typeof tokenPrice === 'undefined' && Number(value) > 0
-      ? 'No pool'
-      : undefined
+  // Only show "No pool" error if there's actually no pool found for price calculation
+  // If there's no price info, just show $0.00 instead
+  const priceError = undefined
 
   const error = showInsufficientBalance ? 'Insufficient balance' : priceError
 

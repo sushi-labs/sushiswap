@@ -227,6 +227,7 @@ export async function initializePoolIfNeeded({
     try {
       const poolContractClient = getPoolContractClient({
         contractId: poolAddress,
+        publicKey: sourceAccount,
       })
       const slot0Result = await poolContractClient.slot0({
         timeoutInSeconds: 30,
@@ -370,6 +371,7 @@ export async function getPoolDirectSDK({
     // Create contract instance using direct SDK approach
     const factoryContractClient = getFactoryContractClient({
       contractId: CONTRACT_ADDRESSES.FACTORY,
+      // No publicKey needed for read-only factory queries
     })
     const assembledTransaction = await factoryContractClient.get_pool({
       token_a: tokenA,

@@ -7,7 +7,7 @@ import {
   getPoolConfig,
 } from './contract-addresses'
 import { initializePoolIfNeeded } from './dex-factory-helpers'
-import { getPoolInfoFromContract } from './pool-helpers'
+import { type PoolConfig, getPoolInfoFromContract } from './pool-helpers'
 import { submitViaRawRPC, waitForTransaction } from './rpc-transaction-helpers'
 
 /**
@@ -47,30 +47,34 @@ export async function mintPosition({
 }> {
   try {
     // Get pool configuration - first try hardcoded config, then query pool contract
-    let poolConfig = getPoolConfig(poolAddress)
+    let poolConfig: PoolConfig | null = getPoolConfig(poolAddress)
 
     if (!poolConfig) {
       console.log(
         `Pool not in hardcoded config, querying contract for ${poolAddress}...`,
       )
-      poolConfig = await getPoolInfoFromContract(poolAddress)
+      const contractConfig = await getPoolInfoFromContract(poolAddress)
+      if (!contractConfig) {
+        throw new Error(
+          `Pool configuration not found for ${poolAddress} and failed to query contract`,
+        )
+      }
+      poolConfig = contractConfig
     }
 
+    // At this point, poolConfig is guaranteed to be non-null
     if (!poolConfig) {
-      throw new Error(
-        `Pool configuration not found for ${poolAddress} and failed to query contract`,
-      )
+      throw new Error('Pool configuration is null')
     }
+
+    // Use poolConfig directly since we've verified it's not null
+    const config = poolConfig
 
     console.log(`💧 Minting position via Position Manager...`)
     console.log(`Pool: ${poolAddress}`)
-    console.log(
-      `Token0: ${poolConfig.token0.address} (${poolConfig.token0.code})`,
-    )
-    console.log(
-      `Token1: ${poolConfig.token1.address} (${poolConfig.token1.code})`,
-    )
-    console.log(`Fee: ${poolConfig.fee}`)
+    console.log(`Token0: ${config.token0.address} (${config.token0.code})`)
+    console.log(`Token1: ${config.token1.address} (${config.token1.code})`)
+    console.log(`Fee: ${config.fee}`)
     console.log(`Tick range: ${tickLower} to ${tickUpper}`)
 
     // Ensure pool is initialized before minting position
@@ -90,9 +94,9 @@ export async function mintPosition({
     console.log('Preparing mint transaction...')
 
     const mintParams = {
-      token0: poolConfig.token0.address,
-      token1: poolConfig.token1.address,
-      fee: poolConfig.fee,
+      token0: config.token0.address,
+      token1: config.token1.address,
+      fee: config.fee,
       recipient,
       tick_lower: tickLower,
       tick_upper: tickUpper,
@@ -450,6 +454,116 @@ export async function decreaseLiquidity({
     }
   } catch (error) {
     console.error('decreaseLiquidity failed:', error)
+    if (error instanceof Error) {
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+      })
+    }
+    throw error
+  }
+}
+
+/**
+ * Collect fees and/or withdrawn tokens from a position
+ */
+export async function collectFees({
+  tokenId,
+  recipient,
+  amount0Max,
+  amount1Max,
+  operator,
+  signTransaction,
+}: {
+  tokenId: number
+  recipient: string
+  amount0Max: bigint
+  amount1Max: bigint
+  operator: string
+  signTransaction: (xdr: string) => Promise<string>
+}): Promise<{
+  txHash: string
+  amount0: bigint
+  amount1: bigint
+}> {
+  try {
+    console.log(`💰 Collecting from position #${tokenId}...`)
+    console.log(`  Max amount0: ${amount0Max}`)
+    console.log(`  Max amount1: ${amount1Max}`)
+
+    const positionManagerClient = getPositionManagerContractClient({
+      contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+      publicKey: operator,
+    })
+
+    console.log('Preparing collect transaction...')
+
+    const assembledTransaction = await positionManagerClient.collect(
+      {
+        params: {
+          token_id: tokenId,
+          recipient,
+          amount0_max: amount0Max,
+          amount1_max: amount1Max,
+          operator,
+        },
+      },
+      {
+        timeoutInSeconds: DEFAULT_TIMEOUT,
+        fee: 100000,
+      },
+    )
+
+    // Get the simulated result from the client
+    // The client automatically simulates and parses the return value as a tuple [amount0, amount1]
+    const simulationResult = assembledTransaction.result
+    console.log('📊 Simulation result:', simulationResult)
+
+    // Extract amounts from the Ok wrapper's value property
+    const resultValue = (
+      simulationResult as unknown as { value: readonly [bigint, bigint] }
+    ).value as readonly [bigint, bigint]
+    const [amount0, amount1] = resultValue
+    console.log(`💰 Simulated collection: ${amount0} token0, ${amount1} token1`)
+
+    console.log('Transaction prepared. Waiting for wallet signature...')
+
+    // Convert to XDR for signing
+    const transactionXdr = assembledTransaction.toXDR()
+
+    // Sign the transaction
+    const signedXdr = await signTransaction(transactionXdr)
+    const signedTx = StellarSdk.TransactionBuilder.fromXDR(
+      signedXdr,
+      NETWORK_CONFIG.PASSPHRASE,
+    )
+
+    console.log('Transaction signed. Submitting to network...')
+
+    // Submit the signed transaction via raw RPC
+    const txHash = await submitViaRawRPC(signedTx)
+
+    console.log(`Transaction submitted: ${txHash}`)
+    console.log('Waiting for confirmation...')
+
+    // Wait for confirmation
+    const result = await waitForTransaction(txHash)
+
+    if (result.success) {
+      console.log('✅ Transaction confirmed!')
+
+      return {
+        txHash,
+        amount0,
+        amount1,
+      }
+    }
+
+    console.error('Transaction failed:', result.error)
+    throw new Error(`Transaction failed: ${JSON.stringify(result.error)}`)
+  } catch (error) {
+    console.error('collectFees failed:', error)
     if (error instanceof Error) {
       console.error('Error details:', {
         message: error.message,

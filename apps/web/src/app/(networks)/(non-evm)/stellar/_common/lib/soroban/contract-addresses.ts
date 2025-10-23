@@ -1,92 +1,42 @@
 /**
  * Contract addresses for Stellar/Soroban DEX contracts
- * Using deployed contract addresses from stellar-auth-test
+ * Using deployed contract addresses from latest deployment
  */
 
-// Deployed contract addresses (Updated: Oct 16, 2025)
+// Deployed contract addresses (Updated: Oct 21, 2025)
+// Deployer: GBSCW2OFR5QSMUIXJMWJGB4FMU7GSVUTY3UP6G3KHC3H2UBQUNOTHILB
 export const CONTRACT_ADDRESSES = {
   // Core DEX contracts
-  FACTORY: 'CB6WRZ2TJM6JXS65YR6V2EC6TBAWPWDPRTCQH3TYEMXPGIMJJ55JR6JN',
-  ROUTER: 'CDL45PH44PCOK4BUS7TR5MFOW2K7MWJMVZUBEWYIRRWMBHWJHBD6P7PF',
-  // Using the newest Position Manager with get_user_positions_with_fees support
-  POSITION_MANAGER: 'CAQKVCPBEN3FHJ3U7ENIBC6GQGOKV7RGQVIQJRNEHL4HHL7I5PY6FSGY',
-  TOKEN_DESCRIPTOR: 'CDJI4LOSGS7UIWG4SDEEZW5TI266LN65EO72SA6SCCJT3SPRKDDVXKZQ',
-  FLASH_EXECUTOR: 'CBQ2H3Z6BIDL4Y6V4IWLC2F74OO5VYLBRLCZLN2G5TUVRMKPSJ6ROYGZ',
+  FACTORY: 'CDYKIAPBABV5U3FK2WY7PINXHYAYQEKIO7LEZJMUBB6MD64S34EOGRQK',
+  ROUTER: 'CD4GEPDR42C7BD6R5OPORAWGYCGDLMNKWEMBJ3U7B6S3RVFZ7EIELXPX',
+  POSITION_MANAGER: 'CC5KEYMWCZ6BCAKKATZ24MAHG2PCB2X2NGENLJXT6TXDVDAYW54EVOZV',
+  TOKEN_DESCRIPTOR: 'CAQWC7PNYSA4CRTPYUVESERXGINUONNLS2RKNFVLL3FGOECTOQ7JPMIH',
+  FLASH_EXECUTOR: 'CB7ER427OKV4VP2RLFFCQZDPLTRRYRLPPLJQEZUT7GFHESQJSBN7UKX7',
+  STRATEGY: 'CACISP46NGYDDH7WE2J6X6DEZLHLPSJSOXPV45IX7PAHFKXRE7J6BIW3',
   POOL_WASM_HASH:
-    '3910707aa159c94b9db126c37be7df870d3f8fedba5ad1ecb2a59c86a89bad62',
+    '34925b53fb6f5d60bf32428f87085b9e9a1849f2e63a4957896d97d3e042e3d3',
 
   // Tokens
   TOKENS: {
     XLM: 'CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC', // native XLM token
-    HYPEA: 'CCUYO46LKVYRQL63LIIMGWVURVBQVETKO26G5OK5XVB5S4GKMGPKXNYJ', // HYPEa
-    HYPEB: 'CBQMJZL4U4MAQNHKNZZ2CAAKOJEDKL4J4C6AVFQL4CSKNLZU6H3PD5O7', // HYPEb
-    HYPEC: 'CCSG4CCSKDAZ2UWZZNFK2FLJJQ3T443SUIAPAJR436WNOSFXPYOT47C2', // HYPEc
+    HYPE: 'CCKYIGXKXH7PBIUQ4D54OIB3ZB4QKCJEAG3M7PW3KDKT5RTGMXNK2PUT',
+    SUSHI: 'CAGOAU6G6JHAWABEGGUXQXOC4FMFZSY4SDKCVW47FS4ULYHEI5TSGJAT',
+    STELLA: 'CA75JDQYO5RQC6H5USNYV3J26MGS476XTYSUDMEONHLEZCKOBSTEWZ5W',
+    HYPED: 'CAOYWTNZT5VBDPCNHSHS4SPQIYOZNJW6BUJL3KR6R2X4TVOYU46HOUYU',
+    HYPEE: 'CA2BMGVWFVJKRGJ5LEC6YT5GK4UGMGF2QZXLAYRVMF6BUOF34JTKLAPI',
   },
 
-  // Pools
-  POOLS: {
-    HYPEA_XLM: 'CCYJJ2A2BAQHKKSNJ3NHRV66GA6XCHHBLROFBBR7J33YIYMWDL57XOUL', // HYPEa/XLM (old)
-    HYPEB_XLM: 'CDLPBPLMZGQHVRDMZAOMOQXWUUBGP5PWSLIAPTJVXC3WTAK6FAR3FQSQ', // HYPEb/XLM (old)
-    HYPEB_XLM_NEW: 'CC5HZRB5LK3L2KVHLXDAJNQLGRQ3O6OEV5UXPWFST5AJDKK65O2SNCNR', // HYPEb/XLM (new factory)
-    HYPEC_XLM: 'CA67FTSW23KKE3PINCLLOTQDK4UDVYXQWVBGMYT672QEHY26R3JFLXRP', // HYPEc/XLM
-  },
-} as const
-
-/**
- * Pool configuration with token pairs, fees, and metadata
- * Note: Pool addresses are still from the JavaScript example as they represent deployed pools
- * Token addresses now use the official package addresses
- */
-export const POOL_CONFIGS: Record<
-  string,
-  {
-    token0: { address: string; code: string }
-    token1: { address: string; code: string }
-    fee: number
-    description: string
-  }
-> = {
-  [CONTRACT_ADDRESSES.POOLS.HYPEA_XLM]: {
-    token0: { address: CONTRACT_ADDRESSES.TOKENS.HYPEA, code: 'HYPEa' },
-    token1: { address: CONTRACT_ADDRESSES.TOKENS.XLM, code: 'XLM' },
-    fee: 3000, // 0.3% fee
-    description: 'HYPEa-XLM (0.3% fee)',
-  },
-  [CONTRACT_ADDRESSES.POOLS.HYPEB_XLM]: {
-    token0: { address: CONTRACT_ADDRESSES.TOKENS.HYPEB, code: 'HYPEb' },
-    token1: { address: CONTRACT_ADDRESSES.TOKENS.XLM, code: 'XLM' },
-    fee: 3000, // 0.3% fee
-    description: 'HYPEb-XLM (0.3% fee)',
-  },
-  [CONTRACT_ADDRESSES.POOLS.HYPEB_XLM_NEW]: {
-    token0: { address: CONTRACT_ADDRESSES.TOKENS.HYPEB, code: 'HYPEb' },
-    token1: { address: CONTRACT_ADDRESSES.TOKENS.XLM, code: 'XLM' },
-    fee: 3000, // 0.3% fee
-    description: 'HYPEb-XLM (0.3% fee - New Factory)',
-  },
-  [CONTRACT_ADDRESSES.POOLS.HYPEC_XLM]: {
-    token0: { address: CONTRACT_ADDRESSES.TOKENS.HYPEC, code: 'HYPEc' },
-    token1: { address: CONTRACT_ADDRESSES.TOKENS.XLM, code: 'XLM' },
-    fee: 3000, // 0.3% fee
-    description: 'HYPEc-XLM (0.3% fee)',
-  },
+  // TODO: Add recognized pool addresses here
 } as const
 
 /**
  * Get pool configuration by address
- * Returns null if not found (dynamic pools will be queried from contract)
+ * Always returns null - all pool detection is now dynamic via contract queries
+ * @deprecated Use getPoolInfoFromContract from pool-helpers instead
  */
-export function getPoolConfig(poolAddress: string) {
-  const config = POOL_CONFIGS[poolAddress as keyof typeof POOL_CONFIGS]
-
-  if (!config) {
-    // This is expected for dynamically discovered pools
-    // pool-helpers will query the contract directly
-    return null
-  }
-
-  // Return the config with address and code, token objects will be resolved by the caller
-  return config
+export function getPoolConfig(_poolAddress: string) {
+  // All pool detection is now dynamic - no hardcoded configs
+  return null
 }
 
 /**

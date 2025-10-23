@@ -121,10 +121,7 @@ const TOTAL_LIQUIDITY_COLUMN: ColumnDef<PoolInfo, unknown> = {
  */
 const TOKEN0_RESERVES_COLUMN: ColumnDef<PoolInfo, unknown> = {
   id: 'token0Reserves',
-  header: (props) => {
-    const pool = props.table.options.data[0] as PoolInfo
-    return `Reserves (${pool.reserves.token0.code})`
-  },
+  header: () => 'Token 0 Reserves',
   accessorFn: (row) => row.reserves.token0.formatted,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     Number(rowA.reserves.token0.amount) - Number(rowB.reserves.token0.amount),
@@ -149,10 +146,7 @@ const TOKEN0_RESERVES_COLUMN: ColumnDef<PoolInfo, unknown> = {
  */
 const TOKEN1_RESERVES_COLUMN: ColumnDef<PoolInfo, unknown> = {
   id: 'token1Reserves',
-  header: (props) => {
-    const pool = props.table.options.data[0] as PoolInfo
-    return `Reserves (${pool.reserves.token1.code})`
-  },
+  header: () => 'Token 1 Reserves',
   accessorFn: (row) => row.reserves.token1.formatted,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     Number(rowA.reserves.token1.amount) - Number(rowB.reserves.token1.amount),

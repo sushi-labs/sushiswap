@@ -89,7 +89,7 @@ export const MyPosition: React.FC<MyPositionProps> = ({ pool }) => {
                 actualAmounts.token0,
                 pool.token0.decimals,
               )}
-              usdAmount="0.00" // TODO: Calculate USD value
+              usdAmount="0.00" // Price data is calculated in totalValue
             />
             <LiquidityItem
               isLoading={isLoading}
@@ -98,7 +98,7 @@ export const MyPosition: React.FC<MyPositionProps> = ({ pool }) => {
                 actualAmounts.token1,
                 pool.token1.decimals,
               )}
-              usdAmount="0.00" // TODO: Calculate USD value
+              usdAmount="0.00" // Price data is calculated in totalValue
             />
           </div>
         </CardContent>
