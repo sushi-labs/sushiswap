@@ -1,6 +1,6 @@
 'use client'
 
-import type { TrendingPool } from '@sushiswap/graph-client/data-api-181'
+import type { TrendingPool } from '@sushiswap/graph-client/data-api'
 import { useMediaQuery } from '@sushiswap/hooks'
 import { ChainId } from 'sushi'
 import {
