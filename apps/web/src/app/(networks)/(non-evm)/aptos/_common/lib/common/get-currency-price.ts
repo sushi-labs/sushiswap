@@ -100,9 +100,12 @@ export function getCurrencyPrice(
       Number(reserveOf(stableNativePair, defaultStable)) > 0 &&
       Number(reserveOf(nativePair, native)) > 0
     ) {
+      // native / stable
       const nativeStablePrice = priceOf(stableNativePair, defaultStable)
+      // token / native
       const currencyNativePrice = priceOf(nativePair, native)
-      const stablePrice = (1 / nativeStablePrice) * currencyNativePrice
+      // native / stable * token / native => token / stable
+      const stablePrice = 1 / (nativeStablePrice * currencyNativePrice)
       // return new Price(currency, defaultStable, stablePrice.denominator, stablePrice.numerator)
       return stablePrice
     }
