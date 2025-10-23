@@ -146,7 +146,7 @@ export const PriceRangeSparklineCLMM = ({
         </div>
       )}
       {isLoading || isLoadingBucketData ? (
-        <SkeletonBox className="w-full h-[124px] rounded-md" />
+        <SkeletonBox className="w-[230px] h-[56px] rounded-md" />
       ) : (
         <svg
           width="100%"
