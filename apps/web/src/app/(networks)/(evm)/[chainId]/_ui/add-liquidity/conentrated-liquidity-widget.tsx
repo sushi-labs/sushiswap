@@ -38,6 +38,7 @@ interface ConcentratedLiquidityWidget {
   existingPosition: Position | undefined
   onChange?(val: string, input: 'a' | 'b'): void
   successLink: string | undefined
+  inputClassName?: string
 }
 
 export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
@@ -53,6 +54,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
   existingPosition,
   onChange,
   successLink,
+  inputClassName,
 }) => {
   const [slippagePercent] = useSlippageTolerance(
     SlippageToleranceStorageKey.AddLiquidity,
@@ -188,7 +190,10 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
               <Web3Input.Currency
                 id="add-liquidity-token0"
                 type="INPUT"
-                className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl"
+                className={classNames(
+                  'p-4 bg-slate-50 dark:bg-slate-800  rounded-xl',
+                  inputClassName,
+                )}
                 chainId={chainId}
                 value={formattedAmounts[Field.CURRENCY_A]}
                 onChange={_onFieldAInput}
@@ -219,7 +224,10 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
               <Web3Input.Currency
                 id="add-liquidity-token1"
                 type="INPUT"
-                className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl"
+                className={classNames(
+                  'p-4 bg-slate-50 dark:bg-slate-800  rounded-xl',
+                  inputClassName,
+                )}
                 chainId={chainId}
                 value={formattedAmounts[Field.CURRENCY_B]}
                 onChange={_onFieldBInput}

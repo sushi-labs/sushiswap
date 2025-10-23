@@ -551,7 +551,7 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
         </p>
       </div>
 
-      <div className="rounded-xl flex flex-col gap-2 py-4 bg-slate-50 dark:bg-slate-800">
+      <div className="rounded-xl flex flex-col gap-2 p-4 bg-slate-50 dark:bg-slate-800">
         {isMounted && showStartPrice && token0 && token1 && (
           <div className="flex flex-col gap-3">
             {!noLiquidity && (

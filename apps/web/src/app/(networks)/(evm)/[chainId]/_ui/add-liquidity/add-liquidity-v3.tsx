@@ -246,6 +246,11 @@ const _Add = ({
             existingPosition={position ?? undefined}
             tokenId={_tokenId}
             successLink={`/${getEvmChainById(chainId).key}/pool/v3/${poolAddress}/${_tokenId ?? 'positions'}`}
+            inputClassName={
+              initToken0 && initToken1
+                ? '!bg-gray-100 dark:!bg-slate-900'
+                : undefined
+            }
           />
         </>
       ) : null}
