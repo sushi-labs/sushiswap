@@ -70,11 +70,7 @@ const getSwapApiResult = async ({
   )
   params.searchParams.set(
     'tokenOut',
-    `${
-      toToken?.type === 'native'
-        ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-        : toToken?.wrap().address
-    }`,
+    `${toToken?.type === 'native' ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : toToken?.wrap().address}`,
   )
   params.searchParams.set('amount', `${amount?.amount.toString()}`)
   params.searchParams.set('maxSlippage', `${Number(slippagePercentage) / 100}`)

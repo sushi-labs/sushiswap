@@ -50,6 +50,7 @@ jobs:
           EDGE_CONFIG: ${{ secrets.EDGE_CONFIG }}
           NEXT_PUBLIC_APP_ENV: 'test'
           NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
+          NEXT_PUBLIC_FUNKIT_API_KEY: ${{ secrets.NEXT_PUBLIC_FUNKIT_API_KEY }}
           NEXT_TELEMETRY_DISABLED: 1
           # Tron
           NEXT_PUBLIC_TRON_PRO_API_KEY: ${{ secrets.NEXT_PUBLIC_TRON_PRO_API_KEY }}

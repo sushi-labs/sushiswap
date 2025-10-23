@@ -20,7 +20,7 @@ export const SwapWidgetToken1Input = () => {
       id="swap-to"
       type="OUTPUT"
       disabled
-      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
+      className="p-4 bg-white dark:bg-slate-900 rounded-xl"
       value={quote?.amountOut?.toSignificant() ?? ''}
       chainId={chainId}
       onSelect={setToken1}

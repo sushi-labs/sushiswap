@@ -18,6 +18,7 @@
       "tsconfig.*.json",
       "packages/graph-client/src/subgraphs/**/*.graphql",
       "apps/web/src/lib/wagmi/hooks/exploits/data/rp2-approvals.json",
+      "apps/web/public/static/*",
       "**/*-env.d.ts",
       "**/*-cache.d.ts"
     ]

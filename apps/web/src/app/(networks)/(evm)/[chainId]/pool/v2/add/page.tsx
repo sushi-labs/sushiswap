@@ -414,7 +414,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
       <Web3Input.Currency
         id="zap-liquidity-token"
         type="INPUT"
-        className="p-3 bg-white dark:bg-slate-800 rounded-xl"
+        className="p-4 bg-white dark:bg-slate-900 rounded-xl"
         chainId={chainId}
         value={inputAmount}
         onChange={setInputAmount}
@@ -635,7 +635,7 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
         <Web3Input.Currency
           id="add-liquidity-token0"
           type="INPUT"
-          className="p-3 bg-white dark:bg-slate-800 rounded-xl"
+          className="p-4 bg-white dark:bg-slate-900 rounded-xl"
           chainId={chainId}
           value={input0}
           onChange={onChangeToken0TypedAmount}
@@ -663,7 +663,7 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
         <Web3Input.Currency
           id="add-liquidity-token1"
           type="INPUT"
-          className="p-3 bg-white dark:bg-slate-800 rounded-xl"
+          className="p-4 bg-white dark:bg-slate-900 rounded-xl"
           chainId={chainId}
           value={input1}
           onChange={onChangeToken1TypedAmount}
