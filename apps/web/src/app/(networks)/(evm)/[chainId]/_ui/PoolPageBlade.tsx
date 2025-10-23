@@ -1,6 +1,6 @@
 'use client'
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
+import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { Button, Container } from '@sushiswap/ui'
 import { type FC, useState } from 'react'
 import { BladeInfoPanel } from 'src/ui/pool/BladeInfoPanel'

@@ -1,5 +1,4 @@
 import type { VariablesOf } from 'gql.tada'
-
 import { type RequestOptions, request } from 'src/lib/request.js'
 import { graphql } from '../../graphql.js'
 

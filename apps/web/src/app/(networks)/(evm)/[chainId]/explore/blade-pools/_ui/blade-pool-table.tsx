@@ -2,10 +2,7 @@
 
 import {} from '@heroicons/react/24/outline'
 import { Slot } from '@radix-ui/react-slot'
-import type {
-  BladePool,
-  BladePools,
-} from '@sushiswap/graph-client/data-api-blade-prod'
+import type { BladePool, BladePools } from '@sushiswap/graph-client/data-api'
 import {
   Card,
   CardDescription,

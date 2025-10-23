@@ -1,6 +1,6 @@
 'use client'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
+import type { BladePool } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Dialog,

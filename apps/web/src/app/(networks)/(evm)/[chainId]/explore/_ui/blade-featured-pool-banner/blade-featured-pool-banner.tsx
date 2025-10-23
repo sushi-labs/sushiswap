@@ -1,7 +1,4 @@
-import type {
-  BladeChainId,
-  BladePool,
-} from '@sushiswap/graph-client/data-api-blade-prod'
+import type { BladeChainId, BladePool } from '@sushiswap/graph-client/data-api'
 import { Badge, Button, Currency } from '@sushiswap/ui'
 import { CurrencyFiatIcon } from '@sushiswap/ui/icons/CurrencyFiatIcon'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'

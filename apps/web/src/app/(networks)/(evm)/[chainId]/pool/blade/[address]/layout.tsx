@@ -1,4 +1,4 @@
-import { getBladePool } from '@sushiswap/graph-client/data-api-blade-prod'
+import { getBladePool } from '@sushiswap/graph-client/data-api'
 import ms from 'ms'
 import type { Metadata } from 'next'
 import { unstable_cache } from 'next/cache'

@@ -40,12 +40,6 @@
 						"schema": "./src/subgraphs/kadena/schema.graphql",
 						"tadaOutputLocation": "./src/subgraphs/kadena/kadena-env.d.ts",
 						"tadaTurboLocation": "./src/subgraphs/kadena/kadena-cache.d.ts"
-					},
-          {
-						"name": "data-api-blade-prod",
-						"schema": "./src/subgraphs/data-api-blade-prod/schema.graphql",
-						"tadaOutputLocation": "./src/subgraphs/data-api-blade-prod/data-api-blade-prod-env.d.ts",
-						"tadaTurboLocation": "./src/subgraphs/data-api-blade-prod/data-api-blade-prod-cache.d.ts"
 					}
         ]
       }

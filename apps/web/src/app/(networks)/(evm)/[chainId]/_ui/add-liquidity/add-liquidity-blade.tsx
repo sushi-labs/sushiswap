@@ -1,6 +1,6 @@
 'use client'
 
-import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
+import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Amount, type ID } from 'sushi'
 import {

@@ -1,7 +1,4 @@
-import {
-  type BladePool,
-  getBladePool,
-} from '@sushiswap/graph-client/data-api-blade-prod'
+import { type BladePool, getBladePool } from '@sushiswap/graph-client/data-api'
 import ms from 'ms'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'

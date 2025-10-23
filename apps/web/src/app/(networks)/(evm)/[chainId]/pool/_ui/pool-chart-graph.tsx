@@ -6,7 +6,7 @@ import type {
   V2Pool,
   V3Pool,
 } from '@sushiswap/graph-client/data-api'
-import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
+import type { BladePool } from '@sushiswap/graph-client/data-api'
 import {
   CardContent,
   CardDescription,

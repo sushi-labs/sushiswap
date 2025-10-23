@@ -1,6 +1,6 @@
 'use client'
 
-import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
+import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import type { Address } from 'viem'

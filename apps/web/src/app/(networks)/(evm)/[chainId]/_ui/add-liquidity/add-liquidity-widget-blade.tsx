@@ -1,5 +1,5 @@
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
+import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
 import { waitForTransactionReceipt } from '@wagmi/core'

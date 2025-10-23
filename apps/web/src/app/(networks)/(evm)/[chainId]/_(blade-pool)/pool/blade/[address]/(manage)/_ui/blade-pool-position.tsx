@@ -1,6 +1,6 @@
 'use client'
 
-import type { BladePool } from '@sushiswap/graph-client/data-api-blade-prod'
+import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
 import { Button, Currency, SkeletonText } from '@sushiswap/ui'
 import { CurrencyFiatIcon } from '@sushiswap/ui/icons/CurrencyFiatIcon'

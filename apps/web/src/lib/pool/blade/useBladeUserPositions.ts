@@ -4,7 +4,7 @@ import {
   type BladeChainId,
   type BladePositions,
   getBladePositions,
-} from '@sushiswap/graph-client/data-api-blade-prod'
+} from '@sushiswap/graph-client/data-api'
 import { skipToken, useQuery } from '@tanstack/react-query'
 import type { EvmAddress } from 'sushi/evm'
 
