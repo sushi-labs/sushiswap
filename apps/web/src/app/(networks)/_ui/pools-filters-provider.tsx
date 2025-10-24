@@ -50,6 +50,14 @@ export const poolFiltersSchema = z.object({
       })
     })
     .optional(),
+  aprRangeMin: z
+    .string()
+    .transform((val) => (val ? Number.parseFloat(val) : undefined))
+    .optional(),
+  aprRangeMax: z
+    .string()
+    .transform((val) => (val ? Number.parseFloat(val) : undefined))
+    .optional(),
 })
 
 export type PoolFilters = z.infer<typeof poolFiltersSchema>
@@ -99,6 +107,8 @@ const DEFAULT_STATE = {
   farmsOnly: false,
   tvlRangeMin: undefined,
   tvlRangeMax: undefined,
+  aprRangeMin: undefined,
+  aprRangeMax: undefined,
   networks: DEFAULT_POOL_NETWORKS,
 }
 
@@ -117,6 +127,8 @@ const PoolsFiltersUrlProvider: FC<PoolsFiltersProviderProps> = ({
       tvlRangeMin,
       tvlRangeMax,
       networks,
+      aprRangeMin,
+      aprRangeMax,
     } = urlFilters
     const state: PoolFilters = {
       tokenSymbols: tokenSymbols ? tokenSymbols : DEFAULT_STATE.tokenSymbols,
@@ -125,6 +137,8 @@ const PoolsFiltersUrlProvider: FC<PoolsFiltersProviderProps> = ({
       tvlRangeMin: tvlRangeMin ?? DEFAULT_STATE.tvlRangeMin,
       tvlRangeMax: tvlRangeMax ?? DEFAULT_STATE.tvlRangeMax,
       networks: networks ? networks : DEFAULT_STATE.networks,
+      aprRangeMin: aprRangeMin ?? DEFAULT_STATE.aprRangeMin,
+      aprRangeMax: aprRangeMax ?? DEFAULT_STATE.aprRangeMax,
     }
     return state
   }, [urlFilters])

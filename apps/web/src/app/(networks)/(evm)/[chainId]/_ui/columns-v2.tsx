@@ -419,7 +419,7 @@ export const VOLUME_1D_COLUMN: ColumnDef<MultiChainPool, unknown> = {
         )}
       >
         {props.row.original.volumeUSDChange1d > 0 ? '+' : ''}
-        {formatPercent(props.row.original.volumeUSDChange1d)}
+        {formatPercent(props.row.original.volumeUSDChange1d / 100)}
       </span>
     </div>
   ),
@@ -460,7 +460,7 @@ export const VOLUME_1W_COLUMN: ColumnDef<MultiChainPool, unknown> = {
         )}
       >
         {props.row.original.volumeUSDChange1w > 0 ? '+' : ''}
-        {formatPercent(props.row.original.volumeUSDChange1w)}
+        {formatPercent(props.row.original.volumeUSDChange1w / 100)}
       </span>
     </div>
   ),
@@ -501,7 +501,7 @@ export const TVL_COLUMN: ColumnDef<MultiChainPool, unknown> = {
         )}
       >
         {props.row.original.liquidityUSDChange1d > 0 ? '+' : ''}
-        {formatPercent(props.row.original.liquidityUSDChange1d)}
+        {formatPercent(props.row.original.liquidityUSDChange1d / 100)}
       </span>
     </div>
   ),
@@ -562,9 +562,9 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<MultiChainPool, unknown> = {
       return (
         <div className="flex flex-col pl-7 w-[100px]">
           <span>
-            {Number.isNaN(props.row.original.totalApr1w)
+            {Number.isNaN(props.row.original.totalApr1w / 100)
               ? '0%'
-              : formatPercent(props.row.original.totalApr1w)}
+              : formatPercent(props.row.original.totalApr1w / 100)}
           </span>
         </div>
       )
