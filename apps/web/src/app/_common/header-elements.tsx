@@ -33,7 +33,7 @@ export const EXPLORE_NAVIGATION_LINKS = (
 
   return [
     {
-      title: 'Swap',
+      title: 'Trade',
       href: `/${getChainById(chainId ?? ChainId.ETHEREUM).key}/swap`,
       description: 'The easiest way to trade.',
     },
@@ -43,20 +43,19 @@ export const EXPLORE_NAVIGATION_LINKS = (
       description: 'Explore top pools.',
     },
     {
-      title: 'Pool',
-      href: `/${getChainById(isPoolChainId ? chainId : ChainId.ETHEREUM).key}/pool`,
-      description: 'Earn fees by providing liquidity.',
-    },
-
-    {
-      title: 'Claim',
-      href: '/claim',
-      description: 'Claim your fees and rewards.',
+      title: 'Portfolio',
+      href: `/${getChainById(chainId ?? ChainId.ETHEREUM).key}/portfolio`,
+      description: 'Track your assets and performance.',
     },
     {
       title: 'Stake',
       href: '/stake',
       description: 'Earn protocol fees by staking SUSHI.',
+    },
+    {
+      title: 'Buy Crypto',
+      href: `/${getChainById(chainId ?? ChainId.ETHEREUM).key}/fiat/advanced`,
+      description: 'Onramp with fiat.',
     },
   ]
 }
