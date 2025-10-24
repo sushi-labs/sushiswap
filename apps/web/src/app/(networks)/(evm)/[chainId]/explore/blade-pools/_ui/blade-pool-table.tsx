@@ -121,7 +121,7 @@ export const BladePoolsTable: FC<BladePoolsTableProps> = ({
         rowRenderer={rowRenderer}
         columns={COLUMNS}
         data={pools ?? []}
-        meta={{ showStableTypes } satisfies BladePoolsTableMeta}
+        meta={{ showStablecoinTypes: showStableTypes }}
       />
     </Card>
   )
