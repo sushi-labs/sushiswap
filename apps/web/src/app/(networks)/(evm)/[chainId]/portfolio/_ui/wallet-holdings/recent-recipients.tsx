@@ -2,7 +2,7 @@ import { Button, Collapsible, classNames } from '@sushiswap/ui'
 import { useEffect, useRef, useState } from 'react'
 import { shortenEvmAddress } from 'sushi/evm'
 import { isAddress } from 'viem'
-import { useRecentRecipients } from '../../../lib/wagmi/hooks/hooks/use-recent-recipients'
+import { useRecentRecipients } from '../../../../../../../lib/wagmi/hooks/hooks/use-recent-recipients'
 import { useOverflow } from '../lp-positions-table/trending'
 import { useSendTokens } from './send-token-provider'
 

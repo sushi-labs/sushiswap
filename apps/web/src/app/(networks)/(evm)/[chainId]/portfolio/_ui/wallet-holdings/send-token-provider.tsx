@@ -5,7 +5,7 @@ import type { EvmCurrency } from 'sushi/evm'
 import { isAddress } from 'viem'
 import { normalize } from 'viem/ens'
 import { useEnsAddress } from 'wagmi'
-import type { Contact } from '../../../lib/wagmi/hooks/hooks/use-contacts'
+import type { Contact } from '../../../../../../../lib/wagmi/hooks/hooks/use-contacts'
 
 export type SendViewStep =
   | 'send'

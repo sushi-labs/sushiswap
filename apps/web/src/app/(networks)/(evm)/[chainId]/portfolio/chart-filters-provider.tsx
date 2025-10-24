@@ -17,7 +17,6 @@ import {
 } from 'react'
 import { parseArgs } from 'src/lib/functions'
 import { useTypedSearchParams } from 'src/lib/hooks'
-import { AssetsChartPeriod } from 'src/ui/portfolio/assets-chart/assets-chart-header'
 import {
   type EvmChainId,
   type EvmCurrency,
@@ -26,6 +25,7 @@ import {
   isEvmChainId,
 } from 'sushi/evm'
 import { z } from 'zod'
+import { AssetsChartPeriod } from '~evm/[chainId]/portfolio/_ui/assets-chart/assets-chart-header'
 
 export const DEFAULT_ASSET_NETWORKS = PoolChainIds.filter(
   (n) => typeof n === 'number' && isEvmChainId(n),

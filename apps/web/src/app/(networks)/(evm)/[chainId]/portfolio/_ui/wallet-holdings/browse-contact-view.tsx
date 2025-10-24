@@ -17,7 +17,7 @@ import { PencilIcon } from '@sushiswap/ui/icons/PencilIcon'
 import { useState } from 'react'
 import { shortenEvmAddress } from 'sushi/evm'
 import { isAddress } from 'viem'
-import { useContacts } from '../../../lib/wagmi/hooks/hooks/use-contacts'
+import { useContacts } from '../../../../../../../lib/wagmi/hooks/hooks/use-contacts'
 import { useSendTokens } from './send-token-provider'
 
 export const BrowseContactView = () => {

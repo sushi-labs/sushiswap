@@ -51,7 +51,7 @@ import { SelectFeeConcentratedWidget } from '~evm/[chainId]/_ui/add-liquidity/se
 import { SelectPriceWidget } from '~evm/[chainId]/_ui/add-liquidity/select-price-widget'
 import { useConcentratedDerivedMintInfo } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
 import { usePoolPosition } from '~evm/[chainId]/pool/v2/[address]/_common/ui/pool-position-provider'
-import { usePrices } from '../../../../../../app/(networks)/(evm)/_common/ui/price-provider/price-provider/use-prices'
+import { usePrices } from '../../../../../../../_common/ui/price-provider/price-provider/use-prices'
 import { ManageDialogHeader } from '../../manage-dialog-header'
 import { Positions } from '../../positions'
 
