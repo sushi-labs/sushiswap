@@ -111,7 +111,7 @@ export const PortfolioSubHeader = () => {
       </div>
       <div
         className={classNames(
-          'pointer-events-none absolute top-0 right-0 h-full w-20 bg-gradient-to-r from-transparent to-white dark:to-slate-900 hidden md:block transition-opacity duration-200 ease-out',
+          'pointer-events-none absolute top-0 right-0 h-full w-20 bg-gradient-to-r from-transparent to-background dark:to-slate-900 transition-opacity duration-200 ease-out',
           hasOverflow && !isAtEnd ? 'opacity-100' : 'opacity-0',
         )}
       />
