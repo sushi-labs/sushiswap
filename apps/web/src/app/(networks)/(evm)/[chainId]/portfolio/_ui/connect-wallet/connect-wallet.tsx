@@ -9,7 +9,7 @@ import { LottiePlayer } from './lottie-player'
 export const ConnnectWallet = () => {
   return (
     <Wrapper className="!p-0" enableBorder>
-      <CardHeader className="border-b !py-5">
+      <CardHeader className="border-b dark:border-[#FFFFFF14] !py-5">
         <Button
           iconPosition="end"
           icon={ChevronDownIcon}
