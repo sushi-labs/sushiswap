@@ -55,6 +55,8 @@ export const PoolsTableV2: FC<PoolsTableV2Props> = ({
     networks,
     tvlRangeMin,
     tvlRangeMax,
+    aprRangeMin,
+    aprRangeMax,
   } = usePoolFilters()
 
   const [sorting, setSorting] = useState<SortingState>([
@@ -72,6 +74,8 @@ export const PoolsTableV2: FC<PoolsTableV2Props> = ({
       onlyIncentivized: farmsOnly,
       minTvl: tvlRangeMin,
       maxTvl: tvlRangeMax,
+      minApr: aprRangeMin,
+      maxApr: aprRangeMax,
       protocols,
       orderBy: sorting[0]?.id as GetMultiChainPools['orderBy'],
       orderDirection: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
@@ -85,6 +89,8 @@ export const PoolsTableV2: FC<PoolsTableV2Props> = ({
     protocols,
     tvlRangeMin,
     tvlRangeMax,
+    aprRangeMin,
+    aprRangeMax,
   ])
 
   const {
