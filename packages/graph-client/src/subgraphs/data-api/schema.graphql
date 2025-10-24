@@ -42,7 +42,7 @@ type Query {
   v3Pool(address: Bytes!, chainId: SushiSwapV3ChainId!): V3Pool!
   v2PoolBuckets(address: Bytes!, chainId: SushiSwapV2ChainId!): PoolBuckets!
   v3PoolBuckets(address: Bytes!, chainId: SushiSwapV3ChainId!): PoolBuckets!
-  multiChainPools(chainIds: [PoolChainId!]!, page: Int = 1, search: [String], protocols: [Protocol], onlyIncentivized: Boolean = false, orderBy: PoolsOrderBy = liquidityUSD, orderDirection: OrderDirection = desc, minTvl: Float, maxTvl: Float): Pools!
+  multiChainPools(chainIds: [PoolChainId!]!, page: Int = 1, search: [String], protocols: [Protocol], onlyIncentivized: Boolean = false, orderBy: PoolsOrderBy = liquidityUSD, orderDirection: OrderDirection = desc, minTvl: Float, maxTvl: Float, minApr: Float, maxApr: Float): Pools!
   v3PoolsByTokens(token0: Bytes!, token1: Bytes!, chainId: SushiSwapV3ChainId!): [V3BasePool!]!
   v3Pools(chainId: SushiSwapV3ChainId!): [V3BasePool!]!
   trendingPools: [TrendingPool!]!
