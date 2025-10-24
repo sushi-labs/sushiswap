@@ -3,12 +3,16 @@ import { PlusCircleIcon } from '@heroicons/react-v1/outline'
 import { XIcon } from '@heroicons/react-v1/solid'
 import { Button, TextField, classNames } from '@sushiswap/ui'
 import { useRef, useState } from 'react'
+import {
+  usePoolFilters,
+  useSetPoolFilters,
+} from 'src/app/(networks)/_ui/pools-filters-provider'
 import { PopoverDrawer } from 'src/app/(networks)/_ui/popover-drawer'
 import { formatNumber } from 'sushi'
 
 export const TableFiltersAPR = () => {
-  const [aprRangeMin, setAprRangeMin] = useState<number | undefined>(undefined)
-  const [aprRangeMax, setAprRangeMax] = useState<number | undefined>(undefined)
+  const { aprRangeMin, aprRangeMax } = usePoolFilters()
+  const setFilters = useSetPoolFilters()
 
   const [localMin, setLocalMin] = useState('')
   const [localMax, setLocalMax] = useState('')
@@ -23,16 +27,23 @@ export const TableFiltersAPR = () => {
   const onConfirm = () => {
     const realMin = localMin ? Number.parseFloat(localMin) : undefined
     const realMax = localMax ? Number.parseFloat(localMax) : undefined
+
     if (realMax && realMin && realMax > realMin) {
-      setAprRangeMin(realMin)
-      setAprRangeMax(realMax)
+      setFilters((prev) => ({
+        ...prev,
+        aprRangeMin: realMin,
+        aprRangeMax: realMax,
+      }))
       closeContent()
     }
   }
 
   const clearFilters = () => {
-    setAprRangeMin(undefined)
-    setAprRangeMax(undefined)
+    setFilters((prev) => ({
+      ...prev,
+      aprRangeMin: undefined,
+      aprRangeMax: undefined,
+    }))
   }
 
   return (
