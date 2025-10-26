@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo } from 'react'
 import { Fraction, withoutScientificNotation } from 'sushi'
-import type { EvmAddress, EvmChainId } from 'sushi/evm'
+import type { EvmAddress, EvmChainId, EvmCurrency } from 'sushi/evm'
 import { parseUnits } from 'viem'
 import { usePriceProvider } from './price-provider'
 import type { ProviderChainState } from './types'
@@ -76,6 +76,14 @@ export function useMultiChainPrices({
             const price = chain.priceMap!.get(address)
             return price
           },
+
+          getForToken: (token: EvmCurrency) => {
+            const address = BigInt(token.wrap().address)
+
+            const price = chain.priceMap!.get(address)
+            return price
+          },
+
           getFraction: (_address: EvmAddress) => {
             const address = BigInt(_address)
 

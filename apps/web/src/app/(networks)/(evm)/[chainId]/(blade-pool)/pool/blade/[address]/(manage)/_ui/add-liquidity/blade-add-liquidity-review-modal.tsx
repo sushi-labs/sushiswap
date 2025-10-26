@@ -27,6 +27,7 @@ import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import type { RfqAllowDepositResponse } from 'src/lib/pool/blade/useBladeAllowDeposit'
 import { useBladeDepositRequest } from 'src/lib/pool/blade/useBladeDepositRequest'
 import { useBladeDepositTransaction } from 'src/lib/pool/blade/useBladeDepositTransaction'
+import { getOnchainPriceFromPool } from 'src/lib/pool/blade/utils'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
@@ -193,18 +194,26 @@ export const BladeAddLiquidityReviewModal: FC<
     return validInputs.flatMap((input) => {
       const parsedAmount = Amount.tryFromHuman(input.token, input.amount)
       if (!parsedAmount) return []
-      const price = prices?.get(input.token.wrap().address) || 0
-      const usdValue = Number(parsedAmount.toString()) * price
+      const price =
+        prices?.getForToken(input.token) ??
+        getOnchainPriceFromPool(input.token, pool)
+      const usdValue =
+        price !== null ? Number(parsedAmount.toString()) * price : null
       return [{ input, parsedAmount, usdValue }]
     })
-  }, [validInputs, prices])
+  }, [validInputs, prices, pool])
 
   const estimatedDepositValue = useMemo(() => {
-    return depositInputsWithValue.reduce((sum, item) => sum + item.usdValue, 0)
+    return depositInputsWithValue.reduce<number | null>(
+      (sum, item) =>
+        sum !== null && item.usdValue !== null ? sum + item.usdValue : null,
+      0,
+    )
   }, [depositInputsWithValue])
 
   const estimatedApiDepositValue = useMemo(() => {
-    if (!depositRequest.data?.pool_tokens) return 0
+    if (!depositRequest.data?.pool_tokens || estimatedDepositValue === null)
+      return null
     const estimatedPoolTokens = Number(depositRequest.data.pool_tokens)
 
     const currentTotalSupply = poolTotalSupply?.amount
@@ -240,8 +249,8 @@ export const BladeAddLiquidityReviewModal: FC<
    * differ from current market prices used in the direct calculation.
    */
   const displayEstimatedValue = useMemo(() => {
-    if (estimatedApiDepositValue === 0) return estimatedDepositValue
-    if (estimatedDepositValue === 0) return estimatedApiDepositValue
+    if (!estimatedApiDepositValue) return estimatedDepositValue
+    if (!estimatedDepositValue) return estimatedApiDepositValue
 
     const differenceRatio =
       Math.abs(estimatedApiDepositValue - estimatedDepositValue) /
@@ -324,7 +333,7 @@ export const BladeAddLiquidityReviewModal: FC<
                             {parsedAmount.toSignificant(6)}
                           </span>
                           <span className="text-sm text-gray-400 dark:text-slate-400">
-                            {formatUSD(usdValue)}
+                            {usdValue !== null ? formatUSD(usdValue) : '-'}
                           </span>
                         </div>
                       </List.KeyValue>
@@ -337,7 +346,9 @@ export const BladeAddLiquidityReviewModal: FC<
                 <List>
                   <List.Control>
                     <List.KeyValue title="Estimated Value">
-                      {formatUSD(displayEstimatedValue || 0)}
+                      {displayEstimatedValue !== null
+                        ? formatUSD(displayEstimatedValue)
+                        : '-'}
                     </List.KeyValue>
 
                     {lockTime?.message ? (

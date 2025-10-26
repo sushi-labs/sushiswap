@@ -6,8 +6,9 @@ import {
   EvmToken,
 } from 'sushi/evm'
 import type { Hex } from 'viem'
+import type { PriceMap } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { BLADE_STABLES } from './stables'
-import type { BladePoolAsset } from './types'
+import type { BladePoolAsset, BladePoolStablecoinAsset } from './types'
 
 export type BladePoolTokensGrouped = {
   tokens: EvmCurrency[]
@@ -68,9 +69,9 @@ export function getPoolAssets(
   )
 
   const assets: BladePoolAsset[] = []
-  const stablecoinAssetMap = new Map<'USD', BladePoolAsset>()
+  const stablecoinAssetMap = new Map<'USD', BladePoolStablecoinAsset>()
 
-  for (const { token: tokenData, priceUSD, ...rest } of pool.tokens) {
+  for (const { token: tokenData, ...rest } of pool.tokens) {
     if (
       !showStableTypes &&
       stablecoinSet.has(tokenData.address.toLowerCase() as EvmAddress)
@@ -80,11 +81,13 @@ export function getPoolAssets(
         stablecoinAsset = {
           ...rest,
           stablecoin: 'USD',
-          priceUSD,
         }
       } else {
         stablecoinAsset.liquidityUSD += rest.liquidityUSD
-        stablecoinAsset.targetWeight += rest.targetWeight
+        if (rest.targetWeight !== null) {
+          stablecoinAsset.targetWeight =
+            (stablecoinAsset.targetWeight ?? 0) + rest.targetWeight
+        }
         stablecoinAsset.weight += rest.weight
       }
       stablecoinAssetMap.set('USD', stablecoinAsset)
@@ -103,7 +106,6 @@ export function getPoolAssets(
       assets.push({
         ...rest,
         token,
-        priceUSD,
       })
     }
   }
@@ -198,4 +200,14 @@ export const shortenSignature = (s: string, v: number): string => {
   const shiftedParity = BigInt(parity) << 255n
 
   return (BigInt(s) + shiftedParity).toString()
+}
+
+export function getOnchainPriceFromPool(
+  token: EvmCurrency,
+  pool: BladePool,
+): number | null {
+  const tokenData = pool.tokens.find(
+    (t) => t.token.address.toLowerCase() === token.wrap().address.toLowerCase(),
+  )
+  return tokenData?.priceUSD ?? null
 }

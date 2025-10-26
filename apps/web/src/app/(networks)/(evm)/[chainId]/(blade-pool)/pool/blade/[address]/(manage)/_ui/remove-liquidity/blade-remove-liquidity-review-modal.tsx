@@ -55,7 +55,10 @@ export const BladeRemoveLiquidityReviewModal: FC<
   const { data: prices } = usePrices({ chainId })
 
   const poolAssets = useMemo(
-    () => getPoolAssets(pool).filter((asset) => asset.targetWeight > 0),
+    () =>
+      getPoolAssets(pool).filter(
+        (asset) => asset.targetWeight !== null && asset.targetWeight > 0,
+      ),
     [pool],
   )
 
@@ -87,18 +90,25 @@ export const BladeRemoveLiquidityReviewModal: FC<
           const amountToReceiveValue =
             userAssetValue * (Number(percentage) / 100)
 
-          // Get token price and calculate amount
-          const tokenPrice = prices?.get(asset.token.wrap().address) || 0
+          const tokenPrice = prices?.getForToken(asset.token) ?? asset.priceUSD
           const tokenAmountValue =
-            tokenPrice > 0 ? amountToReceiveValue / tokenPrice : 0
+            tokenPrice !== null
+              ? tokenPrice > 0
+                ? amountToReceiveValue / tokenPrice
+                : 0
+              : null
+
           const amount =
-            tokenAmountValue > 0
-              ? Amount.fromHuman(asset.token, tokenAmountValue)
-              : new Amount(asset.token, 0n)
+            tokenAmountValue === null
+              ? null
+              : tokenAmountValue > 0
+                ? Amount.fromHuman(asset.token, tokenAmountValue)
+                : new Amount(asset.token, 0n)
 
           return {
             usdValue: amountToReceiveValue,
             weight: asset.weight,
+            token: asset.token,
             amount,
           }
         }
@@ -109,7 +119,7 @@ export const BladeRemoveLiquidityReviewModal: FC<
 
   const [selectedOption, setSelectedOption] = useState<RemoveOptionType>(() => {
     if (pool.isSingleAssetWithdrawEnabled && tokensToReceive.length > 0) {
-      return tokensToReceive[0]?.amount.currency || 'multiple'
+      return tokensToReceive[0]?.token || 'multiple'
     }
     return 'multiple'
   })
@@ -195,6 +205,7 @@ export const BladeRemoveLiquidityReviewModal: FC<
               </DialogHeader>
 
               <RemoveOptionsSelector
+                pool={pool}
                 tokensToReceive={tokensToReceive}
                 selectedOption={selectedOption}
                 setSelectedOption={onSelectedOptionChange}

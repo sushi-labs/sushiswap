@@ -13,6 +13,7 @@ import { useBladeWithdrawRequest } from 'src/lib/pool/blade/useBladeWithdrawRequ
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker'
 
+import { getOnchainPriceFromPool } from 'src/lib/pool/blade/utils'
 import { Amount, Percent, formatUSD } from 'sushi'
 import { type EvmCurrency, EvmNative } from 'sushi/evm'
 import { useAccount } from 'wagmi'
@@ -67,8 +68,11 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
       withdrawRequest.data.asset_amount,
     )
 
-    const tokenPrice = prices?.get(selectedToken.wrap().address) || 0
-    const usdValue = Number(exactAmount.toString()) * tokenPrice
+    const tokenPrice =
+      prices?.getForToken(selectedToken) ??
+      getOnchainPriceFromPool(selectedToken, pool)
+    const usdValue =
+      tokenPrice !== null ? Number(exactAmount.toString()) * tokenPrice : null
 
     return {
       singleAssetData: {
@@ -77,10 +81,21 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
       },
       hasTokenMismatch: false,
     }
-  }, [selectedToken, withdrawRequest.data, withdrawRequest.isSuccess, prices])
+  }, [
+    selectedToken,
+    withdrawRequest.data,
+    withdrawRequest.isSuccess,
+    prices,
+    pool,
+  ])
 
   const showPriceImpactWarning = useMemo(() => {
-    if (!singleAssetData || estimatedValue === 0) return false
+    if (
+      !singleAssetData ||
+      estimatedValue === 0 ||
+      singleAssetData.usdValue === null
+    )
+      return false
 
     const actualUsdValue = singleAssetData.usdValue
 
@@ -209,7 +224,9 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
                 {selectedToken.symbol}
               </div>
               <div className="text-sm text-muted-foreground">
-                {formatUSD(singleAssetData.usdValue)}
+                {singleAssetData.usdValue !== null
+                  ? formatUSD(singleAssetData.usdValue)
+                  : '-'}
               </div>
             </div>
           }
