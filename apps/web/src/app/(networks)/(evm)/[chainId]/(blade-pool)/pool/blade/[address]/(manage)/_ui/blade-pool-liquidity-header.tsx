@@ -46,10 +46,9 @@ export const BladePoolLiquidityHeader: FC<PoolHeader> = ({
     [tokens, hasStablecoin, showStableTypes, stablecoinUsdTokens],
   )
 
-  if (pool && tokens.length > 0)
-    return (
-      <div className="flex flex-col gap-4 sm:gap-6">
-        <div className="flex flex-col gap-3 sm:gap-4">
+  return (
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <div className="flex flex-col gap-3 sm:gap-4">
           <LinkInternal
             href={backUrl}
             className="text-sm text-blue hover:underline"
@@ -136,9 +135,7 @@ export const BladePoolLiquidityHeader: FC<PoolHeader> = ({
               {shortenEvmAddress(address, 4)}
             </LinkExternal>
           </div>
-        </div>
       </div>
-    )
-
-  return <></>
+    </div>
+  )
 }
