@@ -67,8 +67,10 @@ export type RfqDepositResponse = z.infer<typeof rfqDepositResponseSchema>
 
 export const useBladeDepositRequest = ({
   onError,
+  enabled = false,
 }: {
   onError?: (e: Error) => void
+  enabled?: boolean
 } = {}) => {
   const [refreshDelay, setRefreshDelay] = useState<number | null>(null)
 
@@ -109,11 +111,14 @@ export const useBladeDepositRequest = ({
     onError,
   })
 
-  useTimeout(() => {
-    if (mutation.variables) {
-      mutation.mutate(mutation.variables)
-    }
-  }, refreshDelay)
+  useTimeout(
+    () => {
+      if (mutation.variables) {
+        mutation.mutate(mutation.variables)
+      }
+    },
+    enabled ? refreshDelay : null,
+  )
 
   return mutation
 }

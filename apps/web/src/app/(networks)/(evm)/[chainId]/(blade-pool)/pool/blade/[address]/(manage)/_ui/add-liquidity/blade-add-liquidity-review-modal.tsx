@@ -12,8 +12,10 @@ import {
   DialogReview,
   DialogTitle,
   DialogTrigger,
+  DialogType,
   Dots,
   List,
+  useDialog,
 } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import {
@@ -72,7 +74,15 @@ interface BladeAddLiquidityReviewModalProps {
 
 export const BladeAddLiquidityReviewModal: FC<
   BladeAddLiquidityReviewModalProps
-> = ({
+> = (props) => {
+  return (
+    <DialogProvider>
+      <_BladeAddLiquidityReviewModal {...props} />
+    </DialogProvider>
+  )
+}
+
+const _BladeAddLiquidityReviewModal: FC<BladeAddLiquidityReviewModalProps> = ({
   pool,
   chainId,
   validInputs,
@@ -80,6 +90,7 @@ export const BladeAddLiquidityReviewModal: FC<
   children,
   onSuccess: _onSuccess,
 }) => {
+  const { open } = useDialog(DialogType.Review)
   const router = useRouter()
   const { address } = useAccount()
   const { approved } = useApproved(APPROVE_TAG_ADD_LEGACY)
@@ -145,6 +156,7 @@ export const BladeAddLiquidityReviewModal: FC<
 
   const depositRequest = useBladeDepositRequest({
     onError: onDepositRequestError,
+    enabled: open,
   })
   const transactionMutation = useBladeDepositTransaction({
     pool,
@@ -300,7 +312,7 @@ export const BladeAddLiquidityReviewModal: FC<
   }
 
   return (
-    <DialogProvider>
+    <>
       <DialogReview>
         {({ confirm }) => (
           <>
@@ -397,7 +409,7 @@ export const BladeAddLiquidityReviewModal: FC<
         buttonText="Close"
         txHash={transactionMutation.data}
       />
-    </DialogProvider>
+    </>
   )
 }
 
