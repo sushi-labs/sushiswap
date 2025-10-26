@@ -70,7 +70,7 @@ export function getPoolAssets(
   const assets: BladePoolAsset[] = []
   const stablecoinAssetMap = new Map<'USD', BladePoolAsset>()
 
-  for (const { token: tokenData, ...rest } of pool.tokens) {
+  for (const { token: tokenData, priceUSD, ...rest } of pool.tokens) {
     if (
       !showStableTypes &&
       stablecoinSet.has(tokenData.address.toLowerCase() as EvmAddress)
@@ -80,6 +80,7 @@ export function getPoolAssets(
         stablecoinAsset = {
           ...rest,
           stablecoin: 'USD',
+          priceUSD,
         }
       } else {
         stablecoinAsset.liquidityUSD += rest.liquidityUSD
@@ -102,6 +103,7 @@ export function getPoolAssets(
       assets.push({
         ...rest,
         token,
+        priceUSD,
       })
     }
   }

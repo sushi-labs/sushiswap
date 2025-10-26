@@ -14,6 +14,7 @@ export const BladePoolFragment = graphql(
       liquidityUSD
       weight
       targetWeight
+      priceUSD
       token {
         id
         address

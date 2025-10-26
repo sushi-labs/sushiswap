@@ -7,4 +7,5 @@ export type BladePoolAsset =
     })
   | (Omit<BladePool['tokens'][number], 'token'> & {
       token: EvmCurrency
+      priceUSD: number
     })

@@ -72,8 +72,11 @@ function PriceCell({
     return <SkeletonText fontSize="sm" />
   }
 
-  const price =
-    'stablecoin' in row ? 1 : (prices?.get(row.token.wrap().address) ?? 0)
+  const onchainPrice = row.priceUSD
+  const offchainPrice =
+    'stablecoin' in row ? 1 : prices?.get(row.token.wrap().address)
+
+  const price = offchainPrice ?? onchainPrice
   return <span className="text-sm">{formatUSD(price)}</span>
 }
 
