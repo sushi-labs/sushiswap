@@ -29,7 +29,7 @@ export default async function ManageBladePoolPage(props: {
         <div>
           <ManageBladeLiquidityCard pool={pool} tab="add" />
         </div>
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col">
           <BladePoolPosition pool={pool} />
         </div>
       </div>

@@ -15,6 +15,7 @@ import {
   Dots,
   List,
 } from '@sushiswap/ui'
+import { useRouter } from 'next/navigation'
 import {
   type FC,
   type ReactNode,
@@ -29,7 +30,6 @@ import { useBladeDepositRequest } from 'src/lib/pool/blade/useBladeDepositReques
 import { useBladeDepositTransaction } from 'src/lib/pool/blade/useBladeDepositTransaction'
 import { getOnchainPriceFromPool } from 'src/lib/pool/blade/utils'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
-import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
 import { Amount, formatUSD } from 'sushi'
 import { type BladeChainId, type EvmCurrency, getEvmChainById } from 'sushi/evm'
@@ -41,6 +41,7 @@ import {
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
+import { useBladePoolOnchainData } from '../../../_ui/blade-pool-onchain-data-provider'
 import { useBladePoolPosition } from '../blade-pool-position-provider'
 
 interface BladeAddLiquidityReviewModalContextType {
@@ -79,13 +80,18 @@ export const BladeAddLiquidityReviewModal: FC<
   children,
   onSuccess: _onSuccess,
 }) => {
+  const router = useRouter()
   const { address } = useAccount()
   const { approved } = useApproved(APPROVE_TAG_ADD_LEGACY)
   const client = usePublicClient()
-  const { liquidityToken, refetch: refetchPosition } = useBladePoolPosition()
-  const poolTotalSupply = useTotalSupply(liquidityToken)
+  const { refetch: refetchPosition } = useBladePoolPosition()
   const { refetchChain: refetchBalances } = useRefetchBalances()
   const { data: prices } = usePrices({ chainId })
+  const {
+    liquidityUSD,
+    liquidity: poolTotalSupply,
+    refetch: refetchPoolLiquidity,
+  } = useBladePoolOnchainData()
 
   const onSuccess = useCallback(
     (hash: Hex) => {
@@ -95,6 +101,8 @@ export const BladeAddLiquidityReviewModal: FC<
       receipt.then(() => {
         refetchBalances(chainId)
         refetchPosition()
+        refetchPoolLiquidity()
+        router.refresh()
       })
 
       const ts = new Date().getTime()
@@ -113,7 +121,16 @@ export const BladeAddLiquidityReviewModal: FC<
         groupTimestamp: ts,
       })
     },
-    [refetchBalances, refetchPosition, _onSuccess, address, chainId, client],
+    [
+      refetchBalances,
+      refetchPosition,
+      refetchPoolLiquidity,
+      _onSuccess,
+      address,
+      chainId,
+      client,
+      router,
+    ],
   )
 
   const onTransactionError = useCallback((e: Error) => {
@@ -216,21 +233,19 @@ export const BladeAddLiquidityReviewModal: FC<
       return null
     const estimatedPoolTokens = Number(depositRequest.data.pool_tokens)
 
-    const currentTotalSupply = poolTotalSupply?.amount
-      ? Number(poolTotalSupply.amount)
-      : 0
+    const currentTotalSupply = poolTotalSupply ? Number(poolTotalSupply) : 0
     const newTotalSupply = currentTotalSupply + estimatedPoolTokens
 
     const poolProportion =
       newTotalSupply > 0 ? estimatedPoolTokens / newTotalSupply : 0
 
-    const newTotalLiquidity = pool.liquidityUSD + estimatedDepositValue
+    const newTotalLiquidity = liquidityUSD + estimatedDepositValue
 
     const estimatedValue = poolProportion * newTotalLiquidity
     return estimatedValue
   }, [
     depositRequest.data,
-    pool.liquidityUSD,
+    liquidityUSD,
     poolTotalSupply,
     estimatedDepositValue,
   ])
@@ -379,8 +394,7 @@ export const BladeAddLiquidityReviewModal: FC<
         status={status}
         testId="blade-confirmation-modal"
         successMessage="Successfully added liquidity"
-        buttonText="Go to pool"
-        buttonLink={`/${getEvmChainById(chainId).key}/pool/blade/${pool.address}`}
+        buttonText="Close"
         txHash={transactionMutation.data}
       />
     </DialogProvider>

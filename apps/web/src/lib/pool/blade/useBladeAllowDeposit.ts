@@ -2,7 +2,6 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { BLADE_API_HOST, BLADE_API_KEY } from 'src/lib/constants'
-import { useWatchByBlock } from 'src/lib/wagmi/hooks/watch/useWatchByBlock'
 import type { BladeChainId } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { z } from 'zod'
@@ -90,12 +89,6 @@ export const useBladeAllowDeposit = ({
       return rfqAllowDepositResponseSchema.parse(responseData)
     },
     enabled: Boolean(enabled && address && chainId && poolAddress),
-  })
-
-  useWatchByBlock({
-    chainId,
-    key: queryKey,
-    modulo: 10,
   })
 
   return query
