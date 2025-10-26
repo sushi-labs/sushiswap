@@ -7,6 +7,7 @@ import { useMemo, useState } from 'react'
 import { formatPercent, formatUSD } from 'sushi'
 
 import type { BladePool } from '@sushiswap/graph-client/data-api'
+import { useTimeout } from '@sushiswap/hooks/useTimeout'
 import { CurrencyFiatIcon } from '@sushiswap/ui/icons/CurrencyFiatIcon'
 import { getPoolAssets, getPoolTokensGrouped } from 'src/lib/pool/blade'
 import { useUnlockDeposit } from 'src/lib/pool/blade/useUnlockDeposit'
@@ -86,6 +87,17 @@ const PoolPositionConnected: FC<PoolPositionProps> = ({ pool }) => {
       Number(vestingDeposit.balance) / Number(poolTotalSupply.amount)
     return pool.liquidityUSD * poolProportion
   }, [vestingDeposit?.balance, poolTotalSupply, pool.liquidityUSD])
+
+  const timeUntilUnlock = useMemo(() => {
+    if (!vestingDeposit?.lockedUntil) return null
+    const timeUntilUnlock =
+      vestingDeposit.lockedUntil.getTime() - new Date().getTime()
+    return timeUntilUnlock > 0 ? timeUntilUnlock : null
+  }, [vestingDeposit?.lockedUntil])
+
+  useTimeout(() => {
+    refetchPosition()
+  }, timeUntilUnlock)
 
   const assets = useMemo(() => {
     return getPoolAssets(pool, { showStableTypes }).filter(
