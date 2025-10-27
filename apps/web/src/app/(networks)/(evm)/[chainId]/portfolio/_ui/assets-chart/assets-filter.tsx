@@ -6,8 +6,6 @@ import {
   Currency,
   DialogClose,
   FormattedNumber,
-  SkeletonCircle,
-  SkeletonText,
   classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
@@ -34,13 +32,14 @@ import {
 import { NetworkMenu } from '~evm/[chainId]/[trade]/_ui/swap/trade/favorite-recent/network-menu'
 
 export const AssetsFilter = ({
-  setSelectedToken,
+  setSelectedTokenAction,
   selectedToken,
 }: {
-  setSelectedToken: (token: EvmCurrency | undefined) => void
+  setSelectedTokenAction: (token: EvmCurrency | undefined) => void
   selectedToken: EvmCurrency | undefined
 }) => {
   const { chains } = useWalletPortfolioOverview()
+
   const [selectedNetwork, setSelectedNetwork] = useState<EvmChainId | null>(
     null,
   )
@@ -122,7 +121,7 @@ export const AssetsFilter = ({
               type="button"
               onClick={(e) => {
                 e.stopPropagation()
-                setSelectedToken(undefined)
+                setSelectedTokenAction(undefined)
               }}
             >
               Clear
@@ -151,13 +150,13 @@ export const AssetsFilter = ({
           </div>
 
           <CommandGroup className="!overflow-x-hidden !overflow-y-scroll scroll max-h-[300px]">
-            {tokens.map((asset) => {
+            {tokens.map((asset, idx) => {
               return (
                 <CommandItem
-                  key={`${asset.name}__${asset.chainId}`}
+                  key={`${asset.name}__${asset.chainId}__${idx}`}
                   value={`${asset.name}__${asset.chainId}`}
                   onSelect={() => {
-                    setSelectedToken(
+                    setSelectedTokenAction(
                       !isEvmAddress(asset.id)
                         ? EvmNative.fromChainId(asset.chainId as EvmChainId)
                         : new EvmToken({

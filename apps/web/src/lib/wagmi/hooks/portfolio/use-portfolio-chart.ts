@@ -1,4 +1,7 @@
-import { getPortfolioV2Chart } from '@sushiswap/graph-client/data-api'
+import {
+  getPortfolioV2Chart,
+  isPnLHistoryChainId,
+} from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import type { Address } from 'viem'
@@ -24,7 +27,7 @@ export const usePortfolioChart = ({
         address: address as `0x${string}`,
         chainIds: chartNetworks,
         range: chartRange,
-        ...(asset
+        ...(asset && isPnLHistoryChainId(asset.chainId)
           ? {
               tokenFilter: {
                 address: asset.wrap().address,
