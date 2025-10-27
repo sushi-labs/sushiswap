@@ -21,9 +21,9 @@ import {
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
-  type SushiSwapV2ChainId,
-  type SushiSwapV3ChainId,
   UI_FEE_COLLECTOR_ADDRESS,
+  type SushiSwapV2ChainId as _SushiSwapV2ChainId,
+  type SushiSwapV3ChainId as _SushiSwapV3ChainId,
   isSushiSwapV2ChainId as _isSushiSwapV2ChainId,
   isSushiSwapV3ChainId as _isSushiSwapV3ChainId,
   getEvmChainById,
@@ -51,21 +51,61 @@ const isFeeCollectorChainId = (
 ): chainId is FeeCollectorChainId =>
   FEE_COLLECTOR_CHAIN_IDS.includes(chainId as FeeCollectorChainId)
 
+type SushiSwapV2ChainId = _SushiSwapV2ChainId | DeprecatedSushiSwapV2ChainId
 const isSushiSwapV2ChainId = (
   chainId: number,
-): chainId is SushiSwapV2ChainId | DeprecatedSushiSwapV2ChainId => {
+): chainId is SushiSwapV2ChainId => {
   return (
     _isSushiSwapV2ChainId(chainId) || isDeprecatedSushiSwapV2ChainId(chainId)
   )
 }
 
+type SushiSwapV3ChainId = _SushiSwapV3ChainId | DeprecatedSushiSwapV3ChainId
 const isSushiSwapV3ChainId = (
   chainId: number,
-): chainId is SushiSwapV3ChainId | DeprecatedSushiSwapV3ChainId => {
+): chainId is SushiSwapV3ChainId => {
   return (
     _isSushiSwapV3ChainId(chainId) ||
     isDeprecatedSushiSwapV3ChainId(chainId as EvmChainId)
   )
+}
+
+const SLP_CHOMPER_ADDRESS: Record<
+  Exclude<SushiSwapV2ChainId, 11_155_111 | 129399>,
+  Address
+> = {
+  [EvmChainId.ETHEREUM]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.FANTOM]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.POLYGON]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.GNOSIS]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.BSC]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.ARBITRUM]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.AVALANCHE]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.HAQQ]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.HARMONY]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.CELO]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.ARBITRUM_NOVA]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.BOBA]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.BOBA_BNB]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.BASE]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.SCROLL]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.KAVA]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.METIS]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.BTTC]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.FILECOIN]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.ZETACHAIN]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.CORE]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.THUNDERCORE]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.OPTIMISM]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.LINEA]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.POLYGON_ZKEVM]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.BLAST]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.SKALE_EUROPA]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.ROOTSTOCK]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.SONIC]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.HEMI]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.KATANA]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
+  [EvmChainId.FUSE]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
 }
 
 const V3_MANAGER_CHAIN_IDS = [
@@ -317,6 +357,15 @@ const labelWallet = (address: Address, chainId: EvmChainId) => {
       }
     }
   }
+  if (isSushiSwapV3ChainId(chainId)) {
+    if (
+      isAddressEqual(
+        address,
+        SLP_CHOMPER_ADDRESS[chainId as keyof typeof SLP_CHOMPER_ADDRESS],
+      )
+    )
+      return 'SLP FEE COLLECTOR'
+  }
   if (isAddressEqual(address, zeroAddress))
     return shortenEvmAddress(zeroAddress)
 
@@ -506,6 +555,43 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
                 functionName: 'feeToSetter',
               },
             },
+            {
+              scope: 'v2FeeCollector',
+              contract: {
+                chainId,
+                abi: feeCollectorAbi,
+                address:
+                  SLP_CHOMPER_ADDRESS[
+                    chainId as keyof typeof SLP_CHOMPER_ADDRESS
+                  ],
+                functionName: 'owner',
+              },
+            },
+            {
+              scope: 'v2FeeCollector',
+              contract: {
+                chainId,
+                abi: feeCollectorAbi,
+                address:
+                  SLP_CHOMPER_ADDRESS[
+                    chainId as keyof typeof SLP_CHOMPER_ADDRESS
+                  ],
+                functionName: 'pendingOwner',
+              },
+            },
+            {
+              scope: 'v2FeeCollector',
+              contract: {
+                chainId,
+                abi: feeCollectorAbi,
+                address:
+                  SLP_CHOMPER_ADDRESS[
+                    chainId as keyof typeof SLP_CHOMPER_ADDRESS
+                  ],
+                functionName: 'trusted',
+                args: [LIQUIDATOR_BOT_ADDRESS],
+              },
+            },
           ] as const)
         : []),
       ...(isSushiSwapV3ChainId(chainId)
@@ -571,6 +657,7 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
     uiFeeCollector,
     surplusFeeCollector,
     protocolFeeCollector,
+    v2FeeCollector,
     maker,
     routeProcessor,
   } = useMemo(() => {
@@ -581,6 +668,7 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
       uiFeeCollector: undefined as FeeCollectorInfo | undefined,
       surplusFeeCollector: undefined as FeeCollectorInfo | undefined,
       protocolFeeCollector: undefined as FeeCollectorInfo | undefined,
+      v2FeeCollector: undefined as FeeCollectorInfo | undefined,
       maker: undefined as MakerInfo | undefined,
       routeProcessor: undefined as RouteProcessorInfo | undefined,
     }
@@ -890,6 +978,56 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
                 </List.KeyValue>
                 <List.KeyValue title="Operator">
                   {isLoading ? 'Loading…' : renderAccount(maker?.trusted)}
+                </List.KeyValue>
+              </List.Control>
+            </List>
+          )}
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            {isSushiSwapV2ChainId(chainId) ? (
+              <LinkExternal
+                href={getEvmChainById(chainId).getAccountUrl(
+                  SLP_CHOMPER_ADDRESS[
+                    chainId as keyof typeof SLP_CHOMPER_ADDRESS
+                  ],
+                )}
+              >
+                V2 Fee Collector
+              </LinkExternal>
+            ) : (
+              <span className="text-muted-foreground">V2 Fee Collector</span>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {!isSushiSwapV2ChainId(chainId) ? (
+            <span className="text-sm text-muted-foreground">
+              Not available for this network.
+            </span>
+          ) : isError ? (
+            <span className="text-sm text-red-500">
+              Unable to load contract data.
+            </span>
+          ) : (
+            <List>
+              <List.Control>
+                <List.KeyValue title="Owner">
+                  {isLoading
+                    ? 'Loading…'
+                    : renderAccount(v2FeeCollector?.owner)}
+                </List.KeyValue>
+                <List.KeyValue title="Pending Owner">
+                  {isLoading
+                    ? 'Loading…'
+                    : renderAccount(v2FeeCollector?.pendingOwner)}
+                </List.KeyValue>
+                <List.KeyValue title="Operator">
+                  {isLoading
+                    ? 'Loading…'
+                    : renderAccount(v2FeeCollector?.trusted)}
                 </List.KeyValue>
               </List.Control>
             </List>
