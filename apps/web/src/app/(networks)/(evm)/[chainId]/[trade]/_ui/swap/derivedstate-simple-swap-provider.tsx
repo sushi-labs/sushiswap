@@ -9,14 +9,14 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { type SupportedChainId, isSupportedChainId } from 'src/config'
+
 import { useTrade, useTradeQuote } from 'src/lib/hooks/react-query'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { replaceNetworkSlug } from 'src/lib/network'
 import { useCarbonOffset } from 'src/lib/swap/useCarbonOffset'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { Amount, type ChainKey, type Percent, ZERO, getChainByKey } from 'sushi'
+import { Amount, type ChainId, type Percent, ZERO } from 'sushi'
 import {
   EvmChainId,
   type EvmCurrency,
@@ -93,10 +93,8 @@ const DerivedstateSimpleSwapProvider: FC<
     Map<string, EvmCurrency>
   >(new Map())
   const { createQuery } = useCreateQuery()
-  const networkNameFromPath = pathname.split('/')[1]
-  const chainIdFromPath = getChainByKey(
-    networkNameFromPath as ChainKey,
-  )?.chainId
+
+  const chainIdFromPath = Number(_chainId) as ChainId
 
   const chainId0 =
     Number(searchParams.get('chainId0')) !== 0
