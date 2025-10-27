@@ -125,6 +125,9 @@ export const publicTransports = {
   [EvmChainId.PLASMA]: http(
     `https://lb.drpc.org/ogrpc?network=plasma&dkey=${drpcId}`,
   ),
+  [EvmChainId.FUSE]: http(
+    `https://lb.drpc.org/ogrpc?network=fuse&dkey=${drpcId}`,
+  ),
   /* Testnets */
   [EvmChainId.ARBITRUM_SEPOLIA]: http('https://sepolia-rollup.arbitrum.io/rpc'),
   // [EvmChainId.POLYGON_TESTNET]: http('https://rpc.ankr.com/polygon_mumbai'),

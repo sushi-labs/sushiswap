@@ -70,7 +70,10 @@ export const usePoolTransactions = ({
       }
 
       return {
-        transactions: parsed?.data?.edges?.map((e) => e?.node),
+        transactions:
+          parsed?.data?.edges
+            ?.map((e) => e?.node)
+            ?.filter((i) => Boolean(i?.maker)) ?? [],
         pageInfo: parsed?.data?.pageInfo,
         totalCount: parsed?.data?.totalCount,
       }

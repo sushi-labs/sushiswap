@@ -26,7 +26,7 @@ const EXPLORE_NAVIGATION_LINKS = (): NavigationElementDropdown['items'] => [
   },
 
   {
-    title: 'Pool',
+    title: 'Positions',
     href: `/kadena/pool`,
     description: 'Earn fees by providing liquidity.',
   },
