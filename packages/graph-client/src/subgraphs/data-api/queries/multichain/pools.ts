@@ -16,6 +16,8 @@ export const MultiChainPoolsQuery = graphql(`
     $orderDirection: OrderDirection,
     $minTvl: Float,
     $maxTvl: Float
+    $minApr: Float
+    $maxApr: Float
   ) {
     multiChainPools(
       chainIds: $chainIds,
@@ -27,6 +29,8 @@ export const MultiChainPoolsQuery = graphql(`
       orderDirection: $orderDirection,
       minTvl: $minTvl,
       maxTvl: $maxTvl
+      minApr: $minApr
+      maxApr: $maxApr
     ) {
       count
       data {
