@@ -1,12 +1,13 @@
 'use client'
 
+import type { PoolChainId } from '@sushiswap/graph-client/data-api'
 import { Button, SkeletonBox, classNames } from '@sushiswap/ui'
 import { FourSquaresIcon } from '@sushiswap/ui/icons/FourSquaresIcon'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useWalletPortfolioOverview } from 'src/lib/wagmi/hooks/portfolio/use-wallet-portfolio-overview'
 import { formatUSD } from 'sushi'
-import { type EvmChainId, getEvmChainById } from 'sushi/evm'
+import { getEvmChainById } from 'sushi/evm'
 import {
   DEFAULT_ASSET_NETWORKS,
   useChartFilters,
@@ -18,7 +19,7 @@ export const PortfolioSubHeader = () => {
   const { totalValueUSD, chains, isLoading } = useWalletPortfolioOverview()
   const overflowRef = useRef<HTMLDivElement>(null)
   const { chartNetworks } = useChartFilters()
-  const setFilters = useSetChartFilters()
+  const { setChartNetworks } = useSetChartFilters()
   const { hasOverflow } = useOverflow(overflowRef)
   const [isAtEnd, setIsAtEnd] = useState(false)
 
@@ -39,16 +40,11 @@ export const PortfolioSubHeader = () => {
   }, [])
 
   const handleSelectAll = () => {
-    setFilters((prev) => ({ ...prev, chartNetworks: DEFAULT_ASSET_NETWORKS }))
+    setChartNetworks([...DEFAULT_ASSET_NETWORKS])
   }
 
-  const handleSelectChain = (chainId: EvmChainId) => {
-    // @ts-ignore
-    // @dev fix until we have correct chain types
-    setFilters((prev) => ({
-      ...prev,
-      chartNetworks: [chainId],
-    }))
+  const handleSelectChain = (chainId: PoolChainId) => {
+    setChartNetworks([chainId])
   }
 
   const selectedChainId = useMemo(() => {
@@ -99,7 +95,7 @@ export const PortfolioSubHeader = () => {
           ? Array.from({ length: 3 }).map((_, index) => (
               <SkeletonBox key={index} className="w-[145px] h-10" />
             ))
-          : chains.map((chain) => (
+          : chains?.map((chain) => (
               <AssetItem
                 key={chain.chainId}
                 chainId={chain.chainId}
@@ -111,7 +107,7 @@ export const PortfolioSubHeader = () => {
       </div>
       <div
         className={classNames(
-          'pointer-events-none absolute top-0 right-0 h-full w-20 bg-gradient-to-r from-transparent to-white dark:to-slate-900 hidden md:block transition-opacity duration-200 ease-out',
+          'pointer-events-none absolute top-0 right-0 h-full w-20 bg-gradient-to-r from-transparent to-background dark:to-slate-900 transition-opacity duration-200 ease-out',
           hasOverflow && !isAtEnd ? 'opacity-100' : 'opacity-0',
         )}
       />
@@ -125,10 +121,10 @@ const AssetItem = ({
   usdValue,
   onSelect,
 }: {
-  chainId: EvmChainId
+  chainId: PoolChainId
   selected: boolean
   usdValue: number
-  onSelect: (chainId: EvmChainId) => void
+  onSelect: (chainId: PoolChainId) => void
 }) => {
   return (
     <Button

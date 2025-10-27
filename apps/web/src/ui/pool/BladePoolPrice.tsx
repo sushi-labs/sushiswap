@@ -15,7 +15,6 @@ import { formatUSD } from 'sushi'
 import {
   type BladeChainId,
   type EvmAddress,
-  type EvmChainId,
   EvmToken,
   unwrapEvmToken,
 } from 'sushi/evm'

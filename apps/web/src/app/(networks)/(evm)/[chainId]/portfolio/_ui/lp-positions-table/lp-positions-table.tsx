@@ -16,10 +16,18 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { SushiSwapProtocol } from 'sushi/evm'
+import {
+  type EvmChainId,
+  type MerklChainId,
+  SushiSwapProtocol,
+  isMerklChainId,
+} from 'sushi/evm'
 
 import type { PortfolioV2PositionPoolType } from '@sushiswap/graph-client/data-api'
+import { useClaimableRewards } from 'src/lib/hooks/react-query'
+import { useAccount } from 'wagmi'
 import { useLPPositionContext } from '~evm/[chainId]/portfolio/lp-position-provider'
+import { ClaimRewardsButton } from '~evm/claim/rewards/_common/ui/claim-rewards-button'
 import {
   APR_COLUMN,
   CHAIN_COLUMN,
@@ -104,6 +112,21 @@ export const LPPositionsTable = () => {
     }
   }, [isMdScreen, isMobileDrawerOpen])
 
+  const { address } = useAccount()
+  const { data: rewardsData } = useClaimableRewards({
+    chainIds:
+      positionData?.pool?.chainId && isMerklChainId(positionData?.pool?.chainId)
+        ? [positionData?.pool?.chainId as MerklChainId]
+        : [],
+    account: address,
+    enabled:
+      isMerklChainId(positionData?.pool?.chainId as EvmChainId) &&
+      Boolean(positionData),
+  })
+
+  const rewardsForChain =
+    rewardsData?.[positionData?.pool.chainId as MerklChainId]
+
   return (
     <>
       <Card className="overflow-hidden dark:!bg-slate-800 !bg-slate-50">
@@ -133,24 +156,13 @@ export const LPPositionsTable = () => {
           aria-describedby={undefined}
           className="!px-1 border-t !max-w-full md:!max-w-[520px] border-[#EBEBEB] rounded-t-none md:rounded-t-2xl !bg-slate-50 dark:border-[#FFFFFF14] dark:!bg-slate-800 w-full  max-h-[100dvh] overflow-y-auto hide-scrollbar"
         >
-          <div className="flex flex-col gap-4 px-3 mt-14 w-full">
-            <div className="flex gap-2 items-center">
-              {positionData?.pool.protocol ===
-              SushiSwapProtocol.SUSHISWAP_V3 ? (
-                <Button size="sm" className="w-full !rounded-full">
-                  Claim
-                </Button>
-              ) : null}
-
-              <Button
-                onClick={() => setIsManageOpen(true)}
-                size="sm"
-                variant="networks"
-                className="w-full !rounded-full dark:!bg-[#FFFFFF]/[.12] dark:hover:!bg-[#fff]/[.18] dark:active:!bg-[#fff]/[.24]"
-              >
-                Manage
-              </Button>
-            </div>
+          <div className="flex  gap-4 px-3 mt-14 w-full">
+            {positionData?.pool.protocol === SushiSwapProtocol.SUSHISWAP_V3 ? (
+              <ClaimRewardsButton
+                rewards={rewardsForChain}
+                className={classNames('!rounded-full flex-auto !w-1/2')}
+              />
+            ) : null}
             <Button
               size="sm"
               variant="networks"
@@ -158,7 +170,7 @@ export const LPPositionsTable = () => {
                 'dark:!bg-[#FFFFFF]/[.12] dark:hover:!bg-[#fff]/[.18] dark:active:!bg-[#fff]/[.24]',
                 '!rounded-full',
                 positionData?.pool.protocol === SushiSwapProtocol.SUSHISWAP_V3
-                  ? 'w-1/2 mx-auto'
+                  ? 'w-1/2'
                   : 'w-full',
               )}
             >

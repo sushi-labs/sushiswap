@@ -6,16 +6,23 @@ import { useClaimRewards } from 'src/lib/wagmi/hooks/rewards/hooks/useClaimRewar
 export const ClaimRewardsButton: FC<{
   rewards: ClaimableRewards | undefined
   className?: string
+  size?: 'default' | 'sm'
   fullWidth?: boolean
   disabled?: boolean
-}> = ({ rewards, className, fullWidth = true, disabled = false }) => {
+}> = ({
+  rewards,
+  className,
+  size = 'default',
+  fullWidth = true,
+  disabled = false,
+}) => {
   const { isPending, write } = useClaimRewards({ rewards })
 
   const isDisabled = !write || disabled
   return (
     <Button
       className={className}
-      size="default"
+      size={size}
       fullWidth={fullWidth}
       disabled={isDisabled}
       loading={isPending}

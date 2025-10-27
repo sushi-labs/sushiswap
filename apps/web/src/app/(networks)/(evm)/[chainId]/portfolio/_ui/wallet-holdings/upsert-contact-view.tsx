@@ -4,7 +4,7 @@ import { Button, DialogClose, DialogTitle, IconButton } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { isAddress } from 'viem'
 import { useChainId, useEnsAddress } from 'wagmi'
-import { useContacts } from '../../../lib/wagmi/hooks/hooks/use-contacts'
+import { useContacts } from '../../../../../../../lib/wagmi/hooks/hooks/use-contacts'
 import { useSendTokens } from './send-token-provider'
 
 export const UpsertContactView = ({

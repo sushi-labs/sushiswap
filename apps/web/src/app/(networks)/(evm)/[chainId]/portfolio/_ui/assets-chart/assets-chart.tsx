@@ -1,7 +1,7 @@
 'use client'
 
 import { useIsSmScreen } from '@sushiswap/hooks'
-import { CardContent, CardHeader, SkeletonBox, classNames } from '@sushiswap/ui'
+import { CardContent, CardHeader, SkeletonBox } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import type { EChartOption } from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
@@ -15,10 +15,14 @@ import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import ms from 'ms'
 import { useTheme } from 'next-themes'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useCallback } from 'react'
-import { useLocalRecentSwaps } from 'src/lib/hooks/react-query/recent-swaps/useLocalRecentSwaps'
+import {
+  filterLocalRecentSwapsByAccountAndToken,
+  useLocalRecentSwaps,
+} from 'src/lib/hooks/react-query/recent-swaps/useLocalRecentSwaps'
 import { usePortfolioChart } from 'src/lib/wagmi/hooks/portfolio/use-portfolio-chart'
+import { EvmNative, EvmToken } from 'sushi/evm'
 import tailwindConfig from 'tailwind.config'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import { useAccount } from 'wagmi'
@@ -51,23 +55,25 @@ export const AssetsChart = () => {
     address: address,
   })
 
-  const { chartRange } = useChartFilters()
+  const { chartRange, asset } = useChartFilters()
 
   const { theme } = useTheme()
   const isDark = theme === 'dark'
   const isSmallScreen = useIsSmScreen()
 
+  const sortedData = useMemo(() => {
+    if (!data?.dataPoints) return []
+    return [...data.dataPoints].sort((a, b) => a.timestamp - b.timestamp)
+  }, [data])
+
   const [xData, yData] = useMemo(() => {
-    const source = data?.dataPoints ?? []
-    if (!source.length) return [[], []] as [number[], number[]]
+    if (!sortedData.length) return [[], []] as [number[], number[]]
 
-    const sorted = [...source].sort((a, b) => a.timestamp - b.timestamp)
-
-    const x = sorted.map((p) => p.timestamp * 1000)
-    const y = sorted.map((p) => p.valueUSD)
+    const x = sortedData.map((p) => p.timestamp * ms('1s'))
+    const y = sortedData.map((p) => p.valueUSD)
 
     return [x, y]
-  }, [data])
+  }, [sortedData])
 
   const onMouseOver = useCallback(
     ({ name, value }: { name: number; value: number }) => {
@@ -84,58 +90,85 @@ export const AssetsChart = () => {
     [],
   )
 
-  const formatLabel = (date: Date, period: AssetsChartPeriod): string => {
-    switch (period) {
-      case AssetsChartPeriod.OneDay:
-        return format(date, 'h a')
-      case AssetsChartPeriod.SevenDay:
-        return format(date, 'eee')
-      case AssetsChartPeriod.ThirtyDay:
-        return format(date, 'MMM dd')
-      case AssetsChartPeriod.All:
-        return format(date, "MMM ''yy")
-      default:
-        return ''
-    }
-  }
+  const formatLabel = useCallback(
+    (date: Date, period: AssetsChartPeriod): string => {
+      switch (period) {
+        case AssetsChartPeriod.OneDay:
+          return format(date, 'h a')
+        case AssetsChartPeriod.SevenDay:
+          return format(date, 'eee')
+        case AssetsChartPeriod.ThirtyDay:
+          return format(date, 'MMM dd')
+        case AssetsChartPeriod.All:
+          return format(date, "MMM ''yy")
+        default:
+          return ''
+      }
+    },
+    [],
+  )
+
+  const filteredRecentSwaps = useMemo(() => {
+    if (!address || !recentSwaps || !asset) return []
+
+    return filterLocalRecentSwapsByAccountAndToken({
+      swaps: recentSwaps,
+      account: address,
+      token: asset,
+    })
+  }, [address, recentSwaps, asset])
 
   const markerSeries = useMemo(() => {
-    const valueMap = new Map<number, number>()
-
-    const result = recentSwaps
+    if (!asset || !sortedData || sortedData?.length === 0) return []
+    const result = filteredRecentSwaps
       ?.map((tx) => {
-        const timestamp = tx.timestamp * ms('1s')
-        const value = valueMap.get(timestamp)
+        const timestamp = tx.timestamp * ms('1000s')
+        const nearestY = sortedData?.reduce((prev, curr) =>
+          Math.abs(curr?.timestamp - tx.timestamp) <
+          Math.abs(prev?.timestamp - tx.timestamp)
+            ? curr
+            : prev,
+        )
+        const value = nearestY?.valueUSD ?? null
+        const token0 = tx.token0.isNative
+          ? EvmNative.fromChainId(tx.token0.chainId)
+          : new EvmToken({
+              chainId: tx.token0.chainId,
+              address: tx.token0.address,
+              decimals: (tx.token0 as EvmToken).decimals,
+              symbol: (tx.token0 as EvmToken).symbol,
+              name: (tx.token0 as EvmToken).name,
+            })
 
+        const isSell = asset?.isSame(token0)
         return {
           value: [timestamp, value ?? null],
           symbol: 'circle',
           symbolSize: 20,
           itemStyle: {
-            color:
-              tx.type === 'swap'
-                ? isDark
-                  ? '#1DA67D'
-                  : '#1DA67D'
-                : isDark
-                  ? '#EA3830'
-                  : '#DE5852',
+            color: isSell
+              ? isDark
+                ? '#1DA67D'
+                : '#1DA67D'
+              : isDark
+                ? '#EA3830'
+                : '#DE5852',
             opacity: 1,
           },
           label: {
             show: true,
-            formatter: tx.type === 'swap' ? 'S' : 'B',
+            formatter: isSell ? 'S' : 'B',
             color: '#fff',
             fontWeight: 700,
             fontSize: 10,
           },
         }
       })
-      .filter((point) => point.value[1] !== null)
-    return result
-  }, [isDark, recentSwaps])
+      .filter((i) => i.value[1] !== null)
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+    return result
+  }, [isDark, filteredRecentSwaps, sortedData, asset])
+
   const option = useMemo<EChartOption>(
     () => ({
       tooltip: {
@@ -166,7 +199,16 @@ export const AssetsChart = () => {
       yAxis: [getYAxisConfig({ yData, isSmallScreen, tailwind })],
       series: getSeries(xData, yData, markerSeries),
     }),
-    [xData, yData, chartRange, isDark, isSmallScreen, onMouseOver],
+    [
+      xData,
+      yData,
+      chartRange,
+      isDark,
+      isSmallScreen,
+      onMouseOver,
+      formatLabel,
+      markerSeries,
+    ],
   )
 
   return (

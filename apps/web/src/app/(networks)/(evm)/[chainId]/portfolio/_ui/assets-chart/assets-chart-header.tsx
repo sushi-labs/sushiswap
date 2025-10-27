@@ -1,13 +1,17 @@
 'use client'
 
-import type { PortfolioV2ChartResponse } from '@sushiswap/graph-client/data-api'
+import {
+  type PortfolioV2ChartResponse,
+  isPoolChainId,
+} from '@sushiswap/graph-client/data-api'
 import { Button, CardTitle, SkeletonText, classNames } from '@sushiswap/ui'
-import type { FC, MouseEventHandler, ReactNode } from 'react'
+import { type FC, type MouseEventHandler, type ReactNode, useMemo } from 'react'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { formatPercent, formatUSD } from 'sushi'
-import { type EvmCurrency, EvmToken } from 'sushi/evm'
+import type { EvmCurrency } from 'sushi/evm'
 import { isAddress } from 'viem'
 import {
+  DEFAULT_ASSET_NETWORKS,
   useChartFilters,
   useSetChartFilters,
 } from '~evm/[chainId]/portfolio/chart-filters-provider'
@@ -45,17 +49,21 @@ export const AssetsChartHeader: FC<{
   data: PortfolioV2ChartResponse | undefined
 }> = ({ isLoading, data }) => {
   const { chartRange, asset } = useChartFilters()
-  const setFilters = useSetChartFilters()
+  const { setAsset, setChartRange, setChartNetworks } = useSetChartFilters()
 
   const setPeriod = (period: AssetsChartPeriod) => {
-    setFilters((prev) => ({
-      ...prev,
-      chartRange: period,
-    }))
+    setChartRange(period)
   }
 
-  const setAsset = (token: EvmCurrency | undefined) => {
-    setFilters((prev) => ({ ...prev, asset: token }))
+  const setAssetToView = (asset: EvmCurrency | undefined) => {
+    setAsset(asset)
+    if (!asset) {
+      setChartNetworks([...DEFAULT_ASSET_NETWORKS])
+    } else if (isPoolChainId(asset.chainId)) {
+      setChartNetworks([asset.chainId])
+    } else {
+      setChartNetworks([...DEFAULT_ASSET_NETWORKS])
+    }
   }
 
   const { data: hydratedAsset } = useTokenWithCache({
@@ -65,13 +73,16 @@ export const AssetsChartHeader: FC<{
       !!asset && !asset.isNative && isAddress(asset.address, { strict: false }),
   })
 
-  const assetToDisplay = asset?.isNative ? asset : hydratedAsset
+  const assetToDisplay = useMemo(() => {
+    if (!asset) return undefined
+    return asset?.isNative ? asset : hydratedAsset
+  }, [asset, hydratedAsset])
 
   return (
     <>
       <div className="flex flex-col gap-4 justify-between px-4 pb-4 md:pb-4 md:gap-0 md:items-center md:flex-row">
         <AssetsFilter
-          setSelectedToken={setAsset}
+          setSelectedTokenAction={setAssetToView}
           selectedToken={assetToDisplay}
         />
         {assetToDisplay && <ActionButtons token={assetToDisplay} />}

@@ -11,6 +11,7 @@ const features: introspection['types']['ChainIdFeature']['enumValues'][] = [
   'TokenListChainId',
   'TokenListV2ChainId',
   'TrendingTokensChainId',
+  'PnLHistoryChainId',
 ] as const
 
 const path = `./src/subgraphs/data-api/types`

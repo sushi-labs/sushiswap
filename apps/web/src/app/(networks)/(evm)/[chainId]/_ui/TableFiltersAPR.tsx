@@ -28,8 +28,6 @@ export const TableFiltersAPR = () => {
     const realMin = localMin ? Number.parseFloat(localMin) : undefined
     const realMax = localMax ? Number.parseFloat(localMax) : undefined
 
-    console.log('realMin', realMin)
-    console.log('realMax', realMax)
     if (realMax && realMin && realMax > realMin) {
       setFilters((prev) => ({
         ...prev,

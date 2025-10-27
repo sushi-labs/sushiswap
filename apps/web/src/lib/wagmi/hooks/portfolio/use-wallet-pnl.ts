@@ -1,4 +1,7 @@
-import { getPortfolioV2PnL } from '@sushiswap/graph-client/data-api'
+import {
+  getPortfolioV2PnL,
+  isPnLHistoryChainId,
+} from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import type { EvmChainId } from 'sushi/evm'
@@ -14,8 +17,8 @@ export const useWalletPnL = (
       if (!address || tokenMap.size === 0) return new Map()
 
       const filteredTokenMap = new Map(
-        Array.from(tokenMap.entries()).filter(
-          ([chainId]) => chainId !== 43114 && chainId !== 747474,
+        Array.from(tokenMap.entries()).filter(([chainId]) =>
+          isPnLHistoryChainId(chainId),
         ),
       )
 

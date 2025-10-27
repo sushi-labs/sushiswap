@@ -1,6 +1,6 @@
 'use client'
 
-import { PoolChainIds } from '@sushiswap/graph-client/data-api'
+import { PoolChainIds as _PoolChainIds } from '@sushiswap/graph-client/data-api'
 import { useRouter } from 'next/navigation'
 import {
   type FC,
@@ -13,10 +13,11 @@ import {
 } from 'react'
 import { parseArgs } from 'src/lib/functions'
 import { useTypedSearchParams } from 'src/lib/hooks'
-import { poolChainIds } from 'src/lib/wagmi/hooks/portfolio/use-wallet-portfolio'
 import type { ChainId } from 'sushi'
 import { isEvmChainId } from 'sushi/evm'
 import { z } from 'zod'
+
+export const PoolChainIds = _PoolChainIds.map((i) => i)
 
 export const walletFiltersSchema = z.object({
   hideSmallPositions: z
@@ -28,14 +29,14 @@ export const walletFiltersSchema = z.object({
     .transform((val) => (val ? val === 'true' : false))
     .optional(),
   networks: z.string().transform((networks) => {
-    if (!networks) return poolChainIds
+    if (!networks) return PoolChainIds
     return networks.split(',').map((id) => +id as ChainId)
   }),
 })
 
 export type WalletFilters = z.infer<typeof walletFiltersSchema>
 
-export const DEFAULT_WALLET_NETWORKS = poolChainIds.filter(
+export const DEFAULT_WALLET_NETWORKS = PoolChainIds.filter(
   (n) => typeof n === 'number' && isEvmChainId(n),
 )
 

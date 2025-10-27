@@ -1,6 +1,6 @@
 import { PlusCircleIcon } from '@heroicons/react-v1/solid'
 import { Button, Collapsible } from '@sushiswap/ui'
-import { useContacts } from '../../../lib/wagmi/hooks/hooks/use-contacts'
+import { useContacts } from '../../../../../../../lib/wagmi/hooks/hooks/use-contacts'
 import { useSendTokens } from './send-token-provider'
 
 export const VerifyContact = ({

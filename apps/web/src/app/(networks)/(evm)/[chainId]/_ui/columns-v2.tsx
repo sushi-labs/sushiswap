@@ -131,15 +131,15 @@ export const POOL_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   meta: {
     body: {
       skeleton: (
-        <div className="flex flex-col gap-1 py-2 w-[135px]">
-          <div className="flex gap-1 items-center">
-            <SkeletonCircle radius={24} />
-            <SkeletonText fontSize="default" className="max-w-[80px]" />
-          </div>
-          <div className="flex gap-1 items-center">
-            <SkeletonCircle radius={24} />
-            <SkeletonText fontSize="default" className="max-w-[80px]" />
-          </div>
+        <div className="flex gap-1">
+          <SkeletonText
+            fontSize="default"
+            className="!w-[35px] !rounded-full !h-[24px]"
+          />
+          <SkeletonText
+            fontSize="default"
+            className="!w-[48px] !rounded-full !h-[24px]"
+          />
         </div>
       ),
     },
@@ -579,9 +579,9 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<MultiChainPool, unknown> = {
           <div className="flex flex-col cursor-pointer pl-7 w-[100px]">
             <div className="flex gap-1 items-center">
               <span className="underline decoration-dotted underline-offset-2">
-                {Number.isNaN(props.row.original.totalApr1w)
+                {Number.isNaN(props.row.original.totalApr1w / 100)
                   ? '0%'
-                  : formatPercent(props.row.original.totalApr1w)}
+                  : formatPercent(props.row.original.totalApr1w / 100)}
               </span>
               {props.row.original.incentives.map((incentive) => (
                 <Currency.Icon
@@ -601,13 +601,13 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<MultiChainPool, unknown> = {
               <p className="text-xl font-medium">
                 {Number.isNaN(props.row.original.totalApr1w)
                   ? '0%'
-                  : formatPercent(props.row.original.totalApr1w)}
+                  : formatPercent(props.row.original.totalApr1w / 100)}
               </p>
             </div>
             <div className="flex gap-2 justify-between items-center">
               <p>Fee APR</p>
               <p className="font-medium">
-                {formatPercent(props.row.original.feeApr1w)}
+                {formatPercent(props.row.original.feeApr1w / 100)}
               </p>
             </div>
             <p>Liquidity Pool fees from swap transactions</p>
@@ -624,7 +624,7 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<MultiChainPool, unknown> = {
                 ))}
               </div>
               <p className="font-medium">
-                {formatPercent(props.row.original.incentiveApr)}
+                {formatPercent(props.row.original.incentiveApr / 100)}
               </p>
             </div>
             <p>Boosted rewards</p>
