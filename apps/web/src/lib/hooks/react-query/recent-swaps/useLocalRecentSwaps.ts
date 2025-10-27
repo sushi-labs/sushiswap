@@ -1,5 +1,6 @@
 import { useLocalStorage } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { useCallback, useMemo } from 'react'
+import type { ChainId } from 'sushi'
 import type { EvmAddress, EvmCurrency } from 'sushi/evm'
 
 export type LocalRecentSwap = {
@@ -13,6 +14,19 @@ export type LocalRecentSwap = {
   timestamp: number
   account: EvmAddress | undefined
   type: 'swap' | 'xswap'
+}
+
+export const filterLocalRecentSwapsByAccountAndChainIds = ({
+  account,
+  chainIds,
+}: { account: EvmAddress; chainIds: ChainId[] }) => {
+  return (swaps: LocalRecentSwap[]) => {
+    return swaps.filter(
+      (swap) =>
+        swap.account?.toLowerCase() === account.toLowerCase() &&
+        chainIds.some((i) => i === swap.token0.chainId),
+    )
+  }
 }
 
 //@dev hook currently used only to store swaps, will be used in porfolio page chart later
