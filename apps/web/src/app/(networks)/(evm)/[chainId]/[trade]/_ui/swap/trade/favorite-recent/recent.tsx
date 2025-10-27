@@ -24,13 +24,11 @@ import {
   getChangeSign,
   getTextColor,
 } from 'src/lib/helpers'
-import { useLocalRecentSwaps } from 'src/lib/hooks/react-query/recent-swaps/useLocalRecentSwaps'
 import { useRecentSwaps } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import { useSwapTokenSelect } from 'src/lib/hooks/useTokenSelect'
 import { getNetworkKey } from 'src/lib/network'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { formatUSD } from 'sushi'
-import type { EvmChainId } from 'sushi/evm'
 import { EvmNative, EvmToken } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { useNetworkContext } from './network-provider'
@@ -56,9 +54,6 @@ export const Recent = ({ onClose }: { onClose?: () => void }) => {
     walletAddress: address,
     chainIds: chainIds,
   })
-  const { data } = useLocalRecentSwaps()
-
-  console.log('data', data)
 
   if (!address) {
     return <ConnectButton className="w-full" variant="secondary" />
@@ -158,12 +153,12 @@ const RecentItem = ({
               currency={
                 tokenIn.address === NativeAddress
                   ? // @TODO remove typecast once chainId type is resolved
-                    EvmNative.fromChainId(tokenIn.chainId as EvmChainId)
+                    EvmNative.fromChainId(tokenIn.chainId)
                   : new EvmToken({
                       address: tokenIn.address,
                       name: tokenIn.name,
                       symbol: tokenIn.symbol,
-                      chainId: tokenIn.chainId as EvmChainId,
+                      chainId: tokenIn.chainId,
                       decimals: tokenIn.decimals,
 
                       metadata: {
@@ -178,12 +173,12 @@ const RecentItem = ({
               disableLink
               currency={
                 tokenOut.address === NativeAddress
-                  ? EvmNative.fromChainId(tokenOut.chainId as EvmChainId)
+                  ? EvmNative.fromChainId(tokenOut.chainId)
                   : new EvmToken({
                       address: tokenOut.address,
                       name: tokenOut.name,
                       symbol: tokenOut.symbol,
-                      chainId: tokenOut.chainId as EvmChainId,
+                      chainId: tokenOut.chainId,
                       decimals: tokenOut.decimals,
                       metadata: {
                         approved: tokenOut.approved,
@@ -204,7 +199,7 @@ const RecentItem = ({
               <span className="pr-0.5">(</span>
               <NetworkIcon
                 type="square"
-                chainId={tokenIn.chainId as EvmChainId}
+                chainId={tokenIn.chainId}
                 width={16}
                 height={16}
                 className="rounded-[3px]"
@@ -212,7 +207,7 @@ const RecentItem = ({
               <ArrowRightIcon className="w-3 h-3 mx-1 text-slate-500" />
               <NetworkIcon
                 type="square"
-                chainId={tokenOut.chainId as EvmChainId}
+                chainId={tokenOut.chainId}
                 width={16}
                 height={16}
                 className="rounded-[3px]"
@@ -270,7 +265,7 @@ const ActionButtons = ({
         onClick={async () => {
           await handleTokenOutput({
             token: new EvmToken({
-              chainId: recentSwap.tokenIn.chainId as EvmChainId,
+              chainId: recentSwap.tokenIn.chainId,
               address: recentSwap.tokenIn.address,
               decimals: recentSwap.tokenIn.decimals,
               symbol: recentSwap.tokenIn.symbol,
@@ -289,7 +284,7 @@ const ActionButtons = ({
         onClick={async () => {
           await handleTokenInput({
             token: new EvmToken({
-              chainId: recentSwap.tokenIn.chainId as EvmChainId,
+              chainId: recentSwap.tokenIn.chainId,
               address: recentSwap.tokenIn.address,
               decimals: recentSwap.tokenIn.decimals,
               symbol: recentSwap.tokenIn.symbol,
