@@ -9,7 +9,9 @@ import type {
 import { useSkaleEuropaFaucet } from 'src/lib/hooks'
 import { useHeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
 
+import { useMemo } from 'react'
 import { ChainId } from 'sushi'
+import { useAccount } from 'wagmi'
 import { Chart } from './_ui/swap/trade/chart/chart'
 import { ChartHeader } from './_ui/swap/trade/chart/chart-header'
 import { ChartProvider } from './_ui/swap/trade/chart/chart-provider'
@@ -31,18 +33,6 @@ const chainIdsByTradeMode: Record<TradeMode, readonly ChainId[] | null> = {
   swap: null,
 }
 
-const defaultWidgetProps: Partial<ChartingLibraryWidgetOptions> = {
-  interval: '1D' as ResolutionString,
-  library_path: '/trading_view/charting_library/',
-  locale: 'en',
-  charts_storage_url: 'https://saveload.tradingview.com',
-  charts_storage_api_version: '1.1',
-  client_id: 'tradingview.com',
-  user_id: 'public_user_id',
-  fullscreen: false,
-  autosize: true,
-}
-
 export default function TradePage() {
   const {
     state: { chainId, tradeMode, tradeView },
@@ -53,6 +43,22 @@ export default function TradePage() {
   const hasMounted = useIsMounted()
 
   const isKatana = chainId === ChainId.KATANA
+  const { address } = useAccount()
+
+  const defaultWidgetProps: Partial<ChartingLibraryWidgetOptions> =
+    useMemo(() => {
+      return {
+        interval: '1D' as ResolutionString,
+        library_path: '/trading_view/charting_library/',
+        locale: 'en',
+        charts_storage_url: 'https://saveload.tradingview.com',
+        charts_storage_api_version: '1.1',
+        client_id: 'tradingview.com',
+        user_id: address ?? 'public_user_id',
+        fullscreen: false,
+        autosize: true,
+      }
+    }, [address])
 
   return (
     <>

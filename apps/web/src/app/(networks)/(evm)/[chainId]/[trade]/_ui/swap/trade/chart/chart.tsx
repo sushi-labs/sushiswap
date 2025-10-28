@@ -36,7 +36,6 @@ export const Chart = ({
     })
   }, [])
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (!isMounted || !resolvedTheme || tvWidgetRef.current) return
     const intervalQuicks = [60, 240, 720, '1D']
@@ -462,7 +461,14 @@ export const Chart = ({
       tvWidget.remove()
       tvWidgetRef.current = null
     }
-  }, [chartContainerRef, resolvedTheme, isMdScreen, isMounted, token1])
+  }, [
+    widgetProps,
+    chartContainerRef,
+    resolvedTheme,
+    isMdScreen,
+    isMounted,
+    token1,
+  ])
 
   return (
     <div className="flex flex-col flex-grow rounded-xl">

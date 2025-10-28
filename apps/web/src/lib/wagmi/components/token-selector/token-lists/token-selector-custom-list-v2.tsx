@@ -1,7 +1,9 @@
-import { isTokenListV2ChainId } from '@sushiswap/graph-client/data-api'
+import {
+  TokenListV2ChainIds,
+  isTokenListV2ChainId,
+} from '@sushiswap/graph-client/data-api'
 import { List } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { TempChainIds } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import type { EvmAddress } from 'sushi/evm'
 import type { EvmChainId } from 'sushi/evm'
 import type { EvmCurrency } from 'sushi/evm'
@@ -19,6 +21,7 @@ interface TokenSelectorCustomListV2 {
   onShowInfo(currency: EvmCurrency | false): void
   showChainOptions: boolean
 }
+const TokenListChainIds = TokenListV2ChainIds.map((id) => id)
 
 export function TokenSelectorCustomListV2({
   currencies,
@@ -32,7 +35,8 @@ export function TokenSelectorCustomListV2({
   showChainOptions,
 }: TokenSelectorCustomListV2) {
   const myTokensChainIds = useMemo(
-    () => (chainId && isTokenListV2ChainId(chainId) ? [chainId] : TempChainIds),
+    () =>
+      chainId && isTokenListV2ChainId(chainId) ? [chainId] : TokenListChainIds,
     [chainId],
   )
   const {
