@@ -60,21 +60,35 @@ export function TurnstileProvider({ children }: TurnstileProviderContextProps) {
     queryFn: async () => {
       if (!ref.current) return
 
+      console.log('Rendering', Date.now())
+
+      let widgetId: string
+
       const token = await new Promise<string>((resolve) => {
-        window.turnstile.render(ref.current!, {
+        widgetId = window.turnstile.render(ref.current!, {
           sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '',
           size: 'invisible',
           callback: (token) => {
             resolve(token)
           },
         })
+        window.turnstile.execute(widgetId!, {
+          callback: (token: string) => {
+            console.log('Executed', Date.now())
+            resolve(token)
+          },
+        })
       })
+
+      console.log('Got token', Date.now())
 
       const response = await validateTurnstileAction(token)
 
       if (!response.success) {
         throw new Error('Turnstile validation failed')
       }
+
+      console.log('Fetched', Date.now())
 
       return response
     },
@@ -116,7 +130,10 @@ export function TurnstileProvider({ children }: TurnstileProviderContextProps) {
 
   const onLoadCallback = useCallback(() => {
     setTurnstileReady(true)
+    console.log('Turnstile script loaded', Date.now())
   }, [])
+
+  console.log('Loading scripts', Date.now())
 
   return (
     <>

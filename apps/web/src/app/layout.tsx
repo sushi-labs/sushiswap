@@ -62,6 +62,8 @@ export default function RootLayout({
           color="#fa52a0"
         />
         <link rel="shortcut icon" href="/favicon.ico?v=1" />
+        <link rel="preconnect" href="https://challenges.cloudflare.com" />
+        <link rel="dns-prefetch" href="//challenges.cloudflare.com" />
       </head>
       <body className="min-h-screen flex flex-col">
         <ToastContainer />
