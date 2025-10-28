@@ -16,16 +16,17 @@ export const LimitEstPnl = () => {
 
   const pnl = useMemo(() => {
     if (!amountInPerChunk || !amountOut || !token0PriceUSD || !token1PriceUSD) {
-      return '0'
+      return 0
     }
     const totalInUSD = amountInPerChunk
-      ?.mul(token0PriceUSD)
+      ?.mulHuman(token0PriceUSD.toString({ fixed: 6 }))
       ?.mul(BigInt(chunks) || 1n)
-      .amount.toString()
-    const totalOutUSD = amountOut?.mul(token1PriceUSD).amount.toString()
-
+      .toString()
+    const totalOutUSD = amountOut
+      ?.mulHuman(token1PriceUSD.toString({ fixed: 6 }))
+      .toString()
     const _pnl = Number.parseFloat(totalOutUSD) - Number.parseFloat(totalInUSD)
-    return _pnl.toFixed(2)
+    return _pnl
   }, [amountInPerChunk, amountOut, token0PriceUSD, token1PriceUSD, chunks])
 
   return (
@@ -45,16 +46,14 @@ export const LimitEstPnl = () => {
       </div>
       <div
         className={classNames(
-          Number.parseFloat(pnl) > 0
+          pnl > 0
             ? 'text-[#1DA67D]'
-            : Number.parseFloat(pnl) < 0
+            : pnl < 0
               ? 'text-red'
               : 'text-slate-900 dark:text-pink-100',
         )}
       >
-        {Number.parseFloat(pnl) === 0
-          ? '-'
-          : `${Number.parseFloat(pnl) > 0 ? '+' : ''}${formatUSD(pnl)}`}
+        {pnl === 0 ? '-' : `${pnl > 0 ? '+' : ''}${formatUSD(pnl)}`}
       </div>
     </div>
   )
