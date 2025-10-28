@@ -69,7 +69,7 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
     )
 
     const tokenPrice =
-      prices?.getForToken(selectedToken) ??
+      prices?.get(selectedToken.wrap().address) ??
       getOnchainPriceFromPool(selectedToken, pool)
     const usdValue =
       tokenPrice !== null ? Number(exactAmount.toString()) * tokenPrice : null

@@ -10,7 +10,6 @@ export type PriceMap = {
   has: (address: EvmAddress) => boolean
   get: (address: EvmAddress) => number | undefined
   getFraction: (address: EvmAddress) => Fraction | undefined
-  getForToken: (token: EvmCurrency) => number | undefined
 }
 
 export function usePrices({
@@ -75,13 +74,6 @@ export function usePrices({
       },
       get: (_address: EvmAddress) => {
         const address = BigInt(_address)
-
-        const price = chain.priceMap!.get(address)
-        return price
-      },
-
-      getForToken: (token: EvmCurrency) => {
-        const address = BigInt(token.wrap().address)
 
         const price = chain.priceMap!.get(address)
         return price

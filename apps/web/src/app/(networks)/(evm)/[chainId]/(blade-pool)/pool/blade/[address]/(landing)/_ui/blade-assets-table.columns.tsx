@@ -76,7 +76,7 @@ function PriceCell({
     return <span className="text-sm">{formatUSD(1)}</span>
   }
 
-  const price = prices?.getForToken(row.token) ?? row.priceUSD
+  const price = prices?.get(row.token.wrap().address) ?? row.priceUSD
   return (
     <span className="text-sm">{price !== null ? formatUSD(price) : '-'}</span>
   )

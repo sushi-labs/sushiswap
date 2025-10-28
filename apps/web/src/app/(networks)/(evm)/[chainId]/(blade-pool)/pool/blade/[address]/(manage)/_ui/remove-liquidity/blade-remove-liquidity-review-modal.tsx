@@ -90,7 +90,8 @@ export const BladeRemoveLiquidityReviewModal: FC<
           const amountToReceiveValue =
             userAssetValue * (Number(percentage) / 100)
 
-          const tokenPrice = prices?.getForToken(asset.token) ?? asset.priceUSD
+          const tokenPrice =
+            prices?.get(asset.token.wrap().address) ?? asset.priceUSD
           const tokenAmountValue =
             tokenPrice !== null
               ? tokenPrice > 0

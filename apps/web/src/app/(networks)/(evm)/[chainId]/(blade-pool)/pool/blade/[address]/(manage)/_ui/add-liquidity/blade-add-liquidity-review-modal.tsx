@@ -224,7 +224,7 @@ const _BladeAddLiquidityReviewModal: FC<BladeAddLiquidityReviewModalProps> = ({
       const parsedAmount = Amount.tryFromHuman(input.token, input.amount)
       if (!parsedAmount) return []
       const price =
-        prices?.getForToken(input.token) ??
+        prices?.get(input.token.wrap().address) ??
         getOnchainPriceFromPool(input.token, pool)
       const usdValue =
         price !== null ? Number(parsedAmount.toString()) * price : null

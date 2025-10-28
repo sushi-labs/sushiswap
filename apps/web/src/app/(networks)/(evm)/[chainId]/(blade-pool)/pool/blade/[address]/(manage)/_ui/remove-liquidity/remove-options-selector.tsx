@@ -78,7 +78,7 @@ export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
           {tokensToReceive.flatMap((tokenData) => {
             const originalCurrency = tokenData.token
             const tokenPrice =
-              prices?.getForToken(originalCurrency) ??
+              prices?.get(originalCurrency.wrap().address) ??
               getOnchainPriceFromPool(originalCurrency, pool)
             const tokenAmountValue =
               tokenPrice !== null && tokenPrice > 0
