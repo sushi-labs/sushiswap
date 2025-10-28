@@ -28,10 +28,10 @@ import {
 
 export const MarketTable = ({
   tableRowClassName = '',
-  // mobileCardClassName = '',
+  mobileCardClassName = '',
 }: {
   tableRowClassName?: string
-  // mobileCardClassName?: string
+  mobileCardClassName?: string
 }) => {
   const { chainIds, showCurrentPairOnly } = useTradeTablesContext()
 
@@ -135,7 +135,11 @@ export const MarketTable = ({
               key={`history-row-${idx}`}
               className="pb-6 border-b last:border-b-0 last:pb-0"
             >
-              <MobileDataCard row={row} columns={COLUMNS} />
+              <MobileDataCard
+                row={row}
+                columns={COLUMNS}
+                className={mobileCardClassName}
+              />
             </div>
           ))
         )}
