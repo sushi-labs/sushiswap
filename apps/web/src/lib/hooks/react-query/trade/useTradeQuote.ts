@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
+import { proxySwapAction } from 'src/app/_common/turnstile/proxy-swap-action'
+import { useTurnstile } from 'src/app/_common/turnstile/turnstile-provider'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { getFeeString } from 'src/lib/swap/fee'
 import { Amount, Fraction, Percent, Price, ZERO, subtractSlippage } from 'sushi'
@@ -57,6 +59,8 @@ export const useTradeQuoteQuery = (
   }: UseTradeParams,
   select: UseTradeQuerySelect,
 ) => {
+  const { jwt } = useTurnstile()
+
   return useQuery({
     queryKey: [
       'getTradeQuote',
@@ -70,10 +74,11 @@ export const useTradeQuoteQuery = (
         gasPrice,
         source,
         onlyPools,
+        jwt,
       },
     ],
     queryFn: async () => {
-      if (!chainId || !fromToken || !toToken || !amount) {
+      if (!chainId || !fromToken || !toToken || !amount || !jwt) {
         throw new Error('Missing required parameters for trade quote')
       }
 
@@ -106,8 +111,7 @@ export const useTradeQuoteQuery = (
 
       applyPoolExclusion(fromToken, toToken, params.searchParams)
 
-      const res = await fetch(params.toString())
-      const json = await res.json()
+      const json = await proxySwapAction(params.toString(), jwt)
       const resp2 = tradeValidator02.parse(json)
 
       const resp1 = apiAdapter02To01(resp2, fromToken, toToken, recipient)
@@ -120,7 +124,8 @@ export const useTradeQuoteQuery = (
     retry: false, // dont retry on failure, immediately fallback
     select,
     enabled:
-      enabled && Boolean(chainId && fromToken && toToken && amount && gasPrice),
+      enabled &&
+      Boolean(chainId && fromToken && toToken && amount && gasPrice && jwt),
     queryKeyHashFn: stringify,
   })
 }

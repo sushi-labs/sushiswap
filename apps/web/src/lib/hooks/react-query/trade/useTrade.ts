@@ -5,6 +5,8 @@ import {
 } from '@sushiswap/telemetry'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
+import { proxySwapAction } from 'src/app/_common/turnstile/proxy-swap-action'
+import { useTurnstile } from 'src/app/_common/turnstile/turnstile-provider'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { getFeeString, isAddressFeeWhitelisted } from 'src/lib/swap/fee'
 import { Amount, Fraction, Percent, Price, ZERO, subtractSlippage } from 'sushi'
@@ -41,6 +43,7 @@ export const useTradeQuery = (
 ) => {
   const trace = useTrace()
   const { address } = useAccount()
+  const { jwt } = useTurnstile()
 
   return useQuery({
     queryKey: [
@@ -57,10 +60,11 @@ export const useTradeQuery = (
         recipient,
         source,
         onlyPools,
+        jwt,
       },
     ],
     queryFn: async () => {
-      if (!address) throw new Error('No address')
+      if (!address || !jwt) throw new Error('No address or jwt')
 
       const params = new URL(`${API_BASE_URL}/swap/v7/${chainId}`)
       params.searchParams.set('referrer', 'sushi')
@@ -110,8 +114,7 @@ export const useTradeQuery = (
           params.searchParams.append('onlyPools', pool),
         )
 
-      const res = await fetch(params.toString())
-      const json = await res.json()
+      const json = await proxySwapAction(params.toString(), jwt)
       const resp2 = tradeValidator02.parse(json)
 
       const resp1 = apiAdapter02To01(
@@ -140,7 +143,8 @@ export const useTradeQuery = (
         fromToken &&
         toToken &&
         amount &&
-        gasPrice,
+        gasPrice &&
+        jwt,
     ),
     queryKeyHashFn: stringify,
   })
