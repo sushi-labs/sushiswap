@@ -1,5 +1,6 @@
 import { XIcon } from '@heroicons/react-v1/solid'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import { TokenListV2ChainIds } from '@sushiswap/graph-client/data-api'
 import {
   Collapsible,
   IconButton,
@@ -11,11 +12,12 @@ import {
 } from '@sushiswap/ui'
 import { type ChangeEvent, useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { TempChainIds } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import { useSearchTokens } from 'src/lib/hooks/react-query/search-tokens/useSearchTokens'
 import { useAccount } from 'wagmi'
 import { SearchItem } from './search-item'
 import { useSearchContext } from './search-provider'
+
+const SearchChainIds = TokenListV2ChainIds.map((id) => id)
 
 export const SearchContent = ({ onClose }: { onClose: () => void }) => {
   const [open, setOpen] = useState(false)
@@ -34,7 +36,7 @@ export const SearchContent = ({ onClose }: { onClose: () => void }) => {
     hasNextPage,
   } = useSearchTokens({
     walletAddress: address,
-    chainIds: TempChainIds,
+    chainIds: SearchChainIds,
     search: searchValue,
     first: 10,
   })
