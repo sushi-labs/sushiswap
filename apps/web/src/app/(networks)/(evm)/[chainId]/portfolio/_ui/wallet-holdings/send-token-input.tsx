@@ -1,9 +1,13 @@
+import { useBreakpoint } from '@sushiswap/hooks'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { type EvmChainId, isWNativeSupported } from 'sushi/evm'
 import { useSendTokens } from './send-token-provider'
 
 export const SendTokenInput = () => {
+  const { isMd: isMdScreen } = useBreakpoint('md')
   const { mutate, state } = useSendTokens()
+
+  console.log('state.token0', state.token0)
   return (
     <Web3Input.Currency
       id="send"
@@ -20,6 +24,7 @@ export const SendTokenInput = () => {
       allowNative={isWNativeSupported(1)}
       label="Amount"
       showQuickSelect={false}
+      hidePercentageInputs={!isMdScreen}
       inputClassName="!text-slate-900 dark:!text-slate-200 placeholder:text-slate-900 placeholder:dark:text-slate-200"
       labelClassName="font-medium"
     />

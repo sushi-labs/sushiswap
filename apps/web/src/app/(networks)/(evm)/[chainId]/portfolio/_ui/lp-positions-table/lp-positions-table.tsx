@@ -163,7 +163,7 @@ export const LPPositionsTable = () => {
                 className={classNames('!rounded-full flex-auto !w-1/2')}
               />
             ) : null}
-            <Button
+            {/* <Button
               size="sm"
               variant="networks"
               className={classNames(
@@ -175,7 +175,22 @@ export const LPPositionsTable = () => {
               )}
             >
               More
-            </Button>
+            </Button> */}
+            {positionData && (
+              <ManageDialog
+                data={positionData}
+                isOpen={isManageOpen}
+                setIsOpen={setIsManageOpen}
+                triggerChildren={
+                  <Button
+                    variant="networks"
+                    className="w-1/2 !rounded-full dark:!bg-[#FFFFFF]/[.12] dark:hover:!bg-[#fff]/[.18] dark:active:!bg-[#fff]/[.24]"
+                  >
+                    More
+                  </Button>
+                }
+              />
+            )}
           </div>
         </DialogContent>
       </Dialog>

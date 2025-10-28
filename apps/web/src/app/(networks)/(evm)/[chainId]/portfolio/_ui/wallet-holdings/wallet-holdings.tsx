@@ -43,7 +43,6 @@ import { WalletHoldingsHeader } from './wallet-holdings-header'
 
 export const WalletHoldings = () => {
   const { address } = useAccount()
-
   const { data, isLoadingPositions, isLoadingPnl } = useWalletPortfolio({
     address: address as `0x${string}`,
   })
@@ -55,12 +54,19 @@ export const WalletHoldings = () => {
 
   useEffect(() => {
     if (!tokens || tokens.length === 0) return
+    const token0 = tokens[0].token
 
-    const firstToken = new EvmToken({
-      ...tokens[0].token,
-      chainId: tokens[0].token.chainId as EvmChainId,
-      address: tokens[0].token.address as `0x${string}`,
-    })
+    const firstToken =
+      token0.address === ethAddress
+        ? new EvmNative({
+            ...token0,
+            chainId: token0.chainId as EvmChainId,
+          })
+        : new EvmToken({
+            ...token0,
+            chainId: token0.chainId as EvmChainId,
+            address: token0.address as `0x${string}`,
+          })
 
     mutate.setToken0(firstToken)
   }, [mutate.setToken0, tokens])

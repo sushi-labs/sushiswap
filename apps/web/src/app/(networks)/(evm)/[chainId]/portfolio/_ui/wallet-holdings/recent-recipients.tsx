@@ -29,6 +29,8 @@ export const RecentRecipients = () => {
 
   if (recents.length === 0) return null
 
+  console.log('hasOverflow', hasOverflow)
+  console.log('isAtEnd', isAtEnd)
   return (
     <Collapsible open={recents.length > 0}>
       <div className="overflow-x-hidden relative">
@@ -50,7 +52,7 @@ export const RecentRecipients = () => {
           </div>
           <div
             className={classNames(
-              'pointer-events-none absolute top-0 right-0 h-full w-20 bg-gradient-to-r from-transparent to-white dark:to-slate-800 hidden md:block transition-opacity duration-300 ease-in-out',
+              'pointer-events-none absolute top-0 right-0 h-full w-20 bg-gradient-to-r from-transparent to-white dark:to-slate-800 transition-opacity duration-300 ease-in-out',
               hasOverflow && !isAtEnd ? 'opacity-100' : 'opacity-0',
             )}
           />

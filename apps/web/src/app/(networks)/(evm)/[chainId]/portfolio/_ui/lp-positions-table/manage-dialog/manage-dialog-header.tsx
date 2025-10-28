@@ -30,7 +30,7 @@ export const ManageDialogHeader = ({
   const { token0, token1 } = useTokensFromPosition({ data })
 
   return (
-    <div className="flex gap-4 items-center">
+    <div className="flex flex-col md:flex-row gap-4 md:items-center">
       <div className="flex items-center gap-2">
         <div className="relative">
           <Currency.IconList
@@ -59,49 +59,52 @@ export const ManageDialogHeader = ({
           </div>
         </div>
       </div>
-      {data?.pool?.protocol === 'SUSHISWAP_V3' ? (
-        <RangeBadge
-          token0={token0}
-          token1={token1}
-          tokenId={
-            (data.position as PortfolioV2PositionV3PoolType['position'])
-              ?.tokenId
-          }
-          chainId={data.pool.chainId as SushiSwapV3ChainId}
-        />
-      ) : null}
-      {hideApr ? null : (
-        <div
-          className={
-            'bg-skyblue/10 font-medium dark:bg-[#8A80FF08] px-2 py-1 text-xs flex items-center gap-1 rounded-full'
-          }
-        >
-          <APRHoverCard pool={data.pool as unknown as RequiredPool}>
-            <div className="flex items-center gap-1">
-              <span>APR: </span>
-              <span className="underline decoration-dotted underline-offset-2">
-                {formatPercent(data.pool.feeApr1d)}
-              </span>
-              {data?.pool.incentives?.map((i, idx) => (
-                <Currency.Icon
-                  key={idx}
-                  currency={
-                    new EvmToken({
-                      chainId: i.rewardToken.chainId as EvmChainId,
-                      address: i.rewardToken.address as EvmAddress,
-                      decimals: i.rewardToken.decimals,
-                      symbol: i.rewardToken.symbol,
-                      name: i.rewardToken.name,
-                    })
-                  }
-                  width={14}
-                  height={14}
-                />
-              ))}
-            </div>
-          </APRHoverCard>
-        </div>
-      )}
+      <div className="flex items-center gap-2">
+        {' '}
+        {data?.pool?.protocol === 'SUSHISWAP_V3' ? (
+          <RangeBadge
+            token0={token0}
+            token1={token1}
+            tokenId={
+              (data.position as PortfolioV2PositionV3PoolType['position'])
+                ?.tokenId
+            }
+            chainId={data.pool.chainId as SushiSwapV3ChainId}
+          />
+        ) : null}
+        {hideApr ? null : (
+          <div
+            className={
+              'bg-skyblue/10 font-medium dark:bg-[#8A80FF08] px-2 py-1 text-xs flex items-center gap-1 rounded-full'
+            }
+          >
+            <APRHoverCard pool={data.pool as unknown as RequiredPool}>
+              <div className="flex items-center gap-1">
+                <span>APR: </span>
+                <span className="underline decoration-dotted underline-offset-2">
+                  {formatPercent(data.pool.feeApr1d)}
+                </span>
+                {data?.pool.incentives?.map((i, idx) => (
+                  <Currency.Icon
+                    key={idx}
+                    currency={
+                      new EvmToken({
+                        chainId: i.rewardToken.chainId as EvmChainId,
+                        address: i.rewardToken.address as EvmAddress,
+                        decimals: i.rewardToken.decimals,
+                        symbol: i.rewardToken.symbol,
+                        name: i.rewardToken.name,
+                      })
+                    }
+                    width={14}
+                    height={14}
+                  />
+                ))}
+              </div>
+            </APRHoverCard>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
