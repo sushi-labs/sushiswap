@@ -35,7 +35,14 @@ export const DCAOptionsInput = () => {
 
 const DCATradesInput = () => {
   const {
-    state: { chainId, token0, chunks, token0PriceUSD, amountInPerChunk },
+    state: {
+      chainId,
+      token0,
+      chunks,
+      token0PriceUSD,
+      amountInPerChunk,
+      swapAmountString,
+    },
     mutate: { setChunks },
     isLoading,
   } = useDerivedStateTwap()
@@ -92,7 +99,7 @@ const DCATradesInput = () => {
       {!isLoading ? (
         <span
           className={classNames(
-            minTradeSizeError ? 'text-red' : '',
+            minTradeSizeError && swapAmountString ? 'text-red' : '',
             'text-xs text-muted-foreground',
           )}
         >
