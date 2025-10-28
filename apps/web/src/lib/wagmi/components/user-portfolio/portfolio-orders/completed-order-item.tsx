@@ -1,55 +1,65 @@
 import { ArrowRightIcon } from '@heroicons/react-v1/solid'
-import type { RecentSwap } from '@sushiswap/graph-client/data-api'
+// import type { RecentSwap } from '@sushiswap/graph-client/data-api'
 import { Currency, LinkExternal, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { format } from 'date-fns'
 import { type ReactNode, useMemo } from 'react'
 import { NativeAddress } from 'src/lib/constants'
 import { getChangeSign, getTextColor } from 'src/lib/helpers'
+import type { LocalRecentSwap } from 'src/lib/hooks/react-query/recent-swaps/useLocalRecentSwaps'
 import { type TwapOrder, useParsedOrder } from 'src/lib/hooks/react-query/twap'
-import { formatNumber, formatPercent, formatUSD, getChainById } from 'sushi'
+import {
+  Amount,
+  formatNumber,
+  formatPercent,
+  formatUSD,
+  getChainById,
+} from 'sushi'
 import type { EvmChainId } from 'sushi/evm'
 import { EvmNative, EvmToken, shortenHash } from 'sushi/evm'
 import { getNetworkName } from '../../../../network'
 import type { OrderItemType } from './completed-orders'
 
 export const CompletedOrderItem = ({ order }: { order: OrderItemType }) => {
-  const isTwap = Object.hasOwn(order, 'type') && 'type' in order
+  const isTwap =
+    Object.hasOwn(order, 'type') &&
+    order.type !== 'swap' &&
+    order.type !== 'xswap'
 
   return (
     <div className="dark:bg-slate-800 bg-slate-100 sm:bg-slate-50 rounded-xl flex flex-col gap-4 px-5 pt-3 pb-5">
       {isTwap ? (
         <TwapItem order={order as TwapOrder} />
       ) : (
-        <MarketItem order={order as RecentSwap} />
+        <MarketItem order={order as LocalRecentSwap} />
       )}
     </div>
   )
 }
 
-const MarketItem = ({ order }: { order: RecentSwap }) => {
-  const isCrossChain = order.tokenIn.chainId !== order.tokenOut.chainId
+const MarketItem = ({ order }: { order: LocalRecentSwap }) => {
+  const isCrossChain = order.token0.chainId !== order.token1.chainId
   const tokenIn = useMemo(() => {
-    return order.tokenIn.address === NativeAddress
-      ? EvmNative.fromChainId(order.tokenIn.chainId as EvmChainId)
+    return order.token0.type === 'native'
+      ? EvmNative.fromChainId(order.token0.chainId)
       : new EvmToken({
-          chainId: order.tokenIn.chainId as EvmChainId,
-          address: order.tokenIn.address,
-          decimals: order.tokenIn.decimals,
-          symbol: order.tokenIn.symbol,
-          name: order.tokenIn.name,
+          chainId: order.token0.chainId,
+          address: order.token0.address,
+          decimals: order.token0.decimals,
+          symbol: order.token0.symbol,
+          name: order.token0.name,
         })
   }, [order])
 
   const tokenOut = useMemo(() => {
-    return order.tokenOut.address === NativeAddress
-      ? EvmNative.fromChainId(order.tokenOut.chainId as EvmChainId)
+    return order.token1.type === 'native'
+      ? EvmNative.fromChainId(order.token1.chainId)
       : new EvmToken({
-          chainId: order.tokenOut.chainId as EvmChainId,
-          address: order.tokenOut.address,
-          decimals: order.tokenOut.decimals,
-          symbol: order.tokenOut.symbol,
-          name: order.tokenOut.name,
+          chainId: order.token1.chainId,
+          address: order.token1.address,
+          decimals: order.token1.decimals,
+          symbol: order.token1.symbol,
+          name: order.token1.name,
         })
   }, [order])
 
@@ -74,33 +84,37 @@ const MarketItem = ({ order }: { order: RecentSwap }) => {
         <div className="flex flex-col gap-3">
           <Item title="Bought">
             <Currency.Icon currency={tokenOut} width={24} height={24} />
-            {formatNumber(order.amountOut)} {tokenOut.symbol}
+            {formatNumber(new Amount(tokenOut, order.amount1).toSignificant(6))}{' '}
+            {tokenOut.symbol}
           </Item>
           <Item title="Type">Market</Item>
           <Item title="Value/PnL">
-            {formatUSD(order.amountOutUSD)}
-            <span
-              className={classNames('text-xs', getTextColor(order?.totalPnl))}
-            >
-              {getChangeSign(order?.totalPnl)}
-              {formatUSD(order?.totalPnl)}
+            {formatUSD(order.amount1USD ?? 0)}
+            <span className={classNames('text-xs', getTextColor(0))}>
+              {/* {getChangeSign(order?.totalPnl)} */}
+              {getChangeSign(0)}
+              {/* {formatUSD(order?.totalPnl)} */}
+              {'-'}
             </span>
           </Item>
           <Item title="Date">
-            {format(new Date(order.time * 1000), 'MM/dd/yy h:mm a')}
+            {format(new Date(order.timestamp * 1000), 'MM/dd/yy h:mm a')}
           </Item>
         </div>
         <div className="flex flex-col gap-3">
           <Item title="Sold">
             <Currency.Icon currency={tokenIn} width={24} height={24} />
-            {formatNumber(order.amountIn)} {tokenIn.symbol}
+            {formatNumber(new Amount(tokenIn, order.amount0).toSignificant(6))}{' '}
+            {tokenIn.symbol}
           </Item>
-          <Item title="Price USD">{formatUSD(order.amountOutUSD)}</Item>
+          <Item title="Price USD">{formatUSD(order.amount1USD ?? 0)}</Item>
           <Item title="TX Hash">
             <LinkExternal
-              href={getChainById(tokenIn.chainId).getTransactionUrl('0x')}
+              href={getChainById(tokenIn.chainId).getTransactionUrl(
+                order.tx_hash,
+              )}
             >
-              {'-'}
+              {shortenHash(order.tx_hash)}
             </LinkExternal>
           </Item>
           <Item title="Status">Completed</Item>
@@ -121,6 +135,7 @@ const TwapItem = ({ order }: { order: TwapOrder }) => {
             width={14}
             height={14}
           />
+
           {getNetworkName(parsedOrder.chainInfo.id as EvmChainId)}
         </div>
       </div>

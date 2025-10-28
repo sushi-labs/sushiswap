@@ -16,12 +16,12 @@ export const DCAErrors = () => {
     minTradeSizeAmount,
   } = useTwapTradeErrors()
   const {
-    state: { chainId },
+    state: { chainId, swapAmountString },
   } = useDerivedStateTwap()
 
   const errorMessages = useMemo(() => {
     const messages: { title: string; detail?: string }[] = []
-    if (minTradeSizeError) {
+    if (minTradeSizeError && swapAmountString) {
       messages.push({
         title: 'Inadequate Trade Size',
         detail: `Minimum trade amount on ${getNetworkName(chainId)} is ${formatUSD(minTradeSizeAmount)}`,
@@ -47,6 +47,7 @@ export const DCAErrors = () => {
     chainMismatchError,
     minTradeSizeAmount,
     chainId,
+    swapAmountString,
   ])
 
   if (!errorMessages?.length) return null

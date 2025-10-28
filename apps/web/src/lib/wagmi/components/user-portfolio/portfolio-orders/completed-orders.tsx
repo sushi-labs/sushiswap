@@ -1,20 +1,25 @@
 import { OrderStatus, OrderType } from '@orbs-network/twap-sdk'
-import {
-  type RecentSwap,
-  type RecentSwaps,
-  isTokenListV2ChainId,
-} from '@sushiswap/graph-client/data-api'
+// import {
+//   type RecentSwap,
+//   type RecentSwaps,
+//   isTokenListV2ChainId,
+// } from '@sushiswap/graph-client/data-api'
 import { SkeletonBox } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { SUPPORTED_CHAIN_IDS, TWAP_SUPPORTED_CHAIN_IDS } from 'src/config'
-import { useRecentSwaps } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
+import {
+  type LocalRecentSwap,
+  filterLocalRecentSwapsByAccountAndChainIds,
+  useLocalRecentSwaps,
+} from 'src/lib/hooks/react-query/recent-swaps/useLocalRecentSwaps'
+// import { useRecentSwaps } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import { type TwapOrder, useTwapOrders } from 'src/lib/hooks/react-query/twap'
 import { useAccount } from 'wagmi'
 import { DCA_KEYS } from '../twap-orders-badge'
 import { CompletedOrderItem } from './completed-order-item'
 import { CompletedOrderType } from './portfolio-orders'
 
-export type OrderItemType = TwapOrder | RecentSwap
+export type OrderItemType = TwapOrder | LocalRecentSwap
 
 export const CompletedOrders = ({ filter }: { filter: CompletedOrderType }) => {
   const { address } = useAccount()
@@ -27,19 +32,30 @@ export const CompletedOrders = ({ filter }: { filter: CompletedOrderType }) => {
     chainIds: twapChainIds,
     enabled: Boolean(address),
   })
-  const { data: marketSwaps, isLoading: isMarketSwapsLoading } = useRecentSwaps(
-    {
-      walletAddress: address,
-      chainIds: SUPPORTED_CHAIN_IDS.filter((chainId) =>
-        isTokenListV2ChainId(chainId),
-      ),
-    },
-  )
-  const isLoading = isLoadingTwap || isMarketSwapsLoading
+  // const { data: marketSwaps, isLoading: isMarketSwapsLoading } = useRecentSwaps(
+  //   {
+  //     walletAddress: address,
+  //     chainIds: SUPPORTED_CHAIN_IDS.filter((chainId) =>
+  //       isTokenListV2ChainId(chainId),
+  //     ),
+  //   },
+  // )
+  const { data: _localRecentSwaps } = useLocalRecentSwaps()
+
+  const localRecentSwaps = useMemo(() => {
+    if (!_localRecentSwaps || !address) return []
+    return filterLocalRecentSwapsByAccountAndChainIds({
+      account: address,
+      chainIds: SUPPORTED_CHAIN_IDS,
+      swaps: _localRecentSwaps,
+    })
+  }, [address, _localRecentSwaps])
+
+  const isLoading = isLoadingTwap
 
   const allData = useMemo(() => {
     const twapOrdersData = twapOrders?.[OrderStatus.Completed] || []
-    const marketSwapsData: RecentSwaps = marketSwaps || []
+    const marketSwapsData: LocalRecentSwap[] = localRecentSwaps || []
     const _data: OrderItemType[] = []
     if (filter === CompletedOrderType.All) {
       _data.push(...twapOrdersData, ...marketSwapsData)
@@ -55,17 +71,16 @@ export const CompletedOrders = ({ filter }: { filter: CompletedOrderType }) => {
       )
     }
     return _data.sort((a, b) => {
-      const aCreatedAt = 'createdAt' in a ? a.createdAt : a.time * 1000
-      const bCreatedAt = 'createdAt' in b ? b.createdAt : b.time * 1000
+      const aCreatedAt = 'createdAt' in a ? a.createdAt : a.timestamp * 1000
+      const bCreatedAt = 'createdAt' in b ? b.createdAt : b.timestamp * 1000
       return bCreatedAt - aCreatedAt
     })
-  }, [twapOrders, marketSwaps, filter])
+  }, [twapOrders, localRecentSwaps, filter])
 
   if (
     (filter === CompletedOrderType.All && isLoading) ||
     (filter === CompletedOrderType.DCA && isLoadingTwap) ||
-    (filter === CompletedOrderType.Market && isMarketSwapsLoading) ||
-    (filter === CompletedOrderType.Market && isMarketSwapsLoading)
+    (filter === CompletedOrderType.Limit && isLoadingTwap)
   ) {
     return (
       <div className="flex flex-col gap-4">
