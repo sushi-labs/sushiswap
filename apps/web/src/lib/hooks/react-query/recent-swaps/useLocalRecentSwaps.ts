@@ -1,4 +1,4 @@
-import { useLocalStorage } from '@tronweb3/tronwallet-adapter-react-hooks'
+import { useLocalStorage } from '@sushiswap/hooks'
 import { useCallback, useMemo } from 'react'
 import type { ChainId } from 'sushi'
 import {

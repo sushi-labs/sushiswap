@@ -97,7 +97,6 @@ export const Recent = ({ onClose }: { onClose?: () => void }) => {
       </p>
     )
   }
-  console.log(recentSwaps)
 
   return (
     <div className="grid grid-cols-3 col-span-3 gap-0">
