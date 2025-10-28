@@ -39,7 +39,7 @@ export const CHAIN_COLUMN: ColumnDef<PortfolioV2Row> = {
             <NetworkIcon
               type="square"
               chainId={chainId}
-              className="w-5 h-5 rounded-md border border-slate-900 dark:border-slate-800"
+              className="w-5 h-5 rounded-md border border-slate-250 dark:border-slate-800"
             />
           </div>
         ))}

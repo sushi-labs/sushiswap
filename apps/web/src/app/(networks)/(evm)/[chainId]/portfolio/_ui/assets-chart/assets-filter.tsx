@@ -133,7 +133,7 @@ export const AssetsFilter = ({
       content={
         <Command className="flex items-center md:p-5">
           <div className="w-full">
-            <div className="mb-2 w-full h-[54px] justify-between pr-2 items-center rounded-md bg-slate-100 dark:bg-slate-900 dark:border-[#FFFFFF14] border-transparent border flex">
+            <div className="mb-2 w-full md:h-[54px] justify-between pr-2 items-center rounded-md bg-slate-100 dark:bg-slate-900 dark:border-[#FFFFFF14] border-transparent border flex">
               <CommandInput
                 testdata-id="network-selector-input"
                 placeholder="Search"
