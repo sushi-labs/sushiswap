@@ -1,6 +1,6 @@
 'use client'
 
-import type { EvmCurrency } from 'sushi/evm'
+import { type EvmChainId, type EvmCurrency, isEvmChainId } from 'sushi/evm'
 
 import {
   type TokenListV2ChainId,
@@ -9,6 +9,7 @@ import {
   isTrendingTokensChainId,
 } from '@sushiswap/graph-client/data-api'
 import { classNames } from '@sushiswap/ui'
+import { useParams } from 'next/navigation'
 import { useMemo } from 'react'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import type { Address } from 'viem'
@@ -47,6 +48,7 @@ export function TokenSelectorStatesV2({
   search,
   type,
 }: TokenSelectorStates) {
+  const { chainId } = useParams()
   const { networkOptions } = useNetworkOptions()
   const tokenListChainIds = useMemo(
     () =>
@@ -124,7 +126,13 @@ export function TokenSelectorStatesV2({
       <>
         {type === 'buy' ? (
           <TokenSelectorChipBarV2
-            chainIds={selectedNetwork ? [selectedNetwork] : networkOptions}
+            chainIds={
+              selectedNetwork
+                ? [selectedNetwork]
+                : chainId && isEvmChainId(Number(chainId))
+                  ? [Number(chainId) as EvmChainId]
+                  : networkOptions
+            }
             onSelect={onSelect}
             includeNative={includeNative}
             showPinnedTokens={!hidePinnedTokens}
@@ -152,7 +160,13 @@ export function TokenSelectorStatesV2({
       <>
         {type === 'buy' ? (
           <TokenSelectorChipBarV2
-            chainIds={selectedNetwork ? [selectedNetwork] : networkOptions}
+            chainIds={
+              selectedNetwork
+                ? [selectedNetwork]
+                : chainId && isEvmChainId(Number(chainId))
+                  ? [Number(chainId) as EvmChainId]
+                  : networkOptions
+            }
             onSelect={onSelect}
             includeNative={includeNative}
             showPinnedTokens={!hidePinnedTokens}
@@ -187,7 +201,13 @@ export function TokenSelectorStatesV2({
     <>
       {type === 'buy' ? (
         <TokenSelectorChipBarV2
-          chainIds={selectedNetwork ? [selectedNetwork] : networkOptions}
+          chainIds={
+            selectedNetwork
+              ? [selectedNetwork]
+              : chainId && isEvmChainId(Number(chainId))
+                ? [Number(chainId) as EvmChainId]
+                : networkOptions
+          }
           onSelect={onSelect}
           includeNative={includeNative}
           showPinnedTokens={!hidePinnedTokens}
