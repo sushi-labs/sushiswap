@@ -14,36 +14,39 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { TooltipDrawer } from 'src/app/(networks)/_ui/tooltip-drawer'
-import { NativeAddress } from 'src/lib/constants'
+import type { LocalRecentSwap } from 'src/lib/hooks/react-query/recent-swaps/useLocalRecentSwaps'
 import { getNetworkName } from 'src/lib/network'
-import { formatNumber, getChainById } from 'sushi'
+import { Amount, formatNumber, getChainById } from 'sushi'
 import { formatUSD } from 'sushi'
 import type { EvmChainId } from 'sushi/evm'
-import { EvmNative, EvmToken } from 'sushi/evm'
-import type { MarketTrade } from './market-history-table'
+import { EvmNative, EvmToken, shortenHash } from 'sushi/evm'
+// import type { MarketTrade } from './market-history-table'
 
-export const BUY_COLUMN: ColumnDef<MarketTrade> = {
+export const BUY_COLUMN: ColumnDef<LocalRecentSwap> = {
   id: 'buy',
   header: 'Buy',
   enableSorting: false,
-  accessorFn: (row) => row.amountOut,
+  accessorFn: (row) => Number(row.amount1),
   cell: ({ row }) => {
     const token =
-      row.original.tokenOut.address === NativeAddress
-        ? EvmNative.fromChainId(row.original.tokenOut.chainId as EvmChainId)
+      row.original.token1.type === 'native'
+        ? EvmNative.fromChainId(row.original.token1.chainId)
         : new EvmToken({
-            chainId: row.original.tokenOut.chainId as EvmChainId,
-            address: row.original.tokenOut.address,
-            decimals: row.original.tokenOut.decimals,
-            symbol: row.original.tokenOut.symbol,
-            name: row.original.tokenOut.name,
+            chainId: row.original.token1.chainId,
+            address: row.original.token1.address,
+            decimals: row.original.token1.decimals,
+            symbol: row.original.token1.symbol,
+            name: row.original.token1.name,
           })
 
     return (
       <div className="w-full min-w-[150px] flex items-center gap-1 lg:gap-2 whitespace-nowrap">
         <Currency.Icon currency={token} width={24} height={24} />
         <span>
-          {formatNumber(row.original.amountOut)} {token.symbol}
+          {formatNumber(
+            new Amount(token, row.original.amount1).toSignificant(6),
+          )}{' '}
+          {token.symbol}
         </span>
       </div>
     )
@@ -60,27 +63,30 @@ export const BUY_COLUMN: ColumnDef<MarketTrade> = {
   },
 }
 
-export const SELL_COLUMN: ColumnDef<MarketTrade> = {
+export const SELL_COLUMN: ColumnDef<LocalRecentSwap> = {
   id: 'sell',
   header: 'Sell',
   enableSorting: false,
-  accessorFn: (row) => row.amountIn,
+  accessorFn: (row) => Number(row.amount0),
   cell: ({ row }) => {
     const token =
-      row.original.tokenIn.address === NativeAddress
-        ? EvmNative.fromChainId(row.original.tokenIn.chainId as EvmChainId)
+      row.original.token0.type === 'native'
+        ? EvmNative.fromChainId(row.original.token0.chainId)
         : new EvmToken({
-            chainId: row.original.tokenIn.chainId as EvmChainId,
-            address: row.original.tokenIn.address,
-            decimals: row.original.tokenIn.decimals,
-            symbol: row.original.tokenIn.symbol,
-            name: row.original.tokenIn.name,
+            chainId: row.original.token0.chainId,
+            address: row.original.token0.address,
+            decimals: row.original.token0.decimals,
+            symbol: row.original.token0.symbol,
+            name: row.original.token0.name,
           })
     return (
       <div className="flex items-center gap-1 lg:gap-2 whitespace-nowrap">
         <Currency.Icon currency={token} width={24} height={24} />
         <span>
-          {formatNumber(row.original.amountIn)} {token.symbol}
+          {formatNumber(
+            new Amount(token, row.original.amount0).toSignificant(6),
+          )}{' '}
+          {token.symbol}
         </span>
       </div>
     )
@@ -97,14 +103,14 @@ export const SELL_COLUMN: ColumnDef<MarketTrade> = {
   },
 }
 
-export const CHAIN_COLUMN: ColumnDef<MarketTrade> = {
+export const CHAIN_COLUMN: ColumnDef<LocalRecentSwap> = {
   id: 'chain',
   header: 'Chain',
   enableSorting: false,
-  accessorFn: (row) => `${row.tokenIn.chainId}-${row.tokenOut.chainId}`,
+  accessorFn: (row) => `${row.token0.chainId}-${row.token1.chainId}`,
   cell: ({ row }) => {
     const isCrossChain =
-      row.original.tokenIn.chainId !== row.original.tokenOut.chainId
+      row.original.token0.chainId !== row.original.token1.chainId
 
     return (
       <div className="flex items-center gap-2">
@@ -112,12 +118,12 @@ export const CHAIN_COLUMN: ColumnDef<MarketTrade> = {
           <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
             <NetworkIcon
               type="square"
-              chainId={row.original.tokenIn.chainId as EvmChainId}
+              chainId={row.original.token0.chainId as EvmChainId}
               className="w-3 h-3 lg:w-5 lg:h-5"
             />
           </div>
           <span className="block text-xs lg:hidden">
-            {getNetworkName(row.original.tokenIn.chainId as EvmChainId)}
+            {getNetworkName(row.original.token0.chainId as EvmChainId)}
           </span>
           {isCrossChain ? (
             <>
@@ -125,12 +131,12 @@ export const CHAIN_COLUMN: ColumnDef<MarketTrade> = {
               <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
                 <NetworkIcon
                   type="square"
-                  chainId={row.original.tokenOut.chainId as EvmChainId}
+                  chainId={row.original.token0.chainId as EvmChainId}
                   className="w-3 h-3 lg:w-5 lg:h-5"
                 />
               </div>
               <span className="block text-xs lg:hidden">
-                {getNetworkName(row.original.tokenOut.chainId as EvmChainId)}
+                {getNetworkName(row.original.token0.chainId as EvmChainId)}
               </span>
             </>
           ) : null}
@@ -145,7 +151,7 @@ export const CHAIN_COLUMN: ColumnDef<MarketTrade> = {
   },
 }
 
-export const VALUE_PNL_COLUMN: ColumnDef<MarketTrade> = {
+export const VALUE_PNL_COLUMN: ColumnDef<LocalRecentSwap> = {
   id: 'valueUsd',
   header: () => (
     <TooltipDrawer
@@ -164,26 +170,31 @@ export const VALUE_PNL_COLUMN: ColumnDef<MarketTrade> = {
     />
   ),
   enableSorting: false,
-  accessorFn: (row) => row.amountOutUSD,
+  accessorFn: (row) => Number(row.amount1USD ?? 0),
   sortingFn: ({ original: a }, { original: b }) =>
-    a.amountOutUSD - b.amountOutUSD,
-  cell: ({ row }) => (
-    <div className="flex flex-col">
-      <span>{formatUSD(row.original.amountOutUSD)}</span>
-      <span
-        className={
-          row.original.totalPnl > 0
-            ? 'text-xs text-green-500'
-            : row.original.totalPnl < 0
-              ? 'text-xs text-red'
-              : 'text-xs text-muted-foreground'
-        }
-      >
-        {row.original.totalPnl > 0 ? '+' : ''}
-        {formatUSD(row.original.totalPnl)}
-      </span>
-    </div>
-  ),
+    Number(a.amount1USD ?? 0) - Number(b.amount1USD ?? 0),
+  cell: ({ row }) => {
+    //@dev currently using localswap data; data provider does not have accurate data yet
+    const totalPnl = 0
+    return (
+      <div className="flex flex-col">
+        <span>{formatUSD(row.original.amount1USD ?? 0)}</span>
+        <span
+          className={
+            totalPnl > 0
+              ? 'text-xs text-green-500'
+              : totalPnl < 0
+                ? 'text-xs text-red'
+                : 'text-xs text-muted-foreground'
+          }
+        >
+          {totalPnl > 0 ? '+' : ''}
+          {/* {formatUSD(totalPnl)} */}
+          {'-'}
+        </span>
+      </div>
+    )
+  },
   meta: {
     body: {
       skeleton: (
@@ -199,7 +210,7 @@ export const VALUE_PNL_COLUMN: ColumnDef<MarketTrade> = {
 export const getPriceUsdColumn = (
   showInUsd: boolean,
   setShowInUsd: React.Dispatch<React.SetStateAction<boolean>>,
-): ColumnDef<MarketTrade> => ({
+): ColumnDef<LocalRecentSwap> => ({
   id: 'priceUsd',
   enableSorting: false,
   header: () => (
@@ -234,13 +245,23 @@ export const getPriceUsdColumn = (
       </Tooltip>
     </TooltipProvider>
   ),
-  accessorFn: (row) => row.amountOutUSD,
+  accessorFn: (row) => Number(row.amount1USD ?? 0),
   cell: ({ row }) => {
+    const token =
+      row.original.token1.type === 'native'
+        ? EvmNative.fromChainId(row.original.token1.chainId)
+        : new EvmToken({
+            chainId: row.original.token1.chainId,
+            address: row.original.token1.address,
+            decimals: row.original.token1.decimals,
+            symbol: row.original.token1.symbol,
+            name: row.original.token1.name,
+          })
     return showInUsd ? (
-      <span>{formatUSD(row.original.amountOutUSD)}</span>
+      <span>{formatUSD(row.original.amount1USD ?? 0)}</span>
     ) : (
-      <span className="whitespace-nowrap">{`${formatNumber(row.original.amountOut)} ${
-        row.original.tokenOut.symbol
+      <span className="whitespace-nowrap">{`${formatNumber(new Amount(token, row.original.amount1).toSignificant(6))} ${
+        row.original.token1.symbol
       }`}</span>
     )
   },
@@ -251,18 +272,18 @@ export const getPriceUsdColumn = (
   },
 })
 
-export const TX_HASH_COLUMN: ColumnDef<MarketTrade> = {
+export const TX_HASH_COLUMN: ColumnDef<LocalRecentSwap> = {
   id: 'txHash',
   header: 'Tx Hash',
   enableSorting: false,
-  // accessorFn: (row) => row.txHash,
+  accessorFn: (row) => row.tx_hash,
   cell: ({ row }) => (
     <LinkExternal
       href={getChainById(
-        row.original.tokenIn.chainId as EvmChainId,
-      )?.getTransactionUrl('0x')}
+        row.original.token0.chainId as EvmChainId,
+      )?.getTransactionUrl(row.original.tx_hash)}
     >
-      -{/* {shortenHash(row.original.txHash)} */}
+      {shortenHash(row.original.tx_hash)}
     </LinkExternal>
   ),
   meta: {
@@ -272,14 +293,14 @@ export const TX_HASH_COLUMN: ColumnDef<MarketTrade> = {
   },
 }
 
-export const DATE_COLUMN: ColumnDef<MarketTrade> = {
+export const DATE_COLUMN: ColumnDef<LocalRecentSwap> = {
   id: 'timestamp',
   header: () => <span className="lg:text-right lg:block">Date</span>,
   enableSorting: false,
-  accessorFn: (row) => row.time,
+  accessorFn: (row) => row.timestamp,
   cell: ({ row }) => (
     <span className="whitespace-nowrap">
-      {format(new Date(row.original.time * 1000), 'MM/dd/yy h:mm a')}
+      {format(new Date(row.original.timestamp * 1000), 'MM/dd/yy h:mm a')}
     </span>
   ),
   meta: {
