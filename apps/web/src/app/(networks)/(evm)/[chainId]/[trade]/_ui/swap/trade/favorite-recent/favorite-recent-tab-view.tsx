@@ -1,4 +1,3 @@
-import { TokenListV2ChainIds } from '@sushiswap/graph-client/data-api'
 import { Button } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
@@ -56,11 +55,7 @@ export const FavoriteRecentTabView = () => {
           selectedNetwork={selectedNetwork}
           onNetworkSelect={setSelectedNetwork}
           className="!px-1"
-          networkOptions={
-            tab === FavoriteRecentTab.Recent
-              ? TokenListV2ChainIds.map((i) => i)
-              : SUPPORTED_CHAIN_IDS
-          }
+          networkOptions={SUPPORTED_CHAIN_IDS}
           testId="favorite-recent-network-menu-trigger"
         />
       </div>

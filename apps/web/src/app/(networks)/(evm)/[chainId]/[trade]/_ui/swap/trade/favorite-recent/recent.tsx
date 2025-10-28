@@ -1,9 +1,9 @@
 import { ArrowRightIcon } from '@heroicons/react-v1/solid'
-import {
-  // type RecentSwap,
-  TokenListV2ChainIds,
-  isTokenListV2ChainId,
-} from '@sushiswap/graph-client/data-api'
+// import {
+//   type RecentSwap,
+//   TokenListV2ChainIds,
+//   isTokenListV2ChainId,
+// } from '@sushiswap/graph-client/data-api'
 import { useBreakpoint } from '@sushiswap/hooks'
 import {
   Collapsible,
@@ -18,6 +18,7 @@ import {
 import { Button } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useMemo, useState } from 'react'
+import { SUPPORTED_CHAIN_IDS } from 'src/config'
 // import { NativeAddress } from 'src/lib/constants'
 import {
   captializeFirstLetter,
@@ -45,10 +46,10 @@ export const Recent = ({ onClose }: { onClose?: () => void }) => {
   } = useNetworkContext()
 
   const chainIds = useMemo(() => {
-    if (selectedNetwork && isTokenListV2ChainId(selectedNetwork)) {
+    if (selectedNetwork) {
       return [selectedNetwork]
     }
-    return [...TokenListV2ChainIds]
+    return [...SUPPORTED_CHAIN_IDS]
   }, [selectedNetwork])
 
   const { data: localRecentSwaps } = useLocalRecentSwaps()
@@ -126,7 +127,7 @@ export const Recent = ({ onClose }: { onClose?: () => void }) => {
           </Popover>
         </div>
       </div>
-      <div className="grid w-full grid-cols-5 col-span-5 gap-2">
+      <div className="grid w-full grid-cols-5 col-span-5 gap-2 max-h-[300px] overflow-y-auto">
         {recentSwaps?.map((recentSwap, idx) => (
           <RecentItem
             onClose={onClose}
