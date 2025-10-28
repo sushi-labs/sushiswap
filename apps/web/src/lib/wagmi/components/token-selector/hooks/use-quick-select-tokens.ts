@@ -40,10 +40,26 @@ export const useQuickSelectTokens = ({
   const mostSwappedStableTokens = useMemo(() => {
     if (!localRecentSwaps || localRecentSwaps.length === 0) return []
     //filter out default tokens from recent swaps so no duplicates of default tokens
-    const filteredSwaps = localRecentSwaps.filter((swap) => {
-      const tokenOut = swap.token1
-      return allowedSymbols.includes(tokenOut.symbol)
-    })
+    //and filter out duplicates in general
+    const filteredSwaps = localRecentSwaps
+      .filter((swap) => {
+        const tokenOut = swap.token1
+        return allowedSymbols.includes(tokenOut.symbol)
+      })
+      .filter((swap, index, self) => {
+        const tokenOut = swap.token1
+        return (
+          index ===
+          self.findIndex((s) => {
+            return (
+              tokenOut.type === 'token' &&
+              s.token1.type === 'token' &&
+              s.token1.address === tokenOut.address &&
+              s.token1.chainId === tokenOut.chainId
+            )
+          })
+        )
+      })
     if (filteredSwaps.length === 0) return []
     const groupedTokens = new Map<string, EvmCurrency[]>()
     filteredSwaps.forEach((swap) => {
