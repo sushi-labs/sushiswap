@@ -75,6 +75,7 @@ export const ProtocolButton = ({
     >
       <Button
         variant="outline"
+        size="sm"
         className={classNames(
           'rounded-xl border-dashed',
           baseColoringClassname,

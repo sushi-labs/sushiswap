@@ -55,7 +55,7 @@ export const AssetsFilter = ({
       align="start"
       popoverContentClassName="md:max-w-[370px] md:w-[370px] !p-0 !bg-[#FFFFFF] dark:!bg-slate-800  h-full"
       dialogContentClassName="max-w-none h-[100dvh] !flex !flex-col"
-      dialogContentWrapperClassName="h-full md:h-auto"
+      dialogContentWrapperClassName="h-[80dvh] md:h-auto rounded-t-2xl"
       dialogTitle="Select Token"
       dialogTitleClassName="!mt-0"
       hideDialogClose
@@ -149,7 +149,7 @@ export const AssetsFilter = ({
             </div>
           </div>
 
-          <CommandGroup className="!overflow-x-hidden !overflow-y-scroll scroll max-h-[300px]">
+          <CommandGroup className="!overflow-x-hidden !overflow-y-scroll scroll md:max-h-[300px] h-[70dvh]">
             {tokens.map((asset, idx) => {
               return (
                 <CommandItem

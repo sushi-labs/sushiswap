@@ -27,7 +27,7 @@ export const filterLocalRecentSwapsByAccountAndToken = ({
   swaps,
 }: {
   swaps: LocalRecentSwap[]
-  account: EvmAddress
+  account: EvmAddress | undefined
   token: EvmCurrency | undefined
 }) => {
   return swaps.filter((swap) => {
@@ -51,7 +51,7 @@ export const filterLocalRecentSwapsByAccountAndToken = ({
           name: (swap.token1 as EvmToken).name,
         })
     return (
-      swap.account?.toLowerCase() === account.toLowerCase() &&
+      swap.account?.toLowerCase() === account?.toLowerCase() &&
       (token?.isSame(token0) || token?.isSame(token1))
     )
   })

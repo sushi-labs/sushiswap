@@ -63,7 +63,7 @@ export const NetworkMenu = ({
       <DropdownMenuContent
         align="end"
         className={classNames(
-          'max-h-[205px] overflow-y-auto !bg-slate-50 dark:!bg-slate-900 !backdrop-blur-none',
+          'max-h-[205px] overflow-y-auto !bg-slate-50 dark:!bg-slate-900 !backdrop-blur-none z-[70]',
           className,
         )}
       >
