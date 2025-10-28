@@ -76,7 +76,7 @@ export default {
     _onResolveErrorCallback: (reason: string) => void,
     _extension: unknown,
   ): Promise<void> => {
-    // console.log("[resolveSymbol]: Method call", symbolName);
+    // console.log('[resolveSymbol]: Method call', symbolName)
 
     const chainId = symbolName.split('-')[0]
     const address = symbolName.split('-')[1]
