@@ -29,8 +29,6 @@ export const RecentRecipients = () => {
 
   if (recents.length === 0) return null
 
-  console.log('hasOverflow', hasOverflow)
-  console.log('isAtEnd', isAtEnd)
   return (
     <Collapsible open={recents.length > 0}>
       <div className="overflow-x-hidden relative">

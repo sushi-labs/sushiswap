@@ -10,7 +10,7 @@ import {
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
+import { SkeletonText } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import Link from 'next/link'
@@ -18,7 +18,7 @@ import React, { useMemo } from 'react'
 import { TooltipDrawer } from 'src/app/(networks)/_ui/tooltip-drawer'
 import { getTextColor } from 'src/lib/helpers'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { Token, formatNumber, formatPercent, formatUSD } from 'sushi'
+import { formatNumber, formatPercent, formatUSD } from 'sushi'
 import {
   type EvmChainId,
   EvmToken,

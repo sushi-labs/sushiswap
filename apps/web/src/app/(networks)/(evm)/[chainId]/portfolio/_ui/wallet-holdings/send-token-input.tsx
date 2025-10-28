@@ -7,7 +7,6 @@ export const SendTokenInput = () => {
   const { isMd: isMdScreen } = useBreakpoint('md')
   const { mutate, state } = useSendTokens()
 
-  console.log('state.token0', state.token0)
   return (
     <Web3Input.Currency
       id="send"
