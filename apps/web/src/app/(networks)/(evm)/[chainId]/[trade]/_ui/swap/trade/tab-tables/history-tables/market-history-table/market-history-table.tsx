@@ -1,17 +1,18 @@
 'use client'
 
-import {
-  type RecentSwap,
-  isTokenListV2ChainId,
-} from '@sushiswap/graph-client/data-api'
-import { DataTable, SkeletonBox } from '@sushiswap/ui'
+import type { RecentSwap } from '@sushiswap/graph-client/data-api'
+import { DataTable } from '@sushiswap/ui'
 import { Card } from '@sushiswap/ui'
 import type { PaginationState } from '@tanstack/react-table'
 import { useSearchParams } from 'next/navigation'
 import { useMemo } from 'react'
 import { useState } from 'react'
-import { NativeAddress } from 'src/lib/constants'
-import { useRecentSwaps } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
+
+import {
+  filterLocalRecentSwapsByAccountAndChainIds,
+  useLocalRecentSwaps,
+} from 'src/lib/hooks/react-query/recent-swaps/useLocalRecentSwaps'
+// import { useRecentSwaps } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import { useAccount } from 'wagmi'
 import { useDerivedStateSimpleSwap } from '../../../../derivedstate-simple-swap-provider'
 import { useTradeTablesContext } from '../../trade-tables-context'
@@ -49,20 +50,31 @@ export const MarketTable = () => {
 
   const { address } = useAccount()
 
-  const { data: _recentSwaps, isLoading } = useRecentSwaps({
-    walletAddress: address,
-    chainIds: chainIds.filter((chainId) => isTokenListV2ChainId(chainId)),
-  })
+  // const { data: _recentSwaps, isLoading } = useRecentSwaps({
+  //   walletAddress: address,
+  //   chainIds: chainIds.filter((chainId) => isTokenListV2ChainId(chainId)),
+  // })
+
+  const { data: _localRecentSwaps } = useLocalRecentSwaps()
+
+  const localRecentSwaps = useMemo(() => {
+    if (!_localRecentSwaps || !address) return []
+    return filterLocalRecentSwapsByAccountAndChainIds({
+      account: address,
+      chainIds: chainIds,
+      swaps: _localRecentSwaps,
+    })
+  }, [address, _localRecentSwaps, chainIds])
 
   const recentSwaps = useMemo(() => {
-    if (!_recentSwaps) return []
+    if (!localRecentSwaps) return []
     if (showCurrentPairOnly && token0Address && token1Address) {
-      return _recentSwaps.filter((swap) => {
-        const { tokenIn, tokenOut } = swap
+      return localRecentSwaps.filter((swap) => {
+        const { token0, token1 } = swap
         const tokenInAddress =
-          tokenIn.address === NativeAddress ? 'NATIVE' : tokenIn.address
+          token0.type === 'native' ? 'NATIVE' : token0.address
         const tokenOutAddress =
-          tokenOut.address === NativeAddress ? 'NATIVE' : tokenOut.address
+          token1.type === 'native' ? 'NATIVE' : token1.address
         return (
           (tokenInAddress.toLowerCase() === token0Address.toLowerCase() &&
             tokenOutAddress.toLowerCase() === token1Address.toLowerCase()) ||
@@ -71,8 +83,8 @@ export const MarketTable = () => {
         )
       })
     }
-    return _recentSwaps
-  }, [_recentSwaps, showCurrentPairOnly, token0Address, token1Address])
+    return localRecentSwaps
+  }, [localRecentSwaps, showCurrentPairOnly, token0Address, token1Address])
 
   const priceCol = useMemo(
     () => getPriceUsdColumn(showInUsd, setShowInUsd),
@@ -104,7 +116,7 @@ export const MarketTable = () => {
         <DataTable
           columns={COLUMNS}
           data={rowData}
-          loading={isLoading}
+          loading={false}
           className="border-none [&_td]:h-[92px]"
           pagination={true}
           state={{
@@ -115,9 +127,7 @@ export const MarketTable = () => {
       </Card>
 
       <Card className="p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 lg:hidden">
-        {isLoading ? (
-          <SkeletonBox className="w-full h-52" />
-        ) : !rowData?.length ? (
+        {!rowData?.length ? (
           <p className="text-sm italic text-center text-muted-foreground dark:text-pink-200 h-52 flex items-center justify-center">
             No Past Market Orders
           </p>
