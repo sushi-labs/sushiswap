@@ -33,6 +33,7 @@
     "@kadena/wallet-adapter-react": "0.0.7",
     "@kadena/wallet-adapter-walletconnect": "0.2.0",
     "@layerzerolabs/scan-client": "0.0.6",
+    "@marsidev/react-turnstile": "1.3.1",
     "@martianwallet/aptos-wallet-adapter": "0.0.5",
     "@msafe/aptos-wallet-adapter": "1.1.3",
     "@next/bundle-analyzer": "15.1.1",

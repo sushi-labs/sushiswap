@@ -3,6 +3,7 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { Button, Dots } from '@sushiswap/ui'
 import { useCallback, useMemo, useState } from 'react'
+import { TurnstileProvider } from 'src/app/_common/turnstile/turnstile-provider'
 import { useTrade, useTradeQuote } from 'src/lib/hooks/react-query'
 import { logger } from 'src/lib/logger'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
@@ -25,7 +26,15 @@ import { useAccount, usePublicClient, useSendTransaction } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { BarSectionWidget } from './BarSectionWidget'
 
-export const BarSection = withCheckerRoot(
+export const BarSection = (props: Parameters<typeof _BarSection>[0]) => {
+  return (
+    <TurnstileProvider>
+      <_BarSection {...props} />
+    </TurnstileProvider>
+  )
+}
+
+const _BarSection = withCheckerRoot(
   ({
     approveTag,
     inputToken,

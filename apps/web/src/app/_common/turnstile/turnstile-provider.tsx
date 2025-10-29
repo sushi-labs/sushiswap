@@ -1,12 +1,10 @@
 'use client'
 
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import Script from 'next/script'
 import {
-  Suspense,
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -14,30 +12,6 @@ import {
   useState,
 } from 'react'
 import { validateTurnstileAction } from './validate-action'
-
-declare global {
-  interface Window {
-    turnstile: {
-      execute: (widgetId: string, options?: any) => void
-      render: (
-        container: string | HTMLElement,
-        options: {
-          sitekey: string
-          theme?: 'light' | 'dark'
-          size?: 'normal' | 'compact' | 'invisible'
-          callback?: (token: string) => void
-          'error-callback'?: () => void
-          'expired-callback'?: () => void
-          tabindex?: number
-          action?: string
-        },
-      ) => string
-      reset: (widgetId: string) => void
-      remove: (widgetId: string) => void
-      ready: (callback: () => void) => void
-    }
-  }
-}
 
 type Provider = {
   jwt: string | undefined
@@ -50,37 +24,15 @@ interface TurnstileProviderContextProps {
 }
 
 export function TurnstileProvider({ children }: TurnstileProviderContextProps) {
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = useRef<TurnstileInstance>(null)
+
+  const [token, setToken] = useState<string | undefined>(undefined)
   const [jwt, setJwt] = useState<{ jwt: string; exp: number } | undefined>()
 
-  const [turnstileReady, setTurnstileReady] = useState(false)
-
-  const { data, refetch, error } = useQuery({
-    queryKey: ['turnstile-jwt'],
+  const { data, error } = useQuery({
+    queryKey: ['turnstile-jwt', token],
     queryFn: async () => {
-      if (!ref.current) return
-
-      console.log('Rendering', Date.now())
-
-      let widgetId: string
-
-      const token = await new Promise<string>((resolve) => {
-        widgetId = window.turnstile.render(ref.current!, {
-          sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '',
-          size: 'invisible',
-          callback: (token) => {
-            resolve(token)
-          },
-        })
-        window.turnstile.execute(widgetId!, {
-          callback: (token: string) => {
-            console.log('Executed', Date.now())
-            resolve(token)
-          },
-        })
-      })
-
-      console.log('Got token', Date.now())
+      if (!token) return
 
       const response = await validateTurnstileAction(token)
 
@@ -88,13 +40,9 @@ export function TurnstileProvider({ children }: TurnstileProviderContextProps) {
         throw new Error('Turnstile validation failed')
       }
 
-      console.log('Fetched', Date.now())
-
       return response
     },
-    enabled: Boolean(turnstileReady && ref.current),
-    // retry: true,
-    // retryDelay: 1000,
+    enabled: Boolean(token),
   })
 
   useEffect(() => {
@@ -112,7 +60,7 @@ export function TurnstileProvider({ children }: TurnstileProviderContextProps) {
         setJwt(undefined)
       }, expiresIn)
       refetchTimeout = setTimeout(() => {
-        refetch()
+        ref.current?.reset()
       }, refetchIn)
     }
 
@@ -120,28 +68,21 @@ export function TurnstileProvider({ children }: TurnstileProviderContextProps) {
       if (refetchTimeout) clearTimeout(refetchTimeout)
       if (deleteTimeout) clearTimeout(deleteTimeout)
     }
-  }, [data, refetch])
+  }, [data])
 
   useEffect(() => {
     if (error) {
-      setJwt({ jwt: 'fallback', exp: 0 })
+      console.error('Turnstile error:', error)
     }
   }, [error])
 
-  const onLoadCallback = useCallback(() => {
-    setTurnstileReady(true)
-    console.log('Turnstile script loaded', Date.now())
-  }, [])
-
-  console.log('Loading scripts', Date.now())
-
   return (
     <>
-      <div ref={ref} />
-      <Script
-        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-        defer
-        onLoad={onLoadCallback}
+      <Turnstile
+        ref={ref}
+        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''}
+        onError={console.error}
+        onSuccess={(token) => setToken(token)}
       />
       <TurnstileProviderContext.Provider
         value={useMemo(() => ({ jwt: jwt?.jwt }), [jwt])}
