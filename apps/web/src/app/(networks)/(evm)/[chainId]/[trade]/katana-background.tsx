@@ -5,12 +5,16 @@ import { useDerivedStateSimpleTrade } from './_ui/swap/trade/derivedstate-simple
 
 export const KatanaBackground = ({ chainId }: { chainId: ChainId }) => {
   const {
-    state: { tradeView },
+    state: { tradeView, chainId: derivedChainId },
   } = useDerivedStateSimpleTrade()
 
   const isAdvancedTrade = tradeView === 'advanced'
 
-  if (chainId !== ChainId.KATANA || isAdvancedTrade) {
+  if (
+    chainId !== ChainId.KATANA ||
+    derivedChainId !== ChainId.KATANA ||
+    isAdvancedTrade
+  ) {
     return null
   }
   return (

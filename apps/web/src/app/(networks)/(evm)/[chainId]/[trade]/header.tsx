@@ -19,9 +19,11 @@ interface HeaderProps {
 
 export const Header: FC<HeaderProps> = ({ chainId, networks }) => {
   const {
-    state: { tradeView },
+    state: { tradeView, chainId: derivedChainId },
   } = useDerivedStateSimpleTrade()
-  return chainId === ChainId.KATANA && tradeView !== 'advanced' ? (
+  return chainId === ChainId.KATANA &&
+    derivedChainId === ChainId.KATANA &&
+    tradeView !== 'advanced' ? (
     <TransparentHeader chainId={chainId} networks={networks} />
   ) : (
     <_Header chainId={chainId} networks={networks} />
