@@ -36,14 +36,15 @@ const chainIdsByTradeMode: Record<TradeMode, readonly ChainId[] | null> = {
 
 export default function TradePage() {
   const {
-    state: { tradeMode, tradeView },
+    state: { tradeMode, tradeView, chainId: derivedChainId },
   } = useDerivedStateSimpleTrade()
   const { chainId } = useParams()
   useHeaderNetworkSelector(chainIdsByTradeMode[tradeMode])
   useSkaleEuropaFaucet()
   const { isLg } = useBreakpoint('lg')
   const hasMounted = useIsMounted()
-  const isKatana = Number(chainId) === ChainId.KATANA
+  const isKatana =
+    Number(chainId) === ChainId.KATANA && derivedChainId === ChainId.KATANA
   const { address } = useAccount()
 
   const defaultWidgetProps: Partial<ChartingLibraryWidgetOptions> =
