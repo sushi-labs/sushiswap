@@ -5,7 +5,6 @@ import {
 } from '@sushiswap/telemetry'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
-import { proxySwapAction } from 'src/app/_common/turnstile/proxy-swap-action'
 import { useTurnstile } from 'src/app/_common/turnstile/turnstile-provider'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { getFeeString, isAddressFeeWhitelisted } from 'src/lib/swap/fee'
@@ -114,7 +113,11 @@ export const useTradeQuery = (
           params.searchParams.append('onlyPools', pool),
         )
 
-      const json = await proxySwapAction(params.toString(), jwt)
+      const response = await fetch('/api/router-proxy', {
+        body: JSON.stringify({ url: params.toString(), jwt }),
+        method: 'POST',
+      })
+      const json = await response.json()
       const resp2 = tradeValidator02.parse(json)
 
       const resp1 = apiAdapter02To01(

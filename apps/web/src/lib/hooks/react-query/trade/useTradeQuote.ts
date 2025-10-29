@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
-import { proxySwapAction } from 'src/app/_common/turnstile/proxy-swap-action'
 import { useTurnstile } from 'src/app/_common/turnstile/turnstile-provider'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { getFeeString } from 'src/lib/swap/fee'
@@ -111,7 +110,11 @@ export const useTradeQuoteQuery = (
 
       applyPoolExclusion(fromToken, toToken, params.searchParams)
 
-      const json = await proxySwapAction(params.toString(), jwt)
+      const response = await fetch('/api/router-proxy', {
+        body: JSON.stringify({ url: params.toString(), jwt }),
+        method: 'POST',
+      })
+      const json = await response.json()
       const resp2 = tradeValidator02.parse(json)
 
       const resp1 = apiAdapter02To01(resp2, fromToken, toToken, recipient)
