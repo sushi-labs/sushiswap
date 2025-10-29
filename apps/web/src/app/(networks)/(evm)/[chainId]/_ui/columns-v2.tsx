@@ -18,7 +18,7 @@ import React, { useMemo } from 'react'
 import { TooltipDrawer } from 'src/app/(networks)/_ui/tooltip-drawer'
 import { getTextColor } from 'src/lib/helpers'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { Token, formatNumber, formatPercent, formatUSD } from 'sushi'
+import { formatNumber, formatPercent, formatUSD } from 'sushi'
 import {
   type EvmChainId,
   EvmToken,
@@ -34,7 +34,9 @@ import { ProtocolBadge } from './protocol-badge'
 export const CHAIN_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   id: 'chain',
   header: () => (
-    <span className="font-[600] text-slate-450 dark:text-slate-500">Chain</span>
+    <span className="font-semibold text-slate-450 dark:text-slate-500">
+      Chain
+    </span>
   ),
   cell: (props) => (
     <div className="px-2 2xl:min-w-[70px]">
