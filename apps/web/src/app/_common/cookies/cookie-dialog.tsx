@@ -15,6 +15,7 @@ import {
   LinkExternal,
   Separator,
   Switch,
+  classNames,
 } from '@sushiswap/ui'
 import { type ReactElement, useCallback, useEffect, useState } from 'react'
 import { announceCookieChange } from './announce-cookie-change'
@@ -24,6 +25,7 @@ type BaseAction = 'accept' | 'reject' | 'manage'
 function BaseCookieDialog({
   onAction,
 }: { onAction: (action: BaseAction) => void }) {
+  const [isExpanded, setIsExpanded] = useState(false)
   return (
     <DialogContent
       hideClose
@@ -33,20 +35,41 @@ function BaseCookieDialog({
       <VisuallyHidden>
         <DialogTitle>Cookie Policy</DialogTitle>
       </VisuallyHidden>
-      <div>
-        By clicking on “Accept all cookies”, you consent to the storage of
-        cookies on your device and the associated processing of your personal
-        data by Sushi Labs and our partners to improve website navigation,
-        analyse website usage and conduct surveys. You can revoke your consent
-        at any time via the “Manage cookie preferences” button.
-        <br />
-        <br />
-        For further information on our data processing and cookies, please visit
-        our{' '}
-        <LinkExternal href="/legal/privacy-policy">Privacy Policy</LinkExternal>{' '}
-        and our{' '}
-        <LinkExternal href="/legal/cookie-policy">Cookie Policy</LinkExternal>.
-      </div>
+      <p
+        className={classNames(
+          'text-sm',
+          !isExpanded && 'line-clamp-2 before:h-[1lh] before:float-right',
+        )}
+      >
+        {!isExpanded && (
+          <Button
+            variant="link"
+            size="sm"
+            onClick={() => setIsExpanded(!isExpanded)}
+            as="span"
+            className={'ml-1 float-right clear-both'}
+          >
+            More
+          </Button>
+        )}
+        <span>
+          By clicking on “Accept all cookies”, you consent to the storage of
+          cookies on your device and the associated processing of your personal
+          data by Sushi Labs and our partners to improve website navigation,
+          analyse website usage and conduct surveys. You can revoke your consent
+          at any time via the “Manage cookie preferences” button.
+          <br />
+          <br />
+          For further information on our data processing and cookies, please
+          visit our{' '}
+          <LinkExternal href="/legal/privacy-policy">
+            Privacy Policy
+          </LinkExternal>{' '}
+          and our{' '}
+          <LinkExternal href="/legal/cookie-policy">Cookie Policy</LinkExternal>
+          .
+        </span>
+      </p>
       <Separator />
       <div className="flex md:flex-row flex-col w-full gap-3">
         <Button onClick={() => onAction('accept')}>Accept all cookies</Button>
