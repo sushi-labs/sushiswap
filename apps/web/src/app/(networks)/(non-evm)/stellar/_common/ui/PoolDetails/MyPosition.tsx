@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
 import React from 'react'
 import { formatUSD } from 'sushi/format'
+import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
 import { useStellarWallet } from '~stellar/providers'
@@ -15,18 +16,29 @@ interface MyPositionProps {
 export const MyPosition: React.FC<MyPositionProps> = ({ pool }) => {
   const { connectedAddress } = useStellarWallet()
 
-  const { totalValue, isLoading, positions, error } = useMyPosition(
-    connectedAddress ?? undefined,
-    pool.address,
+  const {
+    totalValue,
+    isLoading: isLoadingPositions,
+    positions,
+    error,
+  } = useMyPosition(connectedAddress ?? undefined, pool.address)
+  const { data: priceToken0, isLoading: isLoadingPriceToken0 } = useStablePrice(
+    { token: pool.token0 },
+  )
+  const { data: priceToken1, isLoading: isLoadingPriceToken1 } = useStablePrice(
+    { token: pool.token1 },
   )
 
-  // Extract token amounts from aggregated positions (principal + fees)
+  const isLoading =
+    isLoadingPositions || isLoadingPriceToken0 || isLoadingPriceToken1
+
+  // Extract principal token amounts from aggregated positions
   const actualAmounts = React.useMemo(() => {
     return positions.reduce(
       (acc, cur) => {
         return {
-          token0: acc.token0 + cur.principalToken0 + cur.feesToken0,
-          token1: acc.token1 + cur.principalToken1 + cur.feesToken1,
+          token0: acc.token0 + cur.principalToken0,
+          token1: acc.token1 + cur.principalToken1,
         }
       },
       { token0: 0n, token1: 0n },
@@ -89,7 +101,11 @@ export const MyPosition: React.FC<MyPositionProps> = ({ pool }) => {
                 actualAmounts.token0,
                 pool.token0.decimals,
               )}
-              usdAmount="0.00" // Price data is calculated in totalValue
+              usdAmount={(
+                Number(
+                  formatTokenAmount(actualAmounts.token0, pool.token0.decimals),
+                ) * Number(priceToken0 ?? 0)
+              ).toFixed(2)}
             />
             <LiquidityItem
               isLoading={isLoading}
@@ -98,7 +114,11 @@ export const MyPosition: React.FC<MyPositionProps> = ({ pool }) => {
                 actualAmounts.token1,
                 pool.token1.decimals,
               )}
-              usdAmount="0.00" // Price data is calculated in totalValue
+              usdAmount={(
+                Number(
+                  formatTokenAmount(actualAmounts.token1, pool.token1.decimals),
+                ) * Number(priceToken1 ?? 0)
+              ).toFixed(2)}
             />
           </div>
         </CardContent>

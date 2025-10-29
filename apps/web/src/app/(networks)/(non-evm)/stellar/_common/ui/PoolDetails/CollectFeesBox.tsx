@@ -2,8 +2,9 @@ import { Button, Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
 import type React from 'react'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
+import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
-import { formatTokenAmount } from '~stellar/_common/lib/utils/formatters'
+import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
 import { useStellarWallet } from '~stellar/providers'
 import { useMyPosition } from '../../lib/hooks/position/use-my-position'
 import { useCollectFees } from '../../lib/hooks/position/use-positions'
@@ -15,12 +16,20 @@ interface CollectFeesBoxProps {
 
 export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
   const { connectedAddress, signTransaction } = useStellarWallet()
-  const { positions, isLoading } = useMyPosition(
+  const { positions, isLoading: isPositionsLoading } = useMyPosition(
     connectedAddress || undefined,
     pool.address,
   )
   const collectFeesMutation = useCollectFees()
   const [isCollecting, setIsCollecting] = useState(false)
+  const { data: priceToken0, isLoading: isLoadingPriceToken0 } = useStablePrice(
+    { token: pool.token0 },
+  )
+  const { data: priceToken1, isLoading: isLoadingPriceToken1 } = useStablePrice(
+    { token: pool.token1 },
+  )
+  const isLoading =
+    isPositionsLoading || isLoadingPriceToken0 || isLoadingPriceToken1
 
   // Calculate total fees across all positions
   const totalFees = positions.reduce(
@@ -158,7 +167,11 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
             amount={Number.parseFloat(
               formatTokenAmount(totalFees.token0, pool.token0.decimals),
             ).toFixed(6)}
-            usdAmount="0.00" // TODO: Calculate USD value for fees
+            usdAmount={(
+              Number(
+                formatTokenAmount(totalFees.token0, pool.token0.decimals),
+              ) * Number(priceToken0 ?? 0)
+            ).toFixed(2)}
           />
           <LiquidityItem
             isLoading={isLoading}
@@ -166,7 +179,11 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
             amount={Number.parseFloat(
               formatTokenAmount(totalFees.token1, pool.token1.decimals),
             ).toFixed(6)}
-            usdAmount="0.00" // TODO: Calculate USD value for fees
+            usdAmount={(
+              Number(
+                formatTokenAmount(totalFees.token1, pool.token1.decimals),
+              ) * Number(priceToken1 ?? 0)
+            ).toFixed(2)}
           />
         </div>
       </CardContent>

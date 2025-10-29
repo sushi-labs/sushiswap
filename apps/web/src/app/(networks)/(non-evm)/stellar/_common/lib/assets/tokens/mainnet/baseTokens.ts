@@ -11,6 +11,7 @@ export const baseTokens: Token[] = [
     org: 'unknown',
     domain: 'centre.io',
     decimals: 7,
+    isStable: true,
   },
   {
     code: 'AQUA',
@@ -56,6 +57,7 @@ export const baseTokens: Token[] = [
     org: 'unknown',
     domain: 'ultracapital.xyz',
     decimals: 7,
+    isStable: true,
   },
   {
     code: 'SSLX',
@@ -406,6 +408,7 @@ export const baseTokens: Token[] = [
     org: 'unknown',
     domain: 'zeam.money',
     decimals: 7,
+    isStable: true,
   },
   {
     code: 'ETH',

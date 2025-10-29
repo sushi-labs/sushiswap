@@ -1,49 +1,48 @@
 import { useQuery } from '@tanstack/react-query'
 import { useStellarWallet } from '~stellar/providers'
+import type { Token } from '../types/token.type'
+import { usePoolInfo } from './pool'
+import { useLPUsdValue } from './useLPUsdValue'
 
-const fetchTotalSupply = async (_pairAddress: string): Promise<number> => {
-  try {
-    // TODO(@wu-benjamin): implement for Stellar
-    throw new Error('Function not implemented yet for Stellar')
-  } catch (error) {
-    console.log(error)
-    return 0
-  }
-}
-
-const fetchOwnedSupply = async (_params: {
-  pairAddress: string
-  walletAddress: string
-}): Promise<number> => {
-  try {
-    // TODO(@wu-benjamin): implement for Stellar
-    throw new Error('Function not implemented yet for Stellar')
-  } catch (error) {
-    console.log(error)
-    return 0
-  }
+type UsePoolOwnershipProps = {
+  pairAddress: string | undefined | null
+  token0: Token
+  token1: Token
+  reserve0: bigint
+  reserve1: bigint
 }
 
 export const usePoolOwnership = ({
   pairAddress,
-}: { pairAddress: string | undefined | null }) => {
-  const { connectedAddress } = useStellarWallet()
+  token0,
+  token1,
+  reserve0,
+  reserve1,
+}: UsePoolOwnershipProps) => {
+  const { data: pool } = usePoolInfo(pairAddress ?? null)
+  const { data: lpUsdValueOwned } = useLPUsdValue({
+    token0,
+    token1,
+    reserve0,
+    reserve1,
+  })
+  const { data: lpUsdValueTotal } = useLPUsdValue({
+    token0,
+    token1,
+    reserve0: pool ? BigInt(pool.reserves.token0.amount) : 0n,
+    reserve1: pool ? BigInt(pool.reserves.token1.amount) : 0n,
+  })
   return useQuery({
     queryKey: ['usePoolOwnership', { pairAddress }],
     queryFn: async () => {
-      if (!pairAddress || !connectedAddress) {
+      if (!pairAddress || !pool || !lpUsdValueOwned || !lpUsdValueTotal) {
         return { ownership: '0', ownedSupply: '0' }
       }
-      const totalSupply = await fetchTotalSupply(pairAddress)
-      const ownedSupply = await fetchOwnedSupply({
-        pairAddress: pairAddress,
-        walletAddress: connectedAddress,
-      })
 
-      const ownership = (ownedSupply / totalSupply).toString()
+      const ownership = (lpUsdValueOwned / lpUsdValueTotal).toString()
 
-      return { ownership, ownedSupply: ownedSupply.toString() }
+      return { ownership, ownedSupply: lpUsdValueOwned.toString() }
     },
-    enabled: !!pairAddress && !!connectedAddress,
+    enabled: !!pairAddress && !!pool && !!lpUsdValueOwned && !!lpUsdValueTotal,
   })
 }

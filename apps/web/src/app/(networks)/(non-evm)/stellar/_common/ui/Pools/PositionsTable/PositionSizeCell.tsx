@@ -5,7 +5,13 @@ import type { IPositionRowData } from './PositionsTable'
 
 export const PositionSizeCell = ({ data }: { data: IPositionRowData }) => {
   const { pairAddress } = data
-  const { data: ownership, isLoading } = usePoolOwnership({ pairAddress })
+  const { data: ownership, isLoading } = usePoolOwnership({
+    pairAddress,
+    token0: data.token0,
+    token1: data.token1,
+    reserve0: data.reserve0,
+    reserve1: data.reserve1,
+  })
 
   if (isLoading || ownership === undefined) {
     return <SkeletonText fontSize="lg" />

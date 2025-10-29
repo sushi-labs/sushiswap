@@ -31,10 +31,6 @@ export const PoolsTable = () => {
   const filteredPools = useMemo(() => {
     if (!pools) return [] as PoolInfo[]
     return pools
-    // TODO: apply filtering
-    // return pools?.filter((pool) => {
-    //   return pool.name.toLowerCase().includes(search.toLowerCase())
-    // })
   }, [pools])
 
   const state: Partial<TableState> = useMemo(() => {

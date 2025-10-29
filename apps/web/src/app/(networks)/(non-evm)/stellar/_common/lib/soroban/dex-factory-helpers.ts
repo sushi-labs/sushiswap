@@ -447,7 +447,7 @@ export async function getPoolTransactionBuilder({
  */
 export async function getPoolsForBaseTokenPairs(): Promise<string[]> {
   const tokens = getBaseTokens()
-  const feeTiers = getFees()
+  const feeTiers = await getFees()
 
   console.log('🔍 Querying factory for pools using token combinations:')
   console.log(
@@ -577,7 +577,7 @@ export async function poolExists({
  * Get all available fee tiers and their tick spacings
  * @returns Object mapping fee amounts to tick spacings
  */
-export function getFeeTiers(): Record<number, number> {
+export async function getFeeTiers(): Promise<Record<number, number>> {
   // TODO(drew): This would need to be implemented based on the contract's storage
   // For now, return common fee tiers
   return {
@@ -588,8 +588,8 @@ export function getFeeTiers(): Record<number, number> {
   }
 }
 
-export function getFees(): number[] {
-  return Object.keys(getFeeTiers()).map(Number)
+export async function getFees(): Promise<number[]> {
+  return Object.keys(await getFeeTiers()).map(Number)
 }
 
 /**
@@ -674,7 +674,7 @@ export function isFeeTierSupported(fee: number): boolean {
  * @param fee - Fee amount
  * @returns The tick spacing for the fee tier
  */
-export function getTickSpacingForFee(fee: number): number {
-  const feeTiers = getFeeTiers()
+export async function getTickSpacingForFee(fee: number): Promise<number> {
+  const feeTiers = await getFeeTiers()
   return feeTiers[fee] || 0
 }

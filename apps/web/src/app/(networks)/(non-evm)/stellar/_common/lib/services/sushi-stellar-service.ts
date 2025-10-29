@@ -136,33 +136,6 @@ export class SushiStellarService {
   }
 
   /**
-   * DEPRECATED: Add liquidity directly to pool (bypasses Position Manager)
-   * Use addLiquidity() instead to create trackable positions
-   */
-  async addLiquidityDirect(
-    userAddress: string,
-    params: AddLiquidityParams,
-    signTransaction: (xdr: string) => Promise<string>,
-  ): Promise<{ txHash: string; liquidity: bigint }> {
-    // Convert params to pool-helpers format
-    const result = await poolAddLiquidity({
-      address: params.poolAddress,
-      recipient: params.recipient || userAddress,
-      tickLower: params.tickLower,
-      tickUpper: params.tickUpper,
-      // Convert string amounts to bigint (assuming 7 decimals)
-      amount: BigInt(Math.floor(Number.parseFloat(params.token0Amount) * 1e7)),
-      sourceAccount: userAddress,
-      signTransaction,
-    })
-
-    return {
-      txHash: result.hash,
-      liquidity: BigInt(result.result.liquidityMinted || '0'),
-    }
-  }
-
-  /**
    * Execute a single-hop swap
    */
   async swapExactInputSingle(

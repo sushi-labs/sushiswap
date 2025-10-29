@@ -26,7 +26,6 @@ const config: PlaywrightTestConfig = {
   testMatch: [
     'pool.test.ts',
     'simple.test.ts',
-    // 'smart.test.ts',
     // 'cross-chain.test.ts',
   ],
   testIgnore: [],

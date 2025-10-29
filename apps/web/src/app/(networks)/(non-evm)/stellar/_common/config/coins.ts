@@ -45,32 +45,8 @@ export const USDC: Record<typeof NETWORK_NAME, Token> = {
   },
 }
 
-// HYPEa - Using as fake stablecoin for testnet until XLM/USDC pool exists
-export const HYPE: Record<typeof NETWORK_NAME, Token> = {
-  testnet: {
-    name: 'HYPE',
-    code: 'HYPE',
-    decimals: 7,
-    contract: 'CCKYIGXKXH7PBIUQ4D54OIB3ZB4QKCJEAG3M7PW3KDKT5RTGMXNK2PUT',
-    issuer: '',
-    org: 'hypotenuselabs',
-    domain: '',
-  },
-  mainnet: {
-    name: 'HYPE',
-    code: 'HYPE',
-    decimals: 7,
-    contract: '',
-    issuer: '',
-    org: '',
-    domain: '',
-  },
-}
-
 // Stablecoins available on each network
 export const STABLECOINS: Record<typeof NETWORK_NAME, Token[]> = {
-  // TODO: Replace HYPEa with USDC once XLM/USDC pool is created
-  // Currently using HYPEa as fake stable since HYPEa/XLM pool exists on testnet
-  testnet: [HYPE.testnet],
+  testnet: [USDC.testnet],
   mainnet: [USDC.mainnet],
 }

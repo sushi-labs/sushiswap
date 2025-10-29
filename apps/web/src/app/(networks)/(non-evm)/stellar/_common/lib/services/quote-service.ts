@@ -1,15 +1,12 @@
+import { DEFAULT_TIMEOUT } from '~stellar/_common/lib/soroban/constants'
+import { CONTRACT_ADDRESSES } from '~stellar/_common/lib/soroban/contract-addresses'
 import {
-  getPoolContractClient,
-  getRouterContractClient,
-} from '../soroban/client'
-import { DEFAULT_TIMEOUT } from '../soroban/constants'
-import {
-  CONTRACT_ADDRESSES,
-  NETWORK_CONFIG,
-} from '../soroban/contract-addresses'
-import { getFees, getPool } from '../soroban/dex-factory-helpers'
-import type { PoolBasicInfo } from '../soroban/pool-helpers'
-import type { Token } from '../types/token.type'
+  getFees,
+  getPool,
+} from '~stellar/_common/lib/soroban/dex-factory-helpers'
+import type { PoolBasicInfo } from '~stellar/_common/lib/soroban/pool-helpers'
+import type { Token } from '~stellar/_common/lib/types/token.type'
+import { getRouterContractClient } from '../soroban/client'
 
 /**
  * Quote parameters for single-hop swap
@@ -46,46 +43,6 @@ export interface SwapQuote {
  * Service for getting swap quotes on Stellar
  */
 export class QuoteService {
-  private networkPassphrase: string
-  private sorobanRpcUrl: string
-  private routerAddress: string
-
-  constructor() {
-    this.networkPassphrase = NETWORK_CONFIG.PASSPHRASE
-    this.sorobanRpcUrl = NETWORK_CONFIG.SOROBAN_URL
-    this.routerAddress = CONTRACT_ADDRESSES.ROUTER
-  }
-
-  /**
-   * Simulate transaction via direct RPC call
-   */
-  private async simulateViaRawRPC(txXdr: string): Promise<any> {
-    const rpcRequest = {
-      jsonrpc: '2.0',
-      id: Date.now(),
-      method: 'simulateTransaction',
-      params: {
-        transaction: txXdr,
-      },
-    }
-
-    const response = await fetch(this.sorobanRpcUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(rpcRequest),
-    })
-
-    const result = await response.json()
-
-    if (result.error) {
-      throw new Error(result.error.message || 'RPC simulation failed')
-    }
-
-    return result.result
-  }
-
   /**
    * Get quote for single-hop swap using pool state
    */
@@ -93,70 +50,62 @@ export class QuoteService {
     params: QuoteExactInputSingleParams,
   ): Promise<SwapQuote | null> {
     try {
-      // Get pool info to calculate quote from current state
-      const poolInfo = await getPool({
-        tokenA: params.tokenIn,
-        tokenB: params.tokenOut,
-        fee: params.fee,
+      const routerContractClient = getRouterContractClient({
+        contractId: CONTRACT_ADDRESSES.ROUTER,
+        // No publicKey needed for read-only quote queries
       })
-
-      if (!poolInfo) {
-        // Pool not found - return null to indicate no quote available
-        return null
-      }
-
-      // Use pool client directly (no more dynamic import needed)
-      const poolClient = getPoolContractClient({
-        contractId: poolInfo,
-      })
-
-      // Get pool slot0 for current price
-      const { result: slot0 } = await poolClient.slot0()
-
-      // Get liquidity
-      const { result: liquidity } = await poolClient.liquidity()
-
-      // Calculate output amount using UniswapV3 math
-      // This is a simplified calculation - in production you'd want exact math
-      const sqrtPriceX96 = BigInt(
-        slot0.sqrt_price_x96 || slot0.fee_protocol || 0,
+      const { result } = await routerContractClient.quote_exact_input_single(
+        {
+          params: {
+            token_in: params.tokenIn,
+            token_out: params.tokenOut,
+            fee: params.fee,
+            sqrt_price_limit_x96:
+              params.sqrtPriceLimitX96 ?? BigInt(2) ** 128n - 1n, // max u128
+            amount_in: params.amountIn,
+            // Unused by the contract function implementation, but required
+            amount_out_minimum: 0n,
+            deadline: BigInt(Math.floor(Date.now() / 1000) + 600), // 10 minutes
+            sender: 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF', // Zero address for quote
+            recipient:
+              'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF', // Zero address for quote
+          },
+        },
+        {
+          timeoutInSeconds: DEFAULT_TIMEOUT,
+          fee: 100,
+        },
       )
 
-      if (sqrtPriceX96 === 0n || BigInt(liquidity) === 0n) {
-        // Pool has no liquidity - return null to indicate no quote available
-        return null
+      if (result.isErr()) {
+        throw new Error(
+          `Single-hop quote simulation failed: ${result.unwrapErr().message}`,
+        )
       }
-
-      // Simple estimation: apply fee and use current price
-      // For more accurate quotes, implement full UniswapV3 swap math
-      const feeMultiplier = BigInt(1000000 - params.fee)
-      const amountInAfterFee = (params.amountIn * feeMultiplier) / 1000000n
-
-      // Use pool price to estimate output
-      // Note: This is simplified - real implementation should use tick math
-      const estimatedOutput = amountInAfterFee
 
       return {
-        amountOut: estimatedOutput,
+        amountOut: result.unwrap().amount,
         path: [params.tokenIn, params.tokenOut],
         fees: [params.fee],
-        priceImpact: 0,
+        priceImpact: 0, // Calculate based on pool reserves
         routeType: 'direct',
       }
-    } catch (_error) {
-      // Fallback: simple fee-based estimation
-      const feeMultiplier = (1000000 - params.fee) / 1000000
-      const estimatedOutput = BigInt(
-        Math.floor(Number(params.amountIn) * feeMultiplier),
-      )
+    } catch (error) {
+      console.error('Direct quote simulation failed:', error)
+    }
 
-      return {
-        amountOut: estimatedOutput,
-        path: [params.tokenIn, params.tokenOut],
-        fees: [params.fee],
-        priceImpact: 0,
-        routeType: 'direct',
-      }
+    // Fallback: simple fee-based estimation
+    const feeMultiplier = (1000000 - params.fee) / 1000000
+    const estimatedOutput = BigInt(
+      Math.floor(Number(params.amountIn) * feeMultiplier),
+    )
+
+    return {
+      amountOut: estimatedOutput,
+      path: [params.tokenIn, params.tokenOut],
+      fees: [params.fee],
+      priceImpact: 0,
+      routeType: 'direct',
     }
   }
 
@@ -234,7 +183,7 @@ export class QuoteService {
     const pools: PoolBasicInfo[] = []
 
     // Check each common fee tier
-    for (const fee of getFees()) {
+    for (const fee of await getFees()) {
       try {
         const pool = await getPool({
           tokenA: tokenA.contract,
@@ -255,48 +204,5 @@ export class QuoteService {
     }
 
     return pools
-  }
-
-  /**
-   * Convert SCVal map to object (like demo app)
-   */
-  private scMapToObject(scVal: any): any {
-    if (!scVal || typeof scVal.map !== 'function') {
-      return {}
-    }
-    const entries = scVal.map()
-    const result: any = {}
-    entries.forEach((entry: any) => {
-      const keyVal = entry.key()
-      let key = 'unknown'
-      if (keyVal && typeof keyVal.sym === 'function') {
-        key = this.scSymbolToString(keyVal.sym())
-      }
-      result[key] = entry.val()
-    })
-    return result
-  }
-
-  /**
-   * Convert SC symbol to string (like demo app)
-   */
-  private scSymbolToString(symbol: any): string {
-    if (!symbol) return ''
-    const raw = symbol.toString()
-    const match = raw.match(/Symbol\((.*)\)/)
-    return match ? match[1] : raw
-  }
-
-  /**
-   * Convert ScVal to i128 (like demo app)
-   */
-  private scValToI128(scVal: any): bigint {
-    if (!scVal || typeof scVal.i128 !== 'function') {
-      return 0n
-    }
-    const parts = scVal.i128()
-    const hi = BigInt(parts.hi().toString())
-    const lo = BigInt(parts.lo().toString())
-    return (hi << 64n) + lo
   }
 }

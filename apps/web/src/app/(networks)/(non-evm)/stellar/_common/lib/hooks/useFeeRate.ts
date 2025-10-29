@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import { getPoolContractClient } from '../soroban/client'
-import { useAllPools } from './pool/use-pool-info'
 
 export const useFeeRate = ({
   pairAddress,

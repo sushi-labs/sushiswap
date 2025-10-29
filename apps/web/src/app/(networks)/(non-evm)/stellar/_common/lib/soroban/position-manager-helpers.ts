@@ -1,11 +1,7 @@
 import * as StellarSdk from '@stellar/stellar-sdk'
 import { getPositionManagerContractClient } from './client'
 import { DEFAULT_TIMEOUT } from './constants'
-import {
-  CONTRACT_ADDRESSES,
-  NETWORK_CONFIG,
-  getPoolConfig,
-} from './contract-addresses'
+import { CONTRACT_ADDRESSES, NETWORK_CONFIG } from './contract-addresses'
 import { initializePoolIfNeeded } from './dex-factory-helpers'
 import { type PoolConfig, getPoolInfoFromContract } from './pool-helpers'
 import { submitViaRawRPC, waitForTransaction } from './rpc-transaction-helpers'
@@ -46,25 +42,14 @@ export async function mintPosition({
   amount1: bigint
 }> {
   try {
-    // Get pool configuration - first try hardcoded config, then query pool contract
-    let poolConfig: PoolConfig | null = getPoolConfig(poolAddress)
-
-    if (!poolConfig) {
-      console.log(
-        `Pool not in hardcoded config, querying contract for ${poolAddress}...`,
-      )
-      const contractConfig = await getPoolInfoFromContract(poolAddress)
-      if (!contractConfig) {
-        throw new Error(
-          `Pool configuration not found for ${poolAddress} and failed to query contract`,
-        )
-      }
-      poolConfig = contractConfig
-    }
+    // Get pool configuration by querying pool contract
+    const poolConfig = await getPoolInfoFromContract(poolAddress)
 
     // At this point, poolConfig is guaranteed to be non-null
     if (!poolConfig) {
-      throw new Error('Pool configuration is null')
+      throw new Error(
+        `Pool configuration not found for ${poolAddress} and failed to query contract`,
+      )
     }
 
     // Use poolConfig directly since we've verified it's not null

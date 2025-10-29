@@ -30,16 +30,6 @@ export const CONTRACT_ADDRESSES = {
 } as const
 
 /**
- * Get pool configuration by address
- * Always returns null - all pool detection is now dynamic via contract queries
- * @deprecated Use getPoolInfoFromContract from pool-helpers instead
- */
-export function getPoolConfig(_poolAddress: string) {
-  // All pool detection is now dynamic - no hardcoded configs
-  return null
-}
-
-/**
  * Network configuration
  */
 export const NETWORK_CONFIG = {

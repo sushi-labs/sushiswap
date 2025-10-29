@@ -3,7 +3,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { useSimpleSwapState } from '~stellar/_common/ui/Swap/simple/simple-swap-provider/simple-swap-provider'
 import { QuoteService } from '../../services/quote-service'
-import { CONTRACT_ADDRESSES } from '../../soroban/contract-addresses'
 import { findBestPath } from '../../soroban/dex-router-helpers'
 
 export interface PoolQuoteParams {

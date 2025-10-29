@@ -8,6 +8,7 @@ export interface Token {
   domain?: string
   icon?: string
   decimals: number
+  isStable?: boolean
 }
 
 export interface TokenWithBalance extends Token {

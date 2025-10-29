@@ -16,6 +16,17 @@ export function getBaseTokens(): Token[] {
 }
 
 /**
+ * Gets the stable tokens without any alteration
+ * @returns An array of Tokens
+ */
+export function getStableTokens(): Token[] {
+  const stableTokens: Token[] = tokens[NETWORK_NAME].filter(
+    (token) => token.isStable,
+  )
+  return stableTokens
+}
+
+/**
  * Get a token by its code
  * @param code - The code of the token
  * @returns A Token object
@@ -388,37 +399,6 @@ export async function getMultipleTokenAllowances(
     },
     {} as Record<string, bigint>,
   )
-}
-
-/**
- * Format token amount with decimals
- * @param amount - The amount in smallest units
- * @param decimals - The number of decimals
- * @returns Formatted amount as a string
- */
-export function formatTokenAmount(
-  amount: bigint,
-  decimals: number,
-  maxDecimals = 6,
-): string {
-  const divisor = BigInt(10 ** decimals)
-  const wholePart = amount / divisor
-  const fractionalPart = amount % divisor
-
-  if (fractionalPart === 0n) {
-    return wholePart.toString()
-  }
-
-  const fractionalStr = fractionalPart.toString().padStart(decimals, '0')
-
-  // Convert to number for rounding, then back to string
-  const fullNumber = Number(wholePart) + Number(fractionalStr) / 10 ** decimals
-
-  // Round to maxDecimals places and format
-  const rounded = Number(fullNumber.toFixed(maxDecimals))
-
-  // Remove trailing zeros
-  return rounded.toString().replace(/\.?0+$/, '')
 }
 
 /**

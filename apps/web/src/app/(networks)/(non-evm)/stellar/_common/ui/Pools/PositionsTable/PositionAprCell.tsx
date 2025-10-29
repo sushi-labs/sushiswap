@@ -11,6 +11,10 @@ export const PositionAprCell = ({ data }: { data: IPositionRowData }) => {
   const { pairAddress, token0, token1, reserve0, reserve1 } = data
   const { data: ownership, isLoading: isLoadingOwnership } = usePoolOwnership({
     pairAddress,
+    token0,
+    token1,
+    reserve0,
+    reserve1,
   })
   const ownedLp = Number(ownership?.ownership) ?? 0
   const ownedLpTokens = Number(ownership?.ownedSupply) ?? 0

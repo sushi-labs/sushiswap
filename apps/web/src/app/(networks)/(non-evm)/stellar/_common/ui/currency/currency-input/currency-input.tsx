@@ -70,11 +70,11 @@ export function CurrencyInput({
     }
   }
 
-  const { price: tokenPrice, isLoading: isPriceLoading } = useStablePrice({
-    currency: token,
+  const { data: tokenPrice, isLoading: isPriceLoading } = useStablePrice({
+    token,
   })
   // Show $0.00 when there's no price information instead of showing an error
-  const amountUSD = tokenPrice ? tokenPrice * Number(value) : 0
+  const amountUSD = tokenPrice ? Number(tokenPrice) * Number(value) : 0
 
   const showInsufficientBalance =
     insufficientBalance && !disableInsufficientBalanceError

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useStablePrice } from '~stellar/_common/lib/hooks/useStablePrice'
+import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 
 export const useLPUsdValue = ({
@@ -35,6 +35,6 @@ export const useLPUsdValue = ({
     },
     refetchOnMount: true,
     refetchOnWindowFocus: true,
-    enabled: !!token0 && !!token1 && !!reserve0 && !!reserve1,
+    enabled: true,
   })
 }

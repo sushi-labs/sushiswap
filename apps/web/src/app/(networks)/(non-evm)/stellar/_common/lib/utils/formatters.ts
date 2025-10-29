@@ -135,7 +135,7 @@ export const formatPercentage = (
  */
 export const formatPoolFee = (
   fee: bigint | number | string | null,
-  decimals = 1,
+  decimals = 2,
 ): string => {
   if (!fee) return '0%'
 

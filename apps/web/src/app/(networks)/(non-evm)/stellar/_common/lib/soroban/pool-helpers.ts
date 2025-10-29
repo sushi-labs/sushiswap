@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import { getStablePrice } from '../hooks/price/get-stable-price'
 import type { PoolInfo, PoolLiquidity, PoolReserves } from '../types/pool.type'
 import type { Token } from '../types/token.type'
 import { formatTokenAmount } from '../utils/formatters'
 import { getPoolContractClient } from './client'
 import { DEFAULT_TIMEOUT } from './constants'
-import { getPoolConfig } from './contract-addresses'
 import { discoverAllPools } from './dex-factory-helpers'
 import {
   getTokenBalance,
@@ -128,22 +127,7 @@ export async function getAllPools(): Promise<PoolInfo[]> {
  */
 export async function getPoolInfo(address: string): Promise<PoolInfo | null> {
   try {
-    let config: PoolConfig | null = getPoolConfig(address)
-
-    // If no hardcoded config exists, try to get pool info from the contract itself
-    if (!config) {
-      try {
-        const poolInfo = await getPoolInfoFromContract(address)
-        if (poolInfo) {
-          config = poolInfo
-        }
-      } catch (error) {
-        console.error(
-          `Failed to get pool info from contract for ${address}:`,
-          error,
-        )
-      }
-    }
+    const config = await getPoolInfoFromContract(address)
 
     if (!config) {
       console.warn(
@@ -196,31 +180,15 @@ export async function getPoolInfo(address: string): Promise<PoolInfo | null> {
     }
 
     // Calculate TVL (Total Value Locked)
-    // TODO: actually calculate it using real USD values
-    let tvl = 0
-    const isXLM = (code: string) => code === 'XLM'
+    const token0Price = await getStablePrice(token0).catch(() => '0')
+    const token1Price = await getStablePrice(token1).catch(() => '0')
 
-    if (isXLM(token0.code) || isXLM(token1.code)) {
-      // If one token is XLM, use XLM as the base price
-      const xlmPrice = 0.12 // Approximate XLM price in USD
-      const otherTokenPrice = 0.05 // Approximate price for test tokens
-
-      if (isXLM(token0.code)) {
-        tvl =
-          Number(reserves.token0.amount) * xlmPrice +
-          Number(reserves.token1.amount) * otherTokenPrice
-      } else {
-        tvl =
-          Number(reserves.token0.amount) * otherTokenPrice +
-          Number(reserves.token1.amount) * xlmPrice
-      }
-    } else {
-      // For non-XLM pairs, use a lower estimated value
-      const estimatedTokenPrice = 0.05 // Placeholder price in USD
-      tvl =
-        (Number(reserves.token0.amount) + Number(reserves.token1.amount)) *
-        estimatedTokenPrice
-    }
+    const tvl = (
+      (Number(reserves.token0.amount) / 10 ** token0.decimals) *
+        Number(token0Price) +
+      (Number(reserves.token1.amount) / 10 ** token1.decimals) *
+        Number(token1Price)
+    ).toFixed(2)
 
     return {
       name: `${token0.code}/${token1.code}`,
@@ -231,7 +199,7 @@ export async function getPoolInfo(address: string): Promise<PoolInfo | null> {
       tickSpacing: 60, // TODO: This should be the tick spacing
       liquidity,
       reserves,
-      tvl: formatTokenAmount(tvl, 7, 2),
+      tvl,
     }
   } catch (error) {
     // Pools with no liquidity or missing data are expected
@@ -270,22 +238,7 @@ export async function fetchPoolReserves(
   address: string,
 ): Promise<PoolReserves | null> {
   try {
-    let config: PoolConfig | null = getPoolConfig(address)
-
-    // If no hardcoded config exists, try to get pool info from the contract itself
-    if (!config) {
-      try {
-        const poolInfo = await getPoolInfoFromContract(address)
-        if (poolInfo) {
-          config = poolInfo
-        }
-      } catch (error) {
-        console.error(
-          `Failed to get pool info from contract for ${address}:`,
-          error,
-        )
-      }
-    }
+    const config = await getPoolInfoFromContract(address)
 
     if (!config) {
       throw new Error(`No configuration found for pool: ${address}`)
@@ -345,25 +298,7 @@ export async function getPoolBalances(
   address: string,
   connectedAddress: string,
 ): Promise<PoolReserves | null> {
-  let config: PoolConfig | null = getPoolConfig(address)
-
-  // If no hardcoded config exists, try to get pool info from the contract itself
-  if (!config) {
-    console.log(
-      `No hardcoded config for ${address} in getPoolBalances, querying contract...`,
-    )
-    try {
-      const poolInfo = await getPoolInfoFromContract(address)
-      if (poolInfo) {
-        config = poolInfo
-      }
-    } catch (error) {
-      console.error(
-        `Failed to get pool info from contract for ${address}:`,
-        error,
-      )
-    }
-  }
+  const config = await getPoolInfoFromContract(address)
 
   if (!config) {
     throw new Error(`No configuration found for pool: ${address}`)
@@ -594,25 +529,7 @@ export async function testPoolReserves(poolAddress: string) {
 
   try {
     // Get pool configuration
-    let config: PoolConfig | null = getPoolConfig(poolAddress)
-
-    // If no hardcoded config exists, try to get pool info from the contract itself
-    if (!config) {
-      console.log(
-        `No hardcoded config for ${poolAddress} in testPoolReserves, querying contract...`,
-      )
-      try {
-        const poolInfo = await getPoolInfoFromContract(poolAddress)
-        if (poolInfo) {
-          config = poolInfo
-        }
-      } catch (error) {
-        console.error(
-          `Failed to get pool info from contract for ${poolAddress}:`,
-          error,
-        )
-      }
-    }
+    const config = await getPoolInfoFromContract(poolAddress)
 
     if (!config) {
       console.error(`❌ No configuration found for pool: ${poolAddress}`)
@@ -725,28 +642,12 @@ export async function runPoolReservesTest() {
   try {
     // Test 1: Check if pool configuration exists
     console.log('\n📋 Test 1: Pool Configuration')
-    let config: PoolConfig | null = getPoolConfig(HYPE_XLM_POOL)
+    const config = await getPoolInfoFromContract(HYPE_XLM_POOL)
 
-    // If no hardcoded config exists, try to get pool info from the contract itself
     if (!config) {
-      console.log(
-        `No hardcoded config for ${HYPE_XLM_POOL} in runPoolReservesTest, querying contract...`,
+      console.error(
+        `❌ Pool configuration not found for pool: ${HYPE_XLM_POOL}`,
       )
-      try {
-        const poolInfo = await getPoolInfoFromContract(HYPE_XLM_POOL)
-        if (poolInfo) {
-          config = poolInfo
-        }
-      } catch (error) {
-        console.error(
-          `Failed to get pool info from contract for ${HYPE_XLM_POOL}:`,
-          error,
-        )
-      }
-    }
-
-    if (!config) {
-      console.error('❌ Pool configuration not found')
       return false
     }
     console.log('✅ Pool configuration found:', {
@@ -824,28 +725,10 @@ export async function debugTokenBalance() {
   try {
     // Step 1: Check pool configuration
     console.log('\n📋 Step 1: Pool Configuration')
-    let config: PoolConfig | null = getPoolConfig(HYPE_XLM_POOL)
-
-    // If no hardcoded config exists, try to get pool info from the contract itself
-    if (!config) {
-      console.log(
-        `No hardcoded config for ${HYPE_XLM_POOL} in debugTokenBalance, querying contract...`,
-      )
-      try {
-        const poolInfo = await getPoolInfoFromContract(HYPE_XLM_POOL)
-        if (poolInfo) {
-          config = poolInfo
-        }
-      } catch (error) {
-        console.error(
-          `Failed to get pool info from contract for ${HYPE_XLM_POOL}:`,
-          error,
-        )
-      }
-    }
+    const config = await getPoolInfoFromContract(HYPE_XLM_POOL)
 
     if (!config) {
-      console.error('❌ No pool configuration found')
+      console.error(`❌ No pool configuration found for pool: ${HYPE_XLM_POOL}`)
       return
     }
     console.log('✅ Pool configuration found')

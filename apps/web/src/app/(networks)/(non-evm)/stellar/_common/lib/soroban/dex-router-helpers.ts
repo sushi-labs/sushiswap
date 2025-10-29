@@ -1,18 +1,24 @@
-import { NETWORK_PASSPHRASE, RPC_URL } from '../constants'
 import type { Token } from '../types/token.type'
 import { ZERO_ADDRESS } from './constants'
-import { CONTRACT_ADDRESSES, getPoolConfig } from './contract-addresses'
 import { getFees, getPool } from './dex-factory-helpers'
-import { handleResult } from './handle-result'
 import type { PoolBasicInfo } from './pool-helpers'
 import { getTokenByCode } from './token-helpers'
 
-interface Route {
-  type: 'direct' | 'multihop'
-  path: Token[]
-  pools: PoolBasicInfo[]
-  fees: number[]
+type DirectRoute = {
+  type: 'direct'
+  path: [Token, Token]
+  pools: [PoolBasicInfo]
+  fees: [number]
 }
+
+type MultiHopRoute = {
+  type: 'multihop'
+  path: [Token, Token, Token]
+  pools: [PoolBasicInfo, PoolBasicInfo]
+  fees: [number, number]
+}
+
+export type Route = DirectRoute | MultiHopRoute
 
 // Find all pools between two tokens
 export async function findPoolsBetweenTokens(
@@ -27,9 +33,10 @@ export async function findPoolsBetweenTokens(
   // Note: CONTRACT_ADDRESSES.POOLS is not defined in the current structure
   // Skip known pools lookup for now and go straight to dynamic discovery
 
-  // Fall back to dynamic discovery
-  console.log(`🔍 Checking fees: ${getFees().join(', ')}`)
-  for (const fee of getFees()) {
+  const fees = await getFees()
+
+  console.log(`🔍 Checking fees: ${fees.join(', ')}`)
+  for (const fee of fees) {
     try {
       console.log(
         `🔍 Checking pool: ${tokenA.code}(${tokenA.contract}) ↔ ${tokenB.code}(${tokenB.contract}) with fee ${fee}`,
