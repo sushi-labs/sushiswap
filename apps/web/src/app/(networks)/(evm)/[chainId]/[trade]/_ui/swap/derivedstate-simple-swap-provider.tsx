@@ -23,6 +23,8 @@ import {
   EvmNative,
   defaultCurrency,
   defaultQuoteCurrency,
+  getEvmChainById,
+  isEvmChainId,
   isWNativeSupported,
 } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
@@ -141,21 +143,34 @@ const DerivedstateSimpleSwapProvider: FC<
   // Switch token0 and token1
   const switchTokens = useCallback(() => {
     const params = new URLSearchParams(defaultedParams)
-    const chainId1 = params.get('chainId1')
-    push(
-      `${
-        chainId1
-          ? replaceNetworkSlug(Number(chainId1) as EvmChainId, pathname)
-          : pathname
-      }?${createQueryString([
+    const chainId1 = +(params.get('chainId1') || 0)
+    const token0 = params.get('token0')
+    const token1 = params.get('token1')
+
+    if (!isEvmChainId(chainId1)) {
+      console.error('Invalid chainId1:', chainId1)
+      return
+    }
+
+    const pathSegments = pathname.split('/')
+    pathSegments[1] = getEvmChainById(chainId1).key
+
+    // Can safely cast as defaultedParams are always defined
+    history.pushState(
+      null,
+      '',
+      `${replaceNetworkSlug(
+        Number(chainId1) as EvmChainId,
+        pathname,
+      )}?${createQueryString([
         { name: 'swapAmount', value: null },
-        { name: 'token0', value: defaultedParams.get('token1') as string },
-        { name: 'token1', value: defaultedParams.get('token0') as string },
-        { name: 'chainId0', value: defaultedParams.get('chainId1') as string },
-        { name: 'chainId1', value: defaultedParams.get('chainId0') as string },
+        { name: 'token0', value: token1 as string },
+        { name: 'token1', value: token0 as string },
+        { name: 'chainId0', value: chainId1.toString() },
+        { name: 'chainId1', value: chainId0.toString() },
       ])}`,
     )
-  }, [createQueryString, defaultedParams, pathname, push])
+  }, [pathname, defaultedParams, chainId0, createQueryString])
 
   // Update the URL with a new token0
   const setToken0 = useCallback<(_token0: string | EvmCurrency) => void>(
@@ -171,7 +186,8 @@ const DerivedstateSimpleSwapProvider: FC<
 
       // Switch tokens if the new token0 is the same as the current token1
       if (
-        defaultedParams.get('token1')?.toLowerCase() === token0.toLowerCase()
+        defaultedParams.get('token1')?.toLowerCase() === token0.toLowerCase() &&
+        Number(chainId0) === chainId1
       ) {
         switchTokens()
       } else {
@@ -198,6 +214,7 @@ const DerivedstateSimpleSwapProvider: FC<
       push,
       switchTokens,
       createQuery,
+      chainId1,
     ],
   )
 
@@ -215,7 +232,8 @@ const DerivedstateSimpleSwapProvider: FC<
 
       // Switch tokens if the new token0 is the same as the current token1
       if (
-        defaultedParams.get('token0')?.toLowerCase() === token1.toLowerCase()
+        defaultedParams.get('token0')?.toLowerCase() === token1.toLowerCase() &&
+        chainId0 === Number(chainId1)
       ) {
         switchTokens()
       } else {
@@ -232,6 +250,7 @@ const DerivedstateSimpleSwapProvider: FC<
       }
     },
     [
+      chainId0,
       createQueryString,
       defaultedParams,
       localTokenCache,
