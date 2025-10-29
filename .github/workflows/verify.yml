@@ -21,6 +21,8 @@ jobs:
           ref: ${{ github.head_ref }}
       - name: Install dependencies
         uses: ./.github/actions/install
+        env: 
+          TRADING_VIEW_GH_READ_TOKEN: ${{ secrets.TRADING_VIEW_GH_READ_TOKEN }}
       - name: Format
         run: pnpm format
       - uses: stefanzweifel/git-auto-commit-action@v5
@@ -44,6 +46,8 @@ jobs:
           ref: ${{ github.head_ref }}
       - name: Install dependencies
         uses: ./.github/actions/install
+        env: 
+          TRADING_VIEW_GH_READ_TOKEN: ${{ secrets.TRADING_VIEW_GH_READ_TOKEN }}
       - name: Lint
         run: pnpm lint:fix
       - uses: stefanzweifel/git-auto-commit-action@v5
@@ -68,6 +72,8 @@ jobs:
 
       - name: Install dependencies
         uses: ./.github/actions/install
+        env: 
+          TRADING_VIEW_GH_READ_TOKEN: ${{ secrets.TRADING_VIEW_GH_READ_TOKEN }}
 
       - name: Build packages
         run: pnpm exec turbo run build --filter=./packages/*

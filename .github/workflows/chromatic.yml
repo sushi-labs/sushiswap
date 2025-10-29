@@ -20,6 +20,8 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/actions/install
+        env: 
+          TRADING_VIEW_GH_READ_TOKEN: ${{ secrets.TRADING_VIEW_GH_READ_TOKEN }}
       - name: Build storybook
         run: pnpm exec turbo run build --filter=@sushiswap/storybook^...
       - name: Publish to Chromatic
