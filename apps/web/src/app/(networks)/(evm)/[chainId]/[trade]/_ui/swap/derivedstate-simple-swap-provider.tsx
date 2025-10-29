@@ -186,7 +186,8 @@ const DerivedstateSimpleSwapProvider: FC<
 
       // Switch tokens if the new token0 is the same as the current token1
       if (
-        defaultedParams.get('token1')?.toLowerCase() === token0.toLowerCase()
+        defaultedParams.get('token1')?.toLowerCase() === token0.toLowerCase() &&
+        Number(chainId0) === chainId1
       ) {
         switchTokens()
       } else {
@@ -213,6 +214,7 @@ const DerivedstateSimpleSwapProvider: FC<
       push,
       switchTokens,
       createQuery,
+      chainId1,
     ],
   )
 
@@ -230,7 +232,8 @@ const DerivedstateSimpleSwapProvider: FC<
 
       // Switch tokens if the new token0 is the same as the current token1
       if (
-        defaultedParams.get('token0')?.toLowerCase() === token1.toLowerCase()
+        defaultedParams.get('token0')?.toLowerCase() === token1.toLowerCase() &&
+        chainId0 === Number(chainId1)
       ) {
         switchTokens()
       } else {
@@ -247,6 +250,7 @@ const DerivedstateSimpleSwapProvider: FC<
       }
     },
     [
+      chainId0,
       createQueryString,
       defaultedParams,
       localTokenCache,

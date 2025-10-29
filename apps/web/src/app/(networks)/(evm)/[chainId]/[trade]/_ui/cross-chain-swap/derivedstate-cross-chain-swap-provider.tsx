@@ -227,6 +227,9 @@ const DerivedstateCrossChainSwapProvider: FC<
     [createQueryString, pathname, push],
   )
 
+  // Derive chainId from defaultedParams
+  const chainId1 = Number(defaultedParams.get('chainId1')) as EvmChainId
+
   // Update the URL with a new token0
   const setToken0 = useCallback(
     async (_token0: string | EvmCurrency) => {
@@ -234,6 +237,14 @@ const DerivedstateCrossChainSwapProvider: FC<
       const token0 = getTokenAsString(_token0)
       if (typeof _token0 !== 'string') {
         const _chainId = _token0.chainId.toString()
+        if (
+          defaultedParams.get('token0')?.toLowerCase() ===
+            token0.toLowerCase() &&
+          chainId1 === Number(_chainId)
+        ) {
+          switchTokens()
+          return
+        }
         createQuery(
           [
             { name: 'token0', value: token0 },
@@ -247,16 +258,33 @@ const DerivedstateCrossChainSwapProvider: FC<
         )
       }
     },
-    [createQueryString, pathname, push, createQuery],
+    [
+      createQueryString,
+      pathname,
+      push,
+      createQuery,
+      defaultedParams,
+      chainId1,
+      switchTokens,
+    ],
   )
 
   // Update the URL with a new token1
   const setToken1 = useCallback(
     (_token1: string | EvmCurrency) => {
       // If entity is provided, parse it to a string
+
       const token1 = getTokenAsString(_token1)
       if (typeof _token1 !== 'string') {
         const _chainId = _token1.chainId.toString()
+        if (
+          defaultedParams.get('token0')?.toLowerCase() ===
+            token1.toLowerCase() &&
+          chainId0 === Number(_chainId)
+        ) {
+          switchTokens()
+          return
+        }
         createQuery([
           { name: 'token1', value: token1 },
           { name: 'chainId1', value: _chainId },
@@ -267,7 +295,15 @@ const DerivedstateCrossChainSwapProvider: FC<
         )
       }
     },
-    [createQueryString, pathname, push, createQuery],
+    [
+      createQueryString,
+      pathname,
+      push,
+      createQuery,
+      defaultedParams,
+      chainId0,
+      switchTokens,
+    ],
   )
 
   // Update the URL with both tokens
@@ -296,9 +332,6 @@ const DerivedstateCrossChainSwapProvider: FC<
     },
     [createQueryString, pathname, push],
   )
-
-  // Derive chainId from defaultedParams
-  const chainId1 = Number(defaultedParams.get('chainId1')) as EvmChainId
 
   // Derive token0
   const { data: token0, isInitialLoading: token0Loading } = useTokenWithCache({
