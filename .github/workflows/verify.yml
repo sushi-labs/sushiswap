@@ -106,6 +106,8 @@ jobs:
 
       - name: Install dependencies
         uses: ./.github/actions/install
+        env: 
+          TRADING_VIEW_GH_READ_TOKEN: ${{ secrets.TRADING_VIEW_GH_READ_TOKEN }}
       - name: Check types
         run: pnpm check
 
@@ -118,5 +120,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Install dependencies
         uses: ./.github/actions/install
+        env: 
+          TRADING_VIEW_GH_READ_TOKEN: ${{ secrets.TRADING_VIEW_GH_READ_TOKEN }}
       - name: Test packages
         run: pnpm exec turbo run test --filter=./packages/*
