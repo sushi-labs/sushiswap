@@ -13,3 +13,5 @@ runs:
 
     - name: Set up pnpm
       uses: sushi-labs/actions/.github/actions/pnpm@pnpm-10.4.1
+      env:
+        TRADING_VIEW_GH_READ_TOKEN: ${{ secrets.TRADING_VIEW_GH_READ_TOKEN }}
