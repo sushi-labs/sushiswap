@@ -176,7 +176,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
                   selectedNetwork={_selectedNetwork}
                   onNetworkSelect={_onNetworkSelect}
                   networkOptions={isBrowse ? SUPPORTED_CHAIN_IDS : undefined}
-                  triggerClassName="bg-slate-50 border !rounded-md !px-2 border-black/10 dark:bg-slate-800 dark:border-white/10"
+                  className="bg-slate-50 border !rounded-md !px-2 border-black/10 dark:bg-slate-800 dark:border-white/10"
                   testId="token-selector-network-menu-trigger"
                 />
               </div>
