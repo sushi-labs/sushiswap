@@ -83,6 +83,7 @@ export function TurnstileProvider({ children }: TurnstileProviderContextProps) {
         siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''}
         onError={console.error}
         onSuccess={(token) => setToken(token)}
+        options={{ size: 'invisible' }}
       />
       <TurnstileProviderContext.Provider
         value={useMemo(() => ({ jwt: jwt?.jwt }), [jwt])}
