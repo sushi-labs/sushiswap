@@ -68,6 +68,7 @@ export const SendWidget = ({
         hideClose
         className={classNames(
           'max-w-none md:!max-w-[500px] !rounded-none md:!rounded-xl md:h-auto h-[100dvh] !flex flex-col !p-5',
+          'border border-[#00000014] dark:border-[#FFFFFF14]',
           isBrowseView && 'md:!h-[470px]',
         )}
       >
