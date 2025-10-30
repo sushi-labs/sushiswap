@@ -55,10 +55,14 @@ export function usePoolGraph() {
               poolQueries.push(
                 (async () => {
                   try {
+                    // Order tokens (smaller address first) to match factory's expectations
+                    const [token0, token1] =
+                      tokenA < tokenB ? [tokenA, tokenB] : [tokenB, tokenA]
+
                     // Query pool address from factory
                     const poolResult = await factoryClient.get_pool({
-                      token_a: tokenA,
-                      token_b: tokenB,
+                      token_a: token0,
+                      token_b: token1,
                       fee,
                     })
 

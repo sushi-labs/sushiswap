@@ -66,7 +66,7 @@ export class SushiStellarService {
     const positions =
       await positionService.getUserPositionsWithFees(userAddress)
 
-    // Find position with matching pool tokens and tick range
+    // Find position with matching pool tokens, tick range, AND fee tier
     const existingPosition = positions.find((pos) => {
       const tokensMatch =
         (pos.token0 === poolConfig.token0.address &&
@@ -77,9 +77,12 @@ export class SushiStellarService {
       const ticksMatch =
         pos.tickLower === params.tickLower && pos.tickUpper === params.tickUpper
 
+      const feeMatches = pos.fee === poolConfig.fee
+
       console.log(`🔍 Checking position #${pos.tokenId}:`, {
         tokensMatch,
         ticksMatch,
+        feeMatches,
         posTokens: [pos.token0, pos.token1],
         configTokens: [poolConfig.token0.address, poolConfig.token1.address],
         posTicks: [pos.tickLower, pos.tickUpper],
@@ -88,7 +91,7 @@ export class SushiStellarService {
         configFee: poolConfig.fee,
       })
 
-      return tokensMatch && ticksMatch
+      return tokensMatch && ticksMatch && feeMatches
     })
 
     if (existingPosition) {
@@ -186,7 +189,11 @@ export class SushiStellarService {
     fees: number[]
     amountIn: bigint
   }): Promise<SwapQuote> {
-    return await this.quoteService.getQuoteExactInput(params)
+    const quote = await this.quoteService.getQuoteExactInput(params)
+    if (!quote) {
+      throw new Error('Failed to get quote for multi-hop swap')
+    }
+    return quote
   }
 
   /**

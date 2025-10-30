@@ -67,7 +67,7 @@ export function useMyPosition(userAddress?: string, poolAddress?: string) {
             fee: position.fee,
           })
           return [getPositionKey(position), poolAddress] as const
-        } catch (error) {
+        } catch (_error) {
           return [getPositionKey(position), null] as const
         }
       },
@@ -143,7 +143,7 @@ export function useMyPosition(userAddress?: string, poolAddress?: string) {
           }
 
           return mappedResults
-        } catch (error) {
+        } catch (_error) {
           // Return zeros for all positions in this pool
           return positions.map(
             (position) =>

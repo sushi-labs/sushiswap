@@ -162,15 +162,11 @@ export async function mintPosition({
 
     // Sign the transaction
     const signedXdr = await signTransaction(transactionXdr)
-    const signedTx = StellarSdk.TransactionBuilder.fromXDR(
-      signedXdr,
-      NETWORK_CONFIG.PASSPHRASE,
-    )
 
     console.log('Transaction signed. Submitting to network...')
 
-    // Submit the signed transaction via raw RPC (same as swap)
-    const txHash = await submitViaRawRPC(signedTx)
+    // Submit the signed XDR directly via raw RPC (same as swap)
+    const txHash = await submitViaRawRPC(signedXdr)
 
     console.log(`Transaction submitted: ${txHash}`)
     console.log('Waiting for confirmation...')

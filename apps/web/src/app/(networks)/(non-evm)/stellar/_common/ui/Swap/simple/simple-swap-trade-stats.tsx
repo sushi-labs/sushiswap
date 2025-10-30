@@ -15,7 +15,6 @@ export const SimpleSwapTradeStats = () => {
     isLoadingPrice,
     isPriceFetching,
     outputAmount,
-    slippageAmount,
     priceImpact,
   } = useSimpleSwapState()
 

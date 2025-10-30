@@ -195,9 +195,15 @@ export class PositionService {
         contractId: CONTRACT_ADDRESSES.FACTORY,
       })
 
+      // Order tokens (smaller address first) to match factory's expectations
+      const [token0, token1] =
+        position.token0 < position.token1
+          ? [position.token0, position.token1]
+          : [position.token1, position.token0]
+
       const poolAddress = await factoryClient.get_pool({
-        token_a: position.token0,
-        token_b: position.token1,
+        token_a: token0,
+        token_b: token1,
         fee: position.fee,
       })
 
@@ -368,13 +374,9 @@ export class PositionService {
 
     // Sign the transaction
     const signedXdr = await signTransaction(transactionXdr)
-    const signedTx = StellarSdk.TransactionBuilder.fromXDR(
-      signedXdr,
-      NETWORK_CONFIG.PASSPHRASE,
-    )
 
-    // Submit the signed transaction via raw RPC
-    const txHash = await submitViaRawRPC(signedTx)
+    // Submit the signed XDR directly via raw RPC
+    const txHash = await submitViaRawRPC(signedXdr)
 
     // Wait for confirmation
     const result = await waitForTransaction(txHash)

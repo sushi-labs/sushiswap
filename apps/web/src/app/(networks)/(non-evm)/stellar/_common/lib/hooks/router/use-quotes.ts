@@ -72,6 +72,11 @@ export const useQuoteExactInput = () => {
           amountIn: amountIn,
         })
 
+        if (!quote) {
+          console.error('❌ Multi-hop quote returned null')
+          return '0'
+        }
+
         console.log(
           `✅ Multi-hop quote complete: ${amountIn} → ${quote.amountOut}`,
         )

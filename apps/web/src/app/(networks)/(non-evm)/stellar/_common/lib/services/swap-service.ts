@@ -94,7 +94,7 @@ export class SwapService {
           params: {
             sender: userAddress,
             path: [params.tokenIn, params.tokenOut],
-            fees: [params.fee],
+            fees: [Number(params.fee)],
             recipient: params.recipient,
             amount_in: params.amountIn,
             amount_out_minimum: params.amountOutMinimum,
@@ -119,16 +119,10 @@ export class SwapService {
 
     // Sign the transaction - use the built transaction
     const unsignedXdr = assembledTransaction.built.toXDR()
-
     const signedXdr = await signTransaction(unsignedXdr)
 
-    const signedTx = StellarSdk.TransactionBuilder.fromXDR(
-      signedXdr,
-      this.networkPassphrase,
-    )
-
-    // Submit the signed transaction via raw RPC
-    const txHash = await submitViaRawRPC(signedTx)
+    // Submit the signed XDR directly via raw RPC
+    const txHash = await submitViaRawRPC(signedXdr)
 
     const result = await waitForTransaction(txHash)
 
@@ -154,6 +148,9 @@ export class SwapService {
       contractId: CONTRACT_ADDRESSES.ROUTER,
       publicKey: userAddress,
     })
+    // Ensure fees are proper u32 numbers (not bigints)
+    const feesAsNumbers = params.fees.map((fee) => Number(fee))
+
     let assembledTransaction
     try {
       assembledTransaction = await routerContractClient.swap_exact_input(
@@ -161,7 +158,7 @@ export class SwapService {
           params: {
             sender: userAddress,
             path: params.path,
-            fees: params.fees,
+            fees: feesAsNumbers,
             recipient: params.recipient,
             amount_in: params.amountIn,
             amount_out_minimum: params.amountOutMinimum,
@@ -185,15 +182,19 @@ export class SwapService {
     }
 
     // Sign the transaction - use the built transaction
-    const signedXdr = await signTransaction(assembledTransaction.built.toXDR())
-    const signedTx = StellarSdk.TransactionBuilder.fromXDR(
+    const unsignedXdr = assembledTransaction.built.toXDR()
+    const signedXdr = await signTransaction(unsignedXdr)
+
+    // Parse and re-serialize the signed XDR to normalize encoding
+    // This fixes issues where wallet-signed XDR has encoding quirks
+    const signedTxObj = StellarSdk.TransactionBuilder.fromXDR(
       signedXdr,
       this.networkPassphrase,
     )
+    const reSerializedXdr = signedTxObj.toXDR()
 
-    // Submit the signed transaction via raw RPC
-    const txHash = await submitViaRawRPC(signedTx)
-
+    // Submit the re-serialized XDR via raw RPC
+    const txHash = await submitViaRawRPC(reSerializedXdr)
     const result = await waitForTransaction(txHash)
 
     if (result.success) {
@@ -225,14 +226,6 @@ export class SwapService {
       const sqrtPriceLowerX96 = this.tickToSqrtPrice(tickLower)
       const sqrtPriceUpperX96 = this.tickToSqrtPrice(tickUpper)
 
-      // Determine price position
-      let pricePosition = 'within'
-      if (currentSqrtPriceX96 < sqrtPriceLowerX96) {
-        pricePosition = 'below'
-      } else if (currentSqrtPriceX96 >= sqrtPriceUpperX96) {
-        pricePosition = 'above'
-      }
-
       // Scale desired amounts to contract units (Stellar uses 7 decimals)
       const scaledAmount0 = BigInt(Math.floor(amount0 * 1e7))
 
@@ -248,7 +241,7 @@ export class SwapService {
 
       // Convert to string for contract call
       return liquidity.toString()
-    } catch (error) {
+    } catch (_error) {
       // Fallback to a simple calculation
       const avgAmount = Math.sqrt(amount0 * amount1)
       const fallback = Math.floor(avgAmount * 1e7).toString()
@@ -328,7 +321,7 @@ export class SwapService {
           return calculatedSqrtPrice
         }
       }
-    } catch (error) {
+    } catch (_error) {
       // Error fetching sqrt price from pool
     }
 

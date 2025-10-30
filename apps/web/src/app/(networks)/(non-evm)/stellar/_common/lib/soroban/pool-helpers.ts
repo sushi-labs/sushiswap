@@ -820,13 +820,11 @@ export async function getCurrentSqrtPrice(
         'Fetched sqrt price from slot0 (correct field):',
         sqrtPriceX96.toString(),
       )
-    } else if (slot0Map.fee_protocol && BigInt(slot0Map.fee_protocol) !== 0n) {
-      // The contract has the fields mixed up - sqrt price is in fee_protocol
-      sqrtPriceX96 = BigInt(slot0Map.fee_protocol)
-      console.log(
-        'Fetched sqrt price from slot0 (fee_protocol field - field names swapped):',
-        sqrtPriceX96.toString(),
-      )
+    } else if (
+      slot0Map.sqrt_price_x96 &&
+      Number(slot0Map.sqrt_price_x96) !== 0
+    ) {
+      sqrtPriceX96 = BigInt(slot0Map.sqrt_price_x96)
     }
 
     if (sqrtPriceX96) {

@@ -90,7 +90,7 @@ export async function createPool({
           fee: 100000,
         },
       )
-      .catch((simError) => {
+      .catch((simError: unknown) => {
         console.error('❌ Simulation error:', simError)
         throw new Error(
           `Simulation failed: ${simError instanceof Error ? simError.message : String(simError)}`,
@@ -366,7 +366,11 @@ export async function getPoolDirectSDK({
   fee: number
 }): Promise<string | null> {
   try {
-    console.log('Direct SDK approach - checking pool:', tokenA, tokenB, fee)
+    // Order tokens (smaller address first) - EXACTLY like the router and getPoolTransactionBuilder does
+    const [token0, token1] =
+      tokenA < tokenB ? [tokenA, tokenB] : [tokenB, tokenA]
+
+    console.log('Direct SDK approach - checking pool:', token0, token1, fee)
 
     // Create contract instance using direct SDK approach
     const factoryContractClient = getFactoryContractClient({
@@ -374,8 +378,8 @@ export async function getPoolDirectSDK({
       // No publicKey needed for read-only factory queries
     })
     const assembledTransaction = await factoryContractClient.get_pool({
-      token_a: tokenA,
-      token_b: tokenB,
+      token_a: token0,
+      token_b: token1,
       fee: fee,
     })
     const result = assembledTransaction.result
@@ -507,25 +511,56 @@ export async function getPoolsForBaseTokenPairs(): Promise<string[]> {
         fee: query.fee,
       })
 
-      // Validate pool address format
+      // Return pool with metadata for validation
       if (pool && pool.length === 56 && pool.startsWith('C')) {
-        return pool
+        return { pool, query }
       }
       return null
     }),
   )
 
   // Collect pools that exist
-  const pools = results
+  const poolsWithMetadata = results
     .filter(
-      (result): result is PromiseFulfilledResult<string> =>
-        result.status === 'fulfilled' && result.value !== null,
+      (
+        result,
+      ): result is PromiseFulfilledResult<{
+        pool: string
+        query: (typeof queries)[0]
+      }> => result.status === 'fulfilled' && result.value !== null,
     )
     .map((result) => result.value)
+
+  const pools = poolsWithMetadata.map((item) => item.pool)
 
   console.log(`✅ Found ${pools.length} pools from factory`)
   if (pools.length > 0) {
     console.log('  Pool addresses:', pools)
+    // Check for duplicate pool addresses
+    const uniquePools = new Set(pools)
+    if (uniquePools.size !== pools.length) {
+      console.warn(
+        `⚠️ WARNING: Found duplicate pool addresses! ${pools.length} pools but only ${uniquePools.size} unique addresses`,
+      )
+      // Log which queries returned the same pool
+      const poolToQueries = new Map<string, typeof queries>()
+      for (const { pool, query } of poolsWithMetadata) {
+        if (!poolToQueries.has(pool)) {
+          poolToQueries.set(pool, [])
+        }
+        poolToQueries.get(pool)!.push(query)
+      }
+      for (const [pool, queriesForPool] of poolToQueries.entries()) {
+        if (queriesForPool.length > 1) {
+          console.warn(`  Pool ${pool} was returned for multiple queries:`)
+          for (const q of queriesForPool) {
+            console.warn(
+              `    - ${q.tokenACode}/${q.tokenBCode} (fee: ${q.fee})`,
+            )
+          }
+        }
+      }
+    }
   }
   return pools
 }

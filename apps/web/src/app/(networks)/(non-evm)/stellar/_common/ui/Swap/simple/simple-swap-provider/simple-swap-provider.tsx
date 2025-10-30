@@ -1,6 +1,5 @@
 'use client'
 
-import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
   type FC,
   type ReactNode,
@@ -62,7 +61,6 @@ type Actions =
   | { type: 'setIsTransactionPending'; value: boolean }
 
 export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
-  const [slippageTolerance] = useSlippageTolerance()
   const baseTokens = getBaseTokens()
 
   const reducer = (state: State, action: Actions): State => {

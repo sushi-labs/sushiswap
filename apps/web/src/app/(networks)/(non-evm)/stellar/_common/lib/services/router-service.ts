@@ -215,6 +215,10 @@ export class RouterService {
       amountIn: amountIn,
     })
 
+    if (!quote) {
+      throw new Error('Failed to get quote for multi-hop swap')
+    }
+
     return quote
   }
 
