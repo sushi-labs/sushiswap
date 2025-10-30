@@ -34,7 +34,9 @@ import { ProtocolBadge } from './protocol-badge'
 export const CHAIN_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   id: 'chain',
   header: () => (
-    <span className="font-[600] text-slate-450 dark:text-slate-500">Chain</span>
+    <span className="font-semibold text-slate-450 dark:text-slate-500">
+      Chain
+    </span>
   ),
   cell: (props) => (
     <div className="px-2 2xl:min-w-[70px]">

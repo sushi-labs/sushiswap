@@ -12,7 +12,7 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import { formatUSD } from 'sushi'
+import { formatPercent, formatUSD } from 'sushi'
 import { Wrapper } from '../[trade]/_ui/swap/trade/wrapper'
 
 export const Pool24HVolume = ({
@@ -22,6 +22,8 @@ export const Pool24HVolume = ({
     'volumeUSDChange1d' in pool
       ? pool['volumeUSDChange1d']
       : pool['volumeUSD1dChange']
+
+  console.log('volumeChange', volumeChange)
   return (
     <Wrapper
       enableBorder
@@ -46,8 +48,7 @@ export const Pool24HVolume = ({
                     volumeChange > 0 ? 'text-green' : 'text-red',
                   )}
                 >
-                  ({volumeChange.toFixed(2)}
-                  %)
+                  {formatPercent(volumeChange / 100)}
                 </span>
               </div>
             ) : (

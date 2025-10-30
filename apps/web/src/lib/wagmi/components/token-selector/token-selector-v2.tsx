@@ -121,6 +121,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
         aria-describedby={undefined}
         className={classNames(
           'h-[80vh] !flex !flex-col md:!flex-row w-fit !p-0 md:min-w-[580px]',
+          'border border-[#00000014] dark:border-[#FFFFFF14]',
           !showMoreCurrencyInfo ? '!h-[440px]' : '',
         )}
         variant={variant ?? undefined}
