@@ -6,8 +6,6 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import type { Address } from 'viem'
 
-export const TempChainIds: TokenListV2ChainId[] = [1, 8453, 42161, 137]
-
 interface UseRecentSwaps {
   walletAddress: Address | undefined
   chainIds: TokenListV2ChainId[] | undefined

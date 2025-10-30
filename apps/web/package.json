@@ -7,15 +7,15 @@
     "build": "next build",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc",
+    "copy-trading-view-files": "sh scripts/trading-view/copy_charting_library_files.sh",
     "dev": "next dev --turbopack",
     "generate-swaps": "tsx test/swap/scripts/generate-swaps.ts",
+    "postinstall": "pnpm run copy-trading-view-files",
     "lint": "TIMING=1 next lint",
     "lint:fix": "TIMING=1 next lint --fix",
     "start": "next start",
     "test": "npx playwright test -c test/playwright.config.ts",
-    "test:unit": "vitest --watch=false src",
-    "postinstall": "pnpm run copy-trading-view-files",
-    "copy-trading-view-files": "sh scripts/trading-view/copy_charting_library_files.sh"
+    "test:unit": "vitest --watch=false src"
   },
   "dependencies": {
     "@aptos-labs/ts-sdk": "1.27.0",
@@ -118,7 +118,7 @@
     "nextjs-toploader": "3.8.16",
     "octokit": "2.1.0",
     "petra-plugin-wallet-adapter": "0.4.5",
-    "porto": "0.2.23",
+    "porto": "0.2.27",
     "react": "catalog:react",
     "react-dom": "catalog:react",
     "react-dropzone": "14.2.3",

@@ -12,8 +12,8 @@ import {
 } from 'react'
 import { useCreateQuery } from 'src/lib/hooks/useCreateQuery'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { type ChainKey, getChainByKey } from 'sushi'
-import { EvmChainId, STABLES, isEvmAddress } from 'sushi/evm'
+import type { ChainId } from 'sushi'
+import { EvmChainId, STABLES, defaultCurrency, isEvmAddress } from 'sushi/evm'
 import { defaultQuoteCurrency, isWNativeSupported } from 'sushi/evm'
 import { type EvmCurrency, EvmNative } from 'sushi/evm'
 import type { Address } from 'viem'
@@ -61,69 +61,57 @@ interface ChartProviderProps {
  */
 const ChartProvider: FC<ChartProviderProps> = ({ children }) => {
   const { chainId: _chainId } = useParams()
-
   const searchParams = useSearchParams()
+  const pathname = usePathname()
   const [localTokenCache, setLocalTokenCache] = useState<
     Map<string, EvmCurrency>
   >(new Map())
-  const pathname = usePathname()
   const [storedValue, setValue] = useLocalStorage('chart-token', '')
   const isMounted = useIsMounted()
   const { createQuery } = useCreateQuery()
-
-  const networkNameFromPath = pathname.split('/')[1]
-  const chainIdFromPath = getChainByKey(
-    networkNameFromPath as ChainKey,
-  )?.chainId
+  const chainIdFromPath = Number(_chainId) as ChainId
 
   const chainId0 = (
     Number(searchParams.get('chainId0')) !== 0
       ? Number(searchParams.get('chainId0'))
-      : chainIdFromPath
-        ? chainIdFromPath
-        : EvmChainId.ETHEREUM
+      : chainIdFromPath || EvmChainId.ETHEREUM
   ) as EvmChainId
 
   const chainId1 = (
     Number(searchParams.get('chainId1')) !== 0
       ? Number(searchParams.get('chainId1'))
-      : chainIdFromPath
-        ? chainIdFromPath
-        : EvmChainId.ETHEREUM
+      : chainIdFromPath || EvmChainId.ETHEREUM
   ) as EvmChainId
 
-  const defaultedParams = useMemo(() => {
-    const params = new URLSearchParams(searchParams)
-
-    if (!params.has('token1')) {
-      if (storedValue) {
-        if (isMounted) params.set('token1', storedValue)
-        return params
-      }
-      params.set('token1', getDefaultCurrency(chainId1))
+  // Only a string, not a whole URLSearchParams object
+  const token1Param = useMemo(() => {
+    const current = searchParams.get('token1')
+    if (current) {
+      // persist once mounted (won’t change on every render)
+      if (isMounted) setValue(current)
+      return current
     }
-    if (params.get('token1')) {
-      if (isMounted) setValue(params.get('token1') as string)
-    }
+    const def = storedValue || getDefaultCurrency(chainId1)
+    if (isMounted && !current) setValue(def)
+    return def
+    // Depend on primitives; avoid defaultedParams identity churn
+  }, [chainId1, isMounted, searchParams, storedValue, setValue])
 
-    return params
-  }, [chainId1, searchParams, storedValue, setValue, isMounted])
+  const token0Param = useMemo(
+    () => searchParams.get('token0') ?? '',
+    [searchParams],
+  )
 
-  const token0Param = defaultedParams.get('token0') as string
   const token0FromLocalCache = localTokenCache.get(token0Param)
-
   const { data: token0FromCache } = useTokenWithCache({
     chainId: chainId0,
     address: token0Param as Address,
     enabled: isEvmAddress(token0Param) && !token0FromLocalCache,
     keepPreviousData: false,
   })
-
   const token0 = token0FromLocalCache ?? token0FromCache
 
-  const token1Param = defaultedParams.get('token1') as string
   const token1FromLocalCache = localTokenCache.get(token1Param)
-
   const { data: token1FromCache, isLoading: token1Loading } = useTokenWithCache(
     {
       chainId: chainId1,
@@ -132,97 +120,94 @@ const ChartProvider: FC<ChartProviderProps> = ({ children }) => {
       keepPreviousData: false,
     },
   )
-  const token1 = token1FromLocalCache ?? token1FromCache
+  const token1Fetched = token1FromLocalCache ?? token1FromCache
+
+  // Memoize the native token so it doesn't become a new object each render
+  const nativeToken1 = useMemo(() => {
+    if (isWNativeSupported(chainId1)) {
+      return EvmNative.fromChainId(chainId1)
+    }
+    return undefined
+  }, [chainId1])
+
+  const token1Resolved: EvmCurrency | undefined = useMemo(() => {
+    const resolved = token1Param === 'NATIVE' ? nativeToken1 : token1Fetched
+
+    if (resolved && isStable(resolved)) {
+      return token0 ?? defaultCurrency[chainId0 as keyof typeof defaultCurrency]
+    }
+    return resolved
+  }, [token1Param, nativeToken1, token1Fetched, token0, chainId0])
 
   const push = useCallback((path: string) => {
     const newUrl = new URL(`${window.location.origin}${path}`).toString()
     window.history.pushState({}, '', newUrl)
   }, [])
 
+  const baseParamsString = useMemo(
+    () => searchParams.toString(),
+    [searchParams],
+  )
+
   const createQueryString = useCallback(
     (values: { name: string; value: string | null }[]) => {
-      const params = new URLSearchParams(defaultedParams)
-      values.forEach(({ name, value }) => {
-        if (value === null) {
-          params.delete(name)
-        } else {
-          params.set(name, value)
-        }
-      })
+      const params = new URLSearchParams(baseParamsString)
+      for (const { name, value } of values) {
+        if (value === null) params.delete(name)
+        else params.set(name, value)
+      }
       return params.toString()
     },
-    [defaultedParams],
+    [baseParamsString],
   )
 
-  const setToken1 = useCallback<(_token1: string | EvmCurrency) => void>(
-    async (_token1) => {
-      // If entity is provided, parse it to a string
-      let _chainId = ''
-      const token1 = getTokenAsString(_token1)
-      setValue(token1)
+  const setToken1 = useCallback(
+    (_token1: string | EvmCurrency) => {
+      const str = getTokenAsString(_token1)
+      setValue(str)
+      //if new token is token0 return early
+      if (str === token0Param) {
+        return
+      }
 
       if (typeof _token1 !== 'string') {
-        setLocalTokenCache(localTokenCache.set(token1, _token1))
-        _chainId = _token1.chainId.toString()
-      }
-
-      if (_chainId) {
+        // don't mutate the same Map reference; create a new Map to avoid subtle effects
+        setLocalTokenCache((prev) => {
+          const next = new Map(prev)
+          next.set(str, _token1)
+          return next
+        })
+        const _chainId = String(_token1.chainId)
         createQuery([
-          { name: 'token1', value: token1 },
+          { name: 'token1', value: str },
           { name: 'chainId1', value: _chainId },
         ])
-      } else {
-        push(
-          `${pathname}?${createQueryString([{ name: 'token1', value: token1 }])}`,
-        )
+        return
       }
+
+      // string path update
+      push(`${pathname}?${createQueryString([{ name: 'token1', value: str }])}`)
     },
-    [createQueryString, localTokenCache, pathname, push, setValue, createQuery],
+    [createQuery, createQueryString, pathname, token0Param, push, setValue],
   )
 
+  const contextValue = useMemo<State>(() => {
+    const effectiveToken1 =
+      token1Resolved ??
+      defaultQuoteCurrency[chainId1 as keyof typeof defaultQuoteCurrency]
+
+    return {
+      mutate: { setToken1 },
+      state: {
+        chainId: chainId1,
+        token1: effectiveToken1,
+        isLoading: token1Loading,
+      },
+    }
+  }, [chainId1, token1Resolved, token1Loading, setToken1])
+
   return (
-    <ChartContext.Provider
-      value={useMemo(() => {
-        const _token0 =
-          defaultedParams.get('token0') === 'NATIVE' &&
-          isWNativeSupported(chainId0 as EvmChainId)
-            ? EvmNative.fromChainId(chainId0 as EvmChainId)
-            : token0
-
-        let _token1 =
-          defaultedParams.get('token1') === 'NATIVE' &&
-          isWNativeSupported(chainId1)
-            ? EvmNative.fromChainId(chainId1)
-            : token1
-
-        if (isStable(_token1) && _token0 && !isStable(_token0)) {
-          _token1 = _token0
-        }
-
-        return {
-          mutate: {
-            setToken1,
-          },
-          state: {
-            chainId: chainId1,
-            token1:
-              _token1 ??
-              defaultQuoteCurrency[
-                chainId1 as keyof typeof defaultQuoteCurrency
-              ],
-            isLoading: token1Loading,
-          },
-        }
-      }, [
-        chainId1,
-        defaultedParams,
-        setToken1,
-        token1,
-        token1Loading,
-        token0,
-        chainId0,
-      ])}
-    >
+    <ChartContext.Provider value={contextValue}>
       {children}
     </ChartContext.Provider>
   )

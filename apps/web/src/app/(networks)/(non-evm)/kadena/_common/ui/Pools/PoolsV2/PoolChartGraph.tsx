@@ -47,18 +47,19 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
     timeFrame: PoolChartPeriodToTimeFrame[period],
   })
 
-  const [xData, yData]: [number[], number[]] = useMemo(() => {
+  const [xData, yData]: [string[], number[]] = useMemo(() => {
     if (!data?.charts) return [[], []]
 
     const chartData =
       data.charts[chart.toLowerCase() as keyof typeof data.charts] ?? []
     const cutoff = Date.now() - chartPeriods[period]
 
-    const [x, y] = chartData.reduce<[number[], number[]]>(
+    const [x, y] = chartData.reduce<[string[], number[]]>(
       (acc, point) => {
         const timestampMs = new Date(point.timestamp).getTime()
+        const time = `${new Date(point.timestamp).toISOString().split('T')?.[0]}T04:00:00.000Z`
         if (timestampMs >= cutoff) {
-          acc[0].push(timestampMs)
+          acc[0].push(time)
           acc[1].push(Number(point.value))
         }
         return acc
@@ -87,7 +88,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
 
       if (nameNodes[0]) {
         nameNodes[0].innerHTML = format(
-          new Date(Number.parseInt(name)),
+          new Date(name),
           `dd MMM yyyy${chartPeriods[period] < chartPeriods[PoolChartPeriod.Week] ? ' p' : ''}`,
         )
       }
@@ -115,8 +116,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
         },
         formatter: (params: any) => {
           onMouseOver({ name: params[0].name, value: params[0].value })
-
-          const date = new Date(Number(params?.[0]?.name))
+          const date = new Date(params?.[0]?.name)
           return `<div class="flex flex-col gap-0.5 paper bg-white/50 dark:bg-slate-800/50 px-3 py-2 rounded-xl overflow-hidden shadow-lg">
             <span class="text-sm dark:text-slate-50 text-gray-900 font-medium">${formatUSD(
               params[0].value,
