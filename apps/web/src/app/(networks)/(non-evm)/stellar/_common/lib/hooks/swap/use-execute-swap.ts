@@ -47,9 +47,6 @@ export const useExecuteSwap = () => {
       return { result, params }
     },
     onSuccess: ({ result, params }) => {
-      console.log('Swap executed successfully:', result)
-      console.log('Transaction hash:', result.txHash)
-
       // Show success toast with Stellar explorer link
       const amountOut =
         result.amountOut < 0n ? -result.amountOut : result.amountOut
@@ -72,13 +69,18 @@ export const useExecuteSwap = () => {
         timestamp: Date.now(),
       })
 
-      // Invalidate token balances
+      // Invalidate token balances and positions after swap
       queryClient.invalidateQueries({
         queryKey: ['token', 'balance'],
       })
+      queryClient.invalidateQueries({
+        queryKey: ['stellar', 'positions'],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['stellar', 'position-principals-batch'],
+      })
     },
     onError: (error) => {
-      console.error('Failed to execute swap:', error)
       createErrorToast(error.message || 'Failed to execute swap', false)
     },
   })
@@ -120,9 +122,6 @@ export const useExecuteMultiHopSwap = () => {
       return { result, params }
     },
     onSuccess: ({ result, params }) => {
-      console.log('Multi-hop swap executed successfully:', result)
-      console.log('Transaction hash:', result.txHash)
-
       // Show success toast
       const amountOut =
         result.amountOut < 0n ? -result.amountOut : result.amountOut
@@ -145,13 +144,18 @@ export const useExecuteMultiHopSwap = () => {
         timestamp: Date.now(),
       })
 
-      // Invalidate token balances
+      // Invalidate token balances and positions after swap
       queryClient.invalidateQueries({
         queryKey: ['token', 'balance'],
       })
+      queryClient.invalidateQueries({
+        queryKey: ['stellar', 'positions'],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['stellar', 'position-principals-batch'],
+      })
     },
     onError: (error) => {
-      console.error('Failed to execute multi-hop swap:', error)
       createErrorToast(
         error.message || 'Failed to execute multi-hop swap',
         false,

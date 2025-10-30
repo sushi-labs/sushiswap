@@ -83,17 +83,7 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
       case 'setSlippageAmount':
         return {
           ...state,
-          slippageAmount:
-            action.value -
-            (action.value *
-              Number.parseFloat(
-                slippageTolerance
-                  ? slippageTolerance === 'AUTO'
-                    ? DEFAULT_SLIPPAGE
-                    : slippageTolerance
-                  : DEFAULT_SLIPPAGE,
-              )) /
-              100,
+          slippageAmount: action.value, // Just store the raw amount, slippage is calculated in execute button
         }
       case 'setOutputAmount':
         return { ...state, outputAmount: action.value }

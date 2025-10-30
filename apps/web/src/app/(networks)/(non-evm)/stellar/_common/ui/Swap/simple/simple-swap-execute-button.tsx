@@ -1,12 +1,16 @@
 'use client'
 
+import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { PriceImpactWarning, SlippageWarning } from 'src/ui/common'
 import {
   useExecuteMultiHopSwap,
   useExecuteSwap,
 } from '~stellar/_common/lib/hooks/swap'
 import { findBestPath } from '~stellar/_common/lib/soroban/dex-router-helpers'
+import { requiresPriceImpactConfirmation } from '~stellar/_common/lib/utils/warning-severity'
 import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
 import { Checker } from '~stellar/_common/ui/checker'
 import { useStellarWallet } from '~stellar/providers'
@@ -14,20 +18,48 @@ import { useSimpleSwapState } from './simple-swap-provider/simple-swap-provider'
 
 export const SimpleSwapExecuteButton = () => {
   const { connectedAddress, isConnected } = useStellarWallet()
-  const { amount, token0, token1, outputAmount, slippageAmount } =
+  const { amount, token0, token1, outputAmount, priceImpact } =
     useSimpleSwapState()
   const executeSwap = useExecuteSwap()
   const executeMultiHopSwap = useExecuteMultiHopSwap()
+  const [checked, setChecked] = useState<boolean>(false)
+  const [, { slippageTolerance }] = useSlippageTolerance(
+    SlippageToleranceStorageKey.Swap,
+  )
+
+  const showPriceImpactWarning = requiresPriceImpactConfirmation(
+    priceImpact || undefined,
+  )
+
+  // Show slippage warning if slippage > 20%
+  const showSlippageWarning = useMemo(() => {
+    const slippage =
+      slippageTolerance === 'AUTO' ? 0.5 : Number(slippageTolerance)
+    return slippage > 20
+  }, [slippageTolerance])
+
+  // Reset checkbox when price impact changes
+  useEffect(() => {
+    if (checked && !showPriceImpactWarning) {
+      setChecked(false)
+    }
+  }, [checked, showPriceImpactWarning])
 
   // Calculate amount out minimum with slippage
   const amountOutMinimum = useMemo(() => {
     if (!outputAmount) return 0n
-    // Use the configured slippage amount from state
-    // slippageAmount is in percentage, convert to basis points
-    const slippageBps = slippageAmount ? Math.floor(slippageAmount * 100) : 50 // Default 0.5%
+
+    // Get slippage percentage (default 0.5%)
+    const slippagePercent =
+      slippageTolerance === 'AUTO' ? 0.5 : Number(slippageTolerance)
+
+    // Calculate minimum amount: amountOut * (1 - slippage/100)
+    // Using basis points for precision: (10000 - slippageBps) / 10000
+    const slippageBps = Math.floor(slippagePercent * 100) // Convert to basis points
     const minAmount = (outputAmount * BigInt(10000 - slippageBps)) / 10000n
+
     return minAmount
-  }, [outputAmount, slippageAmount])
+  }, [outputAmount, slippageTolerance])
 
   const handleSwap = async () => {
     if (
@@ -55,14 +87,11 @@ export const SimpleSwapExecuteButton = () => {
       const amountIn = toScaledBigInt(amount, token0.decimals)
 
       // Find the best route (direct or multi-hop)
-      console.log(`🔍 Finding route: ${token0.code} → ${token1.code}`)
       const route = await findBestPath(token0, token1)
 
       if (!route) {
         throw new Error('No route found between tokens')
       }
-
-      console.log(`✅ Route found: ${route.type}`, route)
 
       if (route.type === 'direct') {
         // Single-hop swap
@@ -82,12 +111,6 @@ export const SimpleSwapExecuteButton = () => {
         const path = route.path.map((token) => token.contract)
         const fees = route.fees
 
-        console.log(
-          `🔄 Executing multi-hop swap: ${route.path.map((t) => t.code).join(' → ')}`,
-        )
-        console.log(`Path: ${path.join(' → ')}`)
-        console.log(`Fees: ${fees.join(', ')}`)
-
         await executeMultiHopSwap.mutateAsync({
           userAddress: connectedAddress,
           path,
@@ -101,7 +124,8 @@ export const SimpleSwapExecuteButton = () => {
         })
       }
     } catch (error) {
-      console.error('Swap failed:', error)
+      console.error('Error executing swap:', error)
+      // Error is handled by the mutation hooks
     }
   }
 
@@ -133,28 +157,50 @@ export const SimpleSwapExecuteButton = () => {
     !token1 ||
     !amount ||
     Number(amount) <= 0 ||
+    !outputAmount ||
+    outputAmount === 0n ||
     executeSwap.isPending ||
-    executeMultiHopSwap.isPending
+    executeMultiHopSwap.isPending ||
+    (showPriceImpactWarning && !checked)
 
   return (
-    <div className="pt-4">
-      {!isConnected ? (
-        <ConnectWalletButton fullWidth size="xl" />
-      ) : (
-        <Checker.Amounts amounts={checkerAmount} disabled={isDisabled}>
-          <Button
-            fullWidth
-            size="xl"
-            onClick={handleSwap}
-            disabled={isDisabled}
-            loading={executeSwap.isPending || executeMultiHopSwap.isPending}
-          >
-            {executeSwap.isPending || executeMultiHopSwap.isPending
-              ? 'Executing Swap...'
-              : 'Swap'}
-          </Button>
-        </Checker.Amounts>
+    <>
+      <div className="pt-4">
+        {!isConnected ? (
+          <ConnectWalletButton fullWidth size="xl" />
+        ) : (
+          <Checker.Amounts amounts={checkerAmount} disabled={isDisabled}>
+            <Button
+              fullWidth
+              size="xl"
+              onClick={handleSwap}
+              disabled={isDisabled}
+              loading={executeSwap.isPending || executeMultiHopSwap.isPending}
+              variant={
+                showPriceImpactWarning && !checked ? 'destructive' : 'default'
+              }
+            >
+              {executeSwap.isPending || executeMultiHopSwap.isPending
+                ? 'Executing Swap...'
+                : showPriceImpactWarning && !checked
+                  ? 'Price impact too high'
+                  : amount &&
+                      Number(amount) > 0 &&
+                      (!outputAmount || outputAmount === 0n)
+                    ? 'No route found'
+                    : 'Swap'}
+            </Button>
+          </Checker.Amounts>
+        )}
+      </div>
+      {showSlippageWarning && <SlippageWarning className="mt-4" />}
+      {showPriceImpactWarning && (
+        <PriceImpactWarning
+          className="mt-4"
+          checked={checked}
+          setChecked={setChecked}
+        />
       )}
-    </div>
+    </>
   )
 }

@@ -1,5 +1,7 @@
 import { Transition } from '@headlessui/react'
+import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { SkeletonBox, classNames } from '@sushiswap/ui'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import {
   warningSeverity,
   warningSeverityClassName,
@@ -17,11 +19,26 @@ export const SimpleSwapTradeStats = () => {
     priceImpact,
   } = useSimpleSwapState()
 
+  const [, { slippageTolerance }] = useSlippageTolerance(
+    SlippageToleranceStorageKey.Swap,
+  )
+
   const loading =
     Boolean(isLoadingPrice && Number(amount) > 0) || isPriceFetching
 
   const outputSwapTokenAmount = outputAmount
     ? (Number(outputAmount) / 10 ** token1.decimals).toFixed(6)
+    : null
+
+  // Calculate minimum received with slippage
+  const minReceivedAmount = outputAmount
+    ? (() => {
+        const slippagePercent =
+          slippageTolerance === 'AUTO' ? 0.5 : Number(slippageTolerance)
+        const slippageBps = Math.floor(slippagePercent * 100)
+        const minAmount = (outputAmount * BigInt(10000 - slippageBps)) / 10000n
+        return (Number(minAmount) / 10 ** token1.decimals).toFixed(6)
+      })()
     : null
 
   return (
@@ -34,7 +51,7 @@ export const SimpleSwapTradeStats = () => {
       leaveFrom="transform translate-y-0 opacity-100"
       leaveTo="transform translate-y-[16px] opacity-0"
     >
-      <div className="w-full px-2 flex flex-col gap-1">
+      <div className="w-full px-2 pt-4 flex flex-col gap-1">
         <div className="flex justify-between items-center gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Price impact
@@ -78,8 +95,8 @@ export const SimpleSwapTradeStats = () => {
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
             {loading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
-            ) : slippageAmount !== null && slippageAmount > 0 ? (
-              `${(slippageAmount / 10 ** token1.decimals).toFixed(6)} ${token1.code}`
+            ) : minReceivedAmount ? (
+              `${minReceivedAmount} ${token1.code}`
             ) : (
               '0.00'
             )}

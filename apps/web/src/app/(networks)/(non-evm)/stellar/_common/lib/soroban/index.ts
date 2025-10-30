@@ -13,16 +13,15 @@ export * from './contract-addresses'
 // DEX Factory helpers
 export * from './dex-factory-helpers'
 
-// DEX Router helpers (excluding functions that conflict with pool helpers)
+// DEX Router helpers
 export {
-  executeSwap as executeRouterSwap,
-  executeSwapExactOutput as executeRouterSwapExactOutput,
-  executeSwapExactInputMulti,
-  executeSwapExactOutputMulti,
+  findBestPath,
+  findPoolsBetweenTokens,
   calculateAmountOutMinimum as calculateRouterAmountOutMinimum,
   calculateAmountInMaximum as calculateRouterAmountInMaximum,
   calculateDeadline,
 } from './dex-router-helpers'
+export type { Route } from './dex-router-helpers'
 
 // Pool helpers
 export * from './pool-helpers'

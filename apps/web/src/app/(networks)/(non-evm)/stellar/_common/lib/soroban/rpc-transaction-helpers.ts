@@ -77,17 +77,53 @@ export async function submitViaRawRPC(signedTx: any): Promise<string> {
         )
         console.error('Decoded error result:', errorResult)
 
-        // Try to extract the operation result
-        if (errorResult.result?.().results) {
-          const opResults = errorResult.result().results()
-          console.error('Operation results:', opResults)
+        // Get the transaction result code
+        const txResult = errorResult.result()
+        const txResultSwitch = txResult.switch()
+        console.error('Transaction result switch:', txResultSwitch)
+        console.error('Transaction result switch name:', txResultSwitch.name)
+        console.error('Transaction result switch value:', txResultSwitch.value)
 
-          opResults.forEach((opResult: any, index: number) => {
-            console.error(`Operation ${index} result:`, opResult)
-            if (opResult.value?.()) {
-              console.error(`Operation ${index} value:`, opResult.value())
+        // Try to extract the operation result
+        if (txResult) {
+          console.error('Error result value:', txResult)
+
+          // Try to get the fee charged
+          const feeCharged = errorResult.feeCharged()
+          if (feeCharged !== undefined) {
+            console.error('Fee charged:', feeCharged.toString())
+          }
+
+          // Check for operation results
+          if (
+            txResultSwitch.name === 'txFailed' ||
+            txResultSwitch.name === 'txSuccess'
+          ) {
+            try {
+              const opResults = txResult.results()
+              console.error('Operation results:', opResults)
+
+              if (Array.isArray(opResults)) {
+                opResults.forEach((opResult: any, index: number) => {
+                  console.error(`Operation ${index} result:`, opResult)
+                  const opResultTr = opResult.tr?.()
+                  if (opResultTr) {
+                    console.error(`Operation ${index} tr:`, opResultTr)
+                    const opSwitch = opResultTr.switch?.()
+                    if (opSwitch) {
+                      console.error(
+                        `Operation ${index} switch:`,
+                        opSwitch.name,
+                        opSwitch.value,
+                      )
+                    }
+                  }
+                })
+              }
+            } catch (opError) {
+              console.error('Could not extract operation results:', opError)
             }
-          })
+          }
         }
       } catch (decodeError) {
         console.error('Failed to decode error XDR:', decodeError)

@@ -92,27 +92,16 @@ export class QuoteService {
       }
     } catch (error) {
       console.error('Direct quote simulation failed:', error)
-    }
-
-    // Fallback: simple fee-based estimation
-    const feeMultiplier = (1000000 - params.fee) / 1000000
-    const estimatedOutput = BigInt(
-      Math.floor(Number(params.amountIn) * feeMultiplier),
-    )
-
-    return {
-      amountOut: estimatedOutput,
-      path: [params.tokenIn, params.tokenOut],
-      fees: [params.fee],
-      priceImpact: 0,
-      routeType: 'direct',
+      return null
     }
   }
 
   /**
    * Get quote for multi-hop swap
    */
-  async getQuoteExactInput(params: QuoteExactInputParams): Promise<SwapQuote> {
+  async getQuoteExactInput(
+    params: QuoteExactInputParams,
+  ): Promise<SwapQuote | null> {
     try {
       const routerContractClient = getRouterContractClient({
         contractId: CONTRACT_ADDRESSES.ROUTER,
@@ -153,23 +142,7 @@ export class QuoteService {
       }
     } catch (error) {
       console.error('Multi-hop quote simulation failed:', error)
-    }
-
-    // Fallback: estimate with fees
-    let estimatedOutput = BigInt(params.amountIn.toString())
-    for (const fee of params.fees) {
-      const feeMultiplier = (1000000 - fee) / 1000000
-      estimatedOutput = BigInt(
-        Math.floor(Number(estimatedOutput) * feeMultiplier),
-      )
-    }
-
-    return {
-      amountOut: estimatedOutput,
-      path: params.path,
-      fees: params.fees,
-      priceImpact: 0,
-      routeType: 'multihop',
+      return null
     }
   }
 

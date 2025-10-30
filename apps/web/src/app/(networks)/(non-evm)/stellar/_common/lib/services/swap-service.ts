@@ -87,26 +87,41 @@ export class SwapService {
       publicKey: userAddress,
     })
 
-    const assembledTransaction = await routerContractClient.swap_exact_input(
-      {
-        params: {
-          sender: userAddress,
-          path: [params.tokenIn, params.tokenOut],
-          fees: [params.fee],
-          recipient: params.recipient,
-          amount_in: params.amountIn,
-          amount_out_minimum: params.amountOutMinimum,
-          deadline: BigInt(params.deadline),
+    let assembledTransaction
+    try {
+      assembledTransaction = await routerContractClient.swap_exact_input(
+        {
+          params: {
+            sender: userAddress,
+            path: [params.tokenIn, params.tokenOut],
+            fees: [params.fee],
+            recipient: params.recipient,
+            amount_in: params.amountIn,
+            amount_out_minimum: params.amountOutMinimum,
+            deadline: BigInt(params.deadline),
+          },
         },
-      },
-      {
-        timeoutInSeconds: DEFAULT_TIMEOUT,
-        fee: 100000,
-      },
-    )
+        {
+          timeoutInSeconds: DEFAULT_TIMEOUT,
+          fee: 100000,
+        },
+      )
+    } catch (simulationError) {
+      throw new Error(
+        `Transaction simulation failed: ${simulationError instanceof Error ? simulationError.message : String(simulationError)}`,
+      )
+    }
 
-    // Sign the transaction
-    const signedXdr = await signTransaction(assembledTransaction.toXDR())
+    // Check if the transaction was built properly
+    if (!assembledTransaction.built) {
+      throw new Error('Transaction was not built - missing Soroban data')
+    }
+
+    // Sign the transaction - use the built transaction
+    const unsignedXdr = assembledTransaction.built.toXDR()
+
+    const signedXdr = await signTransaction(unsignedXdr)
+
     const signedTx = StellarSdk.TransactionBuilder.fromXDR(
       signedXdr,
       this.networkPassphrase,
@@ -115,20 +130,14 @@ export class SwapService {
     // Submit the signed transaction via raw RPC
     const txHash = await submitViaRawRPC(signedTx)
 
-    console.log(`Transaction submitted: ${txHash}`)
-    console.log('Waiting for confirmation...')
-
     const result = await waitForTransaction(txHash)
 
     if (result.success) {
-      console.log('✅ Swap executed successfully!')
-
       return {
         txHash,
         amountOut: BigInt(params.amountOutMinimum),
       }
     } else {
-      console.error('Transaction failed:', result.error)
       throw new Error(`Transaction failed: ${JSON.stringify(result.error)}`)
     }
   }
@@ -145,26 +154,38 @@ export class SwapService {
       contractId: CONTRACT_ADDRESSES.ROUTER,
       publicKey: userAddress,
     })
-    const assembledTransaction = await routerContractClient.swap_exact_input(
-      {
-        params: {
-          sender: userAddress,
-          path: params.path,
-          fees: params.fees,
-          recipient: params.recipient,
-          amount_in: params.amountIn,
-          amount_out_minimum: params.amountOutMinimum,
-          deadline: BigInt(params.deadline),
+    let assembledTransaction
+    try {
+      assembledTransaction = await routerContractClient.swap_exact_input(
+        {
+          params: {
+            sender: userAddress,
+            path: params.path,
+            fees: params.fees,
+            recipient: params.recipient,
+            amount_in: params.amountIn,
+            amount_out_minimum: params.amountOutMinimum,
+            deadline: BigInt(params.deadline),
+          },
         },
-      },
-      {
-        timeoutInSeconds: DEFAULT_TIMEOUT,
-        fee: 100000,
-      },
-    )
+        {
+          timeoutInSeconds: DEFAULT_TIMEOUT,
+          fee: 100000,
+        },
+      )
+    } catch (simulationError) {
+      throw new Error(
+        `Transaction simulation failed: ${simulationError instanceof Error ? simulationError.message : String(simulationError)}`,
+      )
+    }
 
-    // Sign the transaction
-    const signedXdr = await signTransaction(assembledTransaction.toXDR())
+    // Check if the transaction was built properly
+    if (!assembledTransaction.built) {
+      throw new Error('Transaction was not built - missing Soroban data')
+    }
+
+    // Sign the transaction - use the built transaction
+    const signedXdr = await signTransaction(assembledTransaction.built.toXDR())
     const signedTx = StellarSdk.TransactionBuilder.fromXDR(
       signedXdr,
       this.networkPassphrase,
@@ -173,20 +194,14 @@ export class SwapService {
     // Submit the signed transaction via raw RPC
     const txHash = await submitViaRawRPC(signedTx)
 
-    console.log(`Transaction submitted: ${txHash}`)
-    console.log('Waiting for confirmation...')
-
     const result = await waitForTransaction(txHash)
 
     if (result.success) {
-      console.log('✅ Swap executed successfully!')
-
       return {
         txHash,
         amountOut: BigInt(params.amountOutMinimum),
       }
     } else {
-      console.error('Transaction failed:', result.error)
       throw new Error(`Transaction failed: ${JSON.stringify(result.error)}`)
     }
   }
@@ -202,57 +217,28 @@ export class SwapService {
     tickLower: number,
     tickUpper: number,
   ): Promise<string> {
-    console.log('=== calculateLiquidityFromAmounts START ===')
-    console.log('Input params:', {
-      poolAddress,
-      amount0,
-      amount1,
-      tickLower,
-      tickUpper,
-    })
-
     try {
       // Get current sqrt price from pool using helper
-      console.log('Fetching current sqrt price from pool...')
       const currentSqrtPriceX96 = await this.getCurrentSqrtPrice(poolAddress)
-      console.log(
-        'Fetched currentSqrtPriceX96:',
-        currentSqrtPriceX96.toString(),
-      )
 
       // Calculate sqrt prices for tick boundaries
       const sqrtPriceLowerX96 = this.tickToSqrtPrice(tickLower)
       const sqrtPriceUpperX96 = this.tickToSqrtPrice(tickUpper)
-      console.log('Calculated sqrt prices:', {
-        lower: sqrtPriceLowerX96.toString(),
-        upper: sqrtPriceUpperX96.toString(),
-        current: currentSqrtPriceX96.toString(),
-      })
 
       // Determine price position
       let pricePosition = 'within'
       if (currentSqrtPriceX96 < sqrtPriceLowerX96) {
         pricePosition = 'below'
-        console.log('Price is BELOW range')
       } else if (currentSqrtPriceX96 >= sqrtPriceUpperX96) {
         pricePosition = 'above'
-        console.log('Price is ABOVE range')
-      } else {
-        console.log('Price is WITHIN range')
       }
 
       // Scale desired amounts to contract units (Stellar uses 7 decimals)
       const scaledAmount0 = BigInt(Math.floor(amount0 * 1e7))
-      console.log('Scaling amounts:', {
-        amount0,
-        scaledAmount0: scaledAmount0.toString(),
-        calculation: `${amount0} * 1e7 = ${scaledAmount0}`,
-      })
 
       // Calculate liquidity from token0 amount only
       // This ensures the user gets exactly the token0 amount they requested
       // The contract will then calculate the exact token1 amount needed
-      console.log('Calling calculateLiquidityFromAmount0...')
       const liquidity = this.calculateLiquidityFromAmount0(
         scaledAmount0,
         currentSqrtPriceX96,
@@ -260,24 +246,12 @@ export class SwapService {
         sqrtPriceUpperX96,
       )
 
-      console.log('Liquidity calculation for addLiquidity:', {
-        desiredAmount0: amount0,
-        scaledAmount0: scaledAmount0.toString(),
-        currentSqrtPrice: currentSqrtPriceX96.toString(),
-        liquidity: liquidity.toString(),
-        pricePosition,
-      })
-
-      console.log('=== calculateLiquidityFromAmounts END ===')
       // Convert to string for contract call
       return liquidity.toString()
     } catch (error) {
-      console.error('Error calculating liquidity:', error)
-      console.error('Error stack:', error instanceof Error ? error.stack : '')
       // Fallback to a simple calculation
       const avgAmount = Math.sqrt(amount0 * amount1)
       const fallback = Math.floor(avgAmount * 1e7).toString()
-      console.log('Using fallback calculation:', fallback)
       return fallback
     }
   }
@@ -326,9 +300,6 @@ export class SwapService {
         )
         const slot0Map = this.scMapToObject(slot0Val)
 
-        console.log('slot0Map:', slot0Map)
-        console.log('Raw slot0 result:', result.result.results[0])
-
         // Try to get sqrt_price_x96 directly
         if (slot0Map.sqrt_price_x96) {
           const u256Val = slot0Map.sqrt_price_x96
@@ -344,7 +315,6 @@ export class SwapService {
 
             const sqrtPrice =
               (hiHi << 192n) | (hiLo << 128n) | (loHi << 64n) | loLo
-            console.log('Fetched sqrt price from slot0:', sqrtPrice.toString())
             return sqrtPrice
           }
         }
@@ -355,20 +325,11 @@ export class SwapService {
           const tick =
             typeof tickVal.i32 === 'function' ? tickVal.i32() : Number(tickVal)
           const calculatedSqrtPrice = this.tickToSqrtPrice(tick)
-          console.log(
-            `Using sqrt price calculated from tick ${tick}:`,
-            calculatedSqrtPrice.toString(),
-          )
           return calculatedSqrtPrice
         }
       }
     } catch (error) {
-      console.error('Failed to fetch sqrt price from pool:', error)
-      console.error(
-        'Error details:',
-        error instanceof Error ? error.message : String(error),
-        error instanceof Error ? error.stack : '',
-      )
+      // Error fetching sqrt price from pool
     }
 
     throw new Error(
@@ -395,14 +356,6 @@ export class SwapService {
     sqrtPriceLowerX96: bigint,
     sqrtPriceUpperX96: bigint,
   ): bigint {
-    console.log('=== calculateLiquidityFromAmount0 START ===')
-    console.log('Input params:', {
-      scaledAmount0: scaledAmount0.toString(),
-      currentSqrtPriceX96: currentSqrtPriceX96.toString(),
-      sqrtPriceLowerX96: sqrtPriceLowerX96.toString(),
-      sqrtPriceUpperX96: sqrtPriceUpperX96.toString(),
-    })
-
     // The contract does two operations with rounding up:
     // 1. product = mul_div_rounding_up(L << 96, price_diff, upper)
     // 2. amount = div_rounding_up(product, lower_or_current)
@@ -410,33 +363,19 @@ export class SwapService {
     // But in practice with large numbers, it's proportional to the divisions
 
     if (currentSqrtPriceX96 < sqrtPriceLowerX96) {
-      console.log('Price is BELOW range - only token0 needed')
       // Below range
       // Work backwards from: amount0 = ((L << 96) * (upper - lower) / upper) / lower
       // Without rounding: L = (amount0 * lower * upper) / ((upper - lower) * 2^96)
       const numerator = scaledAmount0 * sqrtPriceLowerX96 * sqrtPriceUpperX96
       const denominator = (sqrtPriceUpperX96 - sqrtPriceLowerX96) << 96n
-      console.log('Calculation:', {
-        numerator: numerator.toString(),
-        denominator: denominator.toString(),
-        rawLiquidity: (numerator / denominator).toString(),
-      })
       // Reduce liquidity by ~0.2% to account for rounding up (empirical adjustment)
       const liquidity = numerator / denominator
       const adjustedLiquidity = (liquidity * 998n) / 1000n // Reduce by 0.2%
-      console.log(
-        'Adjusted liquidity (reduced by 0.2%):',
-        adjustedLiquidity.toString(),
-      )
-      console.log('=== calculateLiquidityFromAmount0 END ===')
       return adjustedLiquidity
     } else if (currentSqrtPriceX96 >= sqrtPriceUpperX96) {
-      console.log('Price is ABOVE range - only token1 needed, returning 0')
-      console.log('=== calculateLiquidityFromAmount0 END ===')
       // Above range: only token1 needed, return 0
       return BigInt(0)
     } else {
-      console.log('Price is WITHIN range')
       // Within range
       // Contract does: product = (L << 96) * (upper - current) / upper, then amount0 = product / current
       // Reverse step 2: product = amount0 * current
@@ -445,12 +384,6 @@ export class SwapService {
       const numerator = scaledAmount0 * currentSqrtPriceX96 * sqrtPriceUpperX96
       const denominator = (sqrtPriceUpperX96 - currentSqrtPriceX96) << 96n
       const liquidity = numerator / denominator
-      console.log('Calculation:', {
-        numerator: numerator.toString(),
-        denominator: denominator.toString(),
-        liquidity: liquidity.toString(),
-      })
-      console.log('=== calculateLiquidityFromAmount0 END ===')
       return liquidity
     }
   }

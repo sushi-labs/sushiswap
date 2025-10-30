@@ -35,7 +35,7 @@ export function usePosition(tokenId: number | undefined) {
     queryKey: ['stellar', 'positions', 'single', tokenId],
     queryFn: async () => {
       if (!tokenId) return null
-      return await positionService.getPositionWithFees(tokenId)
+      return await positionService.getPosition(tokenId)
     },
     enabled: !!tokenId,
     staleTime: 1000 * 60, // 1 minute

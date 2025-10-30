@@ -1,5 +1,8 @@
 import * as StellarSdk from '@stellar/stellar-sdk'
-import type { UserPositionInfo } from '@sushiswap/stellar-contract-binding-position-manager'
+import type {
+  PositionTuple,
+  UserPositionInfo,
+} from '@sushiswap/stellar-contract-binding-position-manager'
 import {
   getFactoryContractClient,
   getPoolContractClient,
@@ -10,6 +13,7 @@ import {
   CONTRACT_ADDRESSES,
   NETWORK_CONFIG,
 } from '../soroban/contract-addresses'
+import { handleResult } from '../soroban/handle-result'
 import {
   submitViaRawRPC,
   waitForTransaction,
@@ -83,20 +87,47 @@ export class PositionService {
   }
 
   /**
-   * Get a single position with live fee calculations
+   * Get a single position by token ID
+   * Returns raw position data from the positions() function
    */
-  async getPositionWithFees(tokenId: number): Promise<PositionInfo | null> {
+  async getPosition(tokenId: number): Promise<PositionInfo | null> {
     const positionManagerClient = getPositionManagerContractClient({
       contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
       // No publicKey needed for read-only operations that don't require user context
     })
 
     try {
-      const { result } = await positionManagerClient.get_position_with_fees({
+      const { result } = await positionManagerClient.positions({
         token_id: tokenId,
       })
 
-      return formatPositionInfo(result)
+      // positions() returns a tuple: [nonce, operator, token0, token1, fee, tick_lower, tick_upper, liquidity, feeGrowth0, feeGrowth1, tokensOwed0, tokensOwed1]
+      const [
+        _nonce,
+        _operator,
+        token0,
+        token1,
+        fee,
+        tickLower,
+        tickUpper,
+        liquidity,
+        ,
+        ,
+        tokensOwed0,
+        tokensOwed1,
+      ] = handleResult(result)
+
+      return {
+        tokenId,
+        token0,
+        token1,
+        tickLower,
+        tickUpper,
+        liquidity,
+        tokensOwed0,
+        tokensOwed1,
+        fee,
+      }
     } catch (error) {
       console.error(`Failed to get position ${tokenId}:`, error)
       return null
@@ -104,45 +135,19 @@ export class PositionService {
   }
 
   /**
-   * Get multiple positions with live fee calculations
+   * Get all positions owned by a user
+   * Uses the get_user_positions function which returns UserPositionInfo[]
    */
-  async getPositionsWithFees(tokenIds: number[]): Promise<PositionInfo[]> {
-    if (tokenIds.length === 0) return []
-
-    const positionManagerClient = getPositionManagerContractClient({
-      contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
-    })
-
-    try {
-      const { result } = await positionManagerClient.get_positions_with_fees({
-        token_ids: tokenIds,
-      })
-
-      return result.map(formatPositionInfo)
-    } catch (error) {
-      console.error('Failed to get positions with fees:', error)
-      return []
-    }
-  }
-
-  /**
-   * Get all positions owned by a user with live fee calculations
-   * Uses two-step approach to avoid budget exceeded errors:
-   * 1. Get token IDs (lightweight)
-   * 2. Fetch individual position details
-   */
-  async getUserPositionsWithFees(
+  async getUserPositions(
     userAddress: string,
     skip = 0,
     take = 100,
   ): Promise<PositionInfo[]> {
     const positionManagerClient = getPositionManagerContractClient({
       contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
-      // No publicKey needed for read-only position queries
     })
 
     try {
-      // Try the bulk method first
       const { result } =
         await positionManagerClient.get_user_positions_with_fees({
           owner: userAddress,
@@ -150,47 +155,25 @@ export class PositionService {
           take,
         })
 
-      const formattedResults = result.map(formatPositionInfo)
-
-      if (result.length > 0) {
-      }
-
-      return formattedResults
-    } catch (_error) {
-      // Fallback: fetch token IDs first, then fetch positions individually
-      try {
-        const tokenIds = await this.getUserTokenIds(userAddress, skip, take)
-
-        if (tokenIds.length === 0) {
-          return []
-        }
-
-        // Fetch positions one at a time to avoid budget limits
-        const positions: PositionInfo[] = []
-
-        for (const tokenId of tokenIds) {
-          try {
-            const position = await this.getPositionWithFees(tokenId)
-            if (position) {
-              positions.push(position)
-            }
-          } catch (_posError) {
-            // Continue with other positions
-          }
-        }
-
-        return positions
-      } catch (fallbackError) {
-        console.error(
-          '❌ Failed to get user positions with fallback:',
-          fallbackError,
-        )
-        if (fallbackError instanceof Error) {
-          console.error('Error message:', fallbackError.message)
-        }
-        return []
-      }
+      return handleResult(result).map(formatPositionInfo)
+    } catch (error) {
+      console.error('Failed to get user positions:', error)
+      return []
     }
+  }
+
+  /**
+   * Get all positions owned by a user with live fee calculations
+   * This is now an alias for getUserPositions since get_user_positions
+   * already returns all position data including fees
+   */
+  async getUserPositionsWithFees(
+    userAddress: string,
+    skip = 0,
+    take = 100,
+  ): Promise<PositionInfo[]> {
+    // Just call getUserPositions since it already includes all data
+    return this.getUserPositions(userAddress, skip, take)
   }
 
   /**
@@ -201,32 +184,26 @@ export class PositionService {
     tokenId: number,
   ): Promise<{ amount0: bigint; amount1: bigint }> {
     try {
-      // Get position info first (no publicKey needed for read-only)
-      const positionManagerClient = getPositionManagerContractClient({
-        contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
-        // No publicKey needed for read-only position queries
-      })
-
-      const position = await positionManagerClient.get_position_with_fees({
-        token_id: tokenId,
-      })
+      // Get position info first
+      const position = await this.getPosition(tokenId)
+      if (!position) {
+        return { amount0: 0n, amount1: 0n }
+      }
 
       // Get pool address from factory
       const factoryClient = getFactoryContractClient({
         contractId: CONTRACT_ADDRESSES.FACTORY,
-        // No publicKey needed for read-only factory queries
       })
 
       const poolAddress = await factoryClient.get_pool({
-        token_a: position.result.token0,
-        token_b: position.result.token1,
-        fee: position.result.fee,
+        token_a: position.token0,
+        token_b: position.token1,
+        fee: position.fee,
       })
 
       // Get pool's current price
       const poolClient = getPoolContractClient({
         contractId: poolAddress.result || '',
-        // No publicKey needed for read-only pool queries
       })
 
       const slot0 = await poolClient.slot0()
@@ -240,23 +217,27 @@ export class PositionService {
       ) {
         sqrtPriceX96 = BigInt(slot0.result.sqrt_price_x96)
       } else if (
-        slot0.result.fee_protocol &&
-        BigInt(slot0.result.fee_protocol) !== 0n
+        slot0.result.sqrt_price_x96 &&
+        Number(slot0.result.sqrt_price_x96) !== 0
       ) {
-        // The contract has the fields mixed up - sqrt price is in fee_protocol
-        sqrtPriceX96 = BigInt(slot0.result.fee_protocol)
+        sqrtPriceX96 = BigInt(slot0.result.sqrt_price_x96)
       } else {
         return { amount0: 0n, amount1: 0n }
       }
+
+      const positionManagerClient = getPositionManagerContractClient({
+        contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+      })
 
       const result = await positionManagerClient.position_principal({
         token_id: tokenId,
         sqrt_price_x96: sqrtPriceX96,
       })
 
+      const [amount0, amount1] = handleResult(result.result)
       return {
-        amount0: BigInt(result.result[0]),
-        amount1: BigInt(result.result[1]),
+        amount0: BigInt(amount0),
+        amount1: BigInt(amount1),
       }
     } catch (error) {
       console.error(
@@ -299,10 +280,10 @@ export class PositionService {
       ) {
         sqrtPriceX96 = BigInt(slot0.result.sqrt_price_x96)
       } else if (
-        slot0.result.fee_protocol &&
-        BigInt(slot0.result.fee_protocol) !== 0n
+        slot0.result.sqrt_price_x96 &&
+        Number(slot0.result.sqrt_price_x96) !== 0
       ) {
-        sqrtPriceX96 = BigInt(slot0.result.fee_protocol)
+        sqrtPriceX96 = BigInt(slot0.result.sqrt_price_x96)
       } else {
         console.warn('Pool sqrt_price_x96 is 0 - cannot calculate principals')
         // Return zeros for all positions
@@ -325,12 +306,11 @@ export class PositionService {
             sqrt_price_x96: sqrtPriceX96,
           })
 
-          const amount0 = BigInt(result.result[0])
-          const amount1 = BigInt(result.result[1])
+          const [amount0, amount1] = handleResult(result.result)
 
           results.set(tokenId, {
-            amount0,
-            amount1,
+            amount0: BigInt(amount0),
+            amount1: BigInt(amount1),
           })
         } catch (error) {
           console.error(
@@ -430,10 +410,10 @@ export class PositionService {
         token_id: tokenId,
       })
 
-      const fees = result.result
+      const [fees0, fees1] = handleResult(result.result)
       return {
-        fees0: fees[0],
-        fees1: fees[1],
+        fees0: BigInt(fees0),
+        fees1: BigInt(fees1),
       }
     } catch (error) {
       console.error(

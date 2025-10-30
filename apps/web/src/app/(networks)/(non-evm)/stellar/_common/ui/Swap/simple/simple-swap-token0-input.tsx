@@ -1,5 +1,5 @@
-import React, { useEffect, useTransition } from 'react'
-import { useQuoteExactInput } from '~stellar/_common/lib/hooks/router'
+import React, { useEffect, useMemo } from 'react'
+import { useBestRoute } from '~stellar/swap/lib/hooks'
 
 import {
   useSimpleSwapActions,
@@ -8,72 +8,92 @@ import {
 import { CurrencyInput } from '~stellar/_common/ui/currency/currency-input/currency-input'
 
 export const SimpleSwapToken0Input = () => {
-  const [, startTransition] = useTransition()
-  const { amount, token0 } = useSimpleSwapState()
+  const { amount, token0, token1 } = useSimpleSwapState()
   const {
     setAmount,
     setToken0,
     setOutputAmount,
     setSlippageAmount,
     setPriceFetching,
+    setPriceImpact,
     setError,
   } = useSimpleSwapActions()
+
+  // Parse amount to bigint
+  const amountIn = useMemo(() => {
+    if (!amount || Number(amount) <= 0) return 0n
+    try {
+      const [integer = '0', fraction = ''] = amount.split('.')
+      const normalizedFraction = fraction
+        .padEnd(token0.decimals, '0')
+        .slice(0, token0.decimals)
+      const digits =
+        `${integer}${normalizedFraction}`.replace(/^0+(?=\d)/, '') || '0'
+      return BigInt(digits)
+    } catch {
+      return 0n
+    }
+  }, [amount, token0.decimals])
+
   const {
-    mutateAsync: getQuote,
-    isPending: isQuotePending,
-    isSuccess: isQuoteSuccess,
-    data: quoteAmount,
+    route,
+    isLoading: isRouteLoading,
     isError: isQuoteError,
     error: quoteError,
-  } = useQuoteExactInput()
+  } = useBestRoute({
+    tokenIn: token0,
+    tokenOut: token1,
+    amountIn,
+    enabled: amountIn > 0n,
+  })
 
+  // Update fetching state
   useEffect(() => {
-    setOutputAmount(0n)
-    setSlippageAmount(0)
+    setPriceFetching(isRouteLoading)
+  }, [isRouteLoading, setPriceFetching])
 
-    if (Number(amount) > 0) {
-      startTransition(async () => {
-        await getQuote()
-      })
-    }
-  }, [amount, getQuote, setOutputAmount, setSlippageAmount])
-
-  useEffect(() => {
-    if (isQuotePending) {
-      setPriceFetching(true)
-    } else {
-      setPriceFetching(false)
-    }
-  }, [isQuotePending, setPriceFetching])
-
+  // Handle errors
   useEffect(() => {
     if (isQuoteError) {
-      setError(quoteError.message)
+      setError(quoteError?.message || 'Failed to get quote')
+      setOutputAmount(0n)
+      setSlippageAmount(0)
+      setPriceImpact(null)
     } else {
       setError('')
     }
-  }, [isQuoteError, quoteError, setError])
+  }, [
+    isQuoteError,
+    quoteError,
+    setError,
+    setOutputAmount,
+    setSlippageAmount,
+    setPriceImpact,
+  ])
 
+  // Update output amount and price impact from route
   useEffect(() => {
-    if (isQuoteSuccess && quoteAmount && Number(amount) > 0) {
-      try {
-        const amountBigInt =
-          typeof quoteAmount === 'bigint' ? quoteAmount : BigInt(quoteAmount)
-        const absAmountBigInt = amountBigInt < 0n ? -amountBigInt : amountBigInt
+    if (route && amountIn > 0n) {
+      const amountOut = route.amountOut || 0n
+      setOutputAmount(amountOut)
 
-        setOutputAmount(absAmountBigInt)
-
-        if (absAmountBigInt <= BigInt(Number.MAX_SAFE_INTEGER)) {
-          setSlippageAmount(Number(absAmountBigInt))
-        } else {
-          setSlippageAmount(0)
-        }
-      } catch {
-        setOutputAmount(0n)
+      // Note: slippageAmount is no longer used for amountOutMinimum calculation
+      // It's kept for display purposes in simple-swap-trade-stats
+      // We store the raw amountOut as a number for display
+      if (amountOut <= BigInt(Number.MAX_SAFE_INTEGER)) {
+        setSlippageAmount(Number(amountOut))
+      } else {
         setSlippageAmount(0)
       }
+
+      // Set the price impact from the route
+      setPriceImpact(route.priceImpact ?? null)
+    } else if (amountIn === 0n) {
+      setOutputAmount(0n)
+      setSlippageAmount(0)
+      setPriceImpact(null)
     }
-  }, [isQuoteSuccess, quoteAmount, amount, setOutputAmount, setSlippageAmount])
+  }, [route, amountIn, setOutputAmount, setSlippageAmount, setPriceImpact])
 
   return (
     <CurrencyInput

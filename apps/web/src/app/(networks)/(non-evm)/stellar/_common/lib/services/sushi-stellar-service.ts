@@ -291,7 +291,7 @@ export class SushiStellarService {
    * Get a specific position by token ID
    */
   async getPosition(tokenId: number) {
-    return await positionService.getPositionWithFees(tokenId)
+    return await positionService.getPosition(tokenId)
   }
 
   /**

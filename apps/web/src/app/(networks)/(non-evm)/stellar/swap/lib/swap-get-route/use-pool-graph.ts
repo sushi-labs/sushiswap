@@ -18,8 +18,6 @@ export function usePoolGraph() {
   return useQuery({
     queryKey: ['stellar', 'pool-graph'],
     queryFn: async () => {
-      console.log('🔄 Building pool graph...')
-
       const vertices = new Map<string, Vertex>()
       const tokenGraph = new Map<string, string[]>()
 
@@ -81,46 +79,36 @@ export function usePoolGraph() {
                       poolClient.liquidity(),
                     ])
 
-                    const liquidity = BigInt(liquidityResult.result || 0)
+                    const sqrtPriceX96 = slot0Result.result.sqrt_price_x96
 
-                    // Skip pools with no liquidity
-                    if (liquidity === 0n) {
-                      return
-                    }
+                    console.log('sqrtPriceX96', sqrtPriceX96)
 
                     // Get slot0 data
                     const slot0 = slot0Result.result
-                    let sqrtPriceX96: bigint
-
-                    // Handle field name confusion (same as in position-manager-helpers)
-                    if (
-                      slot0.sqrt_price_x96 &&
-                      Number(slot0.sqrt_price_x96) !== 0
-                    ) {
-                      sqrtPriceX96 = BigInt(slot0.sqrt_price_x96)
-                    } else if (
-                      slot0.fee_protocol &&
-                      BigInt(slot0.fee_protocol) !== 0n
-                    ) {
-                      sqrtPriceX96 = BigInt(slot0.fee_protocol)
-                    } else {
-                      // No valid price data
-                      return
-                    }
 
                     const tick = Number(slot0.tick || 0)
 
-                    // Calculate approximate reserves from liquidity and price
-                    // This is a simplification - actual V3 reserves depend on tick ranges
-                    // For routing purposes, we estimate based on current price
-                    const priceNum = Number(sqrtPriceX96) / 2 ** 96
-                    const priceScaled = BigInt(Math.floor(priceNum * 1000000))
+                    // Calculate approximate reserves from liquidity and sqrt price
+                    // For V3/concentrated liquidity: reserve = liquidity / sqrt(price) and reserve1 = liquidity * sqrt(price)
+                    // sqrtPrice = sqrtPriceX96 / 2^96
+                    const liquidity = BigInt(liquidityResult.result || 0)
+                    const sqrtPriceX96BigInt = BigInt(sqrtPriceX96)
+
+                    // Virtual reserves for this liquidity position
+                    // reserve0 = L * 2^96 / sqrtPriceX96, reserve1 = L * sqrtPriceX96 / 2^96
+                    // We keep calculations in BigInt to avoid precision loss
+                    const Q96 = BigInt(2 ** 96)
                     const reserve0 =
-                      priceScaled > 0n ? liquidity / priceScaled : liquidity
-                    const reserve1 =
-                      priceScaled > 0n
-                        ? (liquidity * priceScaled) / BigInt(1000000)
+                      sqrtPriceX96BigInt > 0n
+                        ? (liquidity * Q96) / sqrtPriceX96BigInt
                         : liquidity
+                    const reserve1 =
+                      sqrtPriceX96BigInt > 0n
+                        ? (liquidity * sqrtPriceX96BigInt) / Q96
+                        : liquidity
+
+                    console.log('reserve0', reserve0)
+                    console.log('reserve1', reserve1)
 
                     // Create vertex
                     const vertex: Vertex = {
@@ -135,6 +123,8 @@ export function usePoolGraph() {
                       sqrtPriceX96,
                       tick,
                     }
+
+                    console.log('vertex', vertex)
 
                     // Add vertex to map (both directions)
                     vertices.set(`${tokenA}|||${tokenB}`, vertex)
@@ -157,10 +147,6 @@ export function usePoolGraph() {
                     if (!tokenBEdges.includes(tokenA)) {
                       tokenBEdges.push(tokenA)
                     }
-
-                    console.log(
-                      `✅ Added pool: ${getTokenByContract(tokenA)?.code}/${getTokenByContract(tokenB)?.code} (${fee / 10000}%)`,
-                    )
                   } catch {
                     // Pool doesn't exist or has issues - skip silently
                   }
@@ -173,16 +159,12 @@ export function usePoolGraph() {
         // Wait for all pool queries to complete
         await Promise.all(poolQueries)
 
-        console.log(
-          `✅ Pool graph built: ${vertices.size / 2} pools, ${tokenGraph.size} tokens`,
-        )
-
         return {
           vertices,
           tokenGraph,
         }
       } catch (error) {
-        console.error('❌ Failed to build pool graph:', error)
+        console.error('Error building pool graph:', error)
         return {
           vertices: new Map<string, Vertex>(),
           tokenGraph: new Map<string, string[]>(),

@@ -69,6 +69,8 @@ export function useBestRoute({
         return null
       }
 
+      console.log('🔍 Route:', route)
+
       // Convert route addresses to Token objects
       const tokens: Token[] = route.route
         .map((address) => getTokenByContract(address))

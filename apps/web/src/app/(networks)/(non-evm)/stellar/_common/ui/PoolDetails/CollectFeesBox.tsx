@@ -1,3 +1,4 @@
+import { createErrorToast } from '@sushiswap/notifications'
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
 import type React from 'react'
 import { useState } from 'react'
@@ -45,12 +46,12 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
   // Handle collect fees
   const handleCollectFees = async () => {
     if (!connectedAddress || !signTransaction) {
-      toast.error('Please connect your wallet')
+      createErrorToast('Please connect your wallet', false)
       return
     }
 
     if (positions.length === 0) {
-      toast.error('No positions found')
+      createErrorToast('No positions found', false)
       return
     }
 
@@ -63,15 +64,8 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
       )
 
       if (positionsWithFees.length === 0) {
-        toast.info('No fees to collect')
         return
       }
-
-      toast.info(
-        `Collecting fees from ${positionsWithFees.length} position${positionsWithFees.length > 1 ? 's' : ''}...`,
-      )
-
-      let successCount = 0
 
       // Collect from all positions that have fees
       for (const position of positionsWithFees) {
@@ -94,7 +88,6 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
             signTransaction,
           })
 
-          successCount++
           console.log(
             `Successfully collected fees from position ${position.tokenId}`,
           )
@@ -110,22 +103,12 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
               ? `Position #${position.tokenId}: ${error.message}`
               : `Position #${position.tokenId}: Failed to collect fees`
 
-          toast.error(errorMessage)
+          createErrorToast(errorMessage, false)
         }
-      }
-
-      if (successCount === positionsWithFees.length) {
-        toast.success(
-          `Successfully collected fees from ${successCount} position${successCount > 1 ? 's' : ''}!`,
-        )
-      } else if (successCount > 0) {
-        toast.warning(
-          `Collected fees from ${successCount} of ${positionsWithFees.length} positions`,
-        )
       }
     } catch (error) {
       console.error('Failed to collect fees:', error)
-      toast.error('Failed to collect fees. Please try again.')
+      createErrorToast('Failed to collect fees. Please try again.', false)
     } finally {
       setIsCollecting(false)
     }

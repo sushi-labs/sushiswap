@@ -68,11 +68,6 @@ export function useMyPosition(userAddress?: string, poolAddress?: string) {
           })
           return [getPositionKey(position), poolAddress] as const
         } catch (error) {
-          console.error(
-            'Error fetching pool address for position',
-            position.tokenId,
-            error,
-          )
           return [getPositionKey(position), null] as const
         }
       },
@@ -149,7 +144,6 @@ export function useMyPosition(userAddress?: string, poolAddress?: string) {
 
           return mappedResults
         } catch (error) {
-          console.error(`❌ Failed to get principals for pool ${pool}:`, error)
           // Return zeros for all positions in this pool
           return positions.map(
             (position) =>
@@ -197,11 +191,12 @@ export function useMyPosition(userAddress?: string, poolAddress?: string) {
 
     // Process each position with its principal amounts
     filteredPositions.forEach((position) => {
-      const principalData = positionToPrincipalMap[getPositionKey(position)]
+      const positionKey = getPositionKey(position)
+      const principalData = positionToPrincipalMap[positionKey]
+      const poolAddress = positionToPoolMap[positionKey]
 
       // Skip if we don't have principal data yet
       if (!principalData) {
-        console.warn(`No principal data for position ${position.tokenId}`)
         return
       }
 
@@ -218,7 +213,7 @@ export function useMyPosition(userAddress?: string, poolAddress?: string) {
         feesToken1: position.tokensOwed1,
         token0,
         token1,
-        pool: positionToPoolMap[getPositionKey(position)] || '',
+        pool: poolAddress || '',
       })
     })
 

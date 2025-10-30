@@ -1,6 +1,5 @@
 'use client'
 
-import { Cog6ToothIcon } from '@heroicons/react/20/solid'
 import {
   Button,
   Card,
@@ -146,14 +145,9 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   return (
     <Card className="bg-slate-900/50 border-slate-800">
       <CardHeader>
-        <div className="flex justify-between items-center">
-          <div>
-            <CardTitle>Manage</CardTitle>
-            <CardDescription>Manage your position</CardDescription>
-          </div>
-          <Button variant="ghost" size="sm">
-            <Cog6ToothIcon className="w-4 h-4" />
-          </Button>
+        <div>
+          <CardTitle>Manage</CardTitle>
+          <CardDescription>Manage your position</CardDescription>
         </div>
       </CardHeader>
 
@@ -183,9 +177,6 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                   will be calculated automatically.
                 </CardDescription>
               </div>
-              <Button variant="ghost" size="sm">
-                <Cog6ToothIcon className="w-4 h-4" />
-              </Button>
             </div>
           </CardHeader>
           <CardContent>
