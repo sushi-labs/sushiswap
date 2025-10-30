@@ -121,6 +121,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
         aria-describedby={undefined}
         className={classNames(
           'h-[80vh] !flex !flex-col md:!flex-row w-fit !p-0 md:min-w-[580px]',
+          'border border-[#00000014] dark:border-[#FFFFFF14]',
           !showMoreCurrencyInfo ? '!h-[440px]' : '',
         )}
         variant={variant ?? undefined}
@@ -175,7 +176,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
                   selectedNetwork={_selectedNetwork}
                   onNetworkSelect={_onNetworkSelect}
                   networkOptions={isBrowse ? SUPPORTED_CHAIN_IDS : undefined}
-                  className="bg-slate-50 border !rounded-md !px-2 border-black/10 dark:bg-slate-800 dark:border-white/10"
+                  triggerClassName="bg-slate-50 border !rounded-md !px-2 border-black/10 dark:bg-slate-800 dark:border-white/10"
                   testId="token-selector-network-menu-trigger"
                 />
               </div>
