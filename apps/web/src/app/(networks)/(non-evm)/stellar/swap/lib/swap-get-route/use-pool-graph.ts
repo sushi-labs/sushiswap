@@ -85,8 +85,6 @@ export function usePoolGraph() {
 
                     const sqrtPriceX96 = slot0Result.result.sqrt_price_x96
 
-                    console.log('sqrtPriceX96', sqrtPriceX96)
-
                     // Get slot0 data
                     const slot0 = slot0Result.result
 
@@ -111,9 +109,6 @@ export function usePoolGraph() {
                         ? (liquidity * sqrtPriceX96BigInt) / Q96
                         : liquidity
 
-                    console.log('reserve0', reserve0)
-                    console.log('reserve1', reserve1)
-
                     // Create vertex
                     const vertex: Vertex = {
                       pair: `${tokenA}|||${tokenB}`,
@@ -127,8 +122,6 @@ export function usePoolGraph() {
                       sqrtPriceX96,
                       tick,
                     }
-
-                    console.log('vertex', vertex)
 
                     // Add vertex to map (both directions)
                     vertices.set(`${tokenA}|||${tokenB}`, vertex)
