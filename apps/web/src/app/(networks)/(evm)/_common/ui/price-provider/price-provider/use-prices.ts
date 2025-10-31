@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo } from 'react'
 import { Fraction, withoutScientificNotation } from 'sushi'
-import type { EvmAddress, EvmChainId, EvmCurrency } from 'sushi/evm'
+import type { EvmAddress, EvmChainId } from 'sushi/evm'
 import { parseUnits } from 'viem'
 import { usePriceProvider } from './price-provider'
 
