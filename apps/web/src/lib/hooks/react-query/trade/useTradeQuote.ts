@@ -17,6 +17,7 @@ import {
 } from 'sushi/evm'
 import { stringify, zeroAddress } from 'viem'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
+import { routerProxy } from '../../../../app/_common/turnstile/router-proxy'
 import { apiAdapter02To01 } from './apiAdapter'
 import type { UseTradeParams, UseTradeQuerySelect } from './types'
 import { tradeValidator02 } from './validator02'
@@ -58,9 +59,9 @@ export const useTradeQuoteQuery = (
   }: UseTradeParams,
   select: UseTradeQuerySelect,
 ) => {
-  const { jwt } = useTurnstile()
+  const { jwt, isLoading: isJwtLoading, isError: isJwtError } = useTurnstile()
 
-  return useQuery({
+  const query = useQuery({
     queryKey: [
       'getTradeQuote',
       {
@@ -73,7 +74,6 @@ export const useTradeQuoteQuery = (
         gasPrice,
         source,
         onlyPools,
-        jwt,
       },
     ],
     queryFn: async () => {
@@ -110,10 +110,7 @@ export const useTradeQuoteQuery = (
 
       applyPoolExclusion(fromToken, toToken, params.searchParams)
 
-      const response = await fetch('/api/router-proxy', {
-        body: JSON.stringify({ url: params.toString(), jwt }),
-        method: 'POST',
-      })
+      const response = await routerProxy(params.toString(), jwt)
       const json = await response.json()
       const resp2 = tradeValidator02.parse(json)
 
@@ -131,6 +128,15 @@ export const useTradeQuoteQuery = (
       Boolean(chainId && fromToken && toToken && amount && gasPrice && jwt),
     queryKeyHashFn: stringify,
   })
+
+  return useMemo(
+    () => ({
+      ...query,
+      isError: query.isError || isJwtError,
+      isLoading: query.isLoading || isJwtLoading,
+    }),
+    [query, isJwtLoading, isJwtError],
+  )
 }
 
 export const useTradeQuote = (variables: UseTradeParams) => {

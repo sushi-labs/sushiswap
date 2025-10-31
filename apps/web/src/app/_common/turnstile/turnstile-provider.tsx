@@ -1,20 +1,28 @@
 'use client'
 
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
-import { useQuery } from '@tanstack/react-query'
+import {
+  keepPreviousData,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import ms from 'ms'
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from 'react'
+import { logger } from 'src/lib/logger'
 import { validateTurnstileAction } from './validate-action'
 
 type Provider = {
   jwt: string | undefined
+  isLoading: boolean
+  isError: boolean
 }
 
 export const TurnstileProviderContext = createContext<Provider>({} as Provider)
@@ -26,10 +34,122 @@ interface TurnstileProviderContextProps {
 export function TurnstileProvider({ children }: TurnstileProviderContextProps) {
   const ref = useRef<TurnstileInstance>(null)
 
-  const [token, setToken] = useState<string | undefined>(undefined)
-  const [jwt, setJwt] = useState<{ jwt: string; exp: number } | undefined>()
+  const {
+    data: token,
+    refetch: refetchToken,
+    isLoading: isTokenLoading,
+    isError: isTokenError,
+    onError: onWidgetError,
+    onSuccess: onWidgetSuccess,
+  } = useTurnstileWidget(ref)
 
-  const { data, error } = useQuery({
+  const {
+    data: jwt,
+    reset: resetJwt,
+    isLoading: isJwtLoading,
+    isError: isJwtError,
+  } = useTurnstileJwt(token)
+
+  useEffect(() => {
+    let deleteTimeout: NodeJS.Timeout
+    let refetchTimeout: NodeJS.Timeout
+
+    if (jwt) {
+      const expiresAt = new Date(jwt.exp * 1000)
+      const expiresIn = expiresAt.getTime() - Date.now()
+      const refetchIn = expiresIn - ms('1m')
+
+      deleteTimeout = setTimeout(() => {
+        refetchToken('reset')
+        resetJwt()
+      }, expiresIn)
+      refetchTimeout = setTimeout(() => {
+        refetchToken('quiet')
+      }, refetchIn)
+    }
+
+    return () => {
+      if (refetchTimeout) clearTimeout(refetchTimeout)
+      if (deleteTimeout) clearTimeout(deleteTimeout)
+    }
+  }, [jwt, refetchToken, resetJwt])
+
+  const isLoading = isTokenLoading || isJwtLoading
+  const isError = isTokenError || isJwtError
+
+  const value = useMemo(
+    () => ({ jwt: jwt?.jwt, isLoading, isError }),
+    [jwt, isLoading, isError],
+  )
+
+  console.log(token?.slice(0, 10), jwt?.jwt, isJwtLoading)
+
+  return (
+    <>
+      <Turnstile
+        ref={ref}
+        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''}
+        onError={onWidgetError}
+        onSuccess={onWidgetSuccess}
+      />
+      <TurnstileProviderContext.Provider value={value}>
+        {children}
+      </TurnstileProviderContext.Provider>
+    </>
+  )
+}
+
+type TurnstileWidgetParameters = Parameters<typeof Turnstile>[0]
+
+function useTurnstileWidget(ref: React.RefObject<TurnstileInstance | null>) {
+  const [token, setToken] = useState<string | null>(null)
+
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<Error | null>(null)
+
+  const onError: TurnstileWidgetParameters['onError'] = useCallback(
+    (error: string) => {
+      setError(new Error(error))
+      setIsLoading(false)
+      logger.error(error, {
+        context: 'Turnstile Widget',
+      })
+    },
+    [],
+  )
+  const onSuccess: TurnstileWidgetParameters['onSuccess'] = useCallback(
+    (token: string) => {
+      setToken(token)
+      setError(null)
+      setIsLoading(false)
+    },
+    [],
+  )
+
+  const refetch = useCallback(
+    (mode: 'quiet' | 'reset') => {
+      if (mode === 'reset') {
+        setIsLoading(true)
+      }
+
+      ref?.current?.reset()
+    },
+    [ref],
+  )
+
+  return {
+    data: token,
+    isLoading,
+    isError: !!error,
+    error,
+    refetch,
+    onError,
+    onSuccess,
+  }
+}
+
+function useTurnstileJwt(token: string | null) {
+  const query = useQuery({
     queryKey: ['turnstile-jwt', token],
     queryFn: async () => {
       if (!token) return
@@ -42,55 +162,30 @@ export function TurnstileProvider({ children }: TurnstileProviderContextProps) {
 
       return response
     },
+    placeholderData: keepPreviousData,
     enabled: Boolean(token),
   })
 
-  useEffect(() => {
-    let deleteTimeout: NodeJS.Timeout
-    let refetchTimeout: NodeJS.Timeout
+  console.log(query.data)
 
-    if (data) {
-      setJwt(data)
+  const queryClient = useQueryClient()
 
-      const expiresAt = new Date(data.exp * 1000)
-      const expiresIn = expiresAt.getTime() - Date.now()
-      const refetchIn = expiresIn - ms('1m')
-
-      deleteTimeout = setTimeout(() => {
-        setJwt(undefined)
-      }, expiresIn)
-      refetchTimeout = setTimeout(() => {
-        ref.current?.reset()
-      }, refetchIn)
-    }
-
-    return () => {
-      if (refetchTimeout) clearTimeout(refetchTimeout)
-      if (deleteTimeout) clearTimeout(deleteTimeout)
-    }
-  }, [data])
+  const reset = useCallback(() => {
+    queryClient.removeQueries({ queryKey: ['turnstile-jwt'] })
+  }, [queryClient])
 
   useEffect(() => {
-    if (error) {
-      console.error('Turnstile error:', error)
+    if (query.error) {
+      logger.error(query.error, {
+        context: 'Turnstile JWT',
+      })
     }
-  }, [error])
+  }, [query.error])
 
-  return (
-    <>
-      <Turnstile
-        ref={ref}
-        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''}
-        onError={console.error}
-        onSuccess={(token) => setToken(token)}
-      />
-      <TurnstileProviderContext.Provider
-        value={useMemo(() => ({ jwt: jwt?.jwt }), [jwt])}
-      >
-        {children}
-      </TurnstileProviderContext.Provider>
-    </>
-  )
+  return {
+    ...query,
+    reset,
+  }
 }
 
 export function useTurnstile() {

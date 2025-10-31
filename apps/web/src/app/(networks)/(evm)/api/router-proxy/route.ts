@@ -1,4 +1,4 @@
-import type { NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { verifyTurnstileJwt } from 'src/app/_common/turnstile/jwt'
 
 export const dynamic = 'force-dynamic'
@@ -12,10 +12,10 @@ export async function POST(request: NextRequest) {
     verifyTurnstileJwt(jwt)
   } catch {
     console.error('Invalid Turnstile JWT')
-    // return NextResponse.json(
-    //   { error: 'Invalid Turnstile JWT' },
-    //   { status: 401 },
-    // )
+    return NextResponse.json(
+      { error: 'Invalid Turnstile JWT' },
+      { status: 401 },
+    )
   }
 
   const response = await fetch(body.url)

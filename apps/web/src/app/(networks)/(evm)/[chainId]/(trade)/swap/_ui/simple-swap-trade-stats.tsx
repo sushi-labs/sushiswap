@@ -28,12 +28,14 @@ export const SimpleSwapTradeStats: FC = () => {
   const {
     state: { chainId, swapAmountString, recipient },
   } = useDerivedStateSimpleSwap()
-  const { isLoading, data: quote } = useSimpleSwapTradeQuote()
+  const { isLoading, isError, data: quote } = useSimpleSwapTradeQuote()
   const loading = Boolean(isLoading && !quote)
 
   return (
     <Collapsible
-      open={+swapAmountString > 0 && quote?.route?.status !== 'NoWay'}
+      open={
+        +swapAmountString > 0 && quote?.route?.status !== 'NoWay' && !isError
+      }
     >
       <div className="pt-4 w-full px-2 flex flex-col gap-1">
         <div className="flex justify-between items-center gap-2">

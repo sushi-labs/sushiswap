@@ -15,7 +15,7 @@ import type { FC } from 'react'
 interface CustomWithTooltipProps extends ButtonProps {
   showChildren?: boolean
   onClick(): void
-  buttonText: string
+  buttonText: string | React.ReactNode
   tooltipTitle: string
   tooltipDescription: string
 }

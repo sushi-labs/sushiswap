@@ -6,6 +6,7 @@ import type React from 'react'
 import { type FC, useEffect, useMemo, useState } from 'react'
 import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
 import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
+import { CheckerTurnstile } from 'src/app/_common/turnstile/checker-turnstile'
 import { APPROVE_TAG_SWAP } from 'src/lib/constants'
 import { usePersistedSlippageError } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
@@ -86,61 +87,63 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
           guardWhen={maintenance}
           guardText="Maintenance in progress"
         >
-          <Checker.PartialRoute trade={quote} setSwapAmount={setSwapAmount}>
-            <Checker.Connect>
-              <Checker.Network chainId={chainId}>
-                <Checker.Amounts chainId={chainId} amount={swapAmount}>
-                  <Checker.Slippage
-                    text="Swap With High Slippage"
-                    slippageTolerance={slippagePercent}
-                  >
-                    <Checker.ApproveERC20
-                      id="approve-erc20"
-                      amount={swapAmount}
-                      contract={
-                        isRedSnwapperChainId(chainId)
-                          ? RED_SNWAPPER_ADDRESS[chainId]
-                          : undefined
-                      }
+          <CheckerTurnstile>
+            <Checker.PartialRoute trade={quote} setSwapAmount={setSwapAmount}>
+              <Checker.Connect>
+                <Checker.Network chainId={chainId}>
+                  <Checker.Amounts chainId={chainId} amount={swapAmount}>
+                    <Checker.Slippage
+                      text="Swap With High Slippage"
+                      slippageTolerance={slippagePercent}
                     >
-                      <Checker.Success tag={APPROVE_TAG_SWAP}>
-                        <DialogTrigger asChild>
-                          <Button
-                            size="xl"
-                            disabled={Boolean(
-                              isSlippageError ||
-                                error ||
-                                !quote?.amountOut?.gt(ZERO) ||
-                                quote?.route?.status === 'NoWay' ||
-                                +swapAmountString === 0 ||
-                                (!checked && showPriceImpactWarning),
-                            )}
-                            color={
-                              showPriceImpactWarning || showSlippageWarning
-                                ? 'red'
-                                : 'blue'
-                            }
-                            fullWidth
-                            testId="swap"
-                          >
-                            {!checked && showPriceImpactWarning
-                              ? 'Price impact too high'
-                              : quote?.route?.status === 'NoWay'
-                                ? 'No trade found'
-                                : isWrap
-                                  ? 'Wrap'
-                                  : isUnwrap
-                                    ? 'Unwrap'
-                                    : 'Swap'}
-                          </Button>
-                        </DialogTrigger>
-                      </Checker.Success>
-                    </Checker.ApproveERC20>
-                  </Checker.Slippage>
-                </Checker.Amounts>
-              </Checker.Network>
-            </Checker.Connect>
-          </Checker.PartialRoute>
+                      <Checker.ApproveERC20
+                        id="approve-erc20"
+                        amount={swapAmount}
+                        contract={
+                          isRedSnwapperChainId(chainId)
+                            ? RED_SNWAPPER_ADDRESS[chainId]
+                            : undefined
+                        }
+                      >
+                        <Checker.Success tag={APPROVE_TAG_SWAP}>
+                          <DialogTrigger asChild>
+                            <Button
+                              size="xl"
+                              disabled={Boolean(
+                                isSlippageError ||
+                                  error ||
+                                  !quote?.amountOut?.gt(ZERO) ||
+                                  quote?.route?.status === 'NoWay' ||
+                                  +swapAmountString === 0 ||
+                                  (!checked && showPriceImpactWarning),
+                              )}
+                              color={
+                                showPriceImpactWarning || showSlippageWarning
+                                  ? 'red'
+                                  : 'blue'
+                              }
+                              fullWidth
+                              testId="swap"
+                            >
+                              {!checked && showPriceImpactWarning
+                                ? 'Price impact too high'
+                                : quote?.route?.status === 'NoWay'
+                                  ? 'No trade found'
+                                  : isWrap
+                                    ? 'Wrap'
+                                    : isUnwrap
+                                      ? 'Unwrap'
+                                      : 'Swap'}
+                            </Button>
+                          </DialogTrigger>
+                        </Checker.Success>
+                      </Checker.ApproveERC20>
+                    </Checker.Slippage>
+                  </Checker.Amounts>
+                </Checker.Network>
+              </Checker.Connect>
+            </Checker.PartialRoute>
+          </CheckerTurnstile>
         </Checker.Guard>
       </div>
       {showSlippageWarning && <SlippageWarning className="mt-4" />}

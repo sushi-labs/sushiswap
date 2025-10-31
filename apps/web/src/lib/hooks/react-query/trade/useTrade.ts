@@ -20,6 +20,7 @@ import {
 import { type Hex, stringify, zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
+import { routerProxy } from '../../../../app/_common/turnstile/router-proxy'
 import { apiAdapter02To01 } from './apiAdapter'
 import type { UseTradeParams, UseTradeQuerySelect } from './types'
 import { tradeValidator02 } from './validator02'
@@ -42,9 +43,9 @@ export const useTradeQuery = (
 ) => {
   const trace = useTrace()
   const { address } = useAccount()
-  const { jwt } = useTurnstile()
+  const { jwt, isLoading: isJwtLoading, isError: isJwtError } = useTurnstile()
 
-  return useQuery({
+  const query = useQuery({
     queryKey: [
       'getTrade',
       {
@@ -59,7 +60,6 @@ export const useTradeQuery = (
         recipient,
         source,
         onlyPools,
-        jwt,
       },
     ],
     queryFn: async () => {
@@ -113,10 +113,7 @@ export const useTradeQuery = (
           params.searchParams.append('onlyPools', pool),
         )
 
-      const response = await fetch('/api/router-proxy', {
-        body: JSON.stringify({ url: params.toString(), jwt }),
-        method: 'POST',
-      })
+      const response = await routerProxy(params.toString(), jwt)
       const json = await response.json()
       const resp2 = tradeValidator02.parse(json)
 
@@ -151,6 +148,15 @@ export const useTradeQuery = (
     ),
     queryKeyHashFn: stringify,
   })
+
+  return useMemo(
+    () => ({
+      ...query,
+      isError: query.isError || isJwtError,
+      isLoading: query.isLoading || isJwtLoading,
+    }),
+    [query, isJwtLoading, isJwtError],
+  )
 }
 
 export const useTrade = (variables: UseTradeParams) => {
