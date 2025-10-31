@@ -36,7 +36,7 @@ const depositWriteVariablesMap: Record<
   ClipperPackedExchange: clipperPackedTransmitAndDeposit,
   ClipperPackedOracleVerifiedExchange: clipperPackedTransmitAndDeposit,
   BladeVerifiedExchange: bladePackedTransmitAndDeposit,
-  BladeApproximateCaravelExchange: bladeTransmitAndDeposit,
+  BladeApproximateExchange: bladeTransmitAndDeposit,
 }
 
 export const useBladeDepositTransaction = ({

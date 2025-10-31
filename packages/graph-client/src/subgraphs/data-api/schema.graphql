@@ -74,6 +74,7 @@ type BladePoolToken {
   token: Token!
   liquidity: Float!
   liquidityUSD: Float!
+  priceUSD: Float
   weight: Float!
   targetWeight: Float
 }
@@ -89,7 +90,7 @@ enum BladePoolAbi {
   ClipperPackedExchange
   ClipperPackedOracleVerifiedExchange
   BladeVerifiedExchange
-  BladeApproximateCaravelExchange
+  BladeApproximateExchange
 }
 
 enum BladePoolVaultType {

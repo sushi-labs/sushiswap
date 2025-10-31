@@ -4,12 +4,12 @@ import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { Button } from '@sushiswap/ui'
 import { type FC, useCallback, useMemo, useState } from 'react'
 import { APPROVE_TAG_REMOVE_BLADE } from 'src/lib/constants'
-import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {
   CheckerProvider,
   withCheckerRoot,
 } from 'src/lib/wagmi/systems/Checker/provider'
+import { useBladePoolOnchainData } from '../../../_ui/blade-pool-onchain-data-provider'
 import { useBladePoolPosition } from '../blade-pool-position-provider'
 import { BladeRemoveLiquidityReviewModal } from './blade-remove-liquidity-review-modal'
 import { BladeRemoveSectionWidget } from './blade-remove-section-widget'
@@ -22,22 +22,18 @@ export const BladeRemoveSection: FC<BladeRemoveSectionProps> = withCheckerRoot(
   ({ pool }) => {
     const [percentage, setPercentage] = useState<string>('0')
 
-    const { balance, liquidityToken } = useBladePoolPosition()
-    const poolTotalSupply = useTotalSupply(liquidityToken)
+    const { balance } = useBladePoolPosition()
+    const { liquidityUSD, liquidity: poolTotalSupply } =
+      useBladePoolOnchainData()
 
     const userPositionValue = useMemo(() => {
-      if (
-        !balance?.amount ||
-        !poolTotalSupply?.amount ||
-        poolTotalSupply.amount === 0n
-      ) {
+      if (!balance?.amount || poolTotalSupply === 0n) {
         return 0
       }
 
-      const poolProportion =
-        Number(balance.amount) / Number(poolTotalSupply.amount)
-      return pool.liquidityUSD * poolProportion
-    }, [balance, poolTotalSupply, pool.liquidityUSD])
+      const poolProportion = Number(balance.amount) / Number(poolTotalSupply)
+      return liquidityUSD * poolProportion
+    }, [balance, poolTotalSupply, liquidityUSD])
 
     const onSuccess = useCallback(() => {
       setPercentage('0')
