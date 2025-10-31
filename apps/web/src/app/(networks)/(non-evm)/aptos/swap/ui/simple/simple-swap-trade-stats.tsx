@@ -1,6 +1,5 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { Transition } from '@headlessui/react'
-import { SkeletonBox, classNames } from '@sushiswap/ui'
+import { Collapsible, SkeletonBox, classNames } from '@sushiswap/ui'
 import React from 'react'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
 import { formatNumberWithDecimals } from '~aptos/_common/lib/common/format-number-with-decimals'
@@ -49,15 +48,7 @@ export const SimpleSwapTradeStats = () => {
   const { data: routes } = useSwap()
 
   return (
-    <Transition
-      show={Number(amount) > 0 && bestRoutes.length > 0}
-      enter="transition duration-300 ease-out"
-      enterFrom="transform translate-y-[16px] opacity-0"
-      enterTo="transform translate-y-0 opacity-100"
-      leave="transition duration-300 ease-out"
-      leaveFrom="transform translate-y-0 opacity-100"
-      leaveTo="transform translate-y-[16px] opacity-0"
-    >
+    <Collapsible open={Number(amount) > 0 && bestRoutes.length > 0}>
       <div className="w-full px-2 flex flex-col gap-1">
         <div className="flex justify-between items-center gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
@@ -145,15 +136,12 @@ export const SimpleSwapTradeStats = () => {
                 className={classNames('transition-all flex gap-1 items-center')}
                 rel="noreferrer"
               >
-                {`${account?.address.substring(
-                  0,
-                  6,
-                )}...${account?.address.substring(66 - 4)}`}
+                {`${account?.address.substring(0, 6)}...${account?.address.substring(66 - 4)}`}
               </a>
             </span>
           </div>
         )}
       </div>
-    </Transition>
+    </Collapsible>
   )
 }
