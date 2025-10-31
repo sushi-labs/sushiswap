@@ -4,7 +4,6 @@ import React from 'react'
 import { TableFiltersNetwork } from 'src/app/(networks)/_ui/table-filters-network'
 import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/table-filters-search-token'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { isPublicBladeChainId } from 'src/config.server'
 import {
   SushiSwapProtocol,
   isBladeChainId,
@@ -19,8 +18,7 @@ export default async function MyPositionsPage(props: {
   const params = await props.params
   const chainId = +params.chainId
 
-  const isBladeChain =
-    isBladeChainId(chainId) && (await isPublicBladeChainId(chainId))
+  const isBladeChain = isBladeChainId(chainId)
 
   if (!isSushiSwapChainId(chainId) && !isBladeChain) {
     return notFound()

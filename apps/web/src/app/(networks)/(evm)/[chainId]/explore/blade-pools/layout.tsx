@@ -2,8 +2,7 @@ import { Container } from '@sushiswap/ui'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type React from 'react'
-import { getPublicBladeChainIds, isPublicBladeChainId } from 'src/config.server'
-import { isBladeChainId } from 'sushi/evm'
+import { BLADE_SUPPORTED_CHAIN_IDS, isBladeChainId } from 'sushi/evm'
 import { Header } from '~evm/[chainId]/header'
 import { GlobalStatsCharts } from '../_ui/global-stats-charts'
 import { NavigationItems } from '../navigation-items'
@@ -24,15 +23,13 @@ export default async function ExploreLayout(props: {
 
   const chainId = +params.chainId
 
-  if (!isBladeChainId(chainId) || !(await isPublicBladeChainId(chainId))) {
+  if (!isBladeChainId(chainId)) {
     return notFound()
   }
 
-  const bladeChainIds = await getPublicBladeChainIds()
-
   return (
     <>
-      <Header chainId={chainId} networks={bladeChainIds} />
+      <Header chainId={chainId} networks={BLADE_SUPPORTED_CHAIN_IDS} />
       <main className="flex flex-col h-full flex-1">
         <Container maxWidth="7xl" className="px-4 py-4">
           <GlobalStatsCharts chainId={chainId} />
