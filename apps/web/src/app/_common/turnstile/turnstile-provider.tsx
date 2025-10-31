@@ -82,8 +82,6 @@ export function TurnstileProvider({ children }: TurnstileProviderContextProps) {
     [jwt, isLoading, isError],
   )
 
-  console.log(token?.slice(0, 10), jwt?.jwt, isJwtLoading)
-
   return (
     <>
       <Turnstile
@@ -165,8 +163,6 @@ function useTurnstileJwt(token: string | null) {
     placeholderData: keepPreviousData,
     enabled: Boolean(token),
   })
-
-  console.log(query.data)
 
   const queryClient = useQueryClient()
 
