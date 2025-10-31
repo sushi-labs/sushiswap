@@ -1,10 +1,9 @@
 'use client'
 
 import type { BladePool } from '@sushiswap/graph-client/data-api'
-import { useQueryClient } from '@tanstack/react-query'
-import { useEffect } from 'react'
+import { useCallback } from 'react'
 import type { Address } from 'viem'
-import { useBlockNumber, useReadContract } from 'wagmi'
+import { useReadContract } from 'wagmi'
 import { bladeCommonExchangeAbi } from './abi/bladeCommonExchange'
 
 interface UseVestingDeposit {
@@ -28,7 +27,7 @@ export const useVestingDeposit = ({
     query: {
       refetchInterval: 10000,
       enabled: Boolean(address && enabled),
-      select: (data) => {
+      select: useCallback((data: readonly [bigint, bigint]) => {
         const [lockedUntil, poolTokenAmount] = data
         return {
           balance: poolTokenAmount,
@@ -37,7 +36,7 @@ export const useVestingDeposit = ({
               ? new Date(Number(lockedUntil) * 1000)
               : undefined,
         }
-      },
+      }, []),
     },
   })
 

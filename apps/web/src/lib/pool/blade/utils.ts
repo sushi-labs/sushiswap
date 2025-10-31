@@ -6,7 +6,6 @@ import {
   EvmToken,
 } from 'sushi/evm'
 import type { Hex } from 'viem'
-import type { PriceMap } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { BLADE_STABLES } from './stables'
 import type { BladePoolAsset, BladePoolStablecoinAsset } from './types'
 
