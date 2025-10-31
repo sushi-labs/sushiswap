@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { BLADE_SUPPORTED_CHAIN_IDS } from 'sushi/evm'
+import { BLADE_SUPPORTED_NETWORKS } from 'src/config'
 import { isBladeChainId } from 'sushi/evm'
 import { Header } from '../../header'
 
@@ -18,7 +18,7 @@ export default async function BladePoolLayout(props: {
 
   return (
     <>
-      <Header chainId={chainId} networks={BLADE_SUPPORTED_CHAIN_IDS} />
+      <Header chainId={chainId} networks={BLADE_SUPPORTED_NETWORKS} />
       <main className="flex flex-col h-full flex-1 animate-slide">
         {children}
       </main>

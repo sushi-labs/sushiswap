@@ -2,7 +2,8 @@ import { Container } from '@sushiswap/ui'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type React from 'react'
-import { BLADE_SUPPORTED_CHAIN_IDS, isBladeChainId } from 'sushi/evm'
+import { BLADE_SUPPORTED_NETWORKS } from 'src/config'
+import { isBladeChainId } from 'sushi/evm'
 import { Header } from '~evm/[chainId]/header'
 import { GlobalStatsCharts } from '../_ui/global-stats-charts'
 import { NavigationItems } from '../navigation-items'
@@ -29,7 +30,7 @@ export default async function ExploreLayout(props: {
 
   return (
     <>
-      <Header chainId={chainId} networks={BLADE_SUPPORTED_CHAIN_IDS} />
+      <Header chainId={chainId} networks={BLADE_SUPPORTED_NETWORKS} />
       <main className="flex flex-col h-full flex-1">
         <Container maxWidth="7xl" className="px-4 py-4">
           <GlobalStatsCharts chainId={chainId} />
