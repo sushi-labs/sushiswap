@@ -35,7 +35,13 @@ export default async function BladePoolsPage(props: {
   )
   const bladePools = activePools.filter((pool) => bladeAbis.includes(pool.abi))
   // if there are any Blade pools, only display them, otherwise display Clipper pools
-  const poolsToDisplay = bladePools.length > 0 ? bladePools : activePools
+  // exception for Ethereum: always display all pools
+  const poolsToDisplay =
+    chainId === EvmChainId.ETHEREUM
+      ? activePools
+      : bladePools.length > 0
+        ? bladePools
+        : activePools
 
   const featuredPool =
     poolsToDisplay.length > 0
