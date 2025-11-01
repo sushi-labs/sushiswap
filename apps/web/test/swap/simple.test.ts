@@ -27,7 +27,6 @@ test.beforeEach(async ({ page, next }) => {
     console.error(error)
   })
   // await loadSnapshot(chainId, snapshot)
-
   try {
     await page.route(`**/price/v1/${chainId}`, async (route) => {
       // const response = await route.fetch()
@@ -39,7 +38,6 @@ test.beforeEach(async ({ page, next }) => {
   } catch (error) {
     console.error('error mocking token api', error)
   }
-
   await page.route('http://localhost:3000/api/swap', async (route) => {
     await route.fulfill({ json: { maintenance: false } })
   })
@@ -50,7 +48,17 @@ test.beforeEach(async ({ page, next }) => {
     throw new Error('error intercepting anvil')
   }
 
-  next.onFetch(() => {
+  next.onFetch((req) => {
+    if (
+      req.url === 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
+    ) {
+      return Promise.resolve(
+        new Response(JSON.stringify({ success: true }), {
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      )
+    }
+
     return 'continue'
   })
 })
