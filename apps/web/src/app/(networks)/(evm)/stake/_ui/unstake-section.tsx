@@ -1,3 +1,5 @@
+'use client'
+
 import { APPROVE_TAG_UNSTAKE } from 'src/lib/constants'
 import { EvmChainId, SUSHI, XSUSHI } from 'sushi/evm'
 import { BarSection } from './BarSection'

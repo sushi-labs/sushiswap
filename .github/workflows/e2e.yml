@@ -56,9 +56,13 @@ jobs:
           BITQUERY_API_KEY: ${{ secrets.BITQUERY_API_KEY }}
           BITQUERY_BEARER_TOKEN: ${{ secrets.BITQUERY_BEARER_TOKEN }}
           # Portal
-          AUTH_SESSION_SECRET: p1jPq93q2T6Kmxrva3+WR93xSWLLSa584Qen005+4ts= # Random string, separate from Prod
+          AUTH_SESSION_SECRET: p1jPq93q2T6Kmxrva3+WR93xSWLLSa584Qen005+4ts= # Dummy key for tests
           ZITADEL_ISSUER: https://zitadel.styro.sushi.com
           ZITADEL_SA_TOKEN: ""
+          # Turnstile
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000BB
+          TURNSTILE_SECRET_KEY: 1x0000000000000000000000000000000AA
+          TURNSTILE_JWT_KEY: mo_JGTwru7hsnyREItHd5Q6XVeFZL_MN3psKFoGuGcE # Dummy key for tests
 
       - name: Upload test results
         if: always()

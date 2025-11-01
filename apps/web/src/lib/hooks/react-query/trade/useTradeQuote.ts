@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
+import { useTurnstile } from 'src/app/_common/turnstile/turnstile-provider'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { getFeeString } from 'src/lib/swap/fee'
 import { Amount, Fraction, Percent, Price, ZERO, subtractSlippage } from 'sushi'
@@ -16,6 +17,7 @@ import {
 } from 'sushi/evm'
 import { stringify, zeroAddress } from 'viem'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
+import { routerProxy } from '../../../../app/_common/turnstile/router-proxy'
 import { apiAdapter02To01 } from './apiAdapter'
 import type { UseTradeParams, UseTradeQuerySelect } from './types'
 import { tradeValidator02 } from './validator02'
@@ -57,7 +59,9 @@ export const useTradeQuoteQuery = (
   }: UseTradeParams,
   select: UseTradeQuerySelect,
 ) => {
-  return useQuery({
+  const { jwt, isLoading: isJwtLoading, isError: isJwtError } = useTurnstile()
+
+  const query = useQuery({
     queryKey: [
       'getTradeQuote',
       {
@@ -73,7 +77,7 @@ export const useTradeQuoteQuery = (
       },
     ],
     queryFn: async () => {
-      if (!chainId || !fromToken || !toToken || !amount) {
+      if (!chainId || !fromToken || !toToken || !amount || !jwt) {
         throw new Error('Missing required parameters for trade quote')
       }
 
@@ -106,8 +110,8 @@ export const useTradeQuoteQuery = (
 
       applyPoolExclusion(fromToken, toToken, params.searchParams)
 
-      const res = await fetch(params.toString())
-      const json = await res.json()
+      const response = await routerProxy(params.toString(), jwt)
+      const json = await response.json()
       const resp2 = tradeValidator02.parse(json)
 
       const resp1 = apiAdapter02To01(resp2, fromToken, toToken, recipient)
@@ -120,9 +124,19 @@ export const useTradeQuoteQuery = (
     retry: false, // dont retry on failure, immediately fallback
     select,
     enabled:
-      enabled && Boolean(chainId && fromToken && toToken && amount && gasPrice),
+      enabled &&
+      Boolean(chainId && fromToken && toToken && amount && gasPrice && jwt),
     queryKeyHashFn: stringify,
   })
+
+  return useMemo(
+    () => ({
+      ...query,
+      isError: query.isError || isJwtError,
+      isLoading: query.isLoading || isJwtLoading,
+    }),
+    [query, isJwtLoading, isJwtError],
+  )
 }
 
 export const useTradeQuote = (variables: UseTradeParams) => {

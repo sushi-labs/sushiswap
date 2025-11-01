@@ -1,10 +1,11 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
-import React, { type FC } from 'react'
+import type React from 'react'
+import type { FC } from 'react'
 
 interface CustomProps extends ButtonProps {
   showChildren?: boolean
   onClick(): void
-  buttonText: string
+  buttonText: string | React.ReactNode
 }
 
 const Custom: FC<CustomProps> = ({

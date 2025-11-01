@@ -5,6 +5,7 @@ import {
 } from '@sushiswap/telemetry'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
+import { useTurnstile } from 'src/app/_common/turnstile/turnstile-provider'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { getFeeString, isAddressFeeWhitelisted } from 'src/lib/swap/fee'
 import { Amount, Fraction, Percent, Price, ZERO, subtractSlippage } from 'sushi'
@@ -19,6 +20,7 @@ import {
 import { type Hex, stringify, zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
+import { routerProxy } from '../../../../app/_common/turnstile/router-proxy'
 import { apiAdapter02To01 } from './apiAdapter'
 import type { UseTradeParams, UseTradeQuerySelect } from './types'
 import { tradeValidator02 } from './validator02'
@@ -41,8 +43,9 @@ export const useTradeQuery = (
 ) => {
   const trace = useTrace()
   const { address } = useAccount()
+  const { jwt, isLoading: isJwtLoading, isError: isJwtError } = useTurnstile()
 
-  return useQuery({
+  const query = useQuery({
     queryKey: [
       'getTrade',
       {
@@ -60,7 +63,7 @@ export const useTradeQuery = (
       },
     ],
     queryFn: async () => {
-      if (!address) throw new Error('No address')
+      if (!address || !jwt) throw new Error('No address or jwt')
 
       const params = new URL(`${API_BASE_URL}/swap/v7/${chainId}`)
       params.searchParams.set('referrer', 'sushi')
@@ -110,8 +113,8 @@ export const useTradeQuery = (
           params.searchParams.append('onlyPools', pool),
         )
 
-      const res = await fetch(params.toString())
-      const json = await res.json()
+      const response = await routerProxy(params.toString(), jwt)
+      const json = await response.json()
       const resp2 = tradeValidator02.parse(json)
 
       const resp1 = apiAdapter02To01(
@@ -140,10 +143,20 @@ export const useTradeQuery = (
         fromToken &&
         toToken &&
         amount &&
-        gasPrice,
+        gasPrice &&
+        jwt,
     ),
     queryKeyHashFn: stringify,
   })
+
+  return useMemo(
+    () => ({
+      ...query,
+      isError: query.isError || isJwtError,
+      isLoading: query.isLoading || isJwtLoading,
+    }),
+    [query, isJwtLoading, isJwtError],
+  )
 }
 
 export const useTrade = (variables: UseTradeParams) => {
