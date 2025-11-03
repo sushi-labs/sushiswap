@@ -12,9 +12,12 @@ import {
   DialogReview,
   DialogTitle,
   DialogTrigger,
+  DialogType,
   Dots,
   List,
+  useDialog,
 } from '@sushiswap/ui'
+import { useRouter } from 'next/navigation'
 import {
   type FC,
   type ReactNode,
@@ -27,9 +30,8 @@ import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import type { RfqAllowDepositResponse } from 'src/lib/pool/blade/useBladeAllowDeposit'
 import { useBladeDepositRequest } from 'src/lib/pool/blade/useBladeDepositRequest'
 import { useBladeDepositTransaction } from 'src/lib/pool/blade/useBladeDepositTransaction'
+import { getOnchainPriceFromPool } from 'src/lib/pool/blade/utils'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
-import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
 import { Amount, formatUSD } from 'sushi'
 import { type BladeChainId, type EvmCurrency, getEvmChainById } from 'sushi/evm'
@@ -39,6 +41,7 @@ import {
   usePublicClient,
   useWaitForTransactionReceipt,
 } from 'wagmi'
+import { useBladePoolOnchainData } from '~evm/[chainId]/(blade-pool)/pool/blade/[address]/_ui/blade-pool-onchain-data-provider'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useBladePoolPosition } from '../blade-pool-position-provider'
@@ -71,7 +74,15 @@ interface BladeAddLiquidityReviewModalProps {
 
 export const BladeAddLiquidityReviewModal: FC<
   BladeAddLiquidityReviewModalProps
-> = ({
+> = (props) => {
+  return (
+    <DialogProvider>
+      <_BladeAddLiquidityReviewModal {...props} />
+    </DialogProvider>
+  )
+}
+
+const _BladeAddLiquidityReviewModal: FC<BladeAddLiquidityReviewModalProps> = ({
   pool,
   chainId,
   validInputs,
@@ -79,13 +90,19 @@ export const BladeAddLiquidityReviewModal: FC<
   children,
   onSuccess: _onSuccess,
 }) => {
+  const { open } = useDialog(DialogType.Review)
+  const router = useRouter()
   const { address } = useAccount()
   const { approved } = useApproved(APPROVE_TAG_ADD_LEGACY)
   const client = usePublicClient()
-  const { liquidityToken, refetch: refetchPosition } = useBladePoolPosition()
-  const poolTotalSupply = useTotalSupply(liquidityToken)
+  const { refetch: refetchPosition } = useBladePoolPosition()
   const { refetchChain: refetchBalances } = useRefetchBalances()
   const { data: prices } = usePrices({ chainId })
+  const {
+    liquidityUSD,
+    liquidity: poolTotalSupply,
+    refetch: refetchPoolLiquidity,
+  } = useBladePoolOnchainData()
 
   const onSuccess = useCallback(
     (hash: Hex) => {
@@ -95,6 +112,8 @@ export const BladeAddLiquidityReviewModal: FC<
       receipt.then(() => {
         refetchBalances(chainId)
         refetchPosition()
+        refetchPoolLiquidity()
+        router.refresh()
       })
 
       const ts = new Date().getTime()
@@ -113,7 +132,16 @@ export const BladeAddLiquidityReviewModal: FC<
         groupTimestamp: ts,
       })
     },
-    [refetchBalances, refetchPosition, _onSuccess, address, chainId, client],
+    [
+      refetchBalances,
+      refetchPosition,
+      refetchPoolLiquidity,
+      _onSuccess,
+      address,
+      chainId,
+      client,
+      router,
+    ],
   )
 
   const onTransactionError = useCallback((e: Error) => {
@@ -128,6 +156,7 @@ export const BladeAddLiquidityReviewModal: FC<
 
   const depositRequest = useBladeDepositRequest({
     onError: onDepositRequestError,
+    enabled: open,
   })
   const transactionMutation = useBladeDepositTransaction({
     pool,
@@ -190,19 +219,74 @@ export const BladeAddLiquidityReviewModal: FC<
     [depositRequest.data, address, transactionMutation, validInputs],
   )
 
-  const estimatedValue = useMemo(() => {
-    if (!depositRequest.data?.pool_tokens) return 0
+  const depositInputsWithValue = useMemo(() => {
+    return validInputs.flatMap((input) => {
+      const parsedAmount = Amount.tryFromHuman(input.token, input.amount)
+      if (!parsedAmount) return []
+      const price =
+        prices?.get(input.token.wrap().address) ??
+        getOnchainPriceFromPool(input.token, pool)
+      const usdValue =
+        price !== null ? Number(parsedAmount.toString()) * price : null
+      return [{ input, parsedAmount, usdValue }]
+    })
+  }, [validInputs, prices, pool])
+
+  const estimatedDepositValue = useMemo(() => {
+    return depositInputsWithValue.reduce<number | null>(
+      (sum, item) =>
+        sum !== null && item.usdValue !== null ? sum + item.usdValue : null,
+      0,
+    )
+  }, [depositInputsWithValue])
+
+  const estimatedApiDepositValue = useMemo(() => {
+    if (!depositRequest.data?.pool_tokens || estimatedDepositValue === null)
+      return null
     const estimatedPoolTokens = Number(depositRequest.data.pool_tokens)
+
+    const currentTotalSupply = poolTotalSupply ? Number(poolTotalSupply) : 0
+    const newTotalSupply = currentTotalSupply + estimatedPoolTokens
+
     const poolProportion =
-      poolTotalSupply?.amount && poolTotalSupply.amount > 0
-        ? estimatedPoolTokens /
-          (Number(poolTotalSupply.amount) + estimatedPoolTokens)
-        : undefined
-    const estimatedValue = poolProportion
-      ? pool.liquidityUSD * poolProportion
-      : 0
+      newTotalSupply > 0 ? estimatedPoolTokens / newTotalSupply : 0
+
+    const newTotalLiquidity = liquidityUSD + estimatedDepositValue
+
+    const estimatedValue = poolProportion * newTotalLiquidity
     return estimatedValue
-  }, [depositRequest.data, pool.liquidityUSD, poolTotalSupply])
+  }, [
+    depositRequest.data,
+    liquidityUSD,
+    poolTotalSupply,
+    estimatedDepositValue,
+  ])
+
+  /**
+   * Determines which estimated value to display to the user.
+   *
+   * We show the direct USD calculation (estimatedDepositValue) by default since it uses
+   * current price data and is predictable based on user inputs. However, we fall back to
+   * the API-calculated value (estimatedApiDepositValue) when there's a significant difference (>5%)
+   * to alert the user that something may be wrong with the price data or calculation.
+   *
+   * The 5% threshold represents a 0.05 ratio (absolute difference divided by the direct value).
+   *
+   * Note: These are only estimates and the API value uses on-chain oracle prices which may
+   * differ from current market prices used in the direct calculation.
+   */
+  const displayEstimatedValue = useMemo(() => {
+    if (!estimatedApiDepositValue) return estimatedDepositValue
+    if (!estimatedDepositValue) return estimatedApiDepositValue
+
+    const differenceRatio =
+      Math.abs(estimatedApiDepositValue - estimatedDepositValue) /
+      estimatedDepositValue
+
+    return differenceRatio > 0.05
+      ? estimatedApiDepositValue
+      : estimatedDepositValue
+  }, [estimatedApiDepositValue, estimatedDepositValue])
 
   const { status } = useWaitForTransactionReceipt({
     chainId,
@@ -228,7 +312,7 @@ export const BladeAddLiquidityReviewModal: FC<
   }
 
   return (
-    <DialogProvider>
+    <>
       <DialogReview>
         {({ confirm }) => (
           <>
@@ -249,17 +333,8 @@ export const BladeAddLiquidityReviewModal: FC<
 
               <List>
                 <List.Control>
-                  {validInputs.map((input, index) => {
-                    const parsedAmount = Amount.tryFromHuman(
-                      input.token,
-                      input.amount,
-                    )
-                    if (!parsedAmount) return null
-
-                    const price = prices?.get(input.token.wrap().address) || 0
-                    const usdValue = Number(parsedAmount.toString()) * price
-
-                    return (
+                  {depositInputsWithValue.map(
+                    ({ input, parsedAmount, usdValue }, index) => (
                       <List.KeyValue
                         key={index}
                         title={
@@ -285,12 +360,12 @@ export const BladeAddLiquidityReviewModal: FC<
                             {parsedAmount.toSignificant(6)}
                           </span>
                           <span className="text-sm text-gray-400 dark:text-slate-400">
-                            ${usdValue.toFixed(2)}
+                            {usdValue !== null ? formatUSD(usdValue) : '-'}
                           </span>
                         </div>
                       </List.KeyValue>
-                    )
-                  })}
+                    ),
+                  )}
                 </List.Control>
               </List>
 
@@ -298,7 +373,9 @@ export const BladeAddLiquidityReviewModal: FC<
                 <List>
                   <List.Control>
                     <List.KeyValue title="Estimated Value">
-                      {formatUSD(estimatedValue || 0)}
+                      {displayEstimatedValue !== null
+                        ? formatUSD(displayEstimatedValue)
+                        : '-'}
                     </List.KeyValue>
 
                     {lockTime?.message ? (
@@ -329,11 +406,10 @@ export const BladeAddLiquidityReviewModal: FC<
         status={status}
         testId="blade-confirmation-modal"
         successMessage="Successfully added liquidity"
-        buttonText="Go to pool"
-        buttonLink={`/${getEvmChainById(chainId).key}/pool/blade/${pool.address}`}
+        buttonText="Close"
         txHash={transactionMutation.data}
       />
-    </DialogProvider>
+    </>
   )
 }
 

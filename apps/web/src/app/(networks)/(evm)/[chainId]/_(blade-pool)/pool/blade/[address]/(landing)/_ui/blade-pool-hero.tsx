@@ -30,9 +30,6 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
     ],
     [tokens, hasStablecoin, showStableTypes, stablecoinUsdTokens],
   )
-  const baseApr = pool.totalApr1d
-  const rewardsApr = pool.incentiveApr
-  const basisApr = baseApr + rewardsApr
 
   const poolExplorerLink = getEvmChainById(pool.chainId).getAccountUrl(
     pool.id as EvmAddress,
@@ -118,7 +115,7 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
       <div className="flex xs:flex-row flex-col items-center gap-2 sm:gap-3">
         <div className="flex flex-col items-center gap-1 sm:gap-2">
           <div className="bg-gradient-to-r font-bold font-orbitron text-2xl text-black dark:text-white xs:text-sm sm:text-4xl">
-            {formatPercent(basisApr)}
+            {formatPercent(pool.totalApr1d)}
           </div>
           <div className="font-semibold text-black dark:text-white text-xs opacity-80">
             1D Basis APR
@@ -134,7 +131,7 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
 
         <div className="flex flex-col items-center gap-1 sm:gap-2">
           <div className="bg-gradient-to-r font-bold font-orbitron text-2xl text-black dark:text-white xs:text-sm sm:text-4xl">
-            {formatPercent(baseApr)}
+            {formatPercent(pool.feeApr1d)}
           </div>
           <div className="font-medium text-black dark:text-white text-xs opacity-80">
             Base APR
@@ -151,7 +148,7 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
         <div className="flex flex-col items-center gap-1 sm:gap-2">
           <div className="relative flex items-center gap-2">
             <div className="bg-gradient-to-r font-bold font-orbitron text-2xl text-black dark:text-white xs:text-sm sm:text-4xl">
-              {formatPercent(rewardsApr)}
+              {formatPercent(pool.incentiveApr)}
             </div>
             <div className="-right-6 sm:-right-8 absolute top-1 sm:top-2">
               <SushiIcon width={20} height={20} />

@@ -3,7 +3,6 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { getChainById, getChainByKey, isChainId, isChainKey } from 'sushi'
 import { getEvmChainById, isBladeChainId, isSushiSwapChainId } from 'sushi/evm'
 import { SUPPORTED_NETWORKS } from './config'
-import { isPublicBladeChainId } from './config.server'
 
 export const config = {
   matcher: [
@@ -93,8 +92,7 @@ async function _middleware(req: NextRequest) {
       if (subPage === 'pools') {
         if (
           !isSushiSwapChainId(chain.chainId) &&
-          isBladeChainId(chain.chainId) &&
-          (await isPublicBladeChainId(chain.chainId))
+          isBladeChainId(chain.chainId)
         ) {
           url.pathname = pathname.replace(
             '/explore/pools',

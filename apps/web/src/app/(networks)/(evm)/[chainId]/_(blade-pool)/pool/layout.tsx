@@ -1,6 +1,6 @@
+import { isBladeChainId } from '@sushiswap/graph-client/data-api'
 import { notFound } from 'next/navigation'
-import { getPublicBladeChainIds, isPublicBladeChainId } from 'src/config.server'
-import { isBladeChainId } from 'sushi/evm'
+import { BLADE_SUPPORTED_NETWORKS } from 'src/config'
 import { Header } from '../../header'
 
 export default async function BladePoolLayout(props: {
@@ -12,15 +12,13 @@ export default async function BladePoolLayout(props: {
   const { children } = props
 
   const chainId = +params.chainId
-  if (!isBladeChainId(chainId) || !(await isPublicBladeChainId(chainId))) {
+  if (!isBladeChainId(chainId)) {
     return notFound()
   }
 
-  const bladeChainIds = await getPublicBladeChainIds()
-
   return (
     <>
-      <Header chainId={chainId} networks={bladeChainIds} />
+      <Header chainId={chainId} networks={BLADE_SUPPORTED_NETWORKS} />
       <main className="flex flex-col h-full flex-1 animate-slide">
         {children}
       </main>

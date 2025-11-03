@@ -1,6 +1,8 @@
+import { isBladeChainId } from '@sushiswap/graph-client/data-api'
 import type { VariablesOf } from 'gql.tada'
 import { type RequestOptions, request } from 'src/lib/request.js'
-import { type EvmChainId, SUSHI_DATA_API_HOST, isBladeChainId } from 'sushi/evm'
+import type { EvmChainId } from 'sushi/evm'
+import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
 
 export const BladePoolBucketsQuery = graphql(`

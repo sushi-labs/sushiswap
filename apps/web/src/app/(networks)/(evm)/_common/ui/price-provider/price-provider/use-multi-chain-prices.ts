@@ -76,6 +76,7 @@ export function useMultiChainPrices({
             const price = chain.priceMap!.get(address)
             return price
           },
+
           getFraction: (_address: EvmAddress) => {
             const address = BigInt(_address)
 

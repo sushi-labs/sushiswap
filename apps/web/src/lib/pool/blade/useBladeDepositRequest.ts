@@ -67,8 +67,10 @@ export type RfqDepositResponse = z.infer<typeof rfqDepositResponseSchema>
 
 export const useBladeDepositRequest = ({
   onError,
+  enabled = false,
 }: {
   onError?: (e: Error) => void
+  enabled?: boolean
 } = {}) => {
   const [refreshDelay, setRefreshDelay] = useState<number | null>(null)
 
@@ -80,7 +82,7 @@ export const useBladeDepositRequest = ({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(BLADE_API_KEY ? { 'x-api-key': BLADE_API_KEY } : {}),
+          ...(BLADE_API_KEY ? { 'X-Api-Key': BLADE_API_KEY } : {}),
         },
         body: JSON.stringify(payload),
       })
@@ -109,11 +111,14 @@ export const useBladeDepositRequest = ({
     onError,
   })
 
-  useTimeout(() => {
-    if (mutation.variables) {
-      mutation.mutate(mutation.variables)
-    }
-  }, refreshDelay)
+  useTimeout(
+    () => {
+      if (mutation.variables) {
+        mutation.mutate(mutation.variables)
+      }
+    },
+    enabled ? refreshDelay : null,
+  )
 
   return mutation
 }

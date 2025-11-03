@@ -1,8 +1,12 @@
-import { type BladePool, getBladePool } from '@sushiswap/graph-client/data-api'
+import {
+  type BladePool,
+  getBladePool,
+  isBladeChainId,
+} from '@sushiswap/graph-client/data-api'
 import ms from 'ms'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import { type EvmChainId, isBladeChainId } from 'sushi/evm'
+import type { EvmChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
 import { PoolPageBlade } from '~evm/[chainId]/_ui/PoolPageBlade'
 

@@ -2,10 +2,10 @@ import {
   getAnalyticsDayBuckets,
   isPoolChainId,
 } from '@sushiswap/graph-client/data-api'
+import { isBladeChainId } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
 import { type FC, Suspense } from 'react'
-import { isPublicBladeChainId } from 'src/config.server'
-import { type EvmChainId, isBladeChainId } from 'sushi/evm'
+import type { EvmChainId } from 'sushi/evm'
 import { GlobalStatsLoading } from './global-stats-loading'
 import { TVLChart } from './tvl-chart'
 import { VolumeChart } from './volume-chart'
@@ -39,8 +39,7 @@ const _GlobalStatsCharts: FC<{ chainId: EvmChainId }> = async ({ chainId }) => {
   const isLoading =
     !dayBuckets.v2.length && !dayBuckets.v3.length && !dayBuckets.blade?.length
 
-  const showBlade =
-    isBladeChainId(chainId) && (await isPublicBladeChainId(chainId))
+  const showBlade = isBladeChainId(chainId)
 
   return isLoading ? (
     <GlobalStatsLoading chainId={chainId} />

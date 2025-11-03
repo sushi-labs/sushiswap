@@ -1,12 +1,14 @@
 'use client'
 
 import type { BladePool } from '@sushiswap/graph-client/data-api'
+import { useQueryClient } from '@tanstack/react-query'
 import {
   type FC,
   type ReactNode,
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
 } from 'react'
 import { useVestingDeposit } from 'src/lib/pool/blade/useVestingDeposit'
@@ -14,6 +16,7 @@ import type { Amount } from 'sushi'
 import { type EvmCurrency, EvmToken } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
+import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 
 interface BladePoolPositionContext {
   balance: Amount<EvmCurrency> | null | undefined
@@ -40,10 +43,19 @@ export const BladePoolPositionProvider: FC<{
       chainId: pool.chainId,
       address: pool.address,
       decimals: 18,
-      symbol: 'ClipperLP',
-      name: 'Clipper LP Token',
+      ...(pool.abi.startsWith('Clipper')
+        ? {
+            symbol: 'ClipperLP',
+            name: 'Clipper LP Token',
+          }
+        : {
+            symbol: 'BladeLP',
+            name: 'Blade LP Token',
+          }),
     })
   }, [pool])
+  const { refetchChain: refetchBalances } = useRefetchBalances()
+  const queryClient = useQueryClient()
 
   const {
     data: balance,
@@ -53,14 +65,20 @@ export const BladePoolPositionProvider: FC<{
   const {
     data: vestingDeposit,
     isLoading: isVestingDepositLoading,
-    refetch: refetchVestingDeposit,
+    isFetching: isVestingDepositFetching,
+    isStale: isVestingDepositStale,
+    queryKey: vestingDepositQueryKey,
   } = useVestingDeposit({ pool, address })
 
-  const isLoading = isBalanceLoading || isVestingDepositLoading
+  const isLoading =
+    isBalanceLoading ||
+    isVestingDepositLoading ||
+    (isVestingDepositFetching && isVestingDepositStale)
 
   const refetch = useCallback(() => {
-    refetchVestingDeposit()
-  }, [refetchVestingDeposit])
+    refetchBalances(pool.chainId)
+    queryClient.invalidateQueries({ queryKey: vestingDepositQueryKey })
+  }, [refetchBalances, pool.chainId, vestingDepositQueryKey, queryClient])
 
   return (
     <Context.Provider

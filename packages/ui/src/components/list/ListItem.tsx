@@ -51,7 +51,7 @@ export const ListItem: ListItemComponent = ({
       className={classNames(
         subtitle ? 'items-start' : 'items-center',
         onClick && 'cursor-pointer',
-        'relative flex gap-4 px-3 py-3 w-full cursor-pointer',
+        'relative flex gap-4 px-3 py-3 w-full',
         className,
       )}
       {...(onClick ? { type: 'button', onClick } : {})}

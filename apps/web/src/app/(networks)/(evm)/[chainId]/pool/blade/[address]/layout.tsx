@@ -1,9 +1,9 @@
-import { getBladePool } from '@sushiswap/graph-client/data-api'
+import { getBladePool, isBladeChainId } from '@sushiswap/graph-client/data-api'
 import ms from 'ms'
 import type { Metadata } from 'next'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import { type EvmChainId, isBladeChainId } from 'sushi/evm'
+import type { EvmChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
 
 export async function generateMetadata(props: {
