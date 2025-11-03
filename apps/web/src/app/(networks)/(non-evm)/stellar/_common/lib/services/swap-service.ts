@@ -185,16 +185,8 @@ export class SwapService {
     const unsignedXdr = assembledTransaction.built.toXDR()
     const signedXdr = await signTransaction(unsignedXdr)
 
-    // Parse and re-serialize the signed XDR to normalize encoding
-    // This fixes issues where wallet-signed XDR has encoding quirks
-    const signedTxObj = StellarSdk.TransactionBuilder.fromXDR(
-      signedXdr,
-      this.networkPassphrase,
-    )
-    const reSerializedXdr = signedTxObj.toXDR()
-
-    // Submit the re-serialized XDR via raw RPC
-    const txHash = await submitViaRawRPC(reSerializedXdr)
+    // Submit the signed XDR directly via raw RPC (same as single-hop)
+    const txHash = await submitViaRawRPC(signedXdr)
     const result = await waitForTransaction(txHash)
 
     if (result.success) {
