@@ -2,9 +2,10 @@ import {
   getAnalyticsDayBuckets,
   isPoolChainId,
 } from '@sushiswap/graph-client/data-api'
+import { isBladeChainId } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
 import { type FC, Suspense } from 'react'
-import { type EvmChainId, isBladeChainId } from 'sushi/evm'
+import type { EvmChainId } from 'sushi/evm'
 import { GlobalStatsLoading } from './global-stats-loading'
 import { TVLChart } from './tvl-chart'
 import { VolumeChart } from './volume-chart'

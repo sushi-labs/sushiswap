@@ -1,4 +1,7 @@
-import { getTokenList } from '@sushiswap/graph-client/data-api'
+import {
+  getTokenList,
+  isTokenListChainId,
+} from '@sushiswap/graph-client/data-api'
 import { Ratelimit } from '@upstash/ratelimit'
 import { ipAddress } from '@vercel/functions'
 import { type NextRequest, NextResponse } from 'next/server'
@@ -73,6 +76,10 @@ export async function GET(request: NextRequest) {
       chainId: args.chainId,
       tokenId: args.positionId,
     })
+
+    if (!isTokenListChainId(args.chainId)) {
+      throw new Error(`Token list not supported for chainId ${args.chainId}`)
+    }
 
     const [[token0], [token1]] = await Promise.all([
       getTokenList({ chainId: args.chainId, search: position.token0 }),

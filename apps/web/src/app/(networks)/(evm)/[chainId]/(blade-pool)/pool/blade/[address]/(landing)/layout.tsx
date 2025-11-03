@@ -1,6 +1,7 @@
+import { isBladeChainId } from '@sushiswap/graph-client/data-api'
 import { Container, LinkInternal } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
-import { getEvmChainById, isBladeChainId, isEvmAddress } from 'sushi/evm'
+import { getEvmChainById } from 'sushi/evm'
 
 export default async function Layout(props: {
   children: React.ReactNode
