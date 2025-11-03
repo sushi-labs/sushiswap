@@ -33,6 +33,7 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { getSortedChainIds } from 'src/config'
 import { NativeAddress } from 'src/lib/constants'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import { formatUSD, getChainById } from 'sushi'
@@ -93,9 +94,14 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
 
     const filteredBridgeInfo = useMemo(() => {
       if (!bridgeInfo) return []
-      return bridgeInfo.filter((info) =>
-        networkOptions.some((option) => option === info.chainId),
-      )
+      return bridgeInfo
+        .filter((info) =>
+          networkOptions.some((option) => option === info.chainId),
+        )
+        ?.slice(0, 7)
+        ?.sort((a, b) =>
+          getSortedChainIds([a.chainId, b.chainId])[0] === a.chainId ? -1 : 1,
+        )
     }, [bridgeInfo, networkOptions])
 
     return (
@@ -181,7 +187,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <span className="text-sm text-muted-foreground hover:underline">
+                        <span className="text-sm text-muted-foreground hover:underline whitespace-nowrap">
                           {currency.name ?? currency.symbol}
                         </span>
                       </TooltipTrigger>
@@ -206,9 +212,9 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                 </div>
               </div>
 
-              <div className="flex items-center gap-4">
+              <div className={classNames('flex items-center gap-4')}>
                 {isHovered && showChainOptions && filteredBridgeInfo?.length ? (
-                  <div className="flex gap-1 items-center">
+                  <div className="flex gap-1 !max-w-[220px] items-center">
                     {filteredBridgeInfo?.map((info) => (
                       <NetworkButton
                         key={`${info.chainId}-${info.address}`}
