@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { useStellarWallet } from '~stellar/providers'
 import type { Token } from '../types/token.type'
 import { usePoolInfo } from './pool'
 import { useLPUsdValue } from './useLPUsdValue'
@@ -35,14 +34,26 @@ export const usePoolOwnership = ({
   return useQuery({
     queryKey: ['usePoolOwnership', { pairAddress }],
     queryFn: async () => {
-      if (!pairAddress || !pool || !lpUsdValueOwned || !lpUsdValueTotal) {
+      if (
+        !pairAddress ||
+        !pool ||
+        lpUsdValueOwned === undefined ||
+        lpUsdValueTotal === undefined
+      ) {
         return { ownership: '0', ownedSupply: '0' }
       }
 
-      const ownership = (lpUsdValueOwned / lpUsdValueTotal).toString()
+      const ownership =
+        lpUsdValueTotal === 0
+          ? '0'
+          : (lpUsdValueOwned / lpUsdValueTotal).toString()
 
       return { ownership, ownedSupply: lpUsdValueOwned.toString() }
     },
-    enabled: !!pairAddress && !!pool && !!lpUsdValueOwned && !!lpUsdValueTotal,
+    enabled:
+      !!pairAddress &&
+      !!pool &&
+      lpUsdValueOwned !== undefined &&
+      lpUsdValueTotal !== undefined,
   })
 }
