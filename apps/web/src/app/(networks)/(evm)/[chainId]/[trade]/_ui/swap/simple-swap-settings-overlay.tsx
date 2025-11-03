@@ -12,7 +12,7 @@ export const SimpleSwapSettingsOverlay = () => {
     <SettingsOverlay
       modules={[
         SettingsModule.SlippageTolerance,
-        SettingsModule.Trade2Experience,
+        SettingsModule.AdvancedTradingExperience,
       ]}
       options={{
         tradeView: {
