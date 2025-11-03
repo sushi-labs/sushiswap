@@ -12,6 +12,7 @@ import {
   type EvmCurrency,
   EvmNative,
   UI_FEE_COLLECTOR_ADDRESS,
+  addGasMargin,
   isRedSnwapperChainId,
   isUIFeeCollectorChainId,
   isWNativeSupported,
@@ -229,7 +230,7 @@ export const useTrade = (variables: UseTradeParams) => {
         const gasSpent = gasPrice
           ? new Amount(
               EvmNative.fromChainId(chainId),
-              gasPrice * BigInt(data.route.gasSpent * 1.2),
+              gasPrice * addGasMargin(BigInt(Math.floor(data.route.gasSpent))),
             )
           : undefined
 
