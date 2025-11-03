@@ -103,7 +103,7 @@ export const Recent = ({ onClose }: { onClose?: () => void }) => {
     <div className="grid grid-cols-3 col-span-3 gap-0">
       <div className="sticky top-0 z-[19  ] grid grid-cols-5 col-span-5 text-xs bg-white lg:bg-slate-50 dark:bg-slate-900 lg:dark:bg-slate-800 text-slate-700 dark:text-pink-100">
         <div className="w-full col-span-3 pl-2 font-medium">Token Pair</div>
-        <div className="w-full font-medium text-left whitespace-nowrap">
+        <div className="w-full font-medium  text-left whitespace-nowrap">
           Amount Traded
         </div>
         <div className="w-full col-span-1 pr-2 font-medium text-right">
@@ -145,7 +145,7 @@ const RecentItem = ({
   onClose,
 }: { recentSwap: LocalRecentSwap; onClose?: () => void }) => {
   const [isHovered, setIsHovered] = useState(false)
-  const { isMd } = useBreakpoint('md')
+  const { isLg } = useBreakpoint('lg')
   const { token0, token1 } = recentSwap
 
   return (
@@ -225,11 +225,11 @@ const RecentItem = ({
           ) : null}
         </div>
 
-        {isHovered && isMd ? (
+        {isHovered && isLg ? (
           <ActionButtons onClose={onClose} recentSwap={recentSwap} />
-        ) : isHovered && !isMd ? null : (
+        ) : isHovered && !isLg ? null : (
           <>
-            <div className="text-left pl-0.5">
+            <div className="text-left pl-2.5">
               <span className="font-medium text-slate-900 dark:text-pink-100">
                 {formatUSD(recentSwap?.amount1USD ?? 0)}
               </span>
@@ -252,8 +252,8 @@ const RecentItem = ({
             </div>
           </>
         )}
-        {isHovered && !isMd ? (
-          <div className="col-span-5 mt-2">
+        {isHovered && !isLg ? (
+          <div className="col-span-5 pt-4">
             <Collapsible open={isHovered}>
               <div className="grid w-full grid-cols-5 col-span-5 gap-2">
                 <ActionButtons onClose={onClose} recentSwap={recentSwap} />
