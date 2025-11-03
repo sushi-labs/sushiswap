@@ -124,3 +124,13 @@ if (!('structuredClone' in globalThis)) {
     globalThis.structuredClone = mod.default
   })
 }
+
+import { initBotId } from 'botid/client/core'
+initBotId({
+  protect: [
+    {
+      path: '/api/router-proxy',
+      method: 'POST',
+    },
+  ],
+})

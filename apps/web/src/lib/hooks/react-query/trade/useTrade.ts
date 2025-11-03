@@ -111,7 +111,10 @@ export const useTradeQuery = (
           params.searchParams.append('onlyPools', pool),
         )
 
-      const res = await fetch(params.toString())
+      const res = await fetch('/api/router-proxy', {
+        method: 'POST',
+        body: JSON.stringify({ url: params.toString() }),
+      })
       const json = await res.json()
       const resp2 = tradeValidator02.parse(json)
 
