@@ -291,7 +291,7 @@ const ActionButtons = ({
           onClose?.()
         }}
         size="xs"
-        className="text-slate-50 w-full lg:w-fit !rounded-full bg-green-500 font-semibold hover:bg-green-500 active:bg-green-500/95 focus:bg-green-500"
+        className="text-slate-50 w-full lg:w-fit !rounded-full bg-green-500 font-semibold hover:bg-green-500 active:bg-green-500/95 focus:bg-green-500 !min-h-[24px] !h-[24px]"
       >
         BUY {recentSwap.token0.symbol}
       </Button>
@@ -313,7 +313,7 @@ const ActionButtons = ({
           onClose?.()
         }}
         size="xs"
-        className="text-slate-50 w-full lg:w-fit bg-red-100 !rounded-full font-semibold hover:bg-red-100 active:bg-red-100/95 focus:bg-red-500"
+        className="text-slate-50 w-full lg:w-fit bg-red-100 !rounded-full font-semibold hover:bg-red-100 active:bg-red-100/95 focus:bg-red-500 !min-h-[24px] !h-[24px]"
       >
         SELL {recentSwap.token0.symbol}
       </Button>
