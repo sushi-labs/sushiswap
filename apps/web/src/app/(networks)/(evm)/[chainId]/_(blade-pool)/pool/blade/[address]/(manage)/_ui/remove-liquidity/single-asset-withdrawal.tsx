@@ -5,12 +5,16 @@ import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { createErrorToast } from '@sushiswap/notifications'
 import { Button, Currency, Dots, List, Message } from '@sushiswap/ui'
 import { type FC, useCallback, useMemo } from 'react'
+import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
+import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { logger } from 'src/lib/logger'
 import type { useBladeWithdrawTransaction } from 'src/lib/pool/blade/useBladeWithdraw'
 import { useBladeWithdrawRequest } from 'src/lib/pool/blade/useBladeWithdrawRequest'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
+import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker'
 
-import { Amount, formatUSD } from 'sushi'
+import { getOnchainPriceFromPool } from 'src/lib/pool/blade/utils'
+import { Amount, Percent, formatUSD } from 'sushi'
 import { type EvmCurrency, EvmNative } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import type { PriceMap } from '~evm/_common/ui/price-provider/price-provider/use-prices'
@@ -22,6 +26,7 @@ interface SingleAssetWithdrawalProps {
   prices: PriceMap | undefined
   onConfirm: () => void
   withdrawTransaction: ReturnType<typeof useBladeWithdrawTransaction>
+  estimatedValue: number
 }
 
 export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
@@ -31,6 +36,7 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
   prices,
   onConfirm,
   withdrawTransaction,
+  estimatedValue,
 }) => {
   const { address } = useAccount()
 
@@ -62,8 +68,11 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
       withdrawRequest.data.asset_amount,
     )
 
-    const tokenPrice = prices?.get(selectedToken.wrap().address) || 0
-    const usdValue = Number(exactAmount.toString()) * tokenPrice
+    const tokenPrice =
+      prices?.get(selectedToken.wrap().address) ??
+      getOnchainPriceFromPool(selectedToken, pool)
+    const usdValue =
+      tokenPrice !== null ? Number(exactAmount.toString()) * tokenPrice : null
 
     return {
       singleAssetData: {
@@ -72,7 +81,33 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
       },
       hasTokenMismatch: false,
     }
-  }, [selectedToken, withdrawRequest.data, withdrawRequest.isSuccess, prices])
+  }, [
+    selectedToken,
+    withdrawRequest.data,
+    withdrawRequest.isSuccess,
+    prices,
+    pool,
+  ])
+
+  const showPriceImpactWarning = useMemo(() => {
+    if (
+      !singleAssetData ||
+      estimatedValue === 0 ||
+      singleAssetData.usdValue === null
+    )
+      return false
+
+    const actualUsdValue = singleAssetData.usdValue
+
+    const difference =
+      Math.abs(estimatedValue - actualUsdValue) / estimatedValue
+    const priceImpact = new Percent({
+      numerator: Math.floor(difference * 100),
+      denominator: 100,
+    })
+
+    return !priceImpact.lt(SLIPPAGE_WARNING_THRESHOLD)
+  }, [singleAssetData, estimatedValue])
 
   const handleGetQuote = useCallback(async () => {
     if (!amountToRemove || !address) return
@@ -189,12 +224,15 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
                 {selectedToken.symbol}
               </div>
               <div className="text-sm text-muted-foreground">
-                {formatUSD(singleAssetData.usdValue)}
+                {singleAssetData.usdValue !== null
+                  ? formatUSD(singleAssetData.usdValue)
+                  : '-'}
               </div>
             </div>
           }
         />
       </List.Control>
+      {showPriceImpactWarning && <PriceImpactWarning />}
       <Button
         size="xl"
         fullWidth

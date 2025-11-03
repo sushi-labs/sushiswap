@@ -1,10 +1,9 @@
 'use client'
 
 import type { BladePool } from '@sushiswap/graph-client/data-api'
-import { useQueryClient } from '@tanstack/react-query'
-import { useEffect } from 'react'
+import { useCallback } from 'react'
 import type { Address } from 'viem'
-import { useBlockNumber, useReadContract } from 'wagmi'
+import { useReadContract } from 'wagmi'
 import { bladeCommonExchangeAbi } from './abi/bladeCommonExchange'
 
 interface UseVestingDeposit {
@@ -19,7 +18,6 @@ export const useVestingDeposit = ({
   enabled = true,
 }: UseVestingDeposit) => {
   const { chainId } = pool
-  const queryClient = useQueryClient()
   const query = useReadContract({
     chainId,
     address: pool.address,
@@ -27,8 +25,9 @@ export const useVestingDeposit = ({
     functionName: 'vestingDeposits',
     args: address ? [address] : undefined,
     query: {
+      refetchInterval: 10000,
       enabled: Boolean(address && enabled),
-      select: (data) => {
+      select: useCallback((data: readonly [bigint, bigint]) => {
         const [lockedUntil, poolTokenAmount] = data
         return {
           balance: poolTokenAmount,
@@ -37,23 +36,9 @@ export const useVestingDeposit = ({
               ? new Date(Number(lockedUntil) * 1000)
               : undefined,
         }
-      },
+      }, []),
     },
   })
-
-  const { data: blockNumber } = useBlockNumber({
-    chainId,
-    watch: true,
-  })
-
-  useEffect(() => {
-    if (blockNumber) {
-      queryClient.invalidateQueries(
-        { queryKey: query.queryKey },
-        { cancelRefetch: false },
-      )
-    }
-  }, [blockNumber, queryClient, query.queryKey])
 
   return query
 }

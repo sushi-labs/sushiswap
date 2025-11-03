@@ -1,18 +1,16 @@
-import { type BladePool, getBladePool } from '@sushiswap/graph-client/data-api'
+import {
+  type BladePool,
+  getBladePool,
+  isBladeChainId,
+} from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import ms from 'ms'
 import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import type React from 'react'
-import { PoolHeader } from 'src/ui/pool/PoolHeader'
 import { PoolHeaderBlade } from 'src/ui/pool/PoolHeaderBlade'
-import {
-  type EvmChainId,
-  getEvmChainById,
-  isBladeChainId,
-  isSushiSwapV2ChainId,
-} from 'sushi/evm'
+import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 import { isAddress } from 'viem'
 
 export default async function Layout(props: {

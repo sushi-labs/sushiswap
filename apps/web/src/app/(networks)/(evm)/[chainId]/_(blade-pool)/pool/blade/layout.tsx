@@ -1,6 +1,5 @@
+import { isBladeChainId } from '@sushiswap/graph-client/data-api'
 import { notFound } from 'next/navigation'
-import { isPublicBladeChainId } from 'src/config.server'
-import { isBladeChainId } from 'sushi/evm'
 
 export default async function Layout(props: {
   children: React.ReactNode
@@ -11,7 +10,7 @@ export default async function Layout(props: {
   const { children } = props
 
   const chainId = +params.chainId
-  if (!isBladeChainId(chainId) || !(await isPublicBladeChainId(chainId))) {
+  if (!isBladeChainId(chainId)) {
     return notFound()
   }
 

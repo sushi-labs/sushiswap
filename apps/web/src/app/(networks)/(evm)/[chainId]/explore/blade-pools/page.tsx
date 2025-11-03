@@ -1,8 +1,7 @@
-import { getBladePools } from '@sushiswap/graph-client/data-api'
+import { getBladePools, isBladeChainId } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
-import { isPublicBladeChainId } from 'src/config.server'
-import { type BladeChainId, EvmChainId, isBladeChainId } from 'sushi/evm'
+import { type BladeChainId, EvmChainId } from 'sushi/evm'
 import { BladeFeaturedPoolBanner } from '../_ui/blade-featured-pool-banner'
 import { BladePoolsTable } from './_ui/blade-pool-table'
 
@@ -19,14 +18,14 @@ export default async function BladePoolsPage(props: {
   const params = await props.params
   const chainId = +params.chainId
 
-  if (!isBladeChainId(chainId) || !(await isPublicBladeChainId(chainId))) {
+  if (!isBladeChainId(chainId)) {
     return notFound()
   }
 
   const pools = await getBladePools({ chainId })
   const bladeAbis: (typeof pools)[number]['abi'][] = [
     'BladeVerifiedExchange',
-    'BladeApproximateCaravelExchange',
+    'BladeApproximateExchange',
   ]
   const activePools = pools.filter(
     (pool) =>
@@ -35,7 +34,13 @@ export default async function BladePoolsPage(props: {
   )
   const bladePools = activePools.filter((pool) => bladeAbis.includes(pool.abi))
   // if there are any Blade pools, only display them, otherwise display Clipper pools
-  const poolsToDisplay = bladePools.length > 0 ? bladePools : activePools
+  // exception for Ethereum: always display all pools
+  const poolsToDisplay =
+    chainId === EvmChainId.ETHEREUM
+      ? activePools
+      : bladePools.length > 0
+        ? bladePools
+        : activePools
 
   const featuredPool =
     poolsToDisplay.length > 0
