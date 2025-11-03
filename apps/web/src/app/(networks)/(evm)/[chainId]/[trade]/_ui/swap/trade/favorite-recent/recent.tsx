@@ -101,7 +101,7 @@ export const Recent = ({ onClose }: { onClose?: () => void }) => {
 
   return (
     <div className="grid grid-cols-3 col-span-3 gap-0">
-      <div className="sticky top-0 z-[19  ] grid grid-cols-5 col-span-5 text-xs bg-white lg:bg-slate-50 dark:bg-slate-900 lg:dark:bg-slate-800 text-slate-700 dark:text-pink-100">
+      <div className="sticky top-0 z-[19] grid grid-cols-5 col-span-5 text-xs bg-white lg:bg-slate-50 dark:bg-slate-900 lg:dark:bg-slate-800 text-slate-700 dark:text-pink-100">
         <div className="w-full col-span-3 pl-2 font-medium">Token Pair</div>
         <div className="w-full font-medium  text-left whitespace-nowrap">
           Amount Traded
