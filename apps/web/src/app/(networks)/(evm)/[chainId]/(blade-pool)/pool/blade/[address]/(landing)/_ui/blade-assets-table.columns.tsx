@@ -72,9 +72,14 @@ function PriceCell({
     return <SkeletonText fontSize="sm" />
   }
 
-  const price =
-    'stablecoin' in row ? 1 : (prices?.get(row.token.wrap().address) ?? 0)
-  return <span className="text-sm">{formatUSD(price)}</span>
+  if ('stablecoin' in row) {
+    return <span className="text-sm">{formatUSD(1)}</span>
+  }
+
+  const price = prices?.get(row.token.wrap().address) ?? row.priceUSD
+  return (
+    <span className="text-sm">{price !== null ? formatUSD(price) : '-'}</span>
+  )
 }
 
 export const PRICE_COLUMN: ColumnDef<BladePoolAsset, unknown> = {

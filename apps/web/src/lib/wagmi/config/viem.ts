@@ -133,6 +133,7 @@ export const publicTransports = {
   // [EvmChainId.POLYGON_TESTNET]: http('https://rpc.ankr.com/polygon_mumbai'),
   [EvmChainId.SEPOLIA]: http('https://sepolia.drpc.org'),
   [EvmChainId.TATARA]: http('https://rpc.tatara.katanarpc.com'),
+  [EvmChainId.BOKUTO]: http('https://rpc-bokuto.katanarpc.com'),
 } as const satisfies Record<EvmChainId, Transport>
 
 function pluck<

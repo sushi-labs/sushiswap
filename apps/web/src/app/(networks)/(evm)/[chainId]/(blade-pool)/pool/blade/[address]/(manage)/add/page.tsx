@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation'
-import { isPublicBladeChainId } from 'src/config.server'
 import { getCachedBladePool } from 'src/lib/pool/blade'
 import { isBladeChainId, isEvmAddress } from 'sushi/evm'
 import { BladePoolPositionProvider } from '~evm/[chainId]/(blade-pool)/pool/blade/[address]/(manage)/_ui/blade-pool-position-provider'
@@ -13,11 +12,7 @@ export default async function ManageBladePoolPage(props: {
   const { chainId: _chainId, address } = params
   const chainId = +_chainId
 
-  if (
-    !isBladeChainId(chainId) ||
-    !(await isPublicBladeChainId(chainId)) ||
-    !isEvmAddress(address)
-  ) {
+  if (!isBladeChainId(chainId) || !isEvmAddress(address)) {
     return notFound()
   }
 
@@ -29,7 +24,7 @@ export default async function ManageBladePoolPage(props: {
         <div>
           <ManageBladeLiquidityCard pool={pool} tab="add" />
         </div>
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col">
           <BladePoolPosition pool={pool} />
         </div>
       </div>
