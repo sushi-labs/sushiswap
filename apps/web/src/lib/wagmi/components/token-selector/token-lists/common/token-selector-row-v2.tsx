@@ -128,7 +128,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
             onMouseLeave={() => setIsHovered(false)}
             className={classNames(
               className,
-              `group flex items-center w-full hover:!bg-[#4217FF14] dark:hover:!bg-[#FFFFFF14] focus:bg-bg-blue/20 dark:hover:bg-skyblue/10 dark:focus:bg-bg-skyblue/20 h-full rounded-lg px-3 token-${currency?.symbol}`,
+              `group flex items-center w-full hover:!bg-[#4217FF14] dark:hover:!bg-[#FFFFFF14] focus:bg-bg-blue/20 dark:hover:bg-skyblue/10 dark:focus:bg-bg-skyblue/20 h-full rounded-lg sm:px-3 token-${currency?.symbol}`,
             )}
           >
             <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
@@ -212,7 +212,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                 </div>
               </div>
 
-              <div className={classNames('flex items-center gap-4')}>
+              <div className={classNames('flex items-center gap-2 sm:gap-4')}>
                 {isHovered && showChainOptions && filteredBridgeInfo?.length ? (
                   <div className="flex gap-1 !max-w-[220px] items-center">
                     {filteredBridgeInfo?.map((info) => (
@@ -253,19 +253,16 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                           'text-right text-gray-900 dark:text-slate-50 truncate black:text-slate-50',
                         )}
                       >
-                        {balance.toSignificant(6)}
+                        <span className="hidden sm:block">
+                          {balance.toSignificant(6)}
+                        </span>
+                        <span className="sm:hidden block">
+                          {balance.toSignificant(4)}
+                        </span>
                       </span>
                       <span className="text-sm font-medium text-right text-gray-500 dark:text-slate-400">
                         {price && balance
-                          ? formatUSD(
-                              price *
-                                Number(
-                                  formatUnits(
-                                    balance.amount,
-                                    currency?.decimals,
-                                  ),
-                                ),
-                            )
+                          ? formatUSD(balance?.mulHuman(price).toString())
                           : '-'}
                       </span>
                     </div>
