@@ -59,6 +59,11 @@ test-results
 *.tsbuildinfo
 next-env.d.ts
 
+# compile cache
+node_modules/.cache
+.cache
+node-compile-cache
+
 # storybook
 storybook-static
 

@@ -110,11 +110,13 @@ export function usePoolGraph() {
                         : liquidity
 
                     // Create vertex
+                    // IMPORTANT: Use the ordered tokens (token0, token1) not the query tokens (tokenA, tokenB)
+                    // The reserves are calculated based on ordered tokens, so vertex must store ordered tokens
                     const vertex: Vertex = {
                       pair: `${tokenA}|||${tokenB}`,
                       poolAddress,
-                      token0: tokenA,
-                      token1: tokenB,
+                      token0: token0, // Use ordered token0 (lower address)
+                      token1: token1, // Use ordered token1 (higher address)
                       reserve0: reserve0 || liquidity, // Fallback to liquidity if reserve calc fails
                       reserve1: reserve1 || liquidity,
                       fee,
