@@ -3,7 +3,7 @@ import { SparkleIcon } from '../../icons/SparkleIcon'
 import { Button } from '../button'
 import { Card } from '../card'
 
-export const Trade2ExperienceMessage = () => {
+export const AdvancedTradingExperienceMessage = () => {
   const [hasClosedBanner] = useLocalStorage(
     'has-closed-trade-view-banner',
     false,
@@ -34,7 +34,8 @@ export const Trade2ExperienceMessage = () => {
         >
           <SparkleIcon width={20} height={20} />
           <p className="text-sm">
-            You can find the Trade Experience toggle in Settings later.
+            You can find the Advanced Trading Experience toggle in Settings
+            later.
           </p>
           <Button
             onClick={() => {

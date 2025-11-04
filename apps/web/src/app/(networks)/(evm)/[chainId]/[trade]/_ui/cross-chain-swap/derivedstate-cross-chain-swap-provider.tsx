@@ -238,7 +238,7 @@ const DerivedstateCrossChainSwapProvider: FC<
       if (typeof _token0 !== 'string') {
         const _chainId = _token0.chainId.toString()
         if (
-          defaultedParams.get('token0')?.toLowerCase() ===
+          defaultedParams.get('token1')?.toLowerCase() ===
             token0.toLowerCase() &&
           chainId1 === Number(_chainId)
         ) {

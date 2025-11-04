@@ -35,6 +35,7 @@ import { MetisSquare } from './MetisSquare'
 import { ModeSquare } from './ModeSquare'
 // import { OkexSquare } from "./OkexSquare";
 import { OptimismSquare } from './OptimismSquare'
+import { PlasmaSquare } from './PlasmaSquare'
 // import { PalmSquare } from "./PalmSquare";
 import { PlasmaSquare } from './PlasmaSquare'
 import { PolygonSquare } from './PolygonSquare'
@@ -102,6 +103,7 @@ export * from './ZKLinkSquare'
 export * from './ZKSyncSquare'
 export * from './ZetaChainSquare'
 export * from './KatanaSquare'
+export * from './PlasmaSquare'
 
 // [ChainId.HECO]: HecoSquare,// currently not exported from sushi/chain
 // [ChainId.OKEX]: OkexSquare,// currently not exported from sushi/chain

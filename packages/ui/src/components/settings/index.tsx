@@ -25,11 +25,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../tooltip'
+import {
+  AdvancedTradingExperience,
+  type TradeViewOptions,
+} from './AdvancedTradingExperience'
+import { AdvancedTradingExperienceMessage } from './AdvancedTradingExperienceMessage'
 import { CarbonOffset } from './CarbonOffset'
 import { ExpertMode } from './ExpertMode'
 import { SlippageTolerance } from './SlippageTolerance'
-import { Trade2Experience, type TradeViewOptions } from './Trade2Experience'
-import { Trade2ExperienceMessage } from './Trade2ExperienceMessage'
 import { TransactionDeadline } from './TransactionDeadline'
 
 export enum SettingsModule {
@@ -38,7 +41,7 @@ export enum SettingsModule {
   SlippageTolerance = 'SlippageTolerance',
   ExpertMode = 'ExpertMode',
   TransactionDeadline = 'TransactionDeadline',
-  Trade2Experience = 'Trade2Experience',
+  AdvancedTradingExperience = 'AdvancedTradingExperience',
 }
 
 interface SettingsOverlayProps {
@@ -119,7 +122,7 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
                 </TooltipProvider>
               ) : null}
             </Button>
-            <Trade2ExperienceMessage />
+            <AdvancedTradingExperienceMessage />
           </div>
         )}
       </DialogTrigger>
@@ -136,12 +139,14 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
               <List.Control>
                 <SlippageTolerance options={options?.slippageTolerance} />
                 {options?.tradeView &&
-                  modules.includes(SettingsModule.Trade2Experience) && (
+                  modules.includes(
+                    SettingsModule.AdvancedTradingExperience,
+                  ) && (
                     <>
                       <div className="px-4">
                         <div className="h-px w-full dark:bg-slate-200/5 bg-gray-900/5" />
                       </div>
-                      <Trade2Experience
+                      <AdvancedTradingExperience
                         tradeView={options.tradeView.tradeView}
                         toggleTradeView={options.tradeView.toggleTradeView}
                       />

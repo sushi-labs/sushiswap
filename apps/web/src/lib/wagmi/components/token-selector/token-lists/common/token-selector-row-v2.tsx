@@ -33,6 +33,7 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { getSortedChainIds } from 'src/config'
 import { NativeAddress } from 'src/lib/constants'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import { formatUSD, getChainById } from 'sushi'
@@ -93,9 +94,14 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
 
     const filteredBridgeInfo = useMemo(() => {
       if (!bridgeInfo) return []
-      return bridgeInfo.filter((info) =>
-        networkOptions.some((option) => option === info.chainId),
-      )
+      return bridgeInfo
+        .filter((info) =>
+          networkOptions.some((option) => option === info.chainId),
+        )
+        ?.slice(0, 7)
+        ?.sort((a, b) =>
+          getSortedChainIds([a.chainId, b.chainId])[0] === a.chainId ? -1 : 1,
+        )
     }, [bridgeInfo, networkOptions])
 
     return (
@@ -122,7 +128,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
             onMouseLeave={() => setIsHovered(false)}
             className={classNames(
               className,
-              `group flex items-center w-full hover:!bg-[#4217FF14] dark:hover:!bg-[#FFFFFF14] focus:bg-bg-blue/20 dark:hover:bg-skyblue/10 dark:focus:bg-bg-skyblue/20 h-full rounded-lg px-3 token-${currency?.symbol}`,
+              `group flex items-center w-full hover:!bg-[#4217FF14] dark:hover:!bg-[#FFFFFF14] focus:bg-bg-blue/20 dark:hover:bg-skyblue/10 dark:focus:bg-bg-skyblue/20 h-full rounded-lg sm:px-3 token-${currency?.symbol}`,
             )}
           >
             <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
@@ -181,7 +187,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <span className="text-sm text-muted-foreground hover:underline">
+                        <span className="text-sm text-muted-foreground hover:underline whitespace-nowrap">
                           {currency.name ?? currency.symbol}
                         </span>
                       </TooltipTrigger>
@@ -206,9 +212,9 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                 </div>
               </div>
 
-              <div className="flex items-center gap-4">
+              <div className={classNames('flex items-center gap-2 sm:gap-4')}>
                 {isHovered && showChainOptions && filteredBridgeInfo?.length ? (
-                  <div className="flex gap-1 items-center">
+                  <div className="flex gap-1 !max-w-[220px] items-center">
                     {filteredBridgeInfo?.map((info) => (
                       <NetworkButton
                         key={`${info.chainId}-${info.address}`}
@@ -247,19 +253,16 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                           'text-right text-gray-900 dark:text-slate-50 truncate black:text-slate-50',
                         )}
                       >
-                        {balance.toSignificant(6)}
+                        <span className="hidden sm:block">
+                          {balance.toSignificant(6)}
+                        </span>
+                        <span className="sm:hidden block">
+                          {balance.toSignificant(4)}
+                        </span>
                       </span>
                       <span className="text-sm font-medium text-right text-gray-500 dark:text-slate-400">
                         {price && balance
-                          ? formatUSD(
-                              price *
-                                Number(
-                                  formatUnits(
-                                    balance.amount,
-                                    currency?.decimals,
-                                  ),
-                                ),
-                            )
+                          ? formatUSD(balance?.mulHuman(price).toString())
                           : '-'}
                       </span>
                     </div>

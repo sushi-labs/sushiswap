@@ -131,12 +131,12 @@ export const CHAIN_COLUMN: ColumnDef<LocalRecentSwap> = {
               <div className="dark:border-[#222137] border-[#F5F5F5] border rounded-[4px] overflow-hidden">
                 <NetworkIcon
                   type="square"
-                  chainId={row.original.token0.chainId as EvmChainId}
+                  chainId={row.original.token1.chainId as EvmChainId}
                   className="w-3 h-3 lg:w-5 lg:h-5"
                 />
               </div>
               <span className="block text-xs lg:hidden">
-                {getNetworkName(row.original.token0.chainId as EvmChainId)}
+                {getNetworkName(row.original.token1.chainId as EvmChainId)}
               </span>
             </>
           ) : null}

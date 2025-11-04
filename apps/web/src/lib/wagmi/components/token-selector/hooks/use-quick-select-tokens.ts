@@ -1,4 +1,5 @@
 // import { TokenListV2ChainIds } from '@sushiswap/graph-client/data-api'
+import { useIsMounted } from '@sushiswap/hooks'
 import { useMemo } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import {
@@ -27,6 +28,7 @@ export const useQuickSelectTokens = ({
   //   },
   // )
   const { data: _localRecentSwaps } = useLocalRecentSwaps()
+  const isMounted = useIsMounted()
 
   const localRecentSwaps = useMemo(() => {
     if (!_localRecentSwaps || !account) return []
@@ -105,6 +107,6 @@ export const useQuickSelectTokens = ({
 
   return {
     quickSelectTokens,
-    isLoading: false,
+    isLoading: !isMounted,
   }
 }
