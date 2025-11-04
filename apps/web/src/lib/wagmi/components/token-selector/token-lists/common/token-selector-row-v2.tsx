@@ -2,7 +2,10 @@ import {
   ArrowTopRightOnSquareIcon,
   ExclamationCircleIcon,
 } from '@heroicons/react/20/solid'
-import { InformationCircleIcon } from '@heroicons/react/24/outline'
+import {
+  EllipsisHorizontalIcon,
+  InformationCircleIcon,
+} from '@heroicons/react/24/outline'
 import type { TokenListBalanceV2 } from '@sushiswap/graph-client/data-api'
 import type { PinnedTokenId } from '@sushiswap/hooks'
 import {
@@ -12,6 +15,11 @@ import {
   TraceEvent,
 } from '@sushiswap/telemetry'
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
   IconButton,
   SkeletonCircle,
   SkeletonText,
@@ -36,10 +44,16 @@ import {
 import { getSortedChainIds } from 'src/config'
 import { NativeAddress } from 'src/lib/constants'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
+import { getNetworkName } from 'src/lib/network'
 import { formatUSD, getChainById, withoutScientificNotation } from 'sushi'
 import { type Amount, ZERO } from 'sushi'
-import { type EvmChainId, type EvmCurrency, EvmToken } from 'sushi/evm'
-import { formatUnits } from 'viem'
+import {
+  type EvmChainId,
+  type EvmCurrency,
+  EvmNative,
+  EvmToken,
+  nativeAddress,
+} from 'sushi/evm'
 import { NetworkButton } from '~evm/[chainId]/[trade]/_ui/swap/chain-options-selector'
 import { FavoriteButton } from '~evm/[chainId]/[trade]/_ui/swap/trade/favorite-button'
 
@@ -98,8 +112,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
         .filter((info) =>
           networkOptions.some((option) => option === info.chainId),
         )
-        ?.slice(0, 7)
-        ?.sort((a, b) =>
+        .sort((a, b) =>
           getSortedChainIds([a.chainId, b.chainId])[0] === a.chainId ? -1 : 1,
         )
     }, [bridgeInfo, networkOptions])
@@ -128,7 +141,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
             onMouseLeave={() => setIsHovered(false)}
             className={classNames(
               className,
-              `group flex items-center w-full hover:!bg-[#4217FF14] dark:hover:!bg-[#FFFFFF14] focus:bg-bg-blue/20 dark:hover:bg-skyblue/10 dark:focus:bg-bg-skyblue/20 h-full rounded-lg sm:px-3 token-${currency?.symbol}`,
+              `group flex items-center w-full hover:!bg-[#4217FF14] dark:hover:!bg-[#FFFFFF14] focus:bg-bg-blue/20 dark:focus:bg-bg-skyblue/20 h-full rounded-lg sm:px-3 token-${currency?.symbol}`,
             )}
           >
             <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
@@ -215,7 +228,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
               <div className={classNames('flex items-center gap-2 sm:gap-4')}>
                 {isHovered && showChainOptions && filteredBridgeInfo?.length ? (
                   <div className="flex gap-1 !max-w-[220px] items-center">
-                    {filteredBridgeInfo?.map((info) => (
+                    {filteredBridgeInfo?.slice(0, 5)?.map((info) => (
                       <NetworkButton
                         key={`${info.chainId}-${info.address}`}
                         chainId={info.chainId}
@@ -223,17 +236,83 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                         onClick={(e) => {
                           e.stopPropagation()
                           onClick(
-                            new EvmToken({
-                              address: info.address as `0x${string}`,
-                              chainId: info.chainId as EvmChainId,
-                              decimals: info.decimals,
-                              symbol: currency.symbol,
-                              name: currency.name,
-                            }),
+                            info.address === nativeAddress
+                              ? EvmNative.fromChainId(info.chainId)
+                              : new EvmToken({
+                                  address: info.address as `0x${string}`,
+                                  chainId: info.chainId as EvmChainId,
+                                  decimals: info.decimals,
+                                  symbol: currency.symbol,
+                                  name: currency.name,
+                                }),
                           )
                         }}
                       />
                     ))}
+                    {filteredBridgeInfo?.slice(5, filteredBridgeInfo.length)
+                      ?.length ? (
+                      <DropdownMenu modal={false}>
+                        <DropdownMenuTrigger asChild>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                            }}
+                            type="button"
+                            className={classNames(
+                              'border border-black/10 dark:border-white/10 rounded-md p-1 flex items-center justify-center',
+                              'w-[26px] h-[26px] min-h-[26px] min-w-[26px]',
+                            )}
+                          >
+                            <EllipsisHorizontalIcon
+                              width={16}
+                              height={16}
+                              className="text-slate-500 dark:text-slate-400"
+                            />
+                          </button>
+                        </DropdownMenuTrigger>
+
+                        <DropdownMenuContent
+                          isInsideDialog={true}
+                          align="end"
+                          className="max-h-[195px] h-[195px] !overflow-y-auto !bg-slate-50 dark:!bg-slate-800 !backdrop-blur-none "
+                        >
+                          <DropdownMenuGroup>
+                            {filteredBridgeInfo
+                              ?.slice(5, filteredBridgeInfo.length)
+                              .map((info) => (
+                                <DropdownMenuItem
+                                  key={`${info.chainId}-${info.address}`}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    onClick(
+                                      info.address === nativeAddress
+                                        ? EvmNative.fromChainId(info.chainId)
+                                        : new EvmToken({
+                                            address:
+                                              info.address as `0x${string}`,
+                                            chainId: info.chainId as EvmChainId,
+                                            decimals: info.decimals,
+                                            symbol: currency.symbol,
+                                            name: currency.name,
+                                          }),
+                                    )
+                                  }}
+                                  className={classNames('pr-10')}
+                                >
+                                  <NetworkButton
+                                    iconSize={16}
+                                    chainId={info.chainId}
+                                    className={'border-none'}
+                                  />
+                                  <span className="ml-2">
+                                    {getNetworkName(info.chainId)}
+                                  </span>
+                                </DropdownMenuItem>
+                              ))}
+                          </DropdownMenuGroup>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    ) : null}
                   </div>
                 ) : isBalanceLoading ? (
                   <div className="flex flex-col min-w-[60px]">
