@@ -43,8 +43,6 @@ export const PoolsTable = () => {
     }
   }, [sorting, filteredPools])
 
-  if (!pools || pools.length === 0) return null
-
   return (
     <Card>
       <CardHeader>
@@ -69,7 +67,7 @@ export const PoolsTable = () => {
         loading={isLoading}
         linkFormatter={rowLink}
         columns={SIMPLE_COLUMNS}
-        data={pools}
+        data={pools ?? []}
       />
     </Card>
   )
