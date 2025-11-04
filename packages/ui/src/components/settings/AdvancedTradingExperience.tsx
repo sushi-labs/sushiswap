@@ -5,7 +5,7 @@ import { typographyVariants } from '../typography'
 
 export type TradeViewOptions = 'simple' | 'advanced'
 
-export const Trade2Experience = ({
+export const AdvancedTradingExperience = ({
   toggleTradeView,
   tradeView,
 }: {
@@ -16,14 +16,14 @@ export const Trade2Experience = ({
     <div className={classNames('p-4 rounded-lg')}>
       <div className="flex justify-between items-center gap-4">
         <div className="flex flex-col gap-2">
-          <Label>Trade 2.0 Experience</Label>
+          <Label>Advanced Trading Experience</Label>
           <span
             className={typographyVariants({
               variant: 'muted',
               className: 'text-sm',
             })}
           >
-            Switch to Trade 2.0 for a better trading <br /> experience.
+            Switch to Advanced Trading for a better trading <br /> experience.
           </span>
         </div>
         <Switch

@@ -6,7 +6,6 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { usePinnedTokens } from '@sushiswap/hooks'
 import { useMemo } from 'react'
-import type { ChainId } from 'sushi'
 import { type EvmChainId, EvmNative } from 'sushi/evm'
 import type { Address } from 'viem'
 import { formatUnits, isAddress } from 'viem/utils'
@@ -56,6 +55,7 @@ export const useFavorites = () => {
         .map((token) => ({
           address: token.address,
           chainId: token.chainId as TokenListV2ChainId,
+          symbol: token.symbol,
         }))
 
       const unsupportedTokens = tokens
@@ -81,6 +81,13 @@ export const useFavorites = () => {
       return { supportedTokens, uniqueChainIds, unsupportedTokens, natives }
     }, [_pinnedTokens])
 
+  const _supportedTokens = useMemo(() => {
+    return supportedTokens?.map((token) => ({
+      chainId: token.chainId,
+      address: token.address as Address,
+    }))
+  }, [supportedTokens])
+
   const {
     data: _favorites,
     isLoading: isLoadingTokens,
@@ -89,8 +96,8 @@ export const useFavorites = () => {
     walletAddress: address,
     chainIds: uniqueChainIds,
     search: '',
-    tokens: supportedTokens,
-    first: supportedTokens?.length,
+    tokens: _supportedTokens,
+    first: _supportedTokens?.length,
   })
 
   const {
@@ -104,10 +111,21 @@ export const useFavorites = () => {
   })
 
   const favorites = useMemo(() => {
-    const favArr = _favorites.map((token) => ({
-      ...token,
-      balance: formatUnits(BigInt(token.balance), token.decimals),
-    }))
+    const favArr = _favorites.map((token) => {
+      //sometimes token symbol from searchTokens is different, so we get the symbol from supportedTokens
+      const tokenSymbol =
+        supportedTokens.find(
+          (t) =>
+            t.chainId === token.chainId &&
+            t.address.toLowerCase() === token.address.toLowerCase(),
+        )?.symbol ?? token.symbol
+      return {
+        ...token,
+        symbol: tokenSymbol,
+        balance: formatUnits(BigInt(token.balance), token.decimals),
+        isNative: false,
+      }
+    })
     unsupportedTokens.forEach((token) => {
       const priceUsd =
         _nativeTokens?.priceMap?.get(`${token.chainId}:${token.address}`) ?? 0
@@ -129,6 +147,7 @@ export const useFavorites = () => {
         priceUSD: priceUsd,
         priceChange1d: 0,
         approved: false,
+        isNative: false,
       })
     })
 
@@ -162,6 +181,7 @@ export const useFavorites = () => {
           priceUSD: priceUsd,
           priceChange1d: 0,
           approved: false,
+          isNative: true,
         })
       }
     })
@@ -174,7 +194,7 @@ export const useFavorites = () => {
       if (a.symbol.toLowerCase() > b.symbol.toLowerCase()) return 1
       return 0
     })
-  }, [_favorites, unsupportedTokens, _nativeTokens, natives])
+  }, [_favorites, unsupportedTokens, _nativeTokens, natives, supportedTokens])
 
   const isLoading = isLoadingTokens || isLoadingNative
   const isError = isErrorTokens || isErrorMyTokens

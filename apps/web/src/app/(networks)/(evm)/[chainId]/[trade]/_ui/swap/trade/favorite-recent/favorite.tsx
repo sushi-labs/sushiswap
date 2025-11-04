@@ -12,7 +12,6 @@ import { formatUSD, getChainById, unwrapToken } from 'sushi'
 import { formatNumber, formatPercent } from 'sushi'
 import type { EvmChainId } from 'sushi/evm'
 import type { EvmCurrency } from 'sushi/evm'
-import { WNATIVE } from 'sushi/evm'
 import { EvmToken } from 'sushi/evm'
 import { getAddress } from 'viem'
 import { useAccount } from 'wagmi'
@@ -34,8 +33,8 @@ export const Favorite = () => {
     (_token: EvmCurrency) => {
       const currencyId: PinnedTokenId =
         `${_token?.id}:${_token?.symbol}` as PinnedTokenId
-      const isOnList = !currencyId ? false : hasToken(currencyId)
       if (!currencyId) return
+      const isOnList = hasToken(currencyId)
       mutate(isOnList ? 'remove' : 'add', currencyId)
     },
     [hasToken, mutate],
@@ -61,7 +60,7 @@ export const Favorite = () => {
         </div>
       ) : favorites?.length !== 0 ? (
         <table className="w-full">
-          <thead className="sticky top-0 z-[19] bg-white dark:bg-slate-900 lg:dark:bg-slate-800">
+          <thead className="sticky top-0 z-[19] bg-slate-50 dark:bg-slate-900 lg:dark:bg-slate-800">
             <tr className="text-xs text-slate-700 dark:text-pink-100">
               <th />
               <th className="font-medium text-left">Token</th>
@@ -115,8 +114,9 @@ export const Favorite = () => {
   )
 }
 
-const FavoriteItem = ({ token }: { token: SearchToken }) => {
-  const wrappedAddress = WNATIVE[token.chainId].address
+const FavoriteItem = ({
+  token,
+}: { token: SearchToken & { isNative: boolean } }) => {
   const { handleTokenOutput } = useSwapTokenSelect()
 
   const selectToken = useCallback(
@@ -149,7 +149,7 @@ const FavoriteItem = ({ token }: { token: SearchToken }) => {
       <td className="max-w-[35px] py-3 lg:py-4">
         <FavoriteButton
           currencyId={
-            `${token.chainId}:${token.address === wrappedAddress ? 'NATIVE' : getAddress(token.address)}:${
+            `${token.chainId}:${token?.isNative ? 'NATIVE' : getAddress(token.address)}:${
               token.symbol
             }` as PinnedTokenId
           }
