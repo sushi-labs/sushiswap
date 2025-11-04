@@ -38,7 +38,13 @@ import { NativeAddress } from 'src/lib/constants'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
 import { formatUSD, getChainById, withoutScientificNotation } from 'sushi'
 import { type Amount, ZERO } from 'sushi'
-import { type EvmChainId, type EvmCurrency, EvmToken } from 'sushi/evm'
+import {
+  type EvmChainId,
+  type EvmCurrency,
+  EvmNative,
+  EvmToken,
+  nativeAddress,
+} from 'sushi/evm'
 import { formatUnits } from 'viem'
 import { NetworkButton } from '~evm/[chainId]/[trade]/_ui/swap/chain-options-selector'
 import { FavoriteButton } from '~evm/[chainId]/[trade]/_ui/swap/trade/favorite-button'
@@ -223,13 +229,15 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                         onClick={(e) => {
                           e.stopPropagation()
                           onClick(
-                            new EvmToken({
-                              address: info.address as `0x${string}`,
-                              chainId: info.chainId as EvmChainId,
-                              decimals: info.decimals,
-                              symbol: currency.symbol,
-                              name: currency.name,
-                            }),
+                            info.address === nativeAddress
+                              ? EvmNative.fromChainId(info.chainId)
+                              : new EvmToken({
+                                  address: info.address as `0x${string}`,
+                                  chainId: info.chainId as EvmChainId,
+                                  decimals: info.decimals,
+                                  symbol: currency.symbol,
+                                  name: currency.name,
+                                }),
                           )
                         }}
                       />
