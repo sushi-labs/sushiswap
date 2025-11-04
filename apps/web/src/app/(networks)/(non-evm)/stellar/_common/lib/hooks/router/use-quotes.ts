@@ -55,16 +55,8 @@ export const useQuoteExactInput = () => {
         return quote?.amountOut || '0'
       } else {
         // Multi-hop swap - use the router's multi-hop quote function
-        console.log(
-          `🔄 Calculating multi-hop quote: ${route.path.map((t) => t.code).join(' → ')}`,
-        )
-
         const path = route.path.map((token) => token.contract)
         const fees = route.fees
-
-        console.log(`Path: ${path.join(' → ')}`)
-        console.log(`Fees: ${fees.join(', ')}`)
-        console.log(`Amount in: ${amountIn}`)
 
         const quote = await quoteService.getQuoteExactInput({
           path: path,
@@ -73,13 +65,10 @@ export const useQuoteExactInput = () => {
         })
 
         if (!quote) {
-          console.error('❌ Multi-hop quote returned null')
+          console.error('Multi-hop quote returned null')
           return '0'
         }
 
-        console.log(
-          `✅ Multi-hop quote complete: ${amountIn} → ${quote.amountOut}`,
-        )
         return quote.amountOut.toString()
       }
     },

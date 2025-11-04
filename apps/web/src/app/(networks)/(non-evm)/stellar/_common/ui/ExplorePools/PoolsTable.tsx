@@ -26,7 +26,6 @@ export const PoolsTable = () => {
 
   // Get the pool data
   const { data: pools, isLoading } = useAllPools()
-  console.log('PoolsTable.tsx', { pools })
 
   const filteredPools = useMemo(() => {
     if (!pools) return [] as PoolInfo[]

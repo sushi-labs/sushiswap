@@ -30,7 +30,6 @@ export function TokenListItem({
         )}
         onClick={() => {
           onSelect(token)
-          close()
         }}
       >
         <div className="flex items-center justify-between flex-grow gap-2 rounded">

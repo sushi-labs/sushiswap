@@ -32,7 +32,6 @@ export const useCreatePool = () => {
       })
     },
     onSuccess: (result) => {
-      console.log('Pool created successfully:', result)
 
       // Show success toast with Stellar explorer link
       createToast({

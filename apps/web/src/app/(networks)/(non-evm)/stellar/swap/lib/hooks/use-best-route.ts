@@ -49,10 +49,6 @@ export function useBestRoute({
           return null
         }
 
-        console.log(
-          `🔍 Finding best route: ${tokenIn.code} → ${tokenOut.code}, amount: ${amountIn}`,
-        )
-
         const { vertices, tokenGraph } = poolGraphData
 
         // Check if tokens exist in the graph
@@ -60,7 +56,6 @@ export function useBestRoute({
           !tokenGraph.has(tokenIn.contract) &&
           !tokenGraph.has(tokenOut.contract)
         ) {
-          console.log('❌ Tokens not found in pool graph')
           return null
         }
 
@@ -75,11 +70,8 @@ export function useBestRoute({
         })
 
         if (!route) {
-          console.log('❌ No route found')
           return null
         }
-
-        console.log('🔍 Route:', route)
 
         // Convert route addresses to Token objects
         const tokens: Token[] = route.route
@@ -100,14 +92,6 @@ export function useBestRoute({
           console.error('Failed to resolve all tokens in route')
           return null
         }
-
-        console.log(`✅ Best route found:`)
-        console.log(`   Path: ${tokens.map((t) => t.code).join(' → ')}`)
-        console.log(`   Output: ${route.amountOut}`)
-        console.log(`   Price Impact: ${route.priceImpact.toFixed(2)}%`)
-        console.log(
-          `   Fees: ${route.fees.map((f) => `${f / 10000}%`).join(', ')}`,
-        )
 
         return {
           ...route,

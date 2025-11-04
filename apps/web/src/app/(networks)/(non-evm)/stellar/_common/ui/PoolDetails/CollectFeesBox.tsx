@@ -69,13 +69,6 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
 
       // Collect from all positions that have fees
       for (const position of positionsWithFees) {
-        console.log(`Collecting fees from position ${position.tokenId}`)
-
-        console.log(`Position ${position.tokenId} fees:`, {
-          feesToken0: position.feesToken0.toString(),
-          feesToken1: position.feesToken1.toString(),
-        })
-
         // Max uint128 value for collecting all available fees
         const maxAmount = BigInt('340282366920938463463374607431768211455') // 2^128 - 1
 
@@ -87,10 +80,6 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
             amount1Max: maxAmount,
             signTransaction,
           })
-
-          console.log(
-            `Successfully collected fees from position ${position.tokenId}`,
-          )
         } catch (error) {
           console.error(
             `Failed to collect fees from position ${position.tokenId}:`,

@@ -37,7 +37,6 @@ export class RouterService {
     tokenOut: Token,
     amountIn: bigint,
   ): Promise<SwapRoute | null> {
-    console.log(`Finding best route for ${tokenIn.code} → ${tokenOut.code}`)
 
     // Step 1: Find all available pools
     const availablePools = await this.findAllPools(tokenIn, tokenOut)
@@ -47,7 +46,6 @@ export class RouterService {
 
     // Step 3: Find multi-hop routes if direct pools don't exist
     if (quotes.length === 0) {
-      console.log('No direct pool, checking multi-hop routes...')
       const multiHopQuotes = await this.findMultiHopRoutes(
         tokenIn,
         tokenOut,
@@ -234,13 +232,6 @@ export class RouterService {
     quotes.sort((a, b) => Number(b.amountOut - a.amountOut))
 
     const best = quotes[0]
-
-    // Log why this quote was selected
-    console.log(`Best route: ${best.routeType}`)
-    console.log(`Output: ${best.amountOut}`)
-    if (best.fees) {
-      console.log(`Fees: ${best.fees.map((f) => `${f / 10000}%`).join(' + ')}`)
-    }
 
     return best
   }

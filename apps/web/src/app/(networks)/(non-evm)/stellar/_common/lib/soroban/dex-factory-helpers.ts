@@ -39,7 +39,6 @@ export async function createPool({
   signTransaction: (xdr: string) => Promise<string>
 }): Promise<{ poolAddress: string; txHash: string }> {
   try {
-    console.log('🏭 Creating pool:', { tokenA, tokenB, fee })
 
     // Validate inputs
     if (!tokenA || !tokenB) {

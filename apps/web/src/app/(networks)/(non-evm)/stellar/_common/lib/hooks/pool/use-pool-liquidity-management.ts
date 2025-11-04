@@ -26,7 +26,7 @@ export const useRemoveLiquidity = () => {
 
   return useMutation({
     mutationKey: ['pool', 'removeLiquidity'],
-    onMutate: async (params: RemovePoolLiquidityParams) => {
+    onMutate: async () => {
       // Show "in progress" toast immediately before transaction starts
       const timestamp = Date.now()
       if (connectedAddress) {

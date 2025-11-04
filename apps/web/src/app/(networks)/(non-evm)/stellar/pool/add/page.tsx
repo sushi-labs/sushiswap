@@ -92,8 +92,8 @@ export default function AddPoolPage() {
   // Realign ticks when fee tier changes
   useEffect(() => {
     const spacing = TICK_SPACINGS[selectedFee]
-    setTickLower(alignTick(tickLower, spacing))
-    setTickUpper(alignTick(tickUpper, spacing))
+    setTickLower((prev) => alignTick(prev, spacing))
+    setTickUpper((prev) => alignTick(prev, spacing))
   }, [selectedFee])
 
   // Check if ticks are aligned whenever they change
@@ -156,7 +156,6 @@ export default function AddPoolPage() {
       let poolAddress: string
 
       try {
-        console.log('🏭 Step 1: Creating pool...')
         const result = await createPoolMutation.mutateAsync({
           tokenA: token0.contract,
           tokenB: token1.contract,
@@ -165,7 +164,6 @@ export default function AddPoolPage() {
           fee: selectedFee,
         })
         poolAddress = result.poolAddress
-        console.log('✅ Pool created and initialized:', poolAddress)
       } catch (createError: any) {
         // Check if pool already exists
         const errorMessage = createError?.message || String(createError)
@@ -175,7 +173,6 @@ export default function AddPoolPage() {
 
         if (poolExistsMatch) {
           poolAddress = poolExistsMatch[1]
-          console.log('ℹ️ Pool already exists at:', poolAddress)
         } else {
           // If it's not a "pool exists" error, rethrow
           throw createError
@@ -183,7 +180,6 @@ export default function AddPoolPage() {
       }
 
       // Add liquidity (required)
-      console.log('💧 Step 2: Adding liquidity...')
       await addLiquidityMutation.mutateAsync({
         poolAddress,
         userAddress: connectedAddress,
@@ -194,7 +190,6 @@ export default function AddPoolPage() {
         recipient: connectedAddress,
         signTransaction,
       })
-      console.log('✅ Liquidity added')
 
       // Redirect to the pool page
       router.push(`/stellar/pool/${poolAddress}`)
@@ -362,9 +357,9 @@ export default function AddPoolPage() {
 
           <div className="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-800">
             <div>
-              <label className="text-sm font-medium mb-3 block">
+              <div className="text-sm font-medium mb-3 block">
                 Price Range Strategy
-              </label>
+              </div>
               <div className="grid grid-cols-3 gap-2 mb-4">
                 <Button
                   type="button"
@@ -432,9 +427,9 @@ export default function AddPoolPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <label className="text-xs text-muted-foreground mb-1 block">
+                  <div className="text-xs text-muted-foreground mb-1 block">
                     Min Tick
-                  </label>
+                  </div>
                   <div className="flex gap-2">
                     <Button
                       type="button"
@@ -455,7 +450,7 @@ export default function AddPoolPage() {
                       onValueChange={(val) => {
                         // Allow free typing - don't auto-align yet
                         const tick = Number.parseInt(val)
-                        if (isNaN(tick)) {
+                        if (Number.isNaN(tick)) {
                           setTickLower(0)
                         } else {
                           setTickLower(tick)
@@ -485,9 +480,9 @@ export default function AddPoolPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs text-muted-foreground mb-1 block">
+                  <div className="text-xs text-muted-foreground mb-1 block">
                     Max Tick
-                  </label>
+                  </div>
                   <div className="flex gap-2">
                     <Button
                       type="button"
@@ -508,7 +503,7 @@ export default function AddPoolPage() {
                       onValueChange={(val) => {
                         // Allow free typing - don't auto-align yet
                         const tick = Number.parseInt(val)
-                        if (isNaN(tick)) {
+                        if (Number.isNaN(tick)) {
                           setTickUpper(0)
                         } else {
                           setTickUpper(tick)

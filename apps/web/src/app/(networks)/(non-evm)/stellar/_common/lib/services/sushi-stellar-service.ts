@@ -79,18 +79,6 @@ export class SushiStellarService {
 
       const feeMatches = pos.fee === poolConfig.fee
 
-      console.log(`🔍 Checking position #${pos.tokenId}:`, {
-        tokensMatch,
-        ticksMatch,
-        feeMatches,
-        posTokens: [pos.token0, pos.token1],
-        configTokens: [poolConfig.token0.address, poolConfig.token1.address],
-        posTicks: [pos.tickLower, pos.tickUpper],
-        paramTicks: [params.tickLower, params.tickUpper],
-        posFee: pos.fee,
-        configFee: poolConfig.fee,
-      })
-
       return tokensMatch && ticksMatch && feeMatches
     })
 

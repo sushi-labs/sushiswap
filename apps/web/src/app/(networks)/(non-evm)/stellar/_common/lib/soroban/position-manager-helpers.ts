@@ -55,28 +55,17 @@ export async function mintPosition({
     // Use poolConfig directly since we've verified it's not null
     const config = poolConfig
 
-    console.log(`💧 Minting position via Position Manager...`)
-    console.log(`Pool: ${poolAddress}`)
-    console.log(`Token0: ${config.token0.address} (${config.token0.code})`)
-    console.log(`Token1: ${config.token1.address} (${config.token1.code})`)
-    console.log(`Fee: ${config.fee}`)
-    console.log(`Tick range: ${tickLower} to ${tickUpper}`)
-
     // Ensure pool is initialized before minting position
-    console.log(`🔍 Checking if pool needs initialization...`)
     await initializePoolIfNeeded({
       poolAddress,
       sourceAccount,
       signTransaction,
     })
-    console.log(`✅ Pool initialization check completed`)
 
     const positionManagerClient = getPositionManagerContractClient({
       contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
       publicKey: sourceAccount,
     })
-
-    console.log('Preparing mint transaction...')
 
     const mintParams = {
       token0: config.token0.address,
@@ -93,21 +82,6 @@ export async function mintPosition({
       sender: sourceAccount,
     }
 
-    console.log('📋 Mint parameters:', {
-      token0: mintParams.token0,
-      token1: mintParams.token1,
-      fee: mintParams.fee,
-      recipient: mintParams.recipient,
-      tick_lower: mintParams.tick_lower,
-      tick_upper: mintParams.tick_upper,
-      amount0_desired: mintParams.amount0_desired.toString(),
-      amount1_desired: mintParams.amount1_desired.toString(),
-      amount0_min: mintParams.amount0_min.toString(),
-      amount1_min: mintParams.amount1_min.toString(),
-      deadline: mintParams.deadline.toString(),
-      sender: sourceAccount,
-    })
-
     let assembledTransaction
     try {
       assembledTransaction = await positionManagerClient.mint(
@@ -120,91 +94,27 @@ export async function mintPosition({
         },
       )
     } catch (simulationError) {
-      console.error('❌ Transaction simulation failed:', simulationError)
+      console.error('Transaction simulation failed:', simulationError)
       throw new Error(
         `Transaction simulation failed: ${simulationError instanceof Error ? simulationError.message : String(simulationError)}`,
       )
     }
 
-    console.log('✅ Transaction assembled successfully')
-    console.log('📊 Simulation result:', assembledTransaction.simulation)
-    console.log('📊 Built transaction:', assembledTransaction.built)
-
-    // Log the raw transaction to see operations
-    if (assembledTransaction.built) {
-      console.log(
-        '📊 Transaction operations:',
-        assembledTransaction.built.operations,
-      )
-      if (assembledTransaction.built.operations?.length > 0) {
-        assembledTransaction.built.operations.forEach((op: any, i: number) => {
-          console.log(`📊 Operation ${i}:`, op)
-        })
-      }
-    }
-
-    // Log simulation data
-    if (assembledTransaction.simulationData) {
-      console.log('📊 Simulation data:', assembledTransaction.simulationData)
-      console.log(
-        '📊 Simulation transaction data:',
-        assembledTransaction.simulationData.transactionData,
-      )
-      console.log(
-        '📊 Simulation result:',
-        assembledTransaction.simulationData.result,
-      )
-    }
-
-    console.log('Transaction prepared. Waiting for wallet signature...')
-
     // Convert to XDR for signing
     const transactionXdr = assembledTransaction.toXDR()
-    console.log('Transaction XDR prepared for signing')
 
     // Sign the transaction
     const signedXdr = await signTransaction(transactionXdr)
 
-    console.log('Transaction signed. Submitting to network...')
-
     // Submit the signed XDR directly via raw RPC (same as swap)
     const txHash = await submitViaRawRPC(signedXdr)
-
-    console.log(`Transaction submitted: ${txHash}`)
-    console.log('Waiting for confirmation...')
 
     // Wait for confirmation
     const result = await waitForTransaction(txHash)
 
     if (result.success) {
-      console.log('✅ Transaction confirmed!')
-      console.log('🎉 Position NFT minted!')
-      console.log('📊 Full result data:', result.data)
-      console.log('📊 Result data keys:', Object.keys(result.data))
-      console.log('📊 Return value:', result.data.returnValue)
-
-      // Check various possible locations for the return value
-      const possibleReturnValue =
-        result.data.returnValue ||
-        result.data.result?.returnValue ||
-        result.data.resultXdr ||
-        result.data.result
-
-      console.log('📊 Possible return value:', possibleReturnValue)
-
-      // For now, just return success without parsing the return value
-      // The position was created, we just can't extract the exact values yet
-      console.log(
-        '⚠️ Position created successfully but could not parse return value',
-      )
-      console.log(
-        '⚠️ Returning with placeholder values - position is tracked on-chain',
-      )
-
-      // TODO: Fix return value parsing once we understand the response structure
-      // For now, position was created successfully, just can't extract exact values
+      // Position was created successfully
       // The position will be queryable via get_user_positions_with_fees
-
       return {
         hash: txHash,
         tokenId: 0, // Will be available via get_user_positions_with_fees
@@ -259,14 +169,10 @@ export async function increaseLiquidity({
   amount1: bigint
 }> {
   try {
-    console.log(`💧 Increasing liquidity for position #${tokenId}...`)
-
     const positionManagerClient = getPositionManagerContractClient({
       contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
       publicKey: sourceAccount,
     })
-
-    console.log('Preparing increase_liquidity transaction...')
 
     const assembledTransaction = await positionManagerClient.increase_liquidity(
       {
@@ -286,8 +192,6 @@ export async function increaseLiquidity({
       },
     )
 
-    console.log('Transaction prepared. Waiting for wallet signature...')
-
     // Convert to XDR for signing
     const transactionXdr = assembledTransaction.toXDR()
 
@@ -298,25 +202,13 @@ export async function increaseLiquidity({
       NETWORK_CONFIG.PASSPHRASE,
     )
 
-    console.log('Transaction signed. Submitting to network...')
-
     // Submit the signed transaction via raw RPC
     const txHash = await submitViaRawRPC(signedTx)
-
-    console.log(`Transaction submitted: ${txHash}`)
-    console.log('Waiting for confirmation...')
 
     // Wait for confirmation
     const result = await waitForTransaction(txHash)
 
     if (result.success) {
-      console.log('✅ Transaction confirmed!')
-      console.log('🎉 Liquidity increased!')
-      console.log('📊 Full result data:', result.data)
-
-      // TODO: Parse return value when we understand the response structure
-      // For now, return placeholder values - position is updated on-chain
-
       return {
         hash: txHash,
         liquidity: BigInt(0),
@@ -367,16 +259,10 @@ export async function decreaseLiquidity({
   amount1: bigint
 }> {
   try {
-    console.log(
-      `💧 Decreasing liquidity for position #${tokenId} by ${liquidity}...`,
-    )
-
     const positionManagerClient = getPositionManagerContractClient({
       contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
       publicKey: sourceAccount,
     })
-
-    console.log('Preparing decrease_liquidity transaction...')
 
     const assembledTransaction = await positionManagerClient.decrease_liquidity(
       {
@@ -395,8 +281,6 @@ export async function decreaseLiquidity({
       },
     )
 
-    console.log('Transaction prepared. Waiting for wallet signature...')
-
     // Convert to XDR for signing
     const transactionXdr = assembledTransaction.toXDR()
 
@@ -407,25 +291,13 @@ export async function decreaseLiquidity({
       NETWORK_CONFIG.PASSPHRASE,
     )
 
-    console.log('Transaction signed. Submitting to network...')
-
     // Submit the signed transaction via raw RPC
     const txHash = await submitViaRawRPC(signedTx)
-
-    console.log(`Transaction submitted: ${txHash}`)
-    console.log('Waiting for confirmation...')
 
     // Wait for confirmation
     const result = await waitForTransaction(txHash)
 
     if (result.success) {
-      console.log('✅ Transaction confirmed!')
-      console.log('🎉 Liquidity decreased!')
-      console.log('📊 Full result data:', result.data)
-
-      // TODO: Parse return value when we understand the response structure
-      // For now, return placeholder values - position is updated on-chain
-
       return {
         hash: txHash,
         amount0: BigInt(0),
@@ -471,16 +343,10 @@ export async function collectFees({
   amount1: bigint
 }> {
   try {
-    console.log(`💰 Collecting from position #${tokenId}...`)
-    console.log(`  Max amount0: ${amount0Max}`)
-    console.log(`  Max amount1: ${amount1Max}`)
-
     const positionManagerClient = getPositionManagerContractClient({
       contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
       publicKey: operator,
     })
-
-    console.log('Preparing collect transaction...')
 
     const assembledTransaction = await positionManagerClient.collect(
       {
@@ -501,16 +367,12 @@ export async function collectFees({
     // Get the simulated result from the client
     // The client automatically simulates and parses the return value as a tuple [amount0, amount1]
     const simulationResult = assembledTransaction.result
-    console.log('📊 Simulation result:', simulationResult)
 
     // Extract amounts from the Ok wrapper's value property
     const resultValue = (
       simulationResult as unknown as { value: readonly [bigint, bigint] }
     ).value as readonly [bigint, bigint]
     const [amount0, amount1] = resultValue
-    console.log(`💰 Simulated collection: ${amount0} token0, ${amount1} token1`)
-
-    console.log('Transaction prepared. Waiting for wallet signature...')
 
     // Convert to XDR for signing
     const transactionXdr = assembledTransaction.toXDR()
@@ -522,20 +384,13 @@ export async function collectFees({
       NETWORK_CONFIG.PASSPHRASE,
     )
 
-    console.log('Transaction signed. Submitting to network...')
-
     // Submit the signed transaction via raw RPC
     const txHash = await submitViaRawRPC(signedTx)
-
-    console.log(`Transaction submitted: ${txHash}`)
-    console.log('Waiting for confirmation...')
 
     // Wait for confirmation
     const result = await waitForTransaction(txHash)
 
     if (result.success) {
-      console.log('✅ Transaction confirmed!')
-
       return {
         txHash,
         amount0,
