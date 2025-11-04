@@ -37,7 +37,6 @@ import { ModeSquare } from './ModeSquare'
 import { OptimismSquare } from './OptimismSquare'
 import { PlasmaSquare } from './PlasmaSquare'
 // import { PalmSquare } from "./PalmSquare";
-import { PlasmaSquare } from './PlasmaSquare'
 import { PolygonSquare } from './PolygonSquare'
 import { PolygonZKSquare } from './PolygonZKSquare'
 import { RootstockSquare } from './RootstockSquare'
