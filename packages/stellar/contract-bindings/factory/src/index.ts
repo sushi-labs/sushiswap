@@ -34,7 +34,7 @@ if (typeof window !== 'undefined') {
 export const networks = {
   testnet: {
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CAEMKWO4YHQWHREVS7QFIFCAVB4Q5D5CCTS2HWX2GFNVBCD6ZI5D52S2",
+    contractId: "CBRNHAZCHGTERALW35ZDAWJYVZRZVE5UPBGETV5LPTZPOY5JMCV6CE6D",
   }
 } as const
 
@@ -42,6 +42,59 @@ export type StorageKey = {tag: "Owner", values: void} | {tag: "FeeAmtTickSpacing
 
 
 
+
+export const Errors = {
+  1: {message:"Unauthorized"},
+  10: {message:"InvalidTickRange"},
+  11: {message:"InvalidLiquidity"},
+  12: {message:"InvalidAmount"},
+  13: {message:"InvalidSqrtPrice"},
+  14: {message:"InvalidFee"},
+  15: {message:"InvalidTickSpacing"},
+  20: {message:"TickOutOfBounds"},
+  21: {message:"PriceOutOfBounds"},
+  22: {message:"LiquidityOverflow"},
+  23: {message:"LiquidityUnderflow"},
+  24: {message:"DivisionByZero"},
+  25: {message:"MulDivOverflow"},
+  30: {message:"U128Overflow"},
+  31: {message:"I128Overflow"},
+  32: {message:"U64Overflow"},
+  33: {message:"U32Overflow"},
+  40: {message:"PoolNotInitialized"},
+  41: {message:"PoolAlreadyInitialized"},
+  42: {message:"PositionNotFound"},
+  43: {message:"InsufficientLiquidity"},
+  50: {message:"TickNotInitialized"},
+  51: {message:"InvalidWordPosition"},
+  52: {message:"TickNotSpacedCorrectly"},
+  60: {message:"OracleNotInitialized"},
+  61: {message:"InvalidObservation"},
+  62: {message:"ObservationTooOld"},
+  63: {message:"NotInitialized"},
+  64: {message:"AlreadyInitialized"},
+  65: {message:"TickLowerNotLessThanUpper"},
+  66: {message:"TickLowerTooLow"},
+  67: {message:"TickUpperTooHigh"},
+  68: {message:"Locked"},
+  69: {message:"InvalidPriceLimit"},
+  70: {message:"AmountShouldBeGreaterThanZero"},
+  71: {message:"NegativeAmount"},
+  72: {message:"InsufficientToken0"},
+  73: {message:"InsufficientToken1"},
+  74: {message:"InvalidFeeProtocol"},
+  75: {message:"ZeroPriceNotAllowed"},
+  76: {message:"ZeroLiquidityNotAllowed"},
+  77: {message:"OverflowInSqrtPriceCalculation"},
+  78: {message:"UnderflowInSqrtPriceCalculation"},
+  80: {message:"InsufficientRepayment0"},
+  81: {message:"InsufficientRepayment1"},
+  82: {message:"FlashCallbackFailed"},
+  90: {message:"IdenticalTokens"},
+  91: {message:"PoolAlreadyExists"},
+  92: {message:"FeeAmountAlreadyEnabled"},
+  93: {message:"InvalidFeeAmount"}
+}
 
 export interface Client {
   /**
@@ -383,7 +436,8 @@ export class Client extends ContractClient {
         "AAAAAAAAAKRTZXRzIGEgZGVmYXVsdCByb3V0ZXIgdG8gYmUgYXV0by1hdXRob3JpemVkIG9uIG5ldyBwb29scy4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgY29udHJhY3QgZW52aXJvbm1lbnQKKiBgcm91dGVyYCAtIFJvdXRlciBhZGRyZXNzIHRvIGF1dG8tYXV0aG9yaXplIG9uIG5ldyBwb29scwAAABJzZXRfZGVmYXVsdF9yb3V0ZXIAAAAAAAEAAAAAAAAABnJvdXRlcgAAAAAAEwAAAAA=",
         "AAAAAAAAAFJDbGVhcnMgdGhlIGRlZmF1bHQgcm91dGVyIHNldHRpbmcuCgojIEFyZ3VtZW50cwoqIGBlbnZgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50AAAAAAAUY2xlYXJfZGVmYXVsdF9yb3V0ZXIAAAAAAAAAAA==",
         "AAAAAAAAAPNBdXRob3JpemVzIG9yIHJldm9rZXMgYSByb3V0ZXIgZm9yIGEgc3BlY2lmaWMgcG9vbC4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgY29udHJhY3QgZW52aXJvbm1lbnQKKiBgcG9vbGAgLSBQb29sIGFkZHJlc3MgdG8gY29uZmlndXJlCiogYHJvdXRlcmAgLSBSb3V0ZXIgYWRkcmVzcyB0byBhdXRob3JpemUvcmV2b2tlCiogYGFsbG93ZWRgIC0gVHJ1ZSB0byBncmFudCBhdXRob3JpemF0aW9uLCBmYWxzZSB0byByZXZva2UAAAAAGnNldF9wb29sX3JvdXRlcl9hdXRob3JpemVkAAAAAAADAAAAAAAAAARwb29sAAAAEwAAAAAAAAAGcm91dGVyAAAAAAATAAAAAAAAAAdhbGxvd2VkAAAAAAEAAAAA",
-        "AAAAAAAAAV5FbmFibGVzIGEgbmV3IGZlZSB0aWVyIHdpdGggYXNzb2NpYXRlZCB0aWNrIHNwYWNpbmcuCgojIEFyZ3VtZW50cwoqIGBlbnZgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CiogYGZlZWAgLSBGZWUgdGllciBpbiBiYXNpcyBwb2ludHMgKG11c3QgYmUgPCAxLDAwMCwwMDApCiogYHRpY2tfc3BhY2luZ2AgLSBUaWNrIHNwYWNpbmcgZm9yIHRoaXMgZmVlIHRpZXIgKG11c3QgYmUgPiAwIGFuZCA8IDE2LDM4NCkKCiMgUmV0dXJucwoqIGBPaygoKSlgIG9uIHN1Y2Nlc3MKKiBgRXJyKEVycm9yKWAgLSBJZiB2YWxpZGF0aW9uIGZhaWxzIChzZWUgZmVlczo6ZW5hYmxlX2ZlZV9hbW91bnQgZm9yIGVycm9yIGNvZGVzKQAAAAAACWVfZmVlX2FtdAAAAAAAAAIAAAAAAAAAA2ZlZQAAAAAEAAAAAAAAAAx0aWNrX3NwYWNpbmcAAAAFAAAAAQAAA+kAAAPtAAAAAAAAAAM=" ]),
+        "AAAAAAAAAV5FbmFibGVzIGEgbmV3IGZlZSB0aWVyIHdpdGggYXNzb2NpYXRlZCB0aWNrIHNwYWNpbmcuCgojIEFyZ3VtZW50cwoqIGBlbnZgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CiogYGZlZWAgLSBGZWUgdGllciBpbiBiYXNpcyBwb2ludHMgKG11c3QgYmUgPCAxLDAwMCwwMDApCiogYHRpY2tfc3BhY2luZ2AgLSBUaWNrIHNwYWNpbmcgZm9yIHRoaXMgZmVlIHRpZXIgKG11c3QgYmUgPiAwIGFuZCA8IDE2LDM4NCkKCiMgUmV0dXJucwoqIGBPaygoKSlgIG9uIHN1Y2Nlc3MKKiBgRXJyKEVycm9yKWAgLSBJZiB2YWxpZGF0aW9uIGZhaWxzIChzZWUgZmVlczo6ZW5hYmxlX2ZlZV9hbW91bnQgZm9yIGVycm9yIGNvZGVzKQAAAAAACWVfZmVlX2FtdAAAAAAAAAIAAAAAAAAAA2ZlZQAAAAAEAAAAAAAAAAx0aWNrX3NwYWNpbmcAAAAFAAAAAQAAA+kAAAPtAAAAAAAAAAM=",
+        "AAAABAAAAAAAAAAAAAAABUVycm9yAAAAAAAAMgAAAAAAAAAMVW5hdXRob3JpemVkAAAAAQAAAAAAAAAQSW52YWxpZFRpY2tSYW5nZQAAAAoAAAAAAAAAEEludmFsaWRMaXF1aWRpdHkAAAALAAAAAAAAAA1JbnZhbGlkQW1vdW50AAAAAAAADAAAAAAAAAAQSW52YWxpZFNxcnRQcmljZQAAAA0AAAAAAAAACkludmFsaWRGZWUAAAAAAA4AAAAAAAAAEkludmFsaWRUaWNrU3BhY2luZwAAAAAADwAAAAAAAAAPVGlja091dE9mQm91bmRzAAAAABQAAAAAAAAAEFByaWNlT3V0T2ZCb3VuZHMAAAAVAAAAAAAAABFMaXF1aWRpdHlPdmVyZmxvdwAAAAAAABYAAAAAAAAAEkxpcXVpZGl0eVVuZGVyZmxvdwAAAAAAFwAAAAAAAAAORGl2aXNpb25CeVplcm8AAAAAABgAAAAAAAAADk11bERpdk92ZXJmbG93AAAAAAAZAAAAAAAAAAxVMTI4T3ZlcmZsb3cAAAAeAAAAAAAAAAxJMTI4T3ZlcmZsb3cAAAAfAAAAAAAAAAtVNjRPdmVyZmxvdwAAAAAgAAAAAAAAAAtVMzJPdmVyZmxvdwAAAAAhAAAAAAAAABJQb29sTm90SW5pdGlhbGl6ZWQAAAAAACgAAAAAAAAAFlBvb2xBbHJlYWR5SW5pdGlhbGl6ZWQAAAAAACkAAAAAAAAAEFBvc2l0aW9uTm90Rm91bmQAAAAqAAAAAAAAABVJbnN1ZmZpY2llbnRMaXF1aWRpdHkAAAAAAAArAAAAAAAAABJUaWNrTm90SW5pdGlhbGl6ZWQAAAAAADIAAAAAAAAAE0ludmFsaWRXb3JkUG9zaXRpb24AAAAAMwAAAAAAAAAWVGlja05vdFNwYWNlZENvcnJlY3RseQAAAAAANAAAAAAAAAAUT3JhY2xlTm90SW5pdGlhbGl6ZWQAAAA8AAAAAAAAABJJbnZhbGlkT2JzZXJ2YXRpb24AAAAAAD0AAAAAAAAAEU9ic2VydmF0aW9uVG9vT2xkAAAAAAAAPgAAAAAAAAAOTm90SW5pdGlhbGl6ZWQAAAAAAD8AAAAAAAAAEkFscmVhZHlJbml0aWFsaXplZAAAAAAAQAAAAAAAAAAZVGlja0xvd2VyTm90TGVzc1RoYW5VcHBlcgAAAAAAAEEAAAAAAAAAD1RpY2tMb3dlclRvb0xvdwAAAABCAAAAAAAAABBUaWNrVXBwZXJUb29IaWdoAAAAQwAAAAAAAAAGTG9ja2VkAAAAAABEAAAAAAAAABFJbnZhbGlkUHJpY2VMaW1pdAAAAAAAAEUAAAAAAAAAHUFtb3VudFNob3VsZEJlR3JlYXRlclRoYW5aZXJvAAAAAAAARgAAAAAAAAAOTmVnYXRpdmVBbW91bnQAAAAAAEcAAAAAAAAAEkluc3VmZmljaWVudFRva2VuMAAAAAAASAAAAAAAAAASSW5zdWZmaWNpZW50VG9rZW4xAAAAAABJAAAAAAAAABJJbnZhbGlkRmVlUHJvdG9jb2wAAAAAAEoAAAAAAAAAE1plcm9QcmljZU5vdEFsbG93ZWQAAAAASwAAAAAAAAAXWmVyb0xpcXVpZGl0eU5vdEFsbG93ZWQAAAAATAAAAAAAAAAeT3ZlcmZsb3dJblNxcnRQcmljZUNhbGN1bGF0aW9uAAAAAABNAAAAAAAAAB9VbmRlcmZsb3dJblNxcnRQcmljZUNhbGN1bGF0aW9uAAAAAE4AAAAAAAAAFkluc3VmZmljaWVudFJlcGF5bWVudDAAAAAAAFAAAAAAAAAAFkluc3VmZmljaWVudFJlcGF5bWVudDEAAAAAAFEAAAAAAAAAE0ZsYXNoQ2FsbGJhY2tGYWlsZWQAAAAAUgAAAAAAAAAPSWRlbnRpY2FsVG9rZW5zAAAAAFoAAAAAAAAAEVBvb2xBbHJlYWR5RXhpc3RzAAAAAAAAWwAAAAAAAAAXRmVlQW1vdW50QWxyZWFkeUVuYWJsZWQAAAAAXAAAAAAAAAAQSW52YWxpZEZlZUFtb3VudAAAAF0=" ]),
       options
     )
   }

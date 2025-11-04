@@ -295,11 +295,13 @@ export type FixedPoint128 = readonly [u256];
 export type FixedPoint96 = readonly [u256];
 
 
+export type SqrtPriceX96 = readonly [u256];
+
 export interface SwapStepResult {
   amount_in: u256;
   amount_out: u256;
   fee_amount: u256;
-  sqrt_ratio_next: u256;
+  sqrt_ratio_next: SqrtPriceX96;
 }
 
 

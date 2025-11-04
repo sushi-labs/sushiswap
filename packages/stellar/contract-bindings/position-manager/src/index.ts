@@ -34,7 +34,7 @@ if (typeof window !== 'undefined') {
 export const networks = {
   testnet: {
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CAW67ZLCHUN3O7O6WU5KVB332JHJXPEFII2LP3WPP3KWBPPQSVY7A6K4",
+    contractId: "CC32RV27R6ZOOBNZ25ACUZYJJWXRI6ULJJVGKHRVLHM2MRBZ56M6WK4F",
   }
 } as const
 
@@ -115,6 +115,7 @@ export interface AddLiquidityParams {
   amount1_min: u128;
   fee: u32;
   recipient: string;
+  sender: string;
   tick_lower: i32;
   tick_upper: i32;
   token0: string;
@@ -160,6 +161,7 @@ export interface MintParams {
   deadline: u64;
   fee: u32;
   recipient: string;
+  sender: string;
   tick_lower: i32;
   tick_upper: i32;
   token0: string;
@@ -189,51 +191,15 @@ export interface UserPositionInfo {
 /**
  * Storage keys for the contract
  */
-export type DataKey = {tag: "Factory", values: void} | {tag: "XlmAddress", values: void} | {tag: "TokenDescriptor", values: void} | {tag: "Position", values: readonly [u32]} | {tag: "PoolIdToPoolKey", values: readonly [u32]} | {tag: "PoolIdsByAddress", values: readonly [string]} | {tag: "PoolIdToAddress", values: readonly [u32]} | {tag: "NextPoolId", values: void} | {tag: "NextTokenId", values: void} | {tag: "UserTokenIds", values: readonly [string]};
-
-
-/**
- * Parameters required to construct a token URI (see original Solidity code for semantics)
- */
-export interface ConstructTokenURIParams {
-  base_token_address: string;
-  base_token_decimals: u32;
-  base_token_symbol: string;
-  fee: u32;
-  flip_ratio: boolean;
-  pool_address: string;
-  quote_token_address: string;
-  quote_token_decimals: u32;
-  quote_token_symbol: string;
-  tick_current: i32;
-  tick_lower: i32;
-  tick_spacing: i32;
-  tick_upper: i32;
-  token_id: u64;
-}
-
+export type DataKey = {tag: "HookModules", values: readonly [ComplianceHook]} |{tag: "Factory", values: void} | {tag: "XlmAddress", values: void} | {tag: "TokenDescriptor", values: void} | {tag: "Position", values: readonly [u32]} | {tag: "PoolIdToPoolKey", values: readonly [u32]} | {tag: "PoolIdsByAddress", values: readonly [string]} | {tag: "PoolIdToAddress", values: readonly [u32]} | {tag: "NextPoolId", values: void} | {tag: "NextTokenId", values: void} | {tag: "UserTokenIds", values: readonly [string]};
 
 /**
- * Data structure for weighted tick aggregation across multiple pools
- */
-export interface WeightedTickData {
-  /**
- * Tick value from a pool
- */
-tick: i32;
-  /**
- * Weight for this tick (typically liquidity or volume)
- */
-weight: u128;
-}
-
-/**
- * Error codes for the periphery base contract
+ * Error codes for the periphery libraries
  */
 export const Errors = {
   /**
-   * Transaction has exceeded the deadline
-   */
+ * Transaction has exceeded the deadline
+ */
   1001: {message:"TransactionTooOld"},
   /**
    * Contract has already been initialized
@@ -315,10 +281,9 @@ export const Errors = {
    * Position must have zero liquidity and no owed tokens before burning
    */
   1021: {message:"PositionNotCleared"},
-
   /**
- * Hex string length is insufficient for the requested conversion
- */
+   * Hex string length is insufficient for the requested conversion
+   */
   2001: {message:"HexLengthInsufficient"},
   /**
    * mul_div operation failed in liquidity calculation
@@ -334,10 +299,41 @@ export const Errors = {
   2004: {message:"U256ToU128ConversionFailed"}
 }
 
-// /**
-//  * Keys under which we'll store the immutable fields
-//  */
-// export type DataKey = {tag: "Factory", values: void} | {tag: "XlmAddress", values: void};
+
+/**
+ * Parameters required to construct a token URI (see original Solidity code for semantics)
+ */
+export interface ConstructTokenURIParams {
+  base_token_address: string;
+  base_token_decimals: u32;
+  base_token_symbol: string;
+  fee: u32;
+  flip_ratio: boolean;
+  pool_address: string;
+  quote_token_address: string;
+  quote_token_decimals: u32;
+  quote_token_symbol: string;
+  tick_current: i32;
+  tick_lower: i32;
+  tick_spacing: i32;
+  tick_upper: i32;
+  token_id: u64;
+}
+
+
+/**
+ * Data structure for weighted tick aggregation across multiple pools
+ */
+export interface WeightedTickData {
+  /**
+ * Tick value from a pool
+ */
+tick: i32;
+  /**
+ * Weight for this tick (typically liquidity or volume)
+ */
+weight: u128;
+}
 
 /**
  * Storage keys for the data associated with the allowlist extension
@@ -383,7 +379,7 @@ export interface AllowanceData {
 /**
  * Storage keys for the data associated with `FungibleToken`
  */
-export type StorageKey = {tag: "HookModules", values: readonly [ComplianceHook]} | {tag: "TotalSupply", values: void} | {tag: "Balance", values: readonly [string]} | {tag: "Allowance", values: readonly [AllowanceKey]};
+export type StorageKey = {tag: "TotalSupply", values: void} | {tag: "Balance", values: readonly [string]} | {tag: "Allowance", values: readonly [AllowanceKey]};
 
 
 /**
@@ -879,13 +875,52 @@ export const ClaimsError = {
   341: {message:"ClaimNotValid"}
 }
 
-
+export type CountryCode = string;
 
 
 /**
  * Represents the type of identity holder
  */
 export type IdentityType = {tag: "Individual", values: void} | {tag: "Organization", values: void};
+
+/**
+ * Represents different types of country relationships for individuals
+ */
+export type IndividualCountryRelation = {tag: "Residence", values: readonly [CountryCode]} | {tag: "Citizenship", values: readonly [CountryCode]} | {tag: "SourceOfFunds", values: readonly [CountryCode]} | {tag: "TaxResidency", values: readonly [CountryCode]} | {tag: "Custom", values: readonly [string, CountryCode]};
+
+/**
+ * Represents different types of country relationships for organizations
+ */
+export type OrganizationCountryRelation = {tag: "Incorporation", values: readonly [CountryCode]} | {tag: "OperatingJurisdiction", values: readonly [CountryCode]} | {tag: "TaxJurisdiction", values: readonly [CountryCode]} | {tag: "SourceOfFunds", values: readonly [CountryCode]} | {tag: "Custom", values: readonly [string, CountryCode]};
+
+/**
+ * Unified country relationship that can be either individual or organizational
+ */
+export type CountryRelation = {tag: "Individual", values: readonly [IndividualCountryRelation]} | {tag: "Organization", values: readonly [OrganizationCountryRelation]};
+
+
+/**
+ * A country data containing the country relationship and optional metadata
+ */
+export interface CountryData {
+  /**
+ * Type of country relationship
+ */
+country: CountryRelation;
+  /**
+ * Optional metadata (e.g., visa type, validity period)
+ */
+metadata: Option<Map<string, string>>;
+}
+
+
+/**
+ * Complete identity profile containing identity type and country data
+ */
+export interface IdentityProfile {
+  countries: Array<CountryData>;
+  identity_type: IdentityType;
+}
 
 /**
  * Storage keys for the data associated with Identity Storage Registry.
@@ -1130,27 +1165,14 @@ export type FixedPoint128 = readonly [u256];
 export type FixedPoint96 = readonly [u256];
 
 
+export type SqrtPriceX96 = readonly [u256];
+
 export interface SwapStepResult {
   amount_in: u256;
   amount_out: u256;
   fee_amount: u256;
-  sqrt_ratio_next: u256;
+  sqrt_ratio_next: SqrtPriceX96;
 }
-
-export type PositionTuple = [
-  u64,     // nonce
-  string,  // operator (Address as string)
-  string,  // token0 (Address as string)
-  string,  // token1 (Address as string)
-  u32,     // fee (uint24 in Solidity)
-  i32,     // tickLower (int24)
-  i32,     // tickUpper (int24)
-  u128,    // liquidity
-  u256,    // feeGrowthInside0LastX128 (U256 as u256)
-  u256,    // feeGrowthInside1LastX128 (U256 as u256)
-  u128,    // tokensOwed0
-  u128     // tokensOwed1
-];
 
 
 /**
@@ -1165,6 +1187,25 @@ export type PositionTuple = [
 export interface U512 {
   high: u256;
   low: u256;
+}
+
+/**
+ * Interface representing the return type for positions()
+ * Maps to the fields from the PositionTuple type.
+ */
+export interface PositionTuple {
+  nonce: u64;
+  operator: string; // Address (hex or base32 string)
+  token0: string;   // Address (hex or base32 string)
+  token1: string;   // Address (hex or base32 string)
+  fee: u32;
+  tickLower: i32;
+  tickUpper: i32;
+  liquidity: u128;
+  feeGrowthInside0LastX128: u256;
+  feeGrowthInside1LastX128: u256;
+  tokensOwed0: u128;
+  tokensOwed1: u128;
 }
 
 export interface Client {
@@ -1575,6 +1616,8 @@ export interface Client {
    * Construct and simulate a burn transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Burn an NFT position
    * Requires the position to have 0 liquidity and no tokens owed
+   * 
+   * Matches OpenZeppelin Stellar and Uniswap V3 standard: returns () and panics on error
    */
   burn: ({token_id}: {token_id: u32}, options?: {
     /**
@@ -1803,11 +1846,11 @@ export class Client extends ContractClient {
         "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",
-        "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",
+        "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",
-        "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",
+        "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",
         "AAAAAQAAAEBSZXR1cm4gdHlwZSBmb3IgZ2V0X3VzZXJfcG9zaXRpb25zIC0gY29udGFpbnMgZnVsbCBwb3NpdGlvbiBkYXRhAAAAAAAAABBVc2VyUG9zaXRpb25JbmZvAAAADQAAAAAAAAADZmVlAAAAAAQAAAAAAAAAHGZlZV9ncm93dGhfaW5zaWRlMF9sYXN0X3gxMjgAAAAMAAAAAAAAABxmZWVfZ3Jvd3RoX2luc2lkZTFfbGFzdF94MTI4AAAADAAAAAAAAAAJbGlxdWlkaXR5AAAAAAAACgAAAAAAAAAFbm9uY2UAAAAAAAAGAAAAAAAAAAhvcGVyYXRvcgAAABMAAAAAAAAACnRpY2tfbG93ZXIAAAAAAAUAAAAAAAAACnRpY2tfdXBwZXIAAAAAAAUAAAAAAAAABnRva2VuMAAAAAAAEwAAAAAAAAAGdG9rZW4xAAAAAAATAAAAAAAAAAh0b2tlbl9pZAAAAAQAAAAAAAAADHRva2Vuc19vd2VkMAAAAAoAAAAAAAAADHRva2Vuc19vd2VkMQAAAAo=",
         "AAAAAgAAAB1TdG9yYWdlIGtleXMgZm9yIHRoZSBjb250cmFjdAAAAAAAAAAAAAAHRGF0YUtleQAAAAAKAAAAAAAAAAAAAAAHRmFjdG9yeQAAAAAAAAAAAAAAAApYbG1BZGRyZXNzAAAAAAAAAAAAAAAAAA9Ub2tlbkRlc2NyaXB0b3IAAAAAAQAAAAAAAAAIUG9zaXRpb24AAAABAAAABAAAAAEAAAAAAAAAD1Bvb2xJZFRvUG9vbEtleQAAAAABAAAABAAAAAEAAAAAAAAAEFBvb2xJZHNCeUFkZHJlc3MAAAABAAAAEwAAAAEAAAAAAAAAD1Bvb2xJZFRvQWRkcmVzcwAAAAABAAAABAAAAAAAAAAAAAAACk5leHRQb29sSWQAAAAAAAAAAAAAAAAAC05leHRUb2tlbklkAAAAAAEAAAAAAAAADFVzZXJUb2tlbklkcwAAAAEAAAAT",
         "AAAAAAAAAJpJbml0aWFsaXplIHRoZSBjb250cmFjdApAcGFyYW0gZW52IFRoZSBTb3JvYmFuIGVudmlyb25tZW50CkBwYXJhbSBhZG1pbiBUaGUgYWRtaW4gYWRkcmVzcyBmb3IgdGhlIGNvbnRyYWN0CkBwYXJhbSBiYXNlX3VyaSBUaGUgYmFzZSBVUkkgZm9yIHRva2VuIG1ldGFkYXRhAAAAAAAEaW5pdAAAAAMAAAAAAAAAB2ZhY3RvcnkAAAAAEwAAAAAAAAALeGxtX2FkZHJlc3MAAAAAEwAAAAAAAAAQdG9rZW5fZGVzY3JpcHRvcgAAABMAAAAA",
@@ -1829,7 +1872,7 @@ export class Client extends ContractClient {
         "AAAAAAAAAFxUcmFuc2ZlciBmcm9tIGFuIGFkZHJlc3MgKHVzZWQgYnkgYXBwcm92ZWQgYWRkcmVzc2VzKQpUaGUgc3BlbmRlciBtdXN0IHByb3ZpZGUgYXV0aG9yaXphdGlvbgAAAA10cmFuc2Zlcl9mcm9tAAAAAAAABAAAAAAAAAAHc3BlbmRlcgAAAAATAAAAAAAAAARmcm9tAAAAEwAAAAAAAAACdG8AAAAAABMAAAAAAAAACHRva2VuX2lkAAAABAAAAAA=",
         "AAAAAAAAABVDaGVjayBpZiB0b2tlbiBleGlzdHMAAAAAAAAGZXhpc3RzAAAAAAABAAAAAAAAAAh0b2tlbl9pZAAAAAQAAAABAAAAAQ==",
         "AAAAAAAAAD50b2tlblVSSS1jb21wYXRpYmxlOiBnYXRoZXJzIGFsbCBkYXRhIGFuZCBwYXNzZXMgdG8gZGVzY3JpcHRvcgAAAAAACXRva2VuX3VyaQAAAAAAAAEAAAAAAAAACHRva2VuX2lkAAAABAAAAAEAAAAQ",
-        "AAAAAAAAAFFCdXJuIGFuIE5GVCBwb3NpdGlvbgpSZXF1aXJlcyB0aGUgcG9zaXRpb24gdG8gaGF2ZSAwIGxpcXVpZGl0eSBhbmQgbm8gdG9rZW5zIG93ZWQAAAAAAAAEYnVybgAAAAEAAAAAAAAACHRva2VuX2lkAAAABAAAAAA=",
+        "AAAAAAAAAKdCdXJuIGFuIE5GVCBwb3NpdGlvbgpSZXF1aXJlcyB0aGUgcG9zaXRpb24gdG8gaGF2ZSAwIGxpcXVpZGl0eSBhbmQgbm8gdG9rZW5zIG93ZWQKCk1hdGNoZXMgT3BlblplcHBlbGluIFN0ZWxsYXIgYW5kIFVuaXN3YXAgVjMgc3RhbmRhcmQ6IHJldHVybnMgKCkgYW5kIHBhbmljcyBvbiBlcnJvcgAAAAAEYnVybgAAAAEAAAAAAAAACHRva2VuX2lkAAAABAAAAAA=",
         "AAAAAAAAAV9HZXQgYWxsIHBvc2l0aW9uIHRva2VuIElEcyBvd25lZCBieSBhIHVzZXIgd2l0aCBwYWdpbmF0aW9uClNpbWlsYXIgdG8gVW5pc3dhcCBWMydzIFBvc2l0aW9uIEhlbHBlciBnZXRVc2VyUG9zaXRpb25zCgpHYXMgT3B0aW1pemF0aW9uOiBPKDEpIGxvb2t1cCB1c2luZyBvd25lcnNoaXAgbWFwcGluZwoKQHBhcmFtIG93bmVyIFRoZSBhZGRyZXNzIHRvIHF1ZXJ5IHBvc2l0aW9ucyBmb3IKQHBhcmFtIHNraXAgTnVtYmVyIG9mIHBvc2l0aW9ucyB0byBza2lwIChmb3IgcGFnaW5hdGlvbikKQHBhcmFtIHRha2UgTWF4aW11bSBudW1iZXIgb2YgcG9zaXRpb25zIHRvIHJldHVybgpAcmV0dXJuIFZlYyBvZiB0b2tlbiBJRHMAAAAAEmdldF91c2VyX3Rva2VuX2lkcwAAAAAAAwAAAAAAAAAFb3duZXIAAAAAAAATAAAAAAAAAARza2lwAAAABAAAAAAAAAAEdGFrZQAAAAQAAAABAAAD6gAAAAQ=",
         "AAAAAAAAAP1HZXQgYSBzaW5nbGUgcG9zaXRpb24gd2l0aCBsaXZlIGZlZSBjYWxjdWxhdGlvbnMKTWlycm9ycyBTb2xpZGl0eSBWM1Bvc2l0aW9uSGVscGVyLmdldFBvc2l0aW9uClVubGlrZSBwb3NpdGlvbnMoKSwgdGhpcyBjYWxjdWxhdGVzIHVwLXRvLWRhdGUgZmVlcyBieSBxdWVyeWluZyB0aGUgcG9vbApAcGFyYW0gdG9rZW5faWQgVGhlIE5GVCB0b2tlbiBJRApAcmV0dXJuIFVzZXJQb3NpdGlvbkluZm8gd2l0aCBsaXZlIHRva2Vuc093ZWQgdmFsdWVzAAAAAAAAFmdldF9wb3NpdGlvbl93aXRoX2ZlZXMAAAAAAAEAAAAAAAAACHRva2VuX2lkAAAABAAAAAEAAAPpAAAH0AAAABBVc2VyUG9zaXRpb25JbmZvAAAAAw==",
         "AAAAAAAAARBHZXQgbXVsdGlwbGUgcG9zaXRpb25zIHdpdGggbGl2ZSBmZWUgY2FsY3VsYXRpb25zCk1pcnJvcnMgU29saWRpdHkgVjNQb3NpdGlvbkhlbHBlci5nZXRQb3NpdGlvbnMKVW5saWtlIHBvc2l0aW9ucygpLCB0aGlzIGNhbGN1bGF0ZXMgdXAtdG8tZGF0ZSBmZWVzIGJ5IHF1ZXJ5aW5nIHRoZSBwb29sCkBwYXJhbSB0b2tlbl9pZHMgVmVjIG9mIHRva2VuIElEcyB0byBxdWVyeQpAcmV0dXJuIFZlYyBvZiBVc2VyUG9zaXRpb25JbmZvIHdpdGggbGl2ZSB0b2tlbnNPd2VkIHZhbHVlcwAAABdnZXRfcG9zaXRpb25zX3dpdGhfZmVlcwAAAAABAAAAAAAAAAl0b2tlbl9pZHMAAAAAAAPqAAAABAAAAAEAAAPpAAAD6gAAB9AAAAAQVXNlclBvc2l0aW9uSW5mbwAAAAM=",

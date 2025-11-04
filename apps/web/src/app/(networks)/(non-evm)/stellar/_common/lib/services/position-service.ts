@@ -101,21 +101,21 @@ export class PositionService {
         token_id: tokenId,
       })
 
-      // positions() returns a tuple: [nonce, operator, token0, token1, fee, tick_lower, tick_upper, liquidity, feeGrowth0, feeGrowth1, tokensOwed0, tokensOwed1]
-      const [
-        _nonce,
-        _operator,
+      // positions() returns a dict: {nonce, operator, token0, token1, fee, tick_lower, tick_upper, liquidity, feeGrowth0, feeGrowth1, tokensOwed0, tokensOwed1}
+      const {
+        nonce: _nonce,
+        operator: _operator,
         token0,
         token1,
         fee,
         tickLower,
         tickUpper,
         liquidity,
-        ,
-        ,
+        feeGrowthInside0LastX128: _feeGrowthInside0LastX128,
+        feeGrowthInside1LastX128: _feeGrowthInside1LastX128,
         tokensOwed0,
         tokensOwed1,
-      ] = handleResult(result)
+      } = handleResult(result)
 
       return {
         tokenId,

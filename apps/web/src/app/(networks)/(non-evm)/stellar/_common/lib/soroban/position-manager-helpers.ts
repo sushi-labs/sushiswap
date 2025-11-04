@@ -90,6 +90,7 @@ export async function mintPosition({
       amount0_min: amount0Min,
       amount1_min: amount1Min,
       deadline,
+      sender: sourceAccount,
     }
 
     console.log('📋 Mint parameters:', {
@@ -104,6 +105,7 @@ export async function mintPosition({
       amount0_min: mintParams.amount0_min.toString(),
       amount1_min: mintParams.amount1_min.toString(),
       deadline: mintParams.deadline.toString(),
+      sender: sourceAccount,
     })
 
     let assembledTransaction
