@@ -102,6 +102,18 @@ function calculateAmountOut({
       const reserve0 = isForward ? vertex.reserve0 : vertex.reserve1
       const reserve1 = isForward ? vertex.reserve1 : vertex.reserve0
 
+      // Debug logging for swap direction
+      console.log(
+        `[Swap ${i}] ${tokenA.slice(0, 8)}... → ${tokenB.slice(0, 8)}...`,
+      )
+      console.log(
+        `  Vertex: token0=${vertex.token0.slice(0, 8)}..., token1=${vertex.token1.slice(0, 8)}...`,
+      )
+      console.log(`  Direction: ${isForward ? 'forward' : 'reverse'}`)
+      console.log(`  Reserve0 (input): ${reserve0}`)
+      console.log(`  Reserve1 (output): ${reserve1}`)
+      console.log(`  AmountIn: ${currentAmount}`)
+
       // Calculate output for this hop
       const output = computeExactOutput({
         amountIn: currentAmount,
@@ -109,6 +121,8 @@ function calculateAmountOut({
         reserve1,
         fee: vertex.fee,
       })
+
+      console.log(`  AmountOut: ${output}`)
 
       if (output === 0n) {
         // Swap would fail (insufficient liquidity)

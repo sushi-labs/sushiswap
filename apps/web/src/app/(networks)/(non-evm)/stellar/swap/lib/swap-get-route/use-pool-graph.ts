@@ -64,6 +64,11 @@ export function usePoolGraph() {
                     const [token0, token1] =
                       tokenA < tokenB ? [tokenA, tokenB] : [tokenB, tokenA]
 
+                    const token0Code =
+                      getTokenByContract(token0)?.code || token0.slice(0, 8)
+                    const token1Code =
+                      getTokenByContract(token1)?.code || token1.slice(0, 8)
+
                     // Query pool address from factory
                     const poolResult = await factoryClient.get_pool({
                       token_a: token0,
@@ -75,8 +80,15 @@ export function usePoolGraph() {
 
                     if (!poolAddress || poolAddress === '') {
                       // Pool doesn't exist
+                      console.log(
+                        `✗ No pool: ${token0Code}-${token1Code} (${fee / 10000}%)`,
+                      )
                       return
                     }
+
+                    console.log(
+                      `✓ Found pool: ${token0Code}-${token1Code} (${fee / 10000}%) at ${poolAddress.slice(0, 8)}...`,
+                    )
 
                     // Get pool state
                     const poolClient = getPoolContractClient({
@@ -89,6 +101,11 @@ export function usePoolGraph() {
                     ])
 
                     const sqrtPriceX96 = slot0Result.result.sqrt_price_x96
+                    const liquidity = BigInt(liquidityResult.result || 0)
+
+                    console.log(
+                      `  Liquidity: ${liquidity}, SqrtPrice: ${sqrtPriceX96}`,
+                    )
 
                     // Get slot0 data
                     const slot0 = slot0Result.result
@@ -98,7 +115,6 @@ export function usePoolGraph() {
                     // Calculate approximate reserves from liquidity and sqrt price
                     // For V3/concentrated liquidity: reserve = liquidity / sqrt(price) and reserve1 = liquidity * sqrt(price)
                     // sqrtPrice = sqrtPriceX96 / 2^96
-                    const liquidity = BigInt(liquidityResult.result || 0)
                     const sqrtPriceX96BigInt = BigInt(sqrtPriceX96)
 
                     // Virtual reserves for this liquidity position
@@ -115,15 +131,17 @@ export function usePoolGraph() {
                         : liquidity
 
                     // Create vertex
-                    // IMPORTANT: Use the ordered tokens (token0, token1) not the query tokens (tokenA, tokenB)
-                    // The reserves are calculated based on ordered tokens, so vertex must store ordered tokens
+                    // IMPORTANT: Vertex must be internally consistent
+                    // - pair field uses ordered tokens (token0, token1)
+                    // - token0/token1 use ordered tokens (lower/higher address)
+                    // - reserves match this ordering (reserve0 for token0, reserve1 for token1)
                     const vertex: Vertex = {
-                      pair: `${tokenA}|||${tokenB}`,
+                      pair: `${token0}|||${token1}`, // Must match token0/token1 ordering
                       poolAddress,
-                      token0: token0, // Use ordered token0 (lower address)
-                      token1: token1, // Use ordered token1 (higher address)
-                      reserve0: reserve0 || liquidity, // Fallback to liquidity if reserve calc fails
-                      reserve1: reserve1 || liquidity,
+                      token0: token0, // Ordered: lower address
+                      token1: token1, // Ordered: higher address
+                      reserve0: reserve0 || liquidity, // Reserve for token0
+                      reserve1: reserve1 || liquidity, // Reserve for token1
                       fee,
                       liquidity,
                       sqrtPriceX96,
@@ -162,6 +180,18 @@ export function usePoolGraph() {
 
         // Wait for all pool queries to complete
         await Promise.all(poolQueries)
+
+        // Debug: Log the graph structure
+        console.log('🗺️ Pool Graph Built:')
+        console.log(`  Total pools found: ${vertices.size / 2}`) // Divided by 2 because we store both directions
+        console.log('  Token connections:')
+        tokenGraph.forEach((connections, token) => {
+          const tokenCode = getTokenByContract(token)?.code || token.slice(0, 8)
+          const connectedTokens = connections
+            .map((t) => getTokenByContract(t)?.code || t.slice(0, 8))
+            .join(', ')
+          console.log(`    ${tokenCode}: [${connectedTokens}]`)
+        })
 
         return {
           vertices,

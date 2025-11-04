@@ -1,6 +1,10 @@
 'use client'
 
-import { createErrorToast, createToast } from '@sushiswap/notifications'
+import {
+  createErrorToast,
+  createInfoToast,
+  createSuccessToast,
+} from '@sushiswap/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useStellarWallet } from '~stellar/providers'
 import { SwapService } from '../../services/swap-service'
@@ -26,6 +30,20 @@ export const useExecuteSwap = () => {
 
   return useMutation({
     mutationKey: ['swap', 'executeSwap'],
+    onMutate: async (params: UseExecuteSwapParams) => {
+      // Show "in progress" toast immediately before transaction starts
+      const timestamp = Date.now()
+      const amountInFormatted = (Number(params.amountIn) / 1e7).toFixed(4)
+
+      createInfoToast({
+        summary: `Swapping ${amountInFormatted} ${params.tokenIn.code} for ${params.tokenOut.code}...`,
+        type: 'swap',
+        account: params.userAddress,
+        chainId: 1,
+        groupTimestamp: timestamp,
+        timestamp,
+      })
+    },
     mutationFn: async (params: UseExecuteSwapParams) => {
       const swapService = new SwapService()
 
@@ -52,18 +70,13 @@ export const useExecuteSwap = () => {
       const amountOutFormatted = (Number(amountOut) / 1e7).toFixed(4)
       const amountInFormatted = (Number(params.amountIn) / 1e7).toFixed(4)
 
-      createToast({
-        account: params.userAddress,
+      createSuccessToast({
+        summary: `Swapped ${amountInFormatted} ${params.tokenIn.code} for ${amountOutFormatted} ${params.tokenOut.code}`,
         type: 'swap',
+        account: params.userAddress,
         chainId: 1,
         txHash: result.txHash,
         href: getStellarTxnLink(result.txHash),
-        promise: Promise.resolve(result),
-        summary: {
-          pending: `Swapping ${amountInFormatted} ${params.tokenIn.code} for ${params.tokenOut.code}`,
-          completed: `Swapped ${amountInFormatted} ${params.tokenIn.code} for ${amountOutFormatted} ${params.tokenOut.code}`,
-          failed: 'Swap failed',
-        },
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
       })
@@ -92,6 +105,30 @@ export const useExecuteMultiHopSwap = () => {
 
   return useMutation({
     mutationKey: ['swap', 'executeMultiHopSwap'],
+    onMutate: async (params: {
+      userAddress: string
+      path: string[]
+      fees: number[]
+      amountIn: bigint
+      amountOutMinimum: bigint
+      recipient: string
+      deadline?: number
+      tokenIn?: { code: string }
+      tokenOut?: { code: string }
+    }) => {
+      // Show "in progress" toast immediately before transaction starts
+      const timestamp = Date.now()
+      const amountInFormatted = (Number(params.amountIn) / 1e7).toFixed(4)
+
+      createInfoToast({
+        summary: `Swapping ${amountInFormatted} ${params.tokenIn?.code || 'tokens'} for ${params.tokenOut?.code || 'tokens'}...`,
+        type: 'swap',
+        account: params.userAddress,
+        chainId: 1,
+        groupTimestamp: timestamp,
+        timestamp,
+      })
+    },
     mutationFn: async (params: {
       userAddress: string
       path: string[]
@@ -126,18 +163,13 @@ export const useExecuteMultiHopSwap = () => {
       const amountOutFormatted = (Number(amountOut) / 1e7).toFixed(4)
       const amountInFormatted = (Number(params.amountIn) / 1e7).toFixed(4)
 
-      createToast({
-        account: params.userAddress,
+      createSuccessToast({
+        summary: `Swapped ${amountInFormatted} ${params.tokenIn?.code || 'tokens'} for ${amountOutFormatted} ${params.tokenOut?.code || 'tokens'}`,
         type: 'swap',
+        account: params.userAddress,
         chainId: 1,
         txHash: result.txHash,
         href: getStellarTxnLink(result.txHash),
-        promise: Promise.resolve(result),
-        summary: {
-          pending: `Swapping ${amountInFormatted} ${params.tokenIn?.code || 'tokens'} for ${params.tokenOut?.code || 'tokens'}`,
-          completed: `Swapped ${amountInFormatted} ${params.tokenIn?.code || 'tokens'} for ${amountOutFormatted} ${params.tokenOut?.code || 'tokens'}`,
-          failed: 'Swap failed',
-        },
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
       })

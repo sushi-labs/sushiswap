@@ -9,12 +9,12 @@ import {
   useExecuteMultiHopSwap,
   useExecuteSwap,
 } from '~stellar/_common/lib/hooks/swap'
-import { findBestPath } from '~stellar/_common/lib/soroban/dex-router-helpers'
 import { parseSlippageTolerance } from '~stellar/_common/lib/utils/error-helpers'
 import { requiresPriceImpactConfirmation } from '~stellar/_common/lib/utils/warning-severity'
 import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
 import { Checker } from '~stellar/_common/ui/checker'
 import { useStellarWallet } from '~stellar/providers'
+import { useBestRoute } from '~stellar/swap/lib/hooks'
 import { useSimpleSwapState } from './simple-swap-provider/simple-swap-provider'
 
 export const SimpleSwapExecuteButton = () => {
@@ -27,6 +27,29 @@ export const SimpleSwapExecuteButton = () => {
   const [, { slippageTolerance }] = useSlippageTolerance(
     SlippageToleranceStorageKey.Swap,
   )
+
+  // Get the same route that was used for price calculation
+  const amountIn = useMemo(() => {
+    if (!amount || Number(amount) <= 0 || !token0) return 0n
+    try {
+      const [integer = '0', fraction = ''] = amount.split('.')
+      const normalizedFraction = fraction
+        .padEnd(token0.decimals, '0')
+        .slice(0, token0.decimals)
+      const digits =
+        `${integer}${normalizedFraction}`.replace(/^0+(?=\d)/, '') || '0'
+      return BigInt(digits)
+    } catch {
+      return 0n
+    }
+  }, [amount, token0])
+
+  const { route } = useBestRoute({
+    tokenIn: token0,
+    tokenOut: token1,
+    amountIn,
+    enabled: amountIn > 0n,
+  })
 
   const showPriceImpactWarning = requiresPriceImpactConfirmation(
     priceImpact || undefined,
@@ -47,15 +70,31 @@ export const SimpleSwapExecuteButton = () => {
 
   // Calculate amount out minimum with slippage
   const amountOutMinimum = useMemo(() => {
-    if (!outputAmount) return 0n
+    if (!outputAmount || outputAmount === 0n) return 0n
 
     // Get slippage percentage (default 0.5%)
     const slippagePercent = parseSlippageTolerance(slippageTolerance)
 
+    // Validate slippage is not 100% or more
+    if (slippagePercent >= 100) {
+      console.warn('Slippage >= 100%, using 50% instead')
+      return (outputAmount * 5000n) / 10000n
+    }
+
     // Calculate minimum amount: amountOut * (1 - slippage/100)
     // Using basis points for precision: (10000 - slippageBps) / 10000
     const slippageBps = Math.floor(slippagePercent * 100) // Convert to basis points
-    const minAmount = (outputAmount * BigInt(10000 - slippageBps)) / 10000n
+
+    // Ensure slippageBps doesn't exceed 10000 (100%)
+    const validSlippageBps = Math.min(slippageBps, 9999)
+
+    const minAmount = (outputAmount * BigInt(10000 - validSlippageBps)) / 10000n
+
+    // Ensure minAmount is positive
+    if (minAmount <= 0n) {
+      console.warn('Calculated minAmount is 0 or negative, using 1')
+      return 1n
+    }
 
     return minAmount
   }, [outputAmount, slippageTolerance])
@@ -66,35 +105,20 @@ export const SimpleSwapExecuteButton = () => {
       !token0 ||
       !token1 ||
       !amount ||
-      Number(amount) <= 0
+      Number(amount) <= 0 ||
+      !route
     ) {
       return
     }
 
     try {
-      // Parse decimal string to bigint without precision loss
-      const toScaledBigInt = (value: string, decimals: number): bigint => {
-        const [integer = '0', fraction = ''] = value.split('.')
-        const normalizedFraction = fraction
-          .padEnd(decimals, '0')
-          .slice(0, decimals)
-        const digits =
-          `${integer}${normalizedFraction}`.replace(/^0+(?=\d)/, '') || '0'
-        return BigInt(digits)
-      }
+      // Use the route that was already calculated by useBestRoute
+      // Determine if it's direct (2 tokens) or multi-hop (3+ tokens)
+      const isDirect = route.route.length === 2
 
-      const amountIn = toScaledBigInt(amount, token0.decimals)
-
-      // Find the best route (direct or multi-hop)
-      const route = await findBestPath(token0, token1)
-
-      if (!route) {
-        throw new Error('No route found between tokens')
-      }
-
-      if (route.type === 'direct') {
-        // Single-hop swap
-        const pool = route.pools[0]
+      if (isDirect) {
+        // Single-hop swap (direct pool)
+        console.log('Executing direct swap:', route.route)
         await executeSwap.mutateAsync({
           userAddress: connectedAddress,
           tokenIn: token0,
@@ -102,18 +126,16 @@ export const SimpleSwapExecuteButton = () => {
           amountIn,
           amountOutMinimum,
           recipient: connectedAddress,
-          fee: pool.fee,
+          fee: route.fees[0],
           deadline: Math.floor(Date.now() / 1000) + 600, // 10 minutes
         })
       } else {
         // Multi-hop swap
-        const path = route.path.map((token) => token.contract)
-        const fees = route.fees
-
+        console.log('Executing multi-hop swap:', route.route)
         await executeMultiHopSwap.mutateAsync({
           userAddress: connectedAddress,
-          path,
-          fees,
+          path: route.route, // Use the exact route from graph-based routing
+          fees: route.fees,
           amountIn,
           amountOutMinimum,
           recipient: connectedAddress,
@@ -128,26 +150,15 @@ export const SimpleSwapExecuteButton = () => {
   }
 
   const checkerAmount = useMemo(() => {
-    if (!token0 || !amount) return []
-
-    // Parse decimal string to bigint without precision loss
-    const toScaledBigInt = (value: string, decimals: number): bigint => {
-      const [integer = '0', fraction = ''] = value.split('.')
-      const normalizedFraction = fraction
-        .padEnd(decimals, '0')
-        .slice(0, decimals)
-      const digits =
-        `${integer}${normalizedFraction}`.replace(/^0+(?=\d)/, '') || '0'
-      return BigInt(digits)
-    }
+    if (!token0 || !amountIn || amountIn === 0n) return []
 
     return [
       {
         token: token0,
-        amount: Number(toScaledBigInt(amount, token0.decimals)),
+        amount: Number(amountIn),
       },
     ]
-  }, [amount, token0])
+  }, [amountIn, token0])
 
   const isDisabled =
     !connectedAddress ||

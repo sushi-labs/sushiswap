@@ -197,13 +197,9 @@ export async function increaseLiquidity({
 
     // Sign the transaction
     const signedXdr = await signTransaction(transactionXdr)
-    const signedTx = StellarSdk.TransactionBuilder.fromXDR(
-      signedXdr,
-      NETWORK_CONFIG.PASSPHRASE,
-    )
 
-    // Submit the signed transaction via raw RPC
-    const txHash = await submitViaRawRPC(signedTx)
+    // Submit the signed XDR directly via raw RPC
+    const txHash = await submitViaRawRPC(signedXdr)
 
     // Wait for confirmation
     const result = await waitForTransaction(txHash)
@@ -286,13 +282,9 @@ export async function decreaseLiquidity({
 
     // Sign the transaction
     const signedXdr = await signTransaction(transactionXdr)
-    const signedTx = StellarSdk.TransactionBuilder.fromXDR(
-      signedXdr,
-      NETWORK_CONFIG.PASSPHRASE,
-    )
 
-    // Submit the signed transaction via raw RPC
-    const txHash = await submitViaRawRPC(signedTx)
+    // Submit the signed XDR directly via raw RPC
+    const txHash = await submitViaRawRPC(signedXdr)
 
     // Wait for confirmation
     const result = await waitForTransaction(txHash)
@@ -379,13 +371,9 @@ export async function collectFees({
 
     // Sign the transaction
     const signedXdr = await signTransaction(transactionXdr)
-    const signedTx = StellarSdk.TransactionBuilder.fromXDR(
-      signedXdr,
-      NETWORK_CONFIG.PASSPHRASE,
-    )
 
-    // Submit the signed transaction via raw RPC
-    const txHash = await submitViaRawRPC(signedTx)
+    // Submit the signed XDR directly via raw RPC
+    const txHash = await submitViaRawRPC(signedXdr)
 
     // Wait for confirmation
     const result = await waitForTransaction(txHash)
