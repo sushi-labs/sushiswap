@@ -64,15 +64,10 @@ export function usePoolGraph() {
                     const [token0, token1] =
                       tokenA < tokenB ? [tokenA, tokenB] : [tokenB, tokenA]
 
-                    const token0Code =
-                      getTokenByContract(token0)?.code || token0.slice(0, 8)
-                    const token1Code =
-                      getTokenByContract(token1)?.code || token1.slice(0, 8)
-
                     // Query pool address from factory
                     const poolResult = await factoryClient.get_pool({
-                      token_a: token0,
-                      token_b: token1,
+                      token_a: tokenA < tokenB ? tokenA : tokenB,
+                      token_b: tokenA < tokenB ? tokenB : tokenA,
                       fee,
                     })
 
@@ -80,15 +75,8 @@ export function usePoolGraph() {
 
                     if (!poolAddress || poolAddress === '') {
                       // Pool doesn't exist
-                      console.log(
-                        `✗ No pool: ${token0Code}-${token1Code} (${fee / 10000}%)`,
-                      )
                       return
                     }
-
-                    console.log(
-                      `✓ Found pool: ${token0Code}-${token1Code} (${fee / 10000}%) at ${poolAddress.slice(0, 8)}...`,
-                    )
 
                     // Get pool state
                     const poolClient = getPoolContractClient({
@@ -102,10 +90,6 @@ export function usePoolGraph() {
 
                     const sqrtPriceX96 = slot0Result.result.sqrt_price_x96
                     const liquidity = BigInt(liquidityResult.result || 0)
-
-                    console.log(
-                      `  Liquidity: ${liquidity}, SqrtPrice: ${sqrtPriceX96}`,
-                    )
 
                     // Get slot0 data
                     const slot0 = slot0Result.result
@@ -180,18 +164,6 @@ export function usePoolGraph() {
 
         // Wait for all pool queries to complete
         await Promise.all(poolQueries)
-
-        // Debug: Log the graph structure
-        console.log('🗺️ Pool Graph Built:')
-        console.log(`  Total pools found: ${vertices.size / 2}`) // Divided by 2 because we store both directions
-        console.log('  Token connections:')
-        tokenGraph.forEach((connections, token) => {
-          const tokenCode = getTokenByContract(token)?.code || token.slice(0, 8)
-          const connectedTokens = connections
-            .map((t) => getTokenByContract(t)?.code || t.slice(0, 8))
-            .join(', ')
-          console.log(`    ${tokenCode}: [${connectedTokens}]`)
-        })
 
         return {
           vertices,

@@ -77,8 +77,7 @@ export const SimpleSwapExecuteButton = () => {
 
     // Validate slippage is not 100% or more
     if (slippagePercent >= 100) {
-      console.warn('Slippage >= 100%, using 50% instead')
-      return (outputAmount * 5000n) / 10000n
+      return (outputAmount * 5000n) / 10000n // Cap at 50%
     }
 
     // Calculate minimum amount: amountOut * (1 - slippage/100)
@@ -92,8 +91,7 @@ export const SimpleSwapExecuteButton = () => {
 
     // Ensure minAmount is positive
     if (minAmount <= 0n) {
-      console.warn('Calculated minAmount is 0 or negative, using 1')
-      return 1n
+      return 1n // Minimum 1 unit
     }
 
     return minAmount
@@ -112,13 +110,13 @@ export const SimpleSwapExecuteButton = () => {
     }
 
     try {
-      // Use the route that was already calculated by useBestRoute
-      // Determine if it's direct (2 tokens) or multi-hop (3+ tokens)
+      // Route was calculated by useBestRoute hook
+      // Direct swap: 2 tokens in path (A → B)
+      // Multi-hop: 3+ tokens in path (A → B → C)
       const isDirect = route.route.length === 2
 
       if (isDirect) {
-        // Single-hop swap (direct pool)
-        console.log('Executing direct swap:', route.route)
+        // Direct swap through single pool
         await executeSwap.mutateAsync({
           userAddress: connectedAddress,
           tokenIn: token0,
@@ -131,7 +129,6 @@ export const SimpleSwapExecuteButton = () => {
         })
       } else {
         // Multi-hop swap
-        console.log('Executing multi-hop swap:', route.route)
         await executeMultiHopSwap.mutateAsync({
           userAddress: connectedAddress,
           path: route.route, // Use the exact route from graph-based routing

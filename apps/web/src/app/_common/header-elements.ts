@@ -33,16 +33,6 @@ export const EXPLORE_NAVIGATION_LINKS = (
         },
       ] as const)
     : []),
-  {
-    title: 'Claim',
-    href: '/claim',
-    description: 'Claim your fees and rewards.',
-  },
-  {
-    title: 'Stake',
-    href: '/stake',
-    description: 'Earn protocol fees by staking SUSHI.',
-  },
 ]
 
 export const MORE_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
@@ -86,12 +76,6 @@ export const headerElements = (chainId?: ChainId): NavigationElement[] => [
     href: `/${
       isChainId(Number(chainId)) ? ChainKey[chainId as ChainId] : 'ethereum'
     }/pool`,
-    show: 'desktop',
-    type: NavigationElementType.Single,
-  },
-  {
-    title: 'Stake',
-    href: '/stake',
     show: 'desktop',
     type: NavigationElementType.Single,
   },
