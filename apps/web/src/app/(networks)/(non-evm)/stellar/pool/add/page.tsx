@@ -3,12 +3,16 @@
 import { Button, FormSection, SelectIcon, TextField } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { usePoolInfo, useTokenBalance } from '~stellar/_common/lib/hooks'
 import { useCreatePool } from '~stellar/_common/lib/hooks/factory/use-create-pool'
 import { useCalculatePairedAmount } from '~stellar/_common/lib/hooks/pool/use-calculate-paired-amount'
+import { useMaxPairedAmount } from '~stellar/_common/lib/hooks/pool/use-max-paired-amount'
+import { usePoolBalances } from '~stellar/_common/lib/hooks/pool/use-pool-balances'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/swap/use-add-liquidity'
 import { getPool } from '~stellar/_common/lib/soroban/dex-factory-helpers'
 import type { Token } from '~stellar/_common/lib/types/token.type'
+import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
 import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
 import TokenSelector from '~stellar/_common/ui/token-selector/token-selector'
 import { useStellarWallet } from '~stellar/providers'
@@ -51,6 +55,15 @@ export default function AddPoolPage() {
   const [tickUpper, setTickUpper] = useState<number>(60000)
   const [ticksAligned, setTicksAligned] = useState<boolean>(true)
 
+  const { data: token0Balance } = useTokenBalance(
+    connectedAddress,
+    token0?.contract || null,
+  )
+  const { data: token1Balance } = useTokenBalance(
+    connectedAddress,
+    token1?.contract || null,
+  )
+
   // Check if pool already exists
   const { data: existingPoolAddress } = useQuery({
     queryKey: [
@@ -72,6 +85,9 @@ export default function AddPoolPage() {
     staleTime: 30000,
   })
 
+  const { data: poolInfo } = usePoolInfo(existingPoolAddress ?? null)
+  const reversedPoolTokenOrder = poolInfo?.token0.contract !== token0?.contract
+
   // Auto-calculate token1 amount based on token0 input (only if pool exists)
   const { data: pairedAmountData } = useCalculatePairedAmount(
     existingPoolAddress || null,
@@ -81,12 +97,41 @@ export default function AddPoolPage() {
     token0?.decimals || 7,
   )
 
+  const { data: poolBalanceData } = usePoolBalances(
+    existingPoolAddress || null,
+    connectedAddress,
+  )
+  const { data: maxPairedAmountData } = useMaxPairedAmount(
+    existingPoolAddress || null,
+    poolBalanceData?.token0.amount || '0',
+    poolBalanceData?.token1.amount || '0',
+    tickLower,
+    tickUpper,
+    poolInfo?.token0.decimals,
+    poolInfo?.token1.decimals,
+  )
+
   // Use auto-calculated amount for existing pools, manual input for new pools
-  const token1Amount = existingPoolAddress
-    ? pairedAmountData?.token1Amount
-      ? Number.parseFloat(pairedAmountData.token1Amount).toFixed(4)
-      : ''
-    : manualToken1Amount
+  const token1Amount = useMemo(() => {
+    if (existingPoolAddress) {
+      if (!pairedAmountData) {
+        return ''
+      }
+      const amount = reversedPoolTokenOrder
+        ? (Number.parseFloat(token0Amount) * Number.parseFloat(token0Amount)) /
+          Number.parseFloat(pairedAmountData.token1Amount)
+        : Number.parseFloat(pairedAmountData.token1Amount)
+      return amount.toFixed(4)
+    }
+    return manualToken1Amount
+  }, [
+    token0Amount,
+    existingPoolAddress,
+    pairedAmountData,
+    manualToken1Amount,
+    reversedPoolTokenOrder,
+  ])
+
   const pairedAmountStatus = pairedAmountData?.status || 'idle'
 
   // Realign ticks when fee tier changes
@@ -183,8 +228,8 @@ export default function AddPoolPage() {
       await addLiquidityMutation.mutateAsync({
         poolAddress,
         userAddress: connectedAddress,
-        token0Amount,
-        token1Amount,
+        token0Amount: reversedPoolTokenOrder ? token1Amount : token0Amount,
+        token1Amount: reversedPoolTokenOrder ? token0Amount : token1Amount,
         tickLower,
         tickUpper,
         recipient: connectedAddress,
@@ -309,31 +354,108 @@ export default function AddPoolPage() {
         }
       >
         <section className="flex flex-col gap-4">
-          <TextField
-            type="number"
-            label={token0?.code || 'Token 1'}
-            placeholder="0.0"
-            value={token0Amount}
-            onValueChange={setToken0Amount}
-            required
-          />
+          <div>
+            <div className="flex justify-between items-center">
+              {token0 && (
+                <span className="text-sm font-medium">{token0.code}</span>
+              )}
+              {token0 &&
+                token0Balance !== null &&
+                token0Balance !== undefined && (
+                  <span className="text-xs text-muted-foreground">
+                    {formatTokenAmount(token0Balance, token0.decimals)}
+                  </span>
+                )}
+            </div>
+            <TextField
+              type="number"
+              label={token0?.code || 'Token 1'}
+              placeholder="0.0"
+              value={token0Amount}
+              onValueChange={(value) => {
+                if (value === '') {
+                  setToken0Amount('')
+                  return
+                }
+                if (!token0 || (existingPoolAddress && !maxPairedAmountData)) {
+                  return
+                }
+                const rawAmountValue = BigInt(
+                  Math.floor(Number.parseFloat(value) * 10 ** token0.decimals),
+                )
+                // Check to see if token0 and token1 are swapped in the pool config
+                const maxPairedToken0Amount = reversedPoolTokenOrder
+                  ? BigInt(maxPairedAmountData?.maxToken1Amount ?? '0')
+                  : BigInt(maxPairedAmountData?.maxToken0Amount ?? '0')
+                const maxAmount = existingPoolAddress
+                  ? maxPairedToken0Amount
+                  : (token0Balance ?? 0n)
+                if (rawAmountValue > BigInt(maxAmount)) {
+                  setToken0Amount(
+                    formatTokenAmount(BigInt(maxAmount), token0.decimals),
+                  )
+                } else {
+                  setToken0Amount(
+                    formatTokenAmount(rawAmountValue, token0.decimals),
+                  )
+                }
+              }}
+              required
+            />
+          </div>
           <div className="flex items-center justify-center -my-2">
             <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
               <span className="text-lg">+</span>
             </div>
           </div>
           <div className="space-y-2">
-            <TextField
-              type={existingPoolAddress ? 'text' : 'number'}
-              label={token1?.code || 'Token 2'}
-              placeholder={existingPoolAddress ? 'Auto-calculated' : '0.0'}
-              value={token1Amount}
-              onValueChange={
-                existingPoolAddress ? undefined : setManualToken1Amount
-              }
-              disabled={!!existingPoolAddress}
-              required={!existingPoolAddress}
-            />
+            <div>
+              <div className="flex justify-between items-center">
+                {token1 && (
+                  <span className="text-sm font-medium">{token1.code}</span>
+                )}
+                {token1 &&
+                  token1Balance !== null &&
+                  token1Balance !== undefined && (
+                    <span className="text-xs text-muted-foreground">
+                      {formatTokenAmount(token1Balance, token1.decimals)}
+                    </span>
+                  )}
+              </div>
+              <TextField
+                type={existingPoolAddress ? 'text' : 'number'}
+                label={token1?.code || 'Token 2'}
+                placeholder={existingPoolAddress ? 'Auto-calculated' : '0.0'}
+                value={token1Amount}
+                onValueChange={
+                  existingPoolAddress
+                    ? undefined
+                    : (value) => {
+                        if (
+                          !token1 ||
+                          token1Balance === null ||
+                          token1Balance === undefined
+                        ) {
+                          return
+                        }
+                        if (
+                          Number.parseFloat(value) >
+                          Number.parseFloat(
+                            formatTokenAmount(token1Balance, token1.decimals),
+                          )
+                        ) {
+                          setManualToken1Amount(
+                            formatTokenAmount(token1Balance, token1.decimals),
+                          )
+                        } else {
+                          setManualToken1Amount(value)
+                        }
+                      }
+                }
+                disabled={!!existingPoolAddress}
+                required={!existingPoolAddress}
+              />
+            </div>
             {existingPoolAddress &&
               pairedAmountStatus === 'below-range' &&
               token0Amount && (
@@ -582,8 +704,6 @@ export default function AddPoolPage() {
           </div>
         )}
       </FormSection>
-
-      {/* Submit Button */}
       <FormSection title="" description="">
         <div className="flex w-full flex-col">
           {!isConnected ? (

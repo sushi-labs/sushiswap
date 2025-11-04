@@ -16,11 +16,13 @@ import {
 import type React from 'react'
 import { useMemo, useState } from 'react'
 import { useCalculatePairedAmount } from '~stellar/_common/lib/hooks/pool/use-calculate-paired-amount'
+import { useMaxPairedAmount } from '~stellar/_common/lib/hooks/pool/use-max-paired-amount'
 import { usePoolBalances } from '~stellar/_common/lib/hooks/pool/use-pool-balances'
 import { useRemoveLiquidity } from '~stellar/_common/lib/hooks/pool/use-pool-liquidity-management'
 import { useUserPositions } from '~stellar/_common/lib/hooks/position/use-positions'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/swap'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
+import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
 import { useStellarWallet } from '~stellar/providers'
 import { ConnectWalletButton } from '../ConnectWallet/ConnectWalletButton'
 
@@ -47,6 +49,15 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     -60000, // Default full range
     60000,
     pool.token0.decimals || 7,
+  )
+  const { data: maxPairedAmountData } = useMaxPairedAmount(
+    pool.address,
+    balances?.token0.amount || '0',
+    balances?.token1.amount || '0',
+    -60000, // Default full range
+    60000,
+    pool.token0.decimals,
+    pool.token1.decimals,
   )
 
   const amount1 = pairedAmountData?.token1Amount
@@ -203,7 +214,39 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                           type="number"
                           onWheel={(e) => e.currentTarget.blur()}
                           value={amount0}
-                          onChange={(e) => setAmount0(e.target.value)}
+                          onChange={(e) => {
+                            if (!maxPairedAmountData) {
+                              return
+                            }
+                            if (e.target.value === '') {
+                              setAmount0('')
+                              return
+                            }
+                            const rawAmountValue = BigInt(
+                              Math.floor(
+                                Number.parseFloat(e.target.value) *
+                                  10 ** pool.token0.decimals,
+                              ),
+                            )
+                            if (
+                              rawAmountValue >
+                              BigInt(maxPairedAmountData.maxToken0Amount)
+                            ) {
+                              setAmount0(
+                                formatTokenAmount(
+                                  BigInt(maxPairedAmountData.maxToken0Amount),
+                                  pool.token0.decimals,
+                                ),
+                              )
+                            } else {
+                              setAmount0(
+                                formatTokenAmount(
+                                  rawAmountValue,
+                                  pool.token0.decimals,
+                                ),
+                              )
+                            }
+                          }}
                           placeholder="0.0"
                           className="w-full text-lg font-semibold bg-transparent border-none outline-none"
                         />

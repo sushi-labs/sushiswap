@@ -1,7 +1,6 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { getPoolContractClient } from '../../soroban/client'
 import {
   calculateAmountsFromLiquidity,
   calculateLiquidityFromAmount0,
@@ -36,19 +35,21 @@ export function useCalculatePairedAmount(
       tickLower,
       tickUpper,
     ],
-    queryFn: async () => {
+    queryFn: async (): Promise<{
+      token1Amount: string
+      status: 'idle' | 'below-range' | 'above-range' | 'within-range' | 'error'
+      error?: string
+    }> => {
       if (!poolAddress || !token0Amount || Number(token0Amount) <= 0) {
         return {
           token1Amount: '',
-          status: 'idle' as const,
+          status: 'idle',
         }
       }
 
       try {
         // Get current sqrt price from pool
         const currentSqrtPriceX96 = await getCurrentSqrtPrice(poolAddress)
-
-        console.log(currentSqrtPriceX96)
 
         // Calculate sqrt prices at boundaries
         const sqrtPriceLowerX96 = tickToSqrtPrice(tickLower)
@@ -58,7 +59,7 @@ export function useCalculatePairedAmount(
         if (currentSqrtPriceX96 < sqrtPriceLowerX96) {
           return {
             token1Amount: '0',
-            status: 'below-range' as const,
+            status: 'below-range',
           }
         }
 
@@ -66,7 +67,7 @@ export function useCalculatePairedAmount(
         if (currentSqrtPriceX96 >= sqrtPriceUpperX96) {
           return {
             token1Amount: '0',
-            status: 'above-range' as const,
+            status: 'above-range',
             error: 'Price above range - cannot provide token0 liquidity',
           }
         }
@@ -98,20 +99,20 @@ export function useCalculatePairedAmount(
         if (!Number.isFinite(pairedAmount) || pairedAmount < 0) {
           return {
             token1Amount: '0',
-            status: 'error' as const,
+            status: 'error',
             error: 'Invalid paired amount calculated',
           }
         }
 
         return {
           token1Amount: pairedAmount.toString(),
-          status: 'within-range' as const,
+          status: 'within-range',
         }
       } catch (error) {
         console.error('Error calculating paired amount:', error)
         return {
           token1Amount: '0',
-          status: 'error' as const,
+          status: 'error',
           error: error instanceof Error ? error.message : 'Unknown error',
         }
       }

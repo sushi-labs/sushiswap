@@ -54,13 +54,13 @@ export class SushiStellarService {
       params.deadline || Math.floor(Date.now() / 1000) + 300,
     )
 
-    // Check if user has existing position for this pool with same tick range
-
     // Always fetch pool info from contract (no more dynamic import needed)
     const poolConfig = await getPoolInfoFromContract(params.poolAddress)
     if (!poolConfig) {
       throw new Error('Pool config not found')
     }
+
+    // Check if user has existing position for this pool with same tick range
 
     // Fetch user positions
     const positions =

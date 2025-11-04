@@ -37,7 +37,6 @@ export class RouterService {
     tokenOut: Token,
     amountIn: bigint,
   ): Promise<SwapRoute | null> {
-
     // Step 1: Find all available pools
     const availablePools = await this.findAllPools(tokenIn, tokenOut)
 

@@ -67,7 +67,7 @@ export async function submitViaRawRPC(signedTx: any): Promise<string> {
         // Get the transaction result code
         const txResult = errorResult.result()
         const txResultSwitch = txResult.switch()
-        
+
         console.error('Transaction result:', txResultSwitch.name)
 
         // Try to get the fee charged
@@ -90,9 +90,7 @@ export async function submitViaRawRPC(signedTx: any): Promise<string> {
                 if (opResultTr) {
                   const opSwitch = opResultTr.switch?.()
                   if (opSwitch) {
-                    console.error(
-                      `Operation ${index}: ${opSwitch.name}`,
-                    )
+                    console.error(`Operation ${index}: ${opSwitch.name}`)
                   }
                 }
               })

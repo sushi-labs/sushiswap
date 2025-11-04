@@ -39,7 +39,6 @@ export async function createPool({
   signTransaction: (xdr: string) => Promise<string>
 }): Promise<{ poolAddress: string; txHash: string }> {
   try {
-
     // Validate inputs
     if (!tokenA || !tokenB) {
       throw new Error('Token addresses cannot be empty')

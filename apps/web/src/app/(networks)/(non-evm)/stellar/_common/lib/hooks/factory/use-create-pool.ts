@@ -32,7 +32,6 @@ export const useCreatePool = () => {
       })
     },
     onSuccess: (result) => {
-
       // Show success toast with Stellar explorer link
       createToast({
         account: connectedAddress || undefined,
