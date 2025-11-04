@@ -36,7 +36,7 @@ import {
 import { getSortedChainIds } from 'src/config'
 import { NativeAddress } from 'src/lib/constants'
 import { useNetworkOptions } from 'src/lib/hooks/useNetworkOptions'
-import { formatUSD, getChainById } from 'sushi'
+import { formatUSD, getChainById, withoutScientificNotation } from 'sushi'
 import { type Amount, ZERO } from 'sushi'
 import { type EvmChainId, type EvmCurrency, EvmToken } from 'sushi/evm'
 import { formatUnits } from 'viem'
@@ -262,7 +262,15 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                       </span>
                       <span className="text-sm font-medium text-right text-gray-500 dark:text-slate-400">
                         {price && balance
-                          ? formatUSD(balance?.mulHuman(price).toString())
+                          ? formatUSD(
+                              balance
+                                ?.mulHuman(
+                                  withoutScientificNotation(
+                                    price?.toString(),
+                                  ) ?? '0',
+                                )
+                                .toString(),
+                            )
                           : '-'}
                       </span>
                     </div>
