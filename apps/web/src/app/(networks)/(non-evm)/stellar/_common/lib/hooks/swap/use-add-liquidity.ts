@@ -1,9 +1,14 @@
 'use client'
 
-import { createErrorToast, createToast } from '@sushiswap/notifications'
+import {
+  createErrorToast,
+  createInfoToast,
+  createSuccessToast,
+} from '@sushiswap/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createSushiStellarService } from '../../services/sushi-stellar-service'
 import type { AddLiquidityParams } from '../../services/swap-service'
+import { extractErrorMessage } from '../../utils/error-helpers'
 import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
 
 export interface UseAddLiquidityParams {
@@ -35,33 +40,36 @@ export const useAddLiquidity = () => {
         deadline: params.deadline || Math.floor(Date.now() / 1000) + 300,
       }
 
-      return await service.addLiquidity(
+      const timestamp = Date.now()
+      createInfoToast({
+        summary: 'Adding liquidity...',
+        type: 'mint',
+        account: params.userAddress,
+        chainId: 1,
+        groupTimestamp: timestamp,
+        timestamp,
+      })
+
+      const result = await service.addLiquidity(
         params.userAddress,
         addLiquidityParams,
         params.signTransaction,
       )
-    },
-    onSuccess: (result, variables) => {
-      console.log('Liquidity added successfully:', result)
 
-      // Show success toast with Stellar explorer link
-      createToast({
-        account: variables.userAddress || undefined,
+      return { result, params }
+    },
+    onSuccess: ({ result, params: variables }) => {
+      createSuccessToast({
+        summary: 'Liquidity added successfully',
         type: 'mint',
-        chainId: 1, // Stellar testnet
+        account: variables.userAddress,
+        chainId: 1,
         txHash: result.txHash,
         href: getStellarTxnLink(result.txHash),
-        promise: Promise.resolve(result),
-        summary: {
-          pending: 'Adding liquidity...',
-          completed: 'Liquidity added successfully',
-          failed: 'Failed to add liquidity',
-        },
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
       })
 
-      // Invalidate and refetch pool balances
       queryClient.invalidateQueries({
         queryKey: [
           'pool',
@@ -71,27 +79,22 @@ export const useAddLiquidity = () => {
         ],
       })
 
-      // Invalidate pool info to refresh reserves
       queryClient.invalidateQueries({
         queryKey: ['pool', 'info', variables.poolAddress],
       })
 
-      // Invalidate position queries to refresh position data
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'positions', 'user', variables.userAddress],
       })
 
-      // Invalidate position-pool queries used by useMyPosition
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'position-pool'],
       })
 
-      // Invalidate position-principals-batch queries used by useMyPosition
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'position-principals-batch'],
       })
 
-      // If we know the specific token ID, invalidate that too
       if (result.tokenId) {
         queryClient.invalidateQueries({
           queryKey: ['stellar', 'positions', 'token', result.tokenId],
@@ -103,7 +106,8 @@ export const useAddLiquidity = () => {
     },
     onError: (error) => {
       console.error('Failed to add liquidity:', error)
-      createErrorToast(error.message || 'Failed to add liquidity', false)
+      const errorMessage = extractErrorMessage(error)
+      createErrorToast(errorMessage, false)
     },
   })
 }

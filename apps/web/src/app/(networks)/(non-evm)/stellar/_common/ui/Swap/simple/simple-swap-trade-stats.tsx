@@ -2,6 +2,7 @@ import { Transition } from '@headlessui/react'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { SkeletonBox, classNames } from '@sushiswap/ui'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { parseSlippageTolerance } from '~stellar/_common/lib/utils/error-helpers'
 import {
   warningSeverity,
   warningSeverityClassName,
@@ -32,8 +33,7 @@ export const SimpleSwapTradeStats = () => {
   // Calculate minimum received with slippage
   const minReceivedAmount = outputAmount
     ? (() => {
-        const slippagePercent =
-          slippageTolerance === 'AUTO' ? 0.5 : Number(slippageTolerance)
+        const slippagePercent = parseSlippageTolerance(slippageTolerance)
         const slippageBps = Math.floor(slippagePercent * 100)
         const minAmount = (outputAmount * BigInt(10000 - slippageBps)) / 10000n
         return (Number(minAmount) / 10 ** token1.decimals).toFixed(6)

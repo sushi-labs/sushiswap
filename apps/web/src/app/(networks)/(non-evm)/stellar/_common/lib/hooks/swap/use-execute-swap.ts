@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useStellarWallet } from '~stellar/providers'
 import { SwapService } from '../../services/swap-service'
 import type { Token } from '../../types/token.type'
+import { extractErrorMessage } from '../../utils/error-helpers'
 import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
 
 export interface UseExecuteSwapParams {
@@ -28,7 +29,6 @@ export const useExecuteSwap = () => {
     mutationFn: async (params: UseExecuteSwapParams) => {
       const swapService = new SwapService()
 
-      // Execute single-hop swap using the swap service
       const result = await swapService.swapExactInputSingle(
         params.userAddress,
         {
@@ -39,7 +39,7 @@ export const useExecuteSwap = () => {
           amountIn: params.amountIn,
           amountOutMinimum: params.amountOutMinimum,
           sqrtPriceLimitX96: params.sqrtPriceLimitX96,
-          deadline: params.deadline || Math.floor(Date.now() / 1000) + 600, // 10 minutes default
+          deadline: params.deadline || Math.floor(Date.now() / 1000) + 600,
         },
         signTransaction,
       )
@@ -47,7 +47,6 @@ export const useExecuteSwap = () => {
       return { result, params }
     },
     onSuccess: ({ result, params }) => {
-      // Show success toast with Stellar explorer link
       const amountOut =
         result.amountOut < 0n ? -result.amountOut : result.amountOut
       const amountOutFormatted = (Number(amountOut) / 1e7).toFixed(4)
@@ -56,7 +55,7 @@ export const useExecuteSwap = () => {
       createToast({
         account: params.userAddress,
         type: 'swap',
-        chainId: 1, // Stellar testnet
+        chainId: 1,
         txHash: result.txHash,
         href: getStellarTxnLink(result.txHash),
         promise: Promise.resolve(result),
@@ -69,7 +68,6 @@ export const useExecuteSwap = () => {
         timestamp: Date.now(),
       })
 
-      // Invalidate token balances and positions after swap
       queryClient.invalidateQueries({
         queryKey: ['token', 'balance'],
       })
@@ -81,7 +79,9 @@ export const useExecuteSwap = () => {
       })
     },
     onError: (error) => {
-      createErrorToast(error.message || 'Failed to execute swap', false)
+      const errorMessage = extractErrorMessage(error)
+      console.error('Swap failed:', error)
+      createErrorToast(errorMessage, false)
     },
   })
 }
@@ -105,7 +105,6 @@ export const useExecuteMultiHopSwap = () => {
     }) => {
       const swapService = new SwapService()
 
-      // Execute multi-hop swap using the swap service
       const result = await swapService.swapExactInput(
         params.userAddress,
         {
@@ -122,7 +121,6 @@ export const useExecuteMultiHopSwap = () => {
       return { result, params }
     },
     onSuccess: ({ result, params }) => {
-      // Show success toast
       const amountOut =
         result.amountOut < 0n ? -result.amountOut : result.amountOut
       const amountOutFormatted = (Number(amountOut) / 1e7).toFixed(4)
@@ -144,7 +142,6 @@ export const useExecuteMultiHopSwap = () => {
         timestamp: Date.now(),
       })
 
-      // Invalidate token balances and positions after swap
       queryClient.invalidateQueries({
         queryKey: ['token', 'balance'],
       })
@@ -156,10 +153,9 @@ export const useExecuteMultiHopSwap = () => {
       })
     },
     onError: (error) => {
-      createErrorToast(
-        error.message || 'Failed to execute multi-hop swap',
-        false,
-      )
+      const errorMessage = extractErrorMessage(error)
+      console.error('Multi-hop swap failed:', error)
+      createErrorToast(errorMessage, false)
     },
   })
 }

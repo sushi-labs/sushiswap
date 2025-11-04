@@ -10,6 +10,7 @@ import {
   useExecuteSwap,
 } from '~stellar/_common/lib/hooks/swap'
 import { findBestPath } from '~stellar/_common/lib/soroban/dex-router-helpers'
+import { parseSlippageTolerance } from '~stellar/_common/lib/utils/error-helpers'
 import { requiresPriceImpactConfirmation } from '~stellar/_common/lib/utils/warning-severity'
 import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
 import { Checker } from '~stellar/_common/ui/checker'
@@ -33,8 +34,7 @@ export const SimpleSwapExecuteButton = () => {
 
   // Show slippage warning if slippage > 20%
   const showSlippageWarning = useMemo(() => {
-    const slippage =
-      slippageTolerance === 'AUTO' ? 0.5 : Number(slippageTolerance)
+    const slippage = parseSlippageTolerance(slippageTolerance)
     return slippage > 20
   }, [slippageTolerance])
 
@@ -50,8 +50,7 @@ export const SimpleSwapExecuteButton = () => {
     if (!outputAmount) return 0n
 
     // Get slippage percentage (default 0.5%)
-    const slippagePercent =
-      slippageTolerance === 'AUTO' ? 0.5 : Number(slippageTolerance)
+    const slippagePercent = parseSlippageTolerance(slippageTolerance)
 
     // Calculate minimum amount: amountOut * (1 - slippage/100)
     // Using basis points for precision: (10000 - slippageBps) / 10000
@@ -125,7 +124,6 @@ export const SimpleSwapExecuteButton = () => {
       }
     } catch (error) {
       console.error('Error executing swap:', error)
-      // Error is handled by the mutation hooks
     }
   }
 

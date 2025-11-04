@@ -9,6 +9,7 @@ import {
   submitViaRawRPC,
   waitForTransaction,
 } from '../soroban/rpc-transaction-helpers'
+import { extractErrorMessage } from '../utils/error-helpers'
 
 /**
  * Parameters for adding liquidity
@@ -132,7 +133,7 @@ export class SwapService {
         amountOut: BigInt(params.amountOutMinimum),
       }
     } else {
-      throw new Error(`Transaction failed: ${JSON.stringify(result.error)}`)
+      throw new Error(extractErrorMessage(result.error))
     }
   }
 
@@ -195,7 +196,7 @@ export class SwapService {
         amountOut: BigInt(params.amountOutMinimum),
       }
     } else {
-      throw new Error(`Transaction failed: ${JSON.stringify(result.error)}`)
+      throw new Error(extractErrorMessage(result.error))
     }
   }
 
