@@ -1,6 +1,10 @@
 'use client'
 
-import { createErrorToast, createToast } from '@sushiswap/notifications'
+import {
+  createErrorToast,
+  createInfoToast,
+  createSuccessToast,
+} from '@sushiswap/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   collectFees,
@@ -22,14 +26,27 @@ export const useRemoveLiquidity = () => {
 
   return useMutation({
     mutationKey: ['pool', 'removeLiquidity'],
+    onMutate: async (params: RemovePoolLiquidityParams) => {
+      // Show "in progress" toast immediately before transaction starts
+      const timestamp = Date.now()
+      if (connectedAddress) {
+        createInfoToast({
+          summary: 'Removing liquidity...',
+          type: 'burn',
+          account: connectedAddress,
+          chainId: 1,
+          groupTimestamp: timestamp,
+          timestamp,
+        })
+      }
+    },
     mutationFn: async (params: RemovePoolLiquidityParams) => {
       if (!connectedAddress) {
         throw new Error('Wallet not connected')
       }
 
-      const deadline = BigInt(Math.floor(Date.now() / 1000) + 300) // 5 minutes
+      const deadline = BigInt(Math.floor(Date.now() / 1000) + 300)
 
-      // Step 1: Decrease liquidity (burns liquidity and adds principal + fees to tokens_owed)
       const decreaseResult = await decreaseLiquidity({
         tokenId: params.tokenId,
         liquidity: params.liquidity,
@@ -41,9 +58,6 @@ export const useRemoveLiquidity = () => {
         signTransaction,
       })
 
-      // Step 2: Collect the withdrawn tokens (principal + any accrued fees)
-      // Pool's burn() adds amounts to tokens_owed but doesn't transfer
-      // We must call collect() to actually receive the tokens
       const collectResult = await collectFees({
         tokenId: params.tokenId,
         recipient: connectedAddress,
@@ -61,67 +75,46 @@ export const useRemoveLiquidity = () => {
       }
     },
     onSuccess: (result, variables) => {
-      console.log('Liquidity removed and collected successfully:', result)
-      console.log(`  Decrease tx: ${result.decreaseHash}`)
-      console.log(`  Collect tx: ${result.collectHash}`)
-      console.log(
-        `  Received: ${result.amount0} token0, ${result.amount1} token1`,
-      )
-
-      // Format amounts for better display
       const formatAmount = (amount: bigint) => {
-        const num = Number(amount) / 1e7 // Convert from Stellar's 7 decimal places
+        const num = Number(amount) / 1e7
         return num.toFixed(4)
       }
 
-      // Show success toast with collect transaction link (the one that transfers tokens)
-      createToast({
-        account: connectedAddress || undefined,
+      createSuccessToast({
+        summary: `Liquidity removed! Collected ${formatAmount(result.amount0)} token0, ${formatAmount(result.amount1)} token1`,
         type: 'burn',
-        chainId: 1, // Stellar testnet
+        account: connectedAddress || undefined,
+        chainId: 1,
         txHash: result.collectHash,
         href: getStellarTxnLink(result.collectHash),
-        promise: Promise.resolve(result),
-        summary: {
-          pending: `Removing liquidity and collecting ${formatAmount(result.amount0)} token0, ${formatAmount(result.amount1)} token1...`,
-          completed: `Liquidity removed! Collected ${formatAmount(result.amount0)} token0, ${formatAmount(result.amount1)} token1`,
-          failed: 'Failed to remove liquidity',
-        },
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
       })
 
-      // Invalidate position queries to refresh position data
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'positions', 'user', connectedAddress],
       })
 
-      // Invalidate position-pool queries used by useMyPosition
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'position-pool'],
       })
 
-      // Invalidate position-principals-batch queries used by useMyPosition
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'position-principals-batch'],
       })
 
-      // Invalidate the specific position
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'positions', 'token', variables.tokenId],
       })
 
-      // Invalidate position principal for this specific token
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'position-principal', variables.tokenId],
       })
 
-      // Invalidate pool info to refresh reserves
       queryClient.invalidateQueries({
         queryKey: ['pool', 'info'],
       })
 
-      // Invalidate pool balances
       queryClient.invalidateQueries({
         queryKey: ['pool', 'balances'],
       })

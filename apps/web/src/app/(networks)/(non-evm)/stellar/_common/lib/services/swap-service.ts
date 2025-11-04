@@ -88,41 +88,29 @@ export class SwapService {
       publicKey: userAddress,
     })
 
-    let assembledTransaction
-    try {
-      assembledTransaction = await routerContractClient.swap_exact_input(
-        {
-          params: {
-            sender: userAddress,
-            path: [params.tokenIn, params.tokenOut],
-            fees: [Number(params.fee)],
-            recipient: params.recipient,
-            amount_in: params.amountIn,
-            amount_out_minimum: params.amountOutMinimum,
-            deadline: BigInt(params.deadline),
-          },
+    const assembledTransaction = await routerContractClient.swap_exact_input(
+      {
+        params: {
+          sender: userAddress,
+          path: [params.tokenIn, params.tokenOut],
+          fees: [params.fee],
+          recipient: params.recipient,
+          amount_in: params.amountIn,
+          amount_out_minimum: params.amountOutMinimum,
+          deadline: BigInt(params.deadline),
         },
-        {
-          timeoutInSeconds: DEFAULT_TIMEOUT,
-          fee: 100000,
-        },
-      )
-    } catch (simulationError) {
-      throw new Error(
-        `Transaction simulation failed: ${simulationError instanceof Error ? simulationError.message : String(simulationError)}`,
-      )
-    }
-
-    // Check if the transaction was built properly
-    if (!assembledTransaction.built) {
-      throw new Error('Transaction was not built - missing Soroban data')
-    }
+      },
+      {
+        timeoutInSeconds: DEFAULT_TIMEOUT,
+        fee: 100000,
+      },
+    )
 
     // Sign the transaction - use the built transaction
-    const unsignedXdr = assembledTransaction.built.toXDR()
+    const unsignedXdr = assembledTransaction.toXDR()
     const signedXdr = await signTransaction(unsignedXdr)
 
-    // Submit the signed XDR directly via raw RPC
+    // Submit the re-serialized XDR via raw RPC
     const txHash = await submitViaRawRPC(signedXdr)
 
     const result = await waitForTransaction(txHash)
@@ -152,42 +140,38 @@ export class SwapService {
     // Ensure fees are proper u32 numbers (not bigints)
     const feesAsNumbers = params.fees.map((fee) => Number(fee))
 
-    let assembledTransaction
-    try {
-      assembledTransaction = await routerContractClient.swap_exact_input(
-        {
-          params: {
-            sender: userAddress,
-            path: params.path,
-            fees: feesAsNumbers,
-            recipient: params.recipient,
-            amount_in: params.amountIn,
-            amount_out_minimum: params.amountOutMinimum,
-            deadline: BigInt(params.deadline),
-          },
+    const assembledTransaction = await routerContractClient.swap_exact_input(
+      {
+        params: {
+          sender: userAddress,
+          path: params.path,
+          fees: feesAsNumbers,
+          recipient: params.recipient,
+          amount_in: params.amountIn,
+          amount_out_minimum: params.amountOutMinimum,
+          deadline: BigInt(params.deadline),
         },
-        {
-          timeoutInSeconds: DEFAULT_TIMEOUT,
-          fee: 100000,
-        },
-      )
-    } catch (simulationError) {
-      throw new Error(
-        `Transaction simulation failed: ${simulationError instanceof Error ? simulationError.message : String(simulationError)}`,
-      )
-    }
+      },
+      {
+        timeoutInSeconds: DEFAULT_TIMEOUT,
+        fee: 100000,
+      },
+    )
 
-    // Check if the transaction was built properly
-    if (!assembledTransaction.built) {
-      throw new Error('Transaction was not built - missing Soroban data')
-    }
-
-    // Sign the transaction - use the built transaction
-    const unsignedXdr = assembledTransaction.built.toXDR()
+    // Sign the transaction
+    const unsignedXdr = assembledTransaction.toXDR()
     const signedXdr = await signTransaction(unsignedXdr)
 
-    // Submit the signed XDR directly via raw RPC (same as single-hop)
-    const txHash = await submitViaRawRPC(signedXdr)
+    // Parse and re-serialize the signed XDR to normalize encoding
+    // This fixes issues where wallet-signed XDR has encoding quirks
+    const signedTxObj = StellarSdk.TransactionBuilder.fromXDR(
+      signedXdr,
+      this.networkPassphrase,
+    )
+    const reSerializedXdr = signedTxObj.toXDR()
+
+    // Submit the re-serialized XDR via raw RPC
+    const txHash = await submitViaRawRPC(reSerializedXdr)
     const result = await waitForTransaction(txHash)
 
     if (result.success) {

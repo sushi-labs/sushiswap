@@ -29,6 +29,18 @@ export const useAddLiquidity = () => {
 
   return useMutation({
     mutationKey: ['swap', 'addLiquidity'],
+    onMutate: async (params: UseAddLiquidityParams) => {
+      // Show "in progress" toast immediately before transaction starts
+      const timestamp = Date.now()
+      createInfoToast({
+        summary: 'Adding liquidity...',
+        type: 'mint',
+        account: params.userAddress,
+        chainId: 1,
+        groupTimestamp: timestamp,
+        timestamp,
+      })
+    },
     mutationFn: async (params: UseAddLiquidityParams) => {
       const addLiquidityParams: AddLiquidityParams = {
         poolAddress: params.poolAddress,
@@ -39,16 +51,6 @@ export const useAddLiquidity = () => {
         recipient: params.recipient || params.userAddress,
         deadline: params.deadline || Math.floor(Date.now() / 1000) + 300,
       }
-
-      const timestamp = Date.now()
-      createInfoToast({
-        summary: 'Adding liquidity...',
-        type: 'mint',
-        account: params.userAddress,
-        chainId: 1,
-        groupTimestamp: timestamp,
-        timestamp,
-      })
 
       const result = await service.addLiquidity(
         params.userAddress,

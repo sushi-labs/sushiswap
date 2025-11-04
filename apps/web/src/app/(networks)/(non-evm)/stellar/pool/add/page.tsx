@@ -28,7 +28,12 @@ const TICK_SPACINGS: Record<number, number> = {
 
 // Align tick to the nearest valid tick based on spacing
 function alignTick(tick: number, spacing: number): number {
-  return Math.floor(tick / spacing) * spacing
+  return Math.round(tick / spacing) * spacing
+}
+
+// Check if a tick is properly aligned to the spacing
+function isTickAligned(tick: number, spacing: number): boolean {
+  return tick % spacing === 0
 }
 
 export default function AddPoolPage() {
@@ -44,6 +49,7 @@ export default function AddPoolPage() {
   const [manualToken1Amount, setManualToken1Amount] = useState<string>('') // For new pools
   const [tickLower, setTickLower] = useState<number>(-60000)
   const [tickUpper, setTickUpper] = useState<number>(60000)
+  const [ticksAligned, setTicksAligned] = useState<boolean>(true)
 
   // Check if pool already exists
   const { data: existingPoolAddress } = useQuery({
@@ -88,10 +94,30 @@ export default function AddPoolPage() {
     const spacing = TICK_SPACINGS[selectedFee]
     setTickLower(alignTick(tickLower, spacing))
     setTickUpper(alignTick(tickUpper, spacing))
-  }, [selectedFee, tickLower, tickUpper])
+  }, [selectedFee])
+
+  // Check if ticks are aligned whenever they change
+  useEffect(() => {
+    const spacing = TICK_SPACINGS[selectedFee]
+    const lowerAligned = isTickAligned(tickLower, spacing)
+    const upperAligned = isTickAligned(tickUpper, spacing)
+    setTicksAligned(lowerAligned && upperAligned)
+  }, [tickLower, tickUpper, selectedFee])
 
   const handleCreatePool = async () => {
     if (!token0 || !token1 || !connectedAddress) return
+
+    // Auto-align ticks if they're not aligned
+    const spacing = TICK_SPACINGS[selectedFee]
+    const alignedLower = alignTick(tickLower, spacing)
+    const alignedUpper = alignTick(tickUpper, spacing)
+
+    if (alignedLower !== tickLower || alignedUpper !== tickUpper) {
+      setTickLower(alignedLower)
+      setTickUpper(alignedUpper)
+      // Wait for state to update before proceeding
+      return
+    }
 
     // Safety check: prevent adding liquidity when price is above range
     if (isAboveRange) {
@@ -334,34 +360,214 @@ export default function AddPoolPage() {
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-3 pt-4 border-t border-gray-200 dark:border-gray-800">
-            <TextField
-              type="number"
-              label="Tick Lower"
-              value={tickLower.toString()}
-              onValueChange={(val) => {
-                const tick = Number.parseInt(val) || 0
-                const spacing = TICK_SPACINGS[selectedFee]
-                setTickLower(alignTick(tick, spacing))
-              }}
-            />
-            <TextField
-              type="number"
-              label="Tick Upper"
-              value={tickUpper.toString()}
-              onValueChange={(val) => {
-                const tick = Number.parseInt(val) || 0
-                const spacing = TICK_SPACINGS[selectedFee]
-                setTickUpper(alignTick(tick, spacing))
-              }}
-            />
-          </div>
+          <div className="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-800">
+            <div>
+              <label className="text-sm font-medium mb-3 block">
+                Price Range Strategy
+              </label>
+              <div className="grid grid-cols-3 gap-2 mb-4">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={
+                    tickLower === -60000 && tickUpper === 60000
+                      ? 'default'
+                      : 'secondary'
+                  }
+                  onClick={() => {
+                    const spacing = TICK_SPACINGS[selectedFee]
+                    setTickLower(alignTick(-60000, spacing))
+                    setTickUpper(alignTick(60000, spacing))
+                  }}
+                  className="flex-1"
+                >
+                  Full Range
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={
+                    tickLower ===
+                      alignTick(-6000, TICK_SPACINGS[selectedFee]) &&
+                    tickUpper === alignTick(6000, TICK_SPACINGS[selectedFee])
+                      ? 'default'
+                      : 'secondary'
+                  }
+                  onClick={() => {
+                    const spacing = TICK_SPACINGS[selectedFee]
+                    setTickLower(alignTick(-6000, spacing))
+                    setTickUpper(alignTick(6000, spacing))
+                  }}
+                  className="flex-1"
+                >
+                  ±10%
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={
+                    tickLower === alignTick(-600, TICK_SPACINGS[selectedFee]) &&
+                    tickUpper === alignTick(600, TICK_SPACINGS[selectedFee])
+                      ? 'default'
+                      : 'secondary'
+                  }
+                  onClick={() => {
+                    const spacing = TICK_SPACINGS[selectedFee]
+                    setTickLower(alignTick(-600, spacing))
+                    setTickUpper(alignTick(600, spacing))
+                  }}
+                  className="flex-1"
+                >
+                  ±1%
+                </Button>
+              </div>
+            </div>
 
-          <p className="text-xs text-muted-foreground">
-            Tick range defines the price range for your liquidity. Default:
-            -60000 to 60000 (full range). Ticks auto-align to spacing:{' '}
-            {TICK_SPACINGS[selectedFee]}.
-          </p>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium">Custom Range</span>
+                <span className="text-xs text-muted-foreground">
+                  Multiples of {TICK_SPACINGS[selectedFee]} only
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <label className="text-xs text-muted-foreground mb-1 block">
+                    Min Tick
+                  </label>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => {
+                        const spacing = TICK_SPACINGS[selectedFee]
+                        setTickLower(alignTick(tickLower - spacing, spacing))
+                      }}
+                      className="w-10 px-0"
+                    >
+                      -
+                    </Button>
+                    <TextField
+                      type="number"
+                      placeholder="-60000"
+                      value={tickLower.toString()}
+                      onValueChange={(val) => {
+                        // Allow free typing - don't auto-align yet
+                        const tick = Number.parseInt(val)
+                        if (isNaN(tick)) {
+                          setTickLower(0)
+                        } else {
+                          setTickLower(tick)
+                        }
+                      }}
+                      onBlur={(e) => {
+                        // Only align when user clicks away
+                        const tick = Number.parseInt(e.target.value) || 0
+                        const spacing = TICK_SPACINGS[selectedFee]
+                        setTickLower(alignTick(tick, spacing))
+                      }}
+                      step={TICK_SPACINGS[selectedFee]}
+                      className="w-full text-center font-mono"
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => {
+                        const spacing = TICK_SPACINGS[selectedFee]
+                        setTickLower(alignTick(tickLower + spacing, spacing))
+                      }}
+                      className="w-10 px-0"
+                    >
+                      +
+                    </Button>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs text-muted-foreground mb-1 block">
+                    Max Tick
+                  </label>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => {
+                        const spacing = TICK_SPACINGS[selectedFee]
+                        setTickUpper(alignTick(tickUpper - spacing, spacing))
+                      }}
+                      className="w-10 px-0"
+                    >
+                      -
+                    </Button>
+                    <TextField
+                      type="number"
+                      placeholder="60000"
+                      value={tickUpper.toString()}
+                      onValueChange={(val) => {
+                        // Allow free typing - don't auto-align yet
+                        const tick = Number.parseInt(val)
+                        if (isNaN(tick)) {
+                          setTickUpper(0)
+                        } else {
+                          setTickUpper(tick)
+                        }
+                      }}
+                      onBlur={(e) => {
+                        // Only align when user clicks away
+                        const tick = Number.parseInt(e.target.value) || 0
+                        const spacing = TICK_SPACINGS[selectedFee]
+                        setTickUpper(alignTick(tick, spacing))
+                      }}
+                      step={TICK_SPACINGS[selectedFee]}
+                      className="w-full text-center font-mono"
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => {
+                        const spacing = TICK_SPACINGS[selectedFee]
+                        setTickUpper(alignTick(tickUpper + spacing, spacing))
+                      }}
+                      className="w-10 px-0"
+                    >
+                      +
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className={`p-3 border rounded-lg ${
+                  ticksAligned
+                    ? 'bg-blue-500/5 border-blue-500/20'
+                    : 'bg-yellow-500/10 border-yellow-500/20'
+                }`}
+              >
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Current Range:</span>
+                  <span className="font-mono font-semibold">
+                    {tickLower} to {tickUpper}
+                  </span>
+                </div>
+                {ticksAligned ? (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Ticks must be multiples of {TICK_SPACINGS[selectedFee]}{' '}
+                    (spacing for {selectedFee / 10000}% fee tier). Type any
+                    value and it will auto-align to the nearest valid tick.
+                  </p>
+                ) : (
+                  <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-2 font-medium">
+                    ⚠️ Ticks must be multiples of {TICK_SPACINGS[selectedFee]}.
+                    Click outside the input to auto-align, or click "Align Ticks
+                    & Continue" to proceed.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
         </section>
 
         {token0 && token1 && !hasValidAmounts && (
@@ -404,7 +610,9 @@ export default function AddPoolPage() {
                     ? 'Select Tokens'
                     : !hasValidAmounts
                       ? 'Enter Liquidity Amounts'
-                      : 'Continue'}
+                      : !ticksAligned
+                        ? 'Align Ticks & Continue'
+                        : 'Continue'}
             </Button>
           )}
         </div>

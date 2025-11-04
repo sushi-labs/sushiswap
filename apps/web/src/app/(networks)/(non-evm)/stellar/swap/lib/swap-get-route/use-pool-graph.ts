@@ -27,6 +27,11 @@ export function usePoolGraph() {
           contractId: CONTRACT_ADDRESSES.FACTORY,
         })
 
+        if (!factoryClient) {
+          console.error('Failed to create factory client')
+          return { vertices, tokenGraph }
+        }
+
         // For performance, we'll query a subset of known token pairs
         // In production, you'd want to:
         // 1. Query all pools from the factory
@@ -173,5 +178,6 @@ export function usePoolGraph() {
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 10, // 10 minutes
     retry: 2,
+    throwOnError: false, // Don't throw errors to prevent app crash
   })
 }

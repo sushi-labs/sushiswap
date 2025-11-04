@@ -40,58 +40,83 @@ export function useBestRoute({
       amountIn.toString(),
     ],
     queryFn: async (): Promise<RouteWithTokens | null> => {
-      if (!tokenIn || !tokenOut || !poolGraphData) {
+      try {
+        if (!tokenIn || !tokenOut || !poolGraphData) {
+          return null
+        }
+
+        if (amountIn === 0n) {
+          return null
+        }
+
+        console.log(
+          `🔍 Finding best route: ${tokenIn.code} → ${tokenOut.code}, amount: ${amountIn}`,
+        )
+
+        const { vertices, tokenGraph } = poolGraphData
+
+        // Check if tokens exist in the graph
+        if (
+          !tokenGraph.has(tokenIn.contract) &&
+          !tokenGraph.has(tokenOut.contract)
+        ) {
+          console.log('❌ Tokens not found in pool graph')
+          return null
+        }
+
+        // Run routing algorithm
+        const route = getBestRoute({
+          amountIn,
+          vertices,
+          tokenGraph,
+          tokenIn,
+          tokenOut,
+          maxHops: 3, // Allow up to 3 hops (4 tokens in path)
+        })
+
+        if (!route) {
+          console.log('❌ No route found')
+          return null
+        }
+
+        console.log('🔍 Route:', route)
+
+        // Convert route addresses to Token objects
+        const tokens: Token[] = route.route
+          .map((address) => {
+            try {
+              return getTokenByContract(address)
+            } catch (error) {
+              console.error(
+                `Error getting token by contract ${address}:`,
+                error,
+              )
+              return null
+            }
+          })
+          .filter((token): token is Token => token !== null)
+
+        if (tokens.length !== route.route.length) {
+          console.error('Failed to resolve all tokens in route')
+          return null
+        }
+
+        console.log(`✅ Best route found:`)
+        console.log(`   Path: ${tokens.map((t) => t.code).join(' → ')}`)
+        console.log(`   Output: ${route.amountOut}`)
+        console.log(`   Price Impact: ${route.priceImpact.toFixed(2)}%`)
+        console.log(
+          `   Fees: ${route.fees.map((f) => `${f / 10000}%`).join(', ')}`,
+        )
+
+        return {
+          ...route,
+          tokens,
+        }
+      } catch (error) {
+        console.error('Error finding best route:', error)
+        // Return null instead of throwing to prevent app crash
         return null
-      }
-
-      if (amountIn === 0n) {
-        return null
-      }
-
-      console.log(
-        `🔍 Finding best route: ${tokenIn.code} → ${tokenOut.code}, amount: ${amountIn}`,
-      )
-
-      const { vertices, tokenGraph } = poolGraphData
-
-      // Run routing algorithm
-      const route = getBestRoute({
-        amountIn,
-        vertices,
-        tokenGraph,
-        tokenIn,
-        tokenOut,
-        maxHops: 3, // Allow up to 3 hops (4 tokens in path)
-      })
-
-      if (!route) {
-        console.log('❌ No route found')
-        return null
-      }
-
-      console.log('🔍 Route:', route)
-
-      // Convert route addresses to Token objects
-      const tokens: Token[] = route.route
-        .map((address) => getTokenByContract(address))
-        .filter((token): token is Token => token !== null)
-
-      if (tokens.length !== route.route.length) {
-        console.error('Failed to resolve all tokens in route')
-        return null
-      }
-
-      console.log(`✅ Best route found:`)
-      console.log(`   Path: ${tokens.map((t) => t.code).join(' → ')}`)
-      console.log(`   Output: ${route.amountOut}`)
-      console.log(`   Price Impact: ${route.priceImpact.toFixed(2)}%`)
-      console.log(
-        `   Fees: ${route.fees.map((f) => `${f / 10000}%`).join(', ')}`,
-      )
-
-      return {
-        ...route,
-        tokens,
       }
     },
     enabled:
@@ -103,6 +128,8 @@ export function useBestRoute({
       tokenIn.contract !== tokenOut.contract,
     staleTime: 1000 * 10, // 10 seconds
     gcTime: 1000 * 30, // 30 seconds
+    retry: false, // Don't retry on failure to prevent cascading errors
+    throwOnError: false, // Don't throw errors to prevent app crash
   })
 
   return {
