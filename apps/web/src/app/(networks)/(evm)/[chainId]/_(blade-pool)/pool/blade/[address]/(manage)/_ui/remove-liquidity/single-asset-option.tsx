@@ -5,7 +5,7 @@ import type { EvmCurrency } from 'sushi/evm'
 
 interface SingleAssetOptionProps {
   currency: EvmCurrency
-  tokenAmount: Amount<EvmCurrency>
+  tokenAmount: Amount<EvmCurrency> | null
   estimatedValue: number
   isSelected: boolean
   onSelect: () => void
@@ -56,7 +56,9 @@ export const SingleAssetOption = ({
         value={
           <div className="text-right">
             <div className="font-semibold text-sm">
-              ~{tokenAmount.toSignificant(4)} {currency.symbol}
+              {tokenAmount
+                ? `${tokenAmount.toSignificant(4)} ${currency.symbol}`
+                : '-'}
             </div>
             <div className="text-sm text-muted-foreground">
               ~{formatUSD(estimatedValue)}

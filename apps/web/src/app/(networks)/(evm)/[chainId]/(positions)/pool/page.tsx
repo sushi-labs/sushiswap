@@ -1,15 +1,11 @@
+import { isBladeChainId } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import React from 'react'
 import { TableFiltersNetwork } from 'src/app/(networks)/_ui/table-filters-network'
 import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/table-filters-search-token'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { isPublicBladeChainId } from 'src/config.server'
-import {
-  SushiSwapProtocol,
-  isBladeChainId,
-  isSushiSwapChainId,
-} from 'sushi/evm'
+import { SushiSwapProtocol, isSushiSwapChainId } from 'sushi/evm'
 import { TableFiltersResetButton } from '~evm/[chainId]/_ui/table-filters-reset-button'
 import { PositionsTab } from './_ui/positions-tab'
 
@@ -19,8 +15,7 @@ export default async function MyPositionsPage(props: {
   const params = await props.params
   const chainId = +params.chainId
 
-  const isBladeChain =
-    isBladeChainId(chainId) && (await isPublicBladeChainId(chainId))
+  const isBladeChain = isBladeChainId(chainId)
 
   if (!isSushiSwapChainId(chainId) && !isBladeChain) {
     return notFound()

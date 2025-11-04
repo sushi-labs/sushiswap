@@ -1,5 +1,6 @@
 'use client'
 
+import type { SushiSwapChainId } from '@sushiswap/graph-client/data-api'
 import {
   SkeletonChartLoadingStateMask,
   SkeletonChartXAxe,
@@ -13,7 +14,7 @@ import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo, useState } from 'react'
 import { useTokenPriceChart } from 'src/lib/hooks/api/useTokenPriceChart'
 import { formatPercent, formatUSD } from 'sushi'
-import type { SerializedEvmToken, SushiSwapChainId } from 'sushi/evm'
+import type { SerializedEvmToken } from 'sushi/evm'
 
 enum CHART_DURATION {
   DAY = 'DAY',

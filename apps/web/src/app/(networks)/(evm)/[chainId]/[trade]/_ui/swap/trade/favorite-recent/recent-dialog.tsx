@@ -9,12 +9,18 @@ import {
   DialogTrigger,
 } from '@sushiswap/ui'
 import { useEffect, useState } from 'react'
+import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { NetworkMenu } from './network-menu'
+import { useNetworkContext } from './network-provider'
 import { Recent } from './recent'
 
 export const RecentDialog = () => {
   const { isLg } = useBreakpoint('lg')
   const [isOpen, setIsOpen] = useState(false)
+  const {
+    state: { selectedNetwork },
+    mutate: { setSelectedNetwork },
+  } = useNetworkContext()
 
   useEffect(() => {
     if (isLg && isOpen) {
@@ -43,7 +49,13 @@ export const RecentDialog = () => {
             <DialogTitle className="!mr-0 text-xl font-medium">
               Recent
             </DialogTitle>
-            <NetworkMenu testId="recent-network-menu-trigger" />
+            <NetworkMenu
+              testId="recent-network-menu-trigger"
+              selectedNetwork={selectedNetwork}
+              onNetworkSelect={setSelectedNetwork}
+              className="!px-1"
+              networkOptions={SUPPORTED_CHAIN_IDS}
+            />
           </div>
           <DialogClose className="mr-2">
             <XIcon width={20} height={20} />

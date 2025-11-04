@@ -46,7 +46,7 @@ export const useBladeWithdrawRequest = ({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(BLADE_API_KEY ? { 'x-api-key': BLADE_API_KEY } : {}),
+          ...(BLADE_API_KEY ? { 'X-Api-Key': BLADE_API_KEY } : {}),
         },
         body: JSON.stringify(payload),
       })

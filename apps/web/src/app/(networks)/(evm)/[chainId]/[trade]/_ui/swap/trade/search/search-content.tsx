@@ -117,7 +117,7 @@ export const SearchContent = ({ onClose }: { onClose: () => void }) => {
             </div>
           ) : (
             <div className="text-xs grid grid-cols-[30px_auto_auto_auto] gap-2">
-              <div className="sticky font-medium grid grid-cols-[30px_190px_auto_auto] col-span-4 top-0 z-[19] bg-white lg:bg-slate-50 dark:bg-slate-900 lg:dark:bg-slate-800 text-xs text-[#535263] dark:text-[#E4DDEC]">
+              <div className="sticky font-medium grid grid-cols-[30px_90px_auto_auto] sm:grid-cols-[30px_190px_auto_auto] col-span-4 top-0 z-[19] bg-white lg:bg-slate-50 dark:bg-slate-900 lg:dark:bg-slate-800 text-xs text-[#535263] dark:text-[#E4DDEC]">
                 <div />
                 <div className="w-full mr-auto">Token</div>
                 <div className="w-full ml-auto text-right">Price</div>

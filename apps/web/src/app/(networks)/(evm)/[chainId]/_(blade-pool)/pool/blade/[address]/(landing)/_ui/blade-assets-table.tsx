@@ -28,7 +28,7 @@ export const BladeAssetsTable: FC<BladeAssetsTableProps> = ({ pool }) => {
 
   const data = useMemo(() => {
     return getPoolAssets(pool, { showStableTypes }).filter(
-      (asset) => asset.targetWeight > 0,
+      (asset) => asset.targetWeight !== null && asset.targetWeight > 0,
     )
   }, [pool, showStableTypes])
 

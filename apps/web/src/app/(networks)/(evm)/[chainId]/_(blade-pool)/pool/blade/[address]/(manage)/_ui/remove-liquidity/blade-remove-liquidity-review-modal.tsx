@@ -12,20 +12,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@sushiswap/ui'
+import { useRouter } from 'next/navigation'
 import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import { logger } from 'src/lib/logger'
 import { useBladeWithdrawTransaction } from 'src/lib/pool/blade/useBladeWithdraw'
 import { getPoolAssets } from 'src/lib/pool/blade/utils'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
-import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
 import { Amount, Percent } from 'sushi'
-import { type EvmCurrency, getEvmChainById } from 'sushi/evm'
 import type { Hex } from 'viem'
 import {
   useAccount,
   usePublicClient,
   useWaitForTransactionReceipt,
 } from 'wagmi'
+import { useBladePoolOnchainData } from '~evm/[chainId]/(blade-pool)/pool/blade/[address]/_ui/blade-pool-onchain-data-provider'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useBladePoolPosition } from '../blade-pool-position-provider'
@@ -46,16 +46,24 @@ interface BladeRemoveLiquidityReviewModalProps {
 export const BladeRemoveLiquidityReviewModal: FC<
   BladeRemoveLiquidityReviewModalProps
 > = ({ pool, percentage, children, onSuccess: _onSuccess }) => {
+  const router = useRouter()
   const { address } = useAccount()
   const client = usePublicClient()
-  const { balance, liquidityToken } = useBladePoolPosition()
-  const poolTotalSupply = useTotalSupply(liquidityToken)
+  const { balance } = useBladePoolPosition()
   const { refetchChain: refetchBalances } = useRefetchBalances()
+  const {
+    liquidityUSD,
+    liquidity: poolTotalSupply,
+    refetch: refetchPoolLiquidity,
+  } = useBladePoolOnchainData()
   const chainId = pool.chainId
   const { data: prices } = usePrices({ chainId })
 
   const poolAssets = useMemo(
-    () => getPoolAssets(pool).filter((asset) => asset.targetWeight > 0),
+    () =>
+      getPoolAssets(pool).filter(
+        (asset) => asset.targetWeight !== null && asset.targetWeight > 0,
+      ),
     [pool],
   )
 
@@ -65,18 +73,13 @@ export const BladeRemoveLiquidityReviewModal: FC<
   )
 
   const userPositionValue = useMemo(() => {
-    if (
-      !balance?.amount ||
-      !poolTotalSupply?.amount ||
-      poolTotalSupply.amount === 0n
-    ) {
+    if (!balance?.amount || poolTotalSupply === 0n) {
       return 0
     }
 
-    const poolProportion =
-      Number(balance.amount) / Number(poolTotalSupply.amount)
-    return pool.liquidityUSD * poolProportion
-  }, [balance, poolTotalSupply, pool.liquidityUSD])
+    const poolProportion = Number(balance.amount) / Number(poolTotalSupply)
+    return liquidityUSD * poolProportion
+  }, [balance, poolTotalSupply, liquidityUSD])
 
   const tokensToReceive = useMemo(() => {
     return poolAssets
@@ -87,18 +90,26 @@ export const BladeRemoveLiquidityReviewModal: FC<
           const amountToReceiveValue =
             userAssetValue * (Number(percentage) / 100)
 
-          // Get token price and calculate amount
-          const tokenPrice = prices?.get(asset.token.wrap().address) || 0
+          const tokenPrice =
+            prices?.get(asset.token.wrap().address) ?? asset.priceUSD
           const tokenAmountValue =
-            tokenPrice > 0 ? amountToReceiveValue / tokenPrice : 0
+            tokenPrice !== null
+              ? tokenPrice > 0
+                ? amountToReceiveValue / tokenPrice
+                : 0
+              : null
+
           const amount =
-            tokenAmountValue > 0
-              ? Amount.fromHuman(asset.token, tokenAmountValue)
-              : new Amount(asset.token, 0n)
+            tokenAmountValue === null
+              ? null
+              : tokenAmountValue > 0
+                ? Amount.fromHuman(asset.token, tokenAmountValue)
+                : new Amount(asset.token, 0n)
 
           return {
             usdValue: amountToReceiveValue,
             weight: asset.weight,
+            token: asset.token,
             amount,
           }
         }
@@ -109,7 +120,7 @@ export const BladeRemoveLiquidityReviewModal: FC<
 
   const [selectedOption, setSelectedOption] = useState<RemoveOptionType>(() => {
     if (pool.isSingleAssetWithdrawEnabled && tokensToReceive.length > 0) {
-      return tokensToReceive[0]?.amount.currency || 'multiple'
+      return tokensToReceive[0]?.token || 'multiple'
     }
     return 'multiple'
   })
@@ -138,6 +149,8 @@ export const BladeRemoveLiquidityReviewModal: FC<
       const receipt = client.waitForTransactionReceipt({ hash })
       receipt.then(() => {
         refetchBalances(chainId)
+        refetchPoolLiquidity()
+        router.refresh()
       })
 
       const ts = new Date().getTime()
@@ -156,7 +169,15 @@ export const BladeRemoveLiquidityReviewModal: FC<
         groupTimestamp: ts,
       })
     },
-    [refetchBalances, _onSuccess, address, chainId, client],
+    [
+      refetchBalances,
+      refetchPoolLiquidity,
+      _onSuccess,
+      address,
+      chainId,
+      client,
+      router,
+    ],
   )
 
   const onError = useCallback((e: Error) => {
@@ -195,6 +216,7 @@ export const BladeRemoveLiquidityReviewModal: FC<
               </DialogHeader>
 
               <RemoveOptionsSelector
+                pool={pool}
                 tokensToReceive={tokensToReceive}
                 selectedOption={selectedOption}
                 setSelectedOption={onSelectedOptionChange}
@@ -221,6 +243,7 @@ export const BladeRemoveLiquidityReviewModal: FC<
                   prices={prices}
                   onConfirm={confirm}
                   withdrawTransaction={withdrawTransaction}
+                  estimatedValue={estimatedValue}
                 />
               )}
             </DialogContent>
@@ -232,8 +255,7 @@ export const BladeRemoveLiquidityReviewModal: FC<
         status={status}
         testId="blade-remove-confirmation-modal"
         successMessage="Successfully removed liquidity"
-        buttonText="Go to pool"
-        buttonLink={`/${getEvmChainById(pool.chainId).key}/pool/blade/${pool.address}`}
+        buttonText="Close"
         txHash={withdrawTransaction.data}
       />
     </DialogProvider>

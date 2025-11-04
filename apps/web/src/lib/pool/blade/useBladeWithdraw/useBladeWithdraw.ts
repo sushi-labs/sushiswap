@@ -34,7 +34,7 @@ const withdrawWriteVariablesMap: Record<
   ClipperPackedExchange: clipperWithdraw,
   ClipperPackedOracleVerifiedExchange: clipperWithdraw,
   BladeVerifiedExchange: bladeWithdraw,
-  BladeApproximateCaravelExchange: bladeWithdraw,
+  BladeApproximateExchange: bladeWithdraw,
 }
 
 export const useBladeWithdrawTransaction = ({

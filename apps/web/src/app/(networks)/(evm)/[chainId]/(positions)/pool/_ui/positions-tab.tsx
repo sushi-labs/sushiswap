@@ -1,5 +1,6 @@
 'use client'
 
+import { isBladeChainId } from '@sushiswap/graph-client/data-api'
 import {
   Select,
   SelectContent,
@@ -12,16 +13,14 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
+import { BladeIcon } from '@sushiswap/ui/icons/BladeIcon'
 import type React from 'react'
 import { type FC, useMemo, useState } from 'react'
-
-import { BladeIcon } from '@sushiswap/ui/icons/BladeIcon'
 import {
   type BladeChainId,
   type SushiSwapChainId,
   SushiSwapProtocol,
   getEvmChainById,
-  isBladeChainId,
   isSushiSwapChainId,
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,

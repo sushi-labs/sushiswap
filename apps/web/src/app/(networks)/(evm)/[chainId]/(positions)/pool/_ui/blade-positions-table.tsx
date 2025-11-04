@@ -1,6 +1,9 @@
 'use client'
 
-import type { BladePosition } from '@sushiswap/graph-client/data-api'
+import {
+  type BladePosition,
+  isBladeChainId,
+} from '@sushiswap/graph-client/data-api'
 import {
   Badge,
   Card,
@@ -179,7 +182,8 @@ export const BladePositionsTable: FC<BladePositionsTableProps> = ({
 
   const { data: positions, isLoading } = useBladeUserPositions({
     user: address,
-    chainId,
+    chainId: isBladeChainId(chainId) ? chainId : 1,
+    enabled: Boolean(address && isBladeChainId(chainId)),
   })
 
   const _positions = useMemo(() => {

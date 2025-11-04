@@ -1,3 +1,4 @@
+import { isBladeChainId } from '@sushiswap/graph-client/data-api'
 import { notFound } from 'next/navigation'
 import { type EvmChainId, isSushiSwapV2ChainId } from 'sushi/evm'
 
@@ -10,7 +11,7 @@ export default async function Layout(props: {
   const { children } = props
 
   const chainId = +params.chainId as EvmChainId
-  if (!isSushiSwapV2ChainId(chainId)) {
+  if (!isBladeChainId(chainId)) {
     return notFound()
   }
 

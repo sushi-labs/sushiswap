@@ -65,14 +65,7 @@ export function TokenSelectorMyTokensV2({
       </Shell>
     )
 
-  if (!data.balanceMap?.size)
-    return (
-      <Shell>
-        <div className="flex w-full justify-center py-3">
-          No balances found.
-        </div>
-      </Shell>
-    )
+  if (!data.balanceMap?.size) return null
 
   return (
     <Shell>

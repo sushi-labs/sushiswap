@@ -121,11 +121,12 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
         aria-describedby={undefined}
         className={classNames(
           'h-[80vh] !flex !flex-col md:!flex-row w-fit !p-0 md:min-w-[580px]',
+          'border border-[#00000014] dark:border-[#FFFFFF14]',
           !showMoreCurrencyInfo ? '!h-[440px]' : '',
         )}
         variant={variant ?? undefined}
       >
-        <div className="relative flex flex-col w-full gap-4 p-6 overflow-x-hidden overflow-y-auto hide-scrollbar">
+        <div className="relative flex flex-col w-full gap-4 py-6 sm:px-6 px-3 overflow-x-hidden overflow-y-auto hide-scrollbar">
           {currencyInfo ? (
             <CurrencyInfo
               showMoreCurrencyInfo={showMoreCurrencyInfo}
