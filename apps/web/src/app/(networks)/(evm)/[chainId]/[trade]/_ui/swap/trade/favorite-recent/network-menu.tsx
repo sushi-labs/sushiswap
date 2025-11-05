@@ -78,7 +78,7 @@ export const NetworkMenu = ({
 const NetworkItem = ({ chainId }: { chainId: EvmChainId }) => {
   return (
     <div className="flex items-center gap-1 text-muted-foreground dark:text-pink-200">
-      <NetworkIcon chainId={chainId} width={16} height={16} />
+      <NetworkIcon type="square" chainId={chainId} width={16} height={16} />
       <div>{getNetworkName(chainId)}</div>
     </div>
   )
