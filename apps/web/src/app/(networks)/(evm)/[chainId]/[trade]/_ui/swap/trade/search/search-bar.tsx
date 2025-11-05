@@ -56,7 +56,11 @@ export const SearchBar = () => {
                 <XIcon width={20} height={20} />
               </DialogClose>
             </div>
-            <SearchContent onClose={onClose} />
+            <SearchContent
+              skeletonCount={10}
+              scrollHeight={'55vh'}
+              onClose={onClose}
+            />
           </DialogContent>
         </Dialog>
       </div>
