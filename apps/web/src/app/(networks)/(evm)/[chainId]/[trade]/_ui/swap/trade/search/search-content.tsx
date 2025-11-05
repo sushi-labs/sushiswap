@@ -19,7 +19,15 @@ import { useSearchContext } from './search-provider'
 
 const SearchChainIds = TokenListV2ChainIds.map((id) => id)
 
-export const SearchContent = ({ onClose }: { onClose: () => void }) => {
+export const SearchContent = ({
+  onClose,
+  scrollHeight,
+  skeletonCount,
+}: {
+  onClose: () => void
+  scrollHeight?: number | string
+  skeletonCount?: number
+}) => {
   const [open, setOpen] = useState(false)
   const {
     state: { searchValue },
@@ -89,7 +97,7 @@ export const SearchContent = ({ onClose }: { onClose: () => void }) => {
       <Collapsible open={!!searchValue} className="!overflow-auto">
         <InfiniteScroll
           key={open ? 'scroll-open' : 'scroll-closed'}
-          height={250}
+          height={scrollHeight ?? 250}
           dataLength={tokens.length}
           next={fetchNextPage}
           hasMore={hasNextPage}
@@ -101,7 +109,7 @@ export const SearchContent = ({ onClose }: { onClose: () => void }) => {
         >
           {isLoading ? (
             <div className="flex flex-col gap-2">
-              {Array(5)
+              {Array(skeletonCount ?? 5)
                 .fill(null)
                 .map((_, idx) => (
                   <SearchSkeleton key={idx} />
@@ -121,7 +129,7 @@ export const SearchContent = ({ onClose }: { onClose: () => void }) => {
             </div>
           ) : (
             <div className="text-xs grid grid-cols-[30px_auto_auto_auto] gap-2">
-              <div className="sticky font-medium grid grid-cols-[30px_90px_auto_auto] sm:grid-cols-[30px_190px_auto_auto] col-span-4 top-0 z-[19] bg-white lg:bg-slate-50 dark:bg-slate-900 lg:dark:bg-slate-800 text-xs text-[#535263] dark:text-[#E4DDEC]">
+              <div className="sticky font-medium grid grid-cols-[30px_90px_auto_auto] sm:grid-cols-[30px_190px_auto_auto] col-span-4 -top-[1px] z-[19] bg-white lg:bg-slate-50 dark:bg-slate-900 lg:dark:bg-slate-800 text-xs text-[#535263] dark:text-[#E4DDEC]">
                 <div />
                 <div className="w-full mr-auto">Token</div>
                 <div className="w-full ml-auto text-right">Price</div>

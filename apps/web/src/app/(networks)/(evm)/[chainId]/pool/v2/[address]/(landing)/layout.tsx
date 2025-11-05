@@ -28,11 +28,18 @@ export default async function Layout(props: {
 
   const pool = (await getCachedV2Pool({ chainId, address }))!
 
+  const headersList = await headers()
+  const referer = headersList.get('referer')
+
   return (
     <>
       <Container maxWidth="screen-3xl" className="px-4 pt-10">
         <PoolHeader
-          backUrl={`/${getChainById(chainId).key}/explore/pools`}
+          backUrl={
+            referer?.includes('/pool')
+              ? referer?.toString()
+              : `/${getChainById(chainId).key}/explore/pools`
+          }
           address={pool.address}
           pool={pool}
           apy={{ rewards: pool?.incentiveApr, fees: pool?.feeApr1d }}
