@@ -1,6 +1,7 @@
 'use client'
 
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
+import { createErrorToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
@@ -9,9 +10,11 @@ import {
   useExecuteMultiHopSwap,
   useExecuteSwap,
 } from '~stellar/_common/lib/hooks/swap'
+import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trustline'
 import { parseSlippageTolerance } from '~stellar/_common/lib/utils/error-helpers'
 import { requiresPriceImpactConfirmation } from '~stellar/_common/lib/utils/warning-severity'
 import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
+import { TrustlineWarning } from '~stellar/_common/ui/Trustline/TrustlineWarning'
 import { Checker } from '~stellar/_common/ui/checker'
 import { useStellarWallet } from '~stellar/providers'
 import { useBestRoute } from '~stellar/swap/lib/hooks'
@@ -24,6 +27,13 @@ export const SimpleSwapExecuteButton = () => {
   const executeSwap = useExecuteSwap()
   const executeMultiHopSwap = useExecuteMultiHopSwap()
   const [checked, setChecked] = useState<boolean>(false)
+
+  // Check if output token needs a trustline (for native assets)
+  const { needsTrustline: needsToken1Trustline } = useNeedsTrustline(
+    token1?.contract || '',
+    token1?.code || '',
+    token1?.issuer || '',
+  )
   const [, { slippageTolerance }] = useSlippageTolerance(
     SlippageToleranceStorageKey.Swap,
   )
@@ -167,6 +177,7 @@ export const SimpleSwapExecuteButton = () => {
     outputAmount === 0n ||
     executeSwap.isPending ||
     executeMultiHopSwap.isPending ||
+    needsToken1Trustline ||
     (showPriceImpactWarning && !checked)
 
   return (
@@ -188,17 +199,26 @@ export const SimpleSwapExecuteButton = () => {
             >
               {executeSwap.isPending || executeMultiHopSwap.isPending
                 ? 'Executing Swap...'
-                : showPriceImpactWarning && !checked
-                  ? 'Price impact too high'
-                  : amount &&
-                      Number(amount) > 0 &&
-                      (!outputAmount || outputAmount === 0n)
-                    ? 'No route found'
-                    : 'Swap'}
+                : needsToken1Trustline
+                  ? 'Create trustline first'
+                  : showPriceImpactWarning && !checked
+                    ? 'Price impact too high'
+                    : amount &&
+                        Number(amount) > 0 &&
+                        (!outputAmount || outputAmount === 0n)
+                      ? 'No route found'
+                      : 'Swap'}
             </Button>
           </Checker.Amounts>
         )}
       </div>
+      {needsToken1Trustline && token1?.issuer && (
+        <TrustlineWarning
+          assetCode={token1.code}
+          assetIssuer={token1.issuer}
+          className="mt-4"
+        />
+      )}
       {showSlippageWarning && <SlippageWarning className="mt-4" />}
       {showPriceImpactWarning && (
         <PriceImpactWarning
