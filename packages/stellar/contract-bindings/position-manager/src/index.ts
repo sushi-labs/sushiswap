@@ -34,7 +34,7 @@ if (typeof window !== 'undefined') {
 export const networks = {
   testnet: {
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CC32RV27R6ZOOBNZ25ACUZYJJWXRI6ULJJVGKHRVLHM2MRBZ56M6WK4F",
+    contractId: "CA4XE66WN2S5KZV44VFXGVAHDLYLDSH24RMPCB63WPXLHK3VBDUXKDNX",
   }
 } as const
 
@@ -191,15 +191,51 @@ export interface UserPositionInfo {
 /**
  * Storage keys for the contract
  */
-export type DataKey = {tag: "HookModules", values: readonly [ComplianceHook]} |{tag: "Factory", values: void} | {tag: "XlmAddress", values: void} | {tag: "TokenDescriptor", values: void} | {tag: "Position", values: readonly [u32]} | {tag: "PoolIdToPoolKey", values: readonly [u32]} | {tag: "PoolIdsByAddress", values: readonly [string]} | {tag: "PoolIdToAddress", values: readonly [u32]} | {tag: "NextPoolId", values: void} | {tag: "NextTokenId", values: void} | {tag: "UserTokenIds", values: readonly [string]};
+export type DataKey = {tag: "Factory", values: void} | {tag: "XlmAddress", values: void} | {tag: "TokenDescriptor", values: void} | {tag: "Position", values: readonly [u32]} | {tag: "PoolIdToPoolKey", values: readonly [u32]} | {tag: "PoolIdsByAddress", values: readonly [string]} | {tag: "PoolIdToAddress", values: readonly [u32]} | {tag: "NextPoolId", values: void} | {tag: "NextTokenId", values: void} | {tag: "UserTokenIds", values: readonly [string]};
+
 
 /**
- * Error codes for the periphery libraries
+ * Parameters required to construct a token URI (see original Solidity code for semantics)
+ */
+export interface ConstructTokenURIParams {
+  base_token_address: string;
+  base_token_decimals: u32;
+  base_token_symbol: string;
+  fee: u32;
+  flip_ratio: boolean;
+  pool_address: string;
+  quote_token_address: string;
+  quote_token_decimals: u32;
+  quote_token_symbol: string;
+  tick_current: i32;
+  tick_lower: i32;
+  tick_spacing: i32;
+  tick_upper: i32;
+  token_id: u64;
+}
+
+
+/**
+ * Data structure for weighted tick aggregation across multiple pools
+ */
+export interface WeightedTickData {
+  /**
+ * Tick value from a pool
+ */
+tick: i32;
+  /**
+ * Weight for this tick (typically liquidity or volume)
+ */
+weight: u128;
+}
+
+/**
+ * Error codes for the periphery base contract
  */
 export const Errors = {
   /**
- * Transaction has exceeded the deadline
- */
+   * Transaction has exceeded the deadline
+   */
   1001: {message:"TransactionTooOld"},
   /**
    * Contract has already been initialized
@@ -282,8 +318,8 @@ export const Errors = {
    */
   1021: {message:"PositionNotCleared"},
   /**
-   * Hex string length is insufficient for the requested conversion
-   */
+ * Hex string length is insufficient for the requested conversion
+ */
   2001: {message:"HexLengthInsufficient"},
   /**
    * mul_div operation failed in liquidity calculation
@@ -297,42 +333,6 @@ export const Errors = {
    * U256 to u128 conversion failed (overflow)
    */
   2004: {message:"U256ToU128ConversionFailed"}
-}
-
-
-/**
- * Parameters required to construct a token URI (see original Solidity code for semantics)
- */
-export interface ConstructTokenURIParams {
-  base_token_address: string;
-  base_token_decimals: u32;
-  base_token_symbol: string;
-  fee: u32;
-  flip_ratio: boolean;
-  pool_address: string;
-  quote_token_address: string;
-  quote_token_decimals: u32;
-  quote_token_symbol: string;
-  tick_current: i32;
-  tick_lower: i32;
-  tick_spacing: i32;
-  tick_upper: i32;
-  token_id: u64;
-}
-
-
-/**
- * Data structure for weighted tick aggregation across multiple pools
- */
-export interface WeightedTickData {
-  /**
- * Tick value from a pool
- */
-tick: i32;
-  /**
- * Weight for this tick (typically liquidity or volume)
- */
-weight: u128;
 }
 
 /**
@@ -758,6 +758,16 @@ export const ClaimTopicsAndIssuersError = {
   376: {message:"ClaimTopicsSetCannotBeEmpty"}
 }
 
+
+
+
+
+
+/**
+ * Storage keys for the modular compliance contract.
+ */
+export type ComplianceDataKey = {tag: "HookModules", values: readonly [ComplianceHook]};
+
 /**
  * Hook types for modular compliance system.
  * 
@@ -875,9 +885,9 @@ export const ClaimsError = {
   341: {message:"ClaimNotValid"}
 }
 
+
+
 export type CountryCode = string;
-
-
 /**
  * Represents the type of identity holder
  */
@@ -1163,7 +1173,6 @@ export type FixedPoint128 = readonly [u256];
  * `actual_value = stored_value / 2^96`
  */
 export type FixedPoint96 = readonly [u256];
-
 
 export type SqrtPriceX96 = readonly [u256];
 

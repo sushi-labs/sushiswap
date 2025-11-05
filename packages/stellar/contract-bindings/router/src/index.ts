@@ -30,11 +30,15 @@ if (typeof window !== 'undefined') {
   window.Buffer = window.Buffer || Buffer;
 }
 
+/**
+ * Square root price in Q96 format (u256)
+ */
+export type SqrtPriceX96 = u256;
 
 export const networks = {
   testnet: {
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CDNIM7MB24YP7GQ7LUKJ5FOHBDA7AFQNX4RFGTLQVGV42RPOV6HYTWHI",
+    contractId: "CCJ3GXMBDUMO27GBYBX2HIS3G45RPFMTTGPRXR7QVDZWYKWONT4VMIM6",
   }
 } as const
 
@@ -498,7 +502,6 @@ export type FixedPoint128 = readonly [u256];
  */
 export type FixedPoint96 = readonly [u256];
 
-export type SqrtPriceX96 = readonly [u256];
 
 export interface SwapStepResult {
   amount_in: u256;
