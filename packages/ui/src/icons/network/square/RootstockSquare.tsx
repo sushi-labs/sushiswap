@@ -7,6 +7,6 @@ import type { IconComponent } from '../../../types'
 export const RootstockSquare: IconComponent = (props) => (
   <RootstockNaked
     {...props}
-    circle={<circle cx="64" cy="64" r="64" fill="#000" />}
+    circle={<rect width="256" height="256" fill="black" />}
   />
 )

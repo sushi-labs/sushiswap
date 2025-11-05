@@ -46,6 +46,7 @@ export const TokenNetworkIcon = ({ token }: { token: SearchToken }) => {
             token?.address,
           )}
           className="text-xs flex items-center gap-0.5 !text-muted-foreground dark:text-pink-200"
+          onClick={(e) => e.stopPropagation()}
         >
           {shortenEvmAddress(token?.address)}
           <ArrowUpIcon width={10} height={10} className="rotate-45" />

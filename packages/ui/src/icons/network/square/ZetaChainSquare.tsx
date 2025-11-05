@@ -1,5 +1,3 @@
-import * as React from 'react'
-
 import { ZetaChainNaked } from '../naked/ZetaChainNaked'
 
 import type { IconComponent } from '../../../types'
@@ -7,6 +5,6 @@ import type { IconComponent } from '../../../types'
 export const ZetaChainSquare: IconComponent = (props) => (
   <ZetaChainNaked
     {...props}
-    circle={<circle cx="64" cy="64" r="64" fill="#005741" />}
+    circle={<rect width="256" height="256" fill="#005741" />}
   />
 )

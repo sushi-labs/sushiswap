@@ -260,7 +260,7 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
       <Web3Input.Currency
         id="zap-liquidity-token"
         type="INPUT"
-        className="p-4 bg-white dark:bg-slate-800 rounded-xl"
+        className="p-4 bg-gray-100 dark:bg-slate-800 rounded-xl"
         chainId={chainId}
         value={inputAmount}
         onChange={setInputAmount}
