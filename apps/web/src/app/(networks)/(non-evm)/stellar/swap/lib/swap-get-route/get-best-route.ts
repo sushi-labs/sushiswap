@@ -119,8 +119,14 @@ function calculateAmountOut({
       pools.push(vertex.poolAddress)
       fees.push(vertex.fee)
 
-      // Store mid price for this hop (reserve1 / reserve0)
-      const midPrice = Number(reserve1) / Number(reserve0)
+      // Calculate mid price from sqrtPriceX96 for concentrated liquidity pools
+      // sqrtPrice = sqrt(token1/token0), so price = (sqrtPrice)^2
+      const Q96 = 2 ** 96
+      const sqrtPrice = Number(vertex.sqrtPriceX96) / Q96
+      const poolPrice = sqrtPrice * sqrtPrice // token1 per token0
+
+      // Adjust price based on swap direction
+      const midPrice = isForward ? poolPrice : 1 / poolPrice
       prices.push(midPrice)
 
       // Use output as input for next hop
