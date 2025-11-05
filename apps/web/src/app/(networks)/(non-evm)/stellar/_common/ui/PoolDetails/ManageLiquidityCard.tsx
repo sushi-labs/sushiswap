@@ -19,7 +19,7 @@ import { useCalculatePairedAmount } from '~stellar/_common/lib/hooks/pool/use-ca
 import { useMaxPairedAmount } from '~stellar/_common/lib/hooks/pool/use-max-paired-amount'
 import { usePoolBalances } from '~stellar/_common/lib/hooks/pool/use-pool-balances'
 import { useRemoveLiquidity } from '~stellar/_common/lib/hooks/pool/use-pool-liquidity-management'
-import { useUserPositions } from '~stellar/_common/lib/hooks/position/use-positions'
+import { useMyPosition } from '~stellar/_common/lib/hooks/position/use-my-position'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/swap'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
@@ -35,8 +35,9 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
 }) => {
   const { isConnected, connectedAddress, signTransaction } = useStellarWallet()
   const { data: balances } = usePoolBalances(pool.address, connectedAddress)
-  const { data: userPositions = [] } = useUserPositions(
+  const { positions: myPositions } = useMyPosition(
     connectedAddress || undefined,
+    pool.address,
   )
   const [tab, setTab] = useState<string>('add')
   const [amount0, setAmount0] = useState<string>('')
@@ -70,16 +71,18 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
 
   // Find user's position for this pool (using full range -60000 to 60000)
   const userPosition = useMemo(() => {
-    return userPositions.find((pos) => {
-      const tokensMatch =
-        (pos.token0 === pool.token0.contract &&
-          pos.token1 === pool.token1.contract) ||
-        (pos.token0 === pool.token1.contract &&
-          pos.token1 === pool.token0.contract)
-      const ticksMatch = pos.tickLower === -60000 && pos.tickUpper === 60000
-      return tokensMatch && ticksMatch
-    })
-  }, [userPositions, pool])
+    // myPositions are already filtered by the current pool address
+    // pick the default full-range position if present
+    return (
+      myPositions.find((pos) => {
+        const ticksMatch =
+          pos.principalToken0 !== undefined && pos.principalToken1 !== undefined
+        // Prefer the conventional full range if present
+        // We don't have explicit ticks in PositionSummary, so fall back to first
+        return ticksMatch
+      }) || myPositions[0]
+    )
+  }, [myPositions])
 
   // Check if any amount is entered for button state
   const hasAmount =
@@ -357,11 +360,10 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                       </span>
                       <button
                         type="button"
-                        onClick={() =>
-                          setLpAmount(
-                            (Number(userPosition.liquidity) / 1e7).toString(),
-                          )
-                        }
+                        onClick={() => {
+                          const liq = BigInt(userPosition.liquidity || '0')
+                          setLpAmount((Number(liq) / 1e7).toString())
+                        }}
                         className="text-xs text-blue-500 hover:text-blue-400"
                       >
                         Max

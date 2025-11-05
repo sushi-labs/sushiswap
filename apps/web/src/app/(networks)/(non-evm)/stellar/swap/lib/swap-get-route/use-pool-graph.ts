@@ -60,12 +60,9 @@ export function usePoolGraph() {
               poolQueries.push(
                 (async () => {
                   try {
-                    // Order tokens (smaller address first) to match factory's expectations
-                    const [token0, token1] =
-                      tokenA < tokenB ? [tokenA, tokenB] : [tokenB, tokenA]
-
                     // Query pool address from factory
                     const poolResult = await factoryClient.get_pool({
+                      // Factory supports either order; we still pass normalized
                       token_a: tokenA < tokenB ? tokenA : tokenB,
                       token_b: tokenA < tokenB ? tokenB : tokenA,
                       fee,
@@ -83,9 +80,18 @@ export function usePoolGraph() {
                       contractId: poolAddress,
                     })
 
-                    const [slot0Result, liquidityResult] = await Promise.all([
+                    const [
+                      slot0Result,
+                      liquidityResult,
+                      token0Result,
+                      token1Result,
+                    ] = await Promise.all([
                       poolClient.slot0(),
                       poolClient.liquidity(),
+                      // Fetch canonical pool token order to avoid relying on string compare
+                      // These functions exist on the pool contract
+                      poolClient.token0(),
+                      poolClient.token1(),
                     ])
 
                     const sqrtPriceX96 = slot0Result.result.sqrt_price_x96
@@ -114,11 +120,12 @@ export function usePoolGraph() {
                         ? (liquidity * sqrtPriceX96BigInt) / Q96
                         : liquidity
 
-                    // Create vertex
+                    // Create vertex using canonical pool order
                     // IMPORTANT: Vertex must be internally consistent
-                    // - pair field uses ordered tokens (token0, token1)
-                    // - token0/token1 use ordered tokens (lower/higher address)
+                    // - pair field uses pool's token0/token1 order
                     // - reserves match this ordering (reserve0 for token0, reserve1 for token1)
+                    const token0 = token0Result.result as string
+                    const token1 = token1Result.result as string
                     const vertex: Vertex = {
                       pair: `${token0}|||${token1}`, // Must match token0/token1 ordering
                       poolAddress,
