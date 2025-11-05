@@ -13,7 +13,12 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { type FC, useMemo } from 'react'
-import { EvmToken, getEvmChainById, unwrapEvmToken } from 'sushi/evm'
+import {
+  EvmToken,
+  SushiSwapProtocol,
+  getEvmChainById,
+  unwrapEvmToken,
+} from 'sushi/evm'
 
 type PoolHeader = {
   backUrl: string
@@ -59,6 +64,17 @@ export const PoolHeader: FC<PoolHeader> = ({
       ),
     ]
   }, [pool])
+
+  const protocol = useMemo(() => {
+    switch (pool.protocol) {
+      case SushiSwapProtocol.SUSHISWAP_V3:
+        return 'v3'
+      case SushiSwapProtocol.SUSHISWAP_V2:
+        return 'v2'
+      default:
+        return 'blade'
+    }
+  }, [pool.protocol])
 
   if (pool && token0 && token1)
     return (
@@ -109,17 +125,17 @@ export const PoolHeader: FC<PoolHeader> = ({
               </Button>
               <div
                 className={classNames(
-                  pool.protocol === 'SUSHISWAP_V3'
+                  pool.protocol === SushiSwapProtocol.SUSHISWAP_V3
                     ? 'text-blue dark:text-skyblue'
-                    : pool.protocol === 'SUSHISWAP_V2'
-                      ? 'text-pink'
+                    : pool.protocol === SushiSwapProtocol.SUSHISWAP_V2
+                      ? 'text-pink bg-[#4217FF14]'
                       : '',
                   'text-sm px-2 py-1 font-semibold rounded-full mt-0.5 bg-[#0000001F] dark:bg-[#FFFFFF1F]',
                 )}
               >
-                {pool.protocol === 'SUSHISWAP_V3' ? (
+                {pool.protocol === SushiSwapProtocol.SUSHISWAP_V3 ? (
                   'V3'
-                ) : pool.protocol === 'SUSHISWAP_V2' ? (
+                ) : pool.protocol === SushiSwapProtocol.SUSHISWAP_V2 ? (
                   'V2'
                 ) : (
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4217FF] to-[#3DB1FF]">
@@ -130,7 +146,7 @@ export const PoolHeader: FC<PoolHeader> = ({
             </div>
             {showAddLiquidityButton && !isMd ? (
               <LinkInternal
-                href={`/${getEvmChainById(pool.chainId).key}/pool/v3/${pool.address}/add?feeAmount=${
+                href={`/${getEvmChainById(pool.chainId).key}/pool/${protocol}/${pool.address}/add?feeAmount=${
                   pool.swapFee * 1000000
                 }&fromCurrency=${token0?.isNative ? 'NATIVE' : token0?.address}&toCurrency=${
                   token1?.isNative ? 'NATIVE' : token1?.address

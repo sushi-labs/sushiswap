@@ -1,6 +1,6 @@
 'use client'
-import { PlusCircleIcon } from '@heroicons/react-v1/outline'
 import { XIcon } from '@heroicons/react-v1/solid'
+import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { Button, TextField, classNames } from '@sushiswap/ui'
 import { useRef, useState } from 'react'
 import {
