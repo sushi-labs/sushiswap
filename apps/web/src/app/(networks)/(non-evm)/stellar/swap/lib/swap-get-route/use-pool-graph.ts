@@ -37,14 +37,7 @@ export function usePoolGraph() {
         // 1. Query all pools from the factory
         // 2. Cache results
         // 3. Only query active/liquid pools
-        const knownTokens = [
-          CONTRACT_ADDRESSES.TOKENS.XLM,
-          CONTRACT_ADDRESSES.TOKENS.HYPE,
-          CONTRACT_ADDRESSES.TOKENS.SUSHI,
-          CONTRACT_ADDRESSES.TOKENS.STELLA,
-          CONTRACT_ADDRESSES.TOKENS.HYPED,
-          CONTRACT_ADDRESSES.TOKENS.HYPEE,
-        ]
+        const knownTokens = Object.values(CONTRACT_ADDRESSES.TOKENS)
 
         const feeTiers = [500, 3000, 10000] // 0.05%, 0.3%, 1%
 
