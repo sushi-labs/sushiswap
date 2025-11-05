@@ -13,7 +13,7 @@ export const Search = () => {
   return (
     <Wrapper>
       <div className="flex flex-col gap-4 lg:hidden">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center flex-wrap gap-1">
           <div className="flex items-center gap-1">
             <Button variant="quaternary">Available</Button>
             <FavoriteDialog />

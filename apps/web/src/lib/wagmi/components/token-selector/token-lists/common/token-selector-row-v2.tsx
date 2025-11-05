@@ -200,7 +200,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <span className="text-sm text-muted-foreground hover:underline whitespace-nowrap">
+                        <span className="text-sm text-muted-foreground hover:underline">
                           {currency.name ?? currency.symbol}
                         </span>
                       </TooltipTrigger>
@@ -227,8 +227,8 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
 
               <div className={classNames('flex items-center gap-2 sm:gap-4')}>
                 {isHovered && showChainOptions && filteredBridgeInfo?.length ? (
-                  <div className="flex gap-1 !max-w-[220px] items-center">
-                    {filteredBridgeInfo?.slice(0, 5)?.map((info) => (
+                  <div className="flex gap-1 max-w-[220px] items-center">
+                    {filteredBridgeInfo?.slice(0, 3)?.map((info) => (
                       <NetworkButton
                         key={`${info.chainId}-${info.address}`}
                         chainId={info.chainId}
@@ -249,7 +249,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                         }}
                       />
                     ))}
-                    {filteredBridgeInfo?.slice(5, filteredBridgeInfo.length)
+                    {filteredBridgeInfo?.slice(3, filteredBridgeInfo.length)
                       ?.length ? (
                       <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
@@ -377,7 +377,7 @@ export function TokenSelectorRowLoadingV2() {
     <div className="block flex-1 py-2 h-[64px]">
       <div className="flex items-center w-full h-full px-3 rounded-lg">
         <div className="flex items-center justify-between flex-grow gap-2 rounded">
-          <div className="flex flex-row items-center flex-grow gap-4 w-[200px]">
+          <div className="flex flex-row items-center flex-grow gap-4 max-w-[200px]">
             <SkeletonCircle radius={14} />
             <SkeletonCircle radius={32} />
             <div className="flex flex-col items-start w-full">
