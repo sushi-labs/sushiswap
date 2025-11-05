@@ -1,3 +1,4 @@
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { useLocalStorage } from '@sushiswap/hooks'
 import { SparkleIcon } from '../../icons/SparkleIcon'
 import { Button } from '../button'
@@ -17,6 +18,13 @@ export const AdvancedTradingExperienceMessage = () => {
   }
   return (
     <>
+      <Button
+        size="sm"
+        className="!rounded-full !z-[55] !absolute right-0 top-0"
+        variant="secondary"
+        icon={Cog6ToothIcon}
+      />
+
       <div className="inset-0 dark:bg-slate-900/80 bg-gray-100/80 fixed z-50" />
       <div
         onKeyDown={(e) => {
@@ -25,7 +33,7 @@ export const AdvancedTradingExperienceMessage = () => {
         onClick={(e) => {
           e.stopPropagation()
         }}
-        className="!absolute -right-5 top-12 min-w-[320px] !z-[51]"
+        className="!absolute right-0 top-11 min-w-[320px] !z-[51]"
       >
         <Card
           className={

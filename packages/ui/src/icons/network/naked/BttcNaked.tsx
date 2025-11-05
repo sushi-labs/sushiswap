@@ -1,9 +1,9 @@
 import * as React from 'react'
 
 import classNames from 'classnames'
-import type { IconComponent } from '../../../types'
+import type { NakedNetworkIconComponent } from '../../../types'
 
-export const BttcNaked: IconComponent = (props) => (
+export const BttcNaked: NakedNetworkIconComponent = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
@@ -11,6 +11,7 @@ export const BttcNaked: IconComponent = (props) => (
     {...props}
     className={classNames(props.className, 'dark:text-white text-gray-700')}
   >
+    {props.circle}
     <path
       fill="currentColor"
       d="M126.699 51.114a63.713 63.713 0 00-9.637-22.908 64.336 64.336 0 00-7.805-9.463 64.066 64.066 0 00-20.34-13.709 63.765 63.765 0 00-12.03-3.733 64.448 64.448 0 00-25.773 0 63.767 63.767 0 00-12.03 3.734 64.07 64.07 0 00-10.878 5.904 64.358 64.358 0 00-9.463 7.804 64.358 64.358 0 00-7.804 9.463 64.07 64.07 0 00-5.904 10.878A63.767 63.767 0 001.3 51.114a64.448 64.448 0 000 25.773 63.765 63.765 0 003.734 12.03 64.066 64.066 0 0013.708 20.34 64.336 64.336 0 009.463 7.805 63.713 63.713 0 0022.908 9.637 64.425 64.425 0 0025.773 0 63.71 63.71 0 0022.908-9.637 64.69 64.69 0 009.462-7.805 64.322 64.322 0 007.805-9.462 63.71 63.71 0 009.637-22.908 64.425 64.425 0 000-25.773zM64 120C33.072 120 8 94.929 8 64 8 33.072 33.072 8 64 8c30.929 0 56 25.072 56 56 0 30.929-25.071 56-56 56z"

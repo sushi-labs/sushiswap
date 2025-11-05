@@ -19,7 +19,9 @@ import { FavoriteButton } from '../favorite-button'
 import { TokenNetworkIcon } from '../token-network-icon'
 import { useNetworkContext } from './network-provider'
 
-export const Favorite = () => {
+export const Favorite = ({
+  setIsOpen,
+}: { setIsOpen?: (isOpen: boolean) => void }) => {
   const { address } = useAccount()
   const { favorites, isLoading, isError } = useFavorites()
   const {
@@ -71,14 +73,14 @@ export const Favorite = () => {
                 24h%
               </th>
               <th className="table-cell font-medium text-left lg:hidden">
-                Price/24%
+                Price/24h%
               </th>
               <th className="font-medium text-right">Holdings</th>
             </tr>
           </thead>
           <tbody>
             {favorites?.map((token, idx) => (
-              <FavoriteItem token={token} key={idx} />
+              <FavoriteItem token={token} key={idx} setIsOpen={setIsOpen} />
             ))}
           </tbody>
         </table>
@@ -116,7 +118,11 @@ export const Favorite = () => {
 
 const FavoriteItem = ({
   token,
-}: { token: SearchToken & { isNative: boolean } }) => {
+  setIsOpen,
+}: {
+  token: SearchToken & { isNative: boolean }
+  setIsOpen?: (isOpen: boolean) => void
+}) => {
   const { handleTokenOutput } = useSwapTokenSelect()
 
   const selectToken = useCallback(
@@ -132,8 +138,9 @@ const FavoriteItem = ({
           }),
         ) as EvmCurrency,
       })
+      setIsOpen?.(false)
     },
-    [handleTokenOutput],
+    [handleTokenOutput, setIsOpen],
   )
 
   return (
