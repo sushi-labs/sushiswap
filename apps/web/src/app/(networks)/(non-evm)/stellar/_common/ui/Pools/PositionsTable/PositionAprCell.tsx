@@ -9,38 +9,52 @@ import type { IPositionRowData } from './PositionsTable'
 
 export const PositionAprCell = ({ data }: { data: IPositionRowData }) => {
   const { pairAddress, token0, token1, reserve0, reserve1 } = data
-  const { data: ownership, isLoading: isLoadingOwnership } = usePoolOwnership({
+  const {
+    data: ownership,
+    isPending: isPendingOwnership,
+    isLoading: isLoadingOwnership,
+  } = usePoolOwnership({
     pairAddress,
     token0,
     token1,
     reserve0,
     reserve1,
   })
-  const ownedLp = Number(ownership?.ownership) ?? 0
-  const ownedLpTokens = Number(ownership?.ownedSupply) ?? 0
-  const { data: dayVolumeUSD, isLoading: isLoadingDVol } = useDayVolumeUSD({
+  const proportionLpOwned = Number(ownership?.ownership ?? '0')
+  const userLiquidityValue = Number(ownership?.ownedSupply ?? '0')
+  const {
+    data: dayVolumeUSD,
+    isPending: isPendingDVol,
+    isLoading: isLoadingDVol,
+  } = useDayVolumeUSD({
     pairAddress,
   })
-  const { data: totalLPUsdValue, isLoading: isLoadingLPV } = useLPUsdValue({
-    token0,
-    token1,
-    reserve0,
-    reserve1,
-  })
-  const { data: feeRate, isLoading: isLoadingFeeRate } = useFeeRate({
+  const {
+    data: feeRate,
+    isPending: isPendingFeeRate,
+    isLoading: isLoadingFeeRate,
+  } = useFeeRate({
     pairAddress,
   })
 
   const apr = useMemo(() => {
-    const totalDailyFees = Number(feeRate ?? '0') * Number(dayVolumeUSD ?? 0)
+    const totalDailyFees =
+      (Number(feeRate ?? '0') / 1000000) * Number(dayVolumeUSD ?? 0)
     const annualizedFees = totalDailyFees * 365
-    const userAnnualEarnings = annualizedFees * ownedLp
-    const userLiquidityValue = ownedLpTokens * (totalLPUsdValue ?? 0)
-    const _apr = userAnnualEarnings / userLiquidityValue
-    return Number.isNaN(_apr) ? 0 : _apr
-  }, [dayVolumeUSD, totalLPUsdValue, ownedLp, ownedLpTokens, feeRate])
+    const userAnnualEarnings = annualizedFees * proportionLpOwned
+    const apr =
+      userLiquidityValue !== 0 ? userAnnualEarnings / userLiquidityValue : 0
+    return apr
+  }, [dayVolumeUSD, proportionLpOwned, userLiquidityValue, feeRate])
 
-  if (isLoadingLPV || isLoadingDVol || isLoadingOwnership || isLoadingFeeRate) {
+  if (
+    isLoadingDVol ||
+    isLoadingOwnership ||
+    isLoadingFeeRate ||
+    isPendingDVol ||
+    isPendingOwnership ||
+    isPendingFeeRate
+  ) {
     return <SkeletonText fontSize="lg" />
   }
 

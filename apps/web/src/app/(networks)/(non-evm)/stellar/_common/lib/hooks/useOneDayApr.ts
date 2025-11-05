@@ -3,8 +3,11 @@ import ms from 'ms'
 
 const getTradeAmountsForDay = async (_pairAddress: string) => {
   try {
-    // TODO(@wu-benjamin): implement for Stellar
-    throw new Error('Function not implemented yet for Stellar')
+    // TODO(@wu-benjamin): return real values
+    return Array.from(
+      { length: 10 },
+      () => Math.floor(Math.random() * 99 + 1) / 100,
+    )
   } catch (error) {
     console.log(error)
     return []

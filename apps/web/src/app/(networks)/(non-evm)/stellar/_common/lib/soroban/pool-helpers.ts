@@ -397,6 +397,7 @@ export async function addLiquidity({
       tick_lower: tickLower,
       tick_upper: tickUpper,
       amount: liquidityBigInt,
+      sender: sourceAccount,
     },
     {
       timeoutInSeconds: DEFAULT_TIMEOUT,
