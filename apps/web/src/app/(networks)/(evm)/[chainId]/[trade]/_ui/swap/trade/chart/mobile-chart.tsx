@@ -28,7 +28,7 @@ export const MobileChart = ({
       </DialogTrigger>
       <DialogContent
         variant="semi-opaque"
-        className="h-screen !p-4 !flex flex-col"
+        className="h-[100vh] max-h-[calc(100vh-56px)] !p-4 !flex flex-col"
         hideClose
       >
         <DialogHeader className="h-fit">

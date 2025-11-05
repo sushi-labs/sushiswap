@@ -48,7 +48,7 @@ export const SearchContent = ({ onClose }: { onClose: () => void }) => {
   }, [searchValue])
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!address) return
+    // if (!address) return
     const value = e.target.value
     setSearchValue(value)
   }
@@ -110,6 +110,10 @@ export const SearchContent = ({ onClose }: { onClose: () => void }) => {
           ) : isError ? (
             <div className="text-center text-sm text-red mt-8">
               An error occurred loading search results
+            </div>
+          ) : tokens.length === 0 && !address ? (
+            <div className="text-center font-medium text-sm mt-8">
+              Connect your wallet to search tokens
             </div>
           ) : tokens.length === 0 ? (
             <div className="text-center font-medium text-sm mt-8">
