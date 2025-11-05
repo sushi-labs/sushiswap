@@ -67,7 +67,7 @@ export default function TradePage() {
       <div
         className={classNames(
           'dark:bg-background lg:bg-background',
-          'mb-[56px]',
+          'mb-[56px] ',
           isKatana
             ? '!bg-transparent'
             : tradeView === 'advanced'

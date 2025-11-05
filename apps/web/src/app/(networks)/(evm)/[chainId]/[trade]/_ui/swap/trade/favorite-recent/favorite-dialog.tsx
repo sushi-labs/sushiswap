@@ -62,7 +62,7 @@ export const FavoriteDialog = () => {
           </DialogClose>
         </div>
         <div className="mt-4 max-h-[calc(100vh-200px)] overflow-y-auto hide-scrollbar">
-          <Favorite />
+          <Favorite setIsOpen={setIsOpen} />
         </div>
       </DialogContent>
     </Dialog>
