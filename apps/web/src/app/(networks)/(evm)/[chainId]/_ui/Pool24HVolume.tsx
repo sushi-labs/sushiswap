@@ -1,9 +1,4 @@
-import type {
-  RawV2Pool,
-  RawV3Pool,
-  V2Pool,
-  V3Pool,
-} from '@sushiswap/graph-client/data-api'
+import type { RawV2Pool, RawV3Pool } from '@sushiswap/graph-client/data-api'
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import {
   CardContent,
@@ -23,7 +18,6 @@ export const Pool24HVolume = ({
       ? pool['volumeUSDChange1d']
       : pool['volumeUSD1dChange']
 
-  console.log('volumeChange', volumeChange)
   return (
     <Wrapper
       enableBorder
@@ -48,7 +42,7 @@ export const Pool24HVolume = ({
                     volumeChange > 0 ? 'text-green' : 'text-red',
                   )}
                 >
-                  {formatPercent(volumeChange / 100)}
+                  {formatPercent(volumeChange)}
                 </span>
               </div>
             ) : (

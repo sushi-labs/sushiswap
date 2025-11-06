@@ -7,6 +7,7 @@ import {
   CardTitle,
   Currency,
 } from '@sushiswap/ui'
+import { formatPercent } from 'sushi'
 import { EvmToken } from 'sushi/evm'
 import { Wrapper } from '../[trade]/_ui/swap/trade/wrapper'
 
@@ -14,11 +15,6 @@ export const PoolAPR = ({
   version,
   pool,
 }: { version: 'v2' | 'v3'; pool: RawV2Pool | RawV3Pool }) => {
-  const totalApr = pool?.totalApr1d?.toFixed(2)
-  const feeApr = pool?.feeApr1d?.toFixed(2)
-  const incentivesApr = pool?.incentiveApr?.toFixed(2)
-  const incentives = pool?.incentives
-
   return (
     <Wrapper enableBorder className="!p-4">
       <CardHeader className="!p-0 !pb-5 flex justify-between items-center lg:items-start !flex-row lg:!flex-col gap-2">
@@ -26,7 +22,7 @@ export const PoolAPR = ({
           Total APR
         </CardTitle>
         <CardDescription className="!mt-0 font-bold lg:font-medium text-sm lg:!text-2xl flex items-center">
-          {totalApr}%
+          {formatPercent(pool?.totalApr1d)}
         </CardDescription>
       </CardHeader>
       <CardContent className="!p-0">
@@ -34,7 +30,7 @@ export const PoolAPR = ({
           <div className="flex flex-col gap-1">
             <div className="flex justify-between items-center text-sm font-medium text-slate-900 dark:text-slate-100">
               <span>Fee APR {version === 'v3' ? '(Full Range)' : ''}</span>
-              <span>{feeApr}%</span>
+              <span>{formatPercent(pool?.feeApr1d)}</span>
             </div>
             <span className="hidden text-sm md:block text-slate-450 dark:text-slate-500">
               Liquidity Pool fees from swap transactions
@@ -44,7 +40,7 @@ export const PoolAPR = ({
             <div className="flex justify-between items-center text-sm font-medium text-slate-900 dark:text-slate-100">
               <span className="flex gap-2 items-center">
                 Rewards APR{' '}
-                {incentives?.map((reward) => (
+                {pool?.incentives?.map((reward) => (
                   <Currency.Icon
                     key={reward.id}
                     currency={
@@ -61,7 +57,7 @@ export const PoolAPR = ({
                   />
                 ))}
               </span>
-              <span>{incentivesApr}%</span>
+              <span>{formatPercent(pool?.incentiveApr)}</span>
             </div>
             <span className="hidden text-sm lg:block text-slate-450 dark:text-slate-500">
               Boosted rewards{' '}

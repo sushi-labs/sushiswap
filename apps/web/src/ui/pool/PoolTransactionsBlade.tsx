@@ -282,6 +282,7 @@ const PoolTransactionsBlade: FC<PoolTransactionsBladeProps> = ({
                 <Switch
                   checked={filterByAddress}
                   onCheckedChange={setFilterByAddress}
+                  disabled={!address}
                 />
               </span>
             </div>

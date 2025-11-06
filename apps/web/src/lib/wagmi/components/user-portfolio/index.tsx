@@ -43,9 +43,9 @@ const ResponsivePortfolioWrapper: FC<{
     >
       <SheetTrigger asChild>{trigger}</SheetTrigger>
       <SheetContent
-        overlayClassName="!h-[calc(100%-56px)] dark:bg-slate-900/50 bg-gray-100/50 !inset-y-[56px] backdrop-blur-none"
+        overlayClassName="!h-[calc(100%-57px)] dark:bg-slate-900/50 bg-gray-100/50 !inset-y-[57px] backdrop-blur-none"
         hideClose
-        className="!p-0 !shadow-none border-t-0 !rounded-none dark:!bg-slate-900 !right-0 !inset-y-[56px] !h-[calc(100%-56px)]"
+        className="!p-0 !shadow-none border-t-0 !rounded-none dark:!bg-slate-900 !right-0 !inset-y-[57px] !h-[calc(100%-57px)]"
       >
         {content}
       </SheetContent>
