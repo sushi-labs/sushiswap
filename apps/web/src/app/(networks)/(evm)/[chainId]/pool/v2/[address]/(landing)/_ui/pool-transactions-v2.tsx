@@ -320,6 +320,7 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
                 <Switch
                   checked={filterByAddress}
                   onCheckedChange={setFilterByAddress}
+                  disabled={!address}
                 />
               </span>
             </div>
