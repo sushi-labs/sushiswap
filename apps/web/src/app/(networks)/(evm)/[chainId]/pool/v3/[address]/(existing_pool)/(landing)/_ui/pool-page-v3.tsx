@@ -148,7 +148,7 @@ const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
             </CardHeader>
 
             <CardContent className="!p-0">
-              <CardGroup className="lg:!gap-6">
+              <CardGroup className="lg:!gap-4">
                 <CardCurrencyAmountItem
                   isLoading={isReservesLoading}
                   amount={reserves?.[0]}
