@@ -68,7 +68,7 @@ export default async function ExploreLayout(props: {
   return (
     <>
       <Header chainId={chainId} networks={POOL_SUPPORTED_NETWORKS} />
-      <main className="flex flex-col flex-1 md:gap-6 h-full animate-slide">
+      <main className="flex flex-col flex-1 md:gap-6 h-full animate-slide mb-7">
         <Container className="px-4 pt-4 md:pb-4 pb-0 max-w-[1696px]">
           <ExploreHeader chainId={chainId} />
           <div className="flex flex-col gap-3 justify-between lg:flex-row">

@@ -43,7 +43,7 @@ export default async function Layout(props: {
         />
       </Container>
       <section className="flex flex-col flex-1 mt-4">
-        <div className="h-full md:py-7">{children}</div>
+        <div className="h-full py-7">{children}</div>
       </section>
     </>
   )
