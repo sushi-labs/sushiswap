@@ -1,7 +1,6 @@
 'use client'
 import { PlusIcon } from '@heroicons/react-v1/solid'
-// import { UnknownTokenAlert } from './UnknownTokenAlert'
-import type { RawV2Pool, V2Pool } from '@sushiswap/graph-client/data-api'
+import type { RawV2Pool } from '@sushiswap/graph-client/data-api'
 import { Button, Container, useBreakpoint } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import {
@@ -57,7 +56,6 @@ export const PoolPageV2: FC<PoolPageV2> = ({ pool }) => {
       maxWidth="screen-3xl"
       className="flex flex-col gap-4 px-4 lg:gap-6"
     >
-      {/* <UnknownTokenAlert pool={pool} /> */}
       <div className="flex flex-col-reverse gap-4 w-full lg:gap-10 lg:flex-row">
         <div className="flex-[2_2_0%] min-[1230px]:flex-[3_3_0%] min-w-0 flex flex-col gap-4 lg:gap-6">
           <APRChart pool={pool} />
