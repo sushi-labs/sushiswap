@@ -204,7 +204,6 @@ export const AddLiquidityV2 = ({
       }
     >
       {({ pool: [poolState, pool] }) => {
-        console.log('poolState', poolState, pool)
         const doesNotExist = poolState === SushiSwapV2PoolState.NOT_EXISTS
         if (doesNotExist) {
           setIsZapModeEnabled(false)

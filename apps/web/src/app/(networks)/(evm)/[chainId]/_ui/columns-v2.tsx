@@ -39,11 +39,11 @@ export const CHAIN_COLUMN: ColumnDef<MultiChainPool, unknown> = {
     </span>
   ),
   cell: (props) => (
-    <div className="px-2 2xl:min-w-[70px]">
+    <div className="px-2">
       <NetworkIcon
         type="square"
         chainId={props.row.original.chainId as EvmChainId}
-        className="md:w-5 h-5 min-w-5 min-h-5 rounded-[4px] border border-slate-200 dark:border-slate-750"
+        className="w-5 h-5 min-w-5 min-h-5 rounded-[4px] border border-slate-200 dark:border-slate-750"
       />
     </div>
   ),
@@ -546,7 +546,7 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<MultiChainPool, unknown> = {
         dialogContentClassName="max-w-none"
         side="right"
         trigger={
-          <div className="flex flex-col cursor-pointer pl-7 w-[100px]">
+          <div className="flex flex-col cursor-pointer pl-7 min-w-[100px]">
             <div className="flex gap-1 items-center">
               <span className="underline decoration-dotted underline-offset-2">
                 {Number.isNaN(props.row.original.totalApr1w / 100)
