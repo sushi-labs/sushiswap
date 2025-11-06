@@ -747,7 +747,7 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
           {outOfRange ? (
             <Message size="sm" variant="info">
               <div className="flex items-center gap-1">
-                <InformationCircleIcon className="w-4 min-w-4 h-4 min-h-4" />{' '}
+                <InformationCircleIcon className="w-4 h-4 shrink-0" />
                 Your position will not earn fees or be used in trades until the
                 market price moves into your range.
               </div>
@@ -756,7 +756,7 @@ export const SelectPriceWidget: FC<SelectPriceWidget> = ({
           {invalidRange ? (
             <Message size="sm" variant="info">
               <div className="flex items-center gap-1">
-                <InformationCircleIcon className="w-4 min-w-4 h-4 min-h-4" />{' '}
+                <InformationCircleIcon className="w-4 h-4 shrink-0" />
                 Invalid range selected. The minimum price must be lower than the
                 maximum price.
               </div>

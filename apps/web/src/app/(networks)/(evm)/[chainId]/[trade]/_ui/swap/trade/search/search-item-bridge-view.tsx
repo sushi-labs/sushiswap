@@ -80,7 +80,7 @@ export const SearchItemBridgeView = ({
                 width={16}
                 height={16}
               />
-              <span className="text-xs">
+              <span className="text-xs whitespace-nowrap">
                 {getChainById(token.chainId as EvmChainId)?.name}
               </span>
             </div>

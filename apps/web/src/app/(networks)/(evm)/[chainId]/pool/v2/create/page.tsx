@@ -1,4 +1,5 @@
 'use client'
+
 import { ArrowLeftIcon } from '@heroicons/react-v1/solid'
 import { useLocalStorage } from '@sushiswap/hooks'
 import {
@@ -180,7 +181,7 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
     <div className={classNames('flex flex-col gap-4 pt-6')}>
       <Button
         variant="link"
-        className="flex w-fit items-center !font-medium gap-1 hover:!bg-transparent !px-0"
+        className="flex w-fit items-center !font-medium gap-1 hover:!bg-transparent !px-0 dark:!text-skyblue"
         onClick={back}
       >
         <ArrowLeftIcon className="w-3 h-3" />
