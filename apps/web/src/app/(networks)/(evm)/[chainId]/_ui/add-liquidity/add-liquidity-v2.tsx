@@ -50,6 +50,7 @@ import {
   type EvmChainId,
   type EvmCurrency,
   SUSHISWAP_V2_ROUTER_ADDRESS,
+  type SushiSwapV2ChainId,
   type SushiSwapV2Pool,
   defaultCurrency,
   getEvmChainById,
@@ -95,11 +96,11 @@ export const AddLiquidityV2 = ({
   )
   const [token1, setToken1] = useState<EvmCurrency | undefined>(undefined)
   const [, setToken0V2] = useLocalStorage<EvmCurrency | null>(
-    `add-liquidity-v2-token0-${chainId}`,
+    `add-liquidity-v2-token0`,
     initToken0 ?? null,
   )
   const [, setToken1V2] = useLocalStorage<EvmCurrency | null>(
-    `add-liquidity-v2-token1-${chainId}`,
+    `add-liquidity-v2-token1`,
     initToken0 ?? null,
   )
 
@@ -187,20 +188,24 @@ export const AddLiquidityV2 = ({
     ).toFixed(2)
   }, [input0, input1, token0, token1, price0, price1])
 
+  // @dev token0 and token1 chainId can be diff from dynamic chainId b/c user can change chains in selector
+  const _chainId =
+    token0 && token0?.chainId === token1?.chainId ? token0.chainId : chainId
   return (
     <PoolFinder
       components={
         <PoolFinder.Components>
           <PoolFinder.SushiSwapV2Pool
-            chainId={chainId}
+            chainId={_chainId as SushiSwapV2ChainId}
             token0={token0}
             token1={token1}
-            enabled={isSushiSwapV2ChainId(chainId)}
+            enabled={isSushiSwapV2ChainId(_chainId)}
           />
         </PoolFinder.Components>
       }
     >
       {({ pool: [poolState, pool] }) => {
+        console.log('poolState', poolState, pool)
         const doesNotExist = poolState === SushiSwapV2PoolState.NOT_EXISTS
         if (doesNotExist) {
           setIsZapModeEnabled(false)
@@ -232,12 +237,12 @@ export const AddLiquidityV2 = ({
                   Select A Pool
                 </p>
                 <SelectTokensWidgetV2
-                  chainId={chainId}
+                  chainId={_chainId}
                   token0={token0}
                   token1={token1}
                   setToken0={_setToken0}
                   setToken1={_setToken1}
-                  includeNative={isWNativeSupported(chainId)}
+                  includeNative={isWNativeSupported(_chainId)}
                 />
               </>
             )}
@@ -251,7 +256,7 @@ export const AddLiquidityV2 = ({
             {doesNotExist ? (
               <LinkInternal
                 className="w-full"
-                href={`/${getEvmChainById(chainId).key}/pool/v2/create`}
+                href={`/${getEvmChainById(_chainId).key}/pool/v2/create`}
               >
                 <Button size="xl" className="mt-4 w-full">
                   Next
@@ -259,20 +264,6 @@ export const AddLiquidityV2 = ({
               </LinkInternal>
             ) : (
               <>
-                {/* <Collapsible open={doesNotExist} className="w-full">
-									<div className="flex flex-col gap-4">
-										<p className="text-base font-medium text-slate-900 dark:text-pink-100">Set Price</p>
-										{token0 && token1 && (
-											<InitialPrice
-												token0={token0}
-												token1={token1}
-												input0={input0}
-												input1={input1}
-												setMarketPrice={setMarketPrice}
-											/>
-										)}
-									</div>
-								</Collapsible> */}
                 <div>
                   {hideTokenSelectors ? null : (
                     <p className="pb-2 text-base font-medium text-slate-900 dark:text-pink-100">
@@ -280,7 +271,7 @@ export const AddLiquidityV2 = ({
                     </p>
                   )}
                   <div className="flex flex-col gap-4">
-                    {isZapSupportedChainId(chainId) &&
+                    {isZapSupportedChainId(_chainId) &&
                     poolState === SushiSwapV2PoolState.EXISTS ? (
                       <ToggleZapCard
                         checked={isZapModeEnabled}
@@ -289,14 +280,14 @@ export const AddLiquidityV2 = ({
                     ) : null}
                     {isZapModeEnabled ? (
                       <ZapWidget
-                        chainId={chainId}
+                        chainId={_chainId}
                         pool={pool}
                         poolState={poolState}
                         title={title}
                       />
                     ) : (
                       <AddLiquidityWidget
-                        chainId={token0?.chainId ?? token1?.chainId ?? chainId}
+                        chainId={_chainId}
                         pool={pool}
                         poolState={poolState}
                         title={title}
@@ -655,8 +646,7 @@ export const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
             initialPrice?.token1Per0,
           )?.mulHuman(value ?? '0')
 
-          setTypedAmounts((prev) => ({
-            ...prev,
+          setTypedAmounts(() => ({
             input0: value,
             input1: val ? val.toString() : '',
           }))
@@ -691,8 +681,7 @@ export const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
             token0,
             initialPrice?.token0Per1,
           )?.mulHuman(value ?? '0')
-          setTypedAmounts((prev) => ({
-            ...prev,
+          setTypedAmounts(() => ({
             input0: val ? val.toString() : '',
             input1: value,
           }))
@@ -719,14 +708,7 @@ export const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
   )
 
   useEffect(() => {
-    if (
-      pool?.reserve0.gt(ZERO) &&
-      pool.reserve1.gt(ZERO) &&
-      token0 &&
-      token1 &&
-      input0 !== '' &&
-      input1 !== ''
-    ) {
+    if (pool?.reserve0.gt(ZERO) && pool.reserve1.gt(ZERO) && token0 && token1) {
       if (independendField === 0) {
         const parsedAmount = Amount.tryFromHuman(token0, input0)
         setTypedAmounts({
