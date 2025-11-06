@@ -71,7 +71,6 @@ import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-pric
 import { AddLiquidityV2Button } from './add-liquidity-v2-button'
 import { DoesNotExistMessage } from './does-not-exist-message'
 import { EstimatedValue } from './estimated-value'
-import { InitialPrice } from './initial-price'
 import { SelectTokensWidgetV2 } from './select-tokens-widget-v2'
 
 export const AddLiquidityV2 = ({
