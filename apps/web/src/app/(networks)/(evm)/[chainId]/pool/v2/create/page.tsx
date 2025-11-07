@@ -52,11 +52,11 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
     defaultQuoteCurrency[chainId],
   )
   const [token0V2] = useLocalStorage<EvmCurrency | null>(
-    `add-liquidity-v2-token0-${chainId}`,
+    `add-liquidity-v2-token0`,
     null,
   )
   const [token1V2] = useLocalStorage<EvmCurrency | null>(
-    `add-liquidity-v2-token1-${chainId}`,
+    `add-liquidity-v2-token1`,
     null,
   )
   const [{ input0, input1 }, setTypedAmounts] = useState<{
@@ -164,8 +164,7 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
         const amount0 = Amount.tryFromHuman(token0, token0Per1)?.toString()
         const amount1 = Amount.tryFromHuman(token1, '1')?.toString()
         if (amount0 && amount1) {
-          setTypedAmounts((prev) => ({
-            ...prev,
+          setTypedAmounts(() => ({
             input0: amount0,
             input1: amount1,
           }))

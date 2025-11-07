@@ -10,7 +10,6 @@ import {
   CardContent,
   CardGroup,
   CardHeader,
-  CardItem,
   CardTitle,
   Currency,
   classNames,
@@ -83,25 +82,21 @@ export const PoolPrice = ({
         <CardTitle>Price</CardTitle>
       </CardHeader>
       <CardContent className="!p-0">
-        <CardGroup className="lg:!gap-6">
+        <CardGroup className="lg:!gap-4 w-full text-sm">
           {reserveToken0 ? (
-            <CardItem
-              className="!text-sm"
-              title={
-                <div className="flex gap-2 items-center font-medium text-muted-foreground">
-                  <Currency.Icon
-                    currency={
-                      new EvmToken({
-                        ...reserveToken0,
-                      })
-                    }
-                    width={18}
-                    height={18}
-                  />{' '}
-                  {reserveToken0.symbol}
-                </div>
-              }
-            >
+            <div className="flex items-center flex-wrap gap-1 justify-between w-full">
+              <div className="flex gap-2 items-center font-medium text-muted-foreground">
+                <Currency.Icon
+                  currency={
+                    new EvmToken({
+                      ...reserveToken0,
+                    })
+                  }
+                  width={18}
+                  height={18}
+                />{' '}
+                {reserveToken0.symbol}
+              </div>
               <span className="flex gap-1 font-medium">
                 {showRate
                   ? `1 ${reserveToken0.symbol} = ${reserve1To2} ${reserveToken1.symbol}`
@@ -116,25 +111,22 @@ export const PoolPrice = ({
                   ${price0?.toFixed(2) ?? '0.00'}
                 </span>
               </span>
-            </CardItem>
+            </div>
           ) : null}
           {reserveToken1 ? (
-            <CardItem
-              title={
-                <div className="flex gap-2 items-center font-medium text-muted-foreground">
-                  <Currency.Icon
-                    currency={
-                      new EvmToken({
-                        ...reserveToken1,
-                      })
-                    }
-                    width={18}
-                    height={18}
-                  />{' '}
-                  {reserveToken1.symbol}
-                </div>
-              }
-            >
+            <div className="flex items-center flex-wrap gap-1 justify-between w-full">
+              <div className="flex gap-2 items-center font-medium text-muted-foreground">
+                <Currency.Icon
+                  currency={
+                    new EvmToken({
+                      ...reserveToken1,
+                    })
+                  }
+                  width={18}
+                  height={18}
+                />{' '}
+                {reserveToken1.symbol}
+              </div>
               <span className="flex gap-1 font-medium">
                 {showRate
                   ? `1 ${reserveToken1.symbol} = ${reserve2To1} ${reserveToken0.symbol}`
@@ -149,7 +141,7 @@ export const PoolPrice = ({
                   ${price1?.toFixed(2) ?? '0.00'}
                 </span>
               </span>
-            </CardItem>
+            </div>
           ) : null}
         </CardGroup>
       </CardContent>

@@ -27,8 +27,7 @@ import { useTheme } from 'next-themes'
 import { useMemo, useState } from 'react'
 import type { FC, MouseEventHandler, ReactNode } from 'react'
 import { usePoolBuckets } from 'src/lib/hooks/api/use-pool-buckets'
-import { ChainId, formatPercent } from 'sushi'
-import { SUSHI } from 'sushi/evm'
+import { formatPercent } from 'sushi'
 import { EvmToken } from 'sushi/evm'
 import tailwindConfig from 'tailwind.config'
 import resolveConfig from 'tailwindcss/resolveConfig'
@@ -262,7 +261,7 @@ export const APRChart: FC<APRChartProps> = ({ pool }) => {
                 </span>
                 <div className="hidden gap-1 items-center lg:flex">
                   <span className="text-base lg:text-[1.75rem] font-medium underline decoration-dotted underline-offset-[5px] text-slate-900 dark:text-slate-100">
-                    {formatPercent(pool.totalApr1d / 100)}
+                    {formatPercent(pool.totalApr1d)}
                   </span>
                   <Currency.IconList
                     iconWidth={26}
@@ -325,16 +324,36 @@ export const APRChart: FC<APRChartProps> = ({ pool }) => {
       </CardHeader>
       <CardContent className="!pb-0">
         <div className="flex gap-1 items-center lg:hidden">
-          <span className="text-base lg:text-[1.75rem] font-medium underline decoration-dotted underline-offset-4">
-            12.3%
-          </span>
-          <Currency.IconList
-            iconWidth={20}
-            iconHeight={20}
-            className="!border-none"
-          >
-            <Currency.Icon currency={SUSHI[ChainId.ETHEREUM]} />
-          </Currency.IconList>
+          <APRHoverCard pool={pool}>
+            <div className="flex items-center gap-1">
+              <span className="text-base lg:text-[1.75rem] font-medium underline decoration-dotted underline-offset-4">
+                {formatPercent(pool.totalApr1d)}
+              </span>
+
+              <Currency.IconList
+                iconWidth={20}
+                iconHeight={20}
+                className="!border-none"
+              >
+                {pool?.incentives?.map((i) => {
+                  return (
+                    <Currency.Icon
+                      key={i.rewardToken.address}
+                      currency={
+                        new EvmToken({
+                          chainId: i.rewardToken.chainId,
+                          address: i.rewardToken.address,
+                          decimals: i.rewardToken.decimals,
+                          symbol: i.rewardToken.symbol,
+                          name: i.rewardToken.name,
+                        })
+                      }
+                    />
+                  )
+                })}
+              </Currency.IconList>
+            </div>
+          </APRHoverCard>
         </div>
         {isLoading ? (
           <SkeletonBox
@@ -372,7 +391,10 @@ export const ChartPeriodButton: FC<ChartPeriodButtonProps> = ({
       size="sm"
       variant={active ? 'tertiary' : 'ghost'}
       onClick={onClick}
-      className={classNames('h-8 w-[50px]', !active && '!font-normal')}
+      className={classNames(
+        'h-8 w-[50px]',
+        !active && '!font-normal !text-[#0C0C23] dark:!text-white',
+      )}
     >
       {children}
     </Button>

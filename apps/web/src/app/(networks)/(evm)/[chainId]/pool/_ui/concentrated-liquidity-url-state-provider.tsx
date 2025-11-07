@@ -8,6 +8,7 @@ import React, {
   useContext,
   useMemo,
 } from 'react'
+import { replaceNetworkSlug } from 'src/lib/network'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import {
   EvmChainId,
@@ -180,7 +181,11 @@ export const ConcentratedLiquidityURLStateProvider: FC<
           toCurrency === _fromCurrency || same ? fromCurrency : toCurrency,
         )
       }
-      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
+
+      void push(
+        `${replaceNetworkSlug(currency?.chainId, pathname)}?${_searchParams.toString()}`,
+        { scroll: false },
+      )
     }
     const setToken1 = (currency: EvmCurrency) => {
       const same = currency.wrap().address === token0?.wrap().address
@@ -196,7 +201,10 @@ export const ConcentratedLiquidityURLStateProvider: FC<
           fromCurrency === _toCurrency || same ? toCurrency : fromCurrency,
         )
       }
-      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
+      void push(
+        `${replaceNetworkSlug(currency?.chainId, pathname)}?${_searchParams.toString()}`,
+        { scroll: false },
+      )
     }
     const setFeeAmount = (feeAmount: SushiSwapV3FeeAmount) => {
       const _searchParams = new URLSearchParams(

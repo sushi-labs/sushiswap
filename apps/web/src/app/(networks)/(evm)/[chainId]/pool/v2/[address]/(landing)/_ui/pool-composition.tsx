@@ -8,13 +8,11 @@ import {
   CardGroup,
   CardHeader,
   CardTitle,
-  Switch,
   classNames,
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import { Amount, formatUSD } from 'sushi'
-import { EvmToken } from 'sushi/evm'
+import { Amount, formatPercent, formatUSD } from 'sushi'
 import { Wrapper } from '~evm/[chainId]/[trade]/_ui/swap/trade/wrapper'
 
 interface PoolCompositionProps {
@@ -62,13 +60,13 @@ export const PoolComposition: FC<PoolCompositionProps> = ({
                 : 'text-red',
             )}
           >
-            ({pool?.liquidityUSD1dChange.toFixed(2)}%)
+            ({formatPercent(pool?.liquidityUSD1dChange)})
           </span>
         </CardDescription>
       </CardHeader>
 
       <CardContent className="!p-0">
-        <CardGroup className="lg:!gap-6">
+        <CardGroup className="lg:!gap-4">
           <CardCurrencyAmountItem
             isLoading={isLoading}
             amount={amounts[0]}

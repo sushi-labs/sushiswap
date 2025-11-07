@@ -11,7 +11,7 @@ import {
   IconButton,
   classNames,
 } from '@sushiswap/ui'
-import { type ReactNode, useMemo, useState } from 'react'
+import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import {
   type EvmChainId,
   type EvmCurrency,
@@ -44,6 +44,10 @@ export const AddLiquidityDialog = ({
   chainId: EvmChainId
 }) => {
   const [type, setType] = useState<SushiSwapProtocol>(poolType)
+
+  useEffect(() => {
+    setType(poolType)
+  }, [poolType])
 
   const content = useMemo(() => {
     switch (type) {
@@ -99,7 +103,7 @@ export const AddLiquidityDialog = ({
         hideClose
         aria-describedby={undefined}
         className={classNames(
-          '!px-3 border border-[#00000014] rounded-t-none md:rounded-t-2xl !bg-slate-50 dark:border-[#FFFFFF14] dark:!bg-slate-800 w-full !max-w-full md:!max-w-[640px] max-h-[100dvh] overflow-y-auto hide-scrollbar',
+          '!px-3 border border-[#00000014] rounded-t-none md:rounded-t-2xl !bg-slate-50 dark:border-[#FFFFFF14] dark:!bg-slate-800 w-full !max-w-full md:!max-w-[640px] max-h-[calc(100%-56px)] overflow-y-auto hide-scrollbar',
           type === SushiSwapProtocol.BLADE && 'md:!max-w-[480px]',
         )}
       >
