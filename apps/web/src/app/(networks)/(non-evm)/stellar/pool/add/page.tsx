@@ -1,7 +1,8 @@
 'use client'
 
+import { createToast } from '@sushiswap/notifications'
 import { Button, FormSection, SelectIcon, TextField } from '@sushiswap/ui'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { usePoolInfo, useTokenBalance } from '~stellar/_common/lib/hooks'
@@ -9,10 +10,18 @@ import { useCreatePool } from '~stellar/_common/lib/hooks/factory/use-create-poo
 import { useCalculatePairedAmount } from '~stellar/_common/lib/hooks/pool/use-calculate-paired-amount'
 import { useMaxPairedAmount } from '~stellar/_common/lib/hooks/pool/use-max-paired-amount'
 import { usePoolBalances } from '~stellar/_common/lib/hooks/pool/use-pool-balances'
+import {
+  invalidatePoolInitializedQuery,
+  usePoolInitialized,
+} from '~stellar/_common/lib/hooks/pool/use-pool-initialized'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/swap/use-add-liquidity'
-import { getPool } from '~stellar/_common/lib/soroban/dex-factory-helpers'
+import {
+  getPool,
+  initializePoolIfNeeded,
+} from '~stellar/_common/lib/soroban/dex-factory-helpers'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
+import { getStellarTxnLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
 import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
 import TokenSelector from '~stellar/_common/ui/token-selector/token-selector'
 import { useStellarWallet } from '~stellar/providers'
@@ -45,6 +54,7 @@ export default function AddPoolPage() {
   const router = useRouter()
   const createPoolMutation = useCreatePool()
   const addLiquidityMutation = useAddLiquidity()
+  const queryClient = useQueryClient()
 
   const [token0, setToken0] = useState<Token | undefined>(undefined)
   const [token1, setToken1] = useState<Token | undefined>(undefined)
@@ -85,6 +95,9 @@ export default function AddPoolPage() {
     staleTime: 30000,
   })
 
+  // Check if existing pool is initialized
+  const { data: poolInitialized } = usePoolInitialized(existingPoolAddress)
+
   const { data: poolInfo } = usePoolInfo(existingPoolAddress ?? null)
   const reversedPoolTokenOrder = poolInfo?.token0.contract !== token0?.contract
 
@@ -111,9 +124,15 @@ export default function AddPoolPage() {
     poolInfo?.token1.decimals,
   )
 
-  // Use auto-calculated amount for existing pools, manual input for new pools
+  // Use auto-calculated amount for existing pools, manual input for new pools or uninitialized pools
   const token1Amount = useMemo(() => {
-    if (existingPoolAddress) {
+    // If pool exists but is not initialized, use manual input for price ratio
+    if (existingPoolAddress && poolInitialized === false) {
+      return manualToken1Amount
+    }
+
+    // If pool exists and is initialized, use auto-calculated amount
+    if (existingPoolAddress && poolInitialized === true) {
       if (!pairedAmountData) {
         return ''
       }
@@ -123,10 +142,13 @@ export default function AddPoolPage() {
         : Number.parseFloat(pairedAmountData.token1Amount)
       return amount.toFixed(4)
     }
+
+    // For new pools (no existing pool), use manual input
     return manualToken1Amount
   }, [
     token0Amount,
     existingPoolAddress,
+    poolInitialized,
     pairedAmountData,
     manualToken1Amount,
     reversedPoolTokenOrder,
@@ -204,8 +226,6 @@ export default function AddPoolPage() {
         const result = await createPoolMutation.mutateAsync({
           tokenA: token0.contract,
           tokenB: token1.contract,
-          tokenAmountA: token0Amount,
-          tokenAmountB: token1Amount,
           fee: selectedFee,
         })
         poolAddress = result.poolAddress
@@ -222,6 +242,34 @@ export default function AddPoolPage() {
           // If it's not a "pool exists" error, rethrow
           throw createError
         }
+      }
+
+      const initializeTxHash = await initializePoolIfNeeded({
+        poolAddress,
+        sourceAccount: connectedAddress,
+        signTransaction,
+        tokenAmountA: reversedPoolTokenOrder ? token1Amount : token0Amount,
+        tokenAmountB: reversedPoolTokenOrder ? token0Amount : token1Amount,
+      })
+
+      if (initializeTxHash) {
+        createToast({
+          account: connectedAddress || undefined,
+          type: 'swap',
+          chainId: 1,
+          txHash: initializeTxHash,
+          href: getStellarTxnLink(initializeTxHash),
+          promise: Promise.resolve({ hash: initializeTxHash }),
+          summary: {
+            pending: 'Initializing pool...',
+            completed: 'Pool initialized successfully',
+            failed: 'Pool initialization failed',
+          },
+          groupTimestamp: Date.now(),
+          timestamp: Date.now(),
+        })
+
+        invalidatePoolInitializedQuery(queryClient, poolAddress)
       }
 
       // Add liquidity (required)
@@ -248,10 +296,12 @@ export default function AddPoolPage() {
     token0Amount && token0Amount !== '0' && Number.parseFloat(token0Amount) > 0
 
   // For new pools (no existing pool), we need manual token1 input
-  // For existing pools, token1 is auto-calculated
-  const hasValidAmounts = existingPoolAddress
-    ? hasToken0Amount // Pool exists: only need token0, token1 is auto-calculated
-    : hasToken0Amount && token1Amount && Number.parseFloat(token1Amount) > 0 // New pool: need both amounts
+  // For existing initialized pools, token1 is auto-calculated
+  // For existing uninitialized pools, we need both amounts to set price
+  const hasValidAmounts =
+    existingPoolAddress && poolInitialized === true
+      ? hasToken0Amount // Pool exists and initialized: only need token0, token1 is auto-calculated
+      : hasToken0Amount && token1Amount && Number.parseFloat(token1Amount) > 0 // New pool or uninitialized pool: need both amounts
 
   // Prevent creation when price is above range (can't provide token0)
   const isAboveRange =
@@ -348,9 +398,11 @@ export default function AddPoolPage() {
       <FormSection
         title="Initial Liquidity"
         description={
-          existingPoolAddress
+          existingPoolAddress && poolInitialized === true
             ? `Enter ${token0?.code || 'token0'} amount - ${token1?.code || 'token1'} amount will be calculated automatically.`
-            : 'Add liquidity to your pool. Both amounts are required.'
+            : existingPoolAddress && poolInitialized === false
+              ? 'This pool exists but is not initialized. Enter both token amounts to set the initial price ratio.'
+              : 'Add liquidity to your pool. Both amounts are required.'
         }
       >
         <section className="flex flex-col gap-4">
@@ -423,12 +475,20 @@ export default function AddPoolPage() {
                   )}
               </div>
               <TextField
-                type={existingPoolAddress ? 'text' : 'number'}
+                type={
+                  existingPoolAddress && poolInitialized === true
+                    ? 'text'
+                    : 'number'
+                }
                 label={token1?.code || 'Token 2'}
-                placeholder={existingPoolAddress ? 'Auto-calculated' : '0.0'}
+                placeholder={
+                  existingPoolAddress && poolInitialized === true
+                    ? 'Auto-calculated'
+                    : '0.0'
+                }
                 value={token1Amount}
                 onValueChange={
-                  existingPoolAddress
+                  existingPoolAddress && poolInitialized === true
                     ? undefined
                     : (value) => {
                         if (
@@ -452,8 +512,8 @@ export default function AddPoolPage() {
                         }
                       }
                 }
-                disabled={!!existingPoolAddress}
-                required={!existingPoolAddress}
+                disabled={!!existingPoolAddress && poolInitialized === true}
+                required={!existingPoolAddress || poolInitialized === false}
               />
             </div>
             {existingPoolAddress &&
@@ -690,16 +750,26 @@ export default function AddPoolPage() {
         {token0 && token1 && !hasValidAmounts && (
           <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
             <p className="text-sm text-blue-600 dark:text-blue-400">
-              {existingPoolAddress
+              {existingPoolAddress && poolInitialized === true
                 ? `Enter ${token0.code} amount to add liquidity`
-                : 'Both token amounts are required to create a pool'}
+                : existingPoolAddress && poolInitialized === false
+                  ? 'Both token amounts are required to initialize the pool and add liquidity'
+                  : 'Both token amounts are required to create a pool'}
             </p>
           </div>
         )}
-        {existingPoolAddress && (
+        {existingPoolAddress && poolInitialized === true && (
           <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
             <p className="text-sm text-green-600 dark:text-green-400">
               Pool already exists - liquidity will be added to existing pool
+            </p>
+          </div>
+        )}
+        {existingPoolAddress && poolInitialized === false && (
+          <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+            <p className="text-sm text-yellow-600 dark:text-yellow-400">
+              ⚠️ Pool exists but is not initialized. Enter both token amounts to
+              set the initial price, then add liquidity.
             </p>
           </div>
         )}

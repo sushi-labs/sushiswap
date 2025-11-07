@@ -7,6 +7,7 @@ import {
 } from './client'
 import { DEFAULT_TIMEOUT, ZERO_ADDRESS } from './constants'
 import { CONTRACT_ADDRESSES } from './contract-addresses'
+import { isPoolInitialized } from './pool-initialization'
 import { getBaseTokens } from './token-helpers'
 import { submitTransaction, waitForTransaction } from './transaction-helpers'
 
@@ -14,26 +15,20 @@ import { submitTransaction, waitForTransaction } from './transaction-helpers'
  * Create a new pool with the specified tokens and fee tier
  * @param tokenA - Address of the first token
  * @param tokenB - Address of the second token
- * @param tokenAmountA - Amount of the first token (used to calculate ratio)
- * @param tokenAmountB - Amount of the second token (used to calculate ratio)
  * @param fee - Fee tier (e.g., 3000 for 0.3%, 10000 for 1%)
  * @param sourceAccount - User's Stellar address
  * @param signTransaction - Function to sign the transaction
- * @returns The address of the created pool and transaction hash
+ * @returns The address of the created pool and transaction hash. Pool initialization must be handled separately.
  */
 export async function createPool({
   tokenA,
   tokenB,
-  tokenAmountA,
-  tokenAmountB,
   fee,
   sourceAccount,
   signTransaction,
 }: {
   tokenA: string
   tokenB: string
-  tokenAmountA: string
-  tokenAmountB: string
   fee: number
   sourceAccount: string
   signTransaction: (xdr: string) => Promise<string>
@@ -123,23 +118,6 @@ export async function createPool({
 
       console.log('🎉 Pool created:', poolAddress)
 
-      // Initialize the pool with 1:1 price (tick 0)
-      console.log(
-        `🎨 Initializing pool with ${tokenAmountA}:${tokenAmountB} price`,
-      )
-      try {
-        await initializePool({
-          poolAddress,
-          sqrtPriceX96: encodePriceSqrt(tokenAmountB, tokenAmountA),
-          sourceAccount,
-          signTransaction,
-        })
-        console.log('✅ Pool initialized')
-      } catch (initError) {
-        console.error('⚠️ Pool initialization failed:', initError)
-        // Continue anyway - pool might already be initialized
-      }
-
       return {
         poolAddress,
         txHash: result.hash,
@@ -210,69 +188,51 @@ function integerSqrt(x: bigint): bigint {
  * @param poolAddress - The pool contract address
  * @param sourceAccount - The account initializing the pool
  * @param signTransaction - Function to sign the transaction
+ * @param tokenAmountA - Amount of token A to calculate price ratio
+ * @param tokenAmountB - Amount of token B to calculate price ratio
  */
 export async function initializePoolIfNeeded({
   poolAddress,
   sourceAccount,
   signTransaction,
+  tokenAmountA,
+  tokenAmountB,
 }: {
   poolAddress: string
   sourceAccount: string
   signTransaction: (xdr: string) => Promise<string>
-}): Promise<void> {
-  try {
-    // Check if pool is initialized by calling slot0 and checking sqrt_price_x96
-    try {
-      const poolContractClient = getPoolContractClient({
-        contractId: poolAddress,
-        publicKey: sourceAccount,
-      })
-      const slot0Result = await poolContractClient.slot0({
-        timeoutInSeconds: 30,
-        fee: 100000,
-      })
-
-      const sqrtPriceX96 = slot0Result.result.sqrt_price_x96
-      console.log(`🔍 Pool sqrt_price_x96: ${sqrtPriceX96.toString()}`)
-
-      if (sqrtPriceX96 === 0n) {
-        console.log('🎨 Pool has sqrt_price_x96 = 0, initializing now...')
-        await initializePool({
-          poolAddress,
-          sqrtPriceX96: encodePriceSqrt(1, 1),
-          sourceAccount,
-          signTransaction,
-        })
-        console.log('✅ Pool initialized with sqrt price')
-        return
-      } else {
-        console.log('✅ Pool is already initialized')
-        return
-      }
-    } catch (error) {
-      // Check for specific initialization error codes
-      if (
-        String(error).includes('Error(Contract, #40)') ||
-        String(error).includes('PoolNotInitialized')
-      ) {
-        console.log(
-          '🎨 Pool not initialized (contract error), initializing now...',
-        )
-        await initializePool({
-          poolAddress,
-          sqrtPriceX96: encodePriceSqrt(1, 1),
-          sourceAccount,
-          signTransaction,
-        })
-        console.log('✅ Pool initialized')
-        return
-      }
-      throw error
-    }
-  } catch (error) {
-    console.error('Error checking pool initialization:', error)
-    // Continue anyway - addLiquidity will fail if not initialized
+  tokenAmountA: string
+  tokenAmountB: string
+}): Promise<string | undefined> {
+  if (!tokenAmountA || !tokenAmountB) {
+    throw new Error('Token amounts are required to initialize the pool')
   }
+
+  const initialized = await isPoolInitialized(poolAddress)
+
+  if (initialized) {
+    console.log('✅ Pool is already initialized')
+    return undefined
+  }
+
+  console.log('🎨 Pool not initialized, initializing now...')
+
+  const priceRatio = encodePriceSqrt(tokenAmountB, tokenAmountA)
+
+  console.log(
+    `🎨 Initializing with price ratio: ${tokenAmountB}:${tokenAmountA}`,
+  )
+
+  const txHash = await initializePool({
+    poolAddress,
+    sqrtPriceX96: priceRatio,
+    sourceAccount,
+    signTransaction,
+  })
+
+  console.log('✅ Pool initialized with sqrt price')
+
+  return txHash
 }
 
 /**
@@ -292,7 +252,7 @@ async function initializePool({
   sqrtPriceX96: bigint
   sourceAccount: string
   signTransaction: (xdr: string) => Promise<string>
-}): Promise<void> {
+}): Promise<string> {
   try {
     const poolContractClient = getPoolContractClient({
       contractId: poolAddress,
@@ -316,11 +276,19 @@ async function initializePool({
     const submitResult = await SorobanClient.sendTransaction(signedTx)
 
     // Wait for confirmation
-    if (submitResult.status === 'PENDING') {
-      await waitForTransaction(submitResult.hash)
+    const { hash, status } = submitResult
+
+    if (!hash) {
+      throw new Error('Initialization transaction did not return a hash')
+    }
+
+    if (status === 'PENDING') {
+      await waitForTransaction(hash)
     }
 
     console.log('✅ Pool initialized with sqrt price:', sqrtPriceX96.toString())
+
+    return hash
   } catch (error) {
     console.error('❌ Error initializing pool:', error)
     throw error

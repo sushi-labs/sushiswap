@@ -2,7 +2,6 @@ import * as StellarSdk from '@stellar/stellar-sdk'
 import { getPositionManagerContractClient } from './client'
 import { DEFAULT_TIMEOUT } from './constants'
 import { CONTRACT_ADDRESSES, NETWORK_CONFIG } from './contract-addresses'
-import { initializePoolIfNeeded } from './dex-factory-helpers'
 import { type PoolConfig, getPoolInfoFromContract } from './pool-helpers'
 import { submitViaRawRPC, waitForTransaction } from './rpc-transaction-helpers'
 
@@ -54,13 +53,6 @@ export async function mintPosition({
 
     // Use poolConfig directly since we've verified it's not null
     const config = poolConfig
-
-    // Ensure pool is initialized before minting position
-    await initializePoolIfNeeded({
-      poolAddress,
-      sourceAccount,
-      signTransaction,
-    })
 
     const positionManagerClient = getPositionManagerContractClient({
       contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,

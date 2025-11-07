@@ -5,6 +5,7 @@ import { formatTokenAmount } from '../utils/formatters'
 import { getPoolContractClient } from './client'
 import { DEFAULT_TIMEOUT } from './constants'
 import { discoverAllPools } from './dex-factory-helpers'
+import { isPoolInitialized } from './pool-initialization'
 import {
   getTokenBalance,
   getTokenByCode,
@@ -103,15 +104,28 @@ export async function getAllPools(): Promise<PoolInfo[]> {
     }
 
     // Fetch detailed info for each pool in parallel
-    const poolPromises = poolAddresses.map((address) => {
-      return getPoolInfo(address).catch(() => null)
+    const poolPromises = poolAddresses.map(async (address) => {
+      try {
+        // First check if the pool is initialized
+        const initialized = await isPoolInitialized(address)
+        if (!initialized) {
+          console.log(`⚠️ Skipping uninitialized pool: ${address}`)
+          return null
+        }
+
+        // Then get pool info
+        return await getPoolInfo(address)
+      } catch (error) {
+        console.error(`Error fetching pool ${address}:`, error)
+        return null
+      }
     })
 
     const results = await Promise.all(poolPromises)
     const validPools = results.filter((pool) => pool !== null)
 
     console.log(
-      `✅ Successfully loaded ${validPools.length}/${poolAddresses.length} pools (${poolAddresses.length - validPools.length} empty/inactive pools skipped)`,
+      `✅ Successfully loaded ${validPools.length}/${poolAddresses.length} pools (${poolAddresses.length - validPools.length} empty/uninitialized pools skipped)`,
     )
     return validPools
   } catch (error) {

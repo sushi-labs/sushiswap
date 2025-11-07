@@ -90,6 +90,14 @@ export function usePoolGraph() {
                     const sqrtPriceX96 = slot0Result.result.sqrt_price_x96
                     const liquidity = BigInt(liquidityResult.result || 0)
 
+                    // Skip uninitialized pools (sqrt_price_x96 = 0)
+                    if (sqrtPriceX96 === 0n || sqrtPriceX96 === undefined) {
+                      console.log(
+                        `⚠️ Skipping uninitialized pool: ${poolAddress}`,
+                      )
+                      return
+                    }
+
                     // Get slot0 data
                     const slot0 = slot0Result.result
 

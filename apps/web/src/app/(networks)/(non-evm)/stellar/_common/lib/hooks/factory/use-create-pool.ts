@@ -9,8 +9,6 @@ import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
 export interface CreatePoolParams {
   tokenA: string
   tokenB: string
-  tokenAmountA: string
-  tokenAmountB: string
   fee: number
 }
 
