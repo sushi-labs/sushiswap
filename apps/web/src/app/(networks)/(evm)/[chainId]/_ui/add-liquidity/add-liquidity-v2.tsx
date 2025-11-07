@@ -197,17 +197,17 @@ export const AddLiquidityV2 = ({
   }, [input0, input1, token0, token1, price0, price1])
 
   // @dev token0 and token1 chainId can be diff from dynamic chainId b/c user can change chains in selector
-  const _chainId =
+  const resolvedChainId =
     token0 && token0?.chainId === token1?.chainId ? token0.chainId : chainId
   return (
     <PoolFinder
       components={
         <PoolFinder.Components>
           <PoolFinder.SushiSwapV2Pool
-            chainId={_chainId as SushiSwapV2ChainId}
+            chainId={resolvedChainId as SushiSwapV2ChainId}
             token0={token0}
             token1={token1}
-            enabled={isSushiSwapV2ChainId(_chainId)}
+            enabled={isSushiSwapV2ChainId(resolvedChainId)}
           />
         </PoolFinder.Components>
       }
@@ -244,12 +244,12 @@ export const AddLiquidityV2 = ({
                   Select A Pool
                 </p>
                 <SelectTokensWidgetV2
-                  chainId={_chainId}
+                  chainId={resolvedChainId}
                   token0={token0}
                   token1={token1}
                   setToken0={_setToken0}
                   setToken1={_setToken1}
-                  includeNative={isWNativeSupported(_chainId)}
+                  includeNative={isWNativeSupported(resolvedChainId)}
                 />
               </>
             )}
@@ -263,7 +263,7 @@ export const AddLiquidityV2 = ({
             {doesNotExist ? (
               <LinkInternal
                 className="w-full"
-                href={`/${getEvmChainById(_chainId).key}/pool/v2/create`}
+                href={`/${getEvmChainById(resolvedChainId).key}/pool/v2/create`}
               >
                 <Button size="xl" className="mt-4 w-full">
                   Next
@@ -278,7 +278,7 @@ export const AddLiquidityV2 = ({
                     </p>
                   )}
                   <div className="flex flex-col gap-4">
-                    {isZapSupportedChainId(_chainId) &&
+                    {isZapSupportedChainId(resolvedChainId) &&
                     poolState === SushiSwapV2PoolState.EXISTS ? (
                       <ToggleZapCard
                         checked={isZapModeEnabled}
@@ -287,14 +287,14 @@ export const AddLiquidityV2 = ({
                     ) : null}
                     {isZapModeEnabled ? (
                       <ZapWidget
-                        chainId={_chainId}
+                        chainId={resolvedChainId}
                         pool={pool}
                         poolState={poolState}
                         title={title}
                       />
                     ) : (
                       <AddLiquidityWidget
-                        chainId={_chainId}
+                        chainId={resolvedChainId}
                         pool={pool}
                         poolState={poolState}
                         title={title}
