@@ -185,7 +185,7 @@ export const AssetsChart = () => {
       grid: {
         top: isSmallScreen ? 10 : 30,
         left: isSmallScreen ? 65 : 99,
-        right: 12,
+        right: isSmallScreen ? 20 : 35,
         bottom: isSmallScreen ? 50 : 70,
       },
       color: [
@@ -194,7 +194,13 @@ export const AssetsChart = () => {
           : (tailwind.theme?.colors?.blue as Record<string, string>)['500'],
       ],
       xAxis: [
-        getXAxisConfig({ chartRange, isSmallScreen, formatLabel, tailwind }),
+        getXAxisConfig({
+          chartRange,
+          isSmallScreen,
+          formatLabel,
+          tailwind,
+          xDataLength: xData?.length,
+        }),
       ],
       yAxis: [getYAxisConfig({ yData, isSmallScreen, tailwind })],
       series: getSeries(xData, yData, markerSeries),

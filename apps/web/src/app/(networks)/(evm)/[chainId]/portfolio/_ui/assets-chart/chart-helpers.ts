@@ -1,6 +1,7 @@
 import { format } from 'date-fns'
 import ms from 'ms'
 import { formatUSD } from 'sushi'
+import { AssetsChartPeriod } from './assets-chart-header'
 
 type TooltipParams = {
   chartRange: string
@@ -41,24 +42,25 @@ export const getXAxisConfig = ({
   isSmallScreen,
   formatLabel,
   tailwind,
+  xDataLength,
 }: any) => ({
   type: 'time' as const,
   show: true,
   boundaryGap: false,
   splitNumber:
-    chartRange === 'ONE_DAY'
+    chartRange === AssetsChartPeriod.OneDay
       ? isSmallScreen
         ? 3
         : 5
-      : chartRange === 'SEVEN_DAYS'
+      : chartRange === AssetsChartPeriod.SevenDay
         ? 7
-        : chartRange === 'THIRTY_DAYS'
+        : chartRange === AssetsChartPeriod.ThirtyDay
           ? isSmallScreen
             ? 5
             : 10
           : isSmallScreen
-            ? 3
-            : 5,
+            ? 4
+            : 6,
   axisLabel: {
     formatter: (value: number) =>
       formatLabel(new Date(normalizeTimestamp(value)), chartRange),
@@ -66,6 +68,11 @@ export const getXAxisConfig = ({
     fontWeight: 600 as const,
     fontSize: isSmallScreen ? 12 : 14,
     margin: isSmallScreen ? 20 : 40,
+    hideOverlap: true,
+    interval:
+      chartRange === AssetsChartPeriod.All
+        ? Math.floor(xDataLength / 6)
+        : undefined,
   },
   axisLine: { show: false },
   axisTick: { show: false },
