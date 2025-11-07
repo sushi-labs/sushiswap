@@ -1,8 +1,8 @@
 'use client'
 
 import { XIcon } from '@heroicons/react-v1/solid'
-import { PlusCircleIcon } from '@heroicons/react/24/outline'
-import { classNames } from '@sushiswap/ui'
+import { PlusCircleIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { IconButton, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import {
   Command,
@@ -53,6 +53,12 @@ export const NetworkFilterSelector = ({
       popoverContentClassName="max-w-[225px] !p-0"
       dialogContentClassName="max-w-none"
       dialogTitle="Network Filter"
+      dialogTitleClassName="!mt-0"
+      dialogContentWrapperClassName="!gap-0"
+      customDialogClose={
+        <IconButton variant={'ghost'} icon={XMarkIcon} name="Close" />
+      }
+      hideDialogClose={true}
       trigger={
         <Button
           icon={PlusCircleIcon}

@@ -39,7 +39,7 @@ export const BrowseContactView = () => {
           <IconButton variant={'ghost'} icon={XMarkIcon} name="Close" />
         </DialogClose>
       </div>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 max-h-[304px] overflow-y-auto hide-scrollbar">
         {Object.values(contacts).length === 0 ? (
           <div className="py-6 text-sm font-medium text-center text-muted-foreground">
             No contacts found.
