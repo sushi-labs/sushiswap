@@ -133,7 +133,7 @@ export const PriceBlock: FC<PriceBlockProps> = ({
               ({value === '∞' ? '∞' : priceDifferencePercentage || 0}%)
             </div>
           </div>
-          <div className="flex flex-col md:flex-row gap-2">
+          <div className="flex flex-col-reverse md:flex-row gap-2">
             <button
               type="button"
               disabled={decrementDisabled}
