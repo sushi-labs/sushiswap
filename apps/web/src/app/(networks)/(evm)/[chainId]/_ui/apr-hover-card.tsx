@@ -91,7 +91,7 @@ export const APRHoverCard: FC<APRHoverCardProps> = ({ children, pool }) => {
         <Popover>
           <PopoverTrigger asChild>{children}</PopoverTrigger>
           <PopoverContent
-            side="right"
+            side="bottom"
             className="!p-0 max-w-[320px] whitespace-normal text-left"
           >
             {card}
