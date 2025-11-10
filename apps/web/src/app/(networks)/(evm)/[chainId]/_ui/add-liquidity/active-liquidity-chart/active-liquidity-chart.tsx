@@ -182,7 +182,7 @@ export function ActiveLiquidityChart({
   const [hoverY, setHoverY] = useState<number>()
   const [_showDiffIndicators, setShowDiffIndicators] = useState(false)
   const [timeSelector, setTimeSelector] =
-    useState<(typeof TIME_OPTIONS)[number]['value']>('1d')
+    useState<(typeof TIME_OPTIONS)[number]['value']>('all')
   const {
     data: bucketData,
     isLoading,
