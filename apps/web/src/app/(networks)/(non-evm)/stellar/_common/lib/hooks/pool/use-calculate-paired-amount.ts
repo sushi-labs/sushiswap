@@ -5,16 +5,9 @@ import {
   calculateAmountsFromLiquidity,
   calculateLiquidityFromAmount0,
   getCurrentSqrtPrice,
+  tickToSqrtPrice,
 } from '../../soroban/pool-helpers'
 import { formatTokenAmountWithDecimals } from '../../utils/format'
-
-/**
- * Convert tick to sqrt price (same as pool-helpers)
- */
-function tickToSqrtPrice(tick: number): bigint {
-  const sqrtPrice = Math.sqrt(1.0001 ** tick)
-  return BigInt(Math.floor(sqrtPrice * 2 ** 96))
-}
 
 /**
  * Calculate the required token1 amount based on token0 input
@@ -26,6 +19,7 @@ export function useCalculatePairedAmount(
   tickLower: number,
   tickUpper: number,
   decimals = 7,
+  token0Code?: string,
 ) {
   return useQuery({
     queryKey: [
@@ -61,6 +55,7 @@ export function useCalculatePairedAmount(
           return {
             token1Amount: '0',
             status: 'below-range',
+            error: `Price below range - only ${token0Code} needed`,
           }
         }
 
@@ -69,7 +64,7 @@ export function useCalculatePairedAmount(
           return {
             token1Amount: '0',
             status: 'above-range',
-            error: 'Price above range - cannot provide token0 liquidity',
+            error: `Price above range - cannot provide ${token0Code} liquidity`,
           }
         }
 

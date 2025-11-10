@@ -2,6 +2,7 @@ import { getStablePrice } from '../hooks/price/get-stable-price'
 import type { PoolInfo, PoolLiquidity, PoolReserves } from '../types/pool.type'
 import type { Token } from '../types/token.type'
 import { formatTokenAmount } from '../utils/formatters'
+import { TICK_SPACINGS } from '../utils/ticks'
 import { getPoolContractClient } from './client'
 import { DEFAULT_TIMEOUT } from './constants'
 import { discoverAllPools } from './dex-factory-helpers'
@@ -210,7 +211,7 @@ export async function getPoolInfo(address: string): Promise<PoolInfo | null> {
       token0,
       token1,
       fee: config.fee,
-      tickSpacing: 60, // TODO: This should be the tick spacing
+      tickSpacing: TICK_SPACINGS[config.fee] || 60,
       liquidity,
       reserves,
       tvl,
@@ -614,7 +615,7 @@ export async function getCurrentSqrtPrice(
  * @param tick - The tick value
  * @returns Sqrt price as BigInt
  */
-function tickToSqrtPrice(tick: number): bigint {
+export function tickToSqrtPrice(tick: number): bigint {
   const sqrtPrice = Math.sqrt(1.0001 ** tick)
   return BigInt(Math.floor(sqrtPrice * 2 ** 96))
 }

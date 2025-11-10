@@ -19,12 +19,16 @@ import { useCalculatePairedAmount } from '~stellar/_common/lib/hooks/pool/use-ca
 import { useMaxPairedAmount } from '~stellar/_common/lib/hooks/pool/use-max-paired-amount'
 import { usePoolBalances } from '~stellar/_common/lib/hooks/pool/use-pool-balances'
 import { useRemoveLiquidity } from '~stellar/_common/lib/hooks/pool/use-pool-liquidity-management'
+import { usePoolPrice } from '~stellar/_common/lib/hooks/pool/use-pool-price'
 import { useMyPosition } from '~stellar/_common/lib/hooks/position/use-my-position'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/swap'
+import { useTickRangeSelector } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
+import { alignTick, isTickAligned } from '~stellar/_common/lib/utils/ticks'
 import { useStellarWallet } from '~stellar/providers'
 import { ConnectWalletButton } from '../ConnectWallet/ConnectWalletButton'
+import { TickRangeSelector } from '../TickRangeSelector/TickRangeSelector.tsx'
 
 interface ManageLiquidityCardProps {
   pool: PoolInfo
@@ -43,20 +47,36 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   const [amount0, setAmount0] = useState<string>('')
   const [lpAmount, setLpAmount] = useState<string>('')
 
+  const { data: currentPrice } = usePoolPrice(pool.address)
+  const tickRangeSelectorState = useTickRangeSelector(
+    pool.fee,
+    currentPrice ?? 1,
+  )
+
+  const {
+    tickLower,
+    tickUpper,
+    setTickLower,
+    setTickUpper,
+    isTickRangeValid,
+    tickSpacing,
+  } = tickRangeSelectorState
+
   // Calculate paired amount based on token0 input
   const { data: pairedAmountData } = useCalculatePairedAmount(
     pool.address,
     amount0,
-    -60000, // Default full range
-    60000,
+    tickLower,
+    tickUpper,
     pool.token0.decimals || 7,
+    pool.token0.code,
   )
   const { data: maxPairedAmountData } = useMaxPairedAmount(
     pool.address,
     balances?.token0.amount || '0',
     balances?.token1.amount || '0',
-    -60000, // Default full range
-    60000,
+    tickLower,
+    tickUpper,
     pool.token0.decimals,
     pool.token1.decimals,
   )
@@ -90,7 +110,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
 
   // Prevent adding liquidity when price is above range (can't provide token0)
   const isAboveRange = pairedAmountData?.status === 'above-range'
-  const canAddLiquidity = hasAmount && !isAboveRange
+  const canAddLiquidity = hasAmount && !isAboveRange && isTickRangeValid
 
   // Handle add liquidity
   const handleAddLiquidity = async () => {
@@ -102,14 +122,37 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
       return
     }
 
+    const alignedLower = alignTick(tickLower, tickSpacing)
+    const alignedUpper = alignTick(tickUpper, tickSpacing)
+
+    if (!isTickAligned(alignedLower, tickSpacing)) {
+      console.error(`Tick lower must be a multiple of ${tickSpacing}`)
+      setTickLower(alignedLower)
+      return
+    }
+
+    if (!isTickAligned(alignedUpper, tickSpacing)) {
+      console.error(`Tick upper must be a multiple of ${tickSpacing}`)
+      setTickUpper(alignedUpper)
+      return
+    }
+
+    if (alignedLower >= alignedUpper) {
+      console.error('Tick lower must be less than tick upper')
+      return
+    }
+
+    setTickLower(alignedLower)
+    setTickUpper(alignedUpper)
+
     addLiquidityMutation.mutate(
       {
         userAddress: connectedAddress,
         poolAddress: pool.address,
         token0Amount: amount0,
         token1Amount: amount1, // Auto-calculated amount
-        tickLower: -60000,
-        tickUpper: 60000,
+        tickLower: alignedLower,
+        tickUpper: alignedUpper,
         recipient: connectedAddress,
         signTransaction,
       },
@@ -285,23 +328,18 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                         </div>
                       </div>
                     </div>
-                    {pairedAmountData?.status === 'below-range' && amount0 && (
-                      <p className="text-xs text-yellow-600 dark:text-yellow-400">
-                        Price below range - only {pool.token0.code} needed
-                      </p>
-                    )}
-                    {isAboveRange && amount0 && (
-                      <p className="text-xs text-red-600 dark:text-red-400">
-                        Price above range - cannot provide {pool.token0.code}{' '}
-                        liquidity
-                      </p>
-                    )}
                     {pairedAmountData?.error && (
                       <p className="text-xs text-red-600 dark:text-red-400">
                         {pairedAmountData.error}
                       </p>
                     )}
                   </div>
+
+                  <TickRangeSelector
+                    params={tickRangeSelectorState}
+                    token0={pool.token0}
+                    token1={pool.token1}
+                  />
 
                   {/* Submit Button */}
                   <Button
@@ -316,9 +354,11 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                       ? 'Adding Liquidity...'
                       : isAboveRange
                         ? 'Price Above Range'
-                        : canAddLiquidity
-                          ? 'Add Liquidity'
-                          : 'Enter Amount'}
+                        : !isTickRangeValid
+                          ? 'Adjust Tick Range'
+                          : canAddLiquidity
+                            ? 'Add Liquidity'
+                            : 'Enter Amount'}
                   </Button>
                 </>
               )}

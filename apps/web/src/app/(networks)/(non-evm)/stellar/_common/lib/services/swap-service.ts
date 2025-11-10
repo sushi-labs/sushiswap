@@ -5,6 +5,7 @@ import {
   CONTRACT_ADDRESSES,
   NETWORK_CONFIG,
 } from '../soroban/contract-addresses'
+import { tickToSqrtPrice } from '../soroban/pool-helpers'
 import {
   submitViaRawRPC,
   waitForTransaction,
@@ -192,8 +193,8 @@ export class SwapService {
       const currentSqrtPriceX96 = await this.getCurrentSqrtPrice(poolAddress)
 
       // Calculate sqrt prices for tick boundaries
-      const sqrtPriceLowerX96 = this.tickToSqrtPrice(tickLower)
-      const sqrtPriceUpperX96 = this.tickToSqrtPrice(tickUpper)
+      const sqrtPriceLowerX96 = tickToSqrtPrice(tickLower)
+      const sqrtPriceUpperX96 = tickToSqrtPrice(tickUpper)
 
       // Scale desired amounts to contract units (Stellar uses 7 decimals)
       const scaledAmount0 = BigInt(Math.floor(amount0 * 1e7))
@@ -286,7 +287,7 @@ export class SwapService {
           const tickVal = slot0Map.tick
           const tick =
             typeof tickVal.i32 === 'function' ? tickVal.i32() : Number(tickVal)
-          const calculatedSqrtPrice = this.tickToSqrtPrice(tick)
+          const calculatedSqrtPrice = tickToSqrtPrice(tick)
           return calculatedSqrtPrice
         }
       }
@@ -297,14 +298,6 @@ export class SwapService {
     throw new Error(
       'Could not fetch current price from pool. Please make sure a pool is selected.',
     )
-  }
-
-  /**
-   * Convert tick to sqrt price (exactly like stellar-auth-test)
-   */
-  private tickToSqrtPrice(tick: number): bigint {
-    // sqrt(1.0001^tick) * 2^96
-    return BigInt(Math.floor(Math.sqrt(1.0001 ** tick) * 2 ** 96))
   }
 
   /**
