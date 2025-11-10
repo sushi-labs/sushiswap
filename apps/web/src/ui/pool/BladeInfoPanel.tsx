@@ -50,12 +50,13 @@ const TABS: {
 ]
 
 export const BladeInfoPanel = () => {
-  const { theme } = useTheme()
-  const isDarkMode = theme === 'dark'
+  const { resolvedTheme } = useTheme()
+  const isDarkMode = resolvedTheme === 'dark'
+
   return (
     <Tabs defaultValue="profit">
       <div className="overflow-x-auto px-4 -mx-4 no-scrollbar snap-x snap-mandatory md:mx-0 md:px-0 hide-scrollbar">
-        <TabsList className="inline-flex gap-2 min-w-max bg-slate-50 dark:bg-slate-800 md:gap-3 md:w-full">
+        <TabsList className="inline-flex gap-2 min-w-max bg-slate-50 dark:bg-slate-800 md:gap-3 w-full">
           {TABS.map((tab) => (
             <TabsTrigger
               key={tab.key}
@@ -64,7 +65,7 @@ export const BladeInfoPanel = () => {
                 'group w-full font-semibold !border-none text-muted-foreground',
                 'data-[state=active]:font-medium',
                 'data-[state=active]:!bg-[#4217FF14]',
-                isDarkMode && 'dark:data-[state=active]:!bg-[#3DB1FF14]',
+                'dark:data-[state=active]:!bg-[#3DB1FF14]',
                 'data-[state=active]:text-blue',
                 'dark:data-[state=active]:text-skyblue',
               )}

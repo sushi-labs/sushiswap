@@ -115,7 +115,7 @@ export const PoolCompositionBlade: FC<PoolCompositionBladeProps> = ({
 
       <CardContent className="!p-0">
         <CardGroup className="lg:!gap-6">
-          <div className="hidden justify-between items-center lg:flex">
+          <div className="justify-between items-center flex">
             <span className="text-base text-gray-500 lg:flex-row dark:text-slate-500">
               Show stablecoin types
             </span>
