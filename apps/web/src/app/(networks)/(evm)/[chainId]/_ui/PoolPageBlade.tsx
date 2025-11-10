@@ -7,16 +7,9 @@ import { BladeInfoPanel } from 'src/ui/pool/BladeInfoPanel'
 import { BladePoolPrice } from 'src/ui/pool/BladePoolPrice'
 import { PoolTransactionsBlade } from 'src/ui/pool/PoolTransactionsBlade'
 import { PoolChartBlade } from 'src/ui/pool/pool-chart-blade'
-import { EvmToken, SushiSwapProtocol, unwrapEvmToken } from 'sushi/evm'
-import { PoolChartV2 } from '../pool/v2/[address]/(landing)/_ui/pool-chart-v2'
-import { PoolRewards } from '../pool/v2/[address]/(landing)/_ui/pool-rewards'
-import { PoolTransactionsV2 } from '../pool/v2/[address]/(landing)/_ui/pool-transactions-v2'
-import { APRChart } from './APRChart'
+import { SushiSwapProtocol } from 'sushi/evm'
 import { Pool24HVolume } from './Pool24HVolume'
-import { PoolAPR } from './PoolAPR'
 import { PoolCompositionBlade } from './PoolCompositionBlade'
-import { PoolPrice } from './PoolPrice'
-import { PoolsBladeSection } from './PoolsBladeSection'
 import { AddLiquidityDialog } from './add-liquidity/add-liquidity-dialog'
 
 interface PoolPageBlade {
@@ -53,11 +46,7 @@ export const PoolPageBlade: FC<PoolPageBlade> = ({ pool }) => {
                 chainId={pool.chainId}
               />
             </span>
-            {/* <ManagePositionButton
-              href={`/${ChainKey[pool.chainId]}/pool/v2/${pool.address}/add`}
-            /> */}
           </div>
-          {/* <PoolAPRBlade version="v2" pool={pool} /> */}
           <PoolCompositionBlade
             pool={pool}
             showStableTypes={showStableTypes}
