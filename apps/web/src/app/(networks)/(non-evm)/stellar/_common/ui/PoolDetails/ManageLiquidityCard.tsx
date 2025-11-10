@@ -61,9 +61,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     pool.token1.decimals,
   )
 
-  const amount1 = pairedAmountData?.token1Amount
-    ? Number.parseFloat(pairedAmountData.token1Amount).toFixed(4)
-    : '0'
+  const amount1 = pairedAmountData?.token1Amount ?? '0'
 
   // Liquidity management hooks
   const addLiquidityMutation = useAddLiquidity()
@@ -232,7 +230,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                               ),
                             )
                             if (
-                              rawAmountValue >
+                              rawAmountValue >=
                               BigInt(maxPairedAmountData.maxToken0Amount)
                             ) {
                               setAmount0(
@@ -242,12 +240,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                                 ),
                               )
                             } else {
-                              setAmount0(
-                                formatTokenAmount(
-                                  rawAmountValue,
-                                  pool.token0.decimals,
-                                ),
-                              )
+                              setAmount0(e.target.value)
                             }
                           }}
                           placeholder="0.0"

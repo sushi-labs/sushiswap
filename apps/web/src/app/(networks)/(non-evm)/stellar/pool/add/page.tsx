@@ -5,7 +5,11 @@ import { Button, FormSection, SelectIcon, TextField } from '@sushiswap/ui'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
-import { usePoolInfo, useTokenBalance } from '~stellar/_common/lib/hooks'
+import {
+  useGetPool,
+  usePoolInfo,
+  useTokenBalance,
+} from '~stellar/_common/lib/hooks'
 import { useCreatePool } from '~stellar/_common/lib/hooks/factory/use-create-pool'
 import { useCalculatePairedAmount } from '~stellar/_common/lib/hooks/pool/use-calculate-paired-amount'
 import { useMaxPairedAmount } from '~stellar/_common/lib/hooks/pool/use-max-paired-amount'
@@ -75,25 +79,15 @@ export default function AddPoolPage() {
   )
 
   // Check if pool already exists
-  const { data: existingPoolAddress } = useQuery({
-    queryKey: [
-      'pool',
-      'check',
-      token0?.contract,
-      token1?.contract,
-      selectedFee,
-    ],
-    queryFn: async () => {
-      if (!token0 || !token1) return null
-      return await getPool({
-        tokenA: token0.contract,
-        tokenB: token1.contract,
-        fee: selectedFee,
-      })
-    },
-    enabled: !!token0 && !!token1 && token0.contract !== token1.contract,
-    staleTime: 30000,
-  })
+  const { data: existingPoolAddress } = useGetPool(
+    token0 && token1
+      ? {
+          tokenA: token0.contract,
+          tokenB: token1.contract,
+          fee: selectedFee,
+        }
+      : null,
+  )
 
   // Check if existing pool is initialized
   const { data: poolInitialized } = usePoolInitialized(existingPoolAddress)
@@ -126,29 +120,32 @@ export default function AddPoolPage() {
 
   // Use auto-calculated amount for existing pools, manual input for new pools or uninitialized pools
   const token1Amount = useMemo(() => {
-    // If pool exists but is not initialized, use manual input for price ratio
-    if (existingPoolAddress && poolInitialized === false) {
+    if (manualToken1Amount) {
       return manualToken1Amount
     }
-
-    // If pool exists and is initialized, use auto-calculated amount
-    if (existingPoolAddress && poolInitialized === true) {
-      if (!pairedAmountData) {
-        return ''
-      }
-      const amount = reversedPoolTokenOrder
-        ? (Number.parseFloat(token0Amount) * Number.parseFloat(token0Amount)) /
-          Number.parseFloat(pairedAmountData.token1Amount)
-        : Number.parseFloat(pairedAmountData.token1Amount)
-      return amount.toFixed(4)
+    if (!pairedAmountData || !token0 || !token1) {
+      return ''
     }
-
-    // For new pools (no existing pool), use manual input
-    return manualToken1Amount
+    const rawToken0Amount = BigInt(
+      Math.floor(Number.parseFloat(token0Amount) * 10 ** token0.decimals),
+    )
+    const rawToken1Amount = BigInt(
+      Math.floor(
+        Number.parseFloat(pairedAmountData.token1Amount) *
+          10 ** token1.decimals,
+      ),
+    )
+    const amount = reversedPoolTokenOrder
+      ? formatTokenAmount(
+          (rawToken0Amount * rawToken0Amount) / rawToken1Amount,
+          token1.decimals,
+        )
+      : pairedAmountData.token1Amount
+    return amount
   }, [
+    token0,
+    token1,
     token0Amount,
-    existingPoolAddress,
-    poolInitialized,
     pairedAmountData,
     manualToken1Amount,
     reversedPoolTokenOrder,
@@ -429,7 +426,12 @@ export default function AddPoolPage() {
                   setToken0Amount('')
                   return
                 }
-                if (!token0 || (existingPoolAddress && !maxPairedAmountData)) {
+                if (
+                  !token0 ||
+                  (existingPoolAddress &&
+                    poolInitialized === true &&
+                    !maxPairedAmountData)
+                ) {
                   return
                 }
                 const rawAmountValue = BigInt(
@@ -439,17 +441,14 @@ export default function AddPoolPage() {
                 const maxPairedToken0Amount = reversedPoolTokenOrder
                   ? BigInt(maxPairedAmountData?.maxToken1Amount ?? '0')
                   : BigInt(maxPairedAmountData?.maxToken0Amount ?? '0')
-                const maxAmount = existingPoolAddress
-                  ? maxPairedToken0Amount
-                  : (token0Balance ?? 0n)
-                if (rawAmountValue > BigInt(maxAmount)) {
-                  setToken0Amount(
-                    formatTokenAmount(BigInt(maxAmount), token0.decimals),
-                  )
+                const maxAmount =
+                  existingPoolAddress && poolInitialized === true
+                    ? maxPairedToken0Amount
+                    : (token0Balance ?? 0n)
+                if (rawAmountValue >= maxAmount) {
+                  setToken0Amount(formatTokenAmount(maxAmount, token0.decimals))
                 } else {
-                  setToken0Amount(
-                    formatTokenAmount(rawAmountValue, token0.decimals),
-                  )
+                  setToken0Amount(value)
                 }
               }}
               required
@@ -498,12 +497,12 @@ export default function AddPoolPage() {
                         ) {
                           return
                         }
-                        if (
-                          Number.parseFloat(value) >
-                          Number.parseFloat(
-                            formatTokenAmount(token1Balance, token1.decimals),
-                          )
-                        ) {
+                        const rawAmountValue = BigInt(
+                          Math.floor(
+                            Number.parseFloat(value) * 10 ** token1.decimals,
+                          ),
+                        )
+                        if (rawAmountValue >= token1Balance) {
                           setManualToken1Amount(
                             formatTokenAmount(token1Balance, token1.decimals),
                           )
@@ -517,6 +516,7 @@ export default function AddPoolPage() {
               />
             </div>
             {existingPoolAddress &&
+              poolInitialized === true &&
               pairedAmountStatus === 'below-range' &&
               token0Amount && (
                 <p className="text-xs text-yellow-600 dark:text-yellow-400">
@@ -524,17 +524,20 @@ export default function AddPoolPage() {
                 </p>
               )}
             {existingPoolAddress &&
+              poolInitialized === true &&
               pairedAmountStatus === 'above-range' &&
               token0Amount && (
                 <p className="text-xs text-red-600 dark:text-red-400">
                   Price above range - cannot provide {token0?.code} liquidity
                 </p>
               )}
-            {existingPoolAddress && pairedAmountData?.error && (
-              <p className="text-xs text-red-600 dark:text-red-400">
-                {pairedAmountData.error}
-              </p>
-            )}
+            {existingPoolAddress &&
+              poolInitialized === true &&
+              pairedAmountData?.error && (
+                <p className="text-xs text-red-600 dark:text-red-400">
+                  {pairedAmountData.error}
+                </p>
+              )}
           </div>
 
           <div className="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-800">

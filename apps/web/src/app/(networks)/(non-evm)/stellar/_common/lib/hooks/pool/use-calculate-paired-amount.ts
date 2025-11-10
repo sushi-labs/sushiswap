@@ -6,6 +6,7 @@ import {
   calculateLiquidityFromAmount0,
   getCurrentSqrtPrice,
 } from '../../soroban/pool-helpers'
+import { formatTokenAmountWithDecimals } from '../../utils/format'
 
 /**
  * Convert tick to sqrt price (same as pool-helpers)
@@ -93,10 +94,13 @@ export function useCalculatePairedAmount(
         )
 
         // Convert token1 amount back to token units
-        const pairedAmount = Number(amounts.amount1) / 10 ** decimals
+        const pairedAmount = formatTokenAmountWithDecimals(
+          amounts.amount1,
+          decimals,
+        )
 
         // Check for invalid results
-        if (!Number.isFinite(pairedAmount) || pairedAmount < 0) {
+        if (amounts.amount1 < 0n) {
           return {
             token1Amount: '0',
             status: 'error',
@@ -105,7 +109,7 @@ export function useCalculatePairedAmount(
         }
 
         return {
-          token1Amount: pairedAmount.toString(),
+          token1Amount: pairedAmount,
           status: 'within-range',
         }
       } catch (error) {
