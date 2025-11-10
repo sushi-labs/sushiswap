@@ -268,7 +268,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
         {isLoading ? (
           <SkeletonBox
             className={classNames(
-              'mb-6 h-[400px] w-full dark:via-slate-800 dark:to-slate-900',
+              'my-6 h-[353px] w-full dark:via-slate-800 dark:to-slate-900',
             )}
           />
         ) : isError ? (

@@ -7,7 +7,6 @@ import {
   TabsTrigger,
   classNames,
 } from '@sushiswap/ui'
-
 import { Wrapper } from '~evm/[chainId]/[trade]/_ui/swap/trade/wrapper'
 
 type TabKey = 'profit' | 'impermanent' | 'mev'
