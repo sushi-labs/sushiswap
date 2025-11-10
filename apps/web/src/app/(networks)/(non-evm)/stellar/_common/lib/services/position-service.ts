@@ -1,4 +1,5 @@
 import * as StellarSdk from '@stellar/stellar-sdk'
+import type { u128 } from '@stellar/stellar-sdk/contract'
 import type {
   PositionTuple,
   UserPositionInfo,
@@ -101,10 +102,9 @@ export class PositionService {
         token_id: tokenId,
       })
 
-      // positions() returns a dict: {nonce, operator, token0, token1, fee, tick_lower, tick_upper, liquidity, feeGrowth0, feeGrowth1, tokensOwed0, tokensOwed1}
+      // positions() returns an object: {nonce, token0, token1, fee, tickLower, tickUpper, liquidity, feeGrowthInside0LastX128, feeGrowthInside1LastX128, tokensOwed0, tokensOwed1}
       const {
         nonce: _nonce,
-        operator: _operator,
         token0,
         token1,
         fee,
@@ -115,7 +115,7 @@ export class PositionService {
         feeGrowthInside1LastX128: _feeGrowthInside1LastX128,
         tokensOwed0,
         tokensOwed1,
-      } = handleResult(result)
+      } = handleResult<PositionTuple>(result)
 
       return {
         tokenId,
@@ -155,7 +155,7 @@ export class PositionService {
           take,
         })
 
-      return handleResult(result).map(formatPositionInfo)
+      return handleResult<UserPositionInfo[]>(result).map(formatPositionInfo)
     } catch (error) {
       console.error('Failed to get user positions:', error)
       return []
@@ -240,7 +240,10 @@ export class PositionService {
         sqrt_price_x96: sqrtPriceX96,
       })
 
-      const [amount0, amount1] = handleResult(result.result)
+      const [amount0, amount1] = handleResult<readonly [u128, u128]>(
+        result.result,
+      )
+
       return {
         amount0: BigInt(amount0),
         amount1: BigInt(amount1),
@@ -312,7 +315,9 @@ export class PositionService {
             sqrt_price_x96: sqrtPriceX96,
           })
 
-          const [amount0, amount1] = handleResult(result.result)
+          const [amount0, amount1] = handleResult<readonly [u128, u128]>(
+            result.result,
+          )
 
           results.set(tokenId, {
             amount0: BigInt(amount0),
@@ -412,7 +417,7 @@ export class PositionService {
         token_id: tokenId,
       })
 
-      const [fees0, fees1] = handleResult(result.result)
+      const [fees0, fees1] = handleResult<readonly [u128, u128]>(result.result)
       return {
         fees0: BigInt(fees0),
         fees1: BigInt(fees1),

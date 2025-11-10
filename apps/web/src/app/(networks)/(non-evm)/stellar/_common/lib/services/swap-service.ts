@@ -384,7 +384,7 @@ export class SwapService {
     // For now, we'll use a simple mapping based on the pool addresses we know
     // In a real implementation, this would query the pool contract or factory
     const poolConfigs: { [key: string]: any } = {
-      CC7ZPELSGOVPIGP25TIOYWX2NWFVHCEXFZOKWN4ENF7Z2PBPHLQMKYNS: {
+      CCFVXLUK5MME6ZAGRXW2LN3DOEEVTKHRZXXR543VYPPLHS5GGQXTLSAR: {
         token0: {
           address: 'CCKYIGXKXH7PBIUQ4D54OIB3ZB4QKCJEAG3M7PW3KDKT5RTGMXNK2PUT',
           symbol: 'HYPE',
@@ -399,7 +399,7 @@ export class SwapService {
         currentTick: 0,
         liquidity: 100000000000,
       },
-      CA6TSR6HSFIQVYAXZZGL3LP2WE75EZKM2NX3LJCX7NUPKH6H2VABTSUP: {
+      CBER55TGRM6254WNL4BQR3MXEBUCF3B7TDIDCUUWYMUKIDOIWQXYBWBE: {
         token0: {
           address: 'CAGOAU6G6JHAWABEGGUXQXOC4FMFZSY4SDKCVW47FS4ULYHEI5TSGJAT',
           symbol: 'SUSHI',
@@ -414,7 +414,7 @@ export class SwapService {
         currentTick: 0,
         liquidity: 100000000000,
       },
-      CBFDRD3OMHKLUCMLB7ACAAZ2ILZP63XOYXGLOFLZHCKHUTZEWQUSXFQB: {
+      CAEVOVIMNYOIKLRPU3RFRIQZJAGBCLS272UP5YJXNC7LXJPGRRMMZT3Z: {
         token0: {
           address: 'CA75JDQYO5RQC6H5USNYV3J26MGS476XTYSUDMEONHLEZCKOBSTEWZ5W',
           symbol: 'STELLA',
@@ -429,7 +429,7 @@ export class SwapService {
         currentTick: 0,
         liquidity: 100000000000,
       },
-      CBHWXWMBJJ2ACGD6B35B6DNHYD2YUN34DPYTQKMGR7BNDVFQNIB3HF2W: {
+      CDTGQEVFKWRCMPL54PUZM4B3BLBFIM7RX5MBZCKSMLYVZDIDDXJE3XWM: {
         token0: {
           address: 'CAGOAU6G6JHAWABEGGUXQXOC4FMFZSY4SDKCVW47FS4ULYHEI5TSGJAT',
           symbol: 'SUSHI',

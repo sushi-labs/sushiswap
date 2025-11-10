@@ -34,7 +34,7 @@ if (typeof window !== 'undefined') {
 export const networks = {
   testnet: {
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CA4XE66WN2S5KZV44VFXGVAHDLYLDSH24RMPCB63WPXLHK3VBDUXKDNX",
+    contractId: "CDIZVQLC3PKOZRPILQF3BF5NE2MKEUCGW6SUGKJFD6LAMCWDULUSN5NT",
   }
 } as const
 
@@ -96,7 +96,6 @@ export interface Position {
   fee_growth_inside1_last_x128: FixedPoint128;
   liquidity: u128;
   nonce: u64;
-  operator: string;
   pool_id: u32;
   tick_lower: i32;
   tick_upper: i32;
@@ -178,7 +177,6 @@ export interface UserPositionInfo {
   fee_growth_inside1_last_x128: u256;
   liquidity: u128;
   nonce: u64;
-  operator: string;
   tick_lower: i32;
   tick_upper: i32;
   token0: string;
@@ -191,8 +189,7 @@ export interface UserPositionInfo {
 /**
  * Storage keys for the contract
  */
-export type DataKey = {tag: "Factory", values: void} | {tag: "XlmAddress", values: void} | {tag: "TokenDescriptor", values: void} | {tag: "Position", values: readonly [u32]} | {tag: "PoolIdToPoolKey", values: readonly [u32]} | {tag: "PoolIdsByAddress", values: readonly [string]} | {tag: "PoolIdToAddress", values: readonly [u32]} | {tag: "NextPoolId", values: void} | {tag: "NextTokenId", values: void} | {tag: "UserTokenIds", values: readonly [string]};
-
+export type DataKey = {tag: "HookModules", values: readonly [ComplianceHook]} | {tag: "Factory", values: void} | {tag: "XlmAddress", values: void} | {tag: "TokenDescriptor", values: void} | {tag: "Position", values: readonly [u32]} | {tag: "PoolIdToPoolKey", values: readonly [u32]} | {tag: "PoolIdsByAddress", values: readonly [string]} | {tag: "PoolIdToAddress", values: readonly [u32]} | {tag: "NextPoolId", values: void} | {tag: "NextTokenId", values: void} | {tag: "UserTokenIds", values: readonly [string]} | {tag: "OperatorApprovals", values: readonly [string, string]};
 
 /**
  * Parameters required to construct a token URI (see original Solidity code for semantics)
@@ -318,8 +315,8 @@ export const Errors = {
    */
   1021: {message:"PositionNotCleared"},
   /**
- * Hex string length is insufficient for the requested conversion
- */
+   * Hex string length is insufficient for the requested conversion
+   */
   2001: {message:"HexLengthInsufficient"},
   /**
    * mul_div operation failed in liquidity calculation
@@ -758,16 +755,6 @@ export const ClaimTopicsAndIssuersError = {
   376: {message:"ClaimTopicsSetCannotBeEmpty"}
 }
 
-
-
-
-
-
-/**
- * Storage keys for the modular compliance contract.
- */
-export type ComplianceDataKey = {tag: "HookModules", values: readonly [ComplianceHook]};
-
 /**
  * Hook types for modular compliance system.
  * 
@@ -886,8 +873,8 @@ export const ClaimsError = {
 }
 
 
-
 export type CountryCode = string;
+
 /**
  * Represents the type of identity holder
  */
@@ -1183,6 +1170,19 @@ export interface SwapStepResult {
   sqrt_ratio_next: SqrtPriceX96;
 }
 
+export interface PositionTuple {
+  nonce: u64;
+  token0: string;
+  token1: string;
+  fee: u32;
+  tickLower: i32;
+  tickUpper: i32;
+  liquidity: u128;
+  feeGrowthInside0LastX128: u256;
+  feeGrowthInside1LastX128: u256;
+  tokensOwed0: u128;
+  tokensOwed1: u128;
+}
 
 /**
  * 512-bit unsigned integer
@@ -1196,25 +1196,6 @@ export interface SwapStepResult {
 export interface U512 {
   high: u256;
   low: u256;
-}
-
-/**
- * Interface representing the return type for positions()
- * Maps to the fields from the PositionTuple type.
- */
-export interface PositionTuple {
-  nonce: u64;
-  operator: string; // Address (hex or base32 string)
-  token0: string;   // Address (hex or base32 string)
-  token1: string;   // Address (hex or base32 string)
-  fee: u32;
-  tickLower: i32;
-  tickUpper: i32;
-  liquidity: u128;
-  feeGrowthInside0LastX128: u256;
-  feeGrowthInside1LastX128: u256;
-  tokensOwed0: u128;
-  tokensOwed1: u128;
 }
 
 export interface Client {
@@ -1558,6 +1539,49 @@ export interface Client {
   }) => Promise<AssembledTransaction<Option<string>>>
 
   /**
+   * Construct and simulate a approve_for_all transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Set or revoke approval for an operator to manage all of the owner's NFTs
+   * Mirrors ERC-721 setApprovalForAll
+   */
+  approve_for_all: ({owner, operator, approved}: {owner: string, operator: string, approved: boolean}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<null>>
+
+  /**
+   * Construct and simulate a is_approved_for_all transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Returns true if operator is approved to manage all of the owner’s NFTs
+   */
+  is_approved_for_all: ({owner, operator}: {owner: string, operator: string}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<boolean>>
+
+  /**
    * Construct and simulate a transfer_from transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Transfer from an address (used by approved addresses)
    * The spender must provide authorization
@@ -1851,7 +1875,7 @@ export class Client extends ContractClient {
         "AAAAAQAAAAAAAAAAAAAAElBvc2l0aW9uRGF0YVJldHVybgAAAAAABQAAAAAAAAAdZmVlX2dyb3d0aF9pbnNpZGVfMF9sYXN0X3gxMjgAAAAAAAfQAAAADUZpeGVkUG9pbnQxMjgAAAAAAAAAAAAAHWZlZV9ncm93dGhfaW5zaWRlXzFfbGFzdF94MTI4AAAAAAAH0AAAAA1GaXhlZFBvaW50MTI4AAAAAAAAAAAAAAlsaXF1aWRpdHkAAAAAAAAKAAAAAAAAAA10b2tlbnNfb3dlZF8wAAAAAAAACgAAAAAAAAANdG9rZW5zX293ZWRfMQAAAAAAAAo=",
         "AAAAAQAAAAAAAAAAAAAADlRpY2tJbmZvUmV0dXJuAAAAAAAIAAAAAAAAABlmZWVfZ3Jvd3RoX291dHNpZGVfMF94MTI4AAAAAAAH0AAAAA1GaXhlZFBvaW50MTI4AAAAAAAAAAAAABlmZWVfZ3Jvd3RoX291dHNpZGVfMV94MTI4AAAAAAAH0AAAAA1GaXhlZFBvaW50MTI4AAAAAAAAAAAAAAtpbml0aWFsaXplZAAAAAABAAAAAAAAAA9saXF1aWRpdHlfZ3Jvc3MAAAAACgAAAAAAAAANbGlxdWlkaXR5X25ldAAAAAAAAAsAAAAAAAAAHnNlY19wZXJfbGlxdWlkaXR5X291dHNpZGVfeDEyOAAAAAAH0AAAAA1GaXhlZFBvaW50MTI4AAAAAAAAAAAAAA9zZWNvbmRzX291dHNpZGUAAAAABAAAAAAAAAAXdGlja19jdW11bGF0aXZlX291dHNpZGUAAAAABw==",
         "AAAAAQAAAAAAAAAAAAAAC1Bvb2xLZXlEYXRhAAAAAAMAAAAAAAAAA2ZlZQAAAAAEAAAAAAAAAAZ0b2tlbjAAAAAAABMAAAAAAAAABnRva2VuMQAAAAAAEw==",
-        "AAAAAQAAAAAAAAAAAAAACFBvc2l0aW9uAAAACgAAAAAAAAAcZmVlX2dyb3d0aF9pbnNpZGUwX2xhc3RfeDEyOAAAB9AAAAANRml4ZWRQb2ludDEyOAAAAAAAAAAAAAAcZmVlX2dyb3d0aF9pbnNpZGUxX2xhc3RfeDEyOAAAB9AAAAANRml4ZWRQb2ludDEyOAAAAAAAAAAAAAAJbGlxdWlkaXR5AAAAAAAACgAAAAAAAAAFbm9uY2UAAAAAAAAGAAAAAAAAAAhvcGVyYXRvcgAAABMAAAAAAAAAB3Bvb2xfaWQAAAAABAAAAAAAAAAKdGlja19sb3dlcgAAAAAABQAAAAAAAAAKdGlja191cHBlcgAAAAAABQAAAAAAAAAMdG9rZW5zX293ZWQwAAAACgAAAAAAAAAMdG9rZW5zX293ZWQxAAAACg==",
+        "AAAAAQAAAAAAAAAAAAAACFBvc2l0aW9uAAAACQAAAAAAAAAcZmVlX2dyb3d0aF9pbnNpZGUwX2xhc3RfeDEyOAAAB9AAAAANRml4ZWRQb2ludDEyOAAAAAAAAAAAAAAcZmVlX2dyb3d0aF9pbnNpZGUxX2xhc3RfeDEyOAAAB9AAAAANRml4ZWRQb2ludDEyOAAAAAAAAAAAAAAJbGlxdWlkaXR5AAAAAAAACgAAAAAAAAAFbm9uY2UAAAAAAAAGAAAAAAAAAAdwb29sX2lkAAAAAAQAAAAAAAAACnRpY2tfbG93ZXIAAAAAAAUAAAAAAAAACnRpY2tfdXBwZXIAAAAAAAUAAAAAAAAADHRva2Vuc19vd2VkMAAAAAoAAAAAAAAADHRva2Vuc19vd2VkMQAAAAo=",
         "AAAABQAAAAAAAAAAAAAAFkluY3JlYXNlTGlxdWlkaXR5RXZlbnQAAAAAAAEAAAASaW5jcmVhc2VfbGlxdWlkaXR5AAAAAAAEAAAAAAAAAAh0b2tlbl9pZAAAAAQAAAAAAAAAAAAAAAlsaXF1aWRpdHkAAAAAAAAKAAAAAAAAAAAAAAAHYW1vdW50MAAAAAAKAAAAAAAAAAAAAAAHYW1vdW50MQAAAAAKAAAAAAAAAAI=",
         "AAAABQAAAAAAAAAAAAAAFkRlY3JlYXNlTGlxdWlkaXR5RXZlbnQAAAAAAAEAAAASZGVjcmVhc2VfbGlxdWlkaXR5AAAAAAAEAAAAAAAAAAh0b2tlbl9pZAAAAAQAAAAAAAAAAAAAAAlsaXF1aWRpdHkAAAAAAAAKAAAAAAAAAAAAAAAHYW1vdW50MAAAAAAKAAAAAAAAAAAAAAAHYW1vdW50MQAAAAAKAAAAAAAAAAI=",
         "AAAABQAAAAAAAAAAAAAADENvbGxlY3RFdmVudAAAAAEAAAAHY29sbGVjdAAAAAAEAAAAAAAAAAh0b2tlbl9pZAAAAAQAAAAAAAAAAAAAAAlyZWNpcGllbnQAAAAAAAATAAAAAAAAAAAAAAAHYW1vdW50MAAAAAAKAAAAAAAAAAAAAAAHYW1vdW50MQAAAAAKAAAAAAAAAAI=",
@@ -1860,8 +1884,8 @@ export class Client extends ContractClient {
         "AAAAAQAAAAAAAAAAAAAAF0RlY3JlYXNlTGlxdWlkaXR5UGFyYW1zAAAAAAYAAAAAAAAAC2Ftb3VudDBfbWluAAAAAAoAAAAAAAAAC2Ftb3VudDFfbWluAAAAAAoAAAAAAAAACGRlYWRsaW5lAAAABgAAAAAAAAAJbGlxdWlkaXR5AAAAAAAACgAAAAAAAAAIb3BlcmF0b3IAAAATAAAAAAAAAAh0b2tlbl9pZAAAAAQ=",
         "AAAAAQAAAAAAAAAAAAAADUNvbGxlY3RQYXJhbXMAAAAAAAAFAAAAAAAAAAthbW91bnQwX21heAAAAAAKAAAAAAAAAAthbW91bnQxX21heAAAAAAKAAAAAAAAAAhvcGVyYXRvcgAAABMAAAAAAAAACXJlY2lwaWVudAAAAAAAABMAAAAAAAAACHRva2VuX2lkAAAABA==",
         "AAAAAQAAAAAAAAAAAAAACk1pbnRQYXJhbXMAAAAAAAwAAAAAAAAAD2Ftb3VudDBfZGVzaXJlZAAAAAAKAAAAAAAAAAthbW91bnQwX21pbgAAAAAKAAAAAAAAAA9hbW91bnQxX2Rlc2lyZWQAAAAACgAAAAAAAAALYW1vdW50MV9taW4AAAAACgAAAAAAAAAIZGVhZGxpbmUAAAAGAAAAAAAAAANmZWUAAAAABAAAAAAAAAAJcmVjaXBpZW50AAAAAAAAEwAAAAAAAAAGc2VuZGVyAAAAAAATAAAAAAAAAAp0aWNrX2xvd2VyAAAAAAAFAAAAAAAAAAp0aWNrX3VwcGVyAAAAAAAFAAAAAAAAAAZ0b2tlbjAAAAAAABMAAAAAAAAABnRva2VuMQAAAAAAEw==",
-        "AAAAAQAAAEBSZXR1cm4gdHlwZSBmb3IgZ2V0X3VzZXJfcG9zaXRpb25zIC0gY29udGFpbnMgZnVsbCBwb3NpdGlvbiBkYXRhAAAAAAAAABBVc2VyUG9zaXRpb25JbmZvAAAADQAAAAAAAAADZmVlAAAAAAQAAAAAAAAAHGZlZV9ncm93dGhfaW5zaWRlMF9sYXN0X3gxMjgAAAAMAAAAAAAAABxmZWVfZ3Jvd3RoX2luc2lkZTFfbGFzdF94MTI4AAAADAAAAAAAAAAJbGlxdWlkaXR5AAAAAAAACgAAAAAAAAAFbm9uY2UAAAAAAAAGAAAAAAAAAAhvcGVyYXRvcgAAABMAAAAAAAAACnRpY2tfbG93ZXIAAAAAAAUAAAAAAAAACnRpY2tfdXBwZXIAAAAAAAUAAAAAAAAABnRva2VuMAAAAAAAEwAAAAAAAAAGdG9rZW4xAAAAAAATAAAAAAAAAAh0b2tlbl9pZAAAAAQAAAAAAAAADHRva2Vuc19vd2VkMAAAAAoAAAAAAAAADHRva2Vuc19vd2VkMQAAAAo=",
-        "AAAAAgAAAB1TdG9yYWdlIGtleXMgZm9yIHRoZSBjb250cmFjdAAAAAAAAAAAAAAHRGF0YUtleQAAAAAKAAAAAAAAAAAAAAAHRmFjdG9yeQAAAAAAAAAAAAAAAApYbG1BZGRyZXNzAAAAAAAAAAAAAAAAAA9Ub2tlbkRlc2NyaXB0b3IAAAAAAQAAAAAAAAAIUG9zaXRpb24AAAABAAAABAAAAAEAAAAAAAAAD1Bvb2xJZFRvUG9vbEtleQAAAAABAAAABAAAAAEAAAAAAAAAEFBvb2xJZHNCeUFkZHJlc3MAAAABAAAAEwAAAAEAAAAAAAAAD1Bvb2xJZFRvQWRkcmVzcwAAAAABAAAABAAAAAAAAAAAAAAACk5leHRQb29sSWQAAAAAAAAAAAAAAAAAC05leHRUb2tlbklkAAAAAAEAAAAAAAAADFVzZXJUb2tlbklkcwAAAAEAAAAT",
+        "AAAAAQAAAEBSZXR1cm4gdHlwZSBmb3IgZ2V0X3VzZXJfcG9zaXRpb25zIC0gY29udGFpbnMgZnVsbCBwb3NpdGlvbiBkYXRhAAAAAAAAABBVc2VyUG9zaXRpb25JbmZvAAAADAAAAAAAAAADZmVlAAAAAAQAAAAAAAAAHGZlZV9ncm93dGhfaW5zaWRlMF9sYXN0X3gxMjgAAAAMAAAAAAAAABxmZWVfZ3Jvd3RoX2luc2lkZTFfbGFzdF94MTI4AAAADAAAAAAAAAAJbGlxdWlkaXR5AAAAAAAACgAAAAAAAAAFbm9uY2UAAAAAAAAGAAAAAAAAAAp0aWNrX2xvd2VyAAAAAAAFAAAAAAAAAAp0aWNrX3VwcGVyAAAAAAAFAAAAAAAAAAZ0b2tlbjAAAAAAABMAAAAAAAAABnRva2VuMQAAAAAAEwAAAAAAAAAIdG9rZW5faWQAAAAEAAAAAAAAAAx0b2tlbnNfb3dlZDAAAAAKAAAAAAAAAAx0b2tlbnNfb3dlZDEAAAAK",
+        "AAAAAgAAAB1TdG9yYWdlIGtleXMgZm9yIHRoZSBjb250cmFjdAAAAAAAAAAAAAAHRGF0YUtleQAAAAALAAAAAAAAAAAAAAAHRmFjdG9yeQAAAAAAAAAAAAAAAApYbG1BZGRyZXNzAAAAAAAAAAAAAAAAAA9Ub2tlbkRlc2NyaXB0b3IAAAAAAQAAAAAAAAAIUG9zaXRpb24AAAABAAAABAAAAAEAAAAAAAAAD1Bvb2xJZFRvUG9vbEtleQAAAAABAAAABAAAAAEAAAAAAAAAEFBvb2xJZHNCeUFkZHJlc3MAAAABAAAAEwAAAAEAAAAAAAAAD1Bvb2xJZFRvQWRkcmVzcwAAAAABAAAABAAAAAAAAAAAAAAACk5leHRQb29sSWQAAAAAAAAAAAAAAAAAC05leHRUb2tlbklkAAAAAAEAAAAAAAAADFVzZXJUb2tlbklkcwAAAAEAAAATAAAAAQAAAEtPcGVyYXRvciBhcHByb3ZhbHMgZm9yIGFsbCB0b2tlbnMgb3duZWQgYnkgYEFkZHJlc3NgIGZvciBgQWRkcmVzc2Agb3BlcmF0b3IAAAAAEU9wZXJhdG9yQXBwcm92YWxzAAAAAAAAAgAAABMAAAAT",
         "AAAAAAAAAJpJbml0aWFsaXplIHRoZSBjb250cmFjdApAcGFyYW0gZW52IFRoZSBTb3JvYmFuIGVudmlyb25tZW50CkBwYXJhbSBhZG1pbiBUaGUgYWRtaW4gYWRkcmVzcyBmb3IgdGhlIGNvbnRyYWN0CkBwYXJhbSBiYXNlX3VyaSBUaGUgYmFzZSBVUkkgZm9yIHRva2VuIG1ldGFkYXRhAAAAAAAEaW5pdAAAAAMAAAAAAAAAB2ZhY3RvcnkAAAAAEwAAAAAAAAALeGxtX2FkZHJlc3MAAAAAEwAAAAAAAAAQdG9rZW5fZGVzY3JpcHRvcgAAABMAAAAA",
         "AAAAAAAAAAAAAAAJcG9zaXRpb25zAAAAAAAAAQAAAAAAAAAIdG9rZW5faWQAAAAEAAAAAQAAA+kAAAfQAAAADVBvc2l0aW9uVHVwbGUAAAAAAAAD",
         "AAAAAAAAAEdNaW50IGEgbmV3IHBvc2l0aW9uIE5GVApSZXR1cm5zICh0b2tlbl9pZCwgbGlxdWlkaXR5LCBhbW91bnQwLCBhbW91bnQxKQAAAAAEbWludAAAAAEAAAAAAAAABnBhcmFtcwAAAAAH0AAAAApNaW50UGFyYW1zAAAAAAABAAAD6QAAA+0AAAAEAAAABAAAAAoAAAAKAAAACgAAAAM=",
@@ -1878,6 +1902,8 @@ export class Client extends ContractClient {
         "AAAAAAAAAFpUcmFuc2ZlciBhIHRva2VuIGZyb20gb25lIGFkZHJlc3MgdG8gYW5vdGhlcgpSZXF1aXJlcyBhdXRob3JpemF0aW9uIGZyb20gdGhlIGN1cnJlbnQgb3duZXIAAAAAAAh0cmFuc2ZlcgAAAAMAAAAAAAAABGZyb20AAAATAAAAAAAAAAJ0bwAAAAAAEwAAAAAAAAAIdG9rZW5faWQAAAAEAAAAAA==",
         "AAAAAAAAAFRBcHByb3ZlIGFub3RoZXIgYWRkcmVzcyB0byB0cmFuc2ZlciB0aGlzIHRva2VuClJlcXVpcmVzIGF1dGhvcml6YXRpb24gZnJvbSB0aGUgb3duZXIAAAAHYXBwcm92ZQAAAAAEAAAAAAAAAAVvd25lcgAAAAAAABMAAAAAAAAAB3NwZW5kZXIAAAAAEwAAAAAAAAAIdG9rZW5faWQAAAAEAAAAAAAAABFleHBpcmF0aW9uX2xlZGdlcgAAAAAAAAQAAAAA",
         "AAAAAAAAACRHZXQgdGhlIGFwcHJvdmVkIGFkZHJlc3MgZm9yIGEgdG9rZW4AAAAMZ2V0X2FwcHJvdmVkAAAAAQAAAAAAAAAIdG9rZW5faWQAAAAEAAAAAQAAA+gAAAAT",
+        "AAAAAAAAAGpTZXQgb3IgcmV2b2tlIGFwcHJvdmFsIGZvciBhbiBvcGVyYXRvciB0byBtYW5hZ2UgYWxsIG9mIHRoZSBvd25lcidzIE5GVHMKTWlycm9ycyBFUkMtNzIxIHNldEFwcHJvdmFsRm9yQWxsAAAAAAAPYXBwcm92ZV9mb3JfYWxsAAAAAAMAAAAAAAAABW93bmVyAAAAAAAAEwAAAAAAAAAIb3BlcmF0b3IAAAATAAAAAAAAAAhhcHByb3ZlZAAAAAEAAAAA",
+        "AAAAAAAAAEhSZXR1cm5zIHRydWUgaWYgb3BlcmF0b3IgaXMgYXBwcm92ZWQgdG8gbWFuYWdlIGFsbCBvZiB0aGUgb3duZXLigJlzIE5GVHMAAAATaXNfYXBwcm92ZWRfZm9yX2FsbAAAAAACAAAAAAAAAAVvd25lcgAAAAAAABMAAAAAAAAACG9wZXJhdG9yAAAAEwAAAAEAAAAB",
         "AAAAAAAAAFxUcmFuc2ZlciBmcm9tIGFuIGFkZHJlc3MgKHVzZWQgYnkgYXBwcm92ZWQgYWRkcmVzc2VzKQpUaGUgc3BlbmRlciBtdXN0IHByb3ZpZGUgYXV0aG9yaXphdGlvbgAAAA10cmFuc2Zlcl9mcm9tAAAAAAAABAAAAAAAAAAHc3BlbmRlcgAAAAATAAAAAAAAAARmcm9tAAAAEwAAAAAAAAACdG8AAAAAABMAAAAAAAAACHRva2VuX2lkAAAABAAAAAA=",
         "AAAAAAAAABVDaGVjayBpZiB0b2tlbiBleGlzdHMAAAAAAAAGZXhpc3RzAAAAAAABAAAAAAAAAAh0b2tlbl9pZAAAAAQAAAABAAAAAQ==",
         "AAAAAAAAAD50b2tlblVSSS1jb21wYXRpYmxlOiBnYXRoZXJzIGFsbCBkYXRhIGFuZCBwYXNzZXMgdG8gZGVzY3JpcHRvcgAAAAAACXRva2VuX3VyaQAAAAAAAAEAAAAAAAAACHRva2VuX2lkAAAABAAAAAEAAAAQ",
@@ -2033,6 +2059,8 @@ export class Client extends ContractClient {
         transfer: this.txFromJSON<null>,
         approve: this.txFromJSON<null>,
         get_approved: this.txFromJSON<Option<string>>,
+        approve_for_all: this.txFromJSON<null>,
+        is_approved_for_all: this.txFromJSON<boolean>,
         transfer_from: this.txFromJSON<null>,
         exists: this.txFromJSON<boolean>,
         token_uri: this.txFromJSON<string>,

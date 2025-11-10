@@ -34,7 +34,7 @@ if (typeof window !== 'undefined') {
 export const networks = {
   testnet: {
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CCFOXULWJIYCK4H67RWY2PL7CRMAH6SUB6XOM7HP4MENS42JK2V5GD6T",
+    contractId: "CCFVXLUK5MME6ZAGRXW2LN3DOEEVTKHRZXXR543VYPPLHS5GGQXTLSAR",
   }
 } as const
 
@@ -160,6 +160,19 @@ export interface Slot0 {
   sqrt_price_x96: u256;
   tick: i32;
   unlocked: boolean;
+}
+
+
+/**
+ * Batch query result for position fee calculations
+ * Contains all data needed to compute position fees in a single cross-contract call
+ */
+export interface PositionFeeData {
+  fee_growth_global_0_x128: FixedPoint128;
+  fee_growth_global_1_x128: FixedPoint128;
+  slot0: Slot0;
+  tick_lower_info: TickInfo;
+  tick_upper_info: TickInfo;
 }
 
 
@@ -337,6 +350,7 @@ export type FixedPoint128 = readonly [u256];
 export type FixedPoint96 = readonly [u256];
 
 export type SqrtPriceX96 = readonly [u256];
+
 
 export interface SwapStepResult {
   amount_in: u256;
@@ -1144,6 +1158,35 @@ export interface Client {
   }) => Promise<AssembledTransaction<TickInfo>>
 
   /**
+   * Construct and simulate a get_position_fee_data transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Returns all data needed for position fee calculations in a single call.
+   * 
+   * # Arguments
+   * * `env` - The contract environment
+   * * `tick_lower` - The lower tick of the position
+   * * `tick_upper` - The upper tick of the position
+   * 
+   * # Returns
+   * PositionFeeData struct containing slot0, global fee growth, and tick info
+   */
+  get_position_fee_data: ({tick_lower, tick_upper}: {tick_lower: i32, tick_upper: i32}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<PositionFeeData>>
+
+  /**
    * Construct and simulate a snapshot_cumulatives_inside transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Returns cumulative values inside a tick range for a given position.
    * 
@@ -1446,6 +1489,7 @@ export class Client extends ContractClient {
         "AAAABQAAAAAAAAAAAAAAD0ZsYXNoQmVnaW5FdmVudAAAAAABAAAAC2ZsYXNoX2JlZ2luAAAAAAYAAAAAAAAACWluaXRpYXRvcgAAAAAAABMAAAAAAAAAAAAAAAlyZWNpcGllbnQAAAAAAAATAAAAAAAAAAAAAAAHYW1vdW50MAAAAAAKAAAAAAAAAAAAAAAHYW1vdW50MQAAAAAKAAAAAAAAAAAAAAAEZmVlMAAAAAoAAAAAAAAAAAAAAARmZWUxAAAACgAAAAAAAAAC",
         "AAAABQAAAAAAAAAAAAAADUZsYXNoRW5kRXZlbnQAAAAAAAABAAAACWZsYXNoX2VuZAAAAAAAAAIAAAAAAAAABXBhaWQwAAAAAAAACgAAAAAAAAAAAAAABXBhaWQxAAAAAAAACgAAAAAAAAAC",
         "AAAAAQAAAAAAAAAAAAAABVNsb3QwAAAAAAAAAwAAAAAAAAAOc3FydF9wcmljZV94OTYAAAAAAAwAAAAAAAAABHRpY2sAAAAFAAAAAAAAAAh1bmxvY2tlZAAAAAE=",
+        "AAAAAQAAAIJCYXRjaCBxdWVyeSByZXN1bHQgZm9yIHBvc2l0aW9uIGZlZSBjYWxjdWxhdGlvbnMKQ29udGFpbnMgYWxsIGRhdGEgbmVlZGVkIHRvIGNvbXB1dGUgcG9zaXRpb24gZmVlcyBpbiBhIHNpbmdsZSBjcm9zcy1jb250cmFjdCBjYWxsAAAAAAAAAAAAD1Bvc2l0aW9uRmVlRGF0YQAAAAAFAAAAAAAAABhmZWVfZ3Jvd3RoX2dsb2JhbF8wX3gxMjgAAAfQAAAADUZpeGVkUG9pbnQxMjgAAAAAAAAAAAAAGGZlZV9ncm93dGhfZ2xvYmFsXzFfeDEyOAAAB9AAAAANRml4ZWRQb2ludDEyOAAAAAAAAAAAAAAFc2xvdDAAAAAAAAfQAAAABVNsb3QwAAAAAAAAAAAAAA90aWNrX2xvd2VyX2luZm8AAAAH0AAAAAhUaWNrSW5mbwAAAAAAAAAPdGlja191cHBlcl9pbmZvAAAAB9AAAAAIVGlja0luZm8=",
         "AAAAAQAAAAAAAAAAAAAAClN3YXBSZXN1bHQAAAAAAAUAAAAAAAAAB2Ftb3VudDAAAAAACwAAAAAAAAAHYW1vdW50MQAAAAALAAAAAAAAAAlsaXF1aWRpdHkAAAAAAAAKAAAAAAAAAA5zcXJ0X3ByaWNlX3g5NgAAAAAADAAAAAAAAAAEdGljawAAAAU=",
         "AAAAAQAAAAAAAAAAAAAAE0ltbXV0YWJsZVBvb2xQYXJhbXMAAAAABwAAAAAAAAAHZmFjdG9yeQAAAAATAAAAAAAAAANmZWUAAAAABAAAAAAAAAAOZmxhc2hfZXhlY3V0b3IAAAAAABMAAAAAAAAAEG1heF9saXFfcGVyX3RpY2sAAAAKAAAAAAAAAAx0aWNrX3NwYWNpbmcAAAAFAAAAAAAAAAZ0b2tlbjAAAAAAABMAAAAAAAAABnRva2VuMQAAAAAAEw==",
         "AAAAAQAAAAAAAAAAAAAADFByb3RvY29sRmVlcwAAAAIAAAAAAAAABnRva2VuMAAAAAAACgAAAAAAAAAGdG9rZW4xAAAAAAAK",
@@ -1484,6 +1528,7 @@ export class Client extends ContractClient {
         "AAAAAAAAAIJSZXR1cm5zIHRoZSBnbG9iYWwgZmVlIGdyb3d0aCBmb3IgdG9rZW4xLgoKIyBBcmd1bWVudHMKKiBgZW52YCAtIFRoZSBjb250cmFjdCBlbnZpcm9ubWVudAoKIyBSZXR1cm5zCkZlZSBncm93dGggaW4gUTEyOC4xMjggZm9ybWF0AAAAAAAYZmVlX2dyb3d0aF9nbG9iYWxfMV94MTI4AAAAAAAAAAEAAAfQAAAADUZpeGVkUG9pbnQxMjgAAAA=",
         "AAAAAAAAAJhSZXR1cm5zIHRoZSBhY2N1bXVsYXRlZCBwcm90b2NvbCBmZWVzLgoKIyBBcmd1bWVudHMKKiBgZW52YCAtIFRoZSBjb250cmFjdCBlbnZpcm9ubWVudAoKIyBSZXR1cm5zClByb3RvY29sRmVlcyBzdHJ1Y3QgY29udGFpbmluZyBhbW91bnRzIGZvciBib3RoIHRva2VucwAAAA1wcm90b2NvbF9mZWVzAAAAAAAAAAAAAAEAAAfQAAAADFByb3RvY29sRmVlcw==",
         "AAAAAAAAAM1SZXR1cm5zIGluZm9ybWF0aW9uIGFib3V0IGEgc3BlY2lmaWMgdGljay4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgY29udHJhY3QgZW52aXJvbm1lbnQKKiBgdGlja2AgLSBUaGUgdGljayBpbmRleCB0byBxdWVyeQoKIyBSZXR1cm5zClRpY2tJbmZvIHN0cnVjdCwgb3IgZGVmYXVsdCAodW5pbml0aWFsaXplZCkgaWYgdGljayBoYXNuJ3QgYmVlbiB1c2VkAAAAAAAABXRpY2tzAAAAAAAAAQAAAAAAAAAEdGljawAAAAUAAAABAAAH0AAAAAhUaWNrSW5mbw==",
+        "AAAAAAAAASxSZXR1cm5zIGFsbCBkYXRhIG5lZWRlZCBmb3IgcG9zaXRpb24gZmVlIGNhbGN1bGF0aW9ucyBpbiBhIHNpbmdsZSBjYWxsLgoKIyBBcmd1bWVudHMKKiBgZW52YCAtIFRoZSBjb250cmFjdCBlbnZpcm9ubWVudAoqIGB0aWNrX2xvd2VyYCAtIFRoZSBsb3dlciB0aWNrIG9mIHRoZSBwb3NpdGlvbgoqIGB0aWNrX3VwcGVyYCAtIFRoZSB1cHBlciB0aWNrIG9mIHRoZSBwb3NpdGlvbgoKIyBSZXR1cm5zClBvc2l0aW9uRmVlRGF0YSBzdHJ1Y3QgY29udGFpbmluZyBzbG90MCwgZ2xvYmFsIGZlZSBncm93dGgsIGFuZCB0aWNrIGluZm8AAAAVZ2V0X3Bvc2l0aW9uX2ZlZV9kYXRhAAAAAAAAAgAAAAAAAAAKdGlja19sb3dlcgAAAAAABQAAAAAAAAAKdGlja191cHBlcgAAAAAABQAAAAEAAAfQAAAAD1Bvc2l0aW9uRmVlRGF0YQA=",
         "AAAAAAAAAeJSZXR1cm5zIGN1bXVsYXRpdmUgdmFsdWVzIGluc2lkZSBhIHRpY2sgcmFuZ2UgZm9yIGEgZ2l2ZW4gcG9zaXRpb24uCgpVc2VkIHRvIGNvbXB1dGUgdGltZS13ZWlnaHRlZCBhdmVyYWdlcyBhbmQgbGlxdWlkaXR5LXdlaWdodGVkIHRpbWUgd2l0aGluCmEgcHJpY2UgcmFuZ2UgZm9yIGxpcXVpZGl0eSBtaW5pbmcgYW5kIG90aGVyIGFuYWx5dGljcy4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgY29udHJhY3QgZW52aXJvbm1lbnQKKiBgdGlja19sb3dlcmAgLSBMb3dlciB0aWNrIG9mIHRoZSByYW5nZQoqIGB0aWNrX3VwcGVyYCAtIFVwcGVyIHRpY2sgb2YgdGhlIHJhbmdlCgojIFJldHVybnMKKiBgT2soKHRpY2tfY3VtdWxhdGl2ZSwgc2Vjb25kc19wZXJfbGlxdWlkaXR5X2N1bXVsYXRpdmUsIHNlY29uZHNfaW5zaWRlKSlgCiogYEVycihUaWNrTm90SW5pdGlhbGl6ZWQpYCBpZiBlaXRoZXIgdGljayBoYXNuJ3QgYmVlbiBpbml0aWFsaXplZAAAAAAAG3NuYXBzaG90X2N1bXVsYXRpdmVzX2luc2lkZQAAAAACAAAAAAAAAAp0aWNrX2xvd2VyAAAAAAAFAAAAAAAAAAp0aWNrX3VwcGVyAAAAAAAFAAAAAQAAA+kAAAPtAAAAAwAAAAcAAAfQAAAADUZpeGVkUG9pbnQxMjgAAAAAAAAEAAAAAw==",
         "AAAAAAAAAY9PYnNlcnZlcyBvcmFjbGUgZGF0YSBmb3IgYSBzaW5nbGUgdGltZSBwb2ludC4KClJldHVybnMgdGljayBjdW11bGF0aXZlIGFuZCBzZWNvbmRzIHBlciBsaXF1aWRpdHkgY3VtdWxhdGl2ZSB2YWx1ZXMKZm9yIGNvbXB1dGluZyB0aW1lLXdlaWdodGVkIGF2ZXJhZ2VzLgoKIyBBcmd1bWVudHMKKiBgZW52YCAtIFRoZSBjb250cmFjdCBlbnZpcm9ubWVudAoqIGBzZWNvbmRzX2Fnb2AgLSBIb3cgbWFueSBzZWNvbmRzIGluIHRoZSBwYXN0IHRvIG9ic2VydmUgKDAgPSBjdXJyZW50KQoKIyBSZXR1cm5zCiogYE9rKCh0aWNrX2N1bXVsYXRpdmUsIHNlY29uZHNfcGVyX2xpcXVpZGl0eV9jdW11bGF0aXZlX3gxMjgpKWAKKiBgRXJyYCBpZiBvYnNlcnZhdGlvbiBkb2Vzbid0IGV4aXN0IG9yIGlzIHRvbyBvbGQAAAAADm9ic2VydmVfc2luZ2xlAAAAAAABAAAAAAAAAAtzZWNvbmRzX2FnbwAAAAAEAAAAAQAAA+kAAAPtAAAAAgAAAAcAAAfQAAAADUZpeGVkUG9pbnQxMjgAAAAAAAAD",
         "AAAAAAAAAbdPYnNlcnZlcyBvcmFjbGUgZGF0YSBmb3IgbXVsdGlwbGUgdGltZSBwb2ludHMuCgpSZXR1cm5zIHRpY2sgY3VtdWxhdGl2ZSBhbmQgc2Vjb25kcyBwZXIgbGlxdWlkaXR5IGN1bXVsYXRpdmUgdmFsdWVzCmZvciBlYWNoIHJlcXVlc3RlZCB0aW1lIHBvaW50LCBmb3IgY29tcHV0aW5nIHRpbWUtd2VpZ2h0ZWQgYXZlcmFnZXMuCgojIEFyZ3VtZW50cwoqIGBlbnZgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CiogYHNlY29uZHNfYWdvc2AgLSBWZWN0b3Igb2Ygc2Vjb25kcyBpbiB0aGUgcGFzdCB0byBvYnNlcnZlICgwID0gY3VycmVudCkKCiMgUmV0dXJucwoqIGBPaygodGlja19jdW11bGF0aXZlcywgc2Vjb25kc19wZXJfbGlxdWlkaXR5X2N1bXVsYXRpdmVzX3gxMjgpKWAKKiBgRXJyYCBpZiBhbnkgb2JzZXJ2YXRpb24gZG9lc24ndCBleGlzdCBvciBpcyB0b28gb2xkAAAAAAdvYnNlcnZlAAAAAAEAAAAAAAAADHNlY29uZHNfYWdvcwAAA+oAAAAEAAAAAQAAA+kAAAPtAAAAAgAAA+oAAAAHAAAD6gAAB9AAAAANRml4ZWRQb2ludDEyOAAAAAAAAAM=",
@@ -1527,6 +1572,7 @@ export class Client extends ContractClient {
         fee_growth_global_1_x128: this.txFromJSON<FixedPoint128>,
         protocol_fees: this.txFromJSON<ProtocolFees>,
         ticks: this.txFromJSON<TickInfo>,
+        get_position_fee_data: this.txFromJSON<PositionFeeData>,
         snapshot_cumulatives_inside: this.txFromJSON<Result<readonly [i64, FixedPoint128, u32]>>,
         observe_single: this.txFromJSON<Result<readonly [i64, FixedPoint128]>>,
         observe: this.txFromJSON<Result<readonly [Array<i64>, Array<FixedPoint128>]>>,
