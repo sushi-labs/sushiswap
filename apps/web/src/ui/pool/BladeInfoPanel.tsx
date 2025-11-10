@@ -7,7 +7,7 @@ import {
   TabsTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { useTheme } from 'next-themes'
+
 import { Wrapper } from '~evm/[chainId]/[trade]/_ui/swap/trade/wrapper'
 
 type TabKey = 'profit' | 'impermanent' | 'mev'
@@ -50,9 +50,6 @@ const TABS: {
 ]
 
 export const BladeInfoPanel = () => {
-  const { resolvedTheme } = useTheme()
-  const isDarkMode = resolvedTheme === 'dark'
-
   return (
     <Tabs defaultValue="profit">
       <div className="overflow-x-auto px-4 -mx-4 no-scrollbar snap-x snap-mandatory md:mx-0 md:px-0 hide-scrollbar">
@@ -64,18 +61,15 @@ export const BladeInfoPanel = () => {
               className={classNames(
                 'group w-full font-semibold !border-none text-muted-foreground',
                 'data-[state=active]:font-medium',
-                'data-[state=active]:!bg-[#4217FF14]',
-                'dark:data-[state=active]:!bg-[#3DB1FF14]',
-                'data-[state=active]:text-blue',
-                'dark:data-[state=active]:text-skyblue',
+                'data-[state=active]:!bg-[#4217FF14] dark:data-[state=active]:!bg-[#3DB1FF14]',
+                'data-[state=active]:text-blue dark:data-[state=active]:text-skyblue',
               )}
             >
               <div
                 className={classNames(
                   'flex justify-center items-center w-5 rounded-full aspect-1 mr-2',
                   'bg-muted-foreground',
-                  'group-data-[state=active]:bg-blue',
-                  'dark:group-data-[state=active]:bg-skyblue',
+                  'group-data-[state=active]:bg-blue dark:group-data-[state=active]:bg-skyblue',
                 )}
               >
                 <CheckIcon className="w-[12px] h-[12px] text-slate-50 dark:text-slate-800" />
@@ -88,7 +82,10 @@ export const BladeInfoPanel = () => {
 
       {TABS.map((tab) => (
         <TabsContent key={tab.key} value={tab.key} asChild>
-          <Wrapper className="px-4 !p-6 sm:py-12 min-h-[316px] w-full max-w-full flex flex-col items-center justify-center">
+          <Wrapper
+            className="px-4 !p-6 sm:py-12 min-h-[316px] w-full max-w-full flex flex-col items-center justify-center"
+            enableBorder
+          >
             <div className="flex flex-col gap-10 items-center w-full max-w-3xl text-center">
               <div className="flex flex-col gap-6 w-full max-w-full">
                 <div className="flex gap-2 justify-center items-center">
@@ -110,8 +107,10 @@ export const BladeInfoPanel = () => {
               </div>
               <Button
                 asChild
-                variant={isDarkMode ? 'tertiary' : 'quinary'}
-                className="!rounded-full font-medium flex items-center justify-center gap-2 md:w-auto text-sm md:text-base whitespace-pre-line !h-auto"
+                className={classNames(
+                  '!rounded-full font-medium flex items-center justify-center gap-2 md:w-auto text-sm md:text-base whitespace-pre-line !h-auto',
+                  'dark:!bg-skyblue/10 hover:dark:!bg-skyblue/20 focus:dark:!bg-skyblue/30 dark:!text-skyblue !bg-blue-500/10 !text-blue-500 hover:!bg-blue-500/20 focus:!bg-blue-500/30',
+                )}
               >
                 <span>{tab.cta}</span>
                 <div className="rounded-full bg-blue dark:bg-skyblue p-1 w-[14px] aspect-1 flex items-center justify-center shrink-0">
