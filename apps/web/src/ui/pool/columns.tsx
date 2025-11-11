@@ -833,7 +833,15 @@ export const TX_FEE_BLADE_COLUMN: ColumnDef<{ feeUSD: number }, unknown> = {
   id: 'fee',
   header: 'Fees Inccured (USD)',
   cell: (props) => (
-    <span className="text-green-500">
+    <span
+      className={classNames(
+        props.row.original.feeUSD > 0
+          ? 'text-green-500'
+          : props.row.original.feeUSD === 0
+            ? 'text-gray-900 dark:text-slate-50'
+            : 'text-red',
+      )}
+    >
       {formatUSD(props.row.original.feeUSD)}
     </span>
   ),

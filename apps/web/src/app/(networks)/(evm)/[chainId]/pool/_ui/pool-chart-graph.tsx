@@ -7,15 +7,7 @@ import type {
   V3Pool,
 } from '@sushiswap/graph-client/data-api'
 import type { BladePool } from '@sushiswap/graph-client/data-api'
-import {
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  SkeletonBox,
-  SkeletonText,
-  classNames,
-} from '@sushiswap/ui'
+import { CardContent, SkeletonBox, classNames } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import type { EChartOption } from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
@@ -33,9 +25,6 @@ import { usePoolGraphData } from 'src/lib/hooks'
 import { formatUSD } from 'sushi'
 import type {
   BladeChainId,
-  EvmChainId,
-  PoolBase,
-  PoolId,
   SushiSwapProtocol,
   SushiSwapV2ChainId,
   SushiSwapV3ChainId,
@@ -69,8 +58,8 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
   pool,
   protocol,
 }) => {
-  const { theme } = useTheme()
-  const isDark = theme === 'dark'
+  const { resolvedTheme } = useTheme()
+  const isDark = resolvedTheme === 'dark'
   const {
     data: buckets,
     isInitialLoading: isLoading,
@@ -156,8 +145,10 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
   }
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  const DEFAULT_OPTION = useMemo<EChartOption>(
-    () => ({
+  const DEFAULT_OPTION = useMemo<EChartOption>(() => {
+    const range = xData[xData.length - 1] - xData[0]
+    const padding = range * 0.01
+    return {
       tooltip: {
         trigger: 'axis',
         extraCssText:
@@ -207,7 +198,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
       grid: {
         top: 0,
         left: period === PoolChartPeriod.All ? 18 : 7,
-        right: 0,
+        right: 10,
         bottom: 40,
       },
       xAxis: [
@@ -217,18 +208,19 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
           axisLabel: {
             formatter: (value: number) => formatLabel(new Date(value), period),
             hideOverlap: true,
+            align: 'center',
             color: (tailwind.theme?.colors?.slate as Record<string, string>)[
               '450'
             ],
             fontWeight: 600,
-            align: 'right',
           },
           axisLine: { show: false },
           axisTick: { show: false },
           splitLine: { show: false },
           splitNumber: period === PoolChartPeriod.All ? 8 : 6,
-          min: xData[0] * 1000,
-          max: xData[xData.length - 1] * 1000,
+          // ✅ add small padding before and after the range
+          min: (xData[0] - padding) * 1000,
+          max: (xData[xData.length - 1] + padding) * 1000,
         },
       ],
 
@@ -267,9 +259,8 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
           data: xData.map((x, i) => [x * 1000, yData[i]]),
         },
       ],
-    }),
-    [xData, chart, yData, onMouseOver, period, isDark],
-  )
+    }
+  }, [xData, chart, yData, onMouseOver, period, isDark])
 
   return (
     <>
@@ -277,7 +268,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
         {isLoading ? (
           <SkeletonBox
             className={classNames(
-              'mb-6 h-[400px] w-full dark:via-slate-800 dark:to-slate-900',
+              'my-6 h-[353px] w-full dark:via-slate-800 dark:to-slate-900',
             )}
           />
         ) : isError ? (
