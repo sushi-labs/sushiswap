@@ -358,7 +358,7 @@ export const APRChart: FC<APRChartProps> = ({ pool }) => {
         {isLoading ? (
           <SkeletonBox
             className={classNames(
-              'w-full h-[170px] !mb-4 dark:via-slate-800 dark:to-slate-900',
+              'w-full h-[160px] !mb-4 dark:via-slate-800 dark:to-slate-900',
             )}
           />
         ) : isError ? (
