@@ -1,17 +1,14 @@
 'use client'
 
-import type { RecentSwap } from '@sushiswap/graph-client/data-api'
 import { DataTable } from '@sushiswap/ui'
 import { Card } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
 import { useMemo } from 'react'
 import { useState } from 'react'
-
 import {
   filterLocalRecentSwapsByAccountAndChainIds,
   useLocalRecentSwaps,
 } from 'src/lib/hooks/react-query/recent-swaps/useLocalRecentSwaps'
-// import { useRecentSwaps } from 'src/lib/hooks/react-query/recent-swaps/useRecentsSwaps'
 import { useAccount } from 'wagmi'
 import { useDerivedStateSimpleSwap } from '../../../../derivedstate-simple-swap-provider'
 import { useTradeTablesContext } from '../../trade-tables-context'
@@ -113,7 +110,7 @@ export const MarketTable = ({
 
   return (
     <>
-      <Card className="overflow-hidden !border-none !shadow-none bg-slate-50 dark:bg-slate-800 lg:block">
+      <Card className="overflow-hidden !border-none !shadow-none bg-slate-50 dark:bg-slate-800 hidden lg:block">
         <DataTable
           columns={COLUMNS}
           data={rowData}

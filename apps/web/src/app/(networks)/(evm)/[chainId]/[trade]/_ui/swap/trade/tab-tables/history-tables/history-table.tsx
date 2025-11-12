@@ -27,7 +27,7 @@ export const HistoryTable = ({
   const { historyTableTab, setHistoryTableTab } = useTradeTablesContext()
 
   return (
-    <Card className="overflow-hidden border-none !shadow-none lg:px-3 lg:pt-3 xl:bg-red-white dark:lg:bg-slate-800 !rounded-lg">
+    <Card className="overflow-hidden border-none !shadow-none lg:px-3 lg:pt-3 xl:bg-red-white dark:lg:bg-slate-800 !rounded-lg lg:!rounded-none">
       <Tabs
         defaultValue={historyTableTab}
         onValueChange={(value: string) => {

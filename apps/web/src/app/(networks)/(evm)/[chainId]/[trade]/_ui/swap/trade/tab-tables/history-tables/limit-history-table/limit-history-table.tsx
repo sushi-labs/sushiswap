@@ -79,7 +79,7 @@ export const LimitOrdersHistoryTable = ({
         </div>
       }
     >
-      <Card className="overflow-hidden !border-none bg-slate-50 dark:bg-slate-800 lg:block">
+      <Card className="overflow-hidden !border-none bg-slate-50 dark:bg-slate-800 hidden lg:block">
         <DataTable
           columns={COLUMNS}
           data={data}
@@ -92,7 +92,7 @@ export const LimitOrdersHistoryTable = ({
 
       <Card
         className={classNames(
-          'p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 md:hidden',
+          'p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 lg:hidden',
           mobileCardClassName,
         )}
       >

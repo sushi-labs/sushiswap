@@ -66,7 +66,7 @@ export const LimitOrdersTable = ({
         </div>
       }
     >
-      <Card className="hidden overflow-hidden border-none bg-slate-50 dark:bg-slate-800 md:block !rounded-t-none xl:!rounded-lg">
+      <Card className="hidden overflow-hidden border-none bg-slate-50 dark:bg-slate-800 lg:block !rounded-t-none xl:!rounded-lg">
         <DataTable
           columns={LIMIT_ORDER_COLUMNS}
           data={data}
@@ -79,7 +79,7 @@ export const LimitOrdersTable = ({
 
       <Card
         className={classNames(
-          'p-5 space-y-6 border-accent !shadow-none border bg-slate-50 dark:bg-slate-800 md:hidden',
+          'p-5 space-y-6 border-accent !shadow-none border bg-slate-50 dark:bg-slate-800 lg:hidden',
           mobileCardClassName,
         )}
       >

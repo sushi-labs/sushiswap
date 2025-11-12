@@ -100,7 +100,7 @@ export const DCAOrdersTable = ({
           </div>
         }
       >
-        <Card className="overflow-hidden border-none bg-slate-50 dark:bg-slate-800 lg:block !rounded-t-none xl:!rounded-lg px-2">
+        <Card className="overflow-hidden border-none bg-slate-50 dark:bg-slate-800 hidden lg:block !rounded-t-none xl:!rounded-lg px-2">
           <DataTable
             columns={COLUMNS}
             data={data}
@@ -114,7 +114,7 @@ export const DCAOrdersTable = ({
 
         <Card
           className={classNames(
-            'p-5 space-y-6 border-accent !shadow-none border bg-slate-50 dark:bg-slate-800 md:hidden',
+            'p-5 space-y-6 border-accent !shadow-none border bg-slate-50 dark:bg-slate-800 lg:hidden',
             mobileCardClassName,
           )}
         >
