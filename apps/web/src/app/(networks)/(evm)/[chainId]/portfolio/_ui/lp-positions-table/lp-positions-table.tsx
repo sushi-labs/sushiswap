@@ -184,7 +184,13 @@ export const LPPositionsTable = () => {
                 triggerChildren={
                   <Button
                     variant="networks"
-                    className="w-full !rounded-full dark:!bg-[#FFFFFF]/[.12] dark:hover:!bg-[#fff]/[.18] dark:active:!bg-[#fff]/[.24]"
+                    className={classNames(
+                      '!rounded-full dark:!bg-[#FFFFFF]/[.12] dark:hover:!bg-[#fff]/[.18] dark:active:!bg-[#fff]/[.24]',
+                      positionData?.pool.protocol ===
+                        SushiSwapProtocol.SUSHISWAP_V3
+                        ? 'w-1/2'
+                        : 'w-full',
+                    )}
                   >
                     More
                   </Button>
