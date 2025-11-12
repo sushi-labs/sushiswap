@@ -125,11 +125,13 @@ if (!('structuredClone' in globalThis)) {
 }
 
 import { initBotId } from 'botid/client/core'
-initBotId({
-  protect: [
-    {
-      path: '/api/router-proxy',
-      method: 'POST',
-    },
-  ],
-})
+if (process.env.NODE_ENV === 'production') {
+  initBotId({
+    protect: [
+      {
+        path: '/api/router-proxy',
+        method: 'POST',
+      },
+    ],
+  })
+}
