@@ -184,7 +184,7 @@ export const LPPositionsTable = () => {
                 triggerChildren={
                   <Button
                     variant="networks"
-                    className="w-1/2 !rounded-full dark:!bg-[#FFFFFF]/[.12] dark:hover:!bg-[#fff]/[.18] dark:active:!bg-[#fff]/[.24]"
+                    className="w-full !rounded-full dark:!bg-[#FFFFFF]/[.12] dark:hover:!bg-[#fff]/[.18] dark:active:!bg-[#fff]/[.24]"
                   >
                     More
                   </Button>

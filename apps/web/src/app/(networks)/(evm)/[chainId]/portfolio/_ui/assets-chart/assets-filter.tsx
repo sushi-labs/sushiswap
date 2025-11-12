@@ -55,7 +55,7 @@ export const AssetsFilter = ({
       align="start"
       popoverContentClassName="md:max-w-[370px] md:w-[370px] !p-0 !bg-[#FFFFFF] dark:!bg-slate-800  h-full"
       dialogContentClassName="max-w-none h-[100dvh] !flex !flex-col"
-      dialogContentWrapperClassName="h-[80dvh] md:h-auto rounded-t-2xl"
+      dialogContentWrapperClassName="h-[80dvh] md:h-auto"
       dialogTitle="Select Token"
       dialogTitleClassName="!mt-0"
       hideDialogClose
