@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
+import { routerProxy } from 'src/app/_common/botid/router-proxy'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { getFeeString } from 'src/lib/swap/fee'
 import { Amount, Fraction, Percent, Price, ZERO, subtractSlippage } from 'sushi'
@@ -107,10 +108,7 @@ export const useTradeQuoteQuery = (
 
       applyPoolExclusion(fromToken, toToken, params.searchParams)
 
-      const res = await fetch('/api/router-proxy', {
-        method: 'POST',
-        body: JSON.stringify({ url: params.toString() }),
-      })
+      const res = await routerProxy(params.toString())
       const json = await res.json()
       const resp2 = tradeValidator02.parse(json)
 
