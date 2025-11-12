@@ -3,7 +3,7 @@
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { createErrorToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { PriceImpactWarning, SlippageWarning } from 'src/ui/common'
 import {
@@ -18,15 +18,33 @@ import { TrustlineWarning } from '~stellar/_common/ui/Trustline/TrustlineWarning
 import { Checker } from '~stellar/_common/ui/checker'
 import { useStellarWallet } from '~stellar/providers'
 import { useBestRoute } from '~stellar/swap/lib/hooks'
-import { useSimpleSwapState } from './simple-swap-provider/simple-swap-provider'
+import {
+  useSimpleSwapActions,
+  useSimpleSwapState,
+} from './simple-swap-provider/simple-swap-provider'
 
 export const SimpleSwapExecuteButton = () => {
   const { connectedAddress, isConnected } = useStellarWallet()
   const { amount, token0, token1, outputAmount, priceImpact } =
     useSimpleSwapState()
+  const { setAmount, setOutputAmount, setSlippageAmount, setPriceImpact } =
+    useSimpleSwapActions()
   const executeSwap = useExecuteSwap()
   const executeMultiHopSwap = useExecuteMultiHopSwap()
   const [checked, setChecked] = useState<boolean>(false)
+  const resetSwapForm = useCallback(() => {
+    setAmount('')
+    setOutputAmount(0n)
+    setSlippageAmount(0)
+    setPriceImpact(null)
+    setChecked(false)
+  }, [
+    setAmount,
+    setOutputAmount,
+    setSlippageAmount,
+    setPriceImpact,
+    setChecked,
+  ])
 
   // Check if output token needs a trustline (for native assets)
   const { needsTrustline: needsToken1Trustline } = useNeedsTrustline(
@@ -137,6 +155,7 @@ export const SimpleSwapExecuteButton = () => {
           fee: route.fees[0],
           deadline: Math.floor(Date.now() / 1000) + 600, // 10 minutes
         })
+        resetSwapForm()
       } else {
         // Multi-hop swap
         await executeMultiHopSwap.mutateAsync({
@@ -150,6 +169,7 @@ export const SimpleSwapExecuteButton = () => {
           tokenIn: token0,
           tokenOut: token1,
         })
+        resetSwapForm()
       }
     } catch (error) {
       console.error('Error executing swap:', error)
