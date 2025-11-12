@@ -29,12 +29,17 @@ export async function POST(request: NextRequest) {
 
   const body = await request.json()
 
+  const url = new URL(body.url)
+  if (!url.hostname.endsWith('.sushi.com')) {
+    return NextResponse.json({ error: 'Invalid hostname.' }, { status: 400 })
+  }
+
   const response = await fetch(body.url)
 
   if (newJwt) {
     response.headers.set(
       'Set-Cookie',
-      `botid_jwt=${newJwt}; Path=/; HttpOnly; SameSite=Lax`,
+      `botid_jwt=${newJwt}; Path=/; HttpOnly; SameSite=Strict; Max-Age=300; Secure`,
     )
   }
 
