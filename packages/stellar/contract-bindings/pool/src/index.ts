@@ -34,7 +34,7 @@ if (typeof window !== 'undefined') {
 export const networks = {
   testnet: {
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CCFVXLUK5MME6ZAGRXW2LN3DOEEVTKHRZXXR543VYPPLHS5GGQXTLSAR",
+    contractId: "CDIJSDLJJRSIBPB6G5CPVT6XTMPS22FWNG3SSG3NJVEBYLSKVXRVGPY7",
   }
 } as const
 
@@ -773,6 +773,33 @@ export interface Client {
      */
     simulate?: boolean;
   }) => Promise<AssembledTransaction<Slot0>>
+
+  /**
+   * Construct and simulate a is_initialized transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Returns whether the pool has been initialized.
+   * 
+   * # Arguments
+   * * `env` - The contract environment
+   * 
+   * # Returns
+   * true if initialized, false otherwise
+   */
+  is_initialized: (options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<boolean>>
 
   /**
    * Construct and simulate a factory transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
@@ -1514,6 +1541,7 @@ export class Client extends ContractClient {
         "AAAAAAAAAztFeGVjdXRlcyBhIGZsYXNoIGxvYW4uCgpBbGxvd3MgYm9ycm93aW5nIHRva2VucyBmcm9tIHRoZSBwb29sIHdpdGhvdXQgY29sbGF0ZXJhbC4gVGhlIGJvcnJvd2VkCnRva2VucyBwbHVzIGZlZXMgbXVzdCBiZSByZXR1cm5lZCBpbiB0aGUgc2FtZSB0cmFuc2FjdGlvbiB2aWEgdGhlIGNhbGxiYWNrLgoKIyBBcmd1bWVudHMKKiBgZW52YCAtIFRoZSBjb250cmFjdCBlbnZpcm9ubWVudAoqIGByZWNpcGllbnRgIC0gQWRkcmVzcyByZWNlaXZpbmcgdGhlIGJvcnJvd2VkIHRva2VucwoqIGBhbW91bnQwYCAtIEFtb3VudCBvZiB0b2tlbjAgdG8gYm9ycm93CiogYGFtb3VudDFgIC0gQW1vdW50IG9mIHRva2VuMSB0byBib3Jyb3cKKiBgY2FsbGJhY2tfY29udHJhY3RgIC0gQ29udHJhY3QgdG8gY2FsbCBiYWNrIHdpdGggZmxhc2hfY2FsbGJhY2sKQmVnaW4gYSBmbGFzaCBsb2FuCgpPbmx5IHRoZSBhdXRob3JpemVkIEZsYXNoRXhlY3V0b3IgY2FuIGNhbGwgdGhpcy4KTXVzdCBiZSBmb2xsb3dlZCBieSBmbGFzaF9lbmQoKSBpbiB0aGUgc2FtZSB0cmFuc2FjdGlvbi4KCiMgQXJndW1lbnRzCiogYHJlY2lwaWVudGAgLSBBZGRyZXNzIHRvIHJlY2VpdmUgYm9ycm93ZWQgdG9rZW5zCiogYGFtb3VudDBgIC0gQW1vdW50IG9mIHRva2VuMCB0byBib3Jyb3cKKiBgYW1vdW50MWAgLSBBbW91bnQgb2YgdG9rZW4xIHRvIGJvcnJvdwoqIGBpbml0aWF0b3JgIC0gRmxhc2hFeGVjdXRvciBhZGRyZXNzIChtdXN0IG1hdGNoIGltbXV0YWJsZSBmbGFzaF9leGVjdXRvcikKCiMgUmV0dXJucwoqIGBPaygoZmVlMCwgZmVlMSkpYCAtIEZlZXMgdGhhdCBtdXN0IGJlIHJlcGFpZAAAAAALZmxhc2hfYmVnaW4AAAAABAAAAAAAAAAJcmVjaXBpZW50AAAAAAAAEwAAAAAAAAAHYW1vdW50MAAAAAAKAAAAAAAAAAdhbW91bnQxAAAAAAoAAAAAAAAACWluaXRpYXRvcgAAAAAAABMAAAABAAAD6QAAA+0AAAACAAAACgAAAAoAAAAD",
         "AAAAAAAAAO9FbmQgYSBmbGFzaCBsb2FuCgpNdXN0IGJlIGNhbGxlZCBieSB0aGUgc2FtZSBpbml0aWF0b3IgdGhhdCBjYWxsZWQgZmxhc2hfYmVnaW4oKS4KVmVyaWZpZXMgcmVwYXltZW50IGFuZCBjbGVhcnMgdGhlIGZsYXNoIGxvY2suCgojIFJldHVybnMKKiBgT2soKCkpYCBpZiByZXBheW1lbnQgaXMgc3VmZmljaWVudAoqIGBFcnIoSW5zdWZmaWNpZW50UmVwYXltZW50MC8xKWAgaWYgcmVwYXltZW50IGlzIGluc3VmZmljaWVudAAAAAAJZmxhc2hfZW5kAAAAAAAAAAAAAAEAAAPpAAAD7QAAAAAAAAAD",
         "AAAAAAAAAJVSZXR1cm5zIHRoZSBjdXJyZW50IHBvb2wgc3RhdGUuCgojIEFyZ3VtZW50cwoqIGBlbnZgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CgojIFJldHVybnMKU2xvdDAgY29udGFpbmluZyBjdXJyZW50IHNxcnQgcHJpY2UsIHRpY2ssIGFuZCBsb2NrIHN0YXR1cwAAAAAAAAVzbG90MAAAAAAAAAAAAAABAAAH0AAAAAVTbG90MAAAAA==",
+        "AAAAAAAAAI5SZXR1cm5zIHdoZXRoZXIgdGhlIHBvb2wgaGFzIGJlZW4gaW5pdGlhbGl6ZWQuCgojIEFyZ3VtZW50cwoqIGBlbnZgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CgojIFJldHVybnMKdHJ1ZSBpZiBpbml0aWFsaXplZCwgZmFsc2Ugb3RoZXJ3aXNlAAAAAAAOaXNfaW5pdGlhbGl6ZWQAAAAAAAAAAAABAAAAAQ==",
         "AAAAAAAAAI5SZXR1cm5zIHRoZSBmYWN0b3J5IGFkZHJlc3MgdGhhdCBjcmVhdGVkIHRoaXMgcG9vbC4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgY29udHJhY3QgZW52aXJvbm1lbnQKCiMgUmV0dXJucwpBZGRyZXNzIG9mIHRoZSBmYWN0b3J5IGNvbnRyYWN0AAAAAAAHZmFjdG9yeQAAAAAAAAAAAQAAABM=",
         "AAAAAAAAAHdSZXR1cm5zIHRoZSBhZGRyZXNzIG9mIHRva2VuMCBpbiB0aGUgcGFpci4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgY29udHJhY3QgZW52aXJvbm1lbnQKCiMgUmV0dXJucwpBZGRyZXNzIG9mIHRva2VuMAAAAAAGdG9rZW4wAAAAAAAAAAAAAQAAABM=",
         "AAAAAAAAAHdSZXR1cm5zIHRoZSBhZGRyZXNzIG9mIHRva2VuMSBpbiB0aGUgcGFpci4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgY29udHJhY3QgZW52aXJvbm1lbnQKCiMgUmV0dXJucwpBZGRyZXNzIG9mIHRva2VuMQAAAAAGdG9rZW4xAAAAAAAAAAAAAQAAABM=",
@@ -1558,6 +1586,7 @@ export class Client extends ContractClient {
         flash_begin: this.txFromJSON<Result<readonly [u128, u128]>>,
         flash_end: this.txFromJSON<Result<void>>,
         slot0: this.txFromJSON<Slot0>,
+        is_initialized: this.txFromJSON<boolean>,
         factory: this.txFromJSON<string>,
         token0: this.txFromJSON<string>,
         token1: this.txFromJSON<string>,

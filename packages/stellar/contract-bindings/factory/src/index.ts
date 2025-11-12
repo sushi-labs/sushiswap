@@ -34,7 +34,7 @@ if (typeof window !== 'undefined') {
 export const networks = {
   testnet: {
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CCJ2VLHZJH4NVJ2AM3YC4J6WJIYZXSCJ55AIPSDB5GBM2NCKCKVQ7VQG",
+    contractId: "CB2PLV4EDFSHUO432BEH3ICRUC3EK6Q76SU2W7LUT7IHPDDXQYYEHIT4",
   }
 } as const
 
@@ -265,6 +265,49 @@ export interface Client {
   }) => Promise<AssembledTransaction<Result<string>>>
 
   /**
+   * Construct and simulate a create_and_initialize_pool transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Creates a pool if it doesn't exist and initializes it atomically.
+   * 
+   * This mirrors Uniswap V3's `createAndInitializePoolIfNecessary` behavior:
+   * - If the pool for `(tokenA, tokenB, fee)` does not exist, it is deployed via the factory.
+   * - The pool's `initialize(sqrt_price_x96)` is then invoked in the same Soroban call.
+   * 
+   * The entire operation is atomic: if initialization fails (e.g., invalid price or pool
+   * already initialized), the transaction reverts and the pool creation is rolled back.
+   * 
+   * # Arguments
+   * * `e` - The contract environment
+   * * `token_a` - First token address
+   * * `token_b` - Second token address
+   * * `fee` - Fee tier in basis points
+   * * `sqrt_price_x96` - Initial sqrt price in Q64.96 format
+   * 
+   * # Returns
+   * * `Ok(Address)` - Address of the pool (created or existing)
+   * * `Err(Error)` - If creation or initialization fails
+   * 
+   * # Notes
+   * - If the pool already exists and is initialized, this call no-ops and returns the address.
+   * - If the pool already exists but is not initialized, it will be initialized.
+   */
+  create_and_initialize_pool: ({token_a, token_b, fee, sqrt_price_x96}: {token_a: string, token_b: string, fee: u32, sqrt_price_x96: u256}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<Result<string>>>
+
+  /**
    * Construct and simulate a get_pool transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Returns the pool address for a given token pair and fee tier.
    * 
@@ -432,6 +475,7 @@ export class Client extends ContractClient {
         "AAAAAAAAALJSZXR1cm5zIHRoZSBwcm90b2NvbCBmZWUgZGVub21pbmF0b3IgZm9yIHRva2VuMC4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgY29udHJhY3QgZW52aXJvbm1lbnQKCiMgUmV0dXJucwoqIGB1MzJgIC0gUHJvdG9jb2wgZmVlIGRlbm9taW5hdG9yIGZvciB0b2tlbjAgKDAgaWYgZGlzYWJsZWQsIG9yIDQtMTApAAAAAAASZ2V0X3Byb3RvY29sX2ZlZV8wAAAAAAAAAAAAAQAAAAQ=",
         "AAAAAAAAALJSZXR1cm5zIHRoZSBwcm90b2NvbCBmZWUgZGVub21pbmF0b3IgZm9yIHRva2VuMS4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgY29udHJhY3QgZW52aXJvbm1lbnQKCiMgUmV0dXJucwoqIGB1MzJgIC0gUHJvdG9jb2wgZmVlIGRlbm9taW5hdG9yIGZvciB0b2tlbjEgKDAgaWYgZGlzYWJsZWQsIG9yIDQtMTApAAAAAAASZ2V0X3Byb3RvY29sX2ZlZV8xAAAAAAAAAAAAAQAAAAQ=",
         "AAAAAAAAAVtDcmVhdGVzIGEgbmV3IHBvb2wgZm9yIHRoZSBnaXZlbiB0b2tlbiBwYWlyIGFuZCBmZWUgdGllci4KCiMgQXJndW1lbnRzCiogYGVgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CiogYHRva2VuX2FgIC0gRmlyc3QgdG9rZW4gYWRkcmVzcwoqIGB0b2tlbl9iYCAtIFNlY29uZCB0b2tlbiBhZGRyZXNzCiogYGZlZWAgLSBGZWUgdGllciBpbiBiYXNpcyBwb2ludHMKCiMgUmV0dXJucwoqIGBPayhBZGRyZXNzKWAgLSBBZGRyZXNzIG9mIHRoZSBuZXdseSBjcmVhdGVkIHBvb2wKKiBgRXJyKEVycm9yKWAgLSBJZiB2YWxpZGF0aW9uIGZhaWxzIChzZWUgcG9vbDo6Y3JlYXRlX3Bvb2wgZm9yIGVycm9yIGNvZGVzKQAAAAALY3JlYXRlX3Bvb2wAAAAAAwAAAAAAAAAHdG9rZW5fYQAAAAATAAAAAAAAAAd0b2tlbl9iAAAAABMAAAAAAAAAA2ZlZQAAAAAEAAAAAQAAA+kAAAATAAAAAw==",
+        "AAAAAAAAA99DcmVhdGVzIGEgcG9vbCBpZiBpdCBkb2Vzbid0IGV4aXN0IGFuZCBpbml0aWFsaXplcyBpdCBhdG9taWNhbGx5LgoKVGhpcyBtaXJyb3JzIFVuaXN3YXAgVjMncyBgY3JlYXRlQW5kSW5pdGlhbGl6ZVBvb2xJZk5lY2Vzc2FyeWAgYmVoYXZpb3I6Ci0gSWYgdGhlIHBvb2wgZm9yIGAodG9rZW5BLCB0b2tlbkIsIGZlZSlgIGRvZXMgbm90IGV4aXN0LCBpdCBpcyBkZXBsb3llZCB2aWEgdGhlIGZhY3RvcnkuCi0gVGhlIHBvb2wncyBgaW5pdGlhbGl6ZShzcXJ0X3ByaWNlX3g5NilgIGlzIHRoZW4gaW52b2tlZCBpbiB0aGUgc2FtZSBTb3JvYmFuIGNhbGwuCgpUaGUgZW50aXJlIG9wZXJhdGlvbiBpcyBhdG9taWM6IGlmIGluaXRpYWxpemF0aW9uIGZhaWxzIChlLmcuLCBpbnZhbGlkIHByaWNlIG9yIHBvb2wKYWxyZWFkeSBpbml0aWFsaXplZCksIHRoZSB0cmFuc2FjdGlvbiByZXZlcnRzIGFuZCB0aGUgcG9vbCBjcmVhdGlvbiBpcyByb2xsZWQgYmFjay4KCiMgQXJndW1lbnRzCiogYGVgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CiogYHRva2VuX2FgIC0gRmlyc3QgdG9rZW4gYWRkcmVzcwoqIGB0b2tlbl9iYCAtIFNlY29uZCB0b2tlbiBhZGRyZXNzCiogYGZlZWAgLSBGZWUgdGllciBpbiBiYXNpcyBwb2ludHMKKiBgc3FydF9wcmljZV94OTZgIC0gSW5pdGlhbCBzcXJ0IHByaWNlIGluIFE2NC45NiBmb3JtYXQKCiMgUmV0dXJucwoqIGBPayhBZGRyZXNzKWAgLSBBZGRyZXNzIG9mIHRoZSBwb29sIChjcmVhdGVkIG9yIGV4aXN0aW5nKQoqIGBFcnIoRXJyb3IpYCAtIElmIGNyZWF0aW9uIG9yIGluaXRpYWxpemF0aW9uIGZhaWxzCgojIE5vdGVzCi0gSWYgdGhlIHBvb2wgYWxyZWFkeSBleGlzdHMgYW5kIGlzIGluaXRpYWxpemVkLCB0aGlzIGNhbGwgbm8tb3BzIGFuZCByZXR1cm5zIHRoZSBhZGRyZXNzLgotIElmIHRoZSBwb29sIGFscmVhZHkgZXhpc3RzIGJ1dCBpcyBub3QgaW5pdGlhbGl6ZWQsIGl0IHdpbGwgYmUgaW5pdGlhbGl6ZWQuAAAAABpjcmVhdGVfYW5kX2luaXRpYWxpemVfcG9vbAAAAAAABAAAAAAAAAAHdG9rZW5fYQAAAAATAAAAAAAAAAd0b2tlbl9iAAAAABMAAAAAAAAAA2ZlZQAAAAAEAAAAAAAAAA5zcXJ0X3ByaWNlX3g5NgAAAAAADAAAAAEAAAPpAAAAEwAAAAM=",
         "AAAAAAAAAUdSZXR1cm5zIHRoZSBwb29sIGFkZHJlc3MgZm9yIGEgZ2l2ZW4gdG9rZW4gcGFpciBhbmQgZmVlIHRpZXIuCgojIEFyZ3VtZW50cwoqIGBlbnZgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CiogYHRva2VuX2FgIC0gRmlyc3QgdG9rZW4gYWRkcmVzcwoqIGB0b2tlbl9iYCAtIFNlY29uZCB0b2tlbiBhZGRyZXNzCiogYGZlZWAgLSBGZWUgdGllciBpbiBiYXNpcyBwb2ludHMKCiMgUmV0dXJucwoqIGBTb21lKEFkZHJlc3MpYCAtIFBvb2wgYWRkcmVzcyBpZiBpdCBleGlzdHMKKiBgTm9uZWAgLSBJZiBubyBwb29sIGV4aXN0cyBmb3IgdGhpcyB0b2tlbiBwYWlyIGFuZCBmZWUAAAAACGdldF9wb29sAAAAAwAAAAAAAAAHdG9rZW5fYQAAAAATAAAAAAAAAAd0b2tlbl9iAAAAABMAAAAAAAAAA2ZlZQAAAAAEAAAAAQAAA+gAAAAT",
         "AAAAAAAAAKRTZXRzIGEgZGVmYXVsdCByb3V0ZXIgdG8gYmUgYXV0by1hdXRob3JpemVkIG9uIG5ldyBwb29scy4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgY29udHJhY3QgZW52aXJvbm1lbnQKKiBgcm91dGVyYCAtIFJvdXRlciBhZGRyZXNzIHRvIGF1dG8tYXV0aG9yaXplIG9uIG5ldyBwb29scwAAABJzZXRfZGVmYXVsdF9yb3V0ZXIAAAAAAAEAAAAAAAAABnJvdXRlcgAAAAAAEwAAAAA=",
         "AAAAAAAAAFJDbGVhcnMgdGhlIGRlZmF1bHQgcm91dGVyIHNldHRpbmcuCgojIEFyZ3VtZW50cwoqIGBlbnZgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50AAAAAAAUY2xlYXJfZGVmYXVsdF9yb3V0ZXIAAAAAAAAAAA==",
@@ -448,6 +492,7 @@ export class Client extends ContractClient {
         get_protocol_fee_0: this.txFromJSON<u32>,
         get_protocol_fee_1: this.txFromJSON<u32>,
         create_pool: this.txFromJSON<Result<string>>,
+        create_and_initialize_pool: this.txFromJSON<Result<string>>,
         get_pool: this.txFromJSON<Option<string>>,
         set_default_router: this.txFromJSON<null>,
         clear_default_router: this.txFromJSON<null>,

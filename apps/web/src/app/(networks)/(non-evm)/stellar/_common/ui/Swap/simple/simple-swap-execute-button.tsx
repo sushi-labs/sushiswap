@@ -38,13 +38,7 @@ export const SimpleSwapExecuteButton = () => {
     setSlippageAmount(0)
     setPriceImpact(null)
     setChecked(false)
-  }, [
-    setAmount,
-    setOutputAmount,
-    setSlippageAmount,
-    setPriceImpact,
-    setChecked,
-  ])
+  }, [setAmount, setOutputAmount, setSlippageAmount, setPriceImpact])
 
   // Check if output token needs a trustline (for native assets)
   const { needsTrustline: needsToken1Trustline } = useNeedsTrustline(
