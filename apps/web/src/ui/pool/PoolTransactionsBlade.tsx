@@ -7,7 +7,6 @@ import {
   getBladeSwaps,
 } from '@sushiswap/graph-client/data-api'
 import {
-  Card,
   CardContent,
   CardHeader,
   CardTitle,
@@ -18,6 +17,7 @@ import {
 } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
+import ms from 'ms'
 import { type FC, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { type EvmChainId, getEvmChainById, isBladeChainId } from 'sushi/evm'
@@ -242,7 +242,7 @@ const PoolTransactionsBlade: FC<PoolTransactionsBladeProps> = ({
   const opts = useMemo(
     () =>
       ({
-        refetchInterval: 60_000,
+        refetchInterval: ms('1m'),
         type,
         filterByAddress: filterByAddress ? address : undefined,
       }) as const,

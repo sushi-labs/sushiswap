@@ -35,6 +35,8 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
     pool.id as EvmAddress,
   )
 
+  const baseApr = pool.totalApr1d - pool.incentiveApr
+
   return (
     <div className="relative z-10 flex flex-col items-center justify-center gap-4 px-4">
       <div className="flex flex-col items-center gap-3 sm:gap-4">
@@ -131,7 +133,7 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
 
         <div className="flex flex-col items-center gap-1 sm:gap-2">
           <div className="bg-gradient-to-r font-bold font-orbitron text-2xl text-black dark:text-white xs:text-sm sm:text-4xl">
-            {formatPercent(pool.feeApr1d)}
+            {formatPercent(baseApr)}
           </div>
           <div className="font-medium text-black dark:text-white text-xs opacity-80">
             Base APR
