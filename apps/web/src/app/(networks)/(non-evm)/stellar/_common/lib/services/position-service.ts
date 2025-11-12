@@ -1,4 +1,3 @@
-import * as StellarSdk from '@stellar/stellar-sdk'
 import type { u128 } from '@stellar/stellar-sdk/contract'
 import type {
   PositionTuple,
@@ -10,10 +9,7 @@ import {
   getPositionManagerContractClient,
 } from '../soroban/client'
 import { DEFAULT_TIMEOUT } from '../soroban/constants'
-import {
-  CONTRACT_ADDRESSES,
-  NETWORK_CONFIG,
-} from '../soroban/contract-addresses'
+import { CONTRACT_ADDRESSES } from '../soroban/contract-addresses'
 import { handleResult } from '../soroban/handle-result'
 import {
   submitViaRawRPC,
@@ -66,25 +62,51 @@ const formatPositionInfo = (
  */
 export class PositionService {
   /**
+   * Get the number of positions (NFTs) owned by a user
+   */
+  async getNumberOfUserPositions(userAddress: string): Promise<number> {
+    const positionManagerClient = getPositionManagerContractClient({
+      contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+      // No publicKey needed for read-only operations that don't require user context
+    })
+    const result = await positionManagerClient.balance({
+      owner: userAddress,
+    })
+    return result.result || 0
+  }
+
+  /**
    * Get all position token IDs owned by a user
    */
   async getUserTokenIds(
     userAddress: string,
     skip = 0,
-    take = 100,
+    take = Number.POSITIVE_INFINITY,
   ): Promise<number[]> {
+    const BATCH_SIZE = 20
+    const numberOfUserTokenIds =
+      await this.getNumberOfUserPositions(userAddress)
+    const numberToFetch = Math.min(take, numberOfUserTokenIds - skip)
+    const numberOfBatches = Math.ceil(numberToFetch / BATCH_SIZE)
     const positionManagerClient = getPositionManagerContractClient({
       contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
       publicKey: userAddress,
     })
 
-    const result = await positionManagerClient.get_user_token_ids({
-      owner: userAddress,
-      skip,
-      take,
-    })
+    const batchPromises = Array.from(
+      { length: numberOfBatches },
+      async (_, i) => {
+        return await positionManagerClient.get_user_token_ids({
+          owner: userAddress,
+          skip: skip + i * BATCH_SIZE,
+          take: BATCH_SIZE,
+        })
+      },
+    )
 
-    return result.result || []
+    const batchResults = await Promise.all(batchPromises)
+
+    return batchResults.flatMap((result) => result.result || [])
   }
 
   /**
@@ -141,21 +163,37 @@ export class PositionService {
   async getUserPositions(
     userAddress: string,
     skip = 0,
-    take = 100,
+    take = Number.POSITIVE_INFINITY,
   ): Promise<PositionInfo[]> {
+    const BATCH_SIZE = 3
+    const numberOfUserPositions =
+      await this.getNumberOfUserPositions(userAddress)
+    const numberToFetch = Math.min(take, numberOfUserPositions - skip)
+    const numberOfBatches = Math.ceil(numberToFetch / BATCH_SIZE)
+
     const positionManagerClient = getPositionManagerContractClient({
       contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
     })
 
     try {
-      const { result } =
-        await positionManagerClient.get_user_positions_with_fees({
-          owner: userAddress,
-          skip,
-          take,
-        })
+      const batchPromises = Array.from(
+        { length: numberOfBatches },
+        async (_, i) => {
+          const { result } =
+            await positionManagerClient.get_user_positions_with_fees({
+              owner: userAddress,
+              skip: skip + i * BATCH_SIZE,
+              take: BATCH_SIZE,
+            })
+          return handleResult<UserPositionInfo[]>(result).map(
+            formatPositionInfo,
+          )
+        },
+      )
 
-      return handleResult<UserPositionInfo[]>(result).map(formatPositionInfo)
+      const batchResults = await Promise.all(batchPromises)
+
+      return batchResults.flat()
     } catch (error) {
       console.error('Failed to get user positions:', error)
       return []
@@ -170,7 +208,7 @@ export class PositionService {
   async getUserPositionsWithFees(
     userAddress: string,
     skip = 0,
-    take = 100,
+    take = Number.POSITIVE_INFINITY,
   ): Promise<PositionInfo[]> {
     // Just call getUserPositions since it already includes all data
     return this.getUserPositions(userAddress, skip, take)
