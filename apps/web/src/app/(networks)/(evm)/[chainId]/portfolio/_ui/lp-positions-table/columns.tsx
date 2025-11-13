@@ -299,7 +299,7 @@ const RewardsCell = ({ data }: { data: PortfolioV2PositionPoolType }) => {
       <div className="font-medium">{formatUSD(totalRewards)}</div>
       <div className="flex gap-1 items-center text-xs font-normal uppercase whitespace-nowrap text-muted-foreground dark:text-pink-200">
         {rewardTokens?.map((token, i) => (
-          <span key={i}>
+          <span key={i} className="flex items-center gap-1">
             {formatNumber(token?.toSignificant(6))} {token?.currency?.symbol}
             <Currency.Icon
               currency={token?.currency}
