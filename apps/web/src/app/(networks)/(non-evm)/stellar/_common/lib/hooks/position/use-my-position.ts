@@ -18,6 +18,8 @@ export interface PositionSummary {
   feesToken0: bigint
   feesToken1: bigint
   pool: string
+  tickLower: number
+  tickUpper: number
 }
 
 export interface MyPositionData {
@@ -214,6 +216,8 @@ export function useMyPosition(userAddress?: string, poolAddress?: string) {
         token0,
         token1,
         pool: poolAddress || '',
+        tickLower: position.tickLower,
+        tickUpper: position.tickUpper,
       })
     })
 
