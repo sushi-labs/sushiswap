@@ -66,7 +66,7 @@ export const LimitOrdersTable = ({
         </div>
       }
     >
-      <Card className="hidden overflow-hidden border-none bg-slate-50 dark:bg-slate-800 lg:block !rounded-t-none xl:!rounded-lg">
+      <Card className="hidden overflow-hidden border-none bg-slate-50 dark:bg-slate-800 lg:block !rounded-t-none xl:!rounded-lg px-2">
         <DataTable
           columns={LIMIT_ORDER_COLUMNS}
           data={data}
