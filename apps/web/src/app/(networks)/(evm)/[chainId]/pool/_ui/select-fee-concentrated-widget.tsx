@@ -24,9 +24,14 @@ import {
 import { Dots } from '@sushiswap/ui'
 import React, { type FC, memo, useCallback, useMemo } from 'react'
 import { usePoolsByTokenPair } from 'src/lib/hooks/usePoolsByTokenPair'
-import { type EvmCurrency, SushiSwapV3FeeAmount } from 'sushi/evm'
+import {
+  EvmChainId,
+  type EvmCurrency,
+  type SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
+} from 'sushi/evm'
 
-export const FEE_OPTIONS = [
+export const getFeeOptions = (chainId: SushiSwapV3ChainId) => [
   {
     value: SushiSwapV3FeeAmount.LOWEST,
     subtitle: 'Best for very stable pairs.',
@@ -43,9 +48,22 @@ export const FEE_OPTIONS = [
     value: SushiSwapV3FeeAmount.HIGH,
     subtitle: 'Best for volatile pairs.',
   },
+  ...(chainId === EvmChainId.KATANA
+    ? [
+        {
+          value: SushiSwapV3FeeAmount.HIGHER,
+          subtitle: 'Best for highly volatile pairs.',
+        },
+        {
+          value: SushiSwapV3FeeAmount.HIGHEST,
+          subtitle: 'Best for extremely volatile pairs.',
+        },
+      ]
+    : []),
 ]
 
 interface SelectFeeConcentratedWidget {
+  chainId: SushiSwapV3ChainId
   feeAmount: SushiSwapV3FeeAmount | undefined
   setFeeAmount: (fee: SushiSwapV3FeeAmount) => void
   token0: EvmCurrency | undefined
@@ -56,6 +74,7 @@ interface SelectFeeConcentratedWidget {
 
 export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
   memo(function SelectFeeWidget({
+    chainId,
     feeAmount,
     setFeeAmount: _setFeeAmount,
     token0,
@@ -63,6 +82,8 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
     disableIfNotExists = false,
   }) {
     const trace = useTrace()
+
+    const FEE_OPTIONS = useMemo(() => getFeeOptions(chainId), [chainId])
 
     const setFeeAmount = useCallback(
       (fee: SushiSwapV3FeeAmount) => {
@@ -107,7 +128,7 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
       })
 
       return tvlDistribution
-    }, [pools])
+    }, [pools, FEE_OPTIONS])
 
     return (
       <FormSection
