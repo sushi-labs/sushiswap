@@ -69,6 +69,7 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.BERACHAIN,
   ChainId.PLASMA,
   ChainId.KATANA,
+  ChainId.MONAD,
   ChainId.CRONOS,
   ChainId.MODE,
   ChainId.KAVA,
