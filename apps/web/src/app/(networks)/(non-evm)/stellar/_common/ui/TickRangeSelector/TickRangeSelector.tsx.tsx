@@ -58,6 +58,24 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
   const [minTickRawInput, setMinTickRawInput] = useState(tickLower.toString())
   const [maxTickRawInput, setMaxTickRawInput] = useState(tickUpper.toString())
 
+  // percentFraction represents the decimal form (e.g. 0.1 for 10%).
+  const createPercentPreset = (label: string, percentFraction: number) => {
+    const upperMultiplier = 1 + percentFraction
+    const lowerMultiplier = 1 / upperMultiplier
+
+    return {
+      label,
+      lower: alignTick(
+        currentTick + calculateTickFromPrice(lowerMultiplier),
+        tickSpacing,
+      ),
+      upper: alignTick(
+        currentTick + calculateTickFromPrice(upperMultiplier),
+        tickSpacing,
+      ),
+    }
+  }
+
   const tickRangePresets: TickRangePreset = [
     {
       label: 'Default',
@@ -69,16 +87,8 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
       lower: maxTickRange.lower,
       upper: maxTickRange.upper,
     },
-    {
-      label: '±10%',
-      lower: alignTick(currentTick + calculateTickFromPrice(0.9), tickSpacing),
-      upper: alignTick(currentTick + calculateTickFromPrice(1.1), tickSpacing),
-    },
-    {
-      label: '±1%',
-      lower: alignTick(currentTick + calculateTickFromPrice(0.99), tickSpacing),
-      upper: alignTick(currentTick + calculateTickFromPrice(1.01), tickSpacing),
-    },
+    createPercentPreset('±10%', 0.1),
+    createPercentPreset('±1%', 0.01),
   ]
 
   useEffect(() => {
