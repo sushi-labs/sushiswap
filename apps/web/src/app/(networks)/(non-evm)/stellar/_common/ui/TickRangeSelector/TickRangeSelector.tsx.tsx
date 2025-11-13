@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, TextField } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui'
 import type React from 'react'
 import { useEffect, useState } from 'react'
 import type { TickRangeSelectorState } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
@@ -43,6 +43,10 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
     defaultUpper,
     setTickLower,
     setTickUpper,
+    isDynamic,
+    setIsDynamic,
+    applyPresetRange,
+    dynamicOffsets,
   } = params
 
   const maxTickRange = clampTickRange(
@@ -101,13 +105,15 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
             type="button"
             size="sm"
             variant={
-              tickLower === preset.lower && tickUpper === preset.upper
+              isDynamic &&
+              dynamicOffsets !== null &&
+              dynamicOffsets.lower === preset.lower - currentTick &&
+              dynamicOffsets.upper === preset.upper - currentTick
                 ? 'default'
                 : 'secondary'
             }
             onClick={() => {
-              setTickLower(preset.lower)
-              setTickUpper(preset.upper)
+              applyPresetRange(preset.lower, preset.upper)
             }}
           >
             {preset.label}
@@ -124,9 +130,10 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
               size="sm"
               variant="secondary"
               onClick={() => {
-                setTickLower((prev) => {
-                  return alignTick(prev - tickSpacing, tickSpacing)
-                })
+                setIsDynamic(false)
+                setTickLower((prev) =>
+                  alignTick(prev - tickSpacing, tickSpacing),
+                )
               }}
               className="w-10 px-0"
             >
@@ -143,6 +150,7 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
                 if (Number.isNaN(raw)) {
                   return
                 }
+                setIsDynamic(false)
                 setTickLower(alignTick(raw, tickSpacing))
               }}
               step={tickSpacing}
@@ -152,11 +160,12 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
               type="button"
               size="sm"
               variant="secondary"
-              onClick={() =>
+              onClick={() => {
+                setIsDynamic(false)
                 setTickLower((prev) =>
                   alignTick(prev + tickSpacing, tickSpacing),
                 )
-              }
+              }}
               className="w-10 px-0"
             >
               +
@@ -170,11 +179,12 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
               type="button"
               size="sm"
               variant="secondary"
-              onClick={() =>
+              onClick={() => {
+                setIsDynamic(false)
                 setTickUpper((prev) =>
                   alignTick(prev - tickSpacing, tickSpacing),
                 )
-              }
+              }}
               className="w-10 px-0"
             >
               -
@@ -190,6 +200,7 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
                 if (Number.isNaN(raw)) {
                   return
                 }
+                setIsDynamic(false)
                 setTickUpper(alignTick(raw, tickSpacing))
               }}
               step={tickSpacing}
@@ -199,11 +210,12 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
               type="button"
               size="sm"
               variant="secondary"
-              onClick={() =>
+              onClick={() => {
+                setIsDynamic(false)
                 setTickUpper((prev) =>
                   alignTick(prev + tickSpacing, tickSpacing),
                 )
-              }
+              }}
               className="w-10 px-0"
             >
               +

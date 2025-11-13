@@ -5,6 +5,7 @@ import {
   type SetStateAction,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 import {
@@ -27,6 +28,10 @@ export type TickRangeSelectorState = {
   defaultUpper: number
   setTickLower: Dispatch<SetStateAction<number>>
   setTickUpper: Dispatch<SetStateAction<number>>
+  isDynamic: boolean
+  setIsDynamic: Dispatch<SetStateAction<boolean>>
+  applyPresetRange: (lower: number, upper: number) => void
+  dynamicOffsets: { lower: number; upper: number } | null
 }
 
 export const useTickRangeSelector = (
@@ -54,11 +59,57 @@ export const useTickRangeSelector = (
   const [tickLower, setTickLower] = useState<number>(() => defaultLower)
   const [tickUpper, setTickUpper] = useState<number>(() => defaultUpper)
   const [ticksAligned, setTicksAligned] = useState<boolean>(true)
+  const [isDynamicState, setIsDynamicState] = useState<boolean>(true)
+
+  const dynamicOffsetsRef = useRef<{ lower: number; upper: number }>({
+    lower: defaultLower - currentTick,
+    upper: defaultUpper - currentTick,
+  })
+  const tickRangeRef = useRef<{ lower: number; upper: number }>({
+    lower: defaultLower,
+    upper: defaultUpper,
+  })
 
   useEffect(() => {
     setTickLower((prev) => alignTick(prev, tickSpacing))
     setTickUpper((prev) => alignTick(prev, tickSpacing))
   }, [tickSpacing])
+
+  useEffect(() => {
+    tickRangeRef.current = {
+      lower: tickLower,
+      upper: tickUpper,
+    }
+  }, [tickLower, tickUpper])
+
+  useEffect(() => {
+    if (!isDynamicState) {
+      return
+    }
+
+    dynamicOffsetsRef.current = {
+      lower: tickLower - currentTick,
+      upper: tickUpper - currentTick,
+    }
+  }, [tickLower, tickUpper, currentTick, isDynamicState])
+
+  useEffect(() => {
+    if (!isDynamicState) {
+      return
+    }
+
+    const { lower, upper } = dynamicOffsetsRef.current
+    const nextLower = alignTick(currentTick + lower, tickSpacing)
+    const nextUpper = alignTick(currentTick + upper, tickSpacing)
+
+    if (nextLower !== tickLower) {
+      setTickLower(nextLower)
+    }
+
+    if (nextUpper !== tickUpper) {
+      setTickUpper(nextUpper)
+    }
+  }, [currentTick, tickSpacing, isDynamicState, tickLower, tickUpper])
 
   useEffect(() => {
     const lowerAligned = isTickAligned(tickLower, tickSpacing)
@@ -68,6 +119,38 @@ export const useTickRangeSelector = (
 
   // Prevent adding liquidity when price is above range (can't provide token0)
   const isTickRangeValid = tickLower < tickUpper && ticksAligned
+
+  const setIsDynamic: Dispatch<SetStateAction<boolean>> = (value) => {
+    setIsDynamicState((prev) => {
+      const next = typeof value === 'function' ? value(prev) : value
+
+      if (next && !prev) {
+        const { lower, upper } = tickRangeRef.current
+        dynamicOffsetsRef.current = {
+          lower: lower - currentTick,
+          upper: upper - currentTick,
+        }
+      }
+
+      return next
+    })
+  }
+
+  const applyPresetRange = (lower: number, upper: number) => {
+    const alignedLower = alignTick(lower, tickSpacing)
+    const alignedUpper = alignTick(upper, tickSpacing)
+
+    dynamicOffsetsRef.current = {
+      lower: alignedLower - currentTick,
+      upper: alignedUpper - currentTick,
+    }
+
+    setIsDynamicState(true)
+    setTickLower(alignedLower)
+    setTickUpper(alignedUpper)
+  }
+
+  const dynamicOffsets = isDynamicState ? dynamicOffsetsRef.current : null
 
   return {
     currentTick,
@@ -80,5 +163,9 @@ export const useTickRangeSelector = (
     defaultUpper,
     setTickLower,
     setTickUpper,
+    isDynamic: isDynamicState,
+    setIsDynamic,
+    applyPresetRange,
+    dynamicOffsets,
   }
 }
