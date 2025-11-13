@@ -31,6 +31,8 @@ import {
   SushiSwapV3FeeAmount,
 } from 'sushi/evm'
 
+const EXTENDED_FEE_TIER_CHAIN_IDS = [EvmChainId.KATANA] as const
+
 export const getFeeOptions = (chainId: SushiSwapV3ChainId) => [
   {
     value: SushiSwapV3FeeAmount.LOWEST,
@@ -48,7 +50,9 @@ export const getFeeOptions = (chainId: SushiSwapV3ChainId) => [
     value: SushiSwapV3FeeAmount.HIGH,
     subtitle: 'Best for volatile pairs.',
   },
-  ...(chainId === EvmChainId.KATANA
+  ...(EXTENDED_FEE_TIER_CHAIN_IDS.includes(
+    chainId as (typeof EXTENDED_FEE_TIER_CHAIN_IDS)[number],
+  )
     ? [
         {
           value: SushiSwapV3FeeAmount.HIGHER,
