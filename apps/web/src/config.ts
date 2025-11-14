@@ -28,6 +28,7 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.POLYGON_ZKEVM,
   ChainId.TATARA,
   ChainId.SEPOLIA,
+  ChainId.MONAD,
 ] as const
 
 export const BLADE_SUPPORTED_NETWORKS = BLADE_SUPPORTED_CHAIN_IDS.filter(
@@ -69,6 +70,7 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.BERACHAIN,
   ChainId.PLASMA,
   ChainId.KATANA,
+  ChainId.MONAD,
   ChainId.CRONOS,
   ChainId.MODE,
   ChainId.KAVA,
