@@ -11,15 +11,12 @@ export async function isPoolInitialized(address: string): Promise<boolean> {
       contractId: address,
     })
 
-    const slot0Result = await poolContractClient.slot0({
+    const isInitializedResult = await poolContractClient.is_initialized({
       timeoutInSeconds: 30,
       fee: 100,
     })
 
-    const sqrtPriceX96 = slot0Result.result.sqrt_price_x96
-
-    // Pool is initialized if sqrt_price_x96 is not 0
-    return sqrtPriceX96 !== 0n && sqrtPriceX96 !== undefined
+    return isInitializedResult.result
   } catch (error) {
     // If there's an error (like PoolNotInitialized), the pool is not initialized
     if (

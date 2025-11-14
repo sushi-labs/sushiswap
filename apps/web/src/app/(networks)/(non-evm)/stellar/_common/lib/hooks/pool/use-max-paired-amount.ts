@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { formatTokenAmount } from '../../utils/format'
 import { useCalculatePairedAmount } from './use-calculate-paired-amount'
+import { usePoolInitialized } from './use-pool-initialized'
 
 /**
  * Calculate the maximum token0 and token1 amounts based on token0 and token1 balances
@@ -13,9 +14,10 @@ export function useMaxPairedAmount(
   token1Balance: string,
   tickLower: number,
   tickUpper: number,
-  token0Decimals = 7,
-  token1Decimals = 7,
+  token0Decimals: number,
+  token1Decimals: number,
 ) {
+  const { data: initialized } = usePoolInitialized(poolAddress)
   const { data: pairedAmountData } = useCalculatePairedAmount(
     poolAddress,
     formatTokenAmount(BigInt(token0Balance), token0Decimals),
@@ -46,7 +48,8 @@ export function useMaxPairedAmount(
         !poolAddress ||
         !token0Balance ||
         !token1Balance ||
-        !rawPairedToken1Amount
+        !rawPairedToken1Amount ||
+        !initialized
       ) {
         return {
           maxToken0Amount: '0',
@@ -73,7 +76,11 @@ export function useMaxPairedAmount(
       }
     },
     enabled:
-      !!poolAddress && !!token0Balance && !!token1Balance && !!pairedAmountData,
+      !!poolAddress &&
+      !!token0Balance &&
+      !!token1Balance &&
+      !!pairedAmountData &&
+      !!initialized,
     staleTime: 10000, // 10 seconds
   })
 }

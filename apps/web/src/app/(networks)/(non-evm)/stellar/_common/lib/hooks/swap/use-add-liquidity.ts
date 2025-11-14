@@ -16,6 +16,8 @@ export interface UseAddLiquidityParams {
   poolAddress: string
   token0Amount: string
   token1Amount: string
+  token0Decimals: number
+  token1Decimals: number
   tickLower: number
   tickUpper: number
   recipient?: string
@@ -46,6 +48,8 @@ export const useAddLiquidity = () => {
         poolAddress: params.poolAddress,
         token0Amount: params.token0Amount,
         token1Amount: params.token1Amount,
+        token0Decimals: params.token0Decimals,
+        token1Decimals: params.token1Decimals,
         tickLower: params.tickLower,
         tickUpper: params.tickUpper,
         recipient: params.recipient || params.userAddress,

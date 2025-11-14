@@ -3,7 +3,7 @@
 import { type QueryClient, useQuery } from '@tanstack/react-query'
 import { isPoolInitialized } from '~stellar/_common/lib/soroban/pool-initialization'
 
-export const poolInitializedQueryKey = (address: string | null | undefined) => [
+const poolInitializedQueryKey = (address: string | null | undefined) => [
   'pool',
   'initialized',
   address,

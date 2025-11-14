@@ -205,6 +205,8 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
         poolAddress: pool.address,
         token0Amount: amount0,
         token1Amount: amount1, // Auto-calculated amount
+        token0Decimals: pool.token0.decimals,
+        token1Decimals: pool.token1.decimals,
         tickLower: alignedLower,
         tickUpper: alignedUpper,
         recipient: connectedAddress,

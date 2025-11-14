@@ -8,6 +8,7 @@ import {
   tickToSqrtPrice,
 } from '../../soroban/pool-helpers'
 import { formatTokenAmountWithDecimals } from '../../utils/format'
+import { usePoolInitialized } from './use-pool-initialized'
 
 /**
  * Calculate the required token1 amount based on token0 input
@@ -18,9 +19,10 @@ export function useCalculatePairedAmount(
   token0Amount: string,
   tickLower: number,
   tickUpper: number,
-  decimals = 7,
+  decimals: number,
   token0Code?: string,
 ) {
+  const { data: initialized } = usePoolInitialized(poolAddress)
   return useQuery({
     queryKey: [
       'pool',
@@ -35,7 +37,12 @@ export function useCalculatePairedAmount(
       status: 'idle' | 'below-range' | 'above-range' | 'within-range' | 'error'
       error?: string
     }> => {
-      if (!poolAddress || !token0Amount || Number(token0Amount) <= 0) {
+      if (
+        !poolAddress ||
+        !token0Amount ||
+        Number(token0Amount) <= 0 ||
+        !initialized
+      ) {
         return {
           token1Amount: '',
           status: 'idle',
@@ -116,7 +123,11 @@ export function useCalculatePairedAmount(
         }
       }
     },
-    enabled: !!poolAddress && !!token0Amount && Number(token0Amount) > 0,
+    enabled:
+      !!poolAddress &&
+      !!token0Amount &&
+      Number(token0Amount) > 0 &&
+      !!initialized,
     staleTime: 10000, // 10 seconds
   })
 }

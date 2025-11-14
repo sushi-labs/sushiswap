@@ -1,7 +1,4 @@
-import {
-  getPoolInfoFromContract,
-  addLiquidity as poolAddLiquidity,
-} from '../soroban/pool-helpers'
+import { getPoolInfoFromContract } from '../soroban/pool-helpers'
 import {
   decreaseLiquidity,
   increaseLiquidity,
@@ -42,12 +39,16 @@ export class SushiStellarService {
     params: AddLiquidityParams,
     signTransaction: (xdr: string) => Promise<string>,
   ): Promise<{ txHash: string; tokenId: number; liquidity: bigint }> {
-    // Convert string amounts to bigint (assuming 7 decimals)
+    // Convert string amounts to bigint
     const amount0 = BigInt(
-      Math.floor(Number.parseFloat(params.token0Amount) * 1e7),
+      Math.floor(
+        Number.parseFloat(params.token0Amount) * 10 ** params.token0Decimals,
+      ),
     )
     const amount1 = BigInt(
-      Math.floor(Number.parseFloat(params.token1Amount) * 1e7),
+      Math.floor(
+        Number.parseFloat(params.token1Amount) * 10 ** params.token1Decimals,
+      ),
     )
 
     const deadline = BigInt(
@@ -298,15 +299,21 @@ export class SushiStellarService {
       tokenId: number
       token0Amount: string
       token1Amount: string
+      token0Decimals: number
+      token1Decimals: number
       deadline?: number
     },
     signTransaction: (xdr: string) => Promise<string>,
   ) {
     const amount0 = BigInt(
-      Math.floor(Number.parseFloat(params.token0Amount) * 1e7),
+      Math.floor(
+        Number.parseFloat(params.token0Amount) * 10 ** params.token0Decimals,
+      ),
     )
     const amount1 = BigInt(
-      Math.floor(Number.parseFloat(params.token1Amount) * 1e7),
+      Math.floor(
+        Number.parseFloat(params.token1Amount) * 10 ** params.token1Decimals,
+      ),
     )
 
     return await increaseLiquidity({

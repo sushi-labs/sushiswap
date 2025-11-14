@@ -1,10 +1,5 @@
-import { Address, TransactionBuilder } from '@stellar/stellar-sdk'
-import { NETWORK_PASSPHRASE } from '../constants'
-import {
-  SorobanClient,
-  getFactoryContractClient,
-  getPoolContractClient,
-} from './client'
+import { Address } from '@stellar/stellar-sdk'
+import { getFactoryContractClient } from './client'
 import { DEFAULT_TIMEOUT, ZERO_ADDRESS } from './constants'
 import { CONTRACT_ADDRESSES } from './contract-addresses'
 import { isPoolInitialized } from './pool-initialization'
@@ -12,27 +7,30 @@ import { getBaseTokens } from './token-helpers'
 import { submitTransaction, waitForTransaction } from './transaction-helpers'
 
 /**
- * Create a new pool with the specified tokens and fee tier
+ * Create a new pool with the specified tokens and fee tier initialized to a given sqrt price
  * @param tokenA - Address of the first token
  * @param tokenB - Address of the second token
  * @param fee - Fee tier (e.g., 3000 for 0.3%, 10000 for 1%)
+ * @param sqrtPriceX96 - Initial sqrt price in Q64.96 format for pool initialization
  * @param sourceAccount - User's Stellar address
  * @param signTransaction - Function to sign the transaction
- * @returns The address of the created pool and transaction hash. Pool initialization must be handled separately.
+ * @returns The address of the created and initialized pool and (if no initialized pool already existed) transaction hash.
  */
-export async function createPool({
+export async function createAndInitializePool({
   tokenA,
   tokenB,
   fee,
+  sqrtPriceX96,
   sourceAccount,
   signTransaction,
 }: {
   tokenA: string
   tokenB: string
   fee: number
+  sqrtPriceX96: bigint
   sourceAccount: string
   signTransaction: (xdr: string) => Promise<string>
-}): Promise<{ poolAddress: string; txHash: string }> {
+}): Promise<{ poolAddress: string; txHash?: string }> {
   try {
     // Validate inputs
     if (!tokenA || !tokenB) {
@@ -43,6 +41,9 @@ export async function createPool({
     }
     if (!fee || fee <= 0) {
       throw new Error('Fee must be greater than 0')
+    }
+    if (sqrtPriceX96 <= 0n) {
+      throw new Error('Initial sqrt price must be greater than 0')
     }
 
     // Order tokens (smaller address first) - EXACTLY like the factory expects
@@ -58,7 +59,12 @@ export async function createPool({
     })
 
     if (existingPool) {
-      throw new Error(`Pool already exists at address: ${existingPool}`)
+      const initialized = await isPoolInitialized(existingPool)
+      if (initialized) {
+        return {
+          poolAddress: existingPool,
+        }
+      }
     }
 
     // First, let's try to simulate the transaction to see what happens
@@ -71,12 +77,14 @@ export async function createPool({
     console.log('🏭 Token0 address:', token0)
     console.log('🏭 Token1 address:', token1)
     console.log('🏭 Fee:', fee)
+    console.log('🏭 Initial sqrt price:', sqrtPriceX96)
     const assembledTransaction = await factoryContractClient
-      .create_pool(
+      .create_and_initialize_pool(
         {
           token_a: token0,
           token_b: token1,
           fee: fee,
+          sqrt_price_x96: sqrtPriceX96,
         },
         {
           timeoutInSeconds: DEFAULT_TIMEOUT,
@@ -102,32 +110,32 @@ export async function createPool({
 
     // Submit the transaction
 
-    const result = await submitTransaction(signedXdr)
+    const submitResult = await submitTransaction(signedXdr)
 
-    console.log(`Transaction submitted: ${result.hash}`)
+    console.log(`Transaction submitted: ${submitResult.hash}`)
     console.log('⏳ Waiting for confirmation...')
 
     // Wait for confirmation
-    const txResult = await waitForTransaction(result.hash)
+    const txResult = await waitForTransaction(submitResult.hash)
 
-    if (txResult.status === 'SUCCESS') {
+    if (txResult.status === 'SUCCESS' && txResult.returnValue !== undefined) {
       console.log('✅ Transaction confirmed!')
 
       // Extract pool address from result
       const poolAddress = Address.fromScVal(txResult.returnValue).toString()
 
-      console.log('🎉 Pool created:', poolAddress)
+      console.log('🎉 Pool created and initialized:', poolAddress)
 
       return {
         poolAddress,
-        txHash: result.hash,
+        txHash: submitResult.hash,
       }
     } else {
       console.error('Transaction failed:', txResult)
       throw new Error(`Transaction failed: ${JSON.stringify(txResult)}`)
     }
   } catch (error) {
-    console.error('❌ Error creating pool:', error)
+    console.error('❌ Error creating and initializing pool:', error)
     throw error
   }
 }
@@ -139,7 +147,7 @@ export async function createPool({
  * @param amount0 - Amount of token0 (as bigint, string, or number)
  * @returns sqrt(amount1/amount0) * 2^96 as bigint
  */
-function encodePriceSqrt(
+export function encodePriceSqrt(
   amount1: bigint | string | number,
   amount0: bigint | string | number,
 ): bigint {
@@ -181,118 +189,6 @@ function integerSqrt(x: bigint): bigint {
   }
 
   return y
-}
-
-/**
- * Check if a pool is initialized, and initialize it if needed
- * @param poolAddress - The pool contract address
- * @param sourceAccount - The account initializing the pool
- * @param signTransaction - Function to sign the transaction
- * @param tokenAmountA - Amount of token A to calculate price ratio
- * @param tokenAmountB - Amount of token B to calculate price ratio
- */
-export async function initializePoolIfNeeded({
-  poolAddress,
-  sourceAccount,
-  signTransaction,
-  tokenAmountA,
-  tokenAmountB,
-}: {
-  poolAddress: string
-  sourceAccount: string
-  signTransaction: (xdr: string) => Promise<string>
-  tokenAmountA: string
-  tokenAmountB: string
-}): Promise<string | undefined> {
-  if (!tokenAmountA || !tokenAmountB) {
-    throw new Error('Token amounts are required to initialize the pool')
-  }
-
-  const initialized = await isPoolInitialized(poolAddress)
-
-  if (initialized) {
-    console.log('✅ Pool is already initialized')
-    return undefined
-  }
-
-  console.log('🎨 Pool not initialized, initializing now...')
-
-  const priceRatio = encodePriceSqrt(tokenAmountB, tokenAmountA)
-
-  console.log(
-    `🎨 Initializing with price ratio: ${tokenAmountB}:${tokenAmountA}`,
-  )
-
-  const txHash = await initializePool({
-    poolAddress,
-    sqrtPriceX96: priceRatio,
-    sourceAccount,
-    signTransaction,
-  })
-
-  console.log('✅ Pool initialized with sqrt price')
-
-  return txHash
-}
-
-/**
- * Initialize a pool with an initial sqrt price
- * @param poolAddress - The pool contract address
- * @param sqrtPriceX96 - Initial sqrt price * 2^96
- * @param sourceAccount - The account initializing the pool
- * @param signTransaction - Function to sign the transaction
- */
-async function initializePool({
-  poolAddress,
-  sqrtPriceX96,
-  sourceAccount,
-  signTransaction,
-}: {
-  poolAddress: string
-  sqrtPriceX96: bigint
-  sourceAccount: string
-  signTransaction: (xdr: string) => Promise<string>
-}): Promise<string> {
-  try {
-    const poolContractClient = getPoolContractClient({
-      contractId: poolAddress,
-      publicKey: sourceAccount,
-    })
-    const assembledTransaction = await poolContractClient.initialize(
-      {
-        sqrt_price_x96: sqrtPriceX96,
-      },
-      {
-        timeoutInSeconds: DEFAULT_TIMEOUT,
-        fee: 100000,
-      },
-    )
-
-    // Prepare and sign
-    const signedXdr = await signTransaction(assembledTransaction.toXDR())
-
-    // Submit
-    const signedTx = TransactionBuilder.fromXDR(signedXdr, NETWORK_PASSPHRASE)
-    const submitResult = await SorobanClient.sendTransaction(signedTx)
-
-    // Wait for confirmation
-    const { hash, status } = submitResult
-
-    if (!hash) {
-      throw new Error('Initialization transaction did not return a hash')
-    }
-
-    if (status === 'PENDING') {
-      await waitForTransaction(hash)
-    }
-
-    console.log('✅ Pool initialized with sqrt price:', sqrtPriceX96.toString())
-
-    return hash
-  } catch (error) {
-    console.error('❌ Error initializing pool:', error)
-    throw error
-  }
 }
 
 /**

@@ -94,6 +94,8 @@ export function AdvancedSwapWidget({
         poolAddress: pools[0].address,
         token0Amount: token0AmountScaled,
         token1Amount: token1AmountScaled,
+        token0Decimals: selectedTokenIn.decimals,
+        token1Decimals: selectedTokenOut.decimals,
         tickLower: -60000,
         tickUpper: 60000,
         signTransaction,

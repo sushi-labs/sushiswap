@@ -1,5 +1,6 @@
 import type { Transaction, xdr } from '@stellar/stellar-sdk'
 import { Account, TransactionBuilder } from '@stellar/stellar-sdk'
+import type { rpc } from '@stellar/stellar-sdk'
 import { NETWORK_PASSPHRASE } from '../constants'
 import { SorobanClient } from './client'
 import { DEFAULT_TIMEOUT } from './constants'
@@ -11,7 +12,7 @@ import { DEFAULT_TIMEOUT } from './constants'
  */
 export async function submitTransaction(signedTxXdr: string): Promise<{
   hash: string
-  result: any
+  result: rpc.Api.SendTransactionResponse
 }> {
   try {
     // Parse the signed transaction
@@ -68,7 +69,7 @@ export async function buildTransaction<T extends xdr.Operation>(
 export async function waitForTransaction(
   hash: string,
   timeout = 30000,
-): Promise<any> {
+): Promise<rpc.Api.GetTransactionResponse> {
   const startTime = Date.now()
 
   while (Date.now() - startTime < timeout) {
@@ -76,6 +77,8 @@ export async function waitForTransaction(
       const result = await SorobanClient.getTransaction(hash)
       console.log('result', result)
       if (result.status === 'SUCCESS') {
+        // Wait for 1 ledger to ensure finality while sharing timeout
+        await waitForLedgerPropagation(1, timeout - (Date.now() - startTime))
         return result
       }
       if (result.status === 'FAILED') {
@@ -108,4 +111,22 @@ export async function getAccountInfo(address: string) {
     console.error('Error fetching account info:', error)
     throw error
   }
+}
+
+async function waitForLedgerPropagation(
+  ledgersToWait: number,
+  timeout: number,
+): Promise<void> {
+  const initialLedger = await SorobanClient.getLatestLedger()
+  const targetLedger = initialLedger.sequence + ledgersToWait
+  const startTime = Date.now()
+
+  while (Date.now() - startTime < timeout) {
+    const currentLedger = await SorobanClient.getLatestLedger()
+    if (currentLedger.sequence >= targetLedger) {
+      return
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+  }
+  throw new Error('Ledger wait timeout exceeded')
 }

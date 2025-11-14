@@ -1,8 +1,6 @@
 'use client'
 
-import { createToast } from '@sushiswap/notifications'
 import { Button, FormSection, SelectIcon, TextField } from '@sushiswap/ui'
-import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import {
@@ -10,24 +8,17 @@ import {
   usePoolInfo,
   useTokenBalance,
 } from '~stellar/_common/lib/hooks'
-import { useCreatePool } from '~stellar/_common/lib/hooks/factory/use-create-pool'
+import { useCreateAndInitializePool } from '~stellar/_common/lib/hooks/factory/use-create-and-initialize-pool'
 import { useCalculatePairedAmount } from '~stellar/_common/lib/hooks/pool/use-calculate-paired-amount'
 import { useMaxPairedAmount } from '~stellar/_common/lib/hooks/pool/use-max-paired-amount'
 import { usePoolBalances } from '~stellar/_common/lib/hooks/pool/use-pool-balances'
-import {
-  invalidatePoolInitializedQuery,
-  usePoolInitialized,
-} from '~stellar/_common/lib/hooks/pool/use-pool-initialized'
+import { usePoolInitialized } from '~stellar/_common/lib/hooks/pool/use-pool-initialized'
 import { usePoolPrice } from '~stellar/_common/lib/hooks/pool/use-pool-price'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/swap/use-add-liquidity'
 import { useTickRangeSelector } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
-import {
-  getPool,
-  initializePoolIfNeeded,
-} from '~stellar/_common/lib/soroban/dex-factory-helpers'
+import { encodePriceSqrt } from '~stellar/_common/lib/soroban'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
-import { getStellarTxnLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
 import { FEE_TIERS, TICK_SPACINGS } from '~stellar/_common/lib/utils/ticks'
 import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
 import { TickRangeSelector } from '~stellar/_common/ui/TickRangeSelector/TickRangeSelector.tsx'
@@ -37,9 +28,8 @@ import { useStellarWallet } from '~stellar/providers'
 export default function AddPoolPage() {
   const { isConnected, connectedAddress, signTransaction } = useStellarWallet()
   const router = useRouter()
-  const createPoolMutation = useCreatePool()
+  const createAndInitializePoolMutation = useCreateAndInitializePool()
   const addLiquidityMutation = useAddLiquidity()
-  const queryClient = useQueryClient()
 
   const [token0, setToken0] = useState<Token | undefined>(undefined)
   const [token1, setToken1] = useState<Token | undefined>(undefined)
@@ -71,7 +61,8 @@ export default function AddPoolPage() {
   const { data: poolInitialized } = usePoolInitialized(existingPoolAddress)
 
   const { data: poolInfo } = usePoolInfo(existingPoolAddress ?? null)
-  const reversedPoolTokenOrder = poolInfo?.token0.contract !== token0?.contract
+  const reversedPoolTokenOrder =
+    token0 && token1 && token0.contract > token1.contract
 
   const { data: currentPrice } = usePoolPrice(existingPoolAddress ?? null)
   const tickRangeSelectorState = useTickRangeSelector(
@@ -101,8 +92,8 @@ export default function AddPoolPage() {
     poolBalanceData?.token1.amount || '0',
     tickLower,
     tickUpper,
-    poolInfo?.token0.decimals,
-    poolInfo?.token1.decimals,
+    poolInfo?.token0.decimals || 7,
+    poolInfo?.token1.decimals || 7,
   )
 
   // Use auto-calculated amount for existing pools, manual input for new pools or uninitialized pools
@@ -175,66 +166,35 @@ export default function AddPoolPage() {
       alert('Tick lower must be less than tick upper')
       return
     }
-
     try {
-      let poolAddress: string
-
-      try {
-        const result = await createPoolMutation.mutateAsync({
-          tokenA: token0.contract,
-          tokenB: token1.contract,
-          fee: selectedFee,
-        })
-        poolAddress = result.poolAddress
-      } catch (createError: any) {
-        // Check if pool already exists
-        const errorMessage = createError?.message || String(createError)
-        const poolExistsMatch = errorMessage.match(
-          /Pool already exists at address: ([A-Z0-9]{56})/,
-        )
-
-        if (poolExistsMatch) {
-          poolAddress = poolExistsMatch[1]
-        } else {
-          // If it's not a "pool exists" error, rethrow
-          throw createError
-        }
-      }
-
-      const initializeTxHash = await initializePoolIfNeeded({
-        poolAddress,
-        sourceAccount: connectedAddress,
+      const [orderedToken0, orderedToken1] = reversedPoolTokenOrder
+        ? [token1, token0]
+        : [token0, token1]
+      const [orderedToken0Amount, orderedToken1Amount] = reversedPoolTokenOrder
+        ? [token1Amount, token0Amount]
+        : [token0Amount, token1Amount]
+      const sqrtPriceX96 = encodePriceSqrt(
+        orderedToken1Amount,
+        orderedToken0Amount,
+      )
+      const { result } = await createAndInitializePoolMutation.mutateAsync({
+        tokenA: orderedToken0.contract,
+        tokenB: orderedToken1.contract,
+        fee: selectedFee,
+        sqrtPriceX96,
+        userAddress: connectedAddress,
         signTransaction,
-        tokenAmountA: reversedPoolTokenOrder ? token1Amount : token0Amount,
-        tokenAmountB: reversedPoolTokenOrder ? token0Amount : token1Amount,
       })
-
-      if (initializeTxHash) {
-        createToast({
-          account: connectedAddress || undefined,
-          type: 'swap',
-          chainId: 1,
-          txHash: initializeTxHash,
-          href: getStellarTxnLink(initializeTxHash),
-          promise: Promise.resolve({ hash: initializeTxHash }),
-          summary: {
-            pending: 'Initializing pool...',
-            completed: 'Pool initialized successfully',
-            failed: 'Pool initialization failed',
-          },
-          groupTimestamp: Date.now(),
-          timestamp: Date.now(),
-        })
-
-        invalidatePoolInitializedQuery(queryClient, poolAddress)
-      }
+      const poolAddress = result.poolAddress
 
       // Add liquidity (required)
       await addLiquidityMutation.mutateAsync({
         poolAddress,
         userAddress: connectedAddress,
-        token0Amount: reversedPoolTokenOrder ? token1Amount : token0Amount,
-        token1Amount: reversedPoolTokenOrder ? token0Amount : token1Amount,
+        token0Amount: orderedToken0Amount,
+        token1Amount: orderedToken1Amount,
+        token0Decimals: orderedToken0.decimals,
+        token1Decimals: orderedToken1.decimals,
         tickLower,
         tickUpper,
         recipient: connectedAddress,
@@ -244,7 +204,7 @@ export default function AddPoolPage() {
       // Redirect to the pool page
       router.push(`/stellar/pool/${poolAddress}`)
     } catch (error) {
-      console.error('Failed to create pool or add liquidity:', error)
+      console.error('Failed to create/initialize pool or add liquidity:', error)
     }
   }
 
@@ -271,7 +231,7 @@ export default function AddPoolPage() {
     hasValidAmounts &&
     !isAboveRange
   const isCreating =
-    createPoolMutation.isPending || addLiquidityMutation.isPending
+    createAndInitializePoolMutation.isPending || addLiquidityMutation.isPending
 
   return (
     <>
@@ -531,7 +491,7 @@ export default function AddPoolPage() {
               {isCreating
                 ? addLiquidityMutation.isPending
                   ? 'Adding Liquidity...'
-                  : 'Creating Pool...'
+                  : 'Creating/Initializing Pool...'
                 : isAboveRange
                   ? 'Price Above Range'
                   : !token0 || !token1

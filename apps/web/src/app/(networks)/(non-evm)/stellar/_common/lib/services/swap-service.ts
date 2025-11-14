@@ -19,6 +19,8 @@ export interface AddLiquidityParams {
   poolAddress: string
   token0Amount: string
   token1Amount: string
+  token0Decimals: number
+  token1Decimals: number
   tickLower: number
   tickUpper: number
   recipient?: string
