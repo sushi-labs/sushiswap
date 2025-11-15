@@ -5,14 +5,21 @@ interface TrustlineWarningProps {
   assetCode: string
   assetIssuer: string
   className?: string
+  direction?: 'input' | 'output'
 }
 
 export const TrustlineWarning = ({
   assetCode,
   assetIssuer,
   className,
+  direction = 'output',
 }: TrustlineWarningProps) => {
   const createTrustline = useCreateTrustline()
+
+  const description =
+    direction === 'input'
+      ? `To swap with ${assetCode}, you need to create a trustline first. This is a one-time setup for this asset.`
+      : `To receive ${assetCode}, you need to create a trustline first. This is a one-time setup for this asset.`
 
   const handleCreateTrustline = () => {
     createTrustline.mutate({
@@ -25,10 +32,7 @@ export const TrustlineWarning = ({
     <Message variant="warning" className={className} size="sm">
       <div className="flex flex-col gap-2">
         <p className="font-semibold">⚠️ Trustline Required</p>
-        <p className="text-sm">
-          To swap to {assetCode}, you need to create a trustline first. This is
-          a one-time setup for this asset.
-        </p>
+        <p className="text-sm">{description}</p>
         <Button
           size="sm"
           onClick={handleCreateTrustline}

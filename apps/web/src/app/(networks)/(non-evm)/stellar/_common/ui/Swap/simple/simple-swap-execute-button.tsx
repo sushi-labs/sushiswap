@@ -40,7 +40,12 @@ export const SimpleSwapExecuteButton = () => {
     setChecked(false)
   }, [setAmount, setOutputAmount, setSlippageAmount, setPriceImpact])
 
-  // Check if output token needs a trustline (for native assets)
+  // Check if swap tokens need trustlines (for native assets)
+  const { needsTrustline: needsToken0Trustline } = useNeedsTrustline(
+    token0?.contract || '',
+    token0?.code || '',
+    token0?.issuer || '',
+  )
   const { needsTrustline: needsToken1Trustline } = useNeedsTrustline(
     token1?.contract || '',
     token1?.code || '',
@@ -181,6 +186,8 @@ export const SimpleSwapExecuteButton = () => {
     ]
   }, [amountIn, token0])
 
+  const needsAnyTrustline = needsToken0Trustline || needsToken1Trustline
+
   const isDisabled =
     !connectedAddress ||
     !token0 ||
@@ -191,7 +198,7 @@ export const SimpleSwapExecuteButton = () => {
     outputAmount === 0n ||
     executeSwap.isPending ||
     executeMultiHopSwap.isPending ||
-    needsToken1Trustline ||
+    needsAnyTrustline ||
     (showPriceImpactWarning && !checked)
 
   return (
@@ -213,7 +220,7 @@ export const SimpleSwapExecuteButton = () => {
             >
               {executeSwap.isPending || executeMultiHopSwap.isPending
                 ? 'Executing Swap...'
-                : needsToken1Trustline
+                : needsAnyTrustline
                   ? 'Create trustline first'
                   : showPriceImpactWarning && !checked
                     ? 'Price impact too high'
@@ -226,11 +233,20 @@ export const SimpleSwapExecuteButton = () => {
           </Checker.Amounts>
         )}
       </div>
+      {needsToken0Trustline && token0?.issuer && (
+        <TrustlineWarning
+          assetCode={token0.code}
+          assetIssuer={token0.issuer}
+          direction="input"
+          className="mt-4"
+        />
+      )}
       {needsToken1Trustline && token1?.issuer && (
         <TrustlineWarning
           assetCode={token1.code}
           assetIssuer={token1.issuer}
-          className="mt-4"
+          direction="output"
+          className={needsToken0Trustline ? 'mt-2' : 'mt-4'}
         />
       )}
       {showSlippageWarning && <SlippageWarning className="mt-4" />}
