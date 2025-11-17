@@ -2,6 +2,7 @@ import { checkBotId } from 'botid/server'
 import { cookies } from 'next/headers'
 import { type NextRequest, NextResponse } from 'next/server'
 import { signBotIdJwt, verifyBotIdJwt } from 'src/app/_common/botid/jwt'
+import { isTest } from 'src/lib/environment'
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,8 +12,12 @@ export async function POST(request: NextRequest) {
     let newJwt: string | undefined = undefined
 
     if (!botIdJwt || !verifyBotIdJwt(botIdJwt.value)) {
-      if (process.env.NODE_ENV === 'production') {
-        const verification = await checkBotId()
+      if (!isTest) {
+        const verification = await checkBotId({
+          developmentOptions: {
+            bypass: 'HUMAN',
+          },
+        })
 
         if (verification.isBot) {
           return NextResponse.json(

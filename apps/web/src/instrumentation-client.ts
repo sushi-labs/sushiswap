@@ -125,7 +125,8 @@ if (!('structuredClone' in globalThis)) {
 }
 
 import { initBotId } from 'botid/client/core'
-if (process.env.NODE_ENV === 'production') {
+import { isTest } from './lib/environment'
+if (!isTest) {
   initBotId({
     protect: [
       {
