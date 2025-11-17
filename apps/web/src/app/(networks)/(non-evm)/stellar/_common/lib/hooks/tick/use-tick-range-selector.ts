@@ -12,7 +12,6 @@ import {
   DEFAULT_TICK_RANGE,
   TICK_SPACINGS,
   alignTick,
-  clampTickRange,
   isTickAligned,
 } from '~stellar/_common/lib/utils/ticks'
 import { calculateTickFromPrice } from '../../soroban/pool-helpers'
@@ -42,9 +41,9 @@ export const useTickRangeSelector = (
     return TICK_SPACINGS[fee] ?? TICK_SPACINGS[3000]
   }, [fee])
 
-  const currentTick = alignTick(
-    calculateTickFromPrice(currentPrice),
-    tickSpacing,
+  const currentTick = useMemo(
+    () => alignTick(calculateTickFromPrice(currentPrice), tickSpacing),
+    [currentPrice, tickSpacing],
   )
 
   const defaultLower = useMemo(
@@ -56,10 +55,15 @@ export const useTickRangeSelector = (
     [tickSpacing, currentTick],
   )
 
-  const [tickLower, setTickLower] = useState<number>(() => defaultLower)
-  const [tickUpper, setTickUpper] = useState<number>(() => defaultUpper)
-  const [ticksAligned, setTicksAligned] = useState<boolean>(true)
+  const [tickLower, setTickLower] = useState<number>(defaultLower)
+  const [tickUpper, setTickUpper] = useState<number>(defaultUpper)
   const [isDynamicState, setIsDynamicState] = useState<boolean>(true)
+
+  const ticksAligned = useMemo(() => {
+    const lowerAligned = isTickAligned(tickLower, tickSpacing)
+    const upperAligned = isTickAligned(tickUpper, tickSpacing)
+    return lowerAligned && upperAligned
+  }, [tickLower, tickUpper, tickSpacing])
 
   const dynamicOffsetsRef = useRef<{ lower: number; upper: number }>({
     lower: defaultLower - currentTick,
@@ -87,17 +91,6 @@ export const useTickRangeSelector = (
       return
     }
 
-    dynamicOffsetsRef.current = {
-      lower: tickLower - currentTick,
-      upper: tickUpper - currentTick,
-    }
-  }, [tickLower, tickUpper, currentTick, isDynamicState])
-
-  useEffect(() => {
-    if (!isDynamicState) {
-      return
-    }
-
     const { lower, upper } = dynamicOffsetsRef.current
     const nextLower = alignTick(currentTick + lower, tickSpacing)
     const nextUpper = alignTick(currentTick + upper, tickSpacing)
@@ -109,13 +102,12 @@ export const useTickRangeSelector = (
     if (nextUpper !== tickUpper) {
       setTickUpper(nextUpper)
     }
-  }, [currentTick, tickSpacing, isDynamicState, tickLower, tickUpper])
 
-  useEffect(() => {
-    const lowerAligned = isTickAligned(tickLower, tickSpacing)
-    const upperAligned = isTickAligned(tickUpper, tickSpacing)
-    setTicksAligned(lowerAligned && upperAligned)
-  }, [tickLower, tickUpper, tickSpacing])
+    dynamicOffsetsRef.current = {
+      lower: nextLower - currentTick,
+      upper: nextUpper - currentTick,
+    }
+  }, [currentTick, tickSpacing, isDynamicState, tickLower, tickUpper])
 
   // Prevent adding liquidity when price is above range (can't provide token0)
   const isTickRangeValid = tickLower < tickUpper && ticksAligned
