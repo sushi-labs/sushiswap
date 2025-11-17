@@ -132,15 +132,15 @@ export function useMyPosition(userAddress?: string, poolAddress?: string) {
             pool,
           )
 
-          // Convert Map to position key mapping
+          // Convert Map to tokenId mapping (each position has unique tokenId)
           const mappedResults: [
-            string,
+            number,
             { amount0: bigint; amount1: bigint },
           ][] = []
           for (const position of positions) {
             const result = results.get(position.tokenId)
             if (result) {
-              mappedResults.push([getPositionKey(position), result])
+              mappedResults.push([position.tokenId, result])
             }
           }
 
@@ -149,8 +149,8 @@ export function useMyPosition(userAddress?: string, poolAddress?: string) {
           // Return zeros for all positions in this pool
           return positions.map(
             (position) =>
-              [getPositionKey(position), { amount0: 0n, amount1: 0n }] as [
-                string,
+              [position.tokenId, { amount0: 0n, amount1: 0n }] as [
+                number,
                 { amount0: bigint; amount1: bigint },
               ],
           )
@@ -166,7 +166,7 @@ export function useMyPosition(userAddress?: string, poolAddress?: string) {
   const principalsLoading = principalQueries.some((query) => query.isLoading)
 
   const positionToPrincipalMap = useMemo(() => {
-    const allResults: [string, { amount0: bigint; amount1: bigint }][] = []
+    const allResults: [number, { amount0: bigint; amount1: bigint }][] = []
 
     for (const query of principalQueries) {
       if (query.data) {
@@ -174,7 +174,10 @@ export function useMyPosition(userAddress?: string, poolAddress?: string) {
       }
     }
 
-    return Object.fromEntries(allResults)
+    return Object.fromEntries(allResults) as Record<
+      number,
+      { amount0: bigint; amount1: bigint }
+    >
   }, [principalQueries])
 
   // Aggregate position data with principal amounts
@@ -193,8 +196,8 @@ export function useMyPosition(userAddress?: string, poolAddress?: string) {
 
     // Process each position with its principal amounts
     filteredPositions.forEach((position) => {
+      const principalData = positionToPrincipalMap[position.tokenId]
       const positionKey = getPositionKey(position)
-      const principalData = positionToPrincipalMap[positionKey]
       const poolAddress = positionToPoolMap[positionKey]
 
       // Skip if we don't have principal data yet
