@@ -99,7 +99,8 @@ const TOTAL_LIQUIDITY_COLUMN: ColumnDef<PoolInfo, unknown> = {
   header: 'Total Liquidity',
   accessorFn: (row) => row.liquidity.formatted,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number(rowA.liquidity.formatted) - Number(rowB.liquidity.formatted),
+    Number.parseFloat(rowA.liquidity.amount) -
+    Number.parseFloat(rowB.liquidity.amount),
   cell: (props) => {
     return (
       <div className="flex items-center gap-1">
