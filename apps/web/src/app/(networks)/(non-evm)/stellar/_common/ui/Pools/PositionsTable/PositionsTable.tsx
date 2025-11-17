@@ -19,6 +19,7 @@ import { useStellarWallet } from '~stellar/providers'
 import { ConnectWalletButton } from '../../ConnectWallet/ConnectWalletButton'
 import {
   APR_COLUMN,
+  FEE_COLUMN,
   POSITION_NAME_COLUMN,
   SIZE_COLUMN,
   VALUE_COLUMN,
@@ -34,6 +35,7 @@ export type IPositionRowData = {
   pairAddress: string
   reserve0: bigint
   reserve1: bigint
+  fee: number
 }
 
 export const PositionsTable = ({
@@ -125,9 +127,16 @@ export const PositionsTable = ({
             pairAddress: position.pool,
             reserve0: position.principalToken0,
             reserve1: position.principalToken1,
+            fee: position.fee,
           })) ?? []
         }
-        columns={[POSITION_NAME_COLUMN, VALUE_COLUMN, SIZE_COLUMN, APR_COLUMN]}
+        columns={[
+          POSITION_NAME_COLUMN,
+          FEE_COLUMN,
+          VALUE_COLUMN,
+          SIZE_COLUMN,
+          APR_COLUMN,
+        ]}
         linkFormatter={(data: IPositionRowData) => {
           return `/stellar/pool/${data.pairAddress}`
         }}

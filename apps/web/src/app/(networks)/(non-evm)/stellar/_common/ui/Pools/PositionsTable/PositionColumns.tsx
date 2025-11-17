@@ -2,6 +2,7 @@ import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { ICON_SIZE } from '~stellar/_common/constants/icon-size'
 import { PositionAprCell } from './PositionAprCell'
+import { PositionFeeCell } from './PositionFeeCell'
 import { PositionNameCell } from './PositionNameCell'
 import { PositionSizeCell } from './PositionSizeCell'
 import { PositionValueCell } from './PositionValueCell'
@@ -19,6 +20,23 @@ export const POSITION_NAME_COLUMN: ColumnDef<IPositionRowData, unknown> = {
             <SkeletonCircle radius={ICON_SIZE} />
             <SkeletonCircle radius={ICON_SIZE} className="-ml-[12px]" />
           </div>
+          <div className="flex flex-col w-full">
+            <SkeletonText fontSize="lg" />
+          </div>
+        </div>
+      ),
+    },
+  },
+}
+
+export const FEE_COLUMN: ColumnDef<IPositionRowData, unknown> = {
+  id: 'fee',
+  header: 'Fee Tier',
+  cell: (props) => <PositionFeeCell data={props.row.original} />,
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex items-center w-full gap-2">
           <div className="flex flex-col w-full">
             <SkeletonText fontSize="lg" />
           </div>
