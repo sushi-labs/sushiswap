@@ -188,6 +188,17 @@ export const SimpleSwapExecuteButton = () => {
 
   const needsAnyTrustline = needsToken0Trustline || needsToken1Trustline
 
+  // Check if we have a route but output is 0 (likely due to amount being too small)
+  // This happens when the amount is so small that integer division rounds the output to 0
+  const hasRouteButZeroOutput = useMemo(() => {
+    return (
+      route !== null &&
+      route !== undefined &&
+      amountIn > 0n &&
+      (!outputAmount || outputAmount === 0n)
+    )
+  }, [route, amountIn, outputAmount])
+
   const isDisabled =
     !connectedAddress ||
     !token0 ||
@@ -200,6 +211,40 @@ export const SimpleSwapExecuteButton = () => {
     executeMultiHopSwap.isPending ||
     needsAnyTrustline ||
     (showPriceImpactWarning && !checked)
+
+  // Determine button text
+  const buttonText = useMemo(() => {
+    if (executeSwap.isPending || executeMultiHopSwap.isPending) {
+      return 'Executing Swap...'
+    }
+    if (needsAnyTrustline) {
+      return 'Create trustline first'
+    }
+    if (showPriceImpactWarning && !checked) {
+      return 'Price impact too high'
+    }
+    if (hasRouteButZeroOutput) {
+      return 'Amount too small'
+    }
+    if (
+      amount &&
+      Number(amount) > 0 &&
+      (!route || !outputAmount || outputAmount === 0n)
+    ) {
+      return 'No route found'
+    }
+    return 'Swap'
+  }, [
+    executeSwap.isPending,
+    executeMultiHopSwap.isPending,
+    needsAnyTrustline,
+    showPriceImpactWarning,
+    checked,
+    hasRouteButZeroOutput,
+    amount,
+    route,
+    outputAmount,
+  ])
 
   return (
     <>
@@ -218,17 +263,7 @@ export const SimpleSwapExecuteButton = () => {
                 showPriceImpactWarning && !checked ? 'destructive' : 'default'
               }
             >
-              {executeSwap.isPending || executeMultiHopSwap.isPending
-                ? 'Executing Swap...'
-                : needsAnyTrustline
-                  ? 'Create trustline first'
-                  : showPriceImpactWarning && !checked
-                    ? 'Price impact too high'
-                    : amount &&
-                        Number(amount) > 0 &&
-                        (!outputAmount || outputAmount === 0n)
-                      ? 'No route found'
-                      : 'Swap'}
+              {buttonText}
             </Button>
           </Checker.Amounts>
         )}
