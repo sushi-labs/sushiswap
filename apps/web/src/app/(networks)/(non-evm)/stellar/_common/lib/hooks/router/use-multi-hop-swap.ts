@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useStellarWallet } from '~stellar/providers'
 import { SwapService } from '../../services/swap-service'
 import type { Token } from '../../types/token.type'
+import { formatTokenAmountForDisplay } from '../../utils/format'
 import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
 
 export interface MultiHopSwapExactInputParams {
@@ -48,8 +49,16 @@ export const useExecuteSwapExactInputMulti = () => {
       // Show success toast with Stellar explorer link
       const amountOut =
         result.amountOut < 0n ? -result.amountOut : result.amountOut
-      const amountOutFormatted = (Number(amountOut) / 1e7).toFixed(4)
-      const amountInFormatted = (Number(params.amountIn) / 1e7).toFixed(4)
+      const tokenInDecimals = params.tokenIn?.decimals ?? 7
+      const tokenOutDecimals = params.tokenOut?.decimals ?? 7
+      const amountOutFormatted = formatTokenAmountForDisplay(
+        amountOut,
+        tokenOutDecimals,
+      )
+      const amountInFormatted = formatTokenAmountForDisplay(
+        params.amountIn,
+        tokenInDecimals,
+      )
 
       createToast({
         account: params.userAddress,

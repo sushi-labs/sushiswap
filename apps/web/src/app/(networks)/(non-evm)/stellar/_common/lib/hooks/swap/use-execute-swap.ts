@@ -10,6 +10,7 @@ import { useStellarWallet } from '~stellar/providers'
 import { SwapService } from '../../services/swap-service'
 import type { Token } from '../../types/token.type'
 import { extractErrorMessage } from '../../utils/error-helpers'
+import { formatTokenAmountForDisplay } from '../../utils/format'
 import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
 
 export interface UseExecuteSwapParams {
@@ -33,7 +34,10 @@ export const useExecuteSwap = () => {
     onMutate: async (params: UseExecuteSwapParams) => {
       // Show "in progress" toast immediately before transaction starts
       const timestamp = Date.now()
-      const amountInFormatted = (Number(params.amountIn) / 1e7).toFixed(4)
+      const amountInFormatted = formatTokenAmountForDisplay(
+        params.amountIn,
+        params.tokenIn.decimals,
+      )
 
       createInfoToast({
         summary: `Swapping ${amountInFormatted} ${params.tokenIn.code} for ${params.tokenOut.code}...`,
@@ -67,8 +71,14 @@ export const useExecuteSwap = () => {
     onSuccess: ({ result, params }) => {
       const amountOut =
         result.amountOut < 0n ? -result.amountOut : result.amountOut
-      const amountOutFormatted = (Number(amountOut) / 1e7).toFixed(4)
-      const amountInFormatted = (Number(params.amountIn) / 1e7).toFixed(4)
+      const amountOutFormatted = formatTokenAmountForDisplay(
+        amountOut,
+        params.tokenOut.decimals,
+      )
+      const amountInFormatted = formatTokenAmountForDisplay(
+        params.amountIn,
+        params.tokenIn.decimals,
+      )
 
       createSuccessToast({
         summary: `Swapped ${amountInFormatted} ${params.tokenIn.code} for ${amountOutFormatted} ${params.tokenOut.code}`,
@@ -113,12 +123,16 @@ export const useExecuteMultiHopSwap = () => {
       amountOutMinimum: bigint
       recipient: string
       deadline?: number
-      tokenIn?: { code: string }
-      tokenOut?: { code: string }
+      tokenIn?: { code: string; decimals: number }
+      tokenOut?: { code: string; decimals: number }
     }) => {
       // Show "in progress" toast immediately before transaction starts
       const timestamp = Date.now()
-      const amountInFormatted = (Number(params.amountIn) / 1e7).toFixed(4)
+      const tokenInDecimals = params.tokenIn?.decimals ?? 7
+      const amountInFormatted = formatTokenAmountForDisplay(
+        params.amountIn,
+        tokenInDecimals,
+      )
 
       createInfoToast({
         summary: `Swapping ${amountInFormatted} ${params.tokenIn?.code || 'tokens'} for ${params.tokenOut?.code || 'tokens'}...`,
@@ -137,8 +151,8 @@ export const useExecuteMultiHopSwap = () => {
       amountOutMinimum: bigint
       recipient: string
       deadline?: number
-      tokenIn?: { code: string }
-      tokenOut?: { code: string }
+      tokenIn?: { code: string; decimals: number }
+      tokenOut?: { code: string; decimals: number }
     }) => {
       const swapService = new SwapService()
 
@@ -160,8 +174,16 @@ export const useExecuteMultiHopSwap = () => {
     onSuccess: ({ result, params }) => {
       const amountOut =
         result.amountOut < 0n ? -result.amountOut : result.amountOut
-      const amountOutFormatted = (Number(amountOut) / 1e7).toFixed(4)
-      const amountInFormatted = (Number(params.amountIn) / 1e7).toFixed(4)
+      const tokenInDecimals = params.tokenIn?.decimals ?? 7
+      const tokenOutDecimals = params.tokenOut?.decimals ?? 7
+      const amountOutFormatted = formatTokenAmountForDisplay(
+        amountOut,
+        tokenOutDecimals,
+      )
+      const amountInFormatted = formatTokenAmountForDisplay(
+        params.amountIn,
+        tokenInDecimals,
+      )
 
       createSuccessToast({
         summary: `Swapped ${amountInFormatted} ${params.tokenIn?.code || 'tokens'} for ${amountOutFormatted} ${params.tokenOut?.code || 'tokens'}`,
