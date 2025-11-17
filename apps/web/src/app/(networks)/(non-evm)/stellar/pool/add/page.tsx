@@ -16,7 +16,10 @@ import { usePoolInitialized } from '~stellar/_common/lib/hooks/pool/use-pool-ini
 import { usePoolPrice } from '~stellar/_common/lib/hooks/pool/use-pool-price'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/swap/use-add-liquidity'
 import { useTickRangeSelector } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
-import { encodePriceSqrt } from '~stellar/_common/lib/soroban'
+import {
+  calculatePriceFromSqrtPrice,
+  encodePriceSqrt,
+} from '~stellar/_common/lib/soroban'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
 import { FEE_TIERS, TICK_SPACINGS } from '~stellar/_common/lib/utils/ticks'
@@ -34,24 +37,32 @@ export default function AddPoolPage() {
   const [token0, setToken0] = useState<Token | undefined>(undefined)
   const [token1, setToken1] = useState<Token | undefined>(undefined)
   const [selectedFee, setSelectedFee] = useState<number>(3000)
-  const [token0Amount, setToken0Amount] = useState<string>('')
-  const [manualToken1Amount, setManualToken1Amount] = useState<string>('') // For new pools
+  const [orderedToken0Amount, setOrderedToken0Amount] = useState<string>('')
+  const [manualOrderedToken1Amount, setManualOrderedToken1Amount] =
+    useState<string>('') // For new pools
 
-  const { data: token0Balance } = useTokenBalance(
+  const reversedPoolTokenOrder =
+    token0 && token1 && token0.contract > token1.contract
+
+  const [orderedToken0, orderedToken1] = reversedPoolTokenOrder
+    ? [token1, token0]
+    : [token0, token1]
+
+  const { data: orderedToken0Balance } = useTokenBalance(
     connectedAddress,
-    token0?.contract || null,
+    orderedToken0?.contract || null,
   )
-  const { data: token1Balance } = useTokenBalance(
+  const { data: orderedToken1Balance } = useTokenBalance(
     connectedAddress,
-    token1?.contract || null,
+    orderedToken1?.contract || null,
   )
 
   // Check if pool already exists
   const { data: existingPoolAddress } = useGetPool(
-    token0 && token1
+    orderedToken0 && orderedToken1
       ? {
-          tokenA: token0.contract,
-          tokenB: token1.contract,
+          tokenA: orderedToken0.contract,
+          tokenB: orderedToken1.contract,
           fee: selectedFee,
         }
       : null,
@@ -61,13 +72,40 @@ export default function AddPoolPage() {
   const { data: poolInitialized } = usePoolInitialized(existingPoolAddress)
 
   const { data: poolInfo } = usePoolInfo(existingPoolAddress ?? null)
-  const reversedPoolTokenOrder =
-    token0 && token1 && token0.contract > token1.contract
 
   const { data: currentPrice } = usePoolPrice(existingPoolAddress ?? null)
+  const initSqrtPriceX96 = useMemo(() => {
+    if (!orderedToken0 || !orderedToken1) {
+      return undefined
+    }
+    const orderedToken0AmountRaw = BigInt(
+      Math.floor(Number(orderedToken0Amount) * 10 ** orderedToken0.decimals),
+    )
+    const orderedToken1AmountRaw = BigInt(
+      Math.floor(
+        Number(manualOrderedToken1Amount) * 10 ** orderedToken1.decimals,
+      ),
+    )
+    if (orderedToken0AmountRaw === 0n || orderedToken1AmountRaw === 0n) {
+      return undefined
+    }
+    return encodePriceSqrt(orderedToken1AmountRaw, orderedToken0AmountRaw)
+  }, [
+    orderedToken0,
+    orderedToken1,
+    orderedToken0Amount,
+    manualOrderedToken1Amount,
+  ])
+  const initPrice =
+    initSqrtPriceX96 !== undefined
+      ? calculatePriceFromSqrtPrice(initSqrtPriceX96)
+      : undefined
+
   const tickRangeSelectorState = useTickRangeSelector(
     selectedFee,
-    currentPrice ?? 1,
+    (existingPoolAddress && poolInitialized === true && currentPrice
+      ? currentPrice
+      : initPrice) ?? 1,
   )
   const { tickLower, tickUpper, isTickRangeValid, ticksAligned } =
     tickRangeSelectorState
@@ -75,11 +113,11 @@ export default function AddPoolPage() {
   // Auto-calculate token1 amount based on token0 input (only if pool exists)
   const { data: pairedAmountData } = useCalculatePairedAmount(
     existingPoolAddress || null,
-    token0Amount,
+    orderedToken0Amount,
     tickLower,
     tickUpper,
-    token0?.decimals || 7,
-    token0?.code,
+    orderedToken0?.decimals || 7,
+    orderedToken0?.code,
   )
 
   const { data: poolBalanceData } = usePoolBalances(
@@ -97,42 +135,26 @@ export default function AddPoolPage() {
   )
 
   // Use auto-calculated amount for existing pools, manual input for new pools or uninitialized pools
-  const token1Amount = useMemo(() => {
-    if (manualToken1Amount) {
-      return manualToken1Amount
+  const orderedToken1Amount = useMemo(() => {
+    if (manualOrderedToken1Amount) {
+      return manualOrderedToken1Amount
     }
-    if (!pairedAmountData || !token0 || !token1) {
-      return ''
+    if (pairedAmountData) {
+      return pairedAmountData.token1Amount
     }
-    const rawToken0Amount = BigInt(
-      Math.floor(Number.parseFloat(token0Amount) * 10 ** token0.decimals),
-    )
-    const rawToken1Amount = BigInt(
-      Math.floor(
-        Number.parseFloat(pairedAmountData.token1Amount) *
-          10 ** token1.decimals,
-      ),
-    )
-    const amount = reversedPoolTokenOrder
-      ? formatTokenAmount(
-          (rawToken0Amount * rawToken0Amount) / rawToken1Amount,
-          token1.decimals,
-        )
-      : pairedAmountData.token1Amount
-    return amount
-  }, [
-    token0,
-    token1,
-    token0Amount,
-    pairedAmountData,
-    manualToken1Amount,
-    reversedPoolTokenOrder,
-  ])
+    return ''
+  }, [pairedAmountData, manualOrderedToken1Amount])
 
   const pairedAmountStatus = pairedAmountData?.status || 'idle'
 
   const handleCreatePool = async () => {
-    if (!token0 || !token1 || !connectedAddress || !isTickRangeValid) return
+    if (
+      !orderedToken0 ||
+      !orderedToken1 ||
+      !connectedAddress ||
+      !isTickRangeValid
+    )
+      return
 
     // Safety check: prevent adding liquidity when price is above range
     if (isAboveRange) {
@@ -142,10 +164,11 @@ export default function AddPoolPage() {
 
     // Validate liquidity amounts are provided
     if (
-      !token0Amount ||
-      !token1Amount ||
-      Number.parseFloat(token0Amount) <= 0 ||
-      Number.parseFloat(token1Amount) <= 0
+      !orderedToken0Amount ||
+      !orderedToken1Amount ||
+      Number.parseFloat(orderedToken0Amount) <= 0 ||
+      Number.parseFloat(orderedToken1Amount) <= 0 ||
+      !initSqrtPriceX96
     ) {
       console.error('Liquidity amounts are required')
       return
@@ -167,21 +190,11 @@ export default function AddPoolPage() {
       return
     }
     try {
-      const [orderedToken0, orderedToken1] = reversedPoolTokenOrder
-        ? [token1, token0]
-        : [token0, token1]
-      const [orderedToken0Amount, orderedToken1Amount] = reversedPoolTokenOrder
-        ? [token1Amount, token0Amount]
-        : [token0Amount, token1Amount]
-      const sqrtPriceX96 = encodePriceSqrt(
-        orderedToken1Amount,
-        orderedToken0Amount,
-      )
       const { result } = await createAndInitializePoolMutation.mutateAsync({
         tokenA: orderedToken0.contract,
         tokenB: orderedToken1.contract,
         fee: selectedFee,
-        sqrtPriceX96,
+        sqrtPriceX96: initSqrtPriceX96,
         userAddress: connectedAddress,
         signTransaction,
       })
@@ -209,16 +222,20 @@ export default function AddPoolPage() {
   }
 
   // Check if we have valid amounts
-  const hasToken0Amount =
-    token0Amount && token0Amount !== '0' && Number.parseFloat(token0Amount) > 0
+  const hasOrderedToken0Amount =
+    orderedToken0Amount &&
+    orderedToken0Amount !== '0' &&
+    Number.parseFloat(orderedToken0Amount) > 0
 
   // For new pools (no existing pool), we need manual token1 input
   // For existing initialized pools, token1 is auto-calculated
   // For existing uninitialized pools, we need both amounts to set price
   const hasValidAmounts =
     existingPoolAddress && poolInitialized === true
-      ? hasToken0Amount // Pool exists and initialized: only need token0, token1 is auto-calculated
-      : hasToken0Amount && token1Amount && Number.parseFloat(token1Amount) > 0 // New pool or uninitialized pool: need both amounts
+      ? hasOrderedToken0Amount // Pool exists and initialized: only need token0, token1 is auto-calculated
+      : hasOrderedToken0Amount &&
+        orderedToken1Amount &&
+        Number.parseFloat(orderedToken1Amount) > 0 // New pool or uninitialized pool: need both amounts
 
   // Prevent creation when price is above range (can't provide token0)
   const isAboveRange =
@@ -316,7 +333,7 @@ export default function AddPoolPage() {
         title="Initial Liquidity"
         description={
           existingPoolAddress && poolInitialized === true
-            ? `Enter ${token0?.code || 'token0'} amount - ${token1?.code || 'token1'} amount will be calculated automatically.`
+            ? `Enter ${orderedToken0?.code || 'token0'} amount - ${orderedToken1?.code || 'token1'} amount will be calculated automatically.`
             : existingPoolAddress && poolInitialized === false
               ? 'This pool exists but is not initialized. Enter both token amounts to set the initial price ratio.'
               : 'Add liquidity to your pool. Both amounts are required.'
@@ -325,29 +342,34 @@ export default function AddPoolPage() {
         <section className="flex flex-col gap-4">
           <div>
             <div className="flex justify-between items-center">
-              {token0 && (
-                <span className="text-sm font-medium">{token0.code}</span>
+              {orderedToken0 && (
+                <span className="text-sm font-medium">
+                  {orderedToken0.code}
+                </span>
               )}
-              {token0 &&
-                token0Balance !== null &&
-                token0Balance !== undefined && (
+              {orderedToken0 &&
+                orderedToken0Balance !== null &&
+                orderedToken0Balance !== undefined && (
                   <span className="text-xs text-muted-foreground">
-                    {formatTokenAmount(token0Balance, token0.decimals)}
+                    {formatTokenAmount(
+                      orderedToken0Balance,
+                      orderedToken0.decimals,
+                    )}
                   </span>
                 )}
             </div>
             <TextField
               type="number"
-              label={token0?.code || 'Token 1'}
+              label={orderedToken0?.code || 'Token 1'}
               placeholder="0.0"
-              value={token0Amount}
+              value={orderedToken0Amount}
               onValueChange={(value) => {
                 if (value === '') {
-                  setToken0Amount('')
+                  setOrderedToken0Amount('')
                   return
                 }
                 if (
-                  !token0 ||
+                  !orderedToken0 ||
                   (existingPoolAddress &&
                     poolInitialized === true &&
                     !maxPairedAmountData)
@@ -355,20 +377,20 @@ export default function AddPoolPage() {
                   return
                 }
                 const rawAmountValue = BigInt(
-                  Math.floor(Number.parseFloat(value) * 10 ** token0.decimals),
+                  Math.floor(
+                    Number.parseFloat(value) * 10 ** orderedToken0.decimals,
+                  ),
                 )
-                // Check to see if token0 and token1 are swapped in the pool config
-                const maxPairedToken0Amount = reversedPoolTokenOrder
-                  ? BigInt(maxPairedAmountData?.maxToken1Amount ?? '0')
-                  : BigInt(maxPairedAmountData?.maxToken0Amount ?? '0')
                 const maxAmount =
                   existingPoolAddress && poolInitialized === true
-                    ? maxPairedToken0Amount
-                    : (token0Balance ?? 0n)
+                    ? BigInt(maxPairedAmountData?.maxToken0Amount ?? '0')
+                    : (orderedToken0Balance ?? 0n)
                 if (rawAmountValue >= maxAmount) {
-                  setToken0Amount(formatTokenAmount(maxAmount, token0.decimals))
+                  setOrderedToken0Amount(
+                    formatTokenAmount(maxAmount, orderedToken0.decimals),
+                  )
                 } else {
-                  setToken0Amount(value)
+                  setOrderedToken0Amount(value)
                 }
               }}
               required
@@ -382,14 +404,19 @@ export default function AddPoolPage() {
           <div className="space-y-2">
             <div>
               <div className="flex justify-between items-center">
-                {token1 && (
-                  <span className="text-sm font-medium">{token1.code}</span>
+                {orderedToken1 && (
+                  <span className="text-sm font-medium">
+                    {orderedToken1.code}
+                  </span>
                 )}
-                {token1 &&
-                  token1Balance !== null &&
-                  token1Balance !== undefined && (
+                {orderedToken1 &&
+                  orderedToken1Balance !== null &&
+                  orderedToken1Balance !== undefined && (
                     <span className="text-xs text-muted-foreground">
-                      {formatTokenAmount(token1Balance, token1.decimals)}
+                      {formatTokenAmount(
+                        orderedToken1Balance,
+                        orderedToken1.decimals,
+                      )}
                     </span>
                   )}
               </div>
@@ -399,35 +426,50 @@ export default function AddPoolPage() {
                     ? 'text'
                     : 'number'
                 }
-                label={token1?.code || 'Token 2'}
+                label={orderedToken1?.code || 'Token 2'}
                 placeholder={
                   existingPoolAddress && poolInitialized === true
                     ? 'Auto-calculated'
                     : '0.0'
                 }
-                value={token1Amount}
+                value={orderedToken1Amount}
                 onValueChange={
                   existingPoolAddress && poolInitialized === true
                     ? undefined
                     : (value) => {
+                        if (value === '') {
+                          setManualOrderedToken1Amount('')
+                          return
+                        }
                         if (
-                          !token1 ||
-                          token1Balance === null ||
-                          token1Balance === undefined
+                          !orderedToken1 ||
+                          (existingPoolAddress &&
+                            poolInitialized === true &&
+                            !maxPairedAmountData)
                         ) {
                           return
                         }
                         const rawAmountValue = BigInt(
                           Math.floor(
-                            Number.parseFloat(value) * 10 ** token1.decimals,
+                            Number.parseFloat(value) *
+                              10 ** orderedToken1.decimals,
                           ),
                         )
-                        if (rawAmountValue >= token1Balance) {
-                          setManualToken1Amount(
-                            formatTokenAmount(token1Balance, token1.decimals),
+                        const maxAmount =
+                          existingPoolAddress && poolInitialized === true
+                            ? BigInt(
+                                maxPairedAmountData?.maxToken1Amount ?? '0',
+                              )
+                            : (orderedToken1Balance ?? 0n)
+                        if (rawAmountValue >= maxAmount) {
+                          setManualOrderedToken1Amount(
+                            formatTokenAmount(
+                              maxAmount,
+                              orderedToken1.decimals,
+                            ),
                           )
                         } else {
-                          setManualToken1Amount(value)
+                          setManualOrderedToken1Amount(value)
                         }
                       }
                 }
@@ -445,8 +487,8 @@ export default function AddPoolPage() {
           </div>
           <TickRangeSelector
             params={tickRangeSelectorState}
-            token0={token0}
-            token1={token1}
+            token0={orderedToken0}
+            token1={orderedToken1}
           />
         </section>
 
