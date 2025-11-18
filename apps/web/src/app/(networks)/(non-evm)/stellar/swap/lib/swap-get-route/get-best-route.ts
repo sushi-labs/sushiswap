@@ -3,9 +3,33 @@ import { computeExactOutput } from './compute-exact-output'
 import { computePriceImpact } from './compute-price-impact'
 import type { Route, Vertex } from './types'
 
+/**
+ * Calculate a route score that balances output amount and price impact
+ * Higher score = better route
+ *
+ * Formula: score = amountOut * (1 - priceImpact / 100)
+ * This penalizes routes with high price impact while still prioritizing higher output
+ */
+function calculateRouteScore(route: Route): number {
+  // Normalize amountOut to a 0-1 scale (using log scale to handle large numbers)
+  // For comparison purposes, we use the relative difference
+  const amountOutNum = Number(route.amountOut)
+  const priceImpactPercent = route.priceImpact || 0
+
+  // Score = output amount adjusted by price impact penalty
+  // Price impact is a percentage, so we reduce the score proportionally
+  const priceImpactMultiplier = 1 - Math.min(priceImpactPercent / 100, 0.5) // Cap penalty at 50%
+
+  // Use log scale for amountOut to prevent very large numbers from dominating
+  // Add 1 to avoid log(0) and normalize
+  const normalizedAmount = Math.log10(amountOutNum + 1)
+
+  return normalizedAmount * priceImpactMultiplier
+}
+
 interface GetBestRoute {
   amountIn: bigint
-  vertices: Map<string, Vertex>
+  vertices: Map<string, Vertex[]> // Changed to array to support multiple pools per pair
   tokenGraph: Map<string, string[]>
   tokenIn: Token
   tokenOut: Token
@@ -55,7 +79,7 @@ export function getBestRoute({
 interface CalculateAmountOut {
   route: string[]
   amountIn: bigint
-  vertices: Map<string, Vertex>
+  vertices: Map<string, Vertex[]> // Changed to array to support multiple pools per pair
 }
 
 /**
@@ -90,47 +114,85 @@ function calculateAmountOut({
       const pairKey1 = `${tokenA}|||${tokenB}`
       const pairKey2 = `${tokenB}|||${tokenA}`
 
-      const vertex = vertices.get(pairKey1) || vertices.get(pairKey2)
+      // Get all vertices for this pair (may have multiple pools with different fees)
+      const verticesForPair = vertices.get(pairKey1) || vertices.get(pairKey2)
 
-      if (!vertex) {
+      if (!verticesForPair || verticesForPair.length === 0) {
         // No pool exists for this pair
         return null
       }
 
-      // Determine which direction we're swapping
-      const isForward = vertex.token0 === tokenA
-      const reserve0 = isForward ? vertex.reserve0 : vertex.reserve1
-      const reserve1 = isForward ? vertex.reserve1 : vertex.reserve0
+      // Try all pools for this pair and pick the best one
+      let bestVertex: Vertex | null = null
+      let bestOutput = 0n
+      let bestPriceImpact = Number.POSITIVE_INFINITY
 
-      // Calculate output for this hop
-      const output = computeExactOutput({
-        amountIn: currentAmount,
-        reserve0,
-        reserve1,
-        fee: vertex.fee,
-      })
+      for (const vertex of verticesForPair) {
+        // Determine which direction we're swapping
+        const isForward = vertex.token0 === tokenA
+        const reserve0 = isForward ? vertex.reserve0 : vertex.reserve1
+        const reserve1 = isForward ? vertex.reserve1 : vertex.reserve0
 
-      if (output === 0n) {
-        // Swap would fail (insufficient liquidity)
+        // Calculate output for this hop
+        const output = computeExactOutput({
+          amountIn: currentAmount,
+          reserve0,
+          reserve1,
+          fee: vertex.fee,
+        })
+
+        if (output === 0n) {
+          // Swap would fail (insufficient liquidity) - skip this pool
+          continue
+        }
+
+        // Calculate price for this hop to estimate price impact
+        const Q96 = 2 ** 96
+        const sqrtPrice = Number(vertex.sqrtPriceX96) / Q96
+        const poolPrice = sqrtPrice * sqrtPrice
+        const midPrice = isForward ? poolPrice : 1 / poolPrice
+        const hopPriceImpact = computePriceImpact({
+          midPrice,
+          amountIn: currentAmount,
+          amountOut: output,
+        })
+
+        // Prefer pool with better output and lower price impact
+        // Score = output * (1 - priceImpact/100)
+        const score = Number(output) * (1 - hopPriceImpact / 100)
+        const bestScore = Number(bestOutput) * (1 - bestPriceImpact / 100)
+
+        if (!bestVertex || score > bestScore) {
+          bestVertex = vertex
+          bestOutput = output
+          bestPriceImpact = hopPriceImpact
+        }
+      }
+
+      if (!bestVertex) {
+        // No valid pool found for this pair
         return null
       }
 
+      // Use the best vertex for this hop
+      const isForward = bestVertex.token0 === tokenA
+
       // Store pool and fee info
-      pools.push(vertex.poolAddress)
-      fees.push(vertex.fee)
+      pools.push(bestVertex.poolAddress)
+      fees.push(bestVertex.fee)
 
       // Calculate mid price from sqrtPriceX96 for concentrated liquidity pools
       // sqrtPrice = sqrt(token1/token0), so price = (sqrtPrice)^2
       const Q96 = 2 ** 96
-      const sqrtPrice = Number(vertex.sqrtPriceX96) / Q96
+      const sqrtPrice = Number(bestVertex.sqrtPriceX96) / Q96
       const poolPrice = sqrtPrice * sqrtPrice // token1 per token0
 
       // Adjust price based on swap direction
       const midPrice = isForward ? poolPrice : 1 / poolPrice
       prices.push(midPrice)
 
-      // Use output as input for next hop
-      currentAmount = output
+      // Use best output as input for next hop
+      currentAmount = bestOutput
     }
 
     // Calculate overall mid price (product of all hop prices)
@@ -163,7 +225,7 @@ interface FindBestRoute {
   visited?: Record<string, boolean>
   currentRoute?: string[]
   amountIn: bigint
-  vertices: Map<string, Vertex>
+  vertices: Map<string, Vertex[]> // Changed to array to support multiple pools per pair
   bestRoute?: { current: Route | null }
   maxDepth?: number
 }
@@ -209,11 +271,24 @@ function findBestRoute({
       })
 
       // Update best route if this one is better
+      // Consider both amountOut and priceImpact for better routing decisions
       if (route) {
         if (!bestRoute.current) {
           bestRoute.current = route
-        } else if (route.amountOut > bestRoute.current.amountOut) {
-          bestRoute.current = route
+        } else {
+          // Use a scoring function that considers both output amount and price impact
+          const currentScore = calculateRouteScore(bestRoute.current)
+          const newScore = calculateRouteScore(route)
+
+          // Prefer route with higher score (better output with lower price impact)
+          if (newScore > currentScore) {
+            bestRoute.current = route
+          } else if (newScore === currentScore) {
+            // If scores are equal, prefer the one with higher output
+            if (route.amountOut > bestRoute.current.amountOut) {
+              bestRoute.current = route
+            }
+          }
         }
       }
     } else {

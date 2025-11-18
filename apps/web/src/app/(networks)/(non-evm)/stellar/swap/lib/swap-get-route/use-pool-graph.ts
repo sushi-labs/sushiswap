@@ -18,7 +18,8 @@ export function usePoolGraph() {
   return useQuery({
     queryKey: ['stellar', 'pool-graph'],
     queryFn: async () => {
-      const vertices = new Map<string, Vertex>()
+      // Store arrays of vertices per token pair to handle multiple fee tiers
+      const vertices = new Map<string, Vertex[]>()
       const tokenGraph = new Map<string, string[]>()
 
       try {
@@ -141,8 +142,19 @@ export function usePoolGraph() {
                     }
 
                     // Add vertex to map (both directions)
-                    vertices.set(`${tokenA}|||${tokenB}`, vertex)
-                    vertices.set(`${tokenB}|||${tokenA}`, vertex)
+                    // Store arrays to handle multiple pools (fee tiers) for same pair
+                    const key1 = `${tokenA}|||${tokenB}`
+                    const key2 = `${tokenB}|||${tokenA}`
+
+                    if (!vertices.has(key1)) {
+                      vertices.set(key1, [])
+                    }
+                    if (!vertices.has(key2)) {
+                      vertices.set(key2, [])
+                    }
+
+                    vertices.get(key1)!.push(vertex)
+                    vertices.get(key2)!.push(vertex)
 
                     // Add edges to graph
                     if (!tokenGraph.has(tokenA)) {
@@ -180,7 +192,7 @@ export function usePoolGraph() {
       } catch (error) {
         console.error('Error building pool graph:', error)
         return {
-          vertices: new Map<string, Vertex>(),
+          vertices: new Map<string, Vertex[]>(),
           tokenGraph: new Map<string, string[]>(),
         }
       }

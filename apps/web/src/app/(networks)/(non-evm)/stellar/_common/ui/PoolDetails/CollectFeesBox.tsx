@@ -1,14 +1,14 @@
-import { createErrorToast } from '@sushiswap/notifications'
+import { createErrorToast, createSuccessToast } from '@sushiswap/notifications'
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
 import type React from 'react'
 import { useState } from 'react'
-import { toast } from 'react-toastify'
 import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
 import { useStellarWallet } from '~stellar/providers'
 import { useMyPosition } from '../../lib/hooks/position/use-my-position'
 import { useCollectFees } from '../../lib/hooks/position/use-positions'
+import { getStellarTxnLink } from '../../lib/utils/stellarchain-helpers'
 import { LiquidityItem } from './LiquidityItem'
 
 interface CollectFeesBoxProps {
@@ -67,19 +67,26 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
         return
       }
 
+      const successfulCollections: Array<{
+        txHash: string
+        amount0: bigint
+        amount1: bigint
+      }> = []
+
       // Collect from all positions that have fees
       for (const position of positionsWithFees) {
         // Max uint128 value for collecting all available fees
         const maxAmount = BigInt('340282366920938463463374607431768211455') // 2^128 - 1
 
         try {
-          await collectFeesMutation.mutateAsync({
+          const result = await collectFeesMutation.mutateAsync({
             tokenId: position.tokenId,
             recipient: connectedAddress,
             amount0Max: maxAmount,
             amount1Max: maxAmount,
             signTransaction,
           })
+          successfulCollections.push(result)
         } catch (error) {
           console.error(
             `Failed to collect fees from position ${position.tokenId}:`,
@@ -94,6 +101,50 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
 
           createErrorToast(errorMessage, false)
         }
+      }
+
+      // Show success toast if at least one collection succeeded
+      if (successfulCollections.length > 0) {
+        const lastTxHash =
+          successfulCollections[successfulCollections.length - 1].txHash
+
+        // Sum up the actual amounts collected from all successful operations
+        const totalCollected = successfulCollections.reduce(
+          (acc, result) => ({
+            token0: acc.token0 + result.amount0,
+            token1: acc.token1 + result.amount1,
+          }),
+          { token0: 0n, token1: 0n },
+        )
+
+        const token0Amount = formatTokenAmount(
+          totalCollected.token0,
+          pool.token0.decimals,
+        )
+        const token1Amount = formatTokenAmount(
+          totalCollected.token1,
+          pool.token1.decimals,
+        )
+
+        let summary = 'Fees collected successfully'
+        if (totalCollected.token0 > 0n && totalCollected.token1 > 0n) {
+          summary = `Collected ${token0Amount} ${pool.token0.code} and ${token1Amount} ${pool.token1.code}`
+        } else if (totalCollected.token0 > 0n) {
+          summary = `Collected ${token0Amount} ${pool.token0.code}`
+        } else if (totalCollected.token1 > 0n) {
+          summary = `Collected ${token1Amount} ${pool.token1.code}`
+        }
+
+        createSuccessToast({
+          summary,
+          type: 'claimRewards',
+          account: connectedAddress,
+          chainId: 1,
+          txHash: lastTxHash,
+          href: getStellarTxnLink(lastTxHash),
+          groupTimestamp: Date.now(),
+          timestamp: Date.now(),
+        })
       }
     } catch (error) {
       console.error('Failed to collect fees:', error)
