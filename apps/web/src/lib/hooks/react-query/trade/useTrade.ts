@@ -5,6 +5,7 @@ import {
 } from '@sushiswap/telemetry'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
+import { routerProxy } from 'src/app/_common/botid/router-proxy'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { getFeeString, isAddressFeeWhitelisted } from 'src/lib/swap/fee'
 import { Amount, Fraction, Percent, Price, ZERO, subtractSlippage } from 'sushi'
@@ -111,7 +112,7 @@ export const useTradeQuery = (
           params.searchParams.append('onlyPools', pool),
         )
 
-      const res = await fetch(params.toString())
+      const res = await routerProxy(params.toString())
       const json = await res.json()
       const resp2 = tradeValidator02.parse(json)
 
