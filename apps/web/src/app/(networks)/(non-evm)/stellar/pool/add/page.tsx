@@ -165,6 +165,11 @@ export default function AddPoolPage() {
 
   const pairedAmountStatus = pairedAmountData?.status || 'idle'
 
+  const resetLiquidityForm = () => {
+    setOrderedToken0Amount('')
+    setManualOrderedToken1Amount('')
+  }
+
   const handleCreatePool = async () => {
     if (
       !orderedToken0 ||
@@ -287,7 +292,10 @@ export default function AddPoolPage() {
           <TokenSelector
             id="token0-selector"
             selected={token0}
-            onSelect={setToken0}
+            onSelect={(token) => {
+              setToken0(token)
+              resetLiquidityForm()
+            }}
           >
             <Button variant="secondary" className="w-full">
               <span>{token0?.code ?? 'Select Token'}</span>
@@ -299,7 +307,10 @@ export default function AddPoolPage() {
           <TokenSelector
             id="token1-selector"
             selected={token1}
-            onSelect={setToken1}
+            onSelect={(token) => {
+              setToken1(token)
+              resetLiquidityForm()
+            }}
           >
             <Button variant="secondary" className="w-full">
               <span>{token1?.code ?? 'Select Token'}</span>
@@ -328,7 +339,10 @@ export default function AddPoolPage() {
             <button
               key={tier.value}
               type="button"
-              onClick={() => setSelectedFee(tier.value)}
+              onClick={() => {
+                setSelectedFee(tier.value)
+                resetLiquidityForm()
+              }}
               className={`
                 p-4 rounded-xl border-2 text-left transition-all
                 ${
