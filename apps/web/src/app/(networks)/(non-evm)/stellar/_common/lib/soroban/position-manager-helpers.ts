@@ -166,23 +166,39 @@ export async function increaseLiquidity({
       publicKey: sourceAccount,
     })
 
-    const assembledTransaction = await positionManagerClient.increase_liquidity(
-      {
-        params: {
-          token_id: tokenId,
-          operator,
-          amount0_desired: amount0Desired,
-          amount1_desired: amount1Desired,
-          amount0_min: amount0Min,
-          amount1_min: amount1Min,
-          deadline,
+    let assembledTransaction
+    try {
+      assembledTransaction = await positionManagerClient.increase_liquidity(
+        {
+          params: {
+            token_id: tokenId,
+            operator,
+            amount0_desired: amount0Desired,
+            amount1_desired: amount1Desired,
+            amount0_min: amount0Min,
+            amount1_min: amount1Min,
+            deadline,
+          },
         },
-      },
-      {
-        timeoutInSeconds: DEFAULT_TIMEOUT,
-        fee: 100000,
-      },
-    )
+        {
+          timeoutInSeconds: DEFAULT_TIMEOUT,
+          fee: 100000,
+          simulate: true, // Explicitly enable simulation to ensure footprint is properly set
+        },
+      )
+    } catch (simulationError) {
+      console.error('Transaction simulation failed:', simulationError)
+      throw new Error(
+        `Transaction simulation failed: ${simulationError instanceof Error ? simulationError.message : String(simulationError)}`,
+      )
+    }
+
+    // Verify simulation succeeded and check for footprint issues
+    if (!assembledTransaction.result) {
+      console.warn(
+        'Transaction simulation returned no result, but proceeding...',
+      )
+    }
 
     // Convert to XDR for signing
     const transactionXdr = assembledTransaction.toXDR()

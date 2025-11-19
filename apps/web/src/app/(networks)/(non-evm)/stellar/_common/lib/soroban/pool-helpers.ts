@@ -483,6 +483,39 @@ export function calculateLiquidityFromAmount0(
 }
 
 /**
+ * Calculate liquidity from token1 amount
+ */
+export function calculateLiquidityFromAmount1(
+  scaledAmount1: bigint,
+  currentSqrtPriceX96: bigint,
+  sqrtPriceLowerX96: bigint,
+  sqrtPriceUpperX96: bigint,
+): bigint {
+  if (currentSqrtPriceX96 < sqrtPriceLowerX96) {
+    // Below range: only token0 needed, return 0
+    return BigInt(0)
+  } else if (currentSqrtPriceX96 >= sqrtPriceUpperX96) {
+    // Above range: only token1 needed
+    // amount1 = liquidity * (sqrtUpper - sqrtLower) / 2^96
+    // liquidity = (amount1 * 2^96) / (sqrtUpper - sqrtLower)
+    const numerator = scaledAmount1 << BigInt(96)
+    const denominator = sqrtPriceUpperX96 - sqrtPriceLowerX96
+    const liquidity = numerator / denominator
+    // Reduce by ~0.2% to account for rounding up
+    const adjustedLiquidity = (liquidity * BigInt(998)) / BigInt(1000)
+    return adjustedLiquidity
+  } else {
+    // Within range
+    // amount1 = liquidity * (sqrtPrice - sqrtLower) / 2^96
+    // liquidity = (amount1 * 2^96) / (sqrtPrice - sqrtLower)
+    const numerator = scaledAmount1 << BigInt(96)
+    const denominator = currentSqrtPriceX96 - sqrtPriceLowerX96
+    const liquidity = numerator / denominator
+    return liquidity
+  }
+}
+
+/**
  * Calculate token amounts from liquidity (exactly like stellar-auth-test)
  * IMPORTANT: Must match contract's exact calculation with TWO separate divisions
  */
