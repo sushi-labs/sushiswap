@@ -55,7 +55,6 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.SKALE_EUROPA,
   ChainId.CELO,
   ChainId.HAQQ,
-  ChainId.TRON,
   ChainId.SCROLL,
   ChainId.THUNDERCORE,
   ChainId.ARBITRUM_NOVA,
@@ -141,7 +140,6 @@ export const isSupportedChainId = (
 const UNSORTED_SUPPORTED_NETWORKS = [
   ...SUPPORTED_CHAIN_IDS,
   MvmChainId.APTOS,
-  TvmChainId.TRON,
   KvmChainId.KADENA,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
@@ -161,7 +159,6 @@ export const SUPPORTED_NETWORKS = Array.from(
 const UNSORTED_POOL_SUPPORTED_NETWORKS = [
   ...PoolChainIds,
   MvmChainId.APTOS,
-  TvmChainId.TRON,
   KvmChainId.KADENA,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
