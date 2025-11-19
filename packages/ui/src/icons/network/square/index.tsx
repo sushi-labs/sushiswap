@@ -33,6 +33,7 @@ import { MantaSquare } from './MantaSquare'
 import { MantleSquare } from './MantleSquare'
 import { MetisSquare } from './MetisSquare'
 import { ModeSquare } from './ModeSquare'
+import { MonadSquare } from './MonadSquare'
 // import { OkexSquare } from "./OkexSquare";
 import { OptimismSquare } from './OptimismSquare'
 import { PlasmaSquare } from './PlasmaSquare'
@@ -102,6 +103,7 @@ export * from './ZKSyncSquare'
 export * from './ZetaChainSquare'
 export * from './KatanaSquare'
 export * from './PlasmaSquare'
+export * from './MonadSquare'
 
 // [ChainId.HECO]: HecoSquare,// currently not exported from sushi/chain
 // [ChainId.OKEX]: OkexSquare,// currently not exported from sushi/chain
@@ -153,6 +155,7 @@ export const NETWORK_SQUARE_ICON: Partial<
   [ChainId.HEMI]: HemiSquare,
   [ChainId.PLASMA]: PlasmaSquare,
   [ChainId.KATANA]: KatanaSquare,
+  [ChainId.MONAD]: MonadSquare,
   [ChainId.APTOS]: AptosSquare,
   [ChainId.TRON]: TronSquare,
 }

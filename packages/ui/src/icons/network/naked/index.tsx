@@ -33,6 +33,7 @@ import { MantaNaked } from './MantaNaked'
 import { MantleNaked } from './MantleNaked'
 import { MetisNaked } from './MetisNaked'
 import { ModeNaked } from './ModeNaked'
+import { MonadNaked } from './MonadNaked'
 import { OptimismNaked } from './OptimismNaked'
 import { PlasmaNaked } from './PlasmaNaked'
 import { PolygonNaked } from './PolygonNaked'
@@ -81,6 +82,7 @@ export * from './MantaNaked'
 export * from './MantleNaked'
 export * from './MetisNaked'
 export * from './ModeNaked'
+export * from './MonadNaked'
 export * from './MoonbeamNaked'
 export * from './MoonriverNaked'
 export * from './OkexNaked'
@@ -145,6 +147,7 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.HYPEREVM]: HyperEVMNaked,
   [ChainId.BERACHAIN]: BeraNaked,
   [ChainId.PLASMA]: PlasmaNaked,
+  [ChainId.MONAD]: MonadNaked,
   [ChainId.APTOS]: AptosNaked,
   [ChainId.TRON]: TronNaked,
   [ChainId.KADENA]: KadenaNaked,
