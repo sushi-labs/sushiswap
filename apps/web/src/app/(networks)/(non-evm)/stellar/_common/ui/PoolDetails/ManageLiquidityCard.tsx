@@ -840,29 +840,40 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                           <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
                             Remove percentage
                           </span>
-                          <input
-                            type="number"
-                            min={0}
-                            max={100}
-                            step={1}
-                            value={removePercent}
-                            onChange={(event) => {
-                              const value = Number.parseInt(
-                                event.target.value,
-                                10,
-                              )
-                              if (Number.isNaN(value)) {
-                                setRemovePercent(0)
-                                return
-                              }
-                              const clamped = Math.min(
-                                100,
-                                Math.max(0, Math.round(value)),
-                              )
-                              setRemovePercent(clamped)
-                            }}
-                            className="w-16 rounded-md border border-slate-300 bg-white px-2 py-1 text-right text-sm font-medium text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900/40 dark:text-slate-100"
-                          />
+                          <div className="flex flex-row gap-4 items-center">
+                            <input
+                              type="number"
+                              min={0}
+                              max={100}
+                              step={1}
+                              value={removePercent}
+                              onChange={(event) => {
+                                const value = Number.parseInt(
+                                  event.target.value,
+                                  10,
+                                )
+                                if (Number.isNaN(value)) {
+                                  setRemovePercent(0)
+                                  return
+                                }
+                                const clamped = Math.min(
+                                  100,
+                                  Math.max(0, Math.round(value)),
+                                )
+                                setRemovePercent(clamped)
+                              }}
+                              className="w-16 rounded-md border border-slate-300 bg-white px-2 py-1 text-right text-sm font-medium text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900/40 dark:text-slate-100"
+                            />
+                            <Button
+                              disabled={removePercent === 100}
+                              onClick={() => setRemovePercent(100)}
+                              size="xs"
+                              variant="ghost"
+                              className="border border-slate-300"
+                            >
+                              Max
+                            </Button>
+                          </div>
                         </div>
                         <input
                           type="range"
