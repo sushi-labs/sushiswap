@@ -62,6 +62,8 @@ jobs:
           AUTH_SESSION_SECRET: p1jPq93q2T6Kmxrva3+WR93xSWLLSa584Qen005+4ts= # Random string, separate from Prod
           ZITADEL_ISSUER: https://zitadel.styro.sushi.com
           ZITADEL_SA_TOKEN: ""
+          # BotId
+          BOTID_JWT_KEY: HLQsCXPJ6gEZaLVGnigDE2yv8hBOih53JWeknsEKG0A
 
       - name: Upload test results
         if: always()
