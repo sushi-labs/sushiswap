@@ -28,6 +28,7 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.POLYGON_ZKEVM,
   ChainId.TATARA,
   ChainId.SEPOLIA,
+  ChainId.BOKUTO,
   ChainId.MONAD,
 ] as const
 
