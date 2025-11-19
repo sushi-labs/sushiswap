@@ -44,7 +44,7 @@ export function useCalculateDependentAmount(
       status: 'idle' | 'below-range' | 'above-range' | 'within-range' | 'error'
       error?: string
     }> => {
-      if (!poolAddress || !amount || Number(amount) <= 0 || !initialized) {
+      if (!poolAddress || !initialized) {
         return {
           amount: '',
           status: 'idle',
@@ -105,7 +105,7 @@ export function useCalculateDependentAmount(
         }
 
         // Price is within range - calculate dependent amount
-        const inputAmount = Number.parseFloat(amount)
+        const inputAmount = Number.parseFloat(amount || '0')
         const scaledAmount = BigInt(
           Math.floor(inputAmount * 10 ** independentDecimals),
         )
@@ -167,7 +167,7 @@ export function useCalculateDependentAmount(
         }
       }
     },
-    enabled: !!poolAddress && !!amount && Number(amount) > 0 && !!initialized,
+    enabled: !!poolAddress && !!initialized,
     staleTime: 10000, // 10 seconds
   })
 }

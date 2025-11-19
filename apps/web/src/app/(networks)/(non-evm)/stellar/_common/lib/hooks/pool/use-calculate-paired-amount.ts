@@ -31,6 +31,8 @@ export function useCalculatePairedAmount(
       token0Amount,
       tickLower,
       tickUpper,
+      decimals,
+      token0Code,
     ],
     queryFn: async (): Promise<{
       token1Amount: string
@@ -39,8 +41,6 @@ export function useCalculatePairedAmount(
     }> => {
       if (
         !poolAddress ||
-        !token0Amount ||
-        Number(token0Amount) <= 0 ||
         !initialized ||
         tickLower === null ||
         tickUpper === null ||
@@ -79,7 +79,7 @@ export function useCalculatePairedAmount(
         }
 
         // Price is within range - calculate paired amount
-        const inputAmount = Number.parseFloat(token0Amount)
+        const inputAmount = Number.parseFloat(token0Amount || '0')
         const scaledAmount0 = BigInt(Math.floor(inputAmount * 10 ** decimals))
 
         // Calculate liquidity from token0 amount
@@ -128,8 +128,6 @@ export function useCalculatePairedAmount(
     },
     enabled:
       !!poolAddress &&
-      !!token0Amount &&
-      Number(token0Amount) > 0 &&
       !!initialized &&
       tickLower !== null &&
       tickUpper !== null &&

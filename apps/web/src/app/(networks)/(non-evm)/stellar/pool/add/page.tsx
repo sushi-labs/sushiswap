@@ -147,11 +147,11 @@ export default function AddPoolPage() {
     if (manualOrderedToken1Amount) {
       return manualOrderedToken1Amount
     }
-    if (pairedAmountData) {
+    if (pairedAmountData && orderedToken0Amount) {
       return pairedAmountData.token1Amount
     }
     return ''
-  }, [pairedAmountData, manualOrderedToken1Amount])
+  }, [pairedAmountData, manualOrderedToken1Amount, orderedToken0Amount])
 
   const maxOrderedToken0Amount =
     existingPoolAddress && poolInitialized === true
@@ -190,27 +190,12 @@ export default function AddPoolPage() {
       !orderedToken0Amount ||
       !orderedToken1Amount ||
       Number.parseFloat(orderedToken0Amount) <= 0 ||
-      Number.parseFloat(orderedToken1Amount) <= 0
+      Number.parseFloat(orderedToken1Amount) < 0
     ) {
       console.error('Liquidity amounts are required')
       return
     }
 
-    // Validate tick spacing based on selected fee tier
-    const tickSpacing = TICK_SPACINGS[selectedFee]
-    if (tickLower % tickSpacing !== 0 || tickUpper % tickSpacing !== 0) {
-      console.error(`Tick values must be multiples of ${tickSpacing}`)
-      alert(
-        `Tick values must be multiples of ${tickSpacing} for the selected fee tier`,
-      )
-      return
-    }
-
-    if (tickLower >= tickUpper) {
-      console.error('Tick lower must be less than tick upper')
-      alert('Tick lower must be less than tick upper')
-      return
-    }
     try {
       let poolAddress: string
       if (existingPoolAddress && poolInitialized === true) {
@@ -268,9 +253,8 @@ export default function AddPoolPage() {
         orderedToken1Amount &&
         Number.parseFloat(orderedToken1Amount) > 0 // New pool or uninitialized pool: need both amounts
 
-  // Prevent creation when price is above range (can't provide token0)
-  const isAboveRange =
-    existingPoolAddress && pairedAmountStatus === 'above-range'
+  // Prevent add liquidity when price is above range (can't provide token0)
+  const isAboveRange = pairedAmountStatus === 'above-range'
 
   const canCreate =
     token0 &&
@@ -540,46 +524,50 @@ export default function AddPoolPage() {
                   disabled={!!existingPoolAddress && poolInitialized === true}
                   required={!existingPoolAddress || poolInitialized === false}
                 />
-                <Button
-                  type="button"
-                  size="sm"
-                  variant={
-                    orderedToken1 &&
-                    formatTokenAmount(
-                      maxOrderedToken1Amount,
-                      orderedToken1.decimals,
-                    ) === orderedToken1Amount
-                      ? 'default'
-                      : 'secondary'
-                  }
-                  disabled={
-                    !orderedToken1 ||
-                    (!!existingPoolAddress && poolInitialized === true)
-                  }
-                  onClick={() => {
-                    if (!orderedToken1) {
-                      return
-                    }
-                    setManualOrderedToken1Amount(
+                {(!existingPoolAddress || poolInitialized === false) && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={
+                      orderedToken1 &&
                       formatTokenAmount(
                         maxOrderedToken1Amount,
                         orderedToken1.decimals,
-                      ),
-                    )
-                  }}
-                  className="px-2"
-                >
-                  Max
-                </Button>
+                      ) === orderedToken1Amount
+                        ? 'default'
+                        : 'secondary'
+                    }
+                    disabled={!orderedToken1}
+                    onClick={() => {
+                      if (!orderedToken1) {
+                        return
+                      }
+                      setManualOrderedToken1Amount(
+                        formatTokenAmount(
+                          maxOrderedToken1Amount,
+                          orderedToken1.decimals,
+                        ),
+                      )
+                    }}
+                    className="px-2"
+                  >
+                    Max
+                  </Button>
+                )}
               </div>
             </div>
             {existingPoolAddress &&
               poolInitialized === true &&
-              pairedAmountData?.error && (
+              pairedAmountData?.error &&
+              ((pairedAmountStatus === 'error' && (
                 <p className="text-xs text-red-600 dark:text-red-400">
                   {pairedAmountData.error}
                 </p>
-              )}
+              )) || (
+                <p className="text-xs text-muted-foreground">
+                  {pairedAmountData.error}
+                </p>
+              ))}
           </div>
           <TickRangeSelector
             params={tickRangeSelectorState}

@@ -48,33 +48,42 @@ export function useMaxPairedAmount(
         !poolAddress ||
         !token0Balance ||
         !token1Balance ||
-        !rawPairedToken1Amount ||
         !initialized ||
         tickLower === null ||
-        tickUpper === null
+        tickUpper === null ||
+        !pairedAmountData ||
+        pairedAmountData.status === 'idle' ||
+        pairedAmountData.status === 'error'
       ) {
         return {
           maxToken0Amount: '0',
           maxToken1Amount: '0',
         }
       }
-      try {
+      if (pairedAmountData.status === 'below-range') {
         return {
-          maxToken0Amount:
-            rawPairedToken1Amount < BigInt(token1Balance)
-              ? token0Balance
-              : (
-                  (BigInt(token1Balance) * BigInt(token0Balance)) /
-                  rawPairedToken1Amount
-                ).toString(),
-          maxToken1Amount:
-            rawPairedToken1Amount < BigInt(token1Balance)
-              ? rawPairedToken1Amount.toString()
-              : token1Balance,
+          maxToken0Amount: token0Balance,
+          maxToken1Amount: '0',
         }
-      } catch (error) {
-        console.error('Error calculating max paired amounts', error)
-        throw error
+      }
+      if (pairedAmountData.status === 'above-range') {
+        return {
+          maxToken0Amount: '0',
+          maxToken1Amount: token1Balance,
+        }
+      }
+      return {
+        maxToken0Amount:
+          rawPairedToken1Amount < BigInt(token1Balance)
+            ? token0Balance
+            : (
+                (BigInt(token1Balance) * BigInt(token0Balance)) /
+                rawPairedToken1Amount
+              ).toString(),
+        maxToken1Amount:
+          rawPairedToken1Amount < BigInt(token1Balance)
+            ? rawPairedToken1Amount.toString()
+            : token1Balance,
       }
     },
     enabled:

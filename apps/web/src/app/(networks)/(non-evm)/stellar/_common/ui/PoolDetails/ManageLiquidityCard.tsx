@@ -162,7 +162,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   )
 
   // Calculate dependent amount (only used in normal mode, not zap mode)
-  const parsedAmount = dependentAmountData?.amount ?? ''
+  const parsedAmount = dependentAmountData?.amount ?? '0'
 
   const amount0 =
     independentField === 'token0' ? effectiveTypedValue : parsedAmount
@@ -201,6 +201,15 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     }
   }, [selectedPositionId])
 
+  useEffect(() => {
+    if (dependentAmountData?.status === 'below-range') {
+      setIndependentField('token0')
+    }
+    if (dependentAmountData?.status === 'above-range') {
+      setIndependentField('token1')
+    }
+  }, [dependentAmountData?.status])
+
   // Check if any amount is entered for button state (use effectiveTypedValue)
   const hasAmount =
     effectiveTypedValue !== '' &&
@@ -217,11 +226,8 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
       ? (selectedPosition.principalToken1 * percentBigInt) / 100n
       : 0n
 
-  // Prevent adding liquidity when price is above range (can't provide token0) or below (can't provide token1)
-  const isDependentAmountError =
-    dependentAmountData?.status === 'error' ||
-    dependentAmountData?.status === 'above-range' ||
-    dependentAmountData?.status === 'below-range'
+  // Prevent adding liquidity when dependent amount calculation errors occur
+  const isDependentAmountError = dependentAmountData?.status === 'error'
 
   const canAddLiquidity =
     hasAmount && isTickRangeValid && !isDependentAmountError
@@ -614,18 +620,19 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                                 $ 0.00
                               </div>
                               <Button
-                                variant={
-                                  maxPairedAmountData &&
-                                  formatTokenAmount(
-                                    BigInt(maxPairedAmountData.maxToken0Amount),
-                                    pool.token0.decimals,
-                                  ) === amount0
-                                    ? 'secondary'
-                                    : 'ghost'
-                                }
+                                variant="secondary"
                                 size="xs"
                                 className="border-slate-200 dark:border-slate-800 border"
-                                disabled={!maxPairedAmountData}
+                                disabled={
+                                  !maxPairedAmountData ||
+                                  amount0 ===
+                                    formatTokenAmount(
+                                      BigInt(
+                                        maxPairedAmountData.maxToken0Amount,
+                                      ),
+                                      pool.token0.decimals,
+                                    )
+                                }
                                 onClick={() => {
                                   if (!maxPairedAmountData) {
                                     return
@@ -666,7 +673,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                           </span>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <div className="flex-1 rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-gray-900/50">
+                          <div className="flex-1 rounded-lg border border-slate-300 bg-white p-3 dark:border-slate-700 dark:bg-slate-900/40">
                             <input
                               type="number"
                               onWheel={(e) => e.currentTarget.blur()}
@@ -678,28 +685,54 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                               placeholder="0.0"
                               className="w-full text-lg font-semibold bg-transparent border-none outline-none"
                             />
-                            <div className="text-sm text-muted-foreground mt-1">
-                              $ 0.00
+                            <div className="flex flex-row justify-between mt-1">
+                              <div className="text-sm text-muted-foreground">
+                                $ 0.00
+                              </div>
+                              <Button
+                                variant="secondary"
+                                size="xs"
+                                className="border-slate-200 dark:border-slate-800 border"
+                                disabled={
+                                  !maxPairedAmountData ||
+                                  amount1 ===
+                                    formatTokenAmount(
+                                      BigInt(
+                                        maxPairedAmountData.maxToken1Amount,
+                                      ),
+                                      pool.token1.decimals,
+                                    )
+                                }
+                                onClick={() => {
+                                  if (!maxPairedAmountData) {
+                                    return
+                                  }
+                                  setIndependentField('token1')
+                                  setTypedValue(
+                                    formatTokenAmount(
+                                      BigInt(
+                                        maxPairedAmountData.maxToken1Amount,
+                                      ),
+                                      pool.token1.decimals,
+                                    ),
+                                  )
+                                }}
+                              >
+                                Max
+                              </Button>
                             </div>
                           </div>
                         </div>
-                        {dependentAmountData?.error && (
-                          <p className="text-xs text-red-600 dark:text-red-400">
-                            {dependentAmountData.error}
-                          </p>
-                        )}
-                        {dependentAmountData?.status === 'below-range' &&
-                          independentField === 'token0' && (
-                            <p className="text-xs text-muted-foreground">
-                              Price below range - only {pool.token0.code} needed
+                        {dependentAmountData?.error &&
+                          ((dependentAmountData?.status === 'error' && (
+                            <p className="text-xs text-red-600 dark:text-red-400">
+                              {dependentAmountData.error}
                             </p>
-                          )}
-                        {dependentAmountData?.status === 'above-range' &&
-                          independentField === 'token1' && (
+                          )) || (
                             <p className="text-xs text-muted-foreground">
-                              Price above range - only {pool.token1.code} needed
+                              {dependentAmountData.error}
                             </p>
-                          )}
+                          ))}
                       </div>
 
                       <TickRangeSelector
