@@ -41,8 +41,31 @@ export default function AddPoolPage() {
   const [manualOrderedToken1Amount, setManualOrderedToken1Amount] =
     useState<string>('') // For new pools
 
-  const reversedPoolTokenOrder =
-    token0 && token1 && token0.contract > token1.contract
+  // Check if pool already exists
+  const { data: existingPoolAddress } = useGetPool(
+    token0 && token1
+      ? {
+          tokenA: token0.contract,
+          tokenB: token1.contract,
+          fee: selectedFee,
+        }
+      : null,
+  )
+
+  // Check if existing pool is initialized
+  const { data: poolInitialized } = usePoolInitialized(existingPoolAddress)
+
+  const { data: poolInfo } = usePoolInfo(existingPoolAddress ?? null)
+
+  const reversedPoolTokenOrder = useMemo(() => {
+    if (!token0 || !token1) {
+      return false
+    }
+    if (poolInfo) {
+      return poolInfo.token0.contract !== token0.contract
+    }
+    return token0.contract > token1.contract
+  }, [token0, token1, poolInfo])
 
   const [orderedToken0, orderedToken1] = reversedPoolTokenOrder
     ? [token1, token0]
@@ -57,22 +80,6 @@ export default function AddPoolPage() {
     orderedToken1?.contract || null,
   )
 
-  // Check if pool already exists
-  const { data: existingPoolAddress } = useGetPool(
-    orderedToken0 && orderedToken1
-      ? {
-          tokenA: orderedToken0.contract,
-          tokenB: orderedToken1.contract,
-          fee: selectedFee,
-        }
-      : null,
-  )
-
-  // Check if existing pool is initialized
-  const { data: poolInitialized } = usePoolInitialized(existingPoolAddress)
-
-  const { data: poolInfo } = usePoolInfo(existingPoolAddress ?? null)
-
   const { data: currentPrice } = usePoolPrice(existingPoolAddress ?? null)
   const initSqrtPriceX96 = useMemo(() => {
     if (!orderedToken0 || !orderedToken1) {
@@ -81,6 +88,7 @@ export default function AddPoolPage() {
     const orderedToken0AmountRaw = BigInt(
       Math.floor(Number(orderedToken0Amount) * 10 ** orderedToken0.decimals),
     )
+    // Only used for new pool creation/init when both amounts are provided (no auto-calculate)
     const orderedToken1AmountRaw = BigInt(
       Math.floor(
         Number(manualOrderedToken1Amount) * 10 ** orderedToken1.decimals,
@@ -103,7 +111,7 @@ export default function AddPoolPage() {
 
   const tickRangeSelectorState = useTickRangeSelector(
     selectedFee,
-    (existingPoolAddress && poolInitialized === true && currentPrice
+    (existingPoolAddress && poolInitialized === true
       ? currentPrice
       : initPrice) ?? 1,
   )
@@ -144,6 +152,16 @@ export default function AddPoolPage() {
     }
     return ''
   }, [pairedAmountData, manualOrderedToken1Amount])
+
+  const maxOrderedToken0Amount =
+    existingPoolAddress && poolInitialized === true
+      ? BigInt(maxPairedAmountData?.maxToken0Amount ?? '0')
+      : (orderedToken0Balance ?? 0n)
+
+  const maxOrderedToken1Amount =
+    existingPoolAddress && poolInitialized === true
+      ? BigInt(maxPairedAmountData?.maxToken1Amount ?? '0')
+      : (orderedToken1Balance ?? 0n)
 
   const pairedAmountStatus = pairedAmountData?.status || 'idle'
 
@@ -366,43 +384,72 @@ export default function AddPoolPage() {
                   </span>
                 )}
             </div>
-            <TextField
-              type="number"
-              label={orderedToken0?.code || 'Token 1'}
-              placeholder="0.0"
-              value={orderedToken0Amount}
-              onValueChange={(value) => {
-                if (value === '') {
-                  setOrderedToken0Amount('')
-                  return
-                }
-                if (
-                  !orderedToken0 ||
-                  (existingPoolAddress &&
-                    poolInitialized === true &&
-                    !maxPairedAmountData)
-                ) {
-                  return
-                }
-                const rawAmountValue = BigInt(
-                  Math.floor(
-                    Number.parseFloat(value) * 10 ** orderedToken0.decimals,
-                  ),
-                )
-                const maxAmount =
-                  existingPoolAddress && poolInitialized === true
-                    ? BigInt(maxPairedAmountData?.maxToken0Amount ?? '0')
-                    : (orderedToken0Balance ?? 0n)
-                if (rawAmountValue >= maxAmount) {
-                  setOrderedToken0Amount(
-                    formatTokenAmount(maxAmount, orderedToken0.decimals),
+            <div className="flex flex-row gap-2">
+              <TextField
+                type="number"
+                label={orderedToken0?.code || 'Token 1'}
+                placeholder="0.0"
+                value={orderedToken0Amount}
+                onValueChange={(value) => {
+                  if (value === '') {
+                    setOrderedToken0Amount('')
+                    return
+                  }
+                  if (
+                    !orderedToken0 ||
+                    (existingPoolAddress &&
+                      poolInitialized === true &&
+                      !maxPairedAmountData)
+                  ) {
+                    return
+                  }
+                  const rawAmountValue = BigInt(
+                    Math.floor(
+                      Number.parseFloat(value) * 10 ** orderedToken0.decimals,
+                    ),
                   )
-                } else {
-                  setOrderedToken0Amount(value)
+                  if (rawAmountValue >= maxOrderedToken0Amount) {
+                    setOrderedToken0Amount(
+                      formatTokenAmount(
+                        maxOrderedToken0Amount,
+                        orderedToken0.decimals,
+                      ),
+                    )
+                  } else {
+                    setOrderedToken0Amount(value)
+                  }
+                }}
+                required
+              />
+              <Button
+                type="button"
+                size="sm"
+                variant={
+                  orderedToken0 &&
+                  formatTokenAmount(
+                    maxOrderedToken0Amount,
+                    orderedToken0.decimals,
+                  ) === orderedToken0Amount
+                    ? 'default'
+                    : 'secondary'
                 }
-              }}
-              required
-            />
+                disabled={!orderedToken0}
+                onClick={() => {
+                  if (!orderedToken0) {
+                    return
+                  }
+                  setOrderedToken0Amount(
+                    formatTokenAmount(
+                      maxOrderedToken0Amount,
+                      orderedToken0.decimals,
+                    ),
+                  )
+                }}
+                className="px-2"
+              >
+                Max
+              </Button>
+            </div>
           </div>
           <div className="flex items-center justify-center -my-2">
             <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
@@ -428,62 +475,89 @@ export default function AddPoolPage() {
                     </span>
                   )}
               </div>
-              <TextField
-                type={
-                  existingPoolAddress && poolInitialized === true
-                    ? 'text'
-                    : 'number'
-                }
-                label={orderedToken1?.code || 'Token 2'}
-                placeholder={
-                  existingPoolAddress && poolInitialized === true
-                    ? 'Auto-calculated'
-                    : '0.0'
-                }
-                value={orderedToken1Amount}
-                onValueChange={
-                  existingPoolAddress && poolInitialized === true
-                    ? undefined
-                    : (value) => {
-                        if (value === '') {
-                          setManualOrderedToken1Amount('')
-                          return
-                        }
-                        if (
-                          !orderedToken1 ||
-                          (existingPoolAddress &&
-                            poolInitialized === true &&
-                            !maxPairedAmountData)
-                        ) {
-                          return
-                        }
-                        const rawAmountValue = BigInt(
-                          Math.floor(
-                            Number.parseFloat(value) *
-                              10 ** orderedToken1.decimals,
-                          ),
-                        )
-                        const maxAmount =
-                          existingPoolAddress && poolInitialized === true
-                            ? BigInt(
-                                maxPairedAmountData?.maxToken1Amount ?? '0',
-                              )
-                            : (orderedToken1Balance ?? 0n)
-                        if (rawAmountValue >= maxAmount) {
-                          setManualOrderedToken1Amount(
-                            formatTokenAmount(
-                              maxAmount,
-                              orderedToken1.decimals,
+              <div className="flex flex-row gap-2">
+                <TextField
+                  type={
+                    existingPoolAddress && poolInitialized === true
+                      ? 'text'
+                      : 'number'
+                  }
+                  label={orderedToken1?.code || 'Token 2'}
+                  placeholder={
+                    existingPoolAddress && poolInitialized === true
+                      ? 'Auto-calculated'
+                      : '0.0'
+                  }
+                  value={orderedToken1Amount}
+                  onValueChange={
+                    existingPoolAddress && poolInitialized === true
+                      ? undefined
+                      : (value) => {
+                          if (value === '') {
+                            setManualOrderedToken1Amount('')
+                            return
+                          }
+                          if (
+                            !orderedToken1 ||
+                            (existingPoolAddress &&
+                              poolInitialized === true &&
+                              !maxPairedAmountData)
+                          ) {
+                            return
+                          }
+                          const rawAmountValue = BigInt(
+                            Math.floor(
+                              Number.parseFloat(value) *
+                                10 ** orderedToken1.decimals,
                             ),
                           )
-                        } else {
-                          setManualOrderedToken1Amount(value)
+                          if (rawAmountValue >= maxOrderedToken1Amount) {
+                            setManualOrderedToken1Amount(
+                              formatTokenAmount(
+                                maxOrderedToken1Amount,
+                                orderedToken1.decimals,
+                              ),
+                            )
+                          } else {
+                            setManualOrderedToken1Amount(value)
+                          }
                         }
-                      }
-                }
-                disabled={!!existingPoolAddress && poolInitialized === true}
-                required={!existingPoolAddress || poolInitialized === false}
-              />
+                  }
+                  disabled={!!existingPoolAddress && poolInitialized === true}
+                  required={!existingPoolAddress || poolInitialized === false}
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={
+                    orderedToken1 &&
+                    formatTokenAmount(
+                      maxOrderedToken1Amount,
+                      orderedToken1.decimals,
+                    ) === orderedToken1Amount
+                      ? 'default'
+                      : 'secondary'
+                  }
+                  disabled={
+                    !orderedToken1 ||
+                    (!!existingPoolAddress && poolInitialized === true)
+                  }
+                  onClick={() => {
+                    if (!orderedToken1) {
+                      return
+                    }
+                    setManualOrderedToken1Amount(
+                      formatTokenAmount(
+                        maxOrderedToken1Amount,
+                        orderedToken1.decimals,
+                      ),
+                    )
+                  }}
+                  className="px-2"
+                >
+                  Max
+                </Button>
+              </div>
             </div>
             {existingPoolAddress &&
               poolInitialized === true &&

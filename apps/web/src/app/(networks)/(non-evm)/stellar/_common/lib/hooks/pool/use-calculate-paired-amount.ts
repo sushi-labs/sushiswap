@@ -17,9 +17,9 @@ import { usePoolInitialized } from './use-pool-initialized'
 export function useCalculatePairedAmount(
   poolAddress: string | null,
   token0Amount: string,
-  tickLower: number,
-  tickUpper: number,
-  decimals: number,
+  tickLower: number | null,
+  tickUpper: number | null,
+  decimals: number | null,
   token0Code?: string,
 ) {
   const { data: initialized } = usePoolInitialized(poolAddress)
@@ -41,7 +41,10 @@ export function useCalculatePairedAmount(
         !poolAddress ||
         !token0Amount ||
         Number(token0Amount) <= 0 ||
-        !initialized
+        !initialized ||
+        tickLower === null ||
+        tickUpper === null ||
+        decimals === null
       ) {
         return {
           token1Amount: '',
@@ -127,7 +130,10 @@ export function useCalculatePairedAmount(
       !!poolAddress &&
       !!token0Amount &&
       Number(token0Amount) > 0 &&
-      !!initialized,
+      !!initialized &&
+      tickLower !== null &&
+      tickUpper !== null &&
+      decimals !== null,
     staleTime: 10000, // 10 seconds
   })
 }

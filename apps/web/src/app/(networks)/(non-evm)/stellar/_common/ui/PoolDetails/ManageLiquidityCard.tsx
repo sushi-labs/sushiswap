@@ -358,8 +358,37 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                           placeholder="0.0"
                           className="w-full text-lg font-semibold bg-transparent border-none outline-none"
                         />
-                        <div className="text-sm text-muted-foreground">
-                          $ 0.00
+                        <div className="flex flex-row justify-between mt-1">
+                          <div className="text-sm text-muted-foreground">
+                            $ 0.00
+                          </div>
+                          <Button
+                            variant={
+                              maxPairedAmountData &&
+                              formatTokenAmount(
+                                BigInt(maxPairedAmountData.maxToken0Amount),
+                                pool.token0.decimals,
+                              ) === amount0
+                                ? 'secondary'
+                                : 'ghost'
+                            }
+                            size="xs"
+                            className="border-slate-200 dark:border-slate-800 border"
+                            disabled={!maxPairedAmountData}
+                            onClick={() => {
+                              if (!maxPairedAmountData) {
+                                return
+                              }
+                              setAmount0(
+                                formatTokenAmount(
+                                  BigInt(maxPairedAmountData.maxToken0Amount),
+                                  pool.token0.decimals,
+                                ),
+                              )
+                            }}
+                          >
+                            Max
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -392,7 +421,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                           disabled
                           className="w-full text-lg font-semibold bg-transparent border-none outline-none text-muted-foreground"
                         />
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-sm text-muted-foreground mt-1">
                           $ 0.00
                         </div>
                       </div>

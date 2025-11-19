@@ -12,8 +12,8 @@ export function useMaxPairedAmount(
   poolAddress: string | null,
   token0Balance: string,
   token1Balance: string,
-  tickLower: number,
-  tickUpper: number,
+  tickLower: number | null,
+  tickUpper: number | null,
   token0Decimals: number,
   token1Decimals: number,
 ) {
@@ -49,7 +49,9 @@ export function useMaxPairedAmount(
         !token0Balance ||
         !token1Balance ||
         !rawPairedToken1Amount ||
-        !initialized
+        !initialized ||
+        tickLower === null ||
+        tickUpper === null
       ) {
         return {
           maxToken0Amount: '0',
@@ -80,7 +82,9 @@ export function useMaxPairedAmount(
       !!token0Balance &&
       !!token1Balance &&
       !!pairedAmountData &&
-      !!initialized,
+      !!initialized &&
+      tickLower !== null &&
+      tickUpper !== null,
     staleTime: 10000, // 10 seconds
   })
 }
