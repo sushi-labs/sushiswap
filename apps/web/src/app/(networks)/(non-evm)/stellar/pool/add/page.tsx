@@ -167,8 +167,7 @@ export default function AddPoolPage() {
       !orderedToken0Amount ||
       !orderedToken1Amount ||
       Number.parseFloat(orderedToken0Amount) <= 0 ||
-      Number.parseFloat(orderedToken1Amount) <= 0 ||
-      !initSqrtPriceX96
+      Number.parseFloat(orderedToken1Amount) <= 0
     ) {
       console.error('Liquidity amounts are required')
       return
@@ -190,15 +189,24 @@ export default function AddPoolPage() {
       return
     }
     try {
-      const { result } = await createAndInitializePoolMutation.mutateAsync({
-        tokenA: orderedToken0.contract,
-        tokenB: orderedToken1.contract,
-        fee: selectedFee,
-        sqrtPriceX96: initSqrtPriceX96,
-        userAddress: connectedAddress,
-        signTransaction,
-      })
-      const poolAddress = result.poolAddress
+      let poolAddress: string
+      if (existingPoolAddress && poolInitialized === true) {
+        poolAddress = existingPoolAddress
+      } else {
+        if (!initSqrtPriceX96) {
+          console.error('Initial price is required to create/initialize pool')
+          return
+        }
+        const { result } = await createAndInitializePoolMutation.mutateAsync({
+          tokenA: orderedToken0.contract,
+          tokenB: orderedToken1.contract,
+          fee: selectedFee,
+          sqrtPriceX96: initSqrtPriceX96,
+          userAddress: connectedAddress,
+          signTransaction,
+        })
+        poolAddress = result.poolAddress
+      }
 
       // Add liquidity (required)
       await addLiquidityMutation.mutateAsync({
