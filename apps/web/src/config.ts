@@ -29,7 +29,6 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.TATARA,
   ChainId.SEPOLIA,
   ChainId.BOKUTO,
-  ChainId.MONAD,
 ] as const
 
 export const BLADE_SUPPORTED_NETWORKS = BLADE_SUPPORTED_CHAIN_IDS.filter(
