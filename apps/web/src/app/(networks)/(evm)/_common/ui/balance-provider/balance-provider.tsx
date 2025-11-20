@@ -10,6 +10,7 @@ import {
 } from 'react'
 
 import ms from 'ms'
+import { stringify } from 'src/instrumentation/bigint-json'
 import { NativeAddress } from 'src/lib/constants'
 import { publicWagmiConfig } from 'src/lib/wagmi/config/public'
 import { LowercaseMap } from 'sushi'
@@ -20,7 +21,7 @@ import {
   multicall3Abi_getEthBalance,
 } from 'sushi/evm'
 import type { Address } from 'viem'
-import { multicall } from 'viem/actions'
+import { getBlockNumber, multicall, readContract } from 'viem/actions'
 import { useAccount, useConfig } from 'wagmi'
 import type {
   Balance,
