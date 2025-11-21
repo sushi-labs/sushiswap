@@ -69,13 +69,6 @@ export const CurrencySelector: FC<CurrencySelectorProps> = ({
     )
   }, [query, currenciesData, isLoading])
 
-  // Clear the query when the dialog is closed
-  useEffect(() => {
-    if (!open) {
-      setQuery('')
-    }
-  }, [open])
-
   const _onSelect = useCallback(
     (currency: FiatCurrency) => {
       if (onSelect) {
@@ -88,7 +81,13 @@ export const CurrencySelector: FC<CurrencySelectorProps> = ({
   )
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(state: boolean) => {
+        setOpen(state)
+        setQuery('')
+      }}
+    >
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         aria-describedby={undefined}
