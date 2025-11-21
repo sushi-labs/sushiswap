@@ -1,5 +1,3 @@
-import * as React from 'react'
-
 import type { NakedNetworkIconComponent } from '../../../types'
 
 export const EthereumNaked: NakedNetworkIconComponent = (props) => (
@@ -7,7 +5,7 @@ export const EthereumNaked: NakedNetworkIconComponent = (props) => (
     viewBox="0 0 128 128"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    className="dark:text-white text-gray-700"
+    className="text-gray-700 dark:text-white"
     {...props}
   >
     {props.circle}

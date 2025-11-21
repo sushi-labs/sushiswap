@@ -1,5 +1,4 @@
 import { SkeletonText, classNames } from '@sushiswap/ui'
-import { WalletIcon } from '@sushiswap/ui/icons/WalletIcon'
 import { type FC, memo, useCallback } from 'react'
 import { Amount } from 'sushi'
 import { type EvmCurrency, EvmNative } from 'sushi/evm'
@@ -15,6 +14,7 @@ type BalancePanel = Pick<
   account: string | undefined
   balance: Amount<EvmCurrency> | null | undefined
   type: 'INPUT' | 'OUTPUT'
+  symbol?: string
 }
 
 const MIN_NATIVE_CURRENCY_FOR_GAS = 10n ** 16n // .01 ETH
@@ -26,12 +26,10 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
   disableMaxButton,
   loading,
   type,
+  symbol,
 }) {
   const isMounted = useIsMounted()
-
-  const [big, portion] = (
-    balance ? `${balance?.toSignificant(6)}` : '0.00'
-  ).split('.')
+  const balanceStr = balance ? `${balance?.toSignificant(6)}` : `0`
 
   const onClick = useCallback(() => {
     if (onChange && balance?.gt(0n)) {
@@ -53,7 +51,7 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
   if (loading || !isMounted) {
     return (
       <div className="w-[60px] flex items-center">
-        <SkeletonText fontSize="lg" className="w-full" />
+        <SkeletonText fontSize="sm" className="w-full" />
       </div>
     )
   }
@@ -67,16 +65,13 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
       onClick={onClick}
       className={classNames(
         type === 'INPUT'
-          ? 'text-blue hover:text-blue-600 active:text-blue-700 hover:dark:text-slate-300'
-          : 'text-gray-500 dark:text-slate-500',
-        'font-medium flex gap-1.5 items-center py-1 dark:text-slate-400 px-2 rounded-md',
+          ? 'text-blue hover:text-blue-600 active:text-blue-700 dark:text-skyblue hover:dark:text-skyblue-600 active:dark:text-skyblue-700'
+          : 'text-muted-foreground dark:text-pink-200',
+        'text-sm font-medium flex gap-1 items-center rounded-md',
       )}
       disabled={disableMaxButton}
     >
-      <WalletIcon width={18} height={18} />
-      <span className="text-lg">
-        {big}.<span className="text-sm font-semibold">{portion ?? '00'}</span>
-      </span>
+      Balance: {balanceStr} {symbol || balance?.currency?.symbol}
     </button>
   )
 })

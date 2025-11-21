@@ -1,6 +1,6 @@
+import { isBladeChainId } from '@sushiswap/graph-client/data-api'
 import { notFound } from 'next/navigation'
 import { BLADE_SUPPORTED_NETWORKS } from 'src/config'
-import { isBladeChainId } from 'sushi/evm'
 import { Header } from '../../header'
 
 export default async function BladePoolLayout(props: {

@@ -1,8 +1,10 @@
 'use client'
 
+import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { createErrorToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { useSearchParams } from 'next/navigation'
 import React, { type FC, Suspense, useCallback } from 'react'
 import { getNetworkName } from 'src/lib/network'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
@@ -30,6 +32,14 @@ export const HeaderNetworkSelector: FC<{
 }) => {
   const { switchChainAsync } = useSwitchChain()
   const chainId = useChainId()
+
+  const searchParams = useSearchParams()
+  const chainId0 = searchParams.get('chainId0')
+  const network = chainId0
+    ? (Number(chainId0) as ChainId)
+    : selectedNetwork
+      ? selectedNetwork
+      : chainId
 
   const onSwitchNetwork = useCallback<NetworkSelectorOnSelectCallback>(
     async (el, close) => {
@@ -62,25 +72,21 @@ export const HeaderNetworkSelector: FC<{
 
   return (
     <NetworkSelector
-      selected={selectedNetwork ?? chainId}
-      onSelect={onSwitchNetwork}
+      selected={network}
       networks={networks}
+      onSelect={onSwitchNetwork}
     >
       <Button
         variant="secondary"
         testId="network-selector"
         className={className}
+        icon={ChevronDownIcon}
+        iconPosition="end"
       >
         <Suspense fallback={null}>
-          <NetworkIcon
-            chainId={selectedNetwork ?? chainId}
-            width={20}
-            height={20}
-          />
+          <NetworkIcon chainId={network} width={20} height={20} />
           {hideNetworkName ? null : (
-            <div className="hidden xl:block">
-              {getNetworkName(selectedNetwork ?? chainId)}
-            </div>
+            <div className="hidden xl:block">{getNetworkName(network)}</div>
           )}
         </Suspense>
       </Button>

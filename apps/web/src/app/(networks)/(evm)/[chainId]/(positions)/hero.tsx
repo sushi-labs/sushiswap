@@ -1,4 +1,5 @@
 import { GiftIcon } from '@heroicons/react-v1/outline'
+import { isBladeChainId } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Chip,
@@ -15,7 +16,6 @@ import { type FC, useMemo } from 'react'
 import {
   EvmChainId,
   getEvmChainById,
-  isBladeChainId,
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/evm'

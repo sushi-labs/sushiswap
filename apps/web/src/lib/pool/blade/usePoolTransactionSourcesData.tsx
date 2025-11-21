@@ -1,6 +1,9 @@
 'use client'
 
-import { getBladePoolTxSourcesChart } from '@sushiswap/graph-client/data-api'
+import {
+  getBladePoolTxSourcesChart,
+  isBladeChainId,
+} from '@sushiswap/graph-client/data-api'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import type { BladeChainId, EvmAddress } from 'sushi/evm'
 
@@ -26,6 +29,9 @@ export const usePoolTransactionSourcesData = ({
       duration,
     ],
     queryFn: async () => {
+      if (!isBladeChainId(chainId)) {
+        throw new Error(`Invalid Blade chainId: ${chainId}`)
+      }
       return await getBladePoolTxSourcesChart({
         address: poolAddress,
         chainId,

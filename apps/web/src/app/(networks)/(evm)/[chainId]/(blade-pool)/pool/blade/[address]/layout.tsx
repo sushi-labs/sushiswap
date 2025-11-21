@@ -1,7 +1,8 @@
+import { isBladeChainId } from '@sushiswap/graph-client/data-api'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next/types'
 import { getCachedBladePool, getPoolName } from 'src/lib/pool/blade'
-import { isBladeChainId, isEvmAddress } from 'sushi/evm'
+import { isEvmAddress } from 'sushi/evm'
 import { BladePoolOnchainDataProvider } from './_ui/blade-pool-onchain-data-provider'
 
 export async function generateMetadata(props: {

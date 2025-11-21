@@ -1,6 +1,7 @@
+import type { ReactNode } from 'react'
 import type { ChainId } from 'sushi'
 
-interface BaseNotification {
+export interface BaseNotification {
   account: string | `0x${string}` | undefined
   type:
     | 'portal-deposit'
@@ -23,6 +24,12 @@ interface BaseNotification {
     | 'createMultipleStream'
     | 'createVesting'
     | 'createMultipleVesting'
+    | 'addLiquidity'
+    | 'removeLiquidity'
+    | 'market'
+    | 'dca'
+    | 'limit'
+    | 'product'
   chainId: ChainId
   groupTimestamp: number
   timestamp: number
@@ -42,6 +49,7 @@ export interface PromiseNotification extends BaseNotification {
 
 export type ResolvedNotification = BaseNotification & {
   summary: string
+  description?: ReactNode | ReactNode[]
 }
 
 export type Notification = PromiseNotification | ResolvedNotification

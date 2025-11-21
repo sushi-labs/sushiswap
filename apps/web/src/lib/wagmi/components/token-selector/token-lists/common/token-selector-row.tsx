@@ -65,7 +65,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
       onSelect(currency)
     }, [currency, onSelect])
 
-    const onPin = useCallback(
+    const _onPin = useCallback(
       (e: React.MouseEvent | React.KeyboardEvent) => {
         e.stopPropagation()
         pin?.onPin()
@@ -105,7 +105,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
             className={classNames(
               className,
               selected ? 'bg-secondary' : '',
-              `group flex items-center w-full hover:bg-muted focus:bg-accent h-full rounded-lg px-3 token-${currency?.symbol}`,
+              `group flex items-center w-full hover:bg-blue/10 focus:bg-bg-blue/20 dark:hover:bg-skyblue/10 dark:focus:bg-bg-skyblue/20 h-full rounded-lg px-3 token-${currency?.symbol}`,
             )}
           >
             <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
@@ -221,19 +221,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
                     </div>
                   )
                 )}
-                {pin && (
-                  <IconButton
-                    size="xs"
-                    icon="⭐"
-                    variant="ghost"
-                    name="pin"
-                    onClick={onPin}
-                    className={classNames(
-                      pin.isPinned ? '' : 'grayscale opacity-50',
-                      'z-50',
-                    )}
-                  />
-                )}
+
                 <IconButton
                   size="xs"
                   icon={InformationCircleIcon}
