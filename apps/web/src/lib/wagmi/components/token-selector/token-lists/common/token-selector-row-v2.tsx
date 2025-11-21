@@ -272,7 +272,7 @@ export const TokenSelectorRowV2: FC<TokenSelectorRowV2> = memo(
                         </DropdownMenuTrigger>
 
                         <DropdownMenuContent
-                          isInsideDialog={true}
+                          includePortal={true}
                           align="end"
                           className="max-h-[195px] h-[195px] !overflow-y-auto !bg-slate-50 dark:!bg-slate-800 !backdrop-blur-none "
                         >
