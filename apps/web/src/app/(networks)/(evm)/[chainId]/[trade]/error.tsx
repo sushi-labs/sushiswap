@@ -20,7 +20,7 @@ export default function SwapError({
       >
         Something went wrong!
       </h1>
-      <Container maxWidth="lg" className="px-4 sl">
+      <Container maxWidth="lg" className="px-4">
         <div className="flex flex-col gap-4">
           <Button
             type="button"
