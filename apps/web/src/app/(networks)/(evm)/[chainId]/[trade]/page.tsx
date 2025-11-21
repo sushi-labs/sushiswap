@@ -2,25 +2,19 @@
 
 import { useBreakpoint, useIsMounted } from '@sushiswap/hooks'
 import { Container, SkeletonBox, classNames } from '@sushiswap/ui'
+import { useParams } from 'next/navigation'
 import type {
   ChartingLibraryWidgetOptions,
   ResolutionString,
 } from 'public/trading_view/charting_library/charting_library'
-import { useSkaleEuropaFaucet } from 'src/lib/hooks'
-import { useHeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
-
-import { useParams } from 'next/navigation'
 import { useMemo } from 'react'
+import { useSkaleEuropaFaucet } from 'src/lib/hooks'
 import { ChainId } from 'sushi'
 import { useAccount } from 'wagmi'
 import { Chart } from './_ui/swap/trade/chart/chart'
 import { ChartHeader } from './_ui/swap/trade/chart/chart-header'
 import { ChartProvider } from './_ui/swap/trade/chart/chart-provider'
 import { MobileChart } from './_ui/swap/trade/chart/mobile-chart'
-import {
-  CHAIN_IDS_BY_TRADE_MODE,
-  type TradeMode,
-} from './_ui/swap/trade/config'
 import { useDerivedStateSimpleTrade } from './_ui/swap/trade/derivedstate-simple-trade-provider'
 import { FavoriteRecentTabView } from './_ui/swap/trade/favorite-recent/favorite-recent-tab-view'
 import { NetworkProvider } from './_ui/swap/trade/favorite-recent/network-provider'
@@ -29,17 +23,11 @@ import { TradeTableTabs } from './_ui/swap/trade/tab-tables/trade-tabs/trade-tab
 import { TradeViewSwitch } from './_ui/swap/trade/trade-view-switch'
 import { TradeWidget } from './_ui/swap/trade/trade-widget'
 
-const chainIdsByTradeMode: Record<TradeMode, readonly ChainId[] | null> = {
-  ...CHAIN_IDS_BY_TRADE_MODE,
-  swap: null,
-}
-
 export default function TradePage() {
   const {
-    state: { tradeMode, tradeView, chainId: derivedChainId },
+    state: { tradeView, chainId: derivedChainId },
   } = useDerivedStateSimpleTrade()
   const { chainId } = useParams()
-  useHeaderNetworkSelector(chainIdsByTradeMode[tradeMode])
   useSkaleEuropaFaucet()
   const { isLg } = useBreakpoint('lg')
   const hasMounted = useIsMounted()
