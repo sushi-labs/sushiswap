@@ -9,14 +9,12 @@ const SkeletonLimitPanel = () => {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <SkeletonBox className="w-full h-[150px] rounded-xl" />
         <SkeletonBox className="w-full h-[136px] rounded-xl" />
-        <SkeletonBox className="w-full h-[136px] rounded-xl" />
+        <SkeletonBox className="w-full h-[112px] rounded-xl" />
+        <SkeletonBox className="w-full h-[110px] rounded-xl" />
       </div>
-      <SkeletonBox className="w-full mt-11 h-[52px] rounded-xl" />
-      <SkeletonBox className="w-full h-[84px] rounded-xl" />
+      <SkeletonBox className="w-full h-[34px] rounded-xl" />
 
-      <SkeletonBox className="w-full h-[48px] rounded-xl" />
       <SkeletonBox className="w-full h-[54px] rounded-xl" />
     </div>
   )
@@ -26,15 +24,14 @@ const SkeletonDCAPanel = () => {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <SkeletonBox className="w-full h-[136px] rounded-xl" />
-        <SkeletonBox className="w-full h-[136px] rounded-xl" />
+        <SkeletonBox className="w-full h-[112px] rounded-xl" />
+        <SkeletonBox className="w-full h-[112px] rounded-xl" />
       </div>
-      <SkeletonBox className="w-full h-[84px] rounded-xl" />
-      <SkeletonBox className="w-full h-[114px] rounded-xl" />
+      <div className="flex items-center gap-2 my-2">
+        <SkeletonBox className="w-full h-[58px] rounded-xl" />
+        <SkeletonBox className="w-full h-[58px] rounded-xl" />
+      </div>
       <SkeletonBox className="w-full h-[52px] rounded-xl" />
-
-      <SkeletonBox className="w-full h-[48px] rounded-xl" />
-      <SkeletonBox className="w-full h-[54px] rounded-xl" />
     </div>
   )
 }
@@ -59,6 +56,7 @@ export const LimitWidget: FC<{ animated: boolean }> = ({ animated }) => {
       })}
     >
       <LimitContainerPanel />
+
       <SimpleSwapBanner className="xl:hidden" />
     </div>
   )
