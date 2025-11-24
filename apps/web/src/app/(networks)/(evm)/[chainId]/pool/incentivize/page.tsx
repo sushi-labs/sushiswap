@@ -227,6 +227,7 @@ const Incentivize = withCheckerRoot(() => {
         />
         <SelectFeeConcentratedWidget
           title="What is the fee tier for this pool?"
+          chainId={chainId}
           feeAmount={feeAmount}
           setFeeAmount={setFeeAmount}
           token1={token1}
