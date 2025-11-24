@@ -7,12 +7,6 @@ import {
 } from '@sushiswap/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createSushiStellarService } from '../../services/sushi-stellar-service'
-import {
-  calculateAmountsFromLiquidity,
-  calculateLiquidityFromAmount0,
-  getCurrentSqrtPrice,
-  tickToSqrtPrice,
-} from '../../soroban/pool-helpers'
 import type { Token } from '../../types/token.type'
 import { extractErrorMessage } from '../../utils/error-helpers'
 import { formatTokenAmountWithDecimals } from '../../utils/format'
@@ -64,157 +58,100 @@ export const useZap = () => {
         signTransaction,
       } = params
 
-      // 1. Get Pool State
-      const currentSqrtPriceX96 = await getCurrentSqrtPrice(poolAddress)
-      const sqrtPriceLowerX96 = tickToSqrtPrice(tickLower)
-      const sqrtPriceUpperX96 = tickToSqrtPrice(tickUpper)
-
       const amountInBigInt = BigInt(
         Math.floor(Number.parseFloat(amountIn) * 10 ** tokenInDecimals),
       )
 
-      // Determine if tokenIn is token0 or token1
+      // Determine if tokenIn is token0, token1, or external
       const isToken0 = tokenIn.contract === token0.contract
+      const isToken1 = tokenIn.contract === token1.contract
+      const isExternalToken = !isToken0 && !isToken1
 
-      let amountToSwap = 0n
-      let isSwapNeeded = false
-      const swapTokenIn = tokenIn
-      const swapTokenOut = isToken0 ? token1 : token0
+      let currentToken0Balance = 0n
+      let currentToken1Balance = 0n
 
-      // Logic to determine swap amount
-      if (currentSqrtPriceX96 < sqrtPriceLowerX96) {
-        // Price is below range
-        // If tokenIn is token0: We need only token0. No swap needed.
-        // If tokenIn is token1: We need only token0. Swap ALL token1 to token0.
-        if (!isToken0) {
-          isSwapNeeded = true
-          amountToSwap = amountInBigInt
-        }
-      } else if (currentSqrtPriceX96 >= sqrtPriceUpperX96) {
-        // Price is above range
-        // If tokenIn is token0: We need only token1. Swap ALL token0 to token1.
-        // If tokenIn is token1: We need only token1. No swap needed.
-        if (isToken0) {
-          isSwapNeeded = true
-          amountToSwap = amountInBigInt
-        }
+      if (isExternalToken) {
+        // Case: External token - swap entire amount to get 50/50 of both pool tokens
+        // Split the input amount in half and swap each half to token0 and token1
+        const halfAmount = amountInBigInt / 2n
+        const remainingAmount = amountInBigInt - halfAmount // Handle odd amounts
+
+        // Swap first half to token0
+        const swapToToken0Result = await service.swapWithRouting(
+          userAddress,
+          tokenIn,
+          token0,
+          halfAmount,
+          signTransaction,
+          slippage,
+        )
+        currentToken0Balance = swapToToken0Result.amountOut
+
+        // Add delay between swaps
+        await new Promise((resolve) => setTimeout(resolve, 8000))
+
+        // Swap remaining amount to token1
+        const swapToToken1Result = await service.swapWithRouting(
+          userAddress,
+          tokenIn,
+          token1,
+          remainingAmount,
+          signTransaction,
+          slippage,
+        )
+        currentToken1Balance = swapToToken1Result.amountOut
+
+        // Add delay to ensure Stellar nodes have fully processed the swap transactions
+        await new Promise((resolve) => setTimeout(resolve, 8000))
+
+        // Invalidate balances to reflect swaps in UI
+        queryClient.invalidateQueries({ queryKey: ['pool', 'balances'] })
+        queryClient.invalidateQueries({ queryKey: ['pool', 'info'] })
+
+        console.log(
+          'Swaps completed for external token, waiting for network state to update...',
+        )
       } else {
-        // Price is within range. We need both tokens.
-        // Calculate optimal swap amount.
+        // Case: tokenIn is one of the pool tokens - swap 50% to the other token
+        const halfAmount = amountInBigInt / 2n
+        const remainingAmount = amountInBigInt - halfAmount
 
-        // Calculate Ratio = amount1 / amount0 required for liquidity
-        // We use a dummy large amount of liquidity to get precise ratio
-        // Or simpler: calculate amounts for 1 unit of token0 (scaled)
-
-        const dummyAmount0 = BigInt(10 ** token0.decimals) // 1 unit
-        const liquidity = calculateLiquidityFromAmount0(
-          dummyAmount0,
-          currentSqrtPriceX96,
-          sqrtPriceLowerX96,
-          sqrtPriceUpperX96,
-        )
-        const amounts = calculateAmountsFromLiquidity(
-          liquidity,
-          currentSqrtPriceX96,
-          sqrtPriceLowerX96,
-          sqrtPriceUpperX96,
-        )
-
-        // Ratio R = amount1 / amount0
-        const ratioNum = Number(amounts.amount1) / Number(amounts.amount0) // Watch out for precision
-        // Using Number might lose precision for very large/small ratios but ok for estimation.
-        // Better:
-        // If isToken0 (we have A, need B):
-        // Swap S of A to B.
-        // (A - S) / B_out = 1 / Ratio  => (A - S) * Ratio = B_out
-        // B_out approx S * Price * (1-fee)
-        // Ratio * A - Ratio * S = S * Price * (1-fee)
-        // S = (Ratio * A) / (Price * (1-fee) + Ratio)
-
-        // If !isToken0 (we have B, need A):
-        // Swap S of B to A.
-        // A_out / (B - S) = 1 / Ratio
-        // A_out = Ratio * (B - S)
-        // A_out approx S * (1/Price) * (1-fee)
-        // S * (1/Price) * (1-fee) = Ratio * B - Ratio * S
-        // S * ( (1-fee)/Price + Ratio ) = Ratio * B
-        // S = (Ratio * B) / (Ratio + (1-fee)/Price)
-
-        // Price (token1/token0)
-        const price = Number(currentSqrtPriceX96) ** 2 / 2 ** (96 * 2)
-        // We need to adjust price for decimals difference between 0 and 1?
-        // currentSqrtPriceX96 is based on raw units.
-        // amounts.amount1 and amounts.amount0 are raw units.
-        // So ratioNum is raw ratio.
-        // price is also raw price (y/x).
-
-        // Current price from sqrtPriceX96 is consistent with amounts.
-
-        const fee = 0.003 // Assume 0.3% for standard pool, but should check pool.fee
-        // For now use 0.003 as estimate.
-
+        // Set initial balances
         if (isToken0) {
-          // S = (Ratio * A) / (Price * (1-fee) + Ratio)
-          const numerator = ratioNum * Number(amountInBigInt)
-          const denominator = price * (1 - fee) + ratioNum
-          amountToSwap = BigInt(Math.floor(numerator / denominator))
+          currentToken0Balance = remainingAmount
+          currentToken1Balance = 0n
         } else {
-          // S = (B * Price) / (Price + Ratio * (1-fee))
-          const numerator = Number(amountInBigInt) * price
-          const denominator = price + ratioNum * (1 - fee)
-          amountToSwap = BigInt(Math.floor(numerator / denominator))
+          currentToken0Balance = 0n
+          currentToken1Balance = remainingAmount
         }
 
-        isSwapNeeded = amountToSwap > 0n
-      }
-
-      let currentToken0Balance = isToken0 ? amountInBigInt : 0n
-      let currentToken1Balance = !isToken0 ? amountInBigInt : 0n
-
-      // 2. Execute Swap if needed
-      if (isSwapNeeded && amountToSwap > 0n) {
-        // Update balances before swap (deduct swap amount)
-        if (isToken0) {
-          currentToken0Balance -= amountToSwap
-        } else {
-          currentToken1Balance -= amountToSwap
-        }
-
+        // Swap half to the other pool token
+        const swapTokenOut = isToken0 ? token1 : token0
         const swapResult = await service.swapWithRouting(
           userAddress,
-          swapTokenIn,
+          tokenIn,
           swapTokenOut,
-          amountToSwap,
+          halfAmount,
           signTransaction,
           slippage,
         )
 
-        // Wait for transaction? swapWithRouting already waits.
-
         // Update balances after swap
         if (isToken0) {
           // We swapped Token 0 -> Token 1
-          // currentToken0Balance (remaining) is already updated
-          // We received Token 1
-          currentToken1Balance = swapResult.amountOut // Set precise amount from swap
+          currentToken1Balance = swapResult.amountOut
         } else {
           // We swapped Token 1 -> Token 0
-          // currentToken1Balance (remaining) is already updated
-          // We received Token 0
-          currentToken0Balance = swapResult.amountOut // Set precise amount from swap
+          currentToken0Balance = swapResult.amountOut
         }
 
         // Add delay to ensure Stellar nodes have fully processed the swap transaction
-        // This is similar to the delay needed after pool creation/initialization
-        // Increased delay to ensure pool state is fully updated before adding liquidity
         await new Promise((resolve) => setTimeout(resolve, 8000))
 
         // Invalidate balances to reflect swap in UI immediately (before add liquidity)
         queryClient.invalidateQueries({ queryKey: ['pool', 'balances'] })
         queryClient.invalidateQueries({ queryKey: ['pool', 'info'] })
 
-        // Optional: Show toast for swap completion?
-        // Or just proceed to add liquidity.
         console.log(
           'Swap completed, waiting for network state to update...',
           swapResult.txHash,

@@ -55,7 +55,7 @@ export async function getTokens(
               symbol,
               name,
               decimals,
-              logoUrl,
+              logoUrl: logoUrl ?? undefined,
             }),
             ...rest,
           }),

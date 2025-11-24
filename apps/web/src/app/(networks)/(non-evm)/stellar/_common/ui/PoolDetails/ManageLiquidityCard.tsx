@@ -24,9 +24,11 @@ import { usePoolPrice } from '~stellar/_common/lib/hooks/pool/use-pool-price'
 import { useMyPosition } from '~stellar/_common/lib/hooks/position/use-my-position'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/swap'
 import { useTickRangeSelector } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
+import { useTokenBalanceFromToken } from '~stellar/_common/lib/hooks/token/use-token-balance'
 import { useZap } from '~stellar/_common/lib/hooks/zap/use-zap'
 import { calculatePriceFromTick } from '~stellar/_common/lib/soroban/pool-helpers'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
+import type { Token } from '~stellar/_common/lib/types/token.type'
 import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
 import {
   MAX_TICK_RANGE,
@@ -36,9 +38,79 @@ import {
 import { useStellarWallet } from '~stellar/providers'
 import { ConnectWalletButton } from '../ConnectWallet/ConnectWalletButton'
 import { TickRangeSelector } from '../TickRangeSelector/TickRangeSelector.tsx'
+import TokenSelector from '../token-selector/token-selector'
 
 interface ManageLiquidityCardProps {
   pool: PoolInfo
+}
+
+// Component to display balance for zap token
+const ZapTokenBalance = ({
+  token,
+  address,
+}: {
+  token: Token
+  address: string | null
+}) => {
+  const { data: balance } = useTokenBalanceFromToken(address, token)
+  if (!balance) return <span className="text-xs text-muted-foreground">-</span>
+  return (
+    <span className="text-xs text-muted-foreground">
+      {formatTokenAmount(balance, token.decimals)}
+    </span>
+  )
+}
+
+// Component for Max button that handles both pool tokens and external tokens
+const ZapMaxButton = ({
+  token,
+  pool,
+  balances,
+  address,
+  onSetAmount,
+}: {
+  token: Token
+  pool: PoolInfo
+  balances:
+    | { token0: { amount: string }; token1: { amount: string } }
+    | null
+    | undefined
+  address: string | null
+  onSetAmount: (amount: string) => void
+}) => {
+  const { data: balance } = useTokenBalanceFromToken(address, token)
+
+  const handleMax = () => {
+    if (!token) return
+
+    // Check if it's a pool token first (faster)
+    if (token.contract === pool.token0.contract && balances?.token0.amount) {
+      onSetAmount(
+        formatTokenAmount(BigInt(balances.token0.amount), token.decimals),
+      )
+    } else if (
+      token.contract === pool.token1.contract &&
+      balances?.token1.amount
+    ) {
+      onSetAmount(
+        formatTokenAmount(BigInt(balances.token1.amount), token.decimals),
+      )
+    } else if (balance) {
+      // External token - use balance from hook
+      onSetAmount(formatTokenAmount(balance, token.decimals))
+    }
+  }
+
+  return (
+    <Button
+      variant="ghost"
+      size="xs"
+      className="border-slate-200 dark:border-slate-800 border"
+      onClick={handleMax}
+    >
+      Max
+    </Button>
+  )
 }
 
 export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
@@ -62,7 +134,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   )
   const [removePercent, setRemovePercent] = useState<number>(100)
   const [isZapModeEnabled, setIsZapModeEnabled] = useState<boolean>(false)
-  const [zapTokenIn, setZapTokenIn] = useState<'token0' | 'token1'>('token0')
+  const [zapTokenIn, setZapTokenIn] = useState<Token | null>(null)
   const [zapAmountIn, setZapAmountIn] = useState<string>('')
 
   const { data: currentPrice } = usePoolPrice(pool.address)
@@ -408,15 +480,10 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                     checked={isZapModeEnabled}
                     onCheckedChange={(checked) => {
                       setIsZapModeEnabled(checked)
-                      if (checked) {
-                        // Reset amounts when enabling zap mode
-                        setTypedValue('')
-                        setZapAmountIn('')
-                      } else {
-                        // Reset amounts when disabling zap mode
-                        setTypedValue('')
-                        setZapAmountIn('')
-                      }
+                      // Reset amounts when toggling zap mode
+                      setTypedValue('')
+                      setZapAmountIn('')
+                      setZapTokenIn(null)
                     }}
                   />
 
@@ -429,95 +496,78 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                             Select Token
                           </span>
                         </div>
-                        <div className="flex gap-2">
+                        <TokenSelector
+                          id="zap-token-selector"
+                          selected={zapTokenIn ?? undefined}
+                          onSelect={(token) => {
+                            setZapTokenIn(token)
+                            setZapAmountIn('')
+                          }}
+                        >
                           <Button
-                            variant={
-                              zapTokenIn === 'token0' ? 'default' : 'outline'
-                            }
-                            className="flex-1"
-                            onClick={() => {
-                              setZapTokenIn('token0')
-                              setZapAmountIn('')
-                            }}
+                            variant="outline"
+                            className="w-full justify-between"
                           >
-                            {pool.token0.code}
+                            <div className="flex items-center gap-2">
+                              {zapTokenIn ? (
+                                <>
+                                  <span>{zapTokenIn.code}</span>
+                                </>
+                              ) : (
+                                <span>Select a token</span>
+                              )}
+                            </div>
                           </Button>
-                          <Button
-                            variant={
-                              zapTokenIn === 'token1' ? 'default' : 'outline'
-                            }
-                            className="flex-1"
-                            onClick={() => {
-                              setZapTokenIn('token1')
-                              setZapAmountIn('')
-                            }}
-                          >
-                            {pool.token1.code}
-                          </Button>
-                        </div>
+                        </TokenSelector>
                       </div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm font-medium">
-                            {zapTokenIn === 'token0'
-                              ? pool.token0.code
-                              : pool.token1.code}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {zapTokenIn === 'token0'
-                              ? balances?.token0.formatted
-                              : balances?.token1.formatted}
-                          </span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <div className="flex-1 rounded-lg border border-slate-300 bg-white p-3 dark:border-slate-700 dark:bg-slate-900/40">
-                            <input
-                              type="number"
-                              onWheel={(e) => e.currentTarget.blur()}
-                              value={zapAmountIn}
-                              onChange={(e) => setZapAmountIn(e.target.value)}
-                              placeholder="0.0"
-                              className="w-full text-lg font-semibold bg-transparent border-none outline-none"
+                      {zapTokenIn && (
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm font-medium">
+                              {zapTokenIn.code}
+                            </span>
+                            <ZapTokenBalance
+                              token={zapTokenIn}
+                              address={connectedAddress}
                             />
-                            <div className="flex flex-row justify-between mt-1">
-                              <div className="text-sm text-muted-foreground">
-                                $ 0.00
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <div className="flex-1 rounded-lg border border-slate-300 bg-white p-3 dark:border-slate-700 dark:bg-slate-900/40">
+                              <input
+                                type="number"
+                                onWheel={(e) => e.currentTarget.blur()}
+                                value={zapAmountIn}
+                                onChange={(e) => setZapAmountIn(e.target.value)}
+                                placeholder="0.0"
+                                className="w-full text-lg font-semibold bg-transparent border-none outline-none"
+                              />
+                              <div className="flex flex-row justify-between mt-1">
+                                <div className="text-sm text-muted-foreground">
+                                  $ 0.00
+                                </div>
+                                <ZapMaxButton
+                                  token={zapTokenIn}
+                                  pool={pool}
+                                  balances={balances}
+                                  address={connectedAddress}
+                                  onSetAmount={setZapAmountIn}
+                                />
                               </div>
-                              <Button
-                                variant="ghost"
-                                size="xs"
-                                className="border-slate-200 dark:border-slate-800 border"
-                                onClick={() => {
-                                  const balance =
-                                    zapTokenIn === 'token0'
-                                      ? (balances?.token0.amount ?? '0')
-                                      : (balances?.token1.amount ?? '0')
-                                  const decimals =
-                                    zapTokenIn === 'token0'
-                                      ? pool.token0.decimals
-                                      : pool.token1.decimals
-                                  setZapAmountIn(
-                                    formatTokenAmount(
-                                      BigInt(balance),
-                                      decimals,
-                                    ),
-                                  )
-                                }}
-                              >
-                                Max
-                              </Button>
                             </div>
                           </div>
+                          <p className="text-xs text-muted-foreground">
+                            {zapTokenIn.contract === pool.token0.contract ||
+                            zapTokenIn.contract === pool.token1.contract
+                              ? 'Zap will swap 50% to get the other pool token and add liquidity'
+                              : 'Zap will swap to get both pool tokens (50/50) and add liquidity'}
+                          </p>
                         </div>
-                        <p className="text-xs text-muted-foreground">
-                          Zap will swap to get the required amount of the other
-                          token and add liquidity with optimal ratio
-                        </p>
-                      </div>
+                      )}
                       <Button
                         className="w-full"
                         size="lg"
                         disabled={
+                          !zapTokenIn ||
                           !zapAmountIn ||
                           Number.parseFloat(zapAmountIn) <= 0 ||
                           !isTickRangeValid ||
@@ -555,16 +605,15 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                           setTickLower(alignedLower)
                           setTickUpper(alignedUpper)
 
-                          const tokenIn =
-                            zapTokenIn === 'token0' ? pool.token0 : pool.token1
+                          if (!zapTokenIn) return
 
                           zapMutation.mutate(
                             {
                               userAddress: connectedAddress,
                               poolAddress: pool.address,
-                              tokenIn,
+                              tokenIn: zapTokenIn,
                               amountIn: zapAmountIn,
-                              tokenInDecimals: tokenIn.decimals,
+                              tokenInDecimals: zapTokenIn.decimals,
                               token0: pool.token0,
                               token1: pool.token1,
                               tickLower: alignedLower,
