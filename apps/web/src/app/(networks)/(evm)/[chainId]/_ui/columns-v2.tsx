@@ -50,7 +50,7 @@ export const CHAIN_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   meta: {
     body: {
       skeleton: (
-        <div className="w-[68px] h-[59px] flex items-center">
+        <div className="h-[59px] flex items-center">
           <SkeletonBox className="w-3 h-3 md:w-5 md:h-5 mx-2 !rounded-[4px]" />
         </div>
       ),
@@ -403,34 +403,34 @@ export const VOLUME_1D_COLUMN: ColumnDef<MultiChainPool, unknown> = {
   },
 }
 
-export const VOLUME_1W_COLUMN: ColumnDef<MultiChainPool, unknown> = {
-  id: 'volumeUSD1w',
+export const FEE_1W_COLUMN: ColumnDef<MultiChainPool, unknown> = {
+  id: 'feeUSD1d',
   header: () => (
     <span className="font-[600]">
-      7d Volume <span className="font-normal">(7d%)</span>
+      1d Fee <span className="font-normal">(1d%)</span>
     </span>
   ),
-  accessorFn: (row) => row.volumeUSD1w,
+  accessorFn: (row) => row.feeUSD1d,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number(rowA.volumeUSD1w) - Number(rowB.volumeUSD1w),
+    Number(rowA.feeUSD1d) - Number(rowB.feeUSD1d),
   cell: (props) => (
     <div className="flex flex-col w-[100px]">
       <span>
-        {formatUSD(props.row.original.volumeUSD1w).includes('NaN')
+        {formatUSD(props.row.original.feeUSD1d).includes('NaN')
           ? '$0.00'
-          : formatUSD(props.row.original.volumeUSD1w)}
+          : formatUSD(props.row.original.feeUSD1d)}
       </span>
       <span
         className={classNames(
           'text-xs',
           getTextColor(
-            props.row.original.volumeUSDChange1w,
+            props.row.original.volumeUSDChange1d,
             'text-muted-foreground',
           ),
         )}
       >
-        {props.row.original.volumeUSDChange1w > 0 ? '+' : ''}
-        {formatPercent(props.row.original.volumeUSDChange1w / 100)}
+        {props.row.original.volumeUSDChange1d > 0 ? '+' : ''}
+        {formatPercent(props.row.original.volumeUSDChange1d / 100)}
       </span>
     </div>
   ),
