@@ -40,7 +40,7 @@ export function TokenSelectorMyTokensV2({
     () =>
       chainId && isTokenListV2ChainId(chainId)
         ? [chainId]
-        : networkOptions.filter(isTokenListV2ChainId),
+        : networkOptions.filter((id) => isTokenListV2ChainId(id)),
     [chainId, networkOptions],
   )
   const { data, isError, isLoading } = useMyTokensV2({
