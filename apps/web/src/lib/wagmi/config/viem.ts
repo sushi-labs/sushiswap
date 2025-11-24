@@ -129,7 +129,8 @@ export const publicTransports = {
     `https://lb.drpc.live/ogrpc?network=fuse&dkey=${drpcId}`,
   ),
   [EvmChainId.MONAD]: http(
-    `https://lb.drpc.live/ogrpc?network=monad&dkey=${drpcId}`,
+    // `https://lb.drpc.live/ogrpc?network=monad&dkey=${drpcId}`,
+    `https://rpc.monad.xyz`,
   ),
   /* Testnets */
   [EvmChainId.ARBITRUM_SEPOLIA]: http('https://sepolia-rollup.arbitrum.io/rpc'),
