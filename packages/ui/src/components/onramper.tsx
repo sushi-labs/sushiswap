@@ -38,14 +38,13 @@ export const OnramperButton: FC<{
   className?: string
   chainId?: number
 }> = ({ children, className, chainId }) => {
-  const { setOpen, setDefaultCrypto } = useOnramperContext()
+  const { setOpen } = useOnramperContext()
 
   const onClick = useCallback(() => {
     sendAnalyticsEvent(InterfaceEventName.FIAT_ONRAMP_WIDGET_OPENED)
 
-    if (chainId === -3) setDefaultCrypto('kda_kadena')
     setOpen(true)
-  }, [chainId, setDefaultCrypto, setOpen])
+  }, [setOpen])
 
   return isOnrampOverrideChainId(chainId) ? (
     <Link
