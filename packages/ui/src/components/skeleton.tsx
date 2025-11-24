@@ -13,9 +13,9 @@ function SkeletonBox(props: React.HTMLAttributes<HTMLDivElement>) {
     <div
       {...props}
       className={classNames(
-        props.className,
         skeletonBgColorClassName,
         'rounded-lg overflow-hidden animate-pulse',
+        props.className,
       )}
     />
   )
@@ -151,11 +151,7 @@ function SkeletonChartLoadingStateMask({
   }
 }
 
-function SkeletonChartXAxe({
-  height,
-}: {
-  height: number
-}) {
+function SkeletonChartXAxe({ height }: { height: number }) {
   return (
     <svg transform={`translate(0, ${height})`}>
       <rect

@@ -1,7 +1,10 @@
 'use client'
 
 import { Slot } from '@radix-ui/react-slot'
-import type { Token } from '@sushiswap/graph-client/data-api'
+import {
+  type Token,
+  isSushiSwapChainId,
+} from '@sushiswap/graph-client/data-api'
 import {
   Card,
   CardHeader,
@@ -53,9 +56,12 @@ export const TokensTable: FC<TokensTableProps> = ({ chainId, onRowClick }) => {
     { id: 'marketCapUSD', desc: true },
   ])
 
-  const { data: tokens, isLoading } = useTokens({
-    chainId,
-  })
+  const { data: tokens, isLoading } = useTokens(
+    {
+      chainId: isSushiSwapChainId(chainId) ? chainId : 1,
+    },
+    Boolean(isSushiSwapChainId(chainId)),
+  )
 
   const state: Partial<TableState> = useMemo(() => {
     return {

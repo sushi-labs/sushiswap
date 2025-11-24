@@ -1,9 +1,8 @@
-import { Transition } from '@headlessui/react'
 import {
   SlippageToleranceStorageKey,
   useSlippageTolerance,
 } from '@sushiswap/hooks'
-import { classNames } from '@sushiswap/ui'
+import { Collapsible, classNames } from '@sushiswap/ui'
 import { SkeletonBox } from '@sushiswap/ui'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import Link from 'next/link'
@@ -79,14 +78,8 @@ export const SwapStats = () => {
   }, [trxPrice, networkFeeInTrx])
 
   return (
-    <Transition
-      show={amountIn !== '' && amountOut !== '' && route && route.length > 0}
-      enter="transition duration-300 ease-out"
-      enterFrom="transform translate-y-[16px] opacity-0"
-      enterTo="transform translate-y-0 opacity-100"
-      leave="transition duration-300 ease-out"
-      leaveFrom="transform translate-y-0 opacity-100"
-      leaveTo="transform translate-y-[16px] opacity-0"
+    <Collapsible
+      open={amountIn !== '' && amountOut !== '' && route && route.length > 0}
     >
       <div className="flex flex-col w-full gap-1 px-2 pb-8">
         <div className="flex items-center justify-between gap-2">
@@ -187,6 +180,6 @@ export const SwapStats = () => {
           </div>
         )}
       </div>
-    </Transition>
+    </Collapsible>
   )
 }

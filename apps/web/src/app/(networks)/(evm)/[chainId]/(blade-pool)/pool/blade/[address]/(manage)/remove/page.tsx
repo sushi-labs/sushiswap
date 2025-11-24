@@ -1,6 +1,7 @@
+import { isBladeChainId } from '@sushiswap/graph-client/data-api'
 import { notFound } from 'next/navigation'
 import { getCachedBladePool } from 'src/lib/pool/blade'
-import { isBladeChainId, isEvmAddress } from 'sushi/evm'
+import { isEvmAddress } from 'sushi/evm'
 import { BladePoolPosition } from '~evm/[chainId]/(blade-pool)/pool/blade/[address]/(manage)/_ui/blade-pool-position'
 import { BladePoolPositionProvider } from '~evm/[chainId]/(blade-pool)/pool/blade/[address]/(manage)/_ui/blade-pool-position-provider'
 import { ManageBladeLiquidityCard } from '../_ui/manage-blade-liquidity-card'
