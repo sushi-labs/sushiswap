@@ -13,18 +13,11 @@ import {
 } from './trending-item'
 
 export const Trending = () => {
-  const { data: trendingPools, isLoading, isFetching } = useTrendingPools()
-
+  const { data: trendingPools, isLoading } = useTrendingPools()
   return (
     <>
-      <TrendingDesktop
-        pools={trendingPools}
-        isLoading={isLoading || isFetching}
-      />
-      <TrendingMobile
-        pools={trendingPools}
-        isLoading={isLoading || isFetching}
-      />
+      <TrendingDesktop pools={trendingPools} isLoading={isLoading} />
+      <TrendingMobile pools={trendingPools} isLoading={isLoading} />
     </>
   )
 }

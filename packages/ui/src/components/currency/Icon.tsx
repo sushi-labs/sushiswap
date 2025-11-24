@@ -116,15 +116,18 @@ export interface IconProps extends Omit<ImageProps, 'src' | 'alt'> {
   disableLink?: boolean
 }
 
+export const getIconSrc = (currency: Currency) => {
+  return currency.type === 'native'
+    ? `native-currency/${LOGO[currency.chainId]}`
+    : `tokens/${currency.chainId}/${currency.wrap().address}.jpg`
+}
+
 export const Icon: FC<IconProps> = ({
   currency,
   disableLink = true,
   ...rest
 }) => {
-  const src =
-    currency.type === 'native'
-      ? `native-currency/${LOGO[currency.chainId]}`
-      : `tokens/${currency.chainId}/${currency.wrap().address}.jpg`
+  const src = getIconSrc(currency)
 
   const avatar = (
     <Avatar style={{ width: rest.width, height: rest.height }}>

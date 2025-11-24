@@ -1,7 +1,7 @@
 import type { ImageProps } from 'next/image'
 import type { FC } from 'react'
 
-import { Icon, type IconProps } from './Icon'
+import { Icon, type IconProps, getIconSrc } from './Icon'
 import { IconList, type IconListProps } from './IconList'
 import { List, type ListComponent } from './List'
 
@@ -16,3 +16,5 @@ export const Currency: Currency = {
   Icon,
   IconList,
 }
+
+export { getIconSrc }

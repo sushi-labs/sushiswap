@@ -64,20 +64,23 @@ export const StatisticsChartsV3: FC<Charts> = ({ address, chainId, pool }) => {
           selectedChart={chart}
           setChart={setChart}
         />
-        <PoolChartPeriods
-          periods={periods}
-          selectedPeriod={period}
-          setPeriod={setPeriod}
-        />
+
         {chart === PoolChartType.Depth ? (
           <DepthZoomButtons setZoomRange={setZoomRange} />
-        ) : null}
+        ) : (
+          <PoolChartPeriods
+            periods={periods}
+            selectedPeriod={period}
+            setPeriod={setPeriod}
+          />
+        )}
       </div>
       {chart === PoolChartType.Depth ? (
         <LiquidityDepthChart
           zoomRange={zoomRange}
           chainId={chainId}
           address={address}
+          setZoomRange={setZoomRange}
         />
       ) : (
         <PoolChartGraph

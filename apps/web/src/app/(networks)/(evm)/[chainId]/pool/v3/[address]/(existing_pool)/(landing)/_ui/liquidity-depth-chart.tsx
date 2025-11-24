@@ -5,21 +5,18 @@ import {
   Toggle,
   classNames,
   cloudinaryLogoImageLoader,
+  getIconSrc,
 } from '@sushiswap/ui'
 import ReactECharts from 'echarts-for-react'
 import { useTheme } from 'next-themes'
-import React, { type FC, useMemo, useState } from 'react'
+import React, { type FC, useCallback, useMemo, useState } from 'react'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import { Amount, formatPercent, formatUSD } from 'sushi'
-import {
-  type EvmCurrency,
-  type SushiSwapV3ChainId,
-  unwrapEvmToken,
-} from 'sushi/evm'
+import { type SushiSwapV3ChainId, unwrapEvmToken } from 'sushi/evm'
 import tailwindConfig from 'tailwind.config'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import type { Address } from 'viem'
-import { useDensityChartData } from '~evm/[chainId]/_ui/LiquidityChartRangeInput/hooks'
+import { useDensityChartData } from '~evm/[chainId]/_ui/add-liquidity/active-liquidity-chart/hooks'
 import { useConcentratedDerivedMintInfo } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import type { DepthZoomType } from './statistics-chart-v3'
@@ -28,17 +25,15 @@ interface LiquidityDepthChart {
   address: Address
   chainId: SushiSwapV3ChainId
   zoomRange: DepthZoomType
+  setZoomRange: (zoom: DepthZoomType) => void
 }
 const tailwind = resolveConfig(tailwindConfig)
-
-const getIconSrc = (currency: EvmCurrency) => {
-  return `tokens/${currency.chainId}/${currency.wrap().address}.jpg`
-}
 
 export const LiquidityDepthChart: FC<LiquidityDepthChart> = ({
   address,
   chainId,
   zoomRange,
+  setZoomRange,
 }) => {
   const { data: priceMap } = usePrices({ chainId: chainId })
   const [invertPrice, setInvertPrice] = useState(false)
@@ -74,11 +69,15 @@ export const LiquidityDepthChart: FC<LiquidityDepthChart> = ({
     )
   }, [invertPrice, price])
 
-  const { prices, depths } = useMemo(() => {
-    const prices = data?.map((d) => d.price0.toFixed(6))
-    const depths = data?.map((d) => d.activeLiquidity)
-    return { prices, depths }
-  }, [data])
+  const { prices0, depths, prices1, amounts0Locked, amounts1Locked } =
+    useMemo(() => {
+      const prices0 = data?.map((d) => d.price0.toFixed(6))
+      const prices1 = data?.map((d) => d?.price1?.toFixed(6))
+      const amounts0Locked = data?.map((d) => d?.amount0Locked)
+      const amounts1Locked = data?.map((d) => d?.amount1Locked)
+      const depths = data?.map((d) => d.activeLiquidity)
+      return { prices0, depths, prices1, amounts0Locked, amounts1Locked }
+    }, [data])
 
   const { token0Usd, token1Usd } = useMemo(() => {
     if (!priceMap || !poolStats) return { token0Usd: 0, token1Usd: 0 }
@@ -98,6 +97,31 @@ export const LiquidityDepthChart: FC<LiquidityDepthChart> = ({
     }
   }, [poolStats])
 
+  const handleDataZoom = useCallback(
+    (event: any) => {
+      const payload = Array.isArray(event.batch) ? event.batch[0] : event
+
+      if (
+        payload &&
+        typeof payload.start === 'number' &&
+        typeof payload.end === 'number'
+      ) {
+        setZoomRange({
+          start: payload.start,
+          end: payload.end,
+        })
+      }
+    },
+    [setZoomRange],
+  )
+
+  const onEvents = useMemo(
+    () => ({
+      dataZoom: handleDataZoom,
+    }),
+    [handleDataZoom],
+  )
+
   const option = useMemo(
     () => ({
       grid: {
@@ -108,7 +132,7 @@ export const LiquidityDepthChart: FC<LiquidityDepthChart> = ({
       },
       xAxis: {
         type: 'category',
-        data: prices,
+        data: prices0,
         boundaryGap: true,
         axisLabel: {
           color: (tailwind.theme?.colors?.slate as Record<string, string>)[
@@ -143,18 +167,21 @@ export const LiquidityDepthChart: FC<LiquidityDepthChart> = ({
         },
         formatter: (params: any) => {
           const p = params[0]
-          const price0 = Number.parseFloat(p.name)
-          const price1 = price0 === 0 ? 0 : 1 / price0
-          // const activeLiquidity = Number(p.value)
+          const index = p.dataIndex
+          const price0 = prices0?.[index]
+          const price1 = prices1?.[index]
+          const amount0Locked = amounts0Locked?.[index]
+          const amount1Locked = amounts1Locked?.[index]
+
           if (!token0 || !token1 || !poolStats) return ''
-          const reserve0 = new Amount(token0, poolStats?.reserve0)
-          const reserve1 = new Amount(token1, poolStats?.reserve1)
+          const reserve0 = Amount.tryFromHuman(token0, amount0Locked ?? '0')
+          const reserve1 = Amount.tryFromHuman(token1, amount1Locked ?? '0')
 
-          const token0UsdAmount = reserve0.mulHuman(token0Usd)
-          const token1UsdAmount = reserve1.mulHuman(token1Usd)
+          const token0UsdAmount = reserve0?.mulHuman(token0Usd)
+          const token1UsdAmount = reserve1?.mulHuman(token1Usd)
 
-          const usd0 = Number(token0UsdAmount.toString())
-          const usd1 = Number(token1UsdAmount.toString())
+          const usd0 = Number(token0UsdAmount?.toString() ?? '0')
+          const usd1 = Number(token1UsdAmount?.toString() ?? '0')
           const totalUsd = usd0 + usd1
 
           const percent0 = totalUsd === 0 ? 0 : usd0 / totalUsd
@@ -174,22 +201,17 @@ export const LiquidityDepthChart: FC<LiquidityDepthChart> = ({
 
           const line1 =
             price0 !== null
-              ? `1 ${token0Symbol} = ${price0.toFixed(6)} ${token1Symbol}`
+              ? `1 ${token0Symbol} = ${Number(price0)?.toFixed(6)} ${token1Symbol}`
               : '-'
 
           const line2 =
-            price0 !== null && price0 !== 0
-              ? `1 ${token1Symbol} = ${price1.toFixed(6)} ${token0Symbol}`
+            price0 !== null && Number(price0) !== 0
+              ? `1 ${token1Symbol} = ${Number(price1)?.toFixed(6)} ${token0Symbol}`
               : '-'
 
-          return `<div class="flex text-sm dark:!text-pink-100 !text-[#0C0C23] min-w-[270px] flex-col paper gap-4 bg-white/[.14] dark:bg-slate-800/[.14] p-4 shadow-sm border border-accent rounded-lg">
-                    <div class="flex flex-col gap-1">
-                      <div class="!font-[500]">Ticker Price</div>
-                      <div>${line1}</div>
-                      <div>${line2}</div>
-                    </div>
-                    <div class="flex flex-col gap-2">
-                      <div class="flex items-center justify-between gap-2">
+          const t0 =
+            percent0 > 0
+              ? `<div class="flex items-center justify-between gap-2">
                         <div class="flex items-center gap-1">
                           <img src="${icon0Src}" width="20" height="20" class="rounded-full" />
                           ${token0Symbol}
@@ -198,8 +220,12 @@ export const LiquidityDepthChart: FC<LiquidityDepthChart> = ({
                           <div>${formatUSD(usd0)}</div>
                           <div class="dark:text-slate-300 text-slate-450">${formatPercent(percent0)}</div>
                         </div>
-                      </div>
-                      <div class="flex items-center justify-between gap-2">
+                      </div>`
+              : ''
+
+          const t1 =
+            percent1 > 0
+              ? `<div class="flex items-center justify-between gap-2">
                         <div class="flex items-center gap-1">
                           <img src="${icon1Src}" width="20" height="20" class="rounded-full" />
                           ${token1Symbol}
@@ -209,7 +235,18 @@ export const LiquidityDepthChart: FC<LiquidityDepthChart> = ({
                           <div class="dark:text-slate-300 text-slate-450">${formatPercent(percent1)}</div>
                         </div>
                       </div>
+                    </div>`
+              : ''
+
+          return `<div class="flex text-sm dark:!text-pink-100 !text-[#0C0C23] md:min-w-[270px] flex-col paper gap-4 bg-white/[.14] dark:bg-slate-800/[.14] p-4 shadow-sm border border-accent rounded-lg">
+                    <div class="flex flex-col gap-1">
+                      <div class="!font-[500]">Ticker Price</div>
+                      <div>${line1}</div>
+                      <div>${line2}</div>
                     </div>
+                    <div class="flex flex-col gap-2">
+                      ${t0}
+                      ${t1}
                   </div>`
         },
         borderWidth: 0,
@@ -225,7 +262,7 @@ export const LiquidityDepthChart: FC<LiquidityDepthChart> = ({
         {
           type: 'bar',
           data: depths,
-          barWidth: 3,
+          barWidth: 2.5,
           itemStyle: {
             color: isDark
               ? (tailwind.theme?.colors?.skyblue as Record<string, string>)[
@@ -239,7 +276,7 @@ export const LiquidityDepthChart: FC<LiquidityDepthChart> = ({
       ],
     }),
     [
-      prices,
+      prices0,
       depths,
       zoomRange,
       isDark,
@@ -248,6 +285,9 @@ export const LiquidityDepthChart: FC<LiquidityDepthChart> = ({
       token1,
       token0Usd,
       token1Usd,
+      prices1,
+      amounts0Locked,
+      amounts1Locked,
     ],
   )
 
@@ -289,6 +329,7 @@ export const LiquidityDepthChart: FC<LiquidityDepthChart> = ({
           <ReactECharts
             option={option}
             style={{ width: '100%', height: 334 }}
+            onEvents={onEvents}
           />
         </>
       ) : (
