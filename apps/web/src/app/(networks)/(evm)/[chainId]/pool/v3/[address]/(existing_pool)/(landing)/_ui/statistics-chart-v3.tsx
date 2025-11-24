@@ -15,7 +15,8 @@ import {
   PoolChartType,
   PoolChartTypes,
 } from '~evm/[chainId]/pool/_ui/pool-chart-types'
-import { LiquidityDepthWidget } from './liquidity-depth-widget'
+import { DepthZoomButtons } from './depth-zoom-buttons'
+import { LiquidityDepthChart } from './liquidity-depth-chart'
 
 const statisticsChart = [
   PoolChartType.Volume,
@@ -30,9 +31,18 @@ interface Charts {
   pool: V3Pool
 }
 
+export type DepthZoomType = {
+  start: number
+  end: number
+}
+
 export const StatisticsChartsV3: FC<Charts> = ({ address, chainId, pool }) => {
   const [chart, setChart] = useState<PoolChartType>(statisticsChart[0])
   const [period, setPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Month)
+  const [zoomRange, setZoomRange] = useState<DepthZoomType>({
+    start: 0,
+    end: 100,
+  })
 
   const periods = useMemo(() => {
     if (chart === PoolChartType.Depth) return []
@@ -59,9 +69,16 @@ export const StatisticsChartsV3: FC<Charts> = ({ address, chainId, pool }) => {
           selectedPeriod={period}
           setPeriod={setPeriod}
         />
+        {chart === PoolChartType.Depth ? (
+          <DepthZoomButtons setZoomRange={setZoomRange} />
+        ) : null}
       </div>
       {chart === PoolChartType.Depth ? (
-        <LiquidityDepthWidget chainId={chainId} address={address} />
+        <LiquidityDepthChart
+          zoomRange={zoomRange}
+          chainId={chainId}
+          address={address}
+        />
       ) : (
         <PoolChartGraph
           chart={chart}

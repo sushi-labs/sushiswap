@@ -1,4 +1,4 @@
-import { Collapsible } from '@sushiswap/ui'
+import { Collapsible, Message } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { getNetworkName } from 'src/lib/network'
 import { formatUSD } from 'sushi'
@@ -6,7 +6,7 @@ import {
   useDerivedStateTwap,
   useTwapTradeErrors,
 } from './derivedstate-twap-provider'
-import { ErrorMessage } from './error-message'
+
 export const DCAErrors = () => {
   const {
     minTradeSizeError,
@@ -55,7 +55,14 @@ export const DCAErrors = () => {
   return (
     <Collapsible open={true} className="w-full flex flex-col gap-2">
       {errorMessages.map(({ title, detail }, index) => (
-        <ErrorMessage key={index} title={title} detail={detail} />
+        <Message
+          key={index}
+          className="rounded-xl !bg-[#DE58521A] !text-[#DE5852] text-sm flex flex-col gap-1 items-start !p-4 min-h-[50px]"
+          variant="destructive"
+        >
+          <div className="font-medium">{title}</div>
+          {detail ? <div>{detail}</div> : null}
+        </Message>
       ))}
     </Collapsible>
   )

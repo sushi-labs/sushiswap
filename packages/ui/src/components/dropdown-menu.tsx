@@ -59,7 +59,7 @@ DropdownMenuSubContent.displayName =
 const DropdownMenuContent = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content> & {
-    isInsideDialog?: boolean
+    includePortal?: boolean
   }
 >(
   (
@@ -67,7 +67,7 @@ const DropdownMenuContent = React.forwardRef<
       className,
       sideOffset = 8,
       collisionPadding = 8,
-      isInsideDialog = false,
+      includePortal = false,
       ...props
     },
     ref,
@@ -84,7 +84,7 @@ const DropdownMenuContent = React.forwardRef<
         {...props}
       />
     )
-    return isInsideDialog ? (
+    return includePortal ? (
       content
     ) : (
       <DropdownMenuPrimitive.Portal>{content}</DropdownMenuPrimitive.Portal>

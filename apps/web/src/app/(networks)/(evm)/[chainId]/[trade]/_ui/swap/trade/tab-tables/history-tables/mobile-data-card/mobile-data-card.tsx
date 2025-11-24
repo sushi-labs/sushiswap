@@ -6,6 +6,7 @@ import type {
   ColumnDef,
   HeaderContext,
 } from '@tanstack/react-table'
+import { useMemo } from 'react'
 
 const CHAIN_IDS = ['chain', 'chainId', 'chain_id']
 const ORDER_IDS = ['orderId', 'order_id']
@@ -49,18 +50,27 @@ export const MobileDataCard = <T extends object>({
   columns,
   className,
 }: MobileDataCardProps<T>) => {
-  const chainCol = columns.find((c) => CHAIN_IDS.includes(String(c.id)))
-  const orderCol = columns.find((c) => ORDER_IDS.includes(String(c.id)))
-  const actionCol = columns.find((c) => ACTION_IDS.includes(String(c.id)))
+  const { chainCol, orderCol, actionCol } = useMemo(() => {
+    const chainCol = columns.find((c) => CHAIN_IDS.includes(String(c.id)))
+    const orderCol = columns.find((c) => ORDER_IDS.includes(String(c.id)))
+    const actionCol = columns.find((c) => ACTION_IDS.includes(String(c.id)))
+    return { chainCol, orderCol, actionCol }
+  }, [columns])
 
-  const bodyCols = columns.filter(
-    (c) => c !== chainCol && c !== orderCol && c !== actionCol,
+  const bodyCols = useMemo(
+    () =>
+      columns.filter(
+        (c) => c !== chainCol && c !== orderCol && c !== actionCol,
+      ),
+    [columns, chainCol, orderCol, actionCol],
   )
-
-  const pairs: ColumnDef<T>[][] = []
-  for (let i = 0; i < bodyCols.length; i += 2) {
-    pairs.push(bodyCols.slice(i, i + 2))
-  }
+  const pairs = useMemo(() => {
+    const result: ColumnDef<T>[][] = []
+    for (let i = 0; i < bodyCols.length; i += 2) {
+      result.push(bodyCols.slice(i, i + 2))
+    }
+    return result
+  }, [bodyCols])
 
   return (
     <div className={classNames('space-y-4', className)}>

@@ -1,18 +1,10 @@
 'use client'
 
 import { OrderStatus } from '@orbs-network/twap-sdk'
-import {
-  Card,
-  DataTable,
-  Loader,
-  SkeletonBox,
-  Slot,
-  classNames,
-} from '@sushiswap/ui'
-import type { ColumnDef, Row } from '@tanstack/react-table'
+import { Card, DataTable, SkeletonBox, Slot, classNames } from '@sushiswap/ui'
+import type { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import { type ReactNode, useMemo, useState } from 'react'
 import { useCallback } from 'react'
-import InfiniteScroll from 'react-infinite-scroll-component'
 import {
   type TwapOrder,
   getTwapDcaOrders,
@@ -44,7 +36,10 @@ export const DCAOrdersHistoryTable = ({
   const [selectedRowId, setSelectedRowId] = useState<number | null>(null)
   const [isOpen, setIsOpen] = useState(false)
   const [showInUsd, setShowInUsd] = useState(true)
-
+  const [paginationState, setPaginationState] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  })
   const data = useMemo(() => {
     return getTwapDcaOrders(orders).filter(
       (order) => order.status !== OrderStatus.Open,
@@ -116,52 +111,45 @@ export const DCAOrdersHistoryTable = ({
         onOpenChange={setIsOpen}
         order={selectedOrder}
       />
-      <InfiniteScroll
-        dataLength={data.length}
-        next={() => {}}
-        hasMore={false}
-        loader={
-          <div className="flex justify-center w-full py-4">
-            <Loader size={16} />
-          </div>
-        }
-      >
-        <Card className="overflow-hidden !border-none hidden lg:block bg-slate-50 dark:bg-slate-800">
-          <DataTable
-            columns={COLUMNS}
-            data={data}
-            loading={ordersLoading}
-            rowRenderer={rowRenderer}
-            pagination={false}
-            tableRowClassName={tableRowClassName}
-            className="!border-none [&_td]:h-[92px]"
-          />
-        </Card>
+      <Card className="hidden overflow-hidden border-none lg:block bg-slate-50 dark:bg-slate-800">
+        <DataTable
+          columns={COLUMNS}
+          data={data}
+          loading={ordersLoading}
+          rowRenderer={rowRenderer}
+          pagination
+          className="!border-none [&_td]:h-[92px]"
+          state={{
+            pagination: paginationState,
+          }}
+          onPaginationChange={setPaginationState}
+          tableRowClassName={tableRowClassName}
+        />
+      </Card>
 
-        <Card
-          className={classNames(
-            'p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 lg:hidden',
-            mobileCardClassName,
-          )}
-        >
-          {ordersLoading ? (
-            <SkeletonBox className="w-full h-52" />
-          ) : !data?.length ? (
-            <p className="text-sm italic text-center text-muted-foreground dark:text-pink-200 h-52 flex items-center justify-center">
-              No Past DCA Orders
-            </p>
-          ) : (
-            data?.map((row) => (
-              <div
-                key={row.id}
-                className="pb-6 border-b last:border-b-0 last:pb-0"
-              >
-                <MobileDataCard row={row} columns={MOBILE_COLUMNS} />
-              </div>
-            ))
-          )}
-        </Card>
-      </InfiniteScroll>
+      <Card
+        className={classNames(
+          'p-5 space-y-6 border-none bg-slate-50 dark:bg-slate-800 lg:hidden',
+          mobileCardClassName,
+        )}
+      >
+        {ordersLoading ? (
+          <SkeletonBox className="w-full h-52" />
+        ) : !data?.length ? (
+          <p className="text-sm italic text-center text-muted-foreground dark:text-pink-200 h-52 flex items-center justify-center">
+            No Past DCA Orders
+          </p>
+        ) : (
+          data?.map((row) => (
+            <div
+              key={row.id}
+              className="pb-6 border-b last:border-b-0 last:pb-0"
+            >
+              <MobileDataCard row={row} columns={MOBILE_COLUMNS} />
+            </div>
+          ))
+        )}
+      </Card>
     </>
   )
 }

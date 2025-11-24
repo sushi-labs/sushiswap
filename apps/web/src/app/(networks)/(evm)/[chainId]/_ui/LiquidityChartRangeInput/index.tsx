@@ -47,6 +47,18 @@ const ZOOM_LEVELS: Record<SushiSwapV3FeeAmount, ZoomLevels> = {
     min: 0.00001,
     max: 20,
   },
+  [SushiSwapV3FeeAmount.HIGHER]: {
+    initialMin: 0.5,
+    initialMax: 2,
+    min: 0.00001,
+    max: 20,
+  },
+  [SushiSwapV3FeeAmount.HIGHEST]: {
+    initialMin: 0.5,
+    initialMax: 2,
+    min: 0.00001,
+    max: 20,
+  },
 }
 
 interface InfoBoxProps {

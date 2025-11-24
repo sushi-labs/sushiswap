@@ -32,6 +32,7 @@ interface State {
     tradeMode: TradeMode
     tradeModeChanged: boolean
     chainId: EvmChainId
+    chainId1: EvmChainId
   }
 }
 
@@ -59,11 +60,14 @@ const DerivedstateSimpleTradeProvider: FC<
   const { chainId: _chainId } = useParams()
   const searchParams = useSearchParams()
   const chainId0 = searchParams.get('chainId0')
+  const _chainId1 = searchParams.get('chainId1')
+
   const chainId = chainId0
     ? (Number(chainId0) as EvmChainId)
     : _chainId
       ? (+_chainId as SupportedChainId)
       : EvmChainId.ETHEREUM
+  const chainId1 = _chainId1 ? (Number(_chainId1) as EvmChainId) : chainId
   const { tradeMode } = useTradeMode()
   const [tradeView, _setTradeView] = useState<TradeView>(
     resolveViewModeFromPathname(pathname),
@@ -134,6 +138,7 @@ const DerivedstateSimpleTradeProvider: FC<
             tradeMode,
             tradeModeChanged,
             chainId,
+            chainId1,
           },
         }
       }, [
@@ -143,6 +148,7 @@ const DerivedstateSimpleTradeProvider: FC<
         setTradeMode,
         setTradeView,
         tradeModeChanged,
+        chainId1,
       ])}
     >
       <TradeModeContext.Provider

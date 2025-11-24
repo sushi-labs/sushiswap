@@ -1,4 +1,3 @@
-import { HeaderNetworkSelectorProvider } from 'src/lib/wagmi/components/header-network-selector'
 import { QuickSelectProvider } from 'src/lib/wagmi/components/token-selector/quick-select/quick-select-provider'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
 import { EdgeProvider } from 'src/providers/edge-config-provider'
@@ -14,13 +13,11 @@ export async function Providers({ children }: { children: React.ReactNode }) {
     <CheckerProvider>
       <EdgeProvider config={config}>
         <DerivedStateFiatProvider>
-          <HeaderNetworkSelectorProvider>
-            <StrapiBannerProvider>
-              <QuickSelectProvider>
-                <SearchProvider>{children}</SearchProvider>
-              </QuickSelectProvider>
-            </StrapiBannerProvider>
-          </HeaderNetworkSelectorProvider>
+          <StrapiBannerProvider>
+            <QuickSelectProvider>
+              <SearchProvider>{children}</SearchProvider>
+            </QuickSelectProvider>
+          </StrapiBannerProvider>
         </DerivedStateFiatProvider>
       </EdgeProvider>
     </CheckerProvider>
