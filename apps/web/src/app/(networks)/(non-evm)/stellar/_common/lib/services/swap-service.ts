@@ -5,7 +5,6 @@ import {
   CONTRACT_ADDRESSES,
   NETWORK_CONFIG,
 } from '../soroban/contract-addresses'
-import { tickToSqrtPrice } from '../soroban/pool-helpers'
 import {
   submitViaRawRPC,
   waitForTransaction,
@@ -109,6 +108,14 @@ export class SwapService {
       },
     )
 
+    const simulationResult = assembledTransaction.simulation
+    if (
+      simulationResult &&
+      StellarSdk.rpc.Api.isSimulationError(simulationResult)
+    ) {
+      throw new Error(extractErrorMessage(simulationResult.error))
+    }
+
     // Sign the transaction - use the built transaction
     const unsignedXdr = assembledTransaction.toXDR()
     const signedXdr = await signTransaction(unsignedXdr)
@@ -160,6 +167,13 @@ export class SwapService {
         fee: 100000,
       },
     )
+    const simulationResult = assembledTransaction.simulation
+    if (
+      simulationResult &&
+      StellarSdk.rpc.Api.isSimulationError(simulationResult)
+    ) {
+      throw new Error(extractErrorMessage(simulationResult.error))
+    }
 
     // Sign the transaction
     const unsignedXdr = assembledTransaction.toXDR()

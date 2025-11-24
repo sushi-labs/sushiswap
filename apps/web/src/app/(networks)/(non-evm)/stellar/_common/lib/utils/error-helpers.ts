@@ -30,6 +30,9 @@ const ERROR_MESSAGES: Record<number | string, string> = {
     11: 'Price limit exceeded. The price moved too much.',
   }),
   ...(SwapRouterError[12] && { 12: 'Not authorized to perform this action.' }),
+  ...(SwapRouterError[16] && {
+    16: 'Max slippage too low. Try increasing slippage tolerance.',
+  }),
 
   // Position Manager errors (based on PositionManagerErrors)
   ...(PositionManagerErrors[1001] && {
@@ -83,28 +86,34 @@ export function extractErrorMessage(error: unknown): string {
   }
 
   // If error is an Error object
-  if (error instanceof Error) {
-    // Try to extract contract error code
-    const errorCode = extractContractErrorCode(error.message)
-    if (errorCode && ERROR_MESSAGES[errorCode]) {
-      return ERROR_MESSAGES[errorCode]
-    }
+  if (
+    error instanceof Error ||
+    (typeof error === 'object' && error !== null && 'message' in error)
+  ) {
+    const errorMessage = error.message
+    if (typeof errorMessage === 'string') {
+      // Try to extract contract error code
+      const errorCode = extractContractErrorCode(errorMessage)
+      if (errorCode && ERROR_MESSAGES[errorCode]) {
+        return ERROR_MESSAGES[errorCode]
+      }
 
-    // Check for specific Stellar/Soroban error patterns
-    if (error.message.includes('simulation failed')) {
-      return 'Transaction simulation failed. Please check your inputs and try again.'
-    }
-    if (error.message.includes('insufficient balance')) {
-      return 'Insufficient balance to complete this transaction.'
-    }
+      // Check for specific Stellar/Soroban error patterns
+      if (errorMessage.includes('simulation failed')) {
+        return 'Transaction simulation failed. Please check your inputs and try again.'
+      }
+      if (errorMessage.includes('insufficient balance')) {
+        return 'Insufficient balance to complete this transaction.'
+      }
 
-    // If we have a readable message (not JSON), return it
-    if (
-      error.message &&
-      !error.message.includes('{') &&
-      !error.message.includes('[')
-    ) {
-      return error.message
+      // If we have a readable message (not JSON), return it
+      if (
+        errorMessage &&
+        !errorMessage.includes('{') &&
+        !errorMessage.includes('[')
+      ) {
+        return errorMessage
+      }
     }
   }
 
