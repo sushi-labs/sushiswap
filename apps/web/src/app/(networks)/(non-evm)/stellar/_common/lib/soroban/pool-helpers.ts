@@ -439,6 +439,43 @@ export function tickToSqrtPrice(tick: number): bigint {
   return BigInt(Math.floor(sqrtPrice * 2 ** 96))
 }
 
+export function calculateActiveLiquidity({
+  scaledAmount0,
+  scaledAmount1,
+  currentSqrtPriceX96,
+  sqrtPriceLowerX96,
+  sqrtPriceUpperX96,
+}: {
+  scaledAmount0: bigint
+  scaledAmount1: bigint
+  currentSqrtPriceX96: bigint
+  sqrtPriceLowerX96: bigint
+  sqrtPriceUpperX96: bigint
+}): bigint {
+  if (
+    currentSqrtPriceX96 < sqrtPriceLowerX96 ||
+    currentSqrtPriceX96 >= sqrtPriceUpperX96
+  ) {
+    // Outside range - no active liquidity
+    return 0n
+  } else {
+    const liquidity0 = calculateLiquidityFromAmount0(
+      scaledAmount0,
+      currentSqrtPriceX96,
+      sqrtPriceLowerX96,
+      sqrtPriceUpperX96,
+    )
+    const liquidity1 = calculateLiquidityFromAmount1(
+      scaledAmount1,
+      currentSqrtPriceX96,
+      sqrtPriceLowerX96,
+      sqrtPriceUpperX96,
+    )
+    // Within range - return the lesser of the two liquidities
+    return liquidity0 < liquidity1 ? liquidity0 : liquidity1
+  }
+}
+
 /**
  * Calculate liquidity from token0 amount (exactly like stellar-auth-test)
  * Note: The contract rounds UP when calculating amounts, which can increase the amount by ~1-2 units per division

@@ -32,7 +32,14 @@ export const usePoolOwnership = ({
     reserve1: pool ? BigInt(pool.reserves.token1.amount) : 0n,
   })
   return useQuery({
-    queryKey: ['usePoolOwnership', { pairAddress }],
+    queryKey: [
+      'usePoolOwnership',
+      {
+        pairAddress,
+        reserve0: reserve0.toString(),
+        reserve1: reserve1.toString(),
+      },
+    ],
     queryFn: async () => {
       if (
         !pairAddress ||
@@ -40,15 +47,20 @@ export const usePoolOwnership = ({
         lpUsdValueOwned === undefined ||
         lpUsdValueTotal === undefined
       ) {
-        return { ownership: '0', ownedSupply: '0' }
+        return { ownership: '0', ownedSupplyUsd: '0' }
       }
+
+      const proportionToken0Owned =
+        Number(reserve0) / Number(pool.reserves.token0.amount)
+      const proportionToken1Owned =
+        Number(reserve1) / Number(pool.reserves.token1.amount)
 
       const ownership =
         lpUsdValueTotal === 0
-          ? '0'
+          ? (proportionToken0Owned + proportionToken1Owned) / 2
           : (lpUsdValueOwned / lpUsdValueTotal).toString()
 
-      return { ownership, ownedSupply: lpUsdValueOwned.toString() }
+      return { ownership, ownedSupplyUsd: lpUsdValueOwned.toString() }
     },
     enabled:
       !!pairAddress &&

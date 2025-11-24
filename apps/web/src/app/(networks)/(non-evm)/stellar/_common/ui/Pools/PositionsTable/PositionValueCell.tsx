@@ -4,7 +4,7 @@ import { useLPUsdValue } from '~stellar/_common/lib/hooks/useLPUsdValue'
 import type { IPositionRowData } from './PositionsTable'
 
 export const PositionValueCell = ({ data }: { data: IPositionRowData }) => {
-  const { token0, token1, reserve0, reserve1 } = data
+  const { token0, token1, principalToken0, principalToken1 } = data
   const {
     data: totalLPUsdValue,
     isLoading,
@@ -12,8 +12,8 @@ export const PositionValueCell = ({ data }: { data: IPositionRowData }) => {
   } = useLPUsdValue({
     token0,
     token1,
-    reserve0,
-    reserve1,
+    reserve0: principalToken0,
+    reserve1: principalToken1,
   })
 
   if (isLoading || isPending || Number.isNaN(totalLPUsdValue)) {

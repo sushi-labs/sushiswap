@@ -13,8 +13,10 @@ import {
 import type { PaginationState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/ui/pool'
-import { useMyPosition } from '~stellar/_common/lib/hooks/position/use-my-position'
-import type { Token } from '~stellar/_common/lib/types/token.type'
+import {
+  type PositionSummary,
+  useMyPosition,
+} from '~stellar/_common/lib/hooks/position/use-my-position'
 import { useStellarWallet } from '~stellar/providers'
 import { ConnectWalletButton } from '../../ConnectWallet/ConnectWalletButton'
 import {
@@ -29,14 +31,7 @@ type PositionsTableProps = {
   hideNewPositionButton?: boolean
 }
 
-export type IPositionRowData = {
-  token0: Token
-  token1: Token
-  pairAddress: string
-  reserve0: bigint
-  reserve1: bigint
-  fee: number
-}
+export type IPositionRowData = PositionSummary
 
 export const PositionsTable = ({
   hideNewPositionButton,
@@ -120,16 +115,7 @@ export const PositionsTable = ({
       </CardHeader>
       <DataTable
         loading={isLoading}
-        data={
-          filteredData.map((position) => ({
-            token0: position.token0,
-            token1: position.token1,
-            pairAddress: position.pool,
-            reserve0: position.principalToken0,
-            reserve1: position.principalToken1,
-            fee: position.fee,
-          })) ?? []
-        }
+        data={filteredData}
         columns={[
           POSITION_NAME_COLUMN,
           FEE_COLUMN,
@@ -138,7 +124,7 @@ export const PositionsTable = ({
           APR_COLUMN,
         ]}
         linkFormatter={(data: IPositionRowData) => {
-          return `/stellar/pool/${data.pairAddress}`
+          return `/stellar/pool/${data.pool}`
         }}
         externalLink={false}
         pagination={true}

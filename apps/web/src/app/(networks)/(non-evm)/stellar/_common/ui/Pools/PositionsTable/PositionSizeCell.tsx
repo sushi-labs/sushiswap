@@ -4,13 +4,13 @@ import { usePoolOwnership } from '~stellar/_common/lib/hooks/usePoolOwnership'
 import type { IPositionRowData } from './PositionsTable'
 
 export const PositionSizeCell = ({ data }: { data: IPositionRowData }) => {
-  const { pairAddress } = data
+  const { pool } = data
   const { data: ownership, isLoading } = usePoolOwnership({
-    pairAddress,
+    pairAddress: pool,
     token0: data.token0,
     token1: data.token1,
-    reserve0: data.reserve0,
-    reserve1: data.reserve1,
+    reserve0: data.principalToken0,
+    reserve1: data.principalToken1,
   })
 
   if (isLoading || ownership === undefined) {
