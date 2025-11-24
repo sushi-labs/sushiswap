@@ -15,18 +15,29 @@ import React, {
   type FC,
   type ReactNode,
   useCallback,
-  useEffect,
   useMemo,
   useState,
 } from 'react'
+import { z } from 'zod'
 import type { FiatCurrency } from './derivedstate-fiat-provider'
 import { FiatSelectorRow } from './fiat-selector-row'
-
 interface CurrencySelectorProps {
   selected: FiatCurrency | undefined
   onSelect(currency: FiatCurrency): void
   children: ReactNode
 }
+
+const CurrencySchema = z.object({
+  code: z.string(),
+  name: z.string(),
+  flag: z.string(),
+  country: z.string(),
+  countryCode: z.string(),
+})
+
+const CurrenciesSchema = z.array(CurrencySchema)
+
+export type Currency = z.infer<typeof CurrencySchema>
 
 const useCurrencies = () => {
   return useQuery({
@@ -35,17 +46,18 @@ const useCurrencies = () => {
       const res = await fetch(
         'https://gist.githubusercontent.com/ibrahimhajjaj/a0e39e7330aebf0feb49912f1bf9062f/raw/d160e7d3b0e11ea3912e97a1b3b25b359746c86a/currencies-with-flags.json',
       )
+
       if (!res.ok) {
         throw new Error('Failed to fetch currencies')
       }
-      const data = (await res.json()) as {
-        code: string
-        name: string
-        flag: string
-        country: string
-        countryCode: string
-      }[]
-      return data
+
+      const json = await res.json()
+
+      const _data = CurrenciesSchema.safeParse(json)
+      if (!_data.success) {
+        throw new Error('Invalid currency data')
+      }
+      return _data.data
     },
   })
 }
@@ -69,13 +81,6 @@ export const CurrencySelector: FC<CurrencySelectorProps> = ({
     )
   }, [query, currenciesData, isLoading])
 
-  // Clear the query when the dialog is closed
-  useEffect(() => {
-    if (!open) {
-      setQuery('')
-    }
-  }, [open])
-
   const _onSelect = useCallback(
     (currency: FiatCurrency) => {
       if (onSelect) {
@@ -88,7 +93,13 @@ export const CurrencySelector: FC<CurrencySelectorProps> = ({
   )
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(state: boolean) => {
+        setOpen(state)
+        setQuery('')
+      }}
+    >
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         aria-describedby={undefined}

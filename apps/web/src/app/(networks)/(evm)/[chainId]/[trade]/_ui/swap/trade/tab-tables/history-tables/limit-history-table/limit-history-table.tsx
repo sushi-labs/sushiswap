@@ -1,11 +1,10 @@
 'use client'
 
 import { OrderStatus } from '@orbs-network/twap-sdk'
-import { Card, DataTable, Loader, SkeletonBox } from '@sushiswap/ui'
+import { Card, DataTable, SkeletonBox } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { PaginationState } from '@tanstack/react-table'
 import React, { useMemo, useState } from 'react'
-import InfiniteScroll from 'react-infinite-scroll-component'
 import {
   type TwapOrder,
   getTwapLimitOrders,
@@ -16,7 +15,7 @@ import {
   BUY_COLUMN,
   CHAIN_COLUMN,
   DATE_COLUMN,
-  FILLED_COLUMN,
+  // FILLED_COLUMN,
   SELL_COLUMN,
   STATUS_COLUMN,
   VALUE_PNL_COLUMN,
@@ -68,16 +67,7 @@ export const LimitOrdersHistoryTable = () => {
   )
 
   return (
-    <InfiniteScroll
-      dataLength={data.length}
-      next={() => {}}
-      hasMore={false}
-      loader={
-        <div className="flex justify-center w-full py-4">
-          <Loader size={16} />
-        </div>
-      }
-    >
+    <>
       <Card className="hidden overflow-hidden !border-none bg-slate-50 dark:bg-slate-800 lg:block">
         <DataTable
           columns={COLUMNS}
@@ -110,6 +100,6 @@ export const LimitOrdersHistoryTable = () => {
           ))
         )}
       </Card>
-    </InfiniteScroll>
+    </>
   )
 }

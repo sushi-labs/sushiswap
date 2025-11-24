@@ -120,7 +120,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
       <DialogContent
         aria-describedby={undefined}
         className={classNames(
-          'h-[80vh] !flex !flex-col md:!flex-row w-fit !p-0 md:min-w-[580px]',
+          'max-h-[80vh] !flex !flex-col md:!flex-row w-fit !p-0 md:min-w-[580px]',
           'border border-[#00000014] dark:border-[#FFFFFF14]',
           !showMoreCurrencyInfo ? '!h-[440px]' : '',
         )}
@@ -184,7 +184,7 @@ export const TokenSelectorV2: FC<TokenSelectorV2Props> = ({
           </div>
           <div
             id="token-list-container"
-            className="flex flex-1 flex-col flex-grow px-1 py-0.5 hide-scrollbar overflow-y-scroll"
+            className="flex flex-col  px-1 py-0.5 hide-scrollbar overflow-y-scroll"
           >
             <TokenSelectorStatesV2
               selected={selected}
