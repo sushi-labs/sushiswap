@@ -15,6 +15,7 @@ import React, {
   type ReactElement,
   type ReactNode,
   useCallback,
+  useMemo,
   useState,
 } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
@@ -53,14 +54,25 @@ export default function TokenSelector({
   const { data: tokens } = useBaseTokens()
   const { data: commonTokens } = useCommonTokens()
 
+  // Merge common tokens (from StellarExpert + hardcoded) into the main token map
+  const allTokens = useMemo(() => {
+    const merged = { ...(tokens ?? {}) }
+    if (commonTokens) {
+      Object.entries(commonTokens).forEach(([contract, token]) => {
+        merged[contract] = token
+      })
+    }
+    return merged
+  }, [tokens, commonTokens])
+
   const { data: tokenBalances } = useTokenBalancesMap(
     connectedAddress,
-    Object.keys(tokens ?? {}),
+    Object.keys(allTokens),
   )
 
   const { data: sortedTokenList } = useSortedTokenList({
     query,
-    tokenMap: tokens,
+    tokenMap: allTokens,
     balanceMap: tokenBalances,
   })
 
@@ -111,9 +123,11 @@ export default function TokenSelector({
           />
         </div>
         <div className="flex flex-wrap gap-2">
-          {Object.values(commonTokens ?? {})?.map((token, idx) => (
-            <CommonTokenButton key={idx} token={token} onSelect={_onSelect} />
-          ))}
+          {Object.values(commonTokens ?? {})
+            ?.slice(0, 10)
+            ?.map((token, idx) => (
+              <CommonTokenButton key={idx} token={token} onSelect={_onSelect} />
+            ))}
         </div>
         <List.Control className="relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 min-h-[128px]">
           <div
