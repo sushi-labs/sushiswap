@@ -54,16 +54,14 @@ export function TokenSelectorStatesV2({
     () =>
       selectedNetwork && isTokenListV2ChainId(selectedNetwork)
         ? [selectedNetwork]
-        : networkOptions.filter(isTokenListV2ChainId),
+        : networkOptions.filter((id) => isTokenListV2ChainId(id)),
     [networkOptions, selectedNetwork],
   )
   const trendingListChainIds = useMemo(
     () =>
       selectedNetwork && isTrendingTokensChainId(selectedNetwork)
         ? [selectedNetwork]
-        : (networkOptions.filter(
-            isTrendingTokensChainId,
-          ) as TrendingTokensChainId[]),
+        : networkOptions.filter((id) => isTrendingTokensChainId(id)),
     [networkOptions, selectedNetwork],
   )
 

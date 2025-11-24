@@ -45,7 +45,7 @@ export function TokenSelectorSearchV2({
         ? [chainId]
         : chainId && !isTokenListV2ChainId(chainId)
           ? []
-          : networkOptions.filter(isTokenListV2ChainId),
+          : networkOptions.filter((id) => isTokenListV2ChainId(id)),
     [chainId, networkOptions],
   )
   const { data, priceMap, isError, isLoading, fetchNextPage, hasMore } =
