@@ -132,7 +132,7 @@ const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
               </CardTitle>
 
               <CardDescription className="!mt-0 font-bold lg:font-medium text-sm  lg:!text-2xl flex items-center">
-                {formatUSD(fiatValues[0] + fiatValues[1])}{' '}
+                {formatUSD((fiatValues?.[0] || 0) + (fiatValues?.[1] || 0))}{' '}
                 <span
                   className={classNames(
                     'text-sm lg:text-base font-medium',
@@ -142,7 +142,7 @@ const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
                       : 'text-red',
                   )}
                 >
-                  ({poolStats?.liquidityUSD1dChange.toFixed(2)}%)
+                  ({(poolStats?.liquidityUSD1dChange || 0).toFixed(2)}%)
                 </span>
               </CardDescription>
             </CardHeader>
