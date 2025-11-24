@@ -25,14 +25,16 @@ import { TradeWidget } from './_ui/swap/trade/trade-widget'
 
 export default function TradePage() {
   const {
-    state: { tradeView, chainId: derivedChainId },
+    state: { tradeView, chainId: derivedChainId, chainId1 },
   } = useDerivedStateSimpleTrade()
   const { chainId } = useParams()
   useSkaleEuropaFaucet()
   const { isLg } = useBreakpoint('lg')
   const hasMounted = useIsMounted()
   const isKatana =
-    Number(chainId) === ChainId.KATANA && derivedChainId === ChainId.KATANA
+    Number(chainId) === ChainId.KATANA ||
+    derivedChainId === ChainId.KATANA ||
+    chainId1 === ChainId.KATANA
   const { address } = useAccount()
 
   const defaultWidgetProps: Partial<ChartingLibraryWidgetOptions> =
