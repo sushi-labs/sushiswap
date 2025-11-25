@@ -2,6 +2,10 @@ import { getStablePrice } from '../hooks/price/get-stable-price'
 import type { PoolInfo, PoolLiquidity, PoolReserves } from '../types/pool.type'
 import type { Token } from '../types/token.type'
 import { formatTokenAmount } from '../utils/formatters'
+import {
+  type SlotHints,
+  fetchSlotHintsWithRetry,
+} from '../utils/slot-hint-helpers'
 import { TICK_SPACINGS } from '../utils/ticks'
 import { getPoolContractClient } from './client'
 import { DEFAULT_TIMEOUT } from './constants'
@@ -592,4 +596,16 @@ export function calculateAmountsFromLiquidity(
   }
 
   return { amount0, amount1 }
+}
+
+/**
+ * Get current and next oracle slot hints from pool
+ * Required before any pool write operation (initialize, mint, burn, swap)
+ * @param poolAddress - The pool contract address
+ * @returns Object with currentSlot and nextSlot as bigints
+ */
+export async function getCurrentAndNextSlot(
+  poolAddress: string,
+): Promise<SlotHints> {
+  return await fetchSlotHintsWithRetry(poolAddress)
 }

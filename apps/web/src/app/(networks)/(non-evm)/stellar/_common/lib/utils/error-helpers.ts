@@ -48,6 +48,11 @@ const ERROR_MESSAGES: Record<number | string, string> = {
   ...(PoolErrors[43] && { 43: 'Insufficient liquidity available.' }),
   ...(PoolErrors[70] && { 70: 'Insufficient token0 balance.' }),
   ...(PoolErrors[71] && { 71: 'Insufficient token1 balance.' }),
+
+  // Oracle errors (error code 62)
+  62: 'Oracle observation is too old. Retrying with fresh slot hints...',
+  ObservationTooOld:
+    'Oracle observation is too old. Retrying with fresh slot hints...',
 }
 
 /**
@@ -173,4 +178,45 @@ export function formatSlippageTolerance(value: string | number): string {
 
   const parsed = parseSlippageTolerance(value)
   return `${parsed}%`
+}
+
+/**
+ * Check if an error is an ObservationTooOld error (Error #62)
+ * Only matches the specific contract error to avoid false positives
+ * @param error - The error to check
+ * @returns true if this is an ObservationTooOld error
+ */
+export function isOracleFootprintError(error: unknown): boolean {
+  if (!error) return false
+
+  const errorString = String(error)
+
+  // Match exact contract error name (most common format)
+  if (errorString.includes('ObservationTooOld')) {
+    return true
+  }
+
+  // Match error code format from Stellar SDK
+  if (errorString.includes('Error(Contract, #62)')) {
+    return true
+  }
+
+  return false
+}
+
+/**
+ * Get user-friendly message for oracle errors
+ * @param error - The error to get a message for
+ * @returns User-friendly error message
+ */
+export function getOracleErrorMessage(error: unknown): string {
+  if (!isOracleFootprintError(error)) {
+    return extractErrorMessage(error)
+  }
+
+  // Return the ObservationTooOld message
+  return (
+    ERROR_MESSAGES['ObservationTooOld'] ||
+    'Oracle observation is too old. Retrying with fresh slot hints...'
+  )
 }
