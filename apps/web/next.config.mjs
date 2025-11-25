@@ -35,7 +35,7 @@ const nextConfig = bundleAnalyzer({
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
-    domains: ['cdn.sushi.com', 'static.tronscan.org'],
+    domains: ['cdn.sushi.com'],
   },
   eslint: {
     dirs: [
@@ -97,11 +97,6 @@ const nextConfig = bundleAnalyzer({
         source: '/aptos',
         permanent: true,
         destination: '/aptos/swap',
-      },
-      {
-        source: '/tron',
-        permanent: true,
-        destination: '/tron/swap',
       },
       {
         source: '/',
