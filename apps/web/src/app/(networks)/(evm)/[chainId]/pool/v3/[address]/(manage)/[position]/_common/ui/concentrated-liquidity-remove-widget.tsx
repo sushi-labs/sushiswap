@@ -68,7 +68,7 @@ import {
   useSendTransaction,
   useWaitForTransactionReceipt,
 } from 'wagmi'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { usePublicClient } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 
@@ -93,7 +93,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
   position,
   positionDetails,
 }) => {
-  const { chain } = useAccount()
+  const { chain } = useConnection()
   const client = usePublicClient()
   const [value, setValue] = useState<string>('0')
   const [receiveWrapped, setReceiveWrapped] = useState(false)

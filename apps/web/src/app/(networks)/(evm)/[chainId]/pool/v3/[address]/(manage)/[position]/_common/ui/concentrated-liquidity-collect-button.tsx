@@ -22,8 +22,8 @@ import type { EvmChainId } from 'sushi/evm'
 import type { Hex, SendTransactionReturnType } from 'viem'
 import {
   type UseCallParameters,
-  useAccount,
   useCall,
+  useConnection,
   usePublicClient,
   useSendTransaction,
 } from 'wagmi'
@@ -55,7 +55,7 @@ export const ConcentratedLiquidityCollectButton: FC<
   token0,
   token1,
 }) => {
-  const { chain } = useAccount()
+  const { chain } = useConnection()
   const client = usePublicClient()
 
   const { refetchChain: refetchBalances } = useRefetchBalances()

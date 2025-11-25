@@ -20,7 +20,7 @@ import {
   LDO,
   USDT,
 } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { useTokenAllowance } from '../../hooks/approvals/hooks/useTokenAllowance'
 import { useTokenRevokeApproval } from '../../hooks/approvals/hooks/useTokenRevokeApproval'
 
@@ -60,7 +60,7 @@ const RevokeApproveERC20: FC<RevokeApproveERC20Props> = ({
     amount?.currency?.chainId &&
     isResetApprovalToken(amount.currency.wrap())
 
-  const { address } = useAccount()
+  const { address } = useConnection()
 
   const { data: allowance, isLoading: isAllowanceLoading } = useTokenAllowance({
     token: amount?.currency?.wrap(),

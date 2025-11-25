@@ -9,13 +9,15 @@ import {
 } from '@sushiswap/telemetry'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import React, { type FC, useCallback } from 'react'
+import { useConnectors } from 'wagmi'
 import { useConnect } from '../hooks/wallet/useConnect'
 
 export const ConnectButton: FC<ButtonProps> = ({
   children: _children,
   ...props
 }) => {
-  const { pending, connect, connectors } = useConnect()
+  const { pending, connect } = useConnect()
+  const connectors = useConnectors()
   const { openConnectModal } = useConnectModal()
 
   const onConnect = useCallback(() => {

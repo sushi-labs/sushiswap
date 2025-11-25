@@ -21,7 +21,7 @@ import {
   SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3Pool,
 } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { ZapRouteDialog } from '../../_ui/zap-route-dialog'
 
@@ -35,7 +35,7 @@ interface V3ZapInfoCardProps {
 
 export const V3ZapInfoCard: FC<V3ZapInfoCardProps> = memo(
   ({ zapResponse, isZapError, inputCurrencyAmount, pool, tokenRatios }) => {
-    const { isConnected } = useAccount()
+    const { isConnected } = useConnection()
     const { data: prices } = usePrices({
       chainId: pool?.chainId,
     })

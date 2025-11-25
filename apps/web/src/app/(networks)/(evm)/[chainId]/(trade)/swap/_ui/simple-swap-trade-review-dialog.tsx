@@ -61,7 +61,7 @@ import {
 } from 'sushi/evm'
 import { type SendTransactionReturnType, stringify } from 'viem'
 import {
-  useAccount,
+  useConnection,
   usePublicClient,
   useSendTransaction,
   useWaitForTransactionReceipt,
@@ -100,7 +100,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
   const { approved } = useApproved(APPROVE_TAG_SWAP)
   const [slippagePercent] = useSlippageTolerance()
 
-  const { address } = useAccount()
+  const { address } = useConnection()
   const tradeRef = useRef<UseTradeReturn | null>(null)
   const client = usePublicClient()
 

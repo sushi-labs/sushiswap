@@ -17,7 +17,7 @@ import {
   type SushiSwapV3ChainId,
   SushiSwapV3ChainIds,
 } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { useMultiChainPrices } from '~evm/_common/ui/price-provider/price-provider/use-multi-chain-prices'
 import {
   FEES_ACTION_COLUMN,
@@ -40,7 +40,7 @@ const COLUMNS = [
 ] satisfies ColumnDef<ClaimableFees, unknown>[]
 
 export const ClaimableFeesTab: FC = () => {
-  const { address, isConnecting } = useAccount()
+  const { address, isConnecting } = useConnection()
   const { data: _data, isInitialLoading: isPositionsLoading } =
     useConcentratedLiquidityPositions({
       account: address,

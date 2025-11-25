@@ -12,7 +12,7 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
 import { Amount } from 'sushi'
 import type { EvmCurrency } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { useBladePoolPosition } from '../blade-pool-position-provider'
 import {
   BladeAddLiquidityReviewModal,
@@ -35,7 +35,7 @@ export const BladeAddSection: FC<{ pool: BladePool }> = ({ pool }) => {
 
   const chainId = pool.chainId
   const isMounted = useIsMounted()
-  const { address } = useAccount()
+  const { address } = useConnection()
   const { vestingDeposit, refetch: refetchPosition } = useBladePoolPosition()
 
   const hasLockedPosition = useMemo(() => {

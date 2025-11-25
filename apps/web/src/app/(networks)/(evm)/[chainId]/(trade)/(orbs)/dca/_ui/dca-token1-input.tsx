@@ -10,7 +10,7 @@ import {
 import { useMemo } from 'react'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
 import { BalancePanel } from 'src/lib/wagmi/components/web3-input/Currency/balance-panel'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { useDerivedStateTwap } from '../../_ui/derivedstate-twap-provider'
 
@@ -21,7 +21,7 @@ export const DCAToken1Input = () => {
     isToken1Loading: isTokenLoading,
   } = useDerivedStateTwap()
 
-  const { address } = useAccount()
+  const { address } = useConnection()
 
   const { data: balance, isLoading: isBalanceLoading } = useAmountBalance(token)
 

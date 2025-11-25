@@ -16,7 +16,7 @@ import { useTheme } from 'next-themes'
 import { type FC, type ReactNode, useEffect, useMemo } from 'react'
 import { WagmiStoreVersionCheck } from 'src/lib/wagmi/components/wagmi-store-version-check'
 import { getWagmiConfig, getWagmiInitialState } from 'src/lib/wagmi/config'
-import { WagmiProvider as _WagmiProvider, useAccount } from 'wagmi'
+import { WagmiProvider as _WagmiProvider, useConnection } from 'wagmi'
 
 const darkTheme: Theme = {
   ...rainbowDarkTheme({
@@ -63,7 +63,7 @@ const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
 )
 
 const WagmiTrackers = () => {
-  const { address, chainId } = useAccount()
+  const { address, chainId } = useConnection()
 
   useEffect(() => {
     if (!address || !faro.api) return

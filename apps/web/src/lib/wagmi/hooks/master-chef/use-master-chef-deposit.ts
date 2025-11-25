@@ -14,7 +14,7 @@ import {
 } from 'sushi/evm'
 import {
   type UseSimulateContractParameters,
-  useAccount,
+  useConnection,
   usePublicClient,
   useSimulateContract,
   useWriteContract,
@@ -37,7 +37,7 @@ export const useMasterChefDeposit = ({
   pid,
   enabled = true,
 }: UseMasterChefDepositParams) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const client = usePublicClient()
   const contract = useMasterChefContract(chainId, chef)
 
