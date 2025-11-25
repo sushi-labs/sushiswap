@@ -8,6 +8,7 @@ import {
   getIconSrc,
 } from '@sushiswap/ui'
 import ReactECharts from 'echarts-for-react'
+import type { CallbackDataParams } from 'echarts/types/src/util/types.js'
 import { useTheme } from 'next-themes'
 import React, { type FC, useCallback, useMemo, useState } from 'react'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
@@ -69,14 +70,20 @@ export const LiquidityDepthChart: FC<LiquidityDepthChart> = ({
     )
   }, [invertPrice, price])
 
-  const { prices0, depths, prices1, amounts0Locked, amounts1Locked } =
+  const { prices0, prices1, amounts0Locked, amounts1Locked, activeLiquidity } =
     useMemo(() => {
       const prices0 = data?.map((d) => d.price0.toFixed(6))
       const prices1 = data?.map((d) => d?.price1?.toFixed(6))
       const amounts0Locked = data?.map((d) => d?.amount0Locked)
       const amounts1Locked = data?.map((d) => d?.amount1Locked)
-      const depths = data?.map((d) => d.activeLiquidity)
-      return { prices0, depths, prices1, amounts0Locked, amounts1Locked }
+      const activeLiquidity = data?.map((d) => d?.activeLiquidity)
+      return {
+        prices0,
+        prices1,
+        amounts0Locked,
+        amounts1Locked,
+        activeLiquidity,
+      }
     }, [data])
 
   const { token0Usd, token1Usd } = useMemo(() => {
@@ -89,6 +96,45 @@ export const LiquidityDepthChart: FC<LiquidityDepthChart> = ({
       token1Usd: token1Address ? (priceMap?.get(token1Address) ?? 0) : 0,
     }
   }, [poolStats, priceMap])
+
+  const { token0Data, token1Data } = useMemo(() => {
+    const token0Data = amounts0Locked?.map((amount, index) => {
+      const amount1 = amounts1Locked ? amounts1Locked[index] : 0
+      const amount0Usd = Number(amount || 0) * token0Usd
+      return {
+        amountUsd: amount0Usd,
+        price0: prices0 ? Number(prices0[index]) : 0,
+        price1: prices1 ? Number(prices1[index]) : 0,
+        amount0Locked: amount,
+        amount1Locked: amount1,
+        liquidity: activeLiquidity ? activeLiquidity[index] : 0,
+      }
+    })
+    const token1Data = amounts1Locked?.map((amount, index) => {
+      const amount0 = amounts0Locked ? amounts0Locked[index] : 0
+      const amount1Usd = Number(amount || 0) * token1Usd
+      return {
+        amountUsd: amount1Usd,
+        price0: prices0 ? Number(prices0[index]) : 0,
+        price1: prices1 ? Number(prices1[index]) : 0,
+        amount0Locked: amount0,
+        amount1Locked: amount,
+        liquidity: activeLiquidity ? activeLiquidity[index] : 0,
+      }
+    })
+    return {
+      token0Data,
+      token1Data,
+    }
+  }, [
+    amounts0Locked,
+    amounts1Locked,
+    token0Usd,
+    token1Usd,
+    prices0,
+    prices1,
+    activeLiquidity,
+  ])
 
   const { token0, token1 } = useMemo(() => {
     return {
@@ -120,6 +166,107 @@ export const LiquidityDepthChart: FC<LiquidityDepthChart> = ({
       dataZoom: handleDataZoom,
     }),
     [handleDataZoom],
+  )
+  const { icon0Src, icon1Src } = useMemo(() => {
+    const icon0Src = cloudinaryLogoImageLoader({
+      src: token0 ? getIconSrc(token0) : '',
+      width: 50,
+    })
+    const icon1Src = cloudinaryLogoImageLoader({
+      src: token1 ? getIconSrc(token1) : '',
+      width: 50,
+    })
+    return { icon0Src, icon1Src }
+  }, [token0, token1])
+
+  const onMouseOver = useCallback(
+    (params: CallbackDataParams[]) => {
+      const [token0HoverData, token1HoverData] = params
+
+      const price0 = token0Data?.[token0HoverData?.dataIndex]?.price0
+      const price1 = token1Data?.[token1HoverData?.dataIndex]?.price1
+      const amount0Locked =
+        token0Data?.[token0HoverData?.dataIndex]?.amount0Locked
+      const amount1Locked =
+        token1Data?.[token1HoverData?.dataIndex]?.amount1Locked
+
+      if (!token0 || !token1) return ''
+      const reserve0 = Amount.tryFromHuman(token0, amount0Locked ?? '0')
+      const reserve1 = Amount.tryFromHuman(token1, amount1Locked ?? '0')
+
+      const token0UsdAmount = reserve0?.mulHuman(token0Usd)
+      const token1UsdAmount = reserve1?.mulHuman(token1Usd)
+
+      const usd0 = Number(token0UsdAmount?.toString() ?? '0')
+      const usd1 = Number(token1UsdAmount?.toString() ?? '0')
+      const totalUsd = usd0 + usd1
+
+      const percent0 = totalUsd === 0 ? 0 : usd0 / totalUsd
+      const percent1 = totalUsd === 0 ? 0 : usd1 / totalUsd
+
+      const token0Symbol = token0?.symbol
+      const token1Symbol = token1?.symbol
+
+      const line1 =
+        price0 !== null
+          ? `1 ${token0Symbol} = ${Number(price0)?.toFixed(6)} ${token1Symbol}`
+          : '-'
+
+      const line2 =
+        price0 !== null && Number(price0) !== 0
+          ? `1 ${token1Symbol} = ${Number(price1)?.toFixed(6)} ${token0Symbol}`
+          : '-'
+
+      const t0 =
+        percent0 > 0
+          ? `<div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-1">
+                  <img src="${icon0Src}" width="20" height="20" class="rounded-full" />
+                  ${token0Symbol}
+                </div>
+                <div class="flex items-center gap-1">
+                  <div>${formatUSD(usd0)}</div>
+                  <div class="dark:text-slate-300 text-slate-450">${formatPercent(percent0)}</div>
+                </div>
+              </div>`
+          : ''
+
+      const t1 =
+        percent1 > 0
+          ? `<div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-1">
+                  <img src="${icon1Src}" width="20" height="20" class="rounded-full" />
+                  ${token1Symbol}
+                </div>
+                <div class="flex items-center gap-1">
+                  <div>${formatUSD(usd1)}</div>
+                  <div class="dark:text-slate-300 text-slate-450">${formatPercent(percent1)}</div>
+                </div>
+              </div>
+            </div>`
+          : ''
+
+      return `<div class="flex text-sm dark:!text-pink-100 !text-[#0C0C23] md:min-w-[270px] flex-col paper gap-4 bg-white/[.14] dark:bg-slate-800/[.14] p-4 shadow-sm border border-accent rounded-lg">
+                <div class="flex flex-col gap-1">
+                  <div class="!font-[500]">Ticker Price</div>
+                  <div>${line1}</div>
+                  <div>${line2}</div>
+                </div>
+                <div class="flex flex-col gap-2">
+                  ${t0}
+                  ${t1}
+              </div>`
+    },
+    [
+      token0,
+      token1,
+      token0Usd,
+      token1Usd,
+      token0Data,
+      token1Data,
+      icon0Src,
+      icon1Src,
+    ],
   )
 
   const option = useMemo(
@@ -165,90 +312,7 @@ export const LiquidityDepthChart: FC<LiquidityDepthChart> = ({
           fontSize: 14,
           fontWeight: 400,
         },
-        formatter: (params: any) => {
-          const p = params[0]
-          const index = p.dataIndex
-          const price0 = prices0?.[index]
-          const price1 = prices1?.[index]
-          const amount0Locked = amounts0Locked?.[index]
-          const amount1Locked = amounts1Locked?.[index]
-
-          if (!token0 || !token1 || !poolStats) return ''
-          const reserve0 = Amount.tryFromHuman(token0, amount0Locked ?? '0')
-          const reserve1 = Amount.tryFromHuman(token1, amount1Locked ?? '0')
-
-          const token0UsdAmount = reserve0?.mulHuman(token0Usd)
-          const token1UsdAmount = reserve1?.mulHuman(token1Usd)
-
-          const usd0 = Number(token0UsdAmount?.toString() ?? '0')
-          const usd1 = Number(token1UsdAmount?.toString() ?? '0')
-          const totalUsd = usd0 + usd1
-
-          const percent0 = totalUsd === 0 ? 0 : usd0 / totalUsd
-          const percent1 = totalUsd === 0 ? 0 : usd1 / totalUsd
-
-          const token0Symbol = token0?.symbol
-          const token1Symbol = token1?.symbol
-
-          const icon0Src = cloudinaryLogoImageLoader({
-            src: token0 ? getIconSrc(token0) : '',
-            width: 50,
-          })
-          const icon1Src = cloudinaryLogoImageLoader({
-            src: token1 ? getIconSrc(token1) : '',
-            width: 50,
-          })
-
-          const line1 =
-            price0 !== null
-              ? `1 ${token0Symbol} = ${Number(price0)?.toFixed(6)} ${token1Symbol}`
-              : '-'
-
-          const line2 =
-            price0 !== null && Number(price0) !== 0
-              ? `1 ${token1Symbol} = ${Number(price1)?.toFixed(6)} ${token0Symbol}`
-              : '-'
-
-          const t0 =
-            percent0 > 0
-              ? `<div class="flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-1">
-                          <img src="${icon0Src}" width="20" height="20" class="rounded-full" />
-                          ${token0Symbol}
-                        </div>
-                        <div class="flex items-center gap-1">
-                          <div>${formatUSD(usd0)}</div>
-                          <div class="dark:text-slate-300 text-slate-450">${formatPercent(percent0)}</div>
-                        </div>
-                      </div>`
-              : ''
-
-          const t1 =
-            percent1 > 0
-              ? `<div class="flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-1">
-                          <img src="${icon1Src}" width="20" height="20" class="rounded-full" />
-                          ${token1Symbol}
-                        </div>
-                        <div class="flex items-center gap-1">
-                          <div>${formatUSD(usd1)}</div>
-                          <div class="dark:text-slate-300 text-slate-450">${formatPercent(percent1)}</div>
-                        </div>
-                      </div>
-                    </div>`
-              : ''
-
-          return `<div class="flex text-sm dark:!text-pink-100 !text-[#0C0C23] md:min-w-[270px] flex-col paper gap-4 bg-white/[.14] dark:bg-slate-800/[.14] p-4 shadow-sm border border-accent rounded-lg">
-                    <div class="flex flex-col gap-1">
-                      <div class="!font-[500]">Ticker Price</div>
-                      <div>${line1}</div>
-                      <div>${line2}</div>
-                    </div>
-                    <div class="flex flex-col gap-2">
-                      ${t0}
-                      ${t1}
-                  </div>`
-        },
+        formatter: onMouseOver,
         borderWidth: 0,
       },
       dataZoom: [
@@ -261,8 +325,26 @@ export const LiquidityDepthChart: FC<LiquidityDepthChart> = ({
       series: [
         {
           type: 'bar',
-          data: depths,
+          data: token0Data?.map((o) => o.amountUsd),
           barWidth: 2.5,
+          barMinHeight: 2,
+          stack: 'liquidityUsd',
+          itemStyle: {
+            color: isDark
+              ? (tailwind.theme?.colors?.skyblue as Record<string, string>)[
+                  '500'
+                ]
+              : (tailwind.theme?.colors?.blue as Record<string, string>)['500'],
+            opacity: 0.55,
+          },
+          emphasis: { itemStyle: { opacity: 1 } },
+        },
+        {
+          type: 'bar',
+          data: token1Data?.map((o) => o.amountUsd),
+          stack: 'liquidityUsd',
+          barWidth: 2.5,
+          barMinHeight: 2,
           itemStyle: {
             color: isDark
               ? (tailwind.theme?.colors?.skyblue as Record<string, string>)[
@@ -275,20 +357,7 @@ export const LiquidityDepthChart: FC<LiquidityDepthChart> = ({
         },
       ],
     }),
-    [
-      prices0,
-      depths,
-      zoomRange,
-      isDark,
-      poolStats,
-      token0,
-      token1,
-      token0Usd,
-      token1Usd,
-      prices1,
-      amounts0Locked,
-      amounts1Locked,
-    ],
+    [prices0, zoomRange, isDark, token0Data, token1Data, onMouseOver],
   )
 
   return (
@@ -334,7 +403,7 @@ export const LiquidityDepthChart: FC<LiquidityDepthChart> = ({
         </>
       ) : (
         <div className="flex items-center justify-center h-[353px] w-full text-xs font-[500] italic opacity-80">
-          No Liquidity Data Available
+          No Liquidity Depth Data Available
         </div>
       )}
     </div>
