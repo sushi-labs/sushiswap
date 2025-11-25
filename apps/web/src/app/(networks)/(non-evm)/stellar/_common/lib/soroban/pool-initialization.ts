@@ -1,4 +1,3 @@
-import { executeWithSlotHintRetry } from '../utils/slot-hint-helpers'
 import { getPoolContractClient } from './client'
 
 /**
@@ -32,7 +31,7 @@ export async function isPoolInitialized(address: string): Promise<boolean> {
 }
 
 /**
- * Initialize a pool with slot hint support
+ * Initialize a pool
  * @param poolAddress - The pool contract address
  * @param sqrtPriceX96 - Initial sqrt price in X96 format
  * @param publicKey - Public key of the signer
@@ -43,15 +42,13 @@ export async function initializePool(
   sqrtPriceX96: bigint,
   publicKey: string,
 ) {
-  return await executeWithSlotHintRetry(poolAddress, async (hints) => {
-    const poolClient = getPoolContractClient({
-      contractId: poolAddress,
-      publicKey,
-    })
+  const poolClient = getPoolContractClient({
+    contractId: poolAddress,
+    publicKey,
+  })
 
-    return await poolClient.initialize({
-      sqrt_price_x96: sqrtPriceX96,
-      oracle_slot_hint: hints.currentSlot,
-    })
+  // Initialize only requires sqrt_price_x96 - slot is computed internally by the contract
+  return await poolClient.initialize({
+    sqrt_price_x96: sqrtPriceX96,
   })
 }
