@@ -6,7 +6,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import type { FC, ReactElement, ReactNode } from 'react'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
-import { useAccount, useSwitchChain } from 'wagmi'
+import { useConnection, useSwitchChain } from 'wagmi'
 
 interface NetworkProps extends ButtonProps {
   chainId: EvmChainId | undefined
@@ -23,7 +23,7 @@ const Network: FC<NetworkProps> = ({
   hideChainName = false,
   ...rest
 }): ReactElement<any, any> | null => {
-  const { chain } = useAccount()
+  const { chain } = useConnection()
   const { switchChainAsync } = useSwitchChain({
     mutation: {
       onError: (e) => {

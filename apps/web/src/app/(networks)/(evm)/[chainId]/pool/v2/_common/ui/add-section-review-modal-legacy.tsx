@@ -52,7 +52,7 @@ import {
   useWriteContract,
 } from 'wagmi'
 import { useSimulateContract } from 'wagmi'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { useWaitForTransactionReceipt } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { AddSectionReviewModal } from './add-section-review-modal'
@@ -306,7 +306,7 @@ export const AddSectionReviewModalLegacy: FC<
     storageKey: TTLStorageKey.AddLiquidity,
     chainId,
   })
-  const { address } = useAccount()
+  const { address } = useConnection()
   const { approved } = useApproved(APPROVE_TAG_ADD_LEGACY)
   const [slippageTolerance] = useSlippageTolerance(
     SlippageToleranceStorageKey.AddLiquidity,

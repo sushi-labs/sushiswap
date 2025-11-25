@@ -2,7 +2,7 @@
 
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import type { FC } from 'react'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 
 import { Dots } from '@sushiswap/ui'
 
@@ -17,7 +17,7 @@ const Connect: FC<ButtonProps> = ({
 }) => {
   const isMounted = useIsMounted()
 
-  const { isDisconnected, isConnecting, isReconnecting } = useAccount()
+  const { isDisconnected, isConnecting, isReconnecting } = useConnection()
 
   if (!isMounted)
     return (

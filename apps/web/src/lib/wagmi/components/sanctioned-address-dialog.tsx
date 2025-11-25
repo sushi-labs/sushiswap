@@ -12,14 +12,14 @@ import {
 import { LinkExternal } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
-import { useAccount, useDisconnect } from 'wagmi'
+import { useConnection, useDisconnect } from 'wagmi'
 
 export const SanctionedAddressDialog = () => {
   const [open, setOpen] = useState<boolean>(false)
 
   const { disconnect } = useDisconnect()
 
-  const { address, connector, status } = useAccount()
+  const { address, connector, status } = useConnection()
 
   const { data: isSanctioned } = useQuery({
     queryKey: ['trmlabs', address],

@@ -17,7 +17,7 @@ import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
 import Image from 'next/image'
 import { type FC, type ReactNode, useMemo, useState } from 'react'
 import { EvmChainId, shortenEvmAddress } from 'sushi/evm'
-import { useAccount, useEnsAvatar, useEnsName } from 'wagmi'
+import { useConnection, useEnsAvatar, useEnsName } from 'wagmi'
 import { ConnectButton } from '../connect-button'
 import { PortfolioDefaultView } from './portfolio-default-view'
 import { PortfolioSettingsView } from './portfolio-settings-view'
@@ -51,7 +51,7 @@ const ResponsivePortfolioWrapper: FC<{
 
 export const UserPortfolio = () => {
   const { isSm } = useBreakpoint('sm')
-  const { address } = useAccount()
+  const { address } = useConnection()
   const [view, setView] = useState(PortfolioView.Default)
 
   const { data: ensName, isLoading: isENSNameLoading } = useEnsName({

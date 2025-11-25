@@ -16,14 +16,14 @@ import {
   shortenEvmAddress,
 } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
 } from './derivedstate-simple-swap-provider'
 
 export const SimpleSwapTradeStats: FC = () => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const isMounted = useIsMounted()
   const {
     state: { chainId, swapAmountString, recipient },

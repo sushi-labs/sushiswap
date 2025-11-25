@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import React from 'react'
 import { formatUSD } from 'sushi'
 import type { Address } from 'viem'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { PortfolioV2Positions } from './portfolio-v2-positions'
 import { PortfolioV3Positions } from './portfolio-v3-positions'
 
@@ -25,7 +25,7 @@ function usePortfolioPositions(
 }
 
 export const PortfolioPositions = () => {
-  const id = useAccount()
+  const id = useConnection()
   const { data, isLoading } = usePortfolioPositions(id.address)
 
   // TODO: Add error state

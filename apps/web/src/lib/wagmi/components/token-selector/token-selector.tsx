@@ -27,7 +27,7 @@ import React, {
   useState,
 } from 'react'
 import type { EvmChainId, EvmCurrency } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { CurrencyInfo } from './currency-info'
 import { DesktopNetworkSelector } from './desktop-network-selector'
 import { MobileNetworkSelector } from './mobile-network-selector'
@@ -60,7 +60,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   selectedNetwork,
   onNetworkSelect,
 }) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
 
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)

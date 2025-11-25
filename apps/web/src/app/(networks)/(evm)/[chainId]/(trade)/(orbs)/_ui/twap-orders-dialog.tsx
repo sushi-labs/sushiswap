@@ -50,7 +50,7 @@ import {
   shortenHash,
 } from 'sushi/evm'
 import type { Address, Hex } from 'viem'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { useDerivedStateTwap } from './derivedstate-twap-provider'
 import { TwapCancelOrderButton } from './twap-cancel-order-button'
 
@@ -81,7 +81,7 @@ const _TwapOrdersDialog: FC<{
     state: { chainId },
   } = useDerivedStateTwap()
 
-  const { address } = useAccount()
+  const { address } = useConnection()
 
   const { data: orders, isLoading: isOrdersLoading } = useTwapOrders({
     chainId,
@@ -201,7 +201,7 @@ const TwapOrderDialogContent = ({
   order,
   onBack,
 }: { chainId: TwapSupportedChainId; order: TwapOrder; onBack: () => void }) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
 
   const isLimit = order.type === OrderType.LIMIT
 
@@ -514,7 +514,7 @@ const TwapOrderCard = ({
 }
 
 export const TwapOrdersDialogTriggerButton = () => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   return (
     <TwapOrdersDialog>
       <DialogTrigger asChild>

@@ -7,7 +7,7 @@ import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { Amount } from 'sushi'
 import { type EvmChainId, type EvmCurrency, eip2612Abi_nonces } from 'sushi/evm'
 import { type Address, hexToSignature } from 'viem'
-import { useAccount, useReadContract, useSignTypedData } from 'wagmi'
+import { useConnection, useReadContract, useSignTypedData } from 'wagmi'
 import {
   useApprovedActions,
   useSignature,
@@ -73,7 +73,7 @@ export const useTokenPermit = ({
   ttlStorageKey,
   tag,
 }: UseTokenPermitParams) => {
-  const { address, chainId } = useAccount()
+  const { address, chainId } = useConnection()
 
   const [pending, setPending] = useState(false)
 

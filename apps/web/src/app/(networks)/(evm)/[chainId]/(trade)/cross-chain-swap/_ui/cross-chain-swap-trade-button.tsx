@@ -12,7 +12,7 @@ import { isChainIdSupportedByWallet } from 'src/lib/wagmi/config/wallet'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/slippage'
 import { ZERO } from 'sushi'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { CrossChainSwapChainUnsupportedMessage } from './cross-chain-swap-chain-unsupported-message'
 import { CrossChainSwapTradeReviewDialog } from './cross-chain-swap-trade-review-dialog'
 import {
@@ -30,7 +30,7 @@ export const CrossChainSwapTradeButton: FC = () => {
   const [checked, setChecked] = useState(false)
   const [slippagePercent] = useSlippageTolerance()
 
-  const { connector } = useAccount()
+  const { connector } = useConnection()
 
   const showChainUnsupportedWarning = useMemo(
     () =>

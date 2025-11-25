@@ -58,7 +58,7 @@ import {
   isWNativeSupported,
 } from 'sushi/evm'
 import { zeroAddress } from 'viem'
-import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
+import { useConnection, useWaitForTransactionReceipt } from 'wagmi'
 import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
 import {
   ConcentratedLiquidityURLStateProvider,
@@ -86,7 +86,7 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
 }
 
 const Incentivize = withCheckerRoot(() => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const {
     chainId,
     token0,

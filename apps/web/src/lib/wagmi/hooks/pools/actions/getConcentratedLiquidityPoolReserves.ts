@@ -1,8 +1,8 @@
 import type { V3Pool } from '@sushiswap/graph-client/data-api'
-import { getBalance } from '@wagmi/core'
+import { readContracts } from '@wagmi/core'
 import type { PublicWagmiConfig } from 'src/lib/wagmi/config/public'
 import { Amount } from 'sushi'
-import { EvmToken } from 'sushi/evm'
+import { EvmToken, erc20Abi_balanceOf } from 'sushi/evm'
 
 export const getConcentratedLiquidityPoolReserves = async ({
   pool,
@@ -11,21 +11,28 @@ export const getConcentratedLiquidityPoolReserves = async ({
   pool: V3Pool
   config: PublicWagmiConfig
 }) => {
-  const [balance1, balance2] = await Promise.all([
-    getBalance(config, {
-      address: pool.address,
-      chainId: pool.chainId,
-      token: pool.token0.address,
-    }),
-    getBalance(config, {
-      address: pool.address,
-      chainId: pool.chainId,
-      token: pool.token1.address,
-    }),
-  ])
+  const [balance1, balance2] = await readContracts(config, {
+    contracts: [
+      {
+        address: pool.token0.address,
+        abi: erc20Abi_balanceOf,
+        functionName: 'balanceOf',
+        args: [pool.address],
+        chainId: pool.chainId,
+      },
+      {
+        address: pool.token1.address,
+        abi: erc20Abi_balanceOf,
+        functionName: 'balanceOf',
+        args: [pool.address],
+        chainId: pool.chainId,
+      },
+    ],
+    allowFailure: false,
+  })
 
   return [
-    new Amount(new EvmToken(pool.token0), balance1.value),
-    new Amount(new EvmToken(pool.token1), balance2.value),
+    new Amount(new EvmToken(pool.token0), balance1),
+    new Amount(new EvmToken(pool.token1), balance2),
   ]
 }

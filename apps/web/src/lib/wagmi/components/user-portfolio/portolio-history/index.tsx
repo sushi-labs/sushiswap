@@ -2,7 +2,7 @@ import { getPortfolioHistory } from '@sushiswap/graph-client/data-api'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import type { Address } from 'viem'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { PortfolioApproveTransaction } from './portfolio-approve-transaction'
 import { PortfolioOtherTransaction } from './portfolio-other-transaction'
 import { PortfolioReceiveTransaction } from './portfolio-receive-transaction'
@@ -25,7 +25,7 @@ function usePortfolioHistory(
 }
 
 export const PortfolioHistory = () => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const { data, isLoading } = usePortfolioHistory(address)
 
   return (

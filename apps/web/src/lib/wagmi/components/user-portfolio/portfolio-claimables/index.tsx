@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query'
 import React, { useMemo } from 'react'
 import { formatUSD } from 'sushi'
 import type { Address } from 'viem'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { PortfolioFarmClaimables } from './portfolio-farm-claimables'
 import { PortfolioFuroClaimables } from './portfolio-furo-claimables'
 
@@ -28,7 +28,7 @@ function usePortfolioClaimables(
 }
 
 export const PortfolioClaimables = () => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const { data, isLoading } = usePortfolioClaimables(address)
 
   const farmClaimables: PortfolioFarmClaim[] = useMemo(

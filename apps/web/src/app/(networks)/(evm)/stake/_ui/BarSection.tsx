@@ -21,7 +21,7 @@ import {
   addGasMargin,
 } from 'sushi/evm'
 import type { SendTransactionReturnType } from 'viem'
-import { useAccount, usePublicClient, useSendTransaction } from 'wagmi'
+import { useConnection, usePublicClient, useSendTransaction } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { BarSectionWidget } from './BarSectionWidget'
 
@@ -43,7 +43,7 @@ export const BarSection = withCheckerRoot(
       return Amount.tryFromHuman(inputToken, input)
     }, [input, inputToken])
 
-    const { address } = useAccount()
+    const { address } = useConnection()
     const client = usePublicClient()
 
     const { refetchChain: refetchBalances } = useRefetchBalances()

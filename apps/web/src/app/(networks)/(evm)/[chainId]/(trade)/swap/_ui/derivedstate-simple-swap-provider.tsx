@@ -29,7 +29,7 @@ import {
   isWNativeSupported,
 } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
-import { useAccount, useGasPrice } from 'wagmi'
+import { useConnection, useGasPrice } from 'wagmi'
 
 const getTokenAsString = (token: EvmCurrency | string) =>
   typeof token === 'string'
@@ -82,7 +82,7 @@ const DerivedstateSimpleSwapProvider: FC<
 > = ({ children }) => {
   const { push } = useRouter()
   const { chainId: _chainId } = useParams()
-  const { address } = useAccount()
+  const { address } = useConnection()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [tokenTax, setTokenTax] = useState<Percent | false | undefined>(

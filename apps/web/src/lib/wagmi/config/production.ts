@@ -55,6 +55,9 @@ const connectors = connectorsForWallets(
   },
 )
 
+// TODO: Properly fix when rainbowkit is updated
+export type PublicWagmiConnectors = typeof connectors
+
 const drpcJwt = process.env['NEXT_PUBLIC_DRPC_JWT']
 
 export const createProductionConfig = () => {

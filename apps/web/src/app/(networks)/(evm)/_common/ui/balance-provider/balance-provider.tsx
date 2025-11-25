@@ -21,7 +21,7 @@ import {
 } from 'sushi/evm'
 import type { Address } from 'viem'
 import { multicall } from 'viem/actions'
-import { useAccount, useConfig } from 'wagmi'
+import { useConfig, useConnection } from 'wagmi'
 import type {
   Balance,
   Provider,
@@ -125,7 +125,7 @@ interface BalanceProviderContextProps {
 }
 
 export function BalanceProvider({ children }: BalanceProviderContextProps) {
-  const { address: account } = useAccount()
+  const { address: account } = useConnection()
   const [state, dispatch] = useReducer(reducer, {
     account,
     chains: new Map(),

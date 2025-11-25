@@ -4,13 +4,13 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { getToken as getTokenWeb3 } from '@wagmi/core/actions'
 import { useCallback } from 'react'
 import { logger } from 'src/lib/logger'
 import { getIdFromChainIdAddress } from 'sushi'
 import { type EvmChainId, type EvmID, EvmToken } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
 import { useConfig } from 'wagmi'
+import { getToken } from '../../actions/getToken'
 import type { PublicWagmiConfig } from '../../config/public'
 
 interface UseTokenParams {
@@ -81,8 +81,8 @@ export const getTokenWithCacheQueryFn = async ({
   }
 
   try {
-    const resp = await getTokenWeb3(config, {
-      address: address as Address,
+    const resp = await getToken(config, {
+      address,
       chainId,
     })
     const { decimals, address: tokenAddress, symbol, name } = resp
@@ -90,8 +90,8 @@ export const getTokenWithCacheQueryFn = async ({
     return new EvmToken({
       chainId,
       address: tokenAddress,
-      name: name || '',
-      symbol: symbol || '',
+      name,
+      symbol,
       decimals,
       metadata: {
         approved: false,

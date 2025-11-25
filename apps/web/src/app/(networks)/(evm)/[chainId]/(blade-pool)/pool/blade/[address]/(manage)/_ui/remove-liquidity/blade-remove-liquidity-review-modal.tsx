@@ -21,7 +21,7 @@ import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Amount, Percent } from 'sushi'
 import type { Hex } from 'viem'
 import {
-  useAccount,
+  useConnection,
   usePublicClient,
   useWaitForTransactionReceipt,
 } from 'wagmi'
@@ -47,7 +47,7 @@ export const BladeRemoveLiquidityReviewModal: FC<
   BladeRemoveLiquidityReviewModalProps
 > = ({ pool, percentage, children, onSuccess: _onSuccess }) => {
   const router = useRouter()
-  const { address } = useAccount()
+  const { address } = useConnection()
   const client = usePublicClient()
   const { balance } = useBladePoolPosition()
   const { refetchChain: refetchBalances } = useRefetchBalances()

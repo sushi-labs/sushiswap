@@ -4,7 +4,7 @@ import type { ClaimableRewards } from 'src/lib/hooks/react-query'
 import { logger } from 'src/lib/logger'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import {
-  useAccount,
+  useConnection,
   usePublicClient,
   useSimulateContract,
   useWriteContract,
@@ -38,7 +38,7 @@ export const useClaimRewards = ({
   rewards,
   enabled = true,
 }: UseClaimRewardsParams) => {
-  const { address, chainId } = useAccount()
+  const { address, chainId } = useConnection()
 
   const { data: simulation } = useSimulateContract({
     chainId: rewards.chainId,

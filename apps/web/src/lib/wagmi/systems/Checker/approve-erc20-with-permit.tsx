@@ -24,7 +24,7 @@ import { type FC, useEffect, useState } from 'react'
 import type { Amount } from 'sushi'
 import { EvmChainId, type EvmCurrency } from 'sushi/evm'
 import type { Address } from 'viem'
-import { useAccount, useBytecode } from 'wagmi'
+import { useBytecode, useConnection } from 'wagmi'
 import {
   ApprovalState,
   useTokenApproval,
@@ -87,7 +87,7 @@ const _ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = ({
 }) => {
   const [approvalType, setApprovalType] = useState(ApprovalType.Permit)
 
-  const { address } = useAccount()
+  const { address } = useConnection()
 
   const { data: bytecode } = useBytecode({
     address,

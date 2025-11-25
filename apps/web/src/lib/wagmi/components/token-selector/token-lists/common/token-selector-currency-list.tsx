@@ -2,7 +2,7 @@ import React, { type FC, memo, useMemo } from 'react'
 import { NativeAddress } from 'src/lib/constants'
 import type { Amount, ChainId } from 'sushi'
 import { type EvmCurrency, EvmNative, type EvmToken } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 
 import type { Address } from 'viem'
 import type { PriceMap } from '~evm/_common/ui/price-provider/price-provider/use-prices'
@@ -41,7 +41,7 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> =
     importConfig,
     onShowInfo,
   }) {
-    const { address } = useAccount()
+    const { address } = useConnection()
     const rowData = useMemo<TokenSelectorRow[]>(() => {
       if (!currencies) return []
 
