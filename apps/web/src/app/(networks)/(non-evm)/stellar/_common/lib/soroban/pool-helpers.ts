@@ -453,28 +453,20 @@ export function calculateActiveLiquidity({
   sqrtPriceLowerX96: bigint
   sqrtPriceUpperX96: bigint
 }): bigint {
-  if (
-    currentSqrtPriceX96 < sqrtPriceLowerX96 ||
-    currentSqrtPriceX96 >= sqrtPriceUpperX96
-  ) {
-    // Outside range - no active liquidity
-    return 0n
-  } else {
-    const liquidity0 = calculateLiquidityFromAmount0(
-      scaledAmount0,
-      currentSqrtPriceX96,
-      sqrtPriceLowerX96,
-      sqrtPriceUpperX96,
-    )
-    const liquidity1 = calculateLiquidityFromAmount1(
-      scaledAmount1,
-      currentSqrtPriceX96,
-      sqrtPriceLowerX96,
-      sqrtPriceUpperX96,
-    )
-    // Within range - return the lesser of the two liquidities
-    return liquidity0 < liquidity1 ? liquidity0 : liquidity1
-  }
+  const liquidity0 = calculateLiquidityFromAmount0(
+    scaledAmount0,
+    currentSqrtPriceX96,
+    sqrtPriceLowerX96,
+    sqrtPriceUpperX96,
+  )
+  const liquidity1 = calculateLiquidityFromAmount1(
+    scaledAmount1,
+    currentSqrtPriceX96,
+    sqrtPriceLowerX96,
+    sqrtPriceUpperX96,
+  )
+  // Within range - return the lesser of the two liquidities
+  return liquidity0 < liquidity1 ? liquidity0 : liquidity1
 }
 
 /**
@@ -494,7 +486,7 @@ export function calculateLiquidityFromAmount0(
   // Each rounding up can add up to 1, so total rounding can be ~2
   // But in practice with large numbers, it's proportional to the divisions
 
-  if (currentSqrtPriceX96 < sqrtPriceLowerX96) {
+  if (currentSqrtPriceX96 <= sqrtPriceLowerX96) {
     // Below range
     // Work backwards from: amount0 = ((L << 96) * (upper - lower) / upper) / lower
     // Without rounding: L = (amount0 * lower * upper) / ((upper - lower) * 2^96)
@@ -529,7 +521,7 @@ export function calculateLiquidityFromAmount1(
   sqrtPriceLowerX96: bigint,
   sqrtPriceUpperX96: bigint,
 ): bigint {
-  if (currentSqrtPriceX96 < sqrtPriceLowerX96) {
+  if (currentSqrtPriceX96 <= sqrtPriceLowerX96) {
     // Below range: only token0 needed, return 0
     return BigInt(0)
   } else if (currentSqrtPriceX96 >= sqrtPriceUpperX96) {
