@@ -11,7 +11,10 @@ export const PositionsList: React.FC = () => {
     data: positions = [],
     isLoading,
     error,
-  } = useUserPositions(connectedAddress ?? undefined)
+  } = useUserPositions({
+    userAddress: connectedAddress ?? undefined,
+    excludeDust: true,
+  })
 
   if (!connectedAddress) {
     return (

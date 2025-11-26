@@ -57,6 +57,8 @@ const formatPositionInfo = (
   }
 }
 
+const MINIMUM_DUST_LIQUIDITY = 50n
+
 /**
  * Service for managing positions and collecting fees on Stellar
  */
@@ -64,7 +66,7 @@ export class PositionService {
   /**
    * Get the number of positions (NFTs) owned by a user
    */
-  async getNumberOfUserPositions(userAddress: string): Promise<number> {
+  private async getNumberOfUserPositions(userAddress: string): Promise<number> {
     const positionManagerClient = getPositionManagerContractClient({
       contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
       // No publicKey needed for read-only operations that don't require user context
@@ -78,11 +80,15 @@ export class PositionService {
   /**
    * Get all position token IDs owned by a user
    */
-  async getUserTokenIds(
-    userAddress: string,
+  async getUserTokenIds({
+    userAddress,
     skip = 0,
     take = Number.POSITIVE_INFINITY,
-  ): Promise<number[]> {
+  }: {
+    userAddress: string
+    skip?: number
+    take?: number
+  }): Promise<number[]> {
     const BATCH_SIZE = 20
     const numberOfUserTokenIds =
       await this.getNumberOfUserPositions(userAddress)
@@ -160,11 +166,15 @@ export class PositionService {
    * Get all positions owned by a user
    * Uses the get_user_positions function which returns UserPositionInfo[]
    */
-  async getUserPositions(
-    userAddress: string,
+  private async getUserPositions({
+    userAddress,
     skip = 0,
     take = Number.POSITIVE_INFINITY,
-  ): Promise<PositionInfo[]> {
+  }: {
+    userAddress: string
+    skip?: number
+    take?: number
+  }): Promise<PositionInfo[]> {
     const BATCH_SIZE = 3
     const numberOfUserPositions =
       await this.getNumberOfUserPositions(userAddress)
@@ -205,13 +215,26 @@ export class PositionService {
    * This is now an alias for getUserPositions since get_user_positions
    * already returns all position data including fees
    */
-  async getUserPositionsWithFees(
-    userAddress: string,
+  async getUserPositionsWithFees({
+    userAddress,
+    excludeDust = false,
     skip = 0,
     take = Number.POSITIVE_INFINITY,
-  ): Promise<PositionInfo[]> {
+  }: {
+    userAddress: string
+    excludeDust?: boolean
+    skip?: number
+    take?: number
+  }): Promise<PositionInfo[]> {
     // Just call getUserPositions since it already includes all data
-    return this.getUserPositions(userAddress, skip, take)
+    const userPositionsWithFees = await this.getUserPositions({
+      userAddress,
+      skip,
+      take,
+    })
+    return userPositionsWithFees.filter((position) => {
+      return !excludeDust || position.liquidity >= MINIMUM_DUST_LIQUIDITY
+    })
   }
 
   /**
@@ -299,10 +322,13 @@ export class PositionService {
    * Get principal amounts for multiple positions in the same pool (more efficient)
    * Fetches slot0 once and reuses it for all positions
    */
-  async getPositionsPrincipalBatch(
-    tokenIds: number[],
-    poolAddress: string,
-  ): Promise<Map<number, { amount0: bigint; amount1: bigint }>> {
+  async getPositionsPrincipalBatch({
+    tokenIds,
+    poolAddress,
+  }: {
+    tokenIds: number[]
+    poolAddress: string
+  }): Promise<Map<number, { amount0: bigint; amount1: bigint }>> {
     const results = new Map<number, { amount0: bigint; amount1: bigint }>()
 
     if (tokenIds.length === 0) {

@@ -4,17 +4,25 @@ import { positionService } from '../../services/position-service'
 /**
  * Hook to get all positions owned by a user
  */
-export function useUserPositions(userAddress: string | undefined) {
+export function useUserPositions({
+  userAddress,
+  excludeDust = false,
+}: {
+  userAddress?: string
+  excludeDust?: boolean
+}) {
   return useQuery({
-    queryKey: ['stellar', 'positions', 'user', userAddress],
+    queryKey: ['stellar', 'positions', 'user', userAddress, excludeDust],
     queryFn: async () => {
       if (!userAddress) {
         return []
       }
 
       try {
-        const result =
-          await positionService.getUserPositionsWithFees(userAddress)
+        const result = await positionService.getUserPositionsWithFees({
+          userAddress,
+          excludeDust,
+        })
         return result
       } catch (error) {
         console.error('useUserPositions - Error fetching positions:', error)

@@ -21,7 +21,11 @@ export const MyPosition: React.FC<MyPositionProps> = ({ pool }) => {
     isLoading: isLoadingPositions,
     positions,
     error,
-  } = useMyPosition(connectedAddress ?? undefined, pool.address)
+  } = useMyPosition({
+    userAddress: connectedAddress ?? undefined,
+    poolAddress: pool.address,
+    excludeDust: true,
+  })
   const { data: priceToken0, isLoading: isLoadingPriceToken0 } = useStablePrice(
     { token: pool.token0 },
   )

@@ -42,9 +42,10 @@ export const PositionsTable = ({
     pageSize: 10,
   })
   const { tokenSymbols } = usePoolFilters()
-  const { positions, isLoading: isPositionLoading } = useMyPosition(
-    connectedAddress ?? undefined,
-  )
+  const { positions, isLoading: isPositionLoading } = useMyPosition({
+    userAddress: connectedAddress ?? undefined,
+    excludeDust: true,
+  })
 
   const isLoading = isWalletLoading || isPositionLoading
 

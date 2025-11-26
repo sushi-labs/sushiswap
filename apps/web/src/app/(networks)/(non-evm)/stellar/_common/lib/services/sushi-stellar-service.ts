@@ -64,8 +64,9 @@ export class SushiStellarService {
     // Check if user has existing position for this pool with same tick range
 
     // Fetch user positions
-    const positions =
-      await positionService.getUserPositionsWithFees(userAddress)
+    const positions = await positionService.getUserPositionsWithFees({
+      userAddress,
+    })
 
     // Find position with matching pool tokens, tick range, AND fee tier
     const existingPosition = positions.find((pos) => {
@@ -280,7 +281,7 @@ export class SushiStellarService {
    * Get all positions owned by a user
    */
   async getUserPositions(userAddress: string) {
-    return await positionService.getUserPositionsWithFees(userAddress)
+    return await positionService.getUserPositionsWithFees({ userAddress })
   }
 
   /**

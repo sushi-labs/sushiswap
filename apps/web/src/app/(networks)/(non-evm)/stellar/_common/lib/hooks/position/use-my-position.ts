@@ -46,12 +46,20 @@ const getPositionKey = (position: PositionInfo) => {
 /**
  * Hook to get aggregated position data for the My Position component
  */
-export function useMyPosition(userAddress?: string, poolAddress?: string) {
+export function useMyPosition({
+  userAddress,
+  poolAddress,
+  excludeDust = false,
+}: {
+  userAddress?: string
+  poolAddress?: string
+  excludeDust?: boolean
+}): MyPositionData {
   const {
     data: positions = [],
     isLoading: positionsLoading,
     error: positionsError,
-  } = useUserPositions(userAddress)
+  } = useUserPositions({ userAddress, excludeDust })
 
   const positionToPoolQueries = useQueries({
     queries: positions.map((position) => ({
@@ -128,10 +136,10 @@ export function useMyPosition(userAddress?: string, poolAddress?: string) {
       queryFn: async () => {
         try {
           const tokenIds = positions.map((p) => p.tokenId)
-          const results = await positionService.getPositionsPrincipalBatch(
+          const results = await positionService.getPositionsPrincipalBatch({
             tokenIds,
-            pool,
-          )
+            poolAddress: pool,
+          })
 
           // Convert Map to tokenId mapping (each position has unique tokenId)
           const mappedResults: [

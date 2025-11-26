@@ -118,10 +118,11 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
 }) => {
   const { isConnected, connectedAddress, signTransaction } = useStellarWallet()
   const { data: balances } = usePoolBalances(pool.address, connectedAddress)
-  const { positions: myPositions } = useMyPosition(
-    connectedAddress || undefined,
-    pool.address,
-  )
+  const { positions: myPositions } = useMyPosition({
+    userAddress: connectedAddress || undefined,
+    poolAddress: pool.address,
+    excludeDust: true,
+  })
   const token0Decimals = pool.token0.decimals
   const token1Decimals = pool.token1.decimals
   const [tab, setTab] = useState<string>('add')

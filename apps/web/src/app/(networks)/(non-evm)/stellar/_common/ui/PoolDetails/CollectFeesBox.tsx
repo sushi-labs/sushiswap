@@ -17,10 +17,11 @@ interface CollectFeesBoxProps {
 
 export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
   const { connectedAddress, signTransaction } = useStellarWallet()
-  const { positions, isLoading: isPositionsLoading } = useMyPosition(
-    connectedAddress || undefined,
-    pool.address,
-  )
+  const { positions, isLoading: isPositionsLoading } = useMyPosition({
+    userAddress: connectedAddress || undefined,
+    poolAddress: pool.address,
+    excludeDust: true,
+  })
   const collectFeesMutation = useCollectFees()
   const [isCollecting, setIsCollecting] = useState(false)
   const { data: priceToken0, isLoading: isLoadingPriceToken0 } = useStablePrice(
