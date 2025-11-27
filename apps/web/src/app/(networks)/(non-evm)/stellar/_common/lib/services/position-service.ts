@@ -9,7 +9,7 @@ import {
   getPositionManagerContractClient,
 } from '../soroban/client'
 import { DEFAULT_TIMEOUT } from '../soroban/constants'
-import { CONTRACT_ADDRESSES } from '../soroban/contract-addresses'
+import { contractAddresses } from '../soroban/contracts'
 import { handleResult } from '../soroban/handle-result'
 import {
   submitViaRawRPC,
@@ -68,7 +68,7 @@ export class PositionService {
    */
   private async getNumberOfUserPositions(userAddress: string): Promise<number> {
     const positionManagerClient = getPositionManagerContractClient({
-      contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+      contractId: contractAddresses.POSITION_MANAGER,
       // No publicKey needed for read-only operations that don't require user context
     })
     const result = await positionManagerClient.balance({
@@ -95,7 +95,7 @@ export class PositionService {
     const numberToFetch = Math.min(take, numberOfUserTokenIds - skip)
     const numberOfBatches = Math.ceil(numberToFetch / BATCH_SIZE)
     const positionManagerClient = getPositionManagerContractClient({
-      contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+      contractId: contractAddresses.POSITION_MANAGER,
       publicKey: userAddress,
     })
 
@@ -121,7 +121,7 @@ export class PositionService {
    */
   async getPosition(tokenId: number): Promise<PositionInfo | null> {
     const positionManagerClient = getPositionManagerContractClient({
-      contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+      contractId: contractAddresses.POSITION_MANAGER,
       // No publicKey needed for read-only operations that don't require user context
     })
 
@@ -182,7 +182,7 @@ export class PositionService {
     const numberOfBatches = Math.ceil(numberToFetch / BATCH_SIZE)
 
     const positionManagerClient = getPositionManagerContractClient({
-      contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+      contractId: contractAddresses.POSITION_MANAGER,
     })
 
     try {
@@ -253,7 +253,7 @@ export class PositionService {
 
       // Get pool address from factory
       const factoryClient = getFactoryContractClient({
-        contractId: CONTRACT_ADDRESSES.FACTORY,
+        contractId: contractAddresses.FACTORY,
       })
 
       // Order tokens (smaller address first) to match factory's expectations
@@ -293,7 +293,7 @@ export class PositionService {
       }
 
       const positionManagerClient = getPositionManagerContractClient({
-        contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+        contractId: contractAddresses.POSITION_MANAGER,
       })
 
       const result = await positionManagerClient.position_principal({
@@ -368,7 +368,7 @@ export class PositionService {
 
       // Now calculate principal for each position using the same sqrt price
       const positionManagerClient = getPositionManagerContractClient({
-        contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+        contractId: contractAddresses.POSITION_MANAGER,
         // No publicKey needed for read-only position queries
       })
 
@@ -418,7 +418,7 @@ export class PositionService {
     signTransaction: (xdr: string) => Promise<string>,
   ): Promise<CollectResult> {
     const positionManagerClient = getPositionManagerContractClient({
-      contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+      contractId: contractAddresses.POSITION_MANAGER,
       publicKey: params.recipient,
     })
 
@@ -473,7 +473,7 @@ export class PositionService {
     tokenId: number,
   ): Promise<{ fees0: bigint; fees1: bigint } | null> {
     const positionManagerClient = getPositionManagerContractClient({
-      contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+      contractId: contractAddresses.POSITION_MANAGER,
     })
 
     try {

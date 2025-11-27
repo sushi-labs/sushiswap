@@ -1,3 +1,4 @@
+import { CONTRACT_ADDRESSES } from '~stellar/_common/lib/soroban/contracts/mainnet/contract-addresses'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 
 // These are MAINNET tokens (curated by StellarExpert)
@@ -6,7 +7,7 @@ export const baseTokens: Token[] = [
   {
     code: 'XLM',
     issuer: 'GDMTVHLWJTHSUDMZVVMXXH6VJHA2ZV3HNG5LYNAZ6RTWB7GISM6PGTUV',
-    contract: 'CAS3J7GYLGXMF6TDJBBYYSE3HQ6BBSMLNUQ34T6TZMYMW2EVH34XOWMA',
+    contract: CONTRACT_ADDRESSES.TOKENS.XLM,
     name: 'XLM',
     org: 'stellar',
     domain: 'stellar.org',

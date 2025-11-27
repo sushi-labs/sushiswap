@@ -1,11 +1,11 @@
 import { DEFAULT_TIMEOUT } from '~stellar/_common/lib/soroban/constants'
-import { CONTRACT_ADDRESSES } from '~stellar/_common/lib/soroban/contract-addresses'
 import {
   getFees,
   getPool,
 } from '~stellar/_common/lib/soroban/dex-factory-helpers'
 import type { PoolBasicInfo } from '~stellar/_common/lib/soroban/pool-helpers'
 import type { Token } from '~stellar/_common/lib/types/token.type'
+import { contractAddresses } from '../soroban'
 import { getRouterContractClient } from '../soroban/client'
 
 /**
@@ -51,7 +51,7 @@ export class QuoteService {
   ): Promise<SwapQuote | null> {
     try {
       const routerContractClient = getRouterContractClient({
-        contractId: CONTRACT_ADDRESSES.ROUTER,
+        contractId: contractAddresses.ROUTER,
         // No publicKey needed for read-only quote queries
       })
       const { result } = await routerContractClient.quote_exact_input_single(
@@ -104,7 +104,7 @@ export class QuoteService {
   ): Promise<SwapQuote | null> {
     try {
       const routerContractClient = getRouterContractClient({
-        contractId: CONTRACT_ADDRESSES.ROUTER,
+        contractId: contractAddresses.ROUTER,
         // No publicKey needed for read-only quote queries
       })
       const { result } = await routerContractClient.quote_exact_input(

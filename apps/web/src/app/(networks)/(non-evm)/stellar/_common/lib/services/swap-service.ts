@@ -1,10 +1,7 @@
 import * as StellarSdk from '@stellar/stellar-sdk'
 import { DEFAULT_TIMEOUT } from '@stellar/stellar-sdk/contract'
+import { contractAddresses } from '../soroban'
 import { getRouterContractClient } from '../soroban/client'
-import {
-  CONTRACT_ADDRESSES,
-  NETWORK_CONFIG,
-} from '../soroban/contract-addresses'
 import {
   submitViaRawRPC,
   waitForTransaction,
@@ -67,16 +64,6 @@ export interface SwapQuote {
  * Service for executing swaps and liquidity operations on Stellar
  */
 export class SwapService {
-  private networkPassphrase: string
-  private horizonUrl: string
-  private sorobanRpcUrl: string
-
-  constructor() {
-    this.networkPassphrase = NETWORK_CONFIG.PASSPHRASE
-    this.horizonUrl = NETWORK_CONFIG.HORIZON_URL
-    this.sorobanRpcUrl = NETWORK_CONFIG.SOROBAN_URL
-  }
-
   /**
    * Execute a single-hop swap (exactly like stellar-auth-test)
    */
@@ -86,7 +73,7 @@ export class SwapService {
     signTransaction: (xdr: string) => Promise<string>,
   ): Promise<{ txHash: string; amountOut: bigint }> {
     const routerContractClient = getRouterContractClient({
-      contractId: CONTRACT_ADDRESSES.ROUTER,
+      contractId: contractAddresses.ROUTER,
       publicKey: userAddress,
     })
 
@@ -144,7 +131,7 @@ export class SwapService {
     signTransaction: (xdr: string) => Promise<string>,
   ): Promise<{ txHash: string; amountOut: bigint }> {
     const routerContractClient = getRouterContractClient({
-      contractId: CONTRACT_ADDRESSES.ROUTER,
+      contractId: contractAddresses.ROUTER,
       publicKey: userAddress,
     })
     // Ensure fees are proper u32 numbers (not bigints)

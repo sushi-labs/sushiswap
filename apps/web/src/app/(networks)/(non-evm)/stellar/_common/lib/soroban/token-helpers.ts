@@ -1,17 +1,15 @@
 import type { AssembledTransaction } from '@stellar/stellar-sdk/contract'
-import { tokens } from '../assets/token-assets'
-import { NETWORK_NAME } from '../constants'
+import { staticTokens } from '../assets/token-assets'
 import type { Token } from '../types/token.type'
 import { getTokenContractClient } from './client'
 import { DEFAULT_TIMEOUT } from './constants'
-import { CONTRACT_ADDRESSES } from './contract-addresses'
 
 /**
  * Gets the tokens without any alteration
  * @returns An array of Tokens
  */
 export function getBaseTokens(): Token[] {
-  const baseTokens: Token[] = tokens[NETWORK_NAME]
+  const baseTokens: Token[] = staticTokens
   return baseTokens
 }
 
@@ -20,9 +18,7 @@ export function getBaseTokens(): Token[] {
  * @returns An array of Tokens
  */
 export function getStableTokens(): Token[] {
-  const stableTokens: Token[] = tokens[NETWORK_NAME].filter(
-    (token) => token.isStable,
-  )
+  const stableTokens: Token[] = staticTokens.filter((token) => token.isStable)
   return stableTokens
 }
 
@@ -32,7 +28,7 @@ export function getStableTokens(): Token[] {
  * @returns A Token object
  */
 export function getTokenByCode(code: string): Token | undefined {
-  return tokens[NETWORK_NAME].find((token) => token.code === code)
+  return staticTokens.find((token) => token.code === code)
 }
 
 /**
@@ -41,7 +37,7 @@ export function getTokenByCode(code: string): Token | undefined {
  * @returns A Token object
  */
 export function getTokenByContract(contract: string): Token | undefined {
-  return tokens[NETWORK_NAME].find((token) => token.contract === contract)
+  return staticTokens.find((token) => token.contract === contract)
 }
 
 /**
@@ -415,19 +411,4 @@ export function parseTokenAmount(amountStr: string, decimals: number): bigint {
   const multiplier = BigInt(10 ** decimals)
 
   return BigInt(wholePart) * multiplier + BigInt(paddedFractional)
-}
-
-/**
- * Get test token addresses
- * @returns Object with test token addresses
- */
-export function getTestTokenAddresses() {
-  return {
-    HYPE: CONTRACT_ADDRESSES.TOKENS.HYPE,
-    SUSHI: CONTRACT_ADDRESSES.TOKENS.SUSHI,
-    STELLA: CONTRACT_ADDRESSES.TOKENS.STELLA,
-    HYPED: CONTRACT_ADDRESSES.TOKENS.HYPED,
-    HYPEE: CONTRACT_ADDRESSES.TOKENS.HYPEE,
-    XLM: CONTRACT_ADDRESSES.TOKENS.XLM,
-  }
 }

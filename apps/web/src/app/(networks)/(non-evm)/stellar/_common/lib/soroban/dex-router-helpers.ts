@@ -27,9 +27,7 @@ export async function findPoolsBetweenTokens(
 ): Promise<PoolBasicInfo[]> {
   const pools: PoolBasicInfo[] = []
 
-  // Note: CONTRACT_ADDRESSES.POOLS is not defined in the current structure
-  // Skip known pools lookup for now and go straight to dynamic discovery
-
+  // Dynamic pool discovery
   const fees = await getFees()
 
   for (const fee of fees) {

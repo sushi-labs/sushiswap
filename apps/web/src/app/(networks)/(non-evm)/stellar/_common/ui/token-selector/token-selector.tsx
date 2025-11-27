@@ -20,7 +20,7 @@ import React, {
 } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
-import { useBaseTokens } from '~stellar/_common/lib/hooks/token/use-base-tokens'
+import { staticTokens } from '~stellar/_common/lib/assets/token-assets'
 import { useCommonTokens } from '~stellar/_common/lib/hooks/token/use-common-tokens'
 import { useSortedTokenList } from '~stellar/_common/lib/hooks/token/use-sorted-token-list'
 import { useTokenBalancesMap } from '~stellar/_common/lib/hooks/token/use-token-balance'
@@ -51,19 +51,20 @@ export default function TokenSelector({
   const [query, setQuery] = useState('')
 
   const { connectedAddress } = useStellarWallet()
-  const { data: tokens } = useBaseTokens()
   const { data: commonTokens } = useCommonTokens()
 
   // Merge common tokens (from StellarExpert + hardcoded) into the main token map
   const allTokens = useMemo(() => {
-    const merged = { ...(tokens ?? {}) }
+    const merged = Object.fromEntries(
+      staticTokens.map((token) => [token.contract, token]),
+    )
     if (commonTokens) {
       Object.entries(commonTokens).forEach(([contract, token]) => {
         merged[contract] = token
       })
     }
     return merged
-  }, [tokens, commonTokens])
+  }, [commonTokens])
 
   const { data: tokenBalances } = useTokenBalancesMap(
     connectedAddress,

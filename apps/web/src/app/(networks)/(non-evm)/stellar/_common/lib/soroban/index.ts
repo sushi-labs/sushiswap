@@ -8,7 +8,7 @@
  */
 
 // Contract addresses and configurations
-export * from './contract-addresses'
+export * from './contracts'
 
 // DEX Factory helpers
 export * from './dex-factory-helpers'

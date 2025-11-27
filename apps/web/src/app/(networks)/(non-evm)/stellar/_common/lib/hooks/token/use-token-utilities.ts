@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query'
 import {
   getMultipleTokenAllowances,
   getMultipleTokenBalances,
-  getTestTokenAddresses,
   hasSufficientAllowance,
   hasSufficientBalance,
 } from '../../soroban/token-helpers'
@@ -73,14 +72,5 @@ export const useMultipleTokenAllowances = (
       return await getMultipleTokenAllowances(owner, spender, tokenAddresses)
     },
     enabled: !!owner && !!spender && tokenAddresses.length > 0,
-  })
-}
-
-export const useTestTokenAddresses = () => {
-  return useQuery({
-    queryKey: ['token', 'testAddresses'],
-    queryFn: async () => {
-      return await getTestTokenAddresses()
-    },
   })
 }

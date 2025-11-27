@@ -5,8 +5,7 @@ import { Client as PoolContractClient } from '@sushiswap/stellar-contract-bindin
 import { Client as PositionManagerContractClient } from '@sushiswap/stellar-contract-binding-position-manager'
 import { Client as RouterContractClient } from '@sushiswap/stellar-contract-binding-router'
 import { Client as TokenContractClient } from '@sushiswap/stellar-contract-binding-token'
-import { RPC_URL } from '../constants'
-import { NETWORK_CONFIG } from './contract-addresses'
+import { NETWORK_PASSPHRASE, RPC_URL } from '../constants'
 
 // Initialize Soroban RPC server
 // See https://developers.stellar.org/docs/data/apis/api-providers#publicly-accessible-apis
@@ -27,7 +26,7 @@ export const getFactoryContractClient = ({
 }: ContractClientParams) =>
   new FactoryContractClient({
     contractId: contractId,
-    networkPassphrase: NETWORK_CONFIG.PASSPHRASE,
+    networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
     allowHttp: true,
     publicKey: publicKey,
@@ -39,7 +38,7 @@ export const getRouterContractClient = ({
 }: ContractClientParams) =>
   new RouterContractClient({
     contractId: contractId,
-    networkPassphrase: NETWORK_CONFIG.PASSPHRASE,
+    networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
     allowHttp: true,
     publicKey: publicKey,
@@ -51,7 +50,7 @@ export const getPoolContractClient = ({
 }: ContractClientParams) =>
   new PoolContractClient({
     contractId: contractId,
-    networkPassphrase: NETWORK_CONFIG.PASSPHRASE,
+    networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
     allowHttp: true,
     publicKey: publicKey,
@@ -63,7 +62,7 @@ export const getTokenContractClient = ({
 }: ContractClientParams) =>
   new TokenContractClient({
     contractId: contractId,
-    networkPassphrase: NETWORK_CONFIG.PASSPHRASE,
+    networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
     allowHttp: true,
     publicKey: publicKey,
@@ -75,7 +74,7 @@ export const getPositionManagerContractClient = ({
 }: ContractClientParams) =>
   new PositionManagerContractClient({
     contractId: contractId,
-    networkPassphrase: NETWORK_CONFIG.PASSPHRASE,
+    networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
     allowHttp: true,
     publicKey: publicKey,

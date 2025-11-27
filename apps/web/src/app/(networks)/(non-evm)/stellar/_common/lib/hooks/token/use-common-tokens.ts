@@ -1,26 +1,28 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
-import { tokens } from '~stellar/_common/lib/assets/token-assets'
-import { NETWORK_NAME } from '~stellar/_common/lib/constants'
+import { staticTokens } from '~stellar/_common/lib/assets/token-assets'
+import { IS_TESTNET } from '~stellar/_common/lib/constants'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 
 const stellarExpertAssetSchema = z.object({
   code: z.string(),
   issuer: z.string().optional(),
   contract: z.string().optional(),
+  name: z.string().optional(),
+  org: z.string().optional(),
+  decimals: z.number().optional(),
 })
 
 const stellarExpertResponseSchema = z.array(stellarExpertAssetSchema)
 
-const getStellarExpertAssets = async (
-  network: typeof NETWORK_NAME,
-): Promise<z.infer<typeof stellarExpertAssetSchema>[]> => {
-  const apiUrl =
-    network === 'mainnet'
-      ? 'https://api.stellar.expert/explorer/public/asset-list/top50'
-      : 'https://api.stellar.expert/explorer/testnet/asset-list/top50'
+const stellarExpertTopTokensApiUrl = IS_TESTNET
+  ? 'https://api.stellar.expert/explorer/testnet/asset-list/top50'
+  : 'https://api.stellar.expert/explorer/public/asset-list/top50'
 
-  const response = await fetch(apiUrl, {
+const getStellarExpertAssets = async (): Promise<
+  z.infer<typeof stellarExpertAssetSchema>[]
+> => {
+  const response = await fetch(stellarExpertTopTokensApiUrl, {
     headers: { Accept: 'application/json' },
   })
 
@@ -57,42 +59,39 @@ const getStellarExpertAssets = async (
 const convertToToken = (
   asset: z.infer<typeof stellarExpertAssetSchema>,
 ): Token | null => {
-  if (!asset.contract || asset.contract.length === 0) {
+  if (
+    !asset.contract ||
+    asset.contract.length === 0 ||
+    asset.decimals === undefined
+  ) {
     return null
   }
 
   return {
     code: asset.code,
-    issuer: asset.issuer || '',
+    issuer: asset.issuer ?? '',
     contract: asset.contract,
-    name: asset.code,
-    org: 'unknown',
-    decimals: 7,
+    name: asset.name ?? '',
+    org: asset.org ?? 'unknown',
+    decimals: asset.decimals,
   }
 }
 
-const getHardcodedTokens = (network: typeof NETWORK_NAME): Token[] => {
-  return tokens[network]
-    .filter((token) => token.contract && token.contract.length > 0)
-    .slice(0, 50)
-}
+const hardcodedTokens: Token[] = staticTokens
+  .filter((token) => token.contract && token.contract.length > 0)
+  .slice(0, 50)
 
-const fetchCommonTokensQueryFn = async ({
-  network,
-}: {
-  network: typeof NETWORK_NAME
-}): Promise<Record<string, Token>> => {
+const fetchCommonTokensQueryFn = async (): Promise<Record<string, Token>> => {
   const result: Record<string, Token> = {}
 
   // Always include hardcoded tokens
-  const hardcodedTokens = getHardcodedTokens(network)
   hardcodedTokens.forEach((token) => {
     result[token.contract] = token
   })
 
   // Try to add StellarExpert tokens
   try {
-    const assets = await getStellarExpertAssets(network)
+    const assets = await getStellarExpertAssets()
     const stellarTokens = assets
       .map(convertToToken)
       .filter((token): token is Token => token !== null)
@@ -117,8 +116,8 @@ const fetchCommonTokensQueryFn = async ({
 
 export function useCommonTokens() {
   return useQuery({
-    queryKey: ['common-tokens', { network: NETWORK_NAME }],
-    queryFn: () => fetchCommonTokensQueryFn({ network: NETWORK_NAME }),
+    queryKey: ['common-tokens'],
+    queryFn: () => fetchCommonTokensQueryFn(),
     placeholderData: keepPreviousData,
     staleTime: 3600000,
     gcTime: 86400000,

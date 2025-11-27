@@ -7,7 +7,7 @@ import {
   allowAllModules,
 } from '@creit.tech/stellar-wallets-kit'
 import { createContext, useContext, useEffect, useState } from 'react'
-import { NETWORK_CONFIG } from './_common/lib/soroban/contract-addresses'
+import { NETWORK_PASSPHRASE } from './_common/lib/constants'
 
 interface StellarWalletContextType {
   stellarWalletKit: StellarWalletsKit | null
@@ -116,7 +116,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
     const { signedTxXdr } = await stellarWalletKit.signTransaction(xdr, {
       address: connectedAddress,
-      networkPassphrase: NETWORK_CONFIG.PASSPHRASE,
+      networkPassphrase: NETWORK_PASSPHRASE,
     })
 
     return signedTxXdr

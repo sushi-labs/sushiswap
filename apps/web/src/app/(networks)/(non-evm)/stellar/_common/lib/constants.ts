@@ -9,12 +9,12 @@ export const NETWORK_NAME = IS_TESTNET ? 'testnet' : 'mainnet'
 
 export const RPC_URL = IS_TESTNET
   ? 'https://soroban-testnet.stellar.org'
-  : 'https://soroban.stellar.org'
-
-const _rpcUrl = IS_TESTNET
-  ? 'https://testnet.sorobanrpc.com'
   : 'https://mainnet.sorobanrpc.com'
 
 export const NETWORK_PASSPHRASE = IS_TESTNET
   ? Networks.TESTNET
   : Networks.PUBLIC
+
+export const HORIZON_URL = IS_TESTNET
+  ? 'https://horizon-testnet.stellar.org'
+  : 'https://horizon.stellar.lobstr.co'

@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
+import { staticTokens } from '~stellar/_common/lib/assets/token-assets'
 import {
   getFactoryContractClient,
   getPoolContractClient,
 } from '~stellar/_common/lib/soroban/client'
-import { CONTRACT_ADDRESSES } from '~stellar/_common/lib/soroban/contract-addresses'
-import { getTokenByContract } from '~stellar/_common/lib/soroban/token-helpers'
+import { contractAddresses } from '~stellar/_common/lib/soroban/contracts'
 import type { Vertex } from './types'
 
 /**
@@ -25,7 +25,7 @@ export function usePoolGraph() {
       try {
         // Get factory client to discover pools
         const factoryClient = getFactoryContractClient({
-          contractId: CONTRACT_ADDRESSES.FACTORY,
+          contractId: contractAddresses.FACTORY,
         })
 
         if (!factoryClient) {
@@ -38,7 +38,7 @@ export function usePoolGraph() {
         // 1. Query all pools from the factory
         // 2. Cache results
         // 3. Only query active/liquid pools
-        const knownTokens = Object.values(CONTRACT_ADDRESSES.TOKENS)
+        const knownTokens = staticTokens.map((token) => token.contract)
 
         const feeTiers = [500, 3000, 10000] // 0.05%, 0.3%, 1%
 

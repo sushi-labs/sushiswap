@@ -1,7 +1,7 @@
 import { Address } from '@stellar/stellar-sdk'
 import { getFactoryContractClient } from './client'
 import { DEFAULT_TIMEOUT, ZERO_ADDRESS } from './constants'
-import { CONTRACT_ADDRESSES } from './contract-addresses'
+import { contractAddresses } from './contracts'
 import { isPoolInitialized } from './pool-initialization'
 import { getBaseTokens } from './token-helpers'
 import { submitTransaction, waitForTransaction } from './transaction-helpers'
@@ -69,7 +69,7 @@ export async function createAndInitializePool({
 
     // First, let's try to simulate the transaction to see what happens
     const factoryContractClient = getFactoryContractClient({
-      contractId: CONTRACT_ADDRESSES.FACTORY,
+      contractId: contractAddresses.FACTORY,
       publicKey: sourceAccount,
     })
     console.log('📤 Simulating transaction to calculate resources...')
@@ -236,7 +236,7 @@ export async function getPoolDirectSDK({
 
     // Create contract instance using direct SDK approach
     const factoryContractClient = getFactoryContractClient({
-      contractId: CONTRACT_ADDRESSES.FACTORY,
+      contractId: contractAddresses.FACTORY,
       // No publicKey needed for read-only factory queries
     })
     const assembledTransaction = await factoryContractClient.get_pool({
@@ -282,7 +282,7 @@ export async function getPoolTransactionBuilder({
 
     // Get account for transaction building
     const factoryContractClient = getFactoryContractClient({
-      contractId: CONTRACT_ADDRESSES.FACTORY,
+      contractId: contractAddresses.FACTORY,
     })
     const assembledTransaction = await factoryContractClient.get_pool(
       {
@@ -353,16 +353,6 @@ export async function getPoolsForBaseTokenPairs(): Promise<string[]> {
   console.log(
     `🔍 Querying factory.get_pool() for ${queries.length} combinations (in parallel)...`,
   )
-
-  // Log all token pair queries for debugging
-  console.log('Token pairs being queried:')
-  queries.forEach((query, index) => {
-    console.log(
-      `  ${index + 1}. ${query.tokenACode}/${query.tokenBCode} (fee: ${query.fee})`,
-    )
-    console.log(`     tokenA: ${query.tokenA}`)
-    console.log(`     tokenB: ${query.tokenB}`)
-  })
 
   // Query factory.get_pool(tokenA, tokenB, fee) for all combinations in parallel
   const results = await Promise.allSettled(
@@ -535,7 +525,7 @@ export async function debugCreatePoolParams(
   // Test factory contract simulation
   try {
     const factoryContractClient = getFactoryContractClient({
-      contractId: CONTRACT_ADDRESSES.FACTORY,
+      contractId: contractAddresses.FACTORY,
     })
     const assembledTransaction = await factoryContractClient.create_pool(
       {

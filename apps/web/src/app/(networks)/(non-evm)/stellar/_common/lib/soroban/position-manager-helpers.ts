@@ -1,8 +1,7 @@
-import * as StellarSdk from '@stellar/stellar-sdk'
 import { getPositionManagerContractClient } from './client'
 import { DEFAULT_TIMEOUT } from './constants'
-import { CONTRACT_ADDRESSES, NETWORK_CONFIG } from './contract-addresses'
-import { type PoolConfig, getPoolInfoFromContract } from './pool-helpers'
+import { contractAddresses } from './contracts'
+import { getPoolInfoFromContract } from './pool-helpers'
 import { submitViaRawRPC, waitForTransaction } from './rpc-transaction-helpers'
 
 /**
@@ -55,7 +54,7 @@ export async function mintPosition({
     const config = poolConfig
 
     const positionManagerClient = getPositionManagerContractClient({
-      contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+      contractId: contractAddresses.POSITION_MANAGER,
       publicKey: sourceAccount,
     })
 
@@ -162,7 +161,7 @@ export async function increaseLiquidity({
 }> {
   try {
     const positionManagerClient = getPositionManagerContractClient({
-      contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+      contractId: contractAddresses.POSITION_MANAGER,
       publicKey: sourceAccount,
     })
 
@@ -264,7 +263,7 @@ export async function decreaseLiquidity({
 }> {
   try {
     const positionManagerClient = getPositionManagerContractClient({
-      contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+      contractId: contractAddresses.POSITION_MANAGER,
       publicKey: sourceAccount,
     })
 
@@ -344,7 +343,7 @@ export async function collectFees({
 }> {
   try {
     const positionManagerClient = getPositionManagerContractClient({
-      contractId: CONTRACT_ADDRESSES.POSITION_MANAGER,
+      contractId: contractAddresses.POSITION_MANAGER,
       publicKey: operator,
     })
 

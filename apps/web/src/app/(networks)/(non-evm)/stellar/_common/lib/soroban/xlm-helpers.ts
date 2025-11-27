@@ -1,5 +1,5 @@
 import { getTokenContractClient } from './client'
-import { CONTRACT_ADDRESSES } from './contract-addresses'
+import { contractAddresses } from './contracts'
 
 /**
  * Get the XLM balance of an address
@@ -9,10 +9,10 @@ import { CONTRACT_ADDRESSES } from './contract-addresses'
 export const getXlmBalance = async (address: string): Promise<bigint> => {
   try {
     console.log('🔍 Fetching XLM balance for:', address)
-    console.log('📝 XLM Contract Address:', CONTRACT_ADDRESSES.TOKENS.XLM)
+    console.log('📝 XLM Contract Address:', contractAddresses.TOKENS.XLM)
 
     const xlmContractClient = getTokenContractClient({
-      contractId: CONTRACT_ADDRESSES.TOKENS.XLM,
+      contractId: contractAddresses.TOKENS.XLM,
       // No publicKey needed for read-only balance queries
     })
 

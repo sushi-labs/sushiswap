@@ -1,8 +1,8 @@
 import * as StellarSdk from '@stellar/stellar-sdk'
 import { Horizon } from '@stellar/stellar-sdk'
-import { NETWORK_CONFIG } from './contract-addresses'
+import { HORIZON_URL, NETWORK_PASSPHRASE } from '../constants'
 
-const horizonServer = new Horizon.Server(NETWORK_CONFIG.HORIZON_URL)
+const horizonServer = new Horizon.Server(HORIZON_URL)
 
 /**
  * Asset type from Horizon API
@@ -169,7 +169,7 @@ export async function createTrustline(
     // Build the transaction
     const transaction = new StellarSdk.TransactionBuilder(account, {
       fee: StellarSdk.BASE_FEE,
-      networkPassphrase: NETWORK_CONFIG.PASSPHRASE,
+      networkPassphrase: NETWORK_PASSPHRASE,
     })
       .addOperation(changeTrustOp)
       .setTimeout(180)
@@ -184,7 +184,7 @@ export async function createTrustline(
     // Parse signed XDR and submit to network
     const signedTx = StellarSdk.TransactionBuilder.fromXDR(
       signedXdr,
-      NETWORK_CONFIG.PASSPHRASE,
+      NETWORK_PASSPHRASE,
     )
     const result = await horizonServer.submitTransaction(signedTx)
 
