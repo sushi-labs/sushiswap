@@ -239,6 +239,37 @@ async function runTest() {
           await sleep(60_000)
         }
 
+        // only for aerodrome slipstream v2 on base
+        if (chainId === ChainId.BASE) {
+          const token = new Token({
+            chainId: ChainId.BASE,
+            address: '0x9126236476eFBA9Ad8aB77855c60eB5BF37586Eb',
+            decimals: 18,
+            symbol: 'CHECK',
+          })
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              token,
+              USDC[chainId as keyof typeof USDC],
+              'CHECK',
+              'USDC',
+            ),
+          )
+
+          foundRouteReports.push(
+            findRoute(
+              dataFetcher,
+              token,
+              USDC[chainId as keyof typeof USDC],
+              chainId,
+              [LiquidityProviders.AerodromeSlipstreamV2],
+            ),
+          )
+          await sleep(60_000)
+        }
+
         // only for horizon on linea
         if (chainId === ChainId.LINEA) {
           const token = new Token({
