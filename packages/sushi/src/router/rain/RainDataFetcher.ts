@@ -396,8 +396,7 @@ export class RainDataFetcher extends DataFetcher {
     let isNewPoolCreated = false
     logs.forEach((log) => {
       this.providers.forEach((p) => {
-        const v = p.processLog(log)
-        if (v) isNewPoolCreated = true
+        if (p.processLog(log)) isNewPoolCreated = true
       })
     })
     const results = await Promise.allSettled(
