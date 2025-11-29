@@ -279,6 +279,7 @@ export class RainDataFetcher extends DataFetcher {
 
   /**
    * Updates the pools data of all the liquidity providers until the given block number
+   * and returns true if there was a new pool deployed and false otherwise
    * @param untilBlock - (optional) The block number to update to, if left undefined,
    * pools data will be updated to latest block number
    */
@@ -395,7 +396,8 @@ export class RainDataFetcher extends DataFetcher {
     let isNewPoolCreated = false
     logs.forEach((log) => {
       this.providers.forEach((p) => {
-        if (p.processLog(log)) isNewPoolCreated = true
+        const v = p.processLog(log);
+        if (v) isNewPoolCreated = true
       })
     })
     const results = await Promise.allSettled(
