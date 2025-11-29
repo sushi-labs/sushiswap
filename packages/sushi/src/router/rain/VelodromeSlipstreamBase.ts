@@ -431,7 +431,7 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
     return existingPools
   }
 
-  override handleFactoryEvents(log: Log) {
+  override handleFactoryEvents(log: Log): boolean {
     const logAddress = log.address.toLowerCase()
     const factory =
       this.factory[this.chainId as keyof typeof this.factory]!.toLowerCase()
@@ -447,8 +447,7 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
         })[0]!
         switch (event.eventName) {
           case 'PoolCreated': {
-            this.nullPools.delete(event.args.pool.toLowerCase())
-            break
+            return this.nullPools.delete(event.args.pool.toLowerCase())
           }
           case 'TickSpacingEnabled': {
             // new tick spacing enabled
@@ -498,6 +497,7 @@ export abstract class VelodromeSlipstreamBaseProvider extends UniswapV3BaseProvi
         }
       } catch {}
     }
+    return false
   }
 
   override async afterProcessLog(untilBlock: bigint) {
