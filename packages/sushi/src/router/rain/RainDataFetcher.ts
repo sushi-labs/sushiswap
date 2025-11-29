@@ -279,10 +279,11 @@ export class RainDataFetcher extends DataFetcher {
 
   /**
    * Updates the pools data of all the liquidity providers until the given block number
+   * and returns true if there was a new pool deployed and false otherwise
    * @param untilBlock - (optional) The block number to update to, if left undefined,
    * pools data will be updated to latest block number
    */
-  async updatePools(untilBlock?: bigint) {
+  async updatePools(untilBlock?: bigint): Promise<boolean> {
     let fromBlock = -1n
     const poolAddresses: string[] = []
     const addresses: string[] = [...this.factories]
@@ -317,8 +318,8 @@ export class RainDataFetcher extends DataFetcher {
         }
       }
     })
-    if (fromBlock === -1n) return
-    if (fromBlock === untilBlock) return
+    if (fromBlock === -1n) return false
+    if (fromBlock === untilBlock) return false
     if (fromBlock > untilBlock) {
       throw [
         'pools data are cached at higher block height than the requested block height',
@@ -329,7 +330,7 @@ export class RainDataFetcher extends DataFetcher {
         `requested block height: ${untilBlock}`,
       ].join(', ')
     }
-    if (!poolAddresses.length) return
+    if (!poolAddresses.length) return false
     addresses.push(...poolAddresses)
 
     // get logs in slices of 5 blocks to follow paging instructions from standard evm rpc specs
@@ -392,9 +393,10 @@ export class RainDataFetcher extends DataFetcher {
     })
 
     // process each log for each provider
+    let isNewPoolCreated = false
     logs.forEach((log) => {
       this.providers.forEach((p) => {
-        p.processLog(log)
+        if (p.processLog(log)) isNewPoolCreated = true
       })
     })
     const results = await Promise.allSettled(
@@ -413,6 +415,7 @@ export class RainDataFetcher extends DataFetcher {
         }
       }
     })
+    return isNewPoolCreated
   }
 
   /**

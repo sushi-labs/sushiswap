@@ -99,15 +99,16 @@ export abstract class UniswapV2BaseProvider extends _UniswapV2BaseProvider {
     return [...this.topPools.values(), onDemandPoolCodes].flat()
   }
 
-  override processLog(log: Log) {
-    this.handleFactoryEvents(log)
+  override processLog(log: Log): boolean {
+    const result = this.handleFactoryEvents(log)
     this.handlePoolEvents(log)
+    return result
   }
 
   /**
    * Handles factory events and updates the cache with the results
    */
-  handleFactoryEvents(log: Log) {
+  handleFactoryEvents(log: Log): boolean {
     const factory =
       this.factory[this.chainId as keyof typeof this.factory]!.toLowerCase()
     const logAddress = log.address.toLowerCase()
@@ -118,9 +119,10 @@ export abstract class UniswapV2BaseProvider extends _UniswapV2BaseProvider {
           abi: this.eventsAbi,
           eventName: 'PairCreated',
         })[0]!
-        this.nullPools.delete(event.args[2].toLowerCase())
+        return this.nullPools.delete(event.args[2].toLowerCase())
       } catch {}
     }
+    return false
   }
 
   /**
