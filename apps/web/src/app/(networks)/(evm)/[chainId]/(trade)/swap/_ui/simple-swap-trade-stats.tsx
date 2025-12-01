@@ -71,6 +71,7 @@ export const SimpleSwapTradeStats: FC = () => {
         swapAmountUsd && token0Usd ? swapAmountUsd?.toString() : 'N/A',
       feeUsd: quote?.fee ? quote.fee : 'N/A',
       recipient: recipient ? recipient : 'N/A',
+      timestamp: new Date().toISOString(),
     })
   }, [
     isCollapsed,
