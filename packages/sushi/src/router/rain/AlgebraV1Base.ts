@@ -220,7 +220,7 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
   }
 
   // handle algebra specific pool creation event
-  override handleFactoryEvents(log: Log) {
+  override handleFactoryEvents(log: Log): boolean {
     const factory =
       this.factory[this.chainId as keyof typeof this.factory]!.toLowerCase()
     const logAddress = log.address.toLowerCase()
@@ -231,9 +231,10 @@ export abstract class AlgebraV1BaseProvider extends UniswapV3BaseProvider {
           abi: AlgebraEventsAbi,
           eventName: 'Pool',
         })[0]!
-        this.nullPools.delete(event.args.pool.toLowerCase())
+        return this.nullPools.delete(event.args.pool.toLowerCase())
       } catch {}
     }
+    return false
   }
 
   // handle extra events that Algebra has

@@ -1,0 +1,38 @@
+name: Git is clean
+on: [push]
+
+concurrency:
+  group: ${{ github.ref }}-git-clean
+  cancel-in-progress: ${{ github.ref != 'refs/heads/rain-fork' }}
+
+jobs:
+  git-clean:
+    permissions:
+      id-token: write
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Install Nix 1/2
+        uses: DeterminateSystems/nix-installer-action@main
+        with:
+          determinate: true
+      - name: Install Nix 2/2
+        uses: DeterminateSystems/flakehub-cache-action@main
+
+      - name: Install deps
+        run: nix develop -c pnpm install --frozen-lockfile
+
+      - name: Build ./packages/sushi
+        run: nix develop -c pnpm exec turbo run build --filter=./packages/sushi
+
+      - name: Lint
+        run: nix develop -c pnpm lint
+
+      - run: git diff --exit-code
+
+      - uses: rainlanguage/github-chore/.github/actions/npm-blacklist@main

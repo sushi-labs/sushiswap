@@ -179,7 +179,9 @@ export abstract class LiquidityProvider {
    * Processes event logs to update pool data
    * @param _log - The event log
    */
-  processLog(_log: Log) {}
+  processLog(_log: Log): boolean {
+    return false
+  }
 
   /**
    * Represents any process that needs to take place after event logs are processed
