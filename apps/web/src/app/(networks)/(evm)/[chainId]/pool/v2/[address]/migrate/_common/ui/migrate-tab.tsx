@@ -461,6 +461,7 @@ export const MigrateTab: FC<{ pool: RawV2Pool }> = withCheckerRoot(
           </div>
           <CardContent className="!pb-0">
             <SelectFeeConcentratedWidget
+              chainId={pool.chainId as SushiSwapV3ChainId}
               setFeeAmount={setFeeAmount}
               feeAmount={feeAmount}
               token0={token0}
