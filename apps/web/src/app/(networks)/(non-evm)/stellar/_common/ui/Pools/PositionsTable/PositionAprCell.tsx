@@ -2,10 +2,10 @@ import { SkeletonText } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { formatPercent } from 'sushi/format'
 import { usePoolLiquidity } from '~stellar/_common/lib/hooks'
+import { useDayVolumeUSD } from '~stellar/_common/lib/hooks/pool/use-pool-daily-volume-usd'
+import { useFeeRate } from '~stellar/_common/lib/hooks/pool/use-pool-fee-rate'
 import { usePositionActiveLiquidity } from '~stellar/_common/lib/hooks/position/use-position-active-liquidity'
-import { useFeeRate } from '~stellar/_common/lib/hooks/useFeeRate'
-import { useDayVolumeUSD } from '~stellar/_common/lib/hooks/useOneDayApr'
-import { usePoolOwnership } from '~stellar/_common/lib/hooks/usePoolOwnership'
+import { usePoolOwnership } from '~stellar/_common/lib/hooks/position/use-position-pool-ownership'
 import type { IPositionRowData } from './PositionsTable'
 
 export const PositionAprCell = ({ data }: { data: IPositionRowData }) => {

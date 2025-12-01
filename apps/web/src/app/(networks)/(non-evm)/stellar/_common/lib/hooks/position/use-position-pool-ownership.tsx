@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import type { Token } from '../types/token.type'
-import { usePoolInfo } from './pool'
-import { useLPUsdValue } from './useLPUsdValue'
+import type { Token } from '../../types/token.type'
+import { usePoolInfo } from '../pool'
+import { useLPUsdValue } from '../pool/use-pool-usd-value'
 
 type UsePoolOwnershipProps = {
   pairAddress: string | undefined | null

@@ -1,6 +1,6 @@
 import { SkeletonText } from '@sushiswap/ui'
 import { formatPercent } from 'sushi/format'
-import { usePoolOwnership } from '~stellar/_common/lib/hooks/usePoolOwnership'
+import { usePoolOwnership } from '~stellar/_common/lib/hooks/position/use-position-pool-ownership'
 import type { IPositionRowData } from './PositionsTable'
 
 export const PositionSizeCell = ({ data }: { data: IPositionRowData }) => {
