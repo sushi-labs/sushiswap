@@ -88,19 +88,16 @@ export const SimpleSwapTradeStats: FC = () => {
   return (
     <>
       <div className="flex items-center justify-between gap-2 text-gray-700 dark:text-slate-400">
-        {!hasValidQuote ? null : token0 && token1 && +swapAmountString > 0 ? (
+        {!hasValidQuote ? null : !isMounted ? (
+          <SkeletonText fontSize="sm" className="!w-[100px]" />
+        ) : token0 && token1 && +swapAmountString > 0 ? (
           <SimpleSwapTokenRate />
         ) : null}
         {!hasValidQuote ? null : loading || !quote?.gasSpentUsd ? (
-          <>
-            {!isMounted ? (
-              <SkeletonText fontSize="sm" className="!w-[100px]" />
-            ) : null}
-            <div className="flex items-center gap-1">
-              <SkeletonBox className="h-5 py-0.5 w-[60px]" />
-              <SkeletonBox className="h-6 py-0.5 w-[26px] !rounded-full" />
-            </div>
-          </>
+          <div className="flex items-center gap-1">
+            <SkeletonBox className="h-5 py-0.5 w-[60px]" />
+            <SkeletonBox className="h-6 py-0.5 w-[26px] !rounded-full" />
+          </div>
         ) : (
           <div className="flex items-center gap-0.5">
             <div
