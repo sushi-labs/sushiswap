@@ -23,7 +23,9 @@ export const SimpleSwapWidget = () => {
         <div className="flex flex-col">
           <SimpleSwapToken1Input />
           <SimpleSwapTradeButton />
-          <SimpleSwapTradeStats />
+          <div className="mt-2">
+            <SimpleSwapTradeStats />
+          </div>
         </div>
       </div>
       <SimpleSwapBanner />
