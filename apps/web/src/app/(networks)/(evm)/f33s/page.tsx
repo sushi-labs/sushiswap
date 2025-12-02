@@ -56,7 +56,9 @@ const isSushiSwapV2ChainId = (
   chainId: number,
 ): chainId is SushiSwapV2ChainId => {
   return (
-    _isSushiSwapV2ChainId(chainId) || isDeprecatedSushiSwapV2ChainId(chainId)
+    (_isSushiSwapV2ChainId(chainId) ||
+      isDeprecatedSushiSwapV2ChainId(chainId)) &&
+    chainId !== EvmChainId.BOKUTO
   )
 }
 
@@ -65,8 +67,9 @@ const isSushiSwapV3ChainId = (
   chainId: number,
 ): chainId is SushiSwapV3ChainId => {
   return (
-    _isSushiSwapV3ChainId(chainId) ||
-    isDeprecatedSushiSwapV3ChainId(chainId as EvmChainId)
+    (_isSushiSwapV3ChainId(chainId) ||
+      isDeprecatedSushiSwapV3ChainId(chainId as EvmChainId)) &&
+    chainId !== EvmChainId.BOKUTO
   )
 }
 
@@ -663,7 +666,7 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
     surplusFeeCollector,
     protocolFeeCollector,
     v2FeeCollector,
-    maker,
+    maker: _maker,
     routeProcessor,
   } = useMemo(() => {
     const initial = {
@@ -944,45 +947,6 @@ const NetworkInfo = ({ chainId }: { chainId: EvmChainId }) => {
                   {isLoading
                     ? 'Loading…'
                     : renderAccount(v2Factory?.feeToSetter)}
-                </List.KeyValue>
-              </List.Control>
-            </List>
-          )}
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {isMakerChainId(chainId) ? (
-              <LinkExternal
-                href={getEvmChainById(chainId).getAccountUrl(
-                  MAKER_ADDRESS[chainId],
-                )}
-              >
-                {chainId === EvmChainId.ETHEREUM ? 'SushiMaker' : 'WETHMaker'}
-              </LinkExternal>
-            ) : (
-              <span className="text-muted-foreground">{'WETHMaker'}</span>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {!isMakerChainId(chainId) ? (
-            <span className="text-sm text-muted-foreground">
-              Not deployed on this network.
-            </span>
-          ) : isError ? (
-            <span className="text-sm text-red-500">
-              Unable to load contract data.
-            </span>
-          ) : (
-            <List>
-              <List.Control>
-                <List.KeyValue title="Owner">
-                  {isLoading ? 'Loading…' : renderAccount(maker?.owner)}
-                </List.KeyValue>
-                <List.KeyValue title="Operator">
-                  {isLoading ? 'Loading…' : renderAccount(maker?.trusted)}
                 </List.KeyValue>
               </List.Control>
             </List>
