@@ -1,5 +1,7 @@
+import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { Currency, List, classNames } from '@sushiswap/ui'
 import { type FC, useCallback, useEffect, useMemo, useRef } from 'react'
+import { getOnchainPriceFromPool } from 'src/lib/pool/blade/utils'
 import { Amount, formatUSD } from 'sushi'
 import type { EvmCurrency } from 'sushi/evm'
 import type { PriceMap } from '~evm/_common/ui/price-provider/price-provider/use-prices'
@@ -8,10 +10,12 @@ import { SingleAssetOption } from './single-asset-option'
 export type RemoveOptionType = 'multiple' | EvmCurrency
 
 export interface RemoveOptionsSelectorProps {
+  pool: BladePool
   tokensToReceive: Array<{
     usdValue: number
     weight: number
-    amount: Amount<EvmCurrency>
+    token: EvmCurrency
+    amount: Amount<EvmCurrency> | null
   }>
   selectedOption: RemoveOptionType
   setSelectedOption: (option: RemoveOptionType) => void
@@ -21,6 +25,7 @@ export interface RemoveOptionsSelectorProps {
 }
 
 export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
+  pool,
   tokensToReceive,
   selectedOption,
   setSelectedOption,
@@ -55,7 +60,7 @@ export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
 
   const allSymbolsCombined = useMemo(() => {
     return tokensToReceive
-      .map((tokenData) => tokenData.amount.currency.wrap().symbol)
+      .map((tokenData) => tokenData.token.wrap().symbol)
       .join('/')
   }, [tokensToReceive])
 
@@ -71,10 +76,14 @@ export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
             Choose your preferred token
           </p>
           {tokensToReceive.flatMap((tokenData) => {
-            const originalCurrency = tokenData.amount.currency
-            const tokenPrice = prices?.get(originalCurrency.wrap().address) || 0
+            const originalCurrency = tokenData.token
+            const tokenPrice =
+              prices?.get(originalCurrency.wrap().address) ??
+              getOnchainPriceFromPool(originalCurrency, pool)
             const tokenAmountValue =
-              tokenPrice > 0 ? estimatedValue / tokenPrice : 0
+              tokenPrice !== null && tokenPrice > 0
+                ? estimatedValue / tokenPrice
+                : null
 
             const currenciesToShow = originalCurrency.isNative
               ? [originalCurrency, originalCurrency.wrap()]
@@ -85,7 +94,9 @@ export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
                 selectedOption !== 'multiple' &&
                 selectedOption?.id === currency.id
 
-              const tokenAmount = Amount.fromHuman(currency, tokenAmountValue)
+              const tokenAmount = tokenAmountValue
+                ? Amount.fromHuman(currency, tokenAmountValue)
+                : null
               return (
                 <SingleAssetOption
                   ref={(el) => {
@@ -132,10 +143,7 @@ export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
                 <div className="flex -space-x-1">
                   <Currency.IconList iconWidth={30} iconHeight={30}>
                     {tokensToReceive.map((tokenData, index) => (
-                      <Currency.Icon
-                        key={index}
-                        currency={tokenData.amount.currency}
-                      />
+                      <Currency.Icon key={index} currency={tokenData.token} />
                     ))}
                   </Currency.IconList>
                 </div>
@@ -160,7 +168,7 @@ export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
                 Composition
               </div>
               {tokensToReceive.map((tokenData, index) => {
-                const wrappedCurrency = tokenData.amount.currency.wrap()
+                const wrappedCurrency = tokenData.token.wrap()
                 return (
                   <List.Item
                     key={index}
@@ -182,11 +190,14 @@ export const RemoveOptionsSelector: FC<RemoveOptionsSelectorProps> = ({
                     value={
                       <div className="text-right flex gap-1">
                         <div className="text-sm font-semibold">
-                          ~{tokenData.amount.toSignificant(4)}{' '}
-                          {wrappedCurrency.symbol}
+                          {tokenData.amount
+                            ? `${tokenData.amount.toSignificant(4)} ${wrappedCurrency.symbol}`
+                            : '-'}
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          ~{formatUSD(tokenData.usdValue)}
+                          {tokenData.usdValue !== null
+                            ? formatUSD(tokenData.usdValue)
+                            : '-'}
                         </div>
                       </div>
                     }

@@ -71,7 +71,7 @@ const isSushiSwapV3ChainId = (
 }
 
 const SLP_CHOMPER_ADDRESS: Record<
-  Exclude<SushiSwapV2ChainId, 11_155_111 | 129399>,
+  Exclude<SushiSwapV2ChainId, 11_155_111 | 129399 | 737373>,
   Address
 > = {
   [EvmChainId.ETHEREUM]: '0x1d2aF2B99e253B68d72C76484DD88FFB0Ace158C',
@@ -113,7 +113,10 @@ const V3_MANAGER_CHAIN_IDS = [
   EvmChainId.CELO,
   EvmChainId.POLYGON_ZKEVM,
 ].filter(
-  (chainId) => chainId !== EvmChainId.TATARA && chainId !== EvmChainId.SEPOLIA,
+  (chainId) =>
+    chainId !== EvmChainId.TATARA &&
+    chainId !== EvmChainId.SEPOLIA &&
+    chainId !== EvmChainId.BOKUTO,
 )
 
 type V3ManagerChainId = (typeof V3_MANAGER_CHAIN_IDS)[number]
@@ -188,6 +191,7 @@ const MAKER_CHAIN_IDS = [
   EvmChainId.OPTIMISM,
   EvmChainId.BOBA,
   EvmChainId.BOBA_BNB,
+  EvmChainId.FUSE,
 ] as const
 
 type MakerChainId = (typeof MAKER_CHAIN_IDS)[number]
@@ -212,6 +216,7 @@ const MAKER_ADDRESS: Record<MakerChainId, Address> = {
   [EvmChainId.SCROLL]: '0x039e87AB90205F9d87c5b40d4B28e2Be45dA4a20',
   [EvmChainId.SONIC]: '0x1B7B944fAc5cCe2a1ee8B63BAa47D31bcBe34709',
   [EvmChainId.KATANA]: '0xDA9C0fAA0D15E4525d3854E58dBdF23C67b3477c',
+  [EvmChainId.FUSE]: '0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5',
   // new
   [EvmChainId.LINEA]: '0x544bA588efD839d2692Fc31EA991cD39993c135F',
   [EvmChainId.THUNDERCORE]: '0x51edb3e5bcE8618B77b60215F84aD3DB14709051',

@@ -23,7 +23,6 @@ export function useTimeout(callback: () => void, delay: number | null): void {
     }, delay)
 
     return () => {
-      console.log('clearing timeout', id)
       clearTimeout(id)
     }
   }, [delay])
