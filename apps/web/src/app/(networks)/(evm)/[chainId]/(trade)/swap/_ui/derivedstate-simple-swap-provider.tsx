@@ -52,6 +52,8 @@ interface State {
     setSwapAmount(swapAmount: string): void
     switchTokens(): void
     setTokenTax(tax: Percent | false | undefined): void
+    setIsDetailsCollapsed(isCollapsed: boolean): void
+    setWasDetailsTouched(wasTouched: boolean): void
   }
   state: {
     token0: EvmCurrency | undefined
@@ -65,6 +67,8 @@ interface State {
   isLoading: boolean
   isToken0Loading: boolean
   isToken1Loading: boolean
+  isDetailsCollapsed: boolean
+  wasDetailsTouched: boolean
 }
 
 const DerivedStateSimpleSwapContext = createContext<State>({} as State)
@@ -91,6 +95,8 @@ const DerivedstateSimpleSwapProvider: FC<
   const [localTokenCache, setLocalTokenCache] = useState<
     Map<string, EvmCurrency>
   >(new Map())
+  const [isDetailsCollapsed, setIsDetailsCollapsed] = useState<boolean>(true)
+  const [wasDetailsTouched, setWasDetailsTouched] = useState<boolean>(false)
 
   const chainId =
     _chainId && isSupportedChainId(+_chainId)
@@ -303,6 +309,8 @@ const DerivedstateSimpleSwapProvider: FC<
             switchTokens,
             setSwapAmount,
             setTokenTax,
+            setIsDetailsCollapsed,
+            setWasDetailsTouched,
           },
           state: {
             recipient: address,
@@ -318,6 +326,8 @@ const DerivedstateSimpleSwapProvider: FC<
           isLoading: token0Loading || token1Loading,
           isToken0Loading: token0Loading,
           isToken1Loading: token1Loading,
+          isDetailsCollapsed,
+          wasDetailsTouched,
         }
       }, [
         address,
@@ -333,6 +343,8 @@ const DerivedstateSimpleSwapProvider: FC<
         token1,
         token1Loading,
         tokenTax,
+        isDetailsCollapsed,
+        wasDetailsTouched,
       ])}
     >
       {children}

@@ -3,6 +3,12 @@
 import { ChevronDownIcon } from '@heroicons/react-v1/solid'
 import { useIsMounted } from '@sushiswap/hooks'
 import {
+  BrowserEvent,
+  InterfaceElementName,
+  InterfaceEventName,
+  TraceEvent,
+} from '@sushiswap/telemetry'
+import {
   Collapsible,
   Explainer,
   IconButton,
@@ -11,14 +17,13 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { GasIcon } from '@sushiswap/ui/icons/GasIcon'
-import React, { useCallback, useState, type FC } from 'react'
-import { logger } from 'src/lib/logger'
+import React, { useEffect, type FC } from 'react'
 import {
   warningSeverity,
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
-import { Amount, ZERO, formatUSD } from 'sushi'
+import { ZERO, formatUSD } from 'sushi'
 import {
   EvmChainId,
   EvmNative,
@@ -27,7 +32,6 @@ import {
 } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
 import { useAccount } from 'wagmi'
-import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
@@ -35,54 +39,31 @@ import {
 import { SimpleSwapTokenRate } from './simple-swap-token-rate'
 
 export const SimpleSwapTradeStats: FC = () => {
-  const [isCollapsed, setIsCollapsed] = useState(true)
   const isMounted = useIsMounted()
   const { address } = useAccount()
   const {
     state: { chainId, swapAmountString, recipient, token0, token1 },
+    isDetailsCollapsed,
+    mutate: { setIsDetailsCollapsed, setWasDetailsTouched },
   } = useDerivedStateSimpleSwap()
   const { isLoading, data: quote } = useSimpleSwapTradeQuote()
-  const { data: prices } = usePrices({ chainId })
 
   const loading = Boolean(isLoading && !quote)
   const hasValidQuote = Boolean(
     +swapAmountString > 0 && quote?.route?.status !== 'NoWay',
   )
 
-  const handleToggleSimpleSwapTradeStatsCollapse = useCallback(() => {
-    setIsCollapsed((prev) => !prev)
-    if (!token0 || !token1 || !hasValidQuote || !isCollapsed) return
-    const token0Usd = prices?.get(token0.wrap().address) ?? 0
-    const swapAmountUsd = Amount.tryFromHuman(
-      token0,
-      swapAmountString,
-    )?.mulHuman(token0Usd)
-
-    logger.info('Expanded Simple Swap Details', {
-      location: 'SimpleSwapTradeStats',
-      action: 'handleToggleSimpleSwapTradeStatsCollapse',
-      chainId: chainId,
-      token0: token0.type === 'native' ? 'native' : token0.address,
-      token0Symbol: token0.symbol,
-      token1: token1.type === 'native' ? 'native' : token1.address,
-      token1Symbol: token1.symbol,
-      swapAmount: swapAmountString,
-      swapAmountUsd:
-        swapAmountUsd && token0Usd ? swapAmountUsd?.toString() : 'N/A',
-      feeUsd: quote?.fee ? quote.fee : 'N/A',
-      recipient: recipient ? recipient : 'N/A',
-      timestamp: new Date().toISOString(),
-    })
+  useEffect(() => {
+    if (!hasValidQuote && !isDetailsCollapsed) {
+      // Auto-collapse details when quote becomes invalid and reset state
+      setIsDetailsCollapsed(true)
+      setWasDetailsTouched(false)
+    }
   }, [
-    isCollapsed,
-    chainId,
-    token0,
-    token1,
-    recipient,
-    quote,
-    swapAmountString,
     hasValidQuote,
-    prices,
+    isDetailsCollapsed,
+    setIsDetailsCollapsed,
+    setWasDetailsTouched,
   ])
 
   return (
@@ -103,7 +84,7 @@ export const SimpleSwapTradeStats: FC = () => {
             <div
               className={classNames(
                 'text-xs font-medium flex items-center, transition-opacity',
-                isCollapsed ? 'opacity-100' : 'opacity-0',
+                isDetailsCollapsed ? 'opacity-100' : 'opacity-0',
               )}
             >
               <GasIcon className="inline-block w-3 h-4 mr-0.5" />
@@ -113,21 +94,35 @@ export const SimpleSwapTradeStats: FC = () => {
                   ? `${formatUSD(quote.gasSpentUsd)}`
                   : null}
             </div>
-            <IconButton
-              icon={ChevronDownIcon}
-              size="xs"
-              name="Toggle Swap Details"
-              onClick={handleToggleSimpleSwapTradeStatsCollapse}
-              className={classNames(
-                isCollapsed ? '' : 'rotate-180',
-                'transition-transform',
-              )}
-              variant="ghost"
-            />
+            <TraceEvent
+              events={[BrowserEvent.onClick]}
+              name={InterfaceEventName.SWAP_DETAILS_TOGGLE_CLICKED}
+              element={InterfaceElementName.SWAP_DETAILS_TOGGLE}
+              properties={{
+                detailsCollapsedState: isDetailsCollapsed ? 'closed' : 'open',
+                feeUsd: quote?.fee ? quote.fee : 'N/A',
+                chainId,
+              }}
+            >
+              <IconButton
+                icon={ChevronDownIcon}
+                size="xs"
+                name="Toggle Swap Details"
+                onClick={() => {
+                  setIsDetailsCollapsed(!isDetailsCollapsed)
+                  setWasDetailsTouched(true)
+                }}
+                className={classNames(
+                  isDetailsCollapsed ? '' : 'rotate-180',
+                  'transition-transform',
+                )}
+                variant="ghost"
+              />
+            </TraceEvent>
           </div>
         )}
       </div>
-      <Collapsible open={hasValidQuote && !isCollapsed}>
+      <Collapsible open={hasValidQuote && !isDetailsCollapsed}>
         <div className="pt-2 w-full flex flex-col gap-1">
           <div className="flex justify-between items-center gap-2">
             <span className="text-sm text-gray-700 dark:text-slate-400">
