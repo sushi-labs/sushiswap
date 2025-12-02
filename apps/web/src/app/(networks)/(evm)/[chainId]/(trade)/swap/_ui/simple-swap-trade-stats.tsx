@@ -32,6 +32,7 @@ import {
 } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
 import { useAccount } from 'wagmi'
+import { useDetailsInteractionTracker } from '../../_ui/details-interaction-tracker-provider'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
@@ -43,9 +44,15 @@ export const SimpleSwapTradeStats: FC = () => {
   const { address } = useAccount()
   const {
     state: { chainId, swapAmountString, recipient, token0, token1 },
-    isDetailsCollapsed,
-    mutate: { setIsDetailsCollapsed, setWasDetailsTouched },
   } = useDerivedStateSimpleSwap()
+  const {
+    state: { isDetailsCollapsed },
+    mutate: {
+      setIsDetailsCollapsed,
+      setWasDetailsTouched,
+      resetDetailsTrackedState,
+    },
+  } = useDetailsInteractionTracker()
   const { isLoading, data: quote } = useSimpleSwapTradeQuote()
 
   const loading = Boolean(isLoading && !quote)
@@ -56,15 +63,9 @@ export const SimpleSwapTradeStats: FC = () => {
   useEffect(() => {
     if (!hasValidQuote && !isDetailsCollapsed) {
       // Auto-collapse details when quote becomes invalid and reset state
-      setIsDetailsCollapsed(true)
-      setWasDetailsTouched(false)
+      resetDetailsTrackedState()
     }
-  }, [
-    hasValidQuote,
-    isDetailsCollapsed,
-    setIsDetailsCollapsed,
-    setWasDetailsTouched,
-  ])
+  }, [hasValidQuote, isDetailsCollapsed, resetDetailsTrackedState])
 
   return (
     <>

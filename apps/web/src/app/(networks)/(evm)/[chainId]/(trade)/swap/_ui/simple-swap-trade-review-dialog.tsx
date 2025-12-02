@@ -68,6 +68,7 @@ import {
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
+import { useDetailsInteractionTracker } from '../../_ui/details-interaction-tracker-provider'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTrade,
@@ -95,10 +96,12 @@ const _SimpleSwapTradeReviewDialog: FC<{
 }> = ({ children }) => {
   const {
     state: { token0, token1, chainId, swapAmount, recipient },
-    isDetailsCollapsed,
-    wasDetailsTouched,
-    mutate: { setSwapAmount, setIsDetailsCollapsed, setWasDetailsTouched },
+    mutate: { setSwapAmount },
   } = useDerivedStateSimpleSwap()
+  const {
+    state: { isDetailsCollapsed, wasDetailsTouched },
+    mutate: { resetDetailsTrackedState },
+  } = useDetailsInteractionTracker()
 
   const { approved } = useApproved(APPROVE_TAG_SWAP)
   const [slippagePercent] = useSlippageTolerance()
@@ -267,8 +270,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
       } finally {
         setSwapAmount('')
         refetchBalances(chainId)
-        setIsDetailsCollapsed(true)
-        setWasDetailsTouched(false)
+        resetDetailsTrackedState()
       }
     },
     [
@@ -283,10 +285,9 @@ const _SimpleSwapTradeReviewDialog: FC<{
       trace,
       prices,
       recipient,
-      setIsDetailsCollapsed,
+      resetDetailsTrackedState,
       isDetailsCollapsed,
       wasDetailsTouched,
-      setWasDetailsTouched,
     ],
   )
 
