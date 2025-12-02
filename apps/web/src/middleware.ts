@@ -31,8 +31,7 @@ async function _middleware(req: NextRequest) {
   const { pathname, searchParams, search } = req.nextUrl
 
   if (pathname.includes('/portal') || pathname.startsWith('/portal/')) {
-    //brief test
-    if (process.env.VERCEL_ENV === 'preview') {
+    if (process.env.VERCEL_ENV === 'production') {
       //@dev VERCEL_ENV can be either production, preview, or development
       //@dev using VERCEL_ENV so that local development and preview deployments can access portal
       //@dev currently portal is not ready and we should not be showing it to users on prod
