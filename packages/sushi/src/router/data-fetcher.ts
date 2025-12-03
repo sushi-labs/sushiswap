@@ -3,6 +3,7 @@ import { ChainId, TestnetChainId } from '../chain/index.js'
 import { publicClientConfig } from '../config/index.js'
 import { Type } from '../currency/index.js'
 import { AerodromeSlipstreamProvider } from './liquidity-providers/AerodromeSlipstream.js'
+import { AerodromeSlipstreamV2Provider } from './liquidity-providers/AerodromeSlipstreamV2.js'
 import { AlienBaseV2Provider } from './liquidity-providers/AlienBaseV2.js'
 import { AlienBaseV3Provider } from './liquidity-providers/AlienBaseV3.js'
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap.js'
@@ -187,6 +188,7 @@ export class DataFetcher {
     this.providers = [new NativeWrapProvider(this.chainId, this.web3Client)]
     ;[
       AerodromeSlipstreamProvider,
+      AerodromeSlipstreamV2Provider,
       AlienBaseV2Provider,
       AlienBaseV3Provider,
       ApeSwapProvider,
