@@ -29,7 +29,6 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.TATARA,
   ChainId.SEPOLIA,
   ChainId.BOKUTO,
-  ChainId.KADENA,
 ] as const
 
 export const BLADE_SUPPORTED_NETWORKS = BLADE_SUPPORTED_CHAIN_IDS.filter(
@@ -142,7 +141,6 @@ const UNSORTED_SUPPORTED_NETWORKS = [
   ...SUPPORTED_CHAIN_IDS,
   MvmChainId.APTOS,
   TvmChainId.TRON,
-  KvmChainId.KADENA,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
@@ -162,7 +160,6 @@ const UNSORTED_POOL_SUPPORTED_NETWORKS = [
   ...PoolChainIds,
   MvmChainId.APTOS,
   TvmChainId.TRON,
-  KvmChainId.KADENA,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
