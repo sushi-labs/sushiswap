@@ -45,7 +45,7 @@ export const sendDrilldownLog = async ({
       body: JSON.stringify(logs),
     })
     if (!res.ok && process.env.NODE_ENV !== 'production') {
-      console.error('Loki logging failed:', res.status, await res.text())
+      console.error('Loki logging failed:', res?.status, await res?.text())
     }
   } catch (err) {
     console.error('Error logging to Grafana Loki:', err)
