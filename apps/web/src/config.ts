@@ -40,15 +40,15 @@ export const NEW_CHAIN_IDS = [EvmChainId.MONAD] as const
 
 export const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
-  ChainId.HEMI,
   ChainId.ETHEREUM,
   ChainId.KATANA,
   ChainId.ARBITRUM,
   ChainId.BASE,
   ChainId.POLYGON,
-  ChainId.LINEA,
   ChainId.BSC,
   ChainId.OPTIMISM,
+  ChainId.HEMI,
+  ChainId.LINEA,
   ChainId.FILECOIN,
   ChainId.ROOTSTOCK,
   ChainId.FANTOM,
