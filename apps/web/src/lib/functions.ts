@@ -1,7 +1,7 @@
 import { Amount, Price } from 'sushi'
 import {
   DAI,
-  type EvmChainId,
+  EvmChainId,
   EvmNative,
   EvmToken,
   type Incentive,
@@ -21,6 +21,12 @@ import {
 import { Bound } from './constants'
 import type { useTicks } from './hooks'
 import type { TickProcessed } from './pool/v3/use-concentrated-active-liquidity'
+
+const KATANA_HOT_FIX_ENABLED = true
+
+export const isKatanaRewardsHotfixEnabled = (chainId: EvmChainId) => {
+  return chainId === EvmChainId.KATANA && KATANA_HOT_FIX_ENABLED
+}
 
 export const isSushiSwapV2Pool = (
   pool: SushiSwapV2Pool | null,

@@ -8,7 +8,8 @@ import {
   PopoverTrigger,
   Separator,
 } from '@sushiswap/ui'
-import type { FC, ReactNode } from 'react'
+import { type FC, type ReactNode, useMemo } from 'react'
+import { isKatanaRewardsHotfixEnabled } from 'src/lib/functions'
 import { formatPercent } from 'sushi'
 import type {
   PoolIfIncentivized,
@@ -25,7 +26,12 @@ interface APRHoverCardProps {
 }
 
 export const APRHoverCard: FC<APRHoverCardProps> = ({ children, pool }) => {
-  const feeApr1d = pool.feeApr1d
+  const shouldHideFeeApr = useMemo(
+    () => isKatanaRewardsHotfixEnabled(pool.chainId),
+    [pool.chainId],
+  )
+
+  const feeApr1d = shouldHideFeeApr ? 0 : pool.feeApr1d
 
   const totalAPR = (feeApr1d + pool.incentiveApr) * 100
 
@@ -39,14 +45,16 @@ export const APRHoverCard: FC<APRHoverCardProps> = ({ children, pool }) => {
           change.
         </CardDescription>
         <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between gap-1">
-            <span className="flex flex-grow text-sm text-muted-foreground">
-              Fees
-            </span>
-            <span className="text-sm text-right">
-              {formatPercent(pool.feeApr1d)}
-            </span>
-          </div>
+          {shouldHideFeeApr ? null : (
+            <div className="flex items-center justify-between gap-1">
+              <span className="flex flex-grow text-sm text-muted-foreground">
+                Fees
+              </span>
+              <span className="text-sm text-right">
+                {formatPercent(pool.feeApr1d)}
+              </span>
+            </div>
+          )}
 
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between gap-1">

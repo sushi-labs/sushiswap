@@ -9,7 +9,8 @@ import {
   PopoverTrigger,
 } from '@sushiswap/ui'
 import type { FC, ReactNode } from 'react'
-import React from 'react'
+import React, { useMemo } from 'react'
+import { isKatanaRewardsHotfixEnabled } from 'src/lib/functions'
 import { formatPercent } from 'sushi'
 
 interface APRWithRewardsHoverCardProps {
@@ -22,7 +23,12 @@ export const APRWithRewardsHoverCard: FC<APRWithRewardsHoverCardProps> = ({
   children,
   pool,
 }) => {
-  const feeApr1d = pool.feeApr1d
+  const shouldHideFeeApr = useMemo(
+    () => isKatanaRewardsHotfixEnabled(pool.chainId),
+    [pool.chainId],
+  )
+
+  const feeApr1d = shouldHideFeeApr ? 0 : pool.feeApr1d
 
   const totalAPR = (feeApr1d + pool.incentiveApr) * 100
 
@@ -35,14 +41,16 @@ export const APRWithRewardsHoverCard: FC<APRWithRewardsHoverCardProps> = ({
           the last 24 hours. The APR displayed is algorithmic and subject to
           change.
         </span>
-        <div className="flex flex-col gap-6 px-4 py-2 bg-background rounded-xl">
+        <div className="flex flex-col gap-6 px-4 pb-2 pt-3 bg-background rounded-xl">
           <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between gap-1">
-              <span className="font-medium">Fees</span>
-              <span className="text-muted-foreground">
-                {formatPercent(pool.feeApr1d)}
-              </span>
-            </div>
+            {shouldHideFeeApr ? null : (
+              <div className="flex items-center justify-between gap-1">
+                <span className="font-medium">Fees</span>
+                <span className="text-muted-foreground">
+                  {formatPercent(pool.feeApr1d)}
+                </span>
+              </div>
+            )}
             <div className="flex items-center justify-between gap-1">
               <span className="font-medium ">Rewards</span>
               <span className="text-muted-foreground">

@@ -8,7 +8,8 @@ import {
   classNames,
   typographyVariants,
 } from '@sushiswap/ui'
-import React, { type FC } from 'react'
+import React, { useMemo, type FC } from 'react'
+import { isKatanaRewardsHotfixEnabled } from 'src/lib/functions'
 import { formatPercent } from 'sushi'
 import {
   type EvmAddress,
@@ -42,6 +43,11 @@ export const PoolHeader: FC<PoolHeader> = ({
 }) => {
   const token0 = unwrapEvmToken(new EvmToken(pool.token0))
   const token1 = unwrapEvmToken(new EvmToken(pool.token1))
+
+  const shouldHideFeeApr = useMemo(
+    () => isKatanaRewardsHotfixEnabled(pool.chainId),
+    [pool.chainId],
+  )
 
   return (
     <div className="flex flex-col gap-6">
@@ -118,7 +124,9 @@ export const PoolHeader: FC<PoolHeader> = ({
 
             <APRHoverCard pool={pool}>
               <span className="underline decoration-dotted underline-offset-2">
-                {formatPercent((apy.fees || 0) + (apy.rewards || 0))}
+                {formatPercent(
+                  (shouldHideFeeApr ? 0 : apy.fees || 0) + (apy.rewards || 0),
+                )}
               </span>
             </APRHoverCard>
           </div>
