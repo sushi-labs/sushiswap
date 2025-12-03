@@ -30,7 +30,11 @@ export const sendDrilldownLog = async ({
   const logs = {
     streams: [
       {
-        stream: { Language: 'NodeJS', source: 'Code' },
+        stream: {
+          Language: 'NodeJS',
+          source: 'Code',
+          service_name: 'sushiswap:web',
+        },
         values: [valuesArr],
       },
     ],
