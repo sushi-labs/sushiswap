@@ -10,13 +10,22 @@ import {
 import type { SortingState, TableState } from '@tanstack/react-table'
 import { useCallback, useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/ui/pool'
-import { useAllPools } from '~stellar/_common/lib/hooks/pool/use-pool-info'
-import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
-import { SIMPLE_COLUMNS } from './columns-simple'
+import {
+  type TopPool,
+  useTopPools,
+} from '~stellar/_common/lib/hooks/pool/use-top-pools'
+import {
+  APR_COLUMN,
+  FEES_1D_COLUMN,
+  NAME_COLUMN,
+  TRANSACTIONS_1D_COLUMN,
+  TVL_COLUMN,
+  VOLUME_1D_COLUMN,
+} from './columns'
 
 export const PoolsTable = () => {
   // Dynamic page links
-  const rowLink = useCallback((row: PoolInfo) => {
+  const rowLink = useCallback((row: TopPool) => {
     return `/stellar/pool/${row.address}`
   }, [])
 
@@ -26,18 +35,20 @@ export const PoolsTable = () => {
   ])
 
   // Get the pool data
-  const { data: pools, isLoading } = useAllPools()
+  const { data: topPools, isLoading: isLoadingTopPools } = useTopPools()
+
+  const isLoading = isLoadingTopPools
 
   const { tokenSymbols } = usePoolFilters()
 
   const filteredPools = useMemo(() => {
-    if (!pools) {
-      return [] as PoolInfo[]
+    if (!topPools) {
+      return []
     }
     if (tokenSymbols.length === 0) {
-      return pools
+      return topPools ?? []
     }
-    return pools.filter((pool) => {
+    return topPools.filter((pool) => {
       const poolSearchTermsCaseInsensitive = [
         pool.token0.code.toLowerCase(),
         pool.token1.code.toLowerCase(),
@@ -56,7 +67,7 @@ export const PoolsTable = () => {
         )
       })
     })
-  }, [pools, tokenSymbols])
+  }, [topPools, tokenSymbols])
 
   const state: Partial<TableState> = useMemo(() => {
     return {
@@ -91,7 +102,14 @@ export const PoolsTable = () => {
         onSortingChange={setSorting}
         loading={isLoading}
         linkFormatter={rowLink}
-        columns={SIMPLE_COLUMNS}
+        columns={[
+          NAME_COLUMN,
+          TVL_COLUMN,
+          VOLUME_1D_COLUMN,
+          FEES_1D_COLUMN,
+          TRANSACTIONS_1D_COLUMN,
+          APR_COLUMN,
+        ]}
         data={filteredPools ?? []}
       />
     </Card>

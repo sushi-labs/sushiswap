@@ -6,7 +6,7 @@ import { type OracleHints, fetchOracleHints } from '../utils/slot-hint-helpers'
 import { TICK_SPACINGS } from '../utils/ticks'
 import { getPoolContractClient } from './client'
 import { DEFAULT_TIMEOUT } from './constants'
-import { discoverAllPools } from './dex-factory-helpers'
+import { getPoolsForStaticTokenPairs } from './dex-factory-helpers'
 import { isPoolInitialized } from './pool-initialization'
 import {
   getTokenBalance,
@@ -90,22 +90,17 @@ export async function getPoolInfoFromContract(
   }
 }
 /**
- * Get all available pools with real-time data
+ * Get all available pools for static hard-coded tokens with real-time data
  * Queries factory.get_pool() for all token pair + fee tier combinations
  * (Factory has no "list all pools" method, so we query each combination)
  * @returns Array of pool information with actual liquidity and reserves
+ * @deprecated Use getTopNonEvmPools instead
  */
-export async function getAllPools(): Promise<PoolInfo[]> {
+export async function getAllStaticTokenPools(): Promise<PoolInfo[]> {
   try {
-    const poolAddresses = await discoverAllPools()
-
-    if (poolAddresses.length === 0) {
-      console.warn('⚠️ No pools found from factory')
-      return []
-    }
-
+    const staticPoolAddresses = await getPoolsForStaticTokenPairs()
     // Fetch detailed info for each pool in parallel
-    const poolPromises = poolAddresses.map(async (address) => {
+    const staticPoolInfoPromises = staticPoolAddresses.map(async (address) => {
       try {
         // First check if the pool is initialized
         const initialized = await isPoolInitialized(address)
@@ -121,16 +116,14 @@ export async function getAllPools(): Promise<PoolInfo[]> {
         return null
       }
     })
-
-    const results = await Promise.all(poolPromises)
-    const validPools = results.filter((pool) => pool !== null)
-
-    console.log(
-      `✅ Successfully loaded ${validPools.length}/${poolAddresses.length} pools (${poolAddresses.length - validPools.length} empty/uninitialized pools skipped)`,
+    const staticPoolInfoResults = await Promise.all(staticPoolInfoPromises)
+    const filteredStaticPoolInfoResults = staticPoolInfoResults.filter(
+      (pool) => pool !== null,
     )
-    return validPools
+
+    return filteredStaticPoolInfoResults
   } catch (error) {
-    console.error('❌ Error in getAllPools:', error)
+    console.error('❌ Error in getAllStaticTokenPools:', error)
     return []
   }
 }

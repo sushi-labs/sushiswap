@@ -3,20 +3,36 @@ import {
   getTopNonEvmPools,
 } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
+import type { Token } from '../../types/token.type'
+import { useCommonTokens } from '../token'
 
-interface UseTopPools {
-  enabled?: boolean
-}
+export type TopPool = TopNonEvmPools[number] & { token0: Token; token1: Token }
 
-export type TopPool = TopNonEvmPools[number]
-
-export function useTopPools(
-  { enabled = true }: UseTopPools = { enabled: true },
-) {
-  // TODO(ben): Replace 'tron' with 'stellar' when supported in the graph client
-  return useQuery({
-    queryKey: ['pools', { chainId: 'tron' }],
-    queryFn: async () => await getTopNonEvmPools({ chainId: 'tron' }),
-    enabled: Boolean(enabled),
+export function useTopPools() {
+  const {
+    data: tokens,
+    isLoading: isLoadingTokens,
+    isPending: isPendingTokens,
+  } = useCommonTokens()
+  const tokenKey = tokens
+    ? Object.keys(tokens).toSorted().join(',')
+    : 'no-tokens'
+  return useQuery<TopPool[]>({
+    queryKey: ['pools', { chainId: 'stellar' }, tokenKey],
+    queryFn: async () => {
+      if (!tokens) {
+        return []
+      }
+      const topPools = await getTopNonEvmPools({
+        chainId: 'stellar',
+      })
+      const topPoolsWithTokens = topPools.map((pool) => ({
+        ...pool,
+        token0: tokens[pool.token0Address]!,
+        token1: tokens[pool.token1Address]!,
+      }))
+      return topPoolsWithTokens
+    },
+    enabled: !isLoadingTokens && !isPendingTokens,
   })
 }

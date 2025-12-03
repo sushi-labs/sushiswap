@@ -310,8 +310,9 @@ export async function getPoolTransactionBuilder({
 /**
  * Get all pools by querying factory's get_pool for each token pair + fee combination
  * Uses prepopulated token list since factory has no "list all pools" method
+ * @deprecated Use getTopNonEvmPools instead
  */
-export async function getPoolsForBaseTokenPairs(): Promise<string[]> {
+export async function getPoolsForStaticTokenPairs(): Promise<string[]> {
   const tokens = getBaseTokens()
   const feeTiers = await getFees()
 
@@ -414,25 +415,6 @@ export async function getPoolsForBaseTokenPairs(): Promise<string[]> {
       }
     }
   }
-  return pools
-}
-
-/**
- * Discover all pools by querying factory.get_pool() for each token pair combination
- * Note: Factory has no "list all pools" method, so we query each combination explicitly
- * @returns Array of pool addresses that exist
- */
-export async function discoverAllPools(): Promise<string[]> {
-  console.log('🔍 Discovering pools via factory.get_pool() queries...')
-
-  // Query factory for all token pair + fee tier combinations
-  const pools = await getPoolsForBaseTokenPairs()
-
-  console.log(`🏭 Discovery complete: ${pools.length} pools found`)
-  if (pools.length > 0) {
-    console.log('  Pool addresses:', pools)
-  }
-
   return pools
 }
 
@@ -544,24 +526,4 @@ export async function debugCreatePoolParams(
   } catch (error) {
     console.error('\n❌ Factory simulation failed:', error)
   }
-}
-
-/**
- * Validate that a fee tier is supported
- * @param fee - Fee amount to validate
- * @returns True if fee is supported, false otherwise
- */
-export function isFeeTierSupported(fee: number): boolean {
-  const feeTiers = getFeeTiers()
-  return fee in feeTiers
-}
-
-/**
- * Get the tick spacing for a given fee tier
- * @param fee - Fee amount
- * @returns The tick spacing for the fee tier
- */
-export async function getTickSpacingForFee(fee: number): Promise<number> {
-  const feeTiers = await getFeeTiers()
-  return feeTiers[fee] || 0
 }
