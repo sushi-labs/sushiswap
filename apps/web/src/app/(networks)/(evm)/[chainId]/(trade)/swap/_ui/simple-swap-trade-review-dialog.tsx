@@ -247,6 +247,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                   feeUsd: swapDetails.feeUsd,
                   chainId: swapDetails.chainId,
                   wasDetailsTouched: swapDetails.wasDetailsTouched,
+                  recipient: swapDetails.recipient,
                 },
               })
             }
