@@ -25,6 +25,9 @@ export * from '@stellar/stellar-sdk'
 export * as contract from '@stellar/stellar-sdk/contract'
 export * as rpc from '@stellar/stellar-sdk/rpc'
 
+// Type alias for missing contract-specific type
+export type SqrtPriceX96 = u256;
+
 if (typeof window !== 'undefined') {
   //@ts-ignore Buffer exists
   window.Buffer = window.Buffer || Buffer;
@@ -32,9 +35,9 @@ if (typeof window !== 'undefined') {
 
 
 export const networks = {
-  testnet: {
-    networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CD4UP34V73ZGPIHJIMCBNZBZEWF7C53WKOBTKOTBRI4WZB6PW5EGPP3W",
+  unknown: {
+    networkPassphrase: "Public Global Stellar Network ; September 2015",
+    contractId: "CBYSB6TYJWFDANJ53VXMJOKUUE62DRAXXSEPDA57XTGFZRDAFN27D4Y3",
   }
 } as const
 
@@ -507,10 +510,6 @@ export type FixedPoint128 = readonly [u256];
  */
 export type FixedPoint96 = readonly [u256];
 
-/**
- * Square root price in Q64.96 format (U256)
- */
-export type SqrtPriceX96 = u256;
 
 export interface SwapStepResult {
   amount_in: u256;

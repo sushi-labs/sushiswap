@@ -25,6 +25,25 @@ export * from '@stellar/stellar-sdk'
 export * as contract from '@stellar/stellar-sdk/contract'
 export * as rpc from '@stellar/stellar-sdk/rpc'
 
+// Type aliases for missing contract-specific types
+export type SqrtPriceX96 = u256;
+export type CountryCode = string;
+
+// PositionTuple is the return type of positions() - matches UserPositionInfo structure
+export interface PositionTuple {
+  nonce: u64;
+  token0: string;
+  token1: string;
+  fee: u32;
+  tickLower: i32;
+  tickUpper: i32;
+  liquidity: u128;
+  feeGrowthInside0LastX128: u256;
+  feeGrowthInside1LastX128: u256;
+  tokensOwed0: u128;
+  tokensOwed1: u128;
+}
+
 if (typeof window !== 'undefined') {
   //@ts-ignore Buffer exists
   window.Buffer = window.Buffer || Buffer;
@@ -32,9 +51,9 @@ if (typeof window !== 'undefined') {
 
 
 export const networks = {
-  testnet: {
-    networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CA2R2YSRFYLBGXOMIGPH2PSBH4GTZD3HJ34UUBT5OK3V6776UUTJJVMM",
+  unknown: {
+    networkPassphrase: "Public Global Stellar Network ; September 2015",
+    contractId: "CBQ5FHBALQNHTMPM7SEBCU24YKW36LW5GSC47OG7G7DUCHMU4DYGO2FA",
   }
 } as const
 
@@ -42,7 +61,15 @@ export const networks = {
 export interface Slot0Return {
   sqrt_price_x96: u256;
   tick: i32;
-  unlocked: boolean;
+}
+
+
+/**
+ * Oracle hints for deterministic footprint (must match pool's OracleHints)
+ */
+export interface OracleHints {
+  checkpoint: u32;
+  slot: u128;
 }
 
 
@@ -81,6 +108,15 @@ export interface TickInfoReturn {
   sec_per_liquidity_outside_x128: FixedPoint128;
   seconds_outside: u32;
   tick_cumulative_outside: i64;
+}
+
+
+export interface PositionFeeDataReturn {
+  fee_growth_global_0_x128: FixedPoint128;
+  fee_growth_global_1_x128: FixedPoint128;
+  slot0: Slot0Return;
+  tick_lower_info: TickInfoReturn;
+  tick_upper_info: TickInfoReturn;
 }
 
 
@@ -189,7 +225,30 @@ export interface UserPositionInfo {
 /**
  * Storage keys for the contract
  */
-export type DataKey = {tag: "HookModules", values: readonly [ComplianceHook]} | {tag: "Factory", values: void} | {tag: "XlmAddress", values: void} | {tag: "TokenDescriptor", values: void} | {tag: "Position", values: readonly [u32]} | {tag: "PoolIdToPoolKey", values: readonly [u32]} | {tag: "PoolIdsByAddress", values: readonly [string]} | {tag: "PoolIdToAddress", values: readonly [u32]} | {tag: "NextPoolId", values: void} | {tag: "NextTokenId", values: void} | {tag: "UserTokenIds", values: readonly [string]} | {tag: "OperatorApprovals", values: readonly [string, string]};
+export type PositionManagerDataKey = {tag: "Factory", values: void} | {tag: "XlmAddress", values: void} | {tag: "TokenDescriptor", values: void} | {tag: "Position", values: readonly [u32]} | {tag: "PoolIdToPoolKey", values: readonly [u32]} | {tag: "PoolIdsByAddress", values: readonly [string]} | {tag: "PoolIdToAddress", values: readonly [u32]} | {tag: "NextPoolId", values: void} | {tag: "NextTokenId", values: void} | {tag: "UserTokenIds", values: readonly [string]};
+
+/**
+ * Error codes for the periphery libraries
+ */
+export const PeripheryLibraryErrors = {
+  /**
+   * Hex string length is insufficient for the requested conversion
+   */
+  2001: {message:"HexLengthInsufficient"},
+  /**
+   * mul_div operation failed in liquidity calculation
+   */
+  2002: {message:"MulDivFailed"},
+  /**
+   * Invalid price range (division by zero)
+   */
+  2003: {message:"InvalidPriceRange"},
+  /**
+   * U256 to u128 conversion failed (overflow)
+   */
+  2004: {message:"U256ToU128ConversionFailed"}
+}
+
 
 /**
  * Parameters required to construct a token URI (see original Solidity code for semantics)
@@ -229,7 +288,7 @@ weight: u128;
 /**
  * Error codes for the periphery base contract
  */
-export const Errors = {
+export const PeripheryBaseErrors = {
   /**
    * Transaction has exceeded the deadline
    */
@@ -313,24 +372,21 @@ export const Errors = {
   /**
    * Position must have zero liquidity and no owed tokens before burning
    */
-  1021: {message:"PositionNotCleared"},
-  /**
-   * Hex string length is insufficient for the requested conversion
-   */
-  2001: {message:"HexLengthInsufficient"},
-  /**
-   * mul_div operation failed in liquidity calculation
-   */
-  2002: {message:"MulDivFailed"},
-  /**
-   * Invalid price range (division by zero)
-   */
-  2003: {message:"InvalidPriceRange"},
-  /**
-   * U256 to u128 conversion failed (overflow)
-   */
-  2004: {message:"U256ToU128ConversionFailed"}
+  1021: {message:"PositionNotCleared"}
 }
+
+/**
+ * Combined error codes for backwards compatibility
+ */
+export const Errors = {
+  ...PeripheryLibraryErrors,
+  ...PeripheryBaseErrors,
+}
+
+/**
+ * Keys under which we'll store the immutable fields
+ */
+export type ImmutableFieldsDataKey = {tag: "Factory", values: void} | {tag: "XlmAddress", values: void};
 
 /**
  * Storage keys for the data associated with the allowlist extension
@@ -755,6 +811,16 @@ export const ClaimTopicsAndIssuersError = {
   376: {message:"ClaimTopicsSetCannotBeEmpty"}
 }
 
+
+
+
+
+
+/**
+ * Storage keys for the modular compliance contract.
+ */
+export type ComplianceDataKey = {tag: "HookModules", values: readonly [ComplianceHook]};
+
 /**
  * Hook types for modular compliance system.
  * 
@@ -873,7 +939,7 @@ export const ClaimsError = {
 }
 
 
-export type CountryCode = string;
+
 
 /**
  * Represents the type of identity holder
@@ -1161,7 +1227,6 @@ export type FixedPoint128 = readonly [u256];
  */
 export type FixedPoint96 = readonly [u256];
 
-export type SqrtPriceX96 = readonly [u256];
 
 export interface SwapStepResult {
   amount_in: u256;
@@ -1170,19 +1235,6 @@ export interface SwapStepResult {
   sqrt_ratio_next: SqrtPriceX96;
 }
 
-export interface PositionTuple {
-  nonce: u64;
-  token0: string;
-  token1: string;
-  fee: u32;
-  tickLower: i32;
-  tickUpper: i32;
-  liquidity: u128;
-  feeGrowthInside0LastX128: u256;
-  feeGrowthInside1LastX128: u256;
-  tokensOwed0: u128;
-  tokensOwed1: u128;
-}
 
 /**
  * 512-bit unsigned integer
@@ -1541,9 +1593,13 @@ export interface Client {
   /**
    * Construct and simulate a approve_for_all transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Set or revoke approval for an operator to manage all of the owner's NFTs
-   * Mirrors ERC-721 setApprovalForAll
+   * Delegates to Base NFT contract's approve_for_all functionality
+   * 
+   * # Arguments
+   * * `live_until_ledger` - The ledger number at which the approval expires.
+   * If `0`, the approval is revoked.
    */
-  approve_for_all: ({owner, operator, approved}: {owner: string, operator: string, approved: boolean}, options?: {
+  approve_for_all: ({owner, operator, live_until_ledger}: {owner: string, operator: string, live_until_ledger: u32}, options?: {
     /**
      * The fee to pay for the transaction. Default: BASE_FEE
      */
@@ -1562,7 +1618,8 @@ export interface Client {
 
   /**
    * Construct and simulate a is_approved_for_all transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
-   * Returns true if operator is approved to manage all of the owner’s NFTs
+   * Returns true if operator is approved to manage all of the owner's NFTs
+   * Delegates to Base NFT contract's is_approved_for_all functionality
    */
   is_approved_for_all: ({owner, operator}: {owner: string, operator: string}, options?: {
     /**
@@ -1870,10 +1927,12 @@ export class Client extends ContractClient {
   }
   constructor(public readonly options: ContractClientOptions) {
     super(
-      new ContractSpec([ "AAAAAQAAAAAAAAAAAAAAC1Nsb3QwUmV0dXJuAAAAAAMAAAAAAAAADnNxcnRfcHJpY2VfeDk2AAAAAAAMAAAAAAAAAAR0aWNrAAAABQAAAAAAAAAIdW5sb2NrZWQAAAAB",
+      new ContractSpec([ "AAAAAQAAAAAAAAAAAAAAC1Nsb3QwUmV0dXJuAAAAAAIAAAAAAAAADnNxcnRfcHJpY2VfeDk2AAAAAAAMAAAAAAAAAAR0aWNrAAAABQ==",
+        "AAAAAQAAAEhPcmFjbGUgaGludHMgZm9yIGRldGVybWluaXN0aWMgZm9vdHByaW50IChtdXN0IG1hdGNoIHBvb2wncyBPcmFjbGVIaW50cykAAAAAAAAAC09yYWNsZUhpbnRzAAAAAAIAAAAAAAAACmNoZWNrcG9pbnQAAAAAAAQAAAAAAAAABHNsb3QAAAAK",
         "AAAAAQAAAAAAAAAAAAAAGERlc2NyaXB0b3JUb2tlblVSSVBhcmFtcwAAAA0AAAAAAAAAA2ZlZQAAAAAEAAAAAAAAAAxwb29sX2FkZHJlc3MAAAATAAAAAAAAAAx0aWNrX2N1cnJlbnQAAAAFAAAAAAAAAAp0aWNrX2xvd2VyAAAAAAAFAAAAAAAAAAx0aWNrX3NwYWNpbmcAAAAFAAAAAAAAAAp0aWNrX3VwcGVyAAAAAAAFAAAAAAAAAAZ0b2tlbjAAAAAAABMAAAAAAAAAD3Rva2VuMF9kZWNpbWFscwAAAAAEAAAAAAAAAA10b2tlbjBfc3ltYm9sAAAAAAAAEAAAAAAAAAAGdG9rZW4xAAAAAAATAAAAAAAAAA90b2tlbjFfZGVjaW1hbHMAAAAABAAAAAAAAAANdG9rZW4xX3N5bWJvbAAAAAAAABAAAAAAAAAACHRva2VuX2lkAAAABA==",
         "AAAAAQAAAAAAAAAAAAAAElBvc2l0aW9uRGF0YVJldHVybgAAAAAABQAAAAAAAAAdZmVlX2dyb3d0aF9pbnNpZGVfMF9sYXN0X3gxMjgAAAAAAAfQAAAADUZpeGVkUG9pbnQxMjgAAAAAAAAAAAAAHWZlZV9ncm93dGhfaW5zaWRlXzFfbGFzdF94MTI4AAAAAAAH0AAAAA1GaXhlZFBvaW50MTI4AAAAAAAAAAAAAAlsaXF1aWRpdHkAAAAAAAAKAAAAAAAAAA10b2tlbnNfb3dlZF8wAAAAAAAACgAAAAAAAAANdG9rZW5zX293ZWRfMQAAAAAAAAo=",
         "AAAAAQAAAAAAAAAAAAAADlRpY2tJbmZvUmV0dXJuAAAAAAAIAAAAAAAAABlmZWVfZ3Jvd3RoX291dHNpZGVfMF94MTI4AAAAAAAH0AAAAA1GaXhlZFBvaW50MTI4AAAAAAAAAAAAABlmZWVfZ3Jvd3RoX291dHNpZGVfMV94MTI4AAAAAAAH0AAAAA1GaXhlZFBvaW50MTI4AAAAAAAAAAAAAAtpbml0aWFsaXplZAAAAAABAAAAAAAAAA9saXF1aWRpdHlfZ3Jvc3MAAAAACgAAAAAAAAANbGlxdWlkaXR5X25ldAAAAAAAAAsAAAAAAAAAHnNlY19wZXJfbGlxdWlkaXR5X291dHNpZGVfeDEyOAAAAAAH0AAAAA1GaXhlZFBvaW50MTI4AAAAAAAAAAAAAA9zZWNvbmRzX291dHNpZGUAAAAABAAAAAAAAAAXdGlja19jdW11bGF0aXZlX291dHNpZGUAAAAABw==",
+        "AAAAAQAAAAAAAAAAAAAAFVBvc2l0aW9uRmVlRGF0YVJldHVybgAAAAAAAAUAAAAAAAAAGGZlZV9ncm93dGhfZ2xvYmFsXzBfeDEyOAAAB9AAAAANRml4ZWRQb2ludDEyOAAAAAAAAAAAAAAYZmVlX2dyb3d0aF9nbG9iYWxfMV94MTI4AAAH0AAAAA1GaXhlZFBvaW50MTI4AAAAAAAAAAAAAAVzbG90MAAAAAAAB9AAAAALU2xvdDBSZXR1cm4AAAAAAAAAAA90aWNrX2xvd2VyX2luZm8AAAAH0AAAAA5UaWNrSW5mb1JldHVybgAAAAAAAAAAAA90aWNrX3VwcGVyX2luZm8AAAAH0AAAAA5UaWNrSW5mb1JldHVybgAA",
         "AAAAAQAAAAAAAAAAAAAAC1Bvb2xLZXlEYXRhAAAAAAMAAAAAAAAAA2ZlZQAAAAAEAAAAAAAAAAZ0b2tlbjAAAAAAABMAAAAAAAAABnRva2VuMQAAAAAAEw==",
         "AAAAAQAAAAAAAAAAAAAACFBvc2l0aW9uAAAACQAAAAAAAAAcZmVlX2dyb3d0aF9pbnNpZGUwX2xhc3RfeDEyOAAAB9AAAAANRml4ZWRQb2ludDEyOAAAAAAAAAAAAAAcZmVlX2dyb3d0aF9pbnNpZGUxX2xhc3RfeDEyOAAAB9AAAAANRml4ZWRQb2ludDEyOAAAAAAAAAAAAAAJbGlxdWlkaXR5AAAAAAAACgAAAAAAAAAFbm9uY2UAAAAAAAAGAAAAAAAAAAdwb29sX2lkAAAAAAQAAAAAAAAACnRpY2tfbG93ZXIAAAAAAAUAAAAAAAAACnRpY2tfdXBwZXIAAAAAAAUAAAAAAAAADHRva2Vuc19vd2VkMAAAAAoAAAAAAAAADHRva2Vuc19vd2VkMQAAAAo=",
         "AAAABQAAAAAAAAAAAAAAFkluY3JlYXNlTGlxdWlkaXR5RXZlbnQAAAAAAAEAAAASaW5jcmVhc2VfbGlxdWlkaXR5AAAAAAAEAAAAAAAAAAh0b2tlbl9pZAAAAAQAAAAAAAAAAAAAAAlsaXF1aWRpdHkAAAAAAAAKAAAAAAAAAAAAAAAHYW1vdW50MAAAAAAKAAAAAAAAAAAAAAAHYW1vdW50MQAAAAAKAAAAAAAAAAI=",
@@ -1885,7 +1944,7 @@ export class Client extends ContractClient {
         "AAAAAQAAAAAAAAAAAAAADUNvbGxlY3RQYXJhbXMAAAAAAAAFAAAAAAAAAAthbW91bnQwX21heAAAAAAKAAAAAAAAAAthbW91bnQxX21heAAAAAAKAAAAAAAAAAhvcGVyYXRvcgAAABMAAAAAAAAACXJlY2lwaWVudAAAAAAAABMAAAAAAAAACHRva2VuX2lkAAAABA==",
         "AAAAAQAAAAAAAAAAAAAACk1pbnRQYXJhbXMAAAAAAAwAAAAAAAAAD2Ftb3VudDBfZGVzaXJlZAAAAAAKAAAAAAAAAAthbW91bnQwX21pbgAAAAAKAAAAAAAAAA9hbW91bnQxX2Rlc2lyZWQAAAAACgAAAAAAAAALYW1vdW50MV9taW4AAAAACgAAAAAAAAAIZGVhZGxpbmUAAAAGAAAAAAAAAANmZWUAAAAABAAAAAAAAAAJcmVjaXBpZW50AAAAAAAAEwAAAAAAAAAGc2VuZGVyAAAAAAATAAAAAAAAAAp0aWNrX2xvd2VyAAAAAAAFAAAAAAAAAAp0aWNrX3VwcGVyAAAAAAAFAAAAAAAAAAZ0b2tlbjAAAAAAABMAAAAAAAAABnRva2VuMQAAAAAAEw==",
         "AAAAAQAAAEBSZXR1cm4gdHlwZSBmb3IgZ2V0X3VzZXJfcG9zaXRpb25zIC0gY29udGFpbnMgZnVsbCBwb3NpdGlvbiBkYXRhAAAAAAAAABBVc2VyUG9zaXRpb25JbmZvAAAADAAAAAAAAAADZmVlAAAAAAQAAAAAAAAAHGZlZV9ncm93dGhfaW5zaWRlMF9sYXN0X3gxMjgAAAAMAAAAAAAAABxmZWVfZ3Jvd3RoX2luc2lkZTFfbGFzdF94MTI4AAAADAAAAAAAAAAJbGlxdWlkaXR5AAAAAAAACgAAAAAAAAAFbm9uY2UAAAAAAAAGAAAAAAAAAAp0aWNrX2xvd2VyAAAAAAAFAAAAAAAAAAp0aWNrX3VwcGVyAAAAAAAFAAAAAAAAAAZ0b2tlbjAAAAAAABMAAAAAAAAABnRva2VuMQAAAAAAEwAAAAAAAAAIdG9rZW5faWQAAAAEAAAAAAAAAAx0b2tlbnNfb3dlZDAAAAAKAAAAAAAAAAx0b2tlbnNfb3dlZDEAAAAK",
-        "AAAAAgAAAB1TdG9yYWdlIGtleXMgZm9yIHRoZSBjb250cmFjdAAAAAAAAAAAAAAHRGF0YUtleQAAAAALAAAAAAAAAAAAAAAHRmFjdG9yeQAAAAAAAAAAAAAAAApYbG1BZGRyZXNzAAAAAAAAAAAAAAAAAA9Ub2tlbkRlc2NyaXB0b3IAAAAAAQAAAAAAAAAIUG9zaXRpb24AAAABAAAABAAAAAEAAAAAAAAAD1Bvb2xJZFRvUG9vbEtleQAAAAABAAAABAAAAAEAAAAAAAAAEFBvb2xJZHNCeUFkZHJlc3MAAAABAAAAEwAAAAEAAAAAAAAAD1Bvb2xJZFRvQWRkcmVzcwAAAAABAAAABAAAAAAAAAAAAAAACk5leHRQb29sSWQAAAAAAAAAAAAAAAAAC05leHRUb2tlbklkAAAAAAEAAAAAAAAADFVzZXJUb2tlbklkcwAAAAEAAAATAAAAAQAAAEtPcGVyYXRvciBhcHByb3ZhbHMgZm9yIGFsbCB0b2tlbnMgb3duZWQgYnkgYEFkZHJlc3NgIGZvciBgQWRkcmVzc2Agb3BlcmF0b3IAAAAAEU9wZXJhdG9yQXBwcm92YWxzAAAAAAAAAgAAABMAAAAT",
+        "AAAAAgAAAB1TdG9yYWdlIGtleXMgZm9yIHRoZSBjb250cmFjdAAAAAAAAAAAAAAHRGF0YUtleQAAAAAKAAAAAAAAAAAAAAAHRmFjdG9yeQAAAAAAAAAAAAAAAApYbG1BZGRyZXNzAAAAAAAAAAAAAAAAAA9Ub2tlbkRlc2NyaXB0b3IAAAAAAQAAAAAAAAAIUG9zaXRpb24AAAABAAAABAAAAAEAAAAAAAAAD1Bvb2xJZFRvUG9vbEtleQAAAAABAAAABAAAAAEAAAAAAAAAEFBvb2xJZHNCeUFkZHJlc3MAAAABAAAAEwAAAAEAAAAAAAAAD1Bvb2xJZFRvQWRkcmVzcwAAAAABAAAABAAAAAAAAAAAAAAACk5leHRQb29sSWQAAAAAAAAAAAAAAAAAC05leHRUb2tlbklkAAAAAAEAAAAAAAAADFVzZXJUb2tlbklkcwAAAAEAAAAT",
         "AAAAAAAAAJpJbml0aWFsaXplIHRoZSBjb250cmFjdApAcGFyYW0gZW52IFRoZSBTb3JvYmFuIGVudmlyb25tZW50CkBwYXJhbSBhZG1pbiBUaGUgYWRtaW4gYWRkcmVzcyBmb3IgdGhlIGNvbnRyYWN0CkBwYXJhbSBiYXNlX3VyaSBUaGUgYmFzZSBVUkkgZm9yIHRva2VuIG1ldGFkYXRhAAAAAAAEaW5pdAAAAAMAAAAAAAAAB2ZhY3RvcnkAAAAAEwAAAAAAAAALeGxtX2FkZHJlc3MAAAAAEwAAAAAAAAAQdG9rZW5fZGVzY3JpcHRvcgAAABMAAAAA",
         "AAAAAAAAAAAAAAAJcG9zaXRpb25zAAAAAAAAAQAAAAAAAAAIdG9rZW5faWQAAAAEAAAAAQAAA+kAAAfQAAAADVBvc2l0aW9uVHVwbGUAAAAAAAAD",
         "AAAAAAAAAEdNaW50IGEgbmV3IHBvc2l0aW9uIE5GVApSZXR1cm5zICh0b2tlbl9pZCwgbGlxdWlkaXR5LCBhbW91bnQwLCBhbW91bnQxKQAAAAAEbWludAAAAAEAAAAAAAAABnBhcmFtcwAAAAAH0AAAAApNaW50UGFyYW1zAAAAAAABAAAD6QAAA+0AAAAEAAAABAAAAAoAAAAKAAAACgAAAAM=",
@@ -1902,8 +1961,8 @@ export class Client extends ContractClient {
         "AAAAAAAAAFpUcmFuc2ZlciBhIHRva2VuIGZyb20gb25lIGFkZHJlc3MgdG8gYW5vdGhlcgpSZXF1aXJlcyBhdXRob3JpemF0aW9uIGZyb20gdGhlIGN1cnJlbnQgb3duZXIAAAAAAAh0cmFuc2ZlcgAAAAMAAAAAAAAABGZyb20AAAATAAAAAAAAAAJ0bwAAAAAAEwAAAAAAAAAIdG9rZW5faWQAAAAEAAAAAA==",
         "AAAAAAAAAFRBcHByb3ZlIGFub3RoZXIgYWRkcmVzcyB0byB0cmFuc2ZlciB0aGlzIHRva2VuClJlcXVpcmVzIGF1dGhvcml6YXRpb24gZnJvbSB0aGUgb3duZXIAAAAHYXBwcm92ZQAAAAAEAAAAAAAAAAVvd25lcgAAAAAAABMAAAAAAAAAB3NwZW5kZXIAAAAAEwAAAAAAAAAIdG9rZW5faWQAAAAEAAAAAAAAABFleHBpcmF0aW9uX2xlZGdlcgAAAAAAAAQAAAAA",
         "AAAAAAAAACRHZXQgdGhlIGFwcHJvdmVkIGFkZHJlc3MgZm9yIGEgdG9rZW4AAAAMZ2V0X2FwcHJvdmVkAAAAAQAAAAAAAAAIdG9rZW5faWQAAAAEAAAAAQAAA+gAAAAT",
-        "AAAAAAAAAGpTZXQgb3IgcmV2b2tlIGFwcHJvdmFsIGZvciBhbiBvcGVyYXRvciB0byBtYW5hZ2UgYWxsIG9mIHRoZSBvd25lcidzIE5GVHMKTWlycm9ycyBFUkMtNzIxIHNldEFwcHJvdmFsRm9yQWxsAAAAAAAPYXBwcm92ZV9mb3JfYWxsAAAAAAMAAAAAAAAABW93bmVyAAAAAAAAEwAAAAAAAAAIb3BlcmF0b3IAAAATAAAAAAAAAAhhcHByb3ZlZAAAAAEAAAAA",
-        "AAAAAAAAAEhSZXR1cm5zIHRydWUgaWYgb3BlcmF0b3IgaXMgYXBwcm92ZWQgdG8gbWFuYWdlIGFsbCBvZiB0aGUgb3duZXLigJlzIE5GVHMAAAATaXNfYXBwcm92ZWRfZm9yX2FsbAAAAAACAAAAAAAAAAVvd25lcgAAAAAAABMAAAAAAAAACG9wZXJhdG9yAAAAEwAAAAEAAAAB",
+        "AAAAAAAAAP5TZXQgb3IgcmV2b2tlIGFwcHJvdmFsIGZvciBhbiBvcGVyYXRvciB0byBtYW5hZ2UgYWxsIG9mIHRoZSBvd25lcidzIE5GVHMKRGVsZWdhdGVzIHRvIEJhc2UgTkZUIGNvbnRyYWN0J3MgYXBwcm92ZV9mb3JfYWxsIGZ1bmN0aW9uYWxpdHkKCiMgQXJndW1lbnRzCiogYGxpdmVfdW50aWxfbGVkZ2VyYCAtIFRoZSBsZWRnZXIgbnVtYmVyIGF0IHdoaWNoIHRoZSBhcHByb3ZhbCBleHBpcmVzLgpJZiBgMGAsIHRoZSBhcHByb3ZhbCBpcyByZXZva2VkLgAAAAAAD2FwcHJvdmVfZm9yX2FsbAAAAAADAAAAAAAAAAVvd25lcgAAAAAAABMAAAAAAAAACG9wZXJhdG9yAAAAEwAAAAAAAAARbGl2ZV91bnRpbF9sZWRnZXIAAAAAAAAEAAAAAA==",
+        "AAAAAAAAAIlSZXR1cm5zIHRydWUgaWYgb3BlcmF0b3IgaXMgYXBwcm92ZWQgdG8gbWFuYWdlIGFsbCBvZiB0aGUgb3duZXIncyBORlRzCkRlbGVnYXRlcyB0byBCYXNlIE5GVCBjb250cmFjdCdzIGlzX2FwcHJvdmVkX2Zvcl9hbGwgZnVuY3Rpb25hbGl0eQAAAAAAABNpc19hcHByb3ZlZF9mb3JfYWxsAAAAAAIAAAAAAAAABW93bmVyAAAAAAAAEwAAAAAAAAAIb3BlcmF0b3IAAAATAAAAAQAAAAE=",
         "AAAAAAAAAFxUcmFuc2ZlciBmcm9tIGFuIGFkZHJlc3MgKHVzZWQgYnkgYXBwcm92ZWQgYWRkcmVzc2VzKQpUaGUgc3BlbmRlciBtdXN0IHByb3ZpZGUgYXV0aG9yaXphdGlvbgAAAA10cmFuc2Zlcl9mcm9tAAAAAAAABAAAAAAAAAAHc3BlbmRlcgAAAAATAAAAAAAAAARmcm9tAAAAEwAAAAAAAAACdG8AAAAAABMAAAAAAAAACHRva2VuX2lkAAAABAAAAAA=",
         "AAAAAAAAABVDaGVjayBpZiB0b2tlbiBleGlzdHMAAAAAAAAGZXhpc3RzAAAAAAABAAAAAAAAAAh0b2tlbl9pZAAAAAQAAAABAAAAAQ==",
         "AAAAAAAAAD50b2tlblVSSS1jb21wYXRpYmxlOiBnYXRoZXJzIGFsbCBkYXRhIGFuZCBwYXNzZXMgdG8gZGVzY3JpcHRvcgAAAAAACXRva2VuX3VyaQAAAAAAAAEAAAAAAAAACHRva2VuX2lkAAAABAAAAAEAAAAQ",
