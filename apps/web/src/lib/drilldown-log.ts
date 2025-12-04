@@ -3,9 +3,11 @@
 export const sendDrilldownLog = async ({
   dataForLog,
   extraFields,
+  logLevel,
 }: {
   dataForLog: Record<string, string>
   extraFields?: Record<string, string>
+  logLevel: 'info' | 'error' | 'warning'
 }) => {
   const url = process.env.GRAFANA_LOKI_API_URL
 <<<<<<< HEAD
@@ -40,6 +42,7 @@ export const sendDrilldownLog = async ({
           Language: 'NodeJS',
           source: 'Code',
           service_name: 'sushiswap:web',
+          level: logLevel,
         },
 =======
         stream: { Language: 'NodeJS', source: 'Code' },

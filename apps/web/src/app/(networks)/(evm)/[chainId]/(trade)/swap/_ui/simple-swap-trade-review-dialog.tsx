@@ -249,6 +249,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                   wasDetailsTouched: swapDetails.wasDetailsTouched,
                   recipient: swapDetails.recipient,
                 },
+                logLevel: 'info',
               })
             }
           } else {
