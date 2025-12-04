@@ -8,9 +8,8 @@ export const sendDrilldownLog = async ({
   extraFields?: Record<string, string>
 }) => {
   const url = process.env.GRAFANA_LOKI_API_URL
-  const token = process.env.GRAFANA_LOKI_BEARER_TOKEN
 
-  if (!token || !url) {
+  if (!url) {
     return
   }
 
@@ -44,7 +43,6 @@ export const sendDrilldownLog = async ({
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(logs),
     })
