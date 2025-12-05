@@ -137,6 +137,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
       throw new Error('Stellar wallet not connected')
     }
 
+    if (typeof stellarWalletKit.signAuthEntry !== 'function') {
+      throw new Error('Connected wallet does not support signAuthEntry')
+    }
+
     const { signedAuthEntry } = await stellarWalletKit.signAuthEntry(
       entryPreimageXdr,
       {
