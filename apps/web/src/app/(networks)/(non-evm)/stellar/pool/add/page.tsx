@@ -29,7 +29,7 @@ import TokenSelector from '~stellar/_common/ui/token-selector/token-selector'
 import { useStellarWallet } from '~stellar/providers'
 
 export default function AddPoolPage() {
-  const { isConnected, connectedAddress, signTransaction } = useStellarWallet()
+  const { isConnected, connectedAddress, signTransaction, signAuthEntry } = useStellarWallet()
   const router = useRouter()
   const createAndInitializePoolMutation = useCreateAndInitializePool()
   const addLiquidityMutation = useAddLiquidity()
@@ -228,6 +228,7 @@ export default function AddPoolPage() {
         tickUpper,
         recipient: connectedAddress,
         signTransaction,
+        signAuthEntry,
       })
 
       // Redirect to the pool page

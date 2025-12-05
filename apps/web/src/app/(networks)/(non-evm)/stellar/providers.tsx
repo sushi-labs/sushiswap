@@ -7,7 +7,7 @@ import {
   allowAllModules,
 } from '@creit.tech/stellar-wallets-kit'
 import { createContext, useContext, useEffect, useState } from 'react'
-import { NETWORK_PASSPHRASE } from './_common/lib/constants'
+import { IS_TESTNET, NETWORK_PASSPHRASE } from './_common/lib/constants'
 
 interface StellarWalletContextType {
   stellarWalletKit: StellarWalletsKit | null
@@ -18,6 +18,7 @@ interface StellarWalletContextType {
   connectWallet: (walletId: string) => Promise<void>
   disconnectWallet: () => Promise<void>
   signTransaction: (xdr: string) => Promise<string>
+  signAuthEntry: (entryPreimageXdr: string) => Promise<string>
 }
 
 const StellarWalletContext = createContext<StellarWalletContextType>({
@@ -29,6 +30,7 @@ const StellarWalletContext = createContext<StellarWalletContextType>({
   connectWallet: async () => {},
   disconnectWallet: async () => {},
   signTransaction: async () => '',
+  signAuthEntry: async () => '',
 })
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -38,7 +40,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [connectedAddress, setConnectedAddress] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
-  const PREFERRED_NETWORK = WalletNetwork.TESTNET // TODO: update accordingly
+  const PREFERRED_NETWORK = IS_TESTNET
+    ? WalletNetwork.TESTNET
+    : WalletNetwork.PUBLIC
 
   useEffect(() => {
     const setup = async () => {
@@ -122,6 +126,28 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return signedTxXdr
   }
 
+  /**
+   * Signs a Soroban authorization entry
+   * Used for nested authorization where the user is not the direct invoker
+   * @param entryPreimageXdr - The XDR of the authorization entry preimage to sign
+   * @returns The signed authorization entry (base64 signature)
+   */
+  const signAuthEntry = async (entryPreimageXdr: string) => {
+    if (!stellarWalletKit || !connectedAddress) {
+      throw new Error('Stellar wallet not connected')
+    }
+
+    const { signedAuthEntry } = await stellarWalletKit.signAuthEntry(
+      entryPreimageXdr,
+      {
+        address: connectedAddress,
+        networkPassphrase: NETWORK_PASSPHRASE,
+      },
+    )
+
+    return signedAuthEntry
+  }
+
   return (
     <StellarWalletContext.Provider
       value={{
@@ -131,6 +157,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         isConnected: connectedAddress !== null,
         connectedAddress,
         signTransaction,
+        signAuthEntry,
         connectWallet,
         disconnectWallet,
       }}

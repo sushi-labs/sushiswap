@@ -11,6 +11,7 @@ import {
 import { DEFAULT_TIMEOUT } from '../soroban/constants'
 import { contractAddresses } from '../soroban/contracts'
 import { handleResult } from '../soroban/handle-result'
+import { signAuthEntriesAndGetXdr } from '../soroban/position-manager-helpers'
 import {
   submitViaRawRPC,
   waitForTransaction,
@@ -416,6 +417,7 @@ export class PositionService {
   async collectFees(
     params: CollectParams,
     signTransaction: (xdr: string) => Promise<string>,
+    signAuthEntry: (entryPreimageXdr: string) => Promise<string>,
   ): Promise<CollectResult> {
     const positionManagerClient = getPositionManagerContractClient({
       contractId: contractAddresses.POSITION_MANAGER,
@@ -438,10 +440,14 @@ export class PositionService {
       },
     )
 
-    // Convert to XDR for signing
-    const transactionXdr = assembledTransaction.toXDR()
+    // Sign auth entries for nested authorization (PM -> Pool -> Token transfers)
+    const transactionXdr = await signAuthEntriesAndGetXdr(
+      assembledTransaction as Parameters<typeof signAuthEntriesAndGetXdr>[0],
+      params.recipient,
+      signAuthEntry,
+    )
 
-    // Sign the transaction
+    // Sign the transaction envelope
     const signedXdr = await signTransaction(transactionXdr)
 
     // Submit the signed XDR directly via raw RPC
