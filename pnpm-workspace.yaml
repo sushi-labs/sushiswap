@@ -18,10 +18,10 @@ catalogs:
     "viem": 2.37.12
 
   react:
-    "next": 15.5.3
-    "react": 19.0.0
+    "next": 15.5.7
+    "react": 19.0.1
     "@types/react": 19.0.1
-    "react-dom": 19.0.0
+    "react-dom": 19.0.1
     "@types/react-dom": 19.0.2
   
   ui:
