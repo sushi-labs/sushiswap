@@ -369,7 +369,11 @@ export class SushiStellarService {
     signTransaction: (xdr: string) => Promise<string>,
     signAuthEntry: (entryPreimageXdr: string) => Promise<string>,
   ) {
-    return await positionService.collectFees(params, signTransaction, signAuthEntry)
+    return await positionService.collectFees(
+      params,
+      signTransaction,
+      signAuthEntry,
+    )
   }
 
   /**

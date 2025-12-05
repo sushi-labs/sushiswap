@@ -16,7 +16,8 @@ interface CollectFeesBoxProps {
 }
 
 export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
-  const { connectedAddress, signTransaction, signAuthEntry } = useStellarWallet()
+  const { connectedAddress, signTransaction, signAuthEntry } =
+    useStellarWallet()
   const { positions, isLoading: isPositionsLoading } = useMyPosition({
     userAddress: connectedAddress || undefined,
     poolAddress: pool.address,
