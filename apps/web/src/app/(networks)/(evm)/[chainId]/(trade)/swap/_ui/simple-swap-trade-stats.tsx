@@ -13,11 +13,13 @@ import {
   Explainer,
   IconButton,
   SkeletonBox,
+  SkeletonCircle,
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
 import { GasIcon } from '@sushiswap/ui/icons/GasIcon'
 import React, { useEffect, type FC } from 'react'
+import { UI_FEE_PERCENT } from 'src/config'
 import {
   warningSeverity,
   warningSeverityClassName,
@@ -40,10 +42,9 @@ import {
 import { SimpleSwapTokenRate } from './simple-swap-token-rate'
 
 export const SimpleSwapTradeStats: FC = () => {
-  const isMounted = useIsMounted()
   const { address } = useAccount()
   const {
-    state: { chainId, swapAmountString, recipient, token0, token1 },
+    state: { chainId, swapAmountString, recipient },
   } = useDerivedStateSimpleSwap()
   const {
     state: { isDetailsCollapsed },
@@ -70,15 +71,11 @@ export const SimpleSwapTradeStats: FC = () => {
   return (
     <>
       <div className="flex items-center justify-between gap-2 text-gray-700 dark:text-slate-400">
-        {!hasValidQuote ? null : !isMounted ? (
-          <SkeletonText fontSize="sm" className="!w-[100px]" />
-        ) : token0 && token1 && +swapAmountString > 0 ? (
-          <SimpleSwapTokenRate />
-        ) : null}
+        {!hasValidQuote ? null : <SimpleSwapTokenRate />}
         {!hasValidQuote ? null : loading || !quote?.gasSpentUsd ? (
-          <div className="flex items-center gap-1">
-            <SkeletonBox className="h-5 py-0.5 w-[60px]" />
-            <SkeletonBox className="h-6 py-0.5 w-[26px] !rounded-full" />
+          <div className="flex items-center gap-0.5">
+            <SkeletonText fontSize="sm" className="!w-[60px]" />
+            <SkeletonCircle radius={26} />
           </div>
         ) : (
           <div className="flex items-center gap-0.5">
@@ -181,7 +178,7 @@ export const SimpleSwapTradeStats: FC = () => {
 
           <div className="flex justify-between items-center gap-2">
             <span className="text-sm text-gray-700 dark:text-slate-400">
-              Fee (0.25%)
+              Fee ({UI_FEE_PERCENT}%)
             </span>
             <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
               {loading || !quote?.fee ? (
