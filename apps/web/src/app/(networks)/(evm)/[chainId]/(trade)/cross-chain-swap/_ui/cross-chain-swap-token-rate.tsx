@@ -64,10 +64,6 @@ export const CrossChainSwapTokenRate = () => {
 
     let price
     if (token0Price?.amount && token1Price?.amount) {
-      // price = new Price({
-      //   baseAmount: token0Price,
-      //   quoteAmount: token1Price,
-      // })
       price = new Price({
         baseAmount: new Amount(dummy0, token0Price.amount),
         quoteAmount: new Amount(dummy1, token1Price.amount),
