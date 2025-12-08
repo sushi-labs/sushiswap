@@ -153,6 +153,9 @@ export function useCreateTrustline() {
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'trustlines', connectedAddress],
       })
+      queryClient.invalidateQueries({
+        queryKey: ['stellar', 'trustlines-batch'],
+      })
     },
     onError: (error) => {
       console.error('Failed to create trustline:', error)
