@@ -110,22 +110,15 @@ export const SimpleSwapExecuteButton = () => {
   const amountOutMinimum = useMemo(() => {
     if (!outputAmount || outputAmount === 0n) return 0n
 
-    // Get slippage percentage (default 0.5%)
+    // Get slippage percentage (default 0.5%, max 50%)
+    // parseSlippageTolerance already caps at 50%
     const slippagePercent = parseSlippageTolerance(slippageTolerance)
-
-    // Validate slippage is not 100% or more
-    if (slippagePercent >= 100) {
-      return (outputAmount * 5000n) / 10000n // Cap at 50%
-    }
 
     // Calculate minimum amount: amountOut * (1 - slippage/100)
     // Using basis points for precision: (10000 - slippageBps) / 10000
     const slippageBps = Math.floor(slippagePercent * 100) // Convert to basis points
 
-    // Ensure slippageBps doesn't exceed 10000 (100%)
-    const validSlippageBps = Math.min(slippageBps, 9999)
-
-    const minAmount = (outputAmount * BigInt(10000 - validSlippageBps)) / 10000n
+    const minAmount = (outputAmount * BigInt(10000 - slippageBps)) / 10000n
 
     // Ensure minAmount is positive
     if (minAmount <= 0n) {

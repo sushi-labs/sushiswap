@@ -6,6 +6,8 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { nanoid } from 'nanoid'
+import { toast } from 'react-toastify'
 import { useStellarWallet } from '~stellar/providers'
 import { SwapService } from '../../services/swap-service'
 import type { Token } from '../../types/token.type'
@@ -34,6 +36,7 @@ export const useExecuteSwap = () => {
     onMutate: async (params: UseExecuteSwapParams) => {
       // Show "in progress" toast immediately before transaction starts
       const timestamp = Date.now()
+      const infoToastId = `info:swap-${nanoid()}`
       const amountInFormatted = formatTokenAmountForDisplay(
         params.amountIn,
         params.tokenIn.decimals,
@@ -46,7 +49,11 @@ export const useExecuteSwap = () => {
         chainId: 1,
         groupTimestamp: timestamp,
         timestamp,
+        txHash: infoToastId, // Use as toast ID for dismissal
       })
+
+      // Return context with toast ID for use in onError/onSuccess
+      return { infoToastId }
     },
     mutationFn: async (params: UseExecuteSwapParams) => {
       const swapService = new SwapService()
@@ -68,7 +75,12 @@ export const useExecuteSwap = () => {
 
       return { result, params }
     },
-    onSuccess: ({ result, params }) => {
+    onSuccess: ({ result, params }, _variables, context) => {
+      // Dismiss the "in progress" info toast
+      if (context?.infoToastId) {
+        toast.dismiss(context.infoToastId)
+      }
+
       const amountOut =
         result.amountOut < 0n ? -result.amountOut : result.amountOut
       const amountOutFormatted = formatTokenAmountForDisplay(
@@ -101,7 +113,12 @@ export const useExecuteSwap = () => {
         queryKey: ['stellar', 'position-principals-batch'],
       })
     },
-    onError: (error) => {
+    onError: (error, _variables, context) => {
+      // Dismiss the "in progress" info toast
+      if (context?.infoToastId) {
+        toast.dismiss(context.infoToastId)
+      }
+
       const errorMessage = extractErrorMessage(error)
       console.error('Swap failed:', error)
       createErrorToast(errorMessage, false)
@@ -130,6 +147,7 @@ export const useExecuteMultiHopSwap = () => {
     onMutate: async (params: UseExecuteMultiHopSwapParams) => {
       // Show "in progress" toast immediately before transaction starts
       const timestamp = Date.now()
+      const infoToastId = `info:multihop-swap-${nanoid()}`
       const tokenInDecimals = params.tokenIn?.decimals ?? 7
       const amountInFormatted = formatTokenAmountForDisplay(
         params.amountIn,
@@ -143,7 +161,11 @@ export const useExecuteMultiHopSwap = () => {
         chainId: 1,
         groupTimestamp: timestamp,
         timestamp,
+        txHash: infoToastId, // Use as toast ID for dismissal
       })
+
+      // Return context with toast ID for use in onError/onSuccess
+      return { infoToastId }
     },
     mutationFn: async (params: UseExecuteMultiHopSwapParams) => {
       const swapService = new SwapService()
@@ -163,7 +185,12 @@ export const useExecuteMultiHopSwap = () => {
 
       return { result, params }
     },
-    onSuccess: ({ result, params }) => {
+    onSuccess: ({ result, params }, _variables, context) => {
+      // Dismiss the "in progress" info toast
+      if (context?.infoToastId) {
+        toast.dismiss(context.infoToastId)
+      }
+
       const amountOut =
         result.amountOut < 0n ? -result.amountOut : result.amountOut
       const tokenInDecimals = params.tokenIn?.decimals ?? 7
@@ -198,7 +225,12 @@ export const useExecuteMultiHopSwap = () => {
         queryKey: ['stellar', 'position-principals-batch'],
       })
     },
-    onError: (error) => {
+    onError: (error, _variables, context) => {
+      // Dismiss the "in progress" info toast
+      if (context?.infoToastId) {
+        toast.dismiss(context.infoToastId)
+      }
+
       const errorMessage = extractErrorMessage(error)
       console.error('Multi-hop swap failed:', error)
       createErrorToast(errorMessage, false)

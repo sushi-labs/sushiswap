@@ -149,6 +149,7 @@ export function extractErrorMessage(error: unknown): string {
 
 /**
  * Parse slippage tolerance value safely
+ * Maximum allowed slippage is 50% - anything higher is capped
  */
 export function parseSlippageTolerance(
   value: string | number | undefined,
@@ -160,11 +161,17 @@ export function parseSlippageTolerance(
   const parsed = typeof value === 'string' ? Number.parseFloat(value) : value
 
   // Validate the parsed value
-  if (Number.isNaN(parsed) || parsed < 0 || parsed > 100) {
+  if (Number.isNaN(parsed) || parsed < 0) {
     console.warn(
       `Invalid slippage tolerance value: ${value}, using default 0.5%`,
     )
     return 0.5
+  }
+
+  // Cap at 50% maximum - higher values are dangerous and effectively disable slippage protection
+  if (parsed > 50) {
+    console.warn(`Slippage tolerance ${value}% exceeds maximum, capping at 50%`)
+    return 50
   }
 
   return parsed
