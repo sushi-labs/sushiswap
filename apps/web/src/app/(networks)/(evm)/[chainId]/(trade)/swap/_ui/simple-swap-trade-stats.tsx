@@ -18,6 +18,7 @@ import {
 } from '@sushiswap/ui'
 import { GasIcon } from '@sushiswap/ui/icons/GasIcon'
 import React, { useEffect, type FC } from 'react'
+import { UI_FEE_PERCENT } from 'src/config'
 import {
   warningSeverity,
   warningSeverityClassName,
@@ -181,7 +182,7 @@ export const SimpleSwapTradeStats: FC = () => {
 
           <div className="flex justify-between items-center gap-2">
             <span className="text-sm text-gray-700 dark:text-slate-400">
-              Fee (0.25%)
+              Fee ({UI_FEE_PERCENT}%)
             </span>
             <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
               {loading || !quote?.fee ? (

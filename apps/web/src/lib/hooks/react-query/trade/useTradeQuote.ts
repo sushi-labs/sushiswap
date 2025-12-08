@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
+import { UI_FEE_DECIMAL } from 'src/config'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { getFeeString } from 'src/lib/swap/fee'
 import { Amount, Fraction, Percent, Price, ZERO, subtractSlippage } from 'sushi'
@@ -49,7 +50,7 @@ export const useTradeQuoteQuery = (
     toToken,
     amount,
     gasPrice = 50n,
-    fee = 0.0025,
+    fee = UI_FEE_DECIMAL,
     slippagePercentage,
     recipient,
     source,
