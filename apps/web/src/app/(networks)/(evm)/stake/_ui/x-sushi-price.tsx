@@ -65,7 +65,7 @@ export const XSushiPrice = ({
   }, [invert, prices, totalSupply, sushiBalance])
 
   return isPricesLoading ? (
-    <SkeletonText fontSize="sm" className="w-2/4" />
+    <SkeletonText className="!w-2/4" />
   ) : (
     <Button
       variant="link"

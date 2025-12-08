@@ -109,7 +109,7 @@
     "wagmi": "catalog:web3"
   },
   "peerDependencies": {
-    "next": "15.1.4",
+    "next": "catalog:react",
     "react": "catalog:react",
     "react-dom": "catalog:react",
     "sushi": "*",
