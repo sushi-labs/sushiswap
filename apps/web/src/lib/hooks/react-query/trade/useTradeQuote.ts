@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
-import { UI_FEE_DECIMAL } from 'src/config'
+import { UI_FEE_BIPS, UI_FEE_DECIMAL, UI_FEE_PERCENT } from 'src/config'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { getFeeString } from 'src/lib/swap/fee'
 import { Amount, Fraction, Percent, Price, ZERO, subtractSlippage } from 'sushi'
@@ -183,7 +183,10 @@ export const useTradeQuote = (variables: UseTradeParams) => {
         const minAmountOut = data.args?.amountOutMin
           ? new Amount(toToken, data.args.amountOutMin)
           : subtractSlippage(
-              new Amount(toToken, data.route.amountOutBI),
+              subtractSlippage(
+                new Amount(toToken, data.route.amountOutBI),
+                UI_FEE_DECIMAL,
+              ),
               new Percent({
                 numerator: Math.floor(+slippagePercentage * 100),
                 denominator: 10_000,
