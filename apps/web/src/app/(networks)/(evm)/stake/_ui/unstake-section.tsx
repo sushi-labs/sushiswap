@@ -3,7 +3,7 @@
 import { Button, Dots } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { APPROVE_TAG_UNSTAKE } from 'src/lib/constants'
-import { useBarWithdraw } from 'src/lib/wagmi/hooks/bar/useBarWithdaw'
+import { useBarWithdraw } from 'src/lib/wagmi/hooks/bar/useBarWithdraw'
 import { useQuoteBarWithdraw } from 'src/lib/wagmi/hooks/bar/useQuoteBarWithdraw'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {
@@ -12,7 +12,7 @@ import {
 } from 'src/lib/wagmi/systems/Checker/provider'
 import { Amount } from 'sushi'
 import { EvmChainId, RED_SNWAPPER_ADDRESS, SUSHI, XSUSHI } from 'sushi/evm'
-import { BarSectionWidget } from './unstake-section-widget'
+import { BarWidget } from './bar-widget'
 
 export const UnstakeSection = withCheckerRoot(() => {
   const { approved } = useApproved(APPROVE_TAG_UNSTAKE)
@@ -20,7 +20,9 @@ export const UnstakeSection = withCheckerRoot(() => {
   const [input, setInput] = useState('')
 
   const parsedInput = useMemo(() => {
-    return Amount.tryFromHuman(XSUSHI[EvmChainId.ETHEREUM], input)
+    return input
+      ? Amount.tryFromHuman(XSUSHI[EvmChainId.ETHEREUM], input)
+      : undefined
   }, [input])
 
   const { data: amountOut } = useQuoteBarWithdraw({
@@ -34,7 +36,7 @@ export const UnstakeSection = withCheckerRoot(() => {
   })
 
   return (
-    <BarSectionWidget
+    <BarWidget
       input={input}
       amountOut={amountOut}
       onInput={setInput}
@@ -86,6 +88,6 @@ export const UnstakeSection = withCheckerRoot(() => {
           </Checker.Amounts>
         </Checker.Network>
       </Checker.Connect>
-    </BarSectionWidget>
+    </BarWidget>
   )
 })

@@ -12,7 +12,7 @@ import {
 } from 'src/lib/wagmi/systems/Checker/provider'
 import { Amount } from 'sushi'
 import { EvmChainId, RED_SNWAPPER_ADDRESS, SUSHI, XSUSHI } from 'sushi/evm'
-import { BarSectionWidget } from './stake-section-widget'
+import { BarWidget } from './bar-widget'
 
 export const StakeSection = withCheckerRoot(() => {
   const { approved } = useApproved(APPROVE_TAG_STAKE)
@@ -20,7 +20,9 @@ export const StakeSection = withCheckerRoot(() => {
   const [input, setInput] = useState('')
 
   const parsedInput = useMemo(() => {
-    return Amount.tryFromHuman(SUSHI[EvmChainId.ETHEREUM], input)
+    return input
+      ? Amount.tryFromHuman(SUSHI[EvmChainId.ETHEREUM], input)
+      : undefined
   }, [input])
 
   const { data: amountOut } = useQuoteBarDeposit({
@@ -34,7 +36,7 @@ export const StakeSection = withCheckerRoot(() => {
   })
 
   return (
-    <BarSectionWidget
+    <BarWidget
       input={input}
       amountOut={amountOut}
       onInput={setInput}
@@ -82,6 +84,6 @@ export const StakeSection = withCheckerRoot(() => {
           </Checker.Amounts>
         </Checker.Network>
       </Checker.Connect>
-    </BarSectionWidget>
+    </BarWidget>
   )
 })

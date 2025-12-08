@@ -3,7 +3,6 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { getChainById, getChainByKey, isChainId, isChainKey } from 'sushi'
 import { getEvmChainById, isBladeChainId, isSushiSwapChainId } from 'sushi/evm'
 import { SUPPORTED_NETWORKS } from './config'
-import { isPublicBladeChainId } from './config.server'
 
 export const config = {
   matcher: [
@@ -31,7 +30,13 @@ export const config = {
 async function _middleware(req: NextRequest) {
   const { pathname, searchParams, search } = req.nextUrl
 
-  if (pathname === 'portal' || pathname.startsWith('/portal/')) {
+  if (pathname.includes('/portal') || pathname.startsWith('/portal/')) {
+    if (process.env.VERCEL_ENV === 'production') {
+      //@dev VERCEL_ENV can be either production, preview, or development
+      //@dev using VERCEL_ENV so that local development and preview deployments can access portal
+      //@dev currently portal is not ready and we should not be showing it to users on prod
+      return NextResponse.redirect(new URL(`/ethereum/swap`, req.url))
+    }
     const portalMiddleware = (await import('./app/portal/middleware'))
       .portalMiddleware
     return portalMiddleware(req)
@@ -91,8 +96,7 @@ async function _middleware(req: NextRequest) {
       if (subPage === 'pools') {
         if (
           !isSushiSwapChainId(chain.chainId) &&
-          isBladeChainId(chain.chainId) &&
-          (await isPublicBladeChainId(chain.chainId))
+          isBladeChainId(chain.chainId)
         ) {
           url.pathname = pathname.replace(
             '/explore/pools',

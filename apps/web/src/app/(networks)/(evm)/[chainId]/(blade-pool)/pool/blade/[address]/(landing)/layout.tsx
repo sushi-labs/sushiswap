@@ -1,6 +1,5 @@
 import { Container, LinkInternal } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
-import { isPublicBladeChainId } from 'src/config.server'
 import { getEvmChainById, isBladeChainId, isEvmAddress } from 'sushi/evm'
 
 export default async function Layout(props: {
@@ -11,14 +10,10 @@ export default async function Layout(props: {
 
   const { children } = props
 
-  const { chainId: _chainId, address } = params
+  const { chainId: _chainId } = params
   const chainId = +_chainId
 
-  if (
-    !isBladeChainId(chainId) ||
-    !(await isPublicBladeChainId(chainId)) ||
-    !isEvmAddress(address)
-  ) {
+  if (!isBladeChainId(chainId)) {
     return notFound()
   }
 

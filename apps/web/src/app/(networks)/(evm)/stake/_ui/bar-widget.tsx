@@ -11,11 +11,11 @@ import {
 import type { ReactNode } from 'react'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import type { Amount } from 'sushi'
-import { EvmChainId, type EvmCurrency, SUSHI } from 'sushi/evm'
+import { EvmChainId, type EvmCurrency, SUSHI, XSUSHI } from 'sushi/evm'
 import { useSushiBar } from './sushi-bar-provider'
 import { XSushiPrice } from './x-sushi-price'
 
-interface BarSectionWidgetProps {
+interface BarWidgetProps {
   input: string
   amountOut: Amount<EvmCurrency> | undefined
   inputToken: EvmCurrency
@@ -24,14 +24,14 @@ interface BarSectionWidgetProps {
   children: ReactNode
 }
 
-export const BarSectionWidget = ({
+export const BarWidget = ({
   input,
   amountOut,
   inputToken,
   outputToken,
   onInput,
   children,
-}: BarSectionWidgetProps) => {
+}: BarWidgetProps) => {
   const { totalSupply, sushiBalance } = useSushiBar()
 
   return (
