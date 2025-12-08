@@ -25,6 +25,7 @@ import { useMyPosition } from '~stellar/_common/lib/hooks/position/use-my-positi
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/swap'
 import { useTickRangeSelector } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
 import { useTokenBalanceFromToken } from '~stellar/_common/lib/hooks/token/use-token-balance'
+import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trustline'
 import { useZap } from '~stellar/_common/lib/hooks/zap/use-zap'
 import { calculatePriceFromTick } from '~stellar/_common/lib/soroban/pool-helpers'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
@@ -38,6 +39,7 @@ import {
 import { useStellarWallet } from '~stellar/providers'
 import { ConnectWalletButton } from '../ConnectWallet/ConnectWalletButton'
 import { TickRangeSelector } from '../TickRangeSelector/TickRangeSelector.tsx'
+import { TrustlineWarning } from '../Trustline/TrustlineWarning'
 import TokenSelector from '../token-selector/token-selector'
 
 interface ManageLiquidityCardProps {
@@ -143,6 +145,18 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     pool.fee,
     currentPrice ?? 1,
   )
+
+  // Check trustlines for pool tokens (needed for both add liquidity and zap)
+  const { needsTrustline: needsToken0Trustline } = useNeedsTrustline(
+    pool.token0.code,
+    pool.token0.issuer || '',
+  )
+  const { needsTrustline: needsToken1Trustline } = useNeedsTrustline(
+    pool.token1.code,
+    pool.token1.issuer || '',
+  )
+  const needsAnyPoolTokenTrustline =
+    needsToken0Trustline || needsToken1Trustline
 
   const {
     tickLower,
@@ -303,7 +317,10 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   const isDependentAmountError = dependentAmountData?.status === 'error'
 
   const canAddLiquidity =
-    hasAmount && isTickRangeValid && !isDependentAmountError
+    hasAmount &&
+    isTickRangeValid &&
+    !isDependentAmountError &&
+    !needsAnyPoolTokenTrustline
 
   const formatPriceBound = (tick: number, bound: 'lower' | 'upper') => {
     if (bound === 'lower' && tick <= MAX_TICK_RANGE.lower) {
@@ -564,6 +581,22 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                           </p>
                         </div>
                       )}
+                      {/* Trustline warnings for pool tokens (needed for zap) */}
+                      {needsToken0Trustline && pool.token0.issuer && (
+                        <TrustlineWarning
+                          assetCode={pool.token0.code}
+                          assetIssuer={pool.token0.issuer}
+                          direction="output"
+                        />
+                      )}
+                      {needsToken1Trustline && pool.token1.issuer && (
+                        <TrustlineWarning
+                          assetCode={pool.token1.code}
+                          assetIssuer={pool.token1.issuer}
+                          direction="output"
+                          className={needsToken0Trustline ? 'mt-2' : ''}
+                        />
+                      )}
                       <Button
                         className="w-full"
                         size="lg"
@@ -572,6 +605,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                           !zapAmountIn ||
                           Number.parseFloat(zapAmountIn) <= 0 ||
                           !isTickRangeValid ||
+                          needsAnyPoolTokenTrustline ||
                           zapMutation.isPending
                         }
                         onClick={async () => {
@@ -634,9 +668,11 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                       >
                         {zapMutation.isPending
                           ? 'Zapping & Adding Liquidity...'
-                          : !isTickRangeValid
-                            ? 'Adjust Tick Range'
-                            : 'Zap & Add Liquidity'}
+                          : needsAnyPoolTokenTrustline
+                            ? 'Create trustline first'
+                            : !isTickRangeValid
+                              ? 'Adjust Tick Range'
+                              : 'Zap & Add Liquidity'}
                       </Button>
                     </>
                   ) : (
@@ -791,6 +827,23 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                         token1={pool.token1}
                       />
 
+                      {/* Trustline warnings for pool tokens */}
+                      {needsToken0Trustline && pool.token0.issuer && (
+                        <TrustlineWarning
+                          assetCode={pool.token0.code}
+                          assetIssuer={pool.token0.issuer}
+                          direction="output"
+                        />
+                      )}
+                      {needsToken1Trustline && pool.token1.issuer && (
+                        <TrustlineWarning
+                          assetCode={pool.token1.code}
+                          assetIssuer={pool.token1.issuer}
+                          direction="output"
+                          className={needsToken0Trustline ? 'mt-2' : ''}
+                        />
+                      )}
+
                       {/* Submit Button */}
                       <Button
                         className="w-full"
@@ -802,13 +855,15 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                       >
                         {addLiquidityMutation.isPending
                           ? 'Adding Liquidity...'
-                          : isDependentAmountError
-                            ? 'Price Range Error'
-                            : !isTickRangeValid
-                              ? 'Adjust Tick Range'
-                              : canAddLiquidity
-                                ? 'Add Liquidity'
-                                : 'Enter Amount'}
+                          : needsAnyPoolTokenTrustline
+                            ? 'Create trustline first'
+                            : isDependentAmountError
+                              ? 'Price Range Error'
+                              : !isTickRangeValid
+                                ? 'Adjust Tick Range'
+                                : canAddLiquidity
+                                  ? 'Add Liquidity'
+                                  : 'Enter Amount'}
                       </Button>
                     </>
                   )}

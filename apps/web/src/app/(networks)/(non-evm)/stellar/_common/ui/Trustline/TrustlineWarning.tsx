@@ -16,17 +16,17 @@ export const TrustlineWarning = ({
 }: TrustlineWarningProps) => {
   const createTrustline = useCreateTrustline()
 
-  const description =
-    direction === 'input'
-      ? `To swap with ${assetCode}, you need to create a trustline first. This is a one-time setup for this asset.`
-      : `To receive ${assetCode}, you need to create a trustline first. This is a one-time setup for this asset.`
-
   const handleCreateTrustline = () => {
     createTrustline.mutate({
       assetCode,
       assetIssuer,
     })
   }
+
+  const description =
+    direction === 'input'
+      ? `To swap with ${assetCode}, you need to create a trustline first. This is a one-time setup for this asset.`
+      : `To receive ${assetCode}, you need to create a trustline first. This is a one-time setup for this asset.`
 
   return (
     <Message variant="warning" className={className} size="sm">

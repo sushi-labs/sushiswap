@@ -20,28 +20,36 @@ export interface HorizonAssetInfo {
  * Based on Stellar's asset types:
  * - XLM (native): No trustline needed
  * - Classic Assets (credit_alphanum4/12 with G... issuer): Trustline required
- * - SAC Assets (C... contract addresses): No trustline needed
+ * - Pure Soroban tokens (C... contract only, no issuer): No trustline needed
+ * - SAC-wrapped Classic Assets (C... contract WITH G... issuer): Trustline required
  *
- * @param tokenAddress - The token contract address or issuer
- * @param assetIssuer - The asset issuer (for classic assets)
+ * Important: SAC (Stellar Asset Contracts) that wrap classic assets still require
+ * trustlines on the underlying classic asset. The SAC contract is just an interface
+ * to the classic asset, but the actual token storage is on the classic ledger.
+ *
+ * @param tokenAddress - The token contract address
+ * @param assetCode - The asset code (e.g., "USDC", "XLM", "HYPE")
+ * @param assetIssuer - The asset issuer (for classic assets, G... address)
  * @returns true if asset requires trustline, false otherwise
  */
 export function requiresTrustline(
-  tokenAddress: string,
+  assetCode?: string,
   assetIssuer?: string,
 ): boolean {
-  // SAC (Stellar Asset Contract) addresses start with 'C' - no trustline needed
-  if (tokenAddress.startsWith('C')) {
+  // XLM (native) never needs a trustline, regardless of how it's represented
+  if (assetCode === 'XLM' || assetCode === 'native') {
     return false
   }
 
-  // If there's an issuer (G... address), it's a classic asset - needs trustline
-  // Classic assets are identified by asset_code + issuer account (e.g., USDC:GA5ZS...)
+  // If there's an issuer (G... address), it's a classic asset that needs trustline
+  // This applies even if the token also has a SAC contract address (C...)
+  // SAC-wrapped classic assets still require trustlines on the underlying asset
   if (assetIssuer?.startsWith('G')) {
     return true
   }
 
-  // No issuer typically means XLM (native) - no trustline needed
+  // Pure Soroban tokens (C... contract with no issuer) don't need trustlines
+  // These are native Soroban tokens, not wrapped classic assets
   return false
 }
 
@@ -196,9 +204,87 @@ export async function createTrustline(
     }
   } catch (error) {
     console.error('Error creating trustline:', error)
+
+    // Extract meaningful error message
+    let errorMessage = 'Failed to create trustline'
+    let operationCode = ''
+
+    if (error instanceof Error) {
+      errorMessage = error.message
+
+      // Check for Horizon API error format (BadResponseError from stellar-sdk)
+      const errorWithResponse = error as Error & {
+        response?: {
+          data?: {
+            extras?: {
+              result_codes?: {
+                operations?: string[]
+                transaction?: string
+              }
+            }
+          }
+        }
+      }
+
+      if (errorWithResponse.response?.data?.extras?.result_codes) {
+        const resultCodes = errorWithResponse.response.data.extras.result_codes
+        if (resultCodes.operations?.[0]) {
+          operationCode = resultCodes.operations[0]
+        } else if (resultCodes.transaction) {
+          operationCode = resultCodes.transaction
+        }
+      }
+    } else if (typeof error === 'object' && error !== null) {
+      // Handle non-Error objects
+      const errorObj = error as Record<string, unknown>
+      if (errorObj.message && typeof errorObj.message === 'string') {
+        errorMessage = errorObj.message
+      } else {
+        // Try to stringify but avoid [object Object]
+        try {
+          const stringified = JSON.stringify(error)
+          if (stringified !== '{}') {
+            errorMessage = stringified
+          }
+        } catch {
+          errorMessage = 'Failed to create trustline'
+        }
+      }
+    } else if (typeof error === 'string') {
+      errorMessage = error
+    }
+
+    // Map common Stellar operation codes to user-friendly messages
+    // Reference: https://developers.stellar.org/docs/data/apis/horizon/api-reference/errors/result-codes/operation-specific/change-trust
+    if (operationCode) {
+      const friendlyMessages: Record<string, string> = {
+        // Change Trust errors
+        op_low_reserve:
+          'Your account lacks sufficient XLM to meet the minimum reserve required when adding a trustline. Each trustline increases your minimum XLM reserve. Please add more XLM to your wallet.',
+        op_invalid_limit:
+          'The limit is not sufficient to hold the current balance of the trustline and still satisfy its buying liabilities.',
+        op_no_issuer: 'The asset issuer account does not exist.',
+        op_not_authorized:
+          'You are not authorized to hold this asset. The issuer has not authorized your account.',
+        op_self_not_allowed:
+          'Cannot create a trustline to your own account. The source account attempted to create a trustline for itself.',
+        op_line_full: 'Trustline limit would be exceeded.',
+        // Transaction-level errors
+        tx_insufficient_fee: 'Insufficient fee. Please try again.',
+        tx_bad_auth:
+          'Transaction authorization failed. Please reconnect your wallet and try again.',
+        tx_insufficient_balance:
+          'Insufficient XLM balance to complete this transaction.',
+      }
+
+      errorMessage =
+        friendlyMessages[operationCode] ||
+        `Transaction failed: ${operationCode}`
+    }
+
     return {
       success: false,
-      error: error instanceof Error ? error.message : String(error),
+      error: errorMessage,
     }
   }
 }
@@ -207,27 +293,27 @@ export async function createTrustline(
  * Check and create trustline if needed before a swap
  *
  * Determines if trustline is required based on:
- * - SAC assets (C... addresses): No trustline needed
- * - XLM (native, no issuer): No trustline needed
- * - Classic assets (with issuer): Trustline required
+ * - XLM (native): No trustline needed
+ * - Pure Soroban tokens (C... contract only): No trustline needed
+ * - Classic assets (with G... issuer): Trustline required
+ * - SAC-wrapped classic assets (C... contract + G... issuer): Trustline required
  *
  * @returns Object with success status, whether trustline was created, and any error
  */
 export async function ensureTrustline(
   userAddress: string,
-  tokenAddress: string,
   assetCode: string,
   assetIssuer: string,
   signTransaction: (xdr: string) => Promise<string>,
 ): Promise<{ success: boolean; created: boolean; error?: string }> {
   try {
-    // Check if this asset requires a trustline
-    if (!requiresTrustline(tokenAddress, assetIssuer)) {
-      // SAC token or XLM - no trustline needed
+    // Check if this asset requires a trustline (passing assetCode for XLM detection)
+    if (!requiresTrustline(assetCode, assetIssuer)) {
+      // XLM, pure Soroban token, or no issuer - no trustline needed
       return { success: true, created: false }
     }
 
-    // If no issuer provided, it's XLM (no trustline needed)
+    // If no issuer provided, no trustline needed (pure Soroban token)
     if (!assetIssuer || assetIssuer === '') {
       return { success: true, created: false }
     }
@@ -242,7 +328,7 @@ export async function ensureTrustline(
       return { success: true, created: false }
     }
 
-    // Create trustline for classic asset
+    // Create trustline for classic asset (including SAC-wrapped classic assets)
     console.log(
       `Creating trustline for ${assetCode}:${assetIssuer.slice(0, 8)}...`,
     )

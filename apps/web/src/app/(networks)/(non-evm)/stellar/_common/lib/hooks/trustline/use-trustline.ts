@@ -11,7 +11,44 @@ import {
   hasTrustline,
   requiresTrustline,
 } from '../../soroban/trustline-helpers'
+import { extractErrorMessage } from '../../utils/error-helpers'
 import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
+
+type TrustlineParams = {
+  assetCode: string
+  assetIssuer: string
+  limit?: string
+}
+
+type TrustlineResult = {
+  hasTrustline: boolean
+  needsTrustline: boolean
+}
+
+const NO_TRUSTLINE_NEEDED: TrustlineResult = {
+  hasTrustline: true,
+  needsTrustline: false,
+}
+
+/**
+ * Helper function to check if a token needs a trustline
+ */
+async function checkTokenTrustline(
+  connectedAddress: string,
+  code: string,
+  issuer: string,
+): Promise<TrustlineResult> {
+  const needsTrustlineCheck = requiresTrustline(code, issuer)
+  if (!needsTrustlineCheck) {
+    return NO_TRUSTLINE_NEEDED
+  }
+
+  const hasTrustlineData = await hasTrustline(connectedAddress, code, issuer)
+  return {
+    hasTrustline: hasTrustlineData,
+    needsTrustline: !hasTrustlineData,
+  }
+}
 
 /**
  * Hook to check if a user has a trustline for a specific asset
@@ -66,11 +103,7 @@ export function useCreateTrustline() {
 
   return useMutation({
     mutationKey: ['stellar', 'createTrustline'],
-    onMutate: async (params: {
-      assetCode: string
-      assetIssuer: string
-      limit?: string
-    }) => {
+    onMutate: async (params: TrustlineParams) => {
       const timestamp = Date.now()
       createInfoToast({
         summary: `Creating trustline for ${params.assetCode}...`,
@@ -81,11 +114,7 @@ export function useCreateTrustline() {
         timestamp,
       })
     },
-    mutationFn: async (params: {
-      assetCode: string
-      assetIssuer: string
-      limit?: string
-    }) => {
+    mutationFn: async (params: TrustlineParams) => {
       if (!connectedAddress) {
         throw new Error('Wallet not connected')
       }
@@ -105,6 +134,7 @@ export function useCreateTrustline() {
       return result
     },
     onSuccess: (result, variables) => {
+      const timestamp = Date.now()
       createSuccessToast({
         summary: `Trustline created for ${variables.assetCode}`,
         type: 'mint',
@@ -112,8 +142,8 @@ export function useCreateTrustline() {
         chainId: 1,
         txHash: result.txHash,
         href: result.txHash ? getStellarTxnLink(result.txHash) : undefined,
-        groupTimestamp: Date.now(),
-        timestamp: Date.now(),
+        groupTimestamp: timestamp,
+        timestamp,
       })
 
       // Invalidate trustline queries
@@ -126,43 +156,79 @@ export function useCreateTrustline() {
     },
     onError: (error) => {
       console.error('Failed to create trustline:', error)
-      createErrorToast(
-        error instanceof Error ? error.message : 'Failed to create trustline',
-        false,
-      )
+      const errorMessage = extractErrorMessage(error)
+      createErrorToast(errorMessage, false)
     },
   })
+}
+
+/**
+ * Hook to check if multiple tokens need trustlines
+ *
+ * Takes an array of tokens and returns an array of trustline needs for each token
+ */
+export function useNeedsTrustlines(
+  tokens: Array<{ code: string; issuer: string } | null | undefined>,
+) {
+  const { connectedAddress } = useStellarWallet()
+
+  const trustlineQueries = useQuery({
+    queryKey: [
+      'stellar',
+      'trustlines-batch',
+      connectedAddress,
+      tokens.map((t) => `${t?.code || ''}:${t?.issuer || ''}`).join(','),
+    ],
+    queryFn: async () => {
+      if (!connectedAddress) {
+        return tokens.map(() => NO_TRUSTLINE_NEEDED)
+      }
+
+      return await Promise.all(
+        tokens.map(async (token) => {
+          if (!token?.code || !token?.issuer) {
+            return NO_TRUSTLINE_NEEDED
+          }
+          return await checkTokenTrustline(
+            connectedAddress,
+            token.code,
+            token.issuer,
+          )
+        }),
+      )
+    },
+    enabled: !!connectedAddress,
+    staleTime: 1000 * 30, // 30 seconds
+  })
+
+  const defaultResults = tokens.map(() => NO_TRUSTLINE_NEEDED)
+
+  return {
+    results: trustlineQueries.data || defaultResults,
+    isLoading: trustlineQueries.isLoading,
+    needsAnyTrustline:
+      trustlineQueries.data?.some((result) => result.needsTrustline) || false,
+  }
 }
 
 /**
  * Hook to check if a token needs a trustline
  *
  * Determines if a token requires a trustline based on:
- * - Classic assets (with issuer): Need trustline if user doesn't have one
- * - SAC assets (C... addresses): Never need trustline
- * - XLM (native, no issuer): Never needs trustline
+ * - XLM (native): Never needs trustline
+ * - Classic assets (with G... issuer): Need trustline if user doesn't have one
+ * - SAC-wrapped classic assets (C... contract + G... issuer): Need trustline
+ * - Pure Soroban tokens (C... address only, no issuer): Never need trustline
  */
-export function useNeedsTrustline(
-  tokenAddress: string,
-  assetCode: string,
-  assetIssuer: string,
-) {
-  const { data: hasTrustlineData, isLoading } = useHasTrustline(
-    assetCode,
-    assetIssuer,
-  )
-
-  // Check if this asset type requires a trustline
-  const needsTrustlineCheck = requiresTrustline(tokenAddress, assetIssuer)
-
-  // Needs trustline if:
-  // 1. Asset type requires trustline (classic asset with issuer)
-  // 2. User doesn't already have the trustline
-  const needsTrustline = needsTrustlineCheck && !hasTrustlineData
+export function useNeedsTrustline(assetCode: string, assetIssuer: string) {
+  const { results, isLoading } = useNeedsTrustlines([
+    { code: assetCode, issuer: assetIssuer },
+  ])
+  const result = results[0] || NO_TRUSTLINE_NEEDED
 
   return {
-    needsTrustline,
-    hasTrustline: hasTrustlineData,
+    needsTrustline: result.needsTrustline,
+    hasTrustline: result.hasTrustline,
     isLoading,
   }
 }

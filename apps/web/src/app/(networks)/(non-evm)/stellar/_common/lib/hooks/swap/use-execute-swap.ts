@@ -109,23 +109,25 @@ export const useExecuteSwap = () => {
   })
 }
 
+export interface UseExecuteMultiHopSwapParams {
+  userAddress: string
+  path: string[]
+  fees: number[]
+  amountIn: bigint
+  amountOutMinimum: bigint
+  recipient: string
+  deadline?: number
+  tokenIn?: Token
+  tokenOut?: Token
+}
+
 export const useExecuteMultiHopSwap = () => {
   const { signTransaction } = useStellarWallet()
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationKey: ['swap', 'executeMultiHopSwap'],
-    onMutate: async (params: {
-      userAddress: string
-      path: string[]
-      fees: number[]
-      amountIn: bigint
-      amountOutMinimum: bigint
-      recipient: string
-      deadline?: number
-      tokenIn?: { code: string; decimals: number }
-      tokenOut?: { code: string; decimals: number }
-    }) => {
+    onMutate: async (params: UseExecuteMultiHopSwapParams) => {
       // Show "in progress" toast immediately before transaction starts
       const timestamp = Date.now()
       const tokenInDecimals = params.tokenIn?.decimals ?? 7
@@ -143,17 +145,7 @@ export const useExecuteMultiHopSwap = () => {
         timestamp,
       })
     },
-    mutationFn: async (params: {
-      userAddress: string
-      path: string[]
-      fees: number[]
-      amountIn: bigint
-      amountOutMinimum: bigint
-      recipient: string
-      deadline?: number
-      tokenIn?: { code: string; decimals: number }
-      tokenOut?: { code: string; decimals: number }
-    }) => {
+    mutationFn: async (params: UseExecuteMultiHopSwapParams) => {
       const swapService = new SwapService()
 
       const result = await swapService.swapExactInput(

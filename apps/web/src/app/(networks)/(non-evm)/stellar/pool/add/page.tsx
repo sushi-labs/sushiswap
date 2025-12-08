@@ -16,6 +16,7 @@ import { usePoolInitialized } from '~stellar/_common/lib/hooks/pool/use-pool-ini
 import { usePoolPrice } from '~stellar/_common/lib/hooks/pool/use-pool-price'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/swap/use-add-liquidity'
 import { useTickRangeSelector } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
+import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trustline'
 import {
   calculatePriceFromSqrtPrice,
   encodePriceSqrt,
@@ -25,6 +26,7 @@ import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
 import { FEE_TIERS, TICK_SPACINGS } from '~stellar/_common/lib/utils/ticks'
 import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
 import { TickRangeSelector } from '~stellar/_common/ui/TickRangeSelector/TickRangeSelector.tsx'
+import { TrustlineWarning } from '~stellar/_common/ui/Trustline/TrustlineWarning'
 import TokenSelector from '~stellar/_common/ui/token-selector/token-selector'
 import { useStellarWallet } from '~stellar/providers'
 
@@ -79,6 +81,17 @@ export default function AddPoolPage() {
     connectedAddress,
     orderedToken1?.contract || null,
   )
+
+  // Check trustlines for pool tokens
+  const { needsTrustline: needsToken0Trustline } = useNeedsTrustline(
+    orderedToken0?.code || '',
+    orderedToken0?.issuer || '',
+  )
+  const { needsTrustline: needsToken1Trustline } = useNeedsTrustline(
+    orderedToken1?.code || '',
+    orderedToken1?.issuer || '',
+  )
+  const needsAnyTrustline = needsToken0Trustline || needsToken1Trustline
 
   const { data: currentPrice } = usePoolPrice(existingPoolAddress ?? null)
   const initSqrtPriceX96 = useMemo(() => {
@@ -198,6 +211,8 @@ export default function AddPoolPage() {
 
     try {
       let poolAddress: string
+      let needsDelay = false
+
       if (existingPoolAddress && poolInitialized === true) {
         poolAddress = existingPoolAddress
       } else {
@@ -214,6 +229,16 @@ export default function AddPoolPage() {
           signTransaction,
         })
         poolAddress = result.poolAddress
+        needsDelay = true // Pool was just created/initialized
+      }
+
+      // Add delay after pool creation/initialization to allow Stellar network to propagate state
+      // This prevents auth errors when the add liquidity call happens before the pool is fully available
+      if (needsDelay) {
+        console.log(
+          'Waiting for pool creation to propagate on Stellar network...',
+        )
+        await new Promise((resolve) => setTimeout(resolve, 8000))
       }
 
       // Add liquidity (required)
@@ -261,7 +286,8 @@ export default function AddPoolPage() {
     token1 &&
     token0.contract !== token1.contract &&
     hasValidAmounts &&
-    !isAboveRange
+    !isAboveRange &&
+    !needsAnyTrustline
   const isCreating =
     createAndInitializePoolMutation.isPending || addLiquidityMutation.isPending
 
@@ -604,7 +630,23 @@ export default function AddPoolPage() {
         )}
       </FormSection>
       <FormSection title="" description="">
-        <div className="flex w-full flex-col">
+        <div className="flex w-full flex-col gap-4">
+          {/* Trustline warnings */}
+          {needsToken0Trustline && orderedToken0?.issuer && (
+            <TrustlineWarning
+              assetCode={orderedToken0.code}
+              assetIssuer={orderedToken0.issuer}
+              direction="output"
+            />
+          )}
+          {needsToken1Trustline && orderedToken1?.issuer && (
+            <TrustlineWarning
+              assetCode={orderedToken1.code}
+              assetIssuer={orderedToken1.issuer}
+              direction="output"
+            />
+          )}
+
           {!isConnected ? (
             <ConnectWalletButton fullWidth size="xl" />
           ) : (
@@ -618,15 +660,17 @@ export default function AddPoolPage() {
                 ? addLiquidityMutation.isPending
                   ? 'Adding Liquidity...'
                   : 'Creating/Initializing Pool...'
-                : isAboveRange
-                  ? 'Price Above Range'
-                  : !token0 || !token1
-                    ? 'Select Tokens'
-                    : !hasValidAmounts
-                      ? 'Enter Liquidity Amounts'
-                      : !ticksAligned
-                        ? 'Align Ticks & Continue'
-                        : 'Continue'}
+                : needsAnyTrustline
+                  ? 'Create trustline first'
+                  : isAboveRange
+                    ? 'Price Above Range'
+                    : !token0 || !token1
+                      ? 'Select Tokens'
+                      : !hasValidAmounts
+                        ? 'Enter Liquidity Amounts'
+                        : !ticksAligned
+                          ? 'Align Ticks & Continue'
+                          : 'Continue'}
             </Button>
           )}
         </div>
