@@ -115,7 +115,9 @@ export const publicTransports = {
   [EvmChainId.HEMI]: http(
     `https://lb.drpc.live/ogrpc?network=hemi&dkey=${drpcId}`,
   ),
-  [EvmChainId.KATANA]: http('https://rpc.katana.network'),
+  [EvmChainId.KATANA]: http(
+    `https://lb.drpc.live/ogrpc?network=katana&dkey=${drpcId}`,
+  ),
   [EvmChainId.HYPEREVM]: http(
     `https://lb.drpc.live/ogrpc?network=hyperliquid&dkey=${drpcId}`,
   ),
@@ -129,7 +131,7 @@ export const publicTransports = {
     `https://lb.drpc.live/ogrpc?network=fuse&dkey=${drpcId}`,
   ),
   [EvmChainId.MONAD]: http(
-    `https://lb.drpc.live/ogrpc?network=monad&dkey=${drpcId}`,
+    `https://lb.drpc.live/ogrpc?network=monad-mainnet&dkey=${drpcId}`,
   ),
   /* Testnets */
   [EvmChainId.ARBITRUM_SEPOLIA]: http('https://sepolia-rollup.arbitrum.io/rpc'),

@@ -28,19 +28,21 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.POLYGON_ZKEVM,
   ChainId.TATARA,
   ChainId.SEPOLIA,
-  ChainId.MONAD,
+  ChainId.BOKUTO,
+  ChainId.KADENA,
 ] as const
 
 export const BLADE_SUPPORTED_NETWORKS = BLADE_SUPPORTED_CHAIN_IDS.filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
 
-export const NEW_CHAIN_IDS = [EvmChainId.KATANA, KvmChainId.KADENA] as const
+export const NEW_CHAIN_IDS = [EvmChainId.MONAD] as const
 
 export const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
   ChainId.HEMI,
   ChainId.ETHEREUM,
+  ChainId.KATANA,
   ChainId.ARBITRUM,
   ChainId.BASE,
   ChainId.POLYGON,
@@ -68,7 +70,6 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.HYPEREVM,
   ChainId.BERACHAIN,
   ChainId.PLASMA,
-  ChainId.KATANA,
   ChainId.MONAD,
   ChainId.CRONOS,
   ChainId.MODE,
