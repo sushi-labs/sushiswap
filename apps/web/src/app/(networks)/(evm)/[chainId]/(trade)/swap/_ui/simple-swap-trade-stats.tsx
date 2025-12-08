@@ -42,10 +42,9 @@ import {
 import { SimpleSwapTokenRate } from './simple-swap-token-rate'
 
 export const SimpleSwapTradeStats: FC = () => {
-  const isMounted = useIsMounted()
   const { address } = useAccount()
   const {
-    state: { chainId, swapAmountString, recipient, token0, token1 },
+    state: { chainId, swapAmountString, recipient },
   } = useDerivedStateSimpleSwap()
   const {
     state: { isDetailsCollapsed },
