@@ -191,7 +191,7 @@ export const TwapTradeReviewDialog: FC<{
         {({ confirm }) => (
           <>
             {children}
-            <DialogContent>
+            <DialogContent className="max-h-[80vh]">
               <DialogHeader>
                 <DialogTitle>
                   Sell {swapAmount?.toSignificant(6)} {token0?.symbol}
@@ -206,7 +206,8 @@ export const TwapTradeReviewDialog: FC<{
                   )}
                 </DialogDescription>
               </DialogHeader>
-              <div className="flex flex-col gap-4">
+              {/* 176px is sum of header, footer, padding, and gap */}
+              <div className="flex flex-col gap-4 overflow-y-auto max-h-[calc(80vh-176px)]">
                 <List className="!pt-0">
                   <List.Control>
                     <List.KeyValue title="Network">
