@@ -116,7 +116,7 @@ export const CrossChainSwapTradeStats: FC = () => {
         )}
       </div>
       <Collapsible open={hasValidQuote && !isDetailsCollapsed}>
-        <div className="pt-4 w-full px-2 flex flex-col gap-1">
+        <div className="pt-2 w-full flex flex-col gap-1">
           <div className="flex justify-between items-center gap-2">
             <span className="text-sm text-gray-700 dark:text-slate-400">
               Price impact
