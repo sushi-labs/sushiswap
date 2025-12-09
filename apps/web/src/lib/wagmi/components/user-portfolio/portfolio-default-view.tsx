@@ -66,7 +66,7 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
   }, [tab])
 
   return (
-    <div className="flex flex-col h-full gap-y-5 overflow-hidden">
+    <div className="flex flex-col h-full gap-y-5 overflow-hidden rounded-2xl">
       <div className="flex justify-between px-5 py-6 bg-secondary">
         <div>
           <div className="flex gap-x-2 items-center">
