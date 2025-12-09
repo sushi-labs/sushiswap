@@ -192,7 +192,7 @@ export const TwapTradeReviewDialog: FC<{
           <>
             {children}
             <DialogContent className="max-h-[80vh]">
-              <DialogHeader>
+              <DialogHeader className="!text-left">
                 <DialogTitle>
                   Sell {swapAmount?.toSignificant(6)} {token0?.symbol}
                 </DialogTitle>
