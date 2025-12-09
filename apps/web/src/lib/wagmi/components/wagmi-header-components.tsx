@@ -9,7 +9,7 @@ import {
 import { Suspense, useEffect } from 'react'
 import type { ChainId } from 'sushi'
 import type { EvmChainId } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { HeaderNetworkSelector } from './header-network-selector'
 import { UserPortfolio } from './user-portfolio'
 
@@ -24,7 +24,7 @@ export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
   selectedNetwork,
   onChange,
 }) => {
-  const { chainId, address, connector } = useAccount()
+  const { chainId, address, connector } = useConnection()
   const previousConnectedChainId = usePrevious(chainId)
   useEffect(() => {
     const chainChanged =

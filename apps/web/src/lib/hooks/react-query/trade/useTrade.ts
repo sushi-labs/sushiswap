@@ -19,7 +19,7 @@ import {
   isWNativeSupported,
 } from 'sushi/evm'
 import { type Hex, stringify, zeroAddress } from 'viem'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { apiAdapter02To01 } from './apiAdapter'
 import type { UseTradeParams, UseTradeQuerySelect } from './types'
@@ -42,7 +42,7 @@ export const useTradeQuery = (
   select: UseTradeQuerySelect,
 ) => {
   const trace = useTrace()
-  const { address } = useAccount()
+  const { address } = useConnection()
 
   return useQuery({
     queryKey: [

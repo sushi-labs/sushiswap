@@ -4,7 +4,7 @@ import { publicChains } from '../viem'
 export const testChains = publicChains.map((chain) => ({
   ...chain,
   rpcUrls: foundry.rpcUrls,
-})) as unknown as typeof publicChains
+}))
 
 export type TestChainId = (typeof testChains)[number]['id']
 

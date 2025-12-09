@@ -29,7 +29,7 @@ import {
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { useDetailsInteractionTracker } from '../../_ui/details-interaction-tracker-provider'
 import { CrossChainSwapFeesHoverCard } from './cross-chain-swap-fees-hover-card'
 import { CrossChainSwapTokenRate } from './cross-chain-swap-token-rate'
@@ -39,7 +39,7 @@ import {
 } from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapTradeStats: FC = () => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const {
     state: { chainId0, chainId1, swapAmountString, recipient },
   } = useDerivedStateCrossChainSwap()

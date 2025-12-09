@@ -37,7 +37,7 @@ import type { Address, Hex } from 'viem'
 import { encodePacked } from 'viem/utils'
 import { useWriteContract } from 'wagmi'
 import { usePublicClient, useSimulateContract } from 'wagmi'
-import { useAccount, useChainId, useDisconnect, useSwitchChain } from 'wagmi'
+import { useChainId, useConnection, useDisconnect, useSwitchChain } from 'wagmi'
 import { BalanceProvider } from '~evm/_common/ui/balance-provider/balance-provider'
 import { PriceProvider } from '~evm/_common/ui/price-provider/price-provider/price-provider'
 
@@ -87,7 +87,7 @@ function Deposit({
   amount: Amount<EvmToken>
   onTxConfirmed: (txData: TxData) => void
 }) {
-  const { address } = useAccount()
+  const { address } = useConnection()
 
   const client = usePublicClient()
 
@@ -178,7 +178,7 @@ function DepositTab({
   teamId,
   onTxConfirmed,
 }: { teamId: string; onTxConfirmed: (txData: TxData) => void }) {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const { disconnect } = useDisconnect()
   const chainId = useChainId()
   const { switchChainAsync } = useSwitchChain()

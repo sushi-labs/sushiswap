@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import React from 'react'
 import { formatPercent, formatUSD } from 'sushi'
 import type { Address } from 'viem'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { PortfolioTokensList } from './portfolio-tokens-list'
 
 function usePortfolioWallet(
@@ -24,7 +24,7 @@ function usePortfolioWallet(
 }
 
 export const PortfolioTokens = () => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const { data, isLoading } = usePortfolioWallet(address)
 
   // TODO: Add error state

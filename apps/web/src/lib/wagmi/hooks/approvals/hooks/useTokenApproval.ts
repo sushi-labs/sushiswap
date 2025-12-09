@@ -13,7 +13,7 @@ import {
   maxUint256,
 } from 'viem'
 import {
-  useAccount,
+  useConnection,
   usePublicClient,
   useSimulateContract,
   useWriteContract,
@@ -47,7 +47,7 @@ export const useTokenApproval = ({
   enabled = true,
   approveMax,
 }: UseTokenApprovalParams) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const [pending, setPending] = useState(false)
   const client = usePublicClient()
   const {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { useAppKit } from '@reown/appkit/react'
 import {
   BrowserEvent,
   InterfaceElementName,
@@ -9,22 +9,24 @@ import {
 } from '@sushiswap/telemetry'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import React, { type FC, useCallback } from 'react'
+import { useConnectors } from 'wagmi'
 import { useConnect } from '../hooks/wallet/useConnect'
 
 export const ConnectButton: FC<ButtonProps> = ({
   children: _children,
   ...props
 }) => {
-  const { pending, connect, connectors } = useConnect()
-  const { openConnectModal } = useConnectModal()
+  const { pending, connect } = useConnect()
+  const connectors = useConnectors()
+  const { open } = useAppKit()
 
   const onConnect = useCallback(() => {
     if (process.env.NEXT_PUBLIC_APP_ENV === 'test') {
       connect({ connector: connectors[0] })
     } else {
-      openConnectModal?.()
+      open?.()
     }
-  }, [openConnectModal, connect, connectors])
+  }, [open, connect, connectors])
 
   // Pending confirmation state
   // Awaiting wallet confirmation

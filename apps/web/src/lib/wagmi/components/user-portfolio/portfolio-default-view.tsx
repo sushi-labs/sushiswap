@@ -22,7 +22,7 @@ import {
   useState,
 } from 'react'
 import { getEvmChainById, isEvmChainId, shortenEvmAddress } from 'sushi/evm'
-import { useAccount, useDisconnect } from 'wagmi'
+import { useConnection, useDisconnect } from 'wagmi'
 import type { GetEnsNameReturnType } from 'wagmi/actions'
 import { PortfolioView } from '.'
 import { PortfolioClaimables } from './portfolio-claimables'
@@ -47,7 +47,7 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
   ensName,
   isENSNameLoading,
 }) => {
-  const { connector, address, chain } = useAccount()
+  const { connector, address, chain } = useConnection()
   const { disconnect } = useDisconnect()
 
   const [tab, setTab] = useState(PortfolioTab.Tokens)

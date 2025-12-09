@@ -23,7 +23,7 @@ import {
 import { useBladeUserPositions } from 'src/lib/pool/blade/useBladeUserPositions'
 import { formatPercent, formatUSD } from 'sushi'
 import { type BladeChainId, getEvmChainById } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 
 interface BladePositionsTableProps {
   chainId: BladeChainId
@@ -170,7 +170,7 @@ const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
 export const BladePositionsTable: FC<BladePositionsTableProps> = ({
   chainId,
 }) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const [showStablecoinTypes, setShowStablecoinTypes] = useState(false)
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,

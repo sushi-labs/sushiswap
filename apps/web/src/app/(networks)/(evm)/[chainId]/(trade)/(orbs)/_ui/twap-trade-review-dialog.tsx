@@ -40,7 +40,7 @@ import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
 import { ZERO, formatUSD } from 'sushi'
 import { getEvmChainById, shortenEvmAddress } from 'sushi/evm'
 import {
-  useAccount,
+  useConnection,
   useEstimateGas,
   usePublicClient,
   useSendTransaction,
@@ -74,7 +74,7 @@ export const TwapTradeReviewDialog: FC<{
   const [acceptDisclaimer, setAcceptDisclaimer] = useState(true)
 
   const { approved } = useApproved(APPROVE_TAG_SWAP)
-  const { address } = useAccount()
+  const { address } = useConnection()
   const tradeRef = useRef<UseTwapTradeReturn>(null)
   const client = usePublicClient()
 
