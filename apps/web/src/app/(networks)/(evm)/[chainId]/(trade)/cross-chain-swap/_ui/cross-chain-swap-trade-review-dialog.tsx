@@ -48,6 +48,7 @@ import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
 import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { isXSwapSupportedChainId } from 'src/config'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
+import { sendDrilldownLog } from 'src/lib/drilldown-log'
 import { useCrossChainTradeStep } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { logger } from 'src/lib/logger'
@@ -71,6 +72,8 @@ import {
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
+import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
+import { useDetailsInteractionTracker } from '../../_ui/details-interaction-tracker-provider'
 import {
   ConfirmationDialogContent,
   Divider,
@@ -117,9 +120,14 @@ const _CrossChainSwapTradeReviewDialog: FC<{
       tradeId,
     },
   } = useDerivedStateCrossChainSwap()
+  const {
+    state: { isDetailsCollapsed, wasDetailsTouched },
+    mutate: { resetDetailsTrackedState },
+  } = useDetailsInteractionTracker()
   const client0 = usePublicClient({ chainId: chainId0 })
   const client1 = usePublicClient({ chainId: chainId1 })
   const { approved } = useApproved(APPROVE_TAG_XSWAP)
+  const { data: prices } = usePrices({ chainId: chainId0 })
 
   const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
   const { open: reviewDialogOpen } = useDialog(DialogType.Review)
@@ -209,6 +217,14 @@ const _CrossChainSwapTradeReviewDialog: FC<{
 
   const trace = useTrace()
 
+  const feeData = useMemo(
+    () =>
+      selectedRoute?.step
+        ? getCrossChainFeesBreakdown(selectedRoute.step)
+        : undefined,
+    [selectedRoute?.step],
+  )
+
   const onWriteSuccess = useCallback(
     async (hash: SendTransactionReturnType) => {
       setStepStates({
@@ -286,6 +302,51 @@ const _CrossChainSwapTradeReviewDialog: FC<{
             src_chain_id: trade?.amountIn?.currency?.chainId,
             dst_chain_id: trade?.amountOut?.currency?.chainId,
           })
+          if (trade?.amountIn?.currency && trade?.amountOut?.currency) {
+            const token0Usd =
+              prices?.get(trade?.amountIn?.currency.wrap().address) ?? 0
+            const swapAmountUsd = Amount.tryFromHuman(
+              trade?.amountIn?.currency,
+              trade?.amountIn?.toString(),
+            )?.mulHuman(token0Usd)
+            const swapDetails = {
+              location: '_CrossChainSwapTradeReviewDialog',
+              action: 'onWriteSuccess',
+              chainId: String(chainId0),
+              chainId1: String(chainId1),
+              token0:
+                trade?.amountIn?.currency.type === 'native'
+                  ? 'native'
+                  : trade?.amountIn?.currency.address,
+              token0Symbol: trade?.amountIn?.currency.symbol ?? 'N/A',
+              token1:
+                trade?.amountOut?.currency.type === 'native'
+                  ? 'native'
+                  : trade?.amountOut?.currency.address,
+              token1Symbol: trade?.amountOut?.currency.symbol ?? 'N/A',
+              swapAmount: trade?.amountIn?.toString(),
+              swapAmountUsd:
+                swapAmountUsd && token0Usd ? swapAmountUsd?.toString() : 'N/A',
+              feeUsd: feeData?.uiFeesUSD
+                ? feeData?.uiFeesUSD.toString()
+                : 'N/A',
+              recipient: address ? address : 'N/A',
+              timestamp: Date.now().toString(),
+              detailsCollapsedState: isDetailsCollapsed ? 'closed' : 'open',
+              wasDetailsTouched: wasDetailsTouched ? 'yes' : 'no',
+            }
+            await sendDrilldownLog({
+              dataForLog: swapDetails,
+              extraFields: {
+                detailsCollapsedState: swapDetails.detailsCollapsedState,
+                feeUsd: swapDetails.feeUsd,
+                chainId: swapDetails.chainId,
+                wasDetailsTouched: swapDetails.wasDetailsTouched,
+                recipient: swapDetails.recipient,
+              },
+              logLevel: 'info',
+            })
+          }
         } else {
           sendAnalyticsEvent(SwapEventName.XSWAP_SRC_TRANSACTION_FAILED, {
             txHash: hash,
@@ -320,6 +381,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
       } finally {
         refetchBalances(chainId0)
         setTradeId(nanoid())
+        resetDetailsTrackedState()
       }
     },
     [
@@ -330,6 +392,12 @@ const _CrossChainSwapTradeReviewDialog: FC<{
       address,
       refetchBalances,
       setTradeId,
+      chainId1,
+      resetDetailsTrackedState,
+      feeData,
+      isDetailsCollapsed,
+      wasDetailsTouched,
+      prices,
     ],
   )
 
