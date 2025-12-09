@@ -23,6 +23,14 @@ const testWalletIndex = Number(
 
 const localHttpUrl = `http://127.0.0.1:${anvilPort}`
 
+export const testCustomRpcUrls = testChains.reduce(
+  (acc, chain) => {
+    acc[chain.id] = http(localHttpUrl)
+    return acc
+  },
+  {} as Record<EvmChainId, HttpTransport>,
+)
+
 export const createTestWagmiAdapter = () => {
   const mockConnector = mock({
     accounts: [
@@ -36,13 +44,7 @@ export const createTestWagmiAdapter = () => {
 
   return new WagmiAdapter({
     networks: testChains,
-    customRpcUrls: testChains.reduce(
-      (acc, chain) => {
-        acc[chain.id] = http(localHttpUrl)
-        return acc
-      },
-      {} as Record<EvmChainId, HttpTransport>,
-    ),
+    customRpcUrls: testCustomRpcUrls,
     pollingInterval: 1_000,
     connectors: [mockConnector],
     projectId,

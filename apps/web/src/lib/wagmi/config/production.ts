@@ -30,53 +30,53 @@ const pollingInterval = new Proxy(
 
 const drpcJwt = process.env['NEXT_PUBLIC_DRPC_JWT']
 
-export const createProductionWagmiAdapter = () => {
-  const customRpcUrls = Object.entries(publicTransports).reduce(
-    (acc, [chainId, transport]) => {
-      const transportUrl = transport({ chain: undefined }).value?.url!
+export const productionCustomRpcUrls = Object.entries(publicTransports).reduce(
+  (acc, [chainId, transport]) => {
+    const transportUrl = transport({ chain: undefined }).value?.url!
 
-      let fetchOptions = {}
-      if (transportUrl.startsWith('https://lb.drpc.live/') && drpcJwt) {
-        fetchOptions = {
-          headers: {
-            Authorization: drpcJwt,
-          },
-        }
+    let fetchOptions = {}
+    if (transportUrl.startsWith('https://lb.drpc.live/') && drpcJwt) {
+      fetchOptions = {
+        headers: {
+          Authorization: drpcJwt,
+        },
       }
+    }
 
-      acc[Number(chainId) as EvmChainId] = http(transportUrl, {
-        fetchOptions,
-        onFetchRequest(_req) {
-          if (typeof window !== 'undefined' && transportUrl.includes('drpc')) {
-            drpcJwt && _req.headers.set('Authorization', drpcJwt)
-            try {
-              _req.json().then((json) => {
-                gtagEvent('drpc-request', {
-                  pathname: window.location.pathname,
-                  href: window.location.href,
-                  method: json.method,
-                  chainId,
-                })
+    acc[Number(chainId) as EvmChainId] = http(transportUrl, {
+      fetchOptions,
+      onFetchRequest(_req) {
+        if (typeof window !== 'undefined' && transportUrl.includes('drpc')) {
+          drpcJwt && _req.headers.set('Authorization', drpcJwt)
+          try {
+            _req.json().then((json) => {
+              gtagEvent('drpc-request', {
+                pathname: window.location.pathname,
+                href: window.location.href,
+                method: json.method,
+                chainId,
               })
-            } catch {}
-          }
-        },
-        onFetchResponse(_res) {
-          if (typeof window !== 'undefined' && transportUrl.includes('drpc')) {
-            gtagEvent('drpc-response', {
-              pathname: window.location.pathname,
-              href: window.location.href,
-              chainId,
             })
-          }
-        },
-      })
-      return acc
-    },
-    {} as util.Writeable<typeof publicTransports>,
-  )
+          } catch {}
+        }
+      },
+      onFetchResponse(_res) {
+        if (typeof window !== 'undefined' && transportUrl.includes('drpc')) {
+          gtagEvent('drpc-response', {
+            pathname: window.location.pathname,
+            href: window.location.href,
+            chainId,
+          })
+        }
+      },
+    })
+    return acc
+  },
+  {} as util.Writeable<typeof publicTransports>,
+)
 
-  const networks = Object.keys(customRpcUrls).map(
+export const createProductionWagmiAdapter = () => {
+  const networks = Object.keys(productionCustomRpcUrls).map(
     (chainId) => getEvmChainById(+chainId as EvmChainId).viemChain,
   )
 
@@ -86,7 +86,7 @@ export const createProductionWagmiAdapter = () => {
 
   return new WagmiAdapter({
     ...publicWagmiConfig,
-    customRpcUrls,
+    customRpcUrls: productionCustomRpcUrls,
     pollingInterval,
     connectors: [porto()],
     storage,

@@ -1,6 +1,8 @@
 import { type AppKitNetwork, mainnet } from '@reown/appkit/networks'
 import { type AppKit, createAppKit as _createAppKit } from '@reown/appkit/react'
 import { getWagmiAdapter } from '.'
+import { productionCustomRpcUrls } from './production'
+import { testCustomRpcUrls } from './test'
 
 const metadata = {
   name: 'SushiSwap',
@@ -13,10 +15,15 @@ const metadata = {
 export const projectId = '3f44629277b155ef0caebf3dc705c4ba'
 
 const createAppKit = () => {
+  const isTest = process.env.NEXT_PUBLIC_APP_ENV === 'test'
+
+  const customRpcUrls = isTest ? testCustomRpcUrls : productionCustomRpcUrls
+
   return _createAppKit({
     adapters: [getWagmiAdapter()],
     projectId,
     networks: getWagmiAdapter().networks as [AppKitNetwork, ...AppKitNetwork[]],
+    customRpcUrls,
     coinbasePreference: 'all',
     featuredWalletIds: [
       'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', //metamask
