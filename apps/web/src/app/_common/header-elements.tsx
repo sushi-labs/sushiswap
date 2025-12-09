@@ -92,6 +92,11 @@ export const SUPPORT_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
     href: '/legal/privacy-policy',
     description: 'Our commitment to safeguarding your data.',
   },
+  {
+    title: 'Terms of Service',
+    href: '/legal/terms-of-service',
+    description: 'Our terms and conditions for using Sushi.',
+  },
 ]
 
 interface HeaderElements {

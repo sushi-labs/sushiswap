@@ -1,6 +1,5 @@
 'use client'
 
-import { faro } from '@grafana/faro-web-sdk'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
   BrowserEvent,
@@ -40,6 +39,7 @@ import React, {
 import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
 import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { APPROVE_TAG_SWAP, NativeAddress } from 'src/lib/constants'
+import { sendDrilldownLog } from 'src/lib/drilldown-log'
 import type { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { logger } from 'src/lib/logger'
@@ -50,7 +50,7 @@ import {
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/slippage'
-import { ChainId, ZERO } from 'sushi'
+import { Amount, ChainId, ZERO } from 'sushi'
 import {
   EvmNative,
   addGasMargin,
@@ -67,6 +67,8 @@ import {
   useWaitForTransactionReceipt,
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
+import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
+import { useDetailsInteractionTracker } from '../../_ui/details-interaction-tracker-provider'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTrade,
@@ -96,6 +98,10 @@ const _SimpleSwapTradeReviewDialog: FC<{
     state: { token0, token1, chainId, swapAmount, recipient },
     mutate: { setSwapAmount },
   } = useDerivedStateSimpleSwap()
+  const {
+    state: { isDetailsCollapsed, wasDetailsTouched },
+    mutate: { resetDetailsTrackedState },
+  } = useDetailsInteractionTracker()
 
   const { approved } = useApproved(APPROVE_TAG_SWAP)
   const [slippagePercent] = useSlippageTolerance()
@@ -118,6 +124,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
   )
 
   const { refetchChain: refetchBalances } = useRefetchBalances()
+  const { data: prices } = usePrices({ chainId })
 
   const isWrap =
     token0?.type === 'native' &&
@@ -201,6 +208,50 @@ const _SimpleSwapTradeReviewDialog: FC<{
               chain_id: chainId,
               tx: stringify(trade?.tx),
             })
+            if (trade?.amountIn?.currency && trade?.amountOut?.currency) {
+              const token0Usd =
+                prices?.get(trade?.amountIn?.currency.wrap().address) ?? 0
+              const swapAmountUsd = Amount.tryFromHuman(
+                trade?.amountIn?.currency,
+                trade?.amountIn?.toString(),
+              )?.mulHuman(token0Usd)
+              const swapDetails = {
+                location: '_SimpleSwapTradeReviewDialog',
+                action: 'onSwapSuccess',
+                chainId: String(chainId),
+                token0:
+                  trade?.amountIn?.currency.type === 'native'
+                    ? 'native'
+                    : trade?.amountIn?.currency.address,
+                token0Symbol: trade?.amountIn?.currency.symbol ?? 'N/A',
+                token1:
+                  trade?.amountOut?.currency.type === 'native'
+                    ? 'native'
+                    : trade?.amountOut?.currency.address,
+                token1Symbol: trade?.amountOut?.currency.symbol ?? 'N/A',
+                swapAmount: trade?.amountIn?.toString(),
+                swapAmountUsd:
+                  swapAmountUsd && token0Usd
+                    ? swapAmountUsd?.toString()
+                    : 'N/A',
+                feeUsd: trade?.fee ? trade.fee?.replaceAll('$', '') : 'N/A',
+                recipient: recipient ? recipient : 'N/A',
+                timestamp: Date.now().toString(),
+                detailsCollapsedState: isDetailsCollapsed ? 'closed' : 'open',
+                wasDetailsTouched: wasDetailsTouched ? 'yes' : 'no',
+              }
+              await sendDrilldownLog({
+                dataForLog: swapDetails,
+                extraFields: {
+                  detailsCollapsedState: swapDetails.detailsCollapsedState,
+                  feeUsd: swapDetails.feeUsd,
+                  chainId: swapDetails.chainId,
+                  wasDetailsTouched: swapDetails.wasDetailsTouched,
+                  recipient: swapDetails.recipient,
+                },
+                logLevel: 'info',
+              })
+            }
           } else {
             sendAnalyticsEvent(SwapEventName.SWAP_TRANSACTION_FAILED, {
               txHash: hash,
@@ -221,6 +272,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
       } finally {
         setSwapAmount('')
         refetchBalances(chainId)
+        resetDetailsTrackedState()
       }
     },
     [
@@ -233,6 +285,11 @@ const _SimpleSwapTradeReviewDialog: FC<{
       isUnwrap,
       refetchBalances,
       trace,
+      prices,
+      recipient,
+      resetDetailsTrackedState,
+      isDetailsCollapsed,
+      wasDetailsTouched,
     ],
   )
 

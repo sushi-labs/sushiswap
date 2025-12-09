@@ -25,6 +25,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
+import { UI_FEE_PERCENT } from 'src/config'
 import { APPROVE_TAG_SWAP } from 'src/lib/constants'
 import { usePersistedOrdersStore } from 'src/lib/hooks/react-query/twap'
 import { logger } from 'src/lib/logger'
@@ -322,7 +323,7 @@ export const TwapTradeReviewDialog: FC<{
                         </Button>
                       ) : null}
                     </List.KeyValue>
-                    <List.KeyValue title="Fee">0.25%</List.KeyValue>
+                    <List.KeyValue title="Fee">{UI_FEE_PERCENT}%</List.KeyValue>
                   </List.Control>
                   <List.Control>
                     <List.KeyValue

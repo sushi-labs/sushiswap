@@ -1,5 +1,9 @@
 import type { NextRequest } from 'next/server'
-import { type ZapSupportedChainId, isZapSupportedChainId } from 'src/config'
+import {
+  UI_FEE_BIPS,
+  type ZapSupportedChainId,
+  isZapSupportedChainId,
+} from 'src/config'
 import { sz } from 'sushi'
 import {
   SushiSwapV3FeeAmount,
@@ -79,7 +83,7 @@ export async function GET(request: NextRequest) {
       args: {
         token: tokenIn,
         amount: amountIn,
-        bps: '25',
+        bps: `${UI_FEE_BIPS}`,
         receiver: UI_FEE_COLLECTOR_ADDRESS[chainId],
       },
     },
