@@ -1,42 +1,45 @@
 'use client'
 
+import type { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { cookieToInitialState } from '@wagmi/core'
-import { createProductionConfig } from './production'
-import type { PublicWagmiConfig } from './public'
-import { createTestConfig } from './test'
+import { createProductionWagmiAdapter } from './production'
+import { createTestWagmiAdapter } from './test'
 
-export { createProductionConfig }
-export { createTestConfig }
+export { createProductionWagmiAdapter }
+export { createTestWagmiAdapter }
 
-const createWagmiConfig = () => {
+const createWagmiAdapter = () => {
   const isTest = process.env.NEXT_PUBLIC_APP_ENV === 'test'
 
   const config = (() => {
     if (isTest) {
-      return createTestConfig() as unknown as PublicWagmiConfig
+      return createTestWagmiAdapter()
     }
-    return createProductionConfig()
+    return createProductionWagmiAdapter()
   })()
 
-  return config as PublicWagmiConfig
+  return config
 }
 
-let wagmiConfigSingleton: PublicWagmiConfig | undefined = undefined
-export const getWagmiConfig = () => {
+let wagmiAdapterSingleton: WagmiAdapter | undefined = undefined
+export const getWagmiAdapter = () => {
   if (typeof window === 'undefined') {
-    return createWagmiConfig()
+    return createWagmiAdapter()
   }
 
-  if (!wagmiConfigSingleton) {
-    wagmiConfigSingleton = createWagmiConfig()
+  if (!wagmiAdapterSingleton) {
+    wagmiAdapterSingleton = createWagmiAdapter()
   }
 
-  return wagmiConfigSingleton
+  return wagmiAdapterSingleton
 }
 
 export const getWagmiInitialState = (
   cookieHeaders: string | null | undefined,
 ) => {
-  const initialState = cookieToInitialState(getWagmiConfig(), cookieHeaders)
+  const initialState = cookieToInitialState(
+    getWagmiAdapter().wagmiConfig,
+    cookieHeaders,
+  )
   return initialState
 }

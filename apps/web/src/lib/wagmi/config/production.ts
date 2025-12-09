@@ -1,20 +1,12 @@
 'use client'
 
-import { connectorsForWallets } from '@rainbow-me/rainbowkit'
-import {
-  argentWallet,
-  coinbaseWallet,
-  injectedWallet,
-  metaMaskWallet,
-  safeWallet,
-  trustWallet,
-  walletConnectWallet,
-} from '@rainbow-me/rainbowkit/wallets'
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { gtagEvent } from '@sushiswap/ui'
-import { EvmChainId } from 'sushi/evm'
-import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
+import { porto } from '@wagmi/connectors'
+import { EvmChainId, getEvmChainById } from 'sushi/evm'
+import { http, cookieStorage, createStorage } from 'wagmi'
 import type { util } from 'zod'
-import { portoWallet } from './porto'
+import { projectId } from './appkit'
 import { publicWagmiConfig } from './public'
 import { publicTransports } from './viem'
 
@@ -36,32 +28,10 @@ const pollingInterval = new Proxy(
   },
 )
 
-coinbaseWallet.preference = { options: 'all', telemetry: false }
-
-const connectors = connectorsForWallets(
-  [
-    {
-      groupName: 'Recommended',
-      wallets: [portoWallet, metaMaskWallet, coinbaseWallet, trustWallet],
-    },
-    {
-      groupName: 'Others',
-      wallets: [injectedWallet, walletConnectWallet, argentWallet, safeWallet],
-    },
-  ],
-  {
-    appName: 'Sushi',
-    projectId: '3f44629277b155ef0caebf3dc705c4ba',
-  },
-)
-
-// TODO: Properly fix when rainbowkit is updated
-export type PublicWagmiConnectors = typeof connectors
-
 const drpcJwt = process.env['NEXT_PUBLIC_DRPC_JWT']
 
-export const createProductionConfig = () => {
-  const transports = Object.entries(publicTransports).reduce(
+export const createProductionWagmiAdapter = () => {
+  const customRpcUrls = Object.entries(publicTransports).reduce(
     (acc, [chainId, transport]) => {
       const transportUrl = transport({ chain: undefined }).value?.url!
 
@@ -106,16 +76,22 @@ export const createProductionConfig = () => {
     {} as util.Writeable<typeof publicTransports>,
   )
 
+  const networks = Object.keys(customRpcUrls).map(
+    (chainId) => getEvmChainById(+chainId as EvmChainId).viemChain,
+  )
+
   const storage = createStorage({
     storage: cookieStorage,
   })
 
-  return createConfig({
+  return new WagmiAdapter({
     ...publicWagmiConfig,
-    transports,
+    customRpcUrls,
     pollingInterval,
-    connectors,
+    connectors: [porto()],
     storage,
     ssr: true,
+    networks,
+    projectId,
   })
 }

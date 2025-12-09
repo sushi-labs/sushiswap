@@ -1,10 +1,11 @@
 'use client'
 
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { mock } from '@wagmi/connectors'
 import type { EvmChainId } from 'sushi/evm'
 import { http, type HttpTransport } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
-import { createConfig } from 'wagmi'
+import { projectId } from '../appkit'
 import { accounts, testChains } from './constants'
 
 const anvilPort = String(
@@ -22,7 +23,7 @@ const testWalletIndex = Number(
 
 const localHttpUrl = `http://127.0.0.1:${anvilPort}`
 
-export const createTestConfig = () => {
+export const createTestWagmiAdapter = () => {
   const mockConnector = mock({
     accounts: [
       accounts.map((x) => privateKeyToAccount(x.privateKey))[testWalletIndex]
@@ -33,9 +34,9 @@ export const createTestConfig = () => {
     },
   })
 
-  return createConfig({
-    chains: testChains,
-    transports: testChains.reduce(
+  return new WagmiAdapter({
+    networks: testChains,
+    customRpcUrls: testChains.reduce(
       (acc, chain) => {
         acc[chain.id] = http(localHttpUrl)
         return acc
@@ -44,5 +45,6 @@ export const createTestConfig = () => {
     ),
     pollingInterval: 1_000,
     connectors: [mockConnector],
+    projectId,
   })
 }

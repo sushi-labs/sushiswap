@@ -1,66 +1,14 @@
 'use client'
 
-import '@rainbow-me/rainbowkit/styles.css'
-
 import { faro } from '@grafana/faro-web-sdk'
-import {
-  type DisclaimerComponent,
-  RainbowKitProvider,
-  type Theme,
-  darkTheme as rainbowDarkTheme,
-  lightTheme as rainbowLightTheme,
-  midnightTheme as rainbowMidnightTheme,
-} from '@rainbow-me/rainbowkit'
-import { useIsMounted } from '@sushiswap/hooks'
+import { useAppKitTheme } from '@reown/appkit/react'
 import { useTheme } from 'next-themes'
-import { type FC, type ReactNode, useEffect, useMemo } from 'react'
+import { type FC, type ReactNode, useEffect } from 'react'
 import { WagmiStoreVersionCheck } from 'src/lib/wagmi/components/wagmi-store-version-check'
-import { getWagmiConfig, getWagmiInitialState } from 'src/lib/wagmi/config'
+import { getWagmiAdapter, getWagmiInitialState } from 'src/lib/wagmi/config'
+import { getAppKit } from 'src/lib/wagmi/config/appkit'
+import type { PublicWagmiConfig } from 'src/lib/wagmi/config/public'
 import { WagmiProvider as _WagmiProvider, useConnection } from 'wagmi'
-
-const darkTheme: Theme = {
-  ...rainbowDarkTheme({
-    borderRadius: 'medium',
-    overlayBlur: 'small',
-  }),
-  colors: {
-    ...rainbowDarkTheme().colors,
-    modalBackground: '#1e293b',
-    modalBackdrop: '#00000019',
-    modalBorder: '#00000000',
-  },
-  fonts: {
-    body: 'var(--font-sans)',
-  },
-}
-
-const lightTheme: Theme = {
-  ...rainbowLightTheme({
-    borderRadius: 'medium',
-    overlayBlur: 'small',
-  }),
-  colors: {
-    ...rainbowLightTheme().colors,
-    modalBackground: '#ffffff',
-    modalBackdrop: '#00000019',
-    modalBorder: '#00000000',
-  },
-  fonts: {
-    body: 'var(--font-sans)',
-  },
-}
-
-const midnightTheme: Theme = {
-  ...rainbowMidnightTheme({}),
-}
-
-const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
-  <Text>
-    By connecting your wallet, you agree to Sushi Labs{"' "}
-    <Link href="/legal/terms-of-service">Terms of Service</Link> and{' '}
-    <Link href="/legal/privacy-policy">Privacy Policy</Link>
-  </Text>
-)
 
 const WagmiTrackers = () => {
   const { address, chainId } = useConnection()
@@ -78,44 +26,49 @@ const WagmiTrackers = () => {
   return null
 }
 
+getAppKit()
+
 export const WagmiProvider: FC<{
   children: ReactNode
   cookie?: string | null
 }> = ({ children, cookie }) => {
   const initialState = getWagmiInitialState(cookie)
-  const isMounted = useIsMounted()
 
   const { forcedTheme, resolvedTheme } = useTheme()
 
+  const { setThemeMode, setThemeVariables } = useAppKitTheme()
+
   const theme = forcedTheme || resolvedTheme
 
-  const rainbowKitTheme = useMemo(() => {
-    if (!isMounted) return lightTheme
+  /*
+    biome-ignore lint/correctness/useExhaustiveDependencies:
+    setThemeMode & setThemeVariables are not stable across renders.
+    Including them in deps would cause this effect to run endlessly.
+  */
+  useEffect(() => {
+    console.log('check0')
+    if (!theme) return
 
-    if (theme === 'dark') {
-      return darkTheme
+    const themeMode = theme === 'light' ? 'light' : 'dark'
+    const themeVariables = {
+      '--apkt-font-family': 'var(--font-sans)',
+      '--apkt-accent': '#3898FF',
     }
 
-    if (theme === 'black') {
-      return midnightTheme
-    }
-
-    return lightTheme
-  }, [theme, isMounted])
+    setThemeMode(themeMode)
+    setThemeVariables(themeVariables)
+  }, [theme])
 
   return (
-    <_WagmiProvider config={getWagmiConfig()} initialState={initialState}>
+    <_WagmiProvider
+      config={getWagmiAdapter().wagmiConfig as PublicWagmiConfig}
+      initialState={initialState}
+    >
       <div className="h-full w-full [&>div]:h-full">
-        <RainbowKitProvider
-          modalSize="compact"
-          theme={rainbowKitTheme}
-          appInfo={{ disclaimer: Disclaimer }}
-        >
-          <WagmiStoreVersionCheck>
-            <WagmiTrackers />
-            {children}
-          </WagmiStoreVersionCheck>
-        </RainbowKitProvider>
+        <WagmiStoreVersionCheck>
+          <WagmiTrackers />
+          {children}
+        </WagmiStoreVersionCheck>
       </div>
     </_WagmiProvider>
   )
