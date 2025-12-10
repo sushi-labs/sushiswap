@@ -29,7 +29,9 @@ function usePortfolioClaimables(
 
 export const PortfolioClaimables = () => {
   const { address } = useAccount()
-  const { data, isLoading } = usePortfolioClaimables(address)
+  const { data, isLoading, error } = usePortfolioClaimables(address)
+
+  const hasError = Boolean(error)
 
   const farmClaimables: PortfolioFarmClaim[] = useMemo(
     () =>
@@ -37,22 +39,29 @@ export const PortfolioClaimables = () => {
     [data],
   )
 
-  // TODO: Add error state
   return (
     <div className="flex flex-col h-full overflow-hidden gap-y-5">
       <div className="px-5">
         <div className="flex flex-col px-5 py-3 gap-y-3 bg-secondary rounded-xl">
           <span className="text-sm text-muted-foreground">Total Balance</span>
-          {isLoading || !data ? (
+          {isLoading && !data && !hasError ? (
             <SkeletonText fontSize="lg" className="!w-1/3" />
           ) : (
-            <div className="text-2xl font-bold">
-              {formatUSD(data.totalUSD || 0)}
-            </div>
+            <>
+              <div className="text-2xl font-bold">
+                {formatUSD(data?.totalUSD ?? 0)}
+              </div>
+              {hasError ? (
+                <div className="text-xs italic text-red-500">
+                  An error occurred fetching claimables.
+                </div>
+              ) : null}
+            </>
           )}
         </div>
       </div>
-      {isLoading || !data ? (
+      {hasError ? // Hide skeletons + hide claimable list on error
+      null : isLoading || !data ? (
         <div>
           <div className="px-5 py-4">
             <SkeletonText />
