@@ -73,7 +73,7 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
             {connector ? (
               connector.icon ? (
                 <Image
-                  src={connector.icon}
+                  src={connector.icon.trim()}
                   width="40"
                   height="40"
                   className="p-1"
