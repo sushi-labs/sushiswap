@@ -99,6 +99,14 @@ export function usePoolGraph() {
                       return
                     }
 
+                    // Skip pools with zero liquidity
+                    if (liquidity === 0n) {
+                      console.log(
+                        `⚠️ Skipping pool with zero liquidity: ${poolAddress}`,
+                      )
+                      return
+                    }
+
                     // Get slot0 data
                     const slot0 = slot0Result.result
 
