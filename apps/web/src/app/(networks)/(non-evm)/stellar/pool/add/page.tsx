@@ -20,6 +20,7 @@ import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trus
 import {
   calculatePriceFromSqrtPrice,
   encodePriceSqrt,
+  isAddressLower,
 } from '~stellar/_common/lib/soroban'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
@@ -66,7 +67,9 @@ export default function AddPoolPage() {
     if (poolInfo) {
       return poolInfo.token0.contract !== token0.contract
     }
-    return token0.contract > token1.contract
+    // Check if user-selected token0 should actually be token1 in pool ordering
+    // Pool tokens are ordered by decoded bytes, not string comparison
+    return !isAddressLower(token0.contract, token1.contract)
   }, [token0, token1, poolInfo])
 
   const [orderedToken0, orderedToken1] = reversedPoolTokenOrder

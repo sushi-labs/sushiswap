@@ -1,4 +1,7 @@
-import { DEFAULT_TIMEOUT } from '~stellar/_common/lib/soroban/constants'
+import {
+  DEFAULT_TIMEOUT,
+  getSqrtPriceLimitForSwap,
+} from '~stellar/_common/lib/soroban/constants'
 import {
   getFees,
   getPool,
@@ -54,14 +57,22 @@ export class QuoteService {
         contractId: contractAddresses.ROUTER,
         // No publicKey needed for read-only quote queries
       })
+
+      // Calculate the correct sqrt price limit based on swap direction
+      // In pools: token0 < token1 (ordered by decoded bytes, not string comparison)
+      // - zeroForOne (token0 -> token1): price decreases, use MIN_SQRT_RATIO + 1
+      // - oneForZero (token1 -> token0): price increases, use MAX_SQRT_RATIO - 1
+      const sqrtPriceLimit =
+        params.sqrtPriceLimitX96 ??
+        getSqrtPriceLimitForSwap(params.tokenIn, params.tokenOut)
+
       const { result } = await routerContractClient.quote_exact_input_single(
         {
           params: {
             token_in: params.tokenIn,
             token_out: params.tokenOut,
             fee: params.fee,
-            sqrt_price_limit_x96:
-              params.sqrtPriceLimitX96 ?? BigInt(2) ** 128n - 1n, // max u128
+            sqrt_price_limit_x96: sqrtPriceLimit,
             amount_in: params.amountIn,
             // Unused by the contract function implementation, but required
             amount_out_minimum: 0n,
