@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import {
   calculateAmountsFromLiquidity,
   calculateLiquidityFromAmount0,
@@ -132,6 +133,6 @@ export function useCalculatePairedAmount(
       tickLower !== null &&
       tickUpper !== null &&
       decimals !== null,
-    staleTime: 10000, // 10 seconds
+    staleTime: ms('10s'), // 10 seconds
   })
 }

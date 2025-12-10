@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import {
   fetchPoolLiquidity,
   fetchPoolReserves,
@@ -14,6 +15,7 @@ export const usePoolLiquidity = (address: string | null) => {
       return await fetchPoolLiquidity(address)
     },
     enabled: !!address,
+    staleTime: ms('10s'), // 10 seconds
   })
 }
 
@@ -25,5 +27,6 @@ export const usePoolReserves = (address: string | null) => {
       return await fetchPoolReserves(address)
     },
     enabled: !!address,
+    staleTime: ms('10s'), // 10 seconds
   })
 }

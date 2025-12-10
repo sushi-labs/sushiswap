@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { formatTokenAmount } from '../../utils/format'
 import { useCalculatePairedAmount } from './use-calculate-paired-amount'
 import { usePoolInitialized } from './use-pool-initialized'
@@ -94,6 +95,6 @@ export function useMaxPairedAmount(
       !!initialized &&
       tickLower !== null &&
       tickUpper !== null,
-    staleTime: 10000, // 10 seconds
+    staleTime: ms('10s'), // 10 seconds
   })
 }

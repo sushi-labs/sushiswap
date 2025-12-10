@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import {
   calculatePriceFromSqrtPrice,
   getCurrentSqrtPrice,
@@ -16,5 +17,6 @@ export const usePoolPrice = (address: string | null) => {
       return price
     },
     enabled: !!address,
+    staleTime: ms('10s'), // 10 seconds
   })
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { type QueryClient, useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { isPoolInitialized } from '~stellar/_common/lib/soroban/pool-initialization'
 
 const poolInitializedQueryKey = (address: string | null | undefined) => [
@@ -14,7 +15,7 @@ export const usePoolInitialized = (address: string | null | undefined) => {
     queryKey: poolInitializedQueryKey(address),
     queryFn: () => isPoolInitialized(address!),
     enabled: !!address,
-    staleTime: 30_000,
+    staleTime: ms('30s'),
   })
 }
 

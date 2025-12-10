@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { getAllPools, getPoolInfo } from '../../soroban/pool-helpers'
 
 export const usePoolInfo = (address: string | null) => {
@@ -11,6 +12,7 @@ export const usePoolInfo = (address: string | null) => {
       return await getPoolInfo(address)
     },
     enabled: !!address,
+    staleTime: ms('10s'),
   })
 }
 
@@ -20,5 +22,6 @@ export const useAllPools = () => {
     queryFn: async () => {
       return await getAllPools()
     },
+    staleTime: ms('10s'),
   })
 }
