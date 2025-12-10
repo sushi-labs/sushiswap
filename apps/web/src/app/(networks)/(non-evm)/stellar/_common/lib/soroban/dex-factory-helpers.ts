@@ -1,6 +1,6 @@
 import { Address } from '@stellar/stellar-sdk'
 import { getFactoryContractClient } from './client'
-import { DEFAULT_TIMEOUT, ZERO_ADDRESS } from './constants'
+import { DEFAULT_TIMEOUT, ZERO_ADDRESS, isAddressLower } from './constants'
 import { contractAddresses } from './contracts'
 import { isPoolInitialized } from './pool-initialization'
 import { getBaseTokens } from './token-helpers'
@@ -46,9 +46,11 @@ export async function createAndInitializePool({
       throw new Error('Initial sqrt price must be greater than 0')
     }
 
-    // Order tokens (smaller address first) - EXACTLY like the factory expects
-    const [token0, token1] =
-      tokenA < tokenB ? [tokenA, tokenB] : [tokenB, tokenA]
+    // Order tokens by decoded bytes - EXACTLY like the factory expects
+    // Note: Must compare decoded bytes, not base32 strings (base32 doesn't preserve byte ordering)
+    const [token0, token1] = isAddressLower(tokenA, tokenB)
+      ? [tokenA, tokenB]
+      : [tokenB, tokenA]
     console.log('🏭 Ordered tokens:', { token0, token1 })
 
     // Check if pool already exists
@@ -228,9 +230,11 @@ export async function getPoolDirectSDK({
   fee: number
 }): Promise<string | null> {
   try {
-    // Order tokens (smaller address first) - EXACTLY like the router and getPoolTransactionBuilder does
-    const [token0, token1] =
-      tokenA < tokenB ? [tokenA, tokenB] : [tokenB, tokenA]
+    // Order tokens by decoded bytes - EXACTLY like the router and getPoolTransactionBuilder does
+    // Note: Must compare decoded bytes, not base32 strings (base32 doesn't preserve byte ordering)
+    const [token0, token1] = isAddressLower(tokenA, tokenB)
+      ? [tokenA, tokenB]
+      : [tokenB, tokenA]
 
     console.log('Direct SDK approach - checking pool:', token0, token1, fee)
 
@@ -276,9 +280,11 @@ export async function getPoolTransactionBuilder({
   fee: number
 }): Promise<string | null> {
   try {
-    // Order tokens (smaller address first) - EXACTLY like the router does
-    const [token0, token1] =
-      tokenA < tokenB ? [tokenA, tokenB] : [tokenB, tokenA]
+    // Order tokens by decoded bytes - EXACTLY like the router does
+    // Note: Must compare decoded bytes, not base32 strings (base32 doesn't preserve byte ordering)
+    const [token0, token1] = isAddressLower(tokenA, tokenB)
+      ? [tokenA, tokenB]
+      : [tokenB, tokenA]
 
     // Get account for transaction building
     const factoryContractClient = getFactoryContractClient({
@@ -495,12 +501,14 @@ export async function debugCreatePoolParams(
   console.log('  tokenB:', tokenB)
   console.log('  fee:', fee)
 
-  // Check token ordering
-  const [token0, token1] = tokenA < tokenB ? [tokenA, tokenB] : [tokenB, tokenA]
+  // Check token ordering (by decoded bytes, not string comparison)
+  const [token0, token1] = isAddressLower(tokenA, tokenB)
+    ? [tokenA, tokenB]
+    : [tokenB, tokenA]
   console.log('\nOrdered tokens:')
   console.log('  token0 (first):', token0)
   console.log('  token1 (second):', token1)
-  console.log('  token0 < token1:', token0 < token1)
+  console.log('  token0 < token1 (by bytes):', isAddressLower(token0, token1))
 
   // Check if pool already exists
   try {

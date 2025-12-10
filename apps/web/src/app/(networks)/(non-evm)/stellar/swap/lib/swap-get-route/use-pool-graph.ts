@@ -4,6 +4,7 @@ import {
   getFactoryContractClient,
   getPoolContractClient,
 } from '~stellar/_common/lib/soroban/client'
+import { isAddressLower } from '~stellar/_common/lib/soroban/constants'
 import { contractAddresses } from '~stellar/_common/lib/soroban/contracts'
 import type { Vertex } from './types'
 
@@ -55,10 +56,10 @@ export function usePoolGraph() {
                 (async () => {
                   try {
                     // Query pool address from factory
+                    // Order tokens by decoded bytes (not string comparison - base32 doesn't preserve byte ordering)
                     const poolResult = await factoryClient.get_pool({
-                      // Factory supports either order; we still pass normalized
-                      token_a: tokenA < tokenB ? tokenA : tokenB,
-                      token_b: tokenA < tokenB ? tokenB : tokenA,
+                      token_a: isAddressLower(tokenA, tokenB) ? tokenA : tokenB,
+                      token_b: isAddressLower(tokenA, tokenB) ? tokenB : tokenA,
                       fee,
                     })
 
