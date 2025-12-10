@@ -25,9 +25,7 @@ function usePortfolioWallet(
 
 export const PortfolioTokens = () => {
   const { address } = useAccount()
-  const { data, isLoading, error } = usePortfolioWallet(address)
-
-  const hasError = Boolean(error)
+  const { data, isLoading, isError } = usePortfolioWallet(address)
 
   return (
     <div className="flex flex-col gap-y-5 h-full overflow-hidden">
@@ -36,7 +34,7 @@ export const PortfolioTokens = () => {
           <span className="text-sm text-muted-foreground">Total Balance</span>
 
           <div className="flex flex-col gap-y-2">
-            {isLoading && !data && !hasError ? (
+            {isLoading && !data && !isError ? (
               <>
                 <SkeletonText fontSize="lg" className="!w-1/3" />
                 <SkeletonText className="!w-1/2" />
@@ -47,7 +45,7 @@ export const PortfolioTokens = () => {
                   {formatUSD(data?.totalUSD ?? 0)}
                 </div>
 
-                {hasError ? (
+                {isError ? (
                   <div className="text-xs italic text-red-500">
                     An error occurred fetching token balances.
                   </div>
@@ -74,7 +72,7 @@ export const PortfolioTokens = () => {
       </div>
 
       {/* TOKEN LIST SECTION */}
-      {hasError ? // Hide skeletons + hide tokens list on error
+      {isError ? // Hide skeletons + hide tokens list on error
       null : isLoading || !data ? (
         <div>
           {Array.from({ length: 12 }).map((_, i) => (

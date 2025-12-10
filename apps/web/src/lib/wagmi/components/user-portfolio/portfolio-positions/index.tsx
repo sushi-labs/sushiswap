@@ -26,8 +26,7 @@ function usePortfolioPositions(
 
 export const PortfolioPositions = () => {
   const id = useAccount()
-  const { data, isLoading, error } = usePortfolioPositions(id.address)
-  const hasError = Boolean(error)
+  const { data, isLoading, isError } = usePortfolioPositions(id.address)
 
   return (
     <div className="flex flex-col h-full overflow-hidden gap-y-5">
@@ -35,14 +34,14 @@ export const PortfolioPositions = () => {
         <div className="flex flex-col px-5 py-3 gap-y-3 bg-secondary rounded-xl">
           <span className="text-sm text-muted-foreground">Total Balance</span>
           <div className="">
-            {isLoading && !data && !hasError ? (
+            {isLoading && !data && !isError ? (
               <SkeletonText fontSize="lg" className="!w-1/3" />
             ) : (
               <>
                 <div className="text-2xl font-bold">
                   {formatUSD(data?.totalUSD ?? 0)}
                 </div>
-                {hasError ? (
+                {isError ? (
                   <div className="text-xs italic text-red-500">
                     An error occurred fetching positions.
                   </div>
@@ -52,7 +51,7 @@ export const PortfolioPositions = () => {
           </div>
         </div>
       </div>
-      {hasError ? // Hide skeletons + hide pos list on error
+      {isError ? // Hide skeletons + hide pos list on error
       null : isLoading || !data ? (
         <div>
           <div className="px-5 py-4">
