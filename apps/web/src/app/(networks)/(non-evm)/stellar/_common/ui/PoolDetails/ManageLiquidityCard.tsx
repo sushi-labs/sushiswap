@@ -438,6 +438,8 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
         liquidity: liquidityToRemove,
         amount0Min: 0n,
         amount1Min: 0n,
+        token0Code: pool.token0.code,
+        token1Code: pool.token1.code,
       })
 
       // Reset form
@@ -1042,7 +1044,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                               )}{' '}
                               {pool.token0.code}
                             </div>
-                            <p>Est. token0 principal</p>
+                            <p>Est. {pool.token0.code} principal</p>
                           </div>
                           <div>
                             <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
@@ -1052,7 +1054,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                               )}{' '}
                               {pool.token1.code}
                             </div>
-                            <p>Est. token1 principal</p>
+                            <p>Est. {pool.token1.code} principal</p>
                           </div>
                         </div>
                         <p className="text-[11px] leading-4 text-muted-foreground">

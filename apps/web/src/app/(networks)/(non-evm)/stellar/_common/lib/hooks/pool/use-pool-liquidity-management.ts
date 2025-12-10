@@ -18,6 +18,8 @@ export interface RemovePoolLiquidityParams {
   liquidity: bigint
   amount0Min: bigint
   amount1Min: bigint
+  token0Code: string
+  token1Code: string
 }
 
 export const useRemoveLiquidity = () => {
@@ -81,7 +83,7 @@ export const useRemoveLiquidity = () => {
       }
 
       createSuccessToast({
-        summary: `Liquidity removed! Collected ${formatAmount(result.amount0)} token0, ${formatAmount(result.amount1)} token1`,
+        summary: `Liquidity removed! Collected ${formatAmount(result.amount0)} ${variables.token0Code}, ${formatAmount(result.amount1)} ${variables.token1Code}`,
         type: 'burn',
         account: connectedAddress || undefined,
         chainId: 1,
