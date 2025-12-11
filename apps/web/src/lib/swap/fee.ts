@@ -1,3 +1,4 @@
+import { UI_FEE_BIPS } from 'src/config'
 import { type Amount, type Fraction, Percent } from 'sushi'
 import { type EvmCurrency, isLsd, isStable, isWrapOrUnwrap } from 'sushi/evm'
 import type { Address } from 'viem'
@@ -22,7 +23,7 @@ export const getFeeString = ({
     !(isStable(fromToken) && isStable(toToken)) &&
     !(isLsd(fromToken) && isLsd(toToken))
     ? `${tokenOutPrice ? '$' : ''}${minAmountOut
-        .mul(new Percent({ numerator: 25, denominator: 10000 }))
+        .mul(new Percent({ numerator: UI_FEE_BIPS, denominator: 10_000 }))
         .mul(tokenOutPrice ? tokenOutPrice.asFraction : 1n)
         .toSignificant(4)}${!tokenOutPrice ? ` ${toToken.symbol}` : ''}`
     : '$0'
