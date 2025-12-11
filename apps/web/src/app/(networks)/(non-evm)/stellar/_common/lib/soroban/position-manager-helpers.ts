@@ -37,6 +37,30 @@ export async function signAuthEntriesAndGetXdr(
     return assembledTransaction.toXDR()
   }
 
+  // Check if there are any auth entries that need signing for the user's address
+  // Auth entries with sorobanCredentialsSourceAccount don't need signing (invoker auth)
+  // Only sorobanCredentialsAddress entries for the user's address need signing
+  const hasEntriesNeedingSigning = authEntries.some(
+    (entry: StellarSdk.xdr.SorobanAuthorizationEntry) => {
+      const credentials = entry.credentials()
+      if (
+        credentials.switch() !==
+        StellarSdk.xdr.SorobanCredentialsType.sorobanCredentialsAddress()
+      ) {
+        return false
+      }
+      const entryAddress = StellarSdk.Address.fromScAddress(
+        credentials.address().address(),
+      ).toString()
+      return entryAddress === sourceAccount
+    },
+  )
+
+  // If no entries need signing for this user, return the XDR as-is
+  if (!hasEntriesNeedingSigning) {
+    return assembledTransaction.toXDR()
+  }
+
   // Prefer the SDK helper if present on the assembled transaction
   const assembledWithHelper = assembledTransaction as unknown as {
     signAuthEntries?: (args?: {
