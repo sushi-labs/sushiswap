@@ -19,6 +19,7 @@ export enum InterfaceEventName {
   NAVBAR_SEARCH_SELECTED = 'Navbar Search Selected',
   RISK_CHECKED = 'Risk Checked',
   SWAP_DETAILS_TOGGLE_CLICKED = 'Swap Details Toggle Clicked',
+  XSWAP_DETAILS_TOGGLE_CLICKED = 'XSwap Details Toggle Clicked',
   TOKEN_IMPORTED = 'Token Imported',
   TOKEN_SELECTED = 'Token Selected',
   TOKEN_SELECTOR_OPENED = 'Token Selector Opened',

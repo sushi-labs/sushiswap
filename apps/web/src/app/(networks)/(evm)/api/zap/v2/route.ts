@@ -1,5 +1,9 @@
 import type { NextRequest } from 'next/server'
-import { type ZapSupportedChainId, isZapSupportedChainId } from 'src/config'
+import {
+  UI_FEE_BIPS,
+  type ZapSupportedChainId,
+  isZapSupportedChainId,
+} from 'src/config'
 import { sz } from 'sushi'
 import { UI_FEE_COLLECTOR_ADDRESS, isUIFeeCollectorChainId } from 'sushi/evm'
 import { z } from 'zod'
@@ -48,7 +52,7 @@ export async function GET(request: NextRequest) {
     }
 
     url.searchParams.set('priceImpact', 'true')
-    url.searchParams.set('fee', '25') // 0.25%
+    url.searchParams.set('fee', `${UI_FEE_BIPS}`) // e.g. 25 (0.25%)
     url.searchParams.set(
       'feeReceiver',
       isUIFeeCollectorChainId(parsedParams.chainId)

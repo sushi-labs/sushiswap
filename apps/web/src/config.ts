@@ -15,6 +15,10 @@ import { KvmChainId } from 'sushi/kvm'
 import { MvmChainId } from 'sushi/mvm'
 import { TvmChainId } from 'sushi/tvm'
 
+export const UI_FEE_BIPS = 35
+export const UI_FEE_PERCENT = UI_FEE_BIPS / 100
+export const UI_FEE_DECIMAL = UI_FEE_BIPS / 10_000
+
 export type SwapApiEnabledChainId =
   (typeof SWAP_API_SUPPORTED_CHAIN_IDS)[number]
 export const isSwapApiEnabledChainId = (
