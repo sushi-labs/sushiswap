@@ -10,6 +10,17 @@
 // Contract addresses and configurations
 export * from './contracts'
 
+// Constants and address utilities
+export {
+  ZERO_ADDRESS,
+  DEFAULT_TIMEOUT,
+  MIN_SQRT_RATIO,
+  MAX_SQRT_RATIO,
+  compareContractAddresses,
+  isAddressLower,
+  getSqrtPriceLimitForSwap,
+} from './constants'
+
 // DEX Factory helpers
 export * from './dex-factory-helpers'
 
