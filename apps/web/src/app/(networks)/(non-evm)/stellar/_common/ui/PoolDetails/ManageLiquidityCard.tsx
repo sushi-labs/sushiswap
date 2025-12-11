@@ -118,7 +118,8 @@ const ZapMaxButton = ({
 export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   pool,
 }) => {
-  const { isConnected, connectedAddress, signTransaction, signAuthEntry } = useStellarWallet()
+  const { isConnected, connectedAddress, signTransaction, signAuthEntry } =
+    useStellarWallet()
   const { data: balances } = usePoolBalances(pool.address, connectedAddress)
   const { positions: myPositions } = useMyPosition({
     userAddress: connectedAddress || undefined,

@@ -23,7 +23,8 @@ export interface RemovePoolLiquidityParams {
 }
 
 export const useRemoveLiquidity = () => {
-  const { signTransaction, signAuthEntry, connectedAddress } = useStellarWallet()
+  const { signTransaction, signAuthEntry, connectedAddress } =
+    useStellarWallet()
   const queryClient = useQueryClient()
 
   return useMutation({
