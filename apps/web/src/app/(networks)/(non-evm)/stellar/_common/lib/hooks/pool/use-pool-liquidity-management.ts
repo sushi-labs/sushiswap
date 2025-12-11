@@ -23,7 +23,7 @@ export interface RemovePoolLiquidityParams {
 }
 
 export const useRemoveLiquidity = () => {
-  const { signTransaction, connectedAddress } = useStellarWallet()
+  const { signTransaction, signAuthEntry, connectedAddress } = useStellarWallet()
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -58,6 +58,7 @@ export const useRemoveLiquidity = () => {
         operator: connectedAddress,
         sourceAccount: connectedAddress,
         signTransaction,
+        signAuthEntry,
       })
 
       const collectResult = await collectFees({
@@ -67,6 +68,7 @@ export const useRemoveLiquidity = () => {
         amount1Max: BigInt('18446744073709551615'), // uint128 max
         operator: connectedAddress,
         signTransaction,
+        signAuthEntry,
       })
 
       return {

@@ -78,12 +78,14 @@ export function useCollectFees() {
       amount0Max,
       amount1Max,
       signTransaction,
+      signAuthEntry,
     }: {
       tokenId: number
       recipient: string
       amount0Max: bigint
       amount1Max: bigint
       signTransaction: (xdr: string) => Promise<string>
+      signAuthEntry: (entryPreimageXdr: string) => Promise<string>
     }) => {
       return await positionService.collectFees(
         {
@@ -93,6 +95,7 @@ export function useCollectFees() {
           amount1Max,
         },
         signTransaction,
+        signAuthEntry,
       )
     },
     onSuccess: (result, variables) => {

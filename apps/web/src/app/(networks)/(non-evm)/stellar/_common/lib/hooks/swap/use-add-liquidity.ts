@@ -23,6 +23,7 @@ export interface UseAddLiquidityParams {
   recipient?: string
   deadline?: number
   signTransaction: (xdr: string) => Promise<string>
+  signAuthEntry: (entryPreimageXdr: string) => Promise<string>
 }
 
 export const useAddLiquidity = () => {
@@ -60,6 +61,7 @@ export const useAddLiquidity = () => {
         params.userAddress,
         addLiquidityParams,
         params.signTransaction,
+        params.signAuthEntry,
       )
 
       return { result, params }
