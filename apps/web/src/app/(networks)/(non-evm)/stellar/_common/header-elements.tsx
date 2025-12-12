@@ -48,7 +48,7 @@ export const headerElements: NavigationElement[] = [
     type: NavigationElementType.Single,
   },
   {
-    title: 'Pool',
+    title: 'Positions',
     href: `/stellar/pool`,
     show: 'desktop',
     type: NavigationElementType.Single,
