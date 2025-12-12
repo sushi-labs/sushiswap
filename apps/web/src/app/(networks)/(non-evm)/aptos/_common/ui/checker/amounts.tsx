@@ -3,7 +3,7 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
-import { ZERO } from 'sushi/math'
+import { ZERO } from 'sushi'
 import { useTokenBalances } from '~aptos/_common/lib/common/use-token-balances'
 
 interface AmountsProps extends ButtonProps {

@@ -15,7 +15,7 @@ import {
 } from '@sushiswap/ui'
 import type React from 'react'
 import { useEffect, useMemo, useState } from 'react'
-import { ToggleZapCard } from 'src/ui/pool/ToggleZapCard'
+import { ToggleZapCard } from '~evm/[chainId]/pool/_ui/toggle-zap-card'
 import { useCalculateDependentAmount } from '~stellar/_common/lib/hooks/pool/use-calculate-dependent-amount'
 import { useMaxPairedAmount } from '~stellar/_common/lib/hooks/pool/use-max-paired-amount'
 import { usePoolBalances } from '~stellar/_common/lib/hooks/pool/use-pool-balances'

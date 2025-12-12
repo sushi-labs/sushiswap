@@ -1,6 +1,5 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { ChainId } from 'sushi/chain'
-import type { Token } from 'sushi/currency'
+import { ChainId, type Token } from 'sushi'
 import { z } from 'zod'
 
 const COINGECKO_CHAIN_ID_BY_NAME = {
@@ -14,14 +13,11 @@ const COINGECKO_CHAIN_ID_BY_NAME = {
   [ChainId.FANTOM]: 'ftm',
   [ChainId.METIS]: 'metis',
   [ChainId.ARBITRUM]: 'arbitrum',
-  [ChainId.FUSE]: 'fuse',
-  [ChainId.OKEX]: 'okexchain',
+  // [ChainId.OKEX]: 'okexchain',
   [ChainId.CELO]: 'celo',
   [ChainId.GNOSIS]: 'xdai',
-  [ChainId.HECO]: 'heco',
-  [ChainId.MOONBEAM]: 'glmr',
+  // [ChainId.HECO]: 'heco',
   [ChainId.OPTIMISM]: 'optimism',
-  [ChainId.TELOS]: 'tlos',
   [ChainId.BTTC]: 'bttc',
   [ChainId.KAVA]: 'kava',
   [ChainId.THUNDERCORE]: 'thundercore',

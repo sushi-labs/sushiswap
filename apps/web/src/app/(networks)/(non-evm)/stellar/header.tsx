@@ -3,16 +3,15 @@
 import { Navigation, SushiNavigationDropdown, classNames } from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
-import React, { type FC, Suspense } from 'react'
-import { NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
+import React, { type FC } from 'react'
 import { HeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
-import type { EvmChainId } from 'sushi/chain'
+import { ChainId } from 'sushi'
 import { headerElements } from './_common/header-elements'
 import { ConnectWalletButton } from './_common/ui/ConnectWallet/ConnectWalletButton'
 
 export const Header: FC<{
-  supportedNetworks?: readonly (EvmChainId | NonStandardChainId)[]
-}> = ({ supportedNetworks }) => {
+  networks?: readonly ChainId[]
+}> = ({ networks }) => {
   return (
     <div className="w-full h-[56px] z-20">
       <div className="fixed w-full flex z-20">
@@ -37,9 +36,8 @@ export const Header: FC<{
           rightElement={
             <>
               <HeaderNetworkSelector
-                networks={SUPPORTED_NETWORKS}
-                supportedNetworks={supportedNetworks}
-                selectedNetwork={NonStandardChainId.STELLAR}
+                networks={networks}
+                selectedNetwork={ChainId.STELLAR}
                 className="flex"
               />
               <ConnectWalletButton variant="secondary" />

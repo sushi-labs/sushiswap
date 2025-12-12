@@ -1,6 +1,6 @@
 import { Container, typographyVariants } from '@sushiswap/ui'
 import type { Metadata } from 'next'
-import { BackButton } from 'src/ui/pool/BackButton'
+import { BackButton } from 'src/app/(networks)/_ui/back-button'
 
 export const metadata: Metadata = {
   title: 'Create Pool 💦',

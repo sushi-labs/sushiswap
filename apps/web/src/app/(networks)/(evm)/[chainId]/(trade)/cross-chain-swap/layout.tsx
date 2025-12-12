@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { XSWAP_SUPPORTED_CHAIN_IDS, isXSwapSupportedChainId } from 'src/config'
-import type { EvmChainId } from 'sushi/chain'
+import type { EvmChainId } from 'sushi/evm'
 import { Header } from '../header'
 import { Providers } from './providers'
 
@@ -25,7 +25,7 @@ export default async function CrossChainSwapLayout(props: {
 
   return (
     <Providers chainId={chainId}>
-      <Header chainId={chainId} supportedNetworks={XSWAP_SUPPORTED_CHAIN_IDS} />
+      <Header chainId={chainId} networks={XSWAP_SUPPORTED_CHAIN_IDS} />
       <main className="lg:p-4 mt-16 mb-[86px] h-[clamp(600px,_calc(100vh_-_280px),_800px)]">
         {children}
       </main>

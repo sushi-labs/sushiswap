@@ -1,8 +1,8 @@
 import { PlusIcon } from '@heroicons/react/24/outline'
 import { Button, Container, LinkInternal } from '@sushiswap/ui'
 import React from 'react'
-import { TableFiltersResetButton } from 'src/ui/pool/TableFiltersResetButton'
-import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
+import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/table-filters-search-token'
+import { TableFiltersResetButton } from '~evm/[chainId]/_ui/table-filters-reset-button'
 import { PoolsTable } from '~stellar/_common/ui/ExplorePools/PoolsTable'
 
 export default async function ExplorePoolsPage() {

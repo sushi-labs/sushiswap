@@ -9,7 +9,7 @@ import {
 } from '@sushiswap/ui'
 import type { SortingState, TableState } from '@tanstack/react-table'
 import { useCallback, useMemo, useState } from 'react'
-import { usePoolFilters } from 'src/ui/pool'
+import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { useAllPools } from '~stellar/_common/lib/hooks/pool/use-pool-info'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import { SIMPLE_COLUMNS } from './columns-simple'

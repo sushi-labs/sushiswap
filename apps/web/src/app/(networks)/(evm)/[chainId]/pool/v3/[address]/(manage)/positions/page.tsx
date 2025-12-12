@@ -1,10 +1,7 @@
-import { type V3Pool, getV3Pool } from '@sushiswap/graph-client/data-api'
-import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import { PoolsFiltersProvider } from 'src/ui/pool'
-import type { EvmChainId } from 'sushi/chain'
-import { isSushiSwapV3ChainId } from 'sushi/config'
-import { isAddress } from 'viem'
+import { PoolsFiltersProvider } from 'src/app/(networks)/_ui/pools-filters-provider'
+import { isEvmAddress, isSushiSwapV3ChainId } from 'sushi/evm'
+import { getCachedV3Pool } from '../../_lib/get-cached-v3-pool'
 import { ManageV3PoolPositionsTable } from './table'
 
 export default async function ManageV3PoolPage(props: {
@@ -12,22 +9,13 @@ export default async function ManageV3PoolPage(props: {
 }) {
   const params = await props.params
   const { chainId: _chainId, address } = params
-  const chainId = +_chainId as EvmChainId
+  const chainId = +_chainId
 
-  if (
-    !isSushiSwapV3ChainId(chainId) ||
-    !isAddress(address, { strict: false })
-  ) {
+  if (!isSushiSwapV3ChainId(chainId) || !isEvmAddress(address)) {
     return notFound()
   }
 
-  const pool = (await unstable_cache(
-    async () => await getV3Pool({ chainId, address }, { retries: 3 }),
-    ['v3', 'pool', `${chainId}:${address}`],
-    {
-      revalidate: 60 * 15,
-    },
-  )()) as V3Pool
+  const pool = (await getCachedV3Pool({ chainId, address }))!
 
   return (
     <PoolsFiltersProvider>

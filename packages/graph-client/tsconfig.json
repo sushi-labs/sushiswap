@@ -1,54 +1,48 @@
 {
-  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node20/tsconfig"],
-  "include": ["src"],
-  "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "./dist",
-    "rootDir": "src",
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-    "resolveJsonModule": true,
-    "target": "ES2020",
-    "paths": {
-      "src": ["./src/*"]
-    },
-    "plugins": [
-      {
-        "name": "@0no-co/graphqlsp",
-        "schemas": [
-          {
-            "name": "bentobox",
-            "schema": "./src/subgraphs/bentobox/schema.graphql",
-            "tadaOutputLocation": "./src/subgraphs/bentobox/bentobox-env.d.ts",
-            "tadaTurboLocation": "./src/subgraphs/bentobox/bentobox-cache.d.ts"
-          },
-          {
-            "name": "strapi",
-            "schema": "./src/subgraphs/strapi/schema.graphql",
-            "tadaOutputLocation": "./src/subgraphs/strapi/strapi-env.d.ts",
-            "tadaTurboLocation": "./src/subgraphs/strapi/strapi-cache.d.ts"
-          },
-          {
-            "name": "furo",
-            "schema": "./src/subgraphs/furo/schema.graphql",
-            "tadaOutputLocation": "./src/subgraphs/furo/furo-env.d.ts",
-            "tadaTurboLocation": "./src/subgraphs/furo/furo-cache.d.ts"
-          },
-          {
-            "name": "data-api",
-            "schema": "./src/subgraphs/data-api/schema.graphql",
-            "tadaOutputLocation": "./src/subgraphs/data-api/data-api-env.d.ts",
-            "tadaTurboLocation": "./src/subgraphs/data-api/data-api-cache.d.ts"
-          },
-          {
-            "name": "de.fi",
-            "schema": "./src/subgraphs/de.fi/schema.graphql",
-            "tadaOutputLocation": "./src/subgraphs/de.fi/de.fi-env.d.ts",
-            "tadaTurboLocation": "./src/subgraphs/de.fi/de.fi-cache.d.ts"
-          }
-        ]
-      }
-    ]
-  }
+	"extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node20/tsconfig"],
+	"include": ["src"],
+	"compilerOptions": {
+		"baseUrl": ".",
+		"outDir": "./dist",
+		"rootDir": "src",
+		"sourceMap": true,
+		"declaration": true,
+		"declarationMap": true,
+		"resolveJsonModule": true,
+		"target": "ES2020",
+		"paths": {
+			"src": ["./src/*"]
+		},
+		"plugins": [
+			{
+				"name": "@0no-co/graphqlsp",
+				"schemas": [
+					{
+						"name": "strapi",
+						"schema": "./src/subgraphs/strapi/schema.graphql",
+						"tadaOutputLocation": "./src/subgraphs/strapi/strapi-env.d.ts",
+						"tadaTurboLocation": "./src/subgraphs/strapi/strapi-cache.d.ts"
+					},
+					{
+						"name": "data-api",
+						"schema": "./src/subgraphs/data-api/schema.graphql",
+						"tadaOutputLocation": "./src/subgraphs/data-api/data-api-env.d.ts",
+						"tadaTurboLocation": "./src/subgraphs/data-api/data-api-cache.d.ts"
+					},
+					{
+						"name": "de.fi",
+						"schema": "./src/subgraphs/de.fi/schema.graphql",
+						"tadaOutputLocation": "./src/subgraphs/de.fi/de.fi-env.d.ts",
+						"tadaTurboLocation": "./src/subgraphs/de.fi/de.fi-cache.d.ts"
+					},
+					{
+						"name": "kadena",
+						"schema": "./src/subgraphs/kadena/schema.graphql",
+						"tadaOutputLocation": "./src/subgraphs/kadena/kadena-env.d.ts",
+						"tadaTurboLocation": "./src/subgraphs/kadena/kadena-cache.d.ts"
+					}
+				]
+			}
+		]
+	}
 }

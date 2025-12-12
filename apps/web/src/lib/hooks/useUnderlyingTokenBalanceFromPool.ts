@@ -1,27 +1,29 @@
 'use client'
 
 import { useMemo } from 'react'
-import { sushiSwapV2FactoryAbi_feeTo, uniswapV2PairAbi_kLast } from 'sushi/abi'
+import { Amount, ZERO } from 'sushi'
 import {
+  type EvmCurrency,
+  type EvmToken,
   SUSHISWAP_V2_FACTORY_ADDRESS,
   type SushiSwapV2ChainId,
-} from 'sushi/config'
-import { Amount, type Token, type Type } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
-import { SushiSwapV2Pool } from 'sushi/pool'
+  SushiSwapV2Pool,
+  sushiSwapV2FactoryAbi_feeTo,
+  sushiSwapV2PairAbi_kLast,
+} from 'sushi/evm'
 import { zeroAddress } from 'viem'
 import { useReadContracts } from 'wagmi'
 
 interface Params {
-  totalSupply: Amount<Token> | undefined | null
-  reserve0: Amount<Type> | undefined | null
-  reserve1: Amount<Type> | undefined | null
-  balance: Amount<Type> | undefined | null
+  totalSupply: Amount<EvmToken> | undefined | null
+  reserve0: Amount<EvmCurrency> | undefined | null
+  reserve1: Amount<EvmCurrency> | undefined | null
+  balance: Amount<EvmCurrency> | undefined | null
 }
 
 type UseUnderlyingTokenBalanceFromPairParams = (
   params: Params,
-) => [Amount<Type> | undefined, Amount<Type> | undefined]
+) => [Amount<EvmCurrency> | undefined, Amount<EvmCurrency> | undefined]
 
 export const useUnderlyingTokenBalanceFromPool: UseUnderlyingTokenBalanceFromPairParams =
   ({ balance, totalSupply, reserve1, reserve0 }) => {
@@ -39,7 +41,7 @@ export const useUnderlyingTokenBalanceFromPool: UseUnderlyingTokenBalanceFromPai
         },
         {
           address: totalSupply?.currency.address,
-          abi: uniswapV2PairAbi_kLast,
+          abi: sushiSwapV2PairAbi_kLast,
           functionName: 'kLast',
           chainId: totalSupply?.currency?.chainId,
         },
@@ -57,27 +59,23 @@ export const useUnderlyingTokenBalanceFromPool: UseUnderlyingTokenBalanceFromPai
         !reserve1 ||
         !data?.every((data) => data.status === 'success') ||
         // this condition is a short-circuit in the case where balance updates sooner than totalSupply
-        totalSupply.lessThan(balance)
+        totalSupply.lt(balance.amount)
       ) {
         return [undefined, undefined]
       }
 
-      if (totalSupply.equalTo(ZERO)) {
+      if (totalSupply.eq(ZERO)) {
         return [
-          Amount.fromRawAmount(reserve0.wrapped.currency, '0'),
-          Amount.fromRawAmount(reserve1.wrapped.currency, '0'),
+          new Amount(reserve0.wrap().currency, '0'),
+          new Amount(reserve1.wrap().currency, '0'),
         ]
       }
 
       const feeEnabled = data[0].result !== zeroAddress
       const kLast = data[1].result
 
-      const _reserve0 = reserve0.currency.isNative
-        ? Amount.fromRawAmount(reserve0.currency.wrapped, reserve0.quotient)
-        : (reserve0 as Amount<Token>)
-      const _reserve1 = reserve1.currency.isNative
-        ? Amount.fromRawAmount(reserve1.currency.wrapped, reserve1.quotient)
-        : (reserve1 as Amount<Token>)
+      const _reserve0 = reserve0.wrap()
+      const _reserve1 = reserve1.wrap()
 
       const pool = new SushiSwapV2Pool(_reserve0, _reserve1)
 
@@ -85,14 +83,14 @@ export const useUnderlyingTokenBalanceFromPool: UseUnderlyingTokenBalanceFromPai
         pool.getLiquidityValue(
           _reserve0.currency,
           totalSupply,
-          balance as Amount<Token>,
+          balance as Amount<EvmToken>,
           feeEnabled,
           kLast,
         ),
         pool.getLiquidityValue(
           _reserve1.currency,
           totalSupply,
-          balance as Amount<Token>,
+          balance as Amount<EvmToken>,
           feeEnabled,
           kLast,
         ),

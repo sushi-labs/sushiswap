@@ -1,9 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
-import { MERKL_SUPPORTED_CHAIN_IDS, type MerklChainId } from 'sushi/config'
-import { Amount, Token, type Type } from 'sushi/currency'
+import { Amount } from 'sushi'
+import {
+  type EvmCurrency,
+  EvmToken,
+  MERKL_SUPPORTED_CHAIN_IDS,
+  type MerklChainId,
+} from 'sushi/evm'
 import type { Hex } from 'viem'
 import type { Address } from 'viem/accounts'
-import { useAllPrices } from '../prices'
 import { merklRewardsValidator } from './validator'
 
 interface UseClaimableRewardsParams {
@@ -14,7 +18,7 @@ interface UseClaimableRewardsParams {
 
 export type ClaimableRewards = {
   chainId: MerklChainId
-  rewardAmounts: Record<string, Amount<Type>>
+  rewardAmounts: Record<string, Amount<EvmCurrency>>
   rewardAmountsUSD: Record<string, number>
   totalRewardsUSD: number
   claimArgs: [Address[], Address[], bigint[], Hex[][]]
@@ -27,8 +31,6 @@ export const useClaimableRewards = ({
   account,
   enabled = true,
 }: UseClaimableRewardsParams) => {
-  const { data: prices } = useAllPrices()
-
   return useQuery({
     queryKey: ['claimableMerklRewards', { account }],
     queryFn: async () => {
@@ -46,96 +48,61 @@ export const useClaimableRewards = ({
         }),
       )
 
-      return res.reduce((accum, cur) => {
-        if (cur.status !== 'fulfilled' || cur.value.length === 0) return accum
-
-        const { chain, rewards } = cur.value[0]
-
-        if (rewards.length === 0) return accum
-
-        const rewardAmounts = {} as Record<string, Amount<Type>>
-
-        const claimArgs = {
-          users: [] as Address[],
-          tokens: [] as Address[],
-          amounts: [] as bigint[],
-          proofs: [] as Hex[][],
-        }
-
-        rewards.forEach((reward) => {
+      const data = res
+        .flatMap((result) =>
+          result.status === 'fulfilled' && result.value.length > 0
+            ? result.value[0].rewards
+            : [],
+        )
+        .reduce((accum, reward) => {
           const unclaimed = reward.amount - reward.claimed
+          if (unclaimed === 0n) return accum
 
-          if (unclaimed === 0n) return
+          const chainId = reward.token.chainId as MerklChainId
+          const tokenAddress = reward.token.address.toLowerCase()
+          const token = new EvmToken({ ...reward.token, name: '' })
+          const unclaimedAmount = new Amount(token, unclaimed)
 
-          claimArgs.users.push(account as Address)
-          claimArgs.tokens.push(reward.token.address as Address)
-          claimArgs.amounts.push(reward.amount)
-          claimArgs.proofs.push(reward.proofs)
-
-          const currentValue = rewardAmounts[reward.token.address as Address]
-
-          if (currentValue) {
-            const amount = currentValue.add(
-              Amount.fromRawAmount(currentValue.currency, unclaimed),
-            )
-            rewardAmounts[reward.token.address] = amount
-          } else {
-            const token = new Token(reward.token)
-            const amount = Amount.fromRawAmount(token, unclaimed)
-            rewardAmounts[reward.token.address] = amount
-          }
-        })
-
-        if (Object.keys(rewardAmounts).length === 0) return accum
-
-        const rewardAmountsUSD = Object.entries(rewardAmounts).reduce(
-          (prev, [key, amount]) => {
-            const price = prices
-              ?.get(chain.id)
-              ?.get(amount.currency.wrapped.address.toLowerCase())
-
-            if (!price) {
-              return prev
+          if (!accum[chainId]) {
+            accum[chainId] = {
+              chainId,
+              rewardAmounts: {},
+              rewardAmountsUSD: {},
+              totalRewardsUSD: 0,
+              claimArgs: [[], [], [], []],
             }
+          }
 
-            const _amountUSD = Number(
-              Number(amount.toExact()) * Number(price.toFixed(10)),
-            )
+          accum[chainId].claimArgs[0].push(account as Address)
+          accum[chainId].claimArgs[1].push(tokenAddress)
+          accum[chainId].claimArgs[2].push(reward.amount)
+          accum[chainId].claimArgs[3].push(reward.proofs)
 
-            const amountUSD =
-              Number.isNaN(price) || +price.toFixed(10) < 0.000001
-                ? 0
-                : _amountUSD
+          const existingRewardAmount =
+            accum[chainId].rewardAmounts[tokenAddress]
 
-            prev[key] = amountUSD
-            return prev
-          },
-          {} as Record<string, number>,
-        )
+          if (existingRewardAmount) {
+            const combinedAmount = existingRewardAmount.add(unclaimedAmount)
+            accum[chainId].rewardAmounts[tokenAddress] = combinedAmount
+          } else {
+            accum[chainId].rewardAmounts[tokenAddress] = unclaimedAmount
+          }
 
-        const totalRewardsUSD = Object.values(rewardAmountsUSD).reduce(
-          (prev, amount) => prev + amount,
-          0,
-        )
+          const unclaimedAmountUSD =
+            Number(unclaimedAmount.toString()) * (reward.token.price ?? 0)
 
-        accum[chain.id] = {
-          chainId: chain.id,
-          rewardAmounts,
-          rewardAmountsUSD,
-          totalRewardsUSD,
-          claimArgs: [
-            claimArgs.users,
-            claimArgs.tokens,
-            claimArgs.amounts,
-            claimArgs.proofs,
-          ],
-        }
+          accum[chainId].rewardAmountsUSD[tokenAddress] =
+            (accum[chainId].rewardAmountsUSD[tokenAddress] ?? 0) +
+            unclaimedAmountUSD
+          accum[chainId].totalRewardsUSD += unclaimedAmountUSD
 
-        return accum
-      }, {} as UseClaimableRewardReturn)
+          return accum
+        }, {} as UseClaimableRewardReturn)
+
+      return data
     },
     staleTime: 15000, // 15 seconds
     gcTime: 60000, // 1min
-    enabled: Boolean(enabled && account && prices),
+    enabled: Boolean(enabled && account),
   })
 }

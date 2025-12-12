@@ -6,10 +6,10 @@ import { useCustomTokens } from '@sushiswap/hooks'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { getToken as getTokenWeb3 } from '@wagmi/core/actions'
 import { useCallback } from 'react'
-import type { ID } from 'sushi'
-import type { EvmChainId } from 'sushi/chain'
-import { Token } from 'sushi/currency'
-import { type Address, getAddress, isAddress } from 'viem'
+import { logger } from 'src/lib/logger'
+import { getIdFromChainIdAddress } from 'sushi'
+import { type EvmChainId, type EvmID, EvmToken } from 'sushi/evm'
+import { type Address, isAddress } from 'viem'
 import { useConfig } from 'wagmi'
 import type { PublicWagmiConfig } from '../../config/public'
 
@@ -20,33 +20,14 @@ interface UseTokenParams {
   keepPreviousData?: boolean
 }
 
-type UseTokenReturn = Token
-
-type Data = {
-  id: ID
-  address: Address
-  name: string
-  symbol: string
-  decimals: number
-  approved: boolean
-}
+type UseTokenReturn = EvmToken
 
 export const getTokenWithQueryCacheHydrate = (
   chainId: EvmChainId | undefined,
-  data: Data,
+  data: EvmToken<{ approved: boolean }> | undefined,
 ): UseTokenReturn | undefined => {
   if (data && chainId) {
-    const { address, name, symbol, decimals, approved } = data
-    const token = new Token({
-      chainId,
-      name,
-      decimals,
-      symbol,
-      address,
-      approved,
-    })
-
-    return token
+    return data
   }
 
   return undefined
@@ -55,8 +36,8 @@ export const getTokenWithQueryCacheHydrate = (
 interface GetTokenWithQueryCacheFn {
   chainId: EvmChainId | undefined
   address: Address | undefined | null
-  customTokens: Record<string, Token>
-  hasToken: (cur: string | Token) => boolean
+  customTokens: Record<string, EvmToken<{ approved: boolean }>>
+  hasToken: (cur: string | EvmToken) => boolean
   config: PublicWagmiConfig
 }
 
@@ -66,7 +47,7 @@ export const getTokenWithCacheQueryFn = async ({
   customTokens,
   hasToken,
   config,
-}: GetTokenWithQueryCacheFn) => {
+}: GetTokenWithQueryCacheFn): Promise<EvmToken<{ approved: boolean }>> => {
   if (!chainId) {
     throw Error('chainId is required')
   }
@@ -76,31 +57,27 @@ export const getTokenWithCacheQueryFn = async ({
   }
 
   // Try fetching from localStorage
-  if (hasToken(`${chainId}:${address}`)) {
+  if (hasToken(getIdFromChainIdAddress(chainId, address))) {
     console.log(customTokens)
-    const {
-      address: tokenAddress,
-      name,
-      symbol,
-      decimals,
-      id,
-      approved,
-    } = customTokens[`${chainId}:${getAddress(address)}`]
-    return {
-      address: tokenAddress,
-      name,
-      symbol,
-      decimals,
-      approved,
-      id,
-    } as Data
+    return customTokens[getIdFromChainIdAddress(chainId, address)]
   }
 
   if (isTokenListChainId(chainId)) {
     try {
       const [token] = await getTokenList({ chainId, search: address })
-      if (token) return token
-    } catch {}
+      if (token)
+        return new EvmToken({
+          ...token,
+          metadata: { approved: token.approved },
+        })
+    } catch (error) {
+      logger.error(error, {
+        location: 'useTokenWithCache',
+        action: 'fetchTokenList',
+        token_chain_id: chainId,
+        token_address: address,
+      })
+    }
   }
 
   try {
@@ -110,15 +87,23 @@ export const getTokenWithCacheQueryFn = async ({
     })
     const { decimals, address: tokenAddress, symbol, name } = resp
 
-    return {
+    return new EvmToken({
+      chainId,
       address: tokenAddress,
-      name,
-      symbol,
+      name: name || '',
+      symbol: symbol || '',
       decimals,
-      approved: false,
-      id: `${chainId}:${tokenAddress}`,
-    } as Data
-  } catch {
+      metadata: {
+        approved: false,
+      },
+    })
+  } catch (error) {
+    logger.error(error, {
+      location: 'useTokenWithCache',
+      action: 'fetchTokenRpc',
+      token_chain_id: chainId,
+      token_address: address,
+    })
     throw Error('Could not fetch token')
   }
 }
@@ -131,7 +116,8 @@ export const useTokenWithCache = ({
 }: UseTokenParams) => {
   const { data: customTokens, hasToken } = useCustomTokens()
   const select = useCallback(
-    (data: Data) => getTokenWithQueryCacheHydrate(chainId, data),
+    (data: EvmToken<{ approved: boolean }>) =>
+      getTokenWithQueryCacheHydrate(chainId, data),
     [chainId],
   )
 

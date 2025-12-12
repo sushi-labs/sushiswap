@@ -1,35 +1,31 @@
 'use client'
 
-import { Navigation, SushiNavigationDropdown, classNames } from '@sushiswap/ui'
+import { Navigation, SushiNavigationDropdown } from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import React, { type FC } from 'react'
-import { type NonStandardChainId, SUPPORTED_NETWORKS } from 'src/config'
+import { headerElements } from 'src/app/_common/header-elements'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
-import { ChainId, type EvmChainId } from 'sushi/chain'
+import { ChainId } from 'sushi'
 import { useChainId } from 'wagmi'
 import { Header as _Header } from '~evm/[chainId]/header'
-import { headerElements } from '~evm/_common/header-elements'
 
 interface HeaderProps {
   chainId?: ChainId
-  supportedNetworks?: readonly (EvmChainId | NonStandardChainId)[]
+  networks?: readonly ChainId[]
 }
 
-export const Header: FC<HeaderProps> = ({ chainId, supportedNetworks }) => {
+export const Header: FC<HeaderProps> = ({ chainId, networks }) => {
   return chainId === ChainId.KATANA ? (
-    <TransparentHeader
-      chainId={chainId}
-      supportedNetworks={supportedNetworks}
-    />
+    <TransparentHeader chainId={chainId} networks={networks} />
   ) : (
-    <_Header chainId={chainId} supportedNetworks={supportedNetworks} />
+    <_Header chainId={chainId} networks={networks} />
   )
 }
 
 const TransparentHeader: FC<HeaderProps> = ({
   chainId: _chainId,
-  supportedNetworks,
+  networks,
 }) => {
   const connectedChainId = useChainId()
   const chainId = _chainId ?? connectedChainId
@@ -53,9 +49,8 @@ const TransparentHeader: FC<HeaderProps> = ({
           leftElements={headerElements({ chainId })}
           rightElement={
             <WagmiHeaderComponents
-              networks={SUPPORTED_NETWORKS}
-              selectedNetwork={chainId as EvmChainId}
-              supportedNetworks={supportedNetworks}
+              networks={networks}
+              selectedNetwork={chainId}
             />
           }
         />

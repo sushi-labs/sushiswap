@@ -1,6 +1,6 @@
 import { SkeletonText } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { formatPercent } from 'sushi/format'
+import { formatPercent } from 'sushi'
 import { usePoolLiquidity } from '~stellar/_common/lib/hooks'
 import { usePositionActiveLiquidity } from '~stellar/_common/lib/hooks/position/use-position-active-liquidity'
 import { useFeeRate } from '~stellar/_common/lib/hooks/useFeeRate'

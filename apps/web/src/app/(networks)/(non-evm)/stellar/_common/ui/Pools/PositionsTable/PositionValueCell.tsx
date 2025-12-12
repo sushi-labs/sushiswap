@@ -1,5 +1,5 @@
 import { SkeletonText } from '@sushiswap/ui'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import { useLPUsdValue } from '~stellar/_common/lib/hooks/useLPUsdValue'
 import type { IPositionRowData } from './PositionsTable'
 

@@ -52,9 +52,6 @@ generated
 playwright-report
 test-results
 
-# Sentry
-.sentryclirc
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -66,9 +63,6 @@ node-compile-cache
 
 # storybook
 storybook-static
-
-# Sentry Config File
-.env.sentry-build-plugin
 
 # npm lock file (we use pnpm)
 package-lock.json

@@ -12,7 +12,7 @@ import {
 } from '@sushiswap/ui'
 import type { PaginationState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
-import { usePoolFilters } from 'src/ui/pool'
+import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
 import {
   type PositionSummary,
   useMyPosition,

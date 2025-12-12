@@ -24,7 +24,7 @@ export async function ApiKeyBasicSettingsCard({
   })
 
   return (
-    <Card className="w-full min-w-[470px] h-min">
+    <Card className="w-full md:min-w-[470px] h-min">
       <CardHeader className="rounded-t-xl">
         <CardTitle>Basic Settings</CardTitle>
         <CardDescription>

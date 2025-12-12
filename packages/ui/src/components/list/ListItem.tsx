@@ -48,13 +48,13 @@ export const ListItem: ListItemComponent = ({
   return (
     <Component
       {...rest}
-      type="button"
-      onClick={onClick}
       className={classNames(
-        className,
         subtitle ? 'items-start' : 'items-center',
-        'relative flex gap-4 px-3 py-3 w-full cursor-pointer',
+        onClick && 'cursor-pointer',
+        'relative flex gap-4 px-3 py-3 w-full',
+        className,
       )}
+      {...(onClick ? { type: 'button', onClick } : {})}
     >
       {loading ? (
         <>
@@ -80,8 +80,8 @@ export const ListItem: ListItemComponent = ({
                 strokeWidth: 2,
                 ...iconProps,
                 className: classNames(
-                  iconProps?.className,
                   'text-blue-500 rounded-full',
+                  iconProps?.className,
                 ),
               })}
             </div>

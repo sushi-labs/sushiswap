@@ -3,11 +3,10 @@ import { Container } from '@sushiswap/ui'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type React from 'react'
+import { PoolsFiltersProvider } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { GlobalStatsCharts } from 'src/ui/explore/global-stats-charts'
-import { PoolsFiltersProvider } from 'src/ui/pool'
-import type { ChainId } from 'sushi/chain'
 import { Header } from '../../header'
+import { GlobalStatsCharts } from '../_ui/global-stats-charts'
 import { NavigationItems } from '../navigation-items'
 
 export const metadata: Metadata = {
@@ -23,7 +22,7 @@ export default async function ExploreLayout(props: {
 
   const { children } = props
 
-  const chainId = +params.chainId as ChainId
+  const chainId = +params.chainId
 
   if (!isPoolChainId(chainId)) {
     return notFound()
@@ -31,7 +30,7 @@ export default async function ExploreLayout(props: {
 
   return (
     <>
-      <Header chainId={chainId} supportedNetworks={POOL_SUPPORTED_NETWORKS} />
+      <Header chainId={chainId} networks={POOL_SUPPORTED_NETWORKS} />
       <main className="flex flex-col h-full flex-1 animate-slide">
         <Container maxWidth="7xl" className="px-4 py-4">
           <GlobalStatsCharts chainId={chainId} />

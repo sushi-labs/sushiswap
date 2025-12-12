@@ -1,16 +1,47 @@
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
+import { UI_FEE_BIPS, UI_FEE_DECIMAL, UI_FEE_PERCENT } from 'src/config'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
-import { slippageAmount } from 'sushi/calculate'
-import { isRouteProcessor7ChainId, isWNativeSupported } from 'sushi/config'
-import { Amount, Native, Price, type Type } from 'sushi/currency'
-import { Fraction, Percent, ZERO } from 'sushi/math'
-import { isLsd, isStable, isWrapOrUnwrap } from 'sushi/router'
+import { getFeeString } from 'src/lib/swap/fee'
+import { Amount, Fraction, Percent, Price, ZERO, subtractSlippage } from 'sushi'
+import {
+  type EvmAddress,
+  type EvmCurrency,
+  type EvmID,
+  EvmNative,
+  addGasMargin,
+  isLsd,
+  isRedSnwapperChainId,
+  isStable,
+  isWNativeSupported,
+  isWrapOrUnwrap,
+} from 'sushi/evm'
 import { stringify, zeroAddress } from 'viem'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { apiAdapter02To01 } from './apiAdapter'
 import type { UseTradeParams, UseTradeQuerySelect } from './types'
 import { tradeValidator02 } from './validator02'
+
+const excludePoolsByToken: Partial<Record<EvmID<true>, EvmAddress[]>> = {
+  '1:0x9ea3b5b4ec044b70375236a281986106457b20ef': [
+    '0x7d7e813082ef6c143277c71786e5be626ec77b20',
+  ],
+}
+
+function applyPoolExclusion(
+  fromToken: EvmCurrency,
+  toToken: EvmCurrency,
+  searchParams: URLSearchParams,
+) {
+  if (excludePoolsByToken[fromToken.id] || excludePoolsByToken[toToken.id]) {
+    const excludePools = [
+      ...(excludePoolsByToken[fromToken.id] || []),
+      ...(excludePoolsByToken[toToken.id] || []),
+    ]
+
+    searchParams.set('excludePools', excludePools.join(','))
+  }
+}
 
 export const useTradeQuoteQuery = (
   {
@@ -19,9 +50,11 @@ export const useTradeQuoteQuery = (
     toToken,
     amount,
     gasPrice = 50n,
+    fee = UI_FEE_DECIMAL,
     slippagePercentage,
     recipient,
     source,
+    onlyPools,
     enabled,
   }: UseTradeParams,
   select: UseTradeQuerySelect,
@@ -34,45 +67,52 @@ export const useTradeQuoteQuery = (
         currencyA: fromToken,
         currencyB: toToken,
         amount,
+        fee,
         slippagePercentage,
         gasPrice,
         source,
+        onlyPools,
       },
     ],
     queryFn: async () => {
+      if (!chainId || !fromToken || !toToken || !amount) {
+        throw new Error('Missing required parameters for trade quote')
+      }
+
       const params = new URL(`${API_BASE_URL}/quote/v7/${chainId}`)
       params.searchParams.set('referrer', 'sushi')
       params.searchParams.set(
         'tokenIn',
         `${
-          fromToken?.isNative
+          fromToken?.type === 'native'
             ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-            : fromToken?.wrapped.address
+            : fromToken?.wrap().address
         }`,
       )
       params.searchParams.set(
         'tokenOut',
         `${
-          toToken?.isNative
+          toToken?.type === 'native'
             ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-            : toToken?.wrapped.address
+            : toToken?.wrap().address
         }`,
       )
-      params.searchParams.set('amount', `${amount?.quotient.toString()}`)
+      params.searchParams.set('amount', `${amount?.amount.toString()}`)
       params.searchParams.set('maxSlippage', `${+slippagePercentage / 100}`)
-      params.searchParams.set('fee', '0.0025')
+      params.searchParams.set('fee', `${fee}`)
       params.searchParams.set('feeBy', 'output')
+      if (onlyPools)
+        onlyPools.forEach((pool) =>
+          params.searchParams.append('onlyPools', pool),
+        )
+
+      applyPoolExclusion(fromToken, toToken, params.searchParams)
 
       const res = await fetch(params.toString())
       const json = await res.json()
       const resp2 = tradeValidator02.parse(json)
 
-      const resp1 = apiAdapter02To01(
-        resp2,
-        fromToken as Type,
-        toToken as Type,
-        recipient,
-      )
+      const resp1 = apiAdapter02To01(resp2, fromToken, toToken, recipient)
 
       return resp1
     },
@@ -108,13 +148,15 @@ export const useTradeQuote = (variables: UseTradeParams) => {
     if (prices) {
       if (
         isWNativeSupported(chainId) &&
-        Native.onChain(chainId).wrapped.address !== zeroAddress
+        EvmNative.fromChainId(chainId).wrap().address !== zeroAddress
       ) {
-        result[0] = prices.getFraction(Native.onChain(chainId).wrapped.address)
+        result[0] = prices.getFraction(
+          EvmNative.fromChainId(chainId).wrap().address,
+        )
       }
 
       if (toToken) {
-        result[1] = prices.getFraction(toToken.wrapped.address)
+        result[1] = prices.getFraction(toToken.wrap().address)
       }
     }
 
@@ -124,28 +166,31 @@ export const useTradeQuote = (variables: UseTradeParams) => {
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
       if (
-        isRouteProcessor7ChainId(chainId) &&
+        isRedSnwapperChainId(chainId) &&
         data &&
         amount &&
         data.route &&
         fromToken &&
         toToken
       ) {
-        const amountIn = Amount.fromRawAmount(fromToken, data.route.amountInBI)
-        const amountOut = Amount.fromRawAmount(
+        const amountIn = new Amount(fromToken, data.route.amountInBI)
+        const amountOut = new Amount(
           toToken,
-          new Fraction(data.route.amountOutBI).multiply(
-            tokenTax ? new Percent(1).subtract(tokenTax) : 1,
+          new Fraction({ numerator: data.route.amountOutBI }).mul(
+            tokenTax ? new Percent(1).sub(tokenTax) : 1,
           ).quotient,
         )
         const minAmountOut = data.args?.amountOutMin
-          ? Amount.fromRawAmount(toToken, data.args.amountOutMin)
-          : Amount.fromRawAmount(
-              toToken,
-              slippageAmount(
-                Amount.fromRawAmount(toToken, data.route.amountOutBI),
-                new Percent(Math.floor(+slippagePercentage * 100), 10_000),
-              )[0],
+          ? new Amount(toToken, data.args.amountOutMin)
+          : subtractSlippage(
+              subtractSlippage(
+                new Amount(toToken, data.route.amountOutBI),
+                UI_FEE_DECIMAL,
+              ),
+              new Percent({
+                numerator: Math.floor(+slippagePercentage * 100),
+                denominator: 10_000,
+              }).toNumber(),
             )
 
         // const isOffset = chainId === ChainId.POLYGON && carbonOffset
@@ -165,21 +210,24 @@ export const useTradeQuote = (variables: UseTradeParams) => {
         //     : undefined
 
         const gasSpent = gasPrice
-          ? Amount.fromRawAmount(
-              Native.onChain(chainId),
-              gasPrice * BigInt(data.route.gasSpent * 1.2),
+          ? new Amount(
+              EvmNative.fromChainId(chainId),
+              gasPrice * addGasMargin(BigInt(Math.floor(data.route.gasSpent))),
             )
           : undefined
 
         return {
-          swapPrice: amountOut.greaterThan(ZERO)
+          swapPrice: amountOut.gt(ZERO)
             ? new Price({
                 baseAmount: amount,
                 quoteAmount: amountOut,
               })
             : undefined,
           priceImpact: data.route.priceImpact
-            ? new Percent(Math.round(data.route.priceImpact * 10000), 10000)
+            ? new Percent({
+                numerator: Math.round(data.route.priceImpact * 10000),
+                denominator: 10000,
+              })
             : new Percent(0),
           amountIn,
           amountOut,
@@ -187,17 +235,14 @@ export const useTradeQuote = (variables: UseTradeParams) => {
           gasSpent: gasSpent?.toSignificant(4),
           gasSpentUsd:
             nativePrice && gasSpent
-              ? gasSpent.multiply(nativePrice.asFraction).toSignificant(4)
+              ? gasSpent.mul(nativePrice.asFraction).toSignificant(4)
               : undefined,
-          fee:
-            !isWrapOrUnwrap({ fromToken, toToken }) &&
-            !isStable({ fromToken, toToken }) &&
-            !isLsd({ fromToken, toToken })
-              ? `${tokenOutPrice ? '$' : ''}${minAmountOut
-                  .multiply(new Percent(25, 10000))
-                  .multiply(tokenOutPrice ? tokenOutPrice.asFraction : 1)
-                  .toSignificant(4)} ${!tokenOutPrice ? toToken.symbol : ''}`
-              : '$0',
+          fee: getFeeString({
+            fromToken,
+            toToken,
+            tokenOutPrice,
+            minAmountOut,
+          }),
           route: data.route,
           tx: undefined,
           tokenTax,

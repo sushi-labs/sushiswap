@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
 import React from 'react'
-import { formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi'
 import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import { formatTokenAmount } from '~stellar/_common/lib/utils/format'

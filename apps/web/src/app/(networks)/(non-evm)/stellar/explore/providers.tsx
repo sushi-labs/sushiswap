@@ -2,7 +2,7 @@
 
 import { Card, CardHeader, SkeletonText } from '@sushiswap/ui'
 import { Suspense } from 'react'
-import { PoolsFiltersProvider } from 'src/ui/pool'
+import { PoolsFiltersProvider } from 'src/app/(networks)/_ui/pools-filters-provider'
 
 function PoolsTableSkeleton() {
   return (

@@ -2,7 +2,9 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo, useState } from 'react'
-import { type SendTransactionReturnType, UserRejectedRequestError } from 'viem'
+import { logger } from 'src/lib/logger'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
+import type { SendTransactionReturnType } from 'viem'
 import {
   useAccount,
   usePublicClient,
@@ -110,11 +112,15 @@ export const useAcceptAngleConditions = (
   )
 
   const onError = useCallback((e: Error) => {
-    if (e instanceof Error) {
-      if (!(e.cause instanceof UserRejectedRequestError)) {
-        createErrorToast(e.message, true)
-      }
+    if (isUserRejectedError(e)) {
+      return
     }
+
+    logger.error(e, {
+      location: 'useAcceptAngleConditions',
+      action: 'mutationError',
+    })
+    createErrorToast(e.message, true)
   }, [])
 
   const execute = useWriteContract({

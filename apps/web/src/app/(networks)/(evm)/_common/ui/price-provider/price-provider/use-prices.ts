@@ -1,19 +1,15 @@
 'use client'
 
 import { useEffect, useMemo } from 'react'
-import {
-  type Address,
-  type EvmChainId,
-  Fraction,
-  withoutScientificNotation,
-} from 'sushi'
+import { Fraction, withoutScientificNotation } from 'sushi'
+import type { EvmAddress, EvmChainId } from 'sushi/evm'
 import { parseUnits } from 'viem'
 import { usePriceProvider } from './price-provider'
 
 export type PriceMap = {
-  has: (address: Address) => boolean
-  get: (address: Address) => number | undefined
-  getFraction: (address: Address) => Fraction | undefined
+  has: (address: EvmAddress) => boolean
+  get: (address: EvmAddress) => number | undefined
+  getFraction: (address: EvmAddress) => Fraction | undefined
 }
 
 export function usePrices({
@@ -71,29 +67,30 @@ export function usePrices({
       }
 
     const data: PriceMap = {
-      has: (_address: Address) => {
+      has: (_address: EvmAddress) => {
         const address = BigInt(_address)
 
         return chain.priceMap!.has(address)
       },
-      get: (_address: Address) => {
+      get: (_address: EvmAddress) => {
         const address = BigInt(_address)
 
         const price = chain.priceMap!.get(address)
         return price
       },
-      getFraction: (_address: Address) => {
+
+      getFraction: (_address: EvmAddress) => {
         const address = BigInt(_address)
 
         const price = chain.priceMap!.get(address)
         if (price) {
-          return new Fraction(
-            parseUnits(
+          return new Fraction({
+            numerator: parseUnits(
               withoutScientificNotation(String(price)) || '0',
               18,
             ).toString(),
-            parseUnits('1', 18).toString(),
-          )
+            denominator: parseUnits('1', 18).toString(),
+          })
         }
         return undefined
       },

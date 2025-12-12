@@ -1,5 +1,5 @@
 import { SkeletonText } from '@sushiswap/ui'
-import { formatPercent } from 'sushi/format'
+import { formatPercent } from 'sushi'
 import { usePoolOwnership } from '~stellar/_common/lib/hooks/usePoolOwnership'
 import type { IPositionRowData } from './PositionsTable'
 

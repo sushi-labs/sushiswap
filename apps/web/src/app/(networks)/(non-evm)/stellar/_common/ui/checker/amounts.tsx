@@ -2,7 +2,7 @@
 
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
-import { ZERO } from 'sushi/math'
+import { ZERO } from 'sushi'
 import { useTokenBalances } from '~stellar/_common/lib/hooks/token/use-token-balance'
 import type {
   Token,

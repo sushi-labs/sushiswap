@@ -1,7 +1,7 @@
 import { Container } from '@sushiswap/ui'
 import type React from 'react'
+import { PoolsFiltersProvider } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { PoolsFiltersProvider } from 'src/ui/pool'
 import { Header } from '~stellar/header'
 import { Hero } from './hero'
 import { NavigationItems } from './navigation-items'
@@ -13,7 +13,7 @@ export default function PositionsLayout({
 }) {
   return (
     <>
-      <Header supportedNetworks={POOL_SUPPORTED_NETWORKS} />
+      <Header networks={POOL_SUPPORTED_NETWORKS} />
       <main className="flex flex-col h-full flex-1 animate-slide">
         <Container maxWidth="7xl" className="px-4 py-16">
           <Hero />

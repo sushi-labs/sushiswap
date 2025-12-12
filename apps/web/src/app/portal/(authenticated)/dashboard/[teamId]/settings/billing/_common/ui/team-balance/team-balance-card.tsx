@@ -15,7 +15,7 @@ export async function TeamBalanceCard({ teamId }: { teamId: string }) {
   const response = await client.getTeamsTeamIdBilling({ teamId })
 
   return (
-    <Card className="w-full min-w-[470px] h-min">
+    <Card className="h-min">
       <CardHeader className="rounded-t-xl">
         <CardTitle>Balance</CardTitle>
         <CardDescription>Your team's current balance</CardDescription>

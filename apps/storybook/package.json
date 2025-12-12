@@ -19,7 +19,7 @@
     "class-variance-authority": "0.7.0",
     "react": "catalog:react",
     "react-dom": "catalog:react",
-    "sushi": "catalog:web3"
+    "sushi": "npm:@lufycz/sushi@6.3.1"
   },
   "devDependencies": {
     "@storybook/addon-a11y": "8.4.7",

@@ -2,13 +2,10 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo, useState } from 'react'
-import { erc20Abi_approve } from 'sushi/abi'
-import type { Token } from 'sushi/currency'
-import {
-  type Address,
-  ContractFunctionZeroDataError,
-  UserRejectedRequestError,
-} from 'viem'
+import { logger } from 'src/lib/logger'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
+import { type EvmToken, erc20Abi_approve } from 'sushi/evm'
+import { type Address, ContractFunctionZeroDataError } from 'viem'
 import { usePublicClient, useSimulateContract, useWriteContract } from 'wagmi'
 import type { SendTransactionReturnType } from 'wagmi/actions'
 import {
@@ -21,7 +18,7 @@ import {
 interface UseTokenRevokeApproval {
   account: Address | undefined
   spender: Address | undefined
-  token: Omit<Token, 'wrapped'> | undefined
+  token: Omit<EvmToken, 'wrapped'> | undefined
   enabled?: boolean
 }
 
@@ -121,11 +118,15 @@ export const useTokenRevokeApproval = ({
   )
 
   const onError = useCallback((e: Error) => {
-    if (e instanceof Error) {
-      if (!(e.cause instanceof UserRejectedRequestError)) {
-        createErrorToast(e.message, true)
-      }
+    if (isUserRejectedError(e)) {
+      return
     }
+
+    logger.error(e, {
+      location: 'useTokenRevokeApproval',
+      action: 'mutationError',
+    })
+    createErrorToast(e.message, true)
   }, [])
 
   const { writeContractAsync, ...rest } = useWriteContract({

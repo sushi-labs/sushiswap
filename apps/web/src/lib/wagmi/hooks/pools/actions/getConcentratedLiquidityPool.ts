@@ -1,21 +1,21 @@
-import { type MulticallReturnType, readContracts } from '@wagmi/core/actions'
-import { slot0Abi_slot0, v3baseAbi_liquidity } from 'sushi/abi'
+import { MulticallReturnType, readContracts } from '@wagmi/core/actions'
 import {
+  type EvmCurrency,
+  EvmToken,
   SUSHISWAP_V3_FACTORY_ADDRESS,
   type SushiSwapV3ChainId,
   type SushiSwapV3FeeAmount,
-} from 'sushi/config'
-import type { Token, Type } from 'sushi/currency'
-import {
   SushiSwapV3Pool,
   computeSushiSwapV3PoolAddress,
-} from 'sushi/pool/sushiswap-v3'
+  slot0Abi_slot0,
+  sushiSwapV3PoolAbi_liquidity,
+} from 'sushi/evm'
 import type { Address, ContractFunctionReturnType } from 'viem'
 import type { PublicWagmiConfig } from '../../../config/public'
 
 type Slot0 = ContractFunctionReturnType<typeof slot0Abi_slot0, 'view', 'slot0'>
 type Liquidity = ContractFunctionReturnType<
-  typeof v3baseAbi_liquidity,
+  typeof sushiSwapV3PoolAbi_liquidity,
   'view',
   'liquidity'
 >
@@ -26,8 +26,8 @@ export const getConcentratedLiquidityPools = async ({
 }: {
   poolKeys: {
     chainId: SushiSwapV3ChainId
-    token0: Type
-    token1: Type
+    token0: EvmCurrency
+    token1: EvmCurrency
     feeAmount: SushiSwapV3FeeAmount
   }[]
   config: PublicWagmiConfig
@@ -35,10 +35,10 @@ export const getConcentratedLiquidityPools = async ({
   const pools = poolKeys.map((pool) => {
     let address: Address | undefined
 
-    const tokenA = pool.token0.wrapped
-    const tokenB = pool.token1.wrapped
+    const tokenA = pool.token0.wrap()
+    const tokenB = pool.token1.wrap()
 
-    if (tokenA.equals(tokenB)) {
+    if (tokenA.isSame(tokenB)) {
       return {
         ...pool,
         address: undefined,
@@ -76,7 +76,7 @@ export const getConcentratedLiquidityPools = async ({
       {
         chainId,
         address: address as Address,
-        abi: v3baseAbi_liquidity,
+        abi: sushiSwapV3PoolAbi_liquidity,
         functionName: 'liquidity',
       } as const,
     ]),
@@ -124,8 +124,8 @@ export const getConcentratedLiquidityPool = async ({
   config,
 }: {
   chainId: SushiSwapV3ChainId
-  token0: Type
-  token1: Type
+  token0: EvmCurrency
+  token1: EvmCurrency
   feeAmount: SushiSwapV3FeeAmount
   config: PublicWagmiConfig
 }): Promise<SushiSwapV3Pool | null> => {

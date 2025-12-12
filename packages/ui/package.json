@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@fontsource-variable/inter": "5.0.1",
+    "@fontsource-variable/orbitron": "5.2.6",
     "@headlessui/react": "2.2.0",
     "@heroicons/react": "2.0.13",
     "@radix-ui/react-accordion": "1.2.2",
@@ -88,7 +89,6 @@
     "react-spring": "9.7.5",
     "react-virtualized-auto-sizer": "1.0.25",
     "react-window": "1.8.11",
-    "tailwind-merge": "1.13.2",
     "tailwindcss-animate": "1.0.7",
     "use-resize-observer": "9.1.0"
   },
@@ -103,16 +103,16 @@
     "postcss": "8.4.23",
     "react": "catalog:react",
     "react-dom": "catalog:react",
-    "sushi": "catalog:web3",
+    "sushi": "npm:@lufycz/sushi@6.3.1",
     "tailwindcss": "catalog:ui",
     "typescript": "catalog:",
     "wagmi": "catalog:web3"
   },
   "peerDependencies": {
-    "next": "15.1.4",
+    "next": "catalog:react",
     "react": "catalog:react",
     "react-dom": "catalog:react",
-    "sushi": "*",
+    "sushi": "npm:@lufycz/sushi@6.3.0",
     "tailwindcss": "catalog:ui",
     "wagmi": "catalog:web3"
   },

@@ -1,7 +1,7 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
-import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import { SUSHI_DATA_API_HOST } from 'sushi/evm'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
@@ -17,6 +17,12 @@ export const AnalyticsDayBucketsQuery = graphql(
 
     }
     v3 {
+      id
+      date
+      volumeUSD
+      liquidityUSD
+    }
+    blade {
       id
       date
       volumeUSD
@@ -47,7 +53,23 @@ export async function getAnalyticsDayBuckets(
       options,
     )
     if (result) {
-      return result.sushiDayBuckets
+      // Filter to only keep last 6 months of data
+      const sixMonthsAgo = new Date()
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+      const sixMonthsAgoTimestamp = Math.floor(sixMonthsAgo.getTime() / 1000)
+
+      return {
+        v2: result.sushiDayBuckets.v2.filter(
+          (bucket) => bucket.date >= sixMonthsAgoTimestamp,
+        ),
+        v3: result.sushiDayBuckets.v3.filter(
+          (bucket) => bucket.date >= sixMonthsAgoTimestamp,
+        ),
+        blade:
+          result.sushiDayBuckets.blade?.filter(
+            (bucket) => bucket.date >= sixMonthsAgoTimestamp,
+          ) ?? [],
+      }
     }
   } catch {
     // TODO: handle error, probably return {data, error}? or message
@@ -55,6 +77,7 @@ export async function getAnalyticsDayBuckets(
   return {
     v2: [],
     v3: [],
+    blade: [],
   }
 }
 

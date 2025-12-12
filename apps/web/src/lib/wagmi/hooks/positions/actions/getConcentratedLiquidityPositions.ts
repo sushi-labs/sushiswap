@@ -4,8 +4,8 @@ import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
-} from 'sushi/config'
-import { computeSushiSwapV3PoolAddress } from 'sushi/pool'
+  computeSushiSwapV3PoolAddress,
+} from 'sushi/evm'
 import type { PublicWagmiConfig } from '../../../config/public'
 
 const abiShard = [
@@ -68,8 +68,8 @@ const abiShard = [
   },
 ] as const
 
-const BATCH_SIZE = 25
-const MAX_ENTRIES = 100
+const BATCH_SIZE = 100
+const MAX_ENTRIES = 500
 
 export const getConcentratedLiquidityPositions = async ({
   account,

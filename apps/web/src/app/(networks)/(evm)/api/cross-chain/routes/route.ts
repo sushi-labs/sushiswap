@@ -1,5 +1,5 @@
 import type { NextRequest } from 'next/server'
-import { isXSwapSupportedChainId } from 'src/config'
+import { UI_FEE_DECIMAL, isXSwapSupportedChainId } from 'src/config'
 import { isAddress } from 'viem'
 import { z } from 'zod'
 
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
         exchanges: { allow: ['sushiswap'] },
         allowSwitchChain: false,
         allowDestinationCall: true,
-        fee: 0.0025, // 0.25%
+        fee: UI_FEE_DECIMAL, // e.g. 0.0025 (0.25%)
       },
     }),
   }

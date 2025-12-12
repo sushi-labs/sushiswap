@@ -8,7 +8,7 @@ import {
 } from '@sushiswap/hooks'
 import React, { type FC, type ReactNode, useState } from 'react'
 
-import { DEFAULT_SLIPPAGE } from 'sushi/config'
+import { DEFAULT_SLIPPAGE } from 'sushi/evm'
 import { Button } from '../button'
 import {
   Dialog,
@@ -127,26 +127,24 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
               </List.Control>
             </List>
           )}
-          {modules.includes(SettingsModule.ExpertMode) ||
+          {(modules.includes(SettingsModule.ExpertMode) ||
             modules.includes(SettingsModule.TransactionDeadline) ||
-            (modules.includes(SettingsModule.CarbonOffset) && (
-              <List className="!pt-0">
-                <List.Control>
-                  {modules.includes(SettingsModule.ExpertMode) && (
-                    <ExpertMode />
+            modules.includes(SettingsModule.CarbonOffset)) && (
+            <List className="!pt-0">
+              <List.Control>
+                {modules.includes(SettingsModule.ExpertMode) && <ExpertMode />}
+                {modules.includes(SettingsModule.CarbonOffset) && (
+                  <CarbonOffset />
+                )}
+                {modules.includes(SettingsModule.TransactionDeadline) &&
+                  options?.transactionDeadline && (
+                    <TransactionDeadline
+                      options={options.transactionDeadline}
+                    />
                   )}
-                  {modules.includes(SettingsModule.CarbonOffset) && (
-                    <CarbonOffset />
-                  )}
-                  {modules.includes(SettingsModule.TransactionDeadline) &&
-                    options?.transactionDeadline && (
-                      <TransactionDeadline
-                        options={options.transactionDeadline}
-                      />
-                    )}
-                </List.Control>
-              </List>
-            ))}
+              </List.Control>
+            </List>
+          )}
           {externalModules?.map((Module, index) => (
             <List className="!pt-0" key={index}>
               <List.Control>

@@ -1,38 +1,69 @@
 import { LinkInternal } from '@sushiswap/ui'
-import { PathnameButton } from 'src/ui/pathname-button'
-import { type ChainId, ChainKey } from 'sushi/chain'
+import { PathnameButton } from 'src/app/_ui/pathname-button'
+import {
+  type EvmChainId,
+  getEvmChainById,
+  isBladeChainId,
+  isSushiSwapChainId,
+} from 'sushi/evm'
 
-export function NavigationItems({ chainId }: { chainId: ChainId }) {
+export function NavigationItems({ chainId }: { chainId: EvmChainId }) {
+  const chainKey = getEvmChainById(chainId).key
+  const isBladeChain = isBladeChainId(chainId)
+
   return (
     <>
-      <LinkInternal
-        shallow={true}
-        scroll={false}
-        href={`/${ChainKey[chainId]}/explore/tokens`}
+      <NavigationItem
+        pathname={`/${chainKey}/explore/tokens`}
+        id="tokens"
+        disabled={!isSushiSwapChainId(chainId)}
       >
-        <PathnameButton
-          id="tokens"
-          pathname={`/${ChainKey[chainId]}/explore/tokens`}
-          asChild
-          size="sm"
-        >
-          Tokens
-        </PathnameButton>
-      </LinkInternal>
-      <LinkInternal
-        shallow={true}
-        scroll={false}
-        href={`/${ChainKey[chainId]}/explore/pools`}
+        Tokens
+      </NavigationItem>
+      <NavigationItem
+        pathname={`/${chainKey}/explore/pools`}
+        id="pools"
+        disabled={!isSushiSwapChainId(chainId)}
       >
-        <PathnameButton
-          id="pools"
-          pathname={`/${ChainKey[chainId]}/explore/pools`}
-          asChild
-          size="sm"
-        >
-          Pools
-        </PathnameButton>
-      </LinkInternal>
+        Pools
+      </NavigationItem>
+      <NavigationItem
+        pathname={`/${chainKey}/explore/blade-pools`}
+        id="blade-pools"
+        disabled={!isBladeChain}
+      >
+        Blade Pools
+      </NavigationItem>
     </>
+  )
+}
+
+interface NavigationItemProps {
+  pathname: string
+  id: string
+  disabled?: boolean
+  children: React.ReactNode
+}
+
+function NavigationItem({
+  pathname,
+  id,
+  disabled = false,
+  children,
+}: NavigationItemProps) {
+  if (disabled) {
+    return (
+      <PathnameButton pathname="" size="sm" disabled>
+        {children}
+      </PathnameButton>
+    )
+  }
+
+  return (
+    <LinkInternal shallow={true} scroll={false} href={pathname}>
+      <PathnameButton id={id} pathname={pathname} asChild size="sm">
+        {children}
+      </PathnameButton>
+    </LinkInternal>
   )
 }

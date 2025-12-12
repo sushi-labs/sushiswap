@@ -2,14 +2,16 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
-import { ChefType, type EvmChainId } from 'sushi'
+import { logger } from 'src/lib/logger'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
+import type { Amount, Token } from 'sushi'
 import {
+  ChefType,
+  type EvmChainId,
   masterChefV1Abi_withdraw,
   masterChefV2Abi_withdraw,
   miniChefV2Abi_withdrawAndHarvest,
-} from 'sushi/abi'
-import type { Amount, Token } from 'sushi/currency'
-import { UserRejectedRequestError } from 'viem'
+} from 'sushi/evm'
 import {
   type UseSimulateContractParameters,
   useAccount,
@@ -66,9 +68,15 @@ export const useMasterChefWithdraw = ({
   )
 
   const onError = useCallback((e: Error) => {
-    if (!(e.cause instanceof UserRejectedRequestError)) {
-      createErrorToast(e?.message, true)
+    if (isUserRejectedError(e)) {
+      return
     }
+
+    logger.error(e, {
+      location: 'useMasterChefWithdraw',
+      action: 'mutationError',
+    })
+    createErrorToast(e?.message, true)
   }, [])
 
   const prepare = useMemo(() => {
@@ -81,21 +89,21 @@ export const useMasterChefWithdraw = ({
           data = {
             abi: masterChefV1Abi_withdraw,
             functionName: 'withdraw',
-            args: [BigInt(pid), BigInt(amount.quotient.toString())],
+            args: [BigInt(pid), BigInt(amount.amount.toString())],
           }
           break
         case ChefType.MasterChefV2:
           data = {
             abi: masterChefV2Abi_withdraw,
             functionName: 'withdraw',
-            args: [BigInt(pid), BigInt(amount.quotient.toString()), address],
+            args: [BigInt(pid), BigInt(amount.amount.toString()), address],
           }
           break
         case ChefType.MiniChef:
           data = {
             abi: miniChefV2Abi_withdrawAndHarvest,
             functionName: 'withdrawAndHarvest',
-            args: [BigInt(pid), BigInt(amount.quotient.toString()), address],
+            args: [BigInt(pid), BigInt(amount.amount.toString()), address],
           }
       }
 

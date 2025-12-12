@@ -18,6 +18,4 @@ export const changeOrCreatePasswordSchema = z
         path: ['passwordConfirmation'],
       })
     }
-
-    return data
   })
