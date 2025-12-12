@@ -38,6 +38,7 @@ export class SushiStellarService {
     userAddress: string,
     params: AddLiquidityParams,
     signTransaction: (xdr: string) => Promise<string>,
+    signAuthEntry: (entryPreimageXdr: string) => Promise<string>,
   ): Promise<{ txHash: string; tokenId: number; liquidity: bigint }> {
     // Convert string amounts to bigint
     const amount0 = BigInt(
@@ -96,6 +97,7 @@ export class SushiStellarService {
         operator: userAddress,
         sourceAccount: userAddress,
         signTransaction,
+        signAuthEntry,
       })
 
       return {
@@ -119,6 +121,7 @@ export class SushiStellarService {
       deadline,
       sourceAccount: userAddress,
       signTransaction,
+      signAuthEntry,
     })
 
     return {
@@ -305,6 +308,7 @@ export class SushiStellarService {
       deadline?: number
     },
     signTransaction: (xdr: string) => Promise<string>,
+    signAuthEntry: (entryPreimageXdr: string) => Promise<string>,
   ) {
     const amount0 = BigInt(
       Math.floor(
@@ -327,6 +331,7 @@ export class SushiStellarService {
       operator: userAddress,
       sourceAccount: userAddress,
       signTransaction,
+      signAuthEntry,
     })
   }
 
@@ -341,6 +346,7 @@ export class SushiStellarService {
       deadline?: number
     },
     signTransaction: (xdr: string) => Promise<string>,
+    signAuthEntry: (entryPreimageXdr: string) => Promise<string>,
   ) {
     return await decreaseLiquidity({
       tokenId: params.tokenId,
@@ -351,6 +357,7 @@ export class SushiStellarService {
       operator: userAddress,
       sourceAccount: userAddress,
       signTransaction,
+      signAuthEntry,
     })
   }
 
@@ -360,8 +367,13 @@ export class SushiStellarService {
   async collectFees(
     params: CollectParams,
     signTransaction: (xdr: string) => Promise<string>,
+    signAuthEntry: (entryPreimageXdr: string) => Promise<string>,
   ) {
-    return await positionService.collectFees(params, signTransaction)
+    return await positionService.collectFees(
+      params,
+      signTransaction,
+      signAuthEntry,
+    )
   }
 
   /**

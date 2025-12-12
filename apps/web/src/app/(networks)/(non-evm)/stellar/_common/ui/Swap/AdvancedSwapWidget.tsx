@@ -19,7 +19,7 @@ export function AdvancedSwapWidget({
   userAddress,
   tokens,
 }: AdvancedSwapWidgetProps) {
-  const { signTransaction } = useStellarWallet()
+  const { signTransaction, signAuthEntry } = useStellarWallet()
   const [selectedTokenIn, setSelectedTokenIn] = useState<Token | null>(null)
   const [selectedTokenOut, setSelectedTokenOut] = useState<Token | null>(null)
   const [amountIn, setAmountIn] = useState('')
@@ -99,6 +99,7 @@ export function AdvancedSwapWidget({
         tickLower: -60000,
         tickUpper: 60000,
         signTransaction,
+        signAuthEntry,
       })
     } catch (error) {
       console.error('Add liquidity failed:', error)

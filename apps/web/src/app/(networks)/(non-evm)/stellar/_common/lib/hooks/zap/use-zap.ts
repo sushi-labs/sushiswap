@@ -24,6 +24,7 @@ export interface UseZapParams {
   slippage?: number
   userAddress: string
   signTransaction: (xdr: string) => Promise<string>
+  signAuthEntry: (entryPreimageXdr: string) => Promise<string>
 }
 
 export const useZap = () => {
@@ -56,6 +57,7 @@ export const useZap = () => {
         slippage = 0.005,
         userAddress,
         signTransaction,
+        signAuthEntry,
       } = params
 
       const amountInBigInt = BigInt(
@@ -184,6 +186,7 @@ export const useZap = () => {
           recipient: userAddress,
         },
         signTransaction,
+        signAuthEntry,
       )
 
       return { addLiqResult, params }

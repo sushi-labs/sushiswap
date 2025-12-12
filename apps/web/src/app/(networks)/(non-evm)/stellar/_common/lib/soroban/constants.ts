@@ -8,6 +8,9 @@ export const SIMULATION_ACCOUNT = new Account(ZERO_ADDRESS, '0')
 
 export const DEFAULT_TIMEOUT = 180
 
+// Number of ledgers for auth entry signature validity (~1 minute at 5s/ledger)
+export const VALID_UNTIL_LEDGER_BUMP = 12
+
 /**
  * Uniswap V3 style sqrt price ratio bounds
  * These are the standard bounds for sqrt(price) * 2^96 representation

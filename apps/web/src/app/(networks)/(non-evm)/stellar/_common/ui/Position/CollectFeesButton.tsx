@@ -11,6 +11,7 @@ interface CollectFeesButtonProps {
   tokenId: number
   userAddress: string
   signTransaction: (xdr: string) => Promise<string>
+  signAuthEntry: (entryPreimageXdr: string) => Promise<string>
   token0Code: string
   token1Code: string
   disabled?: boolean
@@ -20,6 +21,7 @@ export const CollectFeesButton: React.FC<CollectFeesButtonProps> = ({
   tokenId,
   userAddress,
   signTransaction,
+  signAuthEntry,
   token0Code,
   token1Code,
   disabled = false,
@@ -42,6 +44,7 @@ export const CollectFeesButton: React.FC<CollectFeesButtonProps> = ({
         amount0Max: fees.fees0,
         amount1Max: fees.fees1,
         signTransaction,
+        signAuthEntry,
       })
 
       // Show success toast
@@ -74,6 +77,7 @@ export const CollectFeesButton: React.FC<CollectFeesButtonProps> = ({
     tokenId,
     userAddress,
     signTransaction,
+    signAuthEntry,
   ])
 
   const buttonText = useMemo(() => {

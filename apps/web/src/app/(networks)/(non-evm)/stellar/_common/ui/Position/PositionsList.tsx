@@ -6,7 +6,8 @@ import { formatTokenAmount } from '../../lib/utils/format'
 import { CollectFeesButton } from './CollectFeesButton'
 
 export const PositionsList: React.FC = () => {
-  const { connectedAddress, signTransaction } = useStellarWallet()
+  const { connectedAddress, signTransaction, signAuthEntry } =
+    useStellarWallet()
   const {
     data: positions = [],
     isLoading,
@@ -130,6 +131,7 @@ export const PositionsList: React.FC = () => {
                   tokenId={position.tokenId}
                   userAddress={connectedAddress}
                   signTransaction={signTransaction}
+                  signAuthEntry={signAuthEntry}
                   token0Code={token0Code}
                   token1Code={token1Code}
                   disabled={
