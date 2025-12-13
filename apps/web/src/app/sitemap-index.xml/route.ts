@@ -7,7 +7,6 @@ const sitemapFiles = [
   '/faq/sitemap.xml',
   ...CHAIN_IDS.map(getNetworkKey).map((key) => `/sitemap/${key}.xml`),
   '/aptos/sitemap.xml',
-  '/tron/sitemap.xml',
   '/legal/sitemap.xml',
 ]
 
