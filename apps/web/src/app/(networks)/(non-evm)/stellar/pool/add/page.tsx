@@ -24,7 +24,7 @@ import {
 } from '~stellar/_common/lib/soroban'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
-import { FEE_TIERS, TICK_SPACINGS } from '~stellar/_common/lib/utils/ticks'
+import { FEE_TIERS } from '~stellar/_common/lib/utils/ticks'
 import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
 import { TickRangeSelector } from '~stellar/_common/ui/TickRangeSelector/TickRangeSelector.tsx'
 import { TrustlineWarning } from '~stellar/_common/ui/Trustline/TrustlineWarning'
@@ -44,6 +44,9 @@ export default function AddPoolPage() {
   const [orderedToken0Amount, setOrderedToken0Amount] = useState<string>('')
   const [manualOrderedToken1Amount, setManualOrderedToken1Amount] =
     useState<string>('') // For new pools
+  const [createPoolState, setCreatePoolState] = useState<
+    'idle' | 'creating' | 'adding_liquidity'
+  >('idle')
 
   // Check if pool already exists
   const { data: existingPoolAddress } = useGetPool(
@@ -187,83 +190,93 @@ export default function AddPoolPage() {
     setManualOrderedToken1Amount('')
   }
 
-  const handleCreatePool = async () => {
-    if (
-      !orderedToken0 ||
-      !orderedToken1 ||
-      !connectedAddress ||
-      !isTickRangeValid
-    )
-      return
-
-    // Safety check: prevent adding liquidity when price is above range
-    if (isAboveRange) {
-      console.error('Cannot add liquidity: price is above range')
-      return
-    }
-
-    // Validate liquidity amounts are provided
-    if (
-      !orderedToken0Amount ||
-      !orderedToken1Amount ||
-      Number.parseFloat(orderedToken0Amount) <= 0 ||
-      Number.parseFloat(orderedToken1Amount) < 0
-    ) {
-      console.error('Liquidity amounts are required')
-      return
-    }
-
+  const handleCreatePool = async (): Promise<void> => {
     try {
-      let poolAddress: string
-      let needsDelay = false
+      if (
+        !orderedToken0 ||
+        !orderedToken1 ||
+        !connectedAddress ||
+        !isTickRangeValid
+      ) {
+        return
+      }
 
-      if (existingPoolAddress && poolInitialized === true) {
-        poolAddress = existingPoolAddress
-      } else {
-        if (!initSqrtPriceX96) {
-          console.error('Initial price is required to create/initialize pool')
-          return
+      // Safety check: prevent adding liquidity when price is above range
+      if (isAboveRange) {
+        console.error('Cannot add liquidity: price is above range')
+        return
+      }
+
+      // Validate liquidity amounts are provided
+      if (
+        !orderedToken0Amount ||
+        !orderedToken1Amount ||
+        Number.parseFloat(orderedToken0Amount) <= 0 ||
+        Number.parseFloat(orderedToken1Amount) < 0
+      ) {
+        console.error('Liquidity amounts are required')
+        return
+      }
+
+      try {
+        let poolAddress: string
+        let needsDelay = false
+
+        if (existingPoolAddress && poolInitialized === true) {
+          poolAddress = existingPoolAddress
+        } else {
+          if (!initSqrtPriceX96) {
+            console.error('Initial price is required to create/initialize pool')
+            return
+          }
+          setCreatePoolState('creating')
+          const { result } = await createAndInitializePoolMutation.mutateAsync({
+            tokenA: orderedToken0.contract,
+            tokenB: orderedToken1.contract,
+            fee: selectedFee,
+            sqrtPriceX96: initSqrtPriceX96,
+            userAddress: connectedAddress,
+            signTransaction,
+          })
+          poolAddress = result.poolAddress
+          needsDelay = true // Pool was just created/initialized
         }
-        const { result } = await createAndInitializePoolMutation.mutateAsync({
-          tokenA: orderedToken0.contract,
-          tokenB: orderedToken1.contract,
-          fee: selectedFee,
-          sqrtPriceX96: initSqrtPriceX96,
+
+        // Add delay after pool creation/initialization to allow Stellar network to propagate state
+        // This prevents auth errors when the add liquidity call happens before the pool is fully available
+        if (needsDelay) {
+          console.log(
+            'Waiting for pool creation to propagate on Stellar network...',
+          )
+          await new Promise((resolve) => setTimeout(resolve, 8000))
+        }
+
+        setCreatePoolState('adding_liquidity')
+        // Add liquidity (required)
+        await addLiquidityMutation.mutateAsync({
+          poolAddress,
           userAddress: connectedAddress,
+          token0Amount: orderedToken0Amount,
+          token1Amount: orderedToken1Amount,
+          token0Decimals: orderedToken0.decimals,
+          token1Decimals: orderedToken1.decimals,
+          tickLower,
+          tickUpper,
+          recipient: connectedAddress,
           signTransaction,
+          signAuthEntry,
         })
-        poolAddress = result.poolAddress
-        needsDelay = true // Pool was just created/initialized
-      }
 
-      // Add delay after pool creation/initialization to allow Stellar network to propagate state
-      // This prevents auth errors when the add liquidity call happens before the pool is fully available
-      if (needsDelay) {
-        console.log(
-          'Waiting for pool creation to propagate on Stellar network...',
+        // Redirect to the pool page
+        router.push(`/stellar/pool/${poolAddress}`)
+      } catch (error) {
+        console.error(
+          'Failed to create/initialize pool or add liquidity:',
+          error,
         )
-        await new Promise((resolve) => setTimeout(resolve, 8000))
       }
-
-      // Add liquidity (required)
-      await addLiquidityMutation.mutateAsync({
-        poolAddress,
-        userAddress: connectedAddress,
-        token0Amount: orderedToken0Amount,
-        token1Amount: orderedToken1Amount,
-        token0Decimals: orderedToken0.decimals,
-        token1Decimals: orderedToken1.decimals,
-        tickLower,
-        tickUpper,
-        recipient: connectedAddress,
-        signTransaction,
-        signAuthEntry,
-      })
-
-      // Redirect to the pool page
-      router.push(`/stellar/pool/${poolAddress}`)
-    } catch (error) {
-      console.error('Failed to create/initialize pool or add liquidity:', error)
+    } finally {
+      setCreatePoolState('idle')
     }
   }
 
@@ -293,8 +306,6 @@ export default function AddPoolPage() {
     hasValidAmounts &&
     !isAboveRange &&
     !needsAnyTrustline
-  const isCreating =
-    createAndInitializePoolMutation.isPending || addLiquidityMutation.isPending
 
   return (
     <>
@@ -658,11 +669,11 @@ export default function AddPoolPage() {
             <Button
               fullWidth
               size="xl"
-              disabled={!canCreate || isCreating}
+              disabled={!canCreate || createPoolState !== 'idle'}
               onClick={handleCreatePool}
             >
-              {isCreating
-                ? addLiquidityMutation.isPending
+              {createPoolState !== 'idle'
+                ? createPoolState === 'adding_liquidity'
                   ? 'Adding Liquidity...'
                   : 'Creating/Initializing Pool...'
                 : needsAnyTrustline
