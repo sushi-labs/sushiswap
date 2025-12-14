@@ -37,7 +37,7 @@ if (typeof window !== 'undefined') {
 export const networks = {
   unknown: {
     networkPassphrase: "Public Global Stellar Network ; September 2015",
-    contractId: "CCOUQCMU4MUNLNRWPKX63342G4G7H36BXRY6BA2X6WRKRJYIBOF2OTFW",
+    contractId: "CCNVOJGNCPZEI5MMSE6NDSX3NAEZVYKRA4M3QIXBZNH2QVBVSR6ELJ72",
   }
 } as const
 
@@ -293,6 +293,54 @@ export interface StepComputations {
   sqrt_price_next_x96: u256;
   sqrt_price_start_x96: u256;
   tick_next: i32;
+}
+
+
+export interface PoolState {
+  /**
+ * Fee tier in basis points (e.g., 3000 = 0.3%)
+ */
+fee: u32;
+  /**
+ * Total active liquidity at current tick
+ */
+liquidity: u128;
+  /**
+ * Current sqrt price in Q64.96 format
+ */
+sqrt_price_x96: u256;
+  /**
+ * Current tick
+ */
+tick: i32;
+  /**
+ * Minimum tick spacing for positions
+ */
+tick_spacing: i32;
+  /**
+ * First token in the pair
+ */
+token0: string;
+  /**
+ * Second token in the pair
+ */
+token1: string;
+}
+
+
+export interface PoolStateWithBalances {
+  /**
+ * Balance of token0 held by the pool (reserve0)
+ */
+reserve0: i128;
+  /**
+ * Balance of token1 held by the pool (reserve1)
+ */
+reserve1: i128;
+  /**
+ * Core pool state (tokens, fee, price, liquidity)
+ */
+state: PoolState;
 }
 
 export const Errors = {
@@ -1217,6 +1265,74 @@ export interface Client {
   }) => Promise<AssembledTransaction<PositionFeeData>>
 
   /**
+   * Construct and simulate a get_full_pool_state transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Returns complete pool state in a single call for efficient batch queries.
+   * 
+   * This function is designed for the PoolLens contract to minimize cross-contract
+   * call overhead. Returns `None` if the pool is not initialized, eliminating the
+   * need for a separate `is_initialized` check.
+   * 
+   * # Arguments
+   * * `env` - The contract environment
+   * 
+   * # Returns
+   * * `Some(PoolState)` if pool is initialized with all config and trading state
+   * * `None` if pool is not initialized
+   */
+  get_full_pool_state: (options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<Option<PoolState>>>
+
+  /**
+   * Construct and simulate a get_pool_state_with_balances transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Returns complete pool state with token balances (reserves) in a single call.
+   * 
+   * Similar to `get_full_pool_state` but also fetches the token balances held by
+   * the pool. This requires two additional cross-contract calls to the token
+   * contracts, adding ~1M CPU instructions per pool.
+   * 
+   * # Arguments
+   * * `env` - The contract environment
+   * 
+   * # Returns
+   * * `Some(PoolStateWithBalances)` if pool is initialized with state and reserves
+   * * `None` if pool is not initialized
+   * 
+   * # Note
+   * Use this when you need TVL/reserve information. If you don't need balances,
+   * prefer `get_full_pool_state`.
+   */
+  get_pool_state_with_balances: (options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<Option<PoolStateWithBalances>>>
+
+  /**
    * Construct and simulate a snapshot_cumulatives_inside transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Returns cumulative values inside a tick range for a given position.
    * 
@@ -1619,6 +1735,8 @@ export class Client extends ContractClient {
         "AAAAAQAAAAAAAAAAAAAACVN3YXBDYWNoZQAAAAAAAAcAAAAAAAAAD2Jsb2NrX3RpbWVzdGFtcAAAAAAEAAAAAAAAABtjb21wdXRlZF9sYXRlc3Rfb2JzZXJ2YXRpb24AAAAAAQAAAAAAAAAMZmVlX3Byb3RvY29sAAAABAAAAAAAAAAFaGludHMAAAAAAAfQAAAAC09yYWNsZUhpbnRzAAAAAAAAAAAPbGlxdWlkaXR5X3N0YXJ0AAAAAAoAAAAAAAAAHHNlY3NfcGVyX2xpcV9jdW11bGF0aXZlX3gxMjgAAAAMAAAAAAAAAA90aWNrX2N1bXVsYXRpdmUAAAAABw==",
         "AAAAAQAAAAAAAAAAAAAACVN3YXBTdGF0ZQAAAAAAAAcAAAAAAAAAEWFtb3VudF9jYWxjdWxhdGVkAAAAAAAACwAAAAAAAAAaYW1vdW50X3NwZWNpZmllZF9yZW1haW5pbmcAAAAAAAsAAAAAAAAAFmZlZV9ncm93dGhfZ2xvYmFsX3gxMjgAAAAAAAwAAAAAAAAACWxpcXVpZGl0eQAAAAAAAAoAAAAAAAAADHByb3RvY29sX2ZlZQAAAAoAAAAAAAAADnNxcnRfcHJpY2VfeDk2AAAAAAAMAAAAAAAAAAR0aWNrAAAABQ==",
         "AAAAAQAAAAAAAAAAAAAAEFN0ZXBDb21wdXRhdGlvbnMAAAAHAAAAAAAAAAlhbW91bnRfaW4AAAAAAAAKAAAAAAAAAAphbW91bnRfb3V0AAAAAAAKAAAAAAAAAApmZWVfYW1vdW50AAAAAAAKAAAAAAAAAAtpbml0aWFsaXplZAAAAAABAAAAAAAAABNzcXJ0X3ByaWNlX25leHRfeDk2AAAAAAwAAAAAAAAAFHNxcnRfcHJpY2Vfc3RhcnRfeDk2AAAADAAAAAAAAAAJdGlja19uZXh0AAAAAAAABQ==",
+        "AAAAAQAAAAAAAAAAAAAACVBvb2xTdGF0ZQAAAAAAAAcAAAAsRmVlIHRpZXIgaW4gYmFzaXMgcG9pbnRzIChlLmcuLCAzMDAwID0gMC4zJSkAAAADZmVlAAAAAAQAAAAmVG90YWwgYWN0aXZlIGxpcXVpZGl0eSBhdCBjdXJyZW50IHRpY2sAAAAAAAlsaXF1aWRpdHkAAAAAAAAKAAAAI0N1cnJlbnQgc3FydCBwcmljZSBpbiBRNjQuOTYgZm9ybWF0AAAAAA5zcXJ0X3ByaWNlX3g5NgAAAAAADAAAAAxDdXJyZW50IHRpY2sAAAAEdGljawAAAAUAAAAiTWluaW11bSB0aWNrIHNwYWNpbmcgZm9yIHBvc2l0aW9ucwAAAAAADHRpY2tfc3BhY2luZwAAAAUAAAAXRmlyc3QgdG9rZW4gaW4gdGhlIHBhaXIAAAAABnRva2VuMAAAAAAAEwAAABhTZWNvbmQgdG9rZW4gaW4gdGhlIHBhaXIAAAAGdG9rZW4xAAAAAAAT",
+        "AAAAAQAAAAAAAAAAAAAAFVBvb2xTdGF0ZVdpdGhCYWxhbmNlcwAAAAAAAAMAAAAtQmFsYW5jZSBvZiB0b2tlbjAgaGVsZCBieSB0aGUgcG9vbCAocmVzZXJ2ZTApAAAAAAAACHJlc2VydmUwAAAACwAAAC1CYWxhbmNlIG9mIHRva2VuMSBoZWxkIGJ5IHRoZSBwb29sIChyZXNlcnZlMSkAAAAAAAAIcmVzZXJ2ZTEAAAALAAAAL0NvcmUgcG9vbCBzdGF0ZSAodG9rZW5zLCBmZWUsIHByaWNlLCBsaXF1aWRpdHkpAAAAAAVzdGF0ZQAAAAAAB9AAAAAJUG9vbFN0YXRlAAAA",
         "AAAAAAAAAdVDb25zdHJ1Y3RvciBjYWxsZWQgYnkgdGhlIGZhY3Rvcnkgd2hlbiBkZXBsb3lpbmcgYSBuZXcgcG9vbC4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgY29udHJhY3QgZW52aXJvbm1lbnQKKiBgZmFjdG9yeWAgLSBBZGRyZXNzIG9mIHRoZSBmYWN0b3J5IGNvbnRyYWN0IHRoYXQgY3JlYXRlZCB0aGlzIHBvb2wKKiBgdG9rZW4wYCAtIEFkZHJlc3Mgb2YgdGhlIGZpcnN0IHRva2VuIGluIHRoZSBwYWlyCiogYHRva2VuMWAgLSBBZGRyZXNzIG9mIHRoZSBzZWNvbmQgdG9rZW4gaW4gdGhlIHBhaXIKKiBgZmVlYCAtIEZlZSB0aWVyIGZvciB0aGlzIHBvb2wgKGluIGJhc2lzIHBvaW50cykKKiBgdGlja19zcGFjaW5nYCAtIE1pbmltdW0gdGljayBzcGFjaW5nIGZvciB0aGlzIHBvb2wKKiBgZmxhc2hfZXhlY3V0b3JgIC0gQWRkcmVzcyBvZiB0aGUgYXV0aG9yaXplZCBGbGFzaEV4ZWN1dG9yIGNvbnRyYWN0IChpbW11dGFibGUpAAAAAAAADV9fY29uc3RydWN0b3IAAAAAAAAGAAAAAAAAAAdmYWN0b3J5AAAAABMAAAAAAAAABnRva2VuMAAAAAAAEwAAAAAAAAAGdG9rZW4xAAAAAAATAAAAAAAAAANmZWUAAAAABAAAAAAAAAAMdGlja19zcGFjaW5nAAAABQAAAAAAAAAOZmxhc2hfZXhlY3V0b3IAAAAAABMAAAAA",
         "AAAAAAAAAUZWYWxpZGF0ZXMgdGhhdCB0aWNrIHJhbmdlIGlzIHByb3Blcmx5IG9yZGVyZWQgYW5kIHdpdGhpbiBib3VuZHMuCgojIEFyZ3VtZW50cwoqIGBlbnZgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CiogYHRpY2tfbG93ZXJgIC0gTG93ZXIgdGljayBvZiB0aGUgcmFuZ2UKKiBgdGlja191cHBlcmAgLSBVcHBlciB0aWNrIG9mIHRoZSByYW5nZQoKIyBSZXR1cm5zCiogYE9rKCgpKWAgaWYgdGlja3MgYXJlIHZhbGlkCiogYEVycmAgaWYgdGlja3MgYXJlIGludmFsaWQgKHdyb25nIG9yZGVyLCBvdXQgb2YgYm91bmRzLCBvciBtaXNhbGlnbmVkIHdpdGggdGlja19zcGFjaW5nKQAAAAAAC2NoZWNrX3RpY2tzAAAAAAIAAAAAAAAACnRpY2tfbG93ZXIAAAAAAAUAAAAAAAAACnRpY2tfdXBwZXIAAAAAAAUAAAABAAAD6QAAA+0AAAAAAAAAAw==",
         "AAAAAAAAAH1SZXR1cm5zIHRoZSBjdXJyZW50IGxlZGdlciB0aW1lc3RhbXAuCgojIEFyZ3VtZW50cwoqIGBlbnZgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CgojIFJldHVybnMKQ3VycmVudCB0aW1lc3RhbXAgaW4gc2Vjb25kcwAAAAAAAA9ibG9ja190aW1lc3RhbXAAAAAAAAAAAAEAAAAG",
@@ -1648,6 +1766,8 @@ export class Client extends ContractClient {
         "AAAAAAAAAJhSZXR1cm5zIHRoZSBhY2N1bXVsYXRlZCBwcm90b2NvbCBmZWVzLgoKIyBBcmd1bWVudHMKKiBgZW52YCAtIFRoZSBjb250cmFjdCBlbnZpcm9ubWVudAoKIyBSZXR1cm5zClByb3RvY29sRmVlcyBzdHJ1Y3QgY29udGFpbmluZyBhbW91bnRzIGZvciBib3RoIHRva2VucwAAAA1wcm90b2NvbF9mZWVzAAAAAAAAAAAAAAEAAAfQAAAADFByb3RvY29sRmVlcw==",
         "AAAAAAAAAM1SZXR1cm5zIGluZm9ybWF0aW9uIGFib3V0IGEgc3BlY2lmaWMgdGljay4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgY29udHJhY3QgZW52aXJvbm1lbnQKKiBgdGlja2AgLSBUaGUgdGljayBpbmRleCB0byBxdWVyeQoKIyBSZXR1cm5zClRpY2tJbmZvIHN0cnVjdCwgb3IgZGVmYXVsdCAodW5pbml0aWFsaXplZCkgaWYgdGljayBoYXNuJ3QgYmVlbiB1c2VkAAAAAAAABXRpY2tzAAAAAAAAAQAAAAAAAAAEdGljawAAAAUAAAABAAAH0AAAAAhUaWNrSW5mbw==",
         "AAAAAAAAASxSZXR1cm5zIGFsbCBkYXRhIG5lZWRlZCBmb3IgcG9zaXRpb24gZmVlIGNhbGN1bGF0aW9ucyBpbiBhIHNpbmdsZSBjYWxsLgoKIyBBcmd1bWVudHMKKiBgZW52YCAtIFRoZSBjb250cmFjdCBlbnZpcm9ubWVudAoqIGB0aWNrX2xvd2VyYCAtIFRoZSBsb3dlciB0aWNrIG9mIHRoZSBwb3NpdGlvbgoqIGB0aWNrX3VwcGVyYCAtIFRoZSB1cHBlciB0aWNrIG9mIHRoZSBwb3NpdGlvbgoKIyBSZXR1cm5zClBvc2l0aW9uRmVlRGF0YSBzdHJ1Y3QgY29udGFpbmluZyBzbG90MCwgZ2xvYmFsIGZlZSBncm93dGgsIGFuZCB0aWNrIGluZm8AAAAVZ2V0X3Bvc2l0aW9uX2ZlZV9kYXRhAAAAAAAAAgAAAAAAAAAKdGlja19sb3dlcgAAAAAABQAAAAAAAAAKdGlja191cHBlcgAAAAAABQAAAAEAAAfQAAAAD1Bvc2l0aW9uRmVlRGF0YQA=",
+        "AAAAAAAAAb9SZXR1cm5zIGNvbXBsZXRlIHBvb2wgc3RhdGUgaW4gYSBzaW5nbGUgY2FsbCBmb3IgZWZmaWNpZW50IGJhdGNoIHF1ZXJpZXMuCgpUaGlzIGZ1bmN0aW9uIGlzIGRlc2lnbmVkIGZvciB0aGUgUG9vbExlbnMgY29udHJhY3QgdG8gbWluaW1pemUgY3Jvc3MtY29udHJhY3QKY2FsbCBvdmVyaGVhZC4gUmV0dXJucyBgTm9uZWAgaWYgdGhlIHBvb2wgaXMgbm90IGluaXRpYWxpemVkLCBlbGltaW5hdGluZyB0aGUKbmVlZCBmb3IgYSBzZXBhcmF0ZSBgaXNfaW5pdGlhbGl6ZWRgIGNoZWNrLgoKIyBBcmd1bWVudHMKKiBgZW52YCAtIFRoZSBjb250cmFjdCBlbnZpcm9ubWVudAoKIyBSZXR1cm5zCiogYFNvbWUoUG9vbFN0YXRlKWAgaWYgcG9vbCBpcyBpbml0aWFsaXplZCB3aXRoIGFsbCBjb25maWcgYW5kIHRyYWRpbmcgc3RhdGUKKiBgTm9uZWAgaWYgcG9vbCBpcyBub3QgaW5pdGlhbGl6ZWQAAAAAE2dldF9mdWxsX3Bvb2xfc3RhdGUAAAAAAAAAAAEAAAPoAAAH0AAAAAlQb29sU3RhdGUAAAA=",
+        "AAAAAAAAAjRSZXR1cm5zIGNvbXBsZXRlIHBvb2wgc3RhdGUgd2l0aCB0b2tlbiBiYWxhbmNlcyAocmVzZXJ2ZXMpIGluIGEgc2luZ2xlIGNhbGwuCgpTaW1pbGFyIHRvIGBnZXRfZnVsbF9wb29sX3N0YXRlYCBidXQgYWxzbyBmZXRjaGVzIHRoZSB0b2tlbiBiYWxhbmNlcyBoZWxkIGJ5CnRoZSBwb29sLiBUaGlzIHJlcXVpcmVzIHR3byBhZGRpdGlvbmFsIGNyb3NzLWNvbnRyYWN0IGNhbGxzIHRvIHRoZSB0b2tlbgpjb250cmFjdHMsIGFkZGluZyB+MU0gQ1BVIGluc3RydWN0aW9ucyBwZXIgcG9vbC4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgY29udHJhY3QgZW52aXJvbm1lbnQKCiMgUmV0dXJucwoqIGBTb21lKFBvb2xTdGF0ZVdpdGhCYWxhbmNlcylgIGlmIHBvb2wgaXMgaW5pdGlhbGl6ZWQgd2l0aCBzdGF0ZSBhbmQgcmVzZXJ2ZXMKKiBgTm9uZWAgaWYgcG9vbCBpcyBub3QgaW5pdGlhbGl6ZWQKCiMgTm90ZQpVc2UgdGhpcyB3aGVuIHlvdSBuZWVkIFRWTC9yZXNlcnZlIGluZm9ybWF0aW9uLiBJZiB5b3UgZG9uJ3QgbmVlZCBiYWxhbmNlcywKcHJlZmVyIGBnZXRfZnVsbF9wb29sX3N0YXRlYC4AAAAcZ2V0X3Bvb2xfc3RhdGVfd2l0aF9iYWxhbmNlcwAAAAAAAAABAAAD6AAAB9AAAAAVUG9vbFN0YXRlV2l0aEJhbGFuY2VzAAAA",
         "AAAAAAAAAeJSZXR1cm5zIGN1bXVsYXRpdmUgdmFsdWVzIGluc2lkZSBhIHRpY2sgcmFuZ2UgZm9yIGEgZ2l2ZW4gcG9zaXRpb24uCgpVc2VkIHRvIGNvbXB1dGUgdGltZS13ZWlnaHRlZCBhdmVyYWdlcyBhbmQgbGlxdWlkaXR5LXdlaWdodGVkIHRpbWUgd2l0aGluCmEgcHJpY2UgcmFuZ2UgZm9yIGxpcXVpZGl0eSBtaW5pbmcgYW5kIG90aGVyIGFuYWx5dGljcy4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgY29udHJhY3QgZW52aXJvbm1lbnQKKiBgdGlja19sb3dlcmAgLSBMb3dlciB0aWNrIG9mIHRoZSByYW5nZQoqIGB0aWNrX3VwcGVyYCAtIFVwcGVyIHRpY2sgb2YgdGhlIHJhbmdlCgojIFJldHVybnMKKiBgT2soKHRpY2tfY3VtdWxhdGl2ZSwgc2Vjb25kc19wZXJfbGlxdWlkaXR5X2N1bXVsYXRpdmUsIHNlY29uZHNfaW5zaWRlKSlgCiogYEVycihUaWNrTm90SW5pdGlhbGl6ZWQpYCBpZiBlaXRoZXIgdGljayBoYXNuJ3QgYmVlbiBpbml0aWFsaXplZAAAAAAAG3NuYXBzaG90X2N1bXVsYXRpdmVzX2luc2lkZQAAAAADAAAAAAAAAAp0aWNrX2xvd2VyAAAAAAAFAAAAAAAAAAp0aWNrX3VwcGVyAAAAAAAFAAAAAAAAAAVoaW50cwAAAAAAB9AAAAALT3JhY2xlSGludHMAAAAAAQAAA+kAAAPtAAAAAwAAAAcAAAfQAAAADUZpeGVkUG9pbnQxMjgAAAAAAAAEAAAAAw==",
         "AAAAAAAAAY9PYnNlcnZlcyBvcmFjbGUgZGF0YSBmb3IgYSBzaW5nbGUgdGltZSBwb2ludC4KClJldHVybnMgdGljayBjdW11bGF0aXZlIGFuZCBzZWNvbmRzIHBlciBsaXF1aWRpdHkgY3VtdWxhdGl2ZSB2YWx1ZXMKZm9yIGNvbXB1dGluZyB0aW1lLXdlaWdodGVkIGF2ZXJhZ2VzLgoKIyBBcmd1bWVudHMKKiBgZW52YCAtIFRoZSBjb250cmFjdCBlbnZpcm9ubWVudAoqIGBzZWNvbmRzX2Fnb2AgLSBIb3cgbWFueSBzZWNvbmRzIGluIHRoZSBwYXN0IHRvIG9ic2VydmUgKDAgPSBjdXJyZW50KQoKIyBSZXR1cm5zCiogYE9rKCh0aWNrX2N1bXVsYXRpdmUsIHNlY29uZHNfcGVyX2xpcXVpZGl0eV9jdW11bGF0aXZlX3gxMjgpKWAKKiBgRXJyYCBpZiBvYnNlcnZhdGlvbiBkb2Vzbid0IGV4aXN0IG9yIGlzIHRvbyBvbGQAAAAADm9ic2VydmVfc2luZ2xlAAAAAAACAAAAAAAAAAtzZWNvbmRzX2FnbwAAAAAEAAAAAAAAAAVoaW50cwAAAAAAB9AAAAALT3JhY2xlSGludHMAAAAAAQAAA+kAAAPtAAAAAgAAAAcAAAfQAAAADUZpeGVkUG9pbnQxMjgAAAAAAAAD",
         "AAAAAAAAAbdPYnNlcnZlcyBvcmFjbGUgZGF0YSBmb3IgbXVsdGlwbGUgdGltZSBwb2ludHMuCgpSZXR1cm5zIHRpY2sgY3VtdWxhdGl2ZSBhbmQgc2Vjb25kcyBwZXIgbGlxdWlkaXR5IGN1bXVsYXRpdmUgdmFsdWVzCmZvciBlYWNoIHJlcXVlc3RlZCB0aW1lIHBvaW50LCBmb3IgY29tcHV0aW5nIHRpbWUtd2VpZ2h0ZWQgYXZlcmFnZXMuCgojIEFyZ3VtZW50cwoqIGBlbnZgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CiogYHNlY29uZHNfYWdvc2AgLSBWZWN0b3Igb2Ygc2Vjb25kcyBpbiB0aGUgcGFzdCB0byBvYnNlcnZlICgwID0gY3VycmVudCkKCiMgUmV0dXJucwoqIGBPaygodGlja19jdW11bGF0aXZlcywgc2Vjb25kc19wZXJfbGlxdWlkaXR5X2N1bXVsYXRpdmVzX3gxMjgpKWAKKiBgRXJyYCBpZiBhbnkgb2JzZXJ2YXRpb24gZG9lc24ndCBleGlzdCBvciBpcyB0b28gb2xkAAAAAAdvYnNlcnZlAAAAAAIAAAAAAAAADHNlY29uZHNfYWdvcwAAA+oAAAAEAAAAAAAAAAVoaW50cwAAAAAAB9AAAAALT3JhY2xlSGludHMAAAAAAQAAA+kAAAPtAAAAAgAAA+oAAAAHAAAD6gAAB9AAAAANRml4ZWRQb2ludDEyOAAAAAAAAAM=",
@@ -1696,6 +1816,8 @@ export class Client extends ContractClient {
         protocol_fees: this.txFromJSON<ProtocolFees>,
         ticks: this.txFromJSON<TickInfo>,
         get_position_fee_data: this.txFromJSON<PositionFeeData>,
+        get_full_pool_state: this.txFromJSON<Option<PoolState>>,
+        get_pool_state_with_balances: this.txFromJSON<Option<PoolStateWithBalances>>,
         snapshot_cumulatives_inside: this.txFromJSON<Result<readonly [i64, FixedPoint128, u32]>>,
         observe_single: this.txFromJSON<Result<readonly [i64, FixedPoint128]>>,
         observe: this.txFromJSON<Result<readonly [Array<i64>, Array<FixedPoint128>]>>,

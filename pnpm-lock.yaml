@@ -348,6 +348,9 @@ importers:
       '@sushiswap/stellar-contract-binding-pool':
         specifier: workspace:*
         version: link:../../packages/stellar/contract-bindings/pool
+      '@sushiswap/stellar-contract-binding-pool-lens':
+        specifier: workspace:*
+        version: link:../../packages/stellar/contract-bindings/pool-lens
       '@sushiswap/stellar-contract-binding-position-manager':
         specifier: workspace:*
         version: link:../../packages/stellar/contract-bindings/position-manager
@@ -870,6 +873,19 @@ importers:
         version: 5.8.3
 
   packages/stellar/contract-bindings/pool:
+    dependencies:
+      '@stellar/stellar-sdk':
+        specifier: ^14.1.1
+        version: 14.4.2
+      buffer:
+        specifier: 6.0.3
+        version: 6.0.3
+    devDependencies:
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+
+  packages/stellar/contract-bindings/pool-lens:
     dependencies:
       '@stellar/stellar-sdk':
         specifier: ^14.1.1

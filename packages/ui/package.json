@@ -112,7 +112,7 @@
     "next": "catalog:react",
     "react": "catalog:react",
     "react-dom": "catalog:react",
-    "sushi": "npm:@lufycz/sushi@6.3.0",
+    "sushi": "*",
     "tailwindcss": "catalog:ui",
     "wagmi": "catalog:web3"
   },

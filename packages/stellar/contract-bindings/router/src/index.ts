@@ -37,7 +37,7 @@ if (typeof window !== 'undefined') {
 export const networks = {
   unknown: {
     networkPassphrase: "Public Global Stellar Network ; September 2015",
-    contractId: "CBYSB6TYJWFDANJ53VXMJOKUUE62DRAXXSEPDA57XTGFZRDAFN27D4Y3",
+    contractId: "CBTOVCRJ4RMONT37UO6WDTAF5ZMYH3IATO2XV4EQRNJZHTDO6FF42HLT",
   }
 } as const
 

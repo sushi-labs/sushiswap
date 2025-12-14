@@ -69,6 +69,7 @@
     "@sushiswap/notifications": "workspace:*",
     "@sushiswap/stellar-contract-binding-factory": "workspace:*",
     "@sushiswap/stellar-contract-binding-pool": "workspace:*",
+    "@sushiswap/stellar-contract-binding-pool-lens": "workspace:*",
     "@sushiswap/stellar-contract-binding-position-manager": "workspace:*",
     "@sushiswap/stellar-contract-binding-router": "workspace:*",
     "@sushiswap/stellar-contract-binding-token": "workspace:*",

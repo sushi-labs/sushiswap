@@ -5,6 +5,7 @@ export type ContractAddresses = {
   ROUTER: ContractAddress
   POSITION_MANAGER: ContractAddress
   TOKEN_DESCRIPTOR: ContractAddress
+  POOL_LENS: ContractAddress
   FLASH_EXECUTOR: ContractAddress
   STRATEGY: ContractAddress
   POOL_WASM_HASH: string
