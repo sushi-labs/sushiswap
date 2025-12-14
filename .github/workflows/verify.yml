@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
 env:
   NODE_OPTIONS: --max-old-space-size=8192
-  # TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-  # TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
 jobs:
   format:
@@ -15,10 +15,10 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
-        # with:
-        #   submodules: 'recursive'
-        #   token: ${{ secrets.PAT }}
-        #   ref: ${{ github.head_ref }}
+        with:
+          submodules: 'recursive'
+          token: ${{ secrets.PAT }}
+          ref: ${{ github.head_ref }}
       - name: Install dependencies
         uses: ./.github/actions/install
       - name: Format
@@ -38,10 +38,10 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
-        # with:
-        #   submodules: 'recursive'
-        #   token: ${{ secrets.PAT }}
-        #   ref: ${{ github.head_ref }}
+        with:
+          submodules: 'recursive'
+          token: ${{ secrets.PAT }}
+          ref: ${{ github.head_ref }}
       - name: Install dependencies
         uses: ./.github/actions/install
       - name: Lint
@@ -59,17 +59,35 @@ jobs:
     needs: lint
     runs-on: ubuntu-latest
     timeout-minutes: 5
+
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
-        with:
+        with: 
           submodules: 'recursive'
+
       - name: Install dependencies
         uses: ./.github/actions/install
+
       - name: Build packages
         run: pnpm exec turbo run build --filter=./packages/*
+
       - name: Build config
         run: pnpm exec turbo run build --filter=./config/*
+
+  # build:
+  #   name: Build
+  #   needs: [lint, format]
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 5
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+  #     - name: Install dependencies
+  #       uses: ./.github/actions/install
+  #     - name: Build
+  #       run: pnpm build
 
   types:
     name: Types
@@ -79,6 +97,7 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
+
       - name: Install dependencies
         uses: ./.github/actions/install
       - name: Check types
