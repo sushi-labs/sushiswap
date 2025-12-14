@@ -44,6 +44,7 @@ import { PoolFinder } from 'src/lib/wagmi/systems/PoolFinder/pool-finder'
 import { Amount, Percent, ZERO } from 'sushi'
 import {
   type EvmChainId,
+  EvmChainKey,
   type EvmCurrency,
   SUSHISWAP_V2_ROUTER_ADDRESS,
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,

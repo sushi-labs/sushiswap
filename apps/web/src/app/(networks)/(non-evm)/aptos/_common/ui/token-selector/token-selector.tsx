@@ -182,7 +182,7 @@ export default function TokenSelector({
                   token={queryToken}
                   onImport={() => {
                     queryToken && handleImport(queryToken)
-                    setOpen(false)
+                    close()
                   }}
                 />
               )}

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { staticTokens } from '~stellar/_common/lib/assets/token-assets'
+import { getFees } from '~stellar/_common/lib/soroban'
 import {
   getFactoryContractClient,
   getPoolContractClient,
@@ -41,7 +42,7 @@ export function usePoolGraph() {
         // 3. Only query active/liquid pools
         const knownTokens = staticTokens.map((token) => token.contract)
 
-        const feeTiers = [500, 3000, 10000] // 0.05%, 0.3%, 1%
+        const feeTiers = await getFees()
 
         // Query all possible pool combinations
         const poolQueries: Promise<void>[] = []

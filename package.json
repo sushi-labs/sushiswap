@@ -14,8 +14,7 @@
     "preinstall": "pnpx only-allow pnpm",
     "postinstall": "node scripts/validate-deps.js",
     "lint": "biome check .",
-    "lint:fix": "biome check . --write",
-    "lint:fix:force": "biome check . --write --unsafe",
+    "lint:fix": "biome check . --apply",
     "sort": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'packages/*/package.json'",
     "sort-check": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'packages/*/package.json' --check",
     "test": "dotenv -- turbo run test --parallel",
@@ -56,24 +55,6 @@
       "@walletconnect/logger@2.1.2": "patches/@walletconnect__logger@2.1.2.patch",
       "@walletconnect/jsonrpc-http-connection@1.0.8": "patches/@walletconnect__jsonrpc-http-connection@1.0.8.patch"
     },
-    "onlyBuiltDependencies": [
-      "@axelar-network/axelarjs-sdk",
-      "@biomejs/biome",
-      "@stellar/stellar-sdk",
-      "@vercel/speed-insights",
-      "bigint-buffer",
-      "blake-hash",
-      "bufferutil",
-      "core-js",
-      "esbuild",
-      "just-pnpm",
-      "keccak",
-      "protobufjs",
-      "secp256k1",
-      "sharp",
-      "tiny-secp256k1",
-      "usb",
-      "utf-8-validate"
-    ]
+    "onlyBuiltDependencies": ["@biomejs/biome"]
   }
 }

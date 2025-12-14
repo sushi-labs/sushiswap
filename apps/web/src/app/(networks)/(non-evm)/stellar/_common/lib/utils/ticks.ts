@@ -2,10 +2,9 @@ export const FEE_TIERS = [
   { value: 500, label: '0.05%', description: 'Best for very stable pairs' },
   { value: 3000, label: '0.3%', description: 'Best for most pairs' },
   { value: 10000, label: '1%', description: 'Best for volatile pairs' },
-]
+] as const
 
 export const TICK_SPACINGS: Record<number, number> = {
-  100: 1,
   500: 10,
   3000: 60,
   10000: 200,
