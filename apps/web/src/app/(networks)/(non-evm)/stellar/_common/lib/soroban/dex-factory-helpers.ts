@@ -118,7 +118,7 @@ export async function createAndInitializePool({
     console.log('⏳ Waiting for confirmation...')
 
     // Wait for confirmation
-    const txResult = await waitForTransaction(submitResult.hash)
+    const txResult = await waitForTransaction(submitResult.hash, 60000, 2)
 
     if (txResult.status === 'SUCCESS' && txResult.returnValue !== undefined) {
       console.log('✅ Transaction confirmed!')

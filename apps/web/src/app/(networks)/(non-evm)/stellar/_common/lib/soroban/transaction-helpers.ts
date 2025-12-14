@@ -69,6 +69,7 @@ export async function buildTransaction<T extends xdr.Operation>(
 export async function waitForTransaction(
   hash: string,
   timeout = 30000,
+  ledgersToWait = 1,
 ): Promise<rpc.Api.GetTransactionResponse> {
   const startTime = Date.now()
 
@@ -78,7 +79,10 @@ export async function waitForTransaction(
       console.log('result', result)
       if (result.status === 'SUCCESS') {
         // Wait for 1 ledger to ensure finality while sharing timeout
-        await waitForLedgerPropagation(1, timeout - (Date.now() - startTime))
+        await waitForLedgerPropagation(
+          ledgersToWait,
+          timeout - (Date.now() - startTime),
+        )
         return result
       }
       if (result.status === 'FAILED') {
