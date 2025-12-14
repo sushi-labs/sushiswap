@@ -6,7 +6,7 @@
 		"paths": {
 			"~aptos/*": ["src/app/(networks)/(non-evm)/aptos/*"],
 			"~tron/*": ["src/app/(networks)/(non-evm)/tron/*"],
-      "~stellar/*": ["src/app/(networks)/(non-evm)/stellar/*"],
+      		"~stellar/*": ["src/app/(networks)/(non-evm)/stellar/*"],
 			"~kadena/*": ["src/app/(networks)/(non-evm)/kadena/*"],
 			"~evm/*": ["src/app/(networks)/(evm)/*"]
 		},
