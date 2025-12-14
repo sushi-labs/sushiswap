@@ -1,4 +1,5 @@
 import { Address } from '@stellar/stellar-sdk'
+import { TICK_SPACINGS } from '../utils/ticks'
 import { getFactoryContractClient } from './client'
 import { DEFAULT_TIMEOUT, ZERO_ADDRESS, isAddressLower } from './constants'
 import { contractAddresses } from './contracts'
@@ -466,23 +467,8 @@ export async function poolExists({
   }
 }
 
-/**
- * Get all available fee tiers and their tick spacings
- * @returns Object mapping fee amounts to tick spacings
- */
-export async function getFeeTiers(): Promise<Record<number, number>> {
-  // TODO(drew): This would need to be implemented based on the contract's storage
-  // For now, return common fee tiers
-  return {
-    100: 1, // 0.01%
-    500: 10, // 0.05%
-    3000: 60, // 0.3%
-    10000: 200, // 1%
-  }
-}
-
 export async function getFees(): Promise<number[]> {
-  return Object.keys(await getFeeTiers()).map(Number)
+  return Object.keys(TICK_SPACINGS).map(Number)
 }
 
 /**
@@ -552,24 +538,4 @@ export async function debugCreatePoolParams(
   } catch (error) {
     console.error('\n❌ Factory simulation failed:', error)
   }
-}
-
-/**
- * Validate that a fee tier is supported
- * @param fee - Fee amount to validate
- * @returns True if fee is supported, false otherwise
- */
-export function isFeeTierSupported(fee: number): boolean {
-  const feeTiers = getFeeTiers()
-  return fee in feeTiers
-}
-
-/**
- * Get the tick spacing for a given fee tier
- * @param fee - Fee amount
- * @returns The tick spacing for the fee tier
- */
-export async function getTickSpacingForFee(fee: number): Promise<number> {
-  const feeTiers = await getFeeTiers()
-  return feeTiers[fee] || 0
 }

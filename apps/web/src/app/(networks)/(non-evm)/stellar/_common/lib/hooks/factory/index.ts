@@ -7,5 +7,4 @@
 
 export * from './use-create-and-initialize-pool'
 export * from './use-get-pool'
-export * from './use-fee-tiers'
 export * from './use-pool-exists'
