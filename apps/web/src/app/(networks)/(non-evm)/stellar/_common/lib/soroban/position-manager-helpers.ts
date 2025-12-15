@@ -198,8 +198,8 @@ export async function mintPosition({
     })
 
     const mintParams = {
-      token0: config.token0.address,
-      token1: config.token1.address,
+      token0: config.token0.contract,
+      token1: config.token1.contract,
       fee: config.fee,
       recipient,
       tick_lower: tickLower,

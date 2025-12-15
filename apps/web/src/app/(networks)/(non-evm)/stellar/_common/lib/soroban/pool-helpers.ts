@@ -3,9 +3,8 @@ import type { PoolInfo, PoolLiquidity, PoolReserves } from '../types/pool.type'
 import type { Token } from '../types/token.type'
 import { formatTokenAmount } from '../utils/formatters'
 import { type OracleHints, fetchOracleHints } from '../utils/slot-hint-helpers'
-import { TICK_SPACINGS } from '../utils/ticks'
-import { getPoolContractClient } from './client'
-import { DEFAULT_TIMEOUT } from './constants'
+import { getPoolLensContractClient } from './client'
+import { contractAddresses } from './contracts'
 import { discoverAllPools } from './dex-factory-helpers'
 import { isPoolInitialized } from './pool-initialization'
 import {
@@ -21,68 +20,86 @@ export interface PoolBasicInfo {
   fee: number
 }
 
-export interface PoolConfig {
-  token0: { address: string; code: string }
-  token1: { address: string; code: string }
+export interface ContractPoolData {
+  token0: Token
+  token1: Token
   fee: number
   description?: string
+  reserve0: bigint
+  reserve1: bigint
+  liquidity: bigint
+  sqrtPriceX96: bigint
+  tickSpacing: number
+  tick: number
 }
 
 /**
- * Query pool contract directly for its configuration
+ * Query pool infor directly from contract
  */
 export async function getPoolInfoFromContract(
   address: string,
-): Promise<PoolConfig | null> {
+): Promise<ContractPoolData | null> {
   try {
-    const poolContractClient = getPoolContractClient({
-      contractId: address,
+    const poolLensContractClient = getPoolLensContractClient({
+      contractId: contractAddresses.POOL_LENS,
       // No publicKey needed for read-only pool info queries
     })
 
     // Query pool for token addresses and fee
-    const [token0Address, token1Address, fee] = await Promise.all([
-      poolContractClient
-        .token0({
-          timeoutInSeconds: 30,
-          fee: 100,
-        })
-        .then((tx: { result: string }) => tx.result),
-      poolContractClient
-        .token1({
-          timeoutInSeconds: 30,
-          fee: 100,
-        })
-        .then((tx: { result: string }) => tx.result),
-      poolContractClient
-        .fee({
-          timeoutInSeconds: 30,
-          fee: 100,
-        })
-        .then((tx: { result: number }) => tx.result),
-    ])
+    const poolResult = (
+      await poolLensContractClient.get_pool_data_with_bal({
+        pool: address,
+      })
+    ).result.result
+
+    if (poolResult.tag === 'NotFound') {
+      console.warn(`Pool not found at address: ${address}`)
+      return null
+    }
+
+    const [poolData] = poolResult.values
+    const { reserve0, reserve1 } = poolData
+    const {
+      token0: token0Address,
+      token1: token1Address,
+      fee,
+      liquidity,
+      sqrt_price_x96: sqrtPriceX96,
+      tick_spacing: tickSpacing,
+      tick,
+    } = poolData.state
 
     // Get token codes from token list
     const token0FromList = getTokenByContract(token0Address)
     const token1FromList = getTokenByContract(token1Address)
 
-    if (!token0FromList || !token1FromList) {
-      console.warn(
-        `Tokens not found in token list, using contract addresses as codes`,
-      )
-      return {
-        token0: { address: token0Address, code: token0Address.slice(0, 8) },
-        token1: { address: token1Address, code: token1Address.slice(0, 8) },
-        fee,
-        description: `${token0Address.slice(0, 8)}-${token1Address.slice(0, 8)} (${fee / 10000}% fee)`,
-      }
-    }
-
     return {
-      token0: { address: token0Address, code: token0FromList.code },
-      token1: { address: token1Address, code: token1FromList.code },
+      token0: {
+        contract: token0Address,
+        code: token0Address.slice(0, 8),
+        name: token0Address.slice(0, 8),
+        decimals: 7,
+        issuer: '',
+        org: 'unknown',
+        ...token0FromList,
+      },
+      token1: {
+        contract: token1Address,
+        code: token1Address.slice(0, 8),
+        name: token1Address.slice(0, 8),
+        decimals: 7,
+        issuer: '',
+        org: 'unknown',
+        ...token1FromList,
+      },
       fee,
-      description: `${token0FromList.code}-${token1FromList.code} (${fee / 10000}% fee)`,
+      description: `${token0Address.slice(0, 8)}-${token1Address.slice(0, 8)} (${fee / 10000}% fee)`,
+      reserve0,
+      reserve1,
+      liquidity,
+      sqrtPriceX96,
+      tickSpacing,
+      tick,
     }
   } catch (error) {
     console.error('Failed to query pool contract:', error)
@@ -142,163 +159,65 @@ export async function getAllPools(): Promise<PoolInfo[]> {
  */
 export async function getPoolInfo(address: string): Promise<PoolInfo | null> {
   try {
-    const config = await getPoolInfoFromContract(address)
+    const contractPoolInfo = await getPoolInfoFromContract(address)
 
-    if (!config) {
+    if (!contractPoolInfo) {
       console.warn(
         `⚠️ Could not fetch pool configuration for: ${address} - Skipping`,
       )
       return null
     }
 
-    let token0 = getTokenByCode(config.token0.code)
-    let token1 = getTokenByCode(config.token1.code)
-
-    // If tokens don't exist in base tokens, create them dynamically from the config
-    if (!token0) {
-      console.warn(
-        `Token ${config.token0.code} not found in base tokens, creating dynamically`,
-      )
-      token0 = {
-        code: config.token0.code,
-        name: config.token0.code,
-        contract: config.token0.address,
-        decimals: 7,
-        issuer: '',
-        org: 'unknown',
-      }
-    }
-
-    if (!token1) {
-      console.warn(
-        `Token ${config.token1.code} not found in base tokens, creating dynamically`,
-      )
-      token1 = {
-        code: config.token1.code,
-        name: config.token1.code,
-        contract: config.token1.address,
-        decimals: 7,
-        issuer: '',
-        org: 'unknown',
-      }
-    }
-
-    // Fetch liquidity and reserves (both may be null for empty pools)
-    const [liquidity, reserves] = await Promise.all([
-      fetchPoolLiquidity(address).catch(() => null),
-      fetchPoolReserves(address).catch(() => null),
-    ])
-
     // Skip pools with no liquidity (empty/inactive pools)
-    if (!liquidity || !reserves) {
+    if (
+      !contractPoolInfo.liquidity ||
+      !contractPoolInfo.reserve0 ||
+      !contractPoolInfo.reserve1
+    ) {
       return null
     }
 
-    // Calculate TVL (Total Value Locked)
-    const token0Price = await getStablePrice(token0).catch(() => '0')
-    const token1Price = await getStablePrice(token1).catch(() => '0')
+    const liquidity: PoolLiquidity = {
+      amount: contractPoolInfo.liquidity.toString(),
+      formatted: formatTokenAmount(contractPoolInfo.liquidity, 7, 2),
+    }
 
-    const tvl = (
-      (Number(reserves.token0.amount) / 10 ** token0.decimals) *
-        Number(token0Price) +
-      (Number(reserves.token1.amount) / 10 ** token1.decimals) *
-        Number(token1Price)
-    ).toFixed(2)
+    const reserves: PoolReserves = {
+      token0: {
+        code: contractPoolInfo.token0.code,
+        amount: contractPoolInfo.reserve0.toString(),
+        formatted: formatTokenAmount(
+          contractPoolInfo.reserve0,
+          contractPoolInfo.token0.decimals,
+          2,
+        ),
+      },
+      token1: {
+        code: contractPoolInfo.token1.code,
+        amount: contractPoolInfo.reserve1.toString(),
+        formatted: formatTokenAmount(
+          contractPoolInfo.reserve1,
+          contractPoolInfo.token1.decimals,
+          2,
+        ),
+      },
+    }
 
     return {
-      name: `${token0.code}/${token1.code}`,
+      name: `${contractPoolInfo.token0.code}/${contractPoolInfo.token1.code}`,
       address: address,
-      token0,
-      token1,
-      fee: config.fee,
-      tickSpacing: TICK_SPACINGS[config.fee] || 60,
+      token0: contractPoolInfo.token0,
+      token1: contractPoolInfo.token1,
+      fee: contractPoolInfo.fee,
+      tickSpacing: contractPoolInfo.tickSpacing,
       liquidity,
       reserves,
-      tvl,
+      sqrtPriceX96: contractPoolInfo.sqrtPriceX96,
+      tick: contractPoolInfo.tick,
     }
   } catch (error) {
     // Pools with no liquidity or missing data are expected
     console.warn(`⚠️ Skipping pool ${address} (likely empty or inactive)`, error)
-    return null
-  }
-}
-
-export async function fetchPoolLiquidity(
-  poolAddress: string,
-): Promise<PoolLiquidity | null> {
-  try {
-    const poolContractClient = getPoolContractClient({
-      contractId: poolAddress,
-    })
-    const { result } = await poolContractClient.liquidity({
-      timeoutInSeconds: DEFAULT_TIMEOUT,
-      fee: 100,
-    })
-    return {
-      amount: result.toString(),
-      formatted: formatTokenAmount(result, 7, 2),
-    }
-  } catch (error) {
-    console.error('Error fetching pool liquidity:', error)
-    return null
-  }
-}
-
-/**
- * Fetch pool reserves using token-helpers
- * @param address - The pool contract address
- * @returns Object with token reserves (raw and formatted)
- */
-export async function fetchPoolReserves(
-  address: string,
-): Promise<PoolReserves | null> {
-  try {
-    const config = await getPoolInfoFromContract(address)
-
-    if (!config) {
-      throw new Error(`No configuration found for pool: ${address}`)
-    }
-
-    const token0 = getTokenByCode(config.token0.code)
-    const token1 = getTokenByCode(config.token1.code)
-
-    if (!token0 || !token1) {
-      throw new Error(`Token configuration not found for pool: ${address}`)
-    }
-
-    // Fetch token balances using token-helpers
-    // Get the balance of the pool address for each token
-    const [balance0, balance1] = await Promise.all([
-      getTokenBalance(address, token0.contract),
-      getTokenBalance(address, token1.contract),
-    ])
-
-    // Format the reserves
-    const token0ReserveFormatted = formatTokenAmount(
-      balance0,
-      token0.decimals,
-      2,
-    )
-    const token1ReserveFormatted = formatTokenAmount(
-      balance1,
-      token1.decimals,
-      2,
-    )
-
-    return {
-      token0: {
-        code: token0.code,
-        amount: balance0.toString(),
-        formatted: token0ReserveFormatted,
-      },
-      token1: {
-        code: token1.code,
-        amount: balance1.toString(),
-        formatted: token1ReserveFormatted,
-      },
-    }
-  } catch (error) {
-    console.error('Error fetching pool reserves:', error)
     return null
   }
 }
@@ -380,54 +299,20 @@ export function calculatePriceFromTick(tick: number): number {
 export async function getCurrentSqrtPrice(
   poolAddress: string,
 ): Promise<bigint> {
-  try {
-    const poolContractClient = getPoolContractClient({
-      contractId: poolAddress,
+  const poolLensContractClient = getPoolLensContractClient({
+    contractId: contractAddresses.POOL_LENS,
+  })
+  const poolDataResult = (
+    await poolLensContractClient.get_pool_data({
+      pool: poolAddress,
     })
-    const { result: slot0Map } = await poolContractClient.slot0({
-      timeoutInSeconds: 30,
-      fee: 100,
-    })
+  ).result.result
 
-    // Handle field name confusion: the contract returns sqrt_price_x96 in the fee_protocol field
-    let sqrtPriceX96: bigint | undefined
-
-    if (
-      slot0Map.sqrt_price_x96 &&
-      typeof slot0Map.sqrt_price_x96 === 'bigint' &&
-      Number(slot0Map.sqrt_price_x96) !== 0
-    ) {
-      sqrtPriceX96 = BigInt(slot0Map.sqrt_price_x96)
-      console.log(
-        'Fetched sqrt price from slot0 (correct field):',
-        sqrtPriceX96.toString(),
-      )
-    } else if (
-      slot0Map.sqrt_price_x96 &&
-      Number(slot0Map.sqrt_price_x96) !== 0
-    ) {
-      sqrtPriceX96 = BigInt(slot0Map.sqrt_price_x96)
-    }
-
-    if (sqrtPriceX96) {
-      return sqrtPriceX96
-    }
-
-    // Fallback: if sqrt_price_x96 parsing failed, use tick to calculate it
-    if (slot0Map.tick !== undefined) {
-      return tickToSqrtPrice(slot0Map.tick)
-    }
-  } catch (error) {
-    console.error('Failed to fetch sqrt price from pool:', error)
-    console.error(
-      'Error details:',
-      error instanceof Error ? error.message : String(error),
-      error instanceof Error ? error.stack : '',
-    )
+  if (poolDataResult.tag === 'NotFound') {
+    throw new Error(`Pool not found at address: ${poolAddress}`)
   }
-  throw new Error(
-    'Could not fetch current price from pool. Please make sure a pool is selected.',
-  )
+  const [poolData] = poolDataResult.values
+  return poolData.sqrt_price_x96
 }
 
 /**

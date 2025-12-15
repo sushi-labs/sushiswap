@@ -62,36 +62,6 @@ const NAME_COLUMN: ColumnDef<PoolInfo, unknown> = {
 }
 
 /**
- * TVL (Total Value Locked) column showing the pool's total value in USD
- */
-const TVL_COLUMN: ColumnDef<PoolInfo, unknown> = {
-  id: 'tvl',
-  header: 'TVL',
-  accessorFn: (row) => row.tvl,
-  sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number.parseFloat(rowA.tvl) - Number.parseFloat(rowB.tvl),
-  cell: (props) => {
-    const tvl = props.row.original.tvl
-    return (
-      <div className="flex items-center gap-1">
-        <span className="text-sm font-medium">
-          $
-          {Number.parseFloat(tvl).toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </span>
-      </div>
-    )
-  },
-  meta: {
-    body: {
-      skeleton: <SkeletonText fontSize="sm" />,
-    },
-  },
-}
-
-/**
  * Total liquidity column showing the pool's total liquidity
  */
 const TOTAL_LIQUIDITY_COLUMN: ColumnDef<PoolInfo, unknown> = {
@@ -221,7 +191,6 @@ const TICK_SPACING_COLUMN: ColumnDef<PoolInfo, unknown> = {
  */
 export const SIMPLE_COLUMNS = [
   NAME_COLUMN,
-  TVL_COLUMN,
   TOTAL_LIQUIDITY_COLUMN,
   TOKEN0_RESERVES_COLUMN,
   TOKEN1_RESERVES_COLUMN,

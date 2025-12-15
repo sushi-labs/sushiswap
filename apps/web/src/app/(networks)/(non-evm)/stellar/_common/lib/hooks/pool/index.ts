@@ -6,7 +6,6 @@
  */
 
 export * from './use-calculate-paired-amount'
-export * from './use-pool-liquidity'
 export {
   useRemoveLiquidity,
   type RemovePoolLiquidityParams,

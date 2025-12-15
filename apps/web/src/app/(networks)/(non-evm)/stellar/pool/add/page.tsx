@@ -13,7 +13,6 @@ import { useCalculatePairedAmount } from '~stellar/_common/lib/hooks/pool/use-ca
 import { useMaxPairedAmount } from '~stellar/_common/lib/hooks/pool/use-max-paired-amount'
 import { usePoolBalances } from '~stellar/_common/lib/hooks/pool/use-pool-balances'
 import { usePoolInitialized } from '~stellar/_common/lib/hooks/pool/use-pool-initialized'
-import { usePoolPrice } from '~stellar/_common/lib/hooks/pool/use-pool-price'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/swap/use-add-liquidity'
 import { useTickRangeSelector } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
 import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trustline'
@@ -100,7 +99,10 @@ export default function AddPoolPage() {
   )
   const needsAnyTrustline = needsToken0Trustline || needsToken1Trustline
 
-  const { data: currentPrice } = usePoolPrice(existingPoolAddress ?? null)
+  const currentPrice = poolInfo
+    ? calculatePriceFromSqrtPrice(poolInfo.sqrtPriceX96)
+    : undefined
+
   const initSqrtPriceX96 = useMemo(() => {
     if (!orderedToken0 || !orderedToken1) {
       return undefined

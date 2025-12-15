@@ -27,7 +27,11 @@ import { useTickRangeSelector } from '~stellar/_common/lib/hooks/tick/use-tick-r
 import { useTokenBalanceFromToken } from '~stellar/_common/lib/hooks/token/use-token-balance'
 import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trustline'
 import { useZap } from '~stellar/_common/lib/hooks/zap/use-zap'
-import { calculatePriceFromTick } from '~stellar/_common/lib/soroban/pool-helpers'
+import {
+  calculatePriceFromSqrtPrice,
+  calculatePriceFromTick,
+  getPoolInfo,
+} from '~stellar/_common/lib/soroban/pool-helpers'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
@@ -141,7 +145,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   const [zapTokenIn, setZapTokenIn] = useState<Token | null>(null)
   const [zapAmountIn, setZapAmountIn] = useState<string>('')
 
-  const { data: currentPrice } = usePoolPrice(pool.address)
+  const currentPrice = calculatePriceFromSqrtPrice(pool.sqrtPriceX96)
   const tickRangeSelectorState = useTickRangeSelector(
     pool.fee,
     currentPrice ?? 1,

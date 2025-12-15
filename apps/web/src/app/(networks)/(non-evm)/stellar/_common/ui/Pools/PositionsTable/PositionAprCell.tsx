@@ -1,9 +1,8 @@
 import { SkeletonText } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { formatPercent } from 'sushi'
-import { usePoolLiquidity } from '~stellar/_common/lib/hooks'
+import { usePoolInfo } from '~stellar/_common/lib/hooks'
 import { usePositionActiveLiquidity } from '~stellar/_common/lib/hooks/position/use-position-active-liquidity'
-import { useFeeRate } from '~stellar/_common/lib/hooks/useFeeRate'
 import { useDayVolumeUSD } from '~stellar/_common/lib/hooks/useOneDayApr'
 import { usePoolOwnership } from '~stellar/_common/lib/hooks/usePoolOwnership'
 import type { IPositionRowData } from './PositionsTable'
@@ -30,10 +29,10 @@ export const PositionAprCell = ({ data }: { data: IPositionRowData }) => {
     reserve1: principalToken1,
   })
   const {
-    data: poolLiquidity,
-    isLoading: isLoadingPoolLiquidity,
-    isPending: isPendingPoolLiquidity,
-  } = usePoolLiquidity(pool ?? null)
+    data: poolInfo,
+    isLoading: isLoadingPoolInfo,
+    isPending: isPendingPoolInfo,
+  } = usePoolInfo(pool ?? null)
   const {
     data: positionActiveLiquidityOwned,
     isLoading: isLoadingPositionActiveLiquidityOwned,
@@ -47,34 +46,29 @@ export const PositionAprCell = ({ data }: { data: IPositionRowData }) => {
   })
   const proportionActiveLiquidityOwned = useMemo(() => {
     if (
-      !poolLiquidity ||
+      !poolInfo ||
       !positionActiveLiquidityOwned ||
-      Number(poolLiquidity.amount) === 0
+      Number(poolInfo.liquidity.amount) === 0
     ) {
       return 0
     }
-    return Number(positionActiveLiquidityOwned) / Number(poolLiquidity.amount)
-  }, [poolLiquidity, positionActiveLiquidityOwned])
+    return (
+      Number(positionActiveLiquidityOwned) / Number(poolInfo.liquidity.amount)
+    )
+  }, [poolInfo, positionActiveLiquidityOwned])
 
   const userLiquidityValueUsd = Number(ownership?.ownedSupplyUsd ?? '0')
   const {
     data: dayVolumeUSD,
-    isPending: isPendingDVol,
-    isLoading: isLoadingDVol,
+    isPending: isPendingDayVol,
+    isLoading: isLoadingDayVol,
   } = useDayVolumeUSD({
-    pairAddress: pool,
-  })
-  const {
-    data: feeRate,
-    isPending: isPendingFeeRate,
-    isLoading: isLoadingFeeRate,
-  } = useFeeRate({
     pairAddress: pool,
   })
 
   const apr = useMemo(() => {
     const totalDailyFeesUsd =
-      (Number(feeRate ?? '0') / 1000000) * Number(dayVolumeUSD ?? 0)
+      ((poolInfo?.fee ?? 0) / 1000000) * Number(dayVolumeUSD ?? 0)
     const annualizedFeesUsd = totalDailyFeesUsd * 365
     const userAnnualEarningsUsd =
       annualizedFeesUsd * proportionActiveLiquidityOwned
@@ -87,20 +81,18 @@ export const PositionAprCell = ({ data }: { data: IPositionRowData }) => {
     dayVolumeUSD,
     proportionActiveLiquidityOwned,
     userLiquidityValueUsd,
-    feeRate,
+    poolInfo,
   ])
 
   if (
-    isLoadingPoolLiquidity ||
+    isLoadingPoolInfo ||
     isLoadingPositionActiveLiquidityOwned ||
-    isLoadingDVol ||
+    isLoadingDayVol ||
     isLoadingOwnership ||
-    isLoadingFeeRate ||
-    isPendingPoolLiquidity ||
+    isPendingPoolInfo ||
     isPendingPositionActiveLiquidityOwned ||
-    isPendingDVol ||
-    isPendingOwnership ||
-    isPendingFeeRate
+    isPendingDayVol ||
+    isPendingOwnership
   ) {
     return <SkeletonText fontSize="lg" />
   }

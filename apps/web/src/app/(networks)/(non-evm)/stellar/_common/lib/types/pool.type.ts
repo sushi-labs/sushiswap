@@ -29,14 +29,6 @@ export interface PoolInfo {
   tickSpacing: number
   liquidity: PoolLiquidity
   reserves: PoolReserves
-  tvl: string
-  slot0?: {
-    sqrtPriceX96: bigint
-    tick: number
-    observationIndex: number
-    observationCardinality: number
-    observationCardinalityNext: number
-    feeProtocol: number
-    unlocked: boolean
-  }
+  sqrtPriceX96: bigint
+  tick: number
 }

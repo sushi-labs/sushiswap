@@ -72,10 +72,10 @@ export class SushiStellarService {
     // Find position with matching pool tokens, tick range, AND fee tier
     const existingPosition = positions.find((pos) => {
       const tokensMatch =
-        (pos.token0 === poolConfig.token0.address &&
-          pos.token1 === poolConfig.token1.address) ||
-        (pos.token0 === poolConfig.token1.address &&
-          pos.token1 === poolConfig.token0.address)
+        (pos.token0 === poolConfig.token0.contract &&
+          pos.token1 === poolConfig.token1.contract) ||
+        (pos.token0 === poolConfig.token1.contract &&
+          pos.token1 === poolConfig.token0.contract)
 
       const ticksMatch =
         pos.tickLower === params.tickLower && pos.tickUpper === params.tickUpper

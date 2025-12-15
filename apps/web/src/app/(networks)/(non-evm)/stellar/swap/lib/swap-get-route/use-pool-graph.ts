@@ -3,11 +3,68 @@ import { staticTokens } from '~stellar/_common/lib/assets/token-assets'
 import { getFees } from '~stellar/_common/lib/soroban'
 import {
   getFactoryContractClient,
-  getPoolContractClient,
+  getPoolLensContractClient,
 } from '~stellar/_common/lib/soroban/client'
 import { isAddressLower } from '~stellar/_common/lib/soroban/constants'
 import { contractAddresses } from '~stellar/_common/lib/soroban/contracts'
 import type { Vertex } from './types'
+
+type GetPoolsByTokenPairsBatchedParams = Array<{
+  token_a: string
+  token_b: string
+  fee: number
+}>
+
+type PoolData = {
+  token0: string
+  token1: string
+  tick: number
+  sqrtPriceX96: bigint
+  liquidity: bigint
+  poolAddress: string
+  fee: number
+}
+
+const getPoolsByTokenPairsBatched = async (
+  params: GetPoolsByTokenPairsBatchedParams,
+): Promise<PoolData[]> => {
+  const BATCH_SIZE = 3
+  const batches: GetPoolsByTokenPairsBatchedParams[] = []
+  const poolLensContractClient = getPoolLensContractClient({
+    contractId: contractAddresses.POOL_LENS,
+  })
+
+  for (let i = 0; i < params.length; i += BATCH_SIZE) {
+    batches.push(params.slice(i, i + BATCH_SIZE))
+  }
+
+  const results: PoolData[][] = await Promise.all(
+    batches.map(async (batch) => {
+      const batchPoolsResult = await poolLensContractClient.get_pools_by_pairs({
+        pairs: batch,
+      })
+      const batchedPoolsInfo: PoolData[] = []
+      for (const poolResult of batchPoolsResult.result) {
+        if (poolResult.result.tag === 'NotFound') {
+          continue
+        }
+        const [poolData] = poolResult.result.values
+        batchedPoolsInfo.push({
+          token0: poolData.token0,
+          token1: poolData.token1,
+          tick: poolData.tick,
+          sqrtPriceX96: poolData.sqrt_price_x96,
+          liquidity: poolData.liquidity,
+          poolAddress: poolResult.pool,
+          fee: poolData.fee,
+        })
+      }
+      return batchedPoolsInfo
+    }),
+  )
+
+  return results.flat()
+}
 
 /**
  * Build a graph of available pools for routing
@@ -45,155 +102,110 @@ export function usePoolGraph() {
         const feeTiers = await getFees()
 
         // Query all possible pool combinations
-        const poolQueries: Promise<void>[] = []
+        const poolQueryInputs: GetPoolsByTokenPairsBatchedParams = []
 
         for (let i = 0; i < knownTokens.length; i++) {
           for (let j = i + 1; j < knownTokens.length; j++) {
             const tokenA = knownTokens[i]
             const tokenB = knownTokens[j]
-
             for (const fee of feeTiers) {
-              poolQueries.push(
-                (async () => {
-                  try {
-                    // Query pool address from factory
-                    // Order tokens by decoded bytes (not string comparison - base32 doesn't preserve byte ordering)
-                    const poolResult = await factoryClient.get_pool({
-                      token_a: isAddressLower(tokenA, tokenB) ? tokenA : tokenB,
-                      token_b: isAddressLower(tokenA, tokenB) ? tokenB : tokenA,
-                      fee,
-                    })
-
-                    const poolAddress = poolResult.result
-
-                    if (!poolAddress || poolAddress === '') {
-                      // Pool doesn't exist
-                      return
-                    }
-
-                    // Get pool state
-                    const poolClient = getPoolContractClient({
-                      contractId: poolAddress,
-                    })
-
-                    const [
-                      slot0Result,
-                      liquidityResult,
-                      token0Result,
-                      token1Result,
-                    ] = await Promise.all([
-                      poolClient.slot0(),
-                      poolClient.liquidity(),
-                      // Fetch canonical pool token order to avoid relying on string compare
-                      // These functions exist on the pool contract
-                      poolClient.token0(),
-                      poolClient.token1(),
-                    ])
-
-                    const sqrtPriceX96 = slot0Result.result.sqrt_price_x96
-                    const liquidity = BigInt(liquidityResult.result || 0)
-
-                    // Skip uninitialized pools (sqrt_price_x96 = 0)
-                    if (sqrtPriceX96 === 0n || sqrtPriceX96 === undefined) {
-                      console.log(
-                        `⚠️ Skipping uninitialized pool: ${poolAddress}`,
-                      )
-                      return
-                    }
-
-                    // Skip pools with zero liquidity
-                    if (liquidity === 0n) {
-                      console.log(
-                        `⚠️ Skipping pool with zero liquidity: ${poolAddress}`,
-                      )
-                      return
-                    }
-
-                    // Get slot0 data
-                    const slot0 = slot0Result.result
-
-                    const tick = Number(slot0.tick || 0)
-
-                    // Calculate approximate reserves from liquidity and sqrt price
-                    // For V3/concentrated liquidity: reserve = liquidity / sqrt(price) and reserve1 = liquidity * sqrt(price)
-                    // sqrtPrice = sqrtPriceX96 / 2^96
-                    const sqrtPriceX96BigInt = BigInt(sqrtPriceX96)
-
-                    // Virtual reserves for this liquidity position
-                    // reserve0 = L * 2^96 / sqrtPriceX96, reserve1 = L * sqrtPriceX96 / 2^96
-                    // We keep calculations in BigInt to avoid precision loss
-                    const Q96 = BigInt(2 ** 96)
-                    const reserve0 =
-                      sqrtPriceX96BigInt > 0n
-                        ? (liquidity * Q96) / sqrtPriceX96BigInt
-                        : liquidity
-                    const reserve1 =
-                      sqrtPriceX96BigInt > 0n
-                        ? (liquidity * sqrtPriceX96BigInt) / Q96
-                        : liquidity
-
-                    // Create vertex using canonical pool order
-                    // IMPORTANT: Vertex must be internally consistent
-                    // - pair field uses pool's token0/token1 order
-                    // - reserves match this ordering (reserve0 for token0, reserve1 for token1)
-                    const token0 = token0Result.result as string
-                    const token1 = token1Result.result as string
-                    const vertex: Vertex = {
-                      pair: `${token0}|||${token1}`, // Must match token0/token1 ordering
-                      poolAddress,
-                      token0: token0, // Ordered: lower address
-                      token1: token1, // Ordered: higher address
-                      reserve0: reserve0 || liquidity, // Reserve for token0
-                      reserve1: reserve1 || liquidity, // Reserve for token1
-                      fee,
-                      liquidity,
-                      sqrtPriceX96,
-                      tick,
-                    }
-
-                    // Add vertex to map (both directions)
-                    // Store arrays to handle multiple pools (fee tiers) for same pair
-                    const key1 = `${tokenA}|||${tokenB}`
-                    const key2 = `${tokenB}|||${tokenA}`
-
-                    if (!vertices.has(key1)) {
-                      vertices.set(key1, [])
-                    }
-                    if (!vertices.has(key2)) {
-                      vertices.set(key2, [])
-                    }
-
-                    vertices.get(key1)!.push(vertex)
-                    vertices.get(key2)!.push(vertex)
-
-                    // Add edges to graph
-                    if (!tokenGraph.has(tokenA)) {
-                      tokenGraph.set(tokenA, [])
-                    }
-                    if (!tokenGraph.has(tokenB)) {
-                      tokenGraph.set(tokenB, [])
-                    }
-
-                    const tokenAEdges = tokenGraph.get(tokenA)!
-                    const tokenBEdges = tokenGraph.get(tokenB)!
-
-                    if (!tokenAEdges.includes(tokenB)) {
-                      tokenAEdges.push(tokenB)
-                    }
-                    if (!tokenBEdges.includes(tokenA)) {
-                      tokenBEdges.push(tokenA)
-                    }
-                  } catch {
-                    // Pool doesn't exist or has issues - skip silently
-                  }
-                })(),
-              )
+              poolQueryInputs.push({
+                token_a: isAddressLower(tokenA, tokenB) ? tokenA : tokenB,
+                token_b: isAddressLower(tokenA, tokenB) ? tokenB : tokenA,
+                fee,
+              })
             }
           }
         }
 
-        // Wait for all pool queries to complete
-        await Promise.all(poolQueries)
+        const pools = await getPoolsByTokenPairsBatched(poolQueryInputs)
+
+        for (const pool of pools) {
+          try {
+            // Skip uninitialized pools (sqrt_price_x96 = 0)
+            if (pool.sqrtPriceX96 === 0n) {
+              console.log(`⚠️ Skipping uninitialized pool: ${pool.poolAddress}`)
+              continue
+            }
+
+            // Skip pools with zero liquidity
+            if (pool.liquidity === 0n) {
+              console.log(
+                `⚠️ Skipping pool with zero liquidity: ${pool.poolAddress}`,
+              )
+              continue
+            }
+
+            // Calculate approximate reserves from liquidity and sqrt price
+            // For V3/concentrated liquidity: reserve = liquidity / sqrt(price) and reserve1 = liquidity * sqrt(price)
+            // sqrtPrice = sqrtPriceX96 / 2^96
+
+            // Virtual reserves for this liquidity position
+            // reserve0 = L * 2^96 / sqrtPriceX96, reserve1 = L * sqrtPriceX96 / 2^96
+            // We keep calculations in BigInt to avoid precision loss
+            const Q96 = BigInt(2 ** 96)
+            const reserve0 =
+              pool.sqrtPriceX96 > 0n
+                ? (pool.liquidity * Q96) / pool.sqrtPriceX96
+                : pool.liquidity
+            const reserve1 =
+              pool.sqrtPriceX96 > 0n
+                ? (pool.liquidity * pool.sqrtPriceX96) / Q96
+                : pool.liquidity
+
+            // Create vertex using canonical pool order
+            // IMPORTANT: Vertex must be internally consistent
+            // - pair field uses pool's token0/token1 order
+            // - reserves match this ordering (reserve0 for token0, reserve1 for token1)
+            const vertex: Vertex = {
+              pair: `${pool.token0}|||${pool.token1}`, // Must match token0/token1 ordering
+              poolAddress: pool.poolAddress,
+              token0: pool.token0, // Ordered: lower address
+              token1: pool.token1, // Ordered: higher address
+              reserve0: reserve0 || pool.liquidity, // Reserve for token0
+              reserve1: reserve1 || pool.liquidity, // Reserve for token1
+              fee: pool.fee,
+              liquidity: pool.liquidity,
+              sqrtPriceX96: pool.sqrtPriceX96,
+              tick: pool.tick,
+            }
+
+            // Add vertex to map (both directions)
+            // Store arrays to handle multiple pools (fee tiers) for same pair
+            const key1 = `${pool.token0}|||${pool.token1}`
+            const key2 = `${pool.token1}|||${pool.token0}`
+
+            if (!vertices.has(key1)) {
+              vertices.set(key1, [])
+            }
+            if (!vertices.has(key2)) {
+              vertices.set(key2, [])
+            }
+
+            vertices.get(key1)!.push(vertex)
+            vertices.get(key2)!.push(vertex)
+
+            // Add edges to graph
+            if (!tokenGraph.has(pool.token0)) {
+              tokenGraph.set(pool.token0, [])
+            }
+            if (!tokenGraph.has(pool.token1)) {
+              tokenGraph.set(pool.token1, [])
+            }
+
+            const tokenAEdges = tokenGraph.get(pool.token0)!
+            const tokenBEdges = tokenGraph.get(pool.token1)!
+
+            if (!tokenAEdges.includes(pool.token1)) {
+              tokenAEdges.push(pool.token1)
+            }
+            if (!tokenBEdges.includes(pool.token0)) {
+              tokenBEdges.push(pool.token0)
+            }
+          } catch {
+            // Pool doesn't exist or has issues - skip silently
+          }
+        }
 
         return {
           vertices,

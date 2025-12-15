@@ -2,6 +2,7 @@ import { Horizon } from '@stellar/stellar-sdk'
 import { Server } from '@stellar/stellar-sdk/rpc'
 import { Client as FactoryContractClient } from '@sushiswap/stellar-contract-binding-factory'
 import { Client as PoolContractClient } from '@sushiswap/stellar-contract-binding-pool'
+import { Client as PoolLensContractClient } from '@sushiswap/stellar-contract-binding-pool-lens'
 import { Client as PositionManagerContractClient } from '@sushiswap/stellar-contract-binding-position-manager'
 import { Client as RouterContractClient } from '@sushiswap/stellar-contract-binding-router'
 import { Client as TokenContractClient } from '@sushiswap/stellar-contract-binding-token'
@@ -49,6 +50,18 @@ export const getPoolContractClient = ({
   publicKey,
 }: ContractClientParams) =>
   new PoolContractClient({
+    contractId: contractId,
+    networkPassphrase: NETWORK_PASSPHRASE,
+    rpcUrl: RPC_URL,
+    allowHttp: true,
+    publicKey: publicKey,
+  })
+
+export const getPoolLensContractClient = ({
+  contractId,
+  publicKey,
+}: ContractClientParams) =>
+  new PoolLensContractClient({
     contractId: contractId,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
