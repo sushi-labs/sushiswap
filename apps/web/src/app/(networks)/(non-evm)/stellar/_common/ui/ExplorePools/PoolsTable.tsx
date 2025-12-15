@@ -1,7 +1,9 @@
 'use client'
 
 import {
+  Button,
   Card,
+  CardContent,
   CardHeader,
   CardTitle,
   DataTable,
@@ -26,7 +28,7 @@ export const PoolsTable = () => {
   ])
 
   // Get the pool data
-  const { data: pools, isLoading } = useAllPools()
+  const { data: pools, isLoading, isFetching, error, refetch } = useAllPools()
 
   const { tokenSymbols } = usePoolFilters()
 
@@ -67,6 +69,29 @@ export const PoolsTable = () => {
       },
     }
   }, [sorting, filteredPools])
+
+  // Show error state with retry button
+  if (error && !isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Pools</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center justify-center py-8 gap-4">
+            <p className="text-sm text-muted-foreground text-center">
+              Failed to load pools. This may be due to a temporary network
+              issue.
+            </p>
+            <p className="text-sm text-red-500 text-center">{error.message}</p>
+            <Button onClick={() => refetch()} disabled={isFetching} size="sm">
+              {isFetching ? 'Retrying...' : 'Retry'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <Card>

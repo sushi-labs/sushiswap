@@ -16,6 +16,8 @@ export const usePoolInitialized = (address: string | null | undefined) => {
     queryFn: () => isPoolInitialized(address!),
     enabled: !!address,
     staleTime: ms('30s'),
+    retry: 3, // Retry up to 3 times on RPC failures
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000), // Exponential backoff
   })
 }
 

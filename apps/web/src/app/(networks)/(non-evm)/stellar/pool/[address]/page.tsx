@@ -7,6 +7,7 @@ import {
   CardTitle,
   Container,
   LinkInternal,
+  SkeletonBox,
 } from '@sushiswap/ui'
 import React, { use } from 'react'
 import { usePoolInfo } from '~stellar/_common/lib/hooks/pool/use-pool-info'
@@ -28,43 +29,129 @@ interface PoolPageProps {
 export default function PoolPage({ params }: PoolPageProps) {
   const resolvedParams = use(params)
   const address = decodeURIComponent(resolvedParams.address)
-  const { data: pool, isLoading, error } = usePoolInfo(address)
+  const {
+    data: pool,
+    isLoading: isLoadingPool,
+    isFetching: isFetchingPool,
+    error: poolError,
+    refetch: refetchPool,
+  } = usePoolInfo(address)
   const { isConnected } = useStellarWallet()
 
   // Check if pool is initialized
-  const { data: initialized } = usePoolInitialized(address)
+  const {
+    data: initialized,
+    isLoading: isLoadingInitialized,
+    isFetching: isFetchingInitialized,
+    error: initializedError,
+    refetch: refetchInitialized,
+  } = usePoolInitialized(address)
 
+  const isLoading = isLoadingPool || isLoadingInitialized
+  const isFetching = isFetchingPool || isFetchingInitialized
+  const hasError = poolError || initializedError
+
+  // Show loading state while either query is loading
   if (isLoading) {
     return (
       <Container maxWidth="5xl" className="px-4">
-        <div className="flex flex-col gap-8">
-          <div>Loading pool...</div>
+        <div className="flex flex-col gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-6">
+              <Card>
+                <CardHeader>
+                  <SkeletonBox className="h-6 w-48" />
+                </CardHeader>
+                <CardContent>
+                  <SkeletonBox className="h-32 w-full" />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <SkeletonBox className="h-6 w-32" />
+                </CardHeader>
+                <CardContent>
+                  <SkeletonBox className="h-24 w-full" />
+                </CardContent>
+              </Card>
+            </div>
+            <Card>
+              <CardHeader>
+                <SkeletonBox className="h-6 w-32" />
+              </CardHeader>
+              <CardContent>
+                <SkeletonBox className="h-48 w-full" />
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </Container>
     )
   }
 
-  if (error) {
+  // Show error state with retry button
+  if (hasError) {
+    const errorMessage =
+      poolError?.message || initializedError?.message || 'Unknown error'
     return (
       <Container maxWidth="5xl" className="px-4">
-        <div className="flex flex-col gap-8">
-          <div>Error loading pool: {error.message}</div>
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Error Loading Pool</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Failed to load pool data. This may be due to a temporary network
+                issue.
+              </p>
+              <p className="text-sm text-red-500">{errorMessage}</p>
+              <Button
+                onClick={() => {
+                  refetchPool()
+                  refetchInitialized()
+                }}
+                disabled={isFetching}
+                className="w-full"
+                size="lg"
+              >
+                {isFetching ? 'Retrying...' : 'Retry'}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </Container>
     )
   }
 
+  // Pool data loaded but pool doesn't exist
   if (!pool) {
     return (
       <Container maxWidth="5xl" className="px-4">
-        <div className="flex flex-col gap-8">
-          <div>Pool not found</div>
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Pool Not Found</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                This pool could not be found. It may not exist or may have been
+                removed.
+              </p>
+              <LinkInternal href="/stellar/explore/pools">
+                <Button className="w-full" size="lg" variant="secondary">
+                  Browse All Pools
+                </Button>
+              </LinkInternal>
+            </div>
+          </CardContent>
+        </Card>
       </Container>
     )
   }
 
   // Show initialization prompt if pool is not initialized
+  // Only show this if we explicitly know initialized === false (not undefined or error)
   if (initialized === false) {
     return (
       <Container maxWidth="5xl" className="px-4">

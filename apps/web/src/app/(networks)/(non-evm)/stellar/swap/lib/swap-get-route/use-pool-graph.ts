@@ -209,7 +209,8 @@ export function usePoolGraph() {
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 10, // 10 minutes
-    retry: 2,
+    retry: 3, // Retry up to 3 times on RPC failures
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000), // Exponential backoff
     throwOnError: false, // Don't throw errors to prevent app crash
   })
 }

@@ -4,6 +4,7 @@ import { getPoolContractClient } from './client'
  * Check if a pool is initialized by checking its sqrt price
  * @param address - The pool contract address
  * @returns true if pool is initialized, false otherwise
+ * @throws Error if there's an RPC/network error (not a "pool not initialized" error)
  */
 export async function isPoolInitialized(address: string): Promise<boolean> {
   try {
@@ -18,15 +19,23 @@ export async function isPoolInitialized(address: string): Promise<boolean> {
 
     return isInitializedResult.result
   } catch (error) {
-    // If there's an error (like PoolNotInitialized), the pool is not initialized
+    const errorString = String(error)
+
+    // Only return false for actual "not initialized" contract errors
+    // These are the specific error codes/messages from the contract
     if (
-      String(error).includes('Error(Contract, #40)') ||
-      String(error).includes('PoolNotInitialized')
+      errorString.includes('Error(Contract, #40)') ||
+      errorString.includes('PoolNotInitialized')
     ) {
       return false
     }
+
+    // For any other error (RPC timeout, network error, etc.), rethrow
+    // This allows React Query to retry and show proper error state
     console.error('Error checking pool initialization:', error)
-    return false
+    throw new Error(
+      `Failed to check pool initialization: ${error instanceof Error ? error.message : errorString}`,
+    )
   }
 }
 
