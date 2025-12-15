@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
   Separator,
+  SkeletonText,
   Tabs,
   TabsContent,
   TabsList,
@@ -15,13 +16,15 @@ import {
 } from '@sushiswap/ui'
 import type React from 'react'
 import { useEffect, useMemo, useState } from 'react'
+import { formatNumber } from 'sushi'
 import { ToggleZapCard } from '~evm/[chainId]/pool/_ui/toggle-zap-card'
 import { useCalculateDependentAmount } from '~stellar/_common/lib/hooks/pool/use-calculate-dependent-amount'
 import { useMaxPairedAmount } from '~stellar/_common/lib/hooks/pool/use-max-paired-amount'
 import { usePoolBalances } from '~stellar/_common/lib/hooks/pool/use-pool-balances'
 import { useRemoveLiquidity } from '~stellar/_common/lib/hooks/pool/use-pool-liquidity-management'
-import { usePoolPrice } from '~stellar/_common/lib/hooks/pool/use-pool-price'
+import { useTopPools } from '~stellar/_common/lib/hooks/pool/use-top-pools'
 import { useMyPosition } from '~stellar/_common/lib/hooks/position/use-my-position'
+import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/swap'
 import { useTickRangeSelector } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
 import { useTokenBalanceFromToken } from '~stellar/_common/lib/hooks/token/use-token-balance'
@@ -30,7 +33,6 @@ import { useZap } from '~stellar/_common/lib/hooks/zap/use-zap'
 import {
   calculatePriceFromSqrtPrice,
   calculatePriceFromTick,
-  getPoolInfo,
 } from '~stellar/_common/lib/soroban/pool-helpers'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import type { Token } from '~stellar/_common/lib/types/token.type'
@@ -130,6 +132,46 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     poolAddress: pool.address,
     excludeDust: true,
   })
+  const {
+    data: onChainUsdPriceToken0,
+    isLoading: isOnChainUsdPriceToken0Loading,
+  } = useStablePrice({ token: pool.token0 })
+  const {
+    data: onChainUsdPriceToken1,
+    isLoading: isOnChainUsdPriceToken1Loading,
+  } = useStablePrice({ token: pool.token1 })
+  const { data: topPools, isLoading: isTopPoolsLoading } = useTopPools()
+  const usdPriceToken0: number | undefined = useMemo(() => {
+    const topPool = topPools?.find(
+      (poolItem) => poolItem.address === pool.address,
+    )
+    if (topPool) {
+      return topPool.token0PriceUSD
+    }
+    if (onChainUsdPriceToken0) {
+      return Number(onChainUsdPriceToken0)
+    }
+    return undefined
+  }, [topPools, onChainUsdPriceToken0, pool])
+  const usdPriceToken1: number | undefined = useMemo(() => {
+    const topPool = topPools?.find(
+      (poolItem) => poolItem.address === pool.address,
+    )
+    if (topPool) {
+      return topPool.token1PriceUSD
+    }
+    if (onChainUsdPriceToken1) {
+      return Number(onChainUsdPriceToken1)
+    }
+    return undefined
+  }, [topPools, onChainUsdPriceToken1, pool])
+  const usdPriceToken0IsLoading =
+    usdPriceToken0 === undefined &&
+    (isOnChainUsdPriceToken0Loading || isTopPoolsLoading)
+  const usdPriceToken1IsLoading =
+    usdPriceToken1 === undefined &&
+    (isOnChainUsdPriceToken1Loading || isTopPoolsLoading)
+
   const token0Decimals = pool.token0.decimals
   const token1Decimals = pool.token1.decimals
   const [tab, setTab] = useState<string>('add')
@@ -144,6 +186,9 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   const [isZapModeEnabled, setIsZapModeEnabled] = useState<boolean>(false)
   const [zapTokenIn, setZapTokenIn] = useState<Token | null>(null)
   const [zapAmountIn, setZapAmountIn] = useState<string>('')
+
+  const { data: usdPriceZapTokenIn, isLoading: usdPriceZapTokenInIsLoading } =
+    useStablePrice({ token: zapTokenIn ?? undefined })
 
   const currentPrice = calculatePriceFromSqrtPrice(pool.sqrtPriceX96)
   const tickRangeSelectorState = useTickRangeSelector(
@@ -569,7 +614,15 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                               />
                               <div className="flex flex-row justify-between mt-1">
                                 <div className="text-sm text-muted-foreground">
-                                  $ 0.00
+                                  {usdPriceZapTokenInIsLoading ? (
+                                    <SkeletonText />
+                                  ) : (
+                                    `$ ${formatNumber(
+                                      Number(usdPriceZapTokenIn ?? '0') *
+                                        (Number(zapAmountIn) || 0),
+                                      2,
+                                    )}`
+                                  )}
                                 </div>
                                 <ZapMaxButton
                                   token={zapTokenIn}
@@ -712,7 +765,15 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                             />
                             <div className="flex flex-row justify-between mt-1">
                               <div className="text-sm text-muted-foreground">
-                                $ 0.00
+                                {usdPriceToken0IsLoading ? (
+                                  <SkeletonText />
+                                ) : (
+                                  `$ ${formatNumber(
+                                    (usdPriceToken0 ?? 0) *
+                                      (Number(amount0) || 0),
+                                    2,
+                                  )}`
+                                )}
                               </div>
                               <Button
                                 variant="secondary"
@@ -782,7 +843,15 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                             />
                             <div className="flex flex-row justify-between mt-1">
                               <div className="text-sm text-muted-foreground">
-                                $ 0.00
+                                {usdPriceToken1IsLoading ? (
+                                  <SkeletonText />
+                                ) : (
+                                  `$ ${formatNumber(
+                                    (usdPriceToken1 ?? 0) *
+                                      (Number(amount1) || 0),
+                                    2,
+                                  )}`
+                                )}
                               </div>
                               <Button
                                 variant="secondary"

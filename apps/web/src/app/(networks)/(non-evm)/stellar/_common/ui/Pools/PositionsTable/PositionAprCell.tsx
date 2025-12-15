@@ -2,9 +2,9 @@ import { SkeletonText } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { formatPercent } from 'sushi'
 import { usePoolInfo } from '~stellar/_common/lib/hooks'
+import { useDayVolumeUSD } from '~stellar/_common/lib/hooks/pool/use-pool-daily-volume-usd'
 import { usePositionActiveLiquidity } from '~stellar/_common/lib/hooks/position/use-position-active-liquidity'
-import { useDayVolumeUSD } from '~stellar/_common/lib/hooks/useOneDayApr'
-import { usePoolOwnership } from '~stellar/_common/lib/hooks/usePoolOwnership'
+import { usePoolOwnership } from '~stellar/_common/lib/hooks/position/use-position-pool-ownership'
 import type { IPositionRowData } from './PositionsTable'
 
 export const PositionAprCell = ({ data }: { data: IPositionRowData }) => {

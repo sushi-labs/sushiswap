@@ -1,6 +1,6 @@
 import { SkeletonText } from '@sushiswap/ui'
 import { formatUSD } from 'sushi'
-import { useLPUsdValue } from '~stellar/_common/lib/hooks/useLPUsdValue'
+import { useLPUsdValue } from '~stellar/_common/lib/hooks/pool/use-pool-usd-value'
 import type { IPositionRowData } from './PositionsTable'
 
 export const PositionValueCell = ({ data }: { data: IPositionRowData }) => {

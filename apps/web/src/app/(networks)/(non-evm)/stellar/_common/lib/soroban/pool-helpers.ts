@@ -111,6 +111,7 @@ export async function getPoolInfoFromContract(
  * Queries factory.get_pool() for all token pair + fee tier combinations
  * (Factory has no "list all pools" method, so we query each combination)
  * @returns Array of pool information with actual liquidity and reserves
+ * @deprecated Use useTopPools query instead
  */
 export async function getAllPools(): Promise<PoolInfo[]> {
   try {

@@ -12,42 +12,74 @@ import {
 import type { SortingState, TableState } from '@tanstack/react-table'
 import { useCallback, useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
-import { useAllPools } from '~stellar/_common/lib/hooks/pool/use-pool-info'
+import { useAllPools } from '~stellar/_common/lib/hooks/pool/use-all-pools'
+import {
+  type TopPool,
+  useTopPools,
+} from '~stellar/_common/lib/hooks/pool/use-top-pools'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
-import { SIMPLE_COLUMNS } from './columns-simple'
+import {
+  APR_COLUMN,
+  FEES_1D_COLUMN,
+  NAME_COLUMN,
+  TRANSACTIONS_1D_COLUMN,
+  TVL_COLUMN,
+  VOLUME_1D_COLUMN,
+} from './columns'
+
+export type PoolData =
+  | (PoolInfo & { tag: 'poolInfo' })
+  | (TopPool & { tag: 'topPool' })
 
 export const PoolsTable = () => {
   // Dynamic page links
-  const rowLink = useCallback((row: PoolInfo) => {
+  const rowLink = useCallback((row: PoolData) => {
     return `/stellar/pool/${row.address}`
   }, [])
 
   // Sort state
   const [sorting, setSorting] = useState<SortingState>([
-    { id: 'liquidity', desc: true },
+    { id: 'liquidityUSD', desc: true },
   ])
 
   // Get the pool data
-  const { data: pools, isLoading, isFetching, error, refetch } = useAllPools()
+  const { data: topPools, isLoading: isLoadingTopPools } = useTopPools()
+  const {
+    data: pools,
+    isLoading: isLoadingAllPools,
+    isFetching: isFetchingAllPools,
+    error,
+    refetch,
+  } = useAllPools()
+  const isLoading = isLoadingTopPools || isLoadingAllPools
 
   const { tokenSymbols } = usePoolFilters()
 
-  const filteredPools = useMemo(() => {
-    if (!pools) {
-      return [] as PoolInfo[]
+  const filteredMergedPools: PoolData[] = useMemo(() => {
+    const mergedPools: PoolData[] = []
+    const poolAdded = new Set<string>()
+    for (const topPool of topPools ?? []) {
+      mergedPools.push({ ...topPool, tag: 'topPool' })
+      poolAdded.add(topPool.address)
+    }
+    for (const pool of pools ?? []) {
+      if (poolAdded.has(pool.address)) {
+        continue
+      }
+      mergedPools.push({ ...pool, tag: 'poolInfo' })
     }
     if (tokenSymbols.length === 0) {
-      return pools
+      return mergedPools
     }
-    return pools.filter((pool) => {
+    return mergedPools.filter((mergedPool) => {
       const poolSearchTermsCaseInsensitive = [
-        pool.token0.code.toLowerCase(),
-        pool.token1.code.toLowerCase(),
+        mergedPool.token0.code.toLowerCase(),
+        mergedPool.token1.code.toLowerCase(),
       ]
       const poolSearchTermsCaseSensitive = [
-        pool.address,
-        pool.token0.contract,
-        pool.token1.contract,
+        mergedPool.address,
+        mergedPool.token0.contract,
+        mergedPool.token1.contract,
       ]
       return tokenSymbols.every((symbol) => {
         return (
@@ -58,17 +90,17 @@ export const PoolsTable = () => {
         )
       })
     })
-  }, [pools, tokenSymbols])
+  }, [pools, tokenSymbols, topPools])
 
   const state: Partial<TableState> = useMemo(() => {
     return {
       sorting,
       pagination: {
         pageIndex: 0,
-        pageSize: filteredPools?.length,
+        pageSize: filteredMergedPools?.length,
       },
     }
-  }, [sorting, filteredPools])
+  }, [sorting, filteredMergedPools])
 
   // Show error state with retry button
   if (error && !isLoading) {
@@ -84,8 +116,12 @@ export const PoolsTable = () => {
               issue.
             </p>
             <p className="text-sm text-red-500 text-center">{error.message}</p>
-            <Button onClick={() => refetch()} disabled={isFetching} size="sm">
-              {isFetching ? 'Retrying...' : 'Retry'}
+            <Button
+              onClick={() => refetch()}
+              disabled={isFetchingAllPools}
+              size="sm"
+            >
+              {isFetchingAllPools ? 'Retrying...' : 'Retry'}
             </Button>
           </div>
         </CardContent>
@@ -105,7 +141,7 @@ export const PoolsTable = () => {
             <span>
               Pools{' '}
               <span className="text-gray-400 dark:text-slate-500">
-                ({filteredPools.length})
+                ({filteredMergedPools.length})
               </span>
             </span>
           )}
@@ -116,8 +152,15 @@ export const PoolsTable = () => {
         onSortingChange={setSorting}
         loading={isLoading}
         linkFormatter={rowLink}
-        columns={SIMPLE_COLUMNS}
-        data={filteredPools ?? []}
+        columns={[
+          NAME_COLUMN,
+          TVL_COLUMN,
+          VOLUME_1D_COLUMN,
+          FEES_1D_COLUMN,
+          TRANSACTIONS_1D_COLUMN,
+          APR_COLUMN,
+        ]}
+        data={filteredMergedPools ?? []}
       />
     </Card>
   )

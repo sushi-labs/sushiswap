@@ -317,6 +317,7 @@ export async function getPoolTransactionBuilder({
 /**
  * Get all pools by querying factory's get_pool for each token pair + fee combination
  * Uses prepopulated token list since factory has no "list all pools" method
+ * @deprecated Use useTopPools query instead
  */
 export async function getPoolsForBaseTokenPairs(): Promise<string[]> {
   const tokens = getBaseTokens()
@@ -428,6 +429,7 @@ export async function getPoolsForBaseTokenPairs(): Promise<string[]> {
  * Discover all pools by querying factory.get_pool() for each token pair combination
  * Note: Factory has no "list all pools" method, so we query each combination explicitly
  * @returns Array of pool addresses that exist
+ * @deprecated Use useTopPools query instead
  */
 export async function discoverAllPools(): Promise<string[]> {
   console.log('🔍 Discovering pools via factory.get_pool() queries...')
