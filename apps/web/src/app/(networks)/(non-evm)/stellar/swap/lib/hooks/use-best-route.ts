@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
+import { QuoteService } from '~stellar/_common/lib/services/quote-service'
 import { getTokenByContract } from '~stellar/_common/lib/soroban/token-helpers'
 import type { Token } from '~stellar/_common/lib/types/token.type'
-import { getBestRoute } from '../swap-get-route'
-import type { RouteWithTokens } from '../swap-get-route'
+import type { RouteWithTokens, Vertex } from '../swap-get-route'
 import { usePoolGraph } from '../swap-get-route'
 
 interface UseBestRouteParams {
@@ -12,13 +12,151 @@ interface UseBestRouteParams {
   enabled?: boolean
 }
 
+interface CandidateRoute {
+  path: string[]
+  fees: number[]
+  pools: string[]
+  vertices: Vertex[]
+}
+
 /**
- * Hook to find the best swap route using graph-based routing
+ * Find all candidate routes between two tokens using the pool graph
+ */
+function findCandidateRoutes(
+  tokenIn: string,
+  tokenOut: string,
+  tokenGraph: Map<string, string[]>,
+  vertices: Map<string, Vertex[]>,
+  maxHops = 3,
+): CandidateRoute[] {
+  const routes: CandidateRoute[] = []
+
+  // DFS to find all paths
+  function dfs(
+    current: string,
+    target: string,
+    visited: Set<string>,
+    path: string[],
+    poolPath: string[],
+    feePath: number[],
+    vertexPath: Vertex[],
+    depth: number,
+  ) {
+    if (depth > maxHops) return
+    if (current === target && path.length >= 2) {
+      routes.push({
+        path: [...path],
+        fees: [...feePath],
+        pools: [...poolPath],
+        vertices: [...vertexPath],
+      })
+      return
+    }
+
+    const neighbors = tokenGraph.get(current) || []
+    for (const neighbor of neighbors) {
+      if (visited.has(neighbor) && neighbor !== target) continue
+
+      // Get all vertices (pools) between current and neighbor
+      const pairKey1 = `${current}|||${neighbor}`
+      const pairKey2 = `${neighbor}|||${current}`
+      const pairVertices =
+        vertices.get(pairKey1) || vertices.get(pairKey2) || []
+
+      // Try each pool (different fee tiers) for this pair
+      for (const vertex of pairVertices) {
+        visited.add(neighbor)
+        path.push(neighbor)
+        poolPath.push(vertex.poolAddress)
+        feePath.push(vertex.fee)
+        vertexPath.push(vertex)
+
+        dfs(
+          neighbor,
+          target,
+          visited,
+          path,
+          poolPath,
+          feePath,
+          vertexPath,
+          depth + 1,
+        )
+
+        path.pop()
+        poolPath.pop()
+        feePath.pop()
+        vertexPath.pop()
+        visited.delete(neighbor)
+      }
+    }
+  }
+
+  const visited = new Set<string>([tokenIn])
+  dfs(tokenIn, tokenOut, visited, [tokenIn], [], [], [], 0)
+
+  return routes
+}
+
+/**
+ * Calculate price impact from pool state and quote result
+ */
+function calculatePriceImpact(
+  amountIn: bigint,
+  amountOut: bigint,
+  vertices: Vertex[],
+  path: string[],
+): number {
+  if (vertices.length === 0 || amountIn === 0n || amountOut === 0n) {
+    return 0
+  }
+
+  try {
+    // Calculate the mid price from pool state
+    // For multi-hop, multiply the mid prices of each hop
+    let overallMidPrice = 1
+
+    for (let i = 0; i < vertices.length; i++) {
+      const vertex = vertices[i]
+      const tokenA = path[i]
+
+      // Determine swap direction
+      const isForward = vertex.token0 === tokenA
+
+      // Calculate mid price from sqrtPriceX96
+      // sqrtPrice = sqrtPriceX96 / 2^96
+      // price (token1/token0) = sqrtPrice^2
+      const Q96 = 2 ** 96
+      const sqrtPrice = Number(vertex.sqrtPriceX96) / Q96
+      const poolPrice = sqrtPrice * sqrtPrice
+
+      // Adjust for swap direction
+      const midPrice = isForward ? poolPrice : 1 / poolPrice
+      overallMidPrice *= midPrice
+    }
+
+    // Calculate expected output at mid price
+    const expectedOutput = Number(amountIn) * overallMidPrice
+
+    if (expectedOutput === 0) return 0
+
+    // Price impact = (expected - actual) / expected * 100
+    const priceImpact =
+      ((expectedOutput - Number(amountOut)) / expectedOutput) * 100
+
+    return Math.abs(priceImpact)
+  } catch (error) {
+    console.error('Error calculating price impact:', error)
+    return 0
+  }
+}
+
+/**
+ * Hook to find the best swap route using on-chain quotes
  *
  * This hook:
  * 1. Builds a graph of available pools
- * 2. Uses DFS to find all possible routes
- * 3. Calculates output amounts for each route
+ * 2. Finds all candidate routes (direct and multi-hop)
+ * 3. Gets on-chain quotes for each route via QuoteService
  * 4. Returns the route with the best output
  */
 export function useBestRoute({
@@ -30,11 +168,11 @@ export function useBestRoute({
   // Get the pool graph
   const { data: poolGraphData, isLoading: isLoadingGraph } = usePoolGraph()
 
-  // Find the best route
+  // Find the best route using on-chain quotes
   const routeQuery = useQuery({
     queryKey: [
       'stellar',
-      'best-route',
+      'best-route-onchain',
       tokenIn?.contract,
       tokenOut?.contract,
       amountIn.toString(),
@@ -59,22 +197,100 @@ export function useBestRoute({
           return null
         }
 
-        // Run routing algorithm
-        const route = getBestRoute({
-          amountIn,
-          vertices,
+        // Find all candidate routes
+        const candidateRoutes = findCandidateRoutes(
+          tokenIn.contract,
+          tokenOut.contract,
           tokenGraph,
-          tokenIn,
-          tokenOut,
-          maxHops: 3, // Allow up to 3 hops (4 tokens in path)
-        })
+          vertices,
+          3, // max 3 hops
+        )
 
-        if (!route) {
+        if (candidateRoutes.length === 0) {
           return null
         }
 
+        // Get on-chain quotes for each route
+        const quoteService = new QuoteService()
+        const quotedRoutes: Array<{
+          route: CandidateRoute
+          amountOut: bigint
+          priceImpact: number
+        }> = []
+
+        // Query all routes in parallel
+        const quotePromises = candidateRoutes.map(async (route) => {
+          try {
+            let quote
+
+            if (route.path.length === 2) {
+              // Direct swap - use single-hop quote
+              quote = await quoteService.getQuoteExactInputSingle({
+                tokenIn: route.path[0],
+                tokenOut: route.path[1],
+                fee: route.fees[0],
+                amountIn,
+              })
+            } else {
+              // Multi-hop swap
+              quote = await quoteService.getQuoteExactInput({
+                path: route.path,
+                fees: route.fees,
+                amountIn,
+              })
+            }
+
+            if (quote && quote.amountOut > 0n) {
+              // Calculate price impact from pool state
+              const priceImpact = calculatePriceImpact(
+                amountIn,
+                quote.amountOut,
+                route.vertices,
+                route.path,
+              )
+
+              return {
+                route,
+                amountOut: quote.amountOut,
+                priceImpact,
+              }
+            }
+          } catch (error) {
+            console.warn(
+              `Quote failed for route ${route.path.join(' → ')}:`,
+              error,
+            )
+          }
+          return null
+        })
+
+        const results = await Promise.all(quotePromises)
+
+        // Filter successful quotes
+        for (const result of results) {
+          if (result) {
+            quotedRoutes.push(result)
+          }
+        }
+
+        if (quotedRoutes.length === 0) {
+          return null
+        }
+
+        // Select best route: highest output with reasonable price impact
+        // Score = amountOut * (1 - priceImpact/100)
+        quotedRoutes.sort((a, b) => {
+          const scoreA =
+            Number(a.amountOut) * (1 - Math.min(a.priceImpact / 100, 0.5))
+          const scoreB =
+            Number(b.amountOut) * (1 - Math.min(b.priceImpact / 100, 0.5))
+          return scoreB - scoreA
+        })
+
+        const bestQuotedRoute = quotedRoutes[0]
+
         // Convert route addresses to Token objects
-        const tokens: Token[] = route.route
+        const tokens: Token[] = bestQuotedRoute.route.path
           .map((address) => {
             try {
               return getTokenByContract(address)
@@ -88,18 +304,21 @@ export function useBestRoute({
           })
           .filter((token): token is Token => token !== null)
 
-        if (tokens.length !== route.route.length) {
+        if (tokens.length !== bestQuotedRoute.route.path.length) {
           console.error('Failed to resolve all tokens in route')
           return null
         }
 
         return {
-          ...route,
+          route: bestQuotedRoute.route.path,
+          pools: bestQuotedRoute.route.pools,
+          fees: bestQuotedRoute.route.fees,
+          amountOut: bestQuotedRoute.amountOut,
+          priceImpact: bestQuotedRoute.priceImpact,
           tokens,
         }
       } catch (error) {
         console.error('Error finding best route:', error)
-        // Return null instead of throwing to prevent app crash
         return null
       }
     },
@@ -112,13 +331,14 @@ export function useBestRoute({
       tokenIn.contract !== tokenOut.contract,
     staleTime: 1000 * 10, // 10 seconds
     gcTime: 1000 * 30, // 30 seconds
-    retry: false, // Don't retry on failure to prevent cascading errors
-    throwOnError: false, // Don't throw errors to prevent app crash
+    retry: 1, // Retry once on failure
+    throwOnError: false,
   })
 
   return {
     route: routeQuery.data,
     isLoading: isLoadingGraph || routeQuery.isLoading,
+    isFetching: routeQuery.isFetching,
     isError: routeQuery.isError,
     error: routeQuery.error,
   }

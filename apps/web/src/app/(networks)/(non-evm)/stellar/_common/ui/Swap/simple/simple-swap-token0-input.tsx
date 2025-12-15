@@ -38,6 +38,7 @@ export const SimpleSwapToken0Input = () => {
   const {
     route,
     isLoading: isRouteLoading,
+    isFetching: isRouteFetching,
     isError: isQuoteError,
     error: quoteError,
   } = useBestRoute({
@@ -47,10 +48,10 @@ export const SimpleSwapToken0Input = () => {
     enabled: amountIn > 0n,
   })
 
-  // Update fetching state
+  // Update fetching state - use isFetching to show loading for on-chain quotes
   useEffect(() => {
-    setPriceFetching(isRouteLoading)
-  }, [isRouteLoading, setPriceFetching])
+    setPriceFetching(isRouteLoading || isRouteFetching)
+  }, [isRouteLoading, isRouteFetching, setPriceFetching])
 
   // Handle errors
   useEffect(() => {
