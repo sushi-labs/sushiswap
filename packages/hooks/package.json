@@ -35,7 +35,7 @@
     "@types/react-dom": "catalog:react",
     "react": "catalog:react",
     "react-dom": "catalog:react",
-    "sushi": "npm:@lufycz/sushi@6.3.1",
+    "sushi": "catalog:web3",
     "tailwindcss": "catalog:ui",
     "typescript": "catalog:"
   },
