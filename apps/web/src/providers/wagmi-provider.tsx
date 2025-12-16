@@ -30,10 +30,7 @@ export const WagmiProvider: FC<{
   const initialState = getWagmiInitialState(cookie)
 
   return (
-    <_WagmiProvider
-      config={getWagmiConfig()}
-      initialState={initialState}
-    >
+    <_WagmiProvider config={getWagmiConfig()} initialState={initialState}>
       <div className="h-full w-full [&>div]:h-full">
         <WalletProvider>
           <WagmiStoreVersionCheck>
