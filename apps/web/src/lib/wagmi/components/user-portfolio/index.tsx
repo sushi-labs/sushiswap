@@ -16,9 +16,9 @@ import {
 import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
 import Image from 'next/image'
 import { type FC, type ReactNode, useMemo, useState } from 'react'
+import { ConnectButton } from 'src/lib/wallet/components/connect-button'
 import { EvmChainId, shortenEvmAddress } from 'sushi/evm'
 import { useConnection, useEnsAvatar, useEnsName } from 'wagmi'
-import { ConnectButton } from '../connect-button'
 import { PortfolioDefaultView } from './portfolio-default-view'
 import { PortfolioSettingsView } from './portfolio-settings-view'
 

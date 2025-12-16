@@ -1,5 +1,4 @@
 import type { Config, CreateConfigParameters } from '@wagmi/core'
-// import type { PublicWagmiConnectors } from './production'
 import { publicChains, publicTransports } from './viem'
 
 export const publicWagmiConfig = {
@@ -15,8 +14,6 @@ export const publicWagmiConfig = {
 type _PublicWagmiConfig = Config<
   (typeof publicWagmiConfig)['chains'],
   (typeof publicWagmiConfig)['transports']
-  // TODO: Properly type
-  // PublicWagmiConnectors
 >
 
 // Speedup

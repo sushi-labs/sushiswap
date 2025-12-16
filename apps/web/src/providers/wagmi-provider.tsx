@@ -1,13 +1,10 @@
 'use client'
 
 import { faro } from '@grafana/faro-web-sdk'
-import { useAppKitTheme } from '@reown/appkit/react'
-import { useTheme } from 'next-themes'
 import { type FC, type ReactNode, useEffect } from 'react'
 import { WagmiStoreVersionCheck } from 'src/lib/wagmi/components/wagmi-store-version-check'
-import { getWagmiAdapter, getWagmiInitialState } from 'src/lib/wagmi/config'
-import { getAppKit } from 'src/lib/wagmi/config/appkit'
-import type { PublicWagmiConfig } from 'src/lib/wagmi/config/public'
+import { getWagmiConfig, getWagmiInitialState } from 'src/lib/wagmi/config'
+import { WalletProvider } from 'src/lib/wallet'
 import { WagmiProvider as _WagmiProvider, useConnection } from 'wagmi'
 
 const WagmiTrackers = () => {
@@ -26,49 +23,24 @@ const WagmiTrackers = () => {
   return null
 }
 
-getAppKit()
-
 export const WagmiProvider: FC<{
   children: ReactNode
   cookie?: string | null
 }> = ({ children, cookie }) => {
   const initialState = getWagmiInitialState(cookie)
 
-  const { forcedTheme, resolvedTheme } = useTheme()
-
-  const { setThemeMode, setThemeVariables } = useAppKitTheme()
-
-  const theme = forcedTheme || resolvedTheme
-
-  /*
-    biome-ignore lint/correctness/useExhaustiveDependencies:
-    setThemeMode & setThemeVariables are not stable across renders.
-    Including them in deps would cause this effect to run endlessly.
-  */
-  useEffect(() => {
-    console.log('check0')
-    if (!theme) return
-
-    const themeMode = theme === 'light' ? 'light' : 'dark'
-    const themeVariables = {
-      '--apkt-font-family': 'var(--font-sans)',
-      '--apkt-accent': '#3898FF',
-    }
-
-    setThemeMode(themeMode)
-    setThemeVariables(themeVariables)
-  }, [theme])
-
   return (
     <_WagmiProvider
-      config={getWagmiAdapter().wagmiConfig as PublicWagmiConfig}
+      config={getWagmiConfig()}
       initialState={initialState}
     >
       <div className="h-full w-full [&>div]:h-full">
-        <WagmiStoreVersionCheck>
-          <WagmiTrackers />
-          {children}
-        </WagmiStoreVersionCheck>
+        <WalletProvider>
+          <WagmiStoreVersionCheck>
+            <WagmiTrackers />
+            {children}
+          </WagmiStoreVersionCheck>
+        </WalletProvider>
       </div>
     </_WagmiProvider>
   )

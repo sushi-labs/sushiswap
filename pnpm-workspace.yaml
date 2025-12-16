@@ -11,11 +11,11 @@ catalog:
 
 catalogs:
   web3:
-    "abitype": 1.1.1
+    "abitype": 1.2.3
     "sushi": 6.2.18
-    "wagmi": 3.0.1
+    "wagmi": 3.1.0
     "@wagmi/core": 3.0.0
-    "viem": 2.40.2
+    "viem": 2.42.1
 
   react:
     "next": 15.5.7
