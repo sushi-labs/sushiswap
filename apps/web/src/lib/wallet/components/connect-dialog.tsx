@@ -7,6 +7,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  LinkExternal,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import Link from 'next/link'
@@ -131,13 +132,13 @@ export const ConnectDialog: FC<Props> = ({ open, onOpenChange }) => {
         <DialogFooter>
           <div className="text-sm text-center">
             By connecting your wallet, you agree to Sushi Labs&apos;{' '}
-            <Link href="/legal/terms-of-service" target={'_blank'}>
+            <LinkExternal href="/legal/terms-of-service">
               Terms of Service
-            </Link>{' '}
+            </LinkExternal>{' '}
             and{' '}
-            <Link href="/legal/privacy-policy" target={'_blank'}>
+            <LinkExternal href="/legal/privacy-policy">
               Privacy Policy
-            </Link>
+            </LinkExternal>
           </div>
         </DialogFooter>
       </DialogContent>
