@@ -1,6 +1,6 @@
 'use client'
 
-import { useAppKit } from '@reown/appkit/react'
+import { useConnectModal } from '@rainbow-me/rainbowkit'
 import {
   BrowserEvent,
   InterfaceElementName,
@@ -18,15 +18,15 @@ export const ConnectButton: FC<ButtonProps> = ({
 }) => {
   const { pending, connect } = useConnect()
   const connectors = useConnectors()
-  const { open } = useAppKit()
+  const { openConnectModal } = useConnectModal()
 
   const onConnect = useCallback(() => {
     if (process.env.NEXT_PUBLIC_APP_ENV === 'test') {
       connect({ connector: connectors[0] })
     } else {
-      open?.()
+      openConnectModal?.()
     }
-  }, [open, connect, connectors])
+  }, [openConnectModal, connect, connectors])
 
   // Pending confirmation state
   // Awaiting wallet confirmation
