@@ -8,7 +8,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@sushiswap/ui'
-import { Button, LinkInternal } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui'
+import Link from 'next/link'
 import React, { useMemo, type FC } from 'react'
 import { UnifiedWalletConfig } from '../config'
 import { useWallets } from '../hooks'
@@ -130,19 +131,13 @@ export const ConnectDialog: FC<Props> = ({ open, onOpenChange }) => {
         <DialogFooter>
           <div className="text-sm text-center">
             By connecting your wallet, you agree to Sushi Labs&apos;{' '}
-            <LinkInternal
-              href="https://sushi.com/legal/terms-of-service"
-              className="text-blue hover:underline"
-            >
+            <Link href="/legal/terms-of-service" target={'_blank'}>
               Terms of Service
-            </LinkInternal>{' '}
+            </Link>{' '}
             and{' '}
-            <LinkInternal
-              href="https://sushi.com/legal/privacy-policy"
-              className="text-blue hover:underline"
-            >
+            <Link href="/legal/privacy-policy" target={'_blank'}>
               Privacy Policy
-            </LinkInternal>
+            </Link>
           </div>
         </DialogFooter>
       </DialogContent>
