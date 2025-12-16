@@ -69,8 +69,13 @@ export const EvmWalletConfig: WalletConnectorConfig = {
 }
 
 export const EvmAdapterConfig = {
-  ['evm-injected']: './adapters/injected',
-  ['evm-metamask']: './adapters/metamask',
-  ['evm-porto']: './adapters/porto',
-  ['evm-safe']: './adapters/evm-safe',
+  ['evm-injected']: () =>
+    import('./adapters/injected').then(({ adapter }) => adapter),
+  ['evm-metamask']: () =>
+    import('./adapters/metamask').then(({ adapter }) => adapter),
+  ['evm-porto']: () =>
+    import('./adapters/porto').then(({ adapter }) => adapter),
+  ['evm-safe']: () => import('./adapters/safe').then(({ adapter }) => adapter),
+  ['evm-walletconnect']: () =>
+    import('./adapters/walletconnect').then(({ adapter }) => adapter),
 } as const

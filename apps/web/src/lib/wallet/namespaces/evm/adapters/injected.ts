@@ -1,6 +1,12 @@
 'use client'
 
-import { connect, disconnect, getConnection, getConnectors } from '@wagmi/core'
+import {
+  connect,
+  disconnect,
+  getConnection,
+  getConnectors,
+  injected,
+} from '@wagmi/core'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
 import type { ConnectOptions, UnifiedWalletAdapter } from '../../../types'
 
@@ -19,7 +25,11 @@ export const adapter: UnifiedWalletAdapter = {
 
   async connect(opts?: ConnectOptions) {
     const uid = opts?.wallet?.uid
-    if (!uid) throw new Error('No connector uid specified')
+    if (!uid) {
+      await connect(getWagmiConfig(), { connector: injected() })
+      return
+    }
+
     const connector = getConnectors(getWagmiConfig()).find(
       (connector) => connector.uid === uid,
     )
