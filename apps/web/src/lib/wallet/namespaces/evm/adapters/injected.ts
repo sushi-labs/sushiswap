@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  type Connector,
   connect,
   disconnect,
   getConnection,
@@ -41,4 +42,12 @@ export const adapter: UnifiedWalletAdapter = {
   async disconnect() {
     await disconnect(getWagmiConfig())
   },
+}
+
+export function isInjectedConnector(connector: Connector) {
+  return (
+    connector.type === 'injected' ||
+    connector.id === 'injected' ||
+    connector.name.toLowerCase().includes('injected')
+  )
 }

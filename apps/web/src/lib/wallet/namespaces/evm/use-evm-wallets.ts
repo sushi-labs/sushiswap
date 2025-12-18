@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useConnectors } from 'wagmi'
 import type { WalletWithState } from '../../types'
+import { isInjectedConnector } from './adapters/injected'
+import { isSafeAppAvailable } from './adapters/safe'
 import { EvmWalletConfig } from './config'
-import { isInjectedConnector } from './utils/injected'
-import { isSafeAppAvailable } from './utils/safe'
 
 const EVM_INJECTED_ID_MAP: Record<string, string> = {
   'io.rabby': 'evm-rabby',
