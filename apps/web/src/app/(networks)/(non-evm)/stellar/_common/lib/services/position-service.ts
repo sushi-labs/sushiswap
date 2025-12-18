@@ -1,3 +1,4 @@
+import { scValToNative } from '@stellar/stellar-sdk'
 import type { u128 } from '@stellar/stellar-sdk/contract'
 import type {
   PositionTuple,
@@ -13,9 +14,9 @@ import { contractAddresses } from '../soroban/contracts'
 import { handleResult } from '../soroban/handle-result'
 import { signAuthEntriesAndGetXdr } from '../soroban/position-manager-helpers'
 import {
-  submitViaRawRPC,
+  submitTransaction,
   waitForTransaction,
-} from '../soroban/rpc-transaction-helpers'
+} from '../soroban/transaction-helpers'
 
 export interface PositionInfo {
   tokenId: number
@@ -451,23 +452,22 @@ export class PositionService {
     const signedXdr = await signTransaction(transactionXdr)
 
     // Submit the signed XDR directly via raw RPC
-    const txHash = await submitViaRawRPC(signedXdr)
+    const { hash: txHash } = await submitTransaction(signedXdr)
 
     // Wait for confirmation
-    const result = await waitForTransaction(txHash)
+    const txResult = await waitForTransaction(txHash)
 
-    if (result.success) {
-      // TODO: Parse return value when we understand the response structure
-      // For now, return placeholder values - fees are collected on-chain
-
+    if (txResult.status === 'SUCCESS' && txResult.returnValue !== undefined) {
+      const retVal = scValToNative(txResult.returnValue)
       return {
-        amount0: BigInt(0),
-        amount1: BigInt(0),
+        amount0: BigInt(retVal[0] ?? 0),
+        amount1: BigInt(retVal[1] ?? 0),
         txHash,
       }
     } else {
-      console.error('Transaction failed:', result.error)
-      throw new Error(`Fee collection failed: ${JSON.stringify(result.error)}`)
+      throw new Error(
+        `Error in collectFees, Transaction ${txHash} ${txResult.status}`,
+      )
     }
   }
 

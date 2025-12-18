@@ -1,7 +1,7 @@
 export {
   useAddLiquidity,
   type UseAddLiquidityParams,
-} from './use-add-liquidity'
+} from '../liquidity/use-add-liquidity'
 export {
   useSwapWithRouting,
   type UseSwapWithRoutingParams,
