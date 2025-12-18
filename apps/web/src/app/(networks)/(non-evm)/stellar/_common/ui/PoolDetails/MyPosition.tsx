@@ -52,7 +52,7 @@ export const MyPosition: React.FC<MyPositionProps> = ({ pool }) => {
   // If no positions found, show empty state
   if (!isLoading && positions.length === 0) {
     return (
-      <Card className="bg-slate-900/50 border-slate-800">
+      <Card className="border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900/50">
         <CardHeader>
           <CardTitle>My Position</CardTitle>
           <div className="text-md">{formatUSD(0)}</div>
@@ -84,7 +84,7 @@ export const MyPosition: React.FC<MyPositionProps> = ({ pool }) => {
 
   return (
     <div className="space-y-4">
-      <Card className="bg-slate-900/50 border-slate-800">
+      <Card className="border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900/50">
         <CardHeader>
           <CardTitle>My Position</CardTitle>
           <div className="text-md">

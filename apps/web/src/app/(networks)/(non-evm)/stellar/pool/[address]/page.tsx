@@ -192,9 +192,9 @@ export default function PoolPage({ params }: PoolPageProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col gap-6">
             <ManageLiquidityCard pool={pool} />
-            <PoolLiquidity pool={pool} />
           </div>
           <div className="flex flex-col gap-4">
+            <PoolLiquidity pool={pool} />
             <MyPosition pool={pool} />
           </div>
         </div>

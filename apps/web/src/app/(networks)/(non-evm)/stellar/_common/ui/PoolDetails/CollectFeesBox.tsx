@@ -163,7 +163,7 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
   }
 
   return (
-    <Card className="bg-slate-900/50 border-slate-800">
+    <Card className="border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900/50">
       <CardHeader>
         <div className="flex justify-between items-center">
           <div>
