@@ -11,6 +11,7 @@ const stellarExpertAssetSchema = z.object({
   name: z.string().optional(),
   org: z.string().optional(),
   decimals: z.number().optional(),
+  icon: z.string().optional(),
 })
 
 const stellarExpertResponseSchema = z.array(stellarExpertAssetSchema)
@@ -74,6 +75,7 @@ const convertToToken = (
     name: asset.name ?? '',
     org: asset.org ?? 'unknown',
     decimals: asset.decimals,
+    icon: asset.icon,
   }
 }
 
