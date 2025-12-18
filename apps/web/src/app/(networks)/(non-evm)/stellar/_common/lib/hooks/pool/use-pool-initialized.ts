@@ -5,6 +5,7 @@ import ms from 'ms'
 import { isPoolInitialized } from '~stellar/_common/lib/soroban/pool-initialization'
 
 const poolInitializedQueryKey = (address: string | null | undefined) => [
+  'stellar',
   'pool',
   'initialized',
   address,

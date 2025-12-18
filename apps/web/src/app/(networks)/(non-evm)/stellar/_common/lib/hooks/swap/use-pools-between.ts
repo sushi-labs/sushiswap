@@ -15,6 +15,7 @@ export const usePoolsBetween = (params: UsePoolsBetweenParams) => {
 
   return useQuery({
     queryKey: [
+      'stellar',
       'swap',
       'poolsBetween',
       params.tokenA.contract,

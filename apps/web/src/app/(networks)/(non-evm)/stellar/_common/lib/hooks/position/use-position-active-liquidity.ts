@@ -26,6 +26,7 @@ export function usePositionActiveLiquidity({
 }) {
   return useQuery({
     queryKey: [
+      'stellar',
       'pool',
       'positionActiveLiquidity',
       {

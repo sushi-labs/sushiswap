@@ -9,7 +9,7 @@ import {
 
 export const usePoolPrice = (address: string | null) => {
   return useQuery({
-    queryKey: ['pool', 'price', address],
+    queryKey: ['stellar', 'pool', 'price', address],
     queryFn: async () => {
       if (!address) return null
       const sqrtPriceX96 = await getCurrentSqrtPrice(address)

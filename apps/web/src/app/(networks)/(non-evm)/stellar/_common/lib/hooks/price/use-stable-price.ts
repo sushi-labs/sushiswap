@@ -4,7 +4,7 @@ import type { Token } from '~stellar/_common/lib/types/token.type'
 
 export const useStablePrice = ({ token }: { token: Token | undefined }) => {
   return useQuery({
-    queryKey: ['useStablePrice', { token: token?.contract }],
+    queryKey: ['stellar', 'useStablePrice', { token: token?.contract }],
     queryFn: async () => {
       const tokenPrice = await getStablePrice(token)
       return tokenPrice

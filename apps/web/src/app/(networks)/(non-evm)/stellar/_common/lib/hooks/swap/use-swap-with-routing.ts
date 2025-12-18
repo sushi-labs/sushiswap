@@ -18,7 +18,7 @@ export const useSwapWithRouting = () => {
   const service = createSushiStellarService()
 
   return useMutation({
-    mutationKey: ['swap', 'swapWithRouting'],
+    mutationKey: ['stellar', 'swap', 'swapWithRouting'],
     mutationFn: async (params: UseSwapWithRoutingParams) => {
       return await service.swapWithRouting(
         params.userAddress,

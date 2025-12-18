@@ -25,7 +25,7 @@ export const useRemoveLiquidity = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationKey: ['pool', 'removeLiquidity'],
+    mutationKey: ['stellar', 'pool', 'removeLiquidity'],
     onMutate: async () => {
       // Show "in progress" toast immediately before transaction starts
       const timestamp = Date.now()
@@ -96,11 +96,11 @@ export const useRemoveLiquidity = () => {
       })
 
       queryClient.invalidateQueries({
-        queryKey: ['pool', 'info'],
+        queryKey: ['stellar', 'pool', 'info'],
       })
 
       queryClient.invalidateQueries({
-        queryKey: ['pool', 'balances'],
+        queryKey: ['stellar', 'pool', 'balances'],
       })
     },
     onError: (error) => {

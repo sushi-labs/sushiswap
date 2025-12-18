@@ -33,6 +33,7 @@ export const usePoolOwnership = ({
   })
   return useQuery({
     queryKey: [
+      'stellar',
       'usePoolOwnership',
       {
         pairAddress,

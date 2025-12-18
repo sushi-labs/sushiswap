@@ -17,6 +17,7 @@ export const useSortedTokenList = ({ query, tokenMap, balanceMap }: Params) => {
   const debouncedQuery = useDebounce(query, 250)
   return useQuery({
     queryKey: [
+      'stellar',
       'sortedTokenList',
       {
         debouncedQuery,

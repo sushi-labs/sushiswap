@@ -18,7 +18,7 @@ export interface ExecuteSwapParams {
 // This hook is deprecated - use useExecuteSwap from hooks/swap instead
 export const useRouterExecuteSwap = () => {
   return useMutation({
-    mutationKey: ['router', 'executeSwap'],
+    mutationKey: ['stellar', 'router', 'executeSwap'],
     mutationFn: async (_params: ExecuteSwapParams) => {
       throw new Error(
         'This hook is deprecated. Use useExecuteSwap from hooks/swap instead.',

@@ -16,7 +16,7 @@ export const useQuoteExactInput = () => {
   const { amount, token0, token1 } = useSimpleSwapState()
 
   return useMutation({
-    mutationKey: ['pool', 'quote', amount, token0, token1],
+    mutationKey: ['stellar', 'pool', 'quote', amount, token0, token1],
     mutationFn: async () => {
       if (!token0 || !token1 || !amount || Number(amount) <= 0) {
         return null

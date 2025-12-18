@@ -14,7 +14,14 @@ export const useHasSufficientBalance = (
   amount: bigint | null,
 ) => {
   return useQuery({
-    queryKey: ['token', 'hasSufficientBalance', address, tokenAddress, amount],
+    queryKey: [
+      'stellar',
+      'token',
+      'hasSufficientBalance',
+      address,
+      tokenAddress,
+      amount,
+    ],
     queryFn: async () => {
       if (!address || !tokenAddress || amount === null) return null
       return await hasSufficientBalance(address, tokenAddress, amount)
@@ -31,6 +38,7 @@ export const useHasSufficientAllowance = (
 ) => {
   return useQuery({
     queryKey: [
+      'stellar',
       'token',
       'hasSufficientAllowance',
       owner,
@@ -51,7 +59,7 @@ export const useMultipleTokenBalances = (
   tokenAddresses: string[],
 ) => {
   return useQuery({
-    queryKey: ['token', 'multipleBalances', address, tokenAddresses],
+    queryKey: ['stellar', 'token', 'multipleBalances', address, tokenAddresses],
     queryFn: async () => {
       if (!address || tokenAddresses.length === 0) return null
       return await getMultipleTokenBalances(address, tokenAddresses)
@@ -66,7 +74,14 @@ export const useMultipleTokenAllowances = (
   tokenAddresses: string[],
 ) => {
   return useQuery({
-    queryKey: ['token', 'multipleAllowances', owner, spender, tokenAddresses],
+    queryKey: [
+      'stellar',
+      'token',
+      'multipleAllowances',
+      owner,
+      spender,
+      tokenAddresses,
+    ],
     queryFn: async () => {
       if (!owner || !spender || tokenAddresses.length === 0) return null
       return await getMultipleTokenAllowances(owner, spender, tokenAddresses)

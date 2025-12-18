@@ -5,7 +5,7 @@ import { useTopPools } from './use-top-pools'
 export const useDayVolumeUSD = ({ pairAddress }: { pairAddress?: string }) => {
   const { data: topPools, isLoading, isPending } = useTopPools()
   return useQuery({
-    queryKey: ['useDayVolumeUSD', pairAddress],
+    queryKey: ['stellar', 'useDayVolumeUSD', pairAddress],
     queryFn: async () => {
       if (!pairAddress || !topPools) {
         return '0'

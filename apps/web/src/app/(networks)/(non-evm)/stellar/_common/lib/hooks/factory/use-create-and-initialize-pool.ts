@@ -23,7 +23,7 @@ export const useCreateAndInitializePool = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationKey: ['factory', 'createAndInitializePool'],
+    mutationKey: ['stellar', 'factory', 'createAndInitializePool'],
     onMutate: async (params: CreateAndInitializePoolParams) => {
       const timestamp = Date.now()
       createInfoToast({

@@ -7,7 +7,7 @@ export const useXlmBalance = () => {
   const { connectedAddress } = useStellarWallet()
 
   return useQuery({
-    queryKey: ['useXlmBalance', connectedAddress],
+    queryKey: ['stellar', 'useXlmBalance', connectedAddress],
     queryFn: async () => {
       if (!connectedAddress) return { balance: 0n, formattedBalance: '-' }
       const balance = await getXlmBalance(connectedAddress)

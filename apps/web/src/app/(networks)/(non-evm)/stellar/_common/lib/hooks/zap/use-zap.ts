@@ -32,7 +32,7 @@ export const useZap = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationKey: ['zap'],
+    mutationKey: ['stellar', 'zap'],
     onMutate: async (params: UseZapParams) => {
       const timestamp = Date.now()
       createInfoToast({
@@ -107,8 +107,10 @@ export const useZap = () => {
         await new Promise((resolve) => setTimeout(resolve, 8000))
 
         // Invalidate balances to reflect swaps in UI
-        queryClient.invalidateQueries({ queryKey: ['pool', 'balances'] })
-        queryClient.invalidateQueries({ queryKey: ['pool', 'info'] })
+        queryClient.invalidateQueries({
+          queryKey: ['stellar', 'pool', 'balances'],
+        })
+        queryClient.invalidateQueries({ queryKey: ['stellar', 'pool', 'info'] })
 
         console.log(
           'Swaps completed for external token, waiting for network state to update...',
@@ -151,8 +153,10 @@ export const useZap = () => {
         await new Promise((resolve) => setTimeout(resolve, 8000))
 
         // Invalidate balances to reflect swap in UI immediately (before add liquidity)
-        queryClient.invalidateQueries({ queryKey: ['pool', 'balances'] })
-        queryClient.invalidateQueries({ queryKey: ['pool', 'info'] })
+        queryClient.invalidateQueries({
+          queryKey: ['stellar', 'pool', 'balances'],
+        })
+        queryClient.invalidateQueries({ queryKey: ['stellar', 'pool', 'info'] })
 
         console.log(
           'Swap completed, waiting for network state to update...',
@@ -204,8 +208,10 @@ export const useZap = () => {
       })
 
       // Invalidate queries
-      queryClient.invalidateQueries({ queryKey: ['pool', 'balances'] })
-      queryClient.invalidateQueries({ queryKey: ['pool', 'info'] })
+      queryClient.invalidateQueries({
+        queryKey: ['stellar', 'pool', 'balances'],
+      })
+      queryClient.invalidateQueries({ queryKey: ['stellar', 'pool', 'info'] })
       queryClient.invalidateQueries({ queryKey: ['stellar', 'positions'] })
       queryClient.invalidateQueries({ queryKey: ['stellar', 'position-pool'] })
     },

@@ -32,7 +32,7 @@ export const useExecuteSwap = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationKey: ['swap', 'executeSwap'],
+    mutationKey: ['stellar', 'swap', 'executeSwap'],
     onMutate: async (params: UseExecuteSwapParams) => {
       // Show "in progress" toast immediately before transaction starts
       const timestamp = Date.now()
@@ -144,7 +144,7 @@ export const useExecuteMultiHopSwap = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationKey: ['swap', 'executeMultiHopSwap'],
+    mutationKey: ['stellar', 'swap', 'executeMultiHopSwap'],
     onMutate: async (params: UseExecuteMultiHopSwapParams) => {
       // Show "in progress" toast immediately before transaction starts
       const timestamp = Date.now()

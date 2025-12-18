@@ -16,6 +16,7 @@ export const useGetQuote = (params: UseGetQuoteParams) => {
 
   return useQuery({
     queryKey: [
+      'stellar',
       'swap',
       'quote',
       params.tokenIn.contract,

@@ -26,6 +26,7 @@ export function useCalculatePairedAmount(
   const { data: initialized } = usePoolInitialized(poolAddress)
   return useQuery({
     queryKey: [
+      'stellar',
       'pool',
       'pairedAmount',
       poolAddress,

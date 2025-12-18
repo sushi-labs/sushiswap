@@ -31,7 +31,7 @@ export const useAddLiquidity = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationKey: ['swap', 'addLiquidity'],
+    mutationKey: ['stellar', 'swap', 'addLiquidity'],
     onMutate: async (params: UseAddLiquidityParams) => {
       // Show "in progress" toast immediately before transaction starts
       const timestamp = Date.now()
@@ -80,6 +80,7 @@ export const useAddLiquidity = () => {
 
       queryClient.invalidateQueries({
         queryKey: [
+          'stellar',
           'pool',
           'balances',
           variables.poolAddress,
@@ -88,7 +89,7 @@ export const useAddLiquidity = () => {
       })
 
       queryClient.invalidateQueries({
-        queryKey: ['pool', 'info', variables.poolAddress],
+        queryKey: ['stellar', 'pool', 'info', variables.poolAddress],
       })
 
       queryClient.invalidateQueries({

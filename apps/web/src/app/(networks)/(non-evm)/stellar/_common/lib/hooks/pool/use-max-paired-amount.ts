@@ -34,6 +34,7 @@ export function useMaxPairedAmount(
   )
   return useQuery({
     queryKey: [
+      'stellar',
       'pool',
       'maxPairedAmount',
       poolAddress,

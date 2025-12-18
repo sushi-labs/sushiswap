@@ -9,7 +9,7 @@ export const usePoolBalances = (
   connectedAddress: string | null,
 ) => {
   return useQuery({
-    queryKey: ['pool', 'balances', address, connectedAddress],
+    queryKey: ['stellar', 'pool', 'balances', address, connectedAddress],
     queryFn: async () => {
       if (!address || !connectedAddress) return null
       return await getPoolBalances(address, connectedAddress)

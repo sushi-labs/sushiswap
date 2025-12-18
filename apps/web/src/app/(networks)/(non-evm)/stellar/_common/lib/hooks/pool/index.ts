@@ -11,4 +11,3 @@ export {
   type RemovePoolLiquidityParams,
 } from '../liquidity/use-remove-liquidity'
 export * from './use-pool-info'
-export * from './use-slot-hints'

@@ -17,6 +17,7 @@ export const useLPUsdValue = ({
   const { data: token1Price } = useStablePrice({ token: token1 })
   return useQuery({
     queryKey: [
+      'stellar',
       'useLPUsdValue',
       token0,
       token1,

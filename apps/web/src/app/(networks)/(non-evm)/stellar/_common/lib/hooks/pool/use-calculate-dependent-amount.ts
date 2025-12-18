@@ -32,6 +32,7 @@ export function useCalculateDependentAmount(
 
   return useQuery({
     queryKey: [
+      'stellar',
       'pool',
       'dependentAmount',
       poolAddress,

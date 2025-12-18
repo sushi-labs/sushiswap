@@ -13,7 +13,7 @@ export const usePoolInfo = (address: string | null) => {
     isPending: isTopPoolsPending,
   } = useTopPools()
   return useQuery<(PoolInfo & { topPoolData?: TopPool }) | null>({
-    queryKey: ['pool', 'info', address],
+    queryKey: ['stellar', 'pool', 'info', address],
     queryFn: async () => {
       if (!address || !topPoolData) {
         return null

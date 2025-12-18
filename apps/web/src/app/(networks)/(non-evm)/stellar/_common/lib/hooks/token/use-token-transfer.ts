@@ -18,7 +18,7 @@ export interface TransferFromTokenParams {
 
 export const useTransferToken = () => {
   return useMutation({
-    mutationKey: ['token', 'transfer'],
+    mutationKey: ['stellar', 'token', 'transfer'],
     mutationFn: async (params: TransferTokenParams) => {
       return await transferToken(params.to, params.amount, params.tokenAddress)
     },
@@ -33,7 +33,7 @@ export const useTransferToken = () => {
 
 export const useTransferFromToken = () => {
   return useMutation({
-    mutationKey: ['token', 'transferFrom'],
+    mutationKey: ['stellar', 'token', 'transferFrom'],
     mutationFn: async (params: TransferFromTokenParams) => {
       return await transferFromToken(
         params.from,
