@@ -39,7 +39,7 @@ For contracts such as the pools and tokens with multiple deployed instances that
 #### Limitations
 
 - A binding can only be generated for a deployed contract with this method though there are likely other tools to generate it directly from a WASM file.
-- The TypeScript binding includes `export const networks` by default which we do not use as we prefer using the `CONTRACT_ADDRESSES` and `NETWORK_CONFIG` from `apps/web/src/app/(networks)/(non-evm)/stellar/_common/lib/soroban/contract-addresses.ts` so we can delete this exported const from `./<name_for_new_contract_binding_sub_directory>/src/index.ts` to reduce confusion.
+- The TypeScript binding includes `export const networks` by default which we do not use as we prefer using the `contractAddresses` and `NETWORK_CONFIG` from `apps/web/src/app/(networks)/(non-evm)/stellar/_common/lib/soroban/contracts/index.ts` so we can delete this exported const from `./<name_for_new_contract_binding_sub_directory>/src/index.ts` to reduce confusion.
 - We can also delete unused imports generated in `./<name_for_new_contract_binding_sub_directory>/src/index.ts` to reduce clutter.
 
 ### Consuming Bindings
@@ -49,7 +49,7 @@ The following steps should be followed to use the TypeScript bindings in `../../
 1. Add `"@sushiswap/stellar-contract-binding-factory": "workspace:*"` to the dependencies of `../../../apps/web/package.json`
 1. Run `pnpm install` in the project root at `../../..`
 1. Import the new contract client in `../../../apps/web/src/app/(networks)/(non-evm)/stellar/_common/lib/soroban/client.ts` with something like `import { Client as ${name_for_new_contract_binding_sub_directory}ContractClient } from '@sushiswap/stellar-contract-binding-${name_for_new_contract_binding_sub_directory}'`
-1. Export a function to get an instantiated client with the same options as the Soroban client and the TypeScript binding in `../../../apps/web/src/app/(networks)/(non-evm)/stellar/_common/lib/soroban/client.ts` like the following where the `contractId` is a `CONTRACT_ADDRESSES` entry from `apps/web/src/app/(networks)/(non-evm)/stellar/_common/lib/soroban/contract-addresses.ts` if the contract is a singleton
+1. Export a function to get an instantiated client with the same options as the Soroban client and the TypeScript binding in `../../../apps/web/src/app/(networks)/(non-evm)/stellar/_common/lib/soroban/client.ts` like the following where the `contractId` is a `contractAddresses` entry from `../../../apps/web/src/app/(networks)/(non-evm)/stellar/_common/lib/soroban/contracts/index.ts` if the contract is a singleton
     ```typescript
     type ContractClientParams = {
       contractId: string

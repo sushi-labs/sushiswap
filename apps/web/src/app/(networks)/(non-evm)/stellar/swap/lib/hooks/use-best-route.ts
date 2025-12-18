@@ -165,8 +165,16 @@ export function useBestRoute({
   amountIn,
   enabled = true,
 }: UseBestRouteParams) {
-  // Get the pool graph
-  const { data: poolGraphData, isLoading: isLoadingGraph } = usePoolGraph()
+  // Build additional tokens list from swap input/output
+  // This ensures the pool graph includes routes for the selected tokens
+  const additionalTokens = [tokenIn?.contract, tokenOut?.contract].filter(
+    (t): t is string => !!t,
+  )
+
+  // Get the pool graph, augmented with input/output tokens
+  const { data: poolGraphData, isLoading: isLoadingGraph } = usePoolGraph({
+    additionalTokens,
+  })
 
   // Find the best route using on-chain quotes
   const routeQuery = useQuery({
