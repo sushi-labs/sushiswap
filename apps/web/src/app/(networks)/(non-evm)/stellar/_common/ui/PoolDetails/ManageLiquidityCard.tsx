@@ -1,5 +1,6 @@
 'use client'
 
+import { createErrorToast, createSuccessToast } from '@sushiswap/notifications'
 import {
   Button,
   Card,
@@ -38,6 +39,7 @@ import {
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
+import { getStellarTxnLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
 import {
   MAX_TICK_RANGE,
   alignTick,
@@ -501,14 +503,45 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
       })
 
       setRemovingLiquidityAndCollectingFeesStep('collecting')
-      await collectFeesMutation.mutateAsync({
-        tokenId: selectedPosition.tokenId,
-        recipient: connectedAddress,
-        amount0Max: 18446744073709551615n, // uint128 max
-        amount1Max: 18446744073709551615n, // uint128 max
-        signTransaction,
-        signAuthEntry,
-      })
+      try {
+        const collectResult = await collectFeesMutation.mutateAsync({
+          tokenId: selectedPosition.tokenId,
+          recipient: connectedAddress,
+          amount0Max: 18446744073709551615n, // uint128 max
+          amount1Max: 18446744073709551615n, // uint128 max
+          signTransaction,
+          signAuthEntry,
+        })
+        const token0Amount = formatTokenAmount(
+          collectResult.amount0,
+          pool.token0.decimals,
+        )
+        const token1Amount = formatTokenAmount(
+          collectResult.amount1,
+          pool.token1.decimals,
+        )
+
+        let summary = 'Fees collected successfully'
+        if (collectResult.amount0 > 0n && collectResult.amount1 > 0n) {
+          summary = `Collected ${token0Amount} ${pool.token0.code} and ${token1Amount} ${pool.token1.code}`
+        } else if (collectResult.amount0 > 0n) {
+          summary = `Collected ${token0Amount} ${pool.token0.code}`
+        } else if (collectResult.amount1 > 0n) {
+          summary = `Collected ${token1Amount} ${pool.token1.code}`
+        }
+        createSuccessToast({
+          summary,
+          type: 'claimRewards',
+          account: connectedAddress,
+          chainId: 1,
+          txHash: collectResult.txHash,
+          href: getStellarTxnLink(collectResult.txHash),
+          groupTimestamp: Date.now(),
+          timestamp: Date.now(),
+        })
+      } catch (error: any) {
+        createErrorToast(error.message, false)
+      }
 
       // Reset form
       setRemovePercent(100)

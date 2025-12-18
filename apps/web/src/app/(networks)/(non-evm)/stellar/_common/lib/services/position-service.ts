@@ -235,7 +235,12 @@ export class PositionService {
       take,
     })
     return userPositionsWithFees.filter((position) => {
-      return !excludeDust || position.liquidity >= MINIMUM_DUST_LIQUIDITY
+      return (
+        !excludeDust ||
+        position.liquidity >= MINIMUM_DUST_LIQUIDITY ||
+        position.tokensOwed0 >= MINIMUM_DUST_LIQUIDITY ||
+        position.tokensOwed1 >= MINIMUM_DUST_LIQUIDITY
+      )
     })
   }
 
