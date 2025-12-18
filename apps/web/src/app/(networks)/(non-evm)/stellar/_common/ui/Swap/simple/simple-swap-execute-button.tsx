@@ -14,7 +14,7 @@ import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trus
 import { parseSlippageTolerance } from '~stellar/_common/lib/utils/error-helpers'
 import { requiresPriceImpactConfirmation } from '~stellar/_common/lib/utils/warning-severity'
 import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
-import { TrustlineWarning } from '~stellar/_common/ui/Trustline/TrustlineWarning'
+import { CreateTrustlineButton } from '~stellar/_common/ui/Trustline/CreateTrustlineButton'
 import { Checker } from '~stellar/_common/ui/checker'
 import { useStellarWallet } from '~stellar/providers'
 import { useBestRoute } from '~stellar/swap/lib/hooks'
@@ -237,6 +237,12 @@ export const SimpleSwapExecuteButton = () => {
       <div className="pt-4">
         {!isConnected ? (
           <ConnectWalletButton fullWidth size="xl" />
+        ) : needsToken1Trustline && token1?.issuer ? (
+          <CreateTrustlineButton
+            tokens={needsToken1Trustline ? [token1] : []}
+            size="xl"
+            fullWidth
+          />
         ) : (
           <Checker.Amounts amounts={checkerAmount} disabled={isDisabled}>
             <Button
@@ -254,14 +260,6 @@ export const SimpleSwapExecuteButton = () => {
           </Checker.Amounts>
         )}
       </div>
-      {needsToken1Trustline && token1?.issuer && (
-        <TrustlineWarning
-          assetCode={token1.code}
-          assetIssuer={token1.issuer}
-          direction="output"
-          className="mt-4"
-        />
-      )}
       {showSlippageWarning && <SlippageWarning className="mt-4" />}
       {showPriceImpactWarning && (
         <PriceImpactWarning

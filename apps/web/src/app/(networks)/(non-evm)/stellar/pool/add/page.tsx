@@ -15,7 +15,6 @@ import { useMaxPairedAmount } from '~stellar/_common/lib/hooks/pool/use-max-pair
 import { usePoolBalances } from '~stellar/_common/lib/hooks/pool/use-pool-balances'
 import { usePoolInitialized } from '~stellar/_common/lib/hooks/pool/use-pool-initialized'
 import { useTickRangeSelector } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
-import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trustline'
 import {
   calculatePriceFromSqrtPrice,
   encodePriceSqrt,
@@ -26,7 +25,6 @@ import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
 import { FEE_TIERS } from '~stellar/_common/lib/utils/ticks'
 import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
 import { TickRangeSelector } from '~stellar/_common/ui/TickRangeSelector/TickRangeSelector.tsx'
-import { TrustlineWarning } from '~stellar/_common/ui/Trustline/TrustlineWarning'
 import TokenSelector from '~stellar/_common/ui/token-selector/token-selector'
 import { useStellarWallet } from '~stellar/providers'
 
@@ -87,17 +85,6 @@ export default function AddPoolPage() {
     connectedAddress,
     orderedToken1?.contract || null,
   )
-
-  // Check trustlines for pool tokens
-  const { needsTrustline: needsToken0Trustline } = useNeedsTrustline(
-    orderedToken0?.code || '',
-    orderedToken0?.issuer || '',
-  )
-  const { needsTrustline: needsToken1Trustline } = useNeedsTrustline(
-    orderedToken1?.code || '',
-    orderedToken1?.issuer || '',
-  )
-  const needsAnyTrustline = needsToken0Trustline || needsToken1Trustline
 
   const currentPrice = poolInfo
     ? calculatePriceFromSqrtPrice(poolInfo.sqrtPriceX96)
@@ -295,15 +282,11 @@ export default function AddPoolPage() {
     token1 &&
     token0.contract !== token1.contract &&
     hasValidAmounts &&
-    !isAboveRange &&
-    !needsAnyTrustline
+    !isAboveRange
 
   const ctaButtonText = useMemo((): string => {
     switch (createPoolState) {
       case 'idle': {
-        if (needsAnyTrustline) {
-          return 'Create trustline first'
-        }
         if (isAboveRange) {
           return 'Price Above Range'
         }
@@ -325,7 +308,6 @@ export default function AddPoolPage() {
     }
   }, [
     createPoolState,
-    needsAnyTrustline,
     isAboveRange,
     token0,
     token1,
@@ -673,22 +655,6 @@ export default function AddPoolPage() {
       </FormSection>
       <FormSection title="" description="">
         <div className="flex w-full flex-col gap-4">
-          {/* Trustline warnings */}
-          {needsToken0Trustline && orderedToken0?.issuer && (
-            <TrustlineWarning
-              assetCode={orderedToken0.code}
-              assetIssuer={orderedToken0.issuer}
-              direction="output"
-            />
-          )}
-          {needsToken1Trustline && orderedToken1?.issuer && (
-            <TrustlineWarning
-              assetCode={orderedToken1.code}
-              assetIssuer={orderedToken1.issuer}
-              direction="output"
-            />
-          )}
-
           {!isConnected ? (
             <ConnectWalletButton fullWidth size="xl" />
           ) : (
