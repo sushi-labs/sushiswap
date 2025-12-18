@@ -9,11 +9,7 @@ import {
   injected,
 } from '@wagmi/core'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
-import type {
-  Wallet,
-  WalletAdapter,
-  WalletAdapterContext,
-} from '../../../types'
+import type { WalletAdapter, WalletAdapterContext } from '../../../types'
 
 function getConnector(uid: string | undefined) {
   const connectors = getConnectors(getWagmiConfig())
