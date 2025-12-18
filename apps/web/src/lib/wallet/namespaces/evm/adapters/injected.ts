@@ -9,39 +9,60 @@ import {
   injected,
 } from '@wagmi/core'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
-import type { ConnectOptions, UnifiedWalletAdapter } from '../../../types'
+import type {
+  Wallet,
+  WalletAdapter,
+  WalletAdapterContext,
+} from '../../../types'
 
-export const adapter: UnifiedWalletAdapter = {
-  namespace: 'eip155',
-  name: 'Injected',
+function getConnector(uid: string | undefined) {
+  const connectors = getConnectors(getWagmiConfig())
+  if (uid) {
+    return connectors.find((connector) => connector.uid === uid)
+  } else {
+    return connectors.find((connector) => isInjectedConnector(connector))
+  }
+}
 
-  isConnected() {
-    return getConnection(getWagmiConfig()).isConnected
-  },
+export function createAdapter(ctx?: WalletAdapterContext): WalletAdapter {
+  const uid = ctx?.uid
 
-  getAddress() {
-    const a = getConnection(getWagmiConfig())
-    return a.isConnected ? a.address : undefined
-  },
+  return {
+    namespace: 'eip155',
+    name: 'Injected',
 
-  async connect(opts?: ConnectOptions) {
-    const uid = opts?.wallet?.uid
-    if (!uid) {
-      await connect(getWagmiConfig(), { connector: injected() })
-      return
-    }
+    isConnected() {
+      const { connector, isConnected } = getConnection(getWagmiConfig())
 
-    const connector = getConnectors(getWagmiConfig()).find(
-      (connector) => connector.uid === uid,
-    )
-    if (!connector) throw new Error(`Connector not found: ${uid}`)
+      return connector &&
+        (uid ? connector.uid === uid : isInjectedConnector(connector))
+        ? isConnected
+        : false
+    },
 
-    await connect(getWagmiConfig(), { connector })
-  },
+    getAddress() {
+      const { connector, address } = getConnection(getWagmiConfig())
 
-  async disconnect() {
-    await disconnect(getWagmiConfig())
-  },
+      return connector &&
+        (uid ? connector.uid === uid : isInjectedConnector(connector))
+        ? address
+        : undefined
+    },
+
+    async connect() {
+      const connector = getConnector(uid)
+
+      await connect(getWagmiConfig(), { connector: connector ?? injected() })
+    },
+
+    async disconnect() {
+      const connector = getConnector(uid)
+
+      if (connector) {
+        await disconnect(getWagmiConfig(), { connector })
+      }
+    },
+  }
 }
 
 export function isInjectedConnector(connector: Connector) {

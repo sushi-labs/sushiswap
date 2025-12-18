@@ -1,4 +1,9 @@
-import type { WalletConfig, WalletConnectorConfig } from '../../types'
+import type {
+  Wallet,
+  WalletAdapter,
+  WalletAdapterContext,
+  WalletConnectorConfig,
+} from '../../types'
 
 enum AdapterId {
   Injected = 'evm-injected',
@@ -8,7 +13,7 @@ enum AdapterId {
   WalletConnect = 'evm-walletconnect',
 }
 
-const RECOMMENDED_WALLETS: WalletConfig[] = [
+const RECOMMENDED_WALLETS: Wallet[] = [
   {
     id: 'evm-rabby',
     namespace: 'eip155',
@@ -43,7 +48,7 @@ const RECOMMENDED_WALLETS: WalletConfig[] = [
   },
 ]
 
-const OTHER_WALLETS: WalletConfig[] = [
+const OTHER_WALLETS: Wallet[] = [
   {
     id: 'evm-injected',
     namespace: 'eip155',
@@ -60,7 +65,7 @@ const OTHER_WALLETS: WalletConfig[] = [
   },
 ]
 
-const WALLETS: WalletConfig[] = [...RECOMMENDED_WALLETS, ...OTHER_WALLETS]
+const WALLETS: Wallet[] = [...RECOMMENDED_WALLETS, ...OTHER_WALLETS]
 
 export const EvmWalletConfig: WalletConnectorConfig = {
   recommended: RECOMMENDED_WALLETS,
@@ -68,9 +73,14 @@ export const EvmWalletConfig: WalletConnectorConfig = {
   all: WALLETS,
 }
 
-export const EvmAdapterConfig = {
-  ['evm-injected']: () =>
-    import('./adapters/injected').then(({ adapter }) => adapter),
+export const EvmAdapterConfig: Record<
+  string,
+  (ctx?: WalletAdapterContext) => Promise<WalletAdapter>
+> = {
+  ['evm-injected']: (ctx) =>
+    import('./adapters/injected').then(({ createAdapter }) =>
+      createAdapter(ctx),
+    ),
   ['evm-metamask']: () =>
     import('./adapters/metamask').then(({ adapter }) => adapter),
   ['evm-porto']: () =>
@@ -78,4 +88,4 @@ export const EvmAdapterConfig = {
   ['evm-safe']: () => import('./adapters/safe').then(({ adapter }) => adapter),
   ['evm-walletconnect']: () =>
     import('./adapters/walletconnect').then(({ adapter }) => adapter),
-} as const
+}

@@ -10,9 +10,8 @@ import {
   LinkExternal,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import Link from 'next/link'
 import React, { useMemo, type FC } from 'react'
-import { UnifiedWalletConfig } from '../config'
+import { WalletConfig } from '../config'
 import { useWallets } from '../hooks'
 import { useWallet } from '../provider/hooks'
 import type { WalletWithState } from '../types'
@@ -35,7 +34,7 @@ export const ConnectDialog: FC<Props> = ({ open, onOpenChange }) => {
     wallets.forEach((w) => {
       if (w.installed) {
         installed.push(w)
-      } else if (UnifiedWalletConfig.recommended.some((r) => r.id === w.id)) {
+      } else if (WalletConfig.recommended.some((r) => r.id === w.id)) {
         recommended.push(w)
       } else {
         others.push(w)
@@ -70,7 +69,7 @@ export const ConnectDialog: FC<Props> = ({ open, onOpenChange }) => {
           }
 
           try {
-            await connect(wallet.id, { wallet })
+            await connect(wallet)
             onOpenChange(false)
           } catch {}
         }}

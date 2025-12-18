@@ -1,16 +1,22 @@
-import { EvmWalletConfig } from './namespaces/evm/config'
-import type { WalletConfig, WalletConnectorConfig } from './types'
+import { EvmAdapterConfig, EvmWalletConfig } from './namespaces/evm/config'
+import type {
+  Wallet,
+  WalletAdapter,
+  WalletAdapterContext,
+  WalletConnectorConfig,
+} from './types'
 
 const RECOMMENDED_WALLETS = [...EvmWalletConfig.recommended]
 const OTHER_WALLETS = [...EvmWalletConfig.other]
 const WALLETS = [...RECOMMENDED_WALLETS, ...OTHER_WALLETS]
 
-export const UnifiedWalletConfig: WalletConnectorConfig = {
+export const WalletConfig: WalletConnectorConfig = {
   recommended: RECOMMENDED_WALLETS,
   other: OTHER_WALLETS,
   all: WALLETS,
 }
 
-export function getWalletConfig(walletId: string): WalletConfig | undefined {
-  return WALLETS.find((w) => w.id === walletId)
-}
+export const AdapterConfig: Record<
+  string,
+  (ctx?: WalletAdapterContext) => Promise<WalletAdapter>
+> = EvmAdapterConfig

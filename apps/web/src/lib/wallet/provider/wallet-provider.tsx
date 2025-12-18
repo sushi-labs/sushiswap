@@ -1,13 +1,8 @@
 'use client'
 
 import { useCallback, useMemo, useState } from 'react'
-import { getWalletConfig } from '../config'
-import type {
-  ConnectOptions,
-  WalletConnection,
-  WalletNamespace,
-} from '../types'
-import { loadAdapter } from '../utils/load-adapter'
+import type { Wallet, WalletConnection, WalletNamespace } from '../types'
+import { getWalletAdapter } from '../utils/adapter'
 import { WalletContext } from './context'
 
 type Props = {
@@ -21,54 +16,46 @@ export function WalletProvider({ children }: Props) {
   )
   const [error, setError] = useState<string | undefined>(undefined)
 
-  const connect = useCallback(
-    async (walletId: string, opts?: ConnectOptions) => {
-      const config = opts?.wallet ?? getWalletConfig(walletId)
-      if (!config) {
-        throw new Error(`Unknown wallet id: ${walletId}`)
-      }
+  const connect = useCallback(async (wallet: Wallet) => {
+    setError(undefined)
+    setPendingWalletId(undefined)
 
-      setError(undefined)
+    try {
+      const adapter = await getWalletAdapter(wallet)
+      await adapter.connect()
+
+      setConnections((prev) => {
+        const next: WalletConnection = {
+          id: wallet.id,
+          namespace: wallet.namespace,
+          adapterId: wallet.adapterId,
+          adapter,
+        }
+
+        const existingIndex = prev.findIndex((c) => c.id === wallet.id)
+        if (existingIndex !== -1) {
+          const copy = prev.slice()
+          copy[existingIndex] = next
+          return copy
+        }
+
+        return [...prev, next]
+      })
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Failed to connect wallet.'
+      setError(msg)
+      console.log('error', e)
+      throw e
+    } finally {
       setPendingWalletId(undefined)
+    }
+  }, [])
 
-      try {
-        const adapter = await loadAdapter(config.adapterId)
-        await adapter.connect(opts)
-
-        setConnections((prev) => {
-          const next: WalletConnection = {
-            id: config.id,
-            namespace: config.namespace,
-            adapterId: config.adapterId,
-            adapter,
-          }
-
-          const existingIndex = prev.findIndex((c) => c.id === config.id)
-          if (existingIndex !== -1) {
-            const copy = prev.slice()
-            copy[existingIndex] = next
-            return copy
-          }
-
-          return [...prev, next]
-        })
-      } catch (e) {
-        const msg = e instanceof Error ? e.message : 'Failed to connect wallet.'
-        setError(msg)
-        console.log('error', e)
-        throw e
-      } finally {
-        setPendingWalletId(undefined)
-      }
-    },
-    [],
-  )
-
-  const disconnect = useCallback(async (walletId: string) => {
+  const disconnect = useCallback(async (wallet: Wallet) => {
     setConnections((prev) => {
-      const existing = prev.find((c) => c.id === walletId)
-      existing?.adapter.disconnect().catch(() => {})
-      return prev.filter((c) => c.id !== walletId)
+      const existing = prev.find((c) => c.id === wallet.id)
+      existing?.adapter.disconnect()
+      return prev.filter((c) => c.id !== wallet.id)
     })
   }, [])
 
@@ -77,7 +64,7 @@ export function WalletProvider({ children }: Props) {
       setConnections((prev) => {
         const toDisconnect = prev.filter((c) => c.namespace === namespace)
         for (const c of toDisconnect) {
-          c.adapter.disconnect().catch(() => {})
+          c.adapter.disconnect()
         }
         return prev.filter((c) => c.namespace !== namespace)
       })

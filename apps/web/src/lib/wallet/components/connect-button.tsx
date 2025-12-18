@@ -20,9 +20,7 @@ export const ConnectButton: FC<ButtonProps> = ({
   const [open, setOpen] = useState(false)
 
   const evmOptions = useMemo(() => {
-    return EvmWalletConfig.all
-      .filter((w) => w.namespace === 'eip155')
-      .map((w) => w.id)
+    return EvmWalletConfig.all.filter((w) => w.namespace === 'eip155')
   }, [])
 
   const onClick = useCallback(async () => {

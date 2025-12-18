@@ -1,32 +1,37 @@
 export type WalletNamespace = 'eip155' | 'solana' | 'aptos'
 
-export interface UnifiedWalletAdapter {
+export interface WalletAdapter {
   namespace: WalletNamespace
   name?: string
 
   isConnected(): boolean
   getAddress(): string | undefined
 
-  connect(opts?: ConnectOptions): Promise<void>
+  connect(): Promise<void>
   disconnect(): Promise<void>
 }
 
-export interface WalletConfig {
+export interface WalletAdapterContext {
+  uid?: string
+}
+
+export interface Wallet {
   id: string
   namespace: WalletNamespace
   name: string
   icon: string
   adapterId: string
   url?: string
+  uid?: string
 }
 
 export interface WalletConnectorConfig {
-  recommended: WalletConfig[]
-  other: WalletConfig[]
-  all: WalletConfig[]
+  recommended: Wallet[]
+  other: Wallet[]
+  all: Wallet[]
 }
 
-export interface WalletWithState extends WalletConfig {
+export interface WalletWithState extends Wallet {
   installed: boolean
   available: boolean
 }
@@ -35,11 +40,5 @@ export interface WalletConnection {
   id: string
   namespace: WalletNamespace
   adapterId: string
-  adapter: UnifiedWalletAdapter
-}
-
-export interface ConnectOptions {
-  wallet?: WalletConfig & {
-    uid?: string
-  }
+  adapter: WalletAdapter
 }

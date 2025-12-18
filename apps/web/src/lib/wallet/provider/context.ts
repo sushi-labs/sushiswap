@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext } from 'react'
-import type { ConnectOptions, WalletConnection } from '../types'
+import type { Wallet, WalletConnection } from '../types'
 
 export type WalletState = {
   connections: WalletConnection[]
@@ -10,8 +10,8 @@ export type WalletState = {
 }
 
 export type WalletActions = {
-  connect: (walletId: string, opts?: ConnectOptions) => Promise<void>
-  disconnect: (walletId: string) => Promise<void>
+  connect: (wallet: Wallet) => Promise<void>
+  disconnect: (wallet: Wallet) => Promise<void>
   disconnectNamespace: (
     namespace: WalletConnection['namespace'],
   ) => Promise<void>
