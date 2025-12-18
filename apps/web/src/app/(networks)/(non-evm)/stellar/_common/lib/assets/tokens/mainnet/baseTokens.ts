@@ -11,6 +11,7 @@ export const baseTokens: Token[] = [
     name: 'XLM',
     org: 'stellar',
     domain: 'stellar.org',
+    icon: 'https://assets.coingecko.com/coins/images/100/large/Stellar_symbol_black_RGB.png',
     decimals: 7,
   },
   {
@@ -29,6 +30,7 @@ export const baseTokens: Token[] = [
     name: 'SUSHI',
     org: 'sushi',
     domain: 'sushi.com',
+    icon: 'https://cdn.sushi.com/image/upload/f_auto,c_limit,w_48/d_unknown.png/tokens/1/0x6B3595068778DD592e39A122f4f5a5cF09C90fE2.jpg',
     decimals: 7,
   },
   // {

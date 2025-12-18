@@ -10,11 +10,7 @@ import {
   useExecuteMultiHopSwap,
   useExecuteSwap,
 } from '~stellar/_common/lib/hooks/swap'
-import {
-  useNeedsTrustline,
-  useNeedsTrustlines,
-} from '~stellar/_common/lib/hooks/trustline/use-trustline'
-import type { Token } from '~stellar/_common/lib/types/token.type'
+import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trustline'
 import { parseSlippageTolerance } from '~stellar/_common/lib/utils/error-helpers'
 import { requiresPriceImpactConfirmation } from '~stellar/_common/lib/utils/warning-severity'
 import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
@@ -44,11 +40,8 @@ export const SimpleSwapExecuteButton = () => {
     setChecked(false)
   }, [setAmount, setOutputAmount, setSlippageAmount, setPriceImpact])
 
-  // Check if swap tokens need trustlines (for native assets)
-  const { needsTrustline: needsToken0Trustline } = useNeedsTrustline(
-    token0?.code || '',
-    token0?.issuer || '',
-  )
+  // Check if output token needs trustline (for native assets)
+  // Note: Input token (token0) doesn't need trustline check - user must already have it to swap FROM it
   const { needsTrustline: needsToken1Trustline } = useNeedsTrustline(
     token1?.code || '',
     token1?.issuer || '',
@@ -79,16 +72,6 @@ export const SimpleSwapExecuteButton = () => {
     amountIn,
     enabled: amountIn > 0n,
   })
-
-  // Get intermediate tokens from multi-hop route (tokens between input and output)
-  // For route A → B → C, intermediate tokens would be [B]
-  const intermediateTokens = useMemo((): Token[] => {
-    if (!route?.tokens || route.tokens.length <= 2) {
-      return []
-    }
-    // Exclude first (input) and last (output) tokens
-    return route.tokens.slice(1, -1)
-  }, [route?.tokens])
 
   const showPriceImpactWarning = requiresPriceImpactConfirmation(
     priceImpact || undefined,
@@ -191,18 +174,6 @@ export const SimpleSwapExecuteButton = () => {
     ]
   }, [amountIn, token0])
 
-  // Check all intermediate tokens for trustlines
-  const {
-    needsAnyTrustline: needsAnyIntermediateTrustline,
-    results: intermediateTrustlineResults,
-  } = useNeedsTrustlines(intermediateTokens)
-
-  // Check if any trustlines are needed (block swap until created)
-  const needsAnyTrustline =
-    needsToken0Trustline ||
-    needsToken1Trustline ||
-    needsAnyIntermediateTrustline
-
   // Check if we have a route but output is 0 (likely due to amount being too small)
   // This happens when the amount is so small that integer division rounds the output to 0
   const hasRouteButZeroOutput = useMemo(() => {
@@ -224,7 +195,7 @@ export const SimpleSwapExecuteButton = () => {
     outputAmount === 0n ||
     executeSwap.isPending ||
     executeMultiHopSwap.isPending ||
-    needsAnyTrustline ||
+    needsToken1Trustline ||
     (showPriceImpactWarning && !checked)
 
   // Determine button text
@@ -232,7 +203,7 @@ export const SimpleSwapExecuteButton = () => {
     if (executeSwap.isPending || executeMultiHopSwap.isPending) {
       return 'Executing Swap...'
     }
-    if (needsAnyTrustline) {
+    if (needsToken1Trustline) {
       return 'Create trustline first'
     }
     if (showPriceImpactWarning && !checked) {
@@ -252,7 +223,7 @@ export const SimpleSwapExecuteButton = () => {
   }, [
     executeSwap.isPending,
     executeMultiHopSwap.isPending,
-    needsAnyTrustline,
+    needsToken1Trustline,
     showPriceImpactWarning,
     checked,
     hasRouteButZeroOutput,
@@ -283,36 +254,12 @@ export const SimpleSwapExecuteButton = () => {
           </Checker.Amounts>
         )}
       </div>
-      {needsToken0Trustline && token0?.issuer && (
-        <TrustlineWarning
-          assetCode={token0.code}
-          assetIssuer={token0.issuer}
-          direction="input"
-          className="mt-4"
-        />
-      )}
-      {intermediateTokens.map((token, index) => {
-        const needsTrustline =
-          intermediateTrustlineResults[index]?.needsTrustline
-        if (needsTrustline && token?.issuer) {
-          return (
-            <TrustlineWarning
-              key={`intermediate-${index}-${token.code}-${token.issuer}`}
-              assetCode={token.code}
-              assetIssuer={token.issuer}
-              direction="output"
-              className="mt-2"
-            />
-          )
-        }
-        return null
-      })}
       {needsToken1Trustline && token1?.issuer && (
         <TrustlineWarning
           assetCode={token1.code}
           assetIssuer={token1.issuer}
           direction="output"
-          className="mt-2"
+          className="mt-4"
         />
       )}
       {showSlippageWarning && <SlippageWarning className="mt-4" />}

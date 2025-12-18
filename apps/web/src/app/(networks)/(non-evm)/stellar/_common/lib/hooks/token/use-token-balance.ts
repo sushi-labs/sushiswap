@@ -13,7 +13,7 @@ export const useTokenBalance = (
   tokenContractId: string | null,
 ) => {
   return useQuery({
-    queryKey: ['token', 'balance', address, tokenContractId],
+    queryKey: ['stellar', 'token', 'balance', address, tokenContractId],
     queryFn: async () => {
       if (!address || !tokenContractId) return null
       return await getTokenBalance(address, tokenContractId)
@@ -27,7 +27,13 @@ export const useTokenBalanceFromToken = (
   token: Token | null,
 ) => {
   return useQuery({
-    queryKey: ['token', 'balanceFromToken', address, token?.contract],
+    queryKey: [
+      'stellar',
+      'token',
+      'balanceFromToken',
+      address,
+      token?.contract,
+    ],
     queryFn: async () => {
       if (!address || !token) return null
       return await getTokenBalanceFromToken(address, token)
@@ -44,7 +50,7 @@ export const useTokenBalanceFromToken = (
  */
 export const useTokenBalances = (address: string | null, tokens: Token[]) => {
   return useQuery({
-    queryKey: ['token', 'balances', tokens, address],
+    queryKey: ['stellar', 'token', 'balances', tokens, address],
     queryFn: async () => {
       if (!address || tokens.length === 0 || !tokens) {
         return []
@@ -81,7 +87,7 @@ export const useTokenBalancesMap = (
   contracts: string[],
 ) => {
   return useQuery({
-    queryKey: ['token', 'balancesMap', address, contracts],
+    queryKey: ['stellar', 'token', 'balancesMap', address, contracts],
     queryFn: async () => {
       if (!address || contracts.length === 0) {
         return contracts.reduce<Record<string, string>>((acc, contract) => {

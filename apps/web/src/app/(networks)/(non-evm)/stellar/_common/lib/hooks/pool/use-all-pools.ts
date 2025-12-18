@@ -9,7 +9,7 @@ import { getAllPools } from '../../soroban/pool-helpers'
  */
 export const useAllPools = () => {
   return useQuery({
-    queryKey: ['pool', 'allPools'],
+    queryKey: ['stellar', 'pool', 'allPools'],
     queryFn: async () => {
       return await getAllPools()
     },

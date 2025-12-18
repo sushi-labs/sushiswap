@@ -103,8 +103,9 @@ export const useExecuteSwap = () => {
         timestamp: Date.now(),
       })
 
+      // Invalidate all stellar token balance queries to update balances after swap
       queryClient.invalidateQueries({
-        queryKey: ['token', 'balance'],
+        queryKey: ['stellar', 'token'],
       })
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'positions'],
@@ -215,8 +216,9 @@ export const useExecuteMultiHopSwap = () => {
         timestamp: Date.now(),
       })
 
+      // Invalidate all stellar token balance queries to update balances after swap
       queryClient.invalidateQueries({
-        queryKey: ['token', 'balance'],
+        queryKey: ['stellar', 'token'],
       })
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'positions'],

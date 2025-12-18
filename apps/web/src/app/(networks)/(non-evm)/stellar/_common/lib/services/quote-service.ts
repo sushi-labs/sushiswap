@@ -165,9 +165,10 @@ export class QuoteService {
     tokenB: Token,
   ): Promise<PoolBasicInfo[]> {
     const pools: PoolBasicInfo[] = []
+    const feeTiers = getFees()
 
     // Check each common fee tier
-    for (const fee of await getFees()) {
+    for (const fee of feeTiers) {
       try {
         const pool = await getPool({
           tokenA: tokenA.contract,

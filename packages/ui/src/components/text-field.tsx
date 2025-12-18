@@ -17,7 +17,9 @@ const numericInputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>> =
 const percentInputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>> =
   {
     placeholder: '0',
+    pattern: '^[0-9]*$',
     inputMode: 'decimal',
+    maxLength: 3,
   }
 
 const textFieldVariants = cva(

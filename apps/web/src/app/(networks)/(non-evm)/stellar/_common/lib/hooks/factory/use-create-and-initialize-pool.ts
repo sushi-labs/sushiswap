@@ -61,7 +61,7 @@ export const useCreateAndInitializePool = () => {
 
       // Invalidate pools list
       queryClient.invalidateQueries({
-        queryKey: ['pool', 'allPools'],
+        queryKey: ['stellar', 'pool', 'allPools'],
       })
       invalidatePoolInitializedQuery(queryClient, result.poolAddress)
     },

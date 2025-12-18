@@ -99,7 +99,7 @@ export function usePoolGraph() {
         // 3. Only query active/liquid pools
         const knownTokens = staticTokens.map((token) => token.contract)
 
-        const feeTiers = await getFees()
+        const feeTiers = getFees()
 
         // Query all possible pool combinations
         const poolQueryInputs: GetPoolsByTokenPairsBatchedParams = []

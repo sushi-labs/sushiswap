@@ -28,7 +28,7 @@ export async function findPoolsBetweenTokens(
   const pools: PoolBasicInfo[] = []
 
   // Dynamic pool discovery
-  const fees = await getFees()
+  const fees = getFees()
 
   for (const fee of fees) {
     try {

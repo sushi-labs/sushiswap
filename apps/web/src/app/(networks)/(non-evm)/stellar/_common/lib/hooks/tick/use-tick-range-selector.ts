@@ -9,9 +9,11 @@ import {
   useState,
 } from 'react'
 import {
+  DEFAULT_FEE_TIER,
   DEFAULT_TICK_RANGE,
   TICK_SPACINGS,
   alignTick,
+  isFeeTier,
   isTickAligned,
 } from '~stellar/_common/lib/utils/ticks'
 import { calculateTickFromPrice } from '../../soroban/pool-helpers'
@@ -38,7 +40,7 @@ export const useTickRangeSelector = (
   currentPrice: number,
 ): TickRangeSelectorState => {
   const tickSpacing = useMemo(() => {
-    return TICK_SPACINGS[fee] ?? TICK_SPACINGS[3000]
+    return isFeeTier(fee) ? TICK_SPACINGS[fee] : TICK_SPACINGS[DEFAULT_FEE_TIER]
   }, [fee])
 
   const currentTick = useMemo(

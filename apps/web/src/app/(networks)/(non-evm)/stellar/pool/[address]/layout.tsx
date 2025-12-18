@@ -1,7 +1,6 @@
 import { Container } from '@sushiswap/ui'
 import { headers } from 'next/headers'
 import { PoolHeader } from '~stellar/_common/ui/PoolDetails/PoolHeader'
-import Providers from './providers'
 
 export default async function PoolLayout(props: {
   children: React.ReactNode
@@ -16,7 +15,7 @@ export default async function PoolLayout(props: {
   const referer = headersList.get('referer')
 
   return (
-    <Providers>
+    <>
       <Container maxWidth="5xl" className="pt-6 px-4">
         <PoolHeader
           address={address}
@@ -32,6 +31,6 @@ export default async function PoolLayout(props: {
           {children}
         </div>
       </section>
-    </Providers>
+    </>
   )
 }

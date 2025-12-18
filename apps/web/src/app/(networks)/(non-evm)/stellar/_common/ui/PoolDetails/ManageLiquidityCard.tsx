@@ -1142,7 +1142,6 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                       <Button
                         className="w-full"
                         size="lg"
-                        variant="destructive"
                         disabled={
                           !hasRemoveAmount ||
                           removeLiquidityMutation.isPending ||

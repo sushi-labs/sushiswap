@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { Header } from '../header'
-import { Providers } from './providers'
 
 export const metadata: Metadata = {
   title: {
@@ -15,9 +14,9 @@ export default function SwapLayout({
   children,
 }: { children: React.ReactNode }) {
   return (
-    <Providers>
+    <>
       <Header />
       <main className="lg:p-4 mb-[86px] animate-slide">{children}</main>
-    </Providers>
+    </>
   )
 }

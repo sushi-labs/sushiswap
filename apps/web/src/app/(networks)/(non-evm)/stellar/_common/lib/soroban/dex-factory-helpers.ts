@@ -1,5 +1,5 @@
 import { Address } from '@stellar/stellar-sdk'
-import { TICK_SPACINGS } from '../utils/ticks'
+import { FEE_TIERS, TICK_SPACINGS } from '../utils/ticks'
 import { getFactoryContractClient } from './client'
 import { DEFAULT_TIMEOUT, ZERO_ADDRESS, isAddressLower } from './constants'
 import { contractAddresses } from './contracts'
@@ -321,7 +321,7 @@ export async function getPoolTransactionBuilder({
  */
 export async function getPoolsForBaseTokenPairs(): Promise<string[]> {
   const tokens = getBaseTokens()
-  const feeTiers = await getFees()
+  const feeTiers = getFees()
 
   console.log('🔍 Querying factory for pools using token combinations:')
   console.log(
@@ -469,8 +469,8 @@ export async function poolExists({
   }
 }
 
-export async function getFees(): Promise<number[]> {
-  return Object.keys(TICK_SPACINGS).map(Number)
+export function getFees(): number[] {
+  return FEE_TIERS.map((tier) => tier.value)
 }
 
 /**
