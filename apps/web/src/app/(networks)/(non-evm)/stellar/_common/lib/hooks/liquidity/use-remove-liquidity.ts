@@ -6,10 +6,7 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import {
-  collectFees,
-  decreaseLiquidity,
-} from '~stellar/_common/lib/soroban/position-manager-helpers'
+import { decreaseLiquidity } from '~stellar/_common/lib/soroban/position-manager-helpers'
 import { getStellarTxnLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
 import { useStellarWallet } from '~stellar/providers'
 
@@ -62,36 +59,18 @@ export const useRemoveLiquidity = () => {
         signAuthEntry,
       })
 
-      const collectResult = await collectFees({
-        tokenId: params.tokenId,
-        recipient: connectedAddress,
-        amount0Max: BigInt('18446744073709551615'), // uint128 max
-        amount1Max: BigInt('18446744073709551615'), // uint128 max
-        operator: connectedAddress,
-        signTransaction,
-        signAuthEntry,
-      })
-
       return {
         decreaseHash: decreaseResult.hash,
-        collectHash: collectResult.txHash,
-        amount0: collectResult.amount0,
-        amount1: collectResult.amount1,
       }
     },
     onSuccess: (result, variables) => {
-      const formatAmount = (amount: bigint) => {
-        const num = Number(amount) / 1e7
-        return num.toFixed(4)
-      }
-
       createSuccessToast({
-        summary: `Liquidity removed! Collected ${formatAmount(result.amount0)} ${variables.token0Code}, ${formatAmount(result.amount1)} ${variables.token1Code}`,
+        summary: `Liquidity removed!`,
         type: 'burn',
         account: connectedAddress || undefined,
         chainId: 1,
-        txHash: result.collectHash,
-        href: getStellarTxnLink(result.collectHash),
+        txHash: result.decreaseHash,
+        href: getStellarTxnLink(result.decreaseHash),
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
       })

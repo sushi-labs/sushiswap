@@ -9,11 +9,11 @@ import {
   useTokenBalance,
 } from '~stellar/_common/lib/hooks'
 import { useCreateAndInitializePool } from '~stellar/_common/lib/hooks/factory/use-create-and-initialize-pool'
+import { useAddLiquidity } from '~stellar/_common/lib/hooks/liquidity/use-add-liquidity'
 import { useCalculatePairedAmount } from '~stellar/_common/lib/hooks/pool/use-calculate-paired-amount'
 import { useMaxPairedAmount } from '~stellar/_common/lib/hooks/pool/use-max-paired-amount'
 import { usePoolBalances } from '~stellar/_common/lib/hooks/pool/use-pool-balances'
 import { usePoolInitialized } from '~stellar/_common/lib/hooks/pool/use-pool-initialized'
-import { useAddLiquidity } from '~stellar/_common/lib/hooks/swap/use-add-liquidity'
 import { useTickRangeSelector } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
 import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trustline'
 import {
