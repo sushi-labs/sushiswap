@@ -28,6 +28,7 @@ export interface WalletWithState extends Wallet {
 
 export interface WalletConnection {
   id: string
+  name: string
   namespace: WalletNamespace
-  adapterId: AdapterId
+  account: string
 }

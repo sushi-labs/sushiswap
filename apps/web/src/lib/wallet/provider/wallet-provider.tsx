@@ -9,6 +9,7 @@ import {
   useState,
 } from 'react'
 import type { Wallet, WalletConnection, WalletNamespace } from '../types'
+import { useConnections } from './state'
 import type { WalletActions, WalletState } from './types'
 import {
   WalletActionsProvider,
@@ -36,14 +37,15 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
 }
 
 function _WalletProvider({ children }: { children: React.ReactNode }) {
-  const [connections, setConnections] = useState<WalletConnection[]>([])
+  const connections = useConnections()
+
   const [pendingWalletId, setPendingWalletId] = useState<string | undefined>(
     undefined,
   )
   const [error, setError] = useState<string | undefined>(undefined)
 
   useEffect(() => {
-    console.log('connections', connections)
+    console.log('connectionz', connections)
   }, [connections])
 
   const walletActions = useWalletActions()
@@ -56,22 +58,23 @@ function _WalletProvider({ children }: { children: React.ReactNode }) {
       try {
         await walletActions.connect(wallet)
 
-        setConnections((prev) => {
-          const next: WalletConnection = {
-            id: wallet.id,
-            namespace: wallet.namespace,
-            adapterId: wallet.adapterId,
-          }
+        // setConnections((prev) => {
+        //   const next: WalletConnection = {
+        //     id: wallet.id,
+        //     namespace: wallet.namespace,
+        //     adapterId: wallet.adapterId,
+        //     account: '',
+        //   }
 
-          const existingIndex = prev.findIndex((c) => c.id === wallet.id)
-          if (existingIndex !== -1) {
-            const copy = prev.slice()
-            copy[existingIndex] = next
-            return copy
-          }
+        //   const existingIndex = prev.findIndex((c) => c.id === wallet.id)
+        //   if (existingIndex !== -1) {
+        //     const copy = prev.slice()
+        //     copy[existingIndex] = next
+        //     return copy
+        //   }
 
-          return [...prev, next]
-        })
+        //   return [...prev, next]
+        // })
       } catch (e) {
         const msg = e instanceof Error ? e.message : 'Failed to connect wallet.'
         setError(msg)
@@ -87,9 +90,9 @@ function _WalletProvider({ children }: { children: React.ReactNode }) {
   const disconnect = useCallback(
     async (wallet: Wallet) => {
       await walletActions.disconnect(wallet)
-      setConnections((prev) => {
-        return prev.filter((c) => c.id !== wallet.id)
-      })
+      // setConnections((prev) => {
+      //   return prev.filter((c) => c.id !== wallet.id)
+      // })
     },
     [walletActions.disconnect],
   )
@@ -97,9 +100,9 @@ function _WalletProvider({ children }: { children: React.ReactNode }) {
   const disconnectNamespace = useCallback(
     async (namespace: WalletNamespace) => {
       await walletActions.disconnectNamespace(namespace)
-      setConnections((prev) => {
-        return prev.filter((c) => c.namespace !== namespace)
-      })
+      // setConnections((prev) => {
+      //   return prev.filter((c) => c.namespace !== namespace)
+      // })
     },
     [walletActions.disconnectNamespace],
   )

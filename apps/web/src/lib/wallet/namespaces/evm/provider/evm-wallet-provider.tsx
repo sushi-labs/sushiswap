@@ -3,8 +3,19 @@ import {
   disconnect as wagmiDisconnect,
 } from '@wagmi/core'
 import type React from 'react'
-import { createContext, useCallback, useContext, useMemo } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
+import {
+  addWalletConnection,
+  clearWalletConnections,
+} from 'src/lib/wallet/provider/state'
 import type { Wallet, WalletWithState } from 'src/lib/wallet/types'
 import { WagmiContext, WagmiProvider, useConnection } from 'wagmi'
 import { EvmAdapterConfig, type EvmAdapterId } from '../config'
@@ -52,7 +63,7 @@ export function EvmWalletProvider({ children }: { children: React.ReactNode }) {
 function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
   const wallets = useEvmWallets()
 
-  const connection = useConnection()
+  const { isConnected, address, connector } = useConnection()
 
   const connect = useCallback(async (wallet: Wallet) => {
     if (!isEvmWallet(wallet)) {
@@ -73,13 +84,28 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo<EvmWalletContext>(
     () => ({
       wallets,
-      isConnected: connection.isConnected,
-      account: connection.address,
+      isConnected: isConnected,
+      account: address,
       connect,
       disconnect,
     }),
-    [wallets, connection.isConnected, connection.address, connect, disconnect],
+    [wallets, isConnected, address, connect, disconnect],
   )
+
+  useEffect(() => {
+    console.log('run evm')
+    if (!isConnected || !connector?.id || !address) {
+      clearWalletConnections('evm')
+      return
+    }
+
+    addWalletConnection({
+      id: connector.id,
+      name: connector.name,
+      namespace: 'evm',
+      account: address,
+    })
+  }, [isConnected, connector?.id, connector?.name, address])
 
   return (
     <EvmWalletContext.Provider value={value}>

@@ -1,12 +1,21 @@
 import {
   ConnectionContext,
   ConnectionProvider,
-  WalletContext,
   WalletProvider,
   useWallet,
 } from '@solana/wallet-adapter-react'
 import type React from 'react'
-import { createContext, useCallback, useContext, useMemo } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+} from 'react'
+import {
+  addWalletConnection,
+  clearWalletConnections,
+} from 'src/lib/wallet/provider/state'
 import type { Wallet, WalletWithState } from 'src/lib/wallet/types'
 import { useSvmWallets } from './use-svm-wallets'
 
@@ -45,7 +54,7 @@ export function SvmWalletProvider({ children }: { children: React.ReactNode }) {
       <ConnectionProvider
         endpoint={`https://lb.drpc.live/ogrpc?network=solana&dkey=${drpcId}`}
       >
-        <WalletProvider wallets={[]}>
+        <WalletProvider wallets={[]} autoConnect>
           <_SvmWalletProvider>{children}</_SvmWalletProvider>
         </WalletProvider>
       </ConnectionProvider>
@@ -54,26 +63,22 @@ export function SvmWalletProvider({ children }: { children: React.ReactNode }) {
 }
 
 function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
-  const context = useContext(WalletContext)
-  console.log('svm-context', context)
   const wallets = useSvmWallets()
-  console.log('svm-wallets', wallets)
+
   const {
     connected,
     publicKey,
-    connect: svmConnect,
     disconnect: svmDisconnect,
-    select,
+    select: svmConnect,
+    wallet,
   } = useWallet()
 
   const connect = useCallback(
     async (wallet: Wallet) => {
       const name = wallet.name
-      console.log('connect', wallet)
-      select(name as string & { __brand__: 'WalletName' })
-      await svmConnect()
+      svmConnect(name as string & { __brand__: 'WalletName' })
     },
-    [select, svmConnect],
+    [svmConnect],
   )
 
   const disconnect = useCallback(async () => {
@@ -90,6 +95,21 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
     }),
     [wallets, connected, publicKey, connect, disconnect],
   )
+
+  useEffect(() => {
+    console.log('run svm', connected, publicKey)
+    if (!connected || !wallet?.adapter.name || !publicKey) {
+      clearWalletConnections('svm')
+      return
+    }
+
+    addWalletConnection({
+      id: wallet.adapter.name,
+      name: wallet.adapter.name,
+      namespace: 'svm',
+      account: publicKey.toString(),
+    })
+  }, [connected, wallet?.adapter.name, publicKey])
 
   return (
     <SvmWalletContext.Provider value={value}>

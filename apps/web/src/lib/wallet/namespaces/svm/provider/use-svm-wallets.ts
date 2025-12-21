@@ -19,7 +19,7 @@ export function useSvmWallets() {
 
       map.set(walletId, {
         id: walletId,
-        namespace: 'evm',
+        namespace: 'svm',
         name: wallet.adapter.name,
         icon: wallet.adapter.icon,
         adapterId: SvmAdapterId.Standard,

@@ -20,10 +20,6 @@ export function useEvmWallets() {
     [connectors],
   )
 
-  useEffect(() => {
-    console.log('connectors', connectors)
-  }, [connectors])
-
   const [safeAvailable, setSafeAvailable] = useState(false)
 
   // Safe app environment
