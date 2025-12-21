@@ -19,19 +19,15 @@ export const ConnectButton: FC<ButtonProps> = ({
   const { connect, pending } = useWallet()
   const [open, setOpen] = useState(false)
 
-  const evmOptions = useMemo(() => {
-    return EvmWalletConfig.all.filter((w) => w.namespace === 'eip155')
-  }, [])
-
   const onClick = useCallback(async () => {
     if (process.env.NEXT_PUBLIC_APP_ENV === 'test') {
-      const first = evmOptions[0]
+      const first = EvmWalletConfig.all.filter((w) => w.namespace === 'evm')[0]
       if (first) await connect(first)
       return
     }
 
     setOpen(true)
-  }, [connect, evmOptions])
+  }, [connect])
 
   // Pending confirmation state
   // Awaiting wallet confirmation

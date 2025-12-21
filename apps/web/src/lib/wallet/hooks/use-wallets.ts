@@ -1,7 +1,10 @@
-import { useEvmWallets } from '../namespaces/evm/use-evm-wallets'
+import { useMemo } from 'react'
+import { useEvmWalletContext } from '../namespaces/evm/provider/evm-wallet-provider'
+import { useSvmWalletContext } from '../namespaces/svm/provider/svm-wallet-provider'
 
 export const useWallets = () => {
-  const evmWallets = useEvmWallets()
+  const { wallets: evmWallets } = useEvmWalletContext()
+  const { wallets: svmWallets } = useSvmWalletContext()
 
-  return evmWallets
+  return useMemo(() => [...svmWallets, ...evmWallets], [svmWallets, evmWallets])
 }

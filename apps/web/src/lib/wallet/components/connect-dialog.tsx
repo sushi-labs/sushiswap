@@ -12,8 +12,7 @@ import {
 import { Button } from '@sushiswap/ui'
 import React, { useMemo, type FC } from 'react'
 import { WalletConfig } from '../config'
-import { useWallets } from '../hooks'
-import { useWallet } from '../provider/hooks'
+import { useWallet, useWallets } from '../hooks'
 import type { WalletWithState } from '../types'
 
 type Props = {

@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useConnectors } from 'wagmi'
-import type { WalletWithState } from '../../types'
-import { isInjectedConnector } from './adapters/injected'
-import { isSafeAppAvailable } from './adapters/safe'
-import { EvmWalletConfig } from './config'
+import type { WalletWithState } from '../../../types'
+import { isInjectedConnector } from '../adapters/injected'
+import { isSafeAppAvailable } from '../adapters/safe'
+import { EvmAdapterId, EvmWalletConfig } from '../config'
 
 const EVM_INJECTED_ID_MAP: Record<string, string> = {
   'io.rabby': 'evm-rabby',
@@ -39,17 +39,17 @@ export function useEvmWallets() {
   }, [])
 
   return useMemo(() => {
-    const map = new Map<string, WalletWithState & { uid?: string }>()
+    const map = new Map<string, WalletWithState>()
     for (const connector of injectedConnectors) {
       const walletId =
         EVM_INJECTED_ID_MAP[connector.id] ?? `evm-injected:${connector.id}`
 
       map.set(walletId, {
         id: walletId,
-        namespace: 'eip155',
+        namespace: 'evm',
         name: connector.name,
         icon: connector.icon ?? '', // TODO: placeholder
-        adapterId: 'evm-injected',
+        adapterId: EvmAdapterId.Injected,
         installed: true,
         available: true,
         uid: connector.uid,

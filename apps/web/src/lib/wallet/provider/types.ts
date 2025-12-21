@@ -1,6 +1,5 @@
 'use client'
 
-import { createContext } from 'react'
 import type { Wallet, WalletConnection } from '../types'
 
 export type WalletState = {
@@ -16,7 +15,3 @@ export type WalletActions = {
     namespace: WalletConnection['namespace'],
   ) => Promise<void>
 }
-
-export type WalletContextValue = WalletState & WalletActions
-
-export const WalletContext = createContext<WalletContextValue | null>(null)

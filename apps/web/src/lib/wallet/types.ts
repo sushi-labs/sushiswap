@@ -1,20 +1,8 @@
-import type { AdapterId } from './config'
-
-export type WalletNamespace = 'eip155' | 'solana' | 'aptos'
-
-export interface WalletAdapter {
-  namespace: WalletNamespace
-  name?: string
-
-  isConnected(): boolean
-  getAddress(): string | undefined
-
-  connect(): Promise<void>
-  disconnect(): Promise<void>
-}
+export type WalletNamespace = 'evm' | 'svm' | 'mvm'
 
 export interface WalletAdapterContext {
-  uid?: string
+  uid?: string // evm
+  walletName?: string // solana
 }
 
 export interface Wallet {
@@ -22,7 +10,7 @@ export interface Wallet {
   namespace: WalletNamespace
   name: string
   icon: string
-  adapterId: AdapterId
+  adapterId: string
   url?: string
   uid?: string
 }
@@ -42,5 +30,4 @@ export interface WalletConnection {
   id: string
   namespace: WalletNamespace
   adapterId: AdapterId
-  adapter: WalletAdapter
 }

@@ -1,14 +1,5 @@
-import {
-  EvmAdapterConfig,
-  type EvmAdapterId,
-  EvmWalletConfig,
-} from './namespaces/evm/config'
-import type {
-  Wallet,
-  WalletAdapter,
-  WalletAdapterContext,
-  WalletConnectorConfig,
-} from './types'
+import { EvmWalletConfig } from './namespaces/evm/config'
+import type { WalletConnectorConfig } from './types'
 
 const RECOMMENDED_WALLETS = [...EvmWalletConfig.recommended]
 const OTHER_WALLETS = [...EvmWalletConfig.other]
@@ -19,10 +10,3 @@ export const WalletConfig: WalletConnectorConfig = {
   other: OTHER_WALLETS,
   all: WALLETS,
 }
-
-export type AdapterId = EvmAdapterId
-
-export const AdapterConfig: Record<
-  AdapterId,
-  (ctx?: WalletAdapterContext) => Promise<WalletAdapter>
-> = EvmAdapterConfig
