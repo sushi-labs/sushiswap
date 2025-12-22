@@ -11,6 +11,7 @@ import {
   getTokenBalance,
   getTokenByCode,
   getTokenByContract,
+  getTokenMetadata,
 } from './token-helpers'
 
 export interface PoolBasicInfo {
@@ -73,27 +74,79 @@ export async function getPoolInfoFromContract(
     const token0FromList = getTokenByContract(token0Address)
     const token1FromList = getTokenByContract(token1Address)
 
+    // If tokens are not in the static list, fetch metadata from chain
+    let token0: Token
+    let token1: Token
+
+    if (token0FromList) {
+      token0 = token0FromList
+    } else {
+      // Fetch token metadata from chain
+      try {
+        const metadata = await getTokenMetadata(token0Address)
+        token0 = {
+          contract: token0Address,
+          code: metadata.symbol || token0Address.slice(0, 8),
+          name: metadata.name || metadata.symbol || token0Address.slice(0, 8),
+          decimals: metadata.decimals,
+          issuer: '',
+          org: 'unknown',
+          isStable: false,
+        }
+      } catch (error) {
+        console.warn(
+          `Failed to fetch metadata for token ${token0Address}:`,
+          error,
+        )
+        token0 = {
+          contract: token0Address,
+          code: token0Address.slice(0, 8),
+          name: token0Address.slice(0, 8),
+          decimals: 7,
+          issuer: '',
+          org: 'unknown',
+          isStable: false,
+        }
+      }
+    }
+
+    if (token1FromList) {
+      token1 = token1FromList
+    } else {
+      // Fetch token metadata from chain
+      try {
+        const metadata = await getTokenMetadata(token1Address)
+        token1 = {
+          contract: token1Address,
+          code: metadata.symbol || token1Address.slice(0, 8),
+          name: metadata.name || metadata.symbol || token1Address.slice(0, 8),
+          decimals: metadata.decimals,
+          issuer: '',
+          org: 'unknown',
+          isStable: false,
+        }
+      } catch (error) {
+        console.warn(
+          `Failed to fetch metadata for token ${token1Address}:`,
+          error,
+        )
+        token1 = {
+          contract: token1Address,
+          code: token1Address.slice(0, 8),
+          name: token1Address.slice(0, 8),
+          decimals: 7,
+          issuer: '',
+          org: 'unknown',
+          isStable: false,
+        }
+      }
+    }
+
     return {
-      token0: {
-        contract: token0Address,
-        code: token0Address.slice(0, 8),
-        name: token0Address.slice(0, 8),
-        decimals: 7,
-        issuer: '',
-        org: 'unknown',
-        ...token0FromList,
-      },
-      token1: {
-        contract: token1Address,
-        code: token1Address.slice(0, 8),
-        name: token1Address.slice(0, 8),
-        decimals: 7,
-        issuer: '',
-        org: 'unknown',
-        ...token1FromList,
-      },
+      token0,
+      token1,
       fee,
-      description: `${token0Address.slice(0, 8)}-${token1Address.slice(0, 8)} (${fee / 10000}% fee)`,
+      description: `${token0.code}-${token1.code} (${fee / 10000}% fee)`,
       reserve0,
       reserve1,
       liquidity,

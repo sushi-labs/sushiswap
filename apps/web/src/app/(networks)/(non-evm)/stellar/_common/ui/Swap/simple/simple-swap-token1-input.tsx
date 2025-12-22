@@ -11,7 +11,7 @@ export const SimpleSwapToken1Input = () => {
   const { setToken1 } = useSimpleSwapActions()
 
   const outputSwapTokenAmount = outputAmount
-    ? formatTokenBalance(outputAmount, token1, token1?.decimals ?? 7)
+    ? formatTokenBalance(outputAmount, token1, token1.decimals)
     : ''
 
   return (

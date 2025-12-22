@@ -6,7 +6,7 @@ import type { Token } from '~stellar/_common/lib/types/token.type'
 import TokenSelector from '~stellar/_common/ui/token-selector/token-selector'
 
 import { useStellarWallet } from '~stellar/providers'
-import { CurrencyIcon } from '../currency-icon'
+import { TokenIcon } from '../../General/TokenIcon'
 import { CurrencyInputBalancePanel } from './currency-input-balance-panel'
 import { CurrencyInputPricePanel } from './currency-input-price-panel'
 
@@ -134,7 +134,7 @@ export function CurrencyInput({
               {token ? (
                 <>
                   <span className="w-[28px] h-[28px] mr-0.5">
-                    <CurrencyIcon currency={token} height={28} width={28} />
+                    <TokenIcon currency={token} height={28} width={28} />
                   </span>
                   {token.code}
                   <SelectIcon />
@@ -154,7 +154,7 @@ export function CurrencyInput({
             {token ? (
               <>
                 <span className="w-[28px] h-[28px] mr-0.5">
-                  <CurrencyIcon currency={token} height={28} width={28} />
+                  <TokenIcon currency={token} height={28} width={28} />
                 </span>
                 {token.code}
               </>

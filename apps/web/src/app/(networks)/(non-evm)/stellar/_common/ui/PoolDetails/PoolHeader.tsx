@@ -24,12 +24,13 @@ interface PoolHeaderProps {
 
 export const PoolHeader = ({ pool, backUrl, address }: PoolHeaderProps) => {
   // If pool is not provided, fetch it using the address
-  const { data: fetchedPool, isLoading: isFetching } = usePoolInfo(
-    address || null,
-  )
+  const {
+    data: fetchedPool,
+    isFetching,
+    isPending,
+  } = usePoolInfo(address || null)
 
   const actualPool = pool || fetchedPool
-  const isLoading = !pool && isFetching
 
   return (
     <div className="flex flex-col gap-6">
@@ -40,7 +41,7 @@ export const PoolHeader = ({ pool, backUrl, address }: PoolHeaderProps) => {
         >
           ← Back
         </LinkInternal>
-        {isLoading ? (
+        {isFetching || isPending ? (
           <div className="flex items-center w-full gap-3">
             <div className="flex items-center">
               <SkeletonCircle radius={40} />
@@ -70,7 +71,8 @@ export const PoolHeader = ({ pool, backUrl, address }: PoolHeaderProps) => {
               </LinkExternal>
             </Button>
           </div>
-        ) : null}
+        ) : // Pool did not load
+        null}
       </div>
 
       <div className="flex flex-wrap items-center gap-y-5 gap-x-[32px] text-secondary-foreground mb-8 mt-1.5">
@@ -82,7 +84,7 @@ export const PoolHeader = ({ pool, backUrl, address }: PoolHeaderProps) => {
           <span className="tracking-tighter font-semibold">Network</span>
           Stellar
         </div>
-        {isLoading ? (
+        {isFetching || isPending ? (
           <>
             <div className="w-48">
               <SkeletonText />
@@ -136,7 +138,8 @@ export const PoolHeader = ({ pool, backUrl, address }: PoolHeaderProps) => {
               </LinkExternal>
             </div>
           </>
-        ) : null}
+        ) : // Pool did not load
+        null}
       </div>
     </div>
   )

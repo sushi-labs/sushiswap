@@ -13,7 +13,7 @@ import React, { type FC, useCallback, useState } from 'react'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 import { formatAddress } from '~stellar/_common/lib/utils/formatters'
 import { getStellarContractLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
-import { CurrencyIcon } from '../currency/currency-icon'
+import { TokenIcon } from '../General/TokenIcon'
 
 interface TokenSelectorImportRow {
   token: Token
@@ -40,7 +40,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
         <div className="flex items-center w-full hover:bg-muted focus:bg-accent h-full rounded-lg px-3">
           <div className="flex flex-row items-center flex-grow gap-4">
             <div className="w-10 h-10">
-              <CurrencyIcon currency={token} height={40} width={40} />
+              <TokenIcon currency={token} height={40} width={40} />
             </div>
             <div className="flex flex-col items-start">
               <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 dark:group-hover:text-white">
@@ -71,7 +71,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
           <List className="!pt-0">
             <List.Control>
               <div className="flex items-center gap-4 py-2 px-4">
-                <CurrencyIcon currency={token} width={40} height={40} />
+                <TokenIcon currency={token} width={40} height={40} />
                 <div className="flex flex-col gap-1">
                   <span className="truncate font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 group-hover:dark:text-white">
                     {token.code}

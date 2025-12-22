@@ -66,7 +66,11 @@ export const SimpleSwapExecuteButton = () => {
     }
   }, [amount, token0])
 
-  const { route } = useBestRoute({
+  const {
+    route,
+    isLoading: isRouteLoading,
+    isFetching: isRouteFetching,
+  } = useBestRoute({
     tokenIn: token0,
     tokenOut: token1,
     amountIn,
@@ -212,6 +216,10 @@ export const SimpleSwapExecuteButton = () => {
     if (hasRouteButZeroOutput) {
       return 'Amount too small'
     }
+    // Show loading state while fetching route
+    if (amount && Number(amount) > 0 && (isRouteLoading || isRouteFetching)) {
+      return 'Finding best route...'
+    }
     if (
       amount &&
       Number(amount) > 0 &&
@@ -230,6 +238,8 @@ export const SimpleSwapExecuteButton = () => {
     amount,
     route,
     outputAmount,
+    isRouteLoading,
+    isRouteFetching,
   ])
 
   return (

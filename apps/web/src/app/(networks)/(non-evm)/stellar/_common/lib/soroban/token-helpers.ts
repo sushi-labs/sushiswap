@@ -243,7 +243,6 @@ export async function getTokenMetadata(tokenAddress: string): Promise<{
   name: string
   symbol: string
   decimals: number
-  totalSupply: bigint
 }> {
   try {
     const tokenContractClient = getTokenContractClient({
@@ -296,7 +295,6 @@ export async function getTokenMetadata(tokenAddress: string): Promise<{
       name: nameResult || '',
       symbol: symbolResult || '',
       decimals: decimalsResult || 0,
-      totalSupply: 0n, // TODO(drew): This would need to be implemented based on the actual contract
     }
   } catch (error) {
     console.error('Error fetching token metadata:', error)
@@ -304,7 +302,6 @@ export async function getTokenMetadata(tokenAddress: string): Promise<{
       name: '',
       symbol: '',
       decimals: 0,
-      totalSupply: 0n,
     }
   }
 }

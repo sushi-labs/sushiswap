@@ -3,7 +3,7 @@ import { Badge, classNames } from '@sushiswap/ui'
 import React, { type CSSProperties } from 'react'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 import { formatNumberWithDecimals } from '~stellar/_common/lib/utils/formatters'
-import { CurrencyIcon } from '../currency/currency-icon'
+import { TokenIcon } from '../General/TokenIcon'
 
 type TokenListItem = {
   id: string
@@ -47,12 +47,12 @@ export function TokenListItem({
                 }
               >
                 <div className="w-10 h-10">
-                  <CurrencyIcon currency={token} />
+                  <TokenIcon currency={token} />
                 </div>
               </Badge>
             ) : (
               <div className="w-10 h-10">
-                <CurrencyIcon currency={token} />
+                <TokenIcon currency={token} />
               </div>
             )}
             <div className="flex flex-col items-start">

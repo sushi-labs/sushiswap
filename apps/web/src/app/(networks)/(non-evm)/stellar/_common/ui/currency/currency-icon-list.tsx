@@ -7,7 +7,7 @@ import {
   cloneElement,
   isValidElement,
 } from 'react'
-import type { CurrencyIcon } from './currency-icon'
+import type { TokenIcon } from '../General/TokenIcon'
 
 export interface CurrencyIconList {
   children: ReactNode
@@ -24,7 +24,7 @@ export const CurrencyIconList: FC<CurrencyIconList> = ({
     <div className="flex items-center">
       <div className={classNames('inline-flex')}>
         {Children.map(children, (child, index) => {
-          if (isValidElement<ComponentProps<typeof CurrencyIcon>>(child)) {
+          if (isValidElement<ComponentProps<typeof TokenIcon>>(child)) {
             return (
               <div
                 className="rounded-full inline-flex z-10 border-2 ring-gray-50 dark:ring-slate-950"

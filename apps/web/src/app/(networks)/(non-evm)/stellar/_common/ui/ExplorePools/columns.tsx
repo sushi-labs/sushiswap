@@ -9,8 +9,8 @@ import {
 } from '@sushiswap/ui'
 import { StellarCircle } from '@sushiswap/ui/icons/network/circle/StellarCircle'
 import type { ColumnDef } from '@tanstack/react-table'
-import { formatNumber, formatPercent, formatUSD } from 'sushi'
-import { CurrencyIcon } from '../currency/currency-icon'
+import { formatPercent, formatUSD } from 'sushi'
+import { TokenIcon } from '../General/TokenIcon'
 import { CurrencyIconList } from '../currency/currency-icon-list'
 import type { PoolData } from './PoolsTable'
 
@@ -28,8 +28,8 @@ export const NAME_COLUMN: ColumnDef<PoolData, unknown> = {
             badgeContent={<StellarCircle width={14} height={14} />}
           >
             <CurrencyIconList iconWidth={26} iconHeight={26}>
-              <CurrencyIcon currency={row.token0} />
-              <CurrencyIcon currency={row.token1} />
+              <TokenIcon currency={row.token0} />
+              <TokenIcon currency={row.token1} />
             </CurrencyIconList>
           </Badge>
         </div>

@@ -26,7 +26,7 @@ import { useSortedTokenList } from '~stellar/_common/lib/hooks/token/use-sorted-
 import { useTokenBalancesMap } from '~stellar/_common/lib/hooks/token/use-token-balance'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 import { useStellarWallet } from '~stellar/providers'
-import { CurrencyIcon } from '../currency/currency-icon'
+import { TokenIcon } from '../General/TokenIcon'
 import { TokenListItem } from './token-selector-list-item'
 
 type RowCallback = (row: {
@@ -213,7 +213,7 @@ const CommonTokenButton = ({
     >
       <div className="flex items-center gap-2 w-full ">
         <div className="w-6 h-6">
-          <CurrencyIcon currency={token} width={24} height={24} />
+          <TokenIcon currency={token} width={24} height={24} />
         </div>
 
         <p>{token.code}</p>

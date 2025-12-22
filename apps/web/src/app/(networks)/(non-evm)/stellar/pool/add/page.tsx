@@ -133,7 +133,7 @@ export default function AddPoolPage() {
     orderedToken0Amount,
     tickLower,
     tickUpper,
-    orderedToken0?.decimals || 7,
+    orderedToken0?.decimals ?? 7,
     orderedToken0?.code,
   )
 
@@ -147,8 +147,8 @@ export default function AddPoolPage() {
     poolBalanceData?.token1.amount || '0',
     tickLower,
     tickUpper,
-    poolInfo?.token0.decimals || 7,
-    poolInfo?.token1.decimals || 7,
+    poolInfo?.token0.decimals ?? 7,
+    poolInfo?.token1.decimals ?? 7,
   )
 
   // Use auto-calculated amount for existing pools, manual input for new pools or uninitialized pools

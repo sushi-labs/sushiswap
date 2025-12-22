@@ -31,7 +31,7 @@ export default function PoolPage({ params }: PoolPageProps) {
   const address = decodeURIComponent(resolvedParams.address)
   const {
     data: pool,
-    isLoading: isLoadingPool,
+    isPending: isPendingPool,
     isFetching: isFetchingPool,
     error: poolError,
     refetch: refetchPool,
@@ -41,18 +41,18 @@ export default function PoolPage({ params }: PoolPageProps) {
   // Check if pool is initialized
   const {
     data: initialized,
-    isLoading: isLoadingInitialized,
+    isPending: isPendingInitialized,
     isFetching: isFetchingInitialized,
     error: initializedError,
     refetch: refetchInitialized,
   } = usePoolInitialized(address)
 
-  const isLoading = isLoadingPool || isLoadingInitialized
+  const isPending = isPendingPool || isPendingInitialized
   const isFetching = isFetchingPool || isFetchingInitialized
   const hasError = poolError || initializedError
 
   // Show loading state while either query is loading
-  if (isLoading) {
+  if (isPending || isFetching) {
     return (
       <Container maxWidth="5xl" className="px-4">
         <div className="flex flex-col gap-6">
