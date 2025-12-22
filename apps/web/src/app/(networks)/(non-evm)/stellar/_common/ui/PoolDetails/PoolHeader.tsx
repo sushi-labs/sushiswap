@@ -24,12 +24,15 @@ interface PoolHeaderProps {
 
 export const PoolHeader = ({ pool, backUrl, address }: PoolHeaderProps) => {
   // If pool is not provided, fetch it using the address
-  const { data: fetchedPool, isLoading: isFetching } = usePoolInfo(
-    address || null,
-  )
+  const {
+    data: fetchedPool,
+    isLoading: isFetching,
+    isPending,
+  } = usePoolInfo(address || null)
 
   const actualPool = pool || fetchedPool
-  const isLoading = !pool && isFetching
+  // Show loading state while fetching OR while waiting for query to be enabled (isPending)
+  const isLoading = !pool && (isFetching || (isPending && !fetchedPool))
 
   return (
     <div className="flex flex-col gap-6">
@@ -70,7 +73,18 @@ export const PoolHeader = ({ pool, backUrl, address }: PoolHeaderProps) => {
               </LinkExternal>
             </Button>
           </div>
-        ) : null}
+        ) : (
+          // Fallback skeleton for when data is loading but isLoading hasn't been set yet
+          <div className="flex items-center w-full gap-3">
+            <div className="flex items-center">
+              <SkeletonCircle radius={40} />
+              <SkeletonCircle radius={40} className="-ml-[13.33px]" />
+            </div>
+            <div className="w-[200px]">
+              <SkeletonText fontSize="3xl" />
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-wrap items-center gap-y-5 gap-x-[32px] text-secondary-foreground mb-8 mt-1.5">
@@ -136,7 +150,17 @@ export const PoolHeader = ({ pool, backUrl, address }: PoolHeaderProps) => {
               </LinkExternal>
             </div>
           </>
-        ) : null}
+        ) : (
+          // Fallback skeleton for when data is loading but isLoading hasn't been set yet
+          <>
+            <div className="w-48">
+              <SkeletonText />
+            </div>
+            <div className="w-48">
+              <SkeletonText />
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

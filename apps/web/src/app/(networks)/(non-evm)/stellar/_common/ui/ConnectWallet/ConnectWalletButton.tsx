@@ -30,7 +30,7 @@ export const ConnectWalletButton = (props: ButtonProps) => {
           disabled={isLoading}
           asChild
           {...props}
-          className={classNames('w-44', props.className)}
+          className={classNames('w-auto sm:w-44', props.className)}
         >
           {isLoading ? (
             <SkeletonText />

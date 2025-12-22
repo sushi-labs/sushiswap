@@ -198,6 +198,15 @@ export const SimpleSwapExecuteButton = () => {
     needsToken1Trustline ||
     (showPriceImpactWarning && !checked)
 
+  // Get loading state from route hook
+  const { isLoading: isRouteLoading, isFetching: isRouteFetching } =
+    useBestRoute({
+      tokenIn: token0,
+      tokenOut: token1,
+      amountIn,
+      enabled: amountIn > 0n,
+    })
+
   // Determine button text
   const buttonText = useMemo(() => {
     if (executeSwap.isPending || executeMultiHopSwap.isPending) {
@@ -211,6 +220,10 @@ export const SimpleSwapExecuteButton = () => {
     }
     if (hasRouteButZeroOutput) {
       return 'Amount too small'
+    }
+    // Show loading state while fetching route
+    if (amount && Number(amount) > 0 && (isRouteLoading || isRouteFetching)) {
+      return 'Finding best route...'
     }
     if (
       amount &&
@@ -230,6 +243,8 @@ export const SimpleSwapExecuteButton = () => {
     amount,
     route,
     outputAmount,
+    isRouteLoading,
+    isRouteFetching,
   ])
 
   return (

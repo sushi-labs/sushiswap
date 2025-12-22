@@ -23,7 +23,7 @@ export const TokenIcon = ({ currency, height = 40, width = 40 }: IconProps) => {
     <>
       {currency?.icon ? (
         <div
-          style={{ width, height }}
+          style={{ width, height, minWidth: width, minHeight: height }}
           className="relative flex shrink-0 overflow-hidden rounded-full"
         >
           <Image
@@ -32,15 +32,18 @@ export const TokenIcon = ({ currency, height = 40, width = 40 }: IconProps) => {
             alt={currency.code}
             height={height}
             width={width}
-            className="aspect-square h-full w-full"
+            className="object-cover rounded-full"
+            style={{ width, height }}
           />
         </div>
       ) : (
         <div
-          className="text-xs text-white font-bold rounded-full flex items-center justify-center bg-gradient-to-b from-gray-300 to-gray-200 dark:from-blue-700 dark:to-blue-900"
+          className="text-xs text-white font-bold rounded-full flex items-center justify-center shrink-0 bg-gradient-to-b from-gray-300 to-gray-200 dark:from-blue-700 dark:to-blue-900"
           style={{
             width: `${width}px`,
             height: `${height}px`,
+            minWidth: `${width}px`,
+            minHeight: `${height}px`,
             background: hashStringToColor(
               currency ? `${currency.code} ${currency.name}` : '??',
             ),

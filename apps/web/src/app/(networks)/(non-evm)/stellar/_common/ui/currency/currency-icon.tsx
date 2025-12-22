@@ -1,7 +1,9 @@
+import { cloudinaryLogoFetchLoader } from '@sushiswap/ui'
+import Image from 'next/image'
 import React from 'react'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 
-interface CurrencyIcon {
+interface CurrencyIconProps {
   currency: Token | undefined
   height?: number
   width?: number
@@ -21,39 +23,39 @@ function hashStringToColor(str: string) {
   const g = (hash & 0x00ff00) >> 8
   const b = hash & 0x0000ff
 
-  return (
-    // biome-ignore lint/style/useTemplate: Minddeft
-    '#' +
-    // biome-ignore lint/style/useTemplate: Minddeft
-    ('0' + r.toString(16)).substr(-2) +
-    // biome-ignore lint/style/useTemplate: Minddeft
-    ('0' + g.toString(16)).substr(-2) +
-    // biome-ignore lint/style/useTemplate: Minddeft
-    ('0' + b.toString(16)).substr(-2)
-  )
+  return `#${`0${r.toString(16)}`.substr(-2)}${`0${g.toString(16)}`.substr(-2)}${`0${b.toString(16)}`.substr(-2)}`
 }
 
 export const CurrencyIcon = ({
   currency,
   height = 40,
   width = 40,
-}: CurrencyIcon) => {
+}: CurrencyIconProps) => {
   return (
     <>
       {currency?.icon ? (
-        <img
-          src={currency?.icon}
-          alt=""
-          className="rounded-full"
-          height={height}
-          width={width}
-        />
+        <div
+          style={{ width, height, minWidth: width, minHeight: height }}
+          className="relative flex shrink-0 overflow-hidden rounded-full"
+        >
+          <Image
+            loader={cloudinaryLogoFetchLoader}
+            src={currency.icon}
+            alt={currency.code || ''}
+            height={height}
+            width={width}
+            className="object-cover rounded-full"
+            style={{ width, height }}
+          />
+        </div>
       ) : (
         <div
-          className="text-xs text-white font-bold rounded-full flex items-center justify-center bg-gradient-to-b from-gray-300 to-gray-200 dark:from-blue-700 dark:to-blue-900"
+          className="text-xs text-white font-bold rounded-full flex items-center justify-center shrink-0 bg-gradient-to-b from-gray-300 to-gray-200 dark:from-blue-700 dark:to-blue-900"
           style={{
             width: `${width}px`,
             height: `${height}px`,
+            minWidth: `${width}px`,
+            minHeight: `${height}px`,
             background: hashStringToColor(
               currency ? `${currency.code} ${currency.name}` : '??',
             ),
