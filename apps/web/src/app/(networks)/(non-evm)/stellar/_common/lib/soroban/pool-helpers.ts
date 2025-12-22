@@ -5,7 +5,6 @@ import { formatTokenAmount } from '../utils/formatters'
 import { type OracleHints, fetchOracleHints } from '../utils/slot-hint-helpers'
 import { getPoolLensContractClient } from './client'
 import { contractAddresses } from './contracts'
-import { discoverAllPools } from './dex-factory-helpers'
 import { isPoolInitialized } from './pool-initialization'
 import {
   getTokenBalance,
@@ -157,52 +156,6 @@ export async function getPoolInfoFromContract(
   } catch (error) {
     console.error('Failed to query pool contract:', error)
     return null
-  }
-}
-/**
- * Get all available pools with real-time data
- * Queries factory.get_pool() for all token pair + fee tier combinations
- * (Factory has no "list all pools" method, so we query each combination)
- * @returns Array of pool information with actual liquidity and reserves
- * @deprecated Use useTopPools query instead
- */
-export async function getAllPools(): Promise<PoolInfo[]> {
-  try {
-    const poolAddresses = await discoverAllPools()
-
-    if (poolAddresses.length === 0) {
-      console.warn('⚠️ No pools found from factory')
-      return []
-    }
-
-    // Fetch detailed info for each pool in parallel
-    const poolPromises = poolAddresses.map(async (address) => {
-      try {
-        // First check if the pool is initialized
-        const initialized = await isPoolInitialized(address)
-        if (!initialized) {
-          console.log(`⚠️ Skipping uninitialized pool: ${address}`)
-          return null
-        }
-
-        // Then get pool info
-        return await getPoolInfo(address)
-      } catch (error) {
-        console.error(`Error fetching pool ${address}:`, error)
-        return null
-      }
-    })
-
-    const results = await Promise.all(poolPromises)
-    const validPools = results.filter((pool) => pool !== null)
-
-    console.log(
-      `✅ Successfully loaded ${validPools.length}/${poolAddresses.length} pools (${poolAddresses.length - validPools.length} empty/uninitialized pools skipped)`,
-    )
-    return validPools
-  } catch (error) {
-    console.error('❌ Error in getAllPools:', error)
-    return []
   }
 }
 

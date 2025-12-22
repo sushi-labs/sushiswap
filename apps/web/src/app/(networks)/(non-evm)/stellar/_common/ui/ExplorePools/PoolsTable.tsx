@@ -12,12 +12,10 @@ import {
 import type { SortingState, TableState } from '@tanstack/react-table'
 import { useCallback, useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
-import { useAllPools } from '~stellar/_common/lib/hooks/pool/use-all-pools'
 import {
   type TopPool,
   useTopPools,
 } from '~stellar/_common/lib/hooks/pool/use-top-pools'
-import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import {
   APR_COLUMN,
   FEES_1D_COLUMN,
@@ -27,13 +25,9 @@ import {
   VOLUME_1D_COLUMN,
 } from './columns'
 
-export type PoolData =
-  | (PoolInfo & { tag: 'poolInfo' })
-  | (TopPool & { tag: 'topPool' })
-
 export const PoolsTable = () => {
   // Dynamic page links
-  const rowLink = useCallback((row: PoolData) => {
+  const rowLink = useCallback((row: TopPool) => {
     return `/stellar/pool/${row.address}`
   }, [])
 
@@ -43,43 +37,30 @@ export const PoolsTable = () => {
   ])
 
   // Get the pool data
-  const { data: topPools, isLoading: isLoadingTopPools } = useTopPools()
   const {
-    data: pools,
-    isLoading: isLoadingAllPools,
-    isFetching: isFetchingAllPools,
+    data: topPools,
+    isPending,
+    isFetching,
     error,
     refetch,
-  } = useAllPools()
-  const isLoading = isLoadingTopPools || isLoadingAllPools
+  } = useTopPools()
 
   const { tokenSymbols } = usePoolFilters()
 
-  const filteredMergedPools: PoolData[] = useMemo(() => {
-    const mergedPools: PoolData[] = []
-    const poolAdded = new Set<string>()
-    for (const topPool of topPools ?? []) {
-      mergedPools.push({ ...topPool, tag: 'topPool' })
-      poolAdded.add(topPool.address)
-    }
-    for (const pool of pools ?? []) {
-      if (poolAdded.has(pool.address)) {
-        continue
-      }
-      mergedPools.push({ ...pool, tag: 'poolInfo' })
-    }
+  const filteredMergedPools: TopPool[] = useMemo(() => {
+    const pools = topPools ?? []
     if (tokenSymbols.length === 0) {
-      return mergedPools
+      return pools
     }
-    return mergedPools.filter((mergedPool) => {
+    return pools.filter((pool) => {
       const poolSearchTermsCaseInsensitive = [
-        mergedPool.token0.code.toLowerCase(),
-        mergedPool.token1.code.toLowerCase(),
+        pool.token0.code.toLowerCase(),
+        pool.token1.code.toLowerCase(),
       ]
       const poolSearchTermsCaseSensitive = [
-        mergedPool.address,
-        mergedPool.token0.contract,
-        mergedPool.token1.contract,
+        pool.address,
+        pool.token0.contract,
+        pool.token1.contract,
       ]
       return tokenSymbols.every((symbol) => {
         return (
@@ -90,7 +71,7 @@ export const PoolsTable = () => {
         )
       })
     })
-  }, [pools, tokenSymbols, topPools])
+  }, [tokenSymbols, topPools])
 
   const state: Partial<TableState> = useMemo(() => {
     return {
@@ -103,7 +84,7 @@ export const PoolsTable = () => {
   }, [sorting, filteredMergedPools])
 
   // Show error state with retry button
-  if (error && !isLoading) {
+  if (error && !isPending) {
     return (
       <Card>
         <CardHeader>
@@ -116,12 +97,8 @@ export const PoolsTable = () => {
               issue.
             </p>
             <p className="text-sm text-red-500 text-center">{error.message}</p>
-            <Button
-              onClick={() => refetch()}
-              disabled={isFetchingAllPools}
-              size="sm"
-            >
-              {isFetchingAllPools ? 'Retrying...' : 'Retry'}
+            <Button onClick={() => refetch()} disabled={isFetching} size="sm">
+              {isFetching ? 'Retrying...' : 'Retry'}
             </Button>
           </div>
         </CardContent>
@@ -133,7 +110,7 @@ export const PoolsTable = () => {
     <Card>
       <CardHeader>
         <CardTitle>
-          {isLoading ? (
+          {isPending ? (
             <div className="!w-28 !h-[18px]">
               <SkeletonText />
             </div>
@@ -150,7 +127,7 @@ export const PoolsTable = () => {
       <DataTable
         state={state}
         onSortingChange={setSorting}
-        loading={isLoading}
+        loading={isPending}
         linkFormatter={rowLink}
         columns={[
           NAME_COLUMN,

@@ -175,10 +175,18 @@ function useBasePoolGraph() {
   // 1. Query all pools from the factory
   // 2. Cache results
   // 3. Only query active/liquid pools
-  const baseTokens = staticTokens.map((token) => token.contract)
+  const baseTokenSymbols = ['XLM', 'USDC', 'EURC', 'PYUSD']
+  const baseTokens = staticTokens.filter((token) =>
+    baseTokenSymbols.includes(token.code),
+  )
+  const baseTokenAddresses = baseTokens.map((token) => token.contract)
 
   return useQuery<PoolGraphData>({
-    queryKey: ['stellar', 'base-pool-graph', [...baseTokens].sort().join(',')],
+    queryKey: [
+      'stellar',
+      'base-pool-graph',
+      [...baseTokenAddresses].sort().join(','),
+    ],
     queryFn: async () => {
       // Store arrays of vertices per token pair to handle multiple fee tiers
       const vertices = new Map<string, Vertex[]>()
@@ -200,10 +208,10 @@ function useBasePoolGraph() {
         // Query all possible pool combinations
         const poolQueryInputs: GetPoolsByTokenPairsBatchedParams = []
 
-        for (let i = 0; i < baseTokens.length; i++) {
-          for (let j = i + 1; j < baseTokens.length; j++) {
-            const tokenA = baseTokens[i]
-            const tokenB = baseTokens[j]
+        for (let i = 0; i < baseTokenAddresses.length; i++) {
+          for (let j = i + 1; j < baseTokenAddresses.length; j++) {
+            const tokenA = baseTokenAddresses[i]
+            const tokenB = baseTokenAddresses[j]
             for (const fee of feeTiers) {
               poolQueryInputs.push({
                 token_a: isAddressLower(tokenA, tokenB) ? tokenA : tokenB,
