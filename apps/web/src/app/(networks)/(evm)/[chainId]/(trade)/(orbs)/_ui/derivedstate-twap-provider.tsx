@@ -23,7 +23,7 @@ import { EvmChainId, type EvmCurrency } from 'sushi/evm'
 import { type Hex, encodeFunctionData } from 'viem'
 import type { Address } from 'viem/accounts'
 import { parseUnits } from 'viem/utils'
-import { z } from 'zod'
+import * as z from 'zod'
 import {
   DerivedstateSimpleSwapProvider,
   useDerivedStateSimpleSwap,

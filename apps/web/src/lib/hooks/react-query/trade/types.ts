@@ -1,7 +1,7 @@
 import type { Amount, Percent, Price } from 'sushi'
 import type { EvmChainId, EvmCurrency, RouterLiquiditySource } from 'sushi/evm'
 import type { Address, Hex, WriteContractParameters } from 'viem'
-import type z from 'zod'
+import type * as z from 'zod'
 import type { legValidator, tradeValidator01 } from './validator01'
 import type { tradeValidator02 } from './validator02'
 

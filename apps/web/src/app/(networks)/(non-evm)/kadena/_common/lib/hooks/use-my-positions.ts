@@ -5,7 +5,7 @@ import type {
 import { type InfiniteData, useInfiniteQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { useCallback } from 'react'
-import { z } from 'zod'
+import * as z from 'zod'
 import { useKadena } from '~kadena/kadena-wallet-provider'
 
 const walletPositionsResponseSchema = z.object({

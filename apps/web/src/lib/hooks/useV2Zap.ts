@@ -3,7 +3,7 @@ import { isZapSupportedChainId } from 'src/config'
 import { type Percent, sz } from 'sushi'
 import type { EvmChainId } from 'sushi/evm'
 import type { Address } from 'viem'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const txSchema = z.object({
   data: sz.hex(),

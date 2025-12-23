@@ -4,7 +4,7 @@ import {
 } from '@sushiswap/graph-client/de.fi'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { type EvmToken, isTokenSecurityChainId } from 'sushi/evm'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const bit = z
   .union([z.enum(['0', '1']), z.undefined()])
