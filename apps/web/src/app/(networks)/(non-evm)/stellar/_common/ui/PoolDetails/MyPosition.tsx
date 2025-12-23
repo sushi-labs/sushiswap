@@ -17,7 +17,6 @@ export const MyPosition: React.FC<MyPositionProps> = ({ pool }) => {
   const { connectedAddress } = useStellarWallet()
 
   const {
-    totalValue,
     isLoading: isLoadingPositions,
     positions,
     error,
@@ -48,6 +47,14 @@ export const MyPosition: React.FC<MyPositionProps> = ({ pool }) => {
       { token0: 0n, token1: 0n },
     )
   }, [positions])
+
+  const token0UsdValue =
+    Number(formatTokenAmount(actualAmounts.token0, pool.token0.decimals)) *
+    Number(priceToken0 ?? 0)
+
+  const token1UsdValue =
+    Number(formatTokenAmount(actualAmounts.token1, pool.token1.decimals)) *
+    Number(priceToken1 ?? 0)
 
   // If no positions found, show empty state
   if (!isLoading && positions.length === 0) {
@@ -88,7 +95,9 @@ export const MyPosition: React.FC<MyPositionProps> = ({ pool }) => {
         <CardHeader>
           <CardTitle>My Position</CardTitle>
           <div className="text-md">
-            {isLoading ? 'Loading...' : formatUSD(totalValue)}
+            {isLoading
+              ? 'Loading...'
+              : formatUSD(token0UsdValue + token1UsdValue)}
           </div>
         </CardHeader>
         <CardContent>
@@ -105,11 +114,7 @@ export const MyPosition: React.FC<MyPositionProps> = ({ pool }) => {
                 actualAmounts.token0,
                 pool.token0.decimals,
               )}
-              usdAmount={(
-                Number(
-                  formatTokenAmount(actualAmounts.token0, pool.token0.decimals),
-                ) * Number(priceToken0 ?? 0)
-              ).toFixed(2)}
+              usdAmount={token0UsdValue.toFixed(2)}
             />
             <LiquidityItem
               isLoading={isLoading}
@@ -118,11 +123,7 @@ export const MyPosition: React.FC<MyPositionProps> = ({ pool }) => {
                 actualAmounts.token1,
                 pool.token1.decimals,
               )}
-              usdAmount={(
-                Number(
-                  formatTokenAmount(actualAmounts.token1, pool.token1.decimals),
-                ) * Number(priceToken1 ?? 0)
-              ).toFixed(2)}
+              usdAmount={token1UsdValue.toFixed(2)}
             />
           </div>
         </CardContent>

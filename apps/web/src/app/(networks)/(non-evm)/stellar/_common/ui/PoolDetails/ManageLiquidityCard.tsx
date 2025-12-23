@@ -483,7 +483,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
             <div className="space-y-4">
               {!isConnected ? (
                 // Show Connect Wallet when not connected
-                <ConnectWalletButton className="w-full" size="lg" />
+                <ConnectWalletButton fullWidth size="lg" />
               ) : (
                 // Show form when connected
                 <>
@@ -735,7 +735,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
             <div className="space-y-4">
               {!isConnected ? (
                 // Show Connect Wallet when not connected
-                <ConnectWalletButton className="w-full" size="lg" />
+                <ConnectWalletButton fullWidth size="lg" />
               ) : myPositions.length === 0 ? (
                 <div className="text-center py-8 space-y-2">
                   <p className="text-muted-foreground">

@@ -6,7 +6,6 @@ import {
   PopoverContent,
   PopoverTrigger,
   SkeletonText,
-  classNames,
 } from '@sushiswap/ui'
 import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
 import { useState } from 'react'
@@ -30,7 +29,7 @@ export const ConnectWalletButton = (props: ButtonProps) => {
           disabled={isLoading}
           asChild
           {...props}
-          className={classNames('w-auto sm:w-44', props.className)}
+          className={props.className}
         >
           {isLoading ? (
             <SkeletonText />

@@ -1,7 +1,7 @@
 import { useDebounce } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import type { Token } from '~stellar/_common/lib/types/token.type'
-import { getTokenMetadata } from '../../soroban/token-helpers'
+import { getTokenByContract } from '../../soroban'
 import {
   filterTokens,
   getSortedTokensByQuery,
@@ -49,21 +49,7 @@ export const useSortedTokenList = ({ query, tokenMap, balanceMap }: Params) => {
         isContractAddress(debouncedQuery)
       ) {
         try {
-          const metadata = await getTokenMetadata(debouncedQuery)
-          if (metadata?.symbol) {
-            // Create a token object from the fetched metadata
-            const customContractToken: Token = {
-              contract: debouncedQuery,
-              code: metadata.symbol,
-              name: metadata.name || metadata.symbol,
-              decimals: metadata.decimals,
-              icon: undefined, // No icon for custom tokens
-              issuer: '',
-              org: 'custom',
-              isStable: false,
-            }
-            filteredSortedTokens = [customContractToken]
-          }
+          filteredSortedTokens = [await getTokenByContract(debouncedQuery)]
         } catch (error) {
           console.warn(
             'Failed to fetch token metadata for:',

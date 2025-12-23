@@ -4,7 +4,7 @@ import {
 } from '~stellar/_common/lib/soroban/constants'
 import {
   getFees,
-  getPool,
+  getPoolDirectSDK,
 } from '~stellar/_common/lib/soroban/dex-factory-helpers'
 import type { PoolBasicInfo } from '~stellar/_common/lib/soroban/pool-helpers'
 import type { Token } from '~stellar/_common/lib/types/token.type'
@@ -170,7 +170,7 @@ export class QuoteService {
     // Check each common fee tier
     for (const fee of feeTiers) {
       try {
-        const pool = await getPool({
+        const pool = await getPoolDirectSDK({
           tokenA: tokenA.contract,
           tokenB: tokenB.contract,
           fee,

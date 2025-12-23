@@ -1,10 +1,9 @@
 import { Address } from '@stellar/stellar-sdk'
-import { FEE_TIERS, TICK_SPACINGS } from '../utils/ticks'
+import { FEE_TIERS } from '../utils/ticks'
 import { getFactoryContractClient } from './client'
-import { DEFAULT_TIMEOUT, ZERO_ADDRESS, isAddressLower } from './constants'
+import { DEFAULT_TIMEOUT, isAddressLower } from './constants'
 import { contractAddresses } from './contracts'
 import { isPoolInitialized } from './pool-initialization'
-import { getBaseTokens } from './token-helpers'
 import { submitTransaction, waitForTransaction } from './transaction-helpers'
 
 /**
@@ -55,7 +54,7 @@ export async function createAndInitializePool({
     console.log('🏭 Ordered tokens:', { token0, token1 })
 
     // Check if pool already exists
-    const existingPool = await getPoolTransactionBuilder({
+    const existingPool = await getPoolDirectSDK({
       tokenA: token0,
       tokenB: token1,
       fee,
@@ -195,26 +194,6 @@ function integerSqrt(x: bigint): bigint {
 }
 
 /**
- * Get the address of an existing pool
- * @param tokenA - Address of the first token
- * @param tokenB - Address of the second token
- * @param fee - Fee tier
- * @returns The pool address if it exists, null otherwise
- */
-export async function getPool({
-  tokenA,
-  tokenB,
-  fee,
-}: {
-  tokenA: string
-  tokenB: string
-  fee: number
-}): Promise<string | null> {
-  // Use the transaction builder approach which is already implemented
-  return await getPoolTransactionBuilder({ tokenA, tokenB, fee })
-}
-
-/**
  * Get pool using direct SDK approach with Contract method
  * @param tokenA - Address of the first token
  * @param tokenB - Address of the second token
@@ -263,58 +242,6 @@ export async function getPoolDirectSDK({
 }
 
 /**
- * Get pool using transaction builder and simulation approach
- * This matches how the router's get_pool_address() function works
- * @param tokenA - Address of the first token
- * @param tokenB - Address of the second token
- * @param fee - Fee tier
- * @param userAddress - User address for account simulation
- * @returns The pool address if it exists, null otherwise
- */
-export async function getPoolTransactionBuilder({
-  tokenA,
-  tokenB,
-  fee,
-}: {
-  tokenA: string
-  tokenB: string
-  fee: number
-}): Promise<string | null> {
-  try {
-    // Order tokens by decoded bytes - EXACTLY like the router does
-    // Note: Must compare decoded bytes, not base32 strings (base32 doesn't preserve byte ordering)
-    const [token0, token1] = isAddressLower(tokenA, tokenB)
-      ? [tokenA, tokenB]
-      : [tokenB, tokenA]
-
-    // Get account for transaction building
-    const factoryContractClient = getFactoryContractClient({
-      contractId: contractAddresses.FACTORY,
-    })
-    const assembledTransaction = await factoryContractClient.get_pool(
-      {
-        token_a: token0,
-        token_b: token1,
-        fee: fee,
-      },
-      {
-        timeoutInSeconds: 30,
-        fee: 100000,
-      },
-    )
-    const result = assembledTransaction.result
-
-    if (result === undefined || result === ZERO_ADDRESS) {
-      return null
-    }
-    return result
-  } catch (error) {
-    console.error('Transaction Builder getPool error:', error)
-    return null
-  }
-}
-
-/**
  * Check if a pool exists for the given token pair and fee
  * @param tokenA - Address of the first token
  * @param tokenB - Address of the second token
@@ -331,7 +258,7 @@ export async function poolExists({
   fee: number
 }): Promise<boolean> {
   try {
-    const poolAddress = await getPool({ tokenA, tokenB, fee })
+    const poolAddress = await getPoolDirectSDK({ tokenA, tokenB, fee })
     return poolAddress !== null
   } catch {
     return false
@@ -340,73 +267,4 @@ export async function poolExists({
 
 export function getFees(): number[] {
   return FEE_TIERS.map((tier) => tier.value)
-}
-
-/**
- * Debug function to test pool creation parameters
- */
-export async function debugCreatePoolParams(
-  tokenA: string,
-  tokenB: string,
-  fee: number,
-) {
-  console.log('\n🔍 Debug Create Pool Parameters')
-  console.log('================================')
-
-  console.log('Input parameters:')
-  console.log('  tokenA:', tokenA)
-  console.log('  tokenB:', tokenB)
-  console.log('  fee:', fee)
-
-  // Check token ordering (by decoded bytes, not string comparison)
-  const [token0, token1] = isAddressLower(tokenA, tokenB)
-    ? [tokenA, tokenB]
-    : [tokenB, tokenA]
-  console.log('\nOrdered tokens:')
-  console.log('  token0 (first):', token0)
-  console.log('  token1 (second):', token1)
-  console.log('  token0 < token1 (by bytes):', isAddressLower(token0, token1))
-
-  // Check if pool already exists
-  try {
-    const existingPool = await getPoolTransactionBuilder({
-      tokenA: token0,
-      tokenB: token1,
-      fee,
-    })
-
-    if (existingPool) {
-      console.log('❌ Pool already exists at:', existingPool)
-    } else {
-      console.log('✅ No existing pool found, can create new one')
-    }
-  } catch (error) {
-    console.log(
-      '✅ No existing pool found (error expected):',
-      error instanceof Error ? error.message : String(error),
-    )
-  }
-
-  // Test factory contract simulation
-  try {
-    const factoryContractClient = getFactoryContractClient({
-      contractId: contractAddresses.FACTORY,
-    })
-    const assembledTransaction = await factoryContractClient.create_pool(
-      {
-        token_a: token0,
-        token_b: token1,
-        fee: fee,
-      },
-      {
-        timeoutInSeconds: 30,
-        fee: 100000,
-      },
-    )
-
-    console.log('\n🏭 Factory simulation result:')
-    console.log(JSON.stringify(assembledTransaction.result, null, 2))
-  } catch (error) {
-    console.error('\n❌ Factory simulation failed:', error)
-  }
 }

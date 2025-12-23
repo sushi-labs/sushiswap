@@ -23,21 +23,40 @@ export function getStableTokens(): Token[] {
 }
 
 /**
- * Get a token by its code
- * @param code - The code of the token
- * @returns A Token object
- */
-export function getTokenByCode(code: string): Token | undefined {
-  return staticTokens.find((token) => token.code === code)
-}
-
-/**
  * Get a token by its contract address
  * @param contract - The contract address of the token
  * @returns A Token object
  */
-export function getTokenByContract(contract: string): Token | undefined {
-  return staticTokens.find((token) => token.contract === contract)
+export async function getTokenByContract(contract: string): Promise<Token> {
+  const tokenFromList = staticTokens.find(
+    (token) => token.contract === contract,
+  )
+  if (tokenFromList) {
+    return tokenFromList
+  }
+  try {
+    const metadata = await getTokenMetadata(contract)
+    return {
+      contract,
+      code: metadata.symbol || contract.slice(0, 8),
+      name: metadata.name || metadata.symbol || contract.slice(0, 8),
+      decimals: metadata.decimals,
+      issuer: '',
+      org: 'unknown',
+      isStable: false,
+    }
+  } catch (error) {
+    console.warn(`Failed to fetch metadata for token ${contract}:`, error)
+    return {
+      contract,
+      code: contract.slice(0, 8),
+      name: contract.slice(0, 8),
+      decimals: 7,
+      issuer: '',
+      org: 'unknown',
+      isStable: false,
+    }
+  }
 }
 
 /**
@@ -239,7 +258,7 @@ export async function transferFromToken(
  * @param tokenAddress - The token contract address
  * @returns Token metadata
  */
-export async function getTokenMetadata(tokenAddress: string): Promise<{
+async function getTokenMetadata(tokenAddress: string): Promise<{
   name: string
   symbol: string
   decimals: number

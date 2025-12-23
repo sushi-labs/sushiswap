@@ -36,6 +36,6 @@ export const useLPUsdValue = ({
     },
     refetchOnMount: true,
     refetchOnWindowFocus: true,
-    enabled: true,
+    enabled: token0Price !== undefined && token1Price !== undefined,
   })
 }

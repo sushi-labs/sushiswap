@@ -36,9 +36,11 @@ export const usePoolOwnership = ({
       'stellar',
       'usePoolOwnership',
       {
-        pairAddress,
+        pool: pool?.address,
         reserve0: reserve0.toString(),
         reserve1: reserve1.toString(),
+        lpUsdValueOwned,
+        lpUsdValueTotal,
       },
     ],
     queryFn: async () => {
@@ -58,7 +60,7 @@ export const usePoolOwnership = ({
 
       const ownership =
         lpUsdValueTotal === 0
-          ? (proportionToken0Owned + proportionToken1Owned) / 2
+          ? ((proportionToken0Owned + proportionToken1Owned) / 2).toString()
           : (lpUsdValueOwned / lpUsdValueTotal).toString()
 
       return { ownership, ownedSupplyUsd: lpUsdValueOwned.toString() }

@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { getPool } from '../../soroban/dex-factory-helpers'
+import { getPoolDirectSDK } from '../../soroban/dex-factory-helpers'
 
 export interface GetPoolParams {
   tokenA: string
@@ -14,7 +14,7 @@ export const useGetPool = (params: GetPoolParams | null) => {
     queryKey: ['factory', 'getPool', params],
     queryFn: async () => {
       if (!params) return null
-      return await getPool(params)
+      return await getPoolDirectSDK(params)
     },
     enabled: !!params,
   })

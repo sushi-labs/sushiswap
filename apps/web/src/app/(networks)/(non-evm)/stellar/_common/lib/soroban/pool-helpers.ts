@@ -1,17 +1,10 @@
-import { getStablePrice } from '../hooks/price/get-stable-price'
 import type { PoolInfo, PoolLiquidity, PoolReserves } from '../types/pool.type'
 import type { Token } from '../types/token.type'
 import { formatTokenAmount } from '../utils/formatters'
 import { type OracleHints, fetchOracleHints } from '../utils/slot-hint-helpers'
 import { getPoolLensContractClient } from './client'
 import { contractAddresses } from './contracts'
-import { isPoolInitialized } from './pool-initialization'
-import {
-  getTokenBalance,
-  getTokenByCode,
-  getTokenByContract,
-  getTokenMetadata,
-} from './token-helpers'
+import { getTokenBalance, getTokenByContract } from './token-helpers'
 
 export interface PoolBasicInfo {
   address: string
@@ -69,77 +62,10 @@ export async function getPoolInfoFromContract(
       tick,
     } = poolData.state
 
-    // Get token codes from token list
-    const token0FromList = getTokenByContract(token0Address)
-    const token1FromList = getTokenByContract(token1Address)
-
-    // If tokens are not in the static list, fetch metadata from chain
-    let token0: Token
-    let token1: Token
-
-    if (token0FromList) {
-      token0 = token0FromList
-    } else {
-      // Fetch token metadata from chain
-      try {
-        const metadata = await getTokenMetadata(token0Address)
-        token0 = {
-          contract: token0Address,
-          code: metadata.symbol || token0Address.slice(0, 8),
-          name: metadata.name || metadata.symbol || token0Address.slice(0, 8),
-          decimals: metadata.decimals,
-          issuer: '',
-          org: 'unknown',
-          isStable: false,
-        }
-      } catch (error) {
-        console.warn(
-          `Failed to fetch metadata for token ${token0Address}:`,
-          error,
-        )
-        token0 = {
-          contract: token0Address,
-          code: token0Address.slice(0, 8),
-          name: token0Address.slice(0, 8),
-          decimals: 7,
-          issuer: '',
-          org: 'unknown',
-          isStable: false,
-        }
-      }
-    }
-
-    if (token1FromList) {
-      token1 = token1FromList
-    } else {
-      // Fetch token metadata from chain
-      try {
-        const metadata = await getTokenMetadata(token1Address)
-        token1 = {
-          contract: token1Address,
-          code: metadata.symbol || token1Address.slice(0, 8),
-          name: metadata.name || metadata.symbol || token1Address.slice(0, 8),
-          decimals: metadata.decimals,
-          issuer: '',
-          org: 'unknown',
-          isStable: false,
-        }
-      } catch (error) {
-        console.warn(
-          `Failed to fetch metadata for token ${token1Address}:`,
-          error,
-        )
-        token1 = {
-          contract: token1Address,
-          code: token1Address.slice(0, 8),
-          name: token1Address.slice(0, 8),
-          decimals: 7,
-          issuer: '',
-          org: 'unknown',
-          isStable: false,
-        }
-      }
-    }
+    const [token0, token1] = await Promise.all([
+      getTokenByContract(token0Address),
+      getTokenByContract(token1Address),
+    ])
 
     return {
       token0,
@@ -238,35 +164,28 @@ export async function getPoolInfo(address: string): Promise<PoolInfo | null> {
 export async function getPoolBalances(
   address: string,
   connectedAddress: string,
-): Promise<PoolReserves | null> {
+): Promise<PoolReserves> {
   const config = await getPoolInfoFromContract(address)
 
   if (!config) {
     throw new Error(`No configuration found for pool: ${address}`)
   }
 
-  const token0 = getTokenByCode(config.token0.code)
-  const token1 = getTokenByCode(config.token1.code)
-
-  if (!token0 || !token1) {
-    throw new Error(`Token configuration not found for pool: ${address}`)
-  }
-
   const [balance0, balance1] = await Promise.all([
-    getTokenBalance(connectedAddress, token0.contract),
-    getTokenBalance(connectedAddress, token1.contract),
+    getTokenBalance(connectedAddress, config.token0.contract),
+    getTokenBalance(connectedAddress, config.token1.contract),
   ])
 
   return {
     token0: {
-      code: token0.code,
+      code: config.token0.code,
       amount: balance0.toString(),
-      formatted: formatTokenAmount(balance0, token0.decimals, 2),
+      formatted: formatTokenAmount(balance0, config.token0.decimals, 2),
     },
     token1: {
-      code: token1.code,
+      code: config.token1.code,
       amount: balance1.toString(),
-      formatted: formatTokenAmount(balance1, token1.decimals, 2),
+      formatted: formatTokenAmount(balance1, config.token1.decimals, 2),
     },
   }
 }

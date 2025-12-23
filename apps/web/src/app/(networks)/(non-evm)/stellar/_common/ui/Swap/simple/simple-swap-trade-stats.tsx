@@ -80,10 +80,12 @@ export const SimpleSwapTradeStats = () => {
             Est. received
           </span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading || !outputSwapTokenAmount ? (
+            {loading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
-            ) : (
+            ) : outputSwapTokenAmount ? (
               `${outputSwapTokenAmount} ${token1.code}`
+            ) : (
+              '0.00'
             )}
           </span>
         </div>

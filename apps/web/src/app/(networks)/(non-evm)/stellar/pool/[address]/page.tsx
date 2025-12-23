@@ -171,7 +171,7 @@ export default function PoolPage({ params }: PoolPageProps) {
                 this pool.
               </p>
               {!isConnected ? (
-                <ConnectWalletButton className="w-full" size="lg" />
+                <ConnectWalletButton fullWidth size="lg" />
               ) : (
                 <LinkInternal href="/stellar/pool/add">
                   <Button className="w-full" size="lg">

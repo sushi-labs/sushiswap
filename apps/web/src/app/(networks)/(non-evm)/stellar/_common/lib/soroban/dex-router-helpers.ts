@@ -1,8 +1,8 @@
 import type { Token } from '../types/token.type'
-import { ZERO_ADDRESS } from './constants'
-import { getFees, getPool } from './dex-factory-helpers'
+import { contractAddresses } from './contracts'
+import { getFees, getPoolDirectSDK } from './dex-factory-helpers'
 import type { PoolBasicInfo } from './pool-helpers'
-import { getTokenByCode } from './token-helpers'
+import { getTokenByContract } from './token-helpers'
 
 type DirectRoute = {
   type: 'direct'
@@ -32,7 +32,7 @@ export async function findPoolsBetweenTokens(
 
   for (const fee of fees) {
     try {
-      const pool = await getPool({
+      const pool = await getPoolDirectSDK({
         tokenA: tokenA.contract,
         tokenB: tokenB.contract,
         fee,
@@ -73,9 +73,11 @@ export async function findBestPath(
 
   // Step 2: Check multi-hop through XLM
   if (fromToken.code !== 'XLM' && toToken.code !== 'XLM') {
-    const xlmToken = getTokenByCode('XLM')
+    const xlmToken = await getTokenByContract(contractAddresses.TOKENS.XLM)
 
-    if (!xlmToken) return null
+    if (!xlmToken) {
+      return null
+    }
 
     const fromToXlm = await findPoolsBetweenTokens(fromToken, xlmToken)
 

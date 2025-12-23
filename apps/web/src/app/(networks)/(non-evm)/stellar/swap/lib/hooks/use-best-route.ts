@@ -298,10 +298,10 @@ export function useBestRoute({
         const bestQuotedRoute = quotedRoutes[0]
 
         // Convert route addresses to Token objects
-        const tokens: Token[] = bestQuotedRoute.route.path
-          .map((address) => {
+        const tokenPromises: Promise<Token | null>[] =
+          bestQuotedRoute.route.path.map(async (address) => {
             try {
-              return getTokenByContract(address)
+              return await getTokenByContract(address)
             } catch (error) {
               console.error(
                 `Error getting token by contract ${address}:`,
@@ -310,7 +310,10 @@ export function useBestRoute({
               return null
             }
           })
-          .filter((token): token is Token => token !== null)
+
+        const tokens = (await Promise.all(tokenPromises)).filter(
+          (token): token is Token => token !== null,
+        )
 
         if (tokens.length !== bestQuotedRoute.route.path.length) {
           console.error('Failed to resolve all tokens in route')

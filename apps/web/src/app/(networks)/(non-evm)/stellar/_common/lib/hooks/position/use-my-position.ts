@@ -24,23 +24,19 @@ export interface PositionSummary {
 }
 
 export interface MyPositionData {
-  totalValue: number
   positions: PositionSummary[]
   isLoading: boolean
   error: Error | null
 }
 
-const UNKNOWN_TOKEN: Token = {
-  code: 'unknown',
-  issuer: 'unknown',
-  contract: 'unknown',
-  name: 'unknown',
-  org: 'unknown',
-  decimals: 7,
-}
-
 const getPositionKey = (position: PositionInfo) => {
   return `${position.token0}-${position.token1}-${position.fee}`
+}
+
+type PoolData = {
+  address: string
+  token0: Token
+  token1: Token
 }
 
 /**
@@ -70,14 +66,26 @@ export function useMyPosition({
         position.token1,
         position.fee,
       ],
-      queryFn: async () => {
+      queryFn: async (): Promise<[string, PoolData | null]> => {
         try {
           const poolAddress = await getPoolDirectSDK({
             tokenA: position.token0,
             tokenB: position.token1,
             fee: position.fee,
           })
-          return [getPositionKey(position), poolAddress] as const
+          if (!poolAddress) {
+            throw new Error('Pool not found')
+          }
+          const token0 = await getTokenByContract(position.token0)
+          const token1 = await getTokenByContract(position.token1)
+          return [
+            getPositionKey(position),
+            {
+              address: poolAddress,
+              token0,
+              token1,
+            },
+          ] as const
         } catch (_error) {
           return [getPositionKey(position), null] as const
         }
@@ -105,7 +113,9 @@ export function useMyPosition({
     }
     return positions.filter((position) => {
       // Check if this position belongs to the current pool
-      return positionToPoolMap[getPositionKey(position)] === poolAddress
+      return (
+        positionToPoolMap[getPositionKey(position)]?.address === poolAddress
+      )
     })
   }, [positions, poolAddress, positionToPoolMap])
 
@@ -115,10 +125,10 @@ export function useMyPosition({
     for (const position of filteredPositions) {
       const pool = positionToPoolMap[getPositionKey(position)]
       if (pool) {
-        if (!grouped.has(pool)) {
-          grouped.set(pool, [])
+        if (!grouped.has(pool.address)) {
+          grouped.set(pool.address, [])
         }
-        grouped.get(pool)!.push(position)
+        grouped.get(pool.address)!.push(position)
       }
     }
     return grouped
@@ -193,7 +203,6 @@ export function useMyPosition({
   const positionData = useMemo((): MyPositionData => {
     if (positionsLoading || principalsLoading || poolsLoading) {
       return {
-        totalValue: 0,
         positions: [],
         isLoading: true,
         error: positionsError || null,
@@ -207,15 +216,12 @@ export function useMyPosition({
     filteredPositions.forEach((position) => {
       const principalData = positionToPrincipalMap[position.tokenId]
       const positionKey = getPositionKey(position)
-      const poolAddress = positionToPoolMap[positionKey]
+      const poolData = positionToPoolMap[positionKey]
 
       // Skip if we don't have principal data yet
-      if (!principalData) {
+      if (!principalData || !poolData) {
         return
       }
-
-      const token0 = getTokenByContract(position.token0) ?? UNKNOWN_TOKEN
-      const token1 = getTokenByContract(position.token1) ?? UNKNOWN_TOKEN
 
       // Add to position summaries
       positionSummaries.push({
@@ -225,20 +231,16 @@ export function useMyPosition({
         principalToken1: principalData.amount1,
         feesToken0: position.tokensOwed0,
         feesToken1: position.tokensOwed1,
-        token0,
-        token1,
-        pool: poolAddress || '',
+        token0: poolData.token0,
+        token1: poolData.token1,
+        pool: poolData.address,
         tickLower: position.tickLower,
         tickUpper: position.tickUpper,
         fee: position.fee,
       })
     })
 
-    // Calculate total value (placeholder - would need price data)
-    const totalValue = 0 // TODO: Calculate based on token amounts and prices
-
     return {
-      totalValue,
       positions: positionSummaries,
       isLoading: false,
       error: positionsError || null,
