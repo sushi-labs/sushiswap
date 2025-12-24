@@ -23,17 +23,62 @@ export function getStableTokens(): Token[] {
 }
 
 /**
- * Get a token by its contract address
+ * Helper to find a token by contract address (case-insensitive) in a token map.
+ */
+function findTokenInMap(
+  tokenMap: Record<string, Token>,
+  contract: string,
+): Token | undefined {
+  // Direct lookup first (most common case)
+  if (tokenMap[contract]) {
+    return tokenMap[contract]
+  }
+  // Try uppercase (Stellar convention)
+  const upperAddress = contract.toUpperCase()
+  if (tokenMap[upperAddress]) {
+    return tokenMap[upperAddress]
+  }
+  // Fallback: case-insensitive search
+  const lowerAddress = contract.toLowerCase()
+  for (const [key, token] of Object.entries(tokenMap)) {
+    if (key.toLowerCase() === lowerAddress) {
+      return token
+    }
+  }
+  return undefined
+}
+
+/**
+ * Get a token by its contract address (case-insensitive).
+ * Stellar contract addresses are case-insensitive, but may be stored
+ * or returned in different cases by different systems.
+ *
  * @param contract - The contract address of the token
+ * @param dynamicTokens - Optional dynamic token map to check first (e.g., from useCommonTokens)
  * @returns A Token object
  */
-export async function getTokenByContract(contract: string): Promise<Token> {
+export async function getTokenByContract(
+  contract: string,
+  dynamicTokens?: Record<string, Token>,
+): Promise<Token> {
+  // Check dynamic tokens first (includes StellarExpert tokens)
+  if (dynamicTokens) {
+    const dynamicToken = findTokenInMap(dynamicTokens, contract)
+    if (dynamicToken) {
+      return dynamicToken
+    }
+  }
+
+  // Check static tokens (case-insensitive)
+  const contractLower = contract.toLowerCase()
   const tokenFromList = staticTokens.find(
-    (token) => token.contract === contract,
+    (token) => token.contract.toLowerCase() === contractLower,
   )
   if (tokenFromList) {
     return tokenFromList
   }
+
+  // Fallback: fetch from chain
   try {
     const metadata = await getTokenMetadata(contract)
     return {

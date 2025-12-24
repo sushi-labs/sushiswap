@@ -4,6 +4,7 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi'
+import { getTokenByContract } from '../../soroban/token-helpers'
 import type { Token } from '../../types/token.type'
 import { useCommonTokens } from '../token'
 
@@ -27,12 +28,24 @@ export function useTopPools() {
       const topPools = await getTopNonEvmPools({
         chainId: ChainId.STELLAR,
       })
-      const topPoolsWithTokens = topPools.map((pool) => ({
-        ...pool,
-        token0: tokens[pool.token0Address],
-        token1: tokens[pool.token1Address],
-      }))
-      return topPoolsWithTokens.filter((pool) => pool.token0 && pool.token1)
+
+      // Fetch token info for all pools
+      // getTokenByContract checks dynamic tokens first, then static, then chain
+      const topPoolsWithTokens = await Promise.all(
+        topPools.map(async (pool) => {
+          const [token0, token1] = await Promise.all([
+            getTokenByContract(pool.token0Address, tokens),
+            getTokenByContract(pool.token1Address, tokens),
+          ])
+          return {
+            ...pool,
+            token0,
+            token1,
+          }
+        }),
+      )
+
+      return topPoolsWithTokens as TopPool[]
     },
     enabled: !!tokens && !isLoadingTokens && !isPendingTokens,
   })
