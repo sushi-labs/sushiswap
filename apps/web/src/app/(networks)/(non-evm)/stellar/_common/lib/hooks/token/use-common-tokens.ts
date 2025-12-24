@@ -87,8 +87,9 @@ const fetchCommonTokensQueryFn = async (): Promise<Record<string, Token>> => {
   const result: Record<string, Token> = {}
 
   // Always include hardcoded tokens
+  // Use uppercase keys for consistency (Stellar addresses are case-insensitive)
   hardcodedTokens.forEach((token) => {
-    result[token.contract] = token
+    result[token.contract.toUpperCase()] = token
   })
 
   // Try to add StellarExpert tokens
@@ -100,7 +101,8 @@ const fetchCommonTokensQueryFn = async (): Promise<Record<string, Token>> => {
       .slice(0, 50)
 
     stellarTokens.forEach((token) => {
-      result[token.contract] = token
+      // Use uppercase keys for consistency
+      result[token.contract.toUpperCase()] = token
     })
 
     console.log(

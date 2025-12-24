@@ -23,13 +23,17 @@ export function getStableTokens(): Token[] {
 }
 
 /**
- * Get a token by its contract address
+ * Get a token by its contract address (case-insensitive).
+ * Stellar contract addresses are case-insensitive, but may be stored
+ * or returned in different cases by different systems.
  * @param contract - The contract address of the token
  * @returns A Token object
  */
 export async function getTokenByContract(contract: string): Promise<Token> {
+  // Case-insensitive lookup since Stellar addresses are case-insensitive
+  const contractLower = contract.toLowerCase()
   const tokenFromList = staticTokens.find(
-    (token) => token.contract === contract,
+    (token) => token.contract.toLowerCase() === contractLower,
   )
   if (tokenFromList) {
     return tokenFromList
