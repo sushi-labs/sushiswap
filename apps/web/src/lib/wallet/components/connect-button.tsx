@@ -7,22 +7,25 @@ import {
   TraceEvent,
 } from '@sushiswap/telemetry'
 import { Button, type ButtonProps } from '@sushiswap/ui'
-import React, { type FC, useCallback, useMemo, useState } from 'react'
-import { EvmWalletConfig } from '../namespaces/evm/config'
+import { getConnectors } from '@wagmi/core'
+import React, { type FC, useCallback, useState } from 'react'
+import { getWagmiConfig } from 'src/lib/wagmi/config'
+import { useConnect } from 'wagmi'
 import { useWallet } from '../provider'
-import { ConnectDialog } from './connect-dialog'
+import { ConnectModal } from './connect-modal'
 
 export const ConnectButton: FC<ButtonProps> = ({
   children: _children,
   ...props
 }) => {
-  const { connect, pending } = useWallet()
+  const { isPending } = useWallet()
+  const { mutate: connect } = useConnect()
   const [open, setOpen] = useState(false)
 
   const onClick = useCallback(async () => {
     if (process.env.NEXT_PUBLIC_APP_ENV === 'test') {
-      const first = EvmWalletConfig.all.filter((w) => w.namespace === 'evm')[0]
-      if (first) await connect(first)
+      const first = getConnectors(getWagmiConfig())?.[0]
+      if (first) await connect({ connector: first })
       return
     }
 
@@ -31,7 +34,7 @@ export const ConnectButton: FC<ButtonProps> = ({
 
   // Pending confirmation state
   // Awaiting wallet confirmation
-  if (pending) {
+  if (isPending) {
     return (
       <Button loading {...props}>
         Authorize Wallet
@@ -41,7 +44,7 @@ export const ConnectButton: FC<ButtonProps> = ({
 
   return (
     <>
-      <ConnectDialog open={open} onOpenChange={setOpen} />
+      <ConnectModal open={open} onOpenChange={setOpen} />
       <TraceEvent
         events={[BrowserEvent.onClick]}
         name={InterfaceEventName.CONNECT_WALLET_BUTTON_CLICKED}

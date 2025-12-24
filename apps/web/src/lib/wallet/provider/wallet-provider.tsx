@@ -1,24 +1,12 @@
 'use client'
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
-import type { Wallet, WalletConnection, WalletNamespace } from '../types'
-import { useConnections } from './state'
-import type { WalletActions, WalletState } from './types'
-import {
-  WalletActionsProvider,
-  useWalletActions,
-} from './wallet-actions-provider'
+import { createContext, useContext, useEffect, useMemo } from 'react'
+import { useConnections } from './store'
+import type { WalletContext as WalletContextType } from './types'
+import { WalletNamespacesProviders } from './wallet-namespaces-provider'
+import { WalletStateProvider, useWalletState } from './wallet-state-provider'
 
-export const WalletContext = createContext<
-  (WalletState & WalletActions) | null
->(null)
+export const WalletContext = createContext<WalletContextType | null>(null)
 
 export function useWallet() {
   const ctx = useContext(WalletContext)
@@ -30,103 +18,31 @@ export function useWallet() {
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   return (
-    <WalletActionsProvider>
+    <WalletStateProvider>
       <_WalletProvider>{children}</_WalletProvider>
-    </WalletActionsProvider>
+    </WalletStateProvider>
   )
 }
 
 function _WalletProvider({ children }: { children: React.ReactNode }) {
   const connections = useConnections()
-
-  const [pendingWalletId, setPendingWalletId] = useState<string | undefined>(
-    undefined,
-  )
-  const [error, setError] = useState<string | undefined>(undefined)
+  const { pendingWalletId } = useWalletState()
 
   useEffect(() => {
-    console.log('connectionz', connections)
+    console.log('connections', connections)
   }, [connections])
-
-  const walletActions = useWalletActions()
-
-  const connect = useCallback(
-    async (wallet: Wallet) => {
-      setError(undefined)
-      setPendingWalletId(undefined)
-
-      try {
-        await walletActions.connect(wallet)
-
-        // setConnections((prev) => {
-        //   const next: WalletConnection = {
-        //     id: wallet.id,
-        //     namespace: wallet.namespace,
-        //     adapterId: wallet.adapterId,
-        //     account: '',
-        //   }
-
-        //   const existingIndex = prev.findIndex((c) => c.id === wallet.id)
-        //   if (existingIndex !== -1) {
-        //     const copy = prev.slice()
-        //     copy[existingIndex] = next
-        //     return copy
-        //   }
-
-        //   return [...prev, next]
-        // })
-      } catch (e) {
-        const msg = e instanceof Error ? e.message : 'Failed to connect wallet.'
-        setError(msg)
-        console.log('error', e)
-        throw e
-      } finally {
-        setPendingWalletId(undefined)
-      }
-    },
-    [walletActions.connect],
-  )
-
-  const disconnect = useCallback(
-    async (wallet: Wallet) => {
-      await walletActions.disconnect(wallet)
-      // setConnections((prev) => {
-      //   return prev.filter((c) => c.id !== wallet.id)
-      // })
-    },
-    [walletActions.disconnect],
-  )
-
-  const disconnectNamespace = useCallback(
-    async (namespace: WalletNamespace) => {
-      await walletActions.disconnectNamespace(namespace)
-      // setConnections((prev) => {
-      //   return prev.filter((c) => c.namespace !== namespace)
-      // })
-    },
-    [walletActions.disconnectNamespace],
-  )
 
   const value = useMemo(
     () => ({
       connections,
-      pending: Boolean(pendingWalletId),
-      error,
-      connect,
-      disconnect,
-      disconnectNamespace,
+      isPending: Boolean(pendingWalletId),
     }),
-    [
-      connections,
-      pendingWalletId,
-      error,
-      connect,
-      disconnect,
-      disconnectNamespace,
-    ],
+    [connections, pendingWalletId],
   )
 
   return (
-    <WalletContext.Provider value={value}>{children}</WalletContext.Provider>
+    <WalletContext.Provider value={value}>
+      <WalletNamespacesProviders>{children}</WalletNamespacesProviders>
+    </WalletContext.Provider>
   )
 }

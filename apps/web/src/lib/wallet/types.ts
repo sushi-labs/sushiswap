@@ -32,3 +32,10 @@ export interface WalletConnection {
   namespace: WalletNamespace
   account: string
 }
+
+export interface NamespaceContext {
+  isConnected: boolean
+  account: string | undefined
+  connect: (wallet: Wallet) => Promise<void>
+  disconnect: (wallet?: Wallet) => Promise<void>
+}

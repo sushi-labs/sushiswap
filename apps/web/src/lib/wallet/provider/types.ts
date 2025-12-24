@@ -2,10 +2,13 @@
 
 import type { Wallet, WalletConnection } from '../types'
 
-export type WalletState = {
+export type WalletContext = {
   connections: WalletConnection[]
-  pending: boolean
-  error: string | undefined
+  isPending: boolean
+}
+
+export type WalletState = {
+  pendingWalletId: string | undefined
 }
 
 export type WalletActions = {

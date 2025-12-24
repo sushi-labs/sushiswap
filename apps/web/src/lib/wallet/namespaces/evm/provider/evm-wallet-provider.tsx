@@ -9,16 +9,15 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
 } from 'react'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
 import {
   addWalletConnection,
   clearWalletConnections,
-} from 'src/lib/wallet/provider/state'
+} from 'src/lib/wallet/provider/store'
 import type { Wallet, WalletWithState } from 'src/lib/wallet/types'
 import { WagmiContext, WagmiProvider, useConnection } from 'wagmi'
-import { EvmAdapterConfig, type EvmAdapterId } from '../config'
+import { EvmAdapterConfig } from '../config'
 import { isEvmWallet } from '../types'
 import { useEvmWallets } from './use-evm-wallets'
 
@@ -30,7 +29,7 @@ function useInEvmContext(): boolean {
 type EvmWalletContext = {
   wallets: WalletWithState[]
   isConnected: boolean
-  account?: string
+  account: string | undefined
   connect: (wallet: Wallet) => Promise<void>
   disconnect: (wallet?: Wallet) => Promise<void>
 }

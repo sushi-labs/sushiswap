@@ -17,8 +17,7 @@ export function useAccounts(): AccountsState {
     const getFirstAddress = (namespace: WalletNamespace) => {
       for (const c of connections) {
         if (c.namespace !== namespace) continue
-        // const addr = c.adapter.getAddress()
-        // if (addr) return addr
+        return c.account
       }
       return undefined
     }

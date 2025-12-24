@@ -15,9 +15,8 @@ import {
 import {
   addWalletConnection,
   clearWalletConnections,
-} from 'src/lib/wallet/provider/state'
-import type { Wallet, WalletWithState } from 'src/lib/wallet/types'
-import { useSvmWallets } from './use-svm-wallets'
+} from 'src/lib/wallet/provider/store'
+import type { Wallet } from 'src/lib/wallet/types'
 
 function useInSvmContext(): boolean {
   const context = useContext(ConnectionContext)
@@ -25,7 +24,6 @@ function useInSvmContext(): boolean {
 }
 
 type SvmWalletContext = {
-  wallets: WalletWithState[]
   isConnected: boolean
   account?: string
   connect: (wallet: Wallet) => Promise<void>
@@ -63,7 +61,7 @@ export function SvmWalletProvider({ children }: { children: React.ReactNode }) {
 }
 
 function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
-  const wallets = useSvmWallets()
+  // const wallets = useSvmWallets()
 
   const {
     connected,
@@ -87,13 +85,12 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo<SvmWalletContext>(
     () => ({
-      wallets,
       isConnected: connected,
       account: publicKey?.toBase58(),
       connect,
       disconnect,
     }),
-    [wallets, connected, publicKey, connect, disconnect],
+    [connected, publicKey, connect, disconnect],
   )
 
   useEffect(() => {

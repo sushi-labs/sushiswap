@@ -21,7 +21,7 @@ function isWalletConnectionEqual(a: WalletConnection, b: WalletConnection) {
 export function addWalletConnection(connection: WalletConnection) {
   const i = connections.findIndex((x) => x.id === connection.id)
 
-  // add
+  // add new connection
   if (i === -1) {
     connections = [...connections, connection]
     emit()
