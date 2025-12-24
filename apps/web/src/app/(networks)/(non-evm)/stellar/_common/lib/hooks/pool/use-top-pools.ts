@@ -39,6 +39,7 @@ export function useTopPools() {
           ])
           return {
             ...pool,
+            address: pool.address.toUpperCase(),
             token0,
             token1,
           }

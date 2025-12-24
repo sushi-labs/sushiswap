@@ -79,12 +79,13 @@ export async function getTokenByContract(
   }
 
   // Fallback: fetch from chain
+  const canonicalContract = contract.toUpperCase()
   try {
     const metadata = await getTokenMetadata(contract)
     return {
-      contract,
-      code: metadata.symbol || contract.slice(0, 8),
-      name: metadata.name || metadata.symbol || contract.slice(0, 8),
+      contract: canonicalContract,
+      code: metadata.symbol || canonicalContract.slice(0, 8),
+      name: metadata.name || metadata.symbol || canonicalContract.slice(0, 8),
       decimals: metadata.decimals,
       issuer: '',
       org: 'unknown',
@@ -93,9 +94,9 @@ export async function getTokenByContract(
   } catch (error) {
     console.warn(`Failed to fetch metadata for token ${contract}:`, error)
     return {
-      contract,
-      code: contract.slice(0, 8),
-      name: contract.slice(0, 8),
+      contract: canonicalContract,
+      code: canonicalContract.slice(0, 8),
+      name: canonicalContract.slice(0, 8),
       decimals: 7,
       issuer: '',
       org: 'unknown',
