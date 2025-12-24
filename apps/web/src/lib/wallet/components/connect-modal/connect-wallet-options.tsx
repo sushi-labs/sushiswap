@@ -35,7 +35,7 @@ export default function ConnectModalOptions() {
     <div className="space-y-2">
       {installed.length > 0 ? (
         <div className="space-y-3">
-          <div>
+          <div className="px-4">
             <span className="font-semibold">Installed</span>
           </div>
           {installed.map((w) => (
@@ -46,7 +46,7 @@ export default function ConnectModalOptions() {
 
       {recommended.length > 0 ? (
         <div className="space-y-3">
-          <div>
+          <div className="px-4">
             <span className="font-semibold">Recommended</span>
           </div>
           {recommended.map((w) => (
@@ -57,7 +57,7 @@ export default function ConnectModalOptions() {
 
       {others.length > 0 ? (
         <div className="space-y-3">
-          <div>
+          <div className="px-4">
             <span className="font-semibold">Others</span>
           </div>
           {others.map((w) => (

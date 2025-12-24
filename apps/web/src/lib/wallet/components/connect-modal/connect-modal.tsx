@@ -4,11 +4,14 @@ import {
   Dialog,
   DialogContent,
   DialogFooter,
+  DialogHeader,
   DialogTitle,
   LinkExternal,
   Sheet,
   SheetContent,
   SheetFooter,
+  SheetHeader,
+  SheetTitle,
   useBreakpoint,
 } from '@sushiswap/ui'
 import dynamic from 'next/dynamic'
@@ -25,20 +28,25 @@ export const ConnectModal: FC<Props> = ({ open, onOpenChange }) => {
   return isSm ? (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent hideClose className="!p-0">
-        {open ? <ConnectModalContent /> : null}
-        <SheetFooter>
-          <ConnectModalFooter />
-        </SheetFooter>
+        <div>
+          <SheetHeader className="p-4 !text-left">
+            <SheetTitle>Connect</SheetTitle>
+            <Disclaimer />
+          </SheetHeader>
+          {open ? <ConnectModalContent /> : null}
+        </div>
       </SheetContent>
     </Sheet>
   ) : (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent hideClose className="!p-0 h-[calc(100%-16px)]">
-        <DialogTitle>Connect Wallet</DialogTitle>
-        {open ? <ConnectModalContent /> : null}
-        <DialogFooter>
-          <ConnectModalFooter />
-        </DialogFooter>
+      <DialogContent hideClose className="!p-0 max-h-[calc(100%-16px)]">
+        <div>
+          <DialogHeader className="p-4 !text-left">
+            <DialogTitle>Connect</DialogTitle>
+            <Disclaimer />
+          </DialogHeader>
+          {open ? <ConnectModalContent /> : null}
+        </div>
       </DialogContent>
     </Dialog>
   )
@@ -48,9 +56,9 @@ const ConnectModalContent = dynamic(() => import('./connect-wallet-options'), {
   ssr: false,
 })
 
-const ConnectModalFooter = () => {
+const Disclaimer = () => {
   return (
-    <div className="text-sm text-center">
+    <div className="text-sm">
       By connecting your wallet, you agree to Sushi Labs&apos;{' '}
       <LinkExternal href="/legal/terms-of-service">
         Terms of Service

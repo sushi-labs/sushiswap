@@ -55,7 +55,7 @@ export function ConnectWalletButton({ wallet }: Props) {
       wallet={wallet}
       fullWidth
       size="lg"
-      variant="secondary"
+      variant="ghost"
       className="!justify-between gap-3"
     >
       <div className="flex flex-1 justify-between gap-3">
