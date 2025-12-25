@@ -9,7 +9,7 @@ export const NETWORK_NAME = IS_TESTNET ? 'testnet' : 'mainnet'
 
 export const RPC_URL = IS_TESTNET
   ? 'https://soroban-testnet.stellar.org'
-  : 'https://mainnet.sorobanrpc.com'
+  : 'https://rpc.ankr.com/stellar_soroban/778adf69774e49f1fe818650a1ba314f3b8ba0129fa9372270858baa2a3e2787'
 
 export const NETWORK_PASSPHRASE = IS_TESTNET
   ? Networks.TESTNET
