@@ -87,18 +87,10 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
   )
 
   useEffect(() => {
-    console.log('run evm')
     if (!isConnected || !connector?.id || !address) {
       clearWalletConnections('evm')
       return
     }
-
-    console.log('adding evm conneciton', {
-      id: `evm:${connector.id.toLowerCase()}`,
-      name: connector.name,
-      namespace: 'evm',
-      account: address,
-    })
 
     addWalletConnection({
       id: `evm:${connector.id.toLowerCase()}`,

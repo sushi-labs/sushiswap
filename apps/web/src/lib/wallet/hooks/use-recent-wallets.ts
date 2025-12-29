@@ -1,10 +1,10 @@
 'use client'
 
 import { useLocalStorage } from '@sushiswap/hooks'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 const RECENT_WALLETS_KEY = 'recent-wallets'
-const MAX_RECENTS = 5
+const MAX_RECENT_WALLETS = 3
 
 export function useRecentWallets() {
   const [recentWallets, _setRecentWallets] = useLocalStorage<string[]>(
@@ -12,15 +12,11 @@ export function useRecentWallets() {
     [],
   )
 
-  useEffect(() => {
-    console.log('recentWallets', recentWallets)
-  }, [recentWallets])
-
   const addRecentWallet = useCallback(
     (walletId: string) => {
       _setRecentWallets((prev) => {
         const next = [walletId, ...prev.filter((id) => id !== walletId)]
-        return next.slice(0, MAX_RECENTS)
+        return next.slice(0, MAX_RECENT_WALLETS)
       })
     },
     [_setRecentWallets],

@@ -92,18 +92,10 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
   )
 
   useEffect(() => {
-    console.log('run svm', connected)
     if (!connected || !wallet?.adapter.name || !publicKey) {
       clearWalletConnections('svm')
       return
     }
-
-    console.log('adding svm wallet', {
-      id: `svm:${wallet.adapter.name.toLowerCase()}`,
-      name: wallet.adapter.name,
-      namespace: 'svm',
-      account: publicKey.toString(),
-    })
 
     addWalletConnection({
       id: `svm:${wallet.adapter.name.toLowerCase()}`,
