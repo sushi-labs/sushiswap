@@ -438,9 +438,6 @@ importers:
       '@wagmi/core':
         specifier: catalog:web3
         version: 3.0.0(@tanstack/query-core@5.62.8)(@types/react@19.0.1)(immer@9.0.21)(react@19.0.1)(typescript@5.8.3)(use-sync-external-store@1.4.0(react@19.0.1))(viem@2.42.1(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))
-      '@wallet-standard/app':
-        specifier: 1.1.0
-        version: 1.1.0
       '@walletconnect/ethereum-provider':
         specifier: ~2.21.1
         version: 2.21.1(@react-native-async-storage/async-storage@1.24.0(react-native@0.73.7(@babel/core@7.28.4)(@babel/preset-env@7.24.4(@babel/core@7.28.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.1)(utf-8-validate@6.0.3)))(@types/react@19.0.1)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.1)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11)
@@ -13637,6 +13634,7 @@ packages:
   whatwg-encoding@2.0.0:
     resolution: {integrity: sha512-p41ogyeMUrw3jWclHWTQg1k05DSVXPLcVxRTYsXUk+ZooOCZLcoYgPZ/HL/D/N+uQPOtcp1me1WhBEaX02mhWg==}
     engines: {node: '>=12'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-fetch@3.6.20:
     resolution: {integrity: sha512-EqhiFU6daOA8kpjOWTL0olhVOF3i7OrFzSYiGsEMB8GcXS+RrzauAERX65xMeNWVqxA6HXH2m69Z9LaKKdisfg==}
