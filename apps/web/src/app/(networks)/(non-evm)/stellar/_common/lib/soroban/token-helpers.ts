@@ -81,7 +81,7 @@ export async function getTokenByContract(
   // Fallback: fetch from chain
   const canonicalContract = contract.toUpperCase()
   try {
-    const metadata = await getTokenMetadata(contract)
+    const metadata = await getTokenMetadata(canonicalContract)
     return {
       contract: canonicalContract,
       code: metadata.symbol || canonicalContract.slice(0, 8),
