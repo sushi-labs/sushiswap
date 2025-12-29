@@ -1,33 +1,30 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { useRecentWallets } from 'src/lib/wallet/hooks/use-recent-wallets'
 import { useConnectors } from 'wagmi'
 import type { WalletWithState } from '../../../types'
 import { isInjectedConnector } from '../adapters/injected'
 import { isSafeAppAvailable } from '../adapters/safe'
-import { EvmAdapterId, EvmWalletConfig } from '../config'
-
-const EVM_INJECTED_ID_MAP: Record<string, string> = {
-  'io.rabby': 'evm-rabby',
-  'io.metamask': 'evm-metamask',
-}
+import { EVM_WALLETS, EvmAdapterId } from '../config'
 
 export function useEvmWallets() {
   const connectors = useConnectors()
+  const { isRecentWallet } = useRecentWallets()
 
   const injectedConnectors = useMemo(
     () => connectors.filter(isInjectedConnector),
     [connectors],
   )
 
-  const [safeAvailable, setSafeAvailable] = useState(false)
+  const [isSafeAvailable, setIsSafeAvailable] = useState(false)
 
   // Safe app environment
   useEffect(() => {
     let cancelled = false
     ;(async () => {
       const ok = await isSafeAppAvailable()
-      if (!cancelled) setSafeAvailable(ok)
+      if (!cancelled) setIsSafeAvailable(ok)
     })()
     return () => {
       cancelled = true
@@ -37,8 +34,7 @@ export function useEvmWallets() {
   return useMemo(() => {
     const map = new Map<string, WalletWithState>()
     for (const connector of injectedConnectors) {
-      const walletId =
-        EVM_INJECTED_ID_MAP[connector.id] ?? `evm-injected:${connector.id}`
+      const walletId = `evm:${connector.id.toLowerCase()}`
 
       map.set(walletId, {
         id: walletId,
@@ -46,41 +42,54 @@ export function useEvmWallets() {
         name: connector.name,
         icon: connector.icon ?? '', // TODO: placeholder
         adapterId: EvmAdapterId.Injected,
-        installed: true,
-        available: true,
+        isInstalled: true,
+        isAvailable: true,
+        isRecent: isRecentWallet(walletId),
         uid: connector.uid,
       })
     }
 
-    for (const wallet of EvmWalletConfig.all) {
-      // skip if already added by detection (installed injected)
+    for (const wallet of EVM_WALLETS) {
+      // skip if already added
       if (map.has(wallet.id)) continue
 
       // always available
       if (
-        wallet.adapterId === 'evm-walletconnect' ||
-        wallet.adapterId === 'evm-porto' ||
-        wallet.id === 'evm-injected'
+        wallet.adapterId === EvmAdapterId.WalletConnect ||
+        wallet.adapterId === EvmAdapterId.Porto ||
+        wallet.id === 'evm:injected'
       ) {
-        map.set(wallet.id, { ...wallet, installed: false, available: true })
-        continue
-      }
-
-      // todo, remove available flag and just don't include safe
-      // safe
-      if (wallet.adapterId === 'evm-safe') {
         map.set(wallet.id, {
           ...wallet,
-          installed: safeAvailable,
-          available: safeAvailable,
+          isInstalled: false,
+          isAvailable: true,
+          isRecent: isRecentWallet(wallet.id),
         })
         continue
       }
 
+      // safe
+      if (wallet.adapterId === EvmAdapterId.Safe) {
+        if (isSafeAvailable) {
+          map.set(wallet.id, {
+            ...wallet,
+            isInstalled: true,
+            isAvailable: true,
+            isRecent: isRecentWallet(wallet.id),
+          })
+        }
+        continue
+      }
+
       // default
-      map.set(wallet.id, { ...wallet, installed: false, available: false })
+      map.set(wallet.id, {
+        ...wallet,
+        isInstalled: false,
+        isAvailable: false,
+        isRecent: isRecentWallet(wallet.id),
+      })
     }
 
     return Array.from(map.values())
-  }, [injectedConnectors, safeAvailable])
+  }, [injectedConnectors, isSafeAvailable, isRecentWallet])
 }

@@ -59,6 +59,14 @@ export function getConnections(): WalletConnection[] {
   return connections
 }
 
+export function watchConnections(listener: () => void) {
+  listeners.add(listener)
+
+  return () => {
+    listeners.delete(listener)
+  }
+}
+
 export function useConnections(): WalletConnection[] {
   return useSyncExternalStore(
     (cb) => {

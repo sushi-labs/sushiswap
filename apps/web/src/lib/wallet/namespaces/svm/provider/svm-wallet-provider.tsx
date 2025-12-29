@@ -61,8 +61,6 @@ export function SvmWalletProvider({ children }: { children: React.ReactNode }) {
 }
 
 function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
-  // const wallets = useSvmWallets()
-
   const {
     connected,
     publicKey,
@@ -94,14 +92,21 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
   )
 
   useEffect(() => {
-    console.log('run svm', connected, publicKey)
+    console.log('run svm', connected)
     if (!connected || !wallet?.adapter.name || !publicKey) {
       clearWalletConnections('svm')
       return
     }
 
+    console.log('adding svm wallet', {
+      id: `svm:${wallet.adapter.name.toLowerCase()}`,
+      name: wallet.adapter.name,
+      namespace: 'svm',
+      account: publicKey.toString(),
+    })
+
     addWalletConnection({
-      id: wallet.adapter.name,
+      id: `svm:${wallet.adapter.name.toLowerCase()}`,
       name: wallet.adapter.name,
       namespace: 'svm',
       account: publicKey.toString(),

@@ -15,11 +15,10 @@ import {
   addWalletConnection,
   clearWalletConnections,
 } from 'src/lib/wallet/provider/store'
-import type { Wallet, WalletWithState } from 'src/lib/wallet/types'
+import type { Wallet } from 'src/lib/wallet/types'
 import { WagmiContext, WagmiProvider, useConnection } from 'wagmi'
 import { EvmAdapterConfig } from '../config'
 import { isEvmWallet } from '../types'
-import { useEvmWallets } from './use-evm-wallets'
 
 function useInEvmContext(): boolean {
   const context = useContext(WagmiContext)
@@ -27,7 +26,6 @@ function useInEvmContext(): boolean {
 }
 
 type EvmWalletContext = {
-  wallets: WalletWithState[]
   isConnected: boolean
   account: string | undefined
   connect: (wallet: Wallet) => Promise<void>
@@ -60,8 +58,6 @@ export function EvmWalletProvider({ children }: { children: React.ReactNode }) {
 }
 
 function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
-  const wallets = useEvmWallets()
-
   const { isConnected, address, connector } = useConnection()
 
   const connect = useCallback(async (wallet: Wallet) => {
@@ -82,13 +78,12 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo<EvmWalletContext>(
     () => ({
-      wallets,
       isConnected: isConnected,
       account: address,
       connect,
       disconnect,
     }),
-    [wallets, isConnected, address, connect, disconnect],
+    [isConnected, address, connect, disconnect],
   )
 
   useEffect(() => {
@@ -98,8 +93,15 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
+    console.log('adding evm conneciton', {
+      id: `evm:${connector.id.toLowerCase()}`,
+      name: connector.name,
+      namespace: 'evm',
+      account: address,
+    })
+
     addWalletConnection({
-      id: connector.id,
+      id: `evm:${connector.id.toLowerCase()}`,
       name: connector.name,
       namespace: 'evm',
       account: address,

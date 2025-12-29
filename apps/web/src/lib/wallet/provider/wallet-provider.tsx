@@ -1,7 +1,8 @@
 'use client'
 
 import { createContext, useContext, useEffect, useMemo } from 'react'
-import { useConnections } from './store'
+import { useRecentWallets } from '../hooks/use-recent-wallets'
+import { getConnections, useConnections, watchConnections } from './store'
 import type { WalletContext as WalletContextType } from './types'
 import { WalletNamespacesProviders } from './wallet-namespaces-provider'
 import { WalletStateProvider, useWalletState } from './wallet-state-provider'
@@ -27,6 +28,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
 function _WalletProvider({ children }: { children: React.ReactNode }) {
   const connections = useConnections()
   const { pendingWalletId } = useWalletState()
+  const { addRecentWallet } = useRecentWallets()
 
   useEffect(() => {
     console.log('connections', connections)
@@ -39,6 +41,16 @@ function _WalletProvider({ children }: { children: React.ReactNode }) {
     }),
     [connections, pendingWalletId],
   )
+
+  useEffect(() => {
+    return watchConnections(() => {
+      const connections = getConnections()
+
+      for (const { id } of connections) {
+        addRecentWallet(id)
+      }
+    })
+  }, [addRecentWallet])
 
   return (
     <WalletContext.Provider value={value}>

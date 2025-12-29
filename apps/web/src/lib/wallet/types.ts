@@ -22,8 +22,9 @@ export interface WalletConnectorConfig {
 }
 
 export interface WalletWithState extends Wallet {
-  installed: boolean
-  available: boolean
+  isInstalled: boolean
+  isAvailable: boolean
+  isRecent: boolean
 }
 
 export interface WalletConnection {
