@@ -3,13 +3,11 @@
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   LinkExternal,
   Sheet,
   SheetContent,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   useBreakpoint,
@@ -40,8 +38,8 @@ export const ConnectModal: FC<Props> = ({ open, onOpenChange }) => {
   ) : (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent hideClose className="!p-0 max-h-[calc(100%-16px)]">
-        <div>
-          <DialogHeader className="p-4 !text-left">
+        <div className="py-4 space-y-4">
+          <DialogHeader className="px-4 !text-left">
             <DialogTitle>Connect</DialogTitle>
             <Disclaimer />
           </DialogHeader>

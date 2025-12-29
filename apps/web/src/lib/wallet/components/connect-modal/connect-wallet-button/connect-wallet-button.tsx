@@ -15,8 +15,8 @@ const ConnectSvmWalletButton = dynamic(
   { ssr: false },
 )
 
-function ConnectNamespaceButton(props: ConnectWalletButtonProps) {
-  if (!props.wallet.available) {
+function ConnectButton(props: ConnectWalletButtonProps) {
+  if (!props.wallet.isAvailable) {
     const { wallet, ...rest } = props
     return (
       <Button
@@ -39,19 +39,19 @@ function ConnectNamespaceButton(props: ConnectWalletButtonProps) {
   }
 }
 
-interface Props {
+export function ConnectWalletButton({
+  wallet,
+}: ConnectWalletButtonProps & {
   wallet: WalletWithState
-}
-
-export function ConnectWalletButton({ wallet }: Props) {
-  const rightChip = wallet.available
-    ? 'Connect'
-    : wallet.url
-      ? 'Get wallet'
-      : 'Unavailable'
+}) {
+  const rightChip = wallet.isRecent
+    ? 'Recent'
+    : wallet.isInstalled
+      ? 'Installed'
+      : undefined
 
   return (
-    <ConnectNamespaceButton
+    <ConnectButton
       wallet={wallet}
       fullWidth
       size="lg"
@@ -68,7 +68,7 @@ export function ConnectWalletButton({ wallet }: Props) {
           <span>{wallet.name}</span>
         </div>
       </div>
-      <Chip variant="secondary">{rightChip}</Chip>
-    </ConnectNamespaceButton>
+      {rightChip ? <Chip variant="secondary">{rightChip}</Chip> : null}
+    </ConnectButton>
   )
 }
