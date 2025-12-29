@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import ms from 'ms'
 import { positionService } from '../../services/position-service'
 
 /**
@@ -29,8 +30,8 @@ export function useUserPositions({
         throw error
       }
     },
-    enabled: !!userAddress,
-    staleTime: 1000 * 60, // 1 minute
+    enabled: Boolean(userAddress),
+    staleTime: ms('1m'),
     retry: false, // Don't retry on error to see the error immediately
   })
 }
@@ -42,11 +43,13 @@ export function usePosition(tokenId: number | undefined) {
   return useQuery({
     queryKey: ['stellar', 'positions', 'single', tokenId],
     queryFn: async () => {
-      if (!tokenId) return null
+      if (!tokenId) {
+        return null
+      }
       return await positionService.getPosition(tokenId)
     },
-    enabled: !!tokenId,
-    staleTime: 1000 * 60, // 1 minute
+    enabled: Boolean(tokenId !== undefined),
+    staleTime: ms('1m'),
   })
 }
 
@@ -57,11 +60,13 @@ export function useUncollectedFees(tokenId: number | undefined) {
   return useQuery({
     queryKey: ['stellar', 'positions', 'fees', tokenId],
     queryFn: async () => {
-      if (!tokenId) return null
+      if (!tokenId) {
+        return null
+      }
       return await positionService.getUncollectedFees(tokenId)
     },
-    enabled: !!tokenId,
-    staleTime: 1000 * 30, // 30 seconds
+    enabled: Boolean(tokenId !== undefined),
+    staleTime: ms('30s'),
   })
 }
 
@@ -98,9 +103,7 @@ export function useCollectFees() {
         signAuthEntry,
       )
     },
-    onSuccess: (result, variables) => {
-      console.log('Fees collected successfully:', result)
-
+    onSuccess: (_result, variables) => {
       // Invalidate position queries to refresh data
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'positions', 'user', variables.recipient],

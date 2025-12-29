@@ -13,14 +13,12 @@ import {
 import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
 import Link from 'next/link'
 import React, { type Dispatch, type SetStateAction } from 'react'
+import { formatUnits } from 'viem'
 import { useTokenBalances } from '~stellar/_common/lib/hooks/token/use-token-balance'
 import { useXlmBalance } from '~stellar/_common/lib/hooks/token/use-xlm-balance'
 import { getBaseTokens } from '~stellar/_common/lib/soroban/token-helpers'
 import type { Token } from '~stellar/_common/lib/types/token.type'
-import {
-  formatAddress,
-  formatTokenBalance,
-} from '~stellar/_common/lib/utils/formatters'
+import { formatAddress } from '~stellar/_common/lib/utils/format'
 import { getStellarAddressLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
 import { useStellarWallet } from '~stellar/providers'
 import type { IProfileView } from './ConnectWalletButton'
@@ -31,7 +29,7 @@ type DefaultViewProps = {
 
 export const DefaultView = ({ setView }: DefaultViewProps) => {
   const { connectedAddress, disconnectWallet } = useStellarWallet()
-  const { data, isLoading: isLoadingBalance } = useXlmBalance()
+  const { data: xlmBalance, isLoading: isLoadingBalance } = useXlmBalance()
 
   // Get base tokens (excluding XLM since we show it separately)
   const baseTokens: Token[] = getBaseTokens().filter(
@@ -83,7 +81,7 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
           <Link
             href={getStellarAddressLink(connectedAddress ?? '')}
             target="_blank"
-            rel="noopenner noreferrer"
+            rel="noopener noreferrer"
           >
             <IconButton
               icon={LinkIcon}
@@ -109,9 +107,10 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
             <SkeletonText className="!w-24 mx-auto !h-7" />
             <span className="text-3xl font-medium h-7">XLM</span>
           </div>
-        ) : data?.formattedBalance && data.formattedBalance !== '-' ? (
+        ) : xlmBalance?.formattedBalance &&
+          xlmBalance.formattedBalance !== '-' ? (
           <p className="text-3xl font-medium whitespace-nowrap">
-            {data.formattedBalance} XLM
+            {xlmBalance.formattedBalance} XLM
           </p>
         ) : (
           <div className="flex flex-col items-center gap-1">
@@ -145,7 +144,9 @@ export const DefaultView = ({ setView }: DefaultViewProps) => {
                       className="!py-2"
                     >
                       <span className="text-sm font-medium">
-                        {formatTokenBalance(token.balance, token)}
+                        {Number.parseFloat(
+                          formatUnits(token.balance, token.decimals),
+                        ).toFixed(2)}
                       </span>
                     </List.KeyValue>
                   ))

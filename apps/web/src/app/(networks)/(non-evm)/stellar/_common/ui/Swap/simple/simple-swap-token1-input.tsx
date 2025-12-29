@@ -1,5 +1,5 @@
 import React from 'react'
-import { formatTokenBalance } from '~stellar/_common/lib/utils/formatters'
+import { formatUnits } from 'viem'
 import {
   useSimpleSwapActions,
   useSimpleSwapState,
@@ -11,7 +11,7 @@ export const SimpleSwapToken1Input = () => {
   const { setToken1 } = useSimpleSwapActions()
 
   const outputSwapTokenAmount = outputAmount
-    ? formatTokenBalance(outputAmount, token1, token1.decimals)
+    ? formatUnits(outputAmount, token1.decimals)
     : ''
 
   return (

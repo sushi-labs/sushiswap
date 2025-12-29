@@ -11,7 +11,7 @@ import {
 } from '@sushiswap/ui'
 import React, { type FC, useCallback, useState } from 'react'
 import type { Token } from '~stellar/_common/lib/types/token.type'
-import { formatAddress } from '~stellar/_common/lib/utils/formatters'
+import { formatAddress } from '~stellar/_common/lib/utils/format'
 import { getStellarContractLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
 import { TokenIcon } from '../General/TokenIcon'
 

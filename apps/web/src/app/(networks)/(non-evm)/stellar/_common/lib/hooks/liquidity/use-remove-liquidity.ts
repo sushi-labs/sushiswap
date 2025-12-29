@@ -6,6 +6,8 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { addMinutes } from 'date-fns'
+import { ChainId } from 'sushi'
 import { decreaseLiquidity } from '~stellar/_common/lib/soroban/position-manager-helpers'
 import { getStellarTxnLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
 import { useStellarWallet } from '~stellar/providers'
@@ -34,7 +36,7 @@ export const useRemoveLiquidity = () => {
           summary: 'Removing liquidity...',
           type: 'burn',
           account: connectedAddress,
-          chainId: 1,
+          chainId: ChainId.STELLAR,
           groupTimestamp: timestamp,
           timestamp,
         })
@@ -45,7 +47,9 @@ export const useRemoveLiquidity = () => {
         throw new Error('Wallet not connected')
       }
 
-      const deadline = BigInt(Math.floor(Date.now() / 1000) + 300)
+      const deadline = BigInt(
+        Math.floor(addMinutes(new Date(), 5).valueOf() / 1000),
+      )
 
       const decreaseResult = await decreaseLiquidity({
         tokenId: params.tokenId,
@@ -68,7 +72,7 @@ export const useRemoveLiquidity = () => {
         summary: `Liquidity removed!`,
         type: 'burn',
         account: connectedAddress || undefined,
-        chainId: 1,
+        chainId: ChainId.STELLAR,
         txHash: result.decreaseHash,
         href: getStellarTxnLink(result.decreaseHash),
         groupTimestamp: Date.now(),

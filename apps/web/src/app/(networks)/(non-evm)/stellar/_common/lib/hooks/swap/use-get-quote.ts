@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { createSushiStellarService } from '../../services/sushi-stellar-service'
 import type { Token } from '../../types/token.type'
 
@@ -29,17 +30,10 @@ export const useGetQuote = (params: UseGetQuoteParams) => {
         params.tokenOut,
         params.amountIn,
       )
-      if (route) {
-        console.log('Quote received:', {
-          amountOut: route.amountOut,
-          route: service.formatRoute(route),
-          priceImpact: route.priceImpact,
-        })
-      }
       return route
     },
-    enabled: params.enabled !== false && params.amountIn > 0n,
-    staleTime: 30000, // 30 seconds
-    refetchInterval: 10000, // 10 seconds
+    enabled: Boolean(params.enabled !== false && params.amountIn > 0n),
+    staleTime: ms('30s'),
+    refetchInterval: ms('10s'),
   })
 }

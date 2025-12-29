@@ -45,9 +45,8 @@ export async function findPoolsBetweenTokens(
           fee: fee,
         })
       }
-    } catch (error) {
+    } catch (_error) {
       // Pool doesn't exist for this fee tier
-      console.warn(`Pool doesn't exist for fee tier ${fee}:`, error)
     }
   }
   return pools
@@ -128,13 +127,4 @@ export function calculateAmountInMaximum(
   const slippageBps = Math.floor(slippageTolerance * 100)
   const slippageMultiplier = BigInt(10000 + slippageBps)
   return (amountIn * slippageMultiplier) / BigInt(10000)
-}
-
-/**
- * Calculate deadline timestamp
- * @param minutesFromNow - Minutes from current time
- * @returns Deadline timestamp
- */
-export function calculateDeadline(minutesFromNow = 20): bigint {
-  return BigInt(Math.floor(Date.now() / 1000) + minutesFromNow * 60)
 }

@@ -45,7 +45,7 @@ export const SimpleSwapToken0Input = () => {
     tokenIn: token0,
     tokenOut: token1,
     amountIn,
-    enabled: amountIn > 0n,
+    enabled: Boolean(amountIn > 0n),
   })
 
   // Update fetching state - use isFetching to show loading for on-chain quotes

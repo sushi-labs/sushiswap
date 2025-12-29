@@ -4,6 +4,8 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import ms from 'ms'
+import { ChainId } from 'sushi'
 import { useStellarWallet } from '~stellar/providers'
 import {
   createTrustline,
@@ -70,8 +72,8 @@ export function useHasTrustline(assetCode: string, assetIssuer: string) {
       }
       return await hasTrustline(connectedAddress, assetCode, assetIssuer)
     },
-    enabled: !!connectedAddress && !!assetIssuer,
-    staleTime: 1000 * 30, // 30 seconds
+    enabled: Boolean(connectedAddress && assetIssuer),
+    staleTime: ms('30s'),
   })
 }
 
@@ -89,8 +91,8 @@ export function useUserTrustlines() {
       }
       return await getUserTrustlines(connectedAddress)
     },
-    enabled: !!connectedAddress,
-    staleTime: 1000 * 60, // 1 minute
+    enabled: Boolean(connectedAddress),
+    staleTime: ms('1m'),
   })
 }
 
@@ -109,7 +111,7 @@ export function useCreateTrustline() {
         summary: `Creating trustline for ${params.assetCode}...`,
         type: 'mint',
         account: connectedAddress || undefined,
-        chainId: 1,
+        chainId: ChainId.STELLAR,
         groupTimestamp: timestamp,
         timestamp,
       })
@@ -139,7 +141,7 @@ export function useCreateTrustline() {
         summary: `Trustline created for ${variables.assetCode}`,
         type: 'mint',
         account: connectedAddress || undefined,
-        chainId: 1,
+        chainId: ChainId.STELLAR,
         txHash: result.txHash,
         href: result.txHash ? getStellarTxnLink(result.txHash) : undefined,
         groupTimestamp: timestamp,
@@ -200,8 +202,8 @@ export function useNeedsTrustlines(
         }),
       )
     },
-    enabled: !!connectedAddress,
-    staleTime: 1000 * 30, // 30 seconds
+    enabled: Boolean(connectedAddress),
+    staleTime: ms('30s'),
   })
 
   const defaultResults = tokens.map(() => NO_TRUSTLINE_NEEDED)

@@ -1,6 +1,7 @@
 import type { AssembledTransaction } from '@stellar/stellar-sdk/contract'
 import { staticTokens } from '../assets/token-assets'
 import type { Token } from '../types/token.type'
+import { formatAddress } from '../utils/format'
 import { getTokenContractClient } from './client'
 import { DEFAULT_TIMEOUT } from './constants'
 
@@ -84,8 +85,9 @@ export async function getTokenByContract(
     const metadata = await getTokenMetadata(canonicalContract)
     return {
       contract: canonicalContract,
-      code: metadata.symbol || canonicalContract.slice(0, 8),
-      name: metadata.name || metadata.symbol || canonicalContract.slice(0, 8),
+      code: metadata.symbol || formatAddress(canonicalContract),
+      name:
+        metadata.name || metadata.symbol || formatAddress(canonicalContract),
       decimals: metadata.decimals,
       issuer: '',
       org: 'unknown',
@@ -95,8 +97,8 @@ export async function getTokenByContract(
     console.warn(`Failed to fetch metadata for token ${contract}:`, error)
     return {
       contract: canonicalContract,
-      code: canonicalContract.slice(0, 8),
-      name: canonicalContract.slice(0, 8),
+      code: formatAddress(canonicalContract),
+      name: formatAddress(canonicalContract),
       decimals: 7,
       issuer: '',
       org: 'unknown',

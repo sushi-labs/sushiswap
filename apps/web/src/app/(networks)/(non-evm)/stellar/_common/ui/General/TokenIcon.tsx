@@ -49,7 +49,7 @@ export const TokenIcon = ({ currency, height = 40, width = 40 }: IconProps) => {
             ),
           }}
         >
-          {currency?.code?.substring(0, 2) ?? '??'}
+          {currency?.code?.slice(0, 2) ?? '??'}
         </div>
       )}
     </>

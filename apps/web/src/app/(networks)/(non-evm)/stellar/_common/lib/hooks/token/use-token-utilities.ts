@@ -23,10 +23,12 @@ export const useHasSufficientBalance = (
       amount,
     ],
     queryFn: async () => {
-      if (!address || !tokenAddress || amount === null) return null
+      if (!address || !tokenAddress || amount === null) {
+        return null
+      }
       return await hasSufficientBalance(address, tokenAddress, amount)
     },
-    enabled: !!address && !!tokenAddress && amount !== null,
+    enabled: Boolean(address && tokenAddress && amount !== null),
   })
 }
 
@@ -47,10 +49,12 @@ export const useHasSufficientAllowance = (
       amount,
     ],
     queryFn: async () => {
-      if (!owner || !spender || !tokenAddress || amount === null) return null
+      if (!owner || !spender || !tokenAddress || amount === null) {
+        return null
+      }
       return await hasSufficientAllowance(owner, spender, tokenAddress, amount)
     },
-    enabled: !!owner && !!spender && !!tokenAddress && amount !== null,
+    enabled: Boolean(owner && spender && tokenAddress && amount !== null),
   })
 }
 
@@ -61,10 +65,12 @@ export const useMultipleTokenBalances = (
   return useQuery({
     queryKey: ['stellar', 'token', 'multipleBalances', address, tokenAddresses],
     queryFn: async () => {
-      if (!address || tokenAddresses.length === 0) return null
+      if (!address || tokenAddresses.length === 0) {
+        return null
+      }
       return await getMultipleTokenBalances(address, tokenAddresses)
     },
-    enabled: !!address && tokenAddresses.length > 0,
+    enabled: Boolean(address && tokenAddresses.length > 0),
   })
 }
 
@@ -83,9 +89,11 @@ export const useMultipleTokenAllowances = (
       tokenAddresses,
     ],
     queryFn: async () => {
-      if (!owner || !spender || tokenAddresses.length === 0) return null
+      if (!owner || !spender || tokenAddresses.length === 0) {
+        return null
+      }
       return await getMultipleTokenAllowances(owner, spender, tokenAddresses)
     },
-    enabled: !!owner && !!spender && tokenAddresses.length > 0,
+    enabled: Boolean(owner && spender && tokenAddresses.length > 0),
   })
 }

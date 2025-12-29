@@ -6,6 +6,8 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { addMinutes } from 'date-fns'
+import { ChainId } from 'sushi'
 import { createSushiStellarService } from '../../services/sushi-stellar-service'
 import type { AddLiquidityParams } from '../../services/swap-service'
 import { extractErrorMessage } from '../../utils/error-helpers'
@@ -39,7 +41,7 @@ export const useAddLiquidity = () => {
         summary: 'Adding liquidity...',
         type: 'mint',
         account: params.userAddress,
-        chainId: 1,
+        chainId: ChainId.STELLAR,
         groupTimestamp: timestamp,
         timestamp,
       })
@@ -54,7 +56,9 @@ export const useAddLiquidity = () => {
         tickLower: params.tickLower,
         tickUpper: params.tickUpper,
         recipient: params.recipient || params.userAddress,
-        deadline: params.deadline || Math.floor(Date.now() / 1000) + 300,
+        deadline:
+          params.deadline ||
+          Math.floor(addMinutes(new Date(), 5).valueOf() / 1000),
       }
 
       const result = await service.addLiquidity(
@@ -71,7 +75,7 @@ export const useAddLiquidity = () => {
         summary: 'Liquidity added successfully',
         type: 'mint',
         account: variables.userAddress,
-        chainId: 1,
+        chainId: ChainId.STELLAR,
         txHash: result.txHash,
         href: getStellarTxnLink(result.txHash),
         groupTimestamp: Date.now(),

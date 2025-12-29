@@ -30,7 +30,6 @@ export {
   findPoolsBetweenTokens,
   calculateAmountOutMinimum as calculateRouterAmountOutMinimum,
   calculateAmountInMaximum as calculateRouterAmountInMaximum,
-  calculateDeadline,
 } from './dex-router-helpers'
 export type { Route } from './dex-router-helpers'
 

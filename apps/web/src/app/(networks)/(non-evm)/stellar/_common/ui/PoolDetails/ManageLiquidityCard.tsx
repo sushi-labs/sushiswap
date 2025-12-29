@@ -16,6 +16,8 @@ import {
 } from '@sushiswap/ui'
 import type React from 'react'
 import { useEffect, useMemo, useState } from 'react'
+import { ChainId } from 'sushi'
+import { formatUnits } from 'viem'
 import { ToggleZapCard } from '~evm/[chainId]/pool/_ui/toggle-zap-card'
 import { useRemoveLiquidity } from '~stellar/_common/lib/hooks/liquidity/use-remove-liquidity'
 import { useCalculateDependentAmount } from '~stellar/_common/lib/hooks/pool/use-calculate-dependent-amount'
@@ -33,7 +35,6 @@ import {
 } from '~stellar/_common/lib/soroban/pool-helpers'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import type { Token } from '~stellar/_common/lib/types/token.type'
-import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
 import { getStellarTxnLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
 import {
   MAX_TICK_RANGE,
@@ -142,14 +143,14 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
 
     if (independentField === 'token0') {
       // User is entering token0, dependent is token1
-      const maxToken0FromBalance = formatTokenAmount(
+      const maxToken0FromBalance = formatUnits(
         BigInt(maxPairedAmountData.maxToken0Amount),
         pool.token0.decimals,
       )
       return maxToken0FromBalance
     } else {
       // User is entering token1, dependent is token0
-      const maxToken1FromBalance = formatTokenAmount(
+      const maxToken1FromBalance = formatUnits(
         BigInt(maxPairedAmountData.maxToken1Amount),
         pool.token1.decimals,
       )
@@ -401,11 +402,11 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
           signTransaction,
           signAuthEntry,
         })
-        const token0Amount = formatTokenAmount(
+        const token0Amount = formatUnits(
           collectResult.amount0,
           pool.token0.decimals,
         )
-        const token1Amount = formatTokenAmount(
+        const token1Amount = formatUnits(
           collectResult.amount1,
           pool.token1.decimals,
         )
@@ -422,7 +423,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
           summary,
           type: 'claimRewards',
           account: connectedAddress,
-          chainId: 1,
+          chainId: ChainId.STELLAR,
           txHash: collectResult.txHash,
           href: getStellarTxnLink(collectResult.txHash),
           groupTimestamp: Date.now(),
@@ -751,19 +752,19 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                   <div className="space-y-3">
                     {myPositions.map((position) => {
                       const isSelected = position.tokenId === selectedPositionId
-                      const principal0 = formatTokenAmount(
+                      const principal0 = formatUnits(
                         position.principalToken0,
                         token0Decimals,
                       )
-                      const principal1 = formatTokenAmount(
+                      const principal1 = formatUnits(
                         position.principalToken1,
                         token1Decimals,
                       )
-                      const fees0 = formatTokenAmount(
+                      const fees0 = formatUnits(
                         position.feesToken0,
                         token0Decimals,
                       )
-                      const fees1 = formatTokenAmount(
+                      const fees1 = formatUnits(
                         position.feesToken1,
                         token1Decimals,
                       )
@@ -893,20 +894,14 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                         <div className="grid grid-cols-2 gap-3 text-xs text-muted-foreground">
                           <div>
                             <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                              {formatTokenAmount(
-                                estimatedToken0,
-                                token0Decimals,
-                              )}{' '}
+                              {formatUnits(estimatedToken0, token0Decimals)}{' '}
                               {pool.token0.code}
                             </div>
                             <p>Est. {pool.token0.code} principal</p>
                           </div>
                           <div>
                             <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                              {formatTokenAmount(
-                                estimatedToken1,
-                                token1Decimals,
-                              )}{' '}
+                              {formatUnits(estimatedToken1, token1Decimals)}{' '}
                               {pool.token1.code}
                             </div>
                             <p>Est. {pool.token1.code} principal</p>

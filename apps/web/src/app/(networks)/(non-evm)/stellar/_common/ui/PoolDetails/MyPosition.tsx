@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
 import React from 'react'
 import { formatUSD } from 'sushi'
+import { formatUnits } from 'viem'
 import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
-import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
 import { useStellarWallet } from '~stellar/providers'
 import { useMyPosition } from '../../lib/hooks/position/use-my-position'
 import { CollectFeesBox } from './CollectFeesBox'
@@ -49,11 +49,11 @@ export const MyPosition: React.FC<MyPositionProps> = ({ pool }) => {
   }, [positions])
 
   const token0UsdValue =
-    Number(formatTokenAmount(actualAmounts.token0, pool.token0.decimals)) *
+    Number(formatUnits(actualAmounts.token0, pool.token0.decimals)) *
     Number(priceToken0 ?? 0)
 
   const token1UsdValue =
-    Number(formatTokenAmount(actualAmounts.token1, pool.token1.decimals)) *
+    Number(formatUnits(actualAmounts.token1, pool.token1.decimals)) *
     Number(priceToken1 ?? 0)
 
   // If no positions found, show empty state
@@ -110,19 +110,13 @@ export const MyPosition: React.FC<MyPositionProps> = ({ pool }) => {
             <LiquidityItem
               isLoading={isLoading}
               token={pool.token0}
-              amount={formatTokenAmount(
-                actualAmounts.token0,
-                pool.token0.decimals,
-              )}
+              amount={formatUnits(actualAmounts.token0, pool.token0.decimals)}
               usdAmount={token0UsdValue.toFixed(2)}
             />
             <LiquidityItem
               isLoading={isLoading}
               token={pool.token1}
-              amount={formatTokenAmount(
-                actualAmounts.token1,
-                pool.token1.decimals,
-              )}
+              amount={formatUnits(actualAmounts.token1, pool.token1.decimals)}
               usdAmount={token1UsdValue.toFixed(2)}
             />
           </div>

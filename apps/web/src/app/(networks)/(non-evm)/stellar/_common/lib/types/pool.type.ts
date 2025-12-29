@@ -2,12 +2,10 @@ import type { Token } from './token.type'
 
 export interface PoolLiquidity {
   amount: string
-  formatted: string
 }
 export interface TokenReserve {
   code: string
   amount: string
-  formatted: string
 }
 
 export interface PoolReserves {

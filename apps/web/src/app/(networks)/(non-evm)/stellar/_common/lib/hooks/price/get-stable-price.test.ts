@@ -18,13 +18,6 @@ vi.mock('~stellar/_common/lib/soroban', () => {
 vi.mock('~stellar/_common/lib/soroban/dex-router-helpers', () => {
   return { findBestPath: vi.fn() }
 })
-vi.mock('~stellar/_common/lib/utils/format', async () => {
-  return {
-    formatTokenAmount: (amount: bigint, decimals: number) => {
-      return (Number(amount) / 10 ** decimals).toString()
-    },
-  }
-})
 
 // Import mocked dependencies
 import { getStableTokens } from '~stellar/_common/lib/soroban'

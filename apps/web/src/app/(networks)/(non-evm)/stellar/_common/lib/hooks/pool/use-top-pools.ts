@@ -48,6 +48,6 @@ export function useTopPools() {
 
       return topPoolsWithTokens as TopPool[]
     },
-    enabled: !!tokens && !isLoadingTokens && !isPendingTokens,
+    enabled: Boolean(tokens && !isLoadingTokens && !isPendingTokens),
   })
 }

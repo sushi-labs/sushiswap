@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { createSushiStellarService } from '../../services/sushi-stellar-service'
 import type { Token } from '../../types/token.type'
 
@@ -23,12 +24,9 @@ export const usePoolsBetween = (params: UsePoolsBetweenParams) => {
     ],
     queryFn: async () => {
       const pools = await service.getPoolsBetween(params.tokenA, params.tokenB)
-      console.log(
-        `Found ${pools.length} pools between ${params.tokenA.code} and ${params.tokenB.code}`,
-      )
       return pools
     },
-    enabled: params.enabled !== false,
-    staleTime: 60000, // 1 minute
+    enabled: Boolean(params.enabled !== false),
+    staleTime: ms('1m'),
   })
 }

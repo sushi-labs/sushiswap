@@ -1,3 +1,4 @@
+import { addMinutes } from 'date-fns'
 import { getPoolInfoFromContract } from '../soroban/pool-helpers'
 import {
   decreaseLiquidity,
@@ -53,7 +54,7 @@ export class SushiStellarService {
     )
 
     const deadline = BigInt(
-      params.deadline || Math.floor(Date.now() / 1000) + 300,
+      params.deadline || Math.floor(addMinutes(new Date(), 5).valueOf() / 1000),
     )
 
     // Always fetch pool info from contract (no more dynamic import needed)
@@ -91,7 +92,7 @@ export class SushiStellarService {
         tokenId: existingPosition.tokenId,
         amount0Desired: amount0,
         amount1Desired: amount1,
-        amount0Min: BigInt(0), // TODO: Add slippage protection
+        amount0Min: BigInt(0),
         amount1Min: BigInt(0),
         deadline,
         operator: userAddress,
@@ -105,7 +106,6 @@ export class SushiStellarService {
         tokenId: existingPosition.tokenId,
         liquidity: result.liquidity,
       }
-    } else {
     }
 
     // No existing position found - mint new one
@@ -116,7 +116,7 @@ export class SushiStellarService {
       tickUpper: params.tickUpper,
       amount0Desired: amount0,
       amount1Desired: amount1,
-      amount0Min: BigInt(0), // TODO: Add slippage protection
+      amount0Min: BigInt(0),
       amount1Min: BigInt(0),
       deadline,
       sourceAccount: userAddress,
@@ -223,7 +223,7 @@ export class SushiStellarService {
       slippage,
     )
 
-    const deadline = Math.floor(Date.now() / 1000) + 300 // 5 minutes
+    const deadline = Math.floor(addMinutes(new Date(), 5).valueOf() / 1000)
 
     let result: { txHash: string; amountOut: bigint }
 
@@ -295,47 +295,6 @@ export class SushiStellarService {
   }
 
   /**
-   * Increase liquidity in an existing position
-   */
-  async increaseLiquidity(
-    userAddress: string,
-    params: {
-      tokenId: number
-      token0Amount: string
-      token1Amount: string
-      token0Decimals: number
-      token1Decimals: number
-      deadline?: number
-    },
-    signTransaction: (xdr: string) => Promise<string>,
-    signAuthEntry: (entryPreimageXdr: string) => Promise<string>,
-  ) {
-    const amount0 = BigInt(
-      Math.floor(
-        Number.parseFloat(params.token0Amount) * 10 ** params.token0Decimals,
-      ),
-    )
-    const amount1 = BigInt(
-      Math.floor(
-        Number.parseFloat(params.token1Amount) * 10 ** params.token1Decimals,
-      ),
-    )
-
-    return await increaseLiquidity({
-      tokenId: params.tokenId,
-      amount0Desired: amount0,
-      amount1Desired: amount1,
-      amount0Min: BigInt(0), // TODO: Add slippage protection
-      amount1Min: BigInt(0),
-      deadline: BigInt(params.deadline || Math.floor(Date.now() / 1000) + 300),
-      operator: userAddress,
-      sourceAccount: userAddress,
-      signTransaction,
-      signAuthEntry,
-    })
-  }
-
-  /**
    * Decrease liquidity from an existing position
    */
   async decreaseLiquidity(
@@ -351,9 +310,12 @@ export class SushiStellarService {
     return await decreaseLiquidity({
       tokenId: params.tokenId,
       liquidity: params.liquidity,
-      amount0Min: BigInt(0), // TODO: Add slippage protection
+      amount0Min: BigInt(0),
       amount1Min: BigInt(0),
-      deadline: BigInt(params.deadline || Math.floor(Date.now() / 1000) + 300),
+      deadline: BigInt(
+        params.deadline ||
+          Math.floor(addMinutes(new Date(), 5).valueOf() / 1000),
+      ),
       operator: userAddress,
       sourceAccount: userAddress,
       signTransaction,

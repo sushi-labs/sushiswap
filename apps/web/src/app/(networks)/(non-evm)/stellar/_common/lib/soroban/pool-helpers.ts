@@ -1,6 +1,5 @@
 import type { PoolInfo, PoolLiquidity, PoolReserves } from '../types/pool.type'
 import type { Token } from '../types/token.type'
-import { formatTokenAmount } from '../utils/formatters'
 import { type OracleHints, fetchOracleHints } from '../utils/slot-hint-helpers'
 import { getPoolLensContractClient } from './client'
 import { contractAddresses } from './contracts'
@@ -80,7 +79,7 @@ export async function getPoolInfoFromContract(
       tick,
     }
   } catch (error) {
-    console.error('Failed to query pool contract:', error)
+    console.warn('Failed to query pool contract:', error)
     return null
   }
 }
@@ -96,7 +95,7 @@ export async function getPoolInfo(address: string): Promise<PoolInfo | null> {
 
     if (!contractPoolInfo) {
       console.warn(
-        `⚠️ Could not fetch pool configuration for: ${address} - Skipping`,
+        `Could not fetch pool configuration for: ${address} - Skipping`,
       )
       return null
     }
@@ -112,27 +111,16 @@ export async function getPoolInfo(address: string): Promise<PoolInfo | null> {
 
     const liquidity: PoolLiquidity = {
       amount: contractPoolInfo.liquidity.toString(),
-      formatted: formatTokenAmount(contractPoolInfo.liquidity, 7, 2),
     }
 
     const reserves: PoolReserves = {
       token0: {
         code: contractPoolInfo.token0.code,
         amount: contractPoolInfo.reserve0.toString(),
-        formatted: formatTokenAmount(
-          contractPoolInfo.reserve0,
-          contractPoolInfo.token0.decimals,
-          2,
-        ),
       },
       token1: {
         code: contractPoolInfo.token1.code,
         amount: contractPoolInfo.reserve1.toString(),
-        formatted: formatTokenAmount(
-          contractPoolInfo.reserve1,
-          contractPoolInfo.token1.decimals,
-          2,
-        ),
       },
     }
 
@@ -150,7 +138,7 @@ export async function getPoolInfo(address: string): Promise<PoolInfo | null> {
     }
   } catch (error) {
     // Pools with no liquidity or missing data are expected
-    console.warn(`⚠️ Skipping pool ${address} (likely empty or inactive)`, error)
+    console.warn(`Skipping pool ${address} (likely empty or inactive)`, error)
     return null
   }
 }
@@ -180,12 +168,10 @@ export async function getPoolBalances(
     token0: {
       code: config.token0.code,
       amount: balance0.toString(),
-      formatted: formatTokenAmount(balance0, config.token0.decimals, 2),
     },
     token1: {
       code: config.token1.code,
       amount: balance1.toString(),
-      formatted: formatTokenAmount(balance1, config.token1.decimals, 2),
     },
   }
 }

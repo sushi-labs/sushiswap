@@ -1,4 +1,3 @@
-// TODO: DRY up, all of these are the same across any network
 'use client'
 
 import once from 'lodash.once'

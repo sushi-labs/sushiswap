@@ -11,9 +11,11 @@ export const useTokenAllowance = (
   return useQuery({
     queryKey: ['stellar', 'token', 'allowance', owner, spender, tokenAddress],
     queryFn: async () => {
-      if (!owner || !spender || !tokenAddress) return null
+      if (!owner || !spender || !tokenAddress) {
+        return null
+      }
       return await getTokenAllowance(owner, spender, tokenAddress)
     },
-    enabled: !!owner && !!spender && !!tokenAddress,
+    enabled: Boolean(owner && spender && tokenAddress),
   })
 }

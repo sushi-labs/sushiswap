@@ -65,10 +65,11 @@ export const usePoolOwnership = ({
 
       return { ownership, ownedSupplyUsd: lpUsdValueOwned.toString() }
     },
-    enabled:
-      !!pairAddress &&
-      !!pool &&
-      lpUsdValueOwned !== undefined &&
-      lpUsdValueTotal !== undefined,
+    enabled: Boolean(
+      pairAddress &&
+        pool &&
+        lpUsdValueOwned !== undefined &&
+        lpUsdValueTotal !== undefined,
+    ),
   })
 }

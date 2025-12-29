@@ -3,6 +3,7 @@
 import { Button, FormSection, SelectIcon, TextField } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
+import { formatUnits } from 'viem'
 import {
   useGetPool,
   usePoolInfo,
@@ -21,7 +22,6 @@ import {
   isAddressLower,
 } from '~stellar/_common/lib/soroban'
 import type { Token } from '~stellar/_common/lib/types/token.type'
-import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
 import { FEE_TIERS } from '~stellar/_common/lib/utils/ticks'
 import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
 import { TickRangeSelector } from '~stellar/_common/ui/TickRangeSelector/TickRangeSelector.tsx'
@@ -425,10 +425,7 @@ export default function AddPoolPage() {
                 orderedToken0Balance !== null &&
                 orderedToken0Balance !== undefined && (
                   <span className="text-xs text-muted-foreground">
-                    {formatTokenAmount(
-                      orderedToken0Balance,
-                      orderedToken0.decimals,
-                    )}
+                    {formatUnits(orderedToken0Balance, orderedToken0.decimals)}
                   </span>
                 )}
             </div>
@@ -458,7 +455,7 @@ export default function AddPoolPage() {
                   )
                   if (rawAmountValue >= maxOrderedToken0Amount) {
                     setOrderedToken0Amount(
-                      formatTokenAmount(
+                      formatUnits(
                         maxOrderedToken0Amount,
                         orderedToken0.decimals,
                       ),
@@ -474,7 +471,7 @@ export default function AddPoolPage() {
                 size="sm"
                 variant={
                   orderedToken0 &&
-                  formatTokenAmount(
+                  formatUnits(
                     maxOrderedToken0Amount,
                     orderedToken0.decimals,
                   ) === orderedToken0Amount
@@ -487,10 +484,7 @@ export default function AddPoolPage() {
                     return
                   }
                   setOrderedToken0Amount(
-                    formatTokenAmount(
-                      maxOrderedToken0Amount,
-                      orderedToken0.decimals,
-                    ),
+                    formatUnits(maxOrderedToken0Amount, orderedToken0.decimals),
                   )
                 }}
                 className="px-2"
@@ -516,7 +510,7 @@ export default function AddPoolPage() {
                   orderedToken1Balance !== null &&
                   orderedToken1Balance !== undefined && (
                     <span className="text-xs text-muted-foreground">
-                      {formatTokenAmount(
+                      {formatUnits(
                         orderedToken1Balance,
                         orderedToken1.decimals,
                       )}
@@ -561,7 +555,7 @@ export default function AddPoolPage() {
                           )
                           if (rawAmountValue >= maxOrderedToken1Amount) {
                             setManualOrderedToken1Amount(
-                              formatTokenAmount(
+                              formatUnits(
                                 maxOrderedToken1Amount,
                                 orderedToken1.decimals,
                               ),
@@ -580,7 +574,7 @@ export default function AddPoolPage() {
                     size="sm"
                     variant={
                       orderedToken1 &&
-                      formatTokenAmount(
+                      formatUnits(
                         maxOrderedToken1Amount,
                         orderedToken1.decimals,
                       ) === orderedToken1Amount
@@ -593,7 +587,7 @@ export default function AddPoolPage() {
                         return
                       }
                       setManualOrderedToken1Amount(
-                        formatTokenAmount(
+                        formatUnits(
                           maxOrderedToken1Amount,
                           orderedToken1.decimals,
                         ),

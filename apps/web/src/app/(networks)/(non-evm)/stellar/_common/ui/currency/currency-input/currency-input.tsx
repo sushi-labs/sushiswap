@@ -173,7 +173,7 @@ export function CurrencyInput({
           value={String(amountUSD)}
         />
         <CurrencyInputBalancePanel
-          coinData={balance ? Number(balance) : 0}
+          coinData={balance ?? 0n}
           isLoading={isBalanceLoading}
           decimals={token?.decimals}
           onClick={balanceClick}

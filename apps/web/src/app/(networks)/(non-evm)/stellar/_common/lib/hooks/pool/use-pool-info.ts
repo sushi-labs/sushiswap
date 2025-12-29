@@ -24,9 +24,10 @@ export const usePoolInfo = (address: string | null) => {
         ...poolInfo,
       }
     },
-    enabled: !!address,
+    enabled: Boolean(address),
     staleTime: ms('10s'),
     retry: 3, // Retry up to 3 times on RPC failures
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000), // Exponential backoff
+    retryDelay: (attemptIndex) =>
+      Math.min(ms('1s') * 2 ** attemptIndex, ms('10s')), // Exponential backoff
   })
 }

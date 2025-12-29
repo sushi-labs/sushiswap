@@ -2,13 +2,13 @@
 
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
+import { formatUnits } from 'viem'
 import {
   calculateAmountsFromLiquidity,
   calculateLiquidityFromAmount0,
   getCurrentSqrtPrice,
   tickToSqrtPrice,
 } from '../../soroban/pool-helpers'
-import { formatTokenAmountWithDecimals } from '../../utils/format'
 import { usePoolInitialized } from './use-pool-initialized'
 
 /**
@@ -101,10 +101,7 @@ export function useCalculatePairedAmount(
         )
 
         // Convert token1 amount back to token units
-        const pairedAmount = formatTokenAmountWithDecimals(
-          amounts.amount1,
-          decimals,
-        )
+        const pairedAmount = formatUnits(amounts.amount1, decimals)
 
         // Check for invalid results
         if (amounts.amount1 < 0n) {
@@ -128,12 +125,13 @@ export function useCalculatePairedAmount(
         }
       }
     },
-    enabled:
-      !!poolAddress &&
-      !!initialized &&
-      tickLower !== null &&
-      tickUpper !== null &&
-      decimals !== null,
-    staleTime: ms('10s'), // 10 seconds
+    enabled: Boolean(
+      poolAddress &&
+        initialized &&
+        tickLower !== null &&
+        tickUpper !== null &&
+        decimals !== null,
+    ),
+    staleTime: ms('10s'),
   })
 }

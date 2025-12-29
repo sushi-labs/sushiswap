@@ -1,8 +1,8 @@
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import { Badge, classNames } from '@sushiswap/ui'
 import React, { type CSSProperties } from 'react'
+import { formatUnits } from 'viem'
 import type { Token } from '~stellar/_common/lib/types/token.type'
-import { formatNumberWithDecimals } from '~stellar/_common/lib/utils/formatters'
 import { TokenIcon } from '../General/TokenIcon'
 
 type TokenListItem = {
@@ -19,6 +19,9 @@ export function TokenListItem({
   selected,
   onSelect,
 }: TokenListItem) {
+  const tokenBalance = Number.parseFloat(
+    formatUnits(BigInt(token.balance ?? 0n), token.decimals),
+  )
   return (
     <div className="py-0.5 h-[64px]" style={style}>
       <button
@@ -64,7 +67,7 @@ export function TokenListItem({
               </span>
             </div>
           </div>
-          {token.balance && BigInt(token.balance) > 0n ? (
+          {tokenBalance > 0 ? (
             <div className="flex flex-col max-w-[140px]">
               <span
                 className={classNames(
@@ -72,10 +75,9 @@ export function TokenListItem({
                   'text-right text-gray-900 dark:text-slate-50 truncate',
                 )}
               >
-                {formatNumberWithDecimals(
-                  Number(token.balance),
-                  token.decimals,
-                )}
+                {tokenBalance < 1
+                  ? tokenBalance.toFixed(8)
+                  : tokenBalance.toFixed(4)}
               </span>
             </div>
           ) : null}

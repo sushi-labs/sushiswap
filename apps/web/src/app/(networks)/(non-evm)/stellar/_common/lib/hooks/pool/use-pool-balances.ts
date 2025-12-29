@@ -11,10 +11,12 @@ export const usePoolBalances = (
   return useQuery({
     queryKey: ['stellar', 'pool', 'balances', address, connectedAddress],
     queryFn: async () => {
-      if (!address || !connectedAddress) return null
+      if (!address || !connectedAddress) {
+        return null
+      }
       return await getPoolBalances(address, connectedAddress)
     },
-    enabled: !!address && !!connectedAddress,
-    staleTime: ms('10s'), // 10 seconds
+    enabled: Boolean(address && connectedAddress),
+    staleTime: ms('10s'),
   })
 }

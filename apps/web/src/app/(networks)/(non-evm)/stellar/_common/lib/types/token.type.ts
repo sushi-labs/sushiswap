@@ -13,5 +13,4 @@ export interface Token {
 
 export interface TokenWithBalance extends Token {
   balance: bigint
-  balanceFormatted: string
 }

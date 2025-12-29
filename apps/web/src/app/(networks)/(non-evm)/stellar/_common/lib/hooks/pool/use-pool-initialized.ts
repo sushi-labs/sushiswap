@@ -14,11 +14,17 @@ const poolInitializedQueryKey = (address: string | null | undefined) => [
 export const usePoolInitialized = (address: string | null | undefined) => {
   return useQuery({
     queryKey: poolInitializedQueryKey(address),
-    queryFn: () => isPoolInitialized(address!),
-    enabled: !!address,
+    queryFn: () => {
+      if (!address) {
+        return false
+      }
+      return isPoolInitialized(address)
+    },
+    enabled: Boolean(address),
     staleTime: ms('30s'),
     retry: 3, // Retry up to 3 times on RPC failures
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000), // Exponential backoff
+    retryDelay: (attemptIndex) =>
+      Math.min(ms('1s') * 2 ** attemptIndex, ms('10s')), // Exponential backoff
   })
 }
 

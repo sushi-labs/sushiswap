@@ -6,13 +6,15 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { addMinutes } from 'date-fns'
 import { nanoid } from 'nanoid'
 import { toast } from 'react-toastify'
+import { ChainId } from 'sushi'
+import { formatUnits } from 'viem'
 import { useStellarWallet } from '~stellar/providers'
 import { SwapService } from '../../services/swap-service'
 import type { Token } from '../../types/token.type'
 import { extractErrorMessage } from '../../utils/error-helpers'
-import { formatTokenAmountForDisplay } from '../../utils/format'
 import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
 
 export interface UseExecuteSwapParams {
@@ -37,7 +39,7 @@ export const useExecuteSwap = () => {
       // Show "in progress" toast immediately before transaction starts
       const timestamp = Date.now()
       const infoToastId = `info:swap-${nanoid()}`
-      const amountInFormatted = formatTokenAmountForDisplay(
+      const amountInFormatted = formatUnits(
         params.amountIn,
         params.tokenIn.decimals,
       )
@@ -46,7 +48,7 @@ export const useExecuteSwap = () => {
         summary: `Swapping ${amountInFormatted} ${params.tokenIn.code} for ${params.tokenOut.code}...`,
         type: 'swap',
         account: params.userAddress,
-        chainId: 1,
+        chainId: ChainId.STELLAR,
         groupTimestamp: timestamp,
         timestamp,
         txHash: infoToastId, // Use as toast ID for dismissal
@@ -68,7 +70,9 @@ export const useExecuteSwap = () => {
           amountIn: params.amountIn,
           amountOutMinimum: params.amountOutMinimum,
           sqrtPriceLimitX96: params.sqrtPriceLimitX96,
-          deadline: params.deadline || Math.floor(Date.now() / 1000) + 600,
+          deadline:
+            params.deadline ||
+            Math.floor(addMinutes(new Date(), 10).valueOf() / 1000),
         },
         signTransaction,
       )
@@ -83,11 +87,11 @@ export const useExecuteSwap = () => {
 
       const amountOut =
         result.amountOut < 0n ? -result.amountOut : result.amountOut
-      const amountOutFormatted = formatTokenAmountForDisplay(
+      const amountOutFormatted = formatUnits(
         amountOut,
         params.tokenOut.decimals,
       )
-      const amountInFormatted = formatTokenAmountForDisplay(
+      const amountInFormatted = formatUnits(
         params.amountIn,
         params.tokenIn.decimals,
       )
@@ -96,7 +100,7 @@ export const useExecuteSwap = () => {
         summary: `Swapped ${amountInFormatted} ${params.tokenIn.code} for ${amountOutFormatted} ${params.tokenOut.code}`,
         type: 'swap',
         account: params.userAddress,
-        chainId: 1,
+        chainId: ChainId.STELLAR,
         txHash: result.txHash,
         href: getStellarTxnLink(result.txHash),
         groupTimestamp: Date.now(),
@@ -150,16 +154,13 @@ export const useExecuteMultiHopSwap = () => {
       const timestamp = Date.now()
       const infoToastId = `info:multihop-swap-${nanoid()}`
       const tokenInDecimals = params.tokenIn?.decimals ?? 7
-      const amountInFormatted = formatTokenAmountForDisplay(
-        params.amountIn,
-        tokenInDecimals,
-      )
+      const amountInFormatted = formatUnits(params.amountIn, tokenInDecimals)
 
       createInfoToast({
         summary: `Swapping ${amountInFormatted} ${params.tokenIn?.code || 'tokens'} for ${params.tokenOut?.code || 'tokens'}...`,
         type: 'swap',
         account: params.userAddress,
-        chainId: 1,
+        chainId: ChainId.STELLAR,
         groupTimestamp: timestamp,
         timestamp,
         txHash: infoToastId, // Use as toast ID for dismissal
@@ -179,7 +180,9 @@ export const useExecuteMultiHopSwap = () => {
           recipient: params.recipient,
           amountIn: params.amountIn,
           amountOutMinimum: params.amountOutMinimum,
-          deadline: params.deadline || Math.floor(Date.now() / 1000) + 600,
+          deadline:
+            params.deadline ||
+            Math.floor(addMinutes(new Date(), 10).valueOf() / 1000),
         },
         signTransaction,
       )
@@ -196,20 +199,14 @@ export const useExecuteMultiHopSwap = () => {
         result.amountOut < 0n ? -result.amountOut : result.amountOut
       const tokenInDecimals = params.tokenIn?.decimals ?? 7
       const tokenOutDecimals = params.tokenOut?.decimals ?? 7
-      const amountOutFormatted = formatTokenAmountForDisplay(
-        amountOut,
-        tokenOutDecimals,
-      )
-      const amountInFormatted = formatTokenAmountForDisplay(
-        params.amountIn,
-        tokenInDecimals,
-      )
+      const amountOutFormatted = formatUnits(amountOut, tokenOutDecimals)
+      const amountInFormatted = formatUnits(params.amountIn, tokenInDecimals)
 
       createSuccessToast({
         summary: `Swapped ${amountInFormatted} ${params.tokenIn?.code || 'tokens'} for ${amountOutFormatted} ${params.tokenOut?.code || 'tokens'}`,
         type: 'swap',
         account: params.userAddress,
-        chainId: 1,
+        chainId: ChainId.STELLAR,
         txHash: result.txHash,
         href: getStellarTxnLink(result.txHash),
         groupTimestamp: Date.now(),

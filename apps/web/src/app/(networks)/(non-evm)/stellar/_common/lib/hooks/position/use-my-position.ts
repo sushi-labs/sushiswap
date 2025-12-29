@@ -1,4 +1,5 @@
 import { useQueries } from '@tanstack/react-query'
+import ms from 'ms'
 import { useMemo } from 'react'
 import {
   type PositionInfo,
@@ -90,8 +91,8 @@ export function useMyPosition({
           return [getPositionKey(position), null] as const
         }
       },
-      enabled: !positionsLoading && !positionsError,
-      staleTime: 1000 * 60, // 1 minute
+      enabled: Boolean(!positionsLoading && !positionsError),
+      staleTime: ms('1m'),
       retry: 1,
     })),
   })
@@ -175,8 +176,8 @@ export function useMyPosition({
           )
         }
       },
-      enabled: positions.length > 0 && pool !== '',
-      staleTime: 1000 * 30, // 30 seconds
+      enabled: Boolean(positions.length > 0 && pool),
+      staleTime: ms('30s'),
       retry: 1,
     })),
   })

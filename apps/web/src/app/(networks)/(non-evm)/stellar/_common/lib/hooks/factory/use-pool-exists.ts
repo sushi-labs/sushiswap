@@ -13,9 +13,11 @@ export const usePoolExists = (params: PoolExistsParams | null) => {
   return useQuery({
     queryKey: ['factory', 'poolExists', params],
     queryFn: async () => {
-      if (!params) return false
+      if (!params) {
+        return false
+      }
       return await poolExists(params)
     },
-    enabled: !!params,
+    enabled: Boolean(params),
   })
 }

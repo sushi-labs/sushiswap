@@ -21,9 +21,6 @@ export interface SwapRoute {
  */
 export class RouterService {
   private quoteService: QuoteService
-  private poolCache: Map<string, PoolBasicInfo> = new Map()
-  private lastCacheUpdate = 0
-  private readonly CACHE_DURATION = 60000 // 1 minute
 
   constructor(quoteService: QuoteService) {
     this.quoteService = quoteService

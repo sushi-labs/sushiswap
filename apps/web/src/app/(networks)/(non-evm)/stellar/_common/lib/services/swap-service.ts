@@ -126,7 +126,7 @@ export class SwapService {
         throw new Error(`Transaction ${txHash} ${txResult.status}`)
       }
     } catch (error) {
-      console.error('❌ Error in swapExactInputSingle', error)
+      console.error('Error in swapExactInputSingle', error)
       throw error
     }
   }
@@ -192,7 +192,7 @@ export class SwapService {
         throw new Error(`Transaction ${txHash} ${txResult.status}`)
       }
     } catch (error) {
-      console.error('❌ Error in swapExactInput', error)
+      console.error('Error in swapExactInput', error)
       throw error
     }
   }

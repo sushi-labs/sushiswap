@@ -21,7 +21,6 @@ export const useApproveToken = () => {
       )
     },
     onSuccess: () => {
-      console.log('Token approval successful')
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'token', 'allowance'],
       })

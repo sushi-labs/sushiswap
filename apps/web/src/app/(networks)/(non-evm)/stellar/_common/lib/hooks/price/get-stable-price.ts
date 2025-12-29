@@ -1,8 +1,8 @@
+import { formatUnits } from 'viem'
 import { QuoteService } from '~stellar/_common/lib/services/quote-service'
 import { getStableTokens } from '~stellar/_common/lib/soroban'
 import { findBestPath } from '~stellar/_common/lib/soroban/dex-router-helpers'
 import type { Token } from '~stellar/_common/lib/types/token.type'
-import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
 
 // This implementation checks direct routes and 2-hop routes via XLM
 // for parity with Tron implementation using findBestPath
@@ -97,15 +97,14 @@ const getTokenPriceDirectOrViaXlm = async (token?: Token): Promise<string> => {
         ? curr
         : prev
     })
-    return formatTokenAmount(
-      BigInt(
-        maxOutputAmountWithoutFees.totalAmountOut +
-          maxOutputAmountWithoutFees.feeAmountOut,
-      ),
+    return formatUnits(
+      maxOutputAmountWithoutFees.totalAmountOut +
+        maxOutputAmountWithoutFees.feeAmountOut,
+
       maxOutputAmountWithoutFees.outputToken.decimals,
     )
   } catch (error) {
-    console.log(error)
+    console.error('Failed to get stable price', error)
     return '0'
   }
 }

@@ -158,10 +158,6 @@ export async function createTrustline(
   limit?: string,
 ): Promise<{ success: boolean; txHash?: string; error?: string }> {
   try {
-    console.log(
-      `Creating trustline for ${assetCode}:${assetIssuer} for user ${userAddress}`,
-    )
-
     // Load the user's account
     const account = await horizonServer.loadAccount(userAddress)
 
@@ -195,8 +191,6 @@ export async function createTrustline(
       NETWORK_PASSPHRASE,
     )
     const result = await horizonServer.submitTransaction(signedTx)
-
-    console.log('Trustline created successfully:', result.hash)
 
     return {
       success: true,
@@ -322,16 +316,10 @@ export async function ensureTrustline(
     const exists = await hasTrustline(userAddress, assetCode, assetIssuer)
 
     if (exists) {
-      console.log(
-        `✓ Trustline already exists for ${assetCode}:${assetIssuer.slice(0, 8)}...`,
-      )
       return { success: true, created: false }
     }
 
     // Create trustline for classic asset (including SAC-wrapped classic assets)
-    console.log(
-      `Creating trustline for ${assetCode}:${assetIssuer.slice(0, 8)}...`,
-    )
     const result = await createTrustline(
       userAddress,
       assetCode,

@@ -338,13 +338,6 @@ export async function increaseLiquidity({
       )
     }
 
-    // Verify simulation succeeded and check for footprint issues
-    if (!assembledTransaction.result) {
-      console.warn(
-        'Transaction simulation returned no result, but proceeding...',
-      )
-    }
-
     // Sign auth entries for nested authorization (PM -> Pool -> Token transfers)
     // This is required because the user is not the direct invoker of pool.increase_liquidity
     const transactionXdr = await signAuthEntriesAndGetXdr(

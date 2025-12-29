@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { QuoteService } from '~stellar/_common/lib/services/quote-service'
 import { getTokenByContract } from '~stellar/_common/lib/soroban/token-helpers'
 import type { Token } from '~stellar/_common/lib/types/token.type'
@@ -333,15 +334,16 @@ export function useBestRoute({
         return null
       }
     },
-    enabled:
+    enabled: Boolean(
       enabled &&
-      !!tokenIn &&
-      !!tokenOut &&
-      !!poolGraphData &&
-      amountIn > 0n &&
-      tokenIn.contract !== tokenOut.contract,
-    staleTime: 1000 * 10, // 10 seconds
-    gcTime: 1000 * 30, // 30 seconds
+        tokenIn &&
+        tokenOut &&
+        poolGraphData &&
+        amountIn > 0n &&
+        tokenIn.contract !== tokenOut.contract,
+    ),
+    staleTime: ms('10s'),
+    gcTime: ms('30s'),
     retry: 1, // Retry once on failure
     throwOnError: false,
   })

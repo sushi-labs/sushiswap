@@ -9,7 +9,6 @@ import {
   useMemo,
   useReducer,
 } from 'react'
-import { DEFAULT_SLIPPAGE } from 'sushi/evm'
 import { getBaseTokens } from '~stellar/_common/lib/soroban/token-helpers'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 

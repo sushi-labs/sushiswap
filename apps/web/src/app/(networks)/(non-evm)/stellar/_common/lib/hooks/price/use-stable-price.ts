@@ -10,7 +10,7 @@ export const useStablePrice = ({ token }: { token: Token | undefined }) => {
       return tokenPrice
     },
     placeholderData: keepPreviousData,
-    enabled: !!token,
+    enabled: Boolean(token),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,

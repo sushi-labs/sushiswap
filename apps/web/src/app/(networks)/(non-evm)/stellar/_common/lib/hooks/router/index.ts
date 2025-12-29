@@ -5,6 +5,5 @@
  * including swaps, liquidity management, and router information.
  */
 
-export { useRouterExecuteSwap } from './use-execute-swap'
 export * from './use-multi-hop-swap'
 export * from './use-quotes'

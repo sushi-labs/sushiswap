@@ -2,9 +2,10 @@ import { createErrorToast, createSuccessToast } from '@sushiswap/notifications'
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
 import type React from 'react'
 import { useState } from 'react'
+import { ChainId } from 'sushi'
+import { formatUnits } from 'viem'
 import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
-import { formatTokenAmount } from '~stellar/_common/lib/utils/format'
 import { useStellarWallet } from '~stellar/providers'
 import { useMyPosition } from '../../lib/hooks/position/use-my-position'
 import { useCollectFees } from '../../lib/hooks/position/use-positions'
@@ -120,11 +121,11 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
           { token0: 0n, token1: 0n },
         )
 
-        const token0Amount = formatTokenAmount(
+        const token0Amount = formatUnits(
           totalCollected.token0,
           pool.token0.decimals,
         )
-        const token1Amount = formatTokenAmount(
+        const token1Amount = formatUnits(
           totalCollected.token1,
           pool.token1.decimals,
         )
@@ -142,7 +143,7 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
           summary,
           type: 'claimRewards',
           account: connectedAddress,
-          chainId: 1,
+          chainId: ChainId.STELLAR,
           txHash: lastTxHash,
           href: getStellarTxnLink(lastTxHash),
           groupTimestamp: Date.now(),
@@ -190,25 +191,19 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
           <LiquidityItem
             isLoading={isLoading}
             token={pool.token0}
-            amount={Number.parseFloat(
-              formatTokenAmount(totalFees.token0, pool.token0.decimals),
-            ).toFixed(6)}
+            amount={formatUnits(totalFees.token0, pool.token0.decimals)}
             usdAmount={(
-              Number(
-                formatTokenAmount(totalFees.token0, pool.token0.decimals),
-              ) * Number(priceToken0 ?? 0)
+              Number(formatUnits(totalFees.token0, pool.token0.decimals)) *
+              Number(priceToken0 ?? 0)
             ).toFixed(2)}
           />
           <LiquidityItem
             isLoading={isLoading}
             token={pool.token1}
-            amount={Number.parseFloat(
-              formatTokenAmount(totalFees.token1, pool.token1.decimals),
-            ).toFixed(6)}
+            amount={formatUnits(totalFees.token1, pool.token1.decimals)}
             usdAmount={(
-              Number(
-                formatTokenAmount(totalFees.token1, pool.token1.decimals),
-              ) * Number(priceToken1 ?? 0)
+              Number(formatUnits(totalFees.token1, pool.token1.decimals)) *
+              Number(priceToken1 ?? 0)
             ).toFixed(2)}
           />
         </div>

@@ -2,10 +2,12 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { addMinutes } from 'date-fns'
+import { ChainId } from 'sushi'
+import { formatUnits } from 'viem'
 import { useStellarWallet } from '~stellar/providers'
 import { SwapService } from '../../services/swap-service'
 import type { Token } from '../../types/token.type'
-import { formatTokenAmountForDisplay } from '../../utils/format'
 import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
 
 export interface MultiHopSwapExactInputParams {
@@ -38,7 +40,9 @@ export const useExecuteSwapExactInputMulti = () => {
           recipient: params.recipient,
           amountIn: params.amountIn,
           amountOutMinimum: params.amountOutMinimum,
-          deadline: params.deadline || Math.floor(Date.now() / 1000) + 600, // 10 minutes default
+          deadline:
+            params.deadline ||
+            Math.floor(addMinutes(new Date(), 10).valueOf() / 1000),
         },
         signTransaction,
       )
@@ -51,24 +55,18 @@ export const useExecuteSwapExactInputMulti = () => {
         result.amountOut < 0n ? -result.amountOut : result.amountOut
       const tokenInDecimals = params.tokenIn?.decimals ?? 7
       const tokenOutDecimals = params.tokenOut?.decimals ?? 7
-      const amountOutFormatted = formatTokenAmountForDisplay(
-        amountOut,
-        tokenOutDecimals,
-      )
-      const amountInFormatted = formatTokenAmountForDisplay(
-        params.amountIn,
-        tokenInDecimals,
-      )
+      const amountOutFormatted = formatUnits(amountOut, tokenOutDecimals)
+      const amountInFormatted = formatUnits(params.amountIn, tokenInDecimals)
 
       createToast({
         account: params.userAddress,
         type: 'swap',
-        chainId: 1, // Stellar testnet
+        chainId: ChainId.STELLAR,
         txHash: result.txHash,
         href: getStellarTxnLink(result.txHash),
         promise: Promise.resolve(result),
         summary: {
-          pending: `Swapping ${amountInFormatted} ${params.tokenIn?.code || 'tokens'} for ${params.tokenOut?.code || 'tokens'}`,
+          pending: `Swapping ${amountInFormatted} ${params.tokenIn?.code || 'tokens'} for ${amountOutFormatted} ${params.tokenOut?.code || 'tokens'}`,
           completed: `Swapped ${amountInFormatted} ${params.tokenIn?.code || 'tokens'} for ${amountOutFormatted} ${params.tokenOut?.code || 'tokens'}`,
           failed: 'Multi-hop swap failed',
         },

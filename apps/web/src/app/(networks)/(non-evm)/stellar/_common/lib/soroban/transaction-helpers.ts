@@ -1,6 +1,7 @@
 import type { Transaction, xdr } from '@stellar/stellar-sdk'
 import { Account, TransactionBuilder } from '@stellar/stellar-sdk'
 import type { rpc } from '@stellar/stellar-sdk'
+import ms from 'ms'
 import { NETWORK_PASSPHRASE } from '../constants'
 import { SorobanClient } from './client'
 import { DEFAULT_TIMEOUT } from './constants'
@@ -23,8 +24,6 @@ export async function submitTransaction(signedTxXdr: string): Promise<{
 
     // Submit the transaction to the network
     const result = await SorobanClient.sendTransaction(transaction)
-
-    console.log('sent txn', result)
 
     return {
       hash: result.hash,
@@ -68,7 +67,7 @@ export async function buildTransaction<T extends xdr.Operation>(
  */
 export async function waitForTransaction(
   hash: string,
-  timeout = 30000,
+  timeout = ms('30s'),
   ledgersToWait = 1,
 ): Promise<rpc.Api.GetTransactionResponse> {
   const startTime = Date.now()
@@ -76,7 +75,6 @@ export async function waitForTransaction(
   while (Date.now() - startTime < timeout) {
     try {
       const result = await SorobanClient.getTransaction(hash)
-      console.log('result', result)
       if (result.status === 'SUCCESS') {
         // Wait for 1 ledger to ensure finality while sharing timeout
         await waitForLedgerPropagation(
@@ -91,13 +89,13 @@ export async function waitForTransaction(
     } catch (error) {
       // Transaction might not be available yet, continue waiting
       if (error instanceof Error && error.message?.includes('not found')) {
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        await new Promise((resolve) => setTimeout(resolve, ms('1s')))
         continue
       }
       throw error
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, ms('1s')))
   }
 
   throw new Error('Transaction confirmation timeout')
@@ -130,7 +128,7 @@ async function waitForLedgerPropagation(
     if (currentLedger.sequence >= targetLedger) {
       return
     }
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, ms('1s')))
   }
   throw new Error('Ledger wait timeout exceeded')
 }

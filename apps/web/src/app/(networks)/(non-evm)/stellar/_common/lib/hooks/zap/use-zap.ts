@@ -6,10 +6,12 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import ms from 'ms'
+import { ChainId } from 'sushi'
+import { formatUnits } from 'viem'
 import { createSushiStellarService } from '../../services/sushi-stellar-service'
 import type { Token } from '../../types/token.type'
 import { extractErrorMessage } from '../../utils/error-helpers'
-import { formatTokenAmountWithDecimals } from '../../utils/format'
 import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
 
 export interface UseZapParams {
@@ -39,7 +41,7 @@ export const useZap = () => {
         summary: 'Adding Liquidity...',
         type: 'mint',
         account: params.userAddress,
-        chainId: 1, // Stellar doesn't have chainId like EVM, using 1 as placeholder or generic
+        chainId: ChainId.STELLAR,
         groupTimestamp: timestamp,
         timestamp,
       })
@@ -90,7 +92,7 @@ export const useZap = () => {
         currentToken0Balance = swapToToken0Result.amountOut
 
         // Add delay between swaps
-        await new Promise((resolve) => setTimeout(resolve, 8000))
+        await new Promise((resolve) => setTimeout(resolve, ms('8s')))
 
         // Swap remaining amount to token1
         const swapToToken1Result = await service.swapWithRouting(
@@ -104,17 +106,13 @@ export const useZap = () => {
         currentToken1Balance = swapToToken1Result.amountOut
 
         // Add delay to ensure Stellar nodes have fully processed the swap transactions
-        await new Promise((resolve) => setTimeout(resolve, 8000))
+        await new Promise((resolve) => setTimeout(resolve, ms('8s')))
 
         // Invalidate balances to reflect swaps in UI
         queryClient.invalidateQueries({
           queryKey: ['stellar', 'pool', 'balances'],
         })
         queryClient.invalidateQueries({ queryKey: ['stellar', 'pool', 'info'] })
-
-        console.log(
-          'Swaps completed for external token, waiting for network state to update...',
-        )
       } else {
         // Case: tokenIn is one of the pool tokens - swap 50% to the other token
         const halfAmount = amountInBigInt / 2n
@@ -150,32 +148,21 @@ export const useZap = () => {
         }
 
         // Add delay to ensure Stellar nodes have fully processed the swap transaction
-        await new Promise((resolve) => setTimeout(resolve, 8000))
+        await new Promise((resolve) => setTimeout(resolve, ms('8s')))
 
         // Invalidate balances to reflect swap in UI immediately (before add liquidity)
         queryClient.invalidateQueries({
           queryKey: ['stellar', 'pool', 'balances'],
         })
         queryClient.invalidateQueries({ queryKey: ['stellar', 'pool', 'info'] })
-
-        console.log(
-          'Swap completed, waiting for network state to update...',
-          swapResult.txHash,
-        )
       }
 
       // 3. Add Liquidity
       // We use the remaining balances
 
       // Format back to string for addLiquidity params
-      const token0AmountStr = formatTokenAmountWithDecimals(
-        currentToken0Balance,
-        token0.decimals,
-      )
-      const token1AmountStr = formatTokenAmountWithDecimals(
-        currentToken1Balance,
-        token1.decimals,
-      )
+      const token0AmountStr = formatUnits(currentToken0Balance, token0.decimals)
+      const token1AmountStr = formatUnits(currentToken1Balance, token1.decimals)
 
       const addLiqResult = await service.addLiquidity(
         userAddress,
@@ -200,7 +187,7 @@ export const useZap = () => {
         summary: 'Liquidity added successfully',
         type: 'mint',
         account: params.userAddress,
-        chainId: 1,
+        chainId: ChainId.STELLAR,
         txHash: addLiqResult.txHash,
         href: getStellarTxnLink(addLiqResult.txHash),
         groupTimestamp: Date.now(),

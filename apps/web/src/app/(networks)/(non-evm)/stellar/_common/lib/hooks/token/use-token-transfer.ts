@@ -22,9 +22,6 @@ export const useTransferToken = () => {
     mutationFn: async (params: TransferTokenParams) => {
       return await transferToken(params.to, params.amount, params.tokenAddress)
     },
-    onSuccess: () => {
-      console.log('Token transfer successful')
-    },
     onError: (error) => {
       console.error('Failed to transfer token:', error)
     },
@@ -41,9 +38,6 @@ export const useTransferFromToken = () => {
         params.amount,
         params.tokenAddress,
       )
-    },
-    onSuccess: () => {
-      console.log('Token transfer from successful')
     },
     onError: (error) => {
       console.error('Failed to transfer from token:', error)

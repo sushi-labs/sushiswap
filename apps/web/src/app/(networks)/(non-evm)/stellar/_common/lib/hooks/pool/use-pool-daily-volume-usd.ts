@@ -16,10 +16,10 @@ export const useDayVolumeUSD = ({ pairAddress }: { pairAddress?: string }) => {
       return topPool?.volumeUSD1d?.toString() ?? '0'
     },
     placeholderData: keepPreviousData,
-    enabled: !!pairAddress && !!topPools && !isLoading && !isPending,
+    enabled: Boolean(pairAddress && topPools && !isLoading && !isPending),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    staleTime: ms('15 minutes'),
+    staleTime: ms('15m'),
   })
 }

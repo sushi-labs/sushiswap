@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
+import { formatUnits } from 'viem'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import { LiquidityItem } from './LiquidityItem'
 
@@ -22,12 +23,18 @@ export const PoolLiquidity = ({
           <LiquidityItem
             isLoading={isLoading}
             token={pool.token0}
-            amount={reserves.token0.formatted}
+            amount={formatUnits(
+              BigInt(reserves.token0.amount),
+              pool.token0.decimals,
+            )}
           />
           <LiquidityItem
             isLoading={isLoading}
             token={pool.token1}
-            amount={reserves.token1.formatted}
+            amount={formatUnits(
+              BigInt(reserves.token1.amount),
+              pool.token1.decimals,
+            )}
           />
         </div>
       </CardContent>

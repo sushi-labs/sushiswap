@@ -2,6 +2,7 @@
 
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
+import { addMinutes } from 'date-fns'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
 import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
@@ -74,7 +75,7 @@ export const SimpleSwapExecuteButton = () => {
     tokenIn: token0,
     tokenOut: token1,
     amountIn,
-    enabled: amountIn > 0n,
+    enabled: Boolean(amountIn > 0n),
   })
 
   const showPriceImpactWarning = requiresPriceImpactConfirmation(
@@ -144,7 +145,7 @@ export const SimpleSwapExecuteButton = () => {
           amountOutMinimum,
           recipient: connectedAddress,
           fee: route.fees[0],
-          deadline: Math.floor(Date.now() / 1000) + 600, // 10 minutes
+          deadline: Math.floor(addMinutes(new Date(), 10).valueOf() / 1000),
         })
         resetSwapForm()
       } else {
@@ -156,7 +157,7 @@ export const SimpleSwapExecuteButton = () => {
           amountIn,
           amountOutMinimum,
           recipient: connectedAddress,
-          deadline: Math.floor(Date.now() / 1000) + 600, // 10 minutes
+          deadline: Math.floor(addMinutes(new Date(), 10).valueOf() / 1000),
           tokenIn: token0,
           tokenOut: token1,
         })

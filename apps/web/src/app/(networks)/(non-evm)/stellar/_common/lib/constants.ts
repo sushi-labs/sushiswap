@@ -1,7 +1,5 @@
 import { Networks } from '@stellar/stellar-sdk'
 
-export const DEFAULT_DECIMALS_PRECISION = 2
-
 // SET THIS FLAG AS NEEDED - this change cascades to many areas of the codebase
 export const IS_TESTNET = false
 

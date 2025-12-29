@@ -1,4 +1,5 @@
 import * as StellarSdk from '@stellar/stellar-sdk'
+import ms from 'ms'
 import { RPC_URL } from '../constants'
 
 /**
@@ -122,7 +123,7 @@ export async function waitForTransaction(
   txHash: string,
 ): Promise<{ success: boolean; data?: any; error?: any }> {
   const maxAttempts = 30
-  const intervalMs = 2000
+  const intervalMs = ms('2s')
 
   for (let i = 0; i < maxAttempts; i++) {
     await new Promise((resolve) => setTimeout(resolve, intervalMs))
