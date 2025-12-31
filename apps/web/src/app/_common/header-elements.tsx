@@ -21,7 +21,7 @@ import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import { GithubIcon } from '@sushiswap/ui/icons/GithubIcon'
 import { XIcon } from '@sushiswap/ui/icons/XIcon'
 import Link from 'next/link'
-import { POOL_SUPPORTED_NETWORKS } from 'src/config'
+import { PERPS_SUPPORTED_NETWORKS, POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { ChainId, getChainById } from 'sushi'
 import { CookieDialog } from './cookies/cookie-dialog'
 
@@ -110,6 +110,8 @@ export const headerElements = ({
 }: HeaderElements = {}): NavigationElement[] => {
   const isPoolChainId =
     chainId && POOL_SUPPORTED_NETWORKS.some((_chainId) => _chainId === chainId)
+  const isPerpsChainId =
+    chainId && PERPS_SUPPORTED_NETWORKS.some((_chainId) => _chainId === chainId)
 
   return [
     {
@@ -224,6 +226,14 @@ export const headerElements = ({
           </NavigationMenuContent>
         </NavigationMenuItem>
       ),
+    },
+    {
+      title: 'Perps',
+      href: `/${
+        getChainById(isPerpsChainId ? chainId : ChainId.ETHEREUM).key
+      }/perps`,
+      show: 'desktop',
+      type: NavigationElementType.Single,
     },
     {
       title: 'Explore',
