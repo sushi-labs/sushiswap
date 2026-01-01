@@ -1,9 +1,9 @@
-import { AccountManagement } from './account-management'
-import { Chart } from './chart'
-import { Orderbook } from './orderbook'
-import { PerpTokenSelector } from './perp-token-selector'
-import { TradeTables } from './trade-tables'
-import { TradeWidget } from './trade-widget'
+import { AccountManagement } from '../account-management'
+import { Chart } from '../chart'
+import { Orderbook } from '../orderbook'
+import { PerpTokenSelector } from '../perp-token-selector'
+import { TradeTables } from '../trade-tables'
+import { TradeWidget } from '../trade-widget'
 
 export const DesktopLayout = () => (
   <div className="h-[calc(100vh-56px)] w-full">
