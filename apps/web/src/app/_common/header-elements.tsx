@@ -30,7 +30,8 @@ export const EXPLORE_NAVIGATION_LINKS = (
 ): NavigationElementDropdown['items'] => {
   const isPoolChainId =
     chainId && POOL_SUPPORTED_NETWORKS.some((_chainId) => _chainId === chainId)
-
+  const isPerpsChainId =
+    chainId && PERPS_SUPPORTED_NETWORKS.some((_chainId) => _chainId === chainId)
   return [
     {
       title: 'Swap',
@@ -41,6 +42,11 @@ export const EXPLORE_NAVIGATION_LINKS = (
       title: 'Explore',
       href: `/${getChainById(isPoolChainId ? chainId : ChainId.ETHEREUM).key}/explore/pools`,
       description: 'Explore top pools.',
+    },
+    {
+      title: 'Perps',
+      href: `/${getChainById(isPerpsChainId ? chainId : ChainId.ETHEREUM).key}/perps`,
+      description: 'Trade perpetual contracts.',
     },
     {
       title: 'Pool',
@@ -208,7 +214,7 @@ export const headerElements = ({
             </LinkInternal>
           </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="w-[400px] gap-3 p-4">
+            <ul className="w-[400px] gap-3 p-4 ">
               <NavigationListItem
                 title={'Swap'}
                 href={`/${getChainById(chainId ?? ChainId.ETHEREUM).key}/swap`}

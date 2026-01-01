@@ -18,11 +18,11 @@ catalogs:
     "viem": 2.37.12
 
   react:
-    "next": 15.5.9
-    "react": 19.0.1
-    "@types/react": 19.0.1
-    "react-dom": 19.0.1
-    "@types/react-dom": 19.0.2
+    "next": 16.1.1
+    "react": 19.2.1
+    "@types/react": 19.2.1
+    "react-dom": 19.2.1
+    "@types/react-dom": 19.2.1
   
   ui:
     "tailwindcss": 3.3.2

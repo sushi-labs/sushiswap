@@ -35,18 +35,9 @@ const nextConfig = bundleAnalyzer({
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
-    domains: ['cdn.sushi.com', 'static.tronscan.org'],
-  },
-  eslint: {
-    dirs: [
-      'app',
-      'components',
-      'functions',
-      'lib',
-      'pages',
-      'providers',
-      'types',
-      'ui',
+    remotePatterns: [
+      new URL('https://cdn.sushi.com'),
+      new URL('https://static.tronscan.org'),
     ],
   },
   webpack: (config, { webpack }) => {
