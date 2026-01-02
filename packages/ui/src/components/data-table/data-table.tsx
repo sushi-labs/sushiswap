@@ -64,6 +64,7 @@ interface DataTableProps<TData, TValue> {
   onSortingChange?: OnChangeFn<SortingState>
   onPaginationChange?: OnChangeFn<PaginationState>
   rowRenderer?: (row: Row<TData>, value: ReactNode) => ReactNode
+  rowClassName?: (row: Row<TData>) => string
   showColumnHeaders?: boolean
   meta?: TableMeta<TData>
 }
@@ -81,6 +82,7 @@ export function DataTable<TData, TValue>({
   onSortingChange,
   onPaginationChange,
   rowRenderer,
+  rowClassName,
   showColumnHeaders = true,
   meta,
 }: DataTableProps<TData, TValue>) {
@@ -173,10 +175,12 @@ export function DataTable<TData, TValue>({
               ))
           ) : table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row, r) => {
+              const _rowClassName = rowClassName ? rowClassName(row) : ''
               const _row = (
                 <TableRow
                   key={r}
                   data-state={row.getIsSelected() && 'selected'}
+                  className={_rowClassName}
                   testdata-id={
                     typeof testId === 'function'
                       ? testId(row.original, r)

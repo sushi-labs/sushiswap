@@ -47,7 +47,11 @@ export const EXPLORE_NAVIGATION_LINKS = (
       href: `/${getChainById(isPoolChainId ? chainId : ChainId.ETHEREUM).key}/pool`,
       description: 'Earn fees by providing liquidity.',
     },
-
+    {
+      title: 'Leaderboard',
+      href: `/${getChainById(chainId ?? ChainId.ETHEREUM).key}/leaderboard`,
+      description: 'See top traders by points and volume.',
+    },
     {
       title: 'Claim',
       href: '/claim',
@@ -224,6 +228,12 @@ export const headerElements = ({
           </NavigationMenuContent>
         </NavigationMenuItem>
       ),
+    },
+    {
+      title: 'Leaderboard',
+      href: `/${getChainById(chainId ?? ChainId.ETHEREUM).key}/leaderboard`,
+      show: 'desktop',
+      type: NavigationElementType.Single,
     },
     {
       title: 'Explore',
