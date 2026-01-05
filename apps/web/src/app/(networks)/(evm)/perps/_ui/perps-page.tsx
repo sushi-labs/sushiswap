@@ -1,10 +1,14 @@
 'use client'
-import { useBreakpoint } from '@sushiswap/ui'
+import { useIsMounted } from '@sushiswap/hooks'
+import { Splash, useBreakpoint } from '@sushiswap/ui'
 import { DesktopLayout } from './desktop/desktop-layout'
 import { MobileLayout } from './mobile/mobile-layout'
 
 export const PerpsPage = () => {
   const { isLg } = useBreakpoint('lg')
+  const isMounted = useIsMounted()
+
+  if (!isMounted) return <Splash />
 
   return <>{isLg ? <DesktopLayout /> : <MobileLayout />}</>
 }

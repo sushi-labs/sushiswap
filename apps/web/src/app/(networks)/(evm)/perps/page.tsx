@@ -1,5 +1,5 @@
 import { PerpsPage } from './_ui/perps-page'
 
-export default function PerpetualsPage() {
+export default async function PerpetualsPage() {
   return <PerpsPage />
 }

@@ -1,8 +1,22 @@
 import { trace } from '@opentelemetry/api'
+import { geolocation } from '@vercel/functions'
+import { i } from 'framer-motion/client'
 import { type NextRequest, NextResponse } from 'next/server'
 import { getChainById, getChainByKey, isChainId, isChainKey } from 'sushi'
 import { getEvmChainById, isBladeChainId, isSushiSwapChainId } from 'sushi/evm'
 import { SUPPORTED_NETWORKS } from './config'
+
+// Restricted country codes for perps page
+const PERPS_RESTRICTED = new Set([
+  'US',
+  'CA-ON', // Ontario - country-region, handled separately than just CA
+  'CU',
+  'IR',
+  'KP',
+  'SY',
+  'MM',
+  'RU',
+])
 
 export const config = {
   matcher: [
@@ -24,12 +38,13 @@ export const config = {
     '/:chainId/migrate',
     '/:chainId/rewards',
     '/:chainId/perps/:path*',
-    '/portal/:path*',
+    '/perps',
   ],
 }
 
 async function _proxy(req: NextRequest) {
   const { pathname, searchParams, search } = req.nextUrl
+  const { country, region } = geolocation(req)
 
   if (pathname.includes('/portal') || pathname.startsWith('/portal/')) {
     if (process.env.VERCEL_ENV === 'production') {
@@ -43,6 +58,18 @@ async function _proxy(req: NextRequest) {
     return portalMiddleware(req)
   }
 
+  if (pathname === '/perps') {
+    const res = NextResponse.next()
+    if (
+      // region === 'dev1' ||
+      PERPS_RESTRICTED.has(country ?? '') ||
+      (country === 'CA' && region === 'ON') // Ontario province restriction
+    ) {
+      res.headers.set('x-perps-region-blocked', 'true')
+    }
+    return res
+  }
+
   if (
     pathname === '/explore' ||
     pathname === '/pools' ||
@@ -51,8 +78,7 @@ async function _proxy(req: NextRequest) {
     pathname === '/swap' ||
     pathname === '/limit' ||
     pathname === '/dca' ||
-    pathname === '/cross-chain-swap' ||
-    pathname === '/perps'
+    pathname === '/cross-chain-swap'
   ) {
     const path = ['/explore', '/pools'].includes(pathname)
       ? 'explore/pools'
@@ -73,7 +99,7 @@ async function _proxy(req: NextRequest) {
   }
 
   const networkNameMatch = pathname.match(
-    /([\w-]+)(?=\/swap|\/limit|\/dca|\/cross-chain-swap|\/explore|\/pool|\/token|\/positions|\/rewards|\/migrate|\/perps)/,
+    /([\w-]+)(?=\/swap|\/limit|\/dca|\/cross-chain-swap|\/explore|\/pool|\/token|\/positions|\/rewards|\/migrate)/,
   )
   if (networkNameMatch?.length) {
     let chain
