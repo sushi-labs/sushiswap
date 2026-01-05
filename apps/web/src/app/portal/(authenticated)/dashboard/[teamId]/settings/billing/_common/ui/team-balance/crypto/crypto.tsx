@@ -141,7 +141,7 @@ function Deposit({
     ),
   })
 
-  const { writeContractAsync, isPending } = useWriteContract({
+  const { mutateAsync: writeContractAsync, isPending } = useWriteContract({
     mutation: { onSuccess, onError },
   })
 
@@ -179,9 +179,9 @@ function DepositTab({
   onTxConfirmed,
 }: { teamId: string; onTxConfirmed: (txData: TxData) => void }) {
   const { address } = useConnection()
-  const { disconnect } = useDisconnect()
+  const { mutate: disconnect } = useDisconnect()
   const chainId = useChainId()
-  const { switchChainAsync } = useSwitchChain()
+  const { mutateAsync: switchChainAsync } = useSwitchChain()
 
   const [value, setValue] = useState('')
   const [_token, setToken] = useState<EvmToken | undefined>(undefined)

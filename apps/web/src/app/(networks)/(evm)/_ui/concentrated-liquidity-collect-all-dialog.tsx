@@ -224,7 +224,7 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
   })
 
   const {
-    sendTransactionAsync,
+    mutateAsync: sendTransactionAsync,
     isPending: isWritePending,
     data: hash,
   } = useSendTransaction({

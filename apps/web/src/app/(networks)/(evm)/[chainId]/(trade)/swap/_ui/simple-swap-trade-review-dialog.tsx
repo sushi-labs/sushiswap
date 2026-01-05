@@ -325,7 +325,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
   )
 
   const {
-    sendTransactionAsync,
+    mutateAsync: sendTransactionAsync,
     isPending: isWritePending,
     data,
   } = useSendTransaction({

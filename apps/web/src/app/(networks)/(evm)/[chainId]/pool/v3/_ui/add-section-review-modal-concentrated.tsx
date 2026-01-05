@@ -291,7 +291,7 @@ export const AddSectionReviewModalConcentrated: FC<
   })
 
   const {
-    sendTransactionAsync,
+    mutateAsync: sendTransactionAsync,
     isPending: isWritePending,
     data,
   } = useSendTransaction({

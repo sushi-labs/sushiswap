@@ -11,7 +11,7 @@ import { useConnection, useConnect as useWagmiConnect } from 'wagmi'
 export const useConnect = (props?: Parameters<typeof useWagmiConnect>[0]) => {
   const [pending, setPending] = useState(false)
 
-  const { connectAsync, ...rest } = useWagmiConnect(props)
+  const { mutateAsync: connectAsync, ...rest } = useWagmiConnect(props)
   const { connector } = useConnection()
 
   const _connectAsync = async (...args: Parameters<typeof connectAsync>) => {

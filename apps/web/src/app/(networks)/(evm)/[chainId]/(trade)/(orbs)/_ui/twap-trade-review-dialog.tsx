@@ -150,7 +150,7 @@ export const TwapTradeReviewDialog: FC<{
   }, [])
 
   const {
-    sendTransactionAsync,
+    mutateAsync: sendTransactionAsync,
     isPending: isWritePending,
     data,
   } = useSendTransaction({
