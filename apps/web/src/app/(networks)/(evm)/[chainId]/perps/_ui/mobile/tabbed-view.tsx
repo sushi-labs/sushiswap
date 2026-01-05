@@ -21,7 +21,7 @@ export const TabbedView = () => {
         <TabsContent value="order-book">
           <div>order book</div>
         </TabsContent>
-        <TabsContent value="Trades">
+        <TabsContent value="trades">
           <div>trades</div>
         </TabsContent>
       </Tabs>
