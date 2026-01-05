@@ -100,7 +100,7 @@ export const TwapCancelOrderButton = ({
   }, [])
 
   const {
-    sendTransactionAsync,
+    mutateAsync: sendTransactionAsync,
     isPending: isWritePending,
     data,
   } = useSendTransaction({

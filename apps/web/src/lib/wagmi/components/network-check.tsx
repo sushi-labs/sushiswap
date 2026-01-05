@@ -11,7 +11,7 @@ export const NetworkCheck: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
   const [open, setOpen] = useState(false)
   const isMounted = useIsMounted()
   const { chain } = useConnection()
-  const { switchChain } = useSwitchChain()
+  const { mutate: switchChain } = useSwitchChain()
 
   // Delay couple seconds
   useEffect(() => {

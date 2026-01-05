@@ -335,7 +335,7 @@ export const useMasterChef: UseMasterChef = ({
   }, [address, chainId, chef, contract, data, pendingSushi, pid, sushiBalance])
 
   const {
-    sendTransaction: _harvest,
+    mutate: _harvest,
     isPending: isWritePending,
     isError: isWriteError,
   } = useSendTransaction({

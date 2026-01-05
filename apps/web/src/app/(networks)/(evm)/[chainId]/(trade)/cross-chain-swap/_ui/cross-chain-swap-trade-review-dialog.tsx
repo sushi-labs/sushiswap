@@ -424,7 +424,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
   }, [])
 
   const {
-    sendTransactionAsync,
+    mutateAsync: sendTransactionAsync,
     isPending: isWritePending,
     data: hash,
     reset,

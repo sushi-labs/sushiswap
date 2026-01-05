@@ -114,8 +114,8 @@ export const useMasterChefDeposit = ({
   })
 
   const {
-    writeContractAsync,
-    writeContract: _,
+    mutateAsync: writeContractAsync,
+    mutate: _,
     ...rest
   } = useWriteContract({
     mutation: {

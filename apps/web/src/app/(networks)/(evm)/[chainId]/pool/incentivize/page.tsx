@@ -149,7 +149,11 @@ const Incentivize = withCheckerRoot(() => {
 
   const {
     simulation: { isError, data: simulationData },
-    write: { writeContractAsync, isPending: isIncentivizeLoading, data },
+    write: {
+      mutateAsync: writeContractAsync,
+      isPending: isIncentivizeLoading,
+      data,
+    },
   } = useIncentivizePoolWithRewards({
     account: address,
     args:
