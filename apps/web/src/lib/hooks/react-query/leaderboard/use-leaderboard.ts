@@ -11,12 +11,18 @@ export const useLeaderboard = ({
   return useInfiniteQuery({
     queryKey: ['useLeaderboard', { page, pageSize, season, enabled }],
     queryFn: async ({ pageParam }) => {
+      if (pageSize !== 25 && pageSize !== 50) {
+        throw new Error('Invalid pageSize, pageSize must be 25 or 50')
+      }
+      if (page < 1) {
+        throw new Error('Invalid page, page must be >= 1')
+      }
       if (season && season < 1) {
         throw new Error('Invalid season, season must be >= 1')
       }
       const _page = pageParam ?? page
 
-      const res = await getLeaderboard({ season: 1, page: _page, pageSize })
+      const res = await getLeaderboard({ page: _page, pageSize, season })
 
       return res
     },
