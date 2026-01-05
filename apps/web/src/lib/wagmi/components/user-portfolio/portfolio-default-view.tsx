@@ -14,16 +14,10 @@ import {
   SkeletonCircle,
 } from '@sushiswap/ui'
 import Image from 'next/image'
-import {
-  type Dispatch,
-  type FC,
-  type SetStateAction,
-  useMemo,
-  useState,
-} from 'react'
-import { getEvmChainById, isEvmChainId, shortenEvmAddress } from 'sushi/evm'
-import { useConnection, useDisconnect } from 'wagmi'
-import type { GetEnsNameReturnType } from 'wagmi/actions'
+import { useMemo, useState } from 'react'
+import { SidebarView, useSidebar } from 'src/app/(networks)/_ui/sidebar'
+import { EvmChainId, getEvmChainById, shortenEvmAddress } from 'sushi/evm'
+import { useConnection, useDisconnect, useEnsName } from 'wagmi'
 import { PortfolioView } from '.'
 import { PortfolioClaimables } from './portfolio-claimables'
 import { PortfolioPositions } from './portfolio-positions'
@@ -36,19 +30,14 @@ enum PortfolioTab {
   // History = 'History',
 }
 
-interface PortfolioDefaultProps {
-  ensName: GetEnsNameReturnType | undefined
-  isENSNameLoading: boolean
-  setView: Dispatch<SetStateAction<PortfolioView>>
-}
-
-export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
-  setView,
-  ensName,
-  isENSNameLoading,
-}) => {
+export const PortfolioDefaultView = () => {
   const { connector, address, chain } = useConnection()
-  const { disconnect } = useDisconnect()
+  const { mutate: disconnect } = useDisconnect()
+  const { data: ensName, isLoading: isENSNameLoading } = useEnsName({
+    chainId: EvmChainId.ETHEREUM,
+    address,
+  })
+  const { setView } = useSidebar()
 
   const [tab, setTab] = useState(PortfolioTab.Tokens)
 
@@ -108,7 +97,7 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
             <IconButton
               size="xs"
               icon={Cog6ToothIcon}
-              onClick={() => setView(PortfolioView.Settings)}
+              onClick={() => setView(SidebarView.Settings)}
               description="Settings"
               name="Settings"
             />
