@@ -93,7 +93,7 @@ export const USER_COLUMN: ColumnDef<LeaderboardEntry, unknown> = {
         )}
         <Badge
           position="top-right"
-          className="!-top-2 -right-12"
+          className="!-top-2 !-right-12"
           badgeContent={isYou ? <Chip variant="blue">You</Chip> : <></>}
         >
           <div className={classNames(getClassForRank(rank))}>
