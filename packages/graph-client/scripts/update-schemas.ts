@@ -7,6 +7,7 @@ const schemas = {
   strapi: 'sushi-strapi-cms.herokuapp.com/graphql',
   furo: 'api.studio.thegraph.com/query/32073/furo-ethereum/v0.0.1',
   'data-api': 'production.data-gcp.sushi.com/graphql',
+  leaderboard: 'leaderboard-indexer-production.up.railway.app/graphql',
 } as const satisfies Record<string, string>
 
 async function updateSchema(schema: keyof typeof schemas) {

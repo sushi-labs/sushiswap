@@ -40,6 +40,12 @@
 						"schema": "./src/subgraphs/kadena/schema.graphql",
 						"tadaOutputLocation": "./src/subgraphs/kadena/kadena-env.d.ts",
 						"tadaTurboLocation": "./src/subgraphs/kadena/kadena-cache.d.ts"
+					},
+					{
+						"name": "leaderboard",
+						"schema": "./src/subgraphs/leaderboard/schema.graphql",
+						"tadaOutputLocation": "./src/subgraphs/leaderboard/leaderboard-env.d.ts",
+						"tadaTurboLocation": "./src/subgraphs/leaderboard/leaderboard-cache.d.ts"
 					}
 				]
 			}

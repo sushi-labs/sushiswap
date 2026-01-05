@@ -1,0 +1,79 @@
+"""
+Indicates exactly one field must be supplied and this field must not be `null`.
+"""
+directive @oneOf on INPUT_OBJECT
+
+type Season {
+  number: Int!
+  name: String!
+  startTime: String!
+  endTime: String!
+  isActive: Boolean!
+}
+
+type UserStats {
+  rank: Int!
+  address: String!
+  points: Int!
+  volumeUsd: Float!
+  season: Season!
+}
+
+type LeaderboardEntry {
+  rank: Int!
+  address: String!
+  points: Int!
+  volumeUsd: Float!
+}
+
+type PageInfo {
+  currentPage: Int!
+  pageSize: Int!
+  totalPages: Int!
+  totalCount: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type Leaderboard {
+  entries: [LeaderboardEntry!]!
+  pageInfo: PageInfo!
+  season: Season!
+}
+
+type ChainStats {
+  chainId: Int!
+  chainName: String!
+  volume: Float!
+  fees: Float!
+  swapCount: Int!
+  userCount: Int!
+}
+
+type Query {
+  """
+  Get stats for a specific user address.
+  If season is not provided, defaults to the current active season.
+  """
+  userStats(address: String!, season: Int): UserStats
+
+  """
+  Get paginated leaderboard.
+  - season: season number (defaults to current active season)
+  - page: page number (defaults to 1)
+  - pageSize: 25 or 50 (defaults to 25)
+  """
+  leaderboard(season: Int, page: Int, pageSize: Int): Leaderboard!
+
+  """Get all seasons"""
+  seasons: [Season!]!
+
+  """Get current active season"""
+  currentSeason: Season
+
+  """
+  Get stats per chain for a season.
+  Returns volume, fees, swap count, and unique user count grouped by chain.
+  """
+  chainStats(season: Int): [ChainStats!]!
+}

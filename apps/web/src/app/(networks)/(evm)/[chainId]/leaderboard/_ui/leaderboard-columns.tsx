@@ -1,3 +1,4 @@
+import type { LeaderboardEntry } from '@sushiswap/graph-client/leaderboard'
 import {
   Badge,
   Chip,
@@ -10,14 +11,13 @@ import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import Image from 'next/image'
 import { formatNumber, formatUSD, truncateString } from 'sushi'
-import { EvmChainId } from 'sushi/evm'
+import { type EvmAddress, EvmChainId } from 'sushi/evm'
 import { useAccount, useEnsAvatar, useEnsName } from 'wagmi'
-import type { LeaderboardEntry } from './leaderboard-table'
 
 const getClassForRank = (rank: number) => {
   switch (rank) {
     case 1:
-      return 'text-[#8A6A00] dark:text-[#FFD84D] font-semibold' // Gold (AA on white)
+      return 'text-[#8A6A00] dark:text-[#FFD84D] font-semibold' // Gold
     case 2:
       return 'text-[#5F6B7A] dark:text-[#E5E7EB] font-semibold' // Silver
     case 3:
@@ -65,7 +65,7 @@ export const USER_COLUMN: ColumnDef<LeaderboardEntry, unknown> = {
   header: 'Trader',
   cell: (props) => {
     const { address: connectedAddress } = useAccount()
-    const address = props.row.original.address
+    const address = props.row.original.address as EvmAddress
     const isYou = connectedAddress?.toLowerCase() === address.toLowerCase()
     const rank = props.row.original.rank
     const { data: ensName } = useEnsName({
@@ -85,7 +85,7 @@ export const USER_COLUMN: ColumnDef<LeaderboardEntry, unknown> = {
             src={avatar}
             width={20}
             height={20}
-            className="rounded-full"
+            className="rounded-full w-[20px] h-[20px] object-fill"
             loader={cloudinaryFetchLoader}
           />
         ) : (
@@ -140,35 +140,14 @@ export const POINTS_COLUMN: ColumnDef<LeaderboardEntry, unknown> = {
 }
 
 export const VOLUME_COLUMN: ColumnDef<LeaderboardEntry, unknown> = {
-  id: 'totalVolumeUsd',
+  id: 'volumeUsd',
   header: 'Volume',
-  accessorFn: (row) => row.totalVolumeUsd,
+  accessorFn: (row) => row.volumeUsd,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    rowA.totalVolumeUsd - rowB.totalVolumeUsd,
+    rowA.volumeUsd - rowB.volumeUsd,
   cell: (props) => {
-    const volume = props.row.original.totalVolumeUsd
+    const volume = props.row.original.volumeUsd
     return <span className="font-medium">{formatUSD(volume)}</span>
-  },
-  meta: {
-    body: {
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
-  },
-}
-
-export const SWAP_COUNT_COLUMN: ColumnDef<LeaderboardEntry, unknown> = {
-  id: 'swapCount',
-  header: 'Swaps',
-  accessorFn: (row) => row.swapCount,
-  sortingFn: ({ original: rowA }, { original: rowB }) =>
-    rowA.swapCount - rowB.swapCount,
-  cell: (props) => {
-    const swapCount = props.row.original.swapCount
-    return <div className="font-medium ml-auto">{formatNumber(swapCount)}</div>
   },
   meta: {
     body: {
