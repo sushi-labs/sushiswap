@@ -100,15 +100,6 @@ export async function getPoolInfo(address: string): Promise<PoolInfo | null> {
       return null
     }
 
-    // Skip pools with no liquidity (empty/inactive pools)
-    if (
-      !contractPoolInfo.liquidity ||
-      !contractPoolInfo.reserve0 ||
-      !contractPoolInfo.reserve1
-    ) {
-      return null
-    }
-
     const liquidity: PoolLiquidity = {
       amount: contractPoolInfo.liquidity.toString(),
     }
