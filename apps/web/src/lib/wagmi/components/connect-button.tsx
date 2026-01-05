@@ -8,7 +8,7 @@ import {
 } from '@sushiswap/telemetry'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import React, { type FC, useCallback } from 'react'
-import { useSidebar } from 'src/app/(networks)/_ui/sidebar'
+import { SidebarView, useSidebar } from 'src/app/(networks)/_ui/sidebar'
 import { useConnectors } from 'wagmi'
 import { useConnect } from '../hooks/wallet/useConnect'
 
@@ -24,7 +24,7 @@ export const ConnectButton: FC<ButtonProps> = ({
     if (process.env.NEXT_PUBLIC_APP_ENV === 'test') {
       connect({ connector: connectors[0] })
     } else {
-      open()
+      open(SidebarView.Connect)
     }
   }, [open, connect, connectors])
 

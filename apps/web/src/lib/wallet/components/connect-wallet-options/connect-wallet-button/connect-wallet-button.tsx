@@ -17,7 +17,7 @@ const ConnectSvmWalletButton = dynamic(
 
 function ConnectButton(props: ConnectWalletButtonProps) {
   if (!props.wallet.isAvailable) {
-    const { wallet, onMutate, onSettled, onSuccess, ...rest } = props
+    const { wallet, onMutate, onSettled, onSuccess, maxWidth, ...rest } = props
     return (
       <Button
         onClick={() => {

@@ -1,15 +1,20 @@
+import { PlusIcon } from '@heroicons/react-v1/solid'
 import {
   ArrowLeftOnRectangleIcon,
+  ArrowsRightLeftIcon,
   Cog6ToothIcon,
   DocumentDuplicateIcon,
   LinkIcon,
 } from '@heroicons/react/24/outline'
-import { UserCircleIcon } from '@heroicons/react/24/solid'
+import { PlusCircleIcon, UserCircleIcon } from '@heroicons/react/24/solid'
 import {
   Button,
   ClipboardController,
   IconButton,
   LinkExternal,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   SkeletonBox,
   SkeletonCircle,
 } from '@sushiswap/ui'
@@ -132,6 +137,47 @@ export const SidebarPortfolioView = () => {
               description="Disconnect"
               name="Disconnect"
             />
+            <Popover>
+              <PopoverTrigger asChild>
+                <IconButton
+                  size="xs"
+                  icon={PlusCircleIcon}
+                  description="Wallet Options"
+                  name="Wallet Options"
+                />
+              </PopoverTrigger>
+              <PopoverContent
+                className="!p-2"
+                onOpenAutoFocus={(e) => e.preventDefault()}
+              >
+                <div className="flex flex-col gap-2">
+                  <Button
+                    fullWidth
+                    variant="ghost"
+                    icon={PlusIcon}
+                    className="!justify-start"
+                    onClick={() =>
+                      setView(SidebarView.Connect, {
+                        namespace: 'svm',
+                      })
+                    }
+                  >
+                    Connect Solana Wallet
+                  </Button>
+                  <Button
+                    fullWidth
+                    variant="ghost"
+                    icon={ArrowsRightLeftIcon} // TODO
+                    className="!justify-start"
+                    onClick={() =>
+                      setView(SidebarView.Connect, { action: 'switch' })
+                    }
+                  >
+                    Switch Wallet
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </div>

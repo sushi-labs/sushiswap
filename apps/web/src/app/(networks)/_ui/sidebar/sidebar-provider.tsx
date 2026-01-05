@@ -1,37 +1,73 @@
 'use client'
 
-import { type ReactNode, createContext, useContext, useState } from 'react'
+import {
+  type ReactNode,
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+} from 'react'
 import { Sidebar } from './sidebar'
-import { SidebarView } from './types'
+import { type SidebarState, SidebarView } from './types'
 
 type SidebarContextValue = {
   isOpen: boolean
-  view: SidebarView
-  open: (view?: SidebarView) => void
+  view: SidebarState['view']
+  context: SidebarState['context']
+  open: (view?: SidebarState['view'], context?: SidebarState['context']) => void
   close: () => void
-  setView: (view: SidebarView) => void
+  setView: (
+    view: SidebarState['view'],
+    context?: SidebarState['context'],
+  ) => void
 }
 
 export const SidebarContext = createContext<SidebarContextValue | null>(null)
 
-const DefaultView = SidebarView.Portfolio
+const DefaultState = { view: SidebarView.Portfolio, isOpen: false }
 
 export const SidebarProvider = ({ children }: { children: ReactNode }) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [view, setView] = useState<SidebarView>(DefaultView)
+  const [state, setState] = useState<SidebarState>(DefaultState)
 
-  const open = (view = DefaultView) => {
-    setView(view)
-    setIsOpen(true)
-  }
+  const value = useMemo(() => {
+    const setView = (
+      view: SidebarState['view'],
+      context?: SidebarState['context'],
+    ) => {
+      setState(
+        view === SidebarView.Connect
+          ? { view, context, isOpen: state.isOpen }
+          : { view, isOpen: state.isOpen },
+      )
+    }
 
-  const close = () => {
-    setView(DefaultView)
-    setIsOpen(false)
-  }
+    const open = (
+      view: SidebarState['view'] = DefaultState.view,
+      context?: SidebarState['context'],
+    ) => {
+      setState(
+        view === SidebarView.Connect
+          ? { view, context, isOpen: true }
+          : { view, isOpen: true },
+      )
+    }
+
+    const close = () => {
+      setState((prev) => ({ ...prev, isOpen: false }))
+    }
+
+    return {
+      view: state.view,
+      context: state.context,
+      isOpen: state.isOpen,
+      open,
+      close,
+      setView,
+    }
+  }, [state])
 
   return (
-    <SidebarContext.Provider value={{ isOpen, view, open, close, setView }}>
+    <SidebarContext.Provider value={value}>
       {children}
       <Sidebar />
     </SidebarContext.Provider>

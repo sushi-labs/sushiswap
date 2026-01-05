@@ -58,6 +58,8 @@ export const Sidebar = () => {
     }
 
     switch (view) {
+      case SidebarView.Connect:
+        return <SidebarConnectView />
       case SidebarView.Settings:
         return <SidebarSettingsView />
       default:

@@ -1,11 +1,12 @@
 'use client'
 
 import { useMemo } from 'react'
-import type { WalletWithState } from '../../types'
+import type { WalletNamespace, WalletWithState } from '../../types'
 import { ConnectWalletButton } from './connect-wallet-button'
 import { useWallets } from './use-wallets'
 
 interface ConnectWalletOptionssProps {
+  namespace?: WalletNamespace
   onConnect?: () => void
 }
 
