@@ -117,17 +117,16 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
     (label: string, percentFraction: number) => {
       const upperMultiplier = 1 + percentFraction
       const lowerMultiplier = 1 / upperMultiplier
+      const { lower, upper } = clampTickRange(
+        currentTick + calculateTickFromPrice(lowerMultiplier),
+        currentTick + calculateTickFromPrice(upperMultiplier),
+        tickSpacing,
+      )
 
       return {
         label,
-        lower: alignTick(
-          currentTick + calculateTickFromPrice(lowerMultiplier),
-          tickSpacing,
-        ),
-        upper: alignTick(
-          currentTick + calculateTickFromPrice(upperMultiplier),
-          tickSpacing,
-        ),
+        lower,
+        upper,
       }
     },
     [currentTick, tickSpacing],
