@@ -16,12 +16,13 @@ import {
 import Image from 'next/image'
 import { useMemo, useState } from 'react'
 import { SidebarView, useSidebar } from 'src/app/(networks)/_ui/sidebar'
+import {
+  PortfolioClaimables,
+  PortfolioPositions,
+  PortfolioTokens,
+} from 'src/lib/wagmi/components/user-portfolio'
 import { EvmChainId, getEvmChainById, shortenEvmAddress } from 'sushi/evm'
 import { useConnection, useDisconnect, useEnsName } from 'wagmi'
-import { PortfolioView } from '.'
-import { PortfolioClaimables } from './portfolio-claimables'
-import { PortfolioPositions } from './portfolio-positions'
-import { PortfolioTokens } from './portfolio-tokens'
 
 enum PortfolioTab {
   Tokens = 'Tokens',
@@ -30,7 +31,7 @@ enum PortfolioTab {
   // History = 'History',
 }
 
-export const PortfolioDefaultView = () => {
+export const SidebarPortfolioView = () => {
   const { connector, address, chain } = useConnection()
   const { mutate: disconnect } = useDisconnect()
   const { data: ensName, isLoading: isENSNameLoading } = useEnsName({

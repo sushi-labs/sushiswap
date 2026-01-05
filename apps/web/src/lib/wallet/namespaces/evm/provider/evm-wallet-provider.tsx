@@ -17,6 +17,7 @@ import {
 } from 'src/lib/wallet/provider/store'
 import type { Wallet } from 'src/lib/wallet/types'
 import { WagmiContext, WagmiProvider, useConnection } from 'wagmi'
+import type { WalletNamespaceContext } from '../../types'
 import { EvmAdapterConfig } from '../config'
 import { isEvmWallet } from '../types'
 
@@ -25,14 +26,7 @@ function useInEvmContext(): boolean {
   return Boolean(context)
 }
 
-type EvmWalletContext = {
-  isConnected: boolean
-  account: string | undefined
-  connect: (wallet: Wallet) => Promise<void>
-  disconnect: (wallet?: Wallet) => Promise<void>
-}
-
-const EvmWalletContext = createContext<EvmWalletContext | null>(null)
+const EvmWalletContext = createContext<WalletNamespaceContext | null>(null)
 
 export function useEvmWalletContext() {
   const ctx = useContext(EvmWalletContext)
@@ -60,23 +54,27 @@ export function EvmWalletProvider({ children }: { children: React.ReactNode }) {
 function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
   const { isConnected, address, connector } = useConnection()
 
-  const connect = useCallback(async (wallet: Wallet) => {
-    if (!isEvmWallet(wallet)) {
-      throw new Error(`Invalid namespace for ${wallet.name}`)
-    }
+  const connect = useCallback(
+    async (wallet: Wallet, onSuccess?: (address: string) => void) => {
+      if (!isEvmWallet(wallet)) {
+        throw new Error(`Invalid namespace for ${wallet.name}`)
+      }
 
-    const connector = await EvmAdapterConfig[wallet.adapterId]({
-      uid: wallet.uid,
-    })
+      const connector = await EvmAdapterConfig[wallet.adapterId]({
+        uid: wallet.uid,
+      })
 
-    await wagmiConnect(getWagmiConfig(), { connector })
-  }, [])
+      const { accounts } = await wagmiConnect(getWagmiConfig(), { connector })
+      onSuccess?.(accounts[0])
+    },
+    [],
+  )
 
   const disconnect = useCallback(async () => {
     await wagmiDisconnect(getWagmiConfig())
   }, [])
 
-  const value = useMemo<EvmWalletContext>(
+  const value = useMemo(
     () => ({
       isConnected: isConnected,
       account: address,

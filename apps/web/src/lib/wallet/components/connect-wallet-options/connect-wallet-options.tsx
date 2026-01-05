@@ -5,7 +5,13 @@ import type { WalletWithState } from '../../types'
 import { ConnectWalletButton } from './connect-wallet-button'
 import { useWallets } from './use-wallets'
 
-export default function ConnectModalOptions() {
+interface ConnectWalletOptionssProps {
+  onConnect?: () => void
+}
+
+export default function ConnectWalletOptions({
+  onConnect,
+}: ConnectWalletOptionssProps) {
   const _wallets = useWallets()
 
   const wallets = useMemo(() => {
@@ -20,7 +26,7 @@ export default function ConnectModalOptions() {
   return (
     <div className="space-y-2">
       {wallets.map((w) => (
-        <ConnectWalletButton key={w.id} wallet={w} />
+        <ConnectWalletButton key={w.id} wallet={w} onSuccess={onConnect} />
       ))}
     </div>
   )

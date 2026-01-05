@@ -14,16 +14,21 @@ type SidebarContextValue = {
 
 export const SidebarContext = createContext<SidebarContextValue | null>(null)
 
+const DefaultView = SidebarView.Portfolio
+
 export const SidebarProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false)
-  const [view, setView] = useState<SidebarView>(SidebarView.Portfolio)
+  const [view, setView] = useState<SidebarView>(DefaultView)
 
-  const open = (view = SidebarView.Portfolio) => {
+  const open = (view = DefaultView) => {
     setView(view)
     setIsOpen(true)
   }
 
-  const close = () => setIsOpen(false)
+  const close = () => {
+    setView(DefaultView)
+    setIsOpen(false)
+  }
 
   return (
     <SidebarContext.Provider value={{ isOpen, view, open, close, setView }}>

@@ -17,20 +17,14 @@ import {
   clearWalletConnections,
 } from 'src/lib/wallet/provider/store'
 import type { Wallet } from 'src/lib/wallet/types'
+import type { WalletNamespaceContext } from '../../types'
 
 function useInSvmContext(): boolean {
   const context = useContext(ConnectionContext)
   return Boolean(context?.connection)
 }
 
-type SvmWalletContext = {
-  isConnected: boolean
-  account?: string
-  connect: (wallet: Wallet) => Promise<void>
-  disconnect: (wallet?: Wallet) => Promise<void>
-}
-
-const SvmWalletContext = createContext<SvmWalletContext | null>(null)
+const SvmWalletContext = createContext<WalletNamespaceContext | null>(null)
 
 export function useSvmWalletContext() {
   const ctx = useContext(SvmWalletContext)
@@ -67,21 +61,31 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
     disconnect: svmDisconnect,
     select: svmConnect,
     wallet,
+    wallets,
   } = useWallet()
 
   const connect = useCallback(
-    async (wallet: Wallet) => {
+    async (wallet: Wallet, onSuccess?: (address: string) => void) => {
       const name = wallet.name
-      svmConnect(name as string & { __brand__: 'WalletName' })
+      const adapter = wallets.find(
+        ({ adapter }) => adapter.name === name,
+      )?.adapter
+
+      if (adapter) {
+        svmConnect(adapter.name)
+        adapter.once('connect', (publicKey) => {
+          onSuccess?.(publicKey?.toString())
+        })
+      }
     },
-    [svmConnect],
+    [svmConnect, wallets],
   )
 
   const disconnect = useCallback(async () => {
     await svmDisconnect()
   }, [svmDisconnect])
 
-  const value = useMemo<SvmWalletContext>(
+  const value = useMemo(
     () => ({
       isConnected: connected,
       account: publicKey?.toBase58(),

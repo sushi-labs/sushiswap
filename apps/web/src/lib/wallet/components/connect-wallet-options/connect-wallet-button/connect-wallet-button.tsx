@@ -1,8 +1,8 @@
 'use client'
 
-import { Button, Chip } from '@sushiswap/ui'
+import { Button, Chip, Loader } from '@sushiswap/ui'
 import dynamic from 'next/dynamic'
-import type { WalletWithState } from 'src/lib/wallet/types'
+import { useWalletState } from 'src/lib/wallet/provider/wallet-state-provider'
 import type { ConnectWalletButtonProps } from './types'
 
 const ConnectEvmWalletButton = dynamic(
@@ -17,7 +17,7 @@ const ConnectSvmWalletButton = dynamic(
 
 function ConnectButton(props: ConnectWalletButtonProps) {
   if (!props.wallet.isAvailable) {
-    const { wallet, ...rest } = props
+    const { wallet, onMutate, onSettled, onSuccess, ...rest } = props
     return (
       <Button
         onClick={() => {
@@ -41,14 +41,17 @@ function ConnectButton(props: ConnectWalletButtonProps) {
 
 export function ConnectWalletButton({
   wallet,
-}: ConnectWalletButtonProps & {
-  wallet: WalletWithState
-}) {
+  onSuccess,
+}: Pick<ConnectWalletButtonProps, 'wallet' | 'onSuccess'>) {
   const rightChip = wallet.isRecent
     ? 'Recent'
     : wallet.isInstalled
       ? 'Installed'
       : undefined
+
+  const { setPendingWalletId, pendingWalletId } = useWalletState()
+
+  const isPending = pendingWalletId === wallet.id
 
   return (
     <ConnectButton
@@ -57,6 +60,13 @@ export function ConnectWalletButton({
       size="lg"
       variant="ghost"
       className="!justify-between gap-3"
+      pending={isPending.toString()}
+      disabled={Boolean(pendingWalletId)}
+      onMutate={() => setPendingWalletId(wallet.id)}
+      onSuccess={(address) => {
+        onSuccess?.(address)
+      }}
+      onSettled={() => setPendingWalletId(undefined)}
     >
       <div className="flex flex-1 justify-between gap-3">
         <div className="flex gap-3">
@@ -68,7 +78,11 @@ export function ConnectWalletButton({
           <span>{wallet.name}</span>
         </div>
       </div>
-      {rightChip ? <Chip variant="secondary">{rightChip}</Chip> : null}
+      {isPending ? (
+        <Loader />
+      ) : rightChip ? (
+        <Chip variant="secondary">{rightChip}</Chip>
+      ) : null}
     </ConnectButton>
   )
 }

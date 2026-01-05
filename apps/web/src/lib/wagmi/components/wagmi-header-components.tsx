@@ -11,7 +11,7 @@ import type { ChainId } from 'sushi'
 import type { EvmChainId } from 'sushi/evm'
 import { useConnection } from 'wagmi'
 import { HeaderNetworkSelector } from './header-network-selector'
-import { UserPortfolio } from './user-portfolio'
+import { UserPortfolio } from './user-portfolio/user-portfolio'
 
 interface WagmiHeaderComponentsProps {
   networks: readonly ChainId[] | undefined

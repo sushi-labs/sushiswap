@@ -11,12 +11,12 @@ import {
   useBreakpoint,
 } from '@sushiswap/ui'
 import { type FC, type ReactNode, useMemo } from 'react'
-import { PortfolioDefaultView } from 'src/lib/wagmi/components/user-portfolio/portfolio-default-view'
-import { PortfolioSettingsView } from 'src/lib/wagmi/components/user-portfolio/portfolio-settings-view'
 import { useAccount } from 'src/lib/wallet'
-import { SidebarConnectView } from 'src/lib/wallet/components/sidebar-connect-view'
 import { useSidebar } from './sidebar-provider'
 import { SidebarView } from './types'
+import { SidebarConnectView } from './views/sidebar-connect-view'
+import { SidebarPortfolioView } from './views/sidebar-portfolio-view'
+import { SidebarSettingsView } from './views/sidebar-settings-view'
 
 const ResponsiveSidebarWrapper: FC<{
   children: ReactNode
@@ -59,9 +59,9 @@ export const Sidebar = () => {
 
     switch (view) {
       case SidebarView.Settings:
-        return <PortfolioSettingsView />
+        return <SidebarSettingsView />
       default:
-        return <PortfolioDefaultView />
+        return <SidebarPortfolioView />
     }
   }, [view, isConnected])
 

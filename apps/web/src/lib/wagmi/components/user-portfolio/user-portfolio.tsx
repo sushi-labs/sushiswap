@@ -8,11 +8,6 @@ import { EvmChainId, shortenEvmAddress } from 'sushi/evm'
 import { useConnection, useEnsAvatar, useEnsName } from 'wagmi'
 import { ConnectButton } from '../connect-button'
 
-export enum PortfolioView {
-  Default = 'Default',
-  Settings = 'Settings',
-}
-
 export const UserPortfolio = () => {
   const { address } = useConnection()
   const { open } = useSidebar()

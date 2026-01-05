@@ -6,6 +6,10 @@ import type { ConnectWalletButtonProps } from './types'
 
 export default function ConnectSvmWalletButton({
   wallet,
+  onMutate,
+  onSuccess,
+  onError,
+  onSettled,
   ...buttonProps
 }: ConnectWalletButtonProps) {
   const { connect } = useSvmWalletContext()
@@ -13,9 +17,15 @@ export default function ConnectSvmWalletButton({
   return (
     <Button
       {...buttonProps}
-      //   disabled={buttonProps.disabled || pendingWalletId === wallet.id} // TODO
       onClick={async () => {
-        await connect(wallet)
+        onMutate?.()
+        try {
+          await connect(wallet, onSuccess)
+        } catch (error) {
+          onError?.(error)
+        } finally {
+          onSettled?.()
+        }
       }}
     />
   )

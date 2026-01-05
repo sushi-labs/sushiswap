@@ -9,6 +9,7 @@ export type WalletContext = {
 
 export type WalletState = {
   pendingWalletId: string | undefined
+  setPendingWalletId: (walletId: string | undefined) => void
 }
 
 export type WalletActions = {

@@ -6,6 +6,10 @@ import type { ConnectWalletButtonProps } from './types'
 
 export default function ConnectEvmWalletButton({
   wallet,
+  onMutate,
+  onSuccess,
+  onError,
+  onSettled,
   ...buttonProps
 }: ConnectWalletButtonProps) {
   const { connect } = useEvmWalletContext()
@@ -13,9 +17,15 @@ export default function ConnectEvmWalletButton({
   return (
     <Button
       {...buttonProps}
-      //   disabled={buttonProps.disabled || pendingWalletId === wallet.id} todo
       onClick={async () => {
-        await connect(wallet)
+        onMutate?.()
+        try {
+          await connect(wallet, onSuccess)
+        } catch (error) {
+          onError?.(error)
+        } finally {
+          onSettled?.()
+        }
       }}
     />
   )

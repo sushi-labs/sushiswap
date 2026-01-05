@@ -16,7 +16,7 @@ const map = {
   dark: <MoonIcon width={20} height={20} />,
 }
 
-export const PortfolioSettingsView = () => {
+export const SidebarSettingsView = () => {
   const { setView } = useSidebar()
   const { theme, setTheme } = useTheme()
   const [showTestnets, setShowTestnets] = useLocalStorage('showTestnets', false)
