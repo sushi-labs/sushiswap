@@ -24,7 +24,6 @@ export const config = {
     '/:chainId/migrate',
     '/:chainId/rewards',
     '/portal/:path*',
-    '/:chainId/leaderboard',
   ],
 }
 
@@ -51,8 +50,7 @@ async function _middleware(req: NextRequest) {
     pathname === '/swap' ||
     pathname === '/limit' ||
     pathname === '/dca' ||
-    pathname === '/cross-chain-swap' ||
-    pathname === '/leaderboard'
+    pathname === '/cross-chain-swap'
   ) {
     const path = ['/explore', '/pools'].includes(pathname)
       ? 'explore/pools'
@@ -73,7 +71,7 @@ async function _middleware(req: NextRequest) {
   }
 
   const networkNameMatch = pathname.match(
-    /([\w-]+)(?=\/swap|\/limit|\/dca|\/cross-chain-swap|\/explore|\/pool|\/token|\/positions|\/rewards|\/migrate|\/leaderboard)/,
+    /([\w-]+)(?=\/swap|\/limit|\/dca|\/cross-chain-swap|\/explore|\/pool|\/token|\/positions|\/rewards|\/migrate)/,
   )
   if (networkNameMatch?.length) {
     let chain

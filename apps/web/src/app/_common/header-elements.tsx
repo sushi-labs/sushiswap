@@ -49,7 +49,7 @@ export const EXPLORE_NAVIGATION_LINKS = (
     },
     {
       title: 'Leaderboard',
-      href: `/${getChainById(chainId ?? ChainId.ETHEREUM).key}/leaderboard`,
+      href: `/leaderboard`,
       description: 'See top traders by points and volume.',
     },
     {
@@ -231,7 +231,7 @@ export const headerElements = ({
     },
     {
       title: 'Leaderboard',
-      href: `/${getChainById(chainId ?? ChainId.ETHEREUM).key}/leaderboard`,
+      href: `/leaderboard`,
       show: 'desktop',
       type: NavigationElementType.Single,
     },
