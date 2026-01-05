@@ -22,7 +22,7 @@ import {
   isWNativeSupported,
 } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
-import { z } from 'zod'
+import * as z from 'zod'
 
 export const queryParamsSchema = z.object({
   fromCurrency: z.nullable(z.string()).transform((value) => value ?? 'NATIVE'),

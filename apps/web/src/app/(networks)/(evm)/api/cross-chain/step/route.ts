@@ -4,7 +4,7 @@ import {
   crossChainStepSchema,
 } from 'src/lib/swap/cross-chain/schema'
 import { isAddress, stringify } from 'viem'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const schema = crossChainStepSchema.extend({
   action: crossChainActionSchema.extend({

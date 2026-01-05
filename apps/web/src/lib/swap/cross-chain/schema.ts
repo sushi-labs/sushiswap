@@ -1,7 +1,7 @@
 import { type XSwapSupportedChainId, isXSwapSupportedChainId } from 'src/config'
 import { sz } from 'sushi'
 import { type Hex, hexToBigInt } from 'viem'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const XSwapChainIdSchema = z.coerce
   .number()

@@ -8,7 +8,7 @@ import {
 } from '@sushiswap/graph-client/kadena'
 import { useCallback } from 'react'
 
-import { z } from 'zod'
+import * as z from 'zod'
 
 const poolsResponseSchema = z.object({
   totalCount: z.number(),

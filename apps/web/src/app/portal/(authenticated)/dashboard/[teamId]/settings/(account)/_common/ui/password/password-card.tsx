@@ -23,7 +23,7 @@ import {
   useCollapsibleMessage,
 } from 'src/app/portal/_common/ui/collapsible-message'
 import { PortalForm } from 'src/app/portal/_common/ui/portal-form'
-import type { z } from 'zod'
+import type * as z from 'zod'
 import { changeOrCreatePasswordAction } from './password-action'
 import { changeOrCreatePasswordSchema } from './password-form-schema'
 

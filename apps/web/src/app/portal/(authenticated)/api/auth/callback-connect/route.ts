@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 import { getSessionData } from 'src/app/portal/_common/lib/client-config'
 import { getIdpIntent } from 'src/app/portal/_common/lib/get-idp-intent'
 import { getUserServiceClient } from 'src/app/portal/_common/lib/zitadel-client'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const schema = z.object({
   id: z.string(),

@@ -7,7 +7,7 @@ import { createSession } from 'src/app/portal/_common/lib/client-config'
 import { getBaseUrl } from 'src/app/portal/_common/lib/get-base-url'
 import { getAdminStyroClient } from 'src/app/portal/_common/lib/styro/styro-client'
 import { getUserServiceClient } from 'src/app/portal/_common/lib/zitadel-client'
-import type { z } from 'zod'
+import type * as z from 'zod'
 import { registerFormSchema } from './register-form-schema'
 
 export type FormState =
