@@ -59,7 +59,7 @@ export function ConnectWalletButton({
       fullWidth
       size="lg"
       variant="ghost"
-      className="!justify-between gap-3"
+      className="!justify-between gap-3 !rounded-none"
       pending={isPending.toString()}
       disabled={Boolean(pendingWalletId)}
       onMutate={() => setPendingWalletId(wallet.id)}

@@ -5,9 +5,9 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Sheet,
-  SheetContent,
-  SheetTitle,
+  Popover,
+  PopoverContent,
+  PopoverPrimitive,
   useBreakpoint,
 } from '@sushiswap/ui'
 import { type FC, type ReactNode, useMemo } from 'react'
@@ -26,14 +26,14 @@ const ResponsiveSidebarWrapper: FC<{
   const onOpenChange = (open: boolean) => !open && close()
 
   return isSm ? (
-    <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetContent hideClose className="!p-0">
-        <VisuallyHidden>
-          <SheetTitle>Sidebar</SheetTitle>
-        </VisuallyHidden>
+    <Popover open={isOpen} onOpenChange={onOpenChange}>
+      <PopoverPrimitive.Anchor asChild>
+        <span aria-hidden className="fixed top-14 right-4 bottom-4 w-px h-px" />
+      </PopoverPrimitive.Anchor>
+      <PopoverContent className="!p-0 h-[calc(100vh-16px)] !w-80">
         {children}
-      </SheetContent>
-    </Sheet>
+      </PopoverContent>
+    </Popover>
   ) : (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent hideClose className="!p-0 h-[calc(100%-16px)]">

@@ -25,7 +25,7 @@ export default function ConnectWalletOptions({
   }, [_wallets])
 
   return (
-    <div className="space-y-2">
+    <div>
       {wallets.map((w) => (
         <ConnectWalletButton key={w.id} wallet={w} onSuccess={onConnect} />
       ))}
