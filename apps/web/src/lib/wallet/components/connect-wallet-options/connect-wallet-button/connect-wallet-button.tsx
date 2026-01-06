@@ -73,7 +73,7 @@ export function ConnectWalletButton({
           <img
             src={wallet.icon}
             alt={wallet.name}
-            className="h-6 w-6 shrink-0"
+            className="h-6 w-6 shrink-0 rounded-md"
           />
           <span>{wallet.name}</span>
         </div>
