@@ -74,12 +74,33 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
       if (adapter) {
         if (adapter.connected && adapter.publicKey) {
           onSuccess?.(adapter.publicKey?.toString())
-        } else {
-          svmConnect(adapter.name)
-          adapter.once('connect', (publicKey) => {
-            onSuccess?.(publicKey.toString())
-          })
+          return
         }
+
+        return new Promise<void>((resolve, reject) => {
+          const cleanup = () => {
+            adapter.off('connect', handleConnect)
+            adapter.off('error', handleError)
+          }
+
+          const handleConnect = (
+            publicKey: NonNullable<(typeof adapter)['publicKey']>,
+          ) => {
+            cleanup()
+            onSuccess?.(publicKey.toString())
+            resolve()
+          }
+
+          const handleError = (error: Error) => {
+            cleanup()
+            reject(error)
+          }
+
+          adapter.once('connect', handleConnect)
+          adapter.once('error', handleError)
+
+          svmConnect(adapter.name)
+        })
       } else {
         throw new Error('SVM adapter not found')
       }
