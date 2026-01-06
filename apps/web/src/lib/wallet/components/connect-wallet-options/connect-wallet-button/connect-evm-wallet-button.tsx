@@ -22,7 +22,7 @@ export default function ConnectEvmWalletButton({
         try {
           await connect(wallet, onSuccess)
         } catch (error) {
-          onError?.(error)
+          onError?.(error as Error)
         } finally {
           onSettled?.()
         }

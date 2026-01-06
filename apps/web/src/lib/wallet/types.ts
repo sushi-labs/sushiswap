@@ -1,4 +1,4 @@
-export type WalletNamespace = 'evm' | 'svm' | 'mvm'
+export type WalletNamespace = 'evm' | 'svm' // | 'mvm'
 
 export interface WalletAdapterContext {
   uid?: string // evm
@@ -40,3 +40,5 @@ export interface NamespaceContext {
   connect: (wallet: Wallet) => Promise<void>
   disconnect: (wallet?: Wallet) => Promise<void>
 }
+
+export type WalletConnectAction = 'connect' | 'switch' | 'select-namespace'

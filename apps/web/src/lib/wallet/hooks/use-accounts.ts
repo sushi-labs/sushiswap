@@ -4,11 +4,7 @@ import { useMemo } from 'react'
 import { useWallet } from '../provider'
 import type { WalletNamespace } from '../types'
 
-type AccountsState = {
-  evm: { address?: string }
-  solana: { address?: string }
-  aptos: { address?: string }
-}
+type AccountsState = Record<WalletNamespace, { address: string | undefined }>
 
 export function useAccounts(): AccountsState {
   const { connections } = useWallet()
@@ -24,8 +20,7 @@ export function useAccounts(): AccountsState {
 
     return {
       evm: { address: getFirstAddress('evm') },
-      solana: { address: getFirstAddress('svm') },
-      aptos: { address: getFirstAddress('mvm') },
+      svm: { address: getFirstAddress('svm') },
     }
   }, [connections])
 }

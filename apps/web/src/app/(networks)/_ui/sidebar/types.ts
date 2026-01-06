@@ -1,4 +1,4 @@
-import type { WalletNamespace } from 'src/lib/wallet'
+import type { WalletConnectAction, WalletNamespace } from 'src/lib/wallet'
 
 export enum SidebarView {
   Connect = 'connect',
@@ -9,7 +9,10 @@ export enum SidebarView {
 export type SidebarState = { isOpen: boolean } & (
   | {
       view: SidebarView.Connect
-      context?: { namespace?: WalletNamespace; action?: 'connect' | 'switch' }
+      context?: {
+        namespace?: WalletNamespace
+        action?: WalletConnectAction
+      }
     }
   | {
       view: Exclude<SidebarView, SidebarView.Connect>

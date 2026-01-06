@@ -5,8 +5,9 @@ import { XMarkIcon } from '@heroicons/react/24/solid'
 import { IconButton } from '@sushiswap/ui'
 import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
-import type { WalletNamespace } from 'src/lib/wallet'
+import { DEFAULT_CHAIN_ID_BY_NAMESPACE } from 'src/lib/wallet'
 import { Disclaimer } from 'src/lib/wallet/components/disclaimer'
+import { getChainById } from 'sushi'
 import { useSidebar } from '../sidebar-provider'
 import { SidebarView } from '../types'
 
@@ -20,16 +21,10 @@ const ConnectWalletOptions = dynamic(
   },
 )
 
-const NETWORK_NAME: Record<WalletNamespace, string> = {
-  evm: 'Ethereum',
-  svm: 'Solana',
-  mvm: 'Aptos',
-}
-
 export const SidebarConnectView = () => {
   const { close, context, view, setView } = useSidebar()
 
-  const { namespace, action } = context ?? {}
+  const { namespace, action = 'connect' } = context ?? {}
 
   return (
     <div className="pb-4">
@@ -40,16 +35,23 @@ export const SidebarConnectView = () => {
               icon={ArrowLeftIcon}
               name={'Back'}
               onClick={() => setView(SidebarView.Portfolio)}
-              className={!namespace && action !== 'switch' ? 'hidden' : ''}
+              className={!namespace && action === 'connect' ? 'hidden' : ''}
               variant="ghost"
               size="xs"
             />
             <span className="font-medium text-lg">
               {namespace
-                ? `Connect ${NETWORK_NAME[namespace]} Wallet`
+                ? `Connect ${
+                    namespace === 'svm' // TODO: remove when solana is added to sushi pkg chains
+                      ? 'Solana'
+                      : getChainById(DEFAULT_CHAIN_ID_BY_NAMESPACE[namespace])
+                          .name
+                  } Wallet`
                 : action === 'switch'
                   ? 'Switch Wallet'
-                  : 'Connect'}
+                  : action === 'select-namespace'
+                    ? 'Select Network'
+                    : 'Connect'}
             </span>
           </div>
           <Disclaimer />
@@ -63,8 +65,12 @@ export const SidebarConnectView = () => {
       </div>
       <Suspense>
         <ConnectWalletOptions
+          action={action}
           namespace={namespace}
           onConnect={view === SidebarView.Connect ? close : undefined}
+          onSelectMultiNamespaceWallet={() =>
+            setView(SidebarView.Connect, { action: 'select-namespace' })
+          }
         />
       </Suspense>
     </div>
