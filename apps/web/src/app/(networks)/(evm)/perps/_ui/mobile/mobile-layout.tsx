@@ -1,7 +1,7 @@
 'use client'
 import { Activity, useState } from 'react'
 import { PerpTokenSelector } from '../perp-token-selector'
-import { TradeTables } from '../trade-tables'
+import { TradeTables } from '../trade-tables/trade-tables'
 import { FooterNav } from './footer-nav'
 import { TabbedView } from './tabbed-view'
 

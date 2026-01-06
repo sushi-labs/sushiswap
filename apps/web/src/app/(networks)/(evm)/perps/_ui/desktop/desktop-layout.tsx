@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { AccountManagement } from '../account-management'
 import { Chart } from '../chart'
 import { PerpTokenSelector } from '../perp-token-selector'
-import { TradeTables } from '../trade-tables'
+import { TradeTables } from '../trade-tables/trade-tables'
 import { TradeWidget } from '../trade-widget'
 import { type DesktopTab, DesktopTabbedView } from './desktop-tabbed-view'
 
