@@ -2,13 +2,13 @@
 import { LinkInternal, Message } from '@sushiswap/ui'
 
 export const GeoBlockedMessage = ({
-  isBlocked,
+  isGeoBlocked,
 }: {
-  isBlocked: boolean
+  isGeoBlocked: boolean
 }) => {
   return (
     <div
-      data-blocked={isBlocked ? 'true' : 'false'}
+      data-blocked={isGeoBlocked ? 'true' : 'false'}
       className="hidden data-[blocked=true]:block data-[blocked=true]:animate-slide"
     >
       <Message variant="destructive">

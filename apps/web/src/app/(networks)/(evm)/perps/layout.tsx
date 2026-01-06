@@ -10,12 +10,12 @@ export default async function PerpsLayout({
   children: React.ReactNode
 }) {
   const headerz = await headers()
-  const isBlocked = headerz.has('x-perps-region-blocked')
+  const isGeoBlocked = headerz.has('x-perps-region-blocked')
   return (
     <Providers>
       <Header chainId={EvmChainId.ARBITRUM} />
 
-      <GeoBlockedMessage isBlocked={isBlocked} />
+      <GeoBlockedMessage isGeoBlocked={isGeoBlocked} />
 
       {children}
     </Providers>
