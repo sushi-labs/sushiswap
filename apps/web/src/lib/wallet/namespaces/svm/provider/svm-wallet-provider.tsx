@@ -72,10 +72,16 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
       )?.adapter
 
       if (adapter) {
-        svmConnect(adapter.name)
-        adapter.once('connect', (publicKey) => {
-          onSuccess?.(publicKey?.toString())
-        })
+        if (adapter.connected && adapter.publicKey) {
+          onSuccess?.(adapter.publicKey?.toString())
+        } else {
+          svmConnect(adapter.name)
+          adapter.once('connect', (publicKey) => {
+            onSuccess?.(publicKey.toString())
+          })
+        }
+      } else {
+        throw new Error('SVM adapter not found')
       }
     },
     [svmConnect, wallets],

@@ -60,14 +60,22 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
         throw new Error(`Invalid namespace for ${wallet.name}`)
       }
 
-      const connector = await EvmAdapterConfig[wallet.adapterId]({
-        uid: wallet.uid,
-      })
-
-      const { accounts } = await wagmiConnect(getWagmiConfig(), { connector })
-      onSuccess?.(accounts[0])
+      if (
+        connector?.id &&
+        wallet.id === `evm:${connector.id.toLowerCase()}` &&
+        address
+      ) {
+        onSuccess?.(address)
+      } else {
+        const { accounts } = await wagmiConnect(getWagmiConfig(), {
+          connector: await EvmAdapterConfig[wallet.adapterId]({
+            uid: wallet.uid,
+          }),
+        })
+        onSuccess?.(accounts[0])
+      }
     },
-    [],
+    [connector?.id, address],
   )
 
   const disconnect = useCallback(async () => {
