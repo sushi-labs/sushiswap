@@ -1,6 +1,4 @@
-'use client'
-
-import { Button } from '@sushiswap/ui'
+import { Slot } from '@sushiswap/ui'
 import { useEvmWalletContext } from 'src/lib/wallet/namespaces/evm/provider/evm-wallet-provider'
 import type { ConnectWalletButtonProps } from './types'
 
@@ -10,23 +8,23 @@ export default function ConnectEvmWalletButton({
   onSuccess,
   onError,
   onSettled,
-  ...buttonProps
+  asChild = false,
+  children,
 }: ConnectWalletButtonProps) {
+  const Comp = asChild ? Slot : 'button'
+
   const { connect } = useEvmWalletContext()
 
-  return (
-    <Button
-      {...buttonProps}
-      onClick={async () => {
-        onMutate?.()
-        try {
-          await connect(wallet, onSuccess)
-        } catch (error) {
-          onError?.(error as Error)
-        } finally {
-          onSettled?.()
-        }
-      }}
-    />
-  )
+  const onClick = async () => {
+    onMutate?.()
+    try {
+      await connect(wallet, onSuccess)
+    } catch (error) {
+      onError?.(error as Error)
+    } finally {
+      onSettled?.()
+    }
+  }
+
+  return <Comp onClick={onClick}>{children}</Comp>
 }

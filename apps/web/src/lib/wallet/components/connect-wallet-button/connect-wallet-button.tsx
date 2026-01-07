@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Chip, Loader } from '@sushiswap/ui'
+import { Button, Chip, Loader, Slot } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import dynamic from 'next/dynamic'
 import { DEFAULT_CHAIN_ID_BY_NAMESPACE } from 'src/lib/wallet'
@@ -19,23 +19,26 @@ const ConnectSvmWalletButton = dynamic(
 )
 
 function ConnectButton(props: ConnectWalletButtonProps) {
-  if (!props.wallet.isAvailable) {
-    const { wallet, onMutate, onSettled, onSuccess, onError, ...rest } = props
-    return (
-      <Button
-        onClick={() => {
-          if (wallet.url) {
-            window.open(wallet.url, '_blank', 'noopener,noreferrer')
-          }
-        }}
-        {...rest}
-      />
-    )
-  }
+  if (!props.wallet.isAvailable || props.onClick) {
+    const { asChild, wallet, onClick, children } = props
 
-  if (props.onClick) {
-    const { wallet, onMutate, onSettled, onSuccess, onError, ...rest } = props
-    return <Button {...rest} />
+    const Comp = asChild ? Slot : 'button'
+
+    return (
+      <Comp
+        onClick={
+          !props.wallet.isAvailable
+            ? () => {
+                if (wallet.url) {
+                  window.open(wallet.url, '_blank', 'noopener,noreferrer')
+                }
+              }
+            : onClick
+        }
+      >
+        {children}
+      </Comp>
+    )
   }
 
   switch (props.wallet.namespace) {
@@ -49,16 +52,15 @@ function ConnectButton(props: ConnectWalletButtonProps) {
 }
 
 export function ConnectWalletButton({
-  wallet,
-  onClick,
-  onSuccess,
   variant = 'wallet',
-}: Pick<ConnectWalletButtonProps, 'wallet' | 'onSuccess' | 'onClick'> & {
+  ...props
+}: Omit<ConnectWalletButtonProps, 'asChild' | 'children'> & {
   variant?: 'wallet' | 'namespace'
 }) {
-  const rightChip = wallet.isRecent
+  const { wallet } = props
+  const rightChip = props.wallet.isRecent
     ? 'Recent'
-    : wallet.isInstalled
+    : props.wallet.isInstalled
       ? 'Installed'
       : undefined
 
@@ -68,54 +70,61 @@ export function ConnectWalletButton({
 
   return (
     <ConnectButton
-      wallet={wallet}
-      fullWidth
-      size="lg"
-      variant="ghost"
-      className="!justify-between gap-3 !rounded-none"
-      pending={isPending.toString()}
-      disabled={Boolean(pendingWalletId)}
-      onClick={onClick}
-      onMutate={() => setPendingWalletId(wallet.id)}
-      onSuccess={(address) => {
-        onSuccess?.(address)
+      asChild
+      {...props}
+      onMutate={() => {
+        setPendingWalletId(wallet.id)
+        props.onMutate?.()
       }}
-      onSettled={() => setPendingWalletId(undefined)}
+      onSettled={() => {
+        setPendingWalletId(undefined)
+        props.onSettled?.()
+      }}
     >
-      <div className="flex flex-1 justify-between gap-3">
-        {variant === 'namespace' ? (
-          <div className="flex gap-3">
-            <NetworkIcon
-              chainId={
-                wallet.namespace === 'svm' // TODO: remove when solana is added to sushi pkg chains
-                  ? 'solana'
-                  : DEFAULT_CHAIN_ID_BY_NAMESPACE[wallet.namespace]
-              }
-              className="h-6 w-6 shrink-0"
-            />
-            <span>
-              {wallet.namespace === 'svm' // TODO: remove when solana is added to sushi pkg chains
-                ? 'Solana'
-                : getChainById(DEFAULT_CHAIN_ID_BY_NAMESPACE[wallet.namespace])
-                    .name}
-            </span>
-          </div>
-        ) : (
-          <div className="flex gap-3">
-            <img
-              src={wallet.icon}
-              alt={wallet.name}
-              className="h-6 w-6 shrink-0 rounded-md"
-            />
-            <span>{wallet.name}</span>
-          </div>
-        )}
-      </div>
-      {isPending ? (
-        <Loader />
-      ) : rightChip && variant === 'wallet' ? (
-        <Chip variant="secondary">{rightChip}</Chip>
-      ) : null}
+      <Button
+        fullWidth
+        size="lg"
+        variant="ghost"
+        className="!justify-between gap-3 !rounded-none"
+        pending={isPending.toString()}
+        disabled={Boolean(pendingWalletId)}
+      >
+        <div className="flex flex-1 justify-between gap-3">
+          {variant === 'namespace' ? (
+            <div className="flex gap-3">
+              <NetworkIcon
+                chainId={
+                  wallet.namespace === 'svm' // TODO: remove when solana is added to sushi pkg chains
+                    ? 'solana'
+                    : DEFAULT_CHAIN_ID_BY_NAMESPACE[wallet.namespace]
+                }
+                className="h-6 w-6 shrink-0"
+              />
+              <span>
+                {wallet.namespace === 'svm' // TODO: remove when solana is added to sushi pkg chains
+                  ? 'Solana'
+                  : getChainById(
+                      DEFAULT_CHAIN_ID_BY_NAMESPACE[wallet.namespace],
+                    ).name}
+              </span>
+            </div>
+          ) : (
+            <div className="flex gap-3">
+              <img
+                src={wallet.icon}
+                alt={wallet.name}
+                className="h-6 w-6 shrink-0 rounded-md"
+              />
+              <span>{wallet.name}</span>
+            </div>
+          )}
+        </div>
+        {isPending ? (
+          <Loader />
+        ) : rightChip && variant === 'wallet' ? (
+          <Chip variant="secondary">{rightChip}</Chip>
+        ) : null}
+      </Button>
     </ConnectButton>
   )
 }
