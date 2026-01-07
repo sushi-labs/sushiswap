@@ -1,21 +1,25 @@
 import type { WalletConnectAction, WalletNamespace } from 'src/lib/wallet'
 
-export enum SidebarView {
-  Connect = 'connect',
-  Portfolio = 'portfolio',
-  Settings = 'settings',
-}
+export const SidebarView = {
+  Connect: 'connect',
+  Portfolio: 'portfolio',
+  Settings: 'settings',
+} as const
+
+export const DefaultSidebarView = SidebarView.Portfolio
+
+export type SidebarView = (typeof SidebarView)[keyof typeof SidebarView]
 
 export type SidebarState = { isOpen: boolean } & (
   | {
-      view: SidebarView.Connect
+      view: 'connect'
       context?: {
         namespace?: WalletNamespace
         action?: WalletConnectAction
       }
     }
   | {
-      view: Exclude<SidebarView, SidebarView.Connect>
+      view: Exclude<SidebarView, 'connect'>
       context?: undefined
     }
 )

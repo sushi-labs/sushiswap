@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react'
 import { Sidebar } from './sidebar'
-import { type SidebarState, SidebarView } from './types'
+import { DefaultSidebarView, type SidebarState, SidebarView } from './types'
 
 type SidebarContextValue = {
   isOpen: boolean
@@ -24,7 +24,7 @@ type SidebarContextValue = {
 
 export const SidebarContext = createContext<SidebarContextValue | null>(null)
 
-const DefaultState = { view: SidebarView.Portfolio, isOpen: false }
+const DefaultState = { view: DefaultSidebarView, isOpen: false }
 
 export const SidebarProvider = ({ children }: { children: ReactNode }) => {
   const [state, setState] = useState<SidebarState>(DefaultState)

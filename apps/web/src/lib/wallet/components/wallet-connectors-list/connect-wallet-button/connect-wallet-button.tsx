@@ -52,9 +52,9 @@ export function ConnectWalletButton({
   wallet,
   onClick,
   onSuccess,
-  showNamespace = false,
+  variant = 'wallet',
 }: Pick<ConnectWalletButtonProps, 'wallet' | 'onSuccess' | 'onClick'> & {
-  showNamespace?: boolean
+  variant?: 'wallet' | 'namespace'
 }) {
   const rightChip = wallet.isRecent
     ? 'Recent'
@@ -83,7 +83,7 @@ export function ConnectWalletButton({
       onSettled={() => setPendingWalletId(undefined)}
     >
       <div className="flex flex-1 justify-between gap-3">
-        {showNamespace ? (
+        {variant === 'namespace' ? (
           <div className="flex gap-3">
             <NetworkIcon
               chainId={
@@ -113,7 +113,7 @@ export function ConnectWalletButton({
       </div>
       {isPending ? (
         <Loader />
-      ) : rightChip && !showNamespace ? (
+      ) : rightChip && variant === 'wallet' ? (
         <Chip variant="secondary">{rightChip}</Chip>
       ) : null}
     </ConnectButton>

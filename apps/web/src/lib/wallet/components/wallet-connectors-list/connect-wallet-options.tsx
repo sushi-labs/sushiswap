@@ -1,11 +1,7 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import type {
-  WalletConnectAction,
-  WalletNamespace,
-  WalletWithState,
-} from '../../types'
+import { useMemo } from 'react'
+import type { WalletNamespace, WalletWithState } from '../../types'
 import { ConnectWalletButton } from './connect-wallet-button'
 import { useWallets } from './use-wallets'
 
@@ -15,22 +11,16 @@ type WalletOption =
 
 interface ConnectWalletOptionsProps {
   namespace?: WalletNamespace
-  action: WalletConnectAction
   onConnect?: () => void
-  onSelectMultiNamespaceWallet?: () => void
+  onSelectMultiNamespaceWallet?: (wallets: WalletWithState[]) => void
 }
 
 export default function ConnectWalletOptions({
-  action,
   namespace,
   onConnect,
   onSelectMultiNamespaceWallet,
 }: ConnectWalletOptionsProps) {
   const wallets = useWallets()
-
-  const [localMultiNamespaceWallets, setLocalMultiNamspaceWallets] = useState<
-    WalletWithState[]
-  >([])
 
   const options: WalletOption[] = useMemo(() => {
     const sortedWallets = [...wallets].sort((a, b) => {
@@ -60,28 +50,14 @@ export default function ConnectWalletOptions({
     )
   }, [wallets, namespace])
 
-  return action === 'select-namespace' && localMultiNamespaceWallets.length ? (
-    <div>
-      {localMultiNamespaceWallets.map((wallet) => (
-        <ConnectWalletButton
-          key={wallet.id}
-          wallet={wallet}
-          onSuccess={onConnect}
-          showNamespace
-        />
-      ))}
-    </div>
-  ) : (
+  return (
     <div>
       {options.map((option) =>
         option.type === 'multi' ? (
           <ConnectWalletButton
             key={option.wallets[0].id}
             wallet={option.wallets[0]}
-            onClick={() => {
-              setLocalMultiNamspaceWallets(option.wallets)
-              onSelectMultiNamespaceWallet?.()
-            }}
+            onClick={() => onSelectMultiNamespaceWallet?.(option.wallets)}
           />
         ) : (
           <ConnectWalletButton

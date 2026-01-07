@@ -8,7 +8,7 @@ import { IconButton } from '@sushiswap/ui'
 import { Switch } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
 import React, { Fragment } from 'react'
-import { SidebarView, useSidebar } from 'src/app/(networks)/_ui/sidebar'
+import { DefaultSidebarView, useSidebar } from 'src/app/(networks)/_ui/sidebar'
 
 const map = {
   system: <span className="text-xs font-semibold">Auto</span>,
@@ -27,7 +27,7 @@ export const SidebarSettingsView = () => {
         <div className="flex justify-start">
           <IconButton
             size="sm"
-            onClick={() => setView(SidebarView.Portfolio)}
+            onClick={() => setView(DefaultSidebarView)}
             icon={ArrowLeftIcon}
             name="Back"
           />
