@@ -7,5 +7,5 @@ export type WalletNamespaceContext = {
     wallet: Wallet,
     onSuccess?: (address: string) => void,
   ) => Promise<void>
-  disconnect: (wallet?: Wallet) => Promise<void>
+  disconnect: () => Promise<void>
 }

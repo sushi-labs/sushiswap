@@ -26,6 +26,7 @@ import {
   PortfolioPositions,
   PortfolioTokens,
 } from 'src/lib/wagmi/components/user-portfolio'
+import { DisconnectWalletButton } from 'src/lib/wallet/components/disconnect-wallet-button'
 import { EvmChainId, getEvmChainById, shortenEvmAddress } from 'sushi/evm'
 import { useConnection, useDisconnect, useEnsName } from 'wagmi'
 
@@ -38,7 +39,6 @@ enum PortfolioTab {
 
 export const SidebarPortfolioView = () => {
   const { connector, address, chain } = useConnection()
-  const { mutate: disconnect } = useDisconnect()
   const { data: ensName, isLoading: isENSNameLoading } = useEnsName({
     chainId: EvmChainId.ETHEREUM,
     address,
@@ -130,13 +130,14 @@ export const SidebarPortfolioView = () => {
                 />
               </LinkExternal>
             )}
-            <IconButton
-              size="xs"
-              icon={ArrowLeftOnRectangleIcon}
-              onClick={() => disconnect()}
-              description="Disconnect"
-              name="Disconnect"
-            />
+            <DisconnectWalletButton namespace="evm" asChild>
+              <IconButton
+                size="xs"
+                icon={ArrowLeftOnRectangleIcon}
+                description="Disconnect"
+                name="Disconnect"
+              />
+            </DisconnectWalletButton>
             <Popover>
               <PopoverTrigger asChild>
                 <IconButton

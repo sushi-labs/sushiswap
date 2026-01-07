@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import type { WalletNamespace, WalletWithState } from '../../types'
-import { ConnectWalletButton } from './connect-wallet-button'
+import { ConnectWalletButton } from '../connect-wallet-button'
 import { useWallets } from './use-wallets'
 
 type ConnectorsListProps =
