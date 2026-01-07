@@ -207,7 +207,9 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
       <div className="flex items-center justify-between text-sm">
         <span className="font-medium">Price Range</span>
         {token0 && token1 && (
-          <span className="text-xs text-muted-foreground">{priceUnit}</span>
+          <span className="text-xs text-muted-foreground">
+            {calculatePriceFromTick(currentTick).toPrecision(4)} {priceUnit}
+          </span>
         )}
       </div>
 
