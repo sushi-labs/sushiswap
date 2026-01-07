@@ -33,7 +33,7 @@ export const useLeaderboard = ({
       }
       return lastPage.pageInfo.currentPage + 1
     },
-    refetchInterval: ms('5m'),
+    refetchInterval: ms('1m'),
     enabled: Boolean(
       enabled && page >= 1 && (pageSize === 25 || pageSize === 50),
     ),
