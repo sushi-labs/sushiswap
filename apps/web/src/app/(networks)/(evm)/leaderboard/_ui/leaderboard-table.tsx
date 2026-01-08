@@ -6,6 +6,8 @@ import type { Row } from '@tanstack/react-table'
 import { useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useLeaderboard } from 'src/lib/hooks/react-query/leaderboard'
+import { useUserStats } from 'src/lib/hooks/react-query/leaderboard/use-user-stats'
+import { useAccount } from 'wagmi'
 import {
   POINTS_COLUMN,
   RANK_COLUMN,
@@ -22,12 +24,15 @@ const COLUMNS = [
 ] as ColumnDef<LeaderboardEntry, unknown>[]
 
 export const LeaderboardTable = () => {
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: 'points', desc: true },
-  ])
+  const { address } = useAccount()
+  const { data: userStats, isLoading: isLoadingUserStats } = useUserStats({
+    address,
+    enabled: Boolean(address),
+  })
+
   const {
     data: leaderboardData,
-    isLoading,
+    isLoading: isLoadingTable,
     fetchNextPage,
     hasNextPage,
   } = useLeaderboard({
@@ -35,20 +40,25 @@ export const LeaderboardTable = () => {
     pageSize: 50,
     enabled: true,
   })
+  const isLoading = isLoadingTable || isLoadingUserStats
 
-  const [data] = useMemo(() => {
-    return [leaderboardData?.pages.flatMap((page) => page.entries) ?? []]
-  }, [leaderboardData])
+  const data = useMemo(() => {
+    const _leaderboardData =
+      leaderboardData?.pages.flatMap((page) => page.entries) ?? []
+    if (!userStats || userStats.rank <= 10) {
+      return _leaderboardData
+    }
+    return [userStats, ..._leaderboardData]
+  }, [leaderboardData, userStats])
 
   const state: Partial<TableState> = useMemo(() => {
     return {
-      sorting,
       pagination: {
         pageIndex: 0,
         pageSize: data?.length,
       },
     }
-  }, [data?.length, sorting])
+  }, [data?.length])
 
   const rowClassName = useCallback((row: Row<LeaderboardEntry>) => {
     const rank = row.original.rank
@@ -72,7 +82,6 @@ export const LeaderboardTable = () => {
         </CardHeader>
         <DataTable
           state={state}
-          onSortingChange={setSorting}
           rowClassName={rowClassName}
           loading={isLoading}
           columns={COLUMNS}

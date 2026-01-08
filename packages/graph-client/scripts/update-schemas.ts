@@ -25,7 +25,6 @@ async function updateSchema(schema: keyof typeof schemas) {
         query: getIntrospectionQuery(),
       }),
     })
-
     const content = printSchema(buildClientSchema((await res.json()).data))
 
     fs.mkdirSync(`./src/subgraphs/${schema}`, { recursive: true })

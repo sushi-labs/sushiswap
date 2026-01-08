@@ -55,7 +55,7 @@ type Query {
   Get stats for a specific user address.
   If season is not provided, defaults to the current active season.
   """
-  userStats(address: String!, season: Int): UserStats
+  userStats(address: String!, seasons:  [Int!]): UserStats
 
   """
   Get paginated leaderboard.

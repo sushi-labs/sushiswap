@@ -4,31 +4,24 @@ import { graphql } from '../../graphql.js'
 import { LEADERBOARD_API_HOST } from '../../leadboard-host.js'
 import { LEADERBOARD_REQUEST_HEADERS } from '../../request-headers.js'
 
-export const UserStatsQuery = graphql(
+export const AllSeasonsQuery = graphql(
   `
- query UserQuery($address: String!, $seasons: [Int!]) {
-  userStats(address: $address, seasons: $seasons) {
-    address
-    points
-    rank
-    season {
+  query Seasons {
+    seasons {
       endTime
       isActive
       name
       number
       startTime
     }
-    volumeUsd
   }
-}
-
 `,
 )
 
-export type GetUserStats = VariablesOf<typeof UserStatsQuery>
+export type GetAllSeasons = VariablesOf<typeof AllSeasonsQuery>
 
-export async function getUserStats(
-  variables: GetUserStats,
+export async function getAllSeasons(
+  variables: GetAllSeasons,
   options?: RequestOptions,
 ) {
   const url = `${LEADERBOARD_API_HOST}/graphql`
@@ -36,17 +29,17 @@ export async function getUserStats(
   const result = await request(
     {
       url,
-      document: UserStatsQuery,
+      document: AllSeasonsQuery,
       variables,
       requestHeaders: LEADERBOARD_REQUEST_HEADERS,
     },
     options,
   )
   if (result) {
-    return result.userStats
+    return result.seasons
   }
 
-  throw new Error('No data returned from Leaderboard API for user stats')
+  throw new Error('No data returned from Leaderboard API for current season')
 }
 
-export type UserStats = Awaited<ReturnType<typeof getUserStats>>
+export type AllSeasons = Awaited<ReturnType<typeof getAllSeasons>>
