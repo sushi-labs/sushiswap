@@ -31,9 +31,9 @@ const getClassForRank = (rank: number) => {
 export const getClassNameForRow = (rank: number) => {
   switch (rank) {
     case 1:
-      return '!border-b !border-b-black/[4%] dark:!border-b-white/[4%] bg-gradient-to-r from-[rgba(59,130,246,0.1)] to-[rgba(251,42,255,0.01)] dark:from-[rgba(219,219,219,0.12)] dark:to-transparent'
+      return '!border-b !border-b-secondary dark:!border-b-secondary bg-gradient-to-r from-[rgba(59,130,246,0.1)] to-[rgba(251,42,255,0.01)] dark:from-[rgba(219,219,219,0.12)] dark:to-transparent'
     case 2:
-      return '!border-b !border-b-black/[4%] dark:!border-b-white/[4%] bg-gradient-to-r from-[rgba(59,130,246,0.1)] to-[rgba(251,42,255,0.01)] dark:from-[rgba(219,219,219,0.12)] dark:to-transparent'
+      return '!border-b !border-b-secondary dark:!border-b-secondary bg-gradient-to-r from-[rgba(59,130,246,0.1)] to-[rgba(251,42,255,0.01)] dark:from-[rgba(219,219,219,0.12)] dark:to-transparent'
     case 3:
       return 'bg-gradient-to-r from-[rgba(59,130,246,0.1)] to-[rgba(251,42,255,0.01)] dark:from-[rgba(219,219,219,0.12)] dark:to-transparent'
     default:
@@ -98,7 +98,7 @@ export const USER_COLUMN: ColumnDef<LeaderboardEntry, unknown> = {
     const classesForRank = useMemo(() => getClassForRank(rank), [rank])
 
     return (
-      <div className="flex items-center gap-4 justify-between w-fit min-w-[150px]">
+      <div className="flex items-center gap-4 justify-between w-fit min-w-[200px]">
         <div className="flex items-center gap-2">
           {avatar ? (
             <Image
@@ -106,7 +106,7 @@ export const USER_COLUMN: ColumnDef<LeaderboardEntry, unknown> = {
               src={avatar}
               width={32}
               height={32}
-              className="rounded-full w-[20px] h-[20px] object-fill"
+              className="rounded-full w-[32px] h-[32px] object-fill"
               loader={cloudinaryFetchLoader}
             />
           ) : (
@@ -123,7 +123,7 @@ export const USER_COLUMN: ColumnDef<LeaderboardEntry, unknown> = {
           {_shouldShowCrown ? (
             <div
               className={classNames(
-                'rounded-lg p-2.5 flex items-center justify-center bg-black/[4%]',
+                'rounded-lg p-2.5 flex items-center justify-center bg-secondary',
                 classesForRank,
               )}
             >

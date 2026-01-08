@@ -1,7 +1,4 @@
-import {
-  type UserStats,
-  getUserStats,
-} from '@sushiswap/graph-client/leaderboard'
+import { getUserStats } from '@sushiswap/graph-client/leaderboard'
 import { useQuery } from '@tanstack/react-query'
 import type { EvmAddress } from 'sushi/evm'
 
@@ -22,8 +19,19 @@ export const useUserStats = ({
         address,
         seasons,
       })
-      //@ts-expect-error - leaderboard introspection is broken atm, will remove this once fixed
-      return stats?.[0] as UserStats | null
+      const totals = stats.reduce(
+        (acc, stat) => {
+          acc.points += stat.points
+          acc.volumeUsd += stat.volumeUsd
+          return acc
+        },
+        { points: 0, volumeUsd: 0 },
+      )
+      return {
+        stats,
+        totalPoints: totals.points,
+        totalVolumeUsd: totals.volumeUsd,
+      }
     },
 
     enabled: Boolean(enabled && address),

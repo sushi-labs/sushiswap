@@ -15,7 +15,7 @@ async function updateSchema(schema: keyof typeof schemas) {
   const url = schemas[schema]
 
   try {
-    const res = await fetch(`https://${url}/`, {
+    const res = await fetch(`https://${url}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

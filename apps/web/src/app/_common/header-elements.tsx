@@ -48,11 +48,6 @@ export const EXPLORE_NAVIGATION_LINKS = (
       description: 'Earn fees by providing liquidity.',
     },
     {
-      title: 'Leaderboard',
-      href: `/leaderboard`,
-      description: 'See top traders by points and volume.',
-    },
-    {
       title: 'Claim',
       href: '/claim',
       description: 'Claim your fees and rewards.',
@@ -228,12 +223,6 @@ export const headerElements = ({
           </NavigationMenuContent>
         </NavigationMenuItem>
       ),
-    },
-    {
-      title: 'Leaderboard',
-      href: `/leaderboard`,
-      show: 'desktop',
-      type: NavigationElementType.Single,
     },
     {
       title: 'Explore',

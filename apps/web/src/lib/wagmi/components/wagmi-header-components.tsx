@@ -11,6 +11,7 @@ import type { ChainId } from 'sushi'
 import type { EvmChainId } from 'sushi/evm'
 import { useAccount } from 'wagmi'
 import { HeaderNetworkSelector } from './header-network-selector'
+import { UserPoints } from './user-points'
 import { UserPortfolio } from './user-portfolio'
 
 interface WagmiHeaderComponentsProps {
@@ -43,6 +44,7 @@ export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
 
   return (
     <Suspense>
+      <UserPoints />
       <HeaderNetworkSelector
         networks={networks}
         selectedNetwork={selectedNetwork}

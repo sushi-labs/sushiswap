@@ -5,7 +5,7 @@ import Image from 'next/image'
 export const NoPointsState = () => {
   return (
     <Card>
-      <div className="px-4 py-8 gap-6 flex justify-center md:justify-between items-center flex-col md:flex-row">
+      <div className="px-6 py-8 gap-6 flex justify-center md:justify-between items-center flex-col md:flex-row">
         <div className="flex md:gap-2 md:flex-row items-center flex-col">
           <Image
             src="/leaderboard-token.png"

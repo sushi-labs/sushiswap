@@ -65,6 +65,7 @@
 *:before,
 *:after {
   box-sizing: inherit;
+  scroll-behavior: smooth;
 }
 
 html {

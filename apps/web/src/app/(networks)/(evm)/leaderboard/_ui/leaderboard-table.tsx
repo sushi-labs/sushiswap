@@ -1,9 +1,9 @@
 'use client'
 import type { LeaderboardEntry } from '@sushiswap/graph-client/leaderboard'
 import { Card, CardHeader, CardTitle, DataTable, Loader } from '@sushiswap/ui'
-import type { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
+import type { ColumnDef, TableState } from '@tanstack/react-table'
 import type { Row } from '@tanstack/react-table'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useLeaderboard } from 'src/lib/hooks/react-query/leaderboard'
 import { useUserStats } from 'src/lib/hooks/react-query/leaderboard/use-user-stats'
@@ -45,10 +45,19 @@ export const LeaderboardTable = () => {
   const data = useMemo(() => {
     const _leaderboardData =
       leaderboardData?.pages.flatMap((page) => page.entries) ?? []
-    if (!userStats || userStats.rank <= 10) {
+    const stats = userStats?.stats?.[0]
+    if (!stats || stats.rank <= 10) {
       return _leaderboardData
     }
-    return [userStats, ..._leaderboardData]
+    return [
+      {
+        address: stats.address,
+        points: stats.points,
+        rank: stats.rank,
+        volumeUsd: stats.volumeUsd,
+      },
+      ..._leaderboardData,
+    ]
   }, [leaderboardData, userStats])
 
   const state: Partial<TableState> = useMemo(() => {
@@ -76,7 +85,7 @@ export const LeaderboardTable = () => {
         </div>
       }
     >
-      <Card>
+      <Card id="leaderboard-table">
         <CardHeader>
           <CardTitle>Leaderboard</CardTitle>
         </CardHeader>
