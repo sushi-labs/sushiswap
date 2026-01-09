@@ -7,7 +7,7 @@ import {
   allowAllModules,
 } from '@creit.tech/stellar-wallets-kit'
 import { createContext, useContext, useEffect, useState } from 'react'
-import { IS_TESTNET, NETWORK_PASSPHRASE } from './_common/lib/constants'
+import { IS_FUTURENET, NETWORK_PASSPHRASE } from './_common/lib/constants'
 
 interface StellarWalletContextType {
   stellarWalletKit: StellarWalletsKit | null
@@ -40,8 +40,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [connectedAddress, setConnectedAddress] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
-  const PREFERRED_NETWORK = IS_TESTNET
-    ? WalletNetwork.TESTNET
+  const PREFERRED_NETWORK = IS_FUTURENET
+    ? WalletNetwork.FUTURENET
     : WalletNetwork.PUBLIC
 
   useEffect(() => {

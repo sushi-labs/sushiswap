@@ -360,6 +360,9 @@ importers:
       '@sushiswap/stellar-contract-binding-token':
         specifier: workspace:*
         version: link:../../packages/stellar/contract-bindings/token
+      '@sushiswap/stellar-contract-binding-zap-router':
+        specifier: workspace:*
+        version: link:../../packages/stellar/contract-bindings/zap-router
       '@sushiswap/styro-client':
         specifier: 0.0.36
         version: 0.0.36(typescript@5.8.3)
@@ -925,6 +928,19 @@ importers:
         version: 5.8.3
 
   packages/stellar/contract-bindings/token:
+    dependencies:
+      '@stellar/stellar-sdk':
+        specifier: ^14.1.1
+        version: 14.4.2
+      buffer:
+        specifier: 6.0.3
+        version: 6.0.3
+    devDependencies:
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+
+  packages/stellar/contract-bindings/zap-router:
     dependencies:
       '@stellar/stellar-sdk':
         specifier: ^14.1.1
@@ -14225,6 +14241,7 @@ packages:
   whatwg-encoding@2.0.0:
     resolution: {integrity: sha512-p41ogyeMUrw3jWclHWTQg1k05DSVXPLcVxRTYsXUk+ZooOCZLcoYgPZ/HL/D/N+uQPOtcp1me1WhBEaX02mhWg==}
     engines: {node: '>=12'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-fetch@3.6.20:
     resolution: {integrity: sha512-EqhiFU6daOA8kpjOWTL0olhVOF3i7OrFzSYiGsEMB8GcXS+RrzauAERX65xMeNWVqxA6HXH2m69Z9LaKKdisfg==}

@@ -35,9 +35,9 @@ if (typeof window !== 'undefined') {
 
 
 export const networks = {
-  unknown: {
-    networkPassphrase: "Public Global Stellar Network ; September 2015",
-    contractId: "CCNVOJGNCPZEI5MMSE6NDSX3NAEZVYKRA4M3QIXBZNH2QVBVSR6ELJ72",
+  futurenet: {
+    networkPassphrase: "Test SDF Future Network ; October 2022",
+    contractId: "CBRTHEKJFVCVGJWO3FJVHHXXNOFYHORYO6X3HX2DXTIRBPGJG4OXSSAV",
   }
 } as const
 

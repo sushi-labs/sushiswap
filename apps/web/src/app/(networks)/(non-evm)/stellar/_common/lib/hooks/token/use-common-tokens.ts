@@ -2,7 +2,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { z } from 'zod'
 import { staticTokens } from '~stellar/_common/lib/assets/token-assets'
-import { IS_TESTNET } from '~stellar/_common/lib/constants'
+import { IS_FUTURENET } from '~stellar/_common/lib/constants'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 
 const stellarExpertAssetSchema = z.object({
@@ -17,13 +17,16 @@ const stellarExpertAssetSchema = z.object({
 
 const stellarExpertResponseSchema = z.array(stellarExpertAssetSchema)
 
-const stellarExpertTopTokensApiUrl = IS_TESTNET
-  ? 'https://api.stellar.expert/explorer/testnet/asset-list/top50'
+const stellarExpertTopTokensApiUrl = IS_FUTURENET
+  ? undefined
   : 'https://api.stellar.expert/explorer/public/asset-list/top50'
 
 const getStellarExpertAssets = async (): Promise<
   z.infer<typeof stellarExpertAssetSchema>[]
 > => {
+  if (!stellarExpertTopTokensApiUrl) {
+    return []
+  }
   const response = await fetch(stellarExpertTopTokensApiUrl, {
     headers: { Accept: 'application/json' },
   })

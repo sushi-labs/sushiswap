@@ -35,9 +35,9 @@ if (typeof window !== 'undefined') {
 
 
 export const networks = {
-  unknown: {
-    networkPassphrase: "Public Global Stellar Network ; September 2015",
-    contractId: "CC2QX66HLWDB64JLJB7H6TQHBYHNCSOWIMRN2KMA2Y63HV6TIIKJ5VI4",
+  futurenet: {
+    networkPassphrase: "Test SDF Future Network ; October 2022",
+    contractId: "CD6VPVNWNQYRPE7HUSHMCJKALSG3WJPRBP7QYPECTX7NWT4H2IYEEFM3",
   }
 } as const
 
@@ -164,6 +164,39 @@ token_b: string;
 /**
  * Mirror the SwapResult structure from the pool contract
  */
+export interface SwapResult {
+  amount0: i128;
+  amount1: i128;
+  liquidity: u128;
+  sqrt_price_x96: u256;
+  tick: i32;
+}
+
+
+/**
+ * Parameters for quoting a single-hop exact input swap
+ */
+export interface QuoteExactInputSingleParams {
+  amount_in: i128;
+  fee: u32;
+  sqrt_price_limit_x96: u256;
+  token_in: string;
+  token_out: string;
+}
+
+
+/**
+ * Parameters for quoting a single-hop exact output swap
+ */
+export interface QuoteExactOutputSingleParams {
+  amount_out: i128;
+  fee: u32;
+  sqrt_price_limit_x96: u256;
+  token_in: string;
+  token_out: string;
+}
+
+
 export interface SwapResult {
   amount0: i128;
   amount1: i128;

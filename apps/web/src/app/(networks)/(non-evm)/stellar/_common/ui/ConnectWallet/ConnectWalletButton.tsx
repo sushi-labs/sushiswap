@@ -9,7 +9,7 @@ import {
 } from '@sushiswap/ui'
 import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
 import { useState } from 'react'
-import { IS_TESTNET } from '~stellar/_common/lib/constants'
+import { IS_FUTURENET } from '~stellar/_common/lib/constants'
 import { formatAddress } from '~stellar/_common/lib/utils/format'
 import { useStellarWallet } from '~stellar/providers'
 import { DefaultView } from './DefaultView'
@@ -45,9 +45,9 @@ export const ConnectWalletButton = (props: ButtonProps) => {
           )}
         </Button>
 
-        {IS_TESTNET && isConnected ? (
+        {IS_FUTURENET && isConnected ? (
           <Chip className="!text-white rounded-md h-fit absolute right-0 !px-1 !py-0 text-[8px] -top-1">
-            Testnet
+            Futurenet
           </Chip>
         ) : null}
       </PopoverTrigger>

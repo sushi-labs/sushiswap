@@ -71,6 +71,7 @@
     "@sushiswap/stellar-contract-binding-position-manager": "workspace:*",
     "@sushiswap/stellar-contract-binding-router": "workspace:*",
     "@sushiswap/stellar-contract-binding-token": "workspace:*",
+    "@sushiswap/stellar-contract-binding-zap-router": "workspace:*",
     "@sushiswap/styro-client": "0.0.36",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/telemetry": "workspace:*",

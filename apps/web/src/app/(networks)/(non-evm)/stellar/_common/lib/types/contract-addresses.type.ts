@@ -7,7 +7,7 @@ export type ContractAddresses = {
   TOKEN_DESCRIPTOR: ContractAddress
   POOL_LENS: ContractAddress
   FLASH_EXECUTOR: ContractAddress
-  STRATEGY: ContractAddress
+  ZAP_ROUTER: ContractAddress
   POOL_WASM_HASH: string
   TOKENS: {
     XLM: ContractAddress

@@ -51,9 +51,9 @@ if (typeof window !== 'undefined') {
 
 
 export const networks = {
-  unknown: {
-    networkPassphrase: "Public Global Stellar Network ; September 2015",
-    contractId: "CCYBGAFJ2J3HGOT367ZIMQVOGLU3IBLQ6I5M66QZGP5SBXZ6FVI4KRVB",
+  futurenet: {
+    networkPassphrase: "Test SDF Future Network ; October 2022",
+    contractId: "CAKHXRS4XKKMANXKW2OK2IIG6QQB5PO4BOLKLRIUI5R74QK72R3Q47PW",
   }
 } as const
 
@@ -1318,6 +1318,27 @@ export interface Client {
   }) => Promise<AssembledTransaction<Result<readonly [u32, u128, u128, u128]>>>
 
   /**
+   * Construct and simulate a mint_with_hints transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Mint a new position NFT using caller-provided oracle hints
+   */
+  mint_with_hints: ({params, hints}: {params: MintParams, hints: OracleHints}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<Result<readonly [u32, u128, u128, u128]>>>
+
+  /**
    * Construct and simulate a increase_liquidity transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Increase liquidity in an existing position
    * Returns (liquidity, amount0, amount1) - the liquidity and amounts added
@@ -1948,6 +1969,7 @@ export class Client extends ContractClient {
         "AAAAAAAAAJpJbml0aWFsaXplIHRoZSBjb250cmFjdApAcGFyYW0gZW52IFRoZSBTb3JvYmFuIGVudmlyb25tZW50CkBwYXJhbSBhZG1pbiBUaGUgYWRtaW4gYWRkcmVzcyBmb3IgdGhlIGNvbnRyYWN0CkBwYXJhbSBiYXNlX3VyaSBUaGUgYmFzZSBVUkkgZm9yIHRva2VuIG1ldGFkYXRhAAAAAAAEaW5pdAAAAAMAAAAAAAAAB2ZhY3RvcnkAAAAAEwAAAAAAAAALeGxtX2FkZHJlc3MAAAAAEwAAAAAAAAAQdG9rZW5fZGVzY3JpcHRvcgAAABMAAAAA",
         "AAAAAAAAAAAAAAAJcG9zaXRpb25zAAAAAAAAAQAAAAAAAAAIdG9rZW5faWQAAAAEAAAAAQAAA+kAAAfQAAAADVBvc2l0aW9uVHVwbGUAAAAAAAAD",
         "AAAAAAAAAEdNaW50IGEgbmV3IHBvc2l0aW9uIE5GVApSZXR1cm5zICh0b2tlbl9pZCwgbGlxdWlkaXR5LCBhbW91bnQwLCBhbW91bnQxKQAAAAAEbWludAAAAAEAAAAAAAAABnBhcmFtcwAAAAAH0AAAAApNaW50UGFyYW1zAAAAAAABAAAD6QAAA+0AAAAEAAAABAAAAAoAAAAKAAAACgAAAAM=",
+        "AAAAAAAAADpNaW50IGEgbmV3IHBvc2l0aW9uIE5GVCB1c2luZyBjYWxsZXItcHJvdmlkZWQgb3JhY2xlIGhpbnRzAAAAAAAPbWludF93aXRoX2hpbnRzAAAAAAIAAAAAAAAABnBhcmFtcwAAAAAH0AAAAApNaW50UGFyYW1zAAAAAAAAAAAABWhpbnRzAAAAAAAH0AAAAAtPcmFjbGVIaW50cwAAAAABAAAD6QAAA+0AAAAEAAAABAAAAAoAAAAKAAAACgAAAAM=",
         "AAAAAAAAAHJJbmNyZWFzZSBsaXF1aWRpdHkgaW4gYW4gZXhpc3RpbmcgcG9zaXRpb24KUmV0dXJucyAobGlxdWlkaXR5LCBhbW91bnQwLCBhbW91bnQxKSAtIHRoZSBsaXF1aWRpdHkgYW5kIGFtb3VudHMgYWRkZWQAAAAAABJpbmNyZWFzZV9saXF1aWRpdHkAAAAAAAEAAAAAAAAABnBhcmFtcwAAAAAH0AAAABdJbmNyZWFzZUxpcXVpZGl0eVBhcmFtcwAAAAABAAAD6QAAA+0AAAADAAAACgAAAAoAAAAKAAAAAw==",
         "AAAAAAAAAF1EZWNyZWFzZSBsaXF1aWRpdHkgZnJvbSBhIHBvc2l0aW9uClJldHVybnMgKGFtb3VudDAsIGFtb3VudDEpIC0gdGhlIGFtb3VudHMgb2YgdG9rZW5zIHJlbW92ZWQAAAAAAAASZGVjcmVhc2VfbGlxdWlkaXR5AAAAAAABAAAAAAAAAAZwYXJhbXMAAAAAB9AAAAAXRGVjcmVhc2VMaXF1aWRpdHlQYXJhbXMAAAAAAQAAA+kAAAPtAAAAAgAAAAoAAAAKAAAAAw==",
         "AAAAAAAAAAAAAAAHY29sbGVjdAAAAAABAAAAAAAAAAZwYXJhbXMAAAAAB9AAAAANQ29sbGVjdFBhcmFtcwAAAAAAAAEAAAPpAAAD7QAAAAIAAAAKAAAACgAAAAM=",
@@ -2105,6 +2127,7 @@ export class Client extends ContractClient {
     init: this.txFromJSON<null>,
         positions: this.txFromJSON<Result<PositionTuple>>,
         mint: this.txFromJSON<Result<readonly [u32, u128, u128, u128]>>,
+        mint_with_hints: this.txFromJSON<Result<readonly [u32, u128, u128, u128]>>,
         increase_liquidity: this.txFromJSON<Result<readonly [u128, u128, u128]>>,
         decrease_liquidity: this.txFromJSON<Result<readonly [u128, u128]>>,
         collect: this.txFromJSON<Result<readonly [u128, u128]>>,
