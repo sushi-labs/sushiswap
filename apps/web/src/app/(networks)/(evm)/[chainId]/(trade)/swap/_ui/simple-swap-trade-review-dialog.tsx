@@ -43,6 +43,7 @@ import { sendDrilldownLog } from 'src/lib/drilldown-log'
 import type { UseTradeReturn } from 'src/lib/hooks/react-query'
 import { useUserStats } from 'src/lib/hooks/react-query/leaderboard/use-user-stats'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { useTierUi } from 'src/lib/leaderboard/tiers'
 import { logger } from 'src/lib/logger'
 import {
   warningSeverity,
@@ -133,7 +134,10 @@ const _SimpleSwapTradeReviewDialog: FC<{
     address: address,
     enabled: Boolean(address),
   })
-
+  const tierData = useMemo(
+    () => useTierUi(userStats?.totalPoints ?? 0),
+    [userStats?.totalPoints],
+  )
   const isWrap =
     token0?.type === 'native' &&
     token1?.wrap().address === EvmNative.fromChainId(chainId).wrap().address
@@ -624,12 +628,13 @@ const _SimpleSwapTradeReviewDialog: FC<{
               </div>
               <div className="flex flex-col items-center gap-1 w-full">
                 <p className="text-sm text-muted-foreground uppercase font-medium">
-                  {600_000 - (userStats?.totalPoints ?? 0)} pts to next tier
+                  {(tierData.nextTier?.minPoints ?? 0) -
+                    (userStats?.totalPoints ?? 0)}{' '}
+                  pts to next tier
                 </p>
-                {/* small target to test animations */}
                 <ProgressBar
                   current={userStats?.totalPoints ?? 0}
-                  target={6_000}
+                  target={tierData.nextTier?.minPoints ?? 0}
                 />
               </div>
             </div>

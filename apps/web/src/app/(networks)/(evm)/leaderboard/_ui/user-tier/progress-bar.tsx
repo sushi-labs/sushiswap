@@ -22,7 +22,7 @@ export const ProgressBar = ({
           transition: `width ${durationMs}ms ease`,
         }}
         // className="h-3 rounded-full  bg-gradient-to-br from-[#F1E363] to-[#EA6D33]"
-        className="h-3 rounded-full bg-blue"
+        className="h-3 rounded-full bg-gradient-to-r from-blue/30 to-blue"
       />
     </div>
   )

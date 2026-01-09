@@ -9,10 +9,12 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useUserStats } from 'src/lib/hooks/react-query/leaderboard/use-user-stats'
+import { useTierUi } from 'src/lib/leaderboard/tiers'
 import { useAccount } from 'wagmi'
 import { ProgressBar } from '~evm/leaderboard/_ui/user-tier/progress-bar'
+import { TierIcon } from '~evm/leaderboard/_ui/user-tier/tier-icon'
 
 const formatter = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 0,
@@ -29,6 +31,13 @@ export const UserPoints = () => {
     address: address,
     enabled: Boolean(address),
   })
+  const tierData = useMemo(
+    () => useTierUi(userStats?.totalPoints ?? 0),
+    [userStats?.totalPoints],
+  )
+
+  if (!address) return null
+
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger disabled={isLoading || isError} asChild>
@@ -56,8 +65,13 @@ export const UserPoints = () => {
               </>
             ) : (
               <>
-                <div className="relative z-[11] min-w-[20px] w-[20px] h-5 rounded-sm bg-gradient-to-br from-[#F1E363] to-[#EA6D33] flex items-center justify-center">
-                  🥉
+                <div
+                  className={classNames(
+                    'relative z-[11] min-w-[20px] w-[20px] h-5 rounded-sm flex items-center justify-center',
+                    tierData.currentTier.accent.bgClass,
+                  )}
+                >
+                  <TierIcon tier={tierData.currentTier.icon} />
                 </div>
                 <div className="hidden lg:block relative z-[11] whitespace-nowrap">
                   <RollingNumber
@@ -81,12 +95,19 @@ export const UserPoints = () => {
           <div className="flex flex-col gap-4">
             <div className="flex justify-between gap-2">
               <div className="flex items-center gap-2">
-                <div className="min-w-[32px] w-[32px] h-8 rounded-md bg-gradient-to-br from-[#F1E363] to-[#EA6D33] flex items-center justify-center">
-                  🥉
+                <div
+                  className={classNames(
+                    'min-w-[32px] w-[32px] h-8 rounded-md flex items-center justify-center',
+                    tierData.currentTier.accent.bgClass,
+                  )}
+                >
+                  <TierIcon tier={tierData.currentTier.icon} />
                 </div>
                 <div className="flex flex-col uppercase w-full">
                   <p className="text-muted-foreground text-xs">Your Tier</p>
-                  <p className="font-bold text-sm">Bronze</p>
+                  <p className="font-bold text-sm">
+                    {tierData.currentTier.name}
+                  </p>
                 </div>
               </div>
               <LinkInternal
@@ -113,19 +134,21 @@ export const UserPoints = () => {
               <div className="flex flex-col uppercase">
                 <p className="text-muted-foreground text-xs">Rank</p>
                 <p className="font-bold text-sm">
-                  #{userStats?.stats?.[0]?.rank}
+                  #{userStats?.stats?.[0]?.rank ?? ' -'}
                 </p>
               </div>
             </div>
             <div className="flex flex-col gap-2">
               <p className="text-xs text-muted-foreground uppercase font-medium">
-                {formatter.format(600_000 - (userStats?.totalPoints ?? 0))} pts
-                to Silver
+                {formatter.format(
+                  (tierData.nextTier?.minPoints ?? 0) -
+                    (userStats?.totalPoints ?? 0),
+                )}{' '}
+                pts to {tierData.nextTier?.name ?? 'next tier'}
               </p>
-              {/* small target to test animations */}
               <ProgressBar
                 current={userStats?.totalPoints ?? 0}
-                target={6_000}
+                target={tierData.nextTier?.minPoints ?? 0}
               />
             </div>
           </div>

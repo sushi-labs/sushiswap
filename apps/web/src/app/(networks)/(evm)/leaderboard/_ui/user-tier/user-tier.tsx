@@ -1,16 +1,17 @@
 'use client'
 
 import { Card, RollingNumber, classNames } from '@sushiswap/ui'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useUserStats } from 'src/lib/hooks/react-query/leaderboard/use-user-stats'
+import { type Tier, useTierUi } from 'src/lib/leaderboard/tiers'
 import { formatNumber } from 'sushi'
 import { useAccount } from 'wagmi'
 import { NoPointsState } from './no-points-state'
 import { ProgressBar } from './progress-bar'
+import { TierIcon } from './tier-icon'
 import { TierSkeleton } from './tier-skeleton'
 import { UnconnectedState } from './unconnected-state'
 
-const STEP = 100_000
 const formatter = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 0,
 })
@@ -20,7 +21,11 @@ export const UserTier = () => {
     address,
     enabled: Boolean(address),
   })
-  const fillAmount = userStats?.totalPoints ? userStats?.totalPoints / STEP : 0
+
+  const tierData = useMemo(
+    () => useTierUi(userStats?.totalPoints ?? 0),
+    [userStats?.totalPoints],
+  )
 
   if (!isConnected) {
     return <UnconnectedState />
@@ -41,14 +46,19 @@ export const UserTier = () => {
             Your Current Tier
           </p>
           <div className="flex items-center gap-6">
-            <div className="min-w-[48px] w-[48px] h-12 rounded-xl bg-gradient-to-br from-[#F1E363] to-[#EA6D33] flex items-center justify-center">
-              🥉
+            <div
+              className={classNames(
+                'min-w-[48px] w-[48px] h-12 rounded-xl flex items-center justify-center',
+                tierData.currentTier.accent.bgClass,
+              )}
+            >
+              <TierIcon tier={tierData.currentTier.icon} />
             </div>
             <div className="flex flex-col w-full">
-              <p className="font-bold text-2xl">Bronze</p>
+              <p className="font-bold text-2xl">{tierData.currentTier.name}</p>
               <p className="text-muted-foreground">
-                Unlock a milestone for every 600k points earned. You are in the
-                top 5% of traders this season.
+                Unlock new tiers the more you earn. You are in the top 5% of
+                traders this season.
               </p>
             </div>
           </div>
@@ -63,47 +73,56 @@ export const UserTier = () => {
               />
             </p>
             <p className="text-sm text-muted-foreground uppercase font-medium">
-              {formatter.format(600_000 - (userStats?.totalPoints ?? 0))} pts to
-              Silver
+              {formatter.format(tierData.ptsToNextRank)} pts to{' '}
+              {tierData.nextTier?.name ?? ''}
             </p>
           </div>
-          {/* small target to test animations */}
-          <ProgressBar current={userStats?.totalPoints} target={6_000} />
+          <ProgressBar
+            current={userStats?.totalPoints}
+            target={tierData.nextTier?.minPoints ?? 0}
+          />
         </div>
         <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
-          {[...Array(7)].map((_, idx) => (
+          {tierData.milestones.map((milestone, idx) => (
             <PointTierBox
               key={idx}
-              isFilled={idx + 1 <= fillAmount}
-              isNext={idx === Math.floor(fillAmount)}
+              isFilled={milestone.isFilled}
+              isNext={milestone.isNext}
+              pointsPerBlock={milestone.pointsPerBlock}
               delayMs={idx * 200}
             />
           ))}
-          <NextTierItem />
+          <NextTierItem nextTier={tierData?.nextTier} />
         </div>
       </div>
     </Card>
   )
 }
 
-const NextTierItem = () => {
-  // todo: make record for tiers and pull in appropriate icon based on tier
+const NextTierItem = ({ nextTier }: { nextTier: Tier | null }) => {
   return (
     <div
       className={classNames(
         'h-10 w-full rounded-lg text-sm flex items-center justify-center font-bold border-2 text-muted-foreground border-black/8 dark:border-white/8',
-        'bg-gradient-to-br from-[#FFFBD4] to-[#D3D3D3]',
+        // 'bg-gradient-to-br from-[#FFFBD4] to-[#D3D3D3]',
+        nextTier?.accent?.bgClass,
       )}
     >
-      🥈
+      {nextTier ? <TierIcon tier={nextTier.icon} className="w-5 h-5" /> : '???'}
     </div>
   )
 }
 const PointTierBox = ({
   isFilled,
   isNext,
+  pointsPerBlock,
   delayMs,
-}: { isFilled: boolean; isNext: boolean; delayMs: number }) => {
+}: {
+  isFilled: boolean
+  isNext: boolean
+  pointsPerBlock: number
+  delayMs: number
+}) => {
   const [changeBg, setChangeBg] = useState(false)
   useEffect(() => {
     const t = setTimeout(() => setChangeBg(true), 250)
@@ -123,7 +142,7 @@ const PointTierBox = ({
         transition: `background 250ms ease ${delayMs}ms, border 250ms ease ${delayMs}ms`,
       }}
     >
-      {formatNumber(STEP)}
+      {formatNumber(pointsPerBlock)}
     </div>
   )
 }

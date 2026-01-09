@@ -11,9 +11,11 @@ import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import Image from 'next/image'
 import { useMemo } from 'react'
+import { getTierForPoints } from 'src/lib/leaderboard/tiers'
 import { formatNumber, formatUSD, truncateString } from 'sushi'
 import { type EvmAddress, EvmChainId } from 'sushi/evm'
 import { useAccount, useEnsAvatar, useEnsName } from 'wagmi'
+import { TierIcon } from './user-tier/tier-icon'
 
 const getClassForRank = (rank: number) => {
   switch (rank) {
@@ -97,6 +99,11 @@ export const USER_COLUMN: ColumnDef<LeaderboardEntry, unknown> = {
     const _shouldShowCrown = useMemo(() => shouldShowCrown(rank), [rank])
     const classesForRank = useMemo(() => getClassForRank(rank), [rank])
 
+    const currentTier = useMemo(
+      () => getTierForPoints(props.row.original.points),
+      [props.row.original.points],
+    )
+
     return (
       <div className="flex items-center gap-4 justify-between w-fit min-w-[200px]">
         <div className="flex items-center gap-2">
@@ -116,7 +123,9 @@ export const USER_COLUMN: ColumnDef<LeaderboardEntry, unknown> = {
             <div className={classNames(classesForRank)}>
               {truncateString(ensName ?? address, 10, 'middle')}
             </div>
-            <div className="text-xs">💎 Tier: todo</div>
+            <div className="text-xs flex gap-0.5">
+              <TierIcon tier={currentTier.icon} /> {currentTier.name}
+            </div>
           </div>
         </div>
         <div className="flex items-center gap-2">
