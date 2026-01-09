@@ -1,9 +1,17 @@
-import { Currency, classNames } from '@sushiswap/ui'
+import {
+  Currency,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+  classNames,
+} from '@sushiswap/ui'
+import { formatFee } from '~stellar/_common/lib/utils/format'
 import { TokenIcon } from '~stellar/_common/ui/General/TokenIcon'
 import type { IPositionRowData } from './PositionsTable'
 
 export const PositionNameCell = ({ data }: { data: IPositionRowData }) => {
-  const { token0, token1 } = data
+  const { token0, token1, fee } = data
 
   return (
     <div className="flex items-center gap-1">
@@ -26,6 +34,20 @@ export const PositionNameCell = ({ data }: { data: IPositionRowData }) => {
             )}
           />
         </span>
+        <div className="flex gap-1">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
+                  {formatFee(fee)}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Swap fee</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>{' '}
       </div>
     </div>
   )

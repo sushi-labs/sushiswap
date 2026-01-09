@@ -183,6 +183,7 @@ export const useZap = () => {
       return { addLiqResult, params }
     },
     onSuccess: ({ addLiqResult, params }) => {
+      const timestamp = Date.now()
       createSuccessToast({
         summary: 'Liquidity added successfully',
         type: 'mint',
@@ -190,8 +191,8 @@ export const useZap = () => {
         chainId: ChainId.STELLAR,
         txHash: addLiqResult.txHash,
         href: getStellarTxnLink(addLiqResult.txHash),
-        groupTimestamp: Date.now(),
-        timestamp: Date.now(),
+        groupTimestamp: timestamp,
+        timestamp,
       })
 
       // Invalidate queries

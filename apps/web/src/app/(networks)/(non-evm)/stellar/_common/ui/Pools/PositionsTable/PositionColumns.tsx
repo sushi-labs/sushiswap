@@ -2,8 +2,10 @@ import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { ICON_SIZE } from '~stellar/_common/constants/icon-size'
 import { PositionAprCell } from './PositionAprCell'
-import { PositionFeeCell } from './PositionFeeCell'
+import { PositionCollectFeesCell } from './PositionCollectFeesCell'
+import { PositionCollectableFeesCell } from './PositionCollectableFeesCell'
 import { PositionNameCell } from './PositionNameCell'
+import { PositionPriceRangeCell } from './PositionPriceRangeCell'
 import { PositionSizeCell } from './PositionSizeCell'
 import { PositionValueCell } from './PositionValueCell'
 import type { IPositionRowData } from './PositionsTable'
@@ -29,10 +31,10 @@ export const POSITION_NAME_COLUMN: ColumnDef<IPositionRowData, unknown> = {
   },
 }
 
-export const FEE_COLUMN: ColumnDef<IPositionRowData, unknown> = {
-  id: 'fee',
-  header: 'Fee Tier',
-  cell: (props) => <PositionFeeCell data={props.row.original} />,
+export const PRICE_RANGE_COLUMN: ColumnDef<IPositionRowData, unknown> = {
+  id: 'price-range',
+  header: 'Price Range',
+  cell: (props) => <PositionPriceRangeCell data={props.row.original} />,
   meta: {
     body: {
       skeleton: (
@@ -93,5 +95,40 @@ export const APR_COLUMN: ColumnDef<IPositionRowData, unknown> = {
         </div>
       ),
     },
+  },
+}
+
+export const COLLECTABLE_FEES_COLUMN: ColumnDef<IPositionRowData, unknown> = {
+  id: 'collectable-fees',
+  header: 'Collectable Fees',
+  cell: (props) => <PositionCollectableFeesCell data={props.row.original} />,
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex items-center w-full gap-2">
+          <div className="flex flex-col w-full">
+            <SkeletonText fontSize="lg" />
+          </div>
+        </div>
+      ),
+    },
+  },
+}
+
+export const COLLECT_FEES_COLUMN: ColumnDef<IPositionRowData, unknown> = {
+  id: 'collect-fees',
+  header: 'Collect Fees',
+  cell: (props) => <PositionCollectFeesCell data={props.row.original} />,
+  meta: {
+    body: {
+      skeleton: (
+        <div className="flex items-center w-full gap-2">
+          <div className="flex flex-col w-full">
+            <SkeletonText fontSize="lg" />
+          </div>
+        </div>
+      ),
+    },
+    disableLink: true,
   },
 }

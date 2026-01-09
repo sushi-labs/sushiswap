@@ -50,6 +50,7 @@ export const useCreateAndInitializePool = () => {
     },
     onSuccess: ({ result, params: variables }) => {
       // Show success toast with Stellar explorer link
+      const timestamp = Date.now()
       createSuccessToast({
         summary: `Initialized pool ${result.txHash !== undefined ? 'created successfully' : 'already exists'} at ${formatAddress(result.poolAddress)}...`,
         type: 'swap',
@@ -57,8 +58,8 @@ export const useCreateAndInitializePool = () => {
         chainId: ChainId.STELLAR,
         txHash: result.txHash,
         href: result.txHash && getStellarTxnLink(result.txHash),
-        groupTimestamp: Date.now(),
-        timestamp: Date.now(),
+        groupTimestamp: timestamp,
+        timestamp,
       })
 
       // Invalidate pools list

@@ -2,7 +2,7 @@ import { createErrorToast, createSuccessToast } from '@sushiswap/notifications'
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
 import type React from 'react'
 import { useState } from 'react'
-import { ChainId } from 'sushi'
+import { ChainId, MAX_UINT128 } from 'sushi'
 import { formatUnits } from 'viem'
 import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
@@ -78,15 +78,12 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
 
       // Collect from all positions that have fees
       for (const position of positionsWithFees) {
-        // Max uint128 value for collecting all available fees
-        const maxAmount = BigInt('340282366920938463463374607431768211455') // 2^128 - 1
-
         try {
           const result = await collectFeesMutation.mutateAsync({
             tokenId: position.tokenId,
             recipient: connectedAddress,
-            amount0Max: maxAmount,
-            amount1Max: maxAmount,
+            amount0Max: MAX_UINT128,
+            amount1Max: MAX_UINT128,
             signTransaction,
             signAuthEntry,
           })
@@ -139,6 +136,7 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
           summary = `Collected ${token1Amount} ${pool.token1.code}`
         }
 
+        const timestamp = Date.now()
         createSuccessToast({
           summary,
           type: 'claimRewards',
@@ -146,8 +144,8 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
           chainId: ChainId.STELLAR,
           txHash: lastTxHash,
           href: getStellarTxnLink(lastTxHash),
-          groupTimestamp: Date.now(),
-          timestamp: Date.now(),
+          groupTimestamp: timestamp,
+          timestamp,
         })
       }
     } catch (error) {

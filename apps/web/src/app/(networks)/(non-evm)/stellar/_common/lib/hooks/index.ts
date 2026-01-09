@@ -8,9 +8,6 @@
 // DEX Factory hooks
 export * from './factory'
 
-// DEX Router hooks
-export * from './router'
-
 // Pool hooks
 export * from './pool'
 

@@ -1,6 +1,7 @@
 import type { PoolInfo, PoolLiquidity, PoolReserves } from '../types/pool.type'
 import type { Token } from '../types/token.type'
 import { type OracleHints, fetchOracleHints } from '../utils/slot-hint-helpers'
+import { MAX_TICK_RANGE } from '../utils/ticks'
 import { getPoolLensContractClient } from './client'
 import { contractAddresses } from './contracts'
 import { getTokenBalance, getTokenByContract } from './token-helpers'
@@ -192,6 +193,31 @@ export function calculateTickFromPrice(price: number): number {
  */
 export function calculatePriceFromTick(tick: number): number {
   return 1.0001 ** tick
+}
+
+export const formatPriceBound = (tick: number, bound: 'lower' | 'upper') => {
+  if (bound === 'lower' && tick <= MAX_TICK_RANGE.lower) {
+    return '0'
+  }
+  if (bound === 'upper' && tick >= MAX_TICK_RANGE.upper) {
+    return '∞'
+  }
+
+  const price = calculatePriceFromTick(tick)
+
+  if (!Number.isFinite(price) || price <= 0) {
+    return bound === 'lower' ? '0' : '∞'
+  }
+
+  if (price >= 1_000_000) {
+    return price.toExponential(2)
+  }
+
+  if (price <= 0.0001) {
+    return '<0.0001'
+  }
+
+  return price.toLocaleString(undefined, { maximumSignificantDigits: 6 })
 }
 
 /**

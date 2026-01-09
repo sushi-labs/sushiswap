@@ -96,6 +96,7 @@ export const useExecuteSwap = () => {
         params.tokenIn.decimals,
       )
 
+      const timestamp = Date.now()
       createSuccessToast({
         summary: `Swapped ${amountInFormatted} ${params.tokenIn.code} for ${amountOutFormatted} ${params.tokenOut.code}`,
         type: 'swap',
@@ -103,8 +104,8 @@ export const useExecuteSwap = () => {
         chainId: ChainId.STELLAR,
         txHash: result.txHash,
         href: getStellarTxnLink(result.txHash),
-        groupTimestamp: Date.now(),
-        timestamp: Date.now(),
+        groupTimestamp: timestamp,
+        timestamp,
       })
 
       // Invalidate all stellar token balance queries to update balances after swap
@@ -202,6 +203,7 @@ export const useExecuteMultiHopSwap = () => {
       const amountOutFormatted = formatUnits(amountOut, tokenOutDecimals)
       const amountInFormatted = formatUnits(params.amountIn, tokenInDecimals)
 
+      const timestamp = Date.now()
       createSuccessToast({
         summary: `Swapped ${amountInFormatted} ${params.tokenIn?.code || 'tokens'} for ${amountOutFormatted} ${params.tokenOut?.code || 'tokens'}`,
         type: 'swap',
@@ -209,8 +211,8 @@ export const useExecuteMultiHopSwap = () => {
         chainId: ChainId.STELLAR,
         txHash: result.txHash,
         href: getStellarTxnLink(result.txHash),
-        groupTimestamp: Date.now(),
-        timestamp: Date.now(),
+        groupTimestamp: timestamp,
+        timestamp,
       })
 
       // Invalidate all stellar token balance queries to update balances after swap

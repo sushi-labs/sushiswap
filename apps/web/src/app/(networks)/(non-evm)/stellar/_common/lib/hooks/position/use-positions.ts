@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import ms from 'ms'
 import { positionService } from '../../services/position-service'
+import { waitForTransaction } from '../../soroban/transaction-helpers'
 
 /**
  * Hook to get all positions owned by a user
@@ -92,7 +93,7 @@ export function useCollectFees() {
       signTransaction: (xdr: string) => Promise<string>
       signAuthEntry: (entryPreimageXdr: string) => Promise<string>
     }) => {
-      return await positionService.collectFees(
+      const collectFeesResult = await positionService.collectFees(
         {
           tokenId,
           recipient,
@@ -102,6 +103,8 @@ export function useCollectFees() {
         signTransaction,
         signAuthEntry,
       )
+      await waitForTransaction(collectFeesResult.txHash)
+      return collectFeesResult
     },
     onSuccess: (_result, variables) => {
       // Invalidate position queries to refresh data

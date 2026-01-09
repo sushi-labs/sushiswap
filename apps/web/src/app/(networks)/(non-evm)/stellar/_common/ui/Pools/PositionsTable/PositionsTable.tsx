@@ -21,8 +21,10 @@ import { useStellarWallet } from '~stellar/providers'
 import { ConnectWalletButton } from '../../ConnectWallet/ConnectWalletButton'
 import {
   APR_COLUMN,
-  FEE_COLUMN,
+  COLLECTABLE_FEES_COLUMN,
+  COLLECT_FEES_COLUMN,
   POSITION_NAME_COLUMN,
+  PRICE_RANGE_COLUMN,
   SIZE_COLUMN,
   VALUE_COLUMN,
 } from './PositionColumns'
@@ -119,10 +121,12 @@ export const PositionsTable = ({
         data={filteredData}
         columns={[
           POSITION_NAME_COLUMN,
-          FEE_COLUMN,
+          PRICE_RANGE_COLUMN,
           VALUE_COLUMN,
           SIZE_COLUMN,
           APR_COLUMN,
+          COLLECTABLE_FEES_COLUMN,
+          COLLECT_FEES_COLUMN,
         ]}
         linkFormatter={(data: IPositionRowData) => {
           return `/stellar/pool/${data.pool}`

@@ -1,6 +1,5 @@
 'use client'
 
-import { createErrorToast, createSuccessToast } from '@sushiswap/notifications'
 import {
   Button,
   Card,
@@ -16,7 +15,6 @@ import {
 } from '@sushiswap/ui'
 import type React from 'react'
 import { useEffect, useMemo, useState } from 'react'
-import { ChainId } from 'sushi'
 import { formatUnits } from 'viem'
 import { ToggleZapCard } from '~evm/[chainId]/pool/_ui/toggle-zap-card'
 import { useRemoveLiquidity } from '~stellar/_common/lib/hooks/liquidity/use-remove-liquidity'
@@ -24,23 +22,17 @@ import { useCalculateDependentAmount } from '~stellar/_common/lib/hooks/pool/use
 import { useMaxPairedAmount } from '~stellar/_common/lib/hooks/pool/use-max-paired-amount'
 import { usePoolBalances } from '~stellar/_common/lib/hooks/pool/use-pool-balances'
 import { useMyPosition } from '~stellar/_common/lib/hooks/position/use-my-position'
-import { useCollectFees } from '~stellar/_common/lib/hooks/position/use-positions'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/swap'
 import { useTickRangeSelector } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
 import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trustline'
 import { useZap } from '~stellar/_common/lib/hooks/zap/use-zap'
 import {
   calculatePriceFromSqrtPrice,
-  calculatePriceFromTick,
+  formatPriceBound,
 } from '~stellar/_common/lib/soroban/pool-helpers'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import type { Token } from '~stellar/_common/lib/types/token.type'
-import { getStellarTxnLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
-import {
-  MAX_TICK_RANGE,
-  alignTick,
-  isTickAligned,
-} from '~stellar/_common/lib/utils/ticks'
+import { alignTick, isTickAligned } from '~stellar/_common/lib/utils/ticks'
 import { useStellarWallet } from '~stellar/providers'
 import { ConnectWalletButton } from '../ConnectWallet/ConnectWalletButton'
 import { TickRangeSelector } from '../TickRangeSelector/TickRangeSelector.tsx'
@@ -203,11 +195,6 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   const addLiquidityMutation = useAddLiquidity()
   const zapMutation = useZap()
   const removeLiquidityMutation = useRemoveLiquidity()
-  const collectFeesMutation = useCollectFees()
-  const [
-    removingLiquidityAndCollectingFeesStep,
-    setRemovingLiquidityAndCollectingFeesStep,
-  ] = useState<'idle' | 'removing' | 'collecting'>('idle')
   const selectedPosition = useMemo(
     () =>
       selectedPositionId == null
@@ -269,31 +256,6 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     isTickRangeValid &&
     !isDependentAmountError &&
     tokensNeedingTrustline.length === 0
-
-  const formatPriceBound = (tick: number, bound: 'lower' | 'upper') => {
-    if (bound === 'lower' && tick <= MAX_TICK_RANGE.lower) {
-      return '0'
-    }
-    if (bound === 'upper' && tick >= MAX_TICK_RANGE.upper) {
-      return '∞'
-    }
-
-    const price = calculatePriceFromTick(tick)
-
-    if (!Number.isFinite(price) || price <= 0) {
-      return bound === 'lower' ? '0' : '∞'
-    }
-
-    if (price >= 1_000_000) {
-      return price.toExponential(2)
-    }
-
-    if (price <= 0.0001) {
-      return '<0.0001'
-    }
-
-    return price.toLocaleString(undefined, { maximumSignificantDigits: 6 })
-  }
 
   // Handle add liquidity (normal mode only - zap mode has its own handler)
   const handleAddLiquidity = async () => {
@@ -366,10 +328,6 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
 
     try {
       const liquidityBigInt = BigInt(selectedPosition.liquidity || '0')
-      if (liquidityBigInt === 0n) {
-        console.error('Selected position has no liquidity')
-        return
-      }
 
       const percentBigInt = BigInt(removePercent)
       const liquidityToRemove =
@@ -377,68 +335,19 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
           ? liquidityBigInt
           : (liquidityBigInt * percentBigInt) / 100n
 
-      if (liquidityToRemove <= 0n) {
-        console.error('Removal amount must be greater than zero')
-        return
-      }
-
-      setRemovingLiquidityAndCollectingFeesStep('removing')
       await removeLiquidityMutation.mutateAsync({
         tokenId: selectedPosition.tokenId,
         liquidity: liquidityToRemove,
         amount0Min: 0n,
         amount1Min: 0n,
-        token0Code: pool.token0.code,
-        token1Code: pool.token1.code,
+        token0: pool.token0,
+        token1: pool.token1,
       })
-
-      setRemovingLiquidityAndCollectingFeesStep('collecting')
-      try {
-        const collectResult = await collectFeesMutation.mutateAsync({
-          tokenId: selectedPosition.tokenId,
-          recipient: connectedAddress,
-          amount0Max: 18446744073709551615n, // uint128 max
-          amount1Max: 18446744073709551615n, // uint128 max
-          signTransaction,
-          signAuthEntry,
-        })
-        const token0Amount = formatUnits(
-          collectResult.amount0,
-          pool.token0.decimals,
-        )
-        const token1Amount = formatUnits(
-          collectResult.amount1,
-          pool.token1.decimals,
-        )
-
-        let summary = 'Fees collected successfully'
-        if (collectResult.amount0 > 0n && collectResult.amount1 > 0n) {
-          summary = `Collected ${token0Amount} ${pool.token0.code} and ${token1Amount} ${pool.token1.code}`
-        } else if (collectResult.amount0 > 0n) {
-          summary = `Collected ${token0Amount} ${pool.token0.code}`
-        } else if (collectResult.amount1 > 0n) {
-          summary = `Collected ${token1Amount} ${pool.token1.code}`
-        }
-        createSuccessToast({
-          summary,
-          type: 'claimRewards',
-          account: connectedAddress,
-          chainId: ChainId.STELLAR,
-          txHash: collectResult.txHash,
-          href: getStellarTxnLink(collectResult.txHash),
-          groupTimestamp: Date.now(),
-          timestamp: Date.now(),
-        })
-      } catch (error: any) {
-        createErrorToast(error.message, false)
-      }
 
       // Reset form
       setRemovePercent(100)
     } catch (error) {
       console.error('Failed to remove liquidity:', error)
-    } finally {
-      setRemovingLiquidityAndCollectingFeesStep('idle')
     }
   }
 
@@ -918,16 +827,13 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                         size="lg"
                         disabled={
                           !hasRemoveAmount ||
-                          removingLiquidityAndCollectingFeesStep !== 'idle' ||
+                          removeLiquidityMutation.isPending ||
                           !selectedPosition
                         }
                         onClick={handleRemoveLiquidity}
                       >
-                        {removingLiquidityAndCollectingFeesStep !== 'idle'
-                          ? removingLiquidityAndCollectingFeesStep ===
-                            'removing'
-                            ? 'Removing Liquidity...'
-                            : 'Collecting Fees...'
+                        {removeLiquidityMutation.isPending
+                          ? 'Removing and Collecting Liquidity...'
                           : hasRemoveAmount
                             ? 'Remove Liquidity'
                             : 'Select Percentage'}

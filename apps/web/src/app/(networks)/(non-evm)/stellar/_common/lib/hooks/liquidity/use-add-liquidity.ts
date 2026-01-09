@@ -71,6 +71,7 @@ export const useAddLiquidity = () => {
       return { result, params }
     },
     onSuccess: ({ result, params: variables }) => {
+      const timestamp = Date.now()
       createSuccessToast({
         summary: 'Liquidity added successfully',
         type: 'mint',
@@ -78,8 +79,8 @@ export const useAddLiquidity = () => {
         chainId: ChainId.STELLAR,
         txHash: result.txHash,
         href: getStellarTxnLink(result.txHash),
-        groupTimestamp: Date.now(),
-        timestamp: Date.now(),
+        groupTimestamp: timestamp,
+        timestamp,
       })
 
       queryClient.invalidateQueries({
