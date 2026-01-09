@@ -24,15 +24,6 @@ export {
 // DEX Factory helpers
 export * from './dex-factory-helpers'
 
-// DEX Router helpers
-export {
-  findBestPath,
-  findPoolsBetweenTokens,
-  calculateAmountOutMinimum as calculateRouterAmountOutMinimum,
-  calculateAmountInMaximum as calculateRouterAmountInMaximum,
-} from './dex-router-helpers'
-export type { Route } from './dex-router-helpers'
-
 // Pool helpers
 export * from './pool-helpers'
 

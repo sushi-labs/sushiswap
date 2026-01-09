@@ -8,7 +8,6 @@ export {
   QuoteService,
   type QuoteExactInputSingleParams,
   type QuoteExactInputParams,
-  type SwapQuote,
 } from './quote-service'
 export { RouterService, type SwapRoute } from './router-service'
 export {

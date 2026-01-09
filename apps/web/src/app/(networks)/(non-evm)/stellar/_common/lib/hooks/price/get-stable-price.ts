@@ -1,12 +1,16 @@
 import { formatUnits } from 'viem'
 import { QuoteService } from '~stellar/_common/lib/services/quote-service'
 import { getStableTokens } from '~stellar/_common/lib/soroban'
-import { findBestPath } from '~stellar/_common/lib/soroban/dex-router-helpers'
 import type { Token } from '~stellar/_common/lib/types/token.type'
+import { SushiStellarService } from '../../services'
 
-// This implementation checks direct routes and 2-hop routes via XLM
-// for parity with Tron implementation using findBestPath
-const getTokenPriceDirectOrViaXlm = async (token?: Token): Promise<string> => {
+const service = new SushiStellarService()
+
+const quoteService = new QuoteService()
+
+// This implementation checks the price of a token against stable tokens available with
+// the route found by findBestRoute in the SushiStellarService
+const getTokenPrice = async (token?: Token): Promise<string> => {
   try {
     if (!token) return '0'
 
@@ -14,12 +18,13 @@ const getTokenPriceDirectOrViaXlm = async (token?: Token): Promise<string> => {
       return '1'
     }
 
+    const amountInForQuote = BigInt(10 ** token.decimals) // 1 unit of the token
+
     const routesToStable = (
       await Promise.all(
         getStableTokens().map((stableToken) => {
-          // We could use getBestRoute instead of findBestPath to enable
-          // searching for routes with additional hops
-          return findBestPath(token, stableToken)
+          // Find best route to each stable token with 1 unit of the token
+          return service.findBestRoute(token, stableToken, amountInForQuote)
         }),
       )
     ).filter((route): route is NonNullable<typeof route> => route !== null)
@@ -29,12 +34,9 @@ const getTokenPriceDirectOrViaXlm = async (token?: Token): Promise<string> => {
       return '0'
     }
 
-    const quoteService = new QuoteService()
-    const amountInForQuote = BigInt(10 ** token.decimals) // 1 unit of the token
-
     const quotePromises = routesToStable.map(async (route) => {
       const quote =
-        route.type === 'direct'
+        route.routeType === 'direct'
           ? await quoteService.getQuoteExactInputSingle({
               tokenIn: route.path[0].contract,
               tokenOut: route.path[1].contract,
@@ -110,6 +112,6 @@ const getTokenPriceDirectOrViaXlm = async (token?: Token): Promise<string> => {
 }
 
 export const getStablePrice = async (token?: Token): Promise<string> => {
-  const tokenPrice = await getTokenPriceDirectOrViaXlm(token)
+  const tokenPrice = await getTokenPrice(token)
   return tokenPrice
 }

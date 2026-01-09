@@ -60,10 +60,10 @@ export function TokenListItem({
             )}
             <div className="flex flex-col items-start">
               <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 group-hover:dark:text-white">
-                {token?.code}
+                {token.code}
               </span>
-              <span className="text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100">
-                {token?.name}
+              <span className="max-w-[200px] truncate text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100">
+                {token.name}
               </span>
             </div>
           </div>

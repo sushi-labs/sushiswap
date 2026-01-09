@@ -1,12 +1,14 @@
-import { beforeAll, describe, expect, test, vi } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 
 // Mock dependencies
 const getQuoteExactInputMock = vi.fn()
 const getQuoteExactInputSingleMock = vi.fn()
+const findBestRouteMock = vi.fn()
 vi.mock('~stellar/_common/lib/services/quote-service', () => {
   class MockQuoteService {
     getQuoteExactInputSingle = getQuoteExactInputSingleMock
     getQuoteExactInput = getQuoteExactInputMock
+    findBestRoute = findBestRouteMock
   }
   return { QuoteService: MockQuoteService }
 })
@@ -15,23 +17,16 @@ vi.mock('~stellar/_common/lib/soroban', () => {
     getStableTokens: vi.fn(),
   }
 })
-vi.mock('~stellar/_common/lib/soroban/dex-router-helpers', () => {
-  return { findBestPath: vi.fn() }
-})
 
 // Import mocked dependencies
 import { getStableTokens } from '~stellar/_common/lib/soroban'
-import {
-  type Route,
-  findBestPath,
-} from '~stellar/_common/lib/soroban/dex-router-helpers'
+import type { Token } from '~stellar/_common/lib/types/token.type'
+import type { SwapRoute } from '../../services'
+import { getStablePrice } from './get-stable-price'
 
 // --- Typed helpers ---
 const mockedGetStableTokens = vi.mocked(getStableTokens)
-const mockedFindBestPath = vi.mocked(findBestPath)
-
-import type { Token } from '~stellar/_common/lib/types/token.type'
-import { getStablePrice } from './get-stable-price'
+const mockedFindBestRoute = findBestRouteMock
 
 describe('getCurrencyPrice', () => {
   // Mock tokens
@@ -80,7 +75,7 @@ describe('getCurrencyPrice', () => {
 
   test("returns '0' when no pools exist", async () => {
     mockedGetStableTokens.mockReturnValue([USDC])
-    mockedFindBestPath.mockResolvedValueOnce(null)
+    mockedFindBestRoute.mockResolvedValueOnce(null)
     const price = await getStablePrice(TOKEN)
     expect(price).toBe('0')
   })
@@ -93,8 +88,8 @@ describe('getCurrencyPrice', () => {
       1,
     )
     mockedGetStableTokens.mockReturnValue([USDC])
-    const bestRoute: Route = {
-      type: 'multihop',
+    const bestRoute: SwapRoute = {
+      routeType: 'multihop',
       path: [TOKEN, XLM, USDC],
       fees,
       pools: [
@@ -111,8 +106,10 @@ describe('getCurrencyPrice', () => {
           fee: fees[1],
         },
       ],
+      amountIn: 1n,
+      amountOut: BigInt(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)),
     }
-    mockedFindBestPath.mockResolvedValueOnce(bestRoute)
+    mockedFindBestRoute.mockResolvedValueOnce(bestRoute)
 
     getQuoteExactInputMock.mockResolvedValueOnce({
       amountOut: BigInt(
@@ -120,7 +117,6 @@ describe('getCurrencyPrice', () => {
       ),
       path: bestRoute.path.map((t) => t.contract),
       fees: bestRoute.fees,
-      priceImpact: 0,
       routeType: 'multihop',
     })
 
@@ -134,8 +130,8 @@ describe('getCurrencyPrice', () => {
     const feeMultiplier = 1 - fee / 1_000_000
 
     mockedGetStableTokens.mockReturnValue([USDC])
-    const bestRoute: Route = {
-      type: 'direct',
+    const bestRoute: SwapRoute = {
+      routeType: 'direct',
       path: [XLM, USDC],
       fees: [fee],
       pools: [
@@ -146,8 +142,10 @@ describe('getCurrencyPrice', () => {
           fee: fee,
         },
       ],
+      amountIn: 1n,
+      amountOut: BigInt(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)),
     }
-    mockedFindBestPath.mockResolvedValueOnce(bestRoute)
+    mockedFindBestRoute.mockResolvedValueOnce(bestRoute)
 
     getQuoteExactInputSingleMock.mockResolvedValueOnce({
       amountOut: BigInt(
@@ -155,7 +153,6 @@ describe('getCurrencyPrice', () => {
       ),
       path: bestRoute.path.map((t) => t.contract),
       fees: bestRoute.fees,
-      priceImpact: 0,
       routeType: 'multihop',
     })
 

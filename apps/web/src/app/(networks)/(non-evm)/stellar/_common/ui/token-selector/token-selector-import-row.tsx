@@ -46,7 +46,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
               <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 dark:group-hover:text-white">
                 {token.code}
               </span>
-              <span className="text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100">
+              <span className="max-w-[200px] truncate text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100 text-ellipsis overflow-clip">
                 {token.name}
               </span>
             </div>

@@ -58,7 +58,6 @@ export interface SwapQuote {
   amountOut: bigint
   path: string[]
   fees: number[]
-  priceImpact: number
   routeType: 'direct' | 'multihop'
 }
 

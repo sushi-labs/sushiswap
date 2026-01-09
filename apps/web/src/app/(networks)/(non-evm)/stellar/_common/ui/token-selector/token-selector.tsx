@@ -1,4 +1,5 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
+import { StrKey } from '@stellar/stellar-sdk'
 import {
   Button,
   Dialog,
@@ -22,11 +23,14 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 import { staticTokens } from '~stellar/_common/lib/assets/token-assets'
 import { useCommonTokens } from '~stellar/_common/lib/hooks/token/use-common-tokens'
+import { useCustomTokens } from '~stellar/_common/lib/hooks/token/use-custom-tokens'
 import { useSortedTokenList } from '~stellar/_common/lib/hooks/token/use-sorted-token-list'
 import { useTokenBalancesMap } from '~stellar/_common/lib/hooks/token/use-token-balance'
+import { useTokenWithCache } from '~stellar/_common/lib/hooks/token/use-token-with-cache'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 import { useStellarWallet } from '~stellar/providers'
 import { TokenIcon } from '../General/TokenIcon'
+import { TokenSelectorImportRow } from './token-selector-import-row'
 import { TokenListItem } from './token-selector-list-item'
 
 type RowCallback = (row: {
@@ -52,19 +56,31 @@ export default function TokenSelector({
 
   const { connectedAddress } = useStellarWallet()
   const { data: commonTokens } = useCommonTokens()
+  const { data: customTokens, mutate: customTokenMutate } = useCustomTokens()
+  const { data: queryToken, isLoading: isLoadingQueryToken } =
+    useTokenWithCache({
+      address: query,
+      enabled: StrKey.isValidContract(query),
+      keepPreviousData: false,
+    })
 
   // Merge common tokens (from StellarExpert + hardcoded) into the main token map
   const allTokens = useMemo(() => {
     const merged = Object.fromEntries(
       staticTokens.map((token) => [token.contract, token]),
     )
+    if (customTokens) {
+      Object.entries(customTokens).forEach(([contract, token]) => {
+        merged[contract] = token
+      })
+    }
     if (commonTokens) {
       Object.entries(commonTokens).forEach(([contract, token]) => {
         merged[contract] = token
       })
     }
     return merged
-  }, [commonTokens])
+  }, [customTokens, commonTokens])
 
   const { data: tokenBalances } = useTokenBalancesMap(
     connectedAddress,
@@ -72,10 +88,17 @@ export default function TokenSelector({
   )
 
   const { data: sortedTokenList } = useSortedTokenList({
-    query,
     tokenMap: allTokens,
     balanceMap: tokenBalances,
   })
+
+  const handleImport = useCallback(
+    (currency: Token) => {
+      customTokenMutate('add', currency)
+      onSelect(currency)
+    },
+    [onSelect, customTokenMutate],
+  )
 
   const _onSelect = useCallback(
     (token: Token) => {
@@ -132,7 +155,9 @@ export default function TokenSelector({
         </div>
         <List.Control className="relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 min-h-[128px]">
           <div
-            data-state={!sortedTokenList ? 'active' : 'inactive'}
+            data-state={
+              !sortedTokenList || isLoadingQueryToken ? 'active' : 'inactive'
+            }
             className={classNames(
               'data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden',
               'py-0.5 h-[64px] -mb-3',
@@ -160,11 +185,21 @@ export default function TokenSelector({
             </div>
           </div>
           <div
-            data-state={sortedTokenList ? 'active' : 'inactive'}
+            data-state={
+              sortedTokenList && !isLoadingQueryToken ? 'active' : 'inactive'
+            }
             className={classNames(
               'data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden',
             )}
           >
+            {queryToken && !allTokens[queryToken.contract.toUpperCase()] && (
+              <TokenSelectorImportRow
+                token={queryToken}
+                onImport={() => {
+                  queryToken && handleImport(queryToken)
+                }}
+              />
+            )}
             <AutoSizer disableWidth>
               {({ height }: { height: number }) => (
                 <FixedSizeList

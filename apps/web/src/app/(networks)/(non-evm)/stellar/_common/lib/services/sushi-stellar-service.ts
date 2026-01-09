@@ -7,12 +7,13 @@ import {
 } from '../soroban/position-manager-helpers'
 import type { Token } from '../types/token.type'
 import { type CollectParams, positionService } from './position-service'
-import { QuoteService, type SwapQuote } from './quote-service'
+import { QuoteService } from './quote-service'
 import { RouterService, type SwapRoute } from './router-service'
 import {
   type AddLiquidityParams,
   type SwapExactInputParams,
   type SwapExactInputSingleParams,
+  type SwapQuote,
   SwapService,
 } from './swap-service'
 

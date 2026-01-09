@@ -1,7 +1,7 @@
 import type { PoolBasicInfo } from '../soroban/pool-helpers'
 import type { Token } from '../types/token.type'
-import type { SwapQuote } from './quote-service'
 import type { QuoteService } from './quote-service'
+import type { SwapQuote } from './swap-service'
 
 /**
  * Swap route information
@@ -12,8 +12,17 @@ export interface SwapRoute {
   fees: number[]
   amountIn: bigint
   amountOut: bigint
-  priceImpact: number
   routeType: 'direct' | 'multihop'
+}
+
+interface DirectQuote extends SwapQuote {
+  routeType: 'direct'
+  pools: PoolBasicInfo[]
+}
+interface MultiHopQuote extends SwapQuote {
+  routeType: 'multihop'
+  pools: PoolBasicInfo[]
+  _tokens: Token[]
 }
 
 /**
@@ -38,7 +47,8 @@ export class RouterService {
     const availablePools = await this.findAllPools(tokenIn, tokenOut)
 
     // Step 2: Get quotes from each pool
-    const quotes = await this.getQuotesFromPools(availablePools, amountIn)
+    const quotes: (DirectQuote | MultiHopQuote)[] =
+      await this.getQuotesFromPools(availablePools, amountIn)
 
     // Step 3: Find multi-hop routes if direct pools don't exist
     if (quotes.length === 0) {
@@ -58,17 +68,14 @@ export class RouterService {
 
     // Convert string path back to Token objects
     const path =
-      bestQuote.routeType === 'direct'
-        ? [tokenIn, tokenOut]
-        : (bestQuote as any)._tokens || [tokenIn, tokenOut] // Use stored tokens for multi-hop
+      bestQuote.routeType === 'direct' ? [tokenIn, tokenOut] : bestQuote._tokens // Use stored tokens for multi-hop
 
     return {
       path,
-      pools: (bestQuote as any).pools || [],
+      pools: bestQuote.pools || [],
       fees: bestQuote.fees,
       amountIn: amountIn,
       amountOut: bestQuote.amountOut,
-      priceImpact: bestQuote.priceImpact,
       routeType: bestQuote.routeType,
     }
   }
@@ -89,8 +96,8 @@ export class RouterService {
   private async getQuotesFromPools(
     pools: PoolBasicInfo[],
     amountIn: bigint,
-  ): Promise<SwapQuote[]> {
-    const quotes: SwapQuote[] = []
+  ): Promise<DirectQuote[]> {
+    const quotes: DirectQuote[] = []
 
     for (const pool of pools) {
       try {
@@ -106,10 +113,9 @@ export class RouterService {
             amountOut: quote.amountOut,
             path: [pool.tokenA.contract, pool.tokenB.contract],
             fees: [pool.fee],
-            priceImpact: quote.priceImpact,
             routeType: 'direct',
             pools: [pool], // Add pools to track them
-          } as SwapQuote & { pools: PoolBasicInfo[] })
+          })
         }
       } catch (_e) {
         console.error(`Failed to get quote from pool ${pool.address}`)
@@ -126,8 +132,8 @@ export class RouterService {
     tokenIn: Token,
     tokenOut: Token,
     amountIn: bigint,
-  ): Promise<SwapQuote[]> {
-    const quotes: SwapQuote[] = []
+  ): Promise<MultiHopQuote[]> {
+    const quotes: MultiHopQuote[] = []
 
     // Common intermediate tokens (usually native token or stablecoins)
     const INTERMEDIATE_TOKENS: Token[] = [
@@ -166,7 +172,7 @@ export class RouterService {
 
             // Store the quote with contract addresses for SwapQuote interface
             // but also track the Token objects separately
-            ;(quotes as any).push({
+            quotes.push({
               amountOut: quote.amountOut,
               path: [
                 tokenIn.contract,
@@ -174,7 +180,6 @@ export class RouterService {
                 tokenOut.contract,
               ],
               fees: [pool1.fee, pool2.fee],
-              priceImpact: quote.priceImpact,
               routeType: 'multihop',
               _tokens: [tokenIn, intermediate, tokenOut], // Track Token objects privately
               pools: [pool1, pool2],
@@ -219,7 +224,7 @@ export class RouterService {
   /**
    * Select best quote based on output amount
    */
-  private selectBestQuote(quotes: SwapQuote[]): SwapQuote | null {
+  private selectBestQuote<T extends SwapQuote>(quotes: T[]): T | null {
     if (quotes.length === 0) {
       return null
     }
@@ -230,24 +235,6 @@ export class RouterService {
     const best = quotes[0]
 
     return best
-  }
-
-  /**
-   * Calculate price impact for a swap
-   */
-  private calculatePriceImpact(
-    amountIn: bigint,
-    amountOut: bigint,
-    poolReserves: { reserveIn: bigint; reserveOut: bigint },
-  ): number {
-    // Simplified price impact calculation
-    // In production, you'd use proper AMM math
-    const currentPrice =
-      Number(poolReserves.reserveOut) / Number(poolReserves.reserveIn)
-    const executionPrice = Number(amountOut) / Number(amountIn)
-    const priceImpact = Math.abs(currentPrice - executionPrice) / currentPrice
-
-    return priceImpact
   }
 
   /**

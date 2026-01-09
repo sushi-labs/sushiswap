@@ -1,68 +1,29 @@
-import { useDebounce } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import type { Token } from '~stellar/_common/lib/types/token.type'
-import { getTokenByContract } from '../../soroban'
-import {
-  filterTokens,
-  getSortedTokensByQuery,
-  tokenComparator,
-} from './get-sorted-tokens-by-query'
+import { tokenComparator } from './get-sorted-tokens-by-query'
 
 interface Params {
-  query: string
   tokenMap: Record<string, Token> | undefined
   balanceMap?: Record<string, string> | undefined
 }
 
-// Check if query looks like a Stellar contract address (starts with C and is 56 chars)
-function isContractAddress(query: string): boolean {
-  return query.startsWith('C') && query.length === 56
-}
-
-export const useSortedTokenList = ({ query, tokenMap, balanceMap }: Params) => {
-  const debouncedQuery = useDebounce(query, 250)
+export const useSortedTokenList = ({ tokenMap, balanceMap }: Params) => {
   return useQuery({
     queryKey: [
       'stellar',
       'sortedTokenList',
       {
-        debouncedQuery,
         tokenContracts: tokenMap ? Object.keys(tokenMap) : [],
         hasBalances: !!balanceMap,
       },
     ],
     queryFn: async () => {
       const tokenMapValues = tokenMap ? Object.values(tokenMap) : []
-      const filteredTokens: Token[] = filterTokens(
-        tokenMapValues,
-        debouncedQuery,
-      )
-      const sortedTokens: Token[] = filteredTokens.sort(tokenComparator())
-      let filteredSortedTokens = getSortedTokensByQuery(
-        sortedTokens,
-        debouncedQuery,
-      )
-
-      // If searching by contract address and no results found, try to fetch token info from chain
-      if (
-        filteredSortedTokens.length === 0 &&
-        isContractAddress(debouncedQuery)
-      ) {
-        try {
-          filteredSortedTokens = [await getTokenByContract(debouncedQuery)]
-        } catch (error) {
-          console.warn(
-            'Failed to fetch token metadata for:',
-            debouncedQuery,
-            error,
-          )
-          // Return empty array if we can't fetch the token
-        }
-      }
+      const sortedTokens: Token[] = tokenMapValues.sort(tokenComparator())
 
       // Sort by balance if provided (convert to BigInt for comparison, store as string)
       if (balanceMap) {
-        const tokensWithBalance = filteredSortedTokens as Array<
+        const tokensWithBalance = sortedTokens as Array<
           Token & { balance?: string }
         >
         tokensWithBalance.forEach((token) => {
@@ -79,7 +40,7 @@ export const useSortedTokenList = ({ query, tokenMap, balanceMap }: Params) => {
         return tokensWithBalance
       }
 
-      return filteredSortedTokens
+      return sortedTokens
     },
   })
 }

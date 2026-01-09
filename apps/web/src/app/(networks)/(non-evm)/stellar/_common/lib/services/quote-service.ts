@@ -11,6 +11,7 @@ import type { PoolBasicInfo } from '~stellar/_common/lib/soroban/pool-helpers'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 import { contractAddresses } from '../soroban'
 import { getRouterContractClient } from '../soroban/client'
+import type { SwapQuote } from './swap-service'
 
 /**
  * Quote parameters for single-hop swap
@@ -30,17 +31,6 @@ export interface QuoteExactInputParams {
   path: string[]
   fees: number[]
   amountIn: bigint
-}
-
-/**
- * Swap quote result
- */
-export interface SwapQuote {
-  amountOut: bigint
-  path: string[]
-  fees: number[]
-  priceImpact: number
-  routeType: 'direct' | 'multihop'
 }
 
 /**
@@ -101,7 +91,6 @@ export class QuoteService {
         amountOut: result.unwrap().amount,
         path: [params.tokenIn, params.tokenOut],
         fees: [params.fee],
-        priceImpact: 0, // Calculate based on pool reserves
         routeType: 'direct',
       }
     } catch (error) {
@@ -153,7 +142,6 @@ export class QuoteService {
         amountOut: result.unwrap().amount,
         path: params.path,
         fees: params.fees,
-        priceImpact: 0, // Calculate based on pool reserves
         routeType: 'multihop',
       }
     } catch (error) {
