@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, classNames } from '@sushiswap/ui'
+import { Card, RollingNumber, classNames } from '@sushiswap/ui'
 import { useEffect, useState } from 'react'
 import { useUserStats } from 'src/lib/hooks/react-query/leaderboard/use-user-stats'
 import { formatNumber } from 'sushi'
@@ -56,7 +56,11 @@ export const UserTier = () => {
         <div className="flex flex-col gap-3 mt-2 w-full">
           <div className="flex justify-between items-end w-full">
             <p className="font-bold text-2xl">
-              {formatter.format(userStats?.totalPoints ?? 0)} pts
+              <RollingNumber
+                value={userStats?.totalPoints ?? 0}
+                format={{ minimumFractionDigits: 0 }}
+                suffix=" pts"
+              />
             </p>
             <p className="text-sm text-muted-foreground uppercase font-medium">
               {formatter.format(600_000 - (userStats?.totalPoints ?? 0))} pts to

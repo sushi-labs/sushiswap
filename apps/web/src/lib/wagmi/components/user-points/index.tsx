@@ -4,14 +4,13 @@ import {
   DropdownMenuGroup,
   DropdownMenuTrigger,
   LinkInternal,
+  RollingNumber,
   SkeletonBox,
-  SkeletonText,
   classNames,
 } from '@sushiswap/ui'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { useUserStats } from 'src/lib/hooks/react-query/leaderboard/use-user-stats'
-import { formatNumber } from 'sushi'
 import { useAccount } from 'wagmi'
 import { ProgressBar } from '~evm/leaderboard/_ui/user-tier/progress-bar'
 
@@ -47,13 +46,13 @@ export const UserPoints = () => {
           />
           <div className="relative z-10 h-[36px] flex items-center gap-2 bg-[rgb(233,234,236)] dark:bg-[rgb(29,32,49)] rounded-[10px] px-2 text-sm font-medium">
             {/* shimmer */}
-            <div className="z-10 transition-all absolute inset-0 overflow-hidden p-4 before:absolute before:inset-0 before:rotate-[-90deg] before:blur-sm lg:before:blur-md before:-translate-x-full before:animate-[shimmer_4s_infinite] before:direction-alternate before:bg-gradient-to-r before:from-transparent before:via-white before:dark:via-[#FFFFFF1A] before:to-transparent" />
+            <div className="z-[9] transition-all absolute inset-0 overflow-hidden p-4 before:absolute before:inset-0 before:rotate-[-90deg] before:blur-sm lg:before:blur-md before:-translate-x-full before:animate-[shimmer_4s_infinite] before:direction-alternate before:bg-gradient-to-r before:from-transparent before:via-white before:dark:via-[#FFFFFF1A] before:to-transparent" />
             {isError ? (
               '-'
             ) : isLoading ? (
               <>
-                <SkeletonBox className="w-5 h-5 min-w-[20px]" />
-                <SkeletonText className="min-w-[60px]" />
+                <SkeletonBox className="w-5 h-5 min-w-[20px]  z-[11]" />
+                <SkeletonBox className="w-[60px] h-5 min-w-[60px] hidden lg:block z-[11]" />
               </>
             ) : (
               <>
@@ -61,7 +60,16 @@ export const UserPoints = () => {
                   🥉
                 </div>
                 <div className="hidden lg:block relative z-[11] whitespace-nowrap">
-                  {formatNumber(userStats?.totalPoints ?? 0)} pts
+                  <RollingNumber
+                    willChange
+                    isolate
+                    format={{
+                      maximumFractionDigits: 0,
+                    }}
+                    shouldNotAnimateFirstRender={true}
+                    value={userStats?.totalPoints ?? 0}
+                  />{' '}
+                  pts
                 </div>
               </>
             )}

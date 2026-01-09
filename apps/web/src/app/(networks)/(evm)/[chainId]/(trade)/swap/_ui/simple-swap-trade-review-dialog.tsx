@@ -23,12 +23,12 @@ import {
   DialogTitle,
   DialogType,
   List,
-  Message,
   SkeletonBox,
   SkeletonText,
   classNames,
   useDialog,
 } from '@sushiswap/ui'
+import { useQueryClient } from '@tanstack/react-query'
 import React, {
   type FC,
   type ReactNode,
@@ -41,6 +41,7 @@ import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { APPROVE_TAG_SWAP, NativeAddress } from 'src/lib/constants'
 import { sendDrilldownLog } from 'src/lib/drilldown-log'
 import type { UseTradeReturn } from 'src/lib/hooks/react-query'
+import { useUserStats } from 'src/lib/hooks/react-query/leaderboard/use-user-stats'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { logger } from 'src/lib/logger'
 import {
@@ -68,6 +69,7 @@ import {
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
+import { ProgressBar } from '~evm/leaderboard/_ui/user-tier/progress-bar'
 import { useDetailsInteractionTracker } from '../../_ui/details-interaction-tracker-provider'
 import {
   useDerivedStateSimpleSwap,
@@ -105,6 +107,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
 
   const { approved } = useApproved(APPROVE_TAG_SWAP)
   const [slippagePercent] = useSlippageTolerance()
+  const queryClient = useQueryClient()
 
   const { address } = useAccount()
   const tradeRef = useRef<UseTradeReturn | null>(null)
@@ -125,6 +128,11 @@ const _SimpleSwapTradeReviewDialog: FC<{
 
   const { refetchChain: refetchBalances } = useRefetchBalances()
   const { data: prices } = usePrices({ chainId })
+
+  const { data: userStats } = useUserStats({
+    address: address,
+    enabled: Boolean(address),
+  })
 
   const isWrap =
     token0?.type === 'native' &&
@@ -273,6 +281,12 @@ const _SimpleSwapTradeReviewDialog: FC<{
         setSwapAmount('')
         refetchBalances(chainId)
         resetDetailsTrackedState()
+        queryClient.invalidateQueries({
+          queryKey: [
+            'useUserStats',
+            { address, seasons: undefined, enabled: true },
+          ],
+        })
       }
     },
     [
@@ -290,6 +304,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
       resetDetailsTrackedState,
       isDetailsCollapsed,
       wasDetailsTouched,
+      queryClient,
     ],
   )
 
@@ -593,11 +608,33 @@ const _SimpleSwapTradeReviewDialog: FC<{
         testId="make-another-swap"
         buttonText="Make another swap"
         txHash={data}
+        successIconSize={!userStats ? 132 : 64}
         successMessage={`You ${
           isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'
         } ${tradeRef.current?.amountIn?.toSignificant(6)} ${token0?.symbol} ${
           isWrap ? 'to' : isUnwrap ? 'to' : 'for'
         } ${tradeRef.current?.amountOut?.toSignificant(6)} ${token1?.symbol}`}
+        customSuccessComponent={
+          !userStats ? null : (
+            <div className="flex flex-col items-center gap-6 pb-6">
+              <div className="flex items-center flex-col">
+                <div className="text-2xl font-semibold">
+                  Points earned from this trade!
+                </div>
+              </div>
+              <div className="flex flex-col items-center gap-1 w-full">
+                <p className="text-sm text-muted-foreground uppercase font-medium">
+                  {600_000 - (userStats?.totalPoints ?? 0)} pts to next tier
+                </p>
+                {/* small target to test animations */}
+                <ProgressBar
+                  current={userStats?.totalPoints ?? 0}
+                  target={6_000}
+                />
+              </div>
+            </div>
+          )
+        }
       />
     </Trace>
   )

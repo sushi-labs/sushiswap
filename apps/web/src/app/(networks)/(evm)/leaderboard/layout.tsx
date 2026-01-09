@@ -14,6 +14,7 @@ export default async function LeaderboardLayout({
   children,
 }: { children: React.ReactNode }) {
   const currentSeason = await getCurrentSeason()
+
   return (
     <>
       <Header chainId={EvmChainId.ETHEREUM} networks={evmChainIds} />

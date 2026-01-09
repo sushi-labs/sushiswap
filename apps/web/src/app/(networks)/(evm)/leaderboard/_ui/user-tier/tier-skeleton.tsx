@@ -9,14 +9,14 @@ export const TierSkeleton = () => {
           <div className="flex items-center gap-6">
             <SkeletonBox className="min-w-[48px] w-[48px] h-12 rounded-xl" />
             <div className="flex flex-col w-full">
-              <SkeletonText className="!max-w-[80px]" />
+              <SkeletonText fontSize="2xl" className="!max-w-[80px]" />
               <SkeletonText className="!max-w-[300px]" />
             </div>
           </div>
         </div>
         <div className="flex flex-col gap-3 mt-2 w-full">
           <div className="flex justify-between items-end w-full">
-            <SkeletonBox className="h-6 w-[80px]" />
+            <SkeletonBox className="h-8 w-[80px]" />
             <SkeletonBox className="h-4 w-[80px]" />
           </div>
           <SkeletonBox className="w-full rounded-full h-3" />

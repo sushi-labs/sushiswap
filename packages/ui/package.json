@@ -3,7 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "description": "Sushi UI",
-  "keywords": ["sushi", "ui", "react", "components"],
+  "keywords": [
+    "sushi",
+    "ui",
+    "react",
+    "components"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/sushi-labs/sushiswap.git",
@@ -11,7 +16,9 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "sideEffects": ["**/*.css"],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "exports": {
     "./index.css": "./index.css",
     "./date-picker.css": "./date-picker.css",
@@ -29,11 +36,20 @@
   },
   "typesVersions": {
     "*": {
-      ".": ["src/**/*"],
-      "./icons/*": ["src/icons/*"]
+      ".": [
+        "src/**/*"
+      ],
+      "./icons/*": [
+        "src/icons/*"
+      ]
     }
   },
-  "files": ["dist", "index.css", "date-picker.css", "tailwind.js"],
+  "files": [
+    "dist",
+    "index.css",
+    "date-picker.css",
+    "tailwind.js"
+  ],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
@@ -45,6 +61,7 @@
     "@fontsource-variable/orbitron": "5.2.6",
     "@headlessui/react": "2.2.0",
     "@heroicons/react": "2.0.13",
+    "@number-flow/react": "0.5.10",
     "@radix-ui/react-accordion": "1.2.2",
     "@radix-ui/react-avatar": "1.1.2",
     "@radix-ui/react-checkbox": "1.1.3",

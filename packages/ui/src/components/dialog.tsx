@@ -235,6 +235,8 @@ interface DialogConfirmProps extends DialogContentProps {
   buttonText?: string
   txHash: `0x${string}` | undefined
   status: 'pending' | 'success' | 'error'
+  successIconSize?: number
+  customSuccessComponent?: ReactNode
 }
 
 const DialogConfirm: FC<DialogConfirmProps> = ({
@@ -245,6 +247,8 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
   buttonLink,
   status,
   txHash,
+  successIconSize,
+  customSuccessComponent,
   ...props
 }) => {
   const { open, setOpen } = useDialog(DialogType.Confirm)
@@ -253,7 +257,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
     <Dialog {...props} open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="!text-left">
             {status === 'pending' ? (
               <Dots>Confirming</Dots>
             ) : status === 'success' ? (
@@ -262,7 +266,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
               'Oops!'
             )}
           </DialogTitle>
-          <DialogDescription className="font-medium">
+          <DialogDescription className="font-medium !text-left">
             {status === 'pending' ? (
               <>
                 Waiting for your{' '}
@@ -308,11 +312,17 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
             {status === 'pending' ? (
               <Loader size={132} strokeWidth={1} className="!text-blue" />
             ) : status === 'success' ? (
-              <CheckMarkIcon width={132} height={132} />
+              <CheckMarkIcon
+                width={successIconSize ?? 132}
+                height={successIconSize ?? 132}
+              />
             ) : (
               <FailedMarkIcon width={132} height={132} />
             )}
           </div>
+          {status === 'success' && customSuccessComponent
+            ? customSuccessComponent
+            : null}
           <DialogFooter>
             <DialogClose asChild>
               <Button
