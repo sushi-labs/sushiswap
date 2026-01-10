@@ -153,5 +153,5 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.APTOS]: AptosCircle,
   [ChainId.TRON]: TronCircle,
   [ChainId.KADENA]: KadenaCircle,
-  ['solana']: SolanaCircle, // TODO: ChainId.SOLANA
+  [ChainId.SOLANA]: SolanaCircle,
 }

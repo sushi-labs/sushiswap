@@ -65,10 +65,8 @@ export const SidebarConnectView = () => {
                 ? 'Select Network'
                 : namespace
                   ? `Connect ${
-                      namespace === 'svm' // TODO: remove when solana is added to sushi pkg chains
-                        ? 'Solana'
-                        : getChainById(DEFAULT_CHAIN_ID_BY_NAMESPACE[namespace])
-                            .name
+                      getChainById(DEFAULT_CHAIN_ID_BY_NAMESPACE[namespace])
+                        .name
                     } Wallet`
                   : action === 'switch'
                     ? 'Switch Wallet'

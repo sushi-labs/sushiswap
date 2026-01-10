@@ -1,10 +1,5 @@
 export type WalletNamespace = 'evm' | 'svm' // | 'mvm'
 
-export interface WalletAdapterContext {
-  uid?: string // evm
-  walletName?: string // solana
-}
-
 export interface Wallet {
   id: string
   namespace: WalletNamespace

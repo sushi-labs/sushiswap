@@ -93,19 +93,14 @@ export function ConnectWalletButton({
           {variant === 'namespace' ? (
             <div className="flex gap-3">
               <NetworkIcon
-                chainId={
-                  wallet.namespace === 'svm' // TODO: remove when solana is added to sushi pkg chains
-                    ? 'solana'
-                    : DEFAULT_CHAIN_ID_BY_NAMESPACE[wallet.namespace]
-                }
+                chainId={DEFAULT_CHAIN_ID_BY_NAMESPACE[wallet.namespace]}
                 className="h-6 w-6 shrink-0"
               />
               <span>
-                {wallet.namespace === 'svm' // TODO: remove when solana is added to sushi pkg chains
-                  ? 'Solana'
-                  : getChainById(
-                      DEFAULT_CHAIN_ID_BY_NAMESPACE[wallet.namespace],
-                    ).name}
+                {
+                  getChainById(DEFAULT_CHAIN_ID_BY_NAMESPACE[wallet.namespace])
+                    .name
+                }
               </span>
             </div>
           ) : (
