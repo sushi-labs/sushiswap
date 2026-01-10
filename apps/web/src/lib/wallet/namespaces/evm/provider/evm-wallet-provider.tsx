@@ -16,6 +16,7 @@ import {
   clearWalletConnections,
 } from 'src/lib/wallet/provider/store'
 import type { Wallet } from 'src/lib/wallet/types'
+import { EvmChainId, isEvmChainId } from 'sushi/evm'
 import { WagmiContext, WagmiProvider, useConnection } from 'wagmi'
 import type { WalletNamespaceContext } from '../../types'
 import { EvmAdapterConfig } from '../config'
@@ -52,7 +53,7 @@ export function EvmWalletProvider({ children }: { children: React.ReactNode }) {
 }
 
 function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
-  const { isConnected, address, connector } = useConnection()
+  const { isConnected, address, connector, chainId } = useConnection()
 
   const connect = useCallback(
     async (wallet: Wallet, onSuccess?: (address: string) => void) => {
@@ -93,18 +94,27 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
   )
 
   useEffect(() => {
-    if (!isConnected || !connector?.id || !address) {
+    if (!isConnected || !connector?.id || !address || !chainId) {
       clearWalletConnections('evm')
       return
     }
 
     addWalletConnection({
+      chainId: isEvmChainId(chainId) ? chainId : EvmChainId.ETHEREUM,
       id: `evm:${connector.id.toLowerCase()}`,
       name: connector.name,
       namespace: 'evm',
       account: address,
+      icon: connector?.icon,
     })
-  }, [isConnected, connector?.id, connector?.name, address])
+  }, [
+    isConnected,
+    connector?.id,
+    connector?.name,
+    connector?.icon,
+    address,
+    chainId,
+  ])
 
   return (
     <EvmWalletContext.Provider value={value}>

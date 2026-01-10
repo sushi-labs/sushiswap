@@ -9,7 +9,7 @@ import { WalletStateProvider, useWalletState } from './wallet-state-provider'
 
 export const WalletContext = createContext<WalletContextType | null>(null)
 
-export function useWallet() {
+export function useWalletContext() {
   const ctx = useContext(WalletContext)
   if (!ctx) {
     throw new Error('WalletProvider is missing')

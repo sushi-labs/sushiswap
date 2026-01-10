@@ -1,3 +1,5 @@
+import type { ChainId } from 'sushi'
+
 export type WalletNamespace = 'evm' | 'svm' // | 'mvm'
 
 export interface Wallet {
@@ -27,6 +29,8 @@ export interface WalletConnection {
   name: string
   namespace: WalletNamespace
   account: string
+  icon?: string
+  chainId: ChainId
 }
 
 export interface NamespaceContext {

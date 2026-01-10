@@ -30,7 +30,7 @@ const ResponsiveSidebarWrapper: FC<{
       <PopoverPrimitive.Anchor asChild>
         <span aria-hidden className="fixed top-14 right-4 bottom-4 w-px h-px" />
       </PopoverPrimitive.Anchor>
-      <PopoverContent className="!p-0 h-[calc(100vh-16px)] !w-80">
+      <PopoverContent className="!p-0 h-[calc(100vh-16px)] !w-80 overflow-hidden">
         {children}
       </PopoverContent>
     </Popover>

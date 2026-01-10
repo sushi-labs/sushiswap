@@ -17,6 +17,8 @@ import {
   clearWalletConnections,
 } from 'src/lib/wallet/provider/store'
 import type { Wallet } from 'src/lib/wallet/types'
+import { ChainId } from 'sushi'
+import { SvmChainId } from 'sushi/svm'
 import type { WalletNamespaceContext } from '../../types'
 
 function useInSvmContext(): boolean {
@@ -129,12 +131,14 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
     }
 
     addWalletConnection({
+      chainId: SvmChainId.SOLANA,
       id: `svm:${wallet.adapter.name.toLowerCase()}`,
       name: wallet.adapter.name,
       namespace: 'svm',
       account: publicKey.toString(),
+      icon: wallet.adapter.icon,
     })
-  }, [connected, wallet?.adapter.name, publicKey])
+  }, [connected, wallet?.adapter.name, wallet?.adapter.icon, publicKey])
 
   return (
     <SvmWalletContext.Provider value={value}>

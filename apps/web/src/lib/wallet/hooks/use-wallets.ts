@@ -4,23 +4,21 @@ import { useMemo } from 'react'
 import { useWalletContext } from '../provider'
 import type { WalletNamespace } from '../types'
 
-type AccountsState = Record<WalletNamespace, { address: string | undefined }>
-
-export function useAccounts(): AccountsState {
+export function useWallets() {
   const { connections } = useWalletContext()
 
   return useMemo(() => {
-    const getFirstAddress = (namespace: WalletNamespace) => {
+    const getFirstWallet = (namespace: WalletNamespace) => {
       for (const c of connections) {
         if (c.namespace !== namespace) continue
-        return c.account
+        return c
       }
       return undefined
     }
 
     return {
-      evm: { address: getFirstAddress('evm') },
-      svm: { address: getFirstAddress('svm') },
+      evm: getFirstWallet('evm'),
+      svm: getFirstWallet('svm'),
     }
   }, [connections])
 }
