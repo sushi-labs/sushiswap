@@ -103,9 +103,11 @@ const ConnectedWalletInfo = ({
           {!wallet?.account || isENSNameLoading ? (
             <SkeletonBox className="h-5 w-28" />
           ) : ensName ? (
-            <div className="font-semibold leading-tight">{ensName}</div>
+            <div className="font-semibold leading-tight cursor-default">
+              {ensName}
+            </div>
           ) : (
-            <div className="font-semibold leading-tight">
+            <div className="font-semibold leading-tight cursor-default">
               {shortenEvmAddress(wallet.account)}
             </div>
           )}
@@ -250,7 +252,7 @@ const ConnectedWalletsPopover = ({
           name="Settings"
         />
       </div>
-      <PopoverContent align="start" className="w-[280px]">
+      <PopoverContent align="start" className="w-[280px] cursor-default">
         <div className="flex flex-col gap-3">
           <div className="text-muted-foreground text-sm font-medium">
             Connected

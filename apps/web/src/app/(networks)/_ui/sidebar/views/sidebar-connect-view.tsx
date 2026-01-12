@@ -51,7 +51,7 @@ export const SidebarConnectView = () => {
         : undefined
 
   return (
-    <div className="pb-4">
+    <div className="pb-4 cursor-default">
       <div className="p-4 flex justify-between gap-4">
         <div className="space-y-2">
           <div className="flex gap-2">
