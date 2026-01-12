@@ -1,5 +1,5 @@
+import { ArrowUpRightIcon } from '@heroicons/react/24/outline'
 import { Button, LinkInternal, Message, classNames } from '@sushiswap/ui'
-import { ArrowUpRight } from '@sushiswap/ui/icons/ArrowUpRight'
 import { type EvmChainId, getEvmChainById, isBladeChainId } from 'sushi/evm'
 
 export const BladeSunsetNotice = ({
@@ -22,8 +22,8 @@ export const BladeSunsetNotice = ({
           <Button
             className="mt-4"
             iconPosition="end"
-            iconProps={{ className: '!w-3 !h-3' }}
-            icon={ArrowUpRight}
+            iconProps={{ className: '!w-4 !h-4' }}
+            icon={ArrowUpRightIcon}
           >
             View Open Positions
           </Button>
