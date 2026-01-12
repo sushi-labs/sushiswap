@@ -22,8 +22,10 @@ const ResponsiveSidebarWrapper: FC<{
   children: ReactNode
 }> = ({ children }) => {
   const { isSm } = useBreakpoint('sm')
-  const { isOpen, close } = useSidebar()
-  const onOpenChange = (open: boolean) => !open && close()
+  const { isOpen, open, close } = useSidebar()
+  const onOpenChange = (shouldOpen: boolean) => {
+    return shouldOpen ? open() : close()
+  }
 
   return isSm ? (
     <Popover open={isOpen} onOpenChange={onOpenChange}>
