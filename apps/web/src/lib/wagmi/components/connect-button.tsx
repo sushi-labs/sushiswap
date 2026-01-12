@@ -24,7 +24,7 @@ export const ConnectButton: FC<ButtonProps> = ({
     if (process.env.NEXT_PUBLIC_APP_ENV === 'test') {
       connect({ connector: connectors[0] })
     } else {
-      open(SidebarView.Connect)
+      open(SidebarView.Connect, { closeOnConnect: true })
     }
   }, [open, connect, connectors])
 

@@ -16,6 +16,7 @@ export type SidebarState = { isOpen: boolean } & (
       context?: {
         namespace?: WalletNamespace
         action?: WalletConnectAction
+        closeOnConnect?: boolean
       }
     }
   | {

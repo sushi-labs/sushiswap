@@ -33,12 +33,15 @@ const DefaultSubview = { type: 'main' } as const
 
 export const SidebarConnectView = () => {
   const { close, context, setView } = useSidebar()
-  const { namespace, action = 'connect' } = context ?? {}
+  const {
+    namespace,
+    action = 'connect',
+    closeOnConnect = false,
+  } = context ?? {}
 
   const [subview, setSubview] = useState<ConnectSubview>(DefaultSubview)
 
-  const onConnect =
-    action === 'connect' ? close : () => setView(DefaultSidebarView)
+  const onConnect = closeOnConnect ? close : () => setView(DefaultSidebarView)
 
   const onBack =
     subview.type === 'select-namespace'
@@ -63,13 +66,13 @@ export const SidebarConnectView = () => {
             <span className="font-medium text-lg">
               {subview.type === 'select-namespace'
                 ? 'Select Network'
-                : namespace
-                  ? `Connect ${
-                      getChainById(DEFAULT_CHAIN_ID_BY_NAMESPACE[namespace])
-                        .name
-                    } Wallet`
-                  : action === 'switch'
-                    ? 'Switch Wallet'
+                : action === 'switch'
+                  ? 'Switch Wallet'
+                  : namespace
+                    ? `Connect ${
+                        getChainById(DEFAULT_CHAIN_ID_BY_NAMESPACE[namespace])
+                          .name
+                      } Wallet`
                     : 'Connect'}
             </span>
           </div>
