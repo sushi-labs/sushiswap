@@ -20,6 +20,10 @@ import {
   PopoverTrigger,
   SkeletonBox,
   SkeletonCircle,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
   useBreakpoint,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
@@ -109,16 +113,25 @@ const ConnectedWalletInfo = ({
             <SkeletonBox className="h-3 w-24" />
           ) : (
             <ClipboardController hideTooltip>
-              {({ setCopied }) => (
-                <Button
-                  asChild
-                  variant="blank"
-                  onClick={() => setCopied(wallet.account)}
-                  className="flex text-xs !justify-start items-center text-muted-foreground !p-0 !h-[unset] !min-h-[unset] leading-none"
-                >
-                  {shortenEvmAddress(wallet.account)}
-                  <DocumentDuplicateIcon className="w-2.5 h-2.5" />
-                </Button>
+              {({ setCopied, isCopied }) => (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        asChild
+                        variant="blank"
+                        onClick={() => setCopied(wallet.account)}
+                        className="flex text-xs !justify-start items-center text-muted-foreground !p-0 !h-[unset] !min-h-[unset] leading-none"
+                      >
+                        {shortenEvmAddress(wallet.account)}
+                        <DocumentDuplicateIcon className="w-2.5 h-2.5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      <p>{isCopied ? 'Copied!' : 'Copy Address'}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
             </ClipboardController>
           )}
