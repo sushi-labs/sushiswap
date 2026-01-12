@@ -1,14 +1,8 @@
 'use client'
 
-import {
-  BrowserEvent,
-  InterfaceElementName,
-  InterfaceEventName,
-  TraceEvent,
-} from '@sushiswap/telemetry'
 import { Button, type ButtonProps } from '@sushiswap/ui'
-import React, { type FC, useCallback } from 'react'
-import { SidebarView, useSidebar } from 'src/app/(networks)/_ui/sidebar'
+import React, { type FC } from 'react'
+import { SelectWalletButton } from 'src/lib/wallet/components/select-wallet-button'
 import { useConnectors } from 'wagmi'
 import { useConnect } from '../hooks/wallet/useConnect'
 
@@ -16,17 +10,23 @@ export const ConnectButton: FC<ButtonProps> = ({
   children: _children,
   ...props
 }) => {
+  return process.env.NEXT_PUBLIC_APP_ENV === 'test' ? (
+    <TestConnectButton {...props} />
+  ) : (
+    <SelectWalletButton {...props} />
+  )
+}
+
+const TestConnectButton: FC<ButtonProps> = ({
+  children: _children,
+  ...props
+}) => {
   const { pending, connect } = useConnect()
   const connectors = useConnectors()
-  const { open } = useSidebar()
 
-  const onConnect = useCallback(() => {
-    if (process.env.NEXT_PUBLIC_APP_ENV === 'test') {
-      connect({ connector: connectors[0] })
-    } else {
-      open(SidebarView.Connect, { closeOnConnect: true })
-    }
-  }, [open, connect, connectors])
+  const onConnect = () => {
+    connect({ connector: connectors[0] })
+  }
 
   // Pending confirmation state
   // Awaiting wallet confirmation
@@ -39,20 +39,14 @@ export const ConnectButton: FC<ButtonProps> = ({
   }
 
   return (
-    <TraceEvent
-      events={[BrowserEvent.onClick]}
-      name={InterfaceEventName.CONNECT_WALLET_BUTTON_CLICKED}
-      element={InterfaceElementName.CONNECT_WALLET_BUTTON}
+    <Button
+      {...props}
+      onClick={onConnect}
+      onKeyDown={onConnect}
+      testId="connect"
     >
-      <Button
-        {...props}
-        onClick={onConnect}
-        onKeyDown={onConnect}
-        testId="connect"
-      >
-        <span className="hidden sm:block">Connect Wallet</span>
-        <span className="block sm:hidden">Connect</span>
-      </Button>
-    </TraceEvent>
+      <span className="hidden sm:block">Connect Wallet</span>
+      <span className="block sm:hidden">Connect</span>
+    </Button>
   )
 }

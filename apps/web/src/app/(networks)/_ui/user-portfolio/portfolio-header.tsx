@@ -182,8 +182,7 @@ const ConnectedWalletInfo = ({
                   })
                 }
               >
-                Connect {wallet?.namespace === 'svm' ? 'Ethereum' : 'Solana'}{' '}
-                Wallet
+                Connect {wallet?.namespace === 'svm' ? 'EVM' : 'Solana'} Wallet
               </Button>
               <Button
                 fullWidth
@@ -193,7 +192,6 @@ const ConnectedWalletInfo = ({
                 onClick={() =>
                   setView(SidebarView.Connect, {
                     action: 'switch',
-                    namespace: wallet?.namespace,
                   })
                 }
               >
@@ -308,7 +306,6 @@ const ConnectedWalletsPopover = ({
                   onClick={() =>
                     setView(SidebarView.Connect, {
                       action: 'switch',
-                      namespace: wallet.namespace,
                     })
                   }
                 />

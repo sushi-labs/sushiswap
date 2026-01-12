@@ -5,7 +5,7 @@ import {
   PortfolioHeader,
   PortfolioPositions,
   PortfolioTokens,
-} from 'src/lib/wagmi/components/user-portfolio'
+} from '../../user-portfolio'
 
 enum PortfolioTab {
   Tokens = 'Tokens',
