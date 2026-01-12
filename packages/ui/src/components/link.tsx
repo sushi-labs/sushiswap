@@ -23,7 +23,7 @@ const LinkExternal: FC<AnchorHTMLAttributes<HTMLAnchorElement>> = ({
         {...props}
         target={target}
         rel={rel}
-        className="cursor-pointer text-blue hover:underline"
+        className={'cursor-pointer text-blue hover:underline'}
       />
     </button>
   )

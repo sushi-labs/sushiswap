@@ -14,9 +14,7 @@ export default async function PerpsLayout({
   return (
     <Providers>
       <Header chainId={EvmChainId.ARBITRUM} />
-
       <GeoBlockedMessage isGeoBlocked={isGeoBlocked} />
-
       {children}
     </Providers>
   )
