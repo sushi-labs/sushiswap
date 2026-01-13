@@ -48,7 +48,7 @@ const formatSpotCtxs = (
     const ctx = ctxs[u.index] ?? {}
     const tokens = u.tokens.map((tokenIndex) => _tokens[tokenIndex])
     const markPrice = Number.parseFloat(ctx.markPx)
-    const last = markPrice
+    const last = ctx.midPx ? Number.parseFloat(ctx.midPx) : markPrice
     const prev = Number.parseFloat(ctx.prevDayPx)
     const changeAbs = last != null && prev != null ? last - prev : null
     const changePct =

@@ -10,20 +10,20 @@ interface State {
   }
 }
 
-const PerpStateContext = createContext<State>({} as State)
+const AssetStateContext = createContext<State>({} as State)
 
-interface PerpStateProviderProps {
+interface AssetStateProviderProps {
   children: React.ReactNode
 }
 
-const PerpStateProvider: FC<PerpStateProviderProps> = ({ children }) => {
+const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
   const [activeAsset, setActiveAsset] = useLocalStorage<string>(
     'sushi.perps.active-asset',
     'BTC',
   )
 
   return (
-    <PerpStateContext.Provider
+    <AssetStateContext.Provider
       value={useMemo(() => {
         return {
           mutate: {
@@ -36,17 +36,17 @@ const PerpStateProvider: FC<PerpStateProviderProps> = ({ children }) => {
       }, [activeAsset, setActiveAsset])}
     >
       {children}
-    </PerpStateContext.Provider>
+    </AssetStateContext.Provider>
   )
 }
 
-const usePerpState = () => {
-  const context = useContext(PerpStateContext)
+const useAssetState = () => {
+  const context = useContext(AssetStateContext)
   if (!context) {
-    throw new Error('Hook can only be used inside PerpState State Context')
+    throw new Error('Hook can only be used inside AssetState State Context')
   }
 
   return context
 }
 
-export { PerpStateProvider, usePerpState }
+export { AssetStateProvider, useAssetState }

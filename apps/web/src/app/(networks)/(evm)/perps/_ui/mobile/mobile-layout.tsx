@@ -1,6 +1,6 @@
 'use client'
 import { Activity, useState } from 'react'
-import { PerpTokenSelector } from '../perp-token-selector'
+import { AssetSelectorAndStats } from '../asset-selector-and-stats'
 import { TradeTables } from '../trade-tables/trade-tables'
 import { FooterNav } from './footer-nav'
 import { TabbedView } from './tabbed-view'
@@ -13,7 +13,7 @@ export const MobileLayout = () => {
     <div className="pb-[52px] bg-red-500/70 w-full h-full min-h-[calc(100vh-96px)]">
       <div className="flex flex-col gap-1 pt-2 bg-green-500/20 ">
         <Activity mode={view === 'account' ? 'hidden' : 'visible'}>
-          <PerpTokenSelector />
+          <AssetSelectorAndStats />
         </Activity>
         <Activity mode={view === 'markets' ? 'visible' : 'hidden'}>
           <TabbedView />

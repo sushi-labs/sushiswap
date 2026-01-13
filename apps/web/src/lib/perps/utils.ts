@@ -1,6 +1,6 @@
 export const getTextColorClass = (value: number) => {
-  if (value >= 0) return 'text-green'
-  if (value < 0) return 'text-red'
+  if (value >= 0) return 'text-green dark:text-green-500'
+  if (value < 0) return 'text-red dark:text-red-500'
   return ''
 }
 
@@ -19,6 +19,10 @@ export const currencyFormatter = new Intl.NumberFormat(undefined, {
 export const enUSFormatNumber = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 2,
   minimumFractionDigits: 2,
+})
+export const numberFormatter = new Intl.NumberFormat('en-US', {
+  maximumFractionDigits: 8,
+  minimumFractionDigits: 0,
 })
 
 export const getHyperliquidExplorerUrl = (type: 'token', address: string) => {

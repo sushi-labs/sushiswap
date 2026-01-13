@@ -35,7 +35,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
                 <TabsTrigger
                   key={tab.value}
                   value={tab.value}
-                  className="!px-1.5 !py-.5 !text-xs"
+                  className="!px-1.5 !text-xs"
                 >
                   {tab.name}
                 </TabsTrigger>

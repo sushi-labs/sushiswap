@@ -11,19 +11,27 @@ import {
   currencyFormatter,
   getSignForValue,
   getTextColorClass,
+  numberFormatter,
 } from 'src/lib/perps/utils'
-import { formatNumber, formatPercent } from 'sushi'
-import { usePerpState } from '../perp-state-provider'
+import { formatPercent } from 'sushi'
+import { useAssetState } from '../perp-state-provider'
 import { ValueSensitiveText } from '../value-sensitive-text'
+import { AssetStatsSkeleton } from './asset-stats-skeleton'
 
-export const PerpTokenStats = () => {
+export const PerpAssetStats = () => {
   const {
     state: { activeAsset },
-  } = usePerpState()
-  const { data: tokenData } = useActiveAsset({
+  } = useAssetState()
+  const { data: assetData, isLoading: isAssetLoading } = useActiveAsset({
     assetString: activeAsset,
   })
-  const initialDecimals = useInitialDecimals(tokenData?.markPrice)
+  const initialDecimals = useInitialDecimals(assetData?.markPrice)
+
+  if (isAssetLoading || !assetData) {
+    return Array(8)
+      .fill(0)
+      .map((_, i) => <AssetStatsSkeleton key={i} />)
+  }
 
   return (
     <>
@@ -51,7 +59,7 @@ export const PerpTokenStats = () => {
             minimumFractionDigits: initialDecimals,
             maximumFractionDigits: initialDecimals,
           }}
-          value={tokenData?.markPrice?.toString() ?? ''}
+          value={assetData?.markPrice?.toString() ?? ''}
           className="text-sm font-medium tabular-nums"
         />
       </div>
@@ -79,7 +87,7 @@ export const PerpTokenStats = () => {
             minimumFractionDigits: initialDecimals,
             maximumFractionDigits: initialDecimals,
           }}
-          value={tokenData?.oraclePrice?.toString() ?? ''}
+          value={assetData?.oraclePrice?.toString() ?? ''}
           className="text-sm font-medium tabular-nums"
           allowColorChange={false}
         />
@@ -90,21 +98,21 @@ export const PerpTokenStats = () => {
         <p
           className={classNames(
             'text-sm whitespace-nowrap tabular-nums font-medium',
-            tokenData?.change24hAbs &&
-              getTextColorClass(Number(tokenData.change24hAbs)),
+            assetData?.change24hAbs &&
+              getTextColorClass(Number(assetData.change24hAbs)),
           )}
         >
-          {getSignForValue(Number(tokenData?.change24hAbs ?? 0))}
-          {formatNumber(Number(tokenData?.change24hAbs ?? 0).toFixed(2))} /{' '}
-          {getSignForValue(Number(tokenData?.change24hPct ?? 0))}
-          {formatPercent(tokenData?.change24hPct)}
+          {getSignForValue(Number(assetData?.change24hAbs ?? 0))}
+          {numberFormatter.format(Number(assetData?.change24hAbs ?? 0))} /{' '}
+          {getSignForValue(Number(assetData?.change24hPct ?? 0))}
+          {formatPercent(assetData?.change24hPct)}
         </p>
       </div>
       <div className="flex flex-col">
         <div className="text-sm text-muted-foreground">24H Volume</div>
 
         <p className={classNames('text-sm  font-medium tabular-nums')}>
-          {currencyFormatter.format(Number(tokenData?.volume24hUsd ?? 0))}
+          {currencyFormatter.format(Number(assetData?.volume24hUsd ?? 0))}
         </p>
       </div>
       <div className="flex flex-col">
@@ -126,7 +134,7 @@ export const PerpTokenStats = () => {
           </HoverCardContent>
         </HoverCard>
         <p className={classNames('text-sm tabular-nums font-medium ')}>
-          {currencyFormatter.format(Number(tokenData?.openInterestUsd ?? 0))}
+          {currencyFormatter.format(Number(assetData?.openInterestUsd ?? 0))}
         </p>
       </div>
       <div className="flex flex-col">
@@ -155,7 +163,7 @@ export const PerpTokenStats = () => {
               'text-sm tabular-nums font-medium whitespace-nowrap',
             )}
           >
-            {(Number(tokenData?.fundingPct ?? 0) * 100).toFixed(4)}%
+            {(Number(assetData?.fundingPct ?? 0) * 100).toFixed(4)}%
           </p>
           <Countdown />
         </div>

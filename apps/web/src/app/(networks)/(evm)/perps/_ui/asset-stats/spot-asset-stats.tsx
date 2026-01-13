@@ -13,26 +13,34 @@ import {
   getHyperliquidExplorerUrl,
   getSignForValue,
   getTextColorClass,
+  numberFormatter,
 } from 'src/lib/perps/utils'
-import { formatNumber, formatPercent, truncateString } from 'sushi'
+import { formatPercent, truncateString } from 'sushi'
 import { useAssetListState } from '../asset-list-provider'
-import { usePerpState } from '../perp-state-provider'
+import { useAssetState } from '../perp-state-provider'
 import { ValueSensitiveText } from '../value-sensitive-text'
+import { AssetStatsSkeleton } from './asset-stats-skeleton'
 
-export const SpotTokenStats = () => {
+export const SpotAssetStats = () => {
   const {
     state: {
-      assetListQuery: { data },
+      assetListQuery: { data, isLoading },
     },
   } = useAssetListState()
   const {
     state: { activeAsset },
-  } = usePerpState()
-  const token = data?.get?.(activeAsset)
-  const { data: tokenData } = useActiveAsset({
+  } = useAssetState()
+  const asset = data?.get?.(activeAsset)
+  const { data: assetData, isLoading: isAssetLoading } = useActiveAsset({
     assetString: activeAsset,
   })
-  const initialDecimals = useInitialDecimals(tokenData?.markPrice)
+  const initialDecimals = useInitialDecimals(assetData?.markPrice)
+
+  if (isLoading || isAssetLoading || !assetData || !asset) {
+    return Array(8)
+      .fill(0)
+      .map((_, i) => <AssetStatsSkeleton key={i} />)
+  }
 
   return (
     <>
@@ -54,8 +62,8 @@ export const SpotTokenStats = () => {
 
         <ValueSensitiveText
           value={
-            tokenData?.midPrice?.toString() ??
-            tokenData?.markPrice?.toString() ??
+            assetData?.midPrice?.toString() ??
+            assetData?.markPrice?.toString() ??
             ''
           }
           className="text-sm font-medium tabular-nums lining-nums min-w-[var(--w)] inline-block"
@@ -71,30 +79,30 @@ export const SpotTokenStats = () => {
         <p
           className={classNames(
             'text-sm whitespace-nowrap tabular-nums font-medium',
-            tokenData?.change24hAbs &&
-              getTextColorClass(Number(tokenData.change24hAbs)),
+            assetData?.change24hAbs &&
+              getTextColorClass(Number(assetData.change24hAbs)),
           )}
         >
-          {getSignForValue(Number(tokenData?.change24hAbs ?? 0))}
-          {formatNumber(Number(tokenData?.change24hAbs ?? 0).toFixed(2))} /{' '}
-          {getSignForValue(Number(tokenData?.change24hPct ?? 0))}
-          {formatPercent(tokenData?.change24hPct)}
+          {getSignForValue(Number(assetData?.change24hAbs ?? 0))}
+          {numberFormatter.format(Number(assetData?.change24hAbs ?? 0))} /{' '}
+          {getSignForValue(Number(assetData?.change24hPct ?? 0))}
+          {formatPercent(assetData?.change24hPct)}
         </p>
       </div>
       <div className="flex flex-col">
         <div className="text-sm text-muted-foreground">24H Volume</div>
 
         <p className={classNames('text-sm  font-medium tabular-nums')}>
-          {enUSFormatNumber.format(Number(tokenData?.volume24hUsd ?? 0))}{' '}
-          {token?.tokens?.[1]?.name}
+          {enUSFormatNumber.format(Number(assetData?.volume24hUsd ?? 0))}{' '}
+          {asset?.tokens?.[1]?.name}
         </p>
       </div>
       <div className="flex flex-col">
         <div className="text-sm text-muted-foreground">Market Cap</div>
 
         <p className={classNames('text-sm  font-medium tabular-nums')}>
-          {enUSFormatNumber.format(Number(tokenData?.marketCap ?? 0))}{' '}
-          {token?.tokens?.[1]?.name}
+          {enUSFormatNumber.format(Number(assetData?.marketCap ?? 0))}{' '}
+          {asset?.tokens?.[1]?.name}
         </p>
       </div>
       <div className="flex flex-col">
@@ -103,14 +111,14 @@ export const SpotTokenStats = () => {
         <LinkExternal
           className={classNames('font-medium')}
           href={
-            token?.tokens?.[0]?.tokenId
-              ? `${getHyperliquidExplorerUrl('token', token?.tokens?.[0]?.tokenId)}`
+            asset?.tokens?.[0]?.tokenId
+              ? `${getHyperliquidExplorerUrl('token', asset?.tokens?.[0]?.tokenId)}`
               : ''
           }
         >
           <div className="!text-sm flex ">
             <span>
-              {truncateString(token?.tokens?.[0]?.tokenId ?? '', 10, 'middle')}
+              {truncateString(asset?.tokens?.[0]?.tokenId ?? '', 10, 'middle')}
               <ExternalLinkIcon className="w-4 h-4 ml-1 inline-block" />
             </span>
           </div>
