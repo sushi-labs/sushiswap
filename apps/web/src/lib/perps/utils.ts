@@ -18,6 +18,7 @@ export const currencyFormatter = new Intl.NumberFormat(undefined, {
 
 export const enUSFormatNumber = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 2,
+  minimumFractionDigits: 2,
 })
 
 export const getHyperliquidExplorerUrl = (type: 'token', address: string) => {

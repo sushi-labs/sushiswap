@@ -6,11 +6,13 @@ export const ValueSensitiveText = ({
   flashMs = 400,
   className,
   formatOptions,
+  allowColorChange = true,
 }: {
   value: string | number
   flashMs?: number
   className?: string
   formatOptions?: Intl.NumberFormatOptions
+  allowColorChange?: boolean
 }) => {
   const prevRef = useRef<number | null>(null)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -20,6 +22,7 @@ export const ValueSensitiveText = ({
   const num = typeof value === 'string' ? Number.parseFloat(value) : value
 
   useEffect(() => {
+    if (!allowColorChange) return
     if (Number.isNaN(num)) return
 
     const prev = prevRef.current
@@ -43,7 +46,7 @@ export const ValueSensitiveText = ({
         clearTimeout(timeoutRef.current)
       }
     }
-  }, [num, flashMs])
+  }, [num, flashMs, allowColorChange])
 
   const colorClass =
     direction === 'up' ? 'text-green' : direction === 'down' ? 'text-red' : ''

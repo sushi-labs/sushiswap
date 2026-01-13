@@ -6,7 +6,9 @@ import {
   LinkExternal,
   classNames,
 } from '@sushiswap/ui'
+import { useActiveAsset } from 'src/lib/perps/use-active-asset'
 import { useAssetList } from 'src/lib/perps/use-asset-list'
+import { useInitialDecimals } from 'src/lib/perps/use-initial-decimals'
 import {
   enUSFormatNumber,
   getHyperliquidExplorerUrl,
@@ -18,8 +20,13 @@ import { ValueSensitiveText } from '../value-sensitive-text'
 
 export const SpotTokenStats = () => {
   const { data } = useAssetList()
-  //todo: provider for selected token
-  const token = data?.spot?.get?.('HYPE/USDC')
+  //todo: provider for selected tokenData
+  const token = data?.spot?.get?.('@142')
+  const { data: tokenData } = useActiveAsset({
+    assetString: '@142',
+  })
+  const initialDecimals = useInitialDecimals(tokenData?.markPrice)
+
   return (
     <>
       <div className="flex flex-col">
@@ -40,9 +47,15 @@ export const SpotTokenStats = () => {
 
         <ValueSensitiveText
           value={
-            token?.midPrice?.toString() ?? token?.markPrice?.toString() ?? ''
+            tokenData?.midPrice?.toString() ??
+            tokenData?.markPrice?.toString() ??
+            ''
           }
-          className="text-sm font-medium tabular-nums"
+          className="text-sm font-medium tabular-nums lining-nums min-w-[var(--w)] inline-block"
+          formatOptions={{
+            minimumFractionDigits: initialDecimals,
+            maximumFractionDigits: initialDecimals,
+          }}
         />
       </div>
       <div className="flex flex-col">
@@ -50,22 +63,22 @@ export const SpotTokenStats = () => {
 
         <p
           className={classNames(
-            'text-sm whitespace-nowrap tabular-nums',
-            token?.change24hAbs &&
-              getTextColorClass(Number(token.change24hAbs)),
+            'text-sm whitespace-nowrap tabular-nums font-medium',
+            tokenData?.change24hAbs &&
+              getTextColorClass(Number(tokenData.change24hAbs)),
           )}
         >
-          {getSignForValue(Number(token?.change24hAbs ?? 0))}
-          {formatNumber(token?.change24hAbs ?? 0)} /{' '}
-          {getSignForValue(Number(token?.change24hPct ?? 0))}
-          {formatPercent(token?.change24hPct)}
+          {getSignForValue(Number(tokenData?.change24hAbs ?? 0))}
+          {formatNumber(Number(tokenData?.change24hAbs ?? 0).toFixed(2))} /{' '}
+          {getSignForValue(Number(tokenData?.change24hPct ?? 0))}
+          {formatPercent(tokenData?.change24hPct)}
         </p>
       </div>
       <div className="flex flex-col">
         <div className="text-sm text-muted-foreground">24H Volume</div>
 
         <p className={classNames('text-sm  font-medium tabular-nums')}>
-          {enUSFormatNumber.format(Number(token?.volume24hUsd ?? 0))}{' '}
+          {enUSFormatNumber.format(Number(tokenData?.volume24hUsd ?? 0))}{' '}
           {token?.tokens?.[1]?.name}
         </p>
       </div>
@@ -73,7 +86,7 @@ export const SpotTokenStats = () => {
         <div className="text-sm text-muted-foreground">Market Cap</div>
 
         <p className={classNames('text-sm  font-medium tabular-nums')}>
-          {enUSFormatNumber.format(Number(token?.marketCap ?? 0))}{' '}
+          {enUSFormatNumber.format(Number(tokenData?.marketCap ?? 0))}{' '}
           {token?.tokens?.[1]?.name}
         </p>
       </div>

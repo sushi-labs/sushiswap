@@ -5,8 +5,8 @@ import { SpotTokenStats } from './spot-token-stats'
 export const TokenStats = () => {
   const { data } = useAssetList()
   //todo: provider for selected token
-  // const token = data?.perp?.get?.('BTC-USDC')
-  const token = data?.spot?.get?.('HYPE/USDC')
+  // const token = data?.perp?.get?.('BTC')
+  const token = data?.spot?.get?.('@1')
   return (
     <>
       {token?.marketType === 'perp' ? <PerpTokenStats /> : <SpotTokenStats />}

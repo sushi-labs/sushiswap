@@ -18,6 +18,7 @@ type CollateralToken = SpotMetaResponse['tokens'][number]
 
 export type PerpOrSpotAsset = {
   symbol: string
+  name: string
   marketType: 'perp' | 'spot'
   dex: string
   tokens?: CollateralToken[]
@@ -55,8 +56,11 @@ const formatSpotCtxs = (
 
     const marketCap = markPrice * Number.parseFloat(ctx.circulatingSupply)
     const symbol = tokens.map((t) => t.name).join('/')
-    acc.set(symbol, {
+    const assetId = ctx?.coin
+
+    acc.set(assetId, {
       symbol,
+      name: assetId,
       marketType: 'spot' as const,
       dex: '',
       tokens,
@@ -123,8 +127,9 @@ export const formatPerpCtxs = (
       const name = u.name?.split(':')?.[1] ?? u.name
       const symbol = `${name}${collateralToken?.name ? `-${collateralToken.name}` : ''}`
 
-      acc.set(symbol, {
+      acc.set(u.name, {
         symbol,
+        name: u.name,
         marketType: 'perp' as const,
         dex: dexName,
         tokens: collateralToken ? [collateralToken] : undefined,
@@ -159,7 +164,7 @@ type AssetData = {
 const KEY = ['useAssetList-perps-spot'] as const
 
 export const useAssetList = () => {
-  const querClient = useQueryClient()
+  const queryClient = useQueryClient()
   const query = useQuery<AssetData>({
     queryKey: KEY,
     staleTime: Number.POSITIVE_INFINITY,
@@ -174,7 +179,7 @@ export const useAssetList = () => {
         { transport: hlWebSocketTransport },
         (spotCtxsEvent) => {
           const _formattedData = formatSpotCtxs(spotMeta, spotCtxsEvent)
-          querClient.setQueryData(KEY, (prev: AssetData | undefined) => ({
+          queryClient.setQueryData(KEY, (prev: AssetData | undefined) => ({
             ...prev,
             spot: _formattedData,
             // all: [...(prev?.all ?? []), ..._formattedData.values()],
@@ -188,7 +193,7 @@ export const useAssetList = () => {
     return () => {
       void unsubscribe?.()
     }
-  }, [querClient, spotMeta])
+  }, [queryClient, spotMeta])
 
   useEffect(() => {
     if (!spotMeta) return
@@ -206,7 +211,7 @@ export const useAssetList = () => {
             perpsMeta,
             allDexsAssetCtxsEvent,
           )
-          querClient.setQueryData(KEY, (prev: AssetData | undefined) => ({
+          queryClient.setQueryData(KEY, (prev: AssetData | undefined) => ({
             ...prev,
             perp: _formattedData,
             // all: [...(prev?.all ?? []), ..._formattedData.values()],
@@ -220,7 +225,7 @@ export const useAssetList = () => {
     return () => {
       void unsubscribe?.()
     }
-  }, [querClient, spotMeta])
+  }, [queryClient, spotMeta])
 
   const isReady = Boolean(query.data?.spot?.size && query.data?.perp?.size)
 

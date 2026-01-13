@@ -5,8 +5,8 @@ import { TokenStats } from './token-stats/token-stats'
 export const PerpTokenSelector = () => {
   const { data } = useAssetList()
   //todo: provider for selected token
-  // const token = data?.perp?.get?.('BTC-USDC')
-  const token = data?.spot?.get?.('HYPE/USDC')
+  const token = data?.perp?.get?.('HYPE')
+  // const token = data?.spot?.get?.('@142')
   return (
     <Card className="p-4 gap-8 flex items-center">
       <div className="whitespace-nowrap">
