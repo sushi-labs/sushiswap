@@ -25,7 +25,7 @@ export * from '@stellar/stellar-sdk'
 export * as contract from '@stellar/stellar-sdk/contract'
 export * as rpc from '@stellar/stellar-sdk/rpc'
 
-// Type aliases for missing contract-specific types
+// Type alias for missing contract-specific type
 export type SqrtPriceX96 = u256;
 
 if (typeof window !== 'undefined') {
@@ -35,9 +35,9 @@ if (typeof window !== 'undefined') {
 
 
 export const networks = {
-  futurenet: {
-    networkPassphrase: "Test SDF Future Network ; October 2022",
-    contractId: "CCTYM2JFOXKZQYB6TIQROPAQNYJYJHCCVKFGSAIGEAWIS2S2GMADFPUM",
+  unknown: {
+    networkPassphrase: "Public Global Stellar Network ; September 2015",
+    contractId: "CA3QTCEIEOEZN33IZGVOQGNLMQIC6J6VQ4TTIQVAKIKEZHOKCIA42XD3",
   }
 } as const
 
