@@ -13,12 +13,15 @@ import {
   getTextColorClass,
 } from 'src/lib/perps/utils'
 import { formatNumber, formatPercent } from 'sushi'
+import { usePerpState } from '../perp-state-provider'
 import { ValueSensitiveText } from '../value-sensitive-text'
 
 export const PerpTokenStats = () => {
-  //todo: provider for selected token
+  const {
+    state: { activeAsset },
+  } = usePerpState()
   const { data: tokenData } = useActiveAsset({
-    assetString: 'xyz:GOLD',
+    assetString: activeAsset,
   })
   const initialDecimals = useInitialDecimals(tokenData?.markPrice)
 

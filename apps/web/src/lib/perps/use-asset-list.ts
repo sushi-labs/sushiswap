@@ -155,11 +155,7 @@ export const formatPerpCtxs = (
 
 type PerpTokenData = ReturnType<typeof formatPerpCtxs>
 type SpotTokenData = ReturnType<typeof formatSpotCtxs>
-type AssetData = {
-  perp: PerpTokenData
-  spot: SpotTokenData
-  // all: PerpOrSpotAsset[]
-}
+type AssetData = PerpTokenData & SpotTokenData
 
 const KEY = ['useAssetList-perps-spot'] as const
 
@@ -179,11 +175,11 @@ export const useAssetList = () => {
         { transport: hlWebSocketTransport },
         (spotCtxsEvent) => {
           const _formattedData = formatSpotCtxs(spotMeta, spotCtxsEvent)
-          queryClient.setQueryData(KEY, (prev: AssetData | undefined) => ({
-            ...prev,
-            spot: _formattedData,
-            // all: [...(prev?.all ?? []), ..._formattedData.values()],
-          }))
+          queryClient.setQueryData(
+            KEY,
+            (prev: AssetData | undefined) =>
+              new Map([...(prev ?? new Map()), ..._formattedData]),
+          )
         },
       )
 
@@ -211,11 +207,11 @@ export const useAssetList = () => {
             perpsMeta,
             allDexsAssetCtxsEvent,
           )
-          queryClient.setQueryData(KEY, (prev: AssetData | undefined) => ({
-            ...prev,
-            perp: _formattedData,
-            // all: [...(prev?.all ?? []), ..._formattedData.values()],
-          }))
+          queryClient.setQueryData(
+            KEY,
+            (prev: AssetData | undefined) =>
+              new Map([...(prev ?? new Map()), ..._formattedData]),
+          )
         },
       )
 
@@ -227,7 +223,7 @@ export const useAssetList = () => {
     }
   }, [queryClient, spotMeta])
 
-  const isReady = Boolean(query.data?.spot?.size && query.data?.perp?.size)
+  const isReady = Boolean(query.data?.size)
 
   return { ...query, isLoading: query.isLoading || !spotMeta || !isReady }
 }

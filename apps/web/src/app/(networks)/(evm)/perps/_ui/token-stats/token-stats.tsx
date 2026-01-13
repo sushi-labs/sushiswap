@@ -1,12 +1,18 @@
-import { useAssetList } from 'src/lib/perps/use-asset-list'
+import { useAssetListState } from '../asset-list-provider'
+import { usePerpState } from '../perp-state-provider'
 import { PerpTokenStats } from './perp-token-stats'
 import { SpotTokenStats } from './spot-token-stats'
 
 export const TokenStats = () => {
-  const { data } = useAssetList()
-  //todo: provider for selected token
-  // const token = data?.perp?.get?.('BTC')
-  const token = data?.spot?.get?.('@1')
+  const {
+    state: {
+      assetListQuery: { data },
+    },
+  } = useAssetListState()
+  const {
+    state: { activeAsset },
+  } = usePerpState()
+  const token = data?.get?.(activeAsset)
   return (
     <>
       {token?.marketType === 'perp' ? <PerpTokenStats /> : <SpotTokenStats />}

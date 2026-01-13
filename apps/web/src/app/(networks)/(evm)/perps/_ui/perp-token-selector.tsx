@@ -1,12 +1,18 @@
 import { Card } from '@sushiswap/ui'
-import { useAssetList } from 'src/lib/perps/use-asset-list'
+import { useAssetListState } from './asset-list-provider'
+import { usePerpState } from './perp-state-provider'
 import { TokenStats } from './token-stats/token-stats'
 
 export const PerpTokenSelector = () => {
-  const { data } = useAssetList()
-  //todo: provider for selected token
-  const token = data?.perp?.get?.('HYPE')
-  // const token = data?.spot?.get?.('@142')
+  const {
+    state: { activeAsset },
+  } = usePerpState()
+  const {
+    state: {
+      assetListQuery: { data },
+    },
+  } = useAssetListState()
+  const token = data?.get?.(activeAsset)
   return (
     <Card className="p-4 gap-8 flex items-center">
       <div className="whitespace-nowrap">

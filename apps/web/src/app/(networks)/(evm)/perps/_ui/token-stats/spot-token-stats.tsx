@@ -7,7 +7,6 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useActiveAsset } from 'src/lib/perps/use-active-asset'
-import { useAssetList } from 'src/lib/perps/use-asset-list'
 import { useInitialDecimals } from 'src/lib/perps/use-initial-decimals'
 import {
   enUSFormatNumber,
@@ -16,14 +15,22 @@ import {
   getTextColorClass,
 } from 'src/lib/perps/utils'
 import { formatNumber, formatPercent, truncateString } from 'sushi'
+import { useAssetListState } from '../asset-list-provider'
+import { usePerpState } from '../perp-state-provider'
 import { ValueSensitiveText } from '../value-sensitive-text'
 
 export const SpotTokenStats = () => {
-  const { data } = useAssetList()
-  //todo: provider for selected tokenData
-  const token = data?.spot?.get?.('@142')
+  const {
+    state: {
+      assetListQuery: { data },
+    },
+  } = useAssetListState()
+  const {
+    state: { activeAsset },
+  } = usePerpState()
+  const token = data?.get?.(activeAsset)
   const { data: tokenData } = useActiveAsset({
-    assetString: '@142',
+    assetString: activeAsset,
   })
   const initialDecimals = useInitialDecimals(tokenData?.markPrice)
 
