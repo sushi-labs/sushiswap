@@ -37,7 +37,7 @@ if (typeof window !== 'undefined') {
 export const networks = {
   futurenet: {
     networkPassphrase: "Test SDF Future Network ; October 2022",
-    contractId: "CD6VPVNWNQYRPE7HUSHMCJKALSG3WJPRBP7QYPECTX7NWT4H2IYEEFM3",
+    contractId: "CCTYM2JFOXKZQYB6TIQROPAQNYJYJHCCVKFGSAIGEAWIS2S2GMADFPUM",
   }
 } as const
 
@@ -265,6 +265,18 @@ export interface PopulatedTick {
   liquidity_gross: u128;
   liquidity_net: i128;
   tick: i32;
+}
+
+
+/**
+ * Result of get_populated_ticks_in_range with truncation signal
+ */
+export interface PopulatedTicksResult {
+  ticks: Array<PopulatedTick>;
+  /**
+ * True if results were truncated due to MAX_TICKS_BATCH limit.
+ */
+truncated: boolean;
 }
 
 /**
@@ -915,6 +927,52 @@ export interface Client {
     simulate?: boolean;
   }) => Promise<AssembledTransaction<Array<PopulatedTick>>>
 
+  /**
+   * Construct and simulate a get_populated_ticks_in_range transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Gets all populated ticks across a range of bitmap words.
+   * 
+   * This function batches multiple bitmap word queries into a single call,
+   * reducing cross-contract call overhead for operations like liquidity charts.
+   * 
+   * # Arguments
+   * * `env` - The Soroban environment
+   * * `pool` - The address of the pool contract
+   * * `start_word` - The first bitmap word index (can be negative)
+   * * `count` - Number of consecutive words to scan (capped at MAX_RANGE_COUNT)
+   * 
+   * # Returns
+   * A `PopulatedTicksResult` containing:
+   * - `ticks`: Vector of PopulatedTick structs in **ascending order** by tick index
+   * - `truncated`: True if results are incomplete for any reason
+   * 
+   * # Ordering
+   * NOTE: This function returns ticks in ASCENDING order (lowest tick first),
+   * which differs from `get_populated_ticks_in_word` that returns REVERSE order
+   * (matching Uniswap V3 Solidity behavior).
+   * 
+   * # Limits & Truncation
+   * The `truncated` flag is set to true if:
+   * - `count` exceeded MAX_RANGE_COUNT (256 words)
+   * - `start_word` was near i32::MAX causing range reduction
+   * - More than MAX_TICKS_BATCH (2
+   */
+  get_populated_ticks_in_range: ({pool, start_word, count}: {pool: string, start_word: i32, count: u32}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<PopulatedTicksResult>>
+
 }
 export class Client extends ContractClient {
   static async deploy<T = Client>(
@@ -969,7 +1027,9 @@ export class Client extends ContractClient {
         "AAAAAAAAAAAAAAAbcXVvdGVfZXhhY3RfaW5wdXRfc2luZ2xlX3YyAAAAAAEAAAAAAAAABnBhcmFtcwAAAAAH0AAAABtRdW90ZUV4YWN0SW5wdXRTaW5nbGVQYXJhbXMAAAAAAQAAA+kAAAfQAAAAEVF1b3RlU2luZ2xlUmVzdWx0AAAAAAAAAw==",
         "AAAAAAAAAAAAAAAccXVvdGVfZXhhY3Rfb3V0cHV0X3NpbmdsZV92MgAAAAEAAAAAAAAABnBhcmFtcwAAAAAH0AAAABxRdW90ZUV4YWN0T3V0cHV0U2luZ2xlUGFyYW1zAAAAAQAAA+kAAAfQAAAAEVF1b3RlU2luZ2xlUmVzdWx0AAAAAAAAAw==",
         "AAAAAQAAADZSZXByZXNlbnRzIGEgcG9wdWxhdGVkIHRpY2sgd2l0aCBsaXF1aWRpdHkgaW5mb3JtYXRpb24AAAAAAAAAAAANUG9wdWxhdGVkVGljawAAAAAAAAMAAAAAAAAAD2xpcXVpZGl0eV9ncm9zcwAAAAAKAAAAAAAAAA1saXF1aWRpdHlfbmV0AAAAAAAACwAAAAAAAAAEdGljawAAAAU=",
+        "AAAAAQAAAD1SZXN1bHQgb2YgZ2V0X3BvcHVsYXRlZF90aWNrc19pbl9yYW5nZSB3aXRoIHRydW5jYXRpb24gc2lnbmFsAAAAAAAAAAAAABRQb3B1bGF0ZWRUaWNrc1Jlc3VsdAAAAAIAAAAAAAAABXRpY2tzAAAAAAAD6gAAB9AAAAANUG9wdWxhdGVkVGljawAAAAAAADxUcnVlIGlmIHJlc3VsdHMgd2VyZSB0cnVuY2F0ZWQgZHVlIHRvIE1BWF9USUNLU19CQVRDSCBsaW1pdC4AAAAJdHJ1bmNhdGVkAAAAAAAAAQ==",
         "AAAAAAAAApZHZXRzIGFsbCBwb3B1bGF0ZWQgdGlja3MgaW4gYSBzcGVjaWZpYyB3b3JkIG9mIHRoZSB0aWNrIGJpdG1hcAoKIyBBcmd1bWVudHMKKiBgZW52YCAtIFRoZSBTb3JvYmFuIGVudmlyb25tZW50CiogYHBvb2xgIC0gVGhlIGFkZHJlc3Mgb2YgdGhlIHBvb2wgY29udHJhY3QKKiBgdGlja19iaXRtYXBfaW5kZXhgIC0gVGhlIGluZGV4IG9mIHRoZSB0aWNrIGJpdG1hcCB3b3JkIHRvIHF1ZXJ5IChpMzIpCgojIFJldHVybnMKQSB2ZWN0b3Igb2YgUG9wdWxhdGVkVGljayBzdHJ1Y3RzIGNvbnRhaW5pbmcgdGljayBpbmRleCwgbGlxdWlkaXR5X25ldCwgYW5kIGxpcXVpZGl0eV9ncm9zcwoKIyBOb3RlClRoaXMgZnVuY3Rpb24gbWlycm9ycyB0aGUgYmVoYXZpb3Igb2YgVW5pc3dhcCBWMydzIFRpY2tMZW5zLmdldFBvcHVsYXRlZFRpY2tzSW5Xb3JkOgoxLiBGZXRjaGVzIHRoZSBiaXRtYXAgZm9yIHRoZSBzcGVjaWZpZWQgd29yZCAoMjU2IGJpdHMpCjIuIENvdW50cyBwb3B1bGF0ZWQgdGlja3MgKGJpdHMgc2V0IHRvIDEpCjMuIEZvciBlYWNoIHBvcHVsYXRlZCBiaXQsIGNhbGN1bGF0ZXMgdGhlIGFjdHVhbCB0aWNrIGFuZCBmZXRjaGVzIGl0cyBkYXRhCjQuIFJldHVybnMgcmVzdWx0cyBpbiByZXZlcnNlIG9yZGVyIChtYXRjaGluZyBTb2xpZGl0eSdzIGJlaGF2aW9yKQAAAAAAG2dldF9wb3B1bGF0ZWRfdGlja3NfaW5fd29yZAAAAAACAAAAAAAAAARwb29sAAAAEwAAAAAAAAARdGlja19iaXRtYXBfaW5kZXgAAAAAAAAFAAAAAQAAA+oAAAfQAAAADVBvcHVsYXRlZFRpY2sAAAA=",
+        "AAAAAAAABABHZXRzIGFsbCBwb3B1bGF0ZWQgdGlja3MgYWNyb3NzIGEgcmFuZ2Ugb2YgYml0bWFwIHdvcmRzLgoKVGhpcyBmdW5jdGlvbiBiYXRjaGVzIG11bHRpcGxlIGJpdG1hcCB3b3JkIHF1ZXJpZXMgaW50byBhIHNpbmdsZSBjYWxsLApyZWR1Y2luZyBjcm9zcy1jb250cmFjdCBjYWxsIG92ZXJoZWFkIGZvciBvcGVyYXRpb25zIGxpa2UgbGlxdWlkaXR5IGNoYXJ0cy4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgU29yb2JhbiBlbnZpcm9ubWVudAoqIGBwb29sYCAtIFRoZSBhZGRyZXNzIG9mIHRoZSBwb29sIGNvbnRyYWN0CiogYHN0YXJ0X3dvcmRgIC0gVGhlIGZpcnN0IGJpdG1hcCB3b3JkIGluZGV4IChjYW4gYmUgbmVnYXRpdmUpCiogYGNvdW50YCAtIE51bWJlciBvZiBjb25zZWN1dGl2ZSB3b3JkcyB0byBzY2FuIChjYXBwZWQgYXQgTUFYX1JBTkdFX0NPVU5UKQoKIyBSZXR1cm5zCkEgYFBvcHVsYXRlZFRpY2tzUmVzdWx0YCBjb250YWluaW5nOgotIGB0aWNrc2A6IFZlY3RvciBvZiBQb3B1bGF0ZWRUaWNrIHN0cnVjdHMgaW4gKiphc2NlbmRpbmcgb3JkZXIqKiBieSB0aWNrIGluZGV4Ci0gYHRydW5jYXRlZGA6IFRydWUgaWYgcmVzdWx0cyBhcmUgaW5jb21wbGV0ZSBmb3IgYW55IHJlYXNvbgoKIyBPcmRlcmluZwpOT1RFOiBUaGlzIGZ1bmN0aW9uIHJldHVybnMgdGlja3MgaW4gQVNDRU5ESU5HIG9yZGVyIChsb3dlc3QgdGljayBmaXJzdCksCndoaWNoIGRpZmZlcnMgZnJvbSBgZ2V0X3BvcHVsYXRlZF90aWNrc19pbl93b3JkYCB0aGF0IHJldHVybnMgUkVWRVJTRSBvcmRlcgoobWF0Y2hpbmcgVW5pc3dhcCBWMyBTb2xpZGl0eSBiZWhhdmlvcikuCgojIExpbWl0cyAmIFRydW5jYXRpb24KVGhlIGB0cnVuY2F0ZWRgIGZsYWcgaXMgc2V0IHRvIHRydWUgaWY6Ci0gYGNvdW50YCBleGNlZWRlZCBNQVhfUkFOR0VfQ09VTlQgKDI1NiB3b3JkcykKLSBgc3RhcnRfd29yZGAgd2FzIG5lYXIgaTMyOjpNQVggY2F1c2luZyByYW5nZSByZWR1Y3Rpb24KLSBNb3JlIHRoYW4gTUFYX1RJQ0tTX0JBVENIICgyAAAAHGdldF9wb3B1bGF0ZWRfdGlja3NfaW5fcmFuZ2UAAAADAAAAAAAAAARwb29sAAAAEwAAAAAAAAAKc3RhcnRfd29yZAAAAAAABQAAAAAAAAAFY291bnQAAAAAAAAEAAAAAQAAB9AAAAAUUG9wdWxhdGVkVGlja3NSZXN1bHQ=",
         "AAAABAAAACdFcnJvciBjb2RlcyBmb3IgdGhlIHBlcmlwaGVyeSBsaWJyYXJpZXMAAAAAAAAAAAVFcnJvcgAAAAAAAAQAAAA+SGV4IHN0cmluZyBsZW5ndGggaXMgaW5zdWZmaWNpZW50IGZvciB0aGUgcmVxdWVzdGVkIGNvbnZlcnNpb24AAAAAABVIZXhMZW5ndGhJbnN1ZmZpY2llbnQAAAAAAAfRAAAAMW11bF9kaXYgb3BlcmF0aW9uIGZhaWxlZCBpbiBsaXF1aWRpdHkgY2FsY3VsYXRpb24AAAAAAAAMTXVsRGl2RmFpbGVkAAAH0gAAACZJbnZhbGlkIHByaWNlIHJhbmdlIChkaXZpc2lvbiBieSB6ZXJvKQAAAAAAEUludmFsaWRQcmljZVJhbmdlAAAAAAAH0wAAAClVMjU2IHRvIHUxMjggY29udmVyc2lvbiBmYWlsZWQgKG92ZXJmbG93KQAAAAAAABpVMjU2VG9VMTI4Q29udmVyc2lvbkZhaWxlZAAAAAAH1A==",
         "AAAAAQAAAFdQYXJhbWV0ZXJzIHJlcXVpcmVkIHRvIGNvbnN0cnVjdCBhIHRva2VuIFVSSSAoc2VlIG9yaWdpbmFsIFNvbGlkaXR5IGNvZGUgZm9yIHNlbWFudGljcykAAAAAAAAAABdDb25zdHJ1Y3RUb2tlblVSSVBhcmFtcwAAAAAOAAAAAAAAABJiYXNlX3Rva2VuX2FkZHJlc3MAAAAAABMAAAAAAAAAE2Jhc2VfdG9rZW5fZGVjaW1hbHMAAAAABAAAAAAAAAARYmFzZV90b2tlbl9zeW1ib2wAAAAAAAAQAAAAAAAAAANmZWUAAAAABAAAAAAAAAAKZmxpcF9yYXRpbwAAAAAAAQAAAAAAAAAMcG9vbF9hZGRyZXNzAAAAEwAAAAAAAAATcXVvdGVfdG9rZW5fYWRkcmVzcwAAAAATAAAAAAAAABRxdW90ZV90b2tlbl9kZWNpbWFscwAAAAQAAAAAAAAAEnF1b3RlX3Rva2VuX3N5bWJvbAAAAAAAEAAAAAAAAAAMdGlja19jdXJyZW50AAAABQAAAAAAAAAKdGlja19sb3dlcgAAAAAABQAAAAAAAAAMdGlja19zcGFjaW5nAAAABQAAAAAAAAAKdGlja191cHBlcgAAAAAABQAAAAAAAAAIdG9rZW5faWQAAAAG",
         "AAAAAQAAAEJEYXRhIHN0cnVjdHVyZSBmb3Igd2VpZ2h0ZWQgdGljayBhZ2dyZWdhdGlvbiBhY3Jvc3MgbXVsdGlwbGUgcG9vbHMAAAAAAAAAAAAQV2VpZ2h0ZWRUaWNrRGF0YQAAAAIAAAAWVGljayB2YWx1ZSBmcm9tIGEgcG9vbAAAAAAABHRpY2sAAAAFAAAANFdlaWdodCBmb3IgdGhpcyB0aWNrICh0eXBpY2FsbHkgbGlxdWlkaXR5IG9yIHZvbHVtZSkAAAAGd2VpZ2h0AAAAAAAK",
@@ -999,6 +1059,7 @@ export class Client extends ContractClient {
         quote_exact_output_v2: this.txFromJSON<Result<QuoteResult>>,
         quote_exact_input_single_v2: this.txFromJSON<Result<QuoteSingleResult>>,
         quote_exact_output_single_v2: this.txFromJSON<Result<QuoteSingleResult>>,
-        get_populated_ticks_in_word: this.txFromJSON<Array<PopulatedTick>>
+        get_populated_ticks_in_word: this.txFromJSON<Array<PopulatedTick>>,
+        get_populated_ticks_in_range: this.txFromJSON<PopulatedTicksResult>
   }
 }

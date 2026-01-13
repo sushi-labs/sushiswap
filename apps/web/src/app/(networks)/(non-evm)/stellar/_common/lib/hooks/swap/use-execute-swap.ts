@@ -225,6 +225,9 @@ export const useExecuteMultiHopSwap = () => {
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'position-principals-batch'],
       })
+      queryClient.invalidateQueries({
+        queryKey: ['stellar', 'pool', 'ticks'],
+      })
     },
     onError: (error, _variables, context) => {
       // Dismiss the "in progress" info toast

@@ -39,6 +39,7 @@ import { TickRangeSelector } from '../TickRangeSelector/TickRangeSelector.tsx'
 import { CreateTrustlineButton } from '../Trustline/CreateTrustlineButton'
 import { CurrencyInput } from '../currency/currency-input/currency-input'
 import TokenSelector from '../token-selector/token-selector'
+import { LiquidityDepthWidget } from './LiquidityDepthWidget'
 
 interface ManageLiquidityCardProps {
   pool: PoolInfo
@@ -342,6 +343,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
         amount1Min: 0n,
         token0: pool.token0,
         token1: pool.token1,
+        poolAddress: pool.address,
       })
 
       // Reset form
@@ -612,6 +614,8 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                         token0={pool.token0}
                         token1={pool.token1}
                       />
+
+                      <LiquidityDepthWidget pool={pool} />
 
                       {/* Submit Button */}
                       <Button

@@ -37,7 +37,7 @@ if (typeof window !== 'undefined') {
 export const networks = {
   futurenet: {
     networkPassphrase: "Test SDF Future Network ; October 2022",
-    contractId: "CBRTHEKJFVCVGJWO3FJVHHXXNOFYHORYO6X3HX2DXTIRBPGJG4OXSSAV",
+    contractId: "CBBBZ645BZZ2HG4FHEZCEXVVUPYDEQIFH7IGMJZDT6TNNKPV4Z25MQE6",
   }
 } as const
 
@@ -1583,6 +1583,70 @@ export interface Client {
   }) => Promise<AssembledTransaction<u256>>
 
   /**
+   * Construct and simulate a get_tick_bitmap_range_public transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Returns a range of tick bitmap words for external callers.
+   * 
+   * Retrieves multiple consecutive 256-bit bitmaps in a single call, reducing
+   * cross-contract call overhead for operations that need to scan multiple words
+   * (e.g., liquidity density charts, tick scanning).
+   * 
+   * # Arguments
+   * * `env` - The contract environment
+   * * `start_word` - The first bitmap word position (can be negative)
+   * * `count` - Number of consecutive words to fetch
+   * 
+   * # Returns
+   * Vector of bitmap words in ascending order [start_word, start_word+1, ...]
+   */
+  get_tick_bitmap_range_public: ({start_word, count}: {start_word: i32, count: u32}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<Array<u256>>>
+
+  /**
+   * Construct and simulate a get_ticks_batch transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Returns tick information for multiple ticks in a single call.
+   * 
+   * Batch fetches tick data for the specified tick indices. Returns default
+   * uninitialized TickInfo for ticks that don't exist (same behavior as `ticks()`).
+   * 
+   * # Arguments
+   * * `env` - The contract environment
+   * * `tick_indices` - Vector of tick indices to query
+   * 
+   * # Returns
+   * Vector of TickInfo in the same order as input indices
+   */
+  get_ticks_batch: ({tick_indices}: {tick_indices: Array<i32>}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<Array<TickInfo>>>
+
+  /**
    * Construct and simulate a quote_exact_input transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Quotes an exact input swap without executing it.
    * 
@@ -1776,6 +1840,8 @@ export class Client extends ContractClient {
         "AAAAAAAAAf9HZXQgb3JhY2xlIHN0YXR1cyBmb3IgVUkgZGVjaXNpb25zLgoKUmV0dXJucyBpbmZvcm1hdGlvbiBhYm91dCB0aGUgb3JhY2xlJ3MgY3VycmVudCBzdGF0ZSB0byBoZWxwIHRoZSBmcm9udGVuZApkZWNpZGUgd2hlbiB0byBzaG93L2VuYWJsZSB0aGUgIlJlZnJlc2ggcHJpY2UiIGJ1dHRvbi4KCiMgUmV0dXJucwpBIHR1cGxlIGAobGFzdF90aW1lc3RhbXAsIGFnZV9zZWNvbmRzLCBjYW5fcG9rZSlgIHdoZXJlOgotIGBsYXN0X3RpbWVzdGFtcGA6IFVuaXggdGltZXN0YW1wIG9mIHRoZSBtb3N0IHJlY2VudCBvYnNlcnZhdGlvbgotIGBhZ2Vfc2Vjb25kc2A6IEhvdyBtYW55IHNlY29uZHMgaGF2ZSBlbGFwc2VkIHNpbmNlIHRoZSBsYXN0IG9ic2VydmF0aW9uCi0gYGNhbl9wb2tlYDogV2hldGhlciBjYWxsaW5nIGBwb2tlX29yYWNsZWAgd291bGQgdXBkYXRlIHRoZSBvcmFjbGUKKHJlc3BlY3RzIE1JTl9PQlNFUlZBVElPTl9JTlRFUlZBTCAtIGF0IGxlYXN0IDEgbGVkZ2VyIOKJiCA1IHNlY29uZHMpAAAAABFnZXRfb3JhY2xlX3N0YXR1cwAAAAAAAAAAAAABAAAD6QAAA+0AAAADAAAABgAAAAYAAAABAAAAAw==",
         "AAAAAAAAAtxNaW50cyBsaXF1aWRpdHkgdG8gYSBwb3NpdGlvbi4KCkNyZWF0ZXMgb3IgYWRkcyB0byBhIGxpcXVpZGl0eSBwb3NpdGlvbiBpbiB0aGUgc3BlY2lmaWVkIHRpY2sgcmFuZ2UuClRyYW5zZmVycyB0aGUgcmVxdWlyZWQgYW1vdW50cyBvZiBib3RoIHRva2VucyBmcm9tIHRoZSBzZW5kZXIuCgojIEFyZ3VtZW50cwoqIGBlbnZgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CiogYHNlbmRlcmAgLSBBZGRyZXNzIGluaXRpYXRpbmcgdGhlIG1pbnQgYW5kIHByb3ZpZGluZyB0b2tlbnMgKHJlcXVpcmVzIGF1dGgpCiogYHJlY2lwaWVudGAgLSBBZGRyZXNzIHJlY2VpdmluZyB0aGUgbGlxdWlkaXR5IHBvc2l0aW9uIChwb3NpdGlvbiBvd25lcikKKiBgdGlja19sb3dlcmAgLSBMb3dlciB0aWNrIG9mIHRoZSBwb3NpdGlvbiByYW5nZQoqIGB0aWNrX3VwcGVyYCAtIFVwcGVyIHRpY2sgb2YgdGhlIHBvc2l0aW9uIHJhbmdlCiogYGFtb3VudGAgLSBBbW91bnQgb2YgbGlxdWlkaXR5IHRvIG1pbnQKCiMgUmV0dXJucwoqIGBPaygoYW1vdW50MCwgYW1vdW50MSkpYCAtIEFtb3VudHMgb2YgdG9rZW5zIGRlcG9zaXRlZAoqIGBFcnIoQW1vdW50U2hvdWxkQmVHcmVhdGVyVGhhblplcm8pYCBpZiBhbW91bnQgaXMgemVybwoqIGBFcnIoTG9ja2VkKWAgaWYgcG9vbCBpcyBjdXJyZW50bHkgbG9ja2VkCiogYEVycihJbnN1ZmZpY2llbnRUb2tlbjAvVG9rZW4xKWAgaWYgdG9rZW4gdHJhbnNmZXIgZmFpbHMAAAAEbWludAAAAAYAAAAAAAAABnNlbmRlcgAAAAAAEwAAAAAAAAAJcmVjaXBpZW50AAAAAAAAEwAAAAAAAAAKdGlja19sb3dlcgAAAAAABQAAAAAAAAAKdGlja191cHBlcgAAAAAABQAAAAAAAAAGYW1vdW50AAAAAAAKAAAAAAAAAAVoaW50cwAAAAAAB9AAAAALT3JhY2xlSGludHMAAAAAAQAAA+kAAAPtAAAAAgAAAAoAAAAKAAAAAw==",
         "AAAAAAAAANJSZXR1cm5zIGEgdGljayBiaXRtYXAgd29yZCAocHVibGljIHZhcmlhbnQpLgoKIyBBcmd1bWVudHMKKiBgZW52YCAtIFRoZSBjb250cmFjdCBlbnZpcm9ubWVudAoqIGB3b3JkX3Bvc2AgLSBUaGUgd29yZCBwb3NpdGlvbiBpbiB0aGUgYml0bWFwCgojIFJldHVybnMKMjU2LWJpdCB3b3JkIGZyb20gdGhlIHRpY2sgYml0bWFwLCBvciB6ZXJvIGlmIHVuaW5pdGlhbGl6ZWQAAAAAABZnZXRfdGlja19iaXRtYXBfcHVibGljAAAAAAABAAAAAAAAAAh3b3JkX3BvcwAAAAUAAAABAAAADA==",
+        "AAAAAAAAAftSZXR1cm5zIGEgcmFuZ2Ugb2YgdGljayBiaXRtYXAgd29yZHMgZm9yIGV4dGVybmFsIGNhbGxlcnMuCgpSZXRyaWV2ZXMgbXVsdGlwbGUgY29uc2VjdXRpdmUgMjU2LWJpdCBiaXRtYXBzIGluIGEgc2luZ2xlIGNhbGwsIHJlZHVjaW5nCmNyb3NzLWNvbnRyYWN0IGNhbGwgb3ZlcmhlYWQgZm9yIG9wZXJhdGlvbnMgdGhhdCBuZWVkIHRvIHNjYW4gbXVsdGlwbGUgd29yZHMKKGUuZy4sIGxpcXVpZGl0eSBkZW5zaXR5IGNoYXJ0cywgdGljayBzY2FubmluZykuCgojIEFyZ3VtZW50cwoqIGBlbnZgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CiogYHN0YXJ0X3dvcmRgIC0gVGhlIGZpcnN0IGJpdG1hcCB3b3JkIHBvc2l0aW9uIChjYW4gYmUgbmVnYXRpdmUpCiogYGNvdW50YCAtIE51bWJlciBvZiBjb25zZWN1dGl2ZSB3b3JkcyB0byBmZXRjaAoKIyBSZXR1cm5zClZlY3RvciBvZiBiaXRtYXAgd29yZHMgaW4gYXNjZW5kaW5nIG9yZGVyIFtzdGFydF93b3JkLCBzdGFydF93b3JkKzEsIC4uLl0AAAAAHGdldF90aWNrX2JpdG1hcF9yYW5nZV9wdWJsaWMAAAACAAAAAAAAAApzdGFydF93b3JkAAAAAAAFAAAAAAAAAAVjb3VudAAAAAAAAAQAAAABAAAD6gAAAAw=",
+        "AAAAAAAAAXpSZXR1cm5zIHRpY2sgaW5mb3JtYXRpb24gZm9yIG11bHRpcGxlIHRpY2tzIGluIGEgc2luZ2xlIGNhbGwuCgpCYXRjaCBmZXRjaGVzIHRpY2sgZGF0YSBmb3IgdGhlIHNwZWNpZmllZCB0aWNrIGluZGljZXMuIFJldHVybnMgZGVmYXVsdAp1bmluaXRpYWxpemVkIFRpY2tJbmZvIGZvciB0aWNrcyB0aGF0IGRvbid0IGV4aXN0IChzYW1lIGJlaGF2aW9yIGFzIGB0aWNrcygpYCkuCgojIEFyZ3VtZW50cwoqIGBlbnZgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CiogYHRpY2tfaW5kaWNlc2AgLSBWZWN0b3Igb2YgdGljayBpbmRpY2VzIHRvIHF1ZXJ5CgojIFJldHVybnMKVmVjdG9yIG9mIFRpY2tJbmZvIGluIHRoZSBzYW1lIG9yZGVyIGFzIGlucHV0IGluZGljZXMAAAAAAA9nZXRfdGlja3NfYmF0Y2gAAAAAAQAAAAAAAAAMdGlja19pbmRpY2VzAAAD6gAAAAUAAAABAAAD6gAAB9AAAAAIVGlja0luZm8=",
         "AAAAAAAAAglRdW90ZXMgYW4gZXhhY3QgaW5wdXQgc3dhcCB3aXRob3V0IGV4ZWN1dGluZyBpdC4KClNpbXVsYXRlcyBhIHN3YXAgdG8gZGV0ZXJtaW5lIG91dHB1dCBhbW91bnQgYW5kIGZpbmFsIHByaWNlIHdpdGhvdXQKdHJhbnNmZXJyaW5nIHRva2VucyBvciBtb2RpZnlpbmcgc3RhdGUuCgojIEFyZ3VtZW50cwoqIGBlbnZgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CiogYHplcm9fZm9yX29uZWAgLSBUcnVlIGlmIHN3YXBwaW5nIHRva2VuMCBmb3IgdG9rZW4xLCBmYWxzZSBvdGhlcndpc2UKKiBgYW1vdW50X2luYCAtIEV4YWN0IGFtb3VudCBvZiBpbnB1dCB0b2tlbnMKKiBgc3FydF9wcmljZV9saW1pdF94OTZgIC0gUHJpY2UgbGltaXQgZm9yIHRoZSBzd2FwIGluIFE2NC45NiBmb3JtYXQKCiMgUmV0dXJucwoqIGBPayhTd2FwUmVzdWx0KWAgY29udGFpbmluZyBvdXRwdXQgYW1vdW50IGFuZCBmaW5hbCBzcXJ0IHByaWNlCiogYEVycmAgaWYgc3dhcCB3b3VsZCBmYWlsIChpbnZhbGlkIHByaWNlIGxpbWl0LCBldGMuKQAAAAAAABFxdW90ZV9leGFjdF9pbnB1dAAAAAAAAAMAAAAAAAAADHplcm9fZm9yX29uZQAAAAEAAAAAAAAACWFtb3VudF9pbgAAAAAAAAsAAAAAAAAAFHNxcnRfcHJpY2VfbGltaXRfeDk2AAAADAAAAAEAAAPpAAAH0AAAAApTd2FwUmVzdWx0AAAAAAAD",
         "AAAAAAAAAjtRdW90ZXMgYW4gZXhhY3Qgb3V0cHV0IHN3YXAgd2l0aG91dCBleGVjdXRpbmcgaXQuCgpTaW11bGF0ZXMgYSBzd2FwIHRvIGRldGVybWluZSBpbnB1dCBhbW91bnQgcmVxdWlyZWQgZm9yIGEgZGVzaXJlZCBvdXRwdXQKd2l0aG91dCB0cmFuc2ZlcnJpbmcgdG9rZW5zIG9yIG1vZGlmeWluZyBzdGF0ZS4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgY29udHJhY3QgZW52aXJvbm1lbnQKKiBgemVyb19mb3Jfb25lYCAtIFRydWUgaWYgc3dhcHBpbmcgdG9rZW4wIGZvciB0b2tlbjEsIGZhbHNlIG90aGVyd2lzZQoqIGBhbW91bnRfb3V0YCAtIEV4YWN0IGFtb3VudCBvZiBvdXRwdXQgdG9rZW5zIGRlc2lyZWQKKiBgc3FydF9wcmljZV9saW1pdF94OTZgIC0gUHJpY2UgbGltaXQgZm9yIHRoZSBzd2FwIGluIFE2NC45NiBmb3JtYXQKCiMgUmV0dXJucwoqIGBPayhTd2FwUmVzdWx0KWAgY29udGFpbmluZyByZXF1aXJlZCBpbnB1dCBhbW91bnQgYW5kIGZpbmFsIHNxcnQgcHJpY2UKKiBgRXJyYCBpZiBzd2FwIHdvdWxkIGZhaWwgKGludmFsaWQgcHJpY2UgbGltaXQsIGluc3VmZmljaWVudCBsaXF1aWRpdHkpAAAAABJxdW90ZV9leGFjdF9vdXRwdXQAAAAAAAMAAAAAAAAADHplcm9fZm9yX29uZQAAAAEAAAAAAAAACmFtb3VudF9vdXQAAAAAAAsAAAAAAAAAFHNxcnRfcHJpY2VfbGltaXRfeDk2AAAADAAAAAEAAAPpAAAH0AAAAApTd2FwUmVzdWx0AAAAAAAD",
         "AAAAAAAAAXFSZXR1cm5zIHBvc2l0aW9uIGRhdGEgZm9yIGEgc3BlY2lmaWMgb3duZXIgYW5kIHRpY2sgcmFuZ2UuCgojIEFyZ3VtZW50cwoqIGBlbnZgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CiogYHJlY2lwaWVudGAgLSBBZGRyZXNzIG9mIHRoZSBwb3NpdGlvbiBvd25lcgoqIGB0aWNrX2xvd2VyYCAtIExvd2VyIHRpY2sgb2YgdGhlIHBvc2l0aW9uIHJhbmdlCiogYHRpY2tfdXBwZXJgIC0gVXBwZXIgdGljayBvZiB0aGUgcG9zaXRpb24gcmFuZ2UKCiMgUmV0dXJucwpQb3NpdGlvbkRhdGEgY29udGFpbmluZyBsaXF1aWRpdHksIGZlZSBncm93dGgsIGFuZCB0b2tlbnMgb3dlZAoKIyBQYW5pY3MKUGFuaWNzIGlmIHBvc2l0aW9uIGRvZXNuJ3QgZXhpc3QAAAAAAAAJcG9zaXRpb25zAAAAAAAAAwAAAAAAAAAJcmVjaXBpZW50AAAAAAAAEwAAAAAAAAAKdGlja19sb3dlcgAAAAAABQAAAAAAAAAKdGlja191cHBlcgAAAAAABQAAAAEAAAfQAAAADFBvc2l0aW9uRGF0YQ==",
@@ -1826,6 +1892,8 @@ export class Client extends ContractClient {
         get_oracle_status: this.txFromJSON<Result<readonly [u64, u64, boolean]>>,
         mint: this.txFromJSON<Result<readonly [u128, u128]>>,
         get_tick_bitmap_public: this.txFromJSON<u256>,
+        get_tick_bitmap_range_public: this.txFromJSON<Array<u256>>,
+        get_ticks_batch: this.txFromJSON<Array<TickInfo>>,
         quote_exact_input: this.txFromJSON<Result<SwapResult>>,
         quote_exact_output: this.txFromJSON<Result<SwapResult>>,
         positions: this.txFromJSON<PositionData>

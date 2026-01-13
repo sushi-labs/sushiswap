@@ -23,6 +23,7 @@ export interface RemovePoolLiquidityParams {
   amount1Min: bigint
   token0: Token
   token1: Token
+  poolAddress: string
 }
 
 export const useRemoveLiquidity = () => {
@@ -103,6 +104,9 @@ export const useRemoveLiquidity = () => {
       })
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'position-principal', variables.tokenId],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['stellar', 'pool', 'ticks', variables.poolAddress],
       })
     },
   })

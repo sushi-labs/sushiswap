@@ -53,7 +53,7 @@ if (typeof window !== 'undefined') {
 export const networks = {
   futurenet: {
     networkPassphrase: "Test SDF Future Network ; October 2022",
-    contractId: "CAKHXRS4XKKMANXKW2OK2IIG6QQB5PO4BOLKLRIUI5R74QK72R3Q47PW",
+    contractId: "CDNIBFERSPZC7W5TBN3IPDWB5KCPYD73HCUCKNQAJTWCBCHVF5WSZZJS",
   }
 } as const
 

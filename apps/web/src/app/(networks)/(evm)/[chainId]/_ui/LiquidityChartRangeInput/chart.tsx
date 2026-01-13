@@ -40,24 +40,27 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
   )
 
   const { xScale, yScale } = useMemo(() => {
-    const scales = {
-      xScale: scaleLinear()
-        .domain([
-          current * zoomLevels.initialMin,
-          current * zoomLevels.initialMax,
-        ] as number[])
-        .range([0, innerWidth]),
-      yScale: scaleLinear()
-        .domain([0, max(series, yAccessor)] as number[])
-        .range([innerHeight, 0]),
-    }
+    // Compute x-scale domain
+    const xScale = scaleLinear()
+      .domain([
+        current * zoomLevels.initialMin,
+        current * zoomLevels.initialMax,
+      ] as number[])
+      .range([0, innerWidth])
 
+    // Apply zoom if present
     if (zoom) {
-      const newXscale = zoom.rescaleX(scales.xScale)
-      scales.xScale.domain(newXscale.domain())
+      const newXscale = zoom.rescaleX(xScale)
+      xScale.domain(newXscale.domain())
     }
 
-    return scales
+    // Use global max for y-scale (not just visible data)
+    // This keeps the scale consistent and avoids disorientation when panning
+    const yScale = scaleLinear()
+      .domain([0, max(series, yAccessor)] as number[])
+      .range([innerHeight, 0])
+
+    return { xScale, yScale }
   }, [
     current,
     zoomLevels.initialMin,

@@ -109,6 +109,10 @@ export const useAddLiquidity = () => {
         queryKey: ['stellar', 'position-principals-batch'],
       })
 
+      queryClient.invalidateQueries({
+        queryKey: ['stellar', 'pool', 'ticks', variables.poolAddress],
+      })
+
       if (result.tokenId) {
         queryClient.invalidateQueries({
           queryKey: ['stellar', 'positions', 'token', result.tokenId],
