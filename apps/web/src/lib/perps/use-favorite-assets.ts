@@ -1,5 +1,5 @@
 import { useLocalStorage } from '@sushiswap/hooks'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 
 export const useFavoriteAssets = () => {
   const [favorites, setFavorites] = useLocalStorage<string[]>(
@@ -27,5 +27,7 @@ export const useFavoriteAssets = () => {
     [favorites],
   )
 
-  return { favorites, handleFavorite, hasFavorited }
+  const favoriteSet = useMemo(() => new Set(favorites), [favorites])
+
+  return { favorites, favoriteSet, handleFavorite, hasFavorited }
 }

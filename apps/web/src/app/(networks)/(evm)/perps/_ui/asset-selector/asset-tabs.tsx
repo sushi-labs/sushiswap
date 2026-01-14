@@ -1,10 +1,11 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { AllAssets } from './all-assets'
+import { FavoriteAssets } from './favorite-assets'
 import { HIP3Assets } from './hip-3-assets'
 import { SpotAssets } from './spot-assets'
 
-const TABS = ['all', 'perps', 'spot', 'HIP-3'] as const
+const TABS = ['all', 'perps', 'spot', 'HIP-3', 'favorites'] as const
 type TabType = (typeof TABS)[number]
 
 export const AssetTabs = () => {
@@ -43,6 +44,9 @@ export const AssetTabs = () => {
         </TabsContent>
         <TabsContent value="HIP-3">
           <HIP3Assets />
+        </TabsContent>
+        <TabsContent value="favorites">
+          <FavoriteAssets />
         </TabsContent>
       </div>
     </Tabs>

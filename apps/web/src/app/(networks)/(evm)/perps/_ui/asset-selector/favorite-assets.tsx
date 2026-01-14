@@ -2,6 +2,7 @@ import { DataTable, Slot } from '@sushiswap/ui'
 import type { Row, SortingState, TableState } from '@tanstack/react-table'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import type { PerpOrSpotAsset } from 'src/lib/perps/use-asset-list'
+import { useFavoriteAssets } from 'src/lib/perps/use-favorite-assets'
 import { useAssetListState } from '../asset-list-provider'
 import { useAssetState } from '../perp-state-provider'
 import { useAssetSelectorState } from './asset-selector-provider'
@@ -23,11 +24,7 @@ const COLUMNS = [
   OPEN_INTEREST_COLUMN,
 ]
 
-export const AllAssets = ({
-  filter,
-}: {
-  filter?: 'perps-only'
-}) => {
+export const FavoriteAssets = () => {
   const {
     state: {
       assetListQuery: { data, isLoading },
@@ -45,15 +42,13 @@ export const AllAssets = ({
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'volume24hUsd', desc: true },
   ])
+  const { favoriteSet } = useFavoriteAssets()
 
   const filtered = useMemo(() => {
     if (!data) return []
-    const baseData =
-      filter === 'perps-only'
-        ? Array.from(data.values()).filter(
-            (asset) => asset.marketType === 'perp',
-          )
-        : Array.from(data.values())
+    const baseData = Array.from(data.values()).filter((asset) =>
+      favoriteSet.has(asset.name),
+    )
     return baseData.filter((asset) => {
       if (search) {
         return (
@@ -63,7 +58,7 @@ export const AllAssets = ({
       }
       return true
     })
-  }, [data, search, filter])
+  }, [data, search, favoriteSet])
 
   const state: Partial<TableState> = useMemo(() => {
     return {
