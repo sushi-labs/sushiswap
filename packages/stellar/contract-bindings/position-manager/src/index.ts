@@ -28,7 +28,21 @@ export * as rpc from '@stellar/stellar-sdk/rpc'
 // Type aliases for missing contract-specific types
 export type SqrtPriceX96 = u256;
 export type CountryCode = string;
-export type PositionTuple = readonly [u64, string, string, string, u32, i32, i32, u128, FixedPoint128, FixedPoint128, u128, u128];
+
+// PositionTuple is the return type of positions() - matches UserPositionInfo structure
+export interface PositionTuple {
+  nonce: u64;
+  token0: string;
+  token1: string;
+  fee: u32;
+  tickLower: i32;
+  tickUpper: i32;
+  liquidity: u128;
+  feeGrowthInside0LastX128: u256;
+  feeGrowthInside1LastX128: u256;
+  tokensOwed0: u128;
+  tokensOwed1: u128;
+}
 
 if (typeof window !== 'undefined') {
   //@ts-ignore Buffer exists
