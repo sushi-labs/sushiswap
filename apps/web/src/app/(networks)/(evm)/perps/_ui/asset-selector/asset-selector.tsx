@@ -45,7 +45,12 @@ export const AssetSelector = () => {
             <div className="whitespace-nowrap flex flex-col lg:flex-row lg:items-center gap-1">
               <div className="flex items-center gap-1">
                 {/* todo: get token icon */}
-                <UnknownTokenIcon className="w-6 h-6" />
+                {/* <UnknownTokenIcon className="w-6 h-6" /> */}
+                <img
+                  src={`https://app.hyperliquid.xyz/coins/${asset?.marketType === 'spot' ? asset?.symbol?.split('/')?.[0] : asset?.name}${asset?.marketType === 'spot' ? '_spot' : ''}.svg`}
+                  alt={asset?.symbol}
+                  className="w-6 h-6 rounded-full"
+                />
                 <span className="text-lg font-medium">{asset?.symbol}</span>
                 <ChevronDownIcon
                   className="block lg:hidden"
