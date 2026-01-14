@@ -1,6 +1,7 @@
 import type { Connector, CreateConnectorFn } from 'wagmi'
-import type { Wallet, WalletConnectorConfig } from '../../types'
+import type { Wallet } from '../../types'
 import {
+  getCoinbaseWalletConnector,
   getInjectedConnector,
   getMetaMaskConnector,
   getPortoConnector,
@@ -8,13 +9,16 @@ import {
   getWalletConnectConnector,
 } from './adapters'
 
-export enum EvmAdapterId {
-  Injected = 'evm-injected',
-  MetaMask = 'evm-metamask',
-  Porto = 'evm-porto',
-  Safe = 'evm-safe',
-  WalletConnect = 'evm-walletconnect',
+export const EvmAdapterId = {
+  Injected: 'evm-injected',
+  MetaMask: 'evm-metamask',
+  Porto: 'evm-porto',
+  Safe: 'evm-safe',
+  WalletConnect: 'evm-walletconnect',
+  CoinbaseWallet: 'evm-coinbasewallet',
 }
+
+export type EvmAdapterId = (typeof EvmAdapterId)[keyof typeof EvmAdapterId]
 
 export const EVM_WALLETS: Wallet[] = [
   {
@@ -62,6 +66,15 @@ export const EVM_WALLETS: Wallet[] = [
     name: 'WalletConnect',
     icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHZpZXdCb3g9IjAgMCAyOCAyOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBmaWxsPSIjM2I5OWZjIiBkPSJNMCAwaDI4djI4SDB6Ii8+PHBhdGggZD0iTTguMzkgMTAuMzc0YTcuOTM0IDcuOTM0IDAgMCAxIDExLjIyIDBsLjM3My4zNzNhLjM5Ny4zOTcgMCAwIDEgMCAuNTZsLTEuMjc1IDEuMjc3YS4yLjIgMCAwIDEtLjI4IDBsLS41MTQtLjUxNGE1LjUzNSA1LjUzNSAwIDAgMC03LjgyOCAwbC0uNTUuNTVhLjIuMiAwIDAgMS0uMjggMEw3Ljk4IDExLjM0NGEuMzk3LjM5NyAwIDAgMSAwLS41NnptMTMuODU5IDIuNjM4IDEuMTM1IDEuMTM1YS4zOTcuMzk3IDAgMCAxIDAgLjU2MWwtNS4xMiA1LjEyYS4zOTcuMzk3IDAgMCAxLS41NiAwbC0zLjYzNC0zLjYzNGEuMS4xIDAgMCAwLS4xNCAwbC0zLjYzMyAzLjYzNGEuMzk3LjM5NyAwIDAgMS0uNTYxIDBsLTUuMTItNS4xMmEuMzk3LjM5NyAwIDAgMSAwLS41NmwxLjEzNi0xLjEzNmEuMzk3LjM5NyAwIDAgMSAuNTYgMGwzLjYzNCAzLjYzM2EuMS4xIDAgMCAwIC4xNCAwbDMuNjMzLTMuNjMzYS4zOTcuMzk3IDAgMCAxIC41NjIgMGwzLjYzMyAzLjYzM2EuMS4xIDAgMCAwIC4xNCAwbDMuNjMzLTMuNjMzYS4zOTcuMzk3IDAgMCAxIC41NjEgMCIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==',
     adapterId: EvmAdapterId.WalletConnect,
+    url: 'https://walletconnect.com',
+  },
+  {
+    id: 'evm:coinbasewalletsdk',
+    namespace: 'evm',
+    name: 'Coinbase Wallet',
+    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHZpZXdCb3g9IjAgMCAyOCAyOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBmaWxsPSIjMmM1ZmY2IiBkPSJNMCAwaDI4djI4SDB6Ii8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNCAyMy44YzUuNDEyIDAgOS44LTQuMzg4IDkuOC05LjhTMTkuNDEyIDQuMiAxNCA0LjIgNC4yIDguNTg4IDQuMiAxNHM0LjM4OCA5LjggOS44IDkuOG0tMi40NS0xM2EuNzUuNzUgMCAwIDAtLjc1Ljc1djQuOWMwIC40MTQuMzM2Ljc1Ljc1Ljc1aDQuOWEuNzUuNzUgMCAwIDAgLjc1LS43NXYtNC45YS43NS43NSAwIDAgMC0uNzUtLjc1eiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==',
+    adapterId: EvmAdapterId.CoinbaseWallet,
+    url: 'https://wallet.coinbase.com',
   },
 ]
 
@@ -69,9 +82,10 @@ export const EvmAdapterConfig: Record<
   EvmAdapterId,
   (ctx?: { uid: string | undefined }) => Promise<Connector | CreateConnectorFn>
 > = {
-  ['evm-injected']: (ctx) => getInjectedConnector(ctx),
-  ['evm-metamask']: () => getMetaMaskConnector(),
-  ['evm-porto']: () => getPortoConnector(),
-  ['evm-safe']: () => getSafeConnector(),
-  ['evm-walletconnect']: () => getWalletConnectConnector(),
+  [EvmAdapterId.Injected]: (ctx) => getInjectedConnector(ctx),
+  [EvmAdapterId.MetaMask]: () => getMetaMaskConnector(),
+  [EvmAdapterId.Porto]: () => getPortoConnector(),
+  [EvmAdapterId.Safe]: () => getSafeConnector(),
+  [EvmAdapterId.WalletConnect]: () => getWalletConnectConnector(),
+  [EvmAdapterId.CoinbaseWallet]: () => getCoinbaseWalletConnector(),
 }

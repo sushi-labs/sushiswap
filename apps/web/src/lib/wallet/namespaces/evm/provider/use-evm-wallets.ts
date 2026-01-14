@@ -57,6 +57,7 @@ export function useEvmWallets() {
       if (
         wallet.adapterId === EvmAdapterId.WalletConnect ||
         wallet.adapterId === EvmAdapterId.Porto ||
+        wallet.adapterId === EvmAdapterId.CoinbaseWallet ||
         wallet.id === 'evm:injected'
       ) {
         map.set(wallet.id, {
