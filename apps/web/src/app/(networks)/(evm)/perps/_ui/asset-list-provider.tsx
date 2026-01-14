@@ -47,7 +47,6 @@ const AssetListProvider: FC<AssetListProviderProps> = ({ children }) => {
         return {
           state: {
             assetListQuery,
-
             uniqueDexes,
             spotCollateralTokens,
           },

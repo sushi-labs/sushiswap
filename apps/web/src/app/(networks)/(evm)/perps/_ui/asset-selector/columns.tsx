@@ -19,7 +19,7 @@ export const SYMBOL_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
     return (
       <div className="whitespace-nowrap flex flex-col lg:flex-row lg:items-center gap-1">
         <div className="flex items-center gap-1">
-          <FavoriteButton assetString={asset.symbol} />
+          <FavoriteButton assetString={asset.name} />
           <span>{asset.symbol}</span>
         </div>
         <div className="flex items-center gap-1">
@@ -53,10 +53,8 @@ export const LAST_PRICE_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
     Number.parseFloat(rowA.lastPrice) - Number.parseFloat(rowB.lastPrice),
   cell: (props) => {
     const token = props.row.original
-    const price =
-      token.marketType === 'perp'
-        ? token.lastPrice
-        : (token.midPrice ?? token.markPrice)
+    const price = token.lastPrice
+
     return (
       <div className="tabular-nums">
         {numberFormatter.format(Number.parseFloat(price ?? '0'))}

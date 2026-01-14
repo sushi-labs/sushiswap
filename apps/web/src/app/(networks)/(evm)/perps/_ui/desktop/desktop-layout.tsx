@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { AccountManagement } from '../account-management'
 import { AssetSelectorAndStats } from '../asset-selector-and-stats'
 import { Chart } from '../chart'
+import { Favorites } from '../favorites/favorites'
 import { TradeTables } from '../trade-tables/trade-tables'
 import { TradeWidget } from '../trade-widget'
 import { type DesktopTab, DesktopTabbedView } from './desktop-tabbed-view'
@@ -9,12 +10,12 @@ import { type DesktopTab, DesktopTabbedView } from './desktop-tabbed-view'
 export const DesktopLayout = () => {
   const [tab, setTab] = useState<DesktopTab>('order-book')
   return (
-    <div className="h-[calc(100vh-56px)] w-full overflow-x-hidden">
+    <div className="h-[calc(100vh-60px)] w-full overflow-x-hidden mt-1">
       <div className="flex gap-1 min-w-0">
         <div className="flex flex-col flex-1 gap-1 min-w-0">
           <div className="flex gap-1 w-full min-w-0">
             <div className="flex flex-col gap-1 flex-1 min-w-0">
-              <div className="bg-blue-500/50 border p-2">favorites</div>
+              <Favorites />
               <AssetSelectorAndStats />
               <Chart className="min-h-[675px]" />
             </div>
