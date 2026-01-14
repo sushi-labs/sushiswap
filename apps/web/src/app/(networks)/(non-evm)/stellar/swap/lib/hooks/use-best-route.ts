@@ -151,6 +151,154 @@ function calculatePriceImpact(
   }
 }
 
+export async function getBestRoute({
+  tokenIn,
+  tokenOut,
+  amountIn,
+  poolGraphData,
+}: {
+  tokenIn: Token
+  tokenOut: Token
+  amountIn: bigint
+  poolGraphData: {
+    vertices: Map<string, Vertex[]>
+    tokenGraph: Map<string, string[]>
+  }
+}): Promise<RouteWithTokens | null> {
+  try {
+    const { vertices, tokenGraph } = poolGraphData
+
+    // Check if tokens exist in the graph
+    if (
+      !tokenGraph.has(tokenIn.contract) &&
+      !tokenGraph.has(tokenOut.contract)
+    ) {
+      return null
+    }
+
+    // Find all candidate routes
+    const candidateRoutes = findCandidateRoutes(
+      tokenIn.contract,
+      tokenOut.contract,
+      tokenGraph,
+      vertices,
+      3, // max 3 hops
+    )
+
+    if (candidateRoutes.length === 0) {
+      return null
+    }
+
+    // Get on-chain quotes for each route
+    const quoteService = new QuoteService()
+    const quotedRoutes: Array<{
+      route: CandidateRoute
+      amountOut: bigint
+      priceImpact: number
+    }> = []
+
+    // Query all routes in parallel
+    const quotePromises = candidateRoutes.map(async (route) => {
+      try {
+        let quote
+
+        if (route.path.length === 2) {
+          // Direct swap - use single-hop quote
+          quote = await quoteService.getQuoteExactInputSingle({
+            tokenIn: route.path[0],
+            tokenOut: route.path[1],
+            fee: route.fees[0],
+            amountIn,
+          })
+        } else {
+          // Multi-hop swap
+          quote = await quoteService.getQuoteExactInput({
+            path: route.path,
+            fees: route.fees,
+            amountIn,
+          })
+        }
+
+        if (quote && quote.amountOut > 0n) {
+          // Calculate price impact from pool state
+          const priceImpact = calculatePriceImpact(
+            amountIn,
+            quote.amountOut,
+            route.vertices,
+            route.path,
+          )
+
+          return {
+            route,
+            amountOut: quote.amountOut,
+            priceImpact,
+          }
+        }
+      } catch (error) {
+        console.warn(`Quote failed for route ${route.path.join(' → ')}:`, error)
+      }
+      return null
+    })
+
+    const results = await Promise.all(quotePromises)
+
+    // Filter successful quotes
+    for (const result of results) {
+      if (result) {
+        quotedRoutes.push(result)
+      }
+    }
+
+    if (quotedRoutes.length === 0) {
+      return null
+    }
+
+    // Select best route: highest output with reasonable price impact
+    // Score = amountOut * (1 - priceImpact/100)
+    quotedRoutes.sort((a, b) => {
+      const scoreA =
+        Number(a.amountOut) * (1 - Math.min(a.priceImpact / 100, 0.5))
+      const scoreB =
+        Number(b.amountOut) * (1 - Math.min(b.priceImpact / 100, 0.5))
+      return scoreB - scoreA
+    })
+
+    const bestQuotedRoute = quotedRoutes[0]
+
+    // Convert route addresses to Token objects
+    const tokenPromises: Promise<Token | null>[] =
+      bestQuotedRoute.route.path.map(async (address) => {
+        try {
+          return await getTokenByContract(address)
+        } catch (error) {
+          console.error(`Error getting token by contract ${address}:`, error)
+          return null
+        }
+      })
+
+    const tokens = (await Promise.all(tokenPromises)).filter(
+      (token): token is Token => token !== null,
+    )
+
+    if (tokens.length !== bestQuotedRoute.route.path.length) {
+      console.error('Failed to resolve all tokens in route')
+      return null
+    }
+
+    return {
+      route: bestQuotedRoute.route.path,
+      pools: bestQuotedRoute.route.pools,
+      fees: bestQuotedRoute.route.fees,
+      amountOut: bestQuotedRoute.amountOut,
+      priceImpact: bestQuotedRoute.priceImpact,
+      tokens,
+    }
+  } catch (error) {
+    console.error('Error finding best route:', error)
+    return null
+  }
+}
+
 /**
  * Hook to find the best swap route using on-chain quotes
  *
@@ -186,152 +334,16 @@ export function useBestRoute({
       amountIn.toString(),
     ],
     queryFn: async (): Promise<RouteWithTokens | null> => {
-      try {
-        if (!tokenIn || !tokenOut || !poolGraphData) {
-          return null
-        }
-
-        if (amountIn === 0n) {
-          return null
-        }
-
-        const { vertices, tokenGraph } = poolGraphData
-
-        // Check if tokens exist in the graph
-        if (
-          !tokenGraph.has(tokenIn.contract) &&
-          !tokenGraph.has(tokenOut.contract)
-        ) {
-          return null
-        }
-
-        // Find all candidate routes
-        const candidateRoutes = findCandidateRoutes(
-          tokenIn.contract,
-          tokenOut.contract,
-          tokenGraph,
-          vertices,
-          3, // max 3 hops
-        )
-
-        if (candidateRoutes.length === 0) {
-          return null
-        }
-
-        // Get on-chain quotes for each route
-        const quoteService = new QuoteService()
-        const quotedRoutes: Array<{
-          route: CandidateRoute
-          amountOut: bigint
-          priceImpact: number
-        }> = []
-
-        // Query all routes in parallel
-        const quotePromises = candidateRoutes.map(async (route) => {
-          try {
-            let quote
-
-            if (route.path.length === 2) {
-              // Direct swap - use single-hop quote
-              quote = await quoteService.getQuoteExactInputSingle({
-                tokenIn: route.path[0],
-                tokenOut: route.path[1],
-                fee: route.fees[0],
-                amountIn,
-              })
-            } else {
-              // Multi-hop swap
-              quote = await quoteService.getQuoteExactInput({
-                path: route.path,
-                fees: route.fees,
-                amountIn,
-              })
-            }
-
-            if (quote && quote.amountOut > 0n) {
-              // Calculate price impact from pool state
-              const priceImpact = calculatePriceImpact(
-                amountIn,
-                quote.amountOut,
-                route.vertices,
-                route.path,
-              )
-
-              return {
-                route,
-                amountOut: quote.amountOut,
-                priceImpact,
-              }
-            }
-          } catch (error) {
-            console.warn(
-              `Quote failed for route ${route.path.join(' → ')}:`,
-              error,
-            )
-          }
-          return null
-        })
-
-        const results = await Promise.all(quotePromises)
-
-        // Filter successful quotes
-        for (const result of results) {
-          if (result) {
-            quotedRoutes.push(result)
-          }
-        }
-
-        if (quotedRoutes.length === 0) {
-          return null
-        }
-
-        // Select best route: highest output with reasonable price impact
-        // Score = amountOut * (1 - priceImpact/100)
-        quotedRoutes.sort((a, b) => {
-          const scoreA =
-            Number(a.amountOut) * (1 - Math.min(a.priceImpact / 100, 0.5))
-          const scoreB =
-            Number(b.amountOut) * (1 - Math.min(b.priceImpact / 100, 0.5))
-          return scoreB - scoreA
-        })
-
-        const bestQuotedRoute = quotedRoutes[0]
-
-        // Convert route addresses to Token objects
-        const tokenPromises: Promise<Token | null>[] =
-          bestQuotedRoute.route.path.map(async (address) => {
-            try {
-              return await getTokenByContract(address)
-            } catch (error) {
-              console.error(
-                `Error getting token by contract ${address}:`,
-                error,
-              )
-              return null
-            }
-          })
-
-        const tokens = (await Promise.all(tokenPromises)).filter(
-          (token): token is Token => token !== null,
-        )
-
-        if (tokens.length !== bestQuotedRoute.route.path.length) {
-          console.error('Failed to resolve all tokens in route')
-          return null
-        }
-
-        return {
-          route: bestQuotedRoute.route.path,
-          pools: bestQuotedRoute.route.pools,
-          fees: bestQuotedRoute.route.fees,
-          amountOut: bestQuotedRoute.amountOut,
-          priceImpact: bestQuotedRoute.priceImpact,
-          tokens,
-        }
-      } catch (error) {
-        console.error('Error finding best route:', error)
+      if (!tokenIn || !tokenOut || !poolGraphData || amountIn === 0n) {
         return null
       }
+
+      return await getBestRoute({
+        tokenIn: tokenIn,
+        tokenOut: tokenOut,
+        amountIn,
+        poolGraphData: poolGraphData,
+      })
     },
     enabled: Boolean(
       tokenIn &&

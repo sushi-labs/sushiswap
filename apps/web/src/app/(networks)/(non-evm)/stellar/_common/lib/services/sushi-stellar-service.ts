@@ -1,25 +1,12 @@
 import { addMinutes } from 'date-fns'
 import { getPoolInfoFromContract } from '../soroban/pool-helpers'
 import {
-  decreaseLiquidity,
   increaseLiquidity,
   mintPosition,
 } from '../soroban/position-manager-helpers'
-import type { Token } from '../types/token.type'
-import { type CollectParams, positionService } from './position-service'
+import { positionService } from './position-service'
 import { QuoteService } from './quote-service'
-import {
-  RouterService,
-  type SwapRoute,
-  formatRouteForUser,
-} from './router-service'
-import {
-  type AddLiquidityParams,
-  type SwapExactInputParams,
-  type SwapExactInputSingleParams,
-  type SwapQuote,
-  SwapService,
-} from './swap-service'
+import { type AddLiquidityParams, SwapService } from './swap-service'
 
 /**
  * Main service for SushiSwap operations on Stellar
@@ -28,12 +15,10 @@ import {
 export class SushiStellarService {
   private swapService: SwapService
   private quoteService: QuoteService
-  private routerService: RouterService
 
   constructor() {
     this.swapService = new SwapService()
     this.quoteService = new QuoteService()
-    this.routerService = new RouterService(this.quoteService)
   }
 
   /**
@@ -134,156 +119,6 @@ export class SushiStellarService {
       tokenId: result.tokenId,
       liquidity: result.liquidity,
     }
-  }
-
-  /**
-   * Execute a single-hop swap
-   */
-  async swapExactInputSingle(
-    userAddress: string,
-    params: SwapExactInputSingleParams,
-    signTransaction: (xdr: string) => Promise<string>,
-  ): Promise<{ txHash: string; amountOut: bigint }> {
-    return await this.swapService.swapExactInputSingle(
-      userAddress,
-      params,
-      signTransaction,
-    )
-  }
-
-  /**
-   * Execute a multi-hop swap
-   */
-  async swapExactInput(
-    userAddress: string,
-    params: SwapExactInputParams,
-    signTransaction: (xdr: string) => Promise<string>,
-  ): Promise<{ txHash: string; amountOut: bigint }> {
-    return await this.swapService.swapExactInput(
-      userAddress,
-      params,
-      signTransaction,
-    )
-  }
-
-  /**
-   * Get quote for single-hop swap
-   */
-  async getQuoteExactInputSingle(params: {
-    tokenIn: string
-    tokenOut: string
-    fee: number
-    amountIn: bigint
-    sqrtPriceLimitX96?: bigint
-  }): Promise<SwapQuote | null> {
-    return await this.quoteService.getQuoteExactInputSingle(params)
-  }
-
-  /**
-   * Get quote for multi-hop swap
-   */
-  async getQuoteExactInput(params: {
-    path: string[]
-    fees: number[]
-    amountIn: bigint
-  }): Promise<SwapQuote> {
-    const quote = await this.quoteService.getQuoteExactInput(params)
-    if (!quote) {
-      throw new Error('Failed to get quote for multi-hop swap')
-    }
-    return quote
-  }
-
-  /**
-   * Find the best route between two tokens
-   */
-  async findBestRoute(
-    tokenIn: Token,
-    tokenOut: Token,
-    amountIn: bigint,
-  ): Promise<SwapRoute | null> {
-    return await this.routerService.findBestRoute(tokenIn, tokenOut, amountIn)
-  }
-
-  /**
-   * Get all available pools between two tokens
-   */
-  async getPoolsBetween(tokenA: Token, tokenB: Token) {
-    return await this.quoteService.findPoolsBetween(tokenA, tokenB)
-  }
-
-  /**
-   * Format route for display
-   */
-  formatRoute(route: SwapRoute): string {
-    return formatRouteForUser(route)
-  }
-
-  // Position Management Methods
-
-  /**
-   * Get all positions owned by a user
-   */
-  async getUserPositions(userAddress: string) {
-    return await positionService.getUserPositionsWithFees({ userAddress })
-  }
-
-  /**
-   * Get a specific position by token ID
-   */
-  async getPosition(tokenId: number) {
-    return await positionService.getPosition(tokenId)
-  }
-
-  /**
-   * Decrease liquidity from an existing position
-   */
-  async decreaseLiquidity(
-    userAddress: string,
-    params: {
-      tokenId: number
-      liquidity: bigint
-      deadline?: number
-    },
-    signTransaction: (xdr: string) => Promise<string>,
-    signAuthEntry: (entryPreimageXdr: string) => Promise<string>,
-  ) {
-    return await decreaseLiquidity({
-      tokenId: params.tokenId,
-      liquidity: params.liquidity,
-      amount0Min: BigInt(0),
-      amount1Min: BigInt(0),
-      deadline: BigInt(
-        params.deadline ||
-          Math.floor(addMinutes(new Date(), 5).valueOf() / 1000),
-      ),
-      operator: userAddress,
-      sourceAccount: userAddress,
-      signTransaction,
-      signAuthEntry,
-    })
-  }
-
-  /**
-   * Collect fees from a position
-   */
-  async collectFees(
-    params: CollectParams,
-    signTransaction: (xdr: string) => Promise<string>,
-    signAuthEntry: (entryPreimageXdr: string) => Promise<string>,
-  ) {
-    return await positionService.collectFees(
-      params,
-      signTransaction,
-      signAuthEntry,
-    )
-  }
-
-  /**
-   * Get uncollected fees for a position
-   */
-  async getUncollectedFees(tokenId: number) {
-    return await positionService.getUncollectedFees(tokenId)
   }
 }
 
