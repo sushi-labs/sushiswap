@@ -1,5 +1,4 @@
 import { useQueries } from '@tanstack/react-query'
-import { keepPreviousData } from '@tanstack/react-query'
 import ms from 'ms'
 import { formatUnits } from 'viem'
 import type { Token } from '~stellar/_common/lib/types/token.type'
@@ -11,9 +10,10 @@ export const useStablePrice = ({ token }: { token: Token | undefined }) => {
   // Build additional tokens list from swap input/output
   // This ensures the pool graph includes routes for the selected tokens
   const stableTokens = getStableTokens()
-  const additionalTokens = [token?.contract, ...stableTokens].filter(
-    (t): t is string => !!t,
-  )
+  const additionalTokens = [
+    token?.contract,
+    ...stableTokens.map((t) => t.contract),
+  ].filter((t): t is string => !!t)
 
   // Get the pool graph, augmented with input/output tokens
   const { data: poolGraphData } = usePoolGraph({

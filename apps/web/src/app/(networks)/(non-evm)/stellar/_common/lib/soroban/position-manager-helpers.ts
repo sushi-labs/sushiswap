@@ -229,12 +229,13 @@ export async function increaseLiquidity({
     // Wait for confirmation
     const result = await waitForTransaction(txHash)
 
-    if (result.success) {
+    if (result.success && assembledTransaction.result.isOk()) {
+      const [liquidity, amount0, amount1] = assembledTransaction.result.unwrap()
       return {
         hash: txHash,
-        liquidity: BigInt(0),
-        amount0: BigInt(0),
-        amount1: BigInt(0),
+        liquidity,
+        amount0,
+        amount1,
       }
     } else {
       console.error('Transaction failed:', result.error)
@@ -320,11 +321,12 @@ export async function decreaseLiquidity({
     // Wait for confirmation
     const result = await waitForTransaction(txHash)
 
-    if (result.success) {
+    if (result.success && assembledTransaction.result.isOk()) {
+      const [amount0, amount1] = assembledTransaction.result.unwrap()
       return {
         hash: txHash,
-        amount0: BigInt(0),
-        amount1: BigInt(0),
+        amount0: amount0,
+        amount1: amount1,
       }
     } else {
       console.error('Transaction failed:', result.error)

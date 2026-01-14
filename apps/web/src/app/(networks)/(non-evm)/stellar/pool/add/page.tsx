@@ -24,7 +24,7 @@ import {
 import type { Token } from '~stellar/_common/lib/types/token.type'
 import { FEE_TIERS } from '~stellar/_common/lib/utils/ticks'
 import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
-import { TickRangeSelector } from '~stellar/_common/ui/TickRangeSelector/TickRangeSelector.tsx'
+import { TickRangeSelector } from '~stellar/_common/ui/TickRangeSelector/TickRangeSelector'
 import TokenSelector from '~stellar/_common/ui/token-selector/token-selector'
 import { useStellarWallet } from '~stellar/providers'
 

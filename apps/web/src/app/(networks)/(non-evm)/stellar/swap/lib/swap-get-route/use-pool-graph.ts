@@ -378,6 +378,7 @@ export function usePoolGraph({
   }, [baseGraph, additionalTokens])
 
   // Augment the base graph with additional tokens (only if needed)
+  const isAugmentEnabled = Boolean(baseGraph) && newTokens.length > 0
   const augmentedQuery = useQuery({
     queryKey: [
       'stellar',
@@ -398,7 +399,7 @@ export function usePoolGraph({
 
       return augmentPoolGraph({ baseGraph, additionalTokens: newTokens })
     },
-    enabled: Boolean(baseGraph),
+    enabled: isAugmentEnabled,
     staleTime: ms('2m'),
     gcTime: ms('5m'),
     retry: 1,
@@ -408,7 +409,7 @@ export function usePoolGraph({
   // Return base graph if no additional tokens, otherwise return augmented
   const data = newTokens.length === 0 ? baseGraph : augmentedQuery.data
   const isPending =
-    isPendingBase || (newTokens.length > 0 && augmentedQuery.isPending)
+    isPendingBase || (isAugmentEnabled && augmentedQuery.isPending)
 
   return {
     data,

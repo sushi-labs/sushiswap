@@ -9,6 +9,7 @@ import {
   type FeeTier,
   MAX_TICK_RANGE,
   TICK_SPACINGS,
+  alignTick,
   isFeeTier,
 } from '../../utils/ticks'
 
@@ -24,25 +25,6 @@ interface UseTicksProps {
   enabled?: boolean
 }
 
-/**
- * Align tick to tick spacing
- */
-const nearestUsableTick = (tick: number, tickSpacing: number): number => {
-  return Math.round(tick / tickSpacing) * tickSpacing
-}
-
-/**
- * This currently returns mock data for testing the UI.
- *
- * This creates ticks that mirror what you'd see from real positions:
- * - Position 1: +/- 1% of current price (tight range around current tick)
- * - Position 2: prices 1.5x to 2x (wider range above current price)
- * - Some additional scattered liquidity
- *
- * Each position creates TWO ticks:
- * - Lower tick: +liquidityNet (liquidity enters the range)
- * - Upper tick: -liquidityNet (liquidity exits the range)
- */
 async function fetchTicks(
   pool: PoolInfo,
   numSurroundingTicks: number,
@@ -52,7 +34,7 @@ async function fetchTicks(
     : 60
 
   const currentTick = pool.tick
-  const activeTick = nearestUsableTick(currentTick, tickSpacing)
+  const activeTick = alignTick(currentTick, tickSpacing)
   const activeIndex = activeTick / (256 * tickSpacing)
 
   const minIndex =
@@ -117,6 +99,6 @@ export function useTicks({
     },
     enabled: Boolean(pool && enabled),
     staleTime: ms('30s'),
-    refetchInterval: ms('60s'), // Less frequent refresh for mock data
+    refetchInterval: ms('60s'),
   })
 }

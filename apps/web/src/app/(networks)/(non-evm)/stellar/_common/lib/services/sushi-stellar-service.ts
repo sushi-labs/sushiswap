@@ -5,22 +5,13 @@ import {
   mintPosition,
 } from '../soroban/position-manager-helpers'
 import { positionService } from './position-service'
-import { QuoteService } from './quote-service'
-import { type AddLiquidityParams, SwapService } from './swap-service'
+import type { AddLiquidityParams } from './swap-service'
 
 /**
  * Main service for SushiSwap operations on Stellar
  * This is the primary interface for interacting with the DEX
  */
 export class SushiStellarService {
-  private swapService: SwapService
-  private quoteService: QuoteService
-
-  constructor() {
-    this.swapService = new SwapService()
-    this.quoteService = new QuoteService()
-  }
-
   /**
    * Add liquidity using Position Manager
    * Automatically increases liquidity on existing position or creates new one

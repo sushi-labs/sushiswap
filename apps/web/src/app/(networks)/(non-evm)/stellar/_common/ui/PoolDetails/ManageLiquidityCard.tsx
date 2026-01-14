@@ -36,7 +36,7 @@ import { alignTick, isTickAligned } from '~stellar/_common/lib/utils/ticks'
 import { useStellarWallet } from '~stellar/providers'
 import { useBestRoute } from '~stellar/swap/lib/hooks/use-best-route'
 import { ConnectWalletButton } from '../ConnectWallet/ConnectWalletButton'
-import { TickRangeSelector } from '../TickRangeSelector/TickRangeSelector.tsx'
+import { TickRangeSelector } from '../TickRangeSelector/TickRangeSelector'
 import { CreateTrustlineButton } from '../Trustline/CreateTrustlineButton'
 import { CurrencyInput } from '../currency/currency-input/currency-input'
 import TokenSelector from '../token-selector/token-selector'
@@ -203,15 +203,16 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
       ),
     ) / 2n // Use half amount for estimating token0 route
   const zapMutation = useZap()
+  // Only run route queries when in zap mode and zap inputs are valid
   const { route: routeToken0, isPending: isPendingRouteToken0 } = useBestRoute({
     tokenIn: zapTokenIn,
     tokenOut: pool.token0,
-    amountIn: halfZapAmountInBigInt,
+    amountIn: isZapModeEnabled ? halfZapAmountInBigInt : 0n,
   })
   const { route: routeToken1, isPending: isPendingRouteToken1 } = useBestRoute({
     tokenIn: zapTokenIn,
     tokenOut: pool.token1,
-    amountIn: halfZapAmountInBigInt,
+    amountIn: isZapModeEnabled ? halfZapAmountInBigInt : 0n,
   })
   const removeLiquidityMutation = useRemoveLiquidity()
   const selectedPosition = useMemo(
