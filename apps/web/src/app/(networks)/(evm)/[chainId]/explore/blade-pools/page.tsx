@@ -29,9 +29,7 @@ export default async function BladePoolsPage(props: {
     'BladeApproximateExchange',
   ]
   const activePools = pools.filter(
-    (pool) =>
-      !pool.isDeprecated &&
-      !EXCLUDED_POOLS[chainId]?.includes(pool.address.toLowerCase()),
+    (pool) => !EXCLUDED_POOLS[chainId]?.includes(pool.address.toLowerCase()),
   )
   const bladePools = activePools.filter((pool) => bladeAbis.includes(pool.abi))
   // if there are any Blade pools, only display them, otherwise display Clipper pools

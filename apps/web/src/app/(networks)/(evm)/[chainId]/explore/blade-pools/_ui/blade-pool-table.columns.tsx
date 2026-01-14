@@ -54,7 +54,18 @@ export const NAME_COLUMN_POOL: ColumnDef<BladePool, unknown> = {
             )}
           </Currency.IconList>
         </div>
-        <div>{poolName}</div>
+        <div className="flex flex-col gap-0.5">
+          <span className="font-medium text-gray-900 dark:text-slate-50">
+            {poolName}
+          </span>
+          {props.row.original.isDeprecated ? (
+            <div className="flex gap-1">
+              <div className="bg-amber-100 text-amber-900 text-[10px] px-2 rounded-full">
+                Deprecated
+              </div>
+            </div>
+          ) : null}
+        </div>
       </div>
     )
   },
