@@ -1,7 +1,7 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
-import { SUSHI_DATA_API_HOST } from 'sushi/evm'
+import { SUSHI_DATA_API_HOST } from 'src/subgraphs/data-api/data-api-host.js'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 

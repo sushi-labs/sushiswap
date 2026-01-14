@@ -1,6 +1,6 @@
 import type { ChainId } from 'sushi'
 
-export type ChainIdVariable<T extends ChainId> = { chainId: Readonly<T> }
+export type ChainIdVariable<T extends ChainId> = { chainId: T }
 
 export type ChainIdsVariable<T extends ChainId> = { chainIds?: Readonly<T[]> }
 

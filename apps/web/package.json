@@ -16,6 +16,7 @@
     "test:unit": "vitest --watch=false src"
   },
   "dependencies": {
+    "@solana/addresses": "catalog:web3",
     "@aptos-labs/ts-sdk": "1.27.0",
     "@aptos-labs/wallet-adapter-core": "3.10.0",
     "@aptos-labs/wallet-adapter-react": "2.3.1",
