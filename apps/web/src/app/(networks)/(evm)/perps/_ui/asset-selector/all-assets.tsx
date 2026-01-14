@@ -45,7 +45,6 @@ export const AllAssets = ({
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'volume24hUsd', desc: true },
   ])
-
   const filtered = useMemo(() => {
     if (!data) return []
     const baseData =

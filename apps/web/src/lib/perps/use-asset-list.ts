@@ -14,6 +14,24 @@ import { useEffect } from 'react'
 import { hlHttpTransport, hlWebSocketTransport } from './transports'
 import { useSpotMeta } from './use-spot-meta'
 
+const SPOT_ASSETS_TO_REWRITE = new Map<string, string>([
+  ['UBTC', 'BTC'],
+  ['UETH', 'ETH'],
+  ['USOL', 'SOL'],
+  ['UPUMP', 'PUMP'],
+  ['UFART', 'FART'],
+  ['UMON', 'MON'],
+  ['UXPL', 'XPL'],
+  ['UENA', 'ENA'],
+  ['UUUSPX', 'SPX'],
+  ['HPENGU', 'PENGU'],
+  ['HFUN', 'FUN'],
+  ['UBONK', 'BONK'],
+  ['HREKT', 'REKT'],
+  ['HWAVE', 'WAVE'],
+  ['USPYX', 'SPYX'],
+])
+
 type CollateralToken = SpotMetaResponse['tokens'][number]
 
 export type PerpOrSpotAsset = {
@@ -55,7 +73,13 @@ const formatSpotCtxs = (
       last != null && prev != null && prev !== 0 ? (last - prev) / prev : null
 
     const marketCap = markPrice * Number.parseFloat(ctx.circulatingSupply)
-    const symbol = tokens.map((t) => t.name).join('/')
+    const symbol = tokens
+      .map((t) =>
+        SPOT_ASSETS_TO_REWRITE.has(t.name)
+          ? SPOT_ASSETS_TO_REWRITE.get(t.name)
+          : t.name,
+      )
+      .join('/')
     const assetId = ctx?.coin
 
     acc.set(assetId, {
