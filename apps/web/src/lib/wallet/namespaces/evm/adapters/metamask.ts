@@ -1,5 +1,6 @@
 'use client'
 
+import { metaMask } from '@wagmi/connectors'
 import type { CreateConnectorFn } from '@wagmi/core'
 import { getConnectorById } from '../utils/connector'
 
@@ -8,17 +9,12 @@ let createConnectorFn: CreateConnectorFn | undefined
 async function getCreateConnectorFn() {
   if (createConnectorFn) return createConnectorFn
 
-  const [{ metaMask }] = await Promise.all([
-    import('@wagmi/connectors'),
-    import('@metamask/sdk'),
-  ])
-
   createConnectorFn = metaMask()
   return createConnectorFn
 }
 
 function getConnector() {
-  return getConnectorById('metaMask')
+  return getConnectorById('metaMaskSDK')
 }
 
 export const getMetaMaskConnector = async () => {

@@ -1,5 +1,6 @@
 'use client'
 
+import { safe } from '@wagmi/connectors'
 import type { CreateConnectorFn } from '@wagmi/core'
 import { getConnectorById } from '../utils/connector'
 
@@ -7,12 +8,6 @@ let createConnectorFn: CreateConnectorFn | undefined
 
 async function getCreateConnectorFn() {
   if (createConnectorFn) return createConnectorFn
-
-  const [{ safe }] = await Promise.all([
-    import('@wagmi/connectors'),
-    import('@safe-global/safe-apps-provider'),
-    import('@safe-global/safe-apps-sdk'),
-  ])
 
   createConnectorFn = safe()
   return createConnectorFn
