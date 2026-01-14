@@ -7,11 +7,7 @@ export const AssetSelectorAndStats = () => {
     <Card className="p-4 gap-8 flex items-center">
       <AssetSelector />
       <div className="flex-1 min-w-0">
-        <div className="overflow-x-auto hide-scrollbar">
-          <div className="grid grid-flow-col auto-cols-max gap-8">
-            <AssetStats />
-          </div>
-        </div>
+        <AssetStats />
       </div>
     </Card>
   )
