@@ -113,8 +113,7 @@ export const ZapError = {
 /**
  * Storage keys for zap-router specific data
  */
-export type DataKey = {tag: "Factory", values: void} | {tag: "XlmAddress", values: void} | {tag: "PositionManager", values: void} | {tag: "SwapRouter", values: void};
-
+export type ZapRouterDataKey = {tag: "Factory", values: void} | {tag: "XlmAddress", values: void} | {tag: "PositionManager", values: void};
 
 /**
  * Mirror of Pool's Slot0 return type for cross-contract decoding
