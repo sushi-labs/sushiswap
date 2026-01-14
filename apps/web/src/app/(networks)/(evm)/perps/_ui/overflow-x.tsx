@@ -69,7 +69,6 @@ const useIsOverflow = (ref: React.RefObject<HTMLElement | null>) => {
         const reachedEnd =
           element.scrollLeft + element.clientWidth >=
           element.scrollWidth - tolerance
-        console.log(element.scrollWidth > element.clientWidth)
         if (reachedEnd) {
           setHasOverflowRight(false)
         } else {

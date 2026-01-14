@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { AccountManagement } from '../account-management'
 import { AssetSelectorAndStats } from '../asset-selector-and-stats'
-import { Chart } from '../chart'
+import { Chart } from '../chart/chart'
 import { Favorites } from '../favorites/favorites'
 import { TradeTables } from '../trade-tables/trade-tables'
 import { TradeWidget } from '../trade-widget'
@@ -17,7 +17,7 @@ export const DesktopLayout = () => {
             <div className="flex flex-col gap-1 flex-1 min-w-0">
               <Favorites />
               <AssetSelectorAndStats />
-              <Chart className="min-h-[675px]" />
+              <Chart />
             </div>
 
             <div className="hidden xl:block flex-none basis-[29.074%] min-w-[300px] ">
