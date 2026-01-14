@@ -3,7 +3,13 @@
 import { ChartBarIcon, InboxIcon, StopIcon } from '@heroicons/react-v1/solid'
 import { SkeletonBox } from '@sushiswap/ui'
 import { format } from 'd3'
-import React, { type FC, type ReactNode, useCallback, useMemo } from 'react'
+import React, {
+  type FC,
+  type ReactNode,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react'
 import colors from 'tailwindcss/colors'
 
 // Import shared chart components from EVM (they are network-agnostic)
@@ -73,9 +79,7 @@ const InfoBox: FC<InfoBoxProps> = ({ message, icon }) => {
 interface LiquidityChartRangeInputProps {
   pool: PoolInfo | null | undefined
   ticksAtLimit?: { [_bound in Bound]?: boolean | undefined }
-  priceRange?: number | undefined
-  priceLower?: number
-  priceUpper?: number
+  priceRange: { [_bound in Bound]: number }
   onLeftRangeInput?: (typedValue: string) => void
   onRightRangeInput?: (typedValue: string) => void
   interactive?: boolean
@@ -87,8 +91,6 @@ export function LiquidityChartRangeInput({
   pool,
   ticksAtLimit = { [Bound.LOWER]: false, [Bound.UPPER]: false },
   priceRange,
-  priceLower,
-  priceUpper,
   onLeftRangeInput = () => {},
   onRightRangeInput = () => {},
   interactive = false,
@@ -100,6 +102,8 @@ export function LiquidityChartRangeInput({
     enabled: Boolean(pool),
   })
 
+  const [isDefaultGraphRange, setIsDefaultGraphRange] = useState<boolean>(false)
+
   // Calculate current price from tick
   const price = useMemo(() => {
     if (!pool) return undefined
@@ -110,39 +114,24 @@ export function LiquidityChartRangeInput({
 
   const onBrushDomainChangeEnded = useCallback(
     (domain: [number, number], mode: string | undefined) => {
-      let leftRangeValue = Number(domain[0])
+      const leftRangeValue = Number(domain[0])
       const rightRangeValue = Number(domain[1])
 
-      if (leftRangeValue <= 0) {
-        leftRangeValue = 1 / 10 ** 6
-      }
+      onLeftRangeInput(leftRangeValue.toString())
+      onRightRangeInput(rightRangeValue.toString())
 
-      // simulate user input for auto-formatting and other validations
-      if (
-        (!ticksAtLimit[Bound.LOWER] || mode === 'handle' || mode === 'reset') &&
-        leftRangeValue > 0
-      ) {
-        onLeftRangeInput(leftRangeValue.toFixed(6))
-      }
-
-      if (
-        (!ticksAtLimit[Bound.UPPER] || mode === 'reset') &&
-        rightRangeValue > 0
-      ) {
-        if (rightRangeValue < 1e35) {
-          onRightRangeInput(rightRangeValue.toFixed(6))
-        }
+      if (mode === 'reset') {
+        setIsDefaultGraphRange(true)
+      } else {
+        setIsDefaultGraphRange(false)
       }
     },
-    [onLeftRangeInput, onRightRangeInput, ticksAtLimit],
+    [onLeftRangeInput, onRightRangeInput],
   )
 
   const brushDomain: [number, number] | undefined = useMemo(() => {
-    if (priceLower !== undefined && priceUpper !== undefined) {
-      return [priceLower, priceUpper]
-    }
-    return undefined
-  }, [priceLower, priceUpper])
+    return [priceRange[Bound.LOWER], priceRange[Bound.UPPER]]
+  }, [priceRange])
 
   const brushLabelValue = useCallback(
     (d: 'w' | 'e', x: number) => {
@@ -253,7 +242,7 @@ export function LiquidityChartRangeInput({
             onBrushDomainChange={onBrushDomainChangeEnded}
             getNewRangeWhenBrushing={getNewRangeWhenBrushing}
             zoomLevels={zoomLevels}
-            priceRange={priceRange}
+            isPriceRangeSet={!isDefaultGraphRange}
             hideBrushes={hideBrushes}
             tokenToggle={tokenToggle}
           />

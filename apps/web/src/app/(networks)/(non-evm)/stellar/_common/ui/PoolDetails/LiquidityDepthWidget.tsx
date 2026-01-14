@@ -8,11 +8,19 @@ import {
   SkeletonBox,
 } from '@sushiswap/ui'
 import React, { type FC } from 'react'
+import { Bound } from 'src/lib/constants'
+import type { TickRangeSelectorState } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
+import {
+  calculatePriceFromTick,
+  calculateTickFromPrice,
+} from '~stellar/_common/lib/soroban'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
+import { MAX_TICK_RANGE, alignTick } from '~stellar/_common/lib/utils/ticks'
 import { LiquidityChartRangeInput } from '../LiquidityChartRangeInput'
 
 interface LiquidityDepthWidgetProps {
   pool: PoolInfo | null | undefined
+  tickRangeSelectorState: TickRangeSelectorState
 }
 
 /**
@@ -24,15 +32,22 @@ interface LiquidityDepthWidgetProps {
  */
 export const LiquidityDepthWidget: FC<LiquidityDepthWidgetProps> = ({
   pool,
+  tickRangeSelectorState,
 }) => {
+  const {
+    tickLower,
+    tickUpper,
+    tickSpacing,
+    setTickLower,
+    setTickUpper,
+    setIsDynamic,
+  } = tickRangeSelectorState
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <span>Liquidity Distribution</span>
-          <span className="text-xs font-normal text-muted-foreground">
-            (Preview)
-          </span>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -41,8 +56,36 @@ export const LiquidityDepthWidget: FC<LiquidityDepthWidgetProps> = ({
         ) : (
           <LiquidityChartRangeInput
             pool={pool}
-            hideBrushes={true}
-            interactive={false}
+            ticksAtLimit={{
+              [Bound.LOWER]:
+                tickLower <= alignTick(MAX_TICK_RANGE.lower, tickSpacing),
+              [Bound.UPPER]:
+                tickUpper >= alignTick(MAX_TICK_RANGE.upper, tickSpacing),
+            }}
+            priceRange={{
+              [Bound.LOWER]: calculatePriceFromTick(tickLower),
+              [Bound.UPPER]: calculatePriceFromTick(tickUpper),
+            }}
+            onLeftRangeInput={(typedValue) => {
+              setIsDynamic(false)
+              setTickLower(
+                alignTick(
+                  calculateTickFromPrice(Number.parseFloat(typedValue)),
+                  tickSpacing,
+                ),
+              )
+            }}
+            onRightRangeInput={(typedValue) => {
+              setIsDynamic(false)
+              setTickUpper(
+                alignTick(
+                  calculateTickFromPrice(Number.parseFloat(typedValue)),
+                  tickSpacing,
+                ),
+              )
+            }}
+            interactive={true}
+            hideBrushes={false}
           />
         )}
       </CardContent>

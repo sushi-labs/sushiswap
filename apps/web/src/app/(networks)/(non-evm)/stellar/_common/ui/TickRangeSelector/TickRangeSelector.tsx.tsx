@@ -30,12 +30,22 @@ type PriceRangePreset = {
 /**
  * Format price for display, handling edge cases for min/max bounds
  */
-function formatPriceDisplay(tick: number, bound: 'lower' | 'upper'): string {
+function formatPriceDisplay(
+  tick: number,
+  tickSpacing: number,
+  bound: 'lower' | 'upper',
+): string {
   // Check if tick is at or beyond extremes
-  if (bound === 'lower' && tick <= MAX_TICK_RANGE.lower) {
+  if (
+    bound === 'lower' &&
+    tick <= alignTick(MAX_TICK_RANGE.lower, tickSpacing)
+  ) {
     return '0'
   }
-  if (bound === 'upper' && tick >= MAX_TICK_RANGE.upper) {
+  if (
+    bound === 'upper' &&
+    tick >= alignTick(MAX_TICK_RANGE.upper, tickSpacing)
+  ) {
     return '∞'
   }
 
@@ -106,10 +116,10 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
 
   // Local state for price inputs (allows user to type freely)
   const [minPriceRawInput, setMinPriceRawInput] = useState(
-    formatPriceDisplay(tickLower, 'lower'),
+    formatPriceDisplay(tickLower, tickSpacing, 'lower'),
   )
   const [maxPriceRawInput, setMaxPriceRawInput] = useState(
-    formatPriceDisplay(tickUpper, 'upper'),
+    formatPriceDisplay(tickUpper, tickSpacing, 'upper'),
   )
 
   // percentFraction represents the decimal form (e.g. 0.1 for 10%).
@@ -148,12 +158,12 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
 
   // Sync local inputs when ticks change externally
   useEffect(() => {
-    setMinPriceRawInput(formatPriceDisplay(tickLower, 'lower'))
-  }, [tickLower])
+    setMinPriceRawInput(formatPriceDisplay(tickLower, tickSpacing, 'lower'))
+  }, [tickLower, tickSpacing])
 
   useEffect(() => {
-    setMaxPriceRawInput(formatPriceDisplay(tickUpper, 'upper'))
-  }, [tickUpper])
+    setMaxPriceRawInput(formatPriceDisplay(tickUpper, tickSpacing, 'upper'))
+  }, [tickUpper, tickSpacing])
 
   // Handle min price input change
   const handleMinPriceBlur = useCallback(() => {
@@ -163,7 +173,7 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
       setTickLower(newTick)
     } else {
       // Reset to current value if invalid
-      setMinPriceRawInput(formatPriceDisplay(tickLower, 'lower'))
+      setMinPriceRawInput(formatPriceDisplay(tickLower, tickSpacing, 'lower'))
     }
   }, [minPriceRawInput, tickSpacing, setIsDynamic, setTickLower, tickLower])
 
@@ -175,7 +185,7 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
       setTickUpper(newTick)
     } else {
       // Reset to current value if invalid
-      setMaxPriceRawInput(formatPriceDisplay(tickUpper, 'upper'))
+      setMaxPriceRawInput(formatPriceDisplay(tickUpper, tickSpacing, 'upper'))
     }
   }, [maxPriceRawInput, tickSpacing, setIsDynamic, setTickUpper, tickUpper])
 
@@ -327,9 +337,9 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
           <div className="flex flex-col justify-end text-end">
             {token0 && token1 && (
               <div className="font-mono font-semibold">
-                {formatPriceDisplay(tickLower, 'lower')} -{' '}
-                {formatPriceDisplay(tickUpper, 'upper')} {token1.code}/
-                {token0.code}
+                {formatPriceDisplay(tickLower, tickSpacing, 'lower')} -{' '}
+                {formatPriceDisplay(tickUpper, tickSpacing, 'upper')}{' '}
+                {token1.code}/{token0.code}
               </div>
             )}
             <div className="text-xs text-muted-foreground">

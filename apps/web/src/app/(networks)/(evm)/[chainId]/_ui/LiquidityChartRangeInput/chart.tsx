@@ -14,7 +14,7 @@ const yAccessor = (d: ChartEntry) => d.activeLiquidity
 export const Chart: FC<LiquidityChartRangeInputProps> = ({
   id = 'liquidityChartRangeInput',
   data: { series, current },
-  priceRange,
+  isPriceRangeSet,
   styles,
   dimensions: { width, height },
   margins,
@@ -100,11 +100,11 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
               [
                 current * zoomLevels.initialMin,
                 current * zoomLevels.initialMax,
-              ] as [number, number],
+              ],
               'reset',
             )
           }}
-          showResetButton={priceRange !== undefined}
+          showResetButton={isPriceRangeSet}
           zoomLevels={zoomLevels}
         />
         {tokenToggle}

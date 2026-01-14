@@ -644,7 +644,10 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                         token1={pool.token1}
                       />
 
-                      <LiquidityDepthWidget pool={pool} />
+                      <LiquidityDepthWidget
+                        pool={pool}
+                        tickRangeSelectorState={tickRangeSelectorState}
+                      />
 
                       {/* Submit Button */}
                       <Button
