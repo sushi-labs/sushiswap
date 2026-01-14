@@ -2,21 +2,12 @@
 
 import { Button, Chip, Loader, Slot } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import dynamic from 'next/dynamic'
 import { DEFAULT_CHAIN_ID_BY_NAMESPACE } from 'src/lib/wallet'
 import { useWalletState } from 'src/lib/wallet/provider/wallet-state-provider'
 import { getChainById } from 'sushi'
+import ConnectEvmWalletButton from './connect-evm-wallet-button'
+import ConnectSvmWalletButton from './connect-svm-wallet-button'
 import type { ConnectWalletButtonProps } from './types'
-
-const ConnectEvmWalletButton = dynamic(
-  () => import('./connect-evm-wallet-button'),
-  { ssr: false },
-)
-
-const ConnectSvmWalletButton = dynamic(
-  () => import('./connect-svm-wallet-button'),
-  { ssr: false },
-)
 
 function ConnectButton(props: ConnectWalletButtonProps) {
   if (!props.wallet.isAvailable || props.onClick) {
