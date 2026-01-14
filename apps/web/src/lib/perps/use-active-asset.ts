@@ -67,7 +67,7 @@ const formatSpotCtxs = (activeSpotAssetCtxEvent: ActiveSpotAssetCtxEvent) => {
 
 type ActivePerp = ReturnType<typeof formatPerpCtxs>
 type ActiveSpot = ReturnType<typeof formatSpotCtxs>
-type ActiveAsset = ActivePerp | ActiveSpot
+export type ActiveAsset = ActivePerp | ActiveSpot
 
 export const useActiveAsset = ({ assetString }: { assetString: string }) => {
   const queryClient = useQueryClient()

@@ -1,11 +1,21 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import type { ActiveAsset } from './use-active-asset'
 
-export const useInitialDecimals = (value: string | number | undefined) => {
+export const useInitialDecimals = (asset: ActiveAsset | undefined) => {
+  const assetRef = useRef(asset?.name)
   const [initialDecimals, setInitialDecimals] = useState<number | undefined>(
     undefined,
   )
   useEffect(() => {
-    if (initialDecimals !== undefined) return
+    if (
+      (initialDecimals !== undefined && asset?.name === assetRef.current) ||
+      !asset
+    ) {
+      return
+    }
+    assetRef.current = asset?.name
+    const value =
+      asset?.marketType === 'perp' ? asset?.markPrice : asset?.lastPrice
     if (value) {
       const parts = value.toString().split('.')
       if (parts.length === 2) {
@@ -14,6 +24,6 @@ export const useInitialDecimals = (value: string | number | undefined) => {
         setInitialDecimals(0)
       }
     }
-  }, [value, initialDecimals])
+  }, [initialDecimals, asset])
   return initialDecimals
 }

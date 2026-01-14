@@ -34,7 +34,7 @@ export const SpotAssetStats = () => {
   const { data: assetData, isLoading: isAssetLoading } = useActiveAsset({
     assetString: activeAsset,
   })
-  const initialDecimals = useInitialDecimals(assetData?.markPrice)
+  const initialDecimals = useInitialDecimals(assetData)
 
   if (isLoading || isAssetLoading || !assetData || !asset) {
     return Array(8)
@@ -61,11 +61,7 @@ export const SpotAssetStats = () => {
         </HoverCard>
 
         <ValueSensitiveText
-          value={
-            assetData?.midPrice?.toString() ??
-            assetData?.markPrice?.toString() ??
-            ''
-          }
+          value={assetData?.lastPrice?.toString() ?? ''}
           className="text-sm font-medium tabular-nums lining-nums min-w-[var(--w)] inline-block"
           formatOptions={{
             minimumFractionDigits: initialDecimals,

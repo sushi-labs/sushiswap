@@ -25,7 +25,7 @@ export const PerpAssetStats = () => {
   const { data: assetData, isLoading: isAssetLoading } = useActiveAsset({
     assetString: activeAsset,
   })
-  const initialDecimals = useInitialDecimals(assetData?.markPrice)
+  const initialDecimals = useInitialDecimals(assetData)
 
   if (isAssetLoading || !assetData) {
     return Array(8)
