@@ -12,7 +12,7 @@ import {
 import { DEFAULT_TIMEOUT } from '../soroban/constants'
 import { contractAddresses } from '../soroban/contracts'
 import { handleResult } from '../soroban/handle-result'
-import { signAuthEntriesAndGetXdr } from '../soroban/position-manager-helpers'
+import { signAuthEntriesAndGetXdr } from '../soroban/rpc-transaction-helpers'
 import {
   submitTransaction,
   waitForTransaction,

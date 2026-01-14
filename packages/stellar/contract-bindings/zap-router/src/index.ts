@@ -568,7 +568,7 @@ weight: u128;
 /**
  * Error codes for the periphery base contract
  */
-export const PeripheryBaseErrors = {
+export const Errors = {
   /**
    * Transaction has exceeded the deadline
    */
@@ -656,9 +656,9 @@ export const PeripheryBaseErrors = {
 }
 
 /**
- * Keys under which we'll store the immutable fields (Position Manager)
+ * Keys under which we'll store the immutable fields
  */
-export type PositionManagerDataKey = {tag: "Factory", values: void} | {tag: "XlmAddress", values: void};
+export type DataKey = {tag: "Factory", values: void} | {tag: "XlmAddress", values: void};
 
 /**
  * Q128.128 fixed-point number

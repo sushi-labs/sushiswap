@@ -164,7 +164,6 @@ export function useBestRoute({
   tokenIn,
   tokenOut,
   amountIn,
-  enabled = true,
 }: UseBestRouteParams) {
   // Build additional tokens list from swap input/output
   // This ensures the pool graph includes routes for the selected tokens
@@ -173,7 +172,7 @@ export function useBestRoute({
   )
 
   // Get the pool graph, augmented with input/output tokens
-  const { data: poolGraphData, isLoading: isLoadingGraph } = usePoolGraph({
+  const { data: poolGraphData, isPending: isPendingGraph } = usePoolGraph({
     additionalTokens,
   })
 
@@ -335,8 +334,7 @@ export function useBestRoute({
       }
     },
     enabled: Boolean(
-      enabled &&
-        tokenIn &&
+      tokenIn &&
         tokenOut &&
         poolGraphData &&
         amountIn > 0n &&
@@ -350,7 +348,7 @@ export function useBestRoute({
 
   return {
     route: routeQuery.data,
-    isLoading: isLoadingGraph || routeQuery.isLoading,
+    isPending: isPendingGraph || routeQuery.isPending,
     isFetching: routeQuery.isFetching,
     isError: routeQuery.isError,
     error: routeQuery.error,

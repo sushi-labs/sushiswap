@@ -69,13 +69,12 @@ export const SimpleSwapExecuteButton = () => {
 
   const {
     route,
-    isLoading: isRouteLoading,
+    isPending: isRoutePending,
     isFetching: isRouteFetching,
   } = useBestRoute({
     tokenIn: token0,
     tokenOut: token1,
     amountIn,
-    enabled: Boolean(amountIn > 0n),
   })
 
   const showPriceImpactWarning = requiresPriceImpactConfirmation(
@@ -218,7 +217,7 @@ export const SimpleSwapExecuteButton = () => {
       return 'Amount too small'
     }
     // Show loading state while fetching route
-    if (amount && Number(amount) > 0 && (isRouteLoading || isRouteFetching)) {
+    if (amount && Number(amount) > 0 && (isRoutePending || isRouteFetching)) {
       return 'Finding best route...'
     }
     if (
@@ -239,7 +238,7 @@ export const SimpleSwapExecuteButton = () => {
     amount,
     route,
     outputAmount,
-    isRouteLoading,
+    isRoutePending,
     isRouteFetching,
   ])
 

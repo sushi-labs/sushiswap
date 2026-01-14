@@ -359,7 +359,7 @@ export function usePoolGraph({
 }: UsePoolGraphParams = {}) {
   const {
     data: baseGraph,
-    isLoading: isLoadingBase,
+    isPending: isPendingBase,
     isError: isErrorBase,
     error: baseGraphError,
   } = useBasePoolGraph()
@@ -407,12 +407,12 @@ export function usePoolGraph({
 
   // Return base graph if no additional tokens, otherwise return augmented
   const data = newTokens.length === 0 ? baseGraph : augmentedQuery.data
-  const isLoading =
-    isLoadingBase || (newTokens.length > 0 && augmentedQuery.isLoading)
+  const isPending =
+    isPendingBase || (newTokens.length > 0 && augmentedQuery.isPending)
 
   return {
     data,
-    isLoading,
+    isPending,
     isError: augmentedQuery.isError || isErrorBase,
     error: augmentedQuery.error ?? baseGraphError,
   }

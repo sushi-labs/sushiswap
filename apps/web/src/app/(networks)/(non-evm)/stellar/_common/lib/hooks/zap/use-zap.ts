@@ -1,15 +1,24 @@
 'use client'
 
+import * as StellarSdk from '@stellar/stellar-sdk'
 import {
   createErrorToast,
   createInfoToast,
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import ms from 'ms'
+import { addMinutes } from 'date-fns'
 import { ChainId } from 'sushi'
-import { formatUnits } from 'viem'
-import { createSushiStellarService } from '../../services/sushi-stellar-service'
+import type { RouteWithTokens } from '~stellar/swap/lib/swap-get-route'
+import { calculateAmountOutMinimum } from '../../services/router-service'
+import { DEFAULT_TIMEOUT, contractAddresses } from '../../soroban'
+import { getZapRouterContractClient } from '../../soroban/client'
+import {
+  type AssembledTransactionLike,
+  signAuthEntriesAndGetXdr,
+  submitViaRawRPC,
+  waitForTransaction,
+} from '../../soroban/rpc-transaction-helpers'
 import type { Token } from '../../types/token.type'
 import { extractErrorMessage } from '../../utils/error-helpers'
 import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
@@ -27,10 +36,11 @@ export interface UseZapParams {
   userAddress: string
   signTransaction: (xdr: string) => Promise<string>
   signAuthEntry: (entryPreimageXdr: string) => Promise<string>
+  routeToken0: RouteWithTokens | null
+  routeToken1: RouteWithTokens | null
 }
 
 export const useZap = () => {
-  const service = createSushiStellarService()
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -52,145 +62,148 @@ export const useZap = () => {
         tokenIn,
         amountIn,
         tokenInDecimals,
-        token0,
-        token1,
         tickLower,
         tickUpper,
         slippage = 0.005,
         userAddress,
         signTransaction,
         signAuthEntry,
+        routeToken0,
+        routeToken1,
+        token0,
+        token1,
       } = params
+
+      const isZapTokenToken0 =
+        tokenIn.contract.toUpperCase() === token0.contract.toUpperCase()
+      const isZapTokenToken1 =
+        tokenIn.contract.toUpperCase() === token1.contract.toUpperCase()
+
+      if (!routeToken0 && !isZapTokenToken0) {
+        throw new Error(`No route from ${tokenIn.code} to ${token0.code}`)
+      }
+      if (!routeToken1 && !isZapTokenToken1) {
+        throw new Error(`No route from ${tokenIn.code} to ${token1.code}`)
+      }
 
       const amountInBigInt = BigInt(
         Math.floor(Number.parseFloat(amountIn) * 10 ** tokenInDecimals),
       )
 
-      // Determine if tokenIn is token0, token1, or external
-      const isToken0 = tokenIn.contract === token0.contract
-      const isToken1 = tokenIn.contract === token1.contract
-      const isExternalToken = !isToken0 && !isToken1
+      const zapRouterClient = getZapRouterContractClient({
+        contractId: contractAddresses.ZAP_ROUTER,
+        publicKey: userAddress,
+      })
 
-      let currentToken0Balance = 0n
-      let currentToken1Balance = 0n
+      const { result: zapQuoteResult } = await zapRouterClient.quote_zap_in(
+        {
+          params: {
+            amount_in: amountInBigInt,
+            fees_to_token0: routeToken0?.fees ?? [],
+            fees_to_token1: routeToken1?.fees ?? [],
+            pool: poolAddress,
+            token_in: tokenIn.contract,
+            path_to_token0: routeToken0?.route ?? [],
+            path_to_token1: routeToken1?.route ?? [],
+            tick_lower: tickLower,
+            tick_upper: tickUpper,
+          },
+        },
+        {
+          timeoutInSeconds: DEFAULT_TIMEOUT,
+        },
+      )
 
-      if (isExternalToken) {
-        // Case: External token - swap entire amount to get 50/50 of both pool tokens
-        // Split the input amount in half and swap each half to token0 and token1
-        const halfAmount = amountInBigInt / 2n
-        const remainingAmount = amountInBigInt - halfAmount // Handle odd amounts
-
-        // Swap first half to token0
-        const swapToToken0Result = await service.swapWithRouting(
-          userAddress,
-          tokenIn,
-          token0,
-          halfAmount,
-          signTransaction,
-          slippage,
+      if (zapQuoteResult.isErr()) {
+        throw new Error(
+          `Error getting zap quote: ${zapQuoteResult.unwrapErr().message}`,
         )
-        currentToken0Balance = swapToToken0Result.amountOut
-
-        // Add delay between swaps
-        await new Promise((resolve) => setTimeout(resolve, ms('8s')))
-
-        // Swap remaining amount to token1
-        const swapToToken1Result = await service.swapWithRouting(
-          userAddress,
-          tokenIn,
-          token1,
-          remainingAmount,
-          signTransaction,
-          slippage,
-        )
-        currentToken1Balance = swapToToken1Result.amountOut
-
-        // Add delay to ensure Stellar nodes have fully processed the swap transactions
-        await new Promise((resolve) => setTimeout(resolve, ms('8s')))
-
-        // Invalidate balances to reflect swaps in UI
-        queryClient.invalidateQueries({
-          queryKey: ['stellar', 'pool', 'balances'],
-        })
-        queryClient.invalidateQueries({ queryKey: ['stellar', 'pool', 'info'] })
-      } else {
-        // Case: tokenIn is one of the pool tokens - swap 50% to the other token
-        const halfAmount = amountInBigInt / 2n
-        const remainingAmount = amountInBigInt - halfAmount
-
-        // Set initial balances
-        if (isToken0) {
-          currentToken0Balance = remainingAmount
-          currentToken1Balance = 0n
-        } else {
-          currentToken0Balance = 0n
-          currentToken1Balance = remainingAmount
-        }
-
-        // Swap half to the other pool token
-        const swapTokenOut = isToken0 ? token1 : token0
-        const swapResult = await service.swapWithRouting(
-          userAddress,
-          tokenIn,
-          swapTokenOut,
-          halfAmount,
-          signTransaction,
-          slippage,
-        )
-
-        // Update balances after swap
-        if (isToken0) {
-          // We swapped Token 0 -> Token 1
-          currentToken1Balance = swapResult.amountOut
-        } else {
-          // We swapped Token 1 -> Token 0
-          currentToken0Balance = swapResult.amountOut
-        }
-
-        // Add delay to ensure Stellar nodes have fully processed the swap transaction
-        await new Promise((resolve) => setTimeout(resolve, ms('8s')))
-
-        // Invalidate balances to reflect swap in UI immediately (before add liquidity)
-        queryClient.invalidateQueries({
-          queryKey: ['stellar', 'pool', 'balances'],
-        })
-        queryClient.invalidateQueries({ queryKey: ['stellar', 'pool', 'info'] })
       }
 
-      // 3. Add Liquidity
-      // We use the remaining balances
+      const zapQuote = zapQuoteResult.unwrap()
 
-      // Format back to string for addLiquidity params
-      const token0AmountStr = formatUnits(currentToken0Balance, token0.decimals)
-      const token1AmountStr = formatUnits(currentToken1Balance, token1.decimals)
-
-      const addLiqResult = await service.addLiquidity(
-        userAddress,
+      const assembledTransaction = await zapRouterClient.zap_in(
         {
-          poolAddress,
-          token0Amount: token0AmountStr,
-          token1Amount: token1AmountStr,
-          token0Decimals: token0.decimals,
-          token1Decimals: token1.decimals,
-          tickLower,
-          tickUpper,
-          recipient: userAddress,
+          params: {
+            amount0_min: calculateAmountOutMinimum(zapQuote.amount0, slippage),
+            amount1_min: calculateAmountOutMinimum(zapQuote.amount1, slippage),
+            amount_in: amountInBigInt,
+            deadline: BigInt(
+              Math.floor(addMinutes(new Date(), 5).valueOf() / 1000),
+            ),
+            fees_to_token0: routeToken0?.fees ?? [],
+            fees_to_token1: routeToken1?.fees ?? [],
+            min_liquidity: calculateAmountOutMinimum(
+              zapQuote.liquidity,
+              slippage,
+            ),
+            path_to_token0: routeToken0?.route ?? [],
+            path_to_token1: routeToken1?.route ?? [],
+            pool: poolAddress,
+            recipient: userAddress,
+            sender: userAddress,
+            swap_amount_hint:
+              isZapTokenToken0 || isZapTokenToken1
+                ? zapQuote.swap_amount
+                : undefined,
+            swap_to_token0_min_out: 0n,
+            swap_to_token1_min_out: 0n,
+            tick_lower: tickLower,
+            tick_upper: tickUpper,
+            token_in: tokenIn.contract,
+          },
         },
-        signTransaction,
+        {
+          timeoutInSeconds: DEFAULT_TIMEOUT,
+          fee: 100000,
+          simulate: true, // Explicitly enable simulation to ensure footprint is properly set
+        },
+      )
+
+      const simulationResult = assembledTransaction.simulation
+      if (
+        simulationResult &&
+        StellarSdk.rpc.Api.isSimulationError(simulationResult)
+      ) {
+        throw new Error(extractErrorMessage(simulationResult.error))
+      }
+
+      // Sign auth entries for nested authorization (PM -> Pool -> Token transfers)
+      // This is required because the user is not the direct invoker of pool.increase_liquidity
+      const transactionXdr = await signAuthEntriesAndGetXdr(
+        assembledTransaction as unknown as AssembledTransactionLike,
+        userAddress,
         signAuthEntry,
       )
 
-      return { addLiqResult, params }
+      // Sign the transaction envelope
+      const signedXdr = await signTransaction(transactionXdr)
+
+      // Submit the signed XDR directly via raw RPC
+      const txHash = await submitViaRawRPC(signedXdr)
+
+      // Wait for confirmation
+      const result = await waitForTransaction(txHash)
+
+      if (result.success) {
+        return {
+          txHash,
+          userAddress,
+        }
+      } else {
+        console.error('Transaction failed:', result.error)
+        throw new Error(`Transaction failed: ${JSON.stringify(result.error)}`)
+      }
     },
-    onSuccess: ({ addLiqResult, params }) => {
+    onSuccess: ({ txHash, userAddress }) => {
       const timestamp = Date.now()
       createSuccessToast({
         summary: 'Liquidity added successfully',
         type: 'mint',
-        account: params.userAddress,
+        account: userAddress,
         chainId: ChainId.STELLAR,
-        txHash: addLiqResult.txHash,
-        href: getStellarTxnLink(addLiqResult.txHash),
+        txHash: txHash,
+        href: getStellarTxnLink(txHash),
         groupTimestamp: timestamp,
         timestamp,
       })

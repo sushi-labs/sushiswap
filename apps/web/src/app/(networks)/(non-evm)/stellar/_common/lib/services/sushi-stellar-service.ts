@@ -8,7 +8,11 @@ import {
 import type { Token } from '../types/token.type'
 import { type CollectParams, positionService } from './position-service'
 import { QuoteService } from './quote-service'
-import { RouterService, type SwapRoute } from './router-service'
+import {
+  RouterService,
+  type SwapRoute,
+  formatRouteForUser,
+} from './router-service'
 import {
   type AddLiquidityParams,
   type SwapExactInputParams,
@@ -202,70 +206,6 @@ export class SushiStellarService {
   }
 
   /**
-   * Execute swap with automatic routing
-   */
-  async swapWithRouting(
-    userAddress: string,
-    tokenIn: Token,
-    tokenOut: Token,
-    amountIn: bigint,
-    signTransaction: (xdr: string) => Promise<string>,
-    slippage = 0.005,
-  ): Promise<{ txHash: string; amountOut: bigint; route: SwapRoute }> {
-    // Find best route
-    const route = await this.findBestRoute(tokenIn, tokenOut, amountIn)
-    if (!route) {
-      throw new Error('No route found between tokens')
-    }
-
-    // Calculate minimum amount out with slippage protection
-    const amountOutMinimum = this.routerService.calculateAmountOutMinimum(
-      route.amountOut,
-      slippage,
-    )
-
-    const deadline = Math.floor(addMinutes(new Date(), 5).valueOf() / 1000)
-
-    let result: { txHash: string; amountOut: bigint }
-
-    if (route.routeType === 'direct') {
-      // Single-hop swap
-      result = await this.swapExactInputSingle(
-        userAddress,
-        {
-          tokenIn: route.path[0].contract,
-          tokenOut: route.path[1].contract,
-          fee: route.fees[0],
-          recipient: userAddress,
-          deadline,
-          amountIn,
-          amountOutMinimum,
-        },
-        signTransaction,
-      )
-    } else {
-      // Multi-hop swap
-      result = await this.swapExactInput(
-        userAddress,
-        {
-          path: route.path.map((token) => token.contract),
-          fees: route.fees,
-          recipient: userAddress,
-          deadline,
-          amountIn,
-          amountOutMinimum,
-        },
-        signTransaction,
-      )
-    }
-
-    return {
-      ...result,
-      route,
-    }
-  }
-
-  /**
    * Get all available pools between two tokens
    */
   async getPoolsBetween(tokenA: Token, tokenB: Token) {
@@ -276,7 +216,7 @@ export class SushiStellarService {
    * Format route for display
    */
   formatRoute(route: SwapRoute): string {
-    return this.routerService.formatRouteForUser(route)
+    return formatRouteForUser(route)
   }
 
   // Position Management Methods

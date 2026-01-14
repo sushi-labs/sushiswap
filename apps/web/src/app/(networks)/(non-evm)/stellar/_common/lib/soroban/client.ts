@@ -6,6 +6,7 @@ import { Client as PoolLensContractClient } from '@sushiswap/stellar-contract-bi
 import { Client as PositionManagerContractClient } from '@sushiswap/stellar-contract-binding-position-manager'
 import { Client as RouterContractClient } from '@sushiswap/stellar-contract-binding-router'
 import { Client as TokenContractClient } from '@sushiswap/stellar-contract-binding-token'
+import { Client as ZapRouterContractClient } from '@sushiswap/stellar-contract-binding-zap-router'
 import { NETWORK_PASSPHRASE, RPC_URL } from '../constants'
 
 // Initialize Soroban RPC server
@@ -81,6 +82,17 @@ export const getPositionManagerContractClient = ({
   publicKey,
 }: ContractClientParams) =>
   new PositionManagerContractClient({
+    contractId: contractId,
+    networkPassphrase: NETWORK_PASSPHRASE,
+    rpcUrl: RPC_URL,
+    publicKey: publicKey,
+  })
+
+export const getZapRouterContractClient = ({
+  contractId,
+  publicKey,
+}: ContractClientParams) =>
+  new ZapRouterContractClient({
     contractId: contractId,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,

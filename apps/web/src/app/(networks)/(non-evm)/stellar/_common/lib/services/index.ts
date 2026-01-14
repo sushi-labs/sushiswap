@@ -9,7 +9,7 @@ export {
   type QuoteExactInputSingleParams,
   type QuoteExactInputParams,
 } from './quote-service'
-export { RouterService, type SwapRoute } from './router-service'
+export type { SwapRoute } from './router-service'
 export {
   SushiStellarService,
   createSushiStellarService,
