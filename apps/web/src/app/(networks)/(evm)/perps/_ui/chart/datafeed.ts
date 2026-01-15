@@ -48,11 +48,11 @@ export const timeframes: TimeFrameItem[] = [
     description: '1 hour',
   },
   { text: '2h', resolution: '120' as ResolutionString, description: '2 hours' },
-  { text: '4h', resolution: '480' as ResolutionString, description: '4 hours' },
-  { text: '8h', resolution: '960' as ResolutionString, description: '8 hours' },
+  { text: '4h', resolution: '240' as ResolutionString, description: '4 hours' },
+  { text: '8h', resolution: '480' as ResolutionString, description: '8 hours' },
   {
     text: '12h',
-    resolution: '1440' as ResolutionString,
+    resolution: '720' as ResolutionString,
     description: '12 hours',
   },
 
@@ -159,14 +159,6 @@ export default {
       const _from = from * 1000
 
       let _to = to * 1000
-      // if (_to - _from > maxSeconds) {
-      //   // If the requested range exceeds the maximum allowed, adjust it
-      //   // _to = _from + maxSeconds;
-      //   _from = _to - maxSeconds // Adjust _from to fit the max range
-      //   if (_from < earliestAllowedTimestamp) {
-      //     _from = earliestAllowedTimestamp
-      //   }
-      // }
 
       const now = Math.floor(Date.now())
       if (_to > now) {

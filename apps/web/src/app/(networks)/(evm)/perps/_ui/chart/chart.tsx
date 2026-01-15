@@ -159,25 +159,25 @@ export const Chart = () => {
           ],
           // Color that overrides grey
           color2: [
-            '#f2edf7',
-            '#0000000a',
-            '#a8a8a8',
-            '#ffffffd',
-            '#ffffffd',
-            '#b396d0',
-            '#a684c8',
-            '#9972c0',
-            '#8c61b8',
-            '#535263',
-            '#535263',
-            '#5e2893',
-            '#552585',
-            '#4d2178',
-            '#441d6b',
-            '#0000000a',
-            '#331650',
-            '#000000',
-            '#220f35',
+            '#f4f4f5',
+            '#e9e9eb',
+            '#dddee1',
+            '#d2d3d7',
+            '#c7c8cd',
+            '#bcbdc3',
+            '#b0b2b8',
+            '#a5a7ae',
+            '#9a9ca4',
+            '#8f919a',
+            '#787b86',
+            '#6e717b',
+            '#646770',
+            '#5a5c65',
+            '#505259',
+            '#46484e',
+            '#3c3e43',
+            '#323338',
+            '#28292d',
           ],
           // Color that overrides red
           color3: [
@@ -212,7 +212,7 @@ export const Chart = () => {
             '#a2eecb',
             '#95ecc3',
             '#88e9bc',
-            '#22c55e', // confirmation modal btn bg positive
+            '#22c55e',
             '#60e2a5',
             '#58cf97',
             '#50bc8a',
@@ -316,25 +316,25 @@ export const Chart = () => {
           ],
 
           color2: [
-            '#f8eeee',
-            '#0f172a',
-            '#eacdcd',
-            '#E4DDEC',
-            '#E4DDEC',
-            '#d49b9b',
-            '#E4DDEC',
-            '#222137',
-            'E4DDEC',
-            '#E4DDEC',
-            '#15152b',
-            '#E4DDEC',
-            '#E4DDEC',
-            '#E4DDEC',
-            '#15152B',
-            '#ffffff0a',
-            '#15152B',
-            '#0f172a',
-            '#381212',
+            '#f4f4f5',
+            '#e9e9eb',
+            '#dddee1',
+            '#d2d3d7',
+            '#c7c8cd',
+            '#bcbdc3',
+            '#b0b2b8',
+            '#a5a7ae',
+            '#9a9ca4',
+            '#8f919a',
+            '#787b86',
+            '#6e717b',
+            '#646770',
+            '#5a5c65',
+            '#505259',
+            '#46484e',
+            '#3c3e43',
+            '#0f172a', //side and top bar bg
+            '#323338',
           ],
           color3: [
             '#fff0f0',
@@ -459,7 +459,6 @@ export const Chart = () => {
   }, [address, chartContainerRef, resolvedTheme, isMounted, activeAsset])
 
   return (
-    // <div className="flex flex-col lg:h-[649px] flex-grow rounded-xl border border-accent shadow-sm bg-white dark:bg-background black:bg-secondary p-2">
     <Card className="flex flex-col lg:h-[649px] flex-grow  p-2">
       <script src="public/trading_view/charting_library/bundles" />
 
@@ -473,7 +472,7 @@ export const Chart = () => {
         />
         <div
           className={classNames(
-            'h-[385px] lg:h-full bg-slate-50 dark:bg-slate-800 dark:text-pink-200 rounded-xl text-muted-foreground items-center justify-center italic text-sm',
+            'h-[385px] lg:h-full rounded-xl text-muted-foreground items-center justify-center italic text-sm',
             hasNoData ? 'flex' : 'hidden',
           )}
         >
