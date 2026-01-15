@@ -9,11 +9,11 @@ export const BladeSunsetNotice = ({
 }: { className?: string; includeCtaBtn?: boolean; chainId?: EvmChainId }) => {
   return (
     <Message className={classNames(className ?? '')}>
-      <p className="font-bold">Sunsetting Notice:</p>
+      <p className="font-bold">Blade Pools Notice:</p>
       <p>
-        Blade Pools are being sunset and are now in withdrawal-only mode. New
-        deposits are disabled - please withdraw your funds and migrate to
-        supported pools.{' '}
+        Blade pools are being paused until further notice and are now withdrawal
+        only. Please withdraw any funds from Blade pools and migrate to V3
+        concentrated liquidity pools to continue earning fees.
       </p>
       {includeCtaBtn ? (
         <LinkInternal
