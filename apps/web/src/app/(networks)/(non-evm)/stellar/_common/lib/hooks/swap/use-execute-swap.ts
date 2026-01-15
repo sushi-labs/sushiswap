@@ -51,7 +51,6 @@ export const useExecuteSwap = () => {
         chainId: ChainId.STELLAR,
         groupTimestamp: timestamp,
         timestamp,
-        txHash: infoToastId, // Use as toast ID for dismissal
       })
 
       // Return context with toast ID for use in onError/onSuccess
@@ -167,7 +166,6 @@ export const useExecuteMultiHopSwap = () => {
         chainId: ChainId.STELLAR,
         groupTimestamp: timestamp,
         timestamp,
-        txHash: infoToastId, // Use as toast ID for dismissal
       })
 
       // Return context with toast ID for use in onError/onSuccess

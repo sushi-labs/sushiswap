@@ -6,6 +6,10 @@ import {
   WalletNetwork,
   allowAllModules,
 } from '@creit.tech/stellar-wallets-kit'
+import {
+  WalletConnectAllowedMethods,
+  WalletConnectModule,
+} from '@creit.tech/stellar-wallets-kit/modules/walletconnect.module'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { IS_FUTURENET, NETWORK_PASSPHRASE } from './_common/lib/constants'
 
@@ -49,7 +53,20 @@ export function Providers({ children }: { children: React.ReactNode }) {
       // Note: This should only be called once any time a user is connected to Stellar
       const kit: StellarWalletsKit = new StellarWalletsKit({
         network: PREFERRED_NETWORK,
-        modules: allowAllModules(),
+        modules: [
+          ...allowAllModules(),
+          new WalletConnectModule({
+            projectId: '04fe42b39cc40b3dd24d3a5ede232dfa',
+            url: 'https://www.sushi.com',
+            name: 'Sushi',
+            description: 'Sushi Stellar Liquidity Pools',
+            icons: [
+              'https://assets.coingecko.com/coins/images/12271/standard/512x512_Logo_no_chop.png?1696512101',
+            ],
+            method: WalletConnectAllowedMethods.SIGN,
+            network: PREFERRED_NETWORK,
+          }),
+        ],
       })
       // Get/Set wallets
       const wallets = await kit.getSupportedWallets()

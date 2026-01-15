@@ -14,7 +14,7 @@ export const baseTokens: Token[] = [
   },
   {
     code: 'HYPE',
-    issuer: '',
+    issuer: 'GBPQPDWLM7PU42ISCDYSX3LESWYMVPI6A7ACHRFACEPR3QSFL47AKAMV',
     contract: 'CCXHOHY22HBRYYM6P4R67QN6SFSSLAQH2P3PKIMC35NZZKWVPX6ZPJSV',
     name: 'HYPE',
     org: 'hypotenuselabs',
@@ -22,7 +22,7 @@ export const baseTokens: Token[] = [
   },
   {
     code: 'SUSHI',
-    issuer: '',
+    issuer: 'GBPQPDWLM7PU42ISCDYSX3LESWYMVPI6A7ACHRFACEPR3QSFL47AKAMV',
     contract: 'CA7WDZGXTB7ZCIGYIVIBXJQFT2U74YUTXVG274ES5ADDOUUE2NCGARUK',
     name: 'SUSHI',
     org: 'sushiswap',
@@ -30,7 +30,7 @@ export const baseTokens: Token[] = [
   },
   {
     code: 'STELLA',
-    issuer: '',
+    issuer: 'GBPQPDWLM7PU42ISCDYSX3LESWYMVPI6A7ACHRFACEPR3QSFL47AKAMV',
     contract: 'CBVHSZJYCOCYCEO36U5BNQWFZYWR4HQW5OMTEARB4RXVHFQOSDPMFCW6',
     name: 'STELLA',
     org: 'hypotenuselabs',
