@@ -53,7 +53,7 @@ export const OrderBook = ({ className }: { className?: string }) => {
     },
   } = useAssetListState()
   const { isLg } = useBreakpoint('lg')
-  const itemCount = isLg ? 13 : 7
+  const itemCount = isLg ? 12 : 7
 
   const [side, setSide] = useState<'base' | 'quote'>('quote')
   const asset = assetList?.get?.(activeAsset)
@@ -181,7 +181,7 @@ export const OrderBook = ({ className }: { className?: string }) => {
               })}
               <tr className="border-y-[2px] lg:border-y-[4px] border-transparent">
                 <td
-                  className="px-0.5 py-0 text-xs dark:bg-slate-800 text-center bg-gray-50 font-medium tabular-nums"
+                  className="px-0.5 py-0 lg:py-0.5 text-xs dark:bg-slate-800 text-center bg-gray-50 font-medium tabular-nums"
                   colSpan={3}
                 >
                   Spread
