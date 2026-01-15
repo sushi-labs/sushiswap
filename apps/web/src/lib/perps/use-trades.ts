@@ -11,6 +11,7 @@ export const useTrades = ({ assetString }: { assetString: string }) => {
   })
 
   useEffect(() => {
+    if (!assetString) return
     let unsubscribe: undefined | (() => Promise<void>) = undefined
     ;(async () => {
       const sub = await trades(

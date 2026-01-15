@@ -5,6 +5,7 @@ import { useTrades } from 'src/lib/perps/use-trades'
 import {
   getHyperliquidExplorerUrl,
   getTextColorClass,
+  numberFormatter,
 } from 'src/lib/perps/utils'
 import { useAssetState } from './asset-state-provider'
 
@@ -12,7 +13,7 @@ export const Trades = () => {
   const {
     state: { activeAsset },
   } = useAssetState()
-  const { data, isLoading, isError } = useTrades({ assetString: activeAsset })
+  const { data, isLoading, error } = useTrades({ assetString: activeAsset })
   const { data: assetName } = useAssetName({ assetString: activeAsset })
 
   return (
@@ -32,13 +33,13 @@ export const Trades = () => {
             Array.from({ length: 50 }).map((_, index) => (
               <SkeletonTradeRow key={index} />
             ))
-          ) : isError ? (
+          ) : error ? (
             <tr>
               <td
                 colSpan={3}
                 className="p-2 h-20 text-xs italic text-red-500/70 text-center"
               >
-                Error loading trades.
+                Error loading trades. {error?.message}
               </td>
             </tr>
           ) : data && data.length > 0 ? (
@@ -50,9 +51,11 @@ export const Trades = () => {
                     getTextColorClass(trade.side === 'B' ? 1 : -1),
                   )}
                 >
-                  {trade.px}
+                  {numberFormatter.format(Number.parseFloat(trade.px))}
                 </td>
-                <td className="px-0.5 py-1 text-xs text-right">{trade.sz}</td>
+                <td className="px-0.5 py-1 text-xs text-right">
+                  {numberFormatter.format(Number.parseFloat(trade.sz))}
+                </td>
                 <td className="px-0.5 py-1 text-xs text-right">
                   {new Date(trade.time).toLocaleTimeString()}
                   <LinkExternal

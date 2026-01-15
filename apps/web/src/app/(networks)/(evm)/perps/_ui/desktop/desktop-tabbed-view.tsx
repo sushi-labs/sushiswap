@@ -1,4 +1,5 @@
 import { Card, Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
+import { OrderBook } from '../order-book/order-book'
 import { Trades } from '../trades'
 
 export const DESKTOP_TABS = [
@@ -24,7 +25,7 @@ export const DesktopTabbedView = ({
   return (
     <Card className="p-2 h-full">
       <Tabs
-        className="w-full"
+        className="w-full h-full"
         value={tab}
         onValueChange={(value) => setTab(value as DesktopTab)}
       >
@@ -36,8 +37,8 @@ export const DesktopTabbedView = ({
             Trades
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="order-book">
-          <div>order book</div>
+        <TabsContent value="order-book" className="h-full">
+          <OrderBook className="h-full" />
         </TabsContent>
         <TabsContent value="trades">
           <Trades />

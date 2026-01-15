@@ -454,7 +454,7 @@ export const Chart = () => {
   ])
 
   return (
-    <Card className="flex flex-col lg:h-[649px] flex-grow  p-2">
+    <Card className="flex flex-col lg:h-[649px] flex-grow p-0 border-0 lg:border lg:p-2">
       <script src="public/trading_view/charting_library/bundles" />
 
       <div className="flex-grow ">

@@ -58,3 +58,9 @@ export const SPOT_ASSETS_TO_REWRITE = new Map<string, string>([
   ['HWAVE', 'WAVE'],
   ['USPYX', 'SPYX'],
 ])
+
+export const toFixedTrim = (x: number, maxDp = 10) => {
+  // stable display, no trailing zeros
+  const s = x.toFixed(maxDp)
+  return s.replace(/\.?0+$/, '')
+}
