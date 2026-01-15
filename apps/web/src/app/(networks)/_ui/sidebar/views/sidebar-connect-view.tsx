@@ -3,16 +3,28 @@
 import { ArrowLeftIcon } from '@heroicons/react-v1/solid'
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import { IconButton } from '@sushiswap/ui'
-import { useState } from 'react'
+import dynamic from 'next/dynamic'
+import { Suspense, useState } from 'react'
 import {
   DEFAULT_CHAIN_ID_BY_NAMESPACE,
   type WalletWithState,
 } from 'src/lib/wallet'
 import { Disclaimer } from 'src/lib/wallet/components/disclaimer'
-import WalletConnectorsList from 'src/lib/wallet/components/wallet-connectors-list/wallet-connectors-list'
+import { WalletConnectorsListSkeleton } from 'src/lib/wallet/components/wallet-connectors-list/wallet-connectors-list-skeleton'
 import { getChainById } from 'sushi'
 import { useSidebar } from '../sidebar-provider'
 import { DefaultSidebarView } from '../types'
+
+const WalletConnectorsList = dynamic(
+  () =>
+    import(
+      'src/lib/wallet/components/wallet-connectors-list/wallet-connectors-list'
+    ),
+  {
+    ssr: false,
+    loading: () => <WalletConnectorsListSkeleton />,
+  },
+)
 
 type ConnectSubview =
   | { type: 'main' }
@@ -84,22 +96,26 @@ export const SidebarConnectView = () => {
         />
       </div>
       {subview.type === 'select-namespace' ? (
-        <WalletConnectorsList
-          variant="namespace"
-          onConnect={onConnect}
-          wallets={subview.wallets}
-        />
+        <Suspense fallback={<WalletConnectorsListSkeleton />}>
+          <WalletConnectorsList
+            variant="namespace"
+            onConnect={onConnect}
+            wallets={subview.wallets}
+          />
+        </Suspense>
       ) : (
-        <WalletConnectorsList
-          namespace={namespace}
-          onConnect={onConnect}
-          onSelectMultiNamespaceWallet={(wallets) =>
-            setSubview({
-              type: 'select-namespace',
-              wallets,
-            })
-          }
-        />
+        <Suspense fallback={<WalletConnectorsListSkeleton />}>
+          <WalletConnectorsList
+            namespace={namespace}
+            onConnect={onConnect}
+            onSelectMultiNamespaceWallet={(wallets) =>
+              setSubview({
+                type: 'select-namespace',
+                wallets,
+              })
+            }
+          />
+        </Suspense>
       )}
     </div>
   )

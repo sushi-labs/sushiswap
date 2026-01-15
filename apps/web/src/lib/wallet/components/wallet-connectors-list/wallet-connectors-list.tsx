@@ -3,7 +3,7 @@
 import { useMemo } from 'react'
 import type { WalletNamespace, WalletWithState } from '../../types'
 import { ConnectWalletButton } from '../connect-wallet-button'
-import { useWallets } from './use-wallets'
+import { useWalletsList } from './use-wallets-list'
 
 type ConnectorsListProps =
   | (WalletConnectorsListProps & {
@@ -67,7 +67,7 @@ function WalletConnectorsList({
   onConnect,
   onSelectMultiNamespaceWallet,
 }: WalletConnectorsListProps) {
-  const wallets = useWallets()
+  const wallets = useWalletsList()
 
   const options: WalletOption[] = useMemo(() => {
     const sortedWallets = [...wallets].sort((a, b) => {
