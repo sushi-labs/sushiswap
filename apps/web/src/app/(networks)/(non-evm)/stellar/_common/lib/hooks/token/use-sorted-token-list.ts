@@ -1,35 +1,49 @@
+import { useDebounce } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import type { Token } from '~stellar/_common/lib/types/token.type'
-import { tokenComparator } from './get-sorted-tokens-by-query'
+import {
+  filterTokens,
+  getSortedTokensByQuery,
+} from './get-sorted-tokens-by-query'
 
 interface Params {
-  tokenMap: Record<string, Token> | undefined
-  balanceMap?: Record<string, string> | undefined
+  query: string
+  tokenMap?: Record<string, Token>
+  balanceMap?: Record<string, string>
 }
 
-export const useSortedTokenList = ({ tokenMap, balanceMap }: Params) => {
+export const useSortedTokenList = ({ query, tokenMap, balanceMap }: Params) => {
+  const debouncedQuery = useDebounce(query, 250)
   return useQuery({
     queryKey: [
       'stellar',
       'sortedTokenList',
       {
+        debouncedQuery,
         tokenContracts: tokenMap ? Object.keys(tokenMap) : [],
         hasBalances: !!balanceMap,
       },
     ],
     queryFn: async () => {
       const tokenMapValues = tokenMap ? Object.values(tokenMap) : []
-      const sortedTokens: Token[] = tokenMapValues.sort(tokenComparator())
+      const filteredTokens: Token[] = filterTokens(
+        tokenMapValues,
+        debouncedQuery,
+      )
+      const filteredSortedTokens = getSortedTokensByQuery(
+        filteredTokens,
+        debouncedQuery,
+      )
 
       // Sort by balance if provided (convert to BigInt for comparison, store as string)
       if (balanceMap) {
-        const tokensWithBalance = sortedTokens as Array<
-          Token & { balance?: string }
-        >
-        tokensWithBalance.forEach((token) => {
-          token.balance = balanceMap[token.contract] || '0'
+        const tokensWithBalance = filteredSortedTokens.map((token) => {
+          return {
+            ...token,
+            balance: balanceMap[token.contract] || '0',
+          }
         })
-        tokensWithBalance.sort((a, b) => {
+        const sortedTokensWithBalance = tokensWithBalance.sort((a, b) => {
           const aBalance = BigInt(a.balance || '0')
           const bBalance = BigInt(b.balance || '0')
           if (aBalance === bBalance) {
@@ -37,10 +51,10 @@ export const useSortedTokenList = ({ tokenMap, balanceMap }: Params) => {
           }
           return aBalance > bBalance ? -1 : 1
         })
-        return tokensWithBalance
+        return sortedTokensWithBalance
       }
 
-      return sortedTokens
+      return filteredSortedTokens
     },
   })
 }

@@ -88,6 +88,7 @@ export default function TokenSelector({
   )
 
   const { data: sortedTokenList } = useSortedTokenList({
+    query,
     tokenMap: allTokens,
     balanceMap: tokenBalances,
   })

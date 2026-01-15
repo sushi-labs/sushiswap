@@ -50,3 +50,36 @@ export const tokenComparator = () => {
     }
   }
 }
+
+export function getSortedTokensByQuery(
+  tokens: Token[] | undefined,
+  searchQuery: string,
+): Token[] {
+  const sortedTokens = tokens ? tokens.toSorted(tokenComparator()) : []
+
+  const symbolMatch = searchQuery
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((s) => s.length > 0)
+
+  if (symbolMatch.length !== 1) {
+    return sortedTokens
+  }
+
+  const exactMatches: Token[] = []
+  const symbolSubstrings: Token[] = []
+  const rest: Token[] = []
+
+  // sort tokens by exact match -> substring on code match -> rest
+  for (const token of sortedTokens) {
+    if (token.code?.toLowerCase() === symbolMatch[0]) {
+      exactMatches.push(token)
+    } else if (token.code?.toLowerCase().startsWith(symbolMatch[0])) {
+      symbolSubstrings.push(token)
+    } else {
+      rest.push(token)
+    }
+  }
+
+  return [...exactMatches, ...symbolSubstrings, ...rest]
+}

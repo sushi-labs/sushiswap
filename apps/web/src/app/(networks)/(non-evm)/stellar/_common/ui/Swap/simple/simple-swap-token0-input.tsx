@@ -37,7 +37,6 @@ export const SimpleSwapToken0Input = () => {
 
   const {
     route,
-    isPending: isRoutePending,
     isFetching: isRouteFetching,
     isError: isQuoteError,
     error: quoteError,
@@ -49,8 +48,8 @@ export const SimpleSwapToken0Input = () => {
 
   // Update fetching state - use isFetching to show loading for on-chain quotes
   useEffect(() => {
-    setPriceFetching(isRoutePending || isRouteFetching)
-  }, [isRoutePending, isRouteFetching, setPriceFetching])
+    setPriceFetching(isRouteFetching)
+  }, [isRouteFetching, setPriceFetching])
 
   // Handle errors
   useEffect(() => {
