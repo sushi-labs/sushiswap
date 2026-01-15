@@ -25,8 +25,36 @@ export const numberFormatter = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 0,
 })
 
-export const getHyperliquidExplorerUrl = (type: 'token', address: string) => {
+export const getHyperliquidExplorerUrl = (
+  type: 'token' | 'txn',
+  value: string,
+) => {
   const base = 'https://app.hyperliquid.xyz/explorer/'
-  //add switch case for other types if needed in future
-  return `${base}${type}/${address}`
+
+  switch (type) {
+    case 'token':
+      return `${base}asset/${value}`
+    case 'txn':
+      return `${base}tx/${value}`
+    default:
+      throw new Error('Invalid type for explorer URL')
+  }
 }
+
+export const SPOT_ASSETS_TO_REWRITE = new Map<string, string>([
+  ['UBTC', 'BTC'],
+  ['UETH', 'ETH'],
+  ['USOL', 'SOL'],
+  ['UPUMP', 'PUMP'],
+  ['UFART', 'FART'],
+  ['UMON', 'MON'],
+  ['UXPL', 'XPL'],
+  ['UENA', 'ENA'],
+  ['UUUSPX', 'SPX'],
+  ['HPENGU', 'PENGU'],
+  ['HFUN', 'FUN'],
+  ['UBONK', 'BONK'],
+  ['HREKT', 'REKT'],
+  ['HWAVE', 'WAVE'],
+  ['USPYX', 'SPYX'],
+])

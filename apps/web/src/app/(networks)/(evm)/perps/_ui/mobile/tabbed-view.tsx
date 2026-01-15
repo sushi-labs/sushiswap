@@ -1,9 +1,10 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
+import { Card, Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { Chart } from '../chart/chart'
+import { Trades } from '../trades'
 
 export const TabbedView = () => {
   return (
-    <div className="bg-blue-500/50 border p-2 h-[460px]  min-h-[350px]">
+    <Card className="p-2 h-[460px] min-h-[350px]">
       <Tabs className="w-full" defaultValue={'chart'}>
         <TabsList className="!flex !px-0 !h-8">
           <TabsTrigger value="chart" className="flex flex-1 !px-1.5 !text-xs">
@@ -26,9 +27,9 @@ export const TabbedView = () => {
           <div className="min-h-full bg-red-500">order book</div>
         </TabsContent>
         <TabsContent value="trades">
-          <div>trades</div>
+          <Trades />
         </TabsContent>
       </Tabs>
-    </div>
+    </Card>
   )
 }

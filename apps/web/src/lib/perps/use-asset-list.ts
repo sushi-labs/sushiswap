@@ -13,24 +13,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { hlHttpTransport, hlWebSocketTransport } from './transports'
 import { useSpotMeta } from './use-spot-meta'
-
-const SPOT_ASSETS_TO_REWRITE = new Map<string, string>([
-  ['UBTC', 'BTC'],
-  ['UETH', 'ETH'],
-  ['USOL', 'SOL'],
-  ['UPUMP', 'PUMP'],
-  ['UFART', 'FART'],
-  ['UMON', 'MON'],
-  ['UXPL', 'XPL'],
-  ['UENA', 'ENA'],
-  ['UUUSPX', 'SPX'],
-  ['HPENGU', 'PENGU'],
-  ['HFUN', 'FUN'],
-  ['UBONK', 'BONK'],
-  ['HREKT', 'REKT'],
-  ['HWAVE', 'WAVE'],
-  ['USPYX', 'SPYX'],
-])
+import { SPOT_ASSETS_TO_REWRITE } from './utils'
 
 type CollateralToken = SpotMetaResponse['tokens'][number]
 

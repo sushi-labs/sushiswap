@@ -14,7 +14,7 @@ import {
   numberFormatter,
 } from 'src/lib/perps/utils'
 import { formatPercent } from 'sushi'
-import { useAssetState } from '../perp-state-provider'
+import { useAssetState } from '../asset-state-provider'
 import { ValueSensitiveText } from '../value-sensitive-text'
 import { AssetStatsSkeleton } from './asset-stats-skeleton'
 

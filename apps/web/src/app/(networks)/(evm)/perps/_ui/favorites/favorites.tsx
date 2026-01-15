@@ -10,8 +10,8 @@ import {
 } from 'src/lib/perps/utils'
 import { formatPercent } from 'sushi'
 import { useAssetListState } from '../asset-list-provider'
+import { useAssetState } from '../asset-state-provider'
 import { OverflowX } from '../overflow-x'
-import { useAssetState } from '../perp-state-provider'
 
 export const Favorites = () => {
   const { favorites } = useFavoriteAssets()

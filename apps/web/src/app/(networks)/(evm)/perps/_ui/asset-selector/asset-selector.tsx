@@ -12,7 +12,7 @@ import {
 } from '@sushiswap/ui'
 import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
 import { useAssetListState } from '../asset-list-provider'
-import { useAssetState } from '../perp-state-provider'
+import { useAssetState } from '../asset-state-provider'
 import { useAssetSelectorState } from './asset-selector-provider'
 import { AssetTabs } from './asset-tabs'
 import { SearchBar } from './search-bar'

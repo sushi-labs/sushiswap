@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useLocalStorage } from '@sushiswap/hooks'
 import { AccountManagement } from '../account-management'
 import { AssetSelectorAndStats } from '../asset-selector-and-stats'
 import { Chart } from '../chart/chart'
@@ -8,7 +8,10 @@ import { TradeWidget } from '../trade-widget'
 import { type DesktopTab, DesktopTabbedView } from './desktop-tabbed-view'
 
 export const DesktopLayout = () => {
-  const [tab, setTab] = useState<DesktopTab>('order-book')
+  const [tab, setTab] = useLocalStorage<DesktopTab>(
+    'sushi.perps.desktop-layout-tab',
+    'order-book',
+  )
   return (
     <div className="h-[calc(100vh-60px)] w-full overflow-x-hidden mt-1">
       <div className="flex gap-1 min-w-0">

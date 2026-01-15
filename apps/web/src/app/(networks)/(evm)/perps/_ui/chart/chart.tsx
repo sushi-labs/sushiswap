@@ -13,7 +13,7 @@ import type {
 import { widget } from 'public/trading_view/charting_library/charting_library.esm.js'
 import { useEffect, useRef, useState } from 'react'
 import { useAccount } from 'wagmi'
-import { useAssetState } from '../perp-state-provider'
+import { useAssetState } from '../asset-state-provider'
 import Datafeed, { timeframes } from './datafeed'
 import { registerNoDataSetter } from './datafeed'
 

@@ -1,6 +1,6 @@
 import { useAssetListState } from '../asset-list-provider'
+import { useAssetState } from '../asset-state-provider'
 import { OverflowX } from '../overflow-x'
-import { useAssetState } from '../perp-state-provider'
 import { PerpAssetStats } from './perp-asset-stats'
 import { SpotAssetStats } from './spot-asset-stats'
 

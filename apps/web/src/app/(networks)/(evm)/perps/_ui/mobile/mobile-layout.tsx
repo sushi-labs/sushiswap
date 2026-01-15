@@ -1,5 +1,6 @@
 'use client'
-import { Activity, useState } from 'react'
+import { useLocalStorage } from '@sushiswap/hooks'
+import { Activity } from 'react'
 import { AssetSelectorAndStats } from '../asset-selector-and-stats'
 import { TradeTables } from '../trade-tables/trade-tables'
 import { FooterNav } from './footer-nav'
@@ -8,7 +9,10 @@ import { TabbedView } from './tabbed-view'
 export type PerpsMobileViewType = 'markets' | 'trade' | 'account'
 
 export const MobileLayout = () => {
-  const [view, setView] = useState<PerpsMobileViewType>('markets')
+  const [view, setView] = useLocalStorage<PerpsMobileViewType>(
+    'sushi.perps.mobile-layout-tab',
+    'markets',
+  )
   return (
     <div className="pb-[52px] bg-red-500/70 w-full h-full min-h-[calc(100vh-96px)]">
       <div className="flex flex-col gap-1 pt-2 bg-green-500/20 ">

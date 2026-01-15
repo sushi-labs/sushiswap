@@ -4,7 +4,7 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import type { PerpOrSpotAsset } from 'src/lib/perps/use-asset-list'
 import { useFavoriteAssets } from 'src/lib/perps/use-favorite-assets'
 import { useAssetListState } from '../asset-list-provider'
-import { useAssetState } from '../perp-state-provider'
+import { useAssetState } from '../asset-state-provider'
 import { useAssetSelectorState } from './asset-selector-provider'
 import {
   DAY_CHANGE_COLUMN,
