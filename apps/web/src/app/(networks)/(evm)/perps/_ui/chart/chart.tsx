@@ -12,7 +12,9 @@ import type {
 } from 'public/trading_view/charting_library/charting_library'
 import { widget } from 'public/trading_view/charting_library/charting_library.esm.js'
 import { useEffect, useRef, useState } from 'react'
+import { useActiveAsset } from 'src/lib/perps/use-active-asset'
 import { useAssetName } from 'src/lib/perps/use-asset-name'
+import { useInitialDecimals } from 'src/lib/perps/use-initial-decimals'
 import { useAccount } from 'wagmi'
 import { useAssetState } from '../asset-state-provider'
 import Datafeed, { timeframes } from './datafeed'
@@ -42,6 +44,10 @@ export const Chart = () => {
   const tvWidgetRef = useRef<IChartingLibraryWidget>(null)
   const { address } = useAccount()
   const { data: assetName } = useAssetName({ assetString: activeAsset })
+  const { data: assetData } = useActiveAsset({
+    assetString: activeAsset,
+  })
+  const initialDecimals = useInitialDecimals(assetData)
   useEffect(() => {
     registerNoDataSetter((hasNoData) => {
       setHasNoData(hasNoData)
@@ -60,8 +66,7 @@ export const Chart = () => {
     localStorage.setItem('tradingview.current_theme.name', resolvedTheme)
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      symbol: `${activeAsset}::${assetName}`,
-
+      symbol: `${activeAsset}::${assetName}::${initialDecimals ?? 2}`,
       datafeed: Datafeed,
       interval:
         (localStorage.getItem(
@@ -71,14 +76,21 @@ export const Chart = () => {
       library_path: widgetProps.library_path,
       locale: widgetProps.locale as LanguageCode,
       disabled_features: [
-        'header_settings' as const,
-        'header_saveload' as const,
+        'header_settings',
+        'header_saveload',
         'header_undo_redo',
         'header_symbol_search',
+        'timeframes_toolbar',
         'header_compare',
+        'header_quick_search',
+        'legend_inplace_edit',
+        'symbol_search_hot_key',
+        'legend_context_menu',
       ],
 
       enabled_features: [
+        'disable_legend_inplace_symbol_change',
+
         'hide_unresolved_symbols_in_legend',
         'hide_main_series_symbol_from_indicator_legend',
       ],
@@ -438,6 +450,7 @@ export const Chart = () => {
     isMounted,
     activeAsset,
     assetName,
+    initialDecimals,
   ])
 
   return (

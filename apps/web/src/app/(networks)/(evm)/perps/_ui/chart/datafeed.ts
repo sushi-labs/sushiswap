@@ -106,19 +106,21 @@ export default {
   },
 
   resolveSymbol: async (
-    symbolName: `${string}::${string}`,
+    symbolName: `${string}::${string}::${number}`,
     onSymbolResolvedCallback: (symbolInfo: LibrarySymbolInfo) => void,
     _onResolveErrorCallback: (reason: string) => void,
     _extension: unknown,
   ): Promise<void> => {
-    const symbol = symbolName?.split('::')[0]
-    const description = symbolName?.split('::')[1]
+    const coin = symbolName?.split('::')?.[0] ?? ''
+    const description = symbolName?.split('::')?.[1] ?? ''
+    const decimals = Number(symbolName?.split('::')[2]) || 2
 
     const symbolItem = {
-      symbol,
-      full_name: symbol,
+      symbol: description,
+      coin,
+      full_name: description,
       description: description,
-      exchange: '',
+      exchange: '', //Hyperliquid
       type: 'crypto',
     }
 
@@ -131,7 +133,7 @@ export default {
       timezone: 'Etc/UTC',
       exchange: symbolItem.exchange,
       minmov: 1,
-      pricescale: 100,
+      pricescale: 10 ** decimals,
       has_intraday: true,
       listed_exchange: symbolItem.exchange,
       format: 'price',
@@ -139,6 +141,9 @@ export default {
       supported_resolutions: configurationData.supported_resolutions,
       volume_precision: 2,
       data_status: 'streaming',
+      library_custom_fields: {
+        coin: symbolItem.coin,
+      },
     }
 
     // console.log('[resolveSymbol]: Symbol resolved', symbolName)
@@ -182,7 +187,7 @@ export default {
       const data = await candleSnapshot(
         { transport: hlWebSocketTransport },
         {
-          coin: symbolInfo.name,
+          coin: symbolInfo.library_custom_fields?.coin as string,
           interval: normalizedResolution,
           startTime: _from,
           endTime: _to,
@@ -252,7 +257,7 @@ export default {
     const sub = await candle(
       { transport: hlWebSocketTransport },
       {
-        coin: symbolInfo.name,
+        coin: symbolInfo.library_custom_fields?.coin as string,
         interval: normalizedResolution,
       },
       (candleData) => {
