@@ -17,7 +17,10 @@ interface UserPortfolioProps {
 export function UserPortfolio({ selectedNetwork }: UserPortfolioProps) {
   const wallets = useWallets()
 
-  const wallet = selectedNetwork === ChainId.SOLANA ? wallets.svm : wallets.evm
+  const wallet =
+    selectedNetwork === ChainId.SOLANA
+      ? (wallets.svm ?? wallets.evm)
+      : (wallets.evm ?? wallets.svm)
 
   const { address: wagmiAddress } = useConnection()
 
