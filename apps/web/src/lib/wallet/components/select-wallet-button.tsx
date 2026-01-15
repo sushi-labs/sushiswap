@@ -18,6 +18,7 @@ interface SelectWalletButtonProps extends Omit<ButtonProps, 'children'> {
 
 export const SelectWalletButton: FC<SelectWalletButtonProps> = ({
   namespace,
+  children,
   ...props
 }) => {
   const { open } = useSidebar()
@@ -48,8 +49,12 @@ export const SelectWalletButton: FC<SelectWalletButtonProps> = ({
         onKeyDown={onConnect}
         testId="connect"
       >
-        <span className="hidden sm:block">Connect Wallet</span>
-        <span className="block sm:hidden">Connect</span>
+        {children ?? (
+          <>
+            <span className="hidden sm:block">Connect Wallet</span>
+            <span className="block sm:hidden">Connect</span>
+          </>
+        )}
       </Button>
     </TraceEvent>
   )

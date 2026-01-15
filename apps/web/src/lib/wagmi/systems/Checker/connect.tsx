@@ -7,6 +7,7 @@ import { useConnection } from 'wagmi'
 import { Dots } from '@sushiswap/ui'
 
 import { useIsMounted } from '@sushiswap/hooks'
+import { useAccount } from 'src/lib/wallet'
 import { ConnectButton } from '../../components/connect-button'
 
 const Connect: FC<ButtonProps> = ({
@@ -16,6 +17,9 @@ const Connect: FC<ButtonProps> = ({
   ...props
 }) => {
   const isMounted = useIsMounted()
+
+  const isWalletConnected = Boolean(useAccount())
+  const isEvmWalletConnected = Boolean(useAccount('evm'))
 
   const { isDisconnected, isConnecting, isReconnecting } = useConnection()
 
@@ -37,7 +41,9 @@ const Connect: FC<ButtonProps> = ({
   if (isDisconnected)
     return (
       <ConnectButton fullWidth={fullWidth} size={size} {...props}>
-        Connect Wallet
+        {isWalletConnected && !isEvmWalletConnected
+          ? 'Connect EVM Wallet'
+          : 'Connect Wallet'}
       </ConnectButton>
     )
 

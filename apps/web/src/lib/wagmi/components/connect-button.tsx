@@ -6,10 +6,7 @@ import { SelectWalletButton } from 'src/lib/wallet/components/select-wallet-butt
 import { useConnectors } from 'wagmi'
 import { useConnect } from '../hooks/wallet/useConnect'
 
-export const ConnectButton: FC<ButtonProps> = ({
-  children: _children,
-  ...props
-}) => {
+export const ConnectButton: FC<ButtonProps> = ({ ...props }) => {
   return process.env.NEXT_PUBLIC_APP_ENV === 'test' ? (
     <TestConnectButton {...props} />
   ) : (
