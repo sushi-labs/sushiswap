@@ -12,6 +12,7 @@ import type {
 } from 'public/trading_view/charting_library/charting_library'
 import { widget } from 'public/trading_view/charting_library/charting_library.esm.js'
 import { useEffect, useRef, useState } from 'react'
+import { useAssetName } from 'src/lib/perps/use-asset-name'
 import { useAccount } from 'wagmi'
 import { useAssetState } from '../asset-state-provider'
 import Datafeed, { timeframes } from './datafeed'
@@ -40,7 +41,7 @@ export const Chart = () => {
   const [hasNoData, setHasNoData] = useState(false)
   const tvWidgetRef = useRef<IChartingLibraryWidget>(null)
   const { address } = useAccount()
-
+  const { data: assetName } = useAssetName({ assetString: activeAsset })
   useEffect(() => {
     registerNoDataSetter((hasNoData) => {
       setHasNoData(hasNoData)
@@ -59,7 +60,7 @@ export const Chart = () => {
     localStorage.setItem('tradingview.current_theme.name', resolvedTheme)
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      symbol: activeAsset,
+      symbol: `${activeAsset}::${assetName}`,
 
       datafeed: Datafeed,
       interval:
@@ -70,36 +71,10 @@ export const Chart = () => {
       library_path: widgetProps.library_path,
       locale: widgetProps.locale as LanguageCode,
       disabled_features: [
-        'legend_widget' as const,
         'header_settings' as const,
-        // 'header_fullscreen_button' as const,
-        'header_screenshot' as const,
         'header_saveload' as const,
         'header_undo_redo',
         'header_symbol_search',
-        'header_undo_redo',
-        'header_undo_redo',
-        'header_undo_redo',
-        'header_undo_redo',
-        'timeframes_toolbar',
-        'display_market_status',
-        'disable_pulse_animation',
-        'object_tree_legend_mode',
-        'show_symbol_logos',
-        // 'symbol_info',
-        'legend_inplace_edit',
-        'legend_context_menu',
-        'create_volume_indicator_by_default',
-        'auto_enable_symbol_labels',
-        'show_object_tree',
-        'header_settings',
-        'edit_buttons_in_legend',
-        'delete_button_in_legend',
-        'format_button_in_legend',
-        'show_hide_button_in_legend',
-        'show_symbol_logo_for_compare_studies',
-        'show_symbol_logo_in_legend',
-        'symbol_search_hot_key',
         'header_compare',
       ],
 
@@ -456,7 +431,14 @@ export const Chart = () => {
       tvWidget.remove()
       tvWidgetRef.current = null
     }
-  }, [address, chartContainerRef, resolvedTheme, isMounted, activeAsset])
+  }, [
+    address,
+    chartContainerRef,
+    resolvedTheme,
+    isMounted,
+    activeAsset,
+    assetName,
+  ])
 
   return (
     <Card className="flex flex-col lg:h-[649px] flex-grow  p-2">

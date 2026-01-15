@@ -106,18 +106,18 @@ export default {
   },
 
   resolveSymbol: async (
-    symbolName: string,
+    symbolName: `${string}::${string}`,
     onSymbolResolvedCallback: (symbolInfo: LibrarySymbolInfo) => void,
     _onResolveErrorCallback: (reason: string) => void,
     _extension: unknown,
   ): Promise<void> => {
-    const symbol = symbolName
-    // let description = symbol
+    const symbol = symbolName?.split('::')[0]
+    const description = symbolName?.split('::')[1]
 
     const symbolItem = {
       symbol,
       full_name: symbol,
-      description: 'testing',
+      description: description,
       exchange: '',
       type: 'crypto',
     }
