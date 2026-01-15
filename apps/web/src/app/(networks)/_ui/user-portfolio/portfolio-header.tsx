@@ -2,7 +2,6 @@
 
 import {
   ArrowLeftOnRectangleIcon,
-  ArrowsRightLeftIcon,
   ChevronDownIcon,
   ChevronUpIcon,
   Cog6ToothIcon,
@@ -27,6 +26,7 @@ import {
   useBreakpoint,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { SwitchIcon } from '@sushiswap/ui/icons/SwitchIcon'
 import Image from 'next/image'
 import { useState } from 'react'
 import { SidebarView, useSidebar } from 'src/app/(networks)/_ui/sidebar'
@@ -189,7 +189,7 @@ const ConnectedWalletInfo = ({
               <Button
                 fullWidth
                 variant="ghost"
-                icon={ArrowsRightLeftIcon} // TODO
+                icon={SwitchIcon}
                 className="!justify-start"
                 onClick={() =>
                   setView(SidebarView.Connect, {
@@ -302,7 +302,7 @@ const ConnectedWalletsPopover = ({
                 <IconButton
                   size="xs"
                   variant="ghost"
-                  icon={ArrowsRightLeftIcon}
+                  icon={SwitchIcon}
                   description="Switch Wallet"
                   name="Switch Wallet"
                   onClick={() =>
