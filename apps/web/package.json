@@ -95,7 +95,7 @@
     "@visx/shape": "3.12.0",
     "@visx/text": "3.12.0",
     "@visx/tooltip": "3.12.0",
-    "@wagmi/connectors": "7.0.2",
+    "@wagmi/connectors": "7.1.2",
     "@wagmi/core": "catalog:web3",
     "@walletconnect/ethereum-provider": "~2.21.1",
     "@zitadel/client": "1.0.2",
