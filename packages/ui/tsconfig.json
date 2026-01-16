@@ -4,9 +4,9 @@
   "exclude": ["dist", ".turbo", "node_modules"],
   "compilerOptions": {
     "jsx": "react-jsx",
-    "lib": ["ES2017", "DOM"],
+    "lib": ["ESNext", "DOM"],
     "module": "ESNext",
-    "target": "es6",
+    "target": "esnext",
     "resolveJsonModule": true,
     "rootDir": "./src",
     "outDir": "./dist",
