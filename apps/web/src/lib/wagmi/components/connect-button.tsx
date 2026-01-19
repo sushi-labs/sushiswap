@@ -2,15 +2,23 @@
 
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import React, { type FC } from 'react'
+import type { WalletNamespace } from 'src/lib/wallet'
 import { SelectWalletButton } from 'src/lib/wallet/components/select-wallet-button'
 import { useConnectors } from 'wagmi'
 import { useConnect } from '../hooks/wallet/useConnect'
 
-export const ConnectButton: FC<ButtonProps> = ({ ...props }) => {
+interface ConnectButtonProps extends ButtonProps {
+  namespace?: WalletNamespace
+}
+
+export const ConnectButton: FC<ConnectButtonProps> = ({
+  namespace,
+  ...props
+}) => {
   return process.env.NEXT_PUBLIC_APP_ENV === 'test' ? (
     <TestConnectButton {...props} />
   ) : (
-    <SelectWalletButton {...props} />
+    <SelectWalletButton namespace={namespace} {...props} />
   )
 }
 
