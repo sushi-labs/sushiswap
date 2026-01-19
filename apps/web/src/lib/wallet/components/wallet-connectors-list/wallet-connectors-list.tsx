@@ -1,6 +1,8 @@
 'use client'
 
 import { useMemo } from 'react'
+import { EvmAdapterId } from '../../namespaces/evm/config'
+import { SvmAdapterId } from '../../namespaces/svm/config'
 import type { WalletNamespace, WalletWithState } from '../../types'
 import { ConnectWalletButton } from '../connect-wallet-button'
 import { useWalletsList } from './use-wallets-list'
@@ -83,18 +85,42 @@ function WalletConnectorsList({
         .map((wallet) => ({ type: 'single', wallet }))
     }
 
-    const byName = new Map<string, WalletWithState[]>()
+    const walletsByName = new Map<
+      string,
+      Map<WalletNamespace, WalletWithState>
+    >()
 
     for (const wallet of sortedWallets) {
       const key = wallet.name.toLowerCase()
-      byName.set(key, [...(byName.get(key) ?? []), wallet])
+
+      if (!walletsByName.has(key)) {
+        walletsByName.set(key, new Map())
+      }
+
+      const walletsByNamespace = walletsByName.get(key)!
+      const existingWallet = walletsByNamespace?.get(wallet.namespace)
+
+      if (!existingWallet) {
+        walletsByNamespace.set(wallet.namespace, wallet)
+        continue
+      }
+
+      if (isBrowserDetectedWallet(wallet)) {
+        continue
+      }
+
+      if (isBrowserDetectedWallet(existingWallet)) {
+        walletsByNamespace.set(wallet.namespace, wallet)
+      }
     }
 
-    return Array.from(byName.values()).map((wallets) =>
-      wallets.length === 1
+    return Array.from(walletsByName.values()).map((walletsByNamespace) => {
+      const wallets = Array.from(walletsByNamespace.values())
+
+      return wallets.length === 1
         ? { type: 'single', wallet: wallets[0] }
-        : { type: 'multi', wallets: wallets },
-    )
+        : { type: 'multi', wallets: wallets }
+    })
   }, [wallets, namespace])
 
   return (
@@ -117,3 +143,6 @@ function WalletConnectorsList({
     </div>
   )
 }
+
+const isBrowserDetectedWallet = (wallet: WalletWithState) =>
+  [EvmAdapterId.Injected, SvmAdapterId.Standard].includes(wallet.adapterId)

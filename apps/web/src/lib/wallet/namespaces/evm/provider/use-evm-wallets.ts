@@ -40,7 +40,7 @@ export function useEvmWallets() {
         id: walletId,
         namespace: 'evm',
         name: connector.name,
-        icon: connector.icon ?? '', // TODO: placeholder
+        icon: connector.icon ?? '',
         adapterId: EvmAdapterId.Injected,
         isInstalled: true,
         isAvailable: true,
@@ -50,8 +50,8 @@ export function useEvmWallets() {
     }
 
     for (const wallet of EVM_WALLETS) {
-      // skip if already added
-      if (map.has(wallet.id)) continue
+      // skip if injected
+      if (map.get(wallet.id)?.uid) continue
 
       // always available
       if (
@@ -59,7 +59,7 @@ export function useEvmWallets() {
         wallet.adapterId === EvmAdapterId.Porto ||
         wallet.adapterId === EvmAdapterId.CoinbaseWallet ||
         wallet.adapterId === EvmAdapterId.MetaMask ||
-        wallet.id === 'evm:injected'
+        wallet.id === EvmAdapterId.Injected
       ) {
         map.set(wallet.id, {
           ...wallet,
