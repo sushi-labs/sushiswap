@@ -27,9 +27,9 @@ const message = 'Confirm to track your referrals and earn points!'
 
 export const FuulProvider: FC<FuulProviderProps> = ({ children }) => {
   const searchParams = useSearchParams()
-  const isReferralURL = searchParams.has('referrer')
+  const isAffiliateURL = searchParams.has('af') // 'af' is the affiliate code param
 
-  return isReferralURL && !isProduction ? (
+  return isAffiliateURL && isProduction ? (
     <_FuulProvider>{children}</_FuulProvider>
   ) : (
     <>{children}</>
@@ -38,6 +38,8 @@ export const FuulProvider: FC<FuulProviderProps> = ({ children }) => {
 
 const _FuulProvider: FC<FuulProviderProps> = ({ children }) => {
   const isMounted = useIsMounted()
+  const searchParams = useSearchParams()
+  const affiliateCode = searchParams.get('af') // 'af' is the affiliate code param
 
   useEffect(() => {
     if (isMounted) {
@@ -57,18 +59,35 @@ const _FuulProvider: FC<FuulProviderProps> = ({ children }) => {
         ) {
           signMessageAsync({
             message,
-          }).then((signature) => {
-            Fuul.identifyUser({
-              identifier: data.address,
-              identifierType: UserIdentifierType.EvmAddress,
-              signature,
-              message,
-            })
           })
+            .then((signature) => {
+              Fuul.identifyUser({
+                identifier: data.address,
+                identifierType: UserIdentifierType.EvmAddress,
+                signature,
+                message,
+              })
+            })
+            .then(() => {
+              if (affiliateCode) {
+                const affiliateCodeMessage = `I am using invite code ${affiliateCode}`
+                signMessageAsync({
+                  message: affiliateCodeMessage,
+                }).then((signature) => {
+                  Fuul.useReferralCode({
+                    code: affiliateCode,
+                    user_identifier: data.address,
+                    user_identifier_type: UserIdentifierType.EvmAddress,
+                    signature,
+                    signature_message: affiliateCodeMessage,
+                  })
+                })
+              }
+            })
         }
       },
     })
-  }, [signMessageAsync, config])
+  }, [signMessageAsync, config, affiliateCode])
 
   return <>{children}</>
 }
