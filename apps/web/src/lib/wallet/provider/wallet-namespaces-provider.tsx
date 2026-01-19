@@ -1,8 +1,5 @@
 'use client'
 
-// import { EvmWalletProvider } from '../namespaces/evm/provider/evm-wallet-provider'
-// import { SvmWalletProvider } from '../namespaces/svm/provider/svm-wallet-provider'
-
 import dynamic from 'next/dynamic'
 
 const EvmWalletProvider = dynamic(

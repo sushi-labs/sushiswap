@@ -30,10 +30,6 @@ function _WalletProvider({ children }: { children: React.ReactNode }) {
   const { pendingWalletId } = useWalletState()
   const { addRecentWallet } = useRecentWallets()
 
-  useEffect(() => {
-    console.log('connections', connections)
-  }, [connections])
-
   const value = useMemo(
     () => ({
       connections,

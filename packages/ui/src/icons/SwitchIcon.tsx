@@ -13,9 +13,9 @@ export const SwitchIcon: IconComponent = (props) => {
       <path
         d="M17.74 9.913H6M13.826 6l3.913 3.913M6.26 13.174H18m-11.74 0 3.914 3.913"
         stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   )
