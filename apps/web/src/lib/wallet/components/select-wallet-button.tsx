@@ -9,6 +9,7 @@ import {
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import React, { type FC } from 'react'
 import { useSidebar } from 'src/app/(networks)/_ui/sidebar'
+import { SidebarTrigger } from 'src/app/(networks)/_ui/sidebar/sidebar-trigger'
 import { useWalletContext } from '../provider'
 import type { WalletNamespace } from '../types'
 
@@ -43,19 +44,21 @@ export const SelectWalletButton: FC<SelectWalletButtonProps> = ({
       name={InterfaceEventName.CONNECT_WALLET_BUTTON_CLICKED}
       element={InterfaceElementName.CONNECT_WALLET_BUTTON}
     >
-      <Button
-        {...props}
-        onClick={onConnect}
-        onKeyDown={onConnect}
-        testId="connect"
-      >
-        {children ?? (
-          <>
-            <span className="hidden sm:block">Connect Wallet</span>
-            <span className="block sm:hidden">Connect</span>
-          </>
-        )}
-      </Button>
+      <SidebarTrigger>
+        <Button
+          {...props}
+          onClick={onConnect}
+          onKeyDown={onConnect}
+          testId="connect"
+        >
+          {children ?? (
+            <>
+              <span className="hidden sm:block">Connect Wallet</span>
+              <span className="block sm:hidden">Connect</span>
+            </>
+          )}
+        </Button>
+      </SidebarTrigger>
     </TraceEvent>
   )
 }

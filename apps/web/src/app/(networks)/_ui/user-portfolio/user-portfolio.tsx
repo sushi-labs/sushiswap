@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, cloudinaryFetchLoader } from '@sushiswap/ui'
+import { Button, PopoverTrigger, cloudinaryFetchLoader } from '@sushiswap/ui'
 import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
 import { PlusOneIcon } from '@sushiswap/ui/icons/PlusOneIcon'
 import Image from 'next/image'
@@ -10,6 +10,7 @@ import { useWallets } from 'src/lib/wallet'
 import { ChainId } from 'sushi'
 import { EvmChainId, shortenEvmAddress } from 'sushi/evm'
 import { useConnection, useEnsAvatar, useEnsName } from 'wagmi'
+import { SidebarTrigger } from '../sidebar/sidebar-trigger'
 
 interface UserPortfolioProps {
   selectedNetwork: ChainId | undefined
@@ -42,23 +43,29 @@ export function UserPortfolio({ selectedNetwork }: UserPortfolioProps) {
   if (!address) return <ConnectButton variant="secondary" />
 
   return (
-    <Button variant="secondary" onClick={() => open()} className="items-center">
-      {avatar ? (
-        <Image
-          alt="ens-avatar"
-          src={avatar}
-          width={20}
-          height={20}
-          className="rounded-full"
-          loader={cloudinaryFetchLoader}
-        />
-      ) : (
-        <JazzIcon diameter={20} address={address} />
-      )}
-      <span className="hidden sm:block">{shortenEvmAddress(address)}</span>
-      {wallets.svm && wallets.evm ? (
-        <PlusOneIcon className="w-4 text-blue" />
-      ) : null}
-    </Button>
+    <SidebarTrigger>
+      <Button
+        variant="secondary"
+        onClick={() => open()}
+        className="items-center"
+      >
+        {avatar ? (
+          <Image
+            alt="ens-avatar"
+            src={avatar}
+            width={20}
+            height={20}
+            className="rounded-full"
+            loader={cloudinaryFetchLoader}
+          />
+        ) : (
+          <JazzIcon diameter={20} address={address} />
+        )}
+        <span className="hidden sm:block">{shortenEvmAddress(address)}</span>
+        {wallets.svm && wallets.evm ? (
+          <PlusOneIcon className="w-4 text-blue" />
+        ) : null}
+      </Button>
+    </SidebarTrigger>
   )
 }
