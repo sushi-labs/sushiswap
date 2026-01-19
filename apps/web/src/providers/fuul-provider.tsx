@@ -61,6 +61,7 @@ const _FuulProvider: FC<FuulProviderProps> = ({ children }) => {
             message,
           })
             .then((signature) => {
+              //todo: Verify signature to get the public key
               Fuul.identifyUser({
                 identifier: data.address,
                 identifierType: UserIdentifierType.EvmAddress,
@@ -74,6 +75,7 @@ const _FuulProvider: FC<FuulProviderProps> = ({ children }) => {
                 signMessageAsync({
                   message: affiliateCodeMessage,
                 }).then((signature) => {
+                  //todo: Verify signature to get the public key
                   Fuul.useReferralCode({
                     code: affiliateCode,
                     user_identifier: data.address,
