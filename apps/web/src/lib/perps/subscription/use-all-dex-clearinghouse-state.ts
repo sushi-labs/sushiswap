@@ -15,7 +15,7 @@ export const useAllDexClearinghouseState = ({
   const query = useQuery<AllDexsClearinghouseStateEvent>({
     queryKey: ['useAllDexClearinghouseState', address],
     staleTime: Number.POSITIVE_INFINITY,
-    enabled: Boolean(address),
+    enabled: false,
   })
 
   useEffect(() => {

@@ -20,6 +20,7 @@ import {
   useWriteContract,
 } from 'wagmi'
 
+//@todo clean up
 const usdc = USDC[EvmChainId.ARBITRUM]
 const chainId = EvmChainId.ARBITRUM
 const HYPERLIQUID_DEPOSIT_BRIDGE =

@@ -171,6 +171,7 @@ export const useAssetList = () => {
   const query = useQuery<AssetData>({
     queryKey: KEY,
     staleTime: Number.POSITIVE_INFINITY,
+    enabled: false,
   })
   const { data: spotMeta } = useSpotMeta()
 

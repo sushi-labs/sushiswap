@@ -96,6 +96,7 @@ export const useL2OrderBook = ({ assetString }: { assetString: string }) => {
 
   const query = useQuery<FormattedL2Orders>({
     queryKey: KEY(assetString),
+    enabled: false, // never auto-fetch
     staleTime: Number.POSITIVE_INFINITY,
   })
 

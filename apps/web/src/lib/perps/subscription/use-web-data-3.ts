@@ -12,7 +12,7 @@ export const useWebData3 = ({ address }: { address?: EvmAddress }) => {
   const query = useQuery<WebData3Event>({
     queryKey: ['useWebData3', address],
     staleTime: Number.POSITIVE_INFINITY,
-    enabled: Boolean(address),
+    enabled: false,
   })
 
   useEffect(() => {

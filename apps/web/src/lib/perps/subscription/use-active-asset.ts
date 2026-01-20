@@ -74,6 +74,7 @@ export const useActiveAsset = ({ assetString }: { assetString: string }) => {
   const query = useQuery<ActiveAsset>({
     queryKey: ['active-asset', assetString],
     staleTime: Number.POSITIVE_INFINITY,
+    enabled: false,
   })
 
   useEffect(() => {

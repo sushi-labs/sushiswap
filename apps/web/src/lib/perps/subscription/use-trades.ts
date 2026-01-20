@@ -7,6 +7,7 @@ export const useTrades = ({ assetString }: { assetString: string }) => {
   const queryClient = useQueryClient()
   const query = useQuery<TradesEvent>({
     queryKey: ['trade-events', assetString],
+    enabled: false, // never auto-fetch
     staleTime: Number.POSITIVE_INFINITY,
   })
 
