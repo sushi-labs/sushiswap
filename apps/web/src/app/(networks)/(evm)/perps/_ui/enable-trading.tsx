@@ -33,8 +33,8 @@ export const EnableTrading = () => {
     }
   }, [data?.agentAddress, walletClientData])
 
-  if (data?.agentValidUntil && data.agentValidUntil > Date.now() / 1000) {
-    return 'Trading Enabled'
+  if (data?.agentValidUntil && data.agentValidUntil > Date.now()) {
+    return null
   }
 
   return (

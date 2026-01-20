@@ -10,11 +10,7 @@ import {
 } from '@sushiswap/ui'
 import { ArrowsLeftRightIcon } from '@sushiswap/ui/icons/ArrowsLeftRight'
 import { type ReactNode, useMemo } from 'react'
-import {
-  currencyFormatter,
-  enUSFormatNumber,
-  getTextColorClass,
-} from 'src/lib/perps/utils'
+import { currencyFormatter, enUSFormatNumber } from 'src/lib/perps/utils'
 import { useUserState } from '~evm/perps/user-provider'
 import { ValueSensitiveText } from '../value-sensitive-text'
 import { AccountManagementSkeleton } from './account-management-skeleton'
@@ -76,10 +72,10 @@ export const AccountManagement = ({ className }: { className?: string }) => {
     return totalNtlPos / accountValue
   }, [data])
 
-  // @todo: deposit modal
+  // @todo: deposit modal - checker for enable trading
   // @todo: withdrawal modal
   // @todo: perps <-> spot transfer modal
-
+  console.log(data?.agentAddress)
   return (
     <Card
       className={classNames(
