@@ -9,8 +9,7 @@ import {
   WidgetTitle,
 } from '@sushiswap/ui'
 import { Widget, WidgetHeader, classNames } from '@sushiswap/ui'
-import React, { type FC, type ReactNode, useCallback, useMemo } from 'react'
-import { NativeAddress } from 'src/lib/constants'
+import React, { type FC, type ReactNode } from 'react'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { type EvmChainId, type EvmCurrency, EvmNative } from 'sushi/evm'
 
@@ -21,78 +20,18 @@ interface TokenInput {
 
 interface BladeAddSectionWidgetProps {
   chainId: EvmChainId
-  availableTokens: EvmCurrency[]
   inputs: TokenInput[]
-  onSelectToken(index: number, currency: EvmCurrency): void
-  onInput(index: number, value: string): void
-  onAddToken(): void
   onRemoveToken(index: number): void
   children: ReactNode
 }
 
 export const BladeAddSectionWidget: FC<BladeAddSectionWidgetProps> = ({
   chainId,
-  availableTokens,
   inputs,
-  onSelectToken,
-  onInput,
-  onAddToken,
   onRemoveToken,
   children,
 }) => {
   const hasNativeToken = inputs.some((input) => input.token?.isNative)
-
-  const selectedTokens = useMemo(
-    () => inputs.map((input) => input.token?.wrap().address).filter(Boolean),
-    [inputs],
-  )
-
-  const hasUnselectedTokens = useMemo(
-    () =>
-      availableTokens.some(
-        (token) => !selectedTokens.includes(token.wrap().address),
-      ),
-    [availableTokens, selectedTokens],
-  )
-
-  const shouldShowAddButton = useMemo(
-    () =>
-      inputs.length < availableTokens.length &&
-      hasUnselectedTokens &&
-      !hasNativeToken,
-    [
-      inputs.length,
-      availableTokens.length,
-      hasUnselectedTokens,
-      hasNativeToken,
-    ],
-  )
-
-  const getTokenOptionsForInput = useCallback(
-    (inputIndex: number) => {
-      const selectedTokenAddresses = inputs
-        .filter((input, index) => index !== inputIndex && input.token)
-        .map((input) => input.token!.wrap().address)
-
-      return availableTokens
-        .filter(
-          (token) => !selectedTokenAddresses.includes(token.wrap().address),
-        )
-        .reduce(
-          (acc, token) => {
-            const wrappedToken = token.wrap()
-            acc[wrappedToken.address] = wrappedToken
-            // Only include native tokens if there's only one input (single asset mode)
-            if (token.isNative && inputs.length === 1) {
-              acc[NativeAddress] = token
-            }
-            return acc
-          },
-          {} as Record<string, EvmCurrency>,
-        )
-    },
-    [inputs, availableTokens],
-  )
 
   return (
     <Widget id="addLiquidity" variant="empty">
@@ -116,13 +55,11 @@ export const BladeAddSectionWidget: FC<BladeAddSectionWidgetProps> = ({
             <Web3Input.Currency
               allowNative
               type="INPUT"
-              className="border border-accent px-3 py-1.5 !rounded-xl"
+              disabled={true}
+              className="border border-accent px-3 py-1.5 !rounded-xl cursor-not-allowed opacity-50"
               loading={false}
               value={input.amount}
-              onChange={(value) => onInput(index, value)}
-              onSelect={(currency) => onSelectToken(index, currency)}
               currency={input.token}
-              currencies={getTokenOptionsForInput(index)}
               chainId={chainId}
             />
             {index === inputs.length - 1 &&
@@ -161,13 +98,13 @@ export const BladeAddSectionWidget: FC<BladeAddSectionWidgetProps> = ({
           </div>
         ))}
 
-        {shouldShowAddButton && (
+        {/* {shouldShowAddButton && (
           <div className="flex justify-center mt-6">
             <Button icon={PlusIcon} onClick={onAddToken} variant="link">
               Add Another Asset
             </Button>
           </div>
-        )}
+        )} */}
       </div>
       <WidgetFooter className={classNames(inputs.length > 1 && 'mt-8')}>
         {children}
