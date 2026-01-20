@@ -9,12 +9,12 @@ export const EnableTrading = () => {
   const { data: walletClientData } = useWalletClient()
   const {
     state: {
-      webData3Query: { data },
+      webData2Query: { data },
     },
   } = useUserState()
 
   const approveAgentFlow = useCallback(async () => {
-    if (!walletClientData || !data?.userState?.agentAddress) return
+    if (!walletClientData || !data?.agentAddress) return
     try {
       const res = await approveAgent(
         {
@@ -22,7 +22,7 @@ export const EnableTrading = () => {
           transport: hlHttpTransport,
         },
         {
-          agentAddress: data?.userState?.agentAddress,
+          agentAddress: data?.agentAddress,
         },
       )
       if (res.status !== 'ok') {
@@ -31,7 +31,11 @@ export const EnableTrading = () => {
     } catch (error) {
       console.log(error)
     }
-  }, [data?.userState, walletClientData])
+  }, [data?.agentAddress, walletClientData])
+
+  if (data?.agentValidUntil && data.agentValidUntil > Date.now() / 1000) {
+    return 'Trading Enabled'
+  }
 
   return (
     <Button className="w-full" onClick={approveAgentFlow}>

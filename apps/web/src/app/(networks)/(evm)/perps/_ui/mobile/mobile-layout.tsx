@@ -2,6 +2,7 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 import { Card } from '@sushiswap/ui'
 import { Activity } from 'react'
+import { AccountManagement } from '../account-management/account-management'
 import { AssetSelectorAndStats } from '../asset-selector-and-stats'
 import { TradeTables } from '../trade-tables/trade-tables'
 import { FooterNav } from './footer-nav'
@@ -29,9 +30,7 @@ export const MobileLayout = () => {
           </Card>
         </Activity>
         <Activity mode={view === 'account' ? 'visible' : 'hidden'}>
-          <Card className="p-2 min-h-[calc(100vh-118px)]">
-            full account view
-          </Card>
+          <AccountManagement className="min-h-[calc(100vh-116px)] rounded-b-none justify-between" />
         </Activity>
         <Activity mode={view === 'account' ? 'hidden' : 'visible'}>
           <TradeTables className="min-h-[300px]" />

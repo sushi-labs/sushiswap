@@ -1,14 +1,10 @@
 'use client'
 import { type FC, createContext, useContext, useMemo } from 'react'
-import { useAllDexClearinghouseState } from 'src/lib/perps/subscription/use-all-dex-clearinghouse-state'
-import { useWebData3 } from 'src/lib/perps/subscription/use-web-data-3'
+import { useWebData2 } from 'src/lib/perps/subscription/use-web-data-2'
 import { useAccount } from 'wagmi'
 interface State {
   state: {
-    webData3Query: ReturnType<typeof useWebData3>
-    allDexClearinghouseStateQuery: ReturnType<
-      typeof useAllDexClearinghouseState
-    >
+    webData2Query: ReturnType<typeof useWebData2>
   }
 }
 
@@ -20,10 +16,8 @@ interface UserProviderProps {
 
 const UserProvider: FC<UserProviderProps> = ({ children }) => {
   const { address } = useAccount()
-  const allDexClearinghouseStateQuery = useAllDexClearinghouseState({
-    address,
-  })
-  const webData3Query = useWebData3({
+
+  const webData2Query = useWebData2({
     address,
   })
 
@@ -32,11 +26,10 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
       value={useMemo(() => {
         return {
           state: {
-            webData3Query,
-            allDexClearinghouseStateQuery,
+            webData2Query,
           },
         }
-      }, [webData3Query, allDexClearinghouseStateQuery])}
+      }, [webData2Query])}
     >
       {children}
     </UserContext.Provider>
