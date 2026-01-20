@@ -96,24 +96,34 @@ export const OrderBook = ({ className }: { className?: string }) => {
   return (
     <div className={classNames('flex flex-col', className ?? '')}>
       <div className="flex justify-end">
-        <div className="flex items-center bg-secondary rounded-lg p-0.5">
-          <Button
-            size="xs"
-            variant={side === 'base' ? 'default' : 'ghost'}
-            onClick={() => setSide('base')}
-            className=" text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md"
-          >
-            {baseSymbol}
-          </Button>
-          <Button
-            size="xs"
-            variant={side === 'quote' ? 'default' : 'ghost'}
-            onClick={() => setSide('quote')}
-            className=" text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md"
-          >
-            {quoteSymbol}
-          </Button>
-        </div>
+        {error ? null : isLoading || !baseSymbol || !quoteSymbol ? (
+          <SkeletonBox className="w-20 h-6 rounded-sm" />
+        ) : (
+          <div className="flex items-center border border-accent rounded-lg p-0.5">
+            <Button
+              size="xs"
+              variant={side === 'base' ? 'secondary' : 'ghost'}
+              onClick={() => setSide('base')}
+              className={classNames(
+                'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
+                side === 'quote' ? 'text-muted-foreground' : '',
+              )}
+            >
+              {baseSymbol}
+            </Button>
+            <Button
+              size="xs"
+              variant={side === 'quote' ? 'secondary' : 'ghost'}
+              onClick={() => setSide('quote')}
+              className={classNames(
+                'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
+                side === 'base' ? 'text-muted-foreground' : '',
+              )}
+            >
+              {quoteSymbol}
+            </Button>
+          </div>
+        )}
       </div>
 
       <table className="w-full">
@@ -132,9 +142,9 @@ export const OrderBook = ({ className }: { className?: string }) => {
         </thead>
         <tbody>
           {isLoading ? (
-            Array.from({ length: itemCount * 2 }).map((_, index) => (
-              <SkeletonOrderBookRow key={index} />
-            ))
+            Array.from({ length: itemCount * 2 + (isLg ? 2 : 1) }).map(
+              (_, index) => <SkeletonOrderBookRow key={index} />,
+            )
           ) : error ? (
             <tr>
               <td

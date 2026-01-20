@@ -39,12 +39,12 @@ export const DesktopLayout = () => {
         <div className="flex flex-col gap-1 flex-none w-[40%] lg:max-w-xs xl:max-w-full xl:basis-[22.5%] xl:w-auto min-w-0">
           <div className="flex flex-col xl:flex-row w-full gap-1 xl:min-w-[280px] min-w-0">
             {isXl ? null : (
-              <div className="w-full min-h-[734px] block xl:hidden min-w-0">
+              <div className="w-full max-h-[734px] block xl:hidden min-w-0">
                 <DesktopTabbedView tab={tab} setTab={setTab} />
               </div>
             )}
 
-            <div className="w-full min-h-[735px] min-w-0">
+            <div className="w-full min-h-[736px] min-w-0">
               <TradeWidget className="h-full" />
             </div>
           </div>

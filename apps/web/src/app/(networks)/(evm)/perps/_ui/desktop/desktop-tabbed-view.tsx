@@ -37,10 +37,10 @@ export const DesktopTabbedView = ({
             Trades
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="order-book">
+        <TabsContent value="order-book" className="!mt-[6px]">
           <OrderBook />
         </TabsContent>
-        <TabsContent value="trades">
+        <TabsContent value="trades" className="!mt-1.5">
           <Trades />
         </TabsContent>
       </Tabs>
