@@ -1,23 +1,19 @@
-import dynamic from 'next/dynamic'
+import { Suspense, lazy } from 'react'
 import type { DisconnectWalletButtonProps } from './types'
 
-const DisconnectEvmWalletButton = dynamic(
-  () => import('./disconnect-evm-wallet-button'),
-  { ssr: false },
-)
-
-const DisconnectSvmWalletButton = dynamic(
-  () => import('./disconnect-svm-wallet-button'),
-  { ssr: false },
-)
+const DisconnectEvmButton = lazy(() => import('./disconnect-evm-wallet-button'))
+const DisconnectSvmButton = lazy(() => import('./disconnect-svm-wallet-button'))
 
 export function DisconnectWalletButton(props: DisconnectWalletButtonProps) {
-  switch (props.namespace) {
-    case 'svm':
-      return <DisconnectSvmWalletButton {...props} />
-    case 'evm':
-      return <DisconnectEvmWalletButton {...props} />
-    default:
-      return null
-  }
+  const { namespace, children } = props
+
+  return (
+    <Suspense fallback={children}>
+      {namespace === 'evm' ? (
+        <DisconnectEvmButton {...props} />
+      ) : namespace === 'svm' ? (
+        <DisconnectSvmButton {...props} />
+      ) : null}
+    </Suspense>
+  )
 }

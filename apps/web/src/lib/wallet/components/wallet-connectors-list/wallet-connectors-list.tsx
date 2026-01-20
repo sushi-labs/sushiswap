@@ -4,8 +4,8 @@ import { useMemo } from 'react'
 import { EvmAdapterId } from '../../namespaces/evm/config'
 import { SvmAdapterId } from '../../namespaces/svm/config'
 import type { WalletNamespace, WalletWithState } from '../../types'
-import { ConnectWalletButton } from '../connect-wallet-button'
 import { useWalletsList } from './use-wallets-list'
+import { WalletConnectorsListButton } from './wallet-connectors-list-button'
 
 type ConnectorsListProps =
   | (WalletConnectorsListProps & {
@@ -43,7 +43,7 @@ function NamespaceConnectorsList({
   return (
     <div>
       {wallets.map((wallet) => (
-        <ConnectWalletButton
+        <WalletConnectorsListButton
           key={wallet.id}
           wallet={wallet}
           onSuccess={onConnect}
@@ -127,13 +127,13 @@ function WalletConnectorsList({
     <div>
       {options.map((option) =>
         option.type === 'multi' ? (
-          <ConnectWalletButton
+          <WalletConnectorsListButton
             key={option.wallets[0].id}
             wallet={option.wallets[0]}
             onClick={() => onSelectMultiNamespaceWallet?.(option.wallets)}
           />
         ) : (
-          <ConnectWalletButton
+          <WalletConnectorsListButton
             key={option.wallet.id}
             wallet={option.wallet}
             onSuccess={onConnect}
