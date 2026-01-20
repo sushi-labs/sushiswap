@@ -5,7 +5,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useEffect, useState } from 'react'
-import { useActiveAsset } from 'src/lib/perps/use-active-asset'
+import { useActiveAsset } from 'src/lib/perps/subscription/use-active-asset'
 import { useInitialDecimals } from 'src/lib/perps/use-initial-decimals'
 import {
   currencyFormatter,

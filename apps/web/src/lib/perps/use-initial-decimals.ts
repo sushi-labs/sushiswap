@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import type { ActiveAsset } from './use-active-asset'
+import type { ActiveAsset } from './subscription/use-active-asset'
 
 export const useInitialDecimals = (asset: ActiveAsset | undefined) => {
   const assetRef = useRef(asset?.name)

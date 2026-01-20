@@ -1,7 +1,7 @@
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
 import { LinkExternal, SkeletonBox, classNames } from '@sushiswap/ui'
+import { useTrades } from 'src/lib/perps/subscription/use-trades'
 import { useAssetName } from 'src/lib/perps/use-asset-name'
-import { useTrades } from 'src/lib/perps/use-trades'
 import {
   getHyperliquidExplorerUrl,
   getTextColorClass,

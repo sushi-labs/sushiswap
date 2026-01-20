@@ -11,9 +11,9 @@ import {
 } from '@nktkas/hyperliquid/api/subscription'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { hlHttpTransport, hlWebSocketTransport } from './transports'
-import { useSpotMeta } from './use-spot-meta'
-import { SPOT_ASSETS_TO_REWRITE } from './utils'
+import { useSpotMeta } from '../info/use-spot-meta'
+import { hlHttpTransport, hlWebSocketTransport } from '../transports'
+import { SPOT_ASSETS_TO_REWRITE } from '../utils'
 
 type CollateralToken = SpotMetaResponse['tokens'][number]
 

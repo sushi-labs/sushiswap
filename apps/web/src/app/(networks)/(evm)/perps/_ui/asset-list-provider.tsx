@@ -1,6 +1,6 @@
 'use client'
 import { type FC, createContext, useContext, useMemo, useState } from 'react'
-import { useAssetList } from 'src/lib/perps/use-asset-list'
+import { useAssetList } from 'src/lib/perps/subscription/use-asset-list'
 interface State {
   state: {
     assetListQuery: ReturnType<typeof useAssetList>

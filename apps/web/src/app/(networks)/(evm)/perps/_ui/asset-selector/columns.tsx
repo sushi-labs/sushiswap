@@ -1,6 +1,6 @@
 import { Chip, SkeletonText, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
-import type { PerpOrSpotAsset } from 'src/lib/perps/use-asset-list'
+import type { PerpOrSpotAsset } from 'src/lib/perps/subscription/use-asset-list'
 import {
   currencyFormatter,
   enUSFormatNumber,

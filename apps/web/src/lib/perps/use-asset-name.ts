@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useSpotMeta } from './use-spot-meta'
+import { useSpotMeta } from './info/use-spot-meta'
 import { SPOT_ASSETS_TO_REWRITE } from './utils'
 
 export const useAssetName = ({ assetString }: { assetString: string }) => {

@@ -1,7 +1,8 @@
-import { classNames } from '@sushiswap/ui'
+import { Card, classNames } from '@sushiswap/ui'
+import { EnableTrading } from './enable-trading'
 
 export const TradeWidget = ({ className }: { className?: string }) => (
-  <div className={classNames('bg-orange-500/50 border ', className ?? '')}>
-    Trade Widget
-  </div>
+  <Card className={classNames('p-2', className ?? '')}>
+    <EnableTrading />
+  </Card>
 )

@@ -12,7 +12,7 @@ import type {
 } from 'public/trading_view/charting_library/charting_library'
 import { widget } from 'public/trading_view/charting_library/charting_library.esm.js'
 import { useEffect, useRef, useState } from 'react'
-import { useActiveAsset } from 'src/lib/perps/use-active-asset'
+import { useActiveAsset } from 'src/lib/perps/subscription/use-active-asset'
 import { useAssetName } from 'src/lib/perps/use-asset-name'
 import { useInitialDecimals } from 'src/lib/perps/use-initial-decimals'
 import { useAccount } from 'wagmi'

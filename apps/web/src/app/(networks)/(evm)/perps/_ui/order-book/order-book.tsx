@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import {
   type OrderbookRow,
   useL2OrderBook,
-} from 'src/lib/perps/use-l2-order-book'
+} from 'src/lib/perps/subscription/use-l2-order-book'
 import {
   getTextColorClass,
   numberFormatter,

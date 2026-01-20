@@ -1,4 +1,4 @@
-import { classNames } from '@sushiswap/ui'
+import { Card, classNames } from '@sushiswap/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { TradeFilter } from './filters/trade-filter'
@@ -23,7 +23,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
   }, [activeTab])
 
   return (
-    <div className={classNames('bg-teal-500/50 border ', className ?? '')}>
+    <Card className={classNames('p-2', className ?? '')}>
       <Tabs
         value={activeTab}
         onValueChange={(val) => setActiveTab(val as TradeTablesTabValue)}
@@ -55,6 +55,6 @@ export const TradeTables = ({ className }: { className?: string }) => {
           </TabsContent>
         ))}
       </Tabs>
-    </div>
+    </Card>
   )
 }

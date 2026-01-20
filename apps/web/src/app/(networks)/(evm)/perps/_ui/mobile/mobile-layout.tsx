@@ -1,5 +1,6 @@
 'use client'
 import { useLocalStorage } from '@sushiswap/hooks'
+import { Card } from '@sushiswap/ui'
 import { Activity } from 'react'
 import { AssetSelectorAndStats } from '../asset-selector-and-stats'
 import { TradeTables } from '../trade-tables/trade-tables'
@@ -14,8 +15,8 @@ export const MobileLayout = () => {
     'markets',
   )
   return (
-    <div className="pb-[52px] bg-red-500/70 w-full h-full min-h-[calc(100vh-96px)]">
-      <div className="flex flex-col gap-1 pt-2 bg-green-500/20 ">
+    <div className="pb-[52px] w-full h-full min-h-[calc(100vh-96px)]">
+      <div className="flex flex-col gap-1 pt-2">
         <Activity mode={view === 'account' ? 'hidden' : 'visible'}>
           <AssetSelectorAndStats />
         </Activity>
@@ -23,14 +24,14 @@ export const MobileLayout = () => {
           <TabbedView />
         </Activity>
         <Activity mode={view === 'trade' ? 'visible' : 'hidden'}>
-          <div className="bg-yellow-500/50 border p-2 h-[460px] min-h-[350px]">
+          <Card className=" p-2 h-[460px] min-h-[350px]">
             trade comp and order book
-          </div>
+          </Card>
         </Activity>
         <Activity mode={view === 'account' ? 'visible' : 'hidden'}>
-          <div className="bg-orange-500/50 border p-2 min-h-[calc(100vh-118px)]">
+          <Card className="p-2 min-h-[calc(100vh-118px)]">
             full account view
-          </div>
+          </Card>
         </Activity>
         <Activity mode={view === 'account' ? 'hidden' : 'visible'}>
           <TradeTables className="min-h-[300px]" />

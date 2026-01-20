@@ -1,7 +1,7 @@
 import { DataTable, Slot } from '@sushiswap/ui'
 import type { Row, SortingState, TableState } from '@tanstack/react-table'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
-import type { PerpOrSpotAsset } from 'src/lib/perps/use-asset-list'
+import type { PerpOrSpotAsset } from 'src/lib/perps/subscription/use-asset-list'
 import { useAssetListState } from '../asset-list-provider'
 import { useAssetState } from '../asset-state-provider'
 import { useAssetSelectorState } from './asset-selector-provider'
