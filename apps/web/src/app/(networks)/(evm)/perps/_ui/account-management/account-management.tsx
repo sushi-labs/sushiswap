@@ -17,12 +17,13 @@ import {
 } from 'src/lib/perps/utils'
 import { useUserState } from '~evm/perps/user-provider'
 import { ValueSensitiveText } from '../value-sensitive-text'
+import { AccountManagementSkeleton } from './account-management-skeleton'
 import { Deposit } from './deposit'
 
 export const AccountManagement = ({ className }: { className?: string }) => {
   const {
     state: {
-      webData2Query: { data },
+      webData2Query: { data, isLoading, error },
     },
   } = useUserState()
 
@@ -75,8 +76,6 @@ export const AccountManagement = ({ className }: { className?: string }) => {
     return totalNtlPos / accountValue
   }, [data])
 
-  // @todo: skeleton loading state
-  // @todo: error state
   // @todo: deposit modal
   // @todo: withdrawal modal
   // @todo: perps <-> spot transfer modal
@@ -88,174 +87,196 @@ export const AccountManagement = ({ className }: { className?: string }) => {
         className ?? '',
       )}
     >
-      <div className="flex flex-col gap-2">
-        <Deposit />
-        <div className="flex items-center gap-2">
-          <Button className="w-full" variant="secondary" size="sm">
-            Perps <ArrowsLeftRightIcon className="w-2 h-2" /> Spot
-          </Button>
-          <Button className="w-full" variant="secondary" size="sm">
-            Withdraw
-          </Button>
-        </div>
-      </div>
-      <div className="flex flex-col gap-2">
-        <hr className="my-10.5border-t border-accent hidden lg:block" />
-        <CardContent className="!p-0 !gap-2">
-          <CardGroup className="!gap-1">
-            <p className="text-xs font-semibold mb-2 lg:mb-1">Account Equity</p>
-            <_CardItem
-              title="Spot"
-              value={
-                <ValueSensitiveText
-                  value={spotEquity}
-                  formatOptions={{
-                    style: 'currency',
-                    currency: 'USD',
-                    maximumFractionDigits: 2,
-                    minimumFractionDigits: 2,
-                  }}
+      {error ? (
+        <>
+          <div className="text-sm text-center italic pt-10 text-transparent lg:text-red">
+            {error?.message ?? 'Error loading account data'}
+          </div>
+          <div className="text-red text-sm text-center italic pt-10 lg:text-transparent">
+            {error?.message ?? 'Error loading account data'}
+          </div>
+        </>
+      ) : isLoading ? (
+        <AccountManagementSkeleton />
+      ) : (
+        <>
+          <div className="flex flex-col gap-2">
+            <Deposit />
+            <div className="flex items-center gap-2">
+              <Button className="w-full" variant="secondary" size="sm">
+                Perps <ArrowsLeftRightIcon className="w-2 h-2" /> Spot
+              </Button>
+              <Button className="w-full" variant="secondary" size="sm">
+                Withdraw
+              </Button>
+            </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            <hr className="my-0.5 border-t border-accent hidden lg:block" />
+            <CardContent className="!p-0 !gap-2">
+              <CardGroup className="!gap-1">
+                <p className="text-xs font-semibold mb-2 lg:mb-1">
+                  Account Equity
+                </p>
+                <_CardItem
+                  title="Spot"
+                  value={
+                    <ValueSensitiveText
+                      value={spotEquity}
+                      formatOptions={{
+                        style: 'currency',
+                        currency: 'USD',
+                        maximumFractionDigits: 2,
+                        minimumFractionDigits: 2,
+                      }}
+                    />
+                  }
                 />
-              }
-            />
-            <_CardItem
-              title={
-                <HoverCard openDelay={0}>
-                  <HoverCardTrigger asChild tabIndex={0}>
-                    <div className="text-muted-foreground underline">Perps</div>
-                  </HoverCardTrigger>
-                  <HoverCardContent
-                    forceMount
-                    side="top"
-                    className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
-                  >
-                    <p>
-                      Balance + Unrealized PNL (approximate account value if all
-                      positions were closed).
-                    </p>
-                  </HoverCardContent>
-                </HoverCard>
-              }
-              value={
-                <ValueSensitiveText
-                  value={perpsEquity}
-                  formatOptions={{
-                    style: 'currency',
-                    currency: 'USD',
-                    maximumFractionDigits: 2,
-                    minimumFractionDigits: 2,
-                  }}
+                <_CardItem
+                  title={
+                    <HoverCard openDelay={0}>
+                      <HoverCardTrigger asChild tabIndex={0}>
+                        <div className="text-muted-foreground underline">
+                          Perps
+                        </div>
+                      </HoverCardTrigger>
+                      <HoverCardContent
+                        forceMount
+                        side="top"
+                        className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+                      >
+                        <p>
+                          Balance + Unrealized PNL (approximate account value if
+                          all positions were closed).
+                        </p>
+                      </HoverCardContent>
+                    </HoverCard>
+                  }
+                  value={
+                    <ValueSensitiveText
+                      value={perpsEquity}
+                      formatOptions={{
+                        style: 'currency',
+                        currency: 'USD',
+                        maximumFractionDigits: 2,
+                        minimumFractionDigits: 2,
+                      }}
+                    />
+                  }
                 />
-              }
-            />
-          </CardGroup>
-          <hr className="border-t border-accent block lg:hidden" />
-          <CardGroup className="!gap-1">
-            <p className="text-xs font-semibold mb-2 lg:mb-1">Perps Overview</p>
-            <_CardItem
-              title={
-                <HoverCard openDelay={0}>
-                  <HoverCardTrigger asChild tabIndex={0}>
-                    <div className="text-muted-foreground underline">
-                      Balance
-                    </div>
-                  </HoverCardTrigger>
-                  <HoverCardContent
-                    forceMount
-                    side="top"
-                    className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
-                  >
-                    <p>
-                      Total Net Transfers + Total Realized Profit + Total Net
-                      Funding Fees.
-                    </p>
-                  </HoverCardContent>
-                </HoverCard>
-              }
-              value={currencyFormatter.format(perpsBalance)}
-            />
-            <_CardItem
-              title="Unrealized PnL"
-              value={currencyFormatter.format(unrelaizedPnL)}
-            />
-            <_CardItem
-              title={
-                <HoverCard openDelay={0}>
-                  <HoverCardTrigger asChild tabIndex={0}>
-                    <div className="text-muted-foreground underline">
-                      Cross Margin Ratio
-                    </div>
-                  </HoverCardTrigger>
-                  <HoverCardContent
-                    forceMount
-                    side="top"
-                    className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
-                  >
-                    <p>
-                      Maintenance Margin / Portfolio Value. Your cross positions
-                      will be liquidated if Margin Ratio reaches 100%.
-                    </p>
-                  </HoverCardContent>
-                </HoverCard>
-              }
-              value={
-                <span
-                //@todo @dev: will need a text color change, come back to this
-                // className={classNames(
-                //   getTextColorClass(totalCrossMarginRatio),
-                // )}
-                >
-                  {enUSFormatNumber.format(totalCrossMarginRatio)}%
-                </span>
-              }
-            />
-            <_CardItem
-              title={
-                <HoverCard openDelay={0}>
-                  <HoverCardTrigger asChild tabIndex={0}>
-                    <div className="text-muted-foreground underline">
-                      Maintenance Margin
-                    </div>
-                  </HoverCardTrigger>
-                  <HoverCardContent
-                    forceMount
-                    side="top"
-                    className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
-                  >
-                    <p>
-                      The minimum portfolio value required to keep your cross
-                      positions open.
-                    </p>
-                  </HoverCardContent>
-                </HoverCard>
-              }
-              value={currencyFormatter.format(maintenanceMargin)}
-            />
-            <_CardItem
-              title={
-                <HoverCard openDelay={0}>
-                  <HoverCardTrigger asChild tabIndex={0}>
-                    <div className="text-muted-foreground underline">
-                      Cross Account Leverage
-                    </div>
-                  </HoverCardTrigger>
-                  <HoverCardContent
-                    forceMount
-                    side="top"
-                    className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
-                  >
-                    <p>
-                      Cross Account Leverage = Total Cross Positions Value /
-                      Cross Account Value.
-                    </p>
-                  </HoverCardContent>
-                </HoverCard>
-              }
-              value={`${enUSFormatNumber.format(crossAccountLeverage)}x`}
-            />
-          </CardGroup>
-        </CardContent>
-      </div>
+              </CardGroup>
+              <hr className="border-t border-accent block lg:hidden" />
+              <CardGroup className="!gap-1">
+                <p className="text-xs font-semibold mb-2 lg:mb-1">
+                  Perps Overview
+                </p>
+                <_CardItem
+                  title={
+                    <HoverCard openDelay={0}>
+                      <HoverCardTrigger asChild tabIndex={0}>
+                        <div className="text-muted-foreground underline">
+                          Balance
+                        </div>
+                      </HoverCardTrigger>
+                      <HoverCardContent
+                        forceMount
+                        side="top"
+                        className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+                      >
+                        <p>
+                          Total Net Transfers + Total Realized Profit + Total
+                          Net Funding Fees.
+                        </p>
+                      </HoverCardContent>
+                    </HoverCard>
+                  }
+                  value={currencyFormatter.format(perpsBalance)}
+                />
+                <_CardItem
+                  title="Unrealized PnL"
+                  value={currencyFormatter.format(unrelaizedPnL)}
+                />
+                <_CardItem
+                  title={
+                    <HoverCard openDelay={0}>
+                      <HoverCardTrigger asChild tabIndex={0}>
+                        <div className="text-muted-foreground underline">
+                          Cross Margin Ratio
+                        </div>
+                      </HoverCardTrigger>
+                      <HoverCardContent
+                        forceMount
+                        side="top"
+                        className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+                      >
+                        <p>
+                          Maintenance Margin / Portfolio Value. Your cross
+                          positions will be liquidated if Margin Ratio reaches
+                          100%.
+                        </p>
+                      </HoverCardContent>
+                    </HoverCard>
+                  }
+                  value={
+                    <span
+                    //@todo @dev: will need a text color change, come back to this
+                    // className={classNames(
+                    //   getTextColorClass(totalCrossMarginRatio),
+                    // )}
+                    >
+                      {enUSFormatNumber.format(totalCrossMarginRatio)}%
+                    </span>
+                  }
+                />
+                <_CardItem
+                  title={
+                    <HoverCard openDelay={0}>
+                      <HoverCardTrigger asChild tabIndex={0}>
+                        <div className="text-muted-foreground underline">
+                          Maintenance Margin
+                        </div>
+                      </HoverCardTrigger>
+                      <HoverCardContent
+                        forceMount
+                        side="top"
+                        className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+                      >
+                        <p>
+                          The minimum portfolio value required to keep your
+                          cross positions open.
+                        </p>
+                      </HoverCardContent>
+                    </HoverCard>
+                  }
+                  value={currencyFormatter.format(maintenanceMargin)}
+                />
+                <_CardItem
+                  title={
+                    <HoverCard openDelay={0}>
+                      <HoverCardTrigger asChild tabIndex={0}>
+                        <div className="text-muted-foreground underline">
+                          Cross Account Leverage
+                        </div>
+                      </HoverCardTrigger>
+                      <HoverCardContent
+                        forceMount
+                        side="top"
+                        className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+                      >
+                        <p>
+                          Cross Account Leverage = Total Cross Positions Value /
+                          Cross Account Value.
+                        </p>
+                      </HoverCardContent>
+                    </HoverCard>
+                  }
+                  value={`${enUSFormatNumber.format(crossAccountLeverage)}x`}
+                />
+              </CardGroup>
+            </CardContent>
+          </div>
+        </>
+      )}
     </Card>
   )
 }
