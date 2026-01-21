@@ -1,0 +1,155 @@
+import { withdraw3 } from '@nktkas/hyperliquid/api/exchange'
+import {
+  createErrorToast,
+  createInfoToast,
+  createSuccessToast,
+} from '@sushiswap/notifications'
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@sushiswap/ui'
+import { useCallback, useState } from 'react'
+import { hlHttpTransport } from 'src/lib/perps/transports'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Amount } from 'sushi'
+import { EvmChainId, USDC } from 'sushi/evm'
+import { useAccount, useWalletClient } from 'wagmi'
+import { useUserState } from '~evm/perps/user-provider'
+import { WithdrawInput } from './withdraw-input'
+
+//@todo clean up
+const currency = USDC[EvmChainId.ARBITRUM]
+const chainId = EvmChainId.ARBITRUM
+const MIN_WITHDRAW_AMOUNT = 2 //2.000000 usdc
+
+export const Withdraw = () => {
+  const [open, setOpen] = useState<boolean>(false)
+  const [amount, setAmount] = useState<string>('')
+  const _amount = Amount.tryFromHuman(currency, amount)
+  const { data: walletClient } = useWalletClient()
+  const {
+    state: {
+      webData2Query: { data, isLoading, error },
+    },
+  } = useUserState()
+  const withdrawableBalance = data?.clearinghouseState.withdrawable
+  const balance = Amount.tryFromHuman(currency, withdrawableBalance ?? '0')
+  const { address } = useAccount()
+  const [isPending, setIsPending] = useState<boolean>(false)
+
+  const insufficientBalance =
+    address && withdrawableBalance && _amount && balance?.lt(_amount)
+
+  const withdrawUsdc = useCallback(async () => {
+    if (!walletClient || !address || !_amount) return
+    try {
+      setIsPending(true)
+      createInfoToast({
+        summary: `Withdrawing ${_amount.toSignificant(6)} USDC`,
+        account: address,
+        type: 'send',
+        timestamp: Date.now(),
+        groupTimestamp: Date.now(),
+        chainId: chainId,
+      })
+      await withdraw3(
+        {
+          wallet: walletClient,
+          transport: hlHttpTransport,
+        },
+        {
+          amount: _amount?.toString(),
+          destination: address,
+        },
+      )
+      createSuccessToast({
+        summary: `Withdraw for ${_amount.toSignificant(6)} USDC submitted`,
+        account: address,
+        type: 'send',
+        timestamp: Date.now(),
+        groupTimestamp: Date.now(),
+        chainId: chainId,
+      })
+      setIsPending(false)
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error)
+      createErrorToast(`Withdraw failed: ${errorMessage}`, false)
+      setIsPending(false)
+    } finally {
+      setIsPending(false)
+      setAmount('')
+      setOpen(false)
+    }
+  }, [walletClient, address, _amount])
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button className="w-full" variant="secondary" size="sm">
+          Withdraw
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader className="!text-left">
+          <DialogTitle>Withdraw</DialogTitle>
+          <DialogDescription>Withdraw USDC to Arbitrum.</DialogDescription>
+        </DialogHeader>
+        <div className="flex flex-col gap-4">
+          <WithdrawInput
+            amount={amount}
+            setAmount={setAmount}
+            balance={balance}
+            currency={currency}
+            error={error?.message}
+            isLoading={isLoading}
+            address={address}
+            chainId={chainId}
+          />
+
+          <Checker.Connect>
+            <Checker.Network chainId={chainId}>
+              <Checker.Custom
+                showChildren={!insufficientBalance}
+                buttonText={'Insufficient Balance'}
+                onClick={() => {}}
+                disabled={Boolean(insufficientBalance)}
+              >
+                <Checker.Custom
+                  showChildren={Number(amount) >= MIN_WITHDRAW_AMOUNT}
+                  buttonText={`Minimum Withdraw ${MIN_WITHDRAW_AMOUNT} USDC`}
+                  onClick={() => {}}
+                  disabled={Number(amount) < MIN_WITHDRAW_AMOUNT}
+                >
+                  <Button
+                    size="xl"
+                    className="w-full"
+                    onClick={withdrawUsdc}
+                    loading={isPending}
+                  >
+                    Withdraw
+                  </Button>
+                </Checker.Custom>
+              </Checker.Custom>
+            </Checker.Network>
+          </Checker.Connect>
+          <div>
+            <p className="text-xs text-muted-foreground italic mb-1">
+              A fee of 1 USDC will be deducted from the USDC withdrawn.
+            </p>
+            <p className="text-xs text-muted-foreground italic">
+              If you have USDC in your Spot Balances, transfer it to Perps to
+              make it available to withdraw. Withdrawals should arrive within 5
+              minutes.
+            </p>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}

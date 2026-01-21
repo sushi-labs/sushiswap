@@ -27,6 +27,8 @@ const HYPERLIQUID_DEPOSIT_BRIDGE =
   '0x2Df1c51E09aECF9cacB7bc98cB1742757f163dF7' as EvmAddress
 const MIN_DEPOSIT_AMOUNT = 5 //5.000000 usdc
 
+//@todo: checker for enable trading
+
 //@dev simple deposit via transfer for the time being
 export const Deposit = () => {
   const [open, setOpen] = useState<boolean>(false)
@@ -101,7 +103,7 @@ export const Deposit = () => {
         </DialogHeader>
         <div className="flex flex-col gap-4">
           <Web3Input.Currency
-            className="w-full border rounded-lg border-accent px-4 py-2 bg-slate-700"
+            className="w-full border rounded-lg border-accent px-4 py-2 dark:bg-slate-700 bg-slate-50"
             value={amount}
             onChange={(val) => setAmount(val)}
             currency={usdc}

@@ -15,6 +15,7 @@ import { useUserState } from '~evm/perps/user-provider'
 import { ValueSensitiveText } from '../value-sensitive-text'
 import { AccountManagementSkeleton } from './account-management-skeleton'
 import { Deposit } from './deposit'
+import { Withdraw } from './widthaw'
 
 export const AccountManagement = ({ className }: { className?: string }) => {
   const {
@@ -72,10 +73,8 @@ export const AccountManagement = ({ className }: { className?: string }) => {
     return totalNtlPos / accountValue
   }, [data])
 
-  // @todo: deposit modal - checker for enable trading
-  // @todo: withdrawal modal
   // @todo: perps <-> spot transfer modal
-  console.log(data?.agentAddress)
+
   return (
     <Card
       className={classNames(
@@ -102,9 +101,7 @@ export const AccountManagement = ({ className }: { className?: string }) => {
               <Button className="w-full" variant="secondary" size="sm">
                 Perps <ArrowsLeftRightIcon className="w-2 h-2" /> Spot
               </Button>
-              <Button className="w-full" variant="secondary" size="sm">
-                Withdraw
-              </Button>
+              <Withdraw />
             </div>
           </div>
           <div className="flex flex-col gap-2">
