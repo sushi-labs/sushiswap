@@ -44,14 +44,19 @@ export const OrderBook = ({ className }: { className?: string }) => {
   const {
     state: { activeAsset },
   } = useAssetState()
-  const { data, isLoading, error } = useL2OrderBook({
+  const {
+    data,
+    isLoading: isLoadingOrderBook,
+    error,
+  } = useL2OrderBook({
     assetString: activeAsset,
   })
   const {
     state: {
-      assetListQuery: { data: assetList },
+      assetListQuery: { data: assetList, isLoading: isLoadingAssetList },
     },
   } = useAssetListState()
+  const isLoading = isLoadingOrderBook || isLoadingAssetList
   const { isLg } = useBreakpoint('lg')
   const itemCount = isLg ? 12 : 7
 
@@ -96,7 +101,7 @@ export const OrderBook = ({ className }: { className?: string }) => {
   return (
     <div className={classNames('flex flex-col', className ?? '')}>
       <div className="flex justify-end">
-        {error ? null : isLoading || !baseSymbol || !quoteSymbol ? (
+        {error ? null : isLoading ? (
           <SkeletonBox className="w-20 h-6 rounded-sm" />
         ) : (
           <div className="flex items-center border border-accent rounded-lg p-0.5">
@@ -128,17 +133,21 @@ export const OrderBook = ({ className }: { className?: string }) => {
 
       <table className="w-full">
         <thead className="bg-white dark:bg-background text-muted-foreground">
-          <tr>
-            <th className="text-left font-normal p-0.5 text-xs">Price</th>
-            <th className="font-normal p-0.5 text-xs text-right">
-              Size{' '}
-              {asset ? `(${side === 'base' ? baseSymbol : quoteSymbol})` : ''}
-            </th>
-            <th className="font-normal p-0.5 text-xs text-right">
-              Total{' '}
-              {asset ? `(${side === 'base' ? baseSymbol : quoteSymbol})` : ''}
-            </th>
-          </tr>
+          {isLoading ? (
+            <SkeletonOrderBookRow />
+          ) : error ? null : (
+            <tr>
+              <th className="text-left font-normal p-0.5 text-xs">Price</th>
+              <th className="font-normal p-0.5 text-xs text-right">
+                Size{' '}
+                {asset ? `(${side === 'base' ? baseSymbol : quoteSymbol})` : ''}
+              </th>
+              <th className="font-normal p-0.5 text-xs text-right">
+                Total{' '}
+                {asset ? `(${side === 'base' ? baseSymbol : quoteSymbol})` : ''}
+              </th>
+            </tr>
+          )}
         </thead>
         <tbody>
           {isLoading ? (
