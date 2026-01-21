@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from 'react'
 import { Fraction, withoutScientificNotation } from 'sushi'
 import { type EvmAddress, type EvmChainId, isEvmChainId } from 'sushi/evm'
-import { type SvmChainId, isSvmChainId } from 'sushi/svm'
+import { type SvmAddress, type SvmChainId, isSvmChainId } from 'sushi/svm'
 import { parseUnits } from 'viem'
 import { usePriceProvider } from './price-provider'
 
@@ -121,13 +121,80 @@ function useSvmPrices({
   chainId,
   enabled = true,
 }: { chainId: SvmChainId | undefined; enabled?: boolean }) {
-  // Implementation would be similar to useEvmPrices but for SVM chains
-  // TODO: Add SVM price fetching logic here
+  const { state, mutate } = usePriceProvider()
 
-  void enabled
-  void chainId
+  useEffect(() => {
+    if (state.ready && chainId && enabled) {
+      mutate.incrementChainId(chainId)
+    }
 
-  return disabledData
+    return () => {
+      if (state.ready && chainId && enabled) {
+        mutate.decrementChainId(chainId)
+      }
+    }
+  }, [chainId, enabled, mutate, state.ready])
+
+  const chain = useMemo(
+    () => (chainId ? state.chains.get(chainId) : undefined),
+    [state, chainId],
+  )
+
+  return useMemo(() => {
+    if (!chainId) {
+      return disabledData
+    }
+
+    if (!chain)
+      return {
+        data: undefined,
+        lastModified: 0,
+        isLoading: true,
+        isUpdating: false,
+        isError: false,
+      }
+
+    if (!chain.priceMap)
+      return {
+        data: undefined,
+        lastModified: chain.lastModified,
+        isLoading: chain.isLoading,
+        isUpdating: chain.isUpdating,
+        isError: chain.isError,
+      }
+
+    const data: PriceMap = {
+      has: (_address: SvmAddress) => {
+        return chain.priceMap!.has(_address)
+      },
+      get: (_address: SvmAddress) => {
+        const price = chain.priceMap!.get(_address)
+        return price
+      },
+
+      getFraction: (_address: SvmAddress) => {
+        const price = chain.priceMap!.get(_address)
+        if (price) {
+          return new Fraction({
+            numerator: parseUnits(
+              withoutScientificNotation(String(price)) || '0',
+              18,
+            ).toString(),
+            denominator: parseUnits('1', 18).toString(),
+          })
+        }
+        return undefined
+      },
+    }
+
+    return {
+      data,
+      lastModified: chain.lastModified,
+      isLoading: chain.isLoading,
+      isUpdating: chain.isUpdating,
+      isError: chain.isError,
+    }
+  }, [chainId, chain])
 }
 
 export function usePrices<TChainId extends EvmChainId | SvmChainId>({
