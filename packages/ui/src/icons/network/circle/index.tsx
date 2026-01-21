@@ -30,6 +30,7 @@ import { KavaCircle } from './KavaCircle'
 import { LineaCircle } from './LineaCircle'
 import { MantaCircle } from './MantaCircle'
 import { MantleCircle } from './MantleCircle'
+import { MegaETHCircle } from './MegaETHCircle'
 import { MetisCircle } from './MetisCircle'
 import { ModeCircle } from './ModeCircle'
 import { MonadCircle } from './MonadCircle'
@@ -79,6 +80,7 @@ export * from './KavaCircle'
 export * from './LineaCircle'
 export * from './MantaCircle'
 export * from './MantleCircle'
+export * from './MegaETHCircle'
 export * from './MetisCircle'
 export * from './ModeCircle'
 export * from './MonadCircle'
@@ -148,6 +150,7 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.BERACHAIN]: BeraCircle,
   [ChainId.PLASMA]: PlasmaCircle,
   [ChainId.MONAD]: MonadCircle,
+  [ChainId.MEGAETH]: MegaETHCircle,
   [ChainId.APTOS]: AptosCircle,
   [ChainId.TRON]: TronCircle,
   [ChainId.KADENA]: KadenaCircle,
