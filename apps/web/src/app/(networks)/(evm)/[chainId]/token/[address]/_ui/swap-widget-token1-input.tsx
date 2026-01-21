@@ -1,7 +1,7 @@
 'use client'
 
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { isWNativeSupported } from 'sushi/evm'
+import { isEvmWNativeSupported } from 'sushi/evm'
 import {
   useDerivedStateSwapWidget,
   useSwapWidgetTradeQuote,
@@ -28,7 +28,7 @@ export const SwapWidgetToken1Input = () => {
       loading={isLoading}
       fetching={isFetching}
       disableMaxButton
-      allowNative={isWNativeSupported(chainId)}
+      allowNative={isEvmWNativeSupported(chainId)}
       label="Buy"
     />
   )
