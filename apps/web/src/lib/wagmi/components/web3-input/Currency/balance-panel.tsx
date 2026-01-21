@@ -2,31 +2,32 @@ import { SkeletonText, classNames } from '@sushiswap/ui'
 import { WalletIcon } from '@sushiswap/ui/icons/WalletIcon'
 import { type FC, memo, useCallback } from 'react'
 import { Amount } from 'sushi'
-import { type EvmCurrency, EvmNative } from 'sushi/evm'
+import { type EvmChainId, EvmNative, isEvmChainId } from 'sushi/evm'
 
 import { useIsMounted } from '@sushiswap/hooks'
+import { type SvmChainId, SvmNative } from 'sushi/svm'
 import type { CurrencyInputProps } from './currency-input'
 
-type BalancePanel = Pick<
-  CurrencyInputProps,
+type BalancePanel<TChainId extends EvmChainId | SvmChainId> = Pick<
+  CurrencyInputProps<TChainId>,
   'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'loading'
 > & {
   id?: string
   account: string | undefined
-  balance: Amount<EvmCurrency> | null | undefined
+  balance: Amount<CurrencyFor<TChainId>> | null | undefined
   type: 'INPUT' | 'OUTPUT'
 }
 
 const MIN_NATIVE_CURRENCY_FOR_GAS = 10n ** 16n // .01 ETH
 
-export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
+export function BalancePanel<TChainId extends EvmChainId | SvmChainId>({
   id,
   balance,
   onChange,
   disableMaxButton,
   loading,
   type,
-}) {
+}: BalancePanel<TChainId>) {
   const isMounted = useIsMounted()
 
   const [big, portion] = (
@@ -40,7 +41,9 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
         balance.gt(MIN_NATIVE_CURRENCY_FOR_GAS)
       ) {
         const hundred = new Amount(
-          EvmNative.fromChainId(balance.currency.chainId),
+          isEvmChainId(balance.currency.chainId)
+            ? EvmNative.fromChainId(balance.currency.chainId)
+            : SvmNative.fromChainId(balance.currency.chainId),
           MIN_NATIVE_CURRENCY_FOR_GAS,
         )
         onChange(balance.sub(hundred).toString())
@@ -79,4 +82,4 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
       </span>
     </button>
   )
-})
+}

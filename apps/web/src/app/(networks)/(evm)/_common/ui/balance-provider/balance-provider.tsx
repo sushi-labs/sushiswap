@@ -11,7 +11,6 @@ import {
 
 import ms from 'ms'
 import { NativeAddress } from 'src/lib/constants'
-import { publicWagmiConfig } from 'src/lib/wagmi/config/public'
 import { LowercaseMap } from 'sushi'
 import {
   type EvmChainId,

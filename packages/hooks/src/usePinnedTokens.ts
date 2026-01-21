@@ -1,14 +1,23 @@
 'use client'
 
 import { useCallback, useMemo } from 'react'
-import type { EvmCurrency, EvmID } from 'sushi/evm'
-import { getAddress as _getAddress, isAddress } from 'viem/utils'
+import { type EvmCurrency, type EvmID, isEvmAddress } from 'sushi/evm'
+import {
+  type SvmAddress,
+  type SvmChainId,
+  type SvmCurrency,
+  isSvmAddress,
+} from 'sushi/svm'
+import { getAddress as _getAddress } from 'viem/utils'
 import { useLocalStorage } from './useLocalStorage'
 
 function getAddress(address: string) {
   if (address === 'NATIVE') return 'NATIVE'
+  if (isSvmAddress(address)) return address
   return _getAddress(address)
 }
+
+type ID = EvmID | `${SvmChainId}:${SvmAddress}`
 
 export const usePinnedTokens = () => {
   const [pinnedTokens, setPinnedTokens] = useLocalStorage(
@@ -33,7 +42,7 @@ export const usePinnedTokens = () => {
   )
 
   const removePinnedToken = useCallback(
-    (currencyId: EvmID) => {
+    (currencyId: ID) => {
       const [chainId, address] = currencyId.split(':')
       setPinnedTokens((value) => {
         value[chainId] = Array.from(
@@ -50,15 +59,19 @@ export const usePinnedTokens = () => {
   )
 
   const hasToken = useCallback(
-    (currency: EvmCurrency | string) => {
+    (currency: EvmCurrency | SvmCurrency | string) => {
       if (typeof currency === 'string') {
         if (!currency.includes(':')) {
           throw new Error('Address provided instead of id')
         }
 
         const [chainId, address] = currency.split(':')
-        if (address !== 'NATIVE' && !isAddress(address)) {
-          throw new Error('Address provided not a valid ERC20 address')
+        if (
+          address !== 'NATIVE' &&
+          !isEvmAddress(address) &&
+          !isSvmAddress(address)
+        ) {
+          throw new Error('Address provided not a valid ERC20 or Solana address')
         }
 
         return pinnedTokens?.[chainId]?.includes(
@@ -72,7 +85,7 @@ export const usePinnedTokens = () => {
   )
 
   const mutate = useCallback(
-    (type: 'add' | 'remove', currencyId: EvmID) => {
+    (type: 'add' | 'remove', currencyId: ID) => {
       if (type === 'add') addPinnedToken(currencyId)
       if (type === 'remove') removePinnedToken(currencyId)
     },

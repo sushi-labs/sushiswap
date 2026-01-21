@@ -15,51 +15,122 @@ import {
   useState,
 } from 'react'
 import { type SupportedChainId, isSupportedChainId } from 'src/config'
-import { useTrade, useTradeQuote } from 'src/lib/hooks/react-query'
+import {
+  useEvmTrade,
+  useEvmTradeQuote,
+  useSvmTradeExecute,
+  useSvmTradeQuote,
+} from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { SVM_FALLBACK_ACCOUNT } from 'src/lib/svm/config'
 import { useCarbonOffset } from 'src/lib/swap/useCarbonOffset'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { Amount, Native, type Percent, ZERO } from 'sushi'
 import {
+  Amount,
+  type Percent,
+  ZERO,
+  isWNativeSupported,
+  normalizeAddress,
+} from 'sushi'
+import {
+  type EvmAddress,
   EvmChainId,
-  type EvmCurrency,
   EvmNative,
   defaultCurrency,
   defaultQuoteCurrency,
-  isEvmWNativeSupported,
+  isEvmAddress,
+  isEvmChainId,
 } from 'sushi/evm'
-import { type Address, isAddress } from 'viem'
+import {
+  type SvmAddress,
+  type SvmChainId,
+  SvmNative,
+  isSvmAddress,
+  isSvmChainId,
+  svmDefaultCurrency,
+  svmDefaultQuoteCurrency,
+} from 'sushi/svm'
 import { useConnection, useGasPrice } from 'wagmi'
 
-const getTokenAsString = (token: EvmCurrency | string) =>
-  typeof token === 'string'
-    ? token
-    : token.type === 'native'
-      ? 'NATIVE'
-      : token.wrap().address
-const getDefaultCurrency = (chainId: number) =>
-  getTokenAsString(defaultCurrency[chainId as keyof typeof defaultCurrency])
-const getQuoteCurrency = (chainId: number) =>
-  getTokenAsString(
-    defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency],
-  )
+function getTokenAsString<TChainId extends SupportedChainId>(
+  chainId: TChainId,
+  token: CurrencyFor<TChainId> | string,
+) {
+  if (typeof token === 'string') {
+    if (isEvmAddress(token) || isSvmAddress(token)) {
+      return normalizeAddress(chainId, token as AddressFor<typeof chainId>)
+    }
+    throw new Error(`Invalid token address: ${token}`)
+  } else if (token.type === 'native') {
+    return 'NATIVE' as const
+  }
 
-interface State {
+  return token.wrap().address as AddressFor<TChainId>
+}
+
+function getDefaultCurrency(chainId: SupportedChainId) {
+  if (isEvmChainId(chainId)) {
+    return getTokenAsString(chainId, defaultCurrency[chainId])
+  } else if (isSvmChainId(chainId)) {
+    return getTokenAsString(chainId, svmDefaultCurrency[chainId])
+  }
+
+  throw new Error(`Unsupported chainId: ${chainId}`)
+}
+function getQuoteCurrency(chainId: SupportedChainId) {
+  if (isEvmChainId(chainId)) {
+    return getTokenAsString(chainId, defaultQuoteCurrency[chainId])
+  } else if (isSvmChainId(chainId)) {
+    return getTokenAsString(chainId, svmDefaultQuoteCurrency[chainId])
+  }
+
+  throw new Error(`Unsupported chainId: ${chainId}`)
+}
+
+function getNativeIfNativeAndWNativeSupported<
+  TChainId extends SupportedChainId,
+>(
+  chainId: TChainId,
+  token: CurrencyFor<TChainId> | undefined,
+  address: string,
+): CurrencyFor<TChainId> | undefined {
+  if (address !== 'NATIVE') {
+    return token
+  }
+
+  if (isEvmChainId(chainId)) {
+    if (isWNativeSupported(chainId)) {
+      return EvmNative.fromChainId(chainId) as CurrencyFor<TChainId>
+    }
+    return token
+  }
+
+  if (isSvmChainId(chainId)) {
+    return SvmNative.fromChainId(chainId) as CurrencyFor<TChainId>
+  }
+
+  throw new Error(`Unsupported chainId: ${chainId}`)
+}
+
+interface State<TChainId extends SupportedChainId = SupportedChainId> {
   mutate: {
-    setToken0(token0: EvmCurrency | string): void
-    setToken1(token1: EvmCurrency | string): void
-    setTokens(token0: EvmCurrency | string, token1: EvmCurrency | string): void
+    setToken0(token0: CurrencyFor<TChainId> | string): void
+    setToken1(token1: CurrencyFor<TChainId> | string): void
+    setTokens(
+      token0: CurrencyFor<TChainId> | string,
+      token1: CurrencyFor<TChainId> | string,
+    ): void
     setSwapAmount(swapAmount: string): void
     switchTokens(): void
     setTokenTax(tax: Percent | false | undefined): void
   }
   state: {
-    token0: EvmCurrency | undefined
-    token1: EvmCurrency | undefined
-    chainId: EvmChainId
+    token0: CurrencyFor<TChainId> | undefined
+    token1: CurrencyFor<TChainId> | undefined
+    chainId: TChainId
     swapAmountString: string
-    swapAmount: Amount<EvmCurrency> | undefined
-    recipient: Address | undefined
+    swapAmount: Amount<CurrencyFor<TChainId>> | undefined
+    recipient: AddressFor<TChainId> | undefined
     tokenTax: Percent | false | undefined
   }
   isLoading: boolean
@@ -77,9 +148,9 @@ interface DerivedStateSimpleSwapProviderProps {
  * URL example:
  * /swap?token0=NATIVE&token1=0x6b3595068778dd592e39a122f4f5a5cf09c90fe2
  */
-const DerivedstateSimpleSwapProvider: FC<
-  DerivedStateSimpleSwapProviderProps
-> = ({ children }) => {
+function DerivedstateSimpleSwapProvider({
+  children,
+}: DerivedStateSimpleSwapProviderProps) {
   const { push } = useRouter()
   const { chainId: _chainId } = useParams()
   const { address } = useConnection()
@@ -88,14 +159,17 @@ const DerivedstateSimpleSwapProvider: FC<
   const [tokenTax, setTokenTax] = useState<Percent | false | undefined>(
     undefined,
   )
-  const [localTokenCache, setLocalTokenCache] = useState<
-    Map<string, EvmCurrency>
-  >(new Map())
 
-  const chainId =
+  const chainId: SupportedChainId =
     _chainId && isSupportedChainId(+_chainId)
       ? (+_chainId as SupportedChainId)
       : EvmChainId.ETHEREUM
+
+  type TChainId = typeof chainId
+
+  const [localTokenCache, setLocalTokenCache] = useState<
+    Map<string, CurrencyFor<TChainId>>
+  >(new Map())
 
   // Get the searchParams and complete with defaults.
   // This handles the case where some params might not be provided by the user
@@ -145,19 +219,22 @@ const DerivedstateSimpleSwapProvider: FC<
   }, [createQueryString, defaultedParams, pathname, push])
 
   // Update the URL with a new token0
-  const setToken0 = useCallback<(_token0: string | EvmCurrency) => void>(
+  const setToken0 = useCallback<
+    (_token0: string | CurrencyFor<TChainId>) => void
+  >(
     (_token0) => {
       // If entity is provided, parse it to a string
-      const token0 = getTokenAsString(_token0)
+      const token0 = getTokenAsString(chainId, _token0)
 
       if (typeof _token0 !== 'string') {
         setLocalTokenCache(localTokenCache.set(token0, _token0))
       }
 
       // Switch tokens if the new token0 is the same as the current token1
-      if (
-        defaultedParams.get('token1')?.toLowerCase() === token0.toLowerCase()
-      ) {
+      const token1 = defaultedParams.get('token1')
+
+      // Lowercases Solana addresses, which are case-sensitive, but a collision is unlikely
+      if (token1?.toLowerCase() === token0.toLowerCase()) {
         switchTokens()
       }
 
@@ -172,6 +249,7 @@ const DerivedstateSimpleSwapProvider: FC<
       }
     },
     [
+      chainId,
       createQueryString,
       defaultedParams,
       localTokenCache,
@@ -182,19 +260,22 @@ const DerivedstateSimpleSwapProvider: FC<
   )
 
   // Update the URL with a new token1
-  const setToken1 = useCallback<(_token1: string | EvmCurrency) => void>(
+  const setToken1 = useCallback<
+    (_token1: string | CurrencyFor<TChainId>) => void
+  >(
     (_token1) => {
       // If entity is provided, parse it to a string
-      const token1 = getTokenAsString(_token1)
+      const token1 = getTokenAsString(chainId, _token1)
 
       if (typeof _token1 !== 'string') {
         setLocalTokenCache(localTokenCache.set(token1, _token1))
       }
 
       // Switch tokens if the new token0 is the same as the current token1
-      if (
-        defaultedParams.get('token0')?.toLowerCase() === token1.toLowerCase()
-      ) {
+      const token0 = defaultedParams.get('token0')
+
+      // Lowercases Solana addresses, which are case-sensitive, but a collision is unlikely
+      if (token0?.toLowerCase() === token1.toLowerCase()) {
         switchTokens()
       }
 
@@ -209,6 +290,7 @@ const DerivedstateSimpleSwapProvider: FC<
       }
     },
     [
+      chainId,
       createQueryString,
       defaultedParams,
       localTokenCache,
@@ -220,12 +302,15 @@ const DerivedstateSimpleSwapProvider: FC<
 
   // Update the URL with both tokens
   const setTokens = useCallback<
-    (_token0: string | EvmCurrency, _token1: string | EvmCurrency) => void
+    (
+      _token0: string | CurrencyFor<TChainId>,
+      _token1: string | CurrencyFor<TChainId>,
+    ) => void
   >(
     (_token0, _token1) => {
       // If entity is provided, parse it to a string
-      const token0 = getTokenAsString(_token0)
-      const token1 = getTokenAsString(_token1)
+      const token0 = getTokenAsString(chainId, _token0)
+      const token1 = getTokenAsString(chainId, _token1)
 
       push(
         `${pathname}?${createQueryString([
@@ -235,7 +320,7 @@ const DerivedstateSimpleSwapProvider: FC<
         { scroll: false },
       )
     },
-    [createQueryString, pathname, push],
+    [chainId, createQueryString, pathname, push],
   )
 
   // Update the URL with a new swapAmount
@@ -261,9 +346,8 @@ const DerivedstateSimpleSwapProvider: FC<
   const { data: token0FromCache, isInitialLoading: token0Loading } =
     useTokenWithCache({
       chainId,
-      address: token0Param as Address,
-      enabled:
-        isAddress(token0Param, { strict: false }) && !token0FromLocalCache,
+      address: token0Param as EvmAddress | SvmAddress,
+      enabled: !token0FromLocalCache,
       keepPreviousData: false,
     })
 
@@ -271,29 +355,32 @@ const DerivedstateSimpleSwapProvider: FC<
   const { data: token1FromCache, isInitialLoading: token1Loading } =
     useTokenWithCache({
       chainId,
-      address: token1Param as Address,
-      enabled:
-        isAddress(token1Param, { strict: false }) && !token1FromLocalCache,
+      address: token1Param as EvmAddress | SvmAddress,
+      enabled: !token1FromLocalCache,
       keepPreviousData: false,
     })
 
   const token0 = token0FromLocalCache ?? token0FromCache
   const token1 = token1FromLocalCache ?? token1FromCache
 
+  const Ctx = DerivedStateSimpleSwapContext as unknown as React.Context<
+    State<TChainId>
+  >
+
   return (
-    <DerivedStateSimpleSwapContext.Provider
+    <Ctx.Provider
       value={useMemo(() => {
         const swapAmountString = defaultedParams.get('swapAmount') || ''
-        const _token0 =
-          defaultedParams.get('token0') === 'NATIVE' &&
-          isEvmWNativeSupported(chainId)
-            ? EvmNative.fromChainId(chainId)
-            : token0
-        const _token1 =
-          defaultedParams.get('token1') === 'NATIVE' &&
-          isEvmWNativeSupported(chainId)
-            ? EvmNative.fromChainId(chainId)
-            : token1
+        const _token0 = getNativeIfNativeAndWNativeSupported(
+          chainId,
+          token0,
+          token0Param,
+        )
+        const _token1 = getNativeIfNativeAndWNativeSupported(
+          chainId,
+          token1,
+          token1Param,
+        )
 
         return {
           mutate: {
@@ -330,18 +417,24 @@ const DerivedstateSimpleSwapProvider: FC<
         switchTokens,
         token0,
         token0Loading,
+        token0Param,
         token1,
         token1Loading,
+        token1Param,
         tokenTax,
       ])}
     >
       {children}
-    </DerivedStateSimpleSwapContext.Provider>
+    </Ctx.Provider>
   )
 }
 
-const useDerivedStateSimpleSwap = () => {
-  const context = useContext(DerivedStateSimpleSwapContext)
+function useDerivedStateSimpleSwap<TChainId extends SupportedChainId>() {
+  const Ctx = DerivedStateSimpleSwapContext as unknown as React.Context<
+    State<TChainId>
+  >
+
+  const context = useContext(Ctx)
   if (!context) {
     throw new Error(
       'Hook can only be used inside Simple Swap Derived State Context',
@@ -351,23 +444,29 @@ const useDerivedStateSimpleSwap = () => {
   return context
 }
 
-const useSimpleSwapTrade = (enabled = true) => {
+function useEvmSimpleSwapTrade(enabled = true) {
   const {
     state: { token0, chainId, swapAmount, token1, recipient },
-  } = useDerivedStateSimpleSwap()
+  } = useDerivedStateSimpleSwap<EvmChainId & SupportedChainId>()
 
   const [slippagePercent] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
-  const { data: gasPrice } = useGasPrice({ chainId })
 
-  const trade = useTrade({
+  const evmChainId = isEvmChainId(chainId) ? chainId : undefined
+  const { data: gasPrice } = useGasPrice({ chainId: evmChainId })
+
+  if (!isEvmChainId(chainId)) {
+    throw new Error('useEvmSimpleSwapTrade is EVM-only')
+  }
+
+  const trade = useEvmTrade({
     chainId,
     fromToken: token0,
     toToken: token1,
     amount: swapAmount,
     slippagePercentage: slippagePercent.toString({ fixed: 2 }),
     gasPrice,
-    recipient: recipient as Address,
+    recipient,
     enabled: Boolean(enabled && swapAmount?.gt(ZERO)),
     carbonOffset,
   })
@@ -375,33 +474,104 @@ const useSimpleSwapTrade = (enabled = true) => {
   return trade
 }
 
-const useSimpleSwapTradeQuote = () => {
-  const {
-    state: { token0, chainId, swapAmount, token1, recipient },
-  } = useDerivedStateSimpleSwap()
+function useEvmSimpleSwapTradeQuote() {
+  const { state } = useDerivedStateSimpleSwap()
 
   const [slippagePercent] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
-  const { data: gasPrice } = useGasPrice({ chainId })
 
-  const quote = useTradeQuote({
+  const evmChainId = isEvmChainId(state.chainId) ? state.chainId : undefined
+  const { data: gasPrice } = useGasPrice({ chainId: evmChainId })
+
+  const params = useMemo(() => {
+    if (isEvmChainId(state.chainId)) {
+      const _state = state as State<typeof state.chainId>['state']
+
+      return {
+        chainId: _state.chainId,
+        fromToken: _state.token0,
+        toToken: _state.token1,
+        amount: _state.swapAmount,
+        slippagePercentage: slippagePercent.toString({ fixed: 2 }),
+        gasPrice,
+        recipient: _state.recipient,
+        enabled: Boolean(_state.swapAmount?.gt(ZERO)),
+        carbonOffset,
+      }
+    }
+
+    return undefined
+  }, [state, slippagePercent, gasPrice, carbonOffset])
+
+  return useEvmTradeQuote(params)
+}
+
+function useSvmSimpleSwapTradeQuote() {
+  const { state } = useDerivedStateSimpleSwap()
+
+  const [slippagePercent] = useSlippageTolerance()
+
+  const params = useMemo(() => {
+    if (isSvmChainId(state.chainId)) {
+      const _state = state as State<SvmChainId>['state']
+
+      return {
+        chainId: _state.chainId,
+        fromToken: _state.token0,
+        toToken: _state.token1,
+        amount: _state.swapAmount,
+        slippagePercentage: slippagePercent.toString({ fixed: 2 }),
+        recipient: SVM_FALLBACK_ACCOUNT, // _state.recipient,
+        enabled: Boolean(_state.swapAmount?.gt(ZERO)),
+      }
+    }
+
+    return undefined
+  }, [state, slippagePercent])
+
+  return useSvmTradeQuote(params)
+}
+
+function useSimpleSwapTradeQuote() {
+  const { state } = useDerivedStateSimpleSwap()
+
+  const evmQuote = useEvmSimpleSwapTradeQuote()
+  const svmQuote = useSvmSimpleSwapTradeQuote()
+
+  if (isEvmChainId(state.chainId)) {
+    return evmQuote
+  } else if (isSvmChainId(state.chainId)) {
+    return svmQuote
+  }
+
+  throw new Error('useSimpleSwapTradeQuote: Unsupported chainId')
+}
+
+function useSvmSimpleSwapTradeExecute() {
+  const {
+    state: { token0, chainId, swapAmount, token1, recipient },
+  } = useDerivedStateSimpleSwap<SvmChainId & SupportedChainId>()
+
+  if (!isSvmChainId(chainId)) {
+    throw new Error('useSvmSimpleSwapTradeExecute is SVM-only')
+  }
+
+  return useSvmTradeExecute({
     chainId,
     fromToken: token0,
     toToken: token1,
     amount: swapAmount,
-    slippagePercentage: slippagePercent.toString({ fixed: 2 }),
-    gasPrice,
-    recipient: recipient as Address,
+    recipient: recipient,
     enabled: Boolean(swapAmount?.gt(ZERO)),
-    carbonOffset,
   })
-
-  return quote
 }
 
 export {
   DerivedstateSimpleSwapProvider,
   useDerivedStateSimpleSwap,
-  useSimpleSwapTrade,
   useSimpleSwapTradeQuote,
+  useEvmSimpleSwapTrade,
+  useEvmSimpleSwapTradeQuote,
+  useSvmSimpleSwapTradeQuote,
+  useSvmSimpleSwapTradeExecute,
 }

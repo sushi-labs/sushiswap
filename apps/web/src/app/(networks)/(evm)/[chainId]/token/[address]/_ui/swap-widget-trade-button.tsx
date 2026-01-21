@@ -6,7 +6,7 @@ import { Button } from '@sushiswap/ui'
 import Link from 'next/link'
 import type React from 'react'
 import { type FC, useMemo } from 'react'
-import type { UseTradeReturn } from 'src/lib/hooks/react-query'
+import type { UseEvmTradeReturn } from 'src/lib/hooks/react-query'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { ZERO } from 'sushi'
@@ -19,7 +19,7 @@ import {
 
 interface PartialRouteCheckerProps {
   children: React.ReactNode
-  trade?: UseTradeReturn
+  trade?: UseEvmTradeReturn
 }
 
 const PartialRouteChecker: FC<PartialRouteCheckerProps> = ({

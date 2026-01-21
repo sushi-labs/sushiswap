@@ -40,7 +40,7 @@ import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
 import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { APPROVE_TAG_SWAP, NativeAddress } from 'src/lib/constants'
 import { sendDrilldownLog } from 'src/lib/drilldown-log'
-import type { UseTradeReturn } from 'src/lib/hooks/react-query'
+import type { UseEvmTradeReturn } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { logger } from 'src/lib/logger'
 import {
@@ -71,7 +71,7 @@ import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-pri
 import { useDetailsInteractionTracker } from '../../_ui/details-interaction-tracker-provider'
 import {
   useDerivedStateSimpleSwap,
-  useSimpleSwapTrade,
+  useEvmSimpleSwapTrade,
 } from './derivedstate-simple-swap-provider'
 import { SimpleSwapErrorMessage } from './simple-swap-error-message'
 
@@ -107,7 +107,8 @@ const _SimpleSwapTradeReviewDialog: FC<{
   const [slippagePercent] = useSlippageTolerance()
 
   const { address } = useConnection()
-  const tradeRef = useRef<UseTradeReturn | null>(null)
+  const tradeRef = useRef<UseEvmTradeReturn | null>(null)
+
   const client = usePublicClient()
 
   const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
@@ -119,7 +120,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
     isSuccess: isSwapQuerySuccess,
     isError: isSwapQueryError,
     error: swapQueryError,
-  } = useSimpleSwapTrade(
+  } = useEvmSimpleSwapTrade(
     Boolean(approved && address && (confirmDialogOpen || reviewDialogOpen)),
   )
 

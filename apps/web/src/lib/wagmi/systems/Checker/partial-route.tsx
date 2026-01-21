@@ -9,10 +9,10 @@ import {
   HoverCardTrigger,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
-import type { UseTradeReturn } from 'src/lib/hooks/react-query'
+import type { UseEvmTradeReturn } from 'src/lib/hooks/react-query'
 
 type PartialRouteProps = ButtonProps & {
-  trade: Pick<UseTradeReturn, 'route' | 'amountIn'> | undefined
+  trade: Pick<UseEvmTradeReturn, 'route' | 'amountIn'> | undefined
   setSwapAmount: (swapAmount: string) => void
 }
 

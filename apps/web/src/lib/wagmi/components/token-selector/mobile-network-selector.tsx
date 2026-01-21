@@ -14,12 +14,13 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { type FC, useState } from 'react'
 import { getNetworkName } from 'src/lib/network'
 import type { EvmChainId } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 import { useConnection } from 'wagmi'
 
 interface MobileNetworkSelector {
-  networks: readonly EvmChainId[]
+  networks: readonly (EvmChainId | SvmChainId)[]
   onSelect: (chainId: number) => void
-  selectedNetwork: EvmChainId
+  selectedNetwork: EvmChainId | SvmChainId
 }
 
 export const MobileNetworkSelector: FC<MobileNetworkSelector> = ({
@@ -29,6 +30,7 @@ export const MobileNetworkSelector: FC<MobileNetworkSelector> = ({
 }) => {
   const [open, setOpen] = useState(false)
 
+  // TODO: Solana useAccount?
   const { chainId } = useConnection()
 
   return (

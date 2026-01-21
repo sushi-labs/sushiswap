@@ -354,6 +354,9 @@ importers:
       '@solana/connector':
         specifier: 0.2.3
         version: 0.2.3(patch_hash=aae317953f9e26a90cd5572a6799437ce390c43526f398a1e91dd99fa2da208b)(81e08fc69e057e2b1e24ab2e429a0960)
+      '@solana/kit':
+        specifier: 5.4.0
+        version: 5.4.0(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3)(utf-8-validate@6.0.3)
       '@sushiswap/graph-client':
         specifier: workspace:*
         version: link:../../packages/graph-client

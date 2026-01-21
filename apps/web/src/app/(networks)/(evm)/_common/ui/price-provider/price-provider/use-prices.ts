@@ -2,17 +2,34 @@
 
 import { useEffect, useMemo } from 'react'
 import { Fraction, withoutScientificNotation } from 'sushi'
-import type { EvmAddress, EvmChainId } from 'sushi/evm'
+import { type EvmAddress, type EvmChainId, isEvmChainId } from 'sushi/evm'
+import { type SvmChainId, isSvmChainId } from 'sushi/svm'
 import { parseUnits } from 'viem'
 import { usePriceProvider } from './price-provider'
 
-export type PriceMap = {
-  has: (address: EvmAddress) => boolean
-  get: (address: EvmAddress) => number | undefined
-  getFraction: (address: EvmAddress) => Fraction | undefined
+export type PriceMap<TChainId extends EvmChainId | SvmChainId = EvmChainId> = {
+  has: (address: AddressFor<TChainId>) => boolean
+  get: (address: AddressFor<TChainId>) => number | undefined
+  getFraction: (address: AddressFor<TChainId>) => Fraction | undefined
 }
 
-export function usePrices({
+type UsePricesResult<TChainId extends EvmChainId | SvmChainId> = {
+  data: PriceMap<TChainId> | undefined
+  lastModified: number
+  isLoading: boolean
+  isUpdating: boolean
+  isError: boolean
+}
+
+const disabledData = {
+  data: undefined,
+  lastModified: 0,
+  isLoading: false,
+  isUpdating: false,
+  isError: false,
+}
+
+function useEvmPrices({
   chainId,
   enabled = true,
 }: { chainId: EvmChainId | undefined; enabled?: boolean }) {
@@ -39,13 +56,7 @@ export function usePrices({
 
   return useMemo(() => {
     if (!chainId) {
-      return {
-        data: undefined,
-        lastModified: 0,
-        isLoading: false,
-        isUpdating: false,
-        isError: false,
-      }
+      return disabledData
     }
 
     if (!chain)
@@ -104,4 +115,48 @@ export function usePrices({
       isError: chain.isError,
     }
   }, [chainId, chain])
+}
+
+function useSvmPrices({
+  chainId,
+  enabled = true,
+}: { chainId: SvmChainId | undefined; enabled?: boolean }) {
+  // Implementation would be similar to useEvmPrices but for SVM chains
+  // TODO: Add SVM price fetching logic here
+
+  void enabled
+  void chainId
+
+  return disabledData
+}
+
+export function usePrices<TChainId extends EvmChainId | SvmChainId>({
+  chainId,
+  enabled = true,
+}: {
+  chainId: TChainId | undefined
+  enabled?: boolean
+}): UsePricesResult<TChainId> {
+  const evmChainId = chainId && isEvmChainId(chainId) ? chainId : undefined
+  const svmChainId = chainId && isSvmChainId(chainId) ? chainId : undefined
+
+  const evmPrices = useEvmPrices({
+    chainId: evmChainId,
+    enabled: Boolean(enabled && evmChainId),
+  })
+
+  const svmPrices = useSvmPrices({
+    chainId: svmChainId,
+    enabled: Boolean(enabled && svmChainId),
+  })
+
+  return useMemo(() => {
+    if (evmChainId) {
+      return evmPrices as UsePricesResult<typeof evmChainId>
+    } else if (svmChainId) {
+      return svmPrices as UsePricesResult<typeof svmChainId>
+    }
+
+    return disabledData
+  }, [evmChainId, evmPrices, svmChainId, svmPrices])
 }

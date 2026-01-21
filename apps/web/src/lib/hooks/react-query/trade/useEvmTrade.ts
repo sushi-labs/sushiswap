@@ -1,49 +1,31 @@
+import {
+  SwapEventName,
+  sendAnalyticsEvent,
+  useTrace,
+} from '@sushiswap/telemetry'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { UI_FEE_BIPS, UI_FEE_DECIMAL, UI_FEE_PERCENT } from 'src/config'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
-import { getFeeString } from 'src/lib/swap/fee'
+import { getFeeString, isAddressFeeWhitelisted } from 'src/lib/swap/fee'
 import { Amount, Fraction, Percent, Price, ZERO, subtractSlippage } from 'sushi'
 import {
-  type EvmAddress,
   type EvmCurrency,
-  type EvmID,
   EvmNative,
+  UI_FEE_COLLECTOR_ADDRESS,
   addGasMargin,
   isEvmWNativeSupported,
-  isLsd,
   isRedSnwapperChainId,
-  isStable,
-  isWrapOrUnwrap,
+  isUIFeeCollectorChainId,
 } from 'sushi/evm'
-import { stringify, zeroAddress } from 'viem'
+import { type Hex, stringify, zeroAddress } from 'viem'
+import { useConnection } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { apiAdapter02To01 } from './apiAdapter'
-import type { UseTradeParams, UseTradeQuerySelect } from './types'
+import type { UseEvmTradeParams, UseEvmTradeQuerySelect } from './types'
 import { tradeValidator02 } from './validator02'
 
-const excludePoolsByToken: Partial<Record<EvmID<true>, EvmAddress[]>> = {
-  '1:0x9ea3b5b4ec044b70375236a281986106457b20ef': [
-    '0x7d7e813082ef6c143277c71786e5be626ec77b20',
-  ],
-}
-
-function applyPoolExclusion(
-  fromToken: EvmCurrency,
-  toToken: EvmCurrency,
-  searchParams: URLSearchParams,
-) {
-  if (excludePoolsByToken[fromToken.id] || excludePoolsByToken[toToken.id]) {
-    const excludePools = [
-      ...(excludePoolsByToken[fromToken.id] || []),
-      ...(excludePoolsByToken[toToken.id] || []),
-    ]
-
-    searchParams.set('excludePools', excludePools.join(','))
-  }
-}
-
-export const useTradeQuoteQuery = (
+export const useEvmTradeQuery = (
   {
     chainId,
     fromToken,
@@ -56,12 +38,15 @@ export const useTradeQuoteQuery = (
     source,
     onlyPools,
     enabled,
-  }: UseTradeParams,
-  select: UseTradeQuerySelect,
+  }: UseEvmTradeParams,
+  select: UseEvmTradeQuerySelect,
 ) => {
+  const trace = useTrace()
+  const { address } = useConnection()
+
   return useQuery({
     queryKey: [
-      'getTradeQuote',
+      'getTrade',
       {
         chainId,
         currencyA: fromToken,
@@ -70,16 +55,16 @@ export const useTradeQuoteQuery = (
         fee,
         slippagePercentage,
         gasPrice,
+        address,
+        recipient,
         source,
         onlyPools,
       },
     ],
     queryFn: async () => {
-      if (!chainId || !fromToken || !toToken || !amount) {
-        throw new Error('Missing required parameters for trade quote')
-      }
+      if (!address) throw new Error('No address')
 
-      const params = new URL(`${API_BASE_URL}/quote/v7/${chainId}`)
+      const params = new URL(`${API_BASE_URL}/swap/v7/${chainId}`)
       params.searchParams.set('referrer', 'sushi')
       params.searchParams.set(
         'tokenIn',
@@ -99,20 +84,49 @@ export const useTradeQuoteQuery = (
       )
       params.searchParams.set('amount', `${amount?.amount.toString()}`)
       params.searchParams.set('maxSlippage', `${+slippagePercentage / 100}`)
-      params.searchParams.set('fee', `${fee}`)
-      params.searchParams.set('feeBy', 'output')
+      params.searchParams.set('sender', `${address}`)
+      recipient && params.searchParams.set('recipient', `${recipient}`)
+
+      if (
+        !isAddressFeeWhitelisted(address) ||
+        (recipient && !isAddressFeeWhitelisted(recipient))
+      ) {
+        params.searchParams.set('fee', `${fee}`)
+        if (fee > 0) {
+          params.searchParams.set('feeBy', 'output')
+          params.searchParams.set(
+            'feeReceiver',
+            isUIFeeCollectorChainId(chainId)
+              ? UI_FEE_COLLECTOR_ADDRESS[chainId]
+              : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
+          )
+        }
+      }
+
+      if (source !== undefined) params.searchParams.set('source', `${source}`)
+      if (process.env.NEXT_PUBLIC_APP_ENV === 'test')
+        params.searchParams.set('simulate', 'false')
+      else params.searchParams.set('simulate', 'true')
       if (onlyPools)
         onlyPools.forEach((pool) =>
           params.searchParams.append('onlyPools', pool),
         )
 
-      applyPoolExclusion(fromToken, toToken, params.searchParams)
-
       const res = await fetch(params.toString())
       const json = await res.json()
       const resp2 = tradeValidator02.parse(json)
 
-      const resp1 = apiAdapter02To01(resp2, fromToken, toToken, recipient)
+      const resp1 = apiAdapter02To01(
+        resp2,
+        fromToken as EvmCurrency,
+        toToken as EvmCurrency,
+        recipient,
+      )
+
+      sendAnalyticsEvent(SwapEventName.SWAP_QUOTE_RECEIVED, {
+        route: stringify(resp1.route),
+        ...trace,
+      })
 
       return resp1
     },
@@ -121,13 +135,20 @@ export const useTradeQuoteQuery = (
     gcTime: 0, // the length of time before inactive data gets removed from the cache
     retry: false, // dont retry on failure, immediately fallback
     select,
-    enabled:
-      enabled && Boolean(chainId && fromToken && toToken && amount && gasPrice),
+    enabled: Boolean(
+      enabled &&
+        address &&
+        chainId &&
+        fromToken &&
+        toToken &&
+        amount &&
+        gasPrice,
+    ),
     queryKeyHashFn: stringify,
   })
 }
 
-export const useTradeQuote = (variables: UseTradeParams) => {
+export const useEvmTrade = (variables: UseEvmTradeParams) => {
   const {
     chainId,
     fromToken,
@@ -163,7 +184,7 @@ export const useTradeQuote = (variables: UseTradeParams) => {
     return result
   }, [chainId, prices, toToken])
 
-  const select: UseTradeQuerySelect = useCallback(
+  const select: UseEvmTradeQuerySelect = useCallback(
     (data) => {
       if (
         isRedSnwapperChainId(chainId) &&
@@ -192,22 +213,6 @@ export const useTradeQuote = (variables: UseTradeParams) => {
                 denominator: 10_000,
               }).toNumber(),
             )
-
-        // const isOffset = chainId === ChainId.POLYGON && carbonOffset
-
-        // if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
-        //   writeArgs = [
-        //     '0xbc4a6be1285893630d45c881c6c343a65fdbe278',
-        //     20000000000000000n,
-        //     ...writeArgs,
-        //   ]
-        //   value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
-        // }
-
-        // const value =
-        //   fromToken.isNative && data?.args?.amountIn
-        //     ? data.args.amountIn
-        //     : undefined
 
         const gasSpent = gasPrice
           ? new Amount(
@@ -244,8 +249,18 @@ export const useTradeQuote = (variables: UseTradeParams) => {
             minAmountOut,
           }),
           route: data.route,
-          tx: undefined,
+          tx: data?.tx
+            ? {
+                from: data.tx.from,
+                to: data.tx.to,
+                data: data.tx.data as Hex,
+                value: data.tx.value,
+                gas: data.tx.gas,
+                gasPrice: data.tx.gasPrice,
+              }
+            : undefined,
           tokenTax,
+          routingSource: 'SushiSwap API',
         }
       }
 
@@ -261,6 +276,7 @@ export const useTradeQuote = (variables: UseTradeParams) => {
         route: undefined,
         tx: undefined,
         tokenTax: undefined,
+        routingSource: undefined,
       }
     },
     [
@@ -277,5 +293,5 @@ export const useTradeQuote = (variables: UseTradeParams) => {
     ],
   )
 
-  return useTradeQuoteQuery(variables, select)
+  return useEvmTradeQuery(variables, select)
 }

@@ -30,7 +30,9 @@ import {
 } from '~evm/[chainId]/(trade)/swap/_ui/derivedstate-simple-swap-provider'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 
-type DerivedStateSimpleSwapState = ReturnType<typeof useDerivedStateSimpleSwap>
+type DerivedStateSimpleSwapState = ReturnType<
+  typeof useDerivedStateSimpleSwap<TwapSupportedChainId>
+>
 
 type State = DerivedStateSimpleSwapState & {
   state: Omit<DerivedStateSimpleSwapState['state'], 'chainId'> & {

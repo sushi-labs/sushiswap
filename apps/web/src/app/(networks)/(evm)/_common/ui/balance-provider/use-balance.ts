@@ -1,23 +1,31 @@
 import { useMemo } from 'react'
-import { Amount } from 'sushi'
-import { type EvmChainId, type EvmCurrency, evmNativeAddress } from 'sushi/evm'
-import type { Address } from 'viem'
+import { Amount, getNativeAddress } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 import { useBalances } from './use-balances'
 
-type Args =
-  | [EvmCurrency | undefined]
-  | [EvmChainId | undefined, Address | undefined]
-type Return = Omit<ReturnType<typeof useBalances>, 'data'> & {
+type Args<TChainId extends EvmChainId | SvmChainId> =
+  | [CurrencyFor<TChainId> | undefined]
+  | [TChainId | undefined, AddressFor<TChainId> | undefined]
+type Return<TChainId extends EvmChainId | SvmChainId> = Omit<
+  ReturnType<typeof useBalances<TChainId>>,
+  'data'
+> & {
   data: bigint | undefined
 }
 
-export function useBalance(currency: EvmCurrency | undefined): Return
-export function useBalance(
-  chainId: EvmChainId | undefined,
-  tokenAddress: Address | undefined,
-): Return
+export function useBalance<TChainId extends EvmChainId | SvmChainId>(
+  currency: CurrencyFor<TChainId> | undefined,
+): Return<TChainId>
+export function useBalance<TChainId extends EvmChainId | SvmChainId>(
+  chainId: TChainId | undefined,
+  tokenAddress: AddressFor<TChainId> | undefined,
+): Return<TChainId>
 
-export function useBalance(arg1: Args[0], arg2?: Args[1]) {
+export function useBalance<TChainId extends EvmChainId | SvmChainId>(
+  arg1: Args<TChainId>[0],
+  arg2?: Args<TChainId>[1],
+) {
   const [chainId, tokenAddresses] = useMemo(() => {
     if (!arg1) {
       return [undefined, []]
@@ -27,12 +35,10 @@ export function useBalance(arg1: Args[0], arg2?: Args[1]) {
       return [arg1, arg2 ? [arg2] : []]
     }
 
-    let address: Address
-    if (arg1.type === 'native') {
-      address = evmNativeAddress
-    } else {
-      address = arg1.address
-    }
+    const address =
+      arg1.type === 'native'
+        ? getNativeAddress(arg1.chainId as TChainId)
+        : (arg1.address as AddressFor<TChainId>)
 
     return [arg1.chainId, [address]]
   }, [arg1, arg2])
@@ -49,7 +55,9 @@ export function useBalance(arg1: Args[0], arg2?: Args[1]) {
   }, [tokenAddress, result])
 }
 
-export function useAmountBalance(currency: EvmCurrency | undefined) {
+export function useAmountBalance<TChainId extends EvmChainId | SvmChainId>(
+  currency: CurrencyFor<TChainId> | undefined,
+) {
   const result = useBalance(currency)
 
   return useMemo(() => {

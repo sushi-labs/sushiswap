@@ -1,7 +1,8 @@
 import type { ImageProps } from 'next/image'
 import type { FC } from 'react'
-import { ChainId, type Currency, getChainById } from 'sushi'
+import { type AddressFor, ChainId, type Currency, getChainById } from 'sushi'
 
+import type { EvmAddress } from 'sushi/evm'
 import { Avatar, AvatarImage } from '../avatar'
 import { LinkExternal } from '../link'
 
@@ -93,7 +94,7 @@ const LOGO: Record<number, string> = {
   [ChainId.PLASMA]: PlasmaLogo,
   [ChainId.MONAD]: MonadLogo,
   [ChainId.SOLANA]: SolanaLogo,
-}
+} satisfies Partial<Record<ChainId, string>>
 
 // function djb2(str: string) {
 //   let hash = 5381
@@ -151,7 +152,8 @@ export const Icon: FC<IconProps> = ({
   return (
     <LinkExternal
       href={getChainById(currency.chainId).getTokenUrl(
-        currency.wrap().address as `0x${string}`,
+        // Ugly cast but will work fine
+        currency.wrap().address as EvmAddress,
       )}
     >
       {avatar}

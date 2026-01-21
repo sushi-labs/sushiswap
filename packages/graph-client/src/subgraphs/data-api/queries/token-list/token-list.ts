@@ -4,7 +4,7 @@ import { type RequestOptions, request } from 'src/lib/request.js'
 import type { ChainIdVariable } from 'src/lib/types/chainId.js'
 import type { TokenListChainId } from 'src/subgraphs/data-api/types/TokenListChainId.js'
 import { type AddressFor, getIdFromChainIdAddress } from 'sushi'
-import { SUSHI_DATA_API_HOST } from 'sushi/evm'
+import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 

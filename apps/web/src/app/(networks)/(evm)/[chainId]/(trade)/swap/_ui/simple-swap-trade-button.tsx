@@ -6,6 +6,7 @@ import type React from 'react'
 import { type FC, useEffect, useMemo, useState } from 'react'
 import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
 import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
+import type { SupportedChainId } from 'src/config'
 import { APPROVE_TAG_SWAP } from 'src/lib/constants'
 import { usePersistedSlippageError } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
@@ -14,13 +15,14 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/slippage'
 import { ZERO } from 'sushi'
 import {
+  type EvmChainId,
   EvmNative,
   RED_SNWAPPER_ADDRESS,
   isRedSnwapperChainId,
 } from 'sushi/evm'
 import {
   useDerivedStateSimpleSwap,
-  useSimpleSwapTradeQuote,
+  useEvmSimpleSwapTradeQuote,
 } from './derivedstate-simple-swap-provider'
 import { SimpleSwapTradeReviewDialog } from './simple-swap-trade-review-dialog'
 import { useIsSwapMaintenance } from './use-is-swap-maintenance'
@@ -48,13 +50,13 @@ const _SimpleSwapTradeButton: FC<SimpleSwapTradeButtonProps> = ({
 
   const { data: maintenance } = useIsSwapMaintenance()
   const { isSlippageError } = usePersistedSlippageError({ isSuccess, error })
-  const { data: quote } = useSimpleSwapTradeQuote()
+  const { data: quote } = useEvmSimpleSwapTradeQuote()
   const [checked, setChecked] = useState(false)
 
   const {
     state: { swapAmount, swapAmountString, chainId, token0, token1 },
     mutate: { setSwapAmount },
-  } = useDerivedStateSimpleSwap()
+  } = useDerivedStateSimpleSwap<EvmChainId & SupportedChainId>()
 
   const isWrap =
     token0?.type === 'native' &&

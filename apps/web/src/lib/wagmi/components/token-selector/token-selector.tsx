@@ -19,7 +19,6 @@ import {
   gtagEvent,
 } from '@sushiswap/ui'
 import React, {
-  type FC,
   type ReactNode,
   useCallback,
   useEffect,
@@ -27,27 +26,28 @@ import React, {
   useState,
 } from 'react'
 import type { EvmChainId, EvmCurrency } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 import { useConnection } from 'wagmi'
 import { CurrencyInfo } from './currency-info'
 import { DesktopNetworkSelector } from './desktop-network-selector'
 import { MobileNetworkSelector } from './mobile-network-selector'
 import { TokenSelectorStates } from './token-selector-states'
 
-interface TokenSelectorProps {
-  selected: EvmCurrency | undefined
-  chainId: EvmChainId
-  onSelect(currency: EvmCurrency): void
+interface TokenSelectorProps<TChainId extends EvmChainId | SvmChainId> {
+  selected: CurrencyFor<TChainId> | undefined
+  chainId: TChainId
+  onSelect(currency: CurrencyFor<TChainId>): void
   children: ReactNode
-  currencies?: Record<string, EvmCurrency<{ approved?: boolean }>>
+  currencies?: Record<string, CurrencyFor<TChainId, { approved?: boolean }>>
   includeNative?: boolean
   hidePinnedTokens?: boolean
   hideSearch?: boolean
-  networks?: readonly EvmChainId[]
-  selectedNetwork?: EvmChainId
+  networks?: readonly (EvmChainId | SvmChainId)[]
+  selectedNetwork?: EvmChainId | SvmChainId
   onNetworkSelect?: (network: number) => void
 }
 
-export const TokenSelector: FC<TokenSelectorProps> = ({
+export function TokenSelector<TChainId extends EvmChainId | SvmChainId>({
   includeNative = true,
   selected,
   onSelect,
@@ -59,12 +59,17 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   networks,
   selectedNetwork,
   onNetworkSelect,
-}) => {
-  const { address } = useConnection()
+}: TokenSelectorProps<TChainId>) {
+  // TODO: Solana useAccount?
+  const { address: evmAddress } = useConnection()
+  // ! Hack for now
+  const address = evmAddress as AddressFor<TChainId> | undefined
 
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
-  const [currencyInfo, showCurrencyInfo] = useState<EvmCurrency | false>(false)
+  const [currencyInfo, showCurrencyInfo] = useState<
+    CurrencyFor<TChainId> | false
+  >(false)
 
   const debouncedQuery = useDebounce(query, 250)
 
@@ -86,7 +91,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   }, [_currencies])
 
   const _onSelect = useCallback(
-    (currency: EvmCurrency) => {
+    (currency: CurrencyFor<TChainId>) => {
       if (onSelect) {
         onSelect(currency)
       }
