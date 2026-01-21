@@ -35,12 +35,13 @@ async function fetchTicks(
 
   const currentTick = pool.tick
   const activeTick = alignTick(currentTick, tickSpacing)
-  const activeIndex = Math.floor(activeTick / (256 * tickSpacing))
 
-  const minIndex =
-    activeIndex - Math.ceil(numSurroundingTicks / (256 * tickSpacing))
-  const maxIndex =
-    activeIndex + Math.floor(numSurroundingTicks / (256 * tickSpacing))
+  const minIndex = Math.floor(
+    (activeTick / tickSpacing - numSurroundingTicks) / 256,
+  )
+  const maxIndex = Math.floor(
+    (activeTick / tickSpacing + numSurroundingTicks) / 256,
+  )
 
   const populatedTicks: PopulatedTick[] = []
 
@@ -78,7 +79,7 @@ async function fetchTicks(
  */
 export function useTicks({
   pool,
-  numSurroundingTicks = (MAX_TICK_RANGE.upper - MAX_TICK_RANGE.lower) / 2,
+  numSurroundingTicks = 1250,
   enabled = true,
 }: UseTicksProps) {
   return useQuery({
