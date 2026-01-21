@@ -1,4 +1,4 @@
-import { withdraw3 } from '@nktkas/hyperliquid/api/exchange'
+import { sendAsset, withdraw3 } from '@nktkas/hyperliquid/api/exchange'
 import {
   createErrorToast,
   createInfoToast,
@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@sushiswap/ui'
+import { ArrowsLeftRightIcon } from '@sushiswap/ui/icons/ArrowsLeftRight'
 import { useCallback, useState } from 'react'
 import { hlHttpTransport } from 'src/lib/perps/transports'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
@@ -20,14 +21,14 @@ import { Amount } from 'sushi'
 import { EvmChainId, USDC } from 'sushi/evm'
 import { useAccount, useWalletClient } from 'wagmi'
 import { useUserState } from '~evm/perps/user-provider'
-import { WithdrawInput } from './withdraw-input'
+import { TransferInput } from './transfer-input'
 
 //@todo clean up
 const currency = USDC[EvmChainId.ARBITRUM]
 const chainId = EvmChainId.ARBITRUM
-const MIN_WITHDRAW_AMOUNT = 2 //2.000000 usdc
 
-export const Withdraw = () => {
+export const PerpSpotTransfer = () => {
+  const [dst, setDst] = useState<'perp' | 'spot'>('spot')
   const [open, setOpen] = useState<boolean>(false)
   const [amount, setAmount] = useState<string>('')
   const _amount = Amount.tryFromHuman(currency, amount)
@@ -37,27 +38,31 @@ export const Withdraw = () => {
       webData2Query: { data, isLoading, error },
     },
   } = useUserState()
-  const withdrawableBalance = data?.clearinghouseState.withdrawable
-  const balance = Amount.tryFromHuman(currency, withdrawableBalance ?? '0')
+  const sendableBalance =
+    dst === 'spot'
+      ? data?.clearinghouseState.withdrawable
+      : data?.spotState?.balances?.find((b) => b.coin === 'USDC')?.total
+
+  const balance = Amount.tryFromHuman(currency, sendableBalance ?? '0')
   const { address } = useAccount()
   const [isPending, setIsPending] = useState<boolean>(false)
 
   const insufficientBalance =
-    address && withdrawableBalance && _amount && balance?.lt(_amount)
+    address && sendableBalance && _amount && balance?.lt(_amount)
 
   const withdrawUsdc = useCallback(async () => {
     if (!walletClient || !address || !_amount) return
     try {
       setIsPending(true)
       createInfoToast({
-        summary: `Withdrawing ${_amount.toSignificant(6)} USDC`,
+        summary: `Transferring ${_amount.toSignificant(6)} USDC to ${dst === 'spot' ? 'Spot' : 'Perps'}`,
         account: address,
         type: 'send',
         timestamp: Date.now(),
         groupTimestamp: Date.now(),
         chainId: chainId,
       })
-      await withdraw3(
+      await sendAsset(
         {
           wallet: walletClient,
           transport: hlHttpTransport,
@@ -65,10 +70,13 @@ export const Withdraw = () => {
         {
           amount: _amount?.toString(),
           destination: address,
+          token: 'USDC',
+          sourceDex: dst === 'perp' ? 'spot' : '',
+          destinationDex: dst === 'perp' ? '' : 'spot',
         },
       )
       createSuccessToast({
-        summary: `Withdraw for ${_amount.toSignificant(6)} USDC submitted`,
+        summary: `Transfer of ${_amount.toSignificant(6)} USDC to ${dst === 'spot' ? 'Spot' : 'Perps'} submitted`,
         account: address,
         type: 'send',
         timestamp: Date.now(),
@@ -79,29 +87,48 @@ export const Withdraw = () => {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error)
-      createErrorToast(`Withdraw failed: ${errorMessage}`, false)
+      createErrorToast(
+        `Transfer to ${dst === 'spot' ? 'Spot' : 'Perps'} failed: ${errorMessage}`,
+        false,
+      )
       setIsPending(false)
     } finally {
       setIsPending(false)
       setAmount('')
       setOpen(false)
     }
-  }, [walletClient, address, _amount])
+  }, [walletClient, address, _amount, dst])
+
+  const handleDstToggle = useCallback(() => {
+    setDst((prevDst) => (prevDst === 'spot' ? 'perp' : 'spot'))
+    setAmount('')
+  }, [])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="w-full" variant="secondary" size="sm">
-          Withdraw
+          Perps <ArrowsLeftRightIcon className="w-2 h-2" /> Spot
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="!text-left">
-          <DialogTitle>Withdraw</DialogTitle>
-          <DialogDescription>Withdraw USDC to Arbitrum.</DialogDescription>
+          <DialogTitle>Transfer USDC</DialogTitle>
+          <DialogDescription>
+            Transfer USDC between your Perps and Spot balances.
+          </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4">
-          <WithdrawInput
+          <Button
+            className="mx-auto"
+            variant="secondary"
+            onClick={handleDstToggle}
+          >
+            {dst === 'spot' ? 'Perps' : 'Spot'}{' '}
+            <ArrowsLeftRightIcon className="w-2 h-2" />{' '}
+            {dst === 'spot' ? 'Spot' : 'Perps'}
+          </Button>
+          <TransferInput
             amount={amount}
             setAmount={setAmount}
             balance={balance}
@@ -115,16 +142,16 @@ export const Withdraw = () => {
           <Checker.Connect>
             <Checker.Network chainId={chainId}>
               <Checker.Custom
-                showChildren={!insufficientBalance}
-                buttonText={'Insufficient Balance'}
+                showChildren={Boolean(amount)}
+                buttonText={'Enter Amount'}
                 onClick={() => {}}
-                disabled={Boolean(insufficientBalance)}
+                disabled={!amount}
               >
                 <Checker.Custom
-                  showChildren={Number(amount) >= MIN_WITHDRAW_AMOUNT}
-                  buttonText={`Minimum Withdraw ${MIN_WITHDRAW_AMOUNT} USDC`}
+                  showChildren={!insufficientBalance}
+                  buttonText={'Insufficient Balance'}
                   onClick={() => {}}
-                  disabled={Number(amount) < MIN_WITHDRAW_AMOUNT}
+                  disabled={Boolean(insufficientBalance)}
                 >
                   <Button
                     size="xl"
@@ -132,22 +159,12 @@ export const Withdraw = () => {
                     onClick={withdrawUsdc}
                     loading={isPending}
                   >
-                    Withdraw
+                    {`Transfer to ${dst === 'spot' ? 'Spot' : 'Perps'}`}
                   </Button>
                 </Checker.Custom>
               </Checker.Custom>
             </Checker.Network>
           </Checker.Connect>
-          <div>
-            <p className="text-xs text-muted-foreground italic mb-1">
-              A fee of 1 USDC will be deducted from the USDC withdrawn.
-            </p>
-            <p className="text-xs text-muted-foreground italic">
-              If you have USDC in your Spot Balances, transfer it to Perps to
-              make it available to withdraw. Withdrawals should arrive within 5
-              minutes.
-            </p>
-          </div>
         </div>
       </DialogContent>
     </Dialog>

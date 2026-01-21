@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   CardContent,
   CardGroup,
@@ -8,14 +7,14 @@ import {
   HoverCardTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { ArrowsLeftRightIcon } from '@sushiswap/ui/icons/ArrowsLeftRight'
 import { type ReactNode, useMemo } from 'react'
 import { currencyFormatter, enUSFormatNumber } from 'src/lib/perps/utils'
 import { useUserState } from '~evm/perps/user-provider'
 import { ValueSensitiveText } from '../value-sensitive-text'
 import { AccountManagementSkeleton } from './account-management-skeleton'
 import { Deposit } from './deposit'
-import { Withdraw } from './widthaw'
+import { PerpSpotTransfer } from './perp-spot-transfer'
+import { Withdraw } from './withdraw'
 
 export const AccountManagement = ({ className }: { className?: string }) => {
   const {
@@ -98,9 +97,7 @@ export const AccountManagement = ({ className }: { className?: string }) => {
           <div className="flex flex-col gap-2">
             <Deposit />
             <div className="flex items-center gap-2">
-              <Button className="w-full" variant="secondary" size="sm">
-                Perps <ArrowsLeftRightIcon className="w-2 h-2" /> Spot
-              </Button>
+              <PerpSpotTransfer />
               <Withdraw />
             </div>
           </div>

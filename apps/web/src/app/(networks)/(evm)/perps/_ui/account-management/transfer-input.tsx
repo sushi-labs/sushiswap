@@ -6,7 +6,7 @@ import { Amount } from 'sushi'
 import type { EvmAddress, EvmChainId, EvmCurrency } from 'sushi/evm'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 
-export const WithdrawInput = ({
+export const TransferInput = ({
   amount,
   setAmount,
   balance,
