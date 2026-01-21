@@ -35,7 +35,7 @@ async function fetchTicks(
 
   const currentTick = pool.tick
   const activeTick = alignTick(currentTick, tickSpacing)
-  const activeIndex = activeTick / (256 * tickSpacing)
+  const activeIndex = Math.floor(activeTick / (256 * tickSpacing))
 
   const minIndex =
     activeIndex - Math.ceil(numSurroundingTicks / (256 * tickSpacing))
@@ -91,11 +91,16 @@ export function useTicks({
       numSurroundingTicks,
     ],
     queryFn: async () => {
+      try {
       if (!pool) {
         throw new Error('Pool is required')
       }
 
-      return fetchTicks(pool, numSurroundingTicks)
+        return await fetchTicks(pool, numSurroundingTicks)
+      } catch (error) {
+        console.error('Error fetching ticks:', error)
+        throw error
+      }
     },
     enabled: Boolean(pool && enabled),
     staleTime: ms('30s'),
