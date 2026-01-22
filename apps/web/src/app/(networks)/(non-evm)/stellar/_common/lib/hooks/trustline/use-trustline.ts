@@ -8,10 +8,10 @@ import ms from 'ms'
 import { ChainId } from 'sushi'
 import { useStellarWallet } from '~stellar/providers'
 import {
+  checkTrustlineRequired,
   createTrustline,
   getUserTrustlines,
   hasTrustline,
-  requiresTrustline,
 } from '../../soroban/trustline-helpers'
 import { extractErrorMessage } from '../../utils/error-helpers'
 import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
@@ -25,30 +25,45 @@ type TrustlineParams = {
 type TrustlineResult = {
   hasTrustline: boolean
   needsTrustline: boolean
+  issuer: string | null
 }
 
 const NO_TRUSTLINE_NEEDED: TrustlineResult = {
   hasTrustline: true,
   needsTrustline: false,
+  issuer: null,
 }
 
 /**
  * Helper function to check if a token needs a trustline
+ * Now uses dynamic lookup from Horizon if issuer is not known
  */
 async function checkTokenTrustline(
   connectedAddress: string,
   code: string,
+  contract: string,
   issuer: string,
 ): Promise<TrustlineResult> {
-  const needsTrustlineCheck = requiresTrustline(code, issuer)
-  if (!needsTrustlineCheck) {
+  // Use the new async function that can look up issuers dynamically
+  const { required, issuer: resolvedIssuer } = await checkTrustlineRequired(
+    contract,
+    code,
+    issuer,
+  )
+
+  if (!required || !resolvedIssuer) {
     return NO_TRUSTLINE_NEEDED
   }
 
-  const hasTrustlineData = await hasTrustline(connectedAddress, code, issuer)
+  const hasTrustlineData = await hasTrustline(
+    connectedAddress,
+    code,
+    resolvedIssuer,
+  )
   return {
     hasTrustline: hasTrustlineData,
     needsTrustline: !hasTrustlineData,
+    issuer: resolvedIssuer,
   }
 }
 
@@ -168,13 +183,24 @@ export function useCreateTrustline() {
 }
 
 /**
+ * Token info for trustline checking
+ */
+type TokenTrustlineInfo =
+  | {
+      code: string
+      contract: string
+      issuer?: string
+    }
+  | null
+  | undefined
+
+/**
  * Hook to check if multiple tokens need trustlines
  *
- * Takes an array of tokens and returns an array of trustline needs for each token
+ * Takes an array of tokens and returns an array of trustline needs for each token.
+ * Now uses dynamic Horizon lookup for tokens without known issuers.
  */
-export function useNeedsTrustlines(
-  tokens: Array<{ code: string; issuer: string } | null | undefined>,
-) {
+export function useNeedsTrustlines(tokens: TokenTrustlineInfo[]) {
   const { connectedAddress } = useStellarWallet()
 
   const trustlineQueries = useQuery({
@@ -182,7 +208,9 @@ export function useNeedsTrustlines(
       'stellar',
       'trustlines-batch',
       connectedAddress,
-      tokens.map((t) => `${t?.code || ''}:${t?.issuer || ''}`).join(','),
+      tokens
+        .map((t) => `${t?.code || ''}:${t?.contract || ''}:${t?.issuer || ''}`)
+        .join(','),
     ],
     queryFn: async () => {
       if (!connectedAddress) {
@@ -191,13 +219,14 @@ export function useNeedsTrustlines(
 
       return await Promise.all(
         tokens.map(async (token) => {
-          if (!token?.code || !token?.issuer) {
+          if (!token?.code || !token?.contract) {
             return NO_TRUSTLINE_NEEDED
           }
           return await checkTokenTrustline(
             connectedAddress,
             token.code,
-            token.issuer,
+            token.contract,
+            token.issuer || '',
           )
         }),
       )
@@ -219,21 +248,23 @@ export function useNeedsTrustlines(
 /**
  * Hook to check if a token needs a trustline
  *
- * Determines if a token requires a trustline based on:
- * - XLM (native): Never needs trustline
- * - Classic assets (with G... issuer): Need trustline if user doesn't have one
- * - SAC-wrapped classic assets (C... contract + G... issuer): Need trustline
- * - Pure Soroban tokens (C... address only, no issuer): Never need trustline
+ * Now dynamically looks up asset info from Horizon if issuer is not known.
+ * Works with SAC-wrapped classic assets even if issuer wasn't pre-populated.
  */
-export function useNeedsTrustline(assetCode: string, assetIssuer: string) {
+export function useNeedsTrustline(
+  assetCode: string,
+  assetContract: string,
+  assetIssuer?: string,
+) {
   const { results, isLoading } = useNeedsTrustlines([
-    { code: assetCode, issuer: assetIssuer },
+    { code: assetCode, contract: assetContract, issuer: assetIssuer },
   ])
   const result = results[0] || NO_TRUSTLINE_NEEDED
 
   return {
     needsTrustline: result.needsTrustline,
     hasTrustline: result.hasTrustline,
+    issuer: result.issuer,
     isLoading,
   }
 }

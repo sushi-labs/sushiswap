@@ -152,7 +152,9 @@ export function LiquidityChartRangeInput({
     [price, ticksAtLimit],
   )
 
-  const isUninitialized = !pool || (data === undefined && !isLoading)
+  // Only consider uninitialized when no pool is provided
+  // When pool exists but data is undefined/empty, that's handled by "no liquidity data" case
+  const isUninitialized = !pool
 
   const getNewRangeWhenBrushing = useCallback(
     (

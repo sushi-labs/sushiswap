@@ -7,7 +7,6 @@ import { getPoolLensContractClient } from '../../soroban/client'
 import type { PoolInfo } from '../../types/pool.type'
 import {
   type FeeTier,
-  MAX_TICK_RANGE,
   TICK_SPACINGS,
   alignTick,
   isFeeTier,
@@ -76,6 +75,10 @@ async function fetchTicks(
 
 /**
  * Hook to fetch tick data for a Stellar pool
+ *
+ * Note: numSurroundingTicks is the number of ticks to fetch on each side of the active tick.
+ * The default of 1250 matches the EVM version and results in fetching ~10 tick bitmap words
+ * (for tickSpacing=60), which is much more efficient than trying to fetch the entire range.
  */
 export function useTicks({
   pool,
@@ -93,9 +96,9 @@ export function useTicks({
     ],
     queryFn: async () => {
       try {
-      if (!pool) {
-        throw new Error('Pool is required')
-      }
+        if (!pool) {
+          throw new Error('Pool is required')
+        }
 
         return await fetchTicks(pool, numSurroundingTicks)
       } catch (error) {

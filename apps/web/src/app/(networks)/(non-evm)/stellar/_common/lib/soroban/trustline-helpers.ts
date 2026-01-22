@@ -15,42 +15,158 @@ export interface HorizonAssetInfo {
 }
 
 /**
- * Check if an asset requires a trustline (Classic Assets)
- *
- * Based on Stellar's asset types:
- * - XLM (native): No trustline needed
- * - Classic Assets (credit_alphanum4/12 with G... issuer): Trustline required
- * - Pure Soroban tokens (C... contract only, no issuer): No trustline needed
- * - SAC-wrapped Classic Assets (C... contract WITH G... issuer): Trustline required
- *
- * Important: SAC (Stellar Asset Contracts) that wrap classic assets still require
- * trustlines on the underlying classic asset. The SAC contract is just an interface
- * to the classic asset, but the actual token storage is on the classic ledger.
- *
- * @param tokenAddress - The token contract address
- * @param assetCode - The asset code (e.g., "USDC", "XLM", "HYPE")
- * @param assetIssuer - The asset issuer (for classic assets, G... address)
- * @returns true if asset requires trustline, false otherwise
+ * Cache for asset issuer lookups to avoid repeated API calls
  */
-export function requiresTrustline(
-  assetCode?: string,
+const assetIssuerCache = new Map<string, string | null>()
+
+/**
+ * Look up asset info from StellarExpert by contract address
+ * This is more reliable than looking up by asset code since it uses the exact contract
+ */
+async function lookupAssetByContract(
+  contractAddress: string,
+): Promise<{ code: string; issuer: string } | null> {
+  try {
+    // StellarExpert has an API to get asset info by contract address
+    const response = await fetch(
+      `https://api.stellar.expert/explorer/public/contract/${contractAddress}`,
+      { headers: { Accept: 'application/json' } },
+    )
+
+    if (!response.ok) {
+      return null
+    }
+
+    const data = await response.json()
+
+    // Check if this contract is a SAC (Stellar Asset Contract)
+    // The response should include the underlying asset info
+    if (data?.asset) {
+      // Asset format is typically "CODE-ISSUER" or just the asset details
+      const assetStr = data.asset
+      if (typeof assetStr === 'string' && assetStr.includes('-')) {
+        const [code, issuer] = assetStr.split('-')
+        if (code && issuer?.startsWith('G')) {
+          return { code, issuer }
+        }
+      }
+    }
+
+    // Alternative: check if there's issuer info directly
+    if (data?.issuer && typeof data.issuer === 'string') {
+      return { code: data.code || '', issuer: data.issuer }
+    }
+
+    return null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Look up asset issuer from Horizon by matching the contract address to a SAC
+ * SAC contract addresses are deterministic based on the asset
+ */
+async function lookupIssuerFromHorizon(
+  assetCode: string,
+  contractAddress: string,
+): Promise<string | null> {
+  try {
+    // Query Horizon for assets with this code
+    const assets = await horizonServer
+      .assets()
+      .forCode(assetCode)
+      .limit(50)
+      .call()
+
+    // For each asset, compute what its SAC address would be and compare
+    for (const asset of assets.records) {
+      if (asset.asset_issuer) {
+        try {
+          // Create the Stellar Asset object
+          const stellarAsset = new StellarSdk.Asset(
+            asset.asset_code,
+            asset.asset_issuer,
+          )
+
+          // Get the SAC contract ID for this asset
+          const sacContractId = stellarAsset.contractId(NETWORK_PASSPHRASE)
+
+          // Compare with the contract address we're looking for
+          if (sacContractId.toUpperCase() === contractAddress.toUpperCase()) {
+            return asset.asset_issuer
+          }
+        } catch {}
+      }
+    }
+
+    return null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Check if an asset requires a trustline by querying multiple sources
+ *
+ * This uses a multi-step lookup:
+ * 1. If issuer is already known, use it
+ * 2. Try StellarExpert API to look up asset by contract address
+ * 3. Try Horizon and match SAC contract IDs
+ *
+ * @param contractAddress - The token contract address (C... format)
+ * @param assetCode - The asset code (e.g., "USDC", "AQUA")
+ * @param assetIssuer - Optional pre-known issuer (G... address)
+ * @returns Object with whether trustline is required and the issuer if found
+ */
+export async function checkTrustlineRequired(
+  contractAddress: string,
+  assetCode: string,
   assetIssuer?: string,
-): boolean {
-  // XLM (native) never needs a trustline, regardless of how it's represented
+): Promise<{ required: boolean; issuer: string | null }> {
+  // XLM (native) never needs a trustline
   if (assetCode === 'XLM' || assetCode === 'native') {
-    return false
+    return { required: false, issuer: null }
   }
 
-  // If there's an issuer (G... address), it's a classic asset that needs trustline
-  // This applies even if the token also has a SAC contract address (C...)
-  // SAC-wrapped classic assets still require trustlines on the underlying asset
+  // If we already have an issuer, use it
   if (assetIssuer?.startsWith('G')) {
-    return true
+    return { required: true, issuer: assetIssuer }
   }
 
-  // Pure Soroban tokens (C... contract with no issuer) don't need trustlines
-  // These are native Soroban tokens, not wrapped classic assets
-  return false
+  // Check cache first
+  const cacheKey = contractAddress.toUpperCase()
+  const cachedIssuer = assetIssuerCache.get(cacheKey)
+  if (cachedIssuer !== undefined) {
+    if (cachedIssuer === null) {
+      return { required: false, issuer: null }
+    }
+    return { required: true, issuer: cachedIssuer }
+  }
+
+  // Step 1: Try StellarExpert lookup by contract address
+  const stellarExpertResult = await lookupAssetByContract(contractAddress)
+  if (stellarExpertResult?.issuer) {
+    assetIssuerCache.set(cacheKey, stellarExpertResult.issuer)
+    return { required: true, issuer: stellarExpertResult.issuer }
+  }
+
+  // Step 2: Try Horizon lookup by matching SAC contract IDs
+  const horizonIssuer = await lookupIssuerFromHorizon(
+    assetCode,
+    contractAddress,
+  )
+  if (horizonIssuer) {
+    assetIssuerCache.set(cacheKey, horizonIssuer)
+    return { required: true, issuer: horizonIssuer }
+  }
+
+  // Cache as null (no trustline needed) for future lookups
+  assetIssuerCache.set(cacheKey, null)
+
+  // If we couldn't find the asset, assume it's a pure Soroban token
+  // (no trustline needed)
+  return { required: false, issuer: null }
 }
 
 /**
@@ -279,69 +395,6 @@ export async function createTrustline(
     return {
       success: false,
       error: errorMessage,
-    }
-  }
-}
-
-/**
- * Check and create trustline if needed before a swap
- *
- * Determines if trustline is required based on:
- * - XLM (native): No trustline needed
- * - Pure Soroban tokens (C... contract only): No trustline needed
- * - Classic assets (with G... issuer): Trustline required
- * - SAC-wrapped classic assets (C... contract + G... issuer): Trustline required
- *
- * @returns Object with success status, whether trustline was created, and any error
- */
-export async function ensureTrustline(
-  userAddress: string,
-  assetCode: string,
-  assetIssuer: string,
-  signTransaction: (xdr: string) => Promise<string>,
-): Promise<{ success: boolean; created: boolean; error?: string }> {
-  try {
-    // Check if this asset requires a trustline (passing assetCode for XLM detection)
-    if (!requiresTrustline(assetCode, assetIssuer)) {
-      // XLM, pure Soroban token, or no issuer - no trustline needed
-      return { success: true, created: false }
-    }
-
-    // If no issuer provided, no trustline needed (pure Soroban token)
-    if (!assetIssuer || assetIssuer === '') {
-      return { success: true, created: false }
-    }
-
-    // Check if trustline already exists for this asset_code + issuer combination
-    const exists = await hasTrustline(userAddress, assetCode, assetIssuer)
-
-    if (exists) {
-      return { success: true, created: false }
-    }
-
-    // Create trustline for classic asset (including SAC-wrapped classic assets)
-    const result = await createTrustline(
-      userAddress,
-      assetCode,
-      assetIssuer,
-      signTransaction,
-    )
-
-    if (!result.success) {
-      return {
-        success: false,
-        created: false,
-        error: result.error,
-      }
-    }
-
-    return { success: true, created: true }
-  } catch (error) {
-    console.error('Error ensuring trustline:', error)
-    return {
-      success: false,
-      created: false,
-      error: error instanceof Error ? error.message : String(error),
     }
   }
 }

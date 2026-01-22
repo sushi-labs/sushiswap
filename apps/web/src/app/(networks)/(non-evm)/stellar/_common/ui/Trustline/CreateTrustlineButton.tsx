@@ -11,10 +11,9 @@ import {
 } from '@sushiswap/ui'
 import { useState } from 'react'
 import { useCreateTrustline } from '~stellar/_common/lib/hooks/trustline/use-trustline'
-import type { Token } from '~stellar/_common/lib/types/token.type'
 
 interface CreateTrustlineButtonProps extends ButtonProps {
-  tokens: Pick<Token, 'code' | 'issuer'>[]
+  tokens: Array<{ code: string; issuer: string }>
 }
 
 export const CreateTrustlineButton = ({

@@ -27,7 +27,8 @@ export interface ContractPoolData {
 }
 
 /**
- * Query pool infor directly from contract
+ * Query pool info directly from contract
+ * @param address - The pool contract address
  */
 export async function getPoolInfoFromContract(
   address: string,

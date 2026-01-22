@@ -16,6 +16,7 @@ import { useMaxPairedAmount } from '~stellar/_common/lib/hooks/pool/use-max-pair
 import { usePoolBalances } from '~stellar/_common/lib/hooks/pool/use-pool-balances'
 import { usePoolInitialized } from '~stellar/_common/lib/hooks/pool/use-pool-initialized'
 import { useTickRangeSelector } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
+import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trustline'
 import {
   calculatePriceFromSqrtPrice,
   encodePriceSqrt,
@@ -25,6 +26,7 @@ import type { Token } from '~stellar/_common/lib/types/token.type'
 import { FEE_TIERS } from '~stellar/_common/lib/utils/ticks'
 import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
 import { TickRangeSelector } from '~stellar/_common/ui/TickRangeSelector/TickRangeSelector'
+import { CreateTrustlineButton } from '~stellar/_common/ui/Trustline/CreateTrustlineButton'
 import TokenSelector from '~stellar/_common/ui/token-selector/token-selector'
 import { useStellarWallet } from '~stellar/providers'
 
@@ -85,6 +87,46 @@ export default function AddPoolPage() {
     connectedAddress,
     orderedToken1?.contract || null,
   )
+
+  // Check trustlines for both pool tokens
+  const {
+    needsTrustline: needsToken0Trustline,
+    isLoading: isLoadingToken0Trustline,
+    issuer: token0ResolvedIssuer,
+  } = useNeedsTrustline(
+    orderedToken0?.code || '',
+    orderedToken0?.contract || '',
+    orderedToken0?.issuer,
+  )
+  const {
+    needsTrustline: needsToken1Trustline,
+    isLoading: isLoadingToken1Trustline,
+    issuer: token1ResolvedIssuer,
+  } = useNeedsTrustline(
+    orderedToken1?.code || '',
+    orderedToken1?.contract || '',
+    orderedToken1?.issuer,
+  )
+  const isLoadingTrustlines =
+    isLoadingToken0Trustline || isLoadingToken1Trustline
+  // Use the resolved issuers from the trustline check (looked up from Horizon if not already known)
+  const tokensNeedingTrustline = useMemo(() => {
+    const tokens: Array<{ code: string; issuer: string }> = []
+    if (needsToken0Trustline && orderedToken0 && token0ResolvedIssuer) {
+      tokens.push({ code: orderedToken0.code, issuer: token0ResolvedIssuer })
+    }
+    if (needsToken1Trustline && orderedToken1 && token1ResolvedIssuer) {
+      tokens.push({ code: orderedToken1.code, issuer: token1ResolvedIssuer })
+    }
+    return tokens
+  }, [
+    needsToken0Trustline,
+    needsToken1Trustline,
+    orderedToken0,
+    orderedToken1,
+    token0ResolvedIssuer,
+    token1ResolvedIssuer,
+  ])
 
   const currentPrice = poolInfo
     ? calculatePriceFromSqrtPrice(poolInfo.sqrtPriceX96)
@@ -651,14 +693,22 @@ export default function AddPoolPage() {
         <div className="flex w-full flex-col gap-4">
           {!isConnected ? (
             <ConnectWalletButton fullWidth size="xl" />
+          ) : tokensNeedingTrustline.length > 0 ? (
+            <CreateTrustlineButton
+              size="xl"
+              fullWidth
+              tokens={tokensNeedingTrustline}
+            />
           ) : (
             <Button
               fullWidth
               size="xl"
-              disabled={!canCreate || createPoolState !== 'idle'}
+              disabled={
+                !canCreate || createPoolState !== 'idle' || isLoadingTrustlines
+              }
               onClick={handleCreatePool}
             >
-              {ctaButtonText}
+              {isLoadingTrustlines ? 'Checking trustlines...' : ctaButtonText}
             </Button>
           )}
         </div>
