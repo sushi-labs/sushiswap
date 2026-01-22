@@ -1,25 +1,25 @@
 'use client'
 
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWalletInfo } from '@solana/connector'
 import { useMemo } from 'react'
 import { useRecentWallets } from 'src/lib/wallet/hooks/use-recent-wallets'
 import type { WalletWithState } from '../../../types'
 import { SVM_WALLETS, SvmAdapterId } from '../config'
 
 export function useSvmWallets() {
-  const { wallets } = useWallet()
+  const { wallets } = useWalletInfo()
   const { isRecentWallet } = useRecentWallets()
 
   return useMemo(() => {
     const map = new Map<string, WalletWithState>()
     for (const wallet of wallets) {
-      const walletId = `svm:${wallet.adapter.name.toLowerCase()}`
+      const walletId = `svm:${wallet.name.toLowerCase()}`
 
       map.set(walletId, {
         id: walletId,
         namespace: 'svm',
-        name: wallet.adapter.name,
-        icon: wallet.adapter.icon,
+        name: wallet.name,
+        icon: wallet.icon ?? '',
         adapterId: SvmAdapterId.Standard,
         isInstalled: true,
         isAvailable: true,

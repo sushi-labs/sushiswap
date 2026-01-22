@@ -1,9 +1,11 @@
+'use client'
+
 import {
-  ConnectionContext,
-  ConnectionProvider,
-  WalletProvider,
-  useWallet,
-} from '@solana/wallet-adapter-react'
+  AppProvider as SvmConnectorProvider,
+  useConnector,
+  useConnectorClient,
+  useWalletInfo,
+} from '@solana/connector/react'
 import type React from 'react'
 import {
   createContext,
@@ -12,6 +14,7 @@ import {
   useEffect,
   useMemo,
 } from 'react'
+import { connectorConfig } from 'src/app/(networks)/(non-evm)/solana/_common/config/connector'
 import {
   addWalletConnection,
   clearWalletConnections,
@@ -21,8 +24,8 @@ import { SvmChainId } from 'sushi/svm'
 import type { WalletNamespaceContext } from '../../types'
 
 function useInSvmContext(): boolean {
-  const context = useContext(ConnectionContext)
-  return Boolean(context?.connection)
+  const client = useConnectorClient()
+  return client !== null
 }
 
 const SvmWalletContext = createContext<WalletNamespaceContext | null>(null)
@@ -42,71 +45,72 @@ export function SvmWalletProvider({ children }: { children: React.ReactNode }) {
   if (inSvmContext) {
     return <_SvmWalletProvider>{children}</_SvmWalletProvider>
   } else {
-    const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
     return (
-      <ConnectionProvider
-        endpoint={`https://lb.drpc.live/ogrpc?network=solana&dkey=${drpcId}`}
-      >
-        <WalletProvider wallets={[]} autoConnect>
-          <_SvmWalletProvider>{children}</_SvmWalletProvider>
-        </WalletProvider>
-      </ConnectionProvider>
+      <SvmConnectorProvider connectorConfig={connectorConfig}>
+        <_SvmWalletProvider>{children}</_SvmWalletProvider>
+      </SvmConnectorProvider>
     )
   }
 }
 
 function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
+  const client = useConnectorClient()
+
+  const walletInfo = useWalletInfo()
+
   const {
-    connected,
-    publicKey,
-    disconnect: svmDisconnect,
-    select: svmConnect,
-    wallet,
-    wallets,
-  } = useWallet()
+    disconnectWallet: svmDisconnect,
+    connectWallet,
+    wallet: _connector,
+  } = useConnector()
+
+  const isConnected = _connector.status === 'connected'
+  const connector =
+    _connector.status === 'connected' ? _connector.session : undefined
 
   const connect = useCallback(
     async (wallet: Wallet, onSuccess?: (address: string) => void) => {
-      const name = wallet.name
-      const adapter = wallets.find(
-        ({ adapter }) => adapter.name === name,
-      )?.adapter
+      if (!client) throw new Error('SVM client not found')
 
-      if (adapter) {
-        if (adapter.connected && adapter.publicKey) {
-          onSuccess?.(adapter.publicKey?.toString())
-          return
-        }
+      const { connectors, wallet: connectedWallet } = client.getSnapshot()
 
-        return new Promise<void>((resolve, reject) => {
-          const cleanup = () => {
-            adapter.off('connect', handleConnect)
-            adapter.off('error', handleError)
-          }
+      const connectorId = connectors.find(
+        (connector) => connector.name === wallet.name,
+      )?.id
 
-          const handleConnect = (
-            publicKey: NonNullable<(typeof adapter)['publicKey']>,
-          ) => {
-            cleanup()
-            onSuccess?.(publicKey.toString())
-            resolve()
-          }
+      if (!connectorId) throw new Error('SVM connector not found')
 
-          const handleError = (error: Error) => {
-            cleanup()
-            reject(error)
-          }
-
-          adapter.once('connect', handleConnect)
-          adapter.once('error', handleError)
-
-          svmConnect(adapter.name)
-        })
+      if (
+        connectedWallet.status === 'connected' &&
+        connectedWallet.session.connectorId === connectorId
+      ) {
+        onSuccess?.(connectedWallet.session.selectedAccount.address.toString())
+        return Promise.resolve()
       } else {
-        throw new Error('SVM adapter not found')
+        return new Promise<void>((resolve, reject) => {
+          const unsubscribe = client.subscribe((state) => {
+            if (state.wallet.status === 'error') {
+              unsubscribe()
+              reject(state.wallet.error ?? new Error('SVM connect failed'))
+            }
+
+            if (state.wallet.status === 'connected') {
+              unsubscribe()
+              onSuccess?.(
+                state.wallet.session.selectedAccount.address.toString(),
+              )
+              resolve()
+            }
+          })
+
+          connectWallet(connectorId).catch((err) => {
+            unsubscribe()
+            reject(err)
+          })
+        })
       }
     },
-    [svmConnect, wallets],
+    [client, connectWallet],
   )
 
   const disconnect = useCallback(async () => {
@@ -115,29 +119,31 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo(
     () => ({
-      isConnected: connected,
-      account: publicKey?.toBase58(),
+      isConnected,
+      account: isConnected
+        ? connector?.selectedAccount.address.toString()
+        : undefined,
       connect,
       disconnect,
     }),
-    [connected, publicKey, connect, disconnect],
+    [isConnected, connector?.selectedAccount.address, connect, disconnect],
   )
 
   useEffect(() => {
-    if (!connected || !wallet?.adapter.name || !publicKey) {
+    if (!isConnected || !connector) {
       clearWalletConnections('svm')
       return
     }
 
     addWalletConnection({
       chainId: SvmChainId.SOLANA,
-      id: `svm:${wallet.adapter.name.toLowerCase()}`,
-      name: wallet.adapter.name,
+      id: `svm:${connector.connectorId.toLowerCase()}`,
+      name: walletInfo.name ?? '',
       namespace: 'svm',
-      account: publicKey.toString(),
-      icon: wallet.adapter.icon,
+      account: connector.selectedAccount.address.toString(),
+      icon: walletInfo.icon ?? undefined,
     })
-  }, [connected, wallet?.adapter.name, wallet?.adapter.icon, publicKey])
+  }, [isConnected, connector, walletInfo.name, walletInfo.icon])
 
   return (
     <SvmWalletContext.Provider value={value}>

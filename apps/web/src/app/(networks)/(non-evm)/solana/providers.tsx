@@ -1,20 +1,16 @@
 'use client'
 
-import {
-  ConnectionProvider,
-  WalletProvider,
-} from '@solana/wallet-adapter-react'
+import { AppProvider as SvmConnectorProvider } from '@solana/connector/react'
+import { WalletProvider } from 'src/lib/wallet'
+import { SidebarProvider } from '../../_ui/sidebar'
+import { connectorConfig } from './_common/config/connector'
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
-
   return (
-    <ConnectionProvider
-      endpoint={`https://lb.drpc.live/ogrpc?network=solana&dkey=${drpcId}`}
-    >
-      <WalletProvider wallets={[]} autoConnect>
-        {children}
+    <SvmConnectorProvider connectorConfig={connectorConfig}>
+      <WalletProvider>
+        <SidebarProvider>{children}</SidebarProvider>
       </WalletProvider>
-    </ConnectionProvider>
+    </SvmConnectorProvider>
   )
 }

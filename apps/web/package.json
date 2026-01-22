@@ -65,7 +65,7 @@
     "@safe-global/safe-apps-provider": "~0.18.6",
     "@safe-global/safe-apps-sdk": "~9.1.0",
     "@snapshot-labs/snapshot.js": "0.9.9",
-    "@solana/wallet-adapter-react": "0.15.39",
+    "@solana/connector": "0.2.3",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/notifications": "workspace:*",
