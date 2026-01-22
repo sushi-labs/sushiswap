@@ -14,6 +14,7 @@ import {
   getTextColorClass,
 } from 'src/lib/perps/utils'
 import { useUserState } from '~evm/perps/user-provider'
+import { useAssetListState } from '../asset-list-provider'
 import { ValueSensitiveText } from '../value-sensitive-text'
 import { AccountManagementSkeleton } from './account-management-skeleton'
 import { Deposit } from './deposit'
@@ -26,15 +27,31 @@ export const AccountManagement = ({ className }: { className?: string }) => {
       webData2Query: { data, isLoading, error },
     },
   } = useUserState()
+  const {
+    state: {
+      assetListQuery: { data: assetList },
+    },
+  } = useAssetListState()
 
   const spotEquity = useMemo(() => {
     if (!data) return 0
     return (
-      data?.spotState?.balances.reduce((acc, bal) => {
-        return acc + Number(bal.total ?? 0)
+      data?.spotState?.balances.reduce((acc, asset) => {
+        const balance = Number(asset?.total) ?? 0
+        if (asset.coin === 'USDC') {
+          return acc + balance
+        }
+        //has to be better way to get this, wth. most likely not seeing it in the sdk
+        const tokenIndex = asset?.token
+        const spot = assetList
+          ?.entries()
+          .find(([, v]) => v.tokens?.find((t) => t.index === tokenIndex))?.[1]
+        const price = Number(spot?.lastPrice) ?? 0
+        const val = balance * price
+        return acc + val
       }, 0) ?? 0
     )
-  }, [data])
+  }, [data, assetList])
 
   const perpsEquity = useMemo(() => {
     if (!data) return 0
