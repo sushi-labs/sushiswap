@@ -80,13 +80,15 @@ const ConnectedWalletInfo = ({
               }
             >
               {wallet.icon ? (
-                <Image
-                  src={wallet.icon.trim()}
-                  width="40"
-                  height="40"
-                  className="p-1"
-                  alt={wallet.name}
-                />
+                <div className="w-10 h-10 p-1">
+                  <img
+                    src={wallet.icon.trim()}
+                    width="36"
+                    height="36"
+                    className="rounded-md"
+                    alt={wallet.name}
+                  />
+                </div>
               ) : (
                 <UserCircleIcon
                   width={40}
