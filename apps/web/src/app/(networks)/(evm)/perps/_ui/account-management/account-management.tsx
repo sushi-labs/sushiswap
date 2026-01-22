@@ -8,7 +8,11 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { type ReactNode, useMemo } from 'react'
-import { currencyFormatter, enUSFormatNumber } from 'src/lib/perps/utils'
+import {
+  currencyFormatter,
+  enUSFormatNumber,
+  getTextColorClass,
+} from 'src/lib/perps/utils'
 import { useUserState } from '~evm/perps/user-provider'
 import { ValueSensitiveText } from '../value-sensitive-text'
 import { AccountManagementSkeleton } from './account-management-skeleton'
@@ -32,25 +36,25 @@ export const AccountManagement = ({ className }: { className?: string }) => {
     )
   }, [data])
 
+  const perpsEquity = useMemo(() => {
+    if (!data) return 0
+    return Number(data?.clearinghouseState.marginSummary.accountValue ?? 0)
+  }, [data])
+
   const unrelaizedPnL = useMemo(() => {
     if (!data) return 0
     return data.clearinghouseState.assetPositions.reduce((posAcc, pos) => {
-      const pnl = Number(pos.position.unrealizedPnl ?? 0)
-      return posAcc + pnl
+      return posAcc + Number(pos.position.unrealizedPnl ?? 0)
     }, 0)
   }, [data])
 
-  const perpsEquity = useMemo(() => {
-    if (!data) return 0
-    return Number(data?.clearinghouseState.withdrawable ?? 0) + unrelaizedPnL
-  }, [data, unrelaizedPnL])
-
   const perpsBalance = useMemo(() => {
-    //Total Net Transfers + Total Realized Profit + Total Net
-
     if (!data) return 0
-    return Number(data?.clearinghouseState.withdrawable ?? 0)
-  }, [data])
+    return (
+      Number(data?.clearinghouseState.marginSummary.accountValue ?? 0) -
+      unrelaizedPnL
+    )
+  }, [data, unrelaizedPnL])
 
   const maintenanceMargin = useMemo(() => {
     if (!data) return 0
@@ -59,20 +63,18 @@ export const AccountManagement = ({ className }: { className?: string }) => {
 
   const totalCrossMarginRatio = useMemo(() => {
     if (!data) return 0
-    return maintenanceMargin / (perpsEquity || 1) //guard for 0
+    return (maintenanceMargin / (perpsEquity || 1)) * 100
   }, [maintenanceMargin, perpsEquity, data])
 
   const crossAccountLeverage = useMemo(() => {
     if (!data) return 0
     const totalNtlPos = Number(
-      data?.clearinghouseState.crossMarginSummary?.totalNtlPos ?? 0,
+      data?.clearinghouseState.marginSummary?.totalNtlPos ?? 0,
     )
     const accountValue =
-      Number(data.clearinghouseState.crossMarginSummary?.accountValue) || 1 //guard for 0
+      Number(data.clearinghouseState.marginSummary?.accountValue) || 1 //guard for 0
     return totalNtlPos / accountValue
   }, [data])
-
-  // @todo: perps <-> spot transfer modal
 
   return (
     <Card
@@ -184,7 +186,13 @@ export const AccountManagement = ({ className }: { className?: string }) => {
                 />
                 <_CardItem
                   title="Unrealized PnL"
-                  value={currencyFormatter.format(unrelaizedPnL)}
+                  value={
+                    <span
+                      className={classNames(getTextColorClass(unrelaizedPnL))}
+                    >
+                      {currencyFormatter.format(unrelaizedPnL)}
+                    </span>
+                  }
                 />
                 <_CardItem
                   title={
@@ -209,10 +217,11 @@ export const AccountManagement = ({ className }: { className?: string }) => {
                   }
                   value={
                     <span
-                    //@todo @dev: will need a text color change, come back to this
-                    // className={classNames(
-                    //   getTextColorClass(totalCrossMarginRatio),
-                    // )}
+                      className={classNames(
+                        totalCrossMarginRatio === 0
+                          ? ''
+                          : getTextColorClass(totalCrossMarginRatio),
+                      )}
                     >
                       {enUSFormatNumber.format(totalCrossMarginRatio)}%
                     </span>
