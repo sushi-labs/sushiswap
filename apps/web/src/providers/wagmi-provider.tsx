@@ -32,12 +32,10 @@ export const WagmiProvider: FC<{
   return (
     <_WagmiProvider config={getWagmiConfig()} initialState={initialState}>
       <div className="h-full w-full [&>div]:h-full">
-        <WalletProvider>
-          <WagmiStoreVersionCheck>
-            <WagmiTrackers />
-            {children}
-          </WagmiStoreVersionCheck>
-        </WalletProvider>
+        <WagmiStoreVersionCheck>
+          <WagmiTrackers />
+          {children}
+        </WagmiStoreVersionCheck>
       </div>
     </_WagmiProvider>
   )
