@@ -20,6 +20,7 @@ export const Hero = () => {
         width={750}
         height={400}
         unoptimized
+        priority
         className="absolute right-0 top-0 md:-top-1/2 z-[-1] opacity-30 md:opacity-100"
       />
     </div>

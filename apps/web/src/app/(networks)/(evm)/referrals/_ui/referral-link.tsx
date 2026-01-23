@@ -1,31 +1,58 @@
 'use client'
 
-import { Fuul } from '@fuul/sdk'
+import { Fuul, UserIdentifierType } from '@fuul/sdk'
 import { ClipboardCopyIcon } from '@heroicons/react-v1/outline'
 import { ClipboardCheckIcon } from '@heroicons/react-v1/outline'
 import { useCopyClipboard } from '@sushiswap/hooks'
-import { Card, IconButton, LinkExternal, classNames } from '@sushiswap/ui'
-import { XIcon } from '@sushiswap/ui/icons/XIcon'
+import { Card, IconButton, classNames } from '@sushiswap/ui'
+import { useCallback } from 'react'
 import { useReferralLink } from 'src/lib/hooks/react-query/referrals'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
-import { useAccount } from 'wagmi'
-
-Fuul.init({ apiKey: process.env.NEXT_PUBLIC_FUUL_API_KEY as string })
-
-// const getTweetIntent = (referralLink: string) => {
-//   const url = encodeURIComponent(referralLink)
-//   const text = encodeURIComponent('Join SushiSwap and start earning!')
-//   return `https://twitter.com/intent/tweet?url=${url}&text=${text}`
-// }
+import { useAccount, useSignMessage } from 'wagmi'
 
 export const ReferralLink = () => {
   const { address, isConnected } = useAccount()
   const [isCopied, staticCopy] = useCopyClipboard()
+  const { signMessageAsync } = useSignMessage()
 
   const { data: referralLink } = useReferralLink({
     address,
     enabled: isConnected,
   })
+
+  const handleAffiliateCode = useCallback(async () => {
+    if (!address) return
+    try {
+      const affiliateCodeData = await Fuul.getAffiliateCode(
+        address,
+        UserIdentifierType.EvmAddress,
+      )
+
+      if (!affiliateCodeData) {
+        const sig = await signMessageAsync({
+          message: `I confirm that I am creating the ${address} code`,
+        })
+
+        await Fuul.createAffiliateCode({
+          userIdentifier: address,
+          identifierType: UserIdentifierType.EvmAddress,
+          signature: sig,
+          code: address,
+        })
+
+        const link = await Fuul.generateTrackingLink(
+          `${window?.location?.origin}/ethereum/swap`,
+          address,
+          UserIdentifierType.EvmAddress,
+        )
+        staticCopy(link)
+      } else {
+        staticCopy(referralLink || '')
+      }
+    } catch (error) {
+      console.error('Error handling affiliate code:', error)
+    }
+  }, [address, referralLink, signMessageAsync, staticCopy])
 
   return (
     <Card className="flex flex-col gap-4 md:flex-row items-start md:justify-between md:items-center w-full p-6 md:p-8">
@@ -62,26 +89,12 @@ export const ReferralLink = () => {
               size="xs"
               className="absolute right-2 top-1/2 transform -translate-y-1/2 z-[11]"
               onClick={async () => {
-                staticCopy(referralLink || '')
+                handleAffiliateCode()
               }}
               iconProps={{ className: 'w-3 h-3' }}
               icon={isCopied ? ClipboardCheckIcon : ClipboardCopyIcon}
             />
           </div>
-
-          {/* <div className="flex items-center gap-1 pl-1">
-            <p className="text-sm">Share on</p>
-            <div className="flex items-center gap-2">
-              <LinkExternal href={getTweetIntent(referralLink || '')}>
-                <IconButton
-                  name="Share on Twitter"
-                  variant="secondary"
-                  size="sm"
-                  icon={XIcon}
-                />
-              </LinkExternal>
-            </div>
-          </div> */}
         </div>
       )}
     </Card>

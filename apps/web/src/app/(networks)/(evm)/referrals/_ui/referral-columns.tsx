@@ -17,19 +17,21 @@ export const USER_COLUMN: ColumnDef<ReferralEntry, unknown> = {
   cell: (props) => {
     const address = props.row.original.address
 
-    const { data: ensName } = useEnsName({
+    const { data: ensName, isLoading: isLoadingEnsName } = useEnsName({
       chainId: EvmChainId.ETHEREUM,
       address,
     })
 
-    const { data: avatar } = useEnsAvatar({
+    const { data: avatar, isLoading } = useEnsAvatar({
       name: ensName || undefined,
       chainId: EvmChainId.ETHEREUM,
     })
 
     return (
       <div className="flex items-center gap-2 w-full">
-        {avatar ? (
+        {isLoading || isLoadingEnsName ? (
+          <SkeletonCircle radius={24} />
+        ) : avatar ? (
           <Image
             alt="ens-avatar"
             src={avatar}

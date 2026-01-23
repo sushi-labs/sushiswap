@@ -10,6 +10,7 @@ export const useReferralLink = ({
     queryKey: ['useReferralLink', { address, enabled }],
     queryFn: async () => {
       if (!address) return null
+
       return await Fuul.generateTrackingLink(
         `${window?.location?.origin}/ethereum/swap`,
         address,
