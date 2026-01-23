@@ -71,7 +71,9 @@ export const usePinnedTokens = () => {
           !isEvmAddress(address) &&
           !isSvmAddress(address)
         ) {
-          throw new Error('Address provided not a valid ERC20 or Solana address')
+          throw new Error(
+            'Address provided not a valid ERC20 or Solana address',
+          )
         }
 
         return pinnedTokens?.[chainId]?.includes(

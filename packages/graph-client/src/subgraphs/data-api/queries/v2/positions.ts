@@ -8,8 +8,8 @@ import {
   SushiSwapProtocol,
   isSushiSwapV2ChainId,
 } from 'sushi/evm'
-import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
 import { type Address, getAddress } from 'viem'
+import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
 
 export const V2PositionsQuery = graphql(

@@ -14,7 +14,8 @@ export async function POST(request: NextRequest) {
   return new Response(await response.text(), {
     status: response.status,
     headers: {
-      'Content-Type': response.headers.get('content-type') ?? 'application/json',
+      'Content-Type':
+        response.headers.get('content-type') ?? 'application/json',
     },
   })
 }

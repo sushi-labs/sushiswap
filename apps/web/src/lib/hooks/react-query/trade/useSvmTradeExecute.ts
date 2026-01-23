@@ -3,11 +3,8 @@ import { useCallback } from 'react'
 import { Amount, Percent, Price, ZERO, subtractSlippage } from 'sushi'
 import { isSvmChainId } from 'sushi/svm'
 import { stringify } from 'viem'
-import type {
-  UseSvmTradeExecuteQuerySelect,
-  UseSvmTradeParams,
-} from './types'
 import { svmExecuteValidator } from './svmUltraValidator'
+import type { UseSvmTradeExecuteQuerySelect, UseSvmTradeParams } from './types'
 
 const toSlippageDecimal = (slippagePercentage: string) => {
   const parsed = Number(slippagePercentage)
@@ -16,13 +13,7 @@ const toSlippageDecimal = (slippagePercentage: string) => {
 }
 
 export const useSvmTradeExecuteQuery = (
-  {
-    chainId,
-    enabled,
-    requestId,
-    order,
-    signedTransaction,
-  }: UseSvmTradeParams,
+  { chainId, enabled, requestId, order, signedTransaction }: UseSvmTradeParams,
   select: UseSvmTradeExecuteQuerySelect,
 ) => {
   const resolvedRequestId = requestId ?? order?.requestId
@@ -76,7 +67,10 @@ export const useSvmTradeExecuteQuery = (
     retry: false,
     select,
     enabled: Boolean(
-      enabled && isSvmChainId(chainId) && resolvedRequestId && signedTransaction,
+      enabled &&
+        isSvmChainId(chainId) &&
+        resolvedRequestId &&
+        signedTransaction,
     ),
     queryKeyHashFn: stringify,
   })
@@ -116,7 +110,9 @@ export const useSvmTradeExecute = (variables: UseSvmTradeParams) => {
         : undefined
 
       const priceImpact =
-        order && priceImpactValue !== undefined && Number.isFinite(priceImpactValue)
+        order &&
+        priceImpactValue !== undefined &&
+        Number.isFinite(priceImpactValue)
           ? new Percent({
               numerator: Math.round(priceImpactValue * 10000),
               denominator: 10000,
