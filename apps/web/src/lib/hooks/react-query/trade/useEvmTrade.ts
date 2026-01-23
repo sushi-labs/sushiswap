@@ -5,7 +5,7 @@ import {
 } from '@sushiswap/telemetry'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
-import { UI_FEE_BIPS, UI_FEE_DECIMAL, UI_FEE_PERCENT } from 'src/config'
+import { EVM_UI_FEE_DECIMAL } from 'src/config'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
 import { getFeeString, isAddressFeeWhitelisted } from 'src/lib/swap/fee'
 import { Amount, Fraction, Percent, Price, ZERO, subtractSlippage } from 'sushi'
@@ -32,7 +32,7 @@ export const useEvmTradeQuery = (
     toToken,
     amount,
     gasPrice = 50n,
-    fee = UI_FEE_DECIMAL,
+    fee = EVM_UI_FEE_DECIMAL,
     slippagePercentage,
     recipient,
     source,
@@ -206,7 +206,7 @@ export const useEvmTrade = (variables: UseEvmTradeParams) => {
           : subtractSlippage(
               subtractSlippage(
                 new Amount(toToken, data.route.amountOutBI),
-                UI_FEE_DECIMAL,
+                EVM_UI_FEE_DECIMAL,
               ),
               new Percent({
                 numerator: Math.floor(+slippagePercentage * 100),

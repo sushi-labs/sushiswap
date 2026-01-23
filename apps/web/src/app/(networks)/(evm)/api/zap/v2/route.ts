@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server'
 import {
-  UI_FEE_BIPS,
+  EVM_UI_FEE_BIPS,
   type ZapSupportedChainId,
   isZapSupportedChainId,
 } from 'src/config'
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
     }
 
     url.searchParams.set('priceImpact', 'true')
-    url.searchParams.set('fee', `${UI_FEE_BIPS}`) // e.g. 25 (0.25%)
+    url.searchParams.set('fee', `${EVM_UI_FEE_BIPS}`) // e.g. 25 (0.25%)
     url.searchParams.set(
       'feeReceiver',
       isUIFeeCollectorChainId(parsedParams.chainId)

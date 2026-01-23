@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server'
 import {
-  UI_FEE_BIPS,
+  EVM_UI_FEE_BIPS,
   type ZapSupportedChainId,
   isZapSupportedChainId,
 } from 'src/config'
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
       args: {
         token: tokenIn,
         amount: amountIn,
-        bps: `${UI_FEE_BIPS}`,
+        bps: `${EVM_UI_FEE_BIPS}`,
         receiver: UI_FEE_COLLECTOR_ADDRESS[chainId],
       },
     },

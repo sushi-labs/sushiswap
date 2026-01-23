@@ -1,9 +1,11 @@
 'use client'
 
+import type { EvmChainId } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 import type { Wallet, WalletConnection } from '../types'
 
-export type WalletContext = {
-  connections: WalletConnection[]
+export type WalletContext<TChainId extends EvmChainId | SvmChainId> = {
+  connections: WalletConnection<TChainId>[]
   isPending: boolean
 }
 
@@ -12,10 +14,10 @@ export type WalletState = {
   setPendingWalletId: (walletId: string | undefined) => void
 }
 
-export type WalletActions = {
+export type WalletActions<TChainId extends EvmChainId | SvmChainId> = {
   connect: (wallet: Wallet) => Promise<void>
   disconnect: (wallet: Wallet) => Promise<void>
   disconnectNamespace: (
-    namespace: WalletConnection['namespace'],
+    namespace: WalletConnection<TChainId>['namespace'],
   ) => Promise<void>
 }

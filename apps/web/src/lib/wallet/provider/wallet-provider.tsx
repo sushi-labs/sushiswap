@@ -1,13 +1,17 @@
 'use client'
 
 import { createContext, useContext, useEffect, useMemo } from 'react'
+import type { EvmChainId } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 import { useRecentWallets } from '../hooks/use-recent-wallets'
 import { getConnections, useConnections, watchConnections } from './store'
 import type { WalletContext as WalletContextType } from './types'
 import { WalletNamespacesProviders } from './wallet-namespaces-provider'
 import { WalletStateProvider, useWalletState } from './wallet-state-provider'
 
-export const WalletContext = createContext<WalletContextType | null>(null)
+export const WalletContext = createContext<WalletContextType<
+  EvmChainId | SvmChainId
+> | null>(null)
 
 export function useWalletContext() {
   const ctx = useContext(WalletContext)

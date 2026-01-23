@@ -12,8 +12,6 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    console.log(response)
-
     return new Response(await response.text(), {
       status: response.status,
       headers: {

@@ -1,6 +1,21 @@
-import type { ChainId } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 
 export type WalletNamespace = 'evm' | 'svm' // | 'mvm'
+
+export type WalletNamespaceFor<TChainId extends EvmChainId | SvmChainId> =
+  TChainId extends EvmChainId
+    ? 'evm'
+    : TChainId extends SvmChainId
+      ? 'svm'
+      : never
+
+export type ChainIdForNamespace<TNamespace extends WalletNamespace> =
+  TNamespace extends 'evm'
+    ? EvmChainId
+    : TNamespace extends 'svm'
+      ? SvmChainId
+      : never
 
 export interface Wallet {
   id: string
@@ -24,18 +39,20 @@ export interface WalletWithState extends Wallet {
   isRecent: boolean
 }
 
-export interface WalletConnection {
+export interface WalletConnection<
+  TChainId extends EvmChainId | SvmChainId = EvmChainId | SvmChainId,
+> {
   id: string
   name: string
-  namespace: WalletNamespace
-  account: string
+  namespace: WalletNamespaceFor<TChainId>
+  account: AddressFor<TChainId>
   icon?: string
-  chainId: ChainId
+  chainId: TChainId
 }
 
-export interface NamespaceContext {
+export interface NamespaceContext<TChainId extends EvmChainId | SvmChainId> {
   isConnected: boolean
-  account: string | undefined
+  account: AddressFor<TChainId> | undefined
   connect: (wallet: Wallet) => Promise<void>
   disconnect: (wallet?: Wallet) => Promise<void>
 }
