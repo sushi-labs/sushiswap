@@ -1,7 +1,7 @@
 import type { PoolTimeFrame } from '@sushiswap/graph-client/kadena'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const chartsResponseSchema = z.object({
   charts: z.object({

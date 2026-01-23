@@ -2,7 +2,7 @@ import { type UseQueryOptions, useQuery } from '@tanstack/react-query'
 import type { Amount, Percent } from 'sushi'
 import type { EvmCurrency } from 'sushi/evm'
 import { type Address, zeroAddress } from 'viem'
-import { z } from 'zod'
+import * as z from 'zod'
 import { crossChainRouteSchema } from '../../../swap/cross-chain/schema'
 import type { CrossChainRoute } from '../../../swap/cross-chain/types'
 

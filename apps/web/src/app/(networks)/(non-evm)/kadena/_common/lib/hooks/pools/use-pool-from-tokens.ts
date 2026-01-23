@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import type { KvmTokenAddress } from 'sushi/kvm'
-import { z } from 'zod'
+import * as z from 'zod'
 import { kadenaClient } from '~kadena/_common/constants/client'
 import {
   buildGetPoolAddress,

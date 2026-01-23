@@ -39,7 +39,7 @@ interface ConcentratedLiquidityCollectButton {
   children(
     params: Omit<
       ReturnType<typeof useSendTransaction>,
-      'sendTransaction' | 'sendTransactionAsync'
+      'mutate' | 'mutateAsync'
     > & { send: (() => Promise<void>) | undefined },
   ): ReactElement<any>
 }
@@ -150,8 +150,8 @@ export const ConcentratedLiquidityCollectButton: FC<
   })
 
   const {
-    sendTransactionAsync,
-    sendTransaction: _,
+    mutateAsync: sendTransactionAsync,
+    mutate: _,
     ...rest
   } = useSendTransaction({
     mutation: {

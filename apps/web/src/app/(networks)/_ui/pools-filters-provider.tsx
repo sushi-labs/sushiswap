@@ -11,7 +11,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { z } from 'zod'
+import * as z from 'zod'
 
 import type { SushiSwapCmsProtocol } from 'src/lib/constants'
 import { parseArgs } from 'src/lib/functions'

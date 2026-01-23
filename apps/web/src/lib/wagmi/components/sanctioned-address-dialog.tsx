@@ -17,7 +17,7 @@ import { useConnection, useDisconnect } from 'wagmi'
 export const SanctionedAddressDialog = () => {
   const [open, setOpen] = useState<boolean>(false)
 
-  const { disconnect } = useDisconnect()
+  const { mutate: disconnect } = useDisconnect()
 
   const { address, connector, status } = useConnection()
 

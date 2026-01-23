@@ -1,20 +1,9 @@
 'use client'
 
-import { connectorsForWallets } from '@rainbow-me/rainbowkit'
-import {
-  argentWallet,
-  coinbaseWallet,
-  injectedWallet,
-  metaMaskWallet,
-  safeWallet,
-  trustWallet,
-  walletConnectWallet,
-} from '@rainbow-me/rainbowkit/wallets'
 import { gtagEvent } from '@sushiswap/ui'
 import { EvmChainId } from 'sushi/evm'
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
 import type { util } from 'zod'
-import { portoWallet } from './porto'
 import { publicWagmiConfig } from './public'
 import { publicTransports } from './viem'
 
@@ -36,28 +25,6 @@ const pollingInterval = new Proxy(
   },
 )
 
-coinbaseWallet.preference = { options: 'all', telemetry: false }
-
-const connectors = connectorsForWallets(
-  [
-    {
-      groupName: 'Recommended',
-      wallets: [portoWallet, metaMaskWallet, coinbaseWallet, trustWallet],
-    },
-    {
-      groupName: 'Others',
-      wallets: [injectedWallet, walletConnectWallet, argentWallet, safeWallet],
-    },
-  ],
-  {
-    appName: 'Sushi',
-    projectId: '3f44629277b155ef0caebf3dc705c4ba',
-  },
-)
-
-// TODO: Properly fix when rainbowkit is updated
-export type PublicWagmiConnectors = typeof connectors
-
 const drpcJwt = process.env['NEXT_PUBLIC_DRPC_JWT']
 
 export const createProductionConfig = () => {
@@ -66,7 +33,7 @@ export const createProductionConfig = () => {
       const transportUrl = transport({ chain: undefined }).value?.url!
 
       let fetchOptions = {}
-      if (transportUrl.startsWith('https://lb.drpc.live/') && drpcJwt) {
+      if (transportUrl.startsWith('https://lb.drpc.org/') && drpcJwt) {
         fetchOptions = {
           headers: {
             Authorization: drpcJwt,
@@ -114,7 +81,6 @@ export const createProductionConfig = () => {
     ...publicWagmiConfig,
     transports,
     pollingInterval,
-    connectors,
     storage,
     ssr: true,
   })

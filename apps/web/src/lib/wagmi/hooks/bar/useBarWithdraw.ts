@@ -83,7 +83,7 @@ export function useBarWithdraw({
     query: { enabled },
   })
 
-  const { writeContractAsync, ...rest } = useWriteContract({
+  const { mutateAsync: writeContractAsync, ...rest } = useWriteContract({
     mutation: {
       onSuccess,
       onError,

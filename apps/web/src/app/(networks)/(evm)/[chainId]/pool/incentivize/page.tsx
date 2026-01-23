@@ -54,8 +54,8 @@ import {
   type SushiSwapV3ChainId,
   SushiSwapV3Pool,
   getEvmChainById,
+  isEvmWNativeSupported,
   isMerklChainId,
-  isWNativeSupported,
 } from 'sushi/evm'
 import { zeroAddress } from 'viem'
 import { useConnection, useWaitForTransactionReceipt } from 'wagmi'
@@ -149,7 +149,11 @@ const Incentivize = withCheckerRoot(() => {
 
   const {
     simulation: { isError, data: simulationData },
-    write: { writeContractAsync, isPending: isIncentivizeLoading, data },
+    write: {
+      mutateAsync: writeContractAsync,
+      isPending: isIncentivizeLoading,
+      data,
+    },
   } = useIncentivizePoolWithRewards({
     account: address,
     args:
@@ -223,7 +227,7 @@ const Incentivize = withCheckerRoot(() => {
           token1={token1}
           setToken0={setToken0}
           setToken1={setToken1}
-          includeNative={isWNativeSupported(chainId)}
+          includeNative={isEvmWNativeSupported(chainId)}
         />
         <SelectFeeConcentratedWidget
           title="What is the fee tier for this pool?"

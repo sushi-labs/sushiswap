@@ -86,7 +86,7 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({
                 >
                   {content}{' '}
                   {usdPrice && (
-                    <span className="font-normal text-slate-300">
+                    <span className="font-normal text-gray-500 dark:text-slate-300">
                       (${usdPrice})
                     </span>
                   )}

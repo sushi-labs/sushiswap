@@ -1,7 +1,7 @@
 import type { NextRequest } from 'next/server'
 import { getAllPrices } from 'src/lib/get-all-prices'
 
-import { z } from 'zod'
+import * as z from 'zod'
 
 const Currency = {
   USD: 'USD',

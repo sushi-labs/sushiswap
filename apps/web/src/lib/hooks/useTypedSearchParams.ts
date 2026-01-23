@@ -1,7 +1,7 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
-import type { z } from 'zod'
+import type * as z from 'zod'
 
 export const useTypedSearchParams = <T extends z.Schema>(schema: T) => {
   const searchParams = useSearchParams()

@@ -122,8 +122,8 @@ export const useMasterChefWithdraw = ({
   })
 
   const {
-    writeContractAsync,
-    writeContract: _,
+    mutateAsync: writeContractAsync,
+    mutate: _,
     ...rest
   } = useWriteContract({
     mutation: {

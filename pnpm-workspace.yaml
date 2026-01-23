@@ -11,14 +11,14 @@ catalog:
 
 catalogs:
   web3:
-    "abitype": 1.1.1
-    "sushi": 6.2.18
-    "wagmi": 3.0.1
-    "@wagmi/core": 3.0.0
-    "viem": 2.40.2
+    "abitype": 1.2.3
+    "sushi": 6.4.8
+    "wagmi": 3.3.2
+    "@wagmi/core": 3.2.2
+    "viem": 2.44.4
 
   react:
-    "next": 15.5.7
+    "next": 15.5.9
     "react": 19.0.1
     "@types/react": 19.0.1
     "react-dom": 19.0.1

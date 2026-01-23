@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { BLADE_API_HOST, BLADE_API_KEY } from 'src/lib/constants'
 import type { BladeChainId } from 'sushi/evm'
 import { useConnection } from 'wagmi'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const rfqAllowDepositResponseBaseSchema = z.object({
   allow: z.boolean(),

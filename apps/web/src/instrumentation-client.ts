@@ -23,7 +23,7 @@ const ignoreUrls = [
   'https://cca-lite.coinbase.com/*',
   'google-analytics.com',
   'https://cdn.sushi.com',
-  'lb.drpc.live',
+  'lb.drpc.org',
   'api.sushi.com/quote',
   '/_next/static',
   '/_next/data',

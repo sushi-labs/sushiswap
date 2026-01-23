@@ -24,7 +24,7 @@ const Network: FC<NetworkProps> = ({
   ...rest
 }): ReactElement<any, any> | null => {
   const { chain } = useConnection()
-  const { switchChainAsync } = useSwitchChain({
+  const { mutateAsync: switchChainAsync } = useSwitchChain({
     mutation: {
       onError: (e) => {
         createErrorToast(e.message, false)

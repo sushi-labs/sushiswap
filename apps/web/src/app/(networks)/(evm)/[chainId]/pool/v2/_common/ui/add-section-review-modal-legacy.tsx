@@ -149,8 +149,8 @@ function useWriteWithNative({
   })
 
   const {
-    writeContractAsync,
-    writeContract: _,
+    mutateAsync: writeContractAsync,
+    mutate: _,
     ...rest
   } = useWriteContract({
     mutation,
@@ -250,8 +250,8 @@ function useWriteWithoutNative({
   })
 
   const {
-    writeContractAsync,
-    writeContract: _,
+    mutateAsync: writeContractAsync,
+    mutate: _,
     ...rest
   } = useWriteContract({
     mutation,
