@@ -14,7 +14,7 @@ import {
   useEffect,
   useMemo,
 } from 'react'
-import { connectorConfig } from 'src/app/(networks)/(non-evm)/solana/_common/config/connector'
+import { getConnectorConfig } from 'src/app/(networks)/(non-evm)/solana/_common/config/connector'
 import {
   addWalletConnection,
   clearWalletConnections,
@@ -46,7 +46,7 @@ export function SvmWalletProvider({ children }: { children: React.ReactNode }) {
     return <_SvmWalletProvider>{children}</_SvmWalletProvider>
   } else {
     return (
-      <SvmConnectorProvider connectorConfig={connectorConfig}>
+      <SvmConnectorProvider connectorConfig={getConnectorConfig()}>
         <_SvmWalletProvider>{children}</_SvmWalletProvider>
       </SvmConnectorProvider>
     )

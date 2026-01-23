@@ -1,11 +1,26 @@
-import { getDefaultConfig } from '@solana/connector'
+import {
+  type ExtendedConnectorConfig,
+  getDefaultConfig,
+} from '@solana/connector'
 
-export const connectorConfig = getDefaultConfig({
-  appName: 'SushiSwap',
-  appUrl:
-    typeof window !== 'undefined'
-      ? window.location.origin
-      : 'http://localhost:3000',
-  autoConnect: true,
-  enableMobile: true,
-})
+let connectorConfigSingleton: ExtendedConnectorConfig | undefined = undefined
+export const getConnectorConfig = () => {
+  if (typeof window === 'undefined') {
+    return createConnectorConfig()
+  }
+
+  if (!connectorConfigSingleton) {
+    connectorConfigSingleton = createConnectorConfig()
+  }
+
+  return connectorConfigSingleton
+}
+
+const createConnectorConfig = () => {
+  return getDefaultConfig({
+    appName: 'SushiSwap',
+    appUrl: 'https://sushi.com',
+    autoConnect: true,
+    enableMobile: true,
+  })
+}
