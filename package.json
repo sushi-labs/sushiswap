@@ -56,8 +56,6 @@
       "@walletconnect/jsonrpc-http-connection@1.0.8": "patches/@walletconnect__jsonrpc-http-connection@1.0.8.patch",
       "@solana/connector": "patches/@solana__connector.patch"
     },
-    "onlyBuiltDependencies": [
-      "@biomejs/biome"
-    ]
+    "onlyBuiltDependencies": ["@biomejs/biome"]
   }
 }
