@@ -57,6 +57,9 @@ patchedDependencies:
   '@msafe/aptos-wallet-adapter@1.1.3':
     hash: 3441fe0a565aaa3e4bce5e858abc4325c7ba3e72bc9ca247a335e16d7485b145
     path: patches/@msafe__aptos-wallet-adapter@1.1.3.patch
+  '@solana/connector':
+    hash: aae317953f9e26a90cd5572a6799437ce390c43526f398a1e91dd99fa2da208b
+    path: patches/@solana__connector.patch
   '@walletconnect/jsonrpc-http-connection@1.0.8':
     hash: 26d4f2a95f85d8db96d7ee2d8d13aaf7c7029eae368162fc5874c4c9cdb78ebb
     path: patches/@walletconnect__jsonrpc-http-connection@1.0.8.patch
@@ -344,7 +347,7 @@ importers:
         version: 0.9.9(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@6.0.3)
       '@solana/connector':
         specifier: 0.2.3
-        version: 0.2.3(81e08fc69e057e2b1e24ab2e429a0960)
+        version: 0.2.3(patch_hash=aae317953f9e26a90cd5572a6799437ce390c43526f398a1e91dd99fa2da208b)(81e08fc69e057e2b1e24ab2e429a0960)
       '@sushiswap/graph-client':
         specifier: workspace:*
         version: link:../../packages/graph-client
@@ -21969,7 +21972,7 @@ snapshots:
     transitivePeerDependencies:
       - fastestsmallesttextencoderdecoder
 
-  '@solana/connector@0.2.3(81e08fc69e057e2b1e24ab2e429a0960)':
+  '@solana/connector@0.2.3(patch_hash=aae317953f9e26a90cd5572a6799437ce390c43526f398a1e91dd99fa2da208b)(81e08fc69e057e2b1e24ab2e429a0960)':
     dependencies:
       '@solana-mobile/wallet-standard-mobile': 0.4.4(@solana/wallet-adapter-base@0.9.27(@solana/web3.js@1.98.4(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3)))(@solana/web3.js@1.98.4(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3))(fastestsmallesttextencoderdecoder@1.0.22)(react-native@0.73.7(@babel/core@7.28.4)(@babel/preset-env@7.24.4(@babel/core@7.28.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.0.1)(utf-8-validate@6.0.3))(react@19.0.1)(typescript@5.8.3)
       '@solana/addresses': 5.4.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3)
