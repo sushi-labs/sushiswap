@@ -1,16 +1,19 @@
 'use client'
 
 import type { ButtonProps } from '@sushiswap/ui'
-import type { FC } from 'react'
 import type { Amount } from 'sushi'
-import type { EvmCurrency } from 'sushi/evm'
+import type { EvmChainId } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 
-import type { Address } from 'viem'
 import { ApproveERC20 } from './approve-erc20'
 
-interface ApproveERC20MultipleProps extends ButtonProps {
+interface ApproveERC20MultipleProps<TChainId extends EvmChainId | SvmChainId>
+  extends ButtonProps {
   id: string
-  amounts: { amount: Amount<EvmCurrency>; contract: Address }[]
+  amounts: {
+    amount: Amount<CurrencyFor<TChainId>>
+    contract: AddressFor<TChainId>
+  }[]
   enabled?: boolean
   index?: number
 }
@@ -18,7 +21,7 @@ interface ApproveERC20MultipleProps extends ButtonProps {
 /*
  * Recursive component for multiple ApproveERC20s
  */
-const ApproveERC20Multiple: FC<ApproveERC20MultipleProps> = ({
+function ApproveERC20Multiple<TChainId extends EvmChainId | SvmChainId>({
   fullWidth = true,
   size = 'xl',
   index,
@@ -26,7 +29,7 @@ const ApproveERC20Multiple: FC<ApproveERC20MultipleProps> = ({
   amounts,
   children,
   ...props
-}) => {
+}: ApproveERC20MultipleProps<TChainId>) {
   if (amounts === undefined) return <>{children}</>
   const _index = typeof index === 'number' ? index : amounts.length - 1
   if (_index < 0) return <>{children}</>

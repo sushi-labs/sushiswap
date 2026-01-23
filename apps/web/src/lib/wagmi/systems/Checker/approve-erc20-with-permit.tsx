@@ -20,9 +20,10 @@ import {
   SelectItem,
   SelectPrimitive,
 } from '@sushiswap/ui'
-import { type FC, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Amount } from 'sushi'
 import { EvmChainId, type EvmCurrency } from 'sushi/evm'
+import { type SvmChainId, isSvmChainId } from 'sushi/svm'
 import type { Address } from 'viem'
 import { useBytecode, useConnection } from 'wagmi'
 import {
@@ -43,11 +44,12 @@ enum ApprovalType {
   Permit = 'permit',
 }
 
-interface ApproveERC20WithPermitProps extends ButtonProps {
+interface ApproveERC20WithPermitProps<TChainId extends EvmChainId | SvmChainId>
+  extends ButtonProps {
   id: string
-  chainId: EvmChainId
-  amount: Amount<EvmCurrency> | undefined
-  contract: Address | undefined
+  chainId: TChainId
+  amount: Amount<CurrencyFor<TChainId>> | undefined
+  contract: AddressFor<TChainId> | undefined
   enabled?: boolean
   permitInfo: PermitInfo
   ttlStorageKey: TTLStorageKey
@@ -61,17 +63,25 @@ const isPermitSupportedChainId = (chainId: number) =>
     chainId as (typeof PERMIT_DISABLED_CHAIN_IDS)[number],
   )
 
-const ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = (props) => {
-  return isPermitSupportedChainId(props.chainId) ? (
-    <RevokeApproveERC20 {...props} id={`revoke-${props.id}`}>
-      <_ApproveERC20WithPermit {...props} />
+function ApproveERC20WithPermit<TChainId extends EvmChainId | SvmChainId>(
+  props: ApproveERC20WithPermitProps<TChainId>,
+) {
+  if (isSvmChainId(props.chainId)) {
+    return <>{props.children}</>
+  }
+
+  const _props = props as ApproveERC20WithPermitProps<EvmChainId>
+
+  return isPermitSupportedChainId(_props.chainId) ? (
+    <RevokeApproveERC20 {..._props} id={`revoke-${_props.id}`}>
+      <_ApproveERC20WithPermit {..._props} />
     </RevokeApproveERC20>
   ) : (
-    <ApproveERC20 {...props} />
+    <ApproveERC20 {..._props} />
   )
 }
 
-const _ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = ({
+function _ApproveERC20WithPermit({
   id,
   amount,
   contract,
@@ -84,7 +94,7 @@ const _ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = ({
   ttlStorageKey,
   tag,
   ...props
-}) => {
+}: ApproveERC20WithPermitProps<EvmChainId>) {
   const [approvalType, setApprovalType] = useState(ApprovalType.Permit)
 
   const { address } = useConnection()

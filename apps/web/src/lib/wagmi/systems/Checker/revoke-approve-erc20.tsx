@@ -10,7 +10,6 @@ import {
   HoverCardTrigger,
   classNames,
 } from '@sushiswap/ui'
-import type { FC } from 'react'
 import type { Amount } from 'sushi'
 import {
   type EvmAddress,
@@ -44,7 +43,7 @@ const isResetApprovalToken = (token: EvmToken) => {
   return tokensForChain.some((_token) => _token.isSame(token))
 }
 
-const RevokeApproveERC20: FC<RevokeApproveERC20Props> = ({
+function RevokeApproveERC20({
   id,
   amount,
   contract,
@@ -54,7 +53,7 @@ const RevokeApproveERC20: FC<RevokeApproveERC20Props> = ({
   size = 'xl',
   enabled = true,
   ...props
-}) => {
+}: RevokeApproveERC20Props) {
   const allowanceEnabled =
     enabled &&
     amount?.currency?.chainId &&

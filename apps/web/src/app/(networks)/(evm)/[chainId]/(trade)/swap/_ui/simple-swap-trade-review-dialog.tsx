@@ -50,8 +50,9 @@ import {
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/slippage'
-import { Amount, ChainId, ZERO } from 'sushi'
+import { Amount, ChainId, ZERO, getChainById } from 'sushi'
 import {
+  type EvmAddress,
   EvmNative,
   addGasMargin,
   evmNativeAddress,
@@ -412,7 +413,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                 <List className="!pt-0">
                   <List.Control>
                     <List.KeyValue title="Network">
-                      {getEvmChainById(chainId).name}
+                      {getChainById(chainId).name}
                     </List.KeyValue>
                     {isSwap && (
                       <List.KeyValue
@@ -519,8 +520,8 @@ const _SimpleSwapTradeReviewDialog: FC<{
                           <a
                             target="_blank"
                             href={
-                              getEvmChainById(chainId).getAccountUrl(
-                                recipient,
+                              getChainById(chainId).getAccountUrl(
+                                recipient as EvmAddress,
                               ) ?? '#'
                             }
                             rel="noreferrer"
@@ -551,6 +552,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                       ...trace,
                     }}
                   >
+                    {/* Start of chain dependent code */}
                     <Button
                       fullWidth
                       size="xl"
@@ -581,6 +583,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                             ? 'Unwrap'
                             : `Swap ${token0?.symbol} for ${token1?.symbol}`}
                     </Button>
+                    {/* End of chain dependent code */}
                   </TraceEvent>
                 </div>
               </DialogFooter>
