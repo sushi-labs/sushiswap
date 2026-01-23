@@ -26,7 +26,7 @@ import {
   EvmNative,
   defaultCurrency,
   defaultQuoteCurrency,
-  isWNativeSupported,
+  isEvmWNativeSupported,
 } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
 import { useConnection, useGasPrice } from 'wagmi'
@@ -286,12 +286,12 @@ const DerivedstateSimpleSwapProvider: FC<
         const swapAmountString = defaultedParams.get('swapAmount') || ''
         const _token0 =
           defaultedParams.get('token0') === 'NATIVE' &&
-          isWNativeSupported(chainId)
+          isEvmWNativeSupported(chainId)
             ? EvmNative.fromChainId(chainId)
             : token0
         const _token1 =
           defaultedParams.get('token1') === 'NATIVE' &&
-          isWNativeSupported(chainId)
+          isEvmWNativeSupported(chainId)
             ? EvmNative.fromChainId(chainId)
             : token1
 

@@ -53,8 +53,8 @@ import {
   defaultQuoteCurrency,
   getEvmChainById,
   isEvmTestnetChainId,
+  isEvmWNativeSupported,
   isSushiSwapV2ChainId,
-  isWNativeSupported,
 } from 'sushi/evm'
 import type { SendTransactionReturnType } from 'viem'
 import {
@@ -192,7 +192,7 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
               token1={token1}
               setToken0={_setToken0}
               setToken1={_setToken1}
-              includeNative={isWNativeSupported(chainId)}
+              includeNative={isEvmWNativeSupported(chainId)}
             />
             <FormSection
               title="Deposit"
@@ -426,7 +426,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
           poolState === SushiSwapV2PoolState.INVALID
         }
         loading={poolState === SushiSwapV2PoolState.LOADING}
-        allowNative={isWNativeSupported(chainId)}
+        allowNative={isEvmWNativeSupported(chainId)}
       />
       <Checker.Connect fullWidth>
         <Checker.Network fullWidth chainId={chainId}>
@@ -648,7 +648,7 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
             poolState === SushiSwapV2PoolState.INVALID
           }
           loading={poolState === SushiSwapV2PoolState.LOADING}
-          allowNative={isWNativeSupported(chainId)}
+          allowNative={isEvmWNativeSupported(chainId)}
         />
         <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
           <button
@@ -676,7 +676,7 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
             poolState === SushiSwapV2PoolState.INVALID
           }
           loading={poolState === SushiSwapV2PoolState.LOADING}
-          allowNative={isWNativeSupported(chainId)}
+          allowNative={isEvmWNativeSupported(chainId)}
         />
         <AddSectionPoolShareCardV2
           pool={pool}
