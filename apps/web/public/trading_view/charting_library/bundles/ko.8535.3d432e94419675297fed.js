@@ -1,1 +1,0 @@
-(self.webpackChunktradingview=self.webpackChunktradingview||[]).push([[8535],{32519:e=>{e.exports={en:["Got it!"],ko:["알겠습니다!"]}},99511:e=>{e.exports={en:["OK"],ko:["확인"]}},27947:e=>{e.exports={en:["Press and hold to see detailed chart values"],ko:["길게 눌러 상세 차트 값을 확인하세요."]}}}]);

@@ -12,13 +12,11 @@ export default function ReferralsLayout({
     <>
       <Header networks={SUPPORTED_CHAIN_IDS} />
       <main className="flex flex-col h-full flex-1 animate-slide">
-        <Container maxWidth="7xl" className="px-4 pt-16 pb-8">
+        <Container maxWidth="7xl" className="px-4 pb-6 pt-14 md:pb-20 md:pt-28">
           <Hero />
         </Container>
         <section className="flex flex-col flex-1">
-          <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-10 min-h-screen">
-            {children}
-          </div>
+          <div className="min-h-screen">{children}</div>
         </section>
       </main>
     </>
