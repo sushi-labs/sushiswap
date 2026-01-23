@@ -1,7 +1,7 @@
 'use client'
 
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { isWNativeSupported } from 'sushi/evm'
+import { isEvmWNativeSupported } from 'sushi/evm'
 import { useDerivedStateTwap } from '../../_ui/derivedstate-twap-provider'
 
 export const TwapToken1Input = () => {
@@ -23,7 +23,7 @@ export const TwapToken1Input = () => {
       currency={token1}
       disableMaxButton
       currencyLoading={isLoading}
-      allowNative={isWNativeSupported(chainId)}
+      allowNative={isEvmWNativeSupported(chainId)}
       label="You're buying"
     />
   )

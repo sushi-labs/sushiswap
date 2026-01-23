@@ -7,17 +7,8 @@ import { classNames } from '@sushiswap/ui'
 import { IconButton } from '@sushiswap/ui'
 import { Switch } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
-import React, {
-  type Dispatch,
-  type FC,
-  Fragment,
-  type SetStateAction,
-} from 'react'
-import { PortfolioView } from '.'
-
-interface PortfolioSettingsViewProps {
-  setView: Dispatch<SetStateAction<PortfolioView>>
-}
+import React, { Fragment } from 'react'
+import { DefaultSidebarView, useSidebar } from 'src/app/(networks)/_ui/sidebar'
 
 const map = {
   system: <span className="text-xs font-semibold">Auto</span>,
@@ -25,9 +16,8 @@ const map = {
   dark: <MoonIcon width={20} height={20} />,
 }
 
-export const PortfolioSettingsView: FC<PortfolioSettingsViewProps> = ({
-  setView,
-}) => {
+export const SidebarSettingsView = () => {
+  const { setView } = useSidebar()
   const { theme, setTheme } = useTheme()
   const [showTestnets, setShowTestnets] = useLocalStorage('showTestnets', false)
 
@@ -37,7 +27,7 @@ export const PortfolioSettingsView: FC<PortfolioSettingsViewProps> = ({
         <div className="flex justify-start">
           <IconButton
             size="sm"
-            onClick={() => setView(PortfolioView.Default)}
+            onClick={() => setView(DefaultSidebarView)}
             icon={ArrowLeftIcon}
             name="Back"
           />

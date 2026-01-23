@@ -4,7 +4,7 @@ import {
   type EvmChainId,
   type EvmCurrency,
   type EvmID,
-  nativeAddress,
+  evmNativeAddress,
 } from 'sushi/evm'
 import type { Address } from 'viem'
 import { useBalanceProvider } from './balance-provider'
@@ -121,7 +121,7 @@ export function useAmountBalances(
       }
 
       if (currency.type === 'native') {
-        return nativeAddress
+        return evmNativeAddress
       }
 
       return currency.address
@@ -142,7 +142,7 @@ export function useAmountBalances(
 
     currencies.forEach((currency) => {
       const address =
-        currency.type === 'native' ? nativeAddress : currency.address
+        currency.type === 'native' ? evmNativeAddress : currency.address
       const amount = result.data.get(address)
 
       if (amount === undefined) {

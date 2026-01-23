@@ -9,7 +9,7 @@ import {
   type SushiSwapV3ChainId,
   computeSushiSwapV3PoolAddress,
   getEvmChainById,
-  isWNativeSupported,
+  isEvmWNativeSupported,
 } from 'sushi/evm'
 import { useConnection } from 'wagmi'
 import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
@@ -89,7 +89,7 @@ const _Add: FC = () => {
         token1={token1}
         setToken0={setToken0}
         setToken1={setToken1}
-        includeNative={isWNativeSupported(chainId)}
+        includeNative={isEvmWNativeSupported(chainId)}
       />
       <SelectFeeConcentratedWidget
         chainId={chainId}
