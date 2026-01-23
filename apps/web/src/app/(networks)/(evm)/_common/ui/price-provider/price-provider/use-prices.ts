@@ -29,10 +29,26 @@ const disabledData = {
   isError: false,
 }
 
-function useEvmPrices({
+function translateAddress<TChainId extends EvmChainId | SvmChainId>(
+  chainId: TChainId,
+  address: AddressFor<TChainId>,
+) {
+  if (isSvmChainId(chainId)) {
+    // Solana addresses are strings, the API returns only JSON for SVM chains
+    return address
+  } else {
+    // EVM addresses are bigints, the API returns binary data for EVM chains
+    return BigInt(address)
+  }
+}
+
+export function usePrices<TChainId extends EvmChainId | SvmChainId>({
   chainId,
   enabled = true,
-}: { chainId: EvmChainId | undefined; enabled?: boolean }) {
+}: {
+  chainId: TChainId | undefined
+  enabled?: boolean
+}): UsePricesResult<TChainId> {
   // Important to use state, not state.chains directly, as the reference to state.chains won't be changing and the component won't re-render
   // It's not best practice, but it's controlled here in the hook and not exposed
   const { state, mutate } = usePriceProvider()
@@ -77,21 +93,21 @@ function useEvmPrices({
         isError: chain.isError,
       }
 
-    const data: PriceMap = {
-      has: (_address: EvmAddress) => {
-        const address = BigInt(_address)
+    const data: PriceMap<TChainId> = {
+      has: (_address: AddressFor<TChainId>) => {
+        const address = translateAddress(chainId, _address)
 
         return chain.priceMap!.has(address)
       },
-      get: (_address: EvmAddress) => {
-        const address = BigInt(_address)
+      get: (_address: AddressFor<TChainId>) => {
+        const address = translateAddress(chainId, _address)
 
         const price = chain.priceMap!.get(address)
         return price
       },
 
-      getFraction: (_address: EvmAddress) => {
-        const address = BigInt(_address)
+      getFraction: (_address: AddressFor<TChainId>) => {
+        const address = translateAddress(chainId, _address)
 
         const price = chain.priceMap!.get(address)
         if (price) {
@@ -115,115 +131,4 @@ function useEvmPrices({
       isError: chain.isError,
     }
   }, [chainId, chain])
-}
-
-function useSvmPrices({
-  chainId,
-  enabled = true,
-}: { chainId: SvmChainId | undefined; enabled?: boolean }) {
-  const { state, mutate } = usePriceProvider()
-
-  useEffect(() => {
-    if (state.ready && chainId && enabled) {
-      mutate.incrementChainId(chainId)
-    }
-
-    return () => {
-      if (state.ready && chainId && enabled) {
-        mutate.decrementChainId(chainId)
-      }
-    }
-  }, [chainId, enabled, mutate, state.ready])
-
-  const chain = useMemo(
-    () => (chainId ? state.chains.get(chainId) : undefined),
-    [state, chainId],
-  )
-
-  return useMemo(() => {
-    if (!chainId) {
-      return disabledData
-    }
-
-    if (!chain)
-      return {
-        data: undefined,
-        lastModified: 0,
-        isLoading: true,
-        isUpdating: false,
-        isError: false,
-      }
-
-    if (!chain.priceMap)
-      return {
-        data: undefined,
-        lastModified: chain.lastModified,
-        isLoading: chain.isLoading,
-        isUpdating: chain.isUpdating,
-        isError: chain.isError,
-      }
-
-    const data: PriceMap = {
-      has: (_address: SvmAddress) => {
-        return chain.priceMap!.has(_address)
-      },
-      get: (_address: SvmAddress) => {
-        const price = chain.priceMap!.get(_address)
-        return price
-      },
-
-      getFraction: (_address: SvmAddress) => {
-        const price = chain.priceMap!.get(_address)
-        if (price) {
-          return new Fraction({
-            numerator: parseUnits(
-              withoutScientificNotation(String(price)) || '0',
-              18,
-            ).toString(),
-            denominator: parseUnits('1', 18).toString(),
-          })
-        }
-        return undefined
-      },
-    }
-
-    return {
-      data,
-      lastModified: chain.lastModified,
-      isLoading: chain.isLoading,
-      isUpdating: chain.isUpdating,
-      isError: chain.isError,
-    }
-  }, [chainId, chain])
-}
-
-export function usePrices<TChainId extends EvmChainId | SvmChainId>({
-  chainId,
-  enabled = true,
-}: {
-  chainId: TChainId | undefined
-  enabled?: boolean
-}): UsePricesResult<TChainId> {
-  const evmChainId = chainId && isEvmChainId(chainId) ? chainId : undefined
-  const svmChainId = chainId && isSvmChainId(chainId) ? chainId : undefined
-
-  const evmPrices = useEvmPrices({
-    chainId: evmChainId,
-    enabled: Boolean(enabled && evmChainId),
-  })
-
-  const svmPrices = useSvmPrices({
-    chainId: svmChainId,
-    enabled: Boolean(enabled && svmChainId),
-  })
-
-  return useMemo(() => {
-    if (evmChainId) {
-      return evmPrices as UsePricesResult<typeof evmChainId>
-    } else if (svmChainId) {
-      return svmPrices as UsePricesResult<typeof svmChainId>
-    }
-
-    return disabledData
-  }, [evmChainId, evmPrices, svmChainId, svmPrices])
 }
