@@ -39,7 +39,9 @@ export function useSvmWalletContext() {
   return ctx
 }
 
-export function SvmWalletProvider({ children }: { children: React.ReactNode }) {
+export default function SvmWalletProvider({
+  children,
+}: { children: React.ReactNode }) {
   const inSvmContext = useInSvmContext()
 
   if (inSvmContext) {

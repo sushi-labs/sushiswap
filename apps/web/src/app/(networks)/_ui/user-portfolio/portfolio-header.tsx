@@ -30,7 +30,11 @@ import { SwitchIcon } from '@sushiswap/ui/icons/SwitchIcon'
 import Image from 'next/image'
 import { useState } from 'react'
 import { SidebarView, useSidebar } from 'src/app/(networks)/_ui/sidebar'
-import { type WalletConnection, useWallets } from 'src/lib/wallet'
+import {
+  ENABLED_WALLET_NAMESPACES,
+  type WalletConnection,
+  useWallets,
+} from 'src/lib/wallet'
 import { DisconnectWalletButton } from 'src/lib/wallet/components/disconnect-wallet-button'
 import { getChainById } from 'sushi'
 import { EvmChainId, shortenEvmAddress } from 'sushi/evm'
@@ -175,19 +179,22 @@ const ConnectedWalletInfo = ({
             onOpenAutoFocus={(e) => e.preventDefault()}
           >
             <div className="flex flex-col gap-2">
-              <Button
-                fullWidth
-                variant="ghost"
-                icon={PlusIcon}
-                className="!justify-start"
-                onClick={() =>
-                  setView(SidebarView.Connect, {
-                    namespace: wallet?.namespace === 'svm' ? 'evm' : 'svm',
-                  })
-                }
-              >
-                Connect {wallet?.namespace === 'svm' ? 'EVM' : 'Solana'} Wallet
-              </Button>
+              {ENABLED_WALLET_NAMESPACES.length > 1 ? (
+                <Button
+                  fullWidth
+                  variant="ghost"
+                  icon={PlusIcon}
+                  className="!justify-start"
+                  onClick={() =>
+                    setView(SidebarView.Connect, {
+                      namespace: wallet?.namespace === 'svm' ? 'evm' : 'svm',
+                    })
+                  }
+                >
+                  Connect {wallet?.namespace === 'svm' ? 'EVM' : 'Solana'}{' '}
+                  Wallet
+                </Button>
+              ) : null}
               <Button
                 fullWidth
                 variant="ghost"

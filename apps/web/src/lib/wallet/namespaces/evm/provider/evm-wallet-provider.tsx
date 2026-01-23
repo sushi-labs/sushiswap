@@ -38,7 +38,9 @@ export function useEvmWalletContext() {
   return ctx
 }
 
-export function EvmWalletProvider({ children }: { children: React.ReactNode }) {
+export default function EvmWalletProvider({
+  children,
+}: { children: React.ReactNode }) {
   const inEvmContext = useInEvmContext()
 
   if (inEvmContext) {
