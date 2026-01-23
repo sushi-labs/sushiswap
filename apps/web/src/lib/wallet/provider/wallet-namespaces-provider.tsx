@@ -18,7 +18,7 @@ const WALLET_NAMESPACE_PROVIDERS: Record<
 }
 
 const providers = ENABLED_WALLET_NAMESPACES.map(
-  (ns) => WALLET_NAMESPACE_PROVIDERS[ns],
+  (namespace) => WALLET_NAMESPACE_PROVIDERS[namespace],
 ).filter(Boolean)
 
 export function WalletNamespacesProviders({

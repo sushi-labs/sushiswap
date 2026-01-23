@@ -1,12 +1,10 @@
 'use client'
 
 import { useMemo } from 'react'
-import { useEvmWallets } from 'src/lib/wallet/namespaces/evm/provider/use-evm-wallets'
-import { useSvmWallets } from 'src/lib/wallet/namespaces/svm/provider/use-svm-wallets'
+import { useWalletsRegistry } from './wallets-registry'
 
 export const useWalletsList = () => {
-  const evmWallets = useEvmWallets()
-  const svmWallets = useSvmWallets()
+  const { wallets } = useWalletsRegistry()
 
-  return useMemo(() => [...svmWallets, ...evmWallets], [svmWallets, evmWallets])
+  return useMemo(() => Array.from(wallets.values()).flat(), [wallets])
 }
