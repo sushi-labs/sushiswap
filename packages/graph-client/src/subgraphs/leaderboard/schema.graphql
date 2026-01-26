@@ -77,3 +77,16 @@ type Query {
   """
   chainStats(season: Int): [ChainStats!]!
 }
+
+type Mutation {
+  """
+  Accept a referral code.
+  Returns success status and message.
+  """
+  acceptReferral(referralCode: String!, message: String!, signature: String!, userAddress: String!): ReferralResult!
+}
+
+type ReferralResult {
+  success: Boolean!
+  message: String!
+}

@@ -1,57 +1,21 @@
 'use client'
 
-import { Fuul, UserIdentifierType } from '@fuul/sdk'
 import { ClipboardCopyIcon } from '@heroicons/react-v1/outline'
 import { ClipboardCheckIcon } from '@heroicons/react-v1/outline'
 import { useCopyClipboard } from '@sushiswap/hooks'
 import { Card, IconButton, classNames } from '@sushiswap/ui'
-import { useCallback } from 'react'
-import { useTrackingLink } from 'src/lib/hooks/react-query/fuul'
+import { useMemo } from 'react'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
-import { useAccount, useSignMessage } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 export const ReferralLink = () => {
   const { address, isConnected } = useAccount()
   const [isCopied, staticCopy] = useCopyClipboard()
-  const { signMessageAsync } = useSignMessage()
 
-  const { data: trackingLink } = useTrackingLink({
-    address,
-    enabled: isConnected,
-  })
-
-  const handleAffiliateCode = useCallback(async () => {
-    if (!address) return
-    try {
-      const affiliateCode = await Fuul.getAffiliateCode(
-        address,
-        UserIdentifierType.EvmAddress,
-      )
-      if (!affiliateCode) {
-        const sig = await signMessageAsync({
-          message: `I confirm that I am creating the ${address} code`,
-        })
-
-        await Fuul.createAffiliateCode({
-          userIdentifier: address,
-          identifierType: UserIdentifierType.EvmAddress,
-          signature: sig,
-          code: address,
-        })
-
-        const link = await Fuul.generateTrackingLink(
-          `${window?.location?.origin}/ethereum/swap`,
-          address,
-          UserIdentifierType.EvmAddress,
-        )
-        staticCopy(link)
-      } else {
-        staticCopy(trackingLink || '')
-      }
-    } catch (error) {
-      console.error('Error handling affiliate code:', error)
-    }
-  }, [address, trackingLink, signMessageAsync, staticCopy])
+  const trackingLink = useMemo(() => {
+    if (!address) return null
+    return `${window.location.origin}/ethereum/swap?referrer=${address}`
+  }, [address])
 
   return (
     <Card className="flex flex-col gap-4 md:flex-row items-start md:justify-between md:items-center w-full p-6 md:p-8">
@@ -87,8 +51,9 @@ export const ReferralLink = () => {
               name="Copy Referral Link"
               size="xs"
               className="absolute right-2 top-1/2 transform -translate-y-1/2 z-[11]"
-              onClick={async () => {
-                handleAffiliateCode()
+              onClick={() => {
+                if (!trackingLink) return
+                staticCopy(trackingLink)
               }}
               iconProps={{ className: 'w-3 h-3' }}
               icon={isCopied ? ClipboardCheckIcon : ClipboardCopyIcon}
