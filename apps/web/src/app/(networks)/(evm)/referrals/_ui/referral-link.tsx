@@ -6,7 +6,7 @@ import { ClipboardCheckIcon } from '@heroicons/react-v1/outline'
 import { useCopyClipboard } from '@sushiswap/hooks'
 import { Card, IconButton, classNames } from '@sushiswap/ui'
 import { useCallback } from 'react'
-import { useReferralLink } from 'src/lib/hooks/react-query/referrals'
+import { useTrackingLink } from 'src/lib/hooks/react-query/fuul'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useAccount, useSignMessage } from 'wagmi'
 
@@ -15,7 +15,7 @@ export const ReferralLink = () => {
   const [isCopied, staticCopy] = useCopyClipboard()
   const { signMessageAsync } = useSignMessage()
 
-  const { data: referralLink } = useReferralLink({
+  const { data: trackingLink } = useTrackingLink({
     address,
     enabled: isConnected,
   })
@@ -23,12 +23,11 @@ export const ReferralLink = () => {
   const handleAffiliateCode = useCallback(async () => {
     if (!address) return
     try {
-      const affiliateCodeData = await Fuul.getAffiliateCode(
+      const affiliateCode = await Fuul.getAffiliateCode(
         address,
         UserIdentifierType.EvmAddress,
       )
-
-      if (!affiliateCodeData) {
+      if (!affiliateCode) {
         const sig = await signMessageAsync({
           message: `I confirm that I am creating the ${address} code`,
         })
@@ -47,12 +46,12 @@ export const ReferralLink = () => {
         )
         staticCopy(link)
       } else {
-        staticCopy(referralLink || '')
+        staticCopy(trackingLink || '')
       }
     } catch (error) {
       console.error('Error handling affiliate code:', error)
     }
-  }, [address, referralLink, signMessageAsync, staticCopy])
+  }, [address, trackingLink, signMessageAsync, staticCopy])
 
   return (
     <Card className="flex flex-col gap-4 md:flex-row items-start md:justify-between md:items-center w-full p-6 md:p-8">
@@ -80,7 +79,7 @@ export const ReferralLink = () => {
               type="text"
               placeholder="https://sushi.com/ethereum/swap?af="
               readOnly
-              value={referralLink || ''}
+              value={trackingLink || ''}
               className="w-full max-w-[500px] bg-slate-50 dark:bg-slate-800 pr-9 font-medium py-2 pl-4 z-[11] bg-gradient-to-r from-blue/[5%] to-pink/[5%] border border-transparent rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
             <IconButton
@@ -95,6 +94,20 @@ export const ReferralLink = () => {
               icon={isCopied ? ClipboardCheckIcon : ClipboardCopyIcon}
             />
           </div>
+
+          {/* <div className="flex items-center gap-1 pl-1">
+            <p className="text-sm">Share on</p>
+            <div className="flex items-center gap-2">
+              <LinkExternal href={getTweetIntent(trackingLink || '')}>
+                <IconButton
+                  name="Share on Twitter"
+                  variant="secondary"
+                  size="sm"
+                  icon={XIcon}
+                />
+              </LinkExternal>
+            </div>
+          </div> */}
         </div>
       )}
     </Card>

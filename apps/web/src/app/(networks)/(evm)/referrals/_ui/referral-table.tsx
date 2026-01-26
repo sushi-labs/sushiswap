@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, DataTable, Loader } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useMemo } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { useTrackingData } from 'src/lib/hooks/react-query/fuul/use-tracking-data'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import type { EvmAddress } from 'sushi/evm'
 import { useAccount } from 'wagmi'
@@ -42,16 +43,16 @@ const leaderboardData: ReferralEntry[] | undefined = [
 
 export const ReferralTable = () => {
   const { address } = useAccount()
-  // const {
-  //   data: leaderboardData,
-  //   isLoading: isLoadingTable,
-  //   fetchNextPage,
-  //   hasNextPage,
-  // } = useLeaderboard({
-  //   page: 1,
-  //   pageSize: 50,
-  //   enabled: true,
-  // })
+  const {
+    data: test,
+    // isLoading: isLoadingTable,
+    // fetchNextPage,
+    // hasNextPage,
+  } = useTrackingData({
+    address: '0xb64eb68da4bfc230ca3b0dca2d4ce75200f03c9f',
+    enabled: true,
+  })
+  console.log(test)
 
   const data = useMemo(() => {
     if (!leaderboardData) return []

@@ -208,8 +208,8 @@ importers:
         specifier: 1.11.2
         version: 1.11.2
       '@fuul/sdk':
-        specifier: 7.12.0
-        version: 7.12.0
+        specifier: 7.14.0
+        version: 7.14.0
       '@grafana/faro-react':
         specifier: 1.19.0
         version: 1.19.0(react-dom@19.0.1(react@19.0.1))(react@19.0.1)
@@ -2987,8 +2987,8 @@ packages:
   '@fontsource-variable/orbitron@5.2.6':
     resolution: {integrity: sha512-WFoCQzrPHLyjiZjjE5esCjgLOyRHD2vHi8u0eEIezzBnNFnMe/Ws+G47crwChT26HRqfUMsOjy26byyvxcWkgw==}
 
-  '@fuul/sdk@7.12.0':
-    resolution: {integrity: sha512-mzzw+vfu/SPXpJC97WvtJBQdtd03QV+ndhGmlPr7bU92PdpDdEOQw7MFtOZf/BgayJQqzeXmiI4tn9DHRPBj+A==}
+  '@fuul/sdk@7.14.0':
+    resolution: {integrity: sha512-DXKKBVL9goim5OlpfuXMi6m8Atj2kwukVQ9jTpkvoHlebpOyWZJg5oQM29cRTHL7PNPd05Vnx7RfNntWcAnVCA==}
 
   '@gemini-wallet/core@0.2.0':
     resolution: {integrity: sha512-vv9aozWnKrrPWQ3vIFcWk7yta4hQW1Ie0fsNNPeXnjAxkbXr2hqMagEptLuMxpEP2W3mnRu05VDNKzcvAuuZDw==}
@@ -16548,7 +16548,7 @@ snapshots:
 
   '@fontsource-variable/orbitron@5.2.6': {}
 
-  '@fuul/sdk@7.12.0':
+  '@fuul/sdk@7.14.0':
     dependencies:
       axios: 1.7.7
       nanoid: 5.1.6
