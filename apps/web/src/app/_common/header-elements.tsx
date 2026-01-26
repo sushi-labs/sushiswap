@@ -48,6 +48,11 @@ export const EXPLORE_NAVIGATION_LINKS = (
       description: 'Earn fees by providing liquidity.',
     },
     {
+      title: 'Referrals',
+      href: '/referrals',
+      description: 'Track your referrals and earn points.',
+    },
+    {
       title: 'Claim',
       href: '/claim',
       description: 'Claim your fees and rewards.',
@@ -263,6 +268,12 @@ export const headerElements = ({
     {
       title: 'Stake',
       href: '/stake',
+      show: 'desktop',
+      type: NavigationElementType.Single,
+    },
+    {
+      title: 'Referrals',
+      href: '/referrals',
       show: 'desktop',
       type: NavigationElementType.Single,
     },

@@ -207,6 +207,9 @@ importers:
       '@cloudinary/url-gen':
         specifier: 1.11.2
         version: 1.11.2
+      '@fuul/sdk':
+        specifier: 7.14.0
+        version: 7.14.0
       '@grafana/faro-react':
         specifier: 1.19.0
         version: 1.19.0(react-dom@19.0.1(react@19.0.1))(react@19.0.1)
@@ -2986,6 +2989,9 @@ packages:
 
   '@fontsource-variable/orbitron@5.2.6':
     resolution: {integrity: sha512-WFoCQzrPHLyjiZjjE5esCjgLOyRHD2vHi8u0eEIezzBnNFnMe/Ws+G47crwChT26HRqfUMsOjy26byyvxcWkgw==}
+
+  '@fuul/sdk@7.14.0':
+    resolution: {integrity: sha512-DXKKBVL9goim5OlpfuXMi6m8Atj2kwukVQ9jTpkvoHlebpOyWZJg5oQM29cRTHL7PNPd05Vnx7RfNntWcAnVCA==}
 
   '@gemini-wallet/core@0.2.0':
     resolution: {integrity: sha512-vv9aozWnKrrPWQ3vIFcWk7yta4hQW1Ie0fsNNPeXnjAxkbXr2hqMagEptLuMxpEP2W3mnRu05VDNKzcvAuuZDw==}
@@ -10653,6 +10659,11 @@ packages:
     engines: {node: ^14 || ^16 || >=18}
     hasBin: true
 
+  nanoid@5.1.6:
+    resolution: {integrity: sha512-c7+7RQ+dMB5dPwwCp4ee1/iV/q2P6aK1mTZcfr1BTuVlyW9hJYiMPybJCcnBlQtuSmTIWNeazm/zqNoZSSElBg==}
+    engines: {node: ^18 || >=20}
+    hasBin: true
+
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
@@ -16551,6 +16562,13 @@ snapshots:
   '@fontsource-variable/inter@5.0.1': {}
 
   '@fontsource-variable/orbitron@5.2.6': {}
+
+  '@fuul/sdk@7.14.0':
+    dependencies:
+      axios: 1.7.7
+      nanoid: 5.1.6
+    transitivePeerDependencies:
+      - debug
 
   '@gemini-wallet/core@0.2.0(viem@2.37.12(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))':
     dependencies:
@@ -23052,7 +23070,7 @@ snapshots:
   axios@1.6.2:
     dependencies:
       follow-redirects: 1.15.6
-      form-data: 4.0.1
+      form-data: 4.0.4
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
@@ -23060,7 +23078,7 @@ snapshots:
   axios@1.7.7:
     dependencies:
       follow-redirects: 1.15.6
-      form-data: 4.0.1
+      form-data: 4.0.4
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
@@ -25412,7 +25430,6 @@ snapshots:
       es-set-tostringtag: 2.1.0
       hasown: 2.0.2
       mime-types: 2.1.35
-    optional: true
 
   fraction.js@4.2.0: {}
 
@@ -27873,6 +27890,8 @@ snapshots:
   nanoid@3.3.7: {}
 
   nanoid@4.0.0: {}
+
+  nanoid@5.1.6: {}
 
   natural-compare@1.4.0: {}
 
