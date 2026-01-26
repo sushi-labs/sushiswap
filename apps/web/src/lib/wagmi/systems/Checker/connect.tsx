@@ -3,28 +3,28 @@
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui'
-import { useAccount, useWalletContext } from 'src/lib/wallet'
-import { useConnection } from 'wagmi'
+import {
+  type WalletNamespace,
+  useAccount,
+  useWalletContext,
+} from 'src/lib/wallet'
 import { ConnectButton } from '../../components/connect-button'
 
 interface ConnectProps extends ButtonProps {
-  networkType: 'evm' | 'svm' | 'all'
+  namespace?: WalletNamespace
 }
 
 function Connect({
   children,
   fullWidth = true,
   size = 'xl',
-  networkType,
+  namespace,
   ...props
 }: ConnectProps) {
   const isMounted = useIsMounted()
 
-  const _networkType = networkType === 'all' ? undefined : networkType
-
-  const isWalletConnected = Boolean(useAccount(_networkType))
-
-  const { isDisconnected, isConnecting, isReconnecting } = useConnection()
+  const { isPending, isConnected } = useWalletContext()
+  const isNamespaceConencted = Boolean(useAccount(namespace))
 
   if (!isMounted)
     return (
@@ -33,7 +33,7 @@ function Connect({
       </Button>
     )
 
-  if (isConnecting || isReconnecting) {
+  if (isPending) {
     return (
       <Button fullWidth={fullWidth} size={size} disabled {...props}>
         <Dots>Checking Wallet</Dots>
@@ -41,18 +41,21 @@ function Connect({
     )
   }
 
-  if (isDisconnected) {
+  if (!isConnected) {
+    const shouldRestrictNamespace = namespace && !isNamespaceConencted
     const midtext =
-      networkType === 'evm' ? 'EVM' : networkType === 'svm' ? 'Solana' : ''
+      namespace === 'evm' ? 'EVM' : namespace === 'svm' ? 'Solana' : ''
 
     return (
       <ConnectButton
-        namespace={_networkType}
+        namespace={shouldRestrictNamespace ? namespace : undefined}
         fullWidth={fullWidth}
         size={size}
         {...props}
       >
-        {`Connect ${midtext} Wallet`}
+        {shouldRestrictNamespace
+          ? `Connect ${midtext} Wallet`
+          : 'Connect Wallet'}
       </ConnectButton>
     )
   }

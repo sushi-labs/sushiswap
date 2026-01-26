@@ -7,6 +7,7 @@ import type { Wallet, WalletConnection } from '../types'
 export type WalletContext<TChainId extends EvmChainId | SvmChainId> = {
   connections: WalletConnection<TChainId>[]
   isPending: boolean
+  isConnected: boolean
 }
 
 export type WalletState = {
