@@ -13,11 +13,23 @@ import {
 } from 'sushi/evm'
 import { KvmChainId } from 'sushi/kvm'
 import { MvmChainId } from 'sushi/mvm'
+import { SvmChainId, isSvmChainId } from 'sushi/svm'
 import { TvmChainId } from 'sushi/tvm'
 
-export const UI_FEE_BIPS = 35
-export const UI_FEE_PERCENT = UI_FEE_BIPS / 100
-export const UI_FEE_DECIMAL = UI_FEE_BIPS / 10_000
+export const SVM_UI_FEE_BIPS = 50
+export const SVM_UI_FEE_PERCENT = SVM_UI_FEE_BIPS / 100
+export const SVM_UI_FEE_DECIMAL = SVM_UI_FEE_BIPS / 10_000
+
+export const EVM_UI_FEE_BIPS = 35
+export const EVM_UI_FEE_PERCENT = EVM_UI_FEE_BIPS / 100
+export const EVM_UI_FEE_DECIMAL = EVM_UI_FEE_BIPS / 10_000
+
+export function getUiFeePercent(chainId: EvmChainId | SvmChainId) {
+  if (isSvmChainId(chainId)) {
+    return SVM_UI_FEE_PERCENT
+  }
+  return EVM_UI_FEE_PERCENT
+}
 
 export type SwapApiEnabledChainId =
   (typeof SWAP_API_SUPPORTED_CHAIN_IDS)[number]
@@ -40,12 +52,13 @@ export const BLADE_SUPPORTED_NETWORKS = BLADE_SUPPORTED_CHAIN_IDS.filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
 
-export const NEW_CHAIN_IDS = [EvmChainId.MONAD] as const
+export const NEW_CHAIN_IDS = [SvmChainId.SOLANA, EvmChainId.MONAD] as const
 
 export const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
-  ChainId.HEMI,
   ChainId.ETHEREUM,
+  ChainId.SOLANA,
+  ChainId.HEMI,
   ChainId.KATANA,
   ChainId.ARBITRUM,
   ChainId.BASE,
@@ -105,6 +118,7 @@ export const getSortedChainIds = <T extends ChainId>(
 export const CHAIN_IDS = [
   ...SUSHISWAP_SUPPORTED_CHAIN_IDS,
   ...AGGREGATOR_ONLY_CHAIN_IDS,
+  SvmChainId.SOLANA,
 ] as const
 
 export const AMM_SUPPORTED_CHAIN_IDS = SUSHISWAP_SUPPORTED_CHAIN_IDS.filter(
@@ -147,6 +161,7 @@ const UNSORTED_SUPPORTED_NETWORKS = [
   MvmChainId.APTOS,
   TvmChainId.TRON,
   KvmChainId.KADENA,
+  SvmChainId.SOLANA,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )

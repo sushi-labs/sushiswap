@@ -1,7 +1,7 @@
 import { sz } from 'sushi'
 import { isEvmAddress } from 'sushi/evm'
 import type { Address } from 'viem'
-import z from 'zod'
+import * as z from 'zod'
 
 export const tokenValidator = z.object({
   chainId: z.number().or(z.string()),

@@ -8,7 +8,7 @@ import type {
 import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import { useSushiV2UserPositions } from 'src/lib/hooks'
 import type { SushiSwapV2ChainId } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { APR_COLUMN, NAME_COLUMN_POOL, VALUE_COLUMN } from './columns'
 
 // ! Column types have to be checked manually
@@ -31,7 +31,7 @@ export const PositionsTable: FC<PositionsTableProps> = ({
   onRowClick,
   rowLink,
 }) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,

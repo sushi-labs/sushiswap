@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { BLADE_API_HOST, BLADE_API_KEY } from 'src/lib/constants'
 import { sz } from 'sushi'
 import { isAddress } from 'viem'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const rfqDepositResponseBaseSchema = z.object({
   sender: sz.evm.address(),

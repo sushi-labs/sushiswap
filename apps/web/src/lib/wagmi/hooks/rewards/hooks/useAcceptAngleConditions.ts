@@ -6,7 +6,7 @@ import { logger } from 'src/lib/logger'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { SendTransactionReturnType } from 'viem'
 import {
-  useAccount,
+  useConnection,
   usePublicClient,
   useReadContract,
   useSimulateContract,
@@ -44,7 +44,7 @@ const acceptConditionsAbi = [
 export const useAcceptAngleConditions = (
   { enabled = true }: { enabled?: boolean } = { enabled: true },
 ) => {
-  const { address, chainId } = useAccount()
+  const { address, chainId } = useConnection()
   const [pending, setPending] = useState(false)
   const client = usePublicClient()
   const {

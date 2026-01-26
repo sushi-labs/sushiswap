@@ -28,7 +28,7 @@ export const HeaderNetworkSelector: FC<{
   className,
   hideNetworkName = false,
 }) => {
-  const { switchChainAsync } = useSwitchChain()
+  const { mutateAsync: switchChainAsync } = useSwitchChain()
   const chainId = useChainId()
 
   const onSwitchNetwork = useCallback<NetworkSelectorOnSelectCallback>(

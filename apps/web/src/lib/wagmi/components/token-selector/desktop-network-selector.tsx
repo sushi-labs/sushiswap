@@ -14,12 +14,13 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { type FC, useCallback } from 'react'
 import { getNetworkName } from 'src/lib/network'
 import type { EvmChainId } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import type { SvmChainId } from 'sushi/svm'
+import { useConnection } from 'wagmi'
 
 interface DesktopNetworkSelector {
-  networks: readonly EvmChainId[]
+  networks: readonly (EvmChainId | SvmChainId)[]
   onSelect: (chainId: number) => void
-  selectedNetwork: EvmChainId
+  selectedNetwork: EvmChainId | SvmChainId
 }
 
 export const DesktopNetworkSelector: FC<DesktopNetworkSelector> = ({
@@ -27,7 +28,8 @@ export const DesktopNetworkSelector: FC<DesktopNetworkSelector> = ({
   selectedNetwork,
   onSelect,
 }) => {
-  const { chainId } = useAccount()
+  // TODO: Solana useAccount?
+  const { chainId } = useConnection()
 
   const _onSelect = useCallback(
     (value: string) => onSelect(+value.split('__')[1]),

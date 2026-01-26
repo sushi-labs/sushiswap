@@ -61,7 +61,7 @@ import {
   isMerklChainId,
   unwrapEvmToken,
 } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import {
   ConcentratedLiquidityProvider,
   useConcentratedDerivedMintInfo,
@@ -77,7 +77,7 @@ const Component: FC<{
   address: EvmAddress
   position: string
 }> = ({ chainId, address: poolAddress, position: tokenId }) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const [invert, setInvert] = useState(false)
 
   const { data: positionDetails, isLoading: _isPositionDetailsLoading } =

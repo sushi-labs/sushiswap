@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import type { Hex } from 'viem'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const LiFiStatusResponseSchema = z.object({
   sending: z.object({

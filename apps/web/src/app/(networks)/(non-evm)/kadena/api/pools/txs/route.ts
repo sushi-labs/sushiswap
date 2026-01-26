@@ -1,7 +1,7 @@
 import { getPoolTransactions } from '@sushiswap/graph-client/kadena'
 import type { NextRequest } from 'next/server'
 
-import { z } from 'zod'
+import * as z from 'zod'
 
 const schema = z.object({
   pairId: z.string(),

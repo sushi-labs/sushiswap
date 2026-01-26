@@ -8,22 +8,21 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '@sushiswap/ui'
-import type { FC } from 'react'
-import type { UseTradeReturn } from 'src/lib/hooks/react-query'
+import type { UseEvmTradeReturn } from 'src/lib/hooks/react-query'
 
 type PartialRouteProps = ButtonProps & {
-  trade: Pick<UseTradeReturn, 'route' | 'amountIn'> | undefined
+  trade: Pick<UseEvmTradeReturn, 'route' | 'amountIn'> | undefined
   setSwapAmount: (swapAmount: string) => void
 }
 
-const PartialRoute: FC<PartialRouteProps> = ({
+function PartialRoute({
   trade,
   setSwapAmount,
   fullWidth = true,
   size = 'xl',
   children,
   ...props
-}) => {
+}: PartialRouteProps) {
   return trade?.route?.status === 'Partial' ? (
     <HoverCard openDelay={0} closeDelay={0}>
       <Button

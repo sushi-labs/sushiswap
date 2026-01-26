@@ -24,16 +24,20 @@ import {
   useCoinGeckoTokenInfo,
   useTokenSecurity,
 } from 'src/lib/hooks/react-query'
-import { formatNumber, formatUSD } from 'sushi'
-import { type EvmCurrency, getEvmChainById, shortenEvmAddress } from 'sushi/evm'
+import { formatNumber, formatUSD, getChainById } from 'sushi'
+import { type EvmAddress, type EvmChainId, shortenEvmAddress } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 import { TokenSecurityView } from '../token-security-view'
 
-interface CurrencyInfoProps {
-  currency: EvmCurrency
+interface CurrencyInfoProps<TChainId extends EvmChainId | SvmChainId> {
+  currency: CurrencyFor<TChainId>
   onBack: () => void
 }
 
-export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
+export function CurrencyInfo<TChainId extends EvmChainId | SvmChainId>({
+  currency,
+  onBack,
+}: CurrencyInfoProps<TChainId>) {
   const { data: tokenSecurity, isLoading: isTokenSecurityLoading } =
     useTokenSecurity({
       currency: currency.wrap(),
@@ -43,6 +47,8 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
     useCoinGeckoTokenInfo({
       token: currency.wrap(),
     })
+
+  console.log(tokenSecurity, coinGeckoInfo)
 
   return (
     <div className="absolute inset-0 z-20 py-6 bg-gray-100 dark:bg-slate-800 rounded-2xl">
@@ -62,7 +68,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
             <div className="flex gap-1 items-center">
               <span className="text-xl font-medium">{currency.symbol}</span>
               <span className="text-muted-foreground text-base font-normal">
-                {getEvmChainById(currency.chainId).name}
+                {getChainById(currency.chainId).name}
               </span>
             </div>
           </DialogTitle>
@@ -196,8 +202,9 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
               <span className="flex gap-1 items-center">
                 <LinkExternal
                   className="font-medium"
-                  href={getEvmChainById(currency.chainId).getTokenUrl(
-                    currency.wrap().address,
+                  href={getChainById(currency.chainId).getTokenUrl(
+                    // Ugly cast should be fine
+                    currency.wrap().address as EvmAddress,
                   )}
                 >
                   {shortenEvmAddress(currency.wrap().address)}

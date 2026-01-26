@@ -1,6 +1,6 @@
 'use client'
 
-import { type FC, type ReactNode, useEffect } from 'react'
+import { type ReactNode, useEffect } from 'react'
 
 import { watchAccount } from '@wagmi/core'
 import { useConfig } from 'wagmi'
@@ -11,7 +11,7 @@ interface SuccessProps {
   tag: string
 }
 // If this gets mounted it sets checker approved to true
-const Success: FC<SuccessProps> = ({ children, tag }) => {
+function Success({ children, tag }: SuccessProps) {
   const { setApproved } = useApprovedActions(tag)
   const config = useConfig()
 

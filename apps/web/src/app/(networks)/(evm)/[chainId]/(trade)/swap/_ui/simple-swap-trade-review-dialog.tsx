@@ -40,7 +40,7 @@ import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
 import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { APPROVE_TAG_SWAP, NativeAddress } from 'src/lib/constants'
 import { sendDrilldownLog } from 'src/lib/drilldown-log'
-import type { UseTradeReturn } from 'src/lib/hooks/react-query'
+import type { UseEvmTradeReturn } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { logger } from 'src/lib/logger'
 import {
@@ -50,18 +50,19 @@ import {
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/slippage'
-import { Amount, ChainId, ZERO } from 'sushi'
+import { Amount, ChainId, ZERO, getChainById } from 'sushi'
 import {
+  type EvmAddress,
   EvmNative,
   addGasMargin,
+  evmNativeAddress,
   getEvmChainById,
   getEvmCurrencyAddress,
-  nativeAddress,
   shortenEvmAddress,
 } from 'sushi/evm'
 import { type SendTransactionReturnType, stringify } from 'viem'
 import {
-  useAccount,
+  useConnection,
   usePublicClient,
   useSendTransaction,
   useWaitForTransactionReceipt,
@@ -71,7 +72,7 @@ import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-pri
 import { useDetailsInteractionTracker } from '../../_ui/details-interaction-tracker-provider'
 import {
   useDerivedStateSimpleSwap,
-  useSimpleSwapTrade,
+  useEvmSimpleSwapTrade,
 } from './derivedstate-simple-swap-provider'
 import { SimpleSwapErrorMessage } from './simple-swap-error-message'
 
@@ -106,8 +107,9 @@ const _SimpleSwapTradeReviewDialog: FC<{
   const { approved } = useApproved(APPROVE_TAG_SWAP)
   const [slippagePercent] = useSlippageTolerance()
 
-  const { address } = useAccount()
-  const tradeRef = useRef<UseTradeReturn | null>(null)
+  const { address } = useConnection()
+  const tradeRef = useRef<UseEvmTradeReturn | null>(null)
+
   const client = usePublicClient()
 
   const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
@@ -119,7 +121,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
     isSuccess: isSwapQuerySuccess,
     isError: isSwapQueryError,
     error: swapQueryError,
-  } = useSimpleSwapTrade(
+  } = useEvmSimpleSwapTrade(
     Boolean(approved && address && (confirmDialogOpen || reviewDialogOpen)),
   )
 
@@ -153,11 +155,11 @@ const _SimpleSwapTradeReviewDialog: FC<{
           token0:
             tradeRef?.current?.amountIn?.currency?.type === 'token'
               ? tradeRef?.current?.amountIn?.currency?.address
-              : nativeAddress,
+              : evmNativeAddress,
           token1:
             tradeRef?.current?.amountOut?.currency?.type === 'token'
               ? tradeRef?.current?.amountOut?.currency?.address
-              : nativeAddress,
+              : evmNativeAddress,
           amountIn: tradeRef?.current?.amountIn?.amount,
           amountOut: tradeRef?.current?.amountOut?.amount,
           amountOutMin: tradeRef?.current?.minAmountOut?.amount,
@@ -325,7 +327,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
   )
 
   const {
-    sendTransactionAsync,
+    mutateAsync: sendTransactionAsync,
     isPending: isWritePending,
     data,
   } = useSendTransaction({
@@ -411,7 +413,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                 <List className="!pt-0">
                   <List.Control>
                     <List.KeyValue title="Network">
-                      {getEvmChainById(chainId).name}
+                      {getChainById(chainId).name}
                     </List.KeyValue>
                     {isSwap && (
                       <List.KeyValue
@@ -518,8 +520,8 @@ const _SimpleSwapTradeReviewDialog: FC<{
                           <a
                             target="_blank"
                             href={
-                              getEvmChainById(chainId).getAccountUrl(
-                                recipient,
+                              getChainById(chainId).getAccountUrl(
+                                recipient as EvmAddress,
                               ) ?? '#'
                             }
                             rel="noreferrer"
@@ -550,6 +552,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                       ...trace,
                     }}
                   >
+                    {/* Start of chain dependent code */}
                     <Button
                       fullWidth
                       size="xl"
@@ -580,6 +583,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                             ? 'Unwrap'
                             : `Swap ${token0?.symbol} for ${token1?.symbol}`}
                     </Button>
+                    {/* End of chain dependent code */}
                   </TraceEvent>
                 </div>
               </DialogFooter>

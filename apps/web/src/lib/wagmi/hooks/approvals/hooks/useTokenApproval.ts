@@ -13,7 +13,7 @@ import {
   maxUint256,
 } from 'viem'
 import {
-  useAccount,
+  useConnection,
   usePublicClient,
   useSimulateContract,
   useWriteContract,
@@ -47,7 +47,7 @@ export const useTokenApproval = ({
   enabled = true,
   approveMax,
 }: UseTokenApprovalParams) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const [pending, setPending] = useState(false)
   const client = usePublicClient()
   const {
@@ -180,12 +180,12 @@ export const useTokenApproval = ({
   // biome-ignore lint/correctness/useExhaustiveDependencies: Typecheck speedup
   const write = useMemo(
     () => {
-      if (!execute.writeContract || !simulation?.request) return
+      if (!execute.mutate || !simulation?.request) return
 
-      return () => execute.writeContract(simulation.request as any)
+      return () => execute.mutate(simulation.request as any)
       // eslint-disable-next-line react-hooks/exhaustive-deps
     },
-    [execute.writeContract, simulation?.request] as const,
+    [execute.mutate, simulation?.request] as const,
   )
 
   return useMemo<[ApprovalState, { write: undefined | (() => void) }]>(() => {

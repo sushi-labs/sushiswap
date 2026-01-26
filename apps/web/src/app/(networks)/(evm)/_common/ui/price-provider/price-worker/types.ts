@@ -1,4 +1,5 @@
 import type { EvmChainId } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 
 export enum PriceWorkerPostMessageType {
   Initialize = 'Initialize',
@@ -7,24 +8,25 @@ export enum PriceWorkerPostMessageType {
   RefetchChainId = 'RefetchChainId',
   SetEnabled = 'SetEnabled',
 }
+export type EvmOrSvmChainId = EvmChainId | SvmChainId
 
 type Initialize = {
   type: PriceWorkerPostMessageType.Initialize
   canUseSharedArrayBuffer: boolean
 }
 
-type IncrementChainId = {
-  chainId: EvmChainId
+type IncrementChainId<TChainId extends EvmChainId | SvmChainId> = {
+  chainId: TChainId
   type: PriceWorkerPostMessageType.IncrementChainId
 }
 
-type DecrementChainId = {
-  chainId: EvmChainId
+type DecrementChainId<TChainId extends EvmChainId | SvmChainId> = {
+  chainId: TChainId
   type: PriceWorkerPostMessageType.DecrementChainId
 }
 
-type RefetchChainId = {
-  chainId: EvmChainId
+type RefetchChainId<TChainId extends EvmChainId | SvmChainId> = {
+  chainId: TChainId
   type: PriceWorkerPostMessageType.RefetchChainId
 }
 
@@ -33,35 +35,25 @@ type SetEnabled = {
   type: PriceWorkerPostMessageType.SetEnabled
 }
 
-export type PriceWorkerPostMessage =
+export type PriceWorkerPostMessage<TChainId extends EvmChainId | SvmChainId> =
   | Initialize
-  | IncrementChainId
-  | DecrementChainId
-  | RefetchChainId
+  | IncrementChainId<TChainId>
+  | DecrementChainId<TChainId>
+  | RefetchChainId<TChainId>
   | SetEnabled
 
 export enum PriceWorkerReceiveMessageType {
   ChainState = 'ChainState',
 }
 
-export type PriceWorkerReceiveMessageChainState = {
-  type: PriceWorkerReceiveMessageType.ChainState
-  payload: Partial<Omit<WorkerChainState, 'priceObject' | 'listenerCount'>> & {
-    chainId: EvmChainId
-  }
-}
+type PriceMapKey<TChainId extends EvmChainId | SvmChainId> =
+  TChainId extends EvmChainId ? bigint : string
 
-export type PriceWorkerReceiveMessage = PriceWorkerReceiveMessageChainState
-
-export type PriceWorker = (typeof Worker)['prototype'] & {
-  postMessage(message: PriceWorkerPostMessage | PriceWorkerPostMessage[]): void
-}
-
-export interface WorkerChainState {
-  chainId: EvmChainId
+export interface WorkerChainState<TChainId extends EvmChainId | SvmChainId> {
+  chainId: TChainId
   listenerCount: number
 
-  priceMap: Map<bigint, number>
+  priceMap: Map<PriceMapKey<TChainId>, number>
 
   lastModified: number
 
@@ -69,3 +61,27 @@ export interface WorkerChainState {
   isUpdating: boolean
   isError: boolean
 }
+
+export type PriceWorkerReceiveMessageChainState<
+  TChainId extends EvmChainId | SvmChainId,
+> = {
+  type: PriceWorkerReceiveMessageType.ChainState
+  payload: Partial<
+    Omit<WorkerChainState<TChainId>, 'priceObject' | 'listenerCount'>
+  > & {
+    chainId: TChainId
+  }
+}
+
+export type PriceWorkerReceiveMessage<
+  TChainId extends EvmChainId | SvmChainId,
+> = PriceWorkerReceiveMessageChainState<TChainId>
+
+export type PriceWorker<TChainId extends EvmChainId | SvmChainId> =
+  (typeof Worker)['prototype'] & {
+    postMessage(
+      message:
+        | PriceWorkerPostMessage<TChainId>
+        | PriceWorkerPostMessage<TChainId>[],
+    ): void
+  }

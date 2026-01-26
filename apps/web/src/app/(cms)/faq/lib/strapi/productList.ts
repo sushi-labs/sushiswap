@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from 'zod'
 import { imageSchema } from './image'
 import { strapi } from './strapi'
 

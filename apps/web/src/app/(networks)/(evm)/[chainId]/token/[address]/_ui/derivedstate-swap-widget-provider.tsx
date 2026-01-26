@@ -9,7 +9,7 @@ import {
   useState,
 } from 'react'
 import { type SupportedChainId, isSupportedChainId } from 'src/config'
-import { useTradeQuote } from 'src/lib/hooks/react-query'
+import { useEvmTradeQuote } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useCarbonOffset } from 'src/lib/swap/useCarbonOffset'
 import { Amount, ZERO } from 'sushi'
@@ -136,7 +136,7 @@ const useSwapWidgetTradeQuote = () => {
   const [carbonOffset] = useCarbonOffset()
   const { data: gasPrice } = useGasPrice({ chainId })
 
-  const quote = useTradeQuote({
+  const quote = useEvmTradeQuote({
     chainId,
     fromToken: token0,
     toToken: token1,

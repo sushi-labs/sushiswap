@@ -1,7 +1,7 @@
 import type { ButtonProps } from '@sushiswap/ui'
 import type { ComponentType, FC } from 'react'
 
-import { Amounts, type AmountsProps } from './amounts'
+import { Amounts } from './amounts'
 import { ApproveERC20, type ApproveERC20Props } from './approve-erc20'
 import {
   ApproveERC20Multiple,
@@ -18,7 +18,7 @@ import {
   type CustomWithTooltipProps,
 } from './custom-with-tooltip'
 import { Guard, type GuardProps } from './guard'
-import { Network, type NetworkProps } from './network'
+import { Network } from './network'
 import { PartialRoute, type PartialRouteProps } from './partial-route'
 import { type ProviderProps, CheckerProvider as Root } from './provider'
 import {
@@ -33,8 +33,8 @@ import {
 import { Success, type SuccessProps } from './success'
 
 export type CheckerProps = {
-  Amounts: ComponentType<AmountsProps>
-  Network: ComponentType<NetworkProps>
+  Amounts: typeof Amounts
+  Network: typeof Network
   Guard: FC<GuardProps>
   Custom: FC<CustomProps>
   CustomWithTooltip: FC<CustomWithTooltipProps>

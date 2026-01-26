@@ -8,22 +8,23 @@ import {
 } from '@sushiswap/telemetry'
 import { Button, Currency, IconButton, buttonIconVariants } from '@sushiswap/ui'
 import { NativeAddress } from 'src/lib/constants'
-import type { EvmChainId, EvmCurrency } from 'sushi/evm'
+import type { EvmChainId } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 import { useChipTokens } from '../hooks/use-chip-tokens'
 
-interface TokenSelectorChipBar {
-  chainId: EvmChainId
-  onSelect(currency: EvmCurrency): void
+interface TokenSelectorChipBar<TChainId extends EvmChainId | SvmChainId> {
+  chainId: TChainId
+  onSelect(currency: CurrencyFor<TChainId>): void
   includeNative?: boolean
   showPinnedTokens?: boolean
 }
 
-export function TokenSelectorChipBar({
+export function TokenSelectorChipBar<TChainId extends EvmChainId | SvmChainId>({
   chainId,
   onSelect,
   includeNative,
   showPinnedTokens = true,
-}: TokenSelectorChipBar) {
+}: TokenSelectorChipBar<TChainId>) {
   const tokens = useChipTokens({ chainId, includeNative, showPinnedTokens })
 
   const { mutate } = usePinnedTokens()

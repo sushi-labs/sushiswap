@@ -1,6 +1,6 @@
 import { ChainId } from 'sushi'
 import { getAddress, isAddress } from 'viem'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const ZpdAddress = z
   .string()

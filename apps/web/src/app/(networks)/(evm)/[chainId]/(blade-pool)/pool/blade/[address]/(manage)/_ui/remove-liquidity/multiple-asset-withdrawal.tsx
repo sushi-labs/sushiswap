@@ -5,7 +5,7 @@ import { type FC, useCallback } from 'react'
 import type { useBladeWithdrawTransaction } from 'src/lib/pool/blade/useBladeWithdraw'
 import type { Amount } from 'sushi'
 import type { EvmCurrency } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 
 interface MultipleAssetWithdrawalProps {
   amountToRemove: Amount<EvmCurrency> | undefined
@@ -18,7 +18,7 @@ export const MultipleAssetWithdrawal: FC<MultipleAssetWithdrawalProps> = ({
   onConfirm,
   withdrawTransaction,
 }) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
 
   const handleConfirmTransaction = useCallback(async () => {
     if (!amountToRemove || !address) return

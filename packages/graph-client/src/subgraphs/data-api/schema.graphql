@@ -52,8 +52,8 @@ type Query {
   chainIdsByFeature(feature: ChainIdFeature!): [ChainId!]!
   sushiBarStats: SushiBarStats!
   sushiBarHistory: SushiBarHistory!
-  tokenList(chainId: TokenListChainId!, first: Int = 50, skip: Int, search: String, customTokens: [Bytes!]): [TokenListEntry!]!
-  tokenListBalances(chainId: TokenListChainId!, account: Bytes!, includeNative: Boolean = true, customTokens: [Bytes!]): [TokenListEntryWithBalance!]!
+  tokenList(chainId: TokenListChainId!, first: Int = 50, skip: Int, search: String, customTokens: [Address!]): [TokenListEntry!]!
+  tokenListBalances(chainId: TokenListChainId!, account: Address!, includeNative: Boolean = true, customTokens: [Address!]): [TokenListWithBalanceEntry!]!
   tokenAnalysis(chainId: Int!, address: Bytes!): TokenAnalysis!
   pendingTokens: [PendingToken!]!
   approvedCommunityTokens: [ApprovedToken!]!
@@ -645,6 +645,15 @@ type PortfolioTransaction {
   gasFeeUSD: Float!
 }
 
+"""A field whose value is an EVM (0x) or SVM (base58) address"""
+scalar Address
+
+"""A field whose value is a Solana address"""
+scalar SvmAddress
+
+"""A field whose value is an EVM address"""
+scalar EvmAddress
+
 """
 A field whose value is a byte string: https://en.wikipedia.org/wiki/Byte_string
 """
@@ -724,15 +733,15 @@ type SushiBarHistory {
 }
 
 type TokenListEntry {
-  address: Bytes!
+  address: Address!
   symbol: String!
   name: String!
   decimals: Int!
   approved: Boolean!
 }
 
-type TokenListEntryWithBalance {
-  address: Bytes!
+type TokenListWithBalanceEntry {
+  address: Address!
   symbol: String!
   name: String!
   decimals: Int!
@@ -805,8 +814,7 @@ type TokenSecurity {
   holderCount: Float!
 }
 
-type ApprovedToken {
-  address: Bytes!
+interface ApprovedTokenFields {
   chainId: ChainId!
   symbol: String!
   name: String!
@@ -815,8 +823,30 @@ type ApprovedToken {
   logoUrl: String
 }
 
+type EvmApprovedToken implements ApprovedTokenFields {
+  address: EvmAddress!
+  chainId: ChainId!
+  symbol: String!
+  name: String!
+  decimals: Int!
+  approved: Boolean!
+  logoUrl: String
+}
+
+type SvmApprovedToken implements ApprovedTokenFields {
+  address: SvmAddress!
+  chainId: ChainId!
+  symbol: String!
+  name: String!
+  decimals: Int!
+  approved: Boolean!
+  logoUrl: String
+}
+
+union ApprovedToken = EvmApprovedToken | SvmApprovedToken
+
 type TrendingToken {
-  address: Bytes!
+  address: Address!
   symbol: String!
   name: String!
   decimals: Int!

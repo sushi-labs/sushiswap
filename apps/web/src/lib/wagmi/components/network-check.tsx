@@ -5,13 +5,13 @@ import { Button } from '@sushiswap/ui'
 import { type FC, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
-import { useAccount, useSwitchChain } from 'wagmi'
+import { useConnection, useSwitchChain } from 'wagmi'
 
 export const NetworkCheck: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
   const [open, setOpen] = useState(false)
   const isMounted = useIsMounted()
-  const { chain } = useAccount()
-  const { switchChain } = useSwitchChain()
+  const { chain } = useConnection()
+  const { mutate: switchChain } = useSwitchChain()
 
   // Delay couple seconds
   useEffect(() => {

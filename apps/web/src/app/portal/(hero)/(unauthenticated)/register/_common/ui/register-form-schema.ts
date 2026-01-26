@@ -1,5 +1,5 @@
 import { zPassword } from 'src/app/portal/_common/lib/zod'
-import { z } from 'zod'
+import * as z from 'zod'
 
 export const registerFormSchema = z
   .object({

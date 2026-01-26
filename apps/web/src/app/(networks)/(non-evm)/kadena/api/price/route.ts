@@ -1,7 +1,7 @@
 import { getTokenPrice } from '@sushiswap/graph-client/kadena'
 import type { NextRequest } from 'next/server'
 import { isKvmTokenAddress } from 'sushi/kvm'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const schema = z.object({
   tokenAddress: z.string().refine((address) => isKvmTokenAddress(address), {
