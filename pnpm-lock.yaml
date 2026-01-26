@@ -307,8 +307,8 @@ importers:
         specifier: 1.37.0
         version: 1.37.0
       '@orbs-network/twap-sdk':
-        specifier: 4.0.26
-        version: 4.0.26
+        specifier: 4.0.26-fix.1
+        version: 4.0.26-fix.1
       '@pontem/wallet-adapter-plugin':
         specifier: 0.2.1
         version: 0.2.1
@@ -4238,11 +4238,11 @@ packages:
     resolution: {integrity: sha512-JD6DerIKdJGmRp4jQyX5FlrQjA4tjOw1cvfsPAZXfOOEErMUHjPcPSICS+6WnM0nB0efSFARh0KAZss+bvExOA==}
     engines: {node: '>=14'}
 
-  '@orbs-network/twap-sdk@4.0.26':
-    resolution: {integrity: sha512-nR2reoSdOQfVRdbfJXnVmM6oWOLG9F6AmQRD1RIMs/rf55/eeeUZZMHjKS7jCJMAe1wyqDqCoZxagka4BlKcng==}
+  '@orbs-network/twap-sdk@4.0.26-fix.1':
+    resolution: {integrity: sha512-8ssUh7D8DTwMJT3DdUSnG2OOqi1gKLxeq88x4+qEM3q2p8gDJE0nWKlvRkGvqaow0HuFXkuXOdQgTLzV7BjvAg==}
 
-  '@orbs-network/twap@2.7.12':
-    resolution: {integrity: sha512-HiNBLflXrBQ3yE27rJtc0BfPBrKnCg4Mq5gseEFU1bTU7Eiw6yZpuhfIqf2DsQGBtfJTkS4MxzcbtzqFZ0KyWA==}
+  '@orbs-network/twap@2.7.29':
+    resolution: {integrity: sha512-6Va1LQZc3o5F5a0FyHozRoBJNacX4K4BfjMevlAmmnx5Sgb6YEhTYMYiIpMwzBpcRB4vMlCIEbKtzPLTcxwUsw==}
 
   '@parcel/watcher-android-arm64@2.3.0':
     resolution: {integrity: sha512-f4o9eA3dgk0XRT3XhB0UWpWpLnKgrh1IwNJKJ7UJek7eTYccQ8LR7XUWFKqw6aEq5KUNlCcGvSzKqSX/vtWVVA==}
@@ -18412,12 +18412,12 @@ snapshots:
 
   '@opentelemetry/semantic-conventions@1.37.0': {}
 
-  '@orbs-network/twap-sdk@4.0.26':
+  '@orbs-network/twap-sdk@4.0.26-fix.1':
     dependencies:
-      '@orbs-network/twap': 2.7.12
-      bignumber.js: 9.1.1
+      '@orbs-network/twap': 2.7.29
+      bignumber.js: 9.3.1
 
-  '@orbs-network/twap@2.7.12': {}
+  '@orbs-network/twap@2.7.29': {}
 
   '@parcel/watcher-android-arm64@2.3.0':
     optional: true
