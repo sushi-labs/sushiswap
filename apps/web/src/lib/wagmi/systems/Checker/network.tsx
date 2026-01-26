@@ -19,11 +19,15 @@ interface NetworkProps<TChainId extends EvmChainId | SvmChainId>
 function Network<TChainId extends EvmChainId | SvmChainId>(
   props: NetworkProps<TChainId>,
 ) {
-  const { chainId } = props
+  const { chainId, children } = props
 
-  if (!chainId || !isEvmChainId(chainId)) return null
+  if (!chainId) return null
 
-  return <EvmNetwork {...(props as NetworkProps<EvmChainId>)} />
+  return isEvmChainId(chainId) ? (
+    <EvmNetwork {...(props as NetworkProps<EvmChainId>)} />
+  ) : (
+    <>{children}</>
+  )
 }
 
 function EvmNetwork({
