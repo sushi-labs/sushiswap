@@ -41,9 +41,7 @@ import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { APPROVE_TAG_SWAP, NativeAddress } from 'src/lib/constants'
 import { sendDrilldownLog } from 'src/lib/drilldown-log'
 import type { UseTradeReturn } from 'src/lib/hooks/react-query'
-import { useUserStats } from 'src/lib/hooks/react-query/leaderboard/use-user-stats'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { useTierUi } from 'src/lib/leaderboard/tiers'
 import { logger } from 'src/lib/logger'
 import {
   warningSeverity,
@@ -70,7 +68,6 @@ import {
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
-import { ProgressBar } from '~evm/leaderboard/_ui/user-tier/progress-bar'
 import { useDetailsInteractionTracker } from '../../_ui/details-interaction-tracker-provider'
 import {
   useDerivedStateSimpleSwap,
@@ -130,14 +127,6 @@ const _SimpleSwapTradeReviewDialog: FC<{
   const { refetchChain: refetchBalances } = useRefetchBalances()
   const { data: prices } = usePrices({ chainId })
 
-  const { data: userStats } = useUserStats({
-    address: address,
-    enabled: Boolean(address),
-  })
-  const tierData = useMemo(
-    () => useTierUi(userStats?.totalPoints ?? 0),
-    [userStats?.totalPoints],
-  )
   const isWrap =
     token0?.type === 'native' &&
     token1?.wrap().address === EvmNative.fromChainId(chainId).wrap().address
@@ -612,34 +601,12 @@ const _SimpleSwapTradeReviewDialog: FC<{
         testId="make-another-swap"
         buttonText="Make another swap"
         txHash={data}
-        successIconSize={!userStats ? 132 : 64}
+        successIconSize={132}
         successMessage={`You ${
           isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'
         } ${tradeRef.current?.amountIn?.toSignificant(6)} ${token0?.symbol} ${
           isWrap ? 'to' : isUnwrap ? 'to' : 'for'
         } ${tradeRef.current?.amountOut?.toSignificant(6)} ${token1?.symbol}`}
-        customSuccessComponent={
-          !userStats ? null : (
-            <div className="flex flex-col items-center gap-6 pb-6">
-              <div className="flex items-center flex-col">
-                <div className="text-2xl font-semibold">
-                  Points earned from this trade!
-                </div>
-              </div>
-              <div className="flex flex-col items-center gap-1 w-full">
-                <p className="text-sm text-muted-foreground uppercase font-medium">
-                  {(tierData.nextTier?.minPoints ?? 0) -
-                    (userStats?.totalPoints ?? 0)}{' '}
-                  pts to next tier
-                </p>
-                <ProgressBar
-                  current={userStats?.totalPoints ?? 0}
-                  target={tierData.nextTier?.minPoints ?? 0}
-                />
-              </div>
-            </div>
-          )
-        }
       />
     </Trace>
   )
