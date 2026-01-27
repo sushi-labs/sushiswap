@@ -26,7 +26,8 @@ export const ReferralLink = () => {
           <span className="text-[#CE2AF6]">Sushi.</span>
         </p>
         <p className="max-w-xs text-sm text-muted-foreground">
-          Earn points for every referral, plus a share of their swap volume.
+          Earn points for every referral swap - 75% for you and 25% for your
+          fren.
         </p>
       </div>
       {!isConnected ? (

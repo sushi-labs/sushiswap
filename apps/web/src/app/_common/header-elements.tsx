@@ -12,10 +12,14 @@ import {
   NavigationListItem,
   NavigationMenuContent,
   NavigationMenuItem,
+  NavigationMenuLink,
   NavigationMenuPrimitive,
   NavigationMenuTrigger,
   OnramperButton,
   Separator,
+  classNames,
+  navigationElementShowMap,
+  navigationMenuTriggerStyle,
 } from '@sushiswap/ui'
 import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import { GithubIcon } from '@sushiswap/ui/icons/GithubIcon'
@@ -272,10 +276,40 @@ export const headerElements = ({
       type: NavigationElementType.Single,
     },
     {
-      title: 'Referrals',
       href: '/referrals',
       show: 'desktop',
-      type: NavigationElementType.Single,
+      type: NavigationElementType.Custom,
+      item: <ReferralLink />,
     },
   ]
+}
+
+const ReferralLink = () => {
+  return (
+    <div className="relative flex items-center justify-center h-[40px] px-0.5 rounded-xl overflow-hidden">
+      {/* rotating "border" */}
+      <div
+        className={classNames(
+          'absolute w-[200%] lg:w-[300%] h-[200%] lg:h-[300%]',
+          'animate-[spin_4s_linear_infinite]',
+          'bg-[conic-gradient(from_90deg_at_50%_50%,_rgba(204,204,204,0.5)_0deg,_rgba(255,255,255,0)_54deg,_rgba(255,255,255,0)_270deg,_rgba(204,204,204,0.5)_360deg)]',
+        )}
+      />
+      <div className="relative z-10 h-[36px] flex items-center gap-2 bg-background focus:bg-accent rounded-[10px]">
+        {/* shimmer */}
+        <div className="z-[9] transition-all absolute rounded-xl inset-0 overflow-hidden p-4 before:absolute before:inset-0 before:rotate-[-90deg] before:blur-sm lg:before:blur-md before:-translate-x-full before:animate-[shimmer_4s_infinite] before:direction-alternate before:bg-gradient-to-r before:from-transparent before:via-white before:dark:via-[#FFFFFF1A] before:to-transparent" />
+        <NavigationMenuItem
+          key={`Referrals:Custom`}
+          className={navigationElementShowMap['desktop']}
+        >
+          <NavigationMenuLink
+            href={'/referrals'}
+            className={navigationMenuTriggerStyle}
+          >
+            Referrals
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      </div>
+    </div>
+  )
 }

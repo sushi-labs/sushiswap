@@ -33,6 +33,11 @@ export const ReferralTable = () => {
     return leaderboardData.pages.flatMap((page) => page.referredUsers)
   }, [leaderboardData])
 
+  const totalCount = useMemo(() => {
+    if (!leaderboardData) return 0
+    return leaderboardData.pages[0]?.pageInfo.totalCount || 0
+  }, [leaderboardData])
+
   const state: Partial<TableState> = useMemo(() => {
     return {
       pagination: {
@@ -56,7 +61,9 @@ export const ReferralTable = () => {
       <Card id="referral-table">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Your Invites</CardTitle>
+            <CardTitle>
+              Your Invites {totalCount > 0 ? `(${totalCount})` : null}
+            </CardTitle>
             {!address ? <ConnectButton size="sm" /> : null}
           </div>
         </CardHeader>
