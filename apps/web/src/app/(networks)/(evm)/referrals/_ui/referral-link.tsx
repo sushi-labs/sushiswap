@@ -2,7 +2,7 @@
 
 import { ClipboardCopyIcon } from '@heroicons/react-v1/outline'
 import { ClipboardCheckIcon } from '@heroicons/react-v1/outline'
-import { useCopyClipboard } from '@sushiswap/hooks'
+import { useCopyClipboard, useIsMounted } from '@sushiswap/hooks'
 import { Card, IconButton, classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
@@ -11,11 +11,12 @@ import { useAccount } from 'wagmi'
 export const ReferralLink = () => {
   const { address, isConnected } = useAccount()
   const [isCopied, staticCopy] = useCopyClipboard()
+  const isMounted = useIsMounted()
 
   const trackingLink = useMemo(() => {
-    if (!address) return null
-    return `${window.location.origin}/ethereum/swap?referrer=${address}`
-  }, [address])
+    if (!address || !isMounted) return null
+    return `${window?.location?.origin}/ethereum/swap?referrer=${address}`
+  }, [address, isMounted])
 
   return (
     <Card className="flex flex-col gap-4 md:flex-row items-start md:justify-between md:items-center w-full p-6 md:p-8">

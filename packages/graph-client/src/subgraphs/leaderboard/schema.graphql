@@ -41,6 +41,26 @@ type Leaderboard {
   season: Season!
 }
 
+type ReferralInvites {
+  referredUsers: [ReferredUser!]!
+  pageInfo: PageInfo!
+  season: Season!
+}
+
+type ReferredUser {
+  address: String!
+  volumeUsd: Float!
+  referralPoints: Int!
+}
+
+type ReferrerStats {
+  rank: Int!
+  address: String!
+  totalReferralVolumeUsd: Int!
+  totalReferralPoints: Float!
+  season: Season!
+}
+
 type ChainStats {
   chainId: Int!
   chainName: String!
@@ -76,6 +96,21 @@ type Query {
   Returns volume, fees, swap count, and unique user count grouped by chain.
   """
   chainStats(season: Int): [ChainStats!]!
+
+  """
+  Get paginated referral invites for a referrer address.
+  - referrerAddress: address of the referrer
+  - season: season number (defaults to current active season)
+  - page: page number (defaults to 1)
+  - pageSize: 25 or 50 (defaults to 25)
+  """
+  referralInvites(referrerAddress: String!, season: Int, page: Int, pageSize: Int): ReferralInvites!
+
+  """
+  Get stats for a specific user address.
+  If seasons is not provided, defaults to the current active season.
+  """
+  userReferralStats(address: String!, seasons: [Int!]): [ReferrerStats!]!
 }
 
 type Mutation {

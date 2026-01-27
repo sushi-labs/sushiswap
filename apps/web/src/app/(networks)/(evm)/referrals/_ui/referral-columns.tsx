@@ -1,3 +1,4 @@
+import type { ReferredUser } from '@sushiswap/graph-client/leaderboard'
 import {
   SkeletonCircle,
   SkeletonText,
@@ -7,15 +8,14 @@ import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
 import type { ColumnDef } from '@tanstack/react-table'
 import Image from 'next/image'
 import { formatNumber, formatUSD, truncateString } from 'sushi'
-import { EvmChainId } from 'sushi/evm'
+import { type EvmAddress, EvmChainId } from 'sushi/evm'
 import { useEnsAvatar, useEnsName } from 'wagmi'
-import type { ReferralEntry } from './referral-table'
 
-export const USER_COLUMN: ColumnDef<ReferralEntry, unknown> = {
+export const USER_COLUMN: ColumnDef<ReferredUser, unknown> = {
   id: 'user',
   header: 'User',
   cell: (props) => {
-    const address = props.row.original.address
+    const address = props.row.original.address as EvmAddress
 
     const { data: ensName, isLoading: isLoadingEnsName } = useEnsName({
       chainId: EvmChainId.ETHEREUM,
@@ -64,11 +64,11 @@ export const USER_COLUMN: ColumnDef<ReferralEntry, unknown> = {
   },
 }
 
-export const POINTS_COLUMN: ColumnDef<ReferralEntry, unknown> = {
+export const POINTS_COLUMN: ColumnDef<ReferredUser, unknown> = {
   id: 'points',
   header: 'Points Earned',
   cell: (props) => {
-    const points = props.row.original.points
+    const points = props.row.original.referralPoints
     return <span className="font-medium">{formatNumber(points)}</span>
   },
   meta: {
@@ -82,11 +82,11 @@ export const POINTS_COLUMN: ColumnDef<ReferralEntry, unknown> = {
   },
 }
 
-export const VOLUME_COLUMN: ColumnDef<ReferralEntry, unknown> = {
+export const VOLUME_COLUMN: ColumnDef<ReferredUser, unknown> = {
   id: 'volumeUsd',
   header: 'Volume (All-Time)',
   cell: (props) => {
-    const volume = props.row.original.volume
+    const volume = props.row.original.volumeUsd
     return <span className="font-medium">{formatUSD(volume)}</span>
   },
   meta: {
