@@ -1,7 +1,8 @@
 'use client'
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import { Slot } from '@radix-ui/react-slot'
-import React, {
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import {
   type Dispatch,
   type FC,
   type ReactNode,
@@ -62,24 +63,41 @@ export const OnramperButton: FC<{
   )
 }
 
+type SignOnramperDataFn = (data: string) => Promise<string>
+
 interface OnramperPanelProps {
   address?: string
+  signOnramperData?: SignOnramperDataFn
   defaultCrypto?: string
 }
 
 export const OnramperPanel: FC<OnramperPanelProps> = ({
   address,
+  signOnramperData,
   defaultCrypto = 'ETH',
 }) => {
   const { open, setOpen } = useOnramperContext()
+  const [signature, setSignature] = useState<string | undefined>(undefined)
+
+  const isSignaturePending = Boolean(open && address && !signature)
+
+  useEffect(() => {
+    if (signOnramperData && open && address) {
+      signOnramperData(`wallets=eth:${address}`).then((signature) => {
+        setSignature(signature)
+      })
+    } else {
+      setSignature(undefined)
+    }
+  }, [signOnramperData, address, open])
 
   let src = `https://buy.onramper.com?themeName=sushi&apiKey=pk_prod_01GTYEN8CHRVPKES7HK2S9JXDJ&defaultCrypto=${defaultCrypto}`
-  if (address) {
-    src += `&wallets=ETH:${address}`
+  if (address && signature) {
+    src += `&wallets=ETH:${address}&signature=${signature}`
   }
 
   return (
-    <Dialog open={open} onOpenChange={() => {}}>
+    <Dialog open={open && !isSignaturePending} onOpenChange={() => {}}>
       <DialogPrimitive.Portal>
         <DialogOverlay />
         <DialogPrimitive.Content
@@ -87,6 +105,9 @@ export const OnramperPanel: FC<OnramperPanelProps> = ({
             'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-2xl md:w-full',
           )}
         >
+          <VisuallyHidden>
+            <DialogPrimitive.DialogTitle>Onramper</DialogPrimitive.DialogTitle>
+          </VisuallyHidden>
           <div className="flex justify-end">
             <IconButton
               onClick={() => setOpen(false)}
@@ -119,6 +140,8 @@ interface OnramperContext {
 const OnramperContext = createContext<OnramperContext | undefined>(undefined)
 
 interface ProviderProps {
+  signOnramperData: SignOnramperDataFn
+  address?: string
   children:
     | (({
         open,
@@ -127,14 +150,22 @@ interface ProviderProps {
     | ReactNode
 }
 
-export const OnramperProvider: FC<ProviderProps> = ({ children }) => {
+export const OnramperProvider: FC<ProviderProps> = ({
+  children,
+  address,
+  signOnramperData,
+}) => {
   const [open, setOpen] = useState(false)
   const [defaultCrypto, setDefaultCrypto] = useState('ETH')
 
   return (
     <OnramperContext.Provider value={{ open, setOpen, setDefaultCrypto }}>
       {typeof children === 'function' ? children({ open, setOpen }) : children}
-      <OnramperPanel defaultCrypto={defaultCrypto} />
+      <OnramperPanel
+        defaultCrypto={defaultCrypto}
+        signOnramperData={signOnramperData}
+        address={address}
+      />
     </OnramperContext.Provider>
   )
 }
