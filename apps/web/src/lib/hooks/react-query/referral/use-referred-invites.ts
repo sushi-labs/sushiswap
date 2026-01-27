@@ -17,7 +17,10 @@ export const useReferredInvites = ({
   enabled: boolean
 }) => {
   return useInfiniteQuery({
-    queryKey: ['useReferredInvites', { page, pageSize, season, enabled }],
+    queryKey: [
+      'useReferredInvites',
+      { page, address, pageSize, season, enabled },
+    ],
     queryFn: async ({ pageParam }) => {
       if (!address) {
         throw new Error('No address provided')

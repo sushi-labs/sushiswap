@@ -60,6 +60,7 @@ const _ReferralProvider: FC<ReferralProviderProps> = ({ children }) => {
           message,
           signature,
           userAddress: data.address,
+          chainId: data?.chainId,
         })
         const ts = Date.now()
         if (res.success) {
@@ -81,9 +82,18 @@ const _ReferralProvider: FC<ReferralProviderProps> = ({ children }) => {
             timestamp: ts,
           })
         }
-        console.log('Referral res:', res)
       } catch (error) {
-        //todo: handle error properly
+        const errMessage =
+          error instanceof Error ? error.message : 'Error accepting referral'
+        const ts = Date.now()
+        createFailedToast({
+          summary: errMessage,
+          account: data.address,
+          type: 'send',
+          chainId: data?.chainId as ChainId,
+          groupTimestamp: ts,
+          timestamp: ts,
+        })
         console.error('Error during account connection:', error)
       }
     }

@@ -6,8 +6,8 @@ import { LEADERBOARD_REQUEST_HEADERS } from '../../request-headers.js'
 
 export const AcceptReferralMutation = graphql(
   `
-mutation AcceptReferral($referralCode: String!, $message: String!, $signature: String!, $userAddress: String!) {
-  acceptReferral(referralCode: $referralCode, message: $message, signature: $signature, userAddress: $userAddress) {
+mutation AcceptReferral($referralCode: String!, $chainId: Int!, $message: String!, $signature: String!, $userAddress: String!) {
+  acceptReferral(referralCode: $referralCode, chainId: $chainId, message: $message, signature: $signature, userAddress: $userAddress) {
     message
     success
   }

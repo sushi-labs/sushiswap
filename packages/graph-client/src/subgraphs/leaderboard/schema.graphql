@@ -56,8 +56,8 @@ type ReferredUser {
 type ReferrerStats {
   rank: Int!
   address: String!
-  totalReferralVolumeUsd: Int!
-  totalReferralPoints: Float!
+  totalReferralVolumeUsd: Float!
+  totalReferralPoints: Int!
   season: Season!
 }
 
@@ -118,7 +118,7 @@ type Mutation {
   Accept a referral code.
   Returns success status and message.
   """
-  acceptReferral(referralCode: String!, message: String!, signature: String!, userAddress: String!): ReferralResult!
+  acceptReferral(referralCode: String!, message: String!, signature: String!, userAddress: String!, chainId: Int!): ReferralResult!
 }
 
 type ReferralResult {
