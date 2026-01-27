@@ -1,7 +1,15 @@
 'use client'
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
-import { Card, LinkExternal, SkeletonText } from '@sushiswap/ui'
+import {
+  Card,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+  LinkExternal,
+  SkeletonText,
+} from '@sushiswap/ui'
 import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
+import { InfoCircle } from '@sushiswap/ui/icons/InfoCircle'
 import { XIcon } from '@sushiswap/ui/icons/XIcon'
 import { useUserReferralStats } from 'src/lib/hooks/react-query/referral/use-user-referral-stats'
 import { formatNumber, formatUSD } from 'sushi'
@@ -38,6 +46,7 @@ export const Stats = () => {
                   ? `#${data.currentRank}`
                   : '-'
             }
+            hoverCardText="Leaderboard is determined by your referred traders volume. Start referring to get ranked!"
           />
           <_StatItem
             title="Points Earned"
@@ -65,10 +74,29 @@ export const Stats = () => {
   )
 }
 
-const _StatItem = ({ title, value }: { title: string; value: string }) => {
+const _StatItem = ({
+  title,
+  value,
+  hoverCardText,
+}: { title: string; value: string; hoverCardText?: string }) => {
   return (
     <Card className="flex p-5 flex-col gap-1 w-full">
-      <p className="text-muted-foreground">{title}</p>
+      <div className="flex items-center gap-1">
+        <p className="text-muted-foreground">{title}</p>
+        {hoverCardText ? (
+          <HoverCard openDelay={0} closeDelay={0}>
+            <HoverCardTrigger tabIndex={0}>
+              <InfoCircle className="w-4 h-4 text-muted-foreground cursor-pointer" />
+            </HoverCardTrigger>
+            <HoverCardContent
+              side="top"
+              className="!px-3 !py-1.5 text-xs max-w-xs"
+            >
+              {hoverCardText}
+            </HoverCardContent>
+          </HoverCard>
+        ) : null}
+      </div>
       <p className="text-3xl font-medium">{value}</p>
     </Card>
   )
