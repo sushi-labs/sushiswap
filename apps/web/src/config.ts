@@ -40,7 +40,7 @@ export const BLADE_SUPPORTED_NETWORKS = BLADE_SUPPORTED_CHAIN_IDS.filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
 
-export const NEW_CHAIN_IDS = [EvmChainId.MONAD] as const
+export const NEW_CHAIN_IDS = [EvmChainId.MONAD, EvmChainId.XLAYER] as const
 
 export const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
@@ -76,6 +76,7 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.BERACHAIN,
   ChainId.PLASMA,
   ChainId.MONAD,
+  ChainId.XLAYER,
   ChainId.CRONOS,
   ChainId.MODE,
   ChainId.KAVA,
