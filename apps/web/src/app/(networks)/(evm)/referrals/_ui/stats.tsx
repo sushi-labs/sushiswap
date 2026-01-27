@@ -32,7 +32,11 @@ export const Stats = () => {
           <_StatItem
             title="Leaderboard Rank"
             value={
-              !address ? '-' : data?.currentRank ? `#${data.currentRank}` : '-'
+              !address || !data?.totalVolumeUsd
+                ? '-'
+                : data?.currentRank
+                  ? `#${data.currentRank}`
+                  : '-'
             }
           />
           <_StatItem
