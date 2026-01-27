@@ -39,14 +39,12 @@ export const OnramperButton: FC<{
   className?: string
   chainId?: number
 }> = ({ children, className, chainId }) => {
-  const { setOpen, setDefaultCrypto } = useOnramperContext()
+  const { setOpen } = useOnramperContext()
 
   const onClick = useCallback(() => {
     sendAnalyticsEvent(InterfaceEventName.FIAT_ONRAMP_WIDGET_OPENED)
-
-    if (chainId === -3) setDefaultCrypto('kda_kadena')
     setOpen(true)
-  }, [chainId, setDefaultCrypto, setOpen])
+  }, [setOpen])
 
   return isOnrampOverrideChainId(chainId) ? (
     <Link
@@ -65,14 +63,18 @@ export const OnramperButton: FC<{
 
 type SignOnramperDataFn = (data: string) => Promise<string>
 
+type OnramperNamespace = 'eth' // | 'btc'
+
 interface OnramperPanelProps {
   address?: string
+  namespace?: OnramperNamespace
   signOnramperData?: SignOnramperDataFn
   defaultCrypto?: string
 }
 
 export const OnramperPanel: FC<OnramperPanelProps> = ({
   address,
+  namespace = 'eth',
   signOnramperData,
   defaultCrypto = 'ETH',
 }) => {
@@ -83,17 +85,17 @@ export const OnramperPanel: FC<OnramperPanelProps> = ({
 
   useEffect(() => {
     if (signOnramperData && open && address) {
-      signOnramperData(`wallets=eth:${address}`).then((signature) => {
+      signOnramperData(`wallets=${namespace}:${address}`).then((signature) => {
         setSignature(signature)
       })
     } else {
       setSignature(undefined)
     }
-  }, [signOnramperData, address, open])
+  }, [signOnramperData, namespace, address, open])
 
   let src = `https://buy.onramper.com?themeName=sushi&apiKey=pk_prod_01GTYEN8CHRVPKES7HK2S9JXDJ&defaultCrypto=${defaultCrypto}`
   if (address && signature) {
-    src += `&wallets=ETH:${address}&signature=${signature}`
+    src += `&wallets=${namespace}:${address}&signature=${signature}`
   }
 
   return (
@@ -142,6 +144,7 @@ const OnramperContext = createContext<OnramperContext | undefined>(undefined)
 interface ProviderProps {
   signOnramperData: SignOnramperDataFn
   address?: string
+  namespace?: OnramperNamespace
   children:
     | (({
         open,
@@ -153,6 +156,7 @@ interface ProviderProps {
 export const OnramperProvider: FC<ProviderProps> = ({
   children,
   address,
+  namespace,
   signOnramperData,
 }) => {
   const [open, setOpen] = useState(false)
@@ -165,6 +169,7 @@ export const OnramperProvider: FC<ProviderProps> = ({
         defaultCrypto={defaultCrypto}
         signOnramperData={signOnramperData}
         address={address}
+        namespace={namespace}
       />
     </OnramperContext.Provider>
   )
