@@ -11,15 +11,17 @@ export function useRefetchBalances() {
   } = useBalanceProvider()
 
   return useMemo(() => {
-    return (chainId: EvmChainId | SvmChainId) => {
-      if (isSvmChainId(chainId)) {
-        queryClient.refetchQueries({
-          queryKey: ['svm-balances', { chainId }],
-          exact: false,
-        })
-      } else {
-        refetchChain(chainId)
-      }
+    return {
+      refetchChain: (chainId: EvmChainId | SvmChainId) => {
+        if (isSvmChainId(chainId)) {
+          queryClient.refetchQueries({
+            queryKey: ['svm-balances', { chainId }],
+            exact: false,
+          })
+        } else {
+          refetchChain(chainId)
+        }
+      },
     }
   }, [queryClient.refetchQueries, refetchChain])
 }
