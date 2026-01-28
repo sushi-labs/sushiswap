@@ -46,6 +46,7 @@ import { SonicNaked } from './SonicNaked'
 import { TaikoNaked } from './TaikoNaked'
 import { ThunderCoreNaked } from './ThunderCoreNaked'
 import { TronNaked } from './TronNaked'
+import { XLayerNaked } from './XLayerNaked'
 import { ZKLinkNaked } from './ZKLinkNaked'
 import { ZKSyncNaked } from './ZKSyncNaked'
 import { ZetaChainNaked } from './ZetaChainNaked'
@@ -100,6 +101,7 @@ export * from './SonicNaked'
 export * from './TaikoNaked'
 export * from './TelosNaked'
 export * from './TronNaked'
+export * from './XLayerNaked'
 export * from './ZKLinkNaked'
 export * from './ZKSyncNaked'
 export * from './ZetaChainNaked'
@@ -151,6 +153,7 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.PLASMA]: PlasmaNaked,
   [ChainId.MONAD]: MonadNaked,
   [ChainId.MEGAETH]: MegaETHNaked,
+  [ChainId.XLAYER]: XLayerNaked,
   [ChainId.APTOS]: AptosNaked,
   [ChainId.TRON]: TronNaked,
   [ChainId.KADENA]: KadenaNaked,

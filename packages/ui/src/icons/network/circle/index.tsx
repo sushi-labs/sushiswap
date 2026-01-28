@@ -45,6 +45,7 @@ import { SonicCircle } from './SonicCircle'
 import { TaikoCircle } from './TaikoCircle'
 import { ThunderCoreCircle } from './ThunderCoreCircle'
 import { TronCircle } from './TronCircle'
+import { XLayerCircle } from './XLayerCircle'
 import { ZKLinkCircle } from './ZKLinkCircle'
 import { ZKSyncCircle } from './ZKSyncCircle'
 import { ZetaChainCircle } from './ZetaChainCircle'
@@ -100,6 +101,7 @@ export * from './TaikoCircle'
 export * from './TelosCircle'
 export * from './ThunderCoreCircle'
 export * from './TronCircle'
+export * from './XLayerCircle'
 export * from './ZKLinkCircle'
 export * from './ZKSyncCircle'
 export * from './ZetaChainCircle'
@@ -151,6 +153,7 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.PLASMA]: PlasmaCircle,
   [ChainId.MONAD]: MonadCircle,
   [ChainId.MEGAETH]: MegaETHCircle,
+  [ChainId.XLAYER]: XLayerCircle,
   [ChainId.APTOS]: AptosCircle,
   [ChainId.TRON]: TronCircle,
   [ChainId.KADENA]: KadenaCircle,

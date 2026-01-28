@@ -133,7 +133,12 @@ export const publicTransports = {
   [EvmChainId.MONAD]: http(
     `https://lb.drpc.org/ogrpc?network=monad-mainnet&dkey=${drpcId}`,
   ),
-  [EvmChainId.MEGAETH]: http(`https://mainnet.megaeth.com/rpc`),
+  [EvmChainId.MEGAETH]: http(
+    `https://lb.drpc.org/ogrpc?network=megaeth&dkey=${drpcId}`,
+  ),
+  [EvmChainId.XLAYER]: http(
+    `https://lb.drpc.org/ogrpc?network=xlayer&dkey=${drpcId}`,
+  ),
   /* Testnets */
   [EvmChainId.ARBITRUM_SEPOLIA]: http('https://sepolia-rollup.arbitrum.io/rpc'),
   // [EvmChainId.POLYGON_TESTNET]: http('https://rpc.ankr.com/polygon_mumbai'),
