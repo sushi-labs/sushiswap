@@ -49,7 +49,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
         </div>
         {TRADE_TABLES_TABS.map((tab) => (
           <TabsContent key={tab.value} value={tab.value}>
-            <div className="p-2 !pt-0">
+            <div className="p-2 !pt-0 max-h-[380px] hide-scrollbar overflow-y-auto">
               <div>{ActiveContent ? <ActiveContent /> : null}</div>
             </div>
           </TabsContent>
