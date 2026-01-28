@@ -37,6 +37,7 @@ function _WalletProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo(
     () => ({
       connections,
+      isConnected: Boolean(connections.length > 0),
       isPending: Boolean(pendingWalletId),
     }),
     [connections, pendingWalletId],

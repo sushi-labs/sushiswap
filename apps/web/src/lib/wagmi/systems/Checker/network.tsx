@@ -5,8 +5,7 @@ import { createErrorToast } from '@sushiswap/notifications'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import type { ReactNode } from 'react'
-import { getChainById } from 'sushi'
-import type { EvmChainId } from 'sushi/evm'
+import { type EvmChainId, getEvmChainById, isEvmChainId } from 'sushi/evm'
 import type { SvmChainId } from 'sushi/svm'
 import { useConnection, useSwitchChain } from 'wagmi'
 
@@ -17,7 +16,21 @@ interface NetworkProps<TChainId extends EvmChainId | SvmChainId>
   hideChainName?: boolean
 }
 
-function Network<TChainId extends EvmChainId | SvmChainId>({
+function Network<TChainId extends EvmChainId | SvmChainId>(
+  props: NetworkProps<TChainId>,
+) {
+  const { chainId, children } = props
+
+  if (!chainId) return null
+
+  return isEvmChainId(chainId) ? (
+    <EvmNetwork {...(props as NetworkProps<EvmChainId>)} />
+  ) : (
+    <>{children}</>
+  )
+}
+
+function EvmNetwork({
   chainId,
   fullWidth = true,
   size = 'xl',
@@ -25,7 +38,7 @@ function Network<TChainId extends EvmChainId | SvmChainId>({
   hoverCardContent,
   hideChainName = false,
   ...rest
-}: NetworkProps<TChainId>) {
+}: NetworkProps<EvmChainId>) {
   const { chain } = useConnection()
   const { mutateAsync: switchChainAsync } = useSwitchChain({
     mutation: {
@@ -50,7 +63,7 @@ function Network<TChainId extends EvmChainId | SvmChainId>({
       >
         {hideChainName
           ? 'Switch Network'
-          : `Switch to ${getChainById(chainId).name}`}
+          : `Switch to ${getEvmChainById(chainId).name}`}
       </Button>
     ) : (
       <HoverCard openDelay={0} closeDelay={0}>
@@ -63,7 +76,7 @@ function Network<TChainId extends EvmChainId | SvmChainId>({
         >
           {hideChainName
             ? 'Switch Network'
-            : `Switch to ${getChainById(chainId).name}`}
+            : `Switch to ${getEvmChainById(chainId).name}`}
           <HoverCardTrigger>
             <InformationCircleIcon width={16} height={16} />
           </HoverCardTrigger>
