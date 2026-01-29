@@ -49,7 +49,7 @@ export const Stats = () => {
                     ? `#${data.currentRank}`
                     : '-'
             }
-            hoverCardText="Leaderboard is determined by your referred fren's trades. Start referring to get ranked!"
+            hoverCardText="Leaderboard is determined by your referred frens' trades. Start referring to get ranked!"
           />
           <_StatItem
             title="Points Earned"
