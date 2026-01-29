@@ -1,5 +1,6 @@
 'use client'
 import { type FC, createContext, useContext, useMemo } from 'react'
+import { useUserFundings } from 'src/lib/perps/subscription/use-user-fundings'
 import { useUserHistoricalOrders } from 'src/lib/perps/subscription/use-user-historical-orders'
 import { useWebData2 } from 'src/lib/perps/subscription/use-web-data-2'
 import { useAccount } from 'wagmi'
@@ -7,6 +8,7 @@ interface State {
   state: {
     webData2Query: ReturnType<typeof useWebData2>
     userHistoricalOrdersQuery: ReturnType<typeof useUserHistoricalOrders>
+    userFundingsQuery: ReturnType<typeof useUserFundings>
   }
 }
 
@@ -25,7 +27,9 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
   const webData2Query = useWebData2({
     address,
   })
-
+  const userFundingsQuery = useUserFundings({
+    address,
+  })
   return (
     <UserContext.Provider
       value={useMemo(() => {
@@ -33,9 +37,10 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
           state: {
             webData2Query,
             userHistoricalOrdersQuery,
+            userFundingsQuery,
           },
         }
-      }, [webData2Query, userHistoricalOrdersQuery])}
+      }, [webData2Query, userHistoricalOrdersQuery, userFundingsQuery])}
     >
       {children}
     </UserContext.Provider>

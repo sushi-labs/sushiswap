@@ -1,0 +1,179 @@
+import { SkeletonText, classNames } from '@sushiswap/ui'
+import type { ColumnDef } from '@tanstack/react-table'
+import { format } from 'date-fns'
+import type { FundingHistoryItemType } from 'src/lib/perps/use-funding-history'
+import {
+  getTextColorClass,
+  getTextColorClassForHover,
+} from 'src/lib/perps/utils'
+import { useAssetState } from '../../asset-state-provider'
+
+export const TIME_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
+  id: 'timestamp',
+  header: 'Time',
+  accessorFn: (row) => row.timestamp,
+  sortingFn: ({ original: rowA }, { original: rowB }) =>
+    rowA.timestamp - rowB.timestamp,
+  cell: (props) => {
+    const timestamp = props.row.original.timestamp
+
+    return (
+      <span className="font-medium whitespace-nowrap">
+        {format(timestamp, 'M/d/yyyy - HH:mm:ss')}
+      </span>
+    )
+  },
+  meta: {
+    body: {
+      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
+      skeleton: (
+        <div className="w-[80px]">
+          <SkeletonText fontSize="lg" />
+        </div>
+      ),
+    },
+  },
+}
+
+export const COIN_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
+  id: 'coin',
+  header: 'Coin',
+  cell: (props) => {
+    const {
+      mutate: { setActiveAsset },
+    } = useAssetState()
+    const coin = props.row.original.coin
+    const side = props.row.original.side
+
+    return (
+      <button
+        onClick={(e) => {
+          e.stopPropagation()
+          setActiveAsset(coin)
+        }}
+        type="button"
+        className={classNames(
+          'font-bold whitespace-nowrap transition-colors',
+          getTextColorClassForHover(side === 'short' ? -1 : 1),
+        )}
+      >
+        {coin}
+      </button>
+    )
+  },
+  meta: {
+    body: {
+      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
+      skeleton: (
+        <div className="w-[80px]">
+          <SkeletonText fontSize="lg" />
+        </div>
+      ),
+    },
+  },
+}
+
+export const SIZE_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
+  id: 'size',
+  header: 'Size',
+  cell: (props) => {
+    const coin = props.row.original.coin
+    const size = props.row.original.size
+    return (
+      <span className="font-medium whitespace-nowrap">
+        {size} {coin}
+      </span>
+    )
+  },
+  meta: {
+    body: {
+      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
+      skeleton: (
+        <div className="w-[80px]">
+          <SkeletonText fontSize="lg" />
+        </div>
+      ),
+    },
+  },
+}
+
+export const SIDE_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
+  id: 'side',
+  header: 'Position Side',
+  cell: (props) => {
+    const side = props.row.original.side
+
+    return (
+      <span
+        className={classNames(
+          'font-medium whitespace-nowrap capitalize',
+          getTextColorClass(side === 'short' ? -1 : 1),
+        )}
+      >
+        {side}
+      </span>
+    )
+  },
+  meta: {
+    body: {
+      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
+      skeleton: (
+        <div className="w-[80px]">
+          <SkeletonText fontSize="lg" />
+        </div>
+      ),
+    },
+  },
+}
+
+export const PAYMENT_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
+  id: 'payment',
+  header: 'Payment',
+  cell: (props) => {
+    const payment = Number.parseFloat(props.row.original.payment)
+
+    return (
+      <span
+        className={classNames(
+          'font-medium whitespace-nowrap capitalize',
+          getTextColorClass(payment),
+        )}
+      >
+        {payment.toFixed(4)} USDC
+      </span>
+    )
+  },
+  meta: {
+    body: {
+      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
+      skeleton: (
+        <div className="w-[80px]">
+          <SkeletonText fontSize="lg" />
+        </div>
+      ),
+    },
+  },
+}
+export const RATE_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
+  id: 'rate',
+  header: 'Rate',
+  cell: (props) => {
+    const rate = Number.parseFloat(props.row.original.rate)
+
+    return (
+      <span className={classNames('font-medium whitespace-nowrap capitalize')}>
+        {(rate * 100).toFixed(4)}%
+      </span>
+    )
+  },
+  meta: {
+    body: {
+      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
+      skeleton: (
+        <div className="w-[80px]">
+          <SkeletonText fontSize="lg" />
+        </div>
+      ),
+    },
+  },
+}
