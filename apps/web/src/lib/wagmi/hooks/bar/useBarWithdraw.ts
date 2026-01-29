@@ -3,14 +3,10 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
 import { logger } from 'src/lib/logger'
+import { prepareLeaveSushiBarTx } from 'src/lib/stake'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { Amount } from 'sushi'
-import {
-  EvmChainId,
-  type EvmToken,
-  XSUSHI_ADDRESS,
-  xsushiAbi_leave,
-} from 'sushi/evm'
+import { EvmChainId, type EvmToken, addGasMargin } from 'sushi/evm'
 import {
   useAccount,
   usePublicClient,
@@ -21,12 +17,14 @@ import type { SendTransactionReturnType } from 'wagmi/actions'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 
 interface UseBarWithdrawParams {
-  amount?: Amount<EvmToken>
+  amountIn: Amount<EvmToken> | undefined
+  amountOut: Amount<EvmToken> | undefined
   enabled?: boolean
 }
 
 export function useBarWithdraw({
-  amount,
+  amountIn,
+  amountOut,
   enabled = true,
 }: UseBarWithdrawParams) {
   const { address } = useAccount()
@@ -36,7 +34,7 @@ export function useBarWithdraw({
 
   const onSuccess = useCallback(
     (data: SendTransactionReturnType) => {
-      if (!amount) return
+      if (!amountIn) return
 
       const receipt = client.waitForTransactionReceipt({ hash: data })
       receipt.then(() => {
@@ -51,7 +49,7 @@ export function useBarWithdraw({
         txHash: data,
         promise: receipt,
         summary: {
-          pending: `Unstaking ${amount.toSignificant(6)} XSUSHI`,
+          pending: `Unstaking ${amountIn.toSignificant(6)} XSUSHI`,
           completed: 'Successfully unstaked XSUSHI',
           failed: 'Something went wrong when unstaking XSUSHI',
         },
@@ -59,7 +57,7 @@ export function useBarWithdraw({
         timestamp: ts,
       })
     },
-    [refetchBalances, address, amount, client],
+    [refetchBalances, address, amountIn, client],
   )
 
   const onError = useCallback((e: Error) => {
@@ -74,13 +72,17 @@ export function useBarWithdraw({
     createErrorToast(e?.message, true)
   }, [])
 
+  const prepareTx = useMemo(
+    () =>
+      amountIn && amountOut && address
+        ? prepareLeaveSushiBarTx(amountIn, amountOut, address)
+        : {},
+    [amountIn, amountOut, address],
+  )
+
   const { data: simulation } = useSimulateContract({
-    address: XSUSHI_ADDRESS[EvmChainId.ETHEREUM],
-    abi: xsushiAbi_leave,
-    functionName: 'leave',
-    chainId: EvmChainId.ETHEREUM,
-    args: amount ? [amount.amount] : undefined,
-    query: { enabled },
+    ...prepareTx,
+    query: { enabled: Boolean(enabled && amountIn && amountOut && address) },
   })
 
   const { writeContractAsync, ...rest } = useWriteContract({
@@ -95,7 +97,10 @@ export function useBarWithdraw({
 
     return async () => {
       try {
-        await writeContractAsync(simulation.request)
+        const gas = simulation.request.gas
+          ? addGasMargin(simulation.request.gas)
+          : undefined
+        await writeContractAsync({ ...simulation.request, gas })
       } catch {}
     }
   }, [writeContractAsync, simulation])
