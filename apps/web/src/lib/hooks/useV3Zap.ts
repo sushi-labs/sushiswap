@@ -9,7 +9,7 @@ import {
   type SushiSwapV3Pool,
 } from 'sushi/evm'
 import { type Address, stringify } from 'viem'
-import { z } from 'zod'
+import * as z from 'zod'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { NativeAddress } from '../constants'
 

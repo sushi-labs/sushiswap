@@ -2,7 +2,7 @@
 
 import { classNames } from '@sushiswap/ui'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { isWNativeSupported } from 'sushi/evm'
+import { isEvmWNativeSupported } from 'sushi/evm'
 import {
   useDerivedStateTwap,
   useTwapTradeErrors,
@@ -31,7 +31,7 @@ export const TwapToken0Input = () => {
       onChange={setSwapAmount}
       currency={token0}
       currencyLoading={isLoading}
-      allowNative={isWNativeSupported(chainId)}
+      allowNative={isEvmWNativeSupported(chainId)}
       label="You're selling"
     />
   )

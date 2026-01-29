@@ -26,10 +26,10 @@ import {
   EvmNative,
   defaultCurrency,
   defaultQuoteCurrency,
-  isWNativeSupported,
+  isEvmWNativeSupported,
 } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
-import { useAccount, useGasPrice } from 'wagmi'
+import { useConnection, useGasPrice } from 'wagmi'
 
 const getTokenAsString = (token: EvmCurrency | string) =>
   typeof token === 'string'
@@ -82,7 +82,7 @@ const DerivedstateSimpleSwapProvider: FC<
 > = ({ children }) => {
   const { push } = useRouter()
   const { chainId: _chainId } = useParams()
-  const { address } = useAccount()
+  const { address } = useConnection()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [tokenTax, setTokenTax] = useState<Percent | false | undefined>(
@@ -286,12 +286,12 @@ const DerivedstateSimpleSwapProvider: FC<
         const swapAmountString = defaultedParams.get('swapAmount') || ''
         const _token0 =
           defaultedParams.get('token0') === 'NATIVE' &&
-          isWNativeSupported(chainId)
+          isEvmWNativeSupported(chainId)
             ? EvmNative.fromChainId(chainId)
             : token0
         const _token1 =
           defaultedParams.get('token1') === 'NATIVE' &&
-          isWNativeSupported(chainId)
+          isEvmWNativeSupported(chainId)
             ? EvmNative.fromChainId(chainId)
             : token1
 

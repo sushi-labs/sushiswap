@@ -34,7 +34,7 @@ import {
   isEvmChainId,
 } from 'sushi/evm'
 import { type Address, isAddress, zeroAddress } from 'viem'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 
 const getTokenAsString = (token: EvmCurrency | string) =>
   typeof token === 'string'
@@ -403,7 +403,7 @@ const useCrossChainTradeRoutes = () => {
   } = useDerivedStateCrossChainSwap()
 
   const [slippagePercent] = useSlippageTolerance()
-  const { address } = useAccount()
+  const { address } = useConnection()
 
   const query = _useCrossChainTradeRoutes({
     fromAmount: swapAmount,

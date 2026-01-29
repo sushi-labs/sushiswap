@@ -10,10 +10,10 @@ import {
   type EvmID,
   EvmNative,
   addGasMargin,
+  isEvmWNativeSupported,
   isLsd,
   isRedSnwapperChainId,
   isStable,
-  isWNativeSupported,
   isWrapOrUnwrap,
 } from 'sushi/evm'
 import { stringify, zeroAddress } from 'viem'
@@ -147,7 +147,7 @@ export const useTradeQuote = (variables: UseTradeParams) => {
 
     if (prices) {
       if (
-        isWNativeSupported(chainId) &&
+        isEvmWNativeSupported(chainId) &&
         EvmNative.fromChainId(chainId).wrap().address !== zeroAddress
       ) {
         result[0] = prices.getFraction(

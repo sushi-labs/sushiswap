@@ -16,7 +16,7 @@ import {
   type SushiSwapV3ChainId,
   unwrapEvmToken,
 } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { SelectPricesWidget } from '~evm/[chainId]/_ui/select-prices-widget'
 import { ConcentratedLiquidityWidget } from '~evm/[chainId]/pool/v3/_ui/concentrated-liquidity-widget'
 
@@ -26,7 +26,7 @@ interface NewPositionProps {
 }
 
 export const NewPosition: FC<NewPositionProps> = ({ address, chainId }) => {
-  const { address: account } = useAccount()
+  const { address: account } = useConnection()
 
   const [invertTokens, setInvertTokens] = useState(false)
 

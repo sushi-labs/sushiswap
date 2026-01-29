@@ -230,8 +230,8 @@ export const useV3Migrate = ({
   }, [])
 
   const {
-    writeContractAsync,
-    writeContract: _,
+    mutateAsync: writeContractAsync,
+    mutate: _,
     ...rest
   } = useWriteContract({
     mutation: {

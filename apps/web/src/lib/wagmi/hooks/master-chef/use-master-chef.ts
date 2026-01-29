@@ -23,8 +23,8 @@ import {
 } from 'sushi/evm'
 import { type Address, encodeFunctionData } from 'viem'
 import {
-  useAccount,
   useBlockNumber,
+  useConnection,
   usePublicClient,
   useReadContracts,
   useSendTransaction,
@@ -61,7 +61,7 @@ export const useMasterChef: UseMasterChef = ({
   token,
   enabled = true,
 }) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const client = usePublicClient()
   const contract = useMasterChefContract(chainId, chef)
 
@@ -335,7 +335,7 @@ export const useMasterChef: UseMasterChef = ({
   }, [address, chainId, chef, contract, data, pendingSushi, pid, sushiBalance])
 
   const {
-    sendTransaction: _harvest,
+    mutate: _harvest,
     isPending: isWritePending,
     isError: isWriteError,
   } = useSendTransaction({

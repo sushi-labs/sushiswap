@@ -1,7 +1,7 @@
 import type { TokenListChainId } from '@sushiswap/graph-client/data-api'
 import { List } from '@sushiswap/ui'
 import type { EvmCurrency } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useMyTokens } from '../hooks/use-my-tokens'
 import {
@@ -35,7 +35,7 @@ export function TokenSelectorMyTokens({
   selected,
   includeNative,
 }: TokenSelectorMyTokens) {
-  const { address } = useAccount()
+  const { address } = useConnection()
 
   const { data, isError, isLoading } = useMyTokens({
     chainId,

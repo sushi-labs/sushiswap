@@ -64,7 +64,7 @@ import { Amount, ZERO, formatNumber, formatUSD } from 'sushi'
 import { EvmNative, getEvmChainById, shortenEvmAddress } from 'sushi/evm'
 import { type SendTransactionReturnType, stringify } from 'viem'
 import {
-  useAccount,
+  useConnection,
   useEstimateGas,
   usePublicClient,
   useSendTransaction,
@@ -106,7 +106,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
 }> = ({ children }) => {
   const [showMore, setShowMore] = useState<boolean>(false)
   const [slippagePercent] = useSlippageTolerance()
-  const { address, chain } = useAccount()
+  const { address, chain } = useConnection()
   const {
     mutate: { setTradeId, setSwapAmount },
     state: {
@@ -424,7 +424,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
   }, [])
 
   const {
-    sendTransactionAsync,
+    mutateAsync: sendTransactionAsync,
     isPending: isWritePending,
     data: hash,
     reset,

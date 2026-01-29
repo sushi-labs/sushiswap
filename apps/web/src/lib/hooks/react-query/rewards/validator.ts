@@ -1,6 +1,6 @@
 import { sz } from 'sushi'
 import { type MerklChainId, isMerklChainId } from 'sushi/evm'
-import z from 'zod'
+import * as z from 'zod'
 
 const merklRewardsTokenValidator = z.object({
   address: sz.evm.address(),

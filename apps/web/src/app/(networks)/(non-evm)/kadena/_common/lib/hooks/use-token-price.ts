@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import type { KvmToken } from 'sushi/kvm'
-import { z } from 'zod'
+import * as z from 'zod'
 import { STABLE_TOKENS } from '~kadena/_common/constants/token-list'
 import { getKdaPrice } from './use-kda-price'
 

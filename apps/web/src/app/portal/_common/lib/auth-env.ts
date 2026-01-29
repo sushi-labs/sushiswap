@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from 'zod'
 
 const authSchema = z.object({
   AUTH_SESSION_SECRET: z.string(),

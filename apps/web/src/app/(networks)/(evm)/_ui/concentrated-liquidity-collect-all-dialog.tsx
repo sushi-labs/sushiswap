@@ -40,7 +40,7 @@ import {
   useSendTransaction,
   useWaitForTransactionReceipt,
 } from 'wagmi'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { usePublicClient } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 
@@ -73,7 +73,7 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
   ConcentratedLiquidityCollectAllDialog
 > = ({ positions, chainId, account, children }) => {
   const { open: isOpen } = useDialog(DialogType.Review)
-  const { chain } = useAccount()
+  const { chain } = useConnection()
   const client = usePublicClient()
   const { refetchChain: refetchBalances } = useRefetchBalances()
   const [receiveWrapped, setReceiveWrapped] = useState(false)
@@ -224,7 +224,7 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
   })
 
   const {
-    sendTransactionAsync,
+    mutateAsync: sendTransactionAsync,
     isPending: isWritePending,
     data: hash,
   } = useSendTransaction({
