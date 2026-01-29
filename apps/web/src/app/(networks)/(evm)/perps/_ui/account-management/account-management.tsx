@@ -24,7 +24,16 @@ import { Withdraw } from './withdraw'
 export const AccountManagement = ({ className }: { className?: string }) => {
   const {
     state: {
-      webData2Query: { data, isLoading, error },
+      webData2Query: {
+        data: webData2,
+        isLoading: isLoadingWebData2,
+        error: errorWebData2,
+      },
+      allDexClearinghouseStateQuery: {
+        data: allDexClearinghouseState,
+        isLoading: allDexLoading,
+        error: allDexError,
+      },
     },
   } = useUserState()
   const {
@@ -32,11 +41,13 @@ export const AccountManagement = ({ className }: { className?: string }) => {
       assetListQuery: { data: assetList },
     },
   } = useAssetListState()
+  const isLoading = isLoadingWebData2 || allDexLoading
+  const error = errorWebData2 || allDexError
 
   const spotEquity = useMemo(() => {
-    if (!data) return 0
+    if (!webData2) return 0
     return (
-      data?.spotState?.balances.reduce((acc, asset) => {
+      webData2?.spotState?.balances.reduce((acc, asset) => {
         const balance = Number(asset?.total) ?? 0
         if (asset.coin === 'USDC') {
           return acc + balance
@@ -51,47 +62,65 @@ export const AccountManagement = ({ className }: { className?: string }) => {
         return acc + val
       }, 0) ?? 0
     )
-  }, [data, assetList])
-
-  const perpsEquity = useMemo(() => {
-    if (!data) return 0
-    return Number(data?.clearinghouseState.marginSummary.accountValue ?? 0)
-  }, [data])
+  }, [webData2, assetList])
 
   const unrelaizedPnL = useMemo(() => {
-    if (!data) return 0
-    return data.clearinghouseState.assetPositions.reduce((posAcc, pos) => {
-      return posAcc + Number(pos.position.unrealizedPnl ?? 0)
-    }, 0)
-  }, [data])
+    if (!allDexClearinghouseState) return 0
+    return allDexClearinghouseState.clearinghouseStates.reduce(
+      (posAcc, [_dex, pos]) => {
+        return pos.assetPositions.reduce((assetAcc, assetPos) => {
+          const unrealizedPnl = Number(assetPos.position.unrealizedPnl ?? 0)
+          return assetAcc + unrealizedPnl
+        }, posAcc)
+      },
+      0,
+    )
+  }, [allDexClearinghouseState])
+
+  const perpsEquity = useMemo(() => {
+    if (!allDexClearinghouseState) return 0
+    return allDexClearinghouseState?.clearinghouseStates.reduce(
+      (posAcc, [_dex, pos]) => {
+        return Number(pos.marginSummary?.accountValue ?? 0) + posAcc
+      },
+      0,
+    )
+  }, [allDexClearinghouseState])
 
   const perpsBalance = useMemo(() => {
-    if (!data) return 0
-    return (
-      Number(data?.clearinghouseState.marginSummary.accountValue ?? 0) -
-      unrelaizedPnL
-    )
-  }, [data, unrelaizedPnL])
+    if (!unrelaizedPnL || !perpsEquity) return 0
+    return perpsEquity - unrelaizedPnL
+  }, [perpsEquity, unrelaizedPnL])
 
   const maintenanceMargin = useMemo(() => {
-    if (!data) return 0
-    return Number(data.clearinghouseState.crossMaintenanceMarginUsed ?? 0)
-  }, [data])
+    if (!allDexClearinghouseState) return 0
+    return (
+      allDexClearinghouseState?.clearinghouseStates?.reduce(
+        (posAcc, [_dex, pos]) => {
+          return Number(pos.crossMaintenanceMarginUsed ?? 0) + posAcc
+        },
+        0,
+      ) || 0
+    )
+  }, [allDexClearinghouseState])
 
   const totalCrossMarginRatio = useMemo(() => {
-    if (!data) return 0
+    if (!perpsEquity) return 0
     return (maintenanceMargin / (perpsEquity || 1)) * 100
-  }, [maintenanceMargin, perpsEquity, data])
+  }, [maintenanceMargin, perpsEquity])
 
   const crossAccountLeverage = useMemo(() => {
-    if (!data) return 0
-    const totalNtlPos = Number(
-      data?.clearinghouseState.marginSummary?.totalNtlPos ?? 0,
-    )
-    const accountValue =
-      Number(data.clearinghouseState.marginSummary?.accountValue) || 1 //guard for 0
-    return totalNtlPos / accountValue
-  }, [data])
+    if (!perpsEquity || !allDexClearinghouseState) return 0
+    const totalNtlPos =
+      allDexClearinghouseState?.clearinghouseStates.reduce(
+        (posAcc, [_dex, pos]) => {
+          return Number(pos.marginSummary?.totalNtlPos ?? 0) + posAcc
+        },
+        0,
+      ) || 0
+
+    return totalNtlPos / (perpsEquity || 1)
+  }, [perpsEquity, allDexClearinghouseState])
 
   return (
     <Card

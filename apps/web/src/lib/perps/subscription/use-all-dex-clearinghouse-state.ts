@@ -1,7 +1,6 @@
 import {
   type AllDexsClearinghouseStateEvent,
   allDexsClearinghouseState,
-  webData3,
 } from '@nktkas/hyperliquid/api/subscription'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'

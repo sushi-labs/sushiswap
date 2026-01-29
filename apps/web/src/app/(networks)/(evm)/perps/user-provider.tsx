@@ -1,5 +1,6 @@
 'use client'
 import { type FC, createContext, useContext, useMemo } from 'react'
+import { useAllDexClearinghouseState } from 'src/lib/perps/subscription/use-all-dex-clearinghouse-state'
 import { useUserFundings } from 'src/lib/perps/subscription/use-user-fundings'
 import { useUserHistoricalOrders } from 'src/lib/perps/subscription/use-user-historical-orders'
 import { useWebData2 } from 'src/lib/perps/subscription/use-web-data-2'
@@ -9,6 +10,9 @@ interface State {
     webData2Query: ReturnType<typeof useWebData2>
     userHistoricalOrdersQuery: ReturnType<typeof useUserHistoricalOrders>
     userFundingsQuery: ReturnType<typeof useUserFundings>
+    allDexClearinghouseStateQuery: ReturnType<
+      typeof useAllDexClearinghouseState
+    >
   }
 }
 
@@ -30,6 +34,7 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
   const userFundingsQuery = useUserFundings({
     address,
   })
+  const allDexClearinghouseStateQuery = useAllDexClearinghouseState({ address })
   return (
     <UserContext.Provider
       value={useMemo(() => {
@@ -38,9 +43,15 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
             webData2Query,
             userHistoricalOrdersQuery,
             userFundingsQuery,
+            allDexClearinghouseStateQuery,
           },
         }
-      }, [webData2Query, userHistoricalOrdersQuery, userFundingsQuery])}
+      }, [
+        webData2Query,
+        userHistoricalOrdersQuery,
+        userFundingsQuery,
+        allDexClearinghouseStateQuery,
+      ])}
     >
       {children}
     </UserContext.Provider>
