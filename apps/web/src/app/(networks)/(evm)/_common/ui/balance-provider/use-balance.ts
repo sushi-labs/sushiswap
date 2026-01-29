@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Amount } from 'sushi'
-import { type EvmChainId, type EvmCurrency, nativeAddress } from 'sushi/evm'
+import { type EvmChainId, type EvmCurrency, evmNativeAddress } from 'sushi/evm'
 import type { Address } from 'viem'
 import { useBalances } from './use-balances'
 
@@ -29,7 +29,7 @@ export function useBalance(arg1: Args[0], arg2?: Args[1]) {
 
     let address: Address
     if (arg1.type === 'native') {
-      address = nativeAddress
+      address = evmNativeAddress
     } else {
       address = arg1.address
     }
