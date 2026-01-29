@@ -18,7 +18,7 @@ import { useAssetState } from '../../asset-state-provider'
 import { columnBodyMeta } from '../column-meta'
 
 export const TIME_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
-  id: 'timestamp',
+  id: 'time',
   header: 'Time',
   accessorFn: (row) => row.time,
   sortingFn: ({ original: rowA }, { original: rowB }) => rowA.time - rowB.time,
@@ -39,6 +39,8 @@ export const TIME_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
 export const COIN_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
   id: 'coin',
   header: 'Coin',
+  accessorFn: (row) => row.symbol,
+  sortingFn: 'alphanumeric',
   cell: (props) => {
     const {
       mutate: { setActiveAsset },
@@ -78,6 +80,12 @@ export const COIN_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
 export const DIRECTION_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
   id: 'direction',
   header: 'Direction',
+  accessorFn: (row) => row.dir,
+  sortingFn: ({ original: rowA }, { original: rowB }) => {
+    const sideA = rowA.side === 'A' ? -1 : 1
+    const sideB = rowB.side === 'A' ? -1 : 1
+    return sideA - sideB
+  },
   cell: (props) => {
     const side = props.row.original.side
     const direction = props.row.original.dir
@@ -139,7 +147,16 @@ export const SIZE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
 export const TRADE_VALUE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
   id: 'tradeValue',
   header: 'Trade Value',
-
+  accessorFn: (row) => {
+    const price = Number.parseFloat(row.px)
+    const size = Number.parseFloat(row.sz)
+    return price * size
+  },
+  sortingFn: ({ original: rowA }, { original: rowB }) => {
+    const valueA = Number.parseFloat(rowA.px) * Number.parseFloat(rowA.sz)
+    const valueB = Number.parseFloat(rowB.px) * Number.parseFloat(rowB.sz)
+    return valueA - valueB
+  },
   cell: (props) => {
     const price = Number.parseFloat(props.row.original.px)
     const size = Number.parseFloat(props.row.original.sz)
@@ -158,7 +175,9 @@ export const TRADE_VALUE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
 export const FEE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
   id: 'fee',
   header: 'Fee',
-
+  accessorFn: (row) => Number.parseFloat(row.fee),
+  sortingFn: ({ original: rowA }, { original: rowB }) =>
+    Number.parseFloat(rowA.fee) - Number.parseFloat(rowB.fee),
   cell: (props) => {
     const fee = Number.parseFloat(props.row.original.fee)
     const feeToken = props.row.original.feeToken
@@ -194,7 +213,9 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
       </HoverCard>
     )
   },
-
+  accessorFn: (row) => Number.parseFloat(row.closedPnl),
+  sortingFn: ({ original: rowA }, { original: rowB }) =>
+    Number.parseFloat(rowA.closedPnl) - Number.parseFloat(rowB.closedPnl),
   cell: (props) => {
     const closedPnl = Number.parseFloat(props.row.original.closedPnl)
     if (closedPnl === 0) {

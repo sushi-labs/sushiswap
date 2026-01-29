@@ -23,6 +23,8 @@ import { columnBodyMeta } from '../column-meta'
 export const COIN_COLUMN: ColumnDef<BalanceItemType, unknown> = {
   id: 'coin',
   header: 'Coin',
+  accessorFn: (row) => row.coin,
+  sortingFn: 'alphanumeric',
   cell: (props) => {
     const {
       mutate: { setActiveAsset },

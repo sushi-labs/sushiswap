@@ -36,6 +36,8 @@ export const TIME_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
 export const TYPE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
   id: 'type',
   header: 'Type',
+  accessorFn: (row) => row.order.orderType,
+  sortingFn: 'alphanumeric',
   cell: (props) => {
     const type = props.row.original.order.orderType
 
@@ -49,6 +51,19 @@ export const TYPE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
 export const COIN_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
   id: 'coin',
   header: 'Coin',
+  accessorFn: (row) => row.order.coin,
+  sortingFn: ({ original: rowA }, { original: rowB }) => {
+    const symbolA = rowA.order.assetSymbol
+    const assetNameA = symbolA?.includes(':')
+      ? symbolA?.split(':')?.[1]
+      : symbolA
+    const symbolB = rowB.order.assetSymbol
+    const assetNameB = symbolB?.includes(':')
+      ? symbolB?.split(':')?.[1]
+      : symbolB
+
+    return assetNameA!.localeCompare(assetNameB!)
+  },
   cell: (props) => {
     const {
       mutate: { setActiveAsset },
@@ -126,6 +141,9 @@ export const DIRECTION_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
 export const SIZE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
   id: 'size',
   header: 'Size',
+  accessorFn: (row) => row.order.origSz,
+  sortingFn: ({ original: rowA }, { original: rowB }) =>
+    Number.parseFloat(rowA.order.origSz) - Number.parseFloat(rowB.order.origSz),
   cell: (props) => {
     const status = props.row.original.status
     const size =
@@ -143,6 +161,14 @@ export const SIZE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
 export const FILLED_SIZE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
   id: 'filledSize',
   header: 'Filled Size',
+  accessorFn: (row) => row.order.origSz,
+  sortingFn: ({ original: rowA }, { original: rowB }) => {
+    const sizeA =
+      rowA.status === 'filled' ? Number.parseFloat(rowA.order.origSz) : 0
+    const sizeB =
+      rowB.status === 'filled' ? Number.parseFloat(rowB.order.origSz) : 0
+    return sizeA - sizeB
+  },
   cell: (props) => {
     const status = props.row.original.status
     const size =
@@ -159,6 +185,34 @@ export const FILLED_SIZE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
 export const ORDER_VALUE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
   id: 'orderValue',
   header: 'Order Value',
+  accessorFn: (row) => {
+    const type = row.order.orderType
+    const limitPrice = row.order.limitPx
+    const ogSz = row.order.origSz
+
+    if (row.status !== 'filled' && type === 'Market') return 0
+    return Number.parseFloat(ogSz) * Number.parseFloat(limitPrice)
+  },
+  sortingFn: ({ original: rowA }, { original: rowB }) => {
+    const typeA = rowA.order.orderType
+    const limitPriceA = rowA.order.limitPx
+    const ogSzA = rowA.order.origSz
+
+    const typeB = rowB.order.orderType
+    const limitPriceB = rowB.order.limitPx
+    const ogSzB = rowB.order.origSz
+
+    const valueA =
+      rowA.status !== 'filled' && typeA === 'Market'
+        ? 0
+        : Number.parseFloat(ogSzA) * Number.parseFloat(limitPriceA)
+    const valueB =
+      rowB.status !== 'filled' && typeB === 'Market'
+        ? 0
+        : Number.parseFloat(ogSzB) * Number.parseFloat(limitPriceB)
+
+    return valueA - valueB
+  },
   cell: (props) => {
     const status = props.row.original.status
     const type = props.row.original.order.orderType
@@ -188,6 +242,12 @@ export const ORDER_VALUE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
 export const PRICE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
   id: 'price',
   header: 'Price',
+  accessorFn: (row) => {
+    row.order.limitPx
+  },
+  sortingFn: ({ original: rowA }, { original: rowB }) =>
+    Number.parseFloat(rowA.order.limitPx) -
+    Number.parseFloat(rowB.order.limitPx),
   cell: (props) => {
     const type = props.row.original.order.orderType
     const value = useMemo(() => {
@@ -207,6 +267,9 @@ export const PRICE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
 export const REDUCE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
   id: 'reduceOnly',
   header: 'Reduce Only',
+  accessorFn: (row) => row.order.reduceOnly,
+  sortingFn: ({ original: rowA }, { original: rowB }) =>
+    Number(rowA.order.reduceOnly) - Number(rowB.order.reduceOnly),
   cell: (props) => {
     const assetType = props.row.original.order.marketType
     const value =
@@ -229,6 +292,8 @@ export const TRIGGER_CONDITIONS_COLUMN: ColumnDef<
 > = {
   id: 'triggerConditions',
   header: 'Trigger Conditions',
+  accessorFn: (row) => row.order.triggerCondition,
+  sortingFn: 'alphanumeric',
   cell: (props) => {
     const triggerCondition = props.row.original.order.triggerCondition
 
@@ -244,6 +309,9 @@ export const TRIGGER_CONDITIONS_COLUMN: ColumnDef<
 export const TP_SL_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
   id: 'tpSl',
   header: 'TP/SL',
+  accessorFn: (row) => row.order.isPositionTpsl,
+  sortingFn: ({ original: rowA }, { original: rowB }) =>
+    Number(rowA.order.isPositionTpsl) - Number(rowB.order.isPositionTpsl),
   cell: (props) => {
     const isPositionTpsl = props.row.original.order.isPositionTpsl
 
@@ -260,6 +328,8 @@ export const TP_SL_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
 export const STATUS_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
   id: 'status',
   header: 'Status',
+  accessorFn: (row) => row.status,
+  sortingFn: 'alphanumeric',
   cell: (props) => {
     const status = props.row.original.status
     const cleanedStatus = useMemo(() => {
@@ -283,6 +353,8 @@ export const STATUS_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
 export const ORDER_ID_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
   id: 'oid',
   header: 'Order ID',
+  accessorFn: (row) => row.order.oid,
+  sortingFn: 'alphanumeric',
   cell: (props) => {
     const orderId = props.row.original.order.oid
 

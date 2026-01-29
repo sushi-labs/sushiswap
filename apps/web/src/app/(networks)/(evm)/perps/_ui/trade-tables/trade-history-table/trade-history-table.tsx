@@ -31,7 +31,7 @@ const COLUMNS = [
 
 export const TradeHistoryTable = () => {
   const { data, isLoading, isError } = useTradeHistory()
-  const [sorting, setSorting] = useState([{ id: 'timestamp', desc: true }])
+  const [sorting, setSorting] = useState([{ id: 'time', desc: true }])
   const {
     state: { tradeFilter },
   } = useTradeTables()

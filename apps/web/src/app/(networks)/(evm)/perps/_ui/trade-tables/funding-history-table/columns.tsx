@@ -32,6 +32,8 @@ export const TIME_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
 export const COIN_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
   id: 'coin',
   header: 'Coin',
+  accessorFn: (row) => row.coin,
+  sortingFn: 'alphanumeric',
   cell: (props) => {
     const {
       mutate: { setActiveAsset },
@@ -63,6 +65,8 @@ export const COIN_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
 export const SIZE_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
   id: 'size',
   header: 'Size',
+  accessorFn: (row) => row.size,
+  sortingFn: ({ original: rowA }, { original: rowB }) => rowA.size - rowB.size,
   cell: (props) => {
     const coin = props.row.original.coin
     const size = props.row.original.size
@@ -80,6 +84,12 @@ export const SIZE_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
 export const SIDE_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
   id: 'side',
   header: 'Position Side',
+  accessorFn: (row) => row.side,
+  sortingFn: ({ original: rowA }, { original: rowB }) => {
+    const sideA = rowA.side === 'short' ? -1 : 1
+    const sideB = rowB.side === 'short' ? -1 : 1
+    return sideA - sideB
+  },
   cell: (props) => {
     const side = props.row.original.side
 
@@ -102,6 +112,9 @@ export const SIDE_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
 export const PAYMENT_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
   id: 'payment',
   header: 'Payment',
+  accessorFn: (row) => row.payment,
+  sortingFn: ({ original: rowA }, { original: rowB }) =>
+    Number.parseFloat(rowA.payment) - Number.parseFloat(rowB.payment),
   cell: (props) => {
     const payment = Number.parseFloat(props.row.original.payment)
 
@@ -123,6 +136,9 @@ export const PAYMENT_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
 export const RATE_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
   id: 'rate',
   header: 'Rate',
+  accessorFn: (row) => row.rate,
+  sortingFn: ({ original: rowA }, { original: rowB }) =>
+    Number.parseFloat(rowA.rate) - Number.parseFloat(rowB.rate),
   cell: (props) => {
     const rate = Number.parseFloat(props.row.original.rate)
 
