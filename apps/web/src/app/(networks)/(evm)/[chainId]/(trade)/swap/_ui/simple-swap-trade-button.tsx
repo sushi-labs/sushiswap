@@ -23,6 +23,7 @@ import { SvmNative, isSvmChainId } from 'sushi/svm'
 import {
   useDerivedStateSimpleSwap,
   useEvmSimpleSwapTradeQuote,
+  useSimpleSwapTradeQuote,
 } from './derivedstate-simple-swap-provider'
 import { SimpleSwapTradeReviewDialog } from './simple-swap-trade-review-dialog'
 import { useIsSwapMaintenance } from './use-is-swap-maintenance'
@@ -57,7 +58,7 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
 
   const { data: maintenance } = useIsSwapMaintenance()
   const { isSlippageError } = usePersistedSlippageError({ isSuccess, error })
-  const { data: quote } = useEvmSimpleSwapTradeQuote()
+  const { data: quote } = useSimpleSwapTradeQuote()
   const [checked, setChecked] = useState(false)
 
   const {
@@ -127,7 +128,7 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
                               isSlippageError ||
                                 error ||
                                 !quote?.amountOut?.gt(ZERO) ||
-                                quote?.route?.status === 'NoWay' ||
+                                quote?.status === 'NoWay' ||
                                 +swapAmountString === 0 ||
                                 (!checked && showPriceImpactWarning),
                             )}
@@ -141,7 +142,7 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
                           >
                             {!checked && showPriceImpactWarning
                               ? 'Price impact too high'
-                              : quote?.route?.status === 'NoWay'
+                              : quote?.status === 'NoWay'
                                 ? 'No trade found'
                                 : isWrap
                                   ? 'Wrap'

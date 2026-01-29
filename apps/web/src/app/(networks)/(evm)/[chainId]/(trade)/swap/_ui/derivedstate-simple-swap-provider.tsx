@@ -455,12 +455,12 @@ function useEvmSimpleSwapTrade(enabled = true) {
   const evmChainId = isEvmChainId(chainId) ? chainId : undefined
   const { data: gasPrice } = useGasPrice({ chainId: evmChainId })
 
-  if (!isEvmChainId(chainId)) {
+  if (enabled && evmChainId) {
     throw new Error('useEvmSimpleSwapTrade is EVM-only')
   }
 
   const trade = useEvmTrade({
-    chainId,
+    chainId: evmChainId,
     fromToken: token0,
     toToken: token1,
     amount: swapAmount,
@@ -532,6 +532,25 @@ function useSvmSimpleSwapTradeQuote() {
   return useSvmTradeQuote(params)
 }
 
+function useSvmSimpleSwapTradeExecute(enabled = true) {
+  const {
+    state: { token0, chainId, swapAmount, token1, recipient },
+  } = useDerivedStateSimpleSwap<SvmChainId & SupportedChainId>()
+
+  if (!isSvmChainId(chainId)) {
+    throw new Error('useSvmSimpleSwapTradeExecute is SVM-only')
+  }
+
+  return useSvmTradeExecute({
+    chainId,
+    fromToken: token0,
+    toToken: token1,
+    amount: swapAmount,
+    recipient: recipient,
+    enabled: Boolean(enabled && swapAmount?.gt(ZERO)),
+  })
+}
+
 function useSimpleSwapTradeQuote() {
   const { state } = useDerivedStateSimpleSwap()
 
@@ -547,29 +566,26 @@ function useSimpleSwapTradeQuote() {
   throw new Error('useSimpleSwapTradeQuote: Unsupported chainId')
 }
 
-function useSvmSimpleSwapTradeExecute() {
-  const {
-    state: { token0, chainId, swapAmount, token1, recipient },
-  } = useDerivedStateSimpleSwap<SvmChainId & SupportedChainId>()
+function useSimpleSwapTradeExecute(enabled = true) {
+  const { state } = useDerivedStateSimpleSwap()
 
-  if (!isSvmChainId(chainId)) {
-    throw new Error('useSvmSimpleSwapTradeExecute is SVM-only')
+  const evmExecute = useEvmSimpleSwapTrade(enabled)
+  const svmExecute = useSvmSimpleSwapTradeExecute(enabled)
+
+  if (isEvmChainId(state.chainId)) {
+    return evmExecute
+  } else if (isSvmChainId(state.chainId)) {
+    return svmExecute
   }
 
-  return useSvmTradeExecute({
-    chainId,
-    fromToken: token0,
-    toToken: token1,
-    amount: swapAmount,
-    recipient: recipient,
-    enabled: Boolean(swapAmount?.gt(ZERO)),
-  })
+  throw new Error('useSimpleSwapTradeExecute: Unsupported chainId')
 }
 
 export {
   DerivedstateSimpleSwapProvider,
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
+  useSimpleSwapTradeExecute,
   useEvmSimpleSwapTrade,
   useEvmSimpleSwapTradeQuote,
   useSvmSimpleSwapTradeQuote,

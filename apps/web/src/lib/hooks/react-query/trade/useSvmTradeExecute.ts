@@ -6,12 +6,6 @@ import { stringify } from 'viem'
 import { svmExecuteValidator } from './svmUltraValidator'
 import type { UseSvmTradeExecuteQuerySelect, UseSvmTradeParams } from './types'
 
-const toSlippageDecimal = (slippagePercentage: string) => {
-  const parsed = Number(slippagePercentage)
-  if (!Number.isFinite(parsed) || parsed < 0) return undefined
-  return parsed / 100
-}
-
 export const useSvmTradeExecuteQuery = (
   { chainId, enabled, requestId, order, signedTransaction }: UseSvmTradeParams,
   select: UseSvmTradeExecuteQuerySelect,
@@ -77,21 +71,31 @@ export const useSvmTradeExecuteQuery = (
 }
 
 export const useSvmTradeExecute = (variables: UseSvmTradeParams) => {
-  const { fromToken, toToken, amount, order, slippagePercentage } = variables
+  const { fromToken, toToken, order } = variables
 
   const select: UseSvmTradeExecuteQuerySelect = useCallback(
     (data) => {
-      const amountIn =
-        order && fromToken ? new Amount(fromToken, order.inAmount) : amount
-      const amountOut =
-        order && toToken ? new Amount(toToken, order.outAmount) : undefined
-      const slippage = toSlippageDecimal(slippagePercentage)
-      const minAmountOut =
-        order && toToken && order.otherAmountThreshold
-          ? new Amount(toToken, order.otherAmountThreshold)
-          : amountOut && slippage !== undefined
-            ? subtractSlippage(amountOut, slippage)
-            : undefined
+      if (!order || !fromToken || !toToken) {
+        return {
+          swapPrice: undefined,
+          priceImpact: undefined,
+          amountIn: undefined,
+          amountOut: undefined,
+          minAmountOut: undefined,
+          gasSpent: undefined,
+          gasSpentUsd: undefined,
+          fee: undefined,
+          route: undefined,
+          status: undefined,
+          tx: undefined,
+          tokenTax: undefined,
+          routingSource: undefined,
+        }
+      }
+
+      const amountIn = new Amount(fromToken, order.inAmount)
+      const amountOut = new Amount(toToken, order.outAmount)
+      const minAmountOut = new Amount(toToken, order.otherAmountThreshold)
 
       const swapPrice =
         amountOut && amountIn && amountOut.gt(ZERO)
@@ -101,25 +105,13 @@ export const useSvmTradeExecute = (variables: UseSvmTradeParams) => {
             })
           : undefined
 
-      const priceImpactValue = order
-        ? order.priceImpact !== undefined
-          ? order.priceImpact
-          : order.priceImpactPct !== undefined
-            ? Number(order.priceImpactPct)
-            : undefined
-        : undefined
-
       const priceImpact =
-        order &&
-        priceImpactValue !== undefined &&
-        Number.isFinite(priceImpactValue)
+        order.priceImpact !== undefined && Number.isFinite(order.priceImpact)
           ? new Percent({
-              numerator: Math.round(priceImpactValue * 10000),
+              numerator: -Math.round(order.priceImpact * 100),
               denominator: 10000,
             })
-          : order
-            ? new Percent(0)
-            : undefined
+          : new Percent(0)
 
       return {
         swapPrice,
@@ -131,11 +123,13 @@ export const useSvmTradeExecute = (variables: UseSvmTradeParams) => {
         gasSpentUsd: undefined,
         fee: undefined,
         route: order,
+        status: 'Success',
         tx: data,
         tokenTax: undefined,
+        routingSource: 'TODO',
       }
     },
-    [amount, fromToken, order, slippagePercentage, toToken],
+    [fromToken, order, toToken],
   )
 
   return useSvmTradeExecuteQuery(variables, select)

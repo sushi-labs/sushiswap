@@ -1,6 +1,8 @@
 import type { ButtonProps } from '@sushiswap/ui'
 import type { ComponentType, FC } from 'react'
 
+import type { EvmChainId } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 import { Amounts } from './amounts'
 import { ApproveERC20, type ApproveERC20Props } from './approve-erc20'
 import {
@@ -32,15 +34,15 @@ import {
 } from './slippage'
 import { Success, type SuccessProps } from './success'
 
-export type CheckerProps = {
+export type CheckerProps<TChainId extends EvmChainId | SvmChainId> = {
   Amounts: typeof Amounts
   Network: typeof Network
   Guard: FC<GuardProps>
   Custom: FC<CustomProps>
   CustomWithTooltip: FC<CustomWithTooltipProps>
-  ApproveERC20: ComponentType<ApproveERC20Props>
-  ApproveERC20Multiple: ComponentType<ApproveERC20MultipleProps>
-  ApproveERC20WithPermit: ComponentType<ApproveERC20WithPermitProps>
+  ApproveERC20: ComponentType<ApproveERC20Props<TChainId>>
+  ApproveERC20Multiple: ComponentType<ApproveERC20MultipleProps<TChainId>>
+  ApproveERC20WithPermit: ComponentType<ApproveERC20WithPermitProps<TChainId>>
   RevokeApproveERC20: ComponentType<RevokeApproveERC20Props>
   Connect: ComponentType<ButtonProps>
   Success: FC<SuccessProps>
@@ -49,7 +51,7 @@ export type CheckerProps = {
   Slippage: FC<SlippageProps>
 }
 
-export const Checker: CheckerProps = {
+export const Checker: CheckerProps<EvmChainId | SvmChainId> = {
   Amounts,
   Connect,
   Network,

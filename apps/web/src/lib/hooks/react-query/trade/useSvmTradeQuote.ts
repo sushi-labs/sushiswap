@@ -98,6 +98,7 @@ export const useSvmTradeQuote = (variables: UseSvmTradeParams | undefined) => {
           gasSpentUsd: undefined,
           fee: undefined,
           route: undefined,
+          status: undefined,
           tx: undefined,
           tokenTax: undefined,
           routingSource: undefined,
@@ -160,7 +161,8 @@ export const useSvmTradeQuote = (variables: UseSvmTradeParams | undefined) => {
           feeUsd !== undefined
             ? `$${feeUsd.toFixed(4)}`
             : `${feeAmount.toSignificant(4)} ${toToken.symbol}`,
-        route: order,
+        route: { status: 'Success', ...order },
+        status: order.errorCode ? 'Failed' : 'Success',
         tx: undefined,
         tokenTax: undefined,
         routingSource: order.router,

@@ -63,6 +63,7 @@ export const useEvmTradeQuery = (
     ],
     queryFn: async () => {
       if (!address) throw new Error('No address')
+      if (!chainId) throw new Error('No chainId')
 
       const params = new URL(`${API_BASE_URL}/swap/v7/${chainId}`)
       params.searchParams.set('referrer', 'sushi')
@@ -166,7 +167,7 @@ export const useEvmTrade = (variables: UseEvmTradeParams) => {
   const [nativePrice, tokenOutPrice] = useMemo(() => {
     const result = [new Fraction(0), undefined]
 
-    if (prices) {
+    if (prices && chainId) {
       if (
         isEvmWNativeSupported(chainId) &&
         EvmNative.fromChainId(chainId).wrap().address !== zeroAddress
@@ -187,6 +188,7 @@ export const useEvmTrade = (variables: UseEvmTradeParams) => {
   const select: UseEvmTradeQuerySelect = useCallback(
     (data) => {
       if (
+        chainId &&
         isRedSnwapperChainId(chainId) &&
         data &&
         amount &&
@@ -249,6 +251,7 @@ export const useEvmTrade = (variables: UseEvmTradeParams) => {
             minAmountOut,
           }),
           route: data.route,
+          status: data.route.status,
           tx: data?.tx
             ? {
                 from: data.tx.from,
@@ -274,6 +277,7 @@ export const useEvmTrade = (variables: UseEvmTradeParams) => {
         gasSpentUsd: undefined,
         fee: undefined,
         route: undefined,
+        status: undefined,
         tx: undefined,
         tokenTax: undefined,
         routingSource: undefined,

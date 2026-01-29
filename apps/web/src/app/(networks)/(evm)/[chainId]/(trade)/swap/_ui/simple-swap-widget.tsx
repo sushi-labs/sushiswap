@@ -24,7 +24,7 @@ export const SimpleSwapWidget = () => {
           <SimpleSwapSwitchTokensButton />
           <div className="flex flex-col">
             <SimpleSwapToken1Input />
-            {/* <SimpleSwapTradeButton /> */}
+            <SimpleSwapTradeButton />
             <div className="mt-2">
               <SimpleSwapTradeStats />
             </div>

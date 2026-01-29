@@ -8,7 +8,7 @@ import type { legValidator, tradeValidator01 } from './validator01'
 import type { tradeValidator02 } from './validator02'
 
 export interface UseEvmTradeParams {
-  chainId: EvmChainId
+  chainId: EvmChainId | undefined
   fromToken: EvmCurrency | undefined
   toToken: EvmCurrency | undefined
   amount: Amount<EvmCurrency> | undefined
@@ -33,6 +33,7 @@ export interface UseEvmTradeReturn {
   gasSpent: string | undefined
   gasSpentUsd: string | undefined
   route: TradeType1['route']
+  status: NonNullable<TradeType1['route']>['status'] | undefined
   tx:
     | {
         from: Address
@@ -70,6 +71,7 @@ export interface UseSvmTradeReturn {
   gasSpent: string | undefined
   gasSpentUsd: string | undefined
   route: SvmOrderResponse | undefined
+  status: NonNullable<TradeType1['route']>['status'] | undefined
   tx: SvmExecuteResponse | undefined
   tokenTax: Percent | false | undefined
   fee: string | undefined
