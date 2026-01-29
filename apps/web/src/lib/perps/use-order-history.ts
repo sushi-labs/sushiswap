@@ -8,16 +8,21 @@ export const useOrderHistory = () => {
       userHistoricalOrdersQuery: {
         data,
         isLoading: isLoadingUserHistoricalOrders,
-        isError,
+        isError: isErrorUserHistoricalOrders,
       },
     },
   } = useUserState()
   const {
     state: {
-      assetListQuery: { data: assetList, isLoading: isAssetListLoading },
+      assetListQuery: {
+        data: assetList,
+        isLoading: isAssetListLoading,
+        isError: isAssetListError,
+      },
     },
   } = useAssetListState()
   const isLoading = isLoadingUserHistoricalOrders || isAssetListLoading
+  const isError = isErrorUserHistoricalOrders || isAssetListError
 
   const formattedData = useMemo(() => {
     if (!data) return []

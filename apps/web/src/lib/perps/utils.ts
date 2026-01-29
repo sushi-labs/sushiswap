@@ -32,6 +32,18 @@ export const numberFormatter = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 0,
 })
 
+export const getPerpsDexAndCoin = (coinString: string) => {
+  if (coinString.includes('@')) {
+    return { perpsDex: null, coin: coinString, type: 'spot' as const }
+  }
+
+  if (coinString.includes(':')) {
+    const [perpsDex, coin] = coinString.split(':')
+    return { perpsDex, coin, type: 'perp' as const }
+  }
+  return { perpsDex: null, coin: coinString, type: 'perp' as const }
+}
+
 export const getHyperliquidExplorerUrl = (
   type: 'token' | 'txn',
   value: string,
@@ -53,7 +65,7 @@ export const SPOT_ASSETS_TO_REWRITE = new Map<string, string>([
   ['UETH', 'ETH'],
   ['USOL', 'SOL'],
   ['UPUMP', 'PUMP'],
-  ['UFART', 'FART'],
+  ['UFART', 'FARTCOIN'],
   ['UMON', 'MON'],
   ['UXPL', 'XPL'],
   ['UENA', 'ENA'],

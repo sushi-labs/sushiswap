@@ -5,6 +5,7 @@ import { useMemo } from 'react'
 import type { OrderHistoryItemType } from 'src/lib/perps/use-order-history'
 import {
   enUSFormatNumber,
+  getPerpsDexAndCoin,
   getTextColorClass,
   getTextColorClassForHover,
   numberFormatter,
@@ -66,9 +67,10 @@ export const COIN_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
       mutate: { setActiveAsset },
     } = useAssetState()
     const coin = props.row.original.order.coin
+    const { perpsDex } = getPerpsDexAndCoin(coin)
     const symbol = props.row.original.order.assetSymbol
     const assetName = symbol?.includes(':') ? symbol?.split(':')?.[1] : symbol
-    const perpsDex = symbol?.includes(':') ? symbol?.split(':')?.[0] : null
+
     const side = props.row.original.order.side
 
     return (

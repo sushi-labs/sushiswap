@@ -6,15 +6,24 @@ import { SPOT_ASSETS_TO_REWRITE } from './utils'
 export const useBalances = () => {
   const {
     state: {
-      webData2Query: { data, isLoading: isLoadingWebData2, isError },
+      webData2Query: {
+        data,
+        isLoading: isLoadingWebData2,
+        isError: isErrorWebData2,
+      },
     },
   } = useUserState()
   const {
     state: {
-      assetListQuery: { data: assetList, isLoading: isAssetListLoading },
+      assetListQuery: {
+        data: assetList,
+        isLoading: isAssetListLoading,
+        isError: isAssetListError,
+      },
     },
   } = useAssetListState()
   const isLoading = isLoadingWebData2 || isAssetListLoading
+  const isError = isErrorWebData2 || isAssetListError
 
   const formattedData = useMemo(() => {
     if (!data) return []

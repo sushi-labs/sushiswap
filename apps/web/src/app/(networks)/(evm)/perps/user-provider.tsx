@@ -1,6 +1,7 @@
 'use client'
-import { type FC, createContext, useContext, useMemo } from 'react'
+import { type FC, createContext, useContext, useMemo, useState } from 'react'
 import { useAllDexClearinghouseState } from 'src/lib/perps/subscription/use-all-dex-clearinghouse-state'
+import { useUserFills } from 'src/lib/perps/subscription/use-user-fills'
 import { useUserFundings } from 'src/lib/perps/subscription/use-user-fundings'
 import { useUserHistoricalOrders } from 'src/lib/perps/subscription/use-user-historical-orders'
 import { useWebData2 } from 'src/lib/perps/subscription/use-web-data-2'
@@ -13,6 +14,11 @@ interface State {
     allDexClearinghouseStateQuery: ReturnType<
       typeof useAllDexClearinghouseState
     >
+    userFillsQuery: ReturnType<typeof useUserFills>
+    aggregateFillsByTime: boolean
+  }
+  mutate: {
+    setAggregateFillsByTime: (aggregate: boolean) => void
   }
 }
 
@@ -23,8 +29,8 @@ interface UserProviderProps {
 }
 
 const UserProvider: FC<UserProviderProps> = ({ children }) => {
+  const [aggregateFillsByTime, setAggregateFillsByTime] = useState(false)
   const { address } = useAccount()
-
   const userHistoricalOrdersQuery = useUserHistoricalOrders({
     address,
   })
@@ -35,6 +41,10 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
     address,
   })
   const allDexClearinghouseStateQuery = useAllDexClearinghouseState({ address })
+  const userFillsQuery = useUserFills({
+    address,
+    aggregateByTime: aggregateFillsByTime,
+  })
   return (
     <UserContext.Provider
       value={useMemo(() => {
@@ -44,6 +54,11 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
             userHistoricalOrdersQuery,
             userFundingsQuery,
             allDexClearinghouseStateQuery,
+            userFillsQuery,
+            aggregateFillsByTime,
+          },
+          mutate: {
+            setAggregateFillsByTime,
           },
         }
       }, [
@@ -51,6 +66,8 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
         userHistoricalOrdersQuery,
         userFundingsQuery,
         allDexClearinghouseStateQuery,
+        userFillsQuery,
+        aggregateFillsByTime,
       ])}
     >
       {children}

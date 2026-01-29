@@ -1,26 +1,26 @@
 import { Checkbox } from '@sushiswap/ui'
-import { useTradeTables } from '../trade-tables-provider'
+import { useUserState } from '~evm/perps/user-provider'
 
 export const AggregateTradeHistory = () => {
   const {
-    state: { shouldAggregateTradeHistory },
-    mutate: { setShouldAggregateTradeHistory },
-  } = useTradeTables()
+    state: { aggregateFillsByTime },
+    mutate: { setAggregateFillsByTime },
+  } = useUserState()
   return (
     <div
       onClick={() => {
-        setShouldAggregateTradeHistory(!shouldAggregateTradeHistory)
+        setAggregateFillsByTime(!aggregateFillsByTime)
       }}
       onKeyDown={() => {
-        setShouldAggregateTradeHistory(!shouldAggregateTradeHistory)
+        setAggregateFillsByTime(!aggregateFillsByTime)
       }}
       className="flex items-center gap-1 whitespace-nowrap text-xs font-medium"
     >
       <Checkbox
         className='data-[state="checked"]:!bg-blue text-slate-100 !border-slate-100 data-[state="checked"]:!border-blue'
-        checked={shouldAggregateTradeHistory}
+        checked={aggregateFillsByTime}
         onCheckedChange={(checked) => {
-          setShouldAggregateTradeHistory(checked as boolean)
+          setAggregateFillsByTime(checked as boolean)
         }}
       />
       <div>Aggregate</div>
