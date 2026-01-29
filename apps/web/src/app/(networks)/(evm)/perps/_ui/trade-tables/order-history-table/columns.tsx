@@ -1,4 +1,4 @@
-import { SkeletonText, classNames } from '@sushiswap/ui'
+import { Chip, SkeletonText, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { useMemo } from 'react'
@@ -66,7 +66,9 @@ export const COIN_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
       mutate: { setActiveAsset },
     } = useAssetState()
     const coin = props.row.original.order.coin
-    const assetName = props.row.original.order.assetSymbol
+    const symbol = props.row.original.order.assetSymbol
+    const assetName = symbol?.includes(':') ? symbol?.split(':')?.[1] : symbol
+    const perpsDex = symbol?.includes(':') ? symbol?.split(':')?.[0] : null
     const side = props.row.original.order.side
 
     return (
@@ -82,6 +84,11 @@ export const COIN_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
         )}
       >
         {assetName}
+        {perpsDex ? (
+          <Chip variant={side === 'A' ? 'red' : 'green'} className="!px-1 ml-1">
+            {perpsDex}
+          </Chip>
+        ) : null}
       </button>
     )
   },
