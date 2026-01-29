@@ -99,6 +99,11 @@ const nextConfig = bundleAnalyzer({
         destination: '/aptos/swap',
       },
       {
+        source: '/stellar',
+        permanent: true,
+        destination: '/stellar/swap',
+      },
+      {
         source: '/tron',
         permanent: true,
         destination: '/tron/swap',
