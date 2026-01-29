@@ -1,11 +1,12 @@
 import type { EvmChainId } from 'sushi/evm'
-import type { SvmChainId } from 'sushi/svm'
+import type { SvmAddress, SvmChainId } from 'sushi/svm'
 
 export enum PriceWorkerPostMessageType {
   Initialize = 'Initialize',
   IncrementChainId = 'IncrementChainId',
   DecrementChainId = 'DecrementChainId',
   RefetchChainId = 'RefetchChainId',
+  RequestPrices = 'RequestPrices',
   SetEnabled = 'SetEnabled',
 }
 export type EvmOrSvmChainId = EvmChainId | SvmChainId
@@ -30,6 +31,12 @@ type RefetchChainId<TChainId extends EvmChainId | SvmChainId> = {
   type: PriceWorkerPostMessageType.RefetchChainId
 }
 
+type RequestPrices = {
+  chainId: SvmChainId
+  addresses: SvmAddress[]
+  type: PriceWorkerPostMessageType.RequestPrices
+}
+
 type SetEnabled = {
   enabled: boolean
   type: PriceWorkerPostMessageType.SetEnabled
@@ -40,6 +47,7 @@ export type PriceWorkerPostMessage<TChainId extends EvmChainId | SvmChainId> =
   | IncrementChainId<TChainId>
   | DecrementChainId<TChainId>
   | RefetchChainId<TChainId>
+  | RequestPrices
   | SetEnabled
 
 export enum PriceWorkerReceiveMessageType {
@@ -47,7 +55,7 @@ export enum PriceWorkerReceiveMessageType {
 }
 
 type PriceMapKey<TChainId extends EvmChainId | SvmChainId> =
-  TChainId extends EvmChainId ? bigint : string
+  TChainId extends EvmChainId ? bigint : SvmAddress
 
 export interface WorkerChainState<TChainId extends EvmChainId | SvmChainId> {
   chainId: TChainId
@@ -60,6 +68,14 @@ export interface WorkerChainState<TChainId extends EvmChainId | SvmChainId> {
   isLoading: boolean
   isUpdating: boolean
   isError: boolean
+
+  svmRequest?: TChainId extends SvmChainId
+    ? {
+        pending: Set<SvmAddress>
+        processing: boolean
+        timestamps: number[]
+      }
+    : undefined
 }
 
 export type PriceWorkerReceiveMessageChainState<

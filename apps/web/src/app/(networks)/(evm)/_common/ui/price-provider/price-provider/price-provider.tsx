@@ -10,6 +10,8 @@ import {
   useState,
 } from 'react'
 
+import { isEvmChainId } from 'sushi/evm'
+import type { SvmAddress } from 'sushi/svm'
 import {
   type EvmOrSvmChainId,
   type PriceWorker,
@@ -133,6 +135,19 @@ export function PriceProvider({ children }: PriceProviderContextProps) {
     [worker],
   )
 
+  const requestPrices = useCallback(
+    (chainId: EvmOrSvmChainId, addresses: SvmAddress[]) => {
+      if (worker && !isEvmChainId(chainId)) {
+        worker.postMessage({
+          type: PriceWorkerPostMessageType.RequestPrices,
+          chainId,
+          addresses,
+        })
+      }
+    },
+    [worker],
+  )
+
   useEffect(() => {
     function setEnabled(_event: Event) {
       if (worker) {
@@ -160,8 +175,9 @@ export function PriceProvider({ children }: PriceProviderContextProps) {
           () => ({
             incrementChainId,
             decrementChainId,
+            requestPrices,
           }),
-          [incrementChainId, decrementChainId],
+          [incrementChainId, decrementChainId, requestPrices],
         ),
       }}
     >

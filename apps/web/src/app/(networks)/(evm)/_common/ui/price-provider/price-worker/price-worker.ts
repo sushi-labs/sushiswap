@@ -1,6 +1,9 @@
 import { SUSHI_DATA_API_HOST } from 'src/lib/constants'
 import { isEvmChainId } from 'sushi/evm'
+import type { SvmAddress } from 'sushi/svm'
 import { UPDATE_INTERVAL } from '../config'
+import { createChainState } from './chain-state'
+import { createSolanaRequestHandlers, isSvmChainState } from './solana'
 import {
   type EvmOrSvmChainId,
   type PriceWorkerPostMessage,
@@ -21,6 +24,12 @@ import {
   function sendMessage(message: PriceWorkerReceiveMessage<EvmOrSvmChainId>) {
     self.postMessage(message)
   }
+
+  const { queueSolanaRequests } = createSolanaRequestHandlers({
+    dataApiHost: SUSHI_DATA_API_HOST,
+    sendMessage,
+    updatePriceData,
+  })
 
   self.onmessage = async ({
     data: _data,
@@ -62,6 +71,14 @@ import {
           }
           break
         }
+        case PriceWorkerPostMessageType.RequestPrices: {
+          const { chainId, addresses } = message
+          const chainState = state.chains.get(chainId)
+          if (chainState && isSvmChainState(chainState)) {
+            queueSolanaRequests(chainState, addresses)
+          }
+          break
+        }
         case PriceWorkerPostMessageType.SetEnabled: {
           const { enabled } = message
           if (state.enabled !== enabled) {
@@ -88,15 +105,7 @@ import {
       return chainState.listenerCount === 1
     }
 
-    state.chains.set(chainId, {
-      chainId,
-      listenerCount: 1,
-      priceMap: new Map() as WorkerChainState<EvmOrSvmChainId>['priceMap'],
-      lastModified: 0,
-      isLoading: true,
-      isUpdating: false,
-      isError: false,
-    })
+    state.chains.set(chainId, createChainState(chainId))
 
     sendMessage({
       type: PriceWorkerReceiveMessageType.ChainState,
@@ -188,7 +197,7 @@ import {
         isLoading: chainState.isLoading,
         isUpdating: chainState.isUpdating,
         isError: chainState.isError,
-        priceMap: sendPrices ? (chainState.priceMap as any) : undefined,
+        priceMap: sendPrices ? chainState.priceMap : undefined,
       },
     })
   }
@@ -214,10 +223,10 @@ import {
       return priceMap
     }
 
-    const data = (await response.json()) as Record<string, number>
-    const solPriceMap = new Map<string, number>()
+    const data = (await response.json()) as Record<SvmAddress, number>
+    const solPriceMap = new Map<SvmAddress, number>()
     for (const [address, price] of Object.entries(data)) {
-      solPriceMap.set(address, price)
+      solPriceMap.set(address as SvmAddress, price)
     }
 
     return solPriceMap

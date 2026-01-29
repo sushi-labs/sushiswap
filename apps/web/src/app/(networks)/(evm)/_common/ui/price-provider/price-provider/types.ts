@@ -1,9 +1,9 @@
 import type { EvmChainId } from 'sushi/evm'
-import type { SvmChainId } from 'sushi/svm'
+import type { SvmAddress, SvmChainId } from 'sushi/svm'
 import type { PriceWorkerReceiveMessageChainState } from '../price-worker/types'
 
 type PriceMapKey<TChainId extends EvmChainId | SvmChainId> =
-  TChainId extends EvmChainId ? bigint : string
+  TChainId extends EvmChainId ? bigint : SvmAddress
 
 export interface ProviderChainState<
   TChainId extends EvmChainId | SvmChainId = EvmChainId,
@@ -31,6 +31,7 @@ export interface ProviderMutations<
 > {
   incrementChainId: (chainId: TChainId) => void
   decrementChainId: (chainId: TChainId) => void
+  requestPrices: (chainId: SvmChainId, addresses: SvmAddress[]) => void
 }
 
 export interface Provider<
