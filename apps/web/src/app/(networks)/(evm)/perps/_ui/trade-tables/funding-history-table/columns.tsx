@@ -1,4 +1,4 @@
-import { SkeletonText, classNames } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import type { FundingHistoryItemType } from 'src/lib/perps/use-funding-history'
@@ -7,6 +7,7 @@ import {
   getTextColorClassForHover,
 } from 'src/lib/perps/utils'
 import { useAssetState } from '../../asset-state-provider'
+import { columnBodyMeta } from '../column-meta'
 
 export const TIME_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
   id: 'timestamp',
@@ -24,14 +25,7 @@ export const TIME_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -62,14 +56,7 @@ export const COIN_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -86,14 +73,7 @@ export const SIZE_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -115,14 +95,7 @@ export const SIDE_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -144,14 +117,7 @@ export const PAYMENT_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 export const RATE_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
@@ -167,13 +133,6 @@ export const RATE_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }

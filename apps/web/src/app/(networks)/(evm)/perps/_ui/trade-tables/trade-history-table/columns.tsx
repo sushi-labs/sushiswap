@@ -3,7 +3,6 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-  SkeletonText,
   classNames,
 } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -16,6 +15,7 @@ import {
   numberFormatter,
 } from 'src/lib/perps/utils'
 import { useAssetState } from '../../asset-state-provider'
+import { columnBodyMeta } from '../column-meta'
 
 export const TIME_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
   id: 'timestamp',
@@ -32,14 +32,7 @@ export const TIME_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -78,14 +71,7 @@ export const COIN_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -108,14 +94,7 @@ export const DIRECTION_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -134,14 +113,7 @@ export const PRICE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 export const SIZE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
@@ -161,14 +133,7 @@ export const SIZE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 export const TRADE_VALUE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
@@ -187,14 +152,7 @@ export const TRADE_VALUE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 export const FEE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
@@ -215,14 +173,7 @@ export const FEE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 export const CLOSED_PNL_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
@@ -256,13 +207,6 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }

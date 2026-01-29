@@ -1,4 +1,4 @@
-import { Chip, SkeletonText, classNames } from '@sushiswap/ui'
+import { Chip, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { useMemo } from 'react'
@@ -11,6 +11,7 @@ import {
   numberFormatter,
 } from 'src/lib/perps/utils'
 import { useAssetState } from '../../asset-state-provider'
+import { columnBodyMeta } from '../column-meta'
 
 export const TIME_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
   id: 'timestamp',
@@ -28,14 +29,7 @@ export const TIME_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -48,14 +42,7 @@ export const TYPE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     return <span className="font-medium whitespace-nowrap">{type}</span>
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -95,14 +82,7 @@ export const COIN_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -139,14 +119,7 @@ export const DIRECTION_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -163,14 +136,7 @@ export const SIZE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     return <span className="font-medium whitespace-nowrap">{size || '-'}</span>
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -186,14 +152,7 @@ export const FILLED_SIZE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     return <span className="font-medium whitespace-nowrap">{size || '-'}</span>
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -222,14 +181,7 @@ export const ORDER_VALUE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -248,14 +200,7 @@ export const PRICE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     return <span className="font-medium whitespace-nowrap">{value}</span>
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -274,14 +219,7 @@ export const REDUCE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     return <span className="font-medium whitespace-nowrap">{value}</span>
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -299,14 +237,7 @@ export const TRIGGER_CONDITIONS_COLUMN: ColumnDef<
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -323,14 +254,7 @@ export const TP_SL_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs !max-w-[80px]',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 export const STATUS_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
@@ -352,14 +276,7 @@ export const STATUS_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs !max-w-[80px]',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -372,13 +289,6 @@ export const ORDER_ID_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     return <span className="font-medium whitespace-nowrap">{orderId}</span>
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }

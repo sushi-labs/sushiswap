@@ -10,7 +10,6 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
-import { SkeletonText } from 'node_modules/@sushiswap/ui/dist/components/skeleton'
 import type { BalanceItemType } from 'src/lib/perps/use-balances'
 import {
   currencyFormatter,
@@ -19,6 +18,7 @@ import {
 } from 'src/lib/perps/utils'
 import { truncateString } from 'sushi'
 import { useAssetState } from '../../asset-state-provider'
+import { columnBodyMeta } from '../column-meta'
 
 export const COIN_COLUMN: ColumnDef<BalanceItemType, unknown> = {
   id: 'coin',
@@ -51,14 +51,7 @@ export const COIN_COLUMN: ColumnDef<BalanceItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -79,14 +72,7 @@ export const TOTAL_BALANCE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -134,14 +120,7 @@ export const AVAILABLE_BALANCE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -161,14 +140,7 @@ export const USDC_VALUE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 export const PNL_COLUMN: ColumnDef<BalanceItemType, unknown> = {
@@ -200,14 +172,7 @@ export const PNL_COLUMN: ColumnDef<BalanceItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -243,13 +208,6 @@ export const CONTRACT_COLUMN: ColumnDef<BalanceItemType, unknown> = {
     )
   },
   meta: {
-    body: {
-      className: '!p-2 !pl-4 !h-[40px] !max-h-[40px] !text-xs',
-      skeleton: (
-        <div className="w-[80px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
