@@ -292,7 +292,7 @@ export function LiquidityChartRangeInput({
             onBrushDomainChange={onBrushDomainChangeEnded}
             getNewRangeWhenBrushing={getNewRangeWhenBrushing}
             zoomLevels={ZOOM_LEVELS[feeAmount ?? SushiSwapV3FeeAmount.MEDIUM]}
-            priceRange={priceRange}
+            isPriceRangeSet={priceRange !== undefined}
             hideBrushes={hideBrushes}
             tokenToggle={tokenToggle}
           />

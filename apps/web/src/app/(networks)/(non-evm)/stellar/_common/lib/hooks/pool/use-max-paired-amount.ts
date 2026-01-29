@@ -1,0 +1,102 @@
+'use client'
+
+import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
+import { formatUnits } from 'viem'
+import { useCalculatePairedAmount } from './use-calculate-paired-amount'
+import { usePoolInitialized } from './use-pool-initialized'
+
+/**
+ * Calculate the maximum token0 and token1 amounts based on token0 and token1 balances
+ */
+export function useMaxPairedAmount(
+  poolAddress: string | null,
+  token0Balance: string,
+  token1Balance: string,
+  tickLower: number | null,
+  tickUpper: number | null,
+  token0Decimals: number,
+  token1Decimals: number,
+) {
+  const { data: initialized } = usePoolInitialized(poolAddress)
+  const { data: pairedAmountData } = useCalculatePairedAmount(
+    poolAddress,
+    formatUnits(BigInt(token0Balance), token0Decimals),
+    tickLower,
+    tickUpper,
+    token0Decimals,
+  )
+  const rawPairedToken1Amount = BigInt(
+    Math.floor(
+      Number.parseFloat(pairedAmountData?.token1Amount || '0') *
+        10 ** token1Decimals,
+    ),
+  )
+  return useQuery({
+    queryKey: [
+      'stellar',
+      'pool',
+      'maxPairedAmount',
+      poolAddress,
+      token0Balance,
+      token1Balance,
+      tickLower,
+      tickUpper,
+      token0Decimals,
+      token1Decimals,
+    ],
+    queryFn: async () => {
+      if (
+        !poolAddress ||
+        !token0Balance ||
+        !token1Balance ||
+        !initialized ||
+        tickLower === null ||
+        tickUpper === null ||
+        !pairedAmountData ||
+        pairedAmountData.status === 'idle' ||
+        pairedAmountData.status === 'error'
+      ) {
+        return {
+          maxToken0Amount: '0',
+          maxToken1Amount: '0',
+        }
+      }
+      if (pairedAmountData.status === 'below-range') {
+        return {
+          maxToken0Amount: token0Balance,
+          maxToken1Amount: '0',
+        }
+      }
+      if (pairedAmountData.status === 'above-range') {
+        return {
+          maxToken0Amount: '0',
+          maxToken1Amount: token1Balance,
+        }
+      }
+      return {
+        maxToken0Amount:
+          rawPairedToken1Amount < BigInt(token1Balance)
+            ? token0Balance
+            : (
+                (BigInt(token1Balance) * BigInt(token0Balance)) /
+                rawPairedToken1Amount
+              ).toString(),
+        maxToken1Amount:
+          rawPairedToken1Amount < BigInt(token1Balance)
+            ? rawPairedToken1Amount.toString()
+            : token1Balance,
+      }
+    },
+    enabled: Boolean(
+      poolAddress &&
+        token0Balance &&
+        token1Balance &&
+        pairedAmountData &&
+        initialized &&
+        tickLower !== null &&
+        tickUpper !== null,
+    ),
+    staleTime: ms('10s'),
+  })
+}
