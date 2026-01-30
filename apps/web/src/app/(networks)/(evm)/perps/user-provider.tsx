@@ -1,20 +1,24 @@
 'use client'
 import { type FC, createContext, useContext, useMemo, useState } from 'react'
 import { useAllDexClearinghouseState } from 'src/lib/perps/subscription/use-all-dex-clearinghouse-state'
+import { useOpenOrders } from 'src/lib/perps/subscription/use-open-orders'
 import { useUserFills } from 'src/lib/perps/subscription/use-user-fills'
 import { useUserFundings } from 'src/lib/perps/subscription/use-user-fundings'
 import { useUserHistoricalOrders } from 'src/lib/perps/subscription/use-user-historical-orders'
 import { useWebData2 } from 'src/lib/perps/subscription/use-web-data-2'
+import { useWebData3 } from 'src/lib/perps/subscription/use-web-data-3'
 import { useAccount } from 'wagmi'
 interface State {
   state: {
     webData2Query: ReturnType<typeof useWebData2>
+    webData3Query: ReturnType<typeof useWebData3>
     userHistoricalOrdersQuery: ReturnType<typeof useUserHistoricalOrders>
     userFundingsQuery: ReturnType<typeof useUserFundings>
     allDexClearinghouseStateQuery: ReturnType<
       typeof useAllDexClearinghouseState
     >
     userFillsQuery: ReturnType<typeof useUserFills>
+    openOrdersQuery: ReturnType<typeof useOpenOrders>
     aggregateFillsByTime: boolean
   }
   mutate: {
@@ -37,6 +41,9 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
   const webData2Query = useWebData2({
     address,
   })
+  const webData3Query = useWebData3({
+    address,
+  })
   const userFundingsQuery = useUserFundings({
     address,
   })
@@ -45,17 +52,20 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
     address,
     aggregateByTime: aggregateFillsByTime,
   })
+  const openOrdersQuery = useOpenOrders({ address })
   return (
     <UserContext.Provider
       value={useMemo(() => {
         return {
           state: {
             webData2Query,
+            webData3Query,
             userHistoricalOrdersQuery,
             userFundingsQuery,
             allDexClearinghouseStateQuery,
             userFillsQuery,
             aggregateFillsByTime,
+            openOrdersQuery,
           },
           mutate: {
             setAggregateFillsByTime,
@@ -68,6 +78,8 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
         allDexClearinghouseStateQuery,
         userFillsQuery,
         aggregateFillsByTime,
+        openOrdersQuery,
+        webData3Query,
       ])}
     >
       {children}
