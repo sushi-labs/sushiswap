@@ -1,27 +1,15 @@
-import type { JsonParsedTokenAccount } from '@solana/kit'
+import {
+  TOKEN_2022_PROGRAM_ADDRESS,
+  findAssociatedTokenPda,
+} from '@solana-program/token-2022'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { SVM_FALLBACK_ACCOUNT } from 'src/lib/svm/config'
 import { getSvmRpc } from 'src/lib/svm/rpc'
+import { useAccount } from 'src/lib/wallet'
 import { getNativeAddress } from 'sushi'
 import { type SvmAddress, type SvmChainId, svmAddress } from 'sushi/svm'
 import { STALE_TIME } from './config'
 import type { UseBalancesReturn } from './types'
-
-const TOKEN_PROGRAM_ID = svmAddress(
-  'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
-)
-const TOKEN_QUERY_THRESHOLD = 4
-
-type TokenAccountParsed = {
-  account: {
-    data: {
-      parsed: {
-        info: JsonParsedTokenAccount
-      }
-    }
-  }
-}
 
 type FetchSvmBalancesParams = {
   chainId: SvmChainId
@@ -29,24 +17,10 @@ type FetchSvmBalancesParams = {
   account: SvmAddress
 }
 
-const parseTokenAccounts = (
-  accounts: readonly TokenAccountParsed[],
-  requestedMints: Set<SvmAddress>,
-  balanceMap: Map<SvmAddress, bigint>,
-) => {
-  accounts.forEach((account) => {
-    const info = account.account.data.parsed.info
-    const mint = info.mint as SvmAddress
-    const amount = info.tokenAmount.amount
-
-    if (!requestedMints.has(mint)) {
-      return
-    }
-
-    const previous = balanceMap.get(mint) ?? 0n
-    balanceMap.set(mint, previous + BigInt(amount))
-  })
-}
+const TOKEN_PROGRAM_ADDRESS = svmAddress(
+  'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+)
+const ACCOUNT_FETCH_CHUNK_SIZE = 100
 
 const fetchSvmBalances = async ({
   chainId,
@@ -72,32 +46,70 @@ const fetchSvmBalances = async ({
   }
 
   if (requestedMints.length > 0) {
-    if (requestedMints.length <= TOKEN_QUERY_THRESHOLD) {
-      const results = await Promise.all(
-        requestedMints.map((mint) =>
-          rpc
-            .getTokenAccountsByOwner(
-              account,
-              { mint },
-              { encoding: 'jsonParsed' },
-            )
-            .send(),
-        ),
+    const ataToMintMap = new Map<SvmAddress, SvmAddress>()
+    const allPotentialAccounts: SvmAddress[] = []
+
+    await Promise.all(
+      requestedMints.map(async (mint) => {
+        const [classicAta] = await findAssociatedTokenPda({
+          mint: mint as SvmAddress,
+          owner: account as SvmAddress,
+          tokenProgram: TOKEN_PROGRAM_ADDRESS,
+        })
+
+        const [token22Ata] = await findAssociatedTokenPda({
+          mint: mint as SvmAddress,
+          owner: account as SvmAddress,
+          tokenProgram: TOKEN_2022_PROGRAM_ADDRESS,
+        })
+
+        allPotentialAccounts.push(classicAta, token22Ata)
+        ataToMintMap.set(classicAta, mint)
+        ataToMintMap.set(token22Ata, mint)
+      }),
+    )
+
+    for (
+      let offset = 0;
+      offset < allPotentialAccounts.length;
+      offset += ACCOUNT_FETCH_CHUNK_SIZE
+    ) {
+      const slice = allPotentialAccounts.slice(
+        offset,
+        offset + ACCOUNT_FETCH_CHUNK_SIZE,
       )
 
-      results.forEach((result, index) => {
-        const mint = requestedMints[index]
-        parseTokenAccounts(result.value, new Set([mint]), balanceMap)
-      })
-    } else {
-      const result = await rpc
-        .getTokenAccountsByOwner(
-          account,
-          { programId: TOKEN_PROGRAM_ID },
-          { encoding: 'jsonParsed' },
-        )
+      const { value } = await rpc
+        .getMultipleAccounts(slice, {
+          encoding: 'jsonParsed',
+          commitment: 'confirmed',
+        })
         .send()
-      parseTokenAccounts(result.value, new Set(requestedMints), balanceMap)
+
+      value.forEach((accountInfo, index) => {
+        if (!accountInfo) return
+
+        // Parse the RPC response
+        const parsed = (accountInfo as { data?: { parsed?: unknown } }).data
+          ?.parsed as
+          | { info?: { mint?: string; tokenAmount?: { amount?: string } } }
+          | undefined
+
+        const amountStr = parsed?.info?.tokenAmount?.amount
+        const parsedMint = parsed?.info?.mint
+
+        // Match the result back to our original requested mint
+        const queriedAddress = slice[index]
+        const originalMint = ataToMintMap.get(queriedAddress!)
+
+        if (!originalMint || !amountStr) return
+
+        // Safety: Ensure the on-chain mint matches what we expected
+        if (parsedMint && parsedMint !== originalMint) return
+
+        // Set the balance (If we found a valid account, overwrite the 0 default)
+        balanceMap.set(originalMint, BigInt(amountStr))
+      })
     }
   }
 
@@ -108,7 +120,7 @@ export function useSvmBalances(
   chainId: SvmChainId | undefined,
   tokenAddresses: SvmAddress[] | undefined,
 ): UseBalancesReturn<SvmChainId> {
-  const account = SVM_FALLBACK_ACCOUNT
+  const account = useAccount('svm')
 
   const uniqueTokenAddresses = useMemo(() => {
     if (!tokenAddresses) {
@@ -124,12 +136,17 @@ export function useSvmBalances(
       'svm-balances',
       { chainId, account, tokenAddresses: uniqueTokenAddresses },
     ],
-    queryFn: () =>
-      fetchSvmBalances({
-        chainId: chainId!,
-        tokenAddresses: uniqueTokenAddresses!,
+    queryFn: () => {
+      if (!chainId || !account || !uniqueTokenAddresses) {
+        throw new Error('Missing parameters for fetching SVM balances')
+      }
+
+      return fetchSvmBalances({
+        chainId: chainId,
+        tokenAddresses: uniqueTokenAddresses,
         account,
-      }),
+      })
+    },
     enabled: Boolean(chainId && account && hasTokens),
     placeholderData: keepPreviousData,
     staleTime: STALE_TIME,

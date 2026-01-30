@@ -24,7 +24,8 @@ function Connect({
   const isMounted = useIsMounted()
 
   const { isPending, isConnected } = useWalletContext()
-  const isNamespaceConencted = Boolean(useAccount(namespace))
+  const isNamespaceConnected = Boolean(useAccount(namespace))
+  const requiresNamespaceConnection = Boolean(namespace && !isNamespaceConnected)
 
   if (!isMounted)
     return (
@@ -41,8 +42,8 @@ function Connect({
     )
   }
 
-  if (!isConnected) {
-    const shouldRestrictNamespace = namespace && !isNamespaceConencted
+  if (!isConnected || requiresNamespaceConnection) {
+    const shouldRestrictNamespace = Boolean(namespace)
     const midtext =
       namespace === 'evm' ? 'EVM' : namespace === 'svm' ? 'Solana' : ''
 

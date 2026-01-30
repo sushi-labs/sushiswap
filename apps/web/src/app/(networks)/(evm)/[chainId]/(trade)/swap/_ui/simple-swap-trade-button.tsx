@@ -22,20 +22,12 @@ import {
 import { SvmNative, isSvmChainId } from 'sushi/svm'
 import {
   useDerivedStateSimpleSwap,
-  useEvmSimpleSwapTradeQuote,
   useSimpleSwapTradeQuote,
 } from './derivedstate-simple-swap-provider'
 import { SimpleSwapTradeReviewDialog } from './simple-swap-trade-review-dialog'
 import { useIsSwapMaintenance } from './use-is-swap-maintenance'
 
 export function SimpleSwapTradeButton() {
-  const {
-    state: { chainId },
-  } = useDerivedStateSimpleSwap()
-
-  if (isSvmChainId(chainId)) {
-  }
-
   return (
     <SimpleSwapTradeReviewDialog>
       {({ error, isSuccess }) => (
@@ -65,6 +57,7 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
     state: { swapAmount, swapAmountString, chainId, token0, token1 },
     mutate: { setSwapAmount },
   } = useDerivedStateSimpleSwap<TChainId>()
+  const walletNamespace = isSvmChainId(chainId) ? 'svm' : 'evm'
 
   const [isWrap, isUnwrap] = useMemo(() => {
     const wrappedAddress = isSvmChainId(chainId)
@@ -104,7 +97,7 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
           guardText="Maintenance in progress"
         >
           <Checker.PartialRoute trade={quote} setSwapAmount={setSwapAmount}>
-            <Checker.Connect>
+            <Checker.Connect namespace={walletNamespace}>
               <Checker.Network chainId={chainId}>
                 <Checker.Amounts chainId={chainId} amount={swapAmount}>
                   <Checker.Slippage

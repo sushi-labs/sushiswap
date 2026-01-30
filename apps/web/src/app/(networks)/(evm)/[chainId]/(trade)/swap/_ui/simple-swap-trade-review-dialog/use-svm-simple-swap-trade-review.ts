@@ -1,13 +1,16 @@
 'use client'
 
+import { getBase64Decoder, getBase64Encoder } from '@solana/codecs-strings'
+import { useTransactionSigner } from '@solana/connector/react'
+import type { Signature } from '@solana/keys'
+import { createErrorToast, createToast } from '@sushiswap/notifications'
+import { SwapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { DialogType, useDialog } from '@sushiswap/ui'
-import { useRef } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import type { SupportedChainId } from 'src/config'
-import type {
-  UseEvmTradeReturn,
-  UseSvmTradeReturn,
-} from 'src/lib/hooks/react-query'
-import { SVM_FALLBACK_ACCOUNT } from 'src/lib/svm/config'
+import type { UseSvmTradeReturn } from 'src/lib/hooks/react-query'
+import { useSvmTradeExecute } from 'src/lib/hooks/react-query'
+import { getSvmRpc } from 'src/lib/svm/rpc'
 import { useAccount } from 'src/lib/wallet'
 import { Percent } from 'sushi'
 import {
@@ -16,14 +19,51 @@ import {
   type SvmCurrency,
   isSvmChainId,
 } from 'sushi/svm'
+import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { isUnwrapTrade, isWrapTrade } from '../common'
 import {
   useDerivedStateSimpleSwap,
-  useSvmSimpleSwapTradeExecute,
+  useSvmSimpleSwapTradeQuote,
 } from '../derivedstate-simple-swap-provider'
 import type { UseSimpleSwapTradeReviewBaseReturn } from './use-simple-swap-trade-review'
 
 const zeroPercent = new Percent(0)
+const CONFIRMATION_POLL_MS = 2_000
+const CONFIRMATION_TIMEOUT_MS = 90_000
+
+const base64Decoder = getBase64Decoder()
+const base64Encoder = getBase64Encoder()
+
+async function waitForSvmSignature(signature: string) {
+  const rpc = getSvmRpc()
+  const deadline = Date.now() + CONFIRMATION_TIMEOUT_MS
+
+  while (Date.now() < deadline) {
+    const { value } = await rpc
+      .getSignatureStatuses([signature as Signature], {
+        searchTransactionHistory: true,
+      })
+      .send()
+
+    const status = value[0]
+    if (status) {
+      if (status.err) {
+        throw new Error('Solana transaction failed')
+      }
+
+      if (
+        status.confirmationStatus === 'confirmed' ||
+        status.confirmationStatus === 'finalized'
+      ) {
+        return status
+      }
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, CONFIRMATION_POLL_MS))
+  }
+
+  throw new Error('Timed out waiting for Solana transaction confirmation')
+}
 
 export function useSvmSimpleSwapTradeReview(): UseSimpleSwapTradeReviewBaseReturn {
   const { state: _state } = useDerivedStateSimpleSwap<
@@ -43,6 +83,7 @@ export function useSvmSimpleSwapTradeReview(): UseSimpleSwapTradeReviewBaseRetur
 }
 
 function _useSvmSimpleSwapTradeReview({
+  chainId,
   recipient,
   token0,
   token1,
@@ -52,40 +93,192 @@ function _useSvmSimpleSwapTradeReview({
   token0: SvmCurrency | undefined
   token1: SvmCurrency | undefined
 }) {
-  const address = useAccount('svm') || SVM_FALLBACK_ACCOUNT
+  const address = useAccount('svm')
+  const { signer } = useTransactionSigner()
+
+  const {
+    mutate: { setSwapAmount },
+  } = useDerivedStateSimpleSwap<SvmChainId & SupportedChainId>()
+  const { refetchChain } = useRefetchBalances()
 
   const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
   const { open: reviewDialogOpen } = useDialog(DialogType.Review)
 
+  const isDialogOpen = confirmDialogOpen || reviewDialogOpen
+  const { state } = useDerivedStateSimpleSwap<SvmChainId & SupportedChainId>()
   const {
     data: trade,
     isFetching: isSwapQueryFetching,
     isSuccess: isSwapQuerySuccess,
     isError: isSwapQueryError,
     error: swapQueryError,
-  } = useSvmSimpleSwapTradeExecute(
-    Boolean(address && (confirmDialogOpen || reviewDialogOpen)),
-  )
+  } = useSvmSimpleSwapTradeQuote()
 
-  console.log(
-    isSwapQueryFetching,
-    isSwapQuerySuccess,
-    isSwapQueryError,
-    swapQueryError,
-  )
+  const order = trade?.route
+  const executeMutation = useSvmTradeExecute({
+    chainId: chainId as SvmChainId,
+    fromToken: token0,
+    toToken: token1,
+    amount: state.swapAmount,
+    recipient,
+    enabled: Boolean(address && isDialogOpen),
+    order,
+  })
 
   const tradeRef = useRef<UseSvmTradeReturn | null>(null)
+  const [isSigning, setIsSigning] = useState(false)
+  const [txHash, setTxHash] = useState<string | undefined>(undefined)
+  const [status, setStatus] = useState<'pending' | 'success' | 'error'>(
+    'pending',
+  )
 
   const isWrap = isWrapTrade(token0, token1)
   const isUnwrap = isUnwrapTrade(token0, token1)
 
+  const onSwapError = useCallback(
+    (error: unknown) => {
+      const message =
+        error instanceof Error ? error.message : 'Something went wrong'
+      if (message.toLowerCase().includes('rejected')) {
+        return
+      }
+      sendAnalyticsEvent(SwapEventName.SWAP_ERROR, {
+        chain_id: chainId,
+        error: message,
+        requestId: order?.requestId,
+      })
+      createErrorToast(message, false)
+    },
+    [chainId, order?.requestId],
+  )
+
+  const write = useMemo(() => {
+    if (
+      !chainId ||
+      !trade ||
+      !order?.transaction ||
+      !order?.requestId ||
+      !signer
+    ) {
+      return undefined
+    }
+
+    return async (confirm: () => void) => {
+      setIsSigning(true)
+      setStatus('pending')
+      try {
+        const unsignedBytes = base64Encoder.encode(order.transaction!)
+        const signed = await signer.signTransaction(unsignedBytes)
+        const signedBytes = (() => {
+          if (signed instanceof Uint8Array) return signed
+          if (ArrayBuffer.isView(signed)) {
+            return new Uint8Array(
+              signed.buffer,
+              signed.byteOffset,
+              signed.byteLength,
+            )
+          }
+          if ('serialize' in signed && typeof signed.serialize === 'function') {
+            return signed.serialize() as Uint8Array
+          }
+          return undefined
+        })()
+
+        if (!signedBytes) {
+          throw new Error('Unsupported signed transaction format')
+        }
+
+        tradeRef.current = trade
+
+        const signedTransaction = base64Decoder.decode(signedBytes)
+        const executePromise = executeMutation.mutateAsync({
+          requestId: order.requestId,
+          signedTransaction,
+        })
+
+        const result = await executePromise
+        const signature = result?.signature
+        if (!signature) {
+          throw new Error('Missing Solana transaction signature')
+        }
+
+        setTxHash(signature)
+        const confirmationPromise = waitForSvmSignature(signature).then(
+          () => result,
+        )
+
+        const actionVerb = isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'
+        const actionPreposition = isWrap || isUnwrap ? 'to' : 'for'
+
+        void createToast({
+          account: address,
+          type: 'swap',
+          chainId,
+          txHash: signature,
+          promise: confirmationPromise,
+          summary: {
+            pending: `${actionVerb}ping ${trade?.amountIn?.toSignificant(6)} ${trade?.amountIn?.currency.symbol} ${actionPreposition} ${trade?.amountOut?.toSignificant(6)} ${trade?.amountOut?.currency.symbol}`,
+            completed: `${actionVerb} ${trade?.amountIn?.toSignificant(6)} ${trade?.amountIn?.currency.symbol} ${actionPreposition} ${trade?.amountOut?.toSignificant(6)} ${trade?.amountOut?.currency.symbol}`,
+            failed: `Something went wrong when trying to ${actionVerb.toLowerCase()} ${trade?.amountIn?.currency.symbol} ${actionPreposition} ${trade?.amountOut?.currency.symbol}`,
+          },
+          timestamp: Date.now(),
+          groupTimestamp: Date.now(),
+        })
+
+        sendAnalyticsEvent(SwapEventName.SWAP_SIGNED, {
+          txHash: signature,
+          chainId,
+        })
+
+        void confirmationPromise
+          .then(() => {
+            setStatus('success')
+            sendAnalyticsEvent(SwapEventName.SWAP_TRANSACTION_COMPLETED, {
+              txHash: signature,
+              chain_id: chainId,
+            })
+          })
+          .catch(() => {
+            setStatus('error')
+            sendAnalyticsEvent(SwapEventName.SWAP_TRANSACTION_FAILED, {
+              txHash: signature,
+              chain_id: chainId,
+            })
+          })
+
+        confirm()
+      } catch (error) {
+        setStatus('error')
+        onSwapError(error)
+      } finally {
+        setSwapAmount('')
+        if (chainId) {
+          refetchChain(chainId)
+        }
+        setIsSigning(false)
+      }
+    }
+  }, [
+    address,
+    chainId,
+    executeMutation,
+    isUnwrap,
+    isWrap,
+    onSwapError,
+    order,
+    refetchChain,
+    setSwapAmount,
+    signer,
+    trade,
+  ])
+
   return {
     trade,
     tradeRef,
-    write: () => Promise.resolve(),
-    isWritePending: false,
-    txHash: undefined,
-    status: 'success' as const,
+    write,
+    isWritePending: isSigning || executeMutation.isPending,
+    txHash,
+    status,
     slippagePercent: zeroPercent,
     isSwapQueryFetching,
     isSwapQuerySuccess,

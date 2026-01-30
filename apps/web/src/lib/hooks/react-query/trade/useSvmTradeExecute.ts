@@ -1,77 +1,23 @@
-import { useQuery } from '@tanstack/react-query'
-import { useCallback } from 'react'
-import { Amount, Percent, Price, ZERO, subtractSlippage } from 'sushi'
-import { isSvmChainId } from 'sushi/svm'
-import { stringify } from 'viem'
+import { useMutation } from '@tanstack/react-query'
+import { useCallback, useMemo } from 'react'
+import { Amount, Percent, Price, ZERO } from 'sushi'
+import { SvmNative, WSOL_ADDRESS, isSvmChainId } from 'sushi/svm'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { svmExecuteValidator } from './svmUltraValidator'
 import type { UseSvmTradeExecuteQuerySelect, UseSvmTradeParams } from './types'
 
-export const useSvmTradeExecuteQuery = (
-  { chainId, enabled, requestId, order, signedTransaction }: UseSvmTradeParams,
-  select: UseSvmTradeExecuteQuerySelect,
-) => {
-  const resolvedRequestId = requestId ?? order?.requestId
-
-  return useQuery({
-    queryKey: [
-      'getSvmTradeExecute',
-      {
-        chainId,
-        requestId: resolvedRequestId,
-      },
-    ],
-    queryFn: async () => {
-      if (!isSvmChainId(chainId)) {
-        throw new Error('Unsupported SVM chainId')
-      }
-
-      if (!resolvedRequestId) {
-        throw new Error('Missing requestId for SVM trade execute')
-      }
-
-      if (!signedTransaction) {
-        throw new Error('Missing signed transaction for SVM trade execute')
-      }
-
-      const body: Record<string, unknown> = {
-        requestId: resolvedRequestId,
-        signedTransaction,
-      }
-
-      // TODO: include compute unit price / prioritization fee fields once supported.
-
-      const res = await fetch(`/api/jupiter/ultra/execute`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      })
-
-      if (!res.ok) {
-        throw new Error(`Jupiter execute failed: ${res.statusText}`)
-      }
-
-      const json = await res.json()
-      return svmExecuteValidator.parse(json)
-    },
-    refetchOnWindowFocus: true,
-    refetchInterval: 2500,
-    gcTime: 0,
-    retry: false,
-    select,
-    enabled: Boolean(
-      enabled &&
-        isSvmChainId(chainId) &&
-        resolvedRequestId &&
-        signedTransaction,
-    ),
-    queryKeyHashFn: stringify,
-  })
-}
+const ULTRA_REFERRAL_FEE_BPS = 50
+const LAMPORTS_PER_SOL = 1_000_000_000
 
 export const useSvmTradeExecute = (variables: UseSvmTradeParams) => {
-  const { fromToken, toToken, order } = variables
+  const { fromToken, toToken, order, chainId, requestId, signedTransaction } =
+    variables
+  const resolvedRequestId = requestId ?? order?.requestId
+
+  const { data: nativePrice } = usePrice({
+    chainId,
+    address: chainId ? WSOL_ADDRESS[chainId] : undefined,
+  })
 
   const select: UseSvmTradeExecuteQuerySelect = useCallback(
     (data) => {
@@ -113,24 +59,115 @@ export const useSvmTradeExecute = (variables: UseSvmTradeParams) => {
             })
           : new Percent(0)
 
+      const feeAmount = amountOut.mul(
+        new Percent({ numerator: ULTRA_REFERRAL_FEE_BPS, denominator: 10000 }),
+      )
+      const feeUsd =
+        order.outUsdValue !== undefined
+          ? order.outUsdValue * (ULTRA_REFERRAL_FEE_BPS / 10000)
+          : undefined
+
+      const lamports =
+        order.signatureFeeLamports +
+        order.prioritizationFeeLamports +
+        order.rentFeeLamports
+      const gasAmount =
+        lamports > 0
+          ? new Amount(
+              SvmNative.fromChainId(fromToken.chainId),
+              Math.round(lamports).toString(),
+            )
+          : undefined
+      const gasSpent = gasAmount?.toSignificant(4)
+      const gasSpentUsd =
+        nativePrice !== undefined && lamports > 0
+          ? (lamports / LAMPORTS_PER_SOL) * nativePrice
+          : undefined
+
       return {
         swapPrice,
         priceImpact,
         amountIn,
         amountOut,
         minAmountOut,
-        gasSpent: undefined,
-        gasSpentUsd: undefined,
-        fee: undefined,
+        gasSpent,
+        gasSpentUsd:
+          gasSpentUsd !== undefined ? gasSpentUsd.toFixed(4) : undefined,
+        fee:
+          feeUsd !== undefined
+            ? `$${feeUsd.toFixed(4)}`
+            : `${feeAmount.toSignificant(4)} ${toToken.symbol}`,
         route: order,
-        status: 'Success',
+        status: data.status,
         tx: data,
         tokenTax: undefined,
-        routingSource: 'TODO',
+        routingSource: order.router,
       }
     },
-    [fromToken, order, toToken],
+    [fromToken, order, toToken, nativePrice],
   )
 
-  return useSvmTradeExecuteQuery(variables, select)
+  const mutation = useMutation({
+    mutationKey: [
+      'executeSvmTrade',
+      {
+        chainId,
+        requestId: resolvedRequestId,
+      },
+    ],
+    mutationFn: async (params?: {
+      requestId?: string
+      signedTransaction?: string
+    }) => {
+      if (!isSvmChainId(chainId)) {
+        throw new Error('Unsupported SVM chainId')
+      }
+
+      const resolvedRequestId =
+        params?.requestId ?? requestId ?? order?.requestId
+      const resolvedSignedTransaction =
+        params?.signedTransaction ?? signedTransaction
+
+      if (!resolvedRequestId) {
+        throw new Error('Missing requestId for SVM trade execute')
+      }
+
+      if (!resolvedSignedTransaction) {
+        throw new Error('Missing signed transaction for SVM trade execute')
+      }
+
+      const body: Record<string, unknown> = {
+        requestId: resolvedRequestId,
+        signedTransaction: resolvedSignedTransaction,
+      }
+
+      // TODO: include compute unit price / prioritization fee fields once supported.
+
+      const res = await fetch(`/api/jupiter/ultra/execute`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      })
+
+      if (!res.ok) {
+        throw new Error(`Jupiter execute failed: ${res.statusText}`)
+      }
+
+      const json = await res.json()
+      return svmExecuteValidator.parse(json)
+    },
+    retry: false,
+  })
+
+  const data = useMemo(
+    () => (mutation.data ? select(mutation.data) : undefined),
+    [mutation.data, select],
+  )
+
+  return {
+    ...mutation,
+    data,
+  }
 }

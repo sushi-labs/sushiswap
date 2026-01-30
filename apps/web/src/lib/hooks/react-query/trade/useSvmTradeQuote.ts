@@ -1,16 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { Amount, Percent, Price, ZERO } from 'sushi'
-import { SvmNative, isSvmChainId } from 'sushi/svm'
+import { SvmNative, WSOL_ADDRESS, isSvmChainId } from 'sushi/svm'
 import { stringify } from 'viem'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { svmOrderValidator } from './svmUltraValidator'
 import type { UseSvmTradeParams, UseSvmTradeQuoteQuerySelect } from './types'
 
-// TODO !: Fix acc
-// const ULTRA_REFERRAL_ACCOUNT = '11111111111111111111111111111111'
+const ULTRA_REFERRAL_ACCOUNT = '3KuHRzEQbh6hcucKWAXCzw71N8FWsCwU2nBr7dd9FoFJ'
 const ULTRA_REFERRAL_FEE_BPS = 50
 const LAMPORTS_PER_SOL = 1_000_000_000
-const SOL_PRICE_USD = 150
 
 export const useSvmTradeQuoteQuery = (
   params: UseSvmTradeParams | undefined,
@@ -44,15 +43,12 @@ export const useSvmTradeQuoteQuery = (
       params.set('outputMint', toToken.wrap().address)
       params.set('amount', amount.amount.toString())
 
-      // params.set('referralAccount', ULTRA_REFERRAL_ACCOUNT)
-      // params.set('referralFee', ULTRA_REFERRAL_FEE_BPS.toString())
+      params.set('referralAccount', ULTRA_REFERRAL_ACCOUNT)
+      params.set('referralFee', ULTRA_REFERRAL_FEE_BPS.toString())
 
-      // TODO: Add taker once we have full Solana wallet support
       if (recipient) {
         params.set('taker', recipient)
       }
-
-      params.set('taker', '8N2ssXZGJbvVLszanERuCJpLZd2nuADgpZwLkDDxwNnS')
 
       const res = await fetch(`/api/jupiter/ultra/order?${params.toString()}`, {
         method: 'GET',
@@ -83,7 +79,12 @@ export const useSvmTradeQuoteQuery = (
 }
 
 export const useSvmTradeQuote = (variables: UseSvmTradeParams | undefined) => {
-  const { fromToken, toToken } = variables || {}
+  const { fromToken, toToken, chainId } = variables || {}
+
+  const { data: nativePrice } = usePrice({
+    chainId,
+    address: chainId ? WSOL_ADDRESS[chainId] : undefined,
+  })
 
   const select: UseSvmTradeQuoteQuerySelect = useCallback(
     (order) => {
@@ -146,7 +147,9 @@ export const useSvmTradeQuote = (variables: UseSvmTradeParams | undefined) => {
           : undefined
       const gasSpent = gasAmount?.toSignificant(4)
       const gasSpentUsd =
-        lamports > 0 ? (lamports / LAMPORTS_PER_SOL) * SOL_PRICE_USD : undefined
+        nativePrice !== undefined && lamports > 0
+          ? (lamports / LAMPORTS_PER_SOL) * nativePrice
+          : undefined
 
       return {
         swapPrice,
@@ -168,7 +171,7 @@ export const useSvmTradeQuote = (variables: UseSvmTradeParams | undefined) => {
         routingSource: order.router,
       }
     },
-    [fromToken, toToken],
+    [fromToken, toToken, nativePrice],
   )
 
   return useSvmTradeQuoteQuery(variables, select)

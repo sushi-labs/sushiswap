@@ -18,12 +18,11 @@ import { type SupportedChainId, isSupportedChainId } from 'src/config'
 import {
   useEvmTrade,
   useEvmTradeQuote,
-  useSvmTradeExecute,
   useSvmTradeQuote,
 } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { SVM_FALLBACK_ACCOUNT } from 'src/lib/svm/config'
 import { useCarbonOffset } from 'src/lib/swap/useCarbonOffset'
+import { useAccount } from 'src/lib/wallet'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import {
   Amount,
@@ -154,6 +153,7 @@ function DerivedstateSimpleSwapProvider({
   const { push } = useRouter()
   const { chainId: _chainId } = useParams()
   const { address } = useConnection()
+  const svmAddress = useAccount('svm')
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [tokenTax, setTokenTax] = useState<Percent | false | undefined>(
@@ -382,6 +382,10 @@ function DerivedstateSimpleSwapProvider({
           token1Param,
         )
 
+        const recipient = (isSvmChainId(chainId)
+          ? svmAddress
+          : address) as AddressFor<TChainId> | undefined
+
         return {
           mutate: {
             setToken0,
@@ -392,7 +396,7 @@ function DerivedstateSimpleSwapProvider({
             setTokenTax,
           },
           state: {
-            recipient: address,
+            recipient,
             chainId,
             swapAmountString,
             swapAmount: _token0
@@ -415,6 +419,7 @@ function DerivedstateSimpleSwapProvider({
         setToken1,
         setTokens,
         switchTokens,
+        svmAddress,
         token0,
         token0Loading,
         token0Param,
@@ -521,7 +526,7 @@ function useSvmSimpleSwapTradeQuote() {
         toToken: _state.token1,
         amount: _state.swapAmount,
         slippagePercentage: slippagePercent.toString({ fixed: 2 }),
-        recipient: SVM_FALLBACK_ACCOUNT, // _state.recipient,
+        recipient: _state.recipient,
         enabled: Boolean(_state.swapAmount?.gt(ZERO)),
       }
     }
@@ -530,25 +535,6 @@ function useSvmSimpleSwapTradeQuote() {
   }, [state, slippagePercent])
 
   return useSvmTradeQuote(params)
-}
-
-function useSvmSimpleSwapTradeExecute(enabled = true) {
-  const {
-    state: { token0, chainId, swapAmount, token1, recipient },
-  } = useDerivedStateSimpleSwap<SvmChainId & SupportedChainId>()
-
-  if (!isSvmChainId(chainId)) {
-    throw new Error('useSvmSimpleSwapTradeExecute is SVM-only')
-  }
-
-  return useSvmTradeExecute({
-    chainId,
-    fromToken: token0,
-    toToken: token1,
-    amount: swapAmount,
-    recipient: recipient,
-    enabled: Boolean(enabled && swapAmount?.gt(ZERO)),
-  })
 }
 
 function useSimpleSwapTradeQuote() {
@@ -566,28 +552,11 @@ function useSimpleSwapTradeQuote() {
   throw new Error('useSimpleSwapTradeQuote: Unsupported chainId')
 }
 
-function useSimpleSwapTradeExecute(enabled = true) {
-  const { state } = useDerivedStateSimpleSwap()
-
-  const evmExecute = useEvmSimpleSwapTrade(enabled)
-  const svmExecute = useSvmSimpleSwapTradeExecute(enabled)
-
-  if (isEvmChainId(state.chainId)) {
-    return evmExecute
-  } else if (isSvmChainId(state.chainId)) {
-    return svmExecute
-  }
-
-  throw new Error('useSimpleSwapTradeExecute: Unsupported chainId')
-}
-
 export {
   DerivedstateSimpleSwapProvider,
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
-  useSimpleSwapTradeExecute,
   useEvmSimpleSwapTrade,
   useEvmSimpleSwapTradeQuote,
   useSvmSimpleSwapTradeQuote,
-  useSvmSimpleSwapTradeExecute,
 }

@@ -37,8 +37,6 @@ function useSimpleSwapTradeReviewBase(): UseSimpleSwapTradeReviewBaseReturn {
   const evmTradeReview = useEvmSimpleSwapTradeReview()
   const svmTradeReview = useSvmSimpleSwapTradeReview()
 
-  console.log(svmTradeReview)
-
   if (isSvmChainId(chainId)) {
     return svmTradeReview
   }

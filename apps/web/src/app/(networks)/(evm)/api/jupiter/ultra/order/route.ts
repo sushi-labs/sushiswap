@@ -1,16 +1,21 @@
 import type { NextRequest } from 'next/server'
+import { JUPITER_ULTRA_API_BASE_URL } from 'src/lib/swap/jupiter-ultra-api'
 
 export async function GET(request: NextRequest) {
   try {
     const query = request.nextUrl.searchParams
-    const url = `https://lite-api.jup.ag/ultra/v1/order?${query.toString()}`
 
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'x-api-key': process.env.JUPITER_API_KEY as string,
+    const response = await fetch(
+      `${JUPITER_ULTRA_API_BASE_URL}/order?${query.toString()}`,
+      {
+        method: 'GET',
+        headers: {
+          'x-api-key': process.env.JUPITER_API_KEY as string,
+        },
       },
-    })
+    )
+
+    console.log(response)
 
     return new Response(await response.text(), {
       status: response.status,

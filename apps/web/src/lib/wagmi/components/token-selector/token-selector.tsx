@@ -25,6 +25,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import { useAccount } from 'src/lib/wallet'
 import type { EvmChainId, EvmCurrency } from 'sushi/evm'
 import type { SvmChainId } from 'sushi/svm'
 import { useConnection } from 'wagmi'
@@ -60,10 +61,7 @@ export function TokenSelector<TChainId extends EvmChainId | SvmChainId>({
   selectedNetwork,
   onNetworkSelect,
 }: TokenSelectorProps<TChainId>) {
-  // TODO: Solana useAccount?
-  const { address: evmAddress } = useConnection()
-  // ! Hack for now
-  const address = evmAddress as AddressFor<TChainId> | undefined
+  const address = useAccount(chainId)
 
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)

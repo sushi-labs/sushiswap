@@ -1,7 +1,7 @@
 import type { TokenListChainId } from '@sushiswap/graph-client/data-api'
 import { List } from '@sushiswap/ui'
-import { SVM_FALLBACK_ACCOUNT } from 'src/lib/svm/config'
-import type { EvmCurrency } from 'sushi/evm'
+import { useAccount } from 'src/lib/wallet'
+import type { EvmChainId } from 'sushi/evm'
 import { useConnection } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useMyTokens } from '../hooks/use-my-tokens'
@@ -36,11 +36,7 @@ export function TokenSelectorMyTokens<TChainId extends TokenListChainId>({
   selected,
   includeNative,
 }: TokenSelectorMyTokens<TChainId>) {
-  // TODO: Solana useAccount equivalent
-  const { address: evmAddress } = useConnection()
-  void evmAddress
-  // ! Hack for now
-  const address = SVM_FALLBACK_ACCOUNT as AddressFor<TChainId> // undefined
+  const address = useAccount(chainId)
 
   const { data, isError, isLoading } = useMyTokens({
     chainId,
