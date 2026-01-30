@@ -54,9 +54,9 @@ import { Amount, ChainId, ZERO } from 'sushi'
 import {
   EvmNative,
   addGasMargin,
+  evmNativeAddress,
   getEvmChainById,
   getEvmCurrencyAddress,
-  nativeAddress,
   shortenEvmAddress,
 } from 'sushi/evm'
 import { type SendTransactionReturnType, stringify } from 'viem'
@@ -153,11 +153,11 @@ const _SimpleSwapTradeReviewDialog: FC<{
           token0:
             tradeRef?.current?.amountIn?.currency?.type === 'token'
               ? tradeRef?.current?.amountIn?.currency?.address
-              : nativeAddress,
+              : evmNativeAddress,
           token1:
             tradeRef?.current?.amountOut?.currency?.type === 'token'
               ? tradeRef?.current?.amountOut?.currency?.address
-              : nativeAddress,
+              : evmNativeAddress,
           amountIn: tradeRef?.current?.amountIn?.amount,
           amountOut: tradeRef?.current?.amountOut?.amount,
           amountOutMin: tradeRef?.current?.minAmountOut?.amount,
