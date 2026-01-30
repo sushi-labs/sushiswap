@@ -22,8 +22,8 @@ import {
 } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useCarbonOffset } from 'src/lib/swap/useCarbonOffset'
-import { useAccount } from 'src/lib/wallet'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
+import { useAccount } from 'src/lib/wallet'
 import {
   Amount,
   type Percent,
@@ -382,9 +382,9 @@ function DerivedstateSimpleSwapProvider({
           token1Param,
         )
 
-        const recipient = (isSvmChainId(chainId)
-          ? svmAddress
-          : address) as AddressFor<TChainId> | undefined
+        const recipient = (isSvmChainId(chainId) ? svmAddress : address) as
+          | AddressFor<TChainId>
+          | undefined
 
         return {
           mutate: {
@@ -460,7 +460,7 @@ function useEvmSimpleSwapTrade(enabled = true) {
   const evmChainId = isEvmChainId(chainId) ? chainId : undefined
   const { data: gasPrice } = useGasPrice({ chainId: evmChainId })
 
-  if (enabled && evmChainId) {
+  if (enabled && !evmChainId) {
     throw new Error('useEvmSimpleSwapTrade is EVM-only')
   }
 

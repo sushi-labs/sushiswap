@@ -11,7 +11,7 @@ import type { SupportedChainId } from 'src/config'
 import type { UseSvmTradeReturn } from 'src/lib/hooks/react-query'
 import { useSvmTradeExecute } from 'src/lib/hooks/react-query'
 import { getSvmRpc } from 'src/lib/svm/rpc'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount, useWallet } from 'src/lib/wallet'
 import { Percent } from 'sushi'
 import {
   type SvmAddress,

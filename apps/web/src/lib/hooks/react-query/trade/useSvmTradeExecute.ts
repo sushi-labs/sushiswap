@@ -141,8 +141,6 @@ export const useSvmTradeExecute = (variables: UseSvmTradeParams) => {
         signedTransaction: resolvedSignedTransaction,
       }
 
-      // TODO: include compute unit price / prioritization fee fields once supported.
-
       const res = await fetch(`/api/jupiter/ultra/execute`, {
         method: 'POST',
         headers: {

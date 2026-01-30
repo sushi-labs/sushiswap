@@ -135,9 +135,7 @@ export const useSvmTradeQuote = (variables: UseSvmTradeParams | undefined) => {
           : undefined
 
       const lamports =
-        order.signatureFeeLamports +
-        order.prioritizationFeeLamports +
-        order.rentFeeLamports
+        order.signatureFeeLamports + order.prioritizationFeeLamports
       const gasAmount =
         lamports > 0
           ? new Amount(
