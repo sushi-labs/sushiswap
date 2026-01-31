@@ -36,8 +36,8 @@ import {
   useWallets,
 } from 'src/lib/wallet'
 import { DisconnectWalletButton } from 'src/lib/wallet/components/disconnect-wallet-button'
-import { getChainById } from 'sushi'
-import { EvmChainId, shortenEvmAddress } from 'sushi/evm'
+import { getChainById, shortenAddress } from 'sushi'
+import { EvmChainId } from 'sushi/evm'
 import { useEnsName } from 'wagmi'
 
 export const PortfolioHeader = () => {
@@ -114,7 +114,7 @@ const ConnectedWalletInfo = ({
             </div>
           ) : (
             <div className="font-semibold leading-tight cursor-default">
-              {shortenEvmAddress(wallet.account)}
+              {shortenAddress(wallet.account)}
             </div>
           )}
           {!wallet?.account ? (
@@ -131,7 +131,7 @@ const ConnectedWalletInfo = ({
                         onClick={() => setCopied(wallet.account)}
                         className="flex text-xs !justify-start items-center text-muted-foreground !p-0 !h-[unset] !min-h-[unset] leading-none"
                       >
-                        {shortenEvmAddress(wallet.account)}
+                        {shortenAddress(wallet.account)}
                         <DocumentDuplicateIcon className="w-2.5 h-2.5" />
                       </Button>
                     </TooltipTrigger>
@@ -276,7 +276,7 @@ const ConnectedWalletsPopover = ({
                 <NetworkIcon chainId={wallet.chainId} width={28} height={28} />
                 <div className="flex flex-col">
                   <span className="text-sm leading-tight">
-                    {displayName ?? shortenEvmAddress(wallet.account)}
+                    {displayName ?? shortenAddress(wallet.account)}
                   </span>
                   <span className="text-muted-foreground text-xs leading-none">
                     {getChainById(wallet.chainId).name}

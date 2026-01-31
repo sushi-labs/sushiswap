@@ -2,8 +2,8 @@
 
 import React, { type FC } from 'react'
 import { Button, List } from '@sushiswap/ui'
-import { ChainId, getChainById } from 'sushi'
-import { type EvmAddress, shortenEvmAddress } from 'sushi/evm'
+import { ChainId, getChainById, shortenAddress } from 'sushi'
+import { type EvmAddress } from 'sushi/evm'
 
 export const RecipientSection: FC<{
   chainId: ChainId
@@ -23,7 +23,7 @@ export const RecipientSection: FC<{
               }
               rel="noreferrer"
             >
-              {shortenEvmAddress(recipient)}
+              {shortenAddress(recipient)}
             </a>
           </Button>
         </List.KeyValue>

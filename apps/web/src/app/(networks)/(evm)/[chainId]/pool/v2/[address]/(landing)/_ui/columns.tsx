@@ -3,8 +3,7 @@ import { SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import formatDistance from 'date-fns/formatDistance'
 import React from 'react'
-import { formatUSD } from 'sushi'
-import { shortenEvmAddress } from 'sushi/evm'
+import { formatUSD, shortenAddress } from 'sushi'
 
 import {
   type Transaction,
@@ -15,7 +14,7 @@ import {
 export const TX_SENDER_V2_COLUMN: ColumnDef<Transaction, unknown> = {
   id: 'sender',
   header: 'Maker',
-  cell: (props) => shortenEvmAddress(props.row.original.sender),
+  cell: (props) => shortenAddress(props.row.original.sender),
   meta: {
     body: {
       skeleton: <SkeletonText fontSize="lg" />,

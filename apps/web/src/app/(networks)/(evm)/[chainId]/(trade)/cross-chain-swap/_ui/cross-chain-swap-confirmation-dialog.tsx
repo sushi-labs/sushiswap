@@ -3,7 +3,8 @@ import { Button, Dots, Loader, classNames } from '@sushiswap/ui'
 import { CheckMarkIcon } from '@sushiswap/ui/icons/CheckMarkIcon'
 import { FailedMarkIcon } from '@sushiswap/ui/icons/FailedMarkIcon'
 import type { FC, ReactNode } from 'react'
-import { getEvmChainById, shortenEvmAddress } from 'sushi/evm'
+import { shortenAddress } from 'sushi'
+import { getEvmChainById } from 'sushi/evm'
 import type { Hex } from 'viem'
 import {
   type UseSelectedCrossChainTradeRouteReturn,
@@ -118,7 +119,7 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
               rel="noreferrer noopener noreferer"
               href={getEvmChainById(chainId1).getAccountUrl(recipient)}
             >
-              <Dots>{shortenEvmAddress(recipient)}</Dots>
+              <Dots>{shortenAddress(recipient)}</Dots>
             </a>
           </Button>
         ) : (
@@ -179,7 +180,7 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
               {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
             </a>
           </Button>{' '}
-          to {recipient ? shortenEvmAddress(recipient) : 'recipient'}
+          to {recipient ? shortenAddress(recipient) : 'recipient'}
         </>
       )
     }

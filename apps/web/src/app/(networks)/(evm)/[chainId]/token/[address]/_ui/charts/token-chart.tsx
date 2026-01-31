@@ -18,11 +18,11 @@ import {
   TooltipTrigger,
 } from '@sushiswap/ui'
 import { type FC, useMemo, useState } from 'react'
+import { shortenAddress } from 'sushi'
 import {
   EvmToken,
   type SerializedEvmToken,
   getEvmChainById,
-  shortenEvmAddress,
 } from 'sushi/evm'
 import { PriceChart } from './price-chart'
 
@@ -69,7 +69,7 @@ export const TokenChart: FC<TokenChartProps> = ({ token }) => {
                 className="font-medium"
                 href={getEvmChainById(token.chainId).getTokenUrl(token.address)}
               >
-                {shortenEvmAddress(token.address)}
+                {shortenAddress(token.address)}
               </LinkExternal>
             </div>
           </div>

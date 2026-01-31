@@ -25,14 +25,13 @@ import {
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
-import { ZERO, formatUSD, getChainById } from 'sushi'
+import { ZERO, formatUSD, getChainById, shortenAddress } from 'sushi'
 import {
   type EvmAddress,
   EvmChainId,
   EvmNative,
   getEvmChainById,
   isEvmAddress,
-  shortenEvmAddress,
 } from 'sushi/evm'
 import {
   type SvmChainId,
@@ -86,13 +85,13 @@ function Recipient<TChainId extends EvmChainId | SvmChainId>({
           rel="noreferrer"
         >
           {isSvmChainId(chainId) ? (
-            <>{shortenEvmAddress(recipient)}</>
+            <>{shortenAddress(recipient)}</>
           ) : (
             <AddressToEnsResolver address={recipient as EvmAddress}>
               {({ isLoading, data }) => {
                 return (
                   <>
-                    {isLoading || !data ? shortenEvmAddress(recipient) : data}
+                    {isLoading || !data ? shortenAddress(recipient) : data}
                   </>
                 )
               }}

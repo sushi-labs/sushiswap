@@ -10,8 +10,8 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import React, { type FC, useEffect, useMemo } from 'react'
-import { ZERO, formatUSD } from 'sushi'
-import { getEvmChainById, shortenEvmAddress } from 'sushi/evm'
+import { ZERO, formatUSD, shortenAddress } from 'sushi'
+import { getEvmChainById } from 'sushi/evm'
 import { isAddress } from 'viem'
 
 import { ChevronDownIcon } from '@heroicons/react-v1/solid'
@@ -229,7 +229,7 @@ export const CrossChainSwapTradeStats: FC = () => {
                       return (
                         <>
                           {isLoading || !data
-                            ? shortenEvmAddress(recipient)
+                            ? shortenAddress(recipient)
                             : data}
                         </>
                       )

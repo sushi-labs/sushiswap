@@ -7,8 +7,8 @@ import Image from 'next/image'
 import { useSidebar } from 'src/app/(networks)/_ui/sidebar'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useWallets } from 'src/lib/wallet'
-import { ChainId } from 'sushi'
-import { EvmChainId, shortenEvmAddress } from 'sushi/evm'
+import { ChainId, shortenAddress } from 'sushi'
+import { EvmChainId } from 'sushi/evm'
 import { useConnection, useEnsAvatar, useEnsName } from 'wagmi'
 import { SidebarTrigger } from '../sidebar/sidebar-trigger'
 
@@ -61,7 +61,7 @@ export function UserPortfolio({ selectedNetwork }: UserPortfolioProps) {
         ) : (
           <JazzIcon diameter={20} address={address} />
         )}
-        <span className="hidden sm:block">{shortenEvmAddress(address)}</span>
+        <span className="hidden sm:block">{shortenAddress(address)}</span>
         {wallets.svm && wallets.evm ? (
           <PlusOneIcon className="w-4 text-blue" />
         ) : null}

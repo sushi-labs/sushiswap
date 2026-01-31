@@ -26,12 +26,11 @@ import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
 import { WagmiProvider } from 'src/providers/wagmi-provider'
-import { Amount } from 'sushi'
+import { Amount, shortenAddress } from 'sushi'
 import {
   type EvmChainId,
   EvmToken,
   erc20Abi_transfer,
-  shortenEvmAddress,
 } from 'sushi/evm'
 import type { Address, Hex } from 'viem'
 import { encodePacked } from 'viem/utils'
@@ -263,7 +262,7 @@ function DepositTab({
                 address ? 'bg-green-500' : 'bg-red-500',
               )}
             />
-            <span>{address ? shortenEvmAddress(address) : 'None'}</span>
+            <span>{address ? shortenAddress(address) : 'None'}</span>
           </span>
           {address && (
             <span

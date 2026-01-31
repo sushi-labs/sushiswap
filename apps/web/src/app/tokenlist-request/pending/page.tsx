@@ -29,13 +29,12 @@ import {
   isTokenSecurityIssue,
 } from 'src/lib/hooks/react-query'
 import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
-import { formatNumber, formatUSD } from 'sushi'
+import { formatNumber, formatUSD, shortenAddress } from 'sushi'
 import {
   type EvmAddress,
   type EvmChainId,
   EvmToken,
   getEvmChainById,
-  shortenEvmAddress,
 } from 'sushi/evm'
 import { NavigationItems } from '../navigation-items'
 
@@ -169,7 +168,7 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
             )?.getTokenUrl(props.row.original.token.address as EvmAddress)}
           >
             <span className="flex items-center gap-1 flex-nowrap">
-              {shortenEvmAddress(props.row.original.token.address)}{' '}
+              {shortenAddress(props.row.original.token.address)}{' '}
               <ExternalLinkIcon width={14} height={14} />
             </span>
           </LinkExternal>
