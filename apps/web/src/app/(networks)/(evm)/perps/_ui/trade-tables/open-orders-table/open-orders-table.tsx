@@ -45,7 +45,7 @@ export const OpenOrdersTable = () => {
   const filterValue = tradeFilter?.['open-orders']?.split(':')?.[1] as
     | TradeFilterType
     | undefined
-  // console.log(data)
+  console.log(data)
   const tableData = useMemo(() => {
     if (isError || !data) return []
     let _data = data
