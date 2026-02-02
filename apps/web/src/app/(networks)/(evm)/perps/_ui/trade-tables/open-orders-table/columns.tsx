@@ -277,7 +277,7 @@ export const CANCEL_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
         onClick={async () => {
           await cancelOrdersAsync({ cancelData: allCancelData })
         }}
-        disabled={isPending}
+        disabled={isPending || !allCancelData?.length}
         type="button"
         className="font-medium text-blue hover:text-blue/80 disabled:text-muted-foreground disabled:cursor-not-allowed"
       >
