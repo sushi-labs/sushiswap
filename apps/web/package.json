@@ -65,6 +65,8 @@
     "@safe-global/safe-apps-provider": "~0.18.6",
     "@safe-global/safe-apps-sdk": "~9.1.0",
     "@snapshot-labs/snapshot.js": "0.9.9",
+    "@solana-program/system": "^0.10.0",
+    "@solana-program/token": "^0.9.0",
     "@solana-program/token-2022": "^0.6.1",
     "@solana/addresses": "catalog:web3",
     "@solana/codecs-strings": "^5.5.1",

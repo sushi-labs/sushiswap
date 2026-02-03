@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import type { SupportedChainId } from 'src/config'
 import { EvmNative, isEvmChainId } from 'sushi/evm'
 import { SvmNative, isSvmChainId } from 'sushi/svm'
@@ -50,4 +51,19 @@ export function isUnwrapTrade<TCurrency extends CurrencyFor<SupportedChainId>>(
   }
 
   return false
+}
+
+export function useWrapUnwrapTrade<
+  TCurrency extends CurrencyFor<SupportedChainId>,
+>(token0: TCurrency | undefined, token1: TCurrency | undefined) {
+  return useMemo(() => {
+    const isWrap = isWrapTrade(token0, token1)
+    const isUnwrap = isUnwrapTrade(token0, token1)
+
+    return {
+      isWrap,
+      isUnwrap,
+      isWrapUnwrap: isWrap || isUnwrap,
+    }
+  }, [token0, token1])
 }

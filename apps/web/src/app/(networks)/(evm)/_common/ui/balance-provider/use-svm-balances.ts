@@ -1,3 +1,4 @@
+import { TOKEN_PROGRAM_ADDRESS } from '@solana-program/token'
 import {
   TOKEN_2022_PROGRAM_ADDRESS,
   findAssociatedTokenPda,
@@ -17,9 +18,6 @@ type FetchSvmBalancesParams = {
   account: SvmAddress
 }
 
-const TOKEN_PROGRAM_ADDRESS = svmAddress(
-  'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
-)
 const ACCOUNT_FETCH_CHUNK_SIZE = 100
 
 const fetchSvmBalances = async ({

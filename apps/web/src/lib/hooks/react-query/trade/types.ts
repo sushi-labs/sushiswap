@@ -1,3 +1,4 @@
+import type { Base64EncodedWireTransaction } from '@solana/kit'
 import type { Amount, Percent, Price } from 'sushi'
 import type { EvmChainId, EvmCurrency, RouterLiquiditySource } from 'sushi/evm'
 import type { SvmAddress, SvmChainId, SvmCurrency } from 'sushi/svm'
@@ -50,7 +51,7 @@ export interface UseEvmTradeReturn {
 }
 
 export interface UseSvmTradeParams {
-  chainId: SvmChainId
+  chainId: SvmChainId | undefined
   fromToken: SvmCurrency | undefined
   toToken: SvmCurrency | undefined
   amount: Amount<SvmCurrency> | undefined
@@ -62,7 +63,7 @@ export interface UseSvmTradeParams {
   signedTransaction?: string
 }
 
-export interface UseSvmTradeReturn {
+export type UseSvmTradeReturn = {
   swapPrice: Price<SvmCurrency, SvmCurrency> | undefined
   priceImpact: Percent | undefined
   amountIn: Amount<SvmCurrency> | undefined
@@ -72,18 +73,23 @@ export interface UseSvmTradeReturn {
   gasSpentUsd: string | undefined
   route: SvmOrderResponse | undefined
   status: NonNullable<TradeType1['route']>['status'] | undefined
-  tx: SvmExecuteResponse | undefined
   tokenTax: Percent | false | undefined
   fee: string | undefined
   routingSource: string | undefined
-}
+} & (
+  | {
+      tx: SvmExecuteResponse | undefined
+      type: 'swap' | undefined
+    }
+  | {
+      tx: Base64EncodedWireTransaction | undefined
+      type: 'wrap/unwrap' | undefined
+    }
+)
 
 export type UseEvmTradeQuerySelect = (data: TradeType1) => UseEvmTradeReturn
 export type UseSvmTradeQuoteQuerySelect = (
   data: SvmOrderResponse,
-) => UseSvmTradeReturn
-export type UseSvmTradeExecuteQuerySelect = (
-  data: SvmExecuteResponse,
 ) => UseSvmTradeReturn
 export type TradeType1 = z.infer<typeof tradeValidator01>
 export type TradeType2 = z.infer<typeof tradeValidator02>

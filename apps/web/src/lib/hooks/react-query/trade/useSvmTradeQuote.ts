@@ -1,22 +1,125 @@
+import { LAMPORTS_PER_SOL, useKitTransactionSigner } from '@solana/connector'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
+import { SVM_UI_FEE_BIPS, ULTRA_REFERRAL_ACCOUNT } from 'src/config'
+import { unwrapSol, wrapSol } from 'src/lib/svm/wrap-unwrap'
 import { Amount, Percent, Price, ZERO } from 'sushi'
-import { SvmNative, WSOL_ADDRESS, isSvmChainId } from 'sushi/svm'
+import { SvmNative, WSOL, WSOL_ADDRESS, isSvmChainId } from 'sushi/svm'
 import { stringify } from 'viem'
+import {
+  isWrapTrade,
+  useWrapUnwrapTrade,
+} from '~evm/[chainId]/(trade)/swap/_ui/common'
+import {
+  useAmountBalance,
+  useBalance,
+} from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { svmOrderValidator } from './svmUltraValidator'
-import type { UseSvmTradeParams, UseSvmTradeQuoteQuerySelect } from './types'
+import type {
+  UseSvmTradeParams,
+  UseSvmTradeQuoteQuerySelect,
+  UseSvmTradeReturn,
+} from './types'
 
-const ULTRA_REFERRAL_ACCOUNT = '3KuHRzEQbh6hcucKWAXCzw71N8FWsCwU2nBr7dd9FoFJ'
-const ULTRA_REFERRAL_FEE_BPS = 50
-const LAMPORTS_PER_SOL = 1_000_000_000
-
-export const useSvmTradeQuoteQuery = (
+function useTradeQuote(
   params: UseSvmTradeParams | undefined,
-  select: UseSvmTradeQuoteQuerySelect,
-) => {
+  isWrapUnwrap: boolean,
+) {
   const { chainId, fromToken, toToken, amount, recipient, enabled } =
     params || {}
+
+  const { data: nativePrice } = usePrice({
+    chainId,
+    address: chainId ? WSOL_ADDRESS[chainId] : undefined,
+  })
+
+  const select: UseSvmTradeQuoteQuerySelect = useCallback(
+    (order) => {
+      if (!order || !fromToken || !toToken) {
+        return {
+          swapPrice: undefined,
+          priceImpact: undefined,
+          amountIn: undefined,
+          amountOut: undefined,
+          minAmountOut: undefined,
+          gasSpent: undefined,
+          gasSpentUsd: undefined,
+          fee: undefined,
+          route: undefined,
+          status: undefined,
+          tx: undefined,
+          tokenTax: undefined,
+          routingSource: undefined,
+          type: undefined,
+        }
+      }
+
+      const amountIn = new Amount(fromToken, order.inAmount)
+      const amountOut = new Amount(toToken, order.outAmount)
+      const minAmountOut = new Amount(toToken, order.otherAmountThreshold)
+
+      const priceImpact =
+        order.priceImpact !== undefined && Number.isFinite(order.priceImpact)
+          ? new Percent({
+              numerator: -Math.round(order.priceImpact * 100),
+              denominator: 10000,
+            })
+          : new Percent(0)
+
+      const swapPrice =
+        amountOut.gt(ZERO) && amountIn
+          ? new Price({
+              baseAmount: amountIn,
+              quoteAmount: amountOut,
+            })
+          : undefined
+
+      const feeAmount = amountOut.mul(
+        new Percent({ numerator: SVM_UI_FEE_BIPS, denominator: 10000 }),
+      )
+      const feeUsd =
+        order.outUsdValue !== undefined
+          ? order.outUsdValue * (SVM_UI_FEE_BIPS / 10000)
+          : undefined
+
+      const lamports =
+        order.signatureFeeLamports + order.prioritizationFeeLamports
+      const gasAmount =
+        lamports > 0
+          ? new Amount(
+              SvmNative.fromChainId(fromToken.chainId),
+              Math.round(lamports).toString(),
+            )
+          : undefined
+      const gasSpent = gasAmount?.toSignificant(4)
+      const gasSpentUsd =
+        nativePrice !== undefined && lamports > 0
+          ? (lamports / LAMPORTS_PER_SOL) * nativePrice
+          : undefined
+
+      return {
+        swapPrice,
+        priceImpact,
+        amountIn,
+        amountOut,
+        minAmountOut,
+        gasSpent,
+        gasSpentUsd: gasSpentUsd?.toFixed(4),
+        fee:
+          feeUsd !== undefined
+            ? `$${feeUsd.toFixed(4)}`
+            : `${feeAmount.toSignificant(4)} ${toToken.symbol}`,
+        route: { status: 'Success', ...order },
+        status: order.errorCode ? 'Failed' : 'Success',
+        tx: undefined,
+        tokenTax: undefined,
+        routingSource: order.router,
+        type: 'swap',
+      }
+    },
+    [fromToken, toToken, nativePrice],
+  )
 
   return useQuery({
     queryKey: [
@@ -44,7 +147,7 @@ export const useSvmTradeQuoteQuery = (
       params.set('amount', amount.amount.toString())
 
       params.set('referralAccount', ULTRA_REFERRAL_ACCOUNT)
-      params.set('referralFee', ULTRA_REFERRAL_FEE_BPS.toString())
+      params.set('referralFee', SVM_UI_FEE_BIPS.toString())
 
       if (recipient) {
         params.set('taker', recipient)
@@ -68,8 +171,9 @@ export const useSvmTradeQuoteQuery = (
     select,
     enabled: Boolean(
       enabled &&
-        params &&
-        isSvmChainId(params.chainId) &&
+        !isWrapUnwrap &&
+        chainId &&
+        isSvmChainId(chainId) &&
         fromToken &&
         toToken &&
         amount,
@@ -78,99 +182,112 @@ export const useSvmTradeQuoteQuery = (
   })
 }
 
-export const useSvmTradeQuote = (variables: UseSvmTradeParams | undefined) => {
-  const { fromToken, toToken, chainId } = variables || {}
+function useWrapUnwrapQuote(
+  params: UseSvmTradeParams | undefined,
+  isWrapUnwrap: boolean,
+) {
+  const { chainId, fromToken, toToken, amount, recipient, enabled } =
+    params || {}
 
+  const { data: wsolBalance } = useAmountBalance(
+    chainId ? WSOL[chainId] : undefined,
+  )
   const { data: nativePrice } = usePrice({
     chainId,
     address: chainId ? WSOL_ADDRESS[chainId] : undefined,
   })
 
-  const select: UseSvmTradeQuoteQuerySelect = useCallback(
-    (order) => {
-      if (!order || !fromToken || !toToken) {
-        return {
-          swapPrice: undefined,
-          priceImpact: undefined,
-          amountIn: undefined,
-          amountOut: undefined,
-          minAmountOut: undefined,
-          gasSpent: undefined,
-          gasSpentUsd: undefined,
-          fee: undefined,
-          route: undefined,
-          status: undefined,
-          tx: undefined,
-          tokenTax: undefined,
-          routingSource: undefined,
-        }
+  const { signer } = useKitTransactionSigner()
+
+  return useQuery<UseSvmTradeReturn>({
+    queryKey: [
+      'getSvmWrapUnwrapQuote',
+      {
+        chainId,
+        fromToken,
+        toToken,
+        amount,
+        recipient,
+        wsolBalance,
+        signer,
+      },
+    ],
+    queryFn: async () => {
+      if (!chainId || !isSvmChainId(chainId)) {
+        throw new Error('Unsupported SVM chainId')
       }
 
-      const amountIn = new Amount(fromToken, order.inAmount)
-      const amountOut = new Amount(toToken, order.outAmount)
-      const minAmountOut = new Amount(toToken, order.otherAmountThreshold)
+      if (!fromToken || !toToken || !amount || !signer) {
+        throw new Error('Missing required parameters for wrap/unwrap quote')
+      }
 
-      const priceImpact =
-        order.priceImpact !== undefined && Number.isFinite(order.priceImpact)
-          ? new Percent({
-              numerator: -Math.round(order.priceImpact * 100),
-              denominator: 10000,
-            })
-          : new Percent(0)
-
-      const swapPrice =
-        amountOut.gt(ZERO) && amountIn
+      const price =
+        amount.gt(ZERO) && amount
           ? new Price({
-              baseAmount: amountIn,
-              quoteAmount: amountOut,
+              baseAmount: amount,
+              quoteAmount: amount,
             })
           : undefined
 
-      const feeAmount = amountOut.mul(
-        new Percent({ numerator: ULTRA_REFERRAL_FEE_BPS, denominator: 10000 }),
+      const { transaction: tx, fee: feeLamports } = isWrapTrade(
+        fromToken,
+        toToken,
       )
-      const feeUsd =
-        order.outUsdValue !== undefined
-          ? order.outUsdValue * (ULTRA_REFERRAL_FEE_BPS / 10000)
-          : undefined
+        ? await wrapSol(signer, amount)
+        : await unwrapSol(
+            signer,
+            amount,
+            wsolBalance ? amount.eq(wsolBalance) : false,
+          )
 
-      const lamports =
-        order.signatureFeeLamports + order.prioritizationFeeLamports
       const gasAmount =
-        lamports > 0
-          ? new Amount(
-              SvmNative.fromChainId(fromToken.chainId),
-              Math.round(lamports).toString(),
-            )
+        feeLamports > 0n
+          ? new Amount(SvmNative.fromChainId(chainId), feeLamports)
           : undefined
       const gasSpent = gasAmount?.toSignificant(4)
       const gasSpentUsd =
-        nativePrice !== undefined && lamports > 0
-          ? (lamports / LAMPORTS_PER_SOL) * nativePrice
+        nativePrice !== undefined && feeLamports > 0n
+          ? (Number(feeLamports) / LAMPORTS_PER_SOL) * nativePrice
           : undefined
 
+      const feeAmount = new Amount(toToken, 0)
+
       return {
-        swapPrice,
-        priceImpact,
-        amountIn,
-        amountOut,
-        minAmountOut,
+        amountIn: amount,
+        amountOut: amount,
+        fee: `${feeAmount.toSignificant(4)} ${toToken.symbol}`,
         gasSpent,
-        gasSpentUsd:
-          gasSpentUsd !== undefined ? gasSpentUsd.toFixed(4) : undefined,
-        fee:
-          feeUsd !== undefined
-            ? `$${feeUsd.toFixed(4)}`
-            : `${feeAmount.toSignificant(4)} ${toToken.symbol}`,
-        route: { status: 'Success', ...order },
-        status: order.errorCode ? 'Failed' : 'Success',
-        tx: undefined,
+        gasSpentUsd: gasSpentUsd?.toFixed(4),
+        minAmountOut: amount,
+        priceImpact: new Percent(0),
+        route: undefined,
+        status: 'Success',
+        swapPrice: price,
         tokenTax: undefined,
-        routingSource: order.router,
+        tx,
+        routingSource: 'Wrap/Unwrap',
+        type: 'wrap/unwrap',
       }
     },
-    [fromToken, toToken, nativePrice],
-  )
+    enabled: Boolean(
+      enabled &&
+        isWrapUnwrap &&
+        chainId &&
+        isSvmChainId(chainId) &&
+        fromToken &&
+        toToken &&
+        amount,
+    ),
+  })
+}
 
-  return useSvmTradeQuoteQuery(variables, select)
+export function useSvmTradeQuote(params: UseSvmTradeParams | undefined) {
+  const { fromToken, toToken } = params || {}
+
+  const { isWrapUnwrap } = useWrapUnwrapTrade(fromToken, toToken)
+
+  const wrapUnwrap = useWrapUnwrapQuote(params, isWrapUnwrap)
+  const trade = useTradeQuote(params, isWrapUnwrap)
+
+  return isWrapUnwrap ? wrapUnwrap : trade
 }

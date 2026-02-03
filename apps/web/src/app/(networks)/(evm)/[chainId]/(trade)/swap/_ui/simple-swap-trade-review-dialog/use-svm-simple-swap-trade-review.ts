@@ -3,6 +3,7 @@
 import { getBase64Decoder, getBase64Encoder } from '@solana/codecs-strings'
 import { useTransactionSigner } from '@solana/connector/react'
 import type { Signature } from '@solana/keys'
+import type { Base64EncodedWireTransaction } from '@solana/kit'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { SwapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { DialogType, useDialog } from '@sushiswap/ui'
@@ -11,7 +12,7 @@ import type { SupportedChainId } from 'src/config'
 import type { UseSvmTradeReturn } from 'src/lib/hooks/react-query'
 import { useSvmTradeExecute } from 'src/lib/hooks/react-query'
 import { getSvmRpc } from 'src/lib/svm/rpc'
-import { useAccount, useWallet } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet'
 import { Percent } from 'sushi'
 import {
   type SvmAddress,
@@ -116,7 +117,7 @@ function _useSvmSimpleSwapTradeReview({
 
   const order = trade?.route
   const executeMutation = useSvmTradeExecute({
-    chainId: chainId as SvmChainId,
+    chainId,
     fromToken: token0,
     toToken: token1,
     amount: state.swapAmount,
@@ -153,21 +154,29 @@ function _useSvmSimpleSwapTradeReview({
   )
 
   const write = useMemo(() => {
-    if (
-      !chainId ||
-      !trade ||
-      !order?.transaction ||
-      !order?.requestId ||
-      !signer
-    ) {
+    if (!chainId || !trade || !signer || !address) {
       return undefined
+    }
+
+    const getUnsignedTransaction = async () => {
+      if (isWrap || isUnwrap) {
+        return trade?.tx as Base64EncodedWireTransaction
+      }
+
+      return order?.transaction
     }
 
     return async (confirm: () => void) => {
       setIsSigning(true)
       setStatus('pending')
       try {
-        const unsignedBytes = base64Encoder.encode(order.transaction!)
+        const unsignedTransaction = await getUnsignedTransaction()
+
+        if (!unsignedTransaction) {
+          throw new Error('Failed to build Solana transaction')
+        }
+
+        const unsignedBytes = base64Encoder.encode(unsignedTransaction)
         const signed = await signer.signTransaction(unsignedBytes)
         const signedBytes = (() => {
           if (signed instanceof Uint8Array) return signed
@@ -192,20 +201,17 @@ function _useSvmSimpleSwapTradeReview({
 
         const signedTransaction = base64Decoder.decode(signedBytes)
         const executePromise = executeMutation.mutateAsync({
-          requestId: order.requestId,
+          requestId: order?.requestId,
           signedTransaction,
         })
 
-        const result = await executePromise
-        const signature = result?.signature
+        const signature = await executePromise
         if (!signature) {
           throw new Error('Missing Solana transaction signature')
         }
 
         setTxHash(signature)
-        const confirmationPromise = waitForSvmSignature(signature).then(
-          () => result,
-        )
+        const confirmationPromise = waitForSvmSignature(signature)
 
         const actionVerb = isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'
         const actionPreposition = isWrap || isUnwrap ? 'to' : 'for'
@@ -230,7 +236,9 @@ function _useSvmSimpleSwapTradeReview({
           chainId,
         })
 
-        void confirmationPromise
+        confirm()
+
+        await confirmationPromise
           .then(() => {
             setStatus('success')
             sendAnalyticsEvent(SwapEventName.SWAP_TRANSACTION_COMPLETED, {
@@ -245,16 +253,12 @@ function _useSvmSimpleSwapTradeReview({
               chain_id: chainId,
             })
           })
-
-        confirm()
       } catch (error) {
         setStatus('error')
         onSwapError(error)
       } finally {
         setSwapAmount('')
-        if (chainId) {
-          refetchChain(chainId)
-        }
+        refetchChain(chainId)
         setIsSigning(false)
       }
     }

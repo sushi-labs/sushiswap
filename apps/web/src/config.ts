@@ -16,6 +16,8 @@ import { MvmChainId } from 'sushi/mvm'
 import { SvmChainId, isSvmChainId } from 'sushi/svm'
 import { TvmChainId } from 'sushi/tvm'
 
+export const ULTRA_REFERRAL_ACCOUNT =
+  '3KuHRzEQbh6hcucKWAXCzw71N8FWsCwU2nBr7dd9FoFJ'
 export const SVM_UI_FEE_BIPS = 50
 export const SVM_UI_FEE_PERCENT = SVM_UI_FEE_BIPS / 100
 export const SVM_UI_FEE_DECIMAL = SVM_UI_FEE_BIPS / 10_000
