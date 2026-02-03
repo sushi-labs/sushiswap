@@ -16,6 +16,7 @@ import {
   numberFormatter,
 } from 'src/lib/perps/utils'
 import { useAssetState } from '../../asset-state-provider'
+import { UpdateLeverageDialog } from '../../exchange/update-leverage-dialog'
 import { columnBodyMeta } from '../column-meta'
 import { useTradeTables } from '../trade-tables-provider'
 
@@ -31,6 +32,8 @@ export const COIN_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     const coin = props.row.original.position.coin
     const perpsDex = props.row.original.perpsDex
     const symbol = props.row.original.assetSymbol
+    const currentLeverage = props.row.original.position.leverage.value
+    const isCross = props.row.original.position.leverage.type === 'cross'
 
     const side = props.row.original.side
 
@@ -57,19 +60,22 @@ export const COIN_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
             </Chip>
           ) : null}
         </button>
-        <button
-          onClick={(e) => {
-            e.stopPropagation()
-            alert('todo: adjust leverage dialog')
-          }}
-          type="button"
-          className={classNames(
-            'font-bold whitespace-nowrap transition-colors',
-            getTextColorClass(side === 'A' ? -1 : 1),
-          )}
-        >
-          {`${props.row.original.position.leverage.value}x`}
-        </button>
+        <UpdateLeverageDialog
+          assetString={coin}
+          currentLeverage={currentLeverage}
+          isCross={isCross}
+          trigger={
+            <button
+              type="button"
+              className={classNames(
+                'font-bold whitespace-nowrap transition-colors',
+                getTextColorClass(side === 'A' ? -1 : 1),
+              )}
+            >
+              {`${props.row.original.position.leverage.value}x`}
+            </button>
+          }
+        />
       </div>
     )
   },

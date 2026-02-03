@@ -36,6 +36,7 @@ export type PerpOrSpotAsset = {
   maxLeverage: number | undefined
   marketCap?: string
   isDelisted: boolean
+  marginTableId: number | undefined
 }
 
 const formatSpotCtxs = (
@@ -84,6 +85,7 @@ const formatSpotCtxs = (
       marketCap: Number.isNaN(marketCap) ? '' : marketCap.toString(),
       maxLeverage: undefined,
       isDelisted: false,
+      marginTableId: undefined,
       // raw: { u, ctx },
     })
     return acc
@@ -153,6 +155,7 @@ export const formatPerpCtxs = (
         maxLeverage: u.maxLeverage,
         marketCap: undefined,
         isDelisted: u.isDelisted ?? false,
+        marginTableId: u.marginTableId,
       })
     }
 
