@@ -1,8 +1,8 @@
 import type { PortfolioWalletToken } from '@sushiswap/graph-client/data-api'
-import { FormattedNumber, classNames } from '@sushiswap/ui'
+import { Currency, FormattedNumber, classNames } from '@sushiswap/ui'
 import React, { type FC } from 'react'
 import { formatPercent, formatUSD } from 'sushi'
-import type { EvmChainId } from 'sushi/evm'
+import { type EvmChainId, EvmNative, EvmToken, isEvmAddress } from 'sushi/evm'
 import { PortfolioInfoRow } from '../portfolio-info-row'
 
 interface PortfolioTokensListProps {
@@ -14,17 +14,27 @@ export const PortfolioTokensList: FC<PortfolioTokensListProps> = ({
 }) => (
   <div className="overflow-y-auto h-full cursor-default">
     {tokens.map((token) => {
+      const isNative = !isEvmAddress(token.id) //for native tokens, the id is the chainname in lowercase
+
       return (
         <PortfolioInfoRow
           key={`${token.chainId}:${token.id}`}
           chainId={token.chainId as EvmChainId}
           icon={
-            <img
-              className="rounded-full"
-              src={token.logoUrl || undefined}
+            <Currency.Icon
+              currency={
+                isNative
+                  ? EvmNative.fromChainId(token.chainId as EvmChainId)
+                  : new EvmToken({
+                      chainId: token.chainId as EvmChainId,
+                      address: token.id as `0x${string}`,
+                      decimals: token.decimals,
+                      symbol: token.symbol,
+                      name: token.name,
+                    })
+              }
               width={28}
               height={28}
-              alt={token.symbol ?? token.name}
             />
           }
           leftContent={

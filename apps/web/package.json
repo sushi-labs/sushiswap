@@ -53,7 +53,7 @@
     "@opentelemetry/sdk-trace-base": "2.1.0",
     "@opentelemetry/sdk-trace-web": "2.1.0",
     "@opentelemetry/semantic-conventions": "1.37.0",
-    "@orbs-network/twap-sdk": "4.0.26",
+    "@orbs-network/twap-sdk": "4.0.26-fix.1",
     "@pontem/wallet-adapter-plugin": "0.2.1",
     "@radix-ui/react-slot": "1.1.1",
     "@radix-ui/react-visually-hidden": "1.1.1",

@@ -394,8 +394,8 @@ const _SimpleSwapTradeReviewDialog: FC<{
                 })}
               </div>
             </div>
-            <DialogContent>
-              <DialogHeader>
+            <DialogContent className="max-h-[80vh]">
+              <DialogHeader className="!text-left">
                 <DialogTitle>
                   Buy {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
                 </DialogTitle>
@@ -404,7 +404,8 @@ const _SimpleSwapTradeReviewDialog: FC<{
                   {swapAmount?.toSignificant(6)} {token0?.symbol}
                 </DialogDescription>
               </DialogHeader>
-              <div className="flex flex-col gap-4">
+              {/* 176px is sum of header, footer, padding, and gap */}
+              <div className="flex flex-col gap-4 overflow-y-auto max-h-[calc(80vh-176px)]">
                 {showSlippageWarning && <SlippageWarning />}
                 {showPriceImpactWarning && <PriceImpactWarning />}
                 <List className="!pt-0">
