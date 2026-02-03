@@ -690,8 +690,8 @@ const _CrossChainSwapTradeReviewDialog: FC<{
               </Collapsible>
               <div className="mt-4">{children}</div>
             </div>
-            <DialogContent>
-              <DialogHeader>
+            <DialogContent className="max-h-[80vh]">
+              <DialogHeader className="!text-left">
                 <DialogTitle>
                   {!step?.amountOut ? (
                     <SkeletonText fontSize="xs" className="w-2/3" />
@@ -705,7 +705,8 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                   Swap {swapAmount?.toSignificant(6)} {token0?.symbol}{' '}
                 </DialogDescription>
               </DialogHeader>
-              <div className="flex flex-col gap-4 overflow-x-hidden">
+              {/* 176px is sum of header, footer, padding, and gap */}
+              <div className="flex flex-col gap-4 overflow-y-auto max-h-[calc(80vh-176px)]">
                 {showSlippageWarning && <SlippageWarning />}
                 {showPriceImpactWarning && <PriceImpactWarning />}
                 <List>

@@ -43,15 +43,15 @@ export default async function Layout(props: {
         <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent py-10 h-full">
           <Container maxWidth="5xl" className="px-4">
             <Message size="sm" variant="info" className="mb-6">
-              <h1 className="py-1 text-lg text-slate-200">
+              <h1 className="py-1 text-lg dark:text-slate-200 text-gray-700">
                 Not seeing your position?
               </h1>
-              We’re beginning to phase out the staking contracts used for V2
-              pools to make way for new and improved technology. If you have any
-              staked positions and wish to unstake and claim your rewards,
+              We&apos;re beginning to phase out the staking contracts used for
+              V2 pools to make way for new and improved technology. If you have
+              any staked positions and wish to unstake and claim your rewards,
               please visit{' '}
               <LinkExternal href="https://deprecated.sushi.com/farms">
-                <span className="text-slate-300">
+                <span className="dark:text-slate-300 text-gray-800">
                   https://deprecated.sushi.com/farms
                 </span>
               </LinkExternal>
