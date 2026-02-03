@@ -16,6 +16,7 @@ import {
   numberFormatter,
 } from 'src/lib/perps/utils'
 import { useAssetState } from '../../asset-state-provider'
+import { CloseAllPositionsDialog } from '../../exchange/close-all-positions-dialog'
 import { UpdateLeverageDialog } from '../../exchange/update-leverage-dialog'
 import { columnBodyMeta } from '../column-meta'
 import { useTradeTables } from '../trade-tables-provider'
@@ -353,19 +354,11 @@ export const FUNDING_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
 
 export const CLOSE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   id: 'Close',
-  header: (_props) => {
-    return (
-      <button
-        onClick={async () => {
-          alert('todo: close all positions dialog')
-        }}
-        // disabled={isPending || !allCancelData?.length}
-        type="button"
-        className="font-medium text-blue hover:text-blue/80 disabled:text-muted-foreground disabled:cursor-not-allowed"
-      >
-        Close All
-      </button>
-    )
+  header: (props) => {
+    const userPositions = props.table
+      .getRowModel()
+      .rows.map((row) => row.original)
+    return <CloseAllPositionsDialog userPositions={userPositions} />
   },
   cell: (_props) => {
     return (

@@ -11,7 +11,7 @@ import {
 } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
-import { useCancelOrders } from 'src/lib/perps/exchange/use-cancel-orders'
+import { useCancelOpenOrders } from 'src/lib/perps/exchange/use-cancel-open-orders'
 import type { UserOpenOrdersItemType } from 'src/lib/perps/use-user-open-orders'
 import {
   enUSFormatNumber,
@@ -369,7 +369,7 @@ export const CANCEL_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
       orderId: row.original.oid,
       asset: row.original.coin,
     }))
-    const { cancelOrdersAsync, isPending } = useCancelOrders()
+    const { cancelOrdersAsync, isPending } = useCancelOpenOrders()
 
     return (
       <button
@@ -385,7 +385,7 @@ export const CANCEL_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
     )
   },
   cell: (props) => {
-    const { cancelOrdersAsync, isPending } = useCancelOrders()
+    const { cancelOrdersAsync, isPending } = useCancelOpenOrders()
     const cancelData = [
       {
         orderId: props.row.original.oid,

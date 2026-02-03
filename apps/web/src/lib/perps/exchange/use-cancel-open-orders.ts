@@ -1,19 +1,22 @@
 import { cancel } from '@nktkas/hyperliquid/api/exchange'
 import { AbstractWalletError } from '@nktkas/hyperliquid/signing'
-import { SymbolConverter } from '@nktkas/hyperliquid/utils'
 import {
   createFailedToast,
   createInfoToast,
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
+import { useAssetListState } from '~evm/perps/_ui/asset-list-provider'
 import { hlHttpTransport } from '../transports'
 import { useAgent } from '../use-agent'
 
 type CancelData = { asset: string; orderId: number }
 
-export const useCancelOrders = () => {
+export const useCancelOpenOrders = () => {
   const { agentAccount } = useAgent()
+  const {
+    state: { symbolConverter },
+  } = useAssetListState()
 
   const mutation = useMutation({
     mutationFn: async ({ cancelData }: { cancelData: CancelData[] }) => {
@@ -24,12 +27,8 @@ export const useCancelOrders = () => {
         return
       }
 
-      const converter = await SymbolConverter.create({
-        transport: hlHttpTransport,
-      })
-
       const cancels = cancelData.map((c) => {
-        const assetId = converter.getAssetId(c.asset)
+        const assetId = symbolConverter?.getAssetId(c.asset)
 
         if (assetId === undefined) throw new Error(`Unknown asset: ${c.asset}`)
         return { a: assetId, o: c.orderId }

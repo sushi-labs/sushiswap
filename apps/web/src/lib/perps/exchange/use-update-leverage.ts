@@ -1,18 +1,20 @@
 import { updateLeverage } from '@nktkas/hyperliquid/api/exchange'
 import { AbstractWalletError } from '@nktkas/hyperliquid/signing'
-import { SymbolConverter } from '@nktkas/hyperliquid/utils'
 import {
   createFailedToast,
   createInfoToast,
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
+import { useAssetListState } from '~evm/perps/_ui/asset-list-provider'
 import { hlHttpTransport } from '../transports'
 import { useAgent } from '../use-agent'
 
 export const useUpdateLeverage = () => {
   const { agentAccount } = useAgent()
-
+  const {
+    state: { symbolConverter },
+  } = useAssetListState()
   const mutation = useMutation({
     mutationFn: async ({
       assetString,
@@ -26,10 +28,7 @@ export const useUpdateLeverage = () => {
         return
       }
 
-      const converter = await SymbolConverter.create({
-        transport: hlHttpTransport,
-      })
-      const assetId = converter.getAssetId(assetString)
+      const assetId = symbolConverter?.getAssetId(assetString)
       if (assetId === undefined) {
         throw new Error(`Unknown asset: ${assetString}`)
       }

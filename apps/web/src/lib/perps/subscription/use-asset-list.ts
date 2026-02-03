@@ -37,6 +37,7 @@ export type PerpOrSpotAsset = {
   marketCap?: string
   isDelisted: boolean
   marginTableId: number | undefined
+  decimals: number
 }
 
 const formatSpotCtxs = (
@@ -70,6 +71,7 @@ const formatSpotCtxs = (
       symbol,
       name: assetId,
       marketType: 'spot' as const,
+      decimals: tokens[0]?.szDecimals,
       dex: '',
       tokens,
       lastPrice: last.toString(),
@@ -86,7 +88,6 @@ const formatSpotCtxs = (
       maxLeverage: undefined,
       isDelisted: false,
       marginTableId: undefined,
-      // raw: { u, ctx },
     })
     return acc
   }, new Map<string, PerpOrSpotAsset>())
@@ -139,6 +140,7 @@ export const formatPerpCtxs = (
       acc.set(u.name, {
         symbol,
         name: u.name,
+        decimals: u.szDecimals,
         marketType: 'perp' as const,
         dex: dexName,
         tokens: collateralToken ? [collateralToken] : undefined,
