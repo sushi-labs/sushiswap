@@ -1,9 +1,11 @@
 import { useMemo } from 'react'
+import { useAccount } from 'wagmi'
 import { useAssetListState } from '~evm/perps/_ui/asset-list-provider'
 import { useUserState } from '~evm/perps/user-provider'
 import { SPOT_ASSETS_TO_REWRITE, getPerpsDexAndCoin } from './utils'
 
 export const useTradeHistory = () => {
+  const { address } = useAccount()
   const {
     state: {
       userFillsQuery: {
@@ -56,12 +58,19 @@ export const useTradeHistory = () => {
   }, [data, assetList])
 
   return useMemo(() => {
+    if (!address) {
+      return {
+        data: [],
+        isLoading: false,
+        isError: false,
+      }
+    }
     return {
       data: formattedData,
       isLoading,
       isError,
     }
-  }, [isLoading, isError, formattedData])
+  }, [isLoading, isError, formattedData, address])
 }
 
 export type TradeHistoryItemType = ReturnType<

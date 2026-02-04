@@ -1,9 +1,11 @@
 import { useMemo } from 'react'
+import { useAccount } from 'wagmi'
 import { useAssetListState } from '~evm/perps/_ui/asset-list-provider'
 import { useUserState } from '~evm/perps/user-provider'
 import { SPOT_ASSETS_TO_REWRITE } from './utils'
 
 export const useBalances = () => {
+  const { address } = useAccount()
   const {
     state: {
       webData2Query: {
@@ -72,12 +74,19 @@ export const useBalances = () => {
   }, [data, assetList])
 
   return useMemo(() => {
+    if (!address) {
+      return {
+        data: [],
+        isLoading: false,
+        isError: false,
+      }
+    }
     return {
       data: formattedData,
       isLoading,
       isError,
     }
-  }, [isLoading, isError, formattedData])
+  }, [isLoading, isError, formattedData, address])
 }
 
 export type BalanceItemType = ReturnType<typeof useBalances>['data'][number]

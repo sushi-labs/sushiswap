@@ -1,7 +1,9 @@
 import { useMemo } from 'react'
+import { useAccount } from 'wagmi'
 import { useUserState } from '~evm/perps/user-provider'
 
 export const useFundingHistory = () => {
+  const { address } = useAccount()
   const {
     state: {
       userFundingsQuery: { data, isLoading, isError },
@@ -27,12 +29,19 @@ export const useFundingHistory = () => {
   }, [data])
 
   return useMemo(() => {
+    if (!address) {
+      return {
+        data: [],
+        isLoading: false,
+        isError: false,
+      }
+    }
     return {
       data: formattedData,
       isLoading,
       isError,
     }
-  }, [isLoading, isError, formattedData])
+  }, [isLoading, isError, formattedData, address])
 }
 
 export type FundingHistoryItemType = ReturnType<

@@ -13,6 +13,7 @@ import {
   enUSFormatNumber,
   getTextColorClass,
 } from 'src/lib/perps/utils'
+import { useAccount } from 'wagmi'
 import { useUserState } from '~evm/perps/user-provider'
 import { useAssetListState } from '../asset-list-provider'
 import { ValueSensitiveText } from '../value-sensitive-text'
@@ -22,6 +23,7 @@ import { PerpSpotTransfer } from './perp-spot-transfer'
 import { Withdraw } from './withdraw'
 
 export const AccountManagement = ({ className }: { className?: string }) => {
+  const { address } = useAccount()
   const {
     state: {
       webData2Query: {
@@ -41,8 +43,8 @@ export const AccountManagement = ({ className }: { className?: string }) => {
       assetListQuery: { data: assetList },
     },
   } = useAssetListState()
-  const isLoading = isLoadingWebData2 || allDexLoading
-  const error = errorWebData2 || allDexError
+  const isLoading = !address ? false : isLoadingWebData2 || allDexLoading
+  const error = !address ? false : errorWebData2 || allDexError
 
   const spotEquity = useMemo(() => {
     if (!webData2) return 0
@@ -142,7 +144,12 @@ export const AccountManagement = ({ className }: { className?: string }) => {
         <AccountManagementSkeleton />
       ) : (
         <>
-          <div className="flex flex-col gap-2">
+          <div
+            className={classNames(
+              'flex flex-col gap-2',
+              !address ? 'opacity-50 pointer-events-none' : '',
+            )}
+          >
             <DepositDialog />
             <div className="flex items-center gap-2">
               <PerpSpotTransfer />
