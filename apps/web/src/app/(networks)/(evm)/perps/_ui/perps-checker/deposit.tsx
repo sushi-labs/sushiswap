@@ -6,7 +6,7 @@ import { DepositDialog } from '../account-management/deposit-dialog'
 export const Deposit: FC<ButtonProps> = ({
   children,
   fullWidth = true,
-  size = 'lg',
+  size = 'default',
   ...props
 }) => {
   const {

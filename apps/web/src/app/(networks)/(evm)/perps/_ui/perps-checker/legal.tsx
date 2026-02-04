@@ -29,7 +29,7 @@ import {
 const Legal: FC<ButtonProps> = ({
   children,
   fullWidth = true,
-  size = 'lg',
+  size = 'default',
   ...props
 }) => {
   const isMounted = useIsMounted()

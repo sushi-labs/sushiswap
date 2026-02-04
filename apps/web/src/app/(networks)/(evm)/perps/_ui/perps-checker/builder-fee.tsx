@@ -5,7 +5,7 @@ import { useApproveBuilderFee } from 'src/lib/perps/exchange/use-approve-builder
 export const BuilderFee: FC<ButtonProps> = ({
   children,
   fullWidth = true,
-  size = 'lg',
+  size = 'default',
   ...props
 }) => {
   const { approveBuilderFeeAsync, isPending, hasApprovedBuilder } =

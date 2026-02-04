@@ -76,7 +76,6 @@ export const CloseAllPositionsDialog = ({
       builder: {
         builderFee: BUILDER_FEE_PERPS,
       },
-      shouldUseMarketPrices: closeType === 'market',
     }
   }, [closeType, userPositions, allMidsData?.mids, assetListData])
 

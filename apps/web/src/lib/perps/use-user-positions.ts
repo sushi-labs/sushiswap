@@ -31,7 +31,10 @@ export const useUserPositions = () => {
     return data.clearinghouseStates.flatMap(([dexName, i]) => {
       return i.assetPositions.map((pos) => {
         const asset = assetList?.get(pos.position.coin)
-        const side = Number.parseFloat(pos.position.szi) >= 0 ? 'B' : 'A'
+        const side =
+          Number.parseFloat(pos.position.szi) >= 0
+            ? ('B' as const)
+            : ('A' as const)
         const markPrice = asset?.markPrice ?? '0'
         return {
           ...pos,

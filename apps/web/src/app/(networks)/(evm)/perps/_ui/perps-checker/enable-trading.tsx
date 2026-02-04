@@ -6,7 +6,7 @@ import { useWalletClient } from 'wagmi'
 export const EnableTrading: FC<ButtonProps> = ({
   children,
   fullWidth = true,
-  size = 'lg',
+  size = 'default',
   ...props
 }) => {
   const { data: walletClient } = useWalletClient()

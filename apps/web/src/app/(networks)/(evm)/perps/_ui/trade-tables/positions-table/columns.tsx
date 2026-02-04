@@ -19,6 +19,7 @@ import {
 } from 'src/lib/perps/utils'
 import { useAssetState } from '../../asset-state-provider'
 import { CloseAllPositionsDialog } from '../../exchange/close-all-positions-dialog'
+import { MarketCloseDialog } from '../../exchange/market-close-dialog'
 import { UpdateLeverageDialog } from '../../exchange/update-leverage-dialog'
 import { columnBodyMeta } from '../column-meta'
 import { useTradeTables } from '../trade-tables-provider'
@@ -359,7 +360,9 @@ export const CLOSE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   header: () => {
     return <CloseAllPositionsDialog />
   },
-  cell: (_props) => {
+  cell: (props) => {
+    const position = useMemo(() => props.row.original, [props.row.original])
+
     return (
       <div className="flex items-center gap-4">
         <button
@@ -372,16 +375,7 @@ export const CLOSE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
         >
           Limit
         </button>
-        <button
-          onClick={() => {
-            alert('todo: close at market position dialog')
-          }}
-          // disabled={isPending}
-          type="button"
-          className="font-medium text-blue hover:text-blue/80 disabled:text-muted-foreground disabled:cursor-not-allowed"
-        >
-          Market
-        </button>
+        <MarketCloseDialog positionToClose={position} />
         <button
           onClick={() => {
             alert('todo: close at market and open reverse dialog')
