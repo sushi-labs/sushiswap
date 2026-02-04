@@ -10,13 +10,15 @@ import {
   DialogTrigger,
   Message,
 } from '@sushiswap/ui'
-import { useMemo, useState } from 'react'
+import { type ReactNode, useMemo, useState } from 'react'
 import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
 import { useExecuteOrders } from 'src/lib/perps/exchange/use-execute-orders'
 import { useUserPositions } from 'src/lib/perps/use-user-positions'
 import { useAssetListState } from '../asset-list-provider'
 
-export const CloseAllPositionsDialog = () => {
+export const CloseAllPositionsDialog = ({
+  trigger,
+}: { trigger?: ReactNode }) => {
   const { data: userPositions } = useUserPositions()
   const [open, setOpen] = useState(false)
   const [closeType, setCloseType] = useState<'market' | 'limit-at-mid'>(
@@ -86,13 +88,17 @@ export const CloseAllPositionsDialog = () => {
       }}
     >
       <DialogTrigger asChild>
-        <button
-          disabled={isPending || userPositions?.length === 0}
-          type="button"
-          className="font-medium text-blue hover:text-blue/80 disabled:text-muted-foreground disabled:cursor-not-allowed"
-        >
-          Close All
-        </button>
+        {trigger ? (
+          trigger
+        ) : (
+          <button
+            disabled={isPending || userPositions?.length === 0}
+            type="button"
+            className="font-medium text-blue hover:text-blue/80 disabled:text-muted-foreground disabled:cursor-not-allowed"
+          >
+            Close All
+          </button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
