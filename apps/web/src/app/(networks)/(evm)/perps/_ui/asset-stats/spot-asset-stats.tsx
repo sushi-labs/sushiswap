@@ -1,4 +1,5 @@
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
+import { formatPrice } from '@nktkas/hyperliquid/utils'
 import {
   HoverCard,
   HoverCardContent,
@@ -6,8 +7,8 @@ import {
   LinkExternal,
   classNames,
 } from '@sushiswap/ui'
+import { useMemo } from 'react'
 import { useActiveAsset } from 'src/lib/perps/subscription/use-active-asset'
-import { useInitialDecimals } from 'src/lib/perps/use-initial-decimals'
 import {
   enUSFormatNumber,
   getHyperliquidExplorerUrl,
@@ -30,11 +31,10 @@ export const SpotAssetStats = () => {
   const {
     state: { activeAsset },
   } = useAssetState()
-  const asset = data?.get?.(activeAsset)
+  const asset = useMemo(() => data?.get?.(activeAsset), [data, activeAsset])
   const { data: assetData, isLoading: isAssetLoading } = useActiveAsset({
     assetString: activeAsset,
   })
-  const initialDecimals = useInitialDecimals(assetData)
 
   if (isLoading || isAssetLoading || !assetData || !asset) {
     return Array(8)
@@ -61,11 +61,15 @@ export const SpotAssetStats = () => {
         </HoverCard>
 
         <ValueSensitiveText
-          value={assetData?.lastPrice?.toString() ?? ''}
+          value={formatPrice(
+            assetData?.lastPrice?.toString() ?? '',
+            asset?.decimals ?? 0,
+            'spot',
+          )}
           className="text-sm font-medium tabular-nums lining-nums min-w-[var(--w)] inline-block"
           formatOptions={{
-            minimumFractionDigits: initialDecimals,
-            maximumFractionDigits: initialDecimals,
+            minimumFractionDigits: 0,
+            maximumFractionDigits: asset?.decimals,
           }}
         />
       </div>

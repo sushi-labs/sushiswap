@@ -61,7 +61,10 @@ export const OrderBook = ({ className }: { className?: string }) => {
   const itemCount = isLg ? 12 : 7
 
   const [side, setSide] = useState<'base' | 'quote'>('quote')
-  const asset = assetList?.get?.(activeAsset)
+  const asset = useMemo(
+    () => assetList?.get?.(activeAsset),
+    [assetList, activeAsset],
+  )
 
   const bids = useMemo(() => data?.bids, [data?.bids])
   const asks = useMemo(() => data?.asks, [data?.asks])

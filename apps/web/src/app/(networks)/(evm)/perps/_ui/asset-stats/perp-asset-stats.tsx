@@ -1,12 +1,12 @@
+import { formatPrice } from '@nktkas/hyperliquid/utils'
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useActiveAsset } from 'src/lib/perps/subscription/use-active-asset'
-import { useInitialDecimals } from 'src/lib/perps/use-initial-decimals'
 import {
   currencyFormatter,
   getSignForValue,
@@ -14,6 +14,7 @@ import {
   numberFormatter,
 } from 'src/lib/perps/utils'
 import { formatPercent } from 'sushi'
+import { useAssetListState } from '../asset-list-provider'
 import { useAssetState } from '../asset-state-provider'
 import { ValueSensitiveText } from '../value-sensitive-text'
 import { AssetStatsSkeleton } from './asset-stats-skeleton'
@@ -22,12 +23,17 @@ export const PerpAssetStats = () => {
   const {
     state: { activeAsset },
   } = useAssetState()
+  const {
+    state: {
+      assetListQuery: { data, isLoading },
+    },
+  } = useAssetListState()
   const { data: assetData, isLoading: isAssetLoading } = useActiveAsset({
     assetString: activeAsset,
   })
-  const initialDecimals = useInitialDecimals(assetData)
+  const asset = useMemo(() => data?.get?.(activeAsset), [data, activeAsset])
 
-  if (isAssetLoading || !assetData) {
+  if (isAssetLoading || !assetData || isLoading) {
     return Array(8)
       .fill(0)
       .map((_, i) => <AssetStatsSkeleton key={i} />)
@@ -55,11 +61,15 @@ export const PerpAssetStats = () => {
         </HoverCard>
 
         <ValueSensitiveText
+          value={formatPrice(
+            assetData?.markPrice?.toString() ?? '',
+            asset?.decimals ?? 0,
+            'perp',
+          )}
           formatOptions={{
-            minimumFractionDigits: initialDecimals,
-            maximumFractionDigits: initialDecimals,
+            minimumFractionDigits: 0,
+            maximumFractionDigits: asset?.decimals,
           }}
-          value={assetData?.markPrice?.toString() ?? ''}
           className="text-sm font-medium tabular-nums"
         />
       </div>
@@ -83,11 +93,15 @@ export const PerpAssetStats = () => {
         </HoverCard>
 
         <ValueSensitiveText
+          value={formatPrice(
+            assetData?.oraclePrice?.toString() ?? '',
+            asset?.decimals ?? 0,
+            'perp',
+          )}
           formatOptions={{
-            minimumFractionDigits: initialDecimals,
-            maximumFractionDigits: initialDecimals,
+            minimumFractionDigits: 0,
+            maximumFractionDigits: asset?.decimals,
           }}
-          value={assetData?.oraclePrice?.toString() ?? ''}
           className="text-sm font-medium tabular-nums"
           allowColorChange={false}
         />

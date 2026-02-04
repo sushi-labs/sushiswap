@@ -1,5 +1,6 @@
 import { Chip, SkeletonText, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
+import { useMemo } from 'react'
 import type { PerpOrSpotAsset } from 'src/lib/perps/subscription/use-asset-list'
 import {
   currencyFormatter,
@@ -15,7 +16,7 @@ export const SYMBOL_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
   id: 'symbol',
   header: 'Symbol',
   cell: (props) => {
-    const asset = props.row.original
+    const asset = useMemo(() => props.row.original, [props.row.original])
     return (
       <div className="whitespace-nowrap flex flex-col lg:flex-row lg:items-center gap-1">
         <div className="flex items-center gap-1">

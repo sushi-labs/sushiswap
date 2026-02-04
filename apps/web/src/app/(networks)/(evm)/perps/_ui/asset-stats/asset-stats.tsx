@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useAssetListState } from '../asset-list-provider'
 import { useAssetState } from '../asset-state-provider'
 import { OverflowX } from '../overflow-x'
@@ -13,7 +14,7 @@ export const AssetStats = () => {
   const {
     state: { activeAsset },
   } = useAssetState()
-  const asset = data?.get?.(activeAsset)
+  const asset = useMemo(() => data?.get?.(activeAsset), [data, activeAsset])
 
   return (
     <OverflowX hideScrollBtns={!asset}>

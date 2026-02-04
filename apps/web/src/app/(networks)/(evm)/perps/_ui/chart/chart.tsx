@@ -11,11 +11,10 @@ import type {
   ResolutionString,
 } from 'public/trading_view/charting_library/charting_library'
 import { widget } from 'public/trading_view/charting_library/charting_library.esm.js'
-import { useEffect, useRef, useState } from 'react'
-import { useActiveAsset } from 'src/lib/perps/subscription/use-active-asset'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useAssetName } from 'src/lib/perps/use-asset-name'
-import { useInitialDecimals } from 'src/lib/perps/use-initial-decimals'
 import { useAccount } from 'wagmi'
+import { useAssetListState } from '../asset-list-provider'
 import { useAssetState } from '../asset-state-provider'
 import Datafeed, { timeframes } from './datafeed'
 import { registerNoDataSetter } from './datafeed'
@@ -44,10 +43,17 @@ export const Chart = () => {
   const tvWidgetRef = useRef<IChartingLibraryWidget>(null)
   const { address } = useAccount()
   const { data: assetName } = useAssetName({ assetString: activeAsset })
-  const { data: assetData } = useActiveAsset({
-    assetString: activeAsset,
-  })
-  const initialDecimals = useInitialDecimals(assetData)
+  const {
+    state: {
+      assetListQuery: { data },
+    },
+  } = useAssetListState()
+  const asset = useMemo(() => data?.get?.(activeAsset), [data, activeAsset])
+  const { decimals, marketType } = useMemo(
+    () => ({ decimals: asset?.decimals ?? 2, marketType: asset?.marketType }),
+    [asset?.decimals, asset?.marketType],
+  )
+
   useEffect(() => {
     registerNoDataSetter((hasNoData) => {
       setHasNoData(hasNoData)
@@ -66,7 +72,7 @@ export const Chart = () => {
     localStorage.setItem('tradingview.current_theme.name', resolvedTheme)
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      symbol: `${activeAsset}::${assetName}::${initialDecimals ?? 2}`,
+      symbol: `${activeAsset}::${assetName}::${decimals}::${marketType}`,
       datafeed: Datafeed,
       interval:
         (localStorage.getItem(
@@ -450,7 +456,8 @@ export const Chart = () => {
     isMounted,
     activeAsset,
     assetName,
-    initialDecimals,
+    decimals,
+    marketType,
   ])
 
   return (

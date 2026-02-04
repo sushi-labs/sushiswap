@@ -11,6 +11,7 @@ import {
   SkeletonBox,
 } from '@sushiswap/ui'
 import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
+import { useMemo } from 'react'
 import { useAssetListState } from '../asset-list-provider'
 import { useAssetState } from '../asset-state-provider'
 import { useAssetSelectorState } from './asset-selector-provider'
@@ -30,7 +31,7 @@ export const AssetSelector = () => {
     state: { open },
     mutate: { setOpen },
   } = useAssetSelectorState()
-  const asset = data?.get?.(activeAsset)
+  const asset = useMemo(() => data?.get?.(activeAsset), [data, activeAsset])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
