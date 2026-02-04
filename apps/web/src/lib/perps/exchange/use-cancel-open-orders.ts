@@ -21,9 +21,6 @@ export const useCancelOpenOrders = () => {
   const mutation = useMutation({
     mutationFn: async ({ cancelData }: { cancelData: CancelData[] }) => {
       if (!agentAccount || cancelData.length === 0) {
-        alert(
-          'todo: handle missing agent account flow; ie. enable trading checker',
-        )
         return
       }
 

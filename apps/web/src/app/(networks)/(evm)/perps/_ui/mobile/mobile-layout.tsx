@@ -1,10 +1,10 @@
 'use client'
 import { useLocalStorage } from '@sushiswap/hooks'
-import { Card } from '@sushiswap/ui'
 import { Activity } from 'react'
 import { AccountManagement } from '../account-management/account-management'
 import { AssetSelectorAndStats } from '../asset-selector-and-stats'
 import { TradeTables } from '../trade-tables/trade-tables'
+import { TradeWidget } from '../trade-widget'
 import { FooterNav } from './footer-nav'
 import { TabbedView } from './tabbed-view'
 
@@ -25,9 +25,7 @@ export const MobileLayout = () => {
           <TabbedView />
         </Activity>
         <Activity mode={view === 'trade' ? 'visible' : 'hidden'}>
-          <Card className=" p-2 h-[460px] min-h-[350px]">
-            trade comp and order book
-          </Card>
+          <TradeWidget className="h-[460px] min-h-[350px]" />
         </Activity>
         <Activity mode={view === 'account' ? 'visible' : 'hidden'}>
           <AccountManagement className="min-h-[calc(100vh-116px)] rounded-b-none justify-between" />

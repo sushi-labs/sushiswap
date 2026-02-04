@@ -22,9 +22,6 @@ export const useUpdateLeverage = () => {
       newLeverage,
     }: { assetString: string; isCross: boolean; newLeverage: number }) => {
       if (!agentAccount) {
-        alert(
-          'todo: handle missing agent account flow; ie. enable trading checker',
-        )
         return
       }
 

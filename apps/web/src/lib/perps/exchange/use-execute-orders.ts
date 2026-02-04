@@ -64,9 +64,6 @@ export const useExecuteOrders = () => {
   const mutation = useMutation({
     mutationFn: async ({ orderData }: { orderData: OrderData }) => {
       if (!agentAccount || orderData.orders.length === 0) {
-        alert(
-          'todo: handle missing agent account flow; ie. enable trading checker',
-        )
         return
       }
 

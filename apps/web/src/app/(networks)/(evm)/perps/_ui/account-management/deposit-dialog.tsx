@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@sushiswap/ui'
-import { useCallback, useMemo, useState } from 'react'
+import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Amount } from 'sushi'
@@ -27,10 +27,8 @@ const HYPERLIQUID_DEPOSIT_BRIDGE =
   '0x2Df1c51E09aECF9cacB7bc98cB1742757f163dF7' as EvmAddress
 const MIN_DEPOSIT_AMOUNT = 5 //5.000000 usdc
 
-//@todo: checker for enable trading
-
 //@dev simple deposit via transfer for the time being
-export const Deposit = () => {
+export const DepositDialog = ({ trigger }: { trigger?: ReactNode }) => {
   const [open, setOpen] = useState<boolean>(false)
   const [amount, setAmount] = useState<string>('')
   const _amount = Amount.tryFromHuman(usdc, amount)
@@ -94,7 +92,7 @@ export const Deposit = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full">Deposit</Button>
+        {trigger ? trigger : <Button className="w-full">Deposit</Button>}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="!text-left">

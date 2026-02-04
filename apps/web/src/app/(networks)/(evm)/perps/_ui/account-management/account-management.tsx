@@ -17,7 +17,7 @@ import { useUserState } from '~evm/perps/user-provider'
 import { useAssetListState } from '../asset-list-provider'
 import { ValueSensitiveText } from '../value-sensitive-text'
 import { AccountManagementSkeleton } from './account-management-skeleton'
-import { Deposit } from './deposit'
+import { DepositDialog } from './deposit-dialog'
 import { PerpSpotTransfer } from './perp-spot-transfer'
 import { Withdraw } from './withdraw'
 
@@ -143,7 +143,7 @@ export const AccountManagement = ({ className }: { className?: string }) => {
       ) : (
         <>
           <div className="flex flex-col gap-2">
-            <Deposit />
+            <DepositDialog />
             <div className="flex items-center gap-2">
               <PerpSpotTransfer />
               <Withdraw />

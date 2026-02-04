@@ -1,41 +1,47 @@
 import { approveBuilderFee } from '@nktkas/hyperliquid/api/exchange'
+import { useSessionStorage } from '@sushiswap/hooks'
 import {
   createFailedToast,
   createInfoToast,
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
-import { BUILDER_FEE_PERPS_PERCENTAGE, BUILDER_FEE_RECEIVER } from '../config'
+import { useMemo } from 'react'
+import { useWalletClient } from 'wagmi'
+import { BUILDER_FEE_RECEIVER, BUILDER_FEE_SPOT_PERCENTAGE } from '../config'
 import { hlHttpTransport } from '../transports'
-import { useAgent } from '../use-agent'
 
 export const useApproveBuilderFee = () => {
-  const { agentAccount } = useAgent()
+  const { data: walletClient } = useWalletClient()
+  const [storedValue, setValue] = useSessionStorage<boolean>(
+    `sushi.perps.approved.builder.${walletClient?.account.address}`,
+    false,
+  )
+
+  const hasApprovedBuilder = useMemo(() => storedValue === true, [storedValue])
+
   const mutation = useMutation({
     mutationFn: async () => {
-      if (!agentAccount) {
-        alert(
-          'todo: handle missing agent account flow; ie. enable trading checker',
-        )
-        throw new Error('Missing agent account')
+      if (!walletClient) {
+        throw new Error('Missing wallet client')
       }
 
       return approveBuilderFee(
-        { wallet: agentAccount, transport: hlHttpTransport },
+        { wallet: walletClient, transport: hlHttpTransport },
         {
-          maxFeeRate: `${BUILDER_FEE_PERPS_PERCENTAGE}%`, // 0.1% in 0.1bps
+          maxFeeRate: `${BUILDER_FEE_SPOT_PERCENTAGE}%`,
           builder: BUILDER_FEE_RECEIVER,
         },
       )
     },
 
     onMutate: (_data) => {
-      if (!agentAccount) throw new Error('Missing agent account')
+      if (!walletClient) throw new Error('Missing wallet client')
       const ts = Date.now()
 
       createInfoToast({
         summary: `Approving Builder Fee`,
-        account: agentAccount.address,
+        account: walletClient.account.address,
         chainId: 1,
         type: 'burn',
         timestamp: ts,
@@ -46,11 +52,12 @@ export const useApproveBuilderFee = () => {
     },
 
     onSuccess: (_res, _vars, ctx) => {
-      if (!agentAccount || !ctx) return
+      if (!walletClient || !ctx) return
+      setValue(true)
 
       createSuccessToast({
         summary: `Approved Builder Fee`,
-        account: agentAccount.address,
+        account: walletClient.account.address,
         chainId: 1,
         type: 'burn',
         timestamp: ctx.ts,
@@ -65,7 +72,7 @@ export const useApproveBuilderFee = () => {
       }
       createFailedToast({
         summary: message || `Failed to Approve Builder Fee`,
-        account: agentAccount?.address,
+        account: walletClient?.account.address,
         chainId: 1,
         type: 'burn',
         timestamp: ctx?.ts ?? Date.now(),
@@ -77,5 +84,6 @@ export const useApproveBuilderFee = () => {
   return {
     approveBuilderFeeAsync: mutation.mutateAsync,
     isPending: mutation.isPending,
+    hasApprovedBuilder,
   }
 }

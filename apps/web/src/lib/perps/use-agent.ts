@@ -16,11 +16,24 @@ import {
 } from 'viem/accounts'
 import { useWalletClient } from 'wagmi'
 import { useAccount } from 'wagmi'
+import { useExtraAgents } from './info/use-extra-agents'
 import { hlHttpTransport } from './transports'
+
+const SUSHI_AGENT_NAME = 'sushi.agent'
 
 export const useAgent = () => {
   const { address } = useAccount()
   const { data: walletClient } = useWalletClient()
+  const {
+    data: extraAgents,
+    isLoading,
+    error,
+    refetch,
+  } = useExtraAgents({ address })
+
+  const sushiAgent = useMemo(() => {
+    return extraAgents?.find((agent) => agent.name === SUSHI_AGENT_NAME)
+  }, [extraAgents])
 
   const [storedValue, setValue, removeValue] = useSessionStorage<
     | {
@@ -52,6 +65,7 @@ export const useAgent = () => {
         },
         {
           agentAddress: type === 'create' ? agent : zeroAddress,
+          agentName: SUSHI_AGENT_NAME,
         },
       )
 
@@ -119,5 +133,9 @@ export const useAgent = () => {
     agentAccount,
     agentAddress: storedValue?.publicKey,
     createOrRemoveAgent: mutation.mutateAsync,
+    sushiAgent,
+    isLoadingSushiAgent: isLoading,
+    sushiAgentError: error,
+    refetchSushiAgent: refetch,
   }
 }
