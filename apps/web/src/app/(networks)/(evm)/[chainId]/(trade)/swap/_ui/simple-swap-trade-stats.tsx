@@ -1,7 +1,6 @@
 'use client'
 
 import { ChevronDownIcon } from '@heroicons/react-v1/solid'
-import { useIsMounted } from '@sushiswap/hooks'
 import {
   BrowserEvent,
   InterfaceElementName,
@@ -33,7 +32,7 @@ import {
   shortenEvmAddress,
 } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { useDetailsInteractionTracker } from '../../_ui/details-interaction-tracker-provider'
 import {
   useDerivedStateSimpleSwap,
@@ -42,7 +41,7 @@ import {
 import { SimpleSwapTokenRate } from './simple-swap-token-rate'
 
 export const SimpleSwapTradeStats: FC = () => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const {
     state: { chainId, swapAmountString, recipient },
   } = useDerivedStateSimpleSwap()

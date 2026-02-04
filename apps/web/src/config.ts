@@ -13,6 +13,7 @@ import {
 } from 'sushi/evm'
 import { KvmChainId } from 'sushi/kvm'
 import { MvmChainId } from 'sushi/mvm'
+import { SvmChainId } from 'sushi/svm'
 import { TvmChainId } from 'sushi/tvm'
 
 export const UI_FEE_BIPS = 35
@@ -44,8 +45,9 @@ export const NEW_CHAIN_IDS = [EvmChainId.MONAD] as const
 
 export const PREFERRED_CHAINID_ORDER = [
   ...NEW_CHAIN_IDS,
-  ChainId.HEMI,
   ChainId.ETHEREUM,
+  ChainId.SOLANA,
+  ChainId.HEMI,
   ChainId.KATANA,
   ChainId.ARBITRUM,
   ChainId.BASE,
@@ -147,6 +149,7 @@ const UNSORTED_SUPPORTED_NETWORKS = [
   MvmChainId.APTOS,
   TvmChainId.TRON,
   KvmChainId.KADENA,
+  SvmChainId.SOLANA,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )

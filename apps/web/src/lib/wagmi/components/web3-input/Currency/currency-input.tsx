@@ -23,7 +23,7 @@ import {
 } from 'react'
 import { Amount, type Percent } from 'sushi'
 import { type EvmChainId, type EvmCurrency, getEvmChainById } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { TokenSelector } from '../../token-selector/token-selector'
@@ -92,7 +92,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   const isMounted = useIsMounted()
 
   const [localValue, setLocalValue] = useState<string>('')
-  const { address } = useAccount()
+  const { address } = useConnection()
   const [pending, startTransition] = useTransition()
 
   const { data: balance, isLoading: isBalanceLoading } =

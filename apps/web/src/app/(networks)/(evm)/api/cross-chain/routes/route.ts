@@ -1,7 +1,7 @@
 import type { NextRequest } from 'next/server'
 import { UI_FEE_DECIMAL, isXSwapSupportedChainId } from 'src/config'
 import { isAddress } from 'viem'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const schema = z.object({
   fromChainId: z.coerce

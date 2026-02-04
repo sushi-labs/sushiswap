@@ -13,7 +13,7 @@ import {
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
 import { getAddress } from 'viem'
-import { z } from 'zod'
+import * as z from 'zod'
 import { CORS } from '../../cors'
 import { getPool } from './getPool'
 import { getPosition } from './getPosition'

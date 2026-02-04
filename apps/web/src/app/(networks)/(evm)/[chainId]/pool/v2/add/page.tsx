@@ -53,12 +53,12 @@ import {
   defaultQuoteCurrency,
   getEvmChainById,
   isEvmTestnetChainId,
+  isEvmWNativeSupported,
   isSushiSwapV2ChainId,
-  isWNativeSupported,
 } from 'sushi/evm'
 import type { SendTransactionReturnType } from 'viem'
 import {
-  useAccount,
+  useConnection,
   useEstimateGas,
   usePublicClient,
   useSendTransaction,
@@ -192,7 +192,7 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
               token1={token1}
               setToken0={_setToken0}
               setToken1={_setToken1}
-              includeNative={isWNativeSupported(chainId)}
+              includeNative={isEvmWNativeSupported(chainId)}
             />
             <FormSection
               title="Deposit"
@@ -260,7 +260,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
 }) => {
   const client = usePublicClient()
 
-  const { address, chain } = useAccount()
+  const { address, chain } = useConnection()
 
   const [slippageTolerance] = useSlippageTolerance(
     SlippageToleranceStorageKey.AddLiquidity,
@@ -387,9 +387,10 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
     [refetchBalances, client, chain, address, pool],
   )
 
-  const { sendTransaction, isPending: isWritePending } = useSendTransaction({
-    mutation: { onSuccess },
-  })
+  const { mutate: sendTransaction, isPending: isWritePending } =
+    useSendTransaction({
+      mutation: { onSuccess },
+    })
 
   const [checked, setChecked] = useState(false)
 
@@ -425,7 +426,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
           poolState === SushiSwapV2PoolState.INVALID
         }
         loading={poolState === SushiSwapV2PoolState.LOADING}
-        allowNative={isWNativeSupported(chainId)}
+        allowNative={isEvmWNativeSupported(chainId)}
       />
       <Checker.Connect fullWidth>
         <Checker.Network fullWidth chainId={chainId}>
@@ -647,7 +648,7 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
             poolState === SushiSwapV2PoolState.INVALID
           }
           loading={poolState === SushiSwapV2PoolState.LOADING}
-          allowNative={isWNativeSupported(chainId)}
+          allowNative={isEvmWNativeSupported(chainId)}
         />
         <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
           <button
@@ -675,7 +676,7 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
             poolState === SushiSwapV2PoolState.INVALID
           }
           loading={poolState === SushiSwapV2PoolState.LOADING}
-          allowNative={isWNativeSupported(chainId)}
+          allowNative={isEvmWNativeSupported(chainId)}
         />
         <AddSectionPoolShareCardV2
           pool={pool}

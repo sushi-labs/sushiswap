@@ -14,7 +14,7 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { type FC, useState } from 'react'
 import { getNetworkName } from 'src/lib/network'
 import type { EvmChainId } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 
 interface MobileNetworkSelector {
   networks: readonly EvmChainId[]
@@ -29,7 +29,7 @@ export const MobileNetworkSelector: FC<MobileNetworkSelector> = ({
 }) => {
   const [open, setOpen] = useState(false)
 
-  const { chainId } = useAccount()
+  const { chainId } = useConnection()
 
   return (
     <>

@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { z } from 'zod'
+import * as z from 'zod'
 
 // Need to redeclare because the Aptos library tries to create a React context on import
 const SUPPORTED_NETWORKS = ['testnet', 'mainnet'] as const

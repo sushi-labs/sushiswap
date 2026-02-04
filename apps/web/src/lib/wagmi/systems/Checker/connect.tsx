@@ -1,12 +1,11 @@
 'use client'
 
-import { Button, type ButtonProps } from '@sushiswap/ui'
-import type { FC } from 'react'
-import { useAccount } from 'wagmi'
-
-import { Dots } from '@sushiswap/ui'
-
 import { useIsMounted } from '@sushiswap/hooks'
+import { Button, type ButtonProps } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
+import type { FC } from 'react'
+import { useAccount } from 'src/lib/wallet'
+import { useConnection } from 'wagmi'
 import { ConnectButton } from '../../components/connect-button'
 
 const Connect: FC<ButtonProps> = ({
@@ -17,7 +16,10 @@ const Connect: FC<ButtonProps> = ({
 }) => {
   const isMounted = useIsMounted()
 
-  const { isDisconnected, isConnecting, isReconnecting } = useAccount()
+  const isWalletConnected = Boolean(useAccount())
+  const isEvmWalletConnected = Boolean(useAccount('evm'))
+
+  const { isDisconnected, isConnecting, isReconnecting } = useConnection()
 
   if (!isMounted)
     return (
@@ -34,12 +36,20 @@ const Connect: FC<ButtonProps> = ({
     )
   }
 
-  if (isDisconnected)
+  if (isDisconnected) {
+    const shouldRestrictToEvm = isWalletConnected && !isEvmWalletConnected
+
     return (
-      <ConnectButton fullWidth={fullWidth} size={size} {...props}>
-        Connect Wallet
+      <ConnectButton
+        namespace={shouldRestrictToEvm ? 'evm' : undefined}
+        fullWidth={fullWidth}
+        size={size}
+        {...props}
+      >
+        {shouldRestrictToEvm ? 'Connect EVM Wallet' : 'Connect Wallet'}
       </ConnectButton>
     )
+  }
 
   return <>{children}</>
 }

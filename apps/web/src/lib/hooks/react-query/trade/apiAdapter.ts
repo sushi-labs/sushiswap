@@ -1,5 +1,5 @@
 import { type EvmCurrency, type EvmNative, EvmToken } from 'sushi/evm'
-import type z from 'zod'
+import type * as z from 'zod'
 import type {
   tokenValidator as tokenValidator01,
   tradeValidator01,

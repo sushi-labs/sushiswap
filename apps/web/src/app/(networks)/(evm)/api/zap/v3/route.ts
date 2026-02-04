@@ -10,7 +10,7 @@ import {
   TickMath,
   UI_FEE_COLLECTOR_ADDRESS,
 } from 'sushi/evm'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const schema = z.object({
   chainId: z.coerce

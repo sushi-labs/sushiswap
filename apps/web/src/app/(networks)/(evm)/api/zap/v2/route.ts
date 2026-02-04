@@ -6,7 +6,7 @@ import {
 } from 'src/config'
 import { sz } from 'sushi'
 import { UI_FEE_COLLECTOR_ADDRESS, isUIFeeCollectorChainId } from 'sushi/evm'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const schema = z.object({
   chainId: z.coerce

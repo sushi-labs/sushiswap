@@ -54,14 +54,14 @@ import { Amount, ChainId, ZERO } from 'sushi'
 import {
   EvmNative,
   addGasMargin,
+  evmNativeAddress,
   getEvmChainById,
   getEvmCurrencyAddress,
-  nativeAddress,
   shortenEvmAddress,
 } from 'sushi/evm'
 import { type SendTransactionReturnType, stringify } from 'viem'
 import {
-  useAccount,
+  useConnection,
   usePublicClient,
   useSendTransaction,
   useWaitForTransactionReceipt,
@@ -106,7 +106,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
   const { approved } = useApproved(APPROVE_TAG_SWAP)
   const [slippagePercent] = useSlippageTolerance()
 
-  const { address } = useAccount()
+  const { address } = useConnection()
   const tradeRef = useRef<UseTradeReturn | null>(null)
   const client = usePublicClient()
 
@@ -153,11 +153,11 @@ const _SimpleSwapTradeReviewDialog: FC<{
           token0:
             tradeRef?.current?.amountIn?.currency?.type === 'token'
               ? tradeRef?.current?.amountIn?.currency?.address
-              : nativeAddress,
+              : evmNativeAddress,
           token1:
             tradeRef?.current?.amountOut?.currency?.type === 'token'
               ? tradeRef?.current?.amountOut?.currency?.address
-              : nativeAddress,
+              : evmNativeAddress,
           amountIn: tradeRef?.current?.amountIn?.amount,
           amountOut: tradeRef?.current?.amountOut?.amount,
           amountOutMin: tradeRef?.current?.minAmountOut?.amount,
@@ -325,7 +325,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
   )
 
   const {
-    sendTransactionAsync,
+    mutateAsync: sendTransactionAsync,
     isPending: isWritePending,
     data,
   } = useSendTransaction({
