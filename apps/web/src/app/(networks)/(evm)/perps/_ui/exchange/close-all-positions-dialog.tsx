@@ -13,14 +13,11 @@ import {
 import { useMemo, useState } from 'react'
 import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
 import { useExecuteOrders } from 'src/lib/perps/exchange/use-execute-orders'
-import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'
+import { useUserPositions } from 'src/lib/perps/use-user-positions'
 import { useAssetListState } from '../asset-list-provider'
 
-export const CloseAllPositionsDialog = ({
-  userPositions,
-}: {
-  userPositions: UserPositionsItemType[]
-}) => {
+export const CloseAllPositionsDialog = () => {
+  const { data: userPositions } = useUserPositions()
   const [open, setOpen] = useState(false)
   const [closeType, setCloseType] = useState<'market' | 'limit-at-mid'>(
     'market',
@@ -90,7 +87,7 @@ export const CloseAllPositionsDialog = ({
     >
       <DialogTrigger asChild>
         <button
-          disabled={isPending}
+          disabled={isPending || userPositions?.length === 0}
           type="button"
           className="font-medium text-blue hover:text-blue/80 disabled:text-muted-foreground disabled:cursor-not-allowed"
         >

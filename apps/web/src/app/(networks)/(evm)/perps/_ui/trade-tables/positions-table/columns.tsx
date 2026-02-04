@@ -354,11 +354,8 @@ export const FUNDING_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
 
 export const CLOSE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   id: 'Close',
-  header: (props) => {
-    const userPositions = props.table
-      .getRowModel()
-      .rows.map((row) => row.original)
-    return <CloseAllPositionsDialog userPositions={userPositions} />
+  header: () => {
+    return <CloseAllPositionsDialog />
   },
   cell: (_props) => {
     return (

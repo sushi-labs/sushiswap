@@ -11,8 +11,12 @@ import {
 } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
+import { useMemo } from 'react'
 import { useCancelOpenOrders } from 'src/lib/perps/exchange/use-cancel-open-orders'
-import type { UserOpenOrdersItemType } from 'src/lib/perps/use-user-open-orders'
+import {
+  type UserOpenOrdersItemType,
+  useUserOpenOrders,
+} from 'src/lib/perps/use-user-open-orders'
 import {
   enUSFormatNumber,
   getTextColorClass,
@@ -364,25 +368,8 @@ export const TP_SL_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
 
 export const CANCEL_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
   id: 'cancel',
-  header: (props) => {
-    const allCancelData = props.table.getRowModel().rows.map((row) => ({
-      orderId: row.original.oid,
-      asset: row.original.coin,
-    }))
-    const { cancelOrdersAsync, isPending } = useCancelOpenOrders()
-
-    return (
-      <button
-        onClick={async () => {
-          await cancelOrdersAsync({ cancelData: allCancelData })
-        }}
-        disabled={isPending || !allCancelData?.length}
-        type="button"
-        className="font-medium text-blue hover:text-blue/80 disabled:text-muted-foreground disabled:cursor-not-allowed"
-      >
-        Cancel All
-      </button>
-    )
+  header: () => {
+    return <CancelAll />
   },
   cell: (props) => {
     const { cancelOrdersAsync, isPending } = useCancelOpenOrders()
@@ -408,4 +395,29 @@ export const CANCEL_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
   meta: {
     body: columnBodyMeta,
   },
+}
+const CancelAll = () => {
+  const { data: openOrders } = useUserOpenOrders()
+  const allCancelData = useMemo(
+    () =>
+      openOrders?.map((i) => ({
+        orderId: i.oid,
+        asset: i.coin,
+      })),
+    [openOrders],
+  )
+  const { cancelOrdersAsync, isPending } = useCancelOpenOrders()
+
+  return (
+    <button
+      onClick={async () => {
+        await cancelOrdersAsync({ cancelData: allCancelData })
+      }}
+      disabled={isPending || !allCancelData?.length}
+      type="button"
+      className="font-medium text-blue hover:text-blue/80 disabled:text-muted-foreground disabled:cursor-not-allowed"
+    >
+      Cancel All
+    </button>
+  )
 }
