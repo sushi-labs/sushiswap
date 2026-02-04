@@ -7,6 +7,8 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
+import { useMemo } from 'react'
+import { useUserOpenOrders } from 'src/lib/perps/use-user-open-orders'
 import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'
 import {
   currencyFormatter,
@@ -402,20 +404,9 @@ export const TP_SL_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   id: 'tpSl',
   header: 'TP/SL',
   cell: (_props) => {
-    const {
-      mutate: { setActiveTab },
-    } = useTradeTables()
     return (
       <div className="flex items-center gap-4 whitespace-nowrap">
-        <button
-          onClick={() => {
-            setActiveTab('open-orders')
-          }}
-          type="button"
-          className="font-medium text-blue hover:text-blue/80 disabled:text-muted-foreground disabled:cursor-not-allowed"
-        >
-          View Orders
-        </button>
+        <ViewOrders />
         <button
           onClick={() => {
             alert('todo: edit tp/sl for position dialog')
@@ -432,4 +423,28 @@ export const TP_SL_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   meta: {
     body: columnBodyMeta,
   },
+}
+
+const ViewOrders = () => {
+  const {
+    mutate: { setActiveTab },
+  } = useTradeTables()
+  const { data: openOrders } = useUserOpenOrders()
+  const hasOrders = useMemo(() => openOrders?.length > 0, [openOrders?.length])
+
+  if (!hasOrders) {
+    return <div className="text-muted-foreground">--/--</div>
+  }
+
+  return (
+    <button
+      onClick={() => {
+        setActiveTab('open-orders')
+      }}
+      type="button"
+      className="font-medium text-blue hover:text-blue/80 disabled:text-muted-foreground disabled:cursor-not-allowed"
+    >
+      View Orders
+    </button>
+  )
 }
