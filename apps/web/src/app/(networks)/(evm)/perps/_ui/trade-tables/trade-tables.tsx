@@ -1,6 +1,9 @@
 import { Card, classNames } from '@sushiswap/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { useMemo } from 'react'
+import { useBalances } from 'src/lib/perps/use-balances'
+import { useUserOpenOrders } from 'src/lib/perps/use-user-open-orders'
+import { useUserPositions } from 'src/lib/perps/use-user-positions'
 import { TradeFilter } from './filters/trade-filter'
 import {
   TRADE_TABLES_TABS,
@@ -13,6 +16,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
     state: { activeTab },
     mutate: { setActiveTab },
   } = useTradeTables()
+
   const ExtraFilter = useMemo(
     () => TRADE_TABLES_TABS.find((tab) => tab.value === activeTab)?.extraFilter,
     [activeTab],
@@ -21,6 +25,43 @@ export const TradeTables = ({ className }: { className?: string }) => {
   const ActiveContent = useMemo(() => {
     return TRADE_TABLES_TABS.find((t) => t.value === activeTab)?.content
   }, [activeTab])
+
+  const { data: balances } = useBalances()
+  const { data: userPositions } = useUserPositions()
+  const { data: openOrders } = useUserOpenOrders()
+  const balanceCount = useMemo(() => balances?.length ?? 0, [balances?.length])
+  const positionCount = useMemo(
+    () => userPositions?.length ?? 0,
+    [userPositions?.length],
+  )
+  const openOrdersCount = useMemo(
+    () => openOrders?.length ?? 0,
+    [openOrders?.length],
+  )
+
+  const tabNameRewrite = useMemo(() => {
+    return TRADE_TABLES_TABS.map((tab) => {
+      if (tab.value === 'balances') {
+        return {
+          value: tab.value,
+          name: `Balances${balanceCount ? ` (${balanceCount})` : ''}`,
+        }
+      }
+      if (tab.value === 'positions') {
+        return {
+          value: tab.value,
+          name: `Positions${positionCount ? ` (${positionCount})` : ''}`,
+        }
+      }
+      if (tab.value === 'open-orders') {
+        return {
+          value: tab.value,
+          name: `Open Orders${openOrdersCount ? ` (${openOrdersCount})` : ''}`,
+        }
+      }
+      return tab
+    })
+  }, [balanceCount, positionCount, openOrdersCount])
 
   return (
     <Card className={classNames('p-2', className ?? '')}>
@@ -31,7 +72,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
         <div className="flex flex-wrap justify-between p-1 gap-2 overflow-x-auto">
           <div className="hide-scrollbar overflow-x-auto">
             <TabsList className="!px-0 !h-8">
-              {TRADE_TABLES_TABS.map((tab) => (
+              {tabNameRewrite?.map((tab) => (
                 <TabsTrigger
                   key={tab.value}
                   value={tab.value}
