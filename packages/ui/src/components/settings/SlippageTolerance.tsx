@@ -41,13 +41,19 @@ export const SlippageTolerance: FC<{
 
   const onChange = useCallback(
     (value: string) => {
+      const numValue = Number(value)
+      // Cap slippage at 50% maximum - 100% slippage would accept any output amount
+      if (!Number.isNaN(numValue) && numValue > 50) {
+        setSlippageTolerance('50')
+        return
+      }
       setSlippageTolerance(value)
     },
     [setSlippageTolerance],
   )
 
   const isDangerous =
-    (!Number.isNaN(+slippageTolerance) && +slippageTolerance >= 1.3) ||
+    (!Number.isNaN(+slippageTolerance) && +slippageTolerance >= 5) ||
     (!Number.isNaN(+slippageTolerance) &&
       +slippageTolerance <= 0.05 &&
       +slippageTolerance > 0)
@@ -154,7 +160,7 @@ export const SlippageTolerance: FC<{
             <TextField
               type="number"
               value={slippageTolerance}
-              onValueChange={setSlippageTolerance}
+              onValueChange={onChange}
               placeholder="Custom"
               id="slippage-tolerance"
               maxDecimals={2}

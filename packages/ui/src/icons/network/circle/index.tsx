@@ -41,6 +41,7 @@ import { RootstockCircle } from './RootstockCircle'
 import { ScrollCircle } from './ScrollCircle'
 import { SkaleCircle } from './SkaleCircle'
 import { SonicCircle } from './SonicCircle'
+import { StellarCircle } from './StellarCircle'
 import { TaikoCircle } from './TaikoCircle'
 import { ThunderCoreCircle } from './ThunderCoreCircle'
 import { TronCircle } from './TronCircle'
@@ -94,6 +95,7 @@ export * from './RootstockCircle'
 export * from './ScrollCircle'
 export * from './SkaleCircle'
 export * from './SonicCircle'
+export * from './StellarCircle'
 export * from './TaikoCircle'
 export * from './TelosCircle'
 export * from './ThunderCoreCircle'
@@ -150,5 +152,6 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.MONAD]: MonadCircle,
   [ChainId.APTOS]: AptosCircle,
   [ChainId.TRON]: TronCircle,
+  [ChainId.STELLAR]: StellarCircle,
   [ChainId.KADENA]: KadenaCircle,
 }
