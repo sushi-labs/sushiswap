@@ -38,6 +38,7 @@ const COLUMNS = [
 
 export const OpenOrdersTable = () => {
   const { data, isLoading, isError } = useUserOpenOrders()
+
   const [sorting, setSorting] = useState([{ id: 'timestamp', desc: true }])
   const {
     state: { tradeFilter },

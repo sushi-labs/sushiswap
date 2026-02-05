@@ -114,8 +114,13 @@ export const DIRECTION_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
   },
   cell: (props) => {
     const side = props.row.original.side
-
-    const direction = side === 'A' ? 'Short' : 'Long'
+    const reduceOnly = props.row.original.reduceOnly
+    const direction = useMemo(() => {
+      if (reduceOnly) {
+        return side === 'A' ? 'Close Long' : 'Close Short'
+      }
+      return side === 'A' ? 'Short' : 'Long'
+    }, [side, reduceOnly])
 
     return (
       <span
