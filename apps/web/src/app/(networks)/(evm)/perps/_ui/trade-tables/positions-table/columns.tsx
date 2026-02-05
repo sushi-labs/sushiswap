@@ -20,6 +20,7 @@ import {
 import { TableButton } from '../../_common/table-button'
 import { useAssetState } from '../../asset-state-provider'
 import { CloseAllPositionsDialog } from '../../exchange/close-all-positions-dialog'
+import { LimitCloseDialog } from '../../exchange/limit-close-dialog'
 import { MarketCloseDialog } from '../../exchange/market-close-dialog'
 import { UpdateLeverageDialog } from '../../exchange/update-leverage-dialog'
 import { columnBodyMeta } from '../column-meta'
@@ -366,14 +367,7 @@ export const CLOSE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
 
     return (
       <div className="flex items-center gap-4">
-        <TableButton
-          onClick={() => {
-            alert('todo: close at limit position dialog')
-          }}
-          // disabled={isPending}
-        >
-          Limit
-        </TableButton>
+        <LimitCloseDialog positionToClose={position} />
         <MarketCloseDialog positionToClose={position} />
         <TableButton
           onClick={() => {

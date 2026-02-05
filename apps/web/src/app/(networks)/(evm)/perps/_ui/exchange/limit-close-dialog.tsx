@@ -1,47 +1,68 @@
 import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
 import {
   Button,
-  Checkbox,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Slider,
-  classNames,
 } from '@sushiswap/ui'
-import { type ReactNode, useMemo, useState } from 'react'
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
 import { useExecuteOrders } from 'src/lib/perps/exchange/use-execute-orders'
 import { useMidPrice } from 'src/lib/perps/use-mid-price'
 import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'
 import { currencyFormatter, getTextColorClass } from 'src/lib/perps/utils'
+import { formatUnits, parseUnits } from 'viem'
+import { LimitInput } from '../_common/limit-input'
+import { PercentageSlider } from '../_common/percentage-slider'
+import { SizeInput } from '../_common/size-input'
 import { TableButton } from '../_common/table-button'
 import { useAssetListState } from '../asset-list-provider'
 import { PerpsChecker } from '../perps-checker'
 
-//@todo- in progress
 export const LimitCloseDialog = ({
   positionToClose,
   trigger,
 }: { positionToClose: UserPositionsItemType; trigger?: ReactNode }) => {
   const [open, setOpen] = useState(false)
-  const [sizeView, setSizeView] = useState<'base' | 'quote'>('base')
+  const [sizeSide, setSizeSide] = useState<'base' | 'quote'>('base')
   const [percentToClose, setPercentToClose] = useState(100)
+  const [sizeToClose, setSizeToClose] = useState<{
+    base: string
+    quote: string
+  }>({
+    base: '0',
+    quote: '0',
+  })
+  const [limitPriceToCloseAt, setLimitPriceToCloseAt] = useState<string>('')
+  const changeInputRef = useRef<'slider' | 'input'>('slider')
   const { executeOrdersAsync, isPending } = useExecuteOrders()
-  // const {midPrice, refreshMidPrice} = useMidPrice({
-  //   assetString: positionToClose.position.coin,
-  // })
   const {
     state: {
-      allMidsQuery: { data: allMidsData },
       assetListQuery: { data: assetListData },
+      allMidsQuery: { data: allMidsData },
     },
   } = useAssetListState()
 
+  const currentMidPrice = useMemo(() => {
+    if (!positionToClose.position.coin) return null
+    return allMidsData?.mids?.[positionToClose.position.coin ?? '']
+  }, [allMidsData?.mids, positionToClose.position.coin])
+  const { midPrice } = useMidPrice({
+    assetString: positionToClose.position.coin,
+  })
+
   const asset = useMemo(() => {
-    if (!positionToClose) return null
+    if (!positionToClose) return undefined
     const _asset = assetListData?.get?.(positionToClose.position.coin)
     if (!_asset) {
       throw new Error(
@@ -51,57 +72,122 @@ export const LimitCloseDialog = ({
     return _asset
   }, [assetListData, positionToClose])
 
-  const { baseSymbol, quoteSymbol } = useMemo(() => {
-    const symbols =
-      asset?.marketType === 'spot'
-        ? asset?.symbol?.split('/')
-        : asset?.symbol?.split('-')
-    return {
-      baseSymbol: symbols?.[0] ?? 'BASE',
-      quoteSymbol: symbols?.[1] ?? 'QUOTE',
-    }
-  }, [asset])
+  //todo: make a math util
+  useEffect(() => {
+    if (changeInputRef.current === 'input') return
 
-  const sizeToClose = useMemo(() => {
-    if (!positionToClose || !asset) return '0'
+    if (!positionToClose || !asset || !midPrice) {
+      setSizeToClose({ base: '0', quote: '0' })
+      return
+    }
+
+    const decimals = asset.decimals
+    const SCALE = 10n ** BigInt(decimals)
+
     const position = positionToClose.position
-    const size = Math.abs(Number.parseFloat(position.szi))
-    const _sizeToClose = (size * percentToClose * 100) / 10000
+
+    const base = parseUnits(
+      Math.abs(Number.parseFloat(position.szi)).toString(),
+      decimals,
+    )
+
+    const percent = BigInt(percentToClose)
+
+    const closeBase = (base * percent) / 100n
+
+    const price = parseUnits(midPrice ?? '0', decimals)
+
+    // quote (scaled) = base * price / SCALE
+    const quote = base === 0n ? 0n : (base * price) / SCALE
+
+    const closeQuote = (quote * percent) / 100n
+
     try {
-      return formatSize(_sizeToClose, asset?.decimals)
+      const baseSize = formatSize(formatUnits(closeBase, decimals), decimals)
+      const quoteSize = formatSize(formatUnits(closeQuote, decimals), decimals)
+
+      setSizeToClose({ base: baseSize, quote: quoteSize })
     } catch (e) {
       console.error('Error formatting size:', e)
-      return '0'
+      setSizeToClose({ base: '0', quote: '0' })
     }
-  }, [positionToClose, percentToClose, asset])
+  }, [positionToClose, percentToClose, asset, midPrice])
 
-  const sizeToCloseInQuote = useMemo(() => {
-    if (!positionToClose || !asset || !sizeToClose) return '0'
+  //todo: make a math util
+  const handleSetSizeToClose = useCallback(
+    (value: string) => {
+      if (!positionToClose || !asset) return
 
-    try {
-      const pricePerUnit =
-        allMidsData?.mids?.[positionToClose.position.coin] ?? 0
-      const sizeInQuote = Number(sizeToClose) * Number(pricePerUnit)
-      return formatSize(sizeInQuote, asset?.decimals)
-    } catch (e) {
-      console.error('Error formatting size in quote:', e)
-      return '0'
-    }
-  }, [positionToClose, asset, allMidsData?.mids, sizeToClose])
+      changeInputRef.current = 'input'
+
+      const decimals = asset.decimals
+      const SCALE = 10n ** BigInt(decimals)
+
+      const position = positionToClose.position
+
+      // base size (scaled)
+      const currentBase = parseUnits(
+        Math.abs(Number.parseFloat(position.szi)).toString(),
+        decimals,
+      )
+
+      // price (scaled) — midPrice is a decimal string like "78876.0"
+      const price = parseUnits(midPrice ?? '0', decimals)
+
+      // quote value (scaled) = base * price / SCALE
+      const currentQuote =
+        currentBase === 0n ? 0n : (currentBase * price) / SCALE
+
+      // input value (scaled) in the currently-selected side
+      const inputScaled = parseUnits(value || '0', decimals)
+
+      // percent = input / current * 100
+      // (do all math in BigInt, then clamp to [0..100] as number)
+      let percentBig = 0n
+      if (sizeSide === 'base') {
+        percentBig =
+          currentBase === 0n ? 0n : (inputScaled * 100n) / currentBase
+      } else {
+        percentBig =
+          currentQuote === 0n ? 0n : (inputScaled * 100n) / currentQuote
+      }
+
+      // clamp
+      if (percentBig < 0n) percentBig = 0n
+      if (percentBig > 100n) percentBig = 100n
+
+      const newPercentToClose = Number(percentBig)
+      setPercentToClose(newPercentToClose)
+
+      // derive close sizes from percent (scaled)
+      const closeBase = (currentBase * percentBig) / 100n
+      const closeQuote = (currentQuote * percentBig) / 100n
+
+      try {
+        const baseStr = formatSize(formatUnits(closeBase, decimals), decimals)
+        const quoteStr = formatSize(formatUnits(closeQuote, decimals), decimals)
+
+        setSizeToClose({
+          base: sizeSide === 'base' ? value : baseStr,
+          quote: sizeSide === 'quote' ? value : quoteStr,
+        })
+      } catch (e) {
+        console.error('Error formatting size:', e)
+        setSizeToClose({ base: '0', quote: '0' })
+      }
+    },
+    [positionToClose, asset, sizeSide, midPrice],
+  )
 
   const orderData = useMemo(() => {
-    if (!positionToClose || !asset) return null
-    const position = positionToClose.position
-    const midPrice = allMidsData?.mids?.[position.coin]
-    if (!midPrice) {
-      throw new Error(
-        `Mid price not available for market close for ${position.coin}`,
-      )
-    }
+    if (!positionToClose || !asset || !limitPriceToCloseAt) return null
 
-    //8% higher than market price for sell orders, 8% lower for buy orders to ensure fills
-    const marketPrice = formatPrice(
-      Number(midPrice) * (positionToClose.side === 'A' ? 1.08 : 0.92),
+    const position = positionToClose.position
+
+    const _price = parseUnits(limitPriceToCloseAt ?? '0', asset?.decimals)
+
+    const limitPrice = formatPrice(
+      formatUnits(_price, asset?.decimals),
       asset?.decimals,
       asset?.marketType,
     )
@@ -110,8 +196,8 @@ export const LimitCloseDialog = ({
       asset: position.coin,
       side:
         positionToClose.side === 'B' ? ('long' as const) : ('short' as const),
-      price: marketPrice,
-      size: sizeToClose,
+      price: limitPrice,
+      size: sizeToClose.base,
       reduceOnly: true,
       orderType: { limit: { timeInForce: 'Gtc' as const } },
     }
@@ -122,13 +208,47 @@ export const LimitCloseDialog = ({
         builderFee: BUILDER_FEE_PERPS,
       },
     }
-  }, [positionToClose, allMidsData?.mids, asset, sizeToClose])
+  }, [positionToClose, limitPriceToCloseAt, asset, sizeToClose])
+
+  const estimatedPnL = useMemo(() => {
+    if (!positionToClose || !orderData || !limitPriceToCloseAt || !asset) {
+      return null
+    }
+
+    const orderToClose = orderData.orders?.[0]
+    if (!orderToClose) return null
+
+    const decimals = asset.decimals
+    const SCALE = 10n ** BigInt(decimals)
+
+    try {
+      // scaled prices
+      const entryPrice = parseUnits(positionToClose.position.entryPx, decimals)
+      const closePrice = parseUnits(limitPriceToCloseAt, decimals)
+
+      // scaled base size
+      const size = parseUnits(orderToClose.size, decimals)
+
+      // signed price diff (scaled)
+      const priceDiff =
+        positionToClose.side === 'B'
+          ? closePrice - entryPrice // long
+          : entryPrice - closePrice // short
+
+      // pnl (scaled quote) = priceDiff * size / SCALE
+      const pnlScaled = (priceDiff * size) / SCALE
+
+      return formatUnits(pnlScaled, decimals)
+    } catch {
+      return null
+    }
+  }, [positionToClose, orderData, limitPriceToCloseAt, asset])
 
   return (
     <Dialog
       open={open}
-      onOpenChange={(open) => {
-        setOpen(open)
+      onOpenChange={(state) => {
+        setOpen(state)
       }}
     >
       <DialogTrigger asChild>
@@ -140,81 +260,44 @@ export const LimitCloseDialog = ({
           </TableButton>
         )}
       </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
+      {/* dont autofocus the size input */}
+      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+        <DialogHeader className="!text-left">
           <DialogTitle>Limit Close</DialogTitle>
           <DialogDescription>
-            Sends an order to close your position at the limit price
+            Send an order to close you position at the limit price.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4 text-sm">
-          <div className="flex flex-col gap-2 text-sm">
-            <div className="flex items-center justify-between">
-              <div className="text-muted-foreground">Size</div>
-              <div className="font-medium flex items-center gap-1">
-                <div
-                  className={classNames(
-                    getTextColorClass(positionToClose?.side === 'A' ? 1 : -1),
-                  )}
-                >
-                  {sizeView === 'base' ? sizeToClose : sizeToCloseInQuote}
-                </div>
-                <div className="flex items-center border border-accent rounded-lg p-0.5">
-                  <Button
-                    size="xs"
-                    variant={sizeView === 'base' ? 'secondary' : 'ghost'}
-                    onClick={() => setSizeView('base')}
-                    className={classNames(
-                      'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
-                      sizeView === 'quote' ? 'text-muted-foreground' : '',
-                    )}
-                  >
-                    {baseSymbol}
-                  </Button>
-                  <Button
-                    size="xs"
-                    variant={sizeView === 'quote' ? 'secondary' : 'ghost'}
-                    onClick={() => setSizeView('quote')}
-                    className={classNames(
-                      'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
-                      sizeView === 'base' ? 'text-muted-foreground' : '',
-                    )}
-                  >
-                    {quoteSymbol}
-                  </Button>
-                </div>
-              </div>
+          <LimitInput
+            currentMidPrice={currentMidPrice ?? null}
+            value={limitPriceToCloseAt}
+            onChange={setLimitPriceToCloseAt}
+            maxDecimals={asset?.decimals ?? 6}
+          />
+          <SizeInput
+            asset={asset}
+            value={sizeToClose}
+            onChange={handleSetSizeToClose}
+            sizeSide={sizeSide}
+            setSizeSide={setSizeSide}
+          />
+          <PercentageSlider
+            value={percentToClose}
+            onChange={(val) => {
+              changeInputRef.current = 'slider'
+              setPercentToClose(val)
+            }}
+            disabled={isPending || !positionToClose}
+          />
+          {estimatedPnL !== null ? (
+            <div className="text-xs whitespace-nowrap">
+              Estimated closed PNL (without fees):{' '}
+              <span className={getTextColorClass(Number(estimatedPnL))}>
+                {currencyFormatter.format(Number.parseFloat(estimatedPnL))}
+              </span>
             </div>
-            <div className="flex items-center justify-between">
-              <div className="text-muted-foreground">Price</div>
-              <div className="font-medium">Market</div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <Slider
-              value={[percentToClose]}
-              min={1}
-              max={100}
-              step={1}
-              onValueChange={(val: number[]) => {
-                setPercentToClose(val[0])
-              }}
-              disabled={isPending || !positionToClose}
-              rangeClassName="!bg-blue"
-              thumbClassName="!border-white"
-            />
-            <div className="border rounded-md border-accent py-1 px-2 whitespace-nowrap text-sm font-medium text-right">
-              {percentToClose.toFixed(0)} %
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-1">
-            <p>Estimaged closed PNL (without fees):</p>
-            <p className={classNames('font-medium', getTextColorClass(12))}>
-              {currencyFormatter.format(12)}
-            </p>
-          </div>
-
+          ) : null}
           {/* connect checker not needed, wont be able to get here unless connected anyway */}
           <PerpsChecker.Legal>
             <PerpsChecker.EnableTrading>
@@ -232,13 +315,11 @@ export const LimitCloseDialog = ({
                     )
                   }}
                   disabled={
-                    isPending ||
-                    !positionToClose ||
-                    Number.parseFloat(sizeToClose) === 0
+                    isPending || !positionToClose || !limitPriceToCloseAt
                   }
                   loading={isPending}
                 >
-                  Confirm
+                  Limit Close
                 </Button>
               </PerpsChecker.BuilderFee>
             </PerpsChecker.EnableTrading>
