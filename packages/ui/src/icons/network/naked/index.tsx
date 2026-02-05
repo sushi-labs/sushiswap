@@ -42,6 +42,7 @@ import { RootstockNaked } from './RootstockNaked'
 import { ScrollNaked } from './ScrollNaked'
 import { SkaleNaked } from './SkaleNaked'
 import { SonicNaked } from './SonicNaked'
+import { StellarNaked } from './StellarNaked'
 import { TaikoNaked } from './TaikoNaked'
 import { ThunderCoreNaked } from './ThunderCoreNaked'
 import { TronNaked } from './TronNaked'
@@ -95,6 +96,7 @@ export * from './RootstockNaked'
 export * from './ScrollNaked'
 export * from './SkaleNaked'
 export * from './SonicNaked'
+export * from './StellarNaked'
 export * from './TaikoNaked'
 export * from './TelosNaked'
 export * from './TronNaked'
@@ -151,4 +153,5 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.APTOS]: AptosNaked,
   [ChainId.TRON]: TronNaked,
   [ChainId.KADENA]: KadenaNaked,
+  [ChainId.STELLAR]: StellarNaked,
 }
