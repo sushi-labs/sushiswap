@@ -17,6 +17,7 @@ import {
   getTextColorClassForHover,
   numberFormatter,
 } from 'src/lib/perps/utils'
+import { TableButton } from '../../_common/table-button'
 import { useAssetState } from '../../asset-state-provider'
 import { CloseAllPositionsDialog } from '../../exchange/close-all-positions-dialog'
 import { MarketCloseDialog } from '../../exchange/market-close-dialog'
@@ -365,27 +366,23 @@ export const CLOSE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
 
     return (
       <div className="flex items-center gap-4">
-        <button
+        <TableButton
           onClick={() => {
             alert('todo: close at limit position dialog')
           }}
           // disabled={isPending}
-          type="button"
-          className="font-medium text-blue hover:text-blue/80 disabled:text-muted-foreground disabled:cursor-not-allowed"
         >
           Limit
-        </button>
+        </TableButton>
         <MarketCloseDialog positionToClose={position} />
-        <button
+        <TableButton
           onClick={() => {
-            alert('todo: close at market and open reverse dialog')
+            alert('todo: reverse position dialog')
           }}
           // disabled={isPending}
-          type="button"
-          className="font-medium text-blue hover:text-blue/80 disabled:text-muted-foreground disabled:cursor-not-allowed"
         >
           Reverse
-        </button>
+        </TableButton>
       </div>
     )
   },
@@ -401,16 +398,14 @@ export const TP_SL_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     return (
       <div className="flex items-center gap-4 whitespace-nowrap">
         <ViewOrders />
-        <button
+        <TableButton
           onClick={() => {
             alert('todo: edit tp/sl for position dialog')
           }}
           // disabled={isPending}
-          type="button"
-          className="font-medium text-blue hover:text-blue/80 disabled:text-muted-foreground disabled:cursor-not-allowed"
         >
           <PencilIcon className="w-4 h-4" />
-        </button>
+        </TableButton>
       </div>
     )
   },
@@ -431,14 +426,12 @@ const ViewOrders = () => {
   }
 
   return (
-    <button
+    <TableButton
       onClick={() => {
         setActiveTab('open-orders')
       }}
-      type="button"
-      className="font-medium text-blue hover:text-blue/80 disabled:text-muted-foreground disabled:cursor-not-allowed"
     >
       View Orders
-    </button>
+    </TableButton>
   )
 }

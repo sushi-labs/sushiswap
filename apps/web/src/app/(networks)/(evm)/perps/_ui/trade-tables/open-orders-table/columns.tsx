@@ -23,6 +23,7 @@ import {
   getTextColorClassForHover,
   numberFormatter,
 } from 'src/lib/perps/utils'
+import { TableButton } from '../../_common/table-button'
 import { useAssetState } from '../../asset-state-provider'
 import { columnBodyMeta } from '../column-meta'
 
@@ -277,12 +278,7 @@ export const TP_SL_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
     return (
       <Dialog>
         <DialogTrigger asChild>
-          <button
-            type="button"
-            className="font-medium text-blue hover:text-blue/80 disabled:text-muted-foreground disabled:cursor-not-allowed"
-          >
-            View
-          </button>
+          <TableButton>View</TableButton>
         </DialogTrigger>
         <DialogContent className="!max-w-3xl">
           <DialogHeader className="!text-left">
@@ -380,16 +376,14 @@ export const CANCEL_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
       },
     ]
     return (
-      <button
+      <TableButton
         onClick={async () => {
           await cancelOrdersAsync({ cancelData })
         }}
         disabled={isPending}
-        type="button"
-        className="font-medium text-blue hover:text-blue/80 disabled:text-muted-foreground disabled:cursor-not-allowed"
       >
         Cancel
-      </button>
+      </TableButton>
     )
   },
   meta: {
@@ -409,15 +403,13 @@ const CancelAll = () => {
   const { cancelOrdersAsync, isPending } = useCancelOpenOrders()
 
   return (
-    <button
+    <TableButton
       onClick={async () => {
         await cancelOrdersAsync({ cancelData: allCancelData })
       }}
       disabled={isPending || !allCancelData?.length}
-      type="button"
-      className="font-medium text-blue hover:text-blue/80 disabled:text-muted-foreground disabled:cursor-not-allowed"
     >
       Cancel All
-    </button>
+    </TableButton>
   )
 }

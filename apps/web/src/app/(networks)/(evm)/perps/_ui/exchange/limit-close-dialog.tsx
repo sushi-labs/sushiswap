@@ -202,6 +202,7 @@ export const LimitCloseDialog = ({
               }}
               disabled={isPending || !positionToClose}
               rangeClassName="!bg-blue"
+              thumbClassName="!border-white"
             />
             <div className="border rounded-md border-accent py-1 px-2 whitespace-nowrap text-sm font-medium text-right">
               {percentToClose.toFixed(0)} %

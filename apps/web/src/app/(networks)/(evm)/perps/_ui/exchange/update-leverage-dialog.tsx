@@ -7,12 +7,12 @@ import {
   DialogTitle,
   DialogTrigger,
   Message,
-  Slider,
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { useUpdateLeverage } from 'src/lib/perps/exchange/use-update-leverage'
 import { useMarginTable } from 'src/lib/perps/info/use-margin-table'
 import { currencyFormatter } from 'src/lib/perps/utils'
+import { PercentageSlider } from '../_common/percentage-slider'
 import { useAssetListState } from '../asset-list-provider'
 
 export const UpdateLeverageDialog = ({
@@ -49,8 +49,8 @@ export const UpdateLeverageDialog = ({
   )
 
   const handleLeverageChange = useCallback(
-    (value: number[]) => {
-      const val = value[0]
+    (value: number) => {
+      const val = value
       if (val < 1) {
         setNewLeverage(1)
       } else if (val > maxLeverage) {
@@ -85,20 +85,14 @@ export const UpdateLeverageDialog = ({
               ? `The max position size for ${newLeverage}x leverage on ${asset?.name} is ${currencyFormatter.format(Number(lastTier.lowerBound))}.`
               : ''}
           </p>
-          <div className="flex items-center gap-4">
-            <Slider
-              value={[newLeverage]}
-              min={1}
-              max={maxLeverage}
-              step={1}
-              onValueChange={handleLeverageChange}
-              disabled={isLoading || isError || isPending}
-              rangeClassName="!bg-blue"
-            />
-            <div className="border rounded-md border-accent py-1 px-2 whitespace-nowrap text-sm font-medium text-right">
-              {newLeverage.toFixed(0)} x
-            </div>
-          </div>
+          <PercentageSlider
+            value={newLeverage}
+            onChange={(val) => {
+              handleLeverageChange(val)
+            }}
+            disabled={isLoading || isError || isPending}
+            maxValue={maxLeverage}
+          />
           <Button
             onClick={async () =>
               await updateLeverageAsync(

@@ -1,7 +1,8 @@
-import { Button, TextField, classNames } from '@sushiswap/ui'
+import { TextField, classNames } from '@sushiswap/ui'
 import { useCallback, useMemo, useState, useTransition } from 'react'
 import type { PerpOrSpotAsset } from 'src/lib/perps/subscription/use-asset-list'
 import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
+import { SideToggle } from './side-toggle'
 
 export const SizeInput = ({
   asset,
@@ -54,31 +55,12 @@ export const SizeInput = ({
             maxDecimals={asset?.decimals}
             className={classNames('!text-lg font-medium text-right')}
           />
-
-          <div className="flex items-center border border-accent rounded-lg p-0.5">
-            <Button
-              size="xs"
-              variant={sizeSide === 'base' ? 'secondary' : 'ghost'}
-              onClick={() => setSizeSide('base')}
-              className={classNames(
-                'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
-                sizeSide === 'quote' ? 'text-muted-foreground' : '',
-              )}
-            >
-              {baseSymbol}
-            </Button>
-            <Button
-              size="xs"
-              variant={sizeSide === 'quote' ? 'secondary' : 'ghost'}
-              onClick={() => setSizeSide('quote')}
-              className={classNames(
-                'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
-                sizeSide === 'base' ? 'text-muted-foreground' : '',
-              )}
-            >
-              {quoteSymbol}
-            </Button>
-          </div>
+          <SideToggle
+            side={sizeSide}
+            setSide={setSizeSide}
+            baseSymbol={baseSymbol}
+            quoteSymbol={quoteSymbol}
+          />
         </div>
       </div>
     </div>

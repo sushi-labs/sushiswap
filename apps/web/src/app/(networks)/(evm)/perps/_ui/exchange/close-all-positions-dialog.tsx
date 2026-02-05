@@ -1,20 +1,20 @@
 import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
 import {
   Button,
-  Checkbox,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Message,
 } from '@sushiswap/ui'
 import { type ReactNode, useMemo, useState } from 'react'
 import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
 import { useExecuteOrders } from 'src/lib/perps/exchange/use-execute-orders'
 import { useUserPositions } from 'src/lib/perps/use-user-positions'
 import { formatUnits, parseUnits } from 'viem'
+import { CheckboxSetting } from '../_common/checkbox-setting'
+import { TableButton } from '../_common/table-button'
 import { useAssetListState } from '../asset-list-provider'
 
 export const CloseAllPositionsDialog = ({
@@ -97,13 +97,9 @@ export const CloseAllPositionsDialog = ({
         {trigger ? (
           trigger
         ) : (
-          <button
-            disabled={isPending || userPositions?.length === 0}
-            type="button"
-            className="font-medium text-blue hover:text-blue/80 disabled:text-muted-foreground disabled:cursor-not-allowed"
-          >
+          <TableButton disabled={isPending || userPositions?.length === 0}>
             Close All
-          </button>
+          </TableButton>
         )}
       </DialogTrigger>
       <DialogContent>
@@ -115,42 +111,20 @@ export const CloseAllPositionsDialog = ({
         </DialogHeader>
         <div className="flex flex-col gap-6 text-sm">
           <div className="flex flex-col gap-4 text-sm">
-            <div
-              onClick={() => {
-                setCloseType('market')
+            <CheckboxSetting
+              value={closeType === 'market'}
+              onChange={(value) => {
+                setCloseType(value ? 'market' : 'limit-at-mid')
               }}
-              onKeyDown={() => {
-                setCloseType('market')
+              label="Market Close"
+            />
+            <CheckboxSetting
+              value={closeType === 'limit-at-mid'}
+              onChange={(value) => {
+                setCloseType(value ? 'limit-at-mid' : 'market')
               }}
-              className="flex items-center gap-1 whitespace-nowrap text-xs font-medium"
-            >
-              <Checkbox
-                className='data-[state="checked"]:!bg-blue text-slate-100 !border-slate-100 data-[state="checked"]:!border-blue'
-                checked={closeType === 'market'}
-                onCheckedChange={(checked) => {
-                  setCloseType(checked ? 'market' : 'limit-at-mid')
-                }}
-              />
-              <div>Market Close</div>
-            </div>
-            <div
-              onClick={() => {
-                setCloseType('limit-at-mid')
-              }}
-              onKeyDown={() => {
-                setCloseType('limit-at-mid')
-              }}
-              className="flex items-center gap-1 whitespace-nowrap text-xs font-medium"
-            >
-              <Checkbox
-                className='data-[state="checked"]:!bg-blue text-slate-100 !border-slate-100 data-[state="checked"]:!border-blue'
-                checked={closeType === 'limit-at-mid'}
-                onCheckedChange={(checked) => {
-                  setCloseType(checked ? 'limit-at-mid' : 'market')
-                }}
-              />
-              <div>Limit Close at Mid Price</div>
-            </div>
+              label="Limit Close at Mid Price"
+            />
           </div>
 
           <Button

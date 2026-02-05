@@ -2,14 +2,12 @@ import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
 import { useLocalStorage } from '@sushiswap/hooks'
 import {
   Button,
-  Checkbox,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Slider,
   classNames,
 } from '@sushiswap/ui'
 import {
@@ -27,6 +25,8 @@ import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
 import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'
 import { getTextColorClass } from 'src/lib/perps/utils'
 import { formatUnits, parseUnits } from 'viem'
+import { CheckboxSetting } from '../_common/checkbox-setting'
+import { PercentageSlider } from '../_common/percentage-slider'
 import { SizeInput } from '../_common/size-input'
 import { TableButton } from '../_common/table-button'
 import { useAssetListState } from '../asset-list-provider'
@@ -39,6 +39,7 @@ export const MarketCloseDialog = ({
   const [open, setOpen] = useState(false)
   const [sizeSide, setSizeSide] = useState<'base' | 'quote'>('base')
   const [percentToClose, setPercentToClose] = useState(100)
+  //todo: bring these toggle settings to provider level later
   const [quickCloseEnabled, setQuickCloseEnabled] = useLocalStorage<boolean>(
     'sushi.perps.market.position.close.dialog',
     false,
@@ -74,108 +75,104 @@ export const MarketCloseDialog = ({
 
   const { baseSymbol } = useSymbolSplit({ asset })
 
-  //@todo: CLEAN UP
+  //todo: make a math util
   useEffect(() => {
     if (changeInputRef.current === 'input') return
-    if (!positionToClose || !asset || !midPrice) {
+
+    if (!positionToClose || !asset || midPrice == null) {
       setSizeToClose({ base: '0', quote: '0' })
       return
     }
+
+    const decimals = asset.decimals
+    const SCALE = 10n ** BigInt(decimals)
+
     const position = positionToClose.position
 
-    const size = parseUnits(
+    const base = parseUnits(
       Math.abs(Number.parseFloat(position.szi)).toString(),
-      asset?.decimals,
+      decimals,
     )
-    const _sizeToClose = (size * BigInt(percentToClose)) / BigInt(100)
 
-    const pricePerUnit = midPrice ?? '0'
-    const sizeInQuote = size * parseUnits(pricePerUnit, asset?.decimals)
+    const percent = BigInt(percentToClose)
 
-    const _sizeInQuoteToClose =
-      (sizeInQuote * BigInt(percentToClose)) /
-      BigInt(100) /
-      parseUnits('1', asset?.decimals)
+    const closeBase = (base * percent) / 100n
+
+    const price = parseUnits(midPrice ?? '0', decimals)
+
+    // quote (scaled) = base * price / SCALE
+    const quote = base === 0n ? 0n : (base * price) / SCALE
+
+    const closeQuote = (quote * percent) / 100n
 
     try {
-      const baseSize = formatSize(
-        formatUnits(_sizeToClose, asset?.decimals),
-        asset?.decimals,
-      )
-      const quoteSize = formatSize(
-        formatUnits(_sizeInQuoteToClose, asset?.decimals),
-        asset?.decimals,
-      )
-      setSizeToClose({
-        base: baseSize,
-        quote: quoteSize,
-      })
+      const baseSize = formatSize(formatUnits(closeBase, decimals), decimals)
+      const quoteSize = formatSize(formatUnits(closeQuote, decimals), decimals)
+
+      setSizeToClose({ base: baseSize, quote: quoteSize })
     } catch (e) {
       console.error('Error formatting size:', e)
       setSizeToClose({ base: '0', quote: '0' })
     }
   }, [positionToClose, percentToClose, asset, midPrice])
 
-  //@todo: CLEAN UP, crazy slow atm
+  //todo: make a math util
   const handleSetSizeToClose = useCallback(
     (value: string) => {
-      if (!positionToClose || !asset) {
-        return
-      }
+      if (!positionToClose || !asset) return
+
       changeInputRef.current = 'input'
+
+      const decimals = asset.decimals
+      const SCALE = 10n ** BigInt(decimals)
+
       const position = positionToClose.position
-      const currentSize = parseUnits(
+
+      // base size (scaled)
+      const currentBase = parseUnits(
         Math.abs(Number.parseFloat(position.szi)).toString(),
-        asset?.decimals,
+        decimals,
       )
-      const pricePerUnit = midPrice ?? '0'
-      const sizeInQuote =
-        currentSize * parseUnits(pricePerUnit, asset?.decimals)
 
-      // Calculate percent to close based on input size if sizeSide is 'base'
-      let newPercentToClose = 0
+      // price (scaled) — midPrice is a decimal string like "78876.0"
+      const price = parseUnits(midPrice ?? '0', decimals)
+
+      // quote value (scaled) = base * price / SCALE
+      const currentQuote =
+        currentBase === 0n ? 0n : (currentBase * price) / SCALE
+
+      // input value (scaled) in the currently-selected side
+      const inputScaled = parseUnits(value || '0', decimals)
+
+      // percent = input / current * 100
+      // (do all math in BigInt, then clamp to [0..100] as number)
+      let percentBig = 0n
       if (sizeSide === 'base') {
-        const inputSize = parseUnits(value || '0', asset?.decimals)
-
-        newPercentToClose =
-          currentSize === BigInt(0)
-            ? 0
-            : Number((inputSize * BigInt(100)) / currentSize)
+        percentBig =
+          currentBase === 0n ? 0n : (inputScaled * 100n) / currentBase
       } else {
-        const inputSizeInQuote =
-          parseUnits(value || '0', asset?.decimals) *
-          parseUnits('1', asset?.decimals)
-        newPercentToClose =
-          currentSize === BigInt(0)
-            ? 0
-            : Number((inputSizeInQuote * BigInt(100)) / sizeInQuote)
+        percentBig =
+          currentQuote === 0n ? 0n : (inputScaled * 100n) / currentQuote
       }
 
-      // Clamp percent to close between 0 and 100
-      newPercentToClose = Math.max(0, Math.min(100, newPercentToClose))
+      // clamp
+      if (percentBig < 0n) percentBig = 0n
+      if (percentBig > 100n) percentBig = 100n
+
+      const newPercentToClose = Number(percentBig)
       setPercentToClose(newPercentToClose)
-      //update sizeToClose state
-      const _sizeToClose =
-        (currentSize * BigInt(newPercentToClose)) / BigInt(100)
-      const _sizeInQuoteToClose =
-        (sizeInQuote * BigInt(newPercentToClose)) /
-        BigInt(100) /
-        parseUnits('1', asset?.decimals)
+
+      // derive close sizes from percent (scaled)
+      const closeBase = (currentBase * percentBig) / 100n
+      const closeQuote = (currentQuote * percentBig) / 100n
 
       try {
-        const baseSize = formatSize(
-          formatUnits(_sizeToClose, asset?.decimals),
-          asset?.decimals,
-        )
-
-        const quoteSize = formatSize(
-          formatUnits(_sizeInQuoteToClose, asset?.decimals),
-          asset?.decimals,
-        )
+        const baseStr = formatSize(formatUnits(closeBase, decimals), decimals)
+        const quoteStr = formatSize(formatUnits(closeQuote, decimals), decimals)
 
         setSizeToClose({
-          base: sizeSide === 'base' ? value : baseSize,
-          quote: sizeSide === 'quote' ? value : quoteSize,
+          base: sizeSide === 'base' ? value : baseStr,
+          quote: sizeSide === 'quote' ? value : quoteStr,
         })
       } catch (e) {
         console.error('Error formatting size:', e)
@@ -187,6 +184,7 @@ export const MarketCloseDialog = ({
 
   const orderData = useMemo(() => {
     if (!positionToClose || !asset) return null
+
     const position = positionToClose.position
 
     const _midPrice = parseUnits(midPrice ?? '0', asset?.decimals)
@@ -223,9 +221,9 @@ export const MarketCloseDialog = ({
   return (
     <Dialog
       open={open}
-      onOpenChange={(open) => {
-        if (quickCloseEnabled) return
-        setOpen(open)
+      onOpenChange={(state) => {
+        if (quickCloseEnabled && !open) return
+        setOpen(state)
       }}
     >
       <DialogTrigger asChild>
@@ -245,7 +243,8 @@ export const MarketCloseDialog = ({
           </TableButton>
         )}
       </DialogTrigger>
-      <DialogContent>
+      {/* dont autofocus the size input */}
+      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader className="!text-left">
           <DialogTitle>Market Close</DialogTitle>
           <DialogDescription>
@@ -278,42 +277,19 @@ export const MarketCloseDialog = ({
             sizeSide={sizeSide}
             setSizeSide={setSizeSide}
           />
-
-          <div className="flex items-center gap-4">
-            <Slider
-              value={[percentToClose]}
-              min={1}
-              max={100}
-              step={1}
-              onValueChange={(val: number[]) => {
-                changeInputRef.current = 'slider'
-                setPercentToClose(val[0])
-              }}
-              disabled={isPending || !positionToClose}
-              rangeClassName="!bg-blue"
-            />
-            <div className="border max-w-[58px] min-w-[58px] rounded-md border-accent py-1 px-2 whitespace-nowrap text-sm font-medium text-right">
-              {percentToClose.toFixed(0)} %
-            </div>
-          </div>
-          <div
-            onClick={() => {
-              setQuickCloseEnabled(!quickCloseEnabled)
+          <PercentageSlider
+            value={percentToClose}
+            onChange={(val) => {
+              changeInputRef.current = 'slider'
+              setPercentToClose(val)
             }}
-            onKeyDown={() => {
-              setQuickCloseEnabled(!quickCloseEnabled)
-            }}
-            className="flex items-center gap-1 whitespace-nowrap text-xs font-medium"
-          >
-            <Checkbox
-              className='data-[state="checked"]:!bg-blue text-slate-100 !border-slate-100 data-[state="checked"]:!border-blue'
-              checked={quickCloseEnabled}
-              onCheckedChange={(checked) => {
-                setQuickCloseEnabled(!checked)
-              }}
-            />
-            <div>Don&apos;t show this again</div>
-          </div>
+            disabled={isPending || !positionToClose}
+          />
+          <CheckboxSetting
+            value={quickCloseEnabled}
+            onChange={setQuickCloseEnabled}
+            label="Don't show this again"
+          />
           {/* connect checker not needed, wont be able to get here unless connected anyway */}
           <PerpsChecker.Legal>
             <PerpsChecker.EnableTrading>

@@ -1,15 +1,17 @@
 import { useBreakpoint } from '@sushiswap/hooks'
-import { Button, SkeletonBox, classNames } from '@sushiswap/ui'
+import { SkeletonBox, classNames } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import {
   type OrderbookRow,
   useL2OrderBook,
 } from 'src/lib/perps/subscription/use-l2-order-book'
+import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
 import {
   getTextColorClass,
   numberFormatter,
   toFixedTrim,
 } from 'src/lib/perps/utils'
+import { SideToggle } from '../_common/side-toggle'
 import { useAssetListState } from '../asset-list-provider'
 import { useAssetState } from '../asset-state-provider'
 
@@ -69,16 +71,7 @@ export const OrderBook = ({ className }: { className?: string }) => {
   const bids = useMemo(() => data?.bids, [data?.bids])
   const asks = useMemo(() => data?.asks, [data?.asks])
 
-  const { baseSymbol, quoteSymbol } = useMemo(() => {
-    const symbols =
-      asset?.marketType === 'spot'
-        ? asset?.symbol?.split('/')
-        : asset?.symbol?.split('-')
-    return {
-      baseSymbol: symbols?.[0] ?? 'BASE',
-      quoteSymbol: symbols?.[1] ?? 'QUOTE',
-    }
-  }, [asset])
+  const { baseSymbol, quoteSymbol } = useSymbolSplit({ asset })
 
   const visibleAsks = useMemo(
     () => asks?.slice(-itemCount) ?? [],
@@ -107,30 +100,12 @@ export const OrderBook = ({ className }: { className?: string }) => {
         {error ? null : isLoading ? (
           <SkeletonBox className="w-20 h-6 rounded-sm" />
         ) : (
-          <div className="flex items-center border border-accent rounded-lg p-0.5">
-            <Button
-              size="xs"
-              variant={side === 'base' ? 'secondary' : 'ghost'}
-              onClick={() => setSide('base')}
-              className={classNames(
-                'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
-                side === 'quote' ? 'text-muted-foreground' : '',
-              )}
-            >
-              {baseSymbol}
-            </Button>
-            <Button
-              size="xs"
-              variant={side === 'quote' ? 'secondary' : 'ghost'}
-              onClick={() => setSide('quote')}
-              className={classNames(
-                'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
-                side === 'base' ? 'text-muted-foreground' : '',
-              )}
-            >
-              {quoteSymbol}
-            </Button>
-          </div>
+          <SideToggle
+            side={side}
+            setSide={setSide}
+            baseSymbol={baseSymbol}
+            quoteSymbol={quoteSymbol}
+          />
         )}
       </div>
 
