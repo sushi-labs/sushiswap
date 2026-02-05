@@ -14,6 +14,7 @@ import { type ReactNode, useMemo, useState } from 'react'
 import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
 import { useExecuteOrders } from 'src/lib/perps/exchange/use-execute-orders'
 import { useUserPositions } from 'src/lib/perps/use-user-positions'
+import { formatUnits, parseUnits } from 'viem'
 import { useAssetListState } from '../asset-list-provider'
 
 export const CloseAllPositionsDialog = ({
@@ -46,9 +47,15 @@ export const CloseAllPositionsDialog = ({
       }
       const decimals = asset.decimals
 
+      const _midPrice = parseUnits(midPrice ?? '0', decimals)
+      const adjustedPrice =
+        pos.side === 'A'
+          ? (_midPrice * BigInt(108)) / BigInt(100) // 8% higher than market price for sell orders
+          : (_midPrice * BigInt(92)) / BigInt(100) // 8% lower for buy orders
+
       //8% higher than market price for sell orders, 8% lower for buy orders to ensure fills
       const marketPrice = formatPrice(
-        Number(midPrice) * (pos.side === 'A' ? 1.08 : 0.92),
+        formatUnits(adjustedPrice, decimals),
         decimals,
         asset?.marketType,
       )
