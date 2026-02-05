@@ -78,11 +78,37 @@ function extractContractErrorCode(errorMessage: string): number | null {
 }
 
 /**
+ * Search for known error messages in the error string
+ */
+function extractKnownErrorMessage(errorMessage: string): string | null {
+  const knownErrors: Record<string, string> = {
+    'resulting balance is not within the allowed range':
+      'Insufficient balance left for account reserve.',
+  }
+
+  for (const [key, message] of Object.entries(knownErrors)) {
+    if (errorMessage.toLowerCase().includes(key)) {
+      return message
+    }
+  }
+
+  return null
+}
+
+/**
  * Extract a user-friendly error message from various error types
  */
 export function extractErrorMessage(error: unknown): string {
   // If error is already a string, check for error codes
   if (typeof error === 'string') {
+    // First check for known error messages
+    const errorMessage = extractKnownErrorMessage(error)
+    if (errorMessage) {
+      return errorMessage
+    }
+    // Fallback to contract error code extraction
+    // Note that there is no robust way to disambiguate conflicting error codes
+    // from different contracts in this case
     const errorCode = extractContractErrorCode(error)
     if (errorCode && ERROR_MESSAGES[errorCode]) {
       return ERROR_MESSAGES[errorCode]
