@@ -1,4 +1,5 @@
 import { PencilIcon } from '@heroicons/react-v1/outline'
+import { formatPrice } from '@nktkas/hyperliquid/utils'
 import {
   Chip,
   HoverCard,
@@ -22,6 +23,7 @@ import { useAssetState } from '../../asset-state-provider'
 import { CloseAllPositionsDialog } from '../../exchange/close-all-positions-dialog'
 import { LimitCloseDialog } from '../../exchange/limit-close-dialog'
 import { MarketCloseDialog } from '../../exchange/market-close-dialog'
+import { ReversePositionDialog } from '../../exchange/reverse-position-dialog'
 import { UpdateLeverageDialog } from '../../exchange/update-leverage-dialog'
 import { columnBodyMeta } from '../column-meta'
 import { useTradeTables } from '../trade-tables-provider'
@@ -242,9 +244,14 @@ export const LIQUIDATION_PRICE_COLUMN: ColumnDef<
     Number.parseFloat(rowB.position.liquidationPx ?? '0'),
   cell: (props) => {
     const liquidationPrice = props.row.original.position.liquidationPx
+    if (!liquidationPrice) {
+      return <span className="font-medium whitespace-nowrap">N/A</span>
+    }
     return (
       <span className="font-medium whitespace-nowrap">
-        {numberFormatter.format(Number.parseFloat(liquidationPrice ?? '0'))}
+        {numberFormatter.format(
+          Number(formatPrice(liquidationPrice.toString(), 0, 'perp')),
+        )}
       </span>
     )
   },
@@ -369,14 +376,7 @@ export const CLOSE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
       <div className="flex items-center gap-4">
         <LimitCloseDialog positionToClose={position} />
         <MarketCloseDialog positionToClose={position} />
-        <TableButton
-          onClick={() => {
-            alert('todo: reverse position dialog')
-          }}
-          // disabled={isPending}
-        >
-          Reverse
-        </TableButton>
+        <ReversePositionDialog positionToClose={position} />
       </div>
     )
   },
