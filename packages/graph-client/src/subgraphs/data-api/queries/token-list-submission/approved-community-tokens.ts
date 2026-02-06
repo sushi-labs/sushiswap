@@ -6,27 +6,14 @@ import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 export const ApprovedCommunityTokensQuery = graphql(
   `
  query ApprovedCommunityTokens {
-  evm: approvedCommunityTokens {
-    ... on EvmApprovedToken {
-      chainId
-      address
-      symbol
-      name
-      decimals
-      approved
-      logoUrl
-    }
-  }
-  svm: approvedCommunityTokens {
-    ... on SvmApprovedToken {
-      chainId
-      address
-      symbol
-      name
-      decimals
-      approved
-      logoUrl
-    }
+  approvedCommunityTokens {
+    address
+    chainId
+    symbol
+    name
+    decimals
+    approved
+    logoUrl
   }
 }
 `,
@@ -42,7 +29,7 @@ export async function getApprovedCommunityTokens() {
   })
 
   if (result) {
-    return [...result.evm, ...result.svm]
+    return result.approvedCommunityTokens
   }
 
   throw new Error('No Approved Community Tokens found')

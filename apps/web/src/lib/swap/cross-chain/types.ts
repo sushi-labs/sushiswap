@@ -8,7 +8,7 @@ type CrossChainType = 'swap' | 'cross' | 'lifi' | 'protocol'
 type CrossChainToken<
   TChainId extends XSwapSupportedChainId = XSwapSupportedChainId,
 > = {
-  address: TChainId extends SvmChainId ? SvmAddress : `0x${string}`
+  address: AddressFor<TChainId>
   chainId: TChainId
   decimals: number
   symbol: string

@@ -251,7 +251,6 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.KATANA,
   ChainId.LINEA,
   ChainId.MANTLE,
-  ChainId.METIS,
   ChainId.MODE,
   ChainId.MONAD,
   // ChainId.MOONBEAM,
