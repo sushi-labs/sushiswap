@@ -1,5 +1,5 @@
 import type { NextRequest } from 'next/server'
-import type { XSwapSupportedChainId } from 'src/config'
+import { type XSwapSupportedChainId, isXSwapSupportedChainId } from 'src/config'
 import { stringify } from 'viem'
 import * as z from 'zod'
 import { stepSchema, sushiChainIdSchema } from '../schemas'

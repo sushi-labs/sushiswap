@@ -1,18 +1,13 @@
 'use client'
 
 import { getBase64Encoder } from '@solana/codecs-strings'
-import { useKitTransactionSigner } from '@solana/connector'
-import {
-  getBase64EncodedWireTransaction,
-  getTransactionDecoder,
-} from '@solana/transactions'
+import { useTransactionSigner } from '@solana/connector'
 import { DialogType, useDialog } from '@sushiswap/ui'
 import { useMutation } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import type { XSwapSupportedChainId } from 'src/config'
 import { useCrossChainTradeStep } from 'src/lib/hooks/react-query'
 import { useSvmEstimateGas } from 'src/lib/svm/hooks/useSvmEstimateGas'
-import { getSvmRpc } from 'src/lib/svm/rpc'
 import { waitForSvmSignature } from 'src/lib/svm/wait-for-svm-signature'
 import { useAccount } from 'src/lib/wallet'
 import type { SvmChainId } from 'sushi/svm'
@@ -26,7 +21,6 @@ import { useCrossChainSwapTradeReviewPre } from './use-cross-chain-swap-trade-re
 import { useCrossChainSwapTradeReviewWriteHandlers } from './use-cross-chain-swap-trade-review-write-handlers'
 
 const base64Encoder = getBase64Encoder()
-const transactionDecoder = getTransactionDecoder()
 
 export function useSvmCrossChainSwapTradeReview<
   TChainId0 extends XSwapSupportedChainId & SvmChainId,
@@ -41,7 +35,7 @@ export function useSvmCrossChainSwapTradeReview<
   } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
 
   const address = useAccount(chainId0)
-  const { signer } = useKitTransactionSigner()
+  const { signer } = useTransactionSigner()
 
   const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
   const { open: reviewDialogOpen } = useDialog(DialogType.Review)
@@ -99,18 +93,9 @@ export function useSvmCrossChainSwapTradeReview<
     mutationFn: async (unsignedTransaction: string) => {
       if (!signer) throw new Error('No signer available')
 
-      const rpc = getSvmRpc()
-
       const unsignedBytes = base64Encoder.encode(unsignedTransaction)
-      const unsignedTx = transactionDecoder.decode(unsignedBytes)
-      const [signedTx] = await signer.modifyAndSignTransactions([unsignedTx])
 
-      const signedTransaction = getBase64EncodedWireTransaction(signedTx)
-      const signature = await rpc
-        .sendTransaction(signedTransaction, {
-          encoding: 'base64',
-        })
-        .send()
+      const signature = await signer.signAndSendTransaction(unsignedBytes)
 
       return signature as unknown as TxHashFor<TChainId0>
     },

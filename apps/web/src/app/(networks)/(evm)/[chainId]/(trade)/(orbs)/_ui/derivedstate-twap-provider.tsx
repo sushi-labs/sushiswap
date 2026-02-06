@@ -85,7 +85,8 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
   children,
   isLimitOrder = false,
 }) => {
-  const derivedStateSimpleSwap = useDerivedStateSimpleSwap()
+  const derivedStateSimpleSwap =
+    useDerivedStateSimpleSwap<TwapSupportedChainId>()
 
   const { data: prices, isLoading: _isPricesLoading } = usePrices({
     chainId: derivedStateSimpleSwap.state.chainId,

@@ -26,7 +26,7 @@ import React, { useCallback, useMemo } from 'react'
 import type { XSwapSupportedChainId } from 'src/config'
 import { useTokenSecurity } from 'src/lib/hooks/react-query'
 import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
-import { getChainById, shortenAddress } from 'sushi'
+import { type CurrencyMetadata, getChainById, shortenAddress } from 'sushi'
 import {
   defaultCurrency as evmDefaultCurrency,
   defaultQuoteCurrency as evmDefaultQuoteCurrency,
@@ -72,8 +72,10 @@ export function CrossChainSwapTokenNotFoundDialog<
 
       customTokensMutate('add', _tokens)
 
-      if (token0) setToken0(token0)
-      if (token1) setToken1(token1)
+      if (token0)
+        setToken0(token0 as unknown as CurrencyFor<TChainId0, CurrencyMetadata>)
+      if (token1)
+        setToken1(token1 as unknown as CurrencyFor<TChainId1, CurrencyMetadata>)
     },
     [customTokensMutate, setToken0, setToken1],
   )
@@ -95,7 +97,13 @@ export function CrossChainSwapTokenNotFoundDialog<
   }, [chainId1]) as TokenFor<TChainId1>
 
   const reset = useCallback(() => {
-    setTokens(defaultCurrency, defaultQuoteCurrency)
+    setTokens(
+      defaultCurrency as unknown as CurrencyFor<TChainId0, CurrencyMetadata>,
+      defaultQuoteCurrency as unknown as CurrencyFor<
+        TChainId1,
+        CurrencyMetadata
+      >,
+    )
   }, [defaultCurrency, defaultQuoteCurrency, setTokens])
 
   const { data: token0SecurityResponse, isLoading: isToken0SecurityLoading } =
@@ -361,10 +369,10 @@ export function CrossChainSwapTokenNotFoundDialog<
                 onClick={() =>
                   onImport([
                     token0?.type === 'token'
-                      ? (token0 as TokenFor<TChainId0>)
+                      ? (token0 as unknown as TokenFor<TChainId0>)
                       : undefined,
                     token1?.type === 'token'
-                      ? (token1 as TokenFor<TChainId1>)
+                      ? (token1 as unknown as TokenFor<TChainId1>)
                       : undefined,
                   ])
                 }
