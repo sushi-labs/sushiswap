@@ -21,6 +21,7 @@ import {
 import { TableButton } from '../../_common/table-button'
 import { useAssetState } from '../../asset-state-provider'
 import { CloseAllPositionsDialog } from '../../exchange/close-all-positions-dialog'
+import { EditTpSlPositionDialog } from '../../exchange/edit-tp-sl-position-dialog'
 import { LimitCloseDialog } from '../../exchange/limit-close-dialog'
 import { MarketCloseDialog } from '../../exchange/market-close-dialog'
 import { ReversePositionDialog } from '../../exchange/reverse-position-dialog'
@@ -388,18 +389,12 @@ export const CLOSE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
 export const TP_SL_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   id: 'tpSl',
   header: 'TP/SL',
-  cell: (_props) => {
+  cell: (props) => {
+    const position = useMemo(() => props.row.original, [props.row.original])
     return (
       <div className="flex items-center gap-4 whitespace-nowrap">
         <ViewOrders />
-        <TableButton
-          onClick={() => {
-            alert('todo: edit tp/sl for position dialog')
-          }}
-          // disabled={isPending}
-        >
-          <PencilIcon className="w-4 h-4" />
-        </TableButton>
+        <EditTpSlPositionDialog positionToClose={position} />
       </div>
     )
   },
