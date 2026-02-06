@@ -25,21 +25,15 @@ import {
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
+import { useAccounts } from 'src/lib/wallet'
 import { ZERO, formatUSD, getChainById, shortenAddress } from 'sushi'
-import {
-  type EvmAddress,
-  EvmChainId,
-  EvmNative,
-  getEvmChainById,
-  isEvmAddress,
-} from 'sushi/evm'
+import { type EvmAddress, EvmChainId, EvmNative, isEvmAddress } from 'sushi/evm'
 import {
   type SvmChainId,
   SvmNative,
   isSvmAddress,
   isSvmChainId,
 } from 'sushi/svm'
-import { useConnection } from 'wagmi'
 import { useDetailsInteractionTracker } from '../../_ui/details-interaction-tracker-provider'
 import {
   useDerivedStateSimpleSwap,
@@ -51,8 +45,12 @@ function Recipient<TChainId extends EvmChainId | SvmChainId>({
   chainId,
   recipient,
 }: { chainId: TChainId; recipient: AddressFor<TChainId> | undefined }) {
-  // TODO: Solana address
-  const { address } = useConnection()
+  const { evm, svm } = useAccounts()
+
+  const address = useMemo(
+    () => (isSvmChainId(chainId) ? svm.address : evm.address),
+    [chainId, evm.address, svm.address],
+  )
 
   const hasValidRecipient = Boolean(
     recipient &&
@@ -90,9 +88,7 @@ function Recipient<TChainId extends EvmChainId | SvmChainId>({
             <AddressToEnsResolver address={recipient as EvmAddress}>
               {({ isLoading, data }) => {
                 return (
-                  <>
-                    {isLoading || !data ? shortenAddress(recipient) : data}
-                  </>
+                  <>{isLoading || !data ? shortenAddress(recipient) : data}</>
                 )
               }}
             </AddressToEnsResolver>
