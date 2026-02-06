@@ -1,260 +1,408 @@
 import { type XSwapSupportedChainId, isXSwapSupportedChainId } from 'src/config'
-import {
-  LIFI_SOLANA_CHAIN_ID,
-  lifiToSushiChainId,
-} from 'src/lib/swap/cross-chain/lifi'
-import { sz } from 'sushi'
 import { type EvmChainId, isEvmAddress, isEvmChainId } from 'sushi/evm'
 import {
-  type SvmAddress,
   SvmChainId,
+  type SvmChainId as SvmChainIdType,
   isSvmAddress,
   isSvmChainId,
 } from 'sushi/svm'
 import * as z from 'zod'
 
-const lifiChainIdSchema = z
-  .number()
-  .refine(
-    (chainId) =>
-      chainId === LIFI_SOLANA_CHAIN_ID || isXSwapSupportedChainId(chainId),
-    {
-      message: 'chainId must exist in XSwapSupportedChainId',
-    },
-  )
+type ChainIdGuard<TChainId extends number> = (
+  chainId: number,
+) => chainId is TChainId
 
-const lifiEvmChainIdSchema = lifiChainIdSchema
-  .refine((chainId) => isEvmChainId(chainId), {
-    message: 'chainId must exist in XSwapSupportedChainId',
-  })
-  .transform((chainId) => chainId as XSwapSupportedChainId & EvmChainId)
+type SchemaFlavor = 'sushi' | 'lifi'
 
-const lifiSvmChainIdSchema = lifiChainIdSchema
-  .refine(
-    (chainId) => chainId === LIFI_SOLANA_CHAIN_ID || isSvmChainId(chainId),
-    {
-      message: 'chainId must exist in XSwapSupportedChainId',
-    },
-  )
-  .transform((chainId) => {
-    if (chainId === LIFI_SOLANA_CHAIN_ID) {
-      return SvmChainId.SOLANA
-    }
-    return chainId as XSwapSupportedChainId & SvmChainId
-  })
+function chainIdSchema<TChainId extends number>({
+  coerce = false,
+  isChainId,
+  message = 'chainId must exist in XSwapSupportedChainId',
+}: {
+  coerce?: boolean
+  isChainId: ChainIdGuard<TChainId>
+  message?: string
+}) {
+  const schema = coerce ? z.coerce.number() : z.number()
 
-const evmAddressSchema = sz.evm.address()
-const svmAddressSchema = z
-  .string()
-  .refine(isSvmAddress)
-  .transform((address) => address as SvmAddress)
+  return schema
+    .refine((chainId): chainId is TChainId => isChainId(chainId), {
+      message,
+    })
+    .transform((chainId) => chainId as TChainId)
+}
 
-function isLifiSvmChainId(chainId: number) {
+export const LIFI_SOLANA_CHAIN_ID = 1151111081099710 as const
+
+type LifiChainId = XSwapSupportedChainId | typeof LIFI_SOLANA_CHAIN_ID
+type SushiEvmChainId = XSwapSupportedChainId & EvmChainId
+type SushiSvmChainId = XSwapSupportedChainId & SvmChainIdType
+
+type ChainIdForFlavor<TFlavor extends SchemaFlavor> = TFlavor extends 'sushi'
+  ? XSwapSupportedChainId
+  : LifiChainId
+
+type SushiToLifiChainId<TChainId extends LifiChainId | XSwapSupportedChainId> =
+  TChainId extends SushiSvmChainId ? typeof LIFI_SOLANA_CHAIN_ID : TChainId
+
+export function sushiToLifiChainId<TChainId extends XSwapSupportedChainId>(
+  chainId: TChainId,
+): SushiToLifiChainId<TChainId> {
+  if (isSvmChainId(chainId)) {
+    return LIFI_SOLANA_CHAIN_ID as SushiToLifiChainId<TChainId>
+  }
+  if (isXSwapSupportedChainId(chainId)) {
+    return chainId as SushiToLifiChainId<TChainId>
+  }
+  throw new Error('chainId not supported in XSwapSupportedChainId')
+}
+
+type LifiToSushiChainId<TChainId extends LifiChainId> =
+  TChainId extends typeof LIFI_SOLANA_CHAIN_ID ? SvmChainId : TChainId
+
+export function lifiToSushiChainId<TChainId extends LifiChainId>(
+  chainId: TChainId,
+) {
+  if (chainId === LIFI_SOLANA_CHAIN_ID) {
+    return SvmChainId.SOLANA
+  }
+  if (isXSwapSupportedChainId(chainId)) {
+    return chainId
+  }
+  throw new Error('chainId not supported in XSwapSupportedChainId')
+}
+
+function isLifiChainId(chainId: number): chainId is LifiChainId {
+  return chainId === LIFI_SOLANA_CHAIN_ID || isXSwapSupportedChainId(chainId)
+}
+
+function isLifiSvmChainId(
+  chainId: number,
+): chainId is typeof LIFI_SOLANA_CHAIN_ID | SushiSvmChainId {
   return chainId === LIFI_SOLANA_CHAIN_ID || isSvmChainId(chainId)
 }
 
-const baseLifiTokenSchema = z.object({
-  decimals: z.number(),
-  symbol: z.string(),
-  name: z.string(),
-  priceUSD: z.string(),
+const _sushiChainIdSchema = chainIdSchema({
+  coerce: true,
+  isChainId: isXSwapSupportedChainId,
 })
 
-const evmLifiTokenSchema = baseLifiTokenSchema.extend({
-  address: evmAddressSchema,
-  chainId: lifiEvmChainIdSchema,
+const _sushiEvmChainIdSchema = chainIdSchema({
+  coerce: true,
+  isChainId: (chainId): chainId is SushiEvmChainId =>
+    isXSwapSupportedChainId(chainId) && isEvmChainId(chainId),
 })
 
-const svmLifiTokenSchema = baseLifiTokenSchema.extend({
-  address: svmAddressSchema,
-  chainId: lifiSvmChainIdSchema,
+const _sushiSvmChainIdSchema = chainIdSchema({
+  coerce: true,
+  isChainId: (chainId): chainId is SushiSvmChainId =>
+    isXSwapSupportedChainId(chainId) && isSvmChainId(chainId),
 })
 
-const lifiTokenSchema = z.union([evmLifiTokenSchema, svmLifiTokenSchema])
+type SushiChainIdSchema<TChainId extends XSwapSupportedChainId | undefined> =
+  TChainId extends undefined
+    ? typeof _sushiChainIdSchema
+    : TChainId extends SvmChainId
+      ? typeof _sushiSvmChainIdSchema
+      : typeof _sushiEvmChainIdSchema
 
-const lifiActionSchema = z
-  .object({
-    fromChainId: lifiChainIdSchema,
+function sushiChainIdSchema<TChainId extends XSwapSupportedChainId | undefined>(
+  chainId?: TChainId,
+): SushiChainIdSchema<TChainId> {
+  if (!chainId) {
+    return chainIdSchema({
+      coerce: true,
+      isChainId: isXSwapSupportedChainId,
+    }) as SushiChainIdSchema<TChainId>
+  }
+
+  if (isSvmChainId(chainId)) {
+    return _sushiSvmChainIdSchema as SushiChainIdSchema<TChainId>
+  }
+
+  return _sushiEvmChainIdSchema as SushiChainIdSchema<TChainId>
+}
+
+const _lifiChainIdSchema = chainIdSchema({
+  isChainId: isLifiChainId,
+})
+
+const _lifiEvmChainIdSchema = chainIdSchema({
+  isChainId: (chainId): chainId is SushiEvmChainId =>
+    isLifiChainId(chainId) && isEvmChainId(chainId),
+})
+
+const _lifiSvmChainIdSchema = chainIdSchema({
+  isChainId: isLifiSvmChainId,
+}).transform((chainId) => {
+  if (chainId === LIFI_SOLANA_CHAIN_ID) {
+    return SvmChainId.SOLANA
+  }
+
+  return chainId as SushiSvmChainId
+})
+
+type LifiChainIdSchema<TChainId extends LifiChainId | undefined> =
+  TChainId extends undefined
+    ? typeof _lifiChainIdSchema
+    : TChainId extends typeof LIFI_SOLANA_CHAIN_ID
+      ? typeof _lifiSvmChainIdSchema
+      : typeof _lifiEvmChainIdSchema
+
+function lifiChainIdSchema<TChainId extends LifiChainId | undefined>(
+  chainId?: TChainId,
+): LifiChainIdSchema<TChainId> {
+  if (!chainId) {
+    return _lifiChainIdSchema as LifiChainIdSchema<TChainId>
+  }
+  if (isLifiSvmChainId(chainId)) {
+    return _lifiSvmChainIdSchema as LifiChainIdSchema<TChainId>
+  }
+  return _lifiEvmChainIdSchema as LifiChainIdSchema<TChainId>
+}
+
+function getAddressValidator(
+  chainId: number,
+  isSvmChainIdFn: (chainId: number) => boolean = isSvmChainId,
+) {
+  return isSvmChainIdFn(chainId) ? isSvmAddress : isEvmAddress
+}
+
+function getAddressSchema<TChainId extends XSwapSupportedChainId | LifiChainId>(
+  chainId: TChainId,
+  {
+    isSvmChainIdFn = isSvmChainId,
+  }: {
+    isSvmChainIdFn?: (chainId: number) => boolean
+  } = {},
+) {
+  return z
+    .string()
+    .refine(getAddressValidator(chainId, isSvmChainIdFn), {
+      error: 'Invalid address format for the specified chainId',
+    })
+    .transform((address) => address as AddressFor<LifiToSushiChainId<TChainId>>)
+}
+
+type FlavorConfig<
+  TChainId extends ChainIdForFlavor<TFlavor>,
+  TFlavor extends SchemaFlavor,
+> = {
+  chainIdSchema: TFlavor extends 'sushi'
+    ? SushiChainIdSchema<TChainId & XSwapSupportedChainId>
+    : LifiChainIdSchema<TChainId & LifiChainId>
+  isSvmChainIdFn: (chainId: number) => boolean
+  normalizeChainId: TFlavor extends 'sushi'
+    ? (chainId: XSwapSupportedChainId) => SushiToLifiChainId<TChainId>
+    : (chainId: LifiChainId) => LifiToSushiChainId<TChainId>
+}
+
+function getFlavorConfig<
+  TChainId extends ChainIdForFlavor<TFlavor>,
+  TFlavor extends SchemaFlavor,
+>(chainId: TChainId, flavor: TFlavor): FlavorConfig<TChainId, TFlavor> {
+  if (flavor === 'sushi') {
+    const _chainId = chainId as TChainId & XSwapSupportedChainId
+    return {
+      chainIdSchema: sushiChainIdSchema(_chainId) as FlavorConfig<
+        TChainId,
+        TFlavor
+      >['chainIdSchema'],
+      isSvmChainIdFn: isSvmChainId,
+      normalizeChainId: sushiToLifiChainId as FlavorConfig<
+        TChainId,
+        TFlavor
+      >['normalizeChainId'],
+    }
+  }
+
+  const _chainId = chainId as TChainId & LifiChainId
+  return {
+    chainIdSchema: lifiChainIdSchema(_chainId) as FlavorConfig<
+      TChainId,
+      TFlavor
+    >['chainIdSchema'],
+    isSvmChainIdFn: isLifiSvmChainId,
+    normalizeChainId: lifiToSushiChainId as FlavorConfig<
+      TChainId,
+      TFlavor
+    >['normalizeChainId'],
+  }
+}
+
+function estimateSchema<
+  TChainId0 extends ChainIdForFlavor<TFlavor>,
+  TChainId1 extends ChainIdForFlavor<TFlavor>,
+  TFlavor extends SchemaFlavor,
+>(fromChainId: TChainId0, toChainId: TChainId1, flavor: TFlavor) {
+  const estimateTokenSchema = z.union([
+    tokenSchema(fromChainId, flavor),
+    tokenSchema(toChainId, flavor),
+  ])
+
+  return z.object({
+    tool: z.string(),
     fromAmount: z.string(),
-    fromToken: lifiTokenSchema,
-    toChainId: lifiChainIdSchema,
-    toToken: lifiTokenSchema,
-    slippage: z.number(),
-    fromAddress: z.string().optional(),
-    toAddress: z.string().optional(),
+    fromAmountUSD: z.string().optional(),
+    toAmount: z.string(),
+    toAmountMin: z.string(),
+    toAmountUSD: z.string().optional(),
+    approvalAddress: z.unknown(),
+    feeCosts: z
+      .array(
+        z.object({
+          name: z.string(),
+          description: z.string(),
+          percentage: z.string(),
+          token: estimateTokenSchema,
+          amount: z.string(),
+          amountUSD: z.string(),
+          included: z.boolean(),
+        }),
+      )
+      .optional()
+      .default([]),
+    gasCosts: z
+      .array(
+        z.object({
+          type: z.enum(['SUM', 'APPROVE', 'SEND', 'FEE']),
+          price: z.string(),
+          estimate: z.string(),
+          limit: z.string(),
+          amount: z.string(),
+          amountUSD: z.string(),
+          token: estimateTokenSchema,
+        }),
+      )
+      .optional()
+      .default([]),
+    executionDuration: z.number(),
+    approvalReset: z.boolean().optional(),
+    skipApproval: z.boolean().optional(),
+    skipPermit: z.boolean().optional(),
   })
-  .superRefine((data, ctx) => {
-    if (data.fromAddress) {
-      const isValidAddress = isLifiSvmChainId(data.fromChainId)
-        ? isSvmAddress(data.fromAddress)
-        : isEvmAddress(data.fromAddress)
-      if (!isValidAddress) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['fromAddress'],
-          message: 'Invalid address',
-        })
-      }
-    }
+}
 
-    if (data.toAddress) {
-      const isValidAddress = isLifiSvmChainId(data.toChainId)
-        ? isSvmAddress(data.toAddress)
-        : isEvmAddress(data.toAddress)
-      if (!isValidAddress) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['toAddress'],
-          message: 'Invalid address',
-        })
-      }
-    }
+function transactionRequestSchema<
+  TChainId extends ChainIdForFlavor<TFlavor>,
+  TFlavor extends SchemaFlavor,
+>(chainId: TChainId, flavor: TFlavor) {
+  const config = getFlavorConfig(chainId, flavor)
+
+  if (config.isSvmChainIdFn(chainId)) {
+    return z.object({
+      data: z.string(),
+    })
+  }
+
+  return z.object({
+    to: z.string().nullable().optional(),
+    from: z.string().optional(),
+    data: z.string().optional(),
+    value: z.string().optional(),
+    gasPrice: z.string().optional(),
   })
-  .transform((data) => ({
-    ...data,
-    fromChainId: lifiToSushiChainId(
-      data.fromChainId as XSwapSupportedChainId | typeof LIFI_SOLANA_CHAIN_ID,
-    ),
-    toChainId: lifiToSushiChainId(
-      data.toChainId as XSwapSupportedChainId | typeof LIFI_SOLANA_CHAIN_ID,
-    ),
-  }))
+}
 
-const lifiEstimateSchema = z.object({
-  tool: z.string(),
-  fromAmount: z.string(),
-  toAmount: z.string(),
-  toAmountMin: z.string(),
-  approvalAddress: z.union([evmAddressSchema, svmAddressSchema]),
-  feeCosts: z
-    .array(
-      z.object({
-        name: z.string(),
-        description: z.string(),
-        percentage: z.string(),
-        token: lifiTokenSchema,
-        amount: z.string(),
-        amountUSD: z.string(),
-        included: z.boolean(),
-      }),
-    )
-    .default([]),
-  gasCosts: z.array(
-    z.object({
-      type: z.enum(['SUM', 'APPROVE', 'SEND']),
-      price: z.string(),
-      estimate: z.string(),
-      limit: z.string(),
-      amount: z.string(),
-      amountUSD: z.string(),
-      token: lifiTokenSchema,
-    }),
-  ),
-  executionDuration: z.number(),
-})
-
-const lifiToolDetailsSchema = z.object({
+const toolDetailsSchema = z.object({
   key: z.string(),
   name: z.string(),
   logoURI: z.string(),
 })
 
-const lifiEvmTransactionRequestSchema = z
-  .object({
-    chainId: lifiEvmChainIdSchema,
-    data: sz.hex(),
-    from: evmAddressSchema,
-    gasLimit: sz.hex(),
-    gasPrice: sz.hex(),
-    to: evmAddressSchema,
-    value: sz.hex(),
+const executionTypeSchema = z.enum(['transaction', 'message', 'all'])
+const typedDataSchema = z.record(z.string(), z.unknown())
+
+function stepBaseSchema<
+  TChainId0 extends ChainIdForFlavor<TFlavor>,
+  TChainId1 extends ChainIdForFlavor<TFlavor>,
+  TFlavor extends SchemaFlavor,
+>(fromChainId: TChainId0, toChainId: TChainId1, flavor: TFlavor) {
+  return z.object({
+    id: z.string(),
+    type: z.unknown(),
+    tool: z.string(),
+    toolDetails: toolDetailsSchema,
+    integrator: z.string().optional(),
+    referrer: z.string().optional(),
+    action: actionSchema(fromChainId, toChainId, flavor),
+    estimate: estimateSchema(fromChainId, toChainId, flavor),
+    executionType: executionTypeSchema.optional(),
+    transactionRequest: transactionRequestSchema(
+      fromChainId,
+      flavor,
+    ).optional(),
+    transactionId: z.string().optional(),
+    typedData: z.array(typedDataSchema).optional(),
   })
-  .transform((data) => ({
-    ...data,
-    chainId: lifiToSushiChainId(
-      data.chainId as XSwapSupportedChainId | typeof LIFI_SOLANA_CHAIN_ID,
-    ),
-  }))
-
-const lifiSvmTransactionRequestSchema = z
-  .object({
-    chainId: lifiSvmChainIdSchema.optional(),
-    data: z.string(),
-  })
-  .passthrough()
-  .transform((data) => ({
-    ...data,
-    chainId:
-      data.chainId == null
-        ? undefined
-        : lifiToSushiChainId(
-            data.chainId as XSwapSupportedChainId | typeof LIFI_SOLANA_CHAIN_ID,
-          ),
-  }))
-
-const lifiTransactionRequestSchema = z.union([
-  lifiEvmTransactionRequestSchema,
-  lifiSvmTransactionRequestSchema,
-])
-
-const lifiStepBaseSchema = z.object({
-  id: z.string(),
-  type: z.enum(['swap', 'cross', 'lifi', 'protocol']),
-  tool: z.string(),
-  toolDetails: lifiToolDetailsSchema,
-  action: lifiActionSchema,
-  estimate: lifiEstimateSchema,
-  transactionRequest: lifiTransactionRequestSchema.optional(),
-})
-
-const lifiStepSchema = lifiStepBaseSchema.extend({
-  includedSteps: z.array(lifiStepBaseSchema),
-})
-
-type TransactionRequestWithChainId = {
-  transactionRequest?: Record<string, unknown>
-  action: { fromChainId: number }
 }
 
-function resolveTransactionRequestChainId<
-  T extends TransactionRequestWithChainId,
->(data: T): T {
-  const { transactionRequest } = data
+function stepSchema<
+  TChainId0 extends ChainIdForFlavor<TFlavor>,
+  TChainId1 extends ChainIdForFlavor<TFlavor>,
+  TFlavor extends SchemaFlavor,
+>(fromChainId: TChainId0, toChainId: TChainId1, flavor: TFlavor) {
+  return stepBaseSchema(fromChainId, toChainId, flavor).extend({
+    type: z.unknown(),
+    includedSteps: z.unknown(),
+  })
+}
 
-  if (
-    !transactionRequest ||
-    typeof transactionRequest !== 'object' ||
-    !('chainId' in transactionRequest)
-  ) {
-    return data
-  }
+function tokenSchema<
+  TChainId extends ChainIdForFlavor<TFlavor>,
+  TFlavor extends SchemaFlavor,
+>(chainId: TChainId, flavor: TFlavor) {
+  const config = getFlavorConfig(chainId, flavor)
 
-  const chainId = (transactionRequest as { chainId?: number | undefined })
-    .chainId
+  return z.object({
+    address: getAddressSchema(chainId, {
+      isSvmChainIdFn: config.isSvmChainIdFn,
+    }),
+    chainId: config.chainIdSchema.transform((c) => config.normalizeChainId(c)),
+    decimals: z.number(),
+    symbol: z.string(),
+    name: z.string(),
+    priceUSD: z.string(),
+    logoURI: z.string().optional(),
+    coinKey: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+  })
+}
 
-  if (chainId != null) {
-    return data
-  }
+function actionSchema<
+  TChainId0 extends ChainIdForFlavor<TFlavor>,
+  TChainId1 extends ChainIdForFlavor<TFlavor>,
+  TFlavor extends SchemaFlavor,
+>(fromChainId: TChainId0, toChainId: TChainId1, flavor: TFlavor) {
+  const fromConfig = getFlavorConfig(fromChainId, flavor)
+  const toConfig = getFlavorConfig(toChainId, flavor)
 
-  return {
-    ...data,
-    transactionRequest: {
-      ...transactionRequest,
-      chainId: data.action.fromChainId,
-    },
-  } as T
+  return z.object({
+    fromChainId: fromConfig.chainIdSchema.transform((c) =>
+      fromConfig.normalizeChainId(c),
+    ),
+    fromAmount: z.string(),
+    fromToken: tokenSchema(fromChainId, flavor),
+    toChainId: toConfig.chainIdSchema.transform((c) =>
+      toConfig.normalizeChainId(c),
+    ),
+    toToken: tokenSchema(toChainId, flavor),
+    slippage: z.number().optional(),
+    fromAddress: getAddressSchema(fromChainId, {
+      isSvmChainIdFn: fromConfig.isSvmChainIdFn,
+    }).optional(),
+    toAddress: getAddressSchema(toChainId, {
+      isSvmChainIdFn: toConfig.isSvmChainIdFn,
+    }).optional(),
+  })
 }
 
 export {
-  evmAddressSchema,
-  lifiActionSchema,
+  type LifiChainId,
+  getAddressSchema,
   lifiChainIdSchema,
-  lifiEstimateSchema,
-  lifiStepBaseSchema,
-  lifiStepSchema,
-  lifiTokenSchema,
-  lifiToolDetailsSchema,
-  lifiTransactionRequestSchema,
-  resolveTransactionRequestChainId,
-  svmAddressSchema,
+  sushiChainIdSchema,
+  stepSchema,
+  tokenSchema,
+  transactionRequestSchema,
 }

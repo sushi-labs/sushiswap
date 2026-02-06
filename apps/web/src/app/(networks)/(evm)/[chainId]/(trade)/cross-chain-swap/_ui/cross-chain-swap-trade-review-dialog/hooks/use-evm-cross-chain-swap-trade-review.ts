@@ -10,7 +10,7 @@ import { logger } from 'src/lib/logger'
 import { getCrossChainFeesBreakdown } from 'src/lib/swap/cross-chain'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
-import type { EvmChainId } from 'sushi/evm'
+import type { EvmAddress, EvmChainId } from 'sushi/evm'
 import {
   useConnection,
   useEstimateGas,
@@ -26,9 +26,9 @@ import type { CrossChainSwapTradeReviewBase } from '../types'
 import { useCrossChainSwapTradeReviewPre } from './use-cross-chain-swap-trade-review-pre'
 import { useCrossChainSwapTradeReviewWriteHandlers } from './use-cross-chain-swap-trade-review-write-handlers'
 
-type ReceiptLike = {
-  status: 'success' | 'reverted'
-  from?: string
+function toBigInt(value: bigint | `0x${string}` | undefined) {
+  if (value == null) return undefined
+  return typeof value === 'bigint' ? value : BigInt(value)
 }
 
 export function useEvmCrossChainSwapTradeReview<
@@ -75,7 +75,7 @@ export function useEvmCrossChainSwapTradeReview<
     chainId: chainId0,
     to: step?.transactionRequest?.to,
     data: step?.transactionRequest?.data,
-    value: step?.transactionRequest?.value,
+    value: toBigInt(step?.transactionRequest?.value),
     account: step?.transactionRequest?.from,
     query: {
       enabled: Boolean(enabled && chain?.id === chainId0 && approved),
@@ -84,9 +84,15 @@ export function useEvmCrossChainSwapTradeReview<
 
   const preparedTx = useMemo(() => {
     return step?.transactionRequest && estGas
-      ? { ...step.transactionRequest, gas: estGas }
+      ? {
+          ...step.transactionRequest,
+          chainId: chainId0,
+          gas: estGas,
+          value: toBigInt(step.transactionRequest.value),
+          gasPrice: toBigInt(step.transactionRequest.gasPrice),
+        }
       : undefined
-  }, [step?.transactionRequest, estGas])
+  }, [chainId0, step?.transactionRequest, estGas])
 
   // onSimulateError
   useEffect(() => {
@@ -108,15 +114,16 @@ export function useEvmCrossChainSwapTradeReview<
     useCrossChainSwapTradeReviewWriteHandlers<
       TChainId0,
       TChainId1,
-      ReceiptLike
+      {
+        status: 'success' | 'reverted'
+      }
     >({
       routeRef: pre.routeRef,
       groupTs: pre.groupTs,
       setStepStates: pre.setStepStates,
       waitForReceipt: (hash) => client0.waitForTransactionReceipt({ hash }),
-      getReceiptInfo: (receipt: ReceiptLike) => ({
+      getReceiptInfo: (receipt) => ({
         status: receipt.status === 'success' ? 'success' : 'failed',
-        fromAddress: receipt.from,
       }),
       step,
       shouldIgnoreWriteError: isUserRejectedError,
@@ -152,7 +159,9 @@ export function useEvmCrossChainSwapTradeReview<
       })
 
       try {
-        await sendTransactionAsync(preparedTx)
+        await sendTransactionAsync(
+          preparedTx as Parameters<typeof sendTransactionAsync>[0],
+        )
         confirm()
       } catch (e) {
         console.log(e)

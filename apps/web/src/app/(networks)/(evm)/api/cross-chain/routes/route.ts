@@ -1,152 +1,94 @@
 import type { NextRequest } from 'next/server'
-import { type XSwapSupportedChainId, isXSwapSupportedChainId } from 'src/config'
-import {
-  type LIFI_SOLANA_CHAIN_ID,
-  lifiToSushiChainId,
-  sushiToLifiChainId,
-} from 'src/lib/swap/cross-chain/lifi'
-import { isEvmAddress } from 'sushi/evm'
-import { isSvmAddress, isSvmChainId } from 'sushi/svm'
+import type { XSwapSupportedChainId } from 'src/config'
 import * as z from 'zod'
 import {
+  type LifiChainId,
+  getAddressSchema,
   lifiChainIdSchema,
-  lifiStepSchema,
-  lifiTokenSchema,
-  lifiTransactionRequestSchema,
-  resolveTransactionRequestChainId,
+  stepSchema,
+  sushiChainIdSchema,
+  sushiToLifiChainId,
+  tokenSchema,
+  transactionRequestSchema,
 } from '../schemas'
 
-const sushiChainIdSchema = z.coerce
-  .number()
-  .refine((chainId) => isXSwapSupportedChainId(chainId), {
-    message: 'chainId must exist in XSwapChainId',
-  })
-
-const routesInputSchema = z
-  .object({
-    fromChainId: sushiChainIdSchema,
-    fromAmount: z.string(),
-    fromTokenAddress: z.string(),
-    toChainId: sushiChainIdSchema,
-    toTokenAddress: z.string(),
-    fromAddress: z.string().optional(),
-    toAddress: z.string().optional(),
-    slippage: z.coerce.number(), // decimal
-    order: z.enum(['CHEAPEST', 'FASTEST']).optional(),
-  })
-  .superRefine((data, ctx) => {
-    const isFromSvm = isSvmChainId(data.fromChainId)
-    const isToSvm = isSvmChainId(data.toChainId)
-
-    const isFromTokenValid = isFromSvm
-      ? isSvmAddress(data.fromTokenAddress)
-      : isEvmAddress(data.fromTokenAddress)
-    if (!isFromTokenValid) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['fromTokenAddress'],
-        message: 'fromTokenAddress does not conform to chain address format',
-      })
-    }
-
-    const isToTokenValid = isToSvm
-      ? isSvmAddress(data.toTokenAddress)
-      : isEvmAddress(data.toTokenAddress)
-    if (!isToTokenValid) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['toTokenAddress'],
-        message: 'toTokenAddress does not conform to chain address format',
-      })
-    }
-
-    if (data.fromAddress) {
-      const isFromAddressValid = isFromSvm
-        ? isSvmAddress(data.fromAddress)
-        : isEvmAddress(data.fromAddress)
-      if (!isFromAddressValid) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['fromAddress'],
-          message: 'fromAddress does not conform to chain address format',
-        })
-      }
-    }
-
-    if (data.toAddress) {
-      const isToAddressValid = isToSvm
-        ? isSvmAddress(data.toAddress)
-        : isEvmAddress(data.toAddress)
-
-      if (!isToAddressValid) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['toAddress'],
-          message: 'toAddress does not conform to chain address format',
-        })
-      }
-    }
-  })
-  .transform((data) => ({
-    ...data,
-    fromChainId: sushiToLifiChainId(data.fromChainId),
-    toChainId: sushiToLifiChainId(data.toChainId),
-  }))
-
-export type CrossChainRoutesInput = z.input<typeof routesInputSchema>
-export type CrossChainRoutesLifiRequest = z.output<typeof routesInputSchema>
-
-const lifiRouteSchema = z
-  .object({
-    id: z.string(),
-    fromChainId: lifiChainIdSchema,
-    fromAmount: z.string(),
-    fromToken: lifiTokenSchema,
-    toChainId: lifiChainIdSchema,
-    toAmount: z.string(),
-    toAmountMin: z.string(),
-    toToken: lifiTokenSchema,
-    gasCostUSD: z.string(),
-    steps: z.array(
-      lifiStepSchema.transform((data) => {
-        const resolved = resolveTransactionRequestChainId(data)
-
-        return {
-          ...resolved,
-          includedStepsWithoutFees: resolved.includedSteps.filter(
-            (step) => step.tool !== 'feeCollection',
-          ),
-        }
-      }),
-    ),
-    tags: z.array(z.string()).optional(),
-    transactionRequest: lifiTransactionRequestSchema.optional(),
-  })
-  .transform((data) => ({
-    ...data,
-    fromChainId: lifiToSushiChainId(
-      data.fromChainId as XSwapSupportedChainId | typeof LIFI_SOLANA_CHAIN_ID,
-    ),
-    toChainId: lifiToSushiChainId(
-      data.toChainId as XSwapSupportedChainId | typeof LIFI_SOLANA_CHAIN_ID,
-    ),
-  }))
-  .refine((data) => data.steps.length === 1, {
-    message: 'multi-step routes are not supported',
-  })
-  .transform((data) => {
-    const { steps, ...rest } = data
-    return {
-      ...rest,
-      step: steps[0],
-    }
-  })
-
-const routesOutputSchema = z.object({
-  routes: z.array(lifiRouteSchema),
+const routesBaseInputSchema = z.object({
+  fromChainId: sushiChainIdSchema(),
+  toChainId: sushiChainIdSchema(),
 })
 
-export type CrossChainRoutesResponse = z.output<typeof routesOutputSchema>
+function routesInputSchema<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+>(fromChainId: TChainId0, toChainId: TChainId1) {
+  return z.object({
+    fromChainId: sushiChainIdSchema(fromChainId).transform(sushiToLifiChainId),
+    fromAmount: z.string(),
+    fromTokenAddress: getAddressSchema(fromChainId),
+    toChainId: sushiChainIdSchema(toChainId).transform(sushiToLifiChainId),
+    toTokenAddress: getAddressSchema(toChainId),
+    fromAddress: getAddressSchema(fromChainId).optional(),
+    toAddress: getAddressSchema(toChainId).optional(),
+    slippage: z.coerce.number(),
+    order: z.enum(['CHEAPEST', 'FASTEST']).optional(),
+  })
+}
+
+function parseRoutesInput(params: Record<string, string>) {
+  const base = routesBaseInputSchema.parse(params)
+  return routesInputSchema(base.fromChainId, base.toChainId).parse(params)
+}
+
+export type CrossChainRoutesInput<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+> = z.input<ReturnType<typeof routesInputSchema<TChainId0, TChainId1>>>
+
+function routesOutputSchema<
+  TChainId0 extends LifiChainId,
+  TChainId1 extends LifiChainId,
+>(fromChainId: TChainId0, toChainId: TChainId1) {
+  return z.object({
+    routes: z.array(
+      z
+        .object({
+          id: z.string(),
+          fromChainId: lifiChainIdSchema(fromChainId),
+          fromAmountUSD: z.string().optional(),
+          fromAmount: z.string(),
+          fromToken: tokenSchema(fromChainId, 'lifi'),
+          fromAddress: z.string().optional(),
+          toChainId: lifiChainIdSchema(toChainId),
+          toAmountUSD: z.string().optional(),
+          toAmount: z.string(),
+          toAmountMin: z.string(),
+          toToken: tokenSchema(toChainId, 'lifi'),
+          toAddress: z.string().optional(),
+          gasCostUSD: z.string().optional(),
+          containsSwitchChain: z.boolean().optional(),
+          steps: z.array(stepSchema(fromChainId, toChainId, 'lifi')),
+          tags: z
+            .array(z.enum(['RECOMMENDED', 'FASTEST', 'CHEAPEST', 'SAFEST']))
+            .optional(),
+        })
+        .refine((data) => data.steps.length === 1, {
+          message: 'multi-step routes are not supported',
+        })
+        .transform((data) => {
+          const { steps, ...rest } = data
+          return {
+            ...rest,
+            step: steps[0],
+          }
+        }),
+    ),
+  })
+}
+
+export type CrossChainRoutesResponse<
+  TChainId0 extends LifiChainId,
+  TChainId1 extends LifiChainId,
+> = z.output<ReturnType<typeof routesOutputSchema<TChainId0, TChainId1>>>
 
 export const revalidate = 20
 
@@ -156,8 +98,8 @@ export async function GET(request: NextRequest) {
   const {
     slippage,
     order = 'CHEAPEST',
-    ...requestParams
-  } = routesInputSchema.parse(params)
+    ...parsedParams
+  } = parseRoutesInput(params)
 
   const url = new URL('https://li.quest/v1/advanced/routes')
 
@@ -171,7 +113,7 @@ export async function GET(request: NextRequest) {
       }),
     },
     body: JSON.stringify({
-      ...requestParams,
+      ...parsedParams,
       options: {
         slippage,
         order,
@@ -179,7 +121,7 @@ export async function GET(request: NextRequest) {
         exchanges: { allow: ['sushiswap'] },
         allowSwitchChain: false,
         allowDestinationCall: true,
-        // fee: EVM_UI_FEE_DECIMAL, // e.g. 0.0025 (0.25%)
+        // fee: UI_FEE_DECIMAL, // e.g. 0.0025 (0.25%)
       },
     }),
   }
@@ -187,7 +129,10 @@ export async function GET(request: NextRequest) {
   const response = await fetch(url, options)
   const json = await response.json()
 
-  const parsed = routesOutputSchema.parse({
+  const parsed = routesOutputSchema(
+    parsedParams.fromChainId,
+    parsedParams.toChainId,
+  ).parse({
     routes: json.routes ?? [],
   })
 

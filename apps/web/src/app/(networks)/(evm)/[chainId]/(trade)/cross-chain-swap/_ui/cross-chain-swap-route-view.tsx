@@ -12,6 +12,8 @@ import type {
 } from 'src/lib/swap/cross-chain/types'
 import { Amount, formatNumber, getChainById, getNativeAddress } from 'sushi'
 
+type NewTokenInput = Parameters<typeof newToken>[0]
+
 interface CrossChainSwapRouteViewProps {
   step: CrossChainStep
 }
@@ -30,7 +32,7 @@ export function CrossChainSwapRouteView({
         getNativeAddress(step.action.fromToken.chainId) ===
           step.action.fromToken.address
           ? nativeFromChainId(step.action.fromToken.chainId)
-          : newToken(step.action.fromToken),
+          : newToken(step.action.fromToken as NewTokenInput),
         step.action.fromAmount,
       ),
     [step],
@@ -42,7 +44,7 @@ export function CrossChainSwapRouteView({
         getNativeAddress(step.action.toToken.chainId) ===
           step.action.toToken.address
           ? nativeFromChainId(step.action.toToken.chainId)
-          : newToken(step.action.toToken),
+          : newToken(step.action.toToken as NewTokenInput),
         step.estimate.toAmount,
       ),
     [step],
@@ -158,12 +160,12 @@ function SwapAction({
     const fromToken =
       getNativeAddress(action.fromToken.chainId) === action.fromToken.address
         ? nativeFromChainId(action.fromToken.chainId)
-        : newToken(action.fromToken)
+        : newToken(action.fromToken as NewTokenInput)
 
     const toToken =
       getNativeAddress(action.toToken.chainId) === action.toToken.address
         ? nativeFromChainId(action.toToken.chainId)
-        : newToken(action.toToken)
+        : newToken(action.toToken as NewTokenInput)
 
     const chain = getChainById(
       label === 'From' ? fromToken.chainId : toToken.chainId,

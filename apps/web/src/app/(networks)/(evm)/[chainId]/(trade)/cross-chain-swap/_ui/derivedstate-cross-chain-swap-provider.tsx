@@ -33,6 +33,8 @@ import {
   getTokenAsString,
 } from '../../_ui/derivedstate-swap-helpers'
 
+type NewTokenInput = Parameters<typeof newToken>[0]
+
 interface State<
   TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
   TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
@@ -418,7 +420,7 @@ function useCrossChainTradeRoutes<
   const [slippagePercent] = useSlippageTolerance()
   const address = useAccount(chainId0)
 
-  const query = _useCrossChainTradeRoutes({
+  const query = _useCrossChainTradeRoutes<TChainId0, TChainId1>({
     fromAmount: swapAmount,
     toToken: token1,
     slippage: slippagePercent,
@@ -443,7 +445,7 @@ function useCrossChainTradeRoutes<
 export interface UseSelectedCrossChainTradeRouteReturn<
   TChainId0 extends XSwapSupportedChainId,
   TChainId1 extends XSwapSupportedChainId,
-> extends CrossChainRoute {
+> extends CrossChainRoute<TChainId0, TChainId1> {
   tokenIn: CurrencyFor<TChainId0>
   tokenOut: CurrencyFor<TChainId1>
   amountIn?: Amount<CurrencyFor<TChainId0>>
@@ -456,7 +458,7 @@ function useSelectedCrossChainTradeRoute<
   TChainId0 extends XSwapSupportedChainId,
   TChainId1 extends XSwapSupportedChainId,
 >() {
-  const routesQuery = useCrossChainTradeRoutes()
+  const routesQuery = useCrossChainTradeRoutes<TChainId0, TChainId1>()
 
   const {
     state: { selectedBridge },
@@ -474,13 +476,13 @@ function useSelectedCrossChainTradeRoute<
     const tokenIn = (
       getNativeAddress(route.fromToken.chainId) === route.fromToken.address
         ? nativeFromChainId(route.fromToken.chainId)
-        : newToken(route.fromToken)
+        : newToken(route.fromToken as NewTokenInput)
     ) as CurrencyFor<TChainId0>
 
     const tokenOut = (
       getNativeAddress(route.toToken.chainId) === route.toToken.address
         ? nativeFromChainId(route.toToken.chainId)
-        : newToken(route.toToken)
+        : newToken(route.toToken as NewTokenInput)
     ) as CurrencyFor<TChainId1>
 
     const amountIn = new Amount(tokenIn, route.fromAmount)
