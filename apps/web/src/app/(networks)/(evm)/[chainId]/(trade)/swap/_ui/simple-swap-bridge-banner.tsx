@@ -6,7 +6,8 @@ import { useLocalStorage } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { FC } from 'react'
-import { EvmChainId, getEvmChainById } from 'sushi/evm'
+import { getChainById } from 'sushi'
+import { EvmChainId } from 'sushi/evm'
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
 const BridgeInfo = {
@@ -68,13 +69,13 @@ export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
             <NetworkIcon chainId={chainId} width={24} height={24} />
             <div className="flex items-center">
               <span className="font-semibold">
-                Bridge to {getEvmChainById(chainId).name}
+                Bridge to {getChainById(chainId).name}
               </span>
               <ArrowUpRightIcon width={20} height={20} />
             </div>
           </div>
           <span className="text-xs">
-            Deposit your tokens to {getEvmChainById(chainId).name}.
+            Deposit your tokens to {getChainById(chainId).name}.
           </span>
         </div>
       </div>

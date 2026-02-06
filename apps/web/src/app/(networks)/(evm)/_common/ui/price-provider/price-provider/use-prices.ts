@@ -32,13 +32,13 @@ const disabledData = {
 function translateAddress<TChainId extends EvmChainId | SvmChainId>(
   chainId: TChainId,
   address: AddressFor<TChainId>,
-) {
+): TChainId extends SvmChainId ? SvmAddress : bigint {
   if (isSvmChainId(chainId)) {
     // Solana addresses are strings, the API returns only JSON for SVM chains
-    return address
+    return address as any
   } else {
     // EVM addresses are bigints, the API returns binary data for EVM chains
-    return BigInt(address)
+    return BigInt(address) as any
   }
 }
 
@@ -67,6 +67,7 @@ export function usePrices<TChainId extends EvmChainId | SvmChainId>({
   }, [chainId, enabled, mutate, state.ready])
 
   useEffect(() => {
+    void chainId
     requestedRef.current.clear()
   }, [chainId])
 
