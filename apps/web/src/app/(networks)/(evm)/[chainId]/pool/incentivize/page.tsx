@@ -56,6 +56,7 @@ import {
   getEvmChainById,
   isEvmWNativeSupported,
   isMerklChainId,
+  isSushiSwapV3ChainId,
 } from 'sushi/evm'
 import { zeroAddress } from 'viem'
 import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
@@ -75,7 +76,11 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
   const chainId = +params.chainId as EvmChainId
   return (
     <ConcentratedLiquidityURLStateProvider
-      chainId={isMerklChainId(chainId) ? chainId : EvmChainId.ETHEREUM}
+      chainId={
+        isSushiSwapV3ChainId(chainId) && isMerklChainId(chainId)
+          ? chainId
+          : EvmChainId.ETHEREUM
+      }
       supportedNetworks={MERKL_SUPPORTED_CHAIN_IDS}
     >
       <ConcentratedLiquidityProvider>
