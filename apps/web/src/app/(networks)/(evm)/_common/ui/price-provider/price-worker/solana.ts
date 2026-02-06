@@ -1,4 +1,4 @@
-import { isSvmChainId, type SvmAddress, type SvmChainId } from 'sushi/svm'
+import { type SvmAddress, type SvmChainId, isSvmChainId } from 'sushi/svm'
 import {
   type EvmOrSvmChainId,
   type PriceWorkerReceiveMessage,

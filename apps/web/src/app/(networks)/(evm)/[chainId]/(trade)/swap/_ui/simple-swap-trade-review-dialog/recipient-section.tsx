@@ -1,9 +1,9 @@
 'use client'
 
-import React, { type FC } from 'react'
 import { Button, List } from '@sushiswap/ui'
-import { ChainId, getChainById, shortenAddress } from 'sushi'
-import { type EvmAddress } from 'sushi/evm'
+import React, { type FC } from 'react'
+import { type ChainId, getChainById, shortenAddress } from 'sushi'
+import type { EvmAddress } from 'sushi/evm'
 
 export const RecipientSection: FC<{
   chainId: ChainId
