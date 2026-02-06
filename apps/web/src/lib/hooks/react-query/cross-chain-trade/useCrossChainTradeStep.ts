@@ -4,13 +4,17 @@ import type { XSwapSupportedChainId } from 'src/config'
 import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'
 import { Amount, Percent, getNativeAddress } from 'sushi'
 import { stringify } from 'viem/utils'
-import type { CrossChainStep } from '../../../swap/cross-chain/types'
-import type { CrossChainStepResponse } from 'src/app/(networks)/(evm)/api/cross-chain/step/route'
+import type {
+  CrossChainStep,
+  CrossChainStepResponse,
+} from '../../../swap/cross-chain/types'
+
+type NewTokenInput = Parameters<typeof newToken>[0]
 
 export interface UseCrossChainTradeStepReturn<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
-> extends CrossChainStep {
+  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+> extends CrossChainStep<TChainId0, TChainId1> {
   tokenIn: CurrencyFor<TChainId0>
   tokenOut: CurrencyFor<TChainId1>
   amountIn?: Amount<CurrencyFor<TChainId0>>
@@ -19,15 +23,21 @@ export interface UseCrossChainTradeStepReturn<
   priceImpact?: Percent
 }
 
-export interface UseCrossChainTradeStepParams {
-  step: CrossChainStep | undefined
+export interface UseCrossChainTradeStepParams<
+  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+> {
+  step: CrossChainStep<TChainId0, TChainId1> | undefined
   enabled?: boolean
 }
 
 export function useCrossChainTradeStep<
   TChainId0 extends XSwapSupportedChainId,
   TChainId1 extends XSwapSupportedChainId,
->({ step, enabled = true }: UseCrossChainTradeStepParams) {
+>({
+  step,
+  enabled = true,
+}: UseCrossChainTradeStepParams<TChainId0, TChainId1>) {
   return useQuery<UseCrossChainTradeStepReturn<TChainId0, TChainId1>>({
     queryKey: ['cross-chain/step', step],
     queryFn: async () => {
@@ -51,20 +61,20 @@ export function useCrossChainTradeStep<
 
       const json = await response.json()
 
-      const parsedStep = json as CrossChainStepResponse
+      const parsedStep = json as CrossChainStepResponse<TChainId0, TChainId1>
 
       const tokenIn = (
         getNativeAddress(parsedStep.action.fromToken.chainId) ===
         parsedStep.action.fromToken.address
           ? nativeFromChainId(parsedStep.action.fromToken.chainId)
-          : newToken(parsedStep.action.fromToken)
+          : newToken(parsedStep.action.fromToken as NewTokenInput)
       ) as CurrencyFor<TChainId0>
 
       const tokenOut = (
         getNativeAddress(parsedStep.action.toToken.chainId) ===
         parsedStep.action.toToken.address
           ? nativeFromChainId(parsedStep.action.toToken.chainId)
-          : newToken(parsedStep.action.toToken)
+          : newToken(parsedStep.action.toToken as NewTokenInput)
       ) as CurrencyFor<TChainId1>
 
       const amountIn = new Amount(tokenIn, parsedStep.action.fromAmount)

@@ -1,5 +1,3 @@
-'use client'
-
 import { createInfoToast, createToast } from '@sushiswap/notifications'
 import { SwapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { useCallback, useEffect, useMemo } from 'react'
@@ -74,7 +72,9 @@ export function useCrossChainSwapTradeReviewPost<
 
     if (!chainId1 || !groupTs.current || !txHash || !route) return
 
-    const destinationChainName = getChainById(route.toChainId).name
+    const destinationChainName =
+      (getChainById(route.toChainId) as { name?: string } | undefined)?.name ??
+      'Destination chain'
 
     const summary =
       route.step?.includedStepsWithoutFees?.[1]?.type === 'swap' ||
