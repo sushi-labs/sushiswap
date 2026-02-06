@@ -5,6 +5,7 @@ import { FailedMarkIcon } from '@sushiswap/ui/icons/FailedMarkIcon'
 import { type FC, type ReactNode, type RefObject, useMemo } from 'react'
 import type { XSwapSupportedChainId } from 'src/config'
 import { getChainById, shortenAddress } from 'sushi'
+import { getEvmChainById } from 'sushi/evm'
 import type { Hex } from 'viem'
 import {
   type UseSelectedCrossChainTradeRouteReturn,

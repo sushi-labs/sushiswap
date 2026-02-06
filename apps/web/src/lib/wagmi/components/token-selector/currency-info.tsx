@@ -19,13 +19,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import type { FC } from 'react'
 import {
   useCoinGeckoTokenInfo,
   useTokenSecurity,
 } from 'src/lib/hooks/react-query'
 import { formatNumber, formatUSD, getChainById, shortenAddress } from 'sushi'
-import { type EvmAddress, type EvmChainId } from 'sushi/evm'
+import type { EvmAddress, EvmChainId } from 'sushi/evm'
 import type { SvmChainId } from 'sushi/svm'
 import { TokenSecurityView } from '../token-security-view'
 

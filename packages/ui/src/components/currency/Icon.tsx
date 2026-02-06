@@ -36,6 +36,7 @@ const BeraLogo = 'berachain.svg'
 const PlasmaLogo = 'plasma.svg'
 const MonadLogo = 'monad.svg'
 const SolanaLogo = 'solana.svg'
+const OkbLogo = 'okb.svg'
 
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
@@ -93,9 +94,9 @@ const LOGO: Record<number, string> = {
   [ChainId.BERACHAIN]: BeraLogo,
   [ChainId.PLASMA]: PlasmaLogo,
   [ChainId.MONAD]: MonadLogo,
+  [ChainId.XLAYER]: OkbLogo,
   [ChainId.SOLANA]: SolanaLogo,
-} satisfies Partial<Record<ChainId, string>>
-
+}
 // function djb2(str: string) {
 //   let hash = 5381
 //   for (let i = 0; i < str.length; i++) {

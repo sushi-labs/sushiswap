@@ -26,11 +26,7 @@ import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { useAccount } from 'src/lib/wallet'
 import { Amount, type Percent, ZERO } from 'sushi'
 import { type EvmAddress, EvmChainId, isEvmChainId } from 'sushi/evm'
-import {
-  type SvmAddress,
-  type SvmChainId,
-  isSvmChainId,
-} from 'sushi/svm'
+import { type SvmAddress, type SvmChainId, isSvmChainId } from 'sushi/svm'
 import { useConnection, useGasPrice } from 'wagmi'
 import {
   getDefaultCurrency,

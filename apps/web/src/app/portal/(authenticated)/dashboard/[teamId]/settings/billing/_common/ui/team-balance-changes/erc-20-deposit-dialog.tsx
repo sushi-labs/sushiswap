@@ -10,11 +10,7 @@ import {
 } from '@sushiswap/ui'
 import type React from 'react'
 import { shortenAddress } from 'sushi'
-import {
-  type EvmChainId,
-  getEvmChainById,
-  shortenHash,
-} from 'sushi/evm'
+import { type EvmChainId, getEvmChainById, shortenHash } from 'sushi/evm'
 import type { Address } from 'viem'
 import { CopyTokenAddress } from './copy-token-address'
 import type { Erc20Deposit } from './team-balance-changes-table'

@@ -12,11 +12,11 @@ catalog:
 catalogs:
   web3:
     "abitype": 1.2.3
-    "sushi": 6.4.13
     "wagmi": 3.3.2
     "@wagmi/core": 3.2.2
     "viem": 2.44.4
     "@solana/addresses": 6.0.1
+    "sushi": 6.5.0
 
   react:
     "next": 15.5.9

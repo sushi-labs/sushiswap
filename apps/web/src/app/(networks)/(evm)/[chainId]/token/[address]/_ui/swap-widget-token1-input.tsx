@@ -1,11 +1,11 @@
 'use client'
 
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
+import { isWNativeSupported } from 'sushi'
 import {
   useDerivedStateSwapWidget,
   useSwapWidgetTradeQuote,
 } from './derivedstate-swap-widget-provider'
-import { isWNativeSupported } from 'sushi'
 
 export const SwapWidgetToken1Input = () => {
   const {

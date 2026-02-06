@@ -156,11 +156,10 @@ export const useEvmTradeQuote = (variables: UseEvmTradeParams | undefined) => {
         chainId &&
         isEvmWNativeSupported(chainId) &&
         EvmNative.fromChainId(chainId).wrap().address !== zeroAddress
-      ) {
+      )
         result[0] = prices.getFraction(
           EvmNative.fromChainId(chainId).wrap().address,
         )
-      }
 
       if (toToken) {
         result[1] = prices.getFraction(toToken.wrap().address)

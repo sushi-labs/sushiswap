@@ -30,11 +30,7 @@ import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
 import { type FC, useCallback, useState } from 'react'
 import { useTokenSecurity } from 'src/lib/hooks/react-query'
 import { getChainById, shortenAddress } from 'sushi'
-import {
-  type EvmAddress,
-  type EvmToken,
-  getEvmChainById,
-} from 'sushi/evm'
+import type { EvmAddress, EvmToken } from 'sushi/evm'
 import type { SvmToken } from 'sushi/svm'
 import { TokenSecurityView } from '../../../token-security-view'
 

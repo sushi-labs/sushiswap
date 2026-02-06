@@ -27,11 +27,7 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
 import { WagmiProvider } from 'src/providers/wagmi-provider'
 import { Amount, shortenAddress } from 'sushi'
-import {
-  type EvmChainId,
-  EvmToken,
-  erc20Abi_transfer,
-} from 'sushi/evm'
+import { type EvmChainId, EvmToken, erc20Abi_transfer } from 'sushi/evm'
 import type { Address, Hex } from 'viem'
 import { encodePacked } from 'viem/utils'
 import { useWriteContract } from 'wagmi'

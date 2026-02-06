@@ -19,11 +19,7 @@ import {
 } from '@sushiswap/ui'
 import { type FC, useMemo, useState } from 'react'
 import { shortenAddress } from 'sushi'
-import {
-  EvmToken,
-  type SerializedEvmToken,
-  getEvmChainById,
-} from 'sushi/evm'
+import { EvmToken, type SerializedEvmToken, getEvmChainById } from 'sushi/evm'
 import { PriceChart } from './price-chart'
 
 type ChartType = 'Price' // | 'Volume' | 'TVL'

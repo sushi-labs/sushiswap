@@ -10,11 +10,7 @@ import {
 } from '@sushiswap/ui'
 import React from 'react'
 import { formatPercent, shortenAddress } from 'sushi'
-import {
-  EvmChainId,
-  XSUSHI,
-  getEvmChainById,
-} from 'sushi/evm'
+import { EvmChainId, XSUSHI, getEvmChainById } from 'sushi/evm'
 import { useSushiBar } from './sushi-bar-provider'
 
 export const BarHeader = () => {
