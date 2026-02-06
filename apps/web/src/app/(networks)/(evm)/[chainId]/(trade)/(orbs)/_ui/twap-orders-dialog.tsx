@@ -41,12 +41,11 @@ import type { TwapSupportedChainId } from 'src/config'
 import { type TwapOrder, useTwapOrders } from 'src/lib/hooks/react-query/twap'
 import { fillDelayText } from 'src/lib/swap/twap'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { Amount, withoutScientificNotation } from 'sushi'
+import { Amount, shortenAddress, withoutScientificNotation } from 'sushi'
 import {
   type EvmCurrency,
   EvmNative,
   getEvmChainById,
-  shortenEvmAddress,
   shortenHash,
 } from 'sushi/evm'
 import type { Address, Hex } from 'viem'
@@ -408,7 +407,7 @@ const TwapOrderDialogContent = ({
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        {shortenEvmAddress(address)}
+                        {shortenAddress(address)}
                       </a>
                     </List.KeyValue>
                   ) : null}

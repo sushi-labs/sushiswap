@@ -25,13 +25,8 @@ import {
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
-import { ZERO, formatUSD } from 'sushi'
-import {
-  EvmChainId,
-  EvmNative,
-  getEvmChainById,
-  shortenEvmAddress,
-} from 'sushi/evm'
+import { ZERO, formatUSD, shortenAddress } from 'sushi'
+import { EvmChainId, EvmNative, getEvmChainById } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
 import { useAccount } from 'wagmi'
 import { useDetailsInteractionTracker } from '../../_ui/details-interaction-tracker-provider'
@@ -241,7 +236,7 @@ export const SimpleSwapTradeStats: FC = () => {
                       return (
                         <>
                           {isLoading || !data
-                            ? shortenEvmAddress(recipient)
+                            ? shortenAddress(recipient)
                             : data}
                         </>
                       )

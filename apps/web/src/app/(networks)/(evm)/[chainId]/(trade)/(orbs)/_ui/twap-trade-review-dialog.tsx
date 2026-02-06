@@ -37,8 +37,8 @@ import {
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
-import { ZERO, formatUSD } from 'sushi'
-import { getEvmChainById, shortenEvmAddress } from 'sushi/evm'
+import { ZERO, formatUSD, shortenAddress } from 'sushi'
+import { getEvmChainById } from 'sushi/evm'
 import {
   useAccount,
   useEstimateGas,
@@ -319,7 +319,7 @@ export const TwapTradeReviewDialog: FC<{
                             )}
                             rel="noreferrer"
                           >
-                            {shortenEvmAddress(recipient)}
+                            {shortenAddress(recipient)}
                           </a>
                         </Button>
                       ) : null}

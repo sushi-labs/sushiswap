@@ -60,8 +60,8 @@ import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/slippage'
-import { Amount, ZERO, formatNumber, formatUSD } from 'sushi'
-import { EvmNative, getEvmChainById, shortenEvmAddress } from 'sushi/evm'
+import { Amount, ZERO, formatNumber, formatUSD, shortenAddress } from 'sushi'
+import { EvmNative, getEvmChainById } from 'sushi/evm'
 import { type SendTransactionReturnType, stringify } from 'viem'
 import {
   useAccount,
@@ -1008,7 +1008,7 @@ const _CrossChainSwapTradeReviewDialog: FC<{
                           className="flex items-center gap-2 cursor-pointer text-blue"
                           rel="noreferrer"
                         >
-                          {shortenEvmAddress(recipient)}
+                          {shortenAddress(recipient)}
                         </a>
                       </List.KeyValue>
                     </List.Control>

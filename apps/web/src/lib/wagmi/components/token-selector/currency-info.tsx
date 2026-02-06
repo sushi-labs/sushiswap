@@ -24,8 +24,8 @@ import {
   useCoinGeckoTokenInfo,
   useTokenSecurity,
 } from 'src/lib/hooks/react-query'
-import { formatNumber, formatUSD } from 'sushi'
-import { type EvmCurrency, getEvmChainById, shortenEvmAddress } from 'sushi/evm'
+import { formatNumber, formatUSD, shortenAddress } from 'sushi'
+import { type EvmCurrency, getEvmChainById } from 'sushi/evm'
 import { TokenSecurityView } from '../token-security-view'
 
 interface CurrencyInfoProps {
@@ -200,7 +200,7 @@ export const CurrencyInfo: FC<CurrencyInfoProps> = ({ currency, onBack }) => {
                     currency.wrap().address,
                   )}
                 >
-                  {shortenEvmAddress(currency.wrap().address)}
+                  {shortenAddress(currency.wrap().address)}
                 </LinkExternal>
                 <ClipboardController hideTooltip>
                   {({ setCopied }) => (

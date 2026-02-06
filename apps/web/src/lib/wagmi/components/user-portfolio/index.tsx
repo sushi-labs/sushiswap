@@ -16,7 +16,8 @@ import {
 import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
 import Image from 'next/image'
 import { type FC, type ReactNode, useMemo, useState } from 'react'
-import { EvmChainId, shortenEvmAddress } from 'sushi/evm'
+import { shortenAddress } from 'sushi'
+import { EvmChainId } from 'sushi/evm'
 import { useAccount, useEnsAvatar, useEnsName } from 'wagmi'
 import { ConnectButton } from '../connect-button'
 import { PortfolioDefaultView } from './portfolio-default-view'
@@ -109,7 +110,7 @@ export const UserPortfolio = () => {
           ) : (
             <JazzIcon diameter={20} address={address} />
           )}
-          <span className="hidden sm:block">{shortenEvmAddress(address)}</span>
+          <span className="hidden sm:block">{shortenAddress(address)}</span>
         </Button>
       }
       content={content}

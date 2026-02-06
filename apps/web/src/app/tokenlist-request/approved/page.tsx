@@ -17,8 +17,7 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import React, { useMemo, useState } from 'react'
 import { useApprovedCommunityTokens } from 'src/lib/hooks'
-import { getChainById } from 'sushi'
-import { shortenEvmAddress } from 'sushi/evm'
+import { getChainById, shortenAddress } from 'sushi'
 import { NavigationItems } from '../navigation-items'
 
 const COLUMNS: ColumnDef<ApprovedCommunityTokens[number], unknown>[] = [
@@ -90,7 +89,7 @@ const COLUMNS: ColumnDef<ApprovedCommunityTokens[number], unknown>[] = [
     cell: (props) => (
       <div className="flex flex-nowrap gap-1">
         <span className="block sm:hidden">
-          {shortenEvmAddress(props.row.original.address)}
+          {shortenAddress(props.row.original.address)}
         </span>
         <span className="hidden sm:block">{props.row.original.address}</span>
         <LinkExternal
