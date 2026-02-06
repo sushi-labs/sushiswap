@@ -17,7 +17,7 @@ export default async function CrossChainSwapLayout(props: {
 }) {
   const params = await props.params
   const { children } = props
-  const chainId = +params.chainId as EvmChainId
+  const chainId = +params.chainId
 
   if (!isXSwapSupportedChainId(chainId)) {
     return notFound()

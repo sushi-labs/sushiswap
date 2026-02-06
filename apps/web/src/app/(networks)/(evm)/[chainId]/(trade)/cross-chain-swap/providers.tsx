@@ -1,13 +1,13 @@
 import { getCrossChainSwapEdgeConfig } from './get-cross-chain-swap-edge-config'
 
+import type { XSwapSupportedChainId } from 'src/config'
 import { EdgeProvider } from 'src/providers/edge-config-provider'
-import type { EvmChainId } from 'sushi/evm'
 import { DerivedstateCrossChainSwapProvider } from './_ui/derivedstate-cross-chain-swap-provider'
 
 export async function Providers({
   children,
   chainId,
-}: { children: React.ReactNode; chainId: EvmChainId }) {
+}: { children: React.ReactNode; chainId: XSwapSupportedChainId }) {
   const config = await getCrossChainSwapEdgeConfig()
 
   return (

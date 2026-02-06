@@ -7,7 +7,7 @@ import {
 } from 'sushi/evm'
 import { zeroAddress } from 'viem'
 
-import type { SupportedChainId } from '../../src/config'
+import type { SupportedChainId, XSwapSupportedChainId } from '../../src/config'
 
 type InputType = 'INPUT' | 'OUTPUT'
 
@@ -21,12 +21,12 @@ if (typeof process.env.NEXT_PUBLIC_DST_CHAIN_ID !== 'string') {
 
 const srcChainId = Number.parseInt(
   process.env.NEXT_PUBLIC_CHAIN_ID,
-) as SupportedChainId
+) as XSwapSupportedChainId & EvmChainId
 
 // TODO: Change to dstChainIds based on paths
 const dstChainId = Number.parseInt(
   process.env.NEXT_PUBLIC_DST_CHAIN_ID,
-) as SupportedChainId
+) as XSwapSupportedChainId & EvmChainId
 
 const url = 'http://localhost:3000/cross-chain-swap'
 
