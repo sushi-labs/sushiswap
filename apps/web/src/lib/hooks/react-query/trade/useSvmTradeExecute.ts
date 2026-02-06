@@ -1,10 +1,6 @@
 import { useTransactionSigner } from '@solana/connector'
-import type {
-  Base64EncodedWireTransaction,
-  ReadonlyUint8Array,
-} from '@solana/kit'
+import type { ReadonlyUint8Array } from '@solana/kit'
 import { useMutation } from '@tanstack/react-query'
-import { getSvmRpc } from 'src/lib/svm/rpc'
 import { isSvmChainId } from 'sushi/svm'
 import { useWrapUnwrapTrade } from '~evm/[chainId]/(trade)/swap/_ui/common'
 import type { UseSvmTradeParams } from './types'
@@ -23,6 +19,7 @@ export function useSvmTradeExecute(variables: UseSvmTradeParams) {
         chainId,
         requestId: resolvedRequestId,
         isWrapUnwrap,
+        signer: signer?.address,
       },
     ],
     mutationFn: async (params?: {
