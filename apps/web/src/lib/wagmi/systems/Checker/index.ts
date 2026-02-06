@@ -13,7 +13,7 @@ import {
   ApproveERC20WithPermit,
   type ApproveERC20WithPermitProps,
 } from './approve-erc20-with-permit'
-import { Connect } from './connect'
+import { Connect, type ConnectProps } from './connect'
 import { Custom, type CustomProps } from './custom'
 import {
   CustomWithTooltip,
@@ -44,7 +44,7 @@ export type CheckerProps<TChainId extends EvmChainId | SvmChainId> = {
   ApproveERC20Multiple: ComponentType<ApproveERC20MultipleProps<TChainId>>
   ApproveERC20WithPermit: ComponentType<ApproveERC20WithPermitProps<TChainId>>
   RevokeApproveERC20: ComponentType<RevokeApproveERC20Props>
-  Connect: ComponentType<ButtonProps>
+  Connect: ComponentType<ConnectProps>
   Success: FC<SuccessProps>
   Root: FC<ProviderProps>
   PartialRoute: FC<PartialRouteProps>

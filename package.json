@@ -47,7 +47,8 @@
       "viem": "catalog:web3",
       "zod": "catalog:",
       "@types/react": "catalog:react",
-      "@types/react-dom": "catalog:react"
+      "@types/react-dom": "catalog:react",
+      "@solana/addresses": "catalog:web3"
     },
     "patchedDependencies": {
       "@aptos-labs/aptos-client@0.1.0": "patches/@aptos-labs__aptos-client@0.1.0.patch",

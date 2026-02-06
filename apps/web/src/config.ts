@@ -265,6 +265,8 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.SONIC,
   ChainId.TAIKO,
   ChainId.ZKSYNC_ERA,
+
+  ChainId.SOLANA,
 ] as const
 
 export type XSwapSupportedChainId = (typeof XSWAP_SUPPORTED_CHAIN_IDS)[number]

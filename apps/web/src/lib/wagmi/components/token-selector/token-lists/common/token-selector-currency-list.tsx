@@ -1,6 +1,5 @@
 import React, { type FC, memo, useMemo } from 'react'
-import { NativeAddress } from 'src/lib/constants'
-import type { Amount } from 'sushi'
+import { type Amount, getNativeAddress } from 'sushi'
 import type { EvmChainId, EvmToken } from 'sushi/evm'
 import { useConnection } from 'wagmi'
 
@@ -55,7 +54,9 @@ export const TokenSelectorCurrencyList: FC<
       account: address,
       currency,
       balance: balancesMap?.get(
-        currency.type === 'native' ? NativeAddress : currency.address,
+        currency.type === 'native'
+          ? getNativeAddress(currency.chainId)
+          : currency.address,
       ),
       price: pricesMap?.getFraction(currency.wrap().address),
       showWarning:

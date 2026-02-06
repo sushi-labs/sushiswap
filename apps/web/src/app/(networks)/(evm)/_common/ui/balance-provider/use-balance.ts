@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Amount, getNativeAddress } from 'sushi'
-import type { EvmChainId } from 'sushi/evm'
+import { type EvmChainId, EvmCurrency, EvmNative } from 'sushi/evm'
 import type { SvmChainId } from 'sushi/svm'
 import { useBalances } from './use-balances'
 
@@ -55,9 +55,22 @@ export function useBalance<TChainId extends EvmChainId | SvmChainId>(
   }, [tokenAddress, result])
 }
 
+type UseAmountBalanceReturn<TChainId extends EvmChainId | SvmChainId> = Omit<
+  ReturnType<typeof useBalance<TChainId>>,
+  'data'
+> & {
+  data: Amount<CurrencyFor<TChainId>> | undefined
+}
+
+export function useAmountBalance(
+  currency: CurrencyFor<EvmChainId> | undefined,
+): UseAmountBalanceReturn<EvmChainId>
+export function useAmountBalance(
+  currency: CurrencyFor<SvmChainId> | undefined,
+): UseAmountBalanceReturn<SvmChainId>
 export function useAmountBalance<TChainId extends EvmChainId | SvmChainId>(
   currency: CurrencyFor<TChainId> | undefined,
-) {
+): UseAmountBalanceReturn<TChainId> {
   const result = useBalance(currency)
 
   return useMemo(() => {

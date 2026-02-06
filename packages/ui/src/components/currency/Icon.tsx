@@ -1,6 +1,6 @@
 import type { ImageProps } from 'next/image'
 import type { FC } from 'react'
-import { type AddressFor, ChainId, type Currency, getChainById } from 'sushi'
+import { ChainId, type Currency, getChainById } from 'sushi'
 
 import type { EvmAddress } from 'sushi/evm'
 import { Avatar, AvatarImage } from '../avatar'

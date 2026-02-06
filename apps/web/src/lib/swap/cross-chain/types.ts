@@ -1,26 +1,17 @@
-import type * as z from 'zod'
-import type {
-  crossChainActionSchema,
-  crossChainEstimateSchema,
-  crossChainRouteSchema,
-  crossChainStepSchema,
-  crossChainToolDetailsSchema,
-  crossChainTransactionRequestSchema,
-} from './schema'
+import type { CrossChainRoutesResponse } from 'src/app/(networks)/(evm)/api/cross-chain/routes/route'
+import type { CrossChainStepResponse } from 'src/app/(networks)/(evm)/api/cross-chain/step/route'
 
-type CrossChainAction = z.infer<typeof crossChainActionSchema>
+type CrossChainRoute = CrossChainRoutesResponse['routes'][number]
 
-type CrossChainEstimate = z.infer<typeof crossChainEstimateSchema>
+type CrossChainStep = CrossChainStepResponse
 
-type CrossChainRoute = z.infer<typeof crossChainRouteSchema>
+type CrossChainAction = CrossChainStep['action']
 
-type CrossChainStep = z.infer<typeof crossChainStepSchema>
+type CrossChainEstimate = CrossChainStep['estimate']
 
-type CrossChainToolDetails = z.infer<typeof crossChainToolDetailsSchema>
+type CrossChainToolDetails = CrossChainStep['toolDetails']
 
-type CrossChainTransactionRequest = z.infer<
-  typeof crossChainTransactionRequestSchema
->
+type CrossChainTransactionRequest = CrossChainStep['transactionRequest']
 
 type CrossChainRouteOrder = 'CHEAPEST' | 'FASTEST'
 
@@ -32,4 +23,6 @@ export type {
   CrossChainToolDetails,
   CrossChainTransactionRequest,
   CrossChainRouteOrder,
+  CrossChainRoutesResponse,
+  CrossChainStepResponse,
 }

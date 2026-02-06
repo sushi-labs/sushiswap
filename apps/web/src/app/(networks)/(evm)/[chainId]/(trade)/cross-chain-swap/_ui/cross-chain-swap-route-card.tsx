@@ -11,7 +11,8 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { GasIcon } from '@sushiswap/ui/icons/GasIcon'
-import React, { type FC, useMemo } from 'react'
+import React, { useMemo } from 'react'
+import type { XSwapSupportedChainId } from 'src/config'
 import { getCrossChainFeesBreakdown } from 'src/lib/swap/cross-chain'
 import type {
   CrossChainRouteOrder,
@@ -30,15 +31,13 @@ interface CrossChainSwapRouteCardProps {
   onSelect: () => void
 }
 
-export const CrossChainSwapRouteCard: FC<CrossChainSwapRouteCardProps> = ({
-  route,
-  order,
-  isSelected,
-  onSelect,
-}) => {
+export function CrossChainSwapRouteCard<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+>({ route, order, isSelected, onSelect }: CrossChainSwapRouteCardProps) {
   const {
     state: { token1, chainId0, chainId1 },
-  } = useDerivedStateCrossChainSwap()
+  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
 
   const { data: price, isLoading: isPriceLoading } = usePrice({
     chainId: token1?.chainId,

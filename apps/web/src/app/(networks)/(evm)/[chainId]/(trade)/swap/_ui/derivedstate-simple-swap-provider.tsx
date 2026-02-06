@@ -24,92 +24,20 @@ import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useCarbonOffset } from 'src/lib/swap/useCarbonOffset'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { useAccount } from 'src/lib/wallet'
-import {
-  Amount,
-  type Percent,
-  ZERO,
-  isWNativeSupported,
-  normalizeAddress,
-} from 'sushi'
-import {
-  type EvmAddress,
-  EvmChainId,
-  EvmNative,
-  defaultCurrency,
-  defaultQuoteCurrency,
-  isEvmAddress,
-  isEvmChainId,
-} from 'sushi/evm'
+import { Amount, type Percent, ZERO } from 'sushi'
+import { type EvmAddress, EvmChainId, isEvmChainId } from 'sushi/evm'
 import {
   type SvmAddress,
   type SvmChainId,
-  SvmNative,
-  isSvmAddress,
   isSvmChainId,
-  svmDefaultCurrency,
-  svmDefaultQuoteCurrency,
 } from 'sushi/svm'
 import { useConnection, useGasPrice } from 'wagmi'
-
-function getTokenAsString<TChainId extends SupportedChainId>(
-  chainId: TChainId,
-  token: CurrencyFor<TChainId> | string,
-) {
-  if (typeof token === 'string') {
-    if (isEvmAddress(token) || isSvmAddress(token)) {
-      return normalizeAddress(chainId, token as AddressFor<typeof chainId>)
-    }
-    throw new Error(`Invalid token address: ${token}`)
-  } else if (token.type === 'native') {
-    return 'NATIVE' as const
-  }
-
-  return token.wrap().address as AddressFor<TChainId>
-}
-
-function getDefaultCurrency(chainId: SupportedChainId) {
-  if (isEvmChainId(chainId)) {
-    return getTokenAsString(chainId, defaultCurrency[chainId])
-  } else if (isSvmChainId(chainId)) {
-    return getTokenAsString(chainId, svmDefaultCurrency[chainId])
-  }
-
-  throw new Error(`Unsupported chainId: ${chainId}`)
-}
-function getQuoteCurrency(chainId: SupportedChainId) {
-  if (isEvmChainId(chainId)) {
-    return getTokenAsString(chainId, defaultQuoteCurrency[chainId])
-  } else if (isSvmChainId(chainId)) {
-    return getTokenAsString(chainId, svmDefaultQuoteCurrency[chainId])
-  }
-
-  throw new Error(`Unsupported chainId: ${chainId}`)
-}
-
-function getNativeIfNativeAndWNativeSupported<
-  TChainId extends SupportedChainId,
->(
-  chainId: TChainId,
-  token: CurrencyFor<TChainId> | undefined,
-  address: string,
-): CurrencyFor<TChainId> | undefined {
-  if (address !== 'NATIVE') {
-    return token
-  }
-
-  if (isEvmChainId(chainId)) {
-    if (isWNativeSupported(chainId)) {
-      return EvmNative.fromChainId(chainId) as CurrencyFor<TChainId>
-    }
-    return token
-  }
-
-  if (isSvmChainId(chainId)) {
-    return SvmNative.fromChainId(chainId) as CurrencyFor<TChainId>
-  }
-
-  throw new Error(`Unsupported chainId: ${chainId}`)
-}
+import {
+  getDefaultCurrency,
+  getNativeIfNativeAndWNativeSupported,
+  getQuoteCurrency,
+  getTokenAsString,
+} from '../../_ui/derivedstate-swap-helpers'
 
 interface State<TChainId extends SupportedChainId = SupportedChainId> {
   mutate: {

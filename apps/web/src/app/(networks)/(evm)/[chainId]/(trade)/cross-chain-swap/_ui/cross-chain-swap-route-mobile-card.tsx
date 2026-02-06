@@ -1,7 +1,8 @@
 import { ClockIcon } from '@heroicons/react/24/outline'
 import { Card, SkeletonCircle, SkeletonText, classNames } from '@sushiswap/ui'
 import { GasIcon } from '@sushiswap/ui/icons/GasIcon'
-import React, { type FC, useMemo } from 'react'
+import React, { useMemo } from 'react'
+import type { XSwapSupportedChainId } from 'src/config'
 import { getCrossChainFeesBreakdown } from 'src/lib/swap/cross-chain'
 import type {
   CrossChainRouteOrder,
@@ -19,12 +20,13 @@ interface CrossChainSwapRouteMobileCardProps {
   onSelect?: () => void
 }
 
-export const CrossChainSwapRouteMobileCard: FC<
-  CrossChainSwapRouteMobileCardProps
-> = ({ route, order, isSelected, onSelect }) => {
+export function CrossChainSwapRouteMobileCard<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+>({ route, order, isSelected, onSelect }: CrossChainSwapRouteMobileCardProps) {
   const {
     state: { token1, chainId0, chainId1 },
-  } = useDerivedStateCrossChainSwap()
+  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
 
   const { data: price, isLoading: isPriceLoading } = usePrice({
     chainId: token1?.chainId,
@@ -115,7 +117,7 @@ export const CrossChainSwapRouteMobileCard: FC<
           <div className="flex gap-1 items-center">
             {amountOut && token1 ? (
               <span className="text-sm font-semibold">
-                {amountOut?.toSignificant(6)} {token1?.symbol}
+                {amountOut.toSignificant(6)} {token1.symbol}
               </span>
             ) : (
               <span className="w-28">

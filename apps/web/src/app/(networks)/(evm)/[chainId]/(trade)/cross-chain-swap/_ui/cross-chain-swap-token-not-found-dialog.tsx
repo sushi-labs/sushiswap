@@ -22,24 +22,31 @@ import { Button } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
+import type { XSwapSupportedChainId } from 'src/config'
 import { useTokenSecurity } from 'src/lib/hooks/react-query'
 import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
-import { shortenAddress } from 'sushi'
+import { getChainById, shortenAddress } from 'sushi'
 import {
-  type EvmToken,
-  defaultCurrency,
-  defaultQuoteCurrency,
-  getEvmChainById,
+  defaultCurrency as evmDefaultCurrency,
+  defaultQuoteCurrency as evmDefaultQuoteCurrency,
   isTokenSecurityChainId,
 } from 'sushi/evm'
+import {
+  isSvmChainId,
+  svmDefaultCurrency,
+  svmDefaultQuoteCurrency,
+} from 'sushi/svm'
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
-export const CrossChainSwapTokenNotFoundDialog = () => {
+export function CrossChainSwapTokenNotFoundDialog<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+>() {
   const {
     state: { chainId0, chainId1, token0, token1 },
     mutate: { setToken0, setToken1, setTokens },
-  } = useDerivedStateCrossChainSwap()
+  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
 
   const { mutate: customTokensMutate, hasToken } = useCustomTokens()
 
@@ -55,8 +62,11 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
   )
 
   const onImport = useCallback(
-    ([token0, token1]: (EvmToken | undefined)[]) => {
-      const _tokens: EvmToken[] = []
+    ([token0, token1]: [
+      TokenFor<TChainId0> | undefined,
+      TokenFor<TChainId1> | undefined,
+    ]) => {
+      const _tokens: TokenFor<TChainId0 | TChainId1>[] = []
       if (token0?.metadata.approved === false) _tokens.push(token0)
       if (token1?.metadata.approved === false) _tokens.push(token1)
 
@@ -68,12 +78,25 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
     [customTokensMutate, setToken0, setToken1],
   )
 
+  const defaultCurrency = useMemo(() => {
+    if (isSvmChainId(chainId0)) {
+      return svmDefaultCurrency[chainId0]
+    }
+    return evmDefaultCurrency[chainId0 as keyof typeof evmDefaultCurrency]
+  }, [chainId0]) as TokenFor<TChainId0>
+
+  const defaultQuoteCurrency = useMemo(() => {
+    if (isSvmChainId(chainId1)) {
+      return svmDefaultQuoteCurrency[chainId1]
+    }
+    return evmDefaultQuoteCurrency[
+      chainId1 as keyof typeof evmDefaultQuoteCurrency
+    ]
+  }, [chainId1]) as TokenFor<TChainId1>
+
   const reset = useCallback(() => {
-    setTokens(
-      defaultCurrency[chainId0 as keyof typeof defaultCurrency],
-      defaultQuoteCurrency[chainId1 as keyof typeof defaultQuoteCurrency],
-    )
-  }, [chainId0, chainId1, setTokens])
+    setTokens(defaultCurrency, defaultQuoteCurrency)
+  }, [defaultCurrency, defaultQuoteCurrency, setTokens])
 
   const { data: token0SecurityResponse, isLoading: isToken0SecurityLoading } =
     useTokenSecurity({
@@ -152,7 +175,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                   Could not retrieve token info for{' '}
                   <a
                     target="_blank"
-                    href={getEvmChainById(token0.chainId)?.getTokenUrl(
+                    href={getChainById(token0.chainId)?.getTokenUrl(
                       token0.wrap().address,
                     )}
                     className="text-blue font-medium"
@@ -161,7 +184,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                     {shortenAddress(token0.wrap().address)}
                   </a>{' '}
                   are you sure this token is on{' '}
-                  {getEvmChainById(token0.chainId)?.name}?
+                  {getChainById(token0.chainId)?.name}?
                 </p>
               </List.Control>
             </List>
@@ -200,7 +223,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                     </div>
                     <LinkExternal
                       target="_blank"
-                      href={getEvmChainById(token0.chainId)?.getTokenUrl(
+                      href={getChainById(token0.chainId)?.getTokenUrl(
                         token0.address,
                       )}
                       className="font-medium"
@@ -236,7 +259,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                   Could not retrieve token info for{' '}
                   <a
                     target="_blank"
-                    href={getEvmChainById(token1.chainId)?.getTokenUrl(
+                    href={getChainById(token1.chainId)?.getTokenUrl(
                       token1.wrap().address,
                     )}
                     className="text-blue font-medium"
@@ -245,7 +268,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                     {shortenAddress(token1.wrap().address)}
                   </a>{' '}
                   are you sure this token is on{' '}
-                  {getEvmChainById(token1.chainId)?.name}?
+                  {getChainById(token1.chainId)?.name}?
                 </p>
               </List.Control>
             </List>
@@ -284,7 +307,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                     </div>
                     <LinkExternal
                       target="_blank"
-                      href={getEvmChainById(token1.chainId)?.getTokenUrl(
+                      href={getChainById(token1.chainId)?.getTokenUrl(
                         token1.address,
                       )}
                       className="font-medium"
@@ -337,8 +360,12 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                 size="xl"
                 onClick={() =>
                   onImport([
-                    token0?.type === 'token' ? token0 : undefined,
-                    token1?.type === 'token' ? token1 : undefined,
+                    token0?.type === 'token'
+                      ? (token0 as TokenFor<TChainId0>)
+                      : undefined,
+                    token1?.type === 'token'
+                      ? (token1 as TokenFor<TChainId1>)
+                      : undefined,
                   ])
                 }
                 variant={isFoT || isRisky ? 'destructive' : 'default'}

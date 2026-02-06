@@ -1,7 +1,8 @@
 import { classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { useMemo } from 'react'
-import type { FC } from 'react'
+import type { XSwapSupportedChainId } from 'src/config'
+import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'
 import { getCrossChainStepBreakdown } from 'src/lib/swap/cross-chain'
 import type {
   CrossChainAction,
@@ -9,24 +10,41 @@ import type {
   CrossChainStep,
   CrossChainToolDetails,
 } from 'src/lib/swap/cross-chain/types'
-import { Amount, formatNumber } from 'sushi'
-import {
-  type EvmCurrency,
-  EvmNative,
-  EvmToken,
-  getEvmChainById,
-} from 'sushi/evm'
-import { zeroAddress } from 'viem'
+import { Amount, formatNumber, getChainById, getNativeAddress } from 'sushi'
 
 interface CrossChainSwapRouteViewProps {
   step: CrossChainStep
 }
 
-export const CrossChainSwapRouteView: FC<CrossChainSwapRouteViewProps> = ({
+export function CrossChainSwapRouteView({
   step,
-}) => {
+}: CrossChainSwapRouteViewProps) {
   const { srcStep, bridgeStep, dstStep } = useMemo(
     () => getCrossChainStepBreakdown(step),
+    [step],
+  )
+
+  const fromAmount = useMemo(
+    () =>
+      new Amount(
+        getNativeAddress(step.action.fromToken.chainId) ===
+          step.action.fromToken.address
+          ? nativeFromChainId(step.action.fromToken.chainId)
+          : newToken(step.action.fromToken),
+        step.action.fromAmount,
+      ),
+    [step],
+  )
+
+  const toAmount = useMemo(
+    () =>
+      new Amount(
+        getNativeAddress(step.action.toToken.chainId) ===
+          step.action.toToken.address
+          ? nativeFromChainId(step.action.toToken.chainId)
+          : newToken(step.action.toToken),
+        step.estimate.toAmount,
+      ),
     [step],
   )
 
@@ -41,19 +59,7 @@ export const CrossChainSwapRouteView: FC<CrossChainSwapRouteViewProps> = ({
             estimate={srcStep?.estimate}
           />
         ) : (
-          <SendAction
-            label="From"
-            amount={useMemo(
-              () =>
-                new Amount(
-                  step.action.fromToken.address === zeroAddress
-                    ? EvmNative.fromChainId(step.action.fromToken.chainId)
-                    : new EvmToken(step.action.fromToken),
-                  step.action.fromAmount,
-                ),
-              [step],
-            )}
-          />
+          <SendAction label="From" amount={fromAmount} />
         )}
         <BridgeAction toolDetails={bridgeStep!.toolDetails} />
         {dstStep ? (
@@ -63,29 +69,17 @@ export const CrossChainSwapRouteView: FC<CrossChainSwapRouteViewProps> = ({
             estimate={dstStep.estimate}
           />
         ) : (
-          <SendAction
-            label="To"
-            amount={useMemo(
-              () =>
-                new Amount(
-                  step.action.toToken.address === zeroAddress
-                    ? EvmNative.fromChainId(step.action.toToken.chainId)
-                    : new EvmToken(step.action.toToken),
-                  step.estimate.toAmount,
-                ),
-              [step],
-            )}
-          />
+          <SendAction label="To" amount={toAmount} />
         )}
       </div>
     </div>
   )
 }
 
-const VerticalDivider: FC<{ className?: string; count: number }> = ({
+function VerticalDivider({
   className,
   count,
-}) => {
+}: { className?: string; count: number }) {
   return (
     <div className={classNames('flex flex-col gap-1', className)}>
       {Array.from({ length: count }).map((_, i) => {
@@ -123,12 +117,15 @@ const VerticalDivider: FC<{ className?: string; count: number }> = ({
   )
 }
 
-const SendAction: FC<{
+function SendAction<TChainId extends XSwapSupportedChainId>({
+  label,
+  amount,
+}: {
   label: 'From' | 'To'
-  amount: Amount<EvmCurrency>
-}> = ({ label, amount }) => {
+  amount: Amount<CurrencyFor<TChainId>>
+}) {
   const chain = useMemo(
-    () => getEvmChainById(amount.currency.chainId)?.name?.toUpperCase(),
+    () => getChainById(amount.currency.chainId)?.name?.toUpperCase(),
     [amount],
   )
 
@@ -148,23 +145,27 @@ const SendAction: FC<{
   )
 }
 
-const SwapAction: FC<{
+function SwapAction({
+  label,
+  action,
+  estimate,
+}: {
   label: 'From' | 'To'
   action: CrossChainAction
   estimate: CrossChainEstimate
-}> = ({ label, action, estimate }) => {
+}) {
   const { fromAmount, toAmount, chain, isWrap, isUnwrap } = useMemo(() => {
     const fromToken =
-      action.fromToken.address === zeroAddress
-        ? EvmNative.fromChainId(action.fromToken.chainId)
-        : new EvmToken(action.fromToken)
+      getNativeAddress(action.fromToken.chainId) === action.fromToken.address
+        ? nativeFromChainId(action.fromToken.chainId)
+        : newToken(action.fromToken)
 
     const toToken =
-      action.toToken.address === zeroAddress
-        ? EvmNative.fromChainId(action.toToken.chainId)
-        : new EvmToken(action.toToken)
+      getNativeAddress(action.toToken.chainId) === action.toToken.address
+        ? nativeFromChainId(action.toToken.chainId)
+        : newToken(action.toToken)
 
-    const chain = getEvmChainById(
+    const chain = getChainById(
       label === 'From' ? fromToken.chainId : toToken.chainId,
     )?.name?.toUpperCase()
 
@@ -213,9 +214,11 @@ const SwapAction: FC<{
   )
 }
 
-const BridgeAction: FC<{
+function BridgeAction({
+  toolDetails,
+}: {
   toolDetails: CrossChainToolDetails
-}> = ({ toolDetails }) => {
+}) {
   return (
     <span className="inline-flex items-center gap-1 text-xs leading-3 text-muted-foreground whitespace-nowrap">
       Via{' '}

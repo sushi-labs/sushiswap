@@ -1,15 +1,31 @@
 import { useMemo } from 'react'
+import type { EvmChainId } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 import { useWalletContext } from '../provider'
-import type { WalletNamespace } from '../types'
+import type { ChainIdForNamespace, WalletConnection, WalletNamespace } from '../types'
 
-export const useWallet = (namespace?: WalletNamespace) => {
+export function useWallet<TNamespace extends WalletNamespace>(
+  namespace?: TNamespace,
+): WalletConnection<ChainIdForNamespace<TNamespace>> | undefined
+export function useWallet<TChainId extends EvmChainId | SvmChainId>(
+  chainId: TChainId,
+): WalletConnection<TChainId> | undefined
+export function useWallet(filter?: EvmChainId | SvmChainId | WalletNamespace) {
   const { connections } = useWalletContext()
 
-  return useMemo(
-    () =>
-      typeof namespace === 'undefined'
-        ? connections[0]
-        : connections.find((c) => c.namespace === namespace),
-    [connections, namespace],
-  )
+  const namespace = typeof filter === 'string' ? filter : undefined
+  const chainId = typeof filter === 'number' ? filter : undefined
+
+  return useMemo(() => {
+    const connection =
+      typeof chainId === 'number'
+        ? connections.find((c) => c.chainId === chainId)
+        : typeof namespace === 'string'
+          ? connections.find((c) => c.namespace === namespace)
+          : connections[0]
+
+    if (!connection) return undefined
+
+    return connection
+  }, [connections, chainId, namespace])
 }

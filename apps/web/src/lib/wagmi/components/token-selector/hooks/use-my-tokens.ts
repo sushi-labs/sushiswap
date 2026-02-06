@@ -6,8 +6,7 @@ import {
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { NativeAddress } from 'src/lib/constants'
-import { type AddressFor, Amount } from 'sushi'
+import { type AddressFor, Amount, getNativeAddress } from 'sushi'
 import {
   type EvmAddress,
   type EvmChainId,
@@ -23,7 +22,6 @@ import {
   SvmNative,
   SvmToken,
   isSvmChainId,
-  svmNativeAddress,
 } from 'sushi/svm'
 import type { Address } from 'viem'
 
@@ -111,13 +109,15 @@ function processEvmTokens(
   const _tokens: EvmCurrency<{ approved: boolean }>[] | undefined = []
   const balanceMap: Map<Address, Amount<EvmCurrency>> | undefined = new Map()
 
+  const nativeAddress = getNativeAddress(chainId)
+
   tokens.forEach((token) => {
     let _token: EvmCurrency<{ approved: boolean }>
     let address: EvmAddress
 
-    if (token.address === NativeAddress) {
+    if (token.address === nativeAddress) {
       _token = EvmNative.fromChainId(chainId)
-      address = NativeAddress
+      address = nativeAddress
     } else {
       _token = new EvmToken({
         ...token,
@@ -140,13 +140,15 @@ function processSvmTokens(
   const _tokens: SvmCurrency<{ approved: boolean }>[] | undefined = []
   const balanceMap: Map<SvmAddress, Amount<SvmCurrency>> | undefined = new Map()
 
+  const nativeAddress = getNativeAddress(chainId)
+
   tokens.forEach((token) => {
     let _token: SvmCurrency<{ approved: boolean }>
     let address: SvmAddress
 
-    if (token.address === NativeAddress) {
+    if (token.address === nativeAddress) {
       _token = SvmNative.fromChainId(chainId)
-      address = svmNativeAddress
+      address = nativeAddress
     } else {
       _token = new SvmToken({
         ...token,

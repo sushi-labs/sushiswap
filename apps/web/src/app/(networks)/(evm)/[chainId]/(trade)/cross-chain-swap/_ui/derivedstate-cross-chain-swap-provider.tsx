@@ -13,7 +13,8 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { isXSwapSupportedChainId } from 'src/config'
+import { type XSwapSupportedChainId, isXSwapSupportedChainId } from 'src/config'
+import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'
 import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { replaceNetworkSlug } from 'src/lib/network'
@@ -22,40 +23,29 @@ import type {
   CrossChainRouteOrder,
 } from 'src/lib/swap/cross-chain'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { Amount, Percent } from 'sushi'
+import { useAccount } from 'src/lib/wallet'
+import { Amount, Percent, getChainById, getNativeAddress } from 'sushi'
+import { type EvmAddress, EvmChainId } from 'sushi/evm'
+import type { SvmAddress } from 'sushi/svm'
 import {
-  EvmChainId,
-  type EvmCurrency,
-  EvmNative,
-  EvmToken,
-  defaultCurrency,
-  defaultQuoteCurrency,
-  getEvmChainById,
-  isEvmChainId,
-} from 'sushi/evm'
-import { type Address, isAddress, zeroAddress } from 'viem'
-import { useConnection } from 'wagmi'
+  getDefaultCurrency,
+  getQuoteCurrency,
+  getTokenAsString,
+} from '../../_ui/derivedstate-swap-helpers'
 
-const getTokenAsString = (token: EvmCurrency | string) =>
-  typeof token === 'string'
-    ? token
-    : token.type === 'native'
-      ? 'NATIVE'
-      : token.wrap().address
-const getDefaultCurrency = (chainId: number) =>
-  getTokenAsString(defaultCurrency[chainId as keyof typeof defaultCurrency])
-const getQuoteCurrency = (chainId: number) =>
-  getTokenAsString(
-    defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency],
-  )
-
-interface State {
+interface State<
+  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+> {
   mutate: {
-    setChainId0(chainId: number): void
-    setChainId1(chainId: number): void
-    setToken0(token0: EvmCurrency | string): void
-    setToken1(token1: EvmCurrency | string): void
-    setTokens(token0: EvmCurrency | string, token1: EvmCurrency | string): void
+    setChainId0(chainId: TChainId0): void
+    setChainId1(chainId: TChainId1): void
+    setToken0(token0: CurrencyFor<TChainId0> | string): void
+    setToken1(token1: CurrencyFor<TChainId1> | string): void
+    setTokens(
+      token0: CurrencyFor<TChainId0> | string,
+      token1: CurrencyFor<TChainId1> | string,
+    ): void
     setSwapAmount(swapAmount: string): void
     switchTokens(): void
     setTradeId: Dispatch<SetStateAction<string>>
@@ -64,13 +54,13 @@ interface State {
   }
   state: {
     tradeId: string
-    token0: EvmCurrency | undefined
-    token1: EvmCurrency | undefined
-    chainId0: EvmChainId
-    chainId1: EvmChainId
+    token0: CurrencyFor<TChainId0> | undefined
+    token1: CurrencyFor<TChainId1> | undefined
+    chainId0: TChainId0
+    chainId1: TChainId1
     swapAmountString: string
-    swapAmount: Amount<EvmCurrency> | undefined
-    recipient: Address | undefined
+    swapAmount: Amount<CurrencyFor<TChainId0>> | undefined
+    recipient: AddressFor<TChainId1> | undefined
     selectedBridge: string | undefined
     routeOrder: CrossChainRouteOrder
   }
@@ -83,7 +73,7 @@ const DerivedStateCrossChainSwapContext = createContext<State>({} as State)
 
 interface DerivedStateCrossChainSwapProviderProps {
   children: React.ReactNode
-  defaultChainId: EvmChainId
+  defaultChainId: XSwapSupportedChainId
 }
 
 /* Parses the URL and provides the chainId, token0, and token1 globally.
@@ -99,7 +89,7 @@ const DerivedstateCrossChainSwapProvider: FC<
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [tradeId, setTradeId] = useState(nanoid())
-  const [chainId, setChainId] = useState<number>(defaultChainId)
+  const [chainId, setChainId] = useState<XSwapSupportedChainId>(defaultChainId)
   const [selectedBridge, setSelectedBridge] = useState<string | undefined>(
     undefined,
   )
@@ -108,6 +98,7 @@ const DerivedstateCrossChainSwapProvider: FC<
   const chainId0 = isXSwapSupportedChainId(chainId)
     ? chainId
     : EvmChainId.ETHEREUM
+  type TChainId0 = typeof chainId0
 
   // Get the searchParams and complete with defaults.
   // This handles the case where some params might not be provided by the user
@@ -124,10 +115,21 @@ const DerivedstateCrossChainSwapProvider: FC<
     if (!params.has('token0'))
       params.set('token0', getDefaultCurrency(chainId0))
     if (!params.has('token1'))
-      params.set('token1', getQuoteCurrency(Number(params.get('chainId1'))))
+      params.set(
+        'token1',
+        getQuoteCurrency(
+          Number(params.get('chainId1')) as XSwapSupportedChainId,
+        ),
+      )
 
     return params
   }, [chainId0, searchParams])
+
+  // Derive chainId from defaultedParams
+  const chainId1 = Number(
+    defaultedParams.get('chainId1'),
+  ) as XSwapSupportedChainId
+  type TChainId1 = typeof chainId1
 
   // Get a new searchParams string by merging the current
   // searchParams with a provided key/value pair
@@ -149,26 +151,23 @@ const DerivedstateCrossChainSwapProvider: FC<
   // Switch token0 and token1
   const switchTokens = useCallback(() => {
     const params = new URLSearchParams(defaultedParams)
-    const chainId1 = +(params.get('chainId1') || 0)
+    const chainId1Param = +(params.get('chainId1') || 0)
     const token0 = params.get('token0')
     const token1 = params.get('token1')
 
-    if (!isEvmChainId(chainId1)) {
-      console.error('Invalid chainId1:', chainId1)
+    if (!isXSwapSupportedChainId(chainId1Param)) {
+      console.error('Invalid chainId1:', chainId1Param)
       return
     }
 
     const pathSegments = pathname.split('/')
-    pathSegments[1] = getEvmChainById(chainId1).key
+    pathSegments[1] = getChainById(chainId1Param).key
 
     // Can safely cast as defaultedParams are always defined
     history.pushState(
       null,
       '',
-      `${replaceNetworkSlug(
-        Number(chainId1) as EvmChainId,
-        pathname,
-      )}?${createQueryString([
+      `${replaceNetworkSlug(chainId1Param, pathname)}?${createQueryString([
         { name: 'swapAmount', value: null },
         { name: 'token0', value: token1 as string },
         { name: 'token1', value: token0 as string },
@@ -176,22 +175,19 @@ const DerivedstateCrossChainSwapProvider: FC<
       ])}`,
     )
 
-    setChainId(Number(chainId1))
+    setChainId(chainId1Param)
   }, [pathname, defaultedParams, chainId0, createQueryString])
 
   // Update the URL with new from chainId
   const setChainId0 = useCallback(
-    (chainId: number) => {
+    (chainId: XSwapSupportedChainId) => {
       if (defaultedParams.get('chainId1') === chainId.toString()) {
         switchTokens()
       } else {
         history.pushState(
           null,
           '',
-          `${replaceNetworkSlug(
-            chainId as EvmChainId,
-            pathname,
-          )}?${createQueryString([
+          `${replaceNetworkSlug(chainId, pathname)}?${createQueryString([
             { name: 'swapAmount', value: null },
             { name: 'token0', value: getDefaultCurrency(chainId0) },
           ])}`,
@@ -205,7 +201,7 @@ const DerivedstateCrossChainSwapProvider: FC<
 
   // Update the URL with new to chainId
   const setChainId1 = useCallback(
-    (chainId: number) => {
+    (chainId: XSwapSupportedChainId) => {
       if (chainId0 === chainId) {
         switchTokens()
       } else {
@@ -224,36 +220,39 @@ const DerivedstateCrossChainSwapProvider: FC<
 
   // Update the URL with a new token0
   const setToken0 = useCallback(
-    (_token0: string | EvmCurrency) => {
+    (_token0: string | CurrencyFor<TChainId0>) => {
       // If entity is provided, parse it to a string
-      const token0 = getTokenAsString(_token0)
+      const token0 = getTokenAsString(chainId0, _token0)
       push(
         `${pathname}?${createQueryString([{ name: 'token0', value: token0 }])}`,
         { scroll: false },
       )
     },
-    [createQueryString, pathname, push],
+    [chainId0, createQueryString, pathname, push],
   )
 
   // Update the URL with a new token1
   const setToken1 = useCallback(
-    (_token1: string | EvmCurrency) => {
+    (_token1: string | CurrencyFor<TChainId1>) => {
       // If entity is provided, parse it to a string
-      const token1 = getTokenAsString(_token1)
+      const token1 = getTokenAsString(chainId1, _token1)
       push(
         `${pathname}?${createQueryString([{ name: 'token1', value: token1 }])}`,
         { scroll: false },
       )
     },
-    [createQueryString, pathname, push],
+    [chainId1, createQueryString, pathname, push],
   )
 
   // Update the URL with both tokens
   const setTokens = useCallback(
-    (_token0: string | EvmCurrency, _token1: string | EvmCurrency) => {
+    (
+      _token0: string | CurrencyFor<TChainId0>,
+      _token1: string | CurrencyFor<TChainId1>,
+    ) => {
       // If entity is provided, parse it to a string
-      const token0 = getTokenAsString(_token0)
-      const token1 = getTokenAsString(_token1)
+      const token0 = getTokenAsString(chainId0, _token0)
+      const token1 = getTokenAsString(chainId1, _token1)
 
       push(
         `${pathname}?${createQueryString([
@@ -263,7 +262,7 @@ const DerivedstateCrossChainSwapProvider: FC<
         { scroll: false },
       )
     },
-    [createQueryString, pathname, push],
+    [chainId0, chainId1, createQueryString, pathname, push],
   )
 
   // Update the URL with a new swapAmount
@@ -279,26 +278,20 @@ const DerivedstateCrossChainSwapProvider: FC<
     [createQueryString, pathname, push],
   )
 
-  // Derive chainId from defaultedParams
-  const chainId1 = Number(defaultedParams.get('chainId1')) as EvmChainId
+  const token0Param = defaultedParams.get('token0') as string
+  const token1Param = defaultedParams.get('token1') as string
 
   // Derive token0
   const { data: token0, isInitialLoading: token0Loading } = useTokenWithCache({
     chainId: chainId0,
-    address: defaultedParams.get('token0') as Address,
-    enabled: isAddress(defaultedParams.get('token0') as string, {
-      strict: false,
-    }),
+    address: token0Param as EvmAddress | SvmAddress,
     keepPreviousData: false,
   })
 
   // Derive token1
   const { data: token1, isInitialLoading: token1Loading } = useTokenWithCache({
     chainId: chainId1,
-    address: defaultedParams.get('token1') as Address,
-    enabled: isAddress(defaultedParams.get('token1') as string, {
-      strict: false,
-    }),
+    address: token1Param as EvmAddress | SvmAddress,
     keepPreviousData: false,
   })
 
@@ -307,10 +300,10 @@ const DerivedstateCrossChainSwapProvider: FC<
   const [_token0, _token1] = useMemo(
     () => [
       defaultedParams.get('token0') === 'NATIVE'
-        ? EvmNative.fromChainId(chainId0)
+        ? nativeFromChainId(chainId0)
         : token0,
       defaultedParams.get('token1') === 'NATIVE'
-        ? EvmNative.fromChainId(chainId1)
+        ? nativeFromChainId(chainId1)
         : token1,
     ],
     [defaultedParams, chainId0, chainId1, token0, token1],
@@ -321,6 +314,8 @@ const DerivedstateCrossChainSwapProvider: FC<
       _token0 ? Amount.tryFromHuman(_token0, swapAmountString) : undefined,
     [_token0, swapAmountString],
   )
+
+  const recipient = useAccount(chainId1)
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -345,7 +340,7 @@ const DerivedstateCrossChainSwapProvider: FC<
           },
           state: {
             tradeId,
-            recipient: undefined,
+            recipient,
             chainId0,
             chainId1,
             swapAmountString,
@@ -378,6 +373,7 @@ const DerivedstateCrossChainSwapProvider: FC<
         tradeId,
         selectedBridge,
         routeOrder,
+        recipient,
       ])}
     >
       {children}
@@ -385,8 +381,15 @@ const DerivedstateCrossChainSwapProvider: FC<
   )
 }
 
-const useDerivedStateCrossChainSwap = () => {
-  const context = useContext(DerivedStateCrossChainSwapContext)
+function useDerivedStateCrossChainSwap<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+>() {
+  const Ctx = DerivedStateCrossChainSwapContext as unknown as React.Context<
+    State<TChainId0, TChainId1>
+  >
+
+  const context = useContext(Ctx)
   if (!context) {
     throw new Error(
       'Hook can only be used inside CrossChain Swap Derived State Context',
@@ -396,14 +399,24 @@ const useDerivedStateCrossChainSwap = () => {
   return context
 }
 
-const useCrossChainTradeRoutes = () => {
+function useCrossChainTradeRoutes<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+>() {
   const {
-    state: { token1, swapAmount, selectedBridge, routeOrder },
+    state: {
+      chainId0,
+      token1,
+      swapAmount,
+      selectedBridge,
+      routeOrder,
+      recipient,
+    },
     mutate: { setSelectedBridge },
-  } = useDerivedStateCrossChainSwap()
+  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
 
   const [slippagePercent] = useSlippageTolerance()
-  const { address } = useConnection()
+  const address = useAccount(chainId0)
 
   const query = _useCrossChainTradeRoutes({
     fromAmount: swapAmount,
@@ -411,6 +424,7 @@ const useCrossChainTradeRoutes = () => {
     slippage: slippagePercent,
     fromAddress: address,
     order: routeOrder,
+    toAddress: recipient,
   })
 
   useEffect(() => {
@@ -426,67 +440,76 @@ const useCrossChainTradeRoutes = () => {
   return query
 }
 
-export interface UseSelectedCrossChainTradeRouteReturn extends CrossChainRoute {
-  tokenIn: EvmCurrency
-  tokenOut: EvmCurrency
-  amountIn?: Amount<EvmCurrency>
-  amountOut?: Amount<EvmCurrency>
-  amountOutMin?: Amount<EvmCurrency>
+export interface UseSelectedCrossChainTradeRouteReturn<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+> extends CrossChainRoute {
+  tokenIn: CurrencyFor<TChainId0>
+  tokenOut: CurrencyFor<TChainId1>
+  amountIn?: Amount<CurrencyFor<TChainId0>>
+  amountOut?: Amount<CurrencyFor<TChainId1>>
+  amountOutMin?: Amount<CurrencyFor<TChainId1>>
   priceImpact?: Percent
 }
 
-const useSelectedCrossChainTradeRoute = () => {
+function useSelectedCrossChainTradeRoute<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+>() {
   const routesQuery = useCrossChainTradeRoutes()
 
   const {
     state: { selectedBridge },
-  } = useDerivedStateCrossChainSwap()
+  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
 
-  const route: UseSelectedCrossChainTradeRouteReturn | undefined =
-    useMemo(() => {
-      const route = routesQuery.data?.find(
-        (route) => route.step.tool === selectedBridge,
-      )
+  const route:
+    | UseSelectedCrossChainTradeRouteReturn<TChainId0, TChainId1>
+    | undefined = useMemo(() => {
+    const route = routesQuery.data?.find(
+      (route) => route.step.tool === selectedBridge,
+    )
 
-      if (!route) return undefined
+    if (!route) return undefined
 
-      const tokenIn =
-        route.fromToken.address === zeroAddress
-          ? EvmNative.fromChainId(route.fromToken.chainId)
-          : new EvmToken(route.fromToken)
+    const tokenIn = (
+      getNativeAddress(route.fromToken.chainId) === route.fromToken.address
+        ? nativeFromChainId(route.fromToken.chainId)
+        : newToken(route.fromToken)
+    ) as CurrencyFor<TChainId0>
 
-      const tokenOut =
-        route.toToken.address === zeroAddress
-          ? EvmNative.fromChainId(route.toToken.chainId)
-          : new EvmToken(route.toToken)
+    const tokenOut = (
+      getNativeAddress(route.toToken.chainId) === route.toToken.address
+        ? nativeFromChainId(route.toToken.chainId)
+        : newToken(route.toToken)
+    ) as CurrencyFor<TChainId1>
 
-      const amountIn = new Amount(tokenIn, route.fromAmount)
-      const amountOut = new Amount(tokenOut, route.toAmount)
-      const amountOutMin = new Amount(tokenOut, route.toAmountMin)
+    const amountIn = new Amount(tokenIn, route.fromAmount)
+    const amountOut = new Amount(tokenOut, route.toAmount)
+    const amountOutMin = new Amount(tokenOut, route.toAmountMin)
 
-      const fromAmountUSD =
-        (Number(route.fromToken.priceUSD) * Number(amountIn.amount)) /
-        10 ** tokenIn.decimals
+    const fromAmountUSD =
+      (Number(route.fromToken.priceUSD) * Number(amountIn.amount)) /
+      10 ** tokenIn.decimals
 
-      const toAmountUSD =
-        (Number(route.toToken.priceUSD) * Number(amountOut.amount)) /
-        10 ** tokenOut.decimals
+    const toAmountUSD =
+      (Number(route.toToken.priceUSD) * Number(amountOut.amount)) /
+      10 ** tokenOut.decimals
 
-      const priceImpact = new Percent({
-        numerator: Math.floor((fromAmountUSD / toAmountUSD - 1) * 10_000),
-        denominator: 10_000,
-      })
+    const priceImpact = new Percent({
+      numerator: Math.floor((fromAmountUSD / toAmountUSD - 1) * 10_000),
+      denominator: 10_000,
+    })
 
-      return {
-        ...route,
-        tokenIn,
-        tokenOut,
-        amountIn,
-        amountOut,
-        amountOutMin,
-        priceImpact,
-      }
-    }, [routesQuery.data, selectedBridge])
+    return {
+      ...route,
+      tokenIn,
+      tokenOut,
+      amountIn,
+      amountOut,
+      amountOutMin,
+      priceImpact,
+    }
+  }, [routesQuery.data, selectedBridge])
 
   return useMemo(
     () => ({

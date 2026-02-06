@@ -10,7 +10,7 @@ import {
 } from 'src/lib/wallet'
 import { ConnectButton } from '../../components/connect-button'
 
-interface ConnectProps extends ButtonProps {
+export interface ConnectProps extends ButtonProps {
   namespace?: WalletNamespace
 }
 
@@ -25,7 +25,9 @@ function Connect({
 
   const { isPending, isConnected } = useWalletContext()
   const isNamespaceConnected = Boolean(useAccount(namespace))
-  const requiresNamespaceConnection = Boolean(namespace && !isNamespaceConnected)
+  const requiresNamespaceConnection = Boolean(
+    namespace && !isNamespaceConnected,
+  )
 
   if (!isMounted)
     return (

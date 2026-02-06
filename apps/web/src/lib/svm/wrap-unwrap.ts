@@ -13,7 +13,6 @@ import {
 } from '@solana-program/token'
 import {
   type Transaction,
-  type TransactionMessage,
   type TransactionMessageBytes,
   type TransactionMessageBytesBase64,
   type TransactionSigner,

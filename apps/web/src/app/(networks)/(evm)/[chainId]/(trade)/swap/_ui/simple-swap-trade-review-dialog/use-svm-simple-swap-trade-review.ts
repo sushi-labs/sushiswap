@@ -1,9 +1,12 @@
 'use client'
 
-import { getBase64Decoder, getBase64Encoder } from '@solana/codecs-strings'
-import { useTransactionSigner } from '@solana/connector/react'
-import type { Signature } from '@solana/keys'
+import { getBase64Encoder } from '@solana/codecs-strings'
+import { useKitTransactionSigner } from '@solana/connector'
 import type { Base64EncodedWireTransaction } from '@solana/kit'
+import {
+  getBase64EncodedWireTransaction,
+  getTransactionDecoder,
+} from '@solana/transactions'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { SwapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { DialogType, useDialog } from '@sushiswap/ui'
@@ -12,7 +15,8 @@ import type { SupportedChainId } from 'src/config'
 import type { UseSvmTradeReturn } from 'src/lib/hooks/react-query'
 import { useSvmTradeExecute } from 'src/lib/hooks/react-query'
 import { getSvmRpc } from 'src/lib/svm/rpc'
-import { useAccount } from 'src/lib/wallet'
+import { waitForSvmSignature } from 'src/lib/svm/wait-for-svm-signature'
+import { useAccount, useWallet } from 'src/lib/wallet'
 import { Percent } from 'sushi'
 import {
   type SvmAddress,
@@ -29,42 +33,8 @@ import {
 import type { UseSimpleSwapTradeReviewBaseReturn } from './use-simple-swap-trade-review'
 
 const zeroPercent = new Percent(0)
-const CONFIRMATION_POLL_MS = 2_000
-const CONFIRMATION_TIMEOUT_MS = 90_000
-
-const base64Decoder = getBase64Decoder()
 const base64Encoder = getBase64Encoder()
-
-async function waitForSvmSignature(signature: string) {
-  const rpc = getSvmRpc()
-  const deadline = Date.now() + CONFIRMATION_TIMEOUT_MS
-
-  while (Date.now() < deadline) {
-    const { value } = await rpc
-      .getSignatureStatuses([signature as Signature], {
-        searchTransactionHistory: true,
-      })
-      .send()
-
-    const status = value[0]
-    if (status) {
-      if (status.err) {
-        throw new Error('Solana transaction failed')
-      }
-
-      if (
-        status.confirmationStatus === 'confirmed' ||
-        status.confirmationStatus === 'finalized'
-      ) {
-        return status
-      }
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, CONFIRMATION_POLL_MS))
-  }
-
-  throw new Error('Timed out waiting for Solana transaction confirmation')
-}
+const transactionDecoder = getTransactionDecoder()
 
 export function useSvmSimpleSwapTradeReview(): UseSimpleSwapTradeReviewBaseReturn {
   const { state: _state } = useDerivedStateSimpleSwap<
@@ -95,7 +65,7 @@ function _useSvmSimpleSwapTradeReview({
   token1: SvmCurrency | undefined
 }) {
   const address = useAccount('svm')
-  const { signer } = useTransactionSigner()
+  const { signer } = useKitTransactionSigner()
 
   const {
     mutate: { setSwapAmount },
@@ -177,29 +147,12 @@ function _useSvmSimpleSwapTradeReview({
         }
 
         const unsignedBytes = base64Encoder.encode(unsignedTransaction)
-        const signed = await signer.signTransaction(unsignedBytes)
-        const signedBytes = (() => {
-          if (signed instanceof Uint8Array) return signed
-          if (ArrayBuffer.isView(signed)) {
-            return new Uint8Array(
-              signed.buffer,
-              signed.byteOffset,
-              signed.byteLength,
-            )
-          }
-          if ('serialize' in signed && typeof signed.serialize === 'function') {
-            return signed.serialize() as Uint8Array
-          }
-          return undefined
-        })()
-
-        if (!signedBytes) {
-          throw new Error('Unsupported signed transaction format')
-        }
+        const unsignedTx = transactionDecoder.decode(unsignedBytes)
+        const [signedTx] = await signer.modifyAndSignTransactions([unsignedTx])
 
         tradeRef.current = trade
 
-        const signedTransaction = base64Decoder.decode(signedBytes)
+        const signedTransaction = getBase64EncodedWireTransaction(signedTx)
         const executePromise = executeMutation.mutateAsync({
           requestId: order?.requestId,
           signedTransaction,
