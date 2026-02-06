@@ -21,7 +21,8 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { getEvmChainById, isEvmChainId, shortenEvmAddress } from 'sushi/evm'
+import { shortenAddress } from 'sushi'
+import { getEvmChainById } from 'sushi/evm'
 import { useAccount, useDisconnect } from 'wagmi'
 import type { GetEnsNameReturnType } from 'wagmi/actions'
 import { PortfolioView } from '.'
@@ -95,13 +96,11 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
               <div>
                 <div className="font-semibold">{ensName}</div>
                 <div className="text-xs text-muted-foreground">
-                  {shortenEvmAddress(address)}
+                  {shortenAddress(address)}
                 </div>
               </div>
             ) : (
-              <span className="font-semibold">
-                {shortenEvmAddress(address)}
-              </span>
+              <span className="font-semibold">{shortenAddress(address)}</span>
             )}
           </div>
           <div className="flex gap-x-3 pt-1 px-2">

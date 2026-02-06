@@ -25,13 +25,13 @@ import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
 import React, { useCallback } from 'react'
 import { useTokenSecurity } from 'src/lib/hooks/react-query'
 import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
+import { shortenAddress } from 'sushi'
 import {
   type EvmToken,
   defaultCurrency,
   defaultQuoteCurrency,
   getEvmChainById,
   isTokenSecurityChainId,
-  shortenEvmAddress,
 } from 'sushi/evm'
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
@@ -158,7 +158,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                     className="text-blue font-medium"
                     rel="noreferrer"
                   >
-                    {shortenEvmAddress(token0.wrap().address)}
+                    {shortenAddress(token0.wrap().address)}
                   </a>{' '}
                   are you sure this token is on{' '}
                   {getEvmChainById(token0.chainId).name}?
@@ -205,7 +205,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                       )}
                       className="font-medium"
                     >
-                      {shortenEvmAddress(token0.address)}{' '}
+                      {shortenAddress(token0.address)}{' '}
                     </LinkExternal>
                   </div>
                 </List.Control>
@@ -242,7 +242,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                     className="text-blue font-medium"
                     rel="noreferrer"
                   >
-                    {shortenEvmAddress(token1.wrap().address)}
+                    {shortenAddress(token1.wrap().address)}
                   </a>{' '}
                   are you sure this token is on{' '}
                   {getEvmChainById(token1.chainId)?.name}?
@@ -289,7 +289,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                       )}
                       className="font-medium"
                     >
-                      {shortenEvmAddress(token1.address)}{' '}
+                      {shortenAddress(token1.address)}{' '}
                     </LinkExternal>
                   </div>
                 </List.Control>

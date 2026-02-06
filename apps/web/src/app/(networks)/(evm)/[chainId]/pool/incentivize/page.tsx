@@ -54,8 +54,9 @@ import {
   type SushiSwapV3ChainId,
   SushiSwapV3Pool,
   getEvmChainById,
+  isEvmWNativeSupported,
   isMerklChainId,
-  isWNativeSupported,
+  isSushiSwapV3ChainId,
 } from 'sushi/evm'
 import { zeroAddress } from 'viem'
 import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
@@ -75,7 +76,11 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
   const chainId = +params.chainId as EvmChainId
   return (
     <ConcentratedLiquidityURLStateProvider
-      chainId={isMerklChainId(chainId) ? chainId : EvmChainId.ETHEREUM}
+      chainId={
+        isSushiSwapV3ChainId(chainId) && isMerklChainId(chainId)
+          ? chainId
+          : EvmChainId.ETHEREUM
+      }
       supportedNetworks={MERKL_SUPPORTED_CHAIN_IDS}
     >
       <ConcentratedLiquidityProvider>
@@ -223,7 +228,7 @@ const Incentivize = withCheckerRoot(() => {
           token1={token1}
           setToken0={setToken0}
           setToken1={setToken1}
-          includeNative={isWNativeSupported(chainId)}
+          includeNative={isEvmWNativeSupported(chainId)}
         />
         <SelectFeeConcentratedWidget
           title="What is the fee tier for this pool?"

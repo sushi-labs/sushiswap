@@ -50,14 +50,13 @@ import {
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/slippage'
-import { Amount, ChainId, ZERO } from 'sushi'
+import { Amount, ChainId, ZERO, shortenAddress } from 'sushi'
 import {
   EvmNative,
   addGasMargin,
+  evmNativeAddress,
   getEvmChainById,
   getEvmCurrencyAddress,
-  nativeAddress,
-  shortenEvmAddress,
 } from 'sushi/evm'
 import { type SendTransactionReturnType, stringify } from 'viem'
 import {
@@ -153,11 +152,11 @@ const _SimpleSwapTradeReviewDialog: FC<{
           token0:
             tradeRef?.current?.amountIn?.currency?.type === 'token'
               ? tradeRef?.current?.amountIn?.currency?.address
-              : nativeAddress,
+              : evmNativeAddress,
           token1:
             tradeRef?.current?.amountOut?.currency?.type === 'token'
               ? tradeRef?.current?.amountOut?.currency?.address
-              : nativeAddress,
+              : evmNativeAddress,
           amountIn: tradeRef?.current?.amountIn?.amount,
           amountOut: tradeRef?.current?.amountOut?.amount,
           amountOutMin: tradeRef?.current?.minAmountOut?.amount,
@@ -524,7 +523,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
                             }
                             rel="noreferrer"
                           >
-                            {shortenEvmAddress(recipient)}
+                            {shortenAddress(recipient)}
                           </a>
                         </Button>
                       </List.KeyValue>
