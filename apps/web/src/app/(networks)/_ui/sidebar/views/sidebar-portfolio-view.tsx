@@ -1,7 +1,6 @@
 import { Button } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import {
-  PortfolioClaimables,
   PortfolioHeader,
   PortfolioPositions,
   PortfolioTokens,
@@ -10,7 +9,7 @@ import {
 enum PortfolioTab {
   Tokens = 'Tokens',
   Positions = 'Positions',
-  Claimable = 'Claimable',
+  // Claimable = 'Claimable',
   // History = 'History',
 }
 
@@ -23,8 +22,8 @@ export const SidebarPortfolioView = () => {
         return <PortfolioTokens />
       case PortfolioTab.Positions:
         return <PortfolioPositions />
-      case PortfolioTab.Claimable:
-        return <PortfolioClaimables />
+      // case PortfolioTab.Claimable:
+      //   return <PortfolioClaimables />
       // case PortfolioTab.History:
       // return <PortfolioHistory />
     }
