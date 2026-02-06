@@ -1,4 +1,8 @@
-import type { Base64EncodedWireTransaction } from '@solana/kit'
+import type { SolanaTransaction } from '@solana/connector'
+import type {
+  Base64EncodedWireTransaction,
+  ReadonlyUint8Array,
+} from '@solana/kit'
 import type { Amount, Percent, Price } from 'sushi'
 import type { EvmChainId, EvmCurrency, RouterLiquiditySource } from 'sushi/evm'
 import type { SvmAddress, SvmChainId, SvmCurrency } from 'sushi/svm'
@@ -60,7 +64,7 @@ export interface UseSvmTradeParams {
   onError?(e: Error): void
   order?: SvmOrderResponse
   requestId?: string
-  signedTransaction?: string
+  unsignedBytes?: ReadonlyUint8Array<ArrayBuffer>
 }
 
 export type UseSvmTradeReturn = {

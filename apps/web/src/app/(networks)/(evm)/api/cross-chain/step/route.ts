@@ -1,10 +1,6 @@
 import type { NextRequest } from 'next/server'
 import { type XSwapSupportedChainId, isXSwapSupportedChainId } from 'src/config'
 import { mapStepToLifi } from 'src/lib/swap/cross-chain/lifi'
-import {
-  lifiStepBaseSchema,
-  resolveTransactionRequestChainId,
-} from '../schemas'
 import { sz } from 'sushi'
 import { type EvmChainId, isEvmAddress, isEvmChainId } from 'sushi/evm'
 import {
@@ -15,6 +11,10 @@ import {
 } from 'sushi/svm'
 import { stringify } from 'viem'
 import * as z from 'zod'
+import {
+  lifiStepBaseSchema,
+  resolveTransactionRequestChainId,
+} from '../schemas'
 
 const sushiEvmChainIdSchema = z.coerce
   .number()
