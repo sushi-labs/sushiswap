@@ -5,7 +5,6 @@
 		"lib": ["DOM", "DOM.Iterable", "ESNext"],
 		"paths": {
 			"~aptos/*": ["src/app/(networks)/(non-evm)/aptos/*"],
-			"~kadena/*": ["src/app/(networks)/(non-evm)/kadena/*"],
 			"~evm/*": ["src/app/(networks)/(evm)/*"]
 		},
 		"allowJs": true,
