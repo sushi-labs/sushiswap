@@ -1,6 +1,5 @@
 import PencilIcon from '@heroicons/react/20/solid/PencilIcon'
 import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
-import { useLocalStorage } from '@sushiswap/hooks'
 import {
   Button,
   Dialog,
@@ -12,19 +11,10 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { type ReactNode, useMemo, useState } from 'react'
-import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
 import { useExecuteOrders } from 'src/lib/perps/exchange/use-execute-orders'
-import { useMidPrice } from 'src/lib/perps/use-mid-price'
 import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
-import { useUserAccountValues } from 'src/lib/perps/use-user-account-values'
 import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'
-import {
-  enUSFormatNumber,
-  estimateLiquidationPrice,
-  getTextColorClass,
-  numberFormatter,
-} from 'src/lib/perps/utils'
-import { formatUnits, parseUnits } from 'viem'
+import { getTextColorClass, numberFormatter } from 'src/lib/perps/utils'
 import { CheckboxSetting } from '../_common/checkbox-setting'
 import { TableButton } from '../_common/table-button'
 import { TpSlInput } from '../_common/tp-sl-input'
