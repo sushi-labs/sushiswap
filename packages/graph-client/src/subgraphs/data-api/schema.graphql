@@ -44,7 +44,7 @@ type Query {
   v3PoolBuckets(address: Bytes!, chainId: SushiSwapV3ChainId!): PoolBuckets!
   v3PoolsByTokens(token0: Bytes!, token1: Bytes!, chainId: SushiSwapV3ChainId!): [V3BasePool!]!
   v3Pools(chainId: SushiSwapV3ChainId!): [V3BasePool!]!
-  portfolioWallet(id: ID!): PortfolioWallet!
+  portfolioWallet(ids: [ID!]!): PortfolioWallet!
   portfolioLiquidityPositions(id: ID!): PortfolioPositions!
   portfolioClaimables(id: ID!): PortfolioClaimables!
   portfolioHistory(id: ID!): [PortfolioTransaction!]!

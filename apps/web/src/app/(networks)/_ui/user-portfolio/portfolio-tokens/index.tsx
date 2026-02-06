@@ -1,31 +1,36 @@
 import { getPortfolioWallet } from '@sushiswap/graph-client/data-api'
 import { SkeletonCircle, SkeletonText, classNames } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
-import React from 'react'
+import React, { useMemo } from 'react'
+import { useAccounts } from 'src/lib/wallet'
 import { formatPercent, formatUSD } from 'sushi'
-import type { Address } from 'viem'
-import { useConnection } from 'wagmi'
 import { PortfolioTokensList } from './portfolio-tokens-list'
 
 function usePortfolioWallet(
-  address: Address | undefined,
+  addresses: (string | undefined)[],
   refetchInterval?: 600_000,
 ) {
   return useQuery({
-    queryKey: ['portfolio-wallet', address],
+    queryKey: ['portfolio-wallet', addresses],
     queryFn: async () => {
-      const id = address as string
-      const data = await getPortfolioWallet({ id })
+      const ids = addresses.filter((a): a is string => !!a)
+      const data = await getPortfolioWallet({ ids })
       return data
     },
-    enabled: !!address,
+    enabled: !!addresses && addresses.length > 0,
     refetchInterval,
   })
 }
 
 export const PortfolioTokens = () => {
-  const { address } = useConnection()
-  const { data, isLoading, isError } = usePortfolioWallet(address)
+  const { evm, svm } = useAccounts()
+
+  const addresses = useMemo(
+    () => [...new Set([evm.address, svm.address])] as string[],
+    [evm.address, svm.address],
+  )
+
+  const { data, isLoading, isError } = usePortfolioWallet(addresses)
 
   return (
     <div className="flex flex-col gap-y-5 h-full overflow-hidden">

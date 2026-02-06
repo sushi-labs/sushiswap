@@ -3,9 +3,10 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import Link from 'next/link'
 import type { FC, ReactElement } from 'react'
 import type { EvmChainId } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 
 interface PortfolioInfoRow {
-  chainId: EvmChainId
+  chainId: EvmChainId | SvmChainId
   icon: ReactElement<any>
   leftContent: ReactElement<any>
   rightContent: ReactElement<any> | null
