@@ -19,7 +19,8 @@ export const RecipientSection: FC<{
             <a
               target="_blank"
               href={
-                getChainById(chainId).getAccountUrl(recipient as EvmAddress) ?? '#'
+                getChainById(chainId).getAccountUrl(recipient as EvmAddress) ??
+                '#'
               }
               rel="noreferrer"
             >

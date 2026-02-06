@@ -135,7 +135,11 @@ export function createSolanaRequestHandlers(deps: SolanaWorkerDeps) {
         },
       })
     } catch (error) {
-      console.error('Failed to request Solana prices', chainState.chainId, error)
+      console.error(
+        'Failed to request Solana prices',
+        chainState.chainId,
+        error,
+      )
       chainState.isError = true
     }
   }

@@ -7,7 +7,8 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: {
         'x-api-key': process.env.JUPITER_API_KEY as string,
-        'Content-Type': request.headers.get('content-type') ?? 'application/json',
+        'Content-Type':
+          request.headers.get('content-type') ?? 'application/json',
       },
       body: await request.text(),
     })

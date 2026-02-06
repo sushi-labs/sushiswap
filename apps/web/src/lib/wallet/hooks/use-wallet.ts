@@ -2,7 +2,11 @@ import { useMemo } from 'react'
 import type { EvmChainId } from 'sushi/evm'
 import type { SvmChainId } from 'sushi/svm'
 import { useWalletContext } from '../provider'
-import type { ChainIdForNamespace, WalletConnection, WalletNamespace } from '../types'
+import type {
+  ChainIdForNamespace,
+  WalletConnection,
+  WalletNamespace,
+} from '../types'
 
 export function useWallet<TNamespace extends WalletNamespace>(
   namespace?: TNamespace,
