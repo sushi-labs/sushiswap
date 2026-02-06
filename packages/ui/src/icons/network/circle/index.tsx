@@ -29,6 +29,7 @@ import { KavaCircle } from './KavaCircle'
 import { LineaCircle } from './LineaCircle'
 import { MantaCircle } from './MantaCircle'
 import { MantleCircle } from './MantleCircle'
+import { MegaETHCircle } from './MegaETHCircle'
 import { MetisCircle } from './MetisCircle'
 import { ModeCircle } from './ModeCircle'
 import { MonadCircle } from './MonadCircle'
@@ -42,6 +43,7 @@ import { SkaleCircle } from './SkaleCircle'
 import { SonicCircle } from './SonicCircle'
 import { TaikoCircle } from './TaikoCircle'
 import { ThunderCoreCircle } from './ThunderCoreCircle'
+import { XLayerCircle } from './XLayerCircle'
 import { ZKLinkCircle } from './ZKLinkCircle'
 import { ZKSyncCircle } from './ZKSyncCircle'
 import { ZetaChainCircle } from './ZetaChainCircle'
@@ -77,6 +79,7 @@ export * from './KavaCircle'
 export * from './LineaCircle'
 export * from './MantaCircle'
 export * from './MantleCircle'
+export * from './MegaETHCircle'
 export * from './MetisCircle'
 export * from './ModeCircle'
 export * from './MonadCircle'
@@ -95,6 +98,7 @@ export * from './SonicCircle'
 export * from './TaikoCircle'
 export * from './TelosCircle'
 export * from './ThunderCoreCircle'
+export * from './XLayerCircle'
 export * from './ZKLinkCircle'
 export * from './ZKSyncCircle'
 export * from './ZetaChainCircle'
@@ -145,5 +149,7 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.BERACHAIN]: BeraCircle,
   [ChainId.PLASMA]: PlasmaCircle,
   [ChainId.MONAD]: MonadCircle,
+  [ChainId.MEGAETH]: MegaETHCircle,
+  [ChainId.XLAYER]: XLayerCircle,
   [ChainId.APTOS]: AptosCircle,
 }

@@ -55,6 +55,7 @@
     "@rainbow-me/rainbowkit": "2.2.8",
     "@rise-wallet/wallet-adapter": "0.1.2",
     "@snapshot-labs/snapshot.js": "0.9.9",
+    "@solana/addresses": "5.4.0",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/notifications": "workspace:*",

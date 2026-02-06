@@ -30,6 +30,7 @@ import { KavaNaked } from './KavaNaked'
 import { LineaNaked } from './LineaNaked'
 import { MantaNaked } from './MantaNaked'
 import { MantleNaked } from './MantleNaked'
+import { MegaETHNaked } from './MegaETHNaked'
 import { MetisNaked } from './MetisNaked'
 import { ModeNaked } from './ModeNaked'
 import { MonadNaked } from './MonadNaked'
@@ -43,6 +44,7 @@ import { SkaleNaked } from './SkaleNaked'
 import { SonicNaked } from './SonicNaked'
 import { TaikoNaked } from './TaikoNaked'
 import { ThunderCoreNaked } from './ThunderCoreNaked'
+import { XLayerNaked } from './XLayerNaked'
 import { ZKLinkNaked } from './ZKLinkNaked'
 import { ZKSyncNaked } from './ZKSyncNaked'
 import { ZetaChainNaked } from './ZetaChainNaked'
@@ -78,6 +80,7 @@ export * from './KavaNaked'
 export * from './LineaNaked'
 export * from './MantaNaked'
 export * from './MantleNaked'
+export * from './MegaETHNaked'
 export * from './MetisNaked'
 export * from './ModeNaked'
 export * from './MonadNaked'
@@ -95,6 +98,7 @@ export * from './SkaleNaked'
 export * from './SonicNaked'
 export * from './TaikoNaked'
 export * from './TelosNaked'
+export * from './XLayerNaked'
 export * from './ZKLinkNaked'
 export * from './ZKSyncNaked'
 export * from './ZetaChainNaked'
@@ -145,5 +149,7 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.BERACHAIN]: BeraNaked,
   [ChainId.PLASMA]: PlasmaNaked,
   [ChainId.MONAD]: MonadNaked,
+  [ChainId.MEGAETH]: MegaETHNaked,
+  [ChainId.XLAYER]: XLayerNaked,
   [ChainId.APTOS]: AptosNaked,
 }

@@ -14,9 +14,9 @@ import {
   EvmNative,
   UI_FEE_COLLECTOR_ADDRESS,
   addGasMargin,
+  isEvmWNativeSupported,
   isRedSnwapperChainId,
   isUIFeeCollectorChainId,
-  isWNativeSupported,
 } from 'sushi/evm'
 import { type Hex, stringify, zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
@@ -168,7 +168,7 @@ export const useTrade = (variables: UseTradeParams) => {
 
     if (prices) {
       if (
-        isWNativeSupported(chainId) &&
+        isEvmWNativeSupported(chainId) &&
         EvmNative.fromChainId(chainId).wrap().address !== zeroAddress
       ) {
         result[0] = prices.getFraction(
