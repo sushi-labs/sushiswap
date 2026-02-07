@@ -53,23 +53,22 @@ export const BLADE_SUPPORTED_NETWORKS = BLADE_SUPPORTED_CHAIN_IDS.filter(
 
 export const NEW_CHAIN_IDS = [
   SvmChainId.SOLANA,
-  EvmChainId.MONAD,
   EvmChainId.MEGAETH,
   EvmChainId.XLAYER,
 ] as const
 
 export const PREFERRED_CHAINID_ORDER = [
-  ...NEW_CHAIN_IDS,
   ChainId.ETHEREUM,
+  ...NEW_CHAIN_IDS,
   ChainId.SOLANA,
-  ChainId.HEMI,
-  ChainId.KATANA,
-  ChainId.ARBITRUM,
   ChainId.BASE,
-  ChainId.POLYGON,
-  ChainId.LINEA,
   ChainId.BSC,
+  ChainId.ARBITRUM,
+  ChainId.POLYGON,
   ChainId.OPTIMISM,
+  ChainId.KATANA,
+  ChainId.HEMI,
+  ChainId.LINEA,
   ChainId.FILECOIN,
   ChainId.ROOTSTOCK,
   ChainId.FANTOM,
