@@ -450,17 +450,14 @@ function useCrossChainTradeRoutes<
   return query
 }
 
-export interface UseSelectedCrossChainTradeRouteReturn<
+export type UseSelectedCrossChainTradeRouteReturn<
   TChainId0 extends XSwapSupportedChainId,
   TChainId1 extends XSwapSupportedChainId,
-> extends CrossChainRoute<TChainId0, TChainId1> {
-  tokenIn: CurrencyFor<TChainId0>
-  tokenOut: CurrencyFor<TChainId1>
-  amountIn?: Amount<CurrencyFor<TChainId0>>
-  amountOut?: Amount<CurrencyFor<TChainId1>>
-  amountOutMin?: Amount<CurrencyFor<TChainId1>>
-  priceImpact?: Percent
-}
+> = NonNullable<
+  ReturnType<
+    typeof useSelectedCrossChainTradeRoute<TChainId0, TChainId1>
+  >['data']
+>
 
 function useSelectedCrossChainTradeRoute<
   TChainId0 extends XSwapSupportedChainId,
@@ -472,9 +469,7 @@ function useSelectedCrossChainTradeRoute<
     state: { selectedBridge },
   } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
 
-  const route:
-    | UseSelectedCrossChainTradeRouteReturn<TChainId0, TChainId1>
-    | undefined = useMemo(() => {
+  const route = useMemo(() => {
     const route = routesQuery.data?.find(
       (route) => route.step.tool === selectedBridge,
     )

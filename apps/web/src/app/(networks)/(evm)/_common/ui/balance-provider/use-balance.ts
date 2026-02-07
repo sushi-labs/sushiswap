@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { Amount, getNativeAddress } from 'sushi'
-import { type EvmChainId, EvmCurrency, EvmNative } from 'sushi/evm'
-import type { SvmChainId } from 'sushi/svm'
+import { Amount, type Currency, getNativeAddress } from 'sushi'
+import { type EvmChainId, type EvmCurrency, EvmNative } from 'sushi/evm'
+import type { SvmChainId, SvmCurrency } from 'sushi/svm'
 import { useBalances } from './use-balances'
 
 type Args<TChainId extends EvmChainId | SvmChainId> =
@@ -55,22 +55,16 @@ export function useBalance<TChainId extends EvmChainId | SvmChainId>(
   }, [tokenAddress, result])
 }
 
-type UseAmountBalanceReturn<TChainId extends EvmChainId | SvmChainId> = Omit<
-  ReturnType<typeof useBalance<TChainId>>,
+type UseAmountBalanceReturn<TCurrency extends SvmCurrency | EvmCurrency> = Omit<
+  ReturnType<typeof useBalance<TCurrency['chainId']>>,
   'data'
 > & {
-  data: Amount<CurrencyFor<TChainId>> | undefined
+  data: Amount<TCurrency> | undefined
 }
 
-export function useAmountBalance(
-  currency: CurrencyFor<EvmChainId> | undefined,
-): UseAmountBalanceReturn<EvmChainId>
-export function useAmountBalance(
-  currency: CurrencyFor<SvmChainId> | undefined,
-): UseAmountBalanceReturn<SvmChainId>
-export function useAmountBalance<TChainId extends EvmChainId | SvmChainId>(
-  currency: CurrencyFor<TChainId> | undefined,
-): UseAmountBalanceReturn<TChainId> {
+export function useAmountBalance<TCurrency extends SvmCurrency | EvmCurrency>(
+  currency: TCurrency | undefined,
+): UseAmountBalanceReturn<TCurrency> {
   const result = useBalance(currency)
 
   return useMemo(() => {

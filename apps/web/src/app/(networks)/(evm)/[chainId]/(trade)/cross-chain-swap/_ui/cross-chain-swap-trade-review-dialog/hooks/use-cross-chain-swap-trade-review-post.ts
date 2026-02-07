@@ -240,7 +240,7 @@ export function useCrossChainSwapTradeReviewPost<
           ? `${executionDurationSeconds} seconds`
           : `${executionDurationMinutes} minutes`
 
-      const { feesBreakdown, totalFeesUSD } = getCrossChainFeesBreakdown([step])
+      const { feesBreakdown, totalFeesUSD } = getCrossChainFeesBreakdown(step)
 
       const chainId0Fees = (
         feesBreakdown.gas.get(chainId0)?.amount ??

@@ -1,9 +1,13 @@
 import type { XSwapSupportedChainId } from 'src/config'
 import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'
+import type { UseCrossChainTradeStepReturn } from 'src/lib/hooks/react-query'
 import { Amount, getNativeAddress } from 'sushi'
+import type { Step } from '~evm/api/cross-chain/schemas'
 import type { CrossChainStep } from './types'
 
-export function getCrossChainStepBreakdown(step?: CrossChainStep) {
+export function getCrossChainStepBreakdown(
+  step?: UseCrossChainTradeStepReturn,
+) {
   if (!step)
     return {
       srcStep: undefined,
@@ -51,9 +55,9 @@ enum FeeType {
 const UI_FEE_NAME = 'LIFI Shared Fee'
 
 export function getCrossChainFeesBreakdown(
-  _steps: CrossChainStep[] | CrossChainStep,
+  step: Step<XSwapSupportedChainId, XSwapSupportedChainId, 'lifi'>,
 ) {
-  const steps = Array.isArray(_steps) ? _steps : [_steps]
+  const steps = [step]
   const gasFeesBreakdown = getFeesBreakdown(steps, FeeType.GAS)
   const protocolFeesBreakdown = getFeesBreakdown(steps, FeeType.PROTOCOL)
   const gasFeesUSD = Array.from(gasFeesBreakdown.values()).reduce(
@@ -85,7 +89,10 @@ export function getCrossChainFeesBreakdown(
   }
 }
 
-function getFeesBreakdown(steps: CrossChainStep[], feeType: FeeType) {
+function getFeesBreakdown(
+  steps: Step<XSwapSupportedChainId, XSwapSupportedChainId, 'lifi'>[],
+  feeType: FeeType,
+) {
   return steps.reduce((feesByChainId, step) => {
     const fees =
       feeType === FeeType.PROTOCOL
@@ -99,7 +106,7 @@ function getFeesBreakdown(steps: CrossChainStep[], feeType: FeeType) {
     const token =
       getNativeAddress(fees[0].token.chainId) === fees[0].token.address
         ? nativeFromChainId(fees[0].token.chainId)
-        : newToken(fees[0].token)
+        : newToken(fees[0].token as Parameters<typeof newToken>[0])
 
     const { amount, amountUSD } = fees.reduce(
       (acc, feeCost) => {

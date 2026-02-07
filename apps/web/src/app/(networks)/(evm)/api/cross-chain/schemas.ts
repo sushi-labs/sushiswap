@@ -6,6 +6,7 @@ import {
   isSvmAddress,
   isSvmChainId,
 } from 'sushi/svm'
+import type { Hex } from 'viem'
 import * as z from 'zod'
 
 type ChainIdGuard<TChainId extends number> = (
@@ -184,6 +185,13 @@ function getAddressSchema<TChainId extends XSwapSupportedChainId | LifiChainId>(
     .transform((address) => address as AddressFor<LifiToSushiChainId<TChainId>>)
 }
 
+type NormalizedChainIdForFlavor<
+  TChainId extends ChainIdForFlavor<TFlavor>,
+  TFlavor extends SchemaFlavor,
+> = TFlavor extends 'sushi'
+  ? SushiToLifiChainId<TChainId & XSwapSupportedChainId>
+  : LifiToSushiChainId<TChainId & LifiChainId>
+
 type FlavorConfig<
   TChainId extends ChainIdForFlavor<TFlavor>,
   TFlavor extends SchemaFlavor,
@@ -193,8 +201,10 @@ type FlavorConfig<
     : LifiChainIdSchema<TChainId & LifiChainId>
   isSvmChainIdFn: (chainId: number) => boolean
   normalizeChainId: TFlavor extends 'sushi'
-    ? (chainId: XSwapSupportedChainId) => SushiToLifiChainId<TChainId>
-    : (chainId: LifiChainId) => LifiToSushiChainId<TChainId>
+    ? (
+        chainId: XSwapSupportedChainId,
+      ) => NormalizedChainIdForFlavor<TChainId, TFlavor>
+    : (chainId: LifiChainId) => NormalizedChainIdForFlavor<TChainId, TFlavor>
 }
 
 function getFlavorConfig<
@@ -247,7 +257,7 @@ function estimateSchema<
     toAmount: z.string(),
     toAmountMin: z.string(),
     toAmountUSD: z.string().optional(),
-    approvalAddress: z.unknown(),
+    approvalAddress: z.union([getAddressSchema(1), getAddressSchema(-5)]),
     feeCosts: z
       .array(
         z.object({
@@ -286,22 +296,71 @@ function estimateSchema<
 function transactionRequestSchema<
   TChainId extends ChainIdForFlavor<TFlavor>,
   TFlavor extends SchemaFlavor,
->(chainId: TChainId, flavor: TFlavor) {
+>(
+  chainId: TChainId,
+  flavor: TFlavor,
+): z.ZodType<
+  TChainId extends SvmChainId | typeof LIFI_SOLANA_CHAIN_ID
+    ? {
+        data: string
+      }
+    : {
+        to?: AddressFor<LifiToSushiChainId<TChainId & LifiChainId>> | null
+        from?: AddressFor<LifiToSushiChainId<TChainId & LifiChainId>>
+        data?: Hex
+        value?: string
+        gasPrice?: string
+      }
+> {
   const config = getFlavorConfig(chainId, flavor)
 
   if (config.isSvmChainIdFn(chainId)) {
     return z.object({
       data: z.string(),
-    })
+    }) as unknown as z.ZodType<
+      TChainId extends SvmChainId | typeof LIFI_SOLANA_CHAIN_ID
+        ? {
+            data: string
+          }
+        : {
+            to?: AddressFor<LifiToSushiChainId<TChainId & LifiChainId>> | null
+            from?: AddressFor<LifiToSushiChainId<TChainId & LifiChainId>>
+            data?: Hex
+            value?: string
+            gasPrice?: string
+          }
+    >
   }
 
   return z.object({
-    to: z.string().nullable().optional(),
-    from: z.string().optional(),
-    data: z.string().optional(),
+    to: getAddressSchema(chainId, {
+      isSvmChainIdFn: config.isSvmChainIdFn,
+    })
+      .nullable()
+      .optional(),
+    from: getAddressSchema(chainId, {
+      isSvmChainIdFn: config.isSvmChainIdFn,
+    }).optional(),
+    data: z
+      .string()
+      .regex(/^0x[a-fA-F0-9]*$/)
+      .transform((data) => data as Hex)
+      .optional(),
     value: z.string().optional(),
     gasPrice: z.string().optional(),
-  })
+  }) as unknown as z.ZodType<
+    TChainId extends SvmChainId | typeof LIFI_SOLANA_CHAIN_ID
+      ? {
+          data: string
+        }
+      : {
+          to?: AddressFor<LifiToSushiChainId<TChainId & LifiChainId>> | null
+          from?: AddressFor<LifiToSushiChainId<TChainId & LifiChainId>>
+          data?: Hex
+          value?: string
+          gasPrice?: string
+        }
+  >
 }
 
 const toolDetailsSchema = z.object({
@@ -310,6 +369,7 @@ const toolDetailsSchema = z.object({
   logoURI: z.string(),
 })
 
+const crossChainTypeSchema = z.enum(['swap', 'cross', 'lifi', 'protocol'])
 const executionTypeSchema = z.enum(['transaction', 'message', 'all'])
 const typedDataSchema = z.record(z.string(), z.unknown())
 
@@ -320,7 +380,7 @@ function stepBaseSchema<
 >(fromChainId: TChainId0, toChainId: TChainId1, flavor: TFlavor) {
   return z.object({
     id: z.string(),
-    type: z.unknown(),
+    type: crossChainTypeSchema,
     tool: z.string(),
     toolDetails: toolDetailsSchema,
     integrator: z.string().optional(),
@@ -342,11 +402,26 @@ function stepSchema<
   TChainId1 extends ChainIdForFlavor<TFlavor>,
   TFlavor extends SchemaFlavor,
 >(fromChainId: TChainId0, toChainId: TChainId1, flavor: TFlavor) {
+  const multichainSteps = z.array(
+    z.union([
+      stepBaseSchema(fromChainId, fromChainId, flavor),
+      stepBaseSchema(fromChainId, toChainId, flavor),
+      stepBaseSchema(toChainId, toChainId, flavor),
+    ]),
+  )
+
   return stepBaseSchema(fromChainId, toChainId, flavor).extend({
-    type: z.unknown(),
-    includedSteps: z.unknown(),
+    // We only need to pass nested step payloads through.
+    includedSteps: multichainSteps,
+    includedStepsWithoutFees: multichainSteps.optional(),
   })
 }
+
+type Step<
+  TChainId0 extends ChainIdForFlavor<TFlavor>,
+  TChainId1 extends ChainIdForFlavor<TFlavor>,
+  TFlavor extends SchemaFlavor,
+> = z.infer<ReturnType<typeof stepSchema<TChainId0, TChainId1, TFlavor>>>
 
 function tokenSchema<
   TChainId extends ChainIdForFlavor<TFlavor>,
@@ -358,7 +433,13 @@ function tokenSchema<
     address: getAddressSchema(chainId, {
       isSvmChainIdFn: config.isSvmChainIdFn,
     }),
-    chainId: config.chainIdSchema.transform((c) => config.normalizeChainId(c)),
+    chainId: config.chainIdSchema.transform(
+      (c) =>
+        config.normalizeChainId(c) as NormalizedChainIdForFlavor<
+          TChainId,
+          TFlavor
+        >,
+    ),
     decimals: z.number(),
     symbol: z.string(),
     name: z.string(),
@@ -378,13 +459,21 @@ function actionSchema<
   const toConfig = getFlavorConfig(toChainId, flavor)
 
   return z.object({
-    fromChainId: fromConfig.chainIdSchema.transform((c) =>
-      fromConfig.normalizeChainId(c),
+    fromChainId: fromConfig.chainIdSchema.transform(
+      (c) =>
+        fromConfig.normalizeChainId(c) as NormalizedChainIdForFlavor<
+          TChainId0,
+          TFlavor
+        >,
     ),
     fromAmount: z.string(),
     fromToken: tokenSchema(fromChainId, flavor),
-    toChainId: toConfig.chainIdSchema.transform((c) =>
-      toConfig.normalizeChainId(c),
+    toChainId: toConfig.chainIdSchema.transform(
+      (c) =>
+        toConfig.normalizeChainId(c) as NormalizedChainIdForFlavor<
+          TChainId1,
+          TFlavor
+        >,
     ),
     toToken: tokenSchema(toChainId, flavor),
     slippage: z.number().optional(),
@@ -403,6 +492,7 @@ export {
   lifiChainIdSchema,
   sushiChainIdSchema,
   stepSchema,
+  type Step,
   tokenSchema,
   transactionRequestSchema,
 }

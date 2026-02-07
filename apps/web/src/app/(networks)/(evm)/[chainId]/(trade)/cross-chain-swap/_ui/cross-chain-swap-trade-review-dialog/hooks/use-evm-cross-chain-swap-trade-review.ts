@@ -26,7 +26,7 @@ import type { CrossChainSwapTradeReviewBase } from '../types'
 import { useCrossChainSwapTradeReviewPre } from './use-cross-chain-swap-trade-review-pre'
 import { useCrossChainSwapTradeReviewWriteHandlers } from './use-cross-chain-swap-trade-review-write-handlers'
 
-function toBigInt(value: bigint | `0x${string}` | undefined) {
+function toBigInt(value: bigint | `0x${string}` | string | undefined) {
   if (value == null) return undefined
   return typeof value === 'bigint' ? value : BigInt(value)
 }

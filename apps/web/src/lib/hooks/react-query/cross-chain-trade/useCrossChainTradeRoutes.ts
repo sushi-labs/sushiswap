@@ -1,10 +1,8 @@
-import { type UseQueryOptions, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import type { XSwapSupportedChainId } from 'src/config'
 import { type Amount, type Percent, getNativeAddress } from 'sushi'
-import type {
-  CrossChainRoute,
-  CrossChainRoutesResponse,
-} from '../../../swap/cross-chain/types'
+import type { CrossChainRoutesResponse } from '~evm/api/cross-chain/routes/route'
 
 export interface UseCrossChainTradeRoutesParms<
   TChainId0 extends XSwapSupportedChainId,
@@ -16,19 +14,15 @@ export interface UseCrossChainTradeRoutesParms<
   toAddress?: AddressFor<TChainId1>
   slippage: Percent
   order?: 'CHEAPEST' | 'FASTEST'
-  query?: Omit<
-    UseQueryOptions<CrossChainRoute<TChainId0, TChainId1>[]>,
-    'queryFn' | 'queryKey'
-  >
 }
 
 export function useCrossChainTradeRoutes<
   TChainId0 extends XSwapSupportedChainId,
   TChainId1 extends XSwapSupportedChainId,
->({ query, ...params }: UseCrossChainTradeRoutesParms<TChainId0, TChainId1>) {
-  return useQuery<CrossChainRoute<TChainId0, TChainId1>[]>({
+>(params: UseCrossChainTradeRoutesParms<TChainId0, TChainId1>) {
+  return useQuery({
     queryKey: ['cross-chain/routes', params],
-    queryFn: async (): Promise<CrossChainRoute<TChainId0, TChainId1>[]> => {
+    queryFn: async () => {
       const { fromAmount, toToken, slippage, toAddress } = params
 
       if (!fromAmount || !toToken || !toAddress) throw new Error()
@@ -74,10 +68,9 @@ export function useCrossChainTradeRoutes<
 
       return routes
     },
-    refetchInterval: query?.refetchInterval ?? 1000 * 20, // 20s
-    enabled:
-      query?.enabled !== false &&
-      Boolean(params.toToken && params.fromAmount?.gt(0n) && params.toAddress),
-    ...query,
+    refetchInterval: ms('20s'),
+    enabled: Boolean(
+      params.toToken && params.fromAmount?.gt(0n) && params.toAddress,
+    ),
   })
 }

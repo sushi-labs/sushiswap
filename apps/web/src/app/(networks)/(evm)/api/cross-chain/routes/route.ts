@@ -5,6 +5,7 @@ import {
   type LifiChainId,
   getAddressSchema,
   lifiChainIdSchema,
+  lifiToSushiChainId,
   stepSchema,
   sushiChainIdSchema,
   sushiToLifiChainId,
@@ -53,12 +54,16 @@ function routesOutputSchema<
       z
         .object({
           id: z.string(),
-          fromChainId: lifiChainIdSchema(fromChainId),
+          fromChainId: lifiChainIdSchema(fromChainId as LifiChainId).transform(
+            (c) => lifiToSushiChainId(c),
+          ),
           fromAmountUSD: z.string().optional(),
           fromAmount: z.string(),
           fromToken: tokenSchema(fromChainId, 'lifi'),
           fromAddress: z.string().optional(),
-          toChainId: lifiChainIdSchema(toChainId),
+          toChainId: lifiChainIdSchema(toChainId as LifiChainId).transform(
+            (c) => lifiToSushiChainId(c),
+          ),
           toAmountUSD: z.string().optional(),
           toAmount: z.string(),
           toAmountMin: z.string(),
@@ -76,10 +81,11 @@ function routesOutputSchema<
         })
         .transform((data) => {
           const { steps, ...rest } = data
+
           return {
-            ...rest,
             step: steps[0],
-          }
+            ...rest,
+          } as typeof data & { step: (typeof steps)[number] } & { steps: never }
         }),
     ),
   })
@@ -128,6 +134,8 @@ export async function GET(request: NextRequest) {
 
   const response = await fetch(url, options)
   const json = await response.json()
+
+  console.log(json.routes[0])
 
   const parsed = routesOutputSchema(
     parsedParams.fromChainId,

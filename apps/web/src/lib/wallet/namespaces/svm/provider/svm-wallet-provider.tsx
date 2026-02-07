@@ -142,7 +142,7 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
       id: `svm:${connector.connectorId.toLowerCase()}`,
       name: walletInfo.name ?? '',
       namespace: 'svm',
-      account: connector.selectedAccount.address.toString(),
+      account: connector.selectedAccount.address,
       icon: walletInfo.icon ?? undefined,
     })
   }, [isConnected, connector, walletInfo.name, walletInfo.icon])

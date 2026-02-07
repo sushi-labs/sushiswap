@@ -3,6 +3,7 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { useMemo } from 'react'
 import type { XSwapSupportedChainId } from 'src/config'
 import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'
+import type { UseCrossChainTradeStepReturn } from 'src/lib/hooks/react-query'
 import { getCrossChainStepBreakdown } from 'src/lib/swap/cross-chain'
 import type {
   CrossChainAction,
@@ -15,7 +16,7 @@ import { Amount, formatNumber, getChainById, getNativeAddress } from 'sushi'
 type NewTokenInput = Parameters<typeof newToken>[0]
 
 interface CrossChainSwapRouteViewProps {
-  step: CrossChainStep
+  step: UseCrossChainTradeStepReturn
 }
 
 export function CrossChainSwapRouteView({

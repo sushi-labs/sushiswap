@@ -45,8 +45,8 @@ export function ConfirmationDialogContent<
   const swapOnDest =
     trade?.step &&
     [
-      trade.step.includedStepsWithoutFees[1]?.type,
-      trade.step.includedStepsWithoutFees[2]?.type,
+      trade.step.includedStepsWithoutFees?.[1]?.type,
+      trade.step.includedStepsWithoutFees?.[2]?.type,
     ].includes('swap')
 
   const [chain0, chain1] = useMemo(

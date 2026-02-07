@@ -4,30 +4,25 @@ import type { XSwapSupportedChainId } from 'src/config'
 import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'
 import { Amount, Percent, getNativeAddress } from 'sushi'
 import { stringify } from 'viem/utils'
-import type {
-  CrossChainStep,
-  CrossChainStepResponse,
-} from '../../../swap/cross-chain/types'
+import type { Step } from '~evm/api/cross-chain/schemas'
+import type { CrossChainStepResponse } from '~evm/api/cross-chain/step/route'
 
 type NewTokenInput = Parameters<typeof newToken>[0]
 
-export interface UseCrossChainTradeStepReturn<
+export type UseCrossChainTradeStepReturn<
   TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
   TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
-> extends CrossChainStep<TChainId0, TChainId1> {
-  tokenIn: CurrencyFor<TChainId0>
-  tokenOut: CurrencyFor<TChainId1>
-  amountIn?: Amount<CurrencyFor<TChainId0>>
-  amountOut?: Amount<CurrencyFor<TChainId1>>
-  amountOutMin?: Amount<CurrencyFor<TChainId1>>
-  priceImpact?: Percent
-}
+> = NonNullable<
+  ReturnType<typeof useCrossChainTradeStep<TChainId0, TChainId1>>['data']
+>
+
+// export type
 
 export interface UseCrossChainTradeStepParams<
-  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
 > {
-  step: CrossChainStep<TChainId0, TChainId1> | undefined
+  step: Step<TChainId0, TChainId1, 'lifi'> | undefined
   enabled?: boolean
 }
 
@@ -38,7 +33,7 @@ export function useCrossChainTradeStep<
   step,
   enabled = true,
 }: UseCrossChainTradeStepParams<TChainId0, TChainId1>) {
-  return useQuery<UseCrossChainTradeStepReturn<TChainId0, TChainId1>>({
+  return useQuery({
     queryKey: ['cross-chain/step', step],
     queryFn: async () => {
       if (!step) throw new Error()
