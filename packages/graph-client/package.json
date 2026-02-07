@@ -51,6 +51,7 @@
     "update-schemas": "tsx scripts/update-schemas.ts"
   },
   "dependencies": {
+    "@solana/addresses": "catalog:web3",
     "gql.tada": "1.7.5",
     "graphql": "16.6.0",
     "graphql-request": "7.1.0",

@@ -1,13 +1,13 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
-import { SUSHI_DATA_API_HOST } from 'sushi/evm'
+import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
 
 export const PortfolioWalletQuery = graphql(
   `
-  query PortfolioWallet($id: ID!) {
-    portfolioWallet(id: $id) {
+  query PortfolioWallet($ids: [ID!]!) {
+    portfolioWallet(ids: $ids) {
       totalUSD
       amountUSD24Change
       percentageChange24h

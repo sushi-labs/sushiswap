@@ -56,7 +56,7 @@ import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
 import { Amount, Fraction, formatPercent } from 'sushi'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { LiquidityChartRangeInput } from './LiquidityChartRangeInput'
 import {
   useConcentratedDerivedMintInfo,
@@ -119,7 +119,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
   showStartPrice = true,
 }) => {
   const isMounted = useIsMounted()
-  const { address } = useAccount()
+  const { address } = useConnection()
   const [invert, setInvert] = useState(false)
   const [yieldRate, setYieldRate] = useState<YieldRatePeriod>(
     YieldRatePeriod.ANNUALLY,

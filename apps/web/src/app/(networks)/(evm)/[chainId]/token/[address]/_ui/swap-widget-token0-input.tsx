@@ -1,7 +1,7 @@
 'use client'
 
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { isEvmWNativeSupported } from 'sushi/evm'
+import { isWNativeSupported } from 'sushi'
 import { useDerivedStateSwapWidget } from './derivedstate-swap-widget-provider'
 
 export const SwapWidgetToken0Input = () => {
@@ -20,7 +20,7 @@ export const SwapWidgetToken0Input = () => {
       value={swapAmountString}
       onChange={setSwapAmount}
       currency={token0}
-      allowNative={isEvmWNativeSupported(chainId)}
+      allowNative={isWNativeSupported(chainId)}
       label="Sell"
     />
   )

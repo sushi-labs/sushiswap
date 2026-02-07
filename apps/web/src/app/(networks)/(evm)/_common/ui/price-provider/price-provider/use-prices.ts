@@ -1,24 +1,58 @@
 'use client'
 
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { Fraction, withoutScientificNotation } from 'sushi'
-import type { EvmAddress, EvmChainId } from 'sushi/evm'
+import { type EvmAddress, type EvmChainId, isEvmChainId } from 'sushi/evm'
+import { type SvmAddress, type SvmChainId, isSvmChainId } from 'sushi/svm'
 import { parseUnits } from 'viem'
 import { usePriceProvider } from './price-provider'
 
-export type PriceMap = {
-  has: (address: EvmAddress) => boolean
-  get: (address: EvmAddress) => number | undefined
-  getFraction: (address: EvmAddress) => Fraction | undefined
+export type PriceMap<TChainId extends EvmChainId | SvmChainId = EvmChainId> = {
+  has: (address: AddressFor<TChainId>) => boolean
+  get: (address: AddressFor<TChainId>) => number | undefined
+  getFraction: (address: AddressFor<TChainId>) => Fraction | undefined
 }
 
-export function usePrices({
+type UsePricesResult<TChainId extends EvmChainId | SvmChainId> = {
+  data: PriceMap<TChainId> | undefined
+  lastModified: number
+  isLoading: boolean
+  isUpdating: boolean
+  isError: boolean
+}
+
+const disabledData = {
+  data: undefined,
+  lastModified: 0,
+  isLoading: false,
+  isUpdating: false,
+  isError: false,
+}
+
+function translateAddress<TChainId extends EvmChainId | SvmChainId>(
+  chainId: TChainId,
+  address: AddressFor<TChainId>,
+): TChainId extends SvmChainId ? SvmAddress : bigint {
+  if (isSvmChainId(chainId)) {
+    // Solana addresses are strings, the API returns only JSON for SVM chains
+    return address as any
+  } else {
+    // EVM addresses are bigints, the API returns binary data for EVM chains
+    return BigInt(address) as any
+  }
+}
+
+export function usePrices<TChainId extends EvmChainId | SvmChainId>({
   chainId,
   enabled = true,
-}: { chainId: EvmChainId | undefined; enabled?: boolean }) {
+}: {
+  chainId: TChainId | undefined
+  enabled?: boolean
+}): UsePricesResult<TChainId> {
   // Important to use state, not state.chains directly, as the reference to state.chains won't be changing and the component won't re-render
   // It's not best practice, but it's controlled here in the hook and not exposed
   const { state, mutate } = usePriceProvider()
+  const requestedRef = useRef<Set<SvmAddress>>(new Set())
 
   useEffect(() => {
     if (state.ready && chainId && enabled) {
@@ -32,6 +66,11 @@ export function usePrices({
     }
   }, [chainId, enabled, mutate, state.ready])
 
+  useEffect(() => {
+    void chainId
+    requestedRef.current.clear()
+  }, [chainId])
+
   const chain = useMemo(
     () => (chainId ? state.chains.get(chainId) : undefined),
     [state, chainId],
@@ -39,13 +78,7 @@ export function usePrices({
 
   return useMemo(() => {
     if (!chainId) {
-      return {
-        data: undefined,
-        lastModified: 0,
-        isLoading: false,
-        isUpdating: false,
-        isError: false,
-      }
+      return disabledData
     }
 
     if (!chain)
@@ -66,21 +99,37 @@ export function usePrices({
         isError: chain.isError,
       }
 
-    const data: PriceMap = {
-      has: (_address: EvmAddress) => {
-        const address = BigInt(_address)
+    const data: PriceMap<TChainId> = {
+      has: (_address: AddressFor<TChainId>) => {
+        const address = translateAddress(chainId, _address)
 
-        return chain.priceMap!.has(address)
+        const hasPrice = chain.priceMap!.has(address)
+        if (!hasPrice && isSvmChainId(chainId)) {
+          const svmAddress = _address as SvmAddress
+          if (!requestedRef.current.has(svmAddress)) {
+            requestedRef.current.add(svmAddress)
+            mutate.requestPrices(chainId, [svmAddress])
+          }
+        }
+
+        return hasPrice
       },
-      get: (_address: EvmAddress) => {
-        const address = BigInt(_address)
+      get: (_address: AddressFor<TChainId>) => {
+        const address = translateAddress(chainId, _address)
 
         const price = chain.priceMap!.get(address)
+        if (price === undefined && isSvmChainId(chainId)) {
+          const svmAddress = _address as SvmAddress
+          if (!requestedRef.current.has(svmAddress)) {
+            requestedRef.current.add(svmAddress)
+            mutate.requestPrices(chainId, [svmAddress])
+          }
+        }
         return price
       },
 
-      getFraction: (_address: EvmAddress) => {
-        const address = BigInt(_address)
+      getFraction: (_address: AddressFor<TChainId>) => {
+        const address = translateAddress(chainId, _address)
 
         const price = chain.priceMap!.get(address)
         if (price) {
@@ -91,6 +140,13 @@ export function usePrices({
             ).toString(),
             denominator: parseUnits('1', 18).toString(),
           })
+        }
+        if (isSvmChainId(chainId)) {
+          const svmAddress = _address as SvmAddress
+          if (!requestedRef.current.has(svmAddress)) {
+            requestedRef.current.add(svmAddress)
+            mutate.requestPrices(chainId, [svmAddress])
+          }
         }
         return undefined
       },
@@ -103,5 +159,5 @@ export function usePrices({
       isUpdating: chain.isUpdating,
       isError: chain.isError,
     }
-  }, [chainId, chain])
+  }, [chainId, chain, mutate])
 }

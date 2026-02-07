@@ -4,13 +4,13 @@ import { useQuery } from '@tanstack/react-query'
 import { createConfig, getBalance } from '@wagmi/core'
 import { EvmChainId } from 'sushi/evm'
 import type { Address } from 'viem'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { publicWagmiConfig } from '../../wagmi/config/public'
 
 const MAX_BALANCE_AMOUNT = 100000000000n // '0.0000001'
 
 export const useSkaleEuropaFaucet = () => {
-  const { address, chainId } = useAccount()
+  const { address, chainId } = useConnection()
 
   return useQuery({
     queryKey: ['useSkaleEuropaFaucet', address],

@@ -9,7 +9,7 @@ import { CrossChainSwapToken1Input } from './cross-chain-swap-token1-input'
 import { CrossChainSwapTradeButton } from './cross-chain-swap-trade-button'
 import { CrossChainSwapTradeStats } from './cross-chain-swap-trade-stats'
 
-export const CrossChainSwapWidget = () => {
+export function CrossChainSwapWidget() {
   return (
     <DetailsInteractionTrackerProvider>
       <div className="flex flex-col gap-4 p-4 md:p-6 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(25,32,49,0.8)] rounded-3xl backdrop-blur-2xl">

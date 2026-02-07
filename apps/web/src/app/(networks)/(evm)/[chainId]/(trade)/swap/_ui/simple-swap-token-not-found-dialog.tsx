@@ -25,14 +25,14 @@ import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
 import React, { useCallback } from 'react'
 import { useTokenSecurity } from 'src/lib/hooks/react-query'
 import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
-import { shortenAddress } from 'sushi'
+import { getChainById, shortenAddress } from 'sushi'
 import {
   type EvmToken,
   defaultCurrency,
   defaultQuoteCurrency,
-  getEvmChainById,
   isTokenSecurityChainId,
 } from 'sushi/evm'
+import type { SvmToken } from 'sushi/svm'
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
 export const SimpleSwapTokenNotFoundDialog = () => {
@@ -55,8 +55,8 @@ export const SimpleSwapTokenNotFoundDialog = () => {
   )
 
   const onImport = useCallback(
-    ([token0, token1]: (EvmToken | undefined)[]) => {
-      const _tokens: EvmToken[] = []
+    ([token0, token1]: (EvmToken | SvmToken | undefined)[]) => {
+      const _tokens: (EvmToken | SvmToken)[] = []
       if (token0?.metadata.approved === false) _tokens.push(token0)
       if (token1?.metadata.approved === false) _tokens.push(token1)
 
@@ -152,7 +152,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                   Could not retrieve token info for{' '}
                   <a
                     target="_blank"
-                    href={getEvmChainById(token0.chainId)?.getTokenUrl(
+                    href={getChainById(token0.chainId)?.getTokenUrl(
                       token0.wrap().address,
                     )}
                     className="text-blue font-medium"
@@ -161,7 +161,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                     {shortenAddress(token0.wrap().address)}
                   </a>{' '}
                   are you sure this token is on{' '}
-                  {getEvmChainById(token0.chainId).name}?
+                  {getChainById(token0.chainId).name}?
                 </p>
               </List.Control>
             </List>
@@ -200,7 +200,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                     </div>
                     <LinkExternal
                       target="_blank"
-                      href={getEvmChainById(token0.chainId)?.getTokenUrl(
+                      href={getChainById(token0.chainId)?.getTokenUrl(
                         token0.address,
                       )}
                       className="font-medium"
@@ -236,7 +236,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                   Could not retrieve token info for{' '}
                   <a
                     target="_blank"
-                    href={getEvmChainById(token1.chainId)?.getTokenUrl(
+                    href={getChainById(token1.chainId)?.getTokenUrl(
                       token1.wrap().address,
                     )}
                     className="text-blue font-medium"
@@ -245,7 +245,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                     {shortenAddress(token1.wrap().address)}
                   </a>{' '}
                   are you sure this token is on{' '}
-                  {getEvmChainById(token1.chainId)?.name}?
+                  {getChainById(token1.chainId)?.name}?
                 </p>
               </List.Control>
             </List>
@@ -284,7 +284,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                     </div>
                     <LinkExternal
                       target="_blank"
-                      href={getEvmChainById(token1.chainId)?.getTokenUrl(
+                      href={getChainById(token1.chainId)?.getTokenUrl(
                         token1.address,
                       )}
                       className="font-medium"

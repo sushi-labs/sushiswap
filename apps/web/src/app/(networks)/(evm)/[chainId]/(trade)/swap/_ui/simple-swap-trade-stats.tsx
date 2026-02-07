@@ -1,7 +1,6 @@
 'use client'
 
 import { ChevronDownIcon } from '@heroicons/react-v1/solid'
-import { useIsMounted } from '@sushiswap/hooks'
 import {
   BrowserEvent,
   InterfaceElementName,
@@ -18,17 +17,22 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { GasIcon } from '@sushiswap/ui/icons/GasIcon'
-import React, { useEffect, type FC } from 'react'
-import { UI_FEE_PERCENT } from 'src/config'
+import React, { useEffect, useMemo, type FC } from 'react'
+import { getUiFeePercent } from 'src/config'
 import {
   warningSeverity,
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
-import { ZERO, formatUSD, shortenAddress } from 'sushi'
-import { EvmChainId, EvmNative, getEvmChainById } from 'sushi/evm'
-import { type Address, isAddress } from 'viem'
-import { useAccount } from 'wagmi'
+import { useAccount } from 'src/lib/wallet'
+import { ZERO, formatUSD, getChainById, shortenAddress } from 'sushi'
+import { type EvmAddress, EvmChainId, EvmNative, isEvmAddress } from 'sushi/evm'
+import {
+  type SvmChainId,
+  SvmNative,
+  isSvmAddress,
+  isSvmChainId,
+} from 'sushi/svm'
 import { useDetailsInteractionTracker } from '../../_ui/details-interaction-tracker-provider'
 import {
   useDerivedStateSimpleSwap,
@@ -36,8 +40,66 @@ import {
 } from './derivedstate-simple-swap-provider'
 import { SimpleSwapTokenRate } from './simple-swap-token-rate'
 
+function Recipient<TChainId extends EvmChainId | SvmChainId>({
+  chainId,
+  recipient,
+}: { chainId: TChainId; recipient: AddressFor<TChainId> | undefined }) {
+  const address = useAccount(chainId)
+
+  const hasValidRecipient = Boolean(
+    recipient &&
+      (isSvmChainId(chainId)
+        ? isSvmAddress(recipient)
+        : isEvmAddress(recipient)),
+  )
+
+  if (!recipient || !hasValidRecipient) {
+    return null
+  }
+
+  return (
+    <div className="flex justify-between items-center border-t border-gray-200 dark:border-slate-200/5 mt-2 pt-2">
+      <span className="font-medium text-sm text-gray-700 dark:text-slate-300">
+        Recipient
+      </span>
+      <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
+        <a
+          target="_blank"
+          href={getChainById(chainId as EvmChainId | SvmChainId).getAccountUrl(
+            recipient as EvmAddress,
+          )}
+          className={classNames(
+            address !== recipient
+              ? 'text-yellow-600'
+              : 'text-gray-700 dark:text-slate-300',
+            'transition-all flex gap-1 items-center',
+          )}
+          rel="noreferrer"
+        >
+          {isSvmChainId(chainId) ? (
+            <>{shortenAddress(recipient)}</>
+          ) : (
+            <AddressToEnsResolver address={recipient as EvmAddress}>
+              {({ isLoading, data }) => {
+                return (
+                  <>{isLoading || !data ? shortenAddress(recipient) : data}</>
+                )
+              }}
+            </AddressToEnsResolver>
+          )}
+          {address !== recipient && (
+            <Explainer>
+              Recipient is different from the connected wallet address. If this
+              is expected, ignore this warning.
+            </Explainer>
+          )}
+        </a>
+      </span>
+    </div>
+  )
+}
+
 export const SimpleSwapTradeStats: FC = () => {
-  const { address } = useAccount()
   const {
     state: { chainId, swapAmountString, recipient },
   } = useDerivedStateSimpleSwap()
@@ -52,9 +114,10 @@ export const SimpleSwapTradeStats: FC = () => {
   const { isLoading, data: quote } = useSimpleSwapTradeQuote()
 
   const loading = Boolean(isLoading && !quote)
-  const hasValidQuote = Boolean(
-    +swapAmountString > 0 && quote?.route?.status !== 'NoWay',
-  )
+
+  const isNoWay =
+    quote?.route && 'status' in quote.route && quote?.route?.status === 'NoWay'
+  const hasValidQuote = Boolean(+swapAmountString > 0 && !isNoWay)
 
   useEffect(() => {
     if (!hasValidQuote && !isDetailsCollapsed) {
@@ -62,6 +125,13 @@ export const SimpleSwapTradeStats: FC = () => {
       resetDetailsTrackedState()
     }
   }, [hasValidQuote, isDetailsCollapsed, resetDetailsTrackedState])
+
+  const nativeSymbol = useMemo(() => {
+    if (isSvmChainId(chainId)) {
+      return SvmNative.fromChainId(chainId).symbol
+    }
+    return EvmNative.fromChainId(chainId).symbol
+  }, [chainId])
 
   return (
     <>
@@ -173,7 +243,7 @@ export const SimpleSwapTradeStats: FC = () => {
 
           <div className="flex justify-between items-center gap-2">
             <span className="text-sm text-gray-700 dark:text-slate-400">
-              Fee ({UI_FEE_PERCENT}%)
+              Fee ({getUiFeePercent(chainId)}%)
             </span>
             <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
               {loading || !quote?.fee ? (
@@ -194,7 +264,7 @@ export const SimpleSwapTradeStats: FC = () => {
               ) : loading || !quote?.gasSpent || quote.gasSpent === '0' ? (
                 <SkeletonBox className="h-4 py-0.5 w-[120px]" />
               ) : quote?.gasSpent ? (
-                `${quote.gasSpent} ${EvmNative.fromChainId(chainId).symbol} ${
+                `${quote.gasSpent} ${nativeSymbol} ${
                   quote?.gasSpentUsd ? `($${quote.gasSpentUsd})` : ''
                 }`
               ) : null}
@@ -214,44 +284,7 @@ export const SimpleSwapTradeStats: FC = () => {
             </span>
           </div>
 
-          {recipient && isAddress(recipient) && (
-            <div className="flex justify-between items-center border-t border-gray-200 dark:border-slate-200/5 mt-2 pt-2">
-              <span className="font-medium text-sm text-gray-700 dark:text-slate-300">
-                Recipient
-              </span>
-              <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
-                <a
-                  target="_blank"
-                  href={getEvmChainById(chainId).getAccountUrl(recipient)}
-                  className={classNames(
-                    address !== recipient
-                      ? 'text-yellow-600'
-                      : 'text-gray-700 dark:text-slate-300',
-                    'transition-all flex gap-1 items-center',
-                  )}
-                  rel="noreferrer"
-                >
-                  <AddressToEnsResolver address={recipient as Address}>
-                    {({ isLoading, data }) => {
-                      return (
-                        <>
-                          {isLoading || !data
-                            ? shortenAddress(recipient)
-                            : data}
-                        </>
-                      )
-                    }}
-                  </AddressToEnsResolver>
-                  {address !== recipient && (
-                    <Explainer>
-                      Recipient is different from the connected wallet address.
-                      If this is expected, ignore this warning.
-                    </Explainer>
-                  )}
-                </a>
-              </span>
-            </div>
-          )}
+          <Recipient chainId={chainId} recipient={recipient} />
         </div>
       </Collapsible>
     </>

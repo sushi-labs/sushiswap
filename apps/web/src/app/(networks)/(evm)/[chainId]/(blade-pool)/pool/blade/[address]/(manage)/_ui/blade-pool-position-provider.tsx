@@ -14,7 +14,7 @@ import {
 import { useVestingDeposit } from 'src/lib/pool/blade/useVestingDeposit'
 import type { Amount } from 'sushi'
 import { type EvmCurrency, EvmToken } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 
@@ -37,7 +37,7 @@ export const BladePoolPositionProvider: FC<{
   children: ReactNode
   watch?: boolean
 }> = ({ pool, children }) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const liquidityToken = useMemo(() => {
     return new EvmToken({
       chainId: pool.chainId,

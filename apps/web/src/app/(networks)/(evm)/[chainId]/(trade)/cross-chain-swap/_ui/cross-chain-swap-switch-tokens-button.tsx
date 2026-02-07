@@ -10,7 +10,7 @@ import {
 
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
-export const CrossChainSwapSwitchTokensButton = () => {
+export function CrossChainSwapSwitchTokensButton() {
   const {
     mutate: { switchTokens },
   } = useDerivedStateCrossChainSwap()

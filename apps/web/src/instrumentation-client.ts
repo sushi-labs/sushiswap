@@ -41,7 +41,6 @@ if (!faro.api && !process.env.CI) {
         environment: process.env.NEXT_PUBLIC_VERCEL_ENV || 'development',
       },
       beforeSend: (item) => {
-        console.log(item)
         if (item.type === 'log') {
           const log = item as TransportItem<LogEvent>
           if (

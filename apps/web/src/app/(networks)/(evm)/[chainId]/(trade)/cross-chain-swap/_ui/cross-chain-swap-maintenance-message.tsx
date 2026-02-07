@@ -3,7 +3,7 @@
 import { Message } from '@sushiswap/ui'
 import { useIsCrossChainSwapMaintenance } from './use-is-cross-chain-swap-maintenance'
 
-export const CrossChainSwapMaintenanceMessage = () => {
+export function CrossChainSwapMaintenanceMessage() {
   const { data: isMaintenance } = useIsCrossChainSwapMaintenance()
 
   if (isMaintenance)

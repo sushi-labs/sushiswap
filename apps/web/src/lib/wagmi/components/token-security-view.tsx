@@ -14,13 +14,14 @@ import {
   isTokenSecurityIssue,
 } from 'src/lib/hooks/react-query'
 import type { EvmToken } from 'sushi/evm'
+import type { SvmToken } from 'sushi/svm'
 
 export const TokenSecurityView = ({
   token,
   tokenSecurity,
   isTokenSecurityLoading,
 }: {
-  token: EvmToken
+  token: EvmToken | SvmToken
   tokenSecurity: TokenSecurityResponse | undefined
   isTokenSecurityLoading: boolean
 }) => {

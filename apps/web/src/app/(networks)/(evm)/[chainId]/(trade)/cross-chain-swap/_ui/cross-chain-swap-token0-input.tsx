@@ -1,18 +1,25 @@
 'use client'
 
-import { XSWAP_SUPPORTED_CHAIN_IDS, getSortedChainIds } from 'src/config'
+import {
+  XSWAP_SUPPORTED_CHAIN_IDS,
+  type XSwapSupportedChainId,
+  getSortedChainIds,
+} from 'src/config'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { isEvmWNativeSupported } from 'sushi/evm'
+import { isWNativeSupported } from 'sushi'
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
 const networks = getSortedChainIds(XSWAP_SUPPORTED_CHAIN_IDS)
 
-export const CrossChainSwapToken0Input = () => {
+export function CrossChainSwapToken0Input<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+>() {
   const {
     state: { swapAmountString, chainId0, token0 },
     mutate: { setSwapAmount, setToken0, setChainId0 },
     isToken0Loading: isLoading,
-  } = useDerivedStateCrossChainSwap()
+  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
 
   return (
     <Web3Input.Currency
@@ -26,11 +33,11 @@ export const CrossChainSwapToken0Input = () => {
       currency={token0}
       loading={isLoading}
       currencyLoading={isLoading}
-      allowNative={isEvmWNativeSupported(chainId0)}
+      allowNative={isWNativeSupported(chainId0)}
       label="Sell"
       networks={networks}
       selectedNetwork={chainId0}
-      onNetworkChange={setChainId0}
+      onNetworkChange={(network) => setChainId0(network as TChainId0)}
     />
   )
 }

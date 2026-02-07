@@ -11,7 +11,7 @@ import {
   getEvmChainById,
   isEvmWNativeSupported,
 } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
 import { SelectPricesWidget } from '~evm/[chainId]/_ui/select-prices-widget'
 import {
@@ -37,7 +37,7 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
 }
 
 const _Add: FC = () => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const {
     chainId,
     token0,

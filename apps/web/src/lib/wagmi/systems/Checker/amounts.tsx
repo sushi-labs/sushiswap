@@ -1,19 +1,28 @@
 'use client'
 
 import { Button, type ButtonProps } from '@sushiswap/ui'
-import { type FC, useMemo } from 'react'
-import { type Amount, ZERO } from 'sushi'
-import type { EvmChainId, EvmCurrency } from 'sushi/evm'
+import { useMemo } from 'react'
+import { type Amount, type IDFor, ZERO } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 import { useAmountBalances } from '~evm/_common/ui/balance-provider/use-balances'
 
-type AmountsProps = ButtonProps & {
-  chainId: EvmChainId | undefined
+type AmountsProps<
+  TChainId extends EvmChainId | SvmChainId = EvmChainId | SvmChainId,
+> = ButtonProps & {
+  chainId: TChainId | undefined
 } & (
-    | { amounts: (Amount<EvmCurrency> | undefined)[]; amount?: undefined }
-    | { amounts?: undefined; amount: Amount<EvmCurrency> | undefined }
+    | {
+        amounts: (Amount<CurrencyFor<TChainId>> | undefined)[]
+        amount?: undefined
+      }
+    | {
+        amounts?: undefined
+        amount: Amount<CurrencyFor<TChainId>> | undefined
+      }
   )
 
-const Amounts: FC<AmountsProps> = ({
+function Amounts<TChainId extends EvmChainId | SvmChainId>({
   type: _type,
   amounts: _amounts,
   amount,
@@ -22,7 +31,7 @@ const Amounts: FC<AmountsProps> = ({
   fullWidth = true,
   size = 'xl',
   ...props
-}) => {
+}: AmountsProps<TChainId>) {
   const amounts = useMemo(() => {
     if (_amounts) return _amounts
     return [amount]
@@ -42,7 +51,9 @@ const Amounts: FC<AmountsProps> = ({
   const sufficientBalance = useMemo(() => {
     return amounts?.every((amount) => {
       if (!amount) return true
-      return !balances?.get(amount.currency.id)?.lt(amount)
+      return !balances
+        ?.get(amount.currency.id as IDFor<TChainId, true>)
+        ?.lt(amount)
     })
   }, [amounts, balances])
 

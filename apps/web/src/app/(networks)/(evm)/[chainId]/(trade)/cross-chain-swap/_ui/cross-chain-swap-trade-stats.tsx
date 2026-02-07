@@ -9,9 +9,8 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import React, { type FC, useEffect, useMemo } from 'react'
-import { ZERO, formatUSD, shortenAddress } from 'sushi'
-import { getEvmChainById } from 'sushi/evm'
+import React, { useEffect, useMemo } from 'react'
+import { ZERO, formatUSD, getChainById, shortenAddress } from 'sushi'
 import { isAddress } from 'viem'
 
 import { ChevronDownIcon } from '@heroicons/react-v1/solid'
@@ -22,14 +21,14 @@ import {
   TraceEvent,
 } from '@sushiswap/telemetry'
 import { GasIcon } from '@sushiswap/ui/icons/GasIcon'
-import { UI_FEE_PERCENT } from 'src/config'
+import { EVM_UI_FEE_PERCENT, type XSwapSupportedChainId } from 'src/config'
 import { getCrossChainFeesBreakdown } from 'src/lib/swap/cross-chain'
 import {
   warningSeverity,
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
-import { useAccount } from 'wagmi'
+import { useAccount } from 'src/lib/wallet'
 import { useDetailsInteractionTracker } from '../../_ui/details-interaction-tracker-provider'
 import { CrossChainSwapFeesHoverCard } from './cross-chain-swap-fees-hover-card'
 import { CrossChainSwapTokenRate } from './cross-chain-swap-token-rate'
@@ -38,11 +37,13 @@ import {
   useSelectedCrossChainTradeRoute,
 } from './derivedstate-cross-chain-swap-provider'
 
-export const CrossChainSwapTradeStats: FC = () => {
-  const { address } = useAccount()
+export function CrossChainSwapTradeStats<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+>() {
   const {
     state: { chainId0, chainId1, swapAmountString, recipient },
-  } = useDerivedStateCrossChainSwap()
+  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
   const { isLoading, data: trade, isError } = useSelectedCrossChainTradeRoute()
   const {
     state: { isDetailsCollapsed },
@@ -59,6 +60,8 @@ export const CrossChainSwapTradeStats: FC = () => {
       resetDetailsTrackedState()
     }
   }, [hasValidQuote, isDetailsCollapsed, resetDetailsTrackedState])
+
+  const address = useAccount(chainId1)
 
   const feeData = useMemo(
     () => (trade?.step ? getCrossChainFeesBreakdown(trade.step) : undefined),
@@ -173,7 +176,7 @@ export const CrossChainSwapTradeStats: FC = () => {
 
           <div className="flex justify-between items-center gap-2">
             <span className="text-sm text-gray-700 dark:text-slate-400">
-              Fee ({UI_FEE_PERCENT}%)
+              Fee ({EVM_UI_FEE_PERCENT}%)
             </span>
             <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
               {isLoading || !feeData ? (
@@ -215,7 +218,9 @@ export const CrossChainSwapTradeStats: FC = () => {
               <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
                 <a
                   target="_blank"
-                  href={getEvmChainById(chainId1).getAccountUrl(recipient)}
+                  href={getChainById(
+                    chainId1 as XSwapSupportedChainId,
+                  ).getAccountUrl(recipient)}
                   className={classNames(
                     address !== recipient
                       ? 'text-yellow-600'

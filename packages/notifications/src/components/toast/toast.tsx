@@ -87,10 +87,12 @@ export const createErrorToast = (
 
   const toastId = `failed:${nanoid()}`
   toast(
-    <>
-      <ToastContent summary={message} code={code} />
-      <ToastButtons onDismiss={() => toast.dismiss(toastId)} />
-    </>,
+    () => (
+      <>
+        <ToastContent summary={message} code={code} />
+        <ToastButtons onDismiss={() => toast.dismiss(toastId)} />
+      </>
+    ),
     {
       ...TOAST_OPTIONS,
       toastId,

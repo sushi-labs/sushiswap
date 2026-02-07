@@ -2,7 +2,7 @@ import type { V2Position } from '@sushiswap/graph-client/data-api'
 import React, { type FC, type ReactNode } from 'react'
 import { useSushiV2UserPositions } from 'src/lib/hooks'
 import type { SushiSwapV2ChainId } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 
 interface PositionCardList {
   chainId: SushiSwapV2ChainId
@@ -24,7 +24,7 @@ export const PositionCardList: FC<PositionCardList> = ({
   children,
   chainId,
 }) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const { data: userPositions, isLoading } = useSushiV2UserPositions({
     user: address,
     chainId,

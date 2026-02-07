@@ -1,21 +1,27 @@
 import { Button, SkeletonText } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
+import type { XSwapSupportedChainId } from 'src/config'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { Amount, Price, formatUSD } from 'sushi'
-import { EvmToken } from 'sushi/evm'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
-export const CrossChainSwapTokenRate = () => {
+export function CrossChainSwapTokenRate<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+>() {
   const [invert, setInvert] = useState(false)
   const {
     state: { chainId0, chainId1, token0, token1 },
     isLoading,
-  } = useDerivedStateCrossChainSwap()
+  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
 
   const amounts = useMemo(() => {
     if (!token0 || !token1) return undefined
-    return [Amount.tryFromHuman(token0, '1'), Amount.tryFromHuman(token1, '1')]
+    return [
+      Amount.tryFromHuman(token0, '1'),
+      Amount.tryFromHuman(token1, '1'),
+    ] as const
   }, [token0, token1])
 
   const [token0FiatPrice] = useTokenAmountDollarValues({
@@ -37,27 +43,16 @@ export const CrossChainSwapTokenRate = () => {
   const price = useMemo(() => {
     if (!token0 || !token1) return '0.00'
 
-    const dummy0 = new EvmToken({
-      address: token0.wrap().address,
-      chainId: 1,
-      decimals: token0.decimals,
-      name: token0.name,
-      symbol: token0.symbol,
-    })
-    const dummy1 = new EvmToken({
-      address: token1.wrap().address,
-      chainId: 1,
-      decimals: token1.decimals,
-      name: token0.name,
-      symbol: token0.symbol,
-    })
-
-    const token0PriceFraction = prices0?.getFraction(token0.wrap().address)
+    const token0PriceFraction = prices0?.getFraction(
+      token0.wrap().address as AddressFor<TChainId0>,
+    )
     const token0Price = token0PriceFraction
       ? Amount.tryFromHuman(token0, '1')?.mul(token0PriceFraction)
       : undefined
 
-    const token1PriceFraction = prices1?.getFraction(token1.wrap().address)
+    const token1PriceFraction = prices1?.getFraction(
+      token1.wrap().address as AddressFor<TChainId1>,
+    )
     const token1Price = token1PriceFraction
       ? Amount.tryFromHuman(token1, '1')?.mul(token1PriceFraction)
       : undefined
@@ -65,8 +60,8 @@ export const CrossChainSwapTokenRate = () => {
     let price
     if (token0Price?.amount && token1Price?.amount) {
       price = new Price({
-        baseAmount: new Amount(dummy0, token0Price.amount),
-        quoteAmount: new Amount(dummy1, token1Price.amount),
+        baseAmount: new Amount(token0, token0Price.amount),
+        quoteAmount: new Amount(token1, token1Price.amount),
       })
     }
 

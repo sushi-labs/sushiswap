@@ -4,7 +4,7 @@ import type { EvmChainId } from 'sushi/evm'
 import type { Address } from 'viem'
 import {
   type UseSimulateContractParameters,
-  useAccount,
+  useConnection,
   usePublicClient,
   useSimulateContract,
   useWriteContract,
@@ -88,7 +88,7 @@ export const useIncentivizePoolWithRewards = ({
   args,
   enabled = true,
 }: UseHarvestAngleRewards) => {
-  const { chain } = useAccount()
+  const { chain } = useConnection()
   const simulation = useSimulateContract({
     chainId,
     abi: distributionCreatorAbi_createDistribution,
