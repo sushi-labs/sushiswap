@@ -2,13 +2,11 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useCallback, useMemo } from 'react'
+import { logger } from 'src/lib/logger'
+import { prepareEnterSushiBarTx } from 'src/lib/stake'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { Amount } from 'sushi'
-import {
-  EvmChainId,
-  type EvmToken,
-  XSUSHI_ADDRESS,
-  xsushiAbi_enter,
-} from 'sushi/evm'
+import { EvmChainId, type EvmToken, addGasMargin } from 'sushi/evm'
 import {
   useAccount,
   usePublicClient,
@@ -16,17 +14,19 @@ import {
   useWriteContract,
 } from 'wagmi'
 import type { SendTransactionReturnType } from 'wagmi/actions'
-
-import { logger } from 'src/lib/logger'
-import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 
 interface UseBarDepositParams {
-  amount?: Amount<EvmToken>
+  amountIn: Amount<EvmToken> | undefined
+  amountOut: Amount<EvmToken> | undefined
   enabled?: boolean
 }
 
-export function useBarDeposit({ amount, enabled = true }: UseBarDepositParams) {
+export function useBarDeposit({
+  amountIn,
+  amountOut,
+  enabled = true,
+}: UseBarDepositParams) {
   const { address } = useAccount()
   const client = usePublicClient()
 
@@ -34,7 +34,7 @@ export function useBarDeposit({ amount, enabled = true }: UseBarDepositParams) {
 
   const onSuccess = useCallback(
     (data: SendTransactionReturnType) => {
-      if (!amount) return
+      if (!amountIn) return
 
       const receipt = client.waitForTransactionReceipt({ hash: data })
       receipt.then(() => {
@@ -49,7 +49,7 @@ export function useBarDeposit({ amount, enabled = true }: UseBarDepositParams) {
         txHash: data,
         promise: receipt,
         summary: {
-          pending: `Staking ${amount.toSignificant(6)} SUSHI`,
+          pending: `Staking ${amountIn.toSignificant(6)} SUSHI`,
           completed: 'Successfully staked SUSHI',
           failed: 'Something went wrong when staking SUSHI',
         },
@@ -57,7 +57,7 @@ export function useBarDeposit({ amount, enabled = true }: UseBarDepositParams) {
         timestamp: ts,
       })
     },
-    [refetchBalances, amount, address, client],
+    [refetchBalances, amountIn, address, client],
   )
 
   const onError = useCallback((e: Error) => {
@@ -72,13 +72,17 @@ export function useBarDeposit({ amount, enabled = true }: UseBarDepositParams) {
     createErrorToast(e?.message, true)
   }, [])
 
+  const prepareTx = useMemo(
+    () =>
+      amountIn && amountOut && address
+        ? prepareEnterSushiBarTx(amountIn, amountOut, address)
+        : {},
+    [amountIn, amountOut, address],
+  )
+
   const { data: simulation } = useSimulateContract({
-    address: XSUSHI_ADDRESS[EvmChainId.ETHEREUM],
-    abi: xsushiAbi_enter,
-    functionName: 'enter',
-    chainId: EvmChainId.ETHEREUM,
-    args: amount ? [amount.amount] : undefined,
-    query: { enabled },
+    ...prepareTx,
+    query: { enabled: Boolean(enabled && amountIn && amountOut && address) },
   })
 
   const { writeContractAsync, ...rest } = useWriteContract({
@@ -90,7 +94,10 @@ export function useBarDeposit({ amount, enabled = true }: UseBarDepositParams) {
 
     return async () => {
       try {
-        await writeContractAsync(simulation.request)
+        const gas = simulation.request.gas
+          ? addGasMargin(simulation.request.gas)
+          : undefined
+        await writeContractAsync({ ...simulation.request, gas })
       } catch {}
     }
   }, [writeContractAsync, simulation])
