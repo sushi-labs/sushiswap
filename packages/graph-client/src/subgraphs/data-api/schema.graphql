@@ -814,7 +814,8 @@ type TokenSecurity {
   holderCount: Float!
 }
 
-interface ApprovedTokenFields {
+type ApprovedToken {
+  address: Address!
   chainId: ChainId!
   symbol: String!
   name: String!
@@ -822,28 +823,6 @@ interface ApprovedTokenFields {
   approved: Boolean!
   logoUrl: String
 }
-
-type EvmApprovedToken implements ApprovedTokenFields {
-  address: EvmAddress!
-  chainId: ChainId!
-  symbol: String!
-  name: String!
-  decimals: Int!
-  approved: Boolean!
-  logoUrl: String
-}
-
-type SvmApprovedToken implements ApprovedTokenFields {
-  address: SvmAddress!
-  chainId: ChainId!
-  symbol: String!
-  name: String!
-  decimals: Int!
-  approved: Boolean!
-  logoUrl: String
-}
-
-union ApprovedToken = EvmApprovedToken | SvmApprovedToken
 
 type TrendingToken {
   address: Address!

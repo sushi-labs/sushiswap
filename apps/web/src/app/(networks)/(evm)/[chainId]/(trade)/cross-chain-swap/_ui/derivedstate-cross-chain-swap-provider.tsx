@@ -13,7 +13,11 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { type XSwapSupportedChainId, isXSwapSupportedChainId } from 'src/config'
+import {
+  type SupportedChainId,
+  type XSwapSupportedChainId,
+  isXSwapSupportedChainId,
+} from 'src/config'
 import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'
 import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
@@ -115,13 +119,11 @@ const DerivedstateCrossChainSwapProvider: FC<
           : EvmChainId.ARBITRUM.toString(),
       )
     if (!params.has('token0'))
-      params.set('token0', getDefaultCurrency(chainId0))
+      params.set('token0', getDefaultCurrency(chainId0 as SupportedChainId))
     if (!params.has('token1'))
       params.set(
         'token1',
-        getQuoteCurrency(
-          Number(params.get('chainId1')) as XSwapSupportedChainId,
-        ),
+        getQuoteCurrency(Number(params.get('chainId1')) as SupportedChainId),
       )
 
     return params
@@ -191,7 +193,10 @@ const DerivedstateCrossChainSwapProvider: FC<
           '',
           `${replaceNetworkSlug(chainId, pathname)}?${createQueryString([
             { name: 'swapAmount', value: null },
-            { name: 'token0', value: getDefaultCurrency(chainId0) },
+            {
+              name: 'token0',
+              value: getDefaultCurrency(chainId0 as SupportedChainId),
+            },
           ])}`,
         )
 
@@ -211,7 +216,10 @@ const DerivedstateCrossChainSwapProvider: FC<
           `${pathname}?${createQueryString([
             { name: 'swapAmount', value: null },
             { name: 'chainId1', value: chainId.toString() },
-            { name: 'token1', value: getQuoteCurrency(chainId) },
+            {
+              name: 'token1',
+              value: getQuoteCurrency(chainId as SupportedChainId),
+            },
           ])}`,
           { scroll: false },
         )
@@ -224,7 +232,7 @@ const DerivedstateCrossChainSwapProvider: FC<
   const setToken0 = useCallback(
     (_token0: string | CurrencyFor<TChainId0>) => {
       // If entity is provided, parse it to a string
-      const token0 = getTokenAsString(chainId0, _token0)
+      const token0 = getTokenAsString(chainId0 as SupportedChainId, _token0)
       push(
         `${pathname}?${createQueryString([{ name: 'token0', value: token0 }])}`,
         { scroll: false },
@@ -237,7 +245,7 @@ const DerivedstateCrossChainSwapProvider: FC<
   const setToken1 = useCallback(
     (_token1: string | CurrencyFor<TChainId1>) => {
       // If entity is provided, parse it to a string
-      const token1 = getTokenAsString(chainId1, _token1)
+      const token1 = getTokenAsString(chainId1 as SupportedChainId, _token1)
       push(
         `${pathname}?${createQueryString([{ name: 'token1', value: token1 }])}`,
         { scroll: false },
@@ -253,8 +261,8 @@ const DerivedstateCrossChainSwapProvider: FC<
       _token1: string | CurrencyFor<TChainId1>,
     ) => {
       // If entity is provided, parse it to a string
-      const token0 = getTokenAsString(chainId0, _token0)
-      const token1 = getTokenAsString(chainId1, _token1)
+      const token0 = getTokenAsString(chainId0 as SupportedChainId, _token0)
+      const token1 = getTokenAsString(chainId1 as SupportedChainId, _token1)
 
       push(
         `${pathname}?${createQueryString([
