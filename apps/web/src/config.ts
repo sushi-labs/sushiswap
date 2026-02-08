@@ -45,6 +45,7 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.BOKUTO,
   ChainId.XLAYER,
   ChainId.MEGAETH,
+  ChainId.SOLANA,
 ] as const
 
 export const BLADE_SUPPORTED_NETWORKS = BLADE_SUPPORTED_CHAIN_IDS.filter(
@@ -264,7 +265,7 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.TAIKO,
   ChainId.ZKSYNC_ERA,
 
-  ChainId.SOLANA,
+  // ChainId.SOLANA,
 ] as const
 
 export type XSwapSupportedChainId = (typeof XSWAP_SUPPORTED_CHAIN_IDS)[number]
