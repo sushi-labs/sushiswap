@@ -112,6 +112,7 @@ const config: PlaywrightTestConfig = {
         `EDGE_CONFIG=${String(process.env.EDGE_CONFIG)}`,
         'NEXT_PUBLIC_APP_ENV=test',
         `NEXT_PUBLIC_CHAIN_ID=${String(process.env.NEXT_PUBLIC_CHAIN_ID)}`,
+        `NEXT_PUBLIC_SUSHI_DATA_API_HOST=${String(process.env.NEXT_PUBLIC_SUSHI_DATA_API_HOST)}`,
         'npm run start',
       ].join(' '),
       port: 3000,
@@ -122,6 +123,9 @@ const config: PlaywrightTestConfig = {
         EDGE_CONFIG: String(process.env.EDGE_CONFIG),
         NEXT_PUBLIC_APP_ENV: 'test',
         NEXT_PUBLIC_CHAIN_ID: String(process.env.NEXT_PUBLIC_CHAIN_ID),
+        NEXT_PUBLIC_SUSHI_DATA_API_HOST: String(
+          process.env.NEXT_PUBLIC_SUSHI_DATA_API_HOST,
+        ),
       },
       // stderr: 'pipe',
       // stdout: 'pipe',
