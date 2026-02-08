@@ -155,11 +155,12 @@ export const SUPPORTED_CHAIN_IDS = Array.from(
     !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
 
-export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
+export type SupportedChainId =
+  | (typeof SUPPORTED_CHAIN_IDS)[number]
+  | typeof ChainId.SOLANA
 export const isSupportedChainId = (
   chainId: number,
-): chainId is SupportedChainId =>
-  SUPPORTED_CHAIN_IDS.includes(chainId as SupportedChainId)
+): chainId is SupportedChainId => SUPPORTED_CHAIN_IDS.includes(chainId as any)
 
 const UNSORTED_SUPPORTED_NETWORKS = [
   ...SUPPORTED_CHAIN_IDS,
@@ -268,8 +269,11 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   // ChainId.SOLANA,
 ] as const
 
-export type XSwapSupportedChainId = (typeof XSWAP_SUPPORTED_CHAIN_IDS)[number]
+export type XSwapSupportedChainId =
+  | (typeof XSWAP_SUPPORTED_CHAIN_IDS)[number]
+  | typeof ChainId.SOLANA
+
 export const isXSwapSupportedChainId = (
   chainId: number,
 ): chainId is XSwapSupportedChainId =>
-  XSWAP_SUPPORTED_CHAIN_IDS.includes(chainId as XSwapSupportedChainId)
+  XSWAP_SUPPORTED_CHAIN_IDS.includes(chainId as any)
