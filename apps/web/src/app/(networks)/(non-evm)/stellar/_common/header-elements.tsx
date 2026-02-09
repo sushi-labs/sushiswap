@@ -9,14 +9,39 @@ import {
   OnramperButton,
 } from '@sushiswap/ui'
 import React from 'react'
-import { EXPLORE_NAVIGATION_LINKS } from 'src/app/_common/header-elements'
 
 export const headerElements: NavigationElement[] = [
   {
-    title: 'Explore',
-    items: EXPLORE_NAVIGATION_LINKS(),
+    item: (
+      <NavigationMenuItem className={NavigationElementType.Custom}>
+        <NavigationMenuTrigger>
+          <LinkInternal href={'/stellar/swap'}>Explore</LinkInternal>
+        </NavigationMenuTrigger>
+        <NavigationMenuContent>
+          <ul className="w-[400px] gap-3 p-4">
+            <NavigationListItem title={'Swap'} href={'/stellar/swap'}>
+              The easiest way to trade.
+            </NavigationListItem>
+            <OnramperButton>
+              <NavigationListItem title={'Buy Crypto'}>
+                Onramp with fiat.
+              </NavigationListItem>
+            </OnramperButton>
+            <NavigationListItem
+              title={'Explore'}
+              href={'/stellar/explore/pools'}
+            >
+              Explore top pools.
+            </NavigationListItem>
+            <NavigationListItem title={'Positions'} href={'/stellar/pool'}>
+              Earn fees by providing liquidity.
+            </NavigationListItem>
+          </ul>
+        </NavigationMenuContent>
+      </NavigationMenuItem>
+    ),
     show: 'mobile',
-    type: NavigationElementType.Dropdown,
+    type: NavigationElementType.Custom,
   },
   {
     show: 'desktop',
