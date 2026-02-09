@@ -43,8 +43,6 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.TATARA,
   ChainId.SEPOLIA,
   ChainId.BOKUTO,
-  ChainId.XLAYER,
-  ChainId.MEGAETH,
   ChainId.SOLANA,
 ] as const
 
