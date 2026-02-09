@@ -7,7 +7,7 @@ import {
 } from '@sushiswap/ui'
 import { EnsoIcon } from '@sushiswap/ui/icons/EnsoIcon'
 import { type FC, memo, useMemo } from 'react'
-import { UI_FEE_PERCENT } from 'src/config'
+import { EVM_UI_FEE_PERCENT } from 'src/config'
 import type { V3ZapResponse } from 'src/lib/hooks'
 import { getFeeString } from 'src/lib/swap/fee'
 import {
@@ -22,7 +22,7 @@ import {
   SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3Pool,
 } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { ZapRouteDialog } from '../../_ui/zap-route-dialog'
 
@@ -36,7 +36,7 @@ interface V3ZapInfoCardProps {
 
 export const V3ZapInfoCard: FC<V3ZapInfoCardProps> = memo(
   ({ zapResponse, isZapError, inputCurrencyAmount, pool, tokenRatios }) => {
-    const { isConnected } = useAccount()
+    const { isConnected } = useConnection()
     const { data: prices } = usePrices({
       chainId: pool?.chainId,
     })
@@ -186,7 +186,7 @@ export const V3ZapInfoCard: FC<V3ZapInfoCardProps> = memo(
                 )}
               </div>
               <div className="flex items-center justify-between gap-2">
-                <span className="font-medium">Fee ({UI_FEE_PERCENT}%)</span>
+                <span className="font-medium">Fee ({EVM_UI_FEE_PERCENT}%)</span>
                 {typeof feeString !== 'undefined' ? (
                   feeString
                 ) : (

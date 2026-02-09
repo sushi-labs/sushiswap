@@ -34,7 +34,7 @@ import {
   useCollapsibleMessage,
 } from 'src/app/portal/_common/ui/collapsible-message'
 import { PortalForm } from 'src/app/portal/_common/ui/portal-form'
-import { z } from 'zod'
+import * as z from 'zod'
 import { Crypto } from './crypto/crypto'
 
 const voucherSchema = z.object({

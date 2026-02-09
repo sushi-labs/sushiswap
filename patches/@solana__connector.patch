@@ -1,0 +1,28 @@
+diff --git a/dist/chunk-DFKGCW7K.mjs b/dist/chunk-DFKGCW7K.mjs
+index 2d410ee018fb344a539668218f1fad264a4f9e73..dc231b5b14f0bea1a6e4c3e98f73f8752a5f3dfd 100644
+--- a/dist/chunk-DFKGCW7K.mjs
++++ b/dist/chunk-DFKGCW7K.mjs
+@@ -1997,8 +1997,7 @@ var logger5 = createLogger("ConnectorClient"), ConnectorClient = class {
+       } catch (error) {
+         this.config.debug && logger5.warn("Error unregistering WalletConnect wallet", { error });
+       }
+-    this.connectionManager.disconnect().catch(() => {
+-    }), this.walletDetector.destroy(), this.eventEmitter.offAll(), this.stateManager.clear();
++    this.walletDetector.destroy(), this.eventEmitter.offAll(), this.stateManager.clear();
+   }
+ };
+ var logger6 = createLogger("Polyfills"), installed = false;
+diff --git a/dist/chunk-ULEPN4NL.js b/dist/chunk-ULEPN4NL.js
+index 86bb0125edb5711e4aabc07ee65a4fa9f1037d24..69b82a8e903078936eabcab221eea3a302d48495 100644
+--- a/dist/chunk-ULEPN4NL.js
++++ b/dist/chunk-ULEPN4NL.js
+@@ -1999,8 +1999,7 @@ var logger5 = chunkBF67LVVM_js.createLogger("ConnectorClient"), ConnectorClient
+       } catch (error) {
+         this.config.debug && logger5.warn("Error unregistering WalletConnect wallet", { error });
+       }
+-    this.connectionManager.disconnect().catch(() => {
+-    }), this.walletDetector.destroy(), this.eventEmitter.offAll(), this.stateManager.clear();
++    this.walletDetector.destroy(), this.eventEmitter.offAll(), this.stateManager.clear();
+   }
+ };
+ var logger6 = chunkBF67LVVM_js.createLogger("Polyfills"), installed = false;

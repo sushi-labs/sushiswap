@@ -19,7 +19,7 @@ import {
   useCollapsibleMessage,
 } from 'src/app/portal/_common/ui/collapsible-message'
 import { PortalForm } from 'src/app/portal/_common/ui/portal-form'
-import type { z } from 'zod'
+import type * as z from 'zod'
 import { loginAction } from './login-action'
 import { loginFormSchema } from './login-form-schema'
 

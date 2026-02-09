@@ -3,22 +3,25 @@ import { List } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import type { EvmAddress, EvmCurrency, EvmNative } from 'sushi/evm'
 import type { EvmChainId } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useMyTokens } from '../hooks/use-my-tokens'
 import { TokenSelectorCurrencyList } from './common/token-selector-currency-list'
 
-interface TokenSelectorCustomList {
-  currencies: Readonly<EvmCurrency<{ approved?: boolean }>[]>
-  chainId: EvmChainId
-  account?: EvmAddress
-  selected: EvmCurrency | undefined
-  onSelect(currency: EvmCurrency): void
+interface TokenSelectorCustomList<TChainId extends EvmChainId | SvmChainId> {
+  currencies: Readonly<CurrencyFor<TChainId, { approved?: boolean }>[]>
+  chainId: TChainId
+  account?: AddressFor<TChainId>
+  selected: CurrencyFor<TChainId> | undefined
+  onSelect(currency: CurrencyFor<TChainId>): void
   search?: string
   includeNative?: boolean
-  onShowInfo(currency: EvmCurrency | false): void
+  onShowInfo(currency: CurrencyFor<TChainId> | false): void
 }
 
-export function TokenSelectorCustomList({
+export function TokenSelectorCustomList<
+  TChainId extends EvmChainId | SvmChainId,
+>({
   currencies,
   chainId,
   account,
@@ -27,7 +30,7 @@ export function TokenSelectorCustomList({
   search,
   includeNative,
   onShowInfo,
-}: TokenSelectorCustomList) {
+}: TokenSelectorCustomList<TChainId>) {
   const {
     data: { balanceMap },
     isLoading,

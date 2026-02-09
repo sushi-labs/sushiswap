@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { BLADE_API_HOST, BLADE_API_KEY } from 'src/lib/constants'
 import { sz } from 'sushi'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const rfqWithdrawResponseSchema = z.object({
   token_holder_address: sz.evm.address(),

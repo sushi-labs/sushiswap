@@ -6,7 +6,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { logger } from 'src/lib/logger'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import {
-  useAccount,
+  useConnection,
   usePublicClient,
   useSimulateContract,
   useWriteContract,
@@ -25,7 +25,7 @@ export const useUnlockDeposit = ({
   enabled = true,
   onSuccess,
 }: UseUnlockDepositParams) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const [isPending, setPending] = useState(false)
   const client = usePublicClient()
 
@@ -83,7 +83,7 @@ export const useUnlockDeposit = ({
     }
   }, [])
 
-  const { writeContractAsync, ...rest } = useWriteContract({
+  const { mutateAsync: writeContractAsync, ...rest } = useWriteContract({
     mutation: {
       onSuccess: onSuccessCallback,
       onError,

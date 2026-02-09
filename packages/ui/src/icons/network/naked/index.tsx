@@ -41,6 +41,7 @@ import { PolygonZKNaked } from './PolygonZKNaked'
 import { RootstockNaked } from './RootstockNaked'
 import { ScrollNaked } from './ScrollNaked'
 import { SkaleNaked } from './SkaleNaked'
+import { SolanaNaked } from './SolanaNaked'
 import { SonicNaked } from './SonicNaked'
 import { TaikoNaked } from './TaikoNaked'
 import { ThunderCoreNaked } from './ThunderCoreNaked'
@@ -95,6 +96,7 @@ export * from './PolygonZKNaked'
 export * from './RootstockNaked'
 export * from './ScrollNaked'
 export * from './SkaleNaked'
+export * from './SolanaNaked'
 export * from './SonicNaked'
 export * from './TaikoNaked'
 export * from './TelosNaked'
@@ -152,4 +154,5 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.MEGAETH]: MegaETHNaked,
   [ChainId.XLAYER]: XLayerNaked,
   [ChainId.APTOS]: AptosNaked,
+  [ChainId.SOLANA]: SolanaNaked,
 }

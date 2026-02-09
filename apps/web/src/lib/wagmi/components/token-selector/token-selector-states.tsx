@@ -4,8 +4,9 @@ import {
   isTokenListChainId,
   isTrendingTokensChainId,
 } from '@sushiswap/graph-client/data-api'
-import { EVM_DEFAULT_BASES, type EvmChainId, type EvmCurrency } from 'sushi/evm'
-import type { Address } from 'viem'
+import { useMemo } from 'react'
+import { EVM_DEFAULT_BASES, type EvmChainId, isEvmChainId } from 'sushi/evm'
+import { SVM_DEFAULT_BASES, type SvmChainId, isSvmChainId } from 'sushi/svm'
 import { useMyTokens } from './hooks/use-my-tokens'
 import { useSearchTokens } from './hooks/use-search-tokens'
 import { useTrendingTokens } from './hooks/use-trending-tokens'
@@ -15,19 +16,19 @@ import { TokenSelectorMyTokens } from './token-lists/token-selector-my-tokens'
 import { TokenSelectorSearch } from './token-lists/token-selector-search'
 import { TokenSelectorTrendingTokens } from './token-lists/token-selector-trending-tokens'
 
-interface TokenSelectorStates {
-  selected: EvmCurrency | undefined
-  chainId: EvmChainId
-  account?: Address
-  onSelect(currency: EvmCurrency): void
-  onShowInfo(currency: EvmCurrency | false): void
-  currencies?: EvmCurrency<{ approved?: boolean }>[]
+interface TokenSelectorStates<TChainId extends EvmChainId | SvmChainId> {
+  selected: CurrencyFor<TChainId> | undefined
+  chainId: TChainId
+  account?: AddressFor<TChainId>
+  onSelect(currency: CurrencyFor<TChainId>): void
+  onShowInfo(currency: CurrencyFor<TChainId> | false): void
+  currencies?: CurrencyFor<TChainId, { approved?: boolean }>[]
   includeNative?: boolean
   hidePinnedTokens?: boolean
   search?: string
 }
 
-export function TokenSelectorStates({
+export function TokenSelectorStates<TChainId extends EvmChainId | SvmChainId>({
   selected,
   chainId,
   account,
@@ -37,7 +38,7 @@ export function TokenSelectorStates({
   includeNative,
   hidePinnedTokens,
   search,
-}: TokenSelectorStates) {
+}: TokenSelectorStates<TChainId>) {
   // Ensure that the user's tokens are loaded
   useMyTokens({
     chainId: isTokenListChainId(chainId) ? chainId : undefined,
@@ -58,6 +59,16 @@ export function TokenSelectorStates({
         : undefined,
     search: '',
   })
+
+  const defaultBases = useMemo(() => {
+    if (isEvmChainId(chainId)) {
+      return EVM_DEFAULT_BASES[chainId]
+    } else if (isSvmChainId(chainId)) {
+      return SVM_DEFAULT_BASES[chainId]
+    }
+
+    throw new Error('Unsupported chainId')
+  }, [chainId]) as Readonly<CurrencyFor<TChainId>[]>
 
   if (currencies) {
     return (
@@ -169,7 +180,7 @@ export function TokenSelectorStates({
     <TokenSelectorCustomList
       chainId={chainId}
       account={account}
-      currencies={EVM_DEFAULT_BASES[chainId]}
+      currencies={defaultBases}
       onSelect={onSelect}
       selected={selected}
       search={search}

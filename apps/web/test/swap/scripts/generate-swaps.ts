@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import {
-  type UseTradeParams,
+  type UseEvmTradeParams,
   tradeValidator02,
 } from 'src/lib/hooks/react-query'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
@@ -14,7 +14,7 @@ import { isSwapApiEnabledChainId } from '../../../src/config'
 const sender = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
 
 type TradeParams = Omit<
-  UseTradeParams,
+  UseEvmTradeParams,
   'chainId' | 'carbonOffset' | 'enabled' | 'recipient'
 >
 

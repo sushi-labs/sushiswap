@@ -13,7 +13,7 @@ import { formatUSD } from 'sushi'
 import type { RawV2Pool } from '@sushiswap/graph-client/data-api'
 import { SkeletonText } from '@sushiswap/ui'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { usePoolPosition } from '../../../_common/ui/pool-position-provider'
 import { PoolPositionDesktop } from './pool-position-desktop'
 
@@ -53,7 +53,7 @@ const PoolPositionConnected = () => {
 }
 
 export const PoolPosition = () => {
-  const { address } = useAccount()
+  const { address } = useConnection()
 
   if (!address) {
     return <PoolPositionDisconnected />

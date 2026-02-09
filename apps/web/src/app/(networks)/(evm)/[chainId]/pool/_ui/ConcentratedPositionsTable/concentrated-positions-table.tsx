@@ -28,7 +28,7 @@ import {
   getEvmChainById,
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { ConcentratedLiquidityCollectAllDialog } from '~evm/_ui/concentrated-liquidity-collect-all-dialog'
 import {
   NAME_COLUMN_V3,
@@ -67,7 +67,7 @@ export const ConcentratedPositionsTable: FC<
   hideCollectAllButton = false,
   actions,
 }) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const { tokenSymbols } = usePoolFilters()
 
   const chainIds = useMemo(() => {

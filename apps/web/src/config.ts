@@ -10,10 +10,24 @@ import {
   isEvmTestnetChainId,
 } from 'sushi/evm'
 import { MvmChainId } from 'sushi/mvm'
+import { SvmChainId, isSvmChainId } from 'sushi/svm'
 
-export const UI_FEE_BIPS = 35
-export const UI_FEE_PERCENT = UI_FEE_BIPS / 100
-export const UI_FEE_DECIMAL = UI_FEE_BIPS / 10_000
+export const ULTRA_REFERRAL_ACCOUNT =
+  'HC6S7N5YHmqGE5yepzHxbVRmnq8KVWZd2FG1e14cMVCp'
+export const SVM_UI_FEE_BIPS = 50
+export const SVM_UI_FEE_PERCENT = SVM_UI_FEE_BIPS / 100
+export const SVM_UI_FEE_DECIMAL = SVM_UI_FEE_BIPS / 10_000
+
+export const EVM_UI_FEE_BIPS = 35
+export const EVM_UI_FEE_PERCENT = EVM_UI_FEE_BIPS / 100
+export const EVM_UI_FEE_DECIMAL = EVM_UI_FEE_BIPS / 10_000
+
+export function getUiFeePercent(chainId: EvmChainId | SvmChainId) {
+  if (isSvmChainId(chainId)) {
+    return SVM_UI_FEE_PERCENT
+  }
+  return EVM_UI_FEE_PERCENT
+}
 
 export type SwapApiEnabledChainId =
   (typeof SWAP_API_SUPPORTED_CHAIN_IDS)[number]
@@ -31,6 +45,7 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.BOKUTO,
   ChainId.XLAYER,
   ChainId.MEGAETH,
+  ChainId.SOLANA,
 ] as const
 
 export const BLADE_SUPPORTED_NETWORKS = BLADE_SUPPORTED_CHAIN_IDS.filter(
@@ -38,22 +53,23 @@ export const BLADE_SUPPORTED_NETWORKS = BLADE_SUPPORTED_CHAIN_IDS.filter(
 )
 
 export const NEW_CHAIN_IDS = [
-  EvmChainId.MONAD,
+  SvmChainId.SOLANA,
   EvmChainId.MEGAETH,
   EvmChainId.XLAYER,
 ] as const
 
 export const PREFERRED_CHAINID_ORDER = [
-  ...NEW_CHAIN_IDS,
-  ChainId.HEMI,
   ChainId.ETHEREUM,
-  ChainId.KATANA,
-  ChainId.ARBITRUM,
+  ...NEW_CHAIN_IDS,
+  ChainId.SOLANA,
   ChainId.BASE,
-  ChainId.POLYGON,
-  ChainId.LINEA,
   ChainId.BSC,
+  ChainId.ARBITRUM,
+  ChainId.POLYGON,
   ChainId.OPTIMISM,
+  ChainId.KATANA,
+  ChainId.HEMI,
+  ChainId.LINEA,
   ChainId.FILECOIN,
   ChainId.ROOTSTOCK,
   ChainId.FANTOM,
@@ -107,6 +123,7 @@ export const getSortedChainIds = <T extends ChainId>(
 export const CHAIN_IDS = [
   ...SUSHISWAP_SUPPORTED_CHAIN_IDS,
   ...AGGREGATOR_ONLY_CHAIN_IDS,
+  SvmChainId.SOLANA,
 ] as const
 
 export const AMM_SUPPORTED_CHAIN_IDS = SUSHISWAP_SUPPORTED_CHAIN_IDS.filter(
@@ -138,15 +155,17 @@ export const SUPPORTED_CHAIN_IDS = Array.from(
     !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
 
-export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
+export type SupportedChainId =
+  | (typeof SUPPORTED_CHAIN_IDS)[number]
+  | typeof ChainId.SOLANA
 export const isSupportedChainId = (
   chainId: number,
-): chainId is SupportedChainId =>
-  SUPPORTED_CHAIN_IDS.includes(chainId as SupportedChainId)
+): chainId is SupportedChainId => SUPPORTED_CHAIN_IDS.includes(chainId as any)
 
 const UNSORTED_SUPPORTED_NETWORKS = [
   ...SUPPORTED_CHAIN_IDS,
   MvmChainId.APTOS,
+  SvmChainId.SOLANA,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
@@ -233,7 +252,6 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.KATANA,
   ChainId.LINEA,
   ChainId.MANTLE,
-  ChainId.METIS,
   ChainId.MODE,
   ChainId.MONAD,
   // ChainId.MOONBEAM,
@@ -247,10 +265,15 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.SONIC,
   ChainId.TAIKO,
   ChainId.ZKSYNC_ERA,
+
+  // ChainId.SOLANA,
 ] as const
 
-export type XSwapSupportedChainId = (typeof XSWAP_SUPPORTED_CHAIN_IDS)[number]
+export type XSwapSupportedChainId =
+  | (typeof XSWAP_SUPPORTED_CHAIN_IDS)[number]
+  | typeof ChainId.SOLANA
+
 export const isXSwapSupportedChainId = (
   chainId: number,
 ): chainId is XSwapSupportedChainId =>
-  XSWAP_SUPPORTED_CHAIN_IDS.includes(chainId as XSwapSupportedChainId)
+  XSWAP_SUPPORTED_CHAIN_IDS.includes(chainId as any)

@@ -13,31 +13,25 @@ import {
 import { Currency } from '@sushiswap/ui'
 import { SkeletonBox } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import {
-  type FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  useTransition,
-} from 'react'
-import { Amount, type Percent } from 'sushi'
-import { type EvmChainId, type EvmCurrency, getEvmChainById } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
+import { Amount, type Percent, getChainById } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
+import { useConnection } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { TokenSelector } from '../../token-selector/token-selector'
 import { BalancePanel } from './balance-panel'
 import { PricePanel } from './price-panel'
 
-interface CurrencyInputProps {
+interface CurrencyInputProps<TChainId extends EvmChainId | SvmChainId> {
   id?: string
   disabled?: boolean
   value: string
   onChange?(value: string): void
-  currency: EvmCurrency | undefined
-  onSelect?(currency: EvmCurrency): void
-  chainId: EvmChainId
+  currency: CurrencyFor<TChainId> | undefined
+  onSelect?(currency: CurrencyFor<TChainId>): void
+  chainId: TChainId
   currencyClassName?: string
   className?: string
   loading?: boolean
@@ -46,7 +40,7 @@ interface CurrencyInputProps {
   type: 'INPUT' | 'OUTPUT'
   fetching?: boolean
   currencyLoading?: boolean
-  currencies?: Record<string, EvmCurrency>
+  currencies?: Record<string, CurrencyFor<TChainId>>
   allowNative?: boolean
   error?: string
   hidePinnedTokens?: boolean
@@ -55,12 +49,12 @@ interface CurrencyInputProps {
   hidePricing?: boolean
   hideIcon?: boolean
   label?: string
-  networks?: readonly EvmChainId[]
-  selectedNetwork?: EvmChainId
+  networks?: readonly (EvmChainId | SvmChainId)[]
+  selectedNetwork?: EvmChainId | SvmChainId
   onNetworkChange?: (network: number) => void
 }
 
-const CurrencyInput: FC<CurrencyInputProps> = ({
+function CurrencyInput<TChainId extends EvmChainId | SvmChainId>({
   id,
   disabled,
   value,
@@ -88,11 +82,11 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   networks,
   selectedNetwork,
   onNetworkChange,
-}) => {
+}: CurrencyInputProps<TChainId>) {
   const isMounted = useIsMounted()
 
   const [localValue, setLocalValue] = useState<string>('')
-  const { address } = useAccount()
+  const { address } = useConnection()
   const [pending, startTransition] = useTransition()
 
   const { data: balance, isLoading: isBalanceLoading } =
@@ -206,7 +200,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
                 <div className="flex flex-col items-start">
                   <span className="text-xl leading-5">{currency.symbol}</span>
                   <span className="text-xs leading-3 text-muted-foreground">
-                    {getEvmChainById(currency.chainId).name}
+                    {getChainById(currency.chainId).name}
                   </span>
                 </div>
                 <SelectPrimitive.Icon asChild>

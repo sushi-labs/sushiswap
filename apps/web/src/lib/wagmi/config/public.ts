@@ -13,8 +13,7 @@ export const publicWagmiConfig = {
 
 type _PublicWagmiConfig = Config<
   (typeof publicWagmiConfig)['chains'],
-  (typeof publicWagmiConfig)['transports'],
-  []
+  (typeof publicWagmiConfig)['transports']
 >
 
 // Speedup

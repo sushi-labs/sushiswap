@@ -1,6 +1,6 @@
 import { get } from '@vercel/edge-config'
 import { NextResponse } from 'next/server'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const schema = z.object({
   maintenance: z.boolean(),

@@ -6,7 +6,7 @@ import {
 import type { NextRequest } from 'next/server'
 import type { EvmChainId } from 'sushi/evm'
 import { getAddress } from 'viem/utils'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const schema = z.object({
   chainId: z.coerce

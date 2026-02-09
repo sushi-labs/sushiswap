@@ -29,12 +29,13 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
 import { type FC, useCallback, useState } from 'react'
 import { useTokenSecurity } from 'src/lib/hooks/react-query'
-import { shortenAddress } from 'sushi'
-import { type EvmToken, getEvmChainById } from 'sushi/evm'
+import { getChainById, shortenAddress } from 'sushi'
+import type { EvmAddress, EvmToken } from 'sushi/evm'
+import type { SvmToken } from 'sushi/svm'
 import { TokenSecurityView } from '../../../token-security-view'
 
 interface TokenSelectorImportRow {
-  currency: EvmToken
+  currency: EvmToken | SvmToken
   onImport(): void
 }
 
@@ -164,8 +165,9 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
               </div>
               <LinkExternal
                 target="_blank"
-                href={getEvmChainById(currency.chainId).getTokenUrl(
-                  currency.address,
+                href={getChainById(currency.chainId).getTokenUrl(
+                  // Ugly cast to satisfy both EvmToken and SvmToken
+                  currency.address as EvmAddress,
                 )}
                 className="font-medium"
               >

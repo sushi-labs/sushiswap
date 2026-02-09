@@ -11,7 +11,7 @@ import { publicWagmiConfig } from 'src/lib/wagmi/config/public'
 import { EvmChainId } from 'sushi/evm'
 import { type Hex, getAddress } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const MAX_BALANCE_AMOUNT = 100000000000n // 0.0000001
 const DISTRIBUTION_AMOUNT = 5000000000000n // 0.000005

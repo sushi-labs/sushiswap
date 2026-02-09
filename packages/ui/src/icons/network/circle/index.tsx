@@ -40,6 +40,7 @@ import { PolygonZKCircle } from './PolygonZKCircle'
 import { RootstockCircle } from './RootstockCircle'
 import { ScrollCircle } from './ScrollCircle'
 import { SkaleCircle } from './SkaleCircle'
+import { SolanaCircle } from './SolanaCircle'
 import { SonicCircle } from './SonicCircle'
 import { TaikoCircle } from './TaikoCircle'
 import { ThunderCoreCircle } from './ThunderCoreCircle'
@@ -94,6 +95,7 @@ export * from './PolygonZKCircle'
 export * from './RootstockCircle'
 export * from './ScrollCircle'
 export * from './SkaleCircle'
+export * from './SolanaCircle'
 export * from './SonicCircle'
 export * from './TaikoCircle'
 export * from './TelosCircle'
@@ -152,4 +154,5 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.MEGAETH]: MegaETHCircle,
   [ChainId.XLAYER]: XLayerCircle,
   [ChainId.APTOS]: AptosCircle,
+  [ChainId.SOLANA]: SolanaCircle,
 }

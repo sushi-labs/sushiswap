@@ -12,7 +12,7 @@ import {
   xsushiAbi_leave,
 } from 'sushi/evm'
 import {
-  useAccount,
+  useConnection,
   usePublicClient,
   useSimulateContract,
   useWriteContract,
@@ -29,7 +29,7 @@ export function useBarWithdraw({
   amount,
   enabled = true,
 }: UseBarWithdrawParams) {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const client = usePublicClient()
 
   const { refetchChain: refetchBalances } = useRefetchBalances()
@@ -83,7 +83,7 @@ export function useBarWithdraw({
     query: { enabled },
   })
 
-  const { writeContractAsync, ...rest } = useWriteContract({
+  const { mutateAsync: writeContractAsync, ...rest } = useWriteContract({
     mutation: {
       onSuccess,
       onError,

@@ -57,6 +57,8 @@ jobs:
           ZITADEL_SA_TOKEN: ""
           # BotId
           BOTID_JWT_KEY: HLQsCXPJ6gEZaLVGnigDE2yv8hBOih53JWeknsEKG0A
+          # Data API
+          NEXT_PUBLIC_SUSHI_DATA_API_HOST: https://data-api-staging.data-gcp.sushi.com
 
       - name: Upload test results
         if: always()

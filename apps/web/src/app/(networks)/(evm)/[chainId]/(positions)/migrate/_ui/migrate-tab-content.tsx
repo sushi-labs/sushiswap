@@ -12,14 +12,14 @@ import { type SushiSwapV2ChainId, isSushiSwapV3ChainId } from 'sushi/evm'
 
 import { useIsMounted } from '@sushiswap/hooks'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { PositionCard, PositionCardSkeleton } from './position-card'
 import { PositionCardList } from './position-card-list'
 
 const MigrateTabContentPositions: FC<{ chainId: SushiSwapV2ChainId }> = ({
   chainId,
 }) => {
-  const { isConnected } = useAccount()
+  const { isConnected } = useConnection()
 
   if (!isConnected) {
     return (
