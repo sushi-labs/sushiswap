@@ -94,6 +94,7 @@ const LOGO: Record<number, string> = {
   [ChainId.BERACHAIN]: BeraLogo,
   [ChainId.PLASMA]: PlasmaLogo,
   [ChainId.MONAD]: MonadLogo,
+  [ChainId.MEGAETH]: EthereumLogo,
   [ChainId.XLAYER]: OkbLogo,
   [ChainId.SOLANA]: SolanaLogo,
 }
