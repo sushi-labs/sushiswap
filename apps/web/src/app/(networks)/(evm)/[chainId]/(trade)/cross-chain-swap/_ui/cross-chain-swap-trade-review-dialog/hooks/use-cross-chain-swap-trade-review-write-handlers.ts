@@ -142,16 +142,14 @@ export function useCrossChainSwapTradeReviewWriteHandlers<
                 )} ${
                   routeRef?.current?.amountIn?.currency.symbol
                 } to bridge token ${
-                  routeRef?.current?.step?.includedStepsWithoutFees?.[0]?.action
-                    .toToken.symbol
+                  routeRef?.current?.amountOut.currency.symbol
                 }`,
                 completed: `Swapped ${routeRef?.current?.amountIn?.toSignificant(
                   6,
                 )} ${
                   routeRef?.current?.amountIn?.currency.symbol
                 } to bridge token ${
-                  routeRef?.current?.step?.includedStepsWithoutFees?.[0]?.action
-                    .toToken.symbol
+                  routeRef?.current?.amountOut.currency.symbol
                 }`,
                 failed: `Something went wrong when trying to swap ${
                   routeRef?.current?.amountIn?.currency.symbol

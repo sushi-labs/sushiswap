@@ -52,7 +52,7 @@ export const PortfolioPositions = () => {
         </div>
       </div>
       {isError ? // Hide skeletons + hide pos list on error
-      null : isLoading || !data ? (
+      null : isLoading ? (
         <div>
           <div className="px-5 py-4">
             <SkeletonText />
@@ -85,10 +85,10 @@ export const PortfolioPositions = () => {
           className="h-full overflow-y-auto"
           defaultValue={['v2', 'v3', 'alm']}
         >
-          {data.v2Positions.length ? (
+          {data?.v2Positions.length ? (
             <PortfolioV2Positions positions={data.v2Positions} />
           ) : null}
-          {data.v3Positions.length ? (
+          {data?.v3Positions.length ? (
             <PortfolioV3Positions positions={data.v3Positions} />
           ) : null}
         </Accordion>
