@@ -10,6 +10,7 @@ import {
   isEvmTestnetChainId,
 } from 'sushi/evm'
 import { MvmChainId } from 'sushi/mvm'
+import { StellarChainId } from 'sushi/stellar'
 import {
   SVM_USDC,
   SVM_USDT,
@@ -81,6 +82,7 @@ export const BLADE_SUPPORTED_NETWORKS = BLADE_SUPPORTED_CHAIN_IDS.filter(
 
 export const NEW_CHAIN_IDS = [
   SvmChainId.SOLANA,
+  StellarChainId.STELLAR,
   EvmChainId.MEGAETH,
   EvmChainId.XLAYER,
 ] as const
@@ -190,6 +192,7 @@ export const isSupportedChainId = (
 const UNSORTED_SUPPORTED_NETWORKS = [
   ...SUPPORTED_CHAIN_IDS,
   MvmChainId.APTOS,
+  StellarChainId.STELLAR,
   SvmChainId.SOLANA,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
@@ -209,6 +212,7 @@ export const SUPPORTED_NETWORKS = Array.from(
 const UNSORTED_POOL_SUPPORTED_NETWORKS = [
   ...PoolChainIds,
   MvmChainId.APTOS,
+  StellarChainId.STELLAR,
 ].filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )

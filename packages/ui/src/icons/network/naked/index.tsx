@@ -43,6 +43,7 @@ import { ScrollNaked } from './ScrollNaked'
 import { SkaleNaked } from './SkaleNaked'
 import { SolanaNaked } from './SolanaNaked'
 import { SonicNaked } from './SonicNaked'
+import { StellarNaked } from './StellarNaked'
 import { TaikoNaked } from './TaikoNaked'
 import { ThunderCoreNaked } from './ThunderCoreNaked'
 import { XLayerNaked } from './XLayerNaked'
@@ -98,6 +99,7 @@ export * from './ScrollNaked'
 export * from './SkaleNaked'
 export * from './SolanaNaked'
 export * from './SonicNaked'
+export * from './StellarNaked'
 export * from './TaikoNaked'
 export * from './TelosNaked'
 export * from './XLayerNaked'
@@ -154,5 +156,6 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.MEGAETH]: MegaETHNaked,
   [ChainId.XLAYER]: XLayerNaked,
   [ChainId.APTOS]: AptosNaked,
+  [ChainId.STELLAR]: StellarNaked,
   [ChainId.SOLANA]: SolanaNaked,
 }

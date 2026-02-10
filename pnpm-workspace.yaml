@@ -3,6 +3,7 @@ packages:
   - 'apps/*'
   - 'config/*'
   - 'packages/*'
+  - 'packages/stellar/contract-bindings/*'
 
 catalog:
   "typescript": 5.8.3

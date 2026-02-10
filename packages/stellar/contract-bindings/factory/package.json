@@ -1,0 +1,17 @@
+{
+  "version": "0.0.0",
+  "name": "@sushiswap/stellar-contract-binding-factory",
+  "type": "module",
+  "exports": "./dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@stellar/stellar-sdk": "^14.1.1",
+    "buffer": "6.0.3"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}

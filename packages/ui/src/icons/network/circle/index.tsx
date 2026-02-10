@@ -42,6 +42,7 @@ import { ScrollCircle } from './ScrollCircle'
 import { SkaleCircle } from './SkaleCircle'
 import { SolanaCircle } from './SolanaCircle'
 import { SonicCircle } from './SonicCircle'
+import { StellarCircle } from './StellarCircle'
 import { TaikoCircle } from './TaikoCircle'
 import { ThunderCoreCircle } from './ThunderCoreCircle'
 import { XLayerCircle } from './XLayerCircle'
@@ -97,6 +98,7 @@ export * from './ScrollCircle'
 export * from './SkaleCircle'
 export * from './SolanaCircle'
 export * from './SonicCircle'
+export * from './StellarCircle'
 export * from './TaikoCircle'
 export * from './TelosCircle'
 export * from './ThunderCoreCircle'
@@ -154,5 +156,6 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.MEGAETH]: MegaETHCircle,
   [ChainId.XLAYER]: XLayerCircle,
   [ChainId.APTOS]: AptosCircle,
+  [ChainId.STELLAR]: StellarCircle,
   [ChainId.SOLANA]: SolanaCircle,
 }

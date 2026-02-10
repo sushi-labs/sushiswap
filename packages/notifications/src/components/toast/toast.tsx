@@ -60,6 +60,7 @@ export const createToast = (props: PromiseNotification) => {
         {
           ...TOAST_OPTIONS,
           toastId,
+          autoClose: 8000,
         },
       )
     })
@@ -96,6 +97,7 @@ export const createErrorToast = (
     {
       ...TOAST_OPTIONS,
       toastId,
+      autoClose: 8000,
     },
   )
 }
