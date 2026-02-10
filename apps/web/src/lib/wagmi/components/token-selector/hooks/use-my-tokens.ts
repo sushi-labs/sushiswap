@@ -5,6 +5,7 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { useMemo } from 'react'
 import { type AddressFor, Amount, getNativeAddress } from 'sushi'
 import {
@@ -68,6 +69,7 @@ export function useMyTokens<TChainId extends TokenListChainId>({
       })
     },
     enabled: Boolean(account && chainId),
+    refetchInterval: ms('10s'),
   })
 
   return useMemo(() => {

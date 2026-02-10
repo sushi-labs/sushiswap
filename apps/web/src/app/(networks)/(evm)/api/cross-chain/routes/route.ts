@@ -1,5 +1,5 @@
 import type { NextRequest } from 'next/server'
-import type { XSwapSupportedChainId } from 'src/config'
+import { EVM_UI_FEE_DECIMAL, type XSwapSupportedChainId } from 'src/config'
 import * as z from 'zod'
 import {
   type LifiChainId,
@@ -127,15 +127,13 @@ export async function GET(request: NextRequest) {
         exchanges: { allow: ['sushiswap'] },
         allowSwitchChain: false,
         allowDestinationCall: true,
-        // fee: UI_FEE_DECIMAL, // e.g. 0.0025 (0.25%)
+        fee: EVM_UI_FEE_DECIMAL, // e.g. 0.0035 (0.35%)
       },
     }),
   }
 
   const response = await fetch(url, options)
   const json = await response.json()
-
-  console.log(json.routes[0])
 
   const parsed = routesOutputSchema(
     parsedParams.fromChainId,

@@ -43,7 +43,6 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.TATARA,
   ChainId.SEPOLIA,
   ChainId.BOKUTO,
-  ChainId.SOLANA,
 ] as const
 
 export const BLADE_SUPPORTED_NETWORKS = BLADE_SUPPORTED_CHAIN_IDS.filter(
@@ -153,9 +152,7 @@ export const SUPPORTED_CHAIN_IDS = Array.from(
     !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
 
-export type SupportedChainId =
-  | (typeof SUPPORTED_CHAIN_IDS)[number]
-  | typeof ChainId.SOLANA
+export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
 export const isSupportedChainId = (
   chainId: number,
 ): chainId is SupportedChainId => SUPPORTED_CHAIN_IDS.includes(chainId as any)
@@ -264,12 +261,10 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.TAIKO,
   ChainId.ZKSYNC_ERA,
 
-  // ChainId.SOLANA,
+  ChainId.SOLANA,
 ] as const
 
-export type XSwapSupportedChainId =
-  | (typeof XSWAP_SUPPORTED_CHAIN_IDS)[number]
-  | typeof ChainId.SOLANA
+export type XSwapSupportedChainId = (typeof XSWAP_SUPPORTED_CHAIN_IDS)[number]
 
 export const isXSwapSupportedChainId = (
   chainId: number,
