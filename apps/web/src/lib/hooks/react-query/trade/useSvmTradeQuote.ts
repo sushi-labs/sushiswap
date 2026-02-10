@@ -51,7 +51,7 @@ function useTradeQuote(
 
   const { data: feeMintBalances } = useAmountBalances(
     chainId ? chainId : undefined,
-    FEE_MINTS,
+    chainId && FEE_MINTS ? FEE_MINTS : undefined,
   )
 
   const nativePrice = useMemo(() => {
