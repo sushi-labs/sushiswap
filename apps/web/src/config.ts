@@ -14,6 +14,7 @@ import { SVM_USDC, SvmChainId, isSvmChainId } from 'sushi/svm'
 
 export const ULTRA_ADVANCED_FEE_RECEIVER =
   'FR7r4C5prSywpsTkd1jutJ6nxDyo25hgAkwHR6HKnNjU'
+export const ULTRA_ADVANCED_FEE_INTEGRATOR_ID = 'tyler@sushi.com'
 export const SVM_FEE_MINT = SVM_USDC
 export const SVM_UI_FEE_BIPS = 50
 export const SVM_UI_FEE_PERCENT = SVM_UI_FEE_BIPS / 100

@@ -4,6 +4,7 @@ import { useCallback } from 'react'
 import {
   SVM_FEE_MINT,
   SVM_UI_FEE_BIPS,
+  ULTRA_ADVANCED_FEE_INTEGRATOR_ID,
   ULTRA_ADVANCED_FEE_RECEIVER,
 } from 'src/config'
 import { unwrapSol, wrapSol } from 'src/lib/svm/wrap-unwrap'
@@ -149,7 +150,7 @@ function useTradeQuote(
 
       params.set('feeReceiver', ULTRA_ADVANCED_FEE_RECEIVER)
       params.set('feeMint', SVM_FEE_MINT['-5'].address)
-      params.set('integratorId', 'tyler@sushi.com')
+      params.set('integratorId', ULTRA_ADVANCED_FEE_INTEGRATOR_ID)
       params.set('feeBps', SVM_UI_FEE_BIPS.toString())
 
       if (recipient) {
