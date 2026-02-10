@@ -32,7 +32,7 @@ export interface LiquidityChartRangeInputProps {
     series: ChartEntry[]
     current: number
   }
-  priceRange: number | undefined
+  isPriceRangeSet: boolean
 
   styles: {
     area: {
