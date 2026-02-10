@@ -1,7 +1,11 @@
 import { LAMPORTS_PER_SOL, useKitTransactionSigner } from '@solana/connector'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
-import { SVM_UI_FEE_BIPS, ULTRA_REFERRAL_ACCOUNT } from 'src/config'
+import {
+  SVM_FEE_MINT,
+  SVM_UI_FEE_BIPS,
+  ULTRA_ADVANCED_FEE_RECEIVER,
+} from 'src/config'
 import { unwrapSol, wrapSol } from 'src/lib/svm/wrap-unwrap'
 import { Amount, Percent, Price, ZERO } from 'sushi'
 import { SvmNative, WSOL, WSOL_ADDRESS, isSvmChainId } from 'sushi/svm'
@@ -10,10 +14,7 @@ import {
   isWrapTrade,
   useWrapUnwrapTrade,
 } from '~evm/[chainId]/(trade)/swap/_ui/common'
-import {
-  useAmountBalance,
-  useBalance,
-} from '~evm/_common/ui/balance-provider/use-balance'
+import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { svmOrderValidator } from './svmUltraValidator'
 import type {
@@ -146,8 +147,10 @@ function useTradeQuote(
       params.set('outputMint', toToken.wrap().address)
       params.set('amount', amount.amount.toString())
 
-      params.set('referralAccount', ULTRA_REFERRAL_ACCOUNT)
-      params.set('referralFee', SVM_UI_FEE_BIPS.toString())
+      params.set('feeReceiver', ULTRA_ADVANCED_FEE_RECEIVER)
+      params.set('feeMint', SVM_FEE_MINT['-5'].address)
+      params.set('integratorId', 'tyler@sushi.com')
+      params.set('feeBps', SVM_UI_FEE_BIPS.toString())
 
       if (recipient) {
         params.set('taker', recipient)

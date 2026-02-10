@@ -10,10 +10,11 @@ import {
   isEvmTestnetChainId,
 } from 'sushi/evm'
 import { MvmChainId } from 'sushi/mvm'
-import { SvmChainId, isSvmChainId } from 'sushi/svm'
+import { SVM_USDC, SvmChainId, isSvmChainId } from 'sushi/svm'
 
-export const ULTRA_REFERRAL_ACCOUNT =
-  'HC6S7N5YHmqGE5yepzHxbVRmnq8KVWZd2FG1e14cMVCp'
+export const ULTRA_ADVANCED_FEE_RECEIVER =
+  'FR7r4C5prSywpsTkd1jutJ6nxDyo25hgAkwHR6HKnNjU'
+export const SVM_FEE_MINT = SVM_USDC
 export const SVM_UI_FEE_BIPS = 50
 export const SVM_UI_FEE_PERCENT = SVM_UI_FEE_BIPS / 100
 export const SVM_UI_FEE_DECIMAL = SVM_UI_FEE_BIPS / 10_000
