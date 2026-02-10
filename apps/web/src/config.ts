@@ -10,12 +10,40 @@ import {
   isEvmTestnetChainId,
 } from 'sushi/evm'
 import { MvmChainId } from 'sushi/mvm'
-import { SVM_USDC, SvmChainId, isSvmChainId } from 'sushi/svm'
+import {
+  SVM_USDC,
+  SVM_USDT,
+  SvmChainId,
+  SvmToken,
+  WSOL,
+  isSvmChainId,
+  svmAddress,
+} from 'sushi/svm'
 
 export const ULTRA_ADVANCED_FEE_RECEIVER =
   'FR7r4C5prSywpsTkd1jutJ6nxDyo25hgAkwHR6HKnNjU'
 export const ULTRA_ADVANCED_FEE_INTEGRATOR_ID = 'tyler@sushi.com'
-export const SVM_FEE_MINT = SVM_USDC
+//@dev: ULTRA_ADVANCED_FEE_RECEIVER must have an ATA created for the fee mint to be used here, can just send a token to the address and an ATA will automatically be created
+export const ULTRA_FEE_MINT_OPTIONS = [
+  { currency: SVM_USDC[SvmChainId.SOLANA], priority: 100 },
+  { currency: SVM_USDT[SvmChainId.SOLANA], priority: 95 },
+  {
+    currency: new SvmToken({
+      address: svmAddress('JuprjznTrTSp2UFa3ZBUFgwdAmtZCq4MQCwysN55USD'),
+      name: 'Jupiter USD',
+      symbol: 'JupUSD',
+      decimals: 6,
+      chainId: SvmChainId.SOLANA,
+    }),
+    priority: 90,
+  },
+  {
+    currency: WSOL[SvmChainId.SOLANA], //fees will be sent in SOL when using WSOL
+    priority: 85,
+    shouldUseNativeForBalanceCheck: true,
+  },
+]
+
 export const SVM_UI_FEE_BIPS = 50
 export const SVM_UI_FEE_PERCENT = SVM_UI_FEE_BIPS / 100
 export const SVM_UI_FEE_DECIMAL = SVM_UI_FEE_BIPS / 10_000
