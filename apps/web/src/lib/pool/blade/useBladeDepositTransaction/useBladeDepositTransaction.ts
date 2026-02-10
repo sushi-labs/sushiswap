@@ -49,8 +49,8 @@ export const useBladeDepositTransaction = ({
   onError?: (error: Error) => void
 }) => {
   const {
-    writeContract,
-    writeContractAsync,
+    mutate: writeContract,
+    mutateAsync: writeContractAsync,
     data: hash,
     isPending: isWritePending,
     error: writeError,

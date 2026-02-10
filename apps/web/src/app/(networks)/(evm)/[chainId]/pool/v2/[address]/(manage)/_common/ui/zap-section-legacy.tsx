@@ -40,11 +40,11 @@ import {
   type SushiSwapV2ChainId,
   type SushiSwapV2Pool,
   defaultCurrency,
-  isWNativeSupported,
+  isEvmWNativeSupported,
 } from 'sushi/evm'
 import type { SendTransactionReturnType } from 'viem'
 import {
-  useAccount,
+  useConnection,
   useEstimateGas,
   usePublicClient,
   useSendTransaction,
@@ -76,7 +76,7 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
 }) => {
   const client = usePublicClient()
 
-  const { address, chain } = useAccount()
+  const { address, chain } = useConnection()
 
   const [slippageTolerance] = useSlippageTolerance(
     SlippageToleranceStorageKey.AddLiquidity,
@@ -203,9 +203,10 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
     [refetchBalances, client, chain, address, pool],
   )
 
-  const { sendTransaction, isPending: isWritePending } = useSendTransaction({
-    mutation: { onSuccess },
-  })
+  const { mutate: sendTransaction, isPending: isWritePending } =
+    useSendTransaction({
+      mutation: { onSuccess },
+    })
 
   const [checked, setChecked] = useState(false)
 
@@ -271,7 +272,7 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
           poolState === SushiSwapV2PoolState.INVALID
         }
         loading={poolState === SushiSwapV2PoolState.LOADING}
-        allowNative={isWNativeSupported(chainId)}
+        allowNative={isEvmWNativeSupported(chainId)}
       />
       <WidgetFooter>
         <div className="flex flex-col gap-4 w-full">

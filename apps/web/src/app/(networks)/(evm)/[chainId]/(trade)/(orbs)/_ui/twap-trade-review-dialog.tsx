@@ -25,7 +25,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { UI_FEE_PERCENT } from 'src/config'
+import { EVM_UI_FEE_PERCENT } from 'src/config'
 import { APPROVE_TAG_SWAP } from 'src/lib/constants'
 import { usePersistedOrdersStore } from 'src/lib/hooks/react-query/twap'
 import { logger } from 'src/lib/logger'
@@ -37,10 +37,10 @@ import {
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
-import { ZERO, formatUSD } from 'sushi'
-import { getEvmChainById, shortenEvmAddress } from 'sushi/evm'
+import { ZERO, formatUSD, shortenAddress } from 'sushi'
+import { getEvmChainById } from 'sushi/evm'
 import {
-  useAccount,
+  useConnection,
   useEstimateGas,
   usePublicClient,
   useSendTransaction,
@@ -74,7 +74,7 @@ export const TwapTradeReviewDialog: FC<{
   const [acceptDisclaimer, setAcceptDisclaimer] = useState(true)
 
   const { approved } = useApproved(APPROVE_TAG_SWAP)
-  const { address } = useAccount()
+  const { address } = useConnection()
   const tradeRef = useRef<UseTwapTradeReturn>(null)
   const client = usePublicClient()
 
@@ -150,7 +150,7 @@ export const TwapTradeReviewDialog: FC<{
   }, [])
 
   const {
-    sendTransactionAsync,
+    mutateAsync: sendTransactionAsync,
     isPending: isWritePending,
     data,
   } = useSendTransaction({
@@ -191,8 +191,8 @@ export const TwapTradeReviewDialog: FC<{
         {({ confirm }) => (
           <>
             {children}
-            <DialogContent>
-              <DialogHeader>
+            <DialogContent className="max-h-[80vh]">
+              <DialogHeader className="!text-left">
                 <DialogTitle>
                   Sell {swapAmount?.toSignificant(6)} {token0?.symbol}
                 </DialogTitle>
@@ -206,7 +206,8 @@ export const TwapTradeReviewDialog: FC<{
                   )}
                 </DialogDescription>
               </DialogHeader>
-              <div className="flex flex-col gap-4">
+              {/* 176px is sum of header, footer, padding, and gap */}
+              <div className="flex flex-col gap-4 overflow-y-auto max-h-[calc(80vh-176px)]">
                 <List className="!pt-0">
                   <List.Control>
                     <List.KeyValue title="Network">
@@ -318,12 +319,14 @@ export const TwapTradeReviewDialog: FC<{
                             )}
                             rel="noreferrer"
                           >
-                            {shortenEvmAddress(recipient)}
+                            {shortenAddress(recipient)}
                           </a>
                         </Button>
                       ) : null}
                     </List.KeyValue>
-                    <List.KeyValue title="Fee">{UI_FEE_PERCENT}%</List.KeyValue>
+                    <List.KeyValue title="Fee">
+                      {EVM_UI_FEE_PERCENT}%
+                    </List.KeyValue>
                   </List.Control>
                   <List.Control>
                     <List.KeyValue

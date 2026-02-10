@@ -8,8 +8,8 @@ import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import Link from 'next/link'
 import { type FC, Fragment, useMemo, useState } from 'react'
 import { getPoolTokensGrouped } from 'src/lib/pool/blade'
-import { formatPercent, formatUSD } from 'sushi'
-import { type EvmAddress, getEvmChainById, shortenEvmAddress } from 'sushi/evm'
+import { formatPercent, formatUSD, shortenAddress } from 'sushi'
+import { type EvmAddress, getEvmChainById } from 'sushi/evm'
 
 interface BladePoolHeroProps {
   pool: BladePool
@@ -107,7 +107,7 @@ export const BladePoolHero: FC<BladePoolHeroProps> = ({ pool }) => {
             <span className="font-medium">Pool Address</span>
             <LinkExternal href={poolExplorerLink}>
               <span className="text-blue-600 dark:text-blue-400">
-                {shortenEvmAddress(pool.address)}
+                {shortenAddress(pool.address)}
               </span>
             </LinkExternal>
           </div>

@@ -9,13 +9,8 @@ import {
   TooltipTrigger,
 } from '@sushiswap/ui'
 import React from 'react'
-import { formatPercent } from 'sushi'
-import {
-  EvmChainId,
-  XSUSHI,
-  getEvmChainById,
-  shortenEvmAddress,
-} from 'sushi/evm'
+import { formatPercent, shortenAddress } from 'sushi'
+import { EvmChainId, XSUSHI, getEvmChainById } from 'sushi/evm'
 import { useSushiBar } from './sushi-bar-provider'
 
 export const BarHeader = () => {
@@ -76,7 +71,7 @@ export const BarHeader = () => {
               size="sm"
               className="!font-medium !text-secondary-foreground"
             >
-              {shortenEvmAddress(XSUSHI[EvmChainId.ETHEREUM].address, 4)}
+              {shortenAddress(XSUSHI[EvmChainId.ETHEREUM].address, 4)}
               <ArrowTopRightOnSquareIcon className="w-3 h-3" />
             </Button>
           </LinkExternal>

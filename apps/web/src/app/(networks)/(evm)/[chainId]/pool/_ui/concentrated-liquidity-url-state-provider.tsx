@@ -18,11 +18,11 @@ import {
   type SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
   currencyFromShortCurrencyName,
+  isEvmWNativeSupported,
   isShortCurrencyName,
-  isWNativeSupported,
 } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
-import { z } from 'zod'
+import * as z from 'zod'
 
 export const queryParamsSchema = z.object({
   fromCurrency: z.nullable(z.string()).transform((value) => value ?? 'NATIVE'),
@@ -75,7 +75,7 @@ const getTokenFromUrl = (
     return currencyFromShortCurrencyName(chainId, currencyId)
   } else if (currencyId && isAddress(currencyId) && token) {
     return token
-  } else if (!currencyId || !isWNativeSupported(chainId)) {
+  } else if (!currencyId || !isEvmWNativeSupported(chainId)) {
     return undefined
   } else {
     return EvmNative.fromChainId(chainId ? chainId : EvmChainId.ETHEREUM)

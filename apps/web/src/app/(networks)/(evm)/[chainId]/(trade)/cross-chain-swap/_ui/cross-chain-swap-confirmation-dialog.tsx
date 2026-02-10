@@ -2,8 +2,10 @@ import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
 import { Button, Dots, Loader, classNames } from '@sushiswap/ui'
 import { CheckMarkIcon } from '@sushiswap/ui/icons/CheckMarkIcon'
 import { FailedMarkIcon } from '@sushiswap/ui/icons/FailedMarkIcon'
-import type { FC, ReactNode } from 'react'
-import { getEvmChainById, shortenEvmAddress } from 'sushi/evm'
+import { type FC, type ReactNode, type RefObject, useMemo } from 'react'
+import type { XSwapSupportedChainId } from 'src/config'
+import { getChainById, shortenAddress } from 'sushi'
+import { getEvmChainById } from 'sushi/evm'
 import type { Hex } from 'viem'
 import {
   type UseSelectedCrossChainTradeRouteReturn,
@@ -11,32 +13,49 @@ import {
   useSelectedCrossChainTradeRoute,
 } from './derivedstate-cross-chain-swap-provider'
 
-interface ConfirmationDialogContent {
-  txHash?: Hex
-  dstTxHash?: Hex
+interface ConfirmationDialogContent<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+> {
+  txHash?: TxHashFor<TChainId0>
+  dstTxHash?: TxHashFor<TChainId1>
   bridgeUrl?: string
   dialogState: { source: StepState; bridge: StepState; dest: StepState }
-  routeRef: React.MutableRefObject<UseSelectedCrossChainTradeRouteReturn | null>
+  routeRef: RefObject<UseSelectedCrossChainTradeRouteReturn<
+    TChainId0,
+    TChainId1
+  > | null>
 }
 
-export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
+export function ConfirmationDialogContent<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+>({
   txHash,
   bridgeUrl,
   dstTxHash,
   dialogState,
   routeRef,
-}) => {
+}: ConfirmationDialogContent<TChainId0, TChainId1>) {
   const {
     state: { chainId0, chainId1, token0, token1, recipient },
-  } = useDerivedStateCrossChainSwap()
+  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
   const { data: trade } = useSelectedCrossChainTradeRoute()
 
   const swapOnDest =
     trade?.step &&
     [
-      trade.step.includedStepsWithoutFees[1]?.type,
-      trade.step.includedStepsWithoutFees[2]?.type,
+      trade.step.includedStepsWithoutFees?.[1]?.type,
+      trade.step.includedStepsWithoutFees?.[2]?.type,
     ].includes('swap')
+
+  const [chain0, chain1] = useMemo(
+    () => [
+      getChainById(chainId0 as XSwapSupportedChainId),
+      getChainById(chainId1 as XSwapSupportedChainId),
+    ],
+    [chainId0, chainId1],
+  )
 
   if (dialogState.source === StepState.Sign) {
     return <>Please sign order with your wallet.</>
@@ -50,14 +69,12 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
           <a
             target="_blank"
             rel="noreferrer noopener noreferer"
-            href={
-              txHash ? getEvmChainById(chainId0).getTransactionUrl(txHash) : ''
-            }
+            href={txHash ? chain0.getTransactionUrl(txHash) : ''}
           >
             transaction
           </a>
         </Button>{' '}
-        to be confirmed on {getEvmChainById(chainId0).name}
+        to be confirmed on {chain0.name}
       </>
     )
   }
@@ -116,9 +133,9 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
             <a
               target="_blank"
               rel="noreferrer noopener noreferer"
-              href={getEvmChainById(chainId1).getAccountUrl(recipient)}
+              href={chain1.getAccountUrl(recipient)}
             >
-              <Dots>{shortenEvmAddress(recipient)}</Dots>
+              <Dots>{shortenAddress(recipient)}</Dots>
             </a>
           </Button>
         ) : (
@@ -137,11 +154,7 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
             <a
               target="_blank"
               rel="noreferrer noopener noreferer"
-              href={
-                txHash
-                  ? getEvmChainById(chainId0).getTransactionUrl(txHash)
-                  : ''
-              }
+              href={txHash ? chain0.getTransactionUrl(txHash) : ''}
             >
               {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
             </a>
@@ -151,11 +164,7 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
             <a
               target="_blank"
               rel="noreferrer noopener noreferer"
-              href={
-                dstTxHash
-                  ? getEvmChainById(chainId1).getTransactionUrl(dstTxHash)
-                  : ''
-              }
+              href={dstTxHash ? chain1.getTransactionUrl(dstTxHash) : ''}
             >
               {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
             </a>
@@ -170,16 +179,12 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
             <a
               target="_blank"
               rel="noreferrer noopener noreferer"
-              href={
-                dstTxHash
-                  ? getEvmChainById(chainId1).getTransactionUrl(dstTxHash)
-                  : ''
-              }
+              href={dstTxHash ? chain1.getTransactionUrl(dstTxHash) : ''}
             >
               {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
             </a>
           </Button>{' '}
-          to {recipient ? shortenEvmAddress(recipient) : 'recipient'}
+          to {recipient ? shortenAddress(recipient) : 'recipient'}
         </>
       )
     }

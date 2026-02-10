@@ -33,7 +33,7 @@ export const GlobalStatsLoading: FC<{ chainId: EvmChainId }> = ({
       <div>
         <div className="flex flex-col gap-3">
           <span className="text-sm text-muted-foreground">
-            {getEvmChainById(chainId).name} T0
+            {getEvmChainById(chainId).name} TVL
           </span>
           <SkeletonBox className="!w-36 h-[36px]" />
           <SkeletonBox className="!w-40 h-[20px]" />

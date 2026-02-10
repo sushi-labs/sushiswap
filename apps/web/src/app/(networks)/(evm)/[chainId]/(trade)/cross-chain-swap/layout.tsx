@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { XSWAP_SUPPORTED_CHAIN_IDS, isXSwapSupportedChainId } from 'src/config'
-import type { EvmChainId } from 'sushi/evm'
 import { Header } from '../header'
 import { Providers } from './providers'
 
@@ -17,7 +16,7 @@ export default async function CrossChainSwapLayout(props: {
 }) {
   const params = await props.params
   const { children } = props
-  const chainId = +params.chainId as EvmChainId
+  const chainId = +params.chainId
 
   if (!isXSwapSupportedChainId(chainId)) {
     return notFound()

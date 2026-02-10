@@ -50,8 +50,8 @@ import {
 import type { Hex, SendTransactionReturnType } from 'viem'
 import {
   type UseCallParameters,
-  useAccount,
   useCall,
+  useConnection,
   usePublicClient,
   useSendTransaction,
   useWaitForTransactionReceipt,
@@ -97,7 +97,7 @@ export const AddSectionReviewModalConcentrated: FC<
   onSuccess: _onSuccess,
   successLink,
 }) => {
-  const { address, chain } = useAccount()
+  const { address, chain } = useConnection()
   const { data: deadline } = useTransactionDeadline({
     storageKey: TTLStorageKey.AddLiquidity,
     chainId,
@@ -291,7 +291,7 @@ export const AddSectionReviewModalConcentrated: FC<
   })
 
   const {
-    sendTransactionAsync,
+    mutateAsync: sendTransactionAsync,
     isPending: isWritePending,
     data,
   } = useSendTransaction({
@@ -320,7 +320,7 @@ export const AddSectionReviewModalConcentrated: FC<
         {({ confirm }) => (
           <>
             {children}
-            <DialogContent>
+            <DialogContent className="max-h-[80vh]">
               <div className="flex justify-between">
                 <DialogHeader>
                   <DialogTitle>
@@ -355,7 +355,8 @@ export const AddSectionReviewModalConcentrated: FC<
                   />
                 </SettingsOverlay>
               </div>
-              <div className="flex flex-col gap-4">
+              {/* 176px is sum of header, footer, padding, and gap */}
+              <div className="flex flex-col gap-4 overflow-y-auto max-h-[calc(80vh-176px)]">
                 <List className="!pt-0">
                   <List.Control>
                     <List.KeyValue flex title="Network">

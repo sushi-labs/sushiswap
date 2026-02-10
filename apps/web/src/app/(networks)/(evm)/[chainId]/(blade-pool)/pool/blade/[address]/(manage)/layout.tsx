@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import type React from 'react'
 import { getCachedBladePool } from 'src/lib/pool/blade'
 import { getEvmChainById, isBladeChainId, isEvmAddress } from 'sushi/evm'
+import { BladeSunsetNotice } from '~evm/[chainId]/_ui/blade-sunset-notice'
 import { BladePoolLiquidityHeader } from './_ui/blade-pool-liquidity-header'
 
 export default async function Layout(props: {
@@ -34,6 +35,7 @@ export default async function Layout(props: {
       <section className="flex flex-col flex-1 mt-4">
         <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent py-10 h-full">
           <Container maxWidth="5xl" className="px-4">
+            <BladeSunsetNotice className="mb-6" includeCtaBtn={false} />
             {children}
           </Container>
         </div>

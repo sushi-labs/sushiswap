@@ -2,14 +2,15 @@ import type { VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
 import type { ChainIdVariable } from 'src/lib/types/chainId.js'
-import { type ChainId, getIdFromChainIdAddress } from 'sushi'
-import { SUSHI_DATA_API_HOST } from 'sushi/evm'
+import type { TokenListChainId } from 'src/subgraphs/data-api/types/TokenListChainId.js'
+import { type AddressFor, getIdFromChainIdAddress } from 'sushi'
+import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
 export const TokenListBalancesQuery = graphql(
   `
-  query TokenListBalances($chainId: TokenListChainId!, $account: Bytes!, $includeNative: Boolean, $customTokens: [Bytes!]) {
+  query TokenListBalances($chainId: TokenListChainId!, $account: Address!, $includeNative: Boolean, $customTokens: [Address!]) {
     tokenListBalances(chainId: $chainId, account: $account, includeNative: $includeNative, customTokens: $customTokens) {
       address
       symbol
@@ -22,11 +23,11 @@ export const TokenListBalancesQuery = graphql(
 `,
 )
 
-export type GetTokenListBalances = VariablesOf<typeof TokenListBalancesQuery> &
-  ChainIdVariable<ChainId>
+export type GetTokenListBalances<TChainId extends TokenListChainId> =
+  VariablesOf<typeof TokenListBalancesQuery> & ChainIdVariable<TChainId>
 
-export async function getTokenListBalances(
-  variables: GetTokenListBalances,
+export async function getTokenListBalances<TChainId extends TokenListChainId>(
+  variables: GetTokenListBalances<TChainId>,
   options?: RequestOptions,
 ) {
   const url = `${SUSHI_DATA_API_HOST}/graphql`
@@ -43,13 +44,16 @@ export async function getTokenListBalances(
 
   if (result) {
     return result.tokenListBalances.map((token) => ({
+      ...token,
       id: getIdFromChainIdAddress(variables.chainId, token.address),
       chainId: variables.chainId,
-      ...token,
+      address: token.address as AddressFor<TChainId>,
     }))
   }
 
   throw new Error('No tokens found')
 }
 
-export type TokenListBalances = Awaited<ReturnType<typeof getTokenListBalances>>
+export type TokenListBalances<
+  TChainId extends TokenListChainId = TokenListChainId,
+> = Awaited<ReturnType<typeof getTokenListBalances<TChainId>>>

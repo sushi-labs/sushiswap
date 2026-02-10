@@ -133,10 +133,16 @@ export const publicTransports = {
   [EvmChainId.MONAD]: http(
     `https://lb.drpc.live/ogrpc?network=monad-mainnet&dkey=${drpcId}`,
   ),
+  [EvmChainId.MEGAETH]: http(
+    `https://lb.drpc.live/ogrpc?network=megaeth&dkey=${drpcId}`,
+  ),
+  [EvmChainId.XLAYER]: http(
+    `https://lb.drpc.live/ogrpc?network=xlayer&dkey=${drpcId}`,
+  ),
   /* Testnets */
   [EvmChainId.ARBITRUM_SEPOLIA]: http('https://sepolia-rollup.arbitrum.io/rpc'),
   // [EvmChainId.POLYGON_TESTNET]: http('https://rpc.ankr.com/polygon_mumbai'),
-  [EvmChainId.SEPOLIA]: http('https://sepolia.drpc.org'),
+  [EvmChainId.SEPOLIA]: http('https://sepolia.drpc.live'),
   [EvmChainId.TATARA]: http('https://rpc.tatara.katanarpc.com'),
   [EvmChainId.BOKUTO]: http('https://rpc-bokuto.katanarpc.com'),
 } as const satisfies Record<EvmChainId, Transport>

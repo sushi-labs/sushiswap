@@ -1,7 +1,7 @@
 import { readContracts } from '@wagmi/core/actions'
-import { SUSHISWAP_V3_POSITION_HELPER } from 'src/config'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
+  SUSHISWAP_V3_POSITION_HELPER,
   SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
   computeSushiSwapV3PoolAddress,

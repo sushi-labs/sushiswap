@@ -3,14 +3,14 @@ import type { Row } from '@tanstack/react-table'
 import type { FC } from 'react'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { getEvmChainById } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { ConcentratedLiquidityCollectAllDialog } from '~evm/_ui/concentrated-liquidity-collect-all-dialog'
 import type { ClaimableFees } from './claimable-fees-tab'
 
 export const ClaimableFeesActionCell: FC<Row<ClaimableFees>> = ({
   original,
 }) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
 
   return (
     <div className="grid grid-cols-2 gap-3 w-[280px]">

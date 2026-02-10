@@ -20,7 +20,7 @@ import {
   erc20Abi_totalSupply,
   masterChefV1Abi_userInfo,
 } from 'sushi/evm'
-import { useAccount, useReadContract, useReadContracts } from 'wagmi'
+import { useConnection, useReadContract, useReadContracts } from 'wagmi'
 import { useAmountBalances } from '~evm/_common/ui/balance-provider/use-balances'
 
 const SnapshotStrategies = [
@@ -78,7 +78,7 @@ const Context = createContext<VotingPowerContext | undefined>(undefined)
 export const VotingPowerProvider: FC<{
   children: ReactNode
 }> = ({ children }) => {
-  const { address, isConnected } = useAccount()
+  const { address, isConnected } = useConnection()
 
   const {
     data: votingPowerData,

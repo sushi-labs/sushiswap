@@ -1,7 +1,7 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { useMemo, useState } from 'react'
 
-export function useAccount() {
+export function useConnection() {
   const { connected } = useWallet()
   const [isLoading, setLoading] = useState<boolean>(true)
   const isLoadingAccount = useMemo(() => {

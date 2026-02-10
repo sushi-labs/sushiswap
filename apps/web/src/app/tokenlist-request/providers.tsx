@@ -1,6 +1,7 @@
 'use client'
 
-import { BaseProviders, OnramperProvider } from '@sushiswap/ui'
+import { BaseProviders } from '@sushiswap/ui'
+import { OnramperProvider } from 'src/lib/onramper/components/onramper-provider'
 import { QueryClientProvider } from '../../providers/query-client-provider'
 import { WagmiProvider } from '../../providers/wagmi-provider'
 
@@ -10,11 +11,11 @@ export function Providers({
 }: { children: React.ReactNode; cookie: string | null }) {
   return (
     <BaseProviders>
-      <OnramperProvider>
-        <QueryClientProvider>
-          <WagmiProvider cookie={cookie}>{children}</WagmiProvider>
-        </QueryClientProvider>
-      </OnramperProvider>
+      <QueryClientProvider>
+        <WagmiProvider cookie={cookie}>
+          <OnramperProvider>{children}</OnramperProvider>
+        </WagmiProvider>
+      </QueryClientProvider>
     </BaseProviders>
   )
 }

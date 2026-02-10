@@ -23,14 +23,16 @@ import { EvmChainId, type EvmCurrency } from 'sushi/evm'
 import { type Hex, encodeFunctionData } from 'viem'
 import type { Address } from 'viem/accounts'
 import { parseUnits } from 'viem/utils'
-import { z } from 'zod'
+import * as z from 'zod'
 import {
   DerivedstateSimpleSwapProvider,
   useDerivedStateSimpleSwap,
 } from '~evm/[chainId]/(trade)/swap/_ui/derivedstate-simple-swap-provider'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 
-type DerivedStateSimpleSwapState = ReturnType<typeof useDerivedStateSimpleSwap>
+type DerivedStateSimpleSwapState = ReturnType<
+  typeof useDerivedStateSimpleSwap<TwapSupportedChainId>
+>
 
 type State = DerivedStateSimpleSwapState & {
   state: Omit<DerivedStateSimpleSwapState['state'], 'chainId'> & {
@@ -83,7 +85,8 @@ const _DerivedStateTwapProvider: FC<DerivedStateTwapProviderProps> = ({
   children,
   isLimitOrder = false,
 }) => {
-  const derivedStateSimpleSwap = useDerivedStateSimpleSwap()
+  const derivedStateSimpleSwap =
+    useDerivedStateSimpleSwap<TwapSupportedChainId>()
 
   const { data: prices, isLoading: _isPricesLoading } = usePrices({
     chainId: derivedStateSimpleSwap.state.chainId,

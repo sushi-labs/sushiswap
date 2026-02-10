@@ -11,7 +11,7 @@ import {
   SushiSwapCmsProtocols,
 } from 'src/lib/constants'
 import { rateLimit } from 'src/lib/rate-limit'
-import { z } from 'zod'
+import * as z from 'zod'
 import { CORS } from '../../cors'
 
 const schema = z.object({

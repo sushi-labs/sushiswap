@@ -16,6 +16,7 @@ import type React from 'react'
 import { type FC, useMemo, useState } from 'react'
 
 import { BladeIcon } from '@sushiswap/ui/icons/BladeIcon'
+import { useSearchParams } from 'next/navigation'
 import {
   type BladeChainId,
   type SushiSwapChainId,
@@ -26,6 +27,7 @@ import {
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
+import { BladeSunsetNotice } from '~evm/[chainId]/_ui/blade-sunset-notice'
 import { ConcentratedPositionsTable } from '~evm/[chainId]/pool/_ui/ConcentratedPositionsTable/concentrated-positions-table'
 import { BladePositionsTable } from './blade-positions-table'
 import { PositionsTable } from './positions-table'
@@ -99,18 +101,29 @@ export const PositionsTab: FC<{
     () => createItems(chainId, supportedProtocols),
     [chainId, supportedProtocols],
   )
+  const searchParams = useSearchParams()
+  const urlTab = searchParams.get('tab')
 
   // Find the first non-disabled tab as default
   const defaultTab = useMemo(() => {
+    if (urlTab) {
+      const matchingItem = items.find(
+        (item) => item.value === urlTab && !item.disabled,
+      )
+      if (matchingItem) {
+        return matchingItem.value
+      }
+    }
     const firstAvailable = items.find((item) => !item.disabled)
     return firstAvailable?.value || 'v3'
-  }, [items])
+  }, [items, urlTab])
 
   const [tab, setTab] = useState(defaultTab)
   const [hideClosedPositions, setHideClosedPositions] = useState(true)
 
   return (
     <div className="flex flex-col gap-4">
+      <BladeSunsetNotice includeCtaBtn={false} />
       <Tabs value={tab} onValueChange={setTab} defaultValue={defaultTab}>
         <div className="flex justify-between mb-4">
           <div className="block sm:hidden">

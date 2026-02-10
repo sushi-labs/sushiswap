@@ -164,8 +164,8 @@ const EnableProtocolFeeButton: FC<{
   pool: EvmAddress
   chainId: EvmChainId
 }> = ({ pool, chainId }) => {
-  const { switchChainAsync } = useSwitchChain()
-  const { data: txHash, writeContract, isPending } = useWriteContract()
+  const { mutateAsync: switchChainAsync } = useSwitchChain()
+  const { data: txHash, mutate: writeContract, isPending } = useWriteContract()
   const { isLoading, isSuccess } = useWaitForTransactionReceipt({
     hash: txHash,
   })

@@ -25,17 +25,23 @@ import { Currency } from '@sushiswap/ui'
 import type React from 'react'
 import { type CSSProperties, type FC, memo, useCallback } from 'react'
 import { NativeAddress } from 'src/lib/constants'
-import { type Amount, type Fraction, ZERO } from 'sushi'
-import { type EvmCurrency, getEvmChainById } from 'sushi/evm'
+import { type Amount, type Fraction, ZERO, getChainById } from 'sushi'
+import {
+  type EvmAddress,
+  type EvmChainId,
+  type EvmCurrency,
+  getEvmChainById,
+} from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 import { zeroAddress } from 'viem'
 
-export interface TokenSelectorRow {
-  account?: `0x${string}`
-  currency: EvmCurrency
+export interface TokenSelectorRow<TChainId extends EvmChainId | SvmChainId> {
+  account?: AddressFor<TChainId>
+  currency: CurrencyFor<TChainId>
   style?: CSSProperties
   className?: string
-  onSelect(currency: EvmCurrency): void
-  balance?: Amount<EvmCurrency> | undefined
+  onSelect(currency: CurrencyFor<TChainId>): void
+  balance?: Amount<CurrencyFor<TChainId>> | undefined
   showWarning: boolean
   price?: Fraction
   pin?: {
@@ -47,8 +53,8 @@ export interface TokenSelectorRow {
   onShowInfo: () => void
 }
 
-export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
-  function TokenSelectorRow({
+export const TokenSelectorRow: FC<TokenSelectorRow<EvmChainId | SvmChainId>> =
+  memo(function TokenSelectorRow({
     price,
     balance,
     currency,
@@ -178,8 +184,9 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
                         <a
                           target="_blank"
                           rel="noopener noreferrer"
-                          href={getEvmChainById(currency.chainId).getTokenUrl(
-                            currency.wrap().address,
+                          href={getChainById(currency.chainId).getTokenUrl(
+                            // Ugly cast but we know this is safe
+                            currency.wrap().address as EvmAddress,
                           )}
                           className="text-blue hover:underline flex gap-1"
                         >
@@ -247,8 +254,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
         </div>
       </TraceEvent>
     )
-  },
-)
+  })
 
 export function TokenSelectorRowLoading() {
   return (

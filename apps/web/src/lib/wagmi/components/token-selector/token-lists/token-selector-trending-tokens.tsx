@@ -8,11 +8,11 @@ import {
   TokenSelectorCurrencyListLoading,
 } from './common/token-selector-currency-list'
 
-interface TokenSelectorTrendingTokens {
-  chainId: TrendingTokensChainId
-  onSelect(currency: EvmCurrency): void
-  onShowInfo(currency: EvmCurrency | false): void
-  selected: EvmCurrency | undefined
+interface TokenSelectorTrendingTokens<TChainId extends TrendingTokensChainId> {
+  chainId: TChainId
+  onSelect(currency: CurrencyFor<TChainId>): void
+  onShowInfo(currency: CurrencyFor<TChainId> | false): void
+  selected: CurrencyFor<TChainId> | undefined
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
@@ -28,12 +28,14 @@ function Shell({ children }: { children: React.ReactNode }) {
 
 const emptyMap = new Map()
 
-export function TokenSelectorTrendingTokens({
+export function TokenSelectorTrendingTokens<
+  TChainId extends TrendingTokensChainId,
+>({
   chainId,
   onSelect,
   onShowInfo,
   selected,
-}: TokenSelectorTrendingTokens) {
+}: TokenSelectorTrendingTokens<TChainId>) {
   const { data, isError, isLoading } = useTrendingTokens({ chainId })
 
   const { data: pricesMap } = usePrices({ chainId })

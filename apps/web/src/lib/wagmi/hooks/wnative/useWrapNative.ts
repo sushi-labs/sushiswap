@@ -9,7 +9,7 @@ import type { Amount } from 'sushi'
 import { type EvmCurrency, weth9Abi_deposit } from 'sushi/evm'
 import type { SendTransactionReturnType } from 'viem'
 import {
-  useAccount,
+  useConnection,
   usePublicClient,
   useSimulateContract,
   useWriteContract,
@@ -24,7 +24,7 @@ export const useWrapNative = ({
   amount,
   enabled = true,
 }: UseWrapNativeParams) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const client = usePublicClient()
 
   const onError = useCallback((e: Error) => {
@@ -92,8 +92,8 @@ export const useWrapNative = ({
   })
 
   const {
-    writeContractAsync,
-    writeContract: _,
+    mutateAsync: writeContractAsync,
+    mutate: _,
     ...rest
   } = useWriteContract({
     mutation: {

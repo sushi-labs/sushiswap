@@ -49,7 +49,7 @@ function BaseCookieDialog({
             as="span"
             className={'ml-1 float-right clear-both'}
           >
-            More
+            <span className="pl-0.5">More</span>
           </Button>
         )}
         <span>
