@@ -22,34 +22,36 @@ interface PortfolioTokensListProps {
   tokens: PortfolioWalletToken[]
 }
 
+const getCurrency = (token: PortfolioWalletToken) => {
+  if (isEvmChainId(token.chainId) && !isEvmAddress(token.id)) {
+    return EvmNative.fromChainId(token.chainId as EvmChainId)
+  } else if (isEvmChainId(token.chainId)) {
+    return new EvmToken({
+      chainId: token.chainId as EvmChainId,
+      address: token.id as `0x${string}`,
+      decimals: token.decimals,
+      symbol: token.symbol,
+      name: token.name,
+    })
+  } else if (token.id === svmNativeAddress) {
+    return SvmNative.fromChainId(token.chainId as SvmChainId)
+  } else {
+    return new SvmToken({
+      chainId: token.chainId as SvmChainId,
+      address: svmAddress(token.id),
+      decimals: token.decimals,
+      symbol: token.symbol,
+      name: token.name,
+    })
+  }
+}
+
 export const PortfolioTokensList: FC<PortfolioTokensListProps> = ({
   tokens,
 }) => (
   <div className="overflow-y-auto h-full cursor-default">
     {tokens.map((token) => {
-      const currency = useMemo(() => {
-        if (isEvmChainId(token.chainId) && !isEvmAddress(token.id)) {
-          return EvmNative.fromChainId(token.chainId as EvmChainId)
-        } else if (isEvmChainId(token.chainId)) {
-          return new EvmToken({
-            chainId: token.chainId as EvmChainId,
-            address: token.id as `0x${string}`,
-            decimals: token.decimals,
-            symbol: token.symbol,
-            name: token.name,
-          })
-        } else if (token.id === svmNativeAddress) {
-          return SvmNative.fromChainId(token.chainId as SvmChainId)
-        } else {
-          return new SvmToken({
-            chainId: token.chainId as SvmChainId,
-            address: svmAddress(token.id),
-            decimals: token.decimals,
-            symbol: token.symbol,
-            name: token.name,
-          })
-        }
-      }, [token.chainId, token.id, token.decimals, token.symbol, token.name])
+      const currency = getCurrency(token)
 
       return (
         <PortfolioInfoRow

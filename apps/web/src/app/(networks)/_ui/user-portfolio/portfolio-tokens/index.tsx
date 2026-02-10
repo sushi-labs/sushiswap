@@ -96,7 +96,7 @@ export const PortfolioTokens = () => {
             </div>
           ))}
         </div>
-      ) : data.tokens.length ? (
+      ) : data?.tokens?.length ? (
         <PortfolioTokensList tokens={data.tokens} />
       ) : null}
     </div>
