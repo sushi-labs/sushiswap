@@ -149,6 +149,7 @@ function _useSvmSimpleSwapTradeReview({
         const unsignedBytes = base64Encoder.encode(unsignedTransaction)
 
         tradeRef.current = trade
+        const _trade = tradeRef.current
 
         const executePromise = executeMutation.mutateAsync({
           requestId: order?.requestId,
@@ -173,9 +174,9 @@ function _useSvmSimpleSwapTradeReview({
           txHash: signature?.toString(),
           promise: confirmationPromise,
           summary: {
-            pending: `${actionVerb}ping ${trade?.amountIn?.toSignificant(6)} ${trade?.amountIn?.currency.symbol} ${actionPreposition} ${trade?.amountOut?.toSignificant(6)} ${trade?.amountOut?.currency.symbol}`,
-            completed: `${actionVerb} ${trade?.amountIn?.toSignificant(6)} ${trade?.amountIn?.currency.symbol} ${actionPreposition} ${trade?.amountOut?.toSignificant(6)} ${trade?.amountOut?.currency.symbol}`,
-            failed: `Something went wrong when trying to ${actionVerb.toLowerCase()} ${trade?.amountIn?.currency.symbol} ${actionPreposition} ${trade?.amountOut?.currency.symbol}`,
+            pending: `${actionVerb}ping ${_trade?.amountIn?.toSignificant(6)} ${_trade?.amountIn?.currency.symbol} ${actionPreposition} ${_trade?.amountOut?.toSignificant(6)} ${_trade?.amountOut?.currency.symbol}`,
+            completed: `${actionVerb} ${_trade?.amountIn?.toSignificant(6)} ${_trade?.amountIn?.currency.symbol} ${actionPreposition} ${_trade?.amountOut?.toSignificant(6)} ${_trade?.amountOut?.currency.symbol}`,
+            failed: `Something went wrong when trying to ${actionVerb.toLowerCase()} ${_trade?.amountIn?.currency.symbol} ${actionPreposition} ${_trade?.amountOut?.currency.symbol}`,
           },
           timestamp: Date.now(),
           groupTimestamp: Date.now(),
@@ -195,33 +196,33 @@ function _useSvmSimpleSwapTradeReview({
               txHash: signature,
               chain_id: chainId,
             })
-            if (trade?.amountIn?.currency && trade?.amountOut?.currency) {
+            if (_trade?.amountIn?.currency && _trade?.amountOut?.currency) {
               const token0Usd =
-                prices?.get(trade?.amountIn?.currency.wrap().address) ?? 0
+                prices?.get(_trade?.amountIn?.currency.wrap().address) ?? 0
               const swapAmountUsd = Amount.tryFromHuman(
-                trade?.amountIn?.currency,
-                trade?.amountIn?.toString(),
+                _trade?.amountIn?.currency,
+                _trade?.amountIn?.toString(),
               )?.mulHuman(token0Usd)
               const swapDetails = {
                 location: '_SimpleSwapTradeReviewDialog',
                 action: 'onSwapSuccess',
                 chainId: String(chainId),
                 token0:
-                  trade?.amountIn?.currency.type === 'native'
+                  _trade?.amountIn?.currency.type === 'native'
                     ? 'native'
-                    : trade?.amountIn?.currency.address,
-                token0Symbol: trade?.amountIn?.currency.symbol ?? 'N/A',
+                    : _trade?.amountIn?.currency.address,
+                token0Symbol: _trade?.amountIn?.currency.symbol ?? 'N/A',
                 token1:
-                  trade?.amountOut?.currency.type === 'native'
+                  _trade?.amountOut?.currency.type === 'native'
                     ? 'native'
-                    : trade?.amountOut?.currency.address,
-                token1Symbol: trade?.amountOut?.currency.symbol ?? 'N/A',
-                swapAmount: trade?.amountIn?.toString(),
+                    : _trade?.amountOut?.currency.address,
+                token1Symbol: _trade?.amountOut?.currency.symbol ?? 'N/A',
+                swapAmount: _trade?.amountIn?.toString(),
                 swapAmountUsd:
                   swapAmountUsd && token0Usd
                     ? swapAmountUsd?.toString()
                     : 'N/A',
-                feeUsd: trade?.fee ? trade.fee?.replaceAll('$', '') : 'N/A',
+                feeUsd: _trade?.fee ? _trade.fee?.replaceAll('$', '') : 'N/A',
                 recipient: recipient ? recipient : 'N/A',
                 timestamp: Date.now().toString(),
                 detailsCollapsedState: isDetailsCollapsed ? 'closed' : 'open',
