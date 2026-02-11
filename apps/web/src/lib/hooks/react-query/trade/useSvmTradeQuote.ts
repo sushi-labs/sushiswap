@@ -60,7 +60,10 @@ function useTradeQuote(
     address: fromToken ? fromToken.wrap().address : undefined,
   })
 
-  const { data: feeMintBalances } = useAmountBalances(chainId, FEE_MINTS)
+  const { data: feeMintBalances } = useAmountBalances(
+    chainId,
+    chainId ? FEE_MINTS : [],
+  )
 
   const feeOptions = useMemo(() => {
     if (!fromToken) return []
