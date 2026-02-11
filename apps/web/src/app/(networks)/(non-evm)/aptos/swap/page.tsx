@@ -14,7 +14,7 @@ export default function SwapPage() {
   }, [network, disconnect])
 
   return (
-    <Container maxWidth="lg" className="px-4">
+    <Container maxWidth="lg">
       <SimpleSwapWidget />
     </Container>
   )
