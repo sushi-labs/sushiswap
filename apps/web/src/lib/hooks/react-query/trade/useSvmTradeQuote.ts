@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import {
   SVM_UI_FEE_BIPS,
+  SVM_UI_FEE_DECIMAL,
   ULTRA_ADVANCED_FEE_INTEGRATOR_ID,
   ULTRA_ADVANCED_FEE_RECEIVER,
   ULTRA_FEE_MINT_OPTIONS,
@@ -49,35 +50,28 @@ function useTradeQuote(
     chainId,
   })
 
-  const { data: feeMintBalances } = useAmountBalances(
-    chainId ? chainId : undefined,
-    chainId && FEE_MINTS ? FEE_MINTS : undefined,
-  )
+  const { data: nativePrice } = usePrice({
+    chainId,
+    address: chainId ? WSOL_ADDRESS[chainId] : undefined,
+  })
 
-  const nativePrice = useMemo(() => {
-    if (chainId) {
-      return svmPrices?.get(WSOL_ADDRESS[chainId])
-    }
-    return undefined
-  }, [svmPrices, chainId])
+  const { data: fromTokenPrice } = usePrice({
+    chainId,
+    address: fromToken ? fromToken.wrap().address : undefined,
+  })
 
-  const fromTokenPrice = useMemo(() => {
-    if (fromToken && chainId) {
-      return svmPrices?.get(fromToken.wrap().address)
-    }
-    return undefined
-  }, [svmPrices, chainId, fromToken])
+  const { data: feeMintBalances } = useAmountBalances(chainId, FEE_MINTS)
 
   const feeOptions = useMemo(() => {
-    return ULTRA_FEE_MINT_OPTIONS?.map((i) => ({
+    if (!fromToken) return []
+
+    return ULTRA_FEE_MINT_OPTIONS.map((i) => ({
       ...i,
       priceUsd: svmPrices?.get(i.currency.wrap().address),
       balance: i.shouldUseNativeForBalanceCheck
         ? feeMintBalances?.get(SvmNative.fromChainId(i.currency.chainId).id)
         : feeMintBalances?.get(i.currency.id),
-      fromTokenForCompare: i.shouldUseNativeForBalanceCheck
-        ? fromToken?.wrap()
-        : fromToken,
+      fromTokenForCompare: fromToken.wrap(),
     }))
   }, [feeMintBalances, svmPrices, fromToken])
 
@@ -213,11 +207,12 @@ function useTradeQuote(
       const initJson = await initRes.json()
 
       const outUsdValue = svmOrderValidator.parse(initJson)?.outUsdValue ?? 0
-      const feeUsd = outUsdValue * (SVM_UI_FEE_BIPS / 10000)
+      const feeUsd = outUsdValue * SVM_UI_FEE_DECIMAL
 
       const payableFeeMintOptions = feeOptions
-        ?.map((c) => {
+        .map((c) => {
           const price = c.priceUsd ?? 0
+          // Fee in token amount (human readable)
           const humanFee = price > 0 ? feeUsd / price : 0
 
           const feeAmount =
@@ -235,9 +230,6 @@ function useTradeQuote(
         params.set('feeBps', SVM_UI_FEE_BIPS.toString())
 
         const sorted = payableFeeMintOptions.sort((a, b) => {
-          if (!a.fromTokenForCompare || !b.fromTokenForCompare) {
-            throw new Error('fromToken not defined')
-          }
           const aSame = a.currency.isSame(a.fromTokenForCompare)
           const bSame = b.currency.isSame(b.fromTokenForCompare)
           if (aSame !== bSame) return aSame ? 1 : -1
@@ -245,9 +237,7 @@ function useTradeQuote(
           return (b.priority ?? 0) - (a.priority ?? 0)
         })
         const chosen = sorted?.[0]
-        if (!chosen.fromTokenForCompare) {
-          throw new Error('No token to compare to')
-        }
+ 
         params.set('feeMint', chosen.currency.address)
 
         const feeMintEqualsFrom = chosen.currency.isSame(
