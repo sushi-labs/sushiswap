@@ -237,7 +237,7 @@ function useTradeQuote(
           return (b.priority ?? 0) - (a.priority ?? 0)
         })
         const chosen = sorted?.[0]
- 
+
         params.set('feeMint', chosen.currency.address)
 
         const feeMintEqualsFrom = chosen.currency.isSame(
