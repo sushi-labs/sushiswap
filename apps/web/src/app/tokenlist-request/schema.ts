@@ -7,12 +7,12 @@ const ZpdAddress = z
   .refine((val) => (val ? isAddress(val) : false), 'Invalid address')
 
 export const ApplyForTokenListTokenSchema = z.object({
-  address: ZpdAddress.transform((address) => getAddress(address)),
+  address: ZpdAddress.transform((address) => getAddress(address)).optional(),
   chainId: z.coerce
     .number()
     .transform((chainId) => chainId as ChainId)
     .default(ChainId.ETHEREUM),
-  logoUrl: z.string().url(),
+  logoUrl: z.string().url().optional(),
   tweetUrl: z.string().url().startsWith('https://x.com/').optional(),
 })
 

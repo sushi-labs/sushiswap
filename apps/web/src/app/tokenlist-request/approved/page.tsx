@@ -113,9 +113,7 @@ const COLUMNS: ColumnDef<ApprovedCommunityTokens[number], unknown>[] = [
 export default function ApprovedTokensPage() {
   const { data, isLoading } = useApprovedCommunityTokens()
 
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: 'createdAt', desc: true },
-  ])
+  const [sorting, setSorting] = useState<SortingState>([])
 
   const state: Partial<TableState> = useMemo(() => {
     return {

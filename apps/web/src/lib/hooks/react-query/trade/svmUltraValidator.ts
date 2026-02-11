@@ -36,10 +36,16 @@ export type SvmOrder = {
   quoteId?: string
   maker?: SvmAddress
   expireAt?: string
-  // platformFee?: {
-  //   feeMint: SvmAddress
-  //   feeBps: number
-  // }
+  platformFee?: {
+    feeMint: SvmAddress
+    feeBps: number
+  }
+  advancedFee?: {
+    feeBps: string
+    feeMint: SvmAddress
+    feeReceiver: SvmAddress
+    feeUsdValue: number
+  }
   errorCode?: number
   errorMessage?: string
 }
@@ -73,12 +79,20 @@ const svmOrderSchema: z.ZodType<SvmOrder> = z
     quoteId: z.string().optional(),
     maker: svmAddressSchema.optional(),
     expireAt: z.string().optional(),
-    // platformFee: z
-    //   .object({
-    //     feeMint: svmAddressSchema,
-    //     feeBps: z.coerce.number(),
-    //   })
-    //   .optional(),
+    platformFee: z
+      .object({
+        feeMint: svmAddressSchema,
+        feeBps: z.coerce.number(),
+      })
+      .optional(),
+    advancedFee: z
+      .object({
+        feeBps: z.string(),
+        feeMint: svmAddressSchema,
+        feeReceiver: svmAddressSchema,
+        feeUsdValue: z.coerce.number(),
+      })
+      .optional(),
     errorCode: z.coerce.number().optional(),
     errorMessage: z.string().optional(),
   })

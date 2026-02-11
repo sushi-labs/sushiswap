@@ -8,18 +8,21 @@ import { SwapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { DialogType, useDialog } from '@sushiswap/ui'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import type { SupportedChainId } from 'src/config'
+import { sendDrilldownLog } from 'src/lib/drilldown-log'
 import type { UseSvmTradeReturn } from 'src/lib/hooks/react-query'
 import { useSvmTradeExecute } from 'src/lib/hooks/react-query'
 import { waitForSvmSignature } from 'src/lib/svm/wait-for-svm-signature'
 import { useAccount } from 'src/lib/wallet'
-import { Percent } from 'sushi'
+import { Amount, Percent } from 'sushi'
 import {
   type SvmAddress,
   type SvmChainId,
   type SvmCurrency,
   isSvmChainId,
 } from 'sushi/svm'
+import { useDetailsInteractionTracker } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
+import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { isUnwrapTrade, isWrapTrade } from '../common'
 import {
   useDerivedStateSimpleSwap,
@@ -60,7 +63,10 @@ function _useSvmSimpleSwapTradeReview({
 }) {
   const address = useAccount('svm')
   const { signer } = useTransactionSigner()
-
+  const {
+    state: { isDetailsCollapsed, wasDetailsTouched },
+    mutate: { resetDetailsTrackedState },
+  } = useDetailsInteractionTracker()
   const {
     mutate: { setSwapAmount },
   } = useDerivedStateSimpleSwap<SvmChainId & SupportedChainId>()
@@ -89,7 +95,7 @@ function _useSvmSimpleSwapTradeReview({
     enabled: Boolean(address && isDialogOpen),
     order,
   })
-
+  const { data: prices } = usePrices({ chainId })
   const tradeRef = useRef<UseSvmTradeReturn | null>(null)
   const [isSigning, setIsSigning] = useState(false)
   const [txHash, setTxHash] = useState<string | undefined>(undefined)
@@ -143,6 +149,7 @@ function _useSvmSimpleSwapTradeReview({
         const unsignedBytes = base64Encoder.encode(unsignedTransaction)
 
         tradeRef.current = trade
+        const _trade = tradeRef.current
 
         const executePromise = executeMutation.mutateAsync({
           requestId: order?.requestId,
@@ -167,9 +174,9 @@ function _useSvmSimpleSwapTradeReview({
           txHash: signature?.toString(),
           promise: confirmationPromise,
           summary: {
-            pending: `${actionVerb}ping ${trade?.amountIn?.toSignificant(6)} ${trade?.amountIn?.currency.symbol} ${actionPreposition} ${trade?.amountOut?.toSignificant(6)} ${trade?.amountOut?.currency.symbol}`,
-            completed: `${actionVerb} ${trade?.amountIn?.toSignificant(6)} ${trade?.amountIn?.currency.symbol} ${actionPreposition} ${trade?.amountOut?.toSignificant(6)} ${trade?.amountOut?.currency.symbol}`,
-            failed: `Something went wrong when trying to ${actionVerb.toLowerCase()} ${trade?.amountIn?.currency.symbol} ${actionPreposition} ${trade?.amountOut?.currency.symbol}`,
+            pending: `${actionVerb}ping ${_trade?.amountIn?.toSignificant(6)} ${_trade?.amountIn?.currency.symbol} ${actionPreposition} ${_trade?.amountOut?.toSignificant(6)} ${_trade?.amountOut?.currency.symbol}`,
+            completed: `${actionVerb} ${_trade?.amountIn?.toSignificant(6)} ${_trade?.amountIn?.currency.symbol} ${actionPreposition} ${_trade?.amountOut?.toSignificant(6)} ${_trade?.amountOut?.currency.symbol}`,
+            failed: `Something went wrong when trying to ${actionVerb.toLowerCase()} ${_trade?.amountIn?.currency.symbol} ${actionPreposition} ${_trade?.amountOut?.currency.symbol}`,
           },
           timestamp: Date.now(),
           groupTimestamp: Date.now(),
@@ -189,6 +196,50 @@ function _useSvmSimpleSwapTradeReview({
               txHash: signature,
               chain_id: chainId,
             })
+            if (_trade?.amountIn?.currency && _trade?.amountOut?.currency) {
+              const token0Usd =
+                prices?.get(_trade?.amountIn?.currency.wrap().address) ?? 0
+              const swapAmountUsd = Amount.tryFromHuman(
+                _trade?.amountIn?.currency,
+                _trade?.amountIn?.toString(),
+              )?.mulHuman(token0Usd)
+              const swapDetails = {
+                location: '_SimpleSwapTradeReviewDialog',
+                action: 'onSwapSuccess',
+                chainId: String(chainId),
+                token0:
+                  _trade?.amountIn?.currency.type === 'native'
+                    ? 'native'
+                    : _trade?.amountIn?.currency.address,
+                token0Symbol: _trade?.amountIn?.currency.symbol ?? 'N/A',
+                token1:
+                  _trade?.amountOut?.currency.type === 'native'
+                    ? 'native'
+                    : _trade?.amountOut?.currency.address,
+                token1Symbol: _trade?.amountOut?.currency.symbol ?? 'N/A',
+                swapAmount: _trade?.amountIn?.toString(),
+                swapAmountUsd:
+                  swapAmountUsd && token0Usd
+                    ? swapAmountUsd?.toString()
+                    : 'N/A',
+                feeUsd: _trade?.fee ? _trade.fee?.replaceAll('$', '') : 'N/A',
+                recipient: recipient ? recipient : 'N/A',
+                timestamp: Date.now().toString(),
+                detailsCollapsedState: isDetailsCollapsed ? 'closed' : 'open',
+                wasDetailsTouched: wasDetailsTouched ? 'yes' : 'no',
+              }
+              sendDrilldownLog({
+                dataForLog: swapDetails,
+                extraFields: {
+                  detailsCollapsedState: swapDetails.detailsCollapsedState,
+                  feeUsd: swapDetails.feeUsd,
+                  chainId: swapDetails.chainId,
+                  wasDetailsTouched: swapDetails.wasDetailsTouched,
+                  recipient: swapDetails.recipient,
+                },
+                logLevel: 'info',
+              })
+            }
           })
           .catch(() => {
             setStatus('error')
@@ -204,6 +255,7 @@ function _useSvmSimpleSwapTradeReview({
         setSwapAmount('')
         refetchChain(chainId)
         setIsSigning(false)
+        resetDetailsTrackedState()
       }
     }
   }, [
@@ -218,6 +270,11 @@ function _useSvmSimpleSwapTradeReview({
     setSwapAmount,
     signer,
     trade,
+    prices,
+    recipient,
+    resetDetailsTrackedState,
+    isDetailsCollapsed,
+    wasDetailsTouched,
   ])
 
   return {

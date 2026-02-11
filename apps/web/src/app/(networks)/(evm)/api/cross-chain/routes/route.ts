@@ -1,5 +1,6 @@
 import type { NextRequest } from 'next/server'
 import { EVM_UI_FEE_DECIMAL, type XSwapSupportedChainId } from 'src/config'
+import { isEvmChainId } from 'sushi/evm'
 import * as z from 'zod'
 import {
   type LifiChainId,
@@ -127,7 +128,10 @@ export async function GET(request: NextRequest) {
         exchanges: { allow: ['sushiswap'] },
         allowSwitchChain: false,
         allowDestinationCall: true,
-        fee: EVM_UI_FEE_DECIMAL, // e.g. 0.0035 (0.35%)
+        //need to setup sol fee in lifi portol
+        fee: isEvmChainId(parsedParams.fromChainId)
+          ? EVM_UI_FEE_DECIMAL
+          : undefined, // e.g. 0.0035 (0.35%)
       },
     }),
   }

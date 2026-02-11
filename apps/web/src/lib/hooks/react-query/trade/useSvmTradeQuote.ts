@@ -1,26 +1,43 @@
 import { LAMPORTS_PER_SOL, useKitTransactionSigner } from '@solana/connector'
 import { useQuery } from '@tanstack/react-query'
-import { useCallback } from 'react'
-import { SVM_UI_FEE_BIPS, ULTRA_REFERRAL_ACCOUNT } from 'src/config'
+import { useCallback, useMemo } from 'react'
+import {
+  SVM_UI_FEE_BIPS,
+  SVM_UI_FEE_DECIMAL,
+  ULTRA_ADVANCED_FEE_INTEGRATOR_ID,
+  ULTRA_ADVANCED_FEE_RECEIVER,
+  ULTRA_FEE_MINT_OPTIONS,
+} from 'src/config'
 import { unwrapSol, wrapSol } from 'src/lib/svm/wrap-unwrap'
 import { Amount, Percent, Price, ZERO } from 'sushi'
-import { SvmNative, WSOL, WSOL_ADDRESS, isSvmChainId } from 'sushi/svm'
+import {
+  SvmChainId,
+  SvmNative,
+  WSOL,
+  WSOL_ADDRESS,
+  isSvmChainId,
+} from 'sushi/svm'
 import { stringify } from 'viem'
 import {
   isWrapTrade,
   useWrapUnwrapTrade,
 } from '~evm/[chainId]/(trade)/swap/_ui/common'
-import {
-  useAmountBalance,
-  useBalance,
-} from '~evm/_common/ui/balance-provider/use-balance'
+import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
+import { useAmountBalances } from '~evm/_common/ui/balance-provider/use-balances'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
+import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { svmOrderValidator } from './svmUltraValidator'
 import type {
   UseSvmTradeParams,
   UseSvmTradeQuoteQuerySelect,
   UseSvmTradeReturn,
 } from './types'
+
+const FEE_MINTS = ULTRA_FEE_MINT_OPTIONS.map((i) =>
+  i.shouldUseNativeForBalanceCheck
+    ? SvmNative.fromChainId(SvmChainId.SOLANA)
+    : i.currency,
+)
 
 function useTradeQuote(
   params: UseSvmTradeParams | undefined,
@@ -29,10 +46,37 @@ function useTradeQuote(
   const { chainId, fromToken, toToken, amount, recipient, enabled } =
     params || {}
 
+  const { data: svmPrices } = usePrices({
+    chainId,
+  })
+
   const { data: nativePrice } = usePrice({
     chainId,
     address: chainId ? WSOL_ADDRESS[chainId] : undefined,
   })
+
+  const { data: fromTokenPrice } = usePrice({
+    chainId,
+    address: fromToken ? fromToken.wrap().address : undefined,
+  })
+
+  const { data: feeMintBalances } = useAmountBalances(
+    chainId,
+    chainId ? FEE_MINTS : [],
+  )
+
+  const feeOptions = useMemo(() => {
+    if (!fromToken) return []
+
+    return ULTRA_FEE_MINT_OPTIONS.map((i) => ({
+      ...i,
+      priceUsd: svmPrices?.get(i.currency.wrap().address),
+      balance: i.shouldUseNativeForBalanceCheck
+        ? feeMintBalances?.get(SvmNative.fromChainId(i.currency.chainId).id)
+        : feeMintBalances?.get(i.currency.id),
+      fromTokenForCompare: fromToken.wrap(),
+    }))
+  }, [feeMintBalances, svmPrices, fromToken])
 
   const select: UseSvmTradeQuoteQuerySelect = useCallback(
     (order) => {
@@ -130,6 +174,8 @@ function useTradeQuote(
         toToken,
         amount,
         recipient,
+        fromTokenPrice,
+        feeOptions,
       },
     ],
     queryFn: async () => {
@@ -142,27 +188,98 @@ function useTradeQuote(
       }
 
       const params = new URLSearchParams()
+
       params.set('inputMint', fromToken.wrap().address)
       params.set('outputMint', toToken.wrap().address)
       params.set('amount', amount.amount.toString())
 
-      params.set('referralAccount', ULTRA_REFERRAL_ACCOUNT)
-      params.set('referralFee', SVM_UI_FEE_BIPS.toString())
-
       if (recipient) {
         params.set('taker', recipient)
       }
+      const initRes = await fetch(
+        `/api/jupiter/ultra/order?${params.toString()}`,
+        {
+          method: 'GET',
+        },
+      )
 
-      const res = await fetch(`/api/jupiter/ultra/order?${params.toString()}`, {
-        method: 'GET',
-      })
-
-      if (!res.ok) {
-        throw new Error(`Jupiter order failed: ${res.statusText}`)
+      if (!initRes.ok) {
+        throw new Error(`Jupiter order failed: ${initRes.statusText}`)
       }
 
-      const json = await res.json()
-      return svmOrderValidator.parse(json)
+      const initJson = await initRes.json()
+
+      const outUsdValue = svmOrderValidator.parse(initJson)?.outUsdValue ?? 0
+      const feeUsd = outUsdValue * SVM_UI_FEE_DECIMAL
+
+      const payableFeeMintOptions = feeOptions
+        .map((c) => {
+          const price = c.priceUsd ?? 0
+          // Fee in token amount (human readable)
+          const humanFee = price > 0 ? feeUsd / price : 0
+
+          const feeAmount =
+            humanFee > 0 ? Amount.tryFromHuman(c.currency, humanFee) : null
+
+          const canPay = !!feeAmount && !!c.balance?.gte(feeAmount)
+
+          return { ...c, feeAmount, canPay }
+        })
+        .filter((c) => c.canPay)
+
+      if (payableFeeMintOptions?.length > 0) {
+        params.set('feeReceiver', ULTRA_ADVANCED_FEE_RECEIVER)
+        params.set('integratorId', ULTRA_ADVANCED_FEE_INTEGRATOR_ID)
+        params.set('feeBps', SVM_UI_FEE_BIPS.toString())
+
+        const sorted = payableFeeMintOptions.sort((a, b) => {
+          const aSame = a.currency.isSame(a.fromTokenForCompare)
+          const bSame = b.currency.isSame(b.fromTokenForCompare)
+          if (aSame !== bSame) return aSame ? 1 : -1
+
+          return (b.priority ?? 0) - (a.priority ?? 0)
+        })
+        const chosen = sorted?.[0]
+
+        params.set('feeMint', chosen.currency.address)
+
+        const feeMintEqualsFrom = chosen.currency.isSame(
+          chosen.fromTokenForCompare,
+        )
+
+        if (feeMintEqualsFrom) {
+          const alternative = sorted?.[1]
+          if (alternative) {
+            params.set('feeMint', alternative.currency.address)
+          } else if (chosen.feeAmount) {
+            //if no alternative feeMint option lower swap amount so fee can be taken
+            const newSwapAmount = amount.sub(chosen.feeAmount)
+            params.set('amount', newSwapAmount.amount.toString())
+          } else {
+            console.warn('No alternative fee mint and no fee amount available')
+            //delete advanced fee params to avoid order failure
+            params.delete('feeReceiver')
+            params.delete('integratorId')
+            params.delete('feeBps')
+            params.delete('feeMint')
+          }
+        }
+      }
+
+      const orderRes = await fetch(
+        `/api/jupiter/ultra/order?${params.toString()}`,
+        {
+          method: 'GET',
+        },
+      )
+
+      if (!orderRes.ok) {
+        throw new Error(`Jupiter order failed: ${orderRes.statusText}`)
+      }
+
+      const orderJson = await orderRes.json()
+
+      return svmOrderValidator.parse(orderJson)
     },
     refetchOnWindowFocus: true,
     refetchInterval: 5000,
@@ -176,7 +293,8 @@ function useTradeQuote(
         isSvmChainId(chainId) &&
         fromToken &&
         toToken &&
-        amount,
+        amount &&
+        feeOptions?.length,
     ),
     queryKeyHashFn: stringify,
   })
