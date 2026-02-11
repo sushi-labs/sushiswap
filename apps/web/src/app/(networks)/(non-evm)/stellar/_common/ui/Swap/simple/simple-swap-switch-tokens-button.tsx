@@ -6,7 +6,7 @@ export const SimpleSwapSwitchTokensButton = () => {
   const { swapTokens } = useSimpleSwapActions()
 
   return (
-    <div className="left-0 right-0 lg:mt-[-26px] lg:mb-[-26px] flex items-center justify-center">
+    <div className="left-0 right-0 mt-[-26px] mb-[-26px] flex items-center justify-center">
       <button
         onClick={swapTokens}
         type="button"
