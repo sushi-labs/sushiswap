@@ -263,9 +263,12 @@ function useTradeQuote(
             const newSwapAmount = amount.sub(chosen.feeAmount)
             params.set('amount', newSwapAmount.amount.toString())
           } else {
-            throw new Error(
-              'No alternative fee mint and no fee amount available',
-            )
+            console.warn('No alternative fee mint and no fee amount available')
+            //delete advanced fee params to avoid order failure
+            params.delete('feeReceiver')
+            params.delete('integratorId')
+            params.delete('feeBps')
+            params.delete('feeMint')
           }
         }
       }
