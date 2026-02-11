@@ -34,12 +34,15 @@ import { SUSHI_DATA_API_HOST } from 'src/lib/constants'
 import { useTokenAnalysis } from 'src/lib/hooks/api/useTokenAnalysis'
 import { NetworkSelector } from 'src/lib/wagmi/components/network-selector'
 import { ChainId, formatNumber, formatUSD, getChainById } from 'sushi'
+import { isEvmChainId } from 'sushi/evm'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { NavigationItems } from './navigation-items'
 import {
   ApplyForTokenListTokenSchema,
   type ApplyForTokenListTokenSchemaType,
 } from './schema'
+
+const _SUPPORTED_CHAIN_IDS = SUPPORTED_CHAIN_IDS.filter(isEvmChainId)
 
 const Metrics = ({
   analysis,
@@ -335,7 +338,7 @@ export default function TokenListing() {
                       </Label>
                       <FormControl>
                         <NetworkSelector
-                          networks={SUPPORTED_CHAIN_IDS}
+                          networks={_SUPPORTED_CHAIN_IDS}
                           selected={value}
                           onSelect={onChange}
                         >
@@ -376,6 +379,7 @@ export default function TokenListing() {
                             onBlur={onBlur}
                             testdata-id="address"
                             unit={analysis?.token.symbol}
+                            required
                           />
                         </FormControl>
                         <FormMessage>
@@ -441,6 +445,7 @@ export default function TokenListing() {
                             name={name}
                             onBlur={onBlur}
                             testdata-id="logoUrl"
+                            required
                           />
                         </FormControl>
                         <FormMessage>Logo URL of your token.</FormMessage>
