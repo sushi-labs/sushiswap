@@ -13,9 +13,18 @@ const stellarExpertAssetSchema = z.object({
   org: z.string().optional(),
   decimals: z.number().optional(),
   icon: z.string().optional(),
+  domain: z.string().optional(),
 })
 
-const stellarExpertResponseSchema = z.array(stellarExpertAssetSchema)
+const stellarExpertAPIResponseSchema = z.object({
+  name: z.string(),
+  provider: z.string(),
+  description: z.string(),
+  version: z.string(),
+  network: z.string(),
+  feedback: z.string(),
+  assets: z.array(stellarExpertAssetSchema),
+})
 
 const stellarExpertTopTokensApiUrl = IS_FUTURENET
   ? undefined
@@ -36,29 +45,16 @@ const getStellarExpertAssets = async (): Promise<
   }
 
   const data = await response.json()
-  const assets: unknown[] = Array.isArray(data)
-    ? data
-    : data &&
-        typeof data === 'object' &&
-        'data' in data &&
-        Array.isArray(data.data)
-      ? data.data
-      : data &&
-          typeof data === 'object' &&
-          'assets' in data &&
-          Array.isArray(data.assets)
-        ? data.assets
-        : []
+  const parsed = stellarExpertAPIResponseSchema.safeParse(data)
+  if (!parsed.success) {
+    console.warn(
+      '[getStellarExpertAssets] Response validation failed, using empty list:',
+      parsed.error,
+    )
+    return []
+  }
 
-  const validAssets = assets.filter(
-    (asset): asset is Record<string, unknown> =>
-      typeof asset === 'object' &&
-      asset !== null &&
-      'code' in asset &&
-      typeof asset.code === 'string',
-  )
-
-  return stellarExpertResponseSchema.parse(validAssets)
+  return parsed.data.assets
 }
 
 const convertToToken = (
@@ -80,6 +76,7 @@ const convertToToken = (
     org: asset.org ?? 'unknown',
     decimals: asset.decimals,
     icon: asset.icon,
+    domain: asset.domain,
   }
 }
 
