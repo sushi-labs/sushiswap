@@ -21,7 +21,6 @@ import React, {
 } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
-import { staticTokens } from '~stellar/_common/lib/assets/token-assets'
 import { useCommonTokens } from '~stellar/_common/lib/hooks/token/use-common-tokens'
 import { useCustomTokens } from '~stellar/_common/lib/hooks/token/use-custom-tokens'
 import { useSortedTokenList } from '~stellar/_common/lib/hooks/token/use-sorted-token-list'
@@ -63,12 +62,10 @@ export default function TokenSelector({
       enabled: StrKey.isValidContract(query),
       keepPreviousData: false,
     })
-  console.log(commonTokens)
+
   // Merge common tokens (from StellarExpert + hardcoded) into the main token map
   const allTokens = useMemo(() => {
-    const merged = Object.fromEntries(
-      staticTokens.map((token) => [token.contract, token]),
-    )
+    const merged = {} as Record<string, Token>
     if (customTokens) {
       Object.entries(customTokens).forEach(([contract, token]) => {
         merged[contract] = token
