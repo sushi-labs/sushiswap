@@ -68,6 +68,11 @@ const convertToToken = (
     return null
   }
 
+  //depegged stable
+  if (asset.code === 'USD' && asset.domain === 'stablecoin.anchorusd.com') {
+    return null
+  }
+
   return {
     code: asset.code,
     issuer: asset.issuer ?? '',

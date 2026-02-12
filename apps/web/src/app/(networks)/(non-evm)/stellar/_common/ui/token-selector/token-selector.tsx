@@ -63,7 +63,7 @@ export default function TokenSelector({
       enabled: StrKey.isValidContract(query),
       keepPreviousData: false,
     })
-
+  console.log(commonTokens)
   // Merge common tokens (from StellarExpert + hardcoded) into the main token map
   const allTokens = useMemo(() => {
     const merged = Object.fromEntries(
