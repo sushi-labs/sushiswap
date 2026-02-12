@@ -30,8 +30,12 @@ export function createTokenFilterFunction<T extends Token>(
     )
   }
 
-  return ({ name, code }: T): boolean =>
-    Boolean((code && matchesSearch(code)) || (name && matchesSearch(name)))
+  return ({ name, code, domain }: T): boolean =>
+    Boolean(
+      (code && matchesSearch(code)) ||
+        (name && matchesSearch(name)) ||
+        (domain && matchesSearch(domain)),
+    )
 }
 
 export function filterTokens<T extends Token>(

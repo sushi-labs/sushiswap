@@ -216,8 +216,8 @@ export default function TokenSelector({
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="flex flex-col items-center justify-center gap-1">
                   <span className="flex items-center text-xs text-gray-500 dark:text-slate-500">
-                    No tokens found on{' '}
-                    <span className="font-medium">Stellar</span>.
+                    No tokens found on
+                    <span className="font-medium ml-1"> Stellar</span>.
                   </span>
                   <span className="text-xs text-gray-500 dark:text-slate-500">
                     Did you try searching with the token code?
