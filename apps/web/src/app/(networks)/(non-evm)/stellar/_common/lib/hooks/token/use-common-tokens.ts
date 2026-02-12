@@ -28,13 +28,14 @@ const stellarExpertAPIResponseSchema = z.object({
 const stellarExpertTopTokensApiUrl =
   'https://api.stellar.expert/explorer/public/asset-list/top50'
 
-const OUTDATED_TOKEN_NAMES = new Set([
+const OUTDATED_TOKENS = new Set([
   { name: 'AFREUM', domain: 'afrem.com' },
   { name: 'FIDR', domain: 'faredidr.com' },
   { name: 'FRED', domain: 'fredenergy.org' },
   { name: 'IFIDR', domain: 'faredidr.com' },
   { name: 'MOBI', domain: 'mobius.network' },
   { name: 'XXA', domain: 'ixinium.io' },
+  { name: 'USD', domain: 'stablecoin.anchorusd.com' },
 ])
 
 const getStellarExpertAssets = async (): Promise<
@@ -63,8 +64,7 @@ const getStellarExpertAssets = async (): Promise<
 
   const assets = parsed.data.assets
   return assets.filter(
-    (i) =>
-      i.domain && !OUTDATED_TOKEN_NAMES.has({ name: i.name, domain: i.domain }),
+    (i) => i.domain && !OUTDATED_TOKENS.has({ name: i.name, domain: i.domain }),
   )
 }
 
