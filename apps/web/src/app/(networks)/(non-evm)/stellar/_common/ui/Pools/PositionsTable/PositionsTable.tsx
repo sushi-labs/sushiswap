@@ -13,12 +13,13 @@ import {
 import type { PaginationState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
+import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
+import { useAccount } from 'src/lib/wallet'
 import {
   type PositionSummary,
   useMyPosition,
 } from '~stellar/_common/lib/hooks/position/use-my-position'
 import { useStellarWallet } from '~stellar/providers'
-import { ConnectWalletButton } from '../../ConnectWallet/ConnectWalletButton'
 import {
   APR_COLUMN,
   COLLECTABLE_FEES_COLUMN,
@@ -38,14 +39,15 @@ export type IPositionRowData = PositionSummary
 export const PositionsTable = ({
   hideNewPositionButton,
 }: PositionsTableProps) => {
-  const { connectedAddress, isLoading: isWalletLoading } = useStellarWallet()
+  const account = useAccount('stellar')
+  const { isLoading: isWalletLoading } = useStellarWallet()
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   })
   const { tokenSymbols } = usePoolFilters()
   const { positions, isLoading: isPositionLoading } = useMyPosition({
-    userAddress: connectedAddress ?? undefined,
+    userAddress: account ?? undefined,
     excludeDust: true,
   })
 
@@ -75,7 +77,7 @@ export const PositionsTable = ({
     })
   }, [positions, tokenSymbols])
 
-  if (!isLoading && !connectedAddress) {
+  if (!isLoading && !account) {
     return (
       <Card className="bg-slate-900/50 border-secondary">
         <CardHeader>
@@ -85,7 +87,7 @@ export const PositionsTable = ({
           <div className="text-center text-slate-800">
             Connect your wallet to view your positions
           </div>
-          <ConnectWalletButton />
+          <ConnectButton namespace="stellar" />
         </CardContent>
       </Card>
     )

@@ -6,7 +6,7 @@ import { getPoolBalances } from '../../soroban/pool-helpers'
 
 export const usePoolBalances = (
   address: string | null,
-  connectedAddress: string | null,
+  connectedAddress: `G${string}` | undefined,
 ) => {
   return useQuery({
     queryKey: ['stellar', 'pool', 'balances', address, connectedAddress],

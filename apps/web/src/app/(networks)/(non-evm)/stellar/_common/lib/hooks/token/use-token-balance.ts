@@ -9,7 +9,7 @@ import {
 import type { Token, TokenWithBalance } from '../../types/token.type'
 
 export const useTokenBalance = (
-  address: string | null,
+  address: `G${string}` | undefined,
   tokenContractId: string | null,
 ) => {
   return useQuery({
@@ -52,7 +52,10 @@ export const useTokenBalanceFromToken = (
  * @param tokens - The list of `Token`s to get balances for
  * @returns The original tokens array with new `balance` and `balanceFormatted` fields for each
  */
-export const useTokenBalances = (address: string | null, tokens: Token[]) => {
+export const useTokenBalances = (
+  address: `G${string}` | undefined,
+  tokens: Token[],
+) => {
   return useQuery({
     queryKey: ['stellar', 'token', 'balances', tokens, address],
     queryFn: async () => {
@@ -89,7 +92,7 @@ export const useTokenBalances = (address: string | null, tokens: Token[]) => {
  * @returns A map of contract addresses to balance amounts (as strings)
  */
 export const useTokenBalancesMap = (
-  address: string | null,
+  address: `G${string}` | undefined,
   contracts: string[],
 ) => {
   return useQuery({

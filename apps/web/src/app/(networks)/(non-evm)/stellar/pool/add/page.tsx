@@ -3,6 +3,8 @@
 import { Button, FormSection, SelectIcon, TextField } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
+import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
+import { useAccount } from 'src/lib/wallet'
 import { formatUnits } from 'viem'
 import {
   useGetPool,
@@ -24,15 +26,16 @@ import {
 } from '~stellar/_common/lib/soroban'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 import { FEE_TIERS } from '~stellar/_common/lib/utils/ticks'
-import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
 import { TickRangeSelector } from '~stellar/_common/ui/TickRangeSelector/TickRangeSelector'
 import { CreateTrustlineButton } from '~stellar/_common/ui/Trustline/CreateTrustlineButton'
 import TokenSelector from '~stellar/_common/ui/token-selector/token-selector'
 import { useStellarWallet } from '~stellar/providers'
 
 export default function AddPoolPage() {
-  const { isConnected, connectedAddress, signTransaction, signAuthEntry } =
-    useStellarWallet()
+  const account = useAccount('stellar')
+  const connectedAddress = account
+  const isConnected = Boolean(connectedAddress)
+  const { signTransaction, signAuthEntry } = useStellarWallet()
   const router = useRouter()
   const createAndInitializePoolMutation = useCreateAndInitializePool()
   const addLiquidityMutation = useAddLiquidity()
@@ -692,7 +695,7 @@ export default function AddPoolPage() {
       <FormSection title="" description="">
         <div className="flex w-full flex-col gap-4">
           {!isConnected ? (
-            <ConnectWalletButton fullWidth size="xl" />
+            <ConnectButton namespace="stellar" fullWidth size="xl" />
           ) : tokensNeedingTrustline.length > 0 ? (
             <CreateTrustlineButton
               size="xl"

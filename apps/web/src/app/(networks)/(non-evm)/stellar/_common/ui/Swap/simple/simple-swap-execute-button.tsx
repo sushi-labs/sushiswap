@@ -7,6 +7,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
 import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
+import { useAccount } from 'src/lib/wallet'
 import {
   useExecuteMultiHopSwap,
   useExecuteSwap,
@@ -14,10 +16,8 @@ import {
 import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trustline'
 import { parseSlippageTolerance } from '~stellar/_common/lib/utils/error-helpers'
 import { requiresPriceImpactConfirmation } from '~stellar/_common/lib/utils/warning-severity'
-import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
 import { CreateTrustlineButton } from '~stellar/_common/ui/Trustline/CreateTrustlineButton'
 import { Checker } from '~stellar/_common/ui/checker'
-import { useStellarWallet } from '~stellar/providers'
 import { useBestRoute } from '~stellar/swap/lib/hooks'
 import {
   useSimpleSwapActions,
@@ -25,7 +25,9 @@ import {
 } from './simple-swap-provider/simple-swap-provider'
 
 export const SimpleSwapExecuteButton = () => {
-  const { connectedAddress, isConnected } = useStellarWallet()
+  const account = useAccount('stellar')
+  const connectedAddress = account
+  const isConnected = Boolean(connectedAddress)
   const { amount, token0, token1, outputAmount, priceImpact } =
     useSimpleSwapState()
   const { setAmount, setOutputAmount, setSlippageAmount, setPriceImpact } =
@@ -248,7 +250,7 @@ export const SimpleSwapExecuteButton = () => {
     <>
       <div className="pt-4">
         {!isConnected ? (
-          <ConnectWalletButton fullWidth size="xl" />
+          <ConnectButton namespace="stellar" fullWidth size="xl" />
         ) : needsToken1Trustline && token1 && token1ResolvedIssuer ? (
           <CreateTrustlineButton
             tokens={[{ code: token1.code, issuer: token1ResolvedIssuer }]}

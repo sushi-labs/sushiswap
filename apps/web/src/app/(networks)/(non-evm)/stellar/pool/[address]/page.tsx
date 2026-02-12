@@ -10,15 +10,15 @@ import {
   SkeletonBox,
 } from '@sushiswap/ui'
 import React, { use } from 'react'
+import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
+import { useAccount } from 'src/lib/wallet'
 import { usePoolInfo } from '~stellar/_common/lib/hooks/pool/use-pool-info'
 import { usePoolInitialized } from '~stellar/_common/lib/hooks/pool/use-pool-initialized'
-import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
 import {
   ManageLiquidityCard,
   PoolLiquidity,
 } from '~stellar/_common/ui/PoolDetails'
 import { MyPosition } from '~stellar/_common/ui/PoolDetails/MyPosition'
-import { useStellarWallet } from '~stellar/providers'
 
 interface PoolPageProps {
   params: Promise<{
@@ -36,7 +36,8 @@ export default function PoolPage({ params }: PoolPageProps) {
     error: poolError,
     refetch: refetchPool,
   } = usePoolInfo(address)
-  const { isConnected } = useStellarWallet()
+  const account = useAccount('stellar')
+  const isConnected = Boolean(account)
 
   // Check if pool is initialized
   const {
@@ -171,7 +172,7 @@ export default function PoolPage({ params }: PoolPageProps) {
                 this pool.
               </p>
               {!isConnected ? (
-                <ConnectWalletButton fullWidth size="lg" />
+                <ConnectButton namespace="stellar" fullWidth size="lg" />
               ) : (
                 <LinkInternal href="/stellar/pool/add">
                   <Button className="w-full" size="lg">

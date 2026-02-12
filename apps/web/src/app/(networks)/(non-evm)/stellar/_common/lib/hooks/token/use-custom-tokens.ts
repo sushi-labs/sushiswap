@@ -2,9 +2,11 @@ import { useLocalStorage } from '@sushiswap/hooks'
 import { useCallback, useMemo } from 'react'
 import type { Token } from '../../types/token.type'
 
+export const STELLAR_CUSTOM_TOKEN_KEY = 'sushi.stellar.custom-tokens'
+
 export function useCustomTokens() {
   const [value, setValue] = useLocalStorage<Record<string, Token>>(
-    'sushi.customTokens.stellar',
+    STELLAR_CUSTOM_TOKEN_KEY,
     {},
   )
 

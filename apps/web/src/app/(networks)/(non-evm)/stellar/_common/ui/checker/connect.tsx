@@ -2,14 +2,13 @@
 
 import type { ButtonProps } from '@sushiswap/ui'
 import type { FC } from 'react'
-
-import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
-import { useStellarWallet } from '~stellar/providers'
+import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
+import { useAccount } from 'src/lib/wallet'
 
 const Connect: FC<ButtonProps> = ({ children, ...props }) => {
-  const { connectedAddress } = useStellarWallet()
+  const account = useAccount('stellar')
 
-  if (!connectedAddress) return <ConnectWalletButton {...props} />
+  if (!account) return <ConnectButton namespace="stellar" {...props} />
 
   return <>{children}</>
 }

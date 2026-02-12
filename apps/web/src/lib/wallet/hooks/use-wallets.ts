@@ -19,6 +19,7 @@ export function useWallets() {
     return {
       evm: getFirstWallet('evm'),
       svm: getFirstWallet('svm'),
+      stellar: getFirstWallet('stellar'),
     }
   }, [connections])
 }

@@ -3,6 +3,9 @@ import type { DisconnectWalletButtonProps } from './types'
 
 const DisconnectEvmButton = lazy(() => import('./disconnect-evm-wallet-button'))
 const DisconnectSvmButton = lazy(() => import('./disconnect-svm-wallet-button'))
+const DisconnectStellarButton = lazy(
+  () => import('./disconnect-stellar-wallet-button'),
+)
 
 export function DisconnectWalletButton(props: DisconnectWalletButtonProps) {
   const { namespace, children } = props
@@ -13,6 +16,8 @@ export function DisconnectWalletButton(props: DisconnectWalletButtonProps) {
         <DisconnectEvmButton {...props} />
       ) : namespace === 'svm' ? (
         <DisconnectSvmButton {...props} />
+      ) : namespace === 'stellar' ? (
+        <DisconnectStellarButton {...props} />
       ) : null}
     </Suspense>
   )

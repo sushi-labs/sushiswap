@@ -15,6 +15,8 @@ import {
 } from '@sushiswap/ui'
 import type React from 'react'
 import { useEffect, useMemo, useState } from 'react'
+import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
+import { useAccount } from 'src/lib/wallet'
 import { formatUnits } from 'viem'
 import { ToggleZapCard } from '~evm/[chainId]/pool/_ui/toggle-zap-card'
 import { useRemoveLiquidity } from '~stellar/_common/lib/hooks/liquidity/use-remove-liquidity'
@@ -35,7 +37,6 @@ import type { Token } from '~stellar/_common/lib/types/token.type'
 import { alignTick, isTickAligned } from '~stellar/_common/lib/utils/ticks'
 import { useStellarWallet } from '~stellar/providers'
 import { useBestRoute } from '~stellar/swap/lib/hooks/use-best-route'
-import { ConnectWalletButton } from '../ConnectWallet/ConnectWalletButton'
 import { TickRangeSelector } from '../TickRangeSelector/TickRangeSelector'
 import { CreateTrustlineButton } from '../Trustline/CreateTrustlineButton'
 import { CurrencyInput } from '../currency/currency-input/currency-input'
@@ -49,8 +50,10 @@ interface ManageLiquidityCardProps {
 export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   pool,
 }) => {
-  const { isConnected, connectedAddress, signTransaction, signAuthEntry } =
-    useStellarWallet()
+  const { signTransaction, signAuthEntry } = useStellarWallet()
+  const account = useAccount('stellar')
+  const connectedAddress = account
+  const isConnected = Boolean(connectedAddress)
   const { data: balances } = usePoolBalances(pool.address, connectedAddress)
   const { positions: myPositions } = useMyPosition({
     userAddress: connectedAddress || undefined,
@@ -439,7 +442,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
             <div className="space-y-4">
               {!isConnected ? (
                 // Show Connect Wallet when not connected
-                <ConnectWalletButton fullWidth size="lg" />
+                <ConnectButton namespace="stellar" fullWidth size="lg" />
               ) : (
                 // Show form when connected
                 <>
@@ -722,7 +725,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
             <div className="space-y-4">
               {!isConnected ? (
                 // Show Connect Wallet when not connected
-                <ConnectWalletButton fullWidth size="lg" />
+                <ConnectButton namespace="stellar" fullWidth size="lg" />
               ) : myPositions.length === 0 ? (
                 <div className="text-center py-8 space-y-2">
                   <p className="text-muted-foreground">

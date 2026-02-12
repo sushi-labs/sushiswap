@@ -68,7 +68,9 @@ const getStellarExpertAssets = async (): Promise<
   )
 }
 
-const fetchCommonTokensQueryFn = async (): Promise<Record<string, Token>> => {
+export const fetchCommonTokensQueryFn = async (): Promise<
+  Record<string, Token>
+> => {
   const result: Record<string, Token> = {}
 
   // Always include hardcoded tokens

@@ -21,6 +21,7 @@ export function useAccounts(): AccountsState {
     return {
       evm: { address: getFirstAddress('evm') },
       svm: { address: getFirstAddress('svm') },
+      stellar: { address: getFirstAddress('stellar') },
     }
   }, [connections])
 }
