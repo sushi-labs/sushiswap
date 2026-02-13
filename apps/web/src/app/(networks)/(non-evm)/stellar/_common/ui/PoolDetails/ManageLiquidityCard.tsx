@@ -15,7 +15,7 @@ import {
 } from '@sushiswap/ui'
 import type React from 'react'
 import { useEffect, useMemo, useState } from 'react'
-import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
 import { formatUnits } from 'viem'
 import { ToggleZapCard } from '~evm/[chainId]/pool/_ui/toggle-zap-card'
@@ -53,7 +53,6 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   const { signTransaction, signAuthEntry } = useStellarWallet()
   const account = useAccount('stellar')
   const connectedAddress = account
-  const isConnected = Boolean(connectedAddress)
   const { data: balances } = usePoolBalances(pool.address, connectedAddress)
   const { positions: myPositions } = useMyPosition({
     userAddress: connectedAddress || undefined,
@@ -440,11 +439,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {!isConnected ? (
-                // Show Connect Wallet when not connected
-                <ConnectButton namespace="stellar" fullWidth size="lg" />
-              ) : (
-                // Show form when connected
+              <Checker.Connect namespace="stellar" fullWidth size="lg">
                 <>
                   {/* Zap Mode Toggle */}
                   <ToggleZapCard
@@ -715,7 +710,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                     </>
                   )}
                 </>
-              )}
+              </Checker.Connect>
             </div>
           </CardContent>
         </TabsContent>
@@ -723,205 +718,211 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
         <TabsContent value="remove">
           <CardContent>
             <div className="space-y-4">
-              {!isConnected ? (
-                // Show Connect Wallet when not connected
-                <ConnectButton namespace="stellar" fullWidth size="lg" />
-              ) : myPositions.length === 0 ? (
-                <div className="text-center py-8 space-y-2">
-                  <p className="text-muted-foreground">
-                    No positions found for this pool.
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Provide liquidity to create a position first.
-                  </p>
-                </div>
-              ) : (
-                // Show form when connected and has position
-                <>
-                  <div className="space-y-3">
-                    {myPositions.map((position) => {
-                      const isSelected = position.tokenId === selectedPositionId
-                      const principal0 = formatUnits(
-                        position.principalToken0,
-                        token0Decimals,
-                      )
-                      const principal1 = formatUnits(
-                        position.principalToken1,
-                        token1Decimals,
-                      )
-                      const fees0 = formatUnits(
-                        position.feesToken0,
-                        token0Decimals,
-                      )
-                      const fees1 = formatUnits(
-                        position.feesToken1,
-                        token1Decimals,
-                      )
-
-                      return (
-                        <button
-                          key={position.tokenId}
-                          type="button"
-                          onClick={() =>
-                            setSelectedPositionId(position.tokenId)
-                          }
-                          className={`w-full rounded-lg border p-4 text-left transition-colors ${
-                            isSelected
-                              ? 'border-blue-500 bg-blue-500/10 dark:bg-blue-500/10'
-                              : 'border-slate-200 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900/50 dark:hover:border-slate-800/60'
-                          }`}
-                        >
-                          <div className="flex items-start justify-between gap-4">
-                            <div className="space-y-2">
-                              <div className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                                Range #{position.tokenId}
-                              </div>
-                              <div className="text-xs text-muted-foreground">
-                                Ticks {position.tickLower} →{' '}
-                                {position.tickUpper}
-                              </div>
-                              <div className="text-xs text-muted-foreground">
-                                Price{' '}
-                                {formatPriceBound(position.tickLower, 'lower')}{' '}
-                                →{' '}
-                                {formatPriceBound(position.tickUpper, 'upper')}{' '}
-                                {pool.token1.code}/{pool.token0.code}
-                              </div>
-                            </div>
-                            <div className="text-right text-xs text-muted-foreground space-y-2">
-                              <div>
-                                Principal:{' '}
-                                <span className="text-slate-900 dark:text-slate-100">
-                                  {principal0} {pool.token0.code}
-                                </span>
-                              </div>
-                              <div>
-                                Principal:{' '}
-                                <span className="text-slate-900 dark:text-slate-100">
-                                  {principal1} {pool.token1.code}
-                                </span>
-                              </div>
-                              <div className="text-[11px]">
-                                Fees:{' '}
-                                <span className="text-slate-900 dark:text-slate-100">
-                                  {fees0} {pool.token0.code}
-                                </span>{' '}
-                                /{' '}
-                                <span className="text-slate-900 dark:text-slate-100">
-                                  {fees1} {pool.token1.code}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </button>
-                      )
-                    })}
+              <Checker.Connect namespace="stellar" fullWidth size="lg">
+                {myPositions.length === 0 ? (
+                  <div className="text-center py-8 space-y-2">
+                    <p className="text-muted-foreground">
+                      No positions found for this pool.
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Provide liquidity to create a position first.
+                    </p>
                   </div>
+                ) : (
+                  // Show form when connected and has position
+                  <>
+                    <div className="space-y-3">
+                      {myPositions.map((position) => {
+                        const isSelected =
+                          position.tokenId === selectedPositionId
+                        const principal0 = formatUnits(
+                          position.principalToken0,
+                          token0Decimals,
+                        )
+                        const principal1 = formatUnits(
+                          position.principalToken1,
+                          token1Decimals,
+                        )
+                        const fees0 = formatUnits(
+                          position.feesToken0,
+                          token0Decimals,
+                        )
+                        const fees1 = formatUnits(
+                          position.feesToken1,
+                          token1Decimals,
+                        )
 
-                  {selectedPosition ? (
-                    <div className="space-y-4">
-                      <div className="space-y-4 rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900/50">
-                        <div className="flex items-center justify-between gap-4">
-                          <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                            Remove percentage
-                          </span>
-                          <div className="flex flex-row gap-4 items-center">
-                            <input
-                              type="number"
-                              min={0}
-                              max={100}
-                              step={1}
-                              value={removePercent}
-                              onChange={(event) => {
-                                const value = Number.parseInt(
-                                  event.target.value,
-                                  10,
-                                )
-                                if (Number.isNaN(value)) {
-                                  setRemovePercent(0)
-                                  return
-                                }
-                                const clamped = Math.min(
-                                  100,
-                                  Math.max(0, Math.round(value)),
-                                )
-                                setRemovePercent(clamped)
-                              }}
-                              className="w-16 rounded-md border border-slate-300 bg-white px-2 py-1 text-right text-sm font-medium text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900/40 dark:text-slate-100"
-                            />
-                            <Button
-                              disabled={removePercent === 100}
-                              onClick={() => setRemovePercent(100)}
-                              size="xs"
-                              variant="ghost"
-                              className="border border-slate-300"
-                            >
-                              Max
-                            </Button>
-                          </div>
-                        </div>
-                        <input
-                          type="range"
-                          min={0}
-                          max={100}
-                          step={1}
-                          value={removePercent}
-                          onChange={(event) => {
-                            const value = Number(event.target.value)
-                            if (Number.isNaN(value)) {
-                              setRemovePercent(0)
-                              return
+                        return (
+                          <button
+                            key={position.tokenId}
+                            type="button"
+                            onClick={() =>
+                              setSelectedPositionId(position.tokenId)
                             }
-                            const clamped = Math.min(
-                              100,
-                              Math.max(0, Math.round(value)),
-                            )
-                            setRemovePercent(clamped)
-                          }}
-                          className="w-full accent-blue-500"
-                        />
-                        <div className="grid grid-cols-2 gap-3 text-xs text-muted-foreground">
-                          <div>
-                            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                              {formatUnits(estimatedToken0, token0Decimals)}{' '}
-                              {pool.token0.code}
+                            className={`w-full rounded-lg border p-4 text-left transition-colors ${
+                              isSelected
+                                ? 'border-blue-500 bg-blue-500/10 dark:bg-blue-500/10'
+                                : 'border-slate-200 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900/50 dark:hover:border-slate-800/60'
+                            }`}
+                          >
+                            <div className="flex items-start justify-between gap-4">
+                              <div className="space-y-2">
+                                <div className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                                  Range #{position.tokenId}
+                                </div>
+                                <div className="text-xs text-muted-foreground">
+                                  Ticks {position.tickLower} →{' '}
+                                  {position.tickUpper}
+                                </div>
+                                <div className="text-xs text-muted-foreground">
+                                  Price{' '}
+                                  {formatPriceBound(
+                                    position.tickLower,
+                                    'lower',
+                                  )}{' '}
+                                  →{' '}
+                                  {formatPriceBound(
+                                    position.tickUpper,
+                                    'upper',
+                                  )}{' '}
+                                  {pool.token1.code}/{pool.token0.code}
+                                </div>
+                              </div>
+                              <div className="text-right text-xs text-muted-foreground space-y-2">
+                                <div>
+                                  Principal:{' '}
+                                  <span className="text-slate-900 dark:text-slate-100">
+                                    {principal0} {pool.token0.code}
+                                  </span>
+                                </div>
+                                <div>
+                                  Principal:{' '}
+                                  <span className="text-slate-900 dark:text-slate-100">
+                                    {principal1} {pool.token1.code}
+                                  </span>
+                                </div>
+                                <div className="text-[11px]">
+                                  Fees:{' '}
+                                  <span className="text-slate-900 dark:text-slate-100">
+                                    {fees0} {pool.token0.code}
+                                  </span>{' '}
+                                  /{' '}
+                                  <span className="text-slate-900 dark:text-slate-100">
+                                    {fees1} {pool.token1.code}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
-                            <p>Est. {pool.token0.code} principal</p>
-                          </div>
-                          <div>
-                            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                              {formatUnits(estimatedToken1, token1Decimals)}{' '}
-                              {pool.token1.code}
-                            </div>
-                            <p>Est. {pool.token1.code} principal</p>
-                          </div>
-                        </div>
-                        <p className="text-[11px] leading-4 text-muted-foreground">
-                          Final withdrawal amounts depend on current pool price
-                          and may differ from principal estimates.
-                        </p>
-                      </div>
-
-                      <Button
-                        className="w-full"
-                        size="lg"
-                        disabled={
-                          !hasRemoveAmount ||
-                          removeLiquidityMutation.isPending ||
-                          !selectedPosition
-                        }
-                        onClick={handleRemoveLiquidity}
-                      >
-                        {removeLiquidityMutation.isPending
-                          ? 'Removing and Collecting Liquidity...'
-                          : hasRemoveAmount
-                            ? 'Remove Liquidity'
-                            : 'Select Percentage'}
-                      </Button>
+                          </button>
+                        )
+                      })}
                     </div>
-                  ) : null}
-                </>
-              )}
+
+                    {selectedPosition ? (
+                      <div className="space-y-4">
+                        <div className="space-y-4 rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900/50">
+                          <div className="flex items-center justify-between gap-4">
+                            <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                              Remove percentage
+                            </span>
+                            <div className="flex flex-row gap-4 items-center">
+                              <input
+                                type="number"
+                                min={0}
+                                max={100}
+                                step={1}
+                                value={removePercent}
+                                onChange={(event) => {
+                                  const value = Number.parseInt(
+                                    event.target.value,
+                                    10,
+                                  )
+                                  if (Number.isNaN(value)) {
+                                    setRemovePercent(0)
+                                    return
+                                  }
+                                  const clamped = Math.min(
+                                    100,
+                                    Math.max(0, Math.round(value)),
+                                  )
+                                  setRemovePercent(clamped)
+                                }}
+                                className="w-16 rounded-md border border-slate-300 bg-white px-2 py-1 text-right text-sm font-medium text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900/40 dark:text-slate-100"
+                              />
+                              <Button
+                                disabled={removePercent === 100}
+                                onClick={() => setRemovePercent(100)}
+                                size="xs"
+                                variant="ghost"
+                                className="border border-slate-300"
+                              >
+                                Max
+                              </Button>
+                            </div>
+                          </div>
+                          <input
+                            type="range"
+                            min={0}
+                            max={100}
+                            step={1}
+                            value={removePercent}
+                            onChange={(event) => {
+                              const value = Number(event.target.value)
+                              if (Number.isNaN(value)) {
+                                setRemovePercent(0)
+                                return
+                              }
+                              const clamped = Math.min(
+                                100,
+                                Math.max(0, Math.round(value)),
+                              )
+                              setRemovePercent(clamped)
+                            }}
+                            className="w-full accent-blue-500"
+                          />
+                          <div className="grid grid-cols-2 gap-3 text-xs text-muted-foreground">
+                            <div>
+                              <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                                {formatUnits(estimatedToken0, token0Decimals)}{' '}
+                                {pool.token0.code}
+                              </div>
+                              <p>Est. {pool.token0.code} principal</p>
+                            </div>
+                            <div>
+                              <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                                {formatUnits(estimatedToken1, token1Decimals)}{' '}
+                                {pool.token1.code}
+                              </div>
+                              <p>Est. {pool.token1.code} principal</p>
+                            </div>
+                          </div>
+                          <p className="text-[11px] leading-4 text-muted-foreground">
+                            Final withdrawal amounts depend on current pool
+                            price and may differ from principal estimates.
+                          </p>
+                        </div>
+
+                        <Button
+                          className="w-full"
+                          size="lg"
+                          disabled={
+                            !hasRemoveAmount ||
+                            removeLiquidityMutation.isPending ||
+                            !selectedPosition
+                          }
+                          onClick={handleRemoveLiquidity}
+                        >
+                          {removeLiquidityMutation.isPending
+                            ? 'Removing and Collecting Liquidity...'
+                            : hasRemoveAmount
+                              ? 'Remove Liquidity'
+                              : 'Select Percentage'}
+                        </Button>
+                      </div>
+                    ) : null}
+                  </>
+                )}
+              </Checker.Connect>
             </div>
           </CardContent>
         </TabsContent>

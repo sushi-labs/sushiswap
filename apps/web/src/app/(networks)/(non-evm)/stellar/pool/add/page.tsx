@@ -3,7 +3,7 @@
 import { Button, FormSection, SelectIcon, TextField } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
-import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
 import { formatUnits } from 'viem'
 import {
@@ -34,7 +34,6 @@ import { useStellarWallet } from '~stellar/providers'
 export default function AddPoolPage() {
   const account = useAccount('stellar')
   const connectedAddress = account
-  const isConnected = Boolean(connectedAddress)
   const { signTransaction, signAuthEntry } = useStellarWallet()
   const router = useRouter()
   const createAndInitializePoolMutation = useCreateAndInitializePool()
@@ -694,26 +693,28 @@ export default function AddPoolPage() {
       </FormSection>
       <FormSection title="" description="">
         <div className="flex w-full flex-col gap-4">
-          {!isConnected ? (
-            <ConnectButton namespace="stellar" fullWidth size="xl" />
-          ) : tokensNeedingTrustline.length > 0 ? (
-            <CreateTrustlineButton
-              size="xl"
-              fullWidth
-              tokens={tokensNeedingTrustline}
-            />
-          ) : (
-            <Button
-              fullWidth
-              size="xl"
-              disabled={
-                !canCreate || createPoolState !== 'idle' || isLoadingTrustlines
-              }
-              onClick={handleCreatePool}
-            >
-              {isLoadingTrustlines ? 'Checking trustlines...' : ctaButtonText}
-            </Button>
-          )}
+          <Checker.Connect namespace="stellar" fullWidth size="xl">
+            {tokensNeedingTrustline.length > 0 ? (
+              <CreateTrustlineButton
+                size="xl"
+                fullWidth
+                tokens={tokensNeedingTrustline}
+              />
+            ) : (
+              <Button
+                fullWidth
+                size="xl"
+                disabled={
+                  !canCreate ||
+                  createPoolState !== 'idle' ||
+                  isLoadingTrustlines
+                }
+                onClick={handleCreatePool}
+              >
+                {isLoadingTrustlines ? 'Checking trustlines...' : ctaButtonText}
+              </Button>
+            )}
+          </Checker.Connect>
         </div>
       </FormSection>
     </>

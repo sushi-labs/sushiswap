@@ -5,6 +5,7 @@ import { Button, type ButtonProps } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui'
 import {
   type WalletNamespace,
+  getNameFromNamespace,
   useAccount,
   useWalletContext,
 } from 'src/lib/wallet'
@@ -46,8 +47,7 @@ function Connect({
 
   if (!isConnected || requiresNamespaceConnection) {
     const shouldRestrictNamespace = Boolean(namespace)
-    const midtext =
-      namespace === 'evm' ? 'EVM' : namespace === 'svm' ? 'Solana' : ''
+    const midtext = namespace ? getNameFromNamespace(namespace) : ''
 
     return (
       <ConnectButton

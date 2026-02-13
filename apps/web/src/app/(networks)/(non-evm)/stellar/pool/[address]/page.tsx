@@ -10,8 +10,7 @@ import {
   SkeletonBox,
 } from '@sushiswap/ui'
 import React, { use } from 'react'
-import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
-import { useAccount } from 'src/lib/wallet'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { usePoolInfo } from '~stellar/_common/lib/hooks/pool/use-pool-info'
 import { usePoolInitialized } from '~stellar/_common/lib/hooks/pool/use-pool-initialized'
 import {
@@ -36,8 +35,6 @@ export default function PoolPage({ params }: PoolPageProps) {
     error: poolError,
     refetch: refetchPool,
   } = usePoolInfo(address)
-  const account = useAccount('stellar')
-  const isConnected = Boolean(account)
 
   // Check if pool is initialized
   const {
@@ -171,15 +168,13 @@ export default function PoolPage({ params }: PoolPageProps) {
                 Enter the desired token amounts to set the initial price for
                 this pool.
               </p>
-              {!isConnected ? (
-                <ConnectButton namespace="stellar" fullWidth size="lg" />
-              ) : (
+              <Checker.Connect namespace="stellar" fullWidth size="lg">
                 <LinkInternal href="/stellar/pool/add">
                   <Button className="w-full" size="lg">
                     Initialize Pool &amp; Add Liquidity
                   </Button>
                 </LinkInternal>
-              )}
+              </Checker.Connect>
             </div>
           </CardContent>
         </Card>
