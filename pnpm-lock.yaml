@@ -34,8 +34,8 @@ catalogs:
       specifier: 3.2.2
       version: 3.2.2
     sushi:
-      specifier: 6.5.0
-      version: 6.5.0
+      specifier: 0.0.0-canary-20260213072602
+      version: 0.0.0-canary-20260213072602
     wagmi:
       specifier: 3.3.2
       version: 3.3.2
@@ -128,7 +128,7 @@ importers:
         version: 19.0.1(react@19.0.1)
       sushi:
         specifier: catalog:web3
-        version: 6.5.0(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 0.0.0-canary-20260213072602(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
     devDependencies:
       '@storybook/addon-a11y':
         specifier: 8.4.7
@@ -576,7 +576,7 @@ importers:
         version: 2.3.3
       sushi:
         specifier: catalog:web3
-        version: 6.5.0(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 0.0.0-canary-20260213072602(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       tiny-invariant:
         specifier: 1.3.1
         version: 1.3.1
@@ -761,7 +761,7 @@ importers:
         version: 1.0.0
       sushi:
         specifier: catalog:web3
-        version: 6.5.0(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 0.0.0-canary-20260213072602(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       viem:
         specifier: 2.44.4
         version: 2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11)
@@ -823,7 +823,7 @@ importers:
         version: 19.0.1(react@19.0.1)
       sushi:
         specifier: catalog:web3
-        version: 6.5.0(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 0.0.0-canary-20260213072602(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       tailwindcss:
         specifier: catalog:ui
         version: 3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.8.3))
@@ -869,7 +869,7 @@ importers:
         version: 19.0.2(@types/react@19.0.1)
       sushi:
         specifier: catalog:web3
-        version: 6.5.0(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 0.0.0-canary-20260213072602(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -1195,7 +1195,7 @@ importers:
         version: 19.0.1(react@19.0.1)
       sushi:
         specifier: catalog:web3
-        version: 6.5.0(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 0.0.0-canary-20260213072602(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       tailwindcss:
         specifier: catalog:ui
         version: 3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.8.3))
@@ -10031,9 +10031,6 @@ packages:
     resolution: {integrity: sha512-2Zks0hf1VLFYI1kbh0I5jP3KHHyCHpkfyHBzsSXRFgl/Bg9mWYfMW8oD+PdMPlEwy5HNsR9JutYy6pMeOh61nw==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
 
-  exponential-backoff@3.1.1:
-    resolution: {integrity: sha512-dX7e/LHVJ6W3DE1MHWi9S1EYzDESENfLrYohG2G++ovZrYOkm4Knwa0mc1cn84xJOR4KEU0WSchhLbd0UklbHw==}
-
   exponential-backoff@3.1.3:
     resolution: {integrity: sha512-ZgEeZXj30q+I0EN+CbSSpIyPaJ5HVQD18Z1m+u1FXbAeT94mr1zw50q4q6jiiC447Nl/YTcIYSAftiGqetwXCA==}
 
@@ -13841,8 +13838,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  sushi@6.5.0:
-    resolution: {integrity: sha512-7rR+uIiJnmQsinijrd1uztTT+lV9O9+cbzOhbYEgQDgBaFcU9V8/JAQVBrhC15qZZNrFlrzugiH3qpelQfHJgA==}
+  sushi@0.0.0-canary-20260213072602:
+    resolution: {integrity: sha512-fEbmE5aMAqLvE6l225PKoeQ3DMue4g586fTyvahX5VUaJns52sjKjoJs5/uk68/IyaVM1Bbg/6DzeqjyoKyeOQ==}
     peerDependencies:
       '@solana/addresses': 6.0.1
       typescript: 5.8.3
@@ -19967,7 +19964,7 @@ snapshots:
       hermes-profile-transformer: 0.0.6
       node-stream-zip: 1.15.0
       ora: 5.4.1
-      semver: 7.6.3
+      semver: 7.7.4
       strip-ansi: 5.2.0
       wcwidth: 1.0.1
       yaml: 2.8.0
@@ -20033,7 +20030,7 @@ snapshots:
       node-fetch: 2.7.0(encoding@0.1.13)
       open: 6.4.0
       ora: 5.4.1
-      semver: 7.6.3
+      semver: 7.7.4
       shell-quote: 1.8.2
       sudo-prompt: 9.2.1
     transitivePeerDependencies:
@@ -20062,7 +20059,7 @@ snapshots:
       fs-extra: 8.1.0
       graceful-fs: 4.2.11
       prompts: 2.4.2
-      semver: 7.6.3
+      semver: 7.7.4
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -27294,8 +27291,6 @@ snapshots:
       jest-util: 29.7.0
     optional: true
 
-  exponential-backoff@3.1.1: {}
-
   exponential-backoff@3.1.3: {}
 
   extend@3.0.2: {}
@@ -28268,7 +28263,7 @@ snapshots:
       '@babel/parser': 7.26.5
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
-      semver: 7.6.3
+      semver: 7.7.4
     transitivePeerDependencies:
       - supports-color
     optional: true
@@ -28666,7 +28661,7 @@ snapshots:
       jest-util: 29.7.0
       natural-compare: 1.4.0
       pretty-format: 29.7.0
-      semver: 7.6.3
+      semver: 7.7.4
     transitivePeerDependencies:
       - supports-color
     optional: true
@@ -28827,7 +28822,7 @@ snapshots:
       decimal.js: 10.4.3
       domexception: 4.0.0
       escodegen: 2.1.0
-      form-data: 4.0.1
+      form-data: 4.0.5
       html-encoding-sniffer: 3.0.0
       http-proxy-agent: 5.0.0
       https-proxy-agent: 5.0.1
@@ -28842,7 +28837,7 @@ snapshots:
       whatwg-encoding: 2.0.0
       whatwg-mimetype: 3.0.0
       whatwg-url: 11.0.0
-      ws: 8.18.0(bufferutil@4.0.8)(utf-8-validate@6.0.3)
+      ws: 8.19.0(bufferutil@4.0.8)(utf-8-validate@6.0.3)
       xml-name-validator: 4.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -29214,7 +29209,7 @@ snapshots:
 
   make-dir@4.0.0:
     dependencies:
-      semver: 7.6.3
+      semver: 7.7.4
     optional: true
 
   make-error@1.3.6: {}
@@ -29441,7 +29436,7 @@ snapshots:
 
   metro-cache@0.80.12:
     dependencies:
-      exponential-backoff: 3.1.1
+      exponential-backoff: 3.1.3
       flow-enums-runtime: 0.0.6
       metro-core: 0.80.12
 
@@ -31623,8 +31618,7 @@ snapshots:
 
   semver@7.7.3: {}
 
-  semver@7.7.4:
-    optional: true
+  semver@7.7.4: {}
 
   send@0.19.0:
     dependencies:
@@ -32197,7 +32191,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  sushi@6.5.0(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11):
+  sushi@0.0.0-canary-20260213072602(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11):
     dependencies:
       '@uniswap/token-lists': 1.0.0-beta.33
       tiny-invariant: 1.3.3
