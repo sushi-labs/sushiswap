@@ -5,10 +5,11 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
-import { Fragment } from 'react'
+import { Fragment, useMemo } from 'react'
 import { useAccount } from 'src/lib/wallet'
 import { formatPercent, formatUSD } from 'sushi'
 import type { StellarChainId } from 'sushi/stellar'
+import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
 import { getStellarPortfolioWallet } from '~stellar/_common/lib/hooks/token/get-stellar-portfolio-wallet'
 import { TokenIcon } from '~stellar/_common/ui/General/TokenIcon'
 import { PortfolioInfoRow } from '../portfolio-info-row'
@@ -29,11 +30,15 @@ function usePortfolioStellarWallet(
   })
 }
 
+type PortfolioStellarWalletToken = NonNullable<
+  ReturnType<typeof usePortfolioStellarWallet>['data']
+>[number]
+
 export const PortfolioStellarTokens = () => {
   const account = useAccount('stellar')
 
   const { data, isLoading, isError } = usePortfolioStellarWallet(account)
-  //need StellarToken support to use PortfolioTokensList
+  //need StellarToken and amountUSD support to use PortfolioTokensList
   return (
     <div className="flex flex-col gap-y-5 h-[calc(100%-50px)] overflow-hidden">
       {!account ? (
@@ -61,45 +66,60 @@ export const PortfolioStellarTokens = () => {
         </div>
       ) : data?.length ? (
         data?.map((token, idx) => (
-          <PortfolioInfoRow
+          <_TokenRow
             key={`${token.chainId}:${token.id}:${idx}`}
-            chainId={token.chainId as StellarChainId}
-            icon={<TokenIcon width={28} height={28} currency={token.token} />}
-            leftContent={
-              <Fragment>
-                <div className="text-sm font-medium overflow-hidden overflow-ellipsis">
-                  {token.name ?? token.symbol}
-                </div>
-                <div className="text-xs text-muted-foreground overflow-hidden overflow-ellipsis">
-                  <FormattedNumber number={token.amount.toString()} />{' '}
-                  {token.symbol}
-                </div>
-              </Fragment>
-            }
-            rightContent={
-              <Fragment>
-                <div className="text-sm font-medium overflow-hidden overflow-ellipsis">
-                  {formatUSD(token.amountUSD)}
-                </div>
-                <div
-                  className={classNames(
-                    'text-xs',
-                    token.price24hChange > 0
-                      ? 'text-green'
-                      : token.price24hChange < 0
-                        ? 'text-red'
-                        : 'text-muted-foreground',
-                  )}
-                >
-                  {`${token.price24hChange > 0 ? '+' : ''}${formatPercent(
-                    token.price24hChange,
-                  )}`}
-                </div>
-              </Fragment>
-            }
+            token={token}
           />
         ))
       ) : null}
     </div>
+  )
+}
+
+const _TokenRow = ({ token }: { token: PortfolioStellarWalletToken }) => {
+  //not ideal, currently no price api for stellar
+  const { data: tokenPrice } = useStablePrice({ token: token.token })
+
+  const _amountUsd = useMemo(() => {
+    return tokenPrice ? token.amount * tokenPrice : 0
+  }, [token.amount, tokenPrice])
+
+  return (
+    <PortfolioInfoRow
+      key={`${token.chainId}:${token.id}`}
+      chainId={token.chainId as StellarChainId}
+      icon={<TokenIcon width={28} height={28} currency={token.token} />}
+      leftContent={
+        <Fragment>
+          <div className="text-sm font-medium overflow-hidden overflow-ellipsis">
+            {token.name ?? token.symbol}
+          </div>
+          <div className="text-xs text-muted-foreground overflow-hidden overflow-ellipsis">
+            <FormattedNumber number={token.amount.toString()} /> {token.symbol}
+          </div>
+        </Fragment>
+      }
+      rightContent={
+        <Fragment>
+          <div className="text-sm font-medium overflow-hidden overflow-ellipsis">
+            {formatUSD(_amountUsd)}
+          </div>
+          <div
+            className={classNames(
+              'text-xs',
+              token.price24hChange > 0
+                ? 'text-green'
+                : token.price24hChange < 0
+                  ? 'text-red'
+                  : 'text-muted-foreground',
+            )}
+          >
+            {`${token.price24hChange > 0 ? '+' : ''}${formatPercent(
+              token.price24hChange,
+            )}`}
+          </div>
+        </Fragment>
+      }
+    />
   )
 }
