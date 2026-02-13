@@ -95,28 +95,30 @@ export const SidebarConnectView = () => {
           onClick={close}
         />
       </div>
-      {subview.type === 'select-namespace' ? (
-        <Suspense fallback={<WalletConnectorsListSkeleton />}>
-          <WalletConnectorsList
-            variant="namespace"
-            onConnect={onConnect}
-            wallets={subview.wallets}
-          />
-        </Suspense>
-      ) : (
-        <Suspense fallback={<WalletConnectorsListSkeleton />}>
-          <WalletConnectorsList
-            namespace={namespace}
-            onConnect={onConnect}
-            onSelectMultiNamespaceWallet={(wallets) =>
-              setSubview({
-                type: 'select-namespace',
-                wallets,
-              })
-            }
-          />
-        </Suspense>
-      )}
+      <div className="overflow-y-auto h-[calc(100vh-127px)] sm:h-[calc(100vh-203px)]">
+        {subview.type === 'select-namespace' ? (
+          <Suspense fallback={<WalletConnectorsListSkeleton />}>
+            <WalletConnectorsList
+              variant="namespace"
+              onConnect={onConnect}
+              wallets={subview.wallets}
+            />
+          </Suspense>
+        ) : (
+          <Suspense fallback={<WalletConnectorsListSkeleton />}>
+            <WalletConnectorsList
+              namespace={namespace}
+              onConnect={onConnect}
+              onSelectMultiNamespaceWallet={(wallets) =>
+                setSubview({
+                  type: 'select-namespace',
+                  wallets,
+                })
+              }
+            />
+          </Suspense>
+        )}
+      </div>
     </div>
   )
 }
