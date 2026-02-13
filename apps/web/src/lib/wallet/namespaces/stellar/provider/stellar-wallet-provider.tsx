@@ -1,6 +1,5 @@
 'use client'
 
-import { useLocalStorage } from '@sushiswap/hooks'
 import type React from 'react'
 import {
   createContext,
@@ -18,11 +17,6 @@ import type { Wallet } from 'src/lib/wallet/types'
 import { StellarChainId } from 'sushi/stellar'
 import type { WalletNamespaceContext } from '../../types'
 import { stellarWalletKit } from '../config'
-
-// function useInStellarContext(): boolean {
-//   const client = useConnectorClient()
-//   return client !== null
-// }
 
 const StellarWalletContext = createContext<WalletNamespaceContext | null>(null)
 
@@ -44,44 +38,13 @@ export default function StellarWalletProvider({
 function _StellarWalletProvider({ children }: { children: React.ReactNode }) {
   const [account, setAccount] = useState<string | undefined>(undefined)
   const [wallet, setWallet] = useState<Wallet | null>(null)
-  // const [prevWallet, setPrevWallet] = useLocalStorage<Wallet | null>(
-  //   'sushi.stellar.wallet-id',
-  //   null,
-  // )
-
-  // // biome-ignore lint/correctness/useExhaustiveDependencies: autoconnect helper
-  // useEffect(() => {
-  //   const autoConnect = async () => {
-  //     if (!stellarWalletKit || !prevWallet) return
-  //     try {
-  //       const id = prevWallet.id?.split(':')?.[1]
-  //       if (!id) throw new Error('Invalid wallet id')
-  //       stellarWalletKit.setWallet(id)
-  //       const { address } = await stellarWalletKit.getAddress()
-  //       setAccount(address)
-  //     } catch (error) {
-  //       console.error('Failed to auto-connect to Stellar wallet:', error)
-  //       setPrevWallet(null)
-  //     }
-  //   }
-  //   // autoConnect()
-  // }, [])
 
   const connect = useCallback(
     async (wallet: Wallet, onSuccess?: (address: string) => void) => {
       if (!stellarWalletKit) throw new Error('Stellar client not found')
-
-      // const { connectors, wallet: connectedWallet } = client.getSnapshot()
-
-      // const connectorId = connectors.find(
-      //   (connector) => connector.name === wallet.name,
-      // )?.id
-
-      // if (!connectorId) throw new Error('Stellar connector not found')
       const id = wallet.id?.split(':')?.[1]
       if (!id) throw new Error('Invalid wallet id')
       stellarWalletKit.setWallet(id)
-      // setPrevWallet(wallet)
       setWallet(wallet)
       const { address } = await stellarWalletKit.getAddress()
       setAccount(address)
@@ -100,7 +63,6 @@ function _StellarWalletProvider({ children }: { children: React.ReactNode }) {
   const disconnect = useCallback(async () => {
     if (!stellarWalletKit) throw new Error('Stellar client not found')
     await stellarWalletKit.disconnect()
-    // setPrevWallet(null)
     setAccount(undefined)
     setWallet(null)
   }, [])
