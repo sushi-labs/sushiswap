@@ -92,12 +92,14 @@ export const PositionsTable = ({
             <div className="flex gap-2">
               {!hideNewPositionButton && account ? (
                 <LinkInternal shallow={true} href={`/stellar/pool/add`}>
-                  <Button icon={PlusIcon} asChild>
+                  <Button icon={PlusIcon} asChild size="sm">
                     Create position
                   </Button>
                 </LinkInternal>
               ) : null}
-              {!account ? <ConnectButton namespace="stellar" /> : null}
+              {!account ? (
+                <ConnectButton namespace="stellar" size="sm" />
+              ) : null}
             </div>
           </div>
         </CardTitle>
