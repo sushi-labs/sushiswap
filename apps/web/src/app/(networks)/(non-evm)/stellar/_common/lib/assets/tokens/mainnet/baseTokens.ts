@@ -82,7 +82,7 @@ export const baseTokens: Token[] = [
     org: 'solv',
     domain: 'solv.finance',
     decimals: 8,
-    icon: 'https://assets.coingecko.com/coins/images/36800/standard/solvBTC.png',
+    icon: 'https://raw.githubusercontent.com/solv-finance/solv-resources/main/SolvBTC/SolvBTC.svg',
   },
   {
     code: 'xSolvBTC',
@@ -92,6 +92,6 @@ export const baseTokens: Token[] = [
     org: 'solv',
     domain: 'solv.finance',
     decimals: 8,
-    icon: 'https://assets.coingecko.com/coins/images/39384/standard/xSolvBTC.png',
+    icon: 'https://raw.githubusercontent.com/solv-finance/solv-resources/main/xSolvBTC/xSolvBTC.svg',
   },
 ]
