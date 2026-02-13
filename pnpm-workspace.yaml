@@ -17,7 +17,7 @@ catalogs:
     "@wagmi/core": 3.2.2
     "viem": 2.44.4
     "@solana/addresses": 6.0.1
-    "sushi": 0.0.0-canary-20260213072602
+    "sushi": 6.5.1
 
   react:
     "next": 15.5.9
