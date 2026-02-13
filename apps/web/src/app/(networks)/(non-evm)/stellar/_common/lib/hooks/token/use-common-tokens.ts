@@ -29,13 +29,13 @@ const stellarExpertTopTokensApiUrl =
   'https://api.stellar.expert/explorer/public/asset-list/top50'
 
 const OUTDATED_TOKENS = new Set([
-  { name: 'AFREUM', domain: 'afrem.com' },
-  { name: 'FIDR', domain: 'faredidr.com' },
-  { name: 'FRED', domain: 'fredenergy.org' },
-  { name: 'IFIDR', domain: 'faredidr.com' },
-  { name: 'MOBI', domain: 'mobius.network' },
-  { name: 'XXA', domain: 'ixinium.io' },
-  { name: 'USD', domain: 'stablecoin.anchorusd.com' },
+  'AFR|afreum.com', //code|domain
+  'FIDR|fixedidr.com',
+  'FRED|fredenergy.org',
+  'iFIDR|fixedidr.com',
+  'MOBI|mobius.network',
+  'XXA|ixinium.io',
+  'USD|stablecoin.anchorusd.com',
 ])
 
 const getStellarExpertAssets = async (): Promise<
@@ -64,7 +64,7 @@ const getStellarExpertAssets = async (): Promise<
 
   const assets = parsed.data.assets
   return assets.filter(
-    (i) => i.domain && !OUTDATED_TOKENS.has({ name: i.name, domain: i.domain }),
+    (i) => i.domain && !OUTDATED_TOKENS.has(`${i.code}|${i.domain}`),
   )
 }
 
@@ -82,7 +82,6 @@ export const fetchCommonTokensQueryFn = async (): Promise<
   // Try to add StellarExpert tokens
   try {
     const assets = await getStellarExpertAssets()
-
     assets.forEach((token) => {
       // Use uppercase keys for consistency
       result[token.contract.toUpperCase()] = token
