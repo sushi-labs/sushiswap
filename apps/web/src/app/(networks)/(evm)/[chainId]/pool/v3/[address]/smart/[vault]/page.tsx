@@ -3,7 +3,6 @@ import {
   getVault,
   isSmartPoolChainId,
 } from '@sushiswap/graph-client/data-api'
-import { getClient } from '@wagmi/core'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { unstable_cache } from 'next/cache'
@@ -22,7 +21,8 @@ import {
   isSushiSwapV3ChainId,
   tickToPrice,
 } from 'sushi/evm'
-import { type Address, isAddress } from 'viem'
+import { type Address, type PublicClient, isAddress } from 'viem'
+import { getPublicClient } from 'wagmi/actions'
 import { getCachedV3Pool } from '../../_lib/get-cached-v3-pool'
 
 function getPriceExtremes(
@@ -58,7 +58,9 @@ function getAdjustment(vault: VaultV1): SteerStrategyGeneric['adjustment'] {
 }
 
 async function getGenerics(vault: VaultV1): Promise<SteerStrategyGeneric> {
-  const client = getClient(vault.chainId)
+  const client = getPublicClient(getWagmiConfig(), {
+    chainId: vault.chainId,
+  }) as PublicClient
 
   const prices = await fetch(`https://api.sushi.com/price/v1/${vault.chainId}`)
     .then((data) => data.json())

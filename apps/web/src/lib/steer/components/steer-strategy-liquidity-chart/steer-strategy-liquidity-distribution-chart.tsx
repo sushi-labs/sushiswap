@@ -9,7 +9,6 @@ import 'echarts/lib/chart/line'
 import 'echarts/lib/component/markArea'
 import 'echarts/lib/component/markLine'
 import echarts from 'echarts/lib/echarts'
-import 'echarts/lib/visual/seriesColor'
 import type { ChartEntry } from '~evm/[chainId]/_ui/LiquidityChartRangeInput/types'
 
 interface SteerStrategyLiquidityDistributionChart {

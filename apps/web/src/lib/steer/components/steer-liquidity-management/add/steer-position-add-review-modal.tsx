@@ -1,6 +1,9 @@
 'use client'
 
-import { type VaultV1, isSteerChainId } from '@sushiswap/graph-client'
+import {
+  type VaultV1,
+  isSmartPoolChainId,
+} from '@sushiswap/graph-client/data-api'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
@@ -150,7 +153,7 @@ export const SteerPositionAddReviewModal: FC<
       !address ||
       !currencies ||
       !parsedAmounts ||
-      !isSteerChainId(vault.chainId)
+      !isSmartPoolChainId(vault.chainId)
     )
       return undefined
 

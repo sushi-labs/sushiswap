@@ -3,8 +3,8 @@
 import { useQuery } from '@tanstack/react-query'
 import React, { type FC } from 'react'
 
+import type { SteerVaultId } from 'sushi/evm'
 import { getSteerVaultAprTimeseries } from '../../fetchers/get-vault-apr-timeseries'
-import type { SteerVaultId } from '../../types'
 import SteerAPRChartInternal from './steer-apr-chart.internal'
 
 interface SteerAPRChartProps {

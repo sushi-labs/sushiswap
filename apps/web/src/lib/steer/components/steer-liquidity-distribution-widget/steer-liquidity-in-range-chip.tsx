@@ -1,13 +1,13 @@
 'use client'
 
+import type { VaultV1 } from '@sushiswap/graph-client/data-api'
 import { Chip, SkeletonBox, classNames } from '@sushiswap/ui'
 import React, { type FC, useMemo } from 'react'
 import { EvmToken, type SushiSwapV3ChainId } from 'sushi/evm'
 import { useConcentratedActiveLiquidity } from '../../../../lib/pool/v3/use-concentrated-active-liquidity'
-import type { SteerVault } from '../../types'
 
 interface SteerLiquidityInRangeChipProps {
-  vault: SteerVault
+  vault: VaultV1
 }
 
 export const SteerLiquidityInRangeChip: FC<SteerLiquidityInRangeChipProps> = ({

@@ -31,6 +31,7 @@ export const PoolsQuery = graphql(
         feeApr1d
         totalApr1d
         incentiveApr
+        isSmartPool
         isIncentivized
         wasIncentivized
         incentives {

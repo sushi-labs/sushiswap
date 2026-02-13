@@ -1,4 +1,4 @@
-import { isSteerChainId } from '@sushiswap/graph-client'
+import { isSmartPoolChainId } from '@sushiswap/graph-client/data-api'
 import { getChainIdAddressFromId } from 'sushi'
 import type { EvmID } from 'sushi/evm'
 import { type PublicClient, zeroAddress } from 'viem'
@@ -15,7 +15,8 @@ export function getVaultsReservesContracts({
   return vaultIds.map((id) => {
     const { chainId, address } = getChainIdAddressFromId(id)
 
-    if (!isSteerChainId(chainId)) throw new Error(`Invalid chainId: ${chainId}`)
+    if (!isSmartPoolChainId(chainId))
+      throw new Error(`Invalid chainId: ${chainId}`)
 
     const steerPeriphery = STEER_PERIPHERY_ADDRESS[chainId]
 

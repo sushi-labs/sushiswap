@@ -4,7 +4,7 @@ import { PlusIcon } from '@heroicons/react/24/solid'
 import { Button, DialogTrigger, classNames } from '@sushiswap/ui'
 import React, { type FC, useMemo } from 'react'
 
-import type { SteerChainId, VaultV1 } from '@sushiswap/graph-client/data-api'
+import type { VaultV1 } from '@sushiswap/graph-client/data-api'
 import { useIsMounted } from '@sushiswap/hooks'
 import { APPROVE_TAG_ADD_STEER, Field } from 'src/lib/constants'
 import { STEER_PERIPHERY_ADDRESS } from 'src/lib/steer/config'
@@ -110,17 +110,13 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
                     fullWidth
                     id="approve-erc20-0"
                     amount={parsedAmounts?.[Field.CURRENCY_A]}
-                    contract={
-                      STEER_PERIPHERY_ADDRESS[vault.chainId as SteerChainId]
-                    }
+                    contract={STEER_PERIPHERY_ADDRESS[vault.chainId]}
                   >
                     <Checker.ApproveERC20
                       fullWidth
                       id="approve-erc20-1"
                       amount={parsedAmounts?.[Field.CURRENCY_B]}
-                      contract={
-                        STEER_PERIPHERY_ADDRESS[vault.chainId as SteerChainId]
-                      }
+                      contract={STEER_PERIPHERY_ADDRESS[vault.chainId]}
                     >
                       <Checker.Success tag={APPROVE_TAG_ADD_STEER}>
                         <SteerPositionAddReviewModal

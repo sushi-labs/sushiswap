@@ -1,8 +1,11 @@
-import type { Vault1 } from '@sushiswap/graph-client'
+import type { VaultV1 } from '@sushiswap/graph-client/data-api'
 import type { Address } from 'viem'
 
 interface GetTokenRatiosProps {
-  vault: Pick<Vault1, 'chainId' | 'token0' | 'token1' | 'reserve0' | 'reserve1'>
+  vault: Pick<
+    VaultV1,
+    'chainId' | 'token0' | 'token1' | 'reserve0' | 'reserve1'
+  >
   prices: Pick<Map<Address, number>, 'get' | 'has'>
 }
 

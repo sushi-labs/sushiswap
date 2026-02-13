@@ -1,7 +1,7 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
-import type { EvmChainId } from 'sushi/evm'
+import type { EvmChainId, EvmID } from 'sushi/evm'
 import type { Address } from 'viem'
 import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
@@ -77,10 +77,10 @@ export async function getSmartPools(
     return result.smartPools.map((pool) => ({
       ...pool,
       chainId: pool.chainId as EvmChainId,
-      id: pool.id as `${string}:0x${string}`,
+      id: pool.id as EvmID,
       strategy: pool.strategy,
       token0: {
-        id: pool.token0.id as `${string}:0x${string}`,
+        id: pool.token0.id as EvmID,
         address: pool.token0.address as Address,
         chainId: pool.token0.chainId as EvmChainId,
         decimals: pool.token0.decimals,
@@ -88,7 +88,7 @@ export async function getSmartPools(
         symbol: pool.token0.symbol,
       },
       token1: {
-        id: pool.token1.id as `${string}:0x${string}`,
+        id: pool.token1.id as EvmID,
         address: pool.token1.address as Address,
         chainId: pool.token1.chainId as EvmChainId,
         decimals: pool.token1.decimals,

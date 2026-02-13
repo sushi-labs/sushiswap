@@ -1,7 +1,10 @@
 'use client'
 
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
-import { type VaultV1, isSteerChainId } from '@sushiswap/graph-client/data-api'
+import {
+  type VaultV1,
+  isSmartPoolChainId,
+} from '@sushiswap/graph-client/data-api'
 import { SlippageToleranceStorageKey, useDebounce } from '@sushiswap/hooks'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
@@ -136,7 +139,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
       !position ||
       position?.steerTokenBalance === 0n ||
       !tokenAmountsDiscounted ||
-      !isSteerChainId(vault.chainId)
+      !isSmartPoolChainId(vault.chainId)
     )
       return undefined
 

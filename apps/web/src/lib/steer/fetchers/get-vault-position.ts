@@ -1,7 +1,7 @@
 import { getChainIdAddressFromId } from 'sushi'
 import type { EvmID } from 'sushi/evm'
 import { type PublicClient, zeroAddress } from 'viem'
-import { steerMultiPositionManagerAbi } from '../abi/steer-multi-position-manager.js'
+import { steerMultiPositionManagerAbi } from '../abi/steer-multi-position-manager'
 
 interface GetVaultPositionsContracts {
   vaultIds: string[]

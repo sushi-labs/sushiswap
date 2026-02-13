@@ -1,11 +1,11 @@
+import type { VaultV1 } from '@sushiswap/graph-client/data-api'
 import { CardTitle } from '@sushiswap/ui'
 import React, { type FC } from 'react'
-import type { SteerVault } from '../../types'
 import { SteerLiquidityInRangeChip } from './steer-liquidity-in-range-chip'
 import { SteerTokenDistributionBar } from './steer-token-distribution-bar'
 
 interface SteerLiquidityDistributionWidgetProps {
-  vault: SteerVault
+  vault: VaultV1
 }
 
 export const SteerLiquidityDistributionWidget: FC<

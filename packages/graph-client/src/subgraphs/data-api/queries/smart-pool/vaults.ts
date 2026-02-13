@@ -1,5 +1,6 @@
 import type { VariablesOf } from 'gql.tada'
 import { type RequestOptions, request } from 'src/lib/request.js'
+import type { EvmID } from 'sushi/evm'
 import type { Address } from 'viem'
 import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
@@ -88,7 +89,7 @@ export async function getVaults(
       return {
         ...v,
         chainId: v.chainId as SmartPoolChainId,
-        id: v.id as `${string}:0x${string}`,
+        id: v.id as EvmID,
         address: v.address as Address,
         reserve0: BigInt(v.reserve0),
         reserve1: BigInt(v.reserve1),
@@ -96,13 +97,13 @@ export async function getVaults(
         fees1: BigInt(v.fees1),
         token0: {
           ...v.token0,
-          id: `${v.chainId}:${v.token0.address}` as `${string}:0x${string}`,
+          id: `${v.chainId}:${v.token0.address}` as EvmID,
           address: v.token0.address as Address,
           chainId: v.chainId as SmartPoolChainId,
         },
         token1: {
           ...v.token1,
-          id: `${v.chainId}:${v.token1.address}` as `${string}:0x${string}`,
+          id: `${v.chainId}:${v.token1.address}` as EvmID,
           address: v.token1.address as Address,
           chainId: v.chainId as SmartPoolChainId,
         },

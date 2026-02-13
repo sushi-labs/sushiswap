@@ -1,14 +1,14 @@
 'use client'
 
+import type { VaultV1 } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import React from 'react'
 import { stringify } from 'viem/utils'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
-import type { SteerVault } from '../../types'
 import { getTokenRatios } from '../../utils'
 
 interface SteerTokenDistributionBarProps {
-  vault: SteerVault
+  vault: VaultV1
 }
 
 export function SteerTokenDistributionBar({

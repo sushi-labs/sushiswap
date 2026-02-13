@@ -13,7 +13,6 @@ import 'echarts/lib/chart/line'
 import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/visualMap'
 import echarts from 'echarts/lib/echarts'
-import 'echarts/lib/visual/seriesColor'
 import { formatPercent } from 'sushi'
 import type { getSteerVaultAprTimeseries } from '../../fetchers/get-vault-apr-timeseries'
 
