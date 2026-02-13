@@ -40,7 +40,7 @@ export const PortfolioStellarTokens = () => {
   const { data, isLoading, isError } = usePortfolioStellarWallet(account)
   //need StellarToken and amountUSD support to use PortfolioTokensList
   return (
-    <div className="flex flex-col gap-y-5 h-[calc(100%-50px)] overflow-hidden">
+    <div className="flex flex-col h-[calc(100%-50px)] overflow-hidden">
       {!account ? (
         <div className="text-xs italic text-center text-muted-foreground">
           No Stellar account connected.
