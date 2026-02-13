@@ -4,7 +4,6 @@ import { PlusIcon } from '@heroicons/react/20/solid'
 import {
   Button,
   Card,
-  CardContent,
   CardHeader,
   CardTitle,
   DataTable,
@@ -77,22 +76,6 @@ export const PositionsTable = ({
     })
   }, [positions, tokenSymbols])
 
-  if (!isLoading && !account) {
-    return (
-      <Card className="bg-slate-900/50 border-secondary">
-        <CardHeader>
-          <CardTitle>My Positions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center text-slate-800">
-            Connect your wallet to view your positions
-          </div>
-          <ConnectButton namespace="stellar" />
-        </CardContent>
-      </Card>
-    )
-  }
-
   return (
     <Card>
       <CardHeader>
@@ -102,18 +85,19 @@ export const PositionsTable = ({
               My Positions{' '}
               {isLoading ? null : (
                 <span className="text-gray-400 dark:text-slate-500">
-                  ({filteredData.length})
+                  ({filteredData?.length})
                 </span>
               )}
             </span>
-            <div className="flex gap-4">
-              {!hideNewPositionButton ? (
+            <div className="flex gap-2">
+              {!hideNewPositionButton && account ? (
                 <LinkInternal shallow={true} href={`/stellar/pool/add`}>
-                  <Button icon={PlusIcon} asChild size="sm">
+                  <Button icon={PlusIcon} asChild>
                     Create position
                   </Button>
                 </LinkInternal>
               ) : null}
+              {!account ? <ConnectButton namespace="stellar" /> : null}
             </div>
           </div>
         </CardTitle>
