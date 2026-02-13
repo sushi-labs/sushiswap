@@ -39,6 +39,7 @@ export function useStellarWallets() {
         isInstalled: wallet.isAvailable, //come back to this
         isAvailable: wallet.isAvailable,
         isRecent: isRecentWallet(walletId),
+        url: wallet.url,
       })
     }
 
