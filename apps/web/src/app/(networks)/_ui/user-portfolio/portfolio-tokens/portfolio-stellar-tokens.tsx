@@ -71,7 +71,11 @@ export const PortfolioStellarTokens = () => {
             token={token}
           />
         ))
-      ) : null}
+      ) : (
+        <div className="text-xs italic text-center text-muted-foreground">
+          No tokens found.
+        </div>
+      )}
     </div>
   )
 }
