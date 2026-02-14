@@ -51,8 +51,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   pool,
 }) => {
   const { signTransaction, signAuthEntry } = useStellarWallet()
-  const account = useAccount('stellar')
-  const connectedAddress = account
+  const connectedAddress = useAccount('stellar')
   const { data: balances } = usePoolBalances(pool.address, connectedAddress)
   const { positions: myPositions } = useMyPosition({
     userAddress: connectedAddress || undefined,

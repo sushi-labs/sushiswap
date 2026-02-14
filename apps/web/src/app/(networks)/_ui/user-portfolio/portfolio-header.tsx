@@ -38,7 +38,9 @@ import {
 } from 'src/lib/wallet'
 import { DisconnectWalletButton } from 'src/lib/wallet/components/disconnect-wallet-button'
 import { getChainById, shortenAddress } from 'sushi'
-import { EvmChainId } from 'sushi/evm'
+import { type EvmAddress, EvmChainId } from 'sushi/evm'
+import type { StellarChainId } from 'sushi/stellar'
+import type { SvmChainId } from 'sushi/svm'
 import { useEnsName } from 'wagmi'
 
 export const PortfolioHeader = () => {
@@ -267,15 +269,15 @@ const ConnectedWalletsPopover = ({
   svm,
   stellar,
 }: {
-  evm?: WalletConnection
-  svm?: WalletConnection
-  stellar?: WalletConnection
+  evm?: WalletConnection<EvmChainId>
+  svm?: WalletConnection<SvmChainId>
+  stellar?: WalletConnection<StellarChainId>
 }) => {
   const { setView } = useSidebar()
 
   const { data: ensName } = useEnsName({
     chainId: EvmChainId.ETHEREUM,
-    address: evm?.account ? (evm?.account as `0x${string}`) : undefined,
+    address: evm?.account,
   })
 
   const [isOpen, setIsOpen] = useState(false)

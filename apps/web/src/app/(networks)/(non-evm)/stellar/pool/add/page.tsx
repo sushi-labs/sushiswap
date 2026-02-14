@@ -32,8 +32,7 @@ import TokenSelector from '~stellar/_common/ui/token-selector/token-selector'
 import { useStellarWallet } from '~stellar/providers'
 
 export default function AddPoolPage() {
-  const account = useAccount('stellar')
-  const connectedAddress = account
+  const connectedAddress = useAccount('stellar')
   const { signTransaction, signAuthEntry } = useStellarWallet()
   const router = useRouter()
   const createAndInitializePoolMutation = useCreateAndInitializePool()

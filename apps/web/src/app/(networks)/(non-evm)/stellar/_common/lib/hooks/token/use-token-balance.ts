@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { formatUnits } from 'viem'
+import type { StellarAddress } from 'sushi/stellar'
 import {
   getTokenBalance,
   getTokenBalanceFromToken,
@@ -9,7 +9,7 @@ import {
 import type { Token, TokenWithBalance } from '../../types/token.type'
 
 export const useTokenBalance = (
-  address: `G${string}` | undefined,
+  address: StellarAddress | undefined,
   tokenContractId: string | null,
 ) => {
   return useQuery({
@@ -53,7 +53,7 @@ export const useTokenBalanceFromToken = (
  * @returns The original tokens array with new `balance` and `balanceFormatted` fields for each
  */
 export const useTokenBalances = (
-  address: `G${string}` | undefined,
+  address: StellarAddress | undefined,
   tokens: Token[],
 ) => {
   return useQuery({
@@ -92,7 +92,7 @@ export const useTokenBalances = (
  * @returns A map of contract addresses to balance amounts (as strings)
  */
 export const useTokenBalancesMap = (
-  address: `G${string}` | undefined,
+  address: StellarAddress | undefined,
   contracts: string[],
 ) => {
   return useQuery({

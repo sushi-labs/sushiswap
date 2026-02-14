@@ -17,7 +17,9 @@ export function createTokenFilterFunction<T extends Token>(
 
   if (lowerSearchParts.length === 0) return alwaysTrue
 
-  const matchesSearch = (s: string): boolean => {
+  const matchesSearch = (s: string | undefined): boolean => {
+    if (!s) return false
+
     const sParts = s
       .toLowerCase()
       .split(/\s+/)
@@ -31,11 +33,7 @@ export function createTokenFilterFunction<T extends Token>(
   }
 
   return ({ name, code, domain }: T): boolean =>
-    Boolean(
-      (code && matchesSearch(code)) ||
-        (name && matchesSearch(name)) ||
-        (domain && matchesSearch(domain)),
-    )
+    matchesSearch(code) || matchesSearch(name) || matchesSearch(domain)
 }
 
 export function filterTokens<T extends Token>(

@@ -25,8 +25,7 @@ import {
 } from './simple-swap-provider/simple-swap-provider'
 
 export const SimpleSwapExecuteButton = () => {
-  const account = useAccount('stellar')
-  const connectedAddress = account
+  const connectedAddress = useAccount('stellar')
   const { amount, token0, token1, outputAmount, priceImpact } =
     useSimpleSwapState()
   const { setAmount, setOutputAmount, setSlippageAmount, setPriceImpact } =

@@ -46,7 +46,7 @@ export const PositionsTable = ({
   })
   const { tokenSymbols } = usePoolFilters()
   const { positions, isLoading: isPositionLoading } = useMyPosition({
-    userAddress: account ?? undefined,
+    userAddress: account,
     excludeDust: true,
   })
 

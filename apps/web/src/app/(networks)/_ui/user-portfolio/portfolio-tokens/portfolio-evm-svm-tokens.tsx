@@ -18,7 +18,7 @@ function usePortfolioWallet(
       const data = await getPortfolioWallet({ ids })
       return data
     },
-    enabled: !!addresses && addresses.length > 0,
+    enabled: addresses.length > 0,
     refetchInterval,
   })
 }

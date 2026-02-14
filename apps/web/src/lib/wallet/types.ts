@@ -1,6 +1,6 @@
 import type { EvmChainId } from 'sushi/evm'
 import type { StellarChainId } from 'sushi/stellar'
-import type { SvmAddress, SvmChainId } from 'sushi/svm'
+import type { SvmChainId } from 'sushi/svm'
 
 export type WalletNamespace = 'evm' | 'svm' | 'stellar'
 

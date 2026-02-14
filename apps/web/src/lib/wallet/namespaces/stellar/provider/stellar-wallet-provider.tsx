@@ -14,7 +14,7 @@ import {
   clearWalletConnections,
 } from 'src/lib/wallet/provider/store'
 import type { Wallet } from 'src/lib/wallet/types'
-import { StellarChainId } from 'sushi/stellar'
+import { type StellarAddress, StellarChainId } from 'sushi/stellar'
 import type { WalletNamespaceContext } from '../../types'
 import { stellarWalletKit } from '../config'
 
@@ -36,11 +36,11 @@ export default function StellarWalletProvider({
 }
 
 function _StellarWalletProvider({ children }: { children: React.ReactNode }) {
-  const [account, setAccount] = useState<string | undefined>(undefined)
+  const [account, setAccount] = useState<StellarAddress | undefined>(undefined)
   const [wallet, setWallet] = useState<Wallet | null>(null)
 
   const connect = useCallback(
-    async (wallet: Wallet, onSuccess?: (address: string) => void) => {
+    async (wallet: Wallet, onSuccess?: (address: StellarAddress) => void) => {
       if (!stellarWalletKit) throw new Error('Stellar client not found')
       const id = wallet.id?.split(':')?.[1]
       if (!id) throw new Error('Invalid wallet id')

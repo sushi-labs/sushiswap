@@ -23,10 +23,9 @@ const StellarWalletContext = createContext<StellarWalletContextType>({
 })
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const account = useAccount('stellar')
+  const connectedAddress = useAccount('stellar')
   const wallets = useStellarWallets()
   const isLoading = Boolean(wallets.length === 0)
-  const connectedAddress = account
 
   /**
    * Signs a Stellar transaction
@@ -76,7 +75,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <StellarWalletContext.Provider
       value={{
         isLoading,
-        isConnected: connectedAddress !== null,
+        isConnected: !!connectedAddress,
         connectedAddress,
         signTransaction,
         signAuthEntry,

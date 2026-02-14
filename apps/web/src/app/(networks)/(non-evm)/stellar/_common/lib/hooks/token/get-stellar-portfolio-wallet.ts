@@ -6,7 +6,6 @@ import type { TokenWithBalance } from '../../types/token.type'
 import { fetchCommonTokensQueryFn } from './use-common-tokens'
 
 export const getStellarPortfolioWallet = async (address: `G${string}`) => {
-  if (!address) return []
   const tokens = await fetchCommonTokensQueryFn()
   const tokensWithBalances: TokenWithBalance[] = []
   for (const token of Object.values(tokens)) {

@@ -8,24 +8,26 @@ import { useQuery } from '@tanstack/react-query'
 import { Fragment, useMemo } from 'react'
 import { useAccount } from 'src/lib/wallet'
 import { formatPercent, formatUSD } from 'sushi'
-import type { StellarChainId } from 'sushi/stellar'
+import type { StellarAddress, StellarChainId } from 'sushi/stellar'
 import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
 import { getStellarPortfolioWallet } from '~stellar/_common/lib/hooks/token/get-stellar-portfolio-wallet'
 import { TokenIcon } from '~stellar/_common/ui/General/TokenIcon'
 import { PortfolioInfoRow } from '../portfolio-info-row'
 
 function usePortfolioStellarWallet(
-  address: `G${string}` | undefined,
+  address: StellarAddress | undefined,
   refetchInterval?: 600_000,
 ) {
   return useQuery({
     queryKey: ['portfolio-wallet-stellar', address],
     queryFn: async () => {
-      if (!address) return null
+      if (!address) {
+        throw new Error('Address is required to fetch Stellar portfolio wallet')
+      }
       const data = await getStellarPortfolioWallet(address)
       return data
     },
-    enabled: !!address,
+    enabled: Boolean(address),
     refetchInterval,
   })
 }
@@ -91,7 +93,7 @@ const _TokenRow = ({ token }: { token: PortfolioStellarWalletToken }) => {
   return (
     <PortfolioInfoRow
       key={`${token.chainId}:${token.id}`}
-      chainId={token.chainId as StellarChainId}
+      chainId={token.chainId}
       icon={<TokenIcon width={28} height={28} currency={token.token} />}
       leftContent={
         <Fragment>

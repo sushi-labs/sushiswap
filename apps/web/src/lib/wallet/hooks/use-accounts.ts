@@ -2,18 +2,18 @@
 
 import { useMemo } from 'react'
 import { useWalletContext } from '../provider'
-import type { WalletNamespace } from '../types'
+import type { ChainIdForNamespace, WalletNamespace } from '../types'
 
-type AccountsState = Record<WalletNamespace, { address: string | undefined }>
-
-export function useAccounts(): AccountsState {
+export function useAccounts() {
   const { connections } = useWalletContext()
 
   return useMemo(() => {
-    const getFirstAddress = (namespace: WalletNamespace) => {
+    const getFirstAddress = <TNamespace extends WalletNamespace>(
+      namespace: TNamespace,
+    ) => {
       for (const c of connections) {
         if (c.namespace !== namespace) continue
-        return c.account
+        return c.account as AddressFor<ChainIdForNamespace<typeof namespace>>
       }
       return undefined
     }
