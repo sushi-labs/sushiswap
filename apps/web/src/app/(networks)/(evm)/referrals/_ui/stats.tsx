@@ -12,11 +12,11 @@ import {
 import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import { XIcon } from '@sushiswap/ui/icons/XIcon'
 import { useUserReferralStats } from 'src/lib/hooks/react-query/referral/use-user-referral-stats'
+import { useAccount } from 'src/lib/wallet'
 import { formatNumber, formatUSD } from 'sushi'
-import { useAccount } from 'wagmi'
 
 export const Stats = () => {
-  const { address } = useAccount()
+  const address = useAccount('evm')
   const { data, isLoading, isError } = useUserReferralStats({
     address: address,
     enabled: Boolean(address),

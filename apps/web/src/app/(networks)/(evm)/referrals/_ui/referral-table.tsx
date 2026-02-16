@@ -6,7 +6,7 @@ import { useMemo } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useReferredInvites } from 'src/lib/hooks/react-query/referral'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
-import { useAccount } from 'wagmi'
+import { useAccount } from 'src/lib/wallet'
 import { POINTS_COLUMN, USER_COLUMN, VOLUME_COLUMN } from './referral-columns'
 
 const COLUMNS = [USER_COLUMN, POINTS_COLUMN, VOLUME_COLUMN] as ColumnDef<
@@ -15,7 +15,7 @@ const COLUMNS = [USER_COLUMN, POINTS_COLUMN, VOLUME_COLUMN] as ColumnDef<
 >[]
 
 export const ReferralTable = () => {
-  const { address } = useAccount()
+  const address = useAccount('evm')
   const {
     data: leaderboardData,
     isLoading: isLoadingTable,

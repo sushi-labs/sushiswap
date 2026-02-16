@@ -5,11 +5,11 @@ import { ClipboardCheckIcon } from '@heroicons/react-v1/outline'
 import { useCopyClipboard, useIsMounted } from '@sushiswap/hooks'
 import { Card, IconButton, classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
-import { useAccount } from 'wagmi'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { useAccount } from 'src/lib/wallet'
 
 export const ReferralLink = () => {
-  const { address, isConnected } = useAccount()
+  const address = useAccount('evm')
   const [isCopied, staticCopy] = useCopyClipboard()
   const isMounted = useIsMounted()
 
@@ -30,9 +30,7 @@ export const ReferralLink = () => {
           fren.
         </p>
       </div>
-      {!isConnected ? (
-        <ConnectButton />
-      ) : (
+      <Checker.Connect namespace="evm">
         <div className="flex flex-col gap-2 w-full max-w-[500px]">
           <div className="relative rounded-full overflow-hidden w-full max-w-[500px] flex p-0.5">
             <div
@@ -76,7 +74,7 @@ export const ReferralLink = () => {
             </div>
           </div> */}
         </div>
-      )}
+      </Checker.Connect>
     </Card>
   )
 }
