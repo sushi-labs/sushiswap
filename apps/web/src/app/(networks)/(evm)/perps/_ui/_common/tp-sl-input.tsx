@@ -1,6 +1,6 @@
 import { formatPrice } from '@nktkas/hyperliquid/utils'
 import { Button, TextField, classNames } from '@sushiswap/ui'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { PerpOrSpotAsset } from 'src/lib/perps/subscription/use-asset-list'
 import {
   type TpSlGainLossType,
@@ -166,6 +166,16 @@ export const TpSlInput = ({
     },
     [entryPrice, onChangeSlPrice, positionSize, asset, positionLeverage, side],
   )
+
+  //if positionSize changes externally (ex: user edits position size in another dialog input), need to recalculate gain/loss based on new position size
+  useEffect(() => {
+    if ( Number.parseFloat(positionSize) > 0) {
+      onChangeGain(type === 'usd' ? gain.usd : gain.percent)
+    }
+    if (Number.parseFloat(positionSize) > 0) {
+      onChangeLoss(type === 'usd' ? loss.usd : loss.percent)
+    }
+  }, [positionSize])
 
   return (
     <div className="flex flex-col gap-2">

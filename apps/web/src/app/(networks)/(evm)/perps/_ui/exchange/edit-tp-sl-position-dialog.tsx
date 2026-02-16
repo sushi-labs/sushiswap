@@ -10,7 +10,7 @@ import {
   DialogTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { type ReactNode, useMemo, useState } from 'react'
+import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { useExecuteOrders } from 'src/lib/perps/exchange/use-execute-orders'
 import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
 import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'
@@ -20,6 +20,7 @@ import { TableButton } from '../_common/table-button'
 import { TpSlInput } from '../_common/tp-sl-input'
 import { useAssetListState } from '../asset-list-provider'
 import { PerpsChecker } from '../perps-checker'
+import { ConfigureAmount } from '../_common/configure-amount';
 
 export const EditTpSlPositionDialog = ({
   positionToClose,
@@ -28,6 +29,8 @@ export const EditTpSlPositionDialog = ({
   const [open, setOpen] = useState(false)
   const [tpPrice, setTpPrice] = useState<string>('')
   const [slPrice, setSlPrice] = useState<string>('')
+  const [configureAmount, setConfigureAmount] = useState(false)
+  const [size, setSize] = useState<number>(0)
 
   const { executeOrdersAsync, isPending } = useExecuteOrders()
   const {
@@ -62,6 +65,12 @@ export const EditTpSlPositionDialog = ({
       return '0'
     }
   }, [positionToClose, asset])
+
+  useEffect(() => {
+    if(!configureAmount && size === 0 && size !== Number.parseFloat(positionSize)) {
+      setSize(Number.parseFloat(positionSize))
+    }
+  }, [positionSize, configureAmount, size]);
 
   const entryPrice = useMemo(() => {
     if (!positionToClose || !asset) return '0'
@@ -195,11 +204,32 @@ export const EditTpSlPositionDialog = ({
             onChangeSlPrice={setSlPrice}
             entryPrice={entryPrice}
             side={positionToClose?.side}
-            positionSize={positionSize}
+            positionSize={configureAmount ? size.toString() : positionSize}
             positionLeverage={positionToClose?.position.leverage.value}
             showExpectedProfit={true}
           />
-          <div>configure amount row</div>
+          <div>
+            <CheckboxSetting
+              value={configureAmount}
+              onChange={(val) => {
+                setConfigureAmount(val)
+
+              }}
+              label="Configure amount"
+            />
+            {
+              configureAmount ? 
+                <ConfigureAmount 
+                  maxDecimals={asset?.decimals ?? 6}
+                  coinSymbol={baseSymbol}
+                  maxValue={Number.parseFloat(positionSize)}
+                  value={size}
+                  onChange={setSize}
+                  step={ 1 / (10 ** (asset?.decimals ?? 6)) }
+                />
+              : null
+            }
+          </div>
           <div>limit price row</div>
 
           {/* connect checker not needed, wont be able to get here unless connected anyway */}
