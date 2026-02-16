@@ -149,7 +149,7 @@ export const SIZE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
 
     return (
       <span className="font-medium whitespace-nowrap">
-        {numberFormatter.format(Number.parseFloat(size))}
+        {size === '0.0' ? '-' : numberFormatter.format(Number.parseFloat(size))}
       </span>
     )
   },
@@ -167,7 +167,9 @@ export const OG_SIZE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
     const origSz = props.row.original.origSz
     return (
       <span className="font-medium whitespace-nowrap">
-        {numberFormatter.format(Number.parseFloat(origSz))}
+        {origSz === '0.0'
+          ? '-'
+          : numberFormatter.format(Number.parseFloat(origSz))}
       </span>
     )
   },
@@ -396,7 +398,7 @@ export const CANCEL_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
   },
 }
 const CancelAll = () => {
-  const { data: openOrders } = useUserOpenOrders()
+  const { data: openOrders } = useUserOpenOrders({})
   const allCancelData = useMemo(
     () =>
       openOrders?.map((i) => ({

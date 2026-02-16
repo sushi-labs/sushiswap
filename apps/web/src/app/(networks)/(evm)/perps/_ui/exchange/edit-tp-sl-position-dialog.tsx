@@ -11,16 +11,26 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
+import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
 import { useExecuteOrders } from 'src/lib/perps/exchange/use-execute-orders'
 import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
+import { useUserOpenOrders } from 'src/lib/perps/use-user-open-orders'
 import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'
-import { getTextColorClass, numberFormatter } from 'src/lib/perps/utils'
+import {
+  calculateGainFromTp,
+  calculateLossFromSl,
+  getTextColorClass,
+  numberFormatter,
+} from 'src/lib/perps/utils'
+import { formatUnits, parseUnits } from 'viem'
 import { CheckboxSetting } from '../_common/checkbox-setting'
+import { ConfigureAmount } from '../_common/configure-amount'
 import { TableButton } from '../_common/table-button'
 import { TpSlInput } from '../_common/tp-sl-input'
+import { TpSlLimitInput } from '../_common/tp-sl-limit-input'
 import { useAssetListState } from '../asset-list-provider'
 import { PerpsChecker } from '../perps-checker'
-import { ConfigureAmount } from '../_common/configure-amount';
+import { CancelOpenOrder } from './cancel-open-order'
 
 export const EditTpSlPositionDialog = ({
   positionToClose,
@@ -31,17 +41,18 @@ export const EditTpSlPositionDialog = ({
   const [slPrice, setSlPrice] = useState<string>('')
   const [configureAmount, setConfigureAmount] = useState(false)
   const [size, setSize] = useState<number>(0)
-
+  const [hasLimitPrice, setHasLimitPrice] = useState(false)
+  const [tpLimitPrice, setTpLimitPrice] = useState<string>('')
+  const [slLimitPrice, setSlLimitPrice] = useState<string>('')
+  const { data: openOrders } = useUserOpenOrders({
+    coin: positionToClose?.position?.coin,
+  })
   const { executeOrdersAsync, isPending } = useExecuteOrders()
   const {
     state: {
       assetListQuery: { data: assetListData },
     },
   } = useAssetListState()
-  // const { midPrice } = useMidPrice({
-  //   assetString: positionToClose.position.coin,
-  // })
-
   const asset = useMemo(() => {
     if (!positionToClose) return undefined
     const _asset = assetListData?.get?.(positionToClose.position.coin)
@@ -52,6 +63,20 @@ export const EditTpSlPositionDialog = ({
     }
     return _asset
   }, [assetListData, positionToClose])
+
+  const { existingTpOrder, existingSlOrder } = useMemo(() => {
+    if (!openOrders || openOrders.length === 0)
+      return { existingTpOrder: undefined, existingSlOrder: undefined }
+    const tpOrder = openOrders.find(
+      (o) =>
+        o.orderType === 'Take Profit Limit' ||
+        o.orderType === 'Take Profit Market',
+    )
+    const slOrder = openOrders.find(
+      (o) => o.orderType === 'Stop Limit' || o.orderType === 'Stop Market',
+    )
+    return { existingTpOrder: tpOrder, existingSlOrder: slOrder }
+  }, [openOrders])
 
   const { baseSymbol } = useSymbolSplit({ asset })
 
@@ -67,10 +92,14 @@ export const EditTpSlPositionDialog = ({
   }, [positionToClose, asset])
 
   useEffect(() => {
-    if(!configureAmount && size === 0 && size !== Number.parseFloat(positionSize)) {
+    if (
+      !configureAmount &&
+      size === 0 &&
+      size !== Number.parseFloat(positionSize)
+    ) {
       setSize(Number.parseFloat(positionSize))
     }
-  }, [positionSize, configureAmount, size]);
+  }, [positionSize, configureAmount, size])
 
   const entryPrice = useMemo(() => {
     if (!positionToClose || !asset) return '0'
@@ -103,41 +132,141 @@ export const EditTpSlPositionDialog = ({
   }, [positionToClose, asset])
 
   const orderData = useMemo(() => {
-    return null
-    // if (!positionToClose || !asset) return null
+    if (!positionToClose || !asset) return null
 
-    // const position = positionToClose.position
+    const position = positionToClose.position
+    const _size = configureAmount
+      ? formatSize(Math.abs(Number(size)), asset.decimals)
+      : '0' //zero is entire size
 
-    // const _midPrice = parseUnits(midPrice ?? '0', asset?.decimals)
-    // const adjustedPrice =
-    //   positionToClose.side === 'A'
-    //     ? (_midPrice * BigInt(108)) / BigInt(100) // 8% higher than market price for sell orders
-    //     : (_midPrice * BigInt(92)) / BigInt(100) // 8% lower for buy orders
+    const _tpPrice = parseUnits(tpPrice ?? '0', asset?.decimals)
+    const _slPrice = parseUnits(slPrice ?? '0', asset?.decimals)
 
-    // //8% higher than market price for sell orders, 8% lower for buy orders to ensure fills
-    // const marketPrice = formatPrice(
-    //   formatUnits(adjustedPrice, asset?.decimals),
-    //   asset?.decimals,
-    //   asset?.marketType,
-    // )
+    const adjustedTpPrice = formatPrice(
+      formatUnits((_tpPrice * BigInt(108)) / BigInt(100), asset?.decimals),
+      asset?.decimals,
+      asset?.marketType,
+    )
+    const adjustedSlPrice = formatPrice(
+      formatUnits((_slPrice * BigInt(108)) / BigInt(100), asset?.decimals),
+      asset?.decimals,
+      asset?.marketType,
+    )
 
-    // const order = {
-    //   asset: position.coin,
-    //   side:
-    //     positionToClose.side === 'A' ? ('short' as const) : ('long' as const),
-    //   price: marketPrice,
-    //   size: positionSize,
-    //   reduceOnly: false,
-    //   orderType: { limit: { timeInForce: 'FrontendMarket' as const } },
-    // }
+    const formattedTpPrice = formatPrice(
+      tpPrice || '0',
+      asset?.decimals,
+      asset?.marketType,
+    )
+    const formattedTpLimitPrice = formatPrice(
+      tpLimitPrice || '0',
+      asset?.decimals,
+      asset?.marketType,
+    )
 
-    // return {
-    //   orders: [order],
-    //   builder: {
-    //     builderFee: BUILDER_FEE_PERPS,
-    //   },
-    // }
-  }, [])
+    const formattedSlPrice = formatPrice(
+      slPrice || '0',
+      asset?.decimals,
+      asset?.marketType,
+    )
+    const formattedSlLimitPrice = formatPrice(
+      slLimitPrice || '0',
+      asset?.decimals,
+      asset?.marketType,
+    )
+    const isTpLimit = hasLimitPrice && Number.parseFloat(tpLimitPrice) > 0
+    const isSlLimit = hasLimitPrice && Number.parseFloat(slLimitPrice) > 0
+
+    const orders = []
+
+    const tpOrder = {
+      asset: position.coin,
+      side:
+        positionToClose.side === 'A' ? ('short' as const) : ('long' as const),
+      price: isTpLimit ? formattedTpLimitPrice : adjustedTpPrice,
+      size: _size,
+      reduceOnly: true,
+      orderType: {
+        trigger: {
+          isMarket: !isTpLimit,
+          tpsl: 'tp' as const,
+          triggerPrice: formattedTpPrice,
+        },
+      },
+    }
+
+    if (tpOrder.orderType.trigger.triggerPrice !== '0') {
+      orders.push(tpOrder)
+    }
+
+    const slOrder = {
+      asset: position.coin,
+      side:
+        positionToClose.side === 'A' ? ('short' as const) : ('long' as const),
+      price: isSlLimit ? formattedSlLimitPrice : adjustedSlPrice,
+      size: _size,
+      reduceOnly: true,
+      orderType: {
+        trigger: {
+          isMarket: !isSlLimit,
+          tpsl: 'sl' as const,
+          triggerPrice: formattedSlPrice,
+        },
+      },
+    }
+
+    if (slOrder.orderType.trigger.triggerPrice !== '0') {
+      orders.push(slOrder)
+    }
+
+    return {
+      orders: orders,
+      grouping: 'positionTpsl' as const,
+      builder: {
+        builderFee: BUILDER_FEE_PERPS,
+      },
+    }
+  }, [
+    asset,
+    configureAmount,
+    size,
+    positionToClose,
+    tpPrice,
+    hasLimitPrice,
+    slPrice,
+    tpLimitPrice,
+    slLimitPrice,
+  ])
+
+  const expectedProfitUsdc = useMemo(() => {
+    if (!positionToClose || !existingTpOrder || !asset) return '0'
+
+    const { gainUsd } = calculateGainFromTp({
+      entryPrice,
+      positionSize:
+        existingTpOrder.sz === '0.0' ? positionSize : existingTpOrder.sz,
+      tpPrice: existingTpOrder.triggerPx,
+      side: existingTpOrder.side === 'A' ? 'B' : 'A',
+      leverage: BigInt(positionToClose?.position.leverage.value),
+      decimals: asset?.decimals,
+    })
+    return gainUsd
+  }, [positionToClose, existingTpOrder, asset, entryPrice, positionSize])
+
+  const expectedLossUsdc = useMemo(() => {
+    if (!positionToClose || !existingSlOrder || !asset) return '0'
+
+    const { lossUsd } = calculateLossFromSl({
+      entryPrice,
+      positionSize:
+        existingSlOrder.sz === '0.0' ? positionSize : existingSlOrder.sz,
+      slPrice: existingSlOrder.triggerPx,
+      side: existingSlOrder.side === 'A' ? 'B' : 'A',
+      leverage: BigInt(positionToClose?.position.leverage.value),
+      decimals: asset?.decimals,
+    })
+    return lossUsd
+  }, [positionToClose, existingSlOrder, asset, entryPrice, positionSize])
 
   return (
     <Dialog
@@ -195,6 +324,52 @@ export const EditTpSlPositionDialog = ({
                 {numberFormatter.format(Number.parseFloat(markPrice))}
               </div>
             </div>
+            {existingTpOrder ? (
+              <div className="flex items-center justify-between">
+                <div className="text-muted-foreground">Take Profit</div>
+                <div className="flex flex-col items-end">
+                  <div className="flex items-center gap-2">
+                    <div className="font-medium whitespace-nowrap">
+                      <p>{existingTpOrder?.triggerCondition}</p>
+                    </div>
+                    <CancelOpenOrder
+                      orderId={existingTpOrder.oid}
+                      coin={positionToClose.position.coin}
+                    />
+                  </div>
+                  <div className="text-muted-foreground text-xs">
+                    Expected Profit:{' '}
+                    {numberFormatter.format(
+                      Number.parseFloat(expectedProfitUsdc),
+                    )}{' '}
+                    USDC
+                  </div>
+                </div>
+              </div>
+            ) : null}
+            {existingSlOrder ? (
+              <div className="flex items-center justify-between">
+                <div className="text-muted-foreground">Stop Loss</div>
+                <div className="flex flex-col items-end">
+                  <div className="flex items-center gap-2">
+                    <div className="font-medium whitespace-nowrap">
+                      <p>{existingSlOrder?.triggerCondition}</p>
+                    </div>
+                    <CancelOpenOrder
+                      orderId={existingSlOrder.oid}
+                      coin={positionToClose.position.coin}
+                    />
+                  </div>
+                  <div className="text-muted-foreground text-xs">
+                    Expected Loss: -
+                    {numberFormatter.format(
+                      Number.parseFloat(expectedLossUsdc),
+                    )}{' '}
+                    USDC
+                  </div>
+                </div>
+              </div>
+            ) : null}
           </div>
           <TpSlInput
             asset={asset}
@@ -207,55 +382,88 @@ export const EditTpSlPositionDialog = ({
             positionSize={configureAmount ? size.toString() : positionSize}
             positionLeverage={positionToClose?.position.leverage.value}
             showExpectedProfit={true}
+            hideSl={Boolean(existingSlOrder)}
+            hideTp={Boolean(existingTpOrder)}
           />
-          <div>
-            <CheckboxSetting
-              value={configureAmount}
-              onChange={(val) => {
-                setConfigureAmount(val)
-
-              }}
-              label="Configure amount"
-            />
-            {
-              configureAmount ? 
-                <ConfigureAmount 
-                  maxDecimals={asset?.decimals ?? 6}
-                  coinSymbol={baseSymbol}
-                  maxValue={Number.parseFloat(positionSize)}
-                  value={size}
-                  onChange={setSize}
-                  step={ 1 / (10 ** (asset?.decimals ?? 6)) }
-                />
-              : null
-            }
-          </div>
-          <div>limit price row</div>
-
-          {/* connect checker not needed, wont be able to get here unless connected anyway */}
-          <PerpsChecker.Legal>
-            <PerpsChecker.EnableTrading>
-              <PerpsChecker.BuilderFee>
-                <Button
-                  onClick={async () => {
-                    if (!orderData) return
-                    await executeOrdersAsync(
-                      { orderData },
-                      {
-                        onSuccess: () => {
-                          setOpen(false)
-                        },
-                      },
-                    )
+          {Boolean(existingSlOrder) && Boolean(existingTpOrder) ? null : (
+            <>
+              <div className="flex flex-col gap-2">
+                <CheckboxSetting
+                  value={configureAmount}
+                  onChange={(val) => {
+                    setConfigureAmount(val)
                   }}
-                  disabled={isPending || !positionToClose}
-                  loading={isPending}
-                >
-                  Confirm
-                </Button>
-              </PerpsChecker.BuilderFee>
-            </PerpsChecker.EnableTrading>
-          </PerpsChecker.Legal>
+                  label="Configure amount"
+                />
+                {configureAmount ? (
+                  <ConfigureAmount
+                    maxDecimals={asset?.decimals ?? 6}
+                    coinSymbol={baseSymbol}
+                    maxValue={Number.parseFloat(positionSize)}
+                    value={size}
+                    onChange={setSize}
+                    step={1 / 10 ** (asset?.decimals ?? 6)}
+                  />
+                ) : null}
+              </div>
+              <div className="flex flex-col gap-2">
+                <CheckboxSetting
+                  value={hasLimitPrice}
+                  onChange={(val) => {
+                    setHasLimitPrice(val)
+                  }}
+                  label="Limit Price"
+                />
+                {hasLimitPrice ? (
+                  <TpSlLimitInput
+                    asset={asset}
+                    tpLimitPrice={tpLimitPrice}
+                    onChangeTpLimitPrice={setTpLimitPrice}
+                    slLimitPrice={slLimitPrice}
+                    onChangeSlLimitPrice={setSlLimitPrice}
+                  />
+                ) : null}
+              </div>
+
+              {/* connect checker not needed, wont be able to get here unless connected anyway */}
+              <PerpsChecker.Legal>
+                <PerpsChecker.EnableTrading>
+                  <PerpsChecker.BuilderFee>
+                    <Button
+                      onClick={async () => {
+                        if (!orderData) return
+                        await executeOrdersAsync(
+                          { orderData },
+                          {
+                            onSuccess: () => {
+                              setOpen(false)
+                            },
+                          },
+                        )
+                      }}
+                      disabled={isPending || !positionToClose}
+                      loading={isPending}
+                    >
+                      Confirm
+                    </Button>
+                  </PerpsChecker.BuilderFee>
+                </PerpsChecker.EnableTrading>
+              </PerpsChecker.Legal>
+              <div>
+                <p className="text-xs text-muted-foreground italic">
+                  By default take-profit and stop-loss orders apply to the
+                  entire position. Take-profit and stop-loss automatically
+                  cancel after closing the position. A market order is triggered
+                  when the stop loss or take profit price is reached.
+                </p>
+                <p className="text-xs text-muted-foreground italic mt-2">
+                  If the order size is configured above, the TP/SL order will be
+                  for that size no matter how the position changes in the
+                  future.
+                </p>
+              </div>
+            </>
+          )}
         </div>
       </DialogContent>
     </Dialog>

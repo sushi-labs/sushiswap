@@ -391,9 +391,10 @@ export const TP_SL_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   header: 'TP/SL',
   cell: (props) => {
     const position = useMemo(() => props.row.original, [props.row.original])
+
     return (
       <div className="flex items-center gap-4 whitespace-nowrap">
-        <ViewOrders />
+        <ViewOrders coin={position.position.coin} />
         <EditTpSlPositionDialog positionToClose={position} />
       </div>
     )
@@ -403,15 +404,38 @@ export const TP_SL_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   },
 }
 
-const ViewOrders = () => {
+const ViewOrders = ({ coin }: { coin: string }) => {
   const {
     mutate: { setActiveTab },
   } = useTradeTables()
-  const { data: openOrders } = useUserOpenOrders()
-  const hasOrders = useMemo(() => openOrders?.length > 0, [openOrders?.length])
+  const { data: openOrders } = useUserOpenOrders({ coin })
 
-  if (!hasOrders) {
-    return <div className="text-muted-foreground">--/--</div>
+  const { existingTpOrder, existingSlOrder } = useMemo(() => {
+    if (!openOrders || openOrders.length === 0)
+      return { existingTpOrder: undefined, existingSlOrder: undefined }
+    const tpOrder = openOrders.find(
+      (o) =>
+        o.orderType === 'Take Profit Limit' ||
+        o.orderType === 'Take Profit Market',
+    )
+    const slOrder = openOrders.find(
+      (o) => o.orderType === 'Stop Limit' || o.orderType === 'Stop Market',
+    )
+    return { existingTpOrder: tpOrder, existingSlOrder: slOrder }
+  }, [openOrders])
+
+  if (existingTpOrder || existingSlOrder) {
+    return (
+      <div className="text-muted-foreground">
+        {existingTpOrder
+          ? numberFormatter.format(Number.parseFloat(existingTpOrder.triggerPx))
+          : '--'}
+        /
+        {existingSlOrder
+          ? numberFormatter.format(Number.parseFloat(existingSlOrder.triggerPx))
+          : '--'}
+      </div>
+    )
   }
 
   return (

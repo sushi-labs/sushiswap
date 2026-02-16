@@ -37,7 +37,7 @@ const COLUMNS = [
 ] as ColumnDef<UserOpenOrdersItemType, unknown>[]
 
 export const OpenOrdersTable = () => {
-  const { data, isLoading, isError } = useUserOpenOrders()
+  const { data, isLoading, isError } = useUserOpenOrders({})
 
   const [sorting, setSorting] = useState([{ id: 'timestamp', desc: true }])
   const {

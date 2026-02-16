@@ -28,7 +28,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
 
   const { data: balances } = useBalances()
   const { data: userPositions } = useUserPositions()
-  const { data: openOrders } = useUserOpenOrders()
+  const { data: openOrders } = useUserOpenOrders({})
   const balanceCount = useMemo(() => balances?.length ?? 0, [balances?.length])
   const positionCount = useMemo(
     () => userPositions?.length ?? 0,

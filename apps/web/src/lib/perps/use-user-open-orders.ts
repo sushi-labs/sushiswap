@@ -3,7 +3,7 @@ import { useAccount } from 'wagmi'
 import { useAssetListState } from '~evm/perps/_ui/asset-list-provider'
 import { useUserState } from '~evm/perps/user-provider'
 
-export const useUserOpenOrders = () => {
+export const useUserOpenOrders = ({ coin }: { coin?: string }) => {
   const { address } = useAccount()
   const {
     state: {
@@ -29,7 +29,7 @@ export const useUserOpenOrders = () => {
   const formattedData = useMemo(() => {
     if (!data) return []
     const dexName = data?.dex
-    return data.orders.map((i) => {
+    const orders = data.orders.map((i) => {
       const asset = assetList?.get(i.coin)
       return {
         ...i,
@@ -38,7 +38,11 @@ export const useUserOpenOrders = () => {
         perpsDex: dexName,
       }
     })
-  }, [data, assetList])
+    if (coin) {
+      return orders?.filter((o) => o?.coin === coin)
+    }
+    return orders
+  }, [data, assetList, coin])
 
   return useMemo(() => {
     if (!address) {
