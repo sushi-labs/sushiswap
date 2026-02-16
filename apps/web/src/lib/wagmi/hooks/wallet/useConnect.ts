@@ -6,13 +6,13 @@ import {
   sendAnalyticsEvent,
 } from '@sushiswap/telemetry'
 import { useState } from 'react'
-import { useAccount, useConnect as useWagmiConnect } from 'wagmi'
+import { useConnection, useConnect as useWagmiConnect } from 'wagmi'
 
 export const useConnect = (props?: Parameters<typeof useWagmiConnect>[0]) => {
   const [pending, setPending] = useState(false)
 
-  const { connectAsync, ...rest } = useWagmiConnect(props)
-  const { connector } = useAccount()
+  const { mutateAsync: connectAsync, ...rest } = useWagmiConnect(props)
+  const { connector } = useConnection()
 
   const _connectAsync = async (...args: Parameters<typeof connectAsync>) => {
     let result

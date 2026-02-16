@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server'
 import {
-  UI_FEE_BIPS,
+  EVM_UI_FEE_BIPS,
   type ZapSupportedChainId,
   isZapSupportedChainId,
 } from 'src/config'
@@ -10,7 +10,7 @@ import {
   TickMath,
   UI_FEE_COLLECTOR_ADDRESS,
 } from 'sushi/evm'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const schema = z.object({
   chainId: z.coerce
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
       args: {
         token: tokenIn,
         amount: amountIn,
-        bps: `${UI_FEE_BIPS}`,
+        bps: `${EVM_UI_FEE_BIPS}`,
         receiver: UI_FEE_COLLECTOR_ADDRESS[chainId],
       },
     },

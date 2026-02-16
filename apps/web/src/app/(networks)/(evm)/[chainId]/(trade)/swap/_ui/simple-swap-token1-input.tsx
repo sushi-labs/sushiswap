@@ -1,7 +1,7 @@
 'use client'
 
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { isWNativeSupported } from 'sushi/evm'
+import { isWNativeSupported } from 'sushi'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
@@ -36,7 +36,6 @@ export const SimpleSwapToken1Input = () => {
       currencyLoading={tokenLoading}
       allowNative={isWNativeSupported(chainId)}
       label="Buy"
-      // priceImpact={quote?.priceImpact}
     />
   )
 }

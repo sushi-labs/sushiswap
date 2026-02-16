@@ -1,10 +1,16 @@
 import type { EvmChainId } from 'sushi/evm'
+import type { SvmAddress, SvmChainId } from 'sushi/svm'
 import type { PriceWorkerReceiveMessageChainState } from '../price-worker/types'
 
-export interface ProviderChainState {
-  chainId: EvmChainId
+type PriceMapKey<TChainId extends EvmChainId | SvmChainId> =
+  TChainId extends EvmChainId ? bigint : SvmAddress
 
-  priceMap?: Map<bigint, number>
+export interface ProviderChainState<
+  TChainId extends EvmChainId | SvmChainId = EvmChainId,
+> {
+  chainId: TChainId
+
+  priceMap?: Map<PriceMapKey<TChainId>, number>
 
   lastModified: number
 
@@ -13,22 +19,31 @@ export interface ProviderChainState {
   isError: boolean
 }
 
-export interface ProviderState {
-  chains: Map<EvmChainId, ProviderChainState>
+export interface ProviderState<
+  TChainId extends EvmChainId | SvmChainId = EvmChainId,
+> {
+  chains: Map<TChainId, ProviderChainState<TChainId>>
   ready: boolean
 }
 
-export interface ProviderMutations {
-  incrementChainId: (chainId: EvmChainId) => void
-  decrementChainId: (chainId: EvmChainId) => void
+export interface ProviderMutations<
+  TChainId extends EvmChainId | SvmChainId = EvmChainId,
+> {
+  incrementChainId: (chainId: TChainId) => void
+  decrementChainId: (chainId: TChainId) => void
+  requestPrices: (chainId: SvmChainId, addresses: SvmAddress[]) => void
 }
 
-export interface Provider {
-  state: ProviderState
-  mutate: ProviderMutations
+export interface Provider<
+  TChainId extends EvmChainId | SvmChainId = EvmChainId,
+> {
+  state: ProviderState<TChainId>
+  mutate: ProviderMutations<TChainId>
 }
 
-export type ProviderActions = {
+export type ProviderActions<
+  TChainId extends EvmChainId | SvmChainId = EvmChainId,
+> = {
   type: 'UPDATE_CHAIN_STATE'
-  payload: PriceWorkerReceiveMessageChainState['payload']
+  payload: PriceWorkerReceiveMessageChainState<TChainId>['payload']
 }

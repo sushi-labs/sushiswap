@@ -1,7 +1,8 @@
 import type { TokenListChainId } from '@sushiswap/graph-client/data-api'
 import { List } from '@sushiswap/ui'
-import type { EvmCurrency } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useAccount } from 'src/lib/wallet'
+import type { EvmChainId } from 'sushi/evm'
+import { useConnection } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useMyTokens } from '../hooks/use-my-tokens'
 import {
@@ -9,11 +10,11 @@ import {
   TokenSelectorCurrencyListLoading,
 } from './common/token-selector-currency-list'
 
-interface TokenSelectorMyTokens {
-  chainId: TokenListChainId
-  onSelect(currency: EvmCurrency): void
-  onShowInfo(currency: EvmCurrency | false): void
-  selected: EvmCurrency | undefined
+interface TokenSelectorMyTokens<TChainId extends TokenListChainId> {
+  chainId: TChainId
+  onSelect(currency: CurrencyFor<TChainId>): void
+  onShowInfo(currency: CurrencyFor<TChainId> | false): void
+  selected: CurrencyFor<TChainId> | undefined
   includeNative?: boolean
 }
 
@@ -28,14 +29,14 @@ function Shell({ children }: { children: React.ReactNode }) {
   )
 }
 
-export function TokenSelectorMyTokens({
+export function TokenSelectorMyTokens<TChainId extends TokenListChainId>({
   chainId,
   onSelect,
   onShowInfo,
   selected,
   includeNative,
-}: TokenSelectorMyTokens) {
-  const { address } = useAccount()
+}: TokenSelectorMyTokens<TChainId>) {
+  const address = useAccount(chainId)
 
   const { data, isError, isLoading } = useMyTokens({
     chainId,

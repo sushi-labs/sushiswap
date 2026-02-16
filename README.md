@@ -12,7 +12,7 @@ https://pnpm.io/installation
 `pnpm install`
 
 ### Configure the environment
-Copy `apps/web/.env.sample` to `apps/web/.env` and fill in non-optional variables. You can skip the Tron and Portal variables if you aren't working on those parts of the app.
+Copy `apps/web/.env.sample` to `apps/web/.env` and fill in non-optional variables. You can skip the Portal variables if you aren't working on those parts of the app.
 
 ### Dev
 `pnpm exec turbo run dev --filter=web`

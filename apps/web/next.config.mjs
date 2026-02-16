@@ -35,10 +35,7 @@ const nextConfig = bundleAnalyzer({
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
-    remotePatterns: [
-      new URL('https://cdn.sushi.com'),
-      new URL('https://static.tronscan.org'),
-    ],
+    remotePatterns: [new URL('https://cdn.sushi.com')],
   },
   webpack: (config, { webpack }) => {
     if (config.plugins) {
@@ -90,9 +87,9 @@ const nextConfig = bundleAnalyzer({
         destination: '/aptos/swap',
       },
       {
-        source: '/tron',
+        source: '/stellar',
         permanent: true,
-        destination: '/tron/swap',
+        destination: '/stellar/swap',
       },
       {
         source: '/',

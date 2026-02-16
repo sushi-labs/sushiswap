@@ -44,7 +44,7 @@ type Query {
   v3PoolBuckets(address: Bytes!, chainId: SushiSwapV3ChainId!): PoolBuckets!
   v3PoolsByTokens(token0: Bytes!, token1: Bytes!, chainId: SushiSwapV3ChainId!): [V3BasePool!]!
   v3Pools(chainId: SushiSwapV3ChainId!): [V3BasePool!]!
-  portfolioWallet(id: ID!): PortfolioWallet!
+  portfolioWallet(ids: [ID!]!): PortfolioWallet!
   portfolioLiquidityPositions(id: ID!): PortfolioPositions!
   portfolioClaimables(id: ID!): PortfolioClaimables!
   portfolioHistory(id: ID!): [PortfolioTransaction!]!
@@ -52,8 +52,8 @@ type Query {
   chainIdsByFeature(feature: ChainIdFeature!): [ChainId!]!
   sushiBarStats: SushiBarStats!
   sushiBarHistory: SushiBarHistory!
-  tokenList(chainId: TokenListChainId!, first: Int = 50, skip: Int, search: String, customTokens: [Bytes!]): [TokenListEntry!]!
-  tokenListBalances(chainId: TokenListChainId!, account: Bytes!, includeNative: Boolean = true, customTokens: [Bytes!]): [TokenListEntryWithBalance!]!
+  tokenList(chainId: TokenListChainId!, first: Int = 50, skip: Int, search: String, customTokens: [Address!]): [TokenListEntry!]!
+  tokenListBalances(chainId: TokenListChainId!, account: Address!, includeNative: Boolean = true, customTokens: [Address!]): [TokenListWithBalanceEntry!]!
   tokenAnalysis(chainId: Int!, address: Bytes!): TokenAnalysis!
   pendingTokens: [PendingToken!]!
   approvedCommunityTokens: [ApprovedToken!]!
@@ -645,6 +645,15 @@ type PortfolioTransaction {
   gasFeeUSD: Float!
 }
 
+"""A field whose value is an EVM (0x) or SVM (base58) address"""
+scalar Address
+
+"""A field whose value is a Solana address"""
+scalar SvmAddress
+
+"""A field whose value is an EVM address"""
+scalar EvmAddress
+
 """
 A field whose value is a byte string: https://en.wikipedia.org/wiki/Byte_string
 """
@@ -724,15 +733,15 @@ type SushiBarHistory {
 }
 
 type TokenListEntry {
-  address: Bytes!
+  address: Address!
   symbol: String!
   name: String!
   decimals: Int!
   approved: Boolean!
 }
 
-type TokenListEntryWithBalance {
-  address: Bytes!
+type TokenListWithBalanceEntry {
+  address: Address!
   symbol: String!
   name: String!
   decimals: Int!
@@ -806,7 +815,7 @@ type TokenSecurity {
 }
 
 type ApprovedToken {
-  address: Bytes!
+  address: Address!
   chainId: ChainId!
   symbol: String!
   name: String!
@@ -816,7 +825,7 @@ type ApprovedToken {
 }
 
 type TrendingToken {
-  address: Bytes!
+  address: Address!
   symbol: String!
   name: String!
   decimals: Int!

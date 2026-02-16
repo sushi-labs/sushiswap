@@ -34,12 +34,6 @@
 						"schema": "./src/subgraphs/de.fi/schema.graphql",
 						"tadaOutputLocation": "./src/subgraphs/de.fi/de.fi-env.d.ts",
 						"tadaTurboLocation": "./src/subgraphs/de.fi/de.fi-cache.d.ts"
-					},
-					{
-						"name": "kadena",
-						"schema": "./src/subgraphs/kadena/schema.graphql",
-						"tadaOutputLocation": "./src/subgraphs/kadena/kadena-env.d.ts",
-						"tadaTurboLocation": "./src/subgraphs/kadena/kadena-cache.d.ts"
 					}
 				]
 			}

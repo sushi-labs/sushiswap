@@ -2,8 +2,9 @@ import type { VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
 import type { ChainIdVariable } from 'src/lib/types/chainId.js'
-import { type ChainId, getIdFromChainIdAddress } from 'sushi'
-import { SUSHI_DATA_API_HOST } from 'sushi/evm'
+import type { TrendingTokensChainId } from 'src/subgraphs/data-api/types/TrendingTokensChainId.js'
+import { type AddressFor, getIdFromChainIdAddress } from 'sushi'
+import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
@@ -21,11 +22,11 @@ export const TrendingTokensQuery = graphql(
 `,
 )
 
-export type GetTrendingTokens = VariablesOf<typeof TrendingTokensQuery> &
-  ChainIdVariable<ChainId>
+export type GetTrendingTokens<TChainId extends TrendingTokensChainId> =
+  VariablesOf<typeof TrendingTokensQuery> & ChainIdVariable<TChainId>
 
-export async function getTrendingTokens(
-  variables: GetTrendingTokens,
+export async function getTrendingTokens<TChainId extends TrendingTokensChainId>(
+  variables: GetTrendingTokens<TChainId>,
   options?: RequestOptions,
 ) {
   const url = `${SUSHI_DATA_API_HOST}/graphql`
@@ -34,7 +35,7 @@ export async function getTrendingTokens(
     {
       url,
       document: TrendingTokensQuery,
-      variables,
+      variables: variables as VariablesOf<typeof TrendingTokensQuery>,
       requestHeaders: SUSHI_REQUEST_HEADERS,
     },
     options,
@@ -42,13 +43,16 @@ export async function getTrendingTokens(
 
   if (result) {
     return result.trendingTokens.map((token) => ({
+      ...token,
       id: getIdFromChainIdAddress(variables.chainId, token.address),
       chainId: variables.chainId,
-      ...token,
+      address: token.address as AddressFor<TChainId>,
     }))
   }
 
   throw new Error('No trending tokens found')
 }
 
-export type TrendingTokens = Awaited<ReturnType<typeof getTrendingTokens>>
+export type TrendingTokens<
+  TChainId extends TrendingTokensChainId = TrendingTokensChainId,
+> = Awaited<ReturnType<typeof getTrendingTokens<TChainId>>>

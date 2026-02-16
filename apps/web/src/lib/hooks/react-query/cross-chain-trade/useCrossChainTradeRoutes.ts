@@ -1,35 +1,31 @@
-import { type UseQueryOptions, useQuery } from '@tanstack/react-query'
-import type { Amount, Percent } from 'sushi'
-import type { EvmCurrency } from 'sushi/evm'
-import { type Address, zeroAddress } from 'viem'
-import { z } from 'zod'
-import { crossChainRouteSchema } from '../../../swap/cross-chain/schema'
-import type { CrossChainRoute } from '../../../swap/cross-chain/types'
+import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
+import type { XSwapSupportedChainId } from 'src/config'
+import { type Amount, type Percent, getNativeAddress } from 'sushi'
+import type { CrossChainRoutesResponse } from '~evm/api/cross-chain/routes/route'
 
-const crossChainRoutesResponseSchema = z.object({
-  routes: z.array(crossChainRouteSchema),
-})
-
-export interface UseCrossChainTradeRoutesParms {
-  fromAmount?: Amount<EvmCurrency>
-  toToken?: EvmCurrency
-  fromAddress?: Address
-  toAddress?: Address
+export interface UseCrossChainTradeRoutesParms<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+> {
+  fromAmount?: Amount<CurrencyFor<TChainId0>>
+  toToken?: CurrencyFor<TChainId1>
+  fromAddress?: AddressFor<TChainId0>
+  toAddress?: AddressFor<TChainId1>
   slippage: Percent
   order?: 'CHEAPEST' | 'FASTEST'
-  query?: Omit<UseQueryOptions<CrossChainRoute[]>, 'queryFn' | 'queryKey'>
 }
 
-export const useCrossChainTradeRoutes = ({
-  query,
-  ...params
-}: UseCrossChainTradeRoutesParms) => {
-  return useQuery<CrossChainRoute[]>({
+export function useCrossChainTradeRoutes<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+>(params: UseCrossChainTradeRoutesParms<TChainId0, TChainId1>) {
+  return useQuery({
     queryKey: ['cross-chain/routes', params],
-    queryFn: async (): Promise<CrossChainRoute[]> => {
-      const { fromAmount, toToken, slippage } = params
+    queryFn: async () => {
+      const { fromAmount, toToken, slippage, toAddress } = params
 
-      if (!fromAmount || !toToken) throw new Error()
+      if (!fromAmount || !toToken || !toAddress) throw new Error()
 
       const url = new URL('/api/cross-chain/routes', window.location.origin)
 
@@ -41,12 +37,14 @@ export const useCrossChainTradeRoutes = ({
       url.searchParams.set(
         'fromTokenAddress',
         fromAmount.currency.type === 'native'
-          ? zeroAddress
+          ? getNativeAddress(fromAmount.currency.chainId)
           : fromAmount.currency.address,
       )
       url.searchParams.set(
         'toTokenAddress',
-        toToken.type === 'native' ? zeroAddress : toToken.address,
+        toToken.type === 'native'
+          ? getNativeAddress(toToken.chainId)
+          : toToken.address,
       )
       url.searchParams.set('fromAmount', fromAmount.amount.toString())
       url.searchParams.set(
@@ -55,12 +53,7 @@ export const useCrossChainTradeRoutes = ({
       )
       params.fromAddress &&
         url.searchParams.set('fromAddress', params.fromAddress)
-      params.toAddress ||
-        (params.fromAddress &&
-          url.searchParams.set(
-            'toAddress',
-            params.toAddress || params.fromAddress,
-          ))
+      params.toAddress && url.searchParams.set('toAddress', params.toAddress)
       params.order && url.searchParams.set('order', params.order)
 
       const response = await fetch(url)
@@ -71,14 +64,13 @@ export const useCrossChainTradeRoutes = ({
 
       const json = await response.json()
 
-      const { routes } = crossChainRoutesResponseSchema.parse(json)
+      const { routes } = json as CrossChainRoutesResponse<TChainId0, TChainId1>
 
       return routes
     },
-    refetchInterval: query?.refetchInterval ?? 1000 * 20, // 20s
-    enabled:
-      query?.enabled !== false &&
-      Boolean(params.toToken && params.fromAmount?.gt(0n)),
-    ...query,
+    refetchInterval: ms('20s'),
+    enabled: Boolean(
+      params.toToken && params.fromAmount?.gt(0n) && params.toAddress,
+    ),
   })
 }

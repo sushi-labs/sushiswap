@@ -70,7 +70,7 @@ import {
   unwrapEvmToken,
 } from 'sushi/evm'
 import type { Address } from 'viem'
-import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
+import { useConnection, useWaitForTransactionReceipt } from 'wagmi'
 import { useConcentratedDerivedMintInfo } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
 import { SelectPricesWidget } from '~evm/[chainId]/_ui/select-prices-widget'
 import { SelectFeeConcentratedWidget } from '~evm/[chainId]/pool/_ui/select-fee-concentrated-widget'
@@ -80,7 +80,7 @@ export const MigrateTab: FC<{ pool: RawV2Pool }> = withCheckerRoot(
   ({ pool: rawPool }) => {
     const pool = useMemo(() => hydrateV2Pool(rawPool), [rawPool])
 
-    const { address } = useAccount()
+    const { address } = useConnection()
     const [feeAmount, setFeeAmount] = useState<SushiSwapV3FeeAmount>(
       SushiSwapV3FeeAmount.LOWEST,
     )

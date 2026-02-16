@@ -13,7 +13,7 @@ import {
   type ClaimableRewards,
   useClaimableRewards,
 } from 'src/lib/hooks/react-query'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import {
   REWARDS_ACTION_COLUMN,
   REWARDS_AMOUNT_COLUMN,
@@ -27,7 +27,7 @@ const COLUMNS = [
 ] satisfies ColumnDef<ClaimableRewards, unknown>[]
 
 export const ClaimableRewardsTab: FC = () => {
-  const { address, isConnecting } = useAccount()
+  const { address, isConnecting } = useConnection()
   const { data: _data, isLoading } = useClaimableRewards({ account: address })
 
   const [paginationState, setPaginationState] = useState<PaginationState>({

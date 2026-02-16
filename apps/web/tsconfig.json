@@ -11,11 +11,8 @@
       "~aptos/*": [
         "src/app/(networks)/(non-evm)/aptos/*"
       ],
-      "~tron/*": [
-        "src/app/(networks)/(non-evm)/tron/*"
-      ],
-      "~kadena/*": [
-        "src/app/(networks)/(non-evm)/kadena/*"
+      "~stellar/*": [
+        "src/app/(networks)/(non-evm)/stellar/*"
       ],
       "~evm/*": [
         "src/app/(networks)/(evm)/*"

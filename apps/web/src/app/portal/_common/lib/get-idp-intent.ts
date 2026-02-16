@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from 'zod'
 import { getUserServiceClient } from './zitadel-client'
 
 const googleSchema = z.object({

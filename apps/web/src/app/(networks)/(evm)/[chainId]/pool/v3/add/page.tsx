@@ -9,9 +9,9 @@ import {
   type SushiSwapV3ChainId,
   computeSushiSwapV3PoolAddress,
   getEvmChainById,
-  isWNativeSupported,
+  isEvmWNativeSupported,
 } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
 import { SelectPricesWidget } from '~evm/[chainId]/_ui/select-prices-widget'
 import {
@@ -37,7 +37,7 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
 }
 
 const _Add: FC = () => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const {
     chainId,
     token0,
@@ -89,7 +89,7 @@ const _Add: FC = () => {
         token1={token1}
         setToken0={setToken0}
         setToken1={setToken1}
-        includeNative={isWNativeSupported(chainId)}
+        includeNative={isEvmWNativeSupported(chainId)}
       />
       <SelectFeeConcentratedWidget
         chainId={chainId}

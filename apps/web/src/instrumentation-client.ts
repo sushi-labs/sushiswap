@@ -23,7 +23,7 @@ const ignoreUrls = [
   'https://cca-lite.coinbase.com/*',
   'google-analytics.com',
   'https://cdn.sushi.com',
-  'lb.drpc.org',
+  'lb.drpc.live',
   'api.sushi.com/quote',
   '/_next/static',
   '/_next/data',
@@ -41,7 +41,6 @@ if (!faro.api && !process.env.CI) {
         environment: process.env.NEXT_PUBLIC_VERCEL_ENV || 'development',
       },
       beforeSend: (item) => {
-        // console.log(item)
         if (item.type === 'log') {
           const log = item as TransportItem<LogEvent>
           if (

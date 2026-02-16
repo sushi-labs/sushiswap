@@ -129,7 +129,7 @@ export const useTokenRevokeApproval = ({
     createErrorToast(e.message, true)
   }, [])
 
-  const { writeContractAsync, ...rest } = useWriteContract({
+  const { mutateAsync: writeContractAsync, ...rest } = useWriteContract({
     mutation: {
       onError,
       onSuccess,

@@ -8,23 +8,32 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@sushiswap/ui'
-import { type FC, useMemo } from 'react'
+import { useMemo } from 'react'
+import type { XSwapSupportedChainId } from 'src/config'
 import type { FeesBreakdown } from 'src/lib/swap/cross-chain'
 import { formatNumber, formatUSD } from 'sushi'
-import type { EvmChainId } from 'sushi/evm'
 
-interface CrossChainSwapFeesHoverCardProps {
+interface CrossChainSwapFeesHoverCardProps<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+> {
   feesBreakdown: FeesBreakdown
   gasFeesUSD: number
   protocolFeesUSD: number
-  chainId0: EvmChainId
-  chainId1: EvmChainId
+  chainId0: TChainId0
+  chainId1: TChainId1
   children: React.ReactNode
 }
 
-export const CrossChainSwapFeesHoverCard: FC<
-  CrossChainSwapFeesHoverCardProps
-> = ({ feesBreakdown, chainId0, chainId1, children }) => {
+export function CrossChainSwapFeesHoverCard<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+>({
+  feesBreakdown,
+  chainId0,
+  chainId1,
+  children,
+}: CrossChainSwapFeesHoverCardProps<TChainId0, TChainId1>) {
   const content = useMemo(() => {
     return (
       <Card>

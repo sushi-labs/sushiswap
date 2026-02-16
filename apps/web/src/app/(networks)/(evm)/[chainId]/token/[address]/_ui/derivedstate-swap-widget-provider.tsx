@@ -9,43 +9,55 @@ import {
   useState,
 } from 'react'
 import { type SupportedChainId, isSupportedChainId } from 'src/config'
-import { useTradeQuote } from 'src/lib/hooks/react-query'
+import { useEvmTradeQuote, useSvmTradeQuote } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useCarbonOffset } from 'src/lib/swap/useCarbonOffset'
 import { Amount, ZERO } from 'sushi'
-import { EvmChainId, type EvmCurrency } from 'sushi/evm'
+import { EvmChainId, isEvmChainId } from 'sushi/evm'
+import { type SvmChainId, isSvmChainId } from 'sushi/svm'
 import { useGasPrice } from 'wagmi'
 
-interface State {
+interface State<TChainId extends SupportedChainId = SupportedChainId> {
   mutate: {
-    setToken0(token0: EvmCurrency | string): void
-    setToken1(token1: EvmCurrency | string): void
+    setToken0(token0: CurrencyFor<TChainId> | string): void
+    setToken1(token1: CurrencyFor<TChainId> | string): void
     setSwapAmount(swapAmount: string): void
     switchTokens(): void
   }
   state: {
-    token0: EvmCurrency | undefined
-    token1: EvmCurrency | undefined
-    chainId: EvmChainId
+    token0: CurrencyFor<TChainId> | undefined
+    token1: CurrencyFor<TChainId> | undefined
+    chainId: TChainId
     swapAmountString: string
-    swapAmount: Amount<EvmCurrency> | undefined
+    swapAmount: Amount<CurrencyFor<TChainId>> | undefined
   }
 }
 
 const DerivedStateSwapWidgetContext = createContext<State>({} as State)
 
-interface DerivedStateSwapWidgetProviderProps {
+interface DerivedStateSwapWidgetProviderProps<
+  TChainId extends SupportedChainId = SupportedChainId,
+> {
   children: React.ReactNode
-  chainId: EvmChainId
-  token0?: EvmCurrency
-  token1?: EvmCurrency
+  chainId: TChainId
+  token0?: CurrencyFor<TChainId>
+  token1?: CurrencyFor<TChainId>
 }
 
-const DerivedstateSwapWidgetProvider: FC<
-  DerivedStateSwapWidgetProviderProps
-> = ({ children, chainId: _chainId, token0: _token0, token1: _token1 }) => {
-  const [token0, _setToken0] = useState<EvmCurrency | undefined>(_token0)
-  const [token1, _setToken1] = useState<EvmCurrency | undefined>(_token1)
+function DerivedStateSwapWidgetProvider<
+  TChainId extends SupportedChainId = SupportedChainId,
+>({
+  children,
+  chainId: _chainId,
+  token0: _token0,
+  token1: _token1,
+}: DerivedStateSwapWidgetProviderProps<TChainId>) {
+  const [token0, _setToken0] = useState<CurrencyFor<TChainId> | undefined>(
+    _token0,
+  )
+  const [token1, _setToken1] = useState<CurrencyFor<TChainId> | undefined>(
+    _token1,
+  )
   const [swapAmountString, setSwapAmount] = useState<string>('')
 
   const chainId =
@@ -59,7 +71,7 @@ const DerivedstateSwapWidgetProvider: FC<
     _setToken1(token0)
   }, [token0, token1])
 
-  const setToken0 = useCallback<(_token0: EvmCurrency) => void>(
+  const setToken0 = useCallback<(_token0: CurrencyFor<TChainId>) => void>(
     (_token0) => {
       if (token1?.isSame(_token0)) {
         switchTokens()
@@ -70,7 +82,7 @@ const DerivedstateSwapWidgetProvider: FC<
     [token1, switchTokens],
   )
 
-  const setToken1 = useCallback<(_token1: EvmCurrency) => void>(
+  const setToken1 = useCallback<(_token1: CurrencyFor<TChainId>) => void>(
     (_token1) => {
       if (token0?.isSame(_token1)) {
         switchTokens()
@@ -116,7 +128,7 @@ const DerivedstateSwapWidgetProvider: FC<
   )
 }
 
-const useDerivedStateSwapWidget = () => {
+function useDerivedStateSwapWidget() {
   const context = useContext(DerivedStateSwapWidgetContext)
   if (!context) {
     throw new Error(
@@ -127,32 +139,81 @@ const useDerivedStateSwapWidget = () => {
   return context
 }
 
-const useSwapWidgetTradeQuote = () => {
-  const {
-    state: { token0, chainId, swapAmount, token1 },
-  } = useDerivedStateSwapWidget()
+function useEvmSimpleSwapTradeQuote() {
+  const { state } = useDerivedStateSwapWidget()
 
   const [slippagePercent] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
-  const { data: gasPrice } = useGasPrice({ chainId })
 
-  const quote = useTradeQuote({
-    chainId,
-    fromToken: token0,
-    toToken: token1,
-    amount: swapAmount,
-    slippagePercentage: slippagePercent.toString({ fixed: 2 }),
-    gasPrice,
-    recipient: undefined,
-    enabled: Boolean(swapAmount?.gt(ZERO)),
-    carbonOffset,
-  })
+  const evmChainId = isEvmChainId(state.chainId) ? state.chainId : undefined
+  const { data: gasPrice } = useGasPrice({ chainId: evmChainId })
 
-  return quote
+  const params = useMemo(() => {
+    if (isEvmChainId(state.chainId)) {
+      const _state = state as State<typeof state.chainId>['state']
+
+      return {
+        chainId: _state.chainId,
+        fromToken: _state.token0,
+        toToken: _state.token1,
+        amount: _state.swapAmount,
+        slippagePercentage: slippagePercent.toString({ fixed: 2 }),
+        gasPrice,
+        recipient: undefined,
+        enabled: Boolean(_state.swapAmount?.gt(ZERO)),
+        carbonOffset,
+      }
+    }
+
+    return undefined
+  }, [state, slippagePercent, gasPrice, carbonOffset])
+
+  return useEvmTradeQuote(params)
+}
+
+function useSvmSimpleSwapTradeQuote() {
+  const { state } = useDerivedStateSwapWidget()
+
+  const [slippagePercent] = useSlippageTolerance()
+
+  const params = useMemo(() => {
+    if (isSvmChainId(state.chainId)) {
+      const _state = state as State<SvmChainId>['state']
+
+      return {
+        chainId: _state.chainId,
+        fromToken: _state.token0,
+        toToken: _state.token1,
+        amount: _state.swapAmount,
+        slippagePercentage: slippagePercent.toString({ fixed: 2 }),
+        recipient: undefined,
+        enabled: Boolean(_state.swapAmount?.gt(ZERO)),
+      }
+    }
+
+    return undefined
+  }, [state, slippagePercent])
+
+  return useSvmTradeQuote(params)
+}
+
+function useSwapWidgetTradeQuote() {
+  const { state } = useDerivedStateSwapWidget()
+
+  const evmQuote = useEvmSimpleSwapTradeQuote()
+  const svmQuote = useSvmSimpleSwapTradeQuote()
+
+  if (isEvmChainId(state.chainId)) {
+    return evmQuote
+  } else if (isSvmChainId(state.chainId)) {
+    return svmQuote
+  }
+
+  throw new Error('useSwapWidgetTradeQuote: Unsupported chainId')
 }
 
 export {
-  DerivedstateSwapWidgetProvider,
+  DerivedStateSwapWidgetProvider,
   useDerivedStateSwapWidget,
   useSwapWidgetTradeQuote,
 }
