@@ -2,7 +2,7 @@
 
 import { acceptReferral } from '@sushiswap/graph-client/leaderboard'
 import { createFailedToast, createSuccessToast } from '@sushiswap/notifications'
-import { type GetAccountReturnType, watchAccount } from '@wagmi/core'
+import { type GetConnectionReturnType, watchConnection } from '@wagmi/core'
 import { useSearchParams } from 'next/navigation'
 import { type FC, useEffect } from 'react'
 import type { PublicWagmiConfig } from 'src/lib/wagmi/config/public'
@@ -13,10 +13,10 @@ interface ReferralProviderProps {
   children: React.ReactNode
 }
 
-// const isProduction =
-//   process.env.NODE_ENV === 'production' &&
-//   process.env.NEXT_PUBLIC_APP_ENV !== 'test'
-const isProduction = true
+const isProduction =
+  process.env.NODE_ENV === 'production' &&
+  process.env.NEXT_PUBLIC_APP_ENV !== 'test'
+// const isProduction = true
 
 export const ReferralProvider: FC<ReferralProviderProps> = ({ children }) => {
   const searchParams = useSearchParams()
@@ -32,13 +32,13 @@ const _ReferralProvider: FC<ReferralProviderProps> = ({ children }) => {
   const searchParams = useSearchParams()
   const referralCode = searchParams.get('referrer')
 
-  const { signMessageAsync } = useSignMessage()
+  const { mutateAsync: signMessageAsync } = useSignMessage()
   const config = useConfig()
 
   useEffect(() => {
     const handleAccountChange = async (
-      data: GetAccountReturnType<PublicWagmiConfig>,
-      prevData: GetAccountReturnType<PublicWagmiConfig>,
+      data: GetConnectionReturnType<PublicWagmiConfig>,
+      prevData: GetConnectionReturnType<PublicWagmiConfig>,
     ) => {
       // Only proceed if account just connected or address changed
       if (
@@ -98,7 +98,7 @@ const _ReferralProvider: FC<ReferralProviderProps> = ({ children }) => {
       }
     }
 
-    return watchAccount(config, {
+    return watchConnection(config, {
       onChange: handleAccountChange,
     })
   }, [signMessageAsync, config, referralCode])
