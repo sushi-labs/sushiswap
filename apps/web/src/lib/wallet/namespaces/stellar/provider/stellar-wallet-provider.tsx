@@ -46,13 +46,15 @@ function _StellarWalletProvider({ children }: { children: React.ReactNode }) {
       if (!id) throw new Error('Invalid wallet id')
       stellarWalletKit.setWallet(id)
       setWallet(wallet)
-      const { address } = await stellarWalletKit.getAddress()
+      const address = (await stellarWalletKit.getAddress())
+        .address as `G${string}`
       setAccount(address)
       if (address) {
         onSuccess?.(address)
       } else {
         stellarWalletKit.setWallet(id)
-        const { address } = await stellarWalletKit.getAddress()
+        const address = (await stellarWalletKit.getAddress())
+          .address as `G${string}`
         setAccount(address)
         onSuccess?.(address)
       }
