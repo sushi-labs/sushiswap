@@ -12,13 +12,11 @@ import {
   NavigationListItem,
   NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuPrimitive,
   NavigationMenuTrigger,
   OnramperButton,
   Separator,
   classNames,
-  navigationElementShowMap,
   navigationMenuTriggerStyle,
 } from '@sushiswap/ui'
 import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
@@ -286,7 +284,7 @@ export const headerElements = ({
 
 const ReferralLink = () => {
   return (
-    <div className="relative flex items-center justify-center h-[40px] px-0.5 rounded-xl overflow-hidden">
+    <div className="relative md:flex hidden items-center justify-center h-[40px] px-0.5 rounded-xl overflow-hidden">
       {/* rotating "border" */}
       <div
         className={classNames(
@@ -298,17 +296,7 @@ const ReferralLink = () => {
       <div className="relative z-10 h-[36px] flex items-center gap-2 bg-background focus:bg-accent rounded-[10px]">
         {/* shimmer */}
         <div className="z-[9] transition-all absolute rounded-xl inset-0 overflow-hidden p-4 before:absolute before:inset-0 before:rotate-[-90deg] before:blur-sm lg:before:blur-md before:-translate-x-full before:animate-[shimmer_4s_infinite] before:direction-alternate before:bg-gradient-to-r before:from-transparent before:via-white before:dark:via-[#FFFFFF1A] before:to-transparent" />
-        <NavigationMenuItem
-          key={`Referrals:Custom`}
-          className={navigationElementShowMap['desktop']}
-        >
-          <NavigationMenuLink
-            href={'/referrals'}
-            className={navigationMenuTriggerStyle}
-          >
-            Referrals
-          </NavigationMenuLink>
-        </NavigationMenuItem>
+        <div className={navigationMenuTriggerStyle}>Referrals</div>
       </div>
     </div>
   )
