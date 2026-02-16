@@ -50,8 +50,8 @@ import {
 import type { Hex, SendTransactionReturnType } from 'viem'
 import {
   type UseCallParameters,
-  useAccount,
   useCall,
+  useConnection,
   usePublicClient,
   useSendTransaction,
   useWaitForTransactionReceipt,
@@ -97,7 +97,7 @@ export const AddSectionReviewModalConcentrated: FC<
   onSuccess: _onSuccess,
   successLink,
 }) => {
-  const { address, chain } = useAccount()
+  const { address, chain } = useConnection()
   const { data: deadline } = useTransactionDeadline({
     storageKey: TTLStorageKey.AddLiquidity,
     chainId,
@@ -291,7 +291,7 @@ export const AddSectionReviewModalConcentrated: FC<
   })
 
   const {
-    sendTransactionAsync,
+    mutateAsync: sendTransactionAsync,
     isPending: isWritePending,
     data,
   } = useSendTransaction({

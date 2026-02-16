@@ -3,8 +3,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { BLADE_API_HOST, BLADE_API_KEY } from 'src/lib/constants'
 import type { BladeChainId } from 'sushi/evm'
-import { useAccount } from 'wagmi'
-import { z } from 'zod'
+import { useConnection } from 'wagmi'
+import * as z from 'zod'
 
 const rfqAllowDepositResponseBaseSchema = z.object({
   allow: z.boolean(),
@@ -58,7 +58,7 @@ export const useBladeAllowDeposit = ({
   poolAddress: string
   enabled?: boolean
 }) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
 
   const queryKey = getAllowDepositQueryKey({ chainId, poolAddress, address })
 

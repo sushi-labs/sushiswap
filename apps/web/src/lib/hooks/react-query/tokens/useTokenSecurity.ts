@@ -4,16 +4,35 @@ import {
 } from '@sushiswap/graph-client/de.fi'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { type EvmToken, isTokenSecurityChainId } from 'sushi/evm'
-import { z } from 'zod'
+import { type SvmToken, isSvmChainId } from 'sushi/svm'
+import * as z from 'zod'
 
 const bit = z
-  .union([z.enum(['0', '1']), z.undefined()])
+  .union([
+    z.enum(['0', '1']),
+    z.literal(0),
+    z.literal(1),
+    z.boolean(),
+    z.undefined(),
+  ])
   .transform((val) => {
-    if (val === '0') return false
-    if (val === '1') return true
+    if (val === '0' || val === 0 || val === false) return false
+    if (val === '1' || val === 1 || val === true) return true
     return undefined
   })
   .optional()
+
+const solanaBit = z.preprocess((val) => {
+  if (val && typeof val === 'object') {
+    if ('status' in val) {
+      return (val as { status?: unknown }).status
+    }
+
+    return undefined
+  }
+
+  return val
+}, bit)
 
 const tokenSecuritySchema = z
   .object({
@@ -64,6 +83,52 @@ const tokenSecuritySchema = z
   }))
 
 export type TokenSecurity = z.infer<typeof tokenSecuritySchema>
+
+const solanaTokenSecuritySchema = z
+  .object({
+    mintable: solanaBit,
+    freezable: solanaBit,
+    metadata_mutable: solanaBit,
+    is_mintable: solanaBit,
+    is_freezable: solanaBit,
+    is_mutable_metadata: solanaBit,
+    is_metadata_mutable: solanaBit,
+    is_verified: solanaBit,
+    is_trust_list: solanaBit,
+    is_trusted: solanaBit,
+    is_scam: solanaBit,
+    trusted_token: solanaBit,
+  })
+  .partial()
+  .transform((data) => ({
+    is_open_source: data.is_verified,
+    is_proxy: undefined,
+    is_mintable: data.is_mintable ?? data.mintable,
+    can_take_back_ownership: undefined,
+    owner_change_balance: undefined,
+    hidden_owner: undefined,
+    selfdestruct: undefined,
+    external_call: undefined,
+    gas_abuse: undefined,
+    buy_tax: undefined,
+    sell_tax: undefined,
+    is_buyable: undefined,
+    is_sell_limit: undefined,
+    slippage_modifiable: undefined,
+    is_honeypot: undefined,
+    transfer_pausable: data.is_freezable ?? data.freezable,
+    is_blacklisted: undefined,
+    is_whitelisted: undefined,
+    is_anti_whale: undefined,
+    trading_cooldown: undefined,
+    is_fake_token: data.is_scam,
+    is_airdrop_scam: undefined,
+    trust_list:
+      data.is_trust_list ??
+      data.is_trusted ??
+      data.is_verified ??
+      data.trusted_token,
+  }))
 
 export const TokenSecurityLabel: Record<keyof TokenSecurity, string> = {
   is_open_source: 'Contract Verified',
@@ -194,6 +259,21 @@ const fetchGoPlusResponse = async (currency: EvmToken) => {
   return tokenSecuritySchema.parse(json.result[currency.address.toLowerCase()])
 }
 
+const fetchGoPlusSolanaResponse = async (currency: SvmToken) => {
+  const url = new URL('https://api.gopluslabs.io/api/v1/solana/token_security')
+  url.searchParams.set('contract_addresses', currency.address)
+
+  const response = await fetch(url)
+
+  if (!response.ok) {
+    throw new Error(`Error: ${response.statusText}`)
+  }
+
+  const json = await response.json()
+
+  return solanaTokenSecuritySchema.parse(json.result?.[currency.address])
+}
+
 enum DeFiScannerIssue {
   VERIFIED_CONTRACT = '185',
   UPGRADABLE_CONTRACT = '193',
@@ -269,18 +349,26 @@ const fetchDeFiResponse = async (currency: EvmToken) => {
   } as TokenSecurity
 }
 
-const fetchTokenSecurityQueryFn = async (currency: EvmToken | undefined) => {
+const fetchTokenSecurityQueryFn = async (
+  currency: EvmToken | SvmToken | undefined,
+) => {
   if (!currency) {
     throw new Error()
   }
 
+  const goPlusResponsePromise = isSvmChainId(currency.chainId)
+    ? fetchGoPlusSolanaResponse(currency as TokenFor<typeof currency.chainId>)
+    : isTokenSecurityChainId(currency.chainId)
+      ? fetchGoPlusResponse(currency as TokenFor<typeof currency.chainId>)
+      : Promise.resolve(undefined)
+
+  const deFiResponsePromise = isTokenScannerChainId(currency.chainId)
+    ? fetchDeFiResponse(currency as TokenFor<typeof currency.chainId>)
+    : Promise.resolve(undefined)
+
   const [goPlusResponseResult, deFiResponseResult] = await Promise.allSettled([
-    isTokenSecurityChainId(currency.chainId)
-      ? fetchGoPlusResponse(currency)
-      : Promise.resolve(undefined),
-    isTokenScannerChainId(currency.chainId)
-      ? fetchDeFiResponse(currency)
-      : Promise.resolve(undefined),
+    goPlusResponsePromise,
+    deFiResponsePromise,
   ])
 
   const goPlusResponse =
@@ -336,7 +424,7 @@ export const useTokenSecurity = ({
   enabled = true,
 }: {
   enabled?: boolean
-  currency: EvmToken | undefined
+  currency: EvmToken | SvmToken | undefined
 }) => {
   return useQuery({
     queryKey: ['useTokenSecurity', currency?.id],

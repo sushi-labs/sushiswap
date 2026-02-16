@@ -1,5 +1,6 @@
 import type { LowercaseMap } from 'sushi'
 import type { EvmChainId, EvmID } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 import type { Address } from 'viem'
 
 export interface Balance {
@@ -61,3 +62,17 @@ export type ProviderActions =
   | ProviderActionDecrementToken
   | ProviderActionUpdateAccount
   | ProviderActionRefresh
+
+export type UseBalancesReturn<TChainId extends EvmChainId | SvmChainId> =
+  | {
+      data: undefined
+      isError: boolean
+      isLoading: boolean
+      isFetching: boolean
+    }
+  | {
+      data: ReadonlyMap<AddressFor<TChainId>, bigint>
+      isError: boolean
+      isLoading: boolean
+      isFetching: boolean
+    }

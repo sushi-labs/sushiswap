@@ -10,7 +10,7 @@ import {
   xsushiAbi_enter,
 } from 'sushi/evm'
 import {
-  useAccount,
+  useConnection,
   usePublicClient,
   useSimulateContract,
   useWriteContract,
@@ -27,7 +27,7 @@ interface UseBarDepositParams {
 }
 
 export function useBarDeposit({ amount, enabled = true }: UseBarDepositParams) {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const client = usePublicClient()
 
   const { refetchChain: refetchBalances } = useRefetchBalances()
@@ -81,7 +81,7 @@ export function useBarDeposit({ amount, enabled = true }: UseBarDepositParams) {
     query: { enabled },
   })
 
-  const { writeContractAsync, ...rest } = useWriteContract({
+  const { mutateAsync: writeContractAsync, ...rest } = useWriteContract({
     mutation: { onSuccess, onError },
   })
 

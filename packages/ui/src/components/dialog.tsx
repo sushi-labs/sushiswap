@@ -17,6 +17,7 @@ import {
 } from 'react'
 import { type ChainId, getChainById } from 'sushi'
 
+import type { EvmChainId } from 'sushi/evm'
 import { CheckMarkIcon } from '../icons/CheckMarkIcon'
 import { FailedMarkIcon } from '../icons/FailedMarkIcon'
 import {
@@ -227,19 +228,20 @@ const DialogCustom: FC<DialogCustomProps> = ({ children, ...props }) => {
 }
 DialogCustom.displayName = 'DialogCustom'
 
-interface DialogConfirmProps extends DialogContentProps {
-  chainId: ChainId
+interface DialogConfirmProps<TChainId extends ChainId>
+  extends DialogContentProps {
+  chainId: TChainId
   testId: string
   successMessage: ReactNode
   buttonLink?: string
   buttonText?: string
-  txHash: `0x${string}` | undefined
+  txHash: (TChainId extends EvmChainId ? `0x${string}` : string) | undefined
   status: 'pending' | 'success' | 'error'
   successIconSize?: number
   customSuccessComponent?: ReactNode
 }
 
-const DialogConfirm: FC<DialogConfirmProps> = ({
+function DialogConfirm<TChainId extends ChainId>({
   chainId,
   testId,
   successMessage,
@@ -250,8 +252,12 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
   successIconSize,
   customSuccessComponent,
   ...props
-}) => {
+}: DialogConfirmProps<TChainId>) {
   const { open, setOpen } = useDialog(DialogType.Confirm)
+  const txHashUrl = useMemo(() => {
+    if (!txHash) return ''
+    return getChainById(chainId).getTransactionUrl(txHash as `0x${string}`)
+  }, [chainId, txHash])
 
   return (
     <Dialog {...props} open={open} onOpenChange={setOpen}>
@@ -272,11 +278,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
                 Waiting for your{' '}
                 <a
                   target="_blank"
-                  href={
-                    txHash
-                      ? getChainById(chainId).getTransactionUrl(txHash)
-                      : ''
-                  }
+                  href={txHashUrl}
                   className="cursor-pointer text-blue hover:underline"
                   rel="noreferrer"
                 >
@@ -287,9 +289,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
             ) : status === 'success' ? (
               <a
                 target="_blank"
-                href={
-                  txHash ? getChainById(chainId).getTransactionUrl(txHash) : ''
-                }
+                href={txHashUrl}
                 className="cursor-pointer text-blue hover:underline"
                 rel="noreferrer"
               >
@@ -298,9 +298,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
             ) : (
               <a
                 target="_blank"
-                href={
-                  txHash ? getChainById(chainId).getTransactionUrl(txHash) : ''
-                }
+                href={txHashUrl}
                 className="cursor-pointer text-blue hover:underline"
                 rel="noreferrer"
               >

@@ -19,7 +19,7 @@ import {
   useCollapsibleMessage,
 } from 'src/app/portal/_common/ui/collapsible-message'
 import { PortalForm } from 'src/app/portal/_common/ui/portal-form'
-import type { z } from 'zod'
+import type * as z from 'zod'
 import { resetPasswordAction } from './reset-password-action'
 import { resetPasswordFormSchema } from './reset-password-form-schema'
 

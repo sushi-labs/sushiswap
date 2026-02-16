@@ -28,7 +28,7 @@ import {
   type SushiSwapV3FeeAmount,
   TickMath,
   defaultCurrency,
-  isWNativeSupported,
+  isEvmWNativeSupported,
 } from 'sushi/evm'
 
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
@@ -55,7 +55,7 @@ import {
 import { Amount, Percent } from 'sushi'
 import type { SendTransactionReturnType } from 'viem'
 import {
-  useAccount,
+  useConnection,
   useEstimateGas,
   usePublicClient,
   useSendTransaction,
@@ -361,7 +361,7 @@ const WidgetContent: FC<WidgetContentProps> = ({
           currency={token0}
           disabled={depositADisabled}
           loading={tokensLoading || isLoading}
-          allowNative={isWNativeSupported(chainId)}
+          allowNative={isEvmWNativeSupported(chainId)}
         />
       </div>
       <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-10">
@@ -414,7 +414,7 @@ const WidgetContent: FC<WidgetContentProps> = ({
           currency={token1}
           loading={tokensLoading || isLoading}
           disabled={depositBDisabled}
-          allowNative={isWNativeSupported(chainId)}
+          allowNative={isEvmWNativeSupported(chainId)}
         />
       </div>
 
@@ -498,7 +498,7 @@ const ZapWidgetContent = withCheckerRoot(
 
     const client = usePublicClient()
 
-    const { address, chain } = useAccount()
+    const { address, chain } = useConnection()
 
     const [slippageTolerance] = useSlippageTolerance(
       SlippageToleranceStorageKey.AddLiquidity,
@@ -625,9 +625,10 @@ const ZapWidgetContent = withCheckerRoot(
       [refetchBalances, client, chain, address, pool],
     )
 
-    const { sendTransaction, isPending: isWritePending } = useSendTransaction({
-      mutation: { onSuccess },
-    })
+    const { mutate: sendTransaction, isPending: isWritePending } =
+      useSendTransaction({
+        mutation: { onSuccess },
+      })
 
     const [checked, setChecked] = useState(false)
 
@@ -671,7 +672,7 @@ const ZapWidgetContent = withCheckerRoot(
           currency={inputCurrency}
           disabled={depositADisabled && depositBDisabled}
           loading={tokensLoading || isLoading}
-          allowNative={isWNativeSupported(chainId)}
+          allowNative={isEvmWNativeSupported(chainId)}
         />
         <Checker.Connect fullWidth>
           <Checker.Network fullWidth chainId={chainId}>

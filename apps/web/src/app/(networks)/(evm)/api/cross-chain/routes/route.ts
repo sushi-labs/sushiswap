@@ -1,48 +1,112 @@
 import type { NextRequest } from 'next/server'
-import { UI_FEE_DECIMAL, isXSwapSupportedChainId } from 'src/config'
-import { isAddress } from 'viem'
-import { z } from 'zod'
+import { EVM_UI_FEE_DECIMAL, type XSwapSupportedChainId } from 'src/config'
+import { isEvmChainId } from 'sushi/evm'
+import * as z from 'zod'
+import {
+  type LifiChainId,
+  getAddressSchema,
+  lifiChainIdSchema,
+  lifiToSushiChainId,
+  stepSchema,
+  sushiChainIdSchema,
+  sushiToLifiChainId,
+  tokenSchema,
+  transactionRequestSchema,
+} from '../schemas'
 
-const schema = z.object({
-  fromChainId: z.coerce
-    .number()
-    .refine((chainId) => isXSwapSupportedChainId(chainId), {
-      message: `fromChainId must exist in XSwapChainId`,
-    }),
-  fromAmount: z.string(),
-  fromTokenAddress: z.string().refine((token) => isAddress(token), {
-    message: 'fromTokenAddress does not conform to Address',
-  }),
-  toChainId: z.coerce
-    .number()
-    .refine((chainId) => isXSwapSupportedChainId(chainId), {
-      message: `toChainId must exist in XSwapChainId`,
-    }),
-  toTokenAddress: z.string().refine((token) => isAddress(token), {
-    message: 'toTokenAddress does not conform to Address',
-  }),
-  fromAddress: z
-    .string()
-    .refine((address) => isAddress(address), {
-      message: 'fromAddress does not conform to Address',
-    })
-    .optional(),
-  toAddress: z
-    .string()
-    .refine((address) => isAddress(address), {
-      message: 'toAddress does not conform to Address',
-    })
-    .optional(),
-  slippage: z.coerce.number(), // decimal
-  order: z.enum(['CHEAPEST', 'FASTEST']).optional(),
+const routesBaseInputSchema = z.object({
+  fromChainId: sushiChainIdSchema(),
+  toChainId: sushiChainIdSchema(),
 })
+
+function routesInputSchema<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+>(fromChainId: TChainId0, toChainId: TChainId1) {
+  return z.object({
+    fromChainId: sushiChainIdSchema(fromChainId).transform(sushiToLifiChainId),
+    fromAmount: z.string(),
+    fromTokenAddress: getAddressSchema(fromChainId),
+    toChainId: sushiChainIdSchema(toChainId).transform(sushiToLifiChainId),
+    toTokenAddress: getAddressSchema(toChainId),
+    fromAddress: getAddressSchema(fromChainId).optional(),
+    toAddress: getAddressSchema(toChainId).optional(),
+    slippage: z.coerce.number(),
+    order: z.enum(['CHEAPEST', 'FASTEST']).optional(),
+  })
+}
+
+function parseRoutesInput(params: Record<string, string>) {
+  const base = routesBaseInputSchema.parse(params)
+  return routesInputSchema(base.fromChainId, base.toChainId).parse(params)
+}
+
+export type CrossChainRoutesInput<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+> = z.input<ReturnType<typeof routesInputSchema<TChainId0, TChainId1>>>
+
+function routesOutputSchema<
+  TChainId0 extends LifiChainId,
+  TChainId1 extends LifiChainId,
+>(fromChainId: TChainId0, toChainId: TChainId1) {
+  return z.object({
+    routes: z.array(
+      z
+        .object({
+          id: z.string(),
+          fromChainId: lifiChainIdSchema(fromChainId as LifiChainId).transform(
+            (c) => lifiToSushiChainId(c),
+          ),
+          fromAmountUSD: z.string().optional(),
+          fromAmount: z.string(),
+          fromToken: tokenSchema(fromChainId, 'lifi'),
+          fromAddress: z.string().optional(),
+          toChainId: lifiChainIdSchema(toChainId as LifiChainId).transform(
+            (c) => lifiToSushiChainId(c),
+          ),
+          toAmountUSD: z.string().optional(),
+          toAmount: z.string(),
+          toAmountMin: z.string(),
+          toToken: tokenSchema(toChainId, 'lifi'),
+          toAddress: z.string().optional(),
+          gasCostUSD: z.string().optional(),
+          containsSwitchChain: z.boolean().optional(),
+          steps: z.array(stepSchema(fromChainId, toChainId, 'lifi')),
+          tags: z
+            .array(z.enum(['RECOMMENDED', 'FASTEST', 'CHEAPEST', 'SAFEST']))
+            .optional(),
+        })
+        .refine((data) => data.steps.length === 1, {
+          message: 'multi-step routes are not supported',
+        })
+        .transform((data) => {
+          const { steps, ...rest } = data
+
+          return {
+            step: steps[0],
+            ...rest,
+          } as typeof data & { step: (typeof steps)[number] } & { steps: never }
+        }),
+    ),
+  })
+}
+
+export type CrossChainRoutesResponse<
+  TChainId0 extends LifiChainId,
+  TChainId1 extends LifiChainId,
+> = z.output<ReturnType<typeof routesOutputSchema<TChainId0, TChainId1>>>
 
 export const revalidate = 20
 
 export async function GET(request: NextRequest) {
   const params = Object.fromEntries(request.nextUrl.searchParams.entries())
 
-  const { slippage, order = 'CHEAPEST', ...parsedParams } = schema.parse(params)
+  const {
+    slippage,
+    order = 'CHEAPEST',
+    ...parsedParams
+  } = parseRoutesInput(params)
 
   const url = new URL('https://li.quest/v1/advanced/routes')
 
@@ -64,14 +128,25 @@ export async function GET(request: NextRequest) {
         exchanges: { allow: ['sushiswap'] },
         allowSwitchChain: false,
         allowDestinationCall: true,
-        fee: UI_FEE_DECIMAL, // e.g. 0.0025 (0.25%)
+        //need to setup sol fee in lifi portol
+        fee: isEvmChainId(parsedParams.fromChainId)
+          ? EVM_UI_FEE_DECIMAL
+          : undefined, // e.g. 0.0035 (0.35%)
       },
     }),
   }
 
   const response = await fetch(url, options)
+  const json = await response.json()
 
-  return Response.json(await response.json(), {
+  const parsed = routesOutputSchema(
+    parsedParams.fromChainId,
+    parsedParams.toChainId,
+  ).parse({
+    routes: json.routes ?? [],
+  })
+
+  return Response.json(parsed, {
     status: response.status,
     headers: {
       'Cache-Control': 's-maxage=15, stale-while-revalidate=20',

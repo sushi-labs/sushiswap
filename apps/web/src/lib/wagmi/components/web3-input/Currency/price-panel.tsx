@@ -6,17 +6,19 @@ import {
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
 import { Amount, ZERO } from 'sushi'
+import type { EvmChainId } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 import type { CurrencyInputProps } from './currency-input'
 
-type PricePanel = Pick<
-  CurrencyInputProps,
+type PricePanel<TChainId extends EvmChainId | SvmChainId> = Pick<
+  CurrencyInputProps<TChainId>,
   'loading' | 'currency' | 'value' | 'priceImpact' | 'className'
 > & {
   error?: string
   price: number | undefined
 }
 
-export const PricePanel: FC<PricePanel> = ({
+export function PricePanel<TChainId extends EvmChainId | SvmChainId>({
   loading,
   price,
   currency,
@@ -24,7 +26,7 @@ export const PricePanel: FC<PricePanel> = ({
   priceImpact,
   error,
   className,
-}) => {
+}: PricePanel<TChainId>) {
   const parsedValue = useMemo(
     () => (currency ? Amount.tryFromHuman(currency, value) : undefined),
     [currency, value],

@@ -2,6 +2,7 @@ import type { ImageProps } from 'next/image'
 import type { FC } from 'react'
 import { ChainId, type Currency, getChainById } from 'sushi'
 
+import type { EvmAddress } from 'sushi/evm'
 import { Avatar, AvatarImage } from '../avatar'
 import { LinkExternal } from '../link'
 
@@ -34,6 +35,8 @@ const HypeLogo = 'hyper.svg'
 const BeraLogo = 'berachain.svg'
 const PlasmaLogo = 'plasma.svg'
 const MonadLogo = 'monad.svg'
+const SolanaLogo = 'solana.svg'
+const OkbLogo = 'okb.svg'
 
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
@@ -91,8 +94,10 @@ const LOGO: Record<number, string> = {
   [ChainId.BERACHAIN]: BeraLogo,
   [ChainId.PLASMA]: PlasmaLogo,
   [ChainId.MONAD]: MonadLogo,
+  [ChainId.MEGAETH]: EthereumLogo,
+  [ChainId.XLAYER]: OkbLogo,
+  [ChainId.SOLANA]: SolanaLogo,
 }
-
 // function djb2(str: string) {
 //   let hash = 5381
 //   for (let i = 0; i < str.length; i++) {
@@ -149,7 +154,8 @@ export const Icon: FC<IconProps> = ({
   return (
     <LinkExternal
       href={getChainById(currency.chainId).getTokenUrl(
-        currency.wrap().address as `0x${string}`,
+        // Ugly cast but will work fine
+        currency.wrap().address as EvmAddress,
       )}
     >
       {avatar}

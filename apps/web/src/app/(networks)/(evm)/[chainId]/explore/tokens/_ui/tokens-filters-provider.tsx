@@ -13,7 +13,7 @@ import {
 } from 'react'
 import { parseArgs } from 'src/lib/functions'
 import { useTypedSearchParams } from 'src/lib/hooks'
-import { z } from 'zod'
+import * as z from 'zod'
 
 export const tokenFiltersSchema = z.object({
   tokenSymbols: z.coerce.string().transform((symbols) => {

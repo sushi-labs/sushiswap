@@ -9,7 +9,7 @@ import {
 } from 'react'
 import { Amount } from 'sushi'
 import { EvmChainId, type EvmCurrency, SUSHI, XSUSHI } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 
 interface BarBalanceContext {
@@ -26,7 +26,7 @@ export const BarBalanceProvider: FC<{
   children: ReactNode
   watch?: boolean
 }> = ({ children }) => {
-  const { isConnected } = useAccount()
+  const { isConnected } = useConnection()
 
   const {
     data: sushiBalance,

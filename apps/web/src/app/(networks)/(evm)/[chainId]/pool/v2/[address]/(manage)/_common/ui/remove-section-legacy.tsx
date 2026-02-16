@@ -52,8 +52,8 @@ import {
 } from 'src/lib/wagmi/systems/Checker/provider'
 import {
   type UseCallParameters,
-  useAccount,
   useCall,
+  useConnection,
   usePublicClient,
   useSendTransaction,
 } from 'wagmi'
@@ -78,7 +78,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     const { approved } = useApproved(APPROVE_TAG_REMOVE_LEGACY)
     const isMounted = useIsMounted()
     const client = usePublicClient()
-    const { address, chain } = useAccount()
+    const { address, chain } = useConnection()
     const { data: deadline } = useTransactionDeadline({
       storageKey: TTLStorageKey.RemoveLiquidity,
       chainId: _pool.chainId,
@@ -414,7 +414,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       },
     })
 
-    const { sendTransactionAsync, isPending: isWritePending } =
+    const { mutateAsync: sendTransactionAsync, isPending: isWritePending } =
       useSendTransaction({
         mutation: {
           onSuccess,

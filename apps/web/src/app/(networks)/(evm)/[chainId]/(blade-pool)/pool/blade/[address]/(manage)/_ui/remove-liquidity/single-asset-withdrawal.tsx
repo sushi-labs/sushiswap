@@ -16,7 +16,7 @@ import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker'
 import { getOnchainPriceFromPool } from 'src/lib/pool/blade/utils'
 import { Amount, Percent, formatUSD } from 'sushi'
 import { type EvmCurrency, EvmNative } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import type { PriceMap } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 
 interface SingleAssetWithdrawalProps {
@@ -38,7 +38,7 @@ export const SingleAssetWithdrawal: FC<SingleAssetWithdrawalProps> = ({
   withdrawTransaction,
   estimatedValue,
 }) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
 
   const onError = useCallback((e: Error) => {
     if (isUserRejectedError(e)) return

@@ -1,15 +1,21 @@
 'use client'
 
+import { WalletProvider } from 'src/lib/wallet'
 import { ReferralProvider } from 'src/providers/referral-provider'
+import { SidebarProvider } from '../_ui/sidebar'
 import { BalanceProvider } from './_common/ui/balance-provider/balance-provider'
 import { PriceProvider } from './_common/ui/price-provider/price-provider/price-provider'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ReferralProvider>
-      <PriceProvider>
-        <BalanceProvider>{children}</BalanceProvider>
-      </PriceProvider>
-    </ReferralProvider>
+    <WalletProvider>
+      <SidebarProvider>
+        <ReferralProvider>
+          <PriceProvider>
+            <BalanceProvider>{children}</BalanceProvider>
+          </PriceProvider>
+        </ReferralProvider>
+      </SidebarProvider>
+    </WalletProvider>
   )
 }

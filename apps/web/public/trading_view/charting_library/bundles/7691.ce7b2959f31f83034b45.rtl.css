@@ -1,0 +1,25 @@
+.positioner-lATuqHRX{box-sizing:border-box;position:fixed;--ui-lib-positioner-applied-height:var(
+		--ui-lib-positioner-exact-height,var(
+			--ui-lib-positioner-anchor-exact-height,var(--ui-lib-positioner-calculated-height)
+		)
+	);--ui-lib-positioner-applied-width:var(
+		--ui-lib-positioner-exact-width,var(
+			--ui-lib-positioner-anchor-exact-width,var(--ui-lib-positioner-calculated-width)
+		)
+	);--ui-lib-positioner-applied-min-width:max(var(
+			--ui-lib-positioner-min-width,0px
+		),var(
+			--ui-lib-positioner-anchor-min-width,0px
+		));--ui-lib-positioner-applied-max-width:min(var(
+			--ui-lib-positioner-max-width,10000vw
+		),var(
+			--ui-lib-positioner-anchor-max-width,10000vw
+		));--ui-lib-positioner-applied-min-height:max(var(
+			--ui-lib-positioner-min-height,0px
+		),var(
+			--ui-lib-positioner-anchor-min-height,0px
+		));--ui-lib-positioner-applied-max-height:min(var(
+			--ui-lib-positioner-max-height,100000vh
+		),var(
+			--ui-lib-positioner-anchor-max-height,100000vh
+		));--ui-lib-positioner-computed-height:max(var(--ui-lib-positioner-applied-min-height),min(var(--ui-lib-positioner-applied-height),var(--ui-lib-positioner-applied-max-height)));--ui-lib-positioner-computed-width:max(var(--ui-lib-positioner-applied-min-width),min(var(--ui-lib-positioner-applied-width),var(--ui-lib-positioner-applied-max-width)));height:var(--ui-lib-positioner-computed-height);left:var(--ui-lib-positioner-calculated-left,0);margin-left:calc(var(--ui-lib-positioner-content-point-x)*(var(--ui-lib-positioner-calculated-width) - var(--ui-lib-positioner-computed-width)));margin-top:calc(var(--ui-lib-positioner-content-point-y)*(var(--ui-lib-positioner-calculated-height) - var(--ui-lib-positioner-computed-height)));top:var(--ui-lib-positioner-calculated-top,0);width:var(--ui-lib-positioner-computed-width)}.invisible-lATuqHRX{opacity:0;pointer-events:none}

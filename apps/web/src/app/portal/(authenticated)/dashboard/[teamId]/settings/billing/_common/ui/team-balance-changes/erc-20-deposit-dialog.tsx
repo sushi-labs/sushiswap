@@ -9,12 +9,8 @@ import {
   List,
 } from '@sushiswap/ui'
 import type React from 'react'
-import {
-  type EvmChainId,
-  getEvmChainById,
-  shortenEvmAddress,
-  shortenHash,
-} from 'sushi/evm'
+import { shortenAddress } from 'sushi'
+import { type EvmChainId, getEvmChainById, shortenHash } from 'sushi/evm'
 import type { Address } from 'viem'
 import { CopyTokenAddress } from './copy-token-address'
 import type { Erc20Deposit } from './team-balance-changes-table'
@@ -57,7 +53,7 @@ export function Erc20DepositDialog({
               <CopyTokenAddress address={erc20Deposit.txHash as Address} />
             </List.KeyValue>
             <List.KeyValue flex title="Token" className="whitespace-nowrap">
-              {shortenEvmAddress(erc20Deposit.token)}
+              {shortenAddress(erc20Deposit.token)}
               <CopyTokenAddress address={erc20Deposit.token as Address} />
             </List.KeyValue>
             <List.KeyValue flex title="Amount" className="whitespace-nowrap">

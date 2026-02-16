@@ -29,7 +29,7 @@ import {
 } from 'src/app/portal/_common/ui/collapsible-message'
 import { CopyButton } from 'src/app/portal/_common/ui/copy-button'
 import { PortalForm } from 'src/app/portal/_common/ui/portal-form'
-import { z } from 'zod'
+import * as z from 'zod'
 
 interface ApiKeyKeyForm {
   teamId: string

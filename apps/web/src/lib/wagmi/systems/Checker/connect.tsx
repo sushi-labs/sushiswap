@@ -1,23 +1,33 @@
 'use client'
 
-import { Button, type ButtonProps } from '@sushiswap/ui'
-import type { FC } from 'react'
-import { useAccount } from 'wagmi'
-
-import { Dots } from '@sushiswap/ui'
-
 import { useIsMounted } from '@sushiswap/hooks'
+import { Button, type ButtonProps } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
+import {
+  type WalletNamespace,
+  useAccount,
+  useWalletContext,
+} from 'src/lib/wallet'
 import { ConnectButton } from '../../components/connect-button'
 
-const Connect: FC<ButtonProps> = ({
+export interface ConnectProps extends ButtonProps {
+  namespace?: WalletNamespace
+}
+
+function Connect({
   children,
   fullWidth = true,
   size = 'xl',
+  namespace,
   ...props
-}) => {
+}: ConnectProps) {
   const isMounted = useIsMounted()
 
-  const { isDisconnected, isConnecting, isReconnecting } = useAccount()
+  const { isPending, isConnected } = useWalletContext()
+  const isNamespaceConnected = Boolean(useAccount(namespace))
+  const requiresNamespaceConnection = Boolean(
+    namespace && !isNamespaceConnected,
+  )
 
   if (!isMounted)
     return (
@@ -26,7 +36,7 @@ const Connect: FC<ButtonProps> = ({
       </Button>
     )
 
-  if (isConnecting || isReconnecting) {
+  if (isPending) {
     return (
       <Button fullWidth={fullWidth} size={size} disabled {...props}>
         <Dots>Checking Wallet</Dots>
@@ -34,12 +44,24 @@ const Connect: FC<ButtonProps> = ({
     )
   }
 
-  if (isDisconnected)
+  if (!isConnected || requiresNamespaceConnection) {
+    const shouldRestrictNamespace = Boolean(namespace)
+    const midtext =
+      namespace === 'evm' ? 'EVM' : namespace === 'svm' ? 'Solana' : ''
+
     return (
-      <ConnectButton fullWidth={fullWidth} size={size} {...props}>
-        Connect Wallet
+      <ConnectButton
+        namespace={shouldRestrictNamespace ? namespace : undefined}
+        fullWidth={fullWidth}
+        size={size}
+        {...props}
+      >
+        {shouldRestrictNamespace
+          ? `Connect ${midtext} Wallet`
+          : 'Connect Wallet'}
       </ConnectButton>
     )
+  }
 
   return <>{children}</>
 }

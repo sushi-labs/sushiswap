@@ -10,7 +10,6 @@ import {
   HoverCardTrigger,
   classNames,
 } from '@sushiswap/ui'
-import type { FC } from 'react'
 import type { Amount } from 'sushi'
 import {
   type EvmAddress,
@@ -20,7 +19,7 @@ import {
   LDO,
   USDT,
 } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { useTokenAllowance } from '../../hooks/approvals/hooks/useTokenAllowance'
 import { useTokenRevokeApproval } from '../../hooks/approvals/hooks/useTokenRevokeApproval'
 
@@ -44,7 +43,7 @@ const isResetApprovalToken = (token: EvmToken) => {
   return tokensForChain.some((_token) => _token.isSame(token))
 }
 
-const RevokeApproveERC20: FC<RevokeApproveERC20Props> = ({
+function RevokeApproveERC20({
   id,
   amount,
   contract,
@@ -54,13 +53,13 @@ const RevokeApproveERC20: FC<RevokeApproveERC20Props> = ({
   size = 'xl',
   enabled = true,
   ...props
-}) => {
+}: RevokeApproveERC20Props) {
   const allowanceEnabled =
     enabled &&
     amount?.currency?.chainId &&
     isResetApprovalToken(amount.currency.wrap())
 
-  const { address } = useAccount()
+  const { address } = useConnection()
 
   const { data: allowance, isLoading: isAllowanceLoading } = useTokenAllowance({
     token: amount?.currency?.wrap(),

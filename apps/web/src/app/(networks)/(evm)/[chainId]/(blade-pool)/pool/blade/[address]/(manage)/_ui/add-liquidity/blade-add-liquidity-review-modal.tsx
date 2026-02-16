@@ -37,7 +37,7 @@ import { Amount, formatUSD } from 'sushi'
 import { type BladeChainId, type EvmCurrency, getEvmChainById } from 'sushi/evm'
 import type { Hex } from 'viem'
 import {
-  useAccount,
+  useConnection,
   usePublicClient,
   useWaitForTransactionReceipt,
 } from 'wagmi'
@@ -92,7 +92,7 @@ const _BladeAddLiquidityReviewModal: FC<BladeAddLiquidityReviewModalProps> = ({
 }) => {
   const { open } = useDialog(DialogType.Review)
   const router = useRouter()
-  const { address } = useAccount()
+  const { address } = useConnection()
   const { approved } = useApproved(APPROVE_TAG_ADD_LEGACY)
   const client = usePublicClient()
   const { refetch: refetchPosition } = useBladePoolPosition()

@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from 'zod'
 import { getBaseUrl } from './get-base-url'
 import { getUserServiceClient } from './zitadel-client'
 

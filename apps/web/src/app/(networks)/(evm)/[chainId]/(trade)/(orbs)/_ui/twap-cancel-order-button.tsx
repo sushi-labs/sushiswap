@@ -17,7 +17,7 @@ import {
   encodeFunctionData,
 } from 'viem'
 import {
-  useAccount,
+  useConnection,
   useEstimateGas,
   usePublicClient,
   useSendTransaction,
@@ -30,7 +30,7 @@ export const TwapCancelOrderButton = ({
 }: { chainId: TwapSupportedChainId; order: TwapOrder }) => {
   const client = usePublicClient()
 
-  const { address } = useAccount()
+  const { address } = useConnection()
 
   const { addCancelledOrderId } = usePersistedOrdersStore({
     chainId,
@@ -100,7 +100,7 @@ export const TwapCancelOrderButton = ({
   }, [])
 
   const {
-    sendTransactionAsync,
+    mutateAsync: sendTransactionAsync,
     isPending: isWritePending,
     data,
   } = useSendTransaction({

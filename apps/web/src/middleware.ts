@@ -141,7 +141,7 @@ async function _middleware(req: NextRequest) {
       }
     }
 
-    if (chain.type === 'evm') {
+    if (chain.type === 'evm' || chain.type === 'svm') {
       url.pathname = pathname.replace(chain.key, chain.chainId.toString())
     }
 
