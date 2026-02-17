@@ -10,6 +10,13 @@ import { BUILDER_FEE_RECEIVER } from '../config'
 import { hlHttpTransport } from '../transports'
 import { useAgent } from '../use-agent'
 
+export type TimeInForceType =
+  | 'Gtc'
+  | 'Ioc'
+  | 'Alo'
+  | 'FrontendMarket'
+  | 'LiquidationMarket'
+
 type OrderType =
   | {
       limit: {
@@ -18,13 +25,7 @@ type OrderType =
         // "Alo": Adds liquidity only.
         // "FrontendMarket": Similar to Ioc, used in Hyperliquid UI.
         // "LiquidationMarket": Similar to Ioc, used in Hyperliquid UI.
-        //todo: bring theses types out to a common file
-        timeInForce:
-          | 'Gtc'
-          | 'Ioc'
-          | 'Alo'
-          | 'FrontendMarket'
-          | 'LiquidationMarket'
+        timeInForce: TimeInForceType
       }
     }
   | {
