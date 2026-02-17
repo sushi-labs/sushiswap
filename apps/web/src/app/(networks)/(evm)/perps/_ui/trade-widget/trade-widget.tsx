@@ -1,6 +1,7 @@
 import { Card, classNames } from '@sushiswap/ui'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { PerpsChecker } from '../perps-checker'
+import { AvailableToTrade } from './available-to-trade'
 import { Leverage } from './leverage'
 import { TradeSideSelect } from './trade-side-select'
 import { TradeTypeSelect } from './trade-type-select'
@@ -13,6 +14,7 @@ export const TradeWidget = ({ className }: { className?: string }) => (
         <TradeTypeSelect />
         <div className="flex flex-col gap-2 mt-1">
           <TradeSideSelect />
+          <AvailableToTrade />
         </div>
       </div>
       <div className="flex flex-col gap-2">
