@@ -1,4 +1,5 @@
 import { formatUnits, parseUnits } from 'viem'
+import type { UserOpenOrdersItemType } from './use-user-open-orders'
 
 export const getTextColorClass = (value: number) => {
   if (value >= 0) return 'text-green dark:text-green-500'
@@ -434,4 +435,24 @@ export function calculateLossFromSl(input: LossFromSlInput): LossFromSlResult {
     lossUsd: formatUnits(lossUsd, decimals),
     lossPercent: formatUnits(roePercentScaled, decimals),
   }
+}
+
+export const getExistingPositionTpSlOrders = (
+  openOrders: UserOpenOrdersItemType[],
+) => {
+  if (!openOrders || openOrders.length === 0) {
+    return { existingTpOrder: undefined, existingSlOrder: undefined }
+  }
+  const tpOrder = openOrders.find(
+    (o) =>
+      (o.orderType === 'Take Profit Limit' ||
+        o.orderType === 'Take Profit Market') &&
+      o.isPositionTpsl,
+  )
+  const slOrder = openOrders.find(
+    (o) =>
+      (o.orderType === 'Stop Limit' || o.orderType === 'Stop Market') &&
+      o.isPositionTpsl,
+  )
+  return { existingTpOrder: tpOrder, existingSlOrder: slOrder }
 }

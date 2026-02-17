@@ -13,6 +13,7 @@ import { useUserOpenOrders } from 'src/lib/perps/use-user-open-orders'
 import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'
 import {
   currencyFormatter,
+  getExistingPositionTpSlOrders,
   getSignForValue,
   getTextColorClass,
   getTextColorClassForHover,
@@ -411,26 +412,19 @@ const ViewOrders = ({ coin }: { coin: string }) => {
   const { data: openOrders } = useUserOpenOrders({ coin })
 
   const { existingTpOrder, existingSlOrder } = useMemo(() => {
-    if (!openOrders || openOrders.length === 0)
-      return { existingTpOrder: undefined, existingSlOrder: undefined }
-    const tpOrder = openOrders.find(
-      (o) =>
-        o.orderType === 'Take Profit Limit' ||
-        o.orderType === 'Take Profit Market',
-    )
-    const slOrder = openOrders.find(
-      (o) => o.orderType === 'Stop Limit' || o.orderType === 'Stop Market',
-    )
-    return { existingTpOrder: tpOrder, existingSlOrder: slOrder }
+    return getExistingPositionTpSlOrders(openOrders)
   }, [openOrders])
 
-  if (existingTpOrder || existingSlOrder) {
+  if (
+    Boolean(existingTpOrder?.triggerPx) ||
+    Boolean(existingSlOrder?.triggerPx)
+  ) {
     return (
-      <div className="text-muted-foreground">
+      <div>
         {existingTpOrder
           ? numberFormatter.format(Number.parseFloat(existingTpOrder.triggerPx))
-          : '--'}
-        /
+          : '--'}{' '}
+        /{' '}
         {existingSlOrder
           ? numberFormatter.format(Number.parseFloat(existingSlOrder.triggerPx))
           : '--'}

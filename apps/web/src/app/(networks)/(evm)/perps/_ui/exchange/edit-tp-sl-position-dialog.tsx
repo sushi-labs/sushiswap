@@ -19,6 +19,7 @@ import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'
 import {
   calculateGainFromTp,
   calculateLossFromSl,
+  getExistingPositionTpSlOrders,
   getTextColorClass,
   numberFormatter,
 } from 'src/lib/perps/utils'
@@ -65,17 +66,7 @@ export const EditTpSlPositionDialog = ({
   }, [assetListData, positionToClose])
 
   const { existingTpOrder, existingSlOrder } = useMemo(() => {
-    if (!openOrders || openOrders.length === 0)
-      return { existingTpOrder: undefined, existingSlOrder: undefined }
-    const tpOrder = openOrders.find(
-      (o) =>
-        o.orderType === 'Take Profit Limit' ||
-        o.orderType === 'Take Profit Market',
-    )
-    const slOrder = openOrders.find(
-      (o) => o.orderType === 'Stop Limit' || o.orderType === 'Stop Market',
-    )
-    return { existingTpOrder: tpOrder, existingSlOrder: slOrder }
+    return getExistingPositionTpSlOrders(openOrders)
   }, [openOrders])
 
   const { baseSymbol } = useSymbolSplit({ asset })
@@ -425,32 +416,31 @@ export const EditTpSlPositionDialog = ({
                     />
                   ) : null}
                 </div>
-                <div>
-                  {/* connect checker not needed, wont be able to get here unless connected anyway */}
-                  <PerpsChecker.Legal>
-                    <PerpsChecker.EnableTrading>
-                      <PerpsChecker.BuilderFee>
-                        <Button
-                          onClick={async () => {
-                            if (!orderData) return
-                            await executeOrdersAsync(
-                              { orderData },
-                              {
-                                onSuccess: () => {
-                                  setOpen(false)
-                                },
+                {/* connect checker not needed, wont be able to get here unless connected anyway */}
+                <PerpsChecker.Legal>
+                  <PerpsChecker.EnableTrading>
+                    <PerpsChecker.BuilderFee>
+                      <Button
+                        onClick={async () => {
+                          if (!orderData) return
+                          await executeOrdersAsync(
+                            { orderData },
+                            {
+                              onSuccess: () => {
+                                setOpen(false)
                               },
-                            )
-                          }}
-                          disabled={isPending || !positionToClose}
-                          loading={isPending}
-                        >
-                          Confirm
-                        </Button>
-                      </PerpsChecker.BuilderFee>
-                    </PerpsChecker.EnableTrading>
-                  </PerpsChecker.Legal>
-                </div>
+                            },
+                          )
+                        }}
+                        disabled={isPending || !positionToClose}
+                        loading={isPending}
+                      >
+                        Confirm
+                      </Button>
+                    </PerpsChecker.BuilderFee>
+                  </PerpsChecker.EnableTrading>
+                </PerpsChecker.Legal>
+
                 <div>
                   <div className="bg-accent w-full h-[1px]" />
                   <p className="text-xs text-muted-foreground italic mt-2">
