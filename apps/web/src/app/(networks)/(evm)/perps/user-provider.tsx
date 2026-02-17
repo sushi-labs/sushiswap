@@ -7,7 +7,7 @@ import { useUserFundings } from 'src/lib/perps/subscription/use-user-fundings'
 import { useUserHistoricalOrders } from 'src/lib/perps/subscription/use-user-historical-orders'
 import { useWebData2 } from 'src/lib/perps/subscription/use-web-data-2'
 import { useWebData3 } from 'src/lib/perps/subscription/use-web-data-3'
-import { useAccount } from 'wagmi'
+import { useAccount } from 'src/lib/wallet'
 interface State {
   state: {
     webData2Query: ReturnType<typeof useWebData2>
@@ -34,7 +34,8 @@ interface UserProviderProps {
 
 const UserProvider: FC<UserProviderProps> = ({ children }) => {
   const [aggregateFillsByTime, setAggregateFillsByTime] = useState(false)
-  const { address } = useAccount()
+  const address = useAccount('evm')
+
   const userHistoricalOrdersQuery = useUserHistoricalOrders({
     address,
   })

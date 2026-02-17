@@ -20,11 +20,8 @@ import type {
   // useState
 } from 'react'
 import { useLegalCheck } from 'src/lib/perps/info/use-legal-check'
+import { useAccount } from 'src/lib/wallet'
 // import { parseSignature } from 'viem'
-import {
-  useAccount,
-  // useDisconnect, useSignTypedData
-} from 'wagmi'
 
 const Legal: FC<ButtonProps> = ({
   children,
@@ -34,7 +31,7 @@ const Legal: FC<ButtonProps> = ({
 }) => {
   const isMounted = useIsMounted()
 
-  const { address } = useAccount()
+  const address = useAccount('evm')
   const { data, isLoading, error } = useLegalCheck({ address })
 
   if (!isMounted)

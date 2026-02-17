@@ -14,7 +14,7 @@ import {
   enUSFormatNumber,
   getTextColorClass,
 } from 'src/lib/perps/utils'
-import { useAccount } from 'wagmi'
+import { useAccount } from 'src/lib/wallet'
 import { ValueSensitiveText } from '../value-sensitive-text'
 import { AccountManagementSkeleton } from './account-management-skeleton'
 import { DepositDialog } from './deposit-dialog'
@@ -22,7 +22,7 @@ import { PerpSpotTransfer } from './perp-spot-transfer'
 import { Withdraw } from './withdraw'
 
 export const AccountManagement = ({ className }: { className?: string }) => {
-  const { address } = useAccount()
+  const address = useAccount('evm')
   const {
     isLoading,
     error,

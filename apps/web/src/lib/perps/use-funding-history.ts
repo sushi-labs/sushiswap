@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
-import { useAccount } from 'wagmi'
 import { useUserState } from '~evm/perps/user-provider'
+import { useAccount } from '../wallet'
 
 export const useFundingHistory = () => {
-  const { address } = useAccount()
+  const address = useAccount('evm')
   const {
     state: {
       userFundingsQuery: { data, isLoading, isError },

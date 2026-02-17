@@ -13,7 +13,7 @@ import type {
 import { widget } from 'public/trading_view/charting_library/charting_library.esm.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useAssetName } from 'src/lib/perps/use-asset-name'
-import { useAccount } from 'wagmi'
+import { useAccount } from 'src/lib/wallet'
 import { useAssetListState } from '../asset-list-provider'
 import { useAssetState } from '../asset-state-provider'
 import Datafeed, { timeframes } from './datafeed'
@@ -41,7 +41,7 @@ export const Chart = () => {
   } = useAssetState()
   const [hasNoData, setHasNoData] = useState(false)
   const tvWidgetRef = useRef<IChartingLibraryWidget>(null)
-  const { address } = useAccount()
+  const address = useAccount('evm')
   const { data: assetName } = useAssetName({ assetString: activeAsset })
   const {
     state: {

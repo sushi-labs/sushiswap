@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
-import { useAccount } from 'wagmi'
 import { useAssetListState } from '~evm/perps/_ui/asset-list-provider'
 import { useUserState } from '~evm/perps/user-provider'
+import { useAccount } from '../wallet'
 import { SPOT_ASSETS_TO_REWRITE, getPerpsDexAndCoin } from './utils'
 
 export const useTradeHistory = () => {
-  const { address } = useAccount()
+  const address = useAccount('evm')
   const {
     state: {
       userFillsQuery: {

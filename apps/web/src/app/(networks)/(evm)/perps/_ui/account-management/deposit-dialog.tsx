@@ -11,14 +11,10 @@ import {
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
 import { type EvmAddress, EvmChainId, USDC, erc20Abi_transfer } from 'sushi/evm'
-import {
-  useAccount,
-  usePublicClient,
-  useSimulateContract,
-  useWriteContract,
-} from 'wagmi'
+import { usePublicClient, useSimulateContract, useWriteContract } from 'wagmi'
 
 //@todo clean up
 const usdc = USDC[EvmChainId.ARBITRUM]
@@ -32,9 +28,9 @@ export const DepositDialog = ({ trigger }: { trigger?: ReactNode }) => {
   const [open, setOpen] = useState<boolean>(false)
   const [amount, setAmount] = useState<string>('')
   const _amount = Amount.tryFromHuman(usdc, amount)
-  const { writeContractAsync, isPending } = useWriteContract()
+  const { mutateAsync: writeContractAsync, isPending } = useWriteContract()
   const client = usePublicClient()
-  const { address } = useAccount()
+  const address = useAccount('evm')
 
   const args = useMemo(() => {
     return {

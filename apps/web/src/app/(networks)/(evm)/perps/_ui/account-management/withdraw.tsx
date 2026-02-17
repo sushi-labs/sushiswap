@@ -16,9 +16,10 @@ import {
 import { useCallback, useState } from 'react'
 import { hlHttpTransport } from 'src/lib/perps/transports'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
 import { EvmChainId, USDC } from 'sushi/evm'
-import { useAccount, useWalletClient } from 'wagmi'
+import { useWalletClient } from 'wagmi'
 import { useUserState } from '~evm/perps/user-provider'
 import { TransferInput } from './transfer-input'
 
@@ -39,7 +40,7 @@ export const Withdraw = () => {
   } = useUserState()
   const withdrawableBalance = data?.clearinghouseState.withdrawable
   const balance = Amount.tryFromHuman(currency, withdrawableBalance ?? '0')
-  const { address } = useAccount()
+  const address = useAccount('evm')
   const [isPending, setIsPending] = useState<boolean>(false)
 
   const insufficientBalance =
