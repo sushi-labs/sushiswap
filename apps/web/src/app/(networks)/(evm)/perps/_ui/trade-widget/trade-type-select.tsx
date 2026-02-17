@@ -48,6 +48,7 @@ export const TradeTypeSelect = () => {
             <TabsTrigger
               className="col-span-1 capitalize text-xs w-full"
               value={isProTrade ? tradeType : 'Pro'}
+              asChild
             >
               <div className="flex items-center w-full gap-1 justify-center">
                 {isProTrade ? tradeType : 'Pro'}
