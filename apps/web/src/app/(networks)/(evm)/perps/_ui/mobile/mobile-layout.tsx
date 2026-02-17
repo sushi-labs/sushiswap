@@ -4,7 +4,7 @@ import { Activity } from 'react'
 import { AccountManagement } from '../account-management/account-management'
 import { AssetSelectorAndStats } from '../asset-selector-and-stats'
 import { TradeTables } from '../trade-tables/trade-tables'
-import { TradeWidget } from '../trade-widget'
+import { TradeWidget } from '../trade-widget/trade-widget'
 import { FooterNav } from './footer-nav'
 import { TabbedView } from './tabbed-view'
 

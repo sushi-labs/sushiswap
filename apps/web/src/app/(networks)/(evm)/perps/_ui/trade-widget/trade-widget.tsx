@@ -1,9 +1,24 @@
 import { Card, classNames } from '@sushiswap/ui'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { PerpsChecker } from './perps-checker'
+import { PerpsChecker } from '../perps-checker'
+import { Leverage } from './leverage'
 
 export const TradeWidget = ({ className }: { className?: string }) => (
   <Card className={classNames('p-2', className ?? '')}>
+    <div className="h-full flex flex-col justify-between">
+      <div className="flex flex-col gap-2">
+        <Leverage />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Test />
+        <div>setttings</div>
+      </div>
+    </div>
+  </Card>
+)
+
+const Test = () => {
+  return (
     <Checker.Connect size="default" namespace="evm">
       <PerpsChecker.Legal size="default">
         <PerpsChecker.Deposit size="default">
@@ -15,5 +30,5 @@ export const TradeWidget = ({ className }: { className?: string }) => (
         </PerpsChecker.Deposit>
       </PerpsChecker.Legal>
     </Checker.Connect>
-  </Card>
-)
+  )
+}

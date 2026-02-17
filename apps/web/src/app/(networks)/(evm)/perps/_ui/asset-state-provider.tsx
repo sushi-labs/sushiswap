@@ -1,12 +1,15 @@
 'use client'
 import { useLocalStorage } from '@sushiswap/hooks'
 import { type FC, createContext, useContext, useMemo } from 'react'
+import { useActiveAssetData } from 'src/lib/perps/subscription/use-active-asset-data'
+import { useAccount } from 'src/lib/wallet'
 interface State {
   mutate: {
     setActiveAsset: (asset: string) => void
   }
   state: {
     activeAsset: string
+    activeAssetDataQuery: ReturnType<typeof useActiveAssetData>
   }
 }
 
@@ -17,10 +20,15 @@ interface AssetStateProviderProps {
 }
 
 const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
+  const address = useAccount('evm')
   const [activeAsset, setActiveAsset] = useLocalStorage<string>(
     'sushi.perps.active-asset',
     'BTC',
   )
+  const activeAssetDataQuery = useActiveAssetData({
+    address,
+    assetString: activeAsset,
+  })
 
   return (
     <AssetStateContext.Provider
@@ -31,9 +39,10 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
           },
           state: {
             activeAsset,
+            activeAssetDataQuery,
           },
         }
-      }, [activeAsset, setActiveAsset])}
+      }, [activeAsset, setActiveAsset, activeAssetDataQuery])}
     >
       {children}
     </AssetStateContext.Provider>

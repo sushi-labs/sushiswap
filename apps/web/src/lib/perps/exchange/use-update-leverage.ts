@@ -1,4 +1,7 @@
-import { updateLeverage } from '@nktkas/hyperliquid/api/exchange'
+import {
+  ApiRequestError,
+  updateLeverage,
+} from '@nktkas/hyperliquid/api/exchange'
 import { AbstractWalletError } from '@nktkas/hyperliquid/signing'
 import {
   createFailedToast,
@@ -71,7 +74,10 @@ export const useUpdateLeverage = () => {
 
     onError: (error, vars, ctx) => {
       let message = ''
-      if (error instanceof AbstractWalletError) {
+      if (
+        error instanceof AbstractWalletError ||
+        error instanceof ApiRequestError
+      ) {
         message = error.message
       }
       createFailedToast({

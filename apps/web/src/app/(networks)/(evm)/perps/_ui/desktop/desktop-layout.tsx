@@ -4,7 +4,7 @@ import { AssetSelectorAndStats } from '../asset-selector-and-stats'
 import { Chart } from '../chart/chart'
 import { Favorites } from '../favorites/favorites'
 import { TradeTables } from '../trade-tables/trade-tables'
-import { TradeWidget } from '../trade-widget'
+import { TradeWidget } from '../trade-widget/trade-widget'
 import { type DesktopTab, DesktopTabbedView } from './desktop-tabbed-view'
 
 export const DesktopLayout = () => {
