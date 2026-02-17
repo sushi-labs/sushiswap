@@ -452,7 +452,8 @@ export const EditTpSlPositionDialog = ({
                   </PerpsChecker.Legal>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground italic">
+                  <div className="bg-accent w-full h-[1px]" />
+                  <p className="text-xs text-muted-foreground italic mt-2">
                     By default take-profit and stop-loss orders apply to the
                     entire position. Take-profit and stop-loss automatically
                     cancel after closing the position. A market order is

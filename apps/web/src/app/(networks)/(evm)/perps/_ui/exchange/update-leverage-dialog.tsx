@@ -78,41 +78,43 @@ export const UpdateLeverageDialog = ({
             leverge is {maxLeverage}x.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-4 text-sm">
-          <p>
-            Max position size decreases the higher your leverage.{' '}
-            {lastTier && newLeverage > lastTier?.maxLeverage
-              ? `The max position size for ${newLeverage}x leverage on ${asset?.name} is ${currencyFormatter.format(Number(lastTier.lowerBound))}.`
-              : ''}
-          </p>
-          <PercentageSlider
-            value={newLeverage}
-            onChange={(val) => {
-              handleLeverageChange(val)
-            }}
-            disabled={isLoading || isError || isPending}
-            maxValue={maxLeverage}
-          />
-          <Button
-            onClick={async () =>
-              await updateLeverageAsync(
-                { assetString, isCross, newLeverage },
-                {
-                  onSuccess: () => {
-                    setOpen(false)
+        <div className="max-h-[calc(100vh-150px)] overflow-y-auto">
+          <div className="flex flex-col gap-4 text-sm">
+            <p>
+              Max position size decreases the higher your leverage.{' '}
+              {lastTier && newLeverage > lastTier?.maxLeverage
+                ? `The max position size for ${newLeverage}x leverage on ${asset?.name} is ${currencyFormatter.format(Number(lastTier.lowerBound))}.`
+                : ''}
+            </p>
+            <PercentageSlider
+              value={newLeverage}
+              onChange={(val) => {
+                handleLeverageChange(val)
+              }}
+              disabled={isLoading || isError || isPending}
+              maxValue={maxLeverage}
+            />
+            <Button
+              onClick={async () =>
+                await updateLeverageAsync(
+                  { assetString, isCross, newLeverage },
+                  {
+                    onSuccess: () => {
+                      setOpen(false)
+                    },
                   },
-                },
-              )
-            }
-            disabled={isLoading || isError || isPending}
-            loading={isPending}
-          >
-            Confirm
-          </Button>
-          <div className="bg-accent w-full h-[1px]" />
-          <Message variant="warning" size="xs" className="!p-3 text-center">
-            Setting a higher leverage increases the risk of liquidation.
-          </Message>
+                )
+              }
+              disabled={isLoading || isError || isPending}
+              loading={isPending}
+            >
+              Confirm
+            </Button>
+            <div className="bg-accent w-full h-[1px]" />
+            <Message variant="warning" size="xs" className="!p-3 text-center">
+              Setting a higher leverage increases the risk of liquidation.
+            </Message>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

@@ -169,82 +169,84 @@ export const ReversePositionDialog = ({
             opposite direction.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-4 text-sm">
-          <div className="flex flex-col gap-2 text-sm">
-            <div className="flex items-center justify-between">
-              <div className="text-muted-foreground">Action</div>
-              <div className="font-medium whitespace-nowrap">
-                <p
-                  className={classNames(
-                    getTextColorClass(positionToClose?.side === 'A' ? 1 : -1),
-                  )}
-                >
-                  {positionToClose?.side === 'A'
-                    ? 'Close Short & Go Long'
-                    : 'Close Long & Go Short'}
-                </p>
+        <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
+          <div className="flex flex-col gap-4 text-sm">
+            <div className="flex flex-col gap-2 text-sm">
+              <div className="flex items-center justify-between">
+                <div className="text-muted-foreground">Action</div>
+                <div className="font-medium whitespace-nowrap">
+                  <p
+                    className={classNames(
+                      getTextColorClass(positionToClose?.side === 'A' ? 1 : -1),
+                    )}
+                  >
+                    {positionToClose?.side === 'A'
+                      ? 'Close Short & Go Long'
+                      : 'Close Long & Go Short'}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="text-muted-foreground">Size</div>
+                <div className="font-medium whitespace-nowrap">
+                  <p
+                    className={classNames(
+                      getTextColorClass(positionToClose?.side === 'A' ? 1 : -1),
+                    )}
+                  >
+                    {positionSize} {baseSymbol}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="text-muted-foreground">Price</div>
+                <div className="font-medium">Market</div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="text-muted-foreground">
+                  Est. Liquidation Price
+                </div>
+                <div className="font-medium">
+                  {estimatedLiquidationPrice
+                    ? enUSFormatNumber.format(
+                        Number.parseFloat(estimatedLiquidationPrice),
+                      )
+                    : 'N/A'}
+                </div>
               </div>
             </div>
-            <div className="flex items-center justify-between">
-              <div className="text-muted-foreground">Size</div>
-              <div className="font-medium whitespace-nowrap">
-                <p
-                  className={classNames(
-                    getTextColorClass(positionToClose?.side === 'A' ? 1 : -1),
-                  )}
-                >
-                  {positionSize} {baseSymbol}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="text-muted-foreground">Price</div>
-              <div className="font-medium">Market</div>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="text-muted-foreground">
-                Est. Liquidation Price
-              </div>
-              <div className="font-medium">
-                {estimatedLiquidationPrice
-                  ? enUSFormatNumber.format(
-                      Number.parseFloat(estimatedLiquidationPrice),
-                    )
-                  : 'N/A'}
-              </div>
-            </div>
-          </div>
-          <CheckboxSetting
-            value={quickCloseEnabled}
-            onChange={setQuickCloseEnabled}
-            label="Don't show this again"
-          />
-          {/* connect checker not needed, wont be able to get here unless connected anyway */}
-          <PerpsChecker.Legal>
-            <PerpsChecker.EnableTrading>
-              <PerpsChecker.BuilderFee>
-                <Button
-                  onClick={async () => {
-                    if (!orderData) return
-                    await executeOrdersAsync(
-                      { orderData },
-                      {
-                        onSuccess: () => {
-                          setOpen(false)
+            <CheckboxSetting
+              value={quickCloseEnabled}
+              onChange={setQuickCloseEnabled}
+              label="Don't show this again"
+            />
+            {/* connect checker not needed, wont be able to get here unless connected anyway */}
+            <PerpsChecker.Legal>
+              <PerpsChecker.EnableTrading>
+                <PerpsChecker.BuilderFee>
+                  <Button
+                    onClick={async () => {
+                      if (!orderData) return
+                      await executeOrdersAsync(
+                        { orderData },
+                        {
+                          onSuccess: () => {
+                            setOpen(false)
+                          },
                         },
-                      },
-                    )
-                  }}
-                  disabled={isPending || !positionToClose}
-                  loading={isPending}
-                >
-                  {positionToClose.side === 'A'
-                    ? 'Reverse to Long'
-                    : 'Reverse to Short'}
-                </Button>
-              </PerpsChecker.BuilderFee>
-            </PerpsChecker.EnableTrading>
-          </PerpsChecker.Legal>
+                      )
+                    }}
+                    disabled={isPending || !positionToClose}
+                    loading={isPending}
+                  >
+                    {positionToClose.side === 'A'
+                      ? 'Reverse to Long'
+                      : 'Reverse to Short'}
+                  </Button>
+                </PerpsChecker.BuilderFee>
+              </PerpsChecker.EnableTrading>
+            </PerpsChecker.Legal>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

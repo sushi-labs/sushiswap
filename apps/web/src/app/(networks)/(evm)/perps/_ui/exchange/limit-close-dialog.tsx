@@ -268,62 +268,64 @@ export const LimitCloseDialog = ({
             Send an order to close you position at the limit price.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-4 text-sm">
-          <LimitInput
-            currentMidPrice={currentMidPrice ?? null}
-            value={limitPriceToCloseAt}
-            onChange={setLimitPriceToCloseAt}
-            maxDecimals={asset?.decimals ?? 6}
-          />
-          <SizeInput
-            asset={asset}
-            value={sizeToClose}
-            onChange={handleSetSizeToClose}
-            sizeSide={sizeSide}
-            setSizeSide={setSizeSide}
-          />
-          <PercentageSlider
-            value={percentToClose}
-            onChange={(val) => {
-              changeInputRef.current = 'slider'
-              setPercentToClose(val)
-            }}
-            disabled={isPending || !positionToClose}
-          />
-          {estimatedPnL !== null ? (
-            <div className="text-xs whitespace-nowrap">
-              Estimated closed PNL (without fees):{' '}
-              <span className={getTextColorClass(Number(estimatedPnL))}>
-                {currencyFormatter.format(Number.parseFloat(estimatedPnL))}
-              </span>
-            </div>
-          ) : null}
-          {/* connect checker not needed, wont be able to get here unless connected anyway */}
-          <PerpsChecker.Legal>
-            <PerpsChecker.EnableTrading>
-              <PerpsChecker.BuilderFee>
-                <Button
-                  onClick={async () => {
-                    if (!orderData) return
-                    await executeOrdersAsync(
-                      { orderData },
-                      {
-                        onSuccess: () => {
-                          setOpen(false)
+        <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
+          <div className="flex flex-col gap-4 text-sm">
+            <LimitInput
+              currentMidPrice={currentMidPrice ?? null}
+              value={limitPriceToCloseAt}
+              onChange={setLimitPriceToCloseAt}
+              maxDecimals={asset?.decimals ?? 6}
+            />
+            <SizeInput
+              asset={asset}
+              value={sizeToClose}
+              onChange={handleSetSizeToClose}
+              sizeSide={sizeSide}
+              setSizeSide={setSizeSide}
+            />
+            <PercentageSlider
+              value={percentToClose}
+              onChange={(val) => {
+                changeInputRef.current = 'slider'
+                setPercentToClose(val)
+              }}
+              disabled={isPending || !positionToClose}
+            />
+            {estimatedPnL !== null ? (
+              <div className="text-xs whitespace-nowrap">
+                Estimated closed PNL (without fees):{' '}
+                <span className={getTextColorClass(Number(estimatedPnL))}>
+                  {currencyFormatter.format(Number.parseFloat(estimatedPnL))}
+                </span>
+              </div>
+            ) : null}
+            {/* connect checker not needed, wont be able to get here unless connected anyway */}
+            <PerpsChecker.Legal>
+              <PerpsChecker.EnableTrading>
+                <PerpsChecker.BuilderFee>
+                  <Button
+                    onClick={async () => {
+                      if (!orderData) return
+                      await executeOrdersAsync(
+                        { orderData },
+                        {
+                          onSuccess: () => {
+                            setOpen(false)
+                          },
                         },
-                      },
-                    )
-                  }}
-                  disabled={
-                    isPending || !positionToClose || !limitPriceToCloseAt
-                  }
-                  loading={isPending}
-                >
-                  Limit Close
-                </Button>
-              </PerpsChecker.BuilderFee>
-            </PerpsChecker.EnableTrading>
-          </PerpsChecker.Legal>
+                      )
+                    }}
+                    disabled={
+                      isPending || !positionToClose || !limitPriceToCloseAt
+                    }
+                    loading={isPending}
+                  >
+                    Limit Close
+                  </Button>
+                </PerpsChecker.BuilderFee>
+              </PerpsChecker.EnableTrading>
+            </PerpsChecker.Legal>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

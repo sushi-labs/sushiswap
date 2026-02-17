@@ -99,35 +99,39 @@ export const DepositDialog = ({ trigger }: { trigger?: ReactNode }) => {
           <DialogTitle>Deposit</DialogTitle>
           <DialogDescription>Deposit USDC from Arbitrum</DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-4">
-          <Web3Input.Currency
-            className="w-full border rounded-lg border-accent px-4 py-2 dark:bg-slate-700 bg-slate-50"
-            value={amount}
-            onChange={(val) => setAmount(val)}
-            currency={usdc}
-            chainId={chainId}
-            type="INPUT"
-          />
+        <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
+          <div className="flex flex-col gap-4">
+            <Web3Input.Currency
+              className="w-full border rounded-lg border-accent px-4 py-2 dark:bg-slate-700 bg-slate-50"
+              value={amount}
+              onChange={(val) => setAmount(val)}
+              currency={usdc}
+              chainId={chainId}
+              type="INPUT"
+            />
 
-          <Checker.Connect>
-            <Checker.Network chainId={chainId}>
-              <Checker.Amounts chainId={chainId} amount={_amount}>
-                <Button
-                  size="xl"
-                  disabled={Number(amount) < MIN_DEPOSIT_AMOUNT || !sim?.result}
-                  className="w-full"
-                  onClick={transferUsdc}
-                  loading={isPending}
-                >
-                  {amount && Number(amount) < MIN_DEPOSIT_AMOUNT
-                    ? `Minimum Deposit ${MIN_DEPOSIT_AMOUNT} USDC`
-                    : !sim?.result
-                      ? 'Simulation failed'
-                      : 'Deposit'}
-                </Button>
-              </Checker.Amounts>
-            </Checker.Network>
-          </Checker.Connect>
+            <Checker.Connect>
+              <Checker.Network chainId={chainId}>
+                <Checker.Amounts chainId={chainId} amount={_amount}>
+                  <Button
+                    size="xl"
+                    disabled={
+                      Number(amount) < MIN_DEPOSIT_AMOUNT || !sim?.result
+                    }
+                    className="w-full"
+                    onClick={transferUsdc}
+                    loading={isPending}
+                  >
+                    {amount && Number(amount) < MIN_DEPOSIT_AMOUNT
+                      ? `Minimum Deposit ${MIN_DEPOSIT_AMOUNT} USDC`
+                      : !sim?.result
+                        ? 'Simulation failed'
+                        : 'Deposit'}
+                  </Button>
+                </Checker.Amounts>
+              </Checker.Network>
+            </Checker.Connect>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

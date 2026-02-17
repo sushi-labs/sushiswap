@@ -100,60 +100,62 @@ export const Withdraw = () => {
           <DialogTitle>Withdraw</DialogTitle>
           <DialogDescription>Withdraw USDC to Arbitrum.</DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-4">
-          <TransferInput
-            amount={amount}
-            setAmount={setAmount}
-            balance={balance}
-            currency={currency}
-            error={error?.message}
-            isLoading={isLoading}
-            address={address}
-            chainId={chainId}
-          />
+        <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
+          <div className="flex flex-col gap-4">
+            <TransferInput
+              amount={amount}
+              setAmount={setAmount}
+              balance={balance}
+              currency={currency}
+              error={error?.message}
+              isLoading={isLoading}
+              address={address}
+              chainId={chainId}
+            />
 
-          <Checker.Connect>
-            <Checker.Network chainId={chainId}>
-              <Checker.Custom
-                showChildren={Boolean(amount)}
-                buttonText={'Enter Amount'}
-                onClick={() => {}}
-                disabled={!amount}
-              >
+            <Checker.Connect>
+              <Checker.Network chainId={chainId}>
                 <Checker.Custom
-                  showChildren={!insufficientBalance}
-                  buttonText={'Insufficient Balance'}
+                  showChildren={Boolean(amount)}
+                  buttonText={'Enter Amount'}
                   onClick={() => {}}
-                  disabled={Boolean(insufficientBalance)}
+                  disabled={!amount}
                 >
                   <Checker.Custom
-                    showChildren={Number(amount) >= MIN_WITHDRAW_AMOUNT}
-                    buttonText={`Minimum Withdraw ${MIN_WITHDRAW_AMOUNT} USDC`}
+                    showChildren={!insufficientBalance}
+                    buttonText={'Insufficient Balance'}
                     onClick={() => {}}
-                    disabled={Number(amount) < MIN_WITHDRAW_AMOUNT}
+                    disabled={Boolean(insufficientBalance)}
                   >
-                    <Button
-                      size="xl"
-                      className="w-full"
-                      onClick={withdrawUsdc}
-                      loading={isPending}
+                    <Checker.Custom
+                      showChildren={Number(amount) >= MIN_WITHDRAW_AMOUNT}
+                      buttonText={`Minimum Withdraw ${MIN_WITHDRAW_AMOUNT} USDC`}
+                      onClick={() => {}}
+                      disabled={Number(amount) < MIN_WITHDRAW_AMOUNT}
                     >
-                      Withdraw
-                    </Button>
+                      <Button
+                        size="xl"
+                        className="w-full"
+                        onClick={withdrawUsdc}
+                        loading={isPending}
+                      >
+                        Withdraw
+                      </Button>
+                    </Checker.Custom>
                   </Checker.Custom>
                 </Checker.Custom>
-              </Checker.Custom>
-            </Checker.Network>
-          </Checker.Connect>
-          <div>
-            <p className="text-xs text-muted-foreground italic mb-1">
-              A fee of 1 USDC will be deducted from the USDC withdrawn.
-            </p>
-            <p className="text-xs text-muted-foreground italic">
-              If you have USDC in your Spot Balances, transfer it to Perps to
-              make it available to withdraw. Withdrawals should arrive within 5
-              minutes.
-            </p>
+              </Checker.Network>
+            </Checker.Connect>
+            <div>
+              <p className="text-xs text-muted-foreground italic mb-1">
+                A fee of 1 USDC will be deducted from the USDC withdrawn.
+              </p>
+              <p className="text-xs text-muted-foreground italic">
+                If you have USDC in your Spot Balances, transfer it to Perps to
+                make it available to withdraw. Withdrawals should arrive within
+                5 minutes.
+              </p>
+            </div>
           </div>
         </div>
       </DialogContent>

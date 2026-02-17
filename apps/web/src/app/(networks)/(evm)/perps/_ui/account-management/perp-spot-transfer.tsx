@@ -118,53 +118,55 @@ export const PerpSpotTransfer = () => {
             Transfer USDC between your Perps and Spot balances.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-4">
-          <Button
-            className="mx-auto"
-            variant="secondary"
-            onClick={handleDstToggle}
-          >
-            {dst === 'spot' ? 'Perps' : 'Spot'}{' '}
-            <ArrowsLeftRightIcon className="w-2 h-2" />{' '}
-            {dst === 'spot' ? 'Spot' : 'Perps'}
-          </Button>
-          <TransferInput
-            amount={amount}
-            setAmount={setAmount}
-            balance={balance}
-            currency={currency}
-            error={error?.message}
-            isLoading={isLoading}
-            address={address}
-            chainId={chainId}
-          />
+        <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
+          <div className="flex flex-col gap-4">
+            <Button
+              className="mx-auto"
+              variant="secondary"
+              onClick={handleDstToggle}
+            >
+              {dst === 'spot' ? 'Perps' : 'Spot'}{' '}
+              <ArrowsLeftRightIcon className="w-2 h-2" />{' '}
+              {dst === 'spot' ? 'Spot' : 'Perps'}
+            </Button>
+            <TransferInput
+              amount={amount}
+              setAmount={setAmount}
+              balance={balance}
+              currency={currency}
+              error={error?.message}
+              isLoading={isLoading}
+              address={address}
+              chainId={chainId}
+            />
 
-          <Checker.Connect>
-            <Checker.Network chainId={chainId}>
-              <Checker.Custom
-                showChildren={Boolean(amount)}
-                buttonText={'Enter Amount'}
-                onClick={() => {}}
-                disabled={!amount}
-              >
+            <Checker.Connect>
+              <Checker.Network chainId={chainId}>
                 <Checker.Custom
-                  showChildren={!insufficientBalance}
-                  buttonText={'Insufficient Balance'}
+                  showChildren={Boolean(amount)}
+                  buttonText={'Enter Amount'}
                   onClick={() => {}}
-                  disabled={Boolean(insufficientBalance)}
+                  disabled={!amount}
                 >
-                  <Button
-                    size="xl"
-                    className="w-full"
-                    onClick={withdrawUsdc}
-                    loading={isPending}
+                  <Checker.Custom
+                    showChildren={!insufficientBalance}
+                    buttonText={'Insufficient Balance'}
+                    onClick={() => {}}
+                    disabled={Boolean(insufficientBalance)}
                   >
-                    {`Transfer to ${dst === 'spot' ? 'Spot' : 'Perps'}`}
-                  </Button>
+                    <Button
+                      size="xl"
+                      className="w-full"
+                      onClick={withdrawUsdc}
+                      loading={isPending}
+                    >
+                      {`Transfer to ${dst === 'spot' ? 'Spot' : 'Perps'}`}
+                    </Button>
+                  </Checker.Custom>
                 </Checker.Custom>
-              </Checker.Custom>
-            </Checker.Network>
-          </Checker.Connect>
+              </Checker.Network>
+            </Checker.Connect>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
