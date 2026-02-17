@@ -284,7 +284,7 @@ export const EditTpSlPositionDialog = ({
           </TableButton>
         )}
       </DialogTrigger>
-      {/* dont autofocus the size input */}
+      {/* dont autofocus the input */}
       <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader className="!text-left">
           <DialogTitle>TP/SL for Position</DialogTitle>
@@ -292,178 +292,182 @@ export const EditTpSlPositionDialog = ({
             Edit your take profit and stop loss orders for this position.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-4 text-sm">
-          <div className="flex flex-col gap-2 text-sm">
-            <div className="flex items-center justify-between">
-              <div className="text-muted-foreground">Coin</div>
-              <div className="font-medium whitespace-nowrap">
-                <p>{baseSymbol}</p>
-              </div>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="text-muted-foreground">Size</div>
-              <div className="font-medium whitespace-nowrap">
-                <p
-                  className={classNames(
-                    getTextColorClass(positionToClose?.side === 'B' ? 1 : -1),
-                  )}
-                >
-                  {positionSize} {baseSymbol}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="text-muted-foreground">Entry Price</div>
-              <div className="font-medium">
-                {numberFormatter.format(Number.parseFloat(entryPrice))}
-              </div>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="text-muted-foreground">Mark Price</div>
-              <div className="font-medium">
-                {numberFormatter.format(Number.parseFloat(markPrice))}
-              </div>
-            </div>
-            {existingTpOrder ? (
+        <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
+          <div className="flex flex-col gap-4 text-sm">
+            <div className="flex flex-col gap-2 text-sm">
               <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">Take Profit</div>
-                <div className="flex flex-col items-end">
-                  <div className="flex items-center gap-2">
-                    <div className="font-medium whitespace-nowrap">
-                      <p>{existingTpOrder?.triggerCondition}</p>
-                    </div>
-                    <CancelOpenOrder
-                      orderId={existingTpOrder.oid}
-                      coin={positionToClose.position.coin}
-                    />
-                  </div>
-                  <div className="text-muted-foreground text-xs">
-                    Expected Profit:{' '}
-                    {numberFormatter.format(
-                      Number.parseFloat(expectedProfitUsdc),
-                    )}{' '}
-                    USDC
-                  </div>
+                <div className="text-muted-foreground">Coin</div>
+                <div className="font-medium whitespace-nowrap">
+                  <p>{baseSymbol}</p>
                 </div>
               </div>
-            ) : null}
-            {existingSlOrder ? (
               <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">Stop Loss</div>
-                <div className="flex flex-col items-end">
-                  <div className="flex items-center gap-2">
-                    <div className="font-medium whitespace-nowrap">
-                      <p>{existingSlOrder?.triggerCondition}</p>
-                    </div>
-                    <CancelOpenOrder
-                      orderId={existingSlOrder.oid}
-                      coin={positionToClose.position.coin}
-                    />
-                  </div>
-                  <div className="text-muted-foreground text-xs">
-                    Expected Loss: -
-                    {numberFormatter.format(
-                      Number.parseFloat(expectedLossUsdc),
-                    )}{' '}
-                    USDC
-                  </div>
+                <div className="text-muted-foreground">Size</div>
+                <div className="font-medium whitespace-nowrap">
+                  <p
+                    className={classNames(
+                      getTextColorClass(positionToClose?.side === 'B' ? 1 : -1),
+                    )}
+                  >
+                    {positionSize} {baseSymbol}
+                  </p>
                 </div>
               </div>
-            ) : null}
+              <div className="flex items-center justify-between">
+                <div className="text-muted-foreground">Entry Price</div>
+                <div className="font-medium">
+                  {numberFormatter.format(Number.parseFloat(entryPrice))}
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="text-muted-foreground">Mark Price</div>
+                <div className="font-medium">
+                  {numberFormatter.format(Number.parseFloat(markPrice))}
+                </div>
+              </div>
+              {existingTpOrder ? (
+                <div className="flex items-center justify-between">
+                  <div className="text-muted-foreground">Take Profit</div>
+                  <div className="flex flex-col items-end">
+                    <div className="flex items-center gap-2">
+                      <div className="font-medium whitespace-nowrap">
+                        <p>{existingTpOrder?.triggerCondition}</p>
+                      </div>
+                      <CancelOpenOrder
+                        orderId={existingTpOrder.oid}
+                        coin={positionToClose.position.coin}
+                      />
+                    </div>
+                    <div className="text-muted-foreground text-xs">
+                      Expected Profit:{' '}
+                      {numberFormatter.format(
+                        Number.parseFloat(expectedProfitUsdc),
+                      )}{' '}
+                      USDC
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+              {existingSlOrder ? (
+                <div className="flex items-center justify-between">
+                  <div className="text-muted-foreground">Stop Loss</div>
+                  <div className="flex flex-col items-end">
+                    <div className="flex items-center gap-2">
+                      <div className="font-medium whitespace-nowrap">
+                        <p>{existingSlOrder?.triggerCondition}</p>
+                      </div>
+                      <CancelOpenOrder
+                        orderId={existingSlOrder.oid}
+                        coin={positionToClose.position.coin}
+                      />
+                    </div>
+                    <div className="text-muted-foreground text-xs">
+                      Expected Loss: -
+                      {numberFormatter.format(
+                        Number.parseFloat(expectedLossUsdc),
+                      )}{' '}
+                      USDC
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+            <TpSlInput
+              asset={asset}
+              tpPrice={tpPrice}
+              onChangeTpPrice={setTpPrice}
+              slPrice={slPrice}
+              onChangeSlPrice={setSlPrice}
+              entryPrice={entryPrice}
+              side={positionToClose?.side}
+              positionSize={configureAmount ? size.toString() : positionSize}
+              positionLeverage={positionToClose?.position.leverage.value}
+              showExpectedProfit={true}
+              hideSl={Boolean(existingSlOrder)}
+              hideTp={Boolean(existingTpOrder)}
+            />
+            {Boolean(existingSlOrder) && Boolean(existingTpOrder) ? null : (
+              <>
+                <div className="flex flex-col gap-2">
+                  <CheckboxSetting
+                    value={configureAmount}
+                    onChange={(val) => {
+                      setConfigureAmount(val)
+                    }}
+                    label="Configure amount"
+                  />
+                  {configureAmount ? (
+                    <ConfigureAmount
+                      maxDecimals={asset?.decimals ?? 6}
+                      coinSymbol={baseSymbol}
+                      maxValue={Number.parseFloat(positionSize)}
+                      value={size}
+                      onChange={setSize}
+                      step={1 / 10 ** (asset?.decimals ?? 6)}
+                    />
+                  ) : null}
+                </div>
+                <div className="flex flex-col gap-2">
+                  <CheckboxSetting
+                    value={hasLimitPrice}
+                    onChange={(val) => {
+                      setHasLimitPrice(val)
+                    }}
+                    label="Limit Price"
+                  />
+                  {hasLimitPrice ? (
+                    <TpSlLimitInput
+                      asset={asset}
+                      tpLimitPrice={tpLimitPrice}
+                      onChangeTpLimitPrice={setTpLimitPrice}
+                      slLimitPrice={slLimitPrice}
+                      onChangeSlLimitPrice={setSlLimitPrice}
+                    />
+                  ) : null}
+                </div>
+                <div>
+                  {/* connect checker not needed, wont be able to get here unless connected anyway */}
+                  <PerpsChecker.Legal>
+                    <PerpsChecker.EnableTrading>
+                      <PerpsChecker.BuilderFee>
+                        <Button
+                          onClick={async () => {
+                            if (!orderData) return
+                            await executeOrdersAsync(
+                              { orderData },
+                              {
+                                onSuccess: () => {
+                                  setOpen(false)
+                                },
+                              },
+                            )
+                          }}
+                          disabled={isPending || !positionToClose}
+                          loading={isPending}
+                        >
+                          Confirm
+                        </Button>
+                      </PerpsChecker.BuilderFee>
+                    </PerpsChecker.EnableTrading>
+                  </PerpsChecker.Legal>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground italic">
+                    By default take-profit and stop-loss orders apply to the
+                    entire position. Take-profit and stop-loss automatically
+                    cancel after closing the position. A market order is
+                    triggered when the stop loss or take profit price is
+                    reached.
+                  </p>
+                  <p className="text-xs text-muted-foreground italic mt-2">
+                    If the order size is configured above, the TP/SL order will
+                    be for that size no matter how the position changes in the
+                    future.
+                  </p>
+                </div>
+              </>
+            )}
           </div>
-          <TpSlInput
-            asset={asset}
-            tpPrice={tpPrice}
-            onChangeTpPrice={setTpPrice}
-            slPrice={slPrice}
-            onChangeSlPrice={setSlPrice}
-            entryPrice={entryPrice}
-            side={positionToClose?.side}
-            positionSize={configureAmount ? size.toString() : positionSize}
-            positionLeverage={positionToClose?.position.leverage.value}
-            showExpectedProfit={true}
-            hideSl={Boolean(existingSlOrder)}
-            hideTp={Boolean(existingTpOrder)}
-          />
-          {Boolean(existingSlOrder) && Boolean(existingTpOrder) ? null : (
-            <>
-              <div className="flex flex-col gap-2">
-                <CheckboxSetting
-                  value={configureAmount}
-                  onChange={(val) => {
-                    setConfigureAmount(val)
-                  }}
-                  label="Configure amount"
-                />
-                {configureAmount ? (
-                  <ConfigureAmount
-                    maxDecimals={asset?.decimals ?? 6}
-                    coinSymbol={baseSymbol}
-                    maxValue={Number.parseFloat(positionSize)}
-                    value={size}
-                    onChange={setSize}
-                    step={1 / 10 ** (asset?.decimals ?? 6)}
-                  />
-                ) : null}
-              </div>
-              <div className="flex flex-col gap-2">
-                <CheckboxSetting
-                  value={hasLimitPrice}
-                  onChange={(val) => {
-                    setHasLimitPrice(val)
-                  }}
-                  label="Limit Price"
-                />
-                {hasLimitPrice ? (
-                  <TpSlLimitInput
-                    asset={asset}
-                    tpLimitPrice={tpLimitPrice}
-                    onChangeTpLimitPrice={setTpLimitPrice}
-                    slLimitPrice={slLimitPrice}
-                    onChangeSlLimitPrice={setSlLimitPrice}
-                  />
-                ) : null}
-              </div>
-
-              {/* connect checker not needed, wont be able to get here unless connected anyway */}
-              <PerpsChecker.Legal>
-                <PerpsChecker.EnableTrading>
-                  <PerpsChecker.BuilderFee>
-                    <Button
-                      onClick={async () => {
-                        if (!orderData) return
-                        await executeOrdersAsync(
-                          { orderData },
-                          {
-                            onSuccess: () => {
-                              setOpen(false)
-                            },
-                          },
-                        )
-                      }}
-                      disabled={isPending || !positionToClose}
-                      loading={isPending}
-                    >
-                      Confirm
-                    </Button>
-                  </PerpsChecker.BuilderFee>
-                </PerpsChecker.EnableTrading>
-              </PerpsChecker.Legal>
-              <div>
-                <p className="text-xs text-muted-foreground italic">
-                  By default take-profit and stop-loss orders apply to the
-                  entire position. Take-profit and stop-loss automatically
-                  cancel after closing the position. A market order is triggered
-                  when the stop loss or take profit price is reached.
-                </p>
-                <p className="text-xs text-muted-foreground italic mt-2">
-                  If the order size is configured above, the TP/SL order will be
-                  for that size no matter how the position changes in the
-                  future.
-                </p>
-              </div>
-            </>
-          )}
         </div>
       </DialogContent>
     </Dialog>
