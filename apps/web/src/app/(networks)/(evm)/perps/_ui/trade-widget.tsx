@@ -4,7 +4,7 @@ import { PerpsChecker } from './perps-checker'
 
 export const TradeWidget = ({ className }: { className?: string }) => (
   <Card className={classNames('p-2', className ?? '')}>
-    <Checker.Connect size="default">
+    <Checker.Connect size="default" namespace="evm">
       <PerpsChecker.Legal size="default">
         <PerpsChecker.Deposit size="default">
           <PerpsChecker.EnableTrading size="default">
