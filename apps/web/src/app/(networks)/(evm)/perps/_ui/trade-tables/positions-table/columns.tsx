@@ -20,13 +20,13 @@ import {
   numberFormatter,
 } from 'src/lib/perps/utils'
 import { TableButton } from '../../_common/table-button'
-import { useAssetState } from '../../asset-state-provider'
 import { CloseAllPositionsDialog } from '../../exchange/close-all-positions-dialog'
 import { EditTpSlPositionDialog } from '../../exchange/edit-tp-sl-position-dialog'
 import { LimitCloseDialog } from '../../exchange/limit-close-dialog'
 import { MarketCloseDialog } from '../../exchange/market-close-dialog'
 import { ReversePositionDialog } from '../../exchange/reverse-position-dialog'
 import { UpdateLeverageDialog } from '../../exchange/update-leverage-dialog'
+import { useAssetState } from '../../trade-widget/asset-state-provider'
 import { columnBodyMeta } from '../column-meta'
 import { useTradeTables } from '../trade-tables-provider'
 

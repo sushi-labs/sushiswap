@@ -2,8 +2,8 @@ import { DataTable, Slot } from '@sushiswap/ui'
 import type { Row, SortingState, TableState } from '@tanstack/react-table'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import type { PerpOrSpotAsset } from 'src/lib/perps/subscription/use-asset-list'
-import { useAssetListState } from '../asset-list-provider'
-import { useAssetState } from '../asset-state-provider'
+import { useAssetState } from '../trade-widget/asset-state-provider'
+import { useAssetListState } from './asset-list-provider'
 import { useAssetSelectorState } from './asset-selector-provider'
 import {
   DAY_CHANGE_COLUMN,

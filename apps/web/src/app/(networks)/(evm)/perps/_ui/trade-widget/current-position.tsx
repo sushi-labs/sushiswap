@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { useUserPositions } from 'src/lib/perps/use-user-positions'
 import { getTextColorClass, numberFormatter } from 'src/lib/perps/utils'
 import { StatItem } from '../_common/stat-item'
-import { useAssetState } from '../asset-state-provider'
+import { useAssetState } from './asset-state-provider'
 
 export const CurrentPosition = () => {
   const {

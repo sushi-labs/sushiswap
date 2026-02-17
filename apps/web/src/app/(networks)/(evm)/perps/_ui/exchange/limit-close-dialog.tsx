@@ -26,7 +26,7 @@ import { LimitInput } from '../_common/limit-input'
 import { PercentageSlider } from '../_common/percentage-slider'
 import { SizeInput } from '../_common/size-input'
 import { TableButton } from '../_common/table-button'
-import { useAssetListState } from '../asset-list-provider'
+import { useAssetListState } from '../asset-selector/asset-list-provider'
 import { PerpsChecker } from '../perps-checker'
 
 export const LimitCloseDialog = ({

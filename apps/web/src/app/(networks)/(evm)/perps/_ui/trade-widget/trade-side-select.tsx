@@ -1,5 +1,5 @@
 import { Button } from '@sushiswap/ui'
-import { useAssetState } from '../asset-state-provider'
+import { useAssetState } from './asset-state-provider'
 
 export const TradeSideSelect = () => {
   const {

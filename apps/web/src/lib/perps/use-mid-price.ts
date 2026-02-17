@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useAssetListState } from '~evm/perps/_ui/asset-list-provider'
+import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
 
 //used for semi static mid price where super fresh price not needed
 export const useMidPrice = ({

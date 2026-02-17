@@ -29,7 +29,7 @@ import { ConfigureAmount } from '../_common/configure-amount'
 import { TableButton } from '../_common/table-button'
 import { TpSlInput } from '../_common/tp-sl-input'
 import { TpSlLimitInput } from '../_common/tp-sl-limit-input'
-import { useAssetListState } from '../asset-list-provider'
+import { useAssetListState } from '../asset-selector/asset-list-provider'
 import { PerpsChecker } from '../perps-checker'
 import { CancelOpenOrder } from './cancel-open-order'
 

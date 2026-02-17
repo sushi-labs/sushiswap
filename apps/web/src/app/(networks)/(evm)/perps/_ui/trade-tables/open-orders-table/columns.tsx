@@ -24,7 +24,7 @@ import {
   numberFormatter,
 } from 'src/lib/perps/utils'
 import { TableButton } from '../../_common/table-button'
-import { useAssetState } from '../../asset-state-provider'
+import { useAssetState } from '../../trade-widget/asset-state-provider'
 import { columnBodyMeta } from '../column-meta'
 
 export const TIME_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {

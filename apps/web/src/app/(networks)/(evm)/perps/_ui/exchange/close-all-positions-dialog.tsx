@@ -15,7 +15,7 @@ import { useUserPositions } from 'src/lib/perps/use-user-positions'
 import { formatUnits, parseUnits } from 'viem'
 import { CheckboxSetting } from '../_common/checkbox-setting'
 import { TableButton } from '../_common/table-button'
-import { useAssetListState } from '../asset-list-provider'
+import { useAssetListState } from '../asset-selector/asset-list-provider'
 
 export const CloseAllPositionsDialog = ({
   trigger,

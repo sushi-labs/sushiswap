@@ -29,7 +29,7 @@ import { PercentageSlider } from '../_common/percentage-slider'
 import { SizeInput } from '../_common/size-input'
 import { TableButton } from '../_common/table-button'
 import { useUserSettingsState } from '../account-management/settings-provider'
-import { useAssetListState } from '../asset-list-provider'
+import { useAssetListState } from '../asset-selector/asset-list-provider'
 import { PerpsChecker } from '../perps-checker'
 
 export const MarketCloseDialog = ({

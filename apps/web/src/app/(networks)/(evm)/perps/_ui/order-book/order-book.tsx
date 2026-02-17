@@ -13,8 +13,8 @@ import {
 } from 'src/lib/perps/utils'
 import { SideToggle } from '../_common/side-toggle'
 import { useUserSettingsState } from '../account-management/settings-provider'
-import { useAssetListState } from '../asset-list-provider'
-import { useAssetState } from '../asset-state-provider'
+import { useAssetListState } from '../asset-selector/asset-list-provider'
+import { useAssetState } from '../trade-widget/asset-state-provider'
 
 const getTotal = (o: OrderbookRow, side: 'base' | 'quote') => {
   return Number.parseFloat(side === 'base' ? o.totalBase : o.totalQuote)

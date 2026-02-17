@@ -17,7 +17,7 @@ import {
   getTextColorClass,
 } from 'src/lib/perps/utils'
 import { truncateString } from 'sushi'
-import { useAssetState } from '../../asset-state-provider'
+import { useAssetState } from '../../trade-widget/asset-state-provider'
 import { columnBodyMeta } from '../column-meta'
 
 export const COIN_COLUMN: ColumnDef<BalanceItemType, unknown> = {

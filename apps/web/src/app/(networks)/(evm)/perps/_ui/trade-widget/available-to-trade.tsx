@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { enUSFormatNumber } from 'src/lib/perps/utils'
 import { StatItem } from '../_common/stat-item'
-import { useAssetState } from '../asset-state-provider'
+import { useAssetState } from './asset-state-provider'
 
 export const AvailableToTrade = () => {
   const {

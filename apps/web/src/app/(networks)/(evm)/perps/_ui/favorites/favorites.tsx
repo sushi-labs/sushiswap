@@ -10,9 +10,9 @@ import {
   numberFormatter,
 } from 'src/lib/perps/utils'
 import { formatPercent } from 'sushi'
-import { useAssetListState } from '../asset-list-provider'
-import { useAssetState } from '../asset-state-provider'
-import { OverflowX } from '../overflow-x'
+import { OverflowX } from '../_common/overflow-x'
+import { useAssetListState } from '../asset-selector/asset-list-provider'
+import { useAssetState } from '../trade-widget/asset-state-provider'
 
 export const Favorites = () => {
   const { favorites } = useFavoriteAssets()

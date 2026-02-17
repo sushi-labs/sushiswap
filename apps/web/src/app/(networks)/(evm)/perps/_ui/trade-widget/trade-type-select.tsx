@@ -13,7 +13,7 @@ import {
   TRADE_TYPES,
   type TradeType,
   useAssetState,
-} from '../asset-state-provider'
+} from './asset-state-provider'
 
 const REGULAR_TRADE_TYPES = TRADE_TYPES.slice(0, 2)
 const PRO_TRADE_TYPES = TRADE_TYPES.slice(2)

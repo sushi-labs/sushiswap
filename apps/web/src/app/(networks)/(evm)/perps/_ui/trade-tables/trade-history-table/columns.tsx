@@ -14,7 +14,7 @@ import {
   getTextColorClassForHover,
   numberFormatter,
 } from 'src/lib/perps/utils'
-import { useAssetState } from '../../asset-state-provider'
+import { useAssetState } from '../../trade-widget/asset-state-provider'
 import { columnBodyMeta } from '../column-meta'
 
 export const TIME_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {

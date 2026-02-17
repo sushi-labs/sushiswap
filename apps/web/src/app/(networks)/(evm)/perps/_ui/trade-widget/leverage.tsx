@@ -1,8 +1,8 @@
 import { Button } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { useAssetState } from '../asset-state-provider'
 import { UpdateLeverageDialog } from '../exchange/update-leverage-dialog'
 import { UpdateMarginModeDialog } from '../exchange/update-margin-mode-dialog'
+import { useAssetState } from './asset-state-provider'
 
 export const Leverage = () => {
   const {

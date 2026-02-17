@@ -5,7 +5,7 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
-import { useAssetListState } from '~evm/perps/_ui/asset-list-provider'
+import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
 import { BUILDER_FEE_RECEIVER } from '../config'
 import { hlHttpTransport } from '../transports'
 import { useAgent } from '../use-agent'

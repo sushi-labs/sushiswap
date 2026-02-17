@@ -13,7 +13,7 @@ import { useUpdateLeverage } from 'src/lib/perps/exchange/use-update-leverage'
 import { useMarginTable } from 'src/lib/perps/info/use-margin-table'
 import { currencyFormatter } from 'src/lib/perps/utils'
 import { PercentageSlider } from '../_common/percentage-slider'
-import { useAssetListState } from '../asset-list-provider'
+import { useAssetListState } from '../asset-selector/asset-list-provider'
 
 export const UpdateLeverageDialog = ({
   trigger,

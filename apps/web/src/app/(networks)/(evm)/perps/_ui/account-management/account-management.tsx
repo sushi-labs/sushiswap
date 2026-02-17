@@ -15,7 +15,7 @@ import {
 } from 'src/lib/perps/utils'
 import { useAccount } from 'src/lib/wallet'
 import { StatItem } from '../_common/stat-item'
-import { ValueSensitiveText } from '../value-sensitive-text'
+import { ValueSensitiveText } from '../_common/value-sensitive-text'
 import { AccountManagementSkeleton } from './account-management-skeleton'
 import { DepositDialog } from './deposit-dialog'
 import { PerpSpotTransfer } from './perp-spot-transfer'

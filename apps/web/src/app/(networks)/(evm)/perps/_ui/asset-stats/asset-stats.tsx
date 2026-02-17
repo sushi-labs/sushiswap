@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { useAssetListState } from '../asset-list-provider'
-import { useAssetState } from '../asset-state-provider'
-import { OverflowX } from '../overflow-x'
+import { OverflowX } from '../_common/overflow-x'
+import { useAssetListState } from '../asset-selector/asset-list-provider'
+import { useAssetState } from '../trade-widget/asset-state-provider'
 import { PerpAssetStats } from './perp-asset-stats'
 import { SpotAssetStats } from './spot-asset-stats'
 
