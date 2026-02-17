@@ -12,6 +12,7 @@ import {
   toFixedTrim,
 } from 'src/lib/perps/utils'
 import { SideToggle } from '../_common/side-toggle'
+import { useUserSettingsState } from '../account-management/settings-provider'
 import { useAssetListState } from '../asset-list-provider'
 import { useAssetState } from '../asset-state-provider'
 
@@ -58,6 +59,9 @@ export const OrderBook = ({ className }: { className?: string }) => {
       assetListQuery: { data: assetList, isLoading: isLoadingAssetList },
     },
   } = useAssetListState()
+  const {
+    state: { orderBookAnimationDisabled },
+  } = useUserSettingsState()
   const isLoading = isLoadingOrderBook || isLoadingAssetList
   const { isLg } = useBreakpoint('lg')
   const itemCount = isLg ? 12 : 7
@@ -143,12 +147,17 @@ export const OrderBook = ({ className }: { className?: string }) => {
             </tr>
           ) : data && data?.bids?.length > 0 && data?.asks?.length > 0 ? (
             <>
-              {visibleAsks.map((order, index) => {
+              {visibleAsks?.map((order, index) => {
                 const pct = (getTotal(order, side) / asksMaxTotal) * 100
                 return (
                   <tr
                     key={index}
-                    className="font-medium relative lg:border-y-[1px] border-y-[.5px] border-transparent transition-[background-size] duration-150"
+                    className={classNames(
+                      'font-medium relative lg:border-y-[1px] border-y-[.5px] border-transparent',
+                      orderBookAnimationDisabled
+                        ? ''
+                        : 'transition-[background-size] duration-150',
+                    )}
                     style={depthRowStyle(pct, 'ask')}
                   >
                     <td
@@ -193,7 +202,12 @@ export const OrderBook = ({ className }: { className?: string }) => {
                 return (
                   <tr
                     key={index}
-                    className="font-medium relative lg:border-y-[1px] border-y-[.5px] border-transparent transition-[background-size] duration-150"
+                    className={classNames(
+                      'font-medium relative lg:border-y-[1px] border-y-[.5px] border-transparent',
+                      orderBookAnimationDisabled
+                        ? ''
+                        : 'transition-[background-size] duration-150',
+                    )}
                     style={depthRowStyle(pct, 'bid')}
                   >
                     <td

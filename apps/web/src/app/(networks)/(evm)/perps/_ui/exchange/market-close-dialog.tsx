@@ -1,5 +1,4 @@
 import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
-import { useLocalStorage } from '@sushiswap/hooks'
 import {
   Button,
   Dialog,
@@ -29,6 +28,7 @@ import { CheckboxSetting } from '../_common/checkbox-setting'
 import { PercentageSlider } from '../_common/percentage-slider'
 import { SizeInput } from '../_common/size-input'
 import { TableButton } from '../_common/table-button'
+import { useUserSettingsState } from '../account-management/settings-provider'
 import { useAssetListState } from '../asset-list-provider'
 import { PerpsChecker } from '../perps-checker'
 
@@ -39,11 +39,10 @@ export const MarketCloseDialog = ({
   const [open, setOpen] = useState(false)
   const [sizeSide, setSizeSide] = useState<'base' | 'quote'>('base')
   const [percentToClose, setPercentToClose] = useState(100)
-  //todo: bring these toggle settings to provider level later
-  const [quickCloseEnabled, setQuickCloseEnabled] = useLocalStorage<boolean>(
-    'sushi.perps.market.position.close.dialog',
-    false,
-  )
+  const {
+    state: { quickCloseMarketPositionEnabled },
+    mutate: { setQuickCloseMarketPositionEnabled },
+  } = useUserSettingsState()
   const [sizeToClose, setSizeToClose] = useState<{
     base: string
     quote: string
@@ -222,7 +221,7 @@ export const MarketCloseDialog = ({
     <Dialog
       open={open}
       onOpenChange={(state) => {
-        if (quickCloseEnabled && !open) return
+        if (quickCloseMarketPositionEnabled && !open) return
         setOpen(state)
       }}
     >
@@ -233,7 +232,7 @@ export const MarketCloseDialog = ({
           <TableButton
             disabled={isPending || !positionToClose}
             onClick={async () => {
-              if (quickCloseEnabled) {
+              if (quickCloseMarketPositionEnabled) {
                 if (!orderData) return
                 await executeOrdersAsync({ orderData })
               }
@@ -287,8 +286,8 @@ export const MarketCloseDialog = ({
               disabled={isPending || !positionToClose}
             />
             <CheckboxSetting
-              value={quickCloseEnabled}
-              onChange={setQuickCloseEnabled}
+              value={quickCloseMarketPositionEnabled}
+              onChange={setQuickCloseMarketPositionEnabled}
               label="Don't show this again"
             />
             {/* connect checker not needed, wont be able to get here unless connected anyway */}

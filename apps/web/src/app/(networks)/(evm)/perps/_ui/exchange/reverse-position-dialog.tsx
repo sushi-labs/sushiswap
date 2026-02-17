@@ -1,5 +1,4 @@
 import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
-import { useLocalStorage } from '@sushiswap/hooks'
 import {
   Button,
   Dialog,
@@ -25,6 +24,7 @@ import {
 import { formatUnits, parseUnits } from 'viem'
 import { CheckboxSetting } from '../_common/checkbox-setting'
 import { TableButton } from '../_common/table-button'
+import { useUserSettingsState } from '../account-management/settings-provider'
 import { useAssetListState } from '../asset-list-provider'
 import { PerpsChecker } from '../perps-checker'
 
@@ -33,12 +33,10 @@ export const ReversePositionDialog = ({
   trigger,
 }: { positionToClose: UserPositionsItemType; trigger?: ReactNode }) => {
   const [open, setOpen] = useState(false)
-  //todo: bring these toggle settings to provider level later
-  const [quickCloseEnabled, setQuickCloseEnabled] = useLocalStorage<boolean>(
-    'sushi.perps.reverse.position.close.dialog',
-    false,
-  )
-
+  const {
+    state: { quickCloseReversePositionEnabled },
+    mutate: { setQuickCloseReversePositionEnabled },
+  } = useUserSettingsState()
   const { executeOrdersAsync, isPending } = useExecuteOrders()
   const {
     state: {
@@ -48,11 +46,7 @@ export const ReversePositionDialog = ({
   const { midPrice } = useMidPrice({
     assetString: positionToClose.position.coin,
   })
-  const {
-    perpsEquity,
-    // perpsBalance,
-    maintenanceMargin,
-  } = useUserAccountValues()
+  const { perpsEquity, maintenanceMargin } = useUserAccountValues()
 
   const asset = useMemo(() => {
     if (!positionToClose) return undefined
@@ -139,7 +133,7 @@ export const ReversePositionDialog = ({
     <Dialog
       open={open}
       onOpenChange={(state) => {
-        if (quickCloseEnabled && !open) return
+        if (quickCloseReversePositionEnabled && !open) return
         setOpen(state)
       }}
     >
@@ -150,7 +144,7 @@ export const ReversePositionDialog = ({
           <TableButton
             disabled={isPending || !positionToClose}
             onClick={async () => {
-              if (quickCloseEnabled) {
+              if (quickCloseReversePositionEnabled) {
                 if (!orderData) return
                 await executeOrdersAsync({ orderData })
               }
@@ -216,8 +210,8 @@ export const ReversePositionDialog = ({
               </div>
             </div>
             <CheckboxSetting
-              value={quickCloseEnabled}
-              onChange={setQuickCloseEnabled}
+              value={quickCloseReversePositionEnabled}
+              onChange={setQuickCloseReversePositionEnabled}
               label="Don't show this again"
             />
             {/* connect checker not needed, wont be able to get here unless connected anyway */}

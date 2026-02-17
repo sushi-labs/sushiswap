@@ -19,6 +19,7 @@ import { ValueSensitiveText } from '../value-sensitive-text'
 import { AccountManagementSkeleton } from './account-management-skeleton'
 import { DepositDialog } from './deposit-dialog'
 import { PerpSpotTransfer } from './perp-spot-transfer'
+import { SettingsDialog } from './settings-dialog'
 import { Withdraw } from './withdraw'
 
 export const AccountManagement = ({ className }: { className?: string }) => {
@@ -237,6 +238,9 @@ export const AccountManagement = ({ className }: { className?: string }) => {
                 />
               </CardGroup>
             </CardContent>
+          </div>
+          <div className="self-end mt-2">
+            <SettingsDialog />
           </div>
         </>
       )}
