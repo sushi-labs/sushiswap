@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo } from 'react'
 import type { EvmChainId } from 'sushi/evm'
+import type { StellarChainId } from 'sushi/stellar'
 import type { SvmChainId } from 'sushi/svm'
 import { useRecentWallets } from '../hooks/use-recent-wallets'
 import { getConnections, useConnections, watchConnections } from './store'
@@ -10,7 +11,7 @@ import { WalletNamespacesProviders } from './wallet-namespaces-provider'
 import { WalletStateProvider, useWalletState } from './wallet-state-provider'
 
 export const WalletContext = createContext<WalletContextType<
-  EvmChainId | SvmChainId
+  EvmChainId | SvmChainId | StellarChainId
 > | null>(null)
 
 export function useWalletContext() {

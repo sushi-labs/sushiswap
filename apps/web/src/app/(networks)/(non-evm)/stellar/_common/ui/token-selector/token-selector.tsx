@@ -21,7 +21,6 @@ import React, {
 } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
-import { staticTokens } from '~stellar/_common/lib/assets/token-assets'
 import { useCommonTokens } from '~stellar/_common/lib/hooks/token/use-common-tokens'
 import { useCustomTokens } from '~stellar/_common/lib/hooks/token/use-custom-tokens'
 import { useSortedTokenList } from '~stellar/_common/lib/hooks/token/use-sorted-token-list'
@@ -66,9 +65,7 @@ export default function TokenSelector({
 
   // Merge common tokens (from StellarExpert + hardcoded) into the main token map
   const allTokens = useMemo(() => {
-    const merged = Object.fromEntries(
-      staticTokens.map((token) => [token.contract, token]),
-    )
+    const merged = {} as Record<string, Token>
     if (customTokens) {
       Object.entries(customTokens).forEach(([contract, token]) => {
         merged[contract] = token
@@ -219,8 +216,8 @@ export default function TokenSelector({
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="flex flex-col items-center justify-center gap-1">
                   <span className="flex items-center text-xs text-gray-500 dark:text-slate-500">
-                    No tokens found on{' '}
-                    <span className="font-medium">Stellar</span>.
+                    No tokens found on
+                    <span className="font-medium ml-1"> Stellar</span>.
                   </span>
                   <span className="text-xs text-gray-500 dark:text-slate-500">
                     Did you try searching with the token code?

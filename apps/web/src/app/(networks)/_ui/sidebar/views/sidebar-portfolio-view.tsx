@@ -30,7 +30,7 @@ export const SidebarPortfolioView = () => {
   }, [tab])
 
   return (
-    <div className="flex flex-col h-full gap-y-5">
+    <div className="flex flex-col h-full gap-y-3">
       <PortfolioHeader />
       <div className="flex px-5 gap-x-2">
         {Object.values(PortfolioTab).map((_tab) => (

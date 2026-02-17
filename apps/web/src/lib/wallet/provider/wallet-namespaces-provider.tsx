@@ -15,6 +15,12 @@ const WALLET_NAMESPACE_PROVIDERS: Record<
   svm: dynamic(() => import('../namespaces/svm/provider/svm-wallet-provider'), {
     ssr: false,
   }),
+  stellar: dynamic(
+    () => import('../namespaces/stellar/provider/stellar-wallet-provider'),
+    {
+      ssr: false,
+    },
+  ),
 }
 
 const providers = ENABLED_WALLET_NAMESPACES.map(
