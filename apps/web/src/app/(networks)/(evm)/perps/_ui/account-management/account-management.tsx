@@ -7,7 +7,6 @@ import {
   HoverCardTrigger,
   classNames,
 } from '@sushiswap/ui'
-import type { ReactNode } from 'react'
 import { useUserAccountValues } from 'src/lib/perps/use-user-account-values'
 import {
   currencyFormatter,
@@ -15,6 +14,7 @@ import {
   getTextColorClass,
 } from 'src/lib/perps/utils'
 import { useAccount } from 'src/lib/wallet'
+import { StatItem } from '../_common/stat-item'
 import { ValueSensitiveText } from '../value-sensitive-text'
 import { AccountManagementSkeleton } from './account-management-skeleton'
 import { DepositDialog } from './deposit-dialog'
@@ -75,7 +75,7 @@ export const AccountManagement = ({ className }: { className?: string }) => {
                 <p className="text-xs font-semibold mb-2 lg:mb-1">
                   Account Equity
                 </p>
-                <_CardItem
+                <StatItem
                   title="Spot"
                   value={
                     <ValueSensitiveText
@@ -89,7 +89,7 @@ export const AccountManagement = ({ className }: { className?: string }) => {
                     />
                   }
                 />
-                <_CardItem
+                <StatItem
                   title={
                     <HoverCard openDelay={0}>
                       <HoverCardTrigger asChild tabIndex={0}>
@@ -127,7 +127,7 @@ export const AccountManagement = ({ className }: { className?: string }) => {
                 <p className="text-xs font-semibold mb-2 lg:mb-1">
                   Perps Overview
                 </p>
-                <_CardItem
+                <StatItem
                   title={
                     <HoverCard openDelay={0}>
                       <HoverCardTrigger asChild tabIndex={0}>
@@ -149,7 +149,7 @@ export const AccountManagement = ({ className }: { className?: string }) => {
                   }
                   value={currencyFormatter.format(perpsBalance)}
                 />
-                <_CardItem
+                <StatItem
                   title="Unrealized PnL"
                   value={
                     <span
@@ -159,7 +159,7 @@ export const AccountManagement = ({ className }: { className?: string }) => {
                     </span>
                   }
                 />
-                <_CardItem
+                <StatItem
                   title={
                     <HoverCard openDelay={0}>
                       <HoverCardTrigger asChild tabIndex={0}>
@@ -192,7 +192,7 @@ export const AccountManagement = ({ className }: { className?: string }) => {
                     </span>
                   }
                 />
-                <_CardItem
+                <StatItem
                   title={
                     <HoverCard openDelay={0}>
                       <HoverCardTrigger asChild tabIndex={0}>
@@ -214,7 +214,7 @@ export const AccountManagement = ({ className }: { className?: string }) => {
                   }
                   value={currencyFormatter.format(maintenanceMargin)}
                 />
-                <_CardItem
+                <StatItem
                   title={
                     <HoverCard openDelay={0}>
                       <HoverCardTrigger asChild tabIndex={0}>
@@ -245,21 +245,5 @@ export const AccountManagement = ({ className }: { className?: string }) => {
         </>
       )}
     </Card>
-  )
-}
-
-// easier that fighting styling of CardItem
-const _CardItem = ({
-  title,
-  value,
-}: {
-  title: ReactNode
-  value: ReactNode
-}) => {
-  return (
-    <div className="grid grid-cols-2 text-xs font-medium">
-      <div className="text-muted-foreground">{title}</div>
-      <div className="justify-end flex">{value}</div>
-    </div>
   )
 }
