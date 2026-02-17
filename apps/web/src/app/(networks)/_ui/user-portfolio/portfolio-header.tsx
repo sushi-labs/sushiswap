@@ -27,28 +27,41 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { SwitchIcon } from '@sushiswap/ui/icons/SwitchIcon'
-import Image from 'next/image'
-import { useState } from 'react'
+import { type ReactNode, useMemo, useState } from 'react'
 import { SidebarView, useSidebar } from 'src/app/(networks)/_ui/sidebar'
 import {
   ENABLED_WALLET_NAMESPACES,
   type WalletConnection,
+  type WalletNamespace,
+  getNameFromNamespace,
   useWallets,
 } from 'src/lib/wallet'
 import { DisconnectWalletButton } from 'src/lib/wallet/components/disconnect-wallet-button'
 import { getChainById, shortenAddress } from 'sushi'
-import { EvmChainId } from 'sushi/evm'
+import { type EvmAddress, EvmChainId } from 'sushi/evm'
+import type { StellarChainId } from 'sushi/stellar'
+import type { SvmChainId } from 'sushi/svm'
 import { useEnsName } from 'wagmi'
 
 export const PortfolioHeader = () => {
   const wallets = useWallets()
-
+  const walletCount = useMemo(() => {
+    if (!wallets) return 0
+    return Object.values(wallets)?.filter((wallet) => wallet !== undefined)
+      .length
+  }, [wallets])
   return (
     <div className="flex justify-between px-5 py-6 bg-secondary">
-      {wallets.evm && wallets.svm ? (
-        <ConnectedWalletsPopover evm={wallets.evm} svm={wallets.svm} />
+      {walletCount > 1 ? (
+        <ConnectedWalletsPopover
+          evm={wallets.evm}
+          svm={wallets.svm}
+          stellar={wallets.stellar}
+        />
       ) : (
-        <ConnectedWalletInfo wallet={wallets.evm ?? wallets.svm} />
+        <ConnectedWalletInfo
+          wallet={wallets.evm ?? wallets.svm ?? wallets.stellar}
+        />
       )}
     </div>
   )
@@ -66,6 +79,14 @@ const ConnectedWalletInfo = ({
       enabled: Boolean(wallet?.namespace === 'evm'),
     },
   })
+
+  const namespacesToConnectTo = useMemo(() => {
+    if (!wallet) return []
+    const otherNamespaces = ENABLED_WALLET_NAMESPACES.filter(
+      (namespace) => namespace !== wallet.namespace,
+    )
+    return otherNamespaces
+  }, [wallet])
 
   const { isSm } = useBreakpoint('sm')
 
@@ -154,7 +175,17 @@ const ConnectedWalletInfo = ({
           description="Settings"
           name="Settings"
         />
-        <DisconnectWalletButton namespace={wallet?.namespace ?? 'evm'} asChild>
+        <DisconnectWalletButton
+          onSuccess={() => {
+            if (wallet?.namespace === 'stellar') {
+              setView(SidebarView.Connect, {
+                namespace: 'stellar',
+              })
+            }
+          }}
+          namespace={wallet?.namespace ?? 'evm'}
+          asChild
+        >
           <IconButton
             size={utilButtonSize}
             variant="ghost"
@@ -163,80 +194,114 @@ const ConnectedWalletInfo = ({
             name="Disconnect"
           />
         </DisconnectWalletButton>
-        <Popover>
-          <PopoverTrigger asChild>
-            <IconButton
-              size={utilButtonSize}
-              variant="ghost"
-              icon={PlusCircleIcon}
-              description="Wallet Options"
-              name="Wallet Options"
-            />
-          </PopoverTrigger>
-          <PopoverContent
-            align="end"
-            className="!p-2"
-            onOpenAutoFocus={(e) => e.preventDefault()}
+        <ConnectMoreWallets namespacesToConnectTo={namespacesToConnectTo}>
+          <Button
+            fullWidth
+            variant="ghost"
+            icon={SwitchIcon}
+            className="!justify-start"
+            onClick={() =>
+              setView(SidebarView.Connect, {
+                action: 'switch',
+                namespace:
+                  wallet?.namespace === 'stellar' ? 'stellar' : undefined,
+              })
+            }
           >
-            <div className="flex flex-col gap-2">
-              {ENABLED_WALLET_NAMESPACES.length > 1 ? (
-                <Button
-                  fullWidth
-                  variant="ghost"
-                  icon={PlusIcon}
-                  className="!justify-start"
-                  onClick={() =>
-                    setView(SidebarView.Connect, {
-                      namespace: wallet?.namespace === 'svm' ? 'evm' : 'svm',
-                    })
-                  }
-                >
-                  Connect {wallet?.namespace === 'svm' ? 'EVM' : 'Solana'}{' '}
-                  Wallet
-                </Button>
-              ) : null}
-              <Button
-                fullWidth
-                variant="ghost"
-                icon={SwitchIcon}
-                className="!justify-start"
-                onClick={() =>
-                  setView(SidebarView.Connect, {
-                    action: 'switch',
-                  })
-                }
-              >
-                Switch Wallet
-              </Button>
-            </div>
-          </PopoverContent>
-        </Popover>
+            Switch Wallet
+          </Button>
+        </ConnectMoreWallets>
       </div>
     </div>
+  )
+}
+
+const ConnectMoreWallets = ({
+  namespacesToConnectTo,
+  children,
+}: { namespacesToConnectTo: WalletNamespace[]; children?: ReactNode }) => {
+  const { isSm } = useBreakpoint('sm')
+  const { setView } = useSidebar()
+
+  const utilButtonSize = isSm ? 'xs' : 'sm'
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <IconButton
+          size={utilButtonSize}
+          variant="ghost"
+          icon={PlusCircleIcon}
+          description="Wallet Options"
+          name="Wallet Options"
+        />
+      </PopoverTrigger>
+      <PopoverContent
+        align="end"
+        className="!p-2"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
+        <div className="flex flex-col gap-2">
+          {namespacesToConnectTo?.map((namespace) => (
+            <Button
+              key={namespace}
+              fullWidth
+              variant="ghost"
+              icon={PlusIcon}
+              className="!justify-start"
+              onClick={() =>
+                setView(SidebarView.Connect, {
+                  namespace: namespace,
+                })
+              }
+            >
+              Connect {getNameFromNamespace(namespace)} Wallet
+            </Button>
+          ))}
+          {children}
+        </div>
+      </PopoverContent>
+    </Popover>
   )
 }
 
 const ConnectedWalletsPopover = ({
   evm,
   svm,
-}: { evm: WalletConnection; svm: WalletConnection }) => {
+  stellar,
+}: {
+  evm?: WalletConnection<EvmChainId>
+  svm?: WalletConnection<SvmChainId>
+  stellar?: WalletConnection<StellarChainId>
+}) => {
   const { setView } = useSidebar()
 
   const { data: ensName } = useEnsName({
     chainId: EvmChainId.ETHEREUM,
-    address: evm.account as `0x${string}`,
+    address: evm?.account,
   })
 
   const [isOpen, setIsOpen] = useState(false)
 
-  const wallets = [
-    { wallet: evm, displayName: ensName ?? undefined },
-    { wallet: svm },
-  ]
+  const wallets = useMemo(
+    () => [
+      ...(evm ? [{ wallet: evm, displayName: ensName ?? undefined }] : []),
+      ...(svm ? [{ wallet: svm }] : []),
+      ...(stellar ? [{ wallet: stellar }] : []),
+    ],
+    [evm, ensName, svm, stellar],
+  )
+
+  const namespacesToConnectTo = useMemo(() => {
+    const connectedNamespaces = wallets?.map(({ wallet }) => wallet.namespace)
+    const otherNamespaces = ENABLED_WALLET_NAMESPACES.filter(
+      (namespace) => !connectedNamespaces.includes(namespace),
+    )
+    return otherNamespaces
+  }, [wallets])
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <div className="flex w-full justify-between items-center">
+    <div className="flex w-full justify-between items-center">
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger>
           <div className="flex gap-2 items-center">
             <UserCircleIcon
@@ -252,6 +317,78 @@ const ConnectedWalletsPopover = ({
             )}
           </div>
         </PopoverTrigger>
+
+        <PopoverContent align="start" className="w-[280px] cursor-default">
+          <div className="flex flex-col gap-3">
+            <div className="text-muted-foreground text-sm font-medium">
+              Connected
+            </div>
+
+            {wallets.map(({ wallet, displayName }) => (
+              <div
+                key={wallet.namespace}
+                className="flex justify-between items-center"
+              >
+                <div className="flex gap-2 items-center">
+                  <NetworkIcon
+                    chainId={wallet.chainId}
+                    width={28}
+                    height={28}
+                  />
+                  <div className="flex flex-col">
+                    <span className="text-sm leading-tight">
+                      {displayName ?? shortenAddress(wallet.account)}
+                    </span>
+                    <span className="text-muted-foreground text-xs leading-none">
+                      {getChainById(wallet.chainId).name}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex gap-1 items-center">
+                  <ClipboardController hideTooltip>
+                    {({ setCopied, isCopied }) => (
+                      <IconButton
+                        size="xs"
+                        variant="ghost"
+                        icon={DocumentDuplicateIcon}
+                        onClick={() => setCopied(wallet.account)}
+                        description={isCopied ? 'Copied!' : 'Copy Address'}
+                        name="Copy"
+                      />
+                    )}
+                  </ClipboardController>
+
+                  <DisconnectWalletButton namespace={wallet.namespace} asChild>
+                    <IconButton
+                      size="xs"
+                      variant="ghost"
+                      icon={ArrowLeftOnRectangleIcon}
+                      description="Disconnect"
+                      name="Disconnect"
+                    />
+                  </DisconnectWalletButton>
+
+                  <IconButton
+                    size="xs"
+                    variant="ghost"
+                    icon={SwitchIcon}
+                    description="Switch Wallet"
+                    name="Switch Wallet"
+                    onClick={() =>
+                      setView(SidebarView.Connect, {
+                        action: 'switch',
+                        namespace: wallet.namespace,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
+      <div className="flex items-center gap-1">
         <IconButton
           className="p-1"
           size="xs"
@@ -260,71 +397,10 @@ const ConnectedWalletsPopover = ({
           description="Settings"
           name="Settings"
         />
+        {namespacesToConnectTo?.length ? (
+          <ConnectMoreWallets namespacesToConnectTo={namespacesToConnectTo} />
+        ) : null}
       </div>
-      <PopoverContent align="start" className="w-[280px] cursor-default">
-        <div className="flex flex-col gap-3">
-          <div className="text-muted-foreground text-sm font-medium">
-            Connected
-          </div>
-
-          {wallets.map(({ wallet, displayName }) => (
-            <div
-              key={wallet.namespace}
-              className="flex justify-between items-center"
-            >
-              <div className="flex gap-2 items-center">
-                <NetworkIcon chainId={wallet.chainId} width={28} height={28} />
-                <div className="flex flex-col">
-                  <span className="text-sm leading-tight">
-                    {displayName ?? shortenAddress(wallet.account)}
-                  </span>
-                  <span className="text-muted-foreground text-xs leading-none">
-                    {getChainById(wallet.chainId).name}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex gap-1 items-center">
-                <ClipboardController hideTooltip>
-                  {({ setCopied, isCopied }) => (
-                    <IconButton
-                      size="xs"
-                      variant="ghost"
-                      icon={DocumentDuplicateIcon}
-                      onClick={() => setCopied(wallet.account)}
-                      description={isCopied ? 'Copied!' : 'Copy Address'}
-                      name="Copy"
-                    />
-                  )}
-                </ClipboardController>
-
-                <DisconnectWalletButton namespace={wallet.namespace} asChild>
-                  <IconButton
-                    size="xs"
-                    variant="ghost"
-                    icon={ArrowLeftOnRectangleIcon}
-                    description="Disconnect"
-                    name="Disconnect"
-                  />
-                </DisconnectWalletButton>
-
-                <IconButton
-                  size="xs"
-                  variant="ghost"
-                  icon={SwitchIcon}
-                  description="Switch Wallet"
-                  name="Switch Wallet"
-                  onClick={() =>
-                    setView(SidebarView.Connect, {
-                      action: 'switch',
-                    })
-                  }
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </PopoverContent>
-    </Popover>
+    </div>
   )
 }

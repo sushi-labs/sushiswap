@@ -7,6 +7,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
 import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { useAccount } from 'src/lib/wallet'
 import {
   useExecuteMultiHopSwap,
   useExecuteSwap,
@@ -14,10 +16,8 @@ import {
 import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trustline'
 import { parseSlippageTolerance } from '~stellar/_common/lib/utils/error-helpers'
 import { requiresPriceImpactConfirmation } from '~stellar/_common/lib/utils/warning-severity'
-import { ConnectWalletButton } from '~stellar/_common/ui/ConnectWallet/ConnectWalletButton'
 import { CreateTrustlineButton } from '~stellar/_common/ui/Trustline/CreateTrustlineButton'
-import { Checker } from '~stellar/_common/ui/checker'
-import { useStellarWallet } from '~stellar/providers'
+import { Checker as StellarChecker } from '~stellar/_common/ui/checker'
 import { useBestRoute } from '~stellar/swap/lib/hooks'
 import {
   useSimpleSwapActions,
@@ -25,7 +25,7 @@ import {
 } from './simple-swap-provider/simple-swap-provider'
 
 export const SimpleSwapExecuteButton = () => {
-  const { connectedAddress, isConnected } = useStellarWallet()
+  const connectedAddress = useAccount('stellar')
   const { amount, token0, token1, outputAmount, priceImpact } =
     useSimpleSwapState()
   const { setAmount, setOutputAmount, setSlippageAmount, setPriceImpact } =
@@ -247,30 +247,33 @@ export const SimpleSwapExecuteButton = () => {
   return (
     <>
       <div className="pt-4">
-        {!isConnected ? (
-          <ConnectWalletButton fullWidth size="xl" />
-        ) : needsToken1Trustline && token1 && token1ResolvedIssuer ? (
-          <CreateTrustlineButton
-            tokens={[{ code: token1.code, issuer: token1ResolvedIssuer }]}
-            size="xl"
-            fullWidth
-          />
-        ) : (
-          <Checker.Amounts amounts={checkerAmount} disabled={isDisabled}>
-            <Button
-              fullWidth
+        <Checker.Connect namespace="stellar" fullWidth size="xl">
+          {needsToken1Trustline && token1 && token1ResolvedIssuer ? (
+            <CreateTrustlineButton
+              tokens={[{ code: token1.code, issuer: token1ResolvedIssuer }]}
               size="xl"
-              onClick={handleSwap}
+              fullWidth
+            />
+          ) : (
+            <StellarChecker.Amounts
+              amounts={checkerAmount}
               disabled={isDisabled}
-              loading={executeSwap.isPending || executeMultiHopSwap.isPending}
-              variant={
-                showPriceImpactWarning && !checked ? 'destructive' : 'default'
-              }
             >
-              {buttonText}
-            </Button>
-          </Checker.Amounts>
-        )}
+              <Button
+                fullWidth
+                size="xl"
+                onClick={handleSwap}
+                disabled={isDisabled}
+                loading={executeSwap.isPending || executeMultiHopSwap.isPending}
+                variant={
+                  showPriceImpactWarning && !checked ? 'destructive' : 'default'
+                }
+              >
+                {buttonText}
+              </Button>
+            </StellarChecker.Amounts>
+          )}
+        </Checker.Connect>
       </div>
       {showSlippageWarning && <SlippageWarning className="mt-4" />}
       {showPriceImpactWarning && (

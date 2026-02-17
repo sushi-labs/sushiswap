@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react'
 import { EvmAdapterId } from '../../namespaces/evm/config'
+import { StellarAdapterId } from '../../namespaces/stellar/config'
 import { SvmAdapterId } from '../../namespaces/svm/config'
 import type { WalletNamespace, WalletWithState } from '../../types'
 import { useWalletsList } from './use-wallets-list'
@@ -148,4 +149,8 @@ const WalletConnectorsList = withWalletsRegistry(
 )
 
 const isBrowserDetectedWallet = (wallet: WalletWithState) =>
-  [EvmAdapterId.Injected, SvmAdapterId.Standard].includes(wallet.adapterId)
+  [
+    EvmAdapterId.Injected,
+    SvmAdapterId.Standard,
+    StellarAdapterId.Standard,
+  ].includes(wallet.adapterId)

@@ -63,7 +63,7 @@ export function TokenListItem({
                 {token.code}
               </span>
               <span className="max-w-[200px] truncate text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100">
-                {token.name}
+                {token.name} {token.domain ? `- ${token.domain}` : ''}
               </span>
             </div>
           </div>

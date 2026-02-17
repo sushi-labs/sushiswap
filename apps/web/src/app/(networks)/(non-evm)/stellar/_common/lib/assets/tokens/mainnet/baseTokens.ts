@@ -42,6 +42,7 @@ export const baseTokens: Token[] = [
     org: 'paxos',
     domain: 'paxos.com',
     decimals: 7,
+    icon: 'https://assets.coingecko.com/coins/images/31212/standard/PYUSD_Token_Logo_2x.png',
   },
   {
     code: 'USDY',
@@ -51,6 +52,7 @@ export const baseTokens: Token[] = [
     org: 'ondo',
     domain: 'ondo.finance',
     decimals: 7,
+    icon: 'https://assets.coingecko.com/coins/images/31700/standard/usdy_(1).png',
   },
   {
     code: 'USTRY',
@@ -60,6 +62,7 @@ export const baseTokens: Token[] = [
     org: 'etherfuse',
     domain: 'etherfuse.com',
     decimals: 7,
+    icon: 'https://assets.coingecko.com/coins/images/52361/standard/-STABLEBOND-06.jpg',
   },
   {
     code: 'CETES',
@@ -69,6 +72,7 @@ export const baseTokens: Token[] = [
     org: 'etherfuse',
     domain: 'etherfuse.com',
     decimals: 7,
+    icon: 'https://assets.coingecko.com/coins/images/37855/standard/cetes.png',
   },
   {
     code: 'SolvBTC',
@@ -78,6 +82,7 @@ export const baseTokens: Token[] = [
     org: 'solv',
     domain: 'solv.finance',
     decimals: 8,
+    icon: 'https://raw.githubusercontent.com/solv-finance/solv-resources/main/SolvBTC/SolvBTC.svg',
   },
   {
     code: 'xSolvBTC',
@@ -87,5 +92,6 @@ export const baseTokens: Token[] = [
     org: 'solv',
     domain: 'solv.finance',
     decimals: 8,
+    icon: 'https://raw.githubusercontent.com/solv-finance/solv-resources/main/xSolvBTC/xSolvBTC.svg',
   },
 ]

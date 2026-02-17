@@ -4,6 +4,9 @@ import type { ConnectWalletButtonProps } from './types'
 
 const ConnectEvmButton = lazy(() => import('./connect-evm-wallet-button'))
 const ConnectSvmButton = lazy(() => import('./connect-svm-wallet-button'))
+const ConnectStellarButton = lazy(
+  () => import('./connect-stellar-wallet-button'),
+)
 
 export function ConnectWalletButton(props: ConnectWalletButtonProps) {
   if (!props.wallet.isAvailable || props.onClick) {
@@ -36,6 +39,8 @@ export function ConnectWalletButton(props: ConnectWalletButtonProps) {
         <ConnectEvmButton {...props} />
       ) : namespace === 'svm' ? (
         <ConnectSvmButton {...props} />
+      ) : namespace === 'stellar' ? (
+        <ConnectStellarButton {...props} />
       ) : null}
     </Suspense>
   )

@@ -2,24 +2,41 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { z } from 'zod'
 import { staticTokens } from '~stellar/_common/lib/assets/token-assets'
-import { IS_FUTURENET } from '~stellar/_common/lib/constants'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 
 const stellarExpertAssetSchema = z.object({
   code: z.string(),
-  issuer: z.string().optional(),
-  contract: z.string().optional(),
-  name: z.string().optional(),
-  org: z.string().optional(),
-  decimals: z.number().optional(),
+  issuer: z.string(),
+  contract: z.string(),
+  name: z.string(),
+  org: z.string(),
+  decimals: z.number(),
   icon: z.string().optional(),
+  domain: z.string().optional(),
 })
 
-const stellarExpertResponseSchema = z.array(stellarExpertAssetSchema)
+const stellarExpertAPIResponseSchema = z.object({
+  name: z.string(),
+  provider: z.string(),
+  description: z.string(),
+  version: z.string(),
+  network: z.string(),
+  feedback: z.string(),
+  assets: z.array(stellarExpertAssetSchema),
+})
 
-const stellarExpertTopTokensApiUrl = IS_FUTURENET
-  ? undefined
-  : 'https://api.stellar.expert/explorer/public/asset-list/top50'
+const stellarExpertTopTokensApiUrl =
+  'https://api.stellar.expert/explorer/public/asset-list/top50'
+
+const OUTDATED_TOKENS = new Set([
+  'AFR|afreum.com', //code|domain
+  'FIDR|fixedidr.com',
+  'FRED|fredenergy.org',
+  'iFIDR|fixedidr.com',
+  'MOBI|mobius.network',
+  'XXA|ixinium.io',
+  'USD|stablecoin.anchorusd.com',
+])
 
 const getStellarExpertAssets = async (): Promise<
   z.infer<typeof stellarExpertAssetSchema>[]
@@ -36,81 +53,42 @@ const getStellarExpertAssets = async (): Promise<
   }
 
   const data = await response.json()
-  const assets: unknown[] = Array.isArray(data)
-    ? data
-    : data &&
-        typeof data === 'object' &&
-        'data' in data &&
-        Array.isArray(data.data)
-      ? data.data
-      : data &&
-          typeof data === 'object' &&
-          'assets' in data &&
-          Array.isArray(data.assets)
-        ? data.assets
-        : []
+  const parsed = stellarExpertAPIResponseSchema.safeParse(data)
+  if (!parsed.success) {
+    console.warn(
+      '[getStellarExpertAssets] Response validation failed, using empty list:',
+      parsed.error,
+    )
+    return []
+  }
 
-  const validAssets = assets.filter(
-    (asset): asset is Record<string, unknown> =>
-      typeof asset === 'object' &&
-      asset !== null &&
-      'code' in asset &&
-      typeof asset.code === 'string',
+  const assets = parsed.data.assets
+  return assets.filter(
+    (i) => i.domain && !OUTDATED_TOKENS.has(`${i.code}|${i.domain}`),
   )
-
-  return stellarExpertResponseSchema.parse(validAssets)
 }
 
-const convertToToken = (
-  asset: z.infer<typeof stellarExpertAssetSchema>,
-): Token | null => {
-  if (
-    !asset.contract ||
-    asset.contract.length === 0 ||
-    asset.decimals === undefined
-  ) {
-    return null
-  }
-
-  return {
-    code: asset.code,
-    issuer: asset.issuer ?? '',
-    contract: asset.contract,
-    name: asset.name ?? '',
-    org: asset.org ?? 'unknown',
-    decimals: asset.decimals,
-    icon: asset.icon,
-  }
-}
-
-const hardcodedTokens: Token[] = staticTokens
-  .filter((token) => token.contract && token.contract.length > 0)
-  .slice(0, 50)
-
-const fetchCommonTokensQueryFn = async (): Promise<Record<string, Token>> => {
+export const fetchCommonTokensQueryFn = async (): Promise<
+  Record<string, Token>
+> => {
   const result: Record<string, Token> = {}
 
   // Always include hardcoded tokens
   // Use uppercase keys for consistency (Stellar addresses are case-insensitive)
-  hardcodedTokens.forEach((token) => {
+  staticTokens.forEach((token) => {
     result[token.contract.toUpperCase()] = token
   })
 
   // Try to add StellarExpert tokens
   try {
     const assets = await getStellarExpertAssets()
-    const stellarTokens = assets
-      .map(convertToToken)
-      .filter((token): token is Token => token !== null)
-      .slice(0, 50)
-
-    stellarTokens.forEach((token) => {
+    assets.forEach((token) => {
       // Use uppercase keys for consistency
       result[token.contract.toUpperCase()] = token
     })
   } catch (error) {
     console.warn(
-      `[useCommonTokens] StellarExpert failed, using ${hardcodedTokens.length} hardcoded tokens only:`,
+      `[useCommonTokens] StellarExpert failed, using ${staticTokens.length} hardcoded tokens only:`,
       error,
     )
   }

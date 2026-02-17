@@ -9,6 +9,7 @@ import {
 } from 'react'
 import { ENABLED_WALLET_NAMESPACES } from '../../config'
 import { useEvmWallets } from '../../namespaces/evm/provider/use-evm-wallets'
+import { useStellarWallets } from '../../namespaces/stellar/provider/use-stellar-wallets'
 import { useSvmWallets } from '../../namespaces/svm/provider/use-svm-wallets'
 import type { WalletNamespace, WalletWithState } from '../../types'
 
@@ -30,6 +31,16 @@ const WALLET_NAMESPACE_LISTENERS: Record<WalletNamespace, React.ComponentType> =
 
       useEffect(() => {
         setWallets('svm', wallets)
+      }, [wallets, setWallets])
+
+      return null
+    },
+    stellar: () => {
+      const wallets = useStellarWallets()
+      const { setWallets } = useWalletsRegistry()
+
+      useEffect(() => {
+        setWallets('stellar', wallets)
       }, [wallets, setWallets])
 
       return null
