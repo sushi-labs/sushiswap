@@ -54,8 +54,10 @@ export const UpdateMarginModeDialog = ({
         </DialogHeader>
         <div className="max-h-[calc(100vh-150px)] overflow-y-auto">
           <div className="flex flex-col gap-4 text-sm">
-            <button
-              type="button"
+            <div
+              onKeyDown={() => {
+                setNewLeverageType('cross')
+              }}
               onClick={() => {
                 setNewLeverageType('cross')
               }}
@@ -77,9 +79,11 @@ export const UpdateMarginModeDialog = ({
                 remaining open positions under assets in this mode may be
                 forfeited.
               </p>
-            </button>
-            <button
-              type="button"
+            </div>
+            <div
+              onKeyDown={() => {
+                setNewLeverageType('isolated')
+              }}
               onClick={() => {
                 setNewLeverageType('isolated')
               }}
@@ -104,7 +108,7 @@ export const UpdateMarginModeDialog = ({
                 Margin can be added or removed to individual positions in this
                 mode.
               </p>
-            </button>
+            </div>
 
             <Button
               onClick={async () => {
