@@ -8,7 +8,7 @@ export const Leverage = () => {
   const {
     state: {
       activeAsset,
-      activeAssetDataQuery: { data: activeAssetData, isLoading },
+      activeAssetDataQuery: { data: activeAssetData, isLoading, isError },
     },
   } = useAssetState()
 
@@ -21,7 +21,7 @@ export const Leverage = () => {
     [activeAssetData?.leverage?.type],
   )
 
-  if (isLoading) {
+  if (isLoading || isError) {
     return (
       <div className="flex items-center gap-2 w-full">
         <Button size="sm" variant="secondary" fullWidth disabled>
