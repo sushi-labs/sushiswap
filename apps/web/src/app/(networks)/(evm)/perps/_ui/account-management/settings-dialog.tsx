@@ -59,6 +59,9 @@ export const SettingsDialog = () => {
               onChange={setOrderBookAnimationDisabled}
               label="Disable Order Book Animation"
             />
+            {/* todo: show buys/sells on chart */}
+            {/* todo: disable unified account mode */}
+            {/* todo: hide pnl? */}
           </div>
         </div>
       </DialogContent>
