@@ -3,7 +3,7 @@ import { useAssetListState } from '~evm/perps/_ui/asset-list-provider'
 import { useUserState } from '~evm/perps/user-provider'
 import { useAccount } from '../wallet'
 
-export const useUserPositions = () => {
+export const useUserPositions = (coin?: string) => {
   const address = useAccount('evm')
   const {
     state: {
@@ -28,7 +28,7 @@ export const useUserPositions = () => {
 
   const formattedData = useMemo(() => {
     if (!data) return []
-    return data.clearinghouseStates.flatMap(([dexName, i]) => {
+    const allData = data.clearinghouseStates.flatMap(([dexName, i]) => {
       return i.assetPositions.map((pos) => {
         const asset = assetList?.get(pos.position.coin)
         const side =
@@ -47,7 +47,9 @@ export const useUserPositions = () => {
         }
       })
     })
-  }, [data, assetList])
+    if (!coin) return allData
+    return allData?.filter((pos) => pos.position.coin === coin)
+  }, [data, assetList, coin])
 
   return useMemo(() => {
     if (!address) {
