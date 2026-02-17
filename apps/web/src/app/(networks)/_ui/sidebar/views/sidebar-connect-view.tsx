@@ -2,12 +2,19 @@
 
 import { ArrowLeftIcon } from '@heroicons/react-v1/solid'
 import { XMarkIcon } from '@heroicons/react/24/solid'
-import { IconButton } from '@sushiswap/ui'
+import {
+  IconButton,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@sushiswap/ui'
 import dynamic from 'next/dynamic'
 import { Suspense, useState } from 'react'
 import {
   DEFAULT_CHAIN_ID_BY_NAMESPACE,
   type WalletWithState,
+  getNameFromNamespace,
 } from 'src/lib/wallet'
 import { Disclaimer } from 'src/lib/wallet/components/disclaimer'
 import { WalletConnectorsListSkeleton } from 'src/lib/wallet/components/wallet-connectors-list/wallet-connectors-list-skeleton'
@@ -35,6 +42,8 @@ type ConnectSubview =
 
 const DefaultSubview = { type: 'main' } as const
 
+const TABS = ['evm', 'svm', 'stellar'] as const
+
 export const SidebarConnectView = () => {
   const { close, context, setView } = useSidebar()
   const {
@@ -44,6 +53,7 @@ export const SidebarConnectView = () => {
   } = context ?? {}
 
   const [subview, setSubview] = useState<ConnectSubview>(DefaultSubview)
+  const [tab, setTab] = useState<(typeof TABS)[number]>('evm')
 
   const onConnect = closeOnConnect ? close : () => setView(DefaultSidebarView)
 
@@ -96,25 +106,70 @@ export const SidebarConnectView = () => {
         />
       </div>
       {subview.type === 'select-namespace' ? (
-        <Suspense fallback={<WalletConnectorsListSkeleton />}>
-          <WalletConnectorsList
-            variant="namespace"
-            onConnect={onConnect}
-            wallets={subview.wallets}
-          />
-        </Suspense>
+        <div className="overflow-y-auto h-[calc(100vh-127px)] sm:h-[calc(100vh-203px)]">
+          <Suspense fallback={<WalletConnectorsListSkeleton />}>
+            <WalletConnectorsList
+              variant="namespace"
+              onConnect={onConnect}
+              wallets={subview.wallets}
+            />
+          </Suspense>
+        </div>
+      ) : namespace ? (
+        <div className="overflow-y-auto h-[calc(100vh-127px)] sm:h-[calc(100vh-203px)]">
+          <Suspense fallback={<WalletConnectorsListSkeleton />}>
+            <WalletConnectorsList
+              namespace={namespace}
+              onConnect={onConnect}
+              onSelectMultiNamespaceWallet={(wallets) =>
+                setSubview({
+                  type: 'select-namespace',
+                  wallets,
+                })
+              }
+            />
+          </Suspense>
+        </div>
       ) : (
         <Suspense fallback={<WalletConnectorsListSkeleton />}>
-          <WalletConnectorsList
-            namespace={namespace}
-            onConnect={onConnect}
-            onSelectMultiNamespaceWallet={(wallets) =>
-              setSubview({
-                type: 'select-namespace',
-                wallets,
-              })
-            }
-          />
+          <Tabs
+            value={tab}
+            onValueChange={(val) => setTab(val as (typeof TABS)[number])}
+            className="w-full"
+          >
+            <div className="flex px-2">
+              <TabsList className="w-full h-8">
+                {TABS.map((_tab) => (
+                  <TabsTrigger
+                    key={_tab}
+                    value={_tab}
+                    className="w-full h-7 text-xs"
+                  >
+                    {getNameFromNamespace(_tab)}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
+
+            {TABS.map((_tab) => (
+              <TabsContent
+                value={_tab}
+                key={`tab-content-${_tab}`}
+                className="overflow-y-auto h-[calc(100vh-165px)] sm:h-[calc(100vh-241px)]"
+              >
+                <WalletConnectorsList
+                  namespace={_tab}
+                  onConnect={onConnect}
+                  onSelectMultiNamespaceWallet={(wallets) =>
+                    setSubview({
+                      type: 'select-namespace',
+                      wallets,
+                    })
+                  }
+                />
+              </TabsContent>
+            ))}
+          </Tabs>
         </Suspense>
       )}
     </div>

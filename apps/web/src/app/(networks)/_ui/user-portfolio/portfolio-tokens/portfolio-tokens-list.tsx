@@ -9,10 +9,12 @@ import {
   isEvmAddress,
   isEvmChainId,
 } from 'sushi/evm'
+import type { StellarChainId } from 'sushi/stellar'
 import {
   type SvmChainId,
   SvmNative,
   SvmToken,
+  isSvmChainId,
   svmAddress,
   svmNativeAddress,
 } from 'sushi/svm'
@@ -21,7 +23,6 @@ import { PortfolioInfoRow } from '../portfolio-info-row'
 interface PortfolioTokensListProps {
   tokens: PortfolioWalletToken[]
 }
-
 const getCurrency = (token: PortfolioWalletToken) => {
   if (isEvmChainId(token.chainId)) {
     if (!isEvmAddress(token.id)) {
@@ -35,16 +36,28 @@ const getCurrency = (token: PortfolioWalletToken) => {
         name: token.name,
       })
     }
-  } else if (token.id === svmNativeAddress) {
-    return SvmNative.fromChainId(token.chainId as SvmChainId)
+  } else if (isSvmChainId(token.chainId)) {
+    if (token.id === svmNativeAddress) {
+      return SvmNative.fromChainId(token.chainId as SvmChainId)
+    } else {
+      return new SvmToken({
+        chainId: token.chainId as SvmChainId,
+        address: svmAddress(token.id),
+        decimals: token.decimals,
+        symbol: token.symbol,
+        name: token.name,
+      })
+    }
   } else {
-    return new SvmToken({
-      chainId: token.chainId as SvmChainId,
-      address: svmAddress(token.id),
-      decimals: token.decimals,
-      symbol: token.symbol,
-      name: token.name,
-    })
+    //stellar token goes here
+    return null
+    // return new StellarToken({
+    //   chainId: token.chainId as StellarChainId,
+    //   address: svmAddress(token.id),
+    //   decimals: token.decimals,
+    //   symbol: token.symbol,
+    //   name: token.name,
+    // })
   }
 }
 
@@ -66,8 +79,14 @@ export function PortfolioTokensList({
         return (
           <PortfolioInfoRow
             key={`${token.chainId}:${token.id}`}
-            chainId={token.chainId as EvmChainId | SvmChainId}
-            icon={<Currency.Icon currency={currency} width={28} height={28} />}
+            chainId={token.chainId as EvmChainId | SvmChainId | StellarChainId}
+            icon={
+              currency ? (
+                <Currency.Icon currency={currency} width={28} height={28} />
+              ) : (
+                <></>
+              )
+            }
             leftContent={
               <React.Fragment>
                 <div className="text-sm font-medium overflow-hidden overflow-ellipsis">

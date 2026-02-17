@@ -1,7 +1,8 @@
+import type { Metadata } from 'next'
 import { Header } from '../header'
 import { Providers } from './providers'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'SushiSwap on Aptos',
   description:
     'SushiSwap is a community-driven decentralized exchange (DEX) for traders and liquidity providers.',
@@ -13,7 +14,7 @@ export default function SwapLayout({
   return (
     <Providers>
       <Header />
-      <main className="lg:p-4 mt-16 mb-[86px] animate-slide">{children}</main>
+      <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
     </Providers>
   )
 }

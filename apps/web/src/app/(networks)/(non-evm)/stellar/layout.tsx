@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import type React from 'react'
+import { WalletProvider } from 'src/lib/wallet'
+import { SidebarProvider } from '../../_ui/sidebar'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
@@ -15,8 +17,12 @@ export default function RootLayout({
   children,
 }: { children: React.ReactNode }) {
   return (
-    <Providers>
-      <div className="flex flex-col h-full w-full">{children}</div>
-    </Providers>
+    <WalletProvider>
+      <Providers>
+        <SidebarProvider>
+          <div className="flex flex-col h-full w-full">{children}</div>
+        </SidebarProvider>
+      </Providers>
+    </WalletProvider>
   )
 }
