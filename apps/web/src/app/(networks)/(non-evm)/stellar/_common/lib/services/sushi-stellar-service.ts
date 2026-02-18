@@ -17,99 +17,103 @@ export class SushiStellarService {
    * Automatically increases liquidity on existing position or creates new one
    */
   async addLiquidity(
-    userAddress: string,
-    params: AddLiquidityParams,
-    signTransaction: (xdr: string) => Promise<string>,
-    signAuthEntry: (entryPreimageXdr: string) => Promise<string>,
+    _userAddress: string,
+    _params: AddLiquidityParams,
+    _signTransaction: (xdr: string) => Promise<string>,
+    _signAuthEntry: (entryPreimageXdr: string) => Promise<string>,
   ): Promise<{ txHash: string; tokenId: number; liquidity: bigint }> {
-    // Convert string amounts to bigint
-    const amount0 = BigInt(
-      Math.floor(
-        Number.parseFloat(params.token0Amount) * 10 ** params.token0Decimals,
-      ),
-    )
-    const amount1 = BigInt(
-      Math.floor(
-        Number.parseFloat(params.token1Amount) * 10 ** params.token1Decimals,
-      ),
+    throw new Error(
+      'Adding liquidity is currently disabled for maintenance. Please check back later.',
     )
 
-    const deadline = BigInt(
-      params.deadline || Math.floor(addMinutes(new Date(), 5).valueOf() / 1000),
-    )
+    // // Convert string amounts to bigint
+    // const amount0 = BigInt(
+    //   Math.floor(
+    //     Number.parseFloat(params.token0Amount) * 10 ** params.token0Decimals,
+    //   ),
+    // )
+    // const amount1 = BigInt(
+    //   Math.floor(
+    //     Number.parseFloat(params.token1Amount) * 10 ** params.token1Decimals,
+    //   ),
+    // )
 
-    // Always fetch pool info from contract (no more dynamic import needed)
-    const poolConfig = await getPoolInfoFromContract(params.poolAddress)
-    if (!poolConfig) {
-      throw new Error('Pool config not found')
-    }
+    // const deadline = BigInt(
+    //   params.deadline || Math.floor(addMinutes(new Date(), 5).valueOf() / 1000),
+    // )
 
-    // Check if user has existing position for this pool with same tick range
+    // // Always fetch pool info from contract (no more dynamic import needed)
+    // const poolConfig = await getPoolInfoFromContract(params.poolAddress)
+    // if (!poolConfig) {
+    //   throw new Error('Pool config not found')
+    // }
 
-    // Fetch user positions
-    const positions = await positionService.getUserPositionsWithFees({
-      userAddress,
-    })
+    // // Check if user has existing position for this pool with same tick range
 
-    // Find position with matching pool tokens, tick range, AND fee tier
-    const existingPosition = positions.find((pos) => {
-      const tokensMatch =
-        (pos.token0 === poolConfig.token0.contract &&
-          pos.token1 === poolConfig.token1.contract) ||
-        (pos.token0 === poolConfig.token1.contract &&
-          pos.token1 === poolConfig.token0.contract)
+    // // Fetch user positions
+    // const positions = await positionService.getUserPositionsWithFees({
+    //   userAddress,
+    // })
 
-      const ticksMatch =
-        pos.tickLower === params.tickLower && pos.tickUpper === params.tickUpper
+    // // Find position with matching pool tokens, tick range, AND fee tier
+    // const existingPosition = positions.find((pos) => {
+    //   const tokensMatch =
+    //     (pos.token0 === poolConfig.token0.contract &&
+    //       pos.token1 === poolConfig.token1.contract) ||
+    //     (pos.token0 === poolConfig.token1.contract &&
+    //       pos.token1 === poolConfig.token0.contract)
 
-      const feeMatches = pos.fee === poolConfig.fee
+    //   const ticksMatch =
+    //     pos.tickLower === params.tickLower && pos.tickUpper === params.tickUpper
 
-      return tokensMatch && ticksMatch && feeMatches
-    })
+    //   const feeMatches = pos.fee === poolConfig.fee
 
-    if (existingPosition) {
-      // Increase liquidity on existing position - NO try/catch here!
-      const result = await increaseLiquidity({
-        tokenId: existingPosition.tokenId,
-        amount0Desired: amount0,
-        amount1Desired: amount1,
-        amount0Min: BigInt(0),
-        amount1Min: BigInt(0),
-        deadline,
-        operator: userAddress,
-        sourceAccount: userAddress,
-        signTransaction,
-        signAuthEntry,
-      })
+    //   return tokensMatch && ticksMatch && feeMatches
+    // })
 
-      return {
-        txHash: result.hash,
-        tokenId: existingPosition.tokenId,
-        liquidity: result.liquidity,
-      }
-    }
+    // if (existingPosition) {
+    //   // Increase liquidity on existing position - NO try/catch here!
+    //   const result = await increaseLiquidity({
+    //     tokenId: existingPosition.tokenId,
+    //     amount0Desired: amount0,
+    //     amount1Desired: amount1,
+    //     amount0Min: BigInt(0),
+    //     amount1Min: BigInt(0),
+    //     deadline,
+    //     operator: userAddress,
+    //     sourceAccount: userAddress,
+    //     signTransaction,
+    //     signAuthEntry,
+    //   })
 
-    // No existing position found - mint new one
-    const result = await mintPosition({
-      poolAddress: params.poolAddress,
-      recipient: params.recipient || userAddress,
-      tickLower: params.tickLower,
-      tickUpper: params.tickUpper,
-      amount0Desired: amount0,
-      amount1Desired: amount1,
-      amount0Min: BigInt(0),
-      amount1Min: BigInt(0),
-      deadline,
-      sourceAccount: userAddress,
-      signTransaction,
-      signAuthEntry,
-    })
+    //   return {
+    //     txHash: result.hash,
+    //     tokenId: existingPosition.tokenId,
+    //     liquidity: result.liquidity,
+    //   }
+    // }
 
-    return {
-      txHash: result.hash,
-      tokenId: result.tokenId,
-      liquidity: result.liquidity,
-    }
+    // // No existing position found - mint new one
+    // const result = await mintPosition({
+    //   poolAddress: params.poolAddress,
+    //   recipient: params.recipient || userAddress,
+    //   tickLower: params.tickLower,
+    //   tickUpper: params.tickUpper,
+    //   amount0Desired: amount0,
+    //   amount1Desired: amount1,
+    //   amount0Min: BigInt(0),
+    //   amount1Min: BigInt(0),
+    //   deadline,
+    //   sourceAccount: userAddress,
+    //   signTransaction,
+    //   signAuthEntry,
+    // })
+
+    // return {
+    //   txHash: result.hash,
+    //   tokenId: result.tokenId,
+    //   liquidity: result.liquidity,
+    // }
   }
 }
 
