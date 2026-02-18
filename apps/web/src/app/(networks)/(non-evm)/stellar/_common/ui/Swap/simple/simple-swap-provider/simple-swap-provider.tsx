@@ -9,6 +9,10 @@ import {
   useMemo,
   useReducer,
 } from 'react'
+import {
+  USDC,
+  XLM,
+} from '~stellar/_common/lib/assets/tokens/mainnet/baseTokens'
 import { getBaseTokens } from '~stellar/_common/lib/soroban/token-helpers'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 
@@ -17,8 +21,8 @@ interface SimpleSwapProvider {
 }
 
 type State = {
-  token0: Token
-  token1: Token
+  token0: Token | undefined
+  token1: Token | undefined
   amount: string | null
   slippageAmount: number
   outputAmount: bigint
@@ -71,8 +75,8 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
       case 'swapTokens':
         return {
           ...state,
-          token0: state.token1,
-          token1: state.token0,
+          token0: state?.token1,
+          token1: state?.token0,
           amount: '',
         }
       case 'setAmount':
@@ -101,7 +105,7 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
 
   const [internalState, dispatch] = useReducer(reducer, {
     token0: baseTokens[0],
-    token1: baseTokens[1],
+    token1: undefined,
     amount: '',
     slippageAmount: 0,
     outputAmount: 0n,
@@ -118,7 +122,7 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
 
   const setToken0 = useCallback(
     (token0: Token) => {
-      if (state.token1.contract === token0.contract) {
+      if (state?.token1?.contract === token0.contract) {
         dispatch({ type: 'swapTokens' })
       } else {
         dispatch({ type: 'setToken0', value: token0 as Token })
@@ -129,7 +133,7 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
 
   const setToken1 = useCallback(
     (token1: Token) => {
-      if (state.token0.contract === token1.contract) {
+      if (state?.token0?.contract === token1.contract) {
         dispatch({ type: 'swapTokens' })
       } else {
         dispatch({ type: 'setToken1', value: token1 as Token })
@@ -195,4 +199,22 @@ export const useSimpleSwapActions = () => {
     throw new Error('Hook can only be used inside SimpleSwapActionsContext')
   }
   return context
+}
+
+export const useIsDisabledPair = () => {
+  const { token0, token1 } = useSimpleSwapState()
+  return useMemo(() => {
+    if (
+      token0?.contract.toLowerCase() === XLM.contract.toLowerCase() &&
+      token1?.contract.toLowerCase() === USDC.contract.toLowerCase()
+    ) {
+      return true
+    } else if (
+      token0?.contract.toLowerCase() === USDC.contract.toLowerCase() &&
+      token1?.contract.toLowerCase() === XLM.contract.toLowerCase()
+    ) {
+      return true
+    }
+    return false
+  }, [token0, token1])
 }

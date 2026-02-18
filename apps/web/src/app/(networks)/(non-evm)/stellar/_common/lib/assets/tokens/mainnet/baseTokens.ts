@@ -1,29 +1,32 @@
 import { CONTRACT_ADDRESSES } from '~stellar/_common/lib/soroban/contracts/mainnet/contract-addresses'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 
+export const XLM = {
+  code: 'XLM',
+  issuer: 'GDMTVHLWJTHSUDMZVVMXXH6VJHA2ZV3HNG5LYNAZ6RTWB7GISM6PGTUV',
+  contract: CONTRACT_ADDRESSES.TOKENS.XLM,
+  name: 'XLM',
+  org: 'stellar',
+  domain: 'stellar.org',
+  icon: 'https://assets.coingecko.com/coins/images/100/large/Stellar_symbol_black_RGB.png',
+  decimals: 7,
+}
+export const USDC = {
+  code: 'USDC',
+  issuer: 'GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN',
+  contract: 'CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75',
+  name: 'USDC',
+  org: 'centre',
+  domain: 'centre.io',
+  icon: 'https://stellar.myfilebase.com/ipfs/QmNcfZxs8e9uVyhEa3xoPWCsj3ZogGirtixMEC9Km4Fjm2',
+  decimals: 7,
+  isStable: true,
+}
+
 // These are MAINNET tokens
 export const baseTokens: Token[] = [
-  {
-    code: 'XLM',
-    issuer: 'GDMTVHLWJTHSUDMZVVMXXH6VJHA2ZV3HNG5LYNAZ6RTWB7GISM6PGTUV',
-    contract: CONTRACT_ADDRESSES.TOKENS.XLM,
-    name: 'XLM',
-    org: 'stellar',
-    domain: 'stellar.org',
-    icon: 'https://assets.coingecko.com/coins/images/100/large/Stellar_symbol_black_RGB.png',
-    decimals: 7,
-  },
-  {
-    code: 'USDC',
-    issuer: 'GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN',
-    contract: 'CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75',
-    name: 'USDC',
-    org: 'centre',
-    domain: 'centre.io',
-    icon: 'https://stellar.myfilebase.com/ipfs/QmNcfZxs8e9uVyhEa3xoPWCsj3ZogGirtixMEC9Km4Fjm2',
-    decimals: 7,
-    isStable: true,
-  },
+  XLM,
+  USDC,
   {
     code: 'EURC',
     issuer: 'GDHU6WRG4IEQXM5NZ4BMPKOXHW76MZM4Y2IEMFDVXBSDP6SJY4ITNPP2',

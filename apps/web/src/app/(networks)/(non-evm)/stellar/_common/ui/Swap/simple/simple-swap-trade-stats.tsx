@@ -11,6 +11,7 @@ import { useSimpleSwapState } from './simple-swap-provider/simple-swap-provider'
 
 export const SimpleSwapTradeStats = () => {
   const {
+    token0,
     token1,
     amount,
     isLoadingPrice,
@@ -26,23 +27,26 @@ export const SimpleSwapTradeStats = () => {
   const loading =
     Boolean(isLoadingPrice && Number(amount) > 0) || isPriceFetching
 
-  const outputSwapTokenAmount = outputAmount
-    ? (Number(outputAmount) / 10 ** token1.decimals).toFixed(6)
-    : null
+  const outputSwapTokenAmount =
+    outputAmount && token1
+      ? (Number(outputAmount) / 10 ** token1?.decimals).toFixed(6)
+      : null
 
   // Calculate minimum received with slippage
-  const minReceivedAmount = outputAmount
-    ? (() => {
-        const slippagePercent = parseSlippageTolerance(slippageTolerance)
-        const slippageBps = Math.floor(slippagePercent * 100)
-        const minAmount = (outputAmount * BigInt(10000 - slippageBps)) / 10000n
-        return (Number(minAmount) / 10 ** token1.decimals).toFixed(6)
-      })()
-    : null
+  const minReceivedAmount =
+    outputAmount && token1
+      ? (() => {
+          const slippagePercent = parseSlippageTolerance(slippageTolerance)
+          const slippageBps = Math.floor(slippagePercent * 100)
+          const minAmount =
+            (outputAmount * BigInt(10000 - slippageBps)) / 10000n
+          return (Number(minAmount) / 10 ** token1.decimals).toFixed(6)
+        })()
+      : null
 
   return (
     <Transition
-      show={Number(amount) > 0}
+      show={Number(amount) > 0 && Boolean(token0) && Boolean(token1)}
       enter="transition duration-300 ease-out"
       enterFrom="transform translate-y-[16px] opacity-0"
       enterTo="transform translate-y-0 opacity-100"
@@ -83,7 +87,7 @@ export const SimpleSwapTradeStats = () => {
             {loading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : outputSwapTokenAmount ? (
-              `${outputSwapTokenAmount} ${token1.code}`
+              `${outputSwapTokenAmount} ${token1?.code}`
             ) : (
               '0.00'
             )}
@@ -97,7 +101,7 @@ export const SimpleSwapTradeStats = () => {
             {loading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : minReceivedAmount ? (
-              `${minReceivedAmount} ${token1.code}`
+              `${minReceivedAmount} ${token1?.code}`
             ) : (
               '0.00'
             )}

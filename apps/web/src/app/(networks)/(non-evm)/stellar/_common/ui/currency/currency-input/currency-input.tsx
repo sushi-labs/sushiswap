@@ -13,7 +13,7 @@ import { CurrencyInputPricePanel } from './currency-input-price-panel'
 type CurrencyInput = {
   id: string
   type: 'INPUT' | 'OUTPUT'
-  token: Token
+  token: Token | undefined
   value: string
   onChange?: (value: string) => void
   onSelect?: (token: Token) => void
@@ -42,7 +42,7 @@ export function CurrencyInput({
 
   const { data: balance, isLoading: isBalanceLoading } = useTokenBalance(
     connectedAddress,
-    token.contract,
+    token?.contract ?? null,
   )
 
   const onUserInput = useCallback(
@@ -55,15 +55,15 @@ export function CurrencyInput({
   )
 
   useEffect(() => {
-    if (typeof balance !== 'undefined') {
+    if (typeof balance !== 'undefined' && token) {
       const priceEst =
-        Number(balance) / 10 ** token.decimals < Number.parseFloat(value)
+        Number(balance) / 10 ** token?.decimals < Number.parseFloat(value)
       setInsufficientBalance(priceEst)
     }
   }, [balance, value, token])
 
   const balanceClick = () => {
-    if (balance) {
+    if (balance && token) {
       onUserInput(String(Number(balance) / 10 ** token.decimals))
     } else {
       onUserInput('0')
@@ -140,7 +140,7 @@ export function CurrencyInput({
                   <SelectIcon />
                 </>
               ) : (
-                'Select'
+                'Select Token'
               )}
             </Button>
           </TokenSelector>
@@ -175,7 +175,7 @@ export function CurrencyInput({
         <CurrencyInputBalancePanel
           coinData={balance ?? 0n}
           isLoading={isBalanceLoading}
-          decimals={token?.decimals}
+          decimals={token?.decimals ?? 7}
           onClick={balanceClick}
           type={type}
         />

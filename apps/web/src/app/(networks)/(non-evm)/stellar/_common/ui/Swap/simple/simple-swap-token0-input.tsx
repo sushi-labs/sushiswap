@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useBestRoute } from '~stellar/swap/lib/hooks'
 
 import {
@@ -21,7 +21,7 @@ export const SimpleSwapToken0Input = () => {
 
   // Parse amount to bigint
   const amountIn = useMemo(() => {
-    if (!amount || Number(amount) <= 0) return 0n
+    if (!amount || Number(amount) <= 0 || !token0) return 0n
     try {
       const [integer = '0', fraction = ''] = amount.split('.')
       const normalizedFraction = fraction
@@ -33,7 +33,7 @@ export const SimpleSwapToken0Input = () => {
     } catch {
       return 0n
     }
-  }, [amount, token0.decimals])
+  }, [amount, token0])
 
   const {
     route,
@@ -41,8 +41,8 @@ export const SimpleSwapToken0Input = () => {
     isError: isQuoteError,
     error: quoteError,
   } = useBestRoute({
-    tokenIn: token0,
-    tokenOut: token1,
+    tokenIn: token0 ?? null,
+    tokenOut: token1 ?? null,
     amountIn,
   })
 

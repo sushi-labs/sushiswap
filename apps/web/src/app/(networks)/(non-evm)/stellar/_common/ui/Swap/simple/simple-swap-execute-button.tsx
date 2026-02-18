@@ -20,6 +20,7 @@ import { CreateTrustlineButton } from '~stellar/_common/ui/Trustline/CreateTrust
 import { Checker as StellarChecker } from '~stellar/_common/ui/checker'
 import { useBestRoute } from '~stellar/swap/lib/hooks'
 import {
+  useIsDisabledPair,
   useSimpleSwapActions,
   useSimpleSwapState,
 } from './simple-swap-provider/simple-swap-provider'
@@ -30,6 +31,7 @@ export const SimpleSwapExecuteButton = () => {
     useSimpleSwapState()
   const { setAmount, setOutputAmount, setSlippageAmount, setPriceImpact } =
     useSimpleSwapActions()
+  const isDisabledPair = useIsDisabledPair()
   const executeSwap = useExecuteSwap()
   const executeMultiHopSwap = useExecuteMultiHopSwap()
   const [checked, setChecked] = useState<boolean>(false)
@@ -74,8 +76,8 @@ export const SimpleSwapExecuteButton = () => {
     isPending: isRoutePending,
     isFetching: isRouteFetching,
   } = useBestRoute({
-    tokenIn: token0,
-    tokenOut: token1,
+    tokenIn: token0 ?? null,
+    tokenOut: token1 ?? null,
     amountIn,
   })
 
@@ -202,10 +204,17 @@ export const SimpleSwapExecuteButton = () => {
     executeSwap.isPending ||
     executeMultiHopSwap.isPending ||
     needsToken1Trustline ||
-    (showPriceImpactWarning && !checked)
+    (showPriceImpactWarning && !checked) ||
+    isDisabledPair
 
   // Determine button text
   const buttonText = useMemo(() => {
+    if (isDisabledPair) {
+      return 'XLM/USDC temporarily unavailable'
+    }
+    if (!token0 || !token1) {
+      return 'Swap'
+    }
     if (executeSwap.isPending || executeMultiHopSwap.isPending) {
       return 'Executing Swap...'
     }
@@ -242,6 +251,9 @@ export const SimpleSwapExecuteButton = () => {
     outputAmount,
     isRoutePending,
     isRouteFetching,
+    token0,
+    token1,
+    isDisabledPair,
   ])
 
   return (
