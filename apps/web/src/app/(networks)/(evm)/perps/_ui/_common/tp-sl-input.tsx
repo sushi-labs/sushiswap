@@ -59,9 +59,11 @@ export const TpSlInput = ({
     percent: '',
   })
 
+  const needsPositionSize = Number(positionSize) === 0 && type === 'usd'
+
   const onChangeGain = useCallback(
     (value: string) => {
-      if (!value) {
+      if (!value || needsPositionSize) {
         onChangeTpPrice('')
         setGain({ usd: '', percent: '' })
         return
@@ -91,12 +93,13 @@ export const TpSlInput = ({
       asset,
       positionLeverage,
       side,
+      needsPositionSize,
     ],
   )
 
   const _onChangeTpPrice = useCallback(
     (value: string) => {
-      if (!value) {
+      if (!value || needsPositionSize) {
         onChangeTpPrice('')
         setGain({ usd: '', percent: '' })
         return
@@ -115,12 +118,20 @@ export const TpSlInput = ({
       onChangeTpPrice(formatPrice(value, decimals, asset?.marketType || 'perp'))
       setGain({ usd: gainUsd, percent: gainPercent })
     },
-    [entryPrice, onChangeTpPrice, positionSize, asset, positionLeverage, side],
+    [
+      entryPrice,
+      onChangeTpPrice,
+      positionSize,
+      asset,
+      positionLeverage,
+      side,
+      needsPositionSize,
+    ],
   )
 
   const onChangeLoss = useCallback(
     (value: string) => {
-      if (!value) {
+      if (!value || needsPositionSize) {
         onChangeSlPrice('')
         setLoss({ usd: '', percent: '' })
         return
@@ -150,12 +161,13 @@ export const TpSlInput = ({
       asset,
       positionLeverage,
       side,
+      needsPositionSize,
     ],
   )
 
   const _onChangeSlPrice = useCallback(
     (value: string) => {
-      if (!value) {
+      if (!value || needsPositionSize) {
         onChangeSlPrice('')
         setLoss({ usd: '', percent: '' })
         return
@@ -174,21 +186,37 @@ export const TpSlInput = ({
       onChangeSlPrice(formatPrice(value, decimals, asset?.marketType || 'perp'))
       setLoss({ usd: lossUsd, percent: lossPercent })
     },
-    [entryPrice, onChangeSlPrice, positionSize, asset, positionLeverage, side],
+    [
+      entryPrice,
+      onChangeSlPrice,
+      positionSize,
+      asset,
+      positionLeverage,
+      side,
+      needsPositionSize,
+    ],
   )
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: if positionSize changes externally (ex: user edits position size in another dialog input), need to recalculate gain/loss based on new position size
   useEffect(() => {
+    if (needsPositionSize) return
     if (Number.parseFloat(positionSize) > 0) {
       onChangeGain(type === 'usd' ? gain.usd : gain.percent)
     }
     if (Number.parseFloat(positionSize) > 0) {
       onChangeLoss(type === 'usd' ? loss.usd : loss.percent)
     }
-  }, [positionSize])
+  }, [positionSize, needsPositionSize])
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 relative">
+      {needsPositionSize ? (
+        <div className="absolute inset-0 backdrop-blur-sm z-10 select-none flex items-center justify-center rounded-md">
+          <p className="text-red font-medium text-xs italic text-center">
+            Enter position size to set TP/SL in USD
+          </p>
+        </div>
+      ) : null}
       {/* take profit */}
       {hideTp ? null : (
         <div className="flex flex-col gap-2">

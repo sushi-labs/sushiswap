@@ -12,15 +12,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <CheckerProvider>
       <AssetListProvider>
-        <AssetStateProvider>
-          <AssetSelectorStateProvider>
-            <TradeTablesProvider>
-              <UserProvider>
+        <AssetSelectorStateProvider>
+          <TradeTablesProvider>
+            <UserProvider>
+              <AssetStateProvider>
                 <UserSettingsProvider>{children}</UserSettingsProvider>
-              </UserProvider>
-            </TradeTablesProvider>
-          </AssetSelectorStateProvider>
-        </AssetStateProvider>
+              </AssetStateProvider>
+            </UserProvider>
+          </TradeTablesProvider>
+        </AssetSelectorStateProvider>
       </AssetListProvider>
     </CheckerProvider>
   )

@@ -11,6 +11,7 @@ import {
 import type { TimeInForceType } from 'src/lib/perps/exchange/use-execute-orders'
 import { useActiveAssetData } from 'src/lib/perps/subscription/use-active-asset-data'
 import type { PerpOrSpotAsset } from 'src/lib/perps/subscription/use-asset-list'
+import { useUserPositions } from 'src/lib/perps/use-user-positions'
 import { useAccount } from 'src/lib/wallet'
 import { useAssetListState } from '../asset-selector/asset-list-provider'
 interface State {
@@ -82,7 +83,7 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
   )
   const [tradeType, _setTradeType] = useState<TradeType>('market')
   const [tradeSide, _setTradeSide] = useState<TradeSideType>('long')
-  const [reduceOnly, setReduceOnly] = useState(false)
+  const [reduceOnly, _setReduceOnly] = useState(false)
   const [size, setSize] = useState({ base: '', quote: '' })
   const [sizeSide, setSizeSide] = useState<'base' | 'quote'>('base')
   const [limitPrice, setLimitPrice] = useState('')
@@ -103,6 +104,7 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     address,
     assetString: activeAsset,
   })
+  const { data: openPosition } = useUserPositions(activeAsset)
 
   const asset = useMemo(() => {
     if (!assetList || !activeAsset) return undefined
@@ -119,8 +121,18 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
   )
 
   const maxTradeSize = useMemo(() => {
+    if (reduceOnly && openPosition && openPosition.length > 0) {
+      const pos = openPosition?.[0]
+      const side = pos.side
+      const positionSize = Math.abs(Number.parseFloat(pos.position.szi))
+      return tradeSide === 'short' && side === 'B'
+        ? positionSize.toString()
+        : tradeSide === 'long' && side === 'A'
+          ? positionSize.toString()
+          : '0'
+    }
     return tradeSide === 'long' ? maxTradeSizeLong : maxTradeSizeShort
-  }, [tradeSide, maxTradeSizeLong, maxTradeSizeShort])
+  }, [tradeSide, maxTradeSizeLong, maxTradeSizeShort, reduceOnly, openPosition])
 
   const markPrice = useMemo(
     () => activeAssetDataQuery?.data?.markPx || '0',
@@ -132,13 +144,30 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     [activeAssetDataQuery?.data?.leverage?.value],
   )
 
-  const setHasTpSl = useCallback((hasTpSl: boolean) => {
-    _setHasTpSl(hasTpSl)
-    if (!hasTpSl) {
+  const setReduceOnly = useCallback((reduceOnly: boolean) => {
+    _setReduceOnly(reduceOnly)
+    if (reduceOnly) {
+      setHasTpSl(false)
       setTpPrice('')
       setSlPrice('')
+      setPercentage(0)
+      setSize({ base: '', quote: '' })
     }
   }, [])
+
+  const setHasTpSl = useCallback(
+    (hasTpSl: boolean) => {
+      _setHasTpSl(hasTpSl)
+      if (hasTpSl) {
+        setReduceOnly(false)
+        setTpPrice('')
+        setSlPrice('')
+        setPercentage(0)
+        setSize({ base: '', quote: '' })
+      }
+    },
+    [setReduceOnly],
+  )
 
   const resetValues = useCallback(() => {
     setSize({ base: '', quote: '' })
@@ -147,7 +176,7 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     setTpPrice('')
     setSlPrice('')
     setHasTpSl(false)
-  }, [setHasTpSl])
+  }, [setHasTpSl, setReduceOnly])
 
   const setTradeType = useCallback(
     (tradeType: TradeType) => {
@@ -229,6 +258,7 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
         slPrice,
         hasTpSl,
         setHasTpSl,
+        setReduceOnly,
       ])}
     >
       {children}

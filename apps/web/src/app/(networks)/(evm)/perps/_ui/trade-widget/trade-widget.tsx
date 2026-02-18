@@ -1,10 +1,9 @@
 import { Card, classNames } from '@sushiswap/ui'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { PerpsChecker } from '../perps-checker'
 import { AvailableToTrade } from './available-to-trade'
 import { CurrentPosition } from './current-position'
 import { Leverage } from './leverage'
 import { OrderForms } from './order-forms/order-forms'
+import { PlaceOrder } from './place-order'
 import { TradeSideSelect } from './trade-side-select'
 import { TradeTypeSelect } from './trade-type-select'
 
@@ -22,25 +21,9 @@ export const TradeWidget = ({ className }: { className?: string }) => (
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <Test />
+        <PlaceOrder />
         <div>details</div>
       </div>
     </div>
   </Card>
 )
-
-const Test = () => {
-  return (
-    <Checker.Connect size="default" namespace="evm">
-      <PerpsChecker.Legal size="default">
-        <PerpsChecker.Deposit size="default">
-          <PerpsChecker.EnableTrading size="default">
-            <PerpsChecker.BuilderFee size="default">
-              <div>todo - testing checkers atm</div>
-            </PerpsChecker.BuilderFee>
-          </PerpsChecker.EnableTrading>
-        </PerpsChecker.Deposit>
-      </PerpsChecker.Legal>
-    </Checker.Connect>
-  )
-}
