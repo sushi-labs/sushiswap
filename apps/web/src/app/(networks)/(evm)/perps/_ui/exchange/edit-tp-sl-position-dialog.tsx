@@ -17,6 +17,7 @@ import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
 import { useUserOpenOrders } from 'src/lib/perps/use-user-open-orders'
 import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'
 import {
+  type TpSlGainLossType,
   calculateGainFromTp,
   calculateLossFromSl,
   getExistingPositionTpSlOrders,
@@ -45,6 +46,8 @@ export const EditTpSlPositionDialog = ({
   const [hasLimitPrice, setHasLimitPrice] = useState(false)
   const [tpLimitPrice, setTpLimitPrice] = useState<string>('')
   const [slLimitPrice, setSlLimitPrice] = useState<string>('')
+  const [type, setType] = useState<TpSlGainLossType>('percent')
+
   const { data: openOrders } = useUserOpenOrders({
     coin: positionToClose?.position?.coin,
   })
@@ -376,6 +379,8 @@ export const EditTpSlPositionDialog = ({
               showExpectedProfit={true}
               hideSl={Boolean(existingSlOrder)}
               hideTp={Boolean(existingTpOrder)}
+              type={type}
+              setType={setType}
             />
             {Boolean(existingSlOrder) && Boolean(existingTpOrder) ? null : (
               <>

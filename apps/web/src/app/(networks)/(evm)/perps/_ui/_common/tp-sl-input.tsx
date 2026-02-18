@@ -18,11 +18,14 @@ export const TpSlInput = ({
   onChangeTpPrice,
   onChangeSlPrice,
   side,
+  type,
+  setType,
   positionSize,
   positionLeverage,
   showExpectedProfit,
   hideTp,
   hideSl,
+  inputSize = 'default',
 }: {
   asset: PerpOrSpotAsset | undefined
   entryPrice: string
@@ -31,11 +34,14 @@ export const TpSlInput = ({
   onChangeTpPrice: (value: string) => void
   onChangeSlPrice: (value: string) => void
   side: 'A' | 'B'
+  type: TpSlGainLossType
+  setType: (type: TpSlGainLossType) => void
   positionSize: string
   positionLeverage: number
   showExpectedProfit?: boolean
   hideTp?: boolean
   hideSl?: boolean
+  inputSize?: 'default' | 'sm'
 }) => {
   const [gain, setGain] = useState<{
     usd: string
@@ -44,7 +50,7 @@ export const TpSlInput = ({
     usd: '',
     percent: '',
   })
-  const [type, setType] = useState<TpSlGainLossType>('percent')
+
   const [loss, setLoss] = useState<{
     usd: string
     percent: string
@@ -187,7 +193,9 @@ export const TpSlInput = ({
       {hideTp ? null : (
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-2">
-            <div className="w-full border rounded-lg border-accent px-4 py-2 dark:bg-slate-700 bg-slate-50">
+            <div
+              className={`w-full border rounded-lg border-accent dark:bg-slate-700 bg-slate-50 ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
+            >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-muted-foreground whitespace-nowrap">
                   TP Price
@@ -201,12 +209,17 @@ export const TpSlInput = ({
                     value={tpPrice}
                     readOnly={!asset}
                     maxDecimals={asset?.decimals}
-                    className={classNames('!text-lg font-medium text-right')}
+                    className={classNames(
+                      'font-medium text-right',
+                      inputSize === 'sm' ? '!text-sm' : '!text-lg',
+                    )}
                   />
                 </div>
               </div>
             </div>
-            <div className="w-full border rounded-lg border-accent px-4 py-2 dark:bg-slate-700 bg-slate-50">
+            <div
+              className={`w-full border rounded-lg border-accent dark:bg-slate-700 bg-slate-50 ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
+            >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-muted-foreground">Gain</p>
                 <div className="flex items-center gap-1">
@@ -217,7 +230,10 @@ export const TpSlInput = ({
                     value={type === 'usd' ? gain.usd : gain.percent}
                     maxDecimals={type === 'usd' ? 0 : 2}
                     disabled={!asset}
-                    className={classNames('!text-lg font-medium text-right')}
+                    className={classNames(
+                      'font-medium text-right',
+                      inputSize === 'sm' ? '!text-sm' : '!text-lg',
+                    )}
                   />
                   <TypeToggle type={type} setType={setType} />
                 </div>
@@ -237,7 +253,9 @@ export const TpSlInput = ({
       {hideSl ? null : (
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-2">
-            <div className="w-full border rounded-lg border-accent px-4 py-2 dark:bg-slate-700 bg-slate-50">
+            <div
+              className={`w-full border rounded-lg border-accent dark:bg-slate-700 bg-slate-50 ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
+            >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-muted-foreground whitespace-nowrap">
                   SL Price
@@ -251,12 +269,17 @@ export const TpSlInput = ({
                     value={slPrice}
                     readOnly={!asset}
                     maxDecimals={asset?.decimals}
-                    className={classNames('!text-lg font-medium text-right')}
+                    className={classNames(
+                      'font-medium text-right',
+                      inputSize === 'sm' ? '!text-sm' : '!text-lg',
+                    )}
                   />
                 </div>
               </div>
             </div>
-            <div className="w-full border rounded-lg border-accent px-4 py-2 dark:bg-slate-700 bg-slate-50">
+            <div
+              className={`w-full border rounded-lg border-accent dark:bg-slate-700 bg-slate-50 ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
+            >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-muted-foreground">Loss</p>
                 <div className="flex items-center gap-1">
@@ -267,7 +290,10 @@ export const TpSlInput = ({
                     value={type === 'usd' ? loss.usd : loss.percent}
                     maxDecimals={type === 'usd' ? 0 : 2}
                     disabled={!asset}
-                    className={classNames('!text-lg font-medium text-right')}
+                    className={classNames(
+                      'font-medium text-right',
+                      inputSize === 'sm' ? '!text-sm' : '!text-lg',
+                    )}
                   />
                   <TypeToggle type={type} setType={setType} />
                 </div>

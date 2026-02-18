@@ -1,4 +1,4 @@
-import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
+import { formatPrice } from '@nktkas/hyperliquid/utils'
 import {
   Button,
   Dialog,
@@ -8,19 +8,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@sushiswap/ui'
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
 import { useExecuteOrders } from 'src/lib/perps/exchange/use-execute-orders'
 import { useMidPrice } from 'src/lib/perps/use-mid-price'
 import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'
-import { currencyFormatter, getTextColorClass } from 'src/lib/perps/utils'
+import {
+  currencyFormatter,
+  getSizeAndPercentageFromInput,
+  getSizeAndPercentageFromPercentageInput,
+  getTextColorClass,
+} from 'src/lib/perps/utils'
 import { formatUnits, parseUnits } from 'viem'
 import { LimitInput } from '../_common/limit-input'
 import { PercentageSlider } from '../_common/percentage-slider'
@@ -40,11 +38,10 @@ export const LimitCloseDialog = ({
     base: string
     quote: string
   }>({
-    base: '0',
+    base: positionToClose?.position?.szi?.split('-')?.[1] ?? '0',
     quote: '0',
   })
   const [limitPriceToCloseAt, setLimitPriceToCloseAt] = useState<string>('')
-  const changeInputRef = useRef<'slider' | 'input'>('slider')
   const { executeOrdersAsync, isPending } = useExecuteOrders()
   const {
     state: {
@@ -72,112 +69,83 @@ export const LimitCloseDialog = ({
     return _asset
   }, [assetListData, positionToClose])
 
-  //todo: make a math util
-  useEffect(() => {
-    if (changeInputRef.current === 'input') return
+  const handeleSetPercentToClose = useCallback(
+    (val: number) => {
+      if (!positionToClose || !asset || midPrice == null) {
+        setSizeToClose({ base: '0', quote: '0' })
+        setPercentToClose(100)
+        return
+      }
 
-    if (!positionToClose || !asset || !midPrice) {
-      setSizeToClose({ base: '0', quote: '0' })
-      return
-    }
+      const size = positionToClose.position.szi
+      try {
+        const { baseSize, quoteSize, percentage } =
+          getSizeAndPercentageFromPercentageInput({
+            percentageInput: val,
+            maxSize: size,
+            priceUsd: midPrice ?? '0',
+            decimals: asset.decimals,
+          })
 
-    const decimals = asset.decimals
-    const SCALE = 10n ** BigInt(decimals)
+        setSizeToClose({ base: baseSize, quote: quoteSize })
+        setPercentToClose(percentage)
+      } catch (e) {
+        console.error('Error formatting size:', e)
+        setSizeToClose({ base: '0', quote: '0' })
+        setPercentToClose(val)
+      }
+    },
+    [positionToClose, asset, midPrice],
+  )
 
-    const position = positionToClose.position
-
-    const base = parseUnits(
-      Math.abs(Number.parseFloat(position.szi)).toString(),
-      decimals,
-    )
-
-    const percent = BigInt(percentToClose)
-
-    const closeBase = (base * percent) / 100n
-
-    const price = parseUnits(midPrice ?? '0', decimals)
-
-    // quote (scaled) = base * price / SCALE
-    const quote = base === 0n ? 0n : (base * price) / SCALE
-
-    const closeQuote = (quote * percent) / 100n
-
-    try {
-      const baseSize = formatSize(formatUnits(closeBase, decimals), decimals)
-      const quoteSize = formatSize(formatUnits(closeQuote, decimals), decimals)
-
-      setSizeToClose({ base: baseSize, quote: quoteSize })
-    } catch (e) {
-      console.error('Error formatting size:', e)
-      setSizeToClose({ base: '0', quote: '0' })
-    }
-  }, [positionToClose, percentToClose, asset, midPrice])
-
-  //todo: make a math util
   const handleSetSizeToClose = useCallback(
     (value: string) => {
       if (!positionToClose || !asset) return
 
-      changeInputRef.current = 'input'
-
-      const decimals = asset.decimals
-      const SCALE = 10n ** BigInt(decimals)
-
-      const position = positionToClose.position
-
-      // base size (scaled)
-      const currentBase = parseUnits(
-        Math.abs(Number.parseFloat(position.szi)).toString(),
-        decimals,
-      )
-
-      // price (scaled) — midPrice is a decimal string like "78876.0"
-      const price = parseUnits(midPrice ?? '0', decimals)
-
-      // quote value (scaled) = base * price / SCALE
-      const currentQuote =
-        currentBase === 0n ? 0n : (currentBase * price) / SCALE
-
-      // input value (scaled) in the currently-selected side
-      const inputScaled = parseUnits(value || '0', decimals)
-
-      // percent = input / current * 100
-      // (do all math in BigInt, then clamp to [0..100] as number)
-      let percentBig = 0n
-      if (sizeSide === 'base') {
-        percentBig =
-          currentBase === 0n ? 0n : (inputScaled * 100n) / currentBase
-      } else {
-        percentBig =
-          currentQuote === 0n ? 0n : (inputScaled * 100n) / currentQuote
-      }
-
-      // clamp
-      if (percentBig < 0n) percentBig = 0n
-      if (percentBig > 100n) percentBig = 100n
-
-      const newPercentToClose = Number(percentBig)
-      setPercentToClose(newPercentToClose)
-
-      // derive close sizes from percent (scaled)
-      const closeBase = (currentBase * percentBig) / 100n
-      const closeQuote = (currentQuote * percentBig) / 100n
-
+      const size = positionToClose.position.szi
       try {
-        const baseStr = formatSize(formatUnits(closeBase, decimals), decimals)
-        const quoteStr = formatSize(formatUnits(closeQuote, decimals), decimals)
+        const { baseSize, quoteSize, percentage } =
+          getSizeAndPercentageFromInput({
+            inputValue: value,
+            sizeSide,
+            maxSize: size,
+            priceUsd: midPrice ?? '0',
+            decimals: asset.decimals,
+          })
+        setPercentToClose(percentage)
 
         setSizeToClose({
-          base: sizeSide === 'base' ? value : baseStr,
-          quote: sizeSide === 'quote' ? value : quoteStr,
+          base: sizeSide === 'base' ? value : baseSize,
+          quote: sizeSide === 'quote' ? value : quoteSize,
         })
       } catch (e) {
         console.error('Error formatting size:', e)
-        setSizeToClose({ base: '0', quote: '0' })
+        setSizeToClose({
+          base: sizeSide === 'base' ? value : '0',
+          quote: sizeSide === 'quote' ? value : '0',
+        })
       }
     },
     [positionToClose, asset, sizeSide, midPrice],
   )
+
+  const _sizeToClose = useMemo(() => {
+    const maxSize = Math.abs(
+      Number.parseFloat(positionToClose?.position?.szi ?? '0'),
+    )
+
+    if (!sizeToClose.base || Number.parseFloat(sizeToClose.base) === 0) {
+      return maxSize.toString()
+    }
+
+    const baseSize = Number.parseFloat(sizeToClose.base)
+
+    if (baseSize > maxSize) {
+      return maxSize.toString()
+    }
+
+    return sizeToClose.base
+  }, [positionToClose, sizeToClose.base])
 
   const orderData = useMemo(() => {
     if (!positionToClose || !asset || !limitPriceToCloseAt) return null
@@ -197,7 +165,7 @@ export const LimitCloseDialog = ({
       side:
         positionToClose.side === 'B' ? ('long' as const) : ('short' as const),
       price: limitPrice,
-      size: sizeToClose.base,
+      size: _sizeToClose,
       reduceOnly: true,
       orderType: { limit: { timeInForce: 'Gtc' as const } },
     }
@@ -208,7 +176,7 @@ export const LimitCloseDialog = ({
         builderFee: BUILDER_FEE_PERPS,
       },
     }
-  }, [positionToClose, limitPriceToCloseAt, asset, sizeToClose])
+  }, [positionToClose, limitPriceToCloseAt, asset, _sizeToClose])
 
   const estimatedPnL = useMemo(() => {
     if (!positionToClose || !orderData || !limitPriceToCloseAt || !asset) {
@@ -285,10 +253,7 @@ export const LimitCloseDialog = ({
             />
             <PercentageSlider
               value={percentToClose}
-              onChange={(val) => {
-                changeInputRef.current = 'slider'
-                setPercentToClose(val)
-              }}
+              onChange={handeleSetPercentToClose}
               disabled={isPending || !positionToClose}
             />
             {estimatedPnL !== null ? (
@@ -316,7 +281,11 @@ export const LimitCloseDialog = ({
                       )
                     }}
                     disabled={
-                      isPending || !positionToClose || !limitPriceToCloseAt
+                      isPending ||
+                      !positionToClose ||
+                      !limitPriceToCloseAt ||
+                      Number.parseFloat(_sizeToClose) <
+                        Number.parseFloat(sizeToClose.base)
                     }
                     loading={isPending}
                   >

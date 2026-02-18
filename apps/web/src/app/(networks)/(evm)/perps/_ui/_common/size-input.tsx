@@ -10,12 +10,14 @@ export const SizeInput = ({
   onChange,
   sizeSide,
   setSizeSide,
+  className,
 }: {
   asset: PerpOrSpotAsset | undefined
   value: { base: string; quote: string }
   onChange?: (value: string) => void
   sizeSide: 'base' | 'quote'
   setSizeSide: (sizeSide: 'base' | 'quote') => void
+  className?: string
 }) => {
   const [pending, startTransition] = useTransition()
 
@@ -41,7 +43,12 @@ export const SizeInput = ({
   }, [sizeSide, value])
 
   return (
-    <div className="w-full border rounded-lg border-accent px-4 py-2 dark:bg-slate-700 bg-slate-50">
+    <div
+      className={classNames(
+        'w-full border rounded-lg border-accent px-4 py-2 dark:bg-slate-700 bg-slate-50',
+        className ?? '',
+      )}
+    >
       <div className="flex items-center justify-between gap-2">
         <p className="text-muted-foreground">Size</p>
         <div className="flex items-center gap-1">

@@ -8,14 +8,11 @@ export const Leverage = () => {
   const {
     state: {
       activeAsset,
+      currentLeverageForAsset,
       activeAssetDataQuery: { data: activeAssetData, isLoading, isError },
     },
   } = useAssetState()
 
-  const currentLeverage = useMemo(
-    () => activeAssetData?.leverage?.value ?? 1,
-    [activeAssetData?.leverage?.value],
-  )
   const currentLeverageIsCross = useMemo(
     () => activeAssetData?.leverage?.type === 'cross',
     [activeAssetData?.leverage?.type],
@@ -43,17 +40,17 @@ export const Leverage = () => {
           </Button>
         }
         assetString={activeAsset}
-        currentLeverage={currentLeverage}
+        currentLeverage={currentLeverageForAsset}
         currentLeverageType={currentLeverageIsCross ? 'cross' : 'isolated'}
       />
       <UpdateLeverageDialog
         trigger={
           <Button size="sm" variant="secondary" fullWidth>
-            {currentLeverage}x
+            {currentLeverageForAsset}x
           </Button>
         }
         assetString={activeAsset}
-        currentLeverage={currentLeverage}
+        currentLeverage={currentLeverageForAsset}
         isCross={currentLeverageIsCross}
       />
     </div>

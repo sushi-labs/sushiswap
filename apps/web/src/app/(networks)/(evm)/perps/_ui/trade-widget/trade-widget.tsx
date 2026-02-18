@@ -4,6 +4,7 @@ import { PerpsChecker } from '../perps-checker'
 import { AvailableToTrade } from './available-to-trade'
 import { CurrentPosition } from './current-position'
 import { Leverage } from './leverage'
+import { OrderForms } from './order-forms/order-forms'
 import { TradeSideSelect } from './trade-side-select'
 import { TradeTypeSelect } from './trade-type-select'
 
@@ -17,6 +18,7 @@ export const TradeWidget = ({ className }: { className?: string }) => (
           <TradeSideSelect />
           <AvailableToTrade />
           <CurrentPosition />
+          <OrderForms />
         </div>
       </div>
       <div className="flex flex-col gap-2">

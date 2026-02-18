@@ -1,3 +1,4 @@
+import { formatSize } from '@nktkas/hyperliquid/utils'
 import { formatUnits, parseUnits } from 'viem'
 import type { UserOpenOrdersItemType } from './use-user-open-orders'
 
@@ -455,4 +456,98 @@ export const getExistingPositionTpSlOrders = (
       o.isPositionTpsl,
   )
   return { existingTpOrder: tpOrder, existingSlOrder: slOrder }
+}
+
+export const getSizeAndPercentageFromInput = ({
+  inputValue,
+  maxSize,
+  sizeSide,
+  decimals,
+  priceUsd,
+}: {
+  inputValue: string
+  maxSize: string
+  sizeSide: 'base' | 'quote'
+  decimals: number
+  priceUsd: string
+}) => {
+  if (decimals === undefined) {
+    return { baseSize: '', quoteSize: '', percentage: 0 }
+  }
+  const SCALE = 10n ** BigInt(decimals)
+
+  const currentBase = parseUnits(
+    Math.abs(Number.parseFloat(maxSize)).toString(),
+    decimals,
+  )
+
+  const price = parseUnits(priceUsd ?? '0', decimals)
+  const currentQuote = currentBase === 0n ? 0n : (currentBase * price) / SCALE
+
+  const inputScaled = parseUnits(inputValue || '0', decimals)
+
+  let percentBig = 0n
+  if (sizeSide === 'base') {
+    percentBig = currentBase === 0n ? 0n : (inputScaled * 100n) / currentBase
+  } else {
+    percentBig = currentQuote === 0n ? 0n : (inputScaled * 100n) / currentQuote
+  }
+  if (percentBig < 0n) percentBig = 0n
+  if (percentBig > 100n) percentBig = 100n
+  const percentage = Number(percentBig)
+
+  const closeBase = (currentBase * percentBig) / 100n
+  const closeQuote = (currentQuote * percentBig) / 100n
+
+  const baseStr = formatSize(formatUnits(closeBase, decimals), decimals)
+  const quoteStr = formatSize(formatUnits(closeQuote, decimals), decimals)
+
+  return {
+    baseSize: baseStr,
+    quoteSize: quoteStr,
+    percentage,
+  }
+}
+
+export const getSizeAndPercentageFromPercentageInput = ({
+  percentageInput,
+  maxSize,
+  decimals,
+  priceUsd,
+}: {
+  percentageInput: number
+  maxSize: string
+  decimals: number
+  priceUsd: string
+}) => {
+  if (decimals === undefined) {
+    return { baseSize: '', quoteSize: '', percentage: 0 }
+  }
+  const SCALE = 10n ** BigInt(decimals)
+
+  const currentBase = parseUnits(
+    Math.abs(Number.parseFloat(maxSize)).toString(),
+    decimals,
+  )
+
+  const price = parseUnits(priceUsd ?? '0', decimals)
+  const currentQuote = currentBase === 0n ? 0n : (currentBase * price) / SCALE
+
+  let percent = BigInt(percentageInput)
+
+  if (percent < 0n) percent = 0n
+  if (percent > 100n) percent = 100n
+  const percentage = Number(percent)
+
+  const closeBase = (currentBase * percent) / 100n
+  const closeQuote = (currentQuote * percent) / 100n
+
+  const baseStr = formatSize(formatUnits(closeBase, decimals), decimals)
+  const quoteStr = formatSize(formatUnits(closeQuote, decimals), decimals)
+
+  return {
+    baseSize: baseStr,
+    quoteSize: quoteStr,
+    percentage,
+  }
 }
