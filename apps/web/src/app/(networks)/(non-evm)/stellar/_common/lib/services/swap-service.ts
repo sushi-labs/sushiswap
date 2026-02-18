@@ -69,130 +69,136 @@ export class SwapService {
    * Execute a single-hop swap (exactly like stellar-auth-test)
    */
   async swapExactInputSingle(
-    userAddress: string,
-    params: SwapExactInputSingleParams,
-    signTransaction: (xdr: string) => Promise<string>,
+    _userAddress: string,
+    _params: SwapExactInputSingleParams,
+    _signTransaction: (xdr: string) => Promise<string>,
   ): Promise<{ txHash: string; amountOut: bigint }> {
-    try {
-      const routerContractClient = getRouterContractClient({
-        contractId: contractAddresses.ROUTER,
-        publicKey: userAddress,
-      })
+    throw new Error(
+      'Swapping is currently disabled for maintenance. Please check back later.',
+    )
+    // try {
+    //   const routerContractClient = getRouterContractClient({
+    //     contractId: contractAddresses.ROUTER,
+    //     publicKey: userAddress,
+    //   })
 
-      const assembledTransaction = await routerContractClient.swap_exact_input(
-        {
-          params: {
-            sender: userAddress,
-            path: [params.tokenIn, params.tokenOut],
-            fees: [params.fee],
-            recipient: params.recipient,
-            amount_in: params.amountIn,
-            amount_out_minimum: params.amountOutMinimum,
-            deadline: BigInt(params.deadline),
-          },
-        },
-        {
-          timeoutInSeconds: DEFAULT_TIMEOUT,
-          fee: 100000,
-        },
-      )
+    //   const assembledTransaction = await routerContractClient.swap_exact_input(
+    //     {
+    //       params: {
+    //         sender: userAddress,
+    //         path: [params.tokenIn, params.tokenOut],
+    //         fees: [params.fee],
+    //         recipient: params.recipient,
+    //         amount_in: params.amountIn,
+    //         amount_out_minimum: params.amountOutMinimum,
+    //         deadline: BigInt(params.deadline),
+    //       },
+    //     },
+    //     {
+    //       timeoutInSeconds: DEFAULT_TIMEOUT,
+    //       fee: 100000,
+    //     },
+    //   )
 
-      const simulationResult = assembledTransaction.simulation
-      if (
-        simulationResult &&
-        StellarSdk.rpc.Api.isSimulationError(simulationResult)
-      ) {
-        throw new Error(extractErrorMessage(simulationResult.error))
-      }
+    //   const simulationResult = assembledTransaction.simulation
+    //   if (
+    //     simulationResult &&
+    //     StellarSdk.rpc.Api.isSimulationError(simulationResult)
+    //   ) {
+    //     throw new Error(extractErrorMessage(simulationResult.error))
+    //   }
 
-      // Sign the transaction - use the built transaction
-      const unsignedXdr = assembledTransaction.toXDR()
-      const signedXdr = await signTransaction(unsignedXdr)
+    //   // Sign the transaction - use the built transaction
+    //   const unsignedXdr = assembledTransaction.toXDR()
+    //   const signedXdr = await signTransaction(unsignedXdr)
 
-      // Submit the signed XDR directly via raw RPC
-      const { hash: txHash } = await submitTransaction(signedXdr)
+    //   // Submit the signed XDR directly via raw RPC
+    //   const { hash: txHash } = await submitTransaction(signedXdr)
 
-      const txResult = await waitForTransaction(txHash)
+    //   const txResult = await waitForTransaction(txHash)
 
-      if (txResult.status === 'SUCCESS' && txResult.returnValue !== undefined) {
-        // Extract output amount from return value
-        const amountOut = scValToBigInt(txResult.returnValue)
-        return {
-          txHash: txHash,
-          amountOut: amountOut,
-        }
-      } else {
-        throw new Error(`Transaction ${txHash} ${txResult.status}`)
-      }
-    } catch (error) {
-      console.error('Error in swapExactInputSingle', error)
-      throw error
-    }
+    //   if (txResult.status === 'SUCCESS' && txResult.returnValue !== undefined) {
+    //     // Extract output amount from return value
+    //     const amountOut = scValToBigInt(txResult.returnValue)
+    //     return {
+    //       txHash: txHash,
+    //       amountOut: amountOut,
+    //     }
+    //   } else {
+    //     throw new Error(`Transaction ${txHash} ${txResult.status}`)
+    //   }
+    // } catch (error) {
+    //   console.error('Error in swapExactInputSingle', error)
+    //   throw error
+    // }
   }
 
   /**
    * Execute a multi-hop swap (exactly like stellar-auth-test)
    */
   async swapExactInput(
-    userAddress: string,
-    params: SwapExactInputParams,
-    signTransaction: (xdr: string) => Promise<string>,
+    _userAddress: string,
+    _params: SwapExactInputParams,
+    _signTransaction: (xdr: string) => Promise<string>,
   ): Promise<{ txHash: string; amountOut: bigint }> {
-    try {
-      const routerContractClient = getRouterContractClient({
-        contractId: contractAddresses.ROUTER,
-        publicKey: userAddress,
-      })
-      // Ensure fees are proper u32 numbers (not bigints)
-      const feesAsNumbers = params.fees.map((fee) => Number(fee))
+    throw new Error(
+      'Swapping is currently disabled for maintenance. Please check back later.',
+    )
+    // try {
+    //   const routerContractClient = getRouterContractClient({
+    //     contractId: contractAddresses.ROUTER,
+    //     publicKey: userAddress,
+    //   })
+    //   // Ensure fees are proper u32 numbers (not bigints)
+    //   const feesAsNumbers = params.fees.map((fee) => Number(fee))
 
-      const assembledTransaction = await routerContractClient.swap_exact_input(
-        {
-          params: {
-            sender: userAddress,
-            path: params.path,
-            fees: feesAsNumbers,
-            recipient: params.recipient,
-            amount_in: params.amountIn,
-            amount_out_minimum: params.amountOutMinimum,
-            deadline: BigInt(params.deadline),
-          },
-        },
-        {
-          timeoutInSeconds: DEFAULT_TIMEOUT,
-          fee: 100000,
-        },
-      )
-      const simulationResult = assembledTransaction.simulation
-      if (
-        simulationResult &&
-        StellarSdk.rpc.Api.isSimulationError(simulationResult)
-      ) {
-        throw new Error(extractErrorMessage(simulationResult.error))
-      }
+    //   const assembledTransaction = await routerContractClient.swap_exact_input(
+    //     {
+    //       params: {
+    //         sender: userAddress,
+    //         path: params.path,
+    //         fees: feesAsNumbers,
+    //         recipient: params.recipient,
+    //         amount_in: params.amountIn,
+    //         amount_out_minimum: params.amountOutMinimum,
+    //         deadline: BigInt(params.deadline),
+    //       },
+    //     },
+    //     {
+    //       timeoutInSeconds: DEFAULT_TIMEOUT,
+    //       fee: 100000,
+    //     },
+    //   )
+    //   const simulationResult = assembledTransaction.simulation
+    //   if (
+    //     simulationResult &&
+    //     StellarSdk.rpc.Api.isSimulationError(simulationResult)
+    //   ) {
+    //     throw new Error(extractErrorMessage(simulationResult.error))
+    //   }
 
-      // Sign the transaction
-      const unsignedXdr = assembledTransaction.toXDR()
-      const signedXdr = await signTransaction(unsignedXdr)
+    //   // Sign the transaction
+    //   const unsignedXdr = assembledTransaction.toXDR()
+    //   const signedXdr = await signTransaction(unsignedXdr)
 
-      // Submit the signed XDR directly via raw RPC (same as single-hop)
-      const { hash: txHash } = await submitTransaction(signedXdr)
+    //   // Submit the signed XDR directly via raw RPC (same as single-hop)
+    //   const { hash: txHash } = await submitTransaction(signedXdr)
 
-      const txResult = await waitForTransaction(txHash)
+    //   const txResult = await waitForTransaction(txHash)
 
-      if (txResult.status === 'SUCCESS' && txResult.returnValue !== undefined) {
-        // Extract output amount from return value
-        const amountOut = scValToBigInt(txResult.returnValue)
-        return {
-          txHash: txHash,
-          amountOut: amountOut,
-        }
-      } else {
-        throw new Error(`Transaction ${txHash} ${txResult.status}`)
-      }
-    } catch (error) {
-      console.error('Error in swapExactInput', error)
-      throw error
-    }
+    //   if (txResult.status === 'SUCCESS' && txResult.returnValue !== undefined) {
+    //     // Extract output amount from return value
+    //     const amountOut = scValToBigInt(txResult.returnValue)
+    //     return {
+    //       txHash: txHash,
+    //       amountOut: amountOut,
+    //     }
+    //   } else {
+    //     throw new Error(`Transaction ${txHash} ${txResult.status}`)
+    //   }
+    // } catch (error) {
+    //   console.error('Error in swapExactInput', error)
+    //   throw error
+    // }
   }
 }
