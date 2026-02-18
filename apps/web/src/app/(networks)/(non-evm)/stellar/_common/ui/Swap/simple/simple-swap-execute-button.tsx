@@ -16,8 +16,8 @@ import {
 import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trustline'
 import { parseSlippageTolerance } from '~stellar/_common/lib/utils/error-helpers'
 import { requiresPriceImpactConfirmation } from '~stellar/_common/lib/utils/warning-severity'
-import { CreateTrustlineButton } from '~stellar/_common/ui/Trustline/CreateTrustlineButton'
-import { Checker as StellarChecker } from '~stellar/_common/ui/checker'
+// import { CreateTrustlineButton } from '~stellar/_common/ui/Trustline/CreateTrustlineButton'
+// import { Checker as StellarChecker } from '~stellar/_common/ui/checker'
 import { useBestRoute } from '~stellar/swap/lib/hooks'
 import {
   useSimpleSwapActions,
@@ -43,12 +43,14 @@ export const SimpleSwapExecuteButton = () => {
 
   // Check if output token needs trustline (for native assets)
   // Note: Input token (token0) doesn't need trustline check - user must already have it to swap FROM it
-  const { needsTrustline: needsToken1Trustline, issuer: token1ResolvedIssuer } =
-    useNeedsTrustline(
-      token1?.code || '',
-      token1?.contract || '',
-      token1?.issuer,
-    )
+  const {
+    needsTrustline: _needsToken1Trustline,
+    issuer: _token1ResolvedIssuer,
+  } = useNeedsTrustline(
+    token1?.code || '',
+    token1?.contract || '',
+    token1?.issuer,
+  )
   const [, { slippageTolerance }] = useSlippageTolerance(
     SlippageToleranceStorageKey.Swap,
   )
@@ -71,8 +73,8 @@ export const SimpleSwapExecuteButton = () => {
 
   const {
     route,
-    isPending: isRoutePending,
-    isFetching: isRouteFetching,
+    // isPending: isRoutePending,
+    // isFetching: isRouteFetching,
   } = useBestRoute({
     tokenIn: token0,
     tokenOut: token1,
@@ -169,7 +171,7 @@ export const SimpleSwapExecuteButton = () => {
     }
   }
 
-  const checkerAmount = useMemo(() => {
+  const _checkerAmount = useMemo(() => {
     if (!token0 || !amountIn || amountIn === 0n) return []
 
     return [
@@ -182,97 +184,102 @@ export const SimpleSwapExecuteButton = () => {
 
   // Check if we have a route but output is 0 (likely due to amount being too small)
   // This happens when the amount is so small that integer division rounds the output to 0
-  const hasRouteButZeroOutput = useMemo(() => {
-    return (
-      route !== null &&
-      route !== undefined &&
-      amountIn > 0n &&
-      (!outputAmount || outputAmount === 0n)
-    )
-  }, [route, amountIn, outputAmount])
+  // const hasRouteButZeroOutput = useMemo(() => {
+  //   return (
+  //     route !== null &&
+  //     route !== undefined &&
+  //     amountIn > 0n &&
+  //     (!outputAmount || outputAmount === 0n)
+  //   )
+  // }, [route, amountIn, outputAmount])
 
-  const isDisabled =
-    !connectedAddress ||
-    !token0 ||
-    !token1 ||
-    !amount ||
-    Number(amount) <= 0 ||
-    !outputAmount ||
-    outputAmount === 0n ||
-    executeSwap.isPending ||
-    executeMultiHopSwap.isPending ||
-    needsToken1Trustline ||
-    (showPriceImpactWarning && !checked)
+  const isDisabled = true
+  // const isDisabled =
+  //   !connectedAddress ||
+  //   !token0 ||
+  //   !token1 ||
+  //   !amount ||
+  //   Number(amount) <= 0 ||
+  //   !outputAmount ||
+  //   outputAmount === 0n ||
+  //   executeSwap.isPending ||
+  //   executeMultiHopSwap.isPending ||
+  //   needsToken1Trustline ||
+  //   (showPriceImpactWarning && !checked)
 
   // Determine button text
-  const buttonText = useMemo(() => {
-    if (executeSwap.isPending || executeMultiHopSwap.isPending) {
-      return 'Executing Swap...'
-    }
-    if (needsToken1Trustline) {
-      return 'Create trustline first'
-    }
-    if (showPriceImpactWarning && !checked) {
-      return 'Price impact too high'
-    }
-    if (hasRouteButZeroOutput) {
-      return 'Amount too small'
-    }
-    // Show loading state while fetching route
-    if (amount && Number(amount) > 0 && (isRoutePending || isRouteFetching)) {
-      return 'Finding best route...'
-    }
-    if (
-      amount &&
-      Number(amount) > 0 &&
-      (!route || !outputAmount || outputAmount === 0n)
-    ) {
-      return 'No route found'
-    }
-    return 'Swap'
-  }, [
-    executeSwap.isPending,
-    executeMultiHopSwap.isPending,
-    needsToken1Trustline,
-    showPriceImpactWarning,
-    checked,
-    hasRouteButZeroOutput,
-    amount,
-    route,
-    outputAmount,
-    isRoutePending,
-    isRouteFetching,
-  ])
+  const buttonText = useMemo(
+    () => {
+      return 'Under Maintenance'
+      // if (executeSwap.isPending || executeMultiHopSwap.isPending) {
+      //   return 'Executing Swap...'
+      // }
+      // if (needsToken1Trustline) {
+      //   return 'Create trustline first'
+      // }
+      // if (showPriceImpactWarning && !checked) {
+      //   return 'Price impact too high'
+      // }
+      // if (hasRouteButZeroOutput) {
+      //   return 'Amount too small'
+      // }
+      // // Show loading state while fetching route
+      // if (amount && Number(amount) > 0 && (isRoutePending || isRouteFetching)) {
+      //   return 'Finding best route...'
+      // }
+      // if (
+      //   amount &&
+      //   Number(amount) > 0 &&
+      //   (!route || !outputAmount || outputAmount === 0n)
+      // ) {
+      //   return 'No route found'
+      // }
+      // return 'Swap'
+    },
+    [
+      // executeSwap.isPending,
+      // executeMultiHopSwap.isPending,
+      // needsToken1Trustline,
+      // showPriceImpactWarning,
+      // checked,
+      // hasRouteButZeroOutput,
+      // amount,
+      // route,
+      // outputAmount,
+      // isRoutePending,
+      // isRouteFetching,
+    ],
+  )
 
   return (
     <>
       <div className="pt-4">
         <Checker.Connect namespace="stellar" fullWidth size="xl">
-          {needsToken1Trustline && token1 && token1ResolvedIssuer ? (
+          {/* {needsToken1Trustline && token1 && token1ResolvedIssuer ? (
             <CreateTrustlineButton
               tokens={[{ code: token1.code, issuer: token1ResolvedIssuer }]}
               size="xl"
               fullWidth
             />
-          ) : (
-            <StellarChecker.Amounts
+          ) : ( */}
+          {/* <StellarChecker.Amounts
               amounts={checkerAmount}
               disabled={isDisabled}
-            >
-              <Button
-                fullWidth
-                size="xl"
-                onClick={handleSwap}
-                disabled={isDisabled}
-                loading={executeSwap.isPending || executeMultiHopSwap.isPending}
-                variant={
-                  showPriceImpactWarning && !checked ? 'destructive' : 'default'
-                }
-              >
-                {buttonText}
-              </Button>
-            </StellarChecker.Amounts>
-          )}
+            > */}
+          <Button
+            fullWidth
+            size="xl"
+            onClick={handleSwap}
+            disabled={isDisabled}
+            loading={executeSwap.isPending || executeMultiHopSwap.isPending}
+            variant={
+              showPriceImpactWarning && !checked ? 'destructive' : 'default'
+            }
+          >
+            {buttonText}
+          </Button>
+          {/* </StellarChecker.Amounts> */}
+          {/* )} */}
         </Checker.Connect>
       </div>
       {showSlippageWarning && <SlippageWarning className="mt-4" />}

@@ -4,10 +4,7 @@ import { Networks } from '@stellar/stellar-sdk'
 export const IS_FUTURENET = false
 
 //'https://rpc.ankr.com/stellar_soroban' <-- public rpc
-export const RPC_URL = IS_FUTURENET
-  ? 'https://rpc-futurenet.stellar.org'
-  : 'https://rpc.ankr.com/stellar_soroban/e6ef92f5420048573bc2887637ca25e41a472789ba54014c6a74c52c7f1af408'
-
+export const RPC_URL = 'https://rpc.ankr.com/stellar_soroban'
 export const NETWORK_PASSPHRASE = IS_FUTURENET
   ? Networks.FUTURENET
   : Networks.PUBLIC
