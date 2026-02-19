@@ -17,6 +17,7 @@ import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
 import { useUserAccountValues } from 'src/lib/perps/use-user-account-values'
 import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'
 import {
+  calculateIsolatedMargin,
   enUSFormatNumber,
   estimateLiquidationPrice,
   getTextColorClass,
@@ -46,7 +47,7 @@ export const ReversePositionDialog = ({
   const { midPrice } = useMidPrice({
     assetString: positionToClose.position.coin,
   })
-  const { perpsEquity, maintenanceMargin } = useUserAccountValues()
+  const { perpsEquity } = useUserAccountValues()
 
   const asset = useMemo(() => {
     if (!positionToClose) return undefined
@@ -113,21 +114,27 @@ export const ReversePositionDialog = ({
       return null
     }
     const positionSize = Math.abs(Number(positionToClose.position.szi))
+
     const isCross = positionToClose.position.leverage.type === 'cross'
-    const isolatedMargin = positionToClose.position.leverage.value
+    const leverage = positionToClose.position.leverage.value
     const maxLeverage = positionToClose.position.maxLeverage * 2
+    const iso = calculateIsolatedMargin({
+      baseSize: positionSize.toString(),
+      price: asset?.markPrice,
+      leverage: leverage,
+      decimals: asset.decimals,
+    })
 
     return estimateLiquidationPrice({
       price: asset?.markPrice,
-      side: positionToClose.side === 'B' ? 'A' : 'B',
+      side: positionToClose.side === 'A' ? 'B' : 'A',
       accountValue: perpsEquity?.toString(),
       positionSize: positionSize.toString(),
       maintenanceLeverage: maxLeverage.toString(),
-      maintenanceMarginRequired: maintenanceMargin.toString(),
-      isolatedMargin: isolatedMargin.toString(), //pass isolated margin even if cross for completeness
+      isolatedMargin: iso?.isolatedMarginFormatted ?? '0', //pass isolated margin even if cross for completeness
       isCross,
     })
-  }, [positionToClose, asset, perpsEquity, maintenanceMargin])
+  }, [positionToClose, asset, perpsEquity])
 
   return (
     <Dialog

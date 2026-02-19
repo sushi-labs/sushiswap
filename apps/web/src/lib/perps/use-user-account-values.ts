@@ -83,8 +83,8 @@ export const useUserAccountValues = () => {
   }, [allDexClearinghouseState])
 
   const perpsBalance = useMemo(() => {
-    if (!unrelaizedPnL || !perpsEquity) return 0
-    return perpsEquity - unrelaizedPnL
+    if (!perpsEquity) return 0
+    return perpsEquity - (unrelaizedPnL || 0)
   }, [perpsEquity, unrelaizedPnL])
 
   const maintenanceMargin = useMemo(() => {

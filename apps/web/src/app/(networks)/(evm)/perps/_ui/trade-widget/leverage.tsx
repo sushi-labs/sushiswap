@@ -1,5 +1,4 @@
 import { Button } from '@sushiswap/ui'
-import { useMemo } from 'react'
 import { UpdateLeverageDialog } from '../exchange/update-leverage-dialog'
 import { UpdateMarginModeDialog } from '../exchange/update-margin-mode-dialog'
 import { useAssetState } from './asset-state-provider'
@@ -9,14 +8,10 @@ export const Leverage = () => {
     state: {
       activeAsset,
       currentLeverageForAsset,
-      activeAssetDataQuery: { data: activeAssetData, isLoading, isError },
+      currentLeverageTypeForAsset,
+      activeAssetDataQuery: { isLoading, isError },
     },
   } = useAssetState()
-
-  const currentLeverageIsCross = useMemo(
-    () => activeAssetData?.leverage?.type === 'cross',
-    [activeAssetData?.leverage?.type],
-  )
 
   if (isLoading || isError) {
     return (
@@ -35,13 +30,18 @@ export const Leverage = () => {
     <div className="flex items-center gap-2 w-full">
       <UpdateMarginModeDialog
         trigger={
-          <Button size="sm" variant="secondary" fullWidth>
-            {currentLeverageIsCross ? 'Cross' : 'Isolated'}
+          <Button
+            size="sm"
+            variant="secondary"
+            fullWidth
+            className="capitalize"
+          >
+            {currentLeverageTypeForAsset}
           </Button>
         }
         assetString={activeAsset}
         currentLeverage={currentLeverageForAsset}
-        currentLeverageType={currentLeverageIsCross ? 'cross' : 'isolated'}
+        currentLeverageType={currentLeverageTypeForAsset}
       />
       <UpdateLeverageDialog
         trigger={
@@ -51,7 +51,7 @@ export const Leverage = () => {
         }
         assetString={activeAsset}
         currentLeverage={currentLeverageForAsset}
-        isCross={currentLeverageIsCross}
+        isCross={currentLeverageTypeForAsset === 'cross'}
       />
     </div>
   )

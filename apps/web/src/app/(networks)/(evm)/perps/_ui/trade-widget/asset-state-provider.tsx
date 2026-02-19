@@ -50,6 +50,7 @@ interface State {
     tpPrice: string
     slPrice: string
     hasTpSl: boolean
+    currentLeverageTypeForAsset: 'cross' | 'isolated'
   }
 }
 
@@ -144,6 +145,11 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     [activeAssetDataQuery?.data?.leverage?.value],
   )
 
+  const currentLeverageTypeForAsset = useMemo(
+    () => activeAssetDataQuery?.data?.leverage?.type ?? 'cross',
+    [activeAssetDataQuery?.data?.leverage?.type],
+  )
+
   const setReduceOnly = useCallback((reduceOnly: boolean) => {
     _setReduceOnly(reduceOnly)
     if (reduceOnly) {
@@ -232,6 +238,7 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
             tpPrice,
             slPrice,
             hasTpSl,
+            currentLeverageTypeForAsset,
           },
         }
       }, [
@@ -259,6 +266,7 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
         hasTpSl,
         setHasTpSl,
         setReduceOnly,
+        currentLeverageTypeForAsset,
       ])}
     >
       {children}

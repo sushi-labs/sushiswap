@@ -59,7 +59,7 @@ export const SizeInput = ({
             onValueChange={_onChange}
             value={pending ? localValue : _value}
             readOnly={!asset}
-            maxDecimals={asset?.decimals}
+            maxDecimals={sizeSide === 'base' ? asset?.decimals : 2}
             className={classNames('!text-lg font-medium text-right')}
           />
           <SideToggle

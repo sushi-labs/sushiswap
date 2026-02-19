@@ -213,17 +213,29 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
       </HoverCard>
     )
   },
-  accessorFn: (row) => Number.parseFloat(row.closedPnl),
-  sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number.parseFloat(rowA.closedPnl) - Number.parseFloat(rowB.closedPnl),
+  accessorFn: (row) => {
+    const closedPnl = Number.parseFloat(row.closedPnl)
+    const fees = Number.parseFloat(row.fee)
+    const totalPnl = closedPnl - fees
+    return totalPnl.toString()
+  },
+  sortingFn: ({ original: rowA }, { original: rowB }) => {
+    const totalPnlA =
+      Number.parseFloat(rowA.closedPnl) - Number.parseFloat(rowA.fee)
+    const totalPnlB =
+      Number.parseFloat(rowB.closedPnl) - Number.parseFloat(rowB.fee)
+    return totalPnlA - totalPnlB
+  },
   cell: (props) => {
     const closedPnl = Number.parseFloat(props.row.original.closedPnl)
-    if (closedPnl === 0) {
+    const fees = Number.parseFloat(props.row.original.fee)
+    const totalPnl = closedPnl - fees
+    if (totalPnl === 0) {
       return '-'
     }
     return (
       <span className="font-medium whitespace-nowrap">
-        {enUSFormatNumber.format(closedPnl)} USDC
+        {enUSFormatNumber.format(totalPnl)} USDC
       </span>
     )
   },

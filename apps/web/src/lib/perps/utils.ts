@@ -90,6 +90,38 @@ export const toFixedTrim = (x: number, maxDp = 10) => {
 
 //Todo: move these math helpers to a separate file
 
+export function calculateIsolatedMargin({
+  baseSize,
+  price,
+  leverage,
+  decimals,
+}: {
+  baseSize: string
+  price: string
+  leverage: number | string
+  decimals: number
+}): { isolatedMargin: bigint; isolatedMarginFormatted: string } | null {
+  try {
+    const SCALE = 10n ** BigInt(decimals)
+
+    const sizeScaled = parseUnits(baseSize, decimals)
+    const priceScaled = parseUnits(price, decimals)
+    const lev = BigInt(leverage)
+
+    if (sizeScaled <= 0n || priceScaled <= 0n || lev <= 0n) return null
+
+    const notional = (sizeScaled * priceScaled) / SCALE
+    const isolatedMargin = notional / lev
+
+    return {
+      isolatedMargin,
+      isolatedMarginFormatted: formatUnits(isolatedMargin, decimals),
+    }
+  } catch {
+    return null
+  }
+}
+
 // Formula:
 // liq_price = price - side * margin_available / position_size / (1 - l * side)
 // where
@@ -97,61 +129,62 @@ export const toFixedTrim = (x: number, maxDp = 10) => {
 // side = 1 for long and -1 for short
 // margin_available (cross) = account_value - maintenance_margin_required
 // margin_available (isolated) = isolated_margin - maintenance_margin_required
-export const estimateLiquidationPrice = ({
+export function estimateLiquidationPrice({
   price,
-  side,
+  side, // 'B' long, 'A' short
   accountValue,
   isolatedMargin,
-  maintenanceLeverage,
-  maintenanceMarginRequired,
-  positionSize,
+  maintenanceLeverage, // THIS needs to be the asset's maint leverage (2x max)
+  positionSize, // base size
   isCross,
+  decimals = 18,
 }: {
   price: string
   side: 'A' | 'B'
   accountValue: string
   isolatedMargin: string
   maintenanceLeverage: string
-  maintenanceMarginRequired: string
   positionSize: string
   isCross: boolean
-}): string | null => {
-  // Use a high internal scale for BigInt math to prevent precision loss
-  const INTERNAL_PRECISION = 18n
-  const SCALE = 10n ** INTERNAL_PRECISION
+  decimals?: number
+}): string | null {
+  try {
+    const SCALE = 10n ** BigInt(decimals)
 
-  const priceB = parseUnits(price, 18)
-  const accountValueB = parseUnits(accountValue, 18)
-  const isolatedMarginB = parseUnits(isolatedMargin, 18)
-  const maintenanceMarginRequiredB = parseUnits(maintenanceMarginRequired, 18)
-  const positionSizeB = parseUnits(positionSize, 18)
+    // long(B)=+1, short(A)=-1
+    const s = side === 'B' ? 1n : -1n
 
-  // Long (B) = 1, Short (A) = -1
-  const s = side === 'B' ? 1n : -1n
+    const P = parseUnits(price, decimals) // quote/base
+    const Q = parseUnits(positionSize, decimals) // base
+    if (P <= 0n || Q <= 0n) return null
 
-  const marginAvailableB = isCross
-    ? accountValueB - maintenanceMarginRequiredB
-    : isolatedMarginB - maintenanceMarginRequiredB
+    const maintLev = parseUnits(maintenanceLeverage, 0)
+    if (maintLev <= 0n) return null
 
-  // l = 1 / maintenanceLeverage
-  const l_scaled = SCALE / BigInt(maintenanceLeverage)
+    // m = 1 / maintLev (scaled)
+    const m = SCALE / maintLev
 
-  // Formula: price - (side * margin_available) / (pos_size * (1 - l * side))
+    // equity
+    const E = parseUnits(isCross ? accountValue : isolatedMargin, decimals)
 
-  // 1. Calculate the denominator: (1 - l * side)
-  const denominator = SCALE - l_scaled * s
+    // term = E / Q (quote/base), keep scaled
+    const E_over_Q = (E * SCALE) / Q
 
-  // 2. Calculate the fraction: (side * margin_available) / (pos_size * denominator / SCALE)
-  // We multiply marginAvailable by SCALE first to maintain precision during BigInt division
-  const numerator = s * marginAvailableB * SCALE
-  const effectivePosSize = (positionSizeB * denominator) / SCALE
+    // numerator = price*(1 - m) - E/Q   (all scaled to decimals)
+    // for shorts, side flips the E/Q contribution
+    const numerator = (P * (SCALE - m)) / SCALE - s * E_over_Q
 
-  const liqPriceB = priceB - numerator / effectivePosSize
-  if (liqPriceB < 0n) {
+    // denom = 1 - 2m   (scaled)
+    const denom = SCALE - 2n * m
+    if (denom === 0n) return null
+
+    const liq = (numerator * SCALE) / denom
+    if (liq <= 0n) return null
+
+    return formatUnits(liq, decimals)
+  } catch {
     return null
   }
-
-  return formatUnits(liqPriceB, 18)
 }
 
 export type Side = 'A' | 'B' // A = short, B = long
@@ -471,42 +504,42 @@ export const getSizeAndPercentageFromInput = ({
   decimals: number
   priceUsd: string
 }) => {
-  if (decimals === undefined) {
+  if (decimals === undefined)
     return { baseSize: '', quoteSize: '', percentage: 0 }
-  }
+
   const SCALE = 10n ** BigInt(decimals)
 
-  const currentBase = parseUnits(
-    Math.abs(Number.parseFloat(maxSize)).toString(),
-    decimals,
-  )
+  const maxSizeAbs = (maxSize ?? '0').trim().replace(/^-/, '') || '0'
+  const currentBase = parseUnits(maxSizeAbs, decimals)
 
   const price = parseUnits(priceUsd ?? '0', decimals)
-  const currentQuote = currentBase === 0n ? 0n : (currentBase * price) / SCALE
 
   const inputScaled = parseUnits(inputValue || '0', decimals)
 
-  let percentBig = 0n
-  if (sizeSide === 'base') {
-    percentBig = currentBase === 0n ? 0n : (inputScaled * 100n) / currentBase
-  } else {
-    percentBig = currentQuote === 0n ? 0n : (inputScaled * 100n) / currentQuote
-  }
-  if (percentBig < 0n) percentBig = 0n
-  if (percentBig > 100n) percentBig = 100n
-  const percentage = Number(percentBig)
+  let closeBase = 0n
+  let closeQuote = 0n
 
-  const closeBase = (currentBase * percentBig) / 100n
-  const closeQuote = (currentQuote * percentBig) / 100n
+  if (sizeSide === 'base') {
+    closeBase = inputScaled
+    closeQuote =
+      closeBase === 0n || price === 0n ? 0n : (closeBase * price) / SCALE
+  } else {
+    closeQuote = inputScaled
+    closeBase =
+      closeQuote === 0n || price === 0n ? 0n : (closeQuote * SCALE) / price
+  }
+
+  const percentBps =
+    currentBase === 0n ? 0n : (closeBase * 10_000n) / currentBase // 0..10000
+  const clampedBps =
+    percentBps < 0n ? 0n : percentBps > 10_000n ? 10_000n : percentBps
+
+  const percentage = Math.ceil(Number(clampedBps) / 100)
 
   const baseStr = formatSize(formatUnits(closeBase, decimals), decimals)
   const quoteStr = formatSize(formatUnits(closeQuote, decimals), decimals)
 
-  return {
-    baseSize: baseStr,
-    quoteSize: quoteStr,
-    percentage,
-  }
+  return { baseSize: baseStr, quoteSize: quoteStr, percentage }
 }
 
 export const getSizeAndPercentageFromPercentageInput = ({
@@ -549,5 +582,75 @@ export const getSizeAndPercentageFromPercentageInput = ({
     baseSize: baseStr,
     quoteSize: quoteStr,
     percentage,
+  }
+}
+
+export function calculateMarginRequired({
+  baseSize,
+  price,
+  leverage,
+  decimals,
+}: {
+  baseSize: string
+  price: string
+  leverage: number | string
+  decimals: number
+}) {
+  if (!baseSize || !price || !leverage) return null
+
+  try {
+    const SCALE = 10n ** BigInt(decimals)
+
+    const sizeScaled = parseUnits(baseSize, decimals)
+    const priceScaled = parseUnits(price, decimals)
+    const lev = BigInt(leverage)
+
+    if (sizeScaled <= 0n || priceScaled <= 0n || lev <= 0n) {
+      return null
+    }
+
+    // notional = base * price / SCALE
+    const notional = (sizeScaled * priceScaled) / SCALE
+
+    // margin = notional / leverage
+    const marginRequired = notional / lev
+
+    return {
+      marginRequired,
+      marginRequiredFormatted: formatUnits(marginRequired, decimals),
+    }
+  } catch {
+    return null
+  }
+}
+
+export function calculateOrderValue({
+  baseSize,
+  price,
+  decimals,
+}: {
+  baseSize: string
+  price: string
+  decimals: number
+}) {
+  if (!baseSize || !price) return null
+
+  try {
+    const SCALE = 10n ** BigInt(decimals)
+
+    const sizeScaled = parseUnits(baseSize, decimals)
+    const priceScaled = parseUnits(price, decimals)
+
+    if (sizeScaled <= 0n || priceScaled <= 0n) return null
+
+    // notional = base * price / SCALE
+    const notional = (sizeScaled * priceScaled) / SCALE
+
+    return {
+      notional,
+      notionalFormatted: formatUnits(notional, decimals),
+    }
+  } catch {
+    return null
   }
 }

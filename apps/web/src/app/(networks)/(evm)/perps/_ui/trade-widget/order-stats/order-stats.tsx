@@ -1,6 +1,9 @@
 import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
 import { StatItem } from '../../_common/stat-item'
 import { useAssetState } from '../asset-state-provider'
+import { LiquidationStat } from './liquidation-stat'
+import { MarginRequiredStat } from './margin-required-stat'
+import { OrderValueStat } from './order-value-stat'
 
 export const OrderStats = () => {
   const {
@@ -19,12 +22,10 @@ export const OrderStats = () => {
           <StatItem title="End" value={`-- USDC`} />
         </>
       ) : (
-        <>
-          <StatItem title="Liquidation Price" value={`--`} />
-        </>
+        <LiquidationStat />
       )}
-      <StatItem title="Order Value" value={`-- USDC`} />
-      <StatItem title="Margin Required" value={`-- USDC`} />
+      <OrderValueStat />
+      <MarginRequiredStat />
       {tradeType === 'market' ? (
         <StatItem title="Slippage" value={`-- USDC`} />
       ) : null}
