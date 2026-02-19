@@ -6,13 +6,17 @@ interface State {
     quickCloseReversePositionEnabled: boolean
     quickCloseMarketPositionEnabled: boolean
     orderBookAnimationDisabled: boolean
+    marketOrderSlippage: number
   }
   mutate: {
     setQuickCloseReversePositionEnabled: (enabled: boolean) => void
     setQuickCloseMarketPositionEnabled: (enabled: boolean) => void
     setOrderBookAnimationDisabled: (disabled: boolean) => void
+    setMarketOrderSlippage: (slippage: number) => void
   }
 }
+
+export const MARKET_SLIPPAGE_DENOMINATOR = 100 //10000 bps = 100% slippage
 
 const UserSettingsContext = createContext<State>({} as State)
 
@@ -40,6 +44,10 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
       `${BASE_STORAGE_KEY}.order.book.animation.disabled`,
       false,
     )
+  const [marketOrderSlippage, setMarketOrderSlippage] = useLocalStorage<number>(
+    `${BASE_STORAGE_KEY}.market.order.slippage`,
+    800, //800 = 8% slippage by default
+  )
 
   return (
     <UserSettingsContext.Provider
@@ -49,11 +57,13 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             quickCloseReversePositionEnabled,
             quickCloseMarketPositionEnabled,
             orderBookAnimationDisabled,
+            marketOrderSlippage,
           },
           mutate: {
             setQuickCloseReversePositionEnabled,
             setQuickCloseMarketPositionEnabled,
             setOrderBookAnimationDisabled,
+            setMarketOrderSlippage,
           },
         }
       }, [
@@ -63,6 +73,8 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
         setQuickCloseMarketPositionEnabled,
         orderBookAnimationDisabled,
         setOrderBookAnimationDisabled,
+        marketOrderSlippage,
+        setMarketOrderSlippage,
       ])}
     >
       {children}

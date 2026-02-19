@@ -4,6 +4,7 @@ import { useAssetState } from '../asset-state-provider'
 import { LiquidationStat } from './liquidation-stat'
 import { MarginRequiredStat } from './margin-required-stat'
 import { OrderValueStat } from './order-value-stat'
+import { SlippageStat } from './slippage-stat'
 
 export const OrderStats = () => {
   const {
@@ -18,17 +19,15 @@ export const OrderStats = () => {
     <div className="flex flex-col gap-2">
       {tradeType === 'scale' ? (
         <>
-          <StatItem title="Start" value={`-- USDC`} />
-          <StatItem title="End" value={`-- USDC`} />
+          <StatItem title="Start" value={`todo USDC`} />
+          <StatItem title="End" value={`todo USDC`} />
         </>
       ) : (
         <LiquidationStat />
       )}
       <OrderValueStat />
       <MarginRequiredStat />
-      {tradeType === 'market' ? (
-        <StatItem title="Slippage" value={`-- USDC`} />
-      ) : null}
+      {tradeType === 'market' ? <SlippageStat /> : null}
       {/* come backe to fees, they depend on HYPE staked, make resusable */}
       <StatItem title="Fees" value={`-- USDC`} />
     </div>
