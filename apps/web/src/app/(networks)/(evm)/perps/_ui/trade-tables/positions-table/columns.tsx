@@ -417,7 +417,8 @@ const ViewOrders = ({ coin }: { coin: string }) => {
 
   if (
     Boolean(existingTpOrder?.triggerPx) ||
-    Boolean(existingSlOrder?.triggerPx)
+    Boolean(existingSlOrder?.triggerPx) ||
+    !openOrders?.length
   ) {
     return (
       <div>
