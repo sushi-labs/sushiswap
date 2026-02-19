@@ -1,6 +1,7 @@
 import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
 import { StatItem } from '../../_common/stat-item'
 import { useAssetState } from '../asset-state-provider'
+import { FeeStat } from './fee-stat'
 import { LiquidationStat } from './liquidation-stat'
 import { MarginRequiredStat } from './margin-required-stat'
 import { OrderValueStat } from './order-value-stat'
@@ -28,8 +29,7 @@ export const OrderStats = () => {
       <OrderValueStat />
       <MarginRequiredStat />
       {tradeType === 'market' ? <SlippageStat /> : null}
-      {/* come backe to fees, they depend on HYPE staked, make resusable */}
-      <StatItem title="Fees" value={`-- USDC`} />
+      <FeeStat />
     </div>
   )
 }
@@ -45,8 +45,8 @@ const TwapStats = () => {
       <StatItem title="Runtime" value={`-- mins`} />
       <StatItem title="Number of Orders" value={`61`} />
       <StatItem title="Size per Suborder" value={`-- ${baseSymbol}`} />
-      {/* come backe to fees, they depend on HYPE staked, make resusable */}
-      <StatItem title="Fees" value={`-- USDC`} />
+
+      <FeeStat />
     </div>
   )
 }

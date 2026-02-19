@@ -230,6 +230,7 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     const closedPnl = Number.parseFloat(props.row.original.closedPnl)
     const fees = Number.parseFloat(props.row.original.fee)
     const totalPnl = closedPnl - fees
+    //todo: incorporate fee rebates into this calculation once we have that data available in the trade history
     if (totalPnl === 0) {
       return '-'
     }

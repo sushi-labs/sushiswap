@@ -10,7 +10,7 @@ import { TradeTypeSelect } from './trade-type-select'
 
 export const TradeWidget = ({ className }: { className?: string }) => (
   <Card className={classNames('p-2 pb-3', className ?? '')}>
-    <div className="h-full flex flex-col justify-between">
+    <div className="h-full flex flex-col justify-between gap-2">
       <div className="flex flex-col gap-2">
         <Leverage />
         <TradeTypeSelect />

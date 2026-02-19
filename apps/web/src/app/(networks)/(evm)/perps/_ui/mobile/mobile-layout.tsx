@@ -25,7 +25,7 @@ export const MobileLayout = () => {
           <TabbedView />
         </Activity>
         <Activity mode={view === 'trade' ? 'visible' : 'hidden'}>
-          <TradeWidget className="h-[460px] min-h-[350px]" />
+          <TradeWidget className="min-h-[380px]" />
         </Activity>
         <Activity mode={view === 'account' ? 'visible' : 'hidden'}>
           <AccountManagement className="min-h-[calc(100vh-116px)] rounded-b-none justify-between" />

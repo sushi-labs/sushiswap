@@ -238,9 +238,9 @@ export const AccountManagement = ({ className }: { className?: string }) => {
                 />
               </CardGroup>
             </CardContent>
-          </div>
-          <div className="self-end mt-2">
-            <SettingsDialog />
+            <div className="self-end mt-2">
+              <SettingsDialog />
+            </div>
           </div>
         </>
       )}
