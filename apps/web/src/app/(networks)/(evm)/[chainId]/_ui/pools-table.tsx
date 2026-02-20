@@ -4,6 +4,7 @@ import {
   ArrowDownRightIcon,
   EllipsisHorizontalIcon,
   GiftIcon,
+  LightBulbIcon,
   MinusIcon,
   PlusIcon,
 } from '@heroicons/react/24/outline'
@@ -112,6 +113,45 @@ const COLUMNS = [
                   Create position
                 </Link>
               </DropdownMenuItem>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild={row.original.isSmartPool}>
+                    <DropdownMenuItem
+                      asChild
+                      disabled={!row.original.isSmartPool}
+                    >
+                      <Link
+                        onClick={(e) => e.stopPropagation()}
+                        shallow={true}
+                        className="flex items-center"
+                        href={`/${getEvmChainById(row.original.chainId).key}/pool/v3/${
+                          row.original.address
+                        }/smart`}
+                      >
+                        <span className="relative">
+                          <LightBulbIcon
+                            width={16}
+                            height={16}
+                            className="mr-2"
+                          />
+                          <sup className="rounded-full bg-background absolute right-[3px]">
+                            <PlusIcon width={12} height={12} />
+                          </sup>
+                        </span>
+                        Create smart position
+                      </Link>
+                    </DropdownMenuItem>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="max-w-[240px]">
+                    <p>
+                      {!row.original.isSmartPool
+                        ? 'No Steer vaults available for this pool'
+                        : `Smart pools optimize liquidity allocation within custom price ranges, enhancing trading efficiency by
+          providing deeper liquidity around the current price, increasing Liquidity Providers (LP) fee earnings.`}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
@@ -230,7 +270,8 @@ export const PoolsTable: FC<PoolsTableProps> = ({
   onRowClick,
   forcedTokenSymbols,
 }) => {
-  const { tokenSymbols, protocols, farmsOnly } = usePoolFilters()
+  const { tokenSymbols, protocols, farmsOnly, smartPoolsOnly } =
+    usePoolFilters()
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'liquidityUSD', desc: true },
@@ -245,11 +286,20 @@ export const PoolsTable: FC<PoolsTableProps> = ({
       chainId,
       search: Array.from(tokenSymbolsSet),
       onlyIncentivized: farmsOnly,
+      onlySmartPools: smartPoolsOnly,
       protocols,
       orderBy: sorting[0]?.id as GetPools['orderBy'],
       orderDirection: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
     }
-  }, [chainId, tokenSymbols, forcedTokenSymbols, farmsOnly, sorting, protocols])
+  }, [
+    chainId,
+    tokenSymbols,
+    forcedTokenSymbols,
+    farmsOnly,
+    smartPoolsOnly,
+    sorting,
+    protocols,
+  ])
 
   const { data: pools, isLoading, fetchNextPage } = usePoolsInfinite(args)
 
