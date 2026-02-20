@@ -8,7 +8,7 @@ import type { EChartsOption } from 'echarts-for-react/lib/types'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/component/markArea'
 import 'echarts/lib/component/markLine'
-import echarts from 'echarts/lib/echarts'
+import * as echarts from 'echarts/lib/echarts'
 import type { ChartEntry } from '~evm/[chainId]/_ui/LiquidityChartRangeInput/types'
 
 interface SteerStrategyLiquidityDistributionChart {
