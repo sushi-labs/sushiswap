@@ -12,7 +12,7 @@ import type { EChartsOption } from 'echarts-for-react/lib/types'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/visualMap'
-import echarts from 'echarts/lib/echarts'
+import * as echarts from 'echarts'
 import { formatPercent } from 'sushi'
 import type { getSteerVaultAprTimeseries } from '../../fetchers/get-vault-apr-timeseries'
 
