@@ -32,7 +32,10 @@ export const APRHoverCard: FC<APRHoverCardProps> = ({
 }) => {
   const feeApr1d = pool.feeApr1d
 
-  const totalAPR = (feeApr1d + pool.incentiveApr) * 100
+  const totalAPR =
+    ((typeof smartPoolAPR === 'number' ? smartPoolAPR : feeApr1d) +
+      pool.incentiveApr) *
+    100
 
   const card = (
     <>
