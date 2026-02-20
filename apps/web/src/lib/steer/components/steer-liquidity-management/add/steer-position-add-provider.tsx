@@ -149,11 +149,14 @@ export function useSteerPositionAddDerivedInfo({
   }, [independentField, reserves])
 
   // amounts
-  const independentAmount: Amount<EvmCurrency> | undefined = currencies?.[
-    independentField
-  ]
-    ? Amount.tryFromHuman(currencies[independentField], typedValue)
-    : undefined
+  const independentAmount: Amount<EvmCurrency> | undefined = useMemo(
+    () =>
+      currencies?.[independentField]
+        ? Amount.tryFromHuman(currencies[independentField], typedValue)
+        : undefined,
+    [independentField, currencies?.[independentField], typedValue],
+  )
+
   const dependentAmount: Amount<EvmCurrency> | undefined = useMemo(() => {
     // we wrap the currencies just to get the price in terms of the other token
     const wrappedIndependentAmount = independentAmount?.wrap()
@@ -164,11 +167,14 @@ export function useSteerPositionAddDerivedInfo({
       independentReserve &&
       dependentReserve &&
       wrappedIndependentAmount &&
-      wrappedIndependentAmount.amount > 0 &&
       dependentCurrency
     ) {
-      if (independentReserve !== 0n && dependentReserve !== 0n) {
-        return Amount.fromHuman(
+      if (
+        independentReserve !== 0n &&
+        dependentReserve !== 0n &&
+        wrappedIndependentAmount.amount > 0
+      ) {
+        return new Amount(
           dependentCurrency,
           wrappedIndependentAmount.mul(dependentReserve).div(independentReserve)
             .amount - 1n,
@@ -178,7 +184,7 @@ export function useSteerPositionAddDerivedInfo({
 
     return undefined
   }, [
-    independentAmount?.wrap,
+    independentAmount,
     dependentField,
     currencyB,
     currencyA,

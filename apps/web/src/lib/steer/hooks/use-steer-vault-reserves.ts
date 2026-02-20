@@ -1,4 +1,4 @@
-import { useReadContracts, useSimulateContract } from 'wagmi'
+import { useReadContract, useReadContracts, useSimulateContract } from 'wagmi'
 
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
@@ -69,15 +69,14 @@ export const useSteerVaultReserves = ({
   )
 
   const contract = useMemo(() => {
-    if (!vaultId) return undefined
-    return getVaultsReservesContracts({ vaultIds: [vaultId] })[0]
+    return getVaultsReservesContracts({ vaultIds: vaultId ? [vaultId] : [] })[0]
   }, [vaultId])
 
-  const query = useSimulateContract({
+  const query = useReadContract({
     ...contract,
     query: {
       enabled: Boolean(enabled && vaultId),
-      select: ({ result }) => getVaultsReservesSelect(vaultId!, result),
+      select: (result) => getVaultsReservesSelect(vaultId!, result),
     },
   })
 
