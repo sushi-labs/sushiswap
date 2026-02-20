@@ -35,7 +35,7 @@ type Query {
   exploreTokenChartV2(chainId: SushiSwapChainId!, address: Bytes!, interval: ExploreTokenChartInterval!, from: Int!, to: Int!): [OHLC!]!
   exploreTokenInfo(chainId: SushiSwapChainId!, address: Bytes!): ExploreTokenInfo
   exploreTokenPools(chainId: PoolChainId!, address: Bytes!): Pools!
-  pools(chainId: PoolChainId!, page: Int = 1, search: [String], protocols: [Protocol], onlyIncentivized: Boolean = false, orderBy: PoolsOrderBy = liquidityUSD, orderDirection: OrderDirection = desc): Pools!
+  pools(chainId: PoolChainId!, page: Int = 1, search: [String], protocols: [Protocol], onlyIncentivized: Boolean = false, onlySmartPools: Boolean = false, orderBy: PoolsOrderBy = liquidityUSD, orderDirection: OrderDirection = desc): Pools!
   poolAddresses(chainId: PoolChainId!, protocols: [Protocol]): [Bytes!]!
   topPools(chainId: ChainId!): [TopPool!]!
   v2Pool(address: Bytes!, chainId: SushiSwapV2ChainId!): V2Pool!
@@ -50,6 +50,9 @@ type Query {
   portfolioHistory(id: ID!): [PortfolioTransaction!]!
   featuresByChainId(chainId: ChainId!): [ChainIdFeature!]!
   chainIdsByFeature(feature: ChainIdFeature!): [ChainId!]!
+  smartPools(chainId: SmartPoolChainId!): [BasicSmartPool!]!
+  vault(chainId: SmartPoolChainId!, vaultAddress: Bytes!): Vault!
+  vaults(chainId: SmartPoolChainId!, poolAddress: Bytes!): [Vault!]!
   sushiBarStats: SushiBarStats!
   sushiBarHistory: SushiBarHistory!
   tokenList(chainId: TokenListChainId!, first: Int = 50, skip: Int, search: String, customTokens: [Address!]): [TokenListEntry!]!
@@ -355,9 +358,12 @@ type V3Pool {
   txCount1dChange: Float!
   liquidityUSD1dChange: Float!
   incentiveApr: Float!
+  hadSmartPool: Boolean!
+  hasSmartPool: Boolean!
   isIncentivized: Boolean!
   wasIncentivized: Boolean!
   incentives: [Incentive!]!
+  vaults: [String!]!
 }
 
 type V3BasePool {
@@ -434,6 +440,7 @@ type TopPool {
   feeApr1d: Float!
   totalApr1d: Float!
   incentiveApr: Float!
+  isSmartPool: Boolean!
   isIncentivized: Boolean!
   wasIncentivized: Boolean!
   source: String!
@@ -460,6 +467,7 @@ type Pool {
   feeApr1d: Float!
   totalApr1d: Float!
   incentiveApr: Float!
+  isSmartPool: Boolean!
   isIncentivized: Boolean!
   wasIncentivized: Boolean!
   incentives: [Incentive!]!
@@ -555,6 +563,24 @@ type V3PortfolioPosition {
   updatedAt: Int
 }
 
+type PortfolioSmartPosition {
+  id: String!
+  chainId: Int!
+  chain: String!
+  protocol: String!
+  protocolId: String!
+  protocolLogoUrl: String!
+  address: String!
+  name: String!
+  vaultAddress: String!
+  swapFee: Float!
+  token0: SimpleToken!
+  token1: SimpleToken!
+  strategy: String!
+  amountUSD: Float!
+  updatedAt: Int
+}
+
 type FuroPosition {
   id: String!
   chainId: Int!
@@ -573,12 +599,14 @@ type PortfolioPositions {
   totalUSD: Float!
   v2Positions: [V2PortfolioPosition]!
   v3Positions: [V3PortfolioPosition]!
+  smartPositions: [PortfolioSmartPosition]!
 }
 
 type PortfolioClaimables {
   totalUSD: Float!
   v2PositionClaimables: [V2PoolClaim]!
   v3PositionClaimables: [V3PoolClaim]!
+  smartPositionClaimables: [SmartPoolClaim]!
   furoClaimables: [FuroClaim]!
 }
 
@@ -589,6 +617,11 @@ type V2PoolClaim {
 
 type V3PoolClaim {
   position: V3PortfolioPosition!
+  token: SimpleToken!
+}
+
+type SmartPoolClaim {
+  position: PortfolioSmartPosition!
   token: SimpleToken!
 }
 
@@ -680,6 +713,9 @@ scalar PoolChainId
 """A field whose value is a blade chain ID"""
 scalar BladeChainId
 
+"""A field whose value is a smart pool chain ID"""
+scalar SmartPoolChainId
+
 """A field whose value is a token list chain ID"""
 scalar TokenListChainId
 
@@ -692,6 +728,7 @@ enum ChainIdFeature {
   SushiSwapV3ChainId
   PoolChainId
   BladeChainId
+  SmartPoolChainId
   TokenListChainId
   TrendingTokensChainId
 }
@@ -702,6 +739,77 @@ enum DataSource {
   STALE_CACHE
   WEB3
   COINGECKO
+}
+
+type BasicSmartPool {
+  id: ID!
+  chainId: Int!
+  address: Bytes!
+  poolAddress: Bytes!
+  swapFee: Float!
+  protocol: String!
+  token0: Token!
+  token1: Token!
+  strategy: String!
+  description: String!
+  liquidityUSD: Float!
+  vaultLiquidityUSD: Float!
+  feeUSD1d: Float!
+  feeApr1d: Float!
+  feeAndIncentiveApr1d: Float!
+  stakedApr1d: Float!
+  stakedAndIncentiveApr1d: Float!
+  incentiveApr: Float!
+  wasIncentivized: Boolean!
+  isIncentivized: Boolean!
+  lowerTick: Int!
+  upperTick: Int!
+  adjustmentFrequency: Int!
+  lastAdjustmentTimestamp: Int!
+  isEnabled: Boolean!
+  wasEnabled: Boolean!
+  isDeprecated: Boolean!
+}
+
+type Vault {
+  id: ID!
+  address: Bytes!
+  chainId: Int!
+  poolAddress: String!
+  feeTier: Float!
+  performanceFee: Float!
+  token0: Token!
+  token1: Token!
+  adjustmentFrequency: Int!
+  lastAdjustmentTimestamp: Int!
+  strategy: String!
+  payloadHash: String!
+  description: String!
+  lowerTick: Int!
+  upperTick: Int!
+  apr: Float!
+  apr1d: Float!
+  apr1w: Float!
+  reserve0: String!
+  reserve0USD: Float!
+  fees0: String!
+  fees0USD: Float!
+  reserve1: String!
+  reserve1USD: Float!
+  fees1: String!
+  fees1USD: Float!
+  reserveUSD: Float!
+  feesUSD: Float!
+  feeApr1d: Float!
+  feeAndIncentiveApr1d: Float!
+  stakedApr1d: Float!
+  stakedAndIncentiveApr1d: Float!
+  incentiveApr: Float!
+  wasIncentivized: Boolean!
+  isIncentivized: Boolean!
+  isEnabled: Boolean!
+  wasEnabled: Boolean!
+  isDeprecated: Boolean!
 }
 
 type SushiBarStats {

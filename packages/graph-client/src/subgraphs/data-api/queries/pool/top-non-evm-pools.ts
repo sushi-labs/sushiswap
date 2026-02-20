@@ -31,6 +31,7 @@ export const TopNonEvmPoolsQuery = graphql(
       feeApr1d
       totalApr1d
       incentiveApr
+      isSmartPool
       isIncentivized
       wasIncentivized
       source

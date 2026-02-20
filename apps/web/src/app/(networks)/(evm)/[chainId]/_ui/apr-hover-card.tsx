@@ -22,12 +22,20 @@ interface APRHoverCardProps {
   children: ReactNode
   pool: RequiredPool
   showEmissions?: boolean
+  smartPoolAPR?: number
 }
 
-export const APRHoverCard: FC<APRHoverCardProps> = ({ children, pool }) => {
+export const APRHoverCard: FC<APRHoverCardProps> = ({
+  children,
+  pool,
+  smartPoolAPR,
+}) => {
   const feeApr1d = pool.feeApr1d
 
-  const totalAPR = (feeApr1d + pool.incentiveApr) * 100
+  const totalAPR =
+    ((typeof smartPoolAPR === 'number' ? smartPoolAPR : feeApr1d) +
+      pool.incentiveApr) *
+    100
 
   const card = (
     <>
@@ -39,14 +47,25 @@ export const APRHoverCard: FC<APRHoverCardProps> = ({ children, pool }) => {
           change.
         </CardDescription>
         <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between gap-1">
-            <span className="flex flex-grow text-sm text-muted-foreground">
-              Fees
-            </span>
-            <span className="text-sm text-right">
-              {formatPercent(pool.feeApr1d)}
-            </span>
-          </div>
+          {typeof smartPoolAPR === 'number' ? (
+            <div className="flex justify-between gap-1 items-center">
+              <span className="flex flex-grow text-sm text-muted-foreground">
+                Smart pool APR
+              </span>
+              <span className="text-right text-sm">
+                {formatPercent(smartPoolAPR)}
+              </span>
+            </div>
+          ) : (
+            <div className="flex justify-between gap-1 items-center">
+              <span className="flex flex-grow text-sm text-muted-foreground">
+                Fees
+              </span>
+              <span className="text-right text-sm">
+                {formatPercent(pool.feeApr1d)}
+              </span>
+            </div>
+          )}
 
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between gap-1">

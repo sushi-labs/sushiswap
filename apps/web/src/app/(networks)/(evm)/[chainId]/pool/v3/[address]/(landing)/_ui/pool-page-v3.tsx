@@ -15,6 +15,8 @@ import {
   CardLabel,
   CardTitle,
   Container,
+  LinkInternal,
+  Message,
   Separator,
   SkeletonText,
   classNames,
@@ -24,6 +26,7 @@ import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPoolReserves'
 import { formatUSD } from 'sushi'
+import { getEvmChainById } from 'sushi/evm'
 import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
 import { PoolRewardDistributionsCard } from './pool-reward-distributions-card'
 import { PoolTransactionsV3 } from './pool-transactions-v3'
@@ -56,6 +59,23 @@ const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
 
   return (
     <Container maxWidth="5xl" className="flex flex-col gap-4 px-4">
+      {pool.hasEnabledSteerVault && (
+        <Message variant="info" size="sm" className="mb-4">
+          {`This pool has been activated to leverage our smart pool feature. Smart pools are designed to optimize the
+        allocation of liquidity within customized price ranges, thereby improving trading efficiency. They achieve
+        this by enhancing liquidity depth around the current price, which results in higher fee earnings for liquidity
+        providers (LPs) and allows the market to dictate the distribution of LPs' positions based on rational
+        decisions.`}{' '}
+          To create a smart pool position, click{' '}
+          <LinkInternal
+            shallow={true}
+            href={`/${getEvmChainById(chainId).key}/pool/v3/${address}/smart`}
+            className="underline"
+          >
+            here
+          </LinkInternal>
+        </Message>
+      )}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
         <div className="flex flex-col gap-6">
