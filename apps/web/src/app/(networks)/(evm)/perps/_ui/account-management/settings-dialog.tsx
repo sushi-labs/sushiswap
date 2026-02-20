@@ -17,11 +17,13 @@ export const SettingsDialog = () => {
       quickCloseMarketPositionEnabled,
       quickCloseReversePositionEnabled,
       orderBookAnimationDisabled,
+      quickConfirmPositionEnabled,
     },
     mutate: {
       setQuickCloseMarketPositionEnabled,
       setQuickCloseReversePositionEnabled,
       setOrderBookAnimationDisabled,
+      setQuickConfirmPositionEnabled,
     },
   } = useUserSettingsState()
   return (
@@ -43,15 +45,19 @@ export const SettingsDialog = () => {
         <div className="max-h-[calc(100vh-120px)] overflow-y-auto">
           <div className="flex flex-col gap-4 pb-4">
             <CheckboxSetting
+              value={quickConfirmPositionEnabled}
+              onChange={setQuickConfirmPositionEnabled}
+              label="Skip Order Confirmation"
+            />
+            <CheckboxSetting
               value={quickCloseMarketPositionEnabled}
               onChange={setQuickCloseMarketPositionEnabled}
-              label="One Click Close Market Position"
+              label="Skip Close Market Position Confirmation"
             />
-
             <CheckboxSetting
               value={quickCloseReversePositionEnabled}
               onChange={setQuickCloseReversePositionEnabled}
-              label="One Click Reverse Position"
+              label="Skip Reverse Position Confirmation"
             />
             <div className="bg-accent w-full h-[1px]" />
             <CheckboxSetting

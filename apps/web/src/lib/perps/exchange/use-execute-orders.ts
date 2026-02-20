@@ -45,7 +45,7 @@ type Order = {
   clientOrderId?: string
 }
 
-type OrderData = {
+export type OrderData = {
   orders: Order[]
   // na: Standard order without grouping.
   // normalTpsl: TP/SL order with fixed size that doesn't adjust with position changes.
@@ -74,7 +74,7 @@ export const useExecuteOrders = () => {
 
         return {
           a: assetId,
-          b: c.side !== 'long',
+          b: c.side === 'long',
           p: c.price,
           s: c.size,
           r: c.reduceOnly,
@@ -100,6 +100,7 @@ export const useExecuteOrders = () => {
         },
         ...(orderData.grouping ? { grouping: orderData.grouping } : {}),
       }
+      console.log(_orderData)
       return order(
         { wallet: agentAccount, transport: hlHttpTransport },
         _orderData,

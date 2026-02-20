@@ -129,59 +129,56 @@ export function calculateIsolatedMargin({
 // side = 1 for long and -1 for short
 // margin_available (cross) = account_value - maintenance_margin_required
 // margin_available (isolated) = isolated_margin - maintenance_margin_required
+
+//todo: refactor to use bigints
 export function estimateLiquidationPrice({
   price,
-  side, // 'B' long, 'A' short
+  side,
   accountValue,
   isolatedMargin,
-  maintenanceLeverage, // THIS needs to be the asset's maint leverage (2x max)
-  positionSize, // base size
+  maintenanceLeverage,
+  maintenanceMarginRequired,
+  positionSize,
   isCross,
-  decimals = 18,
 }: {
   price: string
   side: 'A' | 'B'
   accountValue: string
   isolatedMargin: string
   maintenanceLeverage: string
+  maintenanceMarginRequired?: string
   positionSize: string
   isCross: boolean
-  decimals?: number
 }): string | null {
   try {
-    const SCALE = 10n ** BigInt(decimals)
+    const s = side === 'A' ? -1 : 1
 
-    // long(B)=+1, short(A)=-1
-    const s = side === 'B' ? 1n : -1n
+    const mmr = Number(maintenanceMarginRequired ?? '0')
+    const equity = Number(isCross ? accountValue : isolatedMargin)
 
-    const P = parseUnits(price, decimals) // quote/base
-    const Q = parseUnits(positionSize, decimals) // base
-    if (P <= 0n || Q <= 0n) return null
+    const marginAvailable = equity - mmr
+    const Q = Number(positionSize)
+    const P = Number(price)
+    const maintLev = Number(maintenanceLeverage)
 
-    const maintLev = parseUnits(maintenanceLeverage, 0)
-    if (maintLev <= 0n) return null
+    if (
+      !Number.isFinite(marginAvailable) ||
+      !Number.isFinite(Q) ||
+      !Number.isFinite(P) ||
+      !Number.isFinite(maintLev)
+    )
+      return null
+    if (Q === 0 || maintLev <= 0) return null
 
-    // m = 1 / maintLev (scaled)
-    const m = SCALE / maintLev
+    const l = 1 / maintLev
+    const denom = 1 - l * s
+    if (denom === 0) return null
 
-    // equity
-    const E = parseUnits(isCross ? accountValue : isolatedMargin, decimals)
+    const delta = (s * marginAvailable) / Q / denom
+    const liq = P - delta
 
-    // term = E / Q (quote/base), keep scaled
-    const E_over_Q = (E * SCALE) / Q
-
-    // numerator = price*(1 - m) - E/Q   (all scaled to decimals)
-    // for shorts, side flips the E/Q contribution
-    const numerator = (P * (SCALE - m)) / SCALE - s * E_over_Q
-
-    // denom = 1 - 2m   (scaled)
-    const denom = SCALE - 2n * m
-    if (denom === 0n) return null
-
-    const liq = (numerator * SCALE) / denom
-    if (liq <= 0n) return null
-
-    return formatUnits(liq, decimals)
+    if (liq < 0 || Number.isNaN(liq) || !Number.isFinite(liq)) return null
+    return liq.toString()
   } catch {
     return null
   }

@@ -1,10 +1,10 @@
 import { Card, classNames } from '@sushiswap/ui'
 import { AvailableToTrade } from './available-to-trade'
+import { ConfirmDialog } from './confirm-dialog/confirm-dialog'
 import { CurrentPosition } from './current-position'
 import { Leverage } from './leverage'
 import { OrderForms } from './order-forms/order-forms'
 import { OrderStats } from './order-stats/order-stats'
-import { PlaceOrder } from './place-order'
 import { TradeSideSelect } from './trade-side-select'
 import { TradeTypeSelect } from './trade-type-select'
 
@@ -22,7 +22,7 @@ export const TradeWidget = ({ className }: { className?: string }) => (
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <PlaceOrder />
+        <ConfirmDialog />
         <hr className="border-t border-accent" />
         <OrderStats />
       </div>

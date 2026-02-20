@@ -62,7 +62,7 @@ export const CloseAllPositionsDialog = ({
 
       return {
         asset: pos.position.coin,
-        side: pos.side === 'B' ? ('long' as const) : ('short' as const),
+        side: pos.side === 'A' ? ('long' as const) : ('short' as const),
         price:
           closeType === 'market'
             ? marketPrice

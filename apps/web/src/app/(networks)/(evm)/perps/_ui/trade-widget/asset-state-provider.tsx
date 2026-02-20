@@ -122,6 +122,9 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
   )
 
   const maxTradeSize = useMemo(() => {
+    if (reduceOnly && (!openPosition || openPosition.length === 0)) {
+      return '0'
+    }
     if (reduceOnly && openPosition && openPosition.length > 0) {
       const pos = openPosition?.[0]
       const side = pos.side
@@ -150,21 +153,24 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     [activeAssetDataQuery?.data?.leverage?.type],
   )
 
-  const setReduceOnly = useCallback((reduceOnly: boolean) => {
-    _setReduceOnly(reduceOnly)
-    if (reduceOnly) {
-      setHasTpSl(false)
-      setTpPrice('')
-      setSlPrice('')
-      setPercentage(0)
-      setSize({ base: '', quote: '' })
-    }
-  }, [])
+  const setReduceOnly = useCallback(
+    (_reduceOnly: boolean) => {
+      _setReduceOnly(_reduceOnly)
+      if (_reduceOnly && hasTpSl) {
+        setHasTpSl(false)
+        setTpPrice('')
+        setSlPrice('')
+        setPercentage(0)
+        setSize({ base: '', quote: '' })
+      }
+    },
+    [hasTpSl],
+  )
 
   const setHasTpSl = useCallback(
-    (hasTpSl: boolean) => {
-      _setHasTpSl(hasTpSl)
-      if (hasTpSl) {
+    (_hasTpSl: boolean) => {
+      _setHasTpSl(_hasTpSl)
+      if (_hasTpSl && reduceOnly) {
         setReduceOnly(false)
         setTpPrice('')
         setSlPrice('')
@@ -172,33 +178,27 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
         setSize({ base: '', quote: '' })
       }
     },
-    [setReduceOnly],
+    [setReduceOnly, reduceOnly],
   )
 
-  const resetValues = useCallback(() => {
-    setSize({ base: '', quote: '' })
-    setPercentage(0)
-    setReduceOnly(false)
-    setTpPrice('')
-    setSlPrice('')
-    setHasTpSl(false)
-  }, [setHasTpSl, setReduceOnly])
+  // const resetValues = useCallback(() => {
+  //   setSize({ base: '', quote: '' })
+  //   setPercentage(0)
+  //   setReduceOnly(false)
+  //   setTpPrice('')
+  //   setSlPrice('')
+  //   setHasTpSl(false)
+  // }, [setHasTpSl, setReduceOnly])
 
-  const setTradeType = useCallback(
-    (tradeType: TradeType) => {
-      _setTradeType(tradeType)
-      resetValues()
-    },
-    [resetValues],
-  )
+  const setTradeType = useCallback((tradeType: TradeType) => {
+    _setTradeType(tradeType)
+    // resetValues()
+  }, [])
 
-  const setTradeSide = useCallback(
-    (tradeSide: TradeSideType) => {
-      _setTradeSide(tradeSide)
-      resetValues()
-    },
-    [resetValues],
-  )
+  const setTradeSide = useCallback((tradeSide: TradeSideType) => {
+    _setTradeSide(tradeSide)
+    // resetValues()
+  }, [])
 
   return (
     <AssetStateContext.Provider

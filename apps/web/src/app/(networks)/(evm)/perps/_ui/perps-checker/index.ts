@@ -4,12 +4,14 @@ import { BuilderFee } from './builder-fee'
 import { Deposit } from './deposit'
 import { EnableTrading } from './enable-trading'
 import { Legal } from './legal'
+import { OrderAmount } from './order-amount'
 
 export type PerpsCheckerProps = {
   Legal: ComponentType<ButtonProps>
   EnableTrading: ComponentType<ButtonProps>
   Deposit: ComponentType<ButtonProps>
   BuilderFee: ComponentType<ButtonProps>
+  OrderAmount: ComponentType<ButtonProps>
 }
 
 export const PerpsChecker = {
@@ -17,4 +19,5 @@ export const PerpsChecker = {
   EnableTrading,
   Deposit,
   BuilderFee,
+  OrderAmount,
 }

@@ -74,7 +74,11 @@ const SlippageDialog = () => {
         100,
     )
     if (est < 0) return '0'
-    return formatSize(est, 4)
+    try {
+      return formatSize(est, 4)
+    } catch {
+      return '0'
+    }
   }, [orderBook, tradeSide, asset, size])
 
   const onChange = useCallback((value: string) => {

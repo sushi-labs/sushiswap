@@ -94,7 +94,7 @@ export const ReversePositionDialog = ({
     const order = {
       asset: position.coin,
       side:
-        positionToClose.side === 'A' ? ('short' as const) : ('long' as const),
+        positionToClose.side === 'B' ? ('short' as const) : ('long' as const),
       price: marketPrice,
       size: positionSize,
       reduceOnly: false,
@@ -124,12 +124,13 @@ export const ReversePositionDialog = ({
       leverage: leverage,
       decimals: asset.decimals,
     })
-
+    const quote = positionToClose.position.positionValue
     return estimateLiquidationPrice({
       price: asset?.markPrice,
       side: positionToClose.side === 'A' ? 'B' : 'A',
       accountValue: perpsEquity?.toString(),
       positionSize: positionSize.toString(),
+      maintenanceMarginRequired: (Number(quote) / maxLeverage).toString(),
       maintenanceLeverage: maxLeverage.toString(),
       isolatedMargin: iso?.isolatedMarginFormatted ?? '0', //pass isolated margin even if cross for completeness
       isCross,

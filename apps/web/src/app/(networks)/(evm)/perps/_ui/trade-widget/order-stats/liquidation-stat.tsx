@@ -2,6 +2,7 @@ import { formatPrice } from '@nktkas/hyperliquid/utils'
 import { useMemo } from 'react'
 import { useMarginTable } from 'src/lib/perps/info/use-margin-table'
 import { useUserAccountValues } from 'src/lib/perps/use-user-account-values'
+import { useUserPositions } from 'src/lib/perps/use-user-positions'
 import {
   calculateIsolatedMargin,
   estimateLiquidationPrice,
@@ -10,7 +11,7 @@ import {
 import { StatItem } from '../../_common/stat-item'
 import { useAssetState } from '../asset-state-provider'
 
-export const LiquidationStat = () => {
+export const LiquidationStat = ({ title }: { title?: string }) => {
   const {
     state: {
       tradeSide,
@@ -19,12 +20,20 @@ export const LiquidationStat = () => {
       currentLeverageTypeForAsset,
       currentLeverageForAsset,
       markPrice,
+      activeAsset,
+      reduceOnly,
     },
   } = useAssetState()
-  const { perpsEquity } = useUserAccountValues()
+  const { perpsEquity, maintenanceMargin } = useUserAccountValues()
   const { data: marginTable } = useMarginTable({
     marginTableId: asset?.marginTableId ?? undefined,
   })
+  const { data: existingPositions } = useUserPositions(activeAsset)
+
+  const existingPosition = useMemo(() => {
+    if (!existingPositions || existingPositions.length === 0) return undefined
+    return existingPositions?.find((i) => i.position.coin === activeAsset)
+  }, [existingPositions, activeAsset])
 
   const maxLeverage = useMemo(() => {
     if (!marginTable) return asset?.maxLeverage ?? 1
@@ -39,6 +48,14 @@ export const LiquidationStat = () => {
     return maxLev * 2
   }, [marginTable, asset, size])
 
+  const _tradeSide = useMemo(() => {
+    if (reduceOnly) {
+      //reverse them for reduceOnly
+      return tradeSide === 'long' ? 'short' : 'long'
+    }
+    return tradeSide
+  }, [reduceOnly, tradeSide])
+
   const estimatedLiquidationPrice = useMemo(() => {
     if (!asset || !markPrice || !perpsEquity || !size.base) {
       return null
@@ -51,12 +68,31 @@ export const LiquidationStat = () => {
       leverage: currentLeverageForAsset,
       decimals: asset.decimals,
     })
+    const existingPositionSize = existingPosition
+      ? Number(existingPosition.position.szi)
+      : 0
+    const existingForCurrentSide =
+      (tradeSide === 'long' && existingPosition?.side === 'B') ||
+      (tradeSide === 'short' && existingPosition?.side === 'A')
 
     const liqPrice = estimateLiquidationPrice({
-      price: markPrice,
-      side: tradeSide === 'short' ? 'A' : 'B',
+      price: reduceOnly
+        ? (existingPosition?.position.entryPx ?? markPrice)
+        : markPrice,
+      side: _tradeSide === 'long' ? 'B' : 'A',
       accountValue: perpsEquity?.toString(),
-      positionSize: positionSize,
+      positionSize: reduceOnly
+        ? (
+            Math.abs(existingPositionSize) - Math.abs(Number(positionSize))
+          ).toString()
+        : (
+            Number(positionSize) +
+            (!existingForCurrentSide ? existingPositionSize : 0)
+          ).toString(),
+      maintenanceMarginRequired: (
+        Number(size.quote) / maxLeverage +
+        Number(maintenanceMargin)
+      ).toString(),
       maintenanceLeverage: maxLeverage.toString(),
       isolatedMargin: iso?.isolatedMarginFormatted ?? '0', //pass isolated margin even if cross for completeness
       isCross,
@@ -70,19 +106,23 @@ export const LiquidationStat = () => {
       return null
     }
   }, [
+    tradeSide,
+    existingPosition,
+    maintenanceMargin,
     maxLeverage,
     asset,
     markPrice,
     perpsEquity,
     currentLeverageTypeForAsset,
     currentLeverageForAsset,
-    size.base,
-    tradeSide,
+    size,
+    _tradeSide,
+    reduceOnly,
   ])
 
   return (
     <StatItem
-      title="Liquidation Price"
+      title={title ?? 'Liquidation Price'}
       value={
         estimatedLiquidationPrice
           ? numberFormatter.format(Number(estimatedLiquidationPrice))

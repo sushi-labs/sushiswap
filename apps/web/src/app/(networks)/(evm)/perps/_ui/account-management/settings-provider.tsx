@@ -7,12 +7,14 @@ interface State {
     quickCloseMarketPositionEnabled: boolean
     orderBookAnimationDisabled: boolean
     marketOrderSlippage: number
+    quickConfirmPositionEnabled: boolean
   }
   mutate: {
     setQuickCloseReversePositionEnabled: (enabled: boolean) => void
     setQuickCloseMarketPositionEnabled: (enabled: boolean) => void
     setOrderBookAnimationDisabled: (disabled: boolean) => void
     setMarketOrderSlippage: (slippage: number) => void
+    setQuickConfirmPositionEnabled: (enabled: boolean) => void
   }
 }
 
@@ -39,6 +41,11 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
       `${BASE_STORAGE_KEY}.market.position.quick.close`,
       false,
     )
+  const [quickConfirmPositionEnabled, setQuickConfirmPositionEnabled] =
+    useLocalStorage<boolean>(
+      `${BASE_STORAGE_KEY}.open.position.quick.confirm`,
+      false,
+    )
   const [orderBookAnimationDisabled, setOrderBookAnimationDisabled] =
     useLocalStorage<boolean>(
       `${BASE_STORAGE_KEY}.order.book.animation.disabled`,
@@ -58,12 +65,14 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             quickCloseMarketPositionEnabled,
             orderBookAnimationDisabled,
             marketOrderSlippage,
+            quickConfirmPositionEnabled,
           },
           mutate: {
             setQuickCloseReversePositionEnabled,
             setQuickCloseMarketPositionEnabled,
             setOrderBookAnimationDisabled,
             setMarketOrderSlippage,
+            setQuickConfirmPositionEnabled,
           },
         }
       }, [
@@ -75,6 +84,8 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
         setOrderBookAnimationDisabled,
         marketOrderSlippage,
         setMarketOrderSlippage,
+        quickConfirmPositionEnabled,
+        setQuickConfirmPositionEnabled,
       ])}
     >
       {children}

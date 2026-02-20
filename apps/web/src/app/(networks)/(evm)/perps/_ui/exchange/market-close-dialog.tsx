@@ -44,7 +44,10 @@ export const MarketCloseDialog = ({
     base: string
     quote: string
   }>({
-    base: positionToClose?.position?.szi?.split('-')?.[1] ?? '0',
+    base:
+      positionToClose?.position?.szi?.split('-')?.[1] ||
+      positionToClose?.position?.szi ||
+      '0',
     quote: '0',
   })
   const { executeOrdersAsync, isPending } = useExecuteOrders()
@@ -169,7 +172,7 @@ export const MarketCloseDialog = ({
     const order = {
       asset: position.coin,
       side:
-        positionToClose.side === 'B' ? ('long' as const) : ('short' as const),
+        positionToClose.side === 'A' ? ('long' as const) : ('short' as const),
       price: marketPrice,
       size: _sizeToClose,
       reduceOnly: true,
