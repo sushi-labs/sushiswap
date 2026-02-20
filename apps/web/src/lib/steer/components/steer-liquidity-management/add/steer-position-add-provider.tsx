@@ -164,6 +164,7 @@ export function useSteerPositionAddDerivedInfo({
       independentReserve &&
       dependentReserve &&
       wrappedIndependentAmount &&
+      wrappedIndependentAmount.amount > 0 &&
       dependentCurrency
     ) {
       if (independentReserve !== 0n && dependentReserve !== 0n) {
