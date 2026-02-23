@@ -46,9 +46,9 @@ export async function getBalanceOfs({
 }
 
 export function getBalanceOfsSelect(
-  vaultId: string,
+  vaultId: EvmID,
   result: bigint,
-): { vaultId: string; balance: bigint } {
+): { vaultId: EvmID; balance: bigint } {
   return {
     vaultId,
     balance: result,

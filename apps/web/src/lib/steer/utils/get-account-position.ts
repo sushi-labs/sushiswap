@@ -2,10 +2,10 @@ import { getChainIdAddressFromId } from 'sushi'
 import type { EvmID } from 'sushi/evm'
 
 interface GetAccountPositions {
-  accountBalances: { vaultId: string; balance: bigint }[]
-  totalSupplies: { vaultId: string; totalSupply: bigint }[]
+  accountBalances: { vaultId: EvmID; balance: bigint }[]
+  totalSupplies: { vaultId: EvmID; totalSupply: bigint }[]
   vaultReserves: {
-    vaultId: string
+    vaultId: EvmID
     reserve0: bigint
     reserve1: bigint
   }[]
@@ -48,7 +48,7 @@ export function getAccountPositions({
       token1Balance = (vaultReserve.reserve1 * accountBalance) / totalSupply
     }
 
-    const { address, chainId } = getChainIdAddressFromId(vaultId as EvmID)
+    const { address, chainId } = getChainIdAddressFromId(vaultId)
     return {
       id: vaultId,
       address,
@@ -62,7 +62,7 @@ export function getAccountPositions({
 }
 
 interface GetAccountPosition {
-  vaultId: string
+  vaultId: EvmID
   accountBalance: bigint
   totalSupply: bigint
   vaultReserves: {

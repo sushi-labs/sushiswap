@@ -50,7 +50,7 @@ export async function getVaultsReserves({
 }
 
 export function getVaultsReservesSelect(
-  vaultId: string,
+  vaultId: EvmID,
   result: ContractFunctionReturnType<
     typeof steerPeripheryAbi,
     'view',

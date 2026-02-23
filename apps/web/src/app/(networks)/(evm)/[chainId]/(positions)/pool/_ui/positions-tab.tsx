@@ -15,8 +15,10 @@ import {
 import type React from 'react'
 import { type FC, useMemo, useState } from 'react'
 
+import { isSmartPoolChainId } from '@sushiswap/graph-client/data-api'
 import { BladeIcon } from '@sushiswap/ui/icons/BladeIcon'
 import { useSearchParams } from 'next/navigation'
+import { SteerSmartPositionsTable } from 'src/lib/steer/components/steer-smart-positions-table'
 import {
   type BladeChainId,
   type SushiSwapChainId,
@@ -32,19 +34,8 @@ import { ConcentratedPositionsTable } from '~evm/[chainId]/pool/_ui/Concentrated
 import { BladePositionsTable } from './blade-positions-table'
 import { PositionsTable } from './positions-table'
 
-type TabItem = {
-  id: string
-  value: string
-  protocol: SushiSwapProtocol
-  children: React.ReactNode
-  disabled: boolean
-}
-
-const createItems = (
-  chainId: SushiSwapChainId | BladeChainId,
-  supportedProtocols: SushiSwapProtocol[],
-): TabItem[] => {
-  const allItems: TabItem[] = [
+const createItems = (chainId: SushiSwapChainId | BladeChainId) => {
+  return [
     {
       id: 'sushiswap-v3',
       value: 'v3',
@@ -73,34 +64,46 @@ const createItems = (
         </div>
       ),
     },
-    {
-      id: 'blade',
-      value: 'blade',
-      protocol: SushiSwapProtocol.BLADE,
-      disabled: false, // Blade is only included if supported, so never disabled
-      children: (
-        <div className="flex items-center gap-2">
-          <span>
-            <BladeIcon className="h-3.5" />
-          </span>
-          <span>Blade</span>
-        </div>
-      ),
-    },
-  ]
-
-  // Filter items based on supported protocols
-  return allItems.filter((item) => supportedProtocols.includes(item.protocol))
+    ...(isSmartPoolChainId(chainId)
+      ? [
+          {
+            id: 'sushiswap-smart',
+            value: 'smart',
+            protocol: 'STEER',
+            disabled: !isSmartPoolChainId(chainId),
+            children: (
+              <div className="flex items-center gap-2">
+                <span>💡</span> <span>Smart Pool</span>
+              </div>
+            ),
+          },
+        ]
+      : []),
+    ...(isBladeChainId(chainId)
+      ? [
+          {
+            id: 'blade',
+            value: 'blade',
+            protocol: SushiSwapProtocol.BLADE,
+            disabled: false, // Blade is only included if supported, so never disabled
+            children: (
+              <div className="flex items-center gap-2">
+                <span>
+                  <BladeIcon className="h-3.5" />
+                </span>
+                <span>Blade</span>
+              </div>
+            ),
+          },
+        ]
+      : []),
+  ] as const
 }
 
 export const PositionsTab: FC<{
   chainId: SushiSwapChainId | BladeChainId
-  supportedProtocols: SushiSwapProtocol[]
-}> = ({ chainId, supportedProtocols }) => {
-  const items = useMemo(
-    () => createItems(chainId, supportedProtocols),
-    [chainId, supportedProtocols],
-  )
+}> = ({ chainId }) => {
+  const items = useMemo(() => createItems(chainId), [chainId])
   const searchParams = useSearchParams()
   const urlTab = searchParams.get('tab')
 
@@ -168,6 +171,11 @@ export const PositionsTab: FC<{
             </div>
           ) : null}
         </div>
+        {isSmartPoolChainId(chainId) ? (
+          <TabsContent value="smart">
+            <SteerSmartPositionsTable chainId={chainId} />
+          </TabsContent>
+        ) : null}
         {isBladeChainId(chainId) && (
           <TabsContent value="blade">
             <BladePositionsTable chainId={chainId} />

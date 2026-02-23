@@ -39,9 +39,9 @@ export async function getTotalSupplies({ client, vaultIds }: GetTotalSupplies) {
 }
 
 export function getTotalSuppliesSelect(
-  vaultId: string,
+  vaultId: EvmID,
   result: bigint,
-): { vaultId: string; totalSupply: bigint } {
+): { vaultId: EvmID; totalSupply: bigint } {
   return {
     vaultId,
     totalSupply: result,
