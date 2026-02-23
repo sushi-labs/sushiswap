@@ -184,6 +184,7 @@ export const PositionsTab: FC<{
         <TabsContent value="v3">
           <ConcentratedPositionsTable
             chainId={chainId}
+            hideNewSmartPositionButton={true}
             hideNewPositionButton={true}
             hideClosedPositions={hideClosedPositions}
           />
