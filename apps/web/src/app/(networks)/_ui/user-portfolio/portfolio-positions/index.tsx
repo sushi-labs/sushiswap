@@ -5,7 +5,6 @@ import React from 'react'
 import { formatUSD } from 'sushi'
 import type { Address } from 'viem'
 import { useConnection } from 'wagmi'
-import { PortfolioALMPositions } from './portfolio-alm-positions'
 import { PortfolioV2Positions } from './portfolio-v2-positions'
 import { PortfolioV3Positions } from './portfolio-v3-positions'
 
@@ -91,9 +90,6 @@ export const PortfolioPositions = () => {
           ) : null}
           {data?.v3Positions.length ? (
             <PortfolioV3Positions positions={data.v3Positions} />
-          ) : null}
-          {data?.smartPositions.length ? (
-            <PortfolioALMPositions positions={data.smartPositions} />
           ) : null}
         </Accordion>
       )}
