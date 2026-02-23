@@ -188,16 +188,16 @@ export const PositionsTab: FC<{
             hideClosedPositions={hideClosedPositions}
           />
         </TabsContent>
-        <TabsContent value="v2">
-          {isSushiSwapChainId(chainId) && (
+        {isSushiSwapChainId(chainId) && (
+          <TabsContent value="v2">
             <PositionsTable
               chainId={chainId}
               rowLink={(row) =>
                 `/${getEvmChainById(chainId).key}/pool/v2/${row.pool.address}/add`
               }
             />
-          )}
-        </TabsContent>
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   )

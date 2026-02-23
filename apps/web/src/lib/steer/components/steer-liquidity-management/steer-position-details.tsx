@@ -39,8 +39,8 @@ export const SteerPositionDetails: FC<SteerPositionDetails> = ({ vault }) => {
   const amounts = useMemo(() => {
     if (!position) return undefined
 
-    const amount0 = Amount.fromHuman(currencies[0], position.token0Balance)
-    const amount1 = Amount.fromHuman(currencies[1], position.token1Balance)
+    const amount0 = new Amount(currencies[0], position.token0Balance)
+    const amount1 = new Amount(currencies[1], position.token1Balance)
 
     return [amount0, amount1]
   }, [position, currencies])

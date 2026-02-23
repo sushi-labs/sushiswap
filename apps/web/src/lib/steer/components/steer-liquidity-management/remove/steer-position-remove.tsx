@@ -64,8 +64,8 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
   }, [vault])
 
   const tokenAmountsTotal = useMemo(() => {
-    const token0Amount = Amount.fromHuman(token0, position?.token0Balance || 0n)
-    const token1Amount = Amount.fromHuman(token1, position?.token1Balance || 0n)
+    const token0Amount = new Amount(token0, position?.token0Balance || 0n)
+    const token1Amount = new Amount(token1, position?.token1Balance || 0n)
 
     return [token0Amount, token1Amount]
   }, [position, token0, token1])
@@ -75,11 +75,11 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
       numerator: debouncedValue,
       denominator: 100,
     })
-    const token0Amount = Amount.fromHuman(
+    const token0Amount = new Amount(
       token0,
       liquidityPercentage.mul(tokenAmountsTotal[0].amount).quotient,
     )
-    const token1Amount = Amount.fromHuman(
+    const token1Amount = new Amount(
       token1,
       liquidityPercentage.mul(tokenAmountsTotal[1].amount).quotient,
     )
@@ -153,11 +153,11 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
         subtractSlippage(
           tokenAmountsDiscounted.token0Amount,
           slippagePercent.toNumber(),
-        ),
+        ).amount,
         subtractSlippage(
           tokenAmountsDiscounted.token1Amount,
           slippagePercent.toNumber(),
-        ), // TODO: check decimals
+        ).amount,
         account,
       ],
     } satisfies UseSimulateContractParameters
@@ -177,12 +177,13 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
     },
   })
 
-  const { writeContractAsync, isPending: isWritePending } = useWriteContract({
-    mutation: {
-      onSuccess,
-      onError,
-    },
-  })
+  const { mutateAsync: writeContractAsync, isPending: isWritePending } =
+    useWriteContract({
+      mutation: {
+        onSuccess,
+        onError,
+      },
+    })
 
   const write = useMemo(() => {
     if (!simulation) return undefined

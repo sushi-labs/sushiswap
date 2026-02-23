@@ -74,11 +74,11 @@ export const SteerPositionAddReviewModal: FC<
   const accountPositionAmountsArray = useMemo(() => {
     if (!currencies || !accountPosition) return null
 
-    const token0Amount = Amount.fromHuman(
+    const token0Amount = new Amount(
       currencies.CURRENCY_A,
       accountPosition.token0Balance,
     )
-    const token1Amount = Amount.fromHuman(
+    const token1Amount = new Amount(
       currencies.CURRENCY_B,
       accountPosition.token1Balance,
     )
@@ -166,8 +166,10 @@ export const SteerPositionAddReviewModal: FC<
         vault.address as Address,
         parsedAmounts.CURRENCY_A.amount,
         parsedAmounts.CURRENCY_B.amount,
-        subtractSlippage(parsedAmounts.CURRENCY_A, slippagePercent.toNumber()), // TODO: CHECK DECIMALS
-        subtractSlippage(parsedAmounts.CURRENCY_B, slippagePercent.toNumber()),
+        subtractSlippage(parsedAmounts.CURRENCY_A, slippagePercent.toNumber())
+          .amount,
+        subtractSlippage(parsedAmounts.CURRENCY_B, slippagePercent.toNumber())
+          .amount,
         address,
       ],
     } satisfies UseSimulateContractParameters
@@ -187,15 +189,6 @@ export const SteerPositionAddReviewModal: FC<
     },
   })
 
-  // const { data: estimatedGas } = useEstimateGas({
-  //   ...prepare,
-  //   query: {
-  //     enabled: Boolean(approved && chainId === chain?.id),
-  //   },
-  // })
-
-  // const adjustedGas = estimatedGas ? gasMargin(estimatedGas) : undefined
-
   const {
     mutateAsync: writeContractAsync,
     isPending: isWritePending,
@@ -212,15 +205,12 @@ export const SteerPositionAddReviewModal: FC<
 
     return async (confirm: () => void) => {
       try {
-        await writeContractAsync({
-          ...simulation.request,
-          // gas: adjustedGas,
-        })
+        await writeContractAsync(simulation.request)
 
         confirm()
       } catch {}
     }
-  }, [writeContractAsync, simulation /*, adjustedGas*/])
+  }, [writeContractAsync, simulation])
 
   const { status } = useWaitForTransactionReceipt({
     chainId: vault.chainId,
