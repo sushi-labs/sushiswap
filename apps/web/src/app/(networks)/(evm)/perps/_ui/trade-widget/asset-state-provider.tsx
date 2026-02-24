@@ -54,6 +54,7 @@ interface State {
     currentLeverageTypeForAsset: 'cross' | 'isolated'
     triggerPrice: string
     isTpSlOrder: boolean
+    isTpSlLimitOrder: boolean
   }
 }
 
@@ -120,6 +121,10 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     )
   }, [tradeType])
 
+  const isTpSlLimitOrder = useMemo(() => {
+    return tradeType === 'take limit' || tradeType === 'stop limit'
+  }, [tradeType])
+
   const asset = useMemo(() => {
     if (!assetList || !activeAsset) return undefined
     return assetList.get(activeAsset)
@@ -135,14 +140,10 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
   )
 
   const maxTradeSize = useMemo(() => {
-    if (
-      reduceOnly &&
-      (!openPosition || openPosition.length === 0) &&
-      !isTpSlOrder
-    ) {
+    if (reduceOnly && (!openPosition || openPosition.length === 0)) {
       return '0'
     }
-    if (reduceOnly && openPosition && openPosition.length > 0 && !isTpSlOrder) {
+    if (reduceOnly && openPosition && openPosition.length > 0) {
       const pos = openPosition?.[0]
       const side = pos.side
       const positionSize = Math.abs(Number.parseFloat(pos.position.szi))
@@ -153,14 +154,7 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
           : '0'
     }
     return tradeSide === 'long' ? maxTradeSizeLong : maxTradeSizeShort
-  }, [
-    tradeSide,
-    maxTradeSizeLong,
-    maxTradeSizeShort,
-    reduceOnly,
-    openPosition,
-    isTpSlOrder,
-  ])
+  }, [tradeSide, maxTradeSizeLong, maxTradeSizeShort, reduceOnly, openPosition])
 
   const markPrice = useMemo(
     () => activeAssetDataQuery?.data?.markPx || '0',
@@ -266,6 +260,7 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
             currentLeverageTypeForAsset,
             triggerPrice,
             isTpSlOrder,
+            isTpSlLimitOrder,
           },
         }
       }, [
@@ -296,6 +291,7 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
         currentLeverageTypeForAsset,
         triggerPrice,
         isTpSlOrder,
+        isTpSlLimitOrder,
       ])}
     >
       {children}

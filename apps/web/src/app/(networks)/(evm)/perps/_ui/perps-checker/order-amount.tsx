@@ -1,5 +1,6 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
+import { useMidPrice } from 'src/lib/perps/use-mid-price'
 import { useUserPositions } from 'src/lib/perps/use-user-positions'
 import { parseUnits } from 'viem'
 import { useAssetState } from '../trade-widget/asset-state-provider'
@@ -19,9 +20,14 @@ export const OrderAmount: FC<ButtonProps> = ({
       tradeSide,
       isTpSlOrder,
       triggerPrice,
+      isTpSlLimitOrder,
+      limitPrice,
     },
   } = useAssetState()
   const { data: existingPositions } = useUserPositions(activeAsset)
+  const { midPrice } = useMidPrice({
+    assetString: activeAsset,
+  })
 
   const existingOppositePosition = useMemo(() => {
     if (!existingPositions || existingPositions.length === 0) return undefined
@@ -33,10 +39,10 @@ export const OrderAmount: FC<ButtonProps> = ({
   }, [existingPositions, activeAsset, tradeSide])
 
   const { isSizeValid, buttonText } = useMemo(() => {
-    if (!existingOppositePosition && reduceOnly && !isTpSlOrder) {
+    if (!existingOppositePosition && reduceOnly) {
       return { isSizeValid: false, buttonText: 'Reduce Only Too Large' }
     }
-    if (reduceOnly && Number(maxTradeSize) === 0 && !isTpSlOrder) {
+    if (reduceOnly && Number(maxTradeSize) === 0) {
       return { isSizeValid: false, buttonText: 'Reduce Only Too Large' }
     }
     if (Number(orderSize.base) === 0) {
@@ -47,6 +53,20 @@ export const OrderAmount: FC<ButtonProps> = ({
     }
     if (isTpSlOrder && Number(triggerPrice) === 0) {
       return { isSizeValid: false, buttonText: 'Enter Trigger Price' }
+    }
+    if (
+      isTpSlLimitOrder &&
+      tradeSide === 'long' &&
+      Number(limitPrice) > Number(midPrice)
+    ) {
+      return { isSizeValid: false, buttonText: 'Limit Price Too Low' }
+    }
+    if (
+      isTpSlLimitOrder &&
+      tradeSide === 'short' &&
+      Number(limitPrice) < Number(midPrice)
+    ) {
+      return { isSizeValid: false, buttonText: 'Limit Price Too High' }
     }
     const parsedSize = parseUnits(orderSize.base, 18)
     const parsedMaxTradeSize = parseUnits(maxTradeSize, 18)
@@ -61,6 +81,10 @@ export const OrderAmount: FC<ButtonProps> = ({
     existingOppositePosition,
     isTpSlOrder,
     triggerPrice,
+    isTpSlLimitOrder,
+    limitPrice,
+    midPrice,
+    tradeSide,
   ])
 
   if (!isSizeValid) {
