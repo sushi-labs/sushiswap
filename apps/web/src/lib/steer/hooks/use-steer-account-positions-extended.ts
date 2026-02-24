@@ -1,9 +1,9 @@
 import type { SmartPoolChainId } from '@sushiswap/graph-client/data-api'
 import { useMemo } from 'react'
-import { useAllPrices } from 'src/lib/hooks/react-query'
-import { Amount, Fraction, type ID } from 'sushi'
+import { Amount, Fraction } from 'sushi'
 import { EvmToken } from 'sushi/evm'
 import type { Address } from 'viem'
+import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useSmartPools } from './use-smart-pools'
 import { useSteerAccountPositions } from './use-steer-account-position'
 
@@ -26,7 +26,7 @@ export const useSteerAccountPositionsExtended = ({
   enabled = true,
   chainId,
 }: UseSteerAccountPositionsExtended) => {
-  const { data: prices, isLoading: isPricesLoading } = useAllPrices()
+  const { data: prices, isLoading: isPricesLoading } = usePrices({ chainId })
 
   const { data: smartPools, isLoading: isVaultsLoading } = useSmartPools(
     { chainId },
@@ -57,10 +57,8 @@ export const useSteerAccountPositionsExtended = ({
       const token0 = new EvmToken(vault.token0)
       const token1 = new EvmToken(vault.token1)
 
-      const token0Price =
-        prices?.get(vault.chainId)?.get(token0.address) || new Fraction(0)
-      const token1Price =
-        prices?.get(vault.chainId)?.get(token1.address) || new Fraction(0)
+      const token0Price = prices?.getFraction(token0.address) || new Fraction(0)
+      const token1Price = prices?.getFraction(token1.address) || new Fraction(0)
 
       const token0Amount = new Amount(token0, position.token0Balance)
       const token1Amount = new Amount(token1, position.token1Balance)
