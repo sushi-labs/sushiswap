@@ -1,7 +1,7 @@
 import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
 import { Button } from '@sushiswap/ui'
 import { useCallback, useMemo } from 'react'
-import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
+import { BUILDER_FEE_PERPS, BUILDER_FEE_SPOT } from 'src/lib/perps/config'
 import {
   type OrderData,
   useExecuteOrders,
@@ -46,6 +46,7 @@ export const PlaceOrderButton = ({ onMutate }: { onMutate?: () => void }) => {
   )
 }
 
+//todo: clean up and move this hooks to own files
 const _useOrderData = () => {
   const {
     state: {
@@ -57,10 +58,12 @@ const _useOrderData = () => {
       reduceOnly,
       limitPrice,
       timeInForce,
+      triggerPrice,
     },
   } = useAssetState()
   const marketPrice = _useMarketPrice()
   const { tpOrder, slOrder } = _useTpSlOrder()
+  const builderFee = _useBuilderFee()
 
   return useMemo<OrderData | undefined>(() => {
     if (!asset) return undefined
@@ -87,7 +90,7 @@ const _useOrderData = () => {
           grouping:
             tpOrder || slOrder ? ('normalTpsl' as const) : ('na' as const),
           builder: {
-            builderFee: BUILDER_FEE_PERPS,
+            builderFee: builderFee,
           },
         }
       }
@@ -118,7 +121,7 @@ const _useOrderData = () => {
           grouping:
             tpOrder || slOrder ? ('normalTpsl' as const) : ('na' as const),
           builder: {
-            builderFee: BUILDER_FEE_PERPS,
+            builderFee: builderFee,
           },
         }
       }
@@ -126,42 +129,66 @@ const _useOrderData = () => {
         return {
           orders: [],
           builder: {
-            builderFee: BUILDER_FEE_PERPS,
+            builderFee: builderFee,
           },
         }
       case 'stop limit':
         return {
           orders: [],
           builder: {
-            builderFee: BUILDER_FEE_PERPS,
+            builderFee: builderFee,
           },
         }
-      case 'stop market':
+      case 'stop market': {
+        const _size = formatSize(size.base, asset?.decimals)
+        if (!marketPrice) return undefined
+        const _triggerPrice = formatPrice(
+          triggerPrice,
+          asset?.decimals,
+          asset?.marketType,
+        )
+        const order = {
+          asset: activeAsset,
+          side: tradeSide,
+          price: marketPrice,
+          size: _size,
+          reduceOnly,
+          orderType: {
+            trigger: {
+              isMarket: true,
+              tpsl: 'sl' as const,
+              triggerPrice: _triggerPrice,
+            },
+          },
+        }
+
         return {
-          orders: [],
+          orders: [order],
+          grouping: 'na' as const,
           builder: {
-            builderFee: BUILDER_FEE_PERPS,
+            builderFee: builderFee,
           },
         }
+      }
       case 'take limit':
         return {
           orders: [],
           builder: {
-            builderFee: BUILDER_FEE_PERPS,
+            builderFee: builderFee,
           },
         }
       case 'take market':
         return {
           orders: [],
           builder: {
-            builderFee: BUILDER_FEE_PERPS,
+            builderFee: builderFee,
           },
         }
       case 'TWAP':
         return {
           orders: [],
           builder: {
-            builderFee: BUILDER_FEE_PERPS,
+            builderFee: builderFee,
           },
         }
       default:
@@ -179,7 +206,20 @@ const _useOrderData = () => {
     timeInForce,
     tpOrder,
     slOrder,
+    builderFee,
+    triggerPrice,
   ])
+}
+
+const _useBuilderFee = () => {
+  const {
+    state: { asset },
+  } = useAssetState()
+
+  return useMemo(() => {
+    if (!asset) return BUILDER_FEE_PERPS
+    return asset?.marketType === 'perp' ? BUILDER_FEE_PERPS : BUILDER_FEE_SPOT
+  }, [asset])
 }
 
 const _useMarketPrice = () => {

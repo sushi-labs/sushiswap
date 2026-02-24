@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useAssetState } from '../asset-state-provider'
 import { LimitOrderForm } from './limit-order-form'
 import { MarketOrderForm } from './market-order-form'
+import { StopMarketForm } from './stop-market-form'
 
 export const OrderForms = () => {
   const {
@@ -18,7 +19,7 @@ export const OrderForms = () => {
       case 'stop limit':
         return <div>Stop Limit Order Form</div>
       case 'stop market':
-        return <div>Stop Market Order Form</div>
+        return <StopMarketForm />
       case 'take limit':
         return <div>Take Limit Order Form</div>
       case 'take market':

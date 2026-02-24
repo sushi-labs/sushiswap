@@ -28,6 +28,7 @@ interface State {
     setTpPrice: (tpPrice: string) => void
     setSlPrice: (slPrice: string) => void
     setHasTpSl: (hasTpSl: boolean) => void
+    setTriggerPrice: (triggerPrice: string) => void
   }
   state: {
     activeAsset: string
@@ -51,6 +52,8 @@ interface State {
     slPrice: string
     hasTpSl: boolean
     currentLeverageTypeForAsset: 'cross' | 'isolated'
+    triggerPrice: string
+    isTpSlOrder: boolean
   }
 }
 
@@ -93,6 +96,7 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
   const [hasTpSl, _setHasTpSl] = useState(false)
   const [tpPrice, setTpPrice] = useState<string>('')
   const [slPrice, setSlPrice] = useState<string>('')
+  const [triggerPrice, setTriggerPrice] = useState<string>('')
 
   const address = useAccount('evm')
 
@@ -106,6 +110,15 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     assetString: activeAsset,
   })
   const { data: openPosition } = useUserPositions(activeAsset)
+
+  const isTpSlOrder = useMemo(() => {
+    return (
+      tradeType === 'take market' ||
+      tradeType === 'take limit' ||
+      tradeType === 'stop limit' ||
+      tradeType === 'stop market'
+    )
+  }, [tradeType])
 
   const asset = useMemo(() => {
     if (!assetList || !activeAsset) return undefined
@@ -122,10 +135,14 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
   )
 
   const maxTradeSize = useMemo(() => {
-    if (reduceOnly && (!openPosition || openPosition.length === 0)) {
+    if (
+      reduceOnly &&
+      (!openPosition || openPosition.length === 0) &&
+      !isTpSlOrder
+    ) {
       return '0'
     }
-    if (reduceOnly && openPosition && openPosition.length > 0) {
+    if (reduceOnly && openPosition && openPosition.length > 0 && !isTpSlOrder) {
       const pos = openPosition?.[0]
       const side = pos.side
       const positionSize = Math.abs(Number.parseFloat(pos.position.szi))
@@ -136,7 +153,14 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
           : '0'
     }
     return tradeSide === 'long' ? maxTradeSizeLong : maxTradeSizeShort
-  }, [tradeSide, maxTradeSizeLong, maxTradeSizeShort, reduceOnly, openPosition])
+  }, [
+    tradeSide,
+    maxTradeSizeLong,
+    maxTradeSizeShort,
+    reduceOnly,
+    openPosition,
+    isTpSlOrder,
+  ])
 
   const markPrice = useMemo(
     () => activeAssetDataQuery?.data?.markPx || '0',
@@ -217,6 +241,7 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
             setTpPrice,
             setSlPrice,
             setHasTpSl,
+            setTriggerPrice,
           },
           state: {
             activeAsset,
@@ -239,6 +264,8 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
             slPrice,
             hasTpSl,
             currentLeverageTypeForAsset,
+            triggerPrice,
+            isTpSlOrder,
           },
         }
       }, [
@@ -267,6 +294,8 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
         setHasTpSl,
         setReduceOnly,
         currentLeverageTypeForAsset,
+        triggerPrice,
+        isTpSlOrder,
       ])}
     >
       {children}

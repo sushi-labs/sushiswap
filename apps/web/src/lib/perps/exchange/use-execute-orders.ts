@@ -159,3 +159,35 @@ export const useExecuteOrders = () => {
     isPending: mutation.isPending,
   }
 }
+// Stop Market
+// {
+//     "action": {
+//         "grouping": "na",
+//         "orders": [
+//             {
+//                 "a": 0,
+//                 "b": true,
+//                 "p": "70200",
+//                 "r": true, pass reduceOnly
+//                 "s": "0.00078",
+//                 "t": {
+//                     "trigger": {
+//                         "isMarket": true,
+//                         "tpsl": "sl",
+//                         "triggerPx": "65000"
+//                     }
+//                 }
+//             }
+//         ],
+//         "type": "order"
+//     },
+//     "expiresAfter": 1771968195354,
+//     "isFrontend": true,
+//     "nonce": 1771968181307,
+//     "signature": {
+//         "r": "0xc43f625425d5582840ecbbc6e000245a2deceac379c61e65800ea11083d907f3",
+//         "s": "0x190a0329e3d6272ac0457873a7f8d3dc8e0f554247dd987132edd8f6e3b262f3",
+//         "v": 28
+//     },
+//     "vaultAddress": null
+// }

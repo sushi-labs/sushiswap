@@ -17,6 +17,8 @@ export const OrderAmount: FC<ButtonProps> = ({
       reduceOnly,
       activeAsset,
       tradeSide,
+      isTpSlOrder,
+      triggerPrice,
     },
   } = useAssetState()
   const { data: existingPositions } = useUserPositions(activeAsset)
@@ -31,10 +33,10 @@ export const OrderAmount: FC<ButtonProps> = ({
   }, [existingPositions, activeAsset, tradeSide])
 
   const { isSizeValid, buttonText } = useMemo(() => {
-    if (!existingOppositePosition && reduceOnly) {
+    if (!existingOppositePosition && reduceOnly && !isTpSlOrder) {
       return { isSizeValid: false, buttonText: 'Reduce Only Too Large' }
     }
-    if (reduceOnly && Number(maxTradeSize) === 0) {
+    if (reduceOnly && Number(maxTradeSize) === 0 && !isTpSlOrder) {
       return { isSizeValid: false, buttonText: 'Reduce Only Too Large' }
     }
     if (Number(orderSize.base) === 0) {
@@ -43,13 +45,23 @@ export const OrderAmount: FC<ButtonProps> = ({
     if (Number(orderSize.quote) < 10) {
       return { isSizeValid: false, buttonText: 'Min. Size is $10' }
     }
+    if (isTpSlOrder && Number(triggerPrice) === 0) {
+      return { isSizeValid: false, buttonText: 'Enter Trigger Price' }
+    }
     const parsedSize = parseUnits(orderSize.base, 18)
     const parsedMaxTradeSize = parseUnits(maxTradeSize, 18)
     if (parsedSize <= parsedMaxTradeSize) {
       return { isSizeValid: true, buttonText: '' }
     }
     return { isSizeValid: false, buttonText: 'Invalid Order Size' }
-  }, [maxTradeSize, orderSize, reduceOnly, existingOppositePosition])
+  }, [
+    maxTradeSize,
+    orderSize,
+    reduceOnly,
+    existingOppositePosition,
+    isTpSlOrder,
+    triggerPrice,
+  ])
 
   if (!isSizeValid) {
     return (
