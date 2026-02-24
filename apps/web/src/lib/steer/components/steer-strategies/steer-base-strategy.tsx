@@ -28,7 +28,6 @@ import { FormattedNumber } from '@sushiswap/ui'
 import type { FC } from 'react'
 import { formatPercent, formatUSD } from 'sushi'
 import { APRHoverCard } from '~evm/[chainId]/_ui/apr-hover-card'
-import { SteerAPRChart } from '../steer-apr-chart'
 import { SteerLiquidityInRangeChip } from '../steer-liquidity-distribution-widget/steer-liquidity-in-range-chip'
 import {
   SteerPositionAdd,
@@ -163,13 +162,6 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
             <CardTitle>{vault.strategy}</CardTitle>
             <CardDescription>{vault.description}</CardDescription>
           </CardHeader>
-          <Separator />
-          <div className="h-[200px] rounded-xl flex flex-col p-6">
-            <Stat className="mb-2">
-              <StatLabel size="sm">7 day average fee APR</StatLabel>
-            </Stat>
-            <SteerAPRChart vault={vault} />
-          </div>
           <Separator />
           <div className="grid grid-cols-2">
             <Stat className="px-6 py-3">

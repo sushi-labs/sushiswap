@@ -48,7 +48,7 @@ export const SteerCarouselLoading: FC = () => {
   const render = useCallback(() => {
     return (
       <div className="w-[400px]">
-        <SkeletonBox className="h-[651px] w-[400px]" />
+        <SkeletonBox className="h-[499px] w-[400px]" />
       </div>
     )
   }, [])

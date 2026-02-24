@@ -20,7 +20,6 @@ import {
   getEvmChainById,
 } from 'sushi/evm'
 import { APRHoverCard } from '~evm/[chainId]/_ui/apr-hover-card'
-import { SteerAPRChart } from './steer-apr-chart'
 import { SteerLiquidityDistributionWidget } from './steer-liquidity-distribution-widget/steer-liquidity-distribution-widget'
 
 interface SteerPoolCardProps {
@@ -56,18 +55,16 @@ export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
               </APRHoverCard>
             </StatValue>
           </Stat>
-          <div className="h-[200px] rounded-xl flex items-center justify-center">
-            {!vault.isDeprecated ? (
-              <SteerAPRChart vault={vault} />
-            ) : (
+          {vault.isDeprecated && (
+            <div className="h-[200px] rounded-xl flex items-center justify-center">
               <div className="text-center text-red dark:text-red-600">
                 <div className=" font-medium">This vault is deprecated.</div>
                 <div className="text-sm">
                   It might not accrue any fees and won{"'"}t be readjusted.
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </CardContent>
         <Separator />
         <div className="grid grid-cols-2 divide-x divide-accent">
