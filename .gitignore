@@ -18,8 +18,7 @@ robots.txt
 analyze/
 
 # trading view advanced charts
-apps/web/public/trading_view/datafeeds/
-apps/web/public/trading_view/charting_library/
+apps/web/public/trading_view/
 
 # misc
 .DS_Store
