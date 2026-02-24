@@ -101,7 +101,6 @@ const _useOrderData = () => {
           asset?.decimals,
           asset?.marketType,
         )
-        if (!marketPrice) return undefined
         const mainOrder = {
           asset: activeAsset,
           side: tradeSide,
@@ -132,13 +131,41 @@ const _useOrderData = () => {
             builderFee: builderFee,
           },
         }
-      case 'stop limit':
+      case 'stop limit': {
+        const _size = formatSize(size.base, asset?.decimals)
+        const price = formatPrice(
+          limitPrice,
+          asset?.decimals,
+          asset?.marketType,
+        )
+        const _triggerPrice = formatPrice(
+          triggerPrice,
+          asset?.decimals,
+          asset?.marketType,
+        )
+        const order = {
+          asset: activeAsset,
+          side: tradeSide,
+          price: price,
+          size: _size,
+          reduceOnly,
+          orderType: {
+            trigger: {
+              isMarket: false,
+              tpsl: 'sl' as const,
+              triggerPrice: _triggerPrice,
+            },
+          },
+        }
+
         return {
-          orders: [],
+          orders: [order],
+          grouping: 'na' as const,
           builder: {
             builderFee: builderFee,
           },
         }
+      }
       case 'stop market': {
         const _size = formatSize(size.base, asset?.decimals)
         if (!marketPrice) return undefined
@@ -170,13 +197,41 @@ const _useOrderData = () => {
           },
         }
       }
-      case 'take limit':
+      case 'take limit': {
+        const _size = formatSize(size.base, asset?.decimals)
+        const price = formatPrice(
+          limitPrice,
+          asset?.decimals,
+          asset?.marketType,
+        )
+        const _triggerPrice = formatPrice(
+          triggerPrice,
+          asset?.decimals,
+          asset?.marketType,
+        )
+        const order = {
+          asset: activeAsset,
+          side: tradeSide,
+          price: price,
+          size: _size,
+          reduceOnly,
+          orderType: {
+            trigger: {
+              isMarket: false,
+              tpsl: 'tp' as const,
+              triggerPrice: _triggerPrice,
+            },
+          },
+        }
+
         return {
-          orders: [],
+          orders: [order],
+          grouping: 'na' as const,
           builder: {
             builderFee: builderFee,
           },
         }
+      }
       case 'take market': {
         const _size = formatSize(size.base, asset?.decimals)
         if (!marketPrice) return undefined
