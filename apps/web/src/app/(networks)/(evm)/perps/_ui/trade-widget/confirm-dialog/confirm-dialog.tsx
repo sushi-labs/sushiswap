@@ -7,7 +7,7 @@ import {
 } from '@sushiswap/ui'
 import { useState } from 'react'
 import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
-import { getTextColorClass } from 'src/lib/perps/utils'
+import { getTextColorClass, numberFormatter } from 'src/lib/perps/utils'
 import { CheckboxSetting } from '../../_common/checkbox-setting'
 import { StatItem } from '../../_common/stat-item'
 import { useUserSettingsState } from '../../account-management/settings-provider'
@@ -19,7 +19,7 @@ import { PlaceOrderButton } from './place-order-button'
 export const ConfirmDialog = () => {
   const [open, setOpen] = useState(false)
   const {
-    state: { tradeSide, size, asset, tradeType },
+    state: { tradeSide, size, asset, tradeType, limitPrice },
   } = useAssetState()
   const {
     state: { quickConfirmPositionEnabled },
@@ -71,7 +71,9 @@ export const ConfirmDialog = () => {
               title="Price"
               value={
                 <div>
-                  {tradeType.includes('market') ? 'Market' : 'todo price'}
+                  {tradeType.includes('market')
+                    ? 'Market'
+                    : numberFormatter.format(Number(limitPrice))}
                 </div>
               }
             />

@@ -55,12 +55,12 @@ const _useOrderData = () => {
       size,
       asset,
       reduceOnly,
-      hasTpSl,
-      tpPrice,
-      slPrice,
+      limitPrice,
+      timeInForce,
     },
   } = useAssetState()
   const marketPrice = _useMarketPrice()
+  const { tpOrder, slOrder } = _useTpSlOrder()
 
   return useMemo<OrderData | undefined>(() => {
     if (!asset) return undefined
@@ -77,68 +77,7 @@ const _useOrderData = () => {
 
           orderType: { limit: { timeInForce: 'FrontendMarket' as const } },
         }
-        const _tpPrice = parseUnits(tpPrice ?? '0', asset?.decimals)
-        const _slPrice = parseUnits(slPrice ?? '0', asset?.decimals)
-        const tpOrder =
-          hasTpSl && tpPrice
-            ? {
-                asset: activeAsset,
-                side:
-                  tradeSide === 'long' ? ('short' as const) : ('long' as const),
-                price: formatPrice(
-                  formatUnits(
-                    (_tpPrice * BigInt(90)) / BigInt(100),
-                    asset?.decimals,
-                  ),
-                  asset?.decimals,
-                  asset?.marketType,
-                ),
 
-                size: _size,
-                reduceOnly: true,
-                orderType: {
-                  trigger: {
-                    isMarket: true,
-                    triggerPrice: formatPrice(
-                      tpPrice,
-                      asset?.decimals,
-                      asset?.marketType,
-                    ),
-                    tpsl: 'tp' as const,
-                  },
-                },
-              }
-            : undefined
-
-        const slOrder =
-          hasTpSl && slPrice
-            ? {
-                asset: activeAsset,
-                side:
-                  tradeSide === 'long' ? ('short' as const) : ('long' as const),
-                price: formatPrice(
-                  formatUnits(
-                    (_slPrice * BigInt(90)) / BigInt(100),
-                    asset?.decimals,
-                  ),
-                  asset?.decimals,
-                  asset?.marketType,
-                ),
-                size: _size,
-                reduceOnly: true,
-                orderType: {
-                  trigger: {
-                    isMarket: true,
-                    triggerPrice: formatPrice(
-                      slPrice,
-                      asset?.decimals,
-                      asset?.marketType,
-                    ),
-                    tpsl: 'sl' as const,
-                  },
-                },
-              }
-            : undefined
         return {
           orders: [
             mainOrder,
@@ -152,13 +91,37 @@ const _useOrderData = () => {
           },
         }
       }
-      case 'limit':
+      case 'limit': {
+        const _size = formatSize(size.base, asset?.decimals)
+        const price = formatPrice(
+          limitPrice,
+          asset?.decimals,
+          asset?.marketType,
+        )
+        if (!marketPrice) return undefined
+        const mainOrder = {
+          asset: activeAsset,
+          side: tradeSide,
+          price: price,
+          size: _size,
+          reduceOnly,
+
+          orderType: { limit: { timeInForce: timeInForce } },
+        }
+
         return {
-          orders: [],
+          orders: [
+            mainOrder,
+            ...(tpOrder ? [tpOrder] : []),
+            ...(slOrder ? [slOrder] : []),
+          ],
+          grouping:
+            tpOrder || slOrder ? ('normalTpsl' as const) : ('na' as const),
           builder: {
             builderFee: BUILDER_FEE_PERPS,
           },
         }
+      }
       case 'scale':
         return {
           orders: [],
@@ -212,9 +175,10 @@ const _useOrderData = () => {
     asset,
     reduceOnly,
     marketPrice,
-    hasTpSl,
-    tpPrice,
-    slPrice,
+    limitPrice,
+    timeInForce,
+    tpOrder,
+    slOrder,
   ])
 }
 
@@ -248,4 +212,75 @@ const _useMarketPrice = () => {
       return undefined
     }
   }, [midPrice, marketOrderSlippage, asset, tradeSide])
+}
+
+const _useTpSlOrder = () => {
+  const {
+    state: { tradeSide, activeAsset, asset, hasTpSl, tpPrice, slPrice, size },
+  } = useAssetState()
+  return useMemo(() => {
+    if (!asset || !size?.base) return { tpOrder: undefined, slOrder: undefined }
+    const _size = formatSize(size.base, asset?.decimals)
+    const _tpPrice = parseUnits(tpPrice ?? '0', asset?.decimals)
+    const _slPrice = parseUnits(slPrice ?? '0', asset?.decimals)
+    const tpOrder =
+      hasTpSl && tpPrice
+        ? {
+            asset: activeAsset,
+            side: tradeSide === 'long' ? ('short' as const) : ('long' as const),
+            price: formatPrice(
+              formatUnits(
+                (_tpPrice * BigInt(90)) / BigInt(100), //todo: check to make sure this doesnt need to be reversed for shorts
+                asset?.decimals,
+              ),
+              asset?.decimals,
+              asset?.marketType,
+            ),
+
+            size: _size,
+            reduceOnly: true,
+            orderType: {
+              trigger: {
+                isMarket: true,
+                triggerPrice: formatPrice(
+                  tpPrice,
+                  asset?.decimals,
+                  asset?.marketType,
+                ),
+                tpsl: 'tp' as const,
+              },
+            },
+          }
+        : undefined
+
+    const slOrder =
+      hasTpSl && slPrice
+        ? {
+            asset: activeAsset,
+            side: tradeSide === 'long' ? ('short' as const) : ('long' as const),
+            price: formatPrice(
+              formatUnits(
+                (_slPrice * BigInt(90)) / BigInt(100), //todo: check to make sure this doesnt need to be reversed for shorts
+                asset?.decimals,
+              ),
+              asset?.decimals,
+              asset?.marketType,
+            ),
+            size: _size,
+            reduceOnly: true,
+            orderType: {
+              trigger: {
+                isMarket: true,
+                triggerPrice: formatPrice(
+                  slPrice,
+                  asset?.decimals,
+                  asset?.marketType,
+                ),
+                tpsl: 'sl' as const,
+              },
+            },
+          }
+        : undefined
+    return { tpOrder, slOrder }
+  }, [tradeSide, activeAsset, asset, hasTpSl, tpPrice, slPrice, size?.base])
 }

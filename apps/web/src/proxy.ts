@@ -1,6 +1,5 @@
 import { trace } from '@opentelemetry/api'
 import { geolocation } from '@vercel/functions'
-import { i } from 'framer-motion/client'
 import { type NextRequest, NextResponse } from 'next/server'
 import { getChainById, getChainByKey, isChainId, isChainKey } from 'sushi'
 import { getEvmChainById, isBladeChainId, isSushiSwapChainId } from 'sushi/evm'
@@ -94,7 +93,6 @@ async function _proxy(req: NextRequest) {
         )
       }
     }
-
     return NextResponse.redirect(new URL(`/ethereum/${path}`, req.url))
   }
 

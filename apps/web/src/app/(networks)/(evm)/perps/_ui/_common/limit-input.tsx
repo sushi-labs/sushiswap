@@ -6,11 +6,13 @@ export const LimitInput = ({
   value,
   onChange,
   maxDecimals,
+  size = 'default',
 }: {
   currentMidPrice: string | null
   value: string
   onChange: (value: string) => void
   maxDecimals: number
+  size?: 'sm' | 'default'
 }) => {
   const [pending, startTransition] = useTransition()
 
@@ -36,9 +38,21 @@ export const LimitInput = ({
   }, [currentMidPrice, onChange])
 
   return (
-    <div className="w-full border rounded-lg border-accent px-4 py-2 dark:bg-slate-700 bg-slate-50">
+    <div
+      className={classNames(
+        'w-full border rounded-lg border-accent dark:bg-slate-700 bg-slate-50',
+        size === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2',
+      )}
+    >
       <div className="flex items-center justify-between gap-2">
-        <p className="text-muted-foreground">Price (USDC)</p>
+        <p
+          className={classNames(
+            'text-muted-foreground whitespace-nowrap',
+            size === 'sm' ? 'text-sm' : 'text-base',
+          )}
+        >
+          Price (USDC)
+        </p>
         <div className="flex items-center gap-1">
           <TextField
             type="number"
