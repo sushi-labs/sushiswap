@@ -177,7 +177,7 @@ export function useSteerPositionAddDerivedInfo({
         return new Amount(
           dependentCurrency,
           wrappedIndependentAmount.mul(dependentReserve).div(independentReserve)
-            .amount - 1n,
+            .amount,
         )
       }
     }

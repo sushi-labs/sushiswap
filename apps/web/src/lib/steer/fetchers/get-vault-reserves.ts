@@ -1,7 +1,11 @@
 import { isSmartPoolChainId } from '@sushiswap/graph-client/data-api'
 import { getChainIdAddressFromId } from 'sushi'
 import type { EvmID } from 'sushi/evm'
-import type { ContractFunctionReturnType, PublicClient } from 'viem'
+import {
+  type ContractFunctionReturnType,
+  type PublicClient,
+  zeroAddress,
+} from 'viem'
 import { steerPeripheryAbi } from '../abi/steer-periphery'
 import { STEER_PERIPHERY_ADDRESS } from '../config'
 
@@ -23,9 +27,10 @@ export function getVaultsReservesContracts({
     return {
       abi: steerPeripheryAbi,
       address: steerPeriphery,
+      account: zeroAddress,
       chainId,
       args: [address] as const,
-      functionName: 'vaultDetailsByAddress' as const,
+      functionName: 'vaultBalancesByAddressWithFees' as const,
     }
   })
 }
@@ -53,14 +58,14 @@ export function getVaultsReservesSelect(
   vaultId: EvmID,
   result: ContractFunctionReturnType<
     typeof steerPeripheryAbi,
-    'view',
-    'vaultDetailsByAddress'
+    'nonpayable',
+    'vaultBalancesByAddressWithFees'
   >,
 ) {
   return {
     vaultId,
-    reserve0: result.token0Balance,
-    reserve1: result.token1Balance,
+    reserve0: result.amountToken0,
+    reserve1: result.amountToken1,
   }
 }
 

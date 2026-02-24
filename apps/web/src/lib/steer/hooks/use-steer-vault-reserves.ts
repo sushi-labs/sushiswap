@@ -72,11 +72,11 @@ export const useSteerVaultReserves = ({
     return getVaultsReservesContracts({ vaultIds: vaultId ? [vaultId] : [] })[0]
   }, [vaultId])
 
-  const query = useReadContract({
+  const query = useSimulateContract({
     ...contract,
     query: {
       enabled: Boolean(enabled && vaultId),
-      select: (result) => getVaultsReservesSelect(vaultId!, result),
+      select: ({ result }) => getVaultsReservesSelect(vaultId!, result),
     },
   })
 
