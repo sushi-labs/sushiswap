@@ -3,7 +3,7 @@ import { useAssetState } from '../asset-state-provider'
 import { OrderSizeInput } from './_common/order-size-input'
 import { ReduceOnly } from './_common/reduce-only'
 
-export const StopMarketForm = () => {
+export const TakeStopMarketForm = () => {
   const {
     state: { triggerPrice },
     mutate: { setTriggerPrice },

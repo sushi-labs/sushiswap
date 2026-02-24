@@ -177,13 +177,37 @@ const _useOrderData = () => {
             builderFee: builderFee,
           },
         }
-      case 'take market':
+      case 'take market': {
+        const _size = formatSize(size.base, asset?.decimals)
+        if (!marketPrice) return undefined
+        const _triggerPrice = formatPrice(
+          triggerPrice,
+          asset?.decimals,
+          asset?.marketType,
+        )
+        const order = {
+          asset: activeAsset,
+          side: tradeSide,
+          price: marketPrice,
+          size: _size,
+          reduceOnly,
+          orderType: {
+            trigger: {
+              isMarket: true,
+              tpsl: 'tp' as const,
+              triggerPrice: _triggerPrice,
+            },
+          },
+        }
+
         return {
-          orders: [],
+          orders: [order],
+          grouping: 'na' as const,
           builder: {
             builderFee: builderFee,
           },
         }
+      }
       case 'TWAP':
         return {
           orders: [],
