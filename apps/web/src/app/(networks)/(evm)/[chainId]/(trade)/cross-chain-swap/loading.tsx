@@ -15,7 +15,7 @@ export default function CrossChainSwapLoading() {
           <SkeletonBox className="w-full h-[142px] rounded-xl" />
           <SkeletonBox className="w-full h-[142px] rounded-xl" />
         </div>
-        <SkeletonBox className="w-full h-[52px] rounded-xl" />
+        <SkeletonBox className="w-full h-[52px] rounded-xl mb-2" />
       </div>
     </Container>
   )

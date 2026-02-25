@@ -4,10 +4,10 @@ import { Navigation, SushiNavigationDropdown, classNames } from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import React, { type FC } from 'react'
+import { headerElements } from 'src/app/_common/header-elements'
 import { HeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-selector'
 import { ChainId } from 'sushi'
-import { headerElements } from './_common/header-elements'
-import { ConnectWalletButton } from './_common/ui/ConnectWallet/ConnectWalletButton'
+import { UserPortfolio } from '../../_ui/user-portfolio'
 
 export const Header: FC<{
   networks?: readonly ChainId[]
@@ -32,7 +32,10 @@ export const Header: FC<{
         <Navigation
           className="!pl-0 lg:!pl-4 !z-[unset]"
           hideSushiDropdown
-          leftElements={headerElements}
+          leftElements={headerElements({
+            chainId: ChainId.STELLAR,
+            includeOnramper: true,
+          })}
           rightElement={
             <>
               <HeaderNetworkSelector
@@ -40,7 +43,10 @@ export const Header: FC<{
                 selectedNetwork={ChainId.STELLAR}
                 className="flex"
               />
-              <ConnectWalletButton variant="secondary" />
+              <UserPortfolio
+                namespace="stellar"
+                selectedNetwork={ChainId.STELLAR}
+              />
             </>
           }
         />

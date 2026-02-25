@@ -10,20 +10,20 @@ import type { SvmChainId, SvmCurrency, SvmToken } from 'sushi/svm'
 import type { Address } from 'viem'
 
 export declare global {
-  type AddressFor<TChainId extends EvmChainId | SvmChainId> =
+  type AddressFor<TChainId extends EvmChainId | SvmChainId | StellarChainId> =
     _AddressFor<TChainId>
 
   type TokenFor<
-    TChainId extends EvmChainId | SvmChainId,
+    TChainId extends EvmChainId | SvmChainId | StellarChainId,
     Metadata extends CurrencyMetadata = CurrencyMetadata,
   > = _TokenFor<TChainId, Metadata>
 
   type CurrencyFor<
-    TChainId extends EvmChainId | SvmChainId,
+    TChainId extends EvmChainId | SvmChainId | StellarChainId,
     Metadata extends CurrencyMetadata = CurrencyMetadata,
   > = _CurrencyFor<TChainId, Metadata>
 
-  type TxHashFor<TChainId extends EvmChainId | SvmChainId> =
+  type TxHashFor<TChainId extends EvmChainId | SvmChainId | StellarChainId> =
     _TxHashFor<TChainId>
 
   interface String {

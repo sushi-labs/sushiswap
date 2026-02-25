@@ -4,7 +4,6 @@ import { PlusIcon } from '@heroicons/react/20/solid'
 import {
   Button,
   Card,
-  CardContent,
   CardHeader,
   CardTitle,
   DataTable,
@@ -13,12 +12,13 @@ import {
 import type { PaginationState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
+import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
+import { useAccount } from 'src/lib/wallet'
 import {
   type PositionSummary,
   useMyPosition,
 } from '~stellar/_common/lib/hooks/position/use-my-position'
 import { useStellarWallet } from '~stellar/providers'
-import { ConnectWalletButton } from '../../ConnectWallet/ConnectWalletButton'
 import {
   APR_COLUMN,
   COLLECTABLE_FEES_COLUMN,
@@ -38,14 +38,15 @@ export type IPositionRowData = PositionSummary
 export const PositionsTable = ({
   hideNewPositionButton,
 }: PositionsTableProps) => {
-  const { connectedAddress, isLoading: isWalletLoading } = useStellarWallet()
+  const account = useAccount('stellar')
+  const { isLoading: isWalletLoading } = useStellarWallet()
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   })
   const { tokenSymbols } = usePoolFilters()
   const { positions, isLoading: isPositionLoading } = useMyPosition({
-    userAddress: connectedAddress ?? undefined,
+    userAddress: account,
     excludeDust: true,
   })
 
@@ -75,22 +76,6 @@ export const PositionsTable = ({
     })
   }, [positions, tokenSymbols])
 
-  if (!isLoading && !connectedAddress) {
-    return (
-      <Card className="bg-slate-900/50 border-secondary">
-        <CardHeader>
-          <CardTitle>My Positions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center text-slate-800">
-            Connect your wallet to view your positions
-          </div>
-          <ConnectWalletButton />
-        </CardContent>
-      </Card>
-    )
-  }
-
   return (
     <Card>
       <CardHeader>
@@ -100,17 +85,20 @@ export const PositionsTable = ({
               My Positions{' '}
               {isLoading ? null : (
                 <span className="text-gray-400 dark:text-slate-500">
-                  ({filteredData.length})
+                  ({filteredData?.length})
                 </span>
               )}
             </span>
-            <div className="flex gap-4">
-              {!hideNewPositionButton ? (
+            <div className="flex gap-2">
+              {!hideNewPositionButton && account ? (
                 <LinkInternal shallow={true} href={`/stellar/pool/add`}>
                   <Button icon={PlusIcon} asChild size="sm">
                     Create position
                   </Button>
                 </LinkInternal>
+              ) : null}
+              {!account ? (
+                <ConnectButton namespace="stellar" size="sm" />
               ) : null}
             </div>
           </div>
