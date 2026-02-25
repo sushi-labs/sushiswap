@@ -13,15 +13,21 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { FC, JSX } from 'react'
 import { useTokensFromPool } from 'src/lib/hooks'
 import { formatNumber } from 'sushi'
-import type { PoolBase, PoolIfIncentivized } from 'sushi/evm'
+import type {
+  PoolBase,
+  PoolHasSteerVaults,
+  PoolIfIncentivized,
+} from 'sushi/evm'
 import { ProtocolBadge } from '~evm/[chainId]/_ui/protocol-badge'
 
 export const PoolNameCell: FC<{
-  pool: PoolIfIncentivized<PoolBase, true>
+  pool: PoolHasSteerVaults<PoolIfIncentivized<PoolBase, true>>
 }> = ({ pool }) => {
   const { token0, token1 } = useTokensFromPool(pool)
 
   const isIncentivized = 'isIncentivized' in pool && pool.isIncentivized
+  const hasEnabledVault =
+    'hasEnabledSteerVault' in pool && pool.hasEnabledSteerVault
 
   return (
     <div className="flex items-center gap-5">
@@ -87,6 +93,20 @@ export const PoolNameCell: FC<{
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Farm rewards available</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+          {hasEnabledVault && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="bg-[#F2E9D6] dark:bg-yellow/60 text-[10px] px-2 rounded-full">
+                    💡
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Smart Pool available</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

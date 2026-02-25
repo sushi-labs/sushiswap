@@ -4,6 +4,7 @@ import { formatPercent, formatUSD } from 'sushi'
 import {
   type MaybeNestedPool,
   type PoolBase,
+  type PoolHasSteerVaults,
   type PoolIfIncentivized,
   type PoolWithAprs,
   type PoolWithIncentives,
@@ -64,7 +65,7 @@ export const APR_COLUMN = {
 >
 
 export const NAME_COLUMN_POOL: ColumnDef<
-  MaybeNestedPool<PoolIfIncentivized<PoolBase, true>>,
+  MaybeNestedPool<PoolHasSteerVaults<PoolIfIncentivized<PoolBase, true>>>,
   unknown
 > = {
   id: 'name',
