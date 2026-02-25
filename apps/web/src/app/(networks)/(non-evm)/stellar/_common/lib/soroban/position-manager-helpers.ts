@@ -1,4 +1,7 @@
-import { getPositionManagerContractClient } from './client'
+import {
+  getPositionManagerContractClient,
+  getPositionManagerContractId,
+} from './client'
 import { DEFAULT_TIMEOUT } from './constants'
 import { contractAddresses } from './contracts'
 import { getPoolInfoFromContract } from './pool-helpers'
@@ -267,6 +270,7 @@ export async function decreaseLiquidity({
   sourceAccount,
   signTransaction,
   signAuthEntry,
+  isLegacy = false,
 }: {
   tokenId: number
   liquidity: bigint
@@ -277,14 +281,19 @@ export async function decreaseLiquidity({
   sourceAccount: string
   signTransaction: (xdr: string) => Promise<string>
   signAuthEntry: (entryPreimageXdr: string) => Promise<string>
+  isLegacy?: boolean
 }): Promise<{
   hash: string
   amount0: bigint
   amount1: bigint
 }> {
   try {
+    const positionManagerContractId = getPositionManagerContractId(isLegacy)
+    if (!positionManagerContractId) {
+      throw new Error('Position manager contract not found')
+    }
     const positionManagerClient = getPositionManagerContractClient({
-      contractId: contractAddresses.POSITION_MANAGER,
+      contractId: positionManagerContractId,
       publicKey: sourceAccount,
     })
 

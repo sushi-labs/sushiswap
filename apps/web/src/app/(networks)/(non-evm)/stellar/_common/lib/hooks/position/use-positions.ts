@@ -156,9 +156,12 @@ export function useCollectFees({
       })
       // Invalidate principal amounts for this position since collecting fees might affect them
       queryClient.invalidateQueries({
+        queryKey: ['stellar', 'position-pool'],
+      })
+      queryClient.invalidateQueries({
         queryKey: [
           'stellar',
-          'position-principal',
+          'position-principal-batch',
           isLegacy,
           variables.tokenId,
         ],

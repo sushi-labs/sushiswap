@@ -58,7 +58,7 @@ const formatPositionInfo = (
   }
 }
 
-const MINIMUM_DUST_LIQUIDITY = 50n
+export const MINIMUM_DUST_LIQUIDITY = 50n
 
 /**
  * Service for managing positions and collecting fees on Stellar

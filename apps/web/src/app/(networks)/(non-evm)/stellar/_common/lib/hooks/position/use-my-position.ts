@@ -62,14 +62,7 @@ export function useMyPosition({
 
   const positionToPoolQueries = useQueries({
     queries: positions.map((position) => ({
-      queryKey: [
-        'stellar',
-        'position-pool',
-        isLegacy,
-        position.token0,
-        position.token1,
-        position.fee,
-      ],
+      queryKey: ['stellar', 'position-pool', isLegacy, position.tokenId],
       queryFn: async (): Promise<[string, PoolData | null]> => {
         try {
           const poolAddress = await getPoolDirectSDK({

@@ -26,11 +26,13 @@ export interface RemovePoolLiquidityParams {
   poolAddress: string
 }
 
-export const useRemoveLiquidity = () => {
+export const useRemoveLiquidity = ({
+  isLegacy = false,
+}: { isLegacy?: boolean } = {}) => {
   const { signTransaction, signAuthEntry, connectedAddress } =
     useStellarWallet()
   const queryClient = useQueryClient()
-  const collectFeesMutation = useCollectFees()
+  const collectFeesMutation = useCollectFees({ isLegacy })
 
   // This just decreases the pool liquidity
   // The rest of the useRemoveLiquidity below handles
@@ -69,6 +71,7 @@ export const useRemoveLiquidity = () => {
         sourceAccount: connectedAddress,
         signTransaction,
         signAuthEntry,
+        isLegacy,
       })
 
       await waitForTransaction(decreaseResult.hash)
