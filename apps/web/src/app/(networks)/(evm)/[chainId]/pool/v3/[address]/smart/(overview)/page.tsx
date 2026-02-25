@@ -8,6 +8,7 @@ import { notFound } from 'next/navigation'
 import { SteerCarousel } from 'src/lib/steer/components/steer-carousel'
 import { type EvmChainId, isSushiSwapV3ChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
+import { getCachedV3Pool } from '../../_lib/get-cached-v3-pool'
 
 export default async function VaultOverviewPage(props: {
   params: Promise<{ chainId: string; address: string }>
@@ -24,13 +25,7 @@ export default async function VaultOverviewPage(props: {
     return notFound()
   }
 
-  const pool = await unstable_cache(
-    async () => getV3Pool({ chainId, address }),
-    ['pool', `${chainId}:${address}`],
-    {
-      revalidate: 60 * 15,
-    },
-  )()
+  const pool = (await getCachedV3Pool({ chainId, address }))!
 
   const vaults = await unstable_cache(
     async () => getVaults({ chainId, poolAddress: address }),
