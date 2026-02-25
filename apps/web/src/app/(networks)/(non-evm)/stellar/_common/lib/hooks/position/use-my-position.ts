@@ -47,22 +47,25 @@ export function useMyPosition({
   userAddress,
   poolAddress,
   excludeDust = false,
+  isLegacy = false,
 }: {
   userAddress?: string
   poolAddress?: string
   excludeDust?: boolean
+  isLegacy?: boolean
 }): MyPositionData {
   const {
     data: positions = [],
     isLoading: positionsLoading,
     error: positionsError,
-  } = useUserPositions({ userAddress, excludeDust })
+  } = useUserPositions({ userAddress, excludeDust, isLegacy })
 
   const positionToPoolQueries = useQueries({
     queries: positions.map((position) => ({
       queryKey: [
         'stellar',
         'position-pool',
+        isLegacy,
         position.token0,
         position.token1,
         position.fee,
@@ -141,6 +144,7 @@ export function useMyPosition({
       queryKey: [
         'stellar',
         'position-principals-batch',
+        isLegacy,
         pool,
         positions.map((p) => p.tokenId).sort(),
       ],
@@ -150,6 +154,7 @@ export function useMyPosition({
           const results = await positionService.getPositionsPrincipalBatch({
             tokenIds,
             poolAddress: pool,
+            isLegacy,
           })
 
           // Convert Map to tokenId mapping (each position has unique tokenId)
