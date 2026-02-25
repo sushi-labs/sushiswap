@@ -29,6 +29,9 @@ interface State {
     setSlPrice: (slPrice: string) => void
     setHasTpSl: (hasTpSl: boolean) => void
     setTriggerPrice: (triggerPrice: string) => void
+    setScaleStartEnd: (scaleStartEnd: ScaleStartEnd) => void
+    setTotalOrders: (totalOrders: string) => void
+    setSizeSkew: (sizeSkew: string) => void
   }
   state: {
     activeAsset: string
@@ -55,6 +58,9 @@ interface State {
     triggerPrice: string
     isTpSlOrder: boolean
     isTpSlLimitOrder: boolean
+    scaleStartEnd: ScaleStartEnd
+    totalOrders: string
+    sizeSkew: string
   }
 }
 
@@ -62,6 +68,11 @@ const AssetStateContext = createContext<State>({} as State)
 
 interface AssetStateProviderProps {
   children: React.ReactNode
+}
+
+export type ScaleStartEnd = {
+  start: string
+  end: string
 }
 
 export const TRADE_TYPES = [
@@ -98,6 +109,12 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
   const [tpPrice, setTpPrice] = useState<string>('')
   const [slPrice, setSlPrice] = useState<string>('')
   const [triggerPrice, setTriggerPrice] = useState<string>('')
+  const [scaleStartEnd, setScaleStartEnd] = useState<ScaleStartEnd>({
+    start: '',
+    end: '',
+  })
+  const [totalOrders, setTotalOrders] = useState<string>('2')
+  const [sizeSkew, setSizeSkew] = useState<string>('1')
 
   const address = useAccount('evm')
 
@@ -236,6 +253,9 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
             setSlPrice,
             setHasTpSl,
             setTriggerPrice,
+            setScaleStartEnd,
+            setTotalOrders,
+            setSizeSkew,
           },
           state: {
             activeAsset,
@@ -261,6 +281,9 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
             triggerPrice,
             isTpSlOrder,
             isTpSlLimitOrder,
+            scaleStartEnd,
+            totalOrders,
+            sizeSkew,
           },
         }
       }, [
@@ -292,6 +315,9 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
         triggerPrice,
         isTpSlOrder,
         isTpSlLimitOrder,
+        scaleStartEnd,
+        totalOrders,
+        sizeSkew,
       ])}
     >
       {children}

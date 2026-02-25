@@ -12,22 +12,21 @@ import { CheckboxSetting } from '../../_common/checkbox-setting'
 import { StatItem } from '../../_common/stat-item'
 import { useUserSettingsState } from '../../account-management/settings-provider'
 import { useAssetState } from '../asset-state-provider'
+import { useScaleOrders } from '../hooks/use-scale-orders'
 import { LiquidationStat } from '../order-stats/liquidation-stat'
+import { ScaleStartEndStat } from '../order-stats/scale-start-end-stat'
 import { ConfirmDialogTrigger } from './confirm-dialog-trigger'
 import { PlaceOrderButton } from './place-order-button'
 
 export const ConfirmDialog = () => {
   const [open, setOpen] = useState(false)
   const {
-    state: { tradeSide, size, asset, tradeType, limitPrice },
+    state: { tradeType },
   } = useAssetState()
   const {
     state: { quickConfirmPositionEnabled },
     mutate: { setQuickConfirmPositionEnabled },
   } = useUserSettingsState()
-  const { baseSymbol } = useSymbolSplit({
-    asset,
-  })
 
   return (
     <Dialog
@@ -47,37 +46,14 @@ export const ConfirmDialog = () => {
         </DialogHeader>
         <div className="flex flex-col gap-6 ">
           <div className="flex flex-col gap-2">
-            <StatItem
-              title="Action"
-              value={
-                <div
-                  className={getTextColorClass(tradeSide === 'long' ? 1 : -1)}
-                >
-                  {tradeSide === 'long' ? 'Long' : 'Short'}
-                </div>
-              }
-            />
-            <StatItem
-              title="Size"
-              value={
-                <div
-                  className={getTextColorClass(tradeSide === 'long' ? 1 : -1)}
-                >
-                  {size.base} {baseSymbol}
-                </div>
-              }
-            />
-            <StatItem
-              title="Price"
-              value={
-                <div>
-                  {tradeType.includes('market')
-                    ? 'Market'
-                    : numberFormatter.format(Number(limitPrice))}
-                </div>
-              }
-            />
-            <LiquidationStat title="Est. Liquidation Price" />
+            {tradeType === 'scale' ? (
+              <ScaleOrderStats />
+            ) : (
+              <>
+                <RegularOrderStats />
+                <LiquidationStat title="Est. Liquidation Price" />
+              </>
+            )}
           </div>
           <CheckboxSetting
             value={quickConfirmPositionEnabled}
@@ -93,5 +69,84 @@ export const ConfirmDialog = () => {
         </div>
       </DialogContent>
     </Dialog>
+  )
+}
+
+const RegularOrderStats = () => {
+  const {
+    state: { tradeSide, size, asset, tradeType, limitPrice },
+  } = useAssetState()
+  const { baseSymbol } = useSymbolSplit({
+    asset,
+  })
+
+  return (
+    <>
+      <StatItem
+        title="Action"
+        value={
+          <div className={getTextColorClass(tradeSide === 'long' ? 1 : -1)}>
+            {tradeSide === 'long' ? 'Long' : 'Short'}
+          </div>
+        }
+      />
+      <StatItem
+        title="Size"
+        value={
+          <div className={getTextColorClass(tradeSide === 'long' ? 1 : -1)}>
+            {size.base} {baseSymbol}
+          </div>
+        }
+      />
+      <StatItem
+        title="Price"
+        value={
+          <div>
+            {tradeType.includes('market')
+              ? 'Market'
+              : numberFormatter.format(Number(limitPrice))}
+          </div>
+        }
+      />
+    </>
+  )
+}
+
+const ScaleOrderStats = () => {
+  const {
+    state: { tradeSide, asset },
+  } = useAssetState()
+  const { baseSymbol } = useSymbolSplit({
+    asset,
+  })
+
+  const { data } = useScaleOrders()
+  const totalSize = data?.totalSize
+  const orders = data?.orders
+
+  return (
+    <>
+      <StatItem
+        title="Action"
+        value={
+          <div className={getTextColorClass(tradeSide === 'long' ? 1 : -1)}>
+            {tradeSide === 'long' ? 'Buy' : 'Sell'}
+          </div>
+        }
+      />
+      <StatItem
+        title="Total Size"
+        value={
+          <div className={getTextColorClass(tradeSide === 'long' ? 1 : -1)}>
+            {totalSize} {baseSymbol}
+          </div>
+        }
+      />
+      <StatItem
+        title="Number of Orders"
+        value={<div>{orders ? orders?.length : 'N/A'}</div>}
+      />
+      <ScaleStartEndStat />
+    </>
   )
 }

@@ -4,6 +4,7 @@ import { useMidPrice } from 'src/lib/perps/use-mid-price'
 import { useUserPositions } from 'src/lib/perps/use-user-positions'
 import { parseUnits } from 'viem'
 import { useAssetState } from '../trade-widget/asset-state-provider'
+import { useScaleOrders } from '../trade-widget/hooks/use-scale-orders'
 
 export const OrderAmount: FC<ButtonProps> = ({
   children,
@@ -22,13 +23,17 @@ export const OrderAmount: FC<ButtonProps> = ({
       triggerPrice,
       isTpSlLimitOrder,
       limitPrice,
+      tradeType,
     },
   } = useAssetState()
   const { data: existingPositions } = useUserPositions(activeAsset)
   const { midPrice } = useMidPrice({
     assetString: activeAsset,
   })
+  const { data: scaleOrderData } = useScaleOrders()
+  const allScaleOrdersAreValid = scaleOrderData?.allOrdersValid
 
+  //todo: break this up into smaller checkers
   const existingOppositePosition = useMemo(() => {
     if (!existingPositions || existingPositions.length === 0) return undefined
     return existingPositions?.find(
@@ -51,6 +56,9 @@ export const OrderAmount: FC<ButtonProps> = ({
     if (Number(orderSize.quote) < 10) {
       return { isSizeValid: false, buttonText: 'Min. Size is $10' }
     }
+    if (tradeType === 'scale' && !allScaleOrdersAreValid) {
+      return { isSizeValid: false, buttonText: 'Orders Must Be >= $10' }
+    }
     if (isTpSlOrder && Number(triggerPrice) === 0) {
       return { isSizeValid: false, buttonText: 'Enter Trigger Price' }
     }
@@ -68,6 +76,7 @@ export const OrderAmount: FC<ButtonProps> = ({
     ) {
       return { isSizeValid: false, buttonText: 'Limit Price Too High' }
     }
+
     const parsedSize = parseUnits(orderSize.base, 18)
     const parsedMaxTradeSize = parseUnits(maxTradeSize, 18)
     if (parsedSize <= parsedMaxTradeSize) {
@@ -85,6 +94,8 @@ export const OrderAmount: FC<ButtonProps> = ({
     limitPrice,
     midPrice,
     tradeSide,
+    allScaleOrdersAreValid,
+    tradeType,
   ])
 
   if (!isSizeValid) {

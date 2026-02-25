@@ -5,6 +5,7 @@ import { FeeStat } from './fee-stat'
 import { LiquidationStat } from './liquidation-stat'
 import { MarginRequiredStat } from './margin-required-stat'
 import { OrderValueStat } from './order-value-stat'
+import { ScaleStartEndStat } from './scale-start-end-stat'
 import { SlippageStat } from './slippage-stat'
 
 export const OrderStats = () => {
@@ -18,14 +19,7 @@ export const OrderStats = () => {
 
   return (
     <div className="flex flex-col gap-2">
-      {tradeType === 'scale' ? (
-        <>
-          <StatItem title="Start" value={`todo USDC`} />
-          <StatItem title="End" value={`todo USDC`} />
-        </>
-      ) : (
-        <LiquidationStat />
-      )}
+      {tradeType === 'scale' ? <ScaleStartEndStat /> : <LiquidationStat />}
       <OrderValueStat />
       <MarginRequiredStat />
       {tradeType === 'market' ? <SlippageStat /> : null}

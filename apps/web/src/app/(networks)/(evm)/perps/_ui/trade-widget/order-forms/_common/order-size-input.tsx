@@ -9,21 +9,33 @@ import { useAssetState } from '../../asset-state-provider'
 
 export const OrderSizeInput = () => {
   const {
-    state: { asset, sizeSide, size, maxTradeSize, markPrice, percentage },
+    state: {
+      asset,
+      sizeSide,
+      size,
+      maxTradeSize,
+      markPrice,
+      limitPrice,
+      tradeType,
+      percentage,
+    },
     mutate: { setSizeSide, setSize, setPercentage },
   } = useAssetState()
 
   const handleSetSize = useCallback(
     (value: string) => {
       if (!asset) return
-
+      let price = markPrice
+      if (tradeType.toLowerCase().includes('limit') && limitPrice) {
+        price = limitPrice
+      }
       try {
         const { baseSize, quoteSize, percentage } =
           getSizeAndPercentageFromInput({
             inputValue: value,
             sizeSide,
             maxSize: maxTradeSize,
-            priceUsd: markPrice ?? '0',
+            priceUsd: price ?? '0',
             decimals: asset.decimals,
           })
         setPercentage(percentage)
@@ -40,7 +52,16 @@ export const OrderSizeInput = () => {
         })
       }
     },
-    [asset, sizeSide, maxTradeSize, markPrice, setPercentage, setSize],
+    [
+      asset,
+      sizeSide,
+      maxTradeSize,
+      markPrice,
+      limitPrice,
+      tradeType,
+      setPercentage,
+      setSize,
+    ],
   )
 
   const handleSetPercent = useCallback(
@@ -50,13 +71,16 @@ export const OrderSizeInput = () => {
         setPercentage(0)
         return
       }
-
+      let price = markPrice
+      if (tradeType.toLowerCase().includes('limit') && limitPrice) {
+        price = limitPrice
+      }
       try {
         const { baseSize, quoteSize, percentage } =
           getSizeAndPercentageFromPercentageInput({
             percentageInput: val,
             maxSize: maxTradeSize,
-            priceUsd: markPrice ?? '0',
+            priceUsd: price ?? '0',
             decimals: asset.decimals,
           })
 
@@ -68,7 +92,15 @@ export const OrderSizeInput = () => {
         setPercentage(val)
       }
     },
-    [asset, maxTradeSize, markPrice, setSize, setPercentage],
+    [
+      asset,
+      maxTradeSize,
+      markPrice,
+      limitPrice,
+      tradeType,
+      setSize,
+      setPercentage,
+    ],
   )
 
   return (

@@ -10,7 +10,7 @@ export const StatItem = ({
   return (
     <div className="grid grid-cols-2 text-xs font-medium">
       <div className="text-muted-foreground">{title}</div>
-      <div className="justify-end flex">{value}</div>
+      <div className="justify-end flex whitespace-nowrap">{value}</div>
     </div>
   )
 }

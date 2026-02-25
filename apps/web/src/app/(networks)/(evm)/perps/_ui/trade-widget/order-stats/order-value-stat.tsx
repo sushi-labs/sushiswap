@@ -5,23 +5,27 @@ import { useAssetState } from '../asset-state-provider'
 
 export const OrderValueStat = () => {
   const {
-    state: { asset, size, markPrice },
+    state: { asset, tradeType, size, markPrice, limitPrice },
   } = useAssetState()
 
   const orderValue = useMemo(() => {
     if (!asset || !markPrice || !size.base) {
       return null
     }
+    let price = markPrice
+    if (tradeType.toLowerCase().includes('limit') && limitPrice) {
+      price = limitPrice
+    }
 
     const res = calculateOrderValue({
       baseSize: size.base,
-      price: markPrice,
+      price,
       decimals: asset.decimals,
     })
     if (!res) return null
 
     return enUSFormatNumber.format(Number.parseFloat(res.notionalFormatted))
-  }, [asset, markPrice, size.base])
+  }, [asset, tradeType, size.base, markPrice, limitPrice])
 
   return (
     <StatItem

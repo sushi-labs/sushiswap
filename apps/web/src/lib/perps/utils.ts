@@ -1,4 +1,4 @@
-import { formatSize } from '@nktkas/hyperliquid/utils'
+import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
 import { formatUnits, parseUnits } from 'viem'
 import type { UserOpenOrdersItemType } from './use-user-open-orders'
 
@@ -650,4 +650,82 @@ export function calculateOrderValue({
   } catch {
     return null
   }
+}
+
+//todo: switch to using bigint math
+export function buildScaleOrders({
+  totalSize,
+  startPrice,
+  endPrice,
+  numberOfOrders,
+  sizeSkew,
+  decimals,
+  marketType,
+}: {
+  totalSize: string
+  startPrice: string
+  endPrice: string
+  numberOfOrders: string
+  sizeSkew: string // 0.01..100 (interpreted as last/first multiplier)
+  decimals: number
+  marketType: 'spot' | 'perp'
+}) {
+  const _endPrice = Number.parseFloat(endPrice)
+  const _startPrice = Number.parseFloat(startPrice)
+  const _totalSize = Number.parseFloat(totalSize)
+  const _sizeSkew = Number.parseFloat(sizeSkew)
+  const n = Math.max(1, Number(numberOfOrders) || 2)
+
+  const denom = Math.max(1, n - 1)
+
+  // prices: linear ladder (inclusive)
+  const prices = Array.from({ length: n }, (_, i) => {
+    const t = i / denom
+    return _startPrice + t * (_endPrice - _startPrice)
+  })
+  prices[n - 1] = _endPrice
+
+  // weights: LINEAR from 1 -> sizeSkew
+  const weights = Array.from({ length: n }, (_, i) => {
+    const t = i / denom
+    return 1 + t * (_sizeSkew - 1)
+  })
+
+  const wSum = weights.reduce((a, b) => a + b, 0)
+
+  // sizes normalized to sum exactly to totalSize (fix rounding drift on last)
+  const sizes = weights.map((w) => (_totalSize * w) / wSum)
+
+  const orders = Array.from({ length: n }, (_, idx) => {
+    let _price
+    let _size
+    try {
+      _price = formatPrice(prices[idx], decimals, marketType)
+    } catch {
+      _price = '0'
+    }
+    try {
+      _size = formatSize(sizes[idx], decimals)
+    } catch {
+      _size = '0'
+    }
+    const usdValue = Number(prices[idx]) * Number(sizes[idx])
+    return {
+      price: _price,
+      size: _size,
+      estUsdValue: usdValue,
+    }
+  })
+  let computedTotalSize = orders
+    .reduce((acc, order) => acc + Number(order.size), 0)
+    ?.toString()
+  try {
+    computedTotalSize = formatSize(computedTotalSize, decimals)
+  } catch {
+    computedTotalSize = '0'
+  }
+
+  const allOrdersValid = orders.every((order) => order.estUsdValue >= 10)
+
+  return { orders, totalSize: computedTotalSize, allOrdersValid }
 }

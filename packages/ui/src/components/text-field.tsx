@@ -119,7 +119,7 @@ const Component = <T extends InputType>(
       if (onValueChange && val === '') onValueChange('')
 
       if (inputRegex.test(escapeRegExp(val))) {
-        if (maxDecimals && val?.includes('.')) {
+        if (maxDecimals !== undefined && val?.includes('.')) {
           const [, decimals] = val.split('.')
           if (onValueChange && decimals.length <= maxDecimals) {
             onValueChange(val)

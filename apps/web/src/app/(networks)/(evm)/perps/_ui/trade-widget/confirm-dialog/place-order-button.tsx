@@ -10,6 +10,7 @@ import { useMidPrice } from 'src/lib/perps/use-mid-price'
 import { formatUnits, parseUnits } from 'viem'
 import { useUserSettingsState } from '../../account-management/settings-provider'
 import { useAssetState } from '../asset-state-provider'
+import { useScaleOrders } from '../hooks/use-scale-orders'
 
 export const PlaceOrderButton = ({ onMutate }: { onMutate?: () => void }) => {
   const {
@@ -64,6 +65,7 @@ const _useOrderData = () => {
   const marketPrice = _useMarketPrice()
   const { tpOrder, slOrder } = _useTpSlOrder()
   const builderFee = _useBuilderFee()
+  const { data: scaleOrderData } = useScaleOrders()
 
   return useMemo<OrderData | undefined>(() => {
     if (!asset) return undefined
@@ -124,13 +126,27 @@ const _useOrderData = () => {
           },
         }
       }
-      case 'scale':
+      case 'scale': {
+        const orders = scaleOrderData?.orders
+        if (!orders || orders.length === 0) return undefined
+
+        const scaleOrders = orders?.map((order) => ({
+          asset: activeAsset,
+          side: tradeSide,
+          price: order.price,
+          size: order.size,
+          reduceOnly,
+          orderType: { limit: { timeInForce: timeInForce } },
+        }))
+
         return {
-          orders: [],
+          orders: scaleOrders,
+          grouping: 'na' as const,
           builder: {
             builderFee: builderFee,
           },
         }
+      }
       case 'stop limit': {
         const _size = formatSize(size.base, asset?.decimals)
         const price = formatPrice(
@@ -287,6 +303,7 @@ const _useOrderData = () => {
     slOrder,
     builderFee,
     triggerPrice,
+    scaleOrderData,
   ])
 }
 

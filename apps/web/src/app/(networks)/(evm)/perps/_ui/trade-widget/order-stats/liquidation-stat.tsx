@@ -22,6 +22,8 @@ export const LiquidationStat = ({ title }: { title?: string }) => {
       markPrice,
       activeAsset,
       reduceOnly,
+      tradeType,
+      limitPrice,
     },
   } = useAssetState()
   const { perpsEquity, maintenanceMargin } = useUserAccountValues()
@@ -60,11 +62,16 @@ export const LiquidationStat = ({ title }: { title?: string }) => {
     if (!asset || !markPrice || !perpsEquity || !size.base) {
       return null
     }
+    let price = markPrice
+    if (tradeType.toLowerCase().includes('limit') && limitPrice) {
+      price = limitPrice
+    }
+
     const positionSize = size.base
     const isCross = currentLeverageTypeForAsset === 'cross'
     const iso = calculateIsolatedMargin({
       baseSize: size.base,
-      price: markPrice,
+      price: price,
       leverage: currentLeverageForAsset,
       decimals: asset.decimals,
     })
@@ -76,9 +83,27 @@ export const LiquidationStat = ({ title }: { title?: string }) => {
       (tradeSide === 'short' && existingPosition?.side === 'A')
 
     const liqPrice = estimateLiquidationPrice({
-      price: reduceOnly
-        ? (existingPosition?.position.entryPx ?? markPrice)
-        : markPrice,
+      price: reduceOnly ? (existingPosition?.position.entryPx ?? price) : price,
+      side: _tradeSide === 'long' ? 'B' : 'A',
+      accountValue: perpsEquity?.toString(),
+      positionSize: reduceOnly
+        ? (
+            Math.abs(existingPositionSize) - Math.abs(Number(positionSize))
+          ).toString()
+        : (
+            Number(positionSize) +
+            (!existingForCurrentSide ? existingPositionSize : 0)
+          ).toString(),
+      maintenanceMarginRequired: (
+        Number(size.quote) / maxLeverage +
+        Number(maintenanceMargin)
+      ).toString(),
+      maintenanceLeverage: maxLeverage.toString(),
+      isolatedMargin: iso?.isolatedMarginFormatted ?? '0', //pass isolated margin even if cross for completeness
+      isCross,
+    })
+    console.log({
+      price: reduceOnly ? (existingPosition?.position.entryPx ?? price) : price,
       side: _tradeSide === 'long' ? 'B' : 'A',
       accountValue: perpsEquity?.toString(),
       positionSize: reduceOnly
@@ -118,6 +143,8 @@ export const LiquidationStat = ({ title }: { title?: string }) => {
     size,
     _tradeSide,
     reduceOnly,
+    tradeType,
+    limitPrice,
   ])
 
   return (
