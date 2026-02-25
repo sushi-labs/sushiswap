@@ -8,7 +8,10 @@ import {
   MinusIcon,
   PlusIcon,
 } from '@heroicons/react/24/outline'
-import type { SmartPoolsV1 } from '@sushiswap/graph-client/data-api'
+import type {
+  SmartPoolChainId,
+  SmartPoolsV1,
+} from '@sushiswap/graph-client/data-api'
 import {
   Badge,
   Button,
@@ -56,6 +59,7 @@ import {
 } from 'sushi/evm'
 import { APRHoverCard } from '~evm/[chainId]/_ui/apr-hover-card'
 import { ProtocolBadge } from '~evm/[chainId]/_ui/protocol-badge'
+import { useSmartPools } from '../hooks'
 
 const COLUMNS = [
   {
@@ -485,14 +489,14 @@ const COLUMNS = [
 ] satisfies ColumnDef<SmartPoolsV1[number], unknown>[]
 
 interface SteerSmartPoolsTableProps {
-  smartPools?: SmartPoolsV1
-  isLoading?: boolean
+  chainId: SmartPoolChainId
 }
 
 export const SteerSmartPoolsTable: FC<SteerSmartPoolsTableProps> = ({
-  smartPools,
-  isLoading = false,
+  chainId,
 }) => {
+  const { data: smartPools, isLoading } = useSmartPools({ chainId })
+
   const { tokenSymbols, protocols, farmsOnly } = usePoolFilters()
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'liquidityUSD', desc: true },
