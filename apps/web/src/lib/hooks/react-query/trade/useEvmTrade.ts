@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { EVM_UI_FEE_DECIMAL } from 'src/config'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
-import { getFeeString, isAddressFeeWhitelisted } from 'src/lib/swap/fee'
+import { getFeeString, shouldChargeFee } from 'src/lib/swap/fee'
 import { Amount, Fraction, Percent, Price, ZERO, subtractSlippage } from 'sushi'
 import {
   type EvmCurrency,
@@ -89,8 +89,12 @@ export const useEvmTradeQuery = (
       recipient && params.searchParams.set('recipient', `${recipient}`)
 
       if (
-        !isAddressFeeWhitelisted(address) ||
-        (recipient && !isAddressFeeWhitelisted(recipient))
+        shouldChargeFee({
+          fromToken,
+          toToken,
+          sender: address,
+          recipient,
+        })
       ) {
         params.searchParams.set('fee', `${fee}`)
         if (fee > 0) {

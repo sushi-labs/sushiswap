@@ -8,6 +8,31 @@ const FEE_WHITELIST = ['0xc6164db338890e7a5e05d8a066c4ad54379c5a33']
 export const isAddressFeeWhitelisted = (address: Address) =>
   FEE_WHITELIST.includes(address.toLowerCase())
 
+export const shouldChargeFee = ({
+  fromToken,
+  toToken,
+  sender,
+  recipient,
+}: {
+  fromToken: EvmCurrency | undefined
+  toToken: EvmCurrency | undefined
+  sender?: Address | undefined
+  recipient?: Address | undefined
+}) => {
+  if (!fromToken || !toToken) return false
+  if (isWrapOrUnwrap({ from: fromToken, to: toToken })) return false
+
+  if (
+    sender &&
+    isAddressFeeWhitelisted(sender) &&
+    (!recipient || isAddressFeeWhitelisted(recipient))
+  ) {
+    return false
+  }
+
+  return true
+}
+
 export const getFeeString = ({
   fromToken,
   toToken,
@@ -19,10 +44,12 @@ export const getFeeString = ({
   tokenOutPrice: Fraction | undefined
   minAmountOut: Amount<EvmCurrency>
 }) => {
-  return !isWrapOrUnwrap({ from: fromToken, to: toToken })
-    ? `${tokenOutPrice ? '$' : ''}${minAmountOut
-        .mul(new Percent({ numerator: EVM_UI_FEE_BIPS, denominator: 10_000 }))
-        .mul(tokenOutPrice ? tokenOutPrice.asFraction : 1n)
-        .toSignificant(4)}${!tokenOutPrice ? ` ${toToken.symbol}` : ''}`
-    : '$0'
+  if (!shouldChargeFee({ fromToken, toToken })) {
+    return '$0'
+  }
+
+  return `${tokenOutPrice ? '$' : ''}${minAmountOut
+    .mul(new Percent({ numerator: EVM_UI_FEE_BIPS, denominator: 10_000 }))
+    .mul(tokenOutPrice ? tokenOutPrice.asFraction : 1n)
+    .toSignificant(4)}${!tokenOutPrice ? ` ${toToken.symbol}` : ''}`
 }

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { EVM_UI_FEE_DECIMAL } from 'src/config'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
-import { getFeeString } from 'src/lib/swap/fee'
+import { getFeeString, shouldChargeFee } from 'src/lib/swap/fee'
 import { Amount, Fraction, Percent, Price, ZERO, subtractSlippage } from 'sushi'
 import {
   type EvmAddress,
@@ -104,8 +104,13 @@ export const useEvmTradeQuoteQuery = (
       )
       params.searchParams.set('amount', `${amount?.amount.toString()}`)
       params.searchParams.set('maxSlippage', `${+slippagePercentage / 100}`)
-      params.searchParams.set('fee', `${fee}`)
-      params.searchParams.set('feeBy', 'output')
+      if (shouldChargeFee({ fromToken, toToken, recipient })) {
+        params.searchParams.set('fee', `${fee}`)
+
+        if (fee > 0) {
+          params.searchParams.set('feeBy', 'output')
+        }
+      }
       if (onlyPools)
         onlyPools.forEach((pool) =>
           params.searchParams.append('onlyPools', pool),
