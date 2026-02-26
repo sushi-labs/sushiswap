@@ -1,9 +1,11 @@
 import { Card, classNames } from '@sushiswap/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { useMemo } from 'react'
+import { useUserActiveTwap } from 'src/lib/perps/subscription/use-user-active-twap'
 import { useBalances } from 'src/lib/perps/use-balances'
 import { useUserOpenOrders } from 'src/lib/perps/use-user-open-orders'
 import { useUserPositions } from 'src/lib/perps/use-user-positions'
+import { useAccount } from 'src/lib/wallet'
 import { TradeFilter } from './filters/trade-filter'
 import {
   TRADE_TABLES_TABS,
@@ -25,7 +27,8 @@ export const TradeTables = ({ className }: { className?: string }) => {
   const ActiveContent = useMemo(() => {
     return TRADE_TABLES_TABS.find((t) => t.value === activeTab)?.content
   }, [activeTab])
-
+  const address = useAccount('evm')
+  const { data: twapOrders } = useUserActiveTwap({ address })
   const { data: balances } = useBalances()
   const { data: userPositions } = useUserPositions()
   const { data: openOrders } = useUserOpenOrders({})
@@ -37,6 +40,10 @@ export const TradeTables = ({ className }: { className?: string }) => {
   const openOrdersCount = useMemo(
     () => openOrders?.length ?? 0,
     [openOrders?.length],
+  )
+  const twapOrderCount = useMemo(
+    () => twapOrders?.states.length ?? 0,
+    [twapOrders?.states.length],
   )
 
   const tabNameRewrite = useMemo(() => {
@@ -59,9 +66,15 @@ export const TradeTables = ({ className }: { className?: string }) => {
           name: `Open Orders${openOrdersCount ? ` (${openOrdersCount})` : ''}`,
         }
       }
+      if (tab.value === 'twap') {
+        return {
+          value: tab.value,
+          name: `TWAP ${twapOrderCount ? ` (${twapOrderCount})` : ''}`,
+        }
+      }
       return tab
     })
-  }, [balanceCount, positionCount, openOrdersCount])
+  }, [balanceCount, positionCount, openOrdersCount, twapOrderCount])
 
   return (
     <Card className={classNames('p-2', className ?? '')}>
@@ -90,7 +103,14 @@ export const TradeTables = ({ className }: { className?: string }) => {
         </div>
         {TRADE_TABLES_TABS.map((tab) => (
           <TabsContent key={tab.value} value={tab.value}>
-            <div className="p-2 !pt-0 max-h-[380px] hide-scrollbar overflow-y-auto">
+            <div
+              className={classNames(
+                'p-2 !pt-0',
+                tab.value !== 'twap'
+                  ? 'max-h-[380px] hide-scrollbar overflow-y-auto'
+                  : '',
+              )}
+            >
               <div>{ActiveContent ? <ActiveContent /> : null}</div>
             </div>
           </TabsContent>

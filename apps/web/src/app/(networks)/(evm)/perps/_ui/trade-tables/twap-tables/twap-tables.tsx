@@ -33,7 +33,7 @@ export const TwapTables = () => {
 
       {TWAP_TABLES_TABS.map((tab) => (
         <TabsContent key={tab.value} value={tab.value}>
-          <div className="p-4">
+          <div className="p-4 max-h-[335px] hide-scrollbar overflow-y-auto">
             <div>{ActiveContent ? <ActiveContent /> : null}</div>
           </div>
         </TabsContent>
