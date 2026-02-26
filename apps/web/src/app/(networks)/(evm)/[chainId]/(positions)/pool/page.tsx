@@ -4,11 +4,7 @@ import React from 'react'
 import { TableFiltersNetwork } from 'src/app/(networks)/_ui/table-filters-network'
 import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/table-filters-search-token'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import {
-  SushiSwapProtocol,
-  isBladeChainId,
-  isSushiSwapChainId,
-} from 'sushi/evm'
+import { isBladeChainId, isSushiSwapChainId } from 'sushi/evm'
 import { TableFiltersResetButton } from '~evm/[chainId]/_ui/table-filters-reset-button'
 import { PositionsTab } from './_ui/positions-tab'
 
@@ -24,12 +20,6 @@ export default async function MyPositionsPage(props: {
     return notFound()
   }
 
-  const supportedProtocols: SushiSwapProtocol[] = [
-    SushiSwapProtocol.SUSHISWAP_V2,
-    SushiSwapProtocol.SUSHISWAP_V3,
-    ...(isBladeChain ? [SushiSwapProtocol.BLADE] : []),
-  ]
-
   return (
     <Container maxWidth="7xl" className="px-4">
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
@@ -42,7 +32,7 @@ export default async function MyPositionsPage(props: {
         />
         <TableFiltersResetButton />
       </div>
-      <PositionsTab chainId={chainId} supportedProtocols={supportedProtocols} />
+      <PositionsTab chainId={chainId} />
     </Container>
   )
 }
