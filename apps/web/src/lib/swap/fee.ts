@@ -19,7 +19,9 @@ export const getFeeString = ({
   tokenOutPrice: Fraction | undefined
   minAmountOut: Amount<EvmCurrency>
 }) => {
-  return !isWrapOrUnwrap({ from: fromToken, to: toToken })
+  return !isWrapOrUnwrap({ from: fromToken, to: toToken }) &&
+    !(isStable(fromToken) && isStable(toToken)) &&
+    !(isLsd(fromToken) && isLsd(toToken))
     ? `${tokenOutPrice ? '$' : ''}${minAmountOut
         .mul(new Percent({ numerator: EVM_UI_FEE_BIPS, denominator: 10_000 }))
         .mul(tokenOutPrice ? tokenOutPrice.asFraction : 1n)
