@@ -16,7 +16,7 @@ import { OrderHistoryTable } from './order-history-table'
 import { PositionsTable } from './positions-table/positions-table'
 import { TradeHistoryTable } from './trade-history-table'
 import { ActiveTwapTable } from './twap-tables/active-twap-table'
-import { FillHistoryTwapTable } from './twap-tables/fill-history-twap-table'
+import { FillHistoryTwapTable } from './twap-tables/fill-history-table/fill-history-twap-table'
 import { HistoryTwapTable } from './twap-tables/history-twap-table/history-twap-table'
 import { TwapTables } from './twap-tables/twap-tables'
 
