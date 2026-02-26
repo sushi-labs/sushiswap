@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import type React from 'react'
 import { WalletProvider } from 'src/lib/wallet'
 import { SidebarProvider } from '../../_ui/sidebar'
+import { MigrateBanner } from './legacy-positions/migrate-banner'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
@@ -20,7 +21,10 @@ export default function RootLayout({
     <WalletProvider>
       <Providers>
         <SidebarProvider>
-          <div className="flex flex-col h-full w-full">{children}</div>
+          <div className="flex flex-col h-full w-full">
+            <MigrateBanner />
+            {children}
+          </div>
         </SidebarProvider>
       </Providers>
     </WalletProvider>
