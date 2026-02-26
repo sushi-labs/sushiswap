@@ -19,24 +19,36 @@ export const ConfirmDialogTrigger = () => {
         <PerpsChecker.Deposit size="lg">
           <PerpsChecker.EnableTrading size="lg">
             <PerpsChecker.BuilderFee size="lg">
-              <PerpsChecker.OrderAmount
+              <PerpsChecker.TwapRunningTime
                 size="lg"
                 variant={tradeSide === 'long' ? 'default' : 'destructive'}
               >
-                {quickConfirmPositionEnabled ? (
-                  <PlaceOrderButton />
-                ) : (
-                  <DialogTrigger asChild>
-                    <Button
-                      fullWidth
-                      size="lg"
-                      variant={tradeSide === 'long' ? 'default' : 'destructive'}
-                    >
-                      Place Order
-                    </Button>
-                  </DialogTrigger>
-                )}
-              </PerpsChecker.OrderAmount>
+                <PerpsChecker.OrderAmount
+                  size="lg"
+                  variant={tradeSide === 'long' ? 'default' : 'destructive'}
+                >
+                  <PerpsChecker.TwapSuborder
+                    size="lg"
+                    variant={tradeSide === 'long' ? 'default' : 'destructive'}
+                  >
+                    {quickConfirmPositionEnabled ? (
+                      <PlaceOrderButton />
+                    ) : (
+                      <DialogTrigger asChild>
+                        <Button
+                          fullWidth
+                          size="lg"
+                          variant={
+                            tradeSide === 'long' ? 'default' : 'destructive'
+                          }
+                        >
+                          Place Order
+                        </Button>
+                      </DialogTrigger>
+                    )}
+                  </PerpsChecker.TwapSuborder>
+                </PerpsChecker.OrderAmount>
+              </PerpsChecker.TwapRunningTime>
             </PerpsChecker.BuilderFee>
           </PerpsChecker.EnableTrading>
         </PerpsChecker.Deposit>

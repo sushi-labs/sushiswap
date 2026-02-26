@@ -5,6 +5,8 @@ import { Deposit } from './deposit'
 import { EnableTrading } from './enable-trading'
 import { Legal } from './legal'
 import { OrderAmount } from './order-amount'
+import { TwapRunningTime } from './twap-running-time'
+import { TwapSuborder } from './twap-suborder'
 
 export type PerpsCheckerProps = {
   Legal: ComponentType<ButtonProps>
@@ -12,6 +14,8 @@ export type PerpsCheckerProps = {
   Deposit: ComponentType<ButtonProps>
   BuilderFee: ComponentType<ButtonProps>
   OrderAmount: ComponentType<ButtonProps>
+  TwapRunningTime: ComponentType<ButtonProps>
+  TwapSuborder: ComponentType<ButtonProps>
 }
 
 export const PerpsChecker = {
@@ -20,4 +24,6 @@ export const PerpsChecker = {
   Deposit,
   BuilderFee,
   OrderAmount,
+  TwapRunningTime,
+  TwapSuborder,
 }

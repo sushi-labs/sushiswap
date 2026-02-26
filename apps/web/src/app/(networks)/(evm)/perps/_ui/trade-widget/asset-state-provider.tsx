@@ -32,6 +32,11 @@ interface State {
     setScaleStartEnd: (scaleStartEnd: ScaleStartEnd) => void
     setTotalOrders: (totalOrders: string) => void
     setSizeSkew: (sizeSkew: string) => void
+    setTwapRunningTime: (twapRunningTime: {
+      hours: string
+      minutes: string
+    }) => void
+    setTwapRandomize: (twapRandomize: boolean) => void
   }
   state: {
     activeAsset: string
@@ -61,6 +66,9 @@ interface State {
     scaleStartEnd: ScaleStartEnd
     totalOrders: string
     sizeSkew: string
+    twapRunningTime: { hours: string; minutes: string }
+    twapRandomize: boolean
+    totalRunningTimeInMinutes: number
   }
 }
 
@@ -115,6 +123,11 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
   })
   const [totalOrders, setTotalOrders] = useState<string>('2')
   const [sizeSkew, setSizeSkew] = useState<string>('1')
+  const [twapRunningTime, setTwapRunningTime] = useState<{
+    hours: string
+    minutes: string
+  }>({ hours: '', minutes: '' })
+  const [twapRandomize, setTwapRandomize] = useState<boolean>(false)
 
   const address = useAccount('evm')
 
@@ -128,6 +141,12 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     assetString: activeAsset,
   })
   const { data: openPosition } = useUserPositions(activeAsset)
+
+  const totalRunningTimeInMinutes = useMemo(() => {
+    const hours = Number.parseInt(twapRunningTime.hours) || 0
+    const minutes = Number.parseInt(twapRunningTime.minutes) || 0
+    return minutes + hours * 60
+  }, [twapRunningTime])
 
   const isTpSlOrder = useMemo(() => {
     return (
@@ -256,6 +275,8 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
             setScaleStartEnd,
             setTotalOrders,
             setSizeSkew,
+            setTwapRunningTime,
+            setTwapRandomize,
           },
           state: {
             activeAsset,
@@ -284,6 +305,9 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
             scaleStartEnd,
             totalOrders,
             sizeSkew,
+            twapRunningTime,
+            twapRandomize,
+            totalRunningTimeInMinutes,
           },
         }
       }, [
@@ -318,6 +342,9 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
         scaleStartEnd,
         totalOrders,
         sizeSkew,
+        twapRunningTime,
+        twapRandomize,
+        totalRunningTimeInMinutes,
       ])}
     >
       {children}

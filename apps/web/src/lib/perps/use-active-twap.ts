@@ -28,7 +28,7 @@ export const useActiveTwap = () => {
     return data.states.flatMap(([twapId, state]) => {
       const asset = assetList?.get(state.coin)
       const averagePrice =
-        Number.parseFloat(state.executedNtl) *
+        Number.parseFloat(state.executedNtl) /
         Number.parseFloat(state.executedSz)
       const creationTime = state.timestamp
       const currentTime = Date.now()

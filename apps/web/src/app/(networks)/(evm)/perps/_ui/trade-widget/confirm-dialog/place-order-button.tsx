@@ -6,6 +6,10 @@ import {
   type OrderData,
   useExecuteOrders,
 } from 'src/lib/perps/exchange/use-execute-orders'
+import {
+  type TwapOrder,
+  useExecuteTwapOrder,
+} from 'src/lib/perps/exchange/use-execute-twap-order'
 import { useMidPrice } from 'src/lib/perps/use-mid-price'
 import { formatUnits, parseUnits } from 'viem'
 import { useUserSettingsState } from '../../account-management/settings-provider'
@@ -14,26 +18,49 @@ import { useScaleOrders } from '../hooks/use-scale-orders'
 
 export const PlaceOrderButton = ({ onMutate }: { onMutate?: () => void }) => {
   const {
-    state: { tradeSide },
+    state: { tradeSide, tradeType },
   } = useAssetState()
   const orderData = _useOrderData()
+  const twapOrderData = _useTwapOrderData()
   const { executeOrdersAsync, isPending } = useExecuteOrders()
+  const { executeTwapOrderAsync, isPending: isTwapPending } =
+    useExecuteTwapOrder()
   const {
     state: { quickConfirmPositionEnabled },
   } = useUserSettingsState()
+
   const handleExecuteOrders = useCallback(async () => {
-    if (!orderData || orderData.orders.length === 0) return
-    try {
-      console.log('Executing orders with data:', orderData)
-      await executeOrdersAsync({ orderData })
-      onMutate?.()
-    } catch (error) {
-      console.log(error)
+    if (tradeType === 'TWAP') {
+      if (!twapOrderData) return
+      try {
+        console.log('Executing orders with data:', twapOrderData)
+        await executeTwapOrderAsync(twapOrderData)
+        onMutate?.()
+      } catch (error) {
+        console.log(error)
+      }
+    } else {
+      if (!orderData || orderData.orders.length === 0) return
+      try {
+        console.log('Executing orders with data:', orderData)
+        await executeOrdersAsync({ orderData })
+        onMutate?.()
+      } catch (error) {
+        console.log(error)
+      }
     }
-  }, [executeOrdersAsync, orderData, onMutate])
+  }, [
+    executeOrdersAsync,
+    executeTwapOrderAsync,
+    orderData,
+    twapOrderData,
+    onMutate,
+    tradeType,
+  ])
+
   return (
     <Button
-      loading={isPending}
+      loading={tradeType === 'TWAP' ? isTwapPending : isPending}
       variant={tradeSide === 'long' ? 'default' : 'destructive'}
       onClick={handleExecuteOrders}
       size="lg"
@@ -47,7 +74,46 @@ export const PlaceOrderButton = ({ onMutate }: { onMutate?: () => void }) => {
   )
 }
 
-//todo: clean up and move this hooks to own files
+const _useTwapOrderData = () => {
+  const {
+    state: {
+      tradeSide,
+      tradeType,
+      activeAsset,
+      size,
+      asset,
+      reduceOnly,
+      twapRandomize,
+      totalRunningTimeInMinutes,
+    },
+  } = useAssetState()
+  return useMemo<TwapOrder | undefined>(() => {
+    if (tradeType !== 'TWAP' || !asset) return undefined
+    const _size = formatSize(size.base, asset?.decimals)
+    if (totalRunningTimeInMinutes < 5 || totalRunningTimeInMinutes > 1440) {
+      return undefined
+    }
+    return {
+      asset: activeAsset,
+      side: tradeSide,
+      size: _size,
+      reduceOnly,
+      ramdonize: twapRandomize,
+      minutes: totalRunningTimeInMinutes,
+    }
+  }, [
+    tradeSide,
+    tradeType,
+    activeAsset,
+    size,
+    asset,
+    reduceOnly,
+    twapRandomize,
+    totalRunningTimeInMinutes,
+  ])
+}
+
+//todo: clean up and move hooks to own files
 const _useOrderData = () => {
   const {
     state: {
@@ -68,7 +134,7 @@ const _useOrderData = () => {
   const { data: scaleOrderData } = useScaleOrders()
 
   return useMemo<OrderData | undefined>(() => {
-    if (!asset) return undefined
+    if (!asset || tradeType === 'TWAP') return undefined
     switch (tradeType) {
       case 'market': {
         const _size = formatSize(size.base, asset?.decimals)
@@ -279,13 +345,6 @@ const _useOrderData = () => {
           },
         }
       }
-      case 'TWAP':
-        return {
-          orders: [],
-          builder: {
-            builderFee: builderFee,
-          },
-        }
       default:
         throw new Error('Invalid trade type')
     }

@@ -8,6 +8,7 @@ export const ValueInput = ({
   label,
   maxDecimals,
   className,
+  placeholder,
 }: {
   value: string
   onChange: (value: string) => void
@@ -15,6 +16,7 @@ export const ValueInput = ({
   label: string
   maxDecimals: number
   className?: string
+  placeholder?: string
 }) => {
   const [pending, startTransition] = useTransition()
 
@@ -47,6 +49,7 @@ export const ValueInput = ({
           maxDecimals={maxDecimals}
           className={classNames('!text-lg font-medium text-right')}
           onBlur={onBlur}
+          placeholder={placeholder ?? undefined}
         />
       </div>
     </div>

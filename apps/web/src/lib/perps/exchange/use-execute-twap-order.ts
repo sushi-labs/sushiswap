@@ -12,7 +12,7 @@ import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-prov
 import { hlHttpTransport } from '../transports'
 import { useAgent } from '../use-agent'
 
-type TwapOrder = {
+export type TwapOrder = {
   asset: string
   side: 'long' | 'short'
   size: string
@@ -21,7 +21,7 @@ type TwapOrder = {
   ramdonize: boolean
 }
 
-export const useExecuteOrders = () => {
+export const useExecuteTwapOrder = () => {
   const { agentAccount } = useAgent()
   const {
     state: { symbolConverter },

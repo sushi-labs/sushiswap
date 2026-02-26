@@ -1,4 +1,5 @@
 import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
+import { get } from '@vercel/edge-config'
 import { formatUnits, parseUnits } from 'viem'
 import type { UserOpenOrdersItemType } from './use-user-open-orders'
 
@@ -96,6 +97,33 @@ export const formatDuration = (ms: number) => {
   const s = totalSeconds % 60
 
   return [h, m, s].map((v) => v.toString().padStart(2, '0')).join(':')
+}
+
+export const getTwapOrderCount = (totalRunningTimeInMinutes: number) => {
+  const timeInSeconds = totalRunningTimeInMinutes * 60
+  return Math.floor(timeInSeconds / 30) + 1
+}
+
+export const getTwapSuborderSize = ({
+  totalSize,
+  orderCount,
+  decimals,
+}: {
+  totalSize: string
+  orderCount: number
+  decimals: number
+}) => {
+  if (Number(totalSize) === 0) return '0'
+  let parsedSize = 0n
+  try {
+    parsedSize = parseUnits(totalSize, decimals)
+  } catch (error) {
+    console.log(error)
+    parsedSize = 0n
+  }
+  const orderCountBN = BigInt(orderCount) || 1n
+  const sizePerOrderBN = parsedSize / orderCountBN
+  return formatUnits(sizePerOrderBN, decimals)
 }
 
 //Todo: move these math helpers to a separate file

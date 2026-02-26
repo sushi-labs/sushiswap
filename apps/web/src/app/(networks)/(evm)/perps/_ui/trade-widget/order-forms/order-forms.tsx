@@ -5,6 +5,7 @@ import { MarketOrderForm } from './market-order-form'
 import { ScaleOrderForm } from './scale-order-form'
 import { TakeStopLimitForm } from './take-stop-limit-form'
 import { TakeStopMarketForm } from './take-stop-market-form'
+import { TwapOrderForm } from './twap-order-form'
 
 export const OrderForms = () => {
   const {
@@ -27,7 +28,7 @@ export const OrderForms = () => {
       case 'take market':
         return <TakeStopMarketForm />
       case 'TWAP':
-        return <div>TWAP Order Form</div>
+        return <TwapOrderForm />
       default:
         return null
     }

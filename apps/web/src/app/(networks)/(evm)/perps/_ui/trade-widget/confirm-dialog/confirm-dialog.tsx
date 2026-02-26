@@ -15,6 +15,9 @@ import { useAssetState } from '../asset-state-provider'
 import { useScaleOrders } from '../hooks/use-scale-orders'
 import { LiquidationStat } from '../order-stats/liquidation-stat'
 import { ScaleStartEndStat } from '../order-stats/scale-start-end-stat'
+import { NumberOfOrdersStat } from '../order-stats/twap-stats/number-of-orders-stat'
+import { RuntimeStat } from '../order-stats/twap-stats/runtime-stat'
+import { SizePerSuborderStat } from '../order-stats/twap-stats/size-per-suborder-stat'
 import { ConfirmDialogTrigger } from './confirm-dialog-trigger'
 import { PlaceOrderButton } from './place-order-button'
 
@@ -46,11 +49,13 @@ export const ConfirmDialog = () => {
         </DialogHeader>
         <div className="flex flex-col gap-6 ">
           <div className="flex flex-col gap-2">
-            {tradeType === 'scale' ? (
-              <ScaleOrderStats />
+            {tradeType === 'TWAP' ? (
+              <_TwapOrderStats />
+            ) : tradeType === 'scale' ? (
+              <_ScaleOrderStats />
             ) : (
               <>
-                <RegularOrderStats />
+                <_RegularOrderStats />
                 <LiquidationStat title="Est. Liquidation Price" />
               </>
             )}
@@ -72,7 +77,7 @@ export const ConfirmDialog = () => {
   )
 }
 
-const RegularOrderStats = () => {
+const _RegularOrderStats = () => {
   const {
     state: { tradeSide, size, asset, tradeType, limitPrice },
   } = useAssetState()
@@ -112,7 +117,7 @@ const RegularOrderStats = () => {
   )
 }
 
-const ScaleOrderStats = () => {
+const _ScaleOrderStats = () => {
   const {
     state: { tradeSide, asset },
   } = useAssetState()
@@ -147,6 +152,40 @@ const ScaleOrderStats = () => {
         value={<div>{orders ? orders?.length : 'N/A'}</div>}
       />
       <ScaleStartEndStat />
+    </>
+  )
+}
+
+const _TwapOrderStats = () => {
+  const {
+    state: { tradeSide, asset, size },
+  } = useAssetState()
+  const { baseSymbol } = useSymbolSplit({
+    asset,
+  })
+
+  return (
+    <>
+      <StatItem
+        title="Action"
+        value={
+          <div className={getTextColorClass(tradeSide === 'long' ? 1 : -1)}>
+            {tradeSide === 'long' ? 'Buy' : 'Sell'}
+          </div>
+        }
+      />
+      <StatItem
+        title="Total Size"
+        value={
+          <div className={getTextColorClass(tradeSide === 'long' ? 1 : -1)}>
+            {size.base} {baseSymbol}
+          </div>
+        }
+      />
+      <RuntimeStat />
+      <StatItem title="Frequency" value={`30 seconds`} />
+      <NumberOfOrdersStat />
+      <SizePerSuborderStat />
     </>
   )
 }
