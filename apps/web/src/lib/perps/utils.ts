@@ -88,8 +88,17 @@ export const toFixedTrim = (x: number, maxDp = 10) => {
   return s.replace(/\.?0+$/, '')
 }
 
-//Todo: move these math helpers to a separate file
+export const formatDuration = (ms: number) => {
+  const totalSeconds = Math.floor(ms / 1000)
 
+  const h = Math.floor(totalSeconds / 3600)
+  const m = Math.floor((totalSeconds % 3600) / 60)
+  const s = totalSeconds % 60
+
+  return [h, m, s].map((v) => v.toString().padStart(2, '0')).join(':')
+}
+
+//Todo: move these math helpers to a separate file
 export function calculateIsolatedMargin({
   baseSize,
   price,

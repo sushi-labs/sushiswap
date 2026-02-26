@@ -143,8 +143,8 @@ export const RUNTIME_COLUMN: ColumnDef<ActiveTwapItemType, unknown> = {
 
     return (
       <span className="font-medium whitespace-nowrap">
-        {formattedRunningTime} /{hours > 0 ? `${hours} hours ` : ''}
-        {minutes > 0 ? `${minutes % 60} minutes` : ''}
+        {formattedRunningTime} / {hours > 0 ? `${hours} hours ` : ''}
+        {minutes % 60 > 0 ? `${minutes % 60} minutes` : ''}
       </span>
     )
   },

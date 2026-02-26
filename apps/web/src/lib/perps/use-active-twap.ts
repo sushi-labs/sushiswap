@@ -1,8 +1,8 @@
-import { format } from 'date-fns'
 import { useMemo } from 'react'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
 import { useAccount } from '../wallet'
 import { useUserActiveTwap } from './subscription/use-user-active-twap'
+import { formatDuration } from './utils'
 
 export const useActiveTwap = () => {
   const address = useAccount('evm')
@@ -33,7 +33,8 @@ export const useActiveTwap = () => {
       const creationTime = state.timestamp
       const currentTime = Date.now()
       const runningTimeInMs = currentTime - creationTime
-      const formattedRunningTime = format(runningTimeInMs, 'HH:mm:ss')
+
+      const formattedRunningTime = formatDuration(runningTimeInMs)
       return {
         ...state,
         twapId,

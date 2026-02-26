@@ -168,7 +168,7 @@ export const TOTAL_RUNTIME_COLUMN: ColumnDef<TwapHistoryItemType, unknown> = {
     return (
       <span className="font-medium whitespace-nowrap">
         {hours > 0 ? `${hours} hours ` : ''}
-        {minutes > 0 ? `${minutes % 60} minutes` : ''}
+        {minutes % 60 > 0 ? `${minutes % 60} minutes` : ''}
       </span>
     )
   },
