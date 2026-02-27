@@ -40,7 +40,7 @@ export const OrderSizeInput = () => {
             sizeSide,
             maxSize: maxTradeSize,
             priceUsd: price ?? '0',
-            decimals: asset.decimals + 1,
+            decimals: asset.decimals,
           })
         setPercentage(percentage)
 
@@ -89,7 +89,7 @@ export const OrderSizeInput = () => {
             percentageInput: val,
             maxSize: maxTradeSize,
             priceUsd: price ?? '0',
-            decimals: asset.decimals + 1,
+            decimals: asset.decimals,
           })
 
         setSize({ base: baseSize, quote: quoteSize })

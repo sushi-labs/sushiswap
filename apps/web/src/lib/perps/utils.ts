@@ -123,6 +123,10 @@ export const toFixedTrim = (x: number, maxDp = 10) => {
   return s.replace(/\.?0+$/, '')
 }
 
+function stripSign(s: string) {
+  return s.trim().startsWith('-') ? s.trim().slice(1) : s.trim()
+}
+
 export const formatDuration = (ms: number) => {
   const totalSeconds = Math.floor(ms / 1000)
 
@@ -574,15 +578,15 @@ export const getSizeAndPercentageFromInput = ({
 }) => {
   if (decimals === undefined)
     return { baseSize: '', quoteSize: '', percentage: 0 }
+  const scalingDecimals = decimals * 2
+  const SCALE = 10n ** BigInt(scalingDecimals)
 
-  const SCALE = 10n ** BigInt(decimals)
+  const maxSizeAbs = stripSign(maxSize ?? '0')
+  const currentBase = parseUnits(maxSizeAbs, scalingDecimals)
 
-  const maxSizeAbs = (maxSize ?? '0').trim().replace(/^-/, '') || '0'
-  const currentBase = parseUnits(maxSizeAbs, decimals)
+  const price = parseUnits(priceUsd ?? '0', scalingDecimals)
 
-  const price = parseUnits(priceUsd ?? '0', decimals)
-
-  const inputScaled = parseUnits(inputValue || '0', decimals)
+  const inputScaled = parseUnits(inputValue || '0', scalingDecimals)
 
   let closeBase = 0n
   let closeQuote = 0n
@@ -604,8 +608,11 @@ export const getSizeAndPercentageFromInput = ({
 
   const percentage = Math.ceil(Number(clampedBps) / 100)
 
-  const baseStr = formatSize(formatUnits(closeBase, decimals), decimals)
-  const quoteStr = formatSize(formatUnits(closeQuote, decimals), decimals)
+  const baseStr = formatSize(formatUnits(closeBase, scalingDecimals), decimals)
+  const quoteStr = formatSize(
+    formatUnits(closeQuote, scalingDecimals),
+    decimals,
+  )
 
   return { baseSize: baseStr, quoteSize: quoteStr, percentage }
 }
@@ -624,14 +631,12 @@ export const getSizeAndPercentageFromPercentageInput = ({
   if (decimals === undefined) {
     return { baseSize: '', quoteSize: '', percentage: 0 }
   }
-  const SCALE = 10n ** BigInt(decimals)
+  const scalingDecimals = decimals * 2
+  const SCALE = 10n ** BigInt(scalingDecimals)
 
-  const currentBase = parseUnits(
-    Math.abs(Number.parseFloat(maxSize)).toString(),
-    decimals,
-  )
+  const currentBase = parseUnits(stripSign(maxSize ?? '0'), scalingDecimals)
 
-  const price = parseUnits(priceUsd ?? '0', decimals)
+  const price = parseUnits(priceUsd ?? '0', scalingDecimals)
   const currentQuote = currentBase === 0n ? 0n : (currentBase * price) / SCALE
 
   let percent = BigInt(percentageInput)
@@ -642,9 +647,11 @@ export const getSizeAndPercentageFromPercentageInput = ({
 
   const closeBase = (currentBase * percent) / 100n
   const closeQuote = (currentQuote * percent) / 100n
-
-  const baseStr = formatSize(formatUnits(closeBase, decimals), decimals)
-  const quoteStr = formatSize(formatUnits(closeQuote, decimals), decimals)
+  const baseStr = formatSize(formatUnits(closeBase, scalingDecimals), decimals)
+  const quoteStr = formatSize(
+    formatUnits(closeQuote, scalingDecimals),
+    decimals,
+  )
 
   return {
     baseSize: baseStr,

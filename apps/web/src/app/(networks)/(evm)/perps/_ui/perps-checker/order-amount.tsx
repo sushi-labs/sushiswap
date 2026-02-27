@@ -79,6 +79,7 @@ export const OrderAmount: FC<ButtonProps> = ({
 
     const parsedSize = parseUnits(orderSize.base, 18)
     const parsedMaxTradeSize = parseUnits(maxTradeSize, 18)
+
     if (parsedSize <= parsedMaxTradeSize) {
       return { isSizeValid: true, buttonText: '' }
     }
