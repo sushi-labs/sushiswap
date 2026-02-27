@@ -1,14 +1,21 @@
+'use client'
+
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   Button,
-  LinkInternal,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
+import { useAccount } from 'src/lib/wallet/hooks'
+import { useMyUnmigratedLegacyPositions } from '~stellar/_common/lib/hooks/position/use-my-legacy-position'
 
 export const Hero: FC = () => {
+  const address = useAccount()
+  const { positions, isLoading } = useMyUnmigratedLegacyPositions({
+    userAddress: address,
+  })
   return (
     <section className="flex flex-col gap-6">
       <span className="text-5xl font-bold">Migrate Legacy Positions</span>
@@ -76,6 +83,12 @@ export const Hero: FC = () => {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
+      {address && !isLoading && positions.length === 0 && (
+        <>
+          <div>Thank you for migrating all of your legacy positions!</div>
+          <Button className="self-start">See Current Positions</Button>
+        </>
+      )}
     </section>
   )
 }
