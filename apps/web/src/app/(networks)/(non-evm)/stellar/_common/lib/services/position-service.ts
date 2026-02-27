@@ -107,7 +107,10 @@ export class PositionService {
       userAddress,
       isLegacy,
     })
-    const numberToFetch = Math.min(take, numberOfUserTokenIds - skip)
+    const numberToFetch = Math.max(
+      0,
+      Math.min(take, numberOfUserTokenIds - skip),
+    )
     const numberOfBatches = Math.ceil(numberToFetch / BATCH_SIZE)
     const positionManagerContractId = getPositionManagerContractId(isLegacy)
     if (!positionManagerContractId) {
@@ -211,7 +214,10 @@ export class PositionService {
       userAddress,
       isLegacy,
     })
-    const numberToFetch = Math.min(take, numberOfUserPositions - skip)
+    const numberToFetch = Math.max(
+      0,
+      Math.min(take, numberOfUserPositions - skip),
+    )
     const numberOfBatches = Math.ceil(numberToFetch / BATCH_SIZE)
 
     const positionManagerContractId = getPositionManagerContractId(isLegacy)

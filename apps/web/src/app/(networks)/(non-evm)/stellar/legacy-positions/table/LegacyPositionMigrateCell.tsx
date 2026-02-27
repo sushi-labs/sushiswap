@@ -45,20 +45,21 @@ export const LegacyPositionMigrateCell = ({
         return
       }
 
+      const hasPendingMigration = Boolean(pendingMigrations[tokenId])
+      const migrationParameters = hasPendingMigration
+        ? pendingMigrations[tokenId]
+        : {
+            principal0: principalToken0.toString(),
+            principal1: principalToken1.toString(),
+          }
+
       if (isLegacyPositionActive) {
-        setPendingMigrations((prev) => {
-          if (prev[tokenId]) {
-            return prev
-          }
-          return {
+        if (!hasPendingMigration) {
+          setPendingMigrations((prev) => ({
             ...prev,
-            [tokenId]: {
-              tokenId,
-              principal0: principalToken0.toString(),
-              principal1: principalToken1.toString(),
-            },
-          }
-        })
+            [tokenId]: migrationParameters,
+          }))
+        }
         await decreaseLiquidityMutation.mutateAsync({
           tokenId: tokenId,
           liquidity: BigInt(liquidity || '0'),
@@ -70,20 +71,11 @@ export const LegacyPositionMigrateCell = ({
         })
       }
 
-      const pendingMigration = pendingMigrations[tokenId]
-      if (!pendingMigration) {
-        createErrorToast(
-          'Failed to retrieve position parameters for migration',
-          false,
-        )
-        return
-      }
-
       await increaseLiquidityMutation.mutateAsync({
         userAddress: connectedAddress,
         poolAddress: pool,
-        token0Amount: pendingMigration.principal0,
-        token1Amount: pendingMigration.principal1,
+        token0Amount: migrationParameters.principal0,
+        token1Amount: migrationParameters.principal1,
         token0Decimals: token0.decimals,
         token1Decimals: token1.decimals,
         tickLower,
@@ -96,8 +88,6 @@ export const LegacyPositionMigrateCell = ({
         const { [tokenId]: _, ...rest } = prev
         return rest
       })
-    } catch (error) {
-      console.error(`Failed to migrate position ${tokenId}:`, error)
     } finally {
       setIsMigrating(false)
     }

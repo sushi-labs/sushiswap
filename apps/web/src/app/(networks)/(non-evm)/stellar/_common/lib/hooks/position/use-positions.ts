@@ -159,12 +159,7 @@ export function useCollectFees({
         queryKey: ['stellar', 'position-pool'],
       })
       queryClient.invalidateQueries({
-        queryKey: [
-          'stellar',
-          'position-principal-batch',
-          isLegacy,
-          variables.tokenId,
-        ],
+        queryKey: ['stellar', 'position-principals-batch', isLegacy],
       })
     },
     onError: (error) => {

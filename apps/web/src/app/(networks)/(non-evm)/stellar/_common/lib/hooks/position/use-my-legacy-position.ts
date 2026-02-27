@@ -2,14 +2,10 @@ import { useLocalStorage } from '@sushiswap/hooks'
 import { useMemo } from 'react'
 import type { PendingMigration } from '~stellar/legacy-positions/types'
 import { MINIMUM_DUST_LIQUIDITY } from '../../services/position-service'
-import {
-  type MyPositionData,
-  type PositionSummary,
-  useMyPosition,
-} from './use-my-position'
+import { type PositionSummary, useMyPosition } from './use-my-position'
 
 type MyLegacyPositionData = {
-  positions: Array<PositionSummary & { isMigrated: boolean }>
+  positions: PositionSummary[]
   isLoading: boolean
   error: Error | null
 }
@@ -17,7 +13,7 @@ type MyLegacyPositionData = {
 /**
  * Hook to get aggregated position data for the My Legacy Positions component
  */
-export function useMyLegacyPosition({
+export function useMyUnmigratedLegacyPositions({
   userAddress,
 }: {
   userAddress?: string
@@ -36,40 +32,30 @@ export function useMyLegacyPosition({
     positions: nonLegacyPositions = [],
     isLoading: nonLegacyPositionsLoading,
     error: nonLegacyPositionsError,
-  } = useMyPosition({ userAddress, excludeDust: true, isLegacy: false })
+  } = useMyPosition({ userAddress, excludeDust: false, isLegacy: false })
 
   const activeLegacyPositions = useMemo(() => {
     const activePositions = legacyPositions.filter((position) => {
       const isPendingMigration = Boolean(pendingMigrations[position.tokenId])
+      const isMigrated = nonLegacyPositions.some((nonLegacyPosition) => {
+        return (
+          nonLegacyPosition.pool === position.pool &&
+          nonLegacyPosition.tickLower === position.tickLower &&
+          nonLegacyPosition.tickUpper === position.tickUpper
+        )
+      })
       return (
-        Number(position.liquidity) >= MINIMUM_DUST_LIQUIDITY ||
+        BigInt(position.liquidity || '0') >= MINIMUM_DUST_LIQUIDITY ||
         position.feesToken0 >= MINIMUM_DUST_LIQUIDITY ||
         position.feesToken1 >= MINIMUM_DUST_LIQUIDITY ||
-        isPendingMigration
+        (isPendingMigration && !isMigrated)
       )
     })
     return activePositions
-  }, [legacyPositions, pendingMigrations])
-
-  const legacyPositionsWithMigrationStatus = useMemo(() => {
-    return activeLegacyPositions.map((position) => {
-      return {
-        ...position,
-        isMigrated: nonLegacyPositions.some((nonLegacyPosition) => {
-          return (
-            nonLegacyPosition.principalToken0 === position.principalToken0 &&
-            nonLegacyPosition.principalToken1 === position.principalToken1 &&
-            nonLegacyPosition.pool === position.pool &&
-            nonLegacyPosition.tickLower === position.tickLower &&
-            nonLegacyPosition.tickUpper === position.tickUpper
-          )
-        }),
-      }
-    })
-  }, [activeLegacyPositions, nonLegacyPositions])
+  }, [legacyPositions, pendingMigrations, nonLegacyPositions])
 
   return {
-    positions: legacyPositionsWithMigrationStatus,
+    positions: activeLegacyPositions,
     isLoading: legacyPositionsLoading || nonLegacyPositionsLoading,
     error: legacyPositionsError || nonLegacyPositionsError,
   }

@@ -6,7 +6,7 @@ import { useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useAccount } from 'src/lib/wallet'
-import { useMyLegacyPosition } from '~stellar/_common/lib/hooks/position/use-my-legacy-position'
+import { useMyUnmigratedLegacyPositions } from '~stellar/_common/lib/hooks/position/use-my-legacy-position'
 import { useStellarWallet } from '~stellar/providers'
 import {
   COLLECTABLE_FEES_COLUMN,
@@ -24,9 +24,10 @@ export const LegacyPositionsTable = () => {
     pageSize: 10,
   })
   const { tokenSymbols } = usePoolFilters()
-  const { positions, isLoading: isPositionLoading } = useMyLegacyPosition({
-    userAddress: account,
-  })
+  const { positions, isLoading: isPositionLoading } =
+    useMyUnmigratedLegacyPositions({
+      userAddress: account,
+    })
 
   const isLoading = isWalletLoading || isPositionLoading
 
@@ -34,17 +35,14 @@ export const LegacyPositionsTable = () => {
     if (!positions) {
       return []
     }
-    const unmigratedPositions = positions.filter(
-      (position) => !position.isMigrated,
-    )
     if (!tokenSymbols.length) {
-      return unmigratedPositions
+      return positions
     }
     const queries = tokenSymbols.map((symbol) =>
       symbol.toLowerCase().replaceAll(' ', ''),
     )
 
-    const searchResults = unmigratedPositions.filter((position) => {
+    const searchResults = positions.filter((position) => {
       const positionValues = [
         position.pool,
         position.token0.contract,
