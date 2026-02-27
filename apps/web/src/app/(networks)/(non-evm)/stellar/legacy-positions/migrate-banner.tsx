@@ -4,14 +4,14 @@ import { useLocalStorage } from '@sushiswap/hooks'
 import { Button, LinkInternal } from '@sushiswap/ui'
 import type { FC } from 'react'
 import { useAccount } from 'src/lib/wallet/hooks'
-import { useMyLegacyPosition } from '~stellar/_common/lib/hooks/position/use-my-legacy-position'
+import { useMyUnmigratedLegacyPositions } from '~stellar/_common/lib/hooks/position/use-my-legacy-position'
 
 export const MigrateBanner: FC = () => {
   const account = useAccount('stellar')
   const [showStellarMigrationBanner, setShowStellarMigrationBanner] =
     useLocalStorage<boolean>('show-stellar-migration-banner', true)
 
-  const { positions } = useMyLegacyPosition({
+  const { positions } = useMyUnmigratedLegacyPositions({
     userAddress: account,
   })
 
@@ -35,6 +35,13 @@ export const MigrateBanner: FC = () => {
         <LinkInternal href="/stellar/legacy-positions">
           Learn More and Migrate
         </LinkInternal>
+      </Button>
+      <Button
+        variant="link"
+        className="text-sm text-yellow-900 hover:text-yellow-700 cursor-pointer underline w-fit"
+        onClick={() => setShowStellarMigrationBanner(false)}
+      >
+        Dismiss
       </Button>
     </div>
   )
