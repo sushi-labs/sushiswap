@@ -24,7 +24,7 @@ import { PlaceOrderButton } from './place-order-button'
 export const ConfirmDialog = () => {
   const [open, setOpen] = useState(false)
   const {
-    state: { tradeType },
+    state: { tradeType, asset },
   } = useAssetState()
   const {
     state: { quickConfirmPositionEnabled },
@@ -56,7 +56,9 @@ export const ConfirmDialog = () => {
             ) : (
               <>
                 <_RegularOrderStats />
-                <LiquidationStat title="Est. Liquidation Price" />
+                {asset?.marketType === 'perp' ? (
+                  <LiquidationStat title="Est. Liquidation Price" />
+                ) : null}
               </>
             )}
           </div>
@@ -87,14 +89,19 @@ const _RegularOrderStats = () => {
 
   return (
     <>
-      <StatItem
-        title="Action"
-        value={
-          <div className={getTextColorClass(tradeSide === 'long' ? 1 : -1)}>
-            {tradeSide === 'long' ? 'Long' : 'Short'}
-          </div>
-        }
-      />
+      {asset?.marketType === 'perp' ? (
+        <StatItem
+          title="Action"
+          value={
+            <div className={getTextColorClass(tradeSide === 'long' ? 1 : -1)}>
+              {tradeSide === 'long' ? 'Long' : 'Short'}
+            </div>
+          }
+        />
+      ) : (
+        <BuySellStat />
+      )}
+
       <StatItem
         title="Size"
         value={
@@ -131,14 +138,7 @@ const _ScaleOrderStats = () => {
 
   return (
     <>
-      <StatItem
-        title="Action"
-        value={
-          <div className={getTextColorClass(tradeSide === 'long' ? 1 : -1)}>
-            {tradeSide === 'long' ? 'Buy' : 'Sell'}
-          </div>
-        }
-      />
+      <BuySellStat />
       <StatItem
         title="Total Size"
         value={
@@ -166,14 +166,7 @@ const _TwapOrderStats = () => {
 
   return (
     <>
-      <StatItem
-        title="Action"
-        value={
-          <div className={getTextColorClass(tradeSide === 'long' ? 1 : -1)}>
-            {tradeSide === 'long' ? 'Buy' : 'Sell'}
-          </div>
-        }
-      />
+      <BuySellStat />
       <StatItem
         title="Total Size"
         value={
@@ -187,5 +180,21 @@ const _TwapOrderStats = () => {
       <NumberOfOrdersStat />
       <SizePerSuborderStat />
     </>
+  )
+}
+
+const BuySellStat = () => {
+  const {
+    state: { tradeSide },
+  } = useAssetState()
+  return (
+    <StatItem
+      title="Action"
+      value={
+        <div className={getTextColorClass(tradeSide === 'long' ? 1 : -1)}>
+          {tradeSide === 'long' ? 'Buy' : 'Sell'}
+        </div>
+      }
+    />
   )
 }

@@ -19,6 +19,7 @@ type CollateralToken = SpotMetaResponse['tokens'][number]
 
 export type PerpOrSpotAsset = {
   symbol: string
+  untouchedSymbol: string
   name: string
   marketType: 'perp' | 'spot'
   dex: string
@@ -65,10 +66,12 @@ const formatSpotCtxs = (
           : t.name,
       )
       .join('/')
+    const untouchedSymbol = tokens.map((i) => i.name).join('/')
     const assetId = ctx?.coin
 
     acc.set(assetId, {
       symbol,
+      untouchedSymbol,
       name: assetId,
       marketType: 'spot' as const,
       decimals: tokens[0]?.szDecimals,
@@ -139,6 +142,7 @@ export const formatPerpCtxs = (
 
       acc.set(u.name, {
         symbol,
+        untouchedSymbol: symbol,
         name: u.name,
         decimals: u.szDecimals,
         marketType: 'perp' as const,

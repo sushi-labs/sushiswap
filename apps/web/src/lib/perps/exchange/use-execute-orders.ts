@@ -59,7 +59,10 @@ export type OrderData = {
 export const useExecuteOrders = () => {
   const { agentAccount } = useAgent()
   const {
-    state: { symbolConverter },
+    state: {
+      symbolConverter,
+      assetListQuery: { data: assetList },
+    },
   } = useAssetListState()
 
   const mutation = useMutation({
@@ -69,8 +72,18 @@ export const useExecuteOrders = () => {
       }
 
       const orders: OrderParameters['orders'] = orderData.orders.map((c) => {
-        const assetId = symbolConverter?.getAssetId(c.asset)
-        if (assetId === undefined) throw new Error(`Unknown asset: ${c.asset}`)
+        const asset = assetList?.get(c.asset)
+        if (!asset) throw new Error(`Unknown c.asset: ${c.asset}`)
+        let id
+        if (asset.marketType === 'perp' && asset.dex !== '') {
+          id = `${asset.dex}:${asset.symbol}` // "xyz:GOLD" builder dex
+        } else if (asset.marketType === 'perp') {
+          id = c.asset // BTC perp
+        } else {
+          id = asset?.untouchedSymbol //USOL/USDC - spot
+        }
+        const assetId = symbolConverter?.getAssetId(id)
+        if (assetId === undefined) throw new Error(`Unknown asset: ${id}`)
 
         return {
           a: assetId,

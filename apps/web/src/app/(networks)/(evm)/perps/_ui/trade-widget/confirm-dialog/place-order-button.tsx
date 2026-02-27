@@ -144,8 +144,7 @@ const _useOrderData = () => {
           side: tradeSide,
           price: marketPrice,
           size: _size,
-          reduceOnly,
-
+          reduceOnly: asset?.marketType === 'perp' ? reduceOnly : false, // spot market orders cannot be reduce only
           orderType: { limit: { timeInForce: 'FrontendMarket' as const } },
         }
 
@@ -415,6 +414,9 @@ const _useTpSlOrder = () => {
   } = useAssetState()
   return useMemo(() => {
     if (!asset || !size?.base) return { tpOrder: undefined, slOrder: undefined }
+    if (asset.marketType === 'spot') {
+      return { tpOrder: undefined, slOrder: undefined }
+    }
     const _size = formatSize(size.base, asset?.decimals)
     const _tpPrice = parseUnits(tpPrice ?? '0', asset?.decimals)
     const _slPrice = parseUnits(slPrice ?? '0', asset?.decimals)

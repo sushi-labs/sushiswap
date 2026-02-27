@@ -21,7 +21,7 @@ export const OrderSizeInput = () => {
     },
     mutate: { setSizeSide, setSize, setPercentage },
   } = useAssetState()
-  console.log(markPrice)
+
   const handleSetSize = useCallback(
     (value: string) => {
       if (!asset) return
@@ -36,7 +36,7 @@ export const OrderSizeInput = () => {
             sizeSide,
             maxSize: maxTradeSize,
             priceUsd: price ?? '0',
-            decimals: asset.decimals,
+            decimals: asset.decimals + 1,
           })
         setPercentage(percentage)
 
@@ -81,7 +81,7 @@ export const OrderSizeInput = () => {
             percentageInput: val,
             maxSize: maxTradeSize,
             priceUsd: price ?? '0',
-            decimals: asset.decimals,
+            decimals: asset.decimals + 1,
           })
 
         setSize({ base: baseSize, quote: quoteSize })

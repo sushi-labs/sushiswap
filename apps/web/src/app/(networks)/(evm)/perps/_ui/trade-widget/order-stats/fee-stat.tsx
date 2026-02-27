@@ -4,18 +4,22 @@ import { useMemo } from 'react'
 import { useUserFees } from 'src/lib/perps/info/use-user-fees'
 import { useAccount } from 'src/lib/wallet'
 import { StatItem } from '../../_common/stat-item'
+import { useAssetState } from '../asset-state-provider'
 
 export const FeeStat = () => {
   const address = useAccount('evm')
   const { data: feeData } = useUserFees({ address })
+  const {
+    state: { asset },
+  } = useAssetState()
 
   const { takerFee, makerFee } = useMemo(() => {
     if (!feeData) return { takerFee: '0', makerFee: '0' }
     return {
-      takerFee: `${formatSize(Number(feeData.userCrossRate) * 100, 5)}%`,
-      makerFee: `${formatSize(Number(feeData.userAddRate) * 100, 5)}%`,
+      takerFee: `${formatSize(Number(asset?.marketType === 'perp' ? feeData.userCrossRate : feeData.userSpotCrossRate) * 100, 5)}%`,
+      makerFee: `${formatSize(Number(asset?.marketType === 'perp' ? feeData.userAddRate : feeData.userSpotAddRate) * 100, 5)}%`,
     }
-  }, [feeData])
+  }, [feeData, asset?.marketType])
 
   return (
     <StatItem

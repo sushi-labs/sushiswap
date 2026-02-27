@@ -9,7 +9,7 @@ import { TwapStats } from './twap-stats/twap-stats'
 
 export const OrderStats = () => {
   const {
-    state: { tradeType },
+    state: { tradeType, asset },
   } = useAssetState()
 
   if (tradeType === 'TWAP') {
@@ -18,9 +18,13 @@ export const OrderStats = () => {
 
   return (
     <div className="flex flex-col gap-2">
-      {tradeType === 'scale' ? <ScaleStartEndStat /> : <LiquidationStat />}
+      {tradeType === 'scale' ? (
+        <ScaleStartEndStat />
+      ) : asset?.marketType === 'perp' ? (
+        <LiquidationStat />
+      ) : null}
       <OrderValueStat />
-      <MarginRequiredStat />
+      {asset?.marketType === 'perp' ? <MarginRequiredStat /> : null}
       {tradeType === 'market' ? <SlippageStat /> : null}
       <FeeStat />
     </div>
