@@ -24,7 +24,7 @@ export default function RootLayout({
       <Providers>
         <SidebarProvider>
           <div className="flex flex-col h-full w-full">
-            <div className="flex flex-col sticky top-0 h-full w-full">
+            <div className="flex flex-col sticky top-0 h-full w-full z-50">
               <MigrateBanner />
               <Header networks={POOL_SUPPORTED_NETWORKS} />
             </div>
