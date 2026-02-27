@@ -9,7 +9,7 @@ import { useAccount } from 'src/lib/wallet'
 import { useMyUnmigratedLegacyPositions } from '~stellar/_common/lib/hooks/position/use-my-legacy-position'
 import { useStellarWallet } from '~stellar/providers'
 import {
-  COLLECTABLE_FEES_COLUMN,
+  COLLECTABLE_COLUMN,
   MIGRATE_COLUMN,
   POSITION_NAME_COLUMN,
   PRICE_RANGE_COLUMN,
@@ -89,7 +89,7 @@ export const LegacyPositionsTable = () => {
           POSITION_NAME_COLUMN,
           PRICE_RANGE_COLUMN,
           PRINCIPAL_COLUMN,
-          COLLECTABLE_FEES_COLUMN,
+          COLLECTABLE_COLUMN,
           MIGRATE_COLUMN,
         ]}
         externalLink={false}
