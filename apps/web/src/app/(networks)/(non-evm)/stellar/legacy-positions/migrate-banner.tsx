@@ -8,14 +8,12 @@ import { useMyUnmigratedLegacyPositions } from '~stellar/_common/lib/hooks/posit
 
 export const MigrateBanner: FC = () => {
   const account = useAccount('stellar')
-  const [showStellarMigrationBanner, setShowStellarMigrationBanner] =
-    useLocalStorage<boolean>('show-stellar-migration-banner', true)
 
   const { positions } = useMyUnmigratedLegacyPositions({
     userAddress: account,
   })
 
-  if (positions.length === 0 || !showStellarMigrationBanner) {
+  if (positions.length === 0) {
     return null
   }
 
@@ -35,13 +33,6 @@ export const MigrateBanner: FC = () => {
         <LinkInternal href="/stellar/legacy-positions">
           Learn More and Migrate
         </LinkInternal>
-      </Button>
-      <Button
-        variant="link"
-        className="text-sm text-yellow-900 hover:text-yellow-700 cursor-pointer underline w-fit"
-        onClick={() => setShowStellarMigrationBanner(false)}
-      >
-        Dismiss
       </Button>
     </div>
   )
