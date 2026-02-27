@@ -6,13 +6,14 @@ import {
   AccordionItem,
   AccordionTrigger,
   Button,
+  LinkInternal,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
 import { useAccount } from 'src/lib/wallet/hooks'
 import { useMyUnmigratedLegacyPositions } from '~stellar/_common/lib/hooks/position/use-my-legacy-position'
 
 export const Hero: FC = () => {
-  const address = useAccount()
+  const address = useAccount('stellar')
   const { positions, isLoading } = useMyUnmigratedLegacyPositions({
     userAddress: address,
   })
@@ -50,28 +51,28 @@ export const Hero: FC = () => {
           </AccordionTrigger>
           <AccordionContent>
             <div className="flex flex-col gap-2 pb-2">
-              <p className="text-md w-[720px] text-muted-foreground">
+              <p className="text-md w-full text-muted-foreground">
                 Simply connect your wallet and click the "Migrate" button for
                 each of your legacy positions below.
               </p>
-              <p className="text-md w-[720px] text-muted-foreground">
+              <p className="text-md w-full text-muted-foreground">
                 This will prompt the following on-chain transactions:
               </p>
               <ol className="list-decimal list-outside flex flex-col gap-1 pl-5">
-                <li className="text-md w-[720px] text-muted-foreground">
+                <li className="text-md w-full text-muted-foreground">
                   Request withdrawal of the position principal
                 </li>
-                <li className="text-md w-[720px] text-muted-foreground">
+                <li className="text-md w-full text-muted-foreground">
                   Withdraw the position principal and accrued fees from the
                   legacy position
                 </li>
-                <li className="text-md w-[720px] text-muted-foreground">
+                <li className="text-md w-full text-muted-foreground">
                   Create a position with the new fixed implementation of the
                   position manager using the withdrawn liquidity and the same
                   price range as the legacy position
                 </li>
               </ol>
-              <p className="text-md w-[720px] text-muted-foreground">
+              <p className="text-md w-full text-muted-foreground">
                 While the process will remember your legacy position parameters
                 during the migration to facilitate the creation of the new
                 position with the same parameters, it is recommended that you
@@ -86,7 +87,11 @@ export const Hero: FC = () => {
       {address && !isLoading && positions.length === 0 && (
         <>
           <div>Thank you for migrating all of your legacy positions!</div>
-          <Button className="self-start">See Current Positions</Button>
+          <Button className="self-start">
+            <LinkInternal href="/stellar/pool">
+              See Current Positions
+            </LinkInternal>
+          </Button>
         </>
       )}
     </section>

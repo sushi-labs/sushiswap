@@ -1,6 +1,5 @@
 'use client'
 
-import { useLocalStorage } from '@sushiswap/hooks'
 import { Button, LinkInternal } from '@sushiswap/ui'
 import type { FC } from 'react'
 import { useAccount } from 'src/lib/wallet/hooks'

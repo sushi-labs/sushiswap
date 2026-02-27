@@ -324,11 +324,6 @@ export class PositionService {
         Number(slot0.result.sqrt_price_x96) !== 0
       ) {
         sqrtPriceX96 = BigInt(slot0.result.sqrt_price_x96)
-      } else if (
-        slot0.result.sqrt_price_x96 &&
-        Number(slot0.result.sqrt_price_x96) !== 0
-      ) {
-        sqrtPriceX96 = BigInt(slot0.result.sqrt_price_x96)
       } else {
         console.warn('Pool sqrt_price_x96 is 0 - cannot calculate principals')
         // Return zeros for all positions
@@ -467,7 +462,7 @@ export class PositionService {
   }): Promise<{ fees0: bigint; fees1: bigint } | null> {
     const positionManagerContractId = getPositionManagerContractId(isLegacy)
     if (!positionManagerContractId) {
-      throw new Error('Position manager contract not found')
+      return null
     }
     const positionManagerClient = getPositionManagerContractClient({
       contractId: positionManagerContractId,
