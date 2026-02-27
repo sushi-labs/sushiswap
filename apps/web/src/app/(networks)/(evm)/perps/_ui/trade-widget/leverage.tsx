@@ -9,9 +9,12 @@ export const Leverage = () => {
       activeAsset,
       currentLeverageForAsset,
       currentLeverageTypeForAsset,
+      asset,
       activeAssetDataQuery: { isLoading, isError },
     },
   } = useAssetState()
+
+  if (asset?.marketType === 'spot') return null
 
   if (isLoading || isError) {
     return (

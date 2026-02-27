@@ -20,9 +20,21 @@ const PRO_TRADE_TYPES = TRADE_TYPES.slice(2)
 
 export const TradeTypeSelect = () => {
   const {
-    state: { tradeType },
+    state: { tradeType, asset },
     mutate: { setTradeType },
   } = useAssetState()
+
+  const assetType = useMemo(() => {
+    if (!asset) return 'perp'
+    return asset.marketType
+  }, [asset])
+
+  const proTradeType = useMemo(() => {
+    if (assetType === 'spot') {
+      return ['Scale', 'TWAP']
+    }
+    return TRADE_TYPES.slice(2)
+  }, [assetType])
 
   const isProTrade = useMemo(() => {
     return PRO_TRADE_TYPES.includes(tradeType)
@@ -57,8 +69,8 @@ export const TradeTypeSelect = () => {
             </TabsTrigger>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            {PRO_TRADE_TYPES.map((_tradeType) => (
-              <DropdownMenuItem key={_tradeType} className="!p-0 ">
+            {proTradeType.map((_tradeType) => (
+              <DropdownMenuItem key={_tradeType} className="!p-0">
                 <TabsTrigger
                   className="w-full capitalize text-xs !justify-start"
                   value={_tradeType}

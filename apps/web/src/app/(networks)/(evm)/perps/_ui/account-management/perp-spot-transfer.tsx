@@ -14,7 +14,7 @@ import {
   DialogTrigger,
 } from '@sushiswap/ui'
 import { ArrowsLeftRightIcon } from '@sushiswap/ui/icons/ArrowsLeftRight'
-import { useCallback, useState } from 'react'
+import { type ReactNode, useCallback, useState } from 'react'
 import { hlHttpTransport } from 'src/lib/perps/transports'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
@@ -28,7 +28,7 @@ import { TransferInput } from './transfer-input'
 const currency = USDC[EvmChainId.ARBITRUM]
 const chainId = EvmChainId.ARBITRUM
 
-export const PerpSpotTransfer = () => {
+export const PerpSpotTransfer = ({ trigger }: { trigger?: ReactNode }) => {
   const [dst, setDst] = useState<'perp' | 'spot'>('spot')
   const [open, setOpen] = useState<boolean>(false)
   const [amount, setAmount] = useState<string>('')
@@ -108,9 +108,13 @@ export const PerpSpotTransfer = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full" variant="secondary" size="sm">
-          Perps <ArrowsLeftRightIcon className="w-2 h-2" /> Spot
-        </Button>
+        {trigger ? (
+          trigger
+        ) : (
+          <Button className="w-full" variant="secondary" size="sm">
+            Perps <ArrowsLeftRightIcon className="w-2 h-2" /> Spot
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="!text-left">

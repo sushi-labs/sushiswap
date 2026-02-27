@@ -3,7 +3,7 @@ import { useAssetState } from './asset-state-provider'
 
 export const TradeSideSelect = () => {
   const {
-    state: { tradeSide },
+    state: { tradeSide, asset },
     mutate: { setTradeSide },
   } = useAssetState()
 
@@ -15,7 +15,7 @@ export const TradeSideSelect = () => {
         fullWidth
         onClick={() => setTradeSide('long')}
       >
-        Buy / Long
+        Buy{asset?.marketType === 'perp' ? ' / Long' : ''}
       </Button>
       <Button
         size="sm"
@@ -23,7 +23,7 @@ export const TradeSideSelect = () => {
         fullWidth
         onClick={() => setTradeSide('short')}
       >
-        Sell / Short
+        Sell{asset?.marketType === 'perp' ? ' / Short' : ''}
       </Button>
     </div>
   )

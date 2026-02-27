@@ -7,16 +7,19 @@ import { useAssetState } from './asset-state-provider'
 
 export const CurrentPosition = () => {
   const {
-    state: { activeAsset },
+    state: { activeAsset, asset },
   } = useAssetState()
   const { data } = useUserPositions(activeAsset)
 
   const { positionSize, side } = useMemo(() => {
-    if (!data || data.length === 0) return { positionSize: 0, side: 'C' } //C does not exist, means no position in this component
+    if (!data || data.length === 0 || asset?.marketType === 'spot')
+      return { positionSize: 0, side: 'C' } //C does not exist, means no position in this component
     const pos = data?.[0]
     const side = pos.side
     return { positionSize: Math.abs(Number.parseFloat(pos.position.szi)), side }
-  }, [data])
+  }, [data, asset?.marketType])
+
+  if (asset?.marketType === 'spot') return null
 
   return (
     <StatItem

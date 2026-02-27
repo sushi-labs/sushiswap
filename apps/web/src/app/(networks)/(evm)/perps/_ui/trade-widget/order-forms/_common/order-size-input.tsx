@@ -21,7 +21,7 @@ export const OrderSizeInput = () => {
     },
     mutate: { setSizeSide, setSize, setPercentage },
   } = useAssetState()
-
+  console.log(markPrice)
   const handleSetSize = useCallback(
     (value: string) => {
       if (!asset) return

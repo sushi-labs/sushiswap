@@ -30,6 +30,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
   const address = useAccount('evm')
   const { data: twapOrders } = useUserActiveTwap({ address })
   const { data: balances } = useBalances()
+  console.log(balances)
   const { data: userPositions } = useUserPositions()
   const { data: openOrders } = useUserOpenOrders({})
   const balanceCount = useMemo(() => balances?.length ?? 0, [balances?.length])

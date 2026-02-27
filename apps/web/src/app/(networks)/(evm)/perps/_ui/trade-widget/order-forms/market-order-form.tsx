@@ -25,31 +25,35 @@ export const MarketOrderForm = () => {
   return (
     <div className="flex flex-col gap-1">
       <OrderSizeInput />
-      <ReduceOnly />
-      <div className="flex flex-col gap-2">
-        <CheckboxSetting
-          label="Take Profit / Stop Loss"
-          value={hasTpSl}
-          onChange={(val) => setHasTpSl(val)}
-        />
-        {hasTpSl ? (
-          <TpSlInput
-            asset={asset}
-            tpPrice={tpPrice}
-            onChangeTpPrice={setTpPrice}
-            slPrice={slPrice}
-            onChangeSlPrice={setSlPrice}
-            entryPrice={asset?.midPrice || markPrice}
-            side={tradeSide === 'long' ? 'B' : 'A'}
-            positionSize={type === 'percent' ? maxTradeSize : size.base}
-            positionLeverage={currentLeverageForAsset}
-            showExpectedProfit={false}
-            inputSize="sm"
-            type={type}
-            setType={setType}
-          />
-        ) : null}
-      </div>
+      {asset?.marketType === 'perp' ? (
+        <>
+          <ReduceOnly />
+          <div className="flex flex-col gap-2">
+            <CheckboxSetting
+              label="Take Profit / Stop Loss"
+              value={hasTpSl}
+              onChange={(val) => setHasTpSl(val)}
+            />
+            {hasTpSl ? (
+              <TpSlInput
+                asset={asset}
+                tpPrice={tpPrice}
+                onChangeTpPrice={setTpPrice}
+                slPrice={slPrice}
+                onChangeSlPrice={setSlPrice}
+                entryPrice={asset?.midPrice || markPrice}
+                side={tradeSide === 'long' ? 'B' : 'A'}
+                positionSize={type === 'percent' ? maxTradeSize : size.base}
+                positionLeverage={currentLeverageForAsset}
+                showExpectedProfit={false}
+                inputSize="sm"
+                type={type}
+                setType={setType}
+              />
+            ) : null}
+          </div>
+        </>
+      ) : null}
     </div>
   )
 }

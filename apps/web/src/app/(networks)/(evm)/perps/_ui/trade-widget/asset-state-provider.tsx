@@ -5,12 +5,14 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react'
 import type { TimeInForceType } from 'src/lib/perps/exchange/use-execute-orders'
 import { useActiveAssetData } from 'src/lib/perps/subscription/use-active-asset-data'
 import type { PerpOrSpotAsset } from 'src/lib/perps/subscription/use-asset-list'
+import { useBalance } from 'src/lib/perps/use-balances'
 import { useUserPositions } from 'src/lib/perps/use-user-positions'
 import { useAccount } from 'src/lib/wallet'
 import { useAssetListState } from '../asset-selector/asset-list-provider'
@@ -141,6 +143,8 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     assetString: activeAsset,
   })
   const { data: openPosition } = useUserPositions(activeAsset)
+  const spotBalance = useBalance({ assetString: activeAsset })
+  const spotUsdcBalance = useBalance({ assetString: 'PURR/USDC' })
 
   const totalRunningTimeInMinutes = useMemo(() => {
     const hours = Number.parseInt(twapRunningTime.hours) || 0
@@ -166,16 +170,43 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     return assetList.get(activeAsset)
   }, [assetList, activeAsset])
 
-  const [availableToLong, availableToShort] = useMemo(
-    () => activeAssetDataQuery?.data?.availableToTrade || ['0', '0'],
-    [activeAssetDataQuery?.data?.availableToTrade],
-  )
+  const markPrice = useMemo(() => {
+    if (asset?.marketType === 'spot') {
+      return asset.markPrice || '0'
+    }
+    return activeAssetDataQuery?.data?.markPx || '0'
+  }, [activeAssetDataQuery?.data?.markPx, asset])
+
+  const [availableSpotToBuy, availableSpotToSell] = useMemo(() => {
+    if (asset?.marketType !== 'spot') return ['0', '0']
+    const balance = spotBalance?.availableBalance || '0'
+    const usdcBalance = spotUsdcBalance?.availableBalance || '0'
+    const price = asset.markPrice || '1'
+    const availableToBuy = (Number(usdcBalance) / Number(price)).toString()
+
+    return [availableToBuy, balance]
+  }, [asset, spotBalance, spotUsdcBalance])
+
+  const [availableToLong, availableToShort] = useMemo(() => {
+    if (asset?.marketType === 'spot') {
+      return [availableSpotToBuy, availableSpotToSell]
+    }
+    return activeAssetDataQuery?.data?.availableToTrade || ['0', '0']
+  }, [
+    activeAssetDataQuery?.data?.availableToTrade,
+    availableSpotToBuy,
+    availableSpotToSell,
+    asset?.marketType,
+  ])
   const [maxTradeSizeLong, maxTradeSizeShort] = useMemo(
     () => activeAssetDataQuery?.data?.maxTradeSzs || ['0', '0'],
     [activeAssetDataQuery?.data?.maxTradeSzs],
   )
 
   const maxTradeSize = useMemo(() => {
+    if (asset?.marketType === 'spot') {
+      return tradeSide === 'long' ? availableSpotToBuy : availableSpotToSell
+    }
     if (reduceOnly && (!openPosition || openPosition.length === 0)) {
       return '0'
     }
@@ -190,12 +221,16 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
           : '0'
     }
     return tradeSide === 'long' ? maxTradeSizeLong : maxTradeSizeShort
-  }, [tradeSide, maxTradeSizeLong, maxTradeSizeShort, reduceOnly, openPosition])
-
-  const markPrice = useMemo(
-    () => activeAssetDataQuery?.data?.markPx || '0',
-    [activeAssetDataQuery?.data?.markPx],
-  )
+  }, [
+    tradeSide,
+    maxTradeSizeLong,
+    maxTradeSizeShort,
+    reduceOnly,
+    openPosition,
+    availableSpotToBuy,
+    availableSpotToSell,
+    asset?.marketType,
+  ])
 
   const currentLeverageForAsset = useMemo(
     () => activeAssetDataQuery?.data?.leverage?.value ?? 1,
@@ -235,23 +270,25 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     [setReduceOnly, reduceOnly],
   )
 
-  // const resetValues = useCallback(() => {
-  //   setSize({ base: '', quote: '' })
-  //   setPercentage(0)
-  //   setReduceOnly(false)
-  //   setTpPrice('')
-  //   setSlPrice('')
-  //   setHasTpSl(false)
-  // }, [setHasTpSl, setReduceOnly])
+  // biome-ignore lint/correctness/useExhaustiveDependencies: reset if asset?.marketType changes
+  useEffect(() => {
+    setTpPrice('')
+    setSlPrice('')
+    setPercentage(0)
+    setLimitPrice('')
+    setTriggerPrice('')
+    setHasTpSl(false)
+    setReduceOnly(false)
+    setTimeInForce('Gtc')
+    setSize({ base: '', quote: '' })
+  }, [asset?.marketType])
 
   const setTradeType = useCallback((tradeType: TradeType) => {
     _setTradeType(tradeType)
-    // resetValues()
   }, [])
 
   const setTradeSide = useCallback((tradeSide: TradeSideType) => {
     _setTradeSide(tradeSide)
-    // resetValues()
   }, [])
 
   return (

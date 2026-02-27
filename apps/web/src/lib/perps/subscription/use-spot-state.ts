@@ -1,37 +1,32 @@
 import {
-  type ActiveAssetDataEvent,
-  activeAssetData,
+  type SpotStateEvent,
+  spotState,
 } from '@nktkas/hyperliquid/api/subscription'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import type { EvmAddress } from 'sushi/evm'
 import { hlWebSocketTransport } from '../transports'
 
-export const useActiveAssetData = ({
-  address,
-  assetString,
-}: { address: EvmAddress | undefined; assetString: string }) => {
+export const useSpotState = ({ address }: { address?: EvmAddress }) => {
   const queryClient = useQueryClient()
-  const query = useQuery<ActiveAssetDataEvent>({
-    queryKey: ['useActiveAssetData', address, assetString],
+  const query = useQuery<SpotStateEvent>({
+    queryKey: ['useSpotState', address],
     staleTime: Number.POSITIVE_INFINITY,
     enabled: false,
   })
 
   useEffect(() => {
     if (!address) return
-    if (!assetString) return
-    if (assetString.startsWith('@')) return
     let unsubscribe: undefined | (() => Promise<void>) = undefined
     ;(async () => {
-      const sub = await activeAssetData(
+      const sub = await spotState(
         { transport: hlWebSocketTransport },
-        { user: address, coin: assetString },
-        (activeAssetDataEvent) => {
+        { user: address },
+        (spotStateEvent) => {
           queryClient.setQueryData(
-            ['useActiveAssetData', address, assetString],
-            (_prevActiveAssetDataEvent: ActiveAssetDataEvent | undefined) => {
-              return activeAssetDataEvent
+            ['useSpotState', address],
+            (_prevSpotStateEvent: SpotStateEvent | undefined) => {
+              return spotStateEvent
             },
           )
         },
@@ -43,7 +38,7 @@ export const useActiveAssetData = ({
     return () => {
       void unsubscribe?.()
     }
-  }, [queryClient, address, assetString])
+  }, [queryClient, address])
 
   const isReady = Boolean(query.data)
 
