@@ -2,6 +2,7 @@ import { useLocalStorage } from '@sushiswap/hooks'
 import { createErrorToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
 import { useState } from 'react'
+import { formatUnits } from 'viem'
 import { useAddLiquidity, useRemoveLiquidity } from '~stellar/_common/lib/hooks'
 import type { PositionSummary } from '~stellar/_common/lib/hooks/position/use-my-position'
 import type { IPositionRowData } from '~stellar/_common/ui/Pools/PositionsTable/PositionsTable'
@@ -74,8 +75,14 @@ export const LegacyPositionMigrateCell = ({
       await increaseLiquidityMutation.mutateAsync({
         userAddress: connectedAddress,
         poolAddress: pool,
-        token0Amount: migrationParameters.principal0,
-        token1Amount: migrationParameters.principal1,
+        token0Amount: formatUnits(
+          BigInt(migrationParameters.principal0),
+          token0.decimals,
+        ),
+        token1Amount: formatUnits(
+          BigInt(migrationParameters.principal1),
+          token1.decimals,
+        ),
         token0Decimals: token0.decimals,
         token1Decimals: token1.decimals,
         tickLower,
