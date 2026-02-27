@@ -18,7 +18,7 @@ import { useScaleOrders } from '../hooks/use-scale-orders'
 
 export const PlaceOrderButton = ({ onMutate }: { onMutate?: () => void }) => {
   const {
-    state: { tradeSide, tradeType },
+    state: { tradeSide, tradeType, asset },
   } = useAssetState()
   const orderData = _useOrderData()
   const twapOrderData = _useTwapOrderData()
@@ -58,6 +58,16 @@ export const PlaceOrderButton = ({ onMutate }: { onMutate?: () => void }) => {
     tradeType,
   ])
 
+  const buttonText = useMemo(() => {
+    if (quickConfirmPositionEnabled && !onMutate) {
+      return 'Place Order'
+    }
+    if (asset?.marketType === 'spot') {
+      return tradeSide === 'long' ? 'Buy' : 'Sell'
+    }
+    return tradeSide === 'long' ? 'Buy / Long' : 'Sell / Short'
+  }, [quickConfirmPositionEnabled, onMutate, tradeSide, asset])
+
   return (
     <Button
       loading={tradeType === 'TWAP' ? isTwapPending : isPending}
@@ -65,11 +75,7 @@ export const PlaceOrderButton = ({ onMutate }: { onMutate?: () => void }) => {
       onClick={handleExecuteOrders}
       size="lg"
     >
-      {quickConfirmPositionEnabled && !onMutate
-        ? 'Place Order'
-        : tradeSide === 'long'
-          ? 'Buy / Long'
-          : 'Sell / Short'}
+      {buttonText}
     </Button>
   )
 }
@@ -97,7 +103,7 @@ const _useTwapOrderData = () => {
       asset: activeAsset,
       side: tradeSide,
       size: _size,
-      reduceOnly,
+      reduceOnly: asset?.marketType === 'perp' ? reduceOnly : false, // spot market orders cannot be reduce only
       ramdonize: twapRandomize,
       minutes: totalRunningTimeInMinutes,
     }
@@ -173,8 +179,7 @@ const _useOrderData = () => {
           side: tradeSide,
           price: price,
           size: _size,
-          reduceOnly,
-
+          reduceOnly: asset?.marketType === 'perp' ? reduceOnly : false, // spot market orders cannot be reduce only
           orderType: { limit: { timeInForce: timeInForce } },
         }
 
@@ -200,7 +205,7 @@ const _useOrderData = () => {
           side: tradeSide,
           price: order.price,
           size: order.size,
-          reduceOnly,
+          reduceOnly: asset?.marketType === 'perp' ? reduceOnly : false, // spot market orders cannot be reduce only
           orderType: { limit: { timeInForce: timeInForce } },
         }))
 

@@ -1,3 +1,4 @@
+import { useAssetState } from '../asset-state-provider'
 import { OrderSizeInput } from './_common/order-size-input'
 import { ReduceOnly } from './_common/reduce-only'
 import { ScaleSizeSkewInput } from './_common/scale-size-skew-input'
@@ -6,6 +7,9 @@ import { ScaleTotalOrdersInput } from './_common/scale-total-orders-input'
 import { TifSelector } from './_common/tif-selector'
 
 export const ScaleOrderForm = () => {
+  const {
+    state: { asset },
+  } = useAssetState()
   return (
     <div className="flex flex-col gap-2">
       <OrderSizeInput />
@@ -15,7 +19,7 @@ export const ScaleOrderForm = () => {
         <ScaleSizeSkewInput />
       </div>
       <div className="flex justify-between gap-2 items-start">
-        <ReduceOnly />
+        {asset?.marketType === 'perp' ? <ReduceOnly /> : <div />}
         <TifSelector />
       </div>
     </div>

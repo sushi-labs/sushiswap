@@ -31,7 +31,7 @@ export const TradeTypeSelect = () => {
 
   const proTradeType = useMemo(() => {
     if (assetType === 'spot') {
-      return ['Scale', 'TWAP']
+      return ['scale', 'TWAP']
     }
     return TRADE_TYPES.slice(2)
   }, [assetType])
