@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import type React from 'react'
+import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { WalletProvider } from 'src/lib/wallet'
 import { SidebarProvider } from '../../_ui/sidebar'
+import { Header } from './header'
 import { MigrateBanner } from './legacy-positions/migrate-banner'
 import { Providers } from './providers'
 
@@ -22,7 +24,10 @@ export default function RootLayout({
       <Providers>
         <SidebarProvider>
           <div className="flex flex-col h-full w-full">
-            <MigrateBanner />
+            <div className="flex flex-col sticky top-0 h-full w-full">
+              <MigrateBanner />
+              <Header networks={POOL_SUPPORTED_NETWORKS} />
+            </div>
             {children}
           </div>
         </SidebarProvider>
