@@ -7,15 +7,20 @@ import {
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
+import { TOAST_AUTOCLOSE_TIME } from '../config'
 import { hlHttpTransport } from '../transports'
 import { useAgent } from '../use-agent'
+import { getAssetIdForConverter } from '../utils'
 
 type CancelData = { asset: string; twapId: number }
 
 export const useCancelTwap = () => {
   const { agentAccount } = useAgent()
   const {
-    state: { symbolConverter },
+    state: {
+      symbolConverter,
+      assetListQuery: { data: assetList },
+    },
   } = useAssetListState()
 
   const mutation = useMutation({
@@ -23,8 +28,10 @@ export const useCancelTwap = () => {
       if (!agentAccount || !cancelData) {
         return
       }
-
-      const assetId = symbolConverter?.getAssetId(cancelData.asset)
+      const asset = assetList?.get(cancelData.asset)
+      if (!asset) throw new Error(`Unknown c.asset: ${cancelData.asset}`)
+      const id = getAssetIdForConverter(asset)
+      const assetId = symbolConverter?.getAssetId(id)
 
       if (assetId === undefined)
         throw new Error(`Unknown asset: ${cancelData.asset}`)
@@ -49,6 +56,7 @@ export const useCancelTwap = () => {
         type: 'burn',
         timestamp: ts,
         groupTimestamp: ts,
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
 
       return { ts }
@@ -64,6 +72,7 @@ export const useCancelTwap = () => {
         type: 'burn',
         timestamp: ctx.ts,
         groupTimestamp: ctx.ts,
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
     },
 
@@ -79,6 +88,7 @@ export const useCancelTwap = () => {
         type: 'burn',
         timestamp: ctx?.ts ?? Date.now(),
         groupTimestamp: ctx?.ts ?? Date.now(),
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
     },
   })

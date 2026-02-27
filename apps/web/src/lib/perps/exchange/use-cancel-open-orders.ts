@@ -7,15 +7,20 @@ import {
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
+import { TOAST_AUTOCLOSE_TIME } from '../config'
 import { hlHttpTransport } from '../transports'
 import { useAgent } from '../use-agent'
+import { getAssetIdForConverter } from '../utils'
 
 type CancelData = { asset: string; orderId: number }
 
 export const useCancelOpenOrders = () => {
   const { agentAccount } = useAgent()
   const {
-    state: { symbolConverter },
+    state: {
+      symbolConverter,
+      assetListQuery: { data: assetList },
+    },
   } = useAssetListState()
 
   const mutation = useMutation({
@@ -25,7 +30,10 @@ export const useCancelOpenOrders = () => {
       }
 
       const cancels = cancelData.map((c) => {
-        const assetId = symbolConverter?.getAssetId(c.asset)
+        const asset = assetList?.get(c.asset)
+        if (!asset) throw new Error(`Unknown c.asset: ${c.asset}`)
+        const id = getAssetIdForConverter(asset)
+        const assetId = symbolConverter?.getAssetId(id)
 
         if (assetId === undefined) throw new Error(`Unknown asset: ${c.asset}`)
         return { a: assetId, o: c.orderId }
@@ -52,6 +60,7 @@ export const useCancelOpenOrders = () => {
         type: 'burn',
         timestamp: ts,
         groupTimestamp: ts,
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
 
       return { ts, count: cancelData.length }
@@ -67,6 +76,7 @@ export const useCancelOpenOrders = () => {
         type: 'burn',
         timestamp: ctx.ts,
         groupTimestamp: ctx.ts,
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
     },
 
@@ -84,6 +94,7 @@ export const useCancelOpenOrders = () => {
         type: 'burn',
         timestamp: ctx?.ts ?? Date.now(),
         groupTimestamp: ctx?.ts ?? Date.now(),
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
     },
   })

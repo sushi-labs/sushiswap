@@ -10,13 +10,18 @@ import {
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
+import { TOAST_AUTOCLOSE_TIME } from '../config'
 import { hlHttpTransport } from '../transports'
 import { useAgent } from '../use-agent'
+import { getAssetIdForConverter } from '../utils'
 
 export const useUpdateLeverage = () => {
   const { agentAccount } = useAgent()
   const {
-    state: { symbolConverter },
+    state: {
+      symbolConverter,
+      assetListQuery: { data: assetList },
+    },
   } = useAssetListState()
   const mutation = useMutation({
     mutationFn: async ({
@@ -27,8 +32,11 @@ export const useUpdateLeverage = () => {
       if (!agentAccount) {
         return
       }
+      const asset = assetList?.get(assetString)
+      if (!asset) throw new Error(`Unknown c.asset: ${assetString}`)
+      const id = getAssetIdForConverter(asset)
+      const assetId = symbolConverter?.getAssetId(id)
 
-      const assetId = symbolConverter?.getAssetId(assetString)
       if (assetId === undefined) {
         throw new Error(`Unknown asset: ${assetString}`)
       }
@@ -54,6 +62,7 @@ export const useUpdateLeverage = () => {
         type: 'burn',
         timestamp: ts,
         groupTimestamp: ts,
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
 
       return { ts }
@@ -69,6 +78,7 @@ export const useUpdateLeverage = () => {
         type: 'burn',
         timestamp: ctx.ts,
         groupTimestamp: ctx.ts,
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
     },
 
@@ -89,6 +99,7 @@ export const useUpdateLeverage = () => {
         type: 'burn',
         timestamp: ctx?.ts ?? Date.now(),
         groupTimestamp: ctx?.ts ?? Date.now(),
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
     },
   })

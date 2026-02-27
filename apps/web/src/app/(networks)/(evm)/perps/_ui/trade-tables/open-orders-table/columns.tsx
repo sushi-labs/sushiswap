@@ -115,12 +115,16 @@ export const DIRECTION_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
   cell: (props) => {
     const side = props.row.original.side
     const reduceOnly = props.row.original.reduceOnly
+    const coin = props.row.original.coin
     const direction = useMemo(() => {
+      if (coin.startsWith('@')) {
+        return side === 'A' ? 'Sell' : 'Buy'
+      }
       if (reduceOnly) {
         return side === 'A' ? 'Close Long' : 'Close Short'
       }
       return side === 'A' ? 'Short' : 'Long'
-    }, [side, reduceOnly])
+    }, [side, reduceOnly, coin])
 
     return (
       <span

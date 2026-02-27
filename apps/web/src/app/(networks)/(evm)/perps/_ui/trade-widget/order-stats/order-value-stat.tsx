@@ -13,10 +13,13 @@ export const OrderValueStat = () => {
       return null
     }
     let price = markPrice
-    if (tradeType.toLowerCase().includes('limit') && limitPrice) {
+    if (
+      tradeType.toLowerCase().includes('limit') &&
+      limitPrice &&
+      asset?.marketType === 'perp'
+    ) {
       price = limitPrice
     }
-
     const res = calculateOrderValue({
       baseSize: size.base,
       price,

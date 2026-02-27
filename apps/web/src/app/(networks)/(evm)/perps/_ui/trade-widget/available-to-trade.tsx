@@ -1,5 +1,5 @@
 import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
-import { enUSFormatNumber } from 'src/lib/perps/utils'
+import { numberFormatter } from 'src/lib/perps/utils'
 import { StatItem } from '../_common/stat-item'
 import { PerpSpotTransfer } from '../account-management/perp-spot-transfer'
 import { useAssetState } from './asset-state-provider'
@@ -31,8 +31,8 @@ export const AvailableToTrade = () => {
         }
         value={
           tradeSide === 'long'
-            ? `${enUSFormatNumber.format(Number.parseFloat(availableToLong) * Number(markPrice))} ${quoteSymbol}`
-            : `${enUSFormatNumber.format(Number.parseFloat(availableToShort))} ${baseSymbol}`
+            ? `${numberFormatter.format(Number.parseFloat(availableToLong) * Number(markPrice))} ${quoteSymbol}`
+            : `${numberFormatter.format(Number.parseFloat(availableToShort))} ${baseSymbol}`
         }
       />
     )
@@ -42,8 +42,8 @@ export const AvailableToTrade = () => {
       title="Available to Trade"
       value={`${
         tradeSide === 'long'
-          ? enUSFormatNumber.format(Number.parseFloat(availableToLong))
-          : enUSFormatNumber.format(Number.parseFloat(availableToShort))
+          ? numberFormatter.format(Number.parseFloat(availableToLong))
+          : numberFormatter.format(Number.parseFloat(availableToShort))
       } USDC`}
     />
   )

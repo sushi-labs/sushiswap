@@ -13,6 +13,11 @@ export const useBalances = () => {
         isLoading: isLoadingWebData2,
         isError: isErrorWebData2,
       },
+      spotStateQuery: {
+        data: spotData,
+        isLoading: isLoadingSpotState,
+        isError: isErrorSpotState,
+      },
     },
   } = useUserState()
   const {
@@ -24,8 +29,9 @@ export const useBalances = () => {
       },
     },
   } = useAssetListState()
-  const isLoading = isLoadingWebData2 || isAssetListLoading
-  const isError = isErrorWebData2 || isAssetListError
+  const isLoading =
+    isLoadingWebData2 || isAssetListLoading || isLoadingSpotState
+  const isError = isErrorWebData2 || isAssetListError || isErrorSpotState
 
   const formattedData = useMemo(() => {
     if (!data) return []
@@ -45,6 +51,9 @@ export const useBalances = () => {
         const spot = assetList
           ?.entries()
           .find(([, v]) => v.tokens?.find((t) => t.index === tokenIndex))?.[1]
+        const _spotBalance = spotData?.spotState?.balances?.find(
+          (b) => b.token === tokenIndex,
+        )
         const price = i.coin === 'USDC' ? 1 : (Number(spot?.lastPrice) ?? 0)
         const usdcValue = Number(i.total || 0) * price
         const entry = Number(i.entryNtl || 0)
@@ -53,11 +62,13 @@ export const useBalances = () => {
         const _coin = SPOT_ASSETS_TO_REWRITE.has(i.coin)
           ? SPOT_ASSETS_TO_REWRITE.get(i.coin)
           : i.coin
+        const availableBalance =
+          Number(_spotBalance?.total || 0) - Number(_spotBalance?.hold || 0)
         return {
           coin: i.coin === 'USDC' ? 'USDC (Spot)' : _coin,
           assetName: spot?.name,
           totalBalance: i.total,
-          availableBalance: i.total,
+          availableBalance: availableBalance.toString(),
           usdcValue: usdcValue.toString(),
           pnlRoePc:
             i.coin === 'USDC'
@@ -71,7 +82,7 @@ export const useBalances = () => {
         }
       }) ?? []
     return [perpUsdc, ...spotBalances]
-  }, [data, assetList])
+  }, [data, assetList, spotData])
 
   return useMemo(() => {
     if (!address) {

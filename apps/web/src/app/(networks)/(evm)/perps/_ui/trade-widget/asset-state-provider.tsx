@@ -180,6 +180,7 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
   const [availableSpotToBuy, availableSpotToSell] = useMemo(() => {
     if (asset?.marketType !== 'spot') return ['0', '0']
     const balance = spotBalance?.availableBalance || '0'
+
     const usdcBalance = spotUsdcBalance?.availableBalance || '0'
     const price = asset.markPrice || '1'
     const availableToBuy = (Number(usdcBalance) / Number(price)).toString()

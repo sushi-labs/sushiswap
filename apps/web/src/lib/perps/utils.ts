@@ -1,6 +1,7 @@
 import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
 import { get } from '@vercel/edge-config'
 import { formatUnits, parseUnits } from 'viem'
+import type { PerpOrSpotAsset } from './subscription/use-asset-list'
 import type { UserOpenOrdersItemType } from './use-user-open-orders'
 
 export const getTextColorClass = (value: number) => {
@@ -63,6 +64,39 @@ export const getHyperliquidExplorerUrl = (
     default:
       throw new Error('Invalid type for explorer URL')
   }
+}
+
+export function getHyperliquidCoinIconUrl(
+  asset: PerpOrSpotAsset | undefined,
+): string {
+  if (!asset) return ''
+
+  const { dex = '', marketType, symbol = '', name = '' } = asset
+
+  const prefix = dex !== '' ? `${dex}:` : ''
+
+  const baseSymbol =
+    marketType === 'spot'
+      ? symbol.split('/')?.[0]
+      : dex
+        ? symbol.split('-')?.[0]
+        : name
+
+  const suffix = marketType === 'spot' ? '_spot' : ''
+
+  return `https://app.hyperliquid.xyz/coins/${prefix}${baseSymbol}${suffix}.svg`
+}
+
+export const getAssetIdForConverter = (asset: PerpOrSpotAsset) => {
+  let id
+  if (asset.marketType === 'perp' && asset.dex !== '') {
+    id = `${asset.dex}:${asset.name}` // "xyz:GOLD" builder dex
+  } else if (asset.marketType === 'perp') {
+    id = asset.name // BTC perp
+  } else {
+    id = asset?.untouchedSymbol //USOL/USDC - spot
+  }
+  return id
 }
 
 export const SPOT_ASSETS_TO_REWRITE = new Map<string, string>([

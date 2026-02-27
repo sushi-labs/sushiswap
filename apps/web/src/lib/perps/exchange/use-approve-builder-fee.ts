@@ -8,7 +8,11 @@ import {
 import { useMutation } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useWalletClient } from 'wagmi'
-import { BUILDER_FEE_RECEIVER, BUILDER_FEE_SPOT_PERCENTAGE } from '../config'
+import {
+  BUILDER_FEE_RECEIVER,
+  BUILDER_FEE_SPOT_PERCENTAGE,
+  TOAST_AUTOCLOSE_TIME,
+} from '../config'
 import { hlHttpTransport } from '../transports'
 
 export const useApproveBuilderFee = () => {
@@ -46,6 +50,7 @@ export const useApproveBuilderFee = () => {
         type: 'burn',
         timestamp: ts,
         groupTimestamp: ts,
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
 
       return { ts }
@@ -62,6 +67,7 @@ export const useApproveBuilderFee = () => {
         type: 'burn',
         timestamp: ctx.ts,
         groupTimestamp: ctx.ts,
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
     },
 
@@ -77,6 +83,7 @@ export const useApproveBuilderFee = () => {
         type: 'burn',
         timestamp: ctx?.ts ?? Date.now(),
         groupTimestamp: ctx?.ts ?? Date.now(),
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
     },
   })

@@ -11,32 +11,27 @@ import {
   SkeletonBox,
 } from '@sushiswap/ui'
 import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { getHyperliquidCoinIconUrl } from 'src/lib/perps/utils'
 import { useAssetState } from '../trade-widget/asset-state-provider'
-import { useAssetListState } from './asset-list-provider'
 import { useAssetSelectorState } from './asset-selector-provider'
 import { AssetTabs } from './asset-tabs'
 import { SearchBar } from './search-bar'
 
 export const AssetSelector = () => {
   const {
-    state: { activeAsset },
+    state: { asset },
   } = useAssetState()
-  const {
-    state: {
-      assetListQuery: { data, isLoading },
-    },
-  } = useAssetListState()
+
   const {
     state: { open },
     mutate: { setOpen },
   } = useAssetSelectorState()
-  const asset = useMemo(() => data?.get?.(activeAsset), [data, activeAsset])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {isLoading || !asset ? (
+        {!asset ? (
           <TriggerSkeleton />
         ) : (
           <Button
@@ -45,13 +40,7 @@ export const AssetSelector = () => {
           >
             <div className="whitespace-nowrap flex flex-col lg:flex-row lg:items-center gap-1">
               <div className="flex items-center gap-1">
-                {/* todo: get token icon */}
-                {/* <UnknownTokenIcon className="w-6 h-6" /> */}
-                <img
-                  src={`https://app.hyperliquid.xyz/coins/${asset?.marketType === 'spot' ? asset?.symbol?.split('/')?.[0] : asset?.name}${asset?.marketType === 'spot' ? '_spot' : ''}.svg`}
-                  alt={asset?.symbol}
-                  className="w-6 h-6 rounded-full"
-                />
+                <TokenIcon />
                 <span className="text-lg font-medium">{asset?.symbol}</span>
                 <ChevronDownIcon
                   className="block lg:hidden"
@@ -88,6 +77,42 @@ export const AssetSelector = () => {
         <AssetTabs />
       </DialogContent>
     </Dialog>
+  )
+}
+
+const TokenIcon = () => {
+  const {
+    state: { asset },
+  } = useAssetState()
+  const [imageErr, setImageErr] = useState(false)
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: reset imageErr on asset change
+  useEffect(() => {
+    setImageErr(false)
+  }, [asset?.symbol])
+
+  const url = useMemo(() => {
+    return getHyperliquidCoinIconUrl(asset)
+  }, [asset])
+
+  return (
+    <>
+      {imageErr ? (
+        <UnknownTokenIcon className="w-6 h-6" />
+      ) : (
+        <img
+          src={url}
+          alt={asset?.symbol}
+          className="w-6 h-6 rounded-full"
+          onLoadStart={() => {
+            setImageErr(false)
+          }}
+          onError={() => {
+            setImageErr(true)
+          }}
+        />
+      )}
+    </>
   )
 }
 

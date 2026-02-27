@@ -10,7 +10,7 @@ import { hlWebSocketTransport } from '../transports'
 
 const formatPerpCtxs = (activeAssetCtxEvent: ActiveAssetCtxEvent) => {
   const ctx = activeAssetCtxEvent.ctx
-  const markPrice = Number.parseFloat(ctx.markPx)
+  const markPrice = Number.parseFloat(ctx.midPx ?? ctx.markPx)
   const last = markPrice
   const prev = Number.parseFloat(ctx.prevDayPx)
   const changeAbs = last != null && prev != null ? last - prev : null
@@ -39,7 +39,7 @@ const formatPerpCtxs = (activeAssetCtxEvent: ActiveAssetCtxEvent) => {
 
 const formatSpotCtxs = (activeSpotAssetCtxEvent: ActiveSpotAssetCtxEvent) => {
   const ctx = activeSpotAssetCtxEvent.ctx
-  const markPrice = Number.parseFloat(ctx.markPx)
+  const markPrice = Number.parseFloat(ctx.midPx ?? ctx.markPx)
   const last = markPrice
   const prev = Number.parseFloat(ctx.prevDayPx)
   const changeAbs = last != null && prev != null ? last - prev : null

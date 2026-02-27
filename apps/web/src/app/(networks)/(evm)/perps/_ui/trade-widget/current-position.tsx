@@ -1,5 +1,6 @@
 import { classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
+import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
 import { useUserPositions } from 'src/lib/perps/use-user-positions'
 import { getTextColorClass, numberFormatter } from 'src/lib/perps/utils'
 import { StatItem } from '../_common/stat-item'
@@ -10,6 +11,7 @@ export const CurrentPosition = () => {
     state: { activeAsset, asset },
   } = useAssetState()
   const { data } = useUserPositions(activeAsset)
+  const { baseSymbol } = useSymbolSplit({ asset })
 
   const { positionSize, side } = useMemo(() => {
     if (!data || data.length === 0 || asset?.marketType === 'spot')
@@ -30,7 +32,7 @@ export const CurrentPosition = () => {
             side !== 'C' ? getTextColorClass(side === 'A' ? -1 : 1) : '',
           )}
         >
-          {numberFormatter.format(positionSize)} {activeAsset}
+          {numberFormatter.format(positionSize)} {baseSymbol}
         </div>
       }
     />

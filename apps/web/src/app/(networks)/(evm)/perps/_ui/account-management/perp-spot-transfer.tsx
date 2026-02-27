@@ -15,6 +15,7 @@ import {
 } from '@sushiswap/ui'
 import { ArrowsLeftRightIcon } from '@sushiswap/ui/icons/ArrowsLeftRight'
 import { type ReactNode, useCallback, useState } from 'react'
+import { TOAST_AUTOCLOSE_TIME } from 'src/lib/perps/config'
 import { hlHttpTransport } from 'src/lib/perps/transports'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
@@ -62,6 +63,7 @@ export const PerpSpotTransfer = ({ trigger }: { trigger?: ReactNode }) => {
         timestamp: Date.now(),
         groupTimestamp: Date.now(),
         chainId: chainId,
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
       await sendAsset(
         {
@@ -83,6 +85,7 @@ export const PerpSpotTransfer = ({ trigger }: { trigger?: ReactNode }) => {
         timestamp: Date.now(),
         groupTimestamp: Date.now(),
         chainId: chainId,
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
       setIsPending(false)
     } catch (error) {

@@ -2,6 +2,7 @@
 import { type FC, createContext, useContext, useMemo, useState } from 'react'
 import { useAllDexClearinghouseState } from 'src/lib/perps/subscription/use-all-dex-clearinghouse-state'
 import { useOpenOrders } from 'src/lib/perps/subscription/use-open-orders'
+import { useSpotState } from 'src/lib/perps/subscription/use-spot-state'
 import { useUserFills } from 'src/lib/perps/subscription/use-user-fills'
 import { useUserFundings } from 'src/lib/perps/subscription/use-user-fundings'
 import { useUserHistoricalOrders } from 'src/lib/perps/subscription/use-user-historical-orders'
@@ -19,6 +20,7 @@ interface State {
     >
     userFillsQuery: ReturnType<typeof useUserFills>
     openOrdersQuery: ReturnType<typeof useOpenOrders>
+    spotStateQuery: ReturnType<typeof useSpotState>
     aggregateFillsByTime: boolean
   }
   mutate: {
@@ -55,6 +57,8 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
     aggregateByTime: aggregateFillsByTime,
   })
   const openOrdersQuery = useOpenOrders({ address })
+  const spotStateQuery = useSpotState({ address })
+
   return (
     <UserContext.Provider
       value={useMemo(() => {
@@ -68,6 +72,7 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
             userFillsQuery,
             aggregateFillsByTime,
             openOrdersQuery,
+            spotStateQuery,
           },
           mutate: {
             setAggregateFillsByTime,
@@ -82,6 +87,7 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
         aggregateFillsByTime,
         openOrdersQuery,
         webData3Query,
+        spotStateQuery,
       ])}
     >
       {children}

@@ -6,9 +6,10 @@ import {
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
-import { BUILDER_FEE_RECEIVER } from '../config'
+import { BUILDER_FEE_RECEIVER, TOAST_AUTOCLOSE_TIME } from '../config'
 import { hlHttpTransport } from '../transports'
 import { useAgent } from '../use-agent'
+import { getAssetIdForConverter } from '../utils'
 
 export type TimeInForceType =
   | 'Gtc'
@@ -74,14 +75,7 @@ export const useExecuteOrders = () => {
       const orders: OrderParameters['orders'] = orderData.orders.map((c) => {
         const asset = assetList?.get(c.asset)
         if (!asset) throw new Error(`Unknown c.asset: ${c.asset}`)
-        let id
-        if (asset.marketType === 'perp' && asset.dex !== '') {
-          id = `${asset.dex}:${asset.symbol}` // "xyz:GOLD" builder dex
-        } else if (asset.marketType === 'perp') {
-          id = c.asset // BTC perp
-        } else {
-          id = asset?.untouchedSymbol //USOL/USDC - spot
-        }
+        const id = getAssetIdForConverter(asset)
         const assetId = symbolConverter?.getAssetId(id)
         if (assetId === undefined) throw new Error(`Unknown asset: ${id}`)
 
@@ -113,7 +107,7 @@ export const useExecuteOrders = () => {
         },
         ...(orderData.grouping ? { grouping: orderData.grouping } : {}),
       }
-      console.log(_orderData)
+
       return order(
         { wallet: agentAccount, transport: hlHttpTransport },
         _orderData,
@@ -131,6 +125,7 @@ export const useExecuteOrders = () => {
         type: 'burn',
         timestamp: ts,
         groupTimestamp: ts,
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
 
       return { ts, count: data.orderData.orders.length }
@@ -146,6 +141,7 @@ export const useExecuteOrders = () => {
         type: 'burn',
         timestamp: ctx.ts,
         groupTimestamp: ctx.ts,
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
     },
 
@@ -163,6 +159,7 @@ export const useExecuteOrders = () => {
         type: 'burn',
         timestamp: ctx?.ts ?? Date.now(),
         groupTimestamp: ctx?.ts ?? Date.now(),
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
     },
   })

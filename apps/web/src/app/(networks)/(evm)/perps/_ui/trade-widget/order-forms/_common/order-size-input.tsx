@@ -26,7 +26,11 @@ export const OrderSizeInput = () => {
     (value: string) => {
       if (!asset) return
       let price = markPrice
-      if (tradeType.toLowerCase().includes('limit') && limitPrice) {
+      if (
+        tradeType.toLowerCase().includes('limit') &&
+        limitPrice &&
+        asset?.marketType === 'perp'
+      ) {
         price = limitPrice
       }
       try {
@@ -72,7 +76,11 @@ export const OrderSizeInput = () => {
         return
       }
       let price = markPrice
-      if (tradeType.toLowerCase().includes('limit') && limitPrice) {
+      if (
+        tradeType.toLowerCase().includes('limit') &&
+        limitPrice &&
+        asset?.marketType === 'perp'
+      ) {
         price = limitPrice
       }
       try {
