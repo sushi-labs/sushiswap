@@ -32,13 +32,19 @@ if (typeof window !== 'undefined') {
 
 
 export const networks = {
-  unknown: {
-    networkPassphrase: "Public Global Stellar Network ; September 2015",
-    contractId: "CCRSMJDITH3VK5QOGYCVZDAKIY5GL3RCG4TCVLIAVB662IW2V5KJGZGF",
+  futurenet: {
+    networkPassphrase: "Test SDF Future Network ; October 2022",
+    contractId: "CD6FPHLHMPGOOG7ZCCELMCPMNCZBAWBNQEFLYQSMIEG6P4GJZRPDKJIB",
   }
 } as const
 
-export type StorageKey = {tag: "Owner", values: void} | {tag: "FeeAmtTickSpacing", values: readonly [u32]} | {tag: "GetPool", values: readonly [string, string, u32]} | {tag: "WasmHash", values: void} | {tag: "ProtocolFee0", values: void} | {tag: "ProtocolFee1", values: void} | {tag: "DefaultRouter", values: void} | {tag: "FlashExecutor", values: void};
+export type StorageKey = {tag: "Owner", values: void} | {tag: "FeeAmtTickSpacing", values: readonly [u32]} | {tag: "GetPool", values: readonly [string, string, u32]} | {tag: "WasmHash", values: void} | {tag: "ProtocolFee0", values: void} | {tag: "ProtocolFee1", values: void} | {tag: "DefaultRouter", values: void} | {tag: "FlashExecutor", values: void} | {tag: "ApprovedPoolWasmHash", values: readonly [Buffer]} | {tag: "UpgradeFrozen", values: void} | {tag: "UpgradePermanentlyDisabled", values: void};
+
+
+
+
+
+
 
 
 
@@ -67,11 +73,8 @@ export const Errors = {
   43: {message:"InsufficientLiquidity"},
   50: {message:"TickNotInitialized"},
   52: {message:"TickNotSpacedCorrectly"},
-  60: {message:"OracleNotInitialized"},
-  61: {message:"InvalidObservation"},
+  61: {message:"PoolPaused"},
   62: {message:"ObservationTooOld"},
-  63: {message:"NotInitialized"},
-  64: {message:"AlreadyInitialized"},
   65: {message:"TickLowerNotLessThanUpper"},
   66: {message:"TickLowerTooLow"},
   67: {message:"TickUpperTooHigh"},
@@ -92,7 +95,16 @@ export const Errors = {
   90: {message:"IdenticalTokens"},
   91: {message:"PoolAlreadyExists"},
   92: {message:"FeeAmountAlreadyEnabled"},
-  93: {message:"InvalidFeeAmount"}
+  93: {message:"InvalidFeeAmount"},
+  100: {message:"WasmHashNotApproved"},
+  101: {message:"PoolNotRegistered"},
+  102: {message:"UpgradesFrozen"},
+  /**
+   * Also used for pool-level upgradeability revocation (pool admin feature).
+   * Callers must check both factory.is_upgrade_permanently_disabled() and
+   * pool.is_upgradeability_revoked() to disambiguate.
+   */
+  103: {message:"UpgradesPermanentlyDisabled"}
 }
 
 export interface Client {
@@ -177,6 +189,252 @@ export interface Client {
      */
     simulate?: boolean;
   }) => Promise<AssembledTransaction<string>>
+
+  /**
+   * Construct and simulate a set_pool_wasm_hash transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Sets the default pool wasm hash used for newly created pools.
+   * 
+   * Owner only.
+   */
+  set_pool_wasm_hash: ({new_wasm_hash}: {new_wasm_hash: Buffer}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<null>>
+
+  /**
+   * Construct and simulate a get_pool_wasm_hash transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Returns the default pool wasm hash used for new pool deployments.
+   */
+  get_pool_wasm_hash: (options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<Buffer>>
+
+  /**
+   * Construct and simulate a approve_pool_wasm_hash transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Approves a pool wasm hash for in-place pool upgrades.
+   * 
+   * Owner only.
+   */
+  approve_pool_wasm_hash: ({wasm_hash}: {wasm_hash: Buffer}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<null>>
+
+  /**
+   * Construct and simulate a revoke_pool_wasm_hash transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Revokes a previously approved pool wasm hash.
+   * 
+   * Owner only.
+   */
+  revoke_pool_wasm_hash: ({wasm_hash}: {wasm_hash: Buffer}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<null>>
+
+  /**
+   * Construct and simulate a is_pool_wasm_hash_approved transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Returns whether a pool wasm hash is approved for upgrades.
+   */
+  is_pool_wasm_hash_approved: ({wasm_hash}: {wasm_hash: Buffer}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<boolean>>
+
+  /**
+   * Construct and simulate a set_upgrade_frozen transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Sets whether pool upgrades are frozen.
+   * 
+   * Owner only.
+   */
+  set_upgrade_frozen: ({frozen}: {frozen: boolean}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<Result<void>>>
+
+  /**
+   * Construct and simulate a is_upgrade_frozen transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Returns true when pool upgrades are currently frozen.
+   */
+  is_upgrade_frozen: (options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<boolean>>
+
+  /**
+   * Construct and simulate a disable_upgrades_permanently transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Permanently disables pool upgrades (one-way switch).
+   * 
+   * Owner only.
+   */
+  disable_upgrades_permanently: (options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<null>>
+
+  /**
+   * Construct and simulate a is_upgrade_permanently_disabled transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Returns true if upgrades were permanently disabled.
+   */
+  is_upgrade_permanently_disabled: (options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<boolean>>
+
+  /**
+   * Construct and simulate a upgrade_pool transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Upgrades a specific pool to a new approved wasm hash.
+   * 
+   * Owner only. Allowed only when `!frozen && !permanently_disabled`.
+   */
+  upgrade_pool: ({pool, new_wasm_hash}: {pool: string, new_wasm_hash: Buffer}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<Result<void>>>
+
+  /**
+   * Construct and simulate a migrate_pool transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Calls `pool.migrate(factory)` on behalf of the factory.
+   * 
+   * Owner only. Must be called after `upgrade_pool` when the new pool
+   * code requires post-upgrade migration.
+   */
+  migrate_pool: ({pool}: {pool: string}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<Result<void>>>
 
   /**
    * Construct and simulate a set_protocol_fee transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
@@ -493,14 +751,31 @@ export class Client extends ContractClient {
   }
   constructor(public readonly options: ContractClientOptions) {
     super(
-      new ContractSpec([ "AAAAAgAAAAAAAAAAAAAAClN0b3JhZ2VLZXkAAAAAAAgAAAAAAAAAAAAAAAVPd25lcgAAAAAAAAEAAAAAAAAAEUZlZUFtdFRpY2tTcGFjaW5nAAAAAAAAAQAAAAQAAAABAAAAAAAAAAdHZXRQb29sAAAAAAMAAAATAAAAEwAAAAQAAAAAAAAAAAAAAAhXYXNtSGFzaAAAAAAAAAAAAAAADFByb3RvY29sRmVlMAAAAAAAAAAAAAAADFByb3RvY29sRmVlMQAAAAAAAAAAAAAADURlZmF1bHRSb3V0ZXIAAAAAAAAAAAAAAAAAAA1GbGFzaEV4ZWN1dG9yAAAA",
+      new ContractSpec([ "AAAAAgAAAAAAAAAAAAAAClN0b3JhZ2VLZXkAAAAAAAsAAAAAAAAAAAAAAAVPd25lcgAAAAAAAAEAAAAAAAAAEUZlZUFtdFRpY2tTcGFjaW5nAAAAAAAAAQAAAAQAAAABAAAAAAAAAAdHZXRQb29sAAAAAAMAAAATAAAAEwAAAAQAAAAAAAAAAAAAAAhXYXNtSGFzaAAAAAAAAAAAAAAADFByb3RvY29sRmVlMAAAAAAAAAAAAAAADFByb3RvY29sRmVlMQAAAAAAAAAAAAAADURlZmF1bHRSb3V0ZXIAAAAAAAAAAAAAAAAAAA1GbGFzaEV4ZWN1dG9yAAAAAAAAAQAAAAAAAAAUQXBwcm92ZWRQb29sV2FzbUhhc2gAAAABAAAD7gAAACAAAAAAAAAAAAAAAA1VcGdyYWRlRnJvemVuAAAAAAAAAAAAAAAAAAAaVXBncmFkZVBlcm1hbmVudGx5RGlzYWJsZWQAAA==",
         "AAAABQAAAAAAAAAAAAAAFUZlZUFtb3VudEVuYWJsZWRFdmVudAAAAAAAAAEAAAASZmVlX2Ftb3VudF9lbmFibGVkAAAAAAACAAAAAAAAAANmZWUAAAAABAAAAAAAAAAAAAAADHRpY2tfc3BhY2luZwAAAAUAAAAAAAAAAg==",
         "AAAABQAAAAAAAAAAAAAAEFBvb2xDcmVhdGVkRXZlbnQAAAABAAAADHBvb2xfY3JlYXRlZAAAAAYAAAAAAAAABnNlbmRlcgAAAAAAEwAAAAAAAAAAAAAABnRva2VuMAAAAAAAEwAAAAAAAAAAAAAABnRva2VuMQAAAAAAEwAAAAAAAAAAAAAAA2ZlZQAAAAAEAAAAAAAAAAAAAAAMdGlja19zcGFjaW5nAAAABQAAAAAAAAAAAAAADHBvb2xfYWRkcmVzcwAAABMAAAAAAAAAAg==",
         "AAAABQAAAAAAAAAAAAAAE1NldFByb3RvY29sRmVlRXZlbnQAAAAAAQAAABBzZXRfcHJvdG9jb2xfZmVlAAAABAAAAAAAAAARZmVlX3Byb3RvY29sMF9vbGQAAAAAAAAEAAAAAAAAAAAAAAARZmVlX3Byb3RvY29sMV9vbGQAAAAAAAAEAAAAAAAAAAAAAAARZmVlX3Byb3RvY29sMF9uZXcAAAAAAAAEAAAAAAAAAAAAAAARZmVlX3Byb3RvY29sMV9uZXcAAAAAAAAEAAAAAAAAAAI=",
+        "AAAABQAAAAAAAAAAAAAAEVdhc21BcHByb3ZlZEV2ZW50AAAAAAAAAQAAAA13YXNtX2FwcHJvdmVkAAAAAAAAAQAAAAAAAAAJd2FzbV9oYXNoAAAAAAAD7gAAACAAAAAAAAAAAg==",
+        "AAAABQAAAAAAAAAAAAAAEFdhc21SZXZva2VkRXZlbnQAAAABAAAADHdhc21fcmV2b2tlZAAAAAEAAAAAAAAACXdhc21faGFzaAAAAAAAA+4AAAAgAAAAAAAAAAI=",
+        "AAAABQAAAAAAAAAAAAAAEVBvb2xVcGdyYWRlZEV2ZW50AAAAAAAAAQAAAA1wb29sX3VwZ3JhZGVkAAAAAAAAAgAAAAAAAAAEcG9vbAAAABMAAAAAAAAAAAAAAAl3YXNtX2hhc2gAAAAAAAPuAAAAIAAAAAAAAAAC",
+        "AAAABQAAAAAAAAAAAAAAEVBvb2xNaWdyYXRlZEV2ZW50AAAAAAAAAQAAAA1wb29sX21pZ3JhdGVkAAAAAAAAAQAAAAAAAAAEcG9vbAAAABMAAAAAAAAAAg==",
+        "AAAABQAAAAAAAAAAAAAAElVwZ3JhZGVGcm96ZW5FdmVudAAAAAAAAQAAAA51cGdyYWRlX2Zyb3plbgAAAAAAAQAAAAAAAAAGZnJvemVuAAAAAAABAAAAAAAAAAI=",
+        "AAAABQAAAAAAAAAAAAAAH1VwZ3JhZGVQZXJtYW5lbnRseURpc2FibGVkRXZlbnQAAAAAAQAAABB1cGdyYWRlX2Rpc2FibGVkAAAAAQAAAAAAAAAIZGlzYWJsZWQAAAABAAAAAAAAAAI=",
         "AAAAAAAAA1NJbml0aWFsaXplcyB0aGUgZmFjdG9yeSB3aXRoIGFuIGFkbWluaXN0cmF0b3IgYW5kIHBvb2wgV0FTTSBoYXNoLgoKU2V0cyB1cCB0aGUgZmFjdG9yeSB3aXRoIGRlZmF1bHQgZmVlIHRpZXJzIG1hdGNoaW5nIFVuaXN3YXAgVjM6Ci0gMC4wNSUgKDUwMCBicHMpIHdpdGggdGljayBzcGFjaW5nIDEwIChmb3Igc3RhYmxlY29pbiBwYWlycykKLSAwLjMlICgzMDAwIGJwcykgd2l0aCB0aWNrIHNwYWNpbmcgNjAgKGZvciBtb3N0IHBhaXJzKQotIDElICgxMDAwMCBicHMpIHdpdGggdGljayBzcGFjaW5nIDIwMCAoZm9yIGV4b3RpYyBwYWlycykKCkluaXRpYWxpemVzIHByb3RvY29sIGZlZXMgdG8gMC4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgY29udHJhY3QgZW52aXJvbm1lbnQKKiBgYWRtaW5gIC0gQWRkcmVzcyBvZiB0aGUgZmFjdG9yeSBvd25lcgoqIGB3YXNtX2hhc2hgIC0gV0FTTSBoYXNoIG9mIHRoZSBwb29sIGNvbnRyYWN0IHRvIGRlcGxveQoqIGBmbGFzaF9leGVjdXRvcmAgLSBBZGRyZXNzIG9mIHRoZSBGbGFzaEV4ZWN1dG9yIGNvbnRyYWN0IChpbW11dGFibGUpCgojIEZsYXNoIEV4ZWN1dG9yClRoZSBmbGFzaF9leGVjdXRvciBpcyBzZXQgb25jZSBhdCBpbml0aWFsaXphdGlvbiBhbmQgY2Fubm90IGJlIGNoYW5nZWQuClRoaXMgaW1tdXRhYmlsaXR5IHByb3ZpZGVzOgotIERlY2VudHJhbGl6YXRpb246IE5vIGFkbWluIGNhbiB1cGRhdGUgdGhlIGV4ZWN1dG9yCi0gU2VjdXJpdHk6IEZsYXNoIGxvYW4gYmVoYXZpb3IgaXMgcHJlZGljdGFibGUgYW5kIHVuY2hhbmdlYWJsZQotIFRydXN0OiBVc2VycyBrbm93IHRoZSBleGVjdXRvciBjb250cmFjdCB3aWxsIG5ldmVyIGNoYW5nZQAAAAANX19jb25zdHJ1Y3RvcgAAAAAAAAMAAAAAAAAABWFkbWluAAAAAAAAEwAAAAAAAAAJd2FzbV9oYXNoAAAAAAAD7gAAACAAAAAAAAAADmZsYXNoX2V4ZWN1dG9yAAAAAAATAAAAAA==",
         "AAAAAAAAALFUcmFuc2ZlcnMgZmFjdG9yeSBvd25lcnNoaXAgdG8gYSBuZXcgYWRtaW5pc3RyYXRvci4KCiMgQXJndW1lbnRzCiogYGVgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CiogYG5ld19hZG1pbmAgLSBBZGRyZXNzIG9mIHRoZSBuZXcgb3duZXIgKHJlcXVpcmVzIGN1cnJlbnQgb3duZXIgYXV0aG9yaXphdGlvbikAAAAAAAAJc2V0X293bmVyAAAAAAAAAQAAAAAAAAAJbmV3X2FkbWluAAAAAAAAEwAAAAA=",
         "AAAAAAAAAIdSZXR1cm5zIHRoZSBjdXJyZW50IGZhY3Rvcnkgb3duZXIgYWRkcmVzcy4KCiMgQXJndW1lbnRzCiogYGVgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CgojIFJldHVybnMKKiBgQWRkcmVzc2AgLSBDdXJyZW50IGZhY3Rvcnkgb3duZXIAAAAACWdldF9vd25lcgAAAAAAAAAAAAABAAAAEw==",
         "AAAAAAAAAUVSZXR1cm5zIHRoZSBmbGFzaCBleGVjdXRvciBhZGRyZXNzIGNvbmZpZ3VyZWQgYXQgaW5pdGlhbGl6YXRpb24uCgpUaGUgZmxhc2ggZXhlY3V0b3IgaXMgaW1tdXRhYmxlIGFuZCBzZXQgb25jZSBkdXJpbmcgZmFjdG9yeSBkZXBsb3ltZW50LgpUaGlzIGlzIHRoZSBvbmx5IGF1dGhvcml6ZWQgY29udHJhY3QgdGhhdCBjYW4gaW5pdGlhdGUgZmxhc2ggbG9hbnMgb24gcG9vbHMuCgojIEFyZ3VtZW50cwoqIGBlbnZgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CgojIFJldHVybnMKKiBgQWRkcmVzc2AgLSBBZGRyZXNzIG9mIHRoZSBGbGFzaEV4ZWN1dG9yIGNvbnRyYWN0AAAAAAAAEmdldF9mbGFzaF9leGVjdXRvcgAAAAAAAAAAAAEAAAAT",
+        "AAAAAAAAAEpTZXRzIHRoZSBkZWZhdWx0IHBvb2wgd2FzbSBoYXNoIHVzZWQgZm9yIG5ld2x5IGNyZWF0ZWQgcG9vbHMuCgpPd25lciBvbmx5LgAAAAAAEnNldF9wb29sX3dhc21faGFzaAAAAAAAAQAAAAAAAAANbmV3X3dhc21faGFzaAAAAAAAA+4AAAAgAAAAAA==",
+        "AAAAAAAAAEFSZXR1cm5zIHRoZSBkZWZhdWx0IHBvb2wgd2FzbSBoYXNoIHVzZWQgZm9yIG5ldyBwb29sIGRlcGxveW1lbnRzLgAAAAAAABJnZXRfcG9vbF93YXNtX2hhc2gAAAAAAAAAAAABAAAD7gAAACA=",
+        "AAAAAAAAAEJBcHByb3ZlcyBhIHBvb2wgd2FzbSBoYXNoIGZvciBpbi1wbGFjZSBwb29sIHVwZ3JhZGVzLgoKT3duZXIgb25seS4AAAAAABZhcHByb3ZlX3Bvb2xfd2FzbV9oYXNoAAAAAAABAAAAAAAAAAl3YXNtX2hhc2gAAAAAAAPuAAAAIAAAAAA=",
+        "AAAAAAAAADpSZXZva2VzIGEgcHJldmlvdXNseSBhcHByb3ZlZCBwb29sIHdhc20gaGFzaC4KCk93bmVyIG9ubHkuAAAAAAAVcmV2b2tlX3Bvb2xfd2FzbV9oYXNoAAAAAAAAAQAAAAAAAAAJd2FzbV9oYXNoAAAAAAAD7gAAACAAAAAA",
+        "AAAAAAAAADpSZXR1cm5zIHdoZXRoZXIgYSBwb29sIHdhc20gaGFzaCBpcyBhcHByb3ZlZCBmb3IgdXBncmFkZXMuAAAAAAAaaXNfcG9vbF93YXNtX2hhc2hfYXBwcm92ZWQAAAAAAAEAAAAAAAAACXdhc21faGFzaAAAAAAAA+4AAAAgAAAAAQAAAAE=",
+        "AAAAAAAAADNTZXRzIHdoZXRoZXIgcG9vbCB1cGdyYWRlcyBhcmUgZnJvemVuLgoKT3duZXIgb25seS4AAAAAEnNldF91cGdyYWRlX2Zyb3plbgAAAAAAAQAAAAAAAAAGZnJvemVuAAAAAAABAAAAAQAAA+kAAAPtAAAAAAAAAAM=",
+        "AAAAAAAAADVSZXR1cm5zIHRydWUgd2hlbiBwb29sIHVwZ3JhZGVzIGFyZSBjdXJyZW50bHkgZnJvemVuLgAAAAAAABFpc191cGdyYWRlX2Zyb3plbgAAAAAAAAAAAAABAAAAAQ==",
+        "AAAAAAAAAEFQZXJtYW5lbnRseSBkaXNhYmxlcyBwb29sIHVwZ3JhZGVzIChvbmUtd2F5IHN3aXRjaCkuCgpPd25lciBvbmx5LgAAAAAAABxkaXNhYmxlX3VwZ3JhZGVzX3Blcm1hbmVudGx5AAAAAAAAAAA=",
+        "AAAAAAAAADNSZXR1cm5zIHRydWUgaWYgdXBncmFkZXMgd2VyZSBwZXJtYW5lbnRseSBkaXNhYmxlZC4AAAAAH2lzX3VwZ3JhZGVfcGVybWFuZW50bHlfZGlzYWJsZWQAAAAAAAAAAAEAAAAB",
+        "AAAAAAAAAHhVcGdyYWRlcyBhIHNwZWNpZmljIHBvb2wgdG8gYSBuZXcgYXBwcm92ZWQgd2FzbSBoYXNoLgoKT3duZXIgb25seS4gQWxsb3dlZCBvbmx5IHdoZW4gYCFmcm96ZW4gJiYgIXBlcm1hbmVudGx5X2Rpc2FibGVkYC4AAAAMdXBncmFkZV9wb29sAAAAAgAAAAAAAAAEcG9vbAAAABMAAAAAAAAADW5ld193YXNtX2hhc2gAAAAAAAPuAAAAIAAAAAEAAAPpAAAD7QAAAAAAAAAD",
+        "AAAAAAAAAKBDYWxscyBgcG9vbC5taWdyYXRlKGZhY3RvcnkpYCBvbiBiZWhhbGYgb2YgdGhlIGZhY3RvcnkuCgpPd25lciBvbmx5LiBNdXN0IGJlIGNhbGxlZCBhZnRlciBgdXBncmFkZV9wb29sYCB3aGVuIHRoZSBuZXcgcG9vbApjb2RlIHJlcXVpcmVzIHBvc3QtdXBncmFkZSBtaWdyYXRpb24uAAAADG1pZ3JhdGVfcG9vbAAAAAEAAAAAAAAABHBvb2wAAAATAAAAAQAAA+kAAAPtAAAAAAAAAAM=",
         "AAAAAAAAAVVTZXRzIHRoZSBnbG9iYWwgcHJvdG9jb2wgZmVlIGRlbm9taW5hdG9ycyBmb3IgYWxsIHBvb2xzLgoKIyBBcmd1bWVudHMKKiBgZW52YCAtIFRoZSBjb250cmFjdCBlbnZpcm9ubWVudAoqIGBmZWVfcHJvdG9jb2wwYCAtIFByb3RvY29sIGZlZSBkZW5vbWluYXRvciBmb3IgdG9rZW4wICgwIG9yIDQtMTApCiogYGZlZV9wcm90b2NvbDFgIC0gUHJvdG9jb2wgZmVlIGRlbm9taW5hdG9yIGZvciB0b2tlbjEgKDAgb3IgNC0xMCkKCiMgUmV0dXJucwoqIGBPaygoKSlgIG9uIHN1Y2Nlc3MKKiBgRXJyKEludmFsaWRGZWVQcm90b2NvbClgIGlmIGVpdGhlciBmZWUgaXMgbm90IDAgb3IgaW4gcmFuZ2UgNC0xMAAAAAAAABBzZXRfcHJvdG9jb2xfZmVlAAAAAgAAAAAAAAANZmVlX3Byb3RvY29sMAAAAAAAAAQAAAAAAAAADWZlZV9wcm90b2NvbDEAAAAAAAAEAAAAAQAAA+kAAAPtAAAAAAAAAAM=",
         "AAAAAAAAALJSZXR1cm5zIHRoZSBwcm90b2NvbCBmZWUgZGVub21pbmF0b3IgZm9yIHRva2VuMC4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgY29udHJhY3QgZW52aXJvbm1lbnQKCiMgUmV0dXJucwoqIGB1MzJgIC0gUHJvdG9jb2wgZmVlIGRlbm9taW5hdG9yIGZvciB0b2tlbjAgKDAgaWYgZGlzYWJsZWQsIG9yIDQtMTApAAAAAAASZ2V0X3Byb3RvY29sX2ZlZV8wAAAAAAAAAAAAAQAAAAQ=",
         "AAAAAAAAALJSZXR1cm5zIHRoZSBwcm90b2NvbCBmZWUgZGVub21pbmF0b3IgZm9yIHRva2VuMS4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgY29udHJhY3QgZW52aXJvbm1lbnQKCiMgUmV0dXJucwoqIGB1MzJgIC0gUHJvdG9jb2wgZmVlIGRlbm9taW5hdG9yIGZvciB0b2tlbjEgKDAgaWYgZGlzYWJsZWQsIG9yIDQtMTApAAAAAAASZ2V0X3Byb3RvY29sX2ZlZV8xAAAAAAAAAAAAAQAAAAQ=",
@@ -511,7 +786,7 @@ export class Client extends ContractClient {
         "AAAAAAAAAFJDbGVhcnMgdGhlIGRlZmF1bHQgcm91dGVyIHNldHRpbmcuCgojIEFyZ3VtZW50cwoqIGBlbnZgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50AAAAAAAUY2xlYXJfZGVmYXVsdF9yb3V0ZXIAAAAAAAAAAA==",
         "AAAAAAAAAPNBdXRob3JpemVzIG9yIHJldm9rZXMgYSByb3V0ZXIgZm9yIGEgc3BlY2lmaWMgcG9vbC4KCiMgQXJndW1lbnRzCiogYGVudmAgLSBUaGUgY29udHJhY3QgZW52aXJvbm1lbnQKKiBgcG9vbGAgLSBQb29sIGFkZHJlc3MgdG8gY29uZmlndXJlCiogYHJvdXRlcmAgLSBSb3V0ZXIgYWRkcmVzcyB0byBhdXRob3JpemUvcmV2b2tlCiogYGFsbG93ZWRgIC0gVHJ1ZSB0byBncmFudCBhdXRob3JpemF0aW9uLCBmYWxzZSB0byByZXZva2UAAAAAGnNldF9wb29sX3JvdXRlcl9hdXRob3JpemVkAAAAAAADAAAAAAAAAARwb29sAAAAEwAAAAAAAAAGcm91dGVyAAAAAAATAAAAAAAAAAdhbGxvd2VkAAAAAAEAAAAA",
         "AAAAAAAAAV5FbmFibGVzIGEgbmV3IGZlZSB0aWVyIHdpdGggYXNzb2NpYXRlZCB0aWNrIHNwYWNpbmcuCgojIEFyZ3VtZW50cwoqIGBlbnZgIC0gVGhlIGNvbnRyYWN0IGVudmlyb25tZW50CiogYGZlZWAgLSBGZWUgdGllciBpbiBiYXNpcyBwb2ludHMgKG11c3QgYmUgPCAxLDAwMCwwMDApCiogYHRpY2tfc3BhY2luZ2AgLSBUaWNrIHNwYWNpbmcgZm9yIHRoaXMgZmVlIHRpZXIgKG11c3QgYmUgPiAwIGFuZCA8IDE2LDM4NCkKCiMgUmV0dXJucwoqIGBPaygoKSlgIG9uIHN1Y2Nlc3MKKiBgRXJyKEVycm9yKWAgLSBJZiB2YWxpZGF0aW9uIGZhaWxzIChzZWUgZmVlczo6ZW5hYmxlX2ZlZV9hbW91bnQgZm9yIGVycm9yIGNvZGVzKQAAAAAACWVfZmVlX2FtdAAAAAAAAAIAAAAAAAAAA2ZlZQAAAAAEAAAAAAAAAAx0aWNrX3NwYWNpbmcAAAAFAAAAAQAAA+kAAAPtAAAAAAAAAAM=",
-        "AAAABAAAAAAAAAAAAAAABUVycm9yAAAAAAAAMQAAAAAAAAAMVW5hdXRob3JpemVkAAAAAQAAAAAAAAAQSW52YWxpZFRpY2tSYW5nZQAAAAoAAAAAAAAAEEludmFsaWRMaXF1aWRpdHkAAAALAAAAAAAAAA1JbnZhbGlkQW1vdW50AAAAAAAADAAAAAAAAAAQSW52YWxpZFNxcnRQcmljZQAAAA0AAAAAAAAACkludmFsaWRGZWUAAAAAAA4AAAAAAAAAEkludmFsaWRUaWNrU3BhY2luZwAAAAAADwAAAAAAAAAPVGlja091dE9mQm91bmRzAAAAABQAAAAAAAAAEFByaWNlT3V0T2ZCb3VuZHMAAAAVAAAAAAAAABFMaXF1aWRpdHlPdmVyZmxvdwAAAAAAABYAAAAAAAAAEkxpcXVpZGl0eVVuZGVyZmxvdwAAAAAAFwAAAAAAAAAORGl2aXNpb25CeVplcm8AAAAAABgAAAAAAAAADk11bERpdk92ZXJmbG93AAAAAAAZAAAAAAAAAAxVMTI4T3ZlcmZsb3cAAAAeAAAAAAAAAAxJMTI4T3ZlcmZsb3cAAAAfAAAAAAAAAAtVNjRPdmVyZmxvdwAAAAAgAAAAAAAAAAtVMzJPdmVyZmxvdwAAAAAhAAAAAAAAABJQb29sTm90SW5pdGlhbGl6ZWQAAAAAACgAAAAAAAAAFlBvb2xBbHJlYWR5SW5pdGlhbGl6ZWQAAAAAACkAAAAAAAAAEFBvc2l0aW9uTm90Rm91bmQAAAAqAAAAAAAAABVJbnN1ZmZpY2llbnRMaXF1aWRpdHkAAAAAAAArAAAAAAAAABJUaWNrTm90SW5pdGlhbGl6ZWQAAAAAADIAAAAAAAAAFlRpY2tOb3RTcGFjZWRDb3JyZWN0bHkAAAAAADQAAAAAAAAAFE9yYWNsZU5vdEluaXRpYWxpemVkAAAAPAAAAAAAAAASSW52YWxpZE9ic2VydmF0aW9uAAAAAAA9AAAAAAAAABFPYnNlcnZhdGlvblRvb09sZAAAAAAAAD4AAAAAAAAADk5vdEluaXRpYWxpemVkAAAAAAA/AAAAAAAAABJBbHJlYWR5SW5pdGlhbGl6ZWQAAAAAAEAAAAAAAAAAGVRpY2tMb3dlck5vdExlc3NUaGFuVXBwZXIAAAAAAABBAAAAAAAAAA9UaWNrTG93ZXJUb29Mb3cAAAAAQgAAAAAAAAAQVGlja1VwcGVyVG9vSGlnaAAAAEMAAAAAAAAAEUludmFsaWRQcmljZUxpbWl0AAAAAAAARQAAAAAAAAAdQW1vdW50U2hvdWxkQmVHcmVhdGVyVGhhblplcm8AAAAAAABGAAAAAAAAAA5OZWdhdGl2ZUFtb3VudAAAAAAARwAAAAAAAAASSW5zdWZmaWNpZW50VG9rZW4wAAAAAABIAAAAAAAAABJJbnN1ZmZpY2llbnRUb2tlbjEAAAAAAEkAAAAAAAAAEkludmFsaWRGZWVQcm90b2NvbAAAAAAASgAAAAAAAAATWmVyb1ByaWNlTm90QWxsb3dlZAAAAABLAAAAAAAAABdaZXJvTGlxdWlkaXR5Tm90QWxsb3dlZAAAAABMAAAAAAAAAB5PdmVyZmxvd0luU3FydFByaWNlQ2FsY3VsYXRpb24AAAAAAE0AAAAAAAAAH1VuZGVyZmxvd0luU3FydFByaWNlQ2FsY3VsYXRpb24AAAAATgAAAAAAAAAWSW5zdWZmaWNpZW50UmVwYXltZW50MAAAAAAAUAAAAAAAAAAWSW5zdWZmaWNpZW50UmVwYXltZW50MQAAAAAAUQAAAAAAAAAUTXVzdFVzZUZsYXNoRXhlY3V0b3IAAABSAAAAAAAAAA5GbGFzaE5vdExvY2tlZAAAAAAAUwAAAAAAAAAPSWRlbnRpY2FsVG9rZW5zAAAAAFoAAAAAAAAAEVBvb2xBbHJlYWR5RXhpc3RzAAAAAAAAWwAAAAAAAAAXRmVlQW1vdW50QWxyZWFkeUVuYWJsZWQAAAAAXAAAAAAAAAAQSW52YWxpZEZlZUFtb3VudAAAAF0=" ]),
+        "AAAABAAAAAAAAAAAAAAABUVycm9yAAAAAAAAMgAAAAAAAAAMVW5hdXRob3JpemVkAAAAAQAAAAAAAAAQSW52YWxpZFRpY2tSYW5nZQAAAAoAAAAAAAAAEEludmFsaWRMaXF1aWRpdHkAAAALAAAAAAAAAA1JbnZhbGlkQW1vdW50AAAAAAAADAAAAAAAAAAQSW52YWxpZFNxcnRQcmljZQAAAA0AAAAAAAAACkludmFsaWRGZWUAAAAAAA4AAAAAAAAAEkludmFsaWRUaWNrU3BhY2luZwAAAAAADwAAAAAAAAAPVGlja091dE9mQm91bmRzAAAAABQAAAAAAAAAEFByaWNlT3V0T2ZCb3VuZHMAAAAVAAAAAAAAABFMaXF1aWRpdHlPdmVyZmxvdwAAAAAAABYAAAAAAAAAEkxpcXVpZGl0eVVuZGVyZmxvdwAAAAAAFwAAAAAAAAAORGl2aXNpb25CeVplcm8AAAAAABgAAAAAAAAADk11bERpdk92ZXJmbG93AAAAAAAZAAAAAAAAAAxVMTI4T3ZlcmZsb3cAAAAeAAAAAAAAAAxJMTI4T3ZlcmZsb3cAAAAfAAAAAAAAAAtVNjRPdmVyZmxvdwAAAAAgAAAAAAAAAAtVMzJPdmVyZmxvdwAAAAAhAAAAAAAAABJQb29sTm90SW5pdGlhbGl6ZWQAAAAAACgAAAAAAAAAFlBvb2xBbHJlYWR5SW5pdGlhbGl6ZWQAAAAAACkAAAAAAAAAEFBvc2l0aW9uTm90Rm91bmQAAAAqAAAAAAAAABVJbnN1ZmZpY2llbnRMaXF1aWRpdHkAAAAAAAArAAAAAAAAABJUaWNrTm90SW5pdGlhbGl6ZWQAAAAAADIAAAAAAAAAFlRpY2tOb3RTcGFjZWRDb3JyZWN0bHkAAAAAADQAAAAAAAAAClBvb2xQYXVzZWQAAAAAAD0AAAAAAAAAEU9ic2VydmF0aW9uVG9vT2xkAAAAAAAAPgAAAAAAAAAZVGlja0xvd2VyTm90TGVzc1RoYW5VcHBlcgAAAAAAAEEAAAAAAAAAD1RpY2tMb3dlclRvb0xvdwAAAABCAAAAAAAAABBUaWNrVXBwZXJUb29IaWdoAAAAQwAAAAAAAAARSW52YWxpZFByaWNlTGltaXQAAAAAAABFAAAAAAAAAB1BbW91bnRTaG91bGRCZUdyZWF0ZXJUaGFuWmVybwAAAAAAAEYAAAAAAAAADk5lZ2F0aXZlQW1vdW50AAAAAABHAAAAAAAAABJJbnN1ZmZpY2llbnRUb2tlbjAAAAAAAEgAAAAAAAAAEkluc3VmZmljaWVudFRva2VuMQAAAAAASQAAAAAAAAASSW52YWxpZEZlZVByb3RvY29sAAAAAABKAAAAAAAAABNaZXJvUHJpY2VOb3RBbGxvd2VkAAAAAEsAAAAAAAAAF1plcm9MaXF1aWRpdHlOb3RBbGxvd2VkAAAAAEwAAAAAAAAAHk92ZXJmbG93SW5TcXJ0UHJpY2VDYWxjdWxhdGlvbgAAAAAATQAAAAAAAAAfVW5kZXJmbG93SW5TcXJ0UHJpY2VDYWxjdWxhdGlvbgAAAABOAAAAAAAAABZJbnN1ZmZpY2llbnRSZXBheW1lbnQwAAAAAABQAAAAAAAAABZJbnN1ZmZpY2llbnRSZXBheW1lbnQxAAAAAABRAAAAAAAAABRNdXN0VXNlRmxhc2hFeGVjdXRvcgAAAFIAAAAAAAAADkZsYXNoTm90TG9ja2VkAAAAAABTAAAAAAAAAA9JZGVudGljYWxUb2tlbnMAAAAAWgAAAAAAAAARUG9vbEFscmVhZHlFeGlzdHMAAAAAAABbAAAAAAAAABdGZWVBbW91bnRBbHJlYWR5RW5hYmxlZAAAAABcAAAAAAAAABBJbnZhbGlkRmVlQW1vdW50AAAAXQAAAAAAAAATV2FzbUhhc2hOb3RBcHByb3ZlZAAAAABkAAAAAAAAABFQb29sTm90UmVnaXN0ZXJlZAAAAAAAAGUAAAAAAAAADlVwZ3JhZGVzRnJvemVuAAAAAABmAAAAwEFsc28gdXNlZCBmb3IgcG9vbC1sZXZlbCB1cGdyYWRlYWJpbGl0eSByZXZvY2F0aW9uIChwb29sIGFkbWluIGZlYXR1cmUpLgpDYWxsZXJzIG11c3QgY2hlY2sgYm90aCBmYWN0b3J5LmlzX3VwZ3JhZGVfcGVybWFuZW50bHlfZGlzYWJsZWQoKSBhbmQKcG9vbC5pc191cGdyYWRlYWJpbGl0eV9yZXZva2VkKCkgdG8gZGlzYW1iaWd1YXRlLgAAABtVcGdyYWRlc1Blcm1hbmVudGx5RGlzYWJsZWQAAAAAZw==" ]),
       options
     )
   }
@@ -519,6 +794,17 @@ export class Client extends ContractClient {
     set_owner: this.txFromJSON<null>,
         get_owner: this.txFromJSON<string>,
         get_flash_executor: this.txFromJSON<string>,
+        set_pool_wasm_hash: this.txFromJSON<null>,
+        get_pool_wasm_hash: this.txFromJSON<Buffer>,
+        approve_pool_wasm_hash: this.txFromJSON<null>,
+        revoke_pool_wasm_hash: this.txFromJSON<null>,
+        is_pool_wasm_hash_approved: this.txFromJSON<boolean>,
+        set_upgrade_frozen: this.txFromJSON<Result<void>>,
+        is_upgrade_frozen: this.txFromJSON<boolean>,
+        disable_upgrades_permanently: this.txFromJSON<null>,
+        is_upgrade_permanently_disabled: this.txFromJSON<boolean>,
+        upgrade_pool: this.txFromJSON<Result<void>>,
+        migrate_pool: this.txFromJSON<Result<void>>,
         set_protocol_fee: this.txFromJSON<Result<void>>,
         get_protocol_fee_0: this.txFromJSON<u32>,
         get_protocol_fee_1: this.txFromJSON<u32>,
