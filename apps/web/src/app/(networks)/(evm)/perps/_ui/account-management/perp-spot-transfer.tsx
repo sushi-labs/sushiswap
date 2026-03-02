@@ -1,4 +1,5 @@
 import { sendAsset, withdraw3 } from '@nktkas/hyperliquid/api/exchange'
+import { formatSize } from '@nktkas/hyperliquid/utils'
 import {
   createErrorToast,
   createInfoToast,
@@ -14,7 +15,7 @@ import {
   DialogTrigger,
 } from '@sushiswap/ui'
 import { ArrowsLeftRightIcon } from '@sushiswap/ui/icons/ArrowsLeftRight'
-import { type ReactNode, useCallback, useState } from 'react'
+import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { TOAST_AUTOCLOSE_TIME } from 'src/lib/perps/config'
 import { hlHttpTransport } from 'src/lib/perps/transports'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
@@ -23,14 +24,18 @@ import { Amount } from 'sushi'
 import { EvmChainId, USDC } from 'sushi/evm'
 import { useWalletClient } from 'wagmi'
 import { useUserState } from '~evm/perps/user-provider'
+import { useAssetState } from '../trade-widget/asset-state-provider'
 import { TransferInput } from './transfer-input'
 
 //@todo clean up
 const currency = USDC[EvmChainId.ARBITRUM]
 const chainId = EvmChainId.ARBITRUM
 
-export const PerpSpotTransfer = ({ trigger }: { trigger?: ReactNode }) => {
-  const [dst, setDst] = useState<'perp' | 'spot'>('spot')
+export const PerpSpotTransfer = ({
+  trigger,
+  defaultDst,
+}: { trigger?: ReactNode; defaultDst?: 'perp' | 'spot' }) => {
+  const [dst, setDst] = useState<'perp' | 'spot'>(defaultDst ?? 'spot')
   const [open, setOpen] = useState<boolean>(false)
   const [amount, setAmount] = useState<string>('')
   const _amount = Amount.tryFromHuman(currency, amount)
@@ -40,11 +45,21 @@ export const PerpSpotTransfer = ({ trigger }: { trigger?: ReactNode }) => {
       webData2Query: { data, isLoading, error },
     },
   } = useUserState()
-  const sendableBalance =
-    dst === 'spot'
-      ? data?.clearinghouseState.withdrawable
-      : data?.spotState?.balances?.find((b) => b.coin === 'USDC')?.total
+  const {
+    state: { asset, availableToLong },
+  } = useAssetState()
+  const dexName = useMemo(() => asset?.dex || '', [asset?.dex])
 
+  const sendableBalance = useMemo(() => {
+    if (dst === 'spot' && !dexName) {
+      return data?.clearinghouseState.withdrawable
+    }
+    if (dst === 'spot' && dexName) {
+      return availableToLong
+    }
+
+    return data?.spotState?.balances?.find((b) => b.coin === 'USDC')?.total
+  }, [data, dst, dexName, availableToLong])
   const balance = Amount.tryFromHuman(currency, sendableBalance ?? '0')
   const address = useAccount('evm')
   const [isPending, setIsPending] = useState<boolean>(false)
@@ -57,7 +72,7 @@ export const PerpSpotTransfer = ({ trigger }: { trigger?: ReactNode }) => {
     try {
       setIsPending(true)
       createInfoToast({
-        summary: `Transferring ${_amount.toSignificant(6)} USDC to ${dst === 'spot' ? 'Spot' : 'Perps'}`,
+        summary: `Transferring ${_amount.toSignificant(4)} USDC to ${dst === 'spot' ? 'Spot' : 'Perps'}`,
         account: address,
         type: 'send',
         timestamp: Date.now(),
@@ -65,21 +80,22 @@ export const PerpSpotTransfer = ({ trigger }: { trigger?: ReactNode }) => {
         chainId: chainId,
         autoClose: TOAST_AUTOCLOSE_TIME,
       })
+      const _dexName = dexName ? dexName : ''
       await sendAsset(
         {
           wallet: walletClient,
           transport: hlHttpTransport,
         },
         {
-          amount: _amount?.toString(),
+          amount: formatSize(_amount?.toString(), 2),
           destination: address,
           token: 'USDC',
-          sourceDex: dst === 'perp' ? 'spot' : '',
-          destinationDex: dst === 'perp' ? '' : 'spot',
+          sourceDex: dst === 'perp' ? 'spot' : _dexName,
+          destinationDex: dst === 'perp' ? _dexName : 'spot',
         },
       )
       createSuccessToast({
-        summary: `Transfer of ${_amount.toSignificant(6)} USDC to ${dst === 'spot' ? 'Spot' : 'Perps'} submitted`,
+        summary: `Transfer of ${_amount.toSignificant(4)} USDC to ${dst === 'spot' ? 'Spot' : 'Perps'} submitted`,
         account: address,
         type: 'send',
         timestamp: Date.now(),
@@ -101,7 +117,7 @@ export const PerpSpotTransfer = ({ trigger }: { trigger?: ReactNode }) => {
       setAmount('')
       setOpen(false)
     }
-  }, [walletClient, address, _amount, dst])
+  }, [walletClient, address, _amount, dst, dexName])
 
   const handleDstToggle = useCallback(() => {
     setDst((prevDst) => (prevDst === 'spot' ? 'perp' : 'spot'))
@@ -115,7 +131,8 @@ export const PerpSpotTransfer = ({ trigger }: { trigger?: ReactNode }) => {
           trigger
         ) : (
           <Button className="w-full" variant="secondary" size="sm">
-            Perps <ArrowsLeftRightIcon className="w-2 h-2" /> Spot
+            Perps
+            <ArrowsLeftRightIcon className="w-2 h-2" /> Spot
           </Button>
         )}
       </DialogTrigger>
@@ -133,9 +150,13 @@ export const PerpSpotTransfer = ({ trigger }: { trigger?: ReactNode }) => {
               variant="secondary"
               onClick={handleDstToggle}
             >
-              {dst === 'spot' ? 'Perps' : 'Spot'}{' '}
-              <ArrowsLeftRightIcon className="w-2 h-2" />{' '}
-              {dst === 'spot' ? 'Spot' : 'Perps'}
+              {dst === 'spot'
+                ? `Perps ${dexName ? `(${dexName})` : ''}`
+                : 'Spot'}{' '}
+              <ArrowsLeftRightIcon className="w-2 h-2 min-w-2 min-h-2" />{' '}
+              {dst === 'spot'
+                ? 'Spot'
+                : `Perps ${dexName ? `(${dexName})` : ''}`}
             </Button>
             <TransferInput
               amount={amount}
@@ -149,30 +170,30 @@ export const PerpSpotTransfer = ({ trigger }: { trigger?: ReactNode }) => {
             />
 
             <Checker.Connect>
-              <Checker.Network chainId={chainId}>
+              {/* <Checker.Network chainId={dst === 'perp' ? undefined : chainId}> */}
+              <Checker.Custom
+                showChildren={Boolean(amount)}
+                buttonText={'Enter Amount'}
+                onClick={() => {}}
+                disabled={!amount}
+              >
                 <Checker.Custom
-                  showChildren={Boolean(amount)}
-                  buttonText={'Enter Amount'}
+                  showChildren={!insufficientBalance}
+                  buttonText={'Insufficient Balance'}
                   onClick={() => {}}
-                  disabled={!amount}
+                  disabled={Boolean(insufficientBalance)}
                 >
-                  <Checker.Custom
-                    showChildren={!insufficientBalance}
-                    buttonText={'Insufficient Balance'}
-                    onClick={() => {}}
-                    disabled={Boolean(insufficientBalance)}
+                  <Button
+                    size="xl"
+                    className="w-full"
+                    onClick={withdrawUsdc}
+                    loading={isPending}
                   >
-                    <Button
-                      size="xl"
-                      className="w-full"
-                      onClick={withdrawUsdc}
-                      loading={isPending}
-                    >
-                      {`Transfer to ${dst === 'spot' ? 'Spot' : 'Perps'}`}
-                    </Button>
-                  </Checker.Custom>
+                    {`Transfer to ${dst === 'spot' ? 'Spot' : 'Perps'}`}
+                  </Button>
                 </Checker.Custom>
-              </Checker.Network>
+              </Checker.Custom>
+              {/* </Checker.Network> */}
             </Checker.Connect>
           </div>
         </div>

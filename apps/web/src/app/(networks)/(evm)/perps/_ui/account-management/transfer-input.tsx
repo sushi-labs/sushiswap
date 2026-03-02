@@ -85,7 +85,7 @@ export const TransferInput = ({
             onValueChange={setAmount}
             value={amount}
             readOnly={isLoading || !address}
-            maxDecimals={currency?.decimals}
+            maxDecimals={2}
             data-state={isLoading ? 'inactive' : 'active'}
             className={classNames('p-0 py-1 !text-3xl font-medium')}
           />

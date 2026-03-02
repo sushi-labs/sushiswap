@@ -2,6 +2,8 @@ import { Button, type ButtonProps } from '@sushiswap/ui'
 import type { FC } from 'react'
 import { useUserState } from '~evm/perps/user-provider'
 import { DepositDialog } from '../account-management/deposit-dialog'
+import { PerpSpotTransfer } from '../account-management/perp-spot-transfer'
+import { useAssetState } from '../trade-widget/asset-state-provider'
 
 export const Deposit: FC<ButtonProps> = ({
   children,
@@ -11,9 +13,12 @@ export const Deposit: FC<ButtonProps> = ({
 }) => {
   const {
     state: {
-      webData3Query: { data, isLoading, error },
+      webData2Query: { data, isLoading, error },
     },
   } = useUserState()
+  const {
+    state: { asset, availableToLong },
+  } = useAssetState()
 
   if (isLoading) {
     return (
@@ -31,7 +36,10 @@ export const Deposit: FC<ButtonProps> = ({
     )
   }
 
-  if (Number(data?.userState?.cumLedger) === 0) {
+  if (
+    Number(data?.clearinghouseState?.withdrawable) === 0 &&
+    asset?.dex === ''
+  ) {
     return (
       <DepositDialog
         trigger={
@@ -39,6 +47,22 @@ export const Deposit: FC<ButtonProps> = ({
             Deposit
           </Button>
         }
+      />
+    )
+  }
+  if (
+    Number(availableToLong) === 0 &&
+    asset?.marketType === 'perp' &&
+    asset?.dex !== ''
+  ) {
+    return (
+      <PerpSpotTransfer
+        trigger={
+          <Button fullWidth={fullWidth} size={size} {...props}>
+            Transfer to Perps
+          </Button>
+        }
+        defaultDst="perp"
       />
     )
   }
