@@ -75,6 +75,7 @@ export const LiquidationStat = ({ title }: { title?: string }) => {
       leverage: currentLeverageForAsset,
       decimals: asset.decimals,
     })
+
     const existingPositionSize = existingPosition
       ? Number(existingPosition.position.szi)
       : 0
@@ -82,6 +83,7 @@ export const LiquidationStat = ({ title }: { title?: string }) => {
       (tradeSide === 'long' && existingPosition?.side === 'B') ||
       (tradeSide === 'short' && existingPosition?.side === 'A')
 
+    //todo: something wrong here when the size is small, innacurate price returned
     const liqPrice = estimateLiquidationPrice({
       price: reduceOnly ? (existingPosition?.position.entryPx ?? price) : price,
       side: _tradeSide === 'long' ? 'B' : 'A',
@@ -92,7 +94,7 @@ export const LiquidationStat = ({ title }: { title?: string }) => {
           ).toString()
         : (
             Number(positionSize) +
-            (!existingForCurrentSide ? existingPositionSize : 0)
+            (!existingForCurrentSide && isCross ? existingPositionSize : 0)
           ).toString(),
       maintenanceMarginRequired: (
         Number(size.quote) / maxLeverage +

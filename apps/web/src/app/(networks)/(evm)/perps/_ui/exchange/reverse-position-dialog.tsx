@@ -116,14 +116,7 @@ export const ReversePositionDialog = ({
     const positionSize = Math.abs(Number(positionToClose.position.szi))
 
     const isCross = positionToClose.position.leverage.type === 'cross'
-    const leverage = positionToClose.position.leverage.value
     const maxLeverage = positionToClose.position.maxLeverage * 2
-    const iso = calculateIsolatedMargin({
-      baseSize: positionSize.toString(),
-      price: asset?.markPrice,
-      leverage: leverage,
-      decimals: asset.decimals,
-    })
     const quote = positionToClose.position.positionValue
     return estimateLiquidationPrice({
       price: asset?.markPrice,
@@ -132,7 +125,7 @@ export const ReversePositionDialog = ({
       positionSize: positionSize.toString(),
       maintenanceMarginRequired: (Number(quote) / maxLeverage).toString(),
       maintenanceLeverage: maxLeverage.toString(),
-      isolatedMargin: iso?.isolatedMarginFormatted ?? '0', //pass isolated margin even if cross for completeness
+      isolatedMargin: positionToClose.position.marginUsed,
       isCross,
     })
   }, [positionToClose, asset, perpsEquity])
