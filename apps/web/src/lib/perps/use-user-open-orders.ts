@@ -28,14 +28,13 @@ export const useUserOpenOrders = ({ coin }: { coin?: string }) => {
 
   const formattedData = useMemo(() => {
     if (!data) return []
-    const dexName = data?.dex
     const orders = data.orders.map((i) => {
       const asset = assetList?.get(i.coin)
       return {
         ...i,
         assetSymbol: asset?.marketType === 'perp' ? i.coin : asset?.symbol,
         marketType: asset?.marketType,
-        perpsDex: dexName,
+        perpsDex: asset?.dex,
       }
     })
     if (coin) {

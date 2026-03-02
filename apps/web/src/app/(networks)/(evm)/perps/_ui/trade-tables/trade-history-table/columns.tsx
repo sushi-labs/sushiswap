@@ -47,7 +47,8 @@ export const COIN_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     } = useAssetState()
     const coin = props.row.original.coin
     const perpsDex = props.row.original.perpsDex
-    const symbol = props.row.original.symbol
+    const symbol =
+      props.row.original.symbol?.split('-')?.[0] || props.row.original.symbol
 
     const side = props.row.original.side
 

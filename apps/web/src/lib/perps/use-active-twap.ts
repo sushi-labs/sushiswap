@@ -40,7 +40,7 @@ export const useActiveTwap = () => {
         twapId,
         assetSymbol: asset?.marketType === 'perp' ? state.coin : asset?.symbol,
         marketType: asset?.marketType,
-        perpsDex: data.dex,
+        perpsDex: asset?.dex,
         averagePrice,
         runningTimeInMs,
         formattedRunningTime,

@@ -6,10 +6,10 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { hlWebSocketTransport } from '../transports'
 
-export const useAllMids = ({ dexName }: { dexName?: string }) => {
+export const useAllMids = () => {
   const queryClient = useQueryClient()
   const query = useQuery<AllMidsEvent>({
-    queryKey: ['useAllMids', dexName],
+    queryKey: ['useAllMids'],
     staleTime: Number.POSITIVE_INFINITY,
     enabled: false,
   })
@@ -19,10 +19,10 @@ export const useAllMids = ({ dexName }: { dexName?: string }) => {
     ;(async () => {
       const sub = await allMids(
         { transport: hlWebSocketTransport },
-        { dex: dexName },
+        { dex: 'ALL_DEXS' },
         (allMidsEvent) => {
           queryClient.setQueryData(
-            ['useAllMids', dexName],
+            ['useAllMids'],
             (_prevAllMidsEvent: AllMidsEvent | undefined) => {
               return allMidsEvent
             },
@@ -36,7 +36,7 @@ export const useAllMids = ({ dexName }: { dexName?: string }) => {
     return () => {
       void unsubscribe?.()
     }
-  }, [queryClient, dexName])
+  }, [queryClient])
 
   const isReady = Boolean(query.data)
 

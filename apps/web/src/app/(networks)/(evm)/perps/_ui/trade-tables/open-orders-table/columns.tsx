@@ -73,7 +73,9 @@ export const COIN_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
     } = useAssetState()
     const coin = props.row.original.coin
     const perpsDex = props.row.original.perpsDex
-    const symbol = props.row.original.assetSymbol
+    const symbol =
+      props.row.original.assetSymbol?.split(':')?.[1] ||
+      props.row.original.assetSymbol
 
     const side = props.row.original.side
 

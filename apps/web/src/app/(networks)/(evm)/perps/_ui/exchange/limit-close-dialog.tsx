@@ -52,9 +52,7 @@ export const LimitCloseDialog = ({
       assetListQuery: { data: assetListData },
     },
   } = useAssetListState()
-  const { data: allMidsData } = useAllMids({
-    dexName: positionToClose?.perpsDex ?? '',
-  })
+  const { data: allMidsData } = useAllMids()
 
   const currentMidPrice = useMemo(() => {
     if (!positionToClose.position.coin) return null

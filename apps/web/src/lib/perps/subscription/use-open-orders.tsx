@@ -7,13 +7,10 @@ import { useEffect } from 'react'
 import type { EvmAddress } from 'sushi/evm'
 import { hlWebSocketTransport } from '../transports'
 
-export const useOpenOrders = ({
-  address,
-  dexName,
-}: { address?: EvmAddress; dexName?: string }) => {
+export const useOpenOrders = ({ address }: { address?: EvmAddress }) => {
   const queryClient = useQueryClient()
   const query = useQuery<OpenOrdersEvent>({
-    queryKey: ['useOpenOrders', address, dexName],
+    queryKey: ['useOpenOrders', address],
     staleTime: Number.POSITIVE_INFINITY,
     enabled: false,
   })
@@ -24,10 +21,10 @@ export const useOpenOrders = ({
     ;(async () => {
       const sub = await openOrders(
         { transport: hlWebSocketTransport },
-        { user: address },
+        { user: address, dex: 'ALL_DEXS' },
         (openOrdersEvent) => {
           queryClient.setQueryData(
-            ['useOpenOrders', address, dexName],
+            ['useOpenOrders', address],
             (_prevOpenOrdersEvent: OpenOrdersEvent | undefined) => {
               return openOrdersEvent
             },
@@ -41,7 +38,7 @@ export const useOpenOrders = ({
     return () => {
       void unsubscribe?.()
     }
-  }, [queryClient, address, dexName])
+  }, [queryClient, address])
 
   const isReady = Boolean(query.data)
 

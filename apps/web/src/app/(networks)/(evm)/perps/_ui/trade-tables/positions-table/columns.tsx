@@ -41,7 +41,9 @@ export const COIN_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     } = useAssetState()
     const coin = props.row.original.position.coin
     const perpsDex = props.row.original.perpsDex
-    const symbol = props.row.original.assetSymbol
+    const symbol =
+      props.row.original.assetSymbol?.split(':')?.[1] ||
+      props.row.original.assetSymbol
     const currentLeverage = props.row.original.position.leverage.value
     const isCross = props.row.original.position.leverage.type === 'cross'
 
@@ -102,7 +104,9 @@ export const SIZE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     Number.parseFloat(rowA.position.szi) - Number.parseFloat(rowB.position.szi),
   cell: (props) => {
     const size = Number.parseFloat(props.row.original.position.szi) ?? 0
-    const assetSymbol = props.row.original.assetSymbol
+    const assetSymbol =
+      props.row.original.assetSymbol?.split(':')?.[1] ??
+      props.row.original.assetSymbol
 
     return (
       <span

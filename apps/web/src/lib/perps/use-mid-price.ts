@@ -9,13 +9,7 @@ export const useMidPrice = ({
   assetString: string | undefined
   refreshIntervalMs?: number
 }) => {
-  const dexName = useMemo(() => {
-    if (!assetString || !assetString?.includes(':')) return ''
-    return assetString.split(':')[0]
-  }, [assetString])
-  const { data: allMidsData } = useAllMids({
-    dexName: dexName,
-  })
+  const { data: allMidsData } = useAllMids()
 
   const [midPrice, setMidPrice] = useState<string | null>(null)
 

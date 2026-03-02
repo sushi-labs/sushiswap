@@ -21,7 +21,7 @@ export const useUserActiveTwap = ({ address }: { address?: EvmAddress }) => {
     ;(async () => {
       const sub = await twapStates(
         { transport: hlWebSocketTransport },
-        { user: address },
+        { user: address, dex: 'ALL_DEXS' },
         (twapStateEvent) => {
           queryClient.setQueryData(
             ['useUserActiveTwap', address],

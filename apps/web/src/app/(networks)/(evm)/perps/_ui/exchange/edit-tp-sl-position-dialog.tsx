@@ -196,7 +196,7 @@ export const EditTpSlPositionDialog = ({
     const slOrder = {
       asset: position.coin,
       side:
-        positionToClose.side === 'A' ? ('short' as const) : ('long' as const),
+        positionToClose.side === 'B' ? ('short' as const) : ('long' as const),
       price: isSlLimit ? formattedSlLimitPrice : adjustedSlPrice,
       size: _size,
       reduceOnly: true,
