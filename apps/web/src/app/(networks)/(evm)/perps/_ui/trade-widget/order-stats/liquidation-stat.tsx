@@ -102,26 +102,6 @@ export const LiquidationStat = ({ title }: { title?: string }) => {
       isolatedMargin: iso?.isolatedMarginFormatted ?? '0', //pass isolated margin even if cross for completeness
       isCross,
     })
-    console.log({
-      price: reduceOnly ? (existingPosition?.position.entryPx ?? price) : price,
-      side: _tradeSide === 'long' ? 'B' : 'A',
-      accountValue: perpsEquity?.toString(),
-      positionSize: reduceOnly
-        ? (
-            Math.abs(existingPositionSize) - Math.abs(Number(positionSize))
-          ).toString()
-        : (
-            Number(positionSize) +
-            (!existingForCurrentSide ? existingPositionSize : 0)
-          ).toString(),
-      maintenanceMarginRequired: (
-        Number(size.quote) / maxLeverage +
-        Number(maintenanceMargin)
-      ).toString(),
-      maintenanceLeverage: maxLeverage.toString(),
-      isolatedMargin: iso?.isolatedMarginFormatted ?? '0', //pass isolated margin even if cross for completeness
-      isCross,
-    })
 
     if (!liqPrice) return null
     try {

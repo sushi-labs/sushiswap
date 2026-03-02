@@ -89,10 +89,8 @@ export function getHyperliquidCoinIconUrl(
 
 export const getAssetIdForConverter = (asset: PerpOrSpotAsset) => {
   let id
-  if (asset.marketType === 'perp' && asset.dex !== '') {
-    id = `${asset.dex}:${asset.name}` // "xyz:GOLD" builder dex
-  } else if (asset.marketType === 'perp') {
-    id = asset.name // BTC perp
+  if (asset.marketType === 'perp') {
+    id = asset.name // BTC perp  "xyz:GOLD" builder dex
   } else {
     id = asset?.untouchedSymbol //USOL/USDC - spot
   }

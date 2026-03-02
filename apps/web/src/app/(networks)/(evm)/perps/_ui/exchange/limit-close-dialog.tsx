@@ -11,6 +11,7 @@ import {
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
 import { useExecuteOrders } from 'src/lib/perps/exchange/use-execute-orders'
+import { useAllMids } from 'src/lib/perps/subscription/use-all-mids'
 import { useMidPrice } from 'src/lib/perps/use-mid-price'
 import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'
 import {
@@ -49,9 +50,11 @@ export const LimitCloseDialog = ({
   const {
     state: {
       assetListQuery: { data: assetListData },
-      allMidsQuery: { data: allMidsData },
     },
   } = useAssetListState()
+  const { data: allMidsData } = useAllMids({
+    dexName: positionToClose?.perpsDex ?? '',
+  })
 
   const currentMidPrice = useMemo(() => {
     if (!positionToClose.position.coin) return null

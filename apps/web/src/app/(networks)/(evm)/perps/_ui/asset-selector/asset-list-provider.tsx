@@ -1,20 +1,14 @@
 'use client'
 import type { SymbolConverter } from '@nktkas/hyperliquid/utils'
-import { type FC, createContext, useContext, useMemo, useState } from 'react'
+import { type FC, createContext, useContext, useMemo } from 'react'
 import { useSymbolConverter } from 'src/lib/perps/info/use-symbol-converter'
-import { useAllMids } from 'src/lib/perps/subscription/use-all-mids'
 import { useAssetList } from 'src/lib/perps/subscription/use-asset-list'
 interface State {
   state: {
     assetListQuery: ReturnType<typeof useAssetList>
     uniqueDexes: string[]
     spotCollateralTokens: string[]
-    allMidsQuery: ReturnType<typeof useAllMids>
-    allMidsDexName: string | undefined
     symbolConverter: SymbolConverter | undefined
-  }
-  mutate: {
-    setAllMidsDexName: (dexName: string | undefined) => void
   }
 }
 
@@ -25,14 +19,8 @@ interface AssetListProviderProps {
 }
 
 const AssetListProvider: FC<AssetListProviderProps> = ({ children }) => {
-  const [allMidsDexName, setAllMidsDexName] = useState<string | undefined>(
-    undefined,
-  )
   const assetListQuery = useAssetList()
   const { data: symbolConverter } = useSymbolConverter()
-  const allMidsQuery = useAllMids({
-    dexName: allMidsDexName,
-  })
 
   const uniqueDexes = useMemo(() => {
     if (!assetListQuery.data) return []
@@ -65,22 +53,10 @@ const AssetListProvider: FC<AssetListProviderProps> = ({ children }) => {
             assetListQuery,
             uniqueDexes,
             spotCollateralTokens,
-            allMidsQuery,
-            allMidsDexName,
             symbolConverter,
           },
-          mutate: {
-            setAllMidsDexName,
-          },
         }
-      }, [
-        assetListQuery,
-        uniqueDexes,
-        spotCollateralTokens,
-        allMidsQuery,
-        allMidsDexName,
-        symbolConverter,
-      ])}
+      }, [assetListQuery, uniqueDexes, spotCollateralTokens, symbolConverter])}
     >
       {children}
     </AssetListContext.Provider>

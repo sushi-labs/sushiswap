@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
+import { useAllMids } from './subscription/use-all-mids'
 
 //used for semi static mid price where super fresh price not needed
 export const useMidPrice = ({
@@ -9,11 +9,13 @@ export const useMidPrice = ({
   assetString: string | undefined
   refreshIntervalMs?: number
 }) => {
-  const {
-    state: {
-      allMidsQuery: { data: allMidsData },
-    },
-  } = useAssetListState()
+  const dexName = useMemo(() => {
+    if (!assetString || !assetString?.includes(':')) return ''
+    return assetString.split(':')[0]
+  }, [assetString])
+  const { data: allMidsData } = useAllMids({
+    dexName: dexName,
+  })
 
   const [midPrice, setMidPrice] = useState<string | null>(null)
 

@@ -8,6 +8,7 @@ export const useSymbolConverter = () => {
     queryFn: () =>
       SymbolConverter.create({
         transport: hlHttpTransport,
+        dexs: true,
       }),
     staleTime: Number.POSITIVE_INFINITY,
     retry: 2,

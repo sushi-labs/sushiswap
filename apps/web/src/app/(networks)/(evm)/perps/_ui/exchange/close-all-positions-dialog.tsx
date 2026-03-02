@@ -1,3 +1,4 @@
+import { allMids } from '@nktkas/hyperliquid/api/info'
 import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
 import {
   Button,
@@ -8,9 +9,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@sushiswap/ui'
-import { type ReactNode, useMemo, useState } from 'react'
+import { type ReactNode, useCallback, useState } from 'react'
 import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
-import { useExecuteOrders } from 'src/lib/perps/exchange/use-execute-orders'
+import {
+  type OrderData,
+  useExecuteOrders,
+} from 'src/lib/perps/exchange/use-execute-orders'
+import { hlHttpTransport } from 'src/lib/perps/transports'
 import { useUserPositions } from 'src/lib/perps/use-user-positions'
 import { formatUnits, parseUnits } from 'viem'
 import { CheckboxSetting } from '../_common/checkbox-setting'
@@ -28,14 +33,23 @@ export const CloseAllPositionsDialog = ({
   const { executeOrdersAsync, isPending } = useExecuteOrders()
   const {
     state: {
-      allMidsQuery: { data: allMidsData },
       assetListQuery: { data: assetListData },
     },
   } = useAssetListState()
 
-  const orderData = useMemo(() => {
-    const orders = userPositions.map((pos) => {
-      const midPrice = allMidsData?.mids?.[pos.position.coin]
+  const getOrderData = useCallback(async () => {
+    const _orders: OrderData['orders'] = []
+    for (const pos of userPositions) {
+      const data = await allMids(
+        {
+          transport: hlHttpTransport,
+        },
+        {
+          dex: pos.perpsDex ?? '',
+        },
+      )
+      const mids = data?.mids as unknown as Record<string, string | undefined>
+      const midPrice = mids?.[pos.position.coin]
       if (closeType === 'limit-at-mid' && !midPrice) {
         throw new Error(
           `Mid price not available for limit close for ${pos.position.coin}`,
@@ -60,7 +74,7 @@ export const CloseAllPositionsDialog = ({
         asset?.marketType,
       )
 
-      return {
+      const order = {
         asset: pos.position.coin,
         side: pos.side === 'A' ? ('long' as const) : ('short' as const),
         price:
@@ -77,14 +91,15 @@ export const CloseAllPositionsDialog = ({
             ? { limit: { timeInForce: 'FrontendMarket' as const } }
             : { limit: { timeInForce: 'Gtc' as const } },
       }
-    })
+      _orders.push(order)
+    }
     return {
-      orders,
+      orders: _orders,
       builder: {
         builderFee: BUILDER_FEE_PERPS,
       },
     }
-  }, [closeType, userPositions, allMidsData?.mids, assetListData])
+  }, [closeType, userPositions, assetListData])
 
   return (
     <Dialog
@@ -128,7 +143,8 @@ export const CloseAllPositionsDialog = ({
           </div>
 
           <Button
-            onClick={async () =>
+            onClick={async () => {
+              const orderData = await getOrderData()
               await executeOrdersAsync(
                 { orderData },
                 {
@@ -137,7 +153,7 @@ export const CloseAllPositionsDialog = ({
                   },
                 },
               )
-            }
+            }}
             loading={isPending}
           >
             Confirm{' '}
