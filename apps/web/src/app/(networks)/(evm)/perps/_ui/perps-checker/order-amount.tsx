@@ -67,14 +67,14 @@ export const OrderAmount: FC<ButtonProps> = ({
       tradeSide === 'long' &&
       Number(limitPrice) > Number(midPrice)
     ) {
-      return { isSizeValid: false, buttonText: 'Limit Price Too Low' }
+      return { isSizeValid: false, buttonText: 'Limit Price Too High' }
     }
     if (
       isTpSlLimitOrder &&
       tradeSide === 'short' &&
       Number(limitPrice) < Number(midPrice)
     ) {
-      return { isSizeValid: false, buttonText: 'Limit Price Too High' }
+      return { isSizeValid: false, buttonText: 'Limit Price Too Low' }
     }
 
     const parsedSize = parseUnits(orderSize.base, 18)

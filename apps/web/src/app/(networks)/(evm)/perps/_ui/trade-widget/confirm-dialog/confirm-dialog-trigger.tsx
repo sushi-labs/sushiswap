@@ -27,26 +27,31 @@ export const ConfirmDialogTrigger = () => {
                   size="lg"
                   variant={tradeSide === 'long' ? 'default' : 'destructive'}
                 >
-                  <PerpsChecker.TwapSuborder
+                  <PerpsChecker.TakeStopTrigger
                     size="lg"
                     variant={tradeSide === 'long' ? 'default' : 'destructive'}
                   >
-                    {quickConfirmPositionEnabled ? (
-                      <PlaceOrderButton />
-                    ) : (
-                      <DialogTrigger asChild>
-                        <Button
-                          fullWidth
-                          size="lg"
-                          variant={
-                            tradeSide === 'long' ? 'default' : 'destructive'
-                          }
-                        >
-                          Place Order
-                        </Button>
-                      </DialogTrigger>
-                    )}
-                  </PerpsChecker.TwapSuborder>
+                    <PerpsChecker.TwapSuborder
+                      size="lg"
+                      variant={tradeSide === 'long' ? 'default' : 'destructive'}
+                    >
+                      {quickConfirmPositionEnabled ? (
+                        <PlaceOrderButton />
+                      ) : (
+                        <DialogTrigger asChild>
+                          <Button
+                            fullWidth
+                            size="lg"
+                            variant={
+                              tradeSide === 'long' ? 'default' : 'destructive'
+                            }
+                          >
+                            Place Order
+                          </Button>
+                        </DialogTrigger>
+                      )}
+                    </PerpsChecker.TwapSuborder>
+                  </PerpsChecker.TakeStopTrigger>
                 </PerpsChecker.OrderAmount>
               </PerpsChecker.TwapRunningTime>
             </PerpsChecker.BuilderFee>

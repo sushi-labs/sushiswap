@@ -17,7 +17,6 @@ export const LimitOrderForm = () => {
       currentLeverageForAsset,
       tpPrice,
       slPrice,
-      markPrice,
       hasTpSl,
       maxTradeSize,
       size,
@@ -31,7 +30,7 @@ export const LimitOrderForm = () => {
   })
   const [type, setType] = useState<TpSlGainLossType>('percent')
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-2">
         <LimitInput
           value={limitPrice}
@@ -51,29 +50,29 @@ export const LimitOrderForm = () => {
               value={hasTpSl}
               onChange={(val) => setHasTpSl(val)}
             />
-            {hasTpSl ? (
-              <TpSlInput
-                asset={asset}
-                tpPrice={tpPrice}
-                onChangeTpPrice={setTpPrice}
-                slPrice={slPrice}
-                onChangeSlPrice={setSlPrice}
-                entryPrice={asset?.midPrice || markPrice}
-                side={tradeSide === 'long' ? 'B' : 'A'}
-                positionSize={type === 'percent' ? maxTradeSize : size.base}
-                positionLeverage={currentLeverageForAsset}
-                showExpectedProfit={false}
-                inputSize="sm"
-                type={type}
-                setType={setType}
-              />
-            ) : null}
           </div>
         ) : (
           <div />
         )}
         <TifSelector />
       </div>
+      {hasTpSl ? (
+        <TpSlInput
+          asset={asset}
+          tpPrice={tpPrice}
+          onChangeTpPrice={setTpPrice}
+          slPrice={slPrice}
+          onChangeSlPrice={setSlPrice}
+          entryPrice={limitPrice}
+          side={tradeSide === 'long' ? 'B' : 'A'}
+          positionSize={type === 'percent' ? maxTradeSize : size.base}
+          positionLeverage={currentLeverageForAsset}
+          showExpectedProfit={false}
+          inputSize="sm"
+          type={type}
+          setType={setType}
+        />
+      ) : null}
     </div>
   )
 }
