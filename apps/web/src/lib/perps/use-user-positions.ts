@@ -44,6 +44,13 @@ export const useUserPositions = (coin?: string) => {
           perpsDex: dexName,
           side,
           markPrice,
+          clearingHouseDataForDex: {
+            withdrawable: i.withdrawable,
+            marginSummary: i.marginSummary,
+            crossMaintenanceMarginUsed: i.crossMaintenanceMarginUsed,
+            crossMarginSummary: i.crossMarginSummary,
+            time: i.time,
+          },
         }
       })
     })

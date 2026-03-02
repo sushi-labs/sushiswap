@@ -52,6 +52,7 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
     address,
   })
   const allDexClearinghouseStateQuery = useAllDexClearinghouseState({ address })
+
   const userFillsQuery = useUserFills({
     address,
     aggregateByTime: aggregateFillsByTime,

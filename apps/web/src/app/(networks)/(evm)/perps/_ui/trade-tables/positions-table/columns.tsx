@@ -1,4 +1,4 @@
-import { PencilIcon } from '@heroicons/react-v1/outline'
+import PencilIcon from '@heroicons/react/20/solid/PencilIcon'
 import { formatPrice } from '@nktkas/hyperliquid/utils'
 import {
   Chip,
@@ -25,6 +25,7 @@ import { EditTpSlPositionDialog } from '../../exchange/edit-tp-sl-position-dialo
 import { LimitCloseDialog } from '../../exchange/limit-close-dialog'
 import { MarketCloseDialog } from '../../exchange/market-close-dialog'
 import { ReversePositionDialog } from '../../exchange/reverse-position-dialog'
+import { UpdateIsolatedMarginDialog } from '../../exchange/update-isloated-margin-dialog'
 import { UpdateLeverageDialog } from '../../exchange/update-leverage-dialog'
 import { useAssetState } from '../../trade-widget/asset-state-provider'
 import { columnBodyMeta } from '../column-meta'
@@ -290,11 +291,27 @@ export const MARGIN_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   cell: (props) => {
     const marginUsed = props.row.original.position.marginUsed
     const marginType = props.row.original.position.leverage.type
+    if (marginType === 'cross') {
+      return (
+        <span className="font-medium whitespace-nowrap capitalize">
+          {currencyFormatter.format(Number.parseFloat(marginUsed ?? '0'))} (
+          {marginType})
+        </span>
+      )
+    }
     return (
-      <span className="font-medium whitespace-nowrap capitalize">
-        {currencyFormatter.format(Number.parseFloat(marginUsed ?? '0'))} (
-        {marginType})
-      </span>
+      <UpdateIsolatedMarginDialog
+        position={props.row.original}
+        trigger={
+          <button type="button" className="flex items-center gap-2">
+            <span className="font-medium whitespace-nowrap capitalize">
+              {currencyFormatter.format(Number.parseFloat(marginUsed ?? '0'))} (
+              {marginType})
+            </span>
+            <PencilIcon className="w-4 h-4 text-blue" />
+          </button>
+        }
+      />
     )
   },
   meta: {
