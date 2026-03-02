@@ -2,6 +2,7 @@ type ContractAddress = string
 
 export type ContractAddresses = {
   FACTORY: ContractAddress
+  LEGACY_FACTORY?: ContractAddress
   ROUTER: ContractAddress
   POSITION_MANAGER: ContractAddress
   LEGACY_POSITION_MANAGER?: ContractAddress

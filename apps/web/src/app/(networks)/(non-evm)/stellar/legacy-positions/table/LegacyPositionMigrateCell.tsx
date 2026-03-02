@@ -3,8 +3,15 @@ import { createErrorToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
 import { useState } from 'react'
 import { formatUnits } from 'viem'
-import { useAddLiquidity, useRemoveLiquidity } from '~stellar/_common/lib/hooks'
+import {
+  useAddLiquidity,
+  useCreateAndInitializePool,
+  useGetPool,
+  useRemoveLiquidity,
+} from '~stellar/_common/lib/hooks'
+import { usePoolInitialized } from '~stellar/_common/lib/hooks/pool/use-pool-initialized'
 import type { PositionSummary } from '~stellar/_common/lib/hooks/position/use-my-position'
+import { getPoolInfo } from '~stellar/_common/lib/soroban'
 import type { IPositionRowData } from '~stellar/_common/ui/Pools/PositionsTable/PositionsTable'
 import { useStellarWallet } from '~stellar/providers'
 import type { PendingMigration } from '../types'
@@ -25,17 +32,28 @@ export const LegacyPositionMigrateCell = ({
     liquidity,
     token0,
     token1,
-    pool,
+    pool: legacyPoolAddress,
     feesToken0,
     feesToken1,
     principalToken0,
     principalToken1,
     tickLower,
     tickUpper,
+    fee,
   } = data
   const [isMigrating, setIsMigrating] = useState(false)
   const isLegacyPositionActive =
     BigInt(liquidity || '0') > 0n || feesToken0 > 0n || feesToken1 > 0n
+
+  const createAndInitializePoolMutation = useCreateAndInitializePool()
+  const { data: existingNewPoolAddress } = useGetPool({
+    tokenA: token0.contract,
+    tokenB: token1.contract,
+    fee,
+  })
+  const { data: isExistingNewPoolInitialized } = usePoolInitialized(
+    existingNewPoolAddress,
+  )
 
   // Handle migrate
   const handleMigrate = async () => {
@@ -68,13 +86,33 @@ export const LegacyPositionMigrateCell = ({
           amount1Min: 0n,
           token0,
           token1,
-          poolAddress: pool,
+          poolAddress: legacyPoolAddress,
         })
+      }
+
+      let newPoolAddress: string
+      if (existingNewPoolAddress && isExistingNewPoolInitialized === true) {
+        newPoolAddress = existingNewPoolAddress
+      } else {
+        const legacyPoolInfo = await getPoolInfo(legacyPoolAddress)
+        if (legacyPoolInfo === null) {
+          createErrorToast('Failed to fetch pool info for migration', false)
+          return
+        }
+        const { result } = await createAndInitializePoolMutation.mutateAsync({
+          tokenA: token0.contract,
+          tokenB: token1.contract,
+          fee,
+          sqrtPriceX96: legacyPoolInfo.sqrtPriceX96,
+          userAddress: connectedAddress,
+          signTransaction,
+        })
+        newPoolAddress = result.poolAddress
       }
 
       await increaseLiquidityMutation.mutateAsync({
         userAddress: connectedAddress,
-        poolAddress: pool,
+        poolAddress: newPoolAddress,
         token0Amount: formatUnits(
           BigInt(migrationParameters.principal0),
           token0.decimals,

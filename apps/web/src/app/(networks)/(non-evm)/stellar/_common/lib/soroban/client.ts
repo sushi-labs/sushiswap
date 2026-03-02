@@ -23,6 +23,13 @@ type ContractClientParams = {
   publicKey?: string
 }
 
+export const getFactoryContractId = (isLegacy: boolean) => {
+  if (isLegacy) {
+    return contractAddresses.LEGACY_FACTORY
+  }
+  return contractAddresses.FACTORY
+}
+
 export const getFactoryContractClient = ({
   contractId,
   publicKey,

@@ -67,6 +67,14 @@ export const Hero: FC = () => {
                   legacy position
                 </li>
                 <li className="text-md w-full text-muted-foreground">
+                  If no new pool exists corresponding to the pool of the legacy
+                  position, the migration process will also include a
+                  transaction to migrate the legacy pool to a new pool by
+                  creating and initializing a new pool with the same parameters
+                  (i.e., token pair and fee rate) as the legacy pool with the
+                  current legacy pool price
+                </li>
+                <li className="text-md w-full text-muted-foreground">
                   Create a position with the new fixed implementation of the
                   position manager using the withdrawn liquidity and the same
                   price range as the legacy position

@@ -69,6 +69,7 @@ export function useMyPosition({
             tokenA: position.token0,
             tokenB: position.token1,
             fee: position.fee,
+            isLegacy,
           })
           if (!poolAddress) {
             throw new Error('Pool not found')

@@ -39,7 +39,9 @@ export function useMyUnmigratedLegacyPositions({
       const isPendingMigration = Boolean(pendingMigrations[position.tokenId])
       const isMigrated = nonLegacyPositions.some((nonLegacyPosition) => {
         return (
-          nonLegacyPosition.pool === position.pool &&
+          nonLegacyPosition.token0.contract === position.token0.contract &&
+          nonLegacyPosition.token1.contract === position.token1.contract &&
+          nonLegacyPosition.fee === position.fee &&
           nonLegacyPosition.tickLower === position.tickLower &&
           nonLegacyPosition.tickUpper === position.tickUpper
         )
