@@ -101,6 +101,7 @@ export const UpdateLeverageDialog = ({
                   {
                     onSuccess: () => {
                       setOpen(false)
+                      setNewLeverage(newLeverage)
                     },
                   },
                 )

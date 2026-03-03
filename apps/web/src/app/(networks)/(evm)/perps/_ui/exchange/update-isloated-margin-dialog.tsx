@@ -24,7 +24,7 @@ export const UpdateIsolatedMarginDialog = ({
   position: UserPositionsItemType
 }) => {
   const [open, setOpen] = useState(false)
-  const [type, setType] = useState<'add' | 'remove'>('remove')
+  const [type, setType] = useState<'add' | 'remove'>('add')
   const [amount, setAmount] = useState('')
   const { updateIsolatedMarginAsync, isPending } = useUpdateIsolatedMargin()
 
