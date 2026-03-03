@@ -544,7 +544,10 @@ export const SteerSmartPoolsTable: FC<SteerSmartPoolsTableProps> = ({
     <Card>
       <CardHeader>
         <CardTitle>
-          Smart Pools{' '}
+          ✨{' '}
+          <span className="saturate-200 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
+            Smart Pools
+          </span>{' '}
           {vaults?.length ? (
             <span className="text-gray-400 dark:text-slate-500">
               ({vaults.length})
@@ -568,7 +571,7 @@ export const SteerSmartPoolsTable: FC<SteerSmartPoolsTableProps> = ({
       <DataTable
         testId={(row) => `smart-pools-table-${row.id.replace(':', '-')}`}
         onPaginationChange={setPagination}
-        pagination={true}
+        pagination={false}
         state={state}
         linkFormatter={(row) =>
           `/${getEvmChainById(row.chainId).key}/pool/v3/${row.poolAddress}/smart/${
