@@ -26,12 +26,13 @@ function usePortfolioWallet(
 export const PortfolioEvmSvmTokens = () => {
   const { evm, svm } = useAccounts()
 
-  const addresses = useMemo(
+  const _addresses = useMemo(
     () => [...new Set([evm.address, svm.address])] as string[],
     [evm.address, svm.address],
   )
 
-  const { data, isLoading, isError } = usePortfolioWallet(addresses)
+  // HOTFIX: disable usePortfolioWallet
+  const { data, isLoading, isError } = usePortfolioWallet([])
 
   return (
     <div className="flex flex-col gap-y-5 h-[calc(100%-180px)] overflow-hidden">
