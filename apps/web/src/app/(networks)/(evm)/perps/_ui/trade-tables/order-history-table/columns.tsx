@@ -11,6 +11,7 @@ import {
   numberFormatter,
 } from 'src/lib/perps/utils'
 import { useAssetState } from '../../trade-widget/asset-state-provider'
+import { ViewTpSlDialog } from '../_common/view-tpsl-dialog'
 import { columnBodyMeta } from '../column-meta'
 
 export const TIME_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
@@ -309,16 +310,26 @@ export const TRIGGER_CONDITIONS_COLUMN: ColumnDef<
 export const TP_SL_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
   id: 'tpSl',
   header: 'TP/SL',
-  accessorFn: (row) => row.order.isPositionTpsl,
+  accessorFn: (row) => row.order.children.length > 0,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number(rowA.order.isPositionTpsl) - Number(rowB.order.isPositionTpsl),
+    Number(rowA.order.children.length > 0) -
+    Number(rowB.order.children.length > 0),
   cell: (props) => {
-    const isPositionTpsl = props.row.original.order.isPositionTpsl
+    const hasTpSl = props.row.original.order.children.length > 0
+    const ogOrder = props.row.original.order
+    const tpSlChildren = [
+      ogOrder,
+      ...(props.row.original.order.children as OrderHistoryItemType['order'][]),
+    ]
+    if (!hasTpSl) {
+      return <span className="font-medium whitespace-nowrap">-</span>
+    }
 
     return (
-      <span className="font-medium whitespace-nowrap">
-        {isPositionTpsl ? 'Yes' : '-'}
-      </span>
+      <ViewTpSlDialog
+        tpSlChildren={tpSlChildren}
+        assetSymbol={ogOrder.assetSymbol || ''}
+      />
     )
   },
   meta: {

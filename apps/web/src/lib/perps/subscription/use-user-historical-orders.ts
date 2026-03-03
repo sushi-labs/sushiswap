@@ -38,7 +38,7 @@ export const useUserHistoricalOrders = ({
               const combinedOrderHistory = Array.from(
                 new Map(
                   [...orderHistory, ...prevOrderHistory].map((order) => [
-                    order.order.oid,
+                    `${order.order.oid}-${order.status}`,
                     order,
                   ]),
                 ).values(),

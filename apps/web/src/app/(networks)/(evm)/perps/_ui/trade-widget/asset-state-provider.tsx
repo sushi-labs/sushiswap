@@ -71,6 +71,7 @@ interface State {
     twapRunningTime: { hours: string; minutes: string }
     twapRandomize: boolean
     totalRunningTimeInMinutes: number
+    isLimitOrder: boolean
   }
 }
 
@@ -158,6 +159,14 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
       tradeType === 'take limit' ||
       tradeType === 'stop limit' ||
       tradeType === 'stop market'
+    )
+  }, [tradeType])
+
+  const isLimitOrder = useMemo(() => {
+    return (
+      tradeType === 'limit' ||
+      tradeType === 'stop limit' ||
+      tradeType === 'take limit'
     )
   }, [tradeType])
 
@@ -346,6 +355,7 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
             twapRunningTime,
             twapRandomize,
             totalRunningTimeInMinutes,
+            isLimitOrder,
           },
         }
       }, [
@@ -383,6 +393,7 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
         twapRunningTime,
         twapRandomize,
         totalRunningTimeInMinutes,
+        isLimitOrder,
       ])}
     >
       {children}

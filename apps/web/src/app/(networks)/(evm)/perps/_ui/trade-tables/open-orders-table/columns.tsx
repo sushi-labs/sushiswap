@@ -1,15 +1,5 @@
 import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
-import {
-  Card,
-  Chip,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  classNames,
-} from '@sushiswap/ui'
+import { Chip, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { useMemo } from 'react'
@@ -31,6 +21,7 @@ import {
 import { InlineEdit } from '../../_common/inline-edit'
 import { TableButton } from '../../_common/table-button'
 import { useAssetState } from '../../trade-widget/asset-state-provider'
+import { ViewTpSlDialog } from '../_common/view-tpsl-dialog'
 import { columnBodyMeta } from '../column-meta'
 
 export const TIME_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
@@ -339,97 +330,22 @@ export const TP_SL_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
   accessorFn: (row) => row.isPositionTpsl,
   sortingFn: 'basic',
   cell: (props) => {
-    const isPositionTpsl = Boolean(props.row.original.children?.length)
+    const hasTpSl = Boolean(props.row.original.children?.length)
     const ogOrder = props.row.original
     const tpSlChildren = [
       ogOrder,
       ...(props.row.original.children as UserOpenOrdersItemType[]),
     ]
 
-    if (!isPositionTpsl) {
+    if (!hasTpSl) {
       return <span className="font-medium whitespace-nowrap">-</span>
     }
 
     return (
-      <Dialog>
-        <DialogTrigger asChild>
-          <TableButton>View</TableButton>
-        </DialogTrigger>
-        <DialogContent className="!max-w-3xl">
-          <DialogHeader className="!text-left">
-            <DialogTitle>Take Profit/Stop Loss</DialogTitle>
-            <DialogDescription>
-              View the take profit and stop loss orders associated with this
-              open order.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="max-h-[75vh] overflow-y-auto">
-            {tpSlChildren?.map((tpSlOrder, idx) => {
-              const isMarketPrice = tpSlOrder.orderType.includes('Market')
-              const price = tpSlOrder.limitPx
-              return (
-                <div key={tpSlOrder.oid} className="text-sm">
-                  <p className="text-muted-foreground text-center mb-2">
-                    Order {idx + 1}
-                  </p>
-                  <Card>
-                    <div className="p-4 flex flex-col gap-2">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Type</span>
-                        <span className="font-medium">
-                          {tpSlOrder.orderType}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Side</span>
-                        <span
-                          className={classNames(
-                            'font-medium',
-                            getTextColorClass(tpSlOrder.side === 'A' ? -1 : 1),
-                          )}
-                        >
-                          {tpSlOrder.side === 'A' ? 'Short' : 'Long'}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Amount</span>
-                        <span className="font-medium">
-                          {numberFormatter.format(
-                            Number.parseFloat(tpSlOrder.sz),
-                          )}{' '}
-                          {ogOrder?.assetSymbol}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Trigger</span>
-                        <span className="font-medium">
-                          {tpSlOrder.triggerCondition}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Price</span>
-                        <span className="font-medium">
-                          {isMarketPrice
-                            ? 'Market'
-                            : numberFormatter.format(Number.parseFloat(price))}
-                        </span>
-                      </div>
-                    </div>
-                  </Card>
-                  {idx + 1 !== tpSlChildren.length ? (
-                    <>
-                      <div className="h-10 min-h-10 w-[1px] mt-2 mx-auto bg-muted-foreground" />
-                      <p className="mt-2 text-muted-foreground text-center">
-                        If Order {idx + 2} filled, cancel Order {idx + 3}
-                      </p>
-                    </>
-                  ) : null}
-                </div>
-              )
-            })}
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ViewTpSlDialog
+        tpSlChildren={tpSlChildren}
+        assetSymbol={ogOrder.assetSymbol || ''}
+      />
     )
   },
   meta: {

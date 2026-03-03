@@ -33,8 +33,8 @@ const COLUMNS = [
   PRICE_COLUMN,
   REDUCE_COLUMN,
   TRIGGER_CONDITIONS_COLUMN,
-  STATUS_COLUMN,
   TP_SL_COLUMN,
+  STATUS_COLUMN,
   ORDER_ID_COLUMN,
 ] as ColumnDef<OrderHistoryItemType, unknown>[]
 

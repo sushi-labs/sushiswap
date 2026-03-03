@@ -24,6 +24,7 @@ export const OrderAmount: FC<ButtonProps> = ({
       isTpSlLimitOrder,
       limitPrice,
       tradeType,
+      isLimitOrder,
     },
   } = useAssetState()
   const { data: existingPositions } = useUserPositions(activeAsset)
@@ -76,6 +77,9 @@ export const OrderAmount: FC<ButtonProps> = ({
     ) {
       return { isSizeValid: false, buttonText: 'Limit Price Too Low' }
     }
+    if (isLimitOrder && Number(limitPrice) === 0) {
+      return { isSizeValid: false, buttonText: 'Enter Limit Price' }
+    }
 
     const parsedSize = parseUnits(orderSize.base, 18)
     const parsedMaxTradeSize = parseUnits(maxTradeSize, 18)
@@ -97,6 +101,7 @@ export const OrderAmount: FC<ButtonProps> = ({
     tradeSide,
     allScaleOrdersAreValid,
     tradeType,
+    isLimitOrder,
   ])
 
   if (!isSizeValid) {
