@@ -151,9 +151,8 @@ export const usePrepModifyOrderData = ({
       openOrder.orderType === 'Stop Market' ||
       openOrder.orderType === 'Take Profit Market'
     const isTp = openOrder.orderType.toLowerCase().includes('take profit')
-    if (!openOrder.assetSymbol) return null
     return {
-      asset: openOrder.assetSymbol,
+      asset: openOrder.coin,
       orderId: openOrder.oid,
       side: openOrder.side,
       size: openOrder.sz,
