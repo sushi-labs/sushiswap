@@ -1,5 +1,10 @@
 import { getPortfolioWallet } from '@sushiswap/graph-client/data-api'
-import { SkeletonCircle, SkeletonText, classNames } from '@sushiswap/ui'
+import {
+  Message,
+  SkeletonCircle,
+  SkeletonText,
+  classNames,
+} from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import React, { useMemo } from 'react'
 import { useAccounts } from 'src/lib/wallet'
@@ -37,7 +42,8 @@ export const PortfolioEvmSvmTokens = () => {
   return (
     <div className="flex flex-col gap-y-5 h-[calc(100%-180px)] overflow-hidden">
       <div className="px-5">
-        <div className="flex flex-col gap-y-3 bg-secondary rounded-xl px-5 py-3">
+        <Message size="sm">Portfolio data is temporarily unavailable.</Message>
+        {/* <div className="flex flex-col gap-y-3 bg-secondary rounded-xl px-5 py-3">
           <span className="text-sm text-muted-foreground">Total Balance</span>
 
           <div className="flex flex-col gap-y-2">
@@ -75,7 +81,7 @@ export const PortfolioEvmSvmTokens = () => {
               </>
             )}
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* TOKEN LIST SECTION */}
