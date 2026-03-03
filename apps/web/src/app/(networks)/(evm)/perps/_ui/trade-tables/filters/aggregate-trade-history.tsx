@@ -10,7 +10,7 @@ export const AggregateTradeHistory = () => {
     <CheckboxSetting
       value={aggregateFillsByTime}
       onChange={setAggregateFillsByTime}
-      label="Aggregate Trade History"
+      label="Aggregate"
     />
   )
 }

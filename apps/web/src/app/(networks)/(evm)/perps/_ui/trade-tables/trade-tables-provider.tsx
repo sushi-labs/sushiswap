@@ -15,9 +15,11 @@ import { OpenOrdersTable } from './open-orders-table'
 import { OrderHistoryTable } from './order-history-table'
 import { PositionsTable } from './positions-table/positions-table'
 import { TradeHistoryTable } from './trade-history-table'
-import { ActiveTwapTable } from './twap-tables/active-twap-table/active-twap-table'
-import { FillHistoryTwapTable } from './twap-tables/fill-history-table/fill-history-twap-table'
-import { HistoryTwapTable } from './twap-tables/history-twap-table/history-twap-table'
+import {
+  ActiveTwapTable,
+  FillHistoryTwapTable,
+  HistoryTwapTable,
+} from './twap-tables'
 import { TwapTables } from './twap-tables/twap-tables'
 
 interface State {
