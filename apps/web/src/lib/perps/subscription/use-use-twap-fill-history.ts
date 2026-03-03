@@ -28,9 +28,21 @@ export const useUserTwapFillHistory = ({
           queryClient.setQueryData(
             ['useUserTwapFillHistory', address],
             (
-              _prevUserTwapSliceFillsEvent: UserTwapSliceFillsEvent | undefined,
+              prevUserTwapSliceFillsEvent: UserTwapSliceFillsEvent | undefined,
             ) => {
-              return userTwapSliceFillsEvent
+              const fills = userTwapSliceFillsEvent.twapSliceFills
+              const prevFills =
+                prevUserTwapSliceFillsEvent?.twapSliceFills ?? []
+              const combinedFills = Array.from(
+                new Map(
+                  [...fills, ...prevFills].map((fill) => [fill.fill.oid, fill]),
+                ).values(),
+              )
+              return {
+                user: userTwapSliceFillsEvent.user,
+                twapSliceFills: combinedFills,
+                isSnapshot: userTwapSliceFillsEvent.isSnapshot,
+              }
             },
           )
         },

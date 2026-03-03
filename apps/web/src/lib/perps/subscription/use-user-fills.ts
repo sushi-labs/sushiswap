@@ -28,8 +28,19 @@ export const useUserFills = ({
         (userFillsEvent) => {
           queryClient.setQueryData(
             ['useUserFills', address, aggregateByTime],
-            (_prevUserFillsEvent: UserFillsEvent | undefined) => {
-              return userFillsEvent
+            (prevUserFillsEvent: UserFillsEvent | undefined) => {
+              const fills = userFillsEvent.fills
+              const prevFills = prevUserFillsEvent?.fills ?? []
+              const combinedFills = Array.from(
+                new Map(
+                  [...fills, ...prevFills].map((fill) => [fill.oid, fill]),
+                ).values(),
+              )
+              return {
+                user: userFillsEvent.user,
+                fills: combinedFills,
+                isSnapshot: userFillsEvent.isSnapshot,
+              }
             },
           )
         },

@@ -25,8 +25,22 @@ export const useUserTwapHistory = ({ address }: { address?: EvmAddress }) => {
         (userTwapHistoryEvent) => {
           queryClient.setQueryData(
             ['useUserTwapHistory', address],
-            (_prevUserTwapHistoryEvent: UserTwapHistoryEvent | undefined) => {
-              return userTwapHistoryEvent
+            (prevUserTwapHistoryEvent: UserTwapHistoryEvent | undefined) => {
+              const twapHistory = userTwapHistoryEvent.history
+              const prevTwapHistory = prevUserTwapHistoryEvent?.history ?? []
+              const combinedTwapHistory = Array.from(
+                new Map(
+                  [...twapHistory, ...prevTwapHistory].map((twap) => [
+                    twap.time,
+                    twap,
+                  ]),
+                ).values(),
+              )
+              return {
+                user: userTwapHistoryEvent.user,
+                history: combinedTwapHistory,
+                isSnapshot: userTwapHistoryEvent.isSnapshot,
+              }
             },
           )
         },

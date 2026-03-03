@@ -28,11 +28,26 @@ export const useUserHistoricalOrders = ({
           queryClient.setQueryData(
             ['useUserHistoricalOrders', address],
             (
-              _prevUserHistoricalOrdersEvent:
+              prevUserHistoricalOrdersEvent:
                 | UserHistoricalOrdersEvent
                 | undefined,
             ) => {
-              return userHistoricalOrdersEvent
+              const orderHistory = userHistoricalOrdersEvent.orderHistory
+              const prevOrderHistory =
+                prevUserHistoricalOrdersEvent?.orderHistory ?? []
+              const combinedOrderHistory = Array.from(
+                new Map(
+                  [...orderHistory, ...prevOrderHistory].map((order) => [
+                    order.order.oid,
+                    order,
+                  ]),
+                ).values(),
+              )
+              return {
+                user: userHistoricalOrdersEvent.user,
+                orderHistory: combinedOrderHistory,
+                isSnapshot: userHistoricalOrdersEvent.isSnapshot,
+              }
             },
           )
         },

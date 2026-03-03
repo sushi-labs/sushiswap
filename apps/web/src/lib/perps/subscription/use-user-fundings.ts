@@ -25,8 +25,22 @@ export const useUserFundings = ({ address }: { address?: EvmAddress }) => {
         (userFundingsEvent) => {
           queryClient.setQueryData(
             ['useUserFundings', address],
-            (_prevUserFundingsEvent: UserFundingsEvent | undefined) => {
-              return userFundingsEvent
+            (prevUserFundingsEvent: UserFundingsEvent | undefined) => {
+              const fundings = userFundingsEvent.fundings
+              const prevFundings = prevUserFundingsEvent?.fundings ?? []
+              const combinedFundings = Array.from(
+                new Map(
+                  [...fundings, ...prevFundings].map((funding) => [
+                    funding.time,
+                    funding,
+                  ]),
+                ).values(),
+              )
+              return {
+                user: userFundingsEvent.user,
+                fundings: combinedFundings,
+                isSnapshot: userFundingsEvent.isSnapshot,
+              }
             },
           )
         },
