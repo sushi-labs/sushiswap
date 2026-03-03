@@ -20,6 +20,8 @@ import {
 } from 'src/lib/perps/utils'
 import { InlineEdit } from '../../_common/inline-edit'
 import { TableButton } from '../../_common/table-button'
+import { CancelAllOpenOrdersDialog } from '../../exchange/cancel-all-open-orders-dialog'
+import { CancelOpenOrder } from '../../exchange/cancel-open-order'
 import { useAssetState } from '../../trade-widget/asset-state-provider'
 import { ViewTpSlDialog } from '../_common/view-tpsl-dialog'
 import { columnBodyMeta } from '../column-meta'
@@ -356,51 +358,17 @@ export const TP_SL_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
 export const CANCEL_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
   id: 'cancel',
   header: () => {
-    return <CancelAll />
+    return <CancelAllOpenOrdersDialog />
   },
   cell: (props) => {
-    const { cancelOrdersAsync, isPending } = useCancelOpenOrders()
-    const cancelData = [
-      {
-        orderId: props.row.original.oid,
-        asset: props.row.original.coin,
-      },
-    ]
     return (
-      <TableButton
-        onClick={async () => {
-          await cancelOrdersAsync({ cancelData })
-        }}
-        disabled={isPending}
-      >
-        Cancel
-      </TableButton>
+      <CancelOpenOrder
+        orderId={props.row.original.oid}
+        coin={props.row.original.coin}
+      />
     )
   },
   meta: {
     body: columnBodyMeta,
   },
-}
-const CancelAll = () => {
-  const { data: openOrders } = useUserOpenOrders({})
-  const allCancelData = useMemo(
-    () =>
-      openOrders?.map((i) => ({
-        orderId: i.oid,
-        asset: i.coin,
-      })),
-    [openOrders],
-  )
-  const { cancelOrdersAsync, isPending } = useCancelOpenOrders()
-
-  return (
-    <TableButton
-      onClick={async () => {
-        await cancelOrdersAsync({ cancelData: allCancelData })
-      }}
-      disabled={isPending || !allCancelData?.length}
-    >
-      Cancel All
-    </TableButton>
-  )
 }

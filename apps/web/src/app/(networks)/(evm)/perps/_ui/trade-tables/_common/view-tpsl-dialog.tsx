@@ -60,19 +60,29 @@ export const ViewTpSlDialog = ({
             />
             <div className="h-16 min-h-16 w-[1px] mt-2 mx-auto bg-muted-foreground" />
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div
+            className={classNames(
+              'grid grid-cols-2 gap-2',
+              tpSlOrders?.length <= 1 ? 'mt-4' : '',
+            )}
+          >
             {tpSlOrders?.map((tpSlOrder, idx) => {
               const isMarketPrice = tpSlOrder.orderType.includes('Market')
               const price = tpSlOrder.limitPx
               return (
                 <div
                   key={`${tpSlOrder.oid}-${idx}`}
-                  className="w-full col-span-1"
+                  className={classNames(
+                    'w-full',
+                    tpSlOrders.length === 1 ? 'col-span-2' : 'col-span-1',
+                  )}
                 >
-                  <p className="mt-2 text-muted-foreground text-center mb-4">
-                    If Order {getLetterFromIndex(idx + 1)} filled, cancel Order{' '}
-                    {getLetterFromIndex(idx === 0 ? idx + 2 : idx)}
-                  </p>
+                  {tpSlOrders.length > 1 ? (
+                    <p className="mt-2 text-muted-foreground text-center mb-4">
+                      If Order {getLetterFromIndex(idx + 1)} filled, cancel
+                      Order {getLetterFromIndex(idx === 0 ? idx + 2 : idx)}
+                    </p>
+                  ) : null}
                   <p className="text-muted-foreground text-center mb-2">
                     Order {getLetterFromIndex(idx + 1)}
                   </p>
