@@ -1,4 +1,3 @@
-import { isSmartPoolChainId } from '@sushiswap/graph-client/data-api'
 import { LinkInternal } from '@sushiswap/ui'
 import { PathnameButton } from 'src/app/_ui/pathname-button'
 import {
@@ -11,7 +10,6 @@ import {
 export function NavigationItems({ chainId }: { chainId: EvmChainId }) {
   const chainKey = getEvmChainById(chainId).key
   const isBladeChain = isBladeChainId(chainId)
-  const isSmartPoolChain = isSmartPoolChainId(chainId)
 
   return (
     <>
@@ -35,13 +33,6 @@ export function NavigationItems({ chainId }: { chainId: EvmChainId }) {
         disabled={!isBladeChain}
       >
         Blade Pools
-      </NavigationItem>
-      <NavigationItem
-        pathname={`/${chainKey}/explore/smart-pools`}
-        id="smart-pools"
-        disabled={!isSmartPoolChain}
-      >
-        Smart Pools
       </NavigationItem>
     </>
   )
