@@ -28,8 +28,11 @@ export default async function PoolsPage(props: {
   return (
     <Container maxWidth="7xl" className="px-4">
       {isSmartPoolChainId(chainId) ? (
-        <div className="mb-4">
-          <SteerSmartPoolsTable chainId={chainId} />
+        <div className="mb-4 relative rounded-xl">
+          <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-pink to-blue opacity-40 blur-sm" />
+          <div className="relative rounded-xl bg-background">
+            <SteerSmartPoolsTable chainId={chainId} />
+          </div>
         </div>
       ) : null}
       <div className="flex flex-wrap gap-3 mb-4">
