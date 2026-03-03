@@ -1,3 +1,4 @@
+import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
 import {
   Card,
   Chip,
@@ -14,6 +15,10 @@ import { format } from 'date-fns'
 import { useMemo } from 'react'
 import { useCancelOpenOrders } from 'src/lib/perps/exchange/use-cancel-open-orders'
 import {
+  useModifyOrder,
+  usePrepModifyOrderData,
+} from 'src/lib/perps/exchange/use-modify-order'
+import {
   type UserOpenOrdersItemType,
   useUserOpenOrders,
 } from 'src/lib/perps/use-user-open-orders'
@@ -23,6 +28,7 @@ import {
   getTextColorClassForHover,
   numberFormatter,
 } from 'src/lib/perps/utils'
+import { InlineEdit } from '../../_common/inline-edit'
 import { TableButton } from '../../_common/table-button'
 import { useAssetState } from '../../trade-widget/asset-state-provider'
 import { columnBodyMeta } from '../column-meta'
@@ -152,11 +158,40 @@ export const SIZE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
     Number.parseFloat(rowA.sz) - Number.parseFloat(rowB.sz),
   cell: (props) => {
     const size = props.row.original.sz
+    const decimals = props.row.original.szDecimals
+    const isTrigger = props.row.original.isTrigger
+    const currentOrderData = usePrepModifyOrderData({
+      openOrder: props.row.original,
+    })
+    const { modifyOrder, isPending } = useModifyOrder()
+
+    if (size === '0.0') {
+      return (
+        <span className="font-medium whitespace-nowrap">
+          {isTrigger ? 'Close Position' : '-'}
+        </span>
+      )
+    }
 
     return (
-      <span className="font-medium whitespace-nowrap">
-        {size === '0.0' ? '-' : numberFormatter.format(Number.parseFloat(size))}
-      </span>
+      <InlineEdit
+        value={numberFormatter.format(Number.parseFloat(size))}
+        rawValue={size}
+        onConfirm={(newValue) => {
+          if (!currentOrderData) return
+          if (decimals === undefined) return
+          try {
+            const newSize = formatSize(newValue, decimals)
+            modifyOrder({
+              ...currentOrderData,
+              size: newSize,
+            })
+          } catch (e) {
+            console.error('Failed to modify order size', e)
+          }
+        }}
+        isPending={isPending}
+      />
     )
   },
   meta: {
@@ -205,7 +240,11 @@ export const VALUE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
 
     return (
       <span className="font-medium whitespace-nowrap">
-        {isMarketPrice ? 'Market' : `${enUSFormatNumber.format(value)} USDC`}
+        {Number(value) === 0
+          ? '-'
+          : isMarketPrice
+            ? 'Market'
+            : `${enUSFormatNumber.format(value)} USDC`}
       </span>
     )
   },
@@ -222,14 +261,37 @@ export const PRICE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
     Number.parseFloat(rowA.limitPx) - Number.parseFloat(rowB.limitPx),
   cell: (props) => {
     const price = props.row.original.limitPx
+    const decimals = props.row.original.szDecimals
+    const marketType = props.row.original.marketType
+    const currentOrderData = usePrepModifyOrderData({
+      openOrder: props.row.original,
+    })
+
+    const { modifyOrder, isPending } = useModifyOrder()
     const isMarketPrice = props.row.original.orderType.includes('Market')
+    if (isMarketPrice) {
+      return <span className="font-medium whitespace-nowrap">Market</span>
+    }
 
     return (
-      <span className="font-medium whitespace-nowrap">
-        {isMarketPrice
-          ? 'Market'
-          : numberFormatter.format(Number.parseFloat(price))}
-      </span>
+      <InlineEdit
+        value={numberFormatter.format(Number.parseFloat(price))}
+        rawValue={price}
+        onConfirm={(newValue) => {
+          if (!currentOrderData) return
+          if (decimals === undefined) return
+          try {
+            const newPrice = formatPrice(newValue, decimals, marketType)
+            modifyOrder({
+              ...currentOrderData,
+              price: newPrice,
+            })
+          } catch (e) {
+            console.error('Failed to modify order price', e)
+          }
+        }}
+        isPending={isPending}
+      />
     )
   },
   meta: {

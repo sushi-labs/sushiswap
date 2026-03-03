@@ -45,7 +45,7 @@ export const useBalances = () => {
     isAssetListError ||
     isErrorSpotState ||
     isWebData2Error
-  console.log(data)
+
   const formattedData = useMemo(() => {
     if (!data) return []
 

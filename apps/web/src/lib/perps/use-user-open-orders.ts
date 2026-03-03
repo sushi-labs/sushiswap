@@ -35,6 +35,7 @@ export const useUserOpenOrders = ({ coin }: { coin?: string }) => {
         assetSymbol: asset?.marketType === 'perp' ? i.coin : asset?.symbol,
         marketType: asset?.marketType,
         perpsDex: asset?.dex,
+        szDecimals: asset?.decimals,
       }
     })
     if (coin) {

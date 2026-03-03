@@ -18,7 +18,7 @@ export type TimeInForceType =
   | 'FrontendMarket'
   | 'LiquidationMarket'
 
-type OrderType =
+export type OrderType =
   | {
       limit: {
         // "Gtc": Remains active until filled or canceled.
