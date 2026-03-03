@@ -1,6 +1,6 @@
 import { DataTable } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { type BalanceItemType, useBalances } from 'src/lib/perps/use-balances'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {
@@ -23,6 +23,7 @@ const COLUMNS = [
 
 export const BalanceTable = () => {
   const { data, isLoading, isError } = useBalances()
+  const [sorting, setSorting] = useState([{ id: 'usdcValue', desc: true }])
   const {
     state: { hideSmallBalances, tradeFilter },
   } = useTradeTables()
@@ -57,12 +58,13 @@ export const BalanceTable = () => {
 
   const state: Partial<TableState> = useMemo(() => {
     return {
+      sorting,
       pagination: {
         pageIndex: 0,
         pageSize: tableData.length,
       },
     }
-  }, [tableData])
+  }, [tableData, sorting])
 
   return (
     <DataTable
@@ -70,6 +72,7 @@ export const BalanceTable = () => {
       loading={isLoading}
       columns={COLUMNS}
       data={tableData}
+      onSortingChange={setSorting}
     />
   )
 }

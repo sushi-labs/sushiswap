@@ -1,5 +1,4 @@
 import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
-import { get } from '@vercel/edge-config'
 import { formatUnits, parseUnits } from 'viem'
 import type { PerpOrSpotAsset } from './subscription/use-asset-list'
 import type { UserOpenOrdersItemType } from './use-user-open-orders'

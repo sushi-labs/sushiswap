@@ -8,15 +8,20 @@ export const useBalances = () => {
   const address = useAccount('evm')
   const {
     state: {
-      webData2Query: {
+      allDexClearinghouseStateQuery: {
         data,
-        isLoading: isLoadingWebData2,
-        isError: isErrorWebData2,
+        isLoading: isLoadingAllDexClearinghouse,
+        isError: isErrorAllDexClearinghouse,
       },
       spotStateQuery: {
         data: spotData,
         isLoading: isLoadingSpotState,
         isError: isErrorSpotState,
+      },
+      webData2Query: {
+        data: webData2Data,
+        isLoading: isWebData2Loading,
+        isError: isWebData2Error,
       },
     },
   } = useUserState()
@@ -29,24 +34,39 @@ export const useBalances = () => {
       },
     },
   } = useAssetListState()
-  const isLoading =
-    isLoadingWebData2 || isAssetListLoading || isLoadingSpotState
-  const isError = isErrorWebData2 || isAssetListError || isErrorSpotState
 
+  const isLoading =
+    isLoadingAllDexClearinghouse ||
+    isAssetListLoading ||
+    isLoadingSpotState ||
+    isWebData2Loading
+  const isError =
+    isErrorAllDexClearinghouse ||
+    isAssetListError ||
+    isErrorSpotState ||
+    isWebData2Error
+  console.log(data)
   const formattedData = useMemo(() => {
     if (!data) return []
-    const perpUsdc = {
-      coin: 'USDC (Perps)',
-      totalBalance: data?.clearinghouseState?.marginSummary?.accountValue,
-      availableBalance: data?.clearinghouseState?.withdrawable,
-      usdcValue: data?.clearinghouseState?.marginSummary?.accountValue,
-      pnlRoePc: null,
-      token: null,
-      marketType: 'perp' as const,
-      assetName: null,
-    }
+
+    const perpsUsdcs = data?.clearinghouseStates
+      .flatMap(([dexName, clearinghouseState]) => {
+        return {
+          coin: 'USDC (Perps)',
+          totalBalance: clearinghouseState?.marginSummary?.accountValue,
+          availableBalance: clearinghouseState?.withdrawable,
+          usdcValue: clearinghouseState?.marginSummary?.accountValue,
+          pnlRoePc: null,
+          token: null,
+          marketType: 'perp' as const,
+          assetName: null,
+          dex: dexName,
+        }
+      })
+      .filter((b) => Number(b.usdcValue) > 0)
+
     const spotBalances =
-      data?.spotState?.balances?.map((i) => {
+      webData2Data?.spotState?.balances?.map((i) => {
         const tokenIndex = i.token
         const spot = assetList
           ?.entries()
@@ -79,10 +99,11 @@ export const useBalances = () => {
                 },
           token: spot?.tokens?.find((t) => t.index === tokenIndex),
           marketType: 'spot' as const,
+          dex: '',
         }
       }) ?? []
-    return [perpUsdc, ...spotBalances]
-  }, [data, assetList, spotData])
+    return [...perpsUsdcs, ...spotBalances]
+  }, [data, assetList, spotData, webData2Data])
 
   return useMemo(() => {
     if (!address) {

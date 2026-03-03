@@ -4,6 +4,7 @@ import {
 } from '@heroicons/react-v1/outline'
 import { useCopyClipboard } from '@sushiswap/hooks'
 import {
+  Chip,
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
@@ -31,12 +32,22 @@ export const COIN_COLUMN: ColumnDef<BalanceItemType, unknown> = {
     } = useAssetState()
     const coin = props.row.original.coin
     const assetName = props.row.original.assetName
+    const perpsDex = props.row.original.dex
     const canSelect =
       props.row.original.marketType === 'spot' &&
       coin !== 'USDC (Spot)' &&
       assetName
     if (!canSelect) {
-      return <span className="font-medium whitespace-nowrap">{coin}</span>
+      return (
+        <div className="font-medium whitespace-nowrap">
+          {coin}{' '}
+          {perpsDex ? (
+            <Chip variant={'green'} className="!px-1 ml-1">
+              {perpsDex}
+            </Chip>
+          ) : null}
+        </div>
+      )
     }
 
     return (
@@ -49,6 +60,11 @@ export const COIN_COLUMN: ColumnDef<BalanceItemType, unknown> = {
         className="font-semibold text-blue whitespace-nowrap"
       >
         {coin}
+        {perpsDex ? (
+          <Chip variant={'green'} className="!px-1 ml-1">
+            {perpsDex}
+          </Chip>
+        ) : null}
       </button>
     )
   },
@@ -114,8 +130,7 @@ export const AVAILABLE_BALANCE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
         >
           <p>
             Available balance to open positions ignoring open orders.{' '}
-            {availableBalance} {coin} is available to withdraw transfer, or open
-            HIP-3 positions.
+            {availableBalance} {coin} is available to withdraw transfer.
           </p>
         </HoverCardContent>
       </HoverCard>
