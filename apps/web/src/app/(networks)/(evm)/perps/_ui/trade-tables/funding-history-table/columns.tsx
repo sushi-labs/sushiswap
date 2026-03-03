@@ -1,8 +1,9 @@
-import { classNames } from '@sushiswap/ui'
+import { Chip, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import type { FundingHistoryItemType } from 'src/lib/perps/use-funding-history'
 import {
+  getPerpsDexAndCoin,
   getTextColorClass,
   getTextColorClassForHover,
 } from 'src/lib/perps/utils'
@@ -39,7 +40,10 @@ export const COIN_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
       mutate: { setActiveAsset },
     } = useAssetState()
     const coin = props.row.original.coin
+    const { perpsDex } = getPerpsDexAndCoin(coin)
+    const symbol = props.row.original.assetSymbol
     const side = props.row.original.side
+    const assetName = symbol?.includes(':') ? symbol?.split(':')?.[1] : symbol
 
     return (
       <button
@@ -53,7 +57,15 @@ export const COIN_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
           getTextColorClassForHover(side === 'short' ? -1 : 1),
         )}
       >
-        {coin}
+        {assetName}
+        {perpsDex ? (
+          <Chip
+            variant={side === 'short' ? 'red' : 'green'}
+            className="!px-1 ml-1"
+          >
+            {perpsDex}
+          </Chip>
+        ) : null}
       </button>
     )
   },
@@ -68,11 +80,12 @@ export const SIZE_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
   accessorFn: (row) => row.size,
   sortingFn: ({ original: rowA }, { original: rowB }) => rowA.size - rowB.size,
   cell: (props) => {
-    const coin = props.row.original.coin
     const size = props.row.original.size
+    const symbol = props.row.original.assetSymbol
+    const assetName = symbol?.includes(':') ? symbol?.split(':')?.[1] : symbol
     return (
       <span className="font-medium whitespace-nowrap">
-        {size} {coin}
+        {size} {assetName}
       </span>
     )
   },
