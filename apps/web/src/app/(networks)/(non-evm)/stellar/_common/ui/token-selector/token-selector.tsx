@@ -7,6 +7,7 @@ import {
   DialogDescription,
   List,
   TextField,
+  useBreakpoint,
 } from '@sushiswap/ui'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { DialogHeader, DialogTitle, DialogTrigger } from '@sushiswap/ui'
@@ -21,6 +22,10 @@ import React, {
 } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
+import { DesktopNetworkSelector } from 'src/lib/wagmi/components/token-selector/desktop-network-selector'
+import { MobileNetworkSelector } from 'src/lib/wagmi/components/token-selector/mobile-network-selector'
+import type { ChainId } from 'sushi'
+import { StellarChainId } from 'sushi/stellar'
 import { useCommonTokens } from '~stellar/_common/lib/hooks/token/use-common-tokens'
 import { useCustomTokens } from '~stellar/_common/lib/hooks/token/use-custom-tokens'
 import { useSortedTokenList } from '~stellar/_common/lib/hooks/token/use-sorted-token-list'
@@ -41,6 +46,8 @@ interface PropType {
   id: string
   selected: Token | undefined
   onSelect: (token: Token) => void
+  networks?: readonly ChainId[]
+  onNetworkSelect?: (network: number) => void
   children: ReactNode
 }
 
@@ -49,6 +56,8 @@ export default function TokenSelector({
   selected,
   children,
   onSelect,
+  networks,
+  onNetworkSelect,
 }: PropType) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -123,110 +132,137 @@ export default function TokenSelector({
     [selected, sortedTokenList, _onSelect, id],
   )
 
+  const { isMd } = useBreakpoint('md')
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="!flex flex-col justify-start min-h-[85vh]">
-        <DialogHeader className="!text-left">
-          <DialogTitle>Select a token</DialogTitle>
-          <DialogDescription>
-            Select a token from our default list or search for a token by symbol
-            or address.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex gap-2">
-          <TextField
-            placeholder="Search by token or address"
-            icon={MagnifyingGlassIcon}
-            type="text"
-            testdata-id={`${id}-address-input`}
-            value={query}
-            onValueChange={setQuery}
+      <DialogContent
+        className={classNames(
+          'h-[80vh] !flex !flex-col md:!flex-row w-fit !p-0',
+          networks ? 'md:min-w-[720px]' : 'md:min-w-[600px]',
+        )}
+      >
+        {networks && onNetworkSelect && isMd ? (
+          <DesktopNetworkSelector
+            networks={networks}
+            selectedNetwork={StellarChainId.STELLAR}
+            onSelect={onNetworkSelect}
           />
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {Object.values(commonTokens ?? {})
-            ?.slice(0, 10)
-            ?.map((token, idx) => (
-              <CommonTokenButton key={idx} token={token} onSelect={_onSelect} />
-            ))}
-        </div>
-        <List.Control className="relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 min-h-[128px]">
-          <div
-            data-state={
-              !sortedTokenList || isLoadingQueryToken ? 'active' : 'inactive'
-            }
-            className={classNames(
-              'data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden',
-              'py-0.5 h-[64px] -mb-3',
-            )}
-          >
-            <div className="flex items-center w-full h-full px-3 rounded-lg">
-              <div className="flex items-center justify-between flex-grow gap-2 rounded">
-                <div className="flex flex-row items-center flex-grow gap-4">
-                  <SkeletonCircle radius={40} />
-                  <div className="flex flex-col items-start">
-                    <SkeletonText className="w-[100px]" />
-                    <SkeletonText fontSize="sm" className="w-[60px]" />
+        ) : null}
+        <div className="flex flex-col gap-4 overflow-y-auto relative p-6">
+          <DialogHeader className="!text-left">
+            <DialogTitle>Select a token</DialogTitle>
+            <DialogDescription>
+              Select a token from our default list or search for a token by
+              symbol or address.
+            </DialogDescription>
+          </DialogHeader>
+          {networks && onNetworkSelect && !isMd ? (
+            <MobileNetworkSelector
+              networks={networks}
+              selectedNetwork={StellarChainId.STELLAR}
+              onSelect={onNetworkSelect}
+            />
+          ) : null}
+          <div className="flex gap-2">
+            <TextField
+              placeholder="Search by token or address"
+              icon={MagnifyingGlassIcon}
+              type="text"
+              testdata-id={`${id}-address-input`}
+              value={query}
+              onValueChange={setQuery}
+            />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {Object.values(commonTokens ?? {})
+              ?.slice(0, 10)
+              ?.map((token, idx) => (
+                <CommonTokenButton
+                  key={idx}
+                  token={token}
+                  onSelect={_onSelect}
+                />
+              ))}
+          </div>
+          <List.Control className="relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 min-h-[128px]">
+            <div
+              data-state={
+                !sortedTokenList || isLoadingQueryToken ? 'active' : 'inactive'
+              }
+              className={classNames(
+                'data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden',
+                'py-0.5 h-[64px] -mb-3',
+              )}
+            >
+              <div className="flex items-center w-full h-full px-3 rounded-lg">
+                <div className="flex items-center justify-between flex-grow gap-2 rounded">
+                  <div className="flex flex-row items-center flex-grow gap-4">
+                    <SkeletonCircle radius={40} />
+                    <div className="flex flex-col items-start">
+                      <SkeletonText className="w-[100px]" />
+                      <SkeletonText fontSize="sm" className="w-[60px]" />
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex flex-col w-full">
-                  <SkeletonText className="w-[80px]" />
-                  <SkeletonText
-                    fontSize="sm"
-                    align="right"
-                    className="w-[40px]"
-                  />
+                  <div className="flex flex-col w-full">
+                    <SkeletonText className="w-[80px]" />
+                    <SkeletonText
+                      fontSize="sm"
+                      align="right"
+                      className="w-[40px]"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div
-            data-state={
-              sortedTokenList && !isLoadingQueryToken ? 'active' : 'inactive'
-            }
-            className={classNames(
-              'data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden',
-            )}
-          >
-            {queryToken && !allTokens[queryToken.contract.toUpperCase()] && (
-              <TokenSelectorImportRow
-                token={queryToken}
-                onImport={() => {
-                  queryToken && handleImport(queryToken)
-                }}
-              />
-            )}
-            <AutoSizer disableWidth>
-              {({ height }: { height: number }) => (
-                <FixedSizeList
-                  width="100%"
-                  height={height}
-                  itemCount={sortedTokenList ? sortedTokenList?.length : 0}
-                  itemSize={64}
-                  className={'scroll'}
-                  style={{ overflow: 'overlay' }}
-                >
-                  {Row}
-                </FixedSizeList>
+            <div
+              data-state={
+                sortedTokenList && !isLoadingQueryToken ? 'active' : 'inactive'
+              }
+              className={classNames(
+                'data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden',
               )}
-            </AutoSizer>
-            {sortedTokenList?.length === 0 && (
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="flex flex-col items-center justify-center gap-1">
-                  <span className="flex items-center text-xs text-gray-500 dark:text-slate-500">
-                    No tokens found on
-                    <span className="font-medium ml-1"> Stellar</span>.
-                  </span>
-                  <span className="text-xs text-gray-500 dark:text-slate-500">
-                    Did you try searching with the token code?
-                  </span>
+            >
+              {queryToken && !allTokens[queryToken.contract.toUpperCase()] && (
+                <TokenSelectorImportRow
+                  token={queryToken}
+                  onImport={() => {
+                    queryToken && handleImport(queryToken)
+                  }}
+                />
+              )}
+              <AutoSizer disableWidth>
+                {({ height }: { height: number }) => (
+                  <FixedSizeList
+                    width="100%"
+                    height={height}
+                    itemCount={sortedTokenList ? sortedTokenList?.length : 0}
+                    itemSize={64}
+                    className={'scroll'}
+                    style={{ overflow: 'overlay' }}
+                  >
+                    {Row}
+                  </FixedSizeList>
+                )}
+              </AutoSizer>
+              {sortedTokenList?.length === 0 && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="flex flex-col items-center justify-center gap-1">
+                    <span className="flex items-center text-xs text-gray-500 dark:text-slate-500">
+                      No tokens found on
+                      <span className="font-medium ml-1"> Stellar</span>.
+                    </span>
+                    <span className="text-xs text-gray-500 dark:text-slate-500">
+                      Did you try searching with the token code?
+                    </span>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-        </List.Control>
+              )}
+            </div>
+          </List.Control>
+        </div>
       </DialogContent>
     </Dialog>
   )

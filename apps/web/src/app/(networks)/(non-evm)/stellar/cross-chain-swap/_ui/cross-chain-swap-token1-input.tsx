@@ -1,14 +1,12 @@
 'use client'
 
-import { NEAR_INTENTS_CHAIN_IDS } from 'src/lib/near-intents/config'
+import {
+  NEAR_INTENTS_CHAIN_IDS,
+  type NearIntentsChainId,
+} from 'src/lib/near-intents/config'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { isWNativeSupported } from 'sushi'
-import { type EvmChainId, isEvmChainId } from 'sushi/evm'
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
-
-const NEAR_INTENTS_EVM_CHAIN_IDS = NEAR_INTENTS_CHAIN_IDS.filter((chainId) =>
-  isEvmChainId(chainId),
-)
 
 export function CrossChainSwapToken1Input() {
   const {
@@ -33,9 +31,9 @@ export function CrossChainSwapToken1Input() {
       currencyLoading={isToken1Loading}
       allowNative={isWNativeSupported(chainId1)}
       label="Buy"
-      networks={NEAR_INTENTS_EVM_CHAIN_IDS}
+      networks={NEAR_INTENTS_CHAIN_IDS}
       selectedNetwork={chainId1}
-      onNetworkChange={(network) => setChainId1(network as EvmChainId)}
+      onNetworkChange={(network) => setChainId1(network as NearIntentsChainId)}
     />
   )
 }

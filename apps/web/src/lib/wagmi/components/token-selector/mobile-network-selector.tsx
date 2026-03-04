@@ -14,13 +14,12 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { type FC, useState } from 'react'
 import { getNetworkName } from 'src/lib/network'
 import { useChainIds } from 'src/lib/wallet'
-import type { EvmChainId } from 'sushi/evm'
-import type { SvmChainId } from 'sushi/svm'
+import type { ChainId } from 'sushi'
 
 interface MobileNetworkSelector {
-  networks: readonly (EvmChainId | SvmChainId)[]
+  networks: readonly ChainId[]
   onSelect: (chainId: number) => void
-  selectedNetwork: EvmChainId | SvmChainId
+  selectedNetwork: ChainId
 }
 
 export const MobileNetworkSelector: FC<MobileNetworkSelector> = ({

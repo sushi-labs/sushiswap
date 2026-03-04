@@ -1,10 +1,21 @@
-import { Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
+import {
+  Badge,
+  Button,
+  SelectIcon,
+  SelectPrimitive,
+  TextField,
+  classNames,
+} from '@sushiswap/ui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
 import { useTokenBalance } from '~stellar/_common/lib/hooks/token/use-token-balance'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 import TokenSelector from '~stellar/_common/ui/token-selector/token-selector'
 
+import { ChevronRightIcon } from '@heroicons/react/24/outline'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import type { ChainId } from 'sushi'
+import { StellarChainId } from 'sushi/stellar'
 import { useStellarWallet } from '~stellar/providers'
 import { TokenIcon } from '../../General/TokenIcon'
 import { CurrencyInputBalancePanel } from './currency-input-balance-panel'
@@ -21,6 +32,8 @@ type CurrencyInput = {
   className?: string
   fetching?: boolean
   disableInsufficientBalanceError?: boolean
+  networks?: readonly ChainId[]
+  onNetworkChange?: (network: number) => void
   label?: string
 }
 
@@ -36,6 +49,8 @@ export function CurrencyInput({
   fetching,
   disableInsufficientBalanceError = false,
   label,
+  networks,
+  onNetworkChange,
 }: CurrencyInput) {
   const { connectedAddress } = useStellarWallet()
   const [insufficientBalance, setInsufficientBalance] = useState<boolean>(false)
@@ -119,7 +134,13 @@ export function CurrencyInput({
         </div>
 
         {onSelect ? (
-          <TokenSelector id={id} selected={token} onSelect={onSelect}>
+          <TokenSelector
+            id={id}
+            selected={token}
+            onSelect={onSelect}
+            networks={networks}
+            onNetworkSelect={onNetworkChange}
+          >
             <Button
               size="lg"
               variant={token ? 'secondary' : 'default'}
@@ -132,15 +153,48 @@ export function CurrencyInput({
               )}
             >
               {token ? (
-                <>
-                  <span className="w-[28px] h-[28px] mr-0.5">
-                    <TokenIcon currency={token} height={28} width={28} />
-                  </span>
-                  {token.code}
-                  <SelectIcon />
-                </>
+                networks ? (
+                  <>
+                    <div className="w-[28px] h-[28px] mr-1.5">
+                      <Badge
+                        className="border border-slate-900 rounded-full z-[11]"
+                        position="bottom-right"
+                        badgeContent={
+                          <NetworkIcon
+                            chainId={StellarChainId.STELLAR}
+                            width={16}
+                            height={16}
+                          />
+                        }
+                      >
+                        <TokenIcon currency={token} height={28} width={28} />
+                      </Badge>
+                    </div>
+                    <div className="flex flex-col items-start">
+                      <span className="text-xl leading-5">{token.code}</span>
+                      <span className="text-xs leading-3 text-muted-foreground">
+                        Stellar
+                      </span>
+                    </div>
+                    <SelectPrimitive.Icon asChild>
+                      <ChevronRightIcon
+                        strokeWidth={2}
+                        width={16}
+                        height={16}
+                      />
+                    </SelectPrimitive.Icon>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-[28px] h-[28px] mr-0.5">
+                      <TokenIcon currency={token} width={28} height={28} />
+                    </div>
+                    <span className="text-xl">{token.code}</span>
+                    <SelectIcon />
+                  </>
+                )
               ) : (
-                'Select'
+                'Select token'
               )}
             </Button>
           </TokenSelector>

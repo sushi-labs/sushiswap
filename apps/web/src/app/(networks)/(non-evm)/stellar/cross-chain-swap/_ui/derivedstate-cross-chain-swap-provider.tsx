@@ -1,7 +1,7 @@
 'use client'
 
 import { nanoid } from 'nanoid'
-import { useSearchParams } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   type Dispatch,
   type FC,
@@ -12,11 +12,21 @@ import {
   useMemo,
   useState,
 } from 'react'
+import type { SupportedChainId } from 'src/config'
 import { useNearIntentsQuote, useNearIntentsSwap } from 'src/lib/near-intents'
+import {
+  type NearIntentsChainId,
+  isNearIntentsChainId,
+} from 'src/lib/near-intents/config'
+import { replaceNetworkSlug } from 'src/lib/network'
 import { useAccount } from 'src/lib/wallet'
-import { Percent } from 'sushi'
-import { type EvmAddress, EvmChainId } from 'sushi/evm'
+import { ChainId, Percent, getChainById } from 'sushi'
+import { type EvmAddress, EvmChainId, isEvmChainId } from 'sushi/evm'
 import { type StellarAddress, StellarChainId } from 'sushi/stellar'
+import {
+  getDefaultCurrency,
+  getQuoteCurrency,
+} from '~evm/[chainId]/(trade)/_ui/derivedstate-swap-helpers'
 import { getBaseTokens } from '~stellar/_common/lib/soroban/token-helpers'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 
@@ -24,8 +34,8 @@ type CrossChainRouteOrder = 'CHEAPEST' | 'FASTEST'
 
 interface State {
   mutate: {
-    setChainId0(chainId: StellarChainId): void
-    setChainId1(chainId: EvmChainId): void
+    setChainId0(chainId: NearIntentsChainId): void
+    setChainId1(chainId: NearIntentsChainId): void
     setToken0(token0: Token): void
     setToken1(token1: CurrencyFor<EvmChainId> | undefined): void
     setSwapAmount(swapAmount: string): void
@@ -62,11 +72,43 @@ const baseTokens = getBaseTokens()
 const DerivedstateCrossChainSwapProvider: FC<
   DerivedStateCrossChainSwapProviderProps
 > = ({ children, defaultChainId = EvmChainId.ETHEREUM }) => {
+  const { push } = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
   const [tradeId, setTradeId] = useState(nanoid())
 
   // Source chain is always Stellar
   const chainId0 = StellarChainId.STELLAR
+
+  // Get the searchParams and complete with defaults.
+  // This handles the case where some params might not be provided by the user
+  const defaultedParams = useMemo(() => {
+    const params = new URLSearchParams(Array.from(searchParams.entries()))
+
+    if (!params.has('chainId1'))
+      params.set(
+        'chainId1',
+        chainId0 === StellarChainId.STELLAR
+          ? ChainId.ETHEREUM.toString()
+          : ChainId.STELLAR.toString(),
+      )
+    if (!params.has('token0'))
+      params.set(
+        'token0',
+        isEvmChainId(chainId0)
+          ? getDefaultCurrency(chainId0)
+          : baseTokens[0].contract,
+      )
+    if (!params.has('token1'))
+      params.set(
+        'token1',
+        isEvmChainId(Number(params.get('chainId1')))
+          ? getQuoteCurrency(Number(params.get('chainId1')) as SupportedChainId)
+          : baseTokens[1].contract,
+      )
+
+    return params
+  }, [chainId0, searchParams])
 
   // Get destination chain from URL or default
   const chainId1 = useMemo(() => {
@@ -79,6 +121,23 @@ const DerivedstateCrossChainSwapProvider: FC<
     }
     return defaultChainId
   }, [searchParams, defaultChainId])
+
+  // Get a new searchParams string by merging the current
+  // searchParams with a provided key/value pair
+  const createQueryString = useCallback(
+    (values: { name: string; value: string | null }[]) => {
+      const params = new URLSearchParams(defaultedParams)
+      values.forEach(({ name, value }) => {
+        if (value === null) {
+          params.delete(name)
+        } else {
+          params.set(name, value)
+        }
+      })
+      return params.toString()
+    },
+    [defaultedParams],
+  )
 
   const [token0, setToken0State] = useState<Token>(baseTokens[0])
   const [token1, setToken1State] = useState<
@@ -95,18 +154,78 @@ const DerivedstateCrossChainSwapProvider: FC<
   )
   const [routeOrder, setRouteOrder] = useState<CrossChainRouteOrder>('CHEAPEST')
 
-  const setChainId0 = useCallback((_chainId: StellarChainId) => {
-    // chainId0 is always Stellar, no-op
-  }, [])
+  const switchTokens = useCallback(() => {
+    const params = new URLSearchParams(defaultedParams)
+    const chainId1Param = +(params.get('chainId1') || 0)
+    const token0 = params.get('token0')
+    const token1 = params.get('token1')
 
-  const setChainId1 = useCallback(
-    (chainId: EvmChainId) => {
-      // Update URL with new destination chain
-      const params = new URLSearchParams(searchParams.toString())
-      params.set('chainId1', chainId.toString())
-      window.history.replaceState(null, '', `?${params.toString()}`)
+    if (!isNearIntentsChainId(chainId1Param)) {
+      console.error('Invalid chainId1:', chainId1Param)
+      return
+    }
+
+    const pathSegments = pathname.split('/')
+    pathSegments[1] = getChainById(chainId1Param).key
+
+    // Can safely cast as defaultedParams are always defined
+    push(
+      `${replaceNetworkSlug(chainId1Param, pathname)}?${createQueryString([
+        { name: 'swapAmount', value: null },
+        { name: 'token0', value: token1 as string },
+        { name: 'token1', value: token0 as string },
+        { name: 'chainId1', value: chainId0.toString() },
+      ])}`,
+    )
+  }, [pathname, defaultedParams, chainId0, createQueryString, push])
+
+  // Update the URL with new from chainId
+  const setChainId0 = useCallback(
+    (chainId: NearIntentsChainId) => {
+      if (defaultedParams.get('chainId1') === chainId.toString()) {
+        switchTokens()
+      } else {
+        push(
+          `${replaceNetworkSlug(chainId, pathname)}?${createQueryString([
+            { name: 'swapAmount', value: null },
+            {
+              name: 'token0',
+              value: getDefaultCurrency(chainId0 as SupportedChainId),
+            },
+          ])}`,
+        )
+      }
     },
-    [searchParams],
+    [
+      createQueryString,
+      defaultedParams,
+      pathname,
+      switchTokens,
+      chainId0,
+      push,
+    ],
+  )
+
+  // Update the URL with new to chainId
+  const setChainId1 = useCallback(
+    (chainId: NearIntentsChainId) => {
+      if (chainId0 === chainId) {
+        switchTokens()
+      } else {
+        push(
+          `${pathname}?${createQueryString([
+            { name: 'swapAmount', value: null },
+            { name: 'chainId1', value: chainId.toString() },
+            {
+              name: 'token1',
+              value: getQuoteCurrency(chainId as SupportedChainId),
+            },
+          ])}`,
+          { scroll: false },
+        )
+      }
+    },
+    [createQueryString, pathname, push, switchTokens, chainId0],
   )
 
   const setToken0 = useCallback((token: Token) => {
@@ -135,10 +254,6 @@ const DerivedstateCrossChainSwapProvider: FC<
     [searchParams],
   )
 
-  const switchTokens = useCallback(() => {
-    // Cannot switch - token0 is Stellar, token1 is EVM
-    // This is a no-op for cross-chain swaps from Stellar
-  }, [])
   const recipient = useAccount(chainId1)
   const value = useMemo(() => {
     return {

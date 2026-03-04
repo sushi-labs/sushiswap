@@ -14,7 +14,7 @@ import { Currency } from '@sushiswap/ui'
 import { SkeletonBox } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
-import { Amount, type Percent, getChainById } from 'sushi'
+import { Amount, type ChainId, type Percent, getChainById } from 'sushi'
 import type { EvmChainId } from 'sushi/evm'
 import type { SvmChainId } from 'sushi/svm'
 import { useConnection } from 'wagmi'
@@ -49,7 +49,7 @@ interface CurrencyInputProps<TChainId extends EvmChainId | SvmChainId> {
   hidePricing?: boolean
   hideIcon?: boolean
   label?: string
-  networks?: readonly (EvmChainId | SvmChainId)[]
+  networks?: readonly ChainId[]
   selectedNetwork?: EvmChainId | SvmChainId
   onNetworkChange?: (network: number) => void
 }

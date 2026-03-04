@@ -26,6 +26,7 @@ import React, {
   useState,
 } from 'react'
 import { useAccount } from 'src/lib/wallet'
+import type { ChainId } from 'sushi'
 import type { EvmChainId, EvmCurrency } from 'sushi/evm'
 import type { SvmChainId } from 'sushi/svm'
 import { useConnection } from 'wagmi'
@@ -34,7 +35,7 @@ import { DesktopNetworkSelector } from './desktop-network-selector'
 import { MobileNetworkSelector } from './mobile-network-selector'
 import { TokenSelectorStates } from './token-selector-states'
 
-interface TokenSelectorProps<TChainId extends EvmChainId | SvmChainId> {
+interface TokenSelectorProps<TChainId extends ChainId> {
   selected: CurrencyFor<TChainId> | undefined
   chainId: TChainId
   onSelect(currency: CurrencyFor<TChainId>): void
@@ -43,8 +44,8 @@ interface TokenSelectorProps<TChainId extends EvmChainId | SvmChainId> {
   includeNative?: boolean
   hidePinnedTokens?: boolean
   hideSearch?: boolean
-  networks?: readonly (EvmChainId | SvmChainId)[]
-  selectedNetwork?: EvmChainId | SvmChainId
+  networks?: readonly ChainId[]
+  selectedNetwork?: ChainId
   onNetworkSelect?: (network: number) => void
 }
 
