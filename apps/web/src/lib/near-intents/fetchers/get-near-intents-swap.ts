@@ -5,8 +5,10 @@ import { NEAR_INTENTS_API_URL } from '../config'
 import { nearIntentsSwapSchema } from './schema'
 
 export interface GetNearIntentsSwapParams {
-  inputAmount: Amount<Currency & { nearAssetId: string }>
-  outputCurrency: Currency & { nearAssetId: string }
+  inputAmount: Amount<Currency>
+  inputCurrencyNearId: string
+  outputCurrency: Currency
+  outputCurrencyNearId: string
   slippageTolerance: Percent
   sender: EvmAddress | StellarAddress
   recipient: EvmAddress | StellarAddress
@@ -14,7 +16,8 @@ export interface GetNearIntentsSwapParams {
 
 export const getNearIntentsSwap = async ({
   inputAmount,
-  outputCurrency,
+  inputCurrencyNearId,
+  outputCurrencyNearId,
   slippageTolerance,
   sender,
   recipient,
@@ -29,9 +32,9 @@ export const getNearIntentsSwap = async ({
       dry: false,
       swapType: 'EXACT_INPUT',
       slippageTolerance: slippageTolerance.toString(), // TODO: PRECISION
-      originAsset: inputAmount.currency.nearAssetId,
+      originAsset: inputCurrencyNearId,
       depositType: 'ORIGIN_CHAIN',
-      destinationAsset: outputCurrency.nearAssetId,
+      destinationAsset: outputCurrencyNearId,
       amount: inputAmount.amount.toString(),
       refundTo: sender,
       refundType: 'ORIGIN_CHAIN',

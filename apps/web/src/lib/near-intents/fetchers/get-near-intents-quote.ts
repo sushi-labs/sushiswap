@@ -4,14 +4,17 @@ import { NEAR_INTENTS_API_URL } from '../config'
 import { nearIntentsQuoteSchema } from './schema'
 
 export interface GetNearIntentsQuoteParams {
-  inputAmount: Amount<Currency & { nearAssetId: string }>
-  outputCurrency: Currency & { nearAssetId: string }
+  inputAmount: Amount<Currency>
+  inputCurrencyNearId: string
+  outputCurrency: Currency
+  outputCurrencyNearId: string
   slippageTolerance: Percent
 }
 
 export const getNearIntentsQuote = async ({
   inputAmount,
-  outputCurrency,
+  inputCurrencyNearId,
+  outputCurrencyNearId,
   slippageTolerance,
 }: GetNearIntentsQuoteParams) => {
   const response = await fetch(`${NEAR_INTENTS_API_URL}/v0/quote`, {
@@ -24,9 +27,9 @@ export const getNearIntentsQuote = async ({
       dry: 'true',
       swapType: 'EXACT_INPUT',
       slippageTolerance: slippageTolerance.toString(), // TODO: PRECISION
-      originAsset: inputAmount.currency.nearAssetId,
+      originAsset: inputCurrencyNearId,
       depositType: 'ORIGIN_CHAIN',
-      destinationAsset: outputCurrency.nearAssetId,
+      destinationAsset: outputCurrencyNearId,
       amount: inputAmount.amount.toString(),
       refundTo: zeroAddress,
       refundType: 'ORIGIN_CHAIN',
@@ -34,7 +37,7 @@ export const getNearIntentsQuote = async ({
       recipientType: 'DESTINATION_CHAIN',
       deadline: '2019-08-24T14:15:22Z', // TODO: 10mins?
       referral: 'sushi',
-      //   appFees: [{ recipient: 'recipient.near', fee: 100 }], //
+      //   appFees: [{ recipient: 'recipient.near', fee: 100 }], // TODO
     }),
   })
 

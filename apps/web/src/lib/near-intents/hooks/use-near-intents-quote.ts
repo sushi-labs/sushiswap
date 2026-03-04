@@ -1,61 +1,49 @@
 import { useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
-import { Amount, type Currency, type Percent } from 'sushi'
-import type { EvmAddress } from 'sushi/evm'
-import type { StellarAddress } from 'sushi/stellar'
+import type { Amount, Currency, Percent } from 'sushi'
 import { serialize } from 'wagmi'
-import {
-  type GetNearIntentsQuoteParams,
-  getNearIntentsQuote,
-} from '../fetchers'
-import { useNearIntentsTokens } from './use-near-intents-tokens'
+import { getNearIntentsQuote } from '../fetchers'
+import { useNearAssetId } from './use-near-asset-id'
 
-export interface UseNearIntentsSwapParams {
-  inputAmount: Amount<Currency>
-  outputCurrency: Currency
+export interface UseNearIntentsQuoteParams {
+  inputAmount: Amount<Currency> | undefined
+  outputCurrency: Currency | undefined
   slippageTolerance: Percent
-  sender: EvmAddress | StellarAddress
-  recipient: EvmAddress | StellarAddress
 }
 
-export const useNearIntentsQuote = (params: UseNearIntentsSwapParams) => {
-  const { data: tokens } = useNearIntentsTokens()
-
-  const { inputAmount, outputCurrency } = useMemo(() => {
-    const inputCurrency = {
-      ...params.inputAmount.currency,
-      nearAssetId:
-        tokens[params.inputAmount.currency.chainId][
-          params.inputAmount.currency.isNative
-            ? 'NATIVE'
-            : params.inputAmount.currency.address
-        ],
-    }
-    const outputCurrency = {
-      ...params.outputCurrency,
-      nearAssetId:
-        tokens[params.outputCurrency.chainId][
-          params.outputCurrency.isNative
-            ? 'NATIVE'
-            : params.outputCurrency.address
-        ],
-    }
-
-    return { inputAmount: new Amount(inputAmount.currency, inputAmount.amount) }
-  }, [])
+export const useNearIntentsQuote = (params: UseNearIntentsQuoteParams) => {
+  const { data: inputCurrencyNearId, isLoading } = useNearAssetId(
+    params.inputAmount?.currency,
+  )
+  const { data: outputCurrencyNearId } = useNearAssetId(params.outputCurrency)
 
   return useQuery({
     queryKey: ['near-intents-quote', params],
     queryKeyHashFn: serialize,
     queryFn: async () => {
+      if (
+        !params.inputAmount ||
+        !params.outputCurrency ||
+        !params.slippageTolerance
+      ) {
+        throw new Error('Missing required swap parameters')
+      }
+
+      if (!inputCurrencyNearId || !outputCurrencyNearId) {
+        throw new Error('Missing near asset IDs')
+      }
       return getNearIntentsQuote({
-        inputAmount: params.inputAmount!,
-        outputCurrency: params.outputCurrency!,
-        slippageTolerance: params.slippageTolerance!,
+        inputAmount: params.inputAmount,
+        inputCurrencyNearId,
+        outputCurrency: params.outputCurrency,
+        outputCurrencyNearId,
+        slippageTolerance: params.slippageTolerance,
       })
     },
     enabled: Boolean(
-      params.inputAmount && params.outputCurrency && params.slippageTolerance,
+      params.inputAmount &&
+        params.outputCurrency &&
+        params.slippageTolerance &&
+        !isLoading,
     ),
   })
 }
