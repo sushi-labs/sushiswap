@@ -34,6 +34,12 @@
 						"schema": "./src/subgraphs/de.fi/schema.graphql",
 						"tadaOutputLocation": "./src/subgraphs/de.fi/de.fi-env.d.ts",
 						"tadaTurboLocation": "./src/subgraphs/de.fi/de.fi-cache.d.ts"
+					},
+					{
+						"name": "migration-claim",
+						"schema": "./src/subgraphs/migration-claim/schema.graphql",
+						"tadaOutputLocation": "./src/subgraphs/migration-claim/migration-claim-env.d.ts",
+						"tadaTurboLocation": "./src/subgraphs/migration-claim/migration-claim-cache.d.ts"
 					}
 				]
 			}

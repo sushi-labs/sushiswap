@@ -1,3 +1,4 @@
+import { createErrorToast } from '@sushiswap/notifications'
 import {
   Button,
   Dialog,
@@ -8,16 +9,11 @@ import {
   DialogTrigger,
   Message,
   classNames,
-  useForm,
 } from '@sushiswap/ui'
-import { useCallback, useMemo } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useCallback, useMemo, useState } from 'react'
+import { useInitiateClaim, useSnapshotCheck } from 'src/lib/migration-claim'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import {
-  type EvmChainId,
-  MASTERCHEF_ADDRESS,
-  MINICHEF_ADDRESS,
-  getEvmChainById,
-} from 'sushi/evm'
 import { useConnection, useSignTypedData } from 'wagmi'
 
 export const V2MigrationNotice = ({ className }: { className?: string }) => {
@@ -30,10 +26,9 @@ export const V2MigrationNotice = ({ className }: { className?: string }) => {
           <p>
             If you had LPs staked in a MasterChef or MiniChef contracts, they
             have been migrated to a V3 position. If you would like to claim the
-            underlying tokens, use the initiate claim button and fill out the
-            form while connected with the wallet that made the LP staking
-            transaction to start the claim process to receive the underlying
-            tokens.
+            underlying tokens, use the initiate claim button while connected
+            with the wallet that made the LP staking transaction to start the
+            claim process to receive the underlying tokens.
           </p>
         </div>
 
@@ -43,96 +38,77 @@ export const V2MigrationNotice = ({ className }: { className?: string }) => {
   )
 }
 
-type FormValues = {
-  chainIds: Record<string, boolean>
-}
-
 const ClaimFormDialog = () => {
   const signTypedData = useSignTypedData()
-  const { address } = useConnection()
-
-  const allChainIds = useMemo(() => {
-    const ids = new Set<string>([
-      ...Object.keys(MASTERCHEF_ADDRESS),
-      ...Object.keys(MINICHEF_ADDRESS),
-    ])
-    return [...ids]
-  }, [])
-
-  const defaulChainIds = useMemo(() => {
-    const obj: Record<string, boolean> = {}
-    allChainIds.forEach((id) => {
-      obj[id] = true
-    })
-    return obj
-  }, [allChainIds])
-
+  const { address, chainId } = useConnection()
+  const [open, setOpen] = useState(false)
   const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { isSubmitting },
-  } = useForm<FormValues>({
-    defaultValues: { chainIds: defaulChainIds },
-    mode: 'onChange',
-  })
+    data: snapshotCheck,
+    isLoading,
+    isError,
+  } = useSnapshotCheck({ address })
+  const { mutateAsync, isPending } = useInitiateClaim()
+  const queryClient = useQueryClient()
 
-  const chainIdsMap = watch('chainIds')
+  const onSubmit = useCallback(async () => {
+    if (!address || !chainId) return
 
-  const selectedChainIds = useMemo(() => {
-    const entries = Object.entries(chainIdsMap ?? {})
-    return entries.filter(([, checked]) => checked).map(([id]) => BigInt(id))
-  }, [chainIdsMap])
-
-  const onSubmit = useCallback(
-    async (_: FormValues) => {
-      if (!address || selectedChainIds.length === 0) return
-
-      try {
-        const params = {
-          types: {
-            ClaimRequest: [
-              { name: 'requester', type: 'address' },
-              { name: 'chainId', type: 'uint256[]' },
-              { name: 'message', type: 'string' },
-            ],
-          },
-          primaryType: 'ClaimRequest' as const,
-          message: {
-            requester: address,
-            chainId: selectedChainIds,
-            message:
-              'I am initiating a claim for my migrated V2 staked LPs to receive the underlying tokens.',
-          },
-        }
-        const _signature = await signTypedData.mutateAsync(params)
-
-        //send to params, sig, and address to api to verify and start claim process
-      } catch (error) {
-        console.log('Error initiating claim:', error)
+    try {
+      const params = {
+        types: {
+          ClaimRequest: [
+            { name: 'requester', type: 'address' },
+            { name: 'chainId', type: 'uint256' },
+            { name: 'message', type: 'string' },
+          ],
+        },
+        primaryType: 'ClaimRequest' as const,
+        message: {
+          requester: address.toLowerCase(),
+          chainId: chainId,
+          message:
+            'I am initiating a claim for my migrated V2 staked LPs to receive the underlying tokens.',
+        },
       }
-    },
-    [address, selectedChainIds, signTypedData],
-  )
+      const signature = await signTypedData.mutateAsync(params)
+      await mutateAsync(
+        {
+          address,
+          message: params.message.message,
+          signature,
+          chainId: chainId,
+        },
+        {
+          onSuccess: () => {
+            setOpen(false)
+          },
+        },
+      )
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'An error occurred initiating claim'
+      createErrorToast(errorMessage, false)
+    } finally {
+      queryClient.invalidateQueries({ queryKey: ['useSnapshotCheck', address] })
+    }
+  }, [address, chainId, signTypedData, mutateAsync, queryClient])
 
-  const sections = useMemo(
-    () => [
-      {
-        title: 'MasterChef V1 & V2',
-        key: 'masterchef',
-        ids: Object.keys(MASTERCHEF_ADDRESS),
-      },
-      {
-        title: 'MiniChef',
-        key: 'minichef',
-        ids: Object.keys(MINICHEF_ADDRESS),
-      },
-    ],
-    [],
-  )
+  const infoText = useMemo(() => {
+    if (isLoading) return 'Checking snapshot eligibility...'
+    if (isError) return 'Error checking snapshot eligibility.'
+    if (snapshotCheck?.claimStatus.hasInitiatedClaim) {
+      return `Claim already initiated for this wallet. Status: ${snapshotCheck.claimStatus.status.toUpperCase()}`
+    }
+    if (snapshotCheck?.isOnAnySnapshot) {
+      return 'Your connected wallet is eligible to initiate a claim. You will be prompted to sign a message to verify your ownership of this wallet.'
+    }
+    return 'Your connected wallet was not found on our snapshot.'
+  }, [isLoading, isError, snapshotCheck])
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <Checker.Connect fullWidth size="default" namespace="evm">
         <DialogTrigger asChild>
           <Button fullWidth>Initiate Claim</Button>
@@ -143,73 +119,31 @@ const ClaimFormDialog = () => {
         <DialogHeader className="!text-left">
           <DialogTitle>Initiate Claim</DialogTitle>
           <DialogDescription>
-            Select the chains you would like to claim your underlying tokens
-            from.
+            If your wallet is eligible, you can initiate a claim for your
+            migrated V2 staked LP.
           </DialogDescription>
         </DialogHeader>
-
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-2 px-2 overflow-y-auto max-h-[calc(100vh-250px)] mb-4">
-            {sections.map((section) => (
-              <ChainSection
-                key={section.key}
-                title={section.title}
-                sectionKey={section.key}
-                ids={section.ids}
-                register={register}
-              />
-            ))}
-          </div>
+        <div className="flex flex-col gap-6">
+          <p className="font-medium">{infoText}</p>
 
           <Button
             fullWidth
             type="submit"
-            disabled={!address || selectedChainIds.length === 0}
-            loading={isSubmitting}
-            size="lg"
+            disabled={
+              !address ||
+              isLoading ||
+              isError ||
+              !snapshotCheck?.isOnAnySnapshot ||
+              snapshotCheck?.claimStatus.hasInitiatedClaim
+            }
+            loading={isPending}
+            size="xl"
+            onClick={onSubmit}
           >
             Initiate Claim
           </Button>
-        </form>
+        </div>
       </DialogContent>
     </Dialog>
-  )
-}
-
-function ChainSection({
-  title,
-  sectionKey,
-  ids,
-  register,
-}: {
-  title: string
-  sectionKey: string
-  ids: string[]
-  register: ReturnType<typeof useForm<FormValues>>['register']
-}) {
-  return (
-    <div className="flex flex-col gap-2">
-      <div className="font-bold">{title}</div>
-
-      {ids.map((chainId) => {
-        const chainName =
-          getEvmChainById(Number(chainId) as EvmChainId)?.name ||
-          `Chain ${chainId}`
-
-        return (
-          <div
-            key={`${sectionKey}-${chainId}`}
-            className="flex items-center gap-2"
-          >
-            <input
-              type="checkbox"
-              id={`${sectionKey}-${chainId}`}
-              {...register(`chainIds.${chainId}`)}
-            />
-            <label htmlFor={`${sectionKey}-${chainId}`}>{chainName}</label>
-          </div>
-        )
-      })}
-    </div>
   )
 }
