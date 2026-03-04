@@ -21,33 +21,19 @@ import {
   TraceEvent,
 } from '@sushiswap/telemetry'
 import { GasIcon } from '@sushiswap/ui/icons/GasIcon'
-import { useNearIntentsQuote } from 'src/lib/near-intents'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
 import { useAccount } from 'src/lib/wallet'
 import { useDetailsInteractionTracker } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
-import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
+import {
+  useCrossChainTradeQuote,
+  useDerivedStateCrossChainSwap,
+} from './derivedstate-cross-chain-swap-provider'
 
 export function CrossChainSwapTradeStats() {
   const {
-    state: {
-      swapAmountString,
-      recipient,
-      slippageTolerance,
-      token0,
-      token1,
-      chainId1,
-    },
+    state: { swapAmountString, recipient, slippageTolerance, token1, chainId1 },
   } = useDerivedStateCrossChainSwap()
-  const {
-    isLoading,
-    data: quote,
-    isError,
-  } = useNearIntentsQuote({
-    amount: swapAmountString,
-    inputCurrency: token0,
-    outputCurrency: token1,
-    slippageTolerance,
-  })
+  const { isLoading, data: quote, isError } = useCrossChainTradeQuote()
   const {
     state: { isDetailsCollapsed },
     mutate: {
