@@ -1,31 +1,42 @@
 import { useQuery } from '@tanstack/react-query'
-import type { Amount, Currency, Percent } from 'sushi'
+import type { Currency, Percent } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
 import type { StellarAddress } from 'sushi/stellar'
-import { serialize } from 'wagmi'
+import type { Token as StellarToken } from '~stellar/_common/lib/types/token.type'
 import { getNearIntentsSwap } from '../fetchers'
 import { useNearAssetId } from './use-near-asset-id'
 
 export interface UseNearIntentsSwapParams {
-  inputAmount: Amount<Currency> | undefined
-  outputCurrency: Currency | undefined
+  inputCurrency: Currency | StellarToken | undefined
+  outputCurrency: Currency | StellarToken | undefined
+  amount: string
   slippageTolerance: Percent
   sender: EvmAddress | StellarAddress | undefined
   recipient: EvmAddress | StellarAddress | undefined
 }
 
 export const useNearIntentsSwap = (params: UseNearIntentsSwapParams) => {
-  const { data: inputCurrencyNearId, isLoading } = useNearAssetId(
-    params.inputAmount?.currency,
-  )
-  const { data: outputCurrencyNearId } = useNearAssetId(params.outputCurrency)
+  const { data: inputCurrencyNearId, isLoading: isInputLoading } =
+    useNearAssetId(params.inputCurrency)
+  const { data: outputCurrencyNearId, isLoading: isOutputLoading } =
+    useNearAssetId(params.outputCurrency)
 
   return useQuery({
-    queryKey: ['near-intents-swap', params],
-    queryKeyHashFn: serialize,
+    queryKey: [
+      'near-intents-swap',
+      {
+        inputCurrency: params.inputCurrency,
+        amount: params.amount,
+        outputCurrency: params.outputCurrency,
+        slippageTolerance: params.slippageTolerance,
+        sender: params.sender,
+        recipient: params.recipient,
+      },
+    ],
     queryFn: async () => {
       if (
-        !params.inputAmount ||
+        !params.inputCurrency ||
+        !params.amount ||
         !params.outputCurrency ||
         !params.slippageTolerance ||
         !params.sender ||
@@ -38,9 +49,8 @@ export const useNearIntentsSwap = (params: UseNearIntentsSwapParams) => {
         throw new Error('Unsupported assets')
 
       return getNearIntentsSwap({
-        inputAmount: params.inputAmount,
+        amount: params.amount,
         inputCurrencyNearId,
-        outputCurrency: params.outputCurrency,
         outputCurrencyNearId,
         slippageTolerance: params.slippageTolerance,
         sender: params.sender,
@@ -48,12 +58,14 @@ export const useNearIntentsSwap = (params: UseNearIntentsSwapParams) => {
       })
     },
     enabled: Boolean(
-      params.inputAmount &&
+      params.inputCurrency &&
+        params.amount &&
         params.outputCurrency &&
         params.slippageTolerance &&
         params.sender &&
         params.recipient &&
-        !isLoading,
+        !isInputLoading &&
+        !isOutputLoading,
     ),
   })
 }

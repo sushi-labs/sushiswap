@@ -1,13 +1,12 @@
-import type { Amount, Currency, Percent } from 'sushi'
+import type { Percent } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
 import type { StellarAddress } from 'sushi/stellar'
 import { NEAR_INTENTS_API_URL } from '../config'
 import { nearIntentsSwapSchema } from './schema'
 
 export interface GetNearIntentsSwapParams {
-  inputAmount: Amount<Currency>
+  amount: string
   inputCurrencyNearId: string
-  outputCurrency: Currency
   outputCurrencyNearId: string
   slippageTolerance: Percent
   sender: EvmAddress | StellarAddress
@@ -15,7 +14,7 @@ export interface GetNearIntentsSwapParams {
 }
 
 export const getNearIntentsSwap = async ({
-  inputAmount,
+  amount,
   inputCurrencyNearId,
   outputCurrencyNearId,
   slippageTolerance,
@@ -35,7 +34,7 @@ export const getNearIntentsSwap = async ({
       originAsset: inputCurrencyNearId,
       depositType: 'ORIGIN_CHAIN',
       destinationAsset: outputCurrencyNearId,
-      amount: inputAmount.amount.toString(),
+      amount: amount,
       refundTo: sender,
       refundType: 'ORIGIN_CHAIN',
       recipient: recipient,

@@ -1,13 +1,13 @@
 'use client'
 
 import { CurrencyInput } from '~stellar/_common/ui/currency/currency-input/currency-input'
-import { useStellarCrossChainSwap } from './cross-chain-swap-provider'
+import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
 export function CrossChainSwapToken0Input() {
   const {
     state: { swapAmountString, token0 },
     mutate: { setSwapAmount, setToken0 },
-  } = useStellarCrossChainSwap()
+  } = useDerivedStateCrossChainSwap()
 
   return (
     <CurrencyInput

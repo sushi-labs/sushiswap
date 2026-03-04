@@ -1,12 +1,12 @@
 'use client'
 
 import { Button } from '@sushiswap/ui'
-import { useStellarCrossChainSwap } from './cross-chain-swap-provider'
+import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
 export function CrossChainSwapTradeButton() {
   const {
     state: { swapAmountString, token0, token1, recipient },
-  } = useStellarCrossChainSwap()
+  } = useDerivedStateCrossChainSwap()
 
   const isDisabled = !token0 || !token1 || !swapAmountString || !recipient
 

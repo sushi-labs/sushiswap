@@ -1,23 +1,24 @@
 'use client'
 
-import { ArrowDownIcon } from '@heroicons/react-v1/solid'
-import { IconButton } from '@sushiswap/ui'
-import { useStellarCrossChainSwap } from './cross-chain-swap-provider'
+import ArrowsUpDownIcon from '@heroicons/react/24/solid/ArrowsUpDownIcon'
+import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
 export function CrossChainSwapSwitchTokensButton() {
   const {
     mutate: { switchTokens },
-  } = useStellarCrossChainSwap()
+  } = useDerivedStateCrossChainSwap()
 
   return (
-    <div className="flex items-center justify-center -my-3 z-10">
-      <IconButton
-        icon={ArrowDownIcon}
+    <div className="left-0 right-0 mt-[-26px] mb-[-26px] flex items-center justify-center">
+      <button
         onClick={switchTokens}
-        name="Switch tokens"
-        variant="outline"
-        className="bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 rounded-full"
-      />
+        type="button"
+        className="hover:shadow-sm transition-border z-10 group bg-background p-2 border border-accent transition-all rounded-full cursor-pointer"
+      >
+        <div className="transition-transform rotate-0 group-hover:rotate-180">
+          <ArrowsUpDownIcon strokeWidth={3} className="w-3 h-3 text-blue" />
+        </div>
+      </button>
     </div>
   )
 }

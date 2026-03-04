@@ -1,20 +1,19 @@
-import type { Amount, Currency, Percent } from 'sushi'
+import type { Percent } from 'sushi'
 import { zeroAddress } from 'viem'
 import { NEAR_INTENTS_API_URL } from '../config'
 import { nearIntentsQuoteSchema } from './schema'
 
 export interface GetNearIntentsQuoteParams {
-  inputAmount: Amount<Currency>
+  amount: string
   inputCurrencyNearId: string
-  outputCurrency: Currency
   outputCurrencyNearId: string
   slippageTolerance: Percent
 }
 
 export const getNearIntentsQuote = async ({
-  inputAmount,
   inputCurrencyNearId,
   outputCurrencyNearId,
+  amount,
   slippageTolerance,
 }: GetNearIntentsQuoteParams) => {
   const response = await fetch(`${NEAR_INTENTS_API_URL}/v0/quote`, {
@@ -30,7 +29,7 @@ export const getNearIntentsQuote = async ({
       originAsset: inputCurrencyNearId,
       depositType: 'ORIGIN_CHAIN',
       destinationAsset: outputCurrencyNearId,
-      amount: inputAmount.amount.toString(),
+      amount: amount,
       refundTo: zeroAddress,
       refundType: 'ORIGIN_CHAIN',
       recipient: zeroAddress,

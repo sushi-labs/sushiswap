@@ -1,28 +1,41 @@
 'use client'
 
-import { getBaseTokens } from '~stellar/_common/lib/soroban/token-helpers'
-import { CurrencyInput } from '~stellar/_common/ui/currency/currency-input/currency-input'
-import { useStellarCrossChainSwap } from './cross-chain-swap-provider'
+import { NEAR_INTENTS_CHAIN_IDS } from 'src/lib/near-intents/config'
+import { Web3Input } from 'src/lib/wagmi/components/web3-input'
+import { isWNativeSupported } from 'sushi'
+import { type EvmChainId, isEvmChainId } from 'sushi/evm'
+import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
-const baseTokens = getBaseTokens()
+const NEAR_INTENTS_EVM_CHAIN_IDS = NEAR_INTENTS_CHAIN_IDS.filter((chainId) =>
+  isEvmChainId(chainId),
+)
 
 export function CrossChainSwapToken1Input() {
   const {
-    state: { token1 },
-    mutate: { setToken1 },
-  } = useStellarCrossChainSwap()
+    state: { chainId1, token1 },
+    mutate: { setToken1, setChainId1 },
+    isToken1Loading,
+  } = useDerivedStateCrossChainSwap()
 
   return (
-    <CurrencyInput
+    <Web3Input.Currency
       id="swap-to"
       type="OUTPUT"
       disabled
       className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
-      token={token1 || baseTokens[0]}
-      onSelect={setToken1}
       value=""
-      disableInsufficientBalanceError
+      chainId={chainId1}
+      onSelect={setToken1}
+      currency={token1}
+      loading={false}
+      disableMaxButton
+      fetching={false}
+      currencyLoading={isToken1Loading}
+      allowNative={isWNativeSupported(chainId1)}
       label="Buy"
+      networks={NEAR_INTENTS_EVM_CHAIN_IDS}
+      selectedNetwork={chainId1}
+      onNetworkChange={(network) => setChainId1(network as EvmChainId)}
     />
   )
 }
