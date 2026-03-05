@@ -6,6 +6,7 @@ import {
   HoverCardTrigger,
   classNames,
 } from '@sushiswap/ui'
+import { MeterIcon } from '@sushiswap/ui/icons/MeterIcon'
 import { useUserAccountValues } from 'src/lib/perps/use-user-account-values'
 import {
   currencyFormatter,
@@ -56,8 +57,10 @@ export const UnifiedAccountSummary = () => {
               <span
                 className={classNames(
                   getTextColorClass(unifiedAccountRatio >= 90 ? 1 : 0),
+                  'flex items-center gap-1',
                 )}
               >
+                <MeterIcon width={18} height={8} />
                 {enUSFormatNumber.format(
                   Number(unifiedAccountRatio.toFixed(2)),
                 )}

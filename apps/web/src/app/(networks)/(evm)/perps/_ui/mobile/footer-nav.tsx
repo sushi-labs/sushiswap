@@ -1,5 +1,5 @@
 import { UserIcon } from '@heroicons/react-v1/outline'
-import { ChartBarIcon } from '@heroicons/react-v1/solid'
+import { ChartBarIcon, PlusCircleIcon } from '@heroicons/react-v1/solid'
 import { Button, classNames } from '@sushiswap/ui'
 import type { PerpsMobileViewType } from './mobile-layout'
 
@@ -12,7 +12,7 @@ const OPTIONS = [
   {
     value: 'trade' as const,
     text: 'Trade',
-    icon: <ChartBarIcon className="h-4 w-4" />,
+    icon: <PlusCircleIcon className="h-4 w-4" />,
   },
   {
     value: 'account' as const,
