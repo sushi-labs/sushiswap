@@ -11,12 +11,7 @@ import { hlHttpTransport } from '../transports'
 import { useAgent } from '../use-agent'
 import { getAssetIdForConverter } from '../utils'
 
-export type TimeInForceType =
-  | 'Gtc'
-  | 'Ioc'
-  | 'Alo'
-  | 'FrontendMarket'
-  | 'LiquidationMarket'
+export type TimeInForceType = 'Gtc' | 'Ioc' | 'Alo' | 'FrontendMarket'
 
 export type OrderType =
   | {
@@ -25,7 +20,6 @@ export type OrderType =
         // "Ioc": Fills immediately or cancels any unfilled portion.
         // "Alo": Adds liquidity only.
         // "FrontendMarket": Similar to Ioc, used in Hyperliquid UI.
-        // "LiquidationMarket": Similar to Ioc, used in Hyperliquid UI.
         timeInForce: TimeInForceType
       }
     }

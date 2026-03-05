@@ -1,8 +1,9 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
-import type { FC } from 'react'
+import { type FC, useMemo } from 'react'
 import { useUserState } from '~evm/perps/user-provider'
 import { DepositDialog } from '../account-management/deposit-dialog'
 import { PerpSpotTransfer } from '../account-management/perp-spot-transfer'
+import { useUserSettingsState } from '../account-management/settings-provider'
 import { useAssetState } from '../trade-widget/asset-state-provider'
 
 export const Deposit: FC<ButtonProps> = ({
@@ -17,8 +18,15 @@ export const Deposit: FC<ButtonProps> = ({
     },
   } = useUserState()
   const {
-    state: { asset, availableToLong },
+    state: { asset, availableToLong, tradeSide, availableToShort },
   } = useAssetState()
+  const {
+    state: { isUnifiedAccountModeEnabled },
+  } = useUserSettingsState()
+
+  const availableToTrade = useMemo(() => {
+    return tradeSide === 'long' ? availableToLong : availableToShort
+  }, [tradeSide, availableToLong, availableToShort])
 
   if (isLoading) {
     return (
@@ -38,7 +46,8 @@ export const Deposit: FC<ButtonProps> = ({
 
   if (
     Number(data?.clearinghouseState?.withdrawable) === 0 &&
-    asset?.dex === ''
+    asset?.dex === '' &&
+    !isUnifiedAccountModeEnabled
   ) {
     return (
       <DepositDialog
@@ -51,9 +60,10 @@ export const Deposit: FC<ButtonProps> = ({
     )
   }
   if (
-    Number(availableToLong) === 0 &&
+    Number(availableToTrade) === 0 &&
     asset?.marketType === 'perp' &&
-    asset?.dex !== ''
+    asset?.dex !== '' &&
+    !isUnifiedAccountModeEnabled
   ) {
     return (
       <PerpSpotTransfer
@@ -63,6 +73,18 @@ export const Deposit: FC<ButtonProps> = ({
           </Button>
         }
         defaultDst="perp"
+      />
+    )
+  }
+
+  if (isUnifiedAccountModeEnabled && Number(availableToTrade) === 0) {
+    return (
+      <DepositDialog
+        trigger={
+          <Button fullWidth={fullWidth} size={size} {...props}>
+            Deposit
+          </Button>
+        }
       />
     )
   }

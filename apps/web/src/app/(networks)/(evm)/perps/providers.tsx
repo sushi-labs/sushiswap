@@ -15,9 +15,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <AssetSelectorStateProvider>
           <TradeTablesProvider>
             <UserProvider>
-              <AssetStateProvider>
-                <UserSettingsProvider>{children}</UserSettingsProvider>
-              </AssetStateProvider>
+              <UserSettingsProvider>
+                <AssetStateProvider>{children}</AssetStateProvider>
+              </UserSettingsProvider>
             </UserProvider>
           </TradeTablesProvider>
         </AssetSelectorStateProvider>

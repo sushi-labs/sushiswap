@@ -1,4 +1,5 @@
 import { approveAgent } from '@nktkas/hyperliquid/api/exchange'
+import { AbstractWalletError } from '@nktkas/hyperliquid/signing'
 import { useSessionStorage } from '@sushiswap/hooks'
 import {
   createFailedToast,
@@ -6,7 +7,6 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
-import { AbstractWalletError } from 'node_modules/@nktkas/hyperliquid/script/src/signing/mod'
 import { useMemo } from 'react'
 import { zeroAddress } from 'viem'
 import {
@@ -112,7 +112,7 @@ export const useAgent = () => {
 
     onError: (error, _vars, ctx) => {
       let message = ''
-      if (error instanceof AbstractWalletError) {
+      if (error instanceof AbstractWalletError || error instanceof Error) {
         message = error.message
       }
       removeValue()

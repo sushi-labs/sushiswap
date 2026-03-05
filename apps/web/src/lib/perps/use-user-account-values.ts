@@ -129,6 +129,28 @@ export const useUserAccountValues = () => {
     )
   }, [allDexClearinghouseState])
 
+  const portfolioValue = useMemo(() => {
+    return perpsEquity + spotEquity
+  }, [perpsEquity, spotEquity])
+
+  const unifiedAccountLeverage = useMemo(() => {
+    if (!portfolioValue || !allDexClearinghouseState) return 0
+    const totalNtlPos =
+      allDexClearinghouseState?.clearinghouseStates.reduce(
+        (posAcc, [_dex, pos]) => {
+          return Number(pos.marginSummary?.totalNtlPos ?? 0) + posAcc
+        },
+        0,
+      ) || 0
+
+    return totalNtlPos / (portfolioValue || 1)
+  }, [portfolioValue, allDexClearinghouseState])
+
+  const unifiedAccountRatio = useMemo(() => {
+    if (!portfolioValue || !maintenanceMargin) return 0
+    return (maintenanceMargin / (portfolioValue || 1)) * 100
+  }, [maintenanceMargin, portfolioValue])
+
   return {
     isLoading,
     error,
@@ -140,5 +162,8 @@ export const useUserAccountValues = () => {
     totalCrossMarginRatio,
     crossAccountLeverage,
     withdrawableBalance,
+    portfolioValue,
+    unifiedAccountLeverage,
+    unifiedAccountRatio,
   }
 }

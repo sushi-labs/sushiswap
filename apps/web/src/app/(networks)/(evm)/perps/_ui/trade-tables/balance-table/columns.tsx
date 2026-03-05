@@ -16,6 +16,7 @@ import {
   currencyFormatter,
   getSignForValue,
   getTextColorClass,
+  numberFormatter,
 } from 'src/lib/perps/utils'
 import { truncateString } from 'sushi'
 import { useAssetState } from '../../trade-widget/asset-state-provider'
@@ -85,7 +86,7 @@ export const TOTAL_BALANCE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
 
     return (
       <span className="font-medium whitespace-nowrap">
-        {totalBalance} {coin}
+        {numberFormatter.format(Number.parseFloat(totalBalance))} {coin}
       </span>
     )
   },
@@ -112,7 +113,7 @@ export const AVAILABLE_BALANCE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
     if (!isPerp) {
       return (
         <span className="font-medium whitespace-nowrap">
-          {availableBalance} {coin}
+          {numberFormatter.format(Number.parseFloat(availableBalance))} {coin}
         </span>
       )
     }
@@ -120,7 +121,7 @@ export const AVAILABLE_BALANCE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
       <HoverCard openDelay={0}>
         <HoverCardTrigger asChild tabIndex={0}>
           <div className="font-medium underline whitespace-nowrap">
-            {availableBalance} {coin}
+            {numberFormatter.format(Number.parseFloat(availableBalance))} {coin}
           </div>
         </HoverCardTrigger>
         <HoverCardContent
@@ -130,7 +131,8 @@ export const AVAILABLE_BALANCE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
         >
           <p>
             Available balance to open positions ignoring open orders.{' '}
-            {availableBalance} {coin} is available to withdraw transfer.
+            {numberFormatter.format(Number.parseFloat(availableBalance))} {coin}{' '}
+            is available to withdraw transfer.
           </p>
         </HoverCardContent>
       </HoverCard>

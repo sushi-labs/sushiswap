@@ -9,6 +9,7 @@ import {
   numberFormatter,
 } from 'src/lib/perps/utils'
 import { StatItem } from '../../_common/stat-item'
+import { useUserSettingsState } from '../../account-management/settings-provider'
 import { useAssetState } from '../asset-state-provider'
 
 export const LiquidationStat = ({ title }: { title?: string }) => {
@@ -26,11 +27,15 @@ export const LiquidationStat = ({ title }: { title?: string }) => {
       limitPrice,
     },
   } = useAssetState()
-  const { perpsEquity, maintenanceMargin } = useUserAccountValues()
+  const { perpsEquity, maintenanceMargin, portfolioValue } =
+    useUserAccountValues()
   const { data: marginTable } = useMarginTable({
     marginTableId: asset?.marginTableId ?? undefined,
   })
   const { data: existingPositions } = useUserPositions(activeAsset)
+  const {
+    state: { isUnifiedAccountModeEnabled },
+  } = useUserSettingsState()
 
   const existingPosition = useMemo(() => {
     if (!existingPositions || existingPositions.length === 0) return undefined
@@ -59,7 +64,13 @@ export const LiquidationStat = ({ title }: { title?: string }) => {
   }, [reduceOnly, tradeSide])
 
   const estimatedLiquidationPrice = useMemo(() => {
-    if (!asset || !markPrice || !perpsEquity || !size.base) {
+    if (
+      !asset ||
+      !markPrice ||
+      (isUnifiedAccountModeEnabled && !portfolioValue) ||
+      (!isUnifiedAccountModeEnabled && !perpsEquity) ||
+      !size.base
+    ) {
       return null
     }
     let price = markPrice
@@ -87,7 +98,9 @@ export const LiquidationStat = ({ title }: { title?: string }) => {
     const liqPrice = estimateLiquidationPrice({
       price: reduceOnly ? (existingPosition?.position.entryPx ?? price) : price,
       side: _tradeSide === 'long' ? 'B' : 'A',
-      accountValue: perpsEquity?.toString(),
+      accountValue: isUnifiedAccountModeEnabled
+        ? portfolioValue?.toString()
+        : perpsEquity?.toString(),
       positionSize: reduceOnly
         ? (
             Math.abs(existingPositionSize) - Math.abs(Number(positionSize))
@@ -127,6 +140,8 @@ export const LiquidationStat = ({ title }: { title?: string }) => {
     reduceOnly,
     tradeType,
     limitPrice,
+    portfolioValue,
+    isUnifiedAccountModeEnabled,
   ])
 
   return (

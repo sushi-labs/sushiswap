@@ -25,6 +25,7 @@ import { EvmChainId, USDC } from 'sushi/evm'
 import { useWalletClient } from 'wagmi'
 import { useUserState } from '~evm/perps/user-provider'
 import { useAssetState } from '../trade-widget/asset-state-provider'
+import { useUserSettingsState } from './settings-provider'
 import { TransferInput } from './transfer-input'
 
 //@todo clean up
@@ -48,6 +49,9 @@ export const PerpSpotTransfer = ({
   const {
     state: { asset, availableToLong },
   } = useAssetState()
+  const {
+    state: { isUnifiedAccountModeEnabled },
+  } = useUserSettingsState()
   const dexName = useMemo(() => asset?.dex || '', [asset?.dex])
 
   const sendableBalance = useMemo(() => {
@@ -126,7 +130,7 @@ export const PerpSpotTransfer = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild disabled={isUnifiedAccountModeEnabled}>
         {trigger ? (
           trigger
         ) : (

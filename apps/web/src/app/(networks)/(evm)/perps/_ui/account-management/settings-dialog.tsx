@@ -18,12 +18,14 @@ export const SettingsDialog = () => {
       quickCloseReversePositionEnabled,
       orderBookAnimationDisabled,
       quickConfirmPositionEnabled,
+      isUnifiedAccountModeEnabled,
     },
     mutate: {
       setQuickCloseMarketPositionEnabled,
       setQuickCloseReversePositionEnabled,
       setOrderBookAnimationDisabled,
       setQuickConfirmPositionEnabled,
+      setUnifiedAccountModeEnabled,
     },
   } = useUserSettingsState()
   return (
@@ -65,9 +67,14 @@ export const SettingsDialog = () => {
               onChange={setOrderBookAnimationDisabled}
               label="Disable Order Book Animation"
             />
-            {/* todo: show buys/sells on chart */}
-            {/* todo: disable unified account mode */}
             {/* todo: hide pnl? */}
+            {/* todo: show buys/sells on chart */}
+            <div className="bg-accent w-full h-[1px]" />
+            <CheckboxSetting
+              value={!isUnifiedAccountModeEnabled}
+              onChange={setUnifiedAccountModeEnabled}
+              label="Disable Unified Account Mode"
+            />
           </div>
         </div>
       </DialogContent>

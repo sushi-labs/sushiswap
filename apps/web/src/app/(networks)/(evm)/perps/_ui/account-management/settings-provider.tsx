@@ -1,6 +1,9 @@
 'use client'
 import { useLocalStorage } from '@sushiswap/hooks'
-import { type FC, createContext, useContext, useMemo } from 'react'
+import { type FC, createContext, useCallback, useContext, useMemo } from 'react'
+import { useSetUserAbstraction } from 'src/lib/perps/exchange/use-set-user-abstraction'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
+import { useUserState } from '~evm/perps/user-provider'
 interface State {
   state: {
     quickCloseReversePositionEnabled: boolean
@@ -8,6 +11,7 @@ interface State {
     orderBookAnimationDisabled: boolean
     marketOrderSlippage: number
     quickConfirmPositionEnabled: boolean
+    isUnifiedAccountModeEnabled: boolean
   }
   mutate: {
     setQuickCloseReversePositionEnabled: (enabled: boolean) => void
@@ -15,6 +19,7 @@ interface State {
     setOrderBookAnimationDisabled: (disabled: boolean) => void
     setMarketOrderSlippage: (slippage: number) => void
     setQuickConfirmPositionEnabled: (enabled: boolean) => void
+    setUnifiedAccountModeEnabled: (enabled: boolean) => void
   }
 }
 
@@ -29,6 +34,12 @@ interface UserSettingsProviderProps {
 const BASE_STORAGE_KEY = 'sushi.perps.user-settings'
 
 const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
+  const address = useAccount('evm')
+  const {
+    state: {
+      webData3Query: { data: webData3 },
+    },
+  } = useUserState()
   const [
     quickCloseReversePositionEnabled,
     setQuickCloseReversePositionEnabled,
@@ -55,6 +66,22 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
     `${BASE_STORAGE_KEY}.market.order.slippage`,
     800, //800 = 8% slippage by default
   )
+  const { setUserAbstraction } = useSetUserAbstraction()
+
+  const setUnifiedAccountModeEnabled = useCallback(
+    (enabled: boolean) => {
+      if (!address) return
+      setUserAbstraction({
+        abstraction: !enabled ? 'unifiedAccount' : 'disabled',
+        address,
+      })
+    },
+    [setUserAbstraction, address],
+  )
+
+  const isUnifiedAccountModeEnabled = useMemo(() => {
+    return webData3?.userState?.abstraction === 'unifiedAccount'
+  }, [webData3?.userState?.abstraction])
 
   return (
     <UserSettingsContext.Provider
@@ -66,6 +93,7 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             orderBookAnimationDisabled,
             marketOrderSlippage,
             quickConfirmPositionEnabled,
+            isUnifiedAccountModeEnabled,
           },
           mutate: {
             setQuickCloseReversePositionEnabled,
@@ -73,6 +101,7 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             setOrderBookAnimationDisabled,
             setMarketOrderSlippage,
             setQuickConfirmPositionEnabled,
+            setUnifiedAccountModeEnabled,
           },
         }
       }, [
@@ -86,6 +115,8 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
         setMarketOrderSlippage,
         quickConfirmPositionEnabled,
         setQuickConfirmPositionEnabled,
+        isUnifiedAccountModeEnabled,
+        setUnifiedAccountModeEnabled,
       ])}
     >
       {children}

@@ -260,8 +260,8 @@ importers:
         specifier: 15.1.1
         version: 15.1.1(bufferutil@4.0.8)(utf-8-validate@6.0.3)
       '@nktkas/hyperliquid':
-        specifier: 0.30.2
-        version: 0.30.2(typescript@5.8.3)
+        specifier: 0.32.1
+        version: 0.32.1(typescript@5.8.3)
       '@octokit/auth-app':
         specifier: 4.0.7
         version: 4.0.7(encoding@0.1.13)
@@ -3768,13 +3768,12 @@ packages:
   '@nicolo-ribaudo/eslint-scope-5-internals@5.1.1-v1':
     resolution: {integrity: sha512-54/JRvkLIzzDWshCWfuhadfrfZVPiElY8Fcgmg1HroEly/EDSszzhBAsarCux+D/kOslTRquNzuyGSmUSTTHGg==}
 
-  '@nktkas/hyperliquid@0.30.2':
-    resolution: {integrity: sha512-xz1/oGRunLxY1z1FOsCsXUFOWx8ADL3vL87pQkpl68gIxHT6Duf5z18uxFQWxlPPyB5PHYmpudlziJ6xVPB4Vw==}
+  '@nktkas/hyperliquid@0.32.1':
+    resolution: {integrity: sha512-yikHMax+MGEkC4Wam6FFgMweox9FCVzSjc4i3tnnbabzmV02BRACoPFoA6HXstZJWEcs02wVsXvcuW112x2X0A==}
     engines: {node: '>=20.19.0'}
-    hasBin: true
 
-  '@nktkas/rews@1.2.3':
-    resolution: {integrity: sha512-cpfcIlkUpYlbAI1cvfCTBCajWZfUM6gWyuCJXszECKxdetsU3vURKC8Sz//MDR6RWoULk9T48eJ+0agxT7yB1w==}
+  '@nktkas/rews@2.0.2':
+    resolution: {integrity: sha512-Erc8E7Q/tr9kCcdOvtJxz3TjpowMZMfUx9cbBuWqtty126p84HlySmoXTfzhtpJy3Poov3e+a1FRe9Pwa7+Gcw==}
     engines: {node: '>=20.19.0'}
 
   '@noble/ciphers@1.3.0':
@@ -5420,9 +5419,6 @@ packages:
 
   '@scure/base@1.2.6':
     resolution: {integrity: sha512-g/nm5FgUa//MCj1gV09zTJTaM6KBAHqLN907YVQqf7zC49+DcO4B1so4ZX07Ef10Twr6nuqYEH9GEggFXA4Fmg==}
-
-  '@scure/base@2.0.0':
-    resolution: {integrity: sha512-3E1kpuZginKkek01ovG8krQ0Z44E3DHPjc5S2rjJw9lZn3KSQOs8S7wqikF/AH7iRanHypj85uGyxk0XAyC37w==}
 
   '@scure/bip32@1.3.1':
     resolution: {integrity: sha512-osvveYtyzdEVbt3OfwwXFr4P2iVBL5u1Q3q4ONBfDY/UpOuXmOlbgwc1xECEboY8wIays8Yt6onaWMUdUbfl0A==}
@@ -11820,16 +11816,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  micro-eth-signer@0.18.1:
-    resolution: {integrity: sha512-vXKhCZxrytpl+dXR9JeaE41ZVFndi7wCKc1Jd22smOMAeDErvRcXaTxhYUf1yQxis4n2kIdv/pH7iuf+5/cj+Q==}
-    engines: {node: '>= 20.19.0'}
-
   micro-ftch@0.3.1:
     resolution: {integrity: sha512-/0LLxhzP0tfiR5hcQebtudP56gUurs2CLkGarnCiB/OqEyUFQ6U3paQi/tgLv0hBJYt2rnr9MNpxz4fiiugstg==}
-
-  micro-packed@0.8.0:
-    resolution: {integrity: sha512-AKb8znIvg9sooythbXzyFeChEY0SkW0C6iXECpy/ls0e5BtwXO45J9wD9SLzBztnS4XmF/5kwZknsq+jyynd/A==}
-    engines: {node: '>= 20.19.0'}
 
   micromark-core-commonmark@2.0.2:
     resolution: {integrity: sha512-FKjQKbxd1cibWMM1P9N+H8TwlgGgSkWZMmfuVucLCHaYqeSvJ0hFeHsIa65pA2nYbes0f8LDHPMrd9X7Ujxg9w==}
@@ -18512,16 +18500,15 @@ snapshots:
     dependencies:
       eslint-scope: 5.1.1
 
-  '@nktkas/hyperliquid@0.30.2(typescript@5.8.3)':
+  '@nktkas/hyperliquid@0.32.1(typescript@5.8.3)':
     dependencies:
-      '@nktkas/rews': 1.2.3
+      '@nktkas/rews': 2.0.2
       '@noble/hashes': 2.0.1
-      micro-eth-signer: 0.18.1
       valibot: 1.2.0(typescript@5.8.3)
     transitivePeerDependencies:
       - typescript
 
-  '@nktkas/rews@1.2.3': {}
+  '@nktkas/rews@2.0.2': {}
 
   '@noble/ciphers@1.3.0': {}
 
@@ -20646,8 +20633,6 @@ snapshots:
   '@scure/base@1.2.1': {}
 
   '@scure/base@1.2.6': {}
-
-  '@scure/base@2.0.0': {}
 
   '@scure/bip32@1.3.1':
     dependencies:
@@ -26405,7 +26390,7 @@ snapshots:
       '@ecies/ciphers': 0.2.2(@noble/ciphers@1.3.0)
       '@noble/ciphers': 1.3.0
       '@noble/curves': 1.7.0
-      '@noble/hashes': 1.7.0
+      '@noble/hashes': 1.8.0
 
   ed2curve@0.3.0:
     dependencies:
@@ -29531,17 +29516,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  micro-eth-signer@0.18.1:
-    dependencies:
-      '@noble/curves': 2.0.1
-      '@noble/hashes': 2.0.1
-      micro-packed: 0.8.0
-
   micro-ftch@0.3.1: {}
-
-  micro-packed@0.8.0:
-    dependencies:
-      '@scure/base': 2.0.0
 
   micromark-core-commonmark@2.0.2:
     dependencies:

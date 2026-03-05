@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useUserSettingsState } from '~evm/perps/_ui/account-management/settings-provider'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
 import { useUserState } from '~evm/perps/user-provider'
 import { useAccount } from '../wallet'
@@ -34,6 +35,9 @@ export const useBalances = () => {
       },
     },
   } = useAssetListState()
+  const {
+    state: { isUnifiedAccountModeEnabled },
+  } = useUserSettingsState()
 
   const isLoading =
     isLoadingAllDexClearinghouse ||
@@ -102,8 +106,38 @@ export const useBalances = () => {
           dex: '',
         }
       }) ?? []
-    return [...perpsUsdcs, ...spotBalances]
-  }, [data, assetList, spotData, webData2Data])
+
+    const allBalances = [...perpsUsdcs, ...spotBalances]
+    if (!isUnifiedAccountModeEnabled) {
+      return allBalances
+    }
+    const nonUsdcBalances =
+      allBalances?.filter(
+        (b) => b.coin !== 'USDC (Perps)' && b.coin !== 'USDC (Spot)',
+      ) ?? []
+    const usdcBalances =
+      allBalances?.filter(
+        (b) => b.coin === 'USDC (Perps)' || b.coin === 'USDC (Spot)',
+      ) ?? []
+    const usdc = {
+      coin: 'USDC',
+      assetName: 'PURR/USDC',
+      totalBalance: usdcBalances
+        .reduce((acc, b) => acc + Number(b.totalBalance), 0)
+        .toString(),
+      availableBalance: usdcBalances
+        .reduce((acc, b) => acc + Number(b.availableBalance), 0)
+        .toString(),
+      usdcValue: usdcBalances
+        .reduce((acc, b) => acc + Number(b.usdcValue), 0)
+        .toString(),
+      pnlRoePc: null,
+      token: null,
+      marketType: 'unified' as const,
+      dex: '',
+    }
+    return [usdc, ...nonUsdcBalances]
+  }, [data, assetList, spotData, webData2Data, isUnifiedAccountModeEnabled])
 
   return useMemo(() => {
     if (!address) {
