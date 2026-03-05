@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import type { Currency } from 'sushi'
 import { StellarChainId } from 'sushi/stellar'
+import { CONTRACT_ADDRESSES } from '~stellar/_common/lib/soroban/contracts/mainnet/contract-addresses'
 import type { Token as StellarToken } from '~stellar/_common/lib/types/token.type'
 import { isNearIntentsChainId } from '../config'
 import { useNearIntentsTokens } from './use-near-intents-tokens'
@@ -29,13 +30,17 @@ export const useNearAssetId = (
       return undefined
     }
 
-    return chainTokens[
+    const tokenId =
       'chainId' in currency
         ? currency.isNative
           ? 'NATIVE'
-          : currency.address.toLowerCase()
-        : currency.contract.toLowerCase()
-    ]?.assetId
+          : currency.address
+        : currency.contract.toLowerCase() ===
+            CONTRACT_ADDRESSES.TOKENS.XLM.toLowerCase()
+          ? 'NATIVE'
+          : currency.contract.toLowerCase()
+
+    return chainTokens[tokenId]?.assetId
   }, [query.data, currency])
 
   return {
