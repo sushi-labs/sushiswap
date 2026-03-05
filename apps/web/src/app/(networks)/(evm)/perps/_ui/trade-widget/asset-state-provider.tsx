@@ -104,12 +104,12 @@ export type TradeType = (typeof TRADE_TYPES)[number]
 export type TradeSideType = 'long' | 'short'
 
 const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
-  const [activeAsset, setActiveAsset] = useLocalStorage<string>(
+  const [_activeAsset, setActiveAsset] = useLocalStorage<string>(
     'sushi.perps.active-asset',
     'BTC',
   )
-  const [tradeType, _setTradeType] = useState<TradeType>('market')
-  const [tradeSide, _setTradeSide] = useState<TradeSideType>('long')
+  const [tradeType, setTradeType] = useState<TradeType>('market')
+  const [tradeSide, setTradeSide] = useState<TradeSideType>('long')
   const [reduceOnly, _setReduceOnly] = useState(false)
   const [size, setSize] = useState({ base: '', quote: '' })
   const [sizeSide, setSizeSide] = useState<'base' | 'quote'>('base')
@@ -139,6 +139,13 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
       assetListQuery: { data: assetList },
     },
   } = useAssetListState()
+
+  const activeAsset = useMemo(() => {
+    //validates active asset from local storage against asset list, default to BTC if not valid
+    if (!assetList) return _activeAsset
+    return assetList.has(_activeAsset) ? _activeAsset : 'BTC'
+  }, [_activeAsset, assetList])
+
   const activeAssetDataQuery = useActiveAssetData({
     address,
     assetString: activeAsset,
@@ -293,14 +300,6 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     setSize({ base: '', quote: '' })
   }, [asset?.marketType])
 
-  const setTradeType = useCallback((tradeType: TradeType) => {
-    _setTradeType(tradeType)
-  }, [])
-
-  const setTradeSide = useCallback((tradeSide: TradeSideType) => {
-    _setTradeSide(tradeSide)
-  }, [])
-
   return (
     <AssetStateContext.Provider
       value={useMemo(() => {
@@ -361,8 +360,6 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
       }, [
         activeAsset,
         setActiveAsset,
-        setTradeSide,
-        setTradeType,
         tradeType,
         tradeSide,
         reduceOnly,

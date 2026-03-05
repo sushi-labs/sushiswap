@@ -12,6 +12,17 @@ import {
 import { formatPercent } from 'sushi'
 import { FavoriteButton } from './favorite-button'
 
+const columnBodyMeta = {
+  className: '!p-0 !px-1 !h-[40px] !max-h-[40px] !text-xs',
+  skeleton: (
+    <>
+      <div className="w-[80px]">
+        <SkeletonText fontSize="lg" />
+      </div>
+    </>
+  ),
+}
+
 export const SYMBOL_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
   id: 'symbol',
   header: 'Symbol',
@@ -38,11 +49,8 @@ export const SYMBOL_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
   },
   meta: {
     body: {
-      skeleton: (
-        <div className="w-full max-w-[70px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
+      className: classNames(columnBodyMeta.className, '!pl-0'),
+      skeleton: columnBodyMeta.skeleton,
     },
   },
 }
@@ -63,13 +71,7 @@ export const LAST_PRICE_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
     )
   },
   meta: {
-    body: {
-      skeleton: (
-        <div className="w-full max-w-[70px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 export const DAY_CHANGE_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
@@ -97,13 +99,7 @@ export const DAY_CHANGE_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
     )
   },
   meta: {
-    body: {
-      skeleton: (
-        <div className="w-full max-w-[70px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -127,13 +123,7 @@ export const EIGHT_HOUR_FUNDING_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
     )
   },
   meta: {
-    body: {
-      skeleton: (
-        <div className="w-full max-w-[70px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 
@@ -152,13 +142,7 @@ export const VOLUME_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
     </div>
   ),
   meta: {
-    body: {
-      skeleton: (
-        <div className="w-full max-w-[70px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 export const OPEN_INTEREST_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
@@ -172,7 +156,7 @@ export const OPEN_INTEREST_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
     const openInterestUsd = props.row.original.openInterestUsd
 
     if (!openInterestUsd) {
-      return <div className="tabular-nums">--</div>
+      return <div className="tabular-nums mx-4">--</div>
     }
     return (
       <div className="tabular-nums">
@@ -181,13 +165,7 @@ export const OPEN_INTEREST_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
     )
   },
   meta: {
-    body: {
-      skeleton: (
-        <div className="w-full max-w-[70px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
 export const MARKET_CAP_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
@@ -201,7 +179,7 @@ export const MARKET_CAP_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
     const marketCap = props.row.original.marketCap
     const token = props.row.original.tokens?.[1]
     if (!marketCap) {
-      return <div className="tabular-nums">--</div>
+      return <div className="tabular-nums mx-4">--</div>
     }
     return (
       <div className="tabular-nums whitespace-nowrap">
@@ -211,12 +189,6 @@ export const MARKET_CAP_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
     )
   },
   meta: {
-    body: {
-      skeleton: (
-        <div className="w-full max-w-[70px]">
-          <SkeletonText fontSize="lg" />
-        </div>
-      ),
-    },
+    body: columnBodyMeta,
   },
 }
