@@ -6,7 +6,7 @@ import {
   TextField,
   classNames,
 } from '@sushiswap/ui'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState, useTransition } from 'react'
 import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
 import { useTokenBalance } from '~stellar/_common/lib/hooks/token/use-token-balance'
 import type { Token } from '~stellar/_common/lib/types/token.type'
@@ -54,6 +54,8 @@ export function CurrencyInput({
 }: CurrencyInput) {
   const { connectedAddress } = useStellarWallet()
   const [insufficientBalance, setInsufficientBalance] = useState<boolean>(false)
+  const [localValue, setLocalValue] = useState<string>('')
+  const [pending, startTransition] = useTransition()
 
   const { data: balance, isLoading: isBalanceLoading } = useTokenBalance(
     connectedAddress,
@@ -62,9 +64,12 @@ export function CurrencyInput({
 
   const onUserInput = useCallback(
     (amount: string) => {
-      if (onChange) {
-        onChange(amount)
-      }
+      setLocalValue(amount)
+      startTransition(() => {
+        if (onChange) {
+          onChange(amount)
+        }
+      })
     },
     [onChange],
   )
@@ -122,12 +127,8 @@ export function CurrencyInput({
             type="number"
             variant="naked"
             disabled={disabled}
-            onValueChange={(value) => {
-              if (onUserInput) {
-                onUserInput(value)
-              }
-            }}
-            value={value}
+            onValueChange={onUserInput}
+            value={pending ? localValue : value}
             readOnly={disabled}
             className={classNames('p-0 py-1 !text-3xl font-medium')}
           />
