@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import type { Currency, Percent } from 'sushi'
+import { ChainId, type Currency, type Percent } from 'sushi'
 import type { Token as StellarToken } from '~stellar/_common/lib/types/token.type'
+import type { NearIntentsChainId } from '../config'
 import { getNearIntentsQuote } from '../fetchers'
 import { useNearAssetId } from './use-near-asset-id'
 
@@ -41,6 +42,9 @@ export const useNearIntentsQuote = (params: UseNearIntentsQuoteParams) => {
         throw new Error('Missing near asset IDs')
       }
       return getNearIntentsQuote({
+        chainId0: ('chainId' in params.inputCurrency
+          ? params.inputCurrency.chainId
+          : ChainId.STELLAR) as NearIntentsChainId,
         amount: params.amount,
         inputCurrencyNearId,
         outputCurrencyNearId,

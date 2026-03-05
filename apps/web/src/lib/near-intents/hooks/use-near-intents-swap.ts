@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import type { Currency, Percent } from 'sushi'
+import { ChainId, type Currency, type Percent } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
 import type { StellarAddress } from 'sushi/stellar'
 import type { Token as StellarToken } from '~stellar/_common/lib/types/token.type'
+import type { NearIntentsChainId } from '../config'
 import { getNearIntentsSwap } from '../fetchers'
 import { useNearAssetId } from './use-near-asset-id'
 
@@ -49,6 +50,9 @@ export const useNearIntentsSwap = (params: UseNearIntentsSwapParams) => {
         throw new Error('Unsupported assets')
 
       return getNearIntentsSwap({
+        chainId0: ('chainId' in params.inputCurrency
+          ? params.inputCurrency.chainId
+          : ChainId.STELLAR) as NearIntentsChainId,
         amount: params.amount,
         inputCurrencyNearId,
         outputCurrencyNearId,

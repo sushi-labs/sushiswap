@@ -6,7 +6,7 @@ export const useNearIntentsTokens = (enabled = true) => {
   return useQuery({
     queryKey: ['near-intents-tokens'],
     queryFn: async () => {
-      return getNearIntentsTokens()
+      return await getNearIntentsTokens()
     },
     refetchOnWindowFocus: false,
     staleTime: ms('15m'),

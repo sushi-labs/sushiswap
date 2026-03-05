@@ -1,9 +1,11 @@
-import type { Percent } from 'sushi'
+import { ChainId, type Percent } from 'sushi'
 import { zeroAddress } from 'viem'
-import { NEAR_INTENTS_API_URL } from '../config'
+import { ZERO_ADDRESS } from '~stellar/_common/lib/soroban'
+import { NEAR_INTENTS_API_URL, type NearIntentsChainId } from '../config'
 import { nearIntentsQuoteSchema } from './schema'
 
 export interface GetNearIntentsQuoteParams {
+  chainId0: NearIntentsChainId
   amount: string
   inputCurrencyNearId: string
   outputCurrencyNearId: string
@@ -11,6 +13,7 @@ export interface GetNearIntentsQuoteParams {
 }
 
 export const getNearIntentsQuote = async ({
+  chainId0,
   inputCurrencyNearId,
   outputCurrencyNearId,
   amount,
@@ -23,18 +26,19 @@ export const getNearIntentsQuote = async ({
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      dry: 'true',
+      dry: true,
       swapType: 'EXACT_INPUT',
-      slippageTolerance: slippageTolerance.toString(), // TODO: PRECISION
+      slippageTolerance: slippageTolerance.toNumber() * 10_000,
       originAsset: inputCurrencyNearId,
       depositType: 'ORIGIN_CHAIN',
       destinationAsset: outputCurrencyNearId,
       amount: amount,
-      refundTo: zeroAddress,
+      refundTo: chainId0 === ChainId.STELLAR ? ZERO_ADDRESS : zeroAddress,
       refundType: 'ORIGIN_CHAIN',
-      recipient: zeroAddress,
+      recipient: chainId0 === ChainId.STELLAR ? zeroAddress : ZERO_ADDRESS,
       recipientType: 'DESTINATION_CHAIN',
-      deadline: '2019-08-24T14:15:22Z', // TODO: 10mins?
+      deadline: new Date(Date.now() + 600000).toISOString(), // 10mins
+      depositMode: chainId0 === ChainId.STELLAR ? 'MEMO' : 'SIMPLE',
       referral: 'sushi',
       //   appFees: [{ recipient: 'recipient.near', fee: 100 }], // TODO
     }),

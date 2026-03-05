@@ -1,10 +1,11 @@
-import type { Percent } from 'sushi'
+import { ChainId, type Percent } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
 import type { StellarAddress } from 'sushi/stellar'
-import { NEAR_INTENTS_API_URL } from '../config'
+import { NEAR_INTENTS_API_URL, type NearIntentsChainId } from '../config'
 import { nearIntentsSwapSchema } from './schema'
 
 export interface GetNearIntentsSwapParams {
+  chainId0: NearIntentsChainId
   amount: string
   inputCurrencyNearId: string
   outputCurrencyNearId: string
@@ -14,6 +15,7 @@ export interface GetNearIntentsSwapParams {
 }
 
 export const getNearIntentsSwap = async ({
+  chainId0,
   amount,
   inputCurrencyNearId,
   outputCurrencyNearId,
@@ -30,7 +32,7 @@ export const getNearIntentsSwap = async ({
     body: JSON.stringify({
       dry: false,
       swapType: 'EXACT_INPUT',
-      slippageTolerance: slippageTolerance.toString(), // TODO: PRECISION
+      slippageTolerance: slippageTolerance.toNumber() * 10_000,
       originAsset: inputCurrencyNearId,
       depositType: 'ORIGIN_CHAIN',
       destinationAsset: outputCurrencyNearId,
@@ -39,8 +41,9 @@ export const getNearIntentsSwap = async ({
       refundType: 'ORIGIN_CHAIN',
       recipient: recipient,
       recipientType: 'DESTINATION_CHAIN',
-      deadline: '2019-08-24T14:15:22Z', // TODO: 10mins?
+      deadline: new Date(Date.now() + 600000).toISOString(), // 10mins
       referral: 'sushi',
+      depositMode: chainId0 === ChainId.STELLAR ? 'MEMO' : 'SIMPLE',
       //   appFees: [{ recipient: 'recipient.near', fee: 100 }], //
     }),
   })
