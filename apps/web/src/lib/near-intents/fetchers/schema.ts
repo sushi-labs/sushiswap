@@ -32,7 +32,7 @@ export const nearIntentsTokenSchema = z.object({
   decimals: z.number(),
   blockchain: z.string(),
   symbol: z.string(),
-  price: z.string(),
+  price: z.number(),
   priceUpdatedAt: z.string(),
   contractAddress: z.optional(z.string()),
 })
