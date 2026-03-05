@@ -136,7 +136,7 @@ export async function getTokenBalance(
       !errorStr.includes('Error(Storage, MissingValue)') &&
       !errorStr.includes('trustline entry is missing')
     ) {
-      console.error('Error fetching token balance:', errorStr)
+      console.warn('Error fetching token balance:', errorStr)
     }
     return 0n
   }

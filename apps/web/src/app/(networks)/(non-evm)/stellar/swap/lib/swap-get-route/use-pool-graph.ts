@@ -239,7 +239,7 @@ function useBasePoolGraph() {
           tokenGraph,
         }
       } catch (error) {
-        console.error('Error building pool graph:', error)
+        console.warn('Error building pool graph:', error)
         return {
           vertices: new Map<string, Vertex[]>(),
           tokenGraph: new Map<string, string[]>(),

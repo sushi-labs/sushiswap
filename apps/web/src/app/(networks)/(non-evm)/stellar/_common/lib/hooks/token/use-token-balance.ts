@@ -72,7 +72,7 @@ export const useTokenBalances = (
             balance,
           })
         } catch (error) {
-          console.error(
+          console.warn(
             `Failed to get ${token.contract} token balance for ${address}`,
             error,
           )
@@ -112,7 +112,7 @@ export const useTokenBalancesMap = (
           const balance = await getTokenBalance(address, contract)
           balanceMap[contract] = balance.toString()
         } catch (error) {
-          console.error(`Error fetching balance for ${contract}:`, error)
+          console.warn(`Error fetching balance for ${contract}:`, error)
           balanceMap[contract] = '0'
         }
       }
