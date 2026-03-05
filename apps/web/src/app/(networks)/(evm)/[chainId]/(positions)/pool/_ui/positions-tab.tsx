@@ -30,6 +30,7 @@ import {
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
 import { BladeSunsetNotice } from '~evm/[chainId]/_ui/blade-sunset-notice'
+import { V2MigrationNotice } from '~evm/[chainId]/_ui/v2-migration-notice'
 import { ConcentratedPositionsTable } from '~evm/[chainId]/pool/_ui/ConcentratedPositionsTable/concentrated-positions-table'
 import { BladePositionsTable } from './blade-positions-table'
 import { PositionsTable } from './positions-table'
@@ -126,7 +127,11 @@ export const PositionsTab: FC<{
 
   return (
     <div className="flex flex-col gap-4">
-      <BladeSunsetNotice includeCtaBtn={false} />
+      {tab === 'v2' ? (
+        <V2MigrationNotice />
+      ) : (
+        <BladeSunsetNotice includeCtaBtn={false} />
+      )}
 
       <Tabs value={tab} onValueChange={setTab} defaultValue={defaultTab}>
         <div className="flex justify-between mb-4">

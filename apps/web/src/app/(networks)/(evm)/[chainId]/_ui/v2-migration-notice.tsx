@@ -28,7 +28,7 @@ export const V2MigrationNotice = ({ className }: { className?: string }) => {
             have been migrated to a V3 position. If you would like to claim the
             underlying tokens, use the initiate claim button while connected
             with the wallet that made the LP staking transaction to start the
-            claim process to receive the underlying tokens.
+            claim process and receive the underlying tokens.
           </p>
         </div>
 
@@ -102,9 +102,9 @@ const ClaimFormDialog = () => {
       return `Claim already initiated for this wallet. Status: ${snapshotCheck.claimStatus.status.toUpperCase()}`
     }
     if (snapshotCheck?.isOnAnySnapshot) {
-      return 'Your connected wallet is eligible to initiate a claim. You will be prompted to sign a message to verify your ownership of this wallet.'
+      return 'Connected wallet is eligible to initiate a claim. You will be prompted to sign a message to verify your ownership of this wallet.'
     }
-    return 'Your connected wallet was not found on our snapshot.'
+    return 'Connected wallet was not found on our snapshot.'
   }, [isLoading, isError, snapshotCheck])
 
   return (
