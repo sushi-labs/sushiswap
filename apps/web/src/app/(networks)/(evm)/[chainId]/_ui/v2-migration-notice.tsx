@@ -99,7 +99,15 @@ const ClaimFormDialog = () => {
     if (isLoading) return 'Checking snapshot eligibility...'
     if (isError) return 'Error checking snapshot eligibility.'
     if (snapshotCheck?.claimStatus.hasInitiatedClaim) {
-      return `Claim already initiated for this wallet. Status: ${snapshotCheck.claimStatus.status.toUpperCase()}`
+      if (snapshotCheck.claimStatus.status === 'pending') {
+        return `Claim has been initiated and is currently PENDING. Our support team will be processing your claim, check back for status updates.`
+      }
+      if (snapshotCheck.claimStatus.status === 'processing') {
+        return `Claim has been initiated and is currently PROCESSING. Our support team is working on your claim.`
+      }
+      if (snapshotCheck.claimStatus.status === 'completed') {
+        return `Claim has been COMPLETED for this wallet. The underlying tokens should now be in your wallet.`
+      }
     }
     if (snapshotCheck?.isOnAnySnapshot) {
       return 'Connected wallet is eligible to initiate a claim. You will be prompted to sign a message to verify your ownership of this wallet.'

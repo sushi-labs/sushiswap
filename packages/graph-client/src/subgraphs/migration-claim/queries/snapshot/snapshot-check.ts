@@ -37,7 +37,18 @@ export async function getSnapshotCheck(
     options,
   )
   if (result) {
-    return result.snapshotCheck
+    return {
+      ...result.snapshotCheck,
+      claimStatus: {
+        hasInitiatedClaim: result.snapshotCheck.claimStatus.hasInitiatedClaim,
+        status: result.snapshotCheck.claimStatus.status as
+          | 'pending'
+          | 'processing'
+          | 'completed'
+          | 'failed'
+          | null,
+      },
+    }
   }
 
   throw new Error('No snapshot check data')
