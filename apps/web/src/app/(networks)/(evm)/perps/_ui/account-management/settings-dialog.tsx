@@ -69,6 +69,11 @@ export const SettingsDialog = () => {
             />
             {/* todo: hide pnl? */}
             {/* todo: show buys/sells on chart */}
+            {/* todo: in chart trading */}
+            {/* todo: opt out of spot dust collection */}
+            {/* todo: sound effects on click? */}
+            {/* todo: sound effects on on fill */}
+            {/* todo: fill notifications */}
             <div className="bg-accent w-full h-[1px]" />
             <CheckboxSetting
               value={!isUnifiedAccountModeEnabled}

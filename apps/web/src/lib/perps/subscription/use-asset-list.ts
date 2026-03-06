@@ -58,7 +58,7 @@ const formatSpotCtxs = (
     const changePct =
       last != null && prev != null && prev !== 0 ? (last - prev) / prev : null
 
-    const marketCap = markPrice * Number.parseFloat(ctx.totalSupply)
+    const marketCap = markPrice * Number.parseFloat(ctx.circulatingSupply)
     const symbol = tokens
       .map((t) =>
         SPOT_ASSETS_TO_REWRITE.has(t.name)
