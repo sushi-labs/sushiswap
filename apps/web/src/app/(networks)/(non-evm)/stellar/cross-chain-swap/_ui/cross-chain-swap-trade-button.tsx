@@ -2,13 +2,14 @@
 
 import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/slippage'
 import { useAccount } from 'src/lib/wallet'
 import { getNamespaceForChainId } from 'src/lib/wallet/namespaces/namespace-for-chain-id'
 import { Checker as StellarChecker } from '~stellar/_common/ui/checker'
+import { CrossChainSwapTradeReviewDialog } from './cross-chain-swap-trade-review-dialog'
 import {
   useCrossChainTradeQuote,
   useDerivedStateCrossChainSwap,
@@ -42,7 +43,7 @@ export function CrossChainSwapTradeButton() {
   const hasQuote = quote?.quote?.amountOut && BigInt(quote.quote.amountOut) > 0n
 
   return (
-    <>
+    <CrossChainSwapTradeReviewDialog>
       <div className="mt-4">
         <Checker.Connect fullWidth namespace={getNamespaceForChainId(chainId0)}>
           <Checker.Connect
@@ -55,28 +56,28 @@ export function CrossChainSwapTradeButton() {
                 text="Swap With High Slippage"
                 slippageTolerance={slippageTolerance}
               >
-                {/* <DialogTrigger asChild> */}
-                <Button
-                  disabled={Boolean(
-                    !hasQuote ||
-                      isError ||
-                      +swapAmountString === 0 ||
-                      !destAccount,
-                  )}
-                  color="blue"
-                  fullWidth
-                  size="xl"
-                  testId="swap"
-                >
-                  {isError ? 'No trade found' : 'Swap'}
-                </Button>
-                {/* </DialogTrigger> */}
+                <DialogTrigger asChild>
+                  <Button
+                    disabled={Boolean(
+                      !hasQuote ||
+                        isError ||
+                        +swapAmountString === 0 ||
+                        !destAccount,
+                    )}
+                    color="blue"
+                    fullWidth
+                    size="xl"
+                    testId="swap"
+                  >
+                    {isError ? 'No trade found' : 'Swap'}
+                  </Button>
+                </DialogTrigger>
               </Checker.Slippage>
             </StellarChecker.Amounts>
           </Checker.Connect>
         </Checker.Connect>
       </div>
       {showSlippageWarning && <SlippageWarning className="mt-4" />}
-    </>
+    </CrossChainSwapTradeReviewDialog>
   )
 }
