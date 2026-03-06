@@ -18,7 +18,7 @@ robots.txt
 analyze/
 
 # trading view advanced charts
-apps/web/public/trading_view/
+apps/web/public/trading-view/
 
 # misc
 .DS_Store

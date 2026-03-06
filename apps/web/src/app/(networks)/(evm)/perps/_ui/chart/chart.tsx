@@ -9,8 +9,8 @@ import type {
   IChartingLibraryWidget,
   LanguageCode,
   ResolutionString,
-} from 'public/trading_view/charting_library/charting_library'
-import { widget } from 'public/trading_view/charting_library/charting_library.esm.js'
+} from 'public/trading-view/charting_library/charting_library'
+import { widget } from 'public/trading-view/charting_library/charting_library.esm.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useAssetName } from 'src/lib/perps/use-asset-name'
 import { useAccount } from 'src/lib/wallet'
@@ -21,7 +21,7 @@ import { registerNoDataSetter } from './datafeed'
 
 const widgetProps = {
   interval: '1D' as ResolutionString,
-  library_path: '/trading_view/charting_library/',
+  library_path: '/trading-view/charting_library/',
   locale: 'en',
   charts_storage_url: 'https://saveload.tradingview.com',
   charts_storage_api_version: '1.1' as AvailableSaveloadVersions,
@@ -106,7 +106,7 @@ export const Chart = () => {
       user_id: address ?? 'public_user_id',
       fullscreen: widgetProps.fullscreen,
       autosize: widgetProps.autosize,
-      custom_css_url: '/trading_view/chart.css',
+      custom_css_url: '/trading-view-chart.css',
       theme: resolvedTheme === 'dark' ? 'dark' : 'light',
       overrides: {
         'paneProperties.background':
@@ -462,7 +462,7 @@ export const Chart = () => {
 
   return (
     <Card className="flex flex-col lg:h-[600px] flex-grow p-0 border-0 lg:border lg:p-2">
-      <script src="public/trading_view/charting_library/bundles" />
+      <script src="public/trading-view/charting_library/bundles" />
 
       <div className="flex-grow ">
         <div

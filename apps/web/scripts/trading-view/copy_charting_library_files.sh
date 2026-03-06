@@ -34,15 +34,15 @@ TMP_DIR="$(mktemp -d)"
 git clone -q --depth 1 -b "$BRANCH" "$AUTH_URL" "$TMP_DIR"
 
 # Ensure public/static exists
-create_if_directory_does_not_exists "public/trading_view"
+create_if_directory_does_not_exists "public/trading-view"
 
 # Replace existing asset dirs
-remove_if_directory_exists "public/trading_view/charting_library"
-remove_if_directory_exists "public/trading_view/datafeeds"
+remove_if_directory_exists "public/trading-view/charting_library"
+remove_if_directory_exists "public/trading-view/datafeeds"
 
 # Copy what we need
 if [ -d "${TMP_DIR}/charting_library" ]; then
-  cp -R "${TMP_DIR}/charting_library" "public/trading_view/"
+  cp -R "${TMP_DIR}/charting_library" "public/trading-view/"
 else
   echo "Expected folder 'charting_library' not found in repo" >&2
   rm -rf "$TMP_DIR"
@@ -50,7 +50,7 @@ else
 fi
 
 if [ -d "${TMP_DIR}/datafeeds" ]; then
-  cp -R "${TMP_DIR}/datafeeds" "public/trading_view/"
+  cp -R "${TMP_DIR}/datafeeds" "public/trading-view/"
 fi
 
 # Cleanup
@@ -61,4 +61,4 @@ if [ "${TRADING_VIEW_GH_READ_TOKEN:-}" != "" ]; then
   unset TRADING_VIEW_GH_READ_TOKEN
 fi
 
-echo "TradingView Charting Library assets copied to public/trading_view."
+echo "TradingView Charting Library assets copied to public/trading-view."

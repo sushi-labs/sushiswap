@@ -12,7 +12,7 @@ import type {
   ResolutionString,
   SearchSymbolResultItem,
   TimeFrameItem,
-} from 'public/trading_view/charting_library/charting_library'
+} from 'public/trading-view/charting_library/charting_library'
 import { hlWebSocketTransport } from 'src/lib/perps/transports'
 
 // const lastBarsCache = new Map<string, Bar>();
