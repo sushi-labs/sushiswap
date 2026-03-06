@@ -1,4 +1,5 @@
-import { sendAsset, withdraw3 } from '@nktkas/hyperliquid/api/exchange'
+import { ArrowsUpDownIcon } from '@heroicons/react/24/outline'
+import { sendAsset } from '@nktkas/hyperliquid/api/exchange'
 import { formatSize } from '@nktkas/hyperliquid/utils'
 import {
   createErrorToast,
@@ -14,7 +15,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@sushiswap/ui'
-import { ArrowsLeftRightIcon } from '@sushiswap/ui/icons/ArrowsLeftRight'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { TOAST_AUTOCLOSE_TIME } from 'src/lib/perps/config'
 import { hlHttpTransport } from 'src/lib/perps/transports'
@@ -136,7 +136,7 @@ export const PerpSpotTransfer = ({
         ) : (
           <Button className="w-full" variant="secondary" size="sm">
             Perps
-            <ArrowsLeftRightIcon className="w-2 h-2" /> Spot
+            <ArrowsUpDownIcon className="w-3 h-3 rotate-90" /> Spot
           </Button>
         )}
       </DialogTrigger>
@@ -157,7 +157,7 @@ export const PerpSpotTransfer = ({
               {dst === 'spot'
                 ? `Perps ${dexName ? `(${dexName})` : ''}`
                 : 'Spot'}{' '}
-              <ArrowsLeftRightIcon className="w-2 h-2 min-w-2 min-h-2" />{' '}
+              <ArrowsUpDownIcon className="w-3 h-3 rotate-90" />{' '}
               {dst === 'spot'
                 ? 'Spot'
                 : `Perps ${dexName ? `(${dexName})` : ''}`}
