@@ -8,7 +8,7 @@ export const ConfigureAmount = ({
   disabled,
   step,
   coinSymbol,
-  maxDecimals
+  maxDecimals,
 }: {
   value: number
   onChange: (value: number) => void
@@ -25,13 +25,13 @@ export const ConfigureAmount = ({
   const _onChange = useCallback(
     (value: string) => {
       const _val = value
-      const max = maxValue 
+      const max = maxValue
       if (Number(_val) > max) {
         setLocalValue(max.toString())
         startTransition(() => {
           onChange(max)
         })
-      }  else {
+      } else {
         setLocalValue(_val)
         startTransition(() => {
           onChange(Number(_val))
