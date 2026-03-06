@@ -20,7 +20,7 @@ export const TIME_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
     const timestamp = props.row.original.timestamp
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:lg:whitespace-nowrap">
         {format(timestamp, 'M/d/yyyy - HH:mm:ss')}
       </span>
     )
@@ -53,7 +53,7 @@ export const COIN_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
         }}
         type="button"
         className={classNames(
-          'font-bold whitespace-nowrap transition-colors',
+          'font-bold lg:whitespace-nowrap transition-colors',
           getTextColorClassForHover(side === 'short' ? -1 : 1),
         )}
       >
@@ -84,7 +84,7 @@ export const SIZE_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
     const symbol = props.row.original.assetSymbol
     const assetName = symbol?.includes(':') ? symbol?.split(':')?.[1] : symbol
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {size} {assetName}
       </span>
     )
@@ -109,7 +109,7 @@ export const SIDE_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
     return (
       <span
         className={classNames(
-          'font-medium whitespace-nowrap capitalize',
+          'font-medium lg:whitespace-nowrap capitalize',
           getTextColorClass(side === 'short' ? -1 : 1),
         )}
       >
@@ -134,7 +134,7 @@ export const PAYMENT_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
     return (
       <span
         className={classNames(
-          'font-medium whitespace-nowrap capitalize',
+          'font-medium lg:whitespace-nowrap capitalize',
           getTextColorClass(payment),
         )}
       >
@@ -156,7 +156,9 @@ export const RATE_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
     const rate = Number.parseFloat(props.row.original.rate)
 
     return (
-      <span className={classNames('font-medium whitespace-nowrap capitalize')}>
+      <span
+        className={classNames('font-medium lg:whitespace-nowrap capitalize')}
+      >
         {(rate * 100).toFixed(4)}%
       </span>
     )

@@ -1,10 +1,11 @@
-import { DataTable } from '@sushiswap/ui'
+import { DataTable, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import {
   type UserOpenOrdersItemType,
   useUserOpenOrders,
 } from 'src/lib/perps/use-user-open-orders'
+import { MobileTable } from '../_common/mobile-table'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {
   CANCEL_COLUMN,
@@ -36,9 +37,24 @@ const COLUMNS = [
   CANCEL_COLUMN,
 ] as ColumnDef<UserOpenOrdersItemType, unknown>[]
 
+const MOBILE_COLUMNS = [
+  COIN_COLUMN,
+  TYPE_COLUMN,
+  SIZE_COLUMN,
+  TIME_COLUMN,
+  DIRECTION_COLUMN,
+  OG_SIZE_COLUMN,
+  VALUE_COLUMN,
+  PRICE_COLUMN,
+  REDUCE_COLUMN,
+  TRIGGER_CONDITIONS_COLUMN,
+  TP_SL_COLUMN,
+  CANCEL_COLUMN,
+] as ColumnDef<UserOpenOrdersItemType, unknown>[]
+
 export const OpenOrdersTable = () => {
   const { data, isLoading, isError } = useUserOpenOrders({})
-
+  const { isLg } = useBreakpoint('lg')
   const [sorting, setSorting] = useState([{ id: 'timestamp', desc: true }])
   const {
     state: { tradeFilter },
@@ -74,13 +90,20 @@ export const OpenOrdersTable = () => {
     }
   }, [tableData, sorting])
 
-  return (
+  return isLg ? (
     <DataTable
       state={state}
       loading={isLoading}
       columns={COLUMNS}
       data={tableData}
       onSortingChange={setSorting}
+    />
+  ) : (
+    <MobileTable
+      columns={MOBILE_COLUMNS}
+      data={tableData}
+      isLoading={isLoading}
+      sorting={sorting}
     />
   )
 }

@@ -26,7 +26,7 @@ export const TIME_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     const timestamp = props.row.original.time
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:lg:whitespace-nowrap">
         {format(timestamp, 'M/d/yyyy - HH:mm:ss')}
       </span>
     )
@@ -60,7 +60,7 @@ export const COIN_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
         }}
         type="button"
         className={classNames(
-          'font-bold whitespace-nowrap transition-colors',
+          'font-bold lg:whitespace-nowrap transition-colors',
           getTextColorClassForHover(side === 'A' ? -1 : 1),
         )}
       >
@@ -94,7 +94,7 @@ export const DIRECTION_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     return (
       <span
         className={classNames(
-          'font-medium whitespace-nowrap',
+          'font-medium lg:whitespace-nowrap',
           getTextColorClass(side === 'A' ? -1 : 1),
         )}
       >
@@ -116,7 +116,7 @@ export const PRICE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
   cell: (props) => {
     const price = props.row.original.px
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {numberFormatter.format(Number.parseFloat(price))}
       </span>
     )
@@ -136,7 +136,7 @@ export const SIZE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
 
     const token0Symbol = props.row.original.token0Symbol
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {numberFormatter.format(Number.parseFloat(size))} {token0Symbol}
       </span>
     )
@@ -164,7 +164,7 @@ export const TRADE_VALUE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     const value = price * size
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {enUSFormatNumber.format(value)} USDC
       </span>
     )
@@ -187,7 +187,7 @@ export const FEE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
       return '-'
     }
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {numberFormatter.format(fee)} {feeToken}
       </span>
     )
@@ -236,7 +236,7 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
       return '-'
     }
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {enUSFormatNumber.format(totalPnl)} USDC
       </span>
     )

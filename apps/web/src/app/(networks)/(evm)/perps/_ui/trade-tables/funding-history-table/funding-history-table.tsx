@@ -1,10 +1,11 @@
-import { DataTable } from '@sushiswap/ui'
+import { DataTable, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import {
   type FundingHistoryItemType,
   useFundingHistory,
 } from 'src/lib/perps/use-funding-history'
+import { MobileTable } from '../_common/mobile-table'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {
   COIN_COLUMN,
@@ -24,7 +25,17 @@ const COLUMNS = [
   RATE_COLUMN,
 ] as ColumnDef<FundingHistoryItemType, unknown>[]
 
+const MOBILE_COLUMNS = [
+  COIN_COLUMN,
+  TIME_COLUMN,
+  SIZE_COLUMN,
+  SIDE_COLUMN,
+  PAYMENT_COLUMN,
+  RATE_COLUMN,
+] as ColumnDef<FundingHistoryItemType, unknown>[]
+
 export const FundingHistoryTable = () => {
+  const { isLg } = useBreakpoint('lg')
   const { data, isLoading, isError } = useFundingHistory()
   const [sorting, setSorting] = useState([{ id: 'timestamp', desc: true }])
   const {
@@ -63,13 +74,20 @@ export const FundingHistoryTable = () => {
     }
   }, [tableData, sorting])
 
-  return (
+  return isLg ? (
     <DataTable
       state={state}
       loading={isLoading}
       columns={COLUMNS}
       data={tableData}
       onSortingChange={setSorting}
+    />
+  ) : (
+    <MobileTable
+      columns={MOBILE_COLUMNS}
+      data={tableData}
+      isLoading={isLoading}
+      sorting={sorting}
     />
   )
 }

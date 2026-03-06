@@ -3,15 +3,11 @@ import { Chip, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { useMemo } from 'react'
-import { useCancelOpenOrders } from 'src/lib/perps/exchange/use-cancel-open-orders'
 import {
   useModifyOrder,
   usePrepModifyOrderData,
 } from 'src/lib/perps/exchange/use-modify-order'
-import {
-  type UserOpenOrdersItemType,
-  useUserOpenOrders,
-} from 'src/lib/perps/use-user-open-orders'
+import type { UserOpenOrdersItemType } from 'src/lib/perps/use-user-open-orders'
 import {
   enUSFormatNumber,
   getTextColorClass,
@@ -19,7 +15,6 @@ import {
   numberFormatter,
 } from 'src/lib/perps/utils'
 import { InlineEdit } from '../../_common/inline-edit'
-import { TableButton } from '../../_common/table-button'
 import { CancelAllOpenOrdersDialog } from '../../exchange/cancel-all-open-orders-dialog'
 import { CancelOpenOrder } from '../../exchange/cancel-open-order'
 import { useAssetState } from '../../trade-widget/asset-state-provider'
@@ -36,7 +31,7 @@ export const TIME_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
     const timestamp = props.row.original.timestamp
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:lg:whitespace-nowrap">
         {format(timestamp, 'M/d/yyyy - HH:mm:ss')}
       </span>
     )
@@ -54,7 +49,7 @@ export const TYPE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
   cell: (props) => {
     const type = props.row.original.orderType
 
-    return <span className="font-medium whitespace-nowrap">{type}</span>
+    return <span className="font-medium lg:whitespace-nowrap">{type}</span>
   },
   meta: {
     body: columnBodyMeta,
@@ -86,7 +81,7 @@ export const COIN_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
         }}
         type="button"
         className={classNames(
-          'font-bold whitespace-nowrap transition-colors',
+          'font-bold lg:whitespace-nowrap transition-colors',
           getTextColorClassForHover(side === 'A' ? -1 : 1),
         )}
       >
@@ -130,7 +125,7 @@ export const DIRECTION_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
     return (
       <span
         className={classNames(
-          'font-medium whitespace-nowrap',
+          'font-medium lg:whitespace-nowrap',
           getTextColorClass(side === 'A' ? -1 : 1),
         )}
       >
@@ -160,7 +155,7 @@ export const SIZE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
 
     if (size === '0.0') {
       return (
-        <span className="font-medium whitespace-nowrap">
+        <span className="font-medium lg:whitespace-nowrap">
           {isTrigger ? 'Close Position' : '-'}
         </span>
       )
@@ -200,7 +195,7 @@ export const OG_SIZE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
   cell: (props) => {
     const origSz = props.row.original.origSz
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {origSz === '0.0'
           ? '-'
           : numberFormatter.format(Number.parseFloat(origSz))}
@@ -232,7 +227,7 @@ export const VALUE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
     const isMarketPrice = props.row.original.orderType.includes('Market')
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {Number(value) === 0
           ? '-'
           : isMarketPrice
@@ -263,7 +258,7 @@ export const PRICE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
     const { modifyOrder, isPending } = useModifyOrder()
     const isMarketPrice = props.row.original.orderType.includes('Market')
     if (isMarketPrice) {
-      return <span className="font-medium whitespace-nowrap">Market</span>
+      return <span className="font-medium lg:whitespace-nowrap">Market</span>
     }
 
     return (
@@ -300,7 +295,9 @@ export const REDUCE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
     Number(rowA.reduceOnly) - Number(rowB.reduceOnly),
   cell: (props) => {
     const reduceOnly = props.row.original.reduceOnly ? 'Yes' : 'No'
-    return <span className="font-medium whitespace-nowrap">{reduceOnly}</span>
+    return (
+      <span className="font-medium lg:whitespace-nowrap">{reduceOnly}</span>
+    )
   },
   meta: {
     body: columnBodyMeta,
@@ -318,7 +315,9 @@ export const TRIGGER_CONDITIONS_COLUMN: ColumnDef<
   cell: (props) => {
     const triggerCondition = props.row.original.triggerCondition
     return (
-      <span className="font-medium whitespace-nowrap">{triggerCondition}</span>
+      <span className="font-medium lg:whitespace-nowrap">
+        {triggerCondition}
+      </span>
     )
   },
   meta: {
@@ -340,7 +339,7 @@ export const TP_SL_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
     ]
 
     if (!hasTpSl) {
-      return <span className="font-medium whitespace-nowrap">-</span>
+      return <span className="font-medium lg:whitespace-nowrap">-</span>
     }
 
     return (
@@ -358,7 +357,14 @@ export const TP_SL_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
 export const CANCEL_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
   id: 'cancel',
   header: () => {
-    return <CancelAllOpenOrdersDialog />
+    return (
+      <div>
+        <div className="block lg:hidden">Cancel Order</div>
+        <div className="hidden lg:block">
+          <CancelAllOpenOrdersDialog />
+        </div>
+      </div>
+    )
   },
   cell: (props) => {
     return (

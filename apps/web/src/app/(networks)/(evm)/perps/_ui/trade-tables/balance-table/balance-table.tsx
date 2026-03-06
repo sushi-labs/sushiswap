@@ -1,7 +1,8 @@
-import { DataTable } from '@sushiswap/ui'
+import { DataTable, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import { type BalanceItemType, useBalances } from 'src/lib/perps/use-balances'
+import { MobileTable } from '../_common/mobile-table'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {
   AVAILABLE_BALANCE_COLUMN,
@@ -21,7 +22,17 @@ const COLUMNS = [
   CONTRACT_COLUMN,
 ] as ColumnDef<BalanceItemType, unknown>[]
 
+const MOBILE_COLUMNS = [
+  COIN_COLUMN,
+  USDC_VALUE_COLUMN,
+  TOTAL_BALANCE_COLUMN,
+  AVAILABLE_BALANCE_COLUMN,
+  PNL_COLUMN,
+  CONTRACT_COLUMN,
+] as ColumnDef<BalanceItemType, unknown>[]
+
 export const BalanceTable = () => {
+  const { isLg } = useBreakpoint('lg')
   const { data, isLoading, isError } = useBalances()
   const [sorting, setSorting] = useState([{ id: 'usdcValue', desc: true }])
   const {
@@ -66,13 +77,20 @@ export const BalanceTable = () => {
     }
   }, [tableData, sorting])
 
-  return (
+  return isLg ? (
     <DataTable
       state={state}
       loading={isLoading}
       columns={COLUMNS}
       data={tableData}
       onSortingChange={setSorting}
+    />
+  ) : (
+    <MobileTable
+      columns={MOBILE_COLUMNS}
+      data={tableData}
+      isLoading={isLoading}
+      sorting={sorting}
     />
   )
 }

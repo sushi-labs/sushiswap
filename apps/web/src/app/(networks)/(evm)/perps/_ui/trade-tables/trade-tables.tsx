@@ -1,4 +1,4 @@
-import { Card, classNames } from '@sushiswap/ui'
+import { Card, classNames, useBreakpoint } from '@sushiswap/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { useUserActiveTwap } from 'src/lib/perps/subscription/use-user-active-twap'
@@ -14,6 +14,7 @@ import {
 } from './trade-tables-provider'
 
 export const TradeTables = ({ className }: { className?: string }) => {
+  const { isLg } = useBreakpoint('lg')
   const {
     state: { activeTab },
     mutate: { setActiveTab },
@@ -21,6 +22,12 @@ export const TradeTables = ({ className }: { className?: string }) => {
 
   const ExtraFilter = useMemo(
     () => TRADE_TABLES_TABS.find((tab) => tab.value === activeTab)?.extraFilter,
+    [activeTab],
+  )
+
+  const MobileChildren = useMemo(
+    () =>
+      TRADE_TABLES_TABS.find((tab) => tab.value === activeTab)?.mobileChildren,
     [activeTab],
   )
 
@@ -97,8 +104,15 @@ export const TradeTables = ({ className }: { className?: string }) => {
             </TabsList>
           </div>
           <div className="items-center gap-2 whitespace-nowrap flex lg:max-w-fit justify-between w-full">
-            <TradeFilter />
-            {ExtraFilter ? <ExtraFilter /> : null}
+            {!isLg && activeTab === 'twap' ? null : <TradeFilter />}
+            <div className="flex items-center justify-end gap-4 text-sm lg:text-base">
+              {MobileChildren ? (
+                <div className="flex lg:hidden">
+                  <MobileChildren />
+                </div>
+              ) : null}
+              {ExtraFilter ? <ExtraFilter /> : null}
+            </div>
           </div>
         </div>
         {TRADE_TABLES_TABS.map((tab) => (

@@ -40,7 +40,7 @@ export const COIN_COLUMN: ColumnDef<BalanceItemType, unknown> = {
       assetName
     if (!canSelect) {
       return (
-        <div className="font-medium whitespace-nowrap">
+        <div className="font-medium lg:whitespace-nowrap">
           {coin}{' '}
           {perpsDex ? (
             <Chip variant={'green'} className="!px-1 ml-1">
@@ -58,7 +58,7 @@ export const COIN_COLUMN: ColumnDef<BalanceItemType, unknown> = {
           setActiveAsset(assetName)
         }}
         type="button"
-        className="font-semibold text-blue whitespace-nowrap"
+        className="font-semibold text-blue lg:whitespace-nowrap"
       >
         {coin}
         {perpsDex ? (
@@ -85,7 +85,7 @@ export const TOTAL_BALANCE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
     const coin = props.row.original.coin?.split(' (')[0] ?? ''
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {numberFormatter.format(Number.parseFloat(totalBalance))} {coin}
       </span>
     )
@@ -112,7 +112,7 @@ export const AVAILABLE_BALANCE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
 
     if (!isPerp) {
       return (
-        <span className="font-medium whitespace-nowrap">
+        <span className="font-medium lg:whitespace-nowrap">
           {numberFormatter.format(Number.parseFloat(availableBalance))} {coin}
         </span>
       )
@@ -120,7 +120,7 @@ export const AVAILABLE_BALANCE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
     return (
       <HoverCard openDelay={0}>
         <HoverCardTrigger asChild tabIndex={0}>
-          <div className="font-medium underline whitespace-nowrap">
+          <div className="font-medium underline lg:whitespace-nowrap">
             {numberFormatter.format(Number.parseFloat(availableBalance))} {coin}
           </div>
         </HoverCardTrigger>
@@ -153,7 +153,7 @@ export const USDC_VALUE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
     const usdcValue = props.row.original.usdcValue
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {currencyFormatter.format(Number.parseFloat(usdcValue))}
       </span>
     )
@@ -179,7 +179,7 @@ export const PNL_COLUMN: ColumnDef<BalanceItemType, unknown> = {
     return (
       <span
         className={classNames(
-          'font-medium whitespace-nowrap',
+          'font-medium lg:whitespace-nowrap',
           getTextColorClass(pnl),
         )}
       >

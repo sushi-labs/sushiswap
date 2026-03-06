@@ -1,10 +1,11 @@
-import { DataTable } from '@sushiswap/ui'
+import { DataTable, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import {
   type ActiveTwapItemType,
   useActiveTwap,
 } from 'src/lib/perps/use-active-twap'
+import { MobileTable } from '../../_common/mobile-table'
 import {
   type TradeFilterType,
   useTradeTables,
@@ -31,7 +32,19 @@ const COLUMNS = [
   TERMINATE_COLUMN,
 ] as ColumnDef<ActiveTwapItemType, unknown>[]
 
+const MOBILE_COLUMNS = [
+  COIN_COLUMN,
+  SIZE_COLUMN,
+  RUNTIME_COLUMN,
+  EXECUTED_SIZE_COLUMN,
+  AVG_PRICE_COLUMN,
+  REDUCE_ONLY_COLUMN,
+  CREATION_TIME_COLUMN,
+  TERMINATE_COLUMN,
+] as ColumnDef<ActiveTwapItemType, unknown>[]
+
 export const ActiveTwapTable = () => {
+  const { isLg } = useBreakpoint('lg')
   const { data, isLoading, isError } = useActiveTwap()
   const [sorting, setSorting] = useState([{ id: 'timestamp', desc: true }])
   const {
@@ -70,13 +83,20 @@ export const ActiveTwapTable = () => {
     }
   }, [tableData, sorting])
 
-  return (
+  return isLg ? (
     <DataTable
       state={state}
       loading={isLoading}
       columns={COLUMNS}
       data={tableData}
       onSortingChange={setSorting}
+    />
+  ) : (
+    <MobileTable
+      columns={MOBILE_COLUMNS}
+      data={tableData}
+      isLoading={isLoading}
+      sorting={sorting}
     />
   )
 }

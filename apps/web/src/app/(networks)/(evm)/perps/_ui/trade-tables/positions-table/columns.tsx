@@ -59,7 +59,7 @@ export const COIN_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
           }}
           type="button"
           className={classNames(
-            'font-bold whitespace-nowrap transition-colors',
+            'font-bold lg:whitespace-nowrap transition-colors',
             getTextColorClassForHover(side === 'A' ? -1 : 1),
           )}
         >
@@ -81,7 +81,7 @@ export const COIN_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
             <button
               type="button"
               className={classNames(
-                'font-bold whitespace-nowrap transition-colors',
+                'font-bold lg:whitespace-nowrap transition-colors',
                 getTextColorClass(side === 'A' ? -1 : 1),
               )}
             >
@@ -112,7 +112,7 @@ export const SIZE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     return (
       <span
         className={classNames(
-          'font-medium whitespace-nowrap',
+          'font-medium lg:whitespace-nowrap',
           getTextColorClass(size),
         )}
       >
@@ -136,7 +136,7 @@ export const POSITION_VALUE_COLUMN: ColumnDef<UserPositionsItemType, unknown> =
     cell: (props) => {
       const positionValue = props.row.original.position.positionValue
       return (
-        <span className="font-medium whitespace-nowrap">
+        <span className="font-medium lg:whitespace-nowrap">
           {numberFormatter.format(Number.parseFloat(positionValue))} USDC
         </span>
       )
@@ -156,7 +156,7 @@ export const ENTRY_PRICE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   cell: (props) => {
     const entryPrice = props.row.original.position.entryPx
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {numberFormatter.format(Number.parseFloat(entryPrice))}
       </span>
     )
@@ -175,7 +175,7 @@ export const MARK_PRICE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   cell: (props) => {
     const markPrice = props.row.original.markPrice
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {numberFormatter.format(Number.parseFloat(markPrice))}
       </span>
     )
@@ -191,7 +191,9 @@ export const PNL_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   header: () => (
     <HoverCard openDelay={0}>
       <HoverCardTrigger asChild tabIndex={0}>
-        <div className={classNames('font-medium underline whitespace-nowrap')}>
+        <div
+          className={classNames('font-medium underline lg:whitespace-nowrap')}
+        >
           PNL / (ROE %)
         </div>
       </HoverCardTrigger>
@@ -224,7 +226,7 @@ export const PNL_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     return (
       <span
         className={classNames(
-          'font-medium whitespace-nowrap',
+          'font-medium lg:whitespace-nowrap',
           getTextColorClass(pnl),
         )}
       >
@@ -252,10 +254,10 @@ export const LIQUIDATION_PRICE_COLUMN: ColumnDef<
   cell: (props) => {
     const liquidationPrice = props.row.original.position.liquidationPx
     if (!liquidationPrice) {
-      return <span className="font-medium whitespace-nowrap">N/A</span>
+      return <span className="font-medium lg:whitespace-nowrap">N/A</span>
     }
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {numberFormatter.format(
           Number(formatPrice(liquidationPrice.toString(), 0, 'perp')),
         )}
@@ -271,7 +273,9 @@ export const MARGIN_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   header: () => (
     <HoverCard openDelay={0}>
       <HoverCardTrigger asChild tabIndex={0}>
-        <div className={classNames('font-medium underline whitespace-nowrap')}>
+        <div
+          className={classNames('font-medium underline lg:whitespace-nowrap')}
+        >
           Margin
         </div>
       </HoverCardTrigger>
@@ -293,7 +297,7 @@ export const MARGIN_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     const marginType = props.row.original.position.leverage.type
     if (marginType === 'cross') {
       return (
-        <span className="font-medium whitespace-nowrap capitalize">
+        <span className="font-medium lg:whitespace-nowrap capitalize">
           {currencyFormatter.format(Number.parseFloat(marginUsed ?? '0'))} (
           {marginType})
         </span>
@@ -304,7 +308,7 @@ export const MARGIN_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
         position={props.row.original}
         trigger={
           <button type="button" className="flex items-center gap-2">
-            <span className="font-medium whitespace-nowrap capitalize">
+            <span className="font-medium lg:whitespace-nowrap capitalize">
               {currencyFormatter.format(Number.parseFloat(marginUsed ?? '0'))} (
               {marginType})
             </span>
@@ -323,7 +327,9 @@ export const FUNDING_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   header: () => (
     <HoverCard openDelay={0}>
       <HoverCardTrigger asChild tabIndex={0}>
-        <div className={classNames('font-medium underline whitespace-nowrap')}>
+        <div
+          className={classNames('font-medium underline lg:whitespace-nowrap')}
+        >
           Funding
         </div>
       </HoverCardTrigger>
@@ -359,7 +365,7 @@ export const FUNDING_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
         <HoverCardTrigger asChild tabIndex={0}>
           <div
             className={classNames(
-              'font-medium underline whitespace-nowrap',
+              'font-medium underline lg:whitespace-nowrap',
               getTextColorClass(sinceOpen),
             )}
           >
@@ -415,7 +421,7 @@ export const TP_SL_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     const position = useMemo(() => props.row.original, [props.row.original])
 
     return (
-      <div className="flex items-center gap-4 whitespace-nowrap">
+      <div className="flex items-center gap-4 lg:whitespace-nowrap">
         <ViewOrders coin={position.position.coin} />
         <EditTpSlPositionDialog positionToClose={position} />
       </div>

@@ -26,7 +26,7 @@ export const TIME_COLUMN: ColumnDef<TwapFillHistoryItemType, unknown> = {
     const timestamp = props.row.original.time
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:lg:whitespace-nowrap">
         {format(timestamp, 'M/d/yyyy - HH:mm:ss')}
       </span>
     )
@@ -59,7 +59,7 @@ export const COIN_COLUMN: ColumnDef<TwapFillHistoryItemType, unknown> = {
         }}
         type="button"
         className={classNames(
-          'font-bold whitespace-nowrap transition-colors',
+          'font-bold lg:whitespace-nowrap transition-colors',
           getTextColorClassForHover(side === 'A' ? -1 : 1),
         )}
       >
@@ -89,7 +89,7 @@ export const DIRECTION_COLUMN: ColumnDef<TwapFillHistoryItemType, unknown> = {
     return (
       <span
         className={classNames(
-          'font-medium whitespace-nowrap transition-colors',
+          'font-medium lg:whitespace-nowrap transition-colors',
           getTextColorClass(side === 'A' ? -1 : 1),
         )}
       >
@@ -112,7 +112,7 @@ export const PRICE_COLUMN: ColumnDef<TwapFillHistoryItemType, unknown> = {
     const price = Number.parseFloat(props.row.original.px)
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {numberFormatter.format(price)}
       </span>
     )
@@ -130,10 +130,12 @@ export const SIZE_COLUMN: ColumnDef<TwapFillHistoryItemType, unknown> = {
     Number.parseFloat(rowA.sz) - Number.parseFloat(rowB.sz),
   cell: (props) => {
     const size = Number.parseFloat(props.row.original.sz)
-    const symbol = props.row.original.assetSymbol
+    const symbol =
+      props.row.original.assetSymbol?.split('/')?.[0] ??
+      props.row.original.assetSymbol
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {numberFormatter.format(size)} {symbol}
       </span>
     )
@@ -157,7 +159,7 @@ export const TRADE_VALUE_COLUMN: ColumnDef<TwapFillHistoryItemType, unknown> = {
     const feeToken = props.row.original.feeToken
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {enUSFormatNumber.format(value)} {feeToken}
       </span>
     )
@@ -177,7 +179,7 @@ export const FEE_COLUMN: ColumnDef<TwapFillHistoryItemType, unknown> = {
     const feeToken = props.row.original.feeToken
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {enUSFormatNumber.format(fee)} {feeToken}
       </span>
     )
@@ -226,7 +228,7 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TwapFillHistoryItemType, unknown> = {
       return '-'
     }
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {enUSFormatNumber.format(totalPnl)} {feeToken}
       </span>
     )

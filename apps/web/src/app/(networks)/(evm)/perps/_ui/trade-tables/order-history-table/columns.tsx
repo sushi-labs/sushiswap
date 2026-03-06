@@ -24,7 +24,7 @@ export const TIME_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     const timestamp = props.row.original.order.timestamp
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:lg:whitespace-nowrap">
         {format(timestamp, 'M/d/yyyy - HH:mm:ss')}
       </span>
     )
@@ -42,7 +42,7 @@ export const TYPE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
   cell: (props) => {
     const type = props.row.original.order.orderType
 
-    return <span className="font-medium whitespace-nowrap">{type}</span>
+    return <span className="font-medium lg:whitespace-nowrap">{type}</span>
   },
   meta: {
     body: columnBodyMeta,
@@ -84,7 +84,7 @@ export const COIN_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
         }}
         type="button"
         className={classNames(
-          'font-bold whitespace-nowrap transition-colors',
+          'font-bold lg:whitespace-nowrap transition-colors',
           getTextColorClassForHover(side === 'A' ? -1 : 1),
         )}
       >
@@ -126,7 +126,7 @@ export const DIRECTION_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     return (
       <span
         className={classNames(
-          'font-medium whitespace-nowrap',
+          'font-medium lg:whitespace-nowrap',
           getTextColorClass(side === 'A' ? -1 : 1),
         )}
       >
@@ -152,7 +152,9 @@ export const SIZE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
         ? Number.parseFloat(props.row.original.order.origSz)
         : 0
 
-    return <span className="font-medium whitespace-nowrap">{size || '-'}</span>
+    return (
+      <span className="font-medium lg:whitespace-nowrap">{size || '-'}</span>
+    )
   },
   meta: {
     body: columnBodyMeta,
@@ -176,7 +178,9 @@ export const FILLED_SIZE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
       status === 'filled'
         ? Number.parseFloat(props.row.original.order.origSz)
         : 0
-    return <span className="font-medium whitespace-nowrap">{size || '-'}</span>
+    return (
+      <span className="font-medium lg:whitespace-nowrap">{size || '-'}</span>
+    )
   },
   meta: {
     body: columnBodyMeta,
@@ -221,7 +225,7 @@ export const ORDER_VALUE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     const ogSz = props.row.original.order.origSz
 
     if (status !== 'filled') {
-      return <span className="font-medium whitespace-nowrap">Market</span>
+      return <span className="font-medium lg:whitespace-nowrap">Market</span>
     }
 
     const value = useMemo(() => {
@@ -230,7 +234,7 @@ export const ORDER_VALUE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     }, [status, type, limitPrice, ogSz])
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {value ? `${enUSFormatNumber.format(value)} USDC` : '-'}
       </span>
     )
@@ -258,7 +262,7 @@ export const PRICE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
       )
     }, [type, props.row.original.order.limitPx])
 
-    return <span className="font-medium whitespace-nowrap">{value}</span>
+    return <span className="font-medium lg:whitespace-nowrap">{value}</span>
   },
   meta: {
     body: columnBodyMeta,
@@ -280,7 +284,7 @@ export const REDUCE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
           : 'No'
         : '-'
 
-    return <span className="font-medium whitespace-nowrap">{value}</span>
+    return <span className="font-medium lg:whitespace-nowrap">{value}</span>
   },
   meta: {
     body: columnBodyMeta,
@@ -299,7 +303,9 @@ export const TRIGGER_CONDITIONS_COLUMN: ColumnDef<
     const triggerCondition = props.row.original.order.triggerCondition
 
     return (
-      <span className="font-medium whitespace-nowrap">{triggerCondition}</span>
+      <span className="font-medium lg:whitespace-nowrap">
+        {triggerCondition}
+      </span>
     )
   },
   meta: {
@@ -322,7 +328,7 @@ export const TP_SL_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
       ...(props.row.original.order.children as OrderHistoryItemType['order'][]),
     ]
     if (!hasTpSl) {
-      return <span className="font-medium whitespace-nowrap">-</span>
+      return <span className="font-medium lg:whitespace-nowrap">-</span>
     }
 
     return (
@@ -351,7 +357,7 @@ export const STATUS_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     }, [status])
 
     return (
-      <span className="font-medium whitespace-nowrap capitalize">
+      <span className="font-medium lg:whitespace-nowrap capitalize">
         {cleanedStatus}
       </span>
     )
@@ -369,7 +375,7 @@ export const ORDER_ID_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
   cell: (props) => {
     const orderId = props.row.original.order.oid
 
-    return <span className="font-medium whitespace-nowrap">{orderId}</span>
+    return <span className="font-medium lg:whitespace-nowrap">{orderId}</span>
   },
   meta: {
     body: columnBodyMeta,

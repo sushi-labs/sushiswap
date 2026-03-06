@@ -20,7 +20,7 @@ export const TIME_COLUMN: ColumnDef<TwapHistoryItemType, unknown> = {
     const timestamp = props.row.original.timestamp
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:lg:whitespace-nowrap">
         {format(timestamp * 1000, 'M/d/yyyy - HH:mm:ss')}
       </span>
     )
@@ -53,7 +53,7 @@ export const COIN_COLUMN: ColumnDef<TwapHistoryItemType, unknown> = {
         }}
         type="button"
         className={classNames(
-          'font-bold whitespace-nowrap transition-colors',
+          'font-bold lg:whitespace-nowrap transition-colors',
           getTextColorClassForHover(side === 'A' ? -1 : 1),
         )}
       >
@@ -80,11 +80,13 @@ export const TOTAL_SIZE_COLUMN: ColumnDef<TwapHistoryItemType, unknown> = {
   cell: (props) => {
     const size = props.row.original.sz
     const side = props.row.original.side
-    const symbol = props.row.original.assetSymbol
+    const symbol =
+      props.row.original.assetSymbol?.split('/')?.[0] ??
+      props.row.original.assetSymbol
     return (
       <span
         className={classNames(
-          'font-medium whitespace-nowrap transition-colors',
+          'font-medium lg:whitespace-nowrap transition-colors',
           getTextColorClass(side === 'A' ? -1 : 1),
         )}
       >
@@ -110,7 +112,7 @@ export const EXECUTED_SIZE_COLUMN: ColumnDef<TwapHistoryItemType, unknown> = {
     return (
       <span
         className={classNames(
-          'font-medium whitespace-nowrap transition-colors',
+          'font-medium lg:whitespace-nowrap transition-colors',
           size > 0 ? getTextColorClass(side === 'A' ? -1 : 1) : '',
         )}
       >
@@ -145,7 +147,7 @@ export const AVG_PRICE_COLUMN: ColumnDef<TwapHistoryItemType, unknown> = {
     const executedSize = Number.parseFloat(props.row.original.executedSz)
     const price = executedSize > 0 ? executedNtl / executedSize : 0
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {price > 0 ? numberFormatter.format(price) : '--'}
       </span>
     )
@@ -166,7 +168,7 @@ export const TOTAL_RUNTIME_COLUMN: ColumnDef<TwapHistoryItemType, unknown> = {
     const hours = Math.floor(minutes / 60)
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {hours > 0 ? `${hours} hours ` : ''}
         {minutes % 60 > 0 ? `${minutes % 60} minutes` : ''}
       </span>
@@ -187,7 +189,7 @@ export const REDUCE_ONLY_COLUMN: ColumnDef<TwapHistoryItemType, unknown> = {
     const reduceOnly = props.row.original.reduceOnly
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {reduceOnly ? 'Yes' : 'No'}
       </span>
     )
@@ -207,7 +209,7 @@ export const RANDOMIZE_COLUMN: ColumnDef<TwapHistoryItemType, unknown> = {
     const randomize = props.row.original.randomize
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {randomize ? 'Yes' : 'No'}
       </span>
     )
@@ -226,7 +228,9 @@ export const STATUS_COLUMN: ColumnDef<TwapHistoryItemType, unknown> = {
     const status = props.row.original.status.status
 
     return (
-      <span className="font-medium whitespace-nowrap capitalize">{status}</span>
+      <span className="font-medium lg:whitespace-nowrap capitalize">
+        {status}
+      </span>
     )
   },
   meta: {

@@ -1,11 +1,11 @@
-import { DataTable } from '@sushiswap/ui'
+import { DataTable, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
-
 import {
   type UserPositionsItemType,
   useUserPositions,
 } from 'src/lib/perps/use-user-positions'
+import { MobileTable } from '../_common/mobile-table'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {
   CLOSE_COLUMN,
@@ -35,12 +35,26 @@ const COLUMNS = [
   TP_SL_COLUMN,
 ] as ColumnDef<UserPositionsItemType, unknown>[]
 
+const MOBILE_COLUMNS = [
+  COIN_COLUMN,
+  SIZE_COLUMN,
+  PNL_COLUMN,
+  ENTRY_PRICE_COLUMN,
+  MARK_PRICE_COLUMN,
+  LIQUIDATION_PRICE_COLUMN,
+  POSITION_VALUE_COLUMN,
+  MARGIN_COLUMN,
+  FUNDING_COLUMN,
+  TP_SL_COLUMN,
+  CLOSE_COLUMN,
+] as ColumnDef<UserPositionsItemType, unknown>[]
+
 export const PositionsTable = () => {
   const { data, isLoading, isError } = useUserPositions()
   const [sorting, setSorting] = useState([{ id: 'size', desc: true }])
-
+  const { isLg } = useBreakpoint('lg')
   const {
-    state: { tradeFilter },
+    state: { tradeFilter, expandAll },
   } = useTradeTables()
   const filterValue = tradeFilter?.['positions']?.split(':')?.[1] as
     | TradeFilterType
@@ -73,13 +87,21 @@ export const PositionsTable = () => {
     }
   }, [tableData, sorting])
 
-  return (
+  return isLg ? (
     <DataTable
       state={state}
       loading={isLoading}
       columns={COLUMNS}
       data={tableData}
       onSortingChange={setSorting}
+    />
+  ) : (
+    <MobileTable
+      columns={MOBILE_COLUMNS}
+      data={tableData}
+      isLoading={isLoading}
+      sorting={sorting}
+      isExpandedOverride={expandAll ?? undefined}
     />
   )
 }

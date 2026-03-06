@@ -36,7 +36,7 @@ export const COIN_COLUMN: ColumnDef<ActiveTwapItemType, unknown> = {
         }}
         type="button"
         className={classNames(
-          'font-bold whitespace-nowrap transition-colors',
+          'font-bold lg:whitespace-nowrap transition-colors',
           getTextColorClassForHover(side === 'A' ? -1 : 1),
         )}
       >
@@ -67,7 +67,7 @@ export const SIZE_COLUMN: ColumnDef<ActiveTwapItemType, unknown> = {
     return (
       <span
         className={classNames(
-          'font-medium whitespace-nowrap transition-colors',
+          'font-medium lg:whitespace-nowrap transition-colors',
           getTextColorClass(side === 'A' ? -1 : 1),
         )}
       >
@@ -93,7 +93,7 @@ export const EXECUTED_SIZE_COLUMN: ColumnDef<ActiveTwapItemType, unknown> = {
     return (
       <span
         className={classNames(
-          'font-medium whitespace-nowrap transition-colors',
+          'font-medium lg:whitespace-nowrap transition-colors',
           size > 0 ? getTextColorClass(side === 'A' ? -1 : 1) : '',
         )}
       >
@@ -120,7 +120,7 @@ export const AVG_PRICE_COLUMN: ColumnDef<ActiveTwapItemType, unknown> = {
     const averagePrice = props.row.original.averagePrice
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {averagePrice > 0 ? numberFormatter.format(averagePrice) : '--'}
       </span>
     )
@@ -142,7 +142,7 @@ export const RUNTIME_COLUMN: ColumnDef<ActiveTwapItemType, unknown> = {
     const formattedRunningTime = props.row.original.formattedRunningTime
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {formattedRunningTime} / {hours > 0 ? `${hours} hours ` : ''}
         {minutes % 60 > 0 ? `${minutes % 60} minutes` : ''}
       </span>
@@ -163,7 +163,7 @@ export const REDUCE_ONLY_COLUMN: ColumnDef<ActiveTwapItemType, unknown> = {
     const reduceOnly = props.row.original.reduceOnly
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {reduceOnly ? 'Yes' : 'No'}
       </span>
     )
@@ -183,7 +183,7 @@ export const CREATION_TIME_COLUMN: ColumnDef<ActiveTwapItemType, unknown> = {
     const timestamp = props.row.original.timestamp
 
     return (
-      <span className="font-medium whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {format(timestamp, 'M/d/yyyy - HH:mm:ss')}
       </span>
     )

@@ -7,8 +7,11 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { CancelAllOpenOrdersDialog } from '../exchange/cancel-all-open-orders-dialog'
+import { CloseAllPositionsDialog } from '../exchange/close-all-positions-dialog'
 import { BalanceTable } from './balance-table'
 import { AggregateTradeHistory } from './filters/aggregate-trade-history'
+import { ExpandAll } from './filters/expand-all'
 import { HideSmallBalances } from './filters/hide-small-balances'
 import { FundingHistoryTable } from './funding-history-table'
 import { OpenOrdersTable } from './open-orders-table'
@@ -31,6 +34,7 @@ interface State {
     ) => void
     setHideSmallBalances: (hide: boolean) => void
     setShouldAggregateTradeHistory: (aggregate: boolean) => void
+    setExpandAll: (expand: boolean) => void
   }
   state: {
     activeTab: TradeTablesTabValue
@@ -38,6 +42,7 @@ interface State {
     tradeFilter: Record<TradeTablesTabValue, TradeFilterValueString> | null
     hideSmallBalances: boolean
     shouldAggregateTradeHistory: boolean
+    expandAll: boolean
   }
 }
 
@@ -52,11 +57,22 @@ export const TRADE_TABLES_TABS = [
     name: 'Positions',
     value: 'positions' as const,
     content: PositionsTable,
+    mobileChildren: () => (
+      <div className="flex items-center justify-end gap-4 text-sm">
+        <ExpandAll label="Positions" />
+        <CloseAllPositionsDialog />
+      </div>
+    ),
   },
   {
     name: 'Open Orders',
     value: 'open-orders' as const,
     content: OpenOrdersTable,
+    mobileChildren: () => (
+      <>
+        <CancelAllOpenOrdersDialog />
+      </>
+    ),
   },
   {
     name: 'TWAP',
@@ -68,6 +84,11 @@ export const TRADE_TABLES_TABS = [
     value: 'trade-history' as const,
     extraFilter: AggregateTradeHistory,
     content: TradeHistoryTable,
+    mobileChildren: () => (
+      <>
+        <ExpandAll label="Trades" />
+      </>
+    ),
   },
   {
     name: 'Funding History',
@@ -127,6 +148,7 @@ const TradeTablesProvider: FC<TradeTablesProviderProps> = ({ children }) => {
   const [hideSmallBalances, setHideSmallBalances] = useState<boolean>(false)
   const [shouldAggregateTradeHistory, setShouldAggregateTradeHistory] =
     useState<boolean>(false)
+  const [expandAll, setExpandAll] = useState(false)
 
   const handleSetTradeFilter = useCallback(
     (filter: Partial<Record<TradeTablesTabValue, TradeFilterValueString>>) => {
@@ -147,6 +169,7 @@ const TradeTablesProvider: FC<TradeTablesProviderProps> = ({ children }) => {
             handleSetTradeFilter,
             setHideSmallBalances,
             setShouldAggregateTradeHistory,
+            setExpandAll,
           },
           state: {
             activeTab,
@@ -154,6 +177,7 @@ const TradeTablesProvider: FC<TradeTablesProviderProps> = ({ children }) => {
             tradeFilter,
             hideSmallBalances,
             shouldAggregateTradeHistory,
+            expandAll,
           },
         }
       }, [
@@ -163,6 +187,7 @@ const TradeTablesProvider: FC<TradeTablesProviderProps> = ({ children }) => {
         hideSmallBalances,
         shouldAggregateTradeHistory,
         handleSetTradeFilter,
+        expandAll,
       ])}
     >
       {children}
