@@ -31,19 +31,17 @@ function usePortfolioWallet(
 export const PortfolioEvmSvmTokens = () => {
   const { evm, svm } = useAccounts()
 
-  const _addresses = useMemo(
+  const addresses = useMemo(
     () => [...new Set([evm.address, svm.address])] as string[],
     [evm.address, svm.address],
   )
 
-  // HOTFIX: disable usePortfolioWallet
-  const { data, isLoading, isError } = usePortfolioWallet([])
+  const { data, isLoading, isError } = usePortfolioWallet(addresses)
 
   return (
     <div className="flex flex-col gap-y-5 h-[calc(100%-180px)] overflow-hidden">
       <div className="px-5">
-        <Message size="sm">Portfolio data is temporarily unavailable.</Message>
-        {/* <div className="flex flex-col gap-y-3 bg-secondary rounded-xl px-5 py-3">
+        <div className="flex flex-col gap-y-3 bg-secondary rounded-xl px-5 py-3">
           <span className="text-sm text-muted-foreground">Total Balance</span>
 
           <div className="flex flex-col gap-y-2">
@@ -81,7 +79,7 @@ export const PortfolioEvmSvmTokens = () => {
               </>
             )}
           </div>
-        </div> */}
+        </div>
       </div>
 
       {/* TOKEN LIST SECTION */}
