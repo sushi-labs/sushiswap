@@ -19,13 +19,15 @@ import {
   useUserOpenOrders,
 } from 'src/lib/perps'
 import { TableButton } from '../../_common'
-import { CloseAllPositionsDialog } from '../../exchange/close-all-positions-dialog'
-import { EditTpSlPositionDialog } from '../../exchange/edit-tp-sl-position-dialog'
-import { LimitCloseDialog } from '../../exchange/limit-close-dialog'
-import { MarketCloseDialog } from '../../exchange/market-close-dialog'
-import { ReversePositionDialog } from '../../exchange/reverse-position-dialog'
-import { UpdateIsolatedMarginDialog } from '../../exchange/update-isloated-margin-dialog'
-import { UpdateLeverageDialog } from '../../exchange/update-leverage-dialog'
+import {
+  CloseAllPositionsDialog,
+  EditTpSlPositionDialog,
+  LimitCloseDialog,
+  MarketCloseDialog,
+  ReversePositionDialog,
+  UpdateIsolatedMarginDialog,
+  UpdateLeverageDialog,
+} from '../../exchange'
 import { useAssetState } from '../../trade-widget/asset-state-provider'
 import { columnBodyMeta } from '../_common'
 import { useTradeTables } from '../trade-tables-provider'

@@ -12,8 +12,7 @@ import {
   usePrepModifyOrderData,
 } from 'src/lib/perps'
 import { InlineEdit } from '../../_common'
-import { CancelAllOpenOrdersDialog } from '../../exchange/cancel-all-open-orders-dialog'
-import { CancelOpenOrder } from '../../exchange/cancel-open-order'
+import { CancelAllOpenOrdersDialog, CancelOpenOrder } from '../../exchange'
 import { useAssetState } from '../../trade-widget/asset-state-provider'
 import { ViewTpSlDialog, columnBodyMeta } from '../_common'
 

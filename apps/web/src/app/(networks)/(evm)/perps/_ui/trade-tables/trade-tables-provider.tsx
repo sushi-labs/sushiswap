@@ -7,8 +7,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { CancelAllOpenOrdersDialog } from '../exchange/cancel-all-open-orders-dialog'
-import { CloseAllPositionsDialog } from '../exchange/close-all-positions-dialog'
+import { CancelAllOpenOrdersDialog, CloseAllPositionsDialog } from '../exchange'
 import { BalanceTable } from './balance-table'
 import { AggregateTradeHistory } from './filters/aggregate-trade-history'
 import { ExpandAll } from './filters/expand-all'
