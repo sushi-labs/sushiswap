@@ -8,14 +8,14 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { useActiveAsset } from 'src/lib/perps/subscription'
 import {
   enUSFormatNumber,
   getHyperliquidExplorerUrl,
   getSignForValue,
   getTextColorClass,
   numberFormatter,
-} from 'src/lib/perps/utils'
+  useActiveAsset,
+} from 'src/lib/perps'
 import { formatPercent, truncateString } from 'sushi'
 import { ValueSensitiveText } from '../_common/value-sensitive-text'
 import { useAssetListState } from '../asset-selector/asset-list-provider'

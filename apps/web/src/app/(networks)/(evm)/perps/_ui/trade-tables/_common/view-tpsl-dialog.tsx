@@ -9,11 +9,12 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import type {
-  OrderHistoryItemType,
-  UserOpenOrdersItemType,
-} from 'src/lib/perps/user'
-import { getTextColorClass, numberFormatter } from 'src/lib/perps/utils'
+import {
+  type OrderHistoryItemType,
+  type UserOpenOrdersItemType,
+  getTextColorClass,
+  numberFormatter,
+} from 'src/lib/perps'
 import { TableButton } from '../../_common/table-button'
 
 function getLetterFromIndex(index: number): string {

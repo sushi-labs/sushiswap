@@ -7,13 +7,13 @@ import {
 } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
-import type { TwapFillHistoryItemType } from 'src/lib/perps/use-twap-fill-history'
 import {
+  type TwapFillHistoryItemType,
   enUSFormatNumber,
   getTextColorClass,
   getTextColorClassForHover,
   numberFormatter,
-} from 'src/lib/perps/utils'
+} from 'src/lib/perps'
 import { useAssetState } from '../../../trade-widget/asset-state-provider'
 import { columnBodyMeta } from '../../column-meta'
 

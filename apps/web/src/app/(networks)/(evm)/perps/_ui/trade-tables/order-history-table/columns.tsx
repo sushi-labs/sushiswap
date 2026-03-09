@@ -2,14 +2,14 @@ import { Chip, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { useMemo } from 'react'
-import type { OrderHistoryItemType } from 'src/lib/perps/user'
 import {
+  type OrderHistoryItemType,
   enUSFormatNumber,
   getPerpsDexAndCoin,
   getTextColorClass,
   getTextColorClassForHover,
   numberFormatter,
-} from 'src/lib/perps/utils'
+} from 'src/lib/perps'
 import { useAssetState } from '../../trade-widget/asset-state-provider'
 import { ViewTpSlDialog } from '../_common/view-tpsl-dialog'
 import { columnBodyMeta } from '../column-meta'

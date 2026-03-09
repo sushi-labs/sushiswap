@@ -1,4 +1,4 @@
-import { useMidPrice } from 'src/lib/perps/use-mid-price'
+import { useMidPrice } from 'src/lib/perps'
 import { LimitInput } from '../../_common/limit-input'
 import { TriggerPriceInput } from '../../_common/trigger-price-input'
 import { useAssetState } from '../asset-state-provider'

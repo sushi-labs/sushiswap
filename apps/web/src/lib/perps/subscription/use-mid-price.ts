@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useAllMids } from './subscription/use-all-mids'
+import { useAllMids } from './use-all-mids'
 
 //used for semi static mid price where super fresh price not needed
 export const useMidPrice = ({

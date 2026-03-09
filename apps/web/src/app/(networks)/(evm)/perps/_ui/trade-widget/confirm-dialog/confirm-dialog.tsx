@@ -6,8 +6,11 @@ import {
   DialogTitle,
 } from '@sushiswap/ui'
 import { useState } from 'react'
-import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
-import { getTextColorClass, numberFormatter } from 'src/lib/perps/utils'
+import {
+  getTextColorClass,
+  numberFormatter,
+  useSymbolSplit,
+} from 'src/lib/perps'
 import { CheckboxSetting } from '../../_common/checkbox-setting'
 import { StatItem } from '../../_common/stat-item'
 import { useUserSettingsState } from '../../account-management/settings-provider'

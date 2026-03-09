@@ -9,10 +9,13 @@ import {
   useMemo,
   useState,
 } from 'react'
-import type { TimeInForceType } from 'src/lib/perps/exchange'
-import { useActiveAssetData } from 'src/lib/perps/subscription'
-import type { PerpOrSpotAsset } from 'src/lib/perps/subscription'
-import { useBalance, useUserPositions } from 'src/lib/perps/user'
+import {
+  type PerpOrSpotAsset,
+  type TimeInForceType,
+  useActiveAssetData,
+  useBalance,
+  useUserPositions,
+} from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { useAssetListState } from '../asset-selector/asset-list-provider'
 interface State {

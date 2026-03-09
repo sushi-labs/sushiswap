@@ -1,14 +1,15 @@
 import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
 import { Button } from '@sushiswap/ui'
 import { useCallback, useMemo } from 'react'
-import { BUILDER_FEE_PERPS, BUILDER_FEE_SPOT } from 'src/lib/perps/config'
 import {
+  BUILDER_FEE_PERPS,
+  BUILDER_FEE_SPOT,
   type OrderData,
   type TwapOrder,
   useExecuteOrders,
   useExecuteTwapOrder,
-} from 'src/lib/perps/exchange'
-import { useMidPrice } from 'src/lib/perps/use-mid-price'
+  useMidPrice,
+} from 'src/lib/perps'
 import { formatUnits, parseUnits } from 'viem'
 import { useUserSettingsState } from '../../account-management/settings-provider'
 import { useAssetState } from '../asset-state-provider'

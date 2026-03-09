@@ -1,14 +1,14 @@
 import { Chip, SkeletonText, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
-import type { PerpOrSpotAsset } from 'src/lib/perps/subscription'
 import {
+  type PerpOrSpotAsset,
   currencyFormatter,
   enUSFormatNumber,
   getSignForValue,
   getTextColorClass,
   numberFormatter,
-} from 'src/lib/perps/utils'
+} from 'src/lib/perps'
 import { formatPercent } from 'sushi'
 import { FavoriteButton } from './favorite-button'
 

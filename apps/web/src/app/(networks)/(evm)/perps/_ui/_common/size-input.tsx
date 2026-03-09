@@ -1,7 +1,6 @@
 import { TextField, classNames } from '@sushiswap/ui'
 import { useCallback, useMemo, useState, useTransition } from 'react'
-import type { PerpOrSpotAsset } from 'src/lib/perps/subscription'
-import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
+import { type PerpOrSpotAsset, useSymbolSplit } from 'src/lib/perps'
 import { SideToggle } from './side-toggle'
 
 export const SizeInput = ({

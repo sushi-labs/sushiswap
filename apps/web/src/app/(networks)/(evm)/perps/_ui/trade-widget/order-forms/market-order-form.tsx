@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { TpSlGainLossType } from 'src/lib/perps/utils'
+import type { TpSlGainLossType } from 'src/lib/perps'
 import { CheckboxSetting } from '../../_common/checkbox-setting'
 import { TpSlInput } from '../../_common/tp-sl-input'
 import { useAssetState } from '../asset-state-provider'

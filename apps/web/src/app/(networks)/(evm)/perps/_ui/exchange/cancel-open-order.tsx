@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useCancelOpenOrders } from 'src/lib/perps/exchange'
+import { useCancelOpenOrders } from 'src/lib/perps'
 import { TableButton } from '../_common/table-button'
 
 export const CancelOpenOrder = ({

@@ -1,6 +1,6 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useCallback } from 'react'
-import { useAgent } from 'src/lib/perps/agent'
+import { useAgent } from 'src/lib/perps'
 import { useWalletClient } from 'wagmi'
 
 export const EnableTrading: FC<ButtonProps> = ({

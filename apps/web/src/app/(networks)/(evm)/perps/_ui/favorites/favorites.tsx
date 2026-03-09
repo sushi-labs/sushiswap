@@ -3,12 +3,12 @@ import { formatPrice } from '@nktkas/hyperliquid/utils'
 import { useLocalStorage } from '@sushiswap/hooks'
 import { Button, Card, SkeletonBox, classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { useFavoriteAssets } from 'src/lib/perps/user'
 import {
   getSignForValue,
   getTextColorClass,
   numberFormatter,
-} from 'src/lib/perps/utils'
+  useFavoriteAssets,
+} from 'src/lib/perps'
 import { formatPercent } from 'sushi'
 import { OverflowX } from '../_common/overflow-x'
 import { useAssetListState } from '../asset-selector/asset-list-provider'

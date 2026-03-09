@@ -11,21 +11,19 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
-import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
-import { useExecuteOrders } from 'src/lib/perps/exchange'
-import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
 import {
-  type UserPositionsItemType,
-  useUserOpenOrders,
-} from 'src/lib/perps/user'
-import {
+  BUILDER_FEE_PERPS,
   type TpSlGainLossType,
+  type UserPositionsItemType,
   calculateGainFromTp,
   calculateLossFromSl,
   getExistingPositionTpSlOrders,
   getTextColorClass,
   numberFormatter,
-} from 'src/lib/perps/utils'
+  useExecuteOrders,
+  useSymbolSplit,
+  useUserOpenOrders,
+} from 'src/lib/perps'
 import { formatUnits, parseUnits } from 'viem'
 import { CheckboxSetting } from '../_common/checkbox-setting'
 import { ConfigureAmount } from '../_common/configure-amount'

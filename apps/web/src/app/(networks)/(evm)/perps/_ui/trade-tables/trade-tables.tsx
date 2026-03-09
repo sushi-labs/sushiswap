@@ -1,9 +1,12 @@
 import { Card, classNames, useBreakpoint } from '@sushiswap/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { useUserActiveTwap } from 'src/lib/perps/subscription'
-import { useBalances } from 'src/lib/perps/user'
-import { useUserOpenOrders, useUserPositions } from 'src/lib/perps/user'
+import {
+  useBalances,
+  useUserActiveTwap,
+  useUserOpenOrders,
+  useUserPositions,
+} from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { TradeFilter } from './filters/trade-filter'
 import {

@@ -9,8 +9,9 @@ import {
   useUserHistoricalOrders,
   useWebData2,
   useWebData3,
-} from 'src/lib/perps/subscription'
+} from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
+
 interface State {
   state: {
     webData2Query: ReturnType<typeof useWebData2>

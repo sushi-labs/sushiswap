@@ -7,12 +7,12 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { MeterIcon } from '@sushiswap/ui/icons/MeterIcon'
-import { useUserAccountValues } from 'src/lib/perps/user'
 import {
   currencyFormatter,
   enUSFormatNumber,
   getTextColorClass,
-} from 'src/lib/perps/utils'
+  useUserAccountValues,
+} from 'src/lib/perps'
 import { StatItem } from '../_common/stat-item'
 import { ValueSensitiveText } from '../_common/value-sensitive-text'
 import { SettingsDialog } from './settings-dialog'

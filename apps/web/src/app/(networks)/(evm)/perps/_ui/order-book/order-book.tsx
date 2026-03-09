@@ -1,13 +1,14 @@
 import { useBreakpoint } from '@sushiswap/hooks'
 import { SkeletonBox, classNames } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
-import { type OrderbookRow, useL2OrderBook } from 'src/lib/perps/subscription'
-import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
 import {
+  type OrderbookRow,
   getTextColorClass,
   numberFormatter,
   toFixedTrim,
-} from 'src/lib/perps/utils'
+  useL2OrderBook,
+  useSymbolSplit,
+} from 'src/lib/perps'
 import { SideToggle } from '../_common/side-toggle'
 import { useUserSettingsState } from '../account-management/settings-provider'
 import { useAssetListState } from '../asset-selector/asset-list-provider'

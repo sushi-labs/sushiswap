@@ -19,7 +19,7 @@ import type {
   //  useCallback,
   // useState
 } from 'react'
-import { useLegalCheck } from 'src/lib/perps/info'
+import { useLegalCheck } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 // import { parseSignature } from 'viem'
 

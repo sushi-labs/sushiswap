@@ -1,7 +1,7 @@
 import { formatSize } from '@nktkas/hyperliquid/utils'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { useUserFees } from 'src/lib/perps/info'
+import { useUserFees } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { StatItem } from '../../_common/stat-item'
 import { useAssetState } from '../asset-state-provider'

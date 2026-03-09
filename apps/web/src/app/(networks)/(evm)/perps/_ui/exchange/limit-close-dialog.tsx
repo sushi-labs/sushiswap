@@ -9,17 +9,17 @@ import {
   DialogTrigger,
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
-import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
-import { useExecuteOrders } from 'src/lib/perps/exchange'
-import { useAllMids } from 'src/lib/perps/subscription'
-import { useMidPrice } from 'src/lib/perps/use-mid-price'
-import type { UserPositionsItemType } from 'src/lib/perps/user'
 import {
+  BUILDER_FEE_PERPS,
+  type UserPositionsItemType,
   currencyFormatter,
   getSizeAndPercentageFromInput,
   getSizeAndPercentageFromPercentageInput,
   getTextColorClass,
-} from 'src/lib/perps/utils'
+  useAllMids,
+  useExecuteOrders,
+  useMidPrice,
+} from 'src/lib/perps'
 import { formatUnits, parseUnits } from 'viem'
 import { LimitInput } from '../_common/limit-input'
 import { PercentageSlider } from '../_common/percentage-slider'

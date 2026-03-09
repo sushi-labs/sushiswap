@@ -2,13 +2,13 @@ import { Chip, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { useCallback } from 'react'
-import { useCancelTwap } from 'src/lib/perps/exchange'
-import type { ActiveTwapItemType } from 'src/lib/perps/use-active-twap'
 import {
+  type ActiveTwapItemType,
   getTextColorClass,
   getTextColorClassForHover,
   numberFormatter,
-} from 'src/lib/perps/utils'
+  useCancelTwap,
+} from 'src/lib/perps'
 import { TableButton } from '~evm/perps/_ui/_common/table-button'
 import { useAssetState } from '../../../trade-widget/asset-state-provider'
 import { columnBodyMeta } from '../../column-meta'

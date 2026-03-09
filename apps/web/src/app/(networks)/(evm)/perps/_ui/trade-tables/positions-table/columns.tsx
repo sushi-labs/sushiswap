@@ -11,16 +11,14 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 import {
   type UserPositionsItemType,
-  useUserOpenOrders,
-} from 'src/lib/perps/user'
-import {
   currencyFormatter,
   getExistingPositionTpSlOrders,
   getSignForValue,
   getTextColorClass,
   getTextColorClassForHover,
   numberFormatter,
-} from 'src/lib/perps/utils'
+  useUserOpenOrders,
+} from 'src/lib/perps'
 import { TableButton } from '../../_common/table-button'
 import { CloseAllPositionsDialog } from '../../exchange/close-all-positions-dialog'
 import { EditTpSlPositionDialog } from '../../exchange/edit-tp-sl-position-dialog'

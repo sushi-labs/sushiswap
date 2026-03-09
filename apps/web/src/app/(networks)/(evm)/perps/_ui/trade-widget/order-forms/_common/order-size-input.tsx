@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import {
   getSizeAndPercentageFromInput,
   getSizeAndPercentageFromPercentageInput,
-} from 'src/lib/perps/utils'
+} from 'src/lib/perps'
 import { PercentageSlider } from '~evm/perps/_ui/_common/percentage-slider'
 import { SizeInput } from '~evm/perps/_ui/_common/size-input'
 import { useAssetState } from '../../asset-state-provider'

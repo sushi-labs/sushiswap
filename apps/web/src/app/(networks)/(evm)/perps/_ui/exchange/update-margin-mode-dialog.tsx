@@ -9,7 +9,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { type ReactNode, useMemo, useState } from 'react'
-import { useUpdateLeverage } from 'src/lib/perps/exchange'
+import { useUpdateLeverage } from 'src/lib/perps'
 import { CheckboxSetting } from '../_common/checkbox-setting'
 import { useAssetListState } from '../asset-selector/asset-list-provider'
 

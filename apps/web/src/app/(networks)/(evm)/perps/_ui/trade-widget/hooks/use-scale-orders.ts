@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { buildScaleOrders } from 'src/lib/perps/utils'
+import { buildScaleOrders } from 'src/lib/perps'
 import { useAssetState } from '../asset-state-provider'
 
 export const useScaleOrders = () => {

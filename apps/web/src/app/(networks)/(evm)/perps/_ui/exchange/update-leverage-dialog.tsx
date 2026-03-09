@@ -9,9 +9,11 @@ import {
   Message,
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
-import { useUpdateLeverage } from 'src/lib/perps/exchange'
-import { useMarginTable } from 'src/lib/perps/info'
-import { currencyFormatter } from 'src/lib/perps/utils'
+import {
+  currencyFormatter,
+  useMarginTable,
+  useUpdateLeverage,
+} from 'src/lib/perps'
 import { PercentageSlider } from '../_common/percentage-slider'
 import { useAssetListState } from '../asset-selector/asset-list-provider'
 

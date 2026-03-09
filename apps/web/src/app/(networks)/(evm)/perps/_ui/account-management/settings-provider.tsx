@@ -1,7 +1,7 @@
 'use client'
 import { useLocalStorage } from '@sushiswap/hooks'
 import { type FC, createContext, useCallback, useContext, useMemo } from 'react'
-import { useSetUserAbstraction } from 'src/lib/perps/exchange'
+import { useSetUserAbstraction } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { useUserState } from '~evm/perps/user-provider'
 interface State {

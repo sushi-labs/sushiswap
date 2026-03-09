@@ -1,6 +1,6 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useCallback } from 'react'
-import { useApproveBuilderFee } from 'src/lib/perps/exchange'
+import { useApproveBuilderFee } from 'src/lib/perps'
 
 export const BuilderFee: FC<ButtonProps> = ({
   children,

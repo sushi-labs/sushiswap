@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { calculateOrderValue, enUSFormatNumber } from 'src/lib/perps/utils'
+import { calculateOrderValue, enUSFormatNumber } from 'src/lib/perps'
 import { StatItem } from '../../_common/stat-item'
 import { useAssetState } from '../asset-state-provider'
 

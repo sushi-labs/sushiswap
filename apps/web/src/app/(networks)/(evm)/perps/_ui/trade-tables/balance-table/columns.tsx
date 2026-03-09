@@ -11,13 +11,13 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
-import type { BalanceItemType } from 'src/lib/perps/user'
 import {
+  type BalanceItemType,
   currencyFormatter,
   getSignForValue,
   getTextColorClass,
   numberFormatter,
-} from 'src/lib/perps/utils'
+} from 'src/lib/perps'
 import { truncateString } from 'sushi'
 import { useAssetState } from '../../trade-widget/asset-state-provider'
 import { columnBodyMeta } from '../column-meta'

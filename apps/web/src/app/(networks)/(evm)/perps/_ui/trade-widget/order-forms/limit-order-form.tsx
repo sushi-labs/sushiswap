@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { useMidPrice } from 'src/lib/perps/use-mid-price'
-import type { TpSlGainLossType } from 'src/lib/perps/utils'
+import { type TpSlGainLossType, useMidPrice } from 'src/lib/perps'
 import { CheckboxSetting } from '../../_common/checkbox-setting'
 import { LimitInput } from '../../_common/limit-input'
 import { TpSlInput } from '../../_common/tp-sl-input'

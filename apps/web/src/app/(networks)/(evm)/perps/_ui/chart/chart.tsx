@@ -12,7 +12,7 @@ import type {
 } from 'public/trading-view/charting_library/charting_library'
 import { widget } from 'public/trading-view/charting_library/charting_library.esm.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useAssetName } from 'src/lib/perps/use-asset-name'
+import { useAssetName } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { useAssetListState } from '../asset-selector/asset-list-provider'
 import { useAssetState } from '../trade-widget/asset-state-provider'

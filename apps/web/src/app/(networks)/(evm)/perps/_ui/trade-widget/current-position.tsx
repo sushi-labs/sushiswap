@@ -1,8 +1,11 @@
 import { classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
-import { useUserPositions } from 'src/lib/perps/user'
-import { getTextColorClass, numberFormatter } from 'src/lib/perps/utils'
+import {
+  getTextColorClass,
+  numberFormatter,
+  useSymbolSplit,
+  useUserPositions,
+} from 'src/lib/perps'
 import { StatItem } from '../_common/stat-item'
 import { useAssetState } from './asset-state-provider'
 

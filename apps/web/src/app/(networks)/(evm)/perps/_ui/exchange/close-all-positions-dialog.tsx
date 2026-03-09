@@ -9,10 +9,12 @@ import {
   DialogTrigger,
 } from '@sushiswap/ui'
 import { type ReactNode, useMemo, useState } from 'react'
-import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
-import { useExecuteOrders } from 'src/lib/perps/exchange'
-import { useAllMids } from 'src/lib/perps/subscription'
-import { useUserPositions } from 'src/lib/perps/user'
+import {
+  BUILDER_FEE_PERPS,
+  useAllMids,
+  useExecuteOrders,
+  useUserPositions,
+} from 'src/lib/perps'
 import { formatUnits, parseUnits } from 'viem'
 import { CheckboxSetting } from '../_common/checkbox-setting'
 import { TableButton } from '../_common/table-button'

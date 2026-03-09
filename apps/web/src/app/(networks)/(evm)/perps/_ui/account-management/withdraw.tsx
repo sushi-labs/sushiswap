@@ -14,8 +14,7 @@ import {
   DialogTrigger,
 } from '@sushiswap/ui'
 import { useCallback, useState } from 'react'
-import { TOAST_AUTOCLOSE_TIME } from 'src/lib/perps/config'
-import { hlHttpTransport } from 'src/lib/perps/transports'
+import { TOAST_AUTOCLOSE_TIME, hlHttpTransport } from 'src/lib/perps'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'

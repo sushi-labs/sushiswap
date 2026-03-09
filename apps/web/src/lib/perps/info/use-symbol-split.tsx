@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import type { PerpOrSpotAsset } from './subscription/use-asset-list'
+import type { PerpOrSpotAsset } from '../subscription/use-asset-list'
 
 export const useSymbolSplit = ({
   asset,

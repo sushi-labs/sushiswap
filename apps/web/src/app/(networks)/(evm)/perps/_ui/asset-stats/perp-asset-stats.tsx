@@ -6,13 +6,13 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useEffect, useMemo, useState } from 'react'
-import { useActiveAsset } from 'src/lib/perps/subscription'
 import {
   currencyFormatter,
   getSignForValue,
   getTextColorClass,
   numberFormatter,
-} from 'src/lib/perps/utils'
+  useActiveAsset,
+} from 'src/lib/perps'
 import { formatPercent } from 'sushi'
 import { ValueSensitiveText } from '../_common/value-sensitive-text'
 import { useAssetListState } from '../asset-selector/asset-list-provider'

@@ -10,19 +10,17 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { type ReactNode, useMemo, useState } from 'react'
-import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
-import { useExecuteOrders } from 'src/lib/perps/exchange'
-import { useMidPrice } from 'src/lib/perps/use-mid-price'
-import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
 import {
+  BUILDER_FEE_PERPS,
   type UserPositionsItemType,
-  useUserAccountValues,
-} from 'src/lib/perps/user'
-import {
   enUSFormatNumber,
   estimateLiquidationPrice,
   getTextColorClass,
-} from 'src/lib/perps/utils'
+  useExecuteOrders,
+  useMidPrice,
+  useSymbolSplit,
+  useUserAccountValues,
+} from 'src/lib/perps'
 import { formatUnits, parseUnits } from 'viem'
 import { CheckboxSetting } from '../_common/checkbox-setting'
 import { TableButton } from '../_common/table-button'

@@ -13,7 +13,7 @@ import type {
   SearchSymbolResultItem,
   TimeFrameItem,
 } from 'public/trading-view/charting_library/charting_library'
-import { hlWebSocketTransport } from 'src/lib/perps/transports'
+import { hlWebSocketTransport } from 'src/lib/perps'
 
 // const lastBarsCache = new Map<string, Bar>();
 

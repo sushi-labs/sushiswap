@@ -1,12 +1,12 @@
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
 import { LinkExternal, SkeletonBox, classNames } from '@sushiswap/ui'
-import { useTrades } from 'src/lib/perps/subscription'
-import { useAssetName } from 'src/lib/perps/use-asset-name'
 import {
   getHyperliquidExplorerUrl,
   getTextColorClass,
   numberFormatter,
-} from 'src/lib/perps/utils'
+  useAssetName,
+  useTrades,
+} from 'src/lib/perps'
 import { useAssetState } from './trade-widget/asset-state-provider'
 
 export const Trades = () => {

@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
-import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
 import {
   getTwapOrderCount,
   getTwapSuborderSize,
   numberFormatter,
-} from 'src/lib/perps/utils'
+  useSymbolSplit,
+} from 'src/lib/perps'
 import { StatItem } from '~evm/perps/_ui/_common/stat-item'
 import { useAssetState } from '../../asset-state-provider'
 
