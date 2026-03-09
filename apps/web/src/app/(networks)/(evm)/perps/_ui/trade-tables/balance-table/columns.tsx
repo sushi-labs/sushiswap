@@ -2,6 +2,7 @@ import {
   ClipboardCheckIcon,
   ClipboardCopyIcon,
 } from '@heroicons/react-v1/outline'
+import { userNonFundingLedgerUpdates } from '@nktkas/hyperliquid/api/subscription'
 import { useCopyClipboard } from '@sushiswap/hooks'
 import {
   Chip,
@@ -208,6 +209,20 @@ export const PNL_COLUMN: ColumnDef<BalanceItemType, unknown> = {
     body: columnBodyMeta,
   },
 }
+
+// export const REPAY_COLUMN: ColumnDef<BalanceItemType, unknown> = {
+//   id: 'repay',
+//   header: 'Repay',
+//   cell: (props) => {
+
+//     return (
+//         //todo: get if need to repay and amount to repay
+//     )
+//   },
+//   meta: {
+//     body: columnBodyMeta,
+//   },
+// }
 
 export const CONTRACT_COLUMN: ColumnDef<BalanceItemType, unknown> = {
   id: 'contract',

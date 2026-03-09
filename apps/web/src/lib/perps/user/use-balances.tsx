@@ -14,11 +14,6 @@ export const useBalances = () => {
         isLoading: isLoadingAllDexClearinghouse,
         isError: isErrorAllDexClearinghouse,
       },
-      spotStateQuery: {
-        data: spotData,
-        isLoading: isLoadingSpotState,
-        isError: isErrorSpotState,
-      },
       webData2Query: {
         data: webData2Data,
         isLoading: isWebData2Loading,
@@ -40,15 +35,9 @@ export const useBalances = () => {
   } = useUserSettingsState()
 
   const isLoading =
-    isLoadingAllDexClearinghouse ||
-    isAssetListLoading ||
-    isLoadingSpotState ||
-    isWebData2Loading
+    isLoadingAllDexClearinghouse || isAssetListLoading || isWebData2Loading
   const isError =
-    isErrorAllDexClearinghouse ||
-    isAssetListError ||
-    isErrorSpotState ||
-    isWebData2Error
+    isErrorAllDexClearinghouse || isAssetListError || isWebData2Error
 
   const formattedData = useMemo(() => {
     if (!data) return []
@@ -75,9 +64,6 @@ export const useBalances = () => {
         const spot = assetList
           ?.entries()
           .find(([, v]) => v.tokens?.find((t) => t.index === tokenIndex))?.[1]
-        const _spotBalance = spotData?.spotState?.balances?.find(
-          (b) => b.token === tokenIndex,
-        )
         const price = i.coin === 'USDC' ? 1 : (Number(spot?.markPrice) ?? 0)
         const usdcValue = Number(i.total || 0) * price
         const entry = Number(i.entryNtl || 0)
@@ -86,8 +72,7 @@ export const useBalances = () => {
         const _coin = SPOT_ASSETS_TO_REWRITE.has(i.coin)
           ? SPOT_ASSETS_TO_REWRITE.get(i.coin)
           : i.coin
-        const availableBalance =
-          Number(_spotBalance?.total || 0) - Number(_spotBalance?.hold || 0)
+        const availableBalance = Number(i?.total || 0) - Number(i?.hold || 0)
         return {
           coin: i.coin === 'USDC' ? 'USDC (Spot)' : _coin,
           assetName: spot?.name,
@@ -137,7 +122,7 @@ export const useBalances = () => {
       dex: '',
     }
     return [usdc, ...nonUsdcBalances]
-  }, [data, assetList, spotData, webData2Data, isUnifiedAccountModeEnabled])
+  }, [data, assetList, webData2Data, isUnifiedAccountModeEnabled])
 
   return useMemo(() => {
     if (!address) {
