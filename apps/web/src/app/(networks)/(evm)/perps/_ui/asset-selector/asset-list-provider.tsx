@@ -1,7 +1,7 @@
 'use client'
 import type { SymbolConverter } from '@nktkas/hyperliquid/utils'
 import { type FC, createContext, useContext, useMemo } from 'react'
-import { useSymbolConverter } from 'src/lib/perps/info/use-symbol-converter'
+import { useSymbolConverter } from 'src/lib/perps/info'
 import { useAssetList } from 'src/lib/perps/subscription'
 interface State {
   state: {
