@@ -6,7 +6,7 @@ import {
   useBreakpoint,
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { TradeFilter } from '../filters/trade-filter'
+import { TradeFilter } from '../filters'
 import {
   TWAP_TABLES_TABS,
   type TwapTableTabValue,

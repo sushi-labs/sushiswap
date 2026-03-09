@@ -8,7 +8,7 @@ import {
   useUserPositions,
 } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
-import { TradeFilter } from './filters/trade-filter'
+import { TradeFilter } from './filters'
 import {
   TRADE_TABLES_TABS,
   type TradeTablesTabValue,
