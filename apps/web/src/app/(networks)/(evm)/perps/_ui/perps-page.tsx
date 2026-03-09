@@ -2,7 +2,7 @@
 import { useIsMounted } from '@sushiswap/hooks'
 import { Splash, useBreakpoint } from '@sushiswap/ui'
 import { DesktopLayout } from './desktop'
-import { MobileLayout } from './mobile/mobile-layout'
+import { MobileLayout } from './mobile'
 
 export const PerpsPage = () => {
   const { isLg } = useBreakpoint('lg')
