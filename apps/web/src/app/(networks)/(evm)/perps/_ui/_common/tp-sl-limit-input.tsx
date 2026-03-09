@@ -1,5 +1,5 @@
 import { TextField, classNames } from '@sushiswap/ui'
-import type { PerpOrSpotAsset } from 'src/lib/perps/subscription/use-asset-list'
+import type { PerpOrSpotAsset } from 'src/lib/perps/subscription'
 
 export const TpSlLimitInput = ({
   asset,

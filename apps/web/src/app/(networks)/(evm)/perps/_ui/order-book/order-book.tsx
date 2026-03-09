@@ -1,10 +1,7 @@
 import { useBreakpoint } from '@sushiswap/hooks'
 import { SkeletonBox, classNames } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
-import {
-  type OrderbookRow,
-  useL2OrderBook,
-} from 'src/lib/perps/subscription/use-l2-order-book'
+import { type OrderbookRow, useL2OrderBook } from 'src/lib/perps/subscription'
 import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
 import {
   getTextColorClass,

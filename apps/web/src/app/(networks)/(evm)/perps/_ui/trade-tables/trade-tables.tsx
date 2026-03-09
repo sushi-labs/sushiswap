@@ -1,7 +1,7 @@
 import { Card, classNames, useBreakpoint } from '@sushiswap/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { useUserActiveTwap } from 'src/lib/perps/subscription/use-user-active-twap'
+import { useUserActiveTwap } from 'src/lib/perps/subscription'
 import { useBalances } from 'src/lib/perps/use-balances'
 import { useUserOpenOrders } from 'src/lib/perps/use-user-open-orders'
 import { useUserPositions } from 'src/lib/perps/use-user-positions'

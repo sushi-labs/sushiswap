@@ -1,7 +1,7 @@
 import { formatPrice } from '@nktkas/hyperliquid/utils'
 import { Button, TextField, classNames } from '@sushiswap/ui'
 import { useCallback, useEffect, useState } from 'react'
-import type { PerpOrSpotAsset } from 'src/lib/perps/subscription/use-asset-list'
+import type { PerpOrSpotAsset } from 'src/lib/perps/subscription'
 import {
   type TpSlGainLossType,
   calculateGainFromTp,

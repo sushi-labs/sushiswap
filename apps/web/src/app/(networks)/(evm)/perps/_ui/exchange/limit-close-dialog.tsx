@@ -11,7 +11,7 @@ import {
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
 import { useExecuteOrders } from 'src/lib/perps/exchange/use-execute-orders'
-import { useAllMids } from 'src/lib/perps/subscription/use-all-mids'
+import { useAllMids } from 'src/lib/perps/subscription'
 import { useMidPrice } from 'src/lib/perps/use-mid-price'
 import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'
 import {

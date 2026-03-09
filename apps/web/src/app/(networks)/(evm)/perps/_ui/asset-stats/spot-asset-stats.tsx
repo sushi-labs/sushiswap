@@ -8,7 +8,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { useActiveAsset } from 'src/lib/perps/subscription/use-active-asset'
+import { useActiveAsset } from 'src/lib/perps/subscription'
 import {
   enUSFormatNumber,
   getHyperliquidExplorerUrl,

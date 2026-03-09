@@ -1,13 +1,15 @@
 'use client'
 import { type FC, createContext, useContext, useMemo, useState } from 'react'
-import { useAllDexClearinghouseState } from 'src/lib/perps/subscription/use-all-dex-clearinghouse-state'
-import { useOpenOrders } from 'src/lib/perps/subscription/use-open-orders'
-import { useSpotState } from 'src/lib/perps/subscription/use-spot-state'
-import { useUserFills } from 'src/lib/perps/subscription/use-user-fills'
-import { useUserFundings } from 'src/lib/perps/subscription/use-user-fundings'
-import { useUserHistoricalOrders } from 'src/lib/perps/subscription/use-user-historical-orders'
-import { useWebData2 } from 'src/lib/perps/subscription/use-web-data-2'
-import { useWebData3 } from 'src/lib/perps/subscription/use-web-data-3'
+import {
+  useAllDexClearinghouseState,
+  useOpenOrders,
+  useSpotState,
+  useUserFills,
+  useUserFundings,
+  useUserHistoricalOrders,
+  useWebData2,
+  useWebData3,
+} from 'src/lib/perps/subscription'
 import { useAccount } from 'src/lib/wallet'
 interface State {
   state: {

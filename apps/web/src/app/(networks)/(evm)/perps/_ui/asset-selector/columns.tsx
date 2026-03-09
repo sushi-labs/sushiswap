@@ -1,7 +1,7 @@
 import { Chip, SkeletonText, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
-import type { PerpOrSpotAsset } from 'src/lib/perps/subscription/use-asset-list'
+import type { PerpOrSpotAsset } from 'src/lib/perps/subscription'
 import {
   currencyFormatter,
   enUSFormatNumber,

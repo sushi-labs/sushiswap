@@ -14,7 +14,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useL2OrderBook } from 'src/lib/perps/subscription/use-l2-order-book'
+import { useL2OrderBook } from 'src/lib/perps/subscription'
 import { StatItem } from '../../_common/stat-item'
 import { TableButton } from '../../_common/table-button'
 import {

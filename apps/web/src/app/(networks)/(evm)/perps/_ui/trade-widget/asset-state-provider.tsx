@@ -10,8 +10,8 @@ import {
   useState,
 } from 'react'
 import type { TimeInForceType } from 'src/lib/perps/exchange/use-execute-orders'
-import { useActiveAssetData } from 'src/lib/perps/subscription/use-active-asset-data'
-import type { PerpOrSpotAsset } from 'src/lib/perps/subscription/use-asset-list'
+import { useActiveAssetData } from 'src/lib/perps/subscription'
+import type { PerpOrSpotAsset } from 'src/lib/perps/subscription'
 import { useBalance } from 'src/lib/perps/use-balances'
 import { useUserPositions } from 'src/lib/perps/use-user-positions'
 import { useAccount } from 'src/lib/wallet'
