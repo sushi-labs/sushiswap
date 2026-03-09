@@ -33,7 +33,6 @@ export const getTwapSuborderSize = ({
   return formatUnits(sizePerOrderBN, decimals)
 }
 
-//Todo: move these math helpers to a separate file
 export function calculateIsolatedMargin({
   baseSize,
   price,

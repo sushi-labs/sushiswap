@@ -37,17 +37,17 @@ export const AssetSelector = () => {
         ) : (
           <Button
             variant="secondary"
-            className="whitespace-nowrap lg:!rounded-full !h-fit !gap-1"
+            className="whitespace-nowrap !px-2 lg:!px-3 lg:!rounded-full items-center !h-fit !gap-1"
           >
-            <div className="whitespace-nowrap flex flex-col lg:flex-row lg:items-center gap-1">
+            <span className="block lg:hidden">
+              <TokenIcon />
+            </span>
+            <div className="whitespace-nowrap flex flex-col lg:flex-row lg:items-center lg:gap-1">
               <div className="flex items-center gap-1">
-                <TokenIcon />
+                <span className="hidden lg:block">
+                  <TokenIcon />
+                </span>
                 <span className="text-lg font-medium">{asset?.symbol}</span>
-                <ChevronDownIcon
-                  className="block lg:hidden"
-                  width={20}
-                  height={20}
-                />
               </div>
               <div className="flex items-center gap-1">
                 <Chip variant="blue" className="!px-1">
@@ -60,11 +60,7 @@ export const AssetSelector = () => {
                 ) : null}
               </div>
             </div>
-            <ChevronDownIcon
-              className="hidden lg:block"
-              width={20}
-              height={20}
-            />
+            <ChevronDownIcon className="ml-2 lg:ml-0" width={20} height={20} />
           </Button>
         )}
       </DialogTrigger>
