@@ -1,10 +1,7 @@
 import { DataTable, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
-import {
-  type ActiveTwapItemType,
-  useActiveTwap,
-} from 'src/lib/perps/use-active-twap'
+import { type ActiveTwapItemType, useActiveTwap } from 'src/lib/perps/twap'
 import { MobileTable } from '../../_common/mobile-table'
 import {
   type TradeFilterType,

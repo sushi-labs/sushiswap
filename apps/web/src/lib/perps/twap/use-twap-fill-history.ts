@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
-import { useAccount } from '../wallet'
-import { useUserTwapFillHistory } from './subscription/use-use-twap-fill-history'
+import { useAccount } from '../../wallet'
+import { useUserTwapFillHistory } from '../subscription/use-use-twap-fill-history'
 
 export const useTwapFillHistory = () => {
   const address = useAccount('evm')

@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import {
   type TwapFillHistoryItemType,
   useTwapFillHistory,
-} from 'src/lib/perps/use-twap-fill-history'
+} from 'src/lib/perps/twap'
 import { MobileTable } from '../../_common/mobile-table'
 import {
   type TradeFilterType,
