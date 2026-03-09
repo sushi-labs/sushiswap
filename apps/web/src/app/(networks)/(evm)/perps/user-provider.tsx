@@ -1,5 +1,13 @@
 'use client'
-import { type FC, createContext, useContext, useMemo, useState } from 'react'
+import { createInfoToast } from '@sushiswap/notifications'
+import {
+  type FC,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import {
   useAllDexClearinghouseState,
   useOpenOrders,
@@ -7,6 +15,7 @@ import {
   useUserFills,
   useUserFundings,
   useUserHistoricalOrders,
+  useUserNotifications,
   useWebData2,
   useWebData3,
 } from 'src/lib/perps'
@@ -40,6 +49,23 @@ interface UserProviderProps {
 const UserProvider: FC<UserProviderProps> = ({ children }) => {
   const [aggregateFillsByTime, setAggregateFillsByTime] = useState(false)
   const address = useAccount('evm')
+  const { data: notification } = useUserNotifications({ address })
+
+  useEffect(() => {
+    if (notification) {
+      const ts = Date.now()
+
+      createInfoToast({
+        summary: notification,
+        account: address,
+        chainId: 1,
+        type: 'burn',
+        timestamp: ts,
+        groupTimestamp: ts,
+        autoClose: 2_000,
+      })
+    }
+  }, [notification, address])
 
   const userHistoricalOrdersQuery = useUserHistoricalOrders({
     address,
