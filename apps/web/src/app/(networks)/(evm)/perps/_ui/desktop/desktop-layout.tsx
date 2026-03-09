@@ -1,7 +1,7 @@
 import { useBreakpoint, useLocalStorage } from '@sushiswap/hooks'
 import { AccountManagement } from '../account-management'
 import { AssetSelectorAndStats } from '../asset-selector-and-stats'
-import { Chart } from '../chart/chart'
+import { Chart } from '../chart'
 import { Favorites } from '../favorites/favorites'
 import { TradeTables } from '../trade-tables/trade-tables'
 import { TradeWidget } from '../trade-widget/trade-widget'

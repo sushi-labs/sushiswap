@@ -1,5 +1,5 @@
 import { Card, Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
-import { Chart } from '../chart/chart'
+import { Chart } from '../chart'
 import { OrderBook } from '../order-book/order-book'
 import { Trades } from '../trades'
 
