@@ -13,7 +13,7 @@ import {
   type OrderHistoryItemType,
   type UserOpenOrdersItemType,
   getTextColorClass,
-  numberFormatter,
+  perpsNumberFormatter,
 } from 'src/lib/perps'
 import { TableButton } from '../../_common/table-button'
 
@@ -137,7 +137,7 @@ const _OrderCard = ({
         <div className="flex justify-between">
           <span className="text-muted-foreground">Amount</span>
           <span className="font-medium">
-            {numberFormatter.format(Number.parseFloat(tpSlOrder.sz))}{' '}
+            {perpsNumberFormatter({ value: tpSlOrder.sz, maxFraxDigits: 8 })}{' '}
             {assetSymbol}
           </span>
         </div>
@@ -150,7 +150,7 @@ const _OrderCard = ({
           <span className="font-medium">
             {isMarketPrice
               ? 'Market'
-              : numberFormatter.format(Number.parseFloat(price))}
+              : perpsNumberFormatter({ value: price, maxFraxDigits: 8 })}
           </span>
         </div>
       </div>

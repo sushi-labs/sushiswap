@@ -11,7 +11,6 @@ import {
   type TradeHistoryItemType,
   getTextColorClass,
   getTextColorClassForHover,
-  numberFormatter,
   perpsNumberFormatter,
 } from 'src/lib/perps'
 import { useAssetState } from '../../trade-widget/asset-state-provider'
@@ -117,7 +116,7 @@ export const PRICE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     const price = props.row.original.px
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {numberFormatter.format(Number.parseFloat(price))}
+        {perpsNumberFormatter({ value: price })}
       </span>
     )
   },
@@ -137,7 +136,7 @@ export const SIZE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     const token0Symbol = props.row.original.token0Symbol
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {numberFormatter.format(Number.parseFloat(size))} {token0Symbol}
+        {perpsNumberFormatter({ value: size })} {token0Symbol}
       </span>
     )
   },
@@ -189,7 +188,7 @@ export const FEE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     }
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {numberFormatter.format(fee)} {feeToken}
+        {perpsNumberFormatter({ value: fee })} {feeToken}
       </span>
     )
   },

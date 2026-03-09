@@ -1,5 +1,4 @@
 import PencilIcon from '@heroicons/react/20/solid/PencilIcon'
-import { formatPrice } from '@nktkas/hyperliquid/utils'
 import {
   Chip,
   HoverCard,
@@ -16,7 +15,7 @@ import {
   getSignForValue,
   getTextColorClass,
   getTextColorClassForHover,
-  numberFormatter,
+  perpsNumberFormatter,
   useUserOpenOrders,
 } from 'src/lib/perps'
 import { TableButton } from '../../_common/table-button'
@@ -116,7 +115,7 @@ export const SIZE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
           getTextColorClass(size),
         )}
       >
-        {numberFormatter.format(Math.abs(size))} {assetSymbol}
+        {perpsNumberFormatter({ value: size })} {assetSymbol}
       </span>
     )
   },
@@ -137,7 +136,7 @@ export const POSITION_VALUE_COLUMN: ColumnDef<UserPositionsItemType, unknown> =
       const positionValue = props.row.original.position.positionValue
       return (
         <span className="font-medium lg:whitespace-nowrap">
-          {numberFormatter.format(Number.parseFloat(positionValue))} USDC
+          {perpsNumberFormatter({ value: positionValue })} USDC
         </span>
       )
     },
@@ -157,7 +156,7 @@ export const ENTRY_PRICE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     const entryPrice = props.row.original.position.entryPx
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {numberFormatter.format(Number.parseFloat(entryPrice))}
+        {perpsNumberFormatter({ value: entryPrice })}
       </span>
     )
   },
@@ -176,7 +175,7 @@ export const MARK_PRICE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     const markPrice = props.row.original.markPrice
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {numberFormatter.format(Number.parseFloat(markPrice))}
+        {perpsNumberFormatter({ value: markPrice })}
       </span>
     )
   },
@@ -258,9 +257,9 @@ export const LIQUIDATION_PRICE_COLUMN: ColumnDef<
     }
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {numberFormatter.format(
-          Number(formatPrice(liquidationPrice.toString(), 0, 'perp')),
-        )}
+        {perpsNumberFormatter({
+          value: liquidationPrice,
+        })}
       </span>
     )
   },
@@ -450,11 +449,11 @@ const ViewOrders = ({ coin }: { coin: string }) => {
     return (
       <div>
         {existingTpOrder
-          ? numberFormatter.format(Number.parseFloat(existingTpOrder.triggerPx))
+          ? perpsNumberFormatter({ value: existingTpOrder.triggerPx })
           : '--'}{' '}
         /{' '}
         {existingSlOrder
-          ? numberFormatter.format(Number.parseFloat(existingSlOrder.triggerPx))
+          ? perpsNumberFormatter({ value: existingSlOrder.triggerPx })
           : '--'}
       </div>
     )

@@ -16,7 +16,7 @@ import {
   currencyFormatter,
   getSignForValue,
   getTextColorClass,
-  numberFormatter,
+  perpsNumberFormatter,
 } from 'src/lib/perps'
 import { truncateString } from 'sushi'
 import { useAssetState } from '../../trade-widget/asset-state-provider'
@@ -83,10 +83,12 @@ export const TOTAL_BALANCE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
   cell: (props) => {
     const totalBalance = props.row.original.totalBalance
     const coin = props.row.original.coin?.split(' (')[0] ?? ''
+    const decimals = props.row.original.token?.szDecimals
 
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {numberFormatter.format(Number.parseFloat(totalBalance))} {coin}
+        {perpsNumberFormatter({ value: totalBalance, maxFraxDigits: decimals })}{' '}
+        {coin}
       </span>
     )
   },
@@ -109,11 +111,16 @@ export const AVAILABLE_BALANCE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
     const availableBalance = props.row.original.availableBalance
     const coin = props.row.original.coin?.split(' (')[0] ?? ''
     const isPerp = props.row.original.marketType === 'perp'
+    const decimals = props.row.original.token?.szDecimals
 
     if (!isPerp) {
       return (
         <span className="font-medium lg:whitespace-nowrap">
-          {numberFormatter.format(Number.parseFloat(availableBalance))} {coin}
+          {perpsNumberFormatter({
+            value: availableBalance,
+            maxFraxDigits: decimals,
+          })}{' '}
+          {coin}
         </span>
       )
     }
@@ -121,7 +128,11 @@ export const AVAILABLE_BALANCE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
       <HoverCard openDelay={0}>
         <HoverCardTrigger asChild tabIndex={0}>
           <div className="font-medium underline lg:whitespace-nowrap">
-            {numberFormatter.format(Number.parseFloat(availableBalance))} {coin}
+            {perpsNumberFormatter({
+              value: availableBalance,
+              maxFraxDigits: decimals,
+            })}{' '}
+            {coin}
           </div>
         </HoverCardTrigger>
         <HoverCardContent
@@ -131,8 +142,11 @@ export const AVAILABLE_BALANCE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
         >
           <p>
             Available balance to open positions ignoring open orders.{' '}
-            {numberFormatter.format(Number.parseFloat(availableBalance))} {coin}{' '}
-            is available to withdraw transfer.
+            {perpsNumberFormatter({
+              value: availableBalance,
+              maxFraxDigits: decimals,
+            })}{' '}
+            {coin} is available to withdraw transfer.
           </p>
         </HoverCardContent>
       </HoverCard>

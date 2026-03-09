@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import {
   calculateIsolatedMargin,
   estimateLiquidationPrice,
-  numberFormatter,
+  perpsNumberFormatter,
   useMarginTable,
   useUserAccountValues,
   useUserPositions,
@@ -149,7 +149,7 @@ export const LiquidationStat = ({ title }: { title?: string }) => {
       title={title ?? 'Liquidation Price'}
       value={
         estimatedLiquidationPrice
-          ? numberFormatter.format(Number(estimatedLiquidationPrice))
+          ? perpsNumberFormatter({ value: estimatedLiquidationPrice })
           : `N/A`
       }
     />

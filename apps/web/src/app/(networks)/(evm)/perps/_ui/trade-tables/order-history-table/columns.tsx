@@ -7,7 +7,6 @@ import {
   getPerpsDexAndCoin,
   getTextColorClass,
   getTextColorClassForHover,
-  numberFormatter,
   perpsNumberFormatter,
 } from 'src/lib/perps'
 import { useAssetState } from '../../trade-widget/asset-state-provider'
@@ -259,9 +258,9 @@ export const PRICE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     const type = props.row.original.order.orderType
     const value = useMemo(() => {
       if (type === 'Market') return 'Market'
-      return numberFormatter.format(
-        Number.parseFloat(props.row.original.order.limitPx),
-      )
+      return perpsNumberFormatter({
+        value: props.row.original.order.limitPx,
+      })
     }, [type, props.row.original.order.limitPx])
 
     return <span className="font-medium lg:whitespace-nowrap">{value}</span>

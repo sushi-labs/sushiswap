@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import {
   getTwapOrderCount,
   getTwapSuborderSize,
-  numberFormatter,
+  perpsNumberFormatter,
   useSymbolSplit,
 } from 'src/lib/perps'
 import { StatItem } from '~evm/perps/_ui/_common/stat-item'
@@ -31,7 +31,7 @@ export const SizePerSuborderStat = () => {
   return (
     <StatItem
       title="Size per Suborder"
-      value={`${numberFormatter.format(Number.parseFloat(sizePerSuborder))} ${baseSymbol}`}
+      value={`${perpsNumberFormatter({ value: sizePerSuborder })} ${baseSymbol}`}
     />
   )
 }

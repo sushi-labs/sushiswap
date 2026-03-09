@@ -3,7 +3,7 @@ import { LinkExternal, SkeletonBox, classNames } from '@sushiswap/ui'
 import {
   getHyperliquidExplorerUrl,
   getTextColorClass,
-  numberFormatter,
+  perpsNumberFormatter,
   useAssetName,
   useTrades,
 } from 'src/lib/perps'
@@ -51,10 +51,18 @@ export const Trades = () => {
                     getTextColorClass(trade.side === 'B' ? 1 : -1),
                   )}
                 >
-                  {numberFormatter.format(Number.parseFloat(trade.px))}
+                  {perpsNumberFormatter({
+                    value: trade.px,
+                    maxFraxDigits: 8,
+                    minFraxDigits: 0,
+                  })}
                 </td>
                 <td className="px-0.5 py-1 text-xs text-right">
-                  {numberFormatter.format(Number.parseFloat(trade.sz))}
+                  {perpsNumberFormatter({
+                    value: trade.sz,
+                    maxFraxDigits: 8,
+                    minFraxDigits: 0,
+                  })}
                 </td>
                 <td className="px-0.5 py-1 text-xs text-right">
                   {new Date(trade.time).toLocaleTimeString()}

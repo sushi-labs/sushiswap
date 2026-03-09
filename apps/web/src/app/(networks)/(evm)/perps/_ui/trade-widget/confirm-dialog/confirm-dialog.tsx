@@ -8,7 +8,7 @@ import {
 import { useState } from 'react'
 import {
   getTextColorClass,
-  numberFormatter,
+  perpsNumberFormatter,
   useSymbolSplit,
 } from 'src/lib/perps'
 import { CheckboxSetting } from '../../_common/checkbox-setting'
@@ -119,7 +119,7 @@ const _RegularOrderStats = () => {
           <div>
             {tradeType.includes('market')
               ? 'Market'
-              : numberFormatter.format(Number(limitPrice))}
+              : perpsNumberFormatter({ value: limitPrice })}
           </div>
         }
       />

@@ -11,7 +11,6 @@ import {
   type TwapFillHistoryItemType,
   getTextColorClass,
   getTextColorClassForHover,
-  numberFormatter,
   perpsNumberFormatter,
 } from 'src/lib/perps'
 import { useAssetState } from '../../../trade-widget/asset-state-provider'
@@ -113,7 +112,7 @@ export const PRICE_COLUMN: ColumnDef<TwapFillHistoryItemType, unknown> = {
 
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {numberFormatter.format(price)}
+        {perpsNumberFormatter({ value: price })}
       </span>
     )
   },
@@ -136,7 +135,7 @@ export const SIZE_COLUMN: ColumnDef<TwapFillHistoryItemType, unknown> = {
 
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {numberFormatter.format(size)} {symbol}
+        {perpsNumberFormatter({ value: size })} {symbol}
       </span>
     )
   },

@@ -7,7 +7,6 @@ import {
   type UserOpenOrdersItemType,
   getTextColorClass,
   getTextColorClassForHover,
-  numberFormatter,
   perpsNumberFormatter,
   useModifyOrder,
   usePrepModifyOrderData,
@@ -161,7 +160,7 @@ export const SIZE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
 
     return (
       <InlineEdit
-        value={numberFormatter.format(Number.parseFloat(size))}
+        value={perpsNumberFormatter({ value: size })}
         rawValue={size}
         onConfirm={(newValue) => {
           if (!currentOrderData) return
@@ -194,9 +193,7 @@ export const OG_SIZE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
     const origSz = props.row.original.origSz
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {origSz === '0.0'
-          ? '-'
-          : numberFormatter.format(Number.parseFloat(origSz))}
+        {origSz === '0.0' ? '-' : perpsNumberFormatter({ value: origSz })}
       </span>
     )
   },
@@ -261,7 +258,7 @@ export const PRICE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
 
     return (
       <InlineEdit
-        value={numberFormatter.format(Number.parseFloat(price))}
+        value={perpsNumberFormatter({ value: price })}
         rawValue={price}
         onConfirm={(newValue) => {
           if (!currentOrderData) return

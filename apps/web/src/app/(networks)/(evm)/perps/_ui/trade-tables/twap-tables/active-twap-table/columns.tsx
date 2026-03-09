@@ -6,7 +6,7 @@ import {
   type ActiveTwapItemType,
   getTextColorClass,
   getTextColorClassForHover,
-  numberFormatter,
+  perpsNumberFormatter,
   useCancelTwap,
 } from 'src/lib/perps'
 import { TableButton } from '~evm/perps/_ui/_common/table-button'
@@ -71,7 +71,7 @@ export const SIZE_COLUMN: ColumnDef<ActiveTwapItemType, unknown> = {
           getTextColorClass(side === 'A' ? -1 : 1),
         )}
       >
-        {numberFormatter.format(Number.parseFloat(size))} {symbol}
+        {perpsNumberFormatter({ value: size })} {symbol}
       </span>
     )
   },
@@ -97,7 +97,7 @@ export const EXECUTED_SIZE_COLUMN: ColumnDef<ActiveTwapItemType, unknown> = {
           size > 0 ? getTextColorClass(side === 'A' ? -1 : 1) : '',
         )}
       >
-        {size > 0 ? `${numberFormatter.format(size)} ${symbol}` : '--'}
+        {size > 0 ? `${perpsNumberFormatter({ value: size })} ${symbol}` : '--'}
       </span>
     )
   },
@@ -121,7 +121,9 @@ export const AVG_PRICE_COLUMN: ColumnDef<ActiveTwapItemType, unknown> = {
 
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {averagePrice > 0 ? numberFormatter.format(averagePrice) : '--'}
+        {averagePrice > 0
+          ? perpsNumberFormatter({ value: averagePrice })
+          : '--'}
       </span>
     )
   },

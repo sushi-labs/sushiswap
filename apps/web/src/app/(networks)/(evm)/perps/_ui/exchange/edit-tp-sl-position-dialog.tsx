@@ -19,7 +19,7 @@ import {
   calculateLossFromSl,
   getExistingPositionTpSlOrders,
   getTextColorClass,
-  numberFormatter,
+  perpsNumberFormatter,
   useExecuteOrders,
   useSymbolSplit,
   useUserOpenOrders,
@@ -310,13 +310,19 @@ export const EditTpSlPositionDialog = ({
               <div className="flex items-center justify-between">
                 <div className="text-muted-foreground">Entry Price</div>
                 <div className="font-medium">
-                  {numberFormatter.format(Number.parseFloat(entryPrice))}
+                  {perpsNumberFormatter({
+                    value: entryPrice,
+                    maxFraxDigits: asset?.decimals,
+                  })}
                 </div>
               </div>
               <div className="flex items-center justify-between">
                 <div className="text-muted-foreground">Mark Price</div>
                 <div className="font-medium">
-                  {numberFormatter.format(Number.parseFloat(markPrice))}
+                  {perpsNumberFormatter({
+                    value: markPrice,
+                    maxFraxDigits: asset?.decimals,
+                  })}
                 </div>
               </div>
               {existingTpOrder ? (
@@ -334,9 +340,10 @@ export const EditTpSlPositionDialog = ({
                     </div>
                     <div className="text-muted-foreground text-xs">
                       Expected Profit:{' '}
-                      {numberFormatter.format(
-                        Number.parseFloat(expectedProfitUsdc),
-                      )}{' '}
+                      {perpsNumberFormatter({
+                        value: expectedProfitUsdc,
+                        maxFraxDigits: asset?.decimals,
+                      })}{' '}
                       USDC
                     </div>
                   </div>
@@ -357,9 +364,10 @@ export const EditTpSlPositionDialog = ({
                     </div>
                     <div className="text-muted-foreground text-xs">
                       Expected Loss: -
-                      {numberFormatter.format(
-                        Number.parseFloat(expectedLossUsdc),
-                      )}{' '}
+                      {perpsNumberFormatter({
+                        value: expectedLossUsdc,
+                        maxFraxDigits: asset?.decimals,
+                      })}{' '}
                       USDC
                     </div>
                   </div>

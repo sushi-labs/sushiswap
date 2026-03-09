@@ -1,12 +1,11 @@
 import { StarIcon } from '@heroicons/react-v1/solid'
-import { formatPrice } from '@nktkas/hyperliquid/utils'
 import { useLocalStorage } from '@sushiswap/hooks'
 import { Button, Card, SkeletonBox, classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import {
   getSignForValue,
   getTextColorClass,
-  numberFormatter,
+  perpsNumberFormatter,
   useFavoriteAssets,
 } from 'src/lib/perps'
 import { formatPercent } from 'sushi'
@@ -82,15 +81,10 @@ export const Favorites = () => {
                   : asset?.change24hPct
               const formattedValue =
                 displayType === 'usd'
-                  ? numberFormatter.format(
-                      Number(
-                        formatPrice(
-                          Number(price ?? 0),
-                          asset?.decimals ?? 0,
-                          asset?.marketType,
-                        ),
-                      ),
-                    )
+                  ? perpsNumberFormatter({
+                      value: price ?? '0',
+                      maxFraxDigits: asset?.decimals,
+                    })
                   : formatPercent(Number(changeValue ?? 0))
               return (
                 <Button

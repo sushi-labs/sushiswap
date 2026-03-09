@@ -5,7 +5,7 @@ import {
   type TwapHistoryItemType,
   getTextColorClass,
   getTextColorClassForHover,
-  numberFormatter,
+  perpsNumberFormatter,
 } from 'src/lib/perps'
 import { useAssetState } from '../../../trade-widget/asset-state-provider'
 import { columnBodyMeta } from '../../column-meta'
@@ -90,7 +90,7 @@ export const TOTAL_SIZE_COLUMN: ColumnDef<TwapHistoryItemType, unknown> = {
           getTextColorClass(side === 'A' ? -1 : 1),
         )}
       >
-        {numberFormatter.format(Number.parseFloat(size))} {symbol}
+        {perpsNumberFormatter({ value: size })} {symbol}
       </span>
     )
   },
@@ -116,7 +116,7 @@ export const EXECUTED_SIZE_COLUMN: ColumnDef<TwapHistoryItemType, unknown> = {
           size > 0 ? getTextColorClass(side === 'A' ? -1 : 1) : '',
         )}
       >
-        {size > 0 ? `${numberFormatter.format(size)} ${symbol}` : '--'}
+        {size > 0 ? `${perpsNumberFormatter({ value: size })} ${symbol}` : '--'}
       </span>
     )
   },
@@ -148,7 +148,7 @@ export const AVG_PRICE_COLUMN: ColumnDef<TwapHistoryItemType, unknown> = {
     const price = executedSize > 0 ? executedNtl / executedSize : 0
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {price > 0 ? numberFormatter.format(price) : '--'}
+        {price > 0 ? perpsNumberFormatter({ value: price }) : '--'}
       </span>
     )
   },

@@ -6,7 +6,6 @@ import {
   currencyFormatter,
   getSignForValue,
   getTextColorClass,
-  numberFormatter,
   perpsNumberFormatter,
 } from 'src/lib/perps'
 import { formatPercent } from 'sushi'
@@ -66,7 +65,10 @@ export const LAST_PRICE_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
 
     return (
       <div className="tabular-nums">
-        {numberFormatter.format(Number.parseFloat(price ?? '0'))}
+        {perpsNumberFormatter({
+          value: price ?? '0',
+          maxFraxDigits: token.decimals,
+        })}
       </div>
     )
   },
@@ -87,13 +89,16 @@ export const DAY_CHANGE_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
     return (
       <p
         className={classNames(
-          'text-sm whitespace-nowrap tabular-nums',
+          'text-xs whitespace-nowrap tabular-nums',
           change24hAbs && getTextColorClass(Number(change24hAbs)),
         )}
       >
         {getSignForValue(Number(change24hAbs ?? 0))}
-        {numberFormatter.format(Number(change24hAbs ?? 0))} /{' '}
-        {getSignForValue(Number(change24hPct ?? 0))}
+        {perpsNumberFormatter({
+          value: Number(change24hAbs ?? 0),
+          maxFraxDigits: 4,
+        })}{' '}
+        / {getSignForValue(Number(change24hPct ?? 0))}
         {formatPercent(change24hPct)}
       </p>
     )

@@ -10,7 +10,7 @@ import {
   currencyFormatter,
   getSignForValue,
   getTextColorClass,
-  numberFormatter,
+  perpsNumberFormatter,
   useActiveAsset,
 } from 'src/lib/perps'
 import { formatPercent } from 'sushi'
@@ -117,8 +117,11 @@ export const PerpAssetStats = () => {
           )}
         >
           {getSignForValue(Number(assetData?.change24hAbs ?? 0))}
-          {numberFormatter.format(Number(assetData?.change24hAbs ?? 0))} /{' '}
-          {getSignForValue(Number(assetData?.change24hPct ?? 0))}
+          {perpsNumberFormatter({
+            value: assetData?.change24hAbs ?? '0',
+            maxFraxDigits: 4,
+          })}{' '}
+          / {getSignForValue(Number(assetData?.change24hPct ?? 0))}
           {formatPercent(assetData?.change24hPct)}
         </p>
       </div>

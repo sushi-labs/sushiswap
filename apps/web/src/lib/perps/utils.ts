@@ -43,11 +43,6 @@ export const perpsNumberFormatter = ({
   return formatter.format(num)
 }
 
-export const numberFormatter = new Intl.NumberFormat('en-US', {
-  maximumFractionDigits: 8,
-  minimumFractionDigits: 0,
-})
-
 export const getPerpsDexAndCoin = (coinString: string) => {
   if (coinString.includes('@')) {
     return { perpsDex: null, coin: coinString, type: 'spot' as const }

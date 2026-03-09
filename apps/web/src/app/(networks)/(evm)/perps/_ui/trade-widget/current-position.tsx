@@ -2,7 +2,7 @@ import { classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import {
   getTextColorClass,
-  numberFormatter,
+  perpsNumberFormatter,
   useSymbolSplit,
   useUserPositions,
 } from 'src/lib/perps'
@@ -35,7 +35,7 @@ export const CurrentPosition = () => {
             side !== 'C' ? getTextColorClass(side === 'A' ? -1 : 1) : '',
           )}
         >
-          {numberFormatter.format(positionSize)} {baseSymbol}
+          {perpsNumberFormatter({ value: positionSize })} {baseSymbol}
         </div>
       }
     />

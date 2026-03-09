@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import {
   type OrderbookRow,
   getTextColorClass,
-  numberFormatter,
+  perpsNumberFormatter,
   toFixedTrim,
   useL2OrderBook,
   useSymbolSplit,
@@ -164,21 +164,24 @@ export const OrderBook = ({ className }: { className?: string }) => {
                         getTextColorClass(-1),
                       )}
                     >
-                      {numberFormatter.format(Number.parseFloat(order.price))}
+                      {perpsNumberFormatter({
+                        value: order.price,
+                        maxFraxDigits: 8,
+                      })}
                     </td>
                     <td className="px-0.5 py-1 text-xs text-right">
-                      {numberFormatter.format(
-                        Number.parseFloat(
+                      {perpsNumberFormatter({
+                        value:
                           side === 'base' ? order.sizeBase : order.sizeQuote,
-                        ),
-                      )}
+                        maxFraxDigits: 8,
+                      })}
                     </td>
                     <td className="px-0.5 py-1 text-xs text-right">
-                      {numberFormatter.format(
-                        Number.parseFloat(
+                      {perpsNumberFormatter({
+                        value:
                           side === 'base' ? order.totalBase : order.totalQuote,
-                        ),
-                      )}
+                        maxFraxDigits: 8,
+                      })}
                     </td>
                   </tr>
                 )
@@ -214,21 +217,24 @@ export const OrderBook = ({ className }: { className?: string }) => {
                         getTextColorClass(1),
                       )}
                     >
-                      {numberFormatter.format(Number.parseFloat(order.price))}
+                      {perpsNumberFormatter({
+                        value: order.price,
+                        maxFraxDigits: 8,
+                      })}
                     </td>
                     <td className="px-0.5 py-1 text-xs text-right">
-                      {numberFormatter.format(
-                        Number.parseFloat(
+                      {perpsNumberFormatter({
+                        value:
                           side === 'base' ? order.sizeBase : order.sizeQuote,
-                        ),
-                      )}
+                        maxFraxDigits: 8,
+                      })}
                     </td>
                     <td className="px-0.5 py-1 text-xs text-right">
-                      {numberFormatter.format(
-                        Number.parseFloat(
+                      {perpsNumberFormatter({
+                        value:
                           side === 'base' ? order.totalBase : order.totalQuote,
-                        ),
-                      )}
+                        maxFraxDigits: 8,
+                      })}
                     </td>
                   </tr>
                 )
