@@ -1,7 +1,7 @@
 import { Chip, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
-import type { FundingHistoryItemType } from 'src/lib/perps/use-funding-history'
+import type { FundingHistoryItemType } from 'src/lib/perps/user'
 import {
   getPerpsDexAndCoin,
   getTextColorClass,

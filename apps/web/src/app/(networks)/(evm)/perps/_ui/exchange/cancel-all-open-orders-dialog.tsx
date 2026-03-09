@@ -9,7 +9,7 @@ import {
 } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { useCancelOpenOrders } from 'src/lib/perps/exchange'
-import { useUserOpenOrders } from 'src/lib/perps/use-user-open-orders'
+import { useUserOpenOrders } from 'src/lib/perps/user'
 import { TableButton } from '../_common/table-button'
 
 export const CancelAllOpenOrdersDialog = () => {

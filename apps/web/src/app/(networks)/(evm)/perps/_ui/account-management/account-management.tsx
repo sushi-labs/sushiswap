@@ -1,5 +1,5 @@
 import { Card, classNames } from '@sushiswap/ui'
-import { useUserAccountValues } from 'src/lib/perps/use-user-account-values'
+import { useUserAccountValues } from 'src/lib/perps/user'
 import { useAccount } from 'src/lib/wallet'
 import { AccountManagementSkeleton } from './account-management-skeleton'
 import { AccountSummary } from './account-summary'

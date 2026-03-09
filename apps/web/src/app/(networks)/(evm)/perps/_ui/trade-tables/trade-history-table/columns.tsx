@@ -7,7 +7,7 @@ import {
 } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
-import type { TradeHistoryItemType } from 'src/lib/perps/use-trade-history'
+import type { TradeHistoryItemType } from 'src/lib/perps/user'
 import {
   enUSFormatNumber,
   getTextColorClass,

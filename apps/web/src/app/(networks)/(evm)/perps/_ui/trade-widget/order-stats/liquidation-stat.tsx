@@ -1,8 +1,7 @@
 import { formatPrice } from '@nktkas/hyperliquid/utils'
 import { useMemo } from 'react'
 import { useMarginTable } from 'src/lib/perps/info'
-import { useUserAccountValues } from 'src/lib/perps/use-user-account-values'
-import { useUserPositions } from 'src/lib/perps/use-user-positions'
+import { useUserAccountValues, useUserPositions } from 'src/lib/perps/user'
 import {
   calculateIsolatedMargin,
   estimateLiquidationPrice,

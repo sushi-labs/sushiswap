@@ -1,10 +1,7 @@
 import { DataTable, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
-import {
-  type OrderHistoryItemType,
-  useOrderHistory,
-} from 'src/lib/perps/use-order-history'
+import { type OrderHistoryItemType, useOrderHistory } from 'src/lib/perps/user'
 import { MobileTable } from '../_common/mobile-table'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {

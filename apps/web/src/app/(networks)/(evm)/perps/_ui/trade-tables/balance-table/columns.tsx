@@ -11,7 +11,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
-import type { BalanceItemType } from 'src/lib/perps/use-balances'
+import type { BalanceItemType } from 'src/lib/perps/user'
 import {
   currencyFormatter,
   getSignForValue,

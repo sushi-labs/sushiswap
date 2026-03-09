@@ -1,16 +1,16 @@
 import { useMemo } from 'react'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
 import { useUserState } from '~evm/perps/user-provider'
-import { useAccount } from '../wallet'
+import { useAccount } from '../../wallet'
 
-export const useUserOpenOrders = ({ coin }: { coin?: string }) => {
+export const useFundingHistory = () => {
   const address = useAccount('evm')
   const {
     state: {
-      openOrdersQuery: {
+      userFundingsQuery: {
         data,
-        isLoading: isLoadingOpenOrders,
-        isError: isErrorOpenOrders,
+        isLoading: isUserFundingsLoading,
+        isError: isUserFundingsError,
       },
     },
   } = useUserState()
@@ -23,26 +23,29 @@ export const useUserOpenOrders = ({ coin }: { coin?: string }) => {
       },
     },
   } = useAssetListState()
-  const isLoading = isLoadingOpenOrders || isAssetListLoading
-  const isError = isErrorOpenOrders || isAssetListError
 
+  const isLoading = isUserFundingsLoading || isAssetListLoading
+  const isError = isUserFundingsError || isAssetListError
   const formattedData = useMemo(() => {
     if (!data) return []
-    const orders = data.orders.map((i) => {
+    return data?.fundings?.map((i) => {
+      const side =
+        Number.parseFloat(i.szi) > 0 ? ('long' as const) : ('short' as const)
       const asset = assetList?.get(i.coin)
       return {
-        ...i,
+        timestamp: i.time,
+        coin: i.coin,
         assetSymbol: asset?.marketType === 'perp' ? i.coin : asset?.symbol,
         marketType: asset?.marketType,
-        perpsDex: asset?.dex,
-        szDecimals: asset?.decimals,
+        size: Math.abs(Number.parseFloat(i.szi)),
+        side,
+        payment: i.usdc,
+        rate: i.fundingRate,
+        nSamples: i.nSamples,
+        isSnapshot: data?.isSnapshot || false,
       }
     })
-    if (coin) {
-      return orders?.filter((o) => o?.coin === coin)
-    }
-    return orders
-  }, [data, assetList, coin])
+  }, [data, assetList])
 
   return useMemo(() => {
     if (!address) {
@@ -60,6 +63,6 @@ export const useUserOpenOrders = ({ coin }: { coin?: string }) => {
   }, [isLoading, isError, formattedData, address])
 }
 
-export type UserOpenOrdersItemType = ReturnType<
-  typeof useUserOpenOrders
+export type FundingHistoryItemType = ReturnType<
+  typeof useFundingHistory
 >['data'][number]

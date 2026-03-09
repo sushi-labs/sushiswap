@@ -9,8 +9,10 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import type { OrderHistoryItemType } from 'src/lib/perps/use-order-history'
-import type { UserOpenOrdersItemType } from 'src/lib/perps/use-user-open-orders'
+import type {
+  OrderHistoryItemType,
+  UserOpenOrdersItemType,
+} from 'src/lib/perps/user'
 import { getTextColorClass, numberFormatter } from 'src/lib/perps/utils'
 import { TableButton } from '../../_common/table-button'
 

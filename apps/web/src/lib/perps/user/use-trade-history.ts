@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
 import { useUserState } from '~evm/perps/user-provider'
-import { useAccount } from '../wallet'
-import { SPOT_ASSETS_TO_REWRITE, getPerpsDexAndCoin } from './utils'
+import { useAccount } from '../../wallet'
+import { SPOT_ASSETS_TO_REWRITE, getPerpsDexAndCoin } from '../utils'
 
 export const useTradeHistory = () => {
   const address = useAccount('evm')

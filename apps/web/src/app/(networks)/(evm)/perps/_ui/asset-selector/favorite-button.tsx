@@ -1,7 +1,7 @@
 import { StarIcon } from '@heroicons/react-v1/solid'
 import { IconButton, classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { useFavoriteAssets } from 'src/lib/perps/use-favorite-assets'
+import { useFavoriteAssets } from 'src/lib/perps/user'
 
 export const FavoriteButton = ({
   assetString,

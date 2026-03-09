@@ -1,16 +1,16 @@
 import { useMemo } from 'react'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
 import { useUserState } from '~evm/perps/user-provider'
-import { useAccount } from '../wallet'
+import { useAccount } from '../../wallet'
 
-export const useFundingHistory = () => {
+export const useUserOpenOrders = ({ coin }: { coin?: string }) => {
   const address = useAccount('evm')
   const {
     state: {
-      userFundingsQuery: {
+      openOrdersQuery: {
         data,
-        isLoading: isUserFundingsLoading,
-        isError: isUserFundingsError,
+        isLoading: isLoadingOpenOrders,
+        isError: isErrorOpenOrders,
       },
     },
   } = useUserState()
@@ -23,29 +23,26 @@ export const useFundingHistory = () => {
       },
     },
   } = useAssetListState()
+  const isLoading = isLoadingOpenOrders || isAssetListLoading
+  const isError = isErrorOpenOrders || isAssetListError
 
-  const isLoading = isUserFundingsLoading || isAssetListLoading
-  const isError = isUserFundingsError || isAssetListError
   const formattedData = useMemo(() => {
     if (!data) return []
-    return data?.fundings?.map((i) => {
-      const side =
-        Number.parseFloat(i.szi) > 0 ? ('long' as const) : ('short' as const)
+    const orders = data.orders.map((i) => {
       const asset = assetList?.get(i.coin)
       return {
-        timestamp: i.time,
-        coin: i.coin,
+        ...i,
         assetSymbol: asset?.marketType === 'perp' ? i.coin : asset?.symbol,
         marketType: asset?.marketType,
-        size: Math.abs(Number.parseFloat(i.szi)),
-        side,
-        payment: i.usdc,
-        rate: i.fundingRate,
-        nSamples: i.nSamples,
-        isSnapshot: data?.isSnapshot || false,
+        perpsDex: asset?.dex,
+        szDecimals: asset?.decimals,
       }
     })
-  }, [data, assetList])
+    if (coin) {
+      return orders?.filter((o) => o?.coin === coin)
+    }
+    return orders
+  }, [data, assetList, coin])
 
   return useMemo(() => {
     if (!address) {
@@ -63,6 +60,6 @@ export const useFundingHistory = () => {
   }, [isLoading, isError, formattedData, address])
 }
 
-export type FundingHistoryItemType = ReturnType<
-  typeof useFundingHistory
+export type UserOpenOrdersItemType = ReturnType<
+  typeof useUserOpenOrders
 >['data'][number]

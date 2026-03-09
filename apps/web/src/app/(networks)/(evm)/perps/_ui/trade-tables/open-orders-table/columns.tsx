@@ -4,7 +4,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { useMemo } from 'react'
 import { useModifyOrder, usePrepModifyOrderData } from 'src/lib/perps/exchange'
-import type { UserOpenOrdersItemType } from 'src/lib/perps/use-user-open-orders'
+import type { UserOpenOrdersItemType } from 'src/lib/perps/user'
 import {
   enUSFormatNumber,
   getTextColorClass,

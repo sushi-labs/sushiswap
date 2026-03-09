@@ -6,7 +6,7 @@ import {
   HoverCardTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { useUserAccountValues } from 'src/lib/perps/use-user-account-values'
+import { useUserAccountValues } from 'src/lib/perps/user'
 import {
   currencyFormatter,
   enUSFormatNumber,

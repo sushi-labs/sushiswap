@@ -2,7 +2,7 @@ import { Chip, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { useMemo } from 'react'
-import type { OrderHistoryItemType } from 'src/lib/perps/use-order-history'
+import type { OrderHistoryItemType } from 'src/lib/perps/user'
 import {
   enUSFormatNumber,
   getPerpsDexAndCoin,

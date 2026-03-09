@@ -17,7 +17,7 @@ import { useAgent } from '../agent'
 import { TOAST_AUTOCLOSE_TIME } from '../config'
 import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
-import type { UserOpenOrdersItemType } from '../use-user-open-orders'
+import type { UserOpenOrdersItemType } from '../user/use-user-open-orders'
 import { getAssetIdForConverter } from '../utils'
 import type { OrderType, TimeInForceType } from './use-execute-orders'
 

@@ -1,7 +1,7 @@
 import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
 import { formatUnits, parseUnits } from 'viem'
 import type { PerpOrSpotAsset } from './subscription/use-asset-list'
-import type { UserOpenOrdersItemType } from './use-user-open-orders'
+import type { UserOpenOrdersItemType } from './user/use-user-open-orders'
 
 export const getTextColorClass = (value: number) => {
   if (value >= 0) return 'text-green dark:text-green-500'

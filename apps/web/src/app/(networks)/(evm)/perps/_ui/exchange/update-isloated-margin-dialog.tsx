@@ -10,7 +10,7 @@ import {
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { useUpdateIsolatedMargin } from 'src/lib/perps/exchange'
-import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'
+import type { UserPositionsItemType } from 'src/lib/perps/user'
 import { enUSFormatNumber } from 'src/lib/perps/utils'
 import { IsolatedMarginInput } from '../_common/isolated-margin-input'
 import { SideToggle } from '../_common/side-toggle'

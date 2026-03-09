@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import {
   type FundingHistoryItemType,
   useFundingHistory,
-} from 'src/lib/perps/use-funding-history'
+} from 'src/lib/perps/user'
 import { MobileTable } from '../_common/mobile-table'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {

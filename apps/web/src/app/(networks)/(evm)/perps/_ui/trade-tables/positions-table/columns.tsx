@@ -9,8 +9,10 @@ import {
 } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
-import { useUserOpenOrders } from 'src/lib/perps/use-user-open-orders'
-import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'
+import {
+  type UserPositionsItemType,
+  useUserOpenOrders,
+} from 'src/lib/perps/user'
 import {
   currencyFormatter,
   getExistingPositionTpSlOrders,

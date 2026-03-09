@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import {
   type UserPositionsItemType,
   useUserPositions,
-} from 'src/lib/perps/use-user-positions'
+} from 'src/lib/perps/user'
 import { MobileTable } from '../_common/mobile-table'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {

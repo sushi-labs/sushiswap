@@ -13,7 +13,7 @@ import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
 import { useExecuteOrders } from 'src/lib/perps/exchange'
 import { useAllMids } from 'src/lib/perps/subscription'
 import { useMidPrice } from 'src/lib/perps/use-mid-price'
-import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'
+import type { UserPositionsItemType } from 'src/lib/perps/user'
 import {
   currencyFormatter,
   getSizeAndPercentageFromInput,

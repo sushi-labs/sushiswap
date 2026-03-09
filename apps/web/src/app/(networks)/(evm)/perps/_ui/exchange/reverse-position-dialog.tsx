@@ -14,10 +14,11 @@ import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
 import { useExecuteOrders } from 'src/lib/perps/exchange'
 import { useMidPrice } from 'src/lib/perps/use-mid-price'
 import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
-import { useUserAccountValues } from 'src/lib/perps/use-user-account-values'
-import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'
 import {
-  calculateIsolatedMargin,
+  type UserPositionsItemType,
+  useUserAccountValues,
+} from 'src/lib/perps/user'
+import {
   enUSFormatNumber,
   estimateLiquidationPrice,
   getTextColorClass,

@@ -1,7 +1,7 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { useMidPrice } from 'src/lib/perps/use-mid-price'
-import { useUserPositions } from 'src/lib/perps/use-user-positions'
+import { useUserPositions } from 'src/lib/perps/user'
 import { parseUnits } from 'viem'
 import { useAssetState } from '../trade-widget/asset-state-provider'
 import { useScaleOrders } from '../trade-widget/hooks/use-scale-orders'

@@ -3,7 +3,7 @@ import { formatPrice } from '@nktkas/hyperliquid/utils'
 import { useLocalStorage } from '@sushiswap/hooks'
 import { Button, Card, SkeletonBox, classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { useFavoriteAssets } from 'src/lib/perps/use-favorite-assets'
+import { useFavoriteAssets } from 'src/lib/perps/user'
 import {
   getSignForValue,
   getTextColorClass,

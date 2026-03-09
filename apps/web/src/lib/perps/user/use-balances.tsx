@@ -2,8 +2,8 @@ import { useMemo } from 'react'
 import { useUserSettingsState } from '~evm/perps/_ui/account-management/settings-provider'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
 import { useUserState } from '~evm/perps/user-provider'
-import { useAccount } from '../wallet'
-import { SPOT_ASSETS_TO_REWRITE } from './utils'
+import { useAccount } from '../../wallet'
+import { SPOT_ASSETS_TO_REWRITE } from '../utils'
 
 export const useBalances = () => {
   const address = useAccount('evm')
