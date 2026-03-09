@@ -12,6 +12,7 @@ interface State {
     marketOrderSlippage: number
     quickConfirmPositionEnabled: boolean
     isUnifiedAccountModeEnabled: boolean
+    showBuySellInChart: boolean
   }
   mutate: {
     setQuickCloseReversePositionEnabled: (enabled: boolean) => void
@@ -20,6 +21,7 @@ interface State {
     setMarketOrderSlippage: (slippage: number) => void
     setQuickConfirmPositionEnabled: (enabled: boolean) => void
     setUnifiedAccountModeEnabled: (enabled: boolean) => void
+    setShowBuySellInChart: (enabled: boolean) => void
   }
 }
 
@@ -66,6 +68,10 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
     `${BASE_STORAGE_KEY}.market.order.slippage`,
     800, //800 = 8% slippage by default
   )
+  const [showBuySellInChart, setShowBuySellInChart] = useLocalStorage<boolean>(
+    `${BASE_STORAGE_KEY}.show.buy.sell.in.chart`,
+    false,
+  )
   const { setUserAbstraction } = useSetUserAbstraction()
 
   const setUnifiedAccountModeEnabled = useCallback(
@@ -94,6 +100,7 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             marketOrderSlippage,
             quickConfirmPositionEnabled,
             isUnifiedAccountModeEnabled,
+            showBuySellInChart,
           },
           mutate: {
             setQuickCloseReversePositionEnabled,
@@ -102,6 +109,7 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             setMarketOrderSlippage,
             setQuickConfirmPositionEnabled,
             setUnifiedAccountModeEnabled,
+            setShowBuySellInChart,
           },
         }
       }, [
@@ -117,6 +125,8 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
         setQuickConfirmPositionEnabled,
         isUnifiedAccountModeEnabled,
         setUnifiedAccountModeEnabled,
+        showBuySellInChart,
+        setShowBuySellInChart,
       ])}
     >
       {children}

@@ -19,6 +19,7 @@ export const SettingsDialog = () => {
       orderBookAnimationDisabled,
       quickConfirmPositionEnabled,
       isUnifiedAccountModeEnabled,
+      showBuySellInChart,
     },
     mutate: {
       setQuickCloseMarketPositionEnabled,
@@ -26,6 +27,7 @@ export const SettingsDialog = () => {
       setOrderBookAnimationDisabled,
       setQuickConfirmPositionEnabled,
       setUnifiedAccountModeEnabled,
+      setShowBuySellInChart,
     },
   } = useUserSettingsState()
   return (
@@ -67,8 +69,17 @@ export const SettingsDialog = () => {
               onChange={setOrderBookAnimationDisabled}
               label="Disable Order Book Animation"
             />
+            <CheckboxSetting
+              value={orderBookAnimationDisabled}
+              onChange={setOrderBookAnimationDisabled}
+              label="Disable Order Book Animation"
+            />
+            <CheckboxSetting
+              value={showBuySellInChart}
+              onChange={setShowBuySellInChart}
+              label="Show Buys/Sells on Chart"
+            />
             {/* todo: hide pnl? */}
-            {/* todo: show buys/sells on chart */}
             {/* todo: in chart trading */}
             {/* todo: opt out of spot dust collection */}
             {/* todo: sound effects on click? */}

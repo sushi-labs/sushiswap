@@ -14,6 +14,7 @@ import { widget } from 'public/trading-view/charting_library/charting_library.es
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useAssetName } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
+import { useUserSettingsState } from '../account-management'
 import { useAssetListState } from '../asset-selector'
 import { useAssetState } from '../trade-widget'
 import Datafeed, { timeframes } from './datafeed'
@@ -53,6 +54,9 @@ export const Chart = () => {
     () => ({ decimals: asset?.decimals ?? 2, marketType: asset?.marketType }),
     [asset?.decimals, asset?.marketType],
   )
+  const {
+    state: { showBuySellInChart },
+  } = useUserSettingsState()
 
   useEffect(() => {
     registerNoDataSetter((hasNoData) => {
@@ -72,7 +76,7 @@ export const Chart = () => {
     localStorage.setItem('tradingview.current_theme.name', resolvedTheme)
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      symbol: `${activeAsset}::${assetName}::${decimals}::${marketType}`,
+      symbol: `${activeAsset}::${assetName}::${decimals}::${marketType}::${address}::${showBuySellInChart}`,
       datafeed: Datafeed,
       interval:
         (localStorage.getItem(
@@ -458,6 +462,7 @@ export const Chart = () => {
     assetName,
     decimals,
     marketType,
+    showBuySellInChart,
   ])
 
   return (

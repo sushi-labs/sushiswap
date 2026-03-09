@@ -1,5 +1,5 @@
 import type { ISubscription } from '@nktkas/hyperliquid'
-import { candleSnapshot } from '@nktkas/hyperliquid/api/info'
+import { candleSnapshot, userFills } from '@nktkas/hyperliquid/api/info'
 import {
   type CandleParameters,
   candle,
@@ -13,7 +13,13 @@ import type {
   SearchSymbolResultItem,
   TimeFrameItem,
 } from 'public/trading-view/charting_library/charting_library'
-import { hlWebSocketTransport } from 'src/lib/perps'
+import type { Mark } from 'public/trading-view/charting_library/datafeed-api'
+import {
+  hlHttpTransport,
+  hlWebSocketTransport,
+  perpsNumberFormatter,
+} from 'src/lib/perps'
+import type { EvmAddress } from 'sushi/evm'
 
 // const lastBarsCache = new Map<string, Bar>();
 
@@ -66,6 +72,7 @@ export const timeframes: TimeFrameItem[] = [
 
 type ConfigurationData = {
   supported_resolutions: ResolutionString[]
+  supports_marks: boolean
   exchanges: {
     value: string
     name: string
@@ -79,6 +86,7 @@ type ConfigurationData = {
 
 const configurationData: ConfigurationData = {
   supported_resolutions: timeframes.map((t) => t.resolution),
+  supports_marks: true,
   exchanges: [],
   symbols_types: [
     {
@@ -114,6 +122,9 @@ export default {
     const coin = symbolName?.split('::')?.[0] ?? ''
     const description = symbolName?.split('::')?.[1] ?? ''
     const decimals = Number(symbolName?.split('::')[2]) || 2
+    const marketType = symbolName?.split('::')[3] ?? 'perps'
+    const address = symbolName?.split('::')[4] ?? ''
+    const showBuySellInChart = symbolName?.split('::')[5] === 'true'
 
     const symbolItem = {
       symbol: description,
@@ -143,6 +154,9 @@ export default {
       data_status: 'streaming',
       library_custom_fields: {
         coin: symbolItem.coin,
+        userAddress: address,
+        marketType: marketType as 'perp' | 'spot',
+        showBuySellInChart,
       },
     }
 
@@ -240,7 +254,51 @@ export default {
       onError(_error)
     }
   },
+  getMarks: async (
+    symbolInfo: LibrarySymbolInfo,
+    _from: number,
+    _to: number,
+    onDataCallback: (marks: Mark[]) => void,
+    _resolution: ResolutionString,
+  ): Promise<void> => {
+    const userAddress = symbolInfo.library_custom_fields?.userAddress
+    const showBuySellInChart =
+      symbolInfo.library_custom_fields?.showBuySellInChart
+    if (!userAddress || !showBuySellInChart) {
+      onDataCallback([])
+      return
+    }
+    try {
+      const trades = await userFills(
+        { transport: hlHttpTransport },
+        {
+          user: symbolInfo.library_custom_fields?.userAddress as EvmAddress,
+          aggregateByTime: true,
+        },
+      )
+      const coin = symbolInfo.library_custom_fields?.coin as string
+      const filteredTrades = trades?.filter((trade) => trade?.coin === coin)
+      if (!filteredTrades || filteredTrades.length === 0) {
+        onDataCallback([])
+        return
+      }
+      const marks = filteredTrades?.map((trade) => {
+        return {
+          id: trade.tid,
+          time: Math.floor(trade.time / 1000),
+          color: trade.side === 'B' ? ('green' as const) : ('red' as const),
+          label: trade.side === 'B' ? 'B' : 'S',
+          labelFontColor: 'white',
+          minSize: 18,
+          text: `${trade.dir} @ ${perpsNumberFormatter({ value: trade.px })}`,
+        }
+      })
 
+      onDataCallback(marks)
+    } catch {
+      onDataCallback([])
+    }
+  },
   subscribeBars: async (
     symbolInfo: LibrarySymbolInfo,
     resolution: ResolutionString,
