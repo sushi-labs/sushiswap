@@ -1,3 +1,4 @@
+'use client'
 import { createToast } from '@sushiswap/notifications'
 import {
   Button,

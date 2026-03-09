@@ -4,10 +4,10 @@ import { useAccount } from 'src/lib/wallet'
 import { AccountManagementSkeleton } from './account-management-skeleton'
 import { AccountSummary } from './account-summary'
 import { DepositDialog } from './deposit-dialog'
-import { PerpSpotTransfer } from './perp-spot-transfer'
+import { PerpSpotTransferDialog } from './perp-spot-transfer-dialog'
 import { useUserSettingsState } from './settings-provider'
 import { UnifiedAccountSummary } from './unified-account-summary'
-import { Withdraw } from './withdraw-dialog'
+import { WithdrawDialog } from './withdraw-dialog'
 
 export const AccountManagement = ({ className }: { className?: string }) => {
   const address = useAccount('evm')
@@ -44,8 +44,8 @@ export const AccountManagement = ({ className }: { className?: string }) => {
           >
             <DepositDialog />
             <div className="flex items-center gap-2">
-              <PerpSpotTransfer />
-              <Withdraw />
+              <PerpSpotTransferDialog />
+              <WithdrawDialog />
             </div>
           </div>
           {isUnifiedAccountModeEnabled ? (

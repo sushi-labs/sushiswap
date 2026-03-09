@@ -1,3 +1,4 @@
+'use client'
 import { type L2BookEvent, l2Book } from '@nktkas/hyperliquid/api/subscription'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'

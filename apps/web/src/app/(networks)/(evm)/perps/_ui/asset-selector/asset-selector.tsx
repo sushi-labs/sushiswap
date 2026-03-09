@@ -1,3 +1,4 @@
+'use client'
 import { ChevronDownIcon } from '@heroicons/react-v1/outline'
 import {
   Button,

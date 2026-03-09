@@ -1,3 +1,4 @@
+'use client'
 import { Slider, TextField, classNames } from '@sushiswap/ui'
 import { useCallback, useState, useTransition } from 'react'
 

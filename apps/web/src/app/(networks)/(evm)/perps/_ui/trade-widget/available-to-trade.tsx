@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { perpsNumberFormatter, useSymbolSplit } from 'src/lib/perps'
 import { StatItem } from '../_common'
-import { PerpSpotTransfer } from '../account-management'
+import { PerpSpotTransferDialog } from '../account-management'
 import { useAssetState } from './asset-state-provider'
 
 export const AvailableToTrade = () => {
@@ -31,7 +31,7 @@ export const AvailableToTrade = () => {
       <StatItem
         title={
           tradeSide === 'long' ? (
-            <PerpSpotTransfer
+            <PerpSpotTransferDialog
               trigger={
                 <button
                   className="underline text-muted-foreground"

@@ -1,3 +1,4 @@
+'use client'
 import { formatPrice } from '@nktkas/hyperliquid/utils'
 import { Button, TextField, classNames } from '@sushiswap/ui'
 import { useCallback, useEffect, useState } from 'react'

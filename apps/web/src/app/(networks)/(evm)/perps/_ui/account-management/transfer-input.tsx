@@ -1,3 +1,4 @@
+'use client'
 import { Currency, SkeletonBox, TextField, classNames } from '@sushiswap/ui'
 import { useEffect } from 'react'
 import { BalancePanel } from 'src/lib/wagmi/components/web3-input/Currency/balance-panel'

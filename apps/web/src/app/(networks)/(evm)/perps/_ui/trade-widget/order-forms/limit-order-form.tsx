@@ -1,3 +1,4 @@
+'use client'
 import { useState } from 'react'
 import { type TpSlGainLossType, useMidPrice } from 'src/lib/perps'
 import { CheckboxSetting, LimitInput, TpSlInput } from '../../_common'

@@ -1,3 +1,4 @@
+'use client'
 import { useState } from 'react'
 import type { TpSlGainLossType } from 'src/lib/perps'
 import { CheckboxSetting, TpSlInput } from '../../_common'

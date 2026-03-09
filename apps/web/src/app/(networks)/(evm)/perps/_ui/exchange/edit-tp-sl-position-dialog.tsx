@@ -1,3 +1,4 @@
+'use client'
 import PencilIcon from '@heroicons/react/20/solid/PencilIcon'
 import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
 import {

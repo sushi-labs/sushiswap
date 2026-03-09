@@ -1,3 +1,4 @@
+'use client'
 import PencilIcon from '@heroicons/react/20/solid/PencilIcon'
 import { TextField } from '@sushiswap/ui'
 import { useEffect, useRef, useState } from 'react'

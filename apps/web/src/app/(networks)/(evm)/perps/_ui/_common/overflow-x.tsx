@@ -1,3 +1,4 @@
+'use client'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { classNames } from '@sushiswap/ui'
 import { useEffect, useRef, useState } from 'react'

@@ -1,3 +1,4 @@
+'use client'
 import { Button, classNames } from '@sushiswap/ui'
 type DefaultSide = 'base' | 'quote'
 

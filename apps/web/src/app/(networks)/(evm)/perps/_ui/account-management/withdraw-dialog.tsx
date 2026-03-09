@@ -1,3 +1,4 @@
+'use client'
 import { withdraw3 } from '@nktkas/hyperliquid/api/exchange'
 import {
   createErrorToast,

@@ -1,3 +1,4 @@
+'use client'
 import { formatSize } from '@nktkas/hyperliquid/utils'
 import {
   Button,

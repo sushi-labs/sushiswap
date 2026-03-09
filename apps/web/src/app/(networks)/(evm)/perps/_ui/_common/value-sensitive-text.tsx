@@ -1,3 +1,4 @@
+'use client'
 import { classNames } from '@sushiswap/ui'
 import { useEffect, useRef, useState } from 'react'
 

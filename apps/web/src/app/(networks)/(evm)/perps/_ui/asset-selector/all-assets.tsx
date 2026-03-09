@@ -1,3 +1,4 @@
+'use client'
 import { DataTable, Slot } from '@sushiswap/ui'
 import type { Row, SortingState, TableState } from '@tanstack/react-table'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'

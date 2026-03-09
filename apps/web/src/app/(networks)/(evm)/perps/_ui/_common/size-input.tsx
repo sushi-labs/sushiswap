@@ -1,3 +1,4 @@
+'use client'
 import { TextField, classNames } from '@sushiswap/ui'
 import { useCallback, useMemo, useState, useTransition } from 'react'
 import { type PerpOrSpotAsset, useSymbolSplit } from 'src/lib/perps'

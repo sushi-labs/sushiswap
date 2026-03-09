@@ -3,7 +3,7 @@ import { type FC, useMemo } from 'react'
 import { useUserState } from '~evm/perps/user-provider'
 import {
   DepositDialog,
-  PerpSpotTransfer,
+  PerpSpotTransferDialog,
   useUserSettingsState,
 } from '../account-management'
 import { useAssetState } from '../trade-widget'
@@ -68,7 +68,7 @@ export const Deposit: FC<ButtonProps> = ({
     !isUnifiedAccountModeEnabled
   ) {
     return (
-      <PerpSpotTransfer
+      <PerpSpotTransferDialog
         trigger={
           <Button fullWidth={fullWidth} size={size} {...props}>
             Transfer to Perps

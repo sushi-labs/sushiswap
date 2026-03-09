@@ -1,3 +1,4 @@
+'use client'
 import { ArrowsUpDownIcon } from '@heroicons/react/24/outline'
 import { sendAsset } from '@nktkas/hyperliquid/api/exchange'
 import { formatSize } from '@nktkas/hyperliquid/utils'
@@ -32,7 +33,7 @@ import { TransferInput } from './transfer-input'
 const currency = USDC[EvmChainId.ARBITRUM]
 const chainId = EvmChainId.ARBITRUM
 
-export const PerpSpotTransfer = ({
+export const PerpSpotTransferDialog = ({
   trigger,
   defaultDst,
 }: { trigger?: ReactNode; defaultDst?: 'perp' | 'spot' }) => {

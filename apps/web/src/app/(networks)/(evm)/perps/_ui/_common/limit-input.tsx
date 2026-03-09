@@ -1,3 +1,4 @@
+'use client'
 import { Button, TextField, classNames } from '@sushiswap/ui'
 import { useCallback, useState, useTransition } from 'react'
 

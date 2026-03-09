@@ -1,3 +1,4 @@
+'use client'
 import {
   type WebData3Event,
   webData3,
