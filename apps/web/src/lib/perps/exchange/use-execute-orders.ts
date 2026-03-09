@@ -7,10 +7,10 @@ import {
 import { useMutation } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
+import { useAgent } from '../agent'
 import { BUILDER_FEE_RECEIVER, TOAST_AUTOCLOSE_TIME } from '../config'
 import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
-import { useAgent } from '../use-agent'
 import { getAssetIdForConverter } from '../utils'
 
 export type TimeInForceType = 'Gtc' | 'Ioc' | 'Alo' | 'FrontendMarket'

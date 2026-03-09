@@ -15,9 +15,9 @@ import {
   privateKeyToAddress,
 } from 'viem/accounts'
 import { useWalletClient } from 'wagmi'
-import { useAccount } from '../wallet'
-import { useExtraAgents } from './info/use-extra-agents'
-import { hlHttpTransport } from './transports'
+import { useAccount } from '../../wallet'
+import { useExtraAgents } from '../info'
+import { hlHttpTransport } from '../transports'
 
 const SUSHI_AGENT_NAME = 'sushi.agent'
 

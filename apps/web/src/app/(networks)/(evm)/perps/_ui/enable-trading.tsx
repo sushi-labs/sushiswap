@@ -1,6 +1,6 @@
 import { Button } from '@sushiswap/ui'
 import { useCallback } from 'react'
-import { useAgent } from 'src/lib/perps/use-agent'
+import { useAgent } from 'src/lib/perps/agent'
 import { useWalletClient } from 'wagmi'
 import { useUserState } from '../user-provider'
 
