@@ -6,8 +6,10 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
+import { useAccount } from 'src/lib/wallet'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
 import { TOAST_AUTOCLOSE_TIME } from '../config'
+import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
 import { useAgent } from '../use-agent'
 import { getAssetIdForConverter } from '../utils'
@@ -22,11 +24,17 @@ export const useCancelTwap = () => {
       assetListQuery: { data: assetList },
     },
   } = useAssetListState()
+  const address = useAccount('evm')
+  const { data: legalCheck } = useLegalCheck({ address })
 
   const mutation = useMutation({
+    mutationKey: ['cancel-twap-order', agentAccount?.address, legalCheck],
     mutationFn: async ({ cancelData }: { cancelData: CancelData }) => {
       if (!agentAccount || !cancelData) {
         return
+      }
+      if (!legalCheck?.ipAllowed || !legalCheck?.userAllowed) {
+        throw new Error('Legal check failed. Cannot cancel twap order.')
       }
       const asset = assetList?.get(cancelData.asset)
       if (!asset) throw new Error(`Unknown c.asset: ${cancelData.asset}`)

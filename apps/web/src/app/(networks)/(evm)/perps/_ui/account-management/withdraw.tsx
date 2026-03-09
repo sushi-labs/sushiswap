@@ -22,6 +22,7 @@ import { Amount } from 'sushi'
 import { EvmChainId, USDC } from 'sushi/evm'
 import { useWalletClient } from 'wagmi'
 import { useUserState } from '~evm/perps/user-provider'
+import { PerpsChecker } from '../perps-checker'
 import { TransferInput } from './transfer-input'
 
 //@todo clean up
@@ -117,39 +118,41 @@ export const Withdraw = () => {
               chainId={chainId}
             />
 
-            <Checker.Connect>
-              <Checker.Network chainId={chainId}>
-                <Checker.Custom
-                  showChildren={Boolean(amount)}
-                  buttonText={'Enter Amount'}
-                  onClick={() => {}}
-                  disabled={!amount}
-                >
+            <PerpsChecker.Legal size="xl">
+              <Checker.Connect>
+                <Checker.Network chainId={chainId}>
                   <Checker.Custom
-                    showChildren={!insufficientBalance}
-                    buttonText={'Insufficient Balance'}
+                    showChildren={Boolean(amount)}
+                    buttonText={'Enter Amount'}
                     onClick={() => {}}
-                    disabled={Boolean(insufficientBalance)}
+                    disabled={!amount}
                   >
                     <Checker.Custom
-                      showChildren={Number(amount) >= MIN_WITHDRAW_AMOUNT}
-                      buttonText={`Minimum Withdraw ${MIN_WITHDRAW_AMOUNT} USDC`}
+                      showChildren={!insufficientBalance}
+                      buttonText={'Insufficient Balance'}
                       onClick={() => {}}
-                      disabled={Number(amount) < MIN_WITHDRAW_AMOUNT}
+                      disabled={Boolean(insufficientBalance)}
                     >
-                      <Button
-                        size="xl"
-                        className="w-full"
-                        onClick={withdrawUsdc}
-                        loading={isPending}
+                      <Checker.Custom
+                        showChildren={Number(amount) >= MIN_WITHDRAW_AMOUNT}
+                        buttonText={`Minimum Withdraw ${MIN_WITHDRAW_AMOUNT} USDC`}
+                        onClick={() => {}}
+                        disabled={Number(amount) < MIN_WITHDRAW_AMOUNT}
                       >
-                        Withdraw
-                      </Button>
+                        <Button
+                          size="xl"
+                          className="w-full"
+                          onClick={withdrawUsdc}
+                          loading={isPending}
+                        >
+                          Withdraw
+                        </Button>
+                      </Checker.Custom>
                     </Checker.Custom>
                   </Checker.Custom>
-                </Checker.Custom>
-              </Checker.Network>
-            </Checker.Connect>
+                </Checker.Network>
+              </Checker.Connect>
+            </PerpsChecker.Legal>
             <div>
               <p className="text-xs text-muted-foreground italic mb-1">
                 A fee of 1 USDC will be deducted from the USDC withdrawn.

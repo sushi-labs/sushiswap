@@ -7,12 +7,14 @@ import {
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { useAccount } from 'src/lib/wallet'
 import { useWalletClient } from 'wagmi'
 import {
   BUILDER_FEE_RECEIVER,
   BUILDER_FEE_SPOT_PERCENTAGE,
   TOAST_AUTOCLOSE_TIME,
 } from '../config'
+import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
 
 export const useApproveBuilderFee = () => {
@@ -21,13 +23,23 @@ export const useApproveBuilderFee = () => {
     `sushi.perps.approved.builder.${walletClient?.account.address}`,
     false,
   )
+  const address = useAccount('evm')
+  const { data: legalCheck } = useLegalCheck({ address })
 
   const hasApprovedBuilder = useMemo(() => storedValue === true, [storedValue])
 
   const mutation = useMutation({
+    mutationKey: [
+      'approve-builder-fee',
+      walletClient?.account.address,
+      legalCheck,
+    ],
     mutationFn: async () => {
       if (!walletClient) {
         throw new Error('Missing wallet client')
+      }
+      if (!legalCheck?.ipAllowed || !legalCheck?.userAllowed) {
+        throw new Error('Legal check failed. Cannot approve builder fee.')
       }
 
       return approveBuilderFee(

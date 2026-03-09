@@ -5,8 +5,10 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
+import { useAccount } from 'src/lib/wallet'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
 import { BUILDER_FEE_RECEIVER, TOAST_AUTOCLOSE_TIME } from '../config'
+import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
 import { useAgent } from '../use-agent'
 import { getAssetIdForConverter } from '../utils'
@@ -59,11 +61,17 @@ export const useExecuteOrders = () => {
       assetListQuery: { data: assetList },
     },
   } = useAssetListState()
+  const address = useAccount('evm')
+  const { data: legalCheck } = useLegalCheck({ address })
 
   const mutation = useMutation({
+    mutationKey: ['execute-orders', agentAccount?.address, legalCheck],
     mutationFn: async ({ orderData }: { orderData: OrderData }) => {
       if (!agentAccount || orderData.orders.length === 0) {
         return
+      }
+      if (!legalCheck?.ipAllowed || !legalCheck?.userAllowed) {
+        throw new Error('Legal check failed. Cannot execute orders.')
       }
 
       const orders: OrderParameters['orders'] = orderData.orders.map((c) => {

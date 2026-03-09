@@ -11,8 +11,10 @@ import {
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { useAccount } from 'src/lib/wallet'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
 import { TOAST_AUTOCLOSE_TIME } from '../config'
+import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
 import { useAgent } from '../use-agent'
 import type { UserOpenOrdersItemType } from '../use-user-open-orders'
@@ -37,8 +39,11 @@ export const useModifyOrder = () => {
       assetListQuery: { data: assetList },
     },
   } = useAssetListState()
+  const address = useAccount('evm')
+  const { data: legalCheck } = useLegalCheck({ address })
 
   const mutation = useMutation({
+    mutationKey: ['modify-order', agentAccount?.address, legalCheck],
     mutationFn: async (modifyOrderData: ModifyOrderData) => {
       if (!agentAccount || !modifyOrderData) {
         return

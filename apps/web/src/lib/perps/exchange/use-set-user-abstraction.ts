@@ -8,14 +8,23 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
+import { useAccount } from 'src/lib/wallet'
 import { useWalletClient } from 'wagmi'
 import { TOAST_AUTOCLOSE_TIME } from '../config'
+import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
 
 export const useSetUserAbstraction = () => {
   const { data: walletClient } = useWalletClient()
+  const address = useAccount('evm')
+  const { data: legalCheck } = useLegalCheck({ address })
 
   const mutation = useMutation({
+    mutationKey: [
+      'set-user-abstraction',
+      walletClient?.account.address,
+      legalCheck,
+    ],
     mutationFn: async ({
       abstraction,
       address,
@@ -25,6 +34,9 @@ export const useSetUserAbstraction = () => {
     }) => {
       if (!walletClient) {
         throw new Error('Missing wallet client')
+      }
+      if (!legalCheck?.ipAllowed || !legalCheck?.userAllowed) {
+        throw new Error('Legal check failed. Cannot set user abstraction.')
       }
 
       return userSetAbstraction(

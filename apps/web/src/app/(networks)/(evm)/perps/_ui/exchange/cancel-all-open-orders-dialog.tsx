@@ -23,7 +23,7 @@ export const CancelAllOpenOrdersDialog = () => {
       })),
     [openOrders],
   )
-  console.log('allCancelData', allCancelData)
+
   const { cancelOrdersAsync, isPending } = useCancelOpenOrders()
 
   return (

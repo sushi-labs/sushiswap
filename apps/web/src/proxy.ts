@@ -5,17 +5,55 @@ import { getChainById, getChainByKey, isChainId, isChainKey } from 'sushi'
 import { getEvmChainById, isBladeChainId, isSushiSwapChainId } from 'sushi/evm'
 import { SUPPORTED_NETWORKS } from './config'
 
-// Restricted country codes for perps page
 const PERPS_RESTRICTED = new Set([
+  // derivatives regulation
   'US',
-  'CA-ON', // Ontario - country-region, handled separately than just CA
+  'CA',
+  // OFAC comprehensive sanctions
   'CU',
   'IR',
   'KP',
   'SY',
-  'MM',
+  // Russia sanctions
   'RU',
+  'BY',
+  // conflict / high-risk
+  'AF',
+  'CD',
+  'CF',
+  'ER',
+  'ET',
+  'IQ',
+  'LB',
+  'LY',
+  'ML',
+  'MM',
+  'SO',
+  'SS',
+  'SD',
+  'VE',
+  'YE',
+  'ZW',
 ])
+
+const PERPS_RESTRICTED_REGIONS = new Set(['UA-43', 'UA-14', 'UA-09'])
+
+function isRestrictedPerpsLocation({
+  country,
+  countryRegion,
+}: {
+  country?: string
+  countryRegion?: string
+}) {
+  const normalizedCountry = (country ?? '').toUpperCase()
+  const normalizedCountryRegion = (countryRegion ?? '').toUpperCase()
+
+  const isRestrictedUkraineLocation =
+    normalizedCountry === 'UA' &&
+    PERPS_RESTRICTED_REGIONS.has(normalizedCountryRegion)
+
+  return PERPS_RESTRICTED.has(normalizedCountry) || isRestrictedUkraineLocation
+}
 
 export const config = {
   matcher: [
@@ -43,7 +81,7 @@ export const config = {
 
 async function _proxy(req: NextRequest) {
   const { pathname, searchParams, search } = req.nextUrl
-  const { country, region } = geolocation(req)
+  const { country, countryRegion } = geolocation(req)
 
   if (pathname.includes('/portal') || pathname.startsWith('/portal/')) {
     if (process.env.VERCEL_ENV === 'production') {
@@ -61,8 +99,7 @@ async function _proxy(req: NextRequest) {
     const res = NextResponse.next()
     if (
       // region === 'dev1' ||
-      PERPS_RESTRICTED.has(country ?? '') ||
-      (country === 'CA' && region === 'ON') // Ontario province restriction
+      isRestrictedPerpsLocation({ country, countryRegion })
     ) {
       res.headers.set('x-perps-region-blocked', 'true')
     }

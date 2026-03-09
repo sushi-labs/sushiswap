@@ -24,6 +24,7 @@ import { Amount } from 'sushi'
 import { EvmChainId, USDC } from 'sushi/evm'
 import { useWalletClient } from 'wagmi'
 import { useUserState } from '~evm/perps/user-provider'
+import { PerpsChecker } from '../perps-checker'
 import { useAssetState } from '../trade-widget/asset-state-provider'
 import { useUserSettingsState } from './settings-provider'
 import { TransferInput } from './transfer-input'
@@ -173,32 +174,34 @@ export const PerpSpotTransfer = ({
               chainId={chainId}
             />
 
-            <Checker.Connect>
-              {/* <Checker.Network chainId={dst === 'perp' ? undefined : chainId}> */}
-              <Checker.Custom
-                showChildren={Boolean(amount)}
-                buttonText={'Enter Amount'}
-                onClick={() => {}}
-                disabled={!amount}
-              >
-                <Checker.Custom
-                  showChildren={!insufficientBalance}
-                  buttonText={'Insufficient Balance'}
-                  onClick={() => {}}
-                  disabled={Boolean(insufficientBalance)}
-                >
-                  <Button
-                    size="xl"
-                    className="w-full"
-                    onClick={withdrawUsdc}
-                    loading={isPending}
+            <PerpsChecker.Legal size="xl">
+              <Checker.Connect>
+                <Checker.Network chainId={chainId}>
+                  <Checker.Custom
+                    showChildren={Boolean(amount)}
+                    buttonText={'Enter Amount'}
+                    onClick={() => {}}
+                    disabled={!amount}
                   >
-                    {`Transfer to ${dst === 'spot' ? 'Spot' : 'Perps'}`}
-                  </Button>
-                </Checker.Custom>
-              </Checker.Custom>
-              {/* </Checker.Network> */}
-            </Checker.Connect>
+                    <Checker.Custom
+                      showChildren={!insufficientBalance}
+                      buttonText={'Insufficient Balance'}
+                      onClick={() => {}}
+                      disabled={Boolean(insufficientBalance)}
+                    >
+                      <Button
+                        size="xl"
+                        className="w-full"
+                        onClick={withdrawUsdc}
+                        loading={isPending}
+                      >
+                        {`Transfer to ${dst === 'spot' ? 'Spot' : 'Perps'}`}
+                      </Button>
+                    </Checker.Custom>
+                  </Checker.Custom>
+                </Checker.Network>
+              </Checker.Connect>
+            </PerpsChecker.Legal>
           </div>
         </div>
       </DialogContent>

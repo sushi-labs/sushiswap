@@ -9,9 +9,11 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
+import { useAccount } from 'src/lib/wallet'
 import { parseUnits } from 'viem'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
 import { TOAST_AUTOCLOSE_TIME } from '../config'
+import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
 import { useAgent } from '../use-agent'
 import { getAssetIdForConverter } from '../utils'
@@ -24,7 +26,11 @@ export const useUpdateIsolatedMargin = () => {
       assetListQuery: { data: assetList },
     },
   } = useAssetListState()
+  const address = useAccount('evm')
+  const { data: legalCheck } = useLegalCheck({ address })
+
   const mutation = useMutation({
+    mutationKey: ['update-isolated-margin', agentAccount?.address, legalCheck],
     mutationFn: async ({
       assetString,
       side,
@@ -38,6 +44,9 @@ export const useUpdateIsolatedMargin = () => {
     }) => {
       if (!agentAccount) {
         return
+      }
+      if (!legalCheck?.ipAllowed || !legalCheck?.userAllowed) {
+        throw new Error('Legal check failed. Cannot update isolated margin.')
       }
       const asset = assetList?.get(assetString)
       if (!asset) throw new Error(`Unknown c.asset: ${assetString}`)

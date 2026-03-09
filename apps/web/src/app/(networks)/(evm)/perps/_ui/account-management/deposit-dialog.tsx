@@ -15,6 +15,7 @@ import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
 import { type EvmAddress, EvmChainId, USDC, erc20Abi_transfer } from 'sushi/evm'
 import { usePublicClient, useSimulateContract, useWriteContract } from 'wagmi'
+import { PerpsChecker } from '../perps-checker'
 
 //@todo clean up
 const usdc = USDC[EvmChainId.ARBITRUM]
@@ -106,27 +107,29 @@ export const DepositDialog = ({ trigger }: { trigger?: ReactNode }) => {
               type="INPUT"
             />
 
-            <Checker.Connect>
-              <Checker.Network chainId={chainId}>
-                <Checker.Amounts chainId={chainId} amount={_amount}>
-                  <Button
-                    size="xl"
-                    disabled={
-                      Number(amount) < MIN_DEPOSIT_AMOUNT || !sim?.result
-                    }
-                    className="w-full"
-                    onClick={transferUsdc}
-                    loading={isPending}
-                  >
-                    {amount && Number(amount) < MIN_DEPOSIT_AMOUNT
-                      ? `Minimum Deposit ${MIN_DEPOSIT_AMOUNT} USDC`
-                      : !sim?.result
-                        ? 'Simulation failed'
-                        : 'Deposit'}
-                  </Button>
-                </Checker.Amounts>
-              </Checker.Network>
-            </Checker.Connect>
+            <PerpsChecker.Legal size="xl">
+              <Checker.Connect>
+                <Checker.Network chainId={chainId}>
+                  <Checker.Amounts chainId={chainId} amount={_amount}>
+                    <Button
+                      size="xl"
+                      disabled={
+                        Number(amount) < MIN_DEPOSIT_AMOUNT || !sim?.result
+                      }
+                      className="w-full"
+                      onClick={transferUsdc}
+                      loading={isPending}
+                    >
+                      {amount && Number(amount) < MIN_DEPOSIT_AMOUNT
+                        ? `Minimum Deposit ${MIN_DEPOSIT_AMOUNT} USDC`
+                        : !sim?.result
+                          ? 'Simulation failed'
+                          : 'Deposit'}
+                    </Button>
+                  </Checker.Amounts>
+                </Checker.Network>
+              </Checker.Connect>
+            </PerpsChecker.Legal>
           </div>
         </div>
       </DialogContent>
