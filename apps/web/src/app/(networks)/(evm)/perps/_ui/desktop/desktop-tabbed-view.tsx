@@ -1,5 +1,5 @@
 import { Card, Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
-import { OrderBook } from '../order-book/order-book'
+import { OrderBook } from '../order-book'
 import { Trades } from '../trades'
 
 export const DESKTOP_TABS = [
