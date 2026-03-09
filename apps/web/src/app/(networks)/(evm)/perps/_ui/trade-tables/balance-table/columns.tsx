@@ -83,7 +83,7 @@ export const TOTAL_BALANCE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
   cell: (props) => {
     const totalBalance = props.row.original.totalBalance
     const coin = props.row.original.coin?.split(' (')[0] ?? ''
-    const decimals = props.row.original.token?.szDecimals
+    const decimals = props.row.original.token?.szDecimals || 4
 
     return (
       <span className="font-medium lg:whitespace-nowrap">
@@ -111,7 +111,7 @@ export const AVAILABLE_BALANCE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
     const availableBalance = props.row.original.availableBalance
     const coin = props.row.original.coin?.split(' (')[0] ?? ''
     const isPerp = props.row.original.marketType === 'perp'
-    const decimals = props.row.original.token?.szDecimals
+    const decimals = props.row.original.token?.szDecimals || 4
 
     if (!isPerp) {
       return (

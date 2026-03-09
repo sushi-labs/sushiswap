@@ -78,7 +78,7 @@ export const useBalances = () => {
         const _spotBalance = spotData?.spotState?.balances?.find(
           (b) => b.token === tokenIndex,
         )
-        const price = i.coin === 'USDC' ? 1 : (Number(spot?.lastPrice) ?? 0)
+        const price = i.coin === 'USDC' ? 1 : (Number(spot?.markPrice) ?? 0)
         const usdcValue = Number(i.total || 0) * price
         const entry = Number(i.entryNtl || 0)
         const pnl = usdcValue - entry

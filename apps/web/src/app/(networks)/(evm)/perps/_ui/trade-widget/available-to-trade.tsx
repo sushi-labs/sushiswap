@@ -16,13 +16,28 @@ export const AvailableToTrade = () => {
         Number.parseFloat(availableToLong) * Number(markPrice)
       ).toString()
       return {
-        availToLong: perpsNumberFormatter({ value: longValue }),
-        availToShort: perpsNumberFormatter({ value: availableToShort }),
+        availToLong: perpsNumberFormatter({
+          value: longValue,
+          minFraxDigits: 2,
+          maxFraxDigits: 2,
+        }),
+        availToShort: perpsNumberFormatter({
+          value: availableToShort,
+          maxFraxDigits: asset?.sizePriceDecimals,
+        }),
       }
     }
     return {
-      availToLong: perpsNumberFormatter({ value: availableToLong }),
-      availToShort: perpsNumberFormatter({ value: availableToShort }),
+      availToLong: perpsNumberFormatter({
+        value: availableToLong,
+        minFraxDigits: 2,
+        maxFraxDigits: 2,
+      }),
+      availToShort: perpsNumberFormatter({
+        value: availableToShort,
+        minFraxDigits: 2,
+        maxFraxDigits: 2,
+      }),
     }
   }, [availableToLong, availableToShort, asset, markPrice])
 

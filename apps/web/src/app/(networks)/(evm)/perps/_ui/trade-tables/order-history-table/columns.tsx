@@ -222,14 +222,14 @@ export const ORDER_VALUE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     const limitPrice = props.row.original.order.limitPx
     const ogSz = props.row.original.order.origSz
 
-    if (status !== 'filled') {
+    if (type === 'Market' && status !== 'filled') {
       return <span className="font-medium lg:whitespace-nowrap">Market</span>
     }
 
     const value = useMemo(() => {
-      if (status === 'filled' && type === 'Market') return 0
+      if (status === 'filled') return 0
       return Number.parseFloat(ogSz) * Number.parseFloat(limitPrice)
-    }, [status, type, limitPrice, ogSz])
+    }, [status, limitPrice, ogSz])
 
     return (
       <span className="font-medium lg:whitespace-nowrap">
