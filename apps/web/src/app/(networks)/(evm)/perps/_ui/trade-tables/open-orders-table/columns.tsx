@@ -5,10 +5,10 @@ import { format } from 'date-fns'
 import { useMemo } from 'react'
 import {
   type UserOpenOrdersItemType,
-  enUSFormatNumber,
   getTextColorClass,
   getTextColorClassForHover,
   numberFormatter,
+  perpsNumberFormatter,
   useModifyOrder,
   usePrepModifyOrderData,
 } from 'src/lib/perps'
@@ -230,7 +230,7 @@ export const VALUE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
           ? '-'
           : isMarketPrice
             ? 'Market'
-            : `${enUSFormatNumber.format(value)} USDC`}
+            : `${perpsNumberFormatter({ value, minFraxDigits: 2, maxFraxDigits: 2 })} USDC`}
       </span>
     )
   },

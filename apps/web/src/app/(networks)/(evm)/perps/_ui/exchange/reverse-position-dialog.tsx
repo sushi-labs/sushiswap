@@ -13,9 +13,9 @@ import { type ReactNode, useMemo, useState } from 'react'
 import {
   BUILDER_FEE_PERPS,
   type UserPositionsItemType,
-  enUSFormatNumber,
   estimateLiquidationPrice,
   getTextColorClass,
+  perpsNumberFormatter,
   useExecuteOrders,
   useMidPrice,
   useSymbolSplit,
@@ -202,9 +202,11 @@ export const ReversePositionDialog = ({
                 </div>
                 <div className="font-medium">
                   {estimatedLiquidationPrice
-                    ? enUSFormatNumber.format(
-                        Number.parseFloat(estimatedLiquidationPrice),
-                      )
+                    ? perpsNumberFormatter({
+                        value: estimatedLiquidationPrice,
+                        maxFraxDigits: 2,
+                        minFraxDigits: 2,
+                      })
                     : 'N/A'}
                 </div>
               </div>

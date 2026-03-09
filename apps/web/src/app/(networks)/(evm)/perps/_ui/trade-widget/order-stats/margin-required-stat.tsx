@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { calculateMarginRequired, enUSFormatNumber } from 'src/lib/perps'
+import { calculateMarginRequired, perpsNumberFormatter } from 'src/lib/perps'
 import { StatItem } from '../../_common/stat-item'
 import { useAssetState } from '../asset-state-provider'
 
@@ -32,9 +32,11 @@ export const MarginRequiredStat = () => {
     })
     if (!res) return null
 
-    return enUSFormatNumber.format(
-      Number.parseFloat(res?.marginRequiredFormatted),
-    )
+    return perpsNumberFormatter({
+      value: res?.marginRequiredFormatted,
+      minFraxDigits: 2,
+      maxFraxDigits: 2,
+    })
   }, [
     asset,
     tradeType,

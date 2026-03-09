@@ -11,7 +11,7 @@ import {
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import {
   type UserPositionsItemType,
-  enUSFormatNumber,
+  perpsNumberFormatter,
   useUpdateIsolatedMargin,
 } from 'src/lib/perps'
 import { IsolatedMarginInput } from '../_common/isolated-margin-input'
@@ -104,11 +104,11 @@ export const UpdateIsolatedMarginDialog = ({
             <div className="flex flex-col gap-2">
               <StatItem
                 title={`Current Margin for ${position.assetSymbol}`}
-                value={`${enUSFormatNumber.format(Number.parseFloat(currentMargin ?? '0'))} USDC`}
+                value={`${perpsNumberFormatter({ value: currentMargin ?? '0', minFraxDigits: 2, maxFraxDigits: 2 })} USDC`}
               />
               <StatItem
                 title={`Margin available to ${type}`}
-                value={`${enUSFormatNumber.format(Number.parseFloat(maxValue ?? '0'))} USDC`}
+                value={`${perpsNumberFormatter({ value: maxValue ?? '0', minFraxDigits: 2, maxFraxDigits: 2 })} USDC`}
               />
             </div>
 

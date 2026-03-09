@@ -4,10 +4,10 @@ import { useMemo } from 'react'
 import {
   type PerpOrSpotAsset,
   currencyFormatter,
-  enUSFormatNumber,
   getSignForValue,
   getTextColorClass,
   numberFormatter,
+  perpsNumberFormatter,
 } from 'src/lib/perps'
 import { formatPercent } from 'sushi'
 import { FavoriteButton } from './favorite-button'
@@ -183,7 +183,11 @@ export const MARKET_CAP_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
     }
     return (
       <div className="tabular-nums whitespace-nowrap">
-        {enUSFormatNumber.format(Number.parseFloat(marketCap ?? '0'))}{' '}
+        {perpsNumberFormatter({
+          value: marketCap ?? '0',
+          maxFraxDigits: 2,
+          minFraxDigits: 2,
+        })}{' '}
         {token?.name}
       </div>
     )

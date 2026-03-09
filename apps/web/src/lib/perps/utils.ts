@@ -25,10 +25,24 @@ export const currencyFormatter = new Intl.NumberFormat(undefined, {
   minimumFractionDigits: 2,
 })
 
-export const enUSFormatNumber = new Intl.NumberFormat('en-US', {
-  maximumFractionDigits: 2,
-  minimumFractionDigits: 2,
-})
+export const perpsNumberFormatter = ({
+  value,
+  maxFraxDigits,
+  minFraxDigits,
+}: {
+  value: number | string
+  maxFraxDigits?: number
+  minFraxDigits?: number
+}) => {
+  const num = typeof value === 'string' ? Number.parseFloat(value) : value
+  if (Number.isNaN(num)) return '0'
+  const formatter = new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: maxFraxDigits ?? 8,
+    minimumFractionDigits: minFraxDigits ?? 0,
+  })
+  return formatter.format(num)
+}
+
 export const numberFormatter = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 8,
   minimumFractionDigits: 0,

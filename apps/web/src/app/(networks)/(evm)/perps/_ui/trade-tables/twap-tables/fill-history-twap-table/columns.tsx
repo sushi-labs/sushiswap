@@ -9,10 +9,10 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import {
   type TwapFillHistoryItemType,
-  enUSFormatNumber,
   getTextColorClass,
   getTextColorClassForHover,
   numberFormatter,
+  perpsNumberFormatter,
 } from 'src/lib/perps'
 import { useAssetState } from '../../../trade-widget/asset-state-provider'
 import { columnBodyMeta } from '../../column-meta'
@@ -160,7 +160,8 @@ export const TRADE_VALUE_COLUMN: ColumnDef<TwapFillHistoryItemType, unknown> = {
 
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {enUSFormatNumber.format(value)} {feeToken}
+        {perpsNumberFormatter({ value, minFraxDigits: 2, maxFraxDigits: 2 })}{' '}
+        {feeToken}
       </span>
     )
   },
@@ -180,7 +181,12 @@ export const FEE_COLUMN: ColumnDef<TwapFillHistoryItemType, unknown> = {
 
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {enUSFormatNumber.format(fee)} {feeToken}
+        {perpsNumberFormatter({
+          value: fee,
+          minFraxDigits: 2,
+          maxFraxDigits: 2,
+        })}{' '}
+        {feeToken}
       </span>
     )
   },
@@ -229,7 +235,12 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TwapFillHistoryItemType, unknown> = {
     }
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {enUSFormatNumber.format(totalPnl)} {feeToken}
+        {perpsNumberFormatter({
+          value: totalPnl,
+          minFraxDigits: 2,
+          maxFraxDigits: 2,
+        })}{' '}
+        {feeToken}
       </span>
     )
   },

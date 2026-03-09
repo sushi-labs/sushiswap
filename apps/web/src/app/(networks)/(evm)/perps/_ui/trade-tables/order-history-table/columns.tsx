@@ -4,11 +4,11 @@ import { format } from 'date-fns'
 import { useMemo } from 'react'
 import {
   type OrderHistoryItemType,
-  enUSFormatNumber,
   getPerpsDexAndCoin,
   getTextColorClass,
   getTextColorClassForHover,
   numberFormatter,
+  perpsNumberFormatter,
 } from 'src/lib/perps'
 import { useAssetState } from '../../trade-widget/asset-state-provider'
 import { ViewTpSlDialog } from '../_common/view-tpsl-dialog'
@@ -235,7 +235,9 @@ export const ORDER_VALUE_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
 
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {value ? `${enUSFormatNumber.format(value)} USDC` : '-'}
+        {value
+          ? `${perpsNumberFormatter({ value, minFraxDigits: 2, maxFraxDigits: 2 })} USDC`
+          : '-'}
       </span>
     )
   },

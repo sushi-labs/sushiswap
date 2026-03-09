@@ -9,11 +9,11 @@ import {
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import {
-  enUSFormatNumber,
   getHyperliquidExplorerUrl,
   getSignForValue,
   getTextColorClass,
   numberFormatter,
+  perpsNumberFormatter,
   useActiveAsset,
 } from 'src/lib/perps'
 import { formatPercent, truncateString } from 'sushi'
@@ -93,7 +93,11 @@ export const SpotAssetStats = () => {
         <div className="text-sm text-muted-foreground">24H Volume</div>
 
         <p className={classNames('text-sm  font-medium tabular-nums')}>
-          {enUSFormatNumber.format(Number(assetData?.volume24hUsd ?? 0))}{' '}
+          {perpsNumberFormatter({
+            value: assetData?.volume24hUsd ?? 0,
+            maxFraxDigits: 2,
+            minFraxDigits: 2,
+          })}{' '}
           {asset?.tokens?.[1]?.name}
         </p>
       </div>
@@ -101,7 +105,11 @@ export const SpotAssetStats = () => {
         <div className="text-sm text-muted-foreground">Market Cap</div>
 
         <p className={classNames('text-sm  font-medium tabular-nums')}>
-          {enUSFormatNumber.format(Number(assetData?.marketCap ?? 0))}{' '}
+          {perpsNumberFormatter({
+            value: assetData?.marketCap ?? 0,
+            maxFraxDigits: 2,
+            minFraxDigits: 2,
+          })}{' '}
           {asset?.tokens?.[1]?.name}
         </p>
       </div>

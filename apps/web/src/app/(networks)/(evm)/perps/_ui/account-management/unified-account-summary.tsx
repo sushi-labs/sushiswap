@@ -9,8 +9,8 @@ import {
 import { MeterIcon } from '@sushiswap/ui/icons/MeterIcon'
 import {
   currencyFormatter,
-  enUSFormatNumber,
   getTextColorClass,
+  perpsNumberFormatter,
   useUserAccountValues,
 } from 'src/lib/perps'
 import { StatItem } from '../_common/stat-item'
@@ -61,9 +61,11 @@ export const UnifiedAccountSummary = () => {
                 )}
               >
                 <MeterIcon width={18} height={8} />
-                {enUSFormatNumber.format(
-                  Number(unifiedAccountRatio.toFixed(2)),
-                )}
+                {perpsNumberFormatter({
+                  value: unifiedAccountRatio.toFixed(2),
+                  maxFraxDigits: 2,
+                  minFraxDigits: 2,
+                })}
                 %
               </span>
             }
@@ -135,7 +137,7 @@ export const UnifiedAccountSummary = () => {
                 </HoverCardContent>
               </HoverCard>
             }
-            value={`${enUSFormatNumber.format(unifiedAccountLeverage)}x`}
+            value={`${perpsNumberFormatter({ value: unifiedAccountLeverage, minFraxDigits: 2, maxFraxDigits: 2 })}x`}
           />
         </CardGroup>
       </CardContent>

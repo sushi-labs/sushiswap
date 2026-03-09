@@ -8,8 +8,8 @@ import {
 } from '@sushiswap/ui'
 import {
   currencyFormatter,
-  enUSFormatNumber,
   getTextColorClass,
+  perpsNumberFormatter,
   useUserAccountValues,
 } from 'src/lib/perps'
 import { StatItem } from '../_common/stat-item'
@@ -104,7 +104,11 @@ export const AccountSummary = () => {
             title="Unrealized PnL"
             value={
               <span className={classNames(getTextColorClass(unrelaizedPnL))}>
-                {currencyFormatter.format(unrelaizedPnL)}
+                {perpsNumberFormatter({
+                  value: unrelaizedPnL,
+                  maxFraxDigits: 2,
+                  minFraxDigits: 2,
+                })}
               </span>
             }
           />
@@ -136,7 +140,12 @@ export const AccountSummary = () => {
                     : getTextColorClass(totalCrossMarginRatio),
                 )}
               >
-                {enUSFormatNumber.format(totalCrossMarginRatio)}%
+                {perpsNumberFormatter({
+                  value: totalCrossMarginRatio,
+                  maxFraxDigits: 2,
+                  minFraxDigits: 2,
+                })}
+                %
               </span>
             }
           />
@@ -182,7 +191,11 @@ export const AccountSummary = () => {
                 </HoverCardContent>
               </HoverCard>
             }
-            value={`${enUSFormatNumber.format(crossAccountLeverage)}x`}
+            value={`${perpsNumberFormatter({
+              value: crossAccountLeverage,
+              maxFraxDigits: 2,
+              minFraxDigits: 2,
+            })}x`}
           />
         </CardGroup>
       </CardContent>

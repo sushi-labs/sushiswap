@@ -9,10 +9,10 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import {
   type TradeHistoryItemType,
-  enUSFormatNumber,
   getTextColorClass,
   getTextColorClassForHover,
   numberFormatter,
+  perpsNumberFormatter,
 } from 'src/lib/perps'
 import { useAssetState } from '../../trade-widget/asset-state-provider'
 import { columnBodyMeta } from '../column-meta'
@@ -165,7 +165,8 @@ export const TRADE_VALUE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
 
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {enUSFormatNumber.format(value)} USDC
+        {perpsNumberFormatter({ value, minFraxDigits: 2, maxFraxDigits: 2 })}{' '}
+        USDC
       </span>
     )
   },
@@ -237,7 +238,12 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     }
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {enUSFormatNumber.format(totalPnl)} USDC
+        {perpsNumberFormatter({
+          value: totalPnl,
+          minFraxDigits: 2,
+          maxFraxDigits: 2,
+        })}{' '}
+        USDC
       </span>
     )
   },

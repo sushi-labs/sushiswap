@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { calculateOrderValue, enUSFormatNumber } from 'src/lib/perps'
+import { calculateOrderValue, perpsNumberFormatter } from 'src/lib/perps'
 import { StatItem } from '../../_common/stat-item'
 import { useAssetState } from '../asset-state-provider'
 
@@ -27,7 +27,11 @@ export const OrderValueStat = () => {
     })
     if (!res) return null
 
-    return enUSFormatNumber.format(Number.parseFloat(res.notionalFormatted))
+    return perpsNumberFormatter({
+      value: Number.parseFloat(res.notionalFormatted),
+      minFraxDigits: 2,
+      maxFraxDigits: 2,
+    })
   }, [asset, tradeType, size.base, markPrice, limitPrice])
 
   return (
