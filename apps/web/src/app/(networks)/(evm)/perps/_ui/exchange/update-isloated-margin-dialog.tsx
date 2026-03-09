@@ -14,9 +14,7 @@ import {
   perpsNumberFormatter,
   useUpdateIsolatedMargin,
 } from 'src/lib/perps'
-import { IsolatedMarginInput } from '../_common/isolated-margin-input'
-import { SideToggle } from '../_common/side-toggle'
-import { StatItem } from '../_common/stat-item'
+import { IsolatedMarginInput, SideToggle, StatItem } from '../_common'
 
 export const UpdateIsolatedMarginDialog = ({
   trigger,

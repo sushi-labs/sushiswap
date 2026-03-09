@@ -1,4 +1,4 @@
-import { TableButton } from '../../_common/table-button'
+import { TableButton } from '../../_common'
 import { useTradeTables } from '../trade-tables-provider'
 
 export const ExpandAll = ({ label }: { label?: string }) => {

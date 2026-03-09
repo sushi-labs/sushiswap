@@ -8,7 +8,7 @@ import {
   useUserAccountValues,
   useUserPositions,
 } from 'src/lib/perps'
-import { StatItem } from '../../_common/stat-item'
+import { StatItem } from '../../_common'
 import { useUserSettingsState } from '../../account-management/settings-provider'
 import { useAssetState } from '../asset-state-provider'
 

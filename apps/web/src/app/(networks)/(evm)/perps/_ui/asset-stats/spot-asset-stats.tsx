@@ -16,7 +16,7 @@ import {
   useActiveAsset,
 } from 'src/lib/perps'
 import { formatPercent, truncateString } from 'sushi'
-import { ValueSensitiveText } from '../_common/value-sensitive-text'
+import { ValueSensitiveText } from '../_common'
 import { useAssetListState } from '../asset-selector/asset-list-provider'
 import { useAssetState } from '../trade-widget/asset-state-provider'
 import { AssetStatsSkeleton } from './asset-stats-skeleton'

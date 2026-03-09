@@ -25,11 +25,13 @@ import {
   useUserOpenOrders,
 } from 'src/lib/perps'
 import { formatUnits, parseUnits } from 'viem'
-import { CheckboxSetting } from '../_common/checkbox-setting'
-import { ConfigureAmount } from '../_common/configure-amount'
-import { TableButton } from '../_common/table-button'
-import { TpSlInput } from '../_common/tp-sl-input'
-import { TpSlLimitInput } from '../_common/tp-sl-limit-input'
+import {
+  CheckboxSetting,
+  ConfigureAmount,
+  TableButton,
+  TpSlInput,
+  TpSlLimitInput,
+} from '../_common'
 import { useAssetListState } from '../asset-selector/asset-list-provider'
 import { PerpsChecker } from '../perps-checker'
 import { CancelOpenOrder } from './cancel-open-order'

@@ -15,7 +15,7 @@ import {
   getTextColorClass,
   perpsNumberFormatter,
 } from 'src/lib/perps'
-import { TableButton } from '../../_common/table-button'
+import { TableButton } from '../../_common'
 
 function getLetterFromIndex(index: number): string {
   return String.fromCharCode(97 + index).toUpperCase() // 97 = 'A'

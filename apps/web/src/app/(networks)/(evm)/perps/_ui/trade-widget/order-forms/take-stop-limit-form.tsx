@@ -1,9 +1,7 @@
 import { useMidPrice } from 'src/lib/perps'
-import { LimitInput } from '../../_common/limit-input'
-import { TriggerPriceInput } from '../../_common/trigger-price-input'
+import { LimitInput, TriggerPriceInput } from '../../_common'
 import { useAssetState } from '../asset-state-provider'
-import { OrderSizeInput } from './_common/order-size-input'
-import { ReduceOnly } from './_common/reduce-only'
+import { OrderSizeInput, ReduceOnly } from './_common'
 
 export const TakeStopLimitForm = () => {
   const {

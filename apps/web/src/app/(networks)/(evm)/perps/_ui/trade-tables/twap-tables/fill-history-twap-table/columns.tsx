@@ -14,7 +14,7 @@ import {
   perpsNumberFormatter,
 } from 'src/lib/perps'
 import { useAssetState } from '../../../trade-widget/asset-state-provider'
-import { columnBodyMeta } from '../../column-meta'
+import { columnBodyMeta } from '../../_common/column-meta'
 
 export const TIME_COLUMN: ColumnDef<TwapFillHistoryItemType, unknown> = {
   id: 'timestamp',

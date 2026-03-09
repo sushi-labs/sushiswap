@@ -21,10 +21,12 @@ import {
   useMidPrice,
 } from 'src/lib/perps'
 import { formatUnits, parseUnits } from 'viem'
-import { LimitInput } from '../_common/limit-input'
-import { PercentageSlider } from '../_common/percentage-slider'
-import { SizeInput } from '../_common/size-input'
-import { TableButton } from '../_common/table-button'
+import {
+  LimitInput,
+  PercentageSlider,
+  SizeInput,
+  TableButton,
+} from '../_common'
 import { useAssetListState } from '../asset-selector/asset-list-provider'
 import { PerpsChecker } from '../perps-checker'
 

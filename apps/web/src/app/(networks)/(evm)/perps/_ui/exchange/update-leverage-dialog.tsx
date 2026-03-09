@@ -14,7 +14,7 @@ import {
   useMarginTable,
   useUpdateLeverage,
 } from 'src/lib/perps'
-import { PercentageSlider } from '../_common/percentage-slider'
+import { PercentageSlider } from '../_common'
 import { useAssetListState } from '../asset-selector/asset-list-provider'
 
 export const UpdateLeverageDialog = ({

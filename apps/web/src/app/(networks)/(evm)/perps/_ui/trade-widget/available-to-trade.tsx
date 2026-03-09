@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { perpsNumberFormatter, useSymbolSplit } from 'src/lib/perps'
-import { StatItem } from '../_common/stat-item'
+import { StatItem } from '../_common'
 import { PerpSpotTransfer } from '../account-management/perp-spot-transfer'
 import { useAssetState } from './asset-state-provider'
 

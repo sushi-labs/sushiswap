@@ -21,10 +21,12 @@ import {
   useSymbolSplit,
 } from 'src/lib/perps'
 import { formatUnits, parseUnits } from 'viem'
-import { CheckboxSetting } from '../_common/checkbox-setting'
-import { PercentageSlider } from '../_common/percentage-slider'
-import { SizeInput } from '../_common/size-input'
-import { TableButton } from '../_common/table-button'
+import {
+  CheckboxSetting,
+  PercentageSlider,
+  SizeInput,
+  TableButton,
+} from '../_common'
 import { useUserSettingsState } from '../account-management/settings-provider'
 import { useAssetListState } from '../asset-selector/asset-list-provider'
 import { PerpsChecker } from '../perps-checker'

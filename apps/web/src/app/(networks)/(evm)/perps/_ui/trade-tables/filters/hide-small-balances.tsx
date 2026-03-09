@@ -1,4 +1,4 @@
-import { CheckboxSetting } from '../../_common/checkbox-setting'
+import { CheckboxSetting } from '../../_common'
 import { useTradeTables } from '../trade-tables-provider'
 
 export const HideSmallBalances = () => {

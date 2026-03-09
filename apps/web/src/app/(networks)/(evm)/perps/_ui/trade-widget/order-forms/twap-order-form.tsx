@@ -1,8 +1,10 @@
 import { useAssetState } from '../asset-state-provider'
-import { OrderSizeInput } from './_common/order-size-input'
-import { Randomize } from './_common/randomize'
-import { ReduceOnly } from './_common/reduce-only'
-import { TwapRunningTimeInput } from './_common/twap-running-time-input'
+import {
+  OrderSizeInput,
+  Randomize,
+  ReduceOnly,
+  TwapRunningTimeInput,
+} from './_common'
 
 export const TwapOrderForm = () => {
   const {

@@ -8,7 +8,7 @@ import {
   DialogTrigger,
   IconButton,
 } from '@sushiswap/ui'
-import { CheckboxSetting } from '../_common/checkbox-setting'
+import { CheckboxSetting } from '../_common'
 import { useUserSettingsState } from './settings-provider'
 
 export const SettingsDialog = () => {

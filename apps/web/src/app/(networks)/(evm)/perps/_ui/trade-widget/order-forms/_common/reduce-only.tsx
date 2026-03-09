@@ -1,4 +1,4 @@
-import { CheckboxSetting } from '~evm/perps/_ui/_common/checkbox-setting'
+import { CheckboxSetting } from '~evm/perps/_ui/_common'
 import { useAssetState } from '../../asset-state-provider'
 
 export const ReduceOnly = () => {

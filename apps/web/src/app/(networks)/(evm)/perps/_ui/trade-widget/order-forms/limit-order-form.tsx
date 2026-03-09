@@ -1,12 +1,8 @@
 import { useState } from 'react'
 import { type TpSlGainLossType, useMidPrice } from 'src/lib/perps'
-import { CheckboxSetting } from '../../_common/checkbox-setting'
-import { LimitInput } from '../../_common/limit-input'
-import { TpSlInput } from '../../_common/tp-sl-input'
+import { CheckboxSetting, LimitInput, TpSlInput } from '../../_common'
 import { useAssetState } from '../asset-state-provider'
-import { OrderSizeInput } from './_common/order-size-input'
-import { ReduceOnly } from './_common/reduce-only'
-import { TifSelector } from './_common/tif-selector'
+import { OrderSizeInput, ReduceOnly, TifSelector } from './_common'
 
 export const LimitOrderForm = () => {
   const {

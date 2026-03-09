@@ -10,8 +10,7 @@ import {
   perpsNumberFormatter,
 } from 'src/lib/perps'
 import { useAssetState } from '../../trade-widget/asset-state-provider'
-import { ViewTpSlDialog } from '../_common/view-tpsl-dialog'
-import { columnBodyMeta } from '../column-meta'
+import { ViewTpSlDialog, columnBodyMeta } from '../_common'
 
 export const TIME_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
   id: 'timestamp',

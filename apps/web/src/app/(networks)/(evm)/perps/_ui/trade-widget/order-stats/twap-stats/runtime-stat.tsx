@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { StatItem } from '~evm/perps/_ui/_common/stat-item'
+import { StatItem } from '~evm/perps/_ui/_common'
 import { useAssetState } from '../../asset-state-provider'
 
 export const RuntimeStat = () => {

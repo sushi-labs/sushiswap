@@ -11,8 +11,7 @@ import {
   perpsNumberFormatter,
   useSymbolSplit,
 } from 'src/lib/perps'
-import { CheckboxSetting } from '../../_common/checkbox-setting'
-import { StatItem } from '../../_common/stat-item'
+import { CheckboxSetting, StatItem } from '../../_common'
 import { useUserSettingsState } from '../../account-management/settings-provider'
 import { useAssetState } from '../asset-state-provider'
 import { useScaleOrders } from '../hooks/use-scale-orders'

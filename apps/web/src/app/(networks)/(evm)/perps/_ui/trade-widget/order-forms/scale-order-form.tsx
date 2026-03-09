@@ -1,10 +1,12 @@
 import { useAssetState } from '../asset-state-provider'
-import { OrderSizeInput } from './_common/order-size-input'
-import { ReduceOnly } from './_common/reduce-only'
-import { ScaleSizeSkewInput } from './_common/scale-size-skew-input'
-import { ScaleStartEndInput } from './_common/scale-start-end-input'
-import { ScaleTotalOrdersInput } from './_common/scale-total-orders-input'
-import { TifSelector } from './_common/tif-selector'
+import {
+  OrderSizeInput,
+  ReduceOnly,
+  ScaleSizeSkewInput,
+  ScaleStartEndInput,
+  ScaleTotalOrdersInput,
+  TifSelector,
+} from './_common'
 
 export const ScaleOrderForm = () => {
   const {

@@ -11,12 +11,11 @@ import {
   useModifyOrder,
   usePrepModifyOrderData,
 } from 'src/lib/perps'
-import { InlineEdit } from '../../_common/inline-edit'
+import { InlineEdit } from '../../_common'
 import { CancelAllOpenOrdersDialog } from '../../exchange/cancel-all-open-orders-dialog'
 import { CancelOpenOrder } from '../../exchange/cancel-open-order'
 import { useAssetState } from '../../trade-widget/asset-state-provider'
-import { ViewTpSlDialog } from '../_common/view-tpsl-dialog'
-import { columnBodyMeta } from '../column-meta'
+import { ViewTpSlDialog, columnBodyMeta } from '../_common'
 
 export const TIME_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
   id: 'timestamp',

@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { ValueInput } from '~evm/perps/_ui/_common/value-input'
+import { ValueInput } from '~evm/perps/_ui/_common'
 import { useAssetState } from '../../asset-state-provider'
 
 export const ScaleSizeSkewInput = () => {

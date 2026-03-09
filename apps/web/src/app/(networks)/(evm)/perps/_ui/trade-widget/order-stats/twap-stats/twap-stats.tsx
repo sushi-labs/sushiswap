@@ -1,4 +1,4 @@
-import { StatItem } from '~evm/perps/_ui/_common/stat-item'
+import { StatItem } from '~evm/perps/_ui/_common'
 import { FeeStat } from '../fee-stat'
 import { NumberOfOrdersStat } from './number-of-orders-stat'
 import { RuntimeStat } from './runtime-stat'

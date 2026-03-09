@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import type { TpSlGainLossType } from 'src/lib/perps'
-import { CheckboxSetting } from '../../_common/checkbox-setting'
-import { TpSlInput } from '../../_common/tp-sl-input'
+import { CheckboxSetting, TpSlInput } from '../../_common'
 import { useAssetState } from '../asset-state-provider'
-import { OrderSizeInput } from './_common/order-size-input'
-import { ReduceOnly } from './_common/reduce-only'
+import { OrderSizeInput, ReduceOnly } from './_common'
 
 export const MarketOrderForm = () => {
   const {

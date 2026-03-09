@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { calculateMarginRequired, perpsNumberFormatter } from 'src/lib/perps'
-import { StatItem } from '../../_common/stat-item'
+import { StatItem } from '../../_common'
 import { useAssetState } from '../asset-state-provider'
 
 export const MarginRequiredStat = () => {

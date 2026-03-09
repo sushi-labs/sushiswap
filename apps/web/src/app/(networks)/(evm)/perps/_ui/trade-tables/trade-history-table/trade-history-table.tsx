@@ -2,7 +2,7 @@ import { DataTable, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import { type TradeHistoryItemType, useTradeHistory } from 'src/lib/perps'
-import { MobileTable } from '../_common/mobile-table'
+import { MobileTable } from '../_common'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {
   CLOSED_PNL_COLUMN,

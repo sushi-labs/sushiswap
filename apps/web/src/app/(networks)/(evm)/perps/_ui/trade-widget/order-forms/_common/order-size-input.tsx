@@ -3,8 +3,7 @@ import {
   getSizeAndPercentageFromInput,
   getSizeAndPercentageFromPercentageInput,
 } from 'src/lib/perps'
-import { PercentageSlider } from '~evm/perps/_ui/_common/percentage-slider'
-import { SizeInput } from '~evm/perps/_ui/_common/size-input'
+import { PercentageSlider, SizeInput } from '~evm/perps/_ui/_common'
 import { useAssetState } from '../../asset-state-provider'
 
 export const OrderSizeInput = () => {

@@ -13,8 +13,7 @@ import {
   perpsNumberFormatter,
   useUserAccountValues,
 } from 'src/lib/perps'
-import { StatItem } from '../_common/stat-item'
-import { ValueSensitiveText } from '../_common/value-sensitive-text'
+import { StatItem, ValueSensitiveText } from '../_common'
 import { SettingsDialog } from './settings-dialog'
 
 export const UnifiedAccountSummary = () => {

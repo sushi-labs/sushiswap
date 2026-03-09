@@ -1,5 +1,5 @@
 import { useUserState } from '~evm/perps/user-provider'
-import { CheckboxSetting } from '../../_common/checkbox-setting'
+import { CheckboxSetting } from '../../_common'
 
 export const AggregateTradeHistory = () => {
   const {
