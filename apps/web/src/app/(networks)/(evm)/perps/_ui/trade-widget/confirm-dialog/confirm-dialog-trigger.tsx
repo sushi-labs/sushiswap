@@ -1,6 +1,6 @@
 import { Button, DialogTrigger } from '@sushiswap/ui'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { useUserSettingsState } from '../../account-management/settings-provider'
+import { useUserSettingsState } from '../../account-management'
 import { PerpsChecker } from '../../perps-checker'
 import { useAssetState } from '../asset-state-provider'
 import { PlaceOrderButton } from './place-order-button'

@@ -1,5 +1,5 @@
 import { useBreakpoint, useLocalStorage } from '@sushiswap/hooks'
-import { AccountManagement } from '../account-management/account-management'
+import { AccountManagement } from '../account-management'
 import { AssetSelectorAndStats } from '../asset-selector-and-stats'
 import { Chart } from '../chart/chart'
 import { Favorites } from '../favorites/favorites'

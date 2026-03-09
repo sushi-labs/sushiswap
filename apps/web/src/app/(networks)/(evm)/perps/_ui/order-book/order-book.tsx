@@ -10,7 +10,7 @@ import {
   useSymbolSplit,
 } from 'src/lib/perps'
 import { SideToggle } from '../_common'
-import { useUserSettingsState } from '../account-management/settings-provider'
+import { useUserSettingsState } from '../account-management'
 import { useAssetListState } from '../asset-selector/asset-list-provider'
 import { useAssetState } from '../trade-widget/asset-state-provider'
 

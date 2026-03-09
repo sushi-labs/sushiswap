@@ -23,7 +23,7 @@ import {
 } from 'src/lib/perps'
 import { formatUnits, parseUnits } from 'viem'
 import { CheckboxSetting, TableButton } from '../_common'
-import { useUserSettingsState } from '../account-management/settings-provider'
+import { useUserSettingsState } from '../account-management'
 import { useAssetListState } from '../asset-selector/asset-list-provider'
 import { PerpsChecker } from '../perps-checker'
 

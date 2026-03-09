@@ -12,7 +12,7 @@ import {
   useSymbolSplit,
 } from 'src/lib/perps'
 import { CheckboxSetting, StatItem } from '../../_common'
-import { useUserSettingsState } from '../../account-management/settings-provider'
+import { useUserSettingsState } from '../../account-management'
 import { useAssetState } from '../asset-state-provider'
 import { useScaleOrders } from '../hooks/use-scale-orders'
 import { LiquidationStat } from '../order-stats/liquidation-stat'

@@ -1,9 +1,11 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { useUserState } from '~evm/perps/user-provider'
-import { DepositDialog } from '../account-management/deposit-dialog'
-import { PerpSpotTransfer } from '../account-management/perp-spot-transfer'
-import { useUserSettingsState } from '../account-management/settings-provider'
+import {
+  DepositDialog,
+  PerpSpotTransfer,
+  useUserSettingsState,
+} from '../account-management'
 import { useAssetState } from '../trade-widget/asset-state-provider'
 
 export const Deposit: FC<ButtonProps> = ({

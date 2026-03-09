@@ -11,7 +11,7 @@ import {
   useMidPrice,
 } from 'src/lib/perps'
 import { formatUnits, parseUnits } from 'viem'
-import { useUserSettingsState } from '../../account-management/settings-provider'
+import { useUserSettingsState } from '../../account-management'
 import { useAssetState } from '../asset-state-provider'
 import { useScaleOrders } from '../hooks/use-scale-orders'
 

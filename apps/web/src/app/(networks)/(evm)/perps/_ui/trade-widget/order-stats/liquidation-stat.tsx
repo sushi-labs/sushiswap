@@ -9,7 +9,7 @@ import {
   useUserPositions,
 } from 'src/lib/perps'
 import { StatItem } from '../../_common'
-import { useUserSettingsState } from '../../account-management/settings-provider'
+import { useUserSettingsState } from '../../account-management'
 import { useAssetState } from '../asset-state-provider'
 
 export const LiquidationStat = ({ title }: { title?: string }) => {

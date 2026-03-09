@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useUserSettingsState } from '~evm/perps/_ui/account-management/settings-provider'
+import { useUserSettingsState } from '~evm/perps/_ui/account-management'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
 import { useUserState } from '~evm/perps/user-provider'
 import { useAccount } from '../../wallet'

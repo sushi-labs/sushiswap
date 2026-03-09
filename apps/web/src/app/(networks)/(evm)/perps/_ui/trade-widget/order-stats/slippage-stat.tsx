@@ -19,7 +19,7 @@ import { StatItem, TableButton } from '../../_common'
 import {
   MARKET_SLIPPAGE_DENOMINATOR,
   useUserSettingsState,
-} from '../../account-management/settings-provider'
+} from '../../account-management'
 import { useAssetState } from '../asset-state-provider'
 
 export const SlippageStat = () => {

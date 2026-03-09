@@ -29,7 +29,7 @@ const currency = USDC[EvmChainId.ARBITRUM]
 const chainId = EvmChainId.ARBITRUM
 const MIN_WITHDRAW_AMOUNT = 2 //2.000000 usdc
 
-export const Withdraw = () => {
+export const WithdrawDialog = () => {
   const [open, setOpen] = useState<boolean>(false)
   const [amount, setAmount] = useState<string>('')
   const _amount = Amount.tryFromHuman(currency, amount)

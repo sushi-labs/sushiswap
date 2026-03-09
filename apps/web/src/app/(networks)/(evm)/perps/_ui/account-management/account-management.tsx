@@ -7,7 +7,7 @@ import { DepositDialog } from './deposit-dialog'
 import { PerpSpotTransfer } from './perp-spot-transfer'
 import { useUserSettingsState } from './settings-provider'
 import { UnifiedAccountSummary } from './unified-account-summary'
-import { Withdraw } from './withdraw'
+import { Withdraw } from './withdraw-dialog'
 
 export const AccountManagement = ({ className }: { className?: string }) => {
   const address = useAccount('evm')
