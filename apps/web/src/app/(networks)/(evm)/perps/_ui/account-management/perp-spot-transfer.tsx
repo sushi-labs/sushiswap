@@ -24,7 +24,7 @@ import { EvmChainId, USDC } from 'sushi/evm'
 import { useWalletClient } from 'wagmi'
 import { useUserState } from '~evm/perps/user-provider'
 import { PerpsChecker } from '../perps-checker'
-import { useAssetState } from '../trade-widget/asset-state-provider'
+import { useAssetState } from '../trade-widget'
 import { useUserSettingsState } from './settings-provider'
 import { TransferInput } from './transfer-input'
 

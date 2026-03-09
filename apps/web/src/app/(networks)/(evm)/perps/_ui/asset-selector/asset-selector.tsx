@@ -13,7 +13,7 @@ import {
 import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
 import { useEffect, useMemo, useState } from 'react'
 import { getHyperliquidCoinIconUrl } from 'src/lib/perps'
-import { useAssetState } from '../trade-widget/asset-state-provider'
+import { useAssetState } from '../trade-widget'
 import { useAssetSelectorState } from './asset-selector-provider'
 import { AssetTabs } from './asset-tabs'
 import { SearchBar } from './search-bar'

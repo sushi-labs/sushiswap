@@ -11,7 +11,7 @@ import {
 import { formatPercent } from 'sushi'
 import { OverflowX } from '../_common'
 import { useAssetListState } from '../asset-selector'
-import { useAssetState } from '../trade-widget/asset-state-provider'
+import { useAssetState } from '../trade-widget'
 
 export const Favorites = () => {
   const { favorites } = useFavoriteAssets()

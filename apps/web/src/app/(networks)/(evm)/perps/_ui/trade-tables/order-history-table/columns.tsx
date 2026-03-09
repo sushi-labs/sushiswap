@@ -9,7 +9,7 @@ import {
   getTextColorClassForHover,
   perpsNumberFormatter,
 } from 'src/lib/perps'
-import { useAssetState } from '../../trade-widget/asset-state-provider'
+import { useAssetState } from '../../trade-widget'
 import { ViewTpSlDialog, columnBodyMeta } from '../_common'
 
 export const TIME_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {

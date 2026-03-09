@@ -18,7 +18,7 @@ import {
 import { formatPercent, truncateString } from 'sushi'
 import { ValueSensitiveText } from '../_common'
 import { useAssetListState } from '../asset-selector'
-import { useAssetState } from '../trade-widget/asset-state-provider'
+import { useAssetState } from '../trade-widget'
 import { AssetStatsSkeleton } from './asset-stats-skeleton'
 
 export const SpotAssetStats = () => {

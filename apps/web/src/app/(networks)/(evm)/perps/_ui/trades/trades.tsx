@@ -7,7 +7,7 @@ import {
   useAssetName,
   useTrades,
 } from 'src/lib/perps'
-import { useAssetState } from './trade-widget/asset-state-provider'
+import { useAssetState } from '../trade-widget'
 
 export const Trades = () => {
   const {

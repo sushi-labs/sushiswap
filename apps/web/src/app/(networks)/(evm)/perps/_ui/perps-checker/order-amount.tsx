@@ -2,8 +2,8 @@ import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { useMidPrice, useUserPositions } from 'src/lib/perps'
 import { parseUnits } from 'viem'
-import { useAssetState } from '../trade-widget/asset-state-provider'
-import { useScaleOrders } from '../trade-widget/hooks/use-scale-orders'
+import { useScaleOrders } from '../../../../../../lib/perps/exchange/use-scale-orders'
+import { useAssetState } from '../trade-widget'
 
 export const OrderAmount: FC<ButtonProps> = ({
   children,

@@ -10,7 +10,7 @@ import {
   useCancelTwap,
 } from 'src/lib/perps'
 import { TableButton } from '~evm/perps/_ui/_common'
-import { useAssetState } from '../../../trade-widget/asset-state-provider'
+import { useAssetState } from '../../../trade-widget'
 import { columnBodyMeta } from '../../_common'
 
 export const COIN_COLUMN: ColumnDef<ActiveTwapItemType, unknown> = {

@@ -28,7 +28,7 @@ import {
   UpdateIsolatedMarginDialog,
   UpdateLeverageDialog,
 } from '../../exchange'
-import { useAssetState } from '../../trade-widget/asset-state-provider'
+import { useAssetState } from '../../trade-widget'
 import { columnBodyMeta } from '../_common'
 import { useTradeTables } from '../trade-tables-provider'
 

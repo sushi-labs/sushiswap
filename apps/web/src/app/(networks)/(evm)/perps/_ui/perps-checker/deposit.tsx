@@ -6,7 +6,7 @@ import {
   PerpSpotTransfer,
   useUserSettingsState,
 } from '../account-management'
-import { useAssetState } from '../trade-widget/asset-state-provider'
+import { useAssetState } from '../trade-widget'
 
 export const Deposit: FC<ButtonProps> = ({
   children,

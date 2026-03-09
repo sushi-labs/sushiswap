@@ -12,7 +12,7 @@ import {
 import { SideToggle } from '../_common'
 import { useUserSettingsState } from '../account-management'
 import { useAssetListState } from '../asset-selector'
-import { useAssetState } from '../trade-widget/asset-state-provider'
+import { useAssetState } from '../trade-widget'
 
 const getTotal = (o: OrderbookRow, side: 'base' | 'quote') => {
   return Number.parseFloat(side === 'base' ? o.totalBase : o.totalQuote)

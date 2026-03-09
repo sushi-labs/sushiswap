@@ -1,7 +1,6 @@
-import { useSymbolSplit } from 'src/lib/perps'
+import { useScaleOrders, useSymbolSplit } from 'src/lib/perps'
 import { StatItem } from '../../_common'
 import { useAssetState } from '../asset-state-provider'
-import { useScaleOrders } from '../hooks/use-scale-orders'
 
 export const ScaleStartEndStat = () => {
   const {

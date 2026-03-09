@@ -1,7 +1,7 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { getTwapOrderCount, getTwapSuborderSize } from 'src/lib/perps'
-import { useAssetState } from '../trade-widget/asset-state-provider'
+import { useAssetState } from '../trade-widget'
 
 export const TwapSuborder: FC<ButtonProps> = ({
   children,

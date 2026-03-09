@@ -15,7 +15,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useAssetName } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { useAssetListState } from '../asset-selector'
-import { useAssetState } from '../trade-widget/asset-state-provider'
+import { useAssetState } from '../trade-widget'
 import Datafeed, { timeframes } from './datafeed'
 import { registerNoDataSetter } from './datafeed'
 

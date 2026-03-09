@@ -9,17 +9,19 @@ import { useState } from 'react'
 import {
   getTextColorClass,
   perpsNumberFormatter,
+  useScaleOrders,
   useSymbolSplit,
 } from 'src/lib/perps'
 import { CheckboxSetting, StatItem } from '../../_common'
 import { useUserSettingsState } from '../../account-management'
 import { useAssetState } from '../asset-state-provider'
-import { useScaleOrders } from '../hooks/use-scale-orders'
-import { LiquidationStat } from '../order-stats/liquidation-stat'
-import { ScaleStartEndStat } from '../order-stats/scale-start-end-stat'
-import { NumberOfOrdersStat } from '../order-stats/twap-stats/number-of-orders-stat'
-import { RuntimeStat } from '../order-stats/twap-stats/runtime-stat'
-import { SizePerSuborderStat } from '../order-stats/twap-stats/size-per-suborder-stat'
+import {
+  LiquidationStat,
+  NumberOfOrdersStat,
+  RuntimeStat,
+  ScaleStartEndStat,
+  SizePerSuborderStat,
+} from '../order-stats'
 import { ConfirmDialogTrigger } from './confirm-dialog-trigger'
 import { PlaceOrderButton } from './place-order-button'
 

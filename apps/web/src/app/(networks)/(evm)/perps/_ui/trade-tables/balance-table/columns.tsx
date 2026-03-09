@@ -19,7 +19,7 @@ import {
   perpsNumberFormatter,
 } from 'src/lib/perps'
 import { truncateString } from 'sushi'
-import { useAssetState } from '../../trade-widget/asset-state-provider'
+import { useAssetState } from '../../trade-widget'
 import { columnBodyMeta } from '../_common/column-meta'
 
 export const COIN_COLUMN: ColumnDef<BalanceItemType, unknown> = {

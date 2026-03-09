@@ -1,7 +1,7 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { useMidPrice } from 'src/lib/perps'
-import { useAssetState } from '../trade-widget/asset-state-provider'
+import { useAssetState } from '../trade-widget'
 
 export const TakeStopTrigger: FC<ButtonProps> = ({
   children,

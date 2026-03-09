@@ -7,7 +7,7 @@ import {
   AssetSelectorStateProvider,
 } from './_ui/asset-selector'
 import { TradeTablesProvider } from './_ui/trade-tables'
-import { AssetStateProvider } from './_ui/trade-widget/asset-state-provider'
+import { AssetStateProvider } from './_ui/trade-widget'
 import { UserProvider } from './user-provider'
 
 export function Providers({ children }: { children: React.ReactNode }) {

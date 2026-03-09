@@ -1,7 +1,7 @@
 import { headers } from 'next/headers'
 import { EvmChainId } from 'sushi/evm'
 import { Header } from '~evm/[chainId]/header'
-import { GeoBlockedMessage } from './_ui/geo-blocked-message'
+import { GeoBlockedMessage } from './_ui/_common'
 import { Providers } from './providers'
 
 export default async function PerpsLayout({

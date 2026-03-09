@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { buildScaleOrders } from 'src/lib/perps'
-import { useAssetState } from '../asset-state-provider'
+import { useAssetState } from '../../../app/(networks)/(evm)/perps/_ui/trade-widget'
 
 export const useScaleOrders = () => {
   const {

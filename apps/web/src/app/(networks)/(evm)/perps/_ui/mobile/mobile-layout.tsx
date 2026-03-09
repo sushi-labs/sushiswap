@@ -1,10 +1,10 @@
 'use client'
 import { useLocalStorage } from '@sushiswap/hooks'
 import { Activity } from 'react'
+import { AssetSelectorAndStats } from '../_common'
 import { AccountManagement } from '../account-management'
-import { AssetSelectorAndStats } from '../asset-selector-and-stats'
 import { TradeTables } from '../trade-tables'
-import { TradeWidget } from '../trade-widget/trade-widget'
+import { TradeWidget } from '../trade-widget'
 import { FooterNav } from './footer-nav'
 import { TabbedView } from './tabbed-view'
 

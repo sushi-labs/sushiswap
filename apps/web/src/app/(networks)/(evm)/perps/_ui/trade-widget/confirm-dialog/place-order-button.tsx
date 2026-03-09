@@ -9,11 +9,11 @@ import {
   useExecuteOrders,
   useExecuteTwapOrder,
   useMidPrice,
+  useScaleOrders,
 } from 'src/lib/perps'
 import { formatUnits, parseUnits } from 'viem'
 import { useUserSettingsState } from '../../account-management'
 import { useAssetState } from '../asset-state-provider'
-import { useScaleOrders } from '../hooks/use-scale-orders'
 
 export const PlaceOrderButton = ({ onMutate }: { onMutate?: () => void }) => {
   const {

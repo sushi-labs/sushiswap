@@ -1,10 +1,10 @@
 import { Card, classNames } from '@sushiswap/ui'
 import { AvailableToTrade } from './available-to-trade'
-import { ConfirmDialog } from './confirm-dialog/confirm-dialog'
+import { ConfirmDialog } from './confirm-dialog'
 import { CurrentPosition } from './current-position'
 import { Leverage } from './leverage'
-import { OrderForms } from './order-forms/order-forms'
-import { OrderStats } from './order-stats/order-stats'
+import { OrderForms } from './order-forms'
+import { OrderStats } from './order-stats'
 import { TradeSideSelect } from './trade-side-select'
 import { TradeTypeSelect } from './trade-type-select'
 
