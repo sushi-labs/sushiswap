@@ -67,10 +67,6 @@ export const PerpAssetStats = () => {
             asset?.decimals ?? 0,
             'perp',
           )}
-          formatOptions={{
-            minimumFractionDigits: 0,
-            maximumFractionDigits: asset?.decimals,
-          }}
           className="text-sm font-medium tabular-nums"
         />
       </div>

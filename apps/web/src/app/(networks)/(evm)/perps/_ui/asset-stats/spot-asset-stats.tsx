@@ -66,10 +66,6 @@ export const SpotAssetStats = () => {
             'spot',
           )}
           className="text-sm font-medium tabular-nums lining-nums min-w-[var(--w)] inline-block"
-          formatOptions={{
-            minimumFractionDigits: 0,
-            maximumFractionDigits: asset?.decimals,
-          }}
         />
       </div>
       <div className="flex flex-col">

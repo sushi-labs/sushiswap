@@ -393,7 +393,7 @@ const _useMarketPrice = () => {
 
   return useMemo(() => {
     if (!midPrice || !asset) return undefined
-    const _midPrice = parseUnits(midPrice ?? '0', asset?.decimals)
+    const _midPrice = parseUnits(midPrice ?? '0', asset?.sizePriceDecimals)
 
     const slippage =
       tradeSide === 'long'
@@ -403,7 +403,7 @@ const _useMarketPrice = () => {
 
     try {
       return formatPrice(
-        formatUnits(adjustedPrice, asset?.decimals),
+        formatUnits(adjustedPrice, asset?.sizePriceDecimals),
         asset?.decimals,
         asset?.marketType,
       )
@@ -423,8 +423,8 @@ const _useTpSlOrder = () => {
       return { tpOrder: undefined, slOrder: undefined }
     }
     const _size = formatSize(size.base, asset?.decimals)
-    const _tpPrice = parseUnits(tpPrice ?? '0', asset?.decimals)
-    const _slPrice = parseUnits(slPrice ?? '0', asset?.decimals)
+    const _tpPrice = parseUnits(tpPrice ?? '0', asset?.sizePriceDecimals)
+    const _slPrice = parseUnits(slPrice ?? '0', asset?.sizePriceDecimals)
     const tpOrder =
       hasTpSl && tpPrice
         ? {
@@ -433,7 +433,7 @@ const _useTpSlOrder = () => {
             price: formatPrice(
               formatUnits(
                 (_tpPrice * BigInt(90)) / BigInt(100), //todo: check to make sure this doesnt need to be reversed for shorts
-                asset?.decimals,
+                asset?.sizePriceDecimals,
               ),
               asset?.decimals,
               asset?.marketType,
@@ -463,7 +463,7 @@ const _useTpSlOrder = () => {
             price: formatPrice(
               formatUnits(
                 (_slPrice * BigInt(90)) / BigInt(100), //todo: check to make sure this doesnt need to be reversed for shorts
-                asset?.decimals,
+                asset?.sizePriceDecimals,
               ),
               asset?.decimals,
               asset?.marketType,

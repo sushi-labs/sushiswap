@@ -1,3 +1,4 @@
+import { formatPrice } from '@nktkas/hyperliquid/utils'
 import { Chip, SkeletonText, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
@@ -65,10 +66,11 @@ export const LAST_PRICE_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
 
     return (
       <div className="tabular-nums">
-        {perpsNumberFormatter({
-          value: price ?? '0',
-          maxFraxDigits: token.decimals,
-        })}
+        {formatPrice(
+          price?.toString() ?? '',
+          token?.decimals ?? 0,
+          token.marketType,
+        )}
       </div>
     )
   },

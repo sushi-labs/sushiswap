@@ -23,12 +23,12 @@ export const OrderValueStat = () => {
     const res = calculateOrderValue({
       baseSize: size.base,
       price,
-      decimals: asset.decimals,
+      decimals: asset.sizePriceDecimals,
     })
     if (!res) return null
 
     return perpsNumberFormatter({
-      value: Number.parseFloat(res.notionalFormatted),
+      value: res.notionalFormatted,
       minFraxDigits: 2,
       maxFraxDigits: 2,
     })
