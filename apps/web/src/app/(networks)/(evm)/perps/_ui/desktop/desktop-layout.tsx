@@ -3,7 +3,7 @@ import { AccountManagement } from '../account-management'
 import { AssetSelectorAndStats } from '../asset-selector-and-stats'
 import { Chart } from '../chart'
 import { Favorites } from '../favorites'
-import { TradeTables } from '../trade-tables/trade-tables'
+import { TradeTables } from '../trade-tables'
 import { TradeWidget } from '../trade-widget/trade-widget'
 import { type DesktopTab, DesktopTabbedView } from './desktop-tabbed-view'
 

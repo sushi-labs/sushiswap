@@ -6,7 +6,7 @@ import {
   AssetListProvider,
   AssetSelectorStateProvider,
 } from './_ui/asset-selector'
-import { TradeTablesProvider } from './_ui/trade-tables/trade-tables-provider'
+import { TradeTablesProvider } from './_ui/trade-tables'
 import { AssetStateProvider } from './_ui/trade-widget/asset-state-provider'
 import { UserProvider } from './user-provider'
 
