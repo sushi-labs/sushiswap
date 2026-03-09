@@ -9,7 +9,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import type { TimeInForceType } from 'src/lib/perps/exchange/use-execute-orders'
+import type { TimeInForceType } from 'src/lib/perps/exchange'
 import { useActiveAssetData } from 'src/lib/perps/subscription'
 import type { PerpOrSpotAsset } from 'src/lib/perps/subscription'
 import { useBalance } from 'src/lib/perps/use-balances'

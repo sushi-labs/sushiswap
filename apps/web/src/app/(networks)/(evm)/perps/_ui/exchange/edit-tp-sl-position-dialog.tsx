@@ -12,7 +12,7 @@ import {
 } from '@sushiswap/ui'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
-import { useExecuteOrders } from 'src/lib/perps/exchange/use-execute-orders'
+import { useExecuteOrders } from 'src/lib/perps/exchange'
 import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
 import { useUserOpenOrders } from 'src/lib/perps/use-user-open-orders'
 import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'

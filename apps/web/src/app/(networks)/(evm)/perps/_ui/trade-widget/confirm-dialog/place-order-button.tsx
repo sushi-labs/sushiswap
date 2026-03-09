@@ -4,12 +4,10 @@ import { useCallback, useMemo } from 'react'
 import { BUILDER_FEE_PERPS, BUILDER_FEE_SPOT } from 'src/lib/perps/config'
 import {
   type OrderData,
-  useExecuteOrders,
-} from 'src/lib/perps/exchange/use-execute-orders'
-import {
   type TwapOrder,
+  useExecuteOrders,
   useExecuteTwapOrder,
-} from 'src/lib/perps/exchange/use-execute-twap-order'
+} from 'src/lib/perps/exchange'
 import { useMidPrice } from 'src/lib/perps/use-mid-price'
 import { formatUnits, parseUnits } from 'viem'
 import { useUserSettingsState } from '../../account-management/settings-provider'

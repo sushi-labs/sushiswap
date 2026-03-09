@@ -11,7 +11,7 @@ import {
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
-import { useExecuteOrders } from 'src/lib/perps/exchange/use-execute-orders'
+import { useExecuteOrders } from 'src/lib/perps/exchange'
 import { useMidPrice } from 'src/lib/perps/use-mid-price'
 import { useSymbolSplit } from 'src/lib/perps/use-symbol-split'
 import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'

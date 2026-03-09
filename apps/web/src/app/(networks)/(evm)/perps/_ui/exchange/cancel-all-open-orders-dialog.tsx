@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
-import { useCancelOpenOrders } from 'src/lib/perps/exchange/use-cancel-open-orders'
+import { useCancelOpenOrders } from 'src/lib/perps/exchange'
 import { useUserOpenOrders } from 'src/lib/perps/use-user-open-orders'
 import { TableButton } from '../_common/table-button'
 

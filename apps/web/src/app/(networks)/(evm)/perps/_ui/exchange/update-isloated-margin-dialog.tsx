@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
-import { useUpdateIsolatedMargin } from 'src/lib/perps/exchange/use-update-isolated-margin'
+import { useUpdateIsolatedMargin } from 'src/lib/perps/exchange'
 import type { UserPositionsItemType } from 'src/lib/perps/use-user-positions'
 import { enUSFormatNumber } from 'src/lib/perps/utils'
 import { IsolatedMarginInput } from '../_common/isolated-margin-input'

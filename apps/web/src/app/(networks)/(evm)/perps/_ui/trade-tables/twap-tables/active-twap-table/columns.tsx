@@ -2,7 +2,7 @@ import { Chip, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { useCallback } from 'react'
-import { useCancelTwap } from 'src/lib/perps/exchange/use-cancel-twap'
+import { useCancelTwap } from 'src/lib/perps/exchange'
 import type { ActiveTwapItemType } from 'src/lib/perps/use-active-twap'
 import {
   getTextColorClass,

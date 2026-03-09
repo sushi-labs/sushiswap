@@ -10,7 +10,7 @@ import {
 } from '@sushiswap/ui'
 import { type ReactNode, useMemo, useState } from 'react'
 import { BUILDER_FEE_PERPS } from 'src/lib/perps/config'
-import { useExecuteOrders } from 'src/lib/perps/exchange/use-execute-orders'
+import { useExecuteOrders } from 'src/lib/perps/exchange'
 import { useAllMids } from 'src/lib/perps/subscription'
 import { useUserPositions } from 'src/lib/perps/use-user-positions'
 import { formatUnits, parseUnits } from 'viem'
