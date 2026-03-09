@@ -11,7 +11,7 @@ import {
 } from 'src/lib/perps'
 import { SideToggle } from '../_common'
 import { useUserSettingsState } from '../account-management'
-import { useAssetListState } from '../asset-selector/asset-list-provider'
+import { useAssetListState } from '../asset-selector'
 import { useAssetState } from '../trade-widget/asset-state-provider'
 
 const getTotal = (o: OrderbookRow, side: 'base' | 'quote') => {

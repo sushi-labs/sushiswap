@@ -24,7 +24,7 @@ import {
 import { formatUnits, parseUnits } from 'viem'
 import { CheckboxSetting, TableButton } from '../_common'
 import { useUserSettingsState } from '../account-management'
-import { useAssetListState } from '../asset-selector/asset-list-provider'
+import { useAssetListState } from '../asset-selector'
 import { PerpsChecker } from '../perps-checker'
 
 export const ReversePositionDialog = ({

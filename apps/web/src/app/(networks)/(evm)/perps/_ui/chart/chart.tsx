@@ -14,7 +14,7 @@ import { widget } from 'public/trading-view/charting_library/charting_library.es
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useAssetName } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
-import { useAssetListState } from '../asset-selector/asset-list-provider'
+import { useAssetListState } from '../asset-selector'
 import { useAssetState } from '../trade-widget/asset-state-provider'
 import Datafeed, { timeframes } from './datafeed'
 import { registerNoDataSetter } from './datafeed'

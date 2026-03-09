@@ -10,7 +10,7 @@ import {
 } from 'src/lib/perps'
 import { formatPercent } from 'sushi'
 import { OverflowX } from '../_common'
-import { useAssetListState } from '../asset-selector/asset-list-provider'
+import { useAssetListState } from '../asset-selector'
 import { useAssetState } from '../trade-widget/asset-state-provider'
 
 export const Favorites = () => {

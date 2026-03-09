@@ -11,7 +11,7 @@ import {
 import { type ReactNode, useMemo, useState } from 'react'
 import { useUpdateLeverage } from 'src/lib/perps'
 import { CheckboxSetting } from '../_common'
-import { useAssetListState } from '../asset-selector/asset-list-provider'
+import { useAssetListState } from '../asset-selector'
 
 export const UpdateMarginModeDialog = ({
   trigger,

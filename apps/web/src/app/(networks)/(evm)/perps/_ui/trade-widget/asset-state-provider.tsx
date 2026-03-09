@@ -17,7 +17,7 @@ import {
   useUserPositions,
 } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
-import { useAssetListState } from '../asset-selector/asset-list-provider'
+import { useAssetListState } from '../asset-selector'
 interface State {
   mutate: {
     setActiveAsset: (asset: string) => void

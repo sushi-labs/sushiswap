@@ -15,7 +15,7 @@ import {
   useUpdateLeverage,
 } from 'src/lib/perps'
 import { PercentageSlider } from '../_common'
-import { useAssetListState } from '../asset-selector/asset-list-provider'
+import { useAssetListState } from '../asset-selector'
 
 export const UpdateLeverageDialog = ({
   trigger,

@@ -2,8 +2,10 @@
 
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
 import { UserSettingsProvider } from './_ui/account-management'
-import { AssetListProvider } from './_ui/asset-selector/asset-list-provider'
-import { AssetSelectorStateProvider } from './_ui/asset-selector/asset-selector-provider'
+import {
+  AssetListProvider,
+  AssetSelectorStateProvider,
+} from './_ui/asset-selector'
 import { TradeTablesProvider } from './_ui/trade-tables/trade-tables-provider'
 import { AssetStateProvider } from './_ui/trade-widget/asset-state-provider'
 import { UserProvider } from './user-provider'

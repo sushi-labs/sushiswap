@@ -27,7 +27,7 @@ import {
   SizeInput,
   TableButton,
 } from '../_common'
-import { useAssetListState } from '../asset-selector/asset-list-provider'
+import { useAssetListState } from '../asset-selector'
 import { PerpsChecker } from '../perps-checker'
 
 export const LimitCloseDialog = ({

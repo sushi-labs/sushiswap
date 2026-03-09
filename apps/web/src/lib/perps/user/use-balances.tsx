@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useUserSettingsState } from '~evm/perps/_ui/account-management'
-import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
+import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useUserState } from '~evm/perps/user-provider'
 import { useAccount } from '../../wallet'
 import { SPOT_ASSETS_TO_REWRITE } from '../utils'

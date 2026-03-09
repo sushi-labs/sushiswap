@@ -1,5 +1,5 @@
 import { Card } from '@sushiswap/ui'
-import { AssetSelector } from './asset-selector/asset-selector'
+import { AssetSelector } from './asset-selector'
 import { AssetStats } from './asset-stats/asset-stats'
 
 export const AssetSelectorAndStats = () => {

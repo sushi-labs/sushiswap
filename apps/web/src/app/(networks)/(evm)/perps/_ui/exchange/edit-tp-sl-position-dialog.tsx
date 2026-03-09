@@ -32,7 +32,7 @@ import {
   TpSlInput,
   TpSlLimitInput,
 } from '../_common'
-import { useAssetListState } from '../asset-selector/asset-list-provider'
+import { useAssetListState } from '../asset-selector'
 import { PerpsChecker } from '../perps-checker'
 import { CancelOpenOrder } from './cancel-open-order'
 

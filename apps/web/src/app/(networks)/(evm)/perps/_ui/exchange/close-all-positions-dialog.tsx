@@ -17,7 +17,7 @@ import {
 } from 'src/lib/perps'
 import { formatUnits, parseUnits } from 'viem'
 import { CheckboxSetting, TableButton } from '../_common'
-import { useAssetListState } from '../asset-selector/asset-list-provider'
+import { useAssetListState } from '../asset-selector'
 
 export const CloseAllPositionsDialog = ({
   trigger,

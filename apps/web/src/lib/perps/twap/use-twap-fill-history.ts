@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useAssetListState } from '~evm/perps/_ui/asset-selector/asset-list-provider'
+import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useAccount } from '../../wallet'
 import { useUserTwapFillHistory } from '../subscription/use-use-twap-fill-history'
 

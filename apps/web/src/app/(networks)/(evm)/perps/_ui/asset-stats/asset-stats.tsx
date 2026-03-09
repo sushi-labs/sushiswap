@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { OverflowX } from '../_common'
-import { useAssetListState } from '../asset-selector/asset-list-provider'
+import { useAssetListState } from '../asset-selector'
 import { useAssetState } from '../trade-widget/asset-state-provider'
 import { PerpAssetStats } from './perp-asset-stats'
 import { SpotAssetStats } from './spot-asset-stats'
