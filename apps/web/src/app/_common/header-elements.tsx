@@ -43,6 +43,11 @@ export const EXPLORE_NAVIGATION_LINKS = (
       description: 'Explore top pools.',
     },
     {
+      title: 'Perps',
+      href: `/perps`,
+      description: 'Trade perpetual contracts.',
+    },
+    {
       title: 'Pool',
       href: `/${getChainById(isPoolChainId ? chainId : ChainId.ETHEREUM).key}/pool`,
       description: 'Earn fees by providing liquidity.',
@@ -206,7 +211,7 @@ export const headerElements = ({
             </LinkInternal>
           </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="w-[400px] gap-3 p-4">
+            <ul className="w-[400px] gap-3 p-4 ">
               <NavigationListItem
                 title={'Swap'}
                 href={`/${getChainById(chainId ?? ChainId.ETHEREUM).key}/swap`}
@@ -224,6 +229,12 @@ export const headerElements = ({
           </NavigationMenuContent>
         </NavigationMenuItem>
       ),
+    },
+    {
+      title: 'Perps',
+      href: `/perps`,
+      show: 'desktop',
+      type: NavigationElementType.Single,
     },
     {
       title: 'Explore',

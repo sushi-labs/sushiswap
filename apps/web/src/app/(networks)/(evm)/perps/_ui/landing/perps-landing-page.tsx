@@ -1,0 +1,25 @@
+import { Ellipses } from './ellipses'
+import { LargeSushiIcon } from './large-sushi-icon'
+import { SushiBrandLogo } from './sushi-brand-logo'
+import { TelegramForm } from './telegram-form'
+import { Title } from './title'
+
+export const PerpsLandingPage = () => {
+  return (
+    <main className="overflow-hidden">
+      <div className="my-20 px-4 md:px-6 md:my-32 flex items-center flex-col gap-3 md:gap-6">
+        <SushiBrandLogo className="w-32 md:w-44 h-12 text-[#2C2C2C] dark:text-white" />
+        <Title />
+        <p className="max-w-sm md:max-w-xl lg:max-w-[875px] text-center font-medium text-base md:text-lg lg:text-xl">
+          Pre-launch access is now open. Connect your wallet, join the Telegram,
+          and secure your early trader multiplier before trading begins.
+        </p>
+        <div className="mt-2 w-full">
+          <TelegramForm />
+        </div>
+      </div>
+      <LargeSushiIcon className="fixed z-[-1] -right-24 -bottom-10 w-[60vw] h-[80vh] text-[#2C2C2C] dark:text-white/70" />
+      <Ellipses />
+    </main>
+  )
+}
