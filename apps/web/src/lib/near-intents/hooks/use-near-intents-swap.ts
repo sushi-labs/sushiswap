@@ -10,7 +10,7 @@ import { useNearAssetId } from './use-near-asset-id'
 export interface UseNearIntentsSwapParams {
   inputCurrency: Currency | StellarToken | undefined
   outputCurrency: Currency | StellarToken | undefined
-  amount: string
+  amount: number
   slippageTolerance: Percent
   sender: EvmAddress | StellarAddress | undefined
   recipient: EvmAddress | StellarAddress | undefined

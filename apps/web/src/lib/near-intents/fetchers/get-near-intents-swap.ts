@@ -6,7 +6,7 @@ import { nearIntentsSwapSchema } from './schema'
 
 export interface GetNearIntentsSwapParams {
   chainId0: NearIntentsChainId
-  amount: string
+  amount: number
   inputCurrencyNearId: string
   outputCurrencyNearId: string
   slippageTolerance: Percent

@@ -8,7 +8,7 @@ import { useNearAssetId } from './use-near-asset-id'
 export interface UseNearIntentsQuoteParams {
   inputCurrency: Currency | StellarToken | undefined
   outputCurrency: Currency | StellarToken | undefined
-  amount: string | undefined
+  amount: number | undefined
   slippageTolerance: Percent
 }
 

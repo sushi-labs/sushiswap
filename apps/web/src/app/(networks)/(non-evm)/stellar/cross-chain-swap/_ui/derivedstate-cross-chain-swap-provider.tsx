@@ -57,6 +57,7 @@ interface State {
     chainId0: StellarChainId
     chainId1: EvmChainId
     swapAmountString: string
+    swapAmount: number
     recipient: EvmAddress | StellarAddress | undefined
     slippageTolerance: Percent
     selectedBridge: string | undefined
@@ -298,6 +299,10 @@ const DerivedstateCrossChainSwapProvider: FC<
 
   const swapAmountString = defaultedParams.get('swapAmount') || ''
 
+  const swapAmount = token0
+    ? Number(swapAmountString) * 10 ** token0.decimals
+    : 0
+
   const slippageTolerance = useMemo(
     () => new Percent({ numerator: 50, denominator: 10_000 }),
     [],
@@ -328,6 +333,7 @@ const DerivedstateCrossChainSwapProvider: FC<
             chainId0,
             chainId1,
             swapAmountString,
+            swapAmount,
             recipient,
             slippageTolerance,
             selectedBridge,
@@ -350,6 +356,7 @@ const DerivedstateCrossChainSwapProvider: FC<
         token0,
         token1,
         swapAmountString,
+        swapAmount,
         recipient,
         slippageTolerance,
         selectedBridge,
@@ -372,11 +379,11 @@ function useDerivedStateCrossChainSwap() {
 
 function useCrossChainTradeQuote() {
   const {
-    state: { swapAmountString, token0, token1, slippageTolerance },
+    state: { swapAmount, token0, token1, slippageTolerance },
   } = useDerivedStateCrossChainSwap()
 
   return useNearIntentsQuote({
-    amount: swapAmountString,
+    amount: swapAmount,
     inputCurrency: token0,
     outputCurrency: token1,
     slippageTolerance,
@@ -386,7 +393,7 @@ function useCrossChainTradeQuote() {
 function useCrossChainTradeSwap() {
   const {
     state: {
-      swapAmountString,
+      swapAmount,
       token0,
       token1,
       chainId0,
@@ -400,7 +407,7 @@ function useCrossChainTradeSwap() {
   return useNearIntentsSwap({
     inputCurrency: token0,
     outputCurrency: token1,
-    amount: swapAmountString,
+    amount: swapAmount,
     slippageTolerance,
     sender,
     recipient,

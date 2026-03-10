@@ -6,7 +6,7 @@ import { nearIntentsQuoteSchema } from './schema'
 
 export interface GetNearIntentsQuoteParams {
   chainId0: NearIntentsChainId
-  amount: string
+  amount: number
   inputCurrencyNearId: string
   outputCurrencyNearId: string
   slippageTolerance: Percent
