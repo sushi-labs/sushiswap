@@ -7,13 +7,6 @@ export const SnapshotCheckQuery = graphql(
   `
   query SnapshotCheck($address: String!) {
     snapshotCheck(address: $address) {
-      masterChefV1Positions {
-        positions {
-          balance
-          user
-        }
-        poolAddress
-      }
       isOnAnySnapshot
       claimStatus {
         hasInitiatedClaim

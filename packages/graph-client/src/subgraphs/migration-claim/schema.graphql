@@ -3,14 +3,18 @@ Indicates exactly one field must be supplied and this field must not be `null`.
 """
 directive @oneOf on INPUT_OBJECT
 
-type Position {
-  user: String!
-  balance: String!
+type WalletSnapshotPosition {
+  isContract: Boolean!
+  isMultisigSafe: Boolean!
+  owner: String!
+  ownerReason: String!
+  pools: [String!]!
+  network: String!
+  chefType: String!
 }
 
-type PoolData {
-  poolAddress: String!
-  positions: [Position!]!
+type SnapshotPositionsResponse {
+  positions: [WalletSnapshotPosition!]!
 }
 
 type ClaimStatus {
@@ -20,12 +24,12 @@ type ClaimStatus {
 
 type SnapshotCheckResponse {
   isOnAnySnapshot: Boolean!
-  masterChefV1Positions: [PoolData]
   claimStatus: ClaimStatus!
 }
 
 type Query {
   snapshotCheck(address: String!): SnapshotCheckResponse!
+  snapshotPositions(address: String!): SnapshotPositionsResponse!
 }
 
 type Mutation {
