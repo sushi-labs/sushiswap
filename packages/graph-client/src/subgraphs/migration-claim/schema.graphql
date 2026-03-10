@@ -3,6 +3,16 @@ Indicates exactly one field must be supplied and this field must not be `null`.
 """
 directive @oneOf on INPUT_OBJECT
 
+type SnapshotPositionData {
+  poolAddress: String!
+  positions: [SnapshotUserPosition!]!
+}
+
+type SnapshotUserPosition {
+  user: String!
+  balance: String!
+}
+
 type WalletSnapshotPosition {
   isContract: Boolean!
   isMultisigSafe: Boolean!
@@ -11,6 +21,7 @@ type WalletSnapshotPosition {
   pools: [String!]!
   network: String!
   chefType: String!
+  positionData: [SnapshotPositionData!]!
 }
 
 type SnapshotPositionsResponse {
