@@ -9,8 +9,8 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import React, { useEffect } from 'react'
-import { formatUSD, getChainById, shortenAddress } from 'sushi'
+import React, { useEffect, useMemo } from 'react'
+import { formatPercent, formatUSD, getChainById, shortenAddress } from 'sushi'
 import { isAddress } from 'viem'
 
 import { ChevronDownIcon } from '@heroicons/react-v1/solid'
@@ -24,6 +24,10 @@ import { GasIcon } from '@sushiswap/ui/icons/GasIcon'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
 import { useAccount } from 'src/lib/wallet'
 import { useDetailsInteractionTracker } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
+import {
+  warningSeverity,
+  warningSeverityClassName,
+} from '~stellar/_common/lib/utils/warning-severity'
 import { CrossChainSwapTokenRate } from './cross-chain-swap-token-rate'
 import {
   useCrossChainTradeQuote,
@@ -32,7 +36,7 @@ import {
 
 export function CrossChainSwapTradeStats() {
   const {
-    state: { swapAmountString, recipient, slippageTolerance, token1, chainId1 },
+    state: { swapAmountString, recipient, token1, chainId1 },
   } = useDerivedStateCrossChainSwap()
   const { isLoading, data: quote, isError } = useCrossChainTradeQuote()
   const {
@@ -53,6 +57,29 @@ export function CrossChainSwapTradeStats() {
   }, [hasValidQuote, isDetailsCollapsed, resetDetailsTrackedState])
 
   const address = useAccount(chainId1)
+
+  const formattedAmounts = useMemo(() => {
+    if (!quote?.quote || !token1) {
+      return { amountOut: null, minAmountOut: null }
+    }
+
+    const token1Decimals = token1.decimals
+
+    const amountOutRaw = Number.parseFloat(quote.quote.amountOut)
+    const minAmountOutRaw = Number.parseFloat(quote.quote.minAmountOut)
+
+    const amountOut = amountOutRaw / 10 ** token1Decimals
+    const minAmountOut = minAmountOutRaw / 10 ** token1Decimals
+
+    return {
+      amountOut: amountOut.toLocaleString(undefined, {
+        maximumFractionDigits: 6,
+      }),
+      minAmountOut: minAmountOut.toLocaleString(undefined, {
+        maximumFractionDigits: 6,
+      }),
+    }
+  }, [quote, token1])
 
   return (
     <>
@@ -108,7 +135,12 @@ export function CrossChainSwapTradeStats() {
             <span className="text-sm text-gray-700 dark:text-slate-400">
               Price impact
             </span>
-            <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+            <span
+              className={classNames(
+                warningSeverityClassName(warningSeverity(undefined)),
+                'text-sm font-semibold text-gray-700 text-right dark:text-slate-400',
+              )}
+            >
               {isLoading ? (
                 <SkeletonBox className="h-4 py-0.5 w-[40px]" />
               ) : (
@@ -122,10 +154,10 @@ export function CrossChainSwapTradeStats() {
               Est. received
             </span>
             <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-              {isLoading || !quote?.quote?.amountOut ? (
+              {isLoading || !formattedAmounts.amountOut ? (
                 <SkeletonBox className="h-4 py-0.5 w-[120px]" />
               ) : (
-                `${quote.quote.amountOut} ${token1?.symbol ?? ''}`
+                `${formattedAmounts.amountOut} ${token1?.symbol ?? ''}`
               )}
             </span>
           </div>
@@ -135,20 +167,11 @@ export function CrossChainSwapTradeStats() {
               Min. received
             </span>
             <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-              {isLoading || !quote?.quote?.minAmountOut ? (
+              {isLoading || !formattedAmounts.minAmountOut ? (
                 <SkeletonBox className="h-4 py-0.5 w-[100px]" />
               ) : (
-                `${quote.quote.minAmountOut} ${token1?.symbol ?? ''}`
+                `${formattedAmounts.minAmountOut} ${token1?.symbol ?? ''}`
               )}
-            </span>
-          </div>
-
-          <div className="flex justify-between items-center gap-2">
-            <span className="text-sm text-gray-700 dark:text-slate-400">
-              Slippage Tolerance
-            </span>
-            <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-              {slippageTolerance.toSignificant(2)}%
             </span>
           </div>
 
