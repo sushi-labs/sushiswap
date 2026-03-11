@@ -104,7 +104,13 @@ export const useRemoveLiquidity = ({
         queryKey: ['stellar', 'position-principals-batch'],
       })
       queryClient.invalidateQueries({
-        queryKey: ['stellar', 'positions', 'token', variables.tokenId],
+        queryKey: [
+          'stellar',
+          'positions',
+          'single',
+          isLegacy,
+          variables.tokenId,
+        ],
       })
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'position-principal', variables.tokenId],

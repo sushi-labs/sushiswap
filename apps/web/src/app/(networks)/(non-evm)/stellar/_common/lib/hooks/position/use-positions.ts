@@ -60,7 +60,7 @@ export function usePosition({
   return useQuery({
     queryKey: ['stellar', 'positions', 'single', isLegacy, tokenId],
     queryFn: async () => {
-      if (!tokenId) {
+      if (tokenId === undefined) {
         return null
       }
       return await positionService.getPosition({ tokenId, isLegacy })
@@ -83,7 +83,7 @@ export function useUncollectedFees({
   return useQuery({
     queryKey: ['stellar', 'positions', 'fees', isLegacy, tokenId],
     queryFn: async () => {
-      if (!tokenId) {
+      if (tokenId === undefined) {
         return null
       }
       return await positionService.getUncollectedFees({ tokenId, isLegacy })
