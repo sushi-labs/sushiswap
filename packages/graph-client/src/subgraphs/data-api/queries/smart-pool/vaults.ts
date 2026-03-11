@@ -88,6 +88,7 @@ export async function getVaults(
     const vaults = result.vaults.map((v) => {
       return {
         ...v,
+        apr1d: v.apr1d * 0.2,
         chainId: v.chainId as SmartPoolChainId,
         id: v.id as EvmID,
         address: v.address as Address,
@@ -113,5 +114,5 @@ export async function getVaults(
     return vaults.filter((v) => v !== null) as VaultV1[]
   }
 
-  throw new Error('No smart pool found')
+  throw new Error('No Liquidity Vault found')
 }

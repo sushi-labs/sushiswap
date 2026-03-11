@@ -67,7 +67,7 @@ const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
           className="mb-4 flex flex-col md:flex-row items-center gap-4 justify-between"
         >
           <p>
-            {`This pool has been activated to leverage our smart pool feature. Smart pools are designed to optimize the
+            {`This pool has been activated to leverage our liquidity vault feature. Liquidity Vaults are designed to optimize the
         allocation of liquidity within customized price ranges, thereby improving trading efficiency. They achieve
         this by enhancing liquidity depth around the current price, which results in higher fee earnings for liquidity
         providers (LPs) and allows the market to dictate the distribution of LPs' positions based on rational
@@ -79,7 +79,7 @@ const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
             className="w-full md:w-fit"
           >
             <Button className="w-full md:w-fit">
-              Create Smart Pool Position
+              Create Liquidity Vault Position
             </Button>
           </LinkInternal>
         </Message>

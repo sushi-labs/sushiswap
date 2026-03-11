@@ -218,20 +218,6 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
               <StatLabel size="sm">Deviation</StatLabel>
               <StatValue size="sm">2</StatValue>
             </Stat> */}
-            <Stat className="px-6 py-3">
-              <StatLabel size="sm">Performance fee</StatLabel>
-              <StatValue size="sm">
-                {formatPercent(vault.performanceFee)}
-              </StatValue>
-            </Stat>
-            <Stat className="px-6 py-3">
-              <StatLabel size="sm">Provider</StatLabel>
-              <StatValue size="sm">
-                <LinkExternal href="https://steer.finance/">
-                  SteerFinance
-                </LinkExternal>
-              </StatValue>
-            </Stat>
           </div>
           <Separator />
           <CardHeader>
