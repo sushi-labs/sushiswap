@@ -51,9 +51,9 @@ if (typeof window !== 'undefined') {
 
 
 export const networks = {
-  futurenet: {
-    networkPassphrase: "Test SDF Future Network ; October 2022",
-    contractId: "CDON6SWBJ4JV4T4F5N7UJ63RBXL7LC5GW3UZGHEUV6I5TVTXBNB77ITC",
+  unknown: {
+    networkPassphrase: "Public Global Stellar Network ; September 2015",
+    contractId: "CARTUL5AWDZYBSN7HUUJZSKCAKCIAKM7M54Z76G6KRYCK4XPR3OHUQZ4",
   }
 } as const
 
@@ -1378,6 +1378,27 @@ export interface Client {
   }) => Promise<AssembledTransaction<Result<readonly [u128, u128, u128]>>>
 
   /**
+   * Construct and simulate a increase_liquidity_with_hints transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Increase liquidity using caller-provided oracle hints.
+   */
+  increase_liquidity_with_hints: ({params, hints}: {params: IncreaseLiquidityParams, hints: OracleHints}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<Result<readonly [u128, u128, u128]>>>
+
+  /**
    * Construct and simulate a decrease_liquidity transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Decrease liquidity from a position
    * Returns (amount0, amount1) - the amounts of tokens removed
@@ -1400,9 +1421,51 @@ export interface Client {
   }) => Promise<AssembledTransaction<Result<readonly [u128, u128]>>>
 
   /**
+   * Construct and simulate a decrease_liquidity_with_hints transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Decrease liquidity from a position using caller-provided oracle hints.
+   */
+  decrease_liquidity_with_hints: ({params, hints}: {params: DecreaseLiquidityParams, hints: OracleHints}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<Result<readonly [u128, u128]>>>
+
+  /**
    * Construct and simulate a collect transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
   collect: ({params}: {params: CollectParams}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<Result<readonly [u128, u128]>>>
+
+  /**
+   * Construct and simulate a collect_with_hints transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Collect fees from a position using caller-provided oracle hints.
+   */
+  collect_with_hints: ({params, hints}: {params: CollectParams, hints: OracleHints}, options?: {
     /**
      * The fee to pay for the transaction. Default: BASE_FEE
      */
@@ -2143,8 +2206,11 @@ export class Client extends ContractClient {
         "AAAAAAAAAEdNaW50IGEgbmV3IHBvc2l0aW9uIE5GVApSZXR1cm5zICh0b2tlbl9pZCwgbGlxdWlkaXR5LCBhbW91bnQwLCBhbW91bnQxKQAAAAAEbWludAAAAAEAAAAAAAAABnBhcmFtcwAAAAAH0AAAAApNaW50UGFyYW1zAAAAAAABAAAD6QAAA+0AAAAEAAAABAAAAAoAAAAKAAAACgAAAAM=",
         "AAAAAAAAADpNaW50IGEgbmV3IHBvc2l0aW9uIE5GVCB1c2luZyBjYWxsZXItcHJvdmlkZWQgb3JhY2xlIGhpbnRzAAAAAAAPbWludF93aXRoX2hpbnRzAAAAAAIAAAAAAAAABnBhcmFtcwAAAAAH0AAAAApNaW50UGFyYW1zAAAAAAAAAAAABWhpbnRzAAAAAAAH0AAAAAtPcmFjbGVIaW50cwAAAAABAAAD6QAAA+0AAAAEAAAABAAAAAoAAAAKAAAACgAAAAM=",
         "AAAAAAAAAHJJbmNyZWFzZSBsaXF1aWRpdHkgaW4gYW4gZXhpc3RpbmcgcG9zaXRpb24KUmV0dXJucyAobGlxdWlkaXR5LCBhbW91bnQwLCBhbW91bnQxKSAtIHRoZSBsaXF1aWRpdHkgYW5kIGFtb3VudHMgYWRkZWQAAAAAABJpbmNyZWFzZV9saXF1aWRpdHkAAAAAAAEAAAAAAAAABnBhcmFtcwAAAAAH0AAAABdJbmNyZWFzZUxpcXVpZGl0eVBhcmFtcwAAAAABAAAD6QAAA+0AAAADAAAACgAAAAoAAAAKAAAAAw==",
+        "AAAAAAAAADZJbmNyZWFzZSBsaXF1aWRpdHkgdXNpbmcgY2FsbGVyLXByb3ZpZGVkIG9yYWNsZSBoaW50cy4AAAAAAB1pbmNyZWFzZV9saXF1aWRpdHlfd2l0aF9oaW50cwAAAAAAAAIAAAAAAAAABnBhcmFtcwAAAAAH0AAAABdJbmNyZWFzZUxpcXVpZGl0eVBhcmFtcwAAAAAAAAAABWhpbnRzAAAAAAAH0AAAAAtPcmFjbGVIaW50cwAAAAABAAAD6QAAA+0AAAADAAAACgAAAAoAAAAKAAAAAw==",
         "AAAAAAAAAF1EZWNyZWFzZSBsaXF1aWRpdHkgZnJvbSBhIHBvc2l0aW9uClJldHVybnMgKGFtb3VudDAsIGFtb3VudDEpIC0gdGhlIGFtb3VudHMgb2YgdG9rZW5zIHJlbW92ZWQAAAAAAAASZGVjcmVhc2VfbGlxdWlkaXR5AAAAAAABAAAAAAAAAAZwYXJhbXMAAAAAB9AAAAAXRGVjcmVhc2VMaXF1aWRpdHlQYXJhbXMAAAAAAQAAA+kAAAPtAAAAAgAAAAoAAAAKAAAAAw==",
+        "AAAAAAAAAEZEZWNyZWFzZSBsaXF1aWRpdHkgZnJvbSBhIHBvc2l0aW9uIHVzaW5nIGNhbGxlci1wcm92aWRlZCBvcmFjbGUgaGludHMuAAAAAAAdZGVjcmVhc2VfbGlxdWlkaXR5X3dpdGhfaGludHMAAAAAAAACAAAAAAAAAAZwYXJhbXMAAAAAB9AAAAAXRGVjcmVhc2VMaXF1aWRpdHlQYXJhbXMAAAAAAAAAAAVoaW50cwAAAAAAB9AAAAALT3JhY2xlSGludHMAAAAAAQAAA+kAAAPtAAAAAgAAAAoAAAAKAAAAAw==",
         "AAAAAAAAAAAAAAAHY29sbGVjdAAAAAABAAAAAAAAAAZwYXJhbXMAAAAAB9AAAAANQ29sbGVjdFBhcmFtcwAAAAAAAAEAAAPpAAAD7QAAAAIAAAAKAAAACgAAAAM=",
+        "AAAAAAAAAEBDb2xsZWN0IGZlZXMgZnJvbSBhIHBvc2l0aW9uIHVzaW5nIGNhbGxlci1wcm92aWRlZCBvcmFjbGUgaGludHMuAAAAEmNvbGxlY3Rfd2l0aF9oaW50cwAAAAAAAgAAAAAAAAAGcGFyYW1zAAAAAAfQAAAADUNvbGxlY3RQYXJhbXMAAAAAAAAAAAAABWhpbnRzAAAAAAAH0AAAAAtPcmFjbGVIaW50cwAAAAABAAAD6QAAA+0AAAACAAAACgAAAAoAAAAD",
         "AAAAAAAAAAAAAAAUZ2V0X3Rva2VuX2Rlc2NyaXB0b3IAAAAAAAAAAQAAABM=",
         "AAAAAAAAAAAAAAALZ2V0X2ZhY3RvcnkAAAAAAAAAAAEAAAAT",
         "AAAAAAAAAAAAAAAPZ2V0X3hsbV9hZGRyZXNzAAAAAAAAAAABAAAAEw==",
@@ -2309,8 +2375,11 @@ export class Client extends ContractClient {
         mint: this.txFromJSON<Result<readonly [u32, u128, u128, u128]>>,
         mint_with_hints: this.txFromJSON<Result<readonly [u32, u128, u128, u128]>>,
         increase_liquidity: this.txFromJSON<Result<readonly [u128, u128, u128]>>,
+        increase_liquidity_with_hints: this.txFromJSON<Result<readonly [u128, u128, u128]>>,
         decrease_liquidity: this.txFromJSON<Result<readonly [u128, u128]>>,
+        decrease_liquidity_with_hints: this.txFromJSON<Result<readonly [u128, u128]>>,
         collect: this.txFromJSON<Result<readonly [u128, u128]>>,
+        collect_with_hints: this.txFromJSON<Result<readonly [u128, u128]>>,
         get_token_descriptor: this.txFromJSON<string>,
         get_factory: this.txFromJSON<string>,
         get_xlm_address: this.txFromJSON<string>,

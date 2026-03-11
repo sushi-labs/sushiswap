@@ -35,9 +35,9 @@ if (typeof window !== 'undefined') {
 
 
 export const networks = {
-  futurenet: {
-    networkPassphrase: "Test SDF Future Network ; October 2022",
-    contractId: "CDBEB4J44DTQSICBJBSL6PDT2WF2PHC5SSQLTUSM24PXAPXNCPSGVFLE",
+  unknown: {
+    networkPassphrase: "Public Global Stellar Network ; September 2015",
+    contractId: "CDMIM23WOUL5CZBKX3GOA3V5R5AMVIMTCP52KCDQORWELAPLJ27WZCHL",
   }
 } as const
 
@@ -583,6 +583,27 @@ export interface Client {
   }) => Promise<AssembledTransaction<Result<i128>>>
 
   /**
+   * Construct and simulate a swap_exact_input_single_hints transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Swap exact input single-hop using caller-provided oracle hints.
+   */
+  swap_exact_input_single_hints: ({params, hints}: {params: ExactInputSingleParams, hints: OracleHints}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<Result<i128>>>
+
+  /**
    * Construct and simulate a swap_exact_input transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Swap exact amount of input tokens for as many output tokens as possible
    * Multi-hop version (e.g., Token A → B → C in single transaction)
@@ -591,6 +612,27 @@ export interface Client {
    * First hop: Pool pulls from user. Subsequent hops: Pools use prefunded tokens.
    */
   swap_exact_input: ({params}: {params: ExactInputParams}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
+
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
+
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<Result<i128>>>
+
+  /**
+   * Construct and simulate a swap_exact_input_hints transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Swap exact input multi-hop using caller-provided oracle hints (one per hop).
+   */
+  swap_exact_input_hints: ({params, hints_by_hop}: {params: ExactInputParams, hints_by_hop: Array<OracleHints>}, options?: {
     /**
      * The fee to pay for the transaction. Default: BASE_FEE
      */
@@ -769,7 +811,9 @@ export class Client extends ContractClient {
         "AAAAAQAAACNQYXltZW50IGRldGFpbHMgZm9yIG11bHRpLWhvcCBzd2FwcwAAAAAAAAAAB1BheW1lbnQAAAAAAwAAAA1BbW91bnQgdG8gcGF5AAAAAAAABmFtb3VudAAAAAAACwAAAA1QYXllciBhZGRyZXNzAAAAAAAABXBheWVyAAAAAAAAEwAAAA1Ub2tlbiBhZGRyZXNzAAAAAAAABXRva2VuAAAAAAAAEw==",
         "AAAAAAAAAGFJbml0aWFsaXplIHRoZSByb3V0ZXIgd2l0aCBmYWN0b3J5IGFuZCBYTE0gYWRkcmVzc2VzCkZvbGxvd2luZyBVbmlzd2FwIFYzJ3MgcGVybWlzc2lvbmxlc3MgZGVzaWduAAAAAAAAC2luaXRfcm91dGVyAAAAAAIAAAAAAAAAB2ZhY3RvcnkAAAAAEwAAAAAAAAADeGxtAAAAABMAAAABAAAD6QAAA+0AAAAAAAAH0AAAAA9Td2FwUm91dGVyRXJyb3IA",
         "AAAAAAAAAPFTd2FwIGV4YWN0IGFtb3VudCBvZiBpbnB1dCB0b2tlbnMgZm9yIGFzIG1hbnkgb3V0cHV0IHRva2VucyBhcyBwb3NzaWJsZQpTaW5nbGUgaG9wIHZlcnNpb24KClVzZXMgU29yb2JhbidzIGF1dGhvcml6YXRpb24gZnJhbWV3b3JrIC0gbm8gcHJlLWFwcHJvdmFsIG5lZWRlZCEKVGhlIHVzZXIncyBzaWduYXR1cmUgYXV0aG9yaXplcyBib3RoIHRoZSByb3V0ZXIgY2FsbCBhbmQgdGhlIHBvb2wncyB0b2tlbiB0cmFuc2ZlcnMuAAAAAAAAF3N3YXBfZXhhY3RfaW5wdXRfc2luZ2xlAAAAAAEAAAAAAAAABnBhcmFtcwAAAAAH0AAAABZFeGFjdElucHV0U2luZ2xlUGFyYW1zAAAAAAABAAAD6QAAAAsAAAfQAAAAD1N3YXBSb3V0ZXJFcnJvcgA=",
+        "AAAAAAAAAD9Td2FwIGV4YWN0IGlucHV0IHNpbmdsZS1ob3AgdXNpbmcgY2FsbGVyLXByb3ZpZGVkIG9yYWNsZSBoaW50cy4AAAAAHXN3YXBfZXhhY3RfaW5wdXRfc2luZ2xlX2hpbnRzAAAAAAAAAgAAAAAAAAAGcGFyYW1zAAAAAAfQAAAAFkV4YWN0SW5wdXRTaW5nbGVQYXJhbXMAAAAAAAAAAAAFaGludHMAAAAAAAfQAAAAC09yYWNsZUhpbnRzAAAAAAEAAAPpAAAACwAAB9AAAAAPU3dhcFJvdXRlckVycm9yAA==",
         "AAAAAAAAAR1Td2FwIGV4YWN0IGFtb3VudCBvZiBpbnB1dCB0b2tlbnMgZm9yIGFzIG1hbnkgb3V0cHV0IHRva2VucyBhcyBwb3NzaWJsZQpNdWx0aS1ob3AgdmVyc2lvbiAoZS5nLiwgVG9rZW4gQSDihpIgQiDihpIgQyBpbiBzaW5nbGUgdHJhbnNhY3Rpb24pCgpVc2VzIFNvcm9iYW4ncyBhdXRob3JpemF0aW9uIGZyYW1ld29yayBmb3IgYXRvbWljIG11bHRpLWhvcCBzd2Fwcy4KRmlyc3QgaG9wOiBQb29sIHB1bGxzIGZyb20gdXNlci4gU3Vic2VxdWVudCBob3BzOiBQb29scyB1c2UgcHJlZnVuZGVkIHRva2Vucy4AAAAAAAAQc3dhcF9leGFjdF9pbnB1dAAAAAEAAAAAAAAABnBhcmFtcwAAAAAH0AAAABBFeGFjdElucHV0UGFyYW1zAAAAAQAAA+kAAAALAAAH0AAAAA9Td2FwUm91dGVyRXJyb3IA",
+        "AAAAAAAAAExTd2FwIGV4YWN0IGlucHV0IG11bHRpLWhvcCB1c2luZyBjYWxsZXItcHJvdmlkZWQgb3JhY2xlIGhpbnRzIChvbmUgcGVyIGhvcCkuAAAAFnN3YXBfZXhhY3RfaW5wdXRfaGludHMAAAAAAAIAAAAAAAAABnBhcmFtcwAAAAAH0AAAABBFeGFjdElucHV0UGFyYW1zAAAAAAAAAAxoaW50c19ieV9ob3AAAAPqAAAH0AAAAAtPcmFjbGVIaW50cwAAAAABAAAD6QAAAAsAAAfQAAAAD1N3YXBSb3V0ZXJFcnJvcgA=",
         "AAAAAAAAAI5Td2FwIGFzIGZldyBpbnB1dCB0b2tlbnMgYXMgcG9zc2libGUgZm9yIGV4YWN0IGFtb3VudCBvZiBvdXRwdXQgdG9rZW5zCk5vdCBpbXBsZW1lbnRlZCAocmVxdWlyZXMgcmV2ZXJzZS1wYXRoIGNvb3JkaW5hdGlvbiBhbmQgdG9rZW4gY3VzdG9keSkuAAAAAAAYc3dhcF9leGFjdF9vdXRwdXRfc2luZ2xlAAAAAQAAAAAAAAAGcGFyYW1zAAAAAAfQAAAAF0V4YWN0T3V0cHV0U2luZ2xlUGFyYW1zAAAAAAEAAAPpAAAACwAAB9AAAAAPU3dhcFJvdXRlckVycm9yAA==",
         "AAAAAAAAAAAAAAARc3dhcF9leGFjdF9vdXRwdXQAAAAAAAABAAAAAAAAAAZwYXJhbXMAAAAAB9AAAAARRXhhY3RPdXRwdXRQYXJhbXMAAAAAAAABAAAD6QAAAAsAAAfQAAAAD1N3YXBSb3V0ZXJFcnJvcgA=",
         "AAAAAAAAAFVRdW90ZSBleGFjdCBpbnB1dCBtdWx0aS1ob3Agc3dhcCB3aXRob3V0IGV4ZWN1dGlvbgpSZXR1cm5zIHRoZSBleHBlY3RlZCBvdXRwdXQgYW1vdW50AAAAAAAAEXF1b3RlX2V4YWN0X2lucHV0AAAAAAAAAQAAAAAAAAAGcGFyYW1zAAAAAAfQAAAAEEV4YWN0SW5wdXRQYXJhbXMAAAABAAAD6QAAB9AAAAALUXVvdGVSZXN1bHQAAAAH0AAAAA9Td2FwUm91dGVyRXJyb3IA",
@@ -788,7 +832,9 @@ export class Client extends ContractClient {
   public readonly fromJSON = {
     init_router: this.txFromJSON<Result<void>>,
         swap_exact_input_single: this.txFromJSON<Result<i128>>,
+        swap_exact_input_single_hints: this.txFromJSON<Result<i128>>,
         swap_exact_input: this.txFromJSON<Result<i128>>,
+        swap_exact_input_hints: this.txFromJSON<Result<i128>>,
         swap_exact_output_single: this.txFromJSON<Result<i128>>,
         swap_exact_output: this.txFromJSON<Result<i128>>,
         quote_exact_input: this.txFromJSON<Result<QuoteResult>>,
