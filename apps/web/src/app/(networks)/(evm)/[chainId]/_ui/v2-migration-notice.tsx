@@ -17,6 +17,9 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useConnection, useSignTypedData } from 'wagmi'
 
 export const V2MigrationNotice = ({ className }: { className?: string }) => {
+  const { address } = useConnection()
+  const { data: snapshotCheck } = useSnapshotCheck({ address })
+  if (!snapshotCheck?.isOnAnySnapshot || !address) return null
   return (
     <Message className={classNames(className ?? '')}>
       <div className="flex flex-col md:flex-row gap-4 items-center">
