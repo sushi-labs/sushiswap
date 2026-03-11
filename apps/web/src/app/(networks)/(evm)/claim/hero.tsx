@@ -7,6 +7,7 @@ import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions
 import { formatUSD } from 'sushi'
 import { SushiSwapV3ChainIds } from 'sushi/evm'
 import { useConnection } from 'wagmi'
+import { V2MigrationNotice } from '~evm/[chainId]/_ui/v2-migration-notice'
 
 export const Hero: FC = () => {
   const { address, isConnected } = useConnection()
@@ -90,6 +91,7 @@ export const Hero: FC = () => {
           </CardContent>
         </Card>
       </div>
+      <V2MigrationNotice />
     </section>
   )
 }

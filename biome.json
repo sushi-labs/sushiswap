@@ -14,8 +14,6 @@
       "CHANGELOG.md",
       "dist",
       "coverage",
-      "tsconfig.json",
-      "tsconfig.*.json",
       "packages/graph-client/src/subgraphs/**/*.graphql",
       "packages/stellar",
       "apps/web/src/lib/wagmi/hooks/exploits/data/rp2-approvals.json",
