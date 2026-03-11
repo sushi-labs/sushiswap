@@ -23,9 +23,9 @@ export function useCrossChainTradeRoutes<
   return useQuery({
     queryKey: ['cross-chain/routes', params],
     queryFn: async () => {
-      const { fromAmount, toToken, slippage, toAddress } = params
+      const { fromAmount, toToken, slippage } = params
 
-      if (!fromAmount || !toToken || !toAddress) throw new Error()
+      if (!fromAmount || !toToken) throw new Error()
 
       const url = new URL('/api/cross-chain/routes', window.location.origin)
 
@@ -69,8 +69,6 @@ export function useCrossChainTradeRoutes<
       return routes
     },
     refetchInterval: ms('20s'),
-    enabled: Boolean(
-      params.toToken && params.fromAmount?.gt(0n) && params.toAddress,
-    ),
+    enabled: Boolean(params.toToken && params.fromAmount?.gt(0n)),
   })
 }
