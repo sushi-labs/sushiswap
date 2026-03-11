@@ -69,7 +69,6 @@ function routesOutputSchema<
           toAmount: z.string(),
           toAmountMin: z.string(),
           toToken: tokenSchema(toChainId, 'lifi'),
-          toAddress: z.string().optional(),
           gasCostUSD: z.string().optional(),
           containsSwitchChain: z.boolean().optional(),
           steps: z.array(stepSchema(fromChainId, toChainId, 'lifi')),
