@@ -110,24 +110,23 @@ export const LegacyPositionMigrateCell = ({
         newPoolAddress = result.poolAddress
       }
 
-      await increaseLiquidityMutation.mutateAsync({
-        userAddress: connectedAddress,
-        poolAddress: newPoolAddress,
-        token0Amount: formatUnits(
-          BigInt(migrationParameters.principal0),
-          token0.decimals,
-        ),
-        token1Amount: formatUnits(
-          BigInt(migrationParameters.principal1),
-          token1.decimals,
-        ),
-        token0Decimals: token0.decimals,
-        token1Decimals: token1.decimals,
-        tickLower,
-        tickUpper,
-        signTransaction,
-        signAuthEntry,
-      })
+      const principal0BigInt = BigInt(migrationParameters.principal0)
+      const principal1BigInt = BigInt(migrationParameters.principal1)
+
+      if (principal0BigInt !== 0n || principal1BigInt !== 0n) {
+        await increaseLiquidityMutation.mutateAsync({
+          userAddress: connectedAddress,
+          poolAddress: newPoolAddress,
+          token0Amount: formatUnits(principal0BigInt, token0.decimals),
+          token1Amount: formatUnits(principal1BigInt, token1.decimals),
+          token0Decimals: token0.decimals,
+          token1Decimals: token1.decimals,
+          tickLower,
+          tickUpper,
+          signTransaction,
+          signAuthEntry,
+        })
+      }
 
       setPendingMigrations((prev) => {
         const { [tokenId]: _, ...rest } = prev
