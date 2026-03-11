@@ -1,5 +1,3 @@
-'use client'
-
 import { gtagEvent } from '@sushiswap/ui'
 import { EvmChainId } from 'sushi/evm'
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'

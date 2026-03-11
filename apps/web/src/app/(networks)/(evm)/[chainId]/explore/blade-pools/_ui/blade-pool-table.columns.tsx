@@ -111,7 +111,7 @@ export const TVL_COLUMN: ColumnDef<BladePool, unknown> = {
         )}
       >
         {props.row.original.liquidityUSDChange1d > 0 ? '+' : ''}
-        {formatPercent(props.row.original.liquidityUSDChange1d)}
+        {props.row.original.liquidityUSDChange1d.toFixed(2)}%
       </span>
     </div>
   ),
@@ -146,7 +146,7 @@ export const VOLUME_1W_COLUMN: ColumnDef<BladePool, unknown> = {
         )}
       >
         {props.row.original.volumeUSDChange1w > 0 ? '+' : ''}
-        {formatPercent(props.row.original.volumeUSDChange1w)}
+        {props.row.original.volumeUSDChange1w.toFixed(2)}%
       </span>
     </div>
   ),
@@ -181,7 +181,7 @@ export const VOLUME_1D_COLUMN: ColumnDef<BladePool, unknown> = {
         )}
       >
         {props.row.original.volumeUSDChange1d > 0 ? '+' : ''}
-        {formatPercent(props.row.original.volumeUSDChange1d)}
+        {props.row.original.volumeUSDChange1d.toFixed(2)}%
       </span>
     </div>
   ),

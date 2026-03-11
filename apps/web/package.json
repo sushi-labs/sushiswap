@@ -149,7 +149,6 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@0xsquid/squid-types": "0.1.78",
     "@next/env": "15.1.4",
     "@next/eslint-plugin-next": "15.1.4",
     "@playwright/test": "1.45.0",

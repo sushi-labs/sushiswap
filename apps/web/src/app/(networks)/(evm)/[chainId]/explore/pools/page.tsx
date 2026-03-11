@@ -9,6 +9,7 @@ import { PoolsTable } from '~evm/[chainId]/_ui/pools-table'
 import { TableFiltersFarmsOnly } from '~evm/[chainId]/_ui/table-filters-farms-only'
 import { TableFiltersPoolType } from '~evm/[chainId]/_ui/table-filters-pool-type'
 import { TableFiltersResetButton } from '~evm/[chainId]/_ui/table-filters-reset-button'
+import { TableFiltersSmartPoolsOnly } from '~evm/[chainId]/_ui/table-filters-smart-pools-only'
 
 export default async function PoolsPage(props: {
   params: Promise<{ chainId: string }>
@@ -32,6 +33,7 @@ export default async function PoolsPage(props: {
           className="lg:hidden block"
         />
         <TableFiltersFarmsOnly />
+        <TableFiltersSmartPoolsOnly />
         <TableFiltersResetButton />
       </div>
       <PoolsTable chainId={chainId} />

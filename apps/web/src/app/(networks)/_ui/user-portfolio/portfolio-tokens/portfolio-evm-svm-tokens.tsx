@@ -1,5 +1,10 @@
 import { getPortfolioWallet } from '@sushiswap/graph-client/data-api'
-import { SkeletonCircle, SkeletonText, classNames } from '@sushiswap/ui'
+import {
+  Message,
+  SkeletonCircle,
+  SkeletonText,
+  classNames,
+} from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import React, { useMemo } from 'react'
 import { useAccounts } from 'src/lib/wallet'
