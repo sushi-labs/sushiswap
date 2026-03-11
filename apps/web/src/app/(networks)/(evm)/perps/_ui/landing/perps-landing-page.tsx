@@ -18,7 +18,7 @@ export const PerpsLandingPage = () => {
           <TelegramForm />
         </div>
       </div>
-      <LargeSushiIcon className="fixed z-[-1] -right-24 -bottom-10 w-[60vw] h-[80vh]" />
+      <LargeSushiIcon className="fixed z-[-1] -right-24 -bottom-20 md:-bottom-10 w-[80vw] md:w-[60vw] h-[80vh]" />
       <Ellipses />
     </main>
   )
