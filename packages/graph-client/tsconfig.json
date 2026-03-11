@@ -40,6 +40,12 @@
             "schema": "./src/subgraphs/migration-claim/schema.graphql",
             "tadaOutputLocation": "./src/subgraphs/migration-claim/migration-claim-env.d.ts",
             "tadaTurboLocation": "./src/subgraphs/migration-claim/migration-claim-cache.d.ts"
+          },
+          {
+            "name": "perps-landing-api",
+            "schema": "./src/subgraphs/perps-landing-api/schema.graphql",
+            "tadaOutputLocation": "./src/subgraphs/perps-landing-api/perps-landing-api-env.d.ts",
+            "tadaTurboLocation": "./src/subgraphs/perps-landing-api/perps-landing-api-cache.d.ts"
           }
         ]
       }

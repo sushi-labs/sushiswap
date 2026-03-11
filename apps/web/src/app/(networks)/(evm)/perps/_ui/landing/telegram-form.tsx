@@ -1,6 +1,8 @@
 'use client'
 
+import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useState } from 'react'
+import { useSubmitTelegram } from 'src/lib/perps-landing'
 import { useAccount } from 'src/lib/wallet'
 import { z } from 'zod'
 
@@ -15,9 +17,8 @@ const telegramHandleSchema = z
 export const TelegramForm = () => {
   const [handle, setHandle] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [submitted, setSubmitted] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const address = useAccount('evm')
+  const { mutate, isPending, isSuccess } = useSubmitTelegram()
 
   const validate = useCallback((value: string) => {
     const cleaned = value.replace(/^@/, '').trim()
@@ -46,7 +47,7 @@ export const TelegramForm = () => {
   )
 
   const onSubmit = useCallback(
-    async (e: React.FormEvent) => {
+    (e: React.FormEvent) => {
       e.preventDefault()
 
       const cleaned = handle.replace(/^@/, '').trim()
@@ -58,33 +59,26 @@ export const TelegramForm = () => {
         return
       }
 
-      try {
-        setIsSubmitting(true)
-
-        console.log('Telegram handle:', cleaned)
-        console.log('User address:', address)
-
-        // await submit logic
-        setSubmitted(true)
-      } catch (err) {
-        const message = err instanceof Error ? err.message : String(err)
-        // console.error('Failed to submit telegram handle:', message)
-        setError(message || 'Submission failed. Please try again.')
-        return
-      } finally {
-        setIsSubmitting(false)
-      }
+      mutate({ telegramHandle: cleaned, address })
     },
-    [handle, address],
+    [handle, address, mutate],
   )
 
   return (
     <div className="w-full max-w-lg mx-auto">
-      {submitted ? (
-        <p className="font-lufga fade-in text-lg md:text-2xl lg:text-3xl text-center">
-          Thanks for joining!
-        </p>
-      ) : (
+      <AnimatePresence initial={false} mode="wait" key={'thanks'}>
+        {isSuccess ? (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="font-lufga text-lg md:text-2xl lg:text-3xl text-center"
+          >
+            Thanks for joining!
+          </motion.p>
+        ) : null}
+      </AnimatePresence>
+      {isSuccess ? null : (
         <>
           <form
             onSubmit={onSubmit}
@@ -106,21 +100,27 @@ export const TelegramForm = () => {
             <div className="absolute right-1.5 top-1.5 bottom-1.5">
               <button
                 type="submit"
-                // disabled={!!error || isSubmitting}
+                disabled={!!error || isPending}
                 className="bg-black dark:bg-slate-100 transition-colors disabled:opacity-50 w-[130px] h-full text-white dark:text-black px-4 rounded-full"
               >
-                {isSubmitting ? 'Submitting...' : 'Submit'}
+                {isPending ? 'Submitting...' : 'Submit'}
               </button>
             </div>
           </form>
-          {error ? (
-            <p
-              id="telegram-handle-error"
-              className="mt-2 px-3 text-sm text-red-500 fade-in"
-            >
-              {error}
-            </p>
-          ) : null}
+
+          <AnimatePresence initial={false} mode="wait" key={'error'}>
+            {error ? (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                id="telegram-handle-error"
+                className="mt-2 px-3 text-xs text-red-500"
+              >
+                {error}
+              </motion.p>
+            ) : null}
+          </AnimatePresence>
         </>
       )}
     </div>

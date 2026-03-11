@@ -1,0 +1,21 @@
+"""
+Indicates exactly one field must be supplied and this field must not be `null`.
+"""
+directive @oneOf on INPUT_OBJECT
+
+type SubmissionCountResult {
+  count: Int!
+}
+
+type Query {
+  submissionCount: SubmissionCountResult!
+}
+
+type Mutation {
+  submitTelegram(telegramHandle: String!, address: String): SubmitTelegramResult!
+}
+
+type SubmitTelegramResult {
+  success: Boolean!
+  message: String!
+}
