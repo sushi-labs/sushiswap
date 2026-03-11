@@ -1,12 +1,15 @@
+import { ChevronDownIcon } from '@heroicons/react-v1/solid'
 import { createErrorToast } from '@sushiswap/notifications'
 import {
   Button,
+  Collapsible,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  IconButton,
   Message,
   classNames,
 } from '@sushiswap/ui'
@@ -19,24 +22,40 @@ import { useConnection, useSignTypedData } from 'wagmi'
 export const V2MigrationNotice = ({ className }: { className?: string }) => {
   const { address } = useConnection()
   const { data: snapshotCheck } = useSnapshotCheck({ address })
+  const [open, setOpen] = useState(false)
   if (!snapshotCheck?.isOnAnySnapshot || !address) return null
   return (
     <Message className={classNames(className ?? '')}>
-      <div className="flex flex-col md:flex-row gap-4 items-center">
-        <div className="flex flex-col">
-          <p className="font-bold">V2 Migration Notice:</p>
-
-          <p>
-            If you had LPs staked in a MasterChef or MiniChef contracts, they
-            have been migrated to a V3 position. If you would like to claim the
-            underlying tokens, use the initiate claim button while connected
-            with the wallet that made the LP staking transaction to start the
-            claim process and receive the underlying tokens.
-          </p>
-        </div>
-
-        <ClaimFormDialog />
+      <div className="flex items-center justify-between">
+        <p className="font-bold whitespace-nowrap">V2 Migration Notice</p>
+        <IconButton
+          icon={ChevronDownIcon}
+          size="xs"
+          name="Toggle Swap Details"
+          onClick={() => {
+            setOpen(!open)
+          }}
+          className={classNames(
+            !open ? '' : 'rotate-180',
+            'transition-transform',
+          )}
+        />
       </div>
+      <Collapsible open={open}>
+        <div className="flex flex-col md:flex-row gap-4 items-center mt-2">
+          <div className="flex flex-col">
+            <p>
+              If you had LPs staked in a MasterChef or MiniChef contracts, they
+              have been migrated to a V3 position. If you would like to claim
+              the underlying tokens, use the initiate claim button while
+              connected with the wallet that made the LP staking transaction to
+              start the claim process and receive the underlying tokens.
+            </p>
+          </div>
+
+          <ClaimFormDialog />
+        </div>
+      </Collapsible>
     </Message>
   )
 }
