@@ -1,4 +1,8 @@
 import {
+  type PoolOracleHints,
+  executeWithOracleHints,
+} from '../utils/slot-hint-helpers'
+import {
   getPositionManagerContractClient,
   getPositionManagerContractId,
 } from './client'
@@ -84,17 +88,24 @@ export async function mintPosition({
     }
 
     let assembledTransaction: Awaited<
-      ReturnType<typeof positionManagerClient.mint>
+      ReturnType<typeof positionManagerClient.mint_with_hints>
     >
     try {
-      assembledTransaction = await positionManagerClient.mint(
-        {
-          params: mintParams,
-        },
-        {
-          timeoutInSeconds: DEFAULT_TIMEOUT,
-          fee: 100000,
-        },
+      const mintWithHintsOperation = async ([{ hints }]: PoolOracleHints[]) => {
+        return await positionManagerClient.mint_with_hints(
+          {
+            params: mintParams,
+            hints,
+          },
+          {
+            timeoutInSeconds: DEFAULT_TIMEOUT,
+            fee: 100000,
+          },
+        )
+      }
+      assembledTransaction = await executeWithOracleHints(
+        [poolAddress],
+        mintWithHintsOperation,
       )
     } catch (simulationError) {
       console.error('Transaction simulation failed:', simulationError)
@@ -153,6 +164,7 @@ export async function mintPosition({
  * Increase liquidity in an existing position
  */
 export async function increaseLiquidity({
+  pool,
   tokenId,
   amount0Desired,
   amount1Desired,
@@ -164,6 +176,7 @@ export async function increaseLiquidity({
   signTransaction,
   signAuthEntry,
 }: {
+  pool: string
   tokenId: number
   amount0Desired: bigint
   amount1Desired: bigint
@@ -187,26 +200,35 @@ export async function increaseLiquidity({
     })
 
     let assembledTransaction: Awaited<
-      ReturnType<typeof positionManagerClient.increase_liquidity>
+      ReturnType<typeof positionManagerClient.increase_liquidity_with_hints>
     >
     try {
-      assembledTransaction = await positionManagerClient.increase_liquidity(
-        {
-          params: {
-            token_id: tokenId,
-            operator,
-            amount0_desired: amount0Desired,
-            amount1_desired: amount1Desired,
-            amount0_min: amount0Min,
-            amount1_min: amount1Min,
-            deadline,
+      const increaseLiquidityWithHintsOperation = async ([
+        { hints },
+      ]: PoolOracleHints[]) => {
+        return await positionManagerClient.increase_liquidity_with_hints(
+          {
+            params: {
+              token_id: tokenId,
+              operator,
+              amount0_desired: amount0Desired,
+              amount1_desired: amount1Desired,
+              amount0_min: amount0Min,
+              amount1_min: amount1Min,
+              deadline,
+            },
+            hints: hints,
           },
-        },
-        {
-          timeoutInSeconds: DEFAULT_TIMEOUT,
-          fee: 100000,
-          simulate: true, // Explicitly enable simulation to ensure footprint is properly set
-        },
+          {
+            timeoutInSeconds: DEFAULT_TIMEOUT,
+            fee: 100000,
+            simulate: true, // Explicitly enable simulation to ensure footprint is properly set
+          },
+        )
+      }
+      assembledTransaction = await executeWithOracleHints(
+        [pool],
+        increaseLiquidityWithHintsOperation,
       )
     } catch (simulationError) {
       console.error('Transaction simulation failed:', simulationError)
@@ -261,6 +283,7 @@ export async function increaseLiquidity({
  * Decrease liquidity from an existing position
  */
 export async function decreaseLiquidity({
+  pool,
   tokenId,
   liquidity,
   amount0Min,
@@ -272,6 +295,7 @@ export async function decreaseLiquidity({
   signAuthEntry,
   isLegacy = false,
 }: {
+  pool: string
   tokenId: number
   liquidity: bigint
   amount0Min: bigint
@@ -297,21 +321,31 @@ export async function decreaseLiquidity({
       publicKey: sourceAccount,
     })
 
-    const assembledTransaction = await positionManagerClient.decrease_liquidity(
-      {
-        params: {
-          token_id: tokenId,
-          liquidity,
-          amount0_min: amount0Min,
-          amount1_min: amount1Min,
-          deadline,
-          operator,
+    const decreaseLiquidityWithHintsOperation = async ([
+      { hints },
+    ]: PoolOracleHints[]) => {
+      return await positionManagerClient.decrease_liquidity_with_hints(
+        {
+          params: {
+            token_id: tokenId,
+            liquidity,
+            amount0_min: amount0Min,
+            amount1_min: amount1Min,
+            deadline,
+            operator,
+          },
+          hints,
         },
-      },
-      {
-        timeoutInSeconds: DEFAULT_TIMEOUT,
-        fee: 100000,
-      },
+        {
+          timeoutInSeconds: DEFAULT_TIMEOUT,
+          fee: 100000,
+        },
+      )
+    }
+
+    const assembledTransaction = await executeWithOracleHints(
+      [pool],
+      decreaseLiquidityWithHintsOperation,
     )
 
     // Sign auth entries for nested authorization (PM -> Pool)

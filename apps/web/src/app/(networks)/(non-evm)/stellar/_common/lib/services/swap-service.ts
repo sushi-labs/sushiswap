@@ -9,6 +9,10 @@ import {
   waitForTransaction,
 } from '../soroban/transaction-helpers'
 import { extractErrorMessage } from '../utils/error-helpers'
+import {
+  type PoolOracleHints,
+  executeWithOracleHints,
+} from '../utils/slot-hint-helpers'
 
 /**
  * Parameters for adding liquidity
@@ -29,6 +33,7 @@ export interface AddLiquidityParams {
  * Parameters for single-hop swap
  */
 export interface SwapExactInputSingleParams {
+  pool: string
   tokenIn: string
   tokenOut: string
   fee: number
@@ -43,6 +48,7 @@ export interface SwapExactInputSingleParams {
  * Parameters for multi-hop swap
  */
 export interface SwapExactInputParams {
+  pools: string[]
   path: string[]
   fees: number[]
   recipient: string
@@ -79,22 +85,34 @@ export class SwapService {
         publicKey: userAddress,
       })
 
-      const assembledTransaction = await routerContractClient.swap_exact_input(
-        {
-          params: {
-            sender: userAddress,
-            path: [params.tokenIn, params.tokenOut],
-            fees: [params.fee],
-            recipient: params.recipient,
-            amount_in: params.amountIn,
-            amount_out_minimum: params.amountOutMinimum,
-            deadline: BigInt(params.deadline),
+      const swapExactInputWithHintsOperation = async (
+        hints: PoolOracleHints[],
+      ) => {
+        return await routerContractClient.swap_exact_input_hints(
+          {
+            params: {
+              sender: userAddress,
+              path: [params.tokenIn, params.tokenOut],
+              fees: [params.fee],
+              recipient: params.recipient,
+              amount_in: params.amountIn,
+              amount_out_minimum: params.amountOutMinimum,
+              deadline: BigInt(params.deadline),
+            },
+            hints_by_hop: hints.map((hint) => {
+              return hint.hints
+            }),
           },
-        },
-        {
-          timeoutInSeconds: DEFAULT_TIMEOUT,
-          fee: 100000,
-        },
+          {
+            timeoutInSeconds: DEFAULT_TIMEOUT,
+            fee: 100000,
+          },
+        )
+      }
+
+      const assembledTransaction = await executeWithOracleHints(
+        [params.pool],
+        swapExactInputWithHintsOperation,
       )
 
       const simulationResult = assembledTransaction.simulation
@@ -146,23 +164,36 @@ export class SwapService {
       // Ensure fees are proper u32 numbers (not bigints)
       const feesAsNumbers = params.fees.map((fee) => Number(fee))
 
-      const assembledTransaction = await routerContractClient.swap_exact_input(
-        {
-          params: {
-            sender: userAddress,
-            path: params.path,
-            fees: feesAsNumbers,
-            recipient: params.recipient,
-            amount_in: params.amountIn,
-            amount_out_minimum: params.amountOutMinimum,
-            deadline: BigInt(params.deadline),
+      const swapExactInputWithHintsOperation = async (
+        hints: PoolOracleHints[],
+      ) => {
+        return await routerContractClient.swap_exact_input_hints(
+          {
+            params: {
+              sender: userAddress,
+              path: params.path,
+              fees: feesAsNumbers,
+              recipient: params.recipient,
+              amount_in: params.amountIn,
+              amount_out_minimum: params.amountOutMinimum,
+              deadline: BigInt(params.deadline),
+            },
+            hints_by_hop: hints.map((hint) => {
+              return hint.hints
+            }),
           },
-        },
-        {
-          timeoutInSeconds: DEFAULT_TIMEOUT,
-          fee: 100000,
-        },
+          {
+            timeoutInSeconds: DEFAULT_TIMEOUT,
+            fee: 100000,
+          },
+        )
+      }
+
+      const assembledTransaction = await executeWithOracleHints(
+        params.pools,
+        swapExactInputWithHintsOperation,
       )
+
       const simulationResult = assembledTransaction.simulation
       if (
         simulationResult &&

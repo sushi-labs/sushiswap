@@ -16,6 +16,10 @@ import {
   submitTransaction,
   waitForTransaction,
 } from '../soroban/transaction-helpers'
+import {
+  type PoolOracleHints,
+  executeWithOracleHints,
+} from '../utils/slot-hint-helpers'
 
 export interface PositionInfo {
   tokenId: number
@@ -34,6 +38,7 @@ export interface CollectParams {
   recipient: string
   amount0Max: bigint
   amount1Max: bigint
+  poolAddress: string
 }
 
 export interface CollectResult {
@@ -403,20 +408,30 @@ export class PositionService {
       publicKey: params.recipient,
     })
 
-    const assembledTransaction = await positionManagerClient.collect(
-      {
-        params: {
-          token_id: params.tokenId,
-          recipient: params.recipient,
-          amount0_max: params.amount0Max,
-          amount1_max: params.amount1Max,
-          operator: params.recipient,
+    const collectWithHintsOperation = async ([
+      { hints },
+    ]: PoolOracleHints[]) => {
+      return await positionManagerClient.collect_with_hints(
+        {
+          params: {
+            token_id: params.tokenId,
+            recipient: params.recipient,
+            amount0_max: params.amount0Max,
+            amount1_max: params.amount1Max,
+            operator: params.recipient,
+          },
+          hints,
         },
-      },
-      {
-        timeoutInSeconds: DEFAULT_TIMEOUT,
-        fee: 100000,
-      },
+        {
+          timeoutInSeconds: DEFAULT_TIMEOUT,
+          fee: 100000,
+        },
+      )
+    }
+
+    const assembledTransaction = await executeWithOracleHints(
+      [params.poolAddress],
+      collectWithHintsOperation,
     )
 
     // Sign auth entries for nested authorization (PM -> Pool -> Token transfers)

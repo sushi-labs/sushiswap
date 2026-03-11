@@ -21,6 +21,10 @@ import {
 } from '../../soroban/rpc-transaction-helpers'
 import type { Token } from '../../types/token.type'
 import { extractErrorMessage } from '../../utils/error-helpers'
+import {
+  type PoolOracleHints,
+  executeWithOracleHints,
+} from '../../utils/slot-hint-helpers'
 import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
 
 export interface UseZapParams {
@@ -122,42 +126,62 @@ export const useZap = () => {
 
       const zapQuote = zapQuoteResult.unwrap()
 
-      const assembledTransaction = await zapRouterClient.zap_in(
-        {
-          params: {
-            amount0_min: calculateAmountOutMinimum(zapQuote.amount0, slippage),
-            amount1_min: calculateAmountOutMinimum(zapQuote.amount1, slippage),
-            amount_in: amountInBigInt,
-            deadline: BigInt(
-              Math.floor(addMinutes(new Date(), 5).valueOf() / 1000),
-            ),
-            fees_to_token0: routeToken0?.fees ?? [],
-            fees_to_token1: routeToken1?.fees ?? [],
-            min_liquidity: calculateAmountOutMinimum(
-              zapQuote.liquidity,
-              slippage,
-            ),
-            path_to_token0: routeToken0?.route ?? [],
-            path_to_token1: routeToken1?.route ?? [],
-            pool: poolAddress,
-            recipient: userAddress,
-            sender: userAddress,
-            swap_amount_hint:
-              isZapTokenToken0 || isZapTokenToken1
-                ? zapQuote.swap_amount
-                : undefined,
-            swap_to_token0_min_out: 0n,
-            swap_to_token1_min_out: 0n,
-            tick_lower: tickLower,
-            tick_upper: tickUpper,
-            token_in: tokenIn.contract,
+      const zapInWithHintsOperation = async (hints: PoolOracleHints[]) => {
+        return await zapRouterClient.zap_in_with_hints(
+          {
+            params: {
+              amount0_min: calculateAmountOutMinimum(
+                zapQuote.amount0,
+                slippage,
+              ),
+              amount1_min: calculateAmountOutMinimum(
+                zapQuote.amount1,
+                slippage,
+              ),
+              amount_in: amountInBigInt,
+              deadline: BigInt(
+                Math.floor(addMinutes(new Date(), 5).valueOf() / 1000),
+              ),
+              fees_to_token0: routeToken0?.fees ?? [],
+              fees_to_token1: routeToken1?.fees ?? [],
+              min_liquidity: calculateAmountOutMinimum(
+                zapQuote.liquidity,
+                slippage,
+              ),
+              path_to_token0: routeToken0?.route ?? [],
+              path_to_token1: routeToken1?.route ?? [],
+              pool: poolAddress,
+              recipient: userAddress,
+              sender: userAddress,
+              swap_amount_hint:
+                isZapTokenToken0 || isZapTokenToken1
+                  ? zapQuote.swap_amount
+                  : undefined,
+              swap_to_token0_min_out: 0n,
+              swap_to_token1_min_out: 0n,
+              tick_lower: tickLower,
+              tick_upper: tickUpper,
+              token_in: tokenIn.contract,
+            },
+            pool_hints: hints,
           },
-        },
-        {
-          timeoutInSeconds: DEFAULT_TIMEOUT,
-          fee: 100000,
-          simulate: true, // Explicitly enable simulation to ensure footprint is properly set
-        },
+          {
+            timeoutInSeconds: DEFAULT_TIMEOUT,
+            fee: 100000,
+            simulate: true, // Explicitly enable simulation to ensure footprint is properly set
+          },
+        )
+      }
+
+      const poolsTouched = new Set<string>([
+        ...(routeToken0 ? routeToken0.pools : []),
+        ...(routeToken1 ? routeToken1.pools : []),
+        params.poolAddress,
+      ])
+
+      const assembledTransaction = await executeWithOracleHints(
+        Array.from(poolsTouched),
+        zapInWithHintsOperation,
       )
 
       const simulationResult = assembledTransaction.simulation

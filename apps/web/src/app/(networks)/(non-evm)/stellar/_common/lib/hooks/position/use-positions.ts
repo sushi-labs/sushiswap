@@ -103,6 +103,7 @@ export function useCollectFees({
 
   return useMutation({
     mutationFn: async ({
+      poolAddress,
       tokenId,
       recipient,
       amount0Max,
@@ -110,6 +111,7 @@ export function useCollectFees({
       signTransaction,
       signAuthEntry,
     }: {
+      poolAddress: string
       tokenId: number
       recipient: string
       amount0Max: bigint
@@ -119,6 +121,7 @@ export function useCollectFees({
     }) => {
       const collectFeesResult = await positionService.collectFees(
         {
+          poolAddress,
           tokenId,
           recipient,
           amount0Max,

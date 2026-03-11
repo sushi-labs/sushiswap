@@ -140,6 +140,7 @@ export const SimpleSwapExecuteButton = () => {
         // Direct swap through single pool
         await executeSwap.mutateAsync({
           userAddress: connectedAddress,
+          pool: route.pools[0],
           tokenIn: token0,
           tokenOut: token1,
           amountIn,
@@ -153,6 +154,7 @@ export const SimpleSwapExecuteButton = () => {
         // Multi-hop swap
         await executeMultiHopSwap.mutateAsync({
           userAddress: connectedAddress,
+          pools: route.pools,
           path: route.route, // Use the exact route from graph-based routing
           fees: route.fees,
           amountIn,

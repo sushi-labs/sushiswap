@@ -1,13 +1,10 @@
+import type { OracleHints } from '@sushiswap/stellar-contract-binding-pool'
 import ms from 'ms'
 import { getPoolContractClient } from '../soroban/client'
 
-/**
- * Oracle hints for pool operations
- * Contains both slot and checkpoint hints for deterministic storage access
- */
-export interface OracleHints {
-  slot: bigint
-  checkpoint: number
+export type PoolOracleHints = {
+  pool: string
+  hints: OracleHints
 }
 
 /**
@@ -19,7 +16,7 @@ export interface OracleHints {
 export async function fetchOracleHints(
   poolAddress: string,
   maxRetries = 2,
-): Promise<OracleHints> {
+): Promise<PoolOracleHints> {
   let lastError: Error | null = null
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
@@ -34,8 +31,12 @@ export async function fetchOracleHints(
       })
 
       return {
-        slot: BigInt(result.slot),
-        checkpoint: result.checkpoint,
+        pool: poolAddress,
+        hints: {
+          slot: BigInt(result.slot),
+          checkpoint: result.checkpoint,
+          checkpoint_min: result.checkpoint_min,
+        },
       }
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error))
@@ -89,14 +90,14 @@ export function isObservationTooOldError(error: unknown): boolean {
 
 /**
  * Execute a pool operation with automatic oracle hint retry on failures
- * @param poolAddress - The pool contract address
- * @param operation - Function that performs the pool operation with oracle hints
+ * @param poolAddresses - The pool contract addresses to fetch hints for
+ * @param operation - Function that performs the pool operation with oracle hints received in the same order as the poolAddresses param
  * @param maxRetries - Maximum number of retry attempts (default: 2)
  * @returns Result of the operation
  */
 export async function executeWithOracleHints<T>(
-  poolAddress: string,
-  operation: (hints: OracleHints) => Promise<T>,
+  poolAddresses: string[],
+  operation: (hints: PoolOracleHints[]) => Promise<T>,
   maxRetries = 2,
 ): Promise<T> {
   let lastError: Error | null = null
@@ -104,10 +105,14 @@ export async function executeWithOracleHints<T>(
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       // Fetch fresh oracle hints
-      const hints = await fetchOracleHints(poolAddress, 1)
+      const poolHints = await Promise.all(
+        poolAddresses.map(async (address) => {
+          return await fetchOracleHints(address, 1)
+        }),
+      )
 
       // Execute the operation with the hints
-      return await operation(hints)
+      return await operation(poolHints)
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error))
 

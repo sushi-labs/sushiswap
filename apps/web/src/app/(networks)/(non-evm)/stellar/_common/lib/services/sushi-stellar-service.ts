@@ -70,6 +70,7 @@ export class SushiStellarService {
     if (existingPosition) {
       // Increase liquidity on existing position - NO try/catch here!
       const result = await increaseLiquidity({
+        pool: params.poolAddress,
         tokenId: existingPosition.tokenId,
         amount0Desired: amount0,
         amount1Desired: amount1,

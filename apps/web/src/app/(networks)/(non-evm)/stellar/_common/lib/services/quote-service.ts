@@ -57,6 +57,7 @@ export class QuoteService {
         params.sqrtPriceLimitX96 ??
         getSqrtPriceLimitForSwap(params.tokenIn, params.tokenOut)
 
+      // TODO(BEN): Check if this needs hints
       const { result } = await routerContractClient.quote_exact_input_single(
         {
           params: {

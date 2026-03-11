@@ -62,6 +62,7 @@ export const useRemoveLiquidity = ({
         Math.floor(addMinutes(new Date(), 5).valueOf() / 1000),
       )
       const decreaseResult = await decreaseLiquidity({
+        pool: params.poolAddress,
         tokenId: params.tokenId,
         liquidity: params.liquidity,
         amount0Min: params.amount0Min,
@@ -131,6 +132,7 @@ export const useRemoveLiquidity = ({
       }
     },
     mutationFn: async (params: {
+      poolAddress: string
       tokenId: number
       recipient: string
       amount0Max: bigint
@@ -189,6 +191,7 @@ export const useRemoveLiquidity = ({
       }
       const { collectResult } =
         await collectFeesMutationToastWrapper.mutateAsync({
+          poolAddress: params.poolAddress,
           tokenId: params.tokenId,
           recipient: connectedAddress,
           amount0Max: MAX_UINT128,
