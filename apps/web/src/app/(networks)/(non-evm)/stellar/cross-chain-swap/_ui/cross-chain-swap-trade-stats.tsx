@@ -24,6 +24,7 @@ import { GasIcon } from '@sushiswap/ui/icons/GasIcon'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
 import { useAccount } from 'src/lib/wallet'
 import { useDetailsInteractionTracker } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
+import { CrossChainSwapTokenRate } from './cross-chain-swap-token-rate'
 import {
   useCrossChainTradeQuote,
   useDerivedStateCrossChainSwap,
@@ -56,11 +57,7 @@ export function CrossChainSwapTradeStats() {
   return (
     <>
       <div className="flex items-center justify-between gap-2 text-gray-700 dark:text-slate-400">
-        {!hasValidQuote ? null : (
-          <div className="flex items-center gap-0.5">
-            <SkeletonText fontSize="sm" className="!w-[60px]" />
-          </div>
-        )}
+        {!hasValidQuote ? null : <CrossChainSwapTokenRate />}
 
         {!hasValidQuote ? null : isLoading ? (
           <div className="flex items-center gap-0.5">
