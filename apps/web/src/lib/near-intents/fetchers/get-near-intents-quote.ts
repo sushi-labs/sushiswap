@@ -32,7 +32,7 @@ export const getNearIntentsQuote = async ({
       originAsset: inputCurrencyNearId,
       depositType: 'ORIGIN_CHAIN',
       destinationAsset: outputCurrencyNearId,
-      amount: amount,
+      amount: amount.toString(),
       refundTo: chainId0 === ChainId.STELLAR ? ZERO_ADDRESS : zeroAddress,
       refundType: 'ORIGIN_CHAIN',
       recipient: chainId0 === ChainId.STELLAR ? zeroAddress : ZERO_ADDRESS,

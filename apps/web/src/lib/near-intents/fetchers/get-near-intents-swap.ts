@@ -36,7 +36,7 @@ export const getNearIntentsSwap = async ({
       originAsset: inputCurrencyNearId,
       depositType: 'ORIGIN_CHAIN',
       destinationAsset: outputCurrencyNearId,
-      amount: amount,
+      amount: amount.toString(),
       refundTo: sender,
       refundType: 'ORIGIN_CHAIN',
       recipient: recipient,
