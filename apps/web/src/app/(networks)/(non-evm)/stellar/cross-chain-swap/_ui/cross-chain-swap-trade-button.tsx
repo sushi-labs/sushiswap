@@ -44,7 +44,7 @@ export function CrossChainSwapTradeButton() {
 
   return (
     <CrossChainSwapTradeReviewDialog>
-      <div className="mt-4">
+      <div>
         <Checker.Connect fullWidth namespace={getNamespaceForChainId(chainId0)}>
           <Checker.Connect
             fullWidth
