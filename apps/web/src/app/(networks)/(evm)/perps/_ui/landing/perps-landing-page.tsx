@@ -10,9 +10,9 @@ export const PerpsLandingPage = () => {
       <div className="my-20 px-4 md:px-6 md:my-32 flex items-center flex-col gap-3 md:gap-6">
         <SushiBrandLogo className="w-32 md:w-44 h-12 text-[#2C2C2C] dark:text-white" />
         <Title />
-        <p className="max-w-sm md:max-w-xl lg:max-w-[875px] text-center font-medium text-base md:text-lg lg:text-xl">
-          Pre-launch access is now open. Connect your wallet, join the Telegram,
-          and secure your early trader multiplier before trading begins.
+        <p className="max-w-sm md:max-w-xl lg:max-w-[645px] text-center font-medium text-base md:text-lg lg:text-xl">
+          Pre-launch access is now open. Enter your Telegram and secure your
+          bonus before trading begins.
         </p>
         <div className="mt-2 w-full">
           <TelegramForm />
