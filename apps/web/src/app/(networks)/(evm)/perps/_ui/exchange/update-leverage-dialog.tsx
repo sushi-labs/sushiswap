@@ -78,7 +78,7 @@ export const UpdateLeverageDialog = ({
           <DialogTitle>Adjust Leverage</DialogTitle>
           <DialogDescription>
             Adjust your leverage for {asset?.name} positions. The maximum
-            leverge is {maxLeverage}x.
+            leverage is {maxLeverage}x.
           </DialogDescription>
         </DialogHeader>
         <div className="max-h-[calc(100vh-150px)] overflow-y-auto">

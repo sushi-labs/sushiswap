@@ -47,7 +47,7 @@ export const UpdateMarginModeDialog = ({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Adjust Marging Mode</DialogTitle>
+          <DialogTitle>Adjust Margin Mode</DialogTitle>
           <DialogDescription className="capitalize">
             Adjust your {asset?.symbol} margin mode. Currently set to{' '}
             {currentLeverageType}.
