@@ -7,13 +7,19 @@ import type {
   AvailableSaveloadVersions,
   ChartingLibraryWidgetOptions,
   IChartingLibraryWidget,
+  IPositionLineAdapter,
   LanguageCode,
   ResolutionString,
 } from 'public/trading-view/charting_library/charting_library'
 import { widget } from 'public/trading-view/charting_library/charting_library.esm.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useAssetName } from 'src/lib/perps'
+import {
+  useAssetName,
+  useUserOpenOrders,
+  useUserPositions,
+} from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
+import { formatUSD } from 'sushi'
 import { useUserSettingsState } from '../account-management'
 import { useAssetListState } from '../asset-selector'
 import { useAssetState } from '../trade-widget'
@@ -31,17 +37,30 @@ const widgetProps = {
   autosize: true,
 }
 
+const formatPnlLabel = ({
+  pnl,
+}: {
+  pnl: string
+}) => {
+  return `PNL ${formatUSD(pnl)}`
+}
+
 export const Chart = () => {
   const chartContainerRef = useRef<HTMLDivElement>(
     null,
-  ) as React.MutableRefObject<HTMLInputElement>
+  ) as React.RefObject<HTMLInputElement>
+
   const { resolvedTheme } = useTheme()
   const isMounted = useIsMounted()
+
   const {
     state: { activeAsset },
   } = useAssetState()
+
   const [hasNoData, setHasNoData] = useState(false)
   const tvWidgetRef = useRef<IChartingLibraryWidget>(null)
+  const [chartReady, setChartReady] = useState(false)
+
   const address = useAccount('evm')
   const { data: assetName } = useAssetName({ assetString: activeAsset })
   const {
@@ -49,6 +68,11 @@ export const Chart = () => {
       assetListQuery: { data },
     },
   } = useAssetListState()
+  const { data: position } = useUserPositions(activeAsset)
+  const { data: openOrders } = useUserOpenOrders({ coin: activeAsset })
+
+  const pnlPositionLineRef = useRef<IPositionLineAdapter | null>(null)
+
   const asset = useMemo(() => data?.get?.(activeAsset), [data, activeAsset])
   const { decimals, marketType } = useMemo(
     () => ({ decimals: asset?.decimals ?? 2, marketType: asset?.marketType }),
@@ -63,6 +87,24 @@ export const Chart = () => {
       setHasNoData(hasNoData)
     })
   }, [])
+
+  const tradeLines = useMemo(() => {
+    const pos = position?.[0]
+    if (!pos) return undefined
+    return {
+      entryPrice: pos?.position.entryPx,
+      markPrice: asset?.markPrice || asset?.midPrice,
+      pnl: pos?.position.unrealizedPnl,
+      posSize: pos?.position.szi,
+      side: pos?.side,
+      stopLosses: openOrders?.filter((i) =>
+        i.orderType.toLowerCase().includes('stop'),
+      ),
+      takeProfitPrice: openOrders?.filter((i) =>
+        i.orderType.toLowerCase().includes('take'),
+      ),
+    }
+  }, [position, openOrders, asset?.markPrice, asset?.midPrice])
 
   useEffect(() => {
     if (!isMounted || !resolvedTheme || tvWidgetRef.current) return
@@ -99,8 +141,6 @@ export const Chart = () => {
       ],
 
       enabled_features: [
-        'disable_legend_inplace_symbol_change',
-
         'hide_unresolved_symbols_in_legend',
         'hide_main_series_symbol_from_indicator_legend',
       ],
@@ -449,7 +489,16 @@ export const Chart = () => {
     const tvWidget = new widget(widgetOptions)
     tvWidgetRef.current = tvWidget
 
+    tvWidget.onChartReady(() => {
+      setChartReady(true)
+    })
+
     return () => {
+      setChartReady(false)
+
+      pnlPositionLineRef.current?.remove?.()
+      pnlPositionLineRef.current = null
+
       tvWidget.remove()
       tvWidgetRef.current = null
     }
@@ -463,6 +512,70 @@ export const Chart = () => {
     decimals,
     marketType,
     showBuySellInChart,
+  ])
+
+  useEffect(() => {
+    try {
+      const widget = tvWidgetRef.current
+
+      if (!isMounted || !resolvedTheme || !widget || !chartReady || hasNoData)
+        return
+
+      const chart = widget?.activeChart?.()
+      if (!chart) return
+
+      if (!tradeLines?.pnl) {
+        pnlPositionLineRef.current?.remove?.()
+        pnlPositionLineRef.current = null
+        return
+      }
+
+      if (!pnlPositionLineRef.current) {
+        pnlPositionLineRef.current = chart.createPositionLine?.()
+      }
+
+      const pnlPositionLine = pnlPositionLineRef.current
+      if (!pnlPositionLine) return
+
+      pnlPositionLine.setText(
+        formatPnlLabel({
+          pnl: tradeLines.pnl,
+        }),
+      )
+
+      pnlPositionLine.setPrice(Number.parseFloat(tradeLines.entryPrice))
+      pnlPositionLine.setLineStyle(2).setLineLength(-40, 'pixel')
+      pnlPositionLine.setLineWidth(2)
+
+      if (tradeLines.posSize) {
+        pnlPositionLine.setQuantity(tradeLines.posSize)
+      }
+      pnlPositionLine.setQuantityBackgroundColor(
+        resolvedTheme === 'dark' ? '#000000' : '#ffffff',
+      )
+      pnlPositionLine.setQuantityTextColor(
+        resolvedTheme === 'dark' ? '#ffffff' : '#000000',
+      )
+      pnlPositionLine.setBodyBackgroundColor(
+        resolvedTheme === 'dark' ? '#000000' : '#ffffff',
+      )
+
+      const color = Number(tradeLines.pnl) < 0 ? '#de5852' : '#1ca67d'
+      pnlPositionLine.setBodyTextColor(color)
+
+      pnlPositionLine.setLineColor(color)
+      pnlPositionLine.setBodyBorderColor(color)
+    } catch {
+      console.warn('Error updating position line')
+    }
+  }, [
+    chartReady,
+    hasNoData,
+    tradeLines?.entryPrice,
+    tradeLines?.posSize,
+    tradeLines?.pnl,
+    resolvedTheme,
+    isMounted,
   ])
 
   return (
