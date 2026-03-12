@@ -109,6 +109,7 @@ export const useCancelOpenOrders = () => {
 
   return {
     cancelOrdersAsync: mutation.mutateAsync,
+    cancelOrders: mutation.mutate,
     isPending: mutation.isPending,
   }
 }

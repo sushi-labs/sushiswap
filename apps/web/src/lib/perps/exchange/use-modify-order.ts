@@ -151,31 +151,35 @@ export const usePrepModifyOrderData = ({
   openOrder: UserOpenOrdersItemType
 }) => {
   return useMemo(() => {
-    const isTrigger = openOrder.isTrigger
-    const isMarket =
-      openOrder.orderType === 'Stop Market' ||
-      openOrder.orderType === 'Take Profit Market'
-    const isTp = openOrder.orderType.toLowerCase().includes('take profit')
-    return {
-      asset: openOrder.coin,
-      orderId: openOrder.oid,
-      side: openOrder.side,
-      size: openOrder.sz,
-      price: openOrder.limitPx,
-      reduceOnly: openOrder.reduceOnly,
-      orderType: !isTrigger
-        ? {
-            limit: {
-              timeInForce: openOrder.tif as TimeInForceType,
-            },
-          }
-        : ({
-            trigger: {
-              isMarket: isMarket,
-              triggerPrice: openOrder.triggerPx,
-              tpsl: isTp ? 'tp' : 'sl',
-            },
-          } as OrderType),
-    }
+    return prepModidyOrderData(openOrder)
   }, [openOrder])
+}
+
+export const prepModidyOrderData = (openOrder: UserOpenOrdersItemType) => {
+  const isTrigger = openOrder.isTrigger
+  const isMarket =
+    openOrder.orderType === 'Stop Market' ||
+    openOrder.orderType === 'Take Profit Market'
+  const isTp = openOrder.orderType.toLowerCase().includes('take profit')
+  return {
+    asset: openOrder.coin,
+    orderId: openOrder.oid,
+    side: openOrder.side,
+    size: openOrder.sz,
+    price: openOrder.limitPx,
+    reduceOnly: openOrder.reduceOnly,
+    orderType: !isTrigger
+      ? {
+          limit: {
+            timeInForce: openOrder.tif as TimeInForceType,
+          },
+        }
+      : ({
+          trigger: {
+            isMarket: isMarket,
+            triggerPrice: openOrder.triggerPx,
+            tpsl: isTp ? 'tp' : 'sl',
+          },
+        } as OrderType),
+  }
 }

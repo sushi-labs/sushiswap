@@ -36,6 +36,13 @@ export const useUserOpenOrders = ({ coin }: { coin?: string }) => {
         marketType: asset?.marketType,
         perpsDex: asset?.dex,
         szDecimals: asset?.decimals,
+        type: i.orderType.toLowerCase().includes('take')
+          ? ('tp' as const)
+          : i.orderType.toLowerCase().includes('stop')
+            ? ('sl' as const)
+            : i.orderType === 'Market'
+              ? ('market' as const)
+              : ('limit' as const),
       }
     })
     if (coin) {
