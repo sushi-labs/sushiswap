@@ -20,6 +20,7 @@ import {
   perpsNumberFormatter,
 } from 'src/lib/perps'
 import { truncateString } from 'sushi'
+import { useUserSettingsState } from '../../account-management'
 import { useAssetState } from '../../trade-widget'
 import { columnBodyMeta } from '../_common/column-meta'
 
@@ -185,6 +186,9 @@ export const PNL_COLUMN: ColumnDef<BalanceItemType, unknown> = {
     Number.parseFloat(rowA.pnlRoePc?.pnl?.toString() ?? '0') -
     Number.parseFloat(rowB.pnlRoePc?.pnl?.toString() ?? '0'),
   cell: (props) => {
+    const {
+      state: { hidePnl },
+    } = useUserSettingsState()
     if (!props.row.original.pnlRoePc) {
       return '-'
     }
@@ -198,9 +202,11 @@ export const PNL_COLUMN: ColumnDef<BalanceItemType, unknown> = {
           getTextColorClass(pnl),
         )}
       >
-        {getSignForValue(pnl)}
-        {currencyFormatter.format(Number.parseFloat(pnl.toString()))} / (
-        {getSignForValue(roePc)}
+        {hidePnl ? '' : getSignForValue(pnl)}
+        {hidePnl
+          ? '***'
+          : `${currencyFormatter.format(Number.parseFloat(pnl.toString()))} /`}{' '}
+        ({getSignForValue(roePc)}
         {roePc.toFixed(1)}%)
       </span>
     )

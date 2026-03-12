@@ -20,6 +20,9 @@ export const SettingsDialog = () => {
       quickConfirmPositionEnabled,
       isUnifiedAccountModeEnabled,
       showBuySellInChart,
+      disableBgFillNotifs,
+      hidePnl,
+      optOutOfSpotDustCollection,
     },
     mutate: {
       setQuickCloseMarketPositionEnabled,
@@ -28,6 +31,9 @@ export const SettingsDialog = () => {
       setQuickConfirmPositionEnabled,
       setUnifiedAccountModeEnabled,
       setShowBuySellInChart,
+      setDisableBgFillNotifs,
+      setHidePnl,
+      setOptOutOfSpotDustCollection,
     },
   } = useUserSettingsState()
   return (
@@ -70,21 +76,28 @@ export const SettingsDialog = () => {
               label="Disable Order Book Animation"
             />
             <CheckboxSetting
-              value={orderBookAnimationDisabled}
-              onChange={setOrderBookAnimationDisabled}
-              label="Disable Order Book Animation"
+              value={disableBgFillNotifs}
+              onChange={setDisableBgFillNotifs}
+              label="Disable Background Fill Notifications"
             />
             <CheckboxSetting
               value={showBuySellInChart}
               onChange={setShowBuySellInChart}
               label="Show Buys/Sells on Chart"
             />
-            {/* todo: hide pnl? */}
+            <CheckboxSetting
+              value={hidePnl}
+              onChange={setHidePnl}
+              label="Hide PnL"
+            />
+            <CheckboxSetting
+              value={optOutOfSpotDustCollection}
+              onChange={setOptOutOfSpotDustCollection}
+              label="Opt Out of Spot Dust Collection"
+            />
             {/* todo: in chart trading */}
-            {/* todo: opt out of spot dust collection */}
             {/* todo: sound effects on click? */}
             {/* todo: sound effects on on fill */}
-            {/* todo: fill notifications */}
             <div className="bg-accent w-full h-[1px]" />
             <CheckboxSetting
               value={!isUnifiedAccountModeEnabled}

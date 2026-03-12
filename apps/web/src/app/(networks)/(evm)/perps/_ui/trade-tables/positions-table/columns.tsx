@@ -19,6 +19,7 @@ import {
   useUserOpenOrders,
 } from 'src/lib/perps'
 import { TableButton } from '../../_common'
+import { useUserSettingsState } from '../../account-management'
 import {
   CloseAllPositionsDialog,
   EditTpSlPositionDialog,
@@ -215,6 +216,9 @@ export const PNL_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     Number.parseFloat(rowA.position?.unrealizedPnl ?? '0') -
     Number.parseFloat(rowB.position?.unrealizedPnl ?? '0'),
   cell: (props) => {
+    const {
+      state: { hidePnl },
+    } = useUserSettingsState()
     if (!props.row.original.position.unrealizedPnl) {
       return '-'
     }
@@ -231,8 +235,9 @@ export const PNL_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
           getTextColorClass(pnl),
         )}
       >
-        {getSignForValue(pnl)}
-        {currencyFormatter.format(pnl)} / ({getSignForValue(roePc)}
+        {hidePnl ? '' : getSignForValue(pnl)}
+        {hidePnl ? '***' : `${currencyFormatter.format(pnl)} /`} (
+        {getSignForValue(roePc)}
         {roePc.toFixed(1)}%)
       </span>
     )

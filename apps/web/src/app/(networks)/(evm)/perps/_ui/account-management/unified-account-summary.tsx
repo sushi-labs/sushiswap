@@ -15,6 +15,7 @@ import {
 } from 'src/lib/perps'
 import { StatItem, ValueSensitiveText } from '../_common'
 import { SettingsDialog } from './settings-dialog'
+import { useUserSettingsState } from './settings-provider'
 
 export const UnifiedAccountSummary = () => {
   const {
@@ -24,6 +25,9 @@ export const UnifiedAccountSummary = () => {
     unifiedAccountLeverage,
     unifiedAccountRatio,
   } = useUserAccountValues()
+  const {
+    state: { hidePnl },
+  } = useUserSettingsState()
   return (
     <div className="flex flex-col gap-2">
       <hr className="my-0.5 border-t border-accent hidden lg:block" />
@@ -88,8 +92,12 @@ export const UnifiedAccountSummary = () => {
           <StatItem
             title="Unrealized PnL"
             value={
-              <span className={classNames(getTextColorClass(unrelaizedPnL))}>
-                {currencyFormatter.format(unrelaizedPnL)}
+              <span
+                className={classNames(
+                  hidePnl ? '' : getTextColorClass(unrelaizedPnL),
+                )}
+              >
+                {hidePnl ? '***' : currencyFormatter.format(unrelaizedPnL)}
               </span>
             }
           />

@@ -1,7 +1,19 @@
 'use client'
 import { useLocalStorage } from '@sushiswap/hooks'
-import { type FC, createContext, useCallback, useContext, useMemo } from 'react'
-import { useSetUserAbstraction } from 'src/lib/perps'
+import { createInfoToast } from '@sushiswap/notifications'
+import {
+  type FC,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+} from 'react'
+import {
+  useSetUserAbstraction,
+  useSpotDustToggle,
+  useUserNotifications,
+} from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { useUserState } from '~evm/perps/user-provider'
 interface State {
@@ -13,6 +25,9 @@ interface State {
     quickConfirmPositionEnabled: boolean
     isUnifiedAccountModeEnabled: boolean
     showBuySellInChart: boolean
+    disableBgFillNotifs: boolean
+    hidePnl: boolean
+    optOutOfSpotDustCollection: boolean
   }
   mutate: {
     setQuickCloseReversePositionEnabled: (enabled: boolean) => void
@@ -22,6 +37,9 @@ interface State {
     setQuickConfirmPositionEnabled: (enabled: boolean) => void
     setUnifiedAccountModeEnabled: (enabled: boolean) => void
     setShowBuySellInChart: (enabled: boolean) => void
+    setDisableBgFillNotifs: (disabled: boolean) => void
+    setHidePnl: (hide: boolean) => void
+    setOptOutOfSpotDustCollection: () => void
   }
 }
 
@@ -72,6 +90,35 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
     `${BASE_STORAGE_KEY}.show.buy.sell.in.chart`,
     false,
   )
+  const [disableBgFillNotifs, setDisableBgFillNotifs] =
+    useLocalStorage<boolean>(
+      `${BASE_STORAGE_KEY}.disable.bg.fill.notifs`,
+      false,
+    )
+  const [hidePnl, setHidePnl] = useLocalStorage<boolean>(
+    `${BASE_STORAGE_KEY}.hide.pnl`,
+    false,
+  )
+  const { isPending, updateSpotDusting } = useSpotDustToggle()
+
+  const { data: notification } = useUserNotifications({ address })
+
+  useEffect(() => {
+    if (notification && !disableBgFillNotifs) {
+      const ts = Date.now()
+
+      createInfoToast({
+        summary: notification,
+        account: address,
+        chainId: 1,
+        type: 'burn',
+        timestamp: ts,
+        groupTimestamp: ts,
+        autoClose: 2_000,
+      })
+    }
+  }, [notification, address, disableBgFillNotifs])
+
   const { setUserAbstraction } = useSetUserAbstraction()
 
   const setUnifiedAccountModeEnabled = useCallback(
@@ -89,6 +136,16 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
     return webData3?.userState?.abstraction === 'unifiedAccount'
   }, [webData3?.userState?.abstraction])
 
+  const optOutOfSpotDustCollection = useMemo(() => {
+    return webData3?.userState?.optOutOfSpotDusting || false
+  }, [webData3])
+
+  const setOptOutOfSpotDustCollection = useCallback(() => {
+    if (isPending) return
+
+    updateSpotDusting({ optOut: !optOutOfSpotDustCollection })
+  }, [updateSpotDusting, isPending, optOutOfSpotDustCollection])
+
   return (
     <UserSettingsContext.Provider
       value={useMemo(() => {
@@ -101,6 +158,9 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             quickConfirmPositionEnabled,
             isUnifiedAccountModeEnabled,
             showBuySellInChart,
+            disableBgFillNotifs,
+            hidePnl,
+            optOutOfSpotDustCollection,
           },
           mutate: {
             setQuickCloseReversePositionEnabled,
@@ -110,6 +170,9 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             setQuickConfirmPositionEnabled,
             setUnifiedAccountModeEnabled,
             setShowBuySellInChart,
+            setDisableBgFillNotifs,
+            setHidePnl,
+            setOptOutOfSpotDustCollection,
           },
         }
       }, [
@@ -127,6 +190,12 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
         setUnifiedAccountModeEnabled,
         showBuySellInChart,
         setShowBuySellInChart,
+        disableBgFillNotifs,
+        setDisableBgFillNotifs,
+        hidePnl,
+        setHidePnl,
+        optOutOfSpotDustCollection,
+        setOptOutOfSpotDustCollection,
       ])}
     >
       {children}

@@ -13,6 +13,7 @@ import {
   getTextColorClassForHover,
   perpsNumberFormatter,
 } from 'src/lib/perps'
+import { useUserSettingsState } from '../../account-management'
 import { useAssetState } from '../../trade-widget'
 import { columnBodyMeta } from '../_common/column-meta'
 
@@ -228,6 +229,9 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     return totalPnlA - totalPnlB
   },
   cell: (props) => {
+    const {
+      state: { hidePnl },
+    } = useUserSettingsState()
     const closedPnl = Number.parseFloat(props.row.original.closedPnl)
     const fees = Number.parseFloat(props.row.original.fee)
     const totalPnl = closedPnl - fees
@@ -237,12 +241,13 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     }
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {perpsNumberFormatter({
-          value: totalPnl,
-          minFraxDigits: 2,
-          maxFraxDigits: 2,
-        })}{' '}
-        USDC
+        {hidePnl
+          ? '***'
+          : `${perpsNumberFormatter({
+              value: totalPnl,
+              minFraxDigits: 2,
+              maxFraxDigits: 2,
+            })} USDC`}{' '}
       </span>
     )
   },

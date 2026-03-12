@@ -13,6 +13,7 @@ import {
   getTextColorClassForHover,
   perpsNumberFormatter,
 } from 'src/lib/perps'
+import { useUserSettingsState } from '~evm/perps/_ui/account-management'
 import { useAssetState } from '../../../trade-widget'
 import { columnBodyMeta } from '../../_common/column-meta'
 
@@ -228,18 +229,22 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TwapFillHistoryItemType, unknown> = {
     const fees = Number.parseFloat(props.row.original.fee)
     const feeToken = props.row.original.feeToken
     const totalPnl = closedPnl - fees
+    const {
+      state: { hidePnl },
+    } = useUserSettingsState()
     //todo: incorporate fee rebates into this calculation once we have that data available
     if (totalPnl === 0) {
       return '-'
     }
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {perpsNumberFormatter({
-          value: totalPnl,
-          minFraxDigits: 2,
-          maxFraxDigits: 2,
-        })}{' '}
-        {feeToken}
+        {hidePnl
+          ? '***'
+          : `${perpsNumberFormatter({
+              value: totalPnl,
+              minFraxDigits: 2,
+              maxFraxDigits: 2,
+            })} ${feeToken}`}
       </span>
     )
   },
