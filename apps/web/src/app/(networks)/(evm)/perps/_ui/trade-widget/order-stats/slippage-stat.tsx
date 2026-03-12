@@ -1,5 +1,4 @@
 'use client'
-import { formatSize } from '@nktkas/hyperliquid/utils'
 import {
   Button,
   Dialog,
@@ -15,7 +14,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useL2OrderBook } from 'src/lib/perps'
+import { formatSize, useL2OrderBook } from 'src/lib/perps'
 import { StatItem, TableButton } from '../../_common'
 import {
   MARKET_SLIPPAGE_DENOMINATOR,

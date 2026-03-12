@@ -1,5 +1,4 @@
 'use client'
-import { formatPrice } from '@nktkas/hyperliquid/utils'
 import { Button, TextField, classNames } from '@sushiswap/ui'
 import { useCallback, useEffect, useState } from 'react'
 import {
@@ -9,6 +8,7 @@ import {
   calculateLossFromSl,
   calculateSlFromLoss,
   calculateTpFromGain,
+  formatPrice,
 } from 'src/lib/perps'
 
 export const TpSlInput = ({

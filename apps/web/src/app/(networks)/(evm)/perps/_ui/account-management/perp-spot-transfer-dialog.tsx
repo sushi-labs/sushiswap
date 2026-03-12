@@ -1,7 +1,6 @@
 'use client'
 import { ArrowsUpDownIcon } from '@heroicons/react/24/outline'
 import { sendAsset } from '@nktkas/hyperliquid/api/exchange'
-import { formatSize } from '@nktkas/hyperliquid/utils'
 import {
   createErrorToast,
   createInfoToast,
@@ -17,7 +16,11 @@ import {
   DialogTrigger,
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
-import { TOAST_AUTOCLOSE_TIME, hlHttpTransport } from 'src/lib/perps'
+import {
+  TOAST_AUTOCLOSE_TIME,
+  formatSize,
+  hlHttpTransport,
+} from 'src/lib/perps'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'

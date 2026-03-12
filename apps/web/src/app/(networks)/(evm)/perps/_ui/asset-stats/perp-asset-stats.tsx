@@ -1,5 +1,4 @@
 'use client'
-import { formatPrice } from '@nktkas/hyperliquid/utils'
 import {
   HoverCard,
   HoverCardContent,
@@ -9,6 +8,7 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import {
   currencyFormatter,
+  formatPrice,
   getSignForValue,
   getTextColorClass,
   perpsNumberFormatter,

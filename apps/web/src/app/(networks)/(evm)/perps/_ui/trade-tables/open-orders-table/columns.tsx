@@ -1,10 +1,11 @@
-import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
 import { Chip, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { useMemo } from 'react'
 import {
   type UserOpenOrdersItemType,
+  formatPrice,
+  formatSize,
   getTextColorClass,
   getTextColorClassForHover,
   perpsNumberFormatter,

@@ -1,5 +1,4 @@
 'use client'
-import { formatPrice } from '@nktkas/hyperliquid/utils'
 import {
   Button,
   Dialog,
@@ -14,6 +13,7 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import {
   BUILDER_FEE_PERPS,
   type UserPositionsItemType,
+  formatPrice,
   getSizeAndPercentageFromInput,
   getSizeAndPercentageFromPercentageInput,
   getTextColorClass,

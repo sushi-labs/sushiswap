@@ -1,4 +1,3 @@
-import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
 import { Button } from '@sushiswap/ui'
 import { useCallback, useMemo } from 'react'
 import {
@@ -6,6 +5,8 @@ import {
   BUILDER_FEE_SPOT,
   type OrderData,
   type TwapOrder,
+  formatPrice,
+  formatSize,
   useExecuteOrders,
   useExecuteTwapOrder,
   useMidPrice,

@@ -1,5 +1,4 @@
 'use client'
-import { formatPrice } from '@nktkas/hyperliquid/utils'
 import {
   Button,
   Dialog,
@@ -14,6 +13,7 @@ import {
   BUILDER_FEE_PERPS,
   type UserPositionsItemType,
   currencyFormatter,
+  formatPrice,
   getSizeAndPercentageFromInput,
   getSizeAndPercentageFromPercentageInput,
   getTextColorClass,

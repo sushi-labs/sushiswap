@@ -1,5 +1,4 @@
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
-import { formatPrice } from '@nktkas/hyperliquid/utils'
 import {
   HoverCard,
   HoverCardContent,
@@ -9,6 +8,7 @@ import {
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import {
+  formatPrice,
   getHyperliquidExplorerUrl,
   getSignForValue,
   getTextColorClass,

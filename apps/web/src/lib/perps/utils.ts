@@ -1,3 +1,7 @@
+import {
+  formatPrice as formatPriceHl,
+  formatSize as formatSizeHl,
+} from '@nktkas/hyperliquid/utils'
 import type { PerpOrSpotAsset } from './subscription/use-asset-list'
 
 export const getTextColorClass = (value: number) => {
@@ -41,6 +45,26 @@ export const perpsNumberFormatter = ({
     minimumFractionDigits: minFraxDigits ?? 0,
   })
   return formatter.format(num)
+}
+
+export const formatPrice = (
+  price: string | number,
+  decimals: number,
+  marketType?: 'perp' | 'spot',
+) => {
+  try {
+    return formatPriceHl(price, decimals, marketType)
+  } catch {
+    return '0'
+  }
+}
+
+export const formatSize = (price: string | number, decimals: number) => {
+  try {
+    return formatSizeHl(price, decimals)
+  } catch {
+    return '0'
+  }
 }
 
 export const getPerpsDexAndCoin = (coinString: string) => {

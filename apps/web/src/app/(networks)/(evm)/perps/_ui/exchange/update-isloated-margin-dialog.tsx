@@ -1,5 +1,4 @@
 'use client'
-import { formatSize } from '@nktkas/hyperliquid/utils'
 import {
   Button,
   Dialog,
@@ -12,6 +11,7 @@ import {
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import {
   type UserPositionsItemType,
+  formatSize,
   perpsNumberFormatter,
   useUpdateIsolatedMargin,
 } from 'src/lib/perps'

@@ -1,10 +1,10 @@
-import { formatPrice } from '@nktkas/hyperliquid/utils'
 import { Chip, SkeletonText, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 import {
   type PerpOrSpotAsset,
   currencyFormatter,
+  formatPrice,
   getSignForValue,
   getTextColorClass,
   perpsNumberFormatter,

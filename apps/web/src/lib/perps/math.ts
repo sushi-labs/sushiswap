@@ -1,6 +1,6 @@
-import { formatPrice, formatSize } from '@nktkas/hyperliquid/utils'
 import { formatUnits, parseUnits } from 'viem'
 import type { UserOpenOrdersItemType } from './user/use-user-open-orders'
+import { formatPrice, formatSize } from './utils'
 
 function stripSign(s: string) {
   return s.trim().startsWith('-') ? s.trim().slice(1) : s.trim()

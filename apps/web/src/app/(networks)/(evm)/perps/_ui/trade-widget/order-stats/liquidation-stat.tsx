@@ -1,8 +1,8 @@
-import { formatPrice } from '@nktkas/hyperliquid/utils'
 import { useMemo } from 'react'
 import {
   calculateIsolatedMargin,
   estimateLiquidationPrice,
+  formatPrice,
   perpsNumberFormatter,
   useMarginTable,
   useUserAccountValues,
