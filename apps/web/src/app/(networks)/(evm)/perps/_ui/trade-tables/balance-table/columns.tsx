@@ -222,7 +222,9 @@ export const PNL_COLUMN: ColumnDef<BalanceItemType, unknown> = {
 //   cell: (props) => {
 
 //     return (
-//         //todo: get if need to repay and amount to repay
+//       <span className="font-medium lg:whitespace-nowrap">
+//         {props.row.original. ? 'Yes' : 'No'}
+//       </span>
 //     )
 //   },
 //   meta: {

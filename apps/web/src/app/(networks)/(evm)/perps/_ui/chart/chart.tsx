@@ -39,6 +39,7 @@ export const Chart = () => {
   const chartContainerRef = useRef<HTMLDivElement>(null)
   const tvWidgetRef = useRef<IChartingLibraryWidget | null>(null)
   const pnlPositionLineRef = useRef<IPositionLineAdapter | null>(null)
+  const liquidationLineRef = useRef<IPositionLineAdapter | null>(null)
   const ordersPositionLineRefs = useRef<Record<number, IOrderLineAdapter>>({})
 
   const { resolvedTheme } = useTheme()
@@ -92,6 +93,7 @@ export const Chart = () => {
       posSize: pos.position.szi,
       side: pos.side,
       openOrders: openOrdersForAsset,
+      liquidationPrice: pos.position.liquidationPx,
     }
   }, [position, openOrdersForAsset, asset?.markPrice, asset?.midPrice])
 
@@ -139,6 +141,9 @@ export const Chart = () => {
 
       removeAllOrderLines(ordersPositionLineRefs.current)
       ordersPositionLineRefs.current = {}
+
+      removeLine(liquidationLineRef.current)
+      liquidationLineRef.current = null
 
       tvWidget.remove()
       tvWidgetRef.current = null
@@ -202,6 +207,52 @@ export const Chart = () => {
     tradeLines?.entryPrice,
     tradeLines?.posSize,
     tradeLines?.pnl,
+    resolvedTheme,
+    isMounted,
+  ])
+
+  useEffect(() => {
+    try {
+      const widget = tvWidgetRef.current
+
+      if (!isMounted || !resolvedTheme || !widget || !chartReady || hasNoData) {
+        return
+      }
+
+      const chart = widget.activeChart?.()
+      if (!chart) return
+
+      if (!tradeLines?.liquidationPrice) {
+        removeLine(liquidationLineRef.current)
+        liquidationLineRef.current = null
+        return
+      }
+
+      if (!liquidationLineRef.current) {
+        liquidationLineRef.current = chart.createPositionLine?.() ?? null
+      }
+
+      const liquidationLine = liquidationLineRef.current
+      if (!liquidationLine) return
+
+      liquidationLine.setText('Liq. Price')
+      liquidationLine.setPrice(Number.parseFloat(tradeLines.liquidationPrice))
+
+      applyCommonLineStyles({
+        line: liquidationLine,
+        quantity: undefined,
+        resolvedTheme,
+        color: NEGATIVE_COLOR,
+        lengthMultiplier: 3,
+      })
+      liquidationLine.setQuantity('')
+    } catch {
+      console.warn('Error updating position line liq line')
+    }
+  }, [
+    chartReady,
+    hasNoData,
+    tradeLines?.liquidationPrice,
     resolvedTheme,
     isMounted,
   ])
