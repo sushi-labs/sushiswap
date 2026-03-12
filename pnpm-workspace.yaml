@@ -20,11 +20,11 @@ catalogs:
     "sushi": 6.5.4
 
   react:
-    "next": 16.1.1
-    "react": 19.2.1
-    "@types/react": 19.2.1
-    "react-dom": 19.2.1
-    "@types/react-dom": 19.2.1
+    "next": 16.1.6
+    "react": 19.2.4
+    "@types/react": 19.2.14
+    "react-dom": 19.2.4
+    "@types/react-dom": 19.2.3
   
   ui:
     "tailwindcss": 3.3.2
