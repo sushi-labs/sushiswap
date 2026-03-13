@@ -88,7 +88,10 @@ export const COIN_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
       >
         {assetName}
         {perpsDex ? (
-          <Chip variant={side === 'A' ? 'red' : 'green'} className="!px-1 ml-1">
+          <Chip
+            variant={side === 'A' ? 'perps-red' : 'perps-green'}
+            className="!px-1 ml-1"
+          >
             {perpsDex}
           </Chip>
         ) : null}

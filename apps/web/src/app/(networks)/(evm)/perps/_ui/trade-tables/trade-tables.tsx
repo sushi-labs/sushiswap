@@ -1,4 +1,4 @@
-import { Card, classNames, useBreakpoint } from '@sushiswap/ui'
+import { Button, Card, classNames, useBreakpoint } from '@sushiswap/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import {
@@ -86,21 +86,35 @@ export const TradeTables = ({ className }: { className?: string }) => {
   }, [balanceCount, positionCount, openOrdersCount, twapOrderCount])
 
   return (
-    <Card className={classNames('p-2', className ?? '')}>
+    <Card
+      className={classNames(
+        'p-2 !bg-[#0D1421] border border-[#1E2939]',
+        className ?? '',
+      )}
+    >
       <Tabs
         value={activeTab}
         onValueChange={(val) => setActiveTab(val as TradeTablesTabValue)}
       >
         <div className="flex flex-wrap justify-between p-1 gap-2 overflow-x-auto">
           <div className="hide-scrollbar overflow-x-auto">
-            <TabsList className="!px-0 !h-8">
+            <TabsList className="!px-0.5 !h-8 !bg-[#0D1421]">
               {tabNameRewrite?.map((tab) => (
                 <TabsTrigger
                   key={tab.value}
                   value={tab.value}
                   className="!px-1.5 !text-xs"
+                  asChild
                 >
-                  {tab.name}
+                  <Button
+                    size="xs"
+                    variant={
+                      activeTab === tab.value ? 'perps-secondary' : 'ghost'
+                    }
+                    className="!p-0 w-full col-span-1 capitalize !text-xs !rounded-md"
+                  >
+                    {tab.name}
+                  </Button>
                 </TabsTrigger>
               ))}
             </TabsList>

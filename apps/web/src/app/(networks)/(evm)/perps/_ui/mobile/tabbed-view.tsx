@@ -5,7 +5,7 @@ import { Trades } from '../trades'
 
 export const TabbedView = () => {
   return (
-    <Card className="p-2 h-[463px] min-h-[350px]">
+    <Card className="p-2 h-[463px] min-h-[350px] !bg-[#0D1421] border border-[#1E2939]">
       <Tabs className="w-full" defaultValue={'chart'}>
         <TabsList className="!flex !px-0 !h-8">
           <TabsTrigger value="chart" className="flex flex-1 !px-1.5 !text-xs">

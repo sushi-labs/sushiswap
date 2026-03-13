@@ -28,6 +28,14 @@ const iconButtonVariants = cva(
         ghost: 'hover:bg-secondary focus:bg-accent',
         link: 'text-blue hover:text-blue-700 font-semibold !p-0 !h-[unset] !min-h-[unset]',
         blank: '',
+        'perps-default':
+          'bg-[#2B7FFF99] hover:bg-[#2B7FFFCC] focus:bg-[#2B7FFFCC] border-[#51A2FF80] border active:bg-[#2B7FFFCC] text-white data-[glow=true]:shadow-perps-glow-blue',
+        'perps-secondary':
+          'bg-[#FFFFFF0D] hover:bg-[#FFFFFF1A] border-[#FFFFFF1A] border text-white data-[selected=true]:border-[#51A2FF80] data-[selected=true]:bg-[#FFFFFF1F] data-[selected=true]:shadow-perps-glow-blue-light',
+        'perps-long':
+          'bg-[#35D39999] hover:bg-[#35D399CC] focus:bg-[#35D399CC] border-[#35D39980] border active:bg-[#35D399CC] text-white data-[glow=true]:shadow-perps-glow-green',
+        'perps-short':
+          'bg-[#FF575999] hover:bg-[#FF5759CC] focus:bg-[#FF5759CC] border-[#FF57594D] border active:bg-[#FF5759CC] text-white data-[glow=true]:shadow-perps-glow-red',
       },
       size: {
         xs: 'min-h-[26px] h-[26px] min-w-[26px] w-[26px] text-xs',

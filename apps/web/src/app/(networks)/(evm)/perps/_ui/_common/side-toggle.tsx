@@ -20,21 +20,21 @@ export const SideToggle = <T extends string = DefaultSide>({
   const resolvedOptions = options ?? (['base', 'quote'] as unknown as [T, T])
   const [left, right] = resolvedOptions
   return (
-    <div className="flex items-center border border-accent rounded-lg p-0.5">
+    <div className="flex items-centerrounded-lg p-0.5">
       <Button
         size="xs"
-        variant={side === left ? 'secondary' : 'ghost'}
+        variant={'ghost'}
         onClick={() => setSide(left)}
         className={classNames(
           'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
-          side === right ? 'text-muted-foreground' : '',
+          side === right ? 'text-[#6A7282]' : '',
         )}
       >
         {baseSymbol}
       </Button>
       <Button
         size="xs"
-        variant={side === right ? 'secondary' : 'ghost'}
+        variant={'ghost'}
         onClick={() => setSide(right)}
         className={classNames(
           'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',

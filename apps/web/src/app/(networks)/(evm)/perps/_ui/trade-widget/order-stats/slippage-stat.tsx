@@ -123,7 +123,7 @@ const SlippageDialog = () => {
           </div>
         </TableButton>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent variant="perps-default">
         <DialogHeader className="!text-left">
           <DialogTitle>Adjust Max Slippage</DialogTitle>
           <DialogDescription>

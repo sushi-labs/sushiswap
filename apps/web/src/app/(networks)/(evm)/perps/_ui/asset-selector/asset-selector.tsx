@@ -9,6 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
   SkeletonBox,
 } from '@sushiswap/ui'
 import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
@@ -30,19 +33,20 @@ export const AssetSelector = () => {
   } = useAssetSelectorState()
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger asChild>
         {!asset ? (
           <TriggerSkeleton />
         ) : (
           <Button
-            variant="secondary"
-            className="whitespace-nowrap !px-2 lg:!px-3 lg:!rounded-full items-center !h-fit !gap-1"
+            variant="ghost"
+            className="whitespace-nowrap hover:!bg-transparent !px-2 lg:!px-3 lg:!rounded-full items-center !h-fit !gap-1"
+            asChild
           >
             <span className="block lg:hidden">
               <TokenIcon />
             </span>
-            <div className="whitespace-nowrap flex flex-col lg:flex-row lg:items-center lg:gap-1">
+            <div className="whitespace-nowrap flex flex-col lg:flex-row lg:items-center lg:gap-2">
               <div className="flex items-center gap-1">
                 <span className="hidden lg:block">
                   <TokenIcon />
@@ -50,30 +54,31 @@ export const AssetSelector = () => {
                 <span className="text-lg font-medium">{asset?.symbol}</span>
               </div>
               <div className="flex items-center gap-1">
-                <Chip variant="blue" className="!px-1">
+                <Chip variant="perps-blue" className="!px-1" data-glow="true">
                   {asset?.maxLeverage ? `${asset.maxLeverage}x` : 'Spot'}
                 </Chip>
                 {asset?.dex ? (
-                  <Chip variant="blue" className="!px-1">
+                  <Chip variant="perps-blue" className="!px-1">
                     {asset.dex}
                   </Chip>
                 ) : null}
               </div>
             </div>
-            <ChevronDownIcon className="ml-2 lg:ml-0" width={20} height={20} />
+            <Button
+              variant="perps-secondary"
+              size="xs"
+              className="!px-1 ml-2 lg:ml-1 !rounded-lg"
+            >
+              <ChevronDownIcon width={20} height={20} />
+            </Button>
           </Button>
         )}
-      </DialogTrigger>
-      <DialogContent className="!max-w-3xl">
-        <DialogHeader className="!text-left">
-          <DialogTitle>Select Asset</DialogTitle>
-          <DialogDescription>Select an asset to trade.</DialogDescription>
-        </DialogHeader>
-
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="flex flex-col gap-2 p-3 !backdrop-blur-2xl !border-2 !max-w-[calc(100vw-15px)] !border-[#7D95A9]">
         <SearchBar />
         <AssetTabs />
-      </DialogContent>
-    </Dialog>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 

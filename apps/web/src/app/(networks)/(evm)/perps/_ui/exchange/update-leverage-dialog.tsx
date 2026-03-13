@@ -73,7 +73,7 @@ export const UpdateLeverageDialog = ({
       }}
     >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent>
+      <DialogContent variant="perps-default">
         <DialogHeader>
           <DialogTitle>Adjust Leverage</DialogTitle>
           <DialogDescription>
@@ -98,6 +98,7 @@ export const UpdateLeverageDialog = ({
               maxValue={maxLeverage}
             />
             <Button
+              variant="perps-default"
               onClick={async () =>
                 await updateLeverageAsync(
                   { assetString, isCross, newLeverage },

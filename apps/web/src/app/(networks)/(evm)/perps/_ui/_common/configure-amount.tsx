@@ -57,7 +57,7 @@ export const ConfigureAmount = ({
       />
       <div
         className={classNames(
-          'border flex items-center justify-center !rounded-md !border-accent py-0 px-2 whitespace-nowrap text-sm font-medium text-right',
+          'border flex items-center justify-center !rounded-md border-[#FFFFFF1A] bg-[#FFFFFF0D] py-0 px-2 whitespace-nowrap text-sm font-medium text-right',
         )}
       >
         <TextField
@@ -68,7 +68,7 @@ export const ConfigureAmount = ({
           maxDecimals={maxDecimals}
           disabled={true}
         />
-        <p>{coinSymbol}</p>
+        <p className="text-[#99A1AF]">{coinSymbol}</p>
       </div>
     </div>
   )

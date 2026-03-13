@@ -35,11 +35,15 @@ export const SYMBOL_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
           <span>{asset.symbol}</span>
         </div>
         <div className="flex items-center gap-1">
-          <Chip variant="blue" className="!px-1 !font-medium">
+          <Chip
+            variant="perps-blue"
+            data-glow="true"
+            className="!px-1 !font-medium"
+          >
             {asset.maxLeverage ? `${asset.maxLeverage}x` : 'SPOT'}
           </Chip>
           {asset?.dex ? (
-            <Chip variant="blue" className="!px-1 !font-medium">
+            <Chip variant="perps-blue" className="!px-1 !font-medium">
               {asset.dex}
             </Chip>
           ) : null}

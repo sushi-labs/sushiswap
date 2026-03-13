@@ -26,6 +26,7 @@ import {
   CheckboxSetting,
   PercentageSlider,
   SizeInput,
+  StatItem,
   TableButton,
 } from '../_common'
 import { useUserSettingsState } from '../account-management'
@@ -216,7 +217,10 @@ export const MarketCloseDialog = ({
         )}
       </DialogTrigger>
       {/* dont autofocus the size input */}
-      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+      <DialogContent
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        variant="perps-default"
+      >
         <DialogHeader className="!text-left">
           <DialogTitle>Market Close</DialogTitle>
           <DialogDescription>
@@ -226,9 +230,9 @@ export const MarketCloseDialog = ({
         <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
           <div className="flex flex-col gap-4 text-sm">
             <div className="flex flex-col gap-2 text-sm">
-              <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">Size</div>
-                <div className="font-medium whitespace-nowrap">
+              <StatItem
+                title="Size"
+                value={
                   <p
                     className={classNames(
                       getTextColorClass(positionToClose?.side === 'A' ? 1 : -1),
@@ -236,12 +240,9 @@ export const MarketCloseDialog = ({
                   >
                     {_sizeToClose} {baseSymbol}
                   </p>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">Price</div>
-                <div className="font-medium">Market</div>
-              </div>
+                }
+              />
+              <StatItem title="Price" value={'Market'} />
             </div>
             <SizeInput
               asset={asset}
@@ -249,6 +250,7 @@ export const MarketCloseDialog = ({
               onChange={handleSetSizeToClose}
               sizeSide={sizeSide}
               setSizeSide={setSizeSide}
+              className="!px-2 text-sm !py-0"
             />
             <PercentageSlider
               value={percentToClose}
@@ -265,6 +267,7 @@ export const MarketCloseDialog = ({
               <PerpsChecker.EnableTrading>
                 <PerpsChecker.BuilderFee>
                   <Button
+                    variant="perps-default"
                     onClick={async () => {
                       if (!orderData) return
                       await executeOrdersAsync(

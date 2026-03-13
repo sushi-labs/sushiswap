@@ -14,6 +14,7 @@ export const SearchBar = () => {
       type="text"
       value={search}
       onValueChange={setSearch}
+      className="!border !border-[#7D95A9]"
     />
   )
 }

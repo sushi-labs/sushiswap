@@ -19,7 +19,7 @@ export const AccountManagement = ({ className }: { className?: string }) => {
   return (
     <Card
       className={classNames(
-        'p-2 flex flex-col-reverse lg:flex-col gap-2',
+        'p-2 flex flex-col-reverse lg:flex-col gap-2 !bg-[#0D1421] border border-[#1E2939]',
         className ?? '',
       )}
     >

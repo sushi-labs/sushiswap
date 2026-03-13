@@ -18,10 +18,10 @@ export const Leverage = () => {
   if (isLoading || isError) {
     return (
       <div className="flex items-center gap-2 w-full">
-        <Button size="sm" variant="secondary" fullWidth disabled>
+        <Button size="sm" variant="perps-default" fullWidth disabled>
           Cross
         </Button>
-        <Button size="sm" variant="secondary" fullWidth disabled>
+        <Button size="sm" variant="perps-secondary" fullWidth disabled>
           10x
         </Button>
       </div>
@@ -34,7 +34,7 @@ export const Leverage = () => {
         trigger={
           <Button
             size="sm"
-            variant="secondary"
+            variant="perps-default"
             fullWidth
             className="capitalize"
           >
@@ -47,7 +47,7 @@ export const Leverage = () => {
       />
       <UpdateLeverageDialog
         trigger={
-          <Button size="sm" variant="secondary" fullWidth>
+          <Button size="sm" variant="perps-secondary" fullWidth>
             {currentLeverageForAsset}x
           </Button>
         }

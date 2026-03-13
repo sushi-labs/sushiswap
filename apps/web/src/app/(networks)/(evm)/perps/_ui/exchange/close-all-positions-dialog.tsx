@@ -105,7 +105,7 @@ export const CloseAllPositionsDialog = ({
           </TableButton>
         )}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent variant="perps-default">
         <DialogHeader>
           <DialogTitle>Close All Positions</DialogTitle>
           <DialogDescription>
@@ -131,6 +131,7 @@ export const CloseAllPositionsDialog = ({
           </div>
 
           <Button
+            variant="perps-default"
             onClick={async () =>
               await executeOrdersAsync(
                 { orderData },

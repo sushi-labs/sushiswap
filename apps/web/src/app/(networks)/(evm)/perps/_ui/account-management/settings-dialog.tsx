@@ -47,7 +47,7 @@ export const SettingsDialog = () => {
           iconProps={{ className: 'w-4 h-4' }}
         />
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent variant="perps-default">
         <DialogHeader className="!text-left">
           <DialogTitle>Settings</DialogTitle>
           <DialogDescription>Manage your custom settings</DialogDescription>

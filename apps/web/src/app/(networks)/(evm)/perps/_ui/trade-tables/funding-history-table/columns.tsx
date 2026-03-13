@@ -60,7 +60,7 @@ export const COIN_COLUMN: ColumnDef<FundingHistoryItemType, unknown> = {
         {assetName}
         {perpsDex ? (
           <Chip
-            variant={side === 'short' ? 'red' : 'green'}
+            variant={side === 'short' ? 'perps-red' : 'perps-green'}
             className="!px-1 ml-1"
           >
             {perpsDex}

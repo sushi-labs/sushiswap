@@ -36,7 +36,7 @@ export const Favorites = () => {
   }, [favorites, data, isLoading])
 
   return (
-    <Card className="px-4 py-2 gap-4 flex items-center">
+    <Card className="px-4 py-2 gap-4 flex items-center !bg-[#0D1421] border border-[#1E2939]">
       <div className="flex items-center gap-1">
         <StarIcon className="h-5 w-5 text-yellow-400" />
         <span className="text-xs font-medium">Favorites</span>
@@ -45,7 +45,7 @@ export const Favorites = () => {
         <div className="flex items-center bg-secondary rounded-lg p-0.5">
           <Button
             size="xs"
-            variant={displayType === 'usd' ? 'default' : 'ghost'}
+            variant={displayType === 'usd' ? 'perps-default' : 'ghost'}
             onClick={() => setDisplayType('usd')}
             className="!min-w-6 !w-6 font-semibold"
           >
@@ -53,7 +53,7 @@ export const Favorites = () => {
           </Button>
           <Button
             size="xs"
-            variant={displayType === 'percentage' ? 'default' : 'ghost'}
+            variant={displayType === 'percentage' ? 'perps-default' : 'ghost'}
             onClick={() => setDisplayType('percentage')}
             className="!min-w-6 !w-6 font-semibold"
           >

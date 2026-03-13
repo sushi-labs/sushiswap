@@ -223,12 +223,10 @@ export const TpSlInput = ({
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-2">
             <div
-              className={`w-full border rounded-lg border-accent dark:bg-slate-700 bg-slate-50 ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
+              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-[#FFFFFF0D] ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
             >
               <div className="flex items-center justify-between gap-2">
-                <p className="text-muted-foreground whitespace-nowrap">
-                  TP Price
-                </p>
+                <p className="text-[#4A5565] whitespace-nowrap">TP Price</p>
                 <div className="flex items-center gap-1">
                   <TextField
                     type="number"
@@ -247,10 +245,10 @@ export const TpSlInput = ({
               </div>
             </div>
             <div
-              className={`w-full border rounded-lg border-accent dark:bg-slate-700 bg-slate-50 ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
+              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-[#FFFFFF0D] ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
             >
               <div className="flex items-center justify-between gap-2">
-                <p className="text-muted-foreground">Gain</p>
+                <p className="text-[#4A5565]">Gain</p>
                 <div className="flex items-center gap-1">
                   <TextField
                     type="number"
@@ -283,12 +281,10 @@ export const TpSlInput = ({
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-2">
             <div
-              className={`w-full border rounded-lg border-accent dark:bg-slate-700 bg-slate-50 ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
+              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-[#FFFFFF0D] ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
             >
               <div className="flex items-center justify-between gap-2">
-                <p className="text-muted-foreground whitespace-nowrap">
-                  SL Price
-                </p>
+                <p className="text-[#4A5565] whitespace-nowrap">SL Price</p>
                 <div className="flex items-center gap-1">
                   <TextField
                     type="number"
@@ -307,10 +303,10 @@ export const TpSlInput = ({
               </div>
             </div>
             <div
-              className={`w-full border rounded-lg border-accent dark:bg-slate-700 bg-slate-50 ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
+              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-[#FFFFFF0D] ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
             >
               <div className="flex items-center justify-between gap-2">
-                <p className="text-muted-foreground">Loss</p>
+                <p className="text-[#4A5565]">Loss</p>
                 <div className="flex items-center gap-1">
                   <TextField
                     type="number"
@@ -349,10 +345,10 @@ const TypeToggle = ({
   setType: (type: 'usd' | 'percent') => void
 }) => {
   return (
-    <div className="flex items-center border border-accent rounded-lg p-0.5">
+    <div className="flex items-center rounded-lg p-0.5">
       <Button
         size="xs"
-        variant={type === 'usd' ? 'secondary' : 'ghost'}
+        variant={'ghost'}
         onClick={() => setType('usd')}
         className={classNames(
           'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
@@ -363,7 +359,7 @@ const TypeToggle = ({
       </Button>
       <Button
         size="xs"
-        variant={type === 'percent' ? 'secondary' : 'ghost'}
+        variant={'ghost'}
         onClick={() => setType('percent')}
         className={classNames(
           'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',

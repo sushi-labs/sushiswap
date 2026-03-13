@@ -38,13 +38,14 @@ export const CancelAllOpenOrdersDialog = () => {
           Cancel All
         </TableButton>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent variant="perps-default">
         <DialogHeader>
           <DialogTitle>Cancel All Open Orders</DialogTitle>
           <DialogDescription>Cancel all your open orders.</DialogDescription>
         </DialogHeader>
         <div className="flex flex-col mt-6">
           <Button
+            variant="perps-default"
             onClick={async () =>
               await cancelOrdersAsync(
                 { cancelData: allCancelData },

@@ -45,7 +45,7 @@ export const UpdateMarginModeDialog = ({
       }}
     >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent>
+      <DialogContent variant="perps-default">
         <DialogHeader>
           <DialogTitle>Adjust Margin Mode</DialogTitle>
           <DialogDescription className="capitalize">
@@ -112,6 +112,7 @@ export const UpdateMarginModeDialog = ({
             </div>
 
             <Button
+              variant="perps-default"
               onClick={async () => {
                 await updateLeverageAsync(
                   {

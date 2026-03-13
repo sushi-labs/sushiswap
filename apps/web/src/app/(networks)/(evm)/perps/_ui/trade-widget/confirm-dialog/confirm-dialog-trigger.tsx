@@ -14,26 +14,30 @@ export const ConfirmDialogTrigger = () => {
   } = useUserSettingsState()
 
   return (
-    <Checker.Connect size="lg" namespace="evm">
-      <PerpsChecker.Legal size="lg">
-        <PerpsChecker.Deposit size="lg">
-          <PerpsChecker.EnableTrading size="lg">
-            <PerpsChecker.BuilderFee size="lg">
+    <Checker.Connect size="lg" namespace="evm" variant="perps-default">
+      <PerpsChecker.Legal size="lg" variant="perps-default">
+        <PerpsChecker.Deposit size="lg" variant="perps-default">
+          <PerpsChecker.EnableTrading size="lg" variant="perps-default">
+            <PerpsChecker.BuilderFee size="lg" variant="perps-default">
               <PerpsChecker.TwapRunningTime
                 size="lg"
-                variant={tradeSide === 'long' ? 'default' : 'destructive'}
+                variant={tradeSide === 'long' ? 'perps-long' : 'perps-short'}
               >
                 <PerpsChecker.OrderAmount
                   size="lg"
-                  variant={tradeSide === 'long' ? 'default' : 'destructive'}
+                  variant={tradeSide === 'long' ? 'perps-long' : 'perps-short'}
                 >
                   <PerpsChecker.TakeStopTrigger
                     size="lg"
-                    variant={tradeSide === 'long' ? 'default' : 'destructive'}
+                    variant={
+                      tradeSide === 'long' ? 'perps-long' : 'perps-short'
+                    }
                   >
                     <PerpsChecker.TwapSuborder
                       size="lg"
-                      variant={tradeSide === 'long' ? 'default' : 'destructive'}
+                      variant={
+                        tradeSide === 'long' ? 'perps-long' : 'perps-short'
+                      }
                     >
                       {quickConfirmPositionEnabled ? (
                         <PlaceOrderButton />
@@ -43,8 +47,11 @@ export const ConfirmDialogTrigger = () => {
                             fullWidth
                             size="lg"
                             variant={
-                              tradeSide === 'long' ? 'default' : 'destructive'
+                              tradeSide === 'long'
+                                ? 'perps-long'
+                                : 'perps-short'
                             }
+                            data-glow="true"
                           >
                             Place Order
                           </Button>

@@ -1,4 +1,11 @@
-import { Card, Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
+import {
+  Button,
+  Card,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@sushiswap/ui'
 import { OrderBook } from '../order-book'
 import { Trades } from '../trades'
 
@@ -23,18 +30,30 @@ export const DesktopTabbedView = ({
   setTab: (tab: DesktopTab) => void
 }) => {
   return (
-    <Card className="p-2 h-full">
+    <Card className="p-2 h-full !bg-[#0D1421] border border-[#1E2939]">
       <Tabs
         className="w-full h-full"
         value={tab}
         onValueChange={(value) => setTab(value as DesktopTab)}
       >
-        <TabsList className="!flex">
-          <TabsTrigger value="order-book" className="flex flex-1">
-            Order Book
+        <TabsList className="!flex bg-transparent">
+          <TabsTrigger value="order-book" className="flex flex-1" asChild>
+            <Button
+              size="sm"
+              variant={tab === 'order-book' ? 'perps-secondary' : 'ghost'}
+              className="!p-0 w-full col-span-1 capitalize !text-xs !rounded-md"
+            >
+              Order Book
+            </Button>
           </TabsTrigger>
-          <TabsTrigger value="trades" className="flex flex-1">
-            Trades
+          <TabsTrigger value="trades" className="flex flex-1" asChild>
+            <Button
+              size="sm"
+              variant={tab === 'trades' ? 'perps-secondary' : 'ghost'}
+              className="!p-0 w-full col-span-1 capitalize !text-xs !rounded-md"
+            >
+              Trades
+            </Button>
           </TabsTrigger>
         </TabsList>
         <TabsContent value="order-book" className="!mt-[6px]">

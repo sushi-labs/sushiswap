@@ -19,7 +19,7 @@ export const Trades = () => {
   return (
     <div className="max-h-[400px] lg:max-h-[672px] relative overflow-y-auto hide-scrollbar">
       <table className="w-full">
-        <thead className="sticky top-0 bg-white dark:bg-background text-muted-foreground">
+        <thead className="sticky top-0 dark:bg-[#0D1421] text-muted-foreground">
           <tr>
             <th className="text-left font-normal p-0.5 text-xs">Price</th>
             <th className="font-normal p-0.5 text-xs text-right">

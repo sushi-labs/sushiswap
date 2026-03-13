@@ -74,7 +74,7 @@ export const UpdateIsolatedMarginDialog = ({
       }}
     >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent>
+      <DialogContent variant="perps-default">
         <DialogHeader>
           <DialogTitle>Adjust Margin</DialogTitle>
           <DialogDescription>
@@ -112,6 +112,7 @@ export const UpdateIsolatedMarginDialog = ({
             </div>
 
             <Button
+              variant="perps-default"
               onClick={async () => {
                 if (!updateData) return
                 await updateIsolatedMarginAsync(updateData, {

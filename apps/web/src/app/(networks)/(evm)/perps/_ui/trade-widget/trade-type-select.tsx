@@ -1,6 +1,7 @@
 'use client'
 import ChevronDownIcon from '@heroicons/react/20/solid/ChevronDownIcon'
 import {
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -46,14 +47,22 @@ export const TradeTypeSelect = () => {
       value={tradeType}
       onValueChange={(value) => setTradeType(value as TradeType)}
     >
-      <TabsList className="grid grid-cols-3 !h-9 !p-0.5">
+      <TabsList className="grid grid-cols-3 !h-9 !p-0.5 border-none bg-transparent gap-2">
         {REGULAR_TRADE_TYPES.map((_tradeType) => (
           <TabsTrigger
             key={_tradeType}
             className="col-span-1 capitalize text-xs"
             value={_tradeType}
+            asChild
           >
-            {_tradeType}
+            <Button
+              size="sm"
+              variant={'perps-secondary'}
+              className="!p-0 w-full col-span-1 capitalize !text-xs"
+              data-selected={(tradeType === _tradeType).toString()}
+            >
+              {_tradeType}
+            </Button>
           </TabsTrigger>
         ))}
         <DropdownMenu>
@@ -63,13 +72,21 @@ export const TradeTypeSelect = () => {
               value={isProTrade ? tradeType : 'Pro'}
               asChild
             >
-              <div className="flex items-center w-full gap-1 justify-center">
-                {isProTrade ? tradeType : 'Pro'}
-                <ChevronDownIcon className="ml-1 w-3 h-3" />
-              </div>
+              <Button
+                size="sm"
+                variant={'perps-secondary'}
+                className="!p-0 w-full col-span-1 capitalize !text-xs"
+                data-selected={isProTrade.toString()}
+                asChild
+              >
+                <div className="flex items-center w-full justify-center">
+                  {isProTrade ? tradeType : 'Pro'}
+                  <ChevronDownIcon className="w-3 h-3" />
+                </div>
+              </Button>
             </TabsTrigger>
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
+          <DropdownMenuContent className="paper">
             {proTradeType.map((_tradeType) => (
               <DropdownMenuItem key={_tradeType} className="!p-0">
                 <TabsTrigger

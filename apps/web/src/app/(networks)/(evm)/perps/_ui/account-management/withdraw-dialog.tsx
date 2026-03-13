@@ -96,11 +96,11 @@ export const WithdrawDialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full" variant="secondary" size="sm">
+        <Button className="w-full" variant="perps-secondary" size="sm">
           Withdraw
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent variant="perps-default">
         <DialogHeader className="!text-left">
           <DialogTitle>Withdraw</DialogTitle>
           <DialogDescription>Withdraw USDC to Arbitrum.</DialogDescription>
@@ -118,32 +118,36 @@ export const WithdrawDialog = () => {
               chainId={chainId}
             />
 
-            <PerpsChecker.Legal size="xl">
-              <Checker.Connect>
-                <Checker.Network chainId={chainId}>
+            <PerpsChecker.Legal size="xl" variant="perps-default">
+              <Checker.Connect variant="perps-default">
+                <Checker.Network chainId={chainId} variant="perps-default">
                   <Checker.Custom
                     showChildren={Boolean(amount)}
                     buttonText={'Enter Amount'}
                     onClick={() => {}}
                     disabled={!amount}
+                    variant="perps-default"
                   >
                     <Checker.Custom
                       showChildren={!insufficientBalance}
                       buttonText={'Insufficient Balance'}
                       onClick={() => {}}
                       disabled={Boolean(insufficientBalance)}
+                      variant="perps-default"
                     >
                       <Checker.Custom
                         showChildren={Number(amount) >= MIN_WITHDRAW_AMOUNT}
                         buttonText={`Minimum Withdraw ${MIN_WITHDRAW_AMOUNT} USDC`}
                         onClick={() => {}}
                         disabled={Number(amount) < MIN_WITHDRAW_AMOUNT}
+                        variant="perps-default"
                       >
                         <Button
                           size="xl"
                           className="w-full"
                           onClick={withdrawUsdc}
                           loading={isPending}
+                          variant="perps-default"
                         >
                           Withdraw
                         </Button>

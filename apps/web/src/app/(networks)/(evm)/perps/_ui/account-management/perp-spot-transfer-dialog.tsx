@@ -138,13 +138,13 @@ export const PerpSpotTransferDialog = ({
         {trigger ? (
           trigger
         ) : (
-          <Button className="w-full" variant="secondary" size="sm">
+          <Button className="w-full" variant="perps-secondary" size="sm">
             Perps
             <ArrowsUpDownIcon className="w-3 h-3 rotate-90" /> Spot
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent variant="perps-default">
         <DialogHeader className="!text-left">
           <DialogTitle>Transfer USDC</DialogTitle>
           <DialogDescription>
@@ -177,26 +177,29 @@ export const PerpSpotTransferDialog = ({
               chainId={chainId}
             />
 
-            <PerpsChecker.Legal size="xl">
-              <Checker.Connect>
-                <Checker.Network chainId={chainId}>
+            <PerpsChecker.Legal size="xl" variant="perps-default">
+              <Checker.Connect variant="perps-default">
+                <Checker.Network chainId={chainId} variant="perps-default">
                   <Checker.Custom
                     showChildren={Boolean(amount)}
                     buttonText={'Enter Amount'}
                     onClick={() => {}}
                     disabled={!amount}
+                    variant="perps-default"
                   >
                     <Checker.Custom
                       showChildren={!insufficientBalance}
                       buttonText={'Insufficient Balance'}
                       onClick={() => {}}
                       disabled={Boolean(insufficientBalance)}
+                      variant="perps-default"
                     >
                       <Button
                         size="xl"
                         className="w-full"
                         onClick={withdrawUsdc}
                         loading={isPending}
+                        variant="perps-default"
                       >
                         {`Transfer to ${dst === 'spot' ? 'Spot' : 'Perps'}`}
                       </Button>

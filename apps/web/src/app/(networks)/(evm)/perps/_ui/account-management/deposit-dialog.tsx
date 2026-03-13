@@ -90,9 +90,15 @@ export const DepositDialog = ({ trigger }: { trigger?: ReactNode }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {trigger ? trigger : <Button className="w-full">Deposit</Button>}
+        {trigger ? (
+          trigger
+        ) : (
+          <Button variant="perps-default" className="w-full">
+            Deposit
+          </Button>
+        )}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent variant="perps-default">
         <DialogHeader className="!text-left">
           <DialogTitle>Deposit</DialogTitle>
           <DialogDescription>Deposit USDC from Arbitrum</DialogDescription>
@@ -100,7 +106,7 @@ export const DepositDialog = ({ trigger }: { trigger?: ReactNode }) => {
         <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
           <div className="flex flex-col gap-4">
             <Web3Input.Currency
-              className="w-full border rounded-lg border-accent px-4 py-2 dark:bg-slate-700 bg-slate-50"
+              className="w-full border-2 rounded-lg border-[#7D95A9] px-4 py-2 bg-[#1B293EC7] text-[#78869B]"
               value={amount}
               onChange={(val) => setAmount(val)}
               currency={usdc}
@@ -108,11 +114,16 @@ export const DepositDialog = ({ trigger }: { trigger?: ReactNode }) => {
               type="INPUT"
             />
 
-            <PerpsChecker.Legal size="xl">
-              <Checker.Connect>
-                <Checker.Network chainId={chainId}>
-                  <Checker.Amounts chainId={chainId} amount={_amount}>
+            <PerpsChecker.Legal size="xl" variant="perps-default">
+              <Checker.Connect variant="perps-default">
+                <Checker.Network chainId={chainId} variant="perps-default">
+                  <Checker.Amounts
+                    chainId={chainId}
+                    amount={_amount}
+                    variant="perps-default"
+                  >
                     <Button
+                      variant="perps-default"
                       size="xl"
                       disabled={
                         Number(amount) < MIN_DEPOSIT_AMOUNT || !sim?.result

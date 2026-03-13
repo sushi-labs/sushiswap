@@ -45,7 +45,7 @@ export const ConfirmDialog = () => {
       }}
     >
       <ConfirmDialogTrigger />
-      <DialogContent>
+      <DialogContent variant="perps-default">
         <DialogHeader className="!text-left">
           <DialogTitle>Confirm Order</DialogTitle>
           <DialogDescription>

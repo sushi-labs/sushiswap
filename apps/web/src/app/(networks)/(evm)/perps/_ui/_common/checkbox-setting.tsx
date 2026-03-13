@@ -20,13 +20,13 @@ export const CheckboxSetting = ({
       className="flex items-center w-fit gap-1 whitespace-nowrap text-xs cursor-pointer font-medium"
     >
       <Checkbox
-        className='data-[state="checked"]:!bg-blue text-slate-100 !border-slate-400 dark:!border-slate-100 data-[state="checked"]:!border-blue'
+        className='data-[state="checked"]:!bg-blue text-white !border-[#99A1AF] data-[state="checked"]:!border-blue'
         checked={value}
         onCheckedChange={(checked) => {
           onChange(!checked)
         }}
       />
-      <div>{label}</div>
+      <div className="text-[#99A1AF]">{label}</div>
     </div>
   )
 }

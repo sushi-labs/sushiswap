@@ -41,7 +41,7 @@ export const ViewTpSlDialog = ({
       <DialogTrigger asChild>
         <TableButton>View</TableButton>
       </DialogTrigger>
-      <DialogContent className="!max-w-3xl">
+      <DialogContent variant="perps-default" className="!max-w-3xl">
         <DialogHeader className="!text-left">
           <DialogTitle>Take Profit/Stop Loss</DialogTitle>
           <DialogDescription>
@@ -117,7 +117,7 @@ const _OrderCard = ({
   price: string
 }) => {
   return (
-    <Card>
+    <Card className="!bg-[#0D1421] border border-[#1E2939]">
       <div className="p-4 flex flex-col gap-2">
         <div className="flex justify-between">
           <span className="text-muted-foreground">Order Type</span>

@@ -30,12 +30,12 @@ export const IsolatedMarginInput = ({
   return (
     <div
       className={classNames(
-        'w-full border rounded-lg border-accent px-4 py-2 dark:bg-slate-700 bg-slate-50',
+        'w-full border rounded-lg px-4 py-2 border-[#FFFFFF1A] bg-[#FFFFFF0D]',
         className ?? '',
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <p className="text-muted-foreground">Amount</p>
+        <p className="text-[#4A5565]">Amount</p>
         <div className="flex items-center gap-1">
           <TextField
             type="number"

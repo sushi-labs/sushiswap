@@ -54,7 +54,7 @@ export const TransferInput = ({
       className={classNames(
         _error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
         'relative space-y-2 overflow-hidden pb-2',
-        'w-full border rounded-lg border-accent px-4 py-2 dark:bg-slate-700 bg-slate-50',
+        'w-full border-2 rounded-lg border-[#7D95A9] px-4 py-2 bg-[#1B293EC7] text-[#78869B]',
       )}
     >
       <div

@@ -42,7 +42,7 @@ export const PercentageSlider = ({
     [onChange, maxValue],
   )
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-4 ">
       <Slider
         value={[value]}
         min={1}
@@ -57,7 +57,7 @@ export const PercentageSlider = ({
       />
       <div
         className={classNames(
-          'border max-w-[58px] min-w-[58px] flex items-center justify-center !rounded-md !border-accent py-0 px-2 whitespace-nowrap text-sm font-medium text-right',
+          'border max-w-[58px] min-w-[58px] flex items-center justify-center !rounded-md !border-[#FFFFFF1A] !bg-[#FFFFFF0D] py-0 px-2 whitespace-nowrap text-sm font-medium text-right',
         )}
       >
         <TextField
@@ -67,7 +67,7 @@ export const PercentageSlider = ({
           value={pending ? localValue : value.toString()}
           maxDecimals={0}
         />
-        <p>%</p>
+        <p className="text-[#99A1AF]">%</p>
       </div>
     </div>
   )

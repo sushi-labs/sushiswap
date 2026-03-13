@@ -112,7 +112,7 @@ export const OrderBook = ({ className }: { className?: string }) => {
       </div>
 
       <table className="w-full">
-        <thead className="bg-white dark:bg-background text-muted-foreground">
+        <thead className="bg-[#0D1421] text-muted-foreground">
           {isLoading ? (
             <SkeletonOrderBookRow />
           ) : error ? null : (
@@ -188,7 +188,7 @@ export const OrderBook = ({ className }: { className?: string }) => {
               })}
               <tr className="border-y-[2px] lg:border-y-[4px] border-transparent">
                 <td
-                  className="px-0.5 py-0 lg:py-0.5 text-xs dark:bg-slate-800 text-center bg-gray-50 font-medium tabular-nums"
+                  className="px-0.5 py-0 lg:py-0.5 text-xs dark:bg-slate-800/50 text-center bg-gray-50 font-medium tabular-nums"
                   colSpan={3}
                 >
                   Spread

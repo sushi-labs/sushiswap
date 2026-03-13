@@ -1,4 +1,5 @@
 import {
+  Button,
   Tabs,
   TabsContent,
   TabsList,
@@ -29,14 +30,23 @@ export const TwapTables = () => {
     >
       <div className="flex items-center justify-between">
         {!isLg ? <TradeFilter /> : null}
-        <TabsList className="!px-0 !h-8">
+        <TabsList className="!px-0.5 !h-8 !bg-[#0D1421]">
           {TWAP_TABLES_TABS.map((tab) => (
             <TabsTrigger
               key={tab.value}
               value={tab.value}
               className="!px-1.5 !py-.5 !text-xs"
+              asChild
             >
-              {tab.name}
+              <Button
+                size="xs"
+                variant={
+                  activeTwapTab === tab.value ? 'perps-secondary' : 'ghost'
+                }
+                className="!p-0 w-full col-span-1 capitalize !text-xs !rounded-md"
+              >
+                {tab.name}
+              </Button>
             </TabsTrigger>
           ))}
         </TabsList>

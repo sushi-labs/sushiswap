@@ -41,14 +41,14 @@ export const LimitInput = ({
   return (
     <div
       className={classNames(
-        'w-full border rounded-lg border-accent dark:bg-slate-700 bg-slate-50',
+        'w-full border rounded-lg border-[#FFFFFF1A] bg-[#FFFFFF0D]',
         size === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2',
       )}
     >
       <div className="flex items-center justify-between gap-2">
         <p
           className={classNames(
-            'text-muted-foreground whitespace-nowrap',
+            'text-[#4A5565] whitespace-nowrap',
             size === 'sm' ? 'text-sm' : 'text-base',
           )}
         >
@@ -65,7 +65,7 @@ export const LimitInput = ({
           />
           <Button
             size="xs"
-            variant="secondary"
+            variant="ghost"
             onClick={handleSetToCurrentMidPrice}
           >
             Mid

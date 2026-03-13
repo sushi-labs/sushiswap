@@ -15,24 +15,24 @@ export const AssetTabs = () => {
   )
   return (
     <Tabs
-      className="w-full"
+      className="w-fit"
       value={selectedTab}
       onValueChange={(val) => {
         setSelectedTab(val as TabType)
       }}
     >
-      <TabsList className="!flex !px-0 !h-8 bg-secondary">
+      <TabsList className="!flex w-fit !px-0 !h-8 bg-secondary">
         {TABS.map((tab) => (
           <TabsTrigger
             key={tab}
             value={tab}
-            className="flex flex-1 !px-1.5 !text-xs capitalize"
+            className="flex w-fit !px-1.5 !text-xs capitalize"
           >
             {tab}
           </TabsTrigger>
         ))}
       </TabsList>
-      <div className="max-h-[calc(80vh-150px)] mt-2 overflow-auto max-w-[calc(100vw-48px)] md:!max-w-[720px]">
+      <div className="max-h-[calc(80vh-175px)] md:max-h-[calc(80vh-200px)] mt-2 overflow-auto">
         <TabsContent value="all">
           <AllAssets />
         </TabsContent>

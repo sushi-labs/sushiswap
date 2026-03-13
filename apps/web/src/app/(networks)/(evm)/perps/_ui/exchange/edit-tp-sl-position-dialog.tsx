@@ -30,6 +30,7 @@ import { formatUnits, parseUnits } from 'viem'
 import {
   CheckboxSetting,
   ConfigureAmount,
+  StatItem,
   TableButton,
   TpSlInput,
   TpSlLimitInput,
@@ -283,7 +284,10 @@ export const EditTpSlPositionDialog = ({
         )}
       </DialogTrigger>
       {/* dont autofocus the input */}
-      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+      <DialogContent
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        variant="perps-default"
+      >
         <DialogHeader className="!text-left">
           <DialogTitle>TP/SL for Position</DialogTitle>
           <DialogDescription>
@@ -293,15 +297,10 @@ export const EditTpSlPositionDialog = ({
         <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
           <div className="flex flex-col gap-4 text-sm">
             <div className="flex flex-col gap-2 text-sm">
-              <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">Coin</div>
-                <div className="font-medium whitespace-nowrap">
-                  <p>{baseSymbol}</p>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">Size</div>
-                <div className="font-medium whitespace-nowrap">
+              <StatItem title="Coin" value={baseSymbol} />
+              <StatItem
+                title="Size"
+                value={
                   <p
                     className={classNames(
                       getTextColorClass(positionToClose?.side === 'B' ? 1 : -1),
@@ -309,26 +308,23 @@ export const EditTpSlPositionDialog = ({
                   >
                     {positionSize} {baseSymbol}
                   </p>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">Entry Price</div>
-                <div className="font-medium">
-                  {perpsNumberFormatter({
-                    value: entryPrice,
-                    maxFraxDigits: asset?.decimals,
-                  })}
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">Mark Price</div>
-                <div className="font-medium">
-                  {perpsNumberFormatter({
-                    value: markPrice,
-                    maxFraxDigits: asset?.decimals,
-                  })}
-                </div>
-              </div>
+                }
+              />
+              <StatItem
+                title="Entry Price"
+                value={perpsNumberFormatter({
+                  value: entryPrice,
+                  maxFraxDigits: asset?.decimals,
+                })}
+              />
+              <StatItem
+                title="Mark Price"
+                value={perpsNumberFormatter({
+                  value: markPrice,
+                  maxFraxDigits: asset?.decimals,
+                })}
+              />
+
               {existingTpOrder ? (
                 <div className="flex items-center justify-between">
                   <div className="text-muted-foreground">Take Profit</div>
@@ -393,6 +389,7 @@ export const EditTpSlPositionDialog = ({
               hideTp={Boolean(existingTpOrder)}
               type={type}
               setType={setType}
+              inputSize="sm"
             />
             {Boolean(existingSlOrder) && Boolean(existingTpOrder) ? null : (
               <>
@@ -430,6 +427,7 @@ export const EditTpSlPositionDialog = ({
                       onChangeTpLimitPrice={setTpLimitPrice}
                       slLimitPrice={slLimitPrice}
                       onChangeSlLimitPrice={setSlLimitPrice}
+                      className="!text-sm !py-0 !px-2"
                     />
                   ) : null}
                 </div>
@@ -438,6 +436,7 @@ export const EditTpSlPositionDialog = ({
                   <PerpsChecker.EnableTrading>
                     <PerpsChecker.BuilderFee>
                       <Button
+                        variant="perps-default"
                         onClick={async () => {
                           if (!orderData) return
                           await executeOrdersAsync(

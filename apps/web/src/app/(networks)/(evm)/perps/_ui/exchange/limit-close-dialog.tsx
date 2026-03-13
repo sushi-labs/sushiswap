@@ -236,7 +236,10 @@ export const LimitCloseDialog = ({
         )}
       </DialogTrigger>
       {/* dont autofocus the size input */}
-      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+      <DialogContent
+        variant="perps-default"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <DialogHeader className="!text-left">
           <DialogTitle>Limit Close</DialogTitle>
           <DialogDescription>
@@ -250,6 +253,7 @@ export const LimitCloseDialog = ({
               value={limitPriceToCloseAt}
               onChange={setLimitPriceToCloseAt}
               maxDecimals={asset?.decimals ?? 6}
+              size="sm"
             />
             <SizeInput
               asset={asset}
@@ -257,6 +261,7 @@ export const LimitCloseDialog = ({
               onChange={handleSetSizeToClose}
               sizeSide={sizeSide}
               setSizeSide={setSizeSide}
+              className="!px-2 !py-0 !text-sm"
             />
             <PercentageSlider
               value={percentToClose}
@@ -276,6 +281,7 @@ export const LimitCloseDialog = ({
               <PerpsChecker.EnableTrading>
                 <PerpsChecker.BuilderFee>
                   <Button
+                    variant="perps-default"
                     onClick={async () => {
                       if (!orderData) return
                       await executeOrdersAsync(

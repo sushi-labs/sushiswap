@@ -24,7 +24,7 @@ import {
   useUserAccountValues,
 } from 'src/lib/perps'
 import { formatUnits, parseUnits } from 'viem'
-import { CheckboxSetting, TableButton } from '../_common'
+import { CheckboxSetting, StatItem, TableButton } from '../_common'
 import { useUserSettingsState } from '../account-management'
 import { useAssetListState } from '../asset-selector'
 import { PerpsChecker } from '../perps-checker'
@@ -156,7 +156,10 @@ export const ReversePositionDialog = ({
         )}
       </DialogTrigger>
       {/* dont autofocus the size input */}
-      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+      <DialogContent
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        variant="perps-default"
+      >
         <DialogHeader className="!text-left">
           <DialogTitle>Reverse Position</DialogTitle>
           <DialogDescription>
@@ -167,9 +170,9 @@ export const ReversePositionDialog = ({
         <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
           <div className="flex flex-col gap-4 text-sm">
             <div className="flex flex-col gap-2 text-sm">
-              <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">Action</div>
-                <div className="font-medium whitespace-nowrap">
+              <StatItem
+                title="Action"
+                value={
                   <p
                     className={classNames(
                       getTextColorClass(positionToClose?.side === 'A' ? 1 : -1),
@@ -179,11 +182,11 @@ export const ReversePositionDialog = ({
                       ? 'Close Short & Go Long'
                       : 'Close Long & Go Short'}
                   </p>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">Size</div>
-                <div className="font-medium whitespace-nowrap">
+                }
+              />
+              <StatItem
+                title="Size"
+                value={
                   <p
                     className={classNames(
                       getTextColorClass(positionToClose?.side === 'A' ? 1 : -1),
@@ -191,26 +194,24 @@ export const ReversePositionDialog = ({
                   >
                     {positionSize} {baseSymbol}
                   </p>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">Price</div>
-                <div className="font-medium">Market</div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">
-                  Est. Liquidation Price
-                </div>
-                <div className="font-medium">
-                  {estimatedLiquidationPrice
-                    ? perpsNumberFormatter({
-                        value: estimatedLiquidationPrice,
-                        maxFraxDigits: 2,
-                        minFraxDigits: 2,
-                      })
-                    : 'N/A'}
-                </div>
-              </div>
+                }
+              />
+
+              <StatItem title="Price" value={'Market'} />
+              <StatItem
+                title="Est. Liquidation Price"
+                value={
+                  <div className="font-medium">
+                    {estimatedLiquidationPrice
+                      ? perpsNumberFormatter({
+                          value: estimatedLiquidationPrice,
+                          maxFraxDigits: 2,
+                          minFraxDigits: 2,
+                        })
+                      : 'N/A'}
+                  </div>
+                }
+              />
             </div>
             <CheckboxSetting
               value={quickCloseReversePositionEnabled}
@@ -218,10 +219,15 @@ export const ReversePositionDialog = ({
               label="Don't show this again"
             />
             {/* connect checker not needed, wont be able to get here unless connected anyway */}
-            <PerpsChecker.Legal>
-              <PerpsChecker.EnableTrading>
-                <PerpsChecker.BuilderFee>
+            <PerpsChecker.Legal variant="perps-default">
+              <PerpsChecker.EnableTrading variant="perps-default">
+                <PerpsChecker.BuilderFee variant="perps-default">
                   <Button
+                    variant={
+                      positionToClose.side === 'A'
+                        ? 'perps-long'
+                        : 'perps-short'
+                    }
                     onClick={async () => {
                       if (!orderData) return
                       await executeOrdersAsync(
