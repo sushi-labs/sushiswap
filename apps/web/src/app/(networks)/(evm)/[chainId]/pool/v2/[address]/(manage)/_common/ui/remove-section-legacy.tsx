@@ -91,9 +91,10 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     )
 
     const [percentage, setPercentage] = useState<string>('0')
+    const [denominator, setDenominator] = useState<number>(100)
     const percentToRemove = useMemo(
-      () => new Percent({ numerator: percentage, denominator: 100 }),
-      [percentage],
+      () => new Percent({ numerator: percentage, denominator: denominator }),
+      [percentage, denominator],
     )
     const percentToRemoveDebounced = useDebounce(percentToRemove, 300)
 
@@ -452,7 +453,10 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           token1={token1}
           token0Minimum={minAmount0}
           token1Minimum={minAmount1}
+          denominator={denominator}
           setPercentage={setPercentage}
+          setDenominator={setDenominator}
+          amountToRemove={amountToRemove}
         >
           <Checker.Connect fullWidth>
             <Checker.Guard

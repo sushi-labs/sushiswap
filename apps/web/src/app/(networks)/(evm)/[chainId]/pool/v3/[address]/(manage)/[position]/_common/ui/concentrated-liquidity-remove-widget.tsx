@@ -55,7 +55,7 @@ import {
   type EvmCurrency,
   EvmNative,
   NonfungiblePositionManager,
-  type Position,
+  Position,
   SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
   getEvmChainById,
@@ -71,7 +71,14 @@ import {
 import { useConnection } from 'wagmi'
 import { usePublicClient } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
-
+const DENOMINATOR_OPTIONS = [
+  { percentage: 100, label: '0' },
+  { percentage: 1000, label: '1' },
+  { percentage: 10000, label: '2' },
+  { percentage: 100000, label: '3' },
+  { percentage: 1000000, label: '4' },
+  { percentage: 10000000, label: '5' },
+]
 interface ConcentratedLiquidityRemoveWidget {
   token0: EvmCurrency | undefined
   token1: EvmCurrency | undefined
@@ -95,7 +102,9 @@ export const ConcentratedLiquidityRemoveWidget: FC<
 }) => {
   const { chain } = useConnection()
   const client = usePublicClient()
-  const [value, setValue] = useState<string>('0')
+  const [percentage, setPercentage] = useState<string>('0')
+  const [denominator, setDenominator] = useState<number>(100)
+
   const [receiveWrapped, setReceiveWrapped] = useState(false)
   const [slippageTolerance] = useSlippageTolerance(
     SlippageToleranceStorageKey.RemoveLiquidity,
@@ -104,11 +113,11 @@ export const ConcentratedLiquidityRemoveWidget: FC<
     storageKey: TTLStorageKey.RemoveLiquidity,
     chainId,
   })
-  const debouncedValue = useDebounce(value, 300)
+  const debouncedValue = useDebounce(percentage, 300)
 
   const _onChange = useCallback(
     (val: string) => {
-      setValue(val)
+      setPercentage(val)
       if (onChange) {
         onChange(val)
       }
@@ -122,7 +131,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
 
   const onSuccess = useCallback(
     (hash: SendTransactionReturnType) => {
-      setValue('0')
+      setPercentage('0')
 
       if (!position) return
 
@@ -209,11 +218,22 @@ export const ConcentratedLiquidityRemoveWidget: FC<
     )
   }, [token0, token1, nativeToken])
 
-  const prepare = useMemo(() => {
-    const liquidityPercentage = new Percent({
-      numerator: debouncedValue,
-      denominator: 100,
+  const liquidityPercentage = useMemo(
+    () => new Percent({ numerator: debouncedValue, denominator: denominator }),
+    [debouncedValue, denominator],
+  )
+
+  const partialPosition = useMemo(() => {
+    if (!position) return undefined
+    return new Position({
+      pool: position.pool,
+      liquidity: liquidityPercentage.mul(position.liquidity).quotient,
+      tickLower: position.tickLower,
+      tickUpper: position.tickUpper,
     })
+  }, [position, liquidityPercentage])
+
+  const prepare = useMemo(() => {
     const discountedAmount0 = position
       ? liquidityPercentage.mul(position.amount0.amount).quotient
       : undefined
@@ -286,16 +306,16 @@ export const ConcentratedLiquidityRemoveWidget: FC<
     position,
     positionDetails,
     slippageTolerance,
-    debouncedValue,
     expectedToken0,
     expectedToken1,
+    liquidityPercentage,
   ])
 
   const { isError: isSimulationError } = useCall({
     ...prepare,
     chainId,
     query: {
-      enabled: +value > 0 && chainId === chain?.id,
+      enabled: +percentage > 0 && chainId === chain?.id,
     },
   })
 
@@ -337,8 +357,8 @@ export const ConcentratedLiquidityRemoveWidget: FC<
             feeValue0 ? feeValue0.amount.toString() : '0',
           ),
         )
-        .mul(value)
-        .div(100n),
+        .mul(percentage)
+        .div(denominator),
       position?.amount1
         .add(
           new Amount(
@@ -346,10 +366,10 @@ export const ConcentratedLiquidityRemoveWidget: FC<
             feeValue1 ? feeValue1.amount.toString() : '0',
           ),
         )
-        .mul(value)
-        .div(100n),
+        .mul(percentage)
+        .div(denominator),
     ]
-  }, [feeValue0, feeValue1, position, value])
+  }, [feeValue0, feeValue1, denominator, position, percentage])
 
   const fiatAmountsAsNumber = useTokenAmountDollarValues({
     chainId,
@@ -372,12 +392,18 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                     <div className="flex justify-between gap-4">
                       <div>
                         <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">
-                          {value}%
+                          {new Percent({
+                            numerator: percentage,
+                            denominator: denominator,
+                          }).toString({
+                            fixed: denominator.toString().length - 3,
+                          })}
+                          %
                         </h1>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button
-                          variant={value === '25' ? 'default' : 'secondary'}
+                        {/* <Button
+                          variant={percentage === '25' ? 'default' : 'secondary'}
                           size="sm"
                           onClick={() => _onChange('25')}
                           testId="liquidity-25"
@@ -385,7 +411,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                           25%
                         </Button>
                         <Button
-                          variant={value === '50' ? 'default' : 'secondary'}
+                          variant={percentage === '50' ? 'default' : 'secondary'}
                           size="sm"
                           onClick={() => _onChange('50')}
                           testId="liquidity-50"
@@ -393,7 +419,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                           50%
                         </Button>
                         <Button
-                          variant={value === '75' ? 'default' : 'secondary'}
+                          variant={percentage === '75' ? 'default' : 'secondary'}
                           size="sm"
                           onClick={() => _onChange('75')}
                           testId="liquidity-75"
@@ -401,13 +427,13 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                           75%
                         </Button>
                         <Button
-                          variant={value === '100' ? 'default' : 'secondary'}
+                          variant={percentage === '100' ? 'default' : 'secondary'}
                           size="sm"
                           onClick={() => _onChange('100')}
                           testId="liquidity-max"
                         >
                           Max
-                        </Button>
+                        </Button> */}
                         <SettingsOverlay
                           options={{
                             slippageTolerance: {
@@ -435,13 +461,34 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                         </SettingsOverlay>
                       </div>
                     </div>
+                    <div className="flex items-center gap-2">
+                      {DENOMINATOR_OPTIONS.map((option) => (
+                        <Button
+                          key={option.percentage}
+                          size="sm"
+                          fullWidth
+                          variant={
+                            denominator === option.percentage
+                              ? 'default'
+                              : 'secondary'
+                          }
+                          onClick={() => {
+                            setPercentage('0')
+                            setDenominator(option.percentage)
+                          }}
+                          testId={`remove-liquidity-denominator-${option.percentage}`}
+                        >
+                          {option.label}
+                        </Button>
+                      ))}
+                    </div>
                     <div className="px-1 pt-2 pb-3">
                       <input
-                        value={value}
+                        value={percentage}
                         onChange={(e) => _onChange(e.target.value)}
                         type="range"
                         min="1"
-                        max="100"
+                        max={denominator.toString()}
                         className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg dark:bg-gray-700"
                       />
                     </div>
@@ -451,20 +498,28 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                   <CardGroup>
                     <CardLabel>{"You'll"} receive</CardLabel>
                     <CardCurrencyAmountItem
-                      amount={position?.amount0.mul(value).div(100)}
+                      amount={position?.amount0
+                        .mul(percentage)
+                        .div(denominator)}
                     />
                     <CardCurrencyAmountItem
-                      amount={position?.amount1.mul(value).div(100)}
+                      amount={position?.amount1
+                        .mul(percentage)
+                        .div(denominator)}
                     />
                   </CardGroup>
                   <CardGroup>
                     <CardLabel>{"You'll"} receive collected fees</CardLabel>
                     <CardCurrencyAmountItem
-                      amount={feeValue0?.mul(value).div(100)}
+                      amount={feeValue0?.mul(percentage).div(denominator)}
                     />
                     <CardCurrencyAmountItem
-                      amount={feeValue1?.mul(value).div(100)}
+                      amount={feeValue1?.mul(percentage).div(denominator)}
                     />
+                    <div className="flex justify-between items-center">
+                      <div>SLP</div>
+                      <div>{partialPosition?.liquidity.toString()}</div>
+                    </div>
                   </CardGroup>
                 </Card>
               </CardContent>
@@ -479,10 +534,10 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                         <Button
                           fullWidth
                           size="xl"
-                          disabled={+value === 0}
+                          disabled={+percentage === 0}
                           testId="remove-or-add-liquidity"
                         >
-                          {+value === 0 ? 'Enter Amount' : 'Remove'}
+                          {+percentage === 0 ? 'Enter Amount' : 'Remove'}
                         </Button>
                       </DialogTrigger>
                     </Checker.Network>
@@ -551,8 +606,8 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                                   feeValue0 ? feeValue0.amount.toString() : '0',
                                 ),
                               )
-                              .mul(value)
-                              .div(100)
+                              .mul(percentage)
+                              .div(denominator)
                               ?.toSignificant(6)}{' '}
                             {expectedToken0?.symbol}
                           </div>
@@ -578,8 +633,8 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                                   feeValue1 ? feeValue1.amount.toString() : '0',
                                 ),
                               )
-                              .mul(value)
-                              .div(100)
+                              .mul(percentage)
+                              .div(denominator)
                               ?.toSignificant(6)}{' '}
                             {expectedToken1?.symbol}
                           </div>
