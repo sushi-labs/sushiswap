@@ -10,7 +10,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import React, { useEffect, useMemo } from 'react'
-import { formatPercent, formatUSD, getChainById, shortenAddress } from 'sushi'
+import { formatUSD, getChainById, shortenAddress } from 'sushi'
 import { isAddress } from 'viem'
 
 import { ChevronDownIcon } from '@heroicons/react-v1/solid'
