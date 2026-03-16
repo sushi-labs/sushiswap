@@ -88,7 +88,7 @@ export async function getVaults(
     const vaults = result.vaults.map((v) => {
       return {
         ...v,
-        apr1d: v.apr1d * 0.2,
+        apr1d: v.apr1d,
         chainId: v.chainId as SmartPoolChainId,
         id: v.id as EvmID,
         address: v.address as Address,

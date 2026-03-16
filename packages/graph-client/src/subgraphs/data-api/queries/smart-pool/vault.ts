@@ -84,7 +84,7 @@ export async function getVault(variables: GetVault, options?: RequestOptions) {
       const vault = result.vault
       return {
         ...vault,
-        apr1d: vault.apr1d * 0.2,
+        apr1d: vault.apr1d,
         chainId: vault.chainId as SmartPoolChainId,
         id: vault.id as EvmID,
         address: vault.address as Address,

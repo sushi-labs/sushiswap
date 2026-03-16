@@ -76,7 +76,7 @@ export async function getSmartPools(
   if (result) {
     return result.smartPools.map((pool) => ({
       ...pool,
-      stakedAndIncentiveApr1d: pool.stakedAndIncentiveApr1d * 0.2,
+      stakedAndIncentiveApr1d: pool.stakedAndIncentiveApr1d,
       chainId: pool.chainId as EvmChainId,
       id: pool.id as EvmID,
       strategy: pool.strategy,
