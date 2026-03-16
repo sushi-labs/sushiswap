@@ -6,8 +6,11 @@ import {
   DialogTitle,
   SkeletonText,
 } from '@sushiswap/ui'
-import { useDerivedStateCrossChainSwap } from '../derivedstate-cross-chain-swap-provider'
-import { useCrossChainTradeQuote } from '../derivedstate-cross-chain-swap-provider'
+import { useMemo } from 'react'
+import {
+  useCrossChainTradeQuote,
+  useDerivedStateCrossChainSwap,
+} from '../derivedstate-cross-chain-swap-provider'
 
 export function TradeHeader() {
   const {
@@ -15,7 +18,18 @@ export function TradeHeader() {
   } = useDerivedStateCrossChainSwap()
   const { data: quote } = useCrossChainTradeQuote()
 
-  const amountOut = quote?.quote?.amountOut
+  const amountOut = useMemo(() => {
+    if (!quote?.quote || !token1) {
+      return null
+    }
+
+    const amountOutRaw = Number.parseFloat(quote.quote.amountOut)
+    const amountOutFormatted = amountOutRaw / 10 ** token1.decimals
+
+    return amountOutFormatted.toLocaleString(undefined, {
+      maximumFractionDigits: 6,
+    })
+  }, [quote, token1])
 
   return (
     <DialogHeader className="!text-left">
