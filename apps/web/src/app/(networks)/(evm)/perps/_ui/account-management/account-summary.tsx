@@ -111,13 +111,7 @@ export const AccountSummary = () => {
                   hidePnl ? '' : getTextColorClass(unrelaizedPnL),
                 )}
               >
-                {hidePnl
-                  ? '***'
-                  : perpsNumberFormatter({
-                      value: unrelaizedPnL,
-                      maxFraxDigits: 2,
-                      minFraxDigits: 2,
-                    })}
+                {hidePnl ? '***' : currencyFormatter.format(unrelaizedPnL)}
               </span>
             }
           />

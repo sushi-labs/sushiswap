@@ -365,18 +365,18 @@ export const FUNDING_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     const sinceChange = Number.parseFloat(
       props.row.original.position.cumFunding.sinceChange ?? '0',
     )
-
+    //todo: recheck this
     return (
       <HoverCard openDelay={0}>
         <HoverCardTrigger asChild tabIndex={0}>
           <div
             className={classNames(
               'font-medium underline lg:whitespace-nowrap',
-              getTextColorClass(sinceOpen),
+              getTextColorClass(sinceOpen >= 0 ? -1 : 1),
             )}
           >
-            {getSignForValue(sinceOpen)}
-            {currencyFormatter.format(sinceOpen)}
+            {getSignForValue(sinceOpen >= 0 ? -1 : 1)}
+            {currencyFormatter.format(sinceOpen).replaceAll('-', '')}
           </div>
         </HoverCardTrigger>
         <HoverCardContent
@@ -385,10 +385,10 @@ export const FUNDING_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
           className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
         >
           <p>
-            All Time: {getSignForValue(allTime)}
-            {currencyFormatter.format(allTime)} Since Last Change:{' '}
-            {getSignForValue(sinceChange)}
-            {currencyFormatter.format(sinceChange)}
+            All Time: {getSignForValue(allTime >= 0 ? -1 : 1)}
+            {currencyFormatter.format(allTime).replaceAll('-', '')} Since Last
+            Change: {getSignForValue(sinceChange >= 0 ? -1 : 1)}
+            {currencyFormatter.format(sinceChange).replaceAll('-', '')}
           </p>
         </HoverCardContent>
       </HoverCard>

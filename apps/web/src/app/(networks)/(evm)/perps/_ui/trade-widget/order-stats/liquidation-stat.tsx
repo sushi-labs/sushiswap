@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import {
   calculateIsolatedMargin,
+  calculateMarginRequired,
   estimateLiquidationPrice,
   formatPrice,
   perpsNumberFormatter,
@@ -27,8 +28,7 @@ export const LiquidationStat = ({ title }: { title?: string }) => {
       limitPrice,
     },
   } = useAssetState()
-  const { perpsEquity, maintenanceMargin, portfolioValue } =
-    useUserAccountValues()
+  const { perpsEquity, portfolioValue } = useUserAccountValues()
   const { data: marginTable } = useMarginTable({
     marginTableId: asset?.marginTableId ?? undefined,
   })
@@ -73,77 +73,110 @@ export const LiquidationStat = ({ title }: { title?: string }) => {
     ) {
       return null
     }
-    let price = markPrice
+
+    let orderPrice = markPrice
     if (tradeType.toLowerCase().includes('limit') && limitPrice) {
-      price = limitPrice
+      orderPrice = limitPrice
     }
 
-    const positionSize = size.base
     const isCross = currentLeverageTypeForAsset === 'cross'
+
+    const existingSignedSize = Number(existingPosition?.position.szi ?? 0)
+    const existingEntry = Number(
+      existingPosition?.position.entryPx ?? orderPrice,
+    )
+
+    const orderAbsSize = Number(size.base)
+    const orderSignedSize = _tradeSide === 'long' ? orderAbsSize : -orderAbsSize
+
+    let nextSignedSize = existingSignedSize
+
+    if (reduceOnly) {
+      // clamp so it cannot flip
+      if (existingSignedSize > 0) {
+        nextSignedSize = Math.max(existingSignedSize - orderAbsSize, 0)
+      } else if (existingSignedSize < 0) {
+        nextSignedSize = Math.min(existingSignedSize + orderAbsSize, 0)
+      }
+    } else {
+      nextSignedSize = existingSignedSize + orderSignedSize
+    }
+
+    const nextAbsSize = Math.abs(nextSignedSize)
+    if (nextAbsSize === 0) return null
+
+    const nextSide: 'A' | 'B' = nextSignedSize > 0 ? 'B' : 'A'
+
+    let nextEntry = Number(orderPrice)
+
+    if (existingSignedSize === 0) {
+      nextEntry = Number(orderPrice)
+    } else if (Math.sign(existingSignedSize) === Math.sign(orderSignedSize)) {
+      nextEntry =
+        (Math.abs(existingSignedSize) * existingEntry +
+          Math.abs(orderSignedSize) * Number(orderPrice)) /
+        (Math.abs(existingSignedSize) + Math.abs(orderSignedSize))
+    } else {
+      if (Math.abs(orderSignedSize) < Math.abs(existingSignedSize)) {
+        nextEntry = existingEntry
+      } else if (Math.abs(orderSignedSize) > Math.abs(existingSignedSize)) {
+        nextEntry = Number(orderPrice)
+      } else {
+        return null
+      }
+    }
+
+    const maintenanceLev = Number(maxLeverage)
+    if (!Number.isFinite(maintenanceLev) || maintenanceLev <= 0) {
+      return null
+    }
+
+    const nextMaintenanceMarginRequired =
+      (nextAbsSize * nextEntry) / maintenanceLev
+
     const iso = calculateIsolatedMargin({
-      baseSize: size.base,
-      price: price,
+      baseSize: nextAbsSize.toString(),
+      price: nextEntry.toString(),
       leverage: currentLeverageForAsset,
       decimals: asset.decimals,
     })
 
-    const existingPositionSize = existingPosition
-      ? Number(existingPosition.position.szi)
-      : 0
-    const existingForCurrentSide =
-      (tradeSide === 'long' && existingPosition?.side === 'B') ||
-      (tradeSide === 'short' && existingPosition?.side === 'A')
-
-    //todo: something wrong here when the size is small, innacurate price returned
     const liqPrice = estimateLiquidationPrice({
-      price: reduceOnly ? (existingPosition?.position.entryPx ?? price) : price,
-      side: _tradeSide === 'long' ? 'B' : 'A',
+      price: nextEntry.toString(),
+      side: nextSide,
       accountValue: isUnifiedAccountModeEnabled
-        ? portfolioValue?.toString()
-        : perpsEquity?.toString(),
-      positionSize: reduceOnly
-        ? (
-            Math.abs(existingPositionSize) - Math.abs(Number(positionSize))
-          ).toString()
-        : (
-            Number(positionSize) +
-            (!existingForCurrentSide && isCross ? existingPositionSize : 0)
-          ).toString(),
-      maintenanceMarginRequired: (
-        Number(size.quote) / maxLeverage +
-        Number(maintenanceMargin)
-      ).toString(),
-      maintenanceLeverage: maxLeverage.toString(),
-      isolatedMargin: iso?.isolatedMarginFormatted ?? '0', //pass isolated margin even if cross for completeness
+        ? portfolioValue!.toString()
+        : perpsEquity!.toString(),
+      positionSize: nextAbsSize.toString(),
+      maintenanceMarginRequired: nextMaintenanceMarginRequired.toString(),
+      maintenanceLeverage: maintenanceLev.toString(),
+      isolatedMargin: iso?.isolatedMarginFormatted ?? '0',
       isCross,
     })
 
     if (!liqPrice) return null
+
     try {
-      return formatPrice(liqPrice, asset?.decimals, asset?.marketType)
-    } catch (e) {
-      console.error('Error estimating liquidation price', e)
+      return formatPrice(liqPrice, asset.decimals, asset.marketType)
+    } catch {
       return null
     }
   }, [
-    tradeSide,
-    existingPosition,
-    maintenanceMargin,
-    maxLeverage,
     asset,
     markPrice,
+    portfolioValue,
     perpsEquity,
-    currentLeverageTypeForAsset,
-    currentLeverageForAsset,
-    size,
-    _tradeSide,
-    reduceOnly,
+    size.base,
     tradeType,
     limitPrice,
-    portfolioValue,
+    currentLeverageTypeForAsset,
+    existingPosition,
+    _tradeSide,
+    reduceOnly,
+    currentLeverageForAsset,
+    maxLeverage,
     isUnifiedAccountModeEnabled,
   ])
-
   return (
     <StatItem
       title={title ?? 'Liquidation Price'}
