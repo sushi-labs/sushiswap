@@ -1,12 +1,14 @@
 'use client'
 import { notification } from '@nktkas/hyperliquid/api/subscription'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import type { EvmAddress } from 'sushi/evm'
 import { hlWebSocketTransport } from '../transports'
 
 export const useUserNotifications = ({ address }: { address?: EvmAddress }) => {
   const queryClient = useQueryClient()
+  const skipFirst = useRef(true)
+
   const query = useQuery<string>({
     queryKey: ['useUserNotifications', address],
     staleTime: Number.POSITIVE_INFINITY,
@@ -15,17 +17,22 @@ export const useUserNotifications = ({ address }: { address?: EvmAddress }) => {
 
   useEffect(() => {
     if (!address) return
+
+    skipFirst.current = true
     let unsubscribe: undefined | (() => Promise<void>) = undefined
     ;(async () => {
       const sub = await notification(
         { transport: hlWebSocketTransport },
         { user: address },
         (userNotification) => {
+          if (skipFirst.current) {
+            skipFirst.current = false
+            return
+          }
+
           queryClient.setQueryData(
             ['useUserNotifications', address],
-            (_prevUserNotification: string | undefined) => {
-              return userNotification?.notification
-            },
+            userNotification?.notification,
           )
         },
       )
