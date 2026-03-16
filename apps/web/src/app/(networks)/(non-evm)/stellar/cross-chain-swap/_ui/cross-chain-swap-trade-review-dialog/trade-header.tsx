@@ -8,7 +8,7 @@ import {
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import {
-  useCrossChainTradeQuote,
+  useCrossChainTradeSwap,
   useDerivedStateCrossChainSwap,
 } from '../derivedstate-cross-chain-swap-provider'
 
@@ -16,20 +16,20 @@ export function TradeHeader() {
   const {
     state: { token0, token1, swapAmountString },
   } = useDerivedStateCrossChainSwap()
-  const { data: quote } = useCrossChainTradeQuote()
+  const { data: swap } = useCrossChainTradeSwap()
 
   const amountOut = useMemo(() => {
-    if (!quote?.quote || !token1) {
+    if (!swap?.quote || !token1) {
       return null
     }
 
-    const amountOutRaw = Number.parseFloat(quote.quote.amountOut)
+    const amountOutRaw = Number.parseFloat(swap.quote.amountOut)
     const amountOutFormatted = amountOutRaw / 10 ** token1.decimals
 
     return amountOutFormatted.toLocaleString(undefined, {
       maximumFractionDigits: 6,
     })
-  }, [quote, token1])
+  }, [swap, token1])
 
   return (
     <DialogHeader className="!text-left">

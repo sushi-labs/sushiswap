@@ -4,7 +4,7 @@ import { List, SkeletonText, classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { formatNumber, formatUSD } from 'sushi'
 import {
-  useCrossChainTradeQuote,
+  useCrossChainTradeSwap,
   useDerivedStateCrossChainSwap,
 } from '../derivedstate-cross-chain-swap-provider'
 
@@ -12,10 +12,10 @@ export function TradeDetails() {
   const {
     state: { slippageTolerance },
   } = useDerivedStateCrossChainSwap()
-  const { data: quote, isLoading } = useCrossChainTradeQuote()
+  const { data: swap, isLoading } = useCrossChainTradeSwap()
 
-  const executionDuration = quote?.quote?.timeEstimate
-    ? `${Math.ceil(quote.quote.timeEstimate / 60)} min`
+  const executionDuration = swap?.quote?.timeEstimate
+    ? `${Math.ceil(swap.quote.timeEstimate / 60)} min`
     : undefined
 
   return (
@@ -39,11 +39,11 @@ function TradeSummaryList({
   const {
     state: { token0, token1, swapAmountString },
   } = useDerivedStateCrossChainSwap()
-  const { data: quote } = useCrossChainTradeQuote()
+  const { data: swap } = useCrossChainTradeSwap()
 
   const { amountOut, amountOutUSD, minAmountOut, minAmountOutUSD } =
     useMemo(() => {
-      if (!quote?.quote || !token1) {
+      if (!swap?.quote || !token1) {
         return {
           amountOut: null,
           amountOutUSD: null,
@@ -52,13 +52,13 @@ function TradeSummaryList({
         }
       }
 
-      const amountOutRaw = Number.parseFloat(quote.quote.amountOut)
+      const amountOutRaw = Number.parseFloat(swap.quote.amountOut)
       const amountOutFormatted = amountOutRaw / 10 ** token1.decimals
 
-      const minAmountOutRaw = Number.parseFloat(quote.quote.minAmountOut)
+      const minAmountOutRaw = Number.parseFloat(swap.quote.minAmountOut)
       const minAmountOutFormatted = minAmountOutRaw / 10 ** token1.decimals
 
-      const amountOutUsdNum = Number.parseFloat(quote.quote.amountOutUsd)
+      const amountOutUsdNum = Number.parseFloat(swap.quote.amountOutUsd)
       const minAmountOutUSDValue =
         (minAmountOutRaw / amountOutRaw) * amountOutUsdNum
 
@@ -66,13 +66,13 @@ function TradeSummaryList({
         amountOut: amountOutFormatted.toLocaleString(undefined, {
           maximumFractionDigits: 8,
         }),
-        amountOutUSD: quote.quote.amountOutUsd,
+        amountOutUSD: swap.quote.amountOutUsd,
         minAmountOut: minAmountOutFormatted.toLocaleString(undefined, {
           maximumFractionDigits: 8,
         }),
         minAmountOutUSD: minAmountOutUSDValue.toString(),
       }
-    }, [quote, token1])
+    }, [swap, token1])
 
   return (
     <List>
