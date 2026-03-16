@@ -31,6 +31,7 @@ const formatPerpCtxs = (activeAssetCtxEvent: ActiveAssetCtxEvent) => {
     change24hAbs: changeAbs?.toString(),
     change24hPct: changePct?.toString(),
     fundingPct: ctx.funding,
+    funding1year: String(Number(ctx.funding) * 24 * 365),
     funding8hPct: String(Number(ctx.funding) * 8),
     openInterestUsd: String(openInterestUsd),
     volume24hUsd: ctx.dayNtlVlm ?? ctx.dayBaseVlm,
@@ -62,6 +63,7 @@ const formatSpotCtxs = (activeSpotAssetCtxEvent: ActiveSpotAssetCtxEvent) => {
     volume24hUsd: ctx.dayNtlVlm ?? ctx.dayBaseVlm,
     openInterestUsd: undefined,
     funding8hPct: undefined,
+    funding1year: undefined,
     fundingPct: undefined,
   }
 }

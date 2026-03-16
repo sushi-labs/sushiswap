@@ -172,13 +172,27 @@ export const PerpAssetStats = () => {
           </HoverCardContent>
         </HoverCard>
         <div className="flex items-center gap-2">
-          <p
-            className={classNames(
-              'text-sm tabular-nums font-medium whitespace-nowrap',
-            )}
-          >
-            {(Number(assetData?.fundingPct ?? 0) * 100).toFixed(4)}%
-          </p>
+          <HoverCard openDelay={0}>
+            <HoverCardTrigger asChild tabIndex={0}>
+              <p
+                className={classNames(
+                  'text-sm tabular-nums font-medium whitespace-nowrap',
+                )}
+              >
+                {(Number(assetData?.fundingPct ?? 0) * 100).toFixed(4)}%
+              </p>
+            </HoverCardTrigger>
+            <HoverCardContent
+              forceMount
+              side="top"
+              className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+            >
+              <p>
+                Annualized:{' '}
+                {(Number(assetData?.funding1year ?? 0) * 100).toFixed(4)}%
+              </p>
+            </HoverCardContent>
+          </HoverCard>
           <Countdown />
         </div>
       </div>
