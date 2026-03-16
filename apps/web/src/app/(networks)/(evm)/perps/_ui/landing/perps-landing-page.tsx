@@ -18,8 +18,7 @@ export const PerpsLandingPage = () => {
         <SushiBrandLogo className="w-32 md:w-44 h-12 text-[#2C2C2C] dark:text-white" />
         <Title />
         <p className="max-w-sm md:max-w-xl lg:max-w-[645px] text-center font-medium text-base md:text-lg lg:text-xl">
-          Pre-launch access is now open. Enter your Telegram and secure your
-          bonus before trading begins.
+          Enter your telegram to join the waitlist.
         </p>
         <div className="mt-2 w-full">
           <TelegramForm />
