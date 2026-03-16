@@ -20,6 +20,7 @@ import {
 import { formatUnits, parseUnits } from 'viem'
 import { CheckboxSetting, TableButton } from '../_common'
 import { useAssetListState } from '../asset-selector'
+import { PerpsChecker } from '../perps-checker'
 
 export const CloseAllPositionsDialog = ({
   trigger,
@@ -129,24 +130,31 @@ export const CloseAllPositionsDialog = ({
               label="Limit Close at Mid Price"
             />
           </div>
-
-          <Button
-            variant="perps-default"
-            onClick={async () =>
-              await executeOrdersAsync(
-                { orderData },
-                {
-                  onSuccess: () => {
-                    setOpen(false)
-                  },
-                },
-              )
-            }
-            loading={isPending}
-          >
-            Confirm{' '}
-            {closeType === 'market' ? 'Market Close' : 'Limit Close at Mid'}
-          </Button>
+          <PerpsChecker.Legal variant="perps-default">
+            <PerpsChecker.EnableTrading variant="perps-default">
+              <PerpsChecker.BuilderFee variant="perps-default">
+                <Button
+                  variant="perps-default"
+                  onClick={async () =>
+                    await executeOrdersAsync(
+                      { orderData },
+                      {
+                        onSuccess: () => {
+                          setOpen(false)
+                        },
+                      },
+                    )
+                  }
+                  loading={isPending}
+                >
+                  Confirm{' '}
+                  {closeType === 'market'
+                    ? 'Market Close'
+                    : 'Limit Close at Mid'}
+                </Button>
+              </PerpsChecker.BuilderFee>
+            </PerpsChecker.EnableTrading>
+          </PerpsChecker.Legal>
         </div>
       </DialogContent>
     </Dialog>

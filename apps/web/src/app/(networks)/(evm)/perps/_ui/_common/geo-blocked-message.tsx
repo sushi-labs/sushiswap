@@ -1,25 +1,29 @@
 'use client'
-import { LinkInternal, Message } from '@sushiswap/ui'
+import { LinkExternal, Message } from '@sushiswap/ui'
+import { useLegalCheck } from 'src/lib/perps'
+import { useAccount } from 'src/lib/wallet'
 
 export const GeoBlockedMessage = ({
   isGeoBlocked,
 }: {
   isGeoBlocked: boolean
 }) => {
+  const address = useAccount('evm')
+  const { data } = useLegalCheck({ address })
   return (
     <div
-      data-blocked={isGeoBlocked ? 'true' : 'false'}
+      data-blocked={isGeoBlocked || !data?.ipAllowed ? 'true' : 'false'}
       className="hidden data-[blocked=true]:block data-[blocked=true]:animate-slide"
     >
-      <Message variant="destructive">
+      <Message variant="destructive" className="!p-3 !text-xs !rounded-md">
         You are accessing our products and services from a restricted
         jurisdiction. We do not allow access from certain jurisdictions
         including locations subject to sanctions restrictions and other
         jurisdictions where our services are ineligible for use. For more
         information, see our{' '}
-        <LinkInternal href="#todo" className="underline">
-          Terms of Use
-        </LinkInternal>
+        <LinkExternal href="/legal/terms-of-service">
+          <span className="!text-red underline">Terms of Use</span>
+        </LinkExternal>
         . If you think this is an error, try refreshing the page or opening a
         support ticket.
       </Message>

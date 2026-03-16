@@ -1,5 +1,6 @@
 import { legalCheck } from '@nktkas/hyperliquid/api/info'
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import type { EvmAddress } from 'sushi/evm'
 import { hlHttpTransport } from '../transports'
 
@@ -24,5 +25,6 @@ export const useLegalCheck = ({
       )
     },
     enabled: !!address,
+    refetchInterval: ms('10000'),
   })
 }

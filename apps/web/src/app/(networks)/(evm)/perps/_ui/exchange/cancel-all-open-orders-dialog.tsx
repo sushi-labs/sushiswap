@@ -11,6 +11,7 @@ import {
 import { useMemo, useState } from 'react'
 import { useCancelOpenOrders, useUserOpenOrders } from 'src/lib/perps'
 import { TableButton } from '../_common'
+import { PerpsChecker } from '../perps-checker'
 
 export const CancelAllOpenOrdersDialog = () => {
   const [open, setOpen] = useState(false)
@@ -44,22 +45,28 @@ export const CancelAllOpenOrdersDialog = () => {
           <DialogDescription>Cancel all your open orders.</DialogDescription>
         </DialogHeader>
         <div className="flex flex-col mt-6">
-          <Button
-            variant="perps-default"
-            onClick={async () =>
-              await cancelOrdersAsync(
-                { cancelData: allCancelData },
-                {
-                  onSuccess: () => {
-                    setOpen(false)
-                  },
-                },
-              )
-            }
-            loading={isPending}
-          >
-            Confirm Cancel All
-          </Button>
+          <PerpsChecker.Legal variant="perps-default">
+            <PerpsChecker.EnableTrading variant="perps-default">
+              <PerpsChecker.BuilderFee variant="perps-default">
+                <Button
+                  variant="perps-default"
+                  onClick={async () =>
+                    await cancelOrdersAsync(
+                      { cancelData: allCancelData },
+                      {
+                        onSuccess: () => {
+                          setOpen(false)
+                        },
+                      },
+                    )
+                  }
+                  loading={isPending}
+                >
+                  Confirm Cancel All
+                </Button>
+              </PerpsChecker.BuilderFee>
+            </PerpsChecker.EnableTrading>
+          </PerpsChecker.Legal>
         </div>
       </DialogContent>
     </Dialog>

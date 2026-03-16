@@ -17,6 +17,7 @@ import {
 } from 'src/lib/perps'
 import { PercentageSlider } from '../_common'
 import { useAssetListState } from '../asset-selector'
+import { PerpsChecker } from '../perps-checker'
 
 export const UpdateLeverageDialog = ({
   trigger,
@@ -97,24 +98,30 @@ export const UpdateLeverageDialog = ({
               disabled={isLoading || isError || isPending}
               maxValue={maxLeverage}
             />
-            <Button
-              variant="perps-default"
-              onClick={async () =>
-                await updateLeverageAsync(
-                  { assetString, isCross, newLeverage },
-                  {
-                    onSuccess: () => {
-                      setOpen(false)
-                      setNewLeverage(newLeverage)
-                    },
-                  },
-                )
-              }
-              disabled={isLoading || isError || isPending}
-              loading={isPending}
-            >
-              Confirm
-            </Button>
+            <PerpsChecker.Legal variant="perps-default">
+              <PerpsChecker.EnableTrading variant="perps-default">
+                <PerpsChecker.BuilderFee variant="perps-default">
+                  <Button
+                    variant="perps-default"
+                    onClick={async () =>
+                      await updateLeverageAsync(
+                        { assetString, isCross, newLeverage },
+                        {
+                          onSuccess: () => {
+                            setOpen(false)
+                            setNewLeverage(newLeverage)
+                          },
+                        },
+                      )
+                    }
+                    disabled={isLoading || isError || isPending}
+                    loading={isPending}
+                  >
+                    Confirm
+                  </Button>
+                </PerpsChecker.BuilderFee>
+              </PerpsChecker.EnableTrading>
+            </PerpsChecker.Legal>
             <div className="bg-accent w-full h-[1px]" />
             <Message variant="warning" size="xs" className="!p-3 text-center">
               Setting a higher leverage increases the risk of liquidation.

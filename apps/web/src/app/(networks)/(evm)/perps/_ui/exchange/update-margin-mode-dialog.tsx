@@ -13,6 +13,7 @@ import { type ReactNode, useMemo, useState } from 'react'
 import { useUpdateLeverage } from 'src/lib/perps'
 import { CheckboxSetting } from '../_common'
 import { useAssetListState } from '../asset-selector'
+import { PerpsChecker } from '../perps-checker'
 
 export const UpdateMarginModeDialog = ({
   trigger,
@@ -111,32 +112,38 @@ export const UpdateMarginModeDialog = ({
               </p>
             </div>
 
-            <Button
-              variant="perps-default"
-              onClick={async () => {
-                await updateLeverageAsync(
-                  {
-                    assetString,
-                    isCross: newLeverageType === 'cross',
-                    newLeverage: currentLeverage,
-                  },
-                  {
-                    onSuccess: () => {
-                      setOpen(false)
-                    },
-                  },
-                )
-              }}
-              disabled={
-                isLoading ||
-                isError ||
-                isPending ||
-                newLeverageType === currentLeverageType
-              }
-              loading={isPending}
-            >
-              Confirm
-            </Button>
+            <PerpsChecker.Legal variant="perps-default">
+              <PerpsChecker.EnableTrading variant="perps-default">
+                <PerpsChecker.BuilderFee variant="perps-default">
+                  <Button
+                    variant="perps-default"
+                    onClick={async () => {
+                      await updateLeverageAsync(
+                        {
+                          assetString,
+                          isCross: newLeverageType === 'cross',
+                          newLeverage: currentLeverage,
+                        },
+                        {
+                          onSuccess: () => {
+                            setOpen(false)
+                          },
+                        },
+                      )
+                    }}
+                    disabled={
+                      isLoading ||
+                      isError ||
+                      isPending ||
+                      newLeverageType === currentLeverageType
+                    }
+                    loading={isPending}
+                  >
+                    Confirm
+                  </Button>
+                </PerpsChecker.BuilderFee>
+              </PerpsChecker.EnableTrading>
+            </PerpsChecker.Legal>
           </div>
         </div>
       </DialogContent>

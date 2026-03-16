@@ -16,6 +16,7 @@ import {
   useUpdateIsolatedMargin,
 } from 'src/lib/perps'
 import { IsolatedMarginInput, SideToggle, StatItem } from '../_common'
+import { PerpsChecker } from '../perps-checker'
 
 export const UpdateIsolatedMarginDialog = ({
   trigger,
@@ -110,23 +111,28 @@ export const UpdateIsolatedMarginDialog = ({
                 value={`${perpsNumberFormatter({ value: maxValue ?? '0', minFraxDigits: 2, maxFraxDigits: 2 })} USDC`}
               />
             </div>
-
-            <Button
-              variant="perps-default"
-              onClick={async () => {
-                if (!updateData) return
-                await updateIsolatedMarginAsync(updateData, {
-                  onSuccess: () => {
-                    setOpen(false)
-                    setAmount('')
-                  },
-                })
-              }}
-              loading={isPending}
-              disabled={!updateData || Number(amount) > Number(maxValue)}
-            >
-              Confirm
-            </Button>
+            <PerpsChecker.Legal variant="perps-default">
+              <PerpsChecker.EnableTrading variant="perps-default">
+                <PerpsChecker.BuilderFee variant="perps-default">
+                  <Button
+                    variant="perps-default"
+                    onClick={async () => {
+                      if (!updateData) return
+                      await updateIsolatedMarginAsync(updateData, {
+                        onSuccess: () => {
+                          setOpen(false)
+                          setAmount('')
+                        },
+                      })
+                    }}
+                    loading={isPending}
+                    disabled={!updateData || Number(amount) > Number(maxValue)}
+                  >
+                    Confirm
+                  </Button>
+                </PerpsChecker.BuilderFee>
+              </PerpsChecker.EnableTrading>
+            </PerpsChecker.Legal>
           </div>
         </div>
       </DialogContent>

@@ -263,9 +263,9 @@ export const MarketCloseDialog = ({
               label="Don't show this again"
             />
             {/* connect checker not needed, wont be able to get here unless connected anyway */}
-            <PerpsChecker.Legal>
-              <PerpsChecker.EnableTrading>
-                <PerpsChecker.BuilderFee>
+            <PerpsChecker.Legal variant="perps-default">
+              <PerpsChecker.EnableTrading variant="perps-default">
+                <PerpsChecker.BuilderFee variant="perps-default">
                   <Button
                     variant="perps-default"
                     onClick={async () => {

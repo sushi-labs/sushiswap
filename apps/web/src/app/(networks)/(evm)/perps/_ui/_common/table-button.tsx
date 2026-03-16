@@ -6,12 +6,12 @@ export const TableButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (
 ) => {
   return (
     <button
+      {...props}
       type="button"
       className={classNames(
-        'font-medium text-blue hover:text-blue/80 disabled:text-muted-foreground disabled:cursor-not-allowed',
+        'font-medium text-blue hover:text-blue/80 disabled:opacity-50 disabled:cursor-not-allowed',
         props.className ?? '',
       )}
-      {...props}
     >
       {props.children}
     </button>
