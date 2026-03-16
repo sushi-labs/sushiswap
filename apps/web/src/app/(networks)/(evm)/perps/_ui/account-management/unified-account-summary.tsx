@@ -40,7 +40,7 @@ export const UnifiedAccountSummary = () => {
             title={
               <HoverCard openDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
-                  <div className="text-muted-foreground underline">
+                  <div className="text-[#6A7282] underline">
                     Unified Account Ratio
                   </div>
                 </HoverCardTrigger>
@@ -106,7 +106,7 @@ export const UnifiedAccountSummary = () => {
             title={
               <HoverCard openDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
-                  <div className="text-muted-foreground underline whitespace-nowrap">
+                  <div className="text-[#6A7282] underline whitespace-nowrap">
                     Perps Maintenance Margin
                   </div>
                 </HoverCardTrigger>
@@ -128,7 +128,7 @@ export const UnifiedAccountSummary = () => {
             title={
               <HoverCard openDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
-                  <div className="text-muted-foreground underline">
+                  <div className="text-[#6A7282] underline">
                     Unified Account Leverage
                   </div>
                 </HoverCardTrigger>
