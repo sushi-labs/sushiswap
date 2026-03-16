@@ -381,10 +381,22 @@ export function calculateLossFromSl(input: LossFromSlInput): LossFromSlResult {
   const slPx = parseUnits(slPrice, decimals)
   const sizeScaled = parseUnits(positionSize, decimals)
 
-  if (entryPx <= 0n) throw new Error('entryPrice must be > 0')
-  if (slPx <= 0n) throw new Error('slPrice must be > 0')
-  if (sizeScaled <= 0n) throw new Error('positionSize must be > 0')
-  if (leverage <= 0n) throw new Error('leverage must be > 0')
+  if (entryPx <= 0n) {
+    console.warn('entryPrice must be > 0')
+    return { lossUsd: '0', lossPercent: '0' }
+  }
+  if (slPx <= 0n) {
+    console.warn('slPrice must be > 0')
+    return { lossUsd: '0', lossPercent: '0' }
+  }
+  if (sizeScaled <= 0n) {
+    console.warn('positionSize must be > 0')
+    return { lossUsd: '0', lossPercent: '0' }
+  }
+  if (leverage <= 0n) {
+    console.warn('leverage must be > 0')
+    return { lossUsd: '0', lossPercent: '0' }
+  }
 
   // priceDiff is positive when SL represents a LOSS
   // short loss: sl > entry => sl - entry

@@ -32,7 +32,7 @@ export const useUserFundings = ({ address }: { address?: EvmAddress }) => {
               const combinedFundings = Array.from(
                 new Map(
                   [...fundings, ...prevFundings].map((funding) => [
-                    funding.time,
+                    `${funding.time}-${funding.coin}`,
                     funding,
                   ]),
                 ).values(),

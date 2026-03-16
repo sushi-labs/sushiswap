@@ -13,7 +13,7 @@ export const GeoBlockedMessage = ({
   return (
     <div
       data-blocked={isGeoBlocked || !data?.ipAllowed ? 'true' : 'false'}
-      className="hidden data-[blocked=true]:block data-[blocked=true]:animate-slide"
+      className="hidden data-[blocked=true]:block data-[blocked=true]:animate-slide fixed w-screen top-[56px] z-50 flexitems-center justify-center bg-background"
     >
       <Message
         variant="destructive"
