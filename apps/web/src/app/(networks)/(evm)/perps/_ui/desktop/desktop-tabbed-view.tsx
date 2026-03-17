@@ -36,12 +36,12 @@ export const DesktopTabbedView = ({
         value={tab}
         onValueChange={(value) => setTab(value as DesktopTab)}
       >
-        <TabsList className="!flex bg-transparent">
+        <TabsList className="!flex bg-transparent !rounded-[13px] !px-[1px]">
           <TabsTrigger value="order-book" className="flex flex-1" asChild>
             <Button
               size="sm"
               variant={tab === 'order-book' ? 'perps-secondary' : 'ghost'}
-              className="!p-0 w-full col-span-1 capitalize !text-xs !rounded-md"
+              className="!p-0 w-full col-span-1 capitalize !text-xs"
             >
               Order Book
             </Button>
@@ -50,7 +50,7 @@ export const DesktopTabbedView = ({
             <Button
               size="sm"
               variant={tab === 'trades' ? 'perps-secondary' : 'ghost'}
-              className="!p-0 w-full col-span-1 capitalize !text-xs !rounded-md"
+              className="!p-0 w-full col-span-1 capitalize !text-xs"
             >
               Trades
             </Button>
