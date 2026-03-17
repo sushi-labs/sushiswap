@@ -3,6 +3,7 @@ import '@sushiswap/ui/index.css'
 import { ToastContainer } from '@sushiswap/notifications'
 import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
+import localFont from 'next/font/local'
 import type React from 'react'
 import { Trackers } from './trackers'
 import { UtilityButtons } from './utility-buttons'
@@ -17,6 +18,12 @@ const roboto_mono = Roboto_Mono({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-roboto-mono',
+})
+
+const lufga = localFont({
+  src: '../../public/fonts/LufgaRegular.ttf',
+  variable: '--font-lufga',
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -51,7 +58,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${roboto_mono.variable} dark`}
+      className={`${inter.variable} ${roboto_mono.variable} ${lufga.variable} dark`}
       suppressHydrationWarning
     >
       <head>
