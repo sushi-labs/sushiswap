@@ -9,10 +9,14 @@ export const GeoBlockedMessage = ({
   isGeoBlocked: boolean
 }) => {
   const address = useAccount('evm')
-  const { data } = useLegalCheck({ address })
+  const { data, isLoading, error } = useLegalCheck({ address })
   return (
     <div
-      data-blocked={isGeoBlocked || !data?.ipAllowed ? 'true' : 'false'}
+      data-blocked={
+        isGeoBlocked || (!data?.ipAllowed && !isLoading && !error)
+          ? 'true'
+          : 'false'
+      }
       className="hidden data-[blocked=true]:block data-[blocked=true]:animate-slide fixed w-screen top-[56px] z-50 flexitems-center justify-center bg-background"
     >
       <Message
