@@ -34,7 +34,14 @@ import { PerpsChecker } from '../perps-checker'
 export const LimitCloseDialog = ({
   positionToClose,
   trigger,
-}: { positionToClose: UserPositionsItemType; trigger?: ReactNode }) => {
+  isOpen,
+  onOpenChange,
+}: {
+  positionToClose: UserPositionsItemType
+  trigger?: ReactNode
+  isOpen?: boolean
+  onOpenChange?: (open: boolean) => void
+}) => {
   const [open, setOpen] = useState(false)
   const [sizeSide, setSizeSide] = useState<'base' | 'quote'>('base')
   const [percentToClose, setPercentToClose] = useState(100)
@@ -221,9 +228,13 @@ export const LimitCloseDialog = ({
 
   return (
     <Dialog
-      open={open}
+      open={isOpen !== undefined ? isOpen : open}
       onOpenChange={(state) => {
-        setOpen(state)
+        if (onOpenChange) {
+          onOpenChange(state)
+        } else {
+          setOpen(state)
+        }
       }}
     >
       <DialogTrigger asChild>
@@ -289,6 +300,7 @@ export const LimitCloseDialog = ({
                         {
                           onSuccess: () => {
                             setOpen(false)
+                            if (onOpenChange) onOpenChange(false)
                           },
                         },
                       )

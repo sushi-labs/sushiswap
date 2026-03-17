@@ -10,7 +10,13 @@ import {
   DialogTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { type ReactNode, useEffect, useMemo, useState } from 'react'
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import {
   BUILDER_FEE_PERPS,
   type TpSlGainLossType,
@@ -42,7 +48,14 @@ import { CancelOpenOrder } from './cancel-open-order'
 export const EditTpSlPositionDialog = ({
   positionToClose,
   trigger,
-}: { positionToClose: UserPositionsItemType; trigger?: ReactNode }) => {
+  isOpen,
+  onOpenChange,
+}: {
+  positionToClose: UserPositionsItemType
+  trigger?: ReactNode
+  isOpen?: boolean
+  onOpenChange?: (open: boolean) => void
+}) => {
   const [open, setOpen] = useState(false)
   const [tpPrice, setTpPrice] = useState<string>('')
   const [slPrice, setSlPrice] = useState<string>('')
@@ -267,13 +280,22 @@ export const EditTpSlPositionDialog = ({
     return lossUsd
   }, [positionToClose, existingSlOrder, asset, entryPrice, positionSize])
 
+  const isControlled = isOpen !== undefined
+  const resolvedOpen = isControlled ? isOpen : open
+
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (isControlled) {
+        onOpenChange?.(nextOpen)
+      } else {
+        setOpen(nextOpen)
+      }
+    },
+    [isControlled, onOpenChange],
+  )
+
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(state) => {
-        setOpen(state)
-      }}
-    >
+    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {trigger ? (
           trigger
@@ -443,7 +465,7 @@ export const EditTpSlPositionDialog = ({
                             { orderData },
                             {
                               onSuccess: () => {
-                                setOpen(false)
+                                handleOpenChange(false)
                               },
                             },
                           )

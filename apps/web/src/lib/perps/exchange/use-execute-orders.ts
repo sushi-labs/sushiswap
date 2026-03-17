@@ -5,6 +5,7 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
+import { execute } from 'porto/viem/ContractActions'
 import { useAccount } from 'src/lib/wallet'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useAgent } from '../agent'
@@ -168,6 +169,7 @@ export const useExecuteOrders = () => {
 
   return {
     executeOrdersAsync: mutation.mutateAsync,
+    executeOrders: mutation.mutate,
     isPending: mutation.isPending,
   }
 }

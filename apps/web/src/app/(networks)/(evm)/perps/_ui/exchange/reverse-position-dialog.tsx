@@ -9,7 +9,7 @@ import {
   DialogTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { type ReactNode, useMemo, useState } from 'react'
+import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import {
   BUILDER_FEE_PERPS,
   type UserPositionsItemType,
@@ -32,7 +32,14 @@ import { PerpsChecker } from '../perps-checker'
 export const ReversePositionDialog = ({
   positionToClose,
   trigger,
-}: { positionToClose: UserPositionsItemType; trigger?: ReactNode }) => {
+  isOpen,
+  onOpenChange,
+}: {
+  positionToClose: UserPositionsItemType
+  trigger?: ReactNode
+  isOpen?: boolean
+  onOpenChange?: (open: boolean) => void
+}) => {
   const [open, setOpen] = useState(false)
   const {
     state: { quickCloseReversePositionEnabled },
@@ -130,27 +137,26 @@ export const ReversePositionDialog = ({
     })
   }, [positionToClose, asset, perpsEquity])
 
+  const isControlled = isOpen !== undefined
+  const resolvedOpen = isControlled ? isOpen : open
+
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (isControlled) {
+        onOpenChange?.(nextOpen)
+      } else {
+        setOpen(nextOpen)
+      }
+    },
+    [isControlled, onOpenChange],
+  )
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(state) => {
-        if (quickCloseReversePositionEnabled && !open) return
-        setOpen(state)
-      }}
-    >
+    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {trigger ? (
           trigger
         ) : (
-          <TableButton
-            disabled={isPending || !positionToClose}
-            onClick={async () => {
-              if (quickCloseReversePositionEnabled) {
-                if (!orderData) return
-                await executeOrdersAsync({ orderData })
-              }
-            }}
-          >
+          <TableButton disabled={isPending || !positionToClose}>
             Reverse
           </TableButton>
         )}
@@ -234,7 +240,7 @@ export const ReversePositionDialog = ({
                         { orderData },
                         {
                           onSuccess: () => {
-                            setOpen(false)
+                            handleOpenChange(false)
                           },
                         },
                       )

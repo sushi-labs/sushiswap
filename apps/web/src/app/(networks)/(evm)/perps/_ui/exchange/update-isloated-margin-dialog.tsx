@@ -21,9 +21,13 @@ import { PerpsChecker } from '../perps-checker'
 export const UpdateIsolatedMarginDialog = ({
   trigger,
   position,
+  isOpen,
+  onOpenChange,
 }: {
   trigger: ReactNode
   position: UserPositionsItemType
+  isOpen?: boolean
+  onOpenChange?: (open: boolean) => void
 }) => {
   const [open, setOpen] = useState(false)
   const [type, setType] = useState<'add' | 'remove'>('add')
@@ -67,13 +71,22 @@ export const UpdateIsolatedMarginDialog = ({
     }
   }, [type, position.position.coin, position.side, amount])
 
+  const isControlled = isOpen !== undefined
+  const resolvedOpen = isControlled ? isOpen : open
+
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (isControlled) {
+        onOpenChange?.(nextOpen)
+      } else {
+        setOpen(nextOpen)
+      }
+    },
+    [isControlled, onOpenChange],
+  )
+
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(open) => {
-        setOpen(open)
-      }}
-    >
+    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent variant="perps-default">
         <DialogHeader>
@@ -120,7 +133,7 @@ export const UpdateIsolatedMarginDialog = ({
                       if (!updateData) return
                       await updateIsolatedMarginAsync(updateData, {
                         onSuccess: () => {
-                          setOpen(false)
+                          handleOpenChange(false)
                           setAmount('')
                         },
                       })

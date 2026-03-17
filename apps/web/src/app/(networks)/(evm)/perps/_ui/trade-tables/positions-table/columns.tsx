@@ -22,18 +22,20 @@ import { TableButton } from '../../_common'
 import { useUserSettingsState } from '../../account-management'
 import {
   CloseAllPositionsDialog,
-  EditTpSlPositionDialog,
-  LimitCloseDialog,
-  MarketCloseDialog,
-  ReversePositionDialog,
   UpdateIsolatedMarginDialog,
-  UpdateLeverageDialog,
 } from '../../exchange'
+import { MarketQuickClose } from '../../exchange/market-quick-close'
+import { ReverseQuick } from '../../exchange/reverse-quick'
 import { useAssetState } from '../../trade-widget'
 import { columnBodyMeta } from '../_common'
 import { useTradeTables } from '../trade-tables-provider'
 
-export const COIN_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
+export const COIN_COLUMN = (
+  openModal: (
+    action: 'update-leverage',
+    position: UserPositionsItemType,
+  ) => void,
+): ColumnDef<UserPositionsItemType, unknown> => ({
   id: 'coin',
   header: 'Coin',
   accessorFn: (row) => row.assetSymbol,
@@ -47,8 +49,6 @@ export const COIN_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     const symbol =
       props.row.original.assetSymbol?.split(':')?.[1] ||
       props.row.original.assetSymbol
-    const currentLeverage = props.row.original.position.leverage.value
-    const isCross = props.row.original.position.leverage.type === 'cross'
 
     const side = props.row.original.side
 
@@ -75,30 +75,24 @@ export const COIN_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
             </Chip>
           ) : null}
         </button>
-        <UpdateLeverageDialog
-          assetString={coin}
-          currentLeverage={currentLeverage}
-          isCross={isCross}
-          trigger={
-            <button
-              type="button"
-              className={classNames(
-                'font-bold lg:whitespace-nowrap transition-colors',
-                getTextColorClass(side === 'A' ? -1 : 1),
-              )}
-            >
-              {`${props.row.original.position.leverage.value}x`}
-            </button>
-          }
-        />
+
+        <button
+          onClick={() => openModal('update-leverage', props.row.original)}
+          type="button"
+          className={classNames(
+            'font-bold lg:whitespace-nowrap transition-colors',
+            getTextColorClass(side === 'A' ? -1 : 1),
+          )}
+        >
+          {`${props.row.original.position.leverage.value}x`}
+        </button>
       </div>
     )
   },
   meta: {
     body: columnBodyMeta,
   },
-}
-
+})
 export const SIZE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   id: 'size',
   header: 'Size',
@@ -200,7 +194,6 @@ export const PNL_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
         </div>
       </HoverCardTrigger>
       <HoverCardContent
-        forceMount
         side="top"
         className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
       >
@@ -274,7 +267,9 @@ export const LIQUIDATION_PRICE_COLUMN: ColumnDef<
     body: columnBodyMeta,
   },
 }
-export const MARGIN_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
+export const MARGIN_COLUMN = (
+  openModal: (action: 'update-margin', position: UserPositionsItemType) => void,
+): ColumnDef<UserPositionsItemType, unknown> => ({
   id: 'margin',
   header: () => (
     <HoverCard openDelay={0}>
@@ -310,24 +305,24 @@ export const MARGIN_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
       )
     }
     return (
-      <UpdateIsolatedMarginDialog
-        position={props.row.original}
-        trigger={
-          <button type="button" className="flex items-center gap-2">
-            <span className="font-medium lg:whitespace-nowrap capitalize">
-              {currencyFormatter.format(Number.parseFloat(marginUsed ?? '0'))} (
-              {marginType})
-            </span>
-            <PencilIcon className="w-4 h-4 text-blue" />
-          </button>
-        }
-      />
+      <button
+        type="button"
+        className="flex items-center gap-2"
+        onClick={() => openModal('update-margin', props.row.original)}
+      >
+        <span className="font-medium lg:whitespace-nowrap capitalize">
+          {currencyFormatter.format(Number.parseFloat(marginUsed ?? '0'))} (
+          {marginType})
+        </span>
+        <PencilIcon className="w-4 h-4 text-blue" />
+      </button>
     )
   },
   meta: {
     body: columnBodyMeta,
   },
-}
+})
+
 export const FUNDING_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   id: 'funding',
   header: () => (
@@ -340,7 +335,6 @@ export const FUNDING_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
         </div>
       </HoverCardTrigger>
       <HoverCardContent
-        forceMount
         side="top"
         className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
       >
@@ -380,7 +374,6 @@ export const FUNDING_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
           </div>
         </HoverCardTrigger>
         <HoverCardContent
-          forceMount
           side="top"
           className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
         >
@@ -399,28 +392,53 @@ export const FUNDING_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   },
 }
 
-export const CLOSE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
-  id: 'Close',
-  header: () => {
-    return <CloseAllPositionsDialog />
-  },
+export const CLOSE_COLUMN = (
+  openModal: (
+    action: 'limit-close' | 'market-close' | 'reverse',
+    position: UserPositionsItemType,
+  ) => void,
+): ColumnDef<UserPositionsItemType, unknown> => ({
+  id: 'close',
+  header: () => <CloseAllPositionsDialog />,
   cell: (props) => {
-    const position = useMemo(() => props.row.original, [props.row.original])
+    const position = props.row.original
+    const {
+      state: {
+        quickCloseMarketPositionEnabled,
+        quickCloseReversePositionEnabled,
+      },
+    } = useUserSettingsState()
 
     return (
       <div className="flex items-center gap-4">
-        <LimitCloseDialog positionToClose={position} />
-        <MarketCloseDialog positionToClose={position} />
-        <ReversePositionDialog positionToClose={position} />
+        <TableButton onClick={() => openModal('limit-close', position)}>
+          Limit
+        </TableButton>
+        {quickCloseMarketPositionEnabled ? (
+          <MarketQuickClose position={position} />
+        ) : (
+          <TableButton onClick={() => openModal('market-close', position)}>
+            Market
+          </TableButton>
+        )}
+        {quickCloseReversePositionEnabled ? (
+          <ReverseQuick position={position} />
+        ) : (
+          <TableButton onClick={() => openModal('reverse', position)}>
+            Reverse
+          </TableButton>
+        )}
       </div>
     )
   },
   meta: {
     body: columnBodyMeta,
   },
-}
+})
 
-export const TP_SL_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
+export const TP_SL_COLUMN = (
+  openModal: (action: 'edit-tpsl', position: UserPositionsItemType) => void,
+): ColumnDef<UserPositionsItemType, unknown> => ({
   id: 'tpSl',
   header: 'TP/SL',
   cell: (props) => {
@@ -429,14 +447,16 @@ export const TP_SL_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     return (
       <div className="flex items-center gap-4 lg:whitespace-nowrap">
         <ViewOrders coin={position.position.coin} />
-        <EditTpSlPositionDialog positionToClose={position} />
+        <TableButton onClick={() => openModal('edit-tpsl', position)}>
+          <PencilIcon className="w-4 h-4" />
+        </TableButton>
       </div>
     )
   },
   meta: {
     body: columnBodyMeta,
   },
-}
+})
 
 const ViewOrders = ({ coin }: { coin: string }) => {
   const {

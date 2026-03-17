@@ -24,11 +24,15 @@ export const UpdateLeverageDialog = ({
   assetString,
   currentLeverage,
   isCross,
+  isOpen,
+  onOpenChange,
 }: {
   trigger: ReactNode
   assetString: string
   currentLeverage: number
   isCross: boolean
+  isOpen?: boolean
+  onOpenChange?: (open: boolean) => void
 }) => {
   const [open, setOpen] = useState(false)
   const [newLeverage, setNewLeverage] = useState<number>(currentLeverage)
@@ -66,13 +70,22 @@ export const UpdateLeverageDialog = ({
     [maxLeverage],
   )
 
+  const isControlled = isOpen !== undefined
+  const resolvedOpen = isControlled ? isOpen : open
+
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (isControlled) {
+        onOpenChange?.(nextOpen)
+      } else {
+        setOpen(nextOpen)
+      }
+    },
+    [isControlled, onOpenChange],
+  )
+
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(open) => {
-        setOpen(open)
-      }}
-    >
+    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent variant="perps-default">
         <DialogHeader>
@@ -108,7 +121,7 @@ export const UpdateLeverageDialog = ({
                         { assetString, isCross, newLeverage },
                         {
                           onSuccess: () => {
-                            setOpen(false)
+                            handleOpenChange(false)
                             setNewLeverage(newLeverage)
                           },
                         },
