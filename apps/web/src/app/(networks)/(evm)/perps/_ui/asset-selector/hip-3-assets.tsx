@@ -122,7 +122,10 @@ export const HIP3Assets = () => {
           </TabsTrigger>
         ))}
       </TabsList>
-      <TabsContent value={selectedTab}>
+      <TabsContent
+        value={selectedTab}
+        className="max-h-[calc(80vh-215px)] md:max-h-[calc(80vh-240px)] overflow-auto"
+      >
         <DataTable
           state={state}
           onSortingChange={setSorting}

@@ -29,7 +29,7 @@ export const SYMBOL_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
   cell: (props) => {
     const asset = useMemo(() => props.row.original, [props.row.original])
     return (
-      <div className="whitespace-nowrap flex flex-col lg:flex-row lg:items-center gap-1">
+      <div className="whitespace-nowrap flex flex-col lg:flex-row lg:items-center lg:gap-1 pb-1 lg:pb-0">
         <div className="flex items-center gap-1">
           <FavoriteButton assetString={asset.name} />
           <span>{asset.symbol}</span>

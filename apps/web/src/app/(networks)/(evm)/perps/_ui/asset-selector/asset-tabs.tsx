@@ -1,5 +1,11 @@
 import { useLocalStorage } from '@sushiswap/hooks'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  classNames,
+} from '@sushiswap/ui'
 import { AllAssets } from './all-assets'
 import { FavoriteAssets } from './favorite-assets'
 import { HIP3Assets } from './hip-3-assets'
@@ -32,7 +38,14 @@ export const AssetTabs = () => {
           </TabsTrigger>
         ))}
       </TabsList>
-      <div className="max-h-[calc(80vh-175px)] md:max-h-[calc(80vh-200px)] mt-2 overflow-auto">
+      <div
+        className={classNames(
+          'mt-2',
+          selectedTab !== 'HIP-3' && selectedTab !== 'spot'
+            ? 'max-h-[calc(80vh-175px)] md:max-h-[calc(80vh-200px)] overflow-auto'
+            : '',
+        )}
+      >
         <TabsContent value="all">
           <AllAssets />
         </TabsContent>
