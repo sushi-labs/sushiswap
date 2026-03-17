@@ -1,19 +1,17 @@
+import PencilIcon from '@heroicons/react/20/solid/PencilIcon'
+import { useBreakpoint } from '@sushiswap/hooks'
 import { Chip, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
-import { useMemo } from 'react'
+import { memo, useCallback, useMemo, useState } from 'react'
 import {
   type UserOpenOrdersItemType,
-  formatPrice,
-  formatSize,
   getTextColorClass,
   getTextColorClassForHover,
   perpsNumberFormatter,
-  useModifyOrder,
-  usePrepModifyOrderData,
 } from 'src/lib/perps'
-import { InlineEdit } from '../../_common'
-import { CancelAllOpenOrdersDialog, CancelOpenOrder } from '../../exchange'
+import { InlineEdit, TableButton } from '../../_common'
+import { CancelAllOpenOrdersDialog } from '../../exchange'
 import { useAssetState } from '../../trade-widget'
 import { ViewTpSlDialog, columnBodyMeta } from '../_common'
 
@@ -137,20 +135,27 @@ export const DIRECTION_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
   },
 }
 
-export const SIZE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
+export const SIZE_COLUMN = ({
+  handleConfirmModify,
+  isModifyPending,
+}: {
+  handleConfirmModify: (
+    openOrder: UserOpenOrdersItemType,
+    newValue: string,
+    type: 'size' | 'price',
+  ) => void
+  isModifyPending: boolean
+}): ColumnDef<UserOpenOrdersItemType, unknown> => ({
   id: 'size',
   header: 'Size',
   accessorFn: (row) => row.sz,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     Number.parseFloat(rowA.sz) - Number.parseFloat(rowB.sz),
   cell: (props) => {
-    const size = props.row.original.sz
-    const decimals = props.row.original.szDecimals
-    const isTrigger = props.row.original.isTrigger
-    const currentOrderData = usePrepModifyOrderData({
-      openOrder: props.row.original,
-    })
-    const { modifyOrder, isPending } = useModifyOrder()
+    const [isEditing, setIsEditing] = useState(false)
+    const order = props.row.original
+    const size = order.sz
+    const isTrigger = order.isTrigger
 
     if (size === '0.0') {
       return (
@@ -160,31 +165,35 @@ export const SIZE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
       )
     }
 
+    if (!isEditing) {
+      return (
+        <div className="flex  whitespace-nowrap items-center gap-1">
+          <span className="font-medium">{size}</span>
+          <TableButton onClick={() => setIsEditing(true)} type="button">
+            <PencilIcon className="w-4 h-4" />
+          </TableButton>
+        </div>
+      )
+    }
+
     return (
       <InlineEdit
         value={perpsNumberFormatter({ value: size })}
         rawValue={size}
         onConfirm={(newValue) => {
-          if (!currentOrderData) return
-          if (decimals === undefined) return
-          try {
-            const newSize = formatSize(newValue, decimals)
-            modifyOrder({
-              ...currentOrderData,
-              size: newSize,
-            })
-          } catch (e) {
-            console.error('Failed to modify order size', e)
-          }
+          handleConfirmModify(order, newValue, 'size')
+          setIsEditing(false)
         }}
-        isPending={isPending}
+        isPending={isModifyPending}
+        isEditing={isEditing}
       />
     )
   },
   meta: {
     body: columnBodyMeta,
   },
-}
+})
+
 export const OG_SIZE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
   id: 'ogSize',
   header: 'Original Size',
@@ -238,24 +247,41 @@ export const VALUE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
   },
 }
 
-export const PRICE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
+export const PRICE_COLUMN = ({
+  handleConfirmModify,
+  isModifyPending,
+}: {
+  handleConfirmModify: (
+    openOrder: UserOpenOrdersItemType,
+    newValue: string,
+    type: 'size' | 'price',
+  ) => void
+  isModifyPending: boolean
+}): ColumnDef<UserOpenOrdersItemType, unknown> => ({
   id: 'price',
   header: 'Price',
   accessorFn: (row) => row.limitPx,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     Number.parseFloat(rowA.limitPx) - Number.parseFloat(rowB.limitPx),
   cell: (props) => {
-    const price = props.row.original.limitPx
-    const decimals = props.row.original.szDecimals
-    const marketType = props.row.original.marketType
-    const currentOrderData = usePrepModifyOrderData({
-      openOrder: props.row.original,
-    })
+    const [isEditing, setIsEditing] = useState(false)
+    const order = props.row.original
+    const price = order.limitPx
 
-    const { modifyOrder, isPending } = useModifyOrder()
-    const isMarketPrice = props.row.original.orderType.includes('Market')
+    const isMarketPrice = order.orderType.includes('Market')
     if (isMarketPrice) {
       return <span className="font-medium lg:whitespace-nowrap">Market</span>
+    }
+
+    if (!isEditing) {
+      return (
+        <div className="flex  whitespace-nowrap items-center gap-1">
+          <span className="font-medium">{price}</span>
+          <TableButton onClick={() => setIsEditing(true)} type="button">
+            <PencilIcon className="w-4 h-4" />
+          </TableButton>
+        </div>
+      )
     }
 
     return (
@@ -263,26 +289,18 @@ export const PRICE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
         value={perpsNumberFormatter({ value: price })}
         rawValue={price}
         onConfirm={(newValue) => {
-          if (!currentOrderData) return
-          if (decimals === undefined) return
-          try {
-            const newPrice = formatPrice(newValue, decimals, marketType)
-            modifyOrder({
-              ...currentOrderData,
-              price: newPrice,
-            })
-          } catch (e) {
-            console.error('Failed to modify order price', e)
-          }
+          handleConfirmModify(order, newValue, 'price')
+          setIsEditing(false)
         }}
-        isPending={isPending}
+        isPending={isModifyPending}
+        isEditing={isEditing}
       />
     )
   },
   meta: {
     body: columnBodyMeta,
   },
-}
+})
 
 export const REDUCE_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
   id: 'reduceOnly',
@@ -351,27 +369,57 @@ export const TP_SL_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
   },
 }
 
-export const CANCEL_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
+export const CANCEL_COLUMN = ({
+  onCancelOrder,
+  isCancelPending,
+}: {
+  onCancelOrder: (order: UserOpenOrdersItemType) => void
+  isCancelPending: boolean
+}): ColumnDef<UserOpenOrdersItemType, unknown> => ({
   id: 'cancel',
-  header: () => {
-    return (
-      <div>
-        <div className="block lg:hidden">Cancel Order</div>
-        <div className="hidden lg:block">
-          <CancelAllOpenOrdersDialog />
-        </div>
-      </div>
-    )
-  },
+  header: () => <CancelColumnHeader />,
   cell: (props) => {
     return (
-      <CancelOpenOrder
-        orderId={props.row.original.oid}
-        coin={props.row.original.coin}
+      <CancelOrderCell
+        order={props.row.original}
+        onCancelOrder={onCancelOrder}
+        isCancelPending={isCancelPending}
       />
     )
+    // return (
+    //   <CancelOpenOrder
+    //     orderId={props.row.original.oid}
+    //     coin={props.row.original.coin}
+    //   />
+    // )
   },
   meta: {
     body: columnBodyMeta,
   },
+})
+
+const CancelColumnHeader = () => {
+  const { isLg } = useBreakpoint('lg')
+
+  return isLg ? <CancelAllOpenOrdersDialog /> : <div>Cancel Order</div>
 }
+
+const CancelOrderCell = memo(function CancelOrderCell({
+  order,
+  onCancelOrder,
+  isCancelPending,
+}: {
+  order: UserOpenOrdersItemType
+  onCancelOrder: (order: UserOpenOrdersItemType) => void
+  isCancelPending: boolean
+}) {
+  const handleClick = useCallback(() => {
+    onCancelOrder(order)
+  }, [onCancelOrder, order])
+
+  return (
+    <TableButton onClick={handleClick} disabled={isCancelPending}>
+      Cancel
+    </TableButton>
+  )
+})

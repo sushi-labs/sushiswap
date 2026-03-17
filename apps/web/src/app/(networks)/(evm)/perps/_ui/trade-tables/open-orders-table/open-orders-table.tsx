@@ -1,7 +1,15 @@
 import { DataTable, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
-import { useMemo, useState } from 'react'
-import { type UserOpenOrdersItemType, useUserOpenOrders } from 'src/lib/perps'
+import { useCallback, useMemo, useState } from 'react'
+import {
+  type UserOpenOrdersItemType,
+  formatPrice,
+  formatSize,
+  prepModidyOrderData,
+  useCancelOpenOrders,
+  useModifyOrder,
+  useUserOpenOrders,
+} from 'src/lib/perps'
 import { MobileTable } from '../_common'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {
@@ -19,35 +27,60 @@ import {
   VALUE_COLUMN,
 } from './columns'
 
-const COLUMNS = [
-  TIME_COLUMN,
-  TYPE_COLUMN,
-  COIN_COLUMN,
-  DIRECTION_COLUMN,
-  SIZE_COLUMN,
-  OG_SIZE_COLUMN,
-  VALUE_COLUMN,
-  PRICE_COLUMN,
-  REDUCE_COLUMN,
-  TRIGGER_CONDITIONS_COLUMN,
-  TP_SL_COLUMN,
-  CANCEL_COLUMN,
-] as ColumnDef<UserOpenOrdersItemType, unknown>[]
-
-const MOBILE_COLUMNS = [
-  COIN_COLUMN,
-  TYPE_COLUMN,
-  SIZE_COLUMN,
-  TIME_COLUMN,
-  DIRECTION_COLUMN,
-  OG_SIZE_COLUMN,
-  VALUE_COLUMN,
-  PRICE_COLUMN,
-  REDUCE_COLUMN,
-  TRIGGER_CONDITIONS_COLUMN,
-  TP_SL_COLUMN,
-  CANCEL_COLUMN,
-] as ColumnDef<UserOpenOrdersItemType, unknown>[]
+const getOpenOrdersColumns = ({
+  handleConfirmModify,
+  isModifyPending,
+  isMobile,
+  handleCancelOrder,
+  isCancelPending,
+}: {
+  handleConfirmModify: (
+    openOrder: UserOpenOrdersItemType,
+    newValue: string,
+    type: 'size' | 'price',
+  ) => void
+  isModifyPending: boolean
+  isMobile: boolean
+  handleCancelOrder: (order: UserOpenOrdersItemType) => void
+  isCancelPending: boolean
+}): ColumnDef<UserOpenOrdersItemType, unknown>[] => {
+  if (isMobile) {
+    return [
+      COIN_COLUMN,
+      TYPE_COLUMN,
+      SIZE_COLUMN({ handleConfirmModify, isModifyPending }),
+      TIME_COLUMN,
+      DIRECTION_COLUMN,
+      OG_SIZE_COLUMN,
+      VALUE_COLUMN,
+      PRICE_COLUMN({ handleConfirmModify, isModifyPending }),
+      REDUCE_COLUMN,
+      TRIGGER_CONDITIONS_COLUMN,
+      TP_SL_COLUMN,
+      CANCEL_COLUMN({
+        onCancelOrder: handleCancelOrder,
+        isCancelPending,
+      }),
+    ]
+  }
+  return [
+    TIME_COLUMN,
+    TYPE_COLUMN,
+    COIN_COLUMN,
+    DIRECTION_COLUMN,
+    SIZE_COLUMN({ handleConfirmModify, isModifyPending }),
+    OG_SIZE_COLUMN,
+    VALUE_COLUMN,
+    PRICE_COLUMN({ handleConfirmModify, isModifyPending }),
+    REDUCE_COLUMN,
+    TRIGGER_CONDITIONS_COLUMN,
+    TP_SL_COLUMN,
+    CANCEL_COLUMN({
+      onCancelOrder: handleCancelOrder,
+      isCancelPending,
+    }),
+  ]
+}
 
 export const OpenOrdersTable = () => {
   const { data, isLoading, isError } = useUserOpenOrders({})
@@ -59,6 +92,61 @@ export const OpenOrdersTable = () => {
   const filterValue = tradeFilter?.['open-orders']?.split(':')?.[1] as
     | TradeFilterType
     | undefined
+
+  const { modifyOrder, isPending } = useModifyOrder()
+  const { cancelOrders, isPending: isCancelPending } = useCancelOpenOrders()
+
+  const handleConfirmModify = useCallback(
+    (
+      openOrder: UserOpenOrdersItemType,
+      newValue: string,
+      type: 'size' | 'price',
+    ) => {
+      if (openOrder.szDecimals === undefined) return
+
+      try {
+        const currentOrderData = prepModidyOrderData(openOrder)
+
+        if (!currentOrderData) return
+        let value = newValue
+        if (type === 'price') {
+          value = formatPrice(
+            newValue,
+            openOrder.szDecimals,
+            openOrder.marketType,
+          )
+        } else {
+          value = formatSize(newValue, openOrder.szDecimals)
+        }
+
+        modifyOrder({
+          ...currentOrderData,
+          [type]: value,
+        })
+      } catch (e) {
+        console.error('Failed to modify order size', e)
+      }
+    },
+    [modifyOrder],
+  )
+
+  const handleCancelOrder = useCallback(
+    (order: UserOpenOrdersItemType) => {
+      try {
+        cancelOrders({
+          cancelData: [
+            {
+              orderId: order.oid,
+              asset: order.coin,
+            },
+          ],
+        })
+      } catch (e) {
+        console.error('Failed to cancel order', e)
+      }
+    },
+    [cancelOrders],
+  )
 
   const tableData = useMemo(() => {
     if (isError || !data) return []
@@ -87,20 +175,34 @@ export const OpenOrdersTable = () => {
     }
   }, [tableData, sorting])
 
-  return isLg ? (
-    <DataTable
-      state={state}
-      loading={isLoading}
-      columns={COLUMNS}
-      data={tableData}
-      onSortingChange={setSorting}
-    />
-  ) : (
-    <MobileTable
-      columns={MOBILE_COLUMNS}
-      data={tableData}
-      isLoading={isLoading}
-      sorting={sorting}
-    />
+  const columns = useMemo(() => {
+    return getOpenOrdersColumns({
+      handleConfirmModify,
+      isModifyPending: isPending,
+      isMobile: !isLg,
+      handleCancelOrder,
+      isCancelPending,
+    })
+  }, [handleConfirmModify, isPending, isLg, handleCancelOrder, isCancelPending])
+
+  return (
+    <>
+      {isLg ? (
+        <DataTable
+          state={state}
+          loading={isLoading}
+          columns={columns}
+          data={tableData}
+          onSortingChange={setSorting}
+        />
+      ) : (
+        <MobileTable
+          columns={columns}
+          data={tableData}
+          isLoading={isLoading}
+          sorting={sorting}
+        />
+      )}
+    </>
   )
 }

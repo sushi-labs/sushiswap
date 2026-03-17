@@ -9,13 +9,17 @@ export const InlineEdit = ({
   rawValue,
   onConfirm,
   isPending,
+  isEditing,
 }: {
   value: string
   rawValue: string
   onConfirm: (value: string) => void | Promise<void>
   isPending?: boolean
+  isEditing?: boolean
 }) => {
-  const [editing, setEditing] = useState(false)
+  const [editing, setEditing] = useState(
+    isEditing !== undefined ? isEditing : false,
+  )
   const inputRef = useRef<HTMLInputElement>(null)
   const [localValue, setLocalValue] = useState(rawValue)
 
