@@ -1,13 +1,13 @@
 'use client'
 
-import { Navigation, SushiNavigationDropdown, classNames } from '@sushiswap/ui'
+import { LinkInternal, Navigation, classNames } from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import type { FC } from 'react'
-import { headerElements } from 'src/app/_common/header-elements'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
 import type { ChainId } from 'sushi'
 import { useChainId } from 'wagmi'
+import { headerElements } from './header-elements'
 
 interface HeaderProps {
   chainId?: ChainId
@@ -29,20 +29,19 @@ export const PerpsHeader: FC<HeaderProps> = ({
             'hidden lg:flex justify-between items-center px-1 h-14 flex-shrink-0 bg-[#0D1421] border-[#1E2939] border-b',
           )}
         >
-          <SushiNavigationDropdown className="!px-2">
+          <LinkInternal className="!px-2" href={'/swap'}>
             <SushiWithTextIcon width={90} />
-          </SushiNavigationDropdown>
+          </LinkInternal>
         </div>
         <div className="flex lg:hidden justify-between items-center pl-4 bg-[#0D1421] border-[#1E2939] border-b">
-          <SushiNavigationDropdown>
+          <LinkInternal className="!px-2" href={'/swap'}>
             <SushiIcon width={24} height={24} />
-          </SushiNavigationDropdown>
+          </LinkInternal>
         </div>
         <Navigation
           className="!pl-0 lg:!pl-4 !z-[unset] !bg-[#0D1421]"
           hideSushiDropdown
-          // todo: perps-specific header elements - Home (go back to swap), Trade, Referrals, Vaults
-          leftElements={headerElements({ chainId })}
+          leftElements={headerElements()}
           rightElement={
             <WagmiHeaderComponents
               networks={networks}
