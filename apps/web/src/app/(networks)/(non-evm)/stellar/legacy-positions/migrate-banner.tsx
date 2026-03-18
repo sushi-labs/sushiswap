@@ -19,9 +19,13 @@ export const MigrateBanner: FC = () => {
   return (
     <div className="bg-yellow-200 text-center flex flex-col gap-2 justify-center items-center p-4">
       <p className="font-bold text-md text-yellow-950">
-        IMPORTANT: You have legacy positions that need to be migrated to the new
-        position manager to avoid the risk of having your position principal
-        locked.
+        Attention: We've released an upgrade across our pools. If you have
+        existing positions, we recommend migrating soon. Unmigrated positions
+        risk having your principal become restricted.
+      </p>
+      <p className="font-bold text-md text-yellow-950">
+        Migrating allows you to collect any earned fees and continue with the
+        same position and price range.
       </p>
       <Button
         asChild

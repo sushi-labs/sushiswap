@@ -26,21 +26,13 @@ export const Hero: FC = () => {
           <AccordionContent>
             <div className="flex flex-col gap-2 pb-2">
               <p className="text-md w-full text-muted-foreground">
-                A bug was discovered in the original position manager contract
-                implementation that could lead to positions in heavily-used
-                pools being locked.
+                We've released an upgrade across our pools. If you have existing
+                positions, we recommend migrating soon. Unmigrated positions
+                risk having your principal become restricted.
               </p>
               <p className="text-md w-full text-muted-foreground">
-                In such a state, only fees accrued from the position can be
-                collected, but the position principal itself cannot be
-                withdrawn.
-              </p>
-              <p className="text-md w-full text-muted-foreground">
-                This migration allows users to collect any accrued fees and
-                withdraw their position principal and then easily redeploy their
-                liquidity with the same parameters (principal amounts and price
-                range) under the new fixed implementation of the position
-                manager.
+                Migrating allows you to collect any earned fees and continue
+                with the same amounts and price range.
               </p>
             </div>
           </AccordionContent>
