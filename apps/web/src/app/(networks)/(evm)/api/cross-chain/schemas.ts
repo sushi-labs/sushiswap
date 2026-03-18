@@ -480,6 +480,9 @@ function actionSchema<
     fromAddress: getAddressSchema(fromChainId, {
       isSvmChainIdFn: fromConfig.isSvmChainIdFn,
     }).optional(),
+    toAddress: getAddressSchema(toChainId, {
+      isSvmChainIdFn: toConfig.isSvmChainIdFn,
+    }).optional(),
   })
 }
 
