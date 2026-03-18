@@ -7,6 +7,7 @@ import {
   type EvmID,
   EvmToken,
   type PoolBase,
+  type PoolHasSteerVaults,
   type PoolHistory1D,
   type PoolV3,
   type PoolWithAprs,
@@ -69,6 +70,8 @@ export const V3PoolQuery = graphql(
       txCount1dChange
       liquidityUSD1dChange
       incentiveApr
+      hadSmartPool
+      hasSmartPool
       isIncentivized
       wasIncentivized
       incentives {
@@ -89,6 +92,7 @@ export const V3PoolQuery = graphql(
         rewarderAddress
         rewarderType
       }
+      vaults
     }
   }
 `,
@@ -172,10 +176,12 @@ export async function getV3Pool(
         incentiveApr: pool.incentiveApr,
         isIncentivized: pool.isIncentivized,
         wasIncentivized: pool.wasIncentivized,
+        hasEnabledSteerVault: pool.hasSmartPool,
+        hadEnabledSteerVault: pool.hadSmartPool,
 
         incentives: incentives.map((incentive) => ({
           id: incentive.id as `${string}:0x${string}`,
-          chainId,
+          chainId: incentive.chainId,
           chefType: incentive.chefType as ChefType,
           apr: incentive.apr,
           rewardToken: {
@@ -200,8 +206,8 @@ export async function getV3Pool(
 }
 
 export type RawV3Pool = NonNullable<Awaited<ReturnType<typeof getV3Pool>>>
-export type V3Pool = PoolWithAprs<
-  PoolWithIncentives<PoolHistory1D<PoolV3<PoolBase>>>
+export type V3Pool = PoolHasSteerVaults<
+  PoolWithAprs<PoolWithIncentives<PoolHistory1D<PoolV3<PoolBase>>>>
 >
 
 export function hydrateV3Pool(pool: RawV3Pool | V3Pool) {

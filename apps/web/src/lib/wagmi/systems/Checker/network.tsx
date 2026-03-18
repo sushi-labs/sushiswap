@@ -4,17 +4,33 @@ import { InformationCircleIcon } from '@heroicons/react/24/solid'
 import { createErrorToast } from '@sushiswap/notifications'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
 import { Button, type ButtonProps } from '@sushiswap/ui'
-import type { FC, ReactElement, ReactNode } from 'react'
-import { type EvmChainId, getEvmChainById } from 'sushi/evm'
-import { useAccount, useSwitchChain } from 'wagmi'
+import type { ReactNode } from 'react'
+import { type EvmChainId, getEvmChainById, isEvmChainId } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
+import { useConnection, useSwitchChain } from 'wagmi'
 
-interface NetworkProps extends ButtonProps {
-  chainId: EvmChainId | undefined
+interface NetworkProps<TChainId extends EvmChainId | SvmChainId>
+  extends ButtonProps {
+  chainId: TChainId | undefined
   hoverCardContent?: ReactNode | undefined
   hideChainName?: boolean
 }
 
-const Network: FC<NetworkProps> = ({
+function Network<TChainId extends EvmChainId | SvmChainId>(
+  props: NetworkProps<TChainId>,
+) {
+  const { chainId, children } = props
+
+  if (!chainId) return null
+
+  return isEvmChainId(chainId) ? (
+    <EvmNetwork {...(props as NetworkProps<EvmChainId>)} />
+  ) : (
+    <>{children}</>
+  )
+}
+
+function EvmNetwork({
   chainId,
   fullWidth = true,
   size = 'xl',
@@ -22,9 +38,9 @@ const Network: FC<NetworkProps> = ({
   hoverCardContent,
   hideChainName = false,
   ...rest
-}): ReactElement<any, any> | null => {
-  const { chain } = useAccount()
-  const { switchChainAsync } = useSwitchChain({
+}: NetworkProps<EvmChainId>) {
+  const { chain } = useConnection()
+  const { mutateAsync: switchChainAsync } = useSwitchChain({
     mutation: {
       onError: (e) => {
         createErrorToast(e.message, false)

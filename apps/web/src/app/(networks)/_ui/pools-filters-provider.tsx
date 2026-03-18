@@ -11,7 +11,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { z } from 'zod'
+import * as z from 'zod'
 
 import type { SushiSwapCmsProtocol } from 'src/lib/constants'
 import { parseArgs } from 'src/lib/functions'
@@ -30,6 +30,9 @@ export const poolFiltersSchema = z.object({
         : [],
     ),
   farmsOnly: z
+    .string()
+    .transform((bool) => (bool ? bool === 'true' : undefined)),
+  smartPoolsOnly: z
     .string()
     .transform((bool) => (bool ? bool === 'true' : undefined)),
 })
@@ -75,6 +78,7 @@ const DEFAULT_STATE = {
   tokenSymbols: [],
   protocols: POOL_TYPES,
   farmsOnly: false,
+  smartPoolsOnly: false,
 }
 
 const PoolsFiltersUrlProvider: FC<PoolsFiltersProviderProps> = ({
@@ -85,11 +89,14 @@ const PoolsFiltersUrlProvider: FC<PoolsFiltersProviderProps> = ({
   const urlFilters = useTypedSearchParams(poolFiltersSchema.partial())
 
   const state = useMemo(() => {
-    const { tokenSymbols, protocols, farmsOnly } = urlFilters
+    const { tokenSymbols, protocols, farmsOnly, smartPoolsOnly } = urlFilters
     const state: PoolFilters = {
       tokenSymbols: tokenSymbols ? tokenSymbols : DEFAULT_STATE.tokenSymbols,
       protocols: protocols ? protocols : DEFAULT_STATE.protocols,
       farmsOnly: farmsOnly ? farmsOnly : DEFAULT_STATE.farmsOnly,
+      smartPoolsOnly: smartPoolsOnly
+        ? smartPoolsOnly
+        : DEFAULT_STATE.smartPoolsOnly,
     }
     return state
   }, [urlFilters])

@@ -26,18 +26,13 @@ import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
 import { WagmiProvider } from 'src/providers/wagmi-provider'
-import { Amount } from 'sushi'
-import {
-  type EvmChainId,
-  EvmToken,
-  erc20Abi_transfer,
-  shortenEvmAddress,
-} from 'sushi/evm'
+import { Amount, shortenAddress } from 'sushi'
+import { type EvmChainId, EvmToken, erc20Abi_transfer } from 'sushi/evm'
 import type { Address, Hex } from 'viem'
 import { encodePacked } from 'viem/utils'
 import { useWriteContract } from 'wagmi'
 import { usePublicClient, useSimulateContract } from 'wagmi'
-import { useAccount, useChainId, useDisconnect, useSwitchChain } from 'wagmi'
+import { useChainId, useConnection, useDisconnect, useSwitchChain } from 'wagmi'
 import { BalanceProvider } from '~evm/_common/ui/balance-provider/balance-provider'
 import { PriceProvider } from '~evm/_common/ui/price-provider/price-provider/price-provider'
 
@@ -87,7 +82,7 @@ function Deposit({
   amount: Amount<EvmToken>
   onTxConfirmed: (txData: TxData) => void
 }) {
-  const { address } = useAccount()
+  const { address } = useConnection()
 
   const client = usePublicClient()
 
@@ -141,7 +136,7 @@ function Deposit({
     ),
   })
 
-  const { writeContractAsync, isPending } = useWriteContract({
+  const { mutateAsync: writeContractAsync, isPending } = useWriteContract({
     mutation: { onSuccess, onError },
   })
 
@@ -178,10 +173,10 @@ function DepositTab({
   teamId,
   onTxConfirmed,
 }: { teamId: string; onTxConfirmed: (txData: TxData) => void }) {
-  const { address } = useAccount()
-  const { disconnect } = useDisconnect()
+  const { address } = useConnection()
+  const { mutate: disconnect } = useDisconnect()
   const chainId = useChainId()
-  const { switchChainAsync } = useSwitchChain()
+  const { mutateAsync: switchChainAsync } = useSwitchChain()
 
   const [value, setValue] = useState('')
   const [_token, setToken] = useState<EvmToken | undefined>(undefined)
@@ -263,7 +258,7 @@ function DepositTab({
                 address ? 'bg-green-500' : 'bg-red-500',
               )}
             />
-            <span>{address ? shortenEvmAddress(address) : 'None'}</span>
+            <span>{address ? shortenAddress(address) : 'None'}</span>
           </span>
           {address && (
             <span

@@ -1,7 +1,8 @@
-import { Container } from '@sushiswap/ui'
+import { Container, Message } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import { getCachedBladePool } from 'src/lib/pool/blade'
 import { isBladeChainId, isEvmAddress } from 'sushi/evm'
+import { BladeSunsetNotice } from '~evm/[chainId]/_ui/blade-sunset-notice'
 import { BladeAssetsTable } from './_ui/blade-assets-table'
 import { BladeHighlights } from './_ui/blade-highlights'
 import { BladePoolPairsChart } from './_ui/blade-pair-chart'
@@ -28,6 +29,8 @@ export default async function PoolPage(props: {
 
   return (
     <Container maxWidth="7xl" className="flex flex-col px-4">
+      <BladeSunsetNotice className="mb-4" />
+
       <BladePoolHero pool={pool} />
       <BladeHighlights pool={pool} />
       <div className="space-y-6 mt-16">

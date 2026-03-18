@@ -12,6 +12,8 @@ const evmChainPaths = [
   '/stake',
   '/claim',
   '/explore/pools',
+  '/explore/smart-pools',
+  '/explore/blade-pools',
   '/pool/incentivize',
   '/pool/v2/add',
   '/pool/v3/add',

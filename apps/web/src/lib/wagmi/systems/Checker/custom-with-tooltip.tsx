@@ -10,7 +10,6 @@ import {
   HoverCardTrigger,
   classNames,
 } from '@sushiswap/ui'
-import type { FC } from 'react'
 
 interface CustomWithTooltipProps extends ButtonProps {
   showChildren?: boolean
@@ -20,7 +19,7 @@ interface CustomWithTooltipProps extends ButtonProps {
   tooltipDescription: string
 }
 
-const CustomWithTooltip: FC<CustomWithTooltipProps> = ({
+function CustomWithTooltip({
   showChildren,
   buttonText,
   tooltipTitle,
@@ -31,7 +30,7 @@ const CustomWithTooltip: FC<CustomWithTooltipProps> = ({
   disabled,
   className,
   ...props
-}) => {
+}: CustomWithTooltipProps) {
   if (showChildren) {
     return <>{children}</>
   }

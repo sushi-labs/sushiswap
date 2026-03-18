@@ -10,7 +10,7 @@ import {
   useContext,
   useMemo,
 } from 'react'
-import { z } from 'zod'
+import * as z from 'zod'
 
 import { parseArgs } from 'src/lib/functions'
 import { useTypedSearchParams } from 'src/lib/hooks'

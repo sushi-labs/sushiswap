@@ -54,6 +54,7 @@ module.exports = {
         sans: ['var(--font-inter)'],
         mono: ['var(--font-roboto-mono)'],
         orbitron: ['var(--font-orbitron)'],
+        lufga: ['var(--font-lufga)'],
       },
       backgroundImage: () => ({
         'gradient-radial': 'radial-gradient(#13213E, #111829)',

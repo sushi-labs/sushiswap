@@ -51,16 +51,14 @@ jobs:
           NEXT_PUBLIC_APP_ENV: 'test'
           NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
           NEXT_TELEMETRY_DISABLED: 1
-          # Tron
-          NEXT_PUBLIC_TRON_PRO_API_KEY: ${{ secrets.NEXT_PUBLIC_TRON_PRO_API_KEY }}
-          BITQUERY_API_KEY: ${{ secrets.BITQUERY_API_KEY }}
-          BITQUERY_BEARER_TOKEN: ${{ secrets.BITQUERY_BEARER_TOKEN }}
           # Portal
           AUTH_SESSION_SECRET: p1jPq93q2T6Kmxrva3+WR93xSWLLSa584Qen005+4ts= # Random string, separate from Prod
           ZITADEL_ISSUER: https://zitadel.styro.sushi.com
           ZITADEL_SA_TOKEN: ""
           # BotId
           BOTID_JWT_KEY: HLQsCXPJ6gEZaLVGnigDE2yv8hBOih53JWeknsEKG0A
+          # Data API
+          NEXT_PUBLIC_SUSHI_DATA_API_HOST: https://production.data-gcp.sushi.com
 
       - name: Upload test results
         if: always()

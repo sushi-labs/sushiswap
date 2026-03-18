@@ -6,10 +6,11 @@ import { useClaimableRewards } from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
 import { formatUSD } from 'sushi'
 import { SushiSwapV3ChainIds } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
+import { V2MigrationNotice } from '~evm/[chainId]/_ui/v2-migration-notice'
 
 export const Hero: FC = () => {
-  const { address, isConnected } = useAccount()
+  const { address, isConnected } = useConnection()
 
   const {
     data: positionsData,
@@ -90,6 +91,7 @@ export const Hero: FC = () => {
           </CardContent>
         </Card>
       </div>
+      <V2MigrationNotice />
     </section>
   )
 }

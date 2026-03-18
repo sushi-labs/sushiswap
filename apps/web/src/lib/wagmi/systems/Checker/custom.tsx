@@ -1,5 +1,4 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
-import React, { type FC } from 'react'
 
 interface CustomProps extends ButtonProps {
   showChildren?: boolean
@@ -7,14 +6,14 @@ interface CustomProps extends ButtonProps {
   buttonText: string
 }
 
-const Custom: FC<CustomProps> = ({
+function Custom({
   showChildren,
   buttonText,
   children,
   fullWidth = true,
   size = 'xl',
   ...props
-}) => {
+}: CustomProps) {
   if (!showChildren) {
     return (
       <Button size={size} fullWidth={fullWidth} {...props}>

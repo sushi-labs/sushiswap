@@ -1,19 +1,18 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
-import React, { type FC } from 'react'
 
 interface GuardProps extends ButtonProps {
   guardWhen: boolean
   guardText: string
 }
 
-const Guard: FC<GuardProps> = ({
+function Guard({
   guardWhen,
   guardText,
   children,
   fullWidth = true,
   size = 'xl',
   ...props
-}) => {
+}: GuardProps) {
   if (guardWhen) {
     return (
       <Button size={size} fullWidth={fullWidth} disabled {...props}>

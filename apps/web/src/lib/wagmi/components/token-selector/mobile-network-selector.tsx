@@ -13,13 +13,14 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { type FC, useState } from 'react'
 import { getNetworkName } from 'src/lib/network'
+import { useChainIds } from 'src/lib/wallet'
 import type { EvmChainId } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import type { SvmChainId } from 'sushi/svm'
 
 interface MobileNetworkSelector {
-  networks: readonly EvmChainId[]
+  networks: readonly (EvmChainId | SvmChainId)[]
   onSelect: (chainId: number) => void
-  selectedNetwork: EvmChainId
+  selectedNetwork: EvmChainId | SvmChainId
 }
 
 export const MobileNetworkSelector: FC<MobileNetworkSelector> = ({
@@ -29,7 +30,7 @@ export const MobileNetworkSelector: FC<MobileNetworkSelector> = ({
 }) => {
   const [open, setOpen] = useState(false)
 
-  const { chainId } = useAccount()
+  const chainIds = useChainIds()
 
   return (
     <>
@@ -52,7 +53,7 @@ export const MobileNetworkSelector: FC<MobileNetworkSelector> = ({
                 <div
                   className={classNames(
                     'rounded-full w-2 h-2 mr-0.5 mb-0.5',
-                    chainId === network && 'bg-green',
+                    chainIds?.includes(network) && 'bg-green',
                   )}
                 />
               }
@@ -105,7 +106,7 @@ export const MobileNetworkSelector: FC<MobileNetworkSelector> = ({
                       <div
                         className={classNames(
                           'rounded-full w-2 h-2 mr-0.5 mb-0.5',
-                          chainId === network && 'bg-green',
+                          chainIds?.includes(network) && 'bg-green',
                         )}
                       />
                     }

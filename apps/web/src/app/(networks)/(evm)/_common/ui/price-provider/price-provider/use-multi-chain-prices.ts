@@ -31,7 +31,9 @@ export function useMultiChainPrices({
   const chains = useMemo(() => {
     return (chainIds ?? []).reduce(
       (map, chainId) => {
-        map[chainId] = state.chains.get(chainId)
+        map[chainId] = state.chains.get(chainId) as
+          | ProviderChainState<EvmChainId>
+          | undefined
         return map
       },
       {} as Record<EvmChainId, ProviderChainState | undefined>,

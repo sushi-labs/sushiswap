@@ -2,6 +2,7 @@ import { getBladePools } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import { type BladeChainId, EvmChainId, isBladeChainId } from 'sushi/evm'
+import { BladeSunsetNotice } from '~evm/[chainId]/_ui/blade-sunset-notice'
 import { BladeFeaturedPoolBanner } from '../_ui/blade-featured-pool-banner'
 import { BladePoolsTable } from './_ui/blade-pool-table'
 
@@ -28,9 +29,7 @@ export default async function BladePoolsPage(props: {
     'BladeApproximateExchange',
   ]
   const activePools = pools.filter(
-    (pool) =>
-      !pool.isDeprecated &&
-      !EXCLUDED_POOLS[chainId]?.includes(pool.address.toLowerCase()),
+    (pool) => !EXCLUDED_POOLS[chainId]?.includes(pool.address.toLowerCase()),
   )
   const bladePools = activePools.filter((pool) => bladeAbis.includes(pool.abi))
   // if there are any Blade pools, only display them, otherwise display Clipper pools
@@ -51,6 +50,7 @@ export default async function BladePoolsPage(props: {
 
   return (
     <Container maxWidth="7xl" className="space-y-6 px-4">
+      <BladeSunsetNotice chainId={chainId} />
       {featuredPool && <BladeFeaturedPoolBanner pool={featuredPool} />}
       <BladePoolsTable pools={poolsToDisplay} />
     </Container>

@@ -13,7 +13,7 @@ import { getPoolAssets, getPoolTokensGrouped } from 'src/lib/pool/blade'
 import { useUnlockDeposit } from 'src/lib/pool/blade/useUnlockDeposit'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { useBladePoolOnchainData } from '../../_ui/blade-pool-onchain-data-provider'
 import { useBladePoolPosition } from './blade-pool-position-provider'
 
@@ -251,7 +251,7 @@ const PoolPositionConnected: FC<PoolPositionProps> = ({ pool }) => {
 }
 
 export const BladePoolPosition: FC<PoolPositionProps> = ({ pool }) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
 
   if (!address) {
     return <PoolPositionDisconnected />

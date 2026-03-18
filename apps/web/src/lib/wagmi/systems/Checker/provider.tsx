@@ -43,7 +43,7 @@ interface State {
 
 const initialState = { state: {}, signatureState: {} }
 
-const CheckerProvider: FC<ProviderProps> = ({ children }) => {
+function CheckerProvider({ children }: ProviderProps) {
   const [{ state, signatureState }, setState] = useState<State>(initialState)
 
   const setApproved = useCallback((tag: string, approved: boolean) => {

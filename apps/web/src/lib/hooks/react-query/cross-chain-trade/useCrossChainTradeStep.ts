@@ -1,37 +1,41 @@
-import { type UseQueryOptions, useQuery } from '@tanstack/react-query'
-import { Amount, Percent } from 'sushi'
-import { type EvmCurrency, EvmNative, EvmToken } from 'sushi/evm'
-import { zeroAddress } from 'viem'
+import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
+import type { XSwapSupportedChainId } from 'src/config'
+import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'
+import { Amount, Percent, getNativeAddress } from 'sushi'
 import { stringify } from 'viem/utils'
-import { crossChainStepSchema } from '../../../swap/cross-chain/schema'
-import type { CrossChainStep } from '../../../swap/cross-chain/types'
+import type { Step } from '~evm/api/cross-chain/schemas'
+import type { CrossChainStepResponse } from '~evm/api/cross-chain/step/route'
 
-export interface UseCrossChainTradeStepReturn extends CrossChainStep {
-  tokenIn: EvmCurrency
-  tokenOut: EvmCurrency
-  amountIn?: Amount<EvmCurrency>
-  amountOut?: Amount<EvmCurrency>
-  amountOutMin?: Amount<EvmCurrency>
-  priceImpact?: Percent
+type NewTokenInput = Parameters<typeof newToken>[0]
+
+export type UseCrossChainTradeStepReturn<
+  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+> = NonNullable<
+  ReturnType<typeof useCrossChainTradeStep<TChainId0, TChainId1>>['data']
+>
+
+// export type
+
+export interface UseCrossChainTradeStepParams<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+> {
+  step: Step<TChainId0, TChainId1, 'lifi'> | undefined
+  enabled?: boolean
 }
 
-export interface UseCrossChainTradeStepParms {
-  step: CrossChainStep | undefined
-  query?: Omit<
-    UseQueryOptions<UseCrossChainTradeStepReturn>,
-    'queryFn' | 'queryKey' | 'queryKeyFn'
-  >
-}
-
-export const useCrossChainTradeStep = ({
-  query,
-  ...params
-}: UseCrossChainTradeStepParms) => {
-  return useQuery<UseCrossChainTradeStepReturn>({
-    queryKey: ['cross-chain/step', params],
+export function useCrossChainTradeStep<
+  TChainId0 extends XSwapSupportedChainId,
+  TChainId1 extends XSwapSupportedChainId,
+>({
+  step,
+  enabled = true,
+}: UseCrossChainTradeStepParams<TChainId0, TChainId1>) {
+  return useQuery({
+    queryKey: ['cross-chain/step', step],
     queryFn: async () => {
-      const { step } = params
-
       if (!step) throw new Error()
 
       const url = new URL('/api/cross-chain/step', window.location.origin)
@@ -52,17 +56,21 @@ export const useCrossChainTradeStep = ({
 
       const json = await response.json()
 
-      const parsedStep = crossChainStepSchema.parse(json)
+      const parsedStep = json as CrossChainStepResponse<TChainId0, TChainId1>
 
-      const tokenIn =
-        parsedStep.action.fromToken.address === zeroAddress
-          ? EvmNative.fromChainId(parsedStep.action.fromToken.chainId)
-          : new EvmToken(parsedStep.action.fromToken)
+      const tokenIn = (
+        getNativeAddress(parsedStep.action.fromToken.chainId) ===
+        parsedStep.action.fromToken.address
+          ? nativeFromChainId(parsedStep.action.fromToken.chainId)
+          : newToken(parsedStep.action.fromToken as NewTokenInput)
+      ) as CurrencyFor<TChainId0>
 
-      const tokenOut =
-        parsedStep.action.toToken.address === zeroAddress
-          ? EvmNative.fromChainId(parsedStep.action.toToken.chainId)
-          : new EvmToken(parsedStep.action.toToken)
+      const tokenOut = (
+        getNativeAddress(parsedStep.action.toToken.chainId) ===
+        parsedStep.action.toToken.address
+          ? nativeFromChainId(parsedStep.action.toToken.chainId)
+          : newToken(parsedStep.action.toToken as NewTokenInput)
+      ) as CurrencyFor<TChainId1>
 
       const amountIn = new Amount(tokenIn, parsedStep.action.fromAmount)
       const amountOut = new Amount(tokenOut, parsedStep.estimate.toAmount)
@@ -93,9 +101,8 @@ export const useCrossChainTradeStep = ({
         priceImpact,
       }
     },
-    refetchInterval: query?.refetchInterval ?? 1000 * 10, // 10s
-    enabled: query?.enabled !== false && Boolean(params.step),
+    refetchInterval: ms('10s'),
+    enabled: Boolean(enabled && step),
     queryKeyHashFn: stringify,
-    ...query,
   })
 }

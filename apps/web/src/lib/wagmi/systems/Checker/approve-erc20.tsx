@@ -19,10 +19,10 @@ import {
   SelectItem,
   SelectPrimitive,
 } from '@sushiswap/ui'
-import { type FC, useState } from 'react'
+import { useState } from 'react'
 import type { Amount } from 'sushi'
-import type { EvmCurrency } from 'sushi/evm'
-import type { Address } from 'viem'
+import type { EvmChainId, EvmCurrency } from 'sushi/evm'
+import { type SvmChainId, isSvmChainId } from 'sushi/svm'
 
 import {
   ApprovalState,
@@ -30,22 +30,31 @@ import {
 } from '../../hooks/approvals/hooks/useTokenApproval'
 import { RevokeApproveERC20 } from './revoke-approve-erc20'
 
-interface ApproveERC20Props extends ButtonProps {
+interface ApproveERC20Props<TChainId extends EvmChainId | SvmChainId>
+  extends ButtonProps {
   id: string
-  amount: Amount<EvmCurrency> | undefined
-  contract: Address | undefined
+  amount: Amount<CurrencyFor<TChainId>> | undefined
+  contract: AddressFor<TChainId> | undefined
   enabled?: boolean
 }
 
-const ApproveERC20: FC<ApproveERC20Props> = (props) => {
+function ApproveERC20<TChainId extends EvmChainId | SvmChainId>(
+  props: ApproveERC20Props<TChainId>,
+) {
+  if (props.amount && isSvmChainId(props.amount.currency.chainId)) {
+    return <>{props.children}</>
+  }
+
+  const _props = props as ApproveERC20Props<EvmChainId>
+
   return (
-    <RevokeApproveERC20 {...props} id={`revoke-${props.id}`}>
-      <_ApproveERC20 {...props} />
+    <RevokeApproveERC20 {..._props} id={`revoke-${_props.id}`}>
+      <_ApproveERC20 {..._props} />
     </RevokeApproveERC20>
   )
 }
 
-const _ApproveERC20: FC<ApproveERC20Props> = ({
+function _ApproveERC20({
   id,
   amount,
   contract,
@@ -55,7 +64,7 @@ const _ApproveERC20: FC<ApproveERC20Props> = ({
   size = 'xl',
   enabled = true,
   ...props
-}) => {
+}: ApproveERC20Props<EvmChainId>) {
   const [max, setMax] = useState(false)
   const [state, { write }] = useTokenApproval({
     amount,

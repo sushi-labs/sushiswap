@@ -45,6 +45,7 @@ export const useTransactionDeadline = ({
       return data
     },
     refetchInterval: 60_000,
+    staleTime: 60_000,
     enabled: Boolean(enabled && currentBlockTimestampQuery),
   })
 }

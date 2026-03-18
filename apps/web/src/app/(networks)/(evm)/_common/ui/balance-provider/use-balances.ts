@@ -1,102 +1,52 @@
-import { useEffect, useMemo } from 'react'
-import { Amount, LowercaseMap } from 'sushi'
-import {
-  type EvmChainId,
-  type EvmCurrency,
-  type EvmID,
-  nativeAddress,
-} from 'sushi/evm'
-import type { Address } from 'viem'
-import { useBalanceProvider } from './balance-provider'
-import { isBalanceStaleWhileRevalidate } from './utils'
+import { useMemo } from 'react'
+import { Amount, type IDFor, LowercaseMap, getNativeAddress } from 'sushi'
+import { type EvmChainId, isEvmChainId } from 'sushi/evm'
+import { type SvmChainId, isSvmChainId } from 'sushi/svm'
+import type { UseBalancesReturn } from './types'
+import { useEvmBalances } from './use-evm-balances'
+import { useSvmBalances } from './use-svm-balances'
 
-export function useBalances(
-  chainId: EvmChainId | undefined,
-  tokenAddresses: Address[] | undefined,
-) {
-  const { state, mutate } = useBalanceProvider()
+export function useBalances<TChainId extends EvmChainId | SvmChainId>(
+  chainId: TChainId | undefined,
+  tokenAddresses: AddressFor<TChainId>[] | undefined,
+): UseBalancesReturn<TChainId> {
+  const evmChainId = chainId && isEvmChainId(chainId) ? chainId : undefined
+  const evmTokenAddresses = evmChainId
+    ? (tokenAddresses as AddressFor<EvmChainId>[])
+    : undefined
 
-  useEffect(() => {
-    if (!chainId || !tokenAddresses) {
-      return
-    }
+  const evmBalances = useEvmBalances(evmChainId, evmTokenAddresses)
 
-    const tokenIds = tokenAddresses.map((address) => ({ address, chainId }))
+  const svmChainId = chainId && isSvmChainId(chainId) ? chainId : undefined
+  const svmTokenAddresses = svmChainId
+    ? (tokenAddresses as AddressFor<SvmChainId>[])
+    : undefined
 
-    mutate.incrementToken(tokenIds)
+  const svmBalances = useSvmBalances(svmChainId, svmTokenAddresses)
 
-    return () => {
-      mutate.decrementToken(tokenIds)
-    }
-  }, [chainId, tokenAddresses, mutate.incrementToken, mutate.decrementToken])
-
-  return useMemo(() => {
-    if (!chainId || !tokenAddresses) {
-      return {
-        data: undefined,
-        isError: false,
-        isLoading: false,
-        isFetching: false,
-      }
-    }
-
-    const chain = state.chains.get(chainId)
-
-    if (!chain) {
-      return {
-        data: undefined,
-        isError: false,
-        isLoading: false,
-        isFetching: false,
-      }
-    }
-
-    const balanceMap = new Map<Address, bigint>()
-
-    tokenAddresses.forEach((address) => {
-      const balance = chain.balanceMap.get(address)
-
-      if (!balance) {
-        return
-      }
-
-      if (isBalanceStaleWhileRevalidate(balance)) {
-        return
-      }
-
-      balanceMap.set(address, balance.amount)
-    })
-
-    // If we don't have all the requested balances, return undefined
-    if (balanceMap.size !== tokenAddresses.length) {
-      return {
-        data: undefined,
-        isError: false,
-        isLoading: chain.isFetching,
-        isFetching: chain.isFetching,
-      }
-    }
-
-    let isError = false
-    for (const address of tokenAddresses) {
-      if (balanceMap.get(address)! < 0n) {
-        balanceMap.delete(address)
-        isError = true
-      }
-    }
-
+  if (!chainId) {
     return {
-      data: balanceMap as ReadonlyMap<Address, bigint>,
-      isError,
+      data: undefined,
+      isError: false,
       isLoading: false,
-      isFetching: chain.isFetching,
+      isFetching: false,
     }
-  }, [chainId, tokenAddresses, state])
+  }
+
+  if (evmChainId) {
+    return evmBalances as UseBalancesReturn<TChainId>
+  }
+
+  if (svmChainId) {
+    return svmBalances as UseBalancesReturn<TChainId>
+  }
+
+  throw new Error('Unsupported chainId')
 }
 
-export function useAmountBalances(
-  chainId: EvmChainId | undefined,
-  _currencies: (EvmCurrency | undefined)[] | undefined,
+export function useAmountBalances<TChainId extends EvmChainId | SvmChainId>(
+  chainId: TChainId | undefined,
+  _currencies: (CurrencyFor<TChainId> | undefined)[] | undefined,
 ) {
   const currencies = useMemo(() => {
     if (!_currencies) {
@@ -105,7 +55,7 @@ export function useAmountBalances(
 
     return _currencies.filter(
       (currency) => currency !== undefined,
-    ) as EvmCurrency[]
+    ) as CurrencyFor<TChainId>[]
   }, [_currencies])
 
   const tokenAddresses = useMemo(() => {
@@ -121,40 +71,57 @@ export function useAmountBalances(
       }
 
       if (currency.type === 'native') {
-        return nativeAddress
+        return getNativeAddress(chainId)
       }
 
-      return currency.address
+      return currency.address as AddressFor<TChainId>
     })
   }, [chainId, currencies])
 
   const result = useBalances(chainId, tokenAddresses)
 
   return useMemo(() => {
-    if (!currencies || result.data === undefined) {
+    if (!chainId || !currencies || result.data === undefined) {
       return {
         ...result,
         data: undefined,
       }
     }
 
-    const amountMap = new LowercaseMap<EvmID<true>, Amount<EvmCurrency>>()
+    const nativeAddress = getNativeAddress(chainId)
+    let amountMap: Map<IDFor<TChainId, true>, Amount<CurrencyFor<TChainId>>>
+
+    if (isEvmChainId(chainId)) {
+      amountMap = new LowercaseMap()
+    } else if (isSvmChainId(chainId)) {
+      amountMap = new Map()
+    } else {
+      throw new Error('Unsupported chainId')
+    }
 
     currencies.forEach((currency) => {
       const address =
-        currency.type === 'native' ? nativeAddress : currency.address
+        currency.type === 'native'
+          ? nativeAddress
+          : (currency.address as AddressFor<TChainId>)
       const amount = result.data.get(address)
 
       if (amount === undefined) {
         return
       }
 
-      amountMap.set(currency.id, new Amount(currency, amount))
+      amountMap.set(
+        currency.id as IDFor<TChainId, true>,
+        new Amount(currency, amount),
+      )
     })
 
     return {
       ...result,
-      data: amountMap as ReadonlyMap<EvmID<true>, Amount<EvmCurrency>>,
+      data: amountMap as ReadonlyMap<
+        IDFor<TChainId, true>,
+        Amount<CurrencyFor<TChainId>>
+      >,
     }
-  }, [currencies, result])
+  }, [currencies, result, chainId])
 }

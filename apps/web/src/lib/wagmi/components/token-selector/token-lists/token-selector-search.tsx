@@ -3,8 +3,6 @@ import { useCustomTokens } from '@sushiswap/hooks'
 import { List } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import type { EvmCurrency } from 'sushi/evm'
-import type { Address } from 'viem'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useSearchTokens } from '../hooks/use-search-tokens'
 import {
@@ -12,12 +10,12 @@ import {
   TokenSelectorCurrencyListLoading,
 } from './common/token-selector-currency-list'
 
-interface TokenSelectorSearch {
-  chainId: TokenListChainId
+interface TokenSelectorSearch<TChainId extends TokenListChainId> {
+  chainId: TChainId
   search: string
-  onSelect(currency: EvmCurrency): void
-  onShowInfo(currency: EvmCurrency | false): void
-  selected: EvmCurrency | undefined
+  onSelect(currency: CurrencyFor<TChainId>): void
+  onShowInfo(currency: CurrencyFor<TChainId> | false): void
+  selected: CurrencyFor<TChainId> | undefined
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
@@ -33,13 +31,13 @@ function Shell({ children }: { children: React.ReactNode }) {
 const emptyMap = new Map()
 const pageSize = 20
 
-export function TokenSelectorSearch({
+export function TokenSelectorSearch<TChainId extends TokenListChainId>({
   chainId,
   search,
   selected,
   onSelect,
   onShowInfo,
-}: TokenSelectorSearch) {
+}: TokenSelectorSearch<TChainId>) {
   const { data, isError, isLoading, fetchNextPage, hasMore } = useSearchTokens({
     chainId,
     search,
@@ -61,7 +59,7 @@ export function TokenSelectorSearch({
   )
 
   const importableSet = useMemo(() => {
-    const set = new Set<Address>()
+    const set = new Set<AddressFor<TChainId>>()
 
     if (data) {
       data.forEach((token) => {
@@ -69,7 +67,7 @@ export function TokenSelectorSearch({
           !customTokens.includes(token.address) &&
           token.metadata.approved === false
         ) {
-          set.add(token.address.toLowerCase() as Address)
+          set.add(token.address as AddressFor<TChainId>)
         }
       })
     }
@@ -129,7 +127,9 @@ export function TokenSelectorSearch({
             isBalanceLoading={false}
             importConfig={{
               importableSet,
-              onImport: (token) => {
+              onImport: (_token) => {
+                const token = _token as TokenFor<TChainId>
+
                 mutate('add', [token])
                 onSelect(token)
               },

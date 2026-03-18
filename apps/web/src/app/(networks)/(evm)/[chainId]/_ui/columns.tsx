@@ -108,6 +108,20 @@ export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
                 </Tooltip>
               </TooltipProvider>
             )}
+            {props.row.original.isSmartPool && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="bg-[#F2E9D6] dark:bg-yellow/60 text-[10px] px-2 rounded-full">
+                      💡
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Smart Pool available</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </div>
         </div>
       </div>
@@ -155,7 +169,7 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
         )}
       >
         {props.row.original.liquidityUSDChange1d > 0 ? '+' : ''}
-        {formatPercent(props.row.original.liquidityUSDChange1d)}
+        {props.row.original.liquidityUSDChange1d.toFixed(2)}%
       </span>
     </div>
   ),
@@ -190,7 +204,7 @@ export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
         )}
       >
         {props.row.original.volumeUSDChange1d > 0 ? '+' : ''}
-        {formatPercent(props.row.original.volumeUSDChange1d)}
+        {props.row.original.volumeUSDChange1d.toFixed(2)}%
       </span>
     </div>
   ),
@@ -225,7 +239,7 @@ export const VOLUME_1W_COLUMN: ColumnDef<Pool, unknown> = {
         )}
       >
         {props.row.original.volumeUSDChange1w > 0 ? '+' : ''}
-        {formatPercent(props.row.original.volumeUSDChange1w)}
+        {props.row.original.volumeUSDChange1w.toFixed(2)}%
       </span>
     </div>
   ),

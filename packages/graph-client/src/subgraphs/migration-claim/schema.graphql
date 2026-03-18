@@ -1,0 +1,53 @@
+"""
+Indicates exactly one field must be supplied and this field must not be `null`.
+"""
+directive @oneOf on INPUT_OBJECT
+
+type SnapshotPositionData {
+  poolAddress: String!
+  positions: [SnapshotUserPosition!]!
+}
+
+type SnapshotUserPosition {
+  user: String!
+  balance: String!
+}
+
+type WalletSnapshotPosition {
+  isContract: Boolean!
+  isMultisigSafe: Boolean!
+  owner: String!
+  ownerReason: String!
+  pools: [String!]!
+  network: String!
+  chefType: String!
+  positionData: [SnapshotPositionData!]!
+}
+
+type SnapshotPositionsResponse {
+  positions: [WalletSnapshotPosition!]!
+}
+
+type ClaimStatus {
+  hasInitiatedClaim: Boolean!
+  status: String
+}
+
+type SnapshotCheckResponse {
+  isOnAnySnapshot: Boolean!
+  claimStatus: ClaimStatus!
+}
+
+type Query {
+  snapshotCheck(address: String!): SnapshotCheckResponse!
+  snapshotPositions(address: String!): SnapshotPositionsResponse!
+}
+
+type Mutation {
+  initiateClaim(signature: String!, message: String!, address: String!, chainId: Int!): InitiateClaimResult!
+}
+
+type InitiateClaimResult {
+  success: Boolean!
+  message: String!
+}

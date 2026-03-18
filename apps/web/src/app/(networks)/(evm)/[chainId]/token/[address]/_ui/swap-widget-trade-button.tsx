@@ -6,11 +6,15 @@ import { Button } from '@sushiswap/ui'
 import Link from 'next/link'
 import type React from 'react'
 import { type FC, useMemo } from 'react'
-import type { UseTradeReturn } from 'src/lib/hooks/react-query'
+import type {
+  UseEvmTradeReturn,
+  UseSvmTradeReturn,
+} from 'src/lib/hooks/react-query'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { ZERO } from 'sushi'
+import { ZERO, getChainById } from 'sushi'
 import { EvmNative, getEvmChainById } from 'sushi/evm'
+import { useWrapUnwrapTrade } from '~evm/[chainId]/(trade)/swap/_ui/common'
 import { useIsSwapMaintenance } from '~evm/[chainId]/(trade)/swap/_ui/use-is-swap-maintenance'
 import {
   useDerivedStateSwapWidget,
@@ -19,7 +23,7 @@ import {
 
 interface PartialRouteCheckerProps {
   children: React.ReactNode
-  trade?: UseTradeReturn
+  trade?: UseEvmTradeReturn | UseSvmTradeReturn
 }
 
 const PartialRouteChecker: FC<PartialRouteCheckerProps> = ({
@@ -30,7 +34,7 @@ const PartialRouteChecker: FC<PartialRouteCheckerProps> = ({
     mutate: { setSwapAmount },
   } = useDerivedStateSwapWidget()
 
-  return trade?.route?.status === 'Partial' ? (
+  return trade?.status === 'Partial' ? (
     <HoverCard openDelay={0} closeDelay={0}>
       <Button
         size="xl"
@@ -62,12 +66,7 @@ export const SwapWidgetTradeButton = () => {
     state: { swapAmountString, chainId, token0, token1 },
   } = useDerivedStateSwapWidget()
 
-  const isWrap =
-    token0?.type === 'native' &&
-    token1?.wrap().address === EvmNative.fromChainId(chainId).wrap().address
-  const isUnwrap =
-    token1?.type === 'native' &&
-    token0?.wrap().address === EvmNative.fromChainId(chainId).wrap().address
+  const { isUnwrap, isWrap } = useWrapUnwrapTrade(token0, token1)
 
   const showPriceImpactWarning = useMemo(() => {
     const priceImpactSeverity = warningSeverity(quote?.priceImpact)
@@ -75,7 +74,7 @@ export const SwapWidgetTradeButton = () => {
   }, [quote?.priceImpact])
 
   const url = useMemo(() => {
-    const base = `/${getEvmChainById(chainId).key}/swap`
+    const base = `/${getChainById(chainId).key}/swap`
     const params = new URLSearchParams()
 
     if (token0) {
@@ -100,7 +99,7 @@ export const SwapWidgetTradeButton = () => {
             disabled={Boolean(
               error ||
                 !quote?.amountOut?.gt(ZERO) ||
-                quote?.route?.status === 'NoWay' ||
+                quote?.status === 'NoWay' ||
                 +swapAmountString === 0 ||
                 showPriceImpactWarning,
             )}
@@ -110,7 +109,7 @@ export const SwapWidgetTradeButton = () => {
           >
             {showPriceImpactWarning
               ? 'Price impact too high'
-              : quote?.route?.status === 'NoWay'
+              : quote?.status === 'NoWay'
                 ? 'No trade found'
                 : isWrap
                   ? 'Wrap'

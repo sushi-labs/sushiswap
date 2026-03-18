@@ -1,10 +1,16 @@
 import type { BladeChainId } from 'src/subgraphs/data-api/types/BladeChainId.js'
 import type { PoolChainId } from 'src/subgraphs/data-api/types/PoolChainId.js'
+import type { SmartPoolChainId } from 'src/subgraphs/data-api/types/SmartPoolChainId.js'
 import type { SushiSwapChainId } from 'src/subgraphs/data-api/types/SushiSwapChainId.js'
 import type { TokenListChainId } from 'src/subgraphs/data-api/types/TokenListChainId.js'
 import type { TrendingTokensChainId } from 'src/subgraphs/data-api/types/TrendingTokensChainId.js'
 import type { ChainId } from 'sushi'
-import type { SushiSwapV2ChainId, SushiSwapV3ChainId } from 'sushi/evm'
+import type {
+  EvmAddress,
+  SushiSwapV2ChainId,
+  SushiSwapV3ChainId,
+} from 'sushi/evm'
+import type { SvmAddress } from 'sushi/svm'
 
 type JSONValue = string | number | boolean | null | JSONArray | JSONObject
 
@@ -15,6 +21,10 @@ export interface JSONObject {
 interface JSONArray extends Array<JSONValue> {}
 
 export type Scalars = {
+  Address: EvmAddress | SvmAddress
+  EvmAddress: EvmAddress
+  SvmAddress: SvmAddress
+
   BigInt: string
   BigDecimal: string
   Bytes: `0x${string}`
@@ -30,6 +40,7 @@ export type Scalars = {
   BladeChainId: BladeChainId
 
   PoolChainId: PoolChainId
+  SmartPoolChainId: SmartPoolChainId
 
   TokenListChainId: TokenListChainId
   TrendingTokensChainId: TrendingTokensChainId

@@ -54,7 +54,18 @@ export const NAME_COLUMN_POOL: ColumnDef<BladePool, unknown> = {
             )}
           </Currency.IconList>
         </div>
-        <div>{poolName}</div>
+        <div className="flex flex-col gap-0.5">
+          <span className="font-medium text-gray-900 dark:text-slate-50">
+            {poolName}
+          </span>
+          {props.row.original.isDeprecated ? (
+            <div className="flex gap-1">
+              <div className="bg-amber-100 text-amber-900 text-[10px] px-2 rounded-full">
+                Deprecated
+              </div>
+            </div>
+          ) : null}
+        </div>
       </div>
     )
   },
@@ -100,7 +111,7 @@ export const TVL_COLUMN: ColumnDef<BladePool, unknown> = {
         )}
       >
         {props.row.original.liquidityUSDChange1d > 0 ? '+' : ''}
-        {formatPercent(props.row.original.liquidityUSDChange1d)}
+        {props.row.original.liquidityUSDChange1d.toFixed(2)}%
       </span>
     </div>
   ),
@@ -135,7 +146,7 @@ export const VOLUME_1W_COLUMN: ColumnDef<BladePool, unknown> = {
         )}
       >
         {props.row.original.volumeUSDChange1w > 0 ? '+' : ''}
-        {formatPercent(props.row.original.volumeUSDChange1w)}
+        {props.row.original.volumeUSDChange1w.toFixed(2)}%
       </span>
     </div>
   ),
@@ -170,7 +181,7 @@ export const VOLUME_1D_COLUMN: ColumnDef<BladePool, unknown> = {
         )}
       >
         {props.row.original.volumeUSDChange1d > 0 ? '+' : ''}
-        {formatPercent(props.row.original.volumeUSDChange1d)}
+        {props.row.original.volumeUSDChange1d.toFixed(2)}%
       </span>
     </div>
   ),

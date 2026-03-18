@@ -12,8 +12,8 @@ import { CurrencyFiatIcon } from '@sushiswap/ui/icons/CurrencyFiatIcon'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { type FC, useMemo, useState, Fragment } from 'react'
 import { getPoolTokensGrouped } from 'src/lib/pool/blade'
-import { formatUSD } from 'sushi'
-import { type EvmAddress, getEvmChainById, shortenEvmAddress } from 'sushi/evm'
+import { formatUSD, shortenAddress } from 'sushi'
+import { type EvmAddress, getEvmChainById } from 'sushi/evm'
 import { useBladePoolOnchainData } from '../../_ui/blade-pool-onchain-data-provider'
 
 type PoolHeader = {
@@ -134,7 +134,7 @@ export const BladePoolLiquidityHeader: FC<PoolHeader> = ({
             href={getEvmChainById(pool.chainId).getAccountUrl(address)}
             className="text-blue hover:underline break-all"
           >
-            {shortenEvmAddress(address, 4)}
+            {shortenAddress(address, 4)}
           </LinkExternal>
         </div>
       </div>

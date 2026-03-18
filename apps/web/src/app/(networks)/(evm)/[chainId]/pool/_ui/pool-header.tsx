@@ -9,12 +9,11 @@ import {
   typographyVariants,
 } from '@sushiswap/ui'
 import React, { type FC } from 'react'
-import { formatPercent } from 'sushi'
+import { formatPercent, shortenAddress } from 'sushi'
 import {
   type EvmAddress,
   EvmToken,
   getEvmChainById,
-  shortenEvmAddress,
   unwrapEvmToken,
 } from 'sushi/evm'
 import { APRHoverCard } from '~evm/[chainId]/_ui/apr-hover-card'
@@ -26,6 +25,7 @@ type PoolHeader = {
   apy?: {
     fees: number | undefined
     rewards: number | undefined
+    vault?: number
   }
   priceRange?: string
   hasEnabledStrategies?: boolean
@@ -116,9 +116,12 @@ export const PoolHeader: FC<PoolHeader> = ({
           <div className="flex items-center gap-1.5">
             <span className="font-semibold tracking-tighter">APR</span>
 
-            <APRHoverCard pool={pool}>
+            <APRHoverCard pool={pool} smartPoolAPR={apy.vault}>
               <span className="underline decoration-dotted underline-offset-2">
-                {formatPercent((apy.fees || 0) + (apy.rewards || 0))}
+                {formatPercent(
+                  ((typeof apy.vault === 'number' ? apy.vault : apy.fees) ||
+                    0) + (apy.rewards || 0),
+                )}
               </span>
             </APRHoverCard>
           </div>
@@ -153,7 +156,7 @@ export const PoolHeader: FC<PoolHeader> = ({
               size="sm"
               className="!font-medium !text-secondary-foreground"
             >
-              {shortenEvmAddress(token0.wrap().address, 4)}
+              {shortenAddress(token0.wrap().address, 4)}
               <ArrowTopRightOnSquareIcon className="w-3 h-3" />
             </Button>
           </LinkExternal>
@@ -174,7 +177,7 @@ export const PoolHeader: FC<PoolHeader> = ({
               size="sm"
               className="!font-medium !text-secondary-foreground"
             >
-              {shortenEvmAddress(token1.wrap().address, 4)}
+              {shortenAddress(token1.wrap().address, 4)}
               <ArrowTopRightOnSquareIcon className="w-3 h-3" />
             </Button>
           </LinkExternal>

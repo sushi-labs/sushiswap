@@ -6,11 +6,11 @@ import {
   EvmToken,
   type PoolBase,
   type PoolV3,
-  SUSHI_DATA_API_HOST,
   SushiSwapProtocol,
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
 import type { Address } from 'viem'
+import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
 
 export const V3PoolsByTokensQuery = graphql(

@@ -1,5 +1,3 @@
-'use client'
-
 import { cookieToInitialState } from '@wagmi/core'
 import { createProductionConfig } from './production'
 import type { PublicWagmiConfig } from './public'

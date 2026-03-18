@@ -1,6 +1,6 @@
 import { sz } from 'sushi'
 import { type MerklChainId, isMerklChainId } from 'sushi/evm'
-import z from 'zod'
+import * as z from 'zod'
 
 const merklRewardsTokenValidator = z.object({
   address: sz.evm.address(),
@@ -53,7 +53,7 @@ const merklCampaignValidator = z.object({
   params: z.object({
     blacklist: z.array(z.string()),
     whitelist: z.array(z.string()),
-    isOutOfRangeIncentivized: z.boolean(),
+    isOutOfRangeIncentivized: z.boolean().default(false),
   }),
   rewardToken: z.object({
     address: sz.evm.address(),

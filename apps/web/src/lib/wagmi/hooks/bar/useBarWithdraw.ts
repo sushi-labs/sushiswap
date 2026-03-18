@@ -8,7 +8,7 @@ import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { Amount } from 'sushi'
 import { EvmChainId, type EvmToken, addGasMargin } from 'sushi/evm'
 import {
-  useAccount,
+  useConnection,
   usePublicClient,
   useSimulateContract,
   useWriteContract,
@@ -27,7 +27,7 @@ export function useBarWithdraw({
   amountOut,
   enabled = true,
 }: UseBarWithdrawParams) {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const client = usePublicClient()
 
   const { refetchChain: refetchBalances } = useRefetchBalances()
@@ -85,7 +85,7 @@ export function useBarWithdraw({
     query: { enabled: Boolean(enabled && amountIn && amountOut && address) },
   })
 
-  const { writeContractAsync, ...rest } = useWriteContract({
+  const { mutateAsync: writeContractAsync, ...rest } = useWriteContract({
     mutation: {
       onSuccess,
       onError,

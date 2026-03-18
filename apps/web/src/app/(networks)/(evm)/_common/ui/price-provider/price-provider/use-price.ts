@@ -2,16 +2,17 @@
 
 import { useMemo } from 'react'
 import type { EvmChainId } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 import type { Address } from 'viem'
 import { usePrices } from './use-prices'
 
-export function usePrice({
+export function usePrice<TChainId extends EvmChainId | SvmChainId>({
   chainId,
   address,
   enabled: _enabled = true,
 }: {
-  chainId: EvmChainId | undefined
-  address: Address | undefined
+  chainId: TChainId | undefined
+  address: AddressFor<TChainId> | undefined
   enabled?: boolean
 }) {
   const enabled = chainId && address && _enabled

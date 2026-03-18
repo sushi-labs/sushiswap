@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { type EvmAddress, type EvmChainId, EvmToken } from 'sushi/evm'
 import { getAddress } from 'viem/utils'
-import type { z } from 'zod'
+import type * as z from 'zod'
 import { merklCampaignsValidator } from './validator'
 
 interface UseRewardCampaignsParams {

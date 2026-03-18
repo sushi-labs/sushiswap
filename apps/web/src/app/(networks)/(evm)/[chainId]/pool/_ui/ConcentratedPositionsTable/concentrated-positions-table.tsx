@@ -28,7 +28,7 @@ import {
   getEvmChainById,
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
-import { useAccount } from 'wagmi'
+import { useConnection } from 'wagmi'
 import { ConcentratedLiquidityCollectAllDialog } from '~evm/_ui/concentrated-liquidity-collect-all-dialog'
 import {
   NAME_COLUMN_V3,
@@ -50,6 +50,7 @@ interface ConcentratedPositionsTableProps {
   chainId: EvmChainId
   poolAddress?: string
   onRowClick?(row: ConcentratedLiquidityPositionWithV3Pool): void
+  hideNewSmartPositionButton?: boolean
   hideNewPositionButton?: boolean
   hideClosedPositions?: boolean
   hideCollectAllButton?: boolean
@@ -62,12 +63,13 @@ export const ConcentratedPositionsTable: FC<
   chainId,
   onRowClick,
   poolAddress,
+  hideNewSmartPositionButton = true,
   hideNewPositionButton = false,
   hideClosedPositions = true,
   hideCollectAllButton = false,
   actions,
 }) => {
-  const { address } = useAccount()
+  const { address } = useConnection()
   const { tokenSymbols } = usePoolFilters()
 
   const chainIds = useMemo(() => {
@@ -158,6 +160,23 @@ export const ConcentratedPositionsTable: FC<
                   </div>
                 )}
               </ConcentratedLiquidityCollectAllDialog>
+            ) : null}
+            {!hideNewSmartPositionButton ? (
+              <LinkInternal
+                shallow={true}
+                href={`/${getEvmChainById(chainId).key}/pool/v3/${poolAddress}/smart`}
+                className="basis-full md:basis-[unset]"
+              >
+                <Button
+                  icon={PlusIcon}
+                  asChild
+                  size="sm"
+                  variant="outline"
+                  className="w-full"
+                >
+                  Create smart position
+                </Button>
+              </LinkInternal>
             ) : null}
             {!hideNewPositionButton ? (
               <LinkInternal

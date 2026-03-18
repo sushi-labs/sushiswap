@@ -31,9 +31,9 @@ export const GlobalStatsLoading: FC<{ chainId: EvmChainId }> = ({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-20 gap-y-10">
       <div>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 mb-5">
           <span className="text-sm text-muted-foreground">
-            {getEvmChainById(chainId).name} T0
+            {getEvmChainById(chainId).name} TVL
           </span>
           <SkeletonBox className="!w-36 h-[36px]" />
           <SkeletonBox className="!w-40 h-[20px]" />
@@ -41,7 +41,7 @@ export const GlobalStatsLoading: FC<{ chainId: EvmChainId }> = ({
         <SkeletonChart type="area" />
       </div>
       <div>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 mb-5">
           <span className="text-sm text-muted-foreground">Volume</span>
           <SkeletonBox className="!w-36 h-[36px]" />
           <SkeletonBox className="!w-40 h-[20px]" />

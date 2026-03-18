@@ -92,6 +92,7 @@ export enum InterfaceElementName {
   SWAP_BUTTON = 'swap-button',
   SWAP_DETAILS_DROPDOWN = 'swap-details-dropdown',
   SWAP_DETAILS_TOGGLE = 'swap-details-toggle',
+  XSWAP_DETAILS_TOGGLE = 'xswap-details-toggle',
   SWAP_TOKENS_REVERSE_ARROW_BUTTON = 'swap-tokens-reverse-arrow-button',
   TAX_SERVICE_BANNER_CTA_BUTTON = 'tax-service-banner-learn-more-button',
   TAX_SERVICE_COINTRACKER_BUTTON = 'tax-service-cointracker-link-button',

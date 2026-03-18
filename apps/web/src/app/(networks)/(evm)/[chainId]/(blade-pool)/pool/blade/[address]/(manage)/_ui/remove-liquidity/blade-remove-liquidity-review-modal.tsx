@@ -18,10 +18,10 @@ import { logger } from 'src/lib/logger'
 import { useBladeWithdrawTransaction } from 'src/lib/pool/blade/useBladeWithdraw'
 import { getPoolAssets } from 'src/lib/pool/blade/utils'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
-import { Amount, Percent } from 'sushi'
+import { Amount, Percent, withoutScientificNotation } from 'sushi'
 import type { Hex } from 'viem'
 import {
-  useAccount,
+  useConnection,
   usePublicClient,
   useWaitForTransactionReceipt,
 } from 'wagmi'
@@ -47,7 +47,7 @@ export const BladeRemoveLiquidityReviewModal: FC<
   BladeRemoveLiquidityReviewModalProps
 > = ({ pool, percentage, children, onSuccess: _onSuccess }) => {
   const router = useRouter()
-  const { address } = useAccount()
+  const { address } = useConnection()
   const client = usePublicClient()
   const { balance } = useBladePoolPosition()
   const { refetchChain: refetchBalances } = useRefetchBalances()
@@ -95,14 +95,16 @@ export const BladeRemoveLiquidityReviewModal: FC<
           const tokenAmountValue =
             tokenPrice !== null
               ? tokenPrice > 0
-                ? amountToReceiveValue / tokenPrice
+                ? (withoutScientificNotation(
+                    (amountToReceiveValue / tokenPrice).toString(),
+                  ) ?? 0)
                 : 0
               : null
 
           const amount =
             tokenAmountValue === null
               ? null
-              : tokenAmountValue > 0
+              : Number(tokenAmountValue) > 0
                 ? Amount.fromHuman(asset.token, tokenAmountValue)
                 : new Amount(asset.token, 0n)
 
