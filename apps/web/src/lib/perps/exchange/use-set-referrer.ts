@@ -21,10 +21,15 @@ export const useSetReferrer = () => {
   const address = useAccount('evm')
   const { data: legalCheck } = useLegalCheck({ address })
   const { data: referralData, refetch } = useReferral({ address })
-
   const hasAcceptedReferral = useMemo(() => {
+    if (
+      referralData?.referrerState?.stage === 'ready' &&
+      referralData?.referrerState?.data?.code === SUSHI_REFERRAL_CODE
+    ) {
+      return true
+    }
     return !!referralData?.referredBy
-  }, [referralData?.referredBy])
+  }, [referralData])
 
   const mutation = useMutation({
     mutationKey: ['cancel-twap-order', agentAccount?.address, legalCheck],
