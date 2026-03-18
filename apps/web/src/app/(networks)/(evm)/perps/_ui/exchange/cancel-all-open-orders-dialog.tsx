@@ -48,22 +48,24 @@ export const CancelAllOpenOrdersDialog = () => {
           <PerpsChecker.Legal variant="perps-default">
             <PerpsChecker.EnableTrading variant="perps-default">
               <PerpsChecker.BuilderFee variant="perps-default">
-                <Button
-                  variant="perps-default"
-                  onClick={async () =>
-                    await cancelOrdersAsync(
-                      { cancelData: allCancelData },
-                      {
-                        onSuccess: () => {
-                          setOpen(false)
+                <PerpsChecker.Referral variant="perps-default">
+                  <Button
+                    variant="perps-default"
+                    onClick={async () =>
+                      await cancelOrdersAsync(
+                        { cancelData: allCancelData },
+                        {
+                          onSuccess: () => {
+                            setOpen(false)
+                          },
                         },
-                      },
-                    )
-                  }
-                  loading={isPending}
-                >
-                  Confirm Cancel All
-                </Button>
+                      )
+                    }
+                    loading={isPending}
+                  >
+                    Confirm Cancel All
+                  </Button>
+                </PerpsChecker.Referral>
               </PerpsChecker.BuilderFee>
             </PerpsChecker.EnableTrading>
           </PerpsChecker.Legal>

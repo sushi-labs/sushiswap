@@ -457,24 +457,26 @@ export const EditTpSlPositionDialog = ({
                 <PerpsChecker.Legal variant="perps-default">
                   <PerpsChecker.EnableTrading variant="perps-default">
                     <PerpsChecker.BuilderFee variant="perps-default">
-                      <Button
-                        variant="perps-default"
-                        onClick={async () => {
-                          if (!orderData) return
-                          await executeOrdersAsync(
-                            { orderData },
-                            {
-                              onSuccess: () => {
-                                handleOpenChange(false)
+                      <PerpsChecker.Referral variant="perps-default">
+                        <Button
+                          variant="perps-default"
+                          onClick={async () => {
+                            if (!orderData) return
+                            await executeOrdersAsync(
+                              { orderData },
+                              {
+                                onSuccess: () => {
+                                  handleOpenChange(false)
+                                },
                               },
-                            },
-                          )
-                        }}
-                        disabled={isPending || !positionToClose}
-                        loading={isPending}
-                      >
-                        Confirm
-                      </Button>
+                            )
+                          }}
+                          disabled={isPending || !positionToClose}
+                          loading={isPending}
+                        >
+                          Confirm
+                        </Button>
+                      </PerpsChecker.Referral>
                     </PerpsChecker.BuilderFee>
                   </PerpsChecker.EnableTrading>
                 </PerpsChecker.Legal>

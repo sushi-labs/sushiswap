@@ -115,32 +115,34 @@ export const UpdateMarginModeDialog = ({
             <PerpsChecker.Legal variant="perps-default">
               <PerpsChecker.EnableTrading variant="perps-default">
                 <PerpsChecker.BuilderFee variant="perps-default">
-                  <Button
-                    variant="perps-default"
-                    onClick={async () => {
-                      await updateLeverageAsync(
-                        {
-                          assetString,
-                          isCross: newLeverageType === 'cross',
-                          newLeverage: currentLeverage,
-                        },
-                        {
-                          onSuccess: () => {
-                            setOpen(false)
+                  <PerpsChecker.Referral variant="perps-default">
+                    <Button
+                      variant="perps-default"
+                      onClick={async () => {
+                        await updateLeverageAsync(
+                          {
+                            assetString,
+                            isCross: newLeverageType === 'cross',
+                            newLeverage: currentLeverage,
                           },
-                        },
-                      )
-                    }}
-                    disabled={
-                      isLoading ||
-                      isError ||
-                      isPending ||
-                      newLeverageType === currentLeverageType
-                    }
-                    loading={isPending}
-                  >
-                    Confirm
-                  </Button>
+                          {
+                            onSuccess: () => {
+                              setOpen(false)
+                            },
+                          },
+                        )
+                      }}
+                      disabled={
+                        isLoading ||
+                        isError ||
+                        isPending ||
+                        newLeverageType === currentLeverageType
+                      }
+                      loading={isPending}
+                    >
+                      Confirm
+                    </Button>
+                  </PerpsChecker.Referral>
                 </PerpsChecker.BuilderFee>
               </PerpsChecker.EnableTrading>
             </PerpsChecker.Legal>

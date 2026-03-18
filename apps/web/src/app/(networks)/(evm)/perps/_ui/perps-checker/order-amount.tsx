@@ -1,14 +1,13 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
-import { useMidPrice, useUserPositions } from 'src/lib/perps'
+import { useMidPrice, useScaleOrders, useUserPositions } from 'src/lib/perps'
 import { parseUnits } from 'viem'
-import { useScaleOrders } from '../../../../../../lib/perps/exchange/use-scale-orders'
 import { useAssetState } from '../trade-widget'
 
 export const OrderAmount: FC<ButtonProps> = ({
   children,
   fullWidth = true,
-  size = 'default',
+  size = 'perps-default',
   ...props
 }) => {
   const {

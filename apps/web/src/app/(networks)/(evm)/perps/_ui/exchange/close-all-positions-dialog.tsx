@@ -133,25 +133,27 @@ export const CloseAllPositionsDialog = ({
           <PerpsChecker.Legal variant="perps-default">
             <PerpsChecker.EnableTrading variant="perps-default">
               <PerpsChecker.BuilderFee variant="perps-default">
-                <Button
-                  variant="perps-default"
-                  onClick={async () =>
-                    await executeOrdersAsync(
-                      { orderData },
-                      {
-                        onSuccess: () => {
-                          setOpen(false)
+                <PerpsChecker.Referral variant="perps-default">
+                  <Button
+                    variant="perps-default"
+                    onClick={async () =>
+                      await executeOrdersAsync(
+                        { orderData },
+                        {
+                          onSuccess: () => {
+                            setOpen(false)
+                          },
                         },
-                      },
-                    )
-                  }
-                  loading={isPending}
-                >
-                  Confirm{' '}
-                  {closeType === 'market'
-                    ? 'Market Close'
-                    : 'Limit Close at Mid'}
-                </Button>
+                      )
+                    }
+                    loading={isPending}
+                  >
+                    Confirm{' '}
+                    {closeType === 'market'
+                      ? 'Market Close'
+                      : 'Limit Close at Mid'}
+                  </Button>
+                </PerpsChecker.Referral>
               </PerpsChecker.BuilderFee>
             </PerpsChecker.EnableTrading>
           </PerpsChecker.Legal>

@@ -5,6 +5,7 @@ import { Deposit } from './deposit'
 import { EnableTrading } from './enable-trading'
 import { Legal } from './legal'
 import { OrderAmount } from './order-amount'
+import { Referral } from './referral'
 import { TakeStopTrigger } from './take-stop-trigger'
 import { TwapRunningTime } from './twap-running-time'
 import { TwapSuborder } from './twap-suborder'
@@ -18,6 +19,7 @@ export type PerpsCheckerProps = {
   TwapRunningTime: ComponentType<ButtonProps>
   TwapSuborder: ComponentType<ButtonProps>
   TakeStopTrigger: ComponentType<ButtonProps>
+  Referral: ComponentType<ButtonProps>
 }
 
 export const PerpsChecker = {
@@ -29,4 +31,5 @@ export const PerpsChecker = {
   TwapRunningTime,
   TwapSuborder,
   TakeStopTrigger,
+  Referral,
 }

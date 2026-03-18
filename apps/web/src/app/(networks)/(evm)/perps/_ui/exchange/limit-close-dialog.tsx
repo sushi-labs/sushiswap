@@ -291,31 +291,33 @@ export const LimitCloseDialog = ({
             <PerpsChecker.Legal>
               <PerpsChecker.EnableTrading>
                 <PerpsChecker.BuilderFee>
-                  <Button
-                    variant="perps-default"
-                    onClick={async () => {
-                      if (!orderData) return
-                      await executeOrdersAsync(
-                        { orderData },
-                        {
-                          onSuccess: () => {
-                            setOpen(false)
-                            if (onOpenChange) onOpenChange(false)
+                  <PerpsChecker.Referral>
+                    <Button
+                      variant="perps-default"
+                      onClick={async () => {
+                        if (!orderData) return
+                        await executeOrdersAsync(
+                          { orderData },
+                          {
+                            onSuccess: () => {
+                              setOpen(false)
+                              if (onOpenChange) onOpenChange(false)
+                            },
                           },
-                        },
-                      )
-                    }}
-                    disabled={
-                      isPending ||
-                      !positionToClose ||
-                      !limitPriceToCloseAt ||
-                      Number.parseFloat(_sizeToClose) <
-                        Number.parseFloat(sizeToClose.base)
-                    }
-                    loading={isPending}
-                  >
-                    Limit Close
-                  </Button>
+                        )
+                      }}
+                      disabled={
+                        isPending ||
+                        !positionToClose ||
+                        !limitPriceToCloseAt ||
+                        Number.parseFloat(_sizeToClose) <
+                          Number.parseFloat(sizeToClose.base)
+                      }
+                      loading={isPending}
+                    >
+                      Limit Close
+                    </Button>
+                  </PerpsChecker.Referral>
                 </PerpsChecker.BuilderFee>
               </PerpsChecker.EnableTrading>
             </PerpsChecker.Legal>

@@ -127,22 +127,26 @@ export const UpdateIsolatedMarginDialog = ({
             <PerpsChecker.Legal variant="perps-default">
               <PerpsChecker.EnableTrading variant="perps-default">
                 <PerpsChecker.BuilderFee variant="perps-default">
-                  <Button
-                    variant="perps-default"
-                    onClick={async () => {
-                      if (!updateData) return
-                      await updateIsolatedMarginAsync(updateData, {
-                        onSuccess: () => {
-                          handleOpenChange(false)
-                          setAmount('')
-                        },
-                      })
-                    }}
-                    loading={isPending}
-                    disabled={!updateData || Number(amount) > Number(maxValue)}
-                  >
-                    Confirm
-                  </Button>
+                  <PerpsChecker.Referral variant="perps-default">
+                    <Button
+                      variant="perps-default"
+                      onClick={async () => {
+                        if (!updateData) return
+                        await updateIsolatedMarginAsync(updateData, {
+                          onSuccess: () => {
+                            handleOpenChange(false)
+                            setAmount('')
+                          },
+                        })
+                      }}
+                      loading={isPending}
+                      disabled={
+                        !updateData || Number(amount) > Number(maxValue)
+                      }
+                    >
+                      Confirm
+                    </Button>
+                  </PerpsChecker.Referral>
                 </PerpsChecker.BuilderFee>
               </PerpsChecker.EnableTrading>
             </PerpsChecker.Legal>

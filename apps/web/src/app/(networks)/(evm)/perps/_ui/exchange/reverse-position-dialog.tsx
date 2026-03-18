@@ -228,30 +228,32 @@ export const ReversePositionDialog = ({
             <PerpsChecker.Legal variant="perps-default">
               <PerpsChecker.EnableTrading variant="perps-default">
                 <PerpsChecker.BuilderFee variant="perps-default">
-                  <Button
-                    variant={
-                      positionToClose.side === 'A'
-                        ? 'perps-long'
-                        : 'perps-short'
-                    }
-                    onClick={async () => {
-                      if (!orderData) return
-                      await executeOrdersAsync(
-                        { orderData },
-                        {
-                          onSuccess: () => {
-                            handleOpenChange(false)
+                  <PerpsChecker.Referral variant="perps-default">
+                    <Button
+                      variant={
+                        positionToClose.side === 'A'
+                          ? 'perps-long'
+                          : 'perps-short'
+                      }
+                      onClick={async () => {
+                        if (!orderData) return
+                        await executeOrdersAsync(
+                          { orderData },
+                          {
+                            onSuccess: () => {
+                              handleOpenChange(false)
+                            },
                           },
-                        },
-                      )
-                    }}
-                    disabled={isPending || !positionToClose}
-                    loading={isPending}
-                  >
-                    {positionToClose.side === 'A'
-                      ? 'Reverse to Long'
-                      : 'Reverse to Short'}
-                  </Button>
+                        )
+                      }}
+                      disabled={isPending || !positionToClose}
+                      loading={isPending}
+                    >
+                      {positionToClose.side === 'A'
+                        ? 'Reverse to Long'
+                        : 'Reverse to Short'}
+                    </Button>
+                  </PerpsChecker.Referral>
                 </PerpsChecker.BuilderFee>
               </PerpsChecker.EnableTrading>
             </PerpsChecker.Legal>

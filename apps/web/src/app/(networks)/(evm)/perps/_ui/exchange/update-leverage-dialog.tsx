@@ -114,24 +114,26 @@ export const UpdateLeverageDialog = ({
             <PerpsChecker.Legal variant="perps-default">
               <PerpsChecker.EnableTrading variant="perps-default">
                 <PerpsChecker.BuilderFee variant="perps-default">
-                  <Button
-                    variant="perps-default"
-                    onClick={async () =>
-                      await updateLeverageAsync(
-                        { assetString, isCross, newLeverage },
-                        {
-                          onSuccess: () => {
-                            handleOpenChange(false)
-                            setNewLeverage(newLeverage)
+                  <PerpsChecker.Referral variant="perps-default">
+                    <Button
+                      variant="perps-default"
+                      onClick={async () =>
+                        await updateLeverageAsync(
+                          { assetString, isCross, newLeverage },
+                          {
+                            onSuccess: () => {
+                              handleOpenChange(false)
+                              setNewLeverage(newLeverage)
+                            },
                           },
-                        },
-                      )
-                    }
-                    disabled={isLoading || isError || isPending}
-                    loading={isPending}
-                  >
-                    Confirm
-                  </Button>
+                        )
+                      }
+                      disabled={isLoading || isError || isPending}
+                      loading={isPending}
+                    >
+                      Confirm
+                    </Button>
+                  </PerpsChecker.Referral>
                 </PerpsChecker.BuilderFee>
               </PerpsChecker.EnableTrading>
             </PerpsChecker.Legal>

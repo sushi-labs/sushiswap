@@ -1,25 +1,25 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useCallback } from 'react'
-import { useApproveBuilderFee } from 'src/lib/perps'
+import { useSetReferrer } from 'src/lib/perps'
 
-export const BuilderFee: FC<ButtonProps> = ({
+export const Referral: FC<ButtonProps> = ({
   children,
   fullWidth = true,
   size = 'perps-default',
   ...props
 }) => {
-  const { approveBuilderFeeAsync, isPending, hasApprovedBuilder } =
-    useApproveBuilderFee()
+  const { hasAcceptedReferral, isPending, setReferrerCodeAsync } =
+    useSetReferrer()
 
   const handleApproveBuilderFee = useCallback(async () => {
     try {
-      await approveBuilderFeeAsync()
+      await setReferrerCodeAsync({})
     } catch (error) {
       console.log(error)
     }
-  }, [approveBuilderFeeAsync])
+  }, [setReferrerCodeAsync])
 
-  if (!hasApprovedBuilder) {
+  if (!hasAcceptedReferral) {
     return (
       <Button
         fullWidth={fullWidth}
@@ -28,7 +28,7 @@ export const BuilderFee: FC<ButtonProps> = ({
         loading={isPending}
         {...props}
       >
-        Approve Builder
+        Accept Referral (4% discount)
       </Button>
     )
   }
