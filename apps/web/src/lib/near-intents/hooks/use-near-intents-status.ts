@@ -8,6 +8,56 @@ export interface UseNearIntentsStatusParams {
   enabled?: boolean
 }
 
+export enum StepState {
+  Sign = 0,
+  NotStarted = 1,
+  Pending = 2,
+  PartialSuccess = 3,
+  Success = 4,
+  Failed = 5,
+}
+
+export const initState = (state: {
+  source: StepState
+  bridge: StepState
+  dest: StepState
+}) => {
+  return (
+    state.source === StepState.NotStarted &&
+    state.bridge === StepState.NotStarted &&
+    state.dest === StepState.NotStarted
+  )
+}
+
+export const pendingState = (state: {
+  source: StepState
+  bridge: StepState
+  dest: StepState
+}) => {
+  return !finishedState(state) && !failedState(state) && !initState(state)
+}
+
+export const finishedState = (state: {
+  source: StepState
+  bridge: StepState
+  dest: StepState
+}) => {
+  if (state.source === StepState.Failed) return true
+  return [
+    StepState.Success,
+    StepState.Failed,
+    StepState.PartialSuccess,
+  ].includes(state.dest)
+}
+
+export const failedState = (state: {
+  source: StepState
+  bridge: StepState
+  dest: StepState
+}) => {
+  return state.source === StepState.Failed
+}
+
 export const useNearIntentsStatus = ({
   depositAddress,
   depositMemo,
