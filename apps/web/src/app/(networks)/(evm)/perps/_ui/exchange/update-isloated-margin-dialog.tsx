@@ -32,7 +32,7 @@ export const UpdateIsolatedMarginDialog = ({
   const [open, setOpen] = useState(false)
   const [type, setType] = useState<'add' | 'remove'>('add')
   const [amount, setAmount] = useState('')
-  const { updateIsolatedMarginAsync, isPending } = useUpdateIsolatedMargin()
+  const { updateIsolatedMargin, isPending } = useUpdateIsolatedMargin()
 
   const currentMargin = useMemo(() => {
     return position.position.marginUsed
@@ -130,9 +130,9 @@ export const UpdateIsolatedMarginDialog = ({
                   <PerpsChecker.Referral variant="perps-default">
                     <Button
                       variant="perps-default"
-                      onClick={async () => {
+                      onClick={() => {
                         if (!updateData) return
-                        await updateIsolatedMarginAsync(updateData, {
+                        updateIsolatedMargin(updateData, {
                           onSuccess: () => {
                             handleOpenChange(false)
                             setAmount('')

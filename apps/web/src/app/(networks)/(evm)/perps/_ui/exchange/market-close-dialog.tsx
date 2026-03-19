@@ -61,7 +61,7 @@ export const MarketCloseDialog = ({
       '0',
     quote: '0',
   })
-  const { executeOrdersAsync, isPending } = useExecuteOrders()
+  const { executeOrders, isPending } = useExecuteOrders()
   const {
     state: {
       assetListQuery: { data: assetListData },
@@ -275,9 +275,9 @@ export const MarketCloseDialog = ({
                   <PerpsChecker.Referral variant="perps-default">
                     <Button
                       variant="perps-default"
-                      onClick={async () => {
+                      onClick={() => {
                         if (!orderData) return
-                        await executeOrdersAsync(
+                        executeOrders(
                           { orderData },
                           {
                             onSuccess: () => {

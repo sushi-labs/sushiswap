@@ -107,7 +107,9 @@ export const Chart = () => {
   }, [])
 
   useEffect(() => {
-    if (!isMounted || !resolvedTheme || tvWidgetRef.current) return
+    if (!isMounted || !resolvedTheme || !chartContainerRef.current) return
+    if (!assetName || !decimals || !marketType) return
+    if (tvWidgetRef.current) return
 
     const intervalQuicks = ['5', '60', '1D']
 
@@ -117,7 +119,6 @@ export const Chart = () => {
     )
     localStorage.setItem('tradingview.current_theme.name', resolvedTheme)
 
-    if (!chartContainerRef.current) return
     const widgetOptions = createChartWidgetOptions({
       activeAsset,
       assetName,
@@ -137,8 +138,6 @@ export const Chart = () => {
     })
 
     return () => {
-      setChartReady(false)
-
       removeLine(pnlPositionLineRef.current)
       pnlPositionLineRef.current = null
 
@@ -150,15 +149,16 @@ export const Chart = () => {
 
       tvWidget.remove()
       tvWidgetRef.current = null
+      setChartReady(false)
     }
   }, [
-    address,
-    resolvedTheme,
     isMounted,
+    resolvedTheme,
     activeAsset,
     assetName,
     decimals,
     marketType,
+    address,
     showBuySellInChart,
   ])
 
@@ -347,7 +347,9 @@ export const Chart = () => {
           if (
             'trigger' in preppedData.orderType &&
             preppedData.orderType.trigger.tpsl === 'tp' &&
-            Number(newPrice) < Number(tradeLines.markPrice)
+            (order.side === 'A'
+              ? Number(newPrice) < Number(tradeLines.markPrice)
+              : Number(newPrice) > Number(tradeLines.markPrice))
           ) {
             return createFailedToast({
               summary: `TP price must be higher than current price. To close position immediately, use the position table or order form.`,
@@ -362,7 +364,9 @@ export const Chart = () => {
           if (
             'trigger' in preppedData.orderType &&
             preppedData.orderType.trigger.tpsl === 'sl' &&
-            Number(newPrice) > Number(tradeLines.markPrice)
+            (order.side === 'A'
+              ? Number(newPrice) > Number(tradeLines.markPrice)
+              : Number(newPrice) < Number(tradeLines.markPrice))
           ) {
             return createFailedToast({
               summary: `SL price must be lower than current price. To close position immediately, use the position table or order form.`,

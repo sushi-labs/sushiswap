@@ -115,6 +115,7 @@ export const useUpdateLeverage = () => {
 
   return {
     updateLeverageAsync: mutation.mutateAsync,
+    updateLeverage: mutation.mutate,
     isPending: mutation.isPending,
   }
 }

@@ -45,7 +45,7 @@ export const ReversePositionDialog = ({
     state: { quickCloseReversePositionEnabled },
     mutate: { setQuickCloseReversePositionEnabled },
   } = useUserSettingsState()
-  const { executeOrdersAsync, isPending } = useExecuteOrders()
+  const { executeOrders, isPending } = useExecuteOrders()
   const {
     state: {
       assetListQuery: { data: assetListData },
@@ -235,9 +235,9 @@ export const ReversePositionDialog = ({
                           ? 'perps-long'
                           : 'perps-short'
                       }
-                      onClick={async () => {
+                      onClick={() => {
                         if (!orderData) return
-                        await executeOrdersAsync(
+                        executeOrders(
                           { orderData },
                           {
                             onSuccess: () => {

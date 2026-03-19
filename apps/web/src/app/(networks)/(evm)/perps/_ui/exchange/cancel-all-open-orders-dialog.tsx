@@ -25,7 +25,7 @@ export const CancelAllOpenOrdersDialog = () => {
     [openOrders],
   )
 
-  const { cancelOrdersAsync, isPending } = useCancelOpenOrders()
+  const { cancelOrders, isPending } = useCancelOpenOrders()
 
   return (
     <Dialog
@@ -51,8 +51,8 @@ export const CancelAllOpenOrdersDialog = () => {
                 <PerpsChecker.Referral variant="perps-default">
                   <Button
                     variant="perps-default"
-                    onClick={async () =>
-                      await cancelOrdersAsync(
+                    onClick={() =>
+                      cancelOrders(
                         { cancelData: allCancelData },
                         {
                           onSuccess: () => {

@@ -41,7 +41,7 @@ export const UpdateLeverageDialog = ({
       assetListQuery: { data, isLoading, isError },
     },
   } = useAssetListState()
-  const { updateLeverageAsync, isPending } = useUpdateLeverage()
+  const { updateLeverage, isPending } = useUpdateLeverage()
   const asset = useMemo(() => data?.get?.(assetString), [data, assetString])
   const maxLeverage = useMemo(
     () => asset?.maxLeverage ?? 1,
@@ -117,8 +117,8 @@ export const UpdateLeverageDialog = ({
                   <PerpsChecker.Referral variant="perps-default">
                     <Button
                       variant="perps-default"
-                      onClick={async () =>
-                        await updateLeverageAsync(
+                      onClick={() =>
+                        updateLeverage(
                           { assetString, isCross, newLeverage },
                           {
                             onSuccess: () => {

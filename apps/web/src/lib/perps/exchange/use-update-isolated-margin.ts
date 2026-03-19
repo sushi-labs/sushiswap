@@ -125,6 +125,7 @@ export const useUpdateIsolatedMargin = () => {
 
   return {
     updateIsolatedMarginAsync: mutation.mutateAsync,
+    updateIsolatedMargin: mutation.mutate,
     isPending: mutation.isPending,
   }
 }

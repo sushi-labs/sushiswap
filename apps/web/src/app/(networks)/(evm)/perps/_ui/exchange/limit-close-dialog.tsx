@@ -8,7 +8,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@sushiswap/ui'
-import { type ReactNode, useCallback, useMemo, useState } from 'react'
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import {
   BUILDER_FEE_PERPS,
   type UserPositionsItemType,
@@ -42,6 +48,10 @@ export const LimitCloseDialog = ({
   isOpen?: boolean
   onOpenChange?: (open: boolean) => void
 }) => {
+  const initSize =
+    positionToClose?.position?.szi?.split('-')?.[1] ||
+    positionToClose?.position?.szi ||
+    '0'
   const [open, setOpen] = useState(false)
   const [sizeSide, setSizeSide] = useState<'base' | 'quote'>('base')
   const [percentToClose, setPercentToClose] = useState(100)
@@ -49,14 +59,11 @@ export const LimitCloseDialog = ({
     base: string
     quote: string
   }>({
-    base:
-      positionToClose?.position?.szi?.split('-')?.[1] ||
-      positionToClose?.position?.szi ||
-      '0',
+    base: initSize,
     quote: '0',
   })
   const [limitPriceToCloseAt, setLimitPriceToCloseAt] = useState<string>('')
-  const { executeOrdersAsync, isPending } = useExecuteOrders()
+  const { executeOrders, isPending } = useExecuteOrders()
   const {
     state: {
       assetListQuery: { data: assetListData },
@@ -83,6 +90,24 @@ export const LimitCloseDialog = ({
     return _asset
   }, [assetListData, positionToClose])
 
+  useEffect(() => {
+    if (
+      sizeToClose.quote === '0' &&
+      initSize !== '0' &&
+      percentToClose === 100 &&
+      asset
+    ) {
+      const { baseSize, quoteSize } = getSizeAndPercentageFromPercentageInput({
+        percentageInput: 100,
+        maxSize: initSize,
+        priceUsd: midPrice ?? '0',
+        decimals: asset?.decimals,
+      })
+
+      setSizeToClose({ base: baseSize, quote: quoteSize })
+    }
+  }, [asset, initSize, midPrice, percentToClose, sizeToClose.quote])
+
   const handeleSetPercentToClose = useCallback(
     (val: number) => {
       if (!positionToClose || !asset || midPrice == null) {
@@ -91,7 +116,7 @@ export const LimitCloseDialog = ({
         return
       }
 
-      const size = positionToClose.position.szi
+      const size = initSize
       try {
         const { baseSize, quoteSize, percentage } =
           getSizeAndPercentageFromPercentageInput({
@@ -109,14 +134,14 @@ export const LimitCloseDialog = ({
         setPercentToClose(val)
       }
     },
-    [positionToClose, asset, midPrice],
+    [positionToClose, asset, midPrice, initSize],
   )
 
   const handleSetSizeToClose = useCallback(
     (value: string) => {
       if (!positionToClose || !asset) return
 
-      const size = positionToClose.position.szi
+      const size = initSize
       try {
         const { baseSize, quoteSize, percentage } =
           getSizeAndPercentageFromInput({
@@ -140,7 +165,7 @@ export const LimitCloseDialog = ({
         })
       }
     },
-    [positionToClose, asset, sizeSide, midPrice],
+    [positionToClose, initSize, asset, sizeSide, midPrice],
   )
 
   const _sizeToClose = useMemo(() => {
@@ -294,9 +319,9 @@ export const LimitCloseDialog = ({
                   <PerpsChecker.Referral>
                     <Button
                       variant="perps-default"
-                      onClick={async () => {
+                      onClick={() => {
                         if (!orderData) return
-                        await executeOrdersAsync(
+                        executeOrders(
                           { orderData },
                           {
                             onSuccess: () => {

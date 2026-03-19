@@ -69,7 +69,7 @@ export const EditTpSlPositionDialog = ({
   const { data: openOrders } = useUserOpenOrders({
     coin: positionToClose?.position?.coin,
   })
-  const { executeOrdersAsync, isPending } = useExecuteOrders()
+  const { executeOrders, isPending } = useExecuteOrders()
   const {
     state: {
       assetListQuery: { data: assetListData },
@@ -460,9 +460,9 @@ export const EditTpSlPositionDialog = ({
                       <PerpsChecker.Referral variant="perps-default">
                         <Button
                           variant="perps-default"
-                          onClick={async () => {
+                          onClick={() => {
                             if (!orderData) return
-                            await executeOrdersAsync(
+                            executeOrders(
                               { orderData },
                               {
                                 onSuccess: () => {

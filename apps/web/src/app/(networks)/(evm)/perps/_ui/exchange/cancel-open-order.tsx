@@ -12,7 +12,7 @@ export const CancelOpenOrder = ({
 }) => {
   const address = useAccount('evm')
   const { data } = useLegalCheck({ address })
-  const { cancelOrdersAsync, isPending } = useCancelOpenOrders()
+  const { cancelOrders, isPending } = useCancelOpenOrders()
   const cancelData = useMemo(() => {
     if (!orderId || !coin) return undefined
     return [
@@ -24,9 +24,9 @@ export const CancelOpenOrder = ({
   }, [orderId, coin])
   return (
     <TableButton
-      onClick={async () => {
+      onClick={() => {
         if (!cancelData) return
-        await cancelOrdersAsync({ cancelData })
+        cancelOrders({ cancelData })
       }}
       disabled={isPending || !cancelData || !data?.ipAllowed}
     >

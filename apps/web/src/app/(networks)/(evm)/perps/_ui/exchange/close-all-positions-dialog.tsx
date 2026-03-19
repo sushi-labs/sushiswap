@@ -30,7 +30,7 @@ export const CloseAllPositionsDialog = ({
   const [closeType, setCloseType] = useState<'market' | 'limit-at-mid'>(
     'market',
   )
-  const { executeOrdersAsync, isPending } = useExecuteOrders()
+  const { executeOrders, isPending } = useExecuteOrders()
   const {
     state: {
       assetListQuery: { data: assetListData },
@@ -136,8 +136,8 @@ export const CloseAllPositionsDialog = ({
                 <PerpsChecker.Referral variant="perps-default">
                   <Button
                     variant="perps-default"
-                    onClick={async () =>
-                      await executeOrdersAsync(
+                    onClick={() =>
+                      executeOrders(
                         { orderData },
                         {
                           onSuccess: () => {

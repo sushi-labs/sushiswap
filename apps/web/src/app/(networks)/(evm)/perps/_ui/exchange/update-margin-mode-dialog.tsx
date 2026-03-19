@@ -35,7 +35,7 @@ export const UpdateMarginModeDialog = ({
       assetListQuery: { data, isLoading, isError },
     },
   } = useAssetListState()
-  const { updateLeverageAsync, isPending } = useUpdateLeverage()
+  const { updateLeverage, isPending } = useUpdateLeverage()
   const asset = useMemo(() => data?.get?.(assetString), [data, assetString])
 
   return (
@@ -118,8 +118,8 @@ export const UpdateMarginModeDialog = ({
                   <PerpsChecker.Referral variant="perps-default">
                     <Button
                       variant="perps-default"
-                      onClick={async () => {
-                        await updateLeverageAsync(
+                      onClick={() => {
+                        updateLeverage(
                           {
                             assetString,
                             isCross: newLeverageType === 'cross',
