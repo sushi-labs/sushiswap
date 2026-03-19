@@ -176,37 +176,23 @@ export const STEER_APR_COLUMN: ColumnDef<
   accessorFn: (row) => row.vault.stakedAndIncentiveApr1d,
   cell: (props) => {
     return (
-      <div className="flex gap-1">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="line-through text-muted-foreground">
-                {formatPercent(props.row.original.vault.feeAndIncentiveApr1d)}
-              </span>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>APR when not staked within the vault.</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <APRHoverCard
-          pool={{
-            id: props.row.original.id as EvmID,
-            address: props.row.original.vault.poolAddress,
-            chainId: props.row.original.vault.chainId,
-            protocol: SushiSwapProtocol.SUSHISWAP_V3,
-            feeApr1d: props.row.original.vault.feeApr1d,
-            incentiveApr: props.row.original.vault.incentiveApr,
-            isIncentivized: props.row.original.vault.isIncentivized,
-            wasIncentivized: props.row.original.vault.wasIncentivized,
-          }}
-          smartPoolAPR={props.row.original.vault.stakedApr1d}
-        >
-          <span className="underline decoration-dotted underline-offset-2">
-            {formatPercent(props.row.original.vault.stakedAndIncentiveApr1d)}
-          </span>
-        </APRHoverCard>
-      </div>
+      <APRHoverCard
+        pool={{
+          id: props.row.original.id as EvmID,
+          address: props.row.original.vault.poolAddress,
+          chainId: props.row.original.vault.chainId,
+          protocol: SushiSwapProtocol.SUSHISWAP_V3,
+          feeApr1d: props.row.original.vault.feeApr1d,
+          incentiveApr: props.row.original.vault.incentiveApr,
+          isIncentivized: props.row.original.vault.isIncentivized,
+          wasIncentivized: props.row.original.vault.wasIncentivized,
+        }}
+        smartPoolAPR={props.row.original.vault.stakedApr1d}
+      >
+        <span className="underline decoration-dotted underline-offset-2">
+          {formatPercent(props.row.original.vault.stakedAndIncentiveApr1d)}
+        </span>
+      </APRHoverCard>
     )
   },
   meta: {

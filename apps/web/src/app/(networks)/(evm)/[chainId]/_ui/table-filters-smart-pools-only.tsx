@@ -33,7 +33,7 @@ export const TableFiltersSmartPoolsOnly: FC = () => {
       pressed={isPending ? checked : smartPoolsOnly}
       size="sm"
     >
-      <span>💡</span>Smart pool
+      <span>🏦</span>Liquidity Vault
     </Toggle>
   )
 }
