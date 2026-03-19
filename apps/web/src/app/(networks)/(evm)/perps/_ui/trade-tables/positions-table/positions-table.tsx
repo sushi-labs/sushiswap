@@ -188,7 +188,7 @@ const SharedPositionModal = ({
             if (!nextOpen) onClose()
           }}
           positionToClose={position}
-          trigger={null}
+          trigger={<div />}
         />
       )
 
@@ -200,7 +200,7 @@ const SharedPositionModal = ({
             if (!nextOpen) onClose()
           }}
           positionToClose={position}
-          trigger={null}
+          trigger={<div />}
         />
       )
 
@@ -212,7 +212,7 @@ const SharedPositionModal = ({
             if (!nextOpen) onClose()
           }}
           positionToClose={position}
-          trigger={null}
+          trigger={<div />}
         />
       )
 
@@ -224,7 +224,7 @@ const SharedPositionModal = ({
             if (!nextOpen) onClose()
           }}
           positionToClose={position}
-          trigger={null}
+          trigger={<div />}
         />
       )
 
@@ -250,7 +250,7 @@ const SharedPositionModal = ({
           assetString={position.position.coin}
           currentLeverage={position.position.leverage.value}
           isCross={position.position.leverage.type === 'cross'}
-          trigger={null}
+          trigger={<div />}
         />
       )
 

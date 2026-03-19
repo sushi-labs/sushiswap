@@ -2,6 +2,7 @@
 
 import { formatPrice } from '@nktkas/hyperliquid/utils'
 import { useIsMounted } from '@sushiswap/hooks'
+import { createFailedToast } from '@sushiswap/notifications'
 import { Card, classNames } from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { useTheme } from 'next-themes'
@@ -13,7 +14,8 @@ import type {
 import { widget } from 'public/trading-view/charting_library/charting_library.esm.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
-  prepModidyOrderData,
+  TOAST_AUTOCLOSE_TIME,
+  prepModifyOrderData,
   useAssetName,
   useCancelOpenOrders,
   useModifyOrder,
@@ -339,8 +341,39 @@ export const Chart = () => {
         line.onMove(() => {
           if (isPendingModifyOrder) return
           if (szDecimals === undefined || !marketType) return
-          const preppedData = prepModidyOrderData(order)
+          const preppedData = prepModifyOrderData(order)
           const newPrice = line.getPrice()?.toString() ?? ''
+
+          if (
+            'trigger' in preppedData.orderType &&
+            preppedData.orderType.trigger.tpsl === 'tp' &&
+            Number(newPrice) < Number(tradeLines.markPrice)
+          ) {
+            return createFailedToast({
+              summary: `TP price must be higher than current price. To close position immediately, use the position table or order form.`,
+              account: '0x',
+              chainId: 1,
+              type: 'burn',
+              timestamp: Date.now(),
+              groupTimestamp: Date.now(),
+              autoClose: TOAST_AUTOCLOSE_TIME,
+            })
+          }
+          if (
+            'trigger' in preppedData.orderType &&
+            preppedData.orderType.trigger.tpsl === 'sl' &&
+            Number(newPrice) > Number(tradeLines.markPrice)
+          ) {
+            return createFailedToast({
+              summary: `SL price must be lower than current price. To close position immediately, use the position table or order form.`,
+              account: '0x',
+              chainId: 1,
+              type: 'burn',
+              timestamp: Date.now(),
+              groupTimestamp: Date.now(),
+              autoClose: TOAST_AUTOCLOSE_TIME,
+            })
+          }
 
           setPendingOrderPriceOverrides((prev) => ({
             ...prev,
@@ -351,7 +384,22 @@ export const Chart = () => {
           modifyOrder(
             {
               ...preppedData,
-              price,
+              price:
+                'limit' in preppedData.orderType ? price : preppedData.price,
+              orderType:
+                'limit' in preppedData.orderType
+                  ? {
+                      limit: {
+                        timeInForce: preppedData.orderType.limit.timeInForce,
+                      },
+                    }
+                  : {
+                      trigger: {
+                        isMarket: preppedData.orderType.trigger.isMarket,
+                        triggerPrice: price,
+                        tpsl: preppedData.orderType.trigger.tpsl,
+                      },
+                    },
             },
             {
               onError: () => {
@@ -388,6 +436,7 @@ export const Chart = () => {
     isPendingCancelOrders,
     tradeLines?.openOrders,
     tradeLines?.posSize,
+    tradeLines?.markPrice,
     szDecimals,
     modifyOrder,
     isPendingModifyOrder,

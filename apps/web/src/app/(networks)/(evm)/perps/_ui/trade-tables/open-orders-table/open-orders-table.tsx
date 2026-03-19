@@ -5,7 +5,7 @@ import {
   type UserOpenOrdersItemType,
   formatPrice,
   formatSize,
-  prepModidyOrderData,
+  prepModifyOrderData,
   useCancelOpenOrders,
   useModifyOrder,
   useUserOpenOrders,
@@ -105,7 +105,7 @@ export const OpenOrdersTable = () => {
       if (openOrder.szDecimals === undefined) return
 
       try {
-        const currentOrderData = prepModidyOrderData(openOrder)
+        const currentOrderData = prepModifyOrderData(openOrder)
 
         if (!currentOrderData) return
         let value = newValue

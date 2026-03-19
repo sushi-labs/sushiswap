@@ -151,11 +151,11 @@ export const usePrepModifyOrderData = ({
   openOrder: UserOpenOrdersItemType
 }) => {
   return useMemo(() => {
-    return prepModidyOrderData(openOrder)
+    return prepModifyOrderData(openOrder)
   }, [openOrder])
 }
 
-export const prepModidyOrderData = (openOrder: UserOpenOrdersItemType) => {
+export const prepModifyOrderData = (openOrder: UserOpenOrdersItemType) => {
   const isTrigger = openOrder.isTrigger
   const isMarket =
     openOrder.orderType === 'Stop Market' ||
