@@ -7,15 +7,19 @@ import {
 } from '@sushiswap/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ChainId } from 'sushi'
+import type {
+  StellarAccountAddress,
+  StellarContractAddress,
+} from 'sushi/stellar'
 import { createAndInitializePool } from '../../soroban/dex-factory-helpers'
 import { formatAddress } from '../../utils/format'
 import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
 import { invalidatePoolInitializedQuery } from '../pool/use-pool-initialized'
 
 export interface CreateAndInitializePoolParams {
-  userAddress: string
-  tokenA: string
-  tokenB: string
+  userAddress: StellarAccountAddress
+  tokenA: StellarContractAddress
+  tokenB: StellarContractAddress
   fee: number
   sqrtPriceX96: bigint
   signTransaction: (xdr: string) => Promise<string>

@@ -1,6 +1,12 @@
+import type {
+  StellarAccountAddress,
+  StellarContractAddress,
+} from 'sushi/stellar'
 import { IS_FUTURENET } from '~stellar/_common/lib/constants'
 
-export const getStellarAddressLink = (address: string): string => {
+export const getStellarAddressLink = (
+  address: StellarAccountAddress,
+): string => {
   if (IS_FUTURENET) {
     return `https://futurenet.steexp.com/account/${address}`
   } else {
@@ -8,7 +14,9 @@ export const getStellarAddressLink = (address: string): string => {
   }
 }
 
-export const getStellarContractLink = (contractId: string): string => {
+export const getStellarContractLink = (
+  contractId: StellarContractAddress,
+): string => {
   if (IS_FUTURENET) {
     return `https://futurenet.steexp.com/contract/${contractId}`
   } else {

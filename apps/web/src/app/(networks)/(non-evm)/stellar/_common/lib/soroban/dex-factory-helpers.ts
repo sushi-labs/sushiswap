@@ -1,5 +1,9 @@
 import { Address } from '@stellar/stellar-sdk'
 import ms from 'ms'
+import type {
+  StellarAccountAddress,
+  StellarContractAddress,
+} from 'sushi/stellar'
 import { FEE_TIERS } from '../utils/ticks'
 import { getFactoryContractClient, getFactoryContractId } from './client'
 import { DEFAULT_TIMEOUT, isAddressLower } from './constants'
@@ -25,13 +29,13 @@ export async function createAndInitializePool({
   sourceAccount,
   signTransaction,
 }: {
-  tokenA: string
-  tokenB: string
+  tokenA: StellarContractAddress
+  tokenB: StellarContractAddress
   fee: number
   sqrtPriceX96: bigint
-  sourceAccount: string
+  sourceAccount: StellarAccountAddress
   signTransaction: (xdr: string) => Promise<string>
-}): Promise<{ poolAddress: string; txHash?: string }> {
+}): Promise<{ poolAddress: StellarContractAddress; txHash?: string }> {
   try {
     // Validate inputs
     if (!tokenA || !tokenB) {
@@ -110,7 +114,9 @@ export async function createAndInitializePool({
 
     if (txResult.status === 'SUCCESS' && txResult.returnValue !== undefined) {
       // Extract pool address from result
-      const poolAddress = Address.fromScVal(txResult.returnValue).toString()
+      const poolAddress = Address.fromScVal(
+        txResult.returnValue,
+      ).toString() as StellarContractAddress
 
       return {
         poolAddress,
@@ -190,11 +196,11 @@ export async function getPoolDirectSDK({
   fee,
   isLegacy = false,
 }: {
-  tokenA: string
-  tokenB: string
+  tokenA: StellarContractAddress
+  tokenB: StellarContractAddress
   fee: number
   isLegacy?: boolean
-}): Promise<string | null> {
+}): Promise<StellarContractAddress | null> {
   try {
     // Order tokens by decoded bytes - EXACTLY like the router and getPoolTransactionBuilder does
     // Note: Must compare decoded bytes, not base32 strings (base32 doesn't preserve byte ordering)
@@ -216,7 +222,9 @@ export async function getPoolDirectSDK({
       token_b: token1,
       fee: fee,
     })
-    const result = assembledTransaction.result
+    const result = assembledTransaction.result as
+      | StellarContractAddress
+      | undefined
 
     // Handle the result - it should be an Option<string>
     // where Option<T> is defined as T | undefined

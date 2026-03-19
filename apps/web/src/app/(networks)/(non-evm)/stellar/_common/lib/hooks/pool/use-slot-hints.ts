@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import type { StellarContractAddress } from 'sushi/stellar'
 import {
   type PoolOracleHints,
   fetchOracleHints,
@@ -13,7 +14,7 @@ import {
  * @returns Query result with oracle hints
  */
 export function useOracleHints(
-  poolAddress: string | undefined,
+  poolAddress: StellarContractAddress | undefined,
   enabled = true,
 ) {
   return useQuery<PoolOracleHints, Error>({

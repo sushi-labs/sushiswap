@@ -1,3 +1,8 @@
+import {
+  type StellarAccountAddress,
+  type StellarContractAddress,
+  isStellarContractAddress,
+} from 'sushi/stellar'
 import type { PoolInfo, PoolLiquidity, PoolReserves } from '../types/pool.type'
 import type { Token } from '../types/token.type'
 import { MAX_TICK_RANGE } from '../utils/ticks'
@@ -6,7 +11,7 @@ import { contractAddresses } from './contracts'
 import { getTokenBalance, getTokenByContract } from './token-helpers'
 
 export interface PoolBasicInfo {
-  address: string
+  address: StellarContractAddress
   tokenA: Token
   tokenB: Token
   fee: number
@@ -30,7 +35,7 @@ export interface ContractPoolData {
  * @param address - The pool contract address
  */
 export async function getPoolInfoFromContract(
-  address: string,
+  address: StellarContractAddress,
 ): Promise<ContractPoolData | null> {
   try {
     const poolLensContractClient = getPoolLensContractClient({
@@ -63,8 +68,8 @@ export async function getPoolInfoFromContract(
     } = poolData.state
 
     const [token0, token1] = await Promise.all([
-      getTokenByContract(token0Address),
-      getTokenByContract(token1Address),
+      getTokenByContract(token0Address as StellarContractAddress),
+      getTokenByContract(token1Address as StellarContractAddress),
     ])
 
     return {
@@ -90,7 +95,9 @@ export async function getPoolInfoFromContract(
  * @param address - The pool contract address
  * @returns Complete pool information with all fields populated
  */
-export async function getPoolInfo(address: string): Promise<PoolInfo | null> {
+export async function getPoolInfo(
+  address: StellarContractAddress,
+): Promise<PoolInfo | null> {
   try {
     const contractPoolInfo = await getPoolInfoFromContract(address)
 
@@ -142,8 +149,8 @@ export async function getPoolInfo(address: string): Promise<PoolInfo | null> {
  * @returns The balances for each token in the pool for the connected address
  */
 export async function getPoolBalances(
-  address: string,
-  connectedAddress: string,
+  address: StellarContractAddress,
+  connectedAddress: StellarAccountAddress,
 ): Promise<PoolReserves> {
   const config = await getPoolInfoFromContract(address)
 
@@ -226,7 +233,7 @@ export const formatPriceBound = (tick: number, bound: 'lower' | 'upper') => {
  * @returns Current sqrt price as BigInt
  */
 export async function getCurrentSqrtPrice(
-  poolAddress: string,
+  poolAddress: StellarContractAddress,
 ): Promise<bigint> {
   const poolLensContractClient = getPoolLensContractClient({
     contractId: contractAddresses.POOL_LENS,
