@@ -25,10 +25,23 @@ export async function fetchOracleHints(
         contractId: poolAddress,
       })
 
-      const { result } = await poolClient.get_oracle_hints({
-        timeoutInSeconds: 30,
-        fee: 100,
-      })
+      const { result }: { result: Partial<OracleHints> } =
+        await poolClient.get_oracle_hints({
+          timeoutInSeconds: 30,
+          fee: 100,
+        })
+
+      // Check for legacy pools which is missing an entry
+      // in the result tuple (checkpoint_min)
+      // This would cause the binding to incorrectly parse the hints with one of
+      // the properties being undefined
+      if (
+        result.checkpoint === undefined ||
+        result.slot === undefined ||
+        result.checkpoint_min === undefined
+      ) {
+        throw new Error('Operation not allowed on legacy pool')
+      }
 
       return {
         pool: poolAddress,

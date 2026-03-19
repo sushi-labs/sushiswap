@@ -321,32 +321,46 @@ export async function decreaseLiquidity({
       publicKey: sourceAccount,
     })
 
+    const decreaseLiquidityOperationParams: Parameters<
+      typeof positionManagerClient.decrease_liquidity
+    > = [
+      {
+        params: {
+          token_id: tokenId,
+          liquidity,
+          amount0_min: amount0Min,
+          amount1_min: amount1Min,
+          deadline,
+          operator,
+        },
+      },
+      {
+        timeoutInSeconds: DEFAULT_TIMEOUT,
+        fee: 100000,
+      },
+    ]
+
     const decreaseLiquidityWithHintsOperation = async ([
       { hints },
     ]: PoolOracleHints[]) => {
       return await positionManagerClient.decrease_liquidity_with_hints(
         {
-          params: {
-            token_id: tokenId,
-            liquidity,
-            amount0_min: amount0Min,
-            amount1_min: amount1Min,
-            deadline,
-            operator,
-          },
+          ...decreaseLiquidityOperationParams[0],
           hints,
         },
-        {
-          timeoutInSeconds: DEFAULT_TIMEOUT,
-          fee: 100000,
-        },
+        decreaseLiquidityOperationParams[1],
       )
     }
 
-    const assembledTransaction = await executeWithOracleHints(
-      [pool],
-      decreaseLiquidityWithHintsOperation,
-    )
+    // Do not use hints for legacy pools
+    const assembledTransaction = isLegacy
+      ? await positionManagerClient.decrease_liquidity(
+          ...decreaseLiquidityOperationParams,
+        )
+      : await executeWithOracleHints(
+          [pool],
+          decreaseLiquidityWithHintsOperation,
+        )
 
     // Sign auth entries for nested authorization (PM -> Pool)
     const transactionXdr = await signAuthEntriesAndGetXdr(

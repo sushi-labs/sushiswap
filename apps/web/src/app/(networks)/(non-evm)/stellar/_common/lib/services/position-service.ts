@@ -408,31 +408,43 @@ export class PositionService {
       publicKey: params.recipient,
     })
 
+    const collectOperationParams: Parameters<
+      typeof positionManagerClient.collect
+    > = [
+      {
+        params: {
+          token_id: params.tokenId,
+          recipient: params.recipient,
+          amount0_max: params.amount0Max,
+          amount1_max: params.amount1Max,
+          operator: params.recipient,
+        },
+      },
+      {
+        timeoutInSeconds: DEFAULT_TIMEOUT,
+        fee: 100000,
+      },
+    ]
+
     const collectWithHintsOperation = async ([
       { hints },
     ]: PoolOracleHints[]) => {
       return await positionManagerClient.collect_with_hints(
         {
-          params: {
-            token_id: params.tokenId,
-            recipient: params.recipient,
-            amount0_max: params.amount0Max,
-            amount1_max: params.amount1Max,
-            operator: params.recipient,
-          },
+          ...collectOperationParams[0],
           hints,
         },
-        {
-          timeoutInSeconds: DEFAULT_TIMEOUT,
-          fee: 100000,
-        },
+        collectOperationParams[1],
       )
     }
 
-    const assembledTransaction = await executeWithOracleHints(
-      [params.poolAddress],
-      collectWithHintsOperation,
-    )
+    // Do not use hints for legacy pools
+    const assembledTransaction = isLegacy
+      ? await positionManagerClient.collect(...collectOperationParams)
+      : await executeWithOracleHints(
+          [params.poolAddress],
+          collectWithHintsOperation,
+        )
 
     // Sign auth entries for nested authorization (PM -> Pool -> Token transfers)
     const transactionXdr = await signAuthEntriesAndGetXdr(
