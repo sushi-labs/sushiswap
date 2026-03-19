@@ -39,7 +39,7 @@ export const SteerCarousel: FC<SteerCarousel> = ({ pool: rawPool, vaults }) => {
       className="mt-0 pt-0"
     />
   ) : (
-    <div className="text-center">No smart pools found.</div>
+    <div className="text-center">No liquidity vaults found.</div>
   )
 }
 
