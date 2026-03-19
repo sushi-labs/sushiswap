@@ -4,19 +4,16 @@ import { useMemo } from 'react'
 import { useLegalCheck } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 
-export const GeoBlockedMessage = ({
-  isGeoBlocked,
-}: {
-  isGeoBlocked: boolean
-}) => {
+export const GeoBlockedMessage = () => {
   const address = useAccount('evm')
   const { data, isLoading, error } = useLegalCheck({ address })
+
   const isBlocked = useMemo(() => {
     if (!data?.ipAllowed && !isLoading && !error) {
       return 'true'
     }
-    return isGeoBlocked ? 'true' : 'false'
-  }, [data, isLoading, error, isGeoBlocked])
+    return 'false'
+  }, [data, isLoading, error])
   return (
     <div
       data-blocked={isBlocked}

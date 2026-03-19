@@ -80,15 +80,6 @@ export const BLADE_SUPPORTED_NETWORKS = BLADE_SUPPORTED_CHAIN_IDS.filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
 
-// export const PERPS_SUPPORTED_NETWORKS = [
-//   ChainId.ETHEREUM,
-//   ChainId.ARBITRUM,
-//   ChainId.MONAD,
-//   ChainId.HYPEREVM,
-// ].filter(
-//   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
-// )
-
 export const NEW_CHAIN_IDS = [
   SvmChainId.SOLANA,
   StellarChainId.STELLAR,
