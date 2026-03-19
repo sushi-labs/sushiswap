@@ -13,7 +13,7 @@ export const useStablePrice = ({ token }: { token: Token | undefined }) => {
   const additionalTokens = [
     token?.contract,
     ...stableTokens.map((t) => t.contract),
-  ].filter((t): t is string => !!t)
+  ].filter((t): t is NonNullable<typeof t> => Boolean(t))
 
   // Get the pool graph, augmented with input/output tokens
   const { data: poolGraphData } = usePoolGraph({
@@ -31,7 +31,7 @@ export const useStablePrice = ({ token }: { token: Token | undefined }) => {
         ],
         queryFn: async (): Promise<string | null> => {
           if (!token || !poolGraphData) {
-            return null
+            throw new Error('Token and pool graph data are required')
           }
           const bestRoute = await getBestRoute({
             tokenIn: token,

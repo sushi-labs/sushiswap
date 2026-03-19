@@ -8,6 +8,7 @@ import {
   Result,
   Spec as ContractSpec,
 } from '@stellar/stellar-sdk/contract';
+import { StellarContractAddress } from 'sushi/stellar'
 import type {
   u32,
   i32,
@@ -32,8 +33,8 @@ export type CountryCode = string;
 // PositionTuple is the return type of positions() - matches UserPositionInfo structure
 export interface PositionTuple {
   nonce: u64;
-  token0: string;
-  token1: string;
+  token0: StellarContractAddress;
+  token1: StellarContractAddress;
   fee: u32;
   tickLower: i32;
   tickUpper: i32;
@@ -123,8 +124,8 @@ export interface PositionFeeDataReturn {
 
 export interface PoolKeyData {
   fee: u32;
-  token0: string;
-  token1: string;
+  token0: StellarContractAddress;
+  token1: StellarContractAddress;
 }
 
 
@@ -154,8 +155,8 @@ export interface AddLiquidityParams {
   sender: string;
   tick_lower: i32;
   tick_upper: i32;
-  token0: string;
-  token1: string;
+  token0: StellarContractAddress;
+  token1: StellarContractAddress;
 }
 
 
@@ -200,8 +201,8 @@ export interface MintParams {
   sender: string;
   tick_lower: i32;
   tick_upper: i32;
-  token0: string;
-  token1: string;
+  token0: StellarContractAddress;
+  token1: StellarContractAddress;
 }
 
 
@@ -216,8 +217,8 @@ export interface UserPositionInfo {
   nonce: u64;
   tick_lower: i32;
   tick_upper: i32;
-  token0: string;
-  token1: string;
+  token0: StellarContractAddress;
+  token1: StellarContractAddress;
   token_id: u32;
   tokens_owed0: u128;
   tokens_owed1: u128;

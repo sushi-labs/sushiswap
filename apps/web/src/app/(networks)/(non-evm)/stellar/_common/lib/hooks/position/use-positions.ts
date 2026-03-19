@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import ms from 'ms'
+import type { StellarContractAddress } from 'sushi/stellar'
 import { positionService } from '../../services/position-service'
 import { waitForTransaction } from '../../soroban/transaction-helpers'
 
@@ -111,7 +112,7 @@ export function useCollectFees({
       signTransaction,
       signAuthEntry,
     }: {
-      poolAddress: string
+      poolAddress: StellarContractAddress
       tokenId: number
       recipient: string
       amount0Max: bigint

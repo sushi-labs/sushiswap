@@ -6,6 +6,11 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import ms from 'ms'
 import { ChainId } from 'sushi'
+import {
+  type StellarAccountAddress,
+  type StellarContractAddress,
+  isStellarAccountAddress,
+} from 'sushi/stellar'
 import { useStellarWallet } from '~stellar/providers'
 import {
   checkTrustlineRequired,
@@ -18,14 +23,14 @@ import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
 
 type TrustlineParams = {
   assetCode: string
-  assetIssuer: string
+  assetIssuer: StellarAccountAddress
   limit?: string
 }
 
 type TrustlineResult = {
   hasTrustline: boolean
   needsTrustline: boolean
-  issuer: string | null
+  issuer: StellarAccountAddress | null
 }
 
 const NO_TRUSTLINE_NEEDED: TrustlineResult = {
@@ -39,10 +44,10 @@ const NO_TRUSTLINE_NEEDED: TrustlineResult = {
  * Now uses dynamic lookup from Horizon if issuer is not known
  */
 async function checkTokenTrustline(
-  connectedAddress: string,
+  connectedAddress: StellarAccountAddress,
   code: string,
-  contract: string,
-  issuer: string,
+  contract: StellarContractAddress,
+  issuer: StellarAccountAddress | '',
 ): Promise<TrustlineResult> {
   // Use the new async function that can look up issuers dynamically
   const { required, issuer: resolvedIssuer } = await checkTrustlineRequired(
@@ -70,7 +75,10 @@ async function checkTokenTrustline(
 /**
  * Hook to check if a user has a trustline for a specific asset
  */
-export function useHasTrustline(assetCode: string, assetIssuer: string) {
+export function useHasTrustline(
+  assetCode: string,
+  assetIssuer: StellarAccountAddress,
+) {
   const { connectedAddress } = useStellarWallet()
 
   return useQuery({
@@ -188,8 +196,8 @@ export function useCreateTrustline() {
 type TokenTrustlineInfo =
   | {
       code: string
-      contract: string
-      issuer?: string
+      contract: StellarContractAddress
+      issuer: StellarAccountAddress | ''
     }
   | null
   | undefined
@@ -209,7 +217,7 @@ export function useNeedsTrustlines(tokens: TokenTrustlineInfo[]) {
       'trustlines-batch',
       connectedAddress,
       tokens
-        .map((t) => `${t?.code || ''}:${t?.contract || ''}:${t?.issuer || ''}`)
+        .map((t) => `${t?.code || ''}:${t?.contract || ''}:${t?.issuer}`)
         .join(','),
     ],
     queryFn: async () => {
@@ -226,7 +234,9 @@ export function useNeedsTrustlines(tokens: TokenTrustlineInfo[]) {
             connectedAddress,
             token.code,
             token.contract,
-            token.issuer || '',
+            token.issuer && isStellarAccountAddress(token.issuer)
+              ? token.issuer
+              : '',
           )
         }),
       )
@@ -252,13 +262,13 @@ export function useNeedsTrustlines(tokens: TokenTrustlineInfo[]) {
  * Works with SAC-wrapped classic assets even if issuer wasn't pre-populated.
  */
 export function useNeedsTrustline(
-  assetCode: string,
-  assetContract: string,
-  assetIssuer?: string,
+  params: {
+    code: string
+    contract: StellarContractAddress
+    issuer: StellarAccountAddress | ''
+  } | null,
 ) {
-  const { results, isLoading } = useNeedsTrustlines([
-    { code: assetCode, contract: assetContract, issuer: assetIssuer },
-  ])
+  const { results, isLoading } = useNeedsTrustlines([params])
   const result = results[0] || NO_TRUSTLINE_NEEDED
 
   return {

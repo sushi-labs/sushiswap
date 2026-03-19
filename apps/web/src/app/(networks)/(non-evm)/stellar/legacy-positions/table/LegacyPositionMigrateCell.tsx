@@ -2,6 +2,7 @@ import { useLocalStorage } from '@sushiswap/hooks'
 import { createErrorToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
 import { useState } from 'react'
+import type { StellarContractAddress } from 'sushi/stellar'
 import { formatUnits } from 'viem'
 import {
   useAddLiquidity,
@@ -90,7 +91,7 @@ export const LegacyPositionMigrateCell = ({
         })
       }
 
-      let newPoolAddress: string
+      let newPoolAddress: StellarContractAddress
       if (existingNewPoolAddress && isExistingNewPoolInitialized === true) {
         newPoolAddress = existingNewPoolAddress
       } else {

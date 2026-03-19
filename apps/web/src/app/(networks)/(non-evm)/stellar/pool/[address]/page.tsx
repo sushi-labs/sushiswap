@@ -11,6 +11,10 @@ import {
 } from '@sushiswap/ui'
 import React, { use } from 'react'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
+import {
+  type StellarContractAddress,
+  isStellarContractAddress,
+} from 'sushi/stellar'
 import { usePoolInfo } from '~stellar/_common/lib/hooks/pool/use-pool-info'
 import { usePoolInitialized } from '~stellar/_common/lib/hooks/pool/use-pool-initialized'
 import {
@@ -21,13 +25,17 @@ import { MyPosition } from '~stellar/_common/ui/PoolDetails/MyPosition'
 
 interface PoolPageProps {
   params: Promise<{
-    address: string
+    address: StellarContractAddress
   }>
 }
 
 export default function PoolPage({ params }: PoolPageProps) {
   const resolvedParams = use(params)
   const address = decodeURIComponent(resolvedParams.address)
+  if (!isStellarContractAddress(address)) {
+    throw new Error('Invalid pool address')
+  }
+
   const {
     data: pool,
     isPending: isPendingPool,

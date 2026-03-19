@@ -21,6 +21,7 @@ import type {
   Typepoint,
   Duration,
 } from '@stellar/stellar-sdk/contract';
+import { StellarContractAddress } from "sushi/stellar";
 export * from '@stellar/stellar-sdk'
 export * as contract from '@stellar/stellar-sdk/contract'
 export * as rpc from '@stellar/stellar-sdk/rpc'
@@ -70,11 +71,11 @@ tick_spacing: i32;
   /**
  * First token in the pair (lower address)
  */
-token0: string;
+token0: StellarContractAddress;
   /**
  * Second token in the pair (higher address)
  */
-token1: string;
+token1: StellarContractAddress;
 }
 
 
@@ -117,7 +118,7 @@ export interface PoolData {
   /**
  * The pool contract address
  */
-pool: string;
+pool: StellarContractAddress;
   /**
  * Pool state result - Found(state) if initialized, NotFound otherwise
  */
@@ -134,7 +135,7 @@ export interface PoolDataWithBalances {
   /**
  * The pool contract address
  */
-pool: string;
+pool: StellarContractAddress;
   /**
  * Pool state result with reserves
  */
@@ -584,7 +585,7 @@ export interface Client {
    * # Returns
    * PoolData struct with all pool information
    */
-  get_pool_data: ({pool}: {pool: string}, options?: {
+  get_pool_data: ({pool}: {pool: StellarContractAddress}, options?: {
     /**
      * The fee to pay for the transaction. Default: BASE_FEE
      */
@@ -643,7 +644,7 @@ export interface Client {
    * # Returns
    * PoolDataWithBalances struct with pool state and reserves
    */
-  get_pool_data_with_bal: ({pool}: {pool: string}, options?: {
+  get_pool_data_with_bal: ({pool}: {pool: StellarContractAddress}, options?: {
     /**
      * The fee to pay for the transaction. Default: BASE_FEE
      */
@@ -912,7 +913,7 @@ export interface Client {
    * 3. For each populated bit, calculates the actual tick and fetches its data
    * 4. Returns results in reverse order (matching Solidity's behavior)
    */
-  get_populated_ticks_in_word: ({pool, tick_bitmap_index}: {pool: string, tick_bitmap_index: i32}, options?: {
+  get_populated_ticks_in_word: ({pool, tick_bitmap_index}: {pool: StellarContractAddress, tick_bitmap_index: i32}, options?: {
     /**
      * The fee to pay for the transaction. Default: BASE_FEE
      */
@@ -958,7 +959,7 @@ export interface Client {
    * - `start_word` was near i32::MAX causing range reduction
    * - More than MAX_TICKS_BATCH (2
    */
-  get_populated_ticks_in_range: ({pool, start_word, count}: {pool: string, start_word: i32, count: u32}, options?: {
+  get_populated_ticks_in_range: ({pool, start_word, count}: {pool: StellarContractAddress, start_word: i32, count: u32}, options?: {
     /**
      * The fee to pay for the transaction. Default: BASE_FEE
      */

@@ -1,6 +1,7 @@
 import { isTokenListChainId } from '@sushiswap/graph-client/data-api'
 import { List } from '@sushiswap/ui'
 import { useMemo } from 'react'
+import type { WalletAddressFor } from 'src/lib/wallet'
 import type { EvmAddress, EvmCurrency, EvmNative } from 'sushi/evm'
 import type { EvmChainId } from 'sushi/evm'
 import type { SvmChainId } from 'sushi/svm'
@@ -11,7 +12,7 @@ import { TokenSelectorCurrencyList } from './common/token-selector-currency-list
 interface TokenSelectorCustomList<TChainId extends EvmChainId | SvmChainId> {
   currencies: Readonly<CurrencyFor<TChainId, { approved?: boolean }>[]>
   chainId: TChainId
-  account?: AddressFor<TChainId>
+  account?: WalletAddressFor<TChainId>
   selected: CurrencyFor<TChainId> | undefined
   onSelect(currency: CurrencyFor<TChainId>): void
   search?: string

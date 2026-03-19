@@ -8,14 +8,18 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { addMinutes } from 'date-fns'
 import { ChainId } from 'sushi'
+import type {
+  StellarAccountAddress,
+  StellarContractAddress,
+} from 'sushi/stellar'
 import { createSushiStellarService } from '../../services/sushi-stellar-service'
 import type { AddLiquidityParams } from '../../services/swap-service'
 import { extractErrorMessage } from '../../utils/error-helpers'
 import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
 
 export interface UseAddLiquidityParams {
-  userAddress: string
-  poolAddress: string
+  userAddress: StellarAccountAddress
+  poolAddress: StellarContractAddress
   token0Amount: string
   token1Amount: string
   token0Decimals: number
