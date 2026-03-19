@@ -145,8 +145,8 @@ const COLUMNS = [
                   <TooltipContent side="left" className="max-w-[240px]">
                     <p>
                       {!row.original.isSmartPool
-                        ? 'No Steer vaults available for this pool'
-                        : `Smart pools optimize liquidity allocation within custom price ranges, enhancing trading efficiency by
+                        ? 'No Liquidity Vaults available for this pool'
+                        : `Liquidity Vaults optimize liquidity allocation within custom price ranges, enhancing trading efficiency by
           providing deeper liquidity around the current price, increasing Liquidity Providers (LP) fee earnings.`}
                     </p>
                   </TooltipContent>

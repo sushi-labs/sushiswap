@@ -34,7 +34,7 @@ export const useClaimableRewards = ({
   return useQuery({
     queryKey: ['claimableMerklRewards', { account }],
     queryFn: async () => {
-      const url = new URL(`https://api.merkl.xyz/v4/users/${account}/rewards`)
+      const url = new URL(`https://api.merkl.fr/v4/users/${account}/rewards`)
       url.searchParams.set('test', `${false}`)
 
       const res = await Promise.allSettled(

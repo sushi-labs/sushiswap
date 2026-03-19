@@ -29,7 +29,7 @@ export const useRewardCampaigns = ({
     queryFn: async () => {
       if (!pool || !chainId) throw new Error()
 
-      const url = new URL(`https://api.merkl.xyz/v4/campaigns`)
+      const url = new URL(`https://api.merkl.fr/v4/campaigns`)
       url.searchParams.set('chainId', `${chainId}`)
       url.searchParams.set('mainParameter', `${getAddress(pool)}`)
       url.searchParams.set('test', `${false}`)

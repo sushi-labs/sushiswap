@@ -113,11 +113,11 @@ export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div className="bg-[#F2E9D6] dark:bg-yellow/60 text-[10px] px-2 rounded-full">
-                      💡
+                      🏦
                     </div>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Smart Pool available</p>
+                    <p>Liquidity Vault available</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

@@ -50,7 +50,7 @@ export const APRHoverCard: FC<APRHoverCardProps> = ({
           {typeof smartPoolAPR === 'number' ? (
             <div className="flex justify-between gap-1 items-center">
               <span className="flex flex-grow text-sm text-muted-foreground">
-                Smart pool APR
+                Liquidity Vault APR
               </span>
               <span className="text-right text-sm">
                 {formatPercent(smartPoolAPR)}
