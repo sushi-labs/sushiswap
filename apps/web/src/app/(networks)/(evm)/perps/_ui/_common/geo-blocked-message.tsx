@@ -1,5 +1,6 @@
 'use client'
 import { LinkExternal, Message } from '@sushiswap/ui'
+import { useMemo } from 'react'
 import { useLegalCheck } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 
@@ -10,13 +11,15 @@ export const GeoBlockedMessage = ({
 }) => {
   const address = useAccount('evm')
   const { data, isLoading, error } = useLegalCheck({ address })
+  const isBlocked = useMemo(() => {
+    if (!data?.ipAllowed && !isLoading && !error) {
+      return 'true'
+    }
+    return isGeoBlocked ? 'true' : 'false'
+  }, [data, isLoading, error, isGeoBlocked])
   return (
     <div
-      data-blocked={
-        isGeoBlocked || (!data?.ipAllowed && !isLoading && !error)
-          ? 'true'
-          : 'false'
-      }
+      data-blocked={isBlocked}
       className="hidden data-[blocked=true]:block data-[blocked=true]:animate-slide fixed w-screen top-[56px] z-[11] flexitems-center justify-center bg-background"
     >
       <Message
