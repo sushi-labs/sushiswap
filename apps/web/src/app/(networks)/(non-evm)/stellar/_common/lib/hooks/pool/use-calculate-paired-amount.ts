@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
+import type { StellarContractAddress } from 'sushi/stellar'
 import { formatUnits } from 'viem'
 import {
   calculateAmountsFromLiquidity,
@@ -16,7 +17,7 @@ import { usePoolInitialized } from './use-pool-initialized'
  * Matches the implementation from stellar-auth-test
  */
 export function useCalculatePairedAmount(
-  poolAddress: string | null,
+  poolAddress: StellarContractAddress | null,
   token0Amount: string,
   tickLower: number | null,
   tickUpper: number | null,

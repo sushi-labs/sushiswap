@@ -1,5 +1,6 @@
 import type { OracleHints } from '@sushiswap/stellar-contract-binding-pool'
 import ms from 'ms'
+import type { StellarContractAddress } from 'sushi/stellar'
 import { getPoolContractClient } from '../soroban/client'
 
 export type PoolOracleHints = {
@@ -14,7 +15,7 @@ export type PoolOracleHints = {
  * @returns Oracle hints containing slot and checkpoint
  */
 export async function fetchOracleHints(
-  poolAddress: string,
+  poolAddress: StellarContractAddress,
   maxRetries = 2,
 ): Promise<PoolOracleHints> {
   let lastError: Error | null = null
@@ -109,7 +110,7 @@ export function isObservationTooOldError(error: unknown): boolean {
  * @returns Result of the operation
  */
 export async function executeWithOracleHints<T>(
-  poolAddresses: string[],
+  poolAddresses: StellarContractAddress[],
   operation: (hints: PoolOracleHints[]) => Promise<T>,
   maxRetries = 2,
 ): Promise<T> {

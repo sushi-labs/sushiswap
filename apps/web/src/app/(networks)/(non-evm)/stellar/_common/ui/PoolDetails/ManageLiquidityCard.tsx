@@ -17,6 +17,7 @@ import type React from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
+import type { StellarAccountAddress } from 'sushi/stellar'
 import { formatUnits } from 'viem'
 import { ToggleZapCard } from '~evm/[chainId]/pool/_ui/toggle-zap-card'
 import { useRemoveLiquidity } from '~stellar/_common/lib/hooks/liquidity/use-remove-liquidity'
@@ -85,25 +86,25 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     needsTrustline: needsToken0Trustline,
     isLoading: isLoadingToken0Trustline,
     issuer: token0ResolvedIssuer,
-  } = useNeedsTrustline(
-    pool.token0.code,
-    pool.token0.contract,
-    pool.token0.issuer,
-  )
+  } = useNeedsTrustline({
+    code: pool.token0.code,
+    contract: pool.token0.contract,
+    issuer: pool.token0.issuer,
+  })
   const {
     needsTrustline: needsToken1Trustline,
     isLoading: isLoadingToken1Trustline,
     issuer: token1ResolvedIssuer,
-  } = useNeedsTrustline(
-    pool.token1.code,
-    pool.token1.contract,
-    pool.token1.issuer,
-  )
+  } = useNeedsTrustline({
+    code: pool.token1.code,
+    contract: pool.token1.contract,
+    issuer: pool.token1.issuer,
+  })
   const isLoadingTrustlines =
     isLoadingToken0Trustline || isLoadingToken1Trustline
   // Use the resolved issuers from the trustline check (looked up from Horizon if not already known)
   const tokensNeedingTrustline = useMemo(() => {
-    const tokens: Array<{ code: string; issuer: string }> = []
+    const tokens: Array<{ code: string; issuer: StellarAccountAddress }> = []
     if (needsToken0Trustline && token0ResolvedIssuer) {
       tokens.push({ code: pool.token0.code, issuer: token0ResolvedIssuer })
     }

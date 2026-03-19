@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { useMemo } from 'react'
+import type { StellarContractAddress } from 'sushi/stellar'
 import { staticTokens } from '~stellar/_common/lib/assets/token-assets'
 import { getFees } from '~stellar/_common/lib/soroban'
 import {
@@ -18,23 +19,23 @@ type GetPoolsByTokenPairsBatchedParams = Array<{
 }>
 
 type PoolData = {
-  token0: string
-  token1: string
+  token0: StellarContractAddress
+  token1: StellarContractAddress
   tick: number
   sqrtPriceX96: bigint
   liquidity: bigint
-  poolAddress: string
+  poolAddress: StellarContractAddress
   fee: number
 }
 
 interface PoolGraphData {
   vertices: Map<string, Vertex[]>
-  tokenGraph: Map<string, string[]>
+  tokenGraph: Map<StellarContractAddress, StellarContractAddress[]>
 }
 
 interface UsePoolGraphParams {
   /** Additional token addresses to include in the graph (e.g., swap input/output tokens) */
-  additionalTokens?: string[]
+  additionalTokens?: StellarContractAddress[]
 }
 
 const getPoolsByTokenPairsBatched = async (
@@ -189,7 +190,10 @@ function useBasePoolGraph() {
     queryFn: async () => {
       // Store arrays of vertices per token pair to handle multiple fee tiers
       const vertices = new Map<string, Vertex[]>()
-      const tokenGraph = new Map<string, string[]>()
+      const tokenGraph = new Map<
+        StellarContractAddress,
+        StellarContractAddress[]
+      >()
 
       try {
         // Get factory client to discover pools
@@ -242,7 +246,10 @@ function useBasePoolGraph() {
         console.error('Error building pool graph:', error)
         return {
           vertices: new Map<string, Vertex[]>(),
-          tokenGraph: new Map<string, string[]>(),
+          tokenGraph: new Map<
+            StellarContractAddress,
+            StellarContractAddress[]
+          >(),
         }
       }
     },
@@ -264,7 +271,7 @@ async function augmentPoolGraph({
   additionalTokens,
 }: {
   baseGraph: PoolGraphData
-  additionalTokens: string[]
+  additionalTokens: StellarContractAddress[]
 }): Promise<PoolGraphData> {
   // Filter out additional tokens that are already in the base graph
   const baseTokens = Array.from(baseGraph.tokenGraph.keys())
@@ -389,7 +396,10 @@ export function usePoolGraph({
       if (!baseGraph) {
         return {
           vertices: new Map<string, Vertex[]>(),
-          tokenGraph: new Map<string, string[]>(),
+          tokenGraph: new Map<
+            StellarContractAddress,
+            StellarContractAddress[]
+          >(),
         }
       }
 

@@ -47,10 +47,15 @@ export const SimpleSwapExecuteButton = () => {
     needsTrustline: _needsToken1Trustline,
     issuer: _token1ResolvedIssuer,
   } = useNeedsTrustline(
-    token1?.code || '',
-    token1?.contract || '',
-    token1?.issuer,
+    token1
+      ? {
+          code: token1.code,
+          contract: token1.contract,
+          issuer: token1.issuer,
+        }
+      : null,
   )
+
   const [, { slippageTolerance }] = useSlippageTolerance(
     SlippageToleranceStorageKey.Swap,
   )

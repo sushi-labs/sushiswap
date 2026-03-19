@@ -8,14 +8,14 @@ import { useQuery } from '@tanstack/react-query'
 import { Fragment, useMemo } from 'react'
 import { useAccount } from 'src/lib/wallet'
 import { formatPercent, formatUSD } from 'sushi'
-import type { StellarAddress, StellarChainId } from 'sushi/stellar'
+import type { StellarAccountAddress } from 'sushi/stellar'
 import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
 import { getStellarPortfolioWallet } from '~stellar/_common/lib/hooks/token/get-stellar-portfolio-wallet'
 import { TokenIcon } from '~stellar/_common/ui/General/TokenIcon'
 import { PortfolioInfoRow } from '../portfolio-info-row'
 
 function usePortfolioStellarWallet(
-  address: StellarAddress | undefined,
+  address: StellarAccountAddress | undefined,
   refetchInterval?: 600_000,
 ) {
   return useQuery({

@@ -1,13 +1,28 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import ms from 'ms'
+import {
+  type StellarAccountAddress,
+  type StellarContractAddress,
+  isStellarAccountAddress,
+  isStellarContractAddress,
+  normalizeStellarAddress,
+} from 'sushi/stellar'
 import { z } from 'zod'
 import { staticTokens } from '~stellar/_common/lib/assets/token-assets'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 
 const stellarExpertAssetSchema = z.object({
   code: z.string(),
-  issuer: z.string(),
-  contract: z.string(),
+  issuer: z
+    .custom<StellarAccountAddress>((val) =>
+      isStellarAccountAddress(val as string),
+    )
+    .transform(normalizeStellarAddress),
+  contract: z
+    .custom<StellarContractAddress>((val) =>
+      isStellarContractAddress(val as string),
+    )
+    .transform(normalizeStellarAddress),
   name: z.string(),
   org: z.string(),
   decimals: z.number(),

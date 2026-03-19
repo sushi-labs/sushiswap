@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
+import type { StellarContractAddress } from 'sushi/stellar'
 import { formatUnits } from 'viem'
 import { useCalculatePairedAmount } from './use-calculate-paired-amount'
 import { usePoolInitialized } from './use-pool-initialized'
@@ -10,7 +11,7 @@ import { usePoolInitialized } from './use-pool-initialized'
  * Calculate the maximum token0 and token1 amounts based on token0 and token1 balances
  */
 export function useMaxPairedAmount(
-  poolAddress: string | null,
+  poolAddress: StellarContractAddress | null,
   token0Balance: string,
   token1Balance: string,
   tickLower: number | null,

@@ -1,3 +1,4 @@
+import type { StellarAccountAddress } from 'sushi/stellar'
 import { getTokenContractClient } from './client'
 import { contractAddresses } from './contracts'
 
@@ -6,7 +7,9 @@ import { contractAddresses } from './contracts'
  * @param address The address to get the balance of
  * @returns The balance of the address
  */
-export const getXlmBalance = async (address: string): Promise<bigint> => {
+export const getXlmBalance = async (
+  address: StellarAccountAddress,
+): Promise<bigint> => {
   try {
     const xlmContractClient = getTokenContractClient({
       contractId: contractAddresses.TOKENS.XLM,

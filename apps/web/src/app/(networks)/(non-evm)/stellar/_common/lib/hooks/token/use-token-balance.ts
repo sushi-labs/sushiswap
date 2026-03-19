@@ -1,7 +1,11 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import type { StellarAddress } from 'sushi/stellar'
+import {
+  type StellarAccountAddress,
+  type StellarContractAddress,
+  isStellarContractAddress,
+} from 'sushi/stellar'
 import {
   getTokenBalance,
   getTokenBalanceFromToken,
@@ -9,14 +13,14 @@ import {
 import type { Token, TokenWithBalance } from '../../types/token.type'
 
 export const useTokenBalance = (
-  address: StellarAddress | undefined,
-  tokenContractId: string | null,
+  address: StellarAccountAddress | undefined,
+  tokenContractId: StellarContractAddress | null,
 ) => {
   return useQuery({
     queryKey: ['stellar', 'token', 'balance', address, tokenContractId],
     queryFn: async () => {
       if (!address || !tokenContractId) {
-        return null
+        throw new Error('Address and token contract ID are required')
       }
       return await getTokenBalance(address, tokenContractId)
     },
@@ -25,7 +29,7 @@ export const useTokenBalance = (
 }
 
 export const useTokenBalanceFromToken = (
-  address: string | null,
+  address: StellarAccountAddress | null,
   token: Token | null,
 ) => {
   return useQuery({
@@ -38,7 +42,7 @@ export const useTokenBalanceFromToken = (
     ],
     queryFn: async () => {
       if (!address || !token) {
-        return null
+        throw new Error('Address and token are required')
       }
       return await getTokenBalanceFromToken(address, token)
     },
@@ -53,7 +57,7 @@ export const useTokenBalanceFromToken = (
  * @returns The original tokens array with new `balance` and `balanceFormatted` fields for each
  */
 export const useTokenBalances = (
-  address: StellarAddress | undefined,
+  address: StellarAccountAddress | undefined,
   tokens: Token[],
 ) => {
   return useQuery({
@@ -92,17 +96,20 @@ export const useTokenBalances = (
  * @returns A map of contract addresses to balance amounts (as strings)
  */
 export const useTokenBalancesMap = (
-  address: StellarAddress | undefined,
-  contracts: string[],
+  address: StellarAccountAddress | undefined,
+  contracts: StellarContractAddress[],
 ) => {
   return useQuery({
     queryKey: ['stellar', 'token', 'balancesMap', address, contracts],
     queryFn: async () => {
       if (!address || contracts.length === 0) {
-        return contracts.reduce<Record<string, string>>((acc, contract) => {
-          acc[contract] = '0'
-          return acc
-        }, {})
+        return contracts.reduce<Record<StellarContractAddress, string>>(
+          (acc, contract) => {
+            acc[contract] = '0'
+            return acc
+          },
+          {},
+        )
       }
 
       const balanceMap: Record<string, string> = {}

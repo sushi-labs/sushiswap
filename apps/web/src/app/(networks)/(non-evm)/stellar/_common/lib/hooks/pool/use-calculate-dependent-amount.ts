@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
+import type { StellarContractAddress } from 'sushi/stellar'
 import { formatUnits } from 'viem'
 import {
   calculateAmountsFromLiquidity,
@@ -18,7 +19,7 @@ export type Field = 'token0' | 'token1'
  * Calculate the dependent token amount based on independent token input
  */
 export function useCalculateDependentAmount(
-  poolAddress: string | null,
+  poolAddress: StellarContractAddress | null,
   amount: string,
   independentField: Field,
   tickLower: number,

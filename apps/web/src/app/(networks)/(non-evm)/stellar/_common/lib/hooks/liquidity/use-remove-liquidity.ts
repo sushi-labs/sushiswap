@@ -8,6 +8,7 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { addMinutes } from 'date-fns'
 import { ChainId, MAX_UINT128 } from 'sushi'
+import type { StellarContractAddress } from 'sushi/stellar'
 import { formatUnits } from 'viem'
 import { decreaseLiquidity } from '~stellar/_common/lib/soroban/position-manager-helpers'
 import { getStellarTxnLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
@@ -23,7 +24,7 @@ export interface RemovePoolLiquidityParams {
   amount1Min: bigint
   token0: Token
   token1: Token
-  poolAddress: string
+  poolAddress: StellarContractAddress
 }
 
 export const useRemoveLiquidity = ({
@@ -138,7 +139,7 @@ export const useRemoveLiquidity = ({
       }
     },
     mutationFn: async (params: {
-      poolAddress: string
+      poolAddress: StellarContractAddress
       tokenId: number
       recipient: string
       amount0Max: bigint
