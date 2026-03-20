@@ -380,6 +380,25 @@ export async function decreaseLiquidity({
           decreaseLiquidityWithHintsOperation,
         )
 
+    const simulationResult = assembledTransaction.simulation
+    if (
+      simulationResult &&
+      StellarSdk.rpc.Api.isSimulationError(simulationResult)
+    ) {
+      const extractedErrorMessage = extractErrorMessage(simulationResult.error)
+      if (
+        isLegacy &&
+        extractedErrorMessage.includes(
+          'HostError: Error(Budget, ExceededLimit)',
+        )
+      ) {
+        throw new Error(
+          'Principal in the legacy pool for the position to be migrated is restricted',
+        )
+      }
+      throw new Error(extractedErrorMessage)
+    }
+
     // Sign auth entries for nested authorization (PM -> Pool)
     const transactionXdr = await signAuthEntriesAndGetXdr(
       assembledTransaction as unknown as AssembledTransactionLike,
