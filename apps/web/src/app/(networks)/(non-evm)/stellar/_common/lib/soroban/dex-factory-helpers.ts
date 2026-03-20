@@ -1,7 +1,7 @@
 import { Address } from '@stellar/stellar-sdk'
 import ms from 'ms'
 import { FEE_TIERS } from '../utils/ticks'
-import { getFactoryContractClient } from './client'
+import { getFactoryContractClient, getFactoryContractId } from './client'
 import { DEFAULT_TIMEOUT, isAddressLower } from './constants'
 import { contractAddresses } from './contracts'
 import { isPoolInitialized } from './pool-initialization'
@@ -188,10 +188,12 @@ export async function getPoolDirectSDK({
   tokenA,
   tokenB,
   fee,
+  isLegacy = false,
 }: {
   tokenA: string
   tokenB: string
   fee: number
+  isLegacy?: boolean
 }): Promise<string | null> {
   try {
     // Order tokens by decoded bytes - EXACTLY like the router and getPoolTransactionBuilder does
@@ -201,8 +203,12 @@ export async function getPoolDirectSDK({
       : [tokenB, tokenA]
 
     // Create contract instance using direct SDK approach
+    const factoryContractId = getFactoryContractId(isLegacy)
+    if (!factoryContractId) {
+      throw new Error('Factory contract not found')
+    }
     const factoryContractClient = getFactoryContractClient({
-      contractId: contractAddresses.FACTORY,
+      contractId: factoryContractId,
       // No publicKey needed for read-only factory queries
     })
     const assembledTransaction = await factoryContractClient.get_pool({
@@ -218,30 +224,6 @@ export async function getPoolDirectSDK({
   } catch (error) {
     console.warn('Direct SDK getPool error:', error)
     return null
-  }
-}
-
-/**
- * Check if a pool exists for the given token pair and fee
- * @param tokenA - Address of the first token
- * @param tokenB - Address of the second token
- * @param fee - Fee tier
- * @returns True if pool exists, false otherwise
- */
-export async function poolExists({
-  tokenA,
-  tokenB,
-  fee,
-}: {
-  tokenA: string
-  tokenB: string
-  fee: number
-}): Promise<boolean> {
-  try {
-    const poolAddress = await getPoolDirectSDK({ tokenA, tokenB, fee })
-    return poolAddress !== null
-  } catch {
-    return false
   }
 }
 

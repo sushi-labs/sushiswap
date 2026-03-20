@@ -9,6 +9,10 @@ import {
   waitForTransaction,
 } from '../soroban/transaction-helpers'
 import { extractErrorMessage } from '../utils/error-helpers'
+import {
+  type PoolOracleHints,
+  executeWithOracleHints,
+} from '../utils/slot-hint-helpers'
 
 /**
  * Parameters for adding liquidity
@@ -29,6 +33,7 @@ export interface AddLiquidityParams {
  * Parameters for single-hop swap
  */
 export interface SwapExactInputSingleParams {
+  pool: string
   tokenIn: string
   tokenOut: string
   fee: number
@@ -43,6 +48,7 @@ export interface SwapExactInputSingleParams {
  * Parameters for multi-hop swap
  */
 export interface SwapExactInputParams {
+  pools: string[]
   path: string[]
   fees: number[]
   recipient: string
@@ -69,136 +75,155 @@ export class SwapService {
    * Execute a single-hop swap (exactly like stellar-auth-test)
    */
   async swapExactInputSingle(
-    _userAddress: string,
-    _params: SwapExactInputSingleParams,
-    _signTransaction: (xdr: string) => Promise<string>,
+    userAddress: string,
+    params: SwapExactInputSingleParams,
+    signTransaction: (xdr: string) => Promise<string>,
   ): Promise<{ txHash: string; amountOut: bigint }> {
-    throw new Error(
-      'Swapping is currently disabled for maintenance. Please check back later.',
-    )
-    // try {
-    //   const routerContractClient = getRouterContractClient({
-    //     contractId: contractAddresses.ROUTER,
-    //     publicKey: userAddress,
-    //   })
+    try {
+      const routerContractClient = getRouterContractClient({
+        contractId: contractAddresses.ROUTER,
+        publicKey: userAddress,
+      })
 
-    //   const assembledTransaction = await routerContractClient.swap_exact_input(
-    //     {
-    //       params: {
-    //         sender: userAddress,
-    //         path: [params.tokenIn, params.tokenOut],
-    //         fees: [params.fee],
-    //         recipient: params.recipient,
-    //         amount_in: params.amountIn,
-    //         amount_out_minimum: params.amountOutMinimum,
-    //         deadline: BigInt(params.deadline),
-    //       },
-    //     },
-    //     {
-    //       timeoutInSeconds: DEFAULT_TIMEOUT,
-    //       fee: 100000,
-    //     },
-    //   )
+      const swapExactInputWithHintsOperation = async (
+        hints: PoolOracleHints[],
+      ) => {
+        return await routerContractClient.swap_exact_input_hints(
+          {
+            params: {
+              sender: userAddress,
+              path: [params.tokenIn, params.tokenOut],
+              fees: [params.fee],
+              recipient: params.recipient,
+              amount_in: params.amountIn,
+              amount_out_minimum: params.amountOutMinimum,
+              deadline: BigInt(params.deadline),
+            },
+            hints_by_hop: hints.map((hint) => {
+              return hint.hints
+            }),
+          },
+          {
+            timeoutInSeconds: DEFAULT_TIMEOUT,
+            fee: 100000,
+          },
+        )
+      }
 
-    //   const simulationResult = assembledTransaction.simulation
-    //   if (
-    //     simulationResult &&
-    //     StellarSdk.rpc.Api.isSimulationError(simulationResult)
-    //   ) {
-    //     throw new Error(extractErrorMessage(simulationResult.error))
-    //   }
+      const assembledTransaction = await executeWithOracleHints(
+        [params.pool],
+        swapExactInputWithHintsOperation,
+      )
 
-    //   // Sign the transaction - use the built transaction
-    //   const unsignedXdr = assembledTransaction.toXDR()
-    //   const signedXdr = await signTransaction(unsignedXdr)
+      const simulationResult = assembledTransaction.simulation
+      if (
+        simulationResult &&
+        StellarSdk.rpc.Api.isSimulationError(simulationResult)
+      ) {
+        throw new Error(extractErrorMessage(simulationResult.error))
+      }
 
-    //   // Submit the signed XDR directly via raw RPC
-    //   const { hash: txHash } = await submitTransaction(signedXdr)
+      // Sign the transaction - use the built transaction
+      const unsignedXdr = assembledTransaction.toXDR()
+      const signedXdr = await signTransaction(unsignedXdr)
 
-    //   const txResult = await waitForTransaction(txHash)
+      // Submit the signed XDR directly via raw RPC
+      const { hash: txHash } = await submitTransaction(signedXdr)
 
-    //   if (txResult.status === 'SUCCESS' && txResult.returnValue !== undefined) {
-    //     // Extract output amount from return value
-    //     const amountOut = scValToBigInt(txResult.returnValue)
-    //     return {
-    //       txHash: txHash,
-    //       amountOut: amountOut,
-    //     }
-    //   } else {
-    //     throw new Error(`Transaction ${txHash} ${txResult.status}`)
-    //   }
-    // } catch (error) {
-    //   console.error('Error in swapExactInputSingle', error)
-    //   throw error
-    // }
+      const txResult = await waitForTransaction(txHash)
+
+      if (txResult.status === 'SUCCESS' && txResult.returnValue !== undefined) {
+        // Extract output amount from return value
+        const amountOut = scValToBigInt(txResult.returnValue)
+        return {
+          txHash: txHash,
+          amountOut: amountOut,
+        }
+      } else {
+        throw new Error(`Transaction ${txHash} ${txResult.status}`)
+      }
+    } catch (error) {
+      console.error('Error in swapExactInputSingle', error)
+      throw error
+    }
   }
 
   /**
    * Execute a multi-hop swap (exactly like stellar-auth-test)
    */
   async swapExactInput(
-    _userAddress: string,
-    _params: SwapExactInputParams,
-    _signTransaction: (xdr: string) => Promise<string>,
+    userAddress: string,
+    params: SwapExactInputParams,
+    signTransaction: (xdr: string) => Promise<string>,
   ): Promise<{ txHash: string; amountOut: bigint }> {
-    throw new Error(
-      'Swapping is currently disabled for maintenance. Please check back later.',
-    )
-    // try {
-    //   const routerContractClient = getRouterContractClient({
-    //     contractId: contractAddresses.ROUTER,
-    //     publicKey: userAddress,
-    //   })
-    //   // Ensure fees are proper u32 numbers (not bigints)
-    //   const feesAsNumbers = params.fees.map((fee) => Number(fee))
+    try {
+      const routerContractClient = getRouterContractClient({
+        contractId: contractAddresses.ROUTER,
+        publicKey: userAddress,
+      })
+      // Ensure fees are proper u32 numbers (not bigints)
+      const feesAsNumbers = params.fees.map((fee) => Number(fee))
 
-    //   const assembledTransaction = await routerContractClient.swap_exact_input(
-    //     {
-    //       params: {
-    //         sender: userAddress,
-    //         path: params.path,
-    //         fees: feesAsNumbers,
-    //         recipient: params.recipient,
-    //         amount_in: params.amountIn,
-    //         amount_out_minimum: params.amountOutMinimum,
-    //         deadline: BigInt(params.deadline),
-    //       },
-    //     },
-    //     {
-    //       timeoutInSeconds: DEFAULT_TIMEOUT,
-    //       fee: 100000,
-    //     },
-    //   )
-    //   const simulationResult = assembledTransaction.simulation
-    //   if (
-    //     simulationResult &&
-    //     StellarSdk.rpc.Api.isSimulationError(simulationResult)
-    //   ) {
-    //     throw new Error(extractErrorMessage(simulationResult.error))
-    //   }
+      const swapExactInputWithHintsOperation = async (
+        hints: PoolOracleHints[],
+      ) => {
+        return await routerContractClient.swap_exact_input_hints(
+          {
+            params: {
+              sender: userAddress,
+              path: params.path,
+              fees: feesAsNumbers,
+              recipient: params.recipient,
+              amount_in: params.amountIn,
+              amount_out_minimum: params.amountOutMinimum,
+              deadline: BigInt(params.deadline),
+            },
+            hints_by_hop: hints.map((hint) => {
+              return hint.hints
+            }),
+          },
+          {
+            timeoutInSeconds: DEFAULT_TIMEOUT,
+            fee: 100000,
+          },
+        )
+      }
 
-    //   // Sign the transaction
-    //   const unsignedXdr = assembledTransaction.toXDR()
-    //   const signedXdr = await signTransaction(unsignedXdr)
+      const assembledTransaction = await executeWithOracleHints(
+        params.pools,
+        swapExactInputWithHintsOperation,
+      )
 
-    //   // Submit the signed XDR directly via raw RPC (same as single-hop)
-    //   const { hash: txHash } = await submitTransaction(signedXdr)
+      const simulationResult = assembledTransaction.simulation
+      if (
+        simulationResult &&
+        StellarSdk.rpc.Api.isSimulationError(simulationResult)
+      ) {
+        throw new Error(extractErrorMessage(simulationResult.error))
+      }
 
-    //   const txResult = await waitForTransaction(txHash)
+      // Sign the transaction
+      const unsignedXdr = assembledTransaction.toXDR()
+      const signedXdr = await signTransaction(unsignedXdr)
 
-    //   if (txResult.status === 'SUCCESS' && txResult.returnValue !== undefined) {
-    //     // Extract output amount from return value
-    //     const amountOut = scValToBigInt(txResult.returnValue)
-    //     return {
-    //       txHash: txHash,
-    //       amountOut: amountOut,
-    //     }
-    //   } else {
-    //     throw new Error(`Transaction ${txHash} ${txResult.status}`)
-    //   }
-    // } catch (error) {
-    //   console.error('Error in swapExactInput', error)
-    //   throw error
-    // }
+      // Submit the signed XDR directly via raw RPC (same as single-hop)
+      const { hash: txHash } = await submitTransaction(signedXdr)
+
+      const txResult = await waitForTransaction(txHash)
+
+      if (txResult.status === 'SUCCESS' && txResult.returnValue !== undefined) {
+        // Extract output amount from return value
+        const amountOut = scValToBigInt(txResult.returnValue)
+        return {
+          txHash: txHash,
+          amountOut: amountOut,
+        }
+      } else {
+        throw new Error(`Transaction ${txHash} ${txResult.status}`)
+      }
+    } catch (error) {
+      console.error('Error in swapExactInput', error)
+      throw error
+    }
   }
 }
