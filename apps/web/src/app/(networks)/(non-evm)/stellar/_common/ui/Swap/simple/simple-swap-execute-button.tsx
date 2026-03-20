@@ -172,8 +172,6 @@ export const SimpleSwapExecuteButton = () => {
   }
 
   const checkerAmount = useMemo(() => {
-    if (!token0 || !amountIn || amountIn === 0n) return []
-
     return [
       {
         token: token0,
@@ -192,6 +190,7 @@ export const SimpleSwapExecuteButton = () => {
       (!outputAmount || outputAmount === 0n)
     )
   }, [route, amountIn, outputAmount])
+
   const isDisabled =
     !connectedAddress ||
     !token0 ||
@@ -259,6 +258,8 @@ export const SimpleSwapExecuteButton = () => {
             <StellarChecker.Amounts
               amounts={checkerAmount}
               disabled={isDisabled}
+              fullWidth
+              size="xl"
             >
               <Button
                 fullWidth
