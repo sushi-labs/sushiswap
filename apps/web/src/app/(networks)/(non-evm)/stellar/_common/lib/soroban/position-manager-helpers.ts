@@ -1,3 +1,5 @@
+import * as StellarSdk from '@stellar/stellar-sdk'
+import { extractErrorMessage } from '../utils/error-helpers'
 import {
   type PoolOracleHints,
   executeWithOracleHints,
@@ -112,6 +114,14 @@ export async function mintPosition({
       throw new Error(
         `Transaction simulation failed: ${simulationError instanceof Error ? simulationError.message : String(simulationError)}`,
       )
+    }
+
+    const simulationResult = assembledTransaction.simulation
+    if (
+      simulationResult &&
+      StellarSdk.rpc.Api.isSimulationError(simulationResult)
+    ) {
+      throw new Error(extractErrorMessage(simulationResult.error))
     }
 
     // Sign auth entries for nested authorization (PM -> Pool -> Token transfers)
@@ -235,6 +245,14 @@ export async function increaseLiquidity({
       throw new Error(
         `Transaction simulation failed: ${simulationError instanceof Error ? simulationError.message : String(simulationError)}`,
       )
+    }
+
+    const simulationResult = assembledTransaction.simulation
+    if (
+      simulationResult &&
+      StellarSdk.rpc.Api.isSimulationError(simulationResult)
+    ) {
+      throw new Error(extractErrorMessage(simulationResult.error))
     }
 
     // Sign auth entries for nested authorization (PM -> Pool -> Token transfers)
