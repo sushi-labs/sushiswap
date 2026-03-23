@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@sushiswap/ui'
-import { useCallback, useState } from 'react'
+import { type ReactNode, useCallback, useState } from 'react'
 import { TOAST_AUTOCLOSE_TIME, hlHttpTransport } from 'src/lib/perps'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
@@ -30,7 +30,7 @@ const currency = USDC[EvmChainId.ARBITRUM]
 const chainId = EvmChainId.ARBITRUM
 const MIN_WITHDRAW_AMOUNT = 2 //2.000000 usdc
 
-export const WithdrawDialog = () => {
+export const WithdrawDialog = ({ trigger }: { trigger?: ReactNode }) => {
   const [open, setOpen] = useState<boolean>(false)
   const [amount, setAmount] = useState<string>('')
   const _amount = Amount.tryFromHuman(currency, amount)
@@ -96,9 +96,13 @@ export const WithdrawDialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full" variant="perps-secondary" size="sm">
-          Withdraw
-        </Button>
+        {trigger ? (
+          trigger
+        ) : (
+          <Button className="w-full" variant="perps-secondary" size="sm">
+            Withdraw
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent variant="perps-default">
         <DialogHeader className="!text-left">

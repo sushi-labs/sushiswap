@@ -1,7 +1,8 @@
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { formatSize, useUserFees } from 'src/lib/perps'
+import { useUserFees } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
+import { formatPercent } from 'sushi'
 import { StatItem } from '../../_common'
 import { useAssetState } from '../asset-state-provider'
 
@@ -15,8 +16,14 @@ export const FeeStat = () => {
   const { takerFee, makerFee } = useMemo(() => {
     if (!feeData) return { takerFee: '0', makerFee: '0' }
     return {
-      takerFee: `${formatSize(Number(asset?.marketType === 'perp' ? feeData.userCrossRate : feeData.userSpotCrossRate) * 100, 5)}%`,
-      makerFee: `${formatSize(Number(asset?.marketType === 'perp' ? feeData.userAddRate : feeData.userSpotAddRate) * 100, 5)}%`,
+      takerFee:
+        asset?.marketType === 'perp'
+          ? feeData.userCrossRate
+          : feeData.userSpotCrossRate,
+      makerFee:
+        asset?.marketType === 'perp'
+          ? feeData.userAddRate
+          : feeData.userSpotAddRate,
     }
   }, [feeData, asset?.marketType])
 
@@ -33,13 +40,13 @@ export const FeeStat = () => {
             className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
           >
             <p>
-              Taker orders pay a {takerFee} fee. Maker orders pay a {makerFee}{' '}
-              fee.
+              Taker orders pay a {formatPercent(takerFee)} fee. Maker orders pay
+              a {formatPercent(makerFee)} fee.
             </p>
           </HoverCardContent>
         </HoverCard>
       }
-      value={`${takerFee} / ${makerFee}`}
+      value={`${formatPercent(takerFee)} / ${formatPercent(makerFee)}`}
     />
   )
 }
