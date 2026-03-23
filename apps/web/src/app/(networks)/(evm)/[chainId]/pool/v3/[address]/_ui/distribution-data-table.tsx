@@ -18,7 +18,7 @@ import format from 'date-fns/format'
 import { type FC, useMemo } from 'react'
 import { rewardPerDay } from 'src/lib/functions'
 import type { RewardCampaign } from 'src/lib/hooks/react-query'
-import { EvmChainId } from 'sushi/evm'
+import type { EvmChainId } from 'sushi/evm'
 import { isKatanaStakeRequiredCampaign } from '../_lib/reward-campaign-utils'
 
 interface DistributionDataTableProps {
