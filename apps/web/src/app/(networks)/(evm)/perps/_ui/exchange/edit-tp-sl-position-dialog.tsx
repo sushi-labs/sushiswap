@@ -151,16 +151,22 @@ export const EditTpSlPositionDialog = ({
       ? formatSize(Math.abs(Number(size)), asset.decimals)
       : '0' //zero is entire size
 
-    const _tpPrice = parseUnits(tpPrice ?? '0', asset?.decimals)
-    const _slPrice = parseUnits(slPrice ?? '0', asset?.decimals)
+    const _tpPrice = parseUnits(tpPrice ?? '0', asset?.formatParseDecimals)
+    const _slPrice = parseUnits(slPrice ?? '0', asset?.formatParseDecimals)
 
     const adjustedTpPrice = formatPrice(
-      formatUnits((_tpPrice * BigInt(108)) / BigInt(100), asset?.decimals),
+      formatUnits(
+        (_tpPrice * BigInt(108)) / BigInt(100),
+        asset?.formatParseDecimals,
+      ),
       asset?.decimals,
       asset?.marketType,
     )
     const adjustedSlPrice = formatPrice(
-      formatUnits((_slPrice * BigInt(108)) / BigInt(100), asset?.decimals),
+      formatUnits(
+        (_slPrice * BigInt(108)) / BigInt(100),
+        asset?.formatParseDecimals,
+      ),
       asset?.decimals,
       asset?.marketType,
     )
@@ -260,8 +266,9 @@ export const EditTpSlPositionDialog = ({
       tpPrice: existingTpOrder.triggerPx,
       side: existingTpOrder.side === 'A' ? 'B' : 'A',
       leverage: BigInt(positionToClose?.position.leverage.value),
-      decimals: asset?.decimals,
+      decimals: asset?.decimals || 18,
     })
+    console.log('calculated gainUsd from TP:', gainUsd)
     return gainUsd
   }, [positionToClose, existingTpOrder, asset, entryPrice, positionSize])
 
@@ -275,7 +282,7 @@ export const EditTpSlPositionDialog = ({
       slPrice: existingSlOrder.triggerPx,
       side: existingSlOrder.side === 'A' ? 'B' : 'A',
       leverage: BigInt(positionToClose?.position.leverage.value),
-      decimals: asset?.decimals,
+      decimals: asset?.decimals || 18,
     })
     return lossUsd
   }, [positionToClose, existingSlOrder, asset, entryPrice, positionSize])
@@ -336,14 +343,14 @@ export const EditTpSlPositionDialog = ({
                 title="Entry Price"
                 value={perpsNumberFormatter({
                   value: entryPrice,
-                  maxFraxDigits: asset?.decimals,
+                  maxFraxDigits: asset?.decimals || 6,
                 })}
               />
               <StatItem
                 title="Mark Price"
                 value={perpsNumberFormatter({
                   value: markPrice,
-                  maxFraxDigits: asset?.decimals,
+                  maxFraxDigits: asset?.decimals || 6,
                 })}
               />
 
@@ -364,7 +371,7 @@ export const EditTpSlPositionDialog = ({
                       Expected Profit:{' '}
                       {perpsNumberFormatter({
                         value: expectedProfitUsdc,
-                        maxFraxDigits: asset?.decimals,
+                        maxFraxDigits: asset?.decimals || 6,
                       })}{' '}
                       USDC
                     </div>
@@ -388,7 +395,7 @@ export const EditTpSlPositionDialog = ({
                       Expected Loss: -
                       {perpsNumberFormatter({
                         value: expectedLossUsdc,
-                        maxFraxDigits: asset?.decimals,
+                        maxFraxDigits: asset?.decimals || 6,
                       })}{' '}
                       USDC
                     </div>

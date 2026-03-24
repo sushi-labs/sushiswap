@@ -69,7 +69,7 @@ export const PerpAssetStats = () => {
           )}
           formatOptions={{
             minimumFractionDigits: 0,
-            maximumFractionDigits: asset?.decimals || 6,
+            maximumFractionDigits: 6,
           }}
           className="text-sm font-medium tabular-nums"
         />
@@ -101,7 +101,7 @@ export const PerpAssetStats = () => {
           )}
           formatOptions={{
             minimumFractionDigits: 0,
-            maximumFractionDigits: asset?.decimals || 6,
+            maximumFractionDigits: 6,
           }}
           className="text-sm font-medium tabular-nums"
           allowColorChange={false}

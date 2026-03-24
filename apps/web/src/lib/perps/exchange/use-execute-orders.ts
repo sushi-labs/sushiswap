@@ -101,7 +101,7 @@ export const useExecuteOrders = () => {
           ...(c.clientOrderId ? { c: c.clientOrderId } : {}),
         } satisfies OrderParameters['orders'][number]
       })
-
+      console.log(orders)
       const _orderData: OrderParameters = {
         orders,
         builder: {

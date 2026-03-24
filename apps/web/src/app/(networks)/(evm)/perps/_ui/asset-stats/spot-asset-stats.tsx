@@ -81,7 +81,7 @@ export const SpotAssetStats = () => {
           {getSignForValue(Number(assetData?.change24hAbs ?? 0))}
           {perpsNumberFormatter({
             value: assetData?.change24hAbs ?? '0',
-            maxFraxDigits: 4,
+            maxFraxDigits: 6,
           })}{' '}
           / {getSignForValue(Number(assetData?.change24hPct ?? 0))}
           {formatPercent(assetData?.change24hPct)}

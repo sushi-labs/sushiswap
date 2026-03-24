@@ -23,7 +23,7 @@ export const OrderValueStat = () => {
     const res = calculateOrderValue({
       baseSize: size.base,
       price,
-      decimals: asset.sizePriceDecimals,
+      decimals: asset.formatParseDecimals,
     })
     if (!res) return null
 

@@ -85,15 +85,14 @@ export const ReversePositionDialog = ({
 
     const position = positionToClose.position
 
-    const _midPrice = parseUnits(midPrice ?? '0', asset?.decimals)
+    const _midPrice = parseUnits(midPrice ?? '0', asset?.formatParseDecimals)
     const adjustedPrice =
       positionToClose.side === 'A'
         ? (_midPrice * BigInt(108)) / BigInt(100) // 8% higher than market price for sell orders
         : (_midPrice * BigInt(92)) / BigInt(100) // 8% lower for buy orders
-
     //8% higher than market price for sell orders, 8% lower for buy orders to ensure fills
     const marketPrice = formatPrice(
-      formatUnits(adjustedPrice, asset?.decimals),
+      formatUnits(adjustedPrice, asset?.formatParseDecimals),
       asset?.decimals,
       asset?.marketType,
     )

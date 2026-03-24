@@ -36,7 +36,7 @@ export const MarketQuickClose = ({
 
     const _position = position.position
 
-    const _midPrice = parseUnits(midPrice ?? '0', asset?.decimals)
+    const _midPrice = parseUnits(midPrice ?? '0', asset?.formatParseDecimals)
     const adjustedPrice =
       position.side === 'A'
         ? (_midPrice * BigInt(108)) / BigInt(100) // 8% higher than market price for sell orders
@@ -44,7 +44,7 @@ export const MarketQuickClose = ({
 
     //8% higher than market price for sell orders, 8% lower for buy orders to ensure fills
     const marketPrice = formatPrice(
-      formatUnits(adjustedPrice, asset?.decimals),
+      formatUnits(adjustedPrice, asset?.formatParseDecimals),
       asset?.decimals,
       asset?.marketType,
     )

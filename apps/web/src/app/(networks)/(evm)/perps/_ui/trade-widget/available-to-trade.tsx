@@ -23,7 +23,7 @@ export const AvailableToTrade = () => {
         }),
         availToShort: perpsNumberFormatter({
           value: availableToShort,
-          maxFraxDigits: asset?.sizePriceDecimals,
+          maxFraxDigits: asset?.formatParseDecimals,
         }),
       }
     }

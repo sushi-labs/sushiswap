@@ -40,7 +40,7 @@ export type PerpOrSpotAsset = {
   isDelisted: boolean
   marginTableId: number | undefined
   decimals: number
-  sizePriceDecimals: number
+  formatParseDecimals: number
 }
 
 const formatSpotCtxs = (
@@ -77,7 +77,7 @@ const formatSpotCtxs = (
       name: assetId,
       marketType: 'spot' as const,
       decimals: tokens?.[0]?.szDecimals,
-      sizePriceDecimals: tokens?.[0]?.szDecimals || 4,
+      formatParseDecimals: tokens?.[0]?.szDecimals || 6,
       dex: '',
       tokens,
       lastPrice: last.toString(),
@@ -148,7 +148,7 @@ export const formatPerpCtxs = (
         untouchedSymbol: symbol,
         name: u.name,
         decimals: u.szDecimals,
-        sizePriceDecimals: u.szDecimals || 4,
+        formatParseDecimals: u.szDecimals || 8,
         marketType: 'perp' as const,
         dex: dexName,
         tokens: collateralToken ? [collateralToken] : undefined,

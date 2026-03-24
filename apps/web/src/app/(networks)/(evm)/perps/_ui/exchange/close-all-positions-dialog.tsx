@@ -49,9 +49,8 @@ export const CloseAllPositionsDialog = ({
       if (!asset) {
         throw new Error(`Asset data not available for ${pos.position.coin}`)
       }
-      const decimals = asset.decimals
 
-      const _midPrice = parseUnits(midPrice ?? '0', decimals)
+      const _midPrice = parseUnits(midPrice ?? '0', asset?.formatParseDecimals)
       const adjustedPrice =
         pos.side === 'A'
           ? (_midPrice * BigInt(108)) / BigInt(100) // 8% higher than market price for sell orders
@@ -59,8 +58,8 @@ export const CloseAllPositionsDialog = ({
 
       //8% higher than market price for sell orders, 8% lower for buy orders to ensure fills
       const marketPrice = formatPrice(
-        formatUnits(adjustedPrice, decimals),
-        decimals,
+        formatUnits(adjustedPrice, asset?.formatParseDecimals),
+        asset.decimals,
         asset?.marketType,
       )
 
@@ -70,10 +69,10 @@ export const CloseAllPositionsDialog = ({
         price:
           closeType === 'market'
             ? marketPrice
-            : formatPrice(midPrice!, decimals, asset?.marketType)!,
+            : formatPrice(midPrice!, asset.decimals, asset?.marketType)!,
         size: formatSize(
           Math.abs(Number.parseFloat(pos.position.szi)),
-          decimals,
+          asset.decimals,
         ),
         reduceOnly: true,
         orderType:

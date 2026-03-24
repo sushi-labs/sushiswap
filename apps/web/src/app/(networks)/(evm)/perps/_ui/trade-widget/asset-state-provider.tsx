@@ -1,5 +1,6 @@
 'use client'
 import { useLocalStorage } from '@sushiswap/hooks'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   type FC,
   createContext,
@@ -106,7 +107,7 @@ export type TradeType = (typeof TRADE_TYPES)[number]
 export type TradeSideType = 'long' | 'short'
 
 const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
-  const [_activeAsset, setActiveAsset] = useLocalStorage<string>(
+  const [_activeAsset, _setActiveAsset] = useLocalStorage<string>(
     'sushi.perps.active-asset',
     'BTC',
   )
@@ -141,6 +142,19 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
       assetListQuery: { data: assetList },
     },
   } = useAssetListState()
+  const pathname = usePathname()
+  const isTradePage = pathname === '/perps'
+  const { push } = useRouter()
+
+  const setActiveAsset = useCallback(
+    (asset: string) => {
+      _setActiveAsset(asset)
+      if (!isTradePage) {
+        push('/perps')
+      }
+    },
+    [_setActiveAsset, push, isTradePage],
+  )
 
   const activeAsset = useMemo(() => {
     //validates active asset from local storage against asset list, default to BTC if not valid

@@ -101,7 +101,7 @@ export const LimitCloseDialog = ({
         percentageInput: 100,
         maxSize: initSize,
         priceUsd: midPrice ?? '0',
-        decimals: asset?.decimals,
+        decimals: asset?.formatParseDecimals,
       })
 
       setSizeToClose({ base: baseSize, quote: quoteSize })
@@ -123,7 +123,7 @@ export const LimitCloseDialog = ({
             percentageInput: val,
             maxSize: size,
             priceUsd: midPrice ?? '0',
-            decimals: asset.decimals,
+            decimals: asset.formatParseDecimals,
           })
 
         setSizeToClose({ base: baseSize, quote: quoteSize })
@@ -191,10 +191,13 @@ export const LimitCloseDialog = ({
 
     const position = positionToClose.position
 
-    const _price = parseUnits(limitPriceToCloseAt ?? '0', asset?.decimals)
+    const _price = parseUnits(
+      limitPriceToCloseAt ?? '0',
+      asset?.formatParseDecimals,
+    )
 
     const limitPrice = formatPrice(
-      formatUnits(_price, asset?.decimals),
+      formatUnits(_price, asset?.formatParseDecimals),
       asset?.decimals,
       asset?.marketType,
     )
@@ -225,7 +228,7 @@ export const LimitCloseDialog = ({
     const orderToClose = orderData.orders?.[0]
     if (!orderToClose) return null
 
-    const decimals = asset.decimals
+    const decimals = asset.formatParseDecimals
     const SCALE = 10n ** BigInt(decimals)
 
     try {
