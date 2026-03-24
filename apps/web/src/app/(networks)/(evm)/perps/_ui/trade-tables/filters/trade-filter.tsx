@@ -28,7 +28,7 @@ export const TradeFilter = () => {
       }}
       value={_currentTradeFilter ?? undefined}
     >
-      <SelectTrigger className="!py-0 !px-2 !text-xs !max-h-[32px] !min-h-[32px] !h-[32px] max-w-fit">
+      <SelectTrigger className="!py-0 !px-2 !text-xs !max-h-[32px] !min-h-[32px] !h-[32px] max-w-fit capitalize">
         {_currentTradeFilter ? <SelectValue /> : <span>Filter</span>}
       </SelectTrigger>
 

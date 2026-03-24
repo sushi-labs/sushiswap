@@ -116,23 +116,21 @@ export const ACC_VAL_CHANGE_COLUMN: ColumnDef<
 > = {
   id: 'accountValChange',
   header: 'Account Value Change',
-  accessorFn: (row) => row.accountValChange.amount,
+  accessorFn: (row) => row.accValChange,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number(rowA.accountValChange.amount) - Number(rowB.accountValChange.amount),
+    Number(rowA.accValChange) - Number(rowB.accValChange),
   cell: (props) => {
-    const accountValChange = props.row.original.accountValChange
-    const changeType = props.row.original.changeType
+    const accountValChange = props.row.original.accountValueChange
+    const amount = props.row.original.accValChange
 
     return (
       <span
         className={classNames(
           'font-medium lg:whitespace-nowrap',
-          getTextColorClass(changeType === 'negative' ? -1 : 1),
+          getTextColorClass(amount),
         )}
       >
-        {changeType === 'negative' ? '-' : ''}
-        {perpsNumberFormatter({ value: accountValChange.amount })}{' '}
-        {accountValChange.token}
+        {accountValChange}
       </span>
     )
   },
@@ -147,11 +145,11 @@ export const FEE_COLUMN: ColumnDef<
 > = {
   id: 'fee',
   header: 'Fee',
-  accessorFn: (row) => row.fee,
+  accessorFn: (row) => row.feeAmount,
   sortingFn: 'alphanumeric',
   cell: (props) => {
-    const fee = props.row.original.fee
-    if (fee === 0) {
+    const feeAmount = props.row.original.feeAmount
+    if (feeAmount === 0) {
       return <span className="font-medium lg:whitespace-nowrap">--</span>
     }
 
@@ -162,7 +160,7 @@ export const FEE_COLUMN: ColumnDef<
           getTextColorClass(-1),
         )}
       >
-        {perpsNumberFormatter({ value: fee })} USDC
+        {perpsNumberFormatter({ value: feeAmount })} USDC
       </span>
     )
   },

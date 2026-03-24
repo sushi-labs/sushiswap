@@ -46,7 +46,7 @@ export const BalanceTable = () => {
     if (isError || !data) return []
     let _data = data
     if (hideSmallBalances) {
-      _data = data.filter((item) => Number(item.usdcValue) >= 10)
+      _data = data.filter((item) => Number(item.usdcValue) > 5)
     }
     if (filterValue) {
       //filterValue all or long do nothing

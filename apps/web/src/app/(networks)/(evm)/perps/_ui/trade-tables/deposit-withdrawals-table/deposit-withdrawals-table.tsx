@@ -37,14 +37,11 @@ const MOBILE_COLUMNS = [
   FEE_COLUMN,
 ] as ColumnDef<UserNonFundingLedgerUpdatesItemType, unknown>[]
 
-const startTime = Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 30 // 30 days ago
-
 export const DepositsWithdrawalsTable = () => {
   const { isLg } = useBreakpoint('lg')
   const address = useAccount('evm')
   const { data, isLoading, isError } = useUserNonFundingLedgerUpdates({
     address,
-    startTime,
   })
 
   const [sorting, setSorting] = useState([{ id: 'timestamp', desc: true }])
