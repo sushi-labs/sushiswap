@@ -1,3 +1,4 @@
+import { InformationCircleIcon } from '@heroicons/react-v1/solid'
 import { CheckIcon, ExclamationTriangleIcon } from '@heroicons/react/20/solid'
 import {
   Currency,
@@ -79,17 +80,12 @@ function KatanaStakeRequirementCell({
     <div className="flex justify-center">
       <HoverCard openDelay={150} closeDelay={0}>
         <HoverCardTrigger asChild>
-          <ExclamationTriangleIcon
-            width={24}
-            height={24}
-            className="dark:text-yellow text-amber-900"
-          />
+          <InformationCircleIcon width={24} height={24} />
         </HoverCardTrigger>
-        <HoverCardContent className="max-w-[360px] space-y-2 text-sm">
+        <HoverCardContent className="max-w-[400px] space-y-2 text-sm">
           <p className="font-medium">Stake to earn these emissions</p>
           <p className="text-muted-foreground">
-            LPs must stake in the Katana LP staker contract to receive these
-            emissions. Staking and opt-in are available at{' '}
+            Stake to earn KAT rewards. Go to{' '}
             <a
               href="https://app.katana.network/portfolio"
               target="_blank"
@@ -97,12 +93,12 @@ function KatanaStakeRequirementCell({
               className="text-blue hover:underline"
             >
               app.katana.network/portfolio
-            </a>
-            .
+            </a>{' '}
+            to stake and opt in.
           </p>
           <p className="text-muted-foreground">
-            Once staked, the position disappears from the Sushi positions page
-            and it does not earn trading fees while staked.
+            Your position moves to the external Katana staker contract while
+            staked.
           </p>
         </HoverCardContent>
       </HoverCard>

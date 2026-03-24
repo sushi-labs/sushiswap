@@ -20,8 +20,7 @@ export const KatanaStakingMessage: FC<KatanaStakingMessageProps> = ({
 
   return (
     <Message variant="warning" size="sm">
-      Some active emissions require staking in the Katana LP staker contract to
-      receive them. Stake and opt in at{' '}
+      Stake your LP position to earn KAT rewards. Staking is available at{' '}
       <a
         href="https://app.katana.network/portfolio"
         target="_blank"
@@ -30,13 +29,9 @@ export const KatanaStakingMessage: FC<KatanaStakingMessageProps> = ({
       >
         app.katana.network/portfolio
       </a>
-      .
-      <br />
-      <br />
-      While staked, positions disappear from the Sushi positions page and do not
-      earn trading fees. Katana staking is a third-party flow that Sushi does
-      not control, and Sushi is not responsible for any issues or losses that
-      may occur.
+      . While staked, your position is held in the Katana staker contract and
+      won't appear on this page. Staked positions earn KAT emissions instead of
+      trading fees.
     </Message>
   )
 }
