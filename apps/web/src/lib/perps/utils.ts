@@ -2,6 +2,7 @@ import {
   formatPrice as formatPriceHl,
   formatSize as formatSizeHl,
 } from '@nktkas/hyperliquid/utils'
+import { least } from 'd3'
 import type { PerpOrSpotAsset } from './subscription/use-asset-list'
 
 export const getTextColorClass = (value: number) => {
@@ -104,7 +105,7 @@ export function getHyperliquidCoinIconUrl(
 
   const prefix = dex !== '' ? `${dex}:` : ''
 
-  const baseSymbol =
+  let baseSymbol =
     marketType === 'spot'
       ? symbol.split('/')?.[0]
       : dex
@@ -112,6 +113,9 @@ export function getHyperliquidCoinIconUrl(
         : name
 
   const suffix = marketType === 'spot' ? '_spot' : ''
+  if (SPOT_ASSETS_TO_REWRITE.has(baseSymbol)) {
+    baseSymbol = SPOT_ASSETS_TO_REWRITE.get(baseSymbol) ?? baseSymbol
+  }
 
   return `https://app.hyperliquid.xyz/coins/${prefix}${baseSymbol}${suffix}.svg`
 }
@@ -142,6 +146,8 @@ export const SPOT_ASSETS_TO_REWRITE = new Map<string, string>([
   ['HREKT', 'REKT'],
   ['HWAVE', 'WAVE'],
   ['USPYX', 'SPYX'],
+  ['USDT0', 'USDT'],
+  ['XAUT0', 'XAUT'],
 ])
 
 export const toFixedTrim = (x: number, maxDp = 10) => {

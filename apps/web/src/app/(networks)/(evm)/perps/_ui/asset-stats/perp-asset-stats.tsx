@@ -69,7 +69,7 @@ export const PerpAssetStats = () => {
           )}
           formatOptions={{
             minimumFractionDigits: 0,
-            maximumFractionDigits: asset?.decimals,
+            maximumFractionDigits: asset?.decimals || 6,
           }}
           className="text-sm font-medium tabular-nums"
         />
@@ -101,7 +101,7 @@ export const PerpAssetStats = () => {
           )}
           formatOptions={{
             minimumFractionDigits: 0,
-            maximumFractionDigits: asset?.decimals,
+            maximumFractionDigits: asset?.decimals || 6,
           }}
           className="text-sm font-medium tabular-nums"
           allowColorChange={false}
@@ -120,7 +120,7 @@ export const PerpAssetStats = () => {
           {getSignForValue(Number(assetData?.change24hAbs ?? 0))}
           {perpsNumberFormatter({
             value: assetData?.change24hAbs ?? '0',
-            maxFraxDigits: 4,
+            maxFraxDigits: 6,
           })}{' '}
           / {getSignForValue(Number(assetData?.change24hPct ?? 0))}
           {formatPercent(assetData?.change24hPct)}

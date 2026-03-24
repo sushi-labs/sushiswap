@@ -108,7 +108,7 @@ export const Chart = () => {
 
   useEffect(() => {
     if (!isMounted || !resolvedTheme || !chartContainerRef.current) return
-    if (!assetName || !decimals || !marketType) return
+    if (!assetName || decimals === undefined || !marketType) return
     if (tvWidgetRef.current) return
 
     const intervalQuicks = ['5', '60', '1D']
@@ -118,7 +118,6 @@ export const Chart = () => {
       JSON.stringify(intervalQuicks),
     )
     localStorage.setItem('tradingview.current_theme.name', resolvedTheme)
-
     const widgetOptions = createChartWidgetOptions({
       activeAsset,
       assetName,
