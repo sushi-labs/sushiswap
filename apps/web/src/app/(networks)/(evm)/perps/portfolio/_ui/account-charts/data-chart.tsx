@@ -96,9 +96,6 @@ export const DataChart = ({
       option={DEFAULT_OPTION}
       echarts={echarts}
       style={{ height: 192 }}
-      // onEvents={{
-      //   globalout: onMouseLeave,
-      // }}
     />
   )
 }

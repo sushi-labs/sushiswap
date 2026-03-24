@@ -52,7 +52,7 @@ export const Volume = () => {
         <DialogTrigger asChild>
           <TableButton
             className="w-fit md:text-base text-sm"
-            disabled={isLoading || !!error}
+            disabled={isLoading || !!error || !address}
           >
             View Volume
           </TableButton>

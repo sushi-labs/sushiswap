@@ -11,6 +11,7 @@ import {
 } from '@sushiswap/ui'
 import { type ButtonHTMLAttributes, type FC, useMemo, useState } from 'react'
 import { usePortfolio } from 'src/lib/perps'
+import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useAccount } from 'src/lib/wallet'
 import { DataChart } from './data-chart'
 
@@ -122,7 +123,11 @@ export const AccountCharts = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      {isLoading ? (
+      {!address ? (
+        <div className="flex items-center justify-center h-full">
+          <ConnectButton namespace="evm" className="mx-auto" />
+        </div>
+      ) : isLoading ? (
         <div>
           <SkeletonBox className="w-full h-[208px]" />
         </div>

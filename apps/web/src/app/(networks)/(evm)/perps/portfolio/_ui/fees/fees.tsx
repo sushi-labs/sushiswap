@@ -23,6 +23,11 @@ export const Fees = () => {
   const { data: feeData, isLoading, error } = useUserFees({ address })
 
   const { takerFee, makerFee } = useMemo(() => {
+    if (!address)
+      return {
+        takerFee: side === 'perps' ? 0.00045 : 0.0007,
+        makerFee: side === 'perps' ? 0.00015 : 0.0004,
+      }
     if (!feeData) return { takerFee: '0', makerFee: '0' }
     return {
       takerFee:
@@ -30,7 +35,7 @@ export const Fees = () => {
       makerFee:
         side === 'perps' ? feeData.userAddRate : feeData.userSpotAddRate,
     }
-  }, [feeData, side])
+  }, [feeData, side, address])
 
   return (
     <Card className="p-2 !rounded-md gap-2 flex !bg-[#18223B] border-transparent justify-between flex-col w-full">
