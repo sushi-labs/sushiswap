@@ -9,15 +9,19 @@ export const ValueInput = ({
   label,
   maxDecimals,
   className,
+  inputClassName,
   placeholder,
+  type = 'number',
 }: {
   value: string
   onChange: (value: string) => void
   onBlur?: () => void
   label: string
-  maxDecimals: number
+  maxDecimals?: number
   className?: string
+  inputClassName?: string
   placeholder?: string
+  type?: 'number' | 'text' | 'percent'
 }) => {
   const [pending, startTransition] = useTransition()
 
@@ -43,12 +47,15 @@ export const ValueInput = ({
       <div className="flex items-center justify-between gap-2">
         <p className="text-[#4A5565] whitespace-nowrap">{label}</p>
         <TextField
-          type="number"
+          type={type}
           variant="naked"
           onValueChange={_onChange}
           value={pending ? localValue : value}
           maxDecimals={maxDecimals}
-          className={classNames('!text-lg font-medium text-right')}
+          className={classNames(
+            '!text-lg font-medium text-right',
+            inputClassName ?? '',
+          )}
           onBlur={onBlur}
           placeholder={placeholder ?? undefined}
         />

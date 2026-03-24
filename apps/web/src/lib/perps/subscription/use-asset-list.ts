@@ -187,7 +187,6 @@ export const useAssetList = () => {
     enabled: false,
   })
   const { data: spotMeta } = useSpotMeta()
-
   useEffect(() => {
     if (!spotMeta) return
     let unsubscribe: undefined | (() => Promise<void>) = undefined

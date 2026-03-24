@@ -67,8 +67,8 @@ export const Fees = () => {
         </DropdownMenu>
       </div>
       {isLoading ? (
-        <div className="w-24">
-          <SkeletonText fontSize="2xl" />
+        <div className="w-24 h-8">
+          <SkeletonText fontSize="xl" />
         </div>
       ) : error ? (
         <div className="text-red-500">Error loading fees</div>

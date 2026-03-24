@@ -6,7 +6,8 @@ import { useAssetState } from '../trade-widget'
 export const TakeStopTrigger: FC<ButtonProps> = ({
   children,
   fullWidth = true,
-  size = 'perps-default',
+  variant = 'perps-default',
+  size = 'xl',
   ...props
 }) => {
   const {

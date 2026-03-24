@@ -236,7 +236,7 @@ export const EditTpSlPositionDialog = ({
     if (slOrder.orderType.trigger.triggerPrice !== '0') {
       orders.push(slOrder)
     }
-
+    console.log(orders)
     return {
       orders: orders,
       grouping: 'positionTpsl' as const,
@@ -268,7 +268,6 @@ export const EditTpSlPositionDialog = ({
       leverage: BigInt(positionToClose?.position.leverage.value),
       decimals: asset?.decimals || 18,
     })
-    console.log('calculated gainUsd from TP:', gainUsd)
     return gainUsd
   }, [positionToClose, existingTpOrder, asset, entryPrice, positionSize])
 

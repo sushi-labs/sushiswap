@@ -129,7 +129,7 @@ export const AccountCharts = () => {
         </div>
       ) : isLoading ? (
         <div>
-          <SkeletonBox className="w-full h-[208px]" />
+          <SkeletonBox className="w-full h-[192px]" />
         </div>
       ) : error ? (
         <div className="text-red-500">Error loading stats</div>

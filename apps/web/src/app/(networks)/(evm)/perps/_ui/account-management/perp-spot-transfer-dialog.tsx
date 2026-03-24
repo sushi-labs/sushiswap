@@ -75,7 +75,7 @@ export const PerpSpotTransferDialog = ({
   const insufficientBalance =
     address && sendableBalance && _amount && balance?.lt(_amount)
 
-  const withdrawUsdc = useCallback(async () => {
+  const transferUsdc = useCallback(async () => {
     if (!walletClient || !address || !_amount) return
     try {
       setIsPending(true)
@@ -197,7 +197,7 @@ export const PerpSpotTransferDialog = ({
                       <Button
                         size="xl"
                         className="w-full"
-                        onClick={withdrawUsdc}
+                        onClick={transferUsdc}
                         loading={isPending}
                         variant="perps-default"
                       >

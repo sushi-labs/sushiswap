@@ -5,7 +5,8 @@ import { useSetReferrer } from 'src/lib/perps'
 export const Referral: FC<ButtonProps> = ({
   children,
   fullWidth = true,
-  size = 'perps-default',
+  variant = 'perps-default',
+  size = 'xl',
   ...props
 }) => {
   const { hasAcceptedReferral, isPending, setReferrerCodeAsync } =

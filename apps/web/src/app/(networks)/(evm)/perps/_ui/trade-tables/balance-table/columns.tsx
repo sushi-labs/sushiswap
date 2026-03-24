@@ -19,6 +19,7 @@ import {
   perpsNumberFormatter,
 } from 'src/lib/perps'
 import { truncateString } from 'sushi'
+import { TableButton } from '../../_common'
 import { useUserSettingsState } from '../../account-management'
 import { useAssetState } from '../../trade-widget'
 import { columnBodyMeta } from '../_common/column-meta'
@@ -215,21 +216,26 @@ export const PNL_COLUMN: ColumnDef<BalanceItemType, unknown> = {
   },
 }
 
-// export const REPAY_COLUMN: ColumnDef<BalanceItemType, unknown> = {
-//   id: 'repay',
-//   header: 'Repay',
-//   cell: (props) => {
+export const SEND_COLUMN = (
+  openModal: (action: 'send', balance: BalanceItemType) => void,
+): ColumnDef<BalanceItemType, unknown> => ({
+  id: 'send',
+  header: 'Send',
+  cell: (props) => {
+    const balance = props.row.original
 
-//     return (
-//       <span className="font-medium lg:whitespace-nowrap">
-//         {props.row.original. ? 'Yes' : 'No'}
-//       </span>
-//     )
-//   },
-//   meta: {
-//     body: columnBodyMeta,
-//   },
-// }
+    return (
+      <div className="flex items-center gap-4 lg:whitespace-nowrap">
+        <TableButton onClick={() => openModal('send', balance)}>
+          Send
+        </TableButton>
+      </div>
+    )
+  },
+  meta: {
+    body: columnBodyMeta,
+  },
+})
 
 export const CONTRACT_COLUMN: ColumnDef<BalanceItemType, unknown> = {
   id: 'contract',

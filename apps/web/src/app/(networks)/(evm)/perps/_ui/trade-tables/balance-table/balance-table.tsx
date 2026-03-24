@@ -1,7 +1,8 @@
 import { DataTable, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { type BalanceItemType, useBalances } from 'src/lib/perps'
+import { SendDialog } from '../../account-management'
 import { MobileTable } from '../_common'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {
@@ -9,27 +10,40 @@ import {
   COIN_COLUMN,
   CONTRACT_COLUMN,
   PNL_COLUMN,
+  SEND_COLUMN,
   TOTAL_BALANCE_COLUMN,
   USDC_VALUE_COLUMN,
 } from './columns'
 
-const COLUMNS = [
-  COIN_COLUMN,
-  TOTAL_BALANCE_COLUMN,
-  AVAILABLE_BALANCE_COLUMN,
-  USDC_VALUE_COLUMN,
-  PNL_COLUMN,
-  CONTRACT_COLUMN,
-] as ColumnDef<BalanceItemType, unknown>[]
-
-const MOBILE_COLUMNS = [
-  COIN_COLUMN,
-  USDC_VALUE_COLUMN,
-  TOTAL_BALANCE_COLUMN,
-  AVAILABLE_BALANCE_COLUMN,
-  PNL_COLUMN,
-  CONTRACT_COLUMN,
-] as ColumnDef<BalanceItemType, unknown>[]
+type BalanceAction = 'send'
+const getBalanceColumns = ({
+  openModal,
+  isMobile,
+}: {
+  openModal: (action: BalanceAction, balance: BalanceItemType) => void
+  isMobile: boolean
+}): ColumnDef<BalanceItemType, unknown>[] => {
+  if (isMobile) {
+    return [
+      COIN_COLUMN,
+      TOTAL_BALANCE_COLUMN,
+      AVAILABLE_BALANCE_COLUMN,
+      USDC_VALUE_COLUMN,
+      PNL_COLUMN,
+      SEND_COLUMN(openModal),
+      CONTRACT_COLUMN,
+    ]
+  }
+  return [
+    COIN_COLUMN,
+    USDC_VALUE_COLUMN,
+    TOTAL_BALANCE_COLUMN,
+    AVAILABLE_BALANCE_COLUMN,
+    PNL_COLUMN,
+    SEND_COLUMN(openModal),
+    CONTRACT_COLUMN,
+  ]
+}
 
 export const BalanceTable = () => {
   const { isLg } = useBreakpoint('lg')
@@ -41,6 +55,34 @@ export const BalanceTable = () => {
   const filterValue = tradeFilter?.balances?.split(':')?.[1] as
     | TradeFilterType
     | undefined
+  const [activeModal, setActiveModal] = useState<ActiveModalState>({
+    open: false,
+    action: null,
+    balance: null,
+  })
+
+  const openModal = useCallback(
+    (action: BalanceAction, balance: BalanceItemType) => {
+      setActiveModal({
+        open: true,
+        action,
+        balance,
+      })
+    },
+    [],
+  )
+
+  const closeModal = useCallback(() => {
+    setActiveModal({
+      open: false,
+      action: null,
+      balance: null,
+    })
+  }, [])
+
+  const columns = useMemo(() => {
+    return getBalanceColumns({ openModal, isMobile: !isLg })
+  }, [openModal, isLg])
 
   const tableData = useMemo(() => {
     if (isError || !data) return []
@@ -77,20 +119,60 @@ export const BalanceTable = () => {
     }
   }, [tableData, sorting])
 
-  return isLg ? (
-    <DataTable
-      state={state}
-      loading={isLoading}
-      columns={COLUMNS}
-      data={tableData}
-      onSortingChange={setSorting}
-    />
-  ) : (
-    <MobileTable
-      columns={MOBILE_COLUMNS}
-      data={tableData}
-      isLoading={isLoading}
-      sorting={sorting}
-    />
+  return (
+    <>
+      {isLg ? (
+        <DataTable
+          state={state}
+          loading={isLoading}
+          columns={columns}
+          data={tableData}
+          onSortingChange={setSorting}
+        />
+      ) : (
+        <MobileTable
+          columns={columns}
+          data={tableData}
+          isLoading={isLoading}
+          sorting={sorting}
+        />
+      )}
+      <SharedPositionModal activeModal={activeModal} onClose={closeModal} />
+    </>
   )
+}
+
+type ActiveModalState = {
+  open: boolean
+  action: BalanceAction | null
+  balance: BalanceItemType | null
+}
+
+const SharedPositionModal = ({
+  activeModal,
+  onClose,
+}: {
+  activeModal: ActiveModalState
+  onClose: () => void
+}) => {
+  const { open, action, balance } = activeModal
+
+  if (!open || !action || !balance) return null
+
+  switch (action) {
+    case 'send':
+      return (
+        <SendDialog
+          isOpen={open}
+          onOpenChange={(nextOpen) => {
+            if (!nextOpen) onClose()
+          }}
+          balanceItem={balance}
+          trigger={<div />}
+        />
+      )
+
+    default:
+      return null
+  }
 }

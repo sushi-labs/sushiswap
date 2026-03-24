@@ -69,7 +69,7 @@ export const TpSlInput = ({
         setGain({ usd: '', percent: '' })
         return
       }
-      const decimals = asset?.decimals || 18
+      const decimals = asset?.formatParseDecimals || 18
 
       const { tpPrice, gainUsd, gainPercent } = calculateTpFromGain({
         entryPrice,
@@ -82,7 +82,7 @@ export const TpSlInput = ({
       })
 
       onChangeTpPrice(
-        formatPrice(tpPrice, decimals, asset?.marketType || 'perp'),
+        formatPrice(tpPrice, asset?.decimals || 0, asset?.marketType || 'perp'),
       )
       setGain({ usd: gainUsd, percent: gainPercent })
     },
@@ -105,7 +105,7 @@ export const TpSlInput = ({
         setGain({ usd: '', percent: '' })
         return
       }
-      const decimals = asset?.decimals || 18
+      const decimals = asset?.formatParseDecimals || 18
 
       const { gainUsd, gainPercent } = calculateGainFromTp({
         entryPrice,
@@ -116,7 +116,9 @@ export const TpSlInput = ({
         decimals,
       })
 
-      onChangeTpPrice(formatPrice(value, decimals, asset?.marketType || 'perp'))
+      onChangeTpPrice(
+        formatPrice(value, asset?.decimals || 0, asset?.marketType || 'perp'),
+      )
       setGain({ usd: gainUsd, percent: gainPercent })
     },
     [
@@ -137,7 +139,7 @@ export const TpSlInput = ({
         setLoss({ usd: '', percent: '' })
         return
       }
-      const decimals = asset?.decimals || 18
+      const decimals = asset?.formatParseDecimals || 18
 
       const { slPrice, lossUsd, lossPercent } = calculateSlFromLoss({
         entryPrice,
@@ -150,7 +152,7 @@ export const TpSlInput = ({
       })
 
       onChangeSlPrice(
-        formatPrice(slPrice, decimals, asset?.marketType || 'perp'),
+        formatPrice(slPrice, asset?.decimals || 0, asset?.marketType || 'perp'),
       )
       setLoss({ usd: lossUsd, percent: lossPercent })
     },
@@ -173,7 +175,7 @@ export const TpSlInput = ({
         setLoss({ usd: '', percent: '' })
         return
       }
-      const decimals = asset?.decimals || 18
+      const decimals = asset?.formatParseDecimals || 18
 
       const { lossUsd, lossPercent } = calculateLossFromSl({
         entryPrice,
@@ -184,7 +186,9 @@ export const TpSlInput = ({
         decimals,
       })
 
-      onChangeSlPrice(formatPrice(value, decimals, asset?.marketType || 'perp'))
+      onChangeSlPrice(
+        formatPrice(value, asset?.decimals || 0, asset?.marketType || 'perp'),
+      )
       setLoss({ usd: lossUsd, percent: lossPercent })
     },
     [

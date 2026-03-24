@@ -3,6 +3,7 @@ import { Button } from '@sushiswap/ui'
 import {
   DepositDialog,
   PerpSpotTransferDialog,
+  SendDialog,
   WithdrawDialog,
 } from '~evm/perps/_ui/account-management'
 
@@ -17,6 +18,7 @@ export const DialogRow = () => {
           </Button>
         }
       />
+      <SendDialog trigger={<Button variant="perps-secondary">Send</Button>} />
       <WithdrawDialog
         trigger={<Button variant="perps-secondary">Withdraw</Button>}
       />

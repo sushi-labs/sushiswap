@@ -26,7 +26,8 @@ import { useAccount } from 'src/lib/wallet'
 const Legal: FC<ButtonProps> = ({
   children,
   fullWidth = true,
-  size = 'perps-default',
+  variant = 'perps-default',
+  size = 'xl',
   ...props
 }) => {
   const isMounted = useIsMounted()

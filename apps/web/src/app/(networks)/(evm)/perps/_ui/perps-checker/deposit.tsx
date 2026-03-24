@@ -11,7 +11,8 @@ import { useAssetState } from '../trade-widget'
 export const Deposit: FC<ButtonProps> = ({
   children,
   fullWidth = true,
-  size = 'perps-default',
+  variant = 'perps-default',
+  size = 'xl',
   ...props
 }) => {
   const {
