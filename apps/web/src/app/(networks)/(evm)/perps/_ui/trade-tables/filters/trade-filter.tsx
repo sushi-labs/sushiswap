@@ -34,8 +34,12 @@ export const TradeFilter = () => {
 
       <SelectContent>
         {TRADE_FILTER_VALUES.map((type) => (
-          <SelectItem key={type} value={`${activeTab}:${type}`}>
-            {`${type.charAt(0).toUpperCase()}${type.slice(1)}`}
+          <SelectItem
+            key={type}
+            value={`${activeTab}:${type}`}
+            className="capitalize"
+          >
+            {type}
           </SelectItem>
         ))}
       </SelectContent>

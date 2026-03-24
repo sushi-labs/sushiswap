@@ -2,7 +2,6 @@ import {
   ClipboardCheckIcon,
   ClipboardCopyIcon,
 } from '@heroicons/react-v1/outline'
-import { userNonFundingLedgerUpdates } from '@nktkas/hyperliquid/api/subscription'
 import { useCopyClipboard } from '@sushiswap/hooks'
 import {
   Chip,

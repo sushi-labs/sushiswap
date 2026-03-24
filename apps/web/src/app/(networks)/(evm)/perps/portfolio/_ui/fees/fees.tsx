@@ -70,7 +70,7 @@ export const Fees = () => {
       ) : (
         <div className="font-medium text-lg md:text-2xl">{`${formatPercent(takerFee)} / ${formatPercent(makerFee)}`}</div>
       )}
-      <div className="h-2" />
+      <div className="h-2.5" />
     </Card>
   )
 }

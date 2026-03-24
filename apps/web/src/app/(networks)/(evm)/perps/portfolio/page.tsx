@@ -3,6 +3,7 @@ import { AccountCharts } from './_ui/account-charts'
 import { DialogRow } from './_ui/dialog-row'
 import { Fees } from './_ui/fees'
 import { PortfolioStats } from './_ui/portfolio-stats'
+import { Tables } from './_ui/tables'
 import { Volume } from './_ui/volume'
 
 export default async function PerpetualsPortfolioPage() {
@@ -21,7 +22,9 @@ export default async function PerpetualsPortfolioPage() {
           <PortfolioStats />
           <AccountCharts />
         </div>
-        <div className="min-h-[450px] border">tables</div>
+        <div className="min-h-[450px]">
+          <Tables />
+        </div>
       </div>
     </Container>
   )

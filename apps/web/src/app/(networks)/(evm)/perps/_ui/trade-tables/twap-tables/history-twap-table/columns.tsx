@@ -20,7 +20,7 @@ export const TIME_COLUMN: ColumnDef<TwapHistoryItemType, unknown> = {
     const timestamp = props.row.original.timestamp
 
     return (
-      <span className="font-medium lg:lg:whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {format(timestamp * 1000, 'M/d/yyyy - HH:mm:ss')}
       </span>
     )

@@ -4,8 +4,10 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  classNames,
   useBreakpoint,
 } from '@sushiswap/ui'
+import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 import { TradeFilter } from '../filters'
 import {
@@ -16,6 +18,8 @@ import {
 
 export const TwapTables = () => {
   const { isLg } = useBreakpoint('lg')
+  const pathname = usePathname()
+  const isPortfolio = pathname === '/perps/portfolio'
   const {
     state: { activeTwapTab },
     mutate: { setActiveTwapTab },
@@ -30,7 +34,12 @@ export const TwapTables = () => {
     >
       <div className="flex items-center justify-between">
         {!isLg ? <TradeFilter /> : null}
-        <TabsList className="!px-0.5 !h-8 !bg-[#0D1421]">
+        <TabsList
+          className={classNames(
+            '!px-0.5 !h-8 !bg-[#0D1421]',
+            isPortfolio && '!bg-[#18223B]',
+          )}
+        >
           {TWAP_TABLES_TABS.map((tab) => (
             <TabsTrigger
               key={tab.value}

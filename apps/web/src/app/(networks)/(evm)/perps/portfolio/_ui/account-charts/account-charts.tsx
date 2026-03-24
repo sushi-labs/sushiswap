@@ -90,7 +90,7 @@ export const AccountCharts = () => {
           {VIEWS.map((v) => (
             <ViewButton
               key={v.value}
-              isSelected={view.value === v.value}
+              data-selected={(view.value === v.value).toString()}
               onClick={() => setView(v)}
             >
               {v.label}
@@ -124,7 +124,7 @@ export const AccountCharts = () => {
       </div>
       {isLoading ? (
         <div>
-          <SkeletonBox />
+          <SkeletonBox className="w-full h-[208px]" />
         </div>
       ) : error ? (
         <div className="text-red-500">Error loading stats</div>
@@ -137,16 +137,14 @@ export const AccountCharts = () => {
   )
 }
 
-const ViewButton: FC<
-  ButtonHTMLAttributes<HTMLButtonElement> & { isSelected: boolean }
-> = (props) => {
+const ViewButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (props) => {
   return (
     <button
       {...props}
       className={classNames(
-        'flex gap-1 items-center text-xs lg:text-sm',
+        'flex gap-1 items-center text-xs lg:text-sm text-muted-foreground',
+        'data-[selected=true]:text-white ',
         props.className,
-        props.isSelected ? 'text-white' : 'text-muted-foreground',
       )}
       type="button"
     >

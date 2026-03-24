@@ -22,7 +22,7 @@ export const TIME_COLUMN: ColumnDef<OrderHistoryItemType, unknown> = {
     const timestamp = props.row.original.order.timestamp
 
     return (
-      <span className="font-medium lg:lg:whitespace-nowrap">
+      <span className="font-medium lg:whitespace-nowrap">
         {format(timestamp, 'M/d/yyyy - HH:mm:ss')}
       </span>
     )

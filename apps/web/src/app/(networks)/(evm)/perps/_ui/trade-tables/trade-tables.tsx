@@ -1,5 +1,6 @@
 import { Button, Card, classNames, useBreakpoint } from '@sushiswap/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
+import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 import {
   useBalances,
@@ -21,21 +22,31 @@ export const TradeTables = ({ className }: { className?: string }) => {
     state: { activeTab },
     mutate: { setActiveTab },
   } = useTradeTables()
+  const pathname = usePathname()
+  const isPortfolio = pathname === '/perps/portfolio'
+
+  const TABS = useMemo(() => {
+    if (isPortfolio) {
+      return TRADE_TABLES_TABS
+    }
+    return TRADE_TABLES_TABS.filter(
+      (tab) => tab.value !== 'interest' && tab.value !== 'deposits-withdrawals',
+    )
+  }, [isPortfolio])
 
   const ExtraFilter = useMemo(
-    () => TRADE_TABLES_TABS.find((tab) => tab.value === activeTab)?.extraFilter,
-    [activeTab],
+    () => TABS.find((tab) => tab.value === activeTab)?.extraFilter,
+    [activeTab, TABS],
   )
 
   const MobileChildren = useMemo(
-    () =>
-      TRADE_TABLES_TABS.find((tab) => tab.value === activeTab)?.mobileChildren,
-    [activeTab],
+    () => TABS.find((tab) => tab.value === activeTab)?.mobileChildren,
+    [activeTab, TABS],
   )
 
   const ActiveContent = useMemo(() => {
-    return TRADE_TABLES_TABS.find((t) => t.value === activeTab)?.content
-  }, [activeTab])
+    return TABS.find((t) => t.value === activeTab)?.content
+  }, [activeTab, TABS])
   const address = useAccount('evm')
   const { data: twapOrders } = useUserActiveTwap({ address })
   const { data: balances } = useBalances()
@@ -56,7 +67,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
   )
 
   const tabNameRewrite = useMemo(() => {
-    return TRADE_TABLES_TABS.map((tab) => {
+    return TABS.map((tab) => {
       if (tab.value === 'balances') {
         return {
           value: tab.value,
@@ -83,7 +94,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
       }
       return tab
     })
-  }, [balanceCount, positionCount, openOrdersCount, twapOrderCount])
+  }, [balanceCount, positionCount, openOrdersCount, twapOrderCount, TABS])
 
   return (
     <Card
@@ -98,7 +109,12 @@ export const TradeTables = ({ className }: { className?: string }) => {
       >
         <div className="flex flex-wrap justify-between p-1 gap-2 overflow-x-auto">
           <div className="hide-scrollbar overflow-x-auto">
-            <TabsList className="!px-0.5 !h-8 !bg-[#0D1421]">
+            <TabsList
+              className={classNames(
+                '!px-0.5 !h-8 !bg-[#0D1421]',
+                isPortfolio && '!bg-[#18223B]',
+              )}
+            >
               {tabNameRewrite?.map((tab) => (
                 <TabsTrigger
                   key={tab.value}
@@ -120,7 +136,10 @@ export const TradeTables = ({ className }: { className?: string }) => {
             </TabsList>
           </div>
           <div className="items-center gap-2 whitespace-nowrap flex lg:max-w-fit justify-between w-full">
-            {!isLg && activeTab === 'twap' ? null : <TradeFilter />}
+            {(!isLg && activeTab === 'twap') ||
+            activeTab === 'deposits-withdrawals' ? null : (
+              <TradeFilter />
+            )}
             <div className="flex items-center justify-end gap-4 text-sm lg:text-base">
               {MobileChildren ? (
                 <div className="flex lg:hidden">
@@ -131,7 +150,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
             </div>
           </div>
         </div>
-        {TRADE_TABLES_TABS.map((tab) => (
+        {TABS.map((tab) => (
           <TabsContent key={tab.value} value={tab.value}>
             <div
               className={classNames(

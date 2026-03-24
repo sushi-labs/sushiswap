@@ -9,8 +9,10 @@ import {
 } from 'react'
 import { CancelAllOpenOrdersDialog, CloseAllPositionsDialog } from '../exchange'
 import { BalanceTable } from './balance-table'
+import { DepositsWithdrawalsTable } from './deposit-withdrawals-table'
 import { AggregateTradeHistory, ExpandAll, HideSmallBalances } from './filters'
 import { FundingHistoryTable } from './funding-history-table'
+import { InterestTable } from './interest-table'
 import { OpenOrdersTable } from './open-orders-table'
 import { OrderHistoryTable } from './order-history-table'
 import { PositionsTable } from './positions-table/positions-table'
@@ -96,6 +98,16 @@ export const TRADE_TABLES_TABS = [
     name: 'Order History',
     value: 'order-history' as const,
     content: OrderHistoryTable,
+  },
+  {
+    name: 'Interest',
+    value: 'interest' as const,
+    content: InterestTable,
+  },
+  {
+    name: 'Deposits and Withdrawals',
+    value: 'deposits-withdrawals' as const,
+    content: DepositsWithdrawalsTable,
   },
 ]
 
