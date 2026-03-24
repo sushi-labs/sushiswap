@@ -2,6 +2,7 @@ import { legalCheck } from '@nktkas/hyperliquid/api/info'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import type { EvmAddress } from 'sushi/evm'
+import { zeroAddress } from 'viem'
 import { hlHttpTransport } from '../transports'
 
 export const useLegalCheck = ({
@@ -12,19 +13,15 @@ export const useLegalCheck = ({
   return useQuery({
     queryKey: ['useLegalCheck', address],
     queryFn: async () => {
-      if (!address) {
-        throw new Error('address is undefined')
-      }
       return await legalCheck(
         {
           transport: hlHttpTransport,
         },
         {
-          user: address,
+          user: !address ? zeroAddress : address,
         },
       )
     },
-    enabled: !!address,
     refetchInterval: ms('10000'),
   })
 }
