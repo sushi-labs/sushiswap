@@ -1,7 +1,7 @@
-import { StarIcon } from '@heroicons/react-v1/solid'
 import { IconButton, classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { useFavoriteAssets } from 'src/lib/perps'
+import { FavoriteIcon } from '../_common'
 
 export const FavoriteButton = ({
   assetString,
@@ -16,13 +16,14 @@ export const FavoriteButton = ({
   return (
     <IconButton
       name="perps-fav-btn"
-      icon={StarIcon}
+      icon={FavoriteIcon}
       variant="ghost"
       size="xs"
-      className={classNames(
-        'transition-colors duration-300',
-        _hasFavorited ? 'text-yellow-400' : 'text-muted-foreground',
-      )}
+      iconProps={{
+        // @ts-expect-error: isSelected is not typed on SVGProps
+        isSelected: _hasFavorited,
+      }}
+      className={classNames('transition-colors duration-300')}
       onClick={(e) => {
         e.stopPropagation()
         handleFavorite(assetString)

@@ -9,7 +9,7 @@ import {
   useFavoriteAssets,
 } from 'src/lib/perps'
 import { formatPercent } from 'sushi'
-import { OverflowX } from '../_common'
+import { FavoriteIcon, OverflowX } from '../_common'
 import { useAssetListState } from '../asset-selector'
 import { useAssetState } from '../trade-widget'
 
@@ -38,7 +38,7 @@ export const Favorites = () => {
   return (
     <Card className="px-4 py-2 gap-4 flex items-center !bg-[#0D1421] border border-[#1E2939]">
       <div className="flex items-center gap-1">
-        <StarIcon className="h-5 w-5 text-yellow-400" />
+        <FavoriteIcon className="h-5 w-5" isSelected />
         <span className="text-xs font-medium">Favorites</span>
       </div>
       {favorites?.length ? (

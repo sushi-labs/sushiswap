@@ -95,7 +95,7 @@ export const DataChart = ({
     <ReactEchartsCore
       option={DEFAULT_OPTION}
       echarts={echarts}
-      style={{ height: 208 }}
+      style={{ height: 192 }}
       // onEvents={{
       //   globalout: onMouseLeave,
       // }}

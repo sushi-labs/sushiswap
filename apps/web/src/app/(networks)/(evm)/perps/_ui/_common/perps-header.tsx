@@ -46,6 +46,7 @@ export const PerpsHeader: FC<HeaderProps> = ({
             <WagmiHeaderComponents
               networks={networks}
               selectedNetwork={chainId}
+              hideNetworkSelector={true}
             />
           }
         />

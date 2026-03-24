@@ -7,23 +7,20 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import {
+  currencyFormatter,
   getTextColorClass,
   useBorrowLendUserState,
-  useDelegatorSummary,
   usePortfolio,
   useUserAccountValues,
   useUserVaultEquities,
 } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
-import { formatNumber, formatPercent, formatUSD } from 'sushi'
+import { formatPercent } from 'sushi'
 import { StatItem } from '~evm/perps/_ui/_common'
 
 const STAT_VIEWS = ['perps + spot + vaults', 'perps'] as const
@@ -87,6 +84,7 @@ export const PortfolioStats = () => {
   )
   const [time, setTime] = useState<(typeof TIME)[number]>(TIME[0])
   const address = useAccount('evm')
+
   const {
     data,
     isLoading: isLoadingPortfolio,
@@ -108,31 +106,17 @@ export const PortfolioStats = () => {
     isLoading: isLoadingUserVaultEquities,
     error: userVaultEquitiesError,
   } = useUserVaultEquities({ address })
-  const {
-    data: delegatorSummary,
-    isLoading: isLoadingDelegations,
-    error: delegationsError,
-  } = useDelegatorSummary({ address })
 
   const isLoading =
     isLoadingPortfolio ||
     isLoadingAccountValues ||
     isLoadingBorrowLend ||
-    isLoadingUserVaultEquities ||
-    isLoadingDelegations
+    isLoadingUserVaultEquities
   const error =
     portfolioError ||
     accountValuesError ||
     borrowLendError ||
-    userVaultEquitiesError ||
-    delegationsError
-
-  const stakingAccount = useMemo(() => {
-    if (!delegatorSummary) return 0
-    return (
-      Number(delegatorSummary.delegated) + Number(delegatorSummary.undelegated)
-    )
-  }, [delegatorSummary])
+    userVaultEquitiesError
 
   const vaultEquity = useMemo(() => {
     if (!userVaultEquities) return 0
@@ -148,19 +132,20 @@ export const PortfolioStats = () => {
     }, 0)
   }, [borrowLendState])
 
-  const totalEquity = useMemo(() => {
-    return (spotEquity ?? 0) + (perpsEquity ?? 0)
-  }, [perpsEquity, spotEquity])
-
   const statData = useMemo(() => {
     if (!data) return null
     const key = getKey(time, statView)
     const dataForKey = data?.find(([d, _data]) => d === key)?.[1]
+    const dataForTotalEquity = data?.find(([d, _data]) => d === 'allTime')?.[1]
     if (!dataForKey) return null
     return {
       pnl: dataForKey?.pnlHistory?.[dataForKey.pnlHistory.length - 1]?.[1],
       volume: dataForKey?.vlm,
       maxDrawdown: calculateMaxDrawdown(dataForKey),
+      totalEquity:
+        dataForTotalEquity?.accountValueHistory?.[
+          dataForTotalEquity.accountValueHistory.length - 1
+        ]?.[1],
     }
   }, [data, statView, time])
 
@@ -218,7 +203,7 @@ export const PortfolioStats = () => {
       </div>
       {isLoading ? (
         <div className="flex flex-col gap-1.5">
-          {new Array(9).fill(0).map((_, i) => (
+          {new Array(8).fill(0).map((_, i) => (
             <div
               className="flex items-center justify-between"
               key={`portfolio-skeleton-${i}`}
@@ -243,14 +228,14 @@ export const PortfolioStats = () => {
                     : getTextColorClass(Number(statData?.pnl) || 0),
                 )}
               >
-                {formatUSD(statData?.pnl || 0)}
+                {currencyFormatter.format(Number(statData?.pnl || 0))}
               </span>
             }
           />
           <StatItem
             isPortfolioStat={true}
             title="Volume"
-            value={formatUSD(statData?.volume || '0')}
+            value={currencyFormatter.format(Number(statData?.volume || 0))}
           />
           <StatItem
             isPortfolioStat={true}
@@ -260,47 +245,27 @@ export const PortfolioStats = () => {
           <StatItem
             isPortfolioStat={true}
             title="Total Equity"
-            value={formatUSD(totalEquity)}
+            value={currencyFormatter.format(Number(statData?.totalEquity || 0))}
           />
           <StatItem
             isPortfolioStat={true}
             title="Perps Account Equity"
-            value={formatUSD(perpsEquity)}
+            value={currencyFormatter.format(Number(perpsEquity || 0))}
           />
           <StatItem
             isPortfolioStat={true}
             title="Spot Account Equity"
-            value={formatUSD(spotEquity)}
+            value={currencyFormatter.format(Number(spotEquity || 0))}
           />
           <StatItem
             isPortfolioStat={true}
             title="Vault Equity"
-            value={formatUSD(vaultEquity)}
+            value={currencyFormatter.format(Number(vaultEquity || 0))}
           />
           <StatItem
             isPortfolioStat={true}
             title="Earn Balance"
-            value={formatUSD(earnBalance)}
-          />
-          <StatItem
-            isPortfolioStat={true}
-            title={
-              <HoverCard openDelay={0}>
-                <HoverCardTrigger asChild tabIndex={0}>
-                  <div className="text-[#81898C] underline">
-                    Staking Account
-                  </div>
-                </HoverCardTrigger>
-                <HoverCardContent
-                  forceMount
-                  side="top"
-                  className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
-                >
-                  <p>Staking Balance + Total Staked.</p>
-                </HoverCardContent>
-              </HoverCard>
-            }
-            value={`${formatNumber(stakingAccount)} HYPE`}
+            value={currencyFormatter.format(Number(earnBalance || 0))}
           />
         </div>
       )}
