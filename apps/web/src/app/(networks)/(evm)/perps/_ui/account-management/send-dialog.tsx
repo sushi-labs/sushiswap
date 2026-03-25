@@ -23,29 +23,19 @@ import {
 } from 'react'
 import {
   type BalanceItemType,
+  type SendableAssetType,
   currencyFormatter,
+  perpsNumberFormatter,
   useSendAsset,
+  useSendableAssets,
 } from 'src/lib/perps'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
 import { EvmChainId, EvmToken, isEvmAddress } from 'sushi/evm'
 import { useWalletClient } from 'wagmi'
-import { useUserState } from '~evm/perps/user-provider'
 import { ValueInput } from '../_common'
-import { useAssetListState } from '../asset-selector'
 import { PerpsChecker } from '../perps-checker'
-import { useUserSettingsState } from './settings-provider'
-
-type SendableAsset = {
-  token: string
-  balance: string
-  decimals: number
-  marketType: 'perp' | 'spot'
-  usdcValue: string
-  symbol: string
-  tokenId: string | null
-}
 
 export const SendDialog = ({
   trigger,
@@ -61,23 +51,11 @@ export const SendDialog = ({
   const [dstAddress, setDstAddress] = useState<string>('')
   const [open, setOpen] = useState<boolean>(false)
   const [amount, setAmount] = useState<string>('')
-  const [assetToSend, setAssetToSend] = useState<SendableAsset | null>(null)
+  const [assetToSend, setAssetToSend] = useState<SendableAssetType | null>(null)
   const { data: walletClient } = useWalletClient()
   const address = useAccount('evm')
   const { sendAsset, isPending } = useSendAsset()
-  const {
-    state: {
-      webData2Query: { data },
-    },
-  } = useUserState()
-  const {
-    state: {
-      assetListQuery: { data: assetList },
-    },
-  } = useAssetListState()
-  const {
-    state: { isUnifiedAccountModeEnabled },
-  } = useUserSettingsState()
+  const { data: sendableAssets } = useSendableAssets()
   const isControlled = isOpen !== undefined
   const resolvedOpen = isControlled ? isOpen : open
 
@@ -88,49 +66,12 @@ export const SendDialog = ({
       } else {
         setOpen(nextOpen)
       }
+      if (nextOpen && !assetToSend && sendableAssets?.length > 0) {
+        setAssetToSend(sendableAssets[0])
+      }
     },
-    [isControlled, onOpenChange],
+    [isControlled, onOpenChange, assetToSend, sendableAssets],
   )
-
-  const sendableAssets = useMemo(() => {
-    const assets: SendableAsset[] = []
-    const usdcPerp = {
-      token: 'USDC',
-      balance: data?.clearinghouseState.withdrawable || '0',
-      decimals: 2,
-      marketType: 'perp' as const,
-      usdcValue: data?.clearinghouseState.withdrawable || '0',
-      symbol: 'USDC',
-      tokenId: null,
-    }
-    if (!isUnifiedAccountModeEnabled) {
-      assets.push(usdcPerp)
-    }
-    for (const spotBalance of data?.spotState?.balances || []) {
-      if (spotBalance.total === '0.0') continue
-      const tokenIndex = spotBalance.token
-      const spotAsset = assetList
-        ?.entries()
-        .find(([, v]) => v.tokens?.find((t) => t.index === tokenIndex))?.[1]
-
-      if (!spotAsset) continue
-      const spotToken = spotAsset?.tokens?.[tokenIndex === 0 ? 1 : 0]
-      if (!spotToken) continue
-      const price =
-        spotBalance.coin === 'USDC' ? 1 : (Number(spotAsset?.markPrice) ?? 0)
-      const usdcValue = Number(spotBalance.total || 0) * price
-      assets.push({
-        token: `${spotToken?.name}:${spotToken?.tokenId}`,
-        symbol: spotToken?.name || '',
-        balance: spotBalance.total,
-        decimals: spotToken?.weiDecimals,
-        marketType: 'spot' as const,
-        usdcValue: usdcValue.toString(),
-        tokenId: spotToken?.tokenId,
-      })
-    }
-    return assets
-  }, [data, assetList, isUnifiedAccountModeEnabled])
 
   useEffect(() => {
     if (!assetToSend && sendableAssets.length > 0) {
@@ -148,7 +89,6 @@ export const SendDialog = ({
           return
         }
       }
-      setAssetToSend(sendableAssets[0])
     }
   }, [assetToSend, sendableAssets, balanceItem])
 
@@ -215,10 +155,7 @@ export const SendDialog = ({
         }
       }}
     >
-      <DialogTrigger
-        asChild
-        // disabled={isUnifiedAccountModeEnabled}
-      >
+      <DialogTrigger asChild>
         {trigger ? (
           trigger
         ) : (
@@ -227,7 +164,7 @@ export const SendDialog = ({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent variant="perps-default">
+      <DialogContent variant="perps-default" className="max-w-xl">
         <DialogHeader className="!text-left">
           <DialogTitle>Send Tokens</DialogTitle>
           <DialogDescription>
@@ -278,11 +215,11 @@ export const SendDialog = ({
               >
                 <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[42px]  !gap-1 !border !border-[#FFFFFF1A] bg-[#FFFFFF0D]">
                   {assetToSend
-                    ? `${assetToSend.symbol} (${assetToSend.marketType === 'perp' ? 'Perps' : 'Spot'})`
+                    ? `${assetToSend?.symbol} (${assetToSend?.marketType === 'perp' ? 'Perps' : 'Spot'}) ${Number(assetToSend?.balance) > 0 ? ` - ${perpsNumberFormatter({ value: assetToSend?.balance })}` : ''}`
                     : 'Select Asset'}
                 </SelectTrigger>
                 <SelectContent className="w-full">
-                  {sendableAssets.map((i) => (
+                  {sendableAssets?.map((i) => (
                     <SelectItem
                       key={i.token}
                       value={i.token}
