@@ -17,6 +17,8 @@ export const config = {
     '/:chainId/limit/:path*',
     '/:chainId/dca/:path*',
     '/:chainId/cross-chain-swap/:path*',
+    '/:chainId/stop-loss/:path*',
+    '/:chainId/take-profit/:path*',
     '/:chainId/explore/:path*',
     '/:chainId/pool/:path*',
     '/:chainId/token/:path*',
@@ -48,6 +50,8 @@ async function _middleware(req: NextRequest) {
     pathname === '/pool' ||
     pathname === '/token' ||
     pathname === '/swap' ||
+    pathname === '/stop-loss' ||
+    pathname === '/take-profit' ||
     pathname === '/limit' ||
     pathname === '/dca' ||
     pathname === '/cross-chain-swap'
@@ -71,7 +75,7 @@ async function _middleware(req: NextRequest) {
   }
 
   const networkNameMatch = pathname.match(
-    /([\w-]+)(?=\/swap|\/limit|\/dca|\/cross-chain-swap|\/explore|\/pool|\/token|\/positions|\/rewards|\/migrate)/,
+    /([\w-]+)(?=\/swap|\/limit|\/dca|\/stop-loss|\/take-profit|\/cross-chain-swap|\/explore|\/pool|\/token|\/positions|\/rewards|\/migrate)/,
   )
   if (networkNameMatch?.length) {
     let chain

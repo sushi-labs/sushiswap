@@ -1,5 +1,4 @@
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
-import { TimeUnit } from '@orbs-network/twap-sdk'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,16 +12,15 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useCallback, useMemo } from 'react'
-import {
-  TWAP_MAX_FILL_DELAY,
-  TWAP_MIN_FILL_DELAY,
-  TwapSDK,
-} from 'src/lib/swap/twap'
+import { TWAP_MAX_FILL_DELAY, TWAP_MIN_FILL_DELAY } from 'src/lib/swap/twap'
 import { formatUSD } from 'sushi'
 import {
-  useDerivedStateTwap,
-  useTwapTradeErrors,
-} from '../../_ui/derivedstate-twap-provider'
+  InputErrors,
+  TimeUnit,
+  useFillDelayPanel,
+  useTradesPanel,
+} from '@orbs-network/spot-react'
+import { useTwapMinTradeSize } from '../../_ui/hooks'
 
 export const DCAOptionsInput = () => {
   return (
@@ -35,29 +33,26 @@ export const DCAOptionsInput = () => {
 
 const DCATradesInput = () => {
   const {
-    state: { chainId, token0, chunks, token0PriceUSD, amountInPerChunk },
-    mutate: { setChunks },
-    isLoading,
-  } = useDerivedStateTwap()
-
-  const { minTradeSizeError } = useTwapTradeErrors()
+    onChange: onTradesChange,
+    error,
+    totalTrades,
+    fromToken,
+    amountPerTradeUsd,
+    amountPerTrade,
+  } = useTradesPanel()
+  const minTradeSize = useTwapMinTradeSize()
 
   const onChange = useCallback(
     (value: string) => {
       if (Number.isNaN(+value)) return
-      setChunks(+value)
+      onTradesChange(+value)
     },
-    [setChunks],
+    [onTradesChange],
   )
-
-  const token0ChunkAmountUSD = useMemo(() => {
-    if (!amountInPerChunk || !token0PriceUSD) return undefined
-    return amountInPerChunk.mul(token0PriceUSD).toSignificant(6)
-  }, [amountInPerChunk, token0PriceUSD])
 
   return (
     <div className="flex-1 flex flex-col gap-1 whitespace-nowrap">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-start items-center gap-1">
         <span className="text-sm text-muted-foreground">Over</span>
         <Explainer>
           The total number of individual trades that will be scheduled as part
@@ -67,7 +62,7 @@ const DCATradesInput = () => {
 
       <div
         className={classNames(
-          minTradeSizeError ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
+          error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
           'px-3 py-4 overflow-hidden border border-accent bg-white dark:bg-slate-800 rounded-xl',
         )}
       >
@@ -77,34 +72,21 @@ const DCATradesInput = () => {
           placeholder="0"
           maxDecimals={0}
           onValueChange={onChange}
-          value={chunks}
+          value={totalTrades}
           className={'!h-[20px] !min-h-[5px] !px-0 !py-1 !text-lg font-medium'}
         />
       </div>
-      {!isLoading ? (
-        <span
-          className={classNames(
-            minTradeSizeError ? 'text-red' : '',
-            'text-xs text-muted-foreground',
-          )}
-        >
-          {amountInPerChunk ? (
-            <FormattedNumber number={amountInPerChunk.toString()} />
-          ) : (
-            '0'
-          )}{' '}
-          {token0?.symbol} per trade (
-          {token0ChunkAmountUSD ? formatUSD(token0ChunkAmountUSD) : '$0'}
-          {minTradeSizeError
-            ? ` - min $${TwapSDK.onNetwork(chainId).config.minChunkSizeUsd}`
-            : ''}
-          )
-        </span>
-      ) : (
-        <div className="w-40 h-4 py-0.5">
-          <SkeletonBox className="h-full" />
-        </div>
-      )}
+      <span
+        className={classNames(
+          error ? 'text-red' : '',
+          'text-xs text-muted-foreground',
+        )}
+      >
+        {amountPerTrade ? <FormattedNumber number={amountPerTrade} /> : '0'}{' '}
+        {fromToken?.symbol} per trade (
+        {amountPerTradeUsd ? formatUSD(amountPerTradeUsd) : '$0'}
+        {error ? ` - min $${minTradeSize}` : ''})
+      </span>
     </div>
   )
 }
@@ -117,29 +99,28 @@ const TimeUnitLabel = {
 
 const DCAIntervalInput = () => {
   const {
-    state: { fillDelay },
-    mutate: { setFillDelay },
-  } = useDerivedStateTwap()
-
+    onInputChange,
+    onUnitSelect,
+    error: fillDelayError,
+    fillDelay,
+  } = useFillDelayPanel()
   const onValueChange = useCallback(
     (value: string) => {
       if (Number.isNaN(+value)) return
-      setFillDelay((prev) => ({ ...prev, value: +value }))
+      onInputChange(value)
     },
-    [setFillDelay],
+    [onInputChange],
   )
   const onUnitChange = useCallback(
     (unit: TimeUnit) => {
-      setFillDelay((prev) => ({ ...prev, unit }))
+      onUnitSelect(unit)
     },
-    [setFillDelay],
+    [onUnitSelect],
   )
-
-  const { minFillDelayError, maxFillDelayError } = useTwapTradeErrors()
 
   return (
     <div className="flex-1 flex flex-col gap-1 whitespace-nowrap">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-start items-center gap-1">
         <span className="text-sm text-muted-foreground">Every</span>
         <Explainer>
           The estimated time that will elapse between each trade in your order.
@@ -151,9 +132,7 @@ const DCAIntervalInput = () => {
 
       <div
         className={classNames(
-          minFillDelayError || maxFillDelayError
-            ? '!bg-red-500/20 !dark:bg-red-900/30'
-            : '',
+          fillDelayError ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
           'px-3 py-2 overflow-hidden border border-accent bg-white dark:bg-slate-800 rounded-xl flex justify-between items-center',
         )}
       >
@@ -187,12 +166,12 @@ const DCAIntervalInput = () => {
         </DropdownMenu>
       </div>
 
-      {minFillDelayError ? (
+      {fillDelayError?.type === InputErrors.MIN_FILL_DELAY ? (
         <span className="text-xs text-red">
           Must be ≥ {TWAP_MIN_FILL_DELAY.value}{' '}
           {TimeUnitLabel[TWAP_MIN_FILL_DELAY.unit].toLowerCase()}
         </span>
-      ) : maxFillDelayError ? (
+      ) : fillDelayError?.type === InputErrors.MAX_FILL_DELAY ? (
         <span className="text-xs text-red">
           {' '}
           Must be ≤ {TWAP_MAX_FILL_DELAY.value}{' '}

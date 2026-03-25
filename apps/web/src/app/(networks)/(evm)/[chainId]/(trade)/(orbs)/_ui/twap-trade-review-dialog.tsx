@@ -1,6 +1,10 @@
 'use client'
 
-import { createErrorToast, createToast } from '@sushiswap/notifications'
+import {
+  createErrorToast,
+  createInfoToast,
+  createSuccessToast,
+} from '@sushiswap/notifications'
 import {
   Button,
   DialogConfirm,
@@ -13,177 +17,126 @@ import {
   DialogTitle,
   FormattedNumber,
   List,
-  SkeletonText,
   Switch,
 } from '@sushiswap/ui'
-import { format, formatDistanceStrict } from 'date-fns'
-import React, {
-  type FC,
-  type ReactNode,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
-import { EVM_UI_FEE_PERCENT } from 'src/config'
-import { APPROVE_TAG_SWAP } from 'src/lib/constants'
-import { usePersistedOrdersStore } from 'src/lib/hooks/react-query/twap'
+import {
+  useOrderHistoryPanel,
+  useOrderDisplay,
+  Module,
+  useRePermitOrderData,
+  submitOrder,
+} from '@orbs-network/spot-react'
+import React, { type FC, type ReactNode, useMemo, useState } from 'react'
 import { logger } from 'src/lib/logger'
-import {
-  fillDelayText,
-  getOrderIdFromCreateOrderEvent,
-  getTimeDurationMs,
-} from 'src/lib/swap/twap'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
-import { ZERO, formatUSD, shortenAddress } from 'sushi'
-import { getEvmChainById } from 'sushi/evm'
-import {
-  useConnection,
-  useEstimateGas,
-  usePublicClient,
-  useSendTransaction,
-  useWaitForTransactionReceipt,
-} from 'wagmi'
-import type { SendTransactionReturnType } from 'wagmi/actions'
-import {
-  type UseTwapTradeReturn,
-  useDerivedStateTwap,
-  useTwapTrade,
-} from '~evm/[chainId]/(trade)/(orbs)/_ui/derivedstate-twap-provider'
+import { EvmChainId, getEvmChainById } from 'sushi/evm'
+import { useConnection, useSignTypedData } from 'wagmi'
+import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
+import { Address, numberToHex, parseSignature } from 'viem'
+import { getTwapOrderTitle, isLimitPriceOrder } from './helper'
+import { TwapOrderDetails } from './twap-order-details'
+import { useMutation } from '@tanstack/react-query'
+import { ORBS_EXPLORER_URL } from 'src/lib/swap/twap'
+
+const useSignAndSendMutation = () => {
+  const { address } = useConnection()
+  const { signTypedDataAsync } = useSignTypedData()
+  const rePermitData = useRePermitOrderData()
+  const { refetchOrders } = useOrderHistoryPanel()
+  const {
+    state: { chainId },
+    mutate: { setSwapAmount },
+  } = useDerivedStateSimpleSwap()
+
+  return useMutation({
+    mutationFn: async ({
+      confirm,
+      orderTitle,
+    }: {
+      confirm?: () => void
+      orderTitle?: string
+    }) => {
+      const { order: rePermitOrder, domain, types, primaryType } = rePermitData
+      const signedTimestamp = new Date().getTime()
+      const signatureStr = await signTypedDataAsync({
+        domain: domain as Record<string, any>,
+        types,
+        primaryType,
+        message: rePermitOrder as Record<string, any>,
+        account: address as `0x${string}`,
+      })
+
+      if (!signatureStr) {
+        throw new Error('Failed to sign order')
+      }
+
+      void createInfoToast({
+        account: address,
+        type: 'swap',
+        chainId: chainId,
+        summary: `Placing ${orderTitle} order`,
+        timestamp: signedTimestamp,
+        groupTimestamp: signedTimestamp,
+      })
+
+      const parsedSignature = parseSignature(signatureStr)
+      const order = await submitOrder(rePermitOrder, {
+        v: numberToHex(parsedSignature.v || 0),
+        r: parsedSignature.r,
+        s: parsedSignature.s,
+      })
+      await refetchOrders()
+      const placedTimestamp = new Date().getTime()
+      void createSuccessToast({
+        account: address,
+        type: 'swap',
+        chainId: chainId,
+        summary: `Placed ${orderTitle} order`,
+        timestamp: placedTimestamp,
+        groupTimestamp: placedTimestamp,
+        href: `${ORBS_EXPLORER_URL}/twap/order/${order.id}`,
+      })
+      confirm?.()
+      setSwapAmount('')
+    },
+    onError: (e) => {
+      if (isUserRejectedError(e)) {
+        return
+      }
+      logger.error(e, {
+        location: 'TwapTradeReviewDialog',
+      })
+      createErrorToast(
+        e instanceof Error ? e.message : 'Something went wrong',
+        false,
+      )
+    },
+  })
+}
 
 export const TwapTradeReviewDialog: FC<{
   children: ReactNode
-}> = ({ children }) => {
+  module: Module
+}> = ({ children, module }) => {
   const {
-    state: {
-      token0,
-      token1,
-      chainId,
-      swapAmount,
-      recipient,
-      limitPrice,
-      isLimitOrder,
-      token0PriceUSD,
-      deadline,
-    },
-    mutate: { setSwapAmount },
-  } = useDerivedStateTwap()
+    state: { token0, chainId, swapAmount },
+  } = useDerivedStateSimpleSwap()
 
   const [acceptDisclaimer, setAcceptDisclaimer] = useState(true)
 
-  const { approved } = useApproved(APPROVE_TAG_SWAP)
-  const { address } = useConnection()
-  const tradeRef = useRef<UseTwapTradeReturn>(null)
-  const client = usePublicClient()
-
-  const { addCreatedOrder } = usePersistedOrdersStore({
-    chainId,
-    account: address,
-  })
-
-  const { data: trade } = useTwapTrade()
-
-  const { data: estGas, isError: isEstGasError } = useEstimateGas({
-    ...trade?.tx,
-    query: {
-      enabled: Boolean(approved && trade?.tx?.data),
-    },
-  })
-
-  const onSwapSuccess = useCallback(
-    async (hash: SendTransactionReturnType) => {
-      if (!trade || !chainId) return
-
-      try {
-        const ts = new Date().getTime()
-        const promise = client
-          .waitForTransactionReceipt({
-            hash,
-          })
-          .then((receipt) => {
-            if (receipt.status === 'success') {
-              const orderId = getOrderIdFromCreateOrderEvent(receipt)
-              if (!orderId) return
-
-              addCreatedOrder(
-                orderId,
-                hash,
-                trade.params.map((param) => param.toString()),
-                trade.amountIn.currency.wrap(),
-                trade.minAmountOut.currency,
-              )
-            }
-          })
-
-        void createToast({
-          account: address,
-          type: 'swap',
-          chainId: chainId,
-          txHash: hash,
-          promise,
-          summary: {
-            pending: `Placing ${trade.isLimitOrder ? 'limit' : 'DCA'} order`,
-            completed: `Placed ${trade.isLimitOrder ? 'limit' : 'DCA'} order`,
-            failed: `Something went wrong when placing ${trade.isLimitOrder ? 'limit' : 'DCA'} order`,
-          },
-          timestamp: ts,
-          groupTimestamp: ts,
-        })
-      } finally {
-        setSwapAmount('')
-      }
-    },
-    [setSwapAmount, trade, chainId, client, address, addCreatedOrder],
+  const { mutate: signAndSendOrder, isPending: isSignAndSendPending } =
+    useSignAndSendMutation()
+  const order = useOrderDisplay()
+  const isLimitPrice = isLimitPriceOrder(order.orderType)
+  const orderTitle = useMemo(
+    () => getTwapOrderTitle(order.orderType),
+    [order.orderType],
   )
 
-  const onSwapError = useCallback((e: Error) => {
-    if (isUserRejectedError(e)) {
-      return
-    }
-
-    logger.error(e, {
-      location: 'TwapTradeReviewDialog',
-    })
-    createErrorToast(e.message, false)
-  }, [])
-
-  const {
-    mutateAsync: sendTransactionAsync,
-    isPending: isWritePending,
-    data,
-  } = useSendTransaction({
-    mutation: {
-      onMutate: () => {
-        // Set reference of current trade
-        if (tradeRef && trade) {
-          tradeRef.current = trade
-        }
-      },
-      onSuccess: onSwapSuccess,
-      onError: onSwapError,
-    },
-  })
-
-  const write = useMemo(() => {
-    if (!sendTransactionAsync || !trade?.tx || !estGas) return undefined
-
-    return async (confirm: () => void) => {
-      try {
-        await sendTransactionAsync({
-          ...trade?.tx,
-          gas: (estGas * 6n) / 5n,
-        })
-        confirm()
-      } catch {}
-    }
-  }, [sendTransactionAsync, trade?.tx, estGas])
-
-  const { status } = useWaitForTransactionReceipt({
-    chainId: chainId,
-    hash: data,
-  })
+  const isDca = module === Module.TWAP
+  const isLimit = module === Module.LIMIT
+  const isStopLoss = module === Module.STOP_LOSS
+  const isTakeProfit = module === Module.TAKE_PROFIT
 
   return (
     <DialogProvider>
@@ -197,136 +150,78 @@ export const TwapTradeReviewDialog: FC<{
                   Sell {swapAmount?.toSignificant(6)} {token0?.symbol}
                 </DialogTitle>
                 <DialogDescription>
-                  {!trade ? (
-                    <SkeletonText />
-                  ) : isLimitOrder ? (
-                    `Receive at least ${trade.minAmountOut?.toSignificant(6)} ${token1?.symbol}`
-                  ) : (
-                    `Every ${fillDelayText(trade.fillDelay)} over ${trade.chunks} order${trade.chunks > 1 ? 's' : ''}`
+                  {isLimitPrice && (
+                    <>
+                      Receive at least{' '}
+                      <FormattedNumber
+                        number={order.minDestAmountPerTrade.value}
+                      />{' '}
+                      {order.dstToken?.symbol}{' '}
+                      {order.totalTrades.value > 1 ? 'per trade' : ''}
+                    </>
                   )}
+                  <TwapOrderDetails.DcaChunksRow
+                    orderType={order.orderType}
+                    fillDelay={order.tradeInterval.value}
+                    totalTrades={order.totalTrades.value}
+                  />
                 </DialogDescription>
               </DialogHeader>
               {/* 176px is sum of header, footer, padding, and gap */}
               <div className="flex flex-col gap-4 overflow-y-auto max-h-[calc(80vh-176px)]">
                 <List className="!pt-0">
                   <List.Control>
-                    <List.KeyValue title="Network">
-                      {getEvmChainById(chainId).name}
-                    </List.KeyValue>
-                    {isLimitOrder ? (
-                      <>
-                        <List.KeyValue
-                          title={
-                            <span className="whitespace-nowrap">
-                              Limit price
-                            </span>
-                          }
-                          flex
-                        >
-                          {limitPrice ? (
-                            <span className="flex items-baseline gap-1 whitespace-nowrap scroll hide-scrollbar">
-                              1 {limitPrice.base.symbol} =
-                              <FormattedNumber
-                                number={limitPrice.toSignificant()}
-                              />{' '}
-                              {limitPrice.quote.symbol}{' '}
-                              {token0PriceUSD ? (
-                                <span className="text-muted-foreground">
-                                  (
-                                  {formatUSD(
-                                    token0PriceUSD.toString({ fixed: 6 }),
-                                  )}
-                                  )
-                                </span>
-                              ) : null}
-                            </span>
-                          ) : (
-                            <SkeletonText fontSize="sm" />
-                          )}
-                        </List.KeyValue>
-                        <List.KeyValue title="Expiry">
-                          {deadline ? (
-                            format(deadline, "MMMM d, yyyy 'at' h:mm a")
-                          ) : (
-                            <SkeletonText fontSize="sm" />
-                          )}
-                        </List.KeyValue>
-                      </>
-                    ) : (
-                      <>
-                        <List.KeyValue title="Sell Total">
-                          {trade?.amountIn ? (
-                            <span>
-                              <FormattedNumber
-                                number={trade.amountIn.toString()}
-                              />{' '}
-                              {trade.amountIn.currency.symbol}
-                            </span>
-                          ) : (
-                            <SkeletonText />
-                          )}
-                        </List.KeyValue>
-                        <List.KeyValue title="Number of Orders">
-                          {trade?.chunks ? (
-                            <span>{trade.chunks}</span>
-                          ) : (
-                            <SkeletonText />
-                          )}
-                        </List.KeyValue>
-                        <List.KeyValue title="Sell per Order">
-                          {trade?.amountInPerChunk ? (
-                            <span>
-                              <FormattedNumber
-                                number={trade.amountInPerChunk.toString()}
-                              />{' '}
-                              {trade.amountInPerChunk.currency.symbol}
-                            </span>
-                          ) : (
-                            <SkeletonText />
-                          )}
-                        </List.KeyValue>
-                        <List.KeyValue title="Order Interval">
-                          {trade?.fillDelay ? (
-                            formatDistanceStrict(
-                              0,
-                              getTimeDurationMs(trade.fillDelay),
-                              { roundingMethod: 'floor' },
-                            )
-                          ) : (
-                            <SkeletonText />
-                          )}
-                        </List.KeyValue>
-                        <List.KeyValue title="Start Date">
-                          {format(Date.now(), "MMMM d, yyyy 'at' h:mm a")}
-                        </List.KeyValue>
-                        <List.KeyValue title="Est. End Date">
-                          {deadline ? (
-                            format(deadline, "MMMM d, yyyy 'at' h:mm a")
-                          ) : (
-                            <SkeletonText />
-                          )}
-                        </List.KeyValue>
-                      </>
-                    )}
+                    <div className="flex flex-col gap-3 p-2">
+                      <List.KeyValue title="Network" className="!p-0">
+                        {getEvmChainById(chainId as EvmChainId).name}
+                      </List.KeyValue>
+                      {isDca && (
+                        <TwapOrderDetails.SellTotal
+                          inputAmount={order.srcAmount.value}
+                          inputSymbol={order.srcToken?.symbol}
+                        />
+                      )}
+                      <TwapOrderDetails.LimitPrice
+                        limitPrice={order.limitPrice.value}
+                        token0PriceUSD={order.limitPrice.usd}
+                        fromSymbol={order.srcToken?.symbol}
+                        toSymbol={order.dstToken?.symbol}
+                      />
+                      <TwapOrderDetails.TriggerPrice
+                        triggerPrice={order.triggerPrice.value}
+                        fromToken={order.srcToken}
+                        toToken={order.dstToken}
+                        token0PriceUSD={order.triggerPrice.usd}
+                      />
 
-                    <List.KeyValue title="Recipient">
-                      {recipient ? (
-                        <Button variant="link" size="sm" asChild>
-                          <a
-                            target="_blank"
-                            href={getEvmChainById(chainId).getAccountUrl(
-                              recipient,
-                            )}
-                            rel="noreferrer"
-                          >
-                            {shortenAddress(recipient)}
-                          </a>
-                        </Button>
-                      ) : null}
-                    </List.KeyValue>
-                    <List.KeyValue title="Fee">
-                      {EVM_UI_FEE_PERCENT}%
-                    </List.KeyValue>
+                      {isDca && (
+                        <>
+                          <TwapOrderDetails.NumberOfOrders
+                            totalChunks={order.totalTrades.value}
+                          />
+                          <TwapOrderDetails.SellPerOrder
+                            amountInPerChunk={order.sizePerTrade.value}
+                            inputSymbol={order.srcToken?.symbol}
+                          />
+
+                          <TwapOrderDetails.TradeInterval
+                            fillDelay={order.tradeInterval.value}
+                          />
+                          <TwapOrderDetails.StartDate
+                            startDate={order.createdAt.value}
+                          />
+                        </>
+                      )}
+
+                      <TwapOrderDetails.EndDate
+                        endDate={order.deadline.value}
+                      />
+
+                      <TwapOrderDetails.Recipient
+                        recipient={order.recipient.value as Address}
+                        chainId={chainId}
+                      />
+                    </div>
                   </List.Control>
                   <List.Control>
                     <List.KeyValue
@@ -353,29 +248,16 @@ export const TwapTradeReviewDialog: FC<{
                 </List>
               </div>
               <DialogFooter>
-                <Checker.Connect>
-                  <Checker.Network chainId={chainId}>
-                    <Button
-                      fullWidth
-                      size="xl"
-                      loading={!write && !isEstGasError}
-                      onClick={() => write?.(confirm)}
-                      disabled={Boolean(
-                        isEstGasError ||
-                          isWritePending ||
-                          Boolean(
-                            !sendTransactionAsync && swapAmount?.gt(ZERO),
-                          ),
-                      )}
-                      color={isEstGasError ? 'red' : 'blue'}
-                      testId="confirm-swap"
-                    >
-                      {isEstGasError
-                        ? 'Shoot! Something went wrong :('
-                        : 'Place Order'}
-                    </Button>
-                  </Checker.Network>
-                </Checker.Connect>
+                <Button
+                  fullWidth
+                  loading={isSignAndSendPending}
+                  size="xl"
+                  onClick={() => signAndSendOrder({ confirm, orderTitle })}
+                  color="blue"
+                  testId="confirm-swap"
+                >
+                  Place Order
+                </Button>
               </DialogFooter>
             </DialogContent>
           </>
@@ -383,11 +265,11 @@ export const TwapTradeReviewDialog: FC<{
       </DialogReview>
       <DialogConfirm
         chainId={chainId}
-        status={status}
+        status={'success'}
         testId="place-another-order"
         buttonText="Place another order"
-        txHash={data}
-        successMessage={`Your ${tradeRef.current?.isLimitOrder ? 'limit' : 'DCA'} order was placed`}
+        txHash={undefined}
+        successMessage={`Your ${orderTitle} order was placed`}
       />
     </DialogProvider>
   )

@@ -1,15 +1,16 @@
-import { OrderType } from '@orbs-network/twap-sdk'
+import {
+  getConfig,
+  Order,
+  REPERMIT_ABI,
+  TWAP_ABI,
+  useOrderHistoryPanel,
+  useRefetchUntilStatusSynced,
+} from '@orbs-network/spot-react'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { Button, Dots } from '@sushiswap/ui'
 import { useCallback, useMemo } from 'react'
-import type { TwapSupportedChainId } from 'src/config'
-import {
-  type TwapOrder,
-  usePersistedOrdersStore,
-} from 'src/lib/hooks/react-query/twap'
+
 import { logger } from 'src/lib/logger'
-import { TwapSDK } from 'src/lib/swap/twap'
-import { twapAbi_cancel } from 'src/lib/swap/twap/abi'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import {
   type Address,
@@ -23,29 +24,43 @@ import {
   useSendTransaction,
   useWaitForTransactionReceipt,
 } from 'wagmi'
+import { getTwapConfig, getTwapOrderTitle } from './helper'
+import { EvmChainId } from 'sushi/evm'
 
 export const TwapCancelOrderButton = ({
   chainId,
   order,
-}: { chainId: TwapSupportedChainId; order: TwapOrder }) => {
+}: {
+  chainId: EvmChainId
+  order: Order
+}) => {
   const client = usePublicClient()
 
   const { address } = useConnection()
-
-  const { addCancelledOrderId } = usePersistedOrdersStore({
-    chainId,
-    account: address,
-  })
+  const { mutate: refetchOrders, isPending: isRefetchingOrders } =
+    useRefetchUntilStatusSynced()
 
   const tx = useMemo(() => {
+    if (order.version === 1) {
+      return {
+        chainId,
+        account: address,
+        to: order.twapAddress as Address,
+        data: encodeFunctionData({
+          abi: TWAP_ABI,
+          functionName: 'cancel',
+          args: [BigInt(order.id)],
+        }),
+      }
+    }
     return {
       chainId,
       account: address,
-      to: TwapSDK.onNetwork(chainId).config.twapAddress as Address,
+      to: getTwapConfig(chainId).repermit,
       data: encodeFunctionData({
-        abi: twapAbi_cancel,
+        abi: REPERMIT_ABI,
         functionName: 'cancel',
-        args: [BigInt(order.id)],
+        args: [[order.hash]],
       }),
     }
   }, [chainId, order, address])
@@ -56,17 +71,15 @@ export const TwapCancelOrderButton = ({
       enabled: Boolean(tx),
     },
   })
+  const title = getTwapOrderTitle(order.type)
 
   const onCancelSuccess = useCallback(
     async (hash: SendTransactionReturnType) => {
-      const isLimitOrder = order.type === OrderType.LIMIT
-
       try {
         const ts = new Date().getTime()
         const promise = client.waitForTransactionReceipt({
           hash,
         })
-
         void createToast({
           account: address,
           type: 'swap',
@@ -74,18 +87,18 @@ export const TwapCancelOrderButton = ({
           txHash: hash,
           promise,
           summary: {
-            pending: `Canceling ${isLimitOrder ? 'limit' : 'DCA'} order`,
-            completed: `Canceled ${isLimitOrder ? 'limit' : 'DCA'} order`,
-            failed: `Something went wrong when canceling ${isLimitOrder ? 'limit' : 'DCA'} order`,
+            pending: `Canceling ${title} order`,
+            completed: `Canceled ${title} order`,
+            failed: `Something went wrong when canceling ${title} order`,
           },
           timestamp: ts,
           groupTimestamp: ts,
         })
-      } finally {
-        addCancelledOrderId(order.id)
+      } catch (e) {
+        console.log(e)
       }
     },
-    [order, tx, client, address, addCancelledOrderId],
+    [tx, client, address, title],
   )
 
   const onCancelError = useCallback((e: Error) => {
@@ -119,10 +132,11 @@ export const TwapCancelOrderButton = ({
           ...tx,
           gas: (estGas * 6n) / 5n,
         })
+        refetchOrders([order.hash])
         confirm?.()
       } catch {}
     }
-  }, [sendTransactionAsync, tx, estGas])
+  }, [sendTransactionAsync, tx, estGas, refetchOrders, order.hash])
 
   const { isLoading: isTxLoading, isError: isTxError } =
     useWaitForTransactionReceipt({
@@ -134,19 +148,20 @@ export const TwapCancelOrderButton = ({
     <Button
       fullWidth
       size="xl"
-      loading={!write && !isEstGasError}
+      loading={(!write && !isEstGasError) || isRefetchingOrders}
       onClick={() => write?.()}
       disabled={Boolean(
         isEstGasError ||
-          isWritePending ||
-          isTxLoading ||
-          Boolean(!sendTransactionAsync),
+        isWritePending ||
+        isRefetchingOrders ||
+        isTxLoading ||
+        Boolean(!sendTransactionAsync),
       )}
       testId="cancel-order"
     >
       {isEstGasError || isTxError ? (
         'Shoot! Something went wrong :('
-      ) : isWritePending || isTxLoading ? (
+      ) : isWritePending || isTxLoading || isRefetchingOrders ? (
         <Dots>Cancel Order</Dots>
       ) : (
         'Cancel Order'
