@@ -1,8 +1,11 @@
 import { useMemo } from 'react'
+import { NativeAddress } from 'src/lib/constants'
+import type { EvmAddress } from 'sushi/evm'
 import { useUserSettingsState } from '~evm/perps/_ui/account-management'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useUserState } from '~evm/perps/user-provider'
 import { useAccount } from '../../wallet'
+import { getEvmDestinationAddress } from '../utils'
 
 export const useSendableAssets = (filter?: 'perp' | 'spot') => {
   const address = useAccount('evm')
@@ -41,6 +44,10 @@ export const useSendableAssets = (filter?: 'perp' | 'spot') => {
       usdcValue: webData2Data?.clearinghouseState.withdrawable || '0',
       symbol: 'USDC',
       tokenId: null,
+      destinationAddress: null,
+      evmAddressData: null,
+      markPrice: '1',
+      spender: undefined,
     }
     if (!isUnifiedAccountModeEnabled) {
       assets.push(usdcPerp)
@@ -66,6 +73,26 @@ export const useSendableAssets = (filter?: 'perp' | 'spot') => {
         marketType: 'spot' as const,
         usdcValue: usdcValue.toString(),
         tokenId: spotToken?.tokenId,
+        markPrice: spotAsset?.markPrice,
+        destinationAddress: getEvmDestinationAddress(tokenIndex),
+        evmAddressData: (spotToken?.evmContract?.address === undefined
+          ? {
+              address: NativeAddress,
+              evm_extra_wei_decimals: 0,
+            }
+          : {
+              address:
+                spotToken?.evmContract?.address.toLowerCase() === //usdc rewrite
+                '0x6b9e773128f453f5c2c60935ee2de2cbc5390a24'
+                  ? '0xb88339CB7199b77E23DB6E890353E22632Ba630f'
+                  : spotToken?.evmContract?.address.toLowerCase(),
+              evm_extra_wei_decimals:
+                spotToken?.evmContract?.evm_extra_wei_decimals,
+            }) as {
+          address: EvmAddress
+          evm_extra_wei_decimals: number
+        },
+        spender: spotToken?.evmContract?.address,
       })
     }
     if (filter) {

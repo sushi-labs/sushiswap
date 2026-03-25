@@ -2,7 +2,11 @@ import { DataTable, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useCallback, useMemo, useState } from 'react'
 import { type BalanceItemType, useBalances } from 'src/lib/perps'
-import { PerpSpotTransferDialog, SendDialog } from '../../account-management'
+import {
+  EvmCoreTransferDialog,
+  PerpSpotTransferDialog,
+  SendDialog,
+} from '../../account-management'
 import { MobileTable } from '../_common'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {
@@ -184,6 +188,17 @@ const SharedPositionModal = ({
           balanceItem={balance}
           trigger={<div />}
           defaultDst={balance?.marketType === 'perp' ? 'spot' : 'perp'}
+        />
+      )
+    case 'evm-core-transfer':
+      return (
+        <EvmCoreTransferDialog
+          isOpen={open}
+          onOpenChange={(nextOpen) => {
+            if (!nextOpen) onClose()
+          }}
+          balanceItem={balance}
+          trigger={<div />}
         />
       )
 

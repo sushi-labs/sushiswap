@@ -3,6 +3,7 @@ import {
   formatSize as formatSizeHl,
 } from '@nktkas/hyperliquid/utils'
 import { least } from 'd3'
+import type { EvmAddress } from 'sushi/evm'
 import type { PerpOrSpotAsset } from './subscription/use-asset-list'
 
 export const getTextColorClass = (value: number) => {
@@ -164,4 +165,15 @@ export const formatDuration = (ms: number) => {
   const s = totalSeconds % 60
 
   return [h, m, s].map((v) => v.toString().padStart(2, '0')).join(':')
+}
+
+export const getEvmDestinationAddress = (tokenIndex: number): EvmAddress => {
+  // HYPE is a special case
+  if (tokenIndex === 150) {
+    return '0x2222222222222222222222222222222222222222'
+  }
+
+  // Format: 0x20 + zero-padded token index (big-endian, 19 bytes = 38 hex chars)
+  const hexIndex = tokenIndex.toString(16).padStart(38, '0')
+  return `0x20${hexIndex}`
 }

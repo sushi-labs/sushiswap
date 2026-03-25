@@ -26,13 +26,35 @@ const HYPERLIQUID_DEPOSIT_BRIDGE =
 const MIN_DEPOSIT_AMOUNT = 5 //5.000000 usdc
 
 //@dev simple deposit via transfer for the time being
-export const DepositDialog = ({ trigger }: { trigger?: ReactNode }) => {
+export const DepositDialog = ({
+  trigger,
+  isOpen,
+  onOpenChange,
+}: {
+  trigger?: ReactNode
+  isOpen?: boolean
+  onOpenChange?: (open: boolean) => void
+}) => {
   const [open, setOpen] = useState<boolean>(false)
   const [amount, setAmount] = useState<string>('')
   const _amount = Amount.tryFromHuman(usdc, amount)
   const { mutateAsync: writeContractAsync, isPending } = useWriteContract()
   const client = usePublicClient()
   const address = useAccount('evm')
+
+  const isControlled = isOpen !== undefined
+  const resolvedOpen = isControlled ? isOpen : open
+
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (isControlled) {
+        onOpenChange?.(nextOpen)
+      } else {
+        setOpen(nextOpen)
+      }
+    },
+    [isControlled, onOpenChange],
+  )
 
   const args = useMemo(() => {
     return {
@@ -88,7 +110,7 @@ export const DepositDialog = ({ trigger }: { trigger?: ReactNode }) => {
   }, [sim, writeContractAsync, client, address, _amount])
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {trigger ? (
           trigger

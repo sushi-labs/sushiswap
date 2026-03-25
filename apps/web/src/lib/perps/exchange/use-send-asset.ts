@@ -7,6 +7,7 @@ import {
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
+import type { EvmAddress } from 'sushi/evm'
 import { useWalletClient } from 'wagmi'
 import { TOAST_AUTOCLOSE_TIME } from '../config'
 import { useLegalCheck } from '../info/use-legal-check'
@@ -20,6 +21,7 @@ type SendData = {
   token: string
   amount: string
   decimals: number
+  fromSubAccount?: string | EvmAddress // "" for main account, address for subaccount, or undefined for main account
 }
 
 export const useSendAsset = () => {
@@ -28,11 +30,7 @@ export const useSendAsset = () => {
   const { data: legalCheck } = useLegalCheck({ address })
 
   const mutation = useMutation({
-    mutationKey: [
-      'cancel-twap-order',
-      walletClient?.account?.address,
-      legalCheck,
-    ],
+    mutationKey: ['useSendAsset', walletClient?.account?.address, legalCheck],
     mutationFn: async ({
       destination,
       sourceDex,
@@ -40,6 +38,7 @@ export const useSendAsset = () => {
       token,
       amount: sendAmount,
       decimals,
+      fromSubAccount,
     }: SendData) => {
       if (!walletClient) {
         return
@@ -59,6 +58,7 @@ export const useSendAsset = () => {
           destinationDex,
           token,
           amount: formatSize(sendAmount, decimals),
+          ...(fromSubAccount ? { fromSubAccount } : {}),
         },
       )
     },

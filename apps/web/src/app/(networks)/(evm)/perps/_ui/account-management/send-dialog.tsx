@@ -148,11 +148,6 @@ export const SendDialog = ({
       open={resolvedOpen}
       onOpenChange={(val) => {
         handleOpenChange(val)
-        if (!val) {
-          setAmount('')
-          setDstAddress('')
-          setAssetToSend(sendableAssets.length > 0 ? sendableAssets[0] : null)
-        }
       }}
     >
       <DialogTrigger asChild>

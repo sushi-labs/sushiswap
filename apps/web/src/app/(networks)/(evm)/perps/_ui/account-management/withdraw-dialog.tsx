@@ -30,7 +30,15 @@ const currency = USDC[EvmChainId.ARBITRUM]
 const chainId = EvmChainId.ARBITRUM
 const MIN_WITHDRAW_AMOUNT = 2 //2.000000 usdc
 
-export const WithdrawDialog = ({ trigger }: { trigger?: ReactNode }) => {
+export const WithdrawDialog = ({
+  trigger,
+  isOpen,
+  onOpenChange,
+}: {
+  trigger?: ReactNode
+  isOpen?: boolean
+  onOpenChange?: (open: boolean) => void
+}) => {
   const [open, setOpen] = useState<boolean>(false)
   const [amount, setAmount] = useState<string>('')
   const _amount = Amount.tryFromHuman(currency, amount)
@@ -44,6 +52,20 @@ export const WithdrawDialog = ({ trigger }: { trigger?: ReactNode }) => {
   const balance = Amount.tryFromHuman(currency, withdrawableBalance ?? '0')
   const address = useAccount('evm')
   const [isPending, setIsPending] = useState<boolean>(false)
+
+  const isControlled = isOpen !== undefined
+  const resolvedOpen = isControlled ? isOpen : open
+
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (isControlled) {
+        onOpenChange?.(nextOpen)
+      } else {
+        setOpen(nextOpen)
+      }
+    },
+    [isControlled, onOpenChange],
+  )
 
   const insufficientBalance =
     address && withdrawableBalance && _amount && balance?.lt(_amount)
@@ -94,7 +116,7 @@ export const WithdrawDialog = ({ trigger }: { trigger?: ReactNode }) => {
   }, [walletClient, address, _amount])
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {trigger ? (
           trigger
