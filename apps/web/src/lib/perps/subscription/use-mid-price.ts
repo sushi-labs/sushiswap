@@ -11,7 +11,7 @@ export const useMidPrice = ({
   refreshIntervalMs?: number
 }) => {
   const { data: allMidsData } = useAllMids()
-
+  // console.log('allMidsData', allMidsData)
   const [midPrice, setMidPrice] = useState<string | null>(null)
 
   const liveMidPrice = useMemo(

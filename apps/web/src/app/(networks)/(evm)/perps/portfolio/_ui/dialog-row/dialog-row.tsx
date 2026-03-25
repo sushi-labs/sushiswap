@@ -9,6 +9,7 @@ import {
   SendDialog,
   WithdrawDialog,
 } from '~evm/perps/_ui/account-management'
+import { SwapStablesDialog } from '~evm/perps/_ui/account-management/swap-stables-dialog'
 
 type DialogAction =
   | 'send'
@@ -16,6 +17,7 @@ type DialogAction =
   | 'evm-core-transfer'
   | 'withdraw'
   | 'deposit'
+  | 'swap-stables'
 
 export const DialogRow = () => {
   const [activeModal, setActiveModal] = useState<ActiveModalState>({
@@ -38,6 +40,12 @@ export const DialogRow = () => {
   }, [])
   return (
     <div className="flex items-center gap-2 flex-wrap">
+      <Button
+        variant="perps-secondary"
+        onClick={() => openModal('swap-stables')}
+      >
+        Swap Stablecoins
+      </Button>
       <Button
         variant="perps-secondary"
         onClick={() => openModal('perp-spot-transfer')}
@@ -128,6 +136,16 @@ const SharedPositionModal = ({
     case 'evm-core-transfer':
       return (
         <EvmCoreTransferDialog
+          isOpen={open}
+          onOpenChange={(nextOpen) => {
+            if (!nextOpen) onClose()
+          }}
+          trigger={<div />}
+        />
+      )
+    case 'swap-stables':
+      return (
+        <SwapStablesDialog
           isOpen={open}
           onOpenChange={(nextOpen) => {
             if (!nextOpen) onClose()

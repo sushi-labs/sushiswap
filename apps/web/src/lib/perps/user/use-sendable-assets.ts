@@ -7,7 +7,9 @@ import { useUserState } from '~evm/perps/user-provider'
 import { useAccount } from '../../wallet'
 import { getEvmDestinationAddress } from '../utils'
 
-export const useSendableAssets = (filter?: 'perp' | 'spot') => {
+const STABLE_OPTIONS = ['USDC', 'USDT0', 'USDH']
+
+export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
   const address = useAccount('evm')
   const {
     state: {
@@ -48,6 +50,7 @@ export const useSendableAssets = (filter?: 'perp' | 'spot') => {
       evmAddressData: null,
       markPrice: '1',
       spender: undefined,
+      assetName: null,
     }
     if (!isUnifiedAccountModeEnabled) {
       assets.push(usdcPerp)
@@ -68,12 +71,13 @@ export const useSendableAssets = (filter?: 'perp' | 'spot') => {
       assets.push({
         token: `${spotToken?.name}:${spotToken?.tokenId}`,
         symbol: spotToken?.name || '',
+        assetName: spotAsset?.name || '',
         balance: spotBalance.total,
         decimals: spotToken?.weiDecimals,
         marketType: 'spot' as const,
         usdcValue: usdcValue.toString(),
         tokenId: spotToken?.tokenId,
-        markPrice: spotAsset?.markPrice,
+        markPrice: price,
         destinationAddress: getEvmDestinationAddress(tokenIndex),
         evmAddressData: (spotToken?.evmContract?.address === undefined
           ? {
@@ -96,7 +100,24 @@ export const useSendableAssets = (filter?: 'perp' | 'spot') => {
       })
     }
     if (filter) {
-      return assets.filter((a) => a.marketType === filter)
+      if (filter === 'stable') {
+        return assets?.filter(
+          (a) => a.marketType === 'spot' && STABLE_OPTIONS.includes(a.symbol),
+        )
+        // .map((i) => {
+        //   if (i.symbol === 'USDC') {
+        //     const balance = Number(usdcPerp.balance) + Number(i.balance)
+        //     const value = balance * Number(i.markPrice ?? 1)
+        //     return {
+        //       ...i,
+        //       usdcValue: value.toString(),
+        //       balance: balance.toString(),
+        //     }
+        //   }
+        //   return i
+        // })
+      }
+      return assets?.filter((a) => a.marketType === filter)
     }
     return assets
   }, [webData2Data, assetList, isUnifiedAccountModeEnabled, filter])

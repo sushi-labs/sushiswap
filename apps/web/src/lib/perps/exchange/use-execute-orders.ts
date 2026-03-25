@@ -5,7 +5,6 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
-import { execute } from 'porto/viem/ContractActions'
 import { useAccount } from 'src/lib/wallet'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useAgent } from '../agent'
@@ -101,7 +100,7 @@ export const useExecuteOrders = () => {
           ...(c.clientOrderId ? { c: c.clientOrderId } : {}),
         } satisfies OrderParameters['orders'][number]
       })
-      console.log(orders)
+      // console.log(orders)
       const _orderData: OrderParameters = {
         orders,
         builder: {
@@ -110,7 +109,7 @@ export const useExecuteOrders = () => {
         },
         ...(orderData.grouping ? { grouping: orderData.grouping } : {}),
       }
-
+      // console.log('_orderData', _orderData)
       return order(
         { wallet: agentAccount, transport: hlHttpTransport },
         _orderData,
