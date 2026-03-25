@@ -69,6 +69,7 @@ import {
 import { ConcentratedLiquidityWidget } from '~evm/[chainId]/pool/v3/_ui/concentrated-liquidity-widget'
 import { ClaimRewardsButton } from '~evm/claim/rewards/_common/ui/claim-rewards-button'
 import { DistributionDataTable } from '../../../../_ui/distribution-data-table'
+import { KatanaStakingMessage } from '../../../../_ui/katana-staking-message'
 import { ConcentratedLiquidityCollectWidget } from './concentrated-liquidity-collect-widget'
 import { ConcentratedLiquidityRemoveWidget } from './concentrated-liquidity-remove-widget'
 
@@ -661,6 +662,7 @@ const Component: FC<{
             <div className="py-4">
               <Separator />
             </div>
+            <KatanaStakingMessage campaigns={activeCampaigns} />
             <Card>
               <CardHeader>
                 <CardTitle>Reward distributions</CardTitle>
@@ -696,12 +698,14 @@ const Component: FC<{
                 </CardContent>
                 <TabsContent value="active">
                   <DistributionDataTable
+                    chainId={chainId}
                     isLoading={isCampaignsLoading}
                     data={activeCampaigns}
                   />
                 </TabsContent>
                 <TabsContent value="inactive">
                   <DistributionDataTable
+                    chainId={chainId}
                     isLoading={isCampaignsLoading}
                     data={inactiveCampaigns}
                   />
