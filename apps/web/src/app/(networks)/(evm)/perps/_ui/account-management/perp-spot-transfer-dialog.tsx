@@ -45,11 +45,22 @@ export const PerpSpotTransferDialog = ({
   const { sendAsset, isPending } = useSendAsset()
   const {
     state: {
-      webData2Query: { data, isLoading, error },
+      webData2Query: {
+        data,
+        isLoading: isWebData2Loading,
+        error: webData2Error,
+      },
+      allDexClearinghouseStateQuery: {
+        data: clearinghouseStateData,
+        isLoading: isClearinghouseStateLoading,
+        error: clearinghouseStateError,
+      },
     },
   } = useUserState()
+  const isLoading = isWebData2Loading || isClearinghouseStateLoading
+  const error = webData2Error || clearinghouseStateError
   const {
-    state: { asset, availableToLong },
+    state: { asset },
   } = useAssetState()
   const {
     state: { isUnifiedAccountModeEnabled },
@@ -76,15 +87,15 @@ export const PerpSpotTransferDialog = ({
   }, [asset?.dex, balanceItem])
 
   const sendableBalance = useMemo(() => {
-    if (dst === 'spot' && !dexName) {
-      return data?.clearinghouseState.withdrawable
-    }
-    if (dst === 'spot' && dexName) {
-      return availableToLong
+    if (dst === 'spot') {
+      return clearinghouseStateData?.clearinghouseStates.find(
+        ([dex]) => dex === dexName,
+      )?.[1].withdrawable
     }
 
     return data?.spotState?.balances?.find((b) => b.coin === 'USDC')?.total
-  }, [data, dst, dexName, availableToLong])
+  }, [dst, dexName, clearinghouseStateData, data?.spotState?.balances])
+
   const balance = Amount.tryFromHuman(currency, sendableBalance ?? '0')
   const address = useAccount('evm')
 

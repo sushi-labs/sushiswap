@@ -148,7 +148,7 @@ export const AVAILABLE_BALANCE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
               value: availableBalance,
               maxFraxDigits: decimals,
             })}{' '}
-            {coin} is available to withdraw transfer.
+            {coin} is available to withdraw or transfer.
           </p>
         </HoverCardContent>
       </HoverCard>
