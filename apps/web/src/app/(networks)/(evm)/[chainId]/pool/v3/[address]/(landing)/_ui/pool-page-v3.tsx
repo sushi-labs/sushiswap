@@ -24,11 +24,15 @@ import {
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
+import {
+  useConcentratedLiquidityPoolStats,
+  useRewardCampaigns,
+} from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPoolReserves'
 import { formatUSD } from 'sushi'
-import { getEvmChainById } from 'sushi/evm'
+import { getEvmChainById, isMerklChainId } from 'sushi/evm'
 import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
+import { KatanaStakingMessage } from '../../_ui/katana-staking-message'
 import { PoolRewardDistributionsCard } from './pool-reward-distributions-card'
 import { PoolTransactionsV3 } from './pool-transactions-v3'
 import { StatisticsChartsV3 } from './statistics-chart-v3'
@@ -50,6 +54,11 @@ const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
     chainId,
     address,
   })
+  const { data: rewardsData, isLoading: rewardsLoading } = useRewardCampaigns({
+    pool: address,
+    chainId,
+    enabled: isMerklChainId(chainId),
+  })
 
   const { data: reserves, isLoading: isReservesLoading } =
     useConcentratedLiquidityPoolReserves({
@@ -57,6 +66,9 @@ const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
       chainId,
     })
   const fiatValues = useTokenAmountDollarValues({ chainId, amounts: reserves })
+  const activeCampaigns = useMemo(() => {
+    return rewardsData?.filter((campaign) => campaign.isLive)
+  }, [rewardsData])
 
   return (
     <Container maxWidth="5xl" className="flex flex-col gap-4 px-4">
@@ -170,7 +182,12 @@ const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
       <div className="py-4">
         <Separator />
       </div>
-      <PoolRewardDistributionsCard pool={pool} />
+      <KatanaStakingMessage campaigns={activeCampaigns} />
+      <PoolRewardDistributionsCard
+        pool={pool}
+        isLoading={rewardsLoading}
+        rewardsData={rewardsData}
+      />
       <PoolTransactionsV3 pool={pool} poolAddress={address} />
     </Container>
   )

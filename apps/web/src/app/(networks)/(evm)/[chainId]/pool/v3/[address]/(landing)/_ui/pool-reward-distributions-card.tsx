@@ -15,22 +15,19 @@ import {
   TabsTrigger,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
-import { useRewardCampaigns } from 'src/lib/hooks/react-query'
+import type { RewardCampaign } from 'src/lib/hooks/react-query'
 import { EvmNative, getEvmChainById, isMerklChainId } from 'sushi/evm'
 import { DistributionDataTable } from '../../_ui/distribution-data-table'
 
 interface PoolRewardDistributionsCardParams {
   pool: V3Pool
+  isLoading: boolean
+  rewardsData?: RewardCampaign[]
 }
 
 export const PoolRewardDistributionsCard: FC<
   PoolRewardDistributionsCardParams
-> = ({ pool }) => {
-  const { data: rewardsData, isLoading: rewardsLoading } = useRewardCampaigns({
-    pool: pool.address,
-    chainId: pool.chainId,
-  })
-
+> = ({ pool, isLoading, rewardsData }) => {
   if (!pool) return null
   if (!isMerklChainId(pool.chainId)) return null
 
@@ -76,13 +73,15 @@ export const PoolRewardDistributionsCard: FC<
         </CardContent>
         <TabsContent value="active">
           <DistributionDataTable
-            isLoading={rewardsLoading}
+            chainId={pool.chainId}
+            isLoading={isLoading}
             data={rewardsData?.filter((el) => el.isLive)}
           />
         </TabsContent>
         <TabsContent value="inactive">
           <DistributionDataTable
-            isLoading={rewardsLoading}
+            chainId={pool.chainId}
+            isLoading={isLoading}
             data={rewardsData?.filter((el) => !el.isLive)}
           />
         </TabsContent>
