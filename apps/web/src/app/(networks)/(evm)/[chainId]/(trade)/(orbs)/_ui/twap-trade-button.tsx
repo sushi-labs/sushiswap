@@ -1,23 +1,22 @@
 'use client'
 
-import { type ButtonProps, DialogTrigger, classNames } from '@sushiswap/ui'
+import {
+  type ButtonProps,
+  DialogTrigger,
+  Message,
+  classNames,
+} from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import React, { type FC } from 'react'
-import type { TwapSupportedChainId } from 'src/config'
 import { APPROVE_TAG_SWAP } from 'src/lib/constants'
-import { TwapSDK } from 'src/lib/swap/twap/TwapSDK'
 import { useWrapNative } from 'src/lib/wagmi/hooks/wnative/useWrapNative'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import type { Amount } from 'sushi'
 import type { EvmCurrency } from 'sushi/evm'
-import type { Address } from 'viem'
-import {
-  useDerivedStateTwap,
-  useTwapTrade,
-  useTwapTradeErrors,
-} from './derivedstate-twap-provider'
 import { TwapTradeReviewDialog } from './twap-trade-review-dialog'
 import { useIsTwapMaintenance } from './use-is-twap-maintenance'
+import { useInputErrors, useAddresses, Module } from '@orbs-network/spot-react'
+import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
 
 type WrapNativeCheckerProps = ButtonProps & {
   amount: Amount<EvmCurrency> | undefined
@@ -54,7 +53,7 @@ const WrapNativeChecker: FC<WrapNativeCheckerProps> = ({
 }
 
 type TwapTradeCheckerProps = ButtonProps & {
-  chainId: TwapSupportedChainId
+  chainId: number
 }
 
 const TwapTradeChecker: FC<TwapTradeCheckerProps> = ({
@@ -67,9 +66,9 @@ const TwapTradeChecker: FC<TwapTradeCheckerProps> = ({
   enabled = true,
   ...props
 }) => {
-  const { minTradeSizeError, minFillDelayError, maxFillDelayError } =
-    useTwapTradeErrors()
-  return minTradeSizeError || minFillDelayError || maxFillDelayError ? (
+  const errors = useInputErrors()
+
+  return errors ? (
     <Button
       disabled={true}
       className={className}
@@ -78,30 +77,25 @@ const TwapTradeChecker: FC<TwapTradeCheckerProps> = ({
       testId={id}
       {...props}
     >
-      {minTradeSizeError
-        ? 'Inadequate Trade Size'
-        : minFillDelayError
-          ? 'Trade Interval Below Limit'
-          : maxFillDelayError
-            ? 'Trade Interval Exceeds Limit'
-            : ''}
+      {errors.message}
     </Button>
   ) : (
     <>{children}</>
   )
 }
 
-export const TwapTradeButton = () => {
-  const { data: maintenance } = useIsTwapMaintenance()
+export const TwapTradeButton = ({ module }: { module: Module }) => {
+  const { data: maintenance } = useIsTwapMaintenance(module)
 
   const {
     state: { swapAmount, chainId },
-  } = useDerivedStateTwap()
+  } = useDerivedStateSimpleSwap()
 
-  const { data: trade } = useTwapTrade()
+  const errors = useInputErrors()
+  const { spender } = useAddresses()
 
   return (
-    <TwapTradeReviewDialog>
+    <TwapTradeReviewDialog module={module}>
       <Checker.Guard
         guardWhen={maintenance}
         guardText="Maintenance in progress"
@@ -110,19 +104,17 @@ export const TwapTradeButton = () => {
           <Checker.Network chainId={chainId}>
             <TwapTradeChecker chainId={chainId}>
               <Checker.Amounts chainId={chainId} amount={swapAmount}>
-                <WrapNativeChecker amount={swapAmount}>
+                <WrapNativeChecker amount={swapAmount as Amount<EvmCurrency>}>
                   <Checker.ApproveERC20
                     id="approve-erc20"
                     amount={swapAmount?.wrap()}
-                    contract={
-                      TwapSDK.onNetwork(chainId).config.twapAddress as Address
-                    }
+                    contract={spender}
                   >
                     <Checker.Success tag={APPROVE_TAG_SWAP}>
                       <DialogTrigger asChild>
                         <Button
                           size="xl"
-                          disabled={!trade}
+                          disabled={!!errors}
                           fullWidth
                           testId="swap"
                         >

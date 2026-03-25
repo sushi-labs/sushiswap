@@ -1,19 +1,21 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import { Providers } from './providers'
 import { TwapLayout } from '../_ui/twap-layout'
 
 export const metadata: Metadata = {
-  title: 'Limit',
-  description: 'Trade with limit orders on SushiSwap.',
+  title: 'Take Profit',
+  description: 'Trade with take profit orders on SushiSwap.',
 }
 
-export default async function SwapLimitLayout(props: {
+export default async function SwapTakeProfitLayout(props: {
   children: React.ReactNode
   params: Promise<{ chainId: string }>
 }) {
   const params = await props.params
   const { children } = props
-  const chainId = +params.chainId
+  const chainId = Number(params.chainId)
+  if (!Number.isFinite(chainId)) notFound()
 
   return (
     <Providers>

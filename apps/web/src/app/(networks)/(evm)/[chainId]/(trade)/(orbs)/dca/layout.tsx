@@ -1,8 +1,6 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import { TWAP_SUPPORTED_CHAIN_IDS, isTwapSupportedChainId } from 'src/config'
-import { Header } from '../../header'
 import { Providers } from './providers'
+import { TwapLayout } from '../_ui/twap-layout'
 
 export const metadata: Metadata = {
   title: 'DCA',
@@ -18,14 +16,9 @@ export default async function SwapDCALayout(props: {
   const { children } = props
   const chainId = +params.chainId
 
-  if (!isTwapSupportedChainId(chainId)) {
-    return notFound()
-  }
-
   return (
     <Providers>
-      <Header chainId={chainId} networks={TWAP_SUPPORTED_CHAIN_IDS} />
-      <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
+      <TwapLayout chainId={chainId}>{children}</TwapLayout>
     </Providers>
   )
 }
