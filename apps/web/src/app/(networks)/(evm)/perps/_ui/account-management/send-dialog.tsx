@@ -21,8 +21,11 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { type BalanceItemType, currencyFormatter } from 'src/lib/perps'
-import { useSendAsset } from 'src/lib/perps/exchange/use-send-asset'
+import {
+  type BalanceItemType,
+  currencyFormatter,
+  useSendAsset,
+} from 'src/lib/perps'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'

@@ -1,11 +1,5 @@
 'use client'
 import { ArrowsUpDownIcon } from '@heroicons/react/24/outline'
-import { sendAsset } from '@nktkas/hyperliquid/api/exchange'
-import {
-  createErrorToast,
-  createInfoToast,
-  createSuccessToast,
-} from '@sushiswap/notifications'
 import {
   Button,
   Dialog,
@@ -16,16 +10,11 @@ import {
   DialogTrigger,
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
-import {
-  TOAST_AUTOCLOSE_TIME,
-  formatSize,
-  hlHttpTransport,
-} from 'src/lib/perps'
+import { type BalanceItemType, useSendAsset } from 'src/lib/perps'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
 import { EvmChainId, USDC } from 'sushi/evm'
-import { useWalletClient } from 'wagmi'
 import { useUserState } from '~evm/perps/user-provider'
 import { PerpsChecker } from '../perps-checker'
 import { useAssetState } from '../trade-widget'
@@ -39,12 +28,21 @@ const chainId = EvmChainId.ARBITRUM
 export const PerpSpotTransferDialog = ({
   trigger,
   defaultDst,
-}: { trigger?: ReactNode; defaultDst?: 'perp' | 'spot' }) => {
+  isOpen,
+  onOpenChange,
+  balanceItem,
+}: {
+  trigger?: ReactNode
+  defaultDst?: 'perp' | 'spot'
+  isOpen?: boolean
+  onOpenChange?: (open: boolean) => void
+  balanceItem?: BalanceItemType
+}) => {
   const [dst, setDst] = useState<'perp' | 'spot'>(defaultDst ?? 'spot')
   const [open, setOpen] = useState<boolean>(false)
   const [amount, setAmount] = useState<string>('')
   const _amount = Amount.tryFromHuman(currency, amount)
-  const { data: walletClient } = useWalletClient()
+  const { sendAsset, isPending } = useSendAsset()
   const {
     state: {
       webData2Query: { data, isLoading, error },
@@ -56,7 +54,26 @@ export const PerpSpotTransferDialog = ({
   const {
     state: { isUnifiedAccountModeEnabled },
   } = useUserSettingsState()
-  const dexName = useMemo(() => asset?.dex || '', [asset?.dex])
+  const isControlled = isOpen !== undefined
+  const resolvedOpen = isControlled ? isOpen : open
+
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (isControlled) {
+        onOpenChange?.(nextOpen)
+      } else {
+        setOpen(nextOpen)
+      }
+    },
+    [isControlled, onOpenChange],
+  )
+
+  const dexName = useMemo(() => {
+    if (balanceItem) {
+      return balanceItem.dex
+    }
+    return asset?.dex || ''
+  }, [asset?.dex, balanceItem])
 
   const sendableBalance = useMemo(() => {
     if (dst === 'spot' && !dexName) {
@@ -70,62 +87,31 @@ export const PerpSpotTransferDialog = ({
   }, [data, dst, dexName, availableToLong])
   const balance = Amount.tryFromHuman(currency, sendableBalance ?? '0')
   const address = useAccount('evm')
-  const [isPending, setIsPending] = useState<boolean>(false)
 
   const insufficientBalance =
     address && sendableBalance && _amount && balance?.lt(_amount)
 
-  const transferUsdc = useCallback(async () => {
-    if (!walletClient || !address || !_amount) return
-    try {
-      setIsPending(true)
-      createInfoToast({
-        summary: `Transferring ${_amount.toSignificant(4)} USDC to ${dst === 'spot' ? 'Spot' : 'Perps'}`,
-        account: address,
-        type: 'send',
-        timestamp: Date.now(),
-        groupTimestamp: Date.now(),
-        chainId: chainId,
-        autoClose: TOAST_AUTOCLOSE_TIME,
-      })
-      const _dexName = dexName ? dexName : ''
-      await sendAsset(
-        {
-          wallet: walletClient,
-          transport: hlHttpTransport,
+  const transferUsdc = useCallback(() => {
+    if (!address || !_amount) return
+
+    const _dexName = dexName ? dexName : ''
+    sendAsset(
+      {
+        amount: _amount.toString(),
+        decimals: 2,
+        destination: address,
+        token: 'USDC',
+        sourceDex: dst === 'perp' ? 'spot' : _dexName,
+        destinationDex: dst === 'perp' ? _dexName : 'spot',
+      },
+      {
+        onSuccess: () => {
+          setAmount('')
+          handleOpenChange(false)
         },
-        {
-          amount: formatSize(_amount?.toString(), 2),
-          destination: address,
-          token: 'USDC',
-          sourceDex: dst === 'perp' ? 'spot' : _dexName,
-          destinationDex: dst === 'perp' ? _dexName : 'spot',
-        },
-      )
-      createSuccessToast({
-        summary: `Transfer of ${_amount.toSignificant(4)} USDC to ${dst === 'spot' ? 'Spot' : 'Perps'} submitted`,
-        account: address,
-        type: 'send',
-        timestamp: Date.now(),
-        groupTimestamp: Date.now(),
-        chainId: chainId,
-        autoClose: TOAST_AUTOCLOSE_TIME,
-      })
-      setIsPending(false)
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error)
-      createErrorToast(
-        `Transfer to ${dst === 'spot' ? 'Spot' : 'Perps'} failed: ${errorMessage}`,
-        false,
-      )
-      setIsPending(false)
-    } finally {
-      setIsPending(false)
-      setAmount('')
-      setOpen(false)
-    }
-  }, [walletClient, address, _amount, dst, dexName])
+      },
+    )
+  }, [address, _amount, dst, dexName, sendAsset, handleOpenChange])
 
   const handleDstToggle = useCallback(() => {
     setDst((prevDst) => (prevDst === 'spot' ? 'perp' : 'spot'))
@@ -133,7 +119,7 @@ export const PerpSpotTransferDialog = ({
   }, [])
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild disabled={isUnifiedAccountModeEnabled}>
         {trigger ? (
           trigger

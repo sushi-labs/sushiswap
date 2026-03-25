@@ -237,6 +237,39 @@ export const SEND_COLUMN = (
   },
 })
 
+export const TRANSFER_COLUMN = (
+  openModal: (
+    action: 'transfer' | 'evm-core-transfer',
+    balance: BalanceItemType,
+  ) => void,
+): ColumnDef<BalanceItemType, unknown> => ({
+  id: 'transfer',
+  header: 'Transfer',
+  cell: (props) => {
+    const balance = props.row.original
+    const marketType = balance.marketType
+    const isSpotUSDC = balance.coin === 'USDC (Spot)' && marketType === 'spot'
+    const isPerpUsdc = balance.coin === 'USDC (Perps)' && marketType === 'perp'
+
+    return (
+      <div className="flex items-center gap-4 lg:whitespace-nowrap">
+        {isSpotUSDC || isPerpUsdc ? (
+          <TableButton onClick={() => openModal('transfer', balance)}>
+            Transfer to {isSpotUSDC ? 'Perps' : 'Spot'}
+          </TableButton>
+        ) : (
+          <TableButton onClick={() => openModal('evm-core-transfer', balance)}>
+            Transfer to/from EVM
+          </TableButton>
+        )}
+      </div>
+    )
+  },
+  meta: {
+    body: columnBodyMeta,
+  },
+})
+
 export const CONTRACT_COLUMN: ColumnDef<BalanceItemType, unknown> = {
   id: 'contract',
   header: 'Contract',
