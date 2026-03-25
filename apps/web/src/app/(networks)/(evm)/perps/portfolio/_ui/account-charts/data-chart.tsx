@@ -43,8 +43,8 @@ export const DataChart = ({
       grid: {
         top: 10,
         left: 65,
-        right: 10,
-        bottom: 30,
+        right: 0,
+        bottom: 10,
       },
 
       xAxis: [
@@ -95,7 +95,7 @@ export const DataChart = ({
     <ReactEchartsCore
       option={DEFAULT_OPTION}
       echarts={echarts}
-      style={{ height: 192 }}
+      className="max-h-[192px] min-h-[192px] h-full"
     />
   )
 }
