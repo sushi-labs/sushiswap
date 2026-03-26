@@ -38,7 +38,7 @@ export const Fees = () => {
   }, [feeData, side, address])
 
   return (
-    <Card className="p-2 !rounded-md gap-2 flex !bg-[#18223B] border-transparent justify-between flex-col w-full">
+    <Card className="p-2 !rounded-md gap-2 flex !bg-[#18223B] border-transparent justify-between flex-col w-full h-full">
       <div className="flex items-center justify-between gap-2 text-xs lg:text-sm">
         <div className="text-muted-foreground">Fees (Taker / Maker)</div>
         <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -75,7 +75,7 @@ export const Fees = () => {
       ) : (
         <div className="font-medium text-lg md:text-2xl">{`${formatPercent(takerFee)} / ${formatPercent(makerFee)}`}</div>
       )}
-      <div className="h-[26px]" />
+      <div className="lg:h-[26px] h-[16px]" />
     </Card>
   )
 }
