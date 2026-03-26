@@ -5,7 +5,6 @@ import { useApproveBuilderFee } from 'src/lib/perps'
 export const BuilderFee: FC<ButtonProps> = ({
   children,
   fullWidth = true,
-  variant = 'perps-default',
   size = 'xl',
   ...props
 }) => {

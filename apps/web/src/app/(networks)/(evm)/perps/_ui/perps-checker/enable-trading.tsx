@@ -6,7 +6,6 @@ import { useWalletClient } from 'wagmi'
 export const EnableTrading: FC<ButtonProps> = ({
   children,
   fullWidth = true,
-  variant = 'perps-default',
   size = 'xl',
   ...props
 }) => {

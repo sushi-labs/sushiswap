@@ -5,7 +5,6 @@ import { useAssetState } from '../trade-widget'
 export const TwapRunningTime: FC<ButtonProps> = ({
   children,
   fullWidth = true,
-  variant = 'perps-default',
   size = 'xl',
   ...props
 }) => {
