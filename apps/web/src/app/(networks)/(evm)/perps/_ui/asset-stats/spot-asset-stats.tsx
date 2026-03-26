@@ -46,7 +46,7 @@ export const SpotAssetStats = () => {
       <div className="flex flex-col">
         <HoverCard openDelay={0}>
           <HoverCardTrigger asChild tabIndex={0}>
-            <div className="text-sm text-muted-foreground underline cursor-pointer">
+            <div className="text-xs text-muted-foreground underline cursor-pointer">
               Price
             </div>
           </HoverCardTrigger>
@@ -65,15 +65,15 @@ export const SpotAssetStats = () => {
             asset?.decimals ?? 0,
             'spot',
           )}
-          className="text-sm font-medium tabular-nums lining-nums min-w-[var(--w)] inline-block"
+          className="text-xs font-medium tabular-nums lining-nums min-w-[var(--w)] inline-block"
         />
       </div>
       <div className="flex flex-col">
-        <div className="text-sm text-muted-foreground">24H Change</div>
+        <div className="text-xs text-muted-foreground">24H Change</div>
 
         <p
           className={classNames(
-            'text-sm whitespace-nowrap tabular-nums font-medium',
+            'text-xs whitespace-nowrap tabular-nums font-medium',
             assetData?.change24hAbs &&
               getTextColorClass(Number(assetData.change24hAbs)),
           )}
@@ -88,9 +88,9 @@ export const SpotAssetStats = () => {
         </p>
       </div>
       <div className="flex flex-col">
-        <div className="text-sm text-muted-foreground">24H Volume</div>
+        <div className="text-xs text-muted-foreground">24H Volume</div>
 
-        <p className={classNames('text-sm  font-medium tabular-nums')}>
+        <p className={classNames('text-xs  font-medium tabular-nums')}>
           {perpsNumberFormatter({
             value: assetData?.volume24hUsd ?? 0,
             maxFraxDigits: 2,
@@ -100,9 +100,9 @@ export const SpotAssetStats = () => {
         </p>
       </div>
       <div className="flex flex-col">
-        <div className="text-sm text-muted-foreground">Market Cap</div>
+        <div className="text-xs text-muted-foreground">Market Cap</div>
 
-        <p className={classNames('text-sm  font-medium tabular-nums')}>
+        <p className={classNames('text-xs  font-medium tabular-nums')}>
           {perpsNumberFormatter({
             value: assetData?.marketCap ?? 0,
             maxFraxDigits: 2,
@@ -112,7 +112,7 @@ export const SpotAssetStats = () => {
         </p>
       </div>
       <div className="flex flex-col">
-        <div className="text-sm text-muted-foreground">Contract</div>
+        <div className="text-xs text-muted-foreground">Contract</div>
 
         <LinkExternal
           className={classNames('font-medium')}
@@ -122,7 +122,7 @@ export const SpotAssetStats = () => {
               : ''
           }
         >
-          <div className="!text-sm flex ">
+          <div className="!text-xs flex ">
             <span>
               {truncateString(asset?.tokens?.[0]?.tokenId ?? '', 10, 'middle')}
               <ExternalLinkIcon className="w-4 h-4 ml-1 inline-block" />

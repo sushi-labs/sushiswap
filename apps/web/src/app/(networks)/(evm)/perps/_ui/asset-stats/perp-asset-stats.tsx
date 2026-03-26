@@ -45,7 +45,7 @@ export const PerpAssetStats = () => {
       <div className="flex flex-col">
         <HoverCard openDelay={0}>
           <HoverCardTrigger asChild tabIndex={0}>
-            <div className="text-sm text-muted-foreground underline cursor-pointer">
+            <div className="text-xs text-muted-foreground underline cursor-pointer">
               Mark
             </div>
           </HoverCardTrigger>
@@ -71,13 +71,13 @@ export const PerpAssetStats = () => {
             minimumFractionDigits: 0,
             maximumFractionDigits: 6,
           }}
-          className="text-sm font-medium tabular-nums"
+          className="text-xs font-medium tabular-nums"
         />
       </div>
       <div className="flex flex-col">
         <HoverCard openDelay={0}>
           <HoverCardTrigger asChild tabIndex={0}>
-            <div className="text-sm text-muted-foreground underline cursor-pointer">
+            <div className="text-xs text-muted-foreground underline cursor-pointer">
               Oracle
             </div>
           </HoverCardTrigger>
@@ -103,16 +103,16 @@ export const PerpAssetStats = () => {
             minimumFractionDigits: 0,
             maximumFractionDigits: 6,
           }}
-          className="text-sm font-medium tabular-nums"
+          className="text-xs font-medium tabular-nums"
           allowColorChange={false}
         />
       </div>
       <div className="flex flex-col">
-        <div className="text-sm text-muted-foreground">24H Change</div>
+        <div className="text-xs text-muted-foreground">24H Change</div>
 
         <p
           className={classNames(
-            'text-sm whitespace-nowrap tabular-nums font-medium',
+            'text-xs whitespace-nowrap tabular-nums font-medium',
             assetData?.change24hAbs &&
               getTextColorClass(Number(assetData.change24hAbs)),
           )}
@@ -127,16 +127,16 @@ export const PerpAssetStats = () => {
         </p>
       </div>
       <div className="flex flex-col">
-        <div className="text-sm text-muted-foreground">24H Volume</div>
+        <div className="text-xs text-muted-foreground">24H Volume</div>
 
-        <p className={classNames('text-sm  font-medium tabular-nums')}>
+        <p className={classNames('text-xs  font-medium tabular-nums')}>
           {currencyFormatter.format(Number(assetData?.volume24hUsd ?? 0))}
         </p>
       </div>
       <div className="flex flex-col">
         <HoverCard openDelay={0}>
           <HoverCardTrigger asChild tabIndex={0}>
-            <div className="text-sm text-muted-foreground underline cursor-pointer">
+            <div className="text-xs text-muted-foreground underline cursor-pointer">
               Open Interest
             </div>
           </HoverCardTrigger>
@@ -151,14 +151,14 @@ export const PerpAssetStats = () => {
             </p>
           </HoverCardContent>
         </HoverCard>
-        <p className={classNames('text-sm tabular-nums font-medium ')}>
+        <p className={classNames('text-xs tabular-nums font-medium ')}>
           {currencyFormatter.format(Number(assetData?.openInterestUsd ?? 0))}
         </p>
       </div>
       <div className="flex flex-col">
         <HoverCard openDelay={0}>
           <HoverCardTrigger asChild tabIndex={0}>
-            <div className="text-sm text-muted-foreground underline cursor-pointer whitespace-nowrap">
+            <div className="text-xs text-muted-foreground underline cursor-pointer whitespace-nowrap">
               Funding / Countdown
             </div>
           </HoverCardTrigger>
@@ -180,7 +180,7 @@ export const PerpAssetStats = () => {
             <HoverCardTrigger asChild tabIndex={0}>
               <p
                 className={classNames(
-                  'text-sm tabular-nums font-medium whitespace-nowrap',
+                  'text-xs tabular-nums font-medium whitespace-nowrap',
                 )}
               >
                 {(Number(assetData?.fundingPct ?? 0) * 100).toFixed(4)}%
@@ -230,7 +230,7 @@ const Countdown = () => {
   const seconds = timeLeft % 60
 
   return (
-    <span className="text-sm font-medium tabular-nums whitespace-nowrap">
+    <span className="text-xs font-medium tabular-nums whitespace-nowrap">
       {`00:${minutes.toString().padStart(2, '0')}:${seconds
         .toString()
         .padStart(2, '0')}`}
