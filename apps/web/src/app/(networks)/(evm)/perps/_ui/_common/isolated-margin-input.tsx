@@ -35,7 +35,7 @@ export const IsolatedMarginInput = ({
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <p className="text-[#4A5565]">Amount</p>
+        <p className="text-[#8f9399]">Amount</p>
         <div className="flex items-center gap-1 max-h-[35px]">
           <TextField
             type="number"

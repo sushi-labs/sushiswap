@@ -60,6 +60,7 @@ export const TradeTypeSelect = () => {
               variant={'perps-secondary'}
               className="!p-0 w-full col-span-1 capitalize !text-xs"
               data-selected={(tradeType === _tradeType).toString()}
+              aria-label={`Select ${_tradeType} trade type`}
             >
               {_tradeType}
             </Button>
@@ -78,6 +79,7 @@ export const TradeTypeSelect = () => {
                 className="!p-0 w-full col-span-1 capitalize !text-xs"
                 data-selected={isProTrade.toString()}
                 asChild
+                aria-label="Select Pro trade types"
               >
                 <div className="flex items-center w-full justify-center">
                   {isProTrade ? tradeType : 'Pro'}
@@ -92,6 +94,7 @@ export const TradeTypeSelect = () => {
                 <TabsTrigger
                   className="w-full capitalize text-xs !justify-start"
                   value={_tradeType}
+                  aria-label={`Select ${_tradeType} trade type`}
                 >
                   {_tradeType}
                 </TabsTrigger>

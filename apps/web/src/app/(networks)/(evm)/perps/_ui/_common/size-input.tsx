@@ -50,7 +50,7 @@ export const SizeInput = ({
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <p className="text-[#4A5565]">Size</p>
+        <p className="text-[#8f9399]">Size</p>
         <div className="flex items-center gap-1 max-h-[35px]">
           <TextField
             type="number"

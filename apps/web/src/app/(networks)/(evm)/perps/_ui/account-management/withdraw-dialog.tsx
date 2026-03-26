@@ -145,7 +145,11 @@ export const WithdrawDialog = ({
             />
 
             <PerpsChecker.Legal size="default" variant="perps-default">
-              <Checker.Connect size="default" variant="perps-default">
+              <Checker.Connect
+                size="default"
+                variant="perps-default"
+                namespace="evm"
+              >
                 <Checker.Network
                   size="default"
                   chainId={chainId}

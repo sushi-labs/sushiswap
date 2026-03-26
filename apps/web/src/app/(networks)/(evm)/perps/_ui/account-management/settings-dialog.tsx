@@ -45,6 +45,7 @@ export const SettingsDialog = () => {
           icon={Cog6ToothIcon}
           name="settings"
           iconProps={{ className: 'w-4 h-4' }}
+          aria-label="Open Settings"
         />
       </DialogTrigger>
       <DialogContent variant="perps-default">

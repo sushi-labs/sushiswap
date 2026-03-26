@@ -27,7 +27,7 @@ export const SideToggle = <T extends string = DefaultSide>({
         onClick={() => setSide(left)}
         className={classNames(
           'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
-          side === right ? 'text-[#6A7282]' : '',
+          side === right ? 'text-muted-foreground' : '',
         )}
       >
         {baseSymbol}

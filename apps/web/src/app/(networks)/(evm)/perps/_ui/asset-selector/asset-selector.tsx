@@ -70,6 +70,7 @@ export const AssetSelector = () => {
               variant="perps-secondary"
               size="xs"
               className="!px-1 ml-2 lg:ml-1 !rounded-lg"
+              aria-label="Asset Selector Chevron"
             >
               <ChevronDownIcon width={20} height={20} />
             </Button>

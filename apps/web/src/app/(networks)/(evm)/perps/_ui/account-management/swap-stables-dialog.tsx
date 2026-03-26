@@ -298,7 +298,7 @@ export const SwapStablesDialog = ({
                 label=""
                 type="number"
                 placeholder="Amount"
-                inputClassName="!text-left !text-sm placeholder:text-[#4A5565] pr-10"
+                inputClassName="!text-left !text-sm placeholder:text-[#8f9399] pr-10"
                 maxDecimals={2}
                 className="!px-2 !py-0 !text-sm"
               />
@@ -346,7 +346,11 @@ export const SwapStablesDialog = ({
             />
             <div className="mt-2">
               <PerpsChecker.Legal size="default" variant="perps-default">
-                <Checker.Connect size="default" variant="perps-default">
+                <Checker.Connect
+                  size="default"
+                  variant="perps-default"
+                  namespace="evm"
+                >
                   <Checker.Network
                     chainId={EvmChainId.HYPEREVM}
                     size="default"

@@ -53,7 +53,7 @@ export const AccountSummary = () => {
             title={
               <HoverCard openDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
-                  <div className="text-[#6A7282] underline">Perps</div>
+                  <div className="text-muted-foreground underline">Perps</div>
                 </HoverCardTrigger>
                 <HoverCardContent
                   forceMount
@@ -87,7 +87,7 @@ export const AccountSummary = () => {
             title={
               <HoverCard openDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
-                  <div className="text-[#6A7282] underline">Balance</div>
+                  <div className="text-muted-foreground underline">Balance</div>
                 </HoverCardTrigger>
                 <HoverCardContent
                   forceMount
@@ -119,7 +119,7 @@ export const AccountSummary = () => {
             title={
               <HoverCard openDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
-                  <div className="text-[#6A7282] underline">
+                  <div className="text-muted-foreground underline">
                     Cross Margin Ratio
                   </div>
                 </HoverCardTrigger>
@@ -156,7 +156,7 @@ export const AccountSummary = () => {
             title={
               <HoverCard openDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
-                  <div className="text-[#6A7282] underline">
+                  <div className="text-muted-foreground underline">
                     Maintenance Margin
                   </div>
                 </HoverCardTrigger>
@@ -178,7 +178,7 @@ export const AccountSummary = () => {
             title={
               <HoverCard openDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
-                  <div className="text-[#6A7282] underline">
+                  <div className="text-muted-foreground underline">
                     Cross Account Leverage
                   </div>
                 </HoverCardTrigger>

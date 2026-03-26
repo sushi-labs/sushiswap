@@ -25,7 +25,7 @@ export const TpSlLimitInput = ({
         )}
       >
         <div className="flex items-center justify-between gap-2">
-          <p className="text-[#4A5565] whitespace-nowrap">TP Limit Price</p>
+          <p className="text-[#8f9399] whitespace-nowrap">TP Limit Price</p>
           <div className="flex items-center gap-1 max-h-[35px]">
             <TextField
               type="number"
@@ -47,7 +47,7 @@ export const TpSlLimitInput = ({
         )}
       >
         <div className="flex items-center justify-between gap-2">
-          <p className="text-[#4A5565] whitespace-nowrap">SL Limit Price</p>
+          <p className="text-[#8f9399] whitespace-nowrap">SL Limit Price</p>
           <div className="flex items-center gap-1 max-h-[35px]">
             <TextField
               type="number"

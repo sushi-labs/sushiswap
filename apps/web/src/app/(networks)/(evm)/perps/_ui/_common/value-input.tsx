@@ -45,7 +45,7 @@ export const ValueInput = ({
       )}
     >
       <div className="flex items-center justify-between gap-2 max-h-[35px]">
-        <p className="text-[#4A5565] whitespace-nowrap">{label}</p>
+        <p className="text-[#8f9399] whitespace-nowrap">{label}</p>
         <TextField
           type={type}
           variant="naked"

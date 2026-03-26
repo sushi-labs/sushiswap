@@ -48,7 +48,7 @@ export const LimitInput = ({
       <div className="flex items-center justify-between gap-2">
         <p
           className={classNames(
-            'text-[#4A5565] whitespace-nowrap',
+            'text-[#8f9399] whitespace-nowrap',
             size === 'sm' ? 'text-sm' : 'text-base',
           )}
         >

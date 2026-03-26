@@ -174,7 +174,7 @@ export const SendDialog = ({
               label=""
               placeholder="Destination Address"
               type="text"
-              inputClassName="!text-left !text-sm placeholder:text-[#4A5565]"
+              inputClassName="!text-left !text-sm placeholder:text-[#8f9399]"
               className="!px-2 !py-0 !text-sm"
             />
             <div className="flex items-center gap-2">
@@ -185,7 +185,7 @@ export const SendDialog = ({
                   label=""
                   type="number"
                   placeholder="Amount"
-                  inputClassName="!text-left !text-sm placeholder:text-[#4A5565] pr-10"
+                  inputClassName="!text-left !text-sm placeholder:text-[#8f9399] pr-10"
                   maxDecimals={assetToSend?.decimals ?? 2}
                   className="!px-2 !py-0 !text-sm"
                 />
@@ -230,7 +230,11 @@ export const SendDialog = ({
             </div>
             <div className="mt-2">
               <PerpsChecker.Legal size="default" variant="perps-default">
-                <Checker.Connect variant="perps-default" size="default">
+                <Checker.Connect
+                  variant="perps-default"
+                  size="default"
+                  namespace="evm"
+                >
                   <Checker.Custom
                     size="default"
                     showChildren={Boolean(assetToSend)}

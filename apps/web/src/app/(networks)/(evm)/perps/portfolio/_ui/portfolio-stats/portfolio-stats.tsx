@@ -218,7 +218,6 @@ export const PortfolioStats = () => {
       ) : (
         <div className="flex flex-col gap-2">
           <StatItem
-            isPortfolioStat={true}
             title="PNL"
             value={
               <span
@@ -233,37 +232,27 @@ export const PortfolioStats = () => {
             }
           />
           <StatItem
-            isPortfolioStat={true}
             title="Volume"
             value={currencyFormatter.format(Number(statData?.volume || 0))}
           />
+          <StatItem title="Max Drawdown" value={statData?.maxDrawdown} />
           <StatItem
-            isPortfolioStat={true}
-            title="Max Drawdown"
-            value={statData?.maxDrawdown}
-          />
-          <StatItem
-            isPortfolioStat={true}
             title="Total Equity"
             value={currencyFormatter.format(Number(statData?.totalEquity || 0))}
           />
           <StatItem
-            isPortfolioStat={true}
             title="Perps Account Equity"
             value={currencyFormatter.format(Number(perpsEquity || 0))}
           />
           <StatItem
-            isPortfolioStat={true}
             title="Spot Account Equity"
             value={currencyFormatter.format(Number(spotEquity || 0))}
           />
           <StatItem
-            isPortfolioStat={true}
             title="Vault Equity"
             value={currencyFormatter.format(Number(vaultEquity || 0))}
           />
           <StatItem
-            isPortfolioStat={true}
             title="Earn Balance"
             value={currencyFormatter.format(Number(earnBalance || 0))}
           />
