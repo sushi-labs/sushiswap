@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, LinkInternal } from '@sushiswap/ui'
+import { Button, LinkExternal, LinkInternal } from '@sushiswap/ui'
 import type { FC } from 'react'
 import { useAccount } from 'src/lib/wallet/hooks'
 import { useMyUnmigratedLegacyPositions } from '~stellar/_common/lib/hooks/position/use-my-legacy-position'
@@ -26,6 +26,17 @@ export const MigrateBanner: FC = () => {
       <p className="font-bold text-md text-yellow-950">
         Migrating allows you to collect any earned fees and continue with the
         same position and price range.
+      </p>
+      <p className="font-bold text-md text-yellow-950">
+        If you are unable to withdrawal your funds, please{' '}
+        <LinkExternal
+          href={'https://sushi.com/discord'}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          create a ticket
+        </LinkExternal>{' '}
+        and we'll assist you with retrieval.
       </p>
       <Button
         asChild
