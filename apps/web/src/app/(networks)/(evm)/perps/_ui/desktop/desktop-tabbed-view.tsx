@@ -30,13 +30,13 @@ export const DesktopTabbedView = ({
   setTab: (tab: DesktopTab) => void
 }) => {
   return (
-    <Card className="p-2 h-full !bg-[#0D1421] border border-[#1E2939]">
+    <Card className="p-0 h-full !bg-[#0D1421] border border-[#1E2939] overflow-hidden">
       <Tabs
         className="w-full h-full"
         value={tab}
         onValueChange={(value) => setTab(value as DesktopTab)}
       >
-        <TabsList className="!flex bg-transparent !rounded-[13px] !px-[1px]">
+        <TabsList className="!flex bg-transparent !rounded-[13px] !m-2 !mb-1">
           <TabsTrigger value="order-book" className="flex flex-1" asChild>
             <Button
               size="sm"
@@ -56,10 +56,10 @@ export const DesktopTabbedView = ({
             </Button>
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="order-book" className="!mt-[6px]">
+        <TabsContent value="order-book" className="!mt-0">
           <OrderBook />
         </TabsContent>
-        <TabsContent value="trades" className="!mt-1.5">
+        <TabsContent value="trades" className="!mt-1.5 px-2">
           <Trades />
         </TabsContent>
       </Tabs>

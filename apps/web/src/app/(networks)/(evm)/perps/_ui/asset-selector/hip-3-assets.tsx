@@ -133,6 +133,8 @@ export const HIP3Assets = () => {
           rowRenderer={rowRenderer}
           columns={COLUMNS}
           data={filtered}
+          thClassName="!h-8"
+          hideScrollbar={true}
         />
       </TabsContent>
     </Tabs>

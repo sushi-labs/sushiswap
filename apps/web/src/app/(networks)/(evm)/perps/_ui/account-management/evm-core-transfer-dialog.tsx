@@ -327,13 +327,15 @@ export const EvmCoreTransferDialog = ({
               </Button>
             </div>
             <div className="mt-2">
-              <PerpsChecker.Legal size="xl" variant="perps-default">
-                <Checker.Connect variant="perps-default">
+              <PerpsChecker.Legal size="default" variant="perps-default">
+                <Checker.Connect size="default" variant="perps-default">
                   <Checker.Network
                     chainId={EvmChainId.HYPEREVM}
+                    size="default"
                     variant="perps-default"
                   >
                     <Checker.Custom
+                      size="default"
                       showChildren={Boolean(assetToSend)}
                       buttonText={'Select Asset'}
                       onClick={() => {}}
@@ -341,6 +343,7 @@ export const EvmCoreTransferDialog = ({
                       variant="perps-default"
                     >
                       <Checker.Custom
+                        size="default"
                         showChildren={Number(amount) > 0}
                         buttonText={'Enter Amount'}
                         onClick={() => {}}
@@ -348,6 +351,7 @@ export const EvmCoreTransferDialog = ({
                         variant="perps-default"
                       >
                         <Checker.Custom
+                          size="default"
                           showChildren={!insufficientBalance}
                           buttonText={'Insufficient Balance'}
                           onClick={() => {}}
@@ -362,9 +366,10 @@ export const EvmCoreTransferDialog = ({
                             amount={amountToSend}
                             id="evm-core-transfer-approve"
                             variant="perps-default"
+                            size="default"
                           >
                             <Button
-                              size="xl"
+                              size="default"
                               className="w-full"
                               onClick={send}
                               loading={isPending}

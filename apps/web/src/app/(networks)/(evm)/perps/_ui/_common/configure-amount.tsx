@@ -67,6 +67,7 @@ export const ConfigureAmount = ({
           value={pending ? localValue : value.toString()}
           maxDecimals={maxDecimals}
           disabled={true}
+          wrapperClassName="max-h-[30px]"
         />
         <p className="text-[#99A1AF]">{coinSymbol}</p>
       </div>

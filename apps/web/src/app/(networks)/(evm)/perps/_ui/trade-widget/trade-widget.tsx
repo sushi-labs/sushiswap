@@ -17,9 +17,11 @@ export const TradeWidget = ({ className }: { className?: string }) => (
   >
     <div className="h-full flex flex-col justify-between gap-2">
       <div className="flex flex-col gap-2">
-        <Leverage />
-        <TradeTypeSelect />
-        <div className="flex flex-col gap-2 mt-1">
+        <div className="flex flex-col gap-1">
+          <Leverage />
+          <TradeTypeSelect />
+        </div>
+        <div className="flex flex-col gap-1.5 mt-0.5">
           <hr className="border-t border-accent" />
           <TradeSideSelect />
           <hr className="border-t border-accent" />

@@ -66,6 +66,7 @@ export const PercentageSlider = ({
           onValueChange={_onChange}
           value={pending ? localValue : value.toString()}
           maxDecimals={0}
+          wrapperClassName="max-h-[30px]"
         />
         <p className="text-[#99A1AF]">%</p>
       </div>

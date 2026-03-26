@@ -174,10 +174,15 @@ export const PerpSpotTransferDialog = ({
               chainId={chainId}
             />
 
-            <PerpsChecker.Legal size="xl" variant="perps-default">
-              <Checker.Connect variant="perps-default">
-                <Checker.Network chainId={chainId} variant="perps-default">
+            <PerpsChecker.Legal size="default" variant="perps-default">
+              <Checker.Connect size="default" variant="perps-default">
+                <Checker.Network
+                  size="default"
+                  chainId={chainId}
+                  variant="perps-default"
+                >
                   <Checker.Custom
+                    size="default"
                     showChildren={Boolean(amount)}
                     buttonText={'Enter Amount'}
                     onClick={() => {}}
@@ -185,6 +190,7 @@ export const PerpSpotTransferDialog = ({
                     variant="perps-default"
                   >
                     <Checker.Custom
+                      size="default"
                       showChildren={!insufficientBalance}
                       buttonText={'Insufficient Balance'}
                       onClick={() => {}}
@@ -192,7 +198,7 @@ export const PerpSpotTransferDialog = ({
                       variant="perps-default"
                     >
                       <Button
-                        size="xl"
+                        size="default"
                         className="w-full"
                         onClick={transferUsdc}
                         loading={isPending}

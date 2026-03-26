@@ -29,7 +29,11 @@ export const PerpsHeader: FC<HeaderProps> = ({
             'hidden lg:flex justify-between items-center px-1 h-14 flex-shrink-0 bg-[#0D1421] border-[#1E2939] border-b',
           )}
         >
-          <LinkInternal className="!px-2" href={'/swap'}>
+          <LinkInternal
+            className="!px-2"
+            href={'/swap'}
+            aria-label="Go To Swap Home Page"
+          >
             <SushiWithTextIcon width={90} />
           </LinkInternal>
         </div>

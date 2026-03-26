@@ -54,7 +54,7 @@ export const LimitInput = ({
         >
           Price (USDC)
         </p>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 max-h-[35px]">
           <TextField
             type="number"
             variant="naked"

@@ -149,12 +149,30 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
   const setActiveAsset = useCallback(
     (asset: string) => {
       _setActiveAsset(asset)
+      reset()
       if (!isTradePage) {
         push('/perps')
       }
     },
     [_setActiveAsset, push, isTradePage],
   )
+
+  const reset = useCallback(() => {
+    setTpPrice('')
+    setSlPrice('')
+    setPercentage(0)
+    setLimitPrice('')
+    setTriggerPrice('')
+    setHasTpSl(false)
+    setReduceOnly(false)
+    setTimeInForce('Gtc')
+    setSize({ base: '', quote: '' })
+    setScaleStartEnd({ start: '', end: '' })
+    setTotalOrders('2')
+    setSizeSkew('1')
+    setTwapRunningTime({ hours: '', minutes: '' })
+    setTwapRandomize(false)
+  }, [])
 
   const activeAsset = useMemo(() => {
     //validates active asset from local storage against asset list, default to BTC if not valid
@@ -302,19 +320,6 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     },
     [setReduceOnly, reduceOnly],
   )
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: reset if asset?.marketType changes
-  useEffect(() => {
-    setTpPrice('')
-    setSlPrice('')
-    setPercentage(0)
-    setLimitPrice('')
-    setTriggerPrice('')
-    setHasTpSl(false)
-    setReduceOnly(false)
-    setTimeInForce('Gtc')
-    setSize({ base: '', quote: '' })
-  }, [asset?.marketType])
 
   return (
     <AssetStateContext.Provider

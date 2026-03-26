@@ -39,7 +39,7 @@ export const Fees = () => {
 
   return (
     <Card className="p-2 !rounded-md gap-2 flex !bg-[#18223B] border-transparent justify-between flex-col w-full">
-      <div className="flex items-center justify-between gap-2 lg:text-base text-sm">
+      <div className="flex items-center justify-between gap-2 text-xs lg:text-sm">
         <div className="text-muted-foreground">Fees (Taker / Maker)</div>
         <DropdownMenu open={open} onOpenChange={setOpen}>
           <DropdownMenuTrigger className="capitalize flex items-center">

@@ -43,21 +43,23 @@ export const InlineEdit = ({
       }}
     >
       {editing ? (
-        <div className="border max-h-[25px] px-1 rounded-md border-[#FFFFFF1A] flex items-center justify-center">
-          <TextField
-            type="number"
-            ref={inputRef}
-            value={localValue}
-            onValueChange={setLocalValue}
-            onKeyDown={(e) => {
-              if (editing && e.key === 'Escape') {
-                setEditing(false)
-              }
-            }}
-            variant="naked"
-            className="!min-w-[50px] !text-xs font-medium "
-            disabled={isPending}
-          />
+        <div className="border px-1 rounded-md border-[#FFFFFF1A] overflow-hidden">
+          <div className="flex items-center gap-1 max-h-[20px]">
+            <TextField
+              type="number"
+              ref={inputRef}
+              value={localValue}
+              onValueChange={setLocalValue}
+              onKeyDown={(e) => {
+                if (editing && e.key === 'Escape') {
+                  setEditing(false)
+                }
+              }}
+              variant="naked"
+              className="!min-w-[50px] !text-xs font-medium"
+              disabled={isPending}
+            />
+          </div>
         </div>
       ) : (
         <span className="font-medium whitespace-nowrap">{value}</span>

@@ -25,6 +25,7 @@ export const CheckboxSetting = ({
         onCheckedChange={(checked) => {
           onChange(!checked)
         }}
+        aria-label={`${label} Checkbox`}
       />
       <div className="text-[#99A1AF]">{label}</div>
     </div>

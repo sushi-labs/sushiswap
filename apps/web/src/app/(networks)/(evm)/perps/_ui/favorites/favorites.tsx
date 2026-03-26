@@ -1,4 +1,3 @@
-import { StarIcon } from '@heroicons/react-v1/solid'
 import { useLocalStorage } from '@sushiswap/hooks'
 import { Button, Card, SkeletonBox, classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
@@ -36,7 +35,7 @@ export const Favorites = () => {
   }, [favorites, data, isLoading])
 
   return (
-    <Card className="px-4 py-2 gap-4 flex items-center !bg-[#0D1421] border border-[#1E2939]">
+    <Card className="px-4 py-1 gap-4 flex items-center !bg-[#0D1421] border border-[#1E2939]">
       <div className="flex items-center gap-1">
         <FavoriteIcon className="h-5 w-5" isSelected />
         <span className="text-xs font-medium">Favorites</span>
@@ -70,7 +69,8 @@ export const Favorites = () => {
       >
         {favorites.length && favorites.length !== enrichedFavorites.length ? (
           <FavoriteSkeletonRow />
-        ) : favorites.length === enrichedFavorites.length ? (
+        ) : favorites.length === enrichedFavorites.length &&
+          enrichedFavorites?.length > 0 ? (
           <div className="flex items-center gap-2 snap-start">
             {enrichedFavorites?.map((asset, idx) => {
               if (!asset) return null
@@ -109,9 +109,13 @@ export const Favorites = () => {
               )
             })}
           </div>
-        ) : null}
+        ) : (
+          <div className="flex text-xs gap-1 text-muted-foreground">
+            Click the <FavoriteIcon className="h-4 w-4" /> icon in the selector
+            to add assets here for quick access.
+          </div>
+        )}
       </OverflowX>
-      {/* </div> */}
     </Card>
   )
 }

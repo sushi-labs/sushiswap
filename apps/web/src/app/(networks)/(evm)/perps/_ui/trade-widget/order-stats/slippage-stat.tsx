@@ -134,17 +134,19 @@ const SlippageDialog = () => {
         </DialogHeader>
         <div className="flex flex-col gap-6 text-sm">
           <div className="flex flex-col gap-4 text-sm">
-            <div className="w-full border rounded-lg border-accent px-4 py-2 dark:bg-slate-700 bg-slate-50">
-              <TextField
-                type="number"
-                variant="naked"
-                onValueChange={onChange}
-                value={localSlippage}
-                maxDecimals={2}
-                placeholder="0.0"
-                className={classNames('!text-lg font-medium')}
-                unit="%"
-              />
+            <div className="w-full border rounded-lg px-2 py-0 !text-sm border-[#FFFFFF1A] bg-[#FFFFFF0D]">
+              <div className="flex items-center justify-between gap-2 max-h-[35px]">
+                <TextField
+                  type="number"
+                  variant="naked"
+                  onValueChange={onChange}
+                  value={localSlippage}
+                  maxDecimals={2}
+                  placeholder="0.0"
+                  className={classNames('font-medium')}
+                  unit="%"
+                />
+              </div>
             </div>
           </div>
 

@@ -28,7 +28,7 @@ export const ScaleStartEndInput = () => {
   )
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1">
       <ValueInput
         value={scaleStartEnd.start}
         onChange={handleScaleStartChange}

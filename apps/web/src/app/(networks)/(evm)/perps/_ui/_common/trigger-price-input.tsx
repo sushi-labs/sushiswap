@@ -32,7 +32,7 @@ export const TriggerPriceInput = ({
         className ?? '',
       )}
     >
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center justify-between gap-2 max-h-[35px]">
         <p className="text-[#4A5565] whitespace-nowrap">Trigger Price (USDC)</p>
         <TextField
           type="number"

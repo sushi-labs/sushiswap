@@ -73,7 +73,7 @@ export const PlaceOrderButton = ({ onMutate }: { onMutate?: () => void }) => {
       loading={tradeType === 'TWAP' ? isTwapPending : isPending}
       variant={tradeSide === 'long' ? 'perps-long' : 'perps-short'}
       onClick={handleExecuteOrders}
-      size="lg"
+      size="sm"
       data-glow={'true'}
     >
       {buttonText}

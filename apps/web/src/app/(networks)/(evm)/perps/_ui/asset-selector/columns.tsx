@@ -13,7 +13,7 @@ import { formatPercent } from 'sushi'
 import { FavoriteButton } from './favorite-button'
 
 const columnBodyMeta = {
-  className: '!p-0 !px-1 !h-[40px] !max-h-[40px] !text-xs',
+  className: '!py-0.5 !pr-1 !pl-2.5 !h-[25px] !max-h-[25px] !text-xs',
   skeleton: (
     <>
       <div className="w-[80px]">
@@ -29,7 +29,7 @@ export const SYMBOL_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
   cell: (props) => {
     const asset = useMemo(() => props.row.original, [props.row.original])
     return (
-      <div className="whitespace-nowrap flex flex-col lg:flex-row lg:items-center lg:gap-1 pb-1 lg:pb-0">
+      <div className="whitespace-nowrap flex items-center gap-1 pb-1 lg:pb-0">
         <div className="flex items-center gap-1">
           <FavoriteButton assetString={asset.name} />
           <span>{asset.symbol}</span>
@@ -43,7 +43,7 @@ export const SYMBOL_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
             {asset.maxLeverage ? `${asset.maxLeverage}x` : 'SPOT'}
           </Chip>
           {asset?.dex ? (
-            <Chip variant="perps-blue" className="!px-1 !font-medium">
+            <Chip variant="perps-blue" className="!px-1 !py-0 rounded-md ml-1">
               {asset.dex}
             </Chip>
           ) : null}

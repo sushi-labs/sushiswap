@@ -66,6 +66,8 @@ interface DataTableProps<TData, TValue> {
   rowRenderer?: (row: Row<TData>, value: ReactNode) => ReactNode
   showColumnHeaders?: boolean
   meta?: TableMeta<TData>
+  thClassName?: string
+  hideScrollbar?: boolean
 }
 
 export function DataTable<TData, TValue>({
@@ -83,6 +85,8 @@ export function DataTable<TData, TValue>({
   rowRenderer,
   showColumnHeaders = true,
   meta,
+  thClassName,
+  hideScrollbar,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -121,12 +125,17 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="space-y-4 border-t border-secondary black:border-white/[0.1]">
+    <div
+      className={classNames(
+        'space-y-4 border-t border-secondary black:border-white/[0.1]',
+      )}
+    >
       {toolbar ? toolbar(table) : null}
       <Table
         className={
           pagination ? 'border-b border-secondary black:border-white/[0.1]' : ''
         }
+        hideScrollbar={hideScrollbar}
       >
         {showColumnHeaders ? (
           <TableHeader>
@@ -139,6 +148,7 @@ export function DataTable<TData, TValue>({
                       key={header.id}
                       className={classNames(
                         header.column.getCanSort() ? 'px-2' : 'px-4',
+                        thClassName ?? '',
                       )}
                     >
                       {header.isPlaceholder ? null : (

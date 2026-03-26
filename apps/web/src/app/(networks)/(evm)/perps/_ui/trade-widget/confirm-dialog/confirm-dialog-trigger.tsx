@@ -14,30 +14,30 @@ export const ConfirmDialogTrigger = () => {
   } = useUserSettingsState()
 
   return (
-    <Checker.Connect size="lg" namespace="evm" variant="perps-default">
-      <PerpsChecker.Legal size="lg" variant="perps-default">
-        <PerpsChecker.Deposit size="lg" variant="perps-default">
-          <PerpsChecker.EnableTrading size="lg" variant="perps-default">
-            <PerpsChecker.BuilderFee size="lg" variant="perps-default">
-              <PerpsChecker.Referral size="lg" variant="perps-default">
+    <Checker.Connect size="sm" namespace="evm" variant="perps-default">
+      <PerpsChecker.Legal size="sm" variant="perps-default">
+        <PerpsChecker.Deposit size="sm" variant="perps-default">
+          <PerpsChecker.EnableTrading size="sm" variant="perps-default">
+            <PerpsChecker.BuilderFee size="sm" variant="perps-default">
+              <PerpsChecker.Referral size="sm" variant="perps-default">
                 <PerpsChecker.TwapRunningTime
-                  size="lg"
+                  size="sm"
                   variant={tradeSide === 'long' ? 'perps-long' : 'perps-short'}
                 >
                   <PerpsChecker.OrderAmount
-                    size="lg"
+                    size="sm"
                     variant={
                       tradeSide === 'long' ? 'perps-long' : 'perps-short'
                     }
                   >
                     <PerpsChecker.TakeStopTrigger
-                      size="lg"
+                      size="sm"
                       variant={
                         tradeSide === 'long' ? 'perps-long' : 'perps-short'
                       }
                     >
                       <PerpsChecker.TwapSuborder
-                        size="lg"
+                        size="sm"
                         variant={
                           tradeSide === 'long' ? 'perps-long' : 'perps-short'
                         }
@@ -48,7 +48,7 @@ export const ConfirmDialogTrigger = () => {
                           <DialogTrigger asChild>
                             <Button
                               fullWidth
-                              size="lg"
+                              size="sm"
                               variant={
                                 tradeSide === 'long'
                                   ? 'perps-long'

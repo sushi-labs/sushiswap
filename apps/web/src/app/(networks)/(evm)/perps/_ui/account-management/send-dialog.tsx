@@ -229,9 +229,10 @@ export const SendDialog = ({
               </Select>
             </div>
             <div className="mt-2">
-              <PerpsChecker.Legal size="xl" variant="perps-default">
-                <Checker.Connect variant="perps-default">
+              <PerpsChecker.Legal size="default" variant="perps-default">
+                <Checker.Connect variant="perps-default" size="default">
                   <Checker.Custom
+                    size="default"
                     showChildren={Boolean(assetToSend)}
                     buttonText={'Select Asset'}
                     onClick={() => {}}
@@ -239,6 +240,7 @@ export const SendDialog = ({
                     variant="perps-default"
                   >
                     <Checker.Custom
+                      size="default"
                       showChildren={isEvmAddress(dstAddress)}
                       buttonText={'Enter Address'}
                       onClick={() => {}}
@@ -246,6 +248,7 @@ export const SendDialog = ({
                       variant="perps-default"
                     >
                       <Checker.Custom
+                        size="default"
                         showChildren={Number(amount) > 0}
                         buttonText={'Enter Amount'}
                         onClick={() => {}}
@@ -253,6 +256,7 @@ export const SendDialog = ({
                         variant="perps-default"
                       >
                         <Checker.Custom
+                          size="default"
                           showChildren={!insufficientBalance}
                           buttonText={'Insufficient Balance'}
                           onClick={() => {}}
@@ -260,7 +264,7 @@ export const SendDialog = ({
                           variant="perps-default"
                         >
                           <Button
-                            size="xl"
+                            size="default"
                             className="w-full"
                             onClick={sendTokens}
                             loading={isPending}

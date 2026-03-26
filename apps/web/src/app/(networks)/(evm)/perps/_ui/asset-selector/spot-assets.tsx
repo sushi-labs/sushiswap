@@ -134,6 +134,8 @@ export const SpotAssets = () => {
           rowRenderer={rowRenderer}
           columns={COLUMNS}
           data={filtered}
+          thClassName="!h-8"
+          hideScrollbar={true}
         />
       </TabsContent>
     </Tabs>

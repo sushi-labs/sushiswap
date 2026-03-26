@@ -83,7 +83,7 @@ export const COIN_COLUMN: ColumnDef<UserOpenOrdersItemType, unknown> = {
         {perpsDex ? (
           <Chip
             variant={side === 'A' ? 'perps-red' : 'perps-green'}
-            className="!px-1 ml-1"
+            className="!px-1 !py-0 rounded-md md:ml-1"
           >
             {perpsDex}
           </Chip>

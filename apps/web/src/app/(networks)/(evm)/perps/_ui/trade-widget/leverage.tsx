@@ -17,7 +17,7 @@ export const Leverage = () => {
 
   if (isLoading || isError) {
     return (
-      <div className="flex items-center gap-2 w-full">
+      <div className="flex items-center gap-1.5 w-full">
         <Button size="sm" variant="perps-default" fullWidth disabled>
           Cross
         </Button>
@@ -29,7 +29,7 @@ export const Leverage = () => {
   }
 
   return (
-    <div className="flex items-center gap-2 w-full">
+    <div className="flex items-center gap-1.5 w-full">
       <UpdateMarginModeDialog
         trigger={
           <Button

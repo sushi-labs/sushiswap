@@ -231,7 +231,7 @@ export const TpSlInput = ({
             >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[#4A5565] whitespace-nowrap">TP Price</p>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 max-h-[35px]">
                   <TextField
                     type="number"
                     variant="naked"
@@ -253,7 +253,7 @@ export const TpSlInput = ({
             >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[#4A5565]">Gain</p>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 max-h-[35px]">
                   <TextField
                     type="number"
                     variant="naked"
@@ -289,7 +289,7 @@ export const TpSlInput = ({
             >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[#4A5565] whitespace-nowrap">SL Price</p>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 max-h-[35px]">
                   <TextField
                     type="number"
                     variant="naked"
@@ -311,7 +311,7 @@ export const TpSlInput = ({
             >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[#4A5565]">Loss</p>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 max-h-[35px]">
                   <TextField
                     type="number"
                     variant="naked"

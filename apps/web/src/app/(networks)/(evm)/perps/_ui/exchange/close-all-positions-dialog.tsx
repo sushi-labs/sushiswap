@@ -129,11 +129,12 @@ export const CloseAllPositionsDialog = ({
               label="Limit Close at Mid Price"
             />
           </div>
-          <PerpsChecker.Legal variant="perps-default">
-            <PerpsChecker.EnableTrading variant="perps-default">
-              <PerpsChecker.BuilderFee variant="perps-default">
-                <PerpsChecker.Referral variant="perps-default">
+          <PerpsChecker.Legal size="default" variant="perps-default">
+            <PerpsChecker.EnableTrading size="default" variant="perps-default">
+              <PerpsChecker.BuilderFee size="default" variant="perps-default">
+                <PerpsChecker.Referral size="default" variant="perps-default">
                   <Button
+                    size="default"
                     variant="perps-default"
                     onClick={() =>
                       executeOrders(

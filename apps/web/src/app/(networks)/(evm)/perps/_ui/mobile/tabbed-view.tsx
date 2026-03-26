@@ -5,9 +5,9 @@ import { Trades } from '../trades'
 
 export const TabbedView = () => {
   return (
-    <Card className="p-2 h-[463px] min-h-[350px] !bg-[#0D1421] border border-[#1E2939]">
+    <Card className="p-0 h-[450px] min-h-[350px] !bg-[#0D1421] border border-[#1E2939] overflow-hidden">
       <Tabs className="w-full" defaultValue={'chart'}>
-        <TabsList className="!flex !px-0 !h-8">
+        <TabsList className="!flex !px-0 !h-8 !m-2 !mb-1">
           <TabsTrigger value="chart" className="flex flex-1 !px-1.5 !text-xs">
             Chart
           </TabsTrigger>
@@ -21,10 +21,10 @@ export const TabbedView = () => {
             Trades
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="chart" className="h-[370px]">
+        <TabsContent value="chart" className="h-[375px]">
           <Chart />
         </TabsContent>
-        <TabsContent value="order-book">
+        <TabsContent value="order-book" className="!mt-0">
           <OrderBook />
         </TabsContent>
         <TabsContent value="trades">

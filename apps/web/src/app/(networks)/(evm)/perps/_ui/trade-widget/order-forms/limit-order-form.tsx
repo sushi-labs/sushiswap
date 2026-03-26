@@ -27,7 +27,7 @@ export const LimitOrderForm = () => {
   const [type, setType] = useState<TpSlGainLossType>('percent')
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1">
         <LimitInput
           value={limitPrice}
           onChange={setLimitPrice}

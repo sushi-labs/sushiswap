@@ -20,8 +20,8 @@ export const PerpsPage = () => {
   if (!isMounted) return <Splash />
 
   return (
-    <div className="bg-[#0D1421]">
+    <main className="bg-[#0D1421]">
       {isLg ? <DesktopLayout /> : <MobileLayout />}
-    </div>
+    </main>
   )
 }

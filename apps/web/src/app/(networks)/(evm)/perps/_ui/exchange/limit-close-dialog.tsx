@@ -316,11 +316,12 @@ export const LimitCloseDialog = ({
               </div>
             ) : null}
             {/* connect checker not needed, wont be able to get here unless connected anyway */}
-            <PerpsChecker.Legal>
-              <PerpsChecker.EnableTrading>
-                <PerpsChecker.BuilderFee>
-                  <PerpsChecker.Referral>
+            <PerpsChecker.Legal size="default">
+              <PerpsChecker.EnableTrading size="default">
+                <PerpsChecker.BuilderFee size="default">
+                  <PerpsChecker.Referral size="default">
                     <Button
+                      size="default"
                       variant="perps-default"
                       onClick={() => {
                         if (!orderData) return

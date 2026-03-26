@@ -115,7 +115,7 @@ export const DepositDialog = ({
         {trigger ? (
           trigger
         ) : (
-          <Button variant="perps-default" className="w-full">
+          <Button size="sm" variant="perps-default" className="w-full">
             Deposit
           </Button>
         )}
@@ -136,17 +136,22 @@ export const DepositDialog = ({
               type="INPUT"
             />
 
-            <PerpsChecker.Legal size="xl" variant="perps-default">
-              <Checker.Connect variant="perps-default">
-                <Checker.Network chainId={chainId} variant="perps-default">
+            <PerpsChecker.Legal size="default" variant="perps-default">
+              <Checker.Connect size="default" variant="perps-default">
+                <Checker.Network
+                  size="default"
+                  chainId={chainId}
+                  variant="perps-default"
+                >
                   <Checker.Amounts
+                    size="default"
                     chainId={chainId}
                     amount={_amount}
                     variant="perps-default"
                   >
                     <Button
                       variant="perps-default"
-                      size="xl"
+                      size="default"
                       disabled={
                         Number(amount) < MIN_DEPOSIT_AMOUNT || !sim?.result
                       }

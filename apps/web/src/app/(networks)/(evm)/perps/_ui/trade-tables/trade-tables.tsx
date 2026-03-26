@@ -156,7 +156,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
               className={classNames(
                 'p-2 !pt-0',
                 tab.value !== 'twap'
-                  ? 'max-h-[380px] hide-scrollbar overflow-y-auto'
+                  ? 'min-h-[250px] max-h-[380px] hide-scrollbar overflow-y-auto'
                   : '',
               )}
             >

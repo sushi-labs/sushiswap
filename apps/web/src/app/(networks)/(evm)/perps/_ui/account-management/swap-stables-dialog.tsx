@@ -345,13 +345,15 @@ export const SwapStablesDialog = ({
               value={`${perpsNumberFormatter({ value: estimatedFee, minFraxDigits: 2, maxFraxDigits: 2 })} ${assetToBuy?.symbol || ''}`}
             />
             <div className="mt-2">
-              <PerpsChecker.Legal size="xl" variant="perps-default">
-                <Checker.Connect variant="perps-default">
+              <PerpsChecker.Legal size="default" variant="perps-default">
+                <Checker.Connect size="default" variant="perps-default">
                   <Checker.Network
                     chainId={EvmChainId.HYPEREVM}
+                    size="default"
                     variant="perps-default"
                   >
                     <Checker.Custom
+                      size="default"
                       showChildren={Boolean(assetToSend)}
                       buttonText={'Select Asset'}
                       onClick={() => {}}
@@ -359,6 +361,7 @@ export const SwapStablesDialog = ({
                       variant="perps-default"
                     >
                       <Checker.Custom
+                        size="default"
                         showChildren={Number(amount) > 0}
                         buttonText={'Enter Amount'}
                         onClick={() => {}}
@@ -366,6 +369,7 @@ export const SwapStablesDialog = ({
                         variant="perps-default"
                       >
                         <Checker.Custom
+                          size="default"
                           showChildren={Number(amount) > 10}
                           buttonText={'Value Must Be Greater Than 10'}
                           onClick={() => {}}
@@ -373,6 +377,7 @@ export const SwapStablesDialog = ({
                           variant="perps-default"
                         >
                           <Checker.Custom
+                            size="default"
                             showChildren={!insufficientBalance}
                             buttonText={'Insufficient Balance'}
                             onClick={() => {}}
@@ -380,7 +385,7 @@ export const SwapStablesDialog = ({
                             variant="perps-default"
                           >
                             <Button
-                              size="xl"
+                              size="default"
                               className="w-full"
                               onClick={swapStables}
                               loading={isPending}

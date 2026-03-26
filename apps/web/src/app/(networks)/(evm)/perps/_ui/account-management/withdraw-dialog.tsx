@@ -144,10 +144,15 @@ export const WithdrawDialog = ({
               chainId={chainId}
             />
 
-            <PerpsChecker.Legal size="xl" variant="perps-default">
-              <Checker.Connect variant="perps-default">
-                <Checker.Network chainId={chainId} variant="perps-default">
+            <PerpsChecker.Legal size="default" variant="perps-default">
+              <Checker.Connect size="default" variant="perps-default">
+                <Checker.Network
+                  size="default"
+                  chainId={chainId}
+                  variant="perps-default"
+                >
                   <Checker.Custom
+                    size="default"
                     showChildren={Boolean(amount)}
                     buttonText={'Enter Amount'}
                     onClick={() => {}}
@@ -155,6 +160,7 @@ export const WithdrawDialog = ({
                     variant="perps-default"
                   >
                     <Checker.Custom
+                      size="default"
                       showChildren={!insufficientBalance}
                       buttonText={'Insufficient Balance'}
                       onClick={() => {}}
@@ -162,6 +168,7 @@ export const WithdrawDialog = ({
                       variant="perps-default"
                     >
                       <Checker.Custom
+                        size="default"
                         showChildren={Number(amount) >= MIN_WITHDRAW_AMOUNT}
                         buttonText={`Minimum Withdraw ${MIN_WITHDRAW_AMOUNT} USDC`}
                         onClick={() => {}}
@@ -169,7 +176,7 @@ export const WithdrawDialog = ({
                         variant="perps-default"
                       >
                         <Button
-                          size="xl"
+                          size="default"
                           className="w-full"
                           onClick={withdrawUsdc}
                           loading={isPending}

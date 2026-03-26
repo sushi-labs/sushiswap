@@ -17,7 +17,7 @@ export const Trades = () => {
   const { data: assetName } = useAssetName({ assetString: activeAsset })
 
   return (
-    <div className="max-h-[400px] lg:max-h-[672px] relative overflow-y-auto hide-scrollbar">
+    <div className="max-h-[400px] px-2 lg:px-0 lg:max-h-[672px] relative overflow-y-auto hide-scrollbar">
       <table className="w-full">
         <thead className="sticky top-0 dark:bg-[#0D1421] text-muted-foreground">
           <tr>

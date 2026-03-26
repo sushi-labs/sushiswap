@@ -45,7 +45,10 @@ export const COIN_COLUMN: ColumnDef<BalanceItemType, unknown> = {
         <div className="font-medium lg:whitespace-nowrap">
           {coin}{' '}
           {perpsDex ? (
-            <Chip variant="perps-green" className="!px-1 ml-1">
+            <Chip
+              variant="perps-green"
+              className="!px-1 !py-0 rounded-md md:ml-1"
+            >
               {perpsDex}
             </Chip>
           ) : null}
@@ -64,7 +67,10 @@ export const COIN_COLUMN: ColumnDef<BalanceItemType, unknown> = {
       >
         {coin}
         {perpsDex ? (
-          <Chip variant="perps-green" className="!px-1 ml-1">
+          <Chip
+            variant="perps-green"
+            className="!px-1 !py-0 rounded-md md:ml-1"
+          >
             {perpsDex}
           </Chip>
         ) : null}

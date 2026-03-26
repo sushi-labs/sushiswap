@@ -77,7 +77,7 @@ export const TransferInput = ({
         </div>
         <div
           data-state={isLoading ? 'inactive' : 'active'}
-          className="data-[state=inactive]:hidden data-[state=active]:flex flex-1 items-center"
+          className="data-[state=inactive]:hidden data-[state=active]:flex flex-1 items-center "
         >
           <TextField
             type="number"

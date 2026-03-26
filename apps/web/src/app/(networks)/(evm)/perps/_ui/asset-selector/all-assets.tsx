@@ -100,6 +100,8 @@ export const AllAssets = ({
       rowRenderer={rowRenderer}
       columns={COLUMNS}
       data={filtered}
+      thClassName="!h-8"
+      hideScrollbar={true}
     />
   )
 }

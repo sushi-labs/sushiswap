@@ -47,7 +47,7 @@ export const TradeTypeSelect = () => {
       value={tradeType}
       onValueChange={(value) => setTradeType(value as TradeType)}
     >
-      <TabsList className="grid grid-cols-3 !h-9 !p-0.5 border-none bg-transparent gap-2">
+      <TabsList className="grid grid-cols-3 !h-9 !p-0.5 border-none bg-transparent gap-1.5">
         {REGULAR_TRADE_TYPES.map((_tradeType) => (
           <TabsTrigger
             key={_tradeType}

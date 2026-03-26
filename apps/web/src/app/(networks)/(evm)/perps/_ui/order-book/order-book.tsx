@@ -62,7 +62,7 @@ export const OrderBook = ({ className }: { className?: string }) => {
   } = useUserSettingsState()
   const isLoading = isLoadingOrderBook || isLoadingAssetList
   const { isLg } = useBreakpoint('lg')
-  const itemCount = isLg ? 12 : 7
+  const itemCount = isLg ? 11 : 7
 
   const [side, setSide] = useState<'base' | 'quote'>('quote')
   const asset = useMemo(
@@ -98,7 +98,7 @@ export const OrderBook = ({ className }: { className?: string }) => {
 
   return (
     <div className={classNames('flex flex-col', className ?? '')}>
-      <div className="flex justify-end">
+      <div className="flex justify-end px-2">
         {error ? null : isLoading ? (
           <SkeletonBox className="w-20 h-6 rounded-sm" />
         ) : (
@@ -117,12 +117,14 @@ export const OrderBook = ({ className }: { className?: string }) => {
             <SkeletonOrderBookRow />
           ) : error ? null : (
             <tr>
-              <th className="text-left font-normal p-0.5 text-xs">Price</th>
+              <th className="text-left font-normal pl-2 p-0.5 text-xs">
+                Price
+              </th>
               <th className="font-normal p-0.5 text-xs text-right">
                 Size{' '}
                 {asset ? `(${side === 'base' ? baseSymbol : quoteSymbol})` : ''}
               </th>
-              <th className="font-normal p-0.5 text-xs text-right">
+              <th className="font-normal p-0.5 pr-2 text-xs text-right">
                 Total{' '}
                 {asset ? `(${side === 'base' ? baseSymbol : quoteSymbol})` : ''}
               </th>
@@ -151,7 +153,7 @@ export const OrderBook = ({ className }: { className?: string }) => {
                   <tr
                     key={index}
                     className={classNames(
-                      'font-medium relative lg:border-y-[1px] border-y-[.5px] border-transparent',
+                      'font-medium relative lg:border-y-[1px]  border-y-[.5px] border-transparent',
                       orderBookAnimationDisabled
                         ? ''
                         : 'transition-[background-size] duration-150',
@@ -160,7 +162,7 @@ export const OrderBook = ({ className }: { className?: string }) => {
                   >
                     <td
                       className={classNames(
-                        'px-0.5 py-1 text-xs text-left',
+                        'px-0.5 py-1 text-xs text-left pl-2',
                         getTextColorClass(-1),
                       )}
                     >
@@ -176,7 +178,7 @@ export const OrderBook = ({ className }: { className?: string }) => {
                         maxFraxDigits: 8,
                       })}
                     </td>
-                    <td className="px-0.5 py-1 text-xs text-right">
+                    <td className="px-0.5 py-1 text-xs text-right pr-2">
                       {perpsNumberFormatter({
                         value:
                           side === 'base' ? order.totalBase : order.totalQuote,
@@ -213,7 +215,7 @@ export const OrderBook = ({ className }: { className?: string }) => {
                   >
                     <td
                       className={classNames(
-                        'px-0.5 py-1 text-xs text-left',
+                        'px-0.5 py-1 text-xs text-left pl-2',
                         getTextColorClass(1),
                       )}
                     >
@@ -229,7 +231,7 @@ export const OrderBook = ({ className }: { className?: string }) => {
                         maxFraxDigits: 8,
                       })}
                     </td>
-                    <td className="px-0.5 py-1 text-xs text-right">
+                    <td className="px-0.5 py-1 text-xs text-right pr-2">
                       {perpsNumberFormatter({
                         value:
                           side === 'base' ? order.totalBase : order.totalQuote,

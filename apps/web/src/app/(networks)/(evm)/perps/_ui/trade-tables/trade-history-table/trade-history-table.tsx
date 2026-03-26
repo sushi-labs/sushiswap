@@ -89,6 +89,8 @@ export const TradeHistoryTable = () => {
       columns={COLUMNS}
       data={tableData}
       onSortingChange={setSorting}
+      thClassName="!h-8"
+      hideScrollbar={true}
     />
   ) : (
     <MobileTable

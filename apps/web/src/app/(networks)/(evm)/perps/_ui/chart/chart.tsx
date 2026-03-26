@@ -448,7 +448,7 @@ export const Chart = () => {
   ])
 
   return (
-    <Card className="flex flex-col lg:h-[600px] flex-grow p-0 border-0 lg:border lg:p-2 !bg-[#0D1421]">
+    <Card className="flex flex-col lg:h-[550px] flex-grow p-0 border-0 lg:border lg:p-2 !bg-[#0D1421]">
       <div className="flex-grow">
         <div
           ref={chartContainerRef}
@@ -469,7 +469,7 @@ export const Chart = () => {
         ) : (
           <div
             className={classNames(
-              'h-[385px] lg:h-full rounded-xl text-muted-foreground items-center justify-center italic text-sm',
+              'h-[335px] lg:h-full rounded-xl text-muted-foreground items-center justify-center italic text-sm',
               hasNoData ? 'flex' : 'hidden',
             )}
           >

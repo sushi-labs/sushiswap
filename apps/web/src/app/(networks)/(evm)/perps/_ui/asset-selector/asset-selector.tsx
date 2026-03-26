@@ -3,12 +3,6 @@ import { ChevronDownIcon } from '@heroicons/react-v1/outline'
 import {
   Button,
   Chip,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
@@ -39,8 +33,9 @@ export const AssetSelector = () => {
           <TriggerSkeleton />
         ) : (
           <Button
+            aria-label="Asset Selector"
             variant="ghost"
-            className="whitespace-nowrap hover:!bg-transparent !px-2 lg:!px-3 lg:!rounded-full items-center !h-fit !gap-1"
+            className="whitespace-nowrap hover:!bg-transparent !px-0 lg:!rounded-full items-center !h-fit !gap-1"
             asChild
           >
             <span className="block lg:hidden">
@@ -53,12 +48,19 @@ export const AssetSelector = () => {
                 </span>
                 <span className="text-lg font-medium">{asset?.symbol}</span>
               </div>
-              <div className="flex items-center gap-1">
-                <Chip variant="perps-blue" className="!px-1" data-glow="true">
+              <div className="flex items-center gap-1 ">
+                <Chip
+                  variant="perps-blue"
+                  className="!px-1 !py-0 rounded-md ml-1"
+                  data-glow="true"
+                >
                   {asset?.maxLeverage ? `${asset.maxLeverage}x` : 'Spot'}
                 </Chip>
                 {asset?.dex ? (
-                  <Chip variant="perps-blue" className="!px-1">
+                  <Chip
+                    variant="perps-blue"
+                    className="!px-1 !py-0 rounded-md ml-1"
+                  >
                     {asset.dex}
                   </Chip>
                 ) : null}
