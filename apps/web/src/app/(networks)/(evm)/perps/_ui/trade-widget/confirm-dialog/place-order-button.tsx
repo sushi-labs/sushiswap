@@ -33,7 +33,7 @@ export const PlaceOrderButton = ({ onMutate }: { onMutate?: () => void }) => {
     if (tradeType === 'TWAP') {
       if (!twapOrderData) return
       try {
-        console.log('Executing orders with data:', twapOrderData)
+        // console.log('Executing orders with data:', twapOrderData)
         await executeTwapOrderAsync(twapOrderData)
         onMutate?.()
       } catch (error) {
@@ -42,7 +42,7 @@ export const PlaceOrderButton = ({ onMutate }: { onMutate?: () => void }) => {
     } else {
       if (!orderData || orderData.orders.length === 0) return
       try {
-        console.log('Executing orders with data:', orderData)
+        // console.log('Executing orders with data:', orderData)
         await executeOrdersAsync({ orderData })
         onMutate?.()
       } catch (error) {
@@ -396,7 +396,7 @@ const _useMarketPrice = () => {
   return useMemo(() => {
     if (!midPrice || !asset) return undefined
     const _midPrice = parseUnits(midPrice ?? '0', asset?.formatParseDecimals)
-
+    console.log(asset, midPrice, _midPrice)
     const slippage =
       tradeSide === 'long'
         ? Number(marketOrderSlippage) + 10_000

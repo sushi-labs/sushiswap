@@ -77,7 +77,8 @@ const formatSpotCtxs = (
       name: assetId,
       marketType: 'spot' as const,
       decimals: tokens?.[0]?.szDecimals,
-      formatParseDecimals: tokens?.[0]?.szDecimals || 6,
+      formatParseDecimals:
+        tokens?.[0]?.szDecimals < 6 ? 6 : tokens?.[0]?.szDecimals,
       dex: '',
       tokens,
       lastPrice: last.toString(),
@@ -148,7 +149,7 @@ export const formatPerpCtxs = (
         untouchedSymbol: symbol,
         name: u.name,
         decimals: u.szDecimals,
-        formatParseDecimals: u.szDecimals || 8,
+        formatParseDecimals: u.szDecimals < 8 ? 8 : u.szDecimals,
         marketType: 'perp' as const,
         dex: dexName,
         tokens: collateralToken ? [collateralToken] : undefined,
