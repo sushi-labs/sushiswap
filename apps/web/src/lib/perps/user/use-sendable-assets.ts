@@ -9,6 +9,13 @@ import { getEvmDestinationAddress } from '../utils'
 
 const STABLE_OPTIONS = ['USDC', 'USDT0', 'USDH', 'USDE']
 
+const STABLES = [
+  { coin: 'USDC', token: 0, total: '0.0', hold: '0.0', entryNtl: '0.0' },
+  { coin: 'USDT0', token: 268, total: '0.0', hold: '0.0', entryNtl: '0.0' },
+  { coin: 'USDH', token: 360, total: '0.0', hold: '0.0', entryNtl: '0.0' },
+  { coin: 'USDE', token: 235, total: '0.0', hold: '0.0', entryNtl: '0.0' },
+] //usdc, usdt, usdh, usde
+
 export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
   const address = useAccount('evm')
   const {
@@ -35,7 +42,6 @@ export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
 
   const isLoading = isAssetListLoading || isWebData2Loading
   const isError = isAssetListError || isWebData2Error
-  console.log(webData2Data)
   const sendableAssets = useMemo(() => {
     const assets = []
     const usdcPerp = {
@@ -55,8 +61,16 @@ export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
     if (!isUnifiedAccountModeEnabled) {
       assets.push(usdcPerp)
     }
-    for (const spotBalance of webData2Data?.spotState?.balances || []) {
-      // if (spotBalance.total === '0.0') continue
+    const balanceArr = webData2Data?.spotState?.balances || []
+    const missingStables = STABLES.filter(
+      (stable) =>
+        !balanceArr.find((b) => b.coin === stable.coin) &&
+        STABLE_OPTIONS.includes(stable.coin),
+    )
+    if (missingStables.length > 0) {
+      balanceArr.push(...missingStables)
+    }
+    for (const spotBalance of balanceArr) {
       const tokenIndex = spotBalance.token
       const spotAsset = assetList
         ?.entries()
@@ -99,6 +113,7 @@ export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
         spender: spotToken?.evmContract?.address,
       })
     }
+
     if (filter) {
       if (filter === 'stable') {
         return assets?.filter(

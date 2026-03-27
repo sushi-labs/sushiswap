@@ -80,7 +80,7 @@ export const AvailableToTrade = () => {
       <StatItem
         title="Available to Trade"
         value={
-          asset?.dex !== '' ? (
+          asset?.dex !== '' && quoteSymbol !== 'USDC' ? (
             <TableButton onClick={() => setOpen(true)}>
               {buttonText}
             </TableButton>

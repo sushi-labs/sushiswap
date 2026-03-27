@@ -1,9 +1,11 @@
 'use client'
+import { usePathname } from 'next/navigation'
 import {
   type FC,
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react'
@@ -158,6 +160,17 @@ const TradeTablesProvider: FC<TradeTablesProviderProps> = ({ children }) => {
   const [shouldAggregateTradeHistory, setShouldAggregateTradeHistory] =
     useState<boolean>(false)
   const [expandAll, setExpandAll] = useState(false)
+  const pathname = usePathname()
+  const isTradePage = pathname === '/perps'
+
+  useEffect(() => {
+    if (
+      isTradePage &&
+      (activeTab === 'deposits-withdrawals' || activeTab === 'interest')
+    ) {
+      setActiveTab(TRADE_TABLES_TABS[0].value)
+    }
+  }, [isTradePage, activeTab])
 
   const handleSetTradeFilter = useCallback(
     (filter: Partial<Record<TradeTablesTabValue, TradeFilterValueString>>) => {
