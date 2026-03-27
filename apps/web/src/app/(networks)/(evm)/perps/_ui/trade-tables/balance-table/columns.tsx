@@ -255,11 +255,12 @@ export const TRANSFER_COLUMN = (
     const balance = props.row.original
     const marketType = balance.marketType
     const isSpotUSDC = balance.coin === 'USDC (Spot)' && marketType === 'spot'
-    const isPerpUsdc = balance.coin === 'USDC (Perps)' && marketType === 'perp'
+    const isPerpStable =
+      balance.coin?.includes('(Perps)') && marketType === 'perp'
 
     return (
       <div className="flex items-center gap-4 lg:whitespace-nowrap">
-        {isSpotUSDC || isPerpUsdc ? (
+        {isSpotUSDC || isPerpStable ? (
           <TableButton onClick={() => openModal('transfer', balance)}>
             Transfer to {isSpotUSDC ? 'Perps' : 'Spot'}
           </TableButton>

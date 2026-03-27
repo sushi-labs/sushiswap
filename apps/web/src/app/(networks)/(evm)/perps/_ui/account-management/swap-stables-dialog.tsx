@@ -42,14 +42,26 @@ import { formatUnits, parseUnits } from 'viem'
 import { StatItem, ValueInput } from '../_common'
 import { PerpsChecker } from '../perps-checker'
 
+const STABLE_PAIRS: Record<string, string[]> = {
+  USDC: ['USDT0', 'USDH', 'USDE'],
+  USDT0: ['USDC'],
+  USDH: ['USDC'],
+  USDE: ['USDC'],
+}
+
 export const SwapStablesDialog = ({
   trigger,
   isOpen,
   onOpenChange,
+  nonSelectableSwapData,
 }: {
   trigger?: ReactNode
   isOpen?: boolean
   onOpenChange?: (open: boolean) => void
+  nonSelectableSwapData?: {
+    assetSymbolToSend: string
+    assetSymbolToBuy: string
+  }
 }) => {
   const [open, setOpen] = useState<boolean>(false)
   const [amount, setAmount] = useState<string>('')
@@ -65,21 +77,30 @@ export const SwapStablesDialog = ({
   const isControlled = isOpen !== undefined
   const resolvedOpen = isControlled ? isOpen : open
 
+  useEffect(() => {
+    if (
+      nonSelectableSwapData &&
+      sendableAssets &&
+      (!assetToSend || !assetToBuy)
+    ) {
+      const _assetToSend =
+        sendableAssets.find(
+          (asset) => asset.symbol === nonSelectableSwapData.assetSymbolToSend,
+        ) || null
+      const _assetToBuy =
+        sendableAssets.find(
+          (asset) => asset.symbol === nonSelectableSwapData.assetSymbolToBuy,
+        ) || null
+      setAssetToSend(_assetToSend)
+      setAssetToBuy(_assetToBuy)
+    }
+  }, [nonSelectableSwapData, assetToSend, assetToBuy, sendableAssets])
+
   const assetsToSelect = useMemo(() => {
+    const validSymbols = STABLE_PAIRS[assetToSend?.symbol ?? ''] ?? []
     return {
       sell: sendableAssets,
-      buy:
-        sendableAssets?.filter((i) => {
-          if (assetToSend?.symbol === 'USDC') {
-            return i.symbol === 'USDT0' || i.symbol === 'USDH'
-          }
-          if (
-            assetToSend?.symbol === 'USDT0' ||
-            assetToSend?.symbol === 'USDH'
-          ) {
-            return i.symbol === 'USDC'
-          }
-        }) || [],
+      buy: sendableAssets?.filter((i) => validSymbols.includes(i.symbol)) ?? [],
     }
   }, [sendableAssets, assetToSend])
 
@@ -95,13 +116,21 @@ export const SwapStablesDialog = ({
   )
 
   useEffect(() => {
-    if (!assetToSend && assetsToSelect['sell']?.length > 0) {
+    if (
+      !assetToSend &&
+      assetsToSelect['sell']?.length > 0 &&
+      !nonSelectableSwapData
+    ) {
       setAssetToSend(assetsToSelect['sell'][0])
     }
-    if (!assetToBuy && assetsToSelect['buy']?.length > 0) {
+    if (
+      !assetToBuy &&
+      assetsToSelect['buy']?.length > 0 &&
+      !nonSelectableSwapData
+    ) {
       setAssetToBuy(assetsToSelect['buy'][0])
     }
-  }, [assetToBuy, assetToSend, assetsToSelect])
+  }, [assetToBuy, assetToSend, assetsToSelect, nonSelectableSwapData])
 
   const handleMaxAmount = useCallback(() => {
     if (!assetToSend) return
@@ -214,26 +243,16 @@ export const SwapStablesDialog = ({
   const handleSelectAssetToSend = useCallback(
     (symbol: string) => {
       const asset =
-        assetsToSelect['sell']?.find((a) => a?.symbol === symbol) || null
+        assetsToSelect.sell?.find((a) => a?.symbol === symbol) ?? null
       setAssetToSend(asset)
-      if (symbol === 'USDC') {
-        const assetToBuy =
-          assetsToSelect['buy']?.find(
-            (i) => i.symbol === 'USDT0' || i.symbol === 'USDH',
-          ) || null
-        setAssetToBuy(assetToBuy)
-        return
-      }
-      if (symbol === 'USDT0' || symbol === 'USDH') {
-        const assetToBuy =
-          assetsToSelect['buy']?.find((i) => i.symbol === 'USDC') || null
-        setAssetToBuy(assetToBuy)
-        return
-      }
+
+      const validSymbols = STABLE_PAIRS[symbol] ?? []
+      const assetToBuy =
+        assetsToSelect.buy?.find((i) => validSymbols.includes(i.symbol)) ?? null
+      setAssetToBuy(assetToBuy)
     },
     [assetsToSelect],
   )
-
   const handleSelectAssetToBuy = useCallback(
     (symbol: string) => {
       const asset =
@@ -255,42 +274,54 @@ export const SwapStablesDialog = ({
           trigger
         ) : (
           <Button className="w-full" variant="perps-secondary" size="sm">
-            Swap Stablecoins
+            Swap{' '}
+            {nonSelectableSwapData
+              ? `${nonSelectableSwapData?.assetSymbolToSend} for ${nonSelectableSwapData?.assetSymbolToBuy}`
+              : 'Stablecoins'}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent variant="perps-default" className="max-w-xl">
         <DialogHeader className="!text-left">
-          <DialogTitle>Swap Stablecoins</DialogTitle>
+          <DialogTitle>
+            Swap{' '}
+            {nonSelectableSwapData
+              ? `${nonSelectableSwapData?.assetSymbolToSend} for ${nonSelectableSwapData?.assetSymbolToBuy}`
+              : 'Stablecoins'}
+          </DialogTitle>
           <DialogDescription>
-            Swap between different stablecoins in your Spot account.
+            {nonSelectableSwapData
+              ? 'Swap between stablecoins.'
+              : 'Swap between different stablecoins in your Spot account.'}
           </DialogDescription>
         </DialogHeader>
         <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
           <div className="flex flex-col gap-2">
-            <Select
-              value={assetToSend?.symbol || ''}
-              onValueChange={handleSelectAssetToSend}
-            >
-              <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[42px]  !gap-1 !border !border-[#FFFFFF1A] bg-[#FFFFFF0D]">
-                {assetToSend
-                  ? `${assetToSend?.symbol} ${Number(assetToSend?.balance) > 0 ? ` - ${perpsNumberFormatter({ value: assetToSend?.balance, maxFraxDigits: 2, minFraxDigits: 2 })}` : ''}`
-                  : 'Select Asset'}
-              </SelectTrigger>
-              <SelectContent className="w-full">
-                {assetsToSelect['sell']?.map((i) => (
-                  <SelectItem
-                    key={i?.symbol}
-                    value={i?.symbol}
-                    className="capitalize font-medium !text-white gap-4"
-                  >
-                    {i?.symbol}
-                    {' - '}
-                    {currencyFormatter.format(Number(i?.usdcValue))}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {nonSelectableSwapData ? null : (
+              <Select
+                value={assetToSend?.symbol || ''}
+                onValueChange={handleSelectAssetToSend}
+              >
+                <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[42px]  !gap-1 !border !border-[#FFFFFF1A] bg-[#FFFFFF0D]">
+                  {assetToSend
+                    ? `${assetToSend?.symbol} ${Number(assetToSend?.balance) > 0 ? ` - ${perpsNumberFormatter({ value: assetToSend?.balance, maxFraxDigits: 2, minFraxDigits: 2 })}` : ''}`
+                    : 'Select Asset'}
+                </SelectTrigger>
+                <SelectContent className="w-full">
+                  {assetsToSelect['sell']?.map((i) => (
+                    <SelectItem
+                      key={i?.symbol}
+                      value={i?.symbol}
+                      className="capitalize font-medium !text-white gap-4"
+                    >
+                      {i?.symbol}
+                      {' - '}
+                      {currencyFormatter.format(Number(i?.usdcValue))}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
             <div className="relative flex w-full">
               <ValueInput
                 value={amount}
@@ -310,32 +341,37 @@ export const SwapStablesDialog = ({
                   'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md absolute top-1/2 -translate-y-1/2 right-2',
                 )}
               >
-                Max
+                Max{' '}
+                {nonSelectableSwapData
+                  ? `: ${perpsNumberFormatter({ value: assetToSend?.balance || '0', maxFraxDigits: 2, minFraxDigits: 2 })}`
+                  : null}
               </Button>
             </div>
-            <Select
-              value={assetToBuy?.symbol || ''}
-              onValueChange={handleSelectAssetToBuy}
-            >
-              <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[42px]  !gap-1 !border !border-[#FFFFFF1A] bg-[#FFFFFF0D]">
-                {assetToBuy
-                  ? `${assetToBuy?.symbol} ${Number(assetToBuy?.balance) > 0 ? ` - ${perpsNumberFormatter({ value: assetToBuy?.balance, maxFraxDigits: 2, minFraxDigits: 2 })}` : ''}`
-                  : 'Select Asset'}
-              </SelectTrigger>
-              <SelectContent className="w-full">
-                {assetsToSelect['buy']?.map((i) => (
-                  <SelectItem
-                    key={i?.symbol}
-                    value={i?.symbol}
-                    className="capitalize font-medium !text-white gap-4"
-                  >
-                    {i?.symbol}
-                    {' - '}
-                    {currencyFormatter.format(Number(i?.usdcValue))}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {nonSelectableSwapData ? null : (
+              <Select
+                value={assetToBuy?.symbol || ''}
+                onValueChange={handleSelectAssetToBuy}
+              >
+                <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[42px]  !gap-1 !border !border-[#FFFFFF1A] bg-[#FFFFFF0D]">
+                  {assetToBuy
+                    ? `${assetToBuy?.symbol} ${Number(assetToBuy?.balance) > 0 ? ` - ${perpsNumberFormatter({ value: assetToBuy?.balance, maxFraxDigits: 2, minFraxDigits: 2 })}` : ''}`
+                    : 'Select Asset'}
+                </SelectTrigger>
+                <SelectContent className="w-full">
+                  {assetsToSelect['buy']?.map((i) => (
+                    <SelectItem
+                      key={i?.symbol}
+                      value={i?.symbol}
+                      className="capitalize font-medium !text-white gap-4"
+                    >
+                      {i?.symbol}
+                      {' - '}
+                      {currencyFormatter.format(Number(i?.usdcValue))}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
             <StatItem
               title="You receive approx."
               value={`${perpsNumberFormatter({ value: amount || 0, minFraxDigits: 2, maxFraxDigits: 2 })} ${assetToBuy?.symbol || ''}`}

@@ -5,6 +5,16 @@ import { useUserState } from '~evm/perps/user-provider'
 import { useAccount } from '../../wallet'
 import { SPOT_ASSETS_TO_REWRITE } from '../utils'
 
+const DEX_NAME_TO_COIN: Record<string, string> = {
+  '': 'USDC (Perps)',
+  xyz: 'USDC (Perps)',
+  cash: 'USDT0 (Perps)',
+  flx: 'USDH (Perps)',
+  hyna: 'USDE (Perps)',
+  km: 'USDH (Perps)',
+  vntl: 'USDH (Perps)',
+}
+
 export const useBalances = () => {
   const address = useAccount('evm')
   const {
@@ -45,7 +55,7 @@ export const useBalances = () => {
     const perpsUsdcs = data?.clearinghouseStates
       .flatMap(([dexName, clearinghouseState]) => {
         return {
-          coin: 'USDC (Perps)',
+          coin: DEX_NAME_TO_COIN[dexName] ?? `USDC (Perps)`,
           totalBalance: clearinghouseState?.marginSummary?.accountValue,
           availableBalance: clearinghouseState?.withdrawable,
           usdcValue: clearinghouseState?.marginSummary?.accountValue,

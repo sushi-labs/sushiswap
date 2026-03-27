@@ -1,7 +1,9 @@
-import { useMemo } from 'react'
+'use client'
+import { useMemo, useState } from 'react'
 import { perpsNumberFormatter, useSymbolSplit } from 'src/lib/perps'
-import { StatItem } from '../_common'
+import { StatItem, TableButton } from '../_common'
 import { PerpSpotTransferDialog } from '../account-management'
+import { SwapStablesDialog } from '../account-management/swap-stables-dialog'
 import { useAssetState } from './asset-state-provider'
 
 export const AvailableToTrade = () => {
@@ -9,6 +11,7 @@ export const AvailableToTrade = () => {
     state: { tradeSide, availableToLong, availableToShort, asset, markPrice },
   } = useAssetState()
   const { baseSymbol, quoteSymbol } = useSymbolSplit({ asset })
+  const [open, setOpen] = useState(false)
 
   const { availToLong, availToShort } = useMemo(() => {
     if (asset?.marketType === 'spot') {
@@ -41,6 +44,10 @@ export const AvailableToTrade = () => {
     }
   }, [availableToLong, availableToShort, asset, markPrice])
 
+  const buttonText = useMemo(() => {
+    return `${tradeSide === 'long' ? availToLong : availToShort} ${quoteSymbol}`
+  }, [tradeSide, availToLong, availToShort, quoteSymbol])
+
   if (asset?.marketType === 'spot') {
     return (
       <StatItem
@@ -69,9 +76,30 @@ export const AvailableToTrade = () => {
     )
   }
   return (
-    <StatItem
-      title="Available to Trade"
-      value={`${tradeSide === 'long' ? availToLong : availToShort} USDC`}
-    />
+    <>
+      <StatItem
+        title="Available to Trade"
+        value={
+          asset?.dex !== '' ? (
+            <TableButton onClick={() => setOpen(true)}>
+              {buttonText}
+            </TableButton>
+          ) : (
+            buttonText
+          )
+        }
+      />
+      {open ? (
+        <SwapStablesDialog
+          trigger={<div />}
+          nonSelectableSwapData={{
+            assetSymbolToSend: 'USDC',
+            assetSymbolToBuy: quoteSymbol,
+          }}
+          isOpen={open}
+          onOpenChange={setOpen}
+        />
+      ) : null}
+    </>
   )
 }

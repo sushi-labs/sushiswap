@@ -7,7 +7,7 @@ import { useUserState } from '~evm/perps/user-provider'
 import { useAccount } from '../../wallet'
 import { getEvmDestinationAddress } from '../utils'
 
-const STABLE_OPTIONS = ['USDC', 'USDT0', 'USDH']
+const STABLE_OPTIONS = ['USDC', 'USDT0', 'USDH', 'USDE']
 
 export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
   const address = useAccount('evm')
@@ -35,7 +35,7 @@ export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
 
   const isLoading = isAssetListLoading || isWebData2Loading
   const isError = isAssetListError || isWebData2Error
-
+  console.log(webData2Data)
   const sendableAssets = useMemo(() => {
     const assets = []
     const usdcPerp = {
@@ -56,7 +56,7 @@ export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
       assets.push(usdcPerp)
     }
     for (const spotBalance of webData2Data?.spotState?.balances || []) {
-      if (spotBalance.total === '0.0') continue
+      // if (spotBalance.total === '0.0') continue
       const tokenIndex = spotBalance.token
       const spotAsset = assetList
         ?.entries()

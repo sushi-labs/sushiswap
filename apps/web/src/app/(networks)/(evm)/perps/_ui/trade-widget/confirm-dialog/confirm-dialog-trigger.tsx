@@ -16,58 +16,62 @@ export const ConfirmDialogTrigger = () => {
   return (
     <Checker.Connect size="sm" namespace="evm" variant="perps-default">
       <PerpsChecker.Legal size="sm" variant="perps-default">
-        <PerpsChecker.Deposit size="sm" variant="perps-default">
-          <PerpsChecker.EnableTrading size="sm" variant="perps-default">
-            <PerpsChecker.BuilderFee size="sm" variant="perps-default">
-              <PerpsChecker.Referral size="sm" variant="perps-default">
-                <PerpsChecker.TwapRunningTime
-                  size="sm"
-                  variant={tradeSide === 'long' ? 'perps-long' : 'perps-short'}
-                >
-                  <PerpsChecker.OrderAmount
+        <PerpsChecker.StableAmount size="sm" variant="perps-default">
+          <PerpsChecker.Deposit size="sm" variant="perps-default">
+            <PerpsChecker.EnableTrading size="sm" variant="perps-default">
+              <PerpsChecker.BuilderFee size="sm" variant="perps-default">
+                <PerpsChecker.Referral size="sm" variant="perps-default">
+                  <PerpsChecker.TwapRunningTime
                     size="sm"
                     variant={
                       tradeSide === 'long' ? 'perps-long' : 'perps-short'
                     }
                   >
-                    <PerpsChecker.TakeStopTrigger
+                    <PerpsChecker.OrderAmount
                       size="sm"
                       variant={
                         tradeSide === 'long' ? 'perps-long' : 'perps-short'
                       }
                     >
-                      <PerpsChecker.TwapSuborder
+                      <PerpsChecker.TakeStopTrigger
                         size="sm"
                         variant={
                           tradeSide === 'long' ? 'perps-long' : 'perps-short'
                         }
                       >
-                        {quickConfirmPositionEnabled ? (
-                          <PlaceOrderButton />
-                        ) : (
-                          <DialogTrigger asChild>
-                            <Button
-                              fullWidth
-                              size="sm"
-                              variant={
-                                tradeSide === 'long'
-                                  ? 'perps-long'
-                                  : 'perps-short'
-                              }
-                              data-glow="true"
-                            >
-                              Place Order
-                            </Button>
-                          </DialogTrigger>
-                        )}
-                      </PerpsChecker.TwapSuborder>
-                    </PerpsChecker.TakeStopTrigger>
-                  </PerpsChecker.OrderAmount>
-                </PerpsChecker.TwapRunningTime>
-              </PerpsChecker.Referral>
-            </PerpsChecker.BuilderFee>
-          </PerpsChecker.EnableTrading>
-        </PerpsChecker.Deposit>
+                        <PerpsChecker.TwapSuborder
+                          size="sm"
+                          variant={
+                            tradeSide === 'long' ? 'perps-long' : 'perps-short'
+                          }
+                        >
+                          {quickConfirmPositionEnabled ? (
+                            <PlaceOrderButton />
+                          ) : (
+                            <DialogTrigger asChild>
+                              <Button
+                                fullWidth
+                                size="sm"
+                                variant={
+                                  tradeSide === 'long'
+                                    ? 'perps-long'
+                                    : 'perps-short'
+                                }
+                                data-glow="true"
+                              >
+                                Place Order
+                              </Button>
+                            </DialogTrigger>
+                          )}
+                        </PerpsChecker.TwapSuborder>
+                      </PerpsChecker.TakeStopTrigger>
+                    </PerpsChecker.OrderAmount>
+                  </PerpsChecker.TwapRunningTime>
+                </PerpsChecker.Referral>
+              </PerpsChecker.BuilderFee>
+            </PerpsChecker.EnableTrading>
+          </PerpsChecker.Deposit>
+        </PerpsChecker.StableAmount>
       </PerpsChecker.Legal>
     </Checker.Connect>
   )

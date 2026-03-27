@@ -187,7 +187,6 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
   const { data: openPosition } = useUserPositions(activeAsset)
   const spotBalance = useBalance({ assetString: activeAsset })
   const spotUsdcBalance = useBalance({ assetString: 'PURR/USDC' })
-
   const totalRunningTimeInMinutes = useMemo(() => {
     const hours = Number.parseInt(twapRunningTime.hours) || 0
     const minutes = Number.parseInt(twapRunningTime.minutes) || 0
