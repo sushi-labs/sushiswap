@@ -25,10 +25,7 @@ export const AccountManagement = ({ className }: { className?: string }) => {
     >
       {error ? (
         <>
-          <div className="text-sm text-center italic pt-10 text-transparent lg:text-red">
-            {error?.message ?? 'Error loading account data'}
-          </div>
-          <div className="text-red text-sm text-center italic pt-10 lg:text-transparent">
+          <div className="text-sm text-center italic pt-10 text-red">
             {error?.message ?? 'Error loading account data'}
           </div>
         </>
