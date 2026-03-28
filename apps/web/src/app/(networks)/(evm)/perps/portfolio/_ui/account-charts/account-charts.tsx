@@ -124,7 +124,7 @@ export const AccountCharts = () => {
         </DropdownMenu>
       </div>
       {!address ? (
-        <div className="flex items-center justify-center h-full">
+        <div className="flex items-center justify-center h-full min-h-[192px]">
           <ConnectButton namespace="evm" className="mx-auto" />
         </div>
       ) : isLoading ? (

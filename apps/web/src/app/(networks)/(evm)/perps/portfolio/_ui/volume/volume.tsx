@@ -33,7 +33,7 @@ export const Volume = () => {
   }, [feeData, isLoading, error])
 
   return (
-    <Card className="p-2 !rounded-md gap-2 flex !bg-[#18223B] border-transparent flex-col w-full h-full">
+    <Card className="p-2 !rounded-md gap-2 flex !bg-[#18223B] border-transparent flex-col justify-between w-full h-full">
       <div className="text-muted-foreground text-xs lg:text-sm">
         14 Day Volume
       </div>
@@ -51,7 +51,7 @@ export const Volume = () => {
       <Dialog>
         <DialogTrigger asChild>
           <TableButton
-            className="w-fit text-xs lg:text-sm"
+            className="w-fit text-xs lg:text-sm "
             disabled={isLoading || !!error || !address}
           >
             View Volume

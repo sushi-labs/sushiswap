@@ -235,7 +235,10 @@ export const PortfolioStats = () => {
             title="Volume"
             value={currencyFormatter.format(Number(statData?.volume || 0))}
           />
-          <StatItem title="Max Drawdown" value={statData?.maxDrawdown} />
+          <StatItem
+            title="Max Drawdown"
+            value={statData?.maxDrawdown || formatPercent(0)}
+          />
           <StatItem
             title="Total Equity"
             value={currencyFormatter.format(Number(statData?.totalEquity || 0))}
