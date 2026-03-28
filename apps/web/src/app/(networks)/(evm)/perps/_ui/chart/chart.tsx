@@ -448,7 +448,7 @@ export const Chart = () => {
   ])
 
   return (
-    <Card className="flex flex-col lg:h-[550px] flex-grow p-0 border-0 lg:border lg:p-2 !bg-[#0D1421]">
+    <Card className="flex flex-col lg:h-[560px] flex-grow p-0 border-0 lg:border lg:p-2 !bg-[#0D1421]">
       <div className="flex-grow">
         <div
           ref={chartContainerRef}

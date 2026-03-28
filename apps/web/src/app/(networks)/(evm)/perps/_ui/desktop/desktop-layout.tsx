@@ -25,7 +25,7 @@ export const DesktopLayout = () => {
             </div>
 
             {isXl ? (
-              <div className="hidden xl:block flex-none basis-[29.074%] min-w-[300px] h-[670px]">
+              <div className=" flex-none basis-[29.074%] min-w-[300px] h-[670px]">
                 <DesktopTabbedView tab={tab} setTab={setTab} />
               </div>
             ) : null}
@@ -39,7 +39,7 @@ export const DesktopLayout = () => {
         <div className="flex flex-col gap-1 flex-none w-[40%] lg:max-w-xs xl:max-w-full xl:basis-[22.5%] xl:w-auto min-w-0">
           <div className="flex flex-col xl:flex-row w-full gap-1 xl:min-w-[280px] min-w-0">
             {isXl ? null : (
-              <div className="w-full max-h-[660px] min-w-0">
+              <div className="w-full max-h-[670px] min-w-0">
                 <DesktopTabbedView tab={tab} setTab={setTab} />
               </div>
             )}

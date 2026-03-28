@@ -1,6 +1,15 @@
+import { ChevronDownIcon } from '@heroicons/react-v1/solid'
+import type { L2BookParameters } from '@nktkas/hyperliquid'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { SkeletonBox, classNames } from '@sushiswap/ui'
-import { useMemo, useState } from 'react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  SkeletonBox,
+  classNames,
+} from '@sushiswap/ui'
+import { useEffect, useMemo, useState } from 'react'
 import {
   type OrderbookRow,
   getTextColorClass,
@@ -11,19 +20,17 @@ import {
 } from 'src/lib/perps'
 import { SideToggle } from '../_common'
 import { useUserSettingsState } from '../account-management'
-import { useAssetListState } from '../asset-selector'
 import { useAssetState } from '../trade-widget'
 
 const getTotal = (o: OrderbookRow, side: 'base' | 'quote') => {
-  return Number.parseFloat(side === 'base' ? o.totalBase : o.totalQuote)
+  return side === 'base' ? o.totalBase : o.totalQuote
 }
 
 const depthRowStyle = (
   pct: number,
   side: 'bid' | 'ask',
 ): React.CSSProperties => {
-  const clamped = Math.max(0, Math.min(100, pct))
-
+  const clamped = Math.max(0, Math.min(100, pct)).toFixed(6)
   return side === 'bid'
     ? {
         backgroundImage:
@@ -41,9 +48,36 @@ const depthRowStyle = (
       }
 }
 
+function formatTick(tick: number): string {
+  // Avoid floating point ugliness
+  if (tick >= 1)
+    return tick.toLocaleString('en-US', { maximumFractionDigits: 0 })
+  // Count needed decimal places
+  const decimals = Math.max(0, -Math.floor(Math.log10(tick)))
+  return tick?.toFixed(decimals || 0) || '1'
+}
+
+function tickSizeForPreset(
+  price: string | null,
+  nSigFigs: number,
+  mantissa?: number | null,
+) {
+  if (!price) return '1'
+  const sigFigs = nSigFigs > 5 ? 5 : nSigFigs
+  const mantissaValue = mantissa || 1
+  const magnitude = Math.floor(Math.log10(Number(price)))
+  const base = 10 ** (magnitude - (sigFigs - 1))
+  return formatTick(base * mantissaValue)
+}
+
 export const OrderBook = ({ className }: { className?: string }) => {
+  const [nSigFigs, setNSigFigs] = useState<number | undefined>(undefined)
+  const [mantissa, setMantissa] =
+    useState<L2BookParameters['mantissa']>(undefined)
+  const [priceSnapshot, setPriceSnapshot] = useState<string | null>(null)
+  const [open, setOpen] = useState(false)
   const {
-    state: { activeAsset },
+    state: { activeAsset, asset },
   } = useAssetState()
   const {
     data,
@@ -51,24 +85,22 @@ export const OrderBook = ({ className }: { className?: string }) => {
     error,
   } = useL2OrderBook({
     assetString: activeAsset,
+    nSigFigs: nSigFigs as L2BookParameters['nSigFigs'],
+    mantissa,
   })
-  const {
-    state: {
-      assetListQuery: { data: assetList, isLoading: isLoadingAssetList },
-    },
-  } = useAssetListState()
   const {
     state: { orderBookAnimationDisabled },
   } = useUserSettingsState()
-  const isLoading = isLoadingOrderBook || isLoadingAssetList
+  const isLoading = isLoadingOrderBook
   const { isLg } = useBreakpoint('lg')
   const itemCount = isLg ? 11 : 7
 
   const [side, setSide] = useState<'base' | 'quote'>('quote')
-  const asset = useMemo(
-    () => assetList?.get?.(activeAsset),
-    [assetList, activeAsset],
-  )
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: set snapshot when asset changes
+  useEffect(() => {
+    setPriceSnapshot(asset?.midPrice || asset?.markPrice || null)
+  }, [priceSnapshot, asset?.name])
 
   const bids = useMemo(() => data?.bids, [data?.bids])
   const asks = useMemo(() => data?.asks, [data?.asks])
@@ -98,16 +130,57 @@ export const OrderBook = ({ className }: { className?: string }) => {
 
   return (
     <div className={classNames('flex flex-col', className ?? '')}>
-      <div className="flex justify-end px-2">
+      <div className="flex justify-between px-2">
         {error ? null : isLoading ? (
-          <SkeletonBox className="w-20 h-6 rounded-sm" />
+          <>
+            <SkeletonBox className="w-20 h-6 rounded-sm" />
+            <SkeletonBox className="w-20 h-6 rounded-sm" />
+          </>
         ) : (
-          <SideToggle
-            side={side}
-            setSide={setSide}
-            baseSymbol={baseSymbol}
-            quoteSymbol={quoteSymbol}
-          />
+          <>
+            <DropdownMenu open={open} onOpenChange={setOpen}>
+              <DropdownMenuTrigger className="capitalize flex items-center text-xs">
+                {tickSizeForPreset(priceSnapshot, nSigFigs || 5, mantissa) ||
+                  'Tick Size'}
+                <ChevronDownIcon
+                  className={classNames(
+                    'w-4 h-4 min-w-4 ml-1 transition-transform',
+                    open ? 'rotate-180' : '',
+                  )}
+                />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="paper !rounded-md !bg-[#18223B]">
+                {[5, 7, 6, 4, 3, 2].map((figs) => (
+                  <DropdownMenuItem
+                    key={figs}
+                    className="capitalize"
+                    onClick={() => {
+                      if (figs === 6 || figs === 7) {
+                        setMantissa(figs === 7 ? 2 : 5)
+                        setNSigFigs(5)
+                        return
+                      }
+
+                      setNSigFigs(figs)
+                      setMantissa(undefined)
+                    }}
+                  >
+                    {tickSizeForPreset(
+                      priceSnapshot,
+                      figs,
+                      figs > 5 ? (figs === 7 ? 2 : 5) : undefined,
+                    )}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <SideToggle
+              side={side}
+              setSide={setSide}
+              baseSymbol={baseSymbol}
+              quoteSymbol={quoteSymbol}
+            />
+          </>
         )}
       </div>
 
@@ -175,14 +248,14 @@ export const OrderBook = ({ className }: { className?: string }) => {
                       {perpsNumberFormatter({
                         value:
                           side === 'base' ? order.sizeBase : order.sizeQuote,
-                        maxFraxDigits: 8,
+                        maxFraxDigits: side === 'base' ? 8 : 0,
                       })}
                     </td>
                     <td className="px-0.5 py-1 text-xs text-right pr-2">
                       {perpsNumberFormatter({
                         value:
                           side === 'base' ? order.totalBase : order.totalQuote,
-                        maxFraxDigits: 8,
+                        maxFraxDigits: side === 'base' ? 8 : 0,
                       })}
                     </td>
                   </tr>
@@ -228,14 +301,14 @@ export const OrderBook = ({ className }: { className?: string }) => {
                       {perpsNumberFormatter({
                         value:
                           side === 'base' ? order.sizeBase : order.sizeQuote,
-                        maxFraxDigits: 8,
+                        maxFraxDigits: side === 'base' ? 8 : 0,
                       })}
                     </td>
                     <td className="px-0.5 py-1 text-xs text-right pr-2">
                       {perpsNumberFormatter({
                         value:
                           side === 'base' ? order.totalBase : order.totalQuote,
-                        maxFraxDigits: 8,
+                        maxFraxDigits: side === 'base' ? 8 : 0,
                       })}
                     </td>
                   </tr>

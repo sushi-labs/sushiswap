@@ -1,4 +1,5 @@
 'use client'
+import type { L2BookParameters } from '@nktkas/hyperliquid'
 import { type L2BookEvent, l2Book } from '@nktkas/hyperliquid/api/subscription'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
@@ -8,9 +9,9 @@ import { toFixedTrim } from '../utils'
 export type OrderbookRow = {
   price: string
   sizeBase: string
-  sizeQuote: string // px * sz
-  totalBase: string // cumulative base
-  totalQuote: string // cumulative quote
+  sizeQuote: number // px * sz
+  totalBase: number // cumulative base
+  totalQuote: number // cumulative quote
   n: number
 }
 
@@ -38,9 +39,9 @@ const formatOrders = (ev: L2BookEvent) => {
     return {
       price: l.px,
       sizeBase: l.sz,
-      sizeQuote: toFixedTrim(quote, 0),
-      totalBase: toFixedTrim(runningBidBase, 10),
-      totalQuote: toFixedTrim(runningBidQuote, 0),
+      sizeQuote: quote,
+      totalBase: runningBidBase,
+      totalQuote: runningBidQuote,
       n: l.n,
     }
   })
@@ -59,9 +60,9 @@ const formatOrders = (ev: L2BookEvent) => {
     return {
       price: l.px,
       sizeBase: l.sz,
-      sizeQuote: toFixedTrim(quote, 0),
-      totalBase: toFixedTrim(runningAskBase, 10),
-      totalQuote: toFixedTrim(runningAskQuote, 0),
+      sizeQuote: quote,
+      totalBase: runningAskBase,
+      totalQuote: runningAskQuote,
       n: l.n,
     }
   })
@@ -89,14 +90,25 @@ const formatOrders = (ev: L2BookEvent) => {
 
 type FormattedL2Orders = ReturnType<typeof formatOrders>
 
-const KEY = (assetString: string) =>
-  ['l2-orderbook-book-events', assetString] as const
+const KEY = (
+  assetString: string,
+  nSigFigs: L2BookParameters['nSigFigs'],
+  mantissa: L2BookParameters['mantissa'],
+) => ['l2-orderbook-book-events', assetString, nSigFigs, mantissa] as const
 
-export const useL2OrderBook = ({ assetString }: { assetString: string }) => {
+export const useL2OrderBook = ({
+  assetString,
+  nSigFigs,
+  mantissa,
+}: {
+  assetString: string
+  nSigFigs: L2BookParameters['nSigFigs']
+  mantissa: L2BookParameters['mantissa']
+}) => {
   const queryClient = useQueryClient()
 
   const query = useQuery<FormattedL2Orders>({
-    queryKey: KEY(assetString),
+    queryKey: KEY(assetString, nSigFigs, mantissa),
     enabled: false, // never auto-fetch
     staleTime: Number.POSITIVE_INFINITY,
   })
@@ -108,13 +120,13 @@ export const useL2OrderBook = ({ assetString }: { assetString: string }) => {
     ;(async () => {
       const sub = await l2Book(
         { transport: hlWebSocketTransport },
-        { coin: assetString },
+        { coin: assetString, nSigFigs, mantissa },
         (ev) => {
           queryClient.setQueryData(
-            KEY(assetString),
-            (prev: FormattedL2Orders | undefined) => {
-              // ignore out-of-order / stale events
-              if (prev && prev.time >= ev.time) return prev
+            KEY(assetString, nSigFigs, mantissa),
+            (_prev: FormattedL2Orders | undefined) => {
+              // ignore out-of-order / stale events//todo: comeback to check that this can safely be removed. was causing stale data when sigfisgs/mantissa changed
+              // if (prev && prev.time >= ev.time) return prev
               return formatOrders(ev)
             },
           )
@@ -127,7 +139,7 @@ export const useL2OrderBook = ({ assetString }: { assetString: string }) => {
     return () => {
       void unsubscribe?.()
     }
-  }, [queryClient, assetString])
+  }, [queryClient, assetString, nSigFigs, mantissa])
 
   const isReady = Boolean(query.data)
 
