@@ -21,7 +21,7 @@ export const MobileLayout = () => {
         {view === 'markets' ? <TabbedView /> : null}
         {view === 'trade' ? <TradeWidget className="min-h-[380px]" /> : null}
         {view === 'account' ? (
-          <AccountManagement className="min-h-[calc(100vh-116px)] rounded-b-none justify-between" />
+          <AccountManagement className="min-h-[calc(100dvh-116px)] rounded-b-none justify-between" />
         ) : null}
         {view !== 'account' ? <TradeTables className="min-h-[300px]" /> : null}
       </div>

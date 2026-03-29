@@ -94,7 +94,7 @@ export const OrderBook = ({ className }: { className?: string }) => {
   } = useUserSettingsState()
   const isLoading = isLoadingOrderBook
   const { isLg } = useBreakpoint('lg')
-  const itemCount = isLg ? 11 : 7
+  const itemCount = isLg ? 10 : 7
 
   const [side, setSide] = useState<'base' | 'quote'>('quote')
 
@@ -185,58 +185,55 @@ export const OrderBook = ({ className }: { className?: string }) => {
         )}
       </div>
 
-      <table className="w-full">
-        <thead className="bg-[#0D1421] text-muted-foreground">
+      <div className="w-full">
+        <div className="bg-[#0D1421] text-muted-foreground">
           {isLoading ? (
             <SkeletonOrderBookRow />
           ) : error ? null : (
-            <tr>
-              <th className="text-left font-normal pl-2 p-0.5 text-xs">
+            <div className="grid grid-cols-3">
+              <div className="text-left font-normal pl-2 p-0.5 text-xs">
                 Price
-              </th>
-              <th className="font-normal p-0.5 text-xs text-right">
+              </div>
+              <div className="font-normal p-0.5 text-xs text-right">
                 Size{' '}
                 {asset ? `(${side === 'base' ? baseSymbol : quoteSymbol})` : ''}
-              </th>
-              <th className="font-normal p-0.5 pr-2 text-xs text-right">
+              </div>
+              <div className="font-normal p-0.5 pr-2 text-xs text-right">
                 Total{' '}
                 {asset ? `(${side === 'base' ? baseSymbol : quoteSymbol})` : ''}
-              </th>
-            </tr>
+              </div>
+            </div>
           )}
-        </thead>
-        <tbody>
+        </div>
+        <div>
           {isLoading ? (
             Array.from({ length: itemCount * 2 + (isLg ? 2 : 1) }).map(
               (_, index) => <SkeletonOrderBookRow key={index} />,
             )
           ) : error ? (
-            <tr>
-              <td
-                colSpan={3}
-                className="p-2 h-20 text-xs italic text-red-500/70 text-center"
-              >
+            <div className="grid grid-cols-3">
+              <div className="p-2 h-20 text-xs italic text-red-500/70 text-center col-span-3">
                 Error loading trades. {error?.message}
-              </td>
-            </tr>
+              </div>
+            </div>
           ) : data && data?.bids?.length > 0 && data?.asks?.length > 0 ? (
             <>
               {visibleAsks?.map((order, index) => {
                 const pct = (getTotal(order, side) / asksMaxTotal) * 100
                 return (
-                  <tr
+                  <div
                     key={index}
                     className={classNames(
-                      'font-medium relative lg:border-y-[1px]  border-y-[.5px] border-transparent',
+                      'font-medium relative lg:border-y-[1px] grid grid-cols-3 border-y-[.5px] border-transparent',
                       orderBookAnimationDisabled
                         ? ''
                         : 'transition-[background-size] duration-150',
                     )}
                     style={depthRowStyle(pct, 'ask')}
                   >
-                    <td
+                    <div
                       className={classNames(
-                        'px-0.5 py-1 text-xs text-left pl-2',
+                        'px-0.5 py-1 lg:py-[4.75px] text-xs text-left pl-2',
                         getTextColorClass(-1),
                       )}
                     >
@@ -244,52 +241,49 @@ export const OrderBook = ({ className }: { className?: string }) => {
                         value: order.price,
                         maxFraxDigits: 8,
                       })}
-                    </td>
-                    <td className="px-0.5 py-1 text-xs text-right">
+                    </div>
+                    <div className="px-0.5 py-1 lg:py-[4.75px] text-xs text-right">
                       {perpsNumberFormatter({
                         value:
                           side === 'base' ? order.sizeBase : order.sizeQuote,
                         maxFraxDigits: side === 'base' ? 8 : 0,
                       })}
-                    </td>
-                    <td className="px-0.5 py-1 text-xs text-right pr-2">
+                    </div>
+                    <div className="px-0.5 py-1 lg:py-[4.75px] text-xs text-right pr-2">
                       {perpsNumberFormatter({
                         value:
                           side === 'base' ? order.totalBase : order.totalQuote,
                         maxFraxDigits: side === 'base' ? 8 : 0,
                       })}
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 )
               })}
-              <tr className="border-y-[2px] lg:border-y-[4px] border-transparent">
-                <td
-                  className="px-0.5 py-0 lg:py-0.5 text-xs dark:bg-slate-800/50 text-center bg-gray-50 font-medium tabular-nums"
-                  colSpan={3}
-                >
+              <div className="col-span-3 border-y-[1px] border-transparent">
+                <div className="px-0.5 py-0 col-span-3 lg:py-1 lg:py-[4.75px] text-xs dark:bg-slate-800/50 text-center bg-gray-50 font-medium tabular-nums">
                   Spread
                   <span className="px-4" />
                   {data?.spreadAbs}
                   <span className="px-4" />
                   {toFixedTrim(Number(data?.spreadPct) * 100, 6)}%
-                </td>
-              </tr>
+                </div>
+              </div>
               {visibleBids?.map((order, index) => {
                 const pct = (getTotal(order, side) / bidsMaxTotal) * 100
                 return (
-                  <tr
+                  <div
                     key={index}
                     className={classNames(
-                      'font-medium relative lg:border-y-[1px] border-y-[.5px] border-transparent',
+                      'font-medium grid grid-cols-3 relative lg:border-y-[1px] border-y-[.5px] border-transparent',
                       orderBookAnimationDisabled
                         ? ''
                         : 'transition-[background-size] duration-150',
                     )}
                     style={depthRowStyle(pct, 'bid')}
                   >
-                    <td
+                    <div
                       className={classNames(
-                        'px-0.5 py-1 text-xs text-left pl-2',
+                        'px-0.5 py-1 lg:py-[4.75px] text-xs text-left pl-2',
                         getTextColorClass(1),
                       )}
                     >
@@ -297,22 +291,22 @@ export const OrderBook = ({ className }: { className?: string }) => {
                         value: order.price,
                         maxFraxDigits: 8,
                       })}
-                    </td>
-                    <td className="px-0.5 py-1 text-xs text-right">
+                    </div>
+                    <div className="px-0.5 py-1 lg:py-[4.75px] text-xs text-right">
                       {perpsNumberFormatter({
                         value:
                           side === 'base' ? order.sizeBase : order.sizeQuote,
                         maxFraxDigits: side === 'base' ? 8 : 0,
                       })}
-                    </td>
-                    <td className="px-0.5 py-1 text-xs text-right pr-2">
+                    </div>
+                    <div className="px-0.5 py-1 lg:py-[4.75px] text-xs text-right pr-2">
                       {perpsNumberFormatter({
                         value:
                           side === 'base' ? order.totalBase : order.totalQuote,
                         maxFraxDigits: side === 'base' ? 8 : 0,
                       })}
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 )
               })}
             </>
@@ -323,24 +317,24 @@ export const OrderBook = ({ className }: { className?: string }) => {
               </td>
             </tr>
           )}
-        </tbody>
-      </table>
+        </div>
+      </div>
     </div>
   )
 }
 
 const SkeletonOrderBookRow = () => {
   return (
-    <tr>
-      <td className="px-0.5 py-1">
+    <div className="grid grid-cols-3">
+      <div className="px-0.5 py-1 lg:py-[4.75px]">
         <SkeletonBox className="w-16 h-4" />
-      </td>
-      <td className="px-0.5 py-1 ">
+      </div>
+      <div className="px-0.5 py-1 lg:py-[4.75px] ">
         <SkeletonBox className="ml-auto w-16 h-4" />
-      </td>
-      <td className="px-0.5 py-1">
+      </div>
+      <div className="px-0.5 py-1 lg:py-[4.75px]">
         <SkeletonBox className="w-16 ml-auto h-4" />
-      </td>
-    </tr>
+      </div>
+    </div>
   )
 }

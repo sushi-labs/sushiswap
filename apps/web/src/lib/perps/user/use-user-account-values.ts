@@ -40,23 +40,25 @@ export const useUserAccountValues = () => {
   }, [address, errorWebData2, allDexError, assetListError])
 
   const spotEquity = useMemo(() => {
-    if (!webData2) return 0
-    return (
-      webData2?.spotState?.balances.reduce((acc, asset) => {
+    if (!webData2 || !assetList) return 0
+
+    const amount =
+      webData2?.spotState?.balances?.reduce((acc, asset) => {
         const balance = Number(asset?.total) ?? 0
         if (asset.coin === 'USDC') {
           return acc + balance
         }
-        //has to be better way to get this, wth. most likely not seeing it in the sdk
         const tokenIndex = asset?.token
         const spot = assetList
-          ?.entries()
-          .find(([, v]) => v.tokens?.find((t) => t.index === tokenIndex))?.[1]
+          ?.entries?.()
+          ?.find?.(([, v]) =>
+            v?.tokens?.find((t) => t?.index === tokenIndex),
+          )?.[1]
         const price = Number(spot?.lastPrice) ?? 0
         const val = balance * price
         return acc + val
       }, 0) ?? 0
-    )
+    return amount
   }, [webData2, assetList])
 
   const unrelaizedPnL = useMemo(() => {
