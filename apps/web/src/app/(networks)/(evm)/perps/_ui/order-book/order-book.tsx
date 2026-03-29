@@ -71,9 +71,10 @@ function tickSizeForPreset(
 }
 
 export const OrderBook = ({ className }: { className?: string }) => {
-  const [nSigFigs, setNSigFigs] = useState<number | undefined>(undefined)
-  const [mantissa, setMantissa] =
-    useState<L2BookParameters['mantissa']>(undefined)
+  const {
+    state: { nSigFigs, mantissa },
+    mutate: { setNSigFigs, setMantissa },
+  } = useUserSettingsState()
   const [priceSnapshot, setPriceSnapshot] = useState<string | null>(null)
   const [open, setOpen] = useState(false)
   const {

@@ -1,4 +1,5 @@
 'use client'
+import type { L2BookParameters } from '@nktkas/hyperliquid'
 import { useLocalStorage } from '@sushiswap/hooks'
 import { createInfoToast } from '@sushiswap/notifications'
 import {
@@ -8,6 +9,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useState,
 } from 'react'
 import {
   useSetUserAbstraction,
@@ -28,6 +30,8 @@ interface State {
     disableBgFillNotifs: boolean
     hidePnl: boolean
     optOutOfSpotDustCollection: boolean
+    nSigFigs?: number
+    mantissa: L2BookParameters['mantissa']
   }
   mutate: {
     setQuickCloseReversePositionEnabled: (enabled: boolean) => void
@@ -40,6 +44,8 @@ interface State {
     setDisableBgFillNotifs: (disabled: boolean) => void
     setHidePnl: (hide: boolean) => void
     setOptOutOfSpotDustCollection: () => void
+    setNSigFigs: (nSigFigs: number | undefined) => void
+    setMantissa: (mantissa: L2BookParameters['mantissa']) => void
   }
 }
 
@@ -100,6 +106,9 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
     false,
   )
   const { isPending, updateSpotDusting } = useSpotDustToggle()
+  const [nSigFigs, setNSigFigs] = useState<number | undefined>(undefined)
+  const [mantissa, setMantissa] =
+    useState<L2BookParameters['mantissa']>(undefined)
 
   const { data: notification } = useUserNotifications({ address })
 
@@ -161,6 +170,8 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             disableBgFillNotifs,
             hidePnl,
             optOutOfSpotDustCollection,
+            nSigFigs,
+            mantissa,
           },
           mutate: {
             setQuickCloseReversePositionEnabled,
@@ -173,6 +184,8 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             setDisableBgFillNotifs,
             setHidePnl,
             setOptOutOfSpotDustCollection,
+            setNSigFigs,
+            setMantissa,
           },
         }
       }, [
@@ -196,6 +209,8 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
         setHidePnl,
         optOutOfSpotDustCollection,
         setOptOutOfSpotDustCollection,
+        nSigFigs,
+        mantissa,
       ])}
     >
       {children}

@@ -1,4 +1,5 @@
 'use client'
+import type { L2BookParameters } from '@nktkas/hyperliquid'
 import {
   Button,
   Dialog,
@@ -50,7 +51,7 @@ export const SlippageStat = () => {
 const SlippageDialog = () => {
   const [open, setOpen] = useState(false)
   const {
-    state: { marketOrderSlippage },
+    state: { marketOrderSlippage, nSigFigs, mantissa },
     mutate: { setMarketOrderSlippage },
   } = useUserSettingsState()
   const {
@@ -58,6 +59,8 @@ const SlippageDialog = () => {
   } = useAssetState()
   const { data: orderBook } = useL2OrderBook({
     assetString: activeAsset,
+    nSigFigs: nSigFigs as L2BookParameters['nSigFigs'],
+    mantissa,
   })
   const [localSlippage, setLocalSlippage] = useState(
     (marketOrderSlippage / MARKET_SLIPPAGE_DENOMINATOR).toFixed(2),
