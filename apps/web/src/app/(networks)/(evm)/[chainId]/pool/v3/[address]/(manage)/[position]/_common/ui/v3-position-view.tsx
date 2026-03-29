@@ -45,6 +45,7 @@ import {
 } from 'src/lib/hooks'
 import {
   useClaimableRewards,
+  useKatanaRewardCampaigns,
   useRewardCampaigns,
 } from 'src/lib/hooks/react-query'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
@@ -56,6 +57,7 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Amount, formatPercent, formatUSD } from 'sushi'
 import {
   type EvmAddress,
+  EvmChainId,
   type SushiSwapV3ChainId,
   getEvmChainById,
   isMerklChainId,
@@ -181,18 +183,34 @@ const Component: FC<{
       chainId,
       enabled: isMerklChainId(chainId),
     })
+  const {
+    data: katanaRewardCampaigns,
+    isLoading: isKatanaRewardCampaignsLoading,
+  } = useKatanaRewardCampaigns({
+    pool: poolAddress,
+    chainId,
+    enabled: chainId === EvmChainId.KATANA,
+  })
+
+  const mergedCampaignsData = useMemo(() => {
+    return [...(campaignsData ?? []), ...(katanaRewardCampaigns ?? [])]
+  }, [campaignsData, katanaRewardCampaigns])
 
   const [activeCampaigns, inactiveCampaigns] = useMemo(() => {
-    const activeCampaigns: typeof campaignsData = []
-    const inactiveCampaigns: typeof campaignsData = []
+    const activeCampaigns: typeof mergedCampaignsData = []
+    const inactiveCampaigns: typeof mergedCampaignsData = []
 
-    campaignsData?.forEach((campaign) => {
+    mergedCampaignsData?.forEach((campaign) => {
       if (campaign.isLive) activeCampaigns.push(campaign)
       else inactiveCampaigns.push(campaign)
     })
 
     return [activeCampaigns, inactiveCampaigns]
-  }, [campaignsData])
+  }, [mergedCampaignsData])
+
+  const isRewardsDistributionLoading =
+    isCampaignsLoading ||
+    (chainId === EvmChainId.KATANA && isKatanaRewardCampaignsLoading)
 
   const fiatValuesAmounts = useTokenAmountDollarValues({ chainId, amounts })
   const positionAmounts = useMemo(
@@ -662,7 +680,7 @@ const Component: FC<{
             <div className="py-4">
               <Separator />
             </div>
-            <KatanaStakingMessage campaigns={activeCampaigns} />
+            <KatanaStakingMessage pool={poolAddress} chainId={chainId} />
             <Card>
               <CardHeader>
                 <CardTitle>Reward distributions</CardTitle>
@@ -699,14 +717,14 @@ const Component: FC<{
                 <TabsContent value="active">
                   <DistributionDataTable
                     chainId={chainId}
-                    isLoading={isCampaignsLoading}
+                    isLoading={isRewardsDistributionLoading}
                     data={activeCampaigns}
                   />
                 </TabsContent>
                 <TabsContent value="inactive">
                   <DistributionDataTable
                     chainId={chainId}
-                    isLoading={isCampaignsLoading}
+                    isLoading={isRewardsDistributionLoading}
                     data={inactiveCampaigns}
                   />
                 </TabsContent>
