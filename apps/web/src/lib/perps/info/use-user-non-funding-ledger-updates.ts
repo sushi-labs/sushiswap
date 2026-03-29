@@ -424,16 +424,13 @@ function parseHyperliquidTx(
         accountValueChange: `${perpsNumberFormatter({ value: d.amount })} ${d.token}`,
         accValChange: Number(-d.amount),
       }
-    //@ts-expect-error - missing case in response type
     case 'vaultLeaderCommission':
       return {
         action: 'Vault Commission',
         source: 'Perps',
         destination: 'Perps',
         feeAmount: 0,
-        //@ts-expect-error - missing case in response type
         accountValueChange: `${perpsNumberFormatter({ value: d.usdc })} USDC`,
-        //@ts-expect-error - missing case in response type
         accValChange: Number(d.usdc),
       }
   }
