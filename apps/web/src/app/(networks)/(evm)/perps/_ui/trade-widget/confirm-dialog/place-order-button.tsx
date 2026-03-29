@@ -434,7 +434,8 @@ const _useTpSlOrder = () => {
             side: tradeSide === 'long' ? ('short' as const) : ('long' as const),
             price: formatPrice(
               formatUnits(
-                (_tpPrice * BigInt(90)) / BigInt(100), //todo: check to make sure this doesnt need to be reversed for shorts
+                (_tpPrice * BigInt(tradeSide === 'long' ? 92 : 108)) /
+                  BigInt(100),
                 asset?.formatParseDecimals,
               ),
               asset?.decimals,
@@ -464,7 +465,8 @@ const _useTpSlOrder = () => {
             side: tradeSide === 'long' ? ('short' as const) : ('long' as const),
             price: formatPrice(
               formatUnits(
-                (_slPrice * BigInt(90)) / BigInt(100), //todo: check to make sure this doesnt need to be reversed for shorts
+                (_slPrice * BigInt(tradeSide === 'long' ? 92 : 108)) /
+                  BigInt(100),
                 asset?.formatParseDecimals,
               ),
               asset?.decimals,

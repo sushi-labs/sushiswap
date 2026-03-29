@@ -125,8 +125,6 @@ export const useL2OrderBook = ({
           queryClient.setQueryData(
             KEY(assetString, nSigFigs, mantissa),
             (_prev: FormattedL2Orders | undefined) => {
-              // ignore out-of-order / stale events//todo: comeback to check that this can safely be removed. was causing stale data when sigfisgs/mantissa changed
-              // if (prev && prev.time >= ev.time) return prev
               return formatOrders(ev)
             },
           )

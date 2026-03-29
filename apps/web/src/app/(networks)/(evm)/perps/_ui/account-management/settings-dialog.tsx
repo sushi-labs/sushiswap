@@ -96,7 +96,6 @@ export const SettingsDialog = () => {
               onChange={setOptOutOfSpotDustCollection}
               label="Opt Out of Spot Dust Collection"
             />
-            {/* todo: in chart trading */}
             {/* todo: sound effects on click? */}
             {/* todo: sound effects on on fill */}
             <div className="bg-accent w-full h-[1px]" />

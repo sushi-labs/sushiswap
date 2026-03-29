@@ -156,7 +156,8 @@ export const EditTpSlPositionDialog = ({
 
     const adjustedTpPrice = formatPrice(
       formatUnits(
-        (_tpPrice * BigInt(108)) / BigInt(100),
+        (_tpPrice * BigInt(positionToClose.side === 'B' ? 92 : 108)) /
+          BigInt(100),
         asset?.formatParseDecimals,
       ),
       asset?.decimals,
@@ -164,7 +165,8 @@ export const EditTpSlPositionDialog = ({
     )
     const adjustedSlPrice = formatPrice(
       formatUnits(
-        (_slPrice * BigInt(108)) / BigInt(100),
+        (_slPrice * BigInt(positionToClose.side === 'B' ? 108 : 92)) /
+          BigInt(100),
         asset?.formatParseDecimals,
       ),
       asset?.decimals,

@@ -235,7 +235,6 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TwapFillHistoryItemType, unknown> = {
     const {
       state: { hidePnl },
     } = useUserSettingsState()
-    //todo: incorporate fee rebates into this calculation once we have that data available
     if (totalPnl === 0) {
       return '-'
     }
