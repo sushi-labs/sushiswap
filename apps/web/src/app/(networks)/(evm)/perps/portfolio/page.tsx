@@ -15,7 +15,7 @@ export default async function PerpetualsPortfolioPage() {
           <DialogRow />
         </div>
         <div className="flex flex-col lg:flex-row gap-2">
-          <div className="grid w-full lg:grid-cols-1 grid-cols-2 gap-2 ">
+          <div className="grid w-full lg:grid-cols-1 grid-cols-2 gap-2">
             <Volume />
             <Fees />
           </div>

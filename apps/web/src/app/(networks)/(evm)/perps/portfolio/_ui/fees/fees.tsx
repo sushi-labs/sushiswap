@@ -38,7 +38,7 @@ export const Fees = () => {
   }, [feeData, side, address])
 
   return (
-    <Card className="p-2 !rounded-md gap-2 flex !bg-[#18223B] border-transparent justify-between flex-col w-full h-full">
+    <Card className="p-2 !rounded-md gap-2 flex !bg-[#18223B] border-transparent justify-between flex-col w-full">
       <div className="flex items-start justify-between gap-2 text-xs lg:text-sm">
         <div className="text-muted-foreground">Fees (Taker / Maker)</div>
         <DropdownMenu open={open} onOpenChange={setOpen}>

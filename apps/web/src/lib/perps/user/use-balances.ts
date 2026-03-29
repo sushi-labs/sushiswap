@@ -71,11 +71,9 @@ export const useBalances = () => {
     const spotBalances =
       webData2Data?.spotState?.balances?.map((i) => {
         const tokenIndex = i.token
-        const spot = assetList
-          ?.entries?.()
-          ?.find?.(([, v]) =>
-            v?.tokens?.find((t) => t?.index === tokenIndex),
-          )?.[1]
+        const spot = Array.from(assetList?.entries() ?? []).find(([, v]) =>
+          v?.tokens?.find((t) => t?.index === tokenIndex),
+        )?.[1]
         const price = i.coin === 'USDC' ? 1 : (Number(spot?.markPrice) ?? 0)
         const usdcValue = Number(i.total || 0) * price
         const entry = Number(i.entryNtl || 0)

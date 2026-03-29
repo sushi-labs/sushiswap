@@ -73,11 +73,9 @@ export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
     for (const spotBalance of balanceArr) {
       const tokenIndex = spotBalance.token
       if (!assetList) continue
-      const spotAsset = assetList
-        ?.entries?.()
-        ?.find?.(([, v]) =>
-          v?.tokens?.find((t) => t?.index === tokenIndex),
-        )?.[1]
+      const spotAsset = Array.from(assetList?.entries() ?? []).find(([, v]) =>
+        v?.tokens?.find((t) => t?.index === tokenIndex),
+      )?.[1]
 
       if (!spotAsset) continue
       const spotToken = spotAsset?.tokens?.[tokenIndex === 0 ? 1 : 0]

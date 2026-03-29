@@ -40,26 +40,24 @@ export const useUserAccountValues = () => {
   }, [address, errorWebData2, allDexError, assetListError])
 
   const spotEquity = useMemo(() => {
-    if (!webData2 || !assetList) return 0
+    if (!webData2?.spotState?.balances || !assetList) return 0
 
-    const amount =
+    return (
       webData2?.spotState?.balances?.reduce((acc, asset) => {
         const balance = Number(asset?.total) ?? 0
         if (asset.coin === 'USDC') {
           return acc + balance
         }
         const tokenIndex = asset?.token
-        const spot = assetList
-          ?.entries?.()
-          ?.find?.(([, v]) =>
-            v?.tokens?.find((t) => t?.index === tokenIndex),
-          )?.[1]
+        const spot = Array.from(assetList?.entries() ?? []).find(([, v]) =>
+          v?.tokens?.find((t) => t?.index === tokenIndex),
+        )?.[1]
         const price = Number(spot?.lastPrice) ?? 0
         const val = balance * price
         return acc + val
       }, 0) ?? 0
-    return amount
-  }, [webData2, assetList])
+    )
+  }, [webData2?.spotState?.balances, assetList])
 
   const unrelaizedPnL = useMemo(() => {
     if (!allDexClearinghouseState) return 0
