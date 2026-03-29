@@ -1,7 +1,8 @@
 import { useReactTable } from '@tanstack/react-table'
 import { type ColumnDef, getSortedRowModel } from '@tanstack/react-table'
 import { getCoreRowModel } from '@tanstack/react-table'
-import { useMemo } from 'react'
+import { useVirtualizer } from '@tanstack/react-virtual'
+import { useMemo, useRef } from 'react'
 import { MobileCard } from './mobile-card'
 import { MobileCardSkeleton } from './mobile-card-skeleton'
 
@@ -37,6 +38,17 @@ export const MobileTable = <T,>({
     )
   }, [table])
 
+  const { rows } = table.getRowModel()
+
+  const parentRef = useRef<HTMLDivElement>(null)
+
+  const virtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => (isExpandedOverride ? 230 : 80),
+    overscan: 20,
+  })
+
   if (isLoading) {
     return (
       <div className="flex flex-col gap-3">
@@ -58,8 +70,9 @@ export const MobileTable = <T,>({
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      {table.getRowModel().rows.map((row) => {
+    <div className="flex flex-col gap-3 min-h-[300px]" ref={parentRef}>
+      {virtualizer.getVirtualItems().map((virtualRow) => {
+        const row = rows[virtualRow.index]
         return (
           <MobileCard
             key={row.id}

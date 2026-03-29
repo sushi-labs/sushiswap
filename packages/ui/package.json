@@ -75,6 +75,7 @@
     "@tailwindcss/forms": "0.5.3",
     "@tailwindcss/typography": "0.5.9",
     "@tanstack/react-table": "8.9.1",
+    "@tanstack/react-virtual": "3.13.23",
     "class-variance-authority": "0.7.0",
     "classnames": "2.3.2",
     "cmdk": "1.0.4",

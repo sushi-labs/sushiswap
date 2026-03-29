@@ -1,4 +1,4 @@
-import { DataTable, Slot } from '@sushiswap/ui'
+import { DataTableVirtual, Slot } from '@sushiswap/ui'
 import type { Row, SortingState, TableState } from '@tanstack/react-table'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { type PerpOrSpotAsset, useFavoriteAssets } from 'src/lib/perps'
@@ -88,7 +88,7 @@ export const FavoriteAssets = () => {
   )
 
   return (
-    <DataTable
+    <DataTableVirtual
       state={state}
       onSortingChange={setSorting}
       loading={isLoading}

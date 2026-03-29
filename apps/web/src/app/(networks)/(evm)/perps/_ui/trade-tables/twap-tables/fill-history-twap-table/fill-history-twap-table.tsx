@@ -1,4 +1,4 @@
-import { DataTable, useBreakpoint } from '@sushiswap/ui'
+import { DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import { type TwapFillHistoryItemType, useTwapFillHistory } from 'src/lib/perps'
@@ -87,7 +87,7 @@ export const FillHistoryTwapTable = () => {
   }, [tableData, sorting])
 
   return isLg ? (
-    <DataTable
+    <DataTableVirtual
       state={state}
       loading={isLoading}
       columns={COLUMNS}

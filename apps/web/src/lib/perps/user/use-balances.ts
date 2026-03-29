@@ -69,38 +69,41 @@ export const useBalances = () => {
       .filter((b) => Number(b.usdcValue) > 0)
 
     const spotBalances =
-      webData2Data?.spotState?.balances?.map((i) => {
-        const tokenIndex = i.token
-        const spot = Array.from(assetList?.entries() ?? []).find(([, v]) =>
-          v?.tokens?.find((t) => t?.index === tokenIndex),
-        )?.[1]
-        const price = i.coin === 'USDC' ? 1 : (Number(spot?.markPrice) ?? 0)
-        const usdcValue = Number(i.total || 0) * price
-        const entry = Number(i.entryNtl || 0)
-        const pnl = usdcValue - entry
-        const roePc = entry > 0 ? (pnl / entry) * 100 : null
-        const _coin = SPOT_ASSETS_TO_REWRITE.has(i.coin)
-          ? SPOT_ASSETS_TO_REWRITE.get(i.coin)
-          : i.coin
-        const availableBalance = Number(i?.total || 0) - Number(i?.hold || 0)
-        return {
-          coin: i.coin === 'USDC' ? 'USDC (Spot)' : _coin,
-          assetName: spot?.name,
-          totalBalance: i.total,
-          availableBalance: availableBalance.toString(),
-          usdcValue: usdcValue.toString(),
-          pnlRoePc:
-            i.coin === 'USDC'
-              ? null
-              : {
-                  pnl,
-                  roePc,
-                },
-          token: spot?.tokens?.find((t) => t.index === tokenIndex),
-          marketType: 'spot' as const,
-          dex: '',
-        }
-      }) ?? []
+      webData2Data?.spotState?.balances
+        ?.map((i) => {
+          if (i.total === '0.0') return null
+          const tokenIndex = i.token
+          const spot = Array.from(assetList?.entries() ?? []).find(([, v]) =>
+            v?.tokens?.find((t) => t?.index === tokenIndex),
+          )?.[1]
+          const price = i.coin === 'USDC' ? 1 : (Number(spot?.markPrice) ?? 0)
+          const usdcValue = Number(i.total || 0) * price
+          const entry = Number(i.entryNtl || 0)
+          const pnl = usdcValue - entry
+          const roePc = entry > 0 ? (pnl / entry) * 100 : null
+          const _coin = SPOT_ASSETS_TO_REWRITE.has(i.coin)
+            ? SPOT_ASSETS_TO_REWRITE.get(i.coin)
+            : i.coin
+          const availableBalance = Number(i?.total || 0) - Number(i?.hold || 0)
+          return {
+            coin: i.coin === 'USDC' ? 'USDC (Spot)' : _coin,
+            assetName: spot?.name,
+            totalBalance: i.total,
+            availableBalance: availableBalance.toString(),
+            usdcValue: usdcValue.toString(),
+            pnlRoePc:
+              i.coin === 'USDC'
+                ? null
+                : {
+                    pnl,
+                    roePc,
+                  },
+            token: spot?.tokens?.find((t) => t.index === tokenIndex),
+            marketType: 'spot' as const,
+            dex: '',
+          }
+        })
+        ?.filter((b) => b !== null) ?? []
 
     const allBalances = [...perpsUsdcs, ...spotBalances]
     if (!isUnifiedAccountModeEnabled) {

@@ -1,4 +1,4 @@
-import { DataTable, useBreakpoint } from '@sushiswap/ui'
+import { DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useCallback, useMemo, useState } from 'react'
 import {
@@ -188,7 +188,7 @@ export const OpenOrdersTable = () => {
   return (
     <>
       {isLg ? (
-        <DataTable
+        <DataTableVirtual
           state={state}
           loading={isLoading}
           columns={columns}

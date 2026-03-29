@@ -1,6 +1,6 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 import {
-  DataTable,
+  DataTableVirtual,
   Slot,
   Tabs,
   TabsContent,
@@ -126,9 +126,9 @@ export const SpotAssets = () => {
       </TabsList>
       <TabsContent
         value={selectedTab}
-        className="max-h-[calc(80vh-215px)] hide-scrollbar md:max-h-[calc(80vh-240px)] overflow-auto"
+        className="max-h-[calc(80vh-215px)] hide-scrollbar md:max-h-[calc(80vh-240px)] overflow-auto max-w-[calc(100vw-30px)]"
       >
-        <DataTable
+        <DataTableVirtual
           state={state}
           onSortingChange={setSorting}
           loading={isLoading}
