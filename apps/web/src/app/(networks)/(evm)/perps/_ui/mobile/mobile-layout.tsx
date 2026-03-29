@@ -1,6 +1,6 @@
 'use client'
 import { useLocalStorage } from '@sushiswap/hooks'
-import { AssetSelectorAndStats } from '../_common'
+import { AssetSelectorAndStats, GeoBlockedMessage } from '../_common'
 import { AccountManagement } from '../account-management'
 import { TradeTables } from '../trade-tables'
 import { TradeWidget } from '../trade-widget'
@@ -15,7 +15,8 @@ export const MobileLayout = () => {
     'markets',
   )
   return (
-    <div className="pb-[52px] w-full h-full min-h-[calc(100vh-96px)]">
+    <div className="pb-[52px] w-full h-full min-h-[calc(100vh-96px)] overflow-x-hidden">
+      <GeoBlockedMessage />
       <div className="flex flex-col gap-1 pt-2">
         {view !== 'account' ? <AssetSelectorAndStats /> : null}
         {view === 'markets' ? <TabbedView /> : null}
