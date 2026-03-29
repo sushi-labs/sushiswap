@@ -112,6 +112,7 @@ export const useSendAsset = () => {
   })
 
   return {
+    sendAssetAsync: mutation.mutateAsync,
     sendAsset: mutation.mutate,
     isPending: mutation.isPending,
   }

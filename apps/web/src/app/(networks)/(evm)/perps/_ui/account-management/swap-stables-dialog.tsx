@@ -32,6 +32,7 @@ import {
   perpsNumberFormatter,
   useExecuteOrders,
   useMidPrice,
+  useSendAsset,
   useSendableAssets,
 } from 'src/lib/perps'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
@@ -69,10 +70,12 @@ export const SwapStablesDialog = ({
   const [assetToSend, setAssetToSend] = useState<SendableAssetType | null>(null)
   const [assetToBuy, setAssetToBuy] = useState<SendableAssetType | null>(null)
   const address = useAccount('evm')
-  const { executeOrders, isPending } = useExecuteOrders()
+  const { executeOrdersAsync, isPending: isPendingOrder } = useExecuteOrders()
+  const { sendAssetAsync, isPending: isPendingSendAsset } = useSendAsset()
   const { midPrice } = useMidPrice({
     assetString: assetToBuy?.assetName ?? undefined,
   })
+  const isPending = isPendingOrder || isPendingSendAsset
 
   const isControlled = isOpen !== undefined
   const resolvedOpen = isControlled ? isOpen : open
@@ -227,9 +230,32 @@ export const SwapStablesDialog = ({
     }
   }, [assetToBuy, assetToSend, address, midPrice, amountToSend])
 
-  const swapStables = useCallback(() => {
-    if (!orderData) return
-    executeOrders(
+  const swapStables = useCallback(async () => {
+    if (!orderData || !assetToSend || !address || !amountToSend?.currency)
+      return
+    const spotBalance = Amount.tryFromHuman(
+      amountToSend?.currency,
+      assetToSend?.spotBalance || '0',
+    )
+    if (
+      spotBalance &&
+      assetToSend.symbol === 'USDC' &&
+      assetToSend?.spotBalance &&
+      amountToSend?.gt(spotBalance)
+    ) {
+      const amountToSendFromPerp = spotBalance
+        ? amountToSend.sub(spotBalance)
+        : amountToSend
+      await sendAssetAsync({
+        amount: amountToSendFromPerp.toString(),
+        decimals: 2,
+        destination: address,
+        token: 'USDC',
+        sourceDex: '',
+        destinationDex: 'spot',
+      })
+    }
+    await executeOrdersAsync(
       { orderData },
       {
         onSuccess: () => {
@@ -238,7 +264,15 @@ export const SwapStablesDialog = ({
         },
       },
     )
-  }, [orderData, executeOrders, handleOpenChange])
+  }, [
+    orderData,
+    executeOrdersAsync,
+    sendAssetAsync,
+    handleOpenChange,
+    assetToSend,
+    address,
+    amountToSend,
+  ])
 
   const handleSelectAssetToSend = useCallback(
     (symbol: string) => {

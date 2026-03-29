@@ -117,21 +117,24 @@ export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
 
     if (filter) {
       if (filter === 'stable') {
-        return assets?.filter(
-          (a) => a.marketType === 'spot' && STABLE_OPTIONS.includes(a.symbol),
-        )
-        // .map((i) => {
-        //   if (i.symbol === 'USDC') {
-        //     const balance = Number(usdcPerp.balance) + Number(i.balance)
-        //     const value = balance * Number(i.markPrice ?? 1)
-        //     return {
-        //       ...i,
-        //       usdcValue: value.toString(),
-        //       balance: balance.toString(),
-        //     }
-        //   }
-        //   return i
-        // })
+        return assets
+          ?.filter(
+            (a) => a.marketType === 'spot' && STABLE_OPTIONS.includes(a.symbol),
+          )
+          .map((i) => {
+            if (i.symbol === 'USDC') {
+              const balance = Number(usdcPerp.balance) + Number(i.balance)
+              const value = balance * Number(i.markPrice ?? 1)
+              return {
+                ...i,
+                usdcValue: value.toString(),
+                balance: balance.toString(),
+                spotBalance: i.balance,
+                perpBalance: usdcPerp.balance,
+              }
+            }
+            return i
+          })
       }
       return assets?.filter((a) => a.marketType === filter)
     }
@@ -156,4 +159,7 @@ export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
 
 export type SendableAssetType = ReturnType<
   typeof useSendableAssets
->['data'][number]
+>['data'][number] & {
+  spotBalance?: string
+  perpBalance?: string
+}
