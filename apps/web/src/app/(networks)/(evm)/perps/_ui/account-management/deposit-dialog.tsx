@@ -18,7 +18,7 @@ import { type EvmAddress, EvmChainId, USDC, erc20Abi_transfer } from 'sushi/evm'
 import { usePublicClient, useSimulateContract, useWriteContract } from 'wagmi'
 import { PerpsChecker } from '../perps-checker'
 
-//@todo clean up
+//@todo add more options
 const usdc = USDC[EvmChainId.ARBITRUM]
 const chainId = EvmChainId.ARBITRUM
 const HYPERLIQUID_DEPOSIT_BRIDGE =

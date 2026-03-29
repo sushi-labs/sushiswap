@@ -120,7 +120,6 @@ const _useTwapOrderData = () => {
   ])
 }
 
-//todo: clean up and move hooks to own files
 const _useOrderData = () => {
   const {
     state: {

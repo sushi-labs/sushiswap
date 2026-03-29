@@ -58,7 +58,6 @@ interface State {
     availableToLong: string
     availableToShort: string
     markPrice: string
-    //todo: come back and move this
     activeAssetDataQuery: ReturnType<typeof useActiveAssetData>
     currentLeverageForAsset: number
     tpPrice: string

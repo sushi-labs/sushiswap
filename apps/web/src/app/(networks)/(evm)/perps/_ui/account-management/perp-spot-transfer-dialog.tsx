@@ -25,7 +25,6 @@ import { useAssetState } from '../trade-widget'
 import { useUserSettingsState } from './settings-provider'
 import { TransferInput } from './transfer-input'
 
-//@todo clean up
 const chainId = EvmChainId.ARBITRUM
 
 export const PerpSpotTransferDialog = ({

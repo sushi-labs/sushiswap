@@ -25,7 +25,7 @@ import { useUserState } from '~evm/perps/user-provider'
 import { PerpsChecker } from '../perps-checker'
 import { TransferInput } from './transfer-input'
 
-//@todo clean up
+//@todo add more options
 const currency = USDC[EvmChainId.ARBITRUM]
 const chainId = EvmChainId.ARBITRUM
 const MIN_WITHDRAW_AMOUNT = 2 //2.000000 usdc

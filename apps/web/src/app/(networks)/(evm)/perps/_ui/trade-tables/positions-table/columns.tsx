@@ -359,7 +359,7 @@ export const FUNDING_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     const sinceChange = Number.parseFloat(
       props.row.original.position.cumFunding.sinceChange ?? '0',
     )
-    //todo: recheck this
+
     return (
       <HoverCard openDelay={0}>
         <HoverCardTrigger asChild tabIndex={0}>
