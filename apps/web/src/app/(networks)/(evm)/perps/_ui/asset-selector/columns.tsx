@@ -26,6 +26,7 @@ const columnBodyMeta = {
 export const SYMBOL_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
   id: 'symbol',
   header: 'Symbol',
+  accessorFn: (row) => row.symbol,
   cell: (props) => {
     const asset = useMemo(() => props.row.original, [props.row.original])
     return (
@@ -55,6 +56,9 @@ export const SYMBOL_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
     body: {
       className: classNames(columnBodyMeta.className, '!pl-0'),
       skeleton: columnBodyMeta.skeleton,
+    },
+    header: {
+      className: '!pl-2',
     },
   },
 }

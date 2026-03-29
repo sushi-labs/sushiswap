@@ -96,6 +96,7 @@ export const SpotAssets = () => {
             setActiveAsset(row.original.name)
             setOpen(false)
           }}
+          key={`${row.original.name}-${row.original.dex}-slot`}
         >
           {rowNode}
         </Slot>
@@ -125,7 +126,7 @@ export const SpotAssets = () => {
       </TabsList>
       <TabsContent
         value={selectedTab}
-        className="max-h-[calc(80vh-215px)] md:max-h-[calc(80vh-240px)] overflow-auto"
+        className="max-h-[calc(80vh-215px)] hide-scrollbar md:max-h-[calc(80vh-240px)] overflow-auto"
       >
         <DataTable
           state={state}
@@ -134,7 +135,7 @@ export const SpotAssets = () => {
           rowRenderer={rowRenderer}
           columns={COLUMNS}
           data={filtered}
-          thClassName="!h-8"
+          thClassName="!h-8 pl-0"
           hideScrollbar={true}
         />
       </TabsContent>

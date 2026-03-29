@@ -19,6 +19,7 @@ export const AssetTabs = () => {
     'sushi.perps.selected-search-asset-tab',
     'all',
   )
+
   return (
     <Tabs
       className="w-fit"
@@ -42,7 +43,7 @@ export const AssetTabs = () => {
         className={classNames(
           'mt-2',
           selectedTab !== 'HIP-3' && selectedTab !== 'spot'
-            ? 'max-h-[calc(80vh-175px)] md:max-h-[calc(80vh-200px)] overflow-auto'
+            ? 'h-[calc(80vh-175px)] md:h-[calc(80vh-200px)] overflow-y-auto hide-scrollbar'
             : '',
         )}
       >

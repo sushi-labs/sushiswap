@@ -95,6 +95,7 @@ export const HIP3Assets = () => {
             setActiveAsset(row.original.name)
             setOpen(false)
           }}
+          key={`${row.original.name}-${row.original.dex}-slot`}
         >
           {rowNode}
         </Slot>
@@ -124,7 +125,7 @@ export const HIP3Assets = () => {
       </TabsList>
       <TabsContent
         value={selectedTab}
-        className="max-h-[calc(80vh-215px)] md:max-h-[calc(80vh-240px)] overflow-auto"
+        className="max-h-[calc(80vh-215px)] md:max-h-[calc(80vh-240px)] overflow-auto hide-scrollbar"
       >
         <DataTable
           state={state}
@@ -133,7 +134,7 @@ export const HIP3Assets = () => {
           rowRenderer={rowRenderer}
           columns={COLUMNS}
           data={filtered}
-          thClassName="!h-8"
+          thClassName="!h-8 pl-0"
           hideScrollbar={true}
         />
       </TabsContent>

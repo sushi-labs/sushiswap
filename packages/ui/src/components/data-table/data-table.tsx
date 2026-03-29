@@ -86,7 +86,7 @@ export function DataTable<TData, TValue>({
   showColumnHeaders = true,
   meta,
   thClassName,
-  hideScrollbar,
+  hideScrollbar = false,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -125,11 +125,7 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div
-      className={classNames(
-        'space-y-4 border-t border-secondary black:border-white/[0.1]',
-      )}
-    >
+    <div className="space-y-4 border-t border-secondary black:border-white/[0.1]">
       {toolbar ? toolbar(table) : null}
       <Table
         className={

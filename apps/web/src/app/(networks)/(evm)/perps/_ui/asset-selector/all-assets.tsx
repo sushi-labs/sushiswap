@@ -84,6 +84,7 @@ export const AllAssets = ({
             setActiveAsset(row.original.name)
             setOpen(false)
           }}
+          key={`${row.original.name}-${row.original.dex}-slot`}
         >
           {rowNode}
         </Slot>
@@ -100,7 +101,7 @@ export const AllAssets = ({
       rowRenderer={rowRenderer}
       columns={COLUMNS}
       data={filtered}
-      thClassName="!h-8"
+      thClassName="!h-8 pl-0"
       hideScrollbar={true}
     />
   )
