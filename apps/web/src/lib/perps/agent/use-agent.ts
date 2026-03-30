@@ -115,7 +115,9 @@ export const useAgent = () => {
       if (error instanceof AbstractWalletError || error instanceof Error) {
         message = error.message
       }
-      removeValue()
+      if (message.includes('Failed to sign typed')) {
+        return
+      }
       createFailedToast({
         summary:
           message ||

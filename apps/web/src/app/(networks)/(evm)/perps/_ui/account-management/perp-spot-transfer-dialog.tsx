@@ -8,6 +8,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import {
@@ -172,9 +175,40 @@ export const PerpSpotTransferDialog = ({
     setAmount('')
   }, [])
 
+  if (isUnifiedAccountModeEnabled) {
+    return (
+      <HoverCard openDelay={0}>
+        <HoverCardTrigger
+          asChild
+          tabIndex={0}
+          className="opacity-50 cursor-not-allowed"
+        >
+          {trigger ? (
+            trigger
+          ) : (
+            <Button className="w-full" variant="perps-secondary" size="sm">
+              Perps
+              <ArrowsUpDownIcon className="w-3 h-3 rotate-90" /> Spot
+            </Button>
+          )}
+        </HoverCardTrigger>
+        <HoverCardContent
+          forceMount
+          side="top"
+          className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+        >
+          <p>
+            When unified account is enabled, trading is from a single unified
+            account.
+          </p>
+        </HoverCardContent>
+      </HoverCard>
+    )
+  }
+
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild disabled={isUnifiedAccountModeEnabled}>
+      <DialogTrigger asChild>
         {trigger ? (
           trigger
         ) : (
@@ -184,6 +218,7 @@ export const PerpSpotTransferDialog = ({
           </Button>
         )}
       </DialogTrigger>
+
       <DialogContent variant="perps-default">
         <DialogHeader className="!text-left">
           <DialogTitle>Transfer {currency.symbol}</DialogTitle>

@@ -1,6 +1,11 @@
 'use client'
 import { ArrowsUpDownIcon } from '@heroicons/react/24/outline'
-import { Button } from '@sushiswap/ui'
+import {
+  Button,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@sushiswap/ui'
 import { useCallback, useState } from 'react'
 import {
   DepositDialog,
@@ -8,6 +13,7 @@ import {
   PerpSpotTransferDialog,
   SendDialog,
   WithdrawDialog,
+  useUserSettingsState,
 } from '~evm/perps/_ui/account-management'
 import { SwapStablesDialog } from '~evm/perps/_ui/account-management/swap-stables-dialog'
 
@@ -38,6 +44,9 @@ export const DialogRow = () => {
       action: null,
     })
   }, [])
+  const {
+    state: { isUnifiedAccountModeEnabled },
+  } = useUserSettingsState()
   return (
     <div className="flex items-center gap-2 flex-wrap">
       <Button
@@ -46,13 +55,38 @@ export const DialogRow = () => {
       >
         Swap Stablecoins
       </Button>
-      <Button
-        variant="perps-secondary"
-        onClick={() => openModal('perp-spot-transfer')}
-      >
-        Perps
-        <ArrowsUpDownIcon className="w-3 h-3 rotate-90" /> Spot
-      </Button>
+      {isUnifiedAccountModeEnabled ? (
+        <HoverCard openDelay={0}>
+          <HoverCardTrigger
+            asChild
+            tabIndex={0}
+            className="opacity-50 cursor-not-allowed"
+          >
+            <Button variant="perps-secondary">
+              Perps
+              <ArrowsUpDownIcon className="w-3 h-3 rotate-90" /> Spot
+            </Button>
+          </HoverCardTrigger>
+          <HoverCardContent
+            forceMount
+            side="top"
+            className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+          >
+            <p>
+              When unified account is enabled, trading is from a single unified
+              account.
+            </p>
+          </HoverCardContent>
+        </HoverCard>
+      ) : (
+        <Button
+          variant="perps-secondary"
+          onClick={() => openModal('perp-spot-transfer')}
+        >
+          Perps
+          <ArrowsUpDownIcon className="w-3 h-3 rotate-90" /> Spot
+        </Button>
+      )}
 
       <Button
         variant="perps-secondary"
