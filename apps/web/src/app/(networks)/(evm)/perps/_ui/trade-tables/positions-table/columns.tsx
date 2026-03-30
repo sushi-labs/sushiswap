@@ -20,10 +20,7 @@ import {
 } from 'src/lib/perps'
 import { TableButton } from '../../_common'
 import { useUserSettingsState } from '../../account-management'
-import {
-  CloseAllPositionsDialog,
-  UpdateIsolatedMarginDialog,
-} from '../../exchange'
+import { CloseAllPositionsDialog } from '../../exchange'
 import { MarketQuickClose } from '../../exchange/market-quick-close'
 import { ReverseQuick } from '../../exchange/reverse-quick'
 import { useAssetState } from '../../trade-widget'
@@ -432,7 +429,10 @@ export const CLOSE_COLUMN = (
     )
   },
   meta: {
-    body: columnBodyMeta,
+    body: {
+      className: classNames(columnBodyMeta.className, '!pr-4'),
+      skeleton: columnBodyMeta.skeleton,
+    },
   },
 })
 
