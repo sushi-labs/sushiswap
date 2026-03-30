@@ -10,7 +10,7 @@ import type { IPositionRowData } from './PositionsTable'
 export const PositionCollectFeesCell = ({
   data,
 }: { data: IPositionRowData }) => {
-  const { feesToken0, feesToken1, token0, token1, tokenId } = data
+  const { pool, feesToken0, feesToken1, token0, token1, tokenId } = data
 
   const { connectedAddress, signTransaction, signAuthEntry } =
     useStellarWallet()
@@ -27,6 +27,7 @@ export const PositionCollectFeesCell = ({
 
     try {
       const result = await collectFeesMutation.mutateAsync({
+        poolAddress: pool,
         tokenId: tokenId,
         recipient: connectedAddress,
         amount0Max: MAX_UINT128,

@@ -5,18 +5,21 @@ import type {
   UserPositionInfo,
 } from '@sushiswap/stellar-contract-binding-position-manager'
 import {
-  getFactoryContractClient,
   getPoolContractClient,
   getPositionManagerContractClient,
+  getPositionManagerContractId,
 } from '../soroban/client'
 import { DEFAULT_TIMEOUT } from '../soroban/constants'
-import { contractAddresses } from '../soroban/contracts'
 import { handleResult } from '../soroban/handle-result'
 import { signAuthEntriesAndGetXdr } from '../soroban/rpc-transaction-helpers'
 import {
   submitTransaction,
   waitForTransaction,
 } from '../soroban/transaction-helpers'
+import {
+  type PoolOracleHints,
+  executeWithOracleHints,
+} from '../utils/slot-hint-helpers'
 
 export interface PositionInfo {
   tokenId: number
@@ -35,6 +38,7 @@ export interface CollectParams {
   recipient: string
   amount0Max: bigint
   amount1Max: bigint
+  poolAddress: string
 }
 
 export interface CollectResult {
@@ -59,7 +63,7 @@ const formatPositionInfo = (
   }
 }
 
-const MINIMUM_DUST_LIQUIDITY = 50n
+export const MINIMUM_DUST_LIQUIDITY = 50n
 
 /**
  * Service for managing positions and collecting fees on Stellar
@@ -68,9 +72,19 @@ export class PositionService {
   /**
    * Get the number of positions (NFTs) owned by a user
    */
-  private async getNumberOfUserPositions(userAddress: string): Promise<number> {
+  private async getNumberOfUserPositions({
+    userAddress,
+    isLegacy = false,
+  }: {
+    userAddress: string
+    isLegacy?: boolean
+  }): Promise<number> {
+    const positionManagerContractId = getPositionManagerContractId(isLegacy)
+    if (!positionManagerContractId) {
+      return 0
+    }
     const positionManagerClient = getPositionManagerContractClient({
-      contractId: contractAddresses.POSITION_MANAGER,
+      contractId: positionManagerContractId,
       // No publicKey needed for read-only operations that don't require user context
     })
     const result = await positionManagerClient.balance({
@@ -86,18 +100,29 @@ export class PositionService {
     userAddress,
     skip = 0,
     take = Number.POSITIVE_INFINITY,
+    isLegacy = false,
   }: {
     userAddress: string
     skip?: number
     take?: number
+    isLegacy?: boolean
   }): Promise<number[]> {
     const BATCH_SIZE = 20
-    const numberOfUserTokenIds =
-      await this.getNumberOfUserPositions(userAddress)
-    const numberToFetch = Math.min(take, numberOfUserTokenIds - skip)
+    const numberOfUserTokenIds = await this.getNumberOfUserPositions({
+      userAddress,
+      isLegacy,
+    })
+    const numberToFetch = Math.max(
+      0,
+      Math.min(take, numberOfUserTokenIds - skip),
+    )
     const numberOfBatches = Math.ceil(numberToFetch / BATCH_SIZE)
+    const positionManagerContractId = getPositionManagerContractId(isLegacy)
+    if (!positionManagerContractId) {
+      return []
+    }
     const positionManagerClient = getPositionManagerContractClient({
-      contractId: contractAddresses.POSITION_MANAGER,
+      contractId: positionManagerContractId,
       publicKey: userAddress,
     })
 
@@ -121,9 +146,19 @@ export class PositionService {
    * Get a single position by token ID
    * Returns raw position data from the positions() function
    */
-  async getPosition(tokenId: number): Promise<PositionInfo | null> {
+  async getPosition({
+    tokenId,
+    isLegacy = false,
+  }: {
+    tokenId: number
+    isLegacy?: boolean
+  }): Promise<PositionInfo | null> {
+    const positionManagerContractId = getPositionManagerContractId(isLegacy)
+    if (!positionManagerContractId) {
+      return null
+    }
     const positionManagerClient = getPositionManagerContractClient({
-      contractId: contractAddresses.POSITION_MANAGER,
+      contractId: positionManagerContractId,
       // No publicKey needed for read-only operations that don't require user context
     })
 
@@ -172,19 +207,30 @@ export class PositionService {
     userAddress,
     skip = 0,
     take = Number.POSITIVE_INFINITY,
+    isLegacy = false,
   }: {
     userAddress: string
     skip?: number
     take?: number
+    isLegacy?: boolean
   }): Promise<PositionInfo[]> {
     const BATCH_SIZE = 3
-    const numberOfUserPositions =
-      await this.getNumberOfUserPositions(userAddress)
-    const numberToFetch = Math.min(take, numberOfUserPositions - skip)
+    const numberOfUserPositions = await this.getNumberOfUserPositions({
+      userAddress,
+      isLegacy,
+    })
+    const numberToFetch = Math.max(
+      0,
+      Math.min(take, numberOfUserPositions - skip),
+    )
     const numberOfBatches = Math.ceil(numberToFetch / BATCH_SIZE)
 
+    const positionManagerContractId = getPositionManagerContractId(isLegacy)
+    if (!positionManagerContractId) {
+      return []
+    }
     const positionManagerClient = getPositionManagerContractClient({
-      contractId: contractAddresses.POSITION_MANAGER,
+      contractId: positionManagerContractId,
     })
 
     try {
@@ -222,17 +268,20 @@ export class PositionService {
     excludeDust = false,
     skip = 0,
     take = Number.POSITIVE_INFINITY,
+    isLegacy = false,
   }: {
     userAddress: string
     excludeDust?: boolean
     skip?: number
     take?: number
+    isLegacy?: boolean
   }): Promise<PositionInfo[]> {
     // Just call getUserPositions since it already includes all data
     const userPositionsWithFees = await this.getUserPositions({
       userAddress,
       skip,
       take,
+      isLegacy,
     })
     return userPositionsWithFees.filter((position) => {
       return (
@@ -245,96 +294,17 @@ export class PositionService {
   }
 
   /**
-   * Get the principal token amounts for a position
-   * This calculates the actual token0 and token1 amounts from liquidity
-   */
-  async getPositionPrincipal(
-    tokenId: number,
-  ): Promise<{ amount0: bigint; amount1: bigint }> {
-    try {
-      // Get position info first
-      const position = await this.getPosition(tokenId)
-      if (!position) {
-        return { amount0: 0n, amount1: 0n }
-      }
-
-      // Get pool address from factory
-      const factoryClient = getFactoryContractClient({
-        contractId: contractAddresses.FACTORY,
-      })
-
-      // Order tokens (smaller address first) to match factory's expectations
-      const [token0, token1] =
-        position.token0 < position.token1
-          ? [position.token0, position.token1]
-          : [position.token1, position.token0]
-
-      const poolAddress = await factoryClient.get_pool({
-        token_a: token0,
-        token_b: token1,
-        fee: position.fee,
-      })
-
-      // Get pool's current price
-      const poolClient = getPoolContractClient({
-        contractId: poolAddress.result || '',
-      })
-
-      const slot0 = await poolClient.slot0()
-
-      // Handle field name confusion: the contract returns sqrt_price_x96 in the fee_protocol field
-      let sqrtPriceX96: bigint
-
-      if (
-        slot0.result.sqrt_price_x96 &&
-        Number(slot0.result.sqrt_price_x96) !== 0
-      ) {
-        sqrtPriceX96 = BigInt(slot0.result.sqrt_price_x96)
-      } else if (
-        slot0.result.sqrt_price_x96 &&
-        Number(slot0.result.sqrt_price_x96) !== 0
-      ) {
-        sqrtPriceX96 = BigInt(slot0.result.sqrt_price_x96)
-      } else {
-        return { amount0: 0n, amount1: 0n }
-      }
-
-      const positionManagerClient = getPositionManagerContractClient({
-        contractId: contractAddresses.POSITION_MANAGER,
-      })
-
-      const result = await positionManagerClient.position_principal({
-        token_id: tokenId,
-        sqrt_price_x96: sqrtPriceX96,
-      })
-
-      const [amount0, amount1] = handleResult<readonly [u128, u128]>(
-        result.result,
-      )
-
-      return {
-        amount0: BigInt(amount0),
-        amount1: BigInt(amount1),
-      }
-    } catch (error) {
-      console.error(
-        `Failed to get position principal for token ${tokenId}:`,
-        error,
-      )
-      return { amount0: 0n, amount1: 0n }
-    }
-  }
-
-  /**
    * Get principal amounts for multiple positions in the same pool (more efficient)
    * Fetches slot0 once and reuses it for all positions
    */
   async getPositionsPrincipalBatch({
     tokenIds,
     poolAddress,
+    isLegacy = false,
   }: {
     tokenIds: number[]
     poolAddress: string
+    isLegacy?: boolean
   }): Promise<Map<number, { amount0: bigint; amount1: bigint }>> {
     const results = new Map<number, { amount0: bigint; amount1: bigint }>()
 
@@ -359,11 +329,6 @@ export class PositionService {
         Number(slot0.result.sqrt_price_x96) !== 0
       ) {
         sqrtPriceX96 = BigInt(slot0.result.sqrt_price_x96)
-      } else if (
-        slot0.result.sqrt_price_x96 &&
-        Number(slot0.result.sqrt_price_x96) !== 0
-      ) {
-        sqrtPriceX96 = BigInt(slot0.result.sqrt_price_x96)
       } else {
         console.warn('Pool sqrt_price_x96 is 0 - cannot calculate principals')
         // Return zeros for all positions
@@ -374,8 +339,16 @@ export class PositionService {
       }
 
       // Now calculate principal for each position using the same sqrt price
+      const positionManagerContractId = getPositionManagerContractId(isLegacy)
+      if (!positionManagerContractId) {
+        // Return zeros for all positions
+        for (const tokenId of tokenIds) {
+          results.set(tokenId, { amount0: 0n, amount1: 0n })
+        }
+        return results
+      }
       const positionManagerClient = getPositionManagerContractClient({
-        contractId: contractAddresses.POSITION_MANAGER,
+        contractId: positionManagerContractId,
         // No publicKey needed for read-only position queries
       })
 
@@ -424,13 +397,20 @@ export class PositionService {
     params: CollectParams,
     signTransaction: (xdr: string) => Promise<string>,
     signAuthEntry: (entryPreimageXdr: string) => Promise<string>,
+    isLegacy = false,
   ): Promise<CollectResult> {
+    const positionManagerContractId = getPositionManagerContractId(isLegacy)
+    if (!positionManagerContractId) {
+      throw new Error('Position manager contract not found')
+    }
     const positionManagerClient = getPositionManagerContractClient({
-      contractId: contractAddresses.POSITION_MANAGER,
+      contractId: positionManagerContractId,
       publicKey: params.recipient,
     })
 
-    const assembledTransaction = await positionManagerClient.collect(
+    const collectOperationParams: Parameters<
+      typeof positionManagerClient.collect
+    > = [
       {
         params: {
           token_id: params.tokenId,
@@ -444,7 +424,27 @@ export class PositionService {
         timeoutInSeconds: DEFAULT_TIMEOUT,
         fee: 100000,
       },
-    )
+    ]
+
+    const collectWithHintsOperation = async ([
+      { hints },
+    ]: PoolOracleHints[]) => {
+      return await positionManagerClient.collect_with_hints(
+        {
+          ...collectOperationParams[0],
+          hints,
+        },
+        collectOperationParams[1],
+      )
+    }
+
+    // Do not use hints for legacy pools
+    const assembledTransaction = isLegacy
+      ? await positionManagerClient.collect(...collectOperationParams)
+      : await executeWithOracleHints(
+          [params.poolAddress],
+          collectWithHintsOperation,
+        )
 
     // Sign auth entries for nested authorization (PM -> Pool -> Token transfers)
     const transactionXdr = await signAuthEntriesAndGetXdr(
@@ -480,11 +480,19 @@ export class PositionService {
    * Calculate uncollected fees for a position
    * Uses position_fees which calculates live fees from the pool
    */
-  async getUncollectedFees(
-    tokenId: number,
-  ): Promise<{ fees0: bigint; fees1: bigint } | null> {
+  async getUncollectedFees({
+    tokenId,
+    isLegacy = false,
+  }: {
+    tokenId: number
+    isLegacy?: boolean
+  }): Promise<{ fees0: bigint; fees1: bigint } | null> {
+    const positionManagerContractId = getPositionManagerContractId(isLegacy)
+    if (!positionManagerContractId) {
+      return null
+    }
     const positionManagerClient = getPositionManagerContractClient({
-      contractId: contractAddresses.POSITION_MANAGER,
+      contractId: positionManagerContractId,
     })
 
     try {

@@ -3,7 +3,7 @@ import {
   isOracleFootprintError,
 } from '../utils/error-helpers'
 import {
-  type OracleHints,
+  type PoolOracleHints,
   executeWithOracleHints,
 } from '../utils/slot-hint-helpers'
 
@@ -17,12 +17,12 @@ import {
  * @returns Result of the transaction
  */
 export async function executeTransactionWithRetry<T>(
-  poolAddress: string,
-  operation: (hints: OracleHints) => Promise<T>,
+  poolAddresses: string[],
+  operation: (hints: PoolOracleHints[]) => Promise<T>,
   maxRetries = 2,
 ): Promise<T> {
   try {
-    return await executeWithOracleHints(poolAddress, operation, maxRetries)
+    return await executeWithOracleHints(poolAddresses, operation, maxRetries)
   } catch (error) {
     // Enhance error message if it's an oracle error
     if (isOracleFootprintError(error)) {
@@ -43,15 +43,15 @@ export async function executeTransactionWithRetry<T>(
  * @returns Array of results from each transaction
  */
 export async function executeTransactionsSequentially<T>(
-  poolAddress: string,
-  operations: Array<(hints: OracleHints) => Promise<T>>,
+  poolAddresses: string[],
+  operations: Array<(hints: PoolOracleHints[]) => Promise<T>>,
   maxRetries = 2,
 ): Promise<T[]> {
   const results: T[] = []
 
   for (const operation of operations) {
     const result = await executeTransactionWithRetry(
-      poolAddress,
+      poolAddresses,
       operation,
       maxRetries,
     )

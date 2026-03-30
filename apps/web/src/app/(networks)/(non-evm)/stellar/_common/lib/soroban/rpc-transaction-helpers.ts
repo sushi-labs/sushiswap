@@ -43,73 +43,84 @@ export async function submitViaRawRPC(signedTx: any): Promise<string> {
 
   const result = await response.json()
 
-  if (result.error) {
-    console.error('sendTransaction returned error:', result.error)
-    throw new Error(result.error.message)
-  }
-
-  if (!result.result) {
-    console.error('No result in sendTransaction response')
-    throw new Error('No result in sendTransaction response')
-  }
-
-  // Check if transaction was rejected immediately
-  if (result.result.status === 'ERROR') {
-    console.error('Transaction submission returned ERROR status')
-    console.error('Error details:', result.result)
-
-    // Try to decode the error if available
-    if (result.result.errorResultXdr) {
-      try {
-        // Decode the error XDR to get more details
-        const errorResult = StellarSdk.xdr.TransactionResult.fromXDR(
-          result.result.errorResultXdr,
-          'base64',
-        )
-
-        // Get the transaction result code
-        const txResult = errorResult.result()
-        const txResultSwitch = txResult.switch()
-
-        console.error('Transaction result:', txResultSwitch.name)
-
-        // Try to get the fee charged
-        const feeCharged = errorResult.feeCharged()
-        if (feeCharged !== undefined) {
-          console.error('Fee charged:', feeCharged.toString())
-        }
-
-        // Check for operation results
-        if (
-          txResultSwitch.name === 'txFailed' ||
-          txResultSwitch.name === 'txSuccess'
-        ) {
-          try {
-            const opResults = txResult.results()
-
-            if (Array.isArray(opResults)) {
-              opResults.forEach((opResult: any, index: number) => {
-                const opResultTr = opResult.tr?.()
-                if (opResultTr) {
-                  const opSwitch = opResultTr.switch?.()
-                  if (opSwitch) {
-                    console.error(`Operation ${index}: ${opSwitch.name}`)
-                  }
-                }
-              })
-            }
-          } catch (opError) {
-            console.error('Could not extract operation results:', opError)
-          }
-        }
-      } catch (decodeError) {
-        console.error('Failed to decode error XDR:', decodeError)
-      }
+  const getErrorMessage = (): string | null => {
+    if (result.error) {
+      console.error('sendTransaction returned error:', result.error)
+      return result.error.message
     }
 
-    throw new Error(
-      `Transaction submission failed with ERROR status. Check contract parameters and authorization. Error: ${JSON.stringify(result.result)}`,
-    )
+    if (!result.result) {
+      console.error('No result in sendTransaction response')
+      return 'No result in sendTransaction response'
+    }
+
+    // Check if transaction was rejected immediately
+    if (result.result.status === 'ERROR') {
+      console.error('Transaction submission returned ERROR status')
+      console.error('Error details:', result.result)
+
+      // Try to decode the error if available
+      if (result.result.errorResultXdr) {
+        try {
+          // Decode the error XDR to get more details
+          const errorResult = StellarSdk.xdr.TransactionResult.fromXDR(
+            result.result.errorResultXdr,
+            'base64',
+          )
+
+          // Get the transaction result code
+          const txResult = errorResult.result()
+          const txResultSwitch = txResult.switch()
+
+          console.error('Transaction result:', txResultSwitch.name)
+
+          // Try to get the fee charged
+          const feeCharged = errorResult.feeCharged()
+          if (feeCharged !== undefined) {
+            console.error('Fee charged:', feeCharged.toString())
+          }
+
+          if (txResultSwitch.name === 'txInsufficientBalance') {
+            return 'resulting balance is not within the allowed range'
+          }
+
+          // Check for operation results
+          if (
+            txResultSwitch.name === 'txFailed' ||
+            txResultSwitch.name === 'txSuccess'
+          ) {
+            try {
+              const opResults = txResult.results()
+
+              if (Array.isArray(opResults)) {
+                opResults.forEach((opResult: any, index: number) => {
+                  const opResultTr = opResult.tr?.()
+                  if (opResultTr) {
+                    const opSwitch = opResultTr.switch?.()
+                    if (opSwitch) {
+                      console.error(`Operation ${index}: ${opSwitch.name}`)
+                    }
+                  }
+                })
+              }
+            } catch (opError) {
+              console.error('Could not extract operation results:', opError)
+            }
+          }
+        } catch (decodeError) {
+          console.error('Failed to decode error XDR:', decodeError)
+        }
+      }
+
+      return `Transaction submission failed with ERROR status. Check contract parameters and authorization. Error: ${JSON.stringify(result.result)}`
+    }
+
+    return null
+  }
+
+  const errorMessage = getErrorMessage()
+  if (errorMessage !== null) {
+    throw new Error(errorMessage)
   }
 
   return result.result.hash

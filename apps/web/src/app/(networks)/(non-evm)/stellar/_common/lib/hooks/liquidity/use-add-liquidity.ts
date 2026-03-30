@@ -115,7 +115,7 @@ export const useAddLiquidity = () => {
 
       if (result.tokenId) {
         queryClient.invalidateQueries({
-          queryKey: ['stellar', 'positions', 'token', result.tokenId],
+          queryKey: ['stellar', 'positions', 'single', false, result.tokenId],
         })
         queryClient.invalidateQueries({
           queryKey: ['stellar', 'position-principal', result.tokenId],
