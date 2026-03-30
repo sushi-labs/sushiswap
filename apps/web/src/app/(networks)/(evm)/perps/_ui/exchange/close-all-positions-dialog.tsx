@@ -25,7 +25,8 @@ import { PerpsChecker } from '../perps-checker'
 export const CloseAllPositionsDialog = ({
   trigger,
 }: { trigger?: ReactNode }) => {
-  const { data: userPositions } = useUserPositions()
+  const { data: userPositions, isLoading: isUserPositionsLoading } =
+    useUserPositions()
   const [open, setOpen] = useState(false)
   const [closeType, setCloseType] = useState<'market' | 'limit-at-mid'>(
     'market',
@@ -33,61 +34,70 @@ export const CloseAllPositionsDialog = ({
   const { executeOrders, isPending } = useExecuteOrders()
   const {
     state: {
-      assetListQuery: { data: assetListData },
+      assetListQuery: { data: assetListData, isLoading: isAssetListLoading },
     },
   } = useAssetListState()
-  const { data: allMidsData } = useAllMids()
+  const { data: allMidsData, isLoading: isAllMidsLoading } = useAllMids()
+  const isLoading =
+    isUserPositionsLoading || isAssetListLoading || isAllMidsLoading
   const orderData = useMemo(() => {
-    const orders = userPositions.map((pos) => {
-      const midPrice = allMidsData?.mids?.[pos.position.coin]
-      if (closeType === 'limit-at-mid' && !midPrice) {
-        throw new Error(
-          `Mid price not available for limit close for ${pos.position.coin}`,
+    if (!assetListData || !allMidsData?.mids || isLoading) return null
+    const orders = userPositions
+      ?.map((pos) => {
+        const midPrice = allMidsData?.mids?.[pos.position.coin]
+        if (closeType === 'limit-at-mid' && !midPrice) {
+          throw new Error(
+            `Mid price not available for limit close for ${pos.position.coin}`,
+          )
+        }
+        const asset = assetListData?.get?.(pos.position.coin)
+        if (!asset) {
+          console.warn(`Asset data not available for ${pos.position.coin}`)
+          return null
+        }
+
+        const _midPrice = parseUnits(
+          midPrice ?? '0',
+          asset?.formatParseDecimals,
         )
-      }
-      const asset = assetListData?.get?.(pos.position.coin)
-      if (!asset) {
-        throw new Error(`Asset data not available for ${pos.position.coin}`)
-      }
+        const adjustedPrice =
+          pos.side === 'A'
+            ? (_midPrice * BigInt(108)) / BigInt(100) // 8% higher than market price for sell orders
+            : (_midPrice * BigInt(92)) / BigInt(100) // 8% lower for buy orders
 
-      const _midPrice = parseUnits(midPrice ?? '0', asset?.formatParseDecimals)
-      const adjustedPrice =
-        pos.side === 'A'
-          ? (_midPrice * BigInt(108)) / BigInt(100) // 8% higher than market price for sell orders
-          : (_midPrice * BigInt(92)) / BigInt(100) // 8% lower for buy orders
-
-      //8% higher than market price for sell orders, 8% lower for buy orders to ensure fills
-      const marketPrice = formatPrice(
-        formatUnits(adjustedPrice, asset?.formatParseDecimals),
-        asset.decimals,
-        asset?.marketType,
-      )
-
-      return {
-        asset: pos.position.coin,
-        side: pos.side === 'A' ? ('long' as const) : ('short' as const),
-        price:
-          closeType === 'market'
-            ? marketPrice
-            : formatPrice(midPrice!, asset.decimals, asset?.marketType)!,
-        size: formatSize(
-          Math.abs(Number.parseFloat(pos.position.szi)),
+        //8% higher than market price for sell orders, 8% lower for buy orders to ensure fills
+        const marketPrice = formatPrice(
+          formatUnits(adjustedPrice, asset?.formatParseDecimals),
           asset.decimals,
-        ),
-        reduceOnly: true,
-        orderType:
-          closeType === 'market'
-            ? { limit: { timeInForce: 'FrontendMarket' as const } }
-            : { limit: { timeInForce: 'Gtc' as const } },
-      }
-    })
+          asset?.marketType,
+        )
+
+        return {
+          asset: pos.position.coin,
+          side: pos.side === 'A' ? ('long' as const) : ('short' as const),
+          price:
+            closeType === 'market'
+              ? marketPrice
+              : formatPrice(midPrice!, asset.decimals, asset?.marketType)!,
+          size: formatSize(
+            Math.abs(Number.parseFloat(pos.position.szi)),
+            asset.decimals,
+          ),
+          reduceOnly: true,
+          orderType:
+            closeType === 'market'
+              ? { limit: { timeInForce: 'FrontendMarket' as const } }
+              : { limit: { timeInForce: 'Gtc' as const } },
+        }
+      })
+      .filter((i) => i !== null)
     return {
       orders,
       builder: {
         builderFee: BUILDER_FEE_PERPS,
       },
     }
-  }, [closeType, userPositions, allMidsData?.mids, assetListData])
+  }, [closeType, userPositions, allMidsData?.mids, assetListData, isLoading])
 
   return (
     <Dialog
@@ -136,7 +146,8 @@ export const CloseAllPositionsDialog = ({
                   <Button
                     size="default"
                     variant="perps-default"
-                    onClick={() =>
+                    onClick={() => {
+                      if (!orderData) return
                       executeOrders(
                         { orderData },
                         {
@@ -145,7 +156,7 @@ export const CloseAllPositionsDialog = ({
                           },
                         },
                       )
-                    }
+                    }}
                     loading={isPending}
                   >
                     Confirm{' '}
