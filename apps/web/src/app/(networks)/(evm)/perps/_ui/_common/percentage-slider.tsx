@@ -7,11 +7,13 @@ export const PercentageSlider = ({
   onChange,
   maxValue,
   disabled,
+  unit = '%',
 }: {
   value: number
   onChange: (value: number) => void
   maxValue?: number
   disabled?: boolean
+  unit?: string
 }) => {
   const [pending, startTransition] = useTransition()
 
@@ -68,7 +70,7 @@ export const PercentageSlider = ({
           maxDecimals={0}
           wrapperClassName="max-h-[30px]"
         />
-        <p className="text-[#99A1AF]">%</p>
+        <p className="text-[#99A1AF]">{unit}</p>
       </div>
     </div>
   )

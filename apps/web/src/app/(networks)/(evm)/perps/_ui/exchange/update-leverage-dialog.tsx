@@ -110,6 +110,7 @@ export const UpdateLeverageDialog = ({
               }}
               disabled={isLoading || isError || isPending}
               maxValue={maxLeverage}
+              unit="x"
             />
             <PerpsChecker.Legal size="default" variant="perps-default">
               <PerpsChecker.EnableTrading
