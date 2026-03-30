@@ -22,9 +22,6 @@ export const CheckboxSetting = ({
       <Checkbox
         className='data-[state="checked"]:!bg-blue text-white !border-[#99A1AF] data-[state="checked"]:!border-blue'
         checked={value}
-        onCheckedChange={(checked) => {
-          onChange(!checked)
-        }}
         aria-label={`${label} Checkbox`}
       />
       <div className="text-[#99A1AF]">{label}</div>

@@ -41,7 +41,7 @@ export const useBalances = () => {
     },
   } = useAssetListState()
   const {
-    state: { isUnifiedAccountModeEnabled },
+    state: { isUnifiedAccountModeEnabled, isDexAbstractionEnabled },
   } = useUserSettingsState()
 
   const isLoading =
@@ -52,7 +52,7 @@ export const useBalances = () => {
   const formattedData = useMemo(() => {
     if (!data) return []
 
-    const perpsUsdcs = data?.clearinghouseStates
+    let perpsUsdcs = data?.clearinghouseStates
       .flatMap(([dexName, clearinghouseState]) => {
         return {
           coin: DEX_NAME_TO_COIN[dexName] ?? `USDC (Perps)`,
@@ -77,18 +77,36 @@ export const useBalances = () => {
             v?.tokens?.find((t) => t?.index === tokenIndex),
           )?.[1]
           const price = i.coin === 'USDC' ? 1 : (Number(spot?.markPrice) ?? 0)
-          const usdcValue = Number(i.total || 0) * price
-          const entry = Number(i.entryNtl || 0)
+          let total = Number(i.total || 0)
+
+          const perpBalance = perpsUsdcs.find(
+            (p) => p.coin.replaceAll(' (Perps)', '') === i.coin && p.dex !== '',
+          )
+          if (isDexAbstractionEnabled && perpBalance && i.coin !== 'USDC') {
+            total += Number(perpBalance.totalBalance)
+          }
+
+          const usdcValue = total * price
+          const entry =
+            isDexAbstractionEnabled && perpBalance
+              ? usdcValue
+              : Number(i.entryNtl || 0)
           const pnl = usdcValue - entry
           const roePc = entry > 0 ? (pnl / entry) * 100 : null
           const _coin = SPOT_ASSETS_TO_REWRITE.has(i.coin)
             ? SPOT_ASSETS_TO_REWRITE.get(i.coin)
             : i.coin
-          const availableBalance = Number(i?.total || 0) - Number(i?.hold || 0)
+          let availableBalance = total - Number(i?.hold || 0)
+          if (isDexAbstractionEnabled && perpBalance && i.coin !== 'USDC') {
+            availableBalance -= Number(perpBalance.totalBalance)
+          }
           return {
-            coin: i.coin === 'USDC' ? 'USDC (Spot)' : _coin,
+            coin:
+              i.coin === 'USDC'
+                ? 'USDC (Spot)'
+                : `${_coin}${isDexAbstractionEnabled && perpBalance ? ' (Spot + Perps)' : ''}`,
             assetName: spot?.name,
-            totalBalance: i.total,
+            totalBalance: total.toString(),
             availableBalance: availableBalance.toString(),
             usdcValue: usdcValue.toString(),
             pnlRoePc:
@@ -104,6 +122,41 @@ export const useBalances = () => {
           }
         })
         ?.filter((b) => b !== null) ?? []
+
+    if (isDexAbstractionEnabled) {
+      const totals = perpsUsdcs.reduce(
+        (acc, b) => {
+          const hasSpot = spotBalances.find(
+            (s) =>
+              s.coin.includes('Spot + Perps') &&
+              s.coin.split?.(' ')?.[0] === b.coin.split?.(' ')?.[0],
+          )
+          if (hasSpot) {
+            return acc
+          }
+          return {
+            totalBalance: acc.totalBalance + Number(b.totalBalance),
+            availableBalance: acc.availableBalance + Number(b.availableBalance),
+            usdcValue: acc.usdcValue + Number(b.usdcValue),
+          }
+        },
+        { totalBalance: 0, availableBalance: 0, usdcValue: 0 },
+      )
+
+      perpsUsdcs = [
+        {
+          coin: 'USDC (Perps)',
+          totalBalance: totals.totalBalance.toString(),
+          availableBalance: totals.availableBalance.toString(),
+          usdcValue: totals.usdcValue.toString(),
+          pnlRoePc: null,
+          token: null,
+          marketType: 'perp' as const,
+          assetName: null,
+          dex: '',
+        },
+      ]
+    }
 
     const allBalances = [...perpsUsdcs, ...spotBalances]
     if (!isUnifiedAccountModeEnabled) {
@@ -135,7 +188,13 @@ export const useBalances = () => {
       dex: '',
     }
     return [usdc, ...nonUsdcBalances]
-  }, [data, assetList, webData2Data, isUnifiedAccountModeEnabled])
+  }, [
+    data,
+    assetList,
+    webData2Data,
+    isUnifiedAccountModeEnabled,
+    isDexAbstractionEnabled,
+  ])
 
   return useMemo(() => {
     if (!address) {

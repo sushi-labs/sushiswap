@@ -23,6 +23,7 @@ export const SettingsDialog = () => {
       disableBgFillNotifs,
       hidePnl,
       optOutOfSpotDustCollection,
+      isDexAbstractionEnabled,
     },
     mutate: {
       setQuickCloseMarketPositionEnabled,
@@ -34,6 +35,7 @@ export const SettingsDialog = () => {
       setDisableBgFillNotifs,
       setHidePnl,
       setOptOutOfSpotDustCollection,
+      setDexAbstractionEnabled,
     },
   } = useUserSettingsState()
   return (
@@ -99,6 +101,11 @@ export const SettingsDialog = () => {
             {/* todo: sound effects on click? */}
             {/* todo: sound effects on on fill */}
             <div className="bg-accent w-full h-[1px]" />
+            <CheckboxSetting
+              value={!isDexAbstractionEnabled}
+              onChange={setDexAbstractionEnabled}
+              label="Disable HIP-3 Dex Abstraction"
+            />
             <CheckboxSetting
               value={!isUnifiedAccountModeEnabled}
               onChange={setUnifiedAccountModeEnabled}

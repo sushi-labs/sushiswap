@@ -147,7 +147,6 @@ export const SPOT_ASSETS_TO_REWRITE = new Map<string, string>([
   ['HREKT', 'REKT'],
   ['HWAVE', 'WAVE'],
   ['USPYX', 'SPYX'],
-  ['USDT0', 'USDT'],
   ['XAUT0', 'XAUT'],
 ])
 

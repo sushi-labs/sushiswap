@@ -1,4 +1,11 @@
-import { Button, type ButtonProps } from '@sushiswap/ui'
+import {
+  Button,
+  type ButtonProps,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+  classNames,
+} from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { useSymbolSplit } from 'src/lib/perps/info/use-symbol-split'
 import { useUserState } from '~evm/perps/user-provider'
@@ -24,12 +31,18 @@ export const Deposit: FC<ButtonProps> = ({
     state: { asset, availableToLong, tradeSide, availableToShort },
   } = useAssetState()
   const {
-    state: { isUnifiedAccountModeEnabled },
+    state: { isUnifiedAccountModeEnabled, isDexAbstractionEnabled },
   } = useUserSettingsState()
   const { quoteSymbol } = useSymbolSplit({ asset })
   const availableToTrade = useMemo(() => {
     return tradeSide === 'long' ? availableToLong : availableToShort
   }, [tradeSide, availableToLong, availableToShort])
+
+  const spotUSDCBalance = useMemo(() => {
+    return Number(
+      data?.spotState?.balances?.find((b) => b?.coin === 'USDC')?.total ?? 0,
+    )
+  }, [data])
 
   if (isLoading) {
     return (
@@ -49,6 +62,7 @@ export const Deposit: FC<ButtonProps> = ({
 
   if (
     Number(data?.clearinghouseState?.withdrawable) === 0 &&
+    spotUSDCBalance === 0 &&
     asset?.dex === '' &&
     !isUnifiedAccountModeEnabled
   ) {
@@ -66,6 +80,37 @@ export const Deposit: FC<ButtonProps> = ({
     Number(availableToTrade) === 0 &&
     asset?.marketType === 'perp' &&
     asset?.dex !== '' &&
+    isDexAbstractionEnabled
+  ) {
+    return (
+      <HoverCard openDelay={0}>
+        <HoverCardTrigger asChild tabIndex={0}>
+          <Button
+            fullWidth={fullWidth}
+            size={size}
+            {...props}
+            className={classNames(
+              props.className,
+              'opacity-50 cursor-not-allowed',
+            )}
+          >
+            Transfer
+          </Button>
+        </HoverCardTrigger>
+        <HoverCardContent
+          forceMount
+          side="top"
+          className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+        >
+          <p>Disable HIP-3 Dex Abstraction in Settings to Transfer</p>
+        </HoverCardContent>
+      </HoverCard>
+    )
+  }
+  if (
+    Number(availableToTrade) === 0 &&
+    asset?.marketType === 'perp' &&
+    spotUSDCBalance > 0 &&
     !isUnifiedAccountModeEnabled
   ) {
     return (

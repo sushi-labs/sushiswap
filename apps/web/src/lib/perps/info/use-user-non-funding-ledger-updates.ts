@@ -418,11 +418,11 @@ function parseHyperliquidTx(
     case 'activateDexAbstraction':
       return {
         action: 'Activate Dex Abstraction',
-        source: 'Perps',
-        destination: 'Perps',
+        source: mapDex(d.dex),
+        destination: mapDex(d.dex),
         feeAmount: 0,
         accountValueChange: `${perpsNumberFormatter({ value: d.amount })} ${d.token}`,
-        accValChange: Number(-d.amount),
+        accValChange: Number(d.amount),
       }
     case 'vaultLeaderCommission':
       return {

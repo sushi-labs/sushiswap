@@ -32,6 +32,7 @@ interface State {
     optOutOfSpotDustCollection: boolean
     nSigFigs?: number
     mantissa: L2BookParameters['mantissa']
+    isDexAbstractionEnabled: boolean
   }
   mutate: {
     setQuickCloseReversePositionEnabled: (enabled: boolean) => void
@@ -46,6 +47,7 @@ interface State {
     setOptOutOfSpotDustCollection: () => void
     setNSigFigs: (nSigFigs: number | undefined) => void
     setMantissa: (mantissa: L2BookParameters['mantissa']) => void
+    setDexAbstractionEnabled: (enabled: boolean) => void
   }
 }
 
@@ -66,6 +68,7 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
       webData3Query: { data: webData3 },
     },
   } = useUserState()
+
   const [
     quickCloseReversePositionEnabled,
     setQuickCloseReversePositionEnabled,
@@ -128,17 +131,18 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
     }
   }, [notification, address, disableBgFillNotifs])
 
-  const { setUserAbstraction } = useSetUserAbstraction()
+  const { setUserAbstraction, isPending: isUserAbstractionPending } =
+    useSetUserAbstraction()
 
   const setUnifiedAccountModeEnabled = useCallback(
     (enabled: boolean) => {
-      if (!address) return
+      if (!address || isUserAbstractionPending) return
       setUserAbstraction({
         abstraction: !enabled ? 'unifiedAccount' : 'disabled',
         address,
       })
     },
-    [setUserAbstraction, address],
+    [setUserAbstraction, address, isUserAbstractionPending],
   )
 
   const isUnifiedAccountModeEnabled = useMemo(() => {
@@ -148,6 +152,21 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
   const optOutOfSpotDustCollection = useMemo(() => {
     return webData3?.userState?.optOutOfSpotDusting || false
   }, [webData3])
+
+  const isDexAbstractionEnabled = useMemo(() => {
+    return webData3?.userState?.dexAbstractionEnabled || false
+  }, [webData3])
+
+  const setDexAbstractionEnabled = useCallback(
+    (enabled: boolean) => {
+      if (!address || isUserAbstractionPending) return
+      setUserAbstraction({
+        abstraction: !enabled ? 'dexAbstraction' : 'disabled',
+        address,
+      })
+    },
+    [setUserAbstraction, address, isUserAbstractionPending],
+  )
 
   const setOptOutOfSpotDustCollection = useCallback(() => {
     if (isPending) return
@@ -172,6 +191,7 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             optOutOfSpotDustCollection,
             nSigFigs,
             mantissa,
+            isDexAbstractionEnabled,
           },
           mutate: {
             setQuickCloseReversePositionEnabled,
@@ -186,6 +206,7 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             setOptOutOfSpotDustCollection,
             setNSigFigs,
             setMantissa,
+            setDexAbstractionEnabled,
           },
         }
       }, [
@@ -211,6 +232,8 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
         setOptOutOfSpotDustCollection,
         nSigFigs,
         mantissa,
+        isDexAbstractionEnabled,
+        setDexAbstractionEnabled,
       ])}
     >
       {children}
