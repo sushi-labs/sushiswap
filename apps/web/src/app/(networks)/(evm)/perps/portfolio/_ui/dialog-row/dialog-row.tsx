@@ -131,6 +131,7 @@ const SharedPositionModal = ({
             if (!nextOpen) onClose()
           }}
           trigger={<div />}
+          defaultDex=""
         />
       )
     case 'evm-core-transfer':

@@ -34,6 +34,7 @@ export const PerpSpotTransferDialog = ({
   onOpenChange,
   balanceItem,
   currencySymbol = 'USDC',
+  defaultDex,
 }: {
   trigger?: ReactNode
   defaultDst?: 'perp' | 'spot'
@@ -41,6 +42,7 @@ export const PerpSpotTransferDialog = ({
   onOpenChange?: (open: boolean) => void
   balanceItem?: BalanceItemType
   currencySymbol?: 'USDC' | 'USDT0' | 'USDH' | 'USDE'
+  defaultDex?: string
 }) => {
   const [dst, setDst] = useState<'perp' | 'spot'>(defaultDst ?? 'spot')
   const [open, setOpen] = useState<boolean>(false)
@@ -107,8 +109,11 @@ export const PerpSpotTransferDialog = ({
     if (balanceItem) {
       return balanceItem.dex
     }
+    if (defaultDex !== undefined) {
+      return defaultDex
+    }
     return asset?.dex || ''
-  }, [asset?.dex, balanceItem])
+  }, [asset?.dex, balanceItem, defaultDex])
 
   const sendableBalance = useMemo(() => {
     if (dst === 'spot') {
