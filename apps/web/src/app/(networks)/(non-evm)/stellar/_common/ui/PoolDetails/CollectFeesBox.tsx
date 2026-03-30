@@ -80,6 +80,7 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
       for (const position of positionsWithFees) {
         try {
           const result = await collectFeesMutation.mutateAsync({
+            poolAddress: pool.address,
             tokenId: position.tokenId,
             recipient: connectedAddress,
             amount0Max: MAX_UINT128,

@@ -108,7 +108,7 @@ export default function AddPoolPage() {
     orderedToken1?.contract || '',
     orderedToken1?.issuer,
   )
-  const _isLoadingTrustlines =
+  const isLoadingTrustlines =
     isLoadingToken0Trustline || isLoadingToken1Trustline
   // Use the resolved issuers from the trustline check (looked up from Horizon if not already known)
   const tokensNeedingTrustline = useMemo(() => {
@@ -320,14 +320,14 @@ export default function AddPoolPage() {
   // Prevent add liquidity when price is above range (can't provide token0)
   const isAboveRange = pairedAmountStatus === 'above-range'
 
-  const _canCreate =
+  const canCreate =
     token0 &&
     token1 &&
     token0.contract !== token1.contract &&
     hasValidAmounts &&
     !isAboveRange
 
-  const _ctaButtonText = useMemo((): string => {
+  const ctaButtonText = useMemo((): string => {
     switch (createPoolState) {
       case 'idle': {
         if (isAboveRange) {
@@ -704,15 +704,13 @@ export default function AddPoolPage() {
                 fullWidth
                 size="xl"
                 disabled={
-                  true
-                  // !canCreate ||
-                  // createPoolState !== 'idle' ||
-                  // isLoadingTrustlines
+                  !canCreate ||
+                  createPoolState !== 'idle' ||
+                  isLoadingTrustlines
                 }
                 onClick={handleCreatePool}
               >
-                Under Maintence
-                {/* {isLoadingTrustlines ? 'Checking trustlines...' : ctaButtonText} */}
+                {isLoadingTrustlines ? 'Checking trustlines...' : ctaButtonText}
               </Button>
             )}
           </Checker.Connect>

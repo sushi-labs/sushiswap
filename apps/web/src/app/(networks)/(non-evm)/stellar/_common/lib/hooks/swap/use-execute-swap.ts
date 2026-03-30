@@ -19,6 +19,7 @@ import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
 
 export interface UseExecuteSwapParams {
   userAddress: string
+  pool: string
   tokenIn: Token
   tokenOut: Token
   amountIn: bigint
@@ -62,6 +63,7 @@ export const useExecuteSwap = () => {
       const result = await swapService.swapExactInputSingle(
         params.userAddress,
         {
+          pool: params.pool,
           tokenIn: params.tokenIn.contract,
           tokenOut: params.tokenOut.contract,
           fee: params.fee,
@@ -136,6 +138,7 @@ export const useExecuteSwap = () => {
 
 export interface UseExecuteMultiHopSwapParams {
   userAddress: string
+  pools: string[]
   path: string[]
   fees: number[]
   amountIn: bigint
@@ -177,6 +180,7 @@ export const useExecuteMultiHopSwap = () => {
       const result = await swapService.swapExactInput(
         params.userAddress,
         {
+          pools: params.pools,
           path: params.path,
           fees: params.fees,
           recipient: params.recipient,

@@ -1,4 +1,13 @@
-import { getPositionManagerContractClient } from './client'
+import * as StellarSdk from '@stellar/stellar-sdk'
+import { extractErrorMessage } from '../utils/error-helpers'
+import {
+  type PoolOracleHints,
+  executeWithOracleHints,
+} from '../utils/slot-hint-helpers'
+import {
+  getPositionManagerContractClient,
+  getPositionManagerContractId,
+} from './client'
 import { DEFAULT_TIMEOUT } from './constants'
 import { contractAddresses } from './contracts'
 import { getPoolInfoFromContract } from './pool-helpers'
@@ -81,23 +90,38 @@ export async function mintPosition({
     }
 
     let assembledTransaction: Awaited<
-      ReturnType<typeof positionManagerClient.mint>
+      ReturnType<typeof positionManagerClient.mint_with_hints>
     >
     try {
-      assembledTransaction = await positionManagerClient.mint(
-        {
-          params: mintParams,
-        },
-        {
-          timeoutInSeconds: DEFAULT_TIMEOUT,
-          fee: 100000,
-        },
+      const mintWithHintsOperation = async ([{ hints }]: PoolOracleHints[]) => {
+        return await positionManagerClient.mint_with_hints(
+          {
+            params: mintParams,
+            hints,
+          },
+          {
+            timeoutInSeconds: DEFAULT_TIMEOUT,
+            fee: 100000,
+          },
+        )
+      }
+      assembledTransaction = await executeWithOracleHints(
+        [poolAddress],
+        mintWithHintsOperation,
       )
     } catch (simulationError) {
       console.error('Transaction simulation failed:', simulationError)
       throw new Error(
         `Transaction simulation failed: ${simulationError instanceof Error ? simulationError.message : String(simulationError)}`,
       )
+    }
+
+    const simulationResult = assembledTransaction.simulation
+    if (
+      simulationResult &&
+      StellarSdk.rpc.Api.isSimulationError(simulationResult)
+    ) {
+      throw new Error(extractErrorMessage(simulationResult.error))
     }
 
     // Sign auth entries for nested authorization (PM -> Pool -> Token transfers)
@@ -150,6 +174,7 @@ export async function mintPosition({
  * Increase liquidity in an existing position
  */
 export async function increaseLiquidity({
+  pool,
   tokenId,
   amount0Desired,
   amount1Desired,
@@ -161,6 +186,7 @@ export async function increaseLiquidity({
   signTransaction,
   signAuthEntry,
 }: {
+  pool: string
   tokenId: number
   amount0Desired: bigint
   amount1Desired: bigint
@@ -184,32 +210,49 @@ export async function increaseLiquidity({
     })
 
     let assembledTransaction: Awaited<
-      ReturnType<typeof positionManagerClient.increase_liquidity>
+      ReturnType<typeof positionManagerClient.increase_liquidity_with_hints>
     >
     try {
-      assembledTransaction = await positionManagerClient.increase_liquidity(
-        {
-          params: {
-            token_id: tokenId,
-            operator,
-            amount0_desired: amount0Desired,
-            amount1_desired: amount1Desired,
-            amount0_min: amount0Min,
-            amount1_min: amount1Min,
-            deadline,
+      const increaseLiquidityWithHintsOperation = async ([
+        { hints },
+      ]: PoolOracleHints[]) => {
+        return await positionManagerClient.increase_liquidity_with_hints(
+          {
+            params: {
+              token_id: tokenId,
+              operator,
+              amount0_desired: amount0Desired,
+              amount1_desired: amount1Desired,
+              amount0_min: amount0Min,
+              amount1_min: amount1Min,
+              deadline,
+            },
+            hints: hints,
           },
-        },
-        {
-          timeoutInSeconds: DEFAULT_TIMEOUT,
-          fee: 100000,
-          simulate: true, // Explicitly enable simulation to ensure footprint is properly set
-        },
+          {
+            timeoutInSeconds: DEFAULT_TIMEOUT,
+            fee: 100000,
+            simulate: true, // Explicitly enable simulation to ensure footprint is properly set
+          },
+        )
+      }
+      assembledTransaction = await executeWithOracleHints(
+        [pool],
+        increaseLiquidityWithHintsOperation,
       )
     } catch (simulationError) {
       console.error('Transaction simulation failed:', simulationError)
       throw new Error(
         `Transaction simulation failed: ${simulationError instanceof Error ? simulationError.message : String(simulationError)}`,
       )
+    }
+
+    const simulationResult = assembledTransaction.simulation
+    if (
+      simulationResult &&
+      StellarSdk.rpc.Api.isSimulationError(simulationResult)
+    ) {
+      throw new Error(extractErrorMessage(simulationResult.error))
     }
 
     // Sign auth entries for nested authorization (PM -> Pool -> Token transfers)
@@ -258,6 +301,7 @@ export async function increaseLiquidity({
  * Decrease liquidity from an existing position
  */
 export async function decreaseLiquidity({
+  pool,
   tokenId,
   liquidity,
   amount0Min,
@@ -267,7 +311,9 @@ export async function decreaseLiquidity({
   sourceAccount,
   signTransaction,
   signAuthEntry,
+  isLegacy = false,
 }: {
+  pool: string
   tokenId: number
   liquidity: bigint
   amount0Min: bigint
@@ -277,18 +323,25 @@ export async function decreaseLiquidity({
   sourceAccount: string
   signTransaction: (xdr: string) => Promise<string>
   signAuthEntry: (entryPreimageXdr: string) => Promise<string>
+  isLegacy?: boolean
 }): Promise<{
   hash: string
   amount0: bigint
   amount1: bigint
 }> {
   try {
+    const positionManagerContractId = getPositionManagerContractId(isLegacy)
+    if (!positionManagerContractId) {
+      throw new Error('Position manager contract not found')
+    }
     const positionManagerClient = getPositionManagerContractClient({
-      contractId: contractAddresses.POSITION_MANAGER,
+      contractId: positionManagerContractId,
       publicKey: sourceAccount,
     })
 
-    const assembledTransaction = await positionManagerClient.decrease_liquidity(
+    const decreaseLiquidityOperationParams: Parameters<
+      typeof positionManagerClient.decrease_liquidity
+    > = [
       {
         params: {
           token_id: tokenId,
@@ -303,7 +356,48 @@ export async function decreaseLiquidity({
         timeoutInSeconds: DEFAULT_TIMEOUT,
         fee: 100000,
       },
-    )
+    ]
+
+    const decreaseLiquidityWithHintsOperation = async ([
+      { hints },
+    ]: PoolOracleHints[]) => {
+      return await positionManagerClient.decrease_liquidity_with_hints(
+        {
+          ...decreaseLiquidityOperationParams[0],
+          hints,
+        },
+        decreaseLiquidityOperationParams[1],
+      )
+    }
+
+    // Do not use hints for legacy pools
+    const assembledTransaction = isLegacy
+      ? await positionManagerClient.decrease_liquidity(
+          ...decreaseLiquidityOperationParams,
+        )
+      : await executeWithOracleHints(
+          [pool],
+          decreaseLiquidityWithHintsOperation,
+        )
+
+    const simulationResult = assembledTransaction.simulation
+    if (
+      simulationResult &&
+      StellarSdk.rpc.Api.isSimulationError(simulationResult)
+    ) {
+      const extractedErrorMessage = extractErrorMessage(simulationResult.error)
+      if (
+        isLegacy &&
+        extractedErrorMessage.includes(
+          'HostError: Error(Budget, ExceededLimit)',
+        )
+      ) {
+        throw new Error(
+          'Principal in the legacy pool for the position to be migrated is restricted',
+        )
+      }
+      throw new Error(extractedErrorMessage)
+    }
 
     // Sign auth entries for nested authorization (PM -> Pool)
     const transactionXdr = await signAuthEntriesAndGetXdr(

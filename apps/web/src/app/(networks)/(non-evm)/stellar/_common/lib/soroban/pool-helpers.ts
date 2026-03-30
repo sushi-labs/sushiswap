@@ -1,6 +1,5 @@
 import type { PoolInfo, PoolLiquidity, PoolReserves } from '../types/pool.type'
 import type { Token } from '../types/token.type'
-import { type OracleHints, fetchOracleHints } from '../utils/slot-hint-helpers'
 import { MAX_TICK_RANGE } from '../utils/ticks'
 import { getPoolLensContractClient } from './client'
 import { contractAddresses } from './contracts'
@@ -400,16 +399,4 @@ export function calculateAmountsFromLiquidity(
   }
 
   return { amount0, amount1 }
-}
-
-/**
- * Get oracle hints from pool
- * Required before any pool write operation (mint, burn, swap)
- * @param poolAddress - The pool contract address
- * @returns Object with slot and checkpoint hints
- */
-export async function getOracleHints(
-  poolAddress: string,
-): Promise<OracleHints> {
-  return await fetchOracleHints(poolAddress)
 }
