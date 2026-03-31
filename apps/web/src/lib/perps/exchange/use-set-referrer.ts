@@ -20,7 +20,11 @@ export const useSetReferrer = () => {
   const { agentAccount } = useAgent()
   const address = useAccount('evm')
   const { data: legalCheck } = useLegalCheck({ address })
-  const { data: referralData, refetch } = useReferral({ address })
+  const {
+    data: referralData,
+    refetch,
+    isLoading: isLoadingReferralCheck,
+  } = useReferral({ address })
   const hasAcceptedReferral = useMemo(() => {
     if (
       referralData?.referrerState?.stage === 'ready' &&
@@ -109,5 +113,6 @@ export const useSetReferrer = () => {
     setReferrerCode: mutation.mutate,
     isPending: mutation.isPending,
     hasAcceptedReferral,
+    isLoadingReferralCheck,
   }
 }

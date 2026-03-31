@@ -8,8 +8,12 @@ export const BuilderFee: FC<ButtonProps> = ({
   size = 'xl',
   ...props
 }) => {
-  const { approveBuilderFeeAsync, isPending, hasApprovedBuilder } =
-    useApproveBuilderFee()
+  const {
+    approveBuilderFeeAsync,
+    isPending,
+    hasApprovedBuilder,
+    isLoadingApprovedBuilders,
+  } = useApproveBuilderFee()
 
   const handleApproveBuilderFee = useCallback(async () => {
     try {
@@ -25,7 +29,7 @@ export const BuilderFee: FC<ButtonProps> = ({
         fullWidth={fullWidth}
         size={size}
         onClick={handleApproveBuilderFee}
-        loading={isPending}
+        loading={isPending || isLoadingApprovedBuilders}
         {...props}
       >
         Approve Builder

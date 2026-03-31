@@ -1,5 +1,4 @@
 import { approveBuilderFee } from '@nktkas/hyperliquid/api/exchange'
-import { useSessionStorage } from '@sushiswap/hooks'
 import {
   createFailedToast,
   createInfoToast,
@@ -14,19 +13,28 @@ import {
   BUILDER_FEE_SPOT_PERCENTAGE,
   TOAST_AUTOCLOSE_TIME,
 } from '../config'
+import { useApprovedBuilders } from '../info'
 import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
 
 export const useApproveBuilderFee = () => {
   const { data: walletClient } = useWalletClient()
-  const [storedValue, setValue] = useSessionStorage<boolean>(
-    `sushi.perps.approved.builder.${walletClient?.account.address}`,
-    false,
-  )
   const address = useAccount('evm')
   const { data: legalCheck } = useLegalCheck({ address })
+  const {
+    data: approvedBuilders,
+    refetch,
+    isLoading: isLoadingApprovedBuilders,
+  } = useApprovedBuilders({ address })
 
-  const hasApprovedBuilder = useMemo(() => storedValue === true, [storedValue])
+  const hasApprovedBuilder = useMemo(
+    () =>
+      approvedBuilders?.some(
+        (builder) =>
+          builder.toLowerCase() === BUILDER_FEE_RECEIVER.toLowerCase(),
+      ),
+    [approvedBuilders],
+  )
 
   const mutation = useMutation({
     mutationKey: [
@@ -48,7 +56,9 @@ export const useApproveBuilderFee = () => {
           maxFeeRate: `${BUILDER_FEE_SPOT_PERCENTAGE}%`,
           builder: BUILDER_FEE_RECEIVER,
         },
-      )
+      ).then(() => {
+        refetch()
+      })
     },
 
     onMutate: (_data) => {
@@ -70,7 +80,6 @@ export const useApproveBuilderFee = () => {
 
     onSuccess: (_res, _vars, ctx) => {
       if (!walletClient || !ctx) return
-      setValue(true)
 
       createSuccessToast({
         summary: `Approved Builder Fee`,
@@ -104,5 +113,6 @@ export const useApproveBuilderFee = () => {
     approveBuilderFeeAsync: mutation.mutateAsync,
     isPending: mutation.isPending,
     hasApprovedBuilder,
+    isLoadingApprovedBuilders,
   }
 }

@@ -1,13 +1,13 @@
 import { approveAgent } from '@nktkas/hyperliquid/api/exchange'
 import { AbstractWalletError } from '@nktkas/hyperliquid/signing'
-import { useSessionStorage } from '@sushiswap/hooks'
+import { useLocalStorage, useSessionStorage } from '@sushiswap/hooks'
 import {
   createFailedToast,
   createInfoToast,
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { zeroAddress } from 'viem'
 import {
   generatePrivateKey,
@@ -35,7 +35,7 @@ export const useAgent = () => {
     return extraAgents?.find((agent) => agent.name === SUSHI_AGENT_NAME)
   }, [extraAgents])
 
-  const [storedValue, setValue, removeValue] = useSessionStorage<
+  const [storedValue, setValue, removeValue] = useLocalStorage<
     | {
         privateKey: `0x${string}`
         publicKey: `0x${string}`

@@ -8,8 +8,12 @@ export const Referral: FC<ButtonProps> = ({
   size = 'xl',
   ...props
 }) => {
-  const { hasAcceptedReferral, isPending, setReferrerCodeAsync } =
-    useSetReferrer()
+  const {
+    hasAcceptedReferral,
+    isPending,
+    isLoadingReferralCheck,
+    setReferrerCodeAsync,
+  } = useSetReferrer()
 
   const handleApproveBuilderFee = useCallback(async () => {
     try {
@@ -25,7 +29,7 @@ export const Referral: FC<ButtonProps> = ({
         fullWidth={fullWidth}
         size={size}
         onClick={handleApproveBuilderFee}
-        loading={isPending}
+        loading={isPending || isLoadingReferralCheck}
         {...props}
       >
         Accept Referral (4% discount)
