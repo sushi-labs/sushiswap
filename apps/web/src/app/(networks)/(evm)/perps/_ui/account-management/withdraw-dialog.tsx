@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@sushiswap/ui'
-import { type ReactNode, useCallback, useState } from 'react'
+import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { TOAST_AUTOCLOSE_TIME, hlHttpTransport } from 'src/lib/perps'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
@@ -23,6 +23,7 @@ import { EvmChainId, USDC } from 'sushi/evm'
 import { useWalletClient } from 'wagmi'
 import { useUserState } from '~evm/perps/user-provider'
 import { PerpsChecker } from '../perps-checker'
+import { useUserSettingsState } from './settings-provider'
 import { TransferInput } from './transfer-input'
 
 //@todo add more options
@@ -48,7 +49,15 @@ export const WithdrawDialog = ({
       webData2Query: { data, isLoading, error },
     },
   } = useUserState()
-  const withdrawableBalance = data?.clearinghouseState.withdrawable
+  const {
+    state: { isUnifiedAccountModeEnabled },
+  } = useUserSettingsState()
+  const withdrawableBalance = useMemo(() => {
+    if (isUnifiedAccountModeEnabled) {
+      return data?.spotState?.balances?.find((i) => i.coin === 'USDC')?.total
+    }
+    return data?.clearinghouseState.withdrawable
+  }, [data, isUnifiedAccountModeEnabled])
   const balance = Amount.tryFromHuman(currency, withdrawableBalance ?? '0')
   const address = useAccount('evm')
   const [isPending, setIsPending] = useState<boolean>(false)

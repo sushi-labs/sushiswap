@@ -7,6 +7,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
@@ -22,6 +25,7 @@ import {
 import { useAccount } from 'src/lib/wallet'
 import { formatPercent } from 'sushi'
 import { StatItem } from '~evm/perps/_ui/_common'
+import { useUserSettingsState } from '~evm/perps/_ui/account-management'
 
 const STAT_VIEWS = ['perps + spot + vaults', 'perps'] as const
 const TIME = ['24h', '7D', '30D', 'All-time'] as const
@@ -106,6 +110,9 @@ export const PortfolioStats = () => {
     isLoading: isLoadingUserVaultEquities,
     error: userVaultEquitiesError,
   } = useUserVaultEquities({ address })
+  const {
+    state: { isUnifiedAccountModeEnabled },
+  } = useUserSettingsState()
 
   const isLoading =
     isLoadingPortfolio ||
@@ -243,14 +250,40 @@ export const PortfolioStats = () => {
             title="Total Equity"
             value={currencyFormatter.format(Number(statData?.totalEquity || 0))}
           />
-          <StatItem
-            title="Perps Account Equity"
-            value={currencyFormatter.format(Number(perpsEquity || 0))}
-          />
-          <StatItem
-            title="Spot Account Equity"
-            value={currencyFormatter.format(Number(spotEquity || 0))}
-          />
+          {isUnifiedAccountModeEnabled ? (
+            <StatItem
+              title={
+                <HoverCard openDelay={0}>
+                  <HoverCardTrigger asChild tabIndex={0}>
+                    <div className="text-muted-foreground underline">
+                      Trading Equity
+                    </div>
+                  </HoverCardTrigger>
+                  <HoverCardContent
+                    forceMount
+                    side="top"
+                    className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+                  >
+                    <p>Includes spot and perps accounts</p>
+                  </HoverCardContent>
+                </HoverCard>
+              }
+              value={currencyFormatter.format(
+                Number(perpsEquity || 0) + Number(spotEquity || 0),
+              )}
+            />
+          ) : (
+            <>
+              <StatItem
+                title="Perps Account Equity"
+                value={currencyFormatter.format(Number(perpsEquity || 0))}
+              />
+              <StatItem
+                title="Spot Account Equity"
+                value={currencyFormatter.format(Number(spotEquity || 0))}
+              />
+            </>
+          )}
           <StatItem
             title="Vault Equity"
             value={currencyFormatter.format(Number(vaultEquity || 0))}

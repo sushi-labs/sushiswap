@@ -257,6 +257,35 @@ export const TRANSFER_COLUMN = (
     const isSpotUSDC = balance.coin === 'USDC (Spot)' && marketType === 'spot'
     const isPerpStable =
       balance.coin?.includes('(Perps)') && marketType === 'perp'
+    const {
+      state: { isUnifiedAccountModeEnabled },
+    } = useUserSettingsState()
+
+    if (isUnifiedAccountModeEnabled && balance.coin === 'USDC') {
+      return (
+        <HoverCard openDelay={0}>
+          <HoverCardTrigger
+            asChild
+            tabIndex={0}
+            className="opacity-50 cursor-not-allowed"
+          >
+            <TableButton>
+              Transfer to {isSpotUSDC ? 'Perps' : 'Spot'}
+            </TableButton>
+          </HoverCardTrigger>
+          <HoverCardContent
+            forceMount
+            side="top"
+            className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+          >
+            <p>
+              When unified account is enabled, trading is from a single unified
+              account.
+            </p>
+          </HoverCardContent>
+        </HoverCard>
+      )
+    }
 
     return (
       <div className="flex items-center gap-4 lg:whitespace-nowrap">
