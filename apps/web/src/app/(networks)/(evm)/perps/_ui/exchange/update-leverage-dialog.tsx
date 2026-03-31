@@ -80,8 +80,11 @@ export const UpdateLeverageDialog = ({
       } else {
         setOpen(nextOpen)
       }
+      if (nextOpen) {
+        setNewLeverage(currentLeverage)
+      }
     },
-    [isControlled, onOpenChange],
+    [isControlled, onOpenChange, currentLeverage],
   )
 
   return (
@@ -99,7 +102,9 @@ export const UpdateLeverageDialog = ({
           <div className="flex flex-col gap-4 text-sm">
             <p>
               Max position size decreases the higher your leverage.{' '}
-              {lastTier && newLeverage > lastTier?.maxLeverage
+              {lastTier &&
+              newLeverage > lastTier?.maxLeverage &&
+              Number(lastTier.lowerBound) > 0
                 ? `The max position size for ${newLeverage}x leverage on ${asset?.name} is ${currencyFormatter.format(Number(lastTier.lowerBound))}.`
                 : ''}
             </p>
