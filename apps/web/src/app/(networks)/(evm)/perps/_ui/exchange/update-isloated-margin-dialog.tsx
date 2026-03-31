@@ -10,12 +10,16 @@ import {
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import {
+  DEX_COLLATERAL_TOKENS,
   type UserPositionsItemType,
   formatSize,
   perpsNumberFormatter,
+  useSpotMeta,
   useUpdateIsolatedMargin,
 } from 'src/lib/perps'
+import { useUserState } from '~evm/perps/user-provider'
 import { IsolatedMarginInput, SideToggle, StatItem } from '../_common'
+import { useUserSettingsState } from '../account-management'
 import { PerpsChecker } from '../perps-checker'
 
 export const UpdateIsolatedMarginDialog = ({
@@ -33,16 +37,42 @@ export const UpdateIsolatedMarginDialog = ({
   const [type, setType] = useState<'add' | 'remove'>('add')
   const [amount, setAmount] = useState('')
   const { updateIsolatedMargin, isPending } = useUpdateIsolatedMargin()
-
+  const {
+    state: { isUnifiedAccountModeEnabled },
+  } = useUserSettingsState()
   const currentMargin = useMemo(() => {
     return position.position.marginUsed
   }, [position])
+  const {
+    state: {
+      webData2Query: { data: webData2 },
+    },
+  } = useUserState()
+  const { data: spotMeta } = useSpotMeta()
+  const token = useMemo(() => {
+    const collateralTokenId =
+      DEX_COLLATERAL_TOKENS[
+        position.perpsDex as keyof typeof DEX_COLLATERAL_TOKENS
+      ]?.collateralToken
+    return spotMeta?.tokens.find((t) => t.index === collateralTokenId)
+  }, [position.perpsDex, spotMeta])
 
   const maxValue = useMemo(() => {
     if (type === 'add') {
-      const val = position.clearingHouseDataForDex?.withdrawable ?? '0'
-      if (Number(val) < 0.01) return '0'
-      return val
+      if (!isUnifiedAccountModeEnabled) {
+        const val = position.clearingHouseDataForDex?.withdrawable ?? '0'
+        if (Number(val) < 0.01) return '0'
+        return val
+      } else {
+        const token =
+          DEX_COLLATERAL_TOKENS[
+            position.perpsDex as keyof typeof DEX_COLLATERAL_TOKENS
+          ]?.collateralToken
+        const spotTotal =
+          webData2?.spotState?.balances?.find((b) => b.token === token)
+            ?.total ?? '0'
+        return spotTotal
+      }
     }
     return maxRemovableIsolatedMargin({
       marginUsed: currentMargin,
@@ -50,7 +80,13 @@ export const UpdateIsolatedMarginDialog = ({
       markPrice: position.markPrice,
       leverage: position.position.leverage.value,
     })
-  }, [position, currentMargin, type])
+  }, [
+    position,
+    currentMargin,
+    type,
+    isUnifiedAccountModeEnabled,
+    webData2?.spotState?.balances,
+  ])
 
   const handleMaxAmount = useCallback(() => {
     setAmount(maxValue)
@@ -117,11 +153,11 @@ export const UpdateIsolatedMarginDialog = ({
             <div className="flex flex-col gap-2">
               <StatItem
                 title={`Current Margin for ${position.assetSymbol}`}
-                value={`${perpsNumberFormatter({ value: currentMargin ?? '0', minFraxDigits: 2, maxFraxDigits: 2 })} USDC`}
+                value={`${perpsNumberFormatter({ value: currentMargin ?? '0', minFraxDigits: 2, maxFraxDigits: 2 })} ${token?.name}`}
               />
               <StatItem
                 title={`Margin available to ${type}`}
-                value={`${perpsNumberFormatter({ value: maxValue ?? '0', minFraxDigits: 2, maxFraxDigits: 2 })} USDC`}
+                value={`${perpsNumberFormatter({ value: maxValue ?? '0', minFraxDigits: 2, maxFraxDigits: 2 })} ${token?.name}`}
               />
             </div>
             <PerpsChecker.Legal size="default" variant="perps-default">

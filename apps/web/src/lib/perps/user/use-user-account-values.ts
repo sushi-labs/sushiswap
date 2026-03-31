@@ -4,7 +4,7 @@ import { useUserState } from '~evm/perps/user-provider'
 import { useAccount } from '../../wallet'
 
 //todo: pull from api
-const universe = {
+export const DEX_COLLATERAL_TOKENS = {
   '': {
     index: 0,
     collateralToken: 0,
@@ -35,7 +35,7 @@ const universe = {
   },
   xyz: {
     index: 7,
-    collateralToken: 7,
+    collateralToken: 0,
   },
 }
 
@@ -220,7 +220,7 @@ export const useUserAccountValues = () => {
     const crossMarginByToken: Record<number, number> = {}
     const isolatedMarginByToken: Record<number, number> = {}
     const indexToCollateralToken: Record<number, number> = {}
-    for (const meta of Object.values(universe)) {
+    for (const meta of Object.values(DEX_COLLATERAL_TOKENS)) {
       indexToCollateralToken[meta.index] = meta.collateralToken
     }
     const perpDexStates =
