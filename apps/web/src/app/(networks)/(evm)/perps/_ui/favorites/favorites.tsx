@@ -83,7 +83,7 @@ export const Favorites = () => {
                 displayType === 'usd'
                   ? perpsNumberFormatter({
                       value: price ?? '0',
-                      maxFraxDigits: asset?.decimals,
+                      maxFraxDigits: asset?.formatParseDecimals,
                     })
                   : formatPercent(Number(changeValue ?? 0))
               return (
