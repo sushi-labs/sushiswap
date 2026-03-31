@@ -14,7 +14,7 @@ import { useReferral } from '../info'
 import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
 
-export const SUSHI_REFERRAL_CODE = 'TYSIRAVO' //todo: set this to the actual referral code once it's created
+export const SUSHI_REFERRAL_CODE = 'SUSHISWAP'
 
 export const useSetReferrer = () => {
   const { agentAccount } = useAgent()

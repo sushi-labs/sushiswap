@@ -2,7 +2,6 @@ import {
   formatPrice as formatPriceHl,
   formatSize as formatSizeHl,
 } from '@nktkas/hyperliquid/utils'
-import { least } from 'd3'
 import type { EvmAddress } from 'sushi/evm'
 import type { PerpOrSpotAsset } from './subscription/use-asset-list'
 
