@@ -5,15 +5,15 @@ import { useUserState } from '~evm/perps/user-provider'
 import { useAccount } from '../../wallet'
 import { SPOT_ASSETS_TO_REWRITE } from '../utils'
 
-const DEX_NAME_TO_COIN: Record<string, string> = {
-  '': 'USDC (Perps)',
-  xyz: 'USDC (Perps)',
-  cash: 'USDT0 (Perps)',
-  flx: 'USDH (Perps)',
-  hyna: 'USDE (Perps)',
-  km: 'USDH (Perps)',
-  vntl: 'USDH (Perps)',
-}
+const DEX_NAME_TO_COIN: Map<string, string> = new Map([
+  ['', 'USDC (Perps)'],
+  ['xyz', 'USDC (Perps)'],
+  ['cash', 'USDT0 (Perps)'],
+  ['flx', 'USDH (Perps)'],
+  ['hyna', 'USDE (Perps)'],
+  ['km', 'USDH (Perps)'],
+  ['vntl', 'USDH (Perps)'],
+])
 
 export const useBalances = () => {
   const address = useAccount('evm')
@@ -55,7 +55,7 @@ export const useBalances = () => {
     let perpsUsdcs = data?.clearinghouseStates
       .flatMap(([dexName, clearinghouseState]) => {
         return {
-          coin: DEX_NAME_TO_COIN[dexName] ?? `USDC (Perps)`,
+          coin: DEX_NAME_TO_COIN.get(dexName) ?? `USDC (Perps)`,
           totalBalance: clearinghouseState?.marginSummary?.accountValue,
           availableBalance: clearinghouseState?.withdrawable,
           usdcValue: clearinghouseState?.marginSummary?.accountValue,
@@ -163,13 +163,38 @@ export const useBalances = () => {
       return allBalances
     }
     const nonUsdcBalances =
-      allBalances?.filter(
-        (b) => b.coin !== 'USDC (Perps)' && b.coin !== 'USDC (Spot)',
-      ) ?? []
+      allBalances
+        ?.filter((b) => b.coin !== 'USDC (Perps)' && b.coin !== 'USDC (Spot)')
+        .map((b) => {
+          const hasPerp = perpsUsdcs.find(
+            (p) => p.coin.replaceAll(' (Perps)', '') === b.coin,
+          )
+          const totalBalance = hasPerp
+            ? Number(b.totalBalance) + Number(hasPerp.totalBalance)
+            : Number(b.totalBalance)
+          const availableBalance = hasPerp
+            ? Number(b.availableBalance) + Number(hasPerp.availableBalance)
+            : Number(b.availableBalance)
+
+          const usdcValue = hasPerp
+            ? Number(b.usdcValue) + Number(hasPerp.usdcValue)
+            : Number(b.usdcValue)
+          const pnlRoePc = hasPerp ? null : b.pnlRoePc
+
+          return {
+            ...b,
+            totalBalance: totalBalance.toString(),
+            availableBalance: availableBalance.toString(),
+            usdcValue: usdcValue.toString(),
+            pnlRoePc,
+          }
+        })
+        ?.filter((b) => !b.coin.includes('Perps')) ?? []
     const usdcBalances =
       allBalances?.filter(
         (b) => b.coin === 'USDC (Perps)' || b.coin === 'USDC (Spot)',
       ) ?? []
+
     const usdc = {
       coin: 'USDC',
       assetName: 'PURR/USDC',

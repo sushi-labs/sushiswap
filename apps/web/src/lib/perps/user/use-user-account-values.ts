@@ -3,6 +3,42 @@ import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useUserState } from '~evm/perps/user-provider'
 import { useAccount } from '../../wallet'
 
+//todo: pull from api
+const universe = {
+  '': {
+    index: 0,
+    collateralToken: 0,
+  },
+  abcd: {
+    index: 1,
+    collateralToken: 0,
+  },
+  cash: {
+    index: 2,
+    collateralToken: 268,
+  },
+  flx: {
+    index: 3,
+    collateralToken: 360,
+  },
+  hyna: {
+    index: 4,
+    collateralToken: 235,
+  },
+  km: {
+    index: 5,
+    collateralToken: 360,
+  },
+  vntl: {
+    index: 6,
+    collateralToken: 360,
+  },
+  xyz: {
+    index: 7,
+    collateralToken: 7,
+  },
+}
+
 export const useUserAccountValues = () => {
   const address = useAccount('evm')
   const {
@@ -134,22 +170,97 @@ export const useUserAccountValues = () => {
   }, [perpsEquity, spotEquity])
 
   const unifiedAccountLeverage = useMemo(() => {
-    if (!portfolioValue || !allDexClearinghouseState) return 0
-    const totalNtlPos =
+    if (!allDexClearinghouseState) return 0
+
+    const crossMaintenanceMarginUsed =
       allDexClearinghouseState?.clearinghouseStates.reduce(
         (posAcc, [_dex, pos]) => {
-          return Number(pos.marginSummary?.totalNtlPos ?? 0) + posAcc
+          return Number(pos.crossMaintenanceMarginUsed ?? 0) + posAcc
         },
         0,
       ) || 0
 
-    return totalNtlPos / (portfolioValue || 1)
-  }, [portfolioValue, allDexClearinghouseState])
+    const isolatedValue =
+      allDexClearinghouseState?.clearinghouseStates.reduce(
+        (posAcc, [_dex, pos]) => {
+          const crossPosValue = pos.assetPositions.reduce(
+            (assetAcc, assetPos) => {
+              if (assetPos.position.leverage.type === 'cross') return assetAcc
+              const posValue = Number(assetPos.position.positionValue ?? 0)
+              return assetAcc + posValue
+            },
+            0,
+          )
+          return posAcc + crossPosValue
+        },
+        0,
+      ) || 0
+    const crossValue =
+      allDexClearinghouseState?.clearinghouseStates.reduce(
+        (posAcc, [_dex, pos]) => {
+          const crossPosValue = pos.assetPositions.reduce(
+            (assetAcc, assetPos) => {
+              if (assetPos.position.leverage.type === 'isolated')
+                return assetAcc
+              const posValue = Number(assetPos.position.positionValue ?? 0)
+              return assetAcc + posValue
+            },
+            0,
+          )
+          return posAcc + crossPosValue
+        },
+        0,
+      ) || 0
+
+    return crossValue / (isolatedValue + crossMaintenanceMarginUsed || 1)
+  }, [allDexClearinghouseState])
 
   const unifiedAccountRatio = useMemo(() => {
-    if (!portfolioValue || !maintenanceMargin) return 0
-    return (maintenanceMargin / (portfolioValue || 1)) * 100
-  }, [maintenanceMargin, portfolioValue])
+    // https://hyperliquid.gitbook.io/hyperliquid-docs/trading/account-abstraction-modes#unified-account-ratio
+    const crossMarginByToken: Record<number, number> = {}
+    const isolatedMarginByToken: Record<number, number> = {}
+    const indexToCollateralToken: Record<number, number> = {}
+    for (const meta of Object.values(universe)) {
+      indexToCollateralToken[meta.index] = meta.collateralToken
+    }
+    const perpDexStates =
+      allDexClearinghouseState?.clearinghouseStates?.flatMap(
+        ([_dexName, clearinghouseState]) => {
+          return clearinghouseState
+        },
+      ) ?? []
+    for (let index = 0; index < perpDexStates.length; index++) {
+      const dex = perpDexStates[index]
+      const token = indexToCollateralToken[index]
+
+      if (dex === undefined || token === undefined) continue
+
+      crossMarginByToken[token] =
+        (crossMarginByToken[token] ?? 0) +
+        Number(dex.crossMaintenanceMarginUsed)
+
+      for (const ap of dex.assetPositions) {
+        if (ap.position.leverage.type === 'isolated') {
+          isolatedMarginByToken[token] =
+            (isolatedMarginByToken[token] ?? 0) + Number(ap.position.marginUsed)
+        }
+      }
+    }
+    let maxRatio = 0
+    for (const [tokenStr, crossMargin] of Object.entries(crossMarginByToken)) {
+      const token = Number(tokenStr)
+      const spotTotal =
+        webData2?.spotState?.balances?.find((b) => b.token === token)?.total ??
+        0
+      const isolatedMargin = isolatedMarginByToken[token] ?? 0
+      const available = Number(spotTotal) - isolatedMargin
+      if (available > 0) {
+        maxRatio = Math.max(maxRatio, crossMargin / available)
+      }
+    }
+
+    return maxRatio * 100
+  }, [allDexClearinghouseState, webData2?.spotState?.balances])
 
   return {
     isLoading,
