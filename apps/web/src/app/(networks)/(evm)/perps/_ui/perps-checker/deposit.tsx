@@ -110,7 +110,6 @@ export const Deposit: FC<ButtonProps> = ({
   if (
     Number(availableToTrade) === 0 &&
     asset?.marketType === 'perp' &&
-    spotUSDCBalance > 0 &&
     !isUnifiedAccountModeEnabled
   ) {
     return (
