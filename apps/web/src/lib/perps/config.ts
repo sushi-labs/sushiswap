@@ -1,5 +1,5 @@
 // builder must have at least 100 USDC in perps account value.
-export const BUILDER_FEE_RECEIVER = '0x47Ef3bF350F70724F2fd34206990cdE9C3A6B6F0' //todo: update address
+export const BUILDER_FEE_RECEIVER = '0x12EE177DB3cEafedc639D023A29CC8588DB3A4b9' //sushi ledger
 
 //Builder fee in 0.1bps (1 = 0.0001%). Max 100 for perps (0.1%), 1000 for spot (1%).
 export const BUILDER_FEE_PERPS = 10 // 10 = 0.01% fee for perps
