@@ -120,8 +120,8 @@ export const AVAILABLE_BALANCE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
     const coin = props.row.original.coin?.split(' (')[0] ?? ''
     const isPerp = props.row.original.marketType === 'perp'
     const decimals = props.row.original.token?.szDecimals || 4
-
-    if (!isPerp) {
+    const isUnifiedUSDC = props.row.original.marketType === 'unified'
+    if (!isPerp && !isUnifiedUSDC) {
       return (
         <span className="font-medium lg:whitespace-nowrap">
           {perpsNumberFormatter({
