@@ -120,7 +120,7 @@ export const SIZE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
 
 export const POSITION_VALUE_COLUMN: ColumnDef<UserPositionsItemType, unknown> =
   {
-    id: 'psoValue',
+    id: 'posValue',
     header: 'Position Value',
     accessorFn: (row) => row.position.positionValue,
     sortingFn: ({ original: rowA }, { original: rowB }) =>

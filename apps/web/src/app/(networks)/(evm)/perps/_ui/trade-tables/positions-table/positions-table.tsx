@@ -73,7 +73,7 @@ const getPositionColumns = ({
 
 export const PositionsTable = () => {
   const { data, isLoading, isError } = useUserPositions()
-  const [sorting, setSorting] = useState([{ id: 'size', desc: true }])
+  const [sorting, setSorting] = useState([{ id: 'posValue', desc: true }])
   const { isLg } = useBreakpoint('lg')
   const {
     state: { tradeFilter, expandAll },
