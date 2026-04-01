@@ -10,7 +10,7 @@ import {
   SkeletonText,
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { useUserFees } from 'src/lib/perps'
+import { currencyFormatter, useUserFees } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { formatUSD } from 'sushi'
 import { TableButton } from '~evm/perps/_ui/_common'
@@ -82,9 +82,15 @@ export const Volume = () => {
                     className="text-sm whitespace-nowrap pb-1"
                   >
                     <td className="py-1 pr-4">{item.date}</td>
-                    <td className="py-1 pr-4">{formatUSD(item.exchange)}</td>
-                    <td className="py-1 pr-4">{formatUSD(item.userAdd)}</td>
-                    <td className="py-1 pr-4">{formatUSD(item.userCross)}</td>
+                    <td className="py-1 pr-4">
+                      {currencyFormatter.format(Number(item.exchange))}
+                    </td>
+                    <td className="py-1 pr-4">
+                      {currencyFormatter.format(Number(item.userAdd))}
+                    </td>
+                    <td className="py-1 pr-4">
+                      {currencyFormatter.format(Number(item.userCross))}
+                    </td>
                   </tr>
                 ))}
               </tbody>

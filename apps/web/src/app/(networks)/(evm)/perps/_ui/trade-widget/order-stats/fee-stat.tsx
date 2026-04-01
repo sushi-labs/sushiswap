@@ -14,15 +14,16 @@ export const FeeStat = () => {
 
   const { takerFee, makerFee } = useMemo(() => {
     if (!feeData) return { takerFee: '0', makerFee: '0' }
+    const discount = 1 - Number(feeData.activeReferralDiscount || '0')
     return {
       takerFee:
         asset?.marketType === 'perp'
-          ? feeData.userCrossRate
-          : feeData.userSpotCrossRate,
+          ? Number(feeData.userCrossRate) * discount
+          : Number(feeData.userSpotCrossRate) * discount,
       makerFee:
         asset?.marketType === 'perp'
-          ? feeData.userAddRate
-          : feeData.userSpotAddRate,
+          ? Number(feeData.userAddRate) * discount
+          : Number(feeData.userSpotAddRate) * discount,
     }
   }, [feeData, asset?.marketType])
 
@@ -39,13 +40,13 @@ export const FeeStat = () => {
             className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
           >
             <p>
-              Taker orders pay a {formatPerpsPercent(takerFee, 3)} fee. Maker
-              orders pay a {formatPerpsPercent(makerFee, 3)} fee.
+              Taker orders pay a {formatPerpsPercent(takerFee, 4)} fee. Maker
+              orders pay a {formatPerpsPercent(makerFee, 4)} fee.
             </p>
           </HoverCardContent>
         </HoverCard>
       }
-      value={`${formatPerpsPercent(takerFee, 3)} / ${formatPerpsPercent(makerFee, 3)}`}
+      value={`${formatPerpsPercent(takerFee, 4)} / ${formatPerpsPercent(makerFee, 4)}`}
     />
   )
 }
