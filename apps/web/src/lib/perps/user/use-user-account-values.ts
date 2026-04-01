@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useUserState } from '~evm/perps/user-provider'
 import { useAccount } from '../../wallet'
+import { useSpotClearinghouseState } from '../info'
 
 //todo: pull from api
 export const DEX_COLLATERAL_TOKENS = {
@@ -64,16 +65,40 @@ export const useUserAccountValues = () => {
       },
     },
   } = useAssetListState()
+  const {
+    data: spotClearingHouseState,
+    isLoading: isLoadingSpotClearingHouse,
+    error: errorSpotClearingHouse,
+  } = useSpotClearinghouseState({ address })
 
   const isLoading = useMemo(() => {
     if (!address) return false
-    return isLoadingWebData2 || allDexLoading || assetListLoading
-  }, [address, isLoadingWebData2, allDexLoading, assetListLoading])
+    return (
+      isLoadingWebData2 ||
+      allDexLoading ||
+      assetListLoading ||
+      isLoadingSpotClearingHouse
+    )
+  }, [
+    address,
+    isLoadingWebData2,
+    allDexLoading,
+    assetListLoading,
+    isLoadingSpotClearingHouse,
+  ])
 
   const error = useMemo(() => {
     if (!address) return null
-    return errorWebData2 || allDexError || assetListError
-  }, [address, errorWebData2, allDexError, assetListError])
+    return (
+      errorWebData2 || allDexError || assetListError || errorSpotClearingHouse
+    )
+  }, [
+    address,
+    errorWebData2,
+    allDexError,
+    assetListError,
+    errorSpotClearingHouse,
+  ])
 
   const spotEquity = useMemo(() => {
     if (!webData2?.spotState?.balances || !assetList) return 0
@@ -169,16 +194,36 @@ export const useUserAccountValues = () => {
     return perpsEquity + spotEquity
   }, [perpsEquity, spotEquity])
 
+  const clearhouseStateTotal = useMemo(() => {
+    if (!spotClearingHouseState?.balances || !assetList) return 0
+
+    return (
+      spotClearingHouseState?.balances?.reduce((acc, asset) => {
+        const balance = Number(asset?.total) ?? 0
+        if (asset.coin === 'USDC') {
+          return acc + balance
+        }
+        const tokenIndex = asset?.token
+        //if tokenIndex not in DEX_COLLATERAL_TOKENS, skip
+        if (
+          !Object.values(DEX_COLLATERAL_TOKENS).find(
+            (meta) => meta.collateralToken === tokenIndex,
+          )
+        ) {
+          return acc
+        }
+        const spot = Array.from(assetList?.entries() ?? []).find(([, v]) =>
+          v?.tokens?.find((t) => t?.index === tokenIndex),
+        )?.[1]
+        const price = Number(spot?.lastPrice) ?? 0
+        const val = balance * price
+        return acc + val
+      }, 0) ?? 0
+    )
+  }, [spotClearingHouseState?.balances, assetList])
+
   const unifiedAccountLeverage = useMemo(() => {
     if (!allDexClearinghouseState) return 0
-
-    const crossMaintenanceMarginUsed =
-      allDexClearinghouseState?.clearinghouseStates.reduce(
-        (posAcc, [_dex, pos]) => {
-          return Number(pos.crossMaintenanceMarginUsed ?? 0) + posAcc
-        },
-        0,
-      ) || 0
 
     const isolatedValue =
       allDexClearinghouseState?.clearinghouseStates.reduce(
@@ -212,8 +257,8 @@ export const useUserAccountValues = () => {
         0,
       ) || 0
 
-    return crossValue / (isolatedValue + crossMaintenanceMarginUsed || 1)
-  }, [allDexClearinghouseState])
+    return crossValue / (isolatedValue + clearhouseStateTotal || 1)
+  }, [allDexClearinghouseState, clearhouseStateTotal])
 
   const unifiedAccountRatio = useMemo(() => {
     // https://hyperliquid.gitbook.io/hyperliquid-docs/trading/account-abstraction-modes#unified-account-ratio
@@ -229,6 +274,7 @@ export const useUserAccountValues = () => {
           return clearinghouseState
         },
       ) ?? []
+    // console.log('perpDexStates', perpDexStates)
     for (let index = 0; index < perpDexStates.length; index++) {
       const dex = perpDexStates[index]
       const token = indexToCollateralToken[index]
@@ -250,8 +296,8 @@ export const useUserAccountValues = () => {
     for (const [tokenStr, crossMargin] of Object.entries(crossMarginByToken)) {
       const token = Number(tokenStr)
       const spotTotal =
-        webData2?.spotState?.balances?.find((b) => b.token === token)?.total ??
-        0
+        spotClearingHouseState?.balances?.find((b) => b.token === token)
+          ?.total ?? 0
       const isolatedMargin = isolatedMarginByToken[token] ?? 0
       const available = Number(spotTotal) - isolatedMargin
       if (available > 0) {
@@ -260,7 +306,7 @@ export const useUserAccountValues = () => {
     }
 
     return maxRatio * 100
-  }, [allDexClearinghouseState, webData2?.spotState?.balances])
+  }, [allDexClearinghouseState, spotClearingHouseState?.balances])
 
   return {
     isLoading,
