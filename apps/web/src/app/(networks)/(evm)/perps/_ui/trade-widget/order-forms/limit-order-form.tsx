@@ -37,7 +37,7 @@ export const LimitOrderForm = () => {
           value={limitPrice}
           onChange={setLimitPrice}
           currentMidPrice={midPrice ?? '0'}
-          maxDecimals={asset?.decimals || 6}
+          maxDecimals={asset?.formatParseDecimals || 6}
           size="sm"
         />
         <OrderSizeInput />

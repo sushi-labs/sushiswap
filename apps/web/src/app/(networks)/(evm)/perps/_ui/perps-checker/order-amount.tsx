@@ -30,6 +30,7 @@ export const OrderAmount: FC<ButtonProps> = ({
     assetString: activeAsset,
   })
   const { data: scaleOrderData } = useScaleOrders()
+
   const allScaleOrdersAreValid = scaleOrderData?.allOrdersValid
 
   //todo: break this up into smaller checkers

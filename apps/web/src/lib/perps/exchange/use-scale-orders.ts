@@ -45,7 +45,7 @@ export const useScaleOrders = () => {
         scaleStartEnd.end &&
         totalOrders &&
         sizeSkew &&
-        asset?.decimals &&
+        asset?.decimals !== undefined &&
         asset?.marketType &&
         tradeType === 'scale',
     ),

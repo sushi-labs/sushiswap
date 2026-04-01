@@ -239,7 +239,7 @@ export const TpSlInput = ({
                     onValueChange={_onChangeTpPrice}
                     value={tpPrice}
                     readOnly={!asset}
-                    maxDecimals={asset?.decimals}
+                    maxDecimals={asset?.formatParseDecimals}
                     className={classNames(
                       'font-medium text-right',
                       inputSize === 'sm' ? '!text-sm' : '!text-lg',
@@ -297,7 +297,7 @@ export const TpSlInput = ({
                     onValueChange={_onChangeSlPrice}
                     value={slPrice}
                     readOnly={!asset}
-                    maxDecimals={asset?.decimals}
+                    maxDecimals={asset?.formatParseDecimals}
                     className={classNames(
                       'font-medium text-right',
                       inputSize === 'sm' ? '!text-sm' : '!text-lg',

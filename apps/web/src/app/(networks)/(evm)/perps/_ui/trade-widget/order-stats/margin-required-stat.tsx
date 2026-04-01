@@ -1,5 +1,9 @@
 import { useMemo } from 'react'
-import { calculateMarginRequired, perpsNumberFormatter } from 'src/lib/perps'
+import {
+  calculateMarginRequired,
+  perpsNumberFormatter,
+  useScaleOrders,
+} from 'src/lib/perps'
 import { StatItem } from '../../_common'
 import { useAssetState } from '../asset-state-provider'
 
@@ -14,12 +18,22 @@ export const MarginRequiredStat = () => {
       limitPrice,
     },
   } = useAssetState()
+  const { data: scaleOrderData } = useScaleOrders()
 
   const marginRequired = useMemo(() => {
     if (!asset || !markPrice || !size.base) {
       return null
     }
     let price = markPrice
+    if (tradeType === 'scale' && scaleOrderData?.orders) {
+      const value = scaleOrderData.totalUsdcValue / currentLeverageForAsset
+
+      return perpsNumberFormatter({
+        value,
+        minFraxDigits: 2,
+        maxFraxDigits: 2,
+      })
+    }
     if (tradeType.toLowerCase().includes('limit') && limitPrice) {
       price = limitPrice
     }
@@ -28,7 +42,7 @@ export const MarginRequiredStat = () => {
       baseSize: size.base,
       price,
       leverage: currentLeverageForAsset,
-      decimals: asset.decimals,
+      decimals: asset.formatParseDecimals,
     })
     if (!res) return null
 
@@ -44,6 +58,7 @@ export const MarginRequiredStat = () => {
     markPrice,
     limitPrice,
     currentLeverageForAsset,
+    scaleOrderData,
   ])
 
   return (

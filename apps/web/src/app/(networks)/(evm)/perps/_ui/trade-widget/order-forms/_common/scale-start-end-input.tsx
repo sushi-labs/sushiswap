@@ -4,7 +4,7 @@ import { useAssetState } from '../../asset-state-provider'
 
 export const ScaleStartEndInput = () => {
   const {
-    state: { scaleStartEnd },
+    state: { scaleStartEnd, asset },
     mutate: { setScaleStartEnd },
   } = useAssetState()
 
@@ -33,14 +33,14 @@ export const ScaleStartEndInput = () => {
         value={scaleStartEnd.start}
         onChange={handleScaleStartChange}
         label="Start (USDC)"
-        maxDecimals={1}
+        maxDecimals={asset?.formatParseDecimals || 6}
         className="!py-0 text-sm !px-2"
       />
       <ValueInput
         value={scaleStartEnd.end}
         onChange={handleScaleEndChange}
         label="End (USDC)"
-        maxDecimals={1}
+        maxDecimals={asset?.formatParseDecimals || 6}
         className="!py-0 text-sm !px-2"
       />
     </div>

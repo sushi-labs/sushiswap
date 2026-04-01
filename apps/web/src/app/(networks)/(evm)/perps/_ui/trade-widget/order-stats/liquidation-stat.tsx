@@ -138,7 +138,7 @@ export const LiquidationStat = ({ title }: { title?: string }) => {
       baseSize: nextAbsSize.toString(),
       price: nextEntry.toString(),
       leverage: currentLeverageForAsset,
-      decimals: asset.decimals,
+      decimals: asset.formatParseDecimals,
     })
 
     const liqPrice = estimateLiquidationPrice({

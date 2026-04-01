@@ -1,5 +1,9 @@
 import { useMemo } from 'react'
-import { calculateOrderValue, perpsNumberFormatter } from 'src/lib/perps'
+import {
+  calculateOrderValue,
+  perpsNumberFormatter,
+  useScaleOrders,
+} from 'src/lib/perps'
 import { StatItem } from '../../_common'
 import { useAssetState } from '../asset-state-provider'
 
@@ -7,10 +11,18 @@ export const OrderValueStat = () => {
   const {
     state: { asset, tradeType, size, markPrice, limitPrice },
   } = useAssetState()
+  const { data: scaleOrderData } = useScaleOrders()
 
   const orderValue = useMemo(() => {
     if (!asset || !markPrice || !size.base) {
       return null
+    }
+    if (tradeType === 'scale' && scaleOrderData?.orders) {
+      return perpsNumberFormatter({
+        value: scaleOrderData.totalUsdcValue,
+        minFraxDigits: 2,
+        maxFraxDigits: 2,
+      })
     }
     let price = markPrice
     if (
@@ -32,7 +44,7 @@ export const OrderValueStat = () => {
       minFraxDigits: 2,
       maxFraxDigits: 2,
     })
-  }, [asset, tradeType, size.base, markPrice, limitPrice])
+  }, [asset, tradeType, size.base, markPrice, limitPrice, scaleOrderData])
 
   return (
     <StatItem
