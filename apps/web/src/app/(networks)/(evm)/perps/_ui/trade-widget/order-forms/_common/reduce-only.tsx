@@ -9,7 +9,7 @@ export const ReduceOnly = () => {
   } = useAssetState()
 
   return (
-    <HoverCard openDelay={0} closeDelay={0}>
+    <HoverCard>
       <HoverCardTrigger tabIndex={0}>
         <CheckboxSetting
           label="Reduce Only"

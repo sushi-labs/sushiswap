@@ -17,7 +17,7 @@ export const TifSelector = () => {
   } = useAssetState()
   return (
     <div className="flex items-center gap-1">
-      <HoverCard openDelay={0} closeDelay={0}>
+      <HoverCard>
         <HoverCardTrigger tabIndex={0} asChild>
           <span className="text-muted-foreground underline decoration-dotted text-xs">
             TIF

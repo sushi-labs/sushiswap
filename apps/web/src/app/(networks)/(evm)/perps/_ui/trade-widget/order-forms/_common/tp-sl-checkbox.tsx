@@ -9,7 +9,7 @@ export const TpSlCheckbox = () => {
   } = useAssetState()
 
   return (
-    <HoverCard openDelay={0} closeDelay={0}>
+    <HoverCard>
       <HoverCardTrigger tabIndex={0}>
         <CheckboxSetting
           label="Take Profit / Stop Loss"
