@@ -134,7 +134,7 @@ export const LimitCloseDialog = ({
             sizeSide,
             maxSize: size,
             priceUsd: midPrice ?? '0',
-            decimals: asset.decimals,
+            decimals: asset.formatParseDecimals,
           })
         setPercentToClose(percentage)
 
