@@ -225,21 +225,6 @@ export const useUserAccountValues = () => {
   const unifiedAccountLeverage = useMemo(() => {
     if (!allDexClearinghouseState) return 0
 
-    const isolatedValue =
-      allDexClearinghouseState?.clearinghouseStates.reduce(
-        (posAcc, [_dex, pos]) => {
-          const crossPosValue = pos.assetPositions.reduce(
-            (assetAcc, assetPos) => {
-              if (assetPos.position.leverage.type === 'cross') return assetAcc
-              const posValue = Number(assetPos.position.positionValue ?? 0)
-              return assetAcc + posValue
-            },
-            0,
-          )
-          return posAcc + crossPosValue
-        },
-        0,
-      ) || 0
     const crossValue =
       allDexClearinghouseState?.clearinghouseStates.reduce(
         (posAcc, [_dex, pos]) => {
@@ -257,7 +242,7 @@ export const useUserAccountValues = () => {
         0,
       ) || 0
 
-    return crossValue / (isolatedValue + clearhouseStateTotal || 1)
+    return crossValue / (clearhouseStateTotal || 1)
   }, [allDexClearinghouseState, clearhouseStateTotal])
 
   const unifiedAccountRatio = useMemo(() => {
