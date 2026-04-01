@@ -344,14 +344,14 @@ export const EditTpSlPositionDialog = ({
                 title="Entry Price"
                 value={perpsNumberFormatter({
                   value: entryPrice,
-                  maxFraxDigits: asset?.decimals || 6,
+                  maxFraxDigits: asset?.formatParseDecimals,
                 })}
               />
               <StatItem
                 title="Mark Price"
                 value={perpsNumberFormatter({
                   value: markPrice,
-                  maxFraxDigits: asset?.decimals || 6,
+                  maxFraxDigits: asset?.formatParseDecimals,
                 })}
               />
 
@@ -372,7 +372,7 @@ export const EditTpSlPositionDialog = ({
                       Expected Profit:{' '}
                       {perpsNumberFormatter({
                         value: expectedProfitUsdc,
-                        maxFraxDigits: asset?.decimals || 6,
+                        maxFraxDigits: asset?.formatParseDecimals,
                       })}{' '}
                       USDC
                     </div>
@@ -396,7 +396,7 @@ export const EditTpSlPositionDialog = ({
                       Expected Loss: -
                       {perpsNumberFormatter({
                         value: expectedLossUsdc,
-                        maxFraxDigits: asset?.decimals || 6,
+                        maxFraxDigits: asset?.formatParseDecimals,
                       })}{' '}
                       USDC
                     </div>

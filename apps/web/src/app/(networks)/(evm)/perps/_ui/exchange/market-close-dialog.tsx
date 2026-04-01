@@ -9,7 +9,13 @@ import {
   DialogTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { type ReactNode, useCallback, useMemo, useState } from 'react'
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import {
   BUILDER_FEE_PERPS,
   type UserPositionsItemType,
@@ -51,15 +57,19 @@ export const MarketCloseDialog = ({
     state: { quickCloseMarketPositionEnabled },
     mutate: { setQuickCloseMarketPositionEnabled },
   } = useUserSettingsState()
+  const initBase =
+    positionToClose?.position?.szi?.split('-')?.[1] ||
+    positionToClose?.position?.szi ||
+    '0'
+  const initQuote = Number.parseFloat(
+    positionToClose?.position?.positionValue ?? '0',
+  )
   const [sizeToClose, setSizeToClose] = useState<{
     base: string
     quote: string
   }>({
-    base:
-      positionToClose?.position?.szi?.split('-')?.[1] ||
-      positionToClose?.position?.szi ||
-      '0',
-    quote: '0',
+    base: initBase.toString() || '0',
+    quote: initQuote.toString() || '0',
   })
   const { executeOrders, isPending } = useExecuteOrders()
   const {
@@ -70,6 +80,20 @@ export const MarketCloseDialog = ({
   const { midPrice } = useMidPrice({
     assetString: positionToClose.position.coin,
   })
+
+  const isControlled = isOpen !== undefined
+  const resolvedOpen = isControlled ? isOpen : open
+
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (isControlled) {
+        onOpenChange?.(nextOpen)
+      } else {
+        setOpen(nextOpen)
+      }
+    },
+    [isControlled, onOpenChange],
+  )
 
   const asset = useMemo(() => {
     if (!positionToClose) return undefined
@@ -99,7 +123,7 @@ export const MarketCloseDialog = ({
             percentageInput: val,
             maxSize: size,
             priceUsd: midPrice ?? '0',
-            decimals: asset.decimals,
+            decimals: asset.formatParseDecimals,
           })
 
         setSizeToClose({ base: baseSize, quote: quoteSize })
@@ -112,6 +136,11 @@ export const MarketCloseDialog = ({
     },
     [positionToClose, asset, midPrice],
   )
+  useEffect(() => {
+    if (sizeToClose.quote === '0' && resolvedOpen) {
+      handeleSetPercentToClose(100)
+    }
+  }, [sizeToClose.quote, resolvedOpen, handeleSetPercentToClose])
 
   const handleSetSizeToClose = useCallback(
     (value: string) => {
@@ -125,7 +154,7 @@ export const MarketCloseDialog = ({
             sizeSide,
             maxSize: size,
             priceUsd: midPrice ?? '0',
-            decimals: asset.decimals,
+            decimals: asset.formatParseDecimals,
           })
         setPercentToClose(percentage)
 
@@ -198,19 +227,6 @@ export const MarketCloseDialog = ({
     }
   }, [positionToClose, midPrice, asset, _sizeToClose])
 
-  const isControlled = isOpen !== undefined
-  const resolvedOpen = isControlled ? isOpen : open
-
-  const handleOpenChange = useCallback(
-    (nextOpen: boolean) => {
-      if (isControlled) {
-        onOpenChange?.(nextOpen)
-      } else {
-        setOpen(nextOpen)
-      }
-    },
-    [isControlled, onOpenChange],
-  )
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
