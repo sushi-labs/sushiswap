@@ -15,7 +15,11 @@ import {
   DialogTrigger,
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
-import { TOAST_AUTOCLOSE_TIME, hlHttpTransport } from 'src/lib/perps'
+import {
+  TOAST_AUTOCLOSE_TIME,
+  hlHttpTransport,
+  useSpotClearinghouseState,
+} from 'src/lib/perps'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
@@ -46,20 +50,38 @@ export const WithdrawDialog = ({
   const { data: walletClient } = useWalletClient()
   const {
     state: {
-      webData2Query: { data, isLoading, error },
+      webData2Query: {
+        data,
+        isLoading: isLoadingWebData2,
+        error: errorWebData2,
+      },
     },
   } = useUserState()
   const {
     state: { isUnifiedAccountModeEnabled },
   } = useUserSettingsState()
+  const address = useAccount('evm')
+  const {
+    data: spotClearinghouseState,
+    isLoading: isLoadingSpotClearinghouse,
+    error: errorSpotClearinghouse,
+  } = useSpotClearinghouseState({ address })
+  const isLoading = isLoadingWebData2 || isLoadingSpotClearinghouse
+  const error = errorWebData2 || errorSpotClearinghouse
+
   const withdrawableBalance = useMemo(() => {
     if (isUnifiedAccountModeEnabled) {
-      return data?.spotState?.balances?.find((i) => i.coin === 'USDC')?.total
+      const usdc = spotClearinghouseState?.balances?.find(
+        (b) => b.coin === 'USDC',
+      )
+      const total = usdc?.total || '0'
+      const hold = usdc?.hold || '0'
+      return Number(total) - Number(hold)
     }
     return data?.clearinghouseState.withdrawable
-  }, [data, isUnifiedAccountModeEnabled])
+  }, [data, isUnifiedAccountModeEnabled, spotClearinghouseState])
   const balance = Amount.tryFromHuman(currency, withdrawableBalance ?? '0')
-  const address = useAccount('evm')
+
   const [isPending, setIsPending] = useState<boolean>(false)
 
   const isControlled = isOpen !== undefined

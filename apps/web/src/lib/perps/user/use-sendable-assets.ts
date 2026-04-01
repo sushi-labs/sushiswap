@@ -5,6 +5,7 @@ import { useUserSettingsState } from '~evm/perps/_ui/account-management'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useUserState } from '~evm/perps/user-provider'
 import { useAccount } from '../../wallet'
+import { useSpotClearinghouseState } from '../info'
 import { getEvmDestinationAddress } from '../utils'
 
 const STABLE_OPTIONS = ['USDC', 'USDT0', 'USDH', 'USDE']
@@ -39,9 +40,15 @@ export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
   const {
     state: { isUnifiedAccountModeEnabled },
   } = useUserSettingsState()
+  const {
+    data: spotClearinghouseState,
+    isLoading: isLoadingSpotClearinghouse,
+    error: errorSpotClearinghouse,
+  } = useSpotClearinghouseState({ address })
 
-  const isLoading = isAssetListLoading || isWebData2Loading
-  const isError = isAssetListError || isWebData2Error
+  const isLoading =
+    isAssetListLoading || isWebData2Loading || isLoadingSpotClearinghouse
+  const isError = isAssetListError || isWebData2Error || errorSpotClearinghouse
   const sendableAssets = useMemo(() => {
     const assets = []
     const usdcPerp = {
@@ -61,7 +68,9 @@ export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
     if (!isUnifiedAccountModeEnabled) {
       assets.push(usdcPerp)
     }
-    const balanceArr = webData2Data?.spotState?.balances || []
+    const balanceArr = isUnifiedAccountModeEnabled
+      ? spotClearinghouseState?.balances || []
+      : webData2Data?.spotState?.balances || []
     const missingStables = STABLES.filter(
       (stable) =>
         !balanceArr.find((b) => b.coin === stable.coin) &&
@@ -83,11 +92,14 @@ export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
       const price =
         spotBalance.coin === 'USDC' ? 1 : (Number(spotAsset?.markPrice) ?? 0)
       const usdcValue = Number(spotBalance.total || 0) * price
+      const total = Number(spotBalance.total || 0)
+      const hold = Number(spotBalance.hold || 0)
+      const balance = total - hold
       assets.push({
         token: `${spotToken?.name}:${spotToken?.tokenId}`,
         symbol: spotToken?.name || '',
         assetName: spotAsset?.name || '',
-        balance: spotBalance.total,
+        balance: balance.toString(),
         decimals: spotToken?.weiDecimals,
         marketType: 'spot' as const,
         usdcValue: usdcValue.toString(),
@@ -139,7 +151,13 @@ export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
       return assets?.filter((a) => a.marketType === filter)
     }
     return assets
-  }, [webData2Data, assetList, isUnifiedAccountModeEnabled, filter])
+  }, [
+    webData2Data,
+    assetList,
+    isUnifiedAccountModeEnabled,
+    filter,
+    spotClearinghouseState,
+  ])
 
   return useMemo(() => {
     if (!address) {

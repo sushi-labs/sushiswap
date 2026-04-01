@@ -59,11 +59,7 @@ export const UpdateIsolatedMarginDialog = ({
 
   const maxValue = useMemo(() => {
     if (type === 'add') {
-      if (!isUnifiedAccountModeEnabled) {
-        const val = position.clearingHouseDataForDex?.withdrawable ?? '0'
-        if (Number(val) < 0.01) return '0'
-        return val
-      } else {
+      if (isUnifiedAccountModeEnabled) {
         const token =
           DEX_COLLATERAL_TOKENS[
             position.perpsDex as keyof typeof DEX_COLLATERAL_TOKENS
@@ -72,12 +68,17 @@ export const UpdateIsolatedMarginDialog = ({
           webData2?.spotState?.balances?.find((b) => b.token === token)
             ?.total ?? '0'
         return spotTotal
+      } else {
+        const val = position.clearingHouseDataForDex?.withdrawable ?? '0'
+        if (Number(val) < 0.01) return '0'
+        return val
       }
     }
     return maxRemovableIsolatedMargin({
       marginUsed: currentMargin,
       szi: position.position.szi,
       markPrice: position.markPrice,
+      isUnifiedAccount: isUnifiedAccountModeEnabled,
       leverage: position.position.leverage.value,
     })
   }, [
@@ -202,12 +203,14 @@ function maxRemovableIsolatedMargin({
   szi,
   markPrice,
   leverage,
+  isUnifiedAccount = false,
   decimals = 6,
 }: {
   marginUsed: string
   szi: string
   markPrice: string
   leverage: number
+  isUnifiedAccount?: boolean
   decimals?: number
 }) {
   const m = Number(marginUsed)
@@ -223,9 +226,11 @@ function maxRemovableIsolatedMargin({
     return '0'
 
   const notional = Q * P
-  const minKeep = notional / leverage
-  const raw = Math.max(0, m - minKeep)
+  const minKeep = isUnifiedAccount
+    ? Math.max(notional / leverage, 0.1 * notional)
+    : notional / leverage
 
+  const raw = Math.max(0, m - minKeep)
   const factor = 10 ** decimals
 
   return (Math.floor(raw * factor) / factor).toString()

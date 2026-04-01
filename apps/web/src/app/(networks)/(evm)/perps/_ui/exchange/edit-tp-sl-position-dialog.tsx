@@ -433,12 +433,12 @@ export const EditTpSlPositionDialog = ({
                   />
                   {configureAmount ? (
                     <ConfigureAmount
-                      maxDecimals={asset?.decimals ?? 6}
+                      maxDecimals={asset?.formatParseDecimals ?? 6}
                       coinSymbol={baseSymbol}
                       maxValue={Number.parseFloat(positionSize)}
                       value={size}
                       onChange={setSize}
-                      step={1 / 10 ** (asset?.decimals ?? 6)}
+                      step={1 / 10 ** (asset?.decimals || 6)}
                     />
                   ) : null}
                 </div>

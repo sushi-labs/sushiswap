@@ -36,6 +36,7 @@ import { EvmChainId, EvmToken, isEvmAddress } from 'sushi/evm'
 import { useWalletClient } from 'wagmi'
 import { ValueInput } from '../_common'
 import { PerpsChecker } from '../perps-checker'
+import { useUserSettingsState } from './settings-provider'
 
 export const SendDialog = ({
   trigger,
@@ -58,7 +59,9 @@ export const SendDialog = ({
   const { data: sendableAssets } = useSendableAssets()
   const isControlled = isOpen !== undefined
   const resolvedOpen = isControlled ? isOpen : open
-
+  const {
+    state: { isUnifiedAccountModeEnabled },
+  } = useUserSettingsState()
   const handleOpenChange = useCallback(
     (nextOpen: boolean) => {
       if (isControlled) {
@@ -210,7 +213,7 @@ export const SendDialog = ({
               >
                 <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[42px]  !gap-1 !border !border-[#FFFFFF1A] bg-[#FFFFFF0D]">
                   {assetToSend
-                    ? `${assetToSend?.symbol} (${assetToSend?.marketType === 'perp' ? 'Perps' : 'Spot'}) ${Number(assetToSend?.balance) > 0 ? ` - ${perpsNumberFormatter({ value: assetToSend?.balance })}` : ''}`
+                    ? `${assetToSend?.symbol}  ${isUnifiedAccountModeEnabled ? '' : assetToSend?.marketType === 'perp' ? '(Perps)' : '(Spot)'} ${Number(assetToSend?.balance) > 0 ? ` - ${perpsNumberFormatter({ value: assetToSend?.balance })}` : ''}`
                     : 'Select Asset'}
                 </SelectTrigger>
                 <SelectContent className="w-full">
@@ -220,7 +223,12 @@ export const SendDialog = ({
                       value={i.token}
                       className="capitalize font-medium !text-white gap-4"
                     >
-                      {i.symbol} ({i.marketType === 'perp' ? 'Perps' : 'Spot'})
+                      {i.symbol}{' '}
+                      {isUnifiedAccountModeEnabled
+                        ? ''
+                        : i.marketType === 'perp'
+                          ? '(Perps)'
+                          : '(Spot)'}
                       {' - '}
                       {currencyFormatter.format(Number(i.usdcValue))}
                     </SelectItem>

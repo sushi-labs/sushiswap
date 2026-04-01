@@ -3,6 +3,7 @@ import { useUserSettingsState } from '~evm/perps/_ui/account-management'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useUserState } from '~evm/perps/user-provider'
 import { useAccount } from '../../wallet'
+import { useSpotClearinghouseState } from '../info'
 import { SPOT_ASSETS_TO_REWRITE } from '../utils'
 
 const DEX_NAME_TO_COIN: Map<string, string> = new Map([
@@ -43,11 +44,22 @@ export const useBalances = () => {
   const {
     state: { isUnifiedAccountModeEnabled, isDexAbstractionEnabled },
   } = useUserSettingsState()
+  const {
+    data: spotClearinghouseState,
+    isLoading: isLoadingSpotClearinghouse,
+    error: errorSpotClearinghouse,
+  } = useSpotClearinghouseState({ address })
 
   const isLoading =
-    isLoadingAllDexClearinghouse || isAssetListLoading || isWebData2Loading
+    isLoadingAllDexClearinghouse ||
+    isAssetListLoading ||
+    isWebData2Loading ||
+    isLoadingSpotClearinghouse
   const isError =
-    isErrorAllDexClearinghouse || isAssetListError || isWebData2Error
+    isErrorAllDexClearinghouse ||
+    isAssetListError ||
+    isWebData2Error ||
+    errorSpotClearinghouse
 
   const formattedData = useMemo(() => {
     if (!data) return []
@@ -190,23 +202,17 @@ export const useBalances = () => {
           }
         })
         ?.filter((b) => !b.coin.includes('Perps')) ?? []
-    const usdcBalances =
-      allBalances?.filter(
-        (b) => b.coin === 'USDC (Perps)' || b.coin === 'USDC (Spot)',
-      ) ?? []
+    const usdcBalance = spotClearinghouseState?.balances?.find(
+      (b) => b.coin === 'USDC',
+    )
 
     const usdc = {
       coin: 'USDC',
       assetName: 'PURR/USDC',
-      totalBalance: usdcBalances
-        .reduce((acc, b) => acc + Number(b.totalBalance), 0)
-        .toString(),
-      availableBalance: usdcBalances
-        .reduce((acc, b) => acc + Number(b.availableBalance), 0)
-        .toString(),
-      usdcValue: usdcBalances
-        .reduce((acc, b) => acc + Number(b.usdcValue), 0)
-        .toString(),
+      totalBalance: usdcBalance?.total ?? '0',
+      availableBalance:
+        Number(usdcBalance?.total) - Number(usdcBalance?.hold ?? 0),
+      usdcValue: usdcBalance?.total ?? '0',
       pnlRoePc: null,
       token: null,
       marketType: 'unified' as const,
@@ -219,6 +225,7 @@ export const useBalances = () => {
     webData2Data,
     isUnifiedAccountModeEnabled,
     isDexAbstractionEnabled,
+    spotClearinghouseState,
   ])
 
   return useMemo(() => {

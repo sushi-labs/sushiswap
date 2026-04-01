@@ -34,7 +34,7 @@ export const TpSlLimitInput = ({
               onValueChange={onChangeTpLimitPrice}
               value={tpLimitPrice}
               readOnly={!asset}
-              maxDecimals={asset?.decimals}
+              maxDecimals={asset?.formatParseDecimals}
               className={classNames('!text-lg font-medium text-right')}
             />
           </div>
@@ -54,7 +54,7 @@ export const TpSlLimitInput = ({
               variant="naked"
               onValueChange={onChangeSlLimitPrice}
               value={slLimitPrice}
-              maxDecimals={asset?.decimals}
+              maxDecimals={asset?.formatParseDecimals}
               disabled={!asset}
               className={classNames('!text-lg font-medium text-right')}
             />
