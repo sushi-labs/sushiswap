@@ -17,6 +17,7 @@ export const TakeStopLimitForm = () => {
         value={triggerPrice}
         onChange={setTriggerPrice}
         className="text-sm !px-2 !py-0"
+        maxDecimals={asset?.formatParseDecimals || 6}
       />
       <LimitInput
         value={limitPrice}

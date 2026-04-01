@@ -131,7 +131,7 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
   const [twapRunningTime, setTwapRunningTime] = useState<{
     hours: string
     minutes: string
-  }>({ hours: '', minutes: '' })
+  }>({ hours: '', minutes: '30' })
   const [twapRandomize, setTwapRandomize] = useState<boolean>(false)
 
   const address = useAccount('evm')

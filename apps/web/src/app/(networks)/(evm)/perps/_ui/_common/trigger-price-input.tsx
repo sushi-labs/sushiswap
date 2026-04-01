@@ -6,10 +6,12 @@ export const TriggerPriceInput = ({
   value,
   onChange,
   className,
+  maxDecimals,
 }: {
   value: string
   onChange?: (value: string) => void
   className?: string
+  maxDecimals: number
 }) => {
   const [pending, startTransition] = useTransition()
 
@@ -39,7 +41,7 @@ export const TriggerPriceInput = ({
           variant="naked"
           onValueChange={_onChange}
           value={pending ? localValue : value}
-          maxDecimals={2}
+          maxDecimals={maxDecimals}
           className={classNames('!text-lg font-medium text-right')}
         />
       </div>

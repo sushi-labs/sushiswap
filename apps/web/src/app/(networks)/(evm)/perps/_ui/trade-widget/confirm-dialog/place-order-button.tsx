@@ -395,7 +395,7 @@ const _useMarketPrice = () => {
   return useMemo(() => {
     if (!midPrice || !asset) return undefined
     const _midPrice = parseUnits(midPrice ?? '0', asset?.formatParseDecimals)
-    console.log(asset, midPrice, _midPrice)
+    // console.log(asset, midPrice, _midPrice)
     const slippage =
       tradeSide === 'long'
         ? Number(marketOrderSlippage) + 10_000

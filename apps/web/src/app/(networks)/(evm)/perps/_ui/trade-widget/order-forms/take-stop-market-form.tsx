@@ -4,7 +4,7 @@ import { OrderSizeInput, ReduceOnly } from './_common'
 
 export const TakeStopMarketForm = () => {
   const {
-    state: { triggerPrice },
+    state: { triggerPrice, asset },
     mutate: { setTriggerPrice },
   } = useAssetState()
 
@@ -14,6 +14,7 @@ export const TakeStopMarketForm = () => {
         value={triggerPrice}
         onChange={setTriggerPrice}
         className="text-sm !px-2 !py-0"
+        maxDecimals={asset?.formatParseDecimals || 6}
       />
       <OrderSizeInput />
       <ReduceOnly />
