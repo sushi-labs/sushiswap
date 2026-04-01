@@ -30,6 +30,20 @@ export const currencyFormatter = new Intl.NumberFormat(undefined, {
   minimumFractionDigits: 2,
 })
 
+export const formatPerpsPercent = (
+  value: number | string,
+  decimals?: number,
+) => {
+  const num = typeof value === 'string' ? Number.parseFloat(value) : value
+  if (Number.isNaN(num)) return '0.00%'
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'percent',
+    maximumFractionDigits: decimals ?? 2,
+    minimumFractionDigits: decimals ?? 2,
+  })
+  return formatter.format(num)
+}
+
 export const perpsNumberFormatter = ({
   value,
   maxFraxDigits,

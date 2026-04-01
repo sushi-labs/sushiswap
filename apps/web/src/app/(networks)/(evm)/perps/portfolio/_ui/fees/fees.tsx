@@ -10,9 +10,8 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
-import { useUserFees } from 'src/lib/perps'
+import { formatPerpsPercent, useUserFees } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
-import { formatPercent } from 'sushi'
 
 const FEE_TYPES = ['perps', 'spot'] as const
 
@@ -73,7 +72,7 @@ export const Fees = () => {
       ) : error ? (
         <div className="text-red-500">Error loading fees</div>
       ) : (
-        <div className="font-medium text-lg md:text-2xl ">{`${formatPercent(takerFee)} / ${formatPercent(makerFee)}`}</div>
+        <div className="font-medium text-lg md:text-2xl ">{`${formatPerpsPercent(takerFee, 3)} / ${formatPerpsPercent(makerFee, 3)}`}</div>
       )}
       <div className="h-[16px] lg:h-[20px]" />
     </Card>

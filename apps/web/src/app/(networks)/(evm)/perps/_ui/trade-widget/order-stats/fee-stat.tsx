@@ -1,8 +1,7 @@
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { useUserFees } from 'src/lib/perps'
+import { formatPerpsPercent, useUserFees } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
-import { formatPercent } from 'sushi'
 import { StatItem } from '../../_common'
 import { useAssetState } from '../asset-state-provider'
 
@@ -40,13 +39,13 @@ export const FeeStat = () => {
             className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
           >
             <p>
-              Taker orders pay a {formatPercent(takerFee)} fee. Maker orders pay
-              a {formatPercent(makerFee)} fee.
+              Taker orders pay a {formatPerpsPercent(takerFee, 3)} fee. Maker
+              orders pay a {formatPerpsPercent(makerFee, 3)} fee.
             </p>
           </HoverCardContent>
         </HoverCard>
       }
-      value={`${formatPercent(takerFee)} / ${formatPercent(makerFee)}`}
+      value={`${formatPerpsPercent(takerFee, 3)} / ${formatPerpsPercent(makerFee, 3)}`}
     />
   )
 }
