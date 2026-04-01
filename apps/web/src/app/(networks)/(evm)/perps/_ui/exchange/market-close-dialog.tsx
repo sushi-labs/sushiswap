@@ -116,7 +116,7 @@ export const MarketCloseDialog = ({
         return
       }
 
-      const size = positionToClose.position.szi
+      const size = initBase
       try {
         const { baseSize, quoteSize, percentage } =
           getSizeAndPercentageFromPercentageInput({
@@ -134,19 +134,14 @@ export const MarketCloseDialog = ({
         setPercentToClose(val)
       }
     },
-    [positionToClose, asset, midPrice],
+    [positionToClose, asset, midPrice, initBase],
   )
-  useEffect(() => {
-    if (sizeToClose.quote === '0' && resolvedOpen) {
-      handeleSetPercentToClose(100)
-    }
-  }, [sizeToClose.quote, resolvedOpen, handeleSetPercentToClose])
 
   const handleSetSizeToClose = useCallback(
     (value: string) => {
       if (!positionToClose || !asset) return
 
-      const size = positionToClose.position.szi
+      const size = initBase
       try {
         const { baseSize, quoteSize, percentage } =
           getSizeAndPercentageFromInput({
@@ -170,7 +165,7 @@ export const MarketCloseDialog = ({
         })
       }
     },
-    [positionToClose, asset, sizeSide, midPrice],
+    [positionToClose, asset, sizeSide, midPrice, initBase],
   )
 
   const _sizeToClose = useMemo(() => {

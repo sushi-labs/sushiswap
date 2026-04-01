@@ -48,10 +48,13 @@ export const LimitCloseDialog = ({
   isOpen?: boolean
   onOpenChange?: (open: boolean) => void
 }) => {
-  const initSize =
+  const initBase =
     positionToClose?.position?.szi?.split('-')?.[1] ||
     positionToClose?.position?.szi ||
     '0'
+  const initQuote = Number.parseFloat(
+    positionToClose?.position?.positionValue ?? '0',
+  )
   const [open, setOpen] = useState(false)
   const [sizeSide, setSizeSide] = useState<'base' | 'quote'>('base')
   const [percentToClose, setPercentToClose] = useState(100)
@@ -59,8 +62,8 @@ export const LimitCloseDialog = ({
     base: string
     quote: string
   }>({
-    base: initSize,
-    quote: '0',
+    base: initBase.toString() || '0',
+    quote: initQuote.toString() || '0',
   })
   const [limitPriceToCloseAt, setLimitPriceToCloseAt] = useState<string>('')
   const { executeOrders, isPending } = useExecuteOrders()
@@ -90,24 +93,6 @@ export const LimitCloseDialog = ({
     return _asset
   }, [assetListData, positionToClose])
 
-  useEffect(() => {
-    if (
-      sizeToClose.quote === '0' &&
-      initSize !== '0' &&
-      percentToClose === 100 &&
-      asset
-    ) {
-      const { baseSize, quoteSize } = getSizeAndPercentageFromPercentageInput({
-        percentageInput: 100,
-        maxSize: initSize,
-        priceUsd: midPrice ?? '0',
-        decimals: asset?.formatParseDecimals,
-      })
-
-      setSizeToClose({ base: baseSize, quote: quoteSize })
-    }
-  }, [asset, initSize, midPrice, percentToClose, sizeToClose.quote])
-
   const handeleSetPercentToClose = useCallback(
     (val: number) => {
       if (!positionToClose || !asset || midPrice == null) {
@@ -116,7 +101,7 @@ export const LimitCloseDialog = ({
         return
       }
 
-      const size = initSize
+      const size = initBase
       try {
         const { baseSize, quoteSize, percentage } =
           getSizeAndPercentageFromPercentageInput({
@@ -134,14 +119,14 @@ export const LimitCloseDialog = ({
         setPercentToClose(val)
       }
     },
-    [positionToClose, asset, midPrice, initSize],
+    [positionToClose, asset, midPrice, initBase],
   )
 
   const handleSetSizeToClose = useCallback(
     (value: string) => {
       if (!positionToClose || !asset) return
 
-      const size = initSize
+      const size = initBase
       try {
         const { baseSize, quoteSize, percentage } =
           getSizeAndPercentageFromInput({
@@ -165,7 +150,7 @@ export const LimitCloseDialog = ({
         })
       }
     },
-    [positionToClose, initSize, asset, sizeSide, midPrice],
+    [positionToClose, initBase, asset, sizeSide, midPrice],
   )
 
   const _sizeToClose = useMemo(() => {
@@ -291,7 +276,7 @@ export const LimitCloseDialog = ({
               currentMidPrice={currentMidPrice ?? null}
               value={limitPriceToCloseAt}
               onChange={setLimitPriceToCloseAt}
-              maxDecimals={asset?.decimals ?? 6}
+              maxDecimals={asset?.formatParseDecimals ?? 6}
               size="sm"
             />
             <SizeInput

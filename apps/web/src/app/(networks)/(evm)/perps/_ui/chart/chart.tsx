@@ -344,6 +344,23 @@ export const Chart = () => {
           const newPrice = line.getPrice()?.toString() ?? ''
 
           if (
+            'limit' in preppedData.orderType &&
+            (order.side === 'A'
+              ? Number(newPrice) < Number(tradeLines.markPrice)
+              : Number(newPrice) > Number(tradeLines.markPrice))
+          ) {
+            return createFailedToast({
+              summary: `Limit price must be ${order.side === 'A' ? 'higher' : 'lower'} than current price. To close position immediately, use the position table or order form.`,
+              account: '0x',
+              chainId: 1,
+              type: 'burn',
+              timestamp: Date.now(),
+              groupTimestamp: Date.now(),
+              autoClose: TOAST_AUTOCLOSE_TIME,
+            })
+          }
+
+          if (
             'trigger' in preppedData.orderType &&
             preppedData.orderType.trigger.tpsl === 'tp' &&
             (order.side === 'A'
