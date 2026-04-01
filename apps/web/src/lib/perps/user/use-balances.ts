@@ -210,8 +210,9 @@ export const useBalances = () => {
       coin: 'USDC',
       assetName: 'PURR/USDC',
       totalBalance: usdcBalance?.total ?? '0',
-      availableBalance:
-        Number(usdcBalance?.total) - Number(usdcBalance?.hold ?? 0),
+      availableBalance: (
+        Number(usdcBalance?.total) - Number(usdcBalance?.hold ?? 0)
+      ).toString(),
       usdcValue: usdcBalance?.total ?? '0',
       pnlRoePc: null,
       token: null,
