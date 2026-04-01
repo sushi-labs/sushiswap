@@ -20,7 +20,7 @@ export const Volume = () => {
   const { data: feeData, isLoading, error } = useUserFees({ address })
   const total14DayVolume = useMemo(() => {
     if (isLoading || error || !feeData) return '0'
-    return feeData?.dailyUserVlm?.reduce((acc, i) => {
+    return feeData?.dailyUserVlm?.slice(0, 14).reduce((acc, i) => {
       return acc + Number(i.userCross) + Number(i.userAdd)
     }, 0)
   }, [feeData, isLoading, error])
@@ -28,7 +28,7 @@ export const Volume = () => {
   const volumeData = useMemo(() => {
     if (isLoading || error || !feeData) return []
     return feeData.dailyUserVlm
-      ?.slice(1)
+      ?.slice(0, 14)
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   }, [feeData, isLoading, error])
 
