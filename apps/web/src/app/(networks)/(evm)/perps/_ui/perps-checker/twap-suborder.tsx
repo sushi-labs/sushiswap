@@ -39,10 +39,10 @@ export const TwapSuborder: FC<ButtonProps> = ({
     if (tradeType !== 'TWAP') {
       return { isSuborderValid: true, buttonText: '' }
     }
-    if (sizePerSuborder < 10) {
+    if (sizePerSuborder < 11) {
       return {
         isSuborderValid: false,
-        buttonText: 'Suborders Must Be >= $10 each',
+        buttonText: 'Suborders Must Be >= $11 each',
       }
     }
     return { isSuborderValid: true, buttonText: '' }

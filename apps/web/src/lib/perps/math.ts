@@ -683,7 +683,7 @@ export function buildScaleOrders({
     computedTotalSize = '0'
   }
 
-  const allOrdersValid = orders.every((order) => order.estUsdValue >= 10)
+  const allOrdersValid = orders.every((order) => order.estUsdValue >= 11)
   const totalUsdcValue = orders.reduce(
     (acc, order) => acc + order.estUsdValue,
     0,

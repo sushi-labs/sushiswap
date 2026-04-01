@@ -53,11 +53,11 @@ export const OrderAmount: FC<ButtonProps> = ({
     if (Number(orderSize.base) === 0) {
       return { isSizeValid: false, buttonText: 'Enter Size' }
     }
-    if (Number(orderSize.quote) < 10) {
-      return { isSizeValid: false, buttonText: 'Min. Size is $10' }
+    if (Number(orderSize.quote) < 11) {
+      return { isSizeValid: false, buttonText: 'Min. Size is $11' }
     }
     if (tradeType === 'scale' && !allScaleOrdersAreValid) {
-      return { isSizeValid: false, buttonText: 'Orders Must Be >= $10' }
+      return { isSizeValid: false, buttonText: 'Orders Must Be >= $11' }
     }
     if (isTpSlOrder && Number(triggerPrice) === 0) {
       return { isSizeValid: false, buttonText: 'Enter Trigger Price' }
