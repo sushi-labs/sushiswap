@@ -129,6 +129,8 @@ export function getHyperliquidCoinIconUrl(
   const suffix = marketType === 'spot' ? '_spot' : ''
   if (SPOT_ASSETS_TO_REWRITE.has(baseSymbol)) {
     baseSymbol = SPOT_ASSETS_TO_REWRITE.get(baseSymbol) ?? baseSymbol
+  } else if (baseSymbol === 'USDT0') {
+    baseSymbol = 'USDT'
   }
 
   return `https://app.hyperliquid.xyz/coins/${prefix}${baseSymbol}${suffix}.svg`
