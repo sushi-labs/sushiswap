@@ -18,7 +18,7 @@ export const EXPLORE_NAVIGATION_LINKS =
   (): NavigationElementDropdown['items'] => {
     return [
       {
-        title: 'Perps',
+        title: 'Trade',
         href: `/perps`,
         description: 'Trade perpetual contracts.',
       },
@@ -70,7 +70,7 @@ export const headerElements = (): NavigationElement[] => {
       ),
     },
     {
-      title: 'Perps',
+      title: 'Trade',
       href: `/perps`,
       show: 'desktop',
       type: NavigationElementType.Single,
