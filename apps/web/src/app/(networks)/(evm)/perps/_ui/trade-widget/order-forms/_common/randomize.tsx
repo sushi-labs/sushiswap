@@ -1,3 +1,4 @@
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
 import { CheckboxSetting } from '~evm/perps/_ui/_common'
 import { useAssetState } from '../../asset-state-provider'
 
@@ -8,10 +9,28 @@ export const Randomize = () => {
   } = useAssetState()
 
   return (
-    <CheckboxSetting
-      label="Randomize"
-      value={twapRandomize}
-      onChange={setTwapRandomize}
-    />
+    <HoverCard openDelay={0} closeDelay={0}>
+      <HoverCardTrigger tabIndex={0}>
+        <CheckboxSetting
+          label="Randomize"
+          value={twapRandomize}
+          onChange={setTwapRandomize}
+        />
+      </HoverCardTrigger>
+      <HoverCardContent
+        forceMount
+        side="top"
+        className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+      >
+        <p>
+          If Randomize is enabled, the size of each sub-trade will be
+          automatically adjusted within a certain range, typically up to 20%
+          higher or lower than the original trade size. However, any other
+          requirements specified when creating the TWAP trade, such as ensuring
+          the randomized trade size does not exceed the maximum single trade
+          size, will still be followed.
+        </p>
+      </HoverCardContent>
+    </HoverCard>
   )
 }

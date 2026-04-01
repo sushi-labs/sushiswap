@@ -2,19 +2,19 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
 import { CheckboxSetting } from '~evm/perps/_ui/_common'
 import { useAssetState } from '../../asset-state-provider'
 
-export const ReduceOnly = () => {
+export const TpSlCheckbox = () => {
   const {
-    state: { reduceOnly },
-    mutate: { setReduceOnly },
+    state: { hasTpSl },
+    mutate: { setHasTpSl },
   } = useAssetState()
 
   return (
     <HoverCard openDelay={0} closeDelay={0}>
       <HoverCardTrigger tabIndex={0}>
         <CheckboxSetting
-          label="Reduce Only"
-          value={reduceOnly}
-          onChange={setReduceOnly}
+          label="Take Profit / Stop Loss"
+          value={hasTpSl}
+          onChange={(val) => setHasTpSl(val)}
         />
       </HoverCardTrigger>
       <HoverCardContent
@@ -23,9 +23,8 @@ export const ReduceOnly = () => {
         className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
       >
         <p>
-          This order will not open a new position no matter how large the order
-          size is. It will compare to the existing position at the time of
-          exection.
+          Places simple market TP/SL orders. For advanced features such as limit
+          prices or partial TP/SL, set the TP/SL on an open position.
         </p>
       </HoverCardContent>
     </HoverCard>

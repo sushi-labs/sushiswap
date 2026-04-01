@@ -1,9 +1,14 @@
 'use client'
 import { useState } from 'react'
 import { type TpSlGainLossType, useMidPrice } from 'src/lib/perps'
-import { CheckboxSetting, LimitInput, TpSlInput } from '../../_common'
+import { LimitInput, TpSlInput } from '../../_common'
 import { useAssetState } from '../asset-state-provider'
-import { OrderSizeInput, ReduceOnly, TifSelector } from './_common'
+import {
+  OrderSizeInput,
+  ReduceOnly,
+  TifSelector,
+  TpSlCheckbox,
+} from './_common'
 
 export const LimitOrderForm = () => {
   const {
@@ -19,7 +24,7 @@ export const LimitOrderForm = () => {
       limitPrice,
       activeAsset,
     },
-    mutate: { setTpPrice, setSlPrice, setHasTpSl, setLimitPrice },
+    mutate: { setTpPrice, setSlPrice, setLimitPrice },
   } = useAssetState()
   const { midPrice } = useMidPrice({
     assetString: activeAsset,
@@ -41,11 +46,7 @@ export const LimitOrderForm = () => {
         {asset?.marketType === 'perp' ? (
           <div className="flex flex-col gap-2">
             <ReduceOnly />
-            <CheckboxSetting
-              label="Take Profit / Stop Loss"
-              value={hasTpSl}
-              onChange={(val) => setHasTpSl(val)}
-            />
+            <TpSlCheckbox />
           </div>
         ) : (
           <div />

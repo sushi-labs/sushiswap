@@ -1,9 +1,9 @@
 'use client'
 import { useState } from 'react'
 import type { TpSlGainLossType } from 'src/lib/perps'
-import { CheckboxSetting, TpSlInput } from '../../_common'
+import { TpSlInput } from '../../_common'
 import { useAssetState } from '../asset-state-provider'
-import { OrderSizeInput, ReduceOnly } from './_common'
+import { OrderSizeInput, ReduceOnly, TpSlCheckbox } from './_common'
 
 export const MarketOrderForm = () => {
   const {
@@ -18,7 +18,7 @@ export const MarketOrderForm = () => {
       maxTradeSize,
       size,
     },
-    mutate: { setTpPrice, setSlPrice, setHasTpSl },
+    mutate: { setTpPrice, setSlPrice },
   } = useAssetState()
   const [type, setType] = useState<TpSlGainLossType>('percent')
   return (
@@ -28,11 +28,7 @@ export const MarketOrderForm = () => {
         <>
           <ReduceOnly />
           <div className="flex flex-col gap-2">
-            <CheckboxSetting
-              label="Take Profit / Stop Loss"
-              value={hasTpSl}
-              onChange={(val) => setHasTpSl(val)}
-            />
+            <TpSlCheckbox />
             {hasTpSl ? (
               <TpSlInput
                 asset={asset}
