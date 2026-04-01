@@ -42,7 +42,7 @@ export const AssetTabs = () => {
         className={classNames(
           'mt-2',
           selectedTab !== 'HIP-3' && selectedTab !== 'spot'
-            ? 'max-h-[calc(80vh-175px)] md:max-h-[calc(80vh-200px)] hide-scrollbar overflow-auto max-w-[calc(100vw-30px)]'
+            ? 'max-h-[calc(80vh-200px)] hide-scrollbar overflow-auto max-w-[calc(100vw-30px)]'
             : '',
         )}
       >
