@@ -228,19 +228,6 @@ export const POOL_SUPPORTED_NETWORKS = Array.from(
   ]),
 )
 
-export const TWAP_SUPPORTED_CHAIN_IDS = [
-  ChainId.ARBITRUM,
-  ChainId.BASE,
-  ChainId.ETHEREUM,
-  ChainId.KATANA,
-] as const
-
-export type TwapSupportedChainId = (typeof TWAP_SUPPORTED_CHAIN_IDS)[number]
-export const isTwapSupportedChainId = (
-  chainId: number,
-): chainId is TwapSupportedChainId =>
-  TWAP_SUPPORTED_CHAIN_IDS.includes(chainId as TwapSupportedChainId)
-
 export const ZAP_SUPPORTED_CHAIN_IDS = [
   ChainId.ETHEREUM,
   ChainId.OPTIMISM,

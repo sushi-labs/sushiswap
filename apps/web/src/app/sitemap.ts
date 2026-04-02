@@ -8,6 +8,8 @@ const evmChainPaths = [
   '/cross-chain-swap',
   '/dca',
   '/limit',
+  '/stop-loss',
+  '/take-profit',
   '/swap',
   '/stake',
   '/claim',

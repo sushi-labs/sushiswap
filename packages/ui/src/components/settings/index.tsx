@@ -4,6 +4,7 @@ import { Cog6ToothIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import {
   type SlippageToleranceStorageKey,
   type TTLStorageKey,
+  usePriceProtection,
   useSlippageTolerance,
 } from '@sushiswap/hooks'
 import React, { type FC, type ReactNode, useState } from 'react'
@@ -27,12 +28,14 @@ import {
 } from '../tooltip'
 import { CarbonOffset } from './CarbonOffset'
 import { ExpertMode } from './ExpertMode'
+import { PriceProtection } from './PriceProtection'
 import { SlippageTolerance } from './SlippageTolerance'
 import { TransactionDeadline } from './TransactionDeadline'
 
 export enum SettingsModule {
   CarbonOffset = 'CarbonOffset',
   CustomTokens = 'CustomTokens',
+  PriceProtection = 'PriceProtection',
   SlippageTolerance = 'SlippageTolerance',
   ExpertMode = 'ExpertMode',
   TransactionDeadline = 'TransactionDeadline',
@@ -66,6 +69,15 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
   const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(
     options?.slippageTolerance?.storageKey,
   )
+  const [priceProtection, setPriceProtection] = usePriceProtection()
+
+  const showSlippageBadge =
+    modules.includes(SettingsModule.SlippageTolerance) &&
+    Number(slippageTolerance) > 0.5
+  const showPriceProtectionBadge =
+    modules.includes(SettingsModule.PriceProtection) &&
+    priceProtection !== 'AUTO'
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -79,8 +91,7 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
             icon={Cog6ToothIcon}
             onClick={() => setOpen(true)}
           >
-            {Number(slippageTolerance) > 0.5 &&
-            modules.includes(SettingsModule.SlippageTolerance) ? (
+            {showSlippageBadge ? (
               <TooltipProvider>
                 <Tooltip delayDuration={150}>
                   <TooltipTrigger asChild>
@@ -108,6 +119,28 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
                   <TooltipContent>Reset slippage tolerance</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
+            ) : showPriceProtectionBadge ? (
+              <TooltipProvider>
+                <Tooltip delayDuration={150}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setPriceProtection('AUTO')
+                      }}
+                      className="!rounded-full -mr-1.5 !bg-opacity-50"
+                      iconPosition="end"
+                      variant="secondary"
+                      size="xs"
+                      asChild
+                      icon={XMarkIcon}
+                    >
+                      {priceProtection}%
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Reset price protection</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             ) : null}
           </Button>
         )}
@@ -119,11 +152,18 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
             Adjust to your personal preferences.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 overflow-y-auto max-h-[min(70vh,600px)]">
           {modules.includes(SettingsModule.SlippageTolerance) && (
             <List className="!pt-0">
               <List.Control>
                 <SlippageTolerance options={options?.slippageTolerance} />
+              </List.Control>
+            </List>
+          )}
+          {modules.includes(SettingsModule.PriceProtection) && (
+            <List className="!pt-0">
+              <List.Control>
+                <PriceProtection showAutoSelector />
               </List.Control>
             </List>
           )}

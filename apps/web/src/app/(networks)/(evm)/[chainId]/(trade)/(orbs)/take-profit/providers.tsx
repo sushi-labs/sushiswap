@@ -1,8 +1,8 @@
 import { EdgeProvider } from 'src/providers/edge-config-provider'
-import { getLimitEdgeConfig } from './get-limit-edge-config'
+import { getTakeProfitEdgeConfig } from './get-take-profit-edge-config'
 
 export async function Providers({ children }: { children: React.ReactNode }) {
-  const config = await getLimitEdgeConfig()
+  const config = await getTakeProfitEdgeConfig()
 
   return <EdgeProvider config={config}>{children}</EdgeProvider>
 }

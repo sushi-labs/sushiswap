@@ -5,8 +5,9 @@ import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
 import Link from 'next/link'
 import type { FC, ReactNode } from 'react'
 import { PathnameButton } from 'src/app/_ui/pathname-button'
-import { isTwapSupportedChainId, isXSwapSupportedChainId } from 'src/config'
+import { isXSwapSupportedChainId } from 'src/config'
 import { type EvmToken, getEvmChainById } from 'sushi/evm'
+import { isTwapSupportedChainId } from '~evm/[chainId]/(trade)/(orbs)/_ui/helper'
 
 interface SwapModeButtonProps {
   href?: string
@@ -41,7 +42,9 @@ export const SwapModeButtons: FC<SwapModeButtonsProps> = ({ token }) => {
       <SwapModeButton
         href={
           isTwapSupportedChainId(token.chainId)
-            ? `/${getEvmChainById(token.chainId).key}/limit?token=${token.address}`
+            ? `/${getEvmChainById(token.chainId).key}/limit?token=${
+                token.address
+              }`
             : undefined
         }
       >
@@ -50,7 +53,9 @@ export const SwapModeButtons: FC<SwapModeButtonsProps> = ({ token }) => {
       <SwapModeButton
         href={
           isTwapSupportedChainId(token.chainId)
-            ? `/${getEvmChainById(token.chainId).key}/dca?token=${token.address}`
+            ? `/${getEvmChainById(token.chainId).key}/dca?token=${
+                token.address
+              }`
             : undefined
         }
       >
@@ -59,7 +64,9 @@ export const SwapModeButtons: FC<SwapModeButtonsProps> = ({ token }) => {
       <SwapModeButton
         href={
           isXSwapSupportedChainId(token.chainId)
-            ? `/${getEvmChainById(token.chainId).key}/cross-chain-swap?token0=${token.address}`
+            ? `/${getEvmChainById(token.chainId).key}/cross-chain-swap?token0=${
+                token.address
+              }`
             : undefined
         }
       >
