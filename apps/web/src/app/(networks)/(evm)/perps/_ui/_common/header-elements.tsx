@@ -63,7 +63,6 @@ export const headerElements = (): NavigationElement[] => {
                   {component.description}
                 </NavigationListItem>
               ))}
-              <Separator />
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
