@@ -1,5 +1,5 @@
 import { GeoBlockedMessage } from '../_ui/_common'
-import { Topographic } from './_ui/topographic'
+import { SushiBackground } from './_ui/sushi-background'
 
 export default async function PerpsPortfolioLayout({
   children,
@@ -12,7 +12,7 @@ export default async function PerpsPortfolioLayout({
         <GeoBlockedMessage />
         {children}
       </div>
-      <Topographic className="absolute z-[0] top-0 translate-x-[11%] -right-[11%] w-full h-full" />
+      <SushiBackground className="absolute z-[0] top-0 translate-x-[11%] -right-[11%] w-full h-full" />
     </div>
   )
 }

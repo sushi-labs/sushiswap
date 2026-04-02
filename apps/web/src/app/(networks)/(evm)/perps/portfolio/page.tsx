@@ -2,6 +2,7 @@ import { Container } from '@sushiswap/ui'
 import { AccountCharts } from './_ui/account-charts'
 import { DialogRow } from './_ui/dialog-row'
 import { Fees } from './_ui/fees'
+import { Points } from './_ui/points'
 import { PortfolioStats } from './_ui/portfolio-stats'
 import { Tables } from './_ui/tables'
 import { Volume } from './_ui/volume'
@@ -22,9 +23,10 @@ export default async function PerpetualsPortfolioPage() {
           <PortfolioStats />
           <AccountCharts />
         </div>
-        <div className="min-h-[450px]">
+        <div className="min-h-[300px]">
           <Tables />
         </div>
+        <Points />
       </div>
     </Container>
   )
