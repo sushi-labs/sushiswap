@@ -9,8 +9,8 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import { useMemo, useState } from 'react'
-import { formatPerpsPercent, useUserFees } from 'src/lib/perps'
+import { useState } from 'react'
+import { formatPerpsPercent, useFees } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 
 const FEE_TYPES = ['perps', 'spot'] as const
@@ -19,27 +19,11 @@ export const Fees = () => {
   const [open, setOpen] = useState(false)
   const [side, setSide] = useState<(typeof FEE_TYPES)[number]>('perps')
   const address = useAccount('evm')
-  const { data: feeData, isLoading, error } = useUserFees({ address })
-
-  const { takerFee, makerFee } = useMemo(() => {
-    if (!address)
-      return {
-        takerFee: side === 'perps' ? 0.00045 : 0.0007,
-        makerFee: side === 'perps' ? 0.00015 : 0.0004,
-      }
-    if (!feeData) return { takerFee: '0', makerFee: '0' }
-    const discount = 1 - Number(feeData.activeReferralDiscount)
-    return {
-      takerFee:
-        side === 'perps'
-          ? Number(feeData.userCrossRate) * discount
-          : Number(feeData.userSpotCrossRate) * discount,
-      makerFee:
-        side === 'perps'
-          ? Number(feeData.userAddRate) * discount
-          : Number(feeData.userSpotAddRate) * discount,
-    }
-  }, [feeData, side, address])
+  const { takerFee, makerFee } = useFees({
+    address,
+    marketType: side === 'perps' ? 'perp' : 'spot',
+  })
+  const isLoading = takerFee === '0' || makerFee === '0'
 
   return (
     <Card className="p-2 !rounded-md gap-2 flex !bg-[#18223B] border-transparent justify-between flex-col w-full">
@@ -74,8 +58,6 @@ export const Fees = () => {
         <div className="w-24 h-8">
           <SkeletonText fontSize="xl" />
         </div>
-      ) : error ? (
-        <div className="text-red-500">Error loading fees</div>
       ) : (
         <div className="font-medium text-lg md:text-2xl ">{`${formatPerpsPercent(takerFee, 4)} / ${formatPerpsPercent(makerFee, 4)}`}</div>
       )}
