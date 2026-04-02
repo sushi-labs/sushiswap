@@ -110,7 +110,7 @@ export const Favorites = () => {
             })}
           </div>
         ) : (
-          <div className="flex text-xs gap-1 text-muted-foreground py-2">
+          <div className="flex text-xs gap-1 text-muted-foreground py-[7px]">
             Click the <FavoriteIcon className="h-4 w-4" /> icon in the selector
             to add assets here for quick access.
           </div>
