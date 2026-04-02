@@ -230,7 +230,9 @@ export const TpSlInput = ({
               className={`w-full border rounded-lg border-[#FFFFFF1A] bg-[#FFFFFF0D] ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
             >
               <div className="flex items-center justify-between gap-2">
-                <p className="text-[#8f9399] whitespace-nowrap">TP Price</p>
+                <p className="text-[#8f9399] whitespace-nowrap cursor-default">
+                  TP Price
+                </p>
                 <div className="flex items-center gap-1 max-h-[35px]">
                   <TextField
                     type="number"
@@ -252,7 +254,7 @@ export const TpSlInput = ({
               className={`w-full border rounded-lg border-[#FFFFFF1A] bg-[#FFFFFF0D] ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
             >
               <div className="flex items-center justify-between gap-2">
-                <p className="text-[#8f9399]">Gain</p>
+                <p className="text-[#8f9399] cursor-default">Gain</p>
                 <div className="flex items-center gap-1 max-h-[35px]">
                   <TextField
                     type="number"
@@ -288,7 +290,9 @@ export const TpSlInput = ({
               className={`w-full border rounded-lg border-[#FFFFFF1A] bg-[#FFFFFF0D] ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
             >
               <div className="flex items-center justify-between gap-2">
-                <p className="text-[#8f9399] whitespace-nowrap">SL Price</p>
+                <p className="text-[#8f9399] whitespace-nowrap cursor-default">
+                  SL Price
+                </p>
                 <div className="flex items-center gap-1 max-h-[35px]">
                   <TextField
                     type="number"
@@ -310,7 +314,7 @@ export const TpSlInput = ({
               className={`w-full border rounded-lg border-[#FFFFFF1A] bg-[#FFFFFF0D] ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
             >
               <div className="flex items-center justify-between gap-2">
-                <p className="text-[#8f9399]">Loss</p>
+                <p className="text-[#8f9399] cursor-default">Loss</p>
                 <div className="flex items-center gap-1 max-h-[35px]">
                   <TextField
                     type="number"
