@@ -1,31 +1,18 @@
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
-import { useMemo } from 'react'
-import { formatPerpsPercent, useUserFees } from 'src/lib/perps'
+import { formatPerpsPercent, useFees } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { StatItem } from '../../_common'
 import { useAssetState } from '../asset-state-provider'
 
 export const FeeStat = () => {
   const address = useAccount('evm')
-  const { data: feeData } = useUserFees({ address })
   const {
     state: { asset },
   } = useAssetState()
-
-  const { takerFee, makerFee } = useMemo(() => {
-    if (!feeData) return { takerFee: '0', makerFee: '0' }
-    const discount = 1 - Number(feeData.activeReferralDiscount || '0')
-    return {
-      takerFee:
-        asset?.marketType === 'perp'
-          ? Number(feeData.userCrossRate) * discount
-          : Number(feeData.userSpotCrossRate) * discount,
-      makerFee:
-        asset?.marketType === 'perp'
-          ? Number(feeData.userAddRate) * discount
-          : Number(feeData.userSpotAddRate) * discount,
-    }
-  }, [feeData, asset?.marketType])
+  const { takerFee, makerFee } = useFees({
+    address,
+    marketType: asset?.marketType,
+  })
 
   return (
     <StatItem
