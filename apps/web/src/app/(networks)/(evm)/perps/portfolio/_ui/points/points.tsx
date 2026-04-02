@@ -10,17 +10,18 @@ export const Points = () => {
   return (
     <HoverCard openDelay={0} closeDelay={0}>
       <HoverCardTrigger asChild tabIndex={0}>
-        <Card className="p-2 !rounded-md flex !bg-[#18223B] border-transparent flex-col gap-6 justify-between w-full md:!max-w-[300px]">
-          <div className="text-muted-foreground font-medium lg:text-lg">
-            Points (Season 1)
-          </div>
-          <div>
-            <div className="text-muted-foreground text-xs lg:text-sm">
-              Points Balance
+        <Card className="p-2 lg:p-4 !rounded-md flex !bg-[#18223B] border-transparent flex-col lg:flex-row gap-6 justify-between w-full">
+          <div className="flex flex-col gap-6 lg:flex-row lg:gap-10">
+            <div className="text-muted-foreground font-medium lg:text-lg">
+              Points (Season 1)
             </div>
-            <div className="font-medium text-lg md:text-2xl">Coming Soon</div>
+            <div className="flex gap-2 lg:gap-8 flex-col lg:flex-row">
+              <_Item label="Total Points Earned" value="Coming Soon" />
+              <_Item label="Points Earner (7D)" value="Coming Soon" />
+              <_Item label="Points Earner (30D)" value="Coming Soon" />
+            </div>
           </div>
-          <Button disabled variant="perps-default">
+          <Button disabled variant="perps-default" className="lg:!my-auto">
             Dashboard Coming Soon
           </Button>
         </Card>
@@ -35,5 +36,14 @@ export const Points = () => {
         </p>
       </HoverCardContent>
     </HoverCard>
+  )
+}
+
+const _Item = ({ label, value }: { label: string; value: string }) => {
+  return (
+    <div>
+      <div className="text-muted-foreground text-xs lg:text-sm">{label}</div>
+      <div className="font-medium text-lg md:text-2xl">{value}</div>
+    </div>
   )
 }
