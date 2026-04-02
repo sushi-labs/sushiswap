@@ -134,7 +134,7 @@ const SharedPositionModal = ({
           onOpenChange={(nextOpen) => {
             if (!nextOpen) onClose()
           }}
-          trigger={<div />}
+          trigger={<div className="hidden" />}
         />
       )
     case 'withdraw':
@@ -144,7 +144,7 @@ const SharedPositionModal = ({
           onOpenChange={(nextOpen) => {
             if (!nextOpen) onClose()
           }}
-          trigger={<div />}
+          trigger={<div className="hidden" />}
         />
       )
     case 'send':
@@ -154,7 +154,7 @@ const SharedPositionModal = ({
           onOpenChange={(nextOpen) => {
             if (!nextOpen) onClose()
           }}
-          trigger={<div />}
+          trigger={<div className="hidden" />}
         />
       )
     case 'perp-spot-transfer':
@@ -164,7 +164,7 @@ const SharedPositionModal = ({
           onOpenChange={(nextOpen) => {
             if (!nextOpen) onClose()
           }}
-          trigger={<div />}
+          trigger={<div className="hidden" />}
           defaultDex=""
         />
       )
@@ -175,7 +175,7 @@ const SharedPositionModal = ({
           onOpenChange={(nextOpen) => {
             if (!nextOpen) onClose()
           }}
-          trigger={<div />}
+          trigger={<div className="hidden" />}
         />
       )
     case 'swap-stables':
@@ -185,7 +185,7 @@ const SharedPositionModal = ({
           onOpenChange={(nextOpen) => {
             if (!nextOpen) onClose()
           }}
-          trigger={<div />}
+          trigger={<div className="hidden" />}
         />
       )
 
