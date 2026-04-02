@@ -43,7 +43,7 @@ export const PerpAssetStats = () => {
   return (
     <>
       <div className="flex flex-col">
-        <HoverCard openDelay={0}>
+        <HoverCard openDelay={0} closeDelay={0}>
           <HoverCardTrigger asChild tabIndex={0}>
             <div className="text-xs text-muted-foreground underline cursor-pointer">
               Mark
@@ -75,7 +75,7 @@ export const PerpAssetStats = () => {
         />
       </div>
       <div className="flex flex-col">
-        <HoverCard openDelay={0}>
+        <HoverCard openDelay={0} closeDelay={0}>
           <HoverCardTrigger asChild tabIndex={0}>
             <div className="text-xs text-muted-foreground underline cursor-pointer">
               Oracle
@@ -134,7 +134,7 @@ export const PerpAssetStats = () => {
         </p>
       </div>
       <div className="flex flex-col">
-        <HoverCard openDelay={0}>
+        <HoverCard openDelay={0} closeDelay={0}>
           <HoverCardTrigger asChild tabIndex={0}>
             <div className="text-xs text-muted-foreground underline cursor-pointer">
               Open Interest
@@ -156,7 +156,7 @@ export const PerpAssetStats = () => {
         </p>
       </div>
       <div className="flex flex-col">
-        <HoverCard openDelay={0}>
+        <HoverCard openDelay={0} closeDelay={0}>
           <HoverCardTrigger asChild tabIndex={0}>
             <div className="text-xs text-muted-foreground underline cursor-pointer whitespace-nowrap">
               Funding / Countdown
@@ -176,7 +176,7 @@ export const PerpAssetStats = () => {
           </HoverCardContent>
         </HoverCard>
         <div className="flex items-center gap-2">
-          <HoverCard openDelay={0}>
+          <HoverCard openDelay={0} closeDelay={0}>
             <HoverCardTrigger asChild tabIndex={0}>
               <p
                 className={classNames(

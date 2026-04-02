@@ -56,7 +56,7 @@ export const DialogRow = () => {
         Swap Stablecoins
       </Button>
       {isUnifiedAccountModeEnabled ? (
-        <HoverCard openDelay={0}>
+        <HoverCard openDelay={0} closeDelay={0}>
           <HoverCardTrigger
             asChild
             tabIndex={0}

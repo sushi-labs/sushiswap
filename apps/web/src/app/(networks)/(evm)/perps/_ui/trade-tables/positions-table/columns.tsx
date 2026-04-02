@@ -182,7 +182,7 @@ export const PNL_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   id: 'pnlRoePc',
 
   header: () => (
-    <HoverCard openDelay={0}>
+    <HoverCard openDelay={0} closeDelay={0}>
       <HoverCardTrigger asChild tabIndex={0}>
         <div
           className={classNames('font-medium underline lg:whitespace-nowrap')}
@@ -269,7 +269,7 @@ export const MARGIN_COLUMN = (
 ): ColumnDef<UserPositionsItemType, unknown> => ({
   id: 'margin',
   header: () => (
-    <HoverCard openDelay={0}>
+    <HoverCard openDelay={0} closeDelay={0}>
       <HoverCardTrigger asChild tabIndex={0}>
         <div
           className={classNames('font-medium underline lg:whitespace-nowrap')}
@@ -323,7 +323,7 @@ export const MARGIN_COLUMN = (
 export const FUNDING_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   id: 'funding',
   header: () => (
-    <HoverCard openDelay={0}>
+    <HoverCard openDelay={0} closeDelay={0}>
       <HoverCardTrigger asChild tabIndex={0}>
         <div
           className={classNames('font-medium underline lg:whitespace-nowrap')}
@@ -358,7 +358,7 @@ export const FUNDING_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     )
 
     return (
-      <HoverCard openDelay={0}>
+      <HoverCard openDelay={0} closeDelay={0}>
         <HoverCardTrigger asChild tabIndex={0}>
           <div
             className={classNames(

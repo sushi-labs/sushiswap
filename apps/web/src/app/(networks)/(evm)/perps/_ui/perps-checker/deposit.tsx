@@ -83,7 +83,7 @@ export const Deposit: FC<ButtonProps> = ({
     isDexAbstractionEnabled
   ) {
     return (
-      <HoverCard openDelay={0}>
+      <HoverCard openDelay={0} closeDelay={0}>
         <HoverCardTrigger asChild tabIndex={0}>
           <Button
             fullWidth={fullWidth}

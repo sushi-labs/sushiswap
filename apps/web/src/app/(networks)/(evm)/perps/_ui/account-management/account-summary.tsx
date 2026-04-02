@@ -51,7 +51,7 @@ export const AccountSummary = () => {
           />
           <StatItem
             title={
-              <HoverCard openDelay={0}>
+              <HoverCard openDelay={0} closeDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
                   <div className="text-muted-foreground underline">Perps</div>
                 </HoverCardTrigger>
@@ -85,7 +85,7 @@ export const AccountSummary = () => {
           <p className="text-xs font-semibold mb-2 lg:mb-1">Perps Overview</p>
           <StatItem
             title={
-              <HoverCard openDelay={0}>
+              <HoverCard openDelay={0} closeDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
                   <div className="text-muted-foreground underline">Balance</div>
                 </HoverCardTrigger>
@@ -117,7 +117,7 @@ export const AccountSummary = () => {
           />
           <StatItem
             title={
-              <HoverCard openDelay={0}>
+              <HoverCard openDelay={0} closeDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
                   <div className="text-muted-foreground underline">
                     Cross Margin Ratio
@@ -154,7 +154,7 @@ export const AccountSummary = () => {
           />
           <StatItem
             title={
-              <HoverCard openDelay={0}>
+              <HoverCard openDelay={0} closeDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
                   <div className="text-muted-foreground underline">
                     Maintenance Margin
@@ -176,7 +176,7 @@ export const AccountSummary = () => {
           />
           <StatItem
             title={
-              <HoverCard openDelay={0}>
+              <HoverCard openDelay={0} closeDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
                   <div className="text-muted-foreground underline">
                     Cross Account Leverage

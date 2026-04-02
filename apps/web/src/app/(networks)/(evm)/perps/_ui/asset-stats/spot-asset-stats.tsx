@@ -44,7 +44,7 @@ export const SpotAssetStats = () => {
   return (
     <>
       <div className="flex flex-col">
-        <HoverCard openDelay={0}>
+        <HoverCard openDelay={0} closeDelay={0}>
           <HoverCardTrigger asChild tabIndex={0}>
             <div className="text-xs text-muted-foreground underline cursor-pointer">
               Price

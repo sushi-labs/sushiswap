@@ -86,7 +86,7 @@ export const headerElements = (): NavigationElement[] => {
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem className={NavigationElementType.Custom}>
-          <HoverCard openDelay={0}>
+          <HoverCard openDelay={0} closeDelay={0}>
             <HoverCardTrigger tabIndex={0} asChild>
               <div className="opacity-50 text-sm font-medium cursor-not-allowed py-2.5 px-4 rounded-xl focus:bg-accent hover:bg-secondary">
                 Points
@@ -104,7 +104,7 @@ export const headerElements = (): NavigationElement[] => {
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem className={NavigationElementType.Custom}>
-          <HoverCard openDelay={0}>
+          <HoverCard openDelay={0} closeDelay={0}>
             <HoverCardTrigger tabIndex={0} asChild>
               <div className="opacity-50 text-sm font-medium cursor-not-allowed py-2.5 px-4 rounded-xl focus:bg-accent hover:bg-secondary">
                 Vaults
