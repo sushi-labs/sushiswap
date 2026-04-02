@@ -91,7 +91,7 @@ export const Favorites = () => {
                   key={idx}
                   size="xs"
                   variant="ghost"
-                  className="text-sm font-medium whitespace-nowrap !gap-1 tabular-nums"
+                  className="text-sm font-medium whitespace-nowrap !gap-1 tabular-nums focus:bg-transparent hover:!bg-secondary"
                   onClick={() => setActiveAsset(asset.name)}
                 >
                   {asset?.symbol}
