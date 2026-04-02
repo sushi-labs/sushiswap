@@ -36,7 +36,7 @@ export const FeeStat = () => {
           </HoverCardTrigger>
           <HoverCardContent
             forceMount
-            side="top"
+            side="bottom"
             className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
           >
             <p>
