@@ -23,11 +23,12 @@ export const config = {
     '/:chainId/positions/:path*',
     '/:chainId/migrate',
     '/:chainId/rewards',
-    '/portal/:path*',
+    '/:chainId/perps/:path*',
+    '/perps',
   ],
 }
 
-async function _middleware(req: NextRequest) {
+async function _proxy(req: NextRequest) {
   const { pathname, searchParams, search } = req.nextUrl
 
   if (pathname.includes('/portal') || pathname.startsWith('/portal/')) {
@@ -66,7 +67,6 @@ async function _middleware(req: NextRequest) {
         )
       }
     }
-
     return NextResponse.redirect(new URL(`/ethereum/${path}`, req.url))
   }
 
@@ -151,8 +151,8 @@ async function _middleware(req: NextRequest) {
   return NextResponse.next()
 }
 
-export async function middleware(req: NextRequest) {
-  const response = await _middleware(req)
+export async function proxy(req: NextRequest) {
+  const response = await _proxy(req)
   const current = trace.getActiveSpan()
 
   if (current) {

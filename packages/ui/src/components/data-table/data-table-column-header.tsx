@@ -76,7 +76,7 @@ export function DataTableColumnHeader<TData, TValue>({
             </Tooltip>
           </TooltipProvider>
         ) : (
-          <>{Title}</>
+          <div>{Title}</div>
         )}
       </div>
     )

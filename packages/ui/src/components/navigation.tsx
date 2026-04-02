@@ -93,7 +93,7 @@ export type NavigationElementShow =
   | 'everywhere'
   | 'never'
 
-const navigationElementShowMap: Record<NavigationElementShow, string> = {
+export const navigationElementShowMap: Record<NavigationElementShow, string> = {
   mobile: 'md:hidden block',
   desktop: 'md:block hidden',
   everywhere: '',

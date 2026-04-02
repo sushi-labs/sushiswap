@@ -1,5 +1,5 @@
-import { PerpsLandingPage } from './_ui/landing'
+import { PerpsPage } from './_ui/perps-page'
 
 export default async function PerpetualsPage() {
-  return <PerpsLandingPage />
+  return <PerpsPage />
 }

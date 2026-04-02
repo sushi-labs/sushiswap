@@ -1,4 +1,6 @@
-import { Header } from '~evm/[chainId]/header'
+import { EvmChainId } from 'sushi/evm'
+import { PerpsHeader } from './_ui/_common/perps-header'
+import { Providers } from './providers'
 
 export default async function PerpsLayout({
   children,
@@ -6,9 +8,9 @@ export default async function PerpsLayout({
   children: React.ReactNode
 }) {
   return (
-    <>
-      <Header />
+    <Providers>
+      <PerpsHeader chainId={EvmChainId.ARBITRUM} />
       {children}
-    </>
+    </Providers>
   )
 }
