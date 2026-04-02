@@ -66,9 +66,6 @@ const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
       chainId,
     })
   const fiatValues = useTokenAmountDollarValues({ chainId, amounts: reserves })
-  const activeCampaigns = useMemo(() => {
-    return rewardsData?.filter((campaign) => campaign.isLive)
-  }, [rewardsData])
 
   return (
     <Container maxWidth="5xl" className="flex flex-col gap-4 px-4">
@@ -182,7 +179,7 @@ const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
       <div className="py-4">
         <Separator />
       </div>
-      <KatanaStakingMessage campaigns={activeCampaigns} />
+      <KatanaStakingMessage pool={address} chainId={chainId} />
       <PoolRewardDistributionsCard
         pool={pool}
         isLoading={rewardsLoading}

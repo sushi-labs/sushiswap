@@ -48,6 +48,7 @@ const merklCampaignValidator = z.object({
   distributionChainId: merklChainIdValidator,
   campaignId: z.string(),
   amount: z.string(),
+  apr: z.coerce.number().optional().default(0),
   startTimestamp: z.coerce.number(),
   endTimestamp: z.coerce.number(),
   params: z.object({
