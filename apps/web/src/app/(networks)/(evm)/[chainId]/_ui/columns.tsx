@@ -15,6 +15,7 @@ import React, { useMemo } from 'react'
 import { formatNumber, formatPercent, formatUSD } from 'sushi'
 import { EvmToken, type SushiSwapProtocol } from 'sushi/evm'
 import { APRWithRewardsHoverCard } from './apr-with-rewards-hover-card'
+import { KatanaStakingAPRHoverCard } from './katana-staking-apr-hover-card'
 import { ProtocolBadge } from './protocol-badge'
 
 export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
@@ -269,25 +270,28 @@ export const APR_WITH_REWARDS_COLUMN: ColumnDef<Pool, unknown> = {
   header: 'APR',
   accessorFn: (row) => row.totalApr1d,
   cell: (props) => (
-    <APRWithRewardsHoverCard pool={props.row.original}>
-      <div className="flex items-center gap-1">
-        <span
-          className={classNames(
-            'underline decoration-dotted underline-offset-2',
-          )}
-        >
-          {formatPercent(props.row.original.totalApr1d)}
-        </span>
-        {props.row.original.incentives.map((incentive) => (
-          <Currency.Icon
-            key={incentive.id}
-            width={16}
-            height={16}
-            currency={incentive.rewardToken}
-          />
-        ))}
-      </div>
-    </APRWithRewardsHoverCard>
+    <div className="flex items-center gap-1">
+      <APRWithRewardsHoverCard pool={props.row.original}>
+        <div className="flex items-center gap-1">
+          <span
+            className={classNames(
+              'underline decoration-dotted underline-offset-2',
+            )}
+          >
+            {formatPercent(props.row.original.totalApr1d)}
+          </span>
+          {props.row.original.incentives.map((incentive) => (
+            <Currency.Icon
+              key={incentive.id}
+              width={16}
+              height={16}
+              currency={incentive.rewardToken}
+            />
+          ))}
+        </div>
+      </APRWithRewardsHoverCard>
+      <KatanaStakingAPRHoverCard pool={props.row.original} />
+    </div>
   ),
   meta: {
     body: {

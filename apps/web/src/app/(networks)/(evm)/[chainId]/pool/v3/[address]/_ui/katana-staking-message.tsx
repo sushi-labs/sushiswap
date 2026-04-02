@@ -2,18 +2,26 @@
 
 import { Message } from '@sushiswap/ui'
 import type { FC } from 'react'
-import type { RewardCampaign } from 'src/lib/hooks/react-query'
-import { isKatanaStakeRequiredCampaign } from '../_lib/reward-campaign-utils'
+import { useKatanaRewardCampaigns } from 'src/lib/hooks/react-query'
+import { type EvmAddress, EvmChainId } from 'sushi/evm'
 
 interface KatanaStakingMessageProps {
-  campaigns?: RewardCampaign[]
+  pool: EvmAddress
+  chainId: EvmChainId
 }
 
 export const KatanaStakingMessage: FC<KatanaStakingMessageProps> = ({
-  campaigns,
+  pool,
+  chainId,
 }) => {
+  const { data: campaigns } = useKatanaRewardCampaigns({
+    pool,
+    chainId,
+    enabled: chainId === EvmChainId.KATANA,
+  })
+
   const hasStakeRequiredCampaigns = campaigns?.some(
-    isKatanaStakeRequiredCampaign,
+    (campaign) => campaign.isLive,
   )
 
   if (!hasStakeRequiredCampaigns) return null

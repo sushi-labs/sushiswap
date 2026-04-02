@@ -7,6 +7,7 @@ import { merklCampaignsValidator } from './validator'
 interface UseRewardCampaignsParams {
   pool: EvmAddress | undefined
   chainId: EvmChainId | undefined
+  mainParameterSuffix?: string
   enabled?: boolean
 }
 
@@ -19,19 +20,23 @@ export type RewardCampaign = Omit<
   amount: number
 }
 
-export const useRewardCampaigns = ({
+export function useRewardCampaigns({
   pool,
   chainId,
+  mainParameterSuffix,
   enabled = true,
-}: UseRewardCampaignsParams) => {
+}: UseRewardCampaignsParams) {
   return useQuery({
-    queryKey: ['merklRewardCampaigns', { pool, chainId }],
+    queryKey: ['merklRewardCampaigns', { pool, chainId, mainParameterSuffix }],
     queryFn: async () => {
       if (!pool || !chainId) throw new Error()
 
       const url = new URL(`https://api.merkl.xyz/v4/campaigns`)
       url.searchParams.set('chainId', `${chainId}`)
-      url.searchParams.set('mainParameter', `${getAddress(pool)}`)
+      url.searchParams.set(
+        'mainParameter',
+        `${getAddress(pool)}${mainParameterSuffix ?? ''}`,
+      )
       url.searchParams.set('test', `${false}`)
 
       const res = await fetch(url)
@@ -42,6 +47,7 @@ export const useRewardCampaigns = ({
 
       return parsed.map((parsed) => ({
         ...parsed,
+        apr: parsed.apr / 100,
         rewardToken: new EvmToken(parsed.rewardToken),
         isLive: now >= +parsed.startTimestamp && now <= +parsed.endTimestamp,
         amount: +parsed.amount / 10 ** parsed.rewardToken.decimals,

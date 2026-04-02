@@ -14,9 +14,17 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
-import type { FC } from 'react'
-import type { RewardCampaign } from 'src/lib/hooks/react-query'
-import { EvmNative, getEvmChainById, isMerklChainId } from 'sushi/evm'
+import { type FC, useMemo } from 'react'
+import {
+  type RewardCampaign,
+  useKatanaRewardCampaigns,
+} from 'src/lib/hooks/react-query'
+import {
+  EvmChainId,
+  EvmNative,
+  getEvmChainById,
+  isMerklChainId,
+} from 'sushi/evm'
 import { DistributionDataTable } from '../../_ui/distribution-data-table'
 
 interface PoolRewardDistributionsCardParams {
@@ -30,6 +38,23 @@ export const PoolRewardDistributionsCard: FC<
 > = ({ pool, isLoading, rewardsData }) => {
   if (!pool) return null
   if (!isMerklChainId(pool.chainId)) return null
+
+  const {
+    data: katanaRewardCampaigns,
+    isLoading: isKatanaRewardCampaignsLoading,
+  } = useKatanaRewardCampaigns({
+    pool: pool.address,
+    chainId: pool.chainId,
+    enabled: pool.chainId === EvmChainId.KATANA,
+  })
+
+  const mergedRewardsData = useMemo(() => {
+    return [...(rewardsData ?? []), ...(katanaRewardCampaigns ?? [])]
+  }, [katanaRewardCampaigns, rewardsData])
+
+  const isRewardsLoading =
+    isLoading ||
+    (pool.chainId === EvmChainId.KATANA && isKatanaRewardCampaignsLoading)
 
   return (
     <Card>
@@ -74,15 +99,15 @@ export const PoolRewardDistributionsCard: FC<
         <TabsContent value="active">
           <DistributionDataTable
             chainId={pool.chainId}
-            isLoading={isLoading}
-            data={rewardsData?.filter((el) => el.isLive)}
+            isLoading={isRewardsLoading}
+            data={mergedRewardsData?.filter((el) => el.isLive)}
           />
         </TabsContent>
         <TabsContent value="inactive">
           <DistributionDataTable
             chainId={pool.chainId}
-            isLoading={isLoading}
-            data={rewardsData?.filter((el) => !el.isLive)}
+            isLoading={isRewardsLoading}
+            data={mergedRewardsData?.filter((el) => !el.isLive)}
           />
         </TabsContent>
       </Tabs>
