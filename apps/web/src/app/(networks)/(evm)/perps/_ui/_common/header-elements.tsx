@@ -10,8 +10,11 @@ import {
   NavigationListItem,
   NavigationMenuContent,
   NavigationMenuItem,
+  NavigationMenuLink,
   NavigationMenuPrimitive,
-  Separator,
+  classNames,
+  navigationElementShowMap,
+  navigationMenuTriggerStyle,
 } from '@sushiswap/ui'
 
 export const EXPLORE_NAVIGATION_LINKS =
@@ -69,16 +72,44 @@ export const headerElements = (): NavigationElement[] => {
       ),
     },
     {
-      title: 'Trade',
-      href: `/perps`,
       show: 'desktop',
-      type: NavigationElementType.Single,
+      type: NavigationElementType.Custom,
+      item: (
+        <NavigationMenuItem
+          key={`trade:custom`}
+          className={navigationElementShowMap['desktop']}
+        >
+          <NavigationMenuLink
+            href={'/perps'}
+            className={classNames(
+              navigationMenuTriggerStyle,
+              'focus:bg-transparent hover:!bg-secondary',
+            )}
+          >
+            Trade
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      ),
     },
     {
-      title: 'Portfolio',
-      href: `/perps/portfolio`,
       show: 'desktop',
-      type: NavigationElementType.Single,
+      type: NavigationElementType.Custom,
+      item: (
+        <NavigationMenuItem
+          key={`portfolio:custom`}
+          className={navigationElementShowMap['desktop']}
+        >
+          <NavigationMenuLink
+            href={'/perps/portfolio'}
+            className={classNames(
+              navigationMenuTriggerStyle,
+              'focus:bg-transparent hover:!bg-secondary',
+            )}
+          >
+            Portfolio
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      ),
     },
     {
       show: 'desktop',
