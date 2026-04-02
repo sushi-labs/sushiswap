@@ -14,7 +14,6 @@ import type { FC } from 'react'
 import { useKatanaRewardCampaigns } from 'src/lib/hooks/react-query'
 import { formatPercent } from 'sushi'
 import { EvmChainId } from 'sushi/evm'
-import { getAddress } from 'viem/utils'
 
 interface KatanaStakingAPRHoverCardProps {
   pool: Pool
@@ -24,7 +23,7 @@ export const KatanaStakingAPRHoverCard: FC<KatanaStakingAPRHoverCardProps> = ({
   pool,
 }) => {
   const { data: katanaRewardCampaigns } = useKatanaRewardCampaigns({
-    pool: getAddress(pool.address),
+    pool: pool.address,
     chainId: pool.chainId,
     enabled: pool.chainId === EvmChainId.KATANA,
   })
@@ -80,37 +79,37 @@ export const KatanaStakingAPRHoverCard: FC<KatanaStakingAPRHoverCardProps> = ({
     </div>
   )
 
-  return (
-    <div className="pl-2 min-w-[84px] shrink-0">
-      {showKatanaStakingApr ? (
-        <>
-          <span className="text-muted-foreground">/</span>
-          <div className="hidden sm:block">
-            <HoverCard openDelay={300} closeDelay={0}>
-              <HoverCardTrigger asChild className="cursor-pointer">
-                {trigger}
-              </HoverCardTrigger>
-              <HoverCardContent side="right" className="!p-0 max-w-[320px]">
-                {card}
-              </HoverCardContent>
-            </HoverCard>
-          </div>
-          <div className="block sm:hidden">
-            <Popover>
-              <PopoverTrigger
-                onClick={(e) => e.stopPropagation()}
-                asChild
-                className="cursor-pointer"
-              >
-                {trigger}
-              </PopoverTrigger>
-              <PopoverContent side="right" className="!p-0 max-w-[320px]">
-                {card}
-              </PopoverContent>
-            </Popover>
-          </div>
-        </>
-      ) : null}
-    </div>
-  )
+  if (showKatanaStakingApr) {
+    return (
+      <>
+        <span className="text-muted-foreground">/</span>
+        <div className="hidden sm:block">
+          <HoverCard openDelay={300} closeDelay={0}>
+            <HoverCardTrigger asChild className="cursor-pointer">
+              {trigger}
+            </HoverCardTrigger>
+            <HoverCardContent side="right" className="!p-0 max-w-[320px]">
+              {card}
+            </HoverCardContent>
+          </HoverCard>
+        </div>
+        <div className="block sm:hidden">
+          <Popover>
+            <PopoverTrigger
+              onClick={(e) => e.stopPropagation()}
+              asChild
+              className="cursor-pointer"
+            >
+              {trigger}
+            </PopoverTrigger>
+            <PopoverContent side="right" className="!p-0 max-w-[320px]">
+              {card}
+            </PopoverContent>
+          </Popover>
+        </div>
+      </>
+    )
+  }
+
+  return <div className="min-w-[84px]" />
 }
