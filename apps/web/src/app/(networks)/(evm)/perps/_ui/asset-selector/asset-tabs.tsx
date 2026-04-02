@@ -46,7 +46,7 @@ export const AssetTabs = () => {
             : '',
         )}
       >
-        <TabsContent value="all" className="overflow-auto">
+        <TabsContent value="all">
           <AllAssets />
         </TabsContent>
         <TabsContent value="perps">

@@ -30,7 +30,12 @@ export const SYMBOL_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
   cell: (props) => {
     const asset = useMemo(() => props.row.original, [props.row.original])
     return (
-      <div className="whitespace-nowrap flex items-center gap-1 pb-1 lg:pb-0">
+      <div
+        className={classNames(
+          'whitespace-nowrap flex items-center gap-1 pb-1 lg:pb-0',
+          asset?.marketType === 'perp' ? '!min-w-[215px]' : '',
+        )}
+      >
         <div className="flex items-center gap-1">
           <FavoriteButton assetString={asset.name} />
           <span>{asset.symbol}</span>
@@ -194,10 +199,10 @@ export const MARKET_CAP_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
     const marketCap = props.row.original.marketCap
     const token = props.row.original.tokens?.[1]
     if (!marketCap) {
-      return <div className="tabular-nums mx-4">--</div>
+      return <div className="tabular-nums mr-4">--</div>
     }
     return (
-      <div className="tabular-nums whitespace-nowrap">
+      <div className="tabular-nums whitespace-nowrap !min-w-[210px]">
         {perpsNumberFormatter({
           value: marketCap ?? '0',
           maxFraxDigits: 2,
