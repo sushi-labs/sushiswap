@@ -18,34 +18,31 @@ export const Trades = () => {
 
   return (
     <div className="max-h-[400px] px-2 lg:px-0 lg:max-h-[672px] relative overflow-y-auto hide-scrollbar">
-      <table className="w-full">
-        <thead className="sticky top-0 dark:bg-[#0D1421] text-muted-foreground">
-          <tr>
-            <th className="text-left font-normal p-0.5 text-xs">Price</th>
-            <th className="font-normal p-0.5 text-xs text-right">
+      <div className="w-full">
+        <div className="sticky top-0 dark:bg-[#0D1421] text-muted-foreground">
+          <div className="grid grid-cols-3">
+            <div className="text-left font-normal p-0.5 text-xs">Price</div>
+            <div className="font-normal p-0.5 text-xs text-right">
               Size {assetName ? `(${assetName})` : ''}
-            </th>
-            <th className="font-normal p-0.5 text-xs text-right">Time</th>
-          </tr>
-        </thead>
-        <tbody>
+            </div>
+            <div className="font-normal p-0.5 text-xs text-right">Time</div>
+          </div>
+        </div>
+        <div>
           {isLoading ? (
             Array.from({ length: 50 }).map((_, index) => (
               <SkeletonTradeRow key={index} />
             ))
           ) : error ? (
-            <tr>
-              <td
-                colSpan={3}
-                className="p-2 h-20 text-xs italic text-red-500/70 text-center"
-              >
+            <div className="grid grid-cols-3">
+              <div className="p-2 h-20 text-xs italic text-red-500/70 text-center col-span-3">
                 Error loading trades. {error?.message}
-              </td>
-            </tr>
+              </div>
+            </div>
           ) : data && data.length > 0 ? (
             data.map((trade, index) => (
-              <tr key={index} className="font-medium">
-                <td
+              <div key={index} className="font-medium grid grid-cols-3">
+                <div
                   className={classNames(
                     'px-0.5 py-1 text-xs text-left',
                     getTextColorClass(trade.side === 'B' ? 1 : -1),
@@ -56,33 +53,33 @@ export const Trades = () => {
                     maxFraxDigits: 8,
                     minFraxDigits: 0,
                   })}
-                </td>
-                <td className="px-0.5 py-1 text-xs text-right">
+                </div>
+                <div className="px-0.5 py-1 text-xs text-right">
                   {perpsNumberFormatter({
                     value: trade.sz,
                     maxFraxDigits: 8,
                     minFraxDigits: 0,
                   })}
-                </td>
-                <td className="px-0.5 py-1 text-xs text-right">
+                </div>
+                <div className="px-0.5 py-1 text-xs text-right">
                   {new Date(trade.time).toLocaleTimeString()}
                   <LinkExternal
                     href={getHyperliquidExplorerUrl('txn', trade.hash)}
                   >
                     <ExternalLinkIcon className="h-3.5 w-3.5 text-blue ml-1" />
                   </LinkExternal>
-                </td>
-              </tr>
+                </div>
+              </div>
             ))
           ) : (
-            <tr>
-              <td colSpan={3} className="p-2 text-center">
+            <div className="grid grid-cols-3">
+              <div className="p-2 text-center col-span-3">
                 No trades available.
-              </td>
-            </tr>
+              </div>
+            </div>
           )}
-        </tbody>
-      </table>
+        </div>
+      </div>
     </div>
   )
 }
