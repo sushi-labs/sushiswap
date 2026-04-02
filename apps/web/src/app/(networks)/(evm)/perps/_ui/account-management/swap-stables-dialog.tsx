@@ -336,7 +336,7 @@ export const SwapStablesDialog = ({
                 value={assetToSend?.symbol || ''}
                 onValueChange={handleSelectAssetToSend}
               >
-                <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[42px]  !gap-1 !border !border-[#FFFFFF1A] bg-[#FFFFFF0D]">
+                <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[41px] !pl-4 !gap-1 !border !border-[#FFFFFF1A] bg-[#FFFFFF0D]">
                   {assetToSend
                     ? `${assetToSend?.symbol} ${Number(assetToSend?.balance) > 0 ? ` - ${perpsNumberFormatter({ value: assetToSend?.balance, maxFraxDigits: 2, minFraxDigits: 2 })}` : ''}`
                     : 'Select Asset'}
@@ -365,7 +365,7 @@ export const SwapStablesDialog = ({
                 placeholder="Amount"
                 inputClassName="!text-left !text-sm placeholder:text-[#8f9399] pr-10"
                 maxDecimals={2}
-                className="!px-2 !py-0 !text-sm"
+                className="!px-2 !py-0.5 !text-sm"
               />
               <Button
                 size="xs"
@@ -386,7 +386,7 @@ export const SwapStablesDialog = ({
                 value={assetToBuy?.symbol || ''}
                 onValueChange={handleSelectAssetToBuy}
               >
-                <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[42px]  !gap-1 !border !border-[#FFFFFF1A] bg-[#FFFFFF0D]">
+                <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[41px] !pl-4 !gap-1 !border !border-[#FFFFFF1A] bg-[#FFFFFF0D]">
                   {assetToBuy
                     ? `${assetToBuy?.symbol} ${Number(assetToBuy?.balance) > 0 ? ` - ${perpsNumberFormatter({ value: assetToBuy?.balance, maxFraxDigits: 2, minFraxDigits: 2 })}` : ''}`
                     : 'Select Asset'}

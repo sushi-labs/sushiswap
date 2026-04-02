@@ -119,11 +119,8 @@ export const EvmCoreTransferDialog = ({
       } else {
         setOpen(nextOpen)
       }
-      if (nextOpen && !assetToSend && assetsToSelect[dst]?.length > 0) {
-        setAssetToSend(assetsToSelect[dst][0])
-      }
     },
-    [isControlled, onOpenChange, assetToSend, assetsToSelect, dst],
+    [isControlled, onOpenChange],
   )
 
   useEffect(() => {
@@ -141,6 +138,8 @@ export const EvmCoreTransferDialog = ({
           return
         }
       }
+      setAssetToSend(assetsToSelect[dst][0])
+      return
     }
   }, [assetToSend, assetsToSelect, balanceItem, dst])
 
@@ -285,7 +284,7 @@ export const EvmCoreTransferDialog = ({
                 setAssetToSend(asset)
               }}
             >
-              <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[42px]  !gap-1 !border !border-[#FFFFFF1A] bg-[#FFFFFF0D]">
+              <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[41px] !py-0 !pl-4 !gap-1 !border !border-[#FFFFFF1A] bg-[#FFFFFF0D]">
                 {assetToSend
                   ? `${assetToSend?.symbol} ${Number(assetToSend?.balance) > 0 ? ` - ${perpsNumberFormatter({ value: assetToSend?.balance })}` : ''}`
                   : 'Select Asset'}
@@ -313,7 +312,7 @@ export const EvmCoreTransferDialog = ({
                 placeholder="Amount"
                 inputClassName="!text-left !text-sm placeholder:text-[#8f9399] pr-10"
                 maxDecimals={assetToSend?.decimals ?? 2}
-                className="!px-2 !py-0 !text-sm"
+                className="!px-2 !py-0.5 !text-sm"
               />
               <Button
                 size="xs"

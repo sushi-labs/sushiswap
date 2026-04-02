@@ -69,11 +69,8 @@ export const SendDialog = ({
       } else {
         setOpen(nextOpen)
       }
-      if (nextOpen && !assetToSend && sendableAssets?.length > 0) {
-        setAssetToSend(sendableAssets[0])
-      }
     },
-    [isControlled, onOpenChange, assetToSend, sendableAssets],
+    [isControlled, onOpenChange],
   )
 
   useEffect(() => {
@@ -92,6 +89,8 @@ export const SendDialog = ({
           return
         }
       }
+      setAssetToSend(sendableAssets[0])
+      return
     }
   }, [assetToSend, sendableAssets, balanceItem])
 
@@ -178,9 +177,9 @@ export const SendDialog = ({
               placeholder="Destination Address"
               type="text"
               inputClassName="!text-left !text-sm placeholder:text-[#8f9399]"
-              className="!px-2 !py-0 !text-sm"
+              className="!px-2 !py-0.5 !text-sm"
             />
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 ">
               <div className="relative flex w-full">
                 <ValueInput
                   value={amount}
@@ -190,7 +189,7 @@ export const SendDialog = ({
                   placeholder="Amount"
                   inputClassName="!text-left !text-sm placeholder:text-[#8f9399] pr-10"
                   maxDecimals={assetToSend?.decimals ?? 2}
-                  className="!px-2 !py-0 !text-sm"
+                  className="!px-2 !py-0.5 !text-sm"
                 />
                 <Button
                   size="xs"
@@ -211,7 +210,7 @@ export const SendDialog = ({
                   setAssetToSend(asset)
                 }}
               >
-                <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[42px]  !gap-1 !border !border-[#FFFFFF1A] bg-[#FFFFFF0D]">
+                <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[41px] !py-0 !pl-4 !gap-1 !border !border-[#FFFFFF1A] bg-[#FFFFFF0D]">
                   {assetToSend
                     ? `${assetToSend?.symbol}  ${isUnifiedAccountModeEnabled ? '' : assetToSend?.marketType === 'perp' ? '(Perps)' : '(Spot)'} ${Number(assetToSend?.balance) > 0 ? ` - ${perpsNumberFormatter({ value: assetToSend?.balance })}` : ''}`
                     : 'Select Asset'}
