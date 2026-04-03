@@ -1,19 +1,21 @@
 import { approveBuilderFee } from '@nktkas/hyperliquid/api/exchange'
+import { maxBuilderFee } from '@nktkas/hyperliquid/api/info'
 import {
   createFailedToast,
   createInfoToast,
   createSuccessToast,
 } from '@sushiswap/notifications'
-import { useMutation } from '@tanstack/react-query'
-import { useMemo } from 'react'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
 import { useWalletClient } from 'wagmi'
 import {
+  BUILDER_FEE_PERPS,
+  BUILDER_FEE_PERPS_PERCENTAGE,
   BUILDER_FEE_RECEIVER,
+  BUILDER_FEE_SPOT,
   BUILDER_FEE_SPOT_PERCENTAGE,
   TOAST_AUTOCLOSE_TIME,
 } from '../config'
-import { useApprovedBuilders } from '../info'
 import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
 
@@ -22,19 +24,24 @@ export const useApproveBuilderFee = () => {
   const address = useAccount('evm')
   const { data: legalCheck } = useLegalCheck({ address })
   const {
-    data: approvedBuilders,
+    data: approvedMaxFee,
     refetch,
     isLoading: isLoadingApprovedBuilders,
-  } = useApprovedBuilders({ address })
+  } = useQuery({
+    queryKey: ['maxBuilderFee', address, BUILDER_FEE_RECEIVER],
+    queryFn: async () => {
+      if (!address) throw new Error('address is undefined')
+      return maxBuilderFee(
+        { transport: hlHttpTransport },
+        { user: address, builder: BUILDER_FEE_RECEIVER },
+      )
+    },
+    enabled: !!address,
+  })
 
-  const hasApprovedBuilder = useMemo(
-    () =>
-      approvedBuilders?.some(
-        (builder) =>
-          builder.toLowerCase() === BUILDER_FEE_RECEIVER.toLowerCase(),
-      ),
-    [approvedBuilders],
-  )
+  const requiredFee = Math.max(BUILDER_FEE_PERPS, BUILDER_FEE_SPOT)
+  const hasApprovedBuilder =
+    approvedMaxFee !== undefined && approvedMaxFee >= requiredFee
 
   const mutation = useMutation({
     mutationKey: [
@@ -53,7 +60,7 @@ export const useApproveBuilderFee = () => {
       return approveBuilderFee(
         { wallet: walletClient, transport: hlHttpTransport },
         {
-          maxFeeRate: `${BUILDER_FEE_SPOT_PERCENTAGE}%`,
+          maxFeeRate: `${Math.max(BUILDER_FEE_PERPS_PERCENTAGE, BUILDER_FEE_SPOT_PERCENTAGE)}%`,
           builder: BUILDER_FEE_RECEIVER,
         },
       ).then(() => {
