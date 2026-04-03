@@ -9,6 +9,7 @@ import { useMemo } from 'react'
 import { useAccount } from 'src/lib/wallet'
 import { useWalletClient } from 'wagmi'
 import {
+  BUILDER_FEE_PERPS_PERCENTAGE,
   BUILDER_FEE_RECEIVER,
   BUILDER_FEE_SPOT_PERCENTAGE,
   TOAST_AUTOCLOSE_TIME,
@@ -53,7 +54,7 @@ export const useApproveBuilderFee = () => {
       return approveBuilderFee(
         { wallet: walletClient, transport: hlHttpTransport },
         {
-          maxFeeRate: `${BUILDER_FEE_SPOT_PERCENTAGE}%`,
+          maxFeeRate: `${Math.max(BUILDER_FEE_PERPS_PERCENTAGE, BUILDER_FEE_SPOT_PERCENTAGE)}%`,
           builder: BUILDER_FEE_RECEIVER,
         },
       ).then(() => {
