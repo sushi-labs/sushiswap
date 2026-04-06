@@ -16,6 +16,7 @@ import {
 import { useUserSettingsState } from '../../account-management'
 import { useAssetState } from '../../trade-widget'
 import { columnBodyMeta } from '../_common/column-meta'
+import { ShareClosedPnlDialog } from './share-closed-pnl-dialog'
 
 export const TIME_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
   id: 'time',
@@ -235,6 +236,7 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     const {
       state: { hidePnl },
     } = useUserSettingsState()
+    const isCloseTrade = props.row.original.dir.includes('Close')
     const closedPnl = Number.parseFloat(props.row.original.closedPnl)
     const fees = Number.parseFloat(props.row.original.fee)
     const totalPnl = closedPnl - fees
@@ -243,15 +245,20 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
       return '-'
     }
     return (
-      <span className="font-medium lg:whitespace-nowrap">
-        {hidePnl
-          ? '***'
-          : `${perpsNumberFormatter({
-              value: totalPnl,
-              minFraxDigits: 2,
-              maxFraxDigits: 2,
-            })} USDC`}{' '}
-      </span>
+      <div className="flex items-center gap-[0.25ch] lg:whitespace-nowrap">
+        <span className="font-medium">
+          {hidePnl
+            ? '***'
+            : `${perpsNumberFormatter({
+                value: totalPnl,
+                minFraxDigits: 2,
+                maxFraxDigits: 2,
+              })} USDC`}{' '}
+        </span>
+        {isCloseTrade ? (
+          <ShareClosedPnlDialog trade={props.row.original} />
+        ) : null}
+      </div>
     )
   },
   meta: {
