@@ -35,6 +35,7 @@ const nextConfig = bundleAnalyzer({
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
+    qualities: [100, 75],
     remotePatterns: [new URL('https://cdn.sushi.com')],
   },
   webpack: (config, { webpack }) => {

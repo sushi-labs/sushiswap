@@ -15,6 +15,7 @@ import { useAssetListState } from './asset-list-provider'
 import { useAssetSelectorState } from './asset-selector-provider'
 import {
   DAY_CHANGE_COLUMN,
+  EIGHT_HOUR_FUNDING_COLUMN,
   LAST_PRICE_COLUMN,
   MARKET_CAP_COLUMN,
   SYMBOL_COLUMN,
@@ -25,6 +26,7 @@ const COLUMNS = [
   SYMBOL_COLUMN,
   LAST_PRICE_COLUMN,
   DAY_CHANGE_COLUMN,
+  EIGHT_HOUR_FUNDING_COLUMN,
   VOLUME_COLUMN,
   MARKET_CAP_COLUMN,
 ]
