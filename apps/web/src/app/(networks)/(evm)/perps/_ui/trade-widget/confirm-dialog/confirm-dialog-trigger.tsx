@@ -20,7 +20,7 @@ export const ConfirmDialogTrigger = () => {
           <PerpsChecker.Deposit size="sm" variant="perps-default">
             <PerpsChecker.EnableTrading size="sm" variant="perps-default">
               <PerpsChecker.BuilderFee size="sm" variant="perps-default">
-                <PerpsChecker.Referral size="sm" variant="perps-default">
+                <PerpsChecker.HyperReferral size="sm" variant="perps-default">
                   <PerpsChecker.TwapRunningTime
                     size="sm"
                     variant={
@@ -67,7 +67,7 @@ export const ConfirmDialogTrigger = () => {
                       </PerpsChecker.TakeStopTrigger>
                     </PerpsChecker.OrderAmount>
                   </PerpsChecker.TwapRunningTime>
-                </PerpsChecker.Referral>
+                </PerpsChecker.HyperReferral>
               </PerpsChecker.BuilderFee>
             </PerpsChecker.EnableTrading>
           </PerpsChecker.Deposit>

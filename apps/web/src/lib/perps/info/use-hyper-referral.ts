@@ -4,13 +4,13 @@ import ms from 'ms'
 import type { EvmAddress } from 'sushi/evm'
 import { hlHttpTransport } from '../transports'
 
-export const useReferral = ({
+export const useHyperReferral = ({
   address,
 }: {
   address: EvmAddress | undefined
 }) => {
   return useQuery({
-    queryKey: ['useReferral', address],
+    queryKey: ['useHyperReferral', address],
     queryFn: () => {
       if (!address) {
         throw new Error('address is undefined')

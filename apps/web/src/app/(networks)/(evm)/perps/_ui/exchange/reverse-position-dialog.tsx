@@ -230,7 +230,10 @@ export const ReversePositionDialog = ({
                 variant="perps-default"
               >
                 <PerpsChecker.BuilderFee size="default" variant="perps-default">
-                  <PerpsChecker.Referral size="default" variant="perps-default">
+                  <PerpsChecker.HyperReferral
+                    size="default"
+                    variant="perps-default"
+                  >
                     <Button
                       size="default"
                       variant={
@@ -256,7 +259,7 @@ export const ReversePositionDialog = ({
                         ? 'Reverse to Long'
                         : 'Reverse to Short'}
                     </Button>
-                  </PerpsChecker.Referral>
+                  </PerpsChecker.HyperReferral>
                 </PerpsChecker.BuilderFee>
               </PerpsChecker.EnableTrading>
             </PerpsChecker.Legal>
