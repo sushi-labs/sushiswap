@@ -24,6 +24,7 @@ export type PerpOrSpotAsset = {
   name: string
   marketType: 'perp' | 'spot'
   dex: string
+  onlyIsolated?: boolean
   tokens?: CollateralToken[]
   lastPrice: string
   midPrice?: string | null
@@ -36,6 +37,7 @@ export type PerpOrSpotAsset = {
   volume24hUsd?: string | null
   openInterestUsd: string
   maxLeverage: number | undefined
+  marginMode?: 'strictIsolated' | 'noCross'
   marketCap?: string
   isDelisted: boolean
   marginTableId: number | undefined
@@ -80,6 +82,7 @@ const formatSpotCtxs = (
       formatParseDecimals:
         tokens?.[0]?.szDecimals < 6 ? 6 : tokens?.[0]?.szDecimals,
       dex: '',
+      onlyIsolated: undefined,
       tokens,
       lastPrice: last.toString(),
       midPrice: ctx.midPx,
@@ -93,6 +96,7 @@ const formatSpotCtxs = (
       openInterestUsd: '',
       marketCap: Number.isNaN(marketCap) ? '' : marketCap.toString(),
       maxLeverage: undefined,
+      marginMode: undefined,
       isDelisted: false,
       marginTableId: undefined,
     })
@@ -152,6 +156,7 @@ export const formatPerpCtxs = (
         formatParseDecimals: u.szDecimals < 8 ? 8 : u.szDecimals,
         marketType: 'perp' as const,
         dex: dexName,
+        onlyIsolated: u.onlyIsolated,
         tokens: collateralToken ? [collateralToken] : undefined,
         lastPrice: String(last),
         midPrice: ctx.midPx,
@@ -164,6 +169,7 @@ export const formatPerpCtxs = (
         volume24hUsd: ctx.dayNtlVlm ?? ctx.dayBaseVlm,
         openInterestUsd: String(openInterestUsd),
         maxLeverage: u.maxLeverage,
+        marginMode: u.marginMode,
         marketCap: undefined,
         isDelisted: u.isDelisted ?? false,
         marginTableId: u.marginTableId,

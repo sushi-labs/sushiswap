@@ -42,7 +42,7 @@ export const IsolatedMarginInput = ({
             variant="naked"
             onValueChange={_onChange}
             value={pending ? localValue : value}
-            maxDecimals={2}
+            maxDecimals={6}
             className={classNames('!text-lg font-medium text-right')}
           />
           <TableButton onClick={setMax}>Max</TableButton>
