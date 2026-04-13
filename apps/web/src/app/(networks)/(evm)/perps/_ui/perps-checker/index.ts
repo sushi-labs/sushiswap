@@ -6,6 +6,7 @@ import { EnableTrading } from './enable-trading'
 import { HyperReferral } from './hyper-referral'
 import { Legal } from './legal'
 import { OrderAmount } from './order-amount'
+import { SimpleDeposit } from './simple-deposit'
 import { StableAmount } from './stable-amount'
 import { TakeStopTrigger } from './take-stop-trigger'
 import { TwapRunningTime } from './twap-running-time'
@@ -22,6 +23,7 @@ export type PerpsCheckerProps = {
   TakeStopTrigger: ComponentType<ButtonProps>
   HyperReferral: ComponentType<ButtonProps>
   StableAmount: ComponentType<ButtonProps>
+  SimpleDeposit: ComponentType<ButtonProps>
 }
 
 export const PerpsChecker = {
@@ -35,4 +37,5 @@ export const PerpsChecker = {
   TakeStopTrigger,
   HyperReferral,
   StableAmount,
+  SimpleDeposit,
 }

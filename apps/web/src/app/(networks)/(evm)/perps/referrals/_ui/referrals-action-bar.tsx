@@ -24,6 +24,7 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
 import { EvmChainId } from 'sushi/evm'
 import { formatUnits } from 'viem'
+import { PerpsChecker } from '~evm/perps/_ui/perps-checker'
 
 const PERPS_CLAIM_TOKEN_DECIMALS = 6
 
@@ -153,15 +154,36 @@ function RedeemCodeDialog({
             value={redeemCode}
             onChange={(event) => setRedeemCode(event.target.value)}
           />
-          <Button
+          <PerpsChecker.SimpleDeposit
             fullWidth
             variant="perps-default"
+            size="default"
             disabled={redeemCode.trim().length === 0}
-            loading={redeemCodeMutation.isPending}
-            onClick={() => void handleRedeem()}
           >
-            Redeem Code
-          </Button>
+            <PerpsChecker.EnableTrading
+              fullWidth
+              variant="perps-default"
+              size="default"
+              disabled={redeemCode.trim().length === 0}
+            >
+              <Button
+                fullWidth
+                variant="perps-default"
+                disabled={redeemCode.trim().length === 0}
+                loading={redeemCodeMutation.isPending}
+                onClick={() => void handleRedeem()}
+              >
+                Redeem Code
+              </Button>
+            </PerpsChecker.EnableTrading>
+          </PerpsChecker.SimpleDeposit>
+          <div>
+            <div className="bg-accent w-full h-[1px]" />
+            <p className="text-xs text-muted-foreground italic mt-2">
+              Before a code can be redeemed, you must deposit funds into your
+              account and enable trading.
+            </p>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
