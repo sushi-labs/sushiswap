@@ -30,7 +30,7 @@ export function InvitePage({ code }: { code: string }) {
   }, [code])
 
   return (
-    <Card className="flex min-h-[260px] items-center justify-center border-transparent !bg-[#18223B] p-4 !rounded-md text-center">
+    <Card className="flex min-h-[260px] items-center justify-center border-transparent !bg-[#0D1421] p-4 !rounded-md text-center">
       <p className="text-sm text-slate-400">Redirecting to perps...</p>
     </Card>
   )
