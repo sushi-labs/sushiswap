@@ -322,6 +322,13 @@ function ShareCodeDialog({
           <p className="text-sm text-slate-400">
             You will receive 20% of referred users&apos; fees.
           </p>
+          <div>
+            <div className="bg-accent w-full h-[1px]" />
+            <p className="text-xs text-muted-foreground italic mt-2 text-left">
+              Before a code can be redeemed, the user must have funds deposited
+              into their account and have enabled trading.
+            </p>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
