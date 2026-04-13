@@ -18,6 +18,7 @@ export function InvitePage({ code }: { code: string }) {
     undefined,
   )
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: setPendingInvite and router causes inifinte loop
   useEffect(() => {
     const normalizedCode = normalizePerpsReferralCode(code)
 
@@ -26,7 +27,7 @@ export function InvitePage({ code }: { code: string }) {
     }
 
     router.replace('/perps')
-  }, [code, router, setPendingInvite])
+  }, [code])
 
   return (
     <Card className="flex min-h-[260px] items-center justify-center border-transparent !bg-[#18223B] p-4 !rounded-md text-center">
