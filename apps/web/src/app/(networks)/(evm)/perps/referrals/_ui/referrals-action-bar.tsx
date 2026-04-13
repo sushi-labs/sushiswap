@@ -13,6 +13,7 @@ import {
 } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import {
+  PERPS_CLAIM_CHAIN_ID,
   currencyFormatter,
   useClaimPerpsRewards,
   useCreateSushiReferralCode,
@@ -241,7 +242,7 @@ function ClaimRewardsDialog({
           </div>
           <Checker.Root>
             <Checker.Network
-              chainId={EvmChainId.ARBITRUM}
+              chainId={PERPS_CLAIM_CHAIN_ID}
               variant="perps-default"
               size="default"
             >

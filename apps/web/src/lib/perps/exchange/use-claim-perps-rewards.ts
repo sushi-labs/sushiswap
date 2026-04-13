@@ -14,7 +14,7 @@ import type { SendTransactionReturnType } from 'wagmi/actions'
 import type { usePerpsClaim } from '../info/use-perps-claim'
 import { sushiReferralQueryKeys } from '../sushi-referral'
 
-const PERPS_CLAIM_CHAIN_ID = EvmChainId.ARBITRUM
+export const PERPS_CLAIM_CHAIN_ID = EvmChainId.ARBITRUM
 
 const claimAbi = [
   {
