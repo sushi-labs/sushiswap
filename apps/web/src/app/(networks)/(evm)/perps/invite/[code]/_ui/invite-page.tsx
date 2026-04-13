@@ -3,7 +3,7 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 import { Card } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import {
   PENDING_PERPS_INVITE_KEY,
   type PendingPerpsInvite,
@@ -17,16 +17,22 @@ export function InvitePage({ code }: { code: string }) {
     PENDING_PERPS_INVITE_KEY,
     undefined,
   )
+  const newInviteRef = useRef<PendingPerpsInvite | null>(null)
+
+  const newInvite = useMemo(() => {
+    const normalizedCode = normalizePerpsReferralCode(code)
+    return createPendingPerpsInvite(normalizedCode)
+  }, [code])
 
   useEffect(() => {
-    const normalizedCode = normalizePerpsReferralCode(code)
-
-    if (normalizedCode) {
-      setPendingInvite(createPendingPerpsInvite(normalizedCode))
+    if (newInviteRef.current === newInvite) {
+      return
     }
 
+    newInviteRef.current = newInvite
+    setPendingInvite(newInvite)
     router.replace('/perps')
-  }, [code, router, setPendingInvite])
+  }, [newInvite, router, setPendingInvite])
 
   return (
     <Card className="flex min-h-[260px] items-center justify-center border-transparent !bg-[#18223B] p-4 !rounded-md text-center">
