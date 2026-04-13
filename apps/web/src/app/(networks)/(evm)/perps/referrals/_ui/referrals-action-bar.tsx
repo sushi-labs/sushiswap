@@ -289,7 +289,7 @@ function ShareCodeDialog({
             <div className="text-sm text-slate-400">Your code is</div>
             <div className="mt-1 text-2xl font-medium">{primaryCode}</div>
           </div>
-          <ClipboardController>
+          <ClipboardController hideTooltip>
             {({ setCopied, isCopied }) => (
               <div className="flex justify-center">
                 <div className="inline-flex max-w-full items-center gap-2 px-3 py-2">
