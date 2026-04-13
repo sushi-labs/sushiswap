@@ -1,13 +1,7 @@
 'use client'
 
 import type { PerpsSushiReferredUser } from '@sushiswap/graph-client/data-api'
-import {
-  Button,
-  Card,
-  DataTableVirtual,
-  SkeletonBox,
-  useBreakpoint,
-} from '@sushiswap/ui'
+import { Button, Card, DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
 import type {
   ColumnDef,
   OnChangeFn,
@@ -19,6 +13,10 @@ import { useMemo, useState } from 'react'
 import { useSushiReferredUsers } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { formatUSD, shortenAddress } from 'sushi'
+import {
+  MobileTable,
+  columnBodyMeta,
+} from '~evm/perps/_ui/trade-tables/_common'
 
 const REFEREE_COLUMNS = [
   {
@@ -32,6 +30,9 @@ const REFEREE_COLUMNS = [
           {shortenAddress(props.row.original.refereeAddress)}
         </span>
       )
+    },
+    meta: {
+      body: columnBodyMeta,
     },
   },
   {
@@ -52,6 +53,9 @@ const REFEREE_COLUMNS = [
           {formatDateTime(props.row.original.linkedAt)}
         </span>
       )
+    },
+    meta: {
+      body: columnBodyMeta,
     },
   },
   {
@@ -74,6 +78,9 @@ const REFEREE_COLUMNS = [
         </span>
       )
     },
+    meta: {
+      body: columnBodyMeta,
+    },
   },
   {
     id: 'lifetimeRewards',
@@ -91,6 +98,9 @@ const REFEREE_COLUMNS = [
           {formatUSD(props.row.original.lifetimeEarnedFees)}
         </span>
       )
+    },
+    meta: {
+      body: columnBodyMeta,
     },
   },
 ] as ColumnDef<PerpsSushiReferredUser, unknown>[]
@@ -128,18 +138,9 @@ export function RefereesCard() {
             rewards.
           </p>
         </div>
-        {referredUsers.hasNextPage ? (
-          <Button
-            variant="secondary"
-            onClick={() => referredUsers.fetchNextPage()}
-            loading={referredUsers.isFetchingNextPage}
-          >
-            Load More
-          </Button>
-        ) : null}
       </div>
 
-      <div className="mt-4 hidden overflow-hidden rounded-md lg:block">
+      <div className="mt-4 rounded-md min-h-[300px]">
         {isLg ? (
           <DataTableVirtual
             state={tableState}
@@ -150,37 +151,25 @@ export function RefereesCard() {
             thClassName="!h-8"
             hideScrollbar={true}
           />
-        ) : null}
-      </div>
-
-      <div className="mt-4 flex flex-col gap-2 lg:hidden">
-        {referredUsers.isLoading ? (
-          <SkeletonBox className="h-24 w-full" />
-        ) : referees.length > 0 ? (
-          referees.map((user) => (
-            <div
-              key={`${user.refereeAddress}-${user.linkedAt}`}
-              className="rounded-md bg-[#0D1421] p-3"
-            >
-              <div className="font-medium">
-                {shortenAddress(user.refereeAddress)}
-              </div>
-              <div className="mt-2 text-sm text-slate-400">
-                Linked {formatDateTime(user.linkedAt)}
-              </div>
-              <div className="text-sm text-slate-400">
-                Last earned {formatDateLabel(user.lastEarnedAt)}
-              </div>
-              <div className="mt-2 text-sm font-medium text-white">
-                Lifetime rewards: {formatUSD(user.lifetimeEarnedFees)}
-              </div>
-            </div>
-          ))
         ) : (
-          <div className="p-6 text-center text-sm text-slate-400">
-            No referees yet.
-          </div>
+          <MobileTable
+            columns={REFEREE_COLUMNS}
+            data={referees}
+            isLoading={referredUsers.isLoading}
+            sorting={sorting}
+          />
         )}
+        <div className="mt-4 flex items-center justify-center">
+          {referredUsers.hasNextPage ? (
+            <Button
+              variant="secondary"
+              onClick={() => referredUsers.fetchNextPage()}
+              loading={referredUsers.isFetchingNextPage}
+            >
+              Load More
+            </Button>
+          ) : null}
+        </div>
       </div>
     </Card>
   )
