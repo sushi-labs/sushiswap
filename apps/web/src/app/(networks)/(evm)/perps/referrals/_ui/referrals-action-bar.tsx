@@ -63,6 +63,10 @@ export function ReferralsActionBar() {
     return BigInt(claim.data.claimableAmount) > 0n
   }, [claim.data])
 
+  const refetchOverview = async () => {
+    await overview.refetch()
+  }
+
   return (
     <div className="flex flex-col gap-2 pb-4 lg:flex-row lg:items-center lg:justify-between">
       <div>
@@ -72,6 +76,7 @@ export function ReferralsActionBar() {
         <CreateCodeButton
           overviewLoaded={Boolean(overview.data)}
           primaryCode={primaryCode}
+          refetchOverview={refetchOverview}
         />
         <RedeemCodeDialog
           overviewLoaded={Boolean(overview.data)}
@@ -91,9 +96,11 @@ export function ReferralsActionBar() {
 function CreateCodeButton({
   overviewLoaded,
   primaryCode,
+  refetchOverview,
 }: {
   overviewLoaded: boolean
   primaryCode?: string
+  refetchOverview: () => Promise<void>
 }) {
   const createCode = useCreateSushiReferralCode()
 
@@ -104,7 +111,10 @@ function CreateCodeButton({
   return (
     <Button
       variant="perps-default"
-      onClick={() => createCode.mutate()}
+      onClick={async () => {
+        await createCode.mutateAsync()
+        await refetchOverview()
+      }}
       loading={createCode.isPending}
     >
       Create Code
