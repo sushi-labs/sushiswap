@@ -3,7 +3,7 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 import { Card } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import {
   PENDING_PERPS_INVITE_KEY,
   type PendingPerpsInvite,
@@ -17,17 +17,22 @@ export function InvitePage({ code }: { code: string }) {
     PENDING_PERPS_INVITE_KEY,
     undefined,
   )
+  const newInviteRef = useRef<PendingPerpsInvite | null>(null)
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: setPendingInvite and router causes inifinte loop
-  useEffect(() => {
+  const newInvite = useMemo(() => {
     const normalizedCode = normalizePerpsReferralCode(code)
+    return createPendingPerpsInvite(normalizedCode)
+  }, [code])
 
-    if (normalizedCode) {
-      setPendingInvite(createPendingPerpsInvite(normalizedCode))
+  useEffect(() => {
+    if (newInviteRef.current === newInvite) {
+      return
     }
 
+    newInviteRef.current = newInvite
+    setPendingInvite(newInvite)
     router.replace('/perps')
-  }, [code])
+  }, [newInvite, router, setPendingInvite])
 
   return (
     <Card className="flex min-h-[260px] items-center justify-center border-transparent !bg-[#0D1421] p-4 !rounded-md text-center">

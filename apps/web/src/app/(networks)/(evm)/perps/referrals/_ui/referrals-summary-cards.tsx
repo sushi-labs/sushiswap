@@ -62,9 +62,7 @@ function SummaryCard({
       ) : (
         <div className="font-medium text-lg md:text-2xl">{value}</div>
       )}
-      <div className="h-[16px] text-xs text-slate-400 lg:h-[20px]">
-        {footer}
-      </div>
+      <div className="text-xs text-slate-400">{footer}</div>
     </Card>
   )
 }
