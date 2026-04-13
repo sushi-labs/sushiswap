@@ -36,21 +36,19 @@ const REFEREE_COLUMNS = [
     },
   },
   {
-    id: 'linkedAt',
-    header: 'Linked At',
-    accessorFn: (row: PerpsSushiReferredUser) => row.linkedAt,
+    id: 'lifetimeRewards',
+    header: 'Lifetime Rewards',
+    accessorFn: (row: PerpsSushiReferredUser) => row.lifetimeEarnedFees,
     sortingFn: (
       { original: rowA },
       { original: rowB }: { original: PerpsSushiReferredUser },
     ) => {
-      return (
-        new Date(rowA.linkedAt).getTime() - new Date(rowB.linkedAt).getTime()
-      )
+      return rowA.lifetimeEarnedFees - rowB.lifetimeEarnedFees
     },
     cell: (props: { row: { original: PerpsSushiReferredUser } }) => {
       return (
         <span className="font-medium lg:whitespace-nowrap">
-          {formatDateTime(props.row.original.linkedAt)}
+          {formatUSD(props.row.original.lifetimeEarnedFees)}
         </span>
       )
     },
@@ -83,19 +81,21 @@ const REFEREE_COLUMNS = [
     },
   },
   {
-    id: 'lifetimeRewards',
-    header: 'Lifetime Rewards',
-    accessorFn: (row: PerpsSushiReferredUser) => row.lifetimeEarnedFees,
+    id: 'linkedAt',
+    header: 'Linked At',
+    accessorFn: (row: PerpsSushiReferredUser) => row.linkedAt,
     sortingFn: (
       { original: rowA },
       { original: rowB }: { original: PerpsSushiReferredUser },
     ) => {
-      return rowA.lifetimeEarnedFees - rowB.lifetimeEarnedFees
+      return (
+        new Date(rowA.linkedAt).getTime() - new Date(rowB.linkedAt).getTime()
+      )
     },
     cell: (props: { row: { original: PerpsSushiReferredUser } }) => {
       return (
         <span className="font-medium lg:whitespace-nowrap">
-          {formatUSD(props.row.original.lifetimeEarnedFees)}
+          {formatDateTime(props.row.original.linkedAt)}
         </span>
       )
     },
