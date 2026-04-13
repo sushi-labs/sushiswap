@@ -3,9 +3,9 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 import { useEffect, useMemo } from 'react'
 import { useAccount } from 'src/lib/wallet'
-import { useAgent } from './agent'
-import { useRedeemSushiReferralCode } from './exchange'
-import { useSushiReferralOverview } from './info'
+import { useAgent } from '../agent'
+import { useRedeemSushiReferralCode } from '../exchange'
+import { useSushiReferralOverview } from '../info'
 import {
   PENDING_PERPS_INVITE_KEY,
   type PendingPerpsInvite,
@@ -13,7 +13,7 @@ import {
   canRetryPendingInvite,
   isAddressEligibleForPendingInvite,
   markPendingInviteAttempt,
-} from './pending-invite'
+} from '../pending-invite'
 
 export function AutoApplyInvite() {
   const address = useAccount('evm')

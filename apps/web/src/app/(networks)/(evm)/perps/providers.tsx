@@ -1,6 +1,6 @@
 'use client'
 
-import { AutoApplyInvite } from 'src/lib/perps/use-auto-apply-invite'
+import { AutoApplyInvite, AutoDarkMode } from 'src/lib/perps'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
 import { UserSettingsProvider } from './_ui/account-management'
 import {
@@ -19,6 +19,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <TradeTablesProvider>
             <UserProvider>
               <AutoApplyInvite />
+              <AutoDarkMode />
               <UserSettingsProvider>
                 <AssetStateProvider>{children}</AssetStateProvider>
               </UserSettingsProvider>
