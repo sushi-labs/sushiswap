@@ -157,13 +157,13 @@ function CreateCodeButton({
               await createCode.mutateAsync(
                 { code: userInputCode },
                 {
-                  onSuccess: () => {
+                  onSuccess: async () => {
                     setUserInputCode('')
                     setOpen(false)
+                    await refetchOverview()
                   },
                 },
               )
-              await refetchOverview()
             }}
             loading={createCode.isPending}
             disabled={
