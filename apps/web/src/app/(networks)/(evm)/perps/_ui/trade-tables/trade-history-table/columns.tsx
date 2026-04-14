@@ -236,7 +236,11 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     const {
       state: { hidePnl },
     } = useUserSettingsState()
-    const isCloseTrade = props.row.original.dir.includes('Close')
+    const direction = props.row.original.dir
+    const isCloseTrade =
+      direction.includes('Close') ||
+      direction.includes('Sell') ||
+      direction.includes('>')
     const closedPnl = Number.parseFloat(props.row.original.closedPnl)
     const fees = Number.parseFloat(props.row.original.fee)
     const totalPnl = closedPnl - fees

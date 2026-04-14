@@ -193,6 +193,7 @@ export function ShareClosedPnlDialog({
       <DialogContent
         variant="perps-default"
         className="!inline-grid !w-auto md:!w-auto !min-w-0 !max-h-[calc(100dvh-16px)] !max-w-[calc(100vw-16px)] overflow-y-auto p-4 md:p-5"
+        aria-describedby={undefined}
       >
         <DialogTitle className="sr-only">Share Closed Trade</DialogTitle>
 
@@ -209,8 +210,7 @@ export function ShareClosedPnlDialog({
           <div className="grid w-full gap-3 sm:grid-cols-2">
             <Button
               type="button"
-              variant="default"
-              className="!rounded-2xl"
+              variant="perps-default"
               icon={ArrowDownTrayIcon}
               loading={isSavingImage}
               onClick={() => {
@@ -221,8 +221,7 @@ export function ShareClosedPnlDialog({
             </Button>
             <Button
               type="button"
-              variant="default"
-              className="!rounded-2xl"
+              variant="perps-default"
               icon={LinkIcon}
               onClick={() => {
                 void handleCopyLink()
@@ -232,8 +231,8 @@ export function ShareClosedPnlDialog({
             </Button>
             <Button
               type="button"
-              variant="default"
-              className="!rounded-2xl sm:col-span-2"
+              variant="perps-default"
+              className="sm:col-span-2"
               icon={XIcon}
               loading={isSharingImage}
               onClick={() => {
@@ -268,7 +267,7 @@ function SharePoster({
 }: SharePosterProps): JSX.Element {
   const symbol = getTradeSymbol(trade)
   const leverageMultiplier = useLeverageMultiplier(trade)
-  const direction = trade.side === 'A' ? 'SHORT' : 'LONG'
+  const direction = trade.side === 'B' ? 'SHORT' : 'LONG'
   const closeAction = trade.side === 'A' ? 'BUY' : 'SELL'
   const closePrice = Number.parseFloat(trade.px)
   const size = Number.parseFloat(trade.sz)
@@ -289,7 +288,7 @@ function SharePoster({
   })}%`
   const badgeText = leverageMultiplier
     ? `${direction} ${leverageMultiplier}X`
-    : direction
+    : 'SPOT'
 
   useEffect(() => {
     let cancelled = false
@@ -312,6 +311,7 @@ function SharePoster({
         badgeText,
         closeAction,
         isPositive,
+        isLong: direction === 'LONG',
         largeValue,
         symbol,
         sushiIcon,
@@ -332,6 +332,7 @@ function SharePoster({
     posterRef,
     symbol,
     referralCode,
+    direction,
   ])
 
   return (
@@ -418,6 +419,7 @@ type PosterCanvasData = {
   symbol: string
   sushiIcon: HTMLImageElement
   referralCode?: string
+  isLong: boolean
 }
 
 function drawPosterCanvas(
@@ -440,13 +442,22 @@ function drawPosterCanvas(
     POSTER_WIDTH,
     POSTER_HEIGHT,
   )
-  backgroundGradient.addColorStop(0.17, 'rgba(52, 211, 153, 0.2)')
-  backgroundGradient.addColorStop(0.76, 'rgba(30, 30, 30, 0.2)')
-  backgroundGradient.addColorStop(1, 'rgba(16, 23, 40, 0.2)')
+  backgroundGradient.addColorStop(
+    0.17,
+    data.isPositive ? 'rgba(52, 211, 153, 0.2)' : 'rgba(251, 113, 133, 0.2)',
+  )
+  backgroundGradient.addColorStop(
+    0.76,
+    data.isPositive ? 'rgba(30, 30, 30, 0.2)' : 'rgba(30, 20, 22, 0.2)',
+  )
+  backgroundGradient.addColorStop(
+    1,
+    data.isPositive ? 'rgba(16, 23, 40, 0.2)' : 'rgba(40, 16, 20, 0.2)',
+  )
   context.fillStyle = backgroundGradient
   context.fillRect(0, 0, POSTER_WIDTH, POSTER_HEIGHT)
 
-  drawPosterBadge(context, data.badgeText)
+  drawPosterBadge(context, data.badgeText, data.isPositive, data.isLong)
   drawPosterGlowSquares(context, data.isPositive)
   drawPosterHeader(context, data.symbol, data.closeAction)
   drawPosterPercent(context, data.largeValue, data.isPositive)
@@ -459,6 +470,8 @@ function drawPosterCanvas(
 function drawPosterBadge(
   context: CanvasRenderingContext2D,
   badgeText: string,
+  isPositive: boolean,
+  isLong: boolean,
 ): void {
   context.save()
   const badgeX = 132.025
@@ -470,9 +483,9 @@ function drawPosterBadge(
   const badgeWidth =
     context.measureText(badgeText).width + horizontalPadding * 2
 
-  context.fillStyle = '#F87171'
+  context.fillStyle = isPositive || isLong ? '#34D399' : '#FB7185'
   fillRoundedRect(context, badgeX, badgeY, badgeWidth, badgeHeight, 9.365)
-  context.fillStyle = '#F5D2D9'
+  context.fillStyle = 'white'
   context.textBaseline = 'middle'
   context.fillText(
     badgeText,
@@ -498,11 +511,14 @@ function drawPosterGlowSquares(
     { left: 169.556, top: squareSize, alpha: 0.4 },
   ]
 
+  const maxTop = squareSize * 2
+
   for (const square of squares) {
+    const top = isPositive ? square.top : maxTop - square.top
     drawGlowSquare(
       context,
-      glowOriginX + square.left,
-      glowOriginY + square.top,
+      glowOriginX + square.left - 10,
+      glowOriginY + top,
       baseColor,
       square.alpha,
     )
@@ -534,13 +550,26 @@ function drawPosterHeader(
   context.fillStyle = '#FFFFFF'
   context.textBaseline = 'alphabetic'
   context.font = '700 62px Inter, sans-serif'
-  context.fillText(symbol, 697.893, 640)
+
+  const startX = 697.893
   const symbolWidth = context.measureText(symbol).width
-  context.fillText('|', 697.893 + symbolWidth + 20, 640)
-  context.fillText(closeAction, 697.893 + symbolWidth + 58, 640)
+  const separatorWidth = context.measureText('|').width
+  const closeActionWidth = context.measureText(closeAction).width
+  const totalWidth = symbolWidth + 80 + separatorWidth + 38 + closeActionWidth
+
+  const maxWidth = context.canvas.width - startX // 20px right padding
+  const scale = totalWidth > maxWidth ? maxWidth / totalWidth : 1
+
+  context.save()
+  context.translate(startX, 640)
+  context.scale(scale, 1)
+  context.fillText(symbol, 0, 0)
+  context.fillText('|', symbolWidth + 20, 0)
+  context.fillText(closeAction, symbolWidth + 58, 0)
+  context.restore()
+
   context.restore()
 }
-
 function drawPosterPercent(
   context: CanvasRenderingContext2D,
   largeValue: string,
@@ -617,8 +646,9 @@ function createRoundedRectPath(
 
 function getTradeSymbol(trade: TradeHistoryItemType): string {
   return (
+    trade?.token0Symbol ||
     trade.symbol?.split('-')?.[0] ||
-    trade.token0Symbol ||
+    trade.symbol?.split('/')?.[0] ||
     trade.cleanedCoin ||
     trade.coin
   )
