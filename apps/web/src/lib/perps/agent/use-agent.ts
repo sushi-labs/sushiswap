@@ -16,6 +16,7 @@ import {
 } from 'viem/accounts'
 import { useWalletClient } from 'wagmi'
 import { useAccount } from '../../wallet'
+import { TOAST_AUTOCLOSE_TIME } from '../config'
 import { useExtraAgents } from '../info'
 import { hlHttpTransport } from '../transports'
 
@@ -83,6 +84,7 @@ export const useAgent = () => {
         type: 'burn',
         timestamp: ts,
         groupTimestamp: ts,
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
 
       return { ts, type }
@@ -107,6 +109,7 @@ export const useAgent = () => {
         type: 'burn',
         timestamp: ctx.ts,
         groupTimestamp: ctx.ts,
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
     },
 
@@ -127,6 +130,7 @@ export const useAgent = () => {
         type: 'burn',
         timestamp: ctx?.ts ?? Date.now(),
         groupTimestamp: ctx?.ts ?? Date.now(),
+        autoClose: TOAST_AUTOCLOSE_TIME,
       })
     },
   })
