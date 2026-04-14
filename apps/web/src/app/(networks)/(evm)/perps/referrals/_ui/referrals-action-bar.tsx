@@ -23,7 +23,6 @@ import {
 } from 'src/lib/perps'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
-import { EvmChainId } from 'sushi/evm'
 import { formatUnits } from 'viem'
 import { PerpsChecker } from '~evm/perps/_ui/perps-checker'
 
@@ -94,6 +93,8 @@ export function ReferralsActionBar() {
   )
 }
 
+const REFERRAL_REGEX = /^[A-Z0-9-]{4,20}$/
+
 function CreateCodeButton({
   overviewLoaded,
   primaryCode,
@@ -104,22 +105,62 @@ function CreateCodeButton({
   refetchOverview: () => Promise<void>
 }) {
   const createCode = useCreateSushiReferralCode()
+  const [open, setOpen] = useState(false)
+  const [userInputCode, setUserInputCode] = useState('')
 
   if (!overviewLoaded || primaryCode) {
     return null
   }
 
   return (
-    <Button
-      variant="perps-default"
-      onClick={async () => {
-        await createCode.mutateAsync()
-        await refetchOverview()
-      }}
-      loading={createCode.isPending}
-    >
-      Create Code
-    </Button>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="perps-default">Create Code</Button>
+      </DialogTrigger>
+      <DialogContent variant="perps-default" className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Create code</DialogTitle>
+          <DialogDescription>
+            Create a Sushi referral code for this wallet. This flow is separate
+            from Hyperliquid&apos;s referral system.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-3">
+          <input
+            className="h-10 w-full rounded-md border border-slate-700 bg-[#0D1421] px-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-[#629FFF]"
+            placeholder="SUSHI-ROLL"
+            value={userInputCode}
+            onChange={(event) =>
+              setUserInputCode(event.target.value?.toUpperCase())
+            }
+            pattern="[A-Z0-9-]{4,20}"
+          />
+          <Button
+            variant="perps-default"
+            fullWidth
+            onClick={async () => {
+              await createCode.mutateAsync()
+              await refetchOverview()
+            }}
+            loading={createCode.isPending}
+            disabled={!REFERRAL_REGEX.test(userInputCode)}
+          >
+            Create Code
+          </Button>
+          <div>
+            <div className="bg-accent w-full h-[1px]" />
+            <p className="text-xs text-muted-foreground italic mt-2">
+              This code can only be created once and cannot be changed, so
+              choose wisely!
+            </p>
+            <p className="text-xs text-muted-foreground italic mt-2">
+              Code must be 4-20 characters and can only include uppercase
+              letters, numbers, and hyphens.
+            </p>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -140,6 +181,7 @@ function RedeemCodeDialog({
     setRedeemCode('')
     setOpen(false)
   }
+  const isValidCode = REFERRAL_REGEX.test(redeemCode.trim().toUpperCase())
 
   if (!overviewLoaded || hasRedeemedReferralCode) {
     return null
@@ -160,27 +202,30 @@ function RedeemCodeDialog({
         </DialogHeader>
         <div className="space-y-3">
           <input
-            className="h-10 w-full rounded-md border border-slate-700 bg-[#0D1421] px-3 text-sm uppercase text-white outline-none placeholder:text-slate-500 focus:border-[#629FFF]"
+            className="h-10 w-full rounded-md border border-slate-700 bg-[#0D1421] px-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-[#629FFF]"
             placeholder="ABC123"
             value={redeemCode}
-            onChange={(event) => setRedeemCode(event.target.value)}
+            onChange={(event) =>
+              setRedeemCode(event.target.value.toUpperCase())
+            }
+            pattern="[A-Z0-9-]{4,20}"
           />
           <PerpsChecker.SimpleDeposit
             fullWidth
             variant="perps-default"
             size="default"
-            disabled={redeemCode.trim().length === 0}
+            disabled={!isValidCode}
           >
             <PerpsChecker.EnableTrading
               fullWidth
               variant="perps-default"
               size="default"
-              disabled={redeemCode.trim().length === 0}
+              disabled={!isValidCode}
             >
               <Button
                 fullWidth
                 variant="perps-default"
-                disabled={redeemCode.trim().length === 0}
+                disabled={!isValidCode}
                 loading={redeemCodeMutation.isPending}
                 onClick={() => void handleRedeem()}
               >
