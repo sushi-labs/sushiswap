@@ -132,23 +132,24 @@ function CreateCodeButton({
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
-          <input
-            className="h-10 w-full rounded-md border border-slate-700 bg-[#0D1421] px-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-[#629FFF]"
-            placeholder="SUSHI-ROLL"
-            value={userInputCode}
-            onChange={(event) =>
-              setUserInputCode(event.target.value?.toUpperCase())
-            }
-            pattern={REFERRAL_REGEX_FOR_INPUT}
-          />
-          {!isReferralAvailable &&
-          !isLoading &&
-          REFERRAL_REGEX.test(debouncedUserInputCode) ? (
-            <p className="text-sm text-red-500">
-              This referral code is not available. Please choose a different
-              code.
-            </p>
-          ) : null}
+          <div className="space-y-1">
+            <input
+              className="h-10 w-full rounded-md border border-slate-700 bg-[#0D1421] px-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-[#629FFF]"
+              placeholder="SUSHI-ROLL"
+              value={userInputCode}
+              onChange={(event) =>
+                setUserInputCode(event.target.value?.toUpperCase())
+              }
+              pattern={REFERRAL_REGEX_FOR_INPUT}
+            />
+            {!isReferralAvailable &&
+            !isLoading &&
+            REFERRAL_REGEX.test(debouncedUserInputCode) ? (
+              <p className="text-xs text-red-500">
+                This referral code already exists.
+              </p>
+            ) : null}
+          </div>
           <Button
             variant="perps-default"
             fullWidth
