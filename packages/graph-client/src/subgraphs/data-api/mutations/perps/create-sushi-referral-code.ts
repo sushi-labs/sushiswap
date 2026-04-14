@@ -7,9 +7,9 @@ import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
 export const CreatePerpsSushiReferralCodeMutation = graphql(
   `
-    mutation CreatePerpsSushiReferralCode($address: EvmAddress!) {
+    mutation CreatePerpsSushiReferralCode($address: EvmAddress!, $code: String) {
       perps {
-        createReferralCode(address: $address) {
+        createReferralCode(address: $address, code: $code) {
           id
           code
           ownerAddress

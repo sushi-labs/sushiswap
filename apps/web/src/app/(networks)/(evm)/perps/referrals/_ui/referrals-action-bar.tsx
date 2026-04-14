@@ -1,6 +1,7 @@
 'use client'
 
 import { CheckIcon, DocumentDuplicateIcon } from '@heroicons/react/24/outline'
+import { useDebounce } from '@sushiswap/hooks'
 import {
   Button,
   ClipboardController,
@@ -14,9 +15,12 @@ import {
 import { useMemo, useState } from 'react'
 import {
   PERPS_CLAIM_CHAIN_ID,
+  REFERRAL_REGEX,
+  REFERRAL_REGEX_FOR_INPUT,
   currencyFormatter,
   useClaimPerpsRewards,
   useCreateSushiReferralCode,
+  useIsSushiReferralAvailable,
   usePerpsClaim,
   useRedeemSushiReferralCode,
   useSushiReferralOverview,
@@ -93,8 +97,6 @@ export function ReferralsActionBar() {
   )
 }
 
-const REFERRAL_REGEX = /^[A-Z0-9-]{4,20}$/
-
 function CreateCodeButton({
   overviewLoaded,
   primaryCode,
@@ -107,6 +109,10 @@ function CreateCodeButton({
   const createCode = useCreateSushiReferralCode()
   const [open, setOpen] = useState(false)
   const [userInputCode, setUserInputCode] = useState('')
+  const debouncedUserInputCode = useDebounce(userInputCode, 250)
+  const { data: isReferralAvailable, isLoading } = useIsSushiReferralAvailable({
+    code: debouncedUserInputCode,
+  })
 
   if (!overviewLoaded || primaryCode) {
     return null
@@ -133,17 +139,27 @@ function CreateCodeButton({
             onChange={(event) =>
               setUserInputCode(event.target.value?.toUpperCase())
             }
-            pattern="[A-Z0-9-]{4,20}"
+            pattern={REFERRAL_REGEX_FOR_INPUT}
           />
+          {!isReferralAvailable &&
+          !isLoading &&
+          REFERRAL_REGEX.test(debouncedUserInputCode) ? (
+            <p className="text-sm text-red-500">
+              This referral code is not available. Please choose a different
+              code.
+            </p>
+          ) : null}
           <Button
             variant="perps-default"
             fullWidth
             onClick={async () => {
-              await createCode.mutateAsync()
+              await createCode.mutateAsync({ code: userInputCode })
               await refetchOverview()
             }}
             loading={createCode.isPending}
-            disabled={!REFERRAL_REGEX.test(userInputCode)}
+            disabled={
+              !REFERRAL_REGEX.test(userInputCode) || !isReferralAvailable
+            }
           >
             Create Code
           </Button>
@@ -208,7 +224,7 @@ function RedeemCodeDialog({
             onChange={(event) =>
               setRedeemCode(event.target.value.toUpperCase())
             }
-            pattern="[A-Z0-9-]{4,20}"
+            pattern={REFERRAL_REGEX_FOR_INPUT}
           />
           <PerpsChecker.SimpleDeposit
             fullWidth
@@ -324,7 +340,7 @@ function ShareCodeDialog({
       <DialogTrigger asChild>
         <Button variant="perps-secondary">Share Code</Button>
       </DialogTrigger>
-      <DialogContent variant="perps-default" className="max-w-md">
+      <DialogContent variant="perps-default" className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="w-full text-center">Share code</DialogTitle>
           <DialogDescription />
