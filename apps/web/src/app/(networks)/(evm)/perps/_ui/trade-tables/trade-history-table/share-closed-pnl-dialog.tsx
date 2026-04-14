@@ -20,8 +20,13 @@ import {
   useRef,
   useState,
 } from 'react'
-import { type TradeHistoryItemType, perpsNumberFormatter } from 'src/lib/perps'
+import {
+  type TradeHistoryItemType,
+  perpsNumberFormatter,
+  useSushiReferralOverview,
+} from 'src/lib/perps'
 import { useUserPositions } from 'src/lib/perps/user/use-user-positions'
+import { useAccount } from 'src/lib/wallet'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { TableButton } from '../../_common'
 
@@ -57,8 +62,9 @@ function useLeverageMultiplier(
   return leverage
 }
 
-const REFERRAL_CODE: string | undefined = undefined
 const SHARE_URL = 'https://www.sushi.com/perps'
+const getInviteUrl = (referralCode: string) =>
+  `https://www.sushi.com/perps/invite/${referralCode.toUpperCase()}`
 
 type ShareClosedPnlDialogProps = {
   trade: TradeHistoryItemType
@@ -72,12 +78,22 @@ export function ShareClosedPnlDialog({
   const [isSavingImage, setIsSavingImage] = useState(false)
   const [isSharingImage, setIsSharingImage] = useState(false)
   const posterRef = useRef<HTMLCanvasElement | null>(null)
+  const address = useAccount('evm')
+  const { data: overview } = useSushiReferralOverview({ address })
+
+  const referralCode = useMemo(() => {
+    if (!overview) return undefined
+    return overview?.primaryReferralCode?.code
+  }, [overview])
 
   const totalPnl = useMemo(() => {
     return Number.parseFloat(trade.closedPnl) - Number.parseFloat(trade.fee)
   }, [trade.closedPnl, trade.fee])
 
-  const shareText = useMemo(() => getDefaultShareText(trade), [trade])
+  const shareText = useMemo(
+    () => getDefaultShareText(trade, referralCode),
+    [trade, referralCode],
+  )
 
   useEffect(() => {
     if (!open) {
@@ -87,7 +103,9 @@ export function ShareClosedPnlDialog({
 
   async function handleCopyLink(): Promise<void> {
     try {
-      await navigator.clipboard.writeText(SHARE_URL)
+      await navigator.clipboard.writeText(
+        referralCode ? getInviteUrl(referralCode) : SHARE_URL,
+      )
       setCopied(true)
     } catch {
       createErrorToast('Failed to copy the current page URL.', false)
@@ -125,27 +143,28 @@ export function ShareClosedPnlDialog({
       const file = new File([blob], getShareImageFileName(trade), {
         type: 'image/png',
       })
-
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
       if (
         navigator.share &&
         navigator.canShare &&
-        navigator.canShare({ files: [file] })
+        navigator.canShare({ files: [file] }) &&
+        isMobile
       ) {
         await navigator.share({
           files: [file],
           text: shareText,
           title: 'Share closed trade',
-          url: SHARE_URL,
+          url: referralCode ? getInviteUrl(referralCode) : SHARE_URL,
         })
         return
       }
 
-      const url = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(SHARE_URL)}`
+      const url = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(referralCode ? getInviteUrl(referralCode) : SHARE_URL)}`
       window.open(url, '_blank', 'noopener,noreferrer')
-      createErrorToast(
-        'This browser cannot attach images directly to X. Opened the X composer with text and link instead.',
-        false,
-      )
+      // createErrorToast(
+      //   'This browser cannot attach images directly to X. Opened the X composer with text and link instead.',
+      //   false,
+      // )
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') {
         return
@@ -183,6 +202,7 @@ export function ShareClosedPnlDialog({
               posterRef={posterRef}
               trade={trade}
               totalPnl={totalPnl}
+              referralCode={referralCode}
             />
           </div>
 
@@ -237,12 +257,14 @@ type SharePosterProps = {
   posterRef: RefObject<HTMLCanvasElement | null>
   trade: TradeHistoryItemType
   totalPnl: number
+  referralCode?: string
 }
 
 function SharePoster({
   posterRef,
   trade,
   totalPnl,
+  referralCode,
 }: SharePosterProps): JSX.Element {
   const symbol = getTradeSymbol(trade)
   const leverageMultiplier = useLeverageMultiplier(trade)
@@ -293,6 +315,7 @@ function SharePoster({
         largeValue,
         symbol,
         sushiIcon,
+        referralCode,
       })
     }
 
@@ -301,7 +324,15 @@ function SharePoster({
     return () => {
       cancelled = true
     }
-  }, [badgeText, closeAction, isPositive, largeValue, posterRef, symbol])
+  }, [
+    badgeText,
+    closeAction,
+    isPositive,
+    largeValue,
+    posterRef,
+    symbol,
+    referralCode,
+  ])
 
   return (
     <div
@@ -320,11 +351,14 @@ function SharePoster({
   )
 }
 
-function getDefaultShareText(trade: TradeHistoryItemType): string {
+function getDefaultShareText(
+  trade: TradeHistoryItemType,
+  referralCode?: string,
+): string {
   const baseText = `Trade $${getTradeSymbol(trade)} perps on @SushiSwap`
 
-  return REFERRAL_CODE
-    ? `${baseText} using my referral code ${REFERRAL_CODE}`
+  return referralCode
+    ? `${baseText} using my referral code ${referralCode}`
     : baseText
 }
 
@@ -383,6 +417,7 @@ type PosterCanvasData = {
   largeValue: string
   symbol: string
   sushiIcon: HTMLImageElement
+  referralCode?: string
 }
 
 function drawPosterCanvas(
@@ -415,7 +450,7 @@ function drawPosterCanvas(
   drawPosterGlowSquares(context, data.isPositive)
   drawPosterHeader(context, data.symbol, data.closeAction)
   drawPosterPercent(context, data.largeValue, data.isPositive)
-  drawPosterLink(context)
+  drawPosterLink(context, data.referralCode)
   drawPosterBrand(context, data.sushiIcon)
 
   context.restore()
@@ -519,18 +554,21 @@ function drawPosterPercent(
   context.restore()
 }
 
-function drawPosterLink(context: CanvasRenderingContext2D): void {
+function drawPosterLink(
+  context: CanvasRenderingContext2D,
+  referralCode?: string,
+): void {
   context.save()
   context.textBaseline = 'top'
   context.fillStyle = '#97A3B7'
   context.font = '400 37px Inter, sans-serif'
   context.fillText(
-    REFERRAL_CODE ? 'Referral code:' : 'Trade on:',
-    88.893,
+    referralCode ? 'Referral code:' : 'Trade on:',
+    referralCode ? 88 : 86,
     977.555,
   )
   context.fillStyle = '#FFFFFF'
-  context.fillText(REFERRAL_CODE ?? SHARE_URL, 88.893, 1030.555)
+  context.fillText(referralCode ?? SHARE_URL, 88.893, 1030.555)
   context.restore()
 }
 
