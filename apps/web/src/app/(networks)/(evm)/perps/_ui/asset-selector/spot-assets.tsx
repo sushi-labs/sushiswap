@@ -126,7 +126,7 @@ export const SpotAssets = () => {
       </TabsList>
       <TabsContent
         value={selectedTab}
-        className="max-h-[calc(80vh-215px)] hide-scrollbar md:max-h-[calc(80vh-240px)] overflow-auto max-w-[calc(100vw-30px)]"
+        className="max-h-[calc(80vh-215px)] hide-scrollbar lg:min-h-[410px] lg:max-h-[410px] overflow-auto max-w-[calc(100vw-30px)]"
       >
         <DataTableVirtual
           state={state}

@@ -45,7 +45,7 @@ export const AssetTabs = () => {
           selectedTab !== 'HIP-3' &&
             selectedTab !== 'spot' &&
             selectedTab !== 'Tradfi'
-            ? 'max-h-[calc(80vh-200px)] hide-scrollbar overflow-auto max-w-[calc(100vw-30px)]'
+            ? 'max-h-[calc(80vh-200px)] hide-scrollbar lg:min-h-[450px] lg:max-h-[450px] overflow-auto max-w-[calc(100vw-30px)]'
             : '',
         )}
       >
