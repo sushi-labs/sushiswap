@@ -127,7 +127,7 @@ export const HIP3Assets = () => {
       </TabsList>
       <TabsContent
         value={selectedTab}
-        className="max-h-[calc(80vh-215px)] md:max-h-[calc(80vh-240px)] overflow-auto hide-scrollbar max-w-[calc(100vw-30px)]"
+        className="max-h-[calc(80vh-215px)] lg:min-h-[410px] lg:max-h-[410px] overflow-auto hide-scrollbar max-w-[calc(100vw-30px)]"
       >
         <DataTableVirtual
           state={state}

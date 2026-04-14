@@ -77,7 +77,7 @@ export const AssetSelector = () => {
           </Button>
         )}
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="flex flex-col gap-2 p-3 !backdrop-blur-2xl !border-2 lg:min-h-[500px] lg:max-h-[500px] !max-w-[calc(100vw-15px)] !border-[#7D95A9]">
+      <DropdownMenuContent className="flex flex-col gap-2 p-3 !backdrop-blur-2xl !border-2 !max-w-[calc(100vw-15px)] !border-[#7D95A9]">
         <SearchBar />
         <AssetTabs />
       </DropdownMenuContent>
