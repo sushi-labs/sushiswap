@@ -11,7 +11,7 @@
     "enable-remote-caching": "turbo link",
     "format": "pnpm sort && biome format . --write",
     "generate": "dotenv -- turbo run generate --no-cache --parallel --continue",
-    "preinstall": "pnpx only-allow pnpm",
+    "preinstall": "node scripts/require-trading-view-gh-read-token.js && pnpx only-allow pnpm",
     "postinstall": "node scripts/validate-deps.js",
     "lint": "biome check .",
     "lint:fix": "biome check . --apply",

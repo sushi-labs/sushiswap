@@ -110,6 +110,9 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     'sushi.perps.active-asset',
     'BTC',
   )
+  const [lastUsedLeverages, setLastUsedLeverages] = useLocalStorage<
+    Record<string, number>
+  >('hyperliquid.last_used_leverage', {})
   const [tradeType, setTradeType] = useState<TradeType>('market')
   const [tradeSide, setTradeSide] = useState<TradeSideType>('long')
   const [reduceOnly, _setReduceOnly] = useState(false)
@@ -290,6 +293,23 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     () => activeAssetDataQuery?.data?.leverage?.type ?? 'cross',
     [activeAssetDataQuery?.data?.leverage?.type],
   )
+
+  // Write leverage to localStorage when it changes
+  useEffect(() => {
+    const leverage = activeAssetDataQuery?.data?.leverage?.value
+    if (!activeAsset || leverage === undefined) return
+    if (lastUsedLeverages[activeAsset] === leverage) return
+
+    setLastUsedLeverages((prev) => ({
+      ...prev,
+      [activeAsset]: leverage,
+    }))
+  }, [
+    activeAsset,
+    activeAssetDataQuery?.data?.leverage?.value,
+    lastUsedLeverages,
+    setLastUsedLeverages,
+  ])
 
   const setReduceOnly = useCallback(
     (_reduceOnly: boolean) => {
