@@ -154,7 +154,15 @@ function CreateCodeButton({
             variant="perps-default"
             fullWidth
             onClick={async () => {
-              await createCode.mutateAsync({ code: userInputCode })
+              await createCode.mutateAsync(
+                { code: userInputCode },
+                {
+                  onSuccess: () => {
+                    setUserInputCode('')
+                    setOpen(false)
+                  },
+                },
+              )
               await refetchOverview()
             }}
             loading={createCode.isPending}
