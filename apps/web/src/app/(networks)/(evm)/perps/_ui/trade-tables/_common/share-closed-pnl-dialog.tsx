@@ -198,10 +198,10 @@ export function ShareClosedPnlDialog({
   )
 
   useEffect(() => {
-    if (!open) {
+    if (!resolvedOpen) {
       setCopied(false)
     }
-  }, [open])
+  }, [resolvedOpen])
 
   async function handleCopyLink(): Promise<void> {
     try {
@@ -216,6 +216,7 @@ export function ShareClosedPnlDialog({
 
   async function handleSaveImage(): Promise<void> {
     const posterNode = posterRef.current
+
     if (!posterNode) {
       createErrorToast('Unable to find the share image to export.', false)
       return
@@ -223,9 +224,12 @@ export function ShareClosedPnlDialog({
 
     setIsSavingImage(true)
     try {
+      console.log('canvas dimensions:', posterNode.width, posterNode.height)
       const blob = await exportPosterBlob(posterNode)
+      console.log('blob:', blob)
       downloadBlob(blob, getShareImageFileName(normalizedTrade))
-    } catch {
+    } catch (e) {
+      console.error('export failed:', e) // <-- was silently swallowing the error
       createErrorToast('Failed to export the share image.', false)
     } finally {
       setIsSavingImage(false)
@@ -700,9 +704,10 @@ function drawPosterHeader(
   }
 
   const img = new Image()
+  img.crossOrigin = 'anonymous'
   img.onload = () => drawText(true, img)
   img.onerror = () => drawText(false)
-  img.src = imageUrl
+  img.src = `/api/proxy-image?url=${encodeURIComponent(imageUrl)}` //need to proxy the image. we need to use anonymous cross-origin requests to avoid tainting the canvas
 }
 
 function drawPosterPercent(
