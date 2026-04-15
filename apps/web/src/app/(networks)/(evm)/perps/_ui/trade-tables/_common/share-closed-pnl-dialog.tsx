@@ -593,14 +593,26 @@ function drawPosterBadge(
   const badgeHeight = 51.509
   const horizontalPadding = 12
 
-  context.font = '500 32.778px "Lufga", Inter, sans-serif'
+  context.font = '700 32.778px "Lufga", Inter, sans-serif'
   const badgeWidth =
     context.measureText(badgeText).width + horizontalPadding * 2
 
-  context.fillStyle = isLong ? '#34D399' : '#FB7185'
-  fillRoundedRect(context, badgeX, badgeY, badgeWidth, badgeHeight, 9.365)
+  context.fillStyle = isLong
+    ? 'rgba(52, 211, 153, 0.6)'
+    : 'rgba(251, 113, 133, 0.6)'
+  fillRoundedRect(
+    context,
+    badgeX,
+    badgeY,
+    badgeWidth,
+    badgeHeight,
+    9.365,
+    isLong ? '#34D399' : '#FB7185',
+    2,
+  )
   context.fillStyle = 'white'
   context.textBaseline = 'middle'
+
   context.fillText(
     badgeText,
     badgeX + horizontalPadding,
@@ -759,10 +771,17 @@ function fillRoundedRect(
   width: number,
   height: number,
   radius: number,
+  strokeStyle?: string,
+  lineWidth = 1,
 ): void {
   context.beginPath()
   createRoundedRectPath(context, x, y, width, height, radius)
   context.fill()
+  if (strokeStyle) {
+    context.strokeStyle = strokeStyle
+    context.lineWidth = lineWidth
+    context.stroke()
+  }
 }
 
 function createRoundedRectPath(
