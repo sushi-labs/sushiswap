@@ -142,7 +142,10 @@ export const CloseAllPositionsDialog = ({
           <PerpsChecker.Legal size="default" variant="perps-default">
             <PerpsChecker.EnableTrading size="default" variant="perps-default">
               <PerpsChecker.BuilderFee size="default" variant="perps-default">
-                <PerpsChecker.Referral size="default" variant="perps-default">
+                <PerpsChecker.HyperReferral
+                  size="default"
+                  variant="perps-default"
+                >
                   <Button
                     size="default"
                     variant="perps-default"
@@ -164,7 +167,7 @@ export const CloseAllPositionsDialog = ({
                       ? 'Market Close'
                       : 'Limit Close at Mid'}
                   </Button>
-                </PerpsChecker.Referral>
+                </PerpsChecker.HyperReferral>
               </PerpsChecker.BuilderFee>
             </PerpsChecker.EnableTrading>
           </PerpsChecker.Legal>

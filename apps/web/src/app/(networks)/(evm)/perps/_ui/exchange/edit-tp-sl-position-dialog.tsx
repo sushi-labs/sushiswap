@@ -471,7 +471,7 @@ export const EditTpSlPositionDialog = ({
                       size="default"
                       variant="perps-default"
                     >
-                      <PerpsChecker.Referral
+                      <PerpsChecker.HyperReferral
                         size="default"
                         variant="perps-default"
                       >
@@ -494,7 +494,7 @@ export const EditTpSlPositionDialog = ({
                         >
                           Confirm
                         </Button>
-                      </PerpsChecker.Referral>
+                      </PerpsChecker.HyperReferral>
                     </PerpsChecker.BuilderFee>
                   </PerpsChecker.EnableTrading>
                 </PerpsChecker.Legal>

@@ -2,7 +2,6 @@
 
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
 import { ArrowDownTrayIcon, LinkIcon } from '@heroicons/react/24/outline'
-import { useLocalStorage } from '@sushiswap/hooks'
 import { createErrorToast } from '@sushiswap/notifications'
 import {
   Button,
@@ -14,80 +13,201 @@ import {
 import { XIcon } from '@sushiswap/ui/icons/XIcon'
 import {
   type JSX,
+  type ReactNode,
   type RefObject,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from 'react'
-import { type TradeHistoryItemType, perpsNumberFormatter } from 'src/lib/perps'
-import { useUserPositions } from 'src/lib/perps/user/use-user-positions'
-import { useAssetListState } from '~evm/perps/_ui/asset-selector'
+import {
+  type BalanceItemType,
+  type TradeHistoryItemType,
+  type TwapFillHistoryItemType,
+  type UserPositionsItemType,
+  getHyperliquidCoinIconUrl,
+  perpsNumberFormatter,
+  useActiveAssetData,
+  useSushiReferralOverview,
+} from 'src/lib/perps'
+import { useAccount } from 'src/lib/wallet'
 import { TableButton } from '../../_common'
+import { useAssetListState } from '../../asset-selector'
 
-function useLeverageMultiplier(
-  trade: TradeHistoryItemType,
-): number | undefined {
-  const { data: positions } = useUserPositions()
-  const {
-    state: { assetListQuery },
-  } = useAssetListState()
-  const [lastUsedLeverages] = useLocalStorage<Record<string, number>>(
-    'hyperliquid.last_used_leverage',
-    {},
-  )
-  const asset = assetListQuery.data?.get(trade.coin)
+const SHARE_URL = 'https://www.sushi.com/perps'
+const getInviteUrl = (referralCode: string) =>
+  `https://www.sushi.com/perps/invite/${referralCode.toUpperCase()}`
 
-  const leverage = useMemo(() => {
-    if (positions) {
-      const position = positions.find(
-        (p) =>
-          p.position.coin === trade.coin &&
-          (trade.perpsDex == null || p.perpsDex === trade.perpsDex),
-      )
-      if (position?.position.leverage?.value != null) {
-        return position.position.leverage.value
-      }
-    }
+type AnyTradeType =
+  | TradeHistoryItemType
+  | BalanceItemType
+  | UserPositionsItemType
+  | TwapFillHistoryItemType
 
-    const stored = lastUsedLeverages[trade.coin]
-    return stored ?? asset?.maxLeverage
-  }, [trade.coin, trade.perpsDex, positions, asset, lastUsedLeverages])
-
-  return leverage
+type NormalizedTrade = {
+  symbol: string
+  coin: string
+  closedPnl: number
+  time: number
+  side: 'A' | 'B'
+  sz: string
+  px: string
+  roePc?: number
 }
 
-const REFERRAL_CODE: string | undefined = undefined
-const SHARE_URL = 'https://www.sushi.com/perps'
+function normalizeTrade(trade: AnyTradeType): NormalizedTrade {
+  // UserPositionsItemType —
+  if ('position' in trade) {
+    return {
+      symbol: trade?.assetSymbol?.split(':')?.[1] || trade?.assetSymbol || '',
+      coin: trade.position.coin,
+      time: Date.now(),
+      closedPnl: Number.parseFloat(trade.position.unrealizedPnl ?? '0'),
+      side: trade?.side,
+      sz: Math.abs(Number.parseFloat(trade.position.szi)).toString(),
+      px: trade.markPrice,
+    }
+  }
+
+  // TwapFillHistoryItemType — uses assetSymbol
+  if ('twapId' in trade && !!trade?.twapId && 'assetSymbol' in trade) {
+    const closedPnl = Number.parseFloat(trade.closedPnl)
+    const fees = Number.parseFloat(trade.fee)
+    const totalPnl = closedPnl - fees
+    return {
+      symbol: trade?.assetSymbol?.split('/')?.[0] || trade.assetSymbol || '',
+      coin: trade.coin,
+      time: trade.time,
+      closedPnl: totalPnl,
+      side: trade?.side,
+      sz: trade.sz,
+      px: trade.px,
+    }
+  }
+
+  // BalanceItemType — no pnl fields
+  if ('totalBalance' in trade && 'coin' in trade) {
+    const price =
+      Number.parseFloat(trade.usdcValue) / Number.parseFloat(trade.totalBalance)
+    return {
+      symbol: trade.coin,
+      coin: trade.assetName || '',
+      time: Date.now(),
+      closedPnl: trade?.pnlRoePc?.pnl ?? 0,
+      side: 'B', //can hardcode B here, only spot balances shown here so this has no effect
+      sz: trade.totalBalance,
+      px: price.toString(),
+      roePc: trade?.pnlRoePc?.roePc ?? 0,
+    }
+  }
+
+  // TradeHistoryItemType — full data
+  if ('token0Symbol' in trade) {
+    const closedPnl = Number.parseFloat(trade.closedPnl)
+    const fees = Number.parseFloat(trade.fee)
+    const totalPnl = closedPnl - fees
+    return {
+      symbol: trade?.token0Symbol ?? '',
+      coin: trade.coin,
+      closedPnl: totalPnl,
+      time: trade.time,
+      side: trade?.side === 'A' ? 'B' : 'A',
+      sz: trade.sz,
+      px: trade.px,
+    }
+  }
+
+  return {
+    symbol: '',
+    coin: '',
+    closedPnl: 0,
+    time: Date.now(),
+    side: 'B',
+    sz: '0',
+    px: '0',
+  }
+}
 
 type ShareClosedPnlDialogProps = {
-  trade: TradeHistoryItemType
+  trade: AnyTradeType
+  isOpen?: boolean
+  onOpenChange?: (open: boolean) => void
+  trigger?: ReactNode
 }
-
 export function ShareClosedPnlDialog({
   trade,
+  isOpen,
+  onOpenChange,
+  trigger,
 }: ShareClosedPnlDialogProps): JSX.Element {
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const [isSavingImage, setIsSavingImage] = useState(false)
   const [isSharingImage, setIsSharingImage] = useState(false)
   const posterRef = useRef<HTMLCanvasElement | null>(null)
+  const address = useAccount('evm')
+  const { data: overview } = useSushiReferralOverview({ address })
+  const normalizedTrade = useMemo(() => normalizeTrade(trade), [trade])
+  const {
+    state: {
+      assetListQuery: { data: assetList },
+    },
+  } = useAssetListState()
+  const asset = useMemo(() => {
+    return assetList?.get(normalizedTrade.coin)
+  }, [assetList, normalizedTrade.coin])
+
+  const { data: assetData } = useActiveAssetData({
+    address,
+    assetString: normalizedTrade.coin,
+  })
+  const imageUrl = useMemo(() => {
+    return getHyperliquidCoinIconUrl(asset)
+  }, [asset])
+
+  const isControlled = isOpen !== undefined
+  const resolvedOpen = isControlled ? isOpen : open
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (isControlled) {
+        onOpenChange?.(nextOpen)
+      } else {
+        setOpen(nextOpen)
+      }
+    },
+    [isControlled, onOpenChange],
+  )
+
+  const leverage = useMemo(() => {
+    if (!assetData) return undefined
+    return assetData?.leverage?.value
+  }, [assetData])
+  const referralCode = useMemo(() => {
+    if (!overview) return undefined
+    return overview?.primaryReferralCode?.code
+  }, [overview])
 
   const totalPnl = useMemo(() => {
-    return Number.parseFloat(trade.closedPnl) - Number.parseFloat(trade.fee)
-  }, [trade.closedPnl, trade.fee])
+    return normalizedTrade.closedPnl
+  }, [normalizedTrade.closedPnl])
 
-  const shareText = useMemo(() => getDefaultShareText(trade), [trade])
+  const shareText = useMemo(
+    () => getDefaultShareText(normalizedTrade, referralCode),
+    [normalizedTrade, referralCode],
+  )
 
   useEffect(() => {
-    if (!open) {
+    if (!resolvedOpen) {
       setCopied(false)
     }
-  }, [open])
+  }, [resolvedOpen])
 
   async function handleCopyLink(): Promise<void> {
     try {
-      await navigator.clipboard.writeText(SHARE_URL)
+      await navigator.clipboard.writeText(
+        referralCode ? getInviteUrl(referralCode) : SHARE_URL,
+      )
       setCopied(true)
     } catch {
       createErrorToast('Failed to copy the current page URL.', false)
@@ -96,6 +216,7 @@ export function ShareClosedPnlDialog({
 
   async function handleSaveImage(): Promise<void> {
     const posterNode = posterRef.current
+
     if (!posterNode) {
       createErrorToast('Unable to find the share image to export.', false)
       return
@@ -104,8 +225,9 @@ export function ShareClosedPnlDialog({
     setIsSavingImage(true)
     try {
       const blob = await exportPosterBlob(posterNode)
-      downloadBlob(blob, getShareImageFileName(trade))
-    } catch {
+      downloadBlob(blob, getShareImageFileName(normalizedTrade))
+    } catch (e) {
+      console.error('export failed:', e) // <-- was silently swallowing the error
       createErrorToast('Failed to export the share image.', false)
     } finally {
       setIsSavingImage(false)
@@ -122,30 +244,31 @@ export function ShareClosedPnlDialog({
     setIsSharingImage(true)
     try {
       const blob = await exportPosterBlob(posterNode)
-      const file = new File([blob], getShareImageFileName(trade), {
+      const file = new File([blob], getShareImageFileName(normalizedTrade), {
         type: 'image/png',
       })
-
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
       if (
         navigator.share &&
         navigator.canShare &&
-        navigator.canShare({ files: [file] })
+        navigator.canShare({ files: [file] }) &&
+        isMobile
       ) {
         await navigator.share({
           files: [file],
           text: shareText,
           title: 'Share closed trade',
-          url: SHARE_URL,
+          url: referralCode ? getInviteUrl(referralCode) : SHARE_URL,
         })
         return
       }
 
-      const url = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(SHARE_URL)}`
+      const url = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(referralCode ? getInviteUrl(referralCode) : SHARE_URL)}`
       window.open(url, '_blank', 'noopener,noreferrer')
-      createErrorToast(
-        'This browser cannot attach images directly to X. Opened the X composer with text and link instead.',
-        false,
-      )
+      // createErrorToast(
+      //   'This browser cannot attach images directly to X. Opened the X composer with text and link instead.',
+      //   false,
+      // )
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') {
         return
@@ -158,22 +281,27 @@ export function ShareClosedPnlDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <TableButton
-          className="inline-flex h-6 w-6 items-center justify-center text-blue hover:text-blue/80"
-          aria-label="Share closed trade"
-          title="Share closed trade"
-          onClick={(event) => {
-            event.stopPropagation()
-          }}
-        >
-          <ExternalLinkIcon className="h-3.5 w-3.5" />
-        </TableButton>
+        {trigger ? (
+          trigger
+        ) : (
+          <TableButton
+            className="inline-flex h-6 w-6 items-center justify-center text-blue hover:text-blue/80"
+            aria-label="Share closed trade"
+            title="Share closed trade"
+            onClick={(event) => {
+              event.stopPropagation()
+            }}
+          >
+            <ExternalLinkIcon className="h-3.5 w-3.5" />
+          </TableButton>
+        )}
       </DialogTrigger>
       <DialogContent
         variant="perps-default"
         className="!inline-grid !w-auto md:!w-auto !min-w-0 !max-h-[calc(100dvh-16px)] !max-w-[calc(100vw-16px)] overflow-y-auto p-4 md:p-5"
+        aria-describedby={undefined}
       >
         <DialogTitle className="sr-only">Share Closed Trade</DialogTitle>
 
@@ -181,16 +309,18 @@ export function ShareClosedPnlDialog({
           <div className="flex justify-center">
             <SharePoster
               posterRef={posterRef}
-              trade={trade}
+              trade={normalizedTrade}
               totalPnl={totalPnl}
+              referralCode={referralCode}
+              leverage={leverage}
+              imageUrl={imageUrl}
             />
           </div>
 
           <div className="grid w-full gap-3 sm:grid-cols-2">
             <Button
               type="button"
-              variant="default"
-              className="!rounded-2xl"
+              variant="perps-default"
               icon={ArrowDownTrayIcon}
               loading={isSavingImage}
               onClick={() => {
@@ -201,8 +331,7 @@ export function ShareClosedPnlDialog({
             </Button>
             <Button
               type="button"
-              variant="default"
-              className="!rounded-2xl"
+              variant="perps-default"
               icon={LinkIcon}
               onClick={() => {
                 void handleCopyLink()
@@ -212,8 +341,8 @@ export function ShareClosedPnlDialog({
             </Button>
             <Button
               type="button"
-              variant="default"
-              className="!rounded-2xl sm:col-span-2"
+              variant="perps-default"
+              className="sm:col-span-2"
               icon={XIcon}
               loading={isSharingImage}
               onClick={() => {
@@ -235,30 +364,37 @@ const POSTER_ASPECT_RATIO = POSTER_WIDTH / POSTER_HEIGHT
 
 type SharePosterProps = {
   posterRef: RefObject<HTMLCanvasElement | null>
-  trade: TradeHistoryItemType
+  trade: NormalizedTrade
   totalPnl: number
+  referralCode?: string
+  leverage?: number
+  imageUrl: string
 }
 
 function SharePoster({
   posterRef,
   trade,
   totalPnl,
+  referralCode,
+  leverage,
+  imageUrl,
 }: SharePosterProps): JSX.Element {
-  const symbol = getTradeSymbol(trade)
-  const leverageMultiplier = useLeverageMultiplier(trade)
+  const symbol = trade.symbol
+  const leverageMultiplier = leverage
   const direction = trade.side === 'A' ? 'SHORT' : 'LONG'
-  const closeAction = trade.side === 'A' ? 'BUY' : 'SELL'
   const closePrice = Number.parseFloat(trade.px)
   const size = Number.parseFloat(trade.sz)
-  const realizedPnl = Number.parseFloat(trade.closedPnl)
+  const realizedPnl = trade.closedPnl
   const floatSide = trade.side === 'B' ? 1 : -1
   const entryPrice =
     size === 0 ? closePrice : closePrice + (floatSide * realizedPnl) / size
   const entryNotional = entryPrice * size
   const pnlPercent =
-    entryNotional === 0
-      ? 0
-      : (totalPnl / entryNotional) * (leverageMultiplier ?? 1) * 100
+    'roePc' in trade
+      ? Number(trade.roePc)
+      : entryNotional === 0
+        ? 0
+        : (totalPnl / entryNotional) * (leverageMultiplier ?? 1) * 100
   const isPositive = pnlPercent >= 0
   const largeValue = `${isPositive ? '+' : ''}${perpsNumberFormatter({
     value: pnlPercent,
@@ -266,8 +402,8 @@ function SharePoster({
     maxFraxDigits: 1,
   })}%`
   const badgeText = leverageMultiplier
-    ? `${direction} ${leverageMultiplier}X`
-    : direction
+    ? `${direction} ${leverageMultiplier}x`
+    : 'SPOT'
 
   useEffect(() => {
     let cancelled = false
@@ -288,11 +424,13 @@ function SharePoster({
 
       drawPosterCanvas(context, {
         badgeText,
-        closeAction,
         isPositive,
+        isLong: direction === 'LONG' || badgeText === 'SPOT',
         largeValue,
         symbol,
         sushiIcon,
+        referralCode,
+        imageUrl,
       })
     }
 
@@ -301,7 +439,16 @@ function SharePoster({
     return () => {
       cancelled = true
     }
-  }, [badgeText, closeAction, isPositive, largeValue, posterRef, symbol])
+  }, [
+    badgeText,
+    isPositive,
+    largeValue,
+    posterRef,
+    symbol,
+    referralCode,
+    direction,
+    imageUrl,
+  ])
 
   return (
     <div
@@ -320,11 +467,14 @@ function SharePoster({
   )
 }
 
-function getDefaultShareText(trade: TradeHistoryItemType): string {
-  const baseText = `Trade $${getTradeSymbol(trade)} perps on @SushiSwap`
+function getDefaultShareText(
+  trade: NormalizedTrade,
+  referralCode?: string,
+): string {
+  const baseText = `Trade $${trade.symbol} perps on @SushiSwap`
 
-  return REFERRAL_CODE
-    ? `${baseText} using my referral code ${REFERRAL_CODE}`
+  return referralCode
+    ? `${baseText} using my referral code ${referralCode}`
     : baseText
 }
 
@@ -357,8 +507,8 @@ function downloadBlob(blob: Blob, fileName: string): void {
   }, 0)
 }
 
-function getShareImageFileName(trade: TradeHistoryItemType): string {
-  return `sushi-perps-${getTradeSymbol(trade).toLowerCase()}-${trade.time}.png`
+function getShareImageFileName(trade: NormalizedTrade): string {
+  return `sushi-perps-${trade.symbol.toLowerCase()}-${trade.time}.png`
 }
 
 let sushiIconPromise: Promise<HTMLImageElement> | null = null
@@ -378,11 +528,13 @@ function getSushiIconImage(): Promise<HTMLImageElement> {
 
 type PosterCanvasData = {
   badgeText: string
-  closeAction: string
   isPositive: boolean
   largeValue: string
   symbol: string
   sushiIcon: HTMLImageElement
+  referralCode?: string
+  isLong: boolean
+  imageUrl: string
 }
 
 function drawPosterCanvas(
@@ -405,17 +557,26 @@ function drawPosterCanvas(
     POSTER_WIDTH,
     POSTER_HEIGHT,
   )
-  backgroundGradient.addColorStop(0.17, 'rgba(52, 211, 153, 0.2)')
-  backgroundGradient.addColorStop(0.76, 'rgba(30, 30, 30, 0.2)')
-  backgroundGradient.addColorStop(1, 'rgba(16, 23, 40, 0.2)')
+  backgroundGradient.addColorStop(
+    0.17,
+    data.isPositive ? 'rgba(52, 211, 153, 0.2)' : 'rgba(251, 113, 133, 0.2)',
+  )
+  backgroundGradient.addColorStop(
+    0.76,
+    data.isPositive ? 'rgba(30, 30, 30, 0.2)' : 'rgba(30, 20, 22, 0.2)',
+  )
+  backgroundGradient.addColorStop(
+    1,
+    data.isPositive ? 'rgba(16, 23, 40, 0.2)' : 'rgba(40, 16, 20, 0.2)',
+  )
   context.fillStyle = backgroundGradient
   context.fillRect(0, 0, POSTER_WIDTH, POSTER_HEIGHT)
 
-  drawPosterBadge(context, data.badgeText)
+  drawPosterBadge(context, data.badgeText, data.isLong)
   drawPosterGlowSquares(context, data.isPositive)
-  drawPosterHeader(context, data.symbol, data.closeAction)
+  drawPosterHeader(context, data.symbol, data.imageUrl)
   drawPosterPercent(context, data.largeValue, data.isPositive)
-  drawPosterLink(context)
+  drawPosterLink(context, data.referralCode)
   drawPosterBrand(context, data.sushiIcon)
 
   context.restore()
@@ -424,6 +585,7 @@ function drawPosterCanvas(
 function drawPosterBadge(
   context: CanvasRenderingContext2D,
   badgeText: string,
+  isLong: boolean,
 ): void {
   context.save()
   const badgeX = 132.025
@@ -431,14 +593,26 @@ function drawPosterBadge(
   const badgeHeight = 51.509
   const horizontalPadding = 12
 
-  context.font = '500 32.778px "Lufga", Inter, sans-serif'
+  context.font = '700 32.778px "Lufga", Inter, sans-serif'
   const badgeWidth =
     context.measureText(badgeText).width + horizontalPadding * 2
 
-  context.fillStyle = '#F87171'
-  fillRoundedRect(context, badgeX, badgeY, badgeWidth, badgeHeight, 9.365)
-  context.fillStyle = '#F5D2D9'
+  context.fillStyle = isLong
+    ? 'rgba(52, 211, 153, 0.6)'
+    : 'rgba(251, 113, 133, 0.6)'
+  fillRoundedRect(
+    context,
+    badgeX,
+    badgeY,
+    badgeWidth,
+    badgeHeight,
+    9.365,
+    isLong ? '#34D399' : '#FB7185',
+    2,
+  )
+  context.fillStyle = 'white'
   context.textBaseline = 'middle'
+
   context.fillText(
     badgeText,
     badgeX + horizontalPadding,
@@ -463,11 +637,14 @@ function drawPosterGlowSquares(
     { left: 169.556, top: squareSize, alpha: 0.4 },
   ]
 
+  const maxTop = squareSize * 2
+
   for (const square of squares) {
+    const top = isPositive ? square.top : maxTop - square.top
     drawGlowSquare(
       context,
-      glowOriginX + square.left,
-      glowOriginY + square.top,
+      glowOriginX + square.left - 10,
+      glowOriginY + top,
       baseColor,
       square.alpha,
     )
@@ -489,21 +666,58 @@ function drawGlowSquare(
   fillRoundedRect(context, x, y, 72.667, 72.667, 24)
   context.restore()
 }
-
 function drawPosterHeader(
   context: CanvasRenderingContext2D,
   symbol: string,
-  closeAction: string,
+  imageUrl: string,
 ): void {
-  context.save()
-  context.fillStyle = '#FFFFFF'
-  context.textBaseline = 'alphabetic'
-  context.font = '700 62px Inter, sans-serif'
-  context.fillText(symbol, 697.893, 640)
-  const symbolWidth = context.measureText(symbol).width
-  context.fillText('|', 697.893 + symbolWidth + 20, 640)
-  context.fillText(closeAction, 697.893 + symbolWidth + 58, 640)
-  context.restore()
+  const middleSquareCenterX = 717.893 + 109 - 10 + 72.667 / 2
+  const y = 640
+  const imageSize = 62
+  const gap = 16
+
+  const drawText = (includeImage: boolean, img?: HTMLImageElement) => {
+    context.save()
+    context.fillStyle = '#FFFFFF'
+    context.textBaseline = 'alphabetic'
+    context.font = '700 62px Inter, sans-serif'
+
+    const symbolWidth = context.measureText(symbol).width
+
+    if (includeImage && img) {
+      const totalWidth = imageSize + gap + symbolWidth
+      const startX = middleSquareCenterX - totalWidth / 2
+      const imgX = startX
+      const imgY = y - imageSize + 8
+
+      // Draw circular clipped image
+      context.save()
+      context.beginPath()
+      context.arc(
+        imgX + imageSize / 2,
+        imgY + imageSize / 2,
+        imageSize / 2,
+        0,
+        Math.PI * 2,
+      )
+      context.closePath()
+      context.clip()
+      context.drawImage(img, imgX, imgY, imageSize, imageSize)
+      context.restore()
+
+      context.fillText(symbol, startX + imageSize + gap, y)
+    } else {
+      context.fillText(symbol, middleSquareCenterX - symbolWidth / 2, y)
+    }
+
+    context.restore()
+  }
+
+  const img = new Image()
+  img.crossOrigin = 'anonymous'
+  img.onload = () => drawText(true, img)
+  img.onerror = () => drawText(false)
+  img.src = `/api/proxy-image?url=${encodeURIComponent(imageUrl)}` //need to proxy the image. we need to use anonymous cross-origin requests to avoid tainting the canvas
 }
 
 function drawPosterPercent(
@@ -519,18 +733,21 @@ function drawPosterPercent(
   context.restore()
 }
 
-function drawPosterLink(context: CanvasRenderingContext2D): void {
+function drawPosterLink(
+  context: CanvasRenderingContext2D,
+  referralCode?: string,
+): void {
   context.save()
   context.textBaseline = 'top'
   context.fillStyle = '#97A3B7'
   context.font = '400 37px Inter, sans-serif'
   context.fillText(
-    REFERRAL_CODE ? 'Referral code:' : 'Trade on:',
-    88.893,
+    referralCode ? 'Referral code:' : 'Trade on:',
+    referralCode ? 88 : 86,
     977.555,
   )
   context.fillStyle = '#FFFFFF'
-  context.fillText(REFERRAL_CODE ?? SHARE_URL, 88.893, 1030.555)
+  context.fillText(referralCode ?? SHARE_URL, 88.893, 1030.555)
   context.restore()
 }
 
@@ -554,10 +771,17 @@ function fillRoundedRect(
   width: number,
   height: number,
   radius: number,
+  strokeStyle?: string,
+  lineWidth = 1,
 ): void {
   context.beginPath()
   createRoundedRectPath(context, x, y, width, height, radius)
   context.fill()
+  if (strokeStyle) {
+    context.strokeStyle = strokeStyle
+    context.lineWidth = lineWidth
+    context.stroke()
+  }
 }
 
 function createRoundedRectPath(
@@ -575,13 +799,4 @@ function createRoundedRectPath(
   context.arcTo(x, y + height, x, y, clampedRadius)
   context.arcTo(x, y, x + width, y, clampedRadius)
   context.closePath()
-}
-
-function getTradeSymbol(trade: TradeHistoryItemType): string {
-  return (
-    trade.symbol?.split('-')?.[0] ||
-    trade.token0Symbol ||
-    trade.cleanedCoin ||
-    trade.coin
-  )
 }

@@ -3,9 +3,10 @@ import type { ComponentType } from 'react'
 import { BuilderFee } from './builder-fee'
 import { Deposit } from './deposit'
 import { EnableTrading } from './enable-trading'
+import { HyperReferral } from './hyper-referral'
 import { Legal } from './legal'
 import { OrderAmount } from './order-amount'
-import { Referral } from './referral'
+import { SimpleDeposit } from './simple-deposit'
 import { StableAmount } from './stable-amount'
 import { TakeStopTrigger } from './take-stop-trigger'
 import { TwapRunningTime } from './twap-running-time'
@@ -20,8 +21,9 @@ export type PerpsCheckerProps = {
   TwapRunningTime: ComponentType<ButtonProps>
   TwapSuborder: ComponentType<ButtonProps>
   TakeStopTrigger: ComponentType<ButtonProps>
-  Referral: ComponentType<ButtonProps>
+  HyperReferral: ComponentType<ButtonProps>
   StableAmount: ComponentType<ButtonProps>
+  SimpleDeposit: ComponentType<ButtonProps>
 }
 
 export const PerpsChecker = {
@@ -33,6 +35,7 @@ export const PerpsChecker = {
   TwapRunningTime,
   TwapSuborder,
   TakeStopTrigger,
-  Referral,
+  HyperReferral,
   StableAmount,
+  SimpleDeposit,
 }

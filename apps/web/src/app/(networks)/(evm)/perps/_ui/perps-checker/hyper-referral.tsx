@@ -1,35 +1,35 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useCallback } from 'react'
-import { useSetReferrer } from 'src/lib/perps'
+import { useSetHyperReferrer } from 'src/lib/perps'
 
-export const Referral: FC<ButtonProps> = ({
+export const HyperReferral: FC<ButtonProps> = ({
   children,
   fullWidth = true,
   size = 'xl',
   ...props
 }) => {
   const {
-    hasAcceptedReferral,
+    hasAcceptedHyperReferral,
     isPending,
-    isLoadingReferralCheck,
-    setReferrerCodeAsync,
-  } = useSetReferrer()
+    isLoadingHyperReferralCheck,
+    setHyperReferrerCodeAsync,
+  } = useSetHyperReferrer()
 
   const handleApproveBuilderFee = useCallback(async () => {
     try {
-      await setReferrerCodeAsync({})
+      await setHyperReferrerCodeAsync({})
     } catch (error) {
       console.log(error)
     }
-  }, [setReferrerCodeAsync])
+  }, [setHyperReferrerCodeAsync])
 
-  if (!hasAcceptedReferral) {
+  if (!hasAcceptedHyperReferral) {
     return (
       <Button
         fullWidth={fullWidth}
         size={size}
         onClick={handleApproveBuilderFee}
-        loading={isPending || isLoadingReferralCheck}
+        loading={isPending || isLoadingHyperReferralCheck}
         {...props}
       >
         Accept Referral (4% discount)

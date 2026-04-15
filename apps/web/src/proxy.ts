@@ -25,6 +25,9 @@ export const config = {
     '/:chainId/rewards',
     '/:chainId/perps/:path*',
     '/perps',
+    '/perps/portfolio',
+    '/perps/referrals',
+    '/perps/invite/:code',
   ],
 }
 

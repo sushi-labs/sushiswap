@@ -304,7 +304,7 @@ export const LimitCloseDialog = ({
             <PerpsChecker.Legal size="default">
               <PerpsChecker.EnableTrading size="default">
                 <PerpsChecker.BuilderFee size="default">
-                  <PerpsChecker.Referral size="default">
+                  <PerpsChecker.HyperReferral size="default">
                     <Button
                       size="default"
                       variant="perps-default"
@@ -331,7 +331,7 @@ export const LimitCloseDialog = ({
                     >
                       Limit Close
                     </Button>
-                  </PerpsChecker.Referral>
+                  </PerpsChecker.HyperReferral>
                 </PerpsChecker.BuilderFee>
               </PerpsChecker.EnableTrading>
             </PerpsChecker.Legal>

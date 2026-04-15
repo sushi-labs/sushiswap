@@ -31,6 +31,11 @@ export const EXPLORE_NAVIGATION_LINKS =
         description: 'View your perps portfolio.',
       },
       {
+        title: 'Referrals',
+        href: `/perps/referrals`,
+        description: 'Track Sushi referral rewards.',
+      },
+      {
         title: 'Points',
         href: `#`,
         description: 'Coming Soon',
@@ -107,6 +112,26 @@ export const headerElements = (): NavigationElement[] => {
             )}
           >
             Portfolio
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      ),
+    },
+    {
+      show: 'desktop',
+      type: NavigationElementType.Custom,
+      item: (
+        <NavigationMenuItem
+          key={`referrals:custom`}
+          className={navigationElementShowMap['desktop']}
+        >
+          <NavigationMenuLink
+            href={'/perps/referrals'}
+            className={classNames(
+              navigationMenuTriggerStyle,
+              'focus:bg-transparent hover:!bg-secondary',
+            )}
+          >
+            Referrals
           </NavigationMenuLink>
         </NavigationMenuItem>
       ),

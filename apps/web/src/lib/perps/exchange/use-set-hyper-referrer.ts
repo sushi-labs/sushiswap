@@ -10,35 +10,35 @@ import { useMemo } from 'react'
 import { useAccount } from 'src/lib/wallet'
 import { useAgent } from '../agent'
 import { TOAST_AUTOCLOSE_TIME } from '../config'
-import { useReferral } from '../info'
+import { useHyperReferral } from '../info'
 import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
 
-export const SUSHI_REFERRAL_CODE = 'SUSHISWAP'
+export const SUSHI_HYPER_REFERRAL_CODE = 'SUSHISWAP'
 
-export const useSetReferrer = () => {
+export const useSetHyperReferrer = () => {
   const { agentAccount } = useAgent()
   const address = useAccount('evm')
   const { data: legalCheck } = useLegalCheck({ address })
   const {
-    data: referralData,
+    data: hyperReferralData,
     refetch,
-    isLoading: isLoadingReferralCheck,
-  } = useReferral({ address })
-  const hasAcceptedReferral = useMemo(() => {
+    isLoading: isLoadingHyperReferralCheck,
+  } = useHyperReferral({ address })
+  const hasAcceptedHyperReferral = useMemo(() => {
     if (
-      referralData?.referrerState?.stage === 'ready' &&
-      referralData?.referrerState?.data?.code === SUSHI_REFERRAL_CODE
+      hyperReferralData?.referrerState?.stage === 'ready' &&
+      hyperReferralData?.referrerState?.data?.code === SUSHI_HYPER_REFERRAL_CODE
     ) {
       return true
     }
-    return !!referralData?.referredBy
-  }, [referralData])
+    return !!hyperReferralData?.referredBy
+  }, [hyperReferralData])
 
   const mutation = useMutation({
     mutationKey: ['cancel-twap-order', agentAccount?.address, legalCheck],
     mutationFn: async ({ referralCode }: { referralCode?: string }) => {
-      const code = referralCode || SUSHI_REFERRAL_CODE
+      const code = referralCode || SUSHI_HYPER_REFERRAL_CODE
       if (!agentAccount || !code) {
         return
       }
@@ -109,10 +109,10 @@ export const useSetReferrer = () => {
   })
 
   return {
-    setReferrerCodeAsync: mutation.mutateAsync,
-    setReferrerCode: mutation.mutate,
+    setHyperReferrerCodeAsync: mutation.mutateAsync,
+    setHyperReferrerCode: mutation.mutate,
     isPending: mutation.isPending,
-    hasAcceptedReferral,
-    isLoadingReferralCheck,
+    hasAcceptedHyperReferral,
+    isLoadingHyperReferralCheck,
   }
 }

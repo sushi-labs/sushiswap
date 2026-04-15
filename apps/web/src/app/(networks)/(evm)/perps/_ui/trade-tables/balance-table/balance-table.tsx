@@ -8,6 +8,7 @@ import {
   SendDialog,
 } from '../../account-management'
 import { MobileTable } from '../_common'
+import { ShareClosedPnlDialog } from '../_common/share-closed-pnl-dialog'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {
   AVAILABLE_BALANCE_COLUMN,
@@ -20,7 +21,7 @@ import {
   USDC_VALUE_COLUMN,
 } from './columns'
 
-type BalanceAction = 'send' | 'transfer' | 'evm-core-transfer'
+type BalanceAction = 'send' | 'transfer' | 'evm-core-transfer' | 'share-pnl'
 const getBalanceColumns = ({
   openModal,
   isMobile,
@@ -34,7 +35,7 @@ const getBalanceColumns = ({
       TOTAL_BALANCE_COLUMN,
       AVAILABLE_BALANCE_COLUMN,
       USDC_VALUE_COLUMN,
-      PNL_COLUMN,
+      PNL_COLUMN(openModal),
       SEND_COLUMN(openModal),
       TRANSFER_COLUMN(openModal),
       CONTRACT_COLUMN,
@@ -45,7 +46,7 @@ const getBalanceColumns = ({
     USDC_VALUE_COLUMN,
     TOTAL_BALANCE_COLUMN,
     AVAILABLE_BALANCE_COLUMN,
-    PNL_COLUMN,
+    PNL_COLUMN(openModal),
     SEND_COLUMN(openModal),
     TRANSFER_COLUMN(openModal),
     CONTRACT_COLUMN,
@@ -200,6 +201,17 @@ const SharedPositionModal = ({
             if (!nextOpen) onClose()
           }}
           balanceItem={balance}
+          trigger={<div />}
+        />
+      )
+    case 'share-pnl':
+      return (
+        <ShareClosedPnlDialog
+          isOpen={open}
+          onOpenChange={(nextOpen) => {
+            if (!nextOpen) onClose()
+          }}
+          trade={balance}
           trigger={<div />}
         />
       )
