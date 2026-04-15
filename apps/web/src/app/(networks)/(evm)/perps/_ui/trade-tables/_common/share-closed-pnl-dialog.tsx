@@ -59,14 +59,21 @@ type NormalizedTrade = {
 function normalizeTrade(trade: AnyTradeType): NormalizedTrade {
   // UserPositionsItemType —
   if ('position' in trade) {
+    const entryPrice = Number.parseFloat(trade.position.entryPx)
+    const size = Number.parseFloat(trade.position.szi)
+    const entryNotional = entryPrice * size
+    const leverage = trade.position.leverage.value
+    const pnl = Number.parseFloat(trade.position.unrealizedPnl ?? '0')
+    const roePc = (pnl / entryNotional) * (leverage ?? 1) * 100
     return {
       symbol: trade?.assetSymbol?.split(':')?.[1] || trade?.assetSymbol || '',
       coin: trade.position.coin,
       time: Date.now(),
-      closedPnl: Number.parseFloat(trade.position.unrealizedPnl ?? '0'),
+      closedPnl: pnl,
       side: trade?.side,
-      sz: Math.abs(Number.parseFloat(trade.position.szi)).toString(),
+      sz: Math.abs(size).toString(),
       px: trade.markPrice,
+      roePc,
     }
   }
 
