@@ -16,6 +16,7 @@ import {
 import { useUserSettingsState } from '~evm/perps/_ui/account-management'
 import { useAssetState } from '../../../trade-widget'
 import { columnBodyMeta } from '../../_common/column-meta'
+import { ShareClosedPnlDialog } from '../../_common/share-closed-pnl-dialog'
 
 export const TIME_COLUMN: ColumnDef<TwapFillHistoryItemType, unknown> = {
   id: 'timestamp',
@@ -235,19 +236,29 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TwapFillHistoryItemType, unknown> = {
     const {
       state: { hidePnl },
     } = useUserSettingsState()
+    const direction = props.row.original.dir
+    const isCloseTrade =
+      direction.includes('Close') ||
+      direction.includes('Sell') ||
+      direction.includes('>')
     if (totalPnl === 0) {
       return '-'
     }
     return (
-      <span className="font-medium lg:whitespace-nowrap">
-        {hidePnl
-          ? '***'
-          : `${perpsNumberFormatter({
-              value: totalPnl,
-              minFraxDigits: 2,
-              maxFraxDigits: 2,
-            })} ${feeToken}`}
-      </span>
+      <div className="flex items-center gap-0.5">
+        <span className="font-medium lg:whitespace-nowrap">
+          {hidePnl
+            ? '***'
+            : `${perpsNumberFormatter({
+                value: totalPnl,
+                minFraxDigits: 2,
+                maxFraxDigits: 2,
+              })} ${feeToken}`}
+        </span>
+        {isCloseTrade ? (
+          <ShareClosedPnlDialog trade={props.row.original} />
+        ) : null}
+      </div>
     )
   },
   meta: {

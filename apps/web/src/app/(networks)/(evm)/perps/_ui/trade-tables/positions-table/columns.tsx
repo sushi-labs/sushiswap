@@ -1,3 +1,4 @@
+import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
 import PencilIcon from '@heroicons/react/20/solid/PencilIcon'
 import {
   Chip,
@@ -178,7 +179,9 @@ export const MARK_PRICE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
   },
 }
 
-export const PNL_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
+export const PNL_COLUMN = (
+  openModal: (action: 'share-pnl', position: UserPositionsItemType) => void,
+): ColumnDef<UserPositionsItemType, unknown> => ({
   id: 'pnlRoePc',
 
   header: () => (
@@ -219,23 +222,30 @@ export const PNL_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     const roePc = (pnl / marginUsed) * 100
 
     return (
-      <span
-        className={classNames(
-          'font-medium lg:whitespace-nowrap',
-          getTextColorClass(pnl),
-        )}
+      <button
+        type="button"
+        className="flex items-center gap-0.5"
+        onClick={() => openModal('share-pnl', props.row.original)}
       >
-        {hidePnl ? '' : getSignForValue(pnl)}
-        {hidePnl ? '***' : `${currencyFormatter.format(pnl)} /`} (
-        {getSignForValue(roePc)}
-        {roePc.toFixed(1)}%)
-      </span>
+        <span
+          className={classNames(
+            'font-medium lg:whitespace-nowrap',
+            getTextColorClass(pnl),
+          )}
+        >
+          {hidePnl ? '' : getSignForValue(pnl)}
+          {hidePnl ? '***' : `${currencyFormatter.format(pnl)} /`} (
+          {getSignForValue(roePc)}
+          {roePc.toFixed(1)}%)
+        </span>
+        <ExternalLinkIcon className="h-3.5 w-3.5 text-blue" />
+      </button>
     )
   },
   meta: {
     body: columnBodyMeta,
   },
-}
+})
 
 export const LIQUIDATION_PRICE_COLUMN: ColumnDef<
   UserPositionsItemType,

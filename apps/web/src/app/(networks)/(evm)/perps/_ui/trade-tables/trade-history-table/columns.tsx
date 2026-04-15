@@ -16,7 +16,7 @@ import {
 import { useUserSettingsState } from '../../account-management'
 import { useAssetState } from '../../trade-widget'
 import { columnBodyMeta } from '../_common/column-meta'
-import { ShareClosedPnlDialog } from './share-closed-pnl-dialog'
+import { ShareClosedPnlDialog } from '../_common/share-closed-pnl-dialog'
 
 export const TIME_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
   id: 'time',
@@ -48,8 +48,7 @@ export const COIN_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     } = useAssetState()
     const coin = props.row.original.coin
     const perpsDex = props.row.original.perpsDex
-    const symbol =
-      props.row.original.symbol?.split('-')?.[0] || props.row.original.symbol
+    const symbol = props.row.original.token0Symbol
 
     const side = props.row.original.side
 
