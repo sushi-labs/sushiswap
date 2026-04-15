@@ -23,7 +23,7 @@ export const Fees = () => {
     address,
     marketType: side === 'perps' ? 'perp' : 'spot',
   })
-  const isLoading = takerFee === '0' || makerFee === '0'
+  const isLoading = takerFee === 0 || makerFee === 0
 
   return (
     <Card className="p-2 !rounded-md gap-2 flex !bg-[#18223B] border-transparent justify-between flex-col w-full">

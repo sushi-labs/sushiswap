@@ -1,4 +1,5 @@
 'use client'
+import { userFills, userFillsByTime } from '@nktkas/hyperliquid/api/info'
 import {
   Button,
   Dialog,
@@ -9,24 +10,22 @@ import {
   DialogTrigger,
   classNames,
 } from '@sushiswap/ui'
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import {
   BUILDER_FEE_PERPS,
   type UserPositionsItemType,
   formatPrice,
+  formatTradeHistoryItem,
   getSizeAndPercentageFromInput,
   getSizeAndPercentageFromPercentageInput,
   getTextColorClass,
+  hlHttpTransport,
   useExecuteOrders,
+  useFees,
   useMidPrice,
   useSymbolSplit,
 } from 'src/lib/perps'
+import { useAccount } from 'src/lib/wallet'
 import { formatUnits, parseUnits } from 'viem'
 import {
   CheckboxSetting,
@@ -55,7 +54,7 @@ export const MarketCloseDialog = ({
   const [percentToClose, setPercentToClose] = useState(100)
   const {
     state: { quickCloseMarketPositionEnabled },
-    mutate: { setQuickCloseMarketPositionEnabled },
+    mutate: { setQuickCloseMarketPositionEnabled, handleOpenPnLCard },
   } = useUserSettingsState()
   const initBase =
     positionToClose?.position?.szi?.split('-')?.[1] ||
@@ -80,6 +79,7 @@ export const MarketCloseDialog = ({
   const { midPrice } = useMidPrice({
     assetString: positionToClose.position.coin,
   })
+  const address = useAccount('evm')
 
   const isControlled = isOpen !== undefined
   const resolvedOpen = isControlled ? isOpen : open
@@ -222,6 +222,25 @@ export const MarketCloseDialog = ({
     }
   }, [positionToClose, midPrice, asset, _sizeToClose])
 
+  const _handleOpenPnlCard = useCallback(async () => {
+    if (!address) return
+    const fills = await userFillsByTime(
+      {
+        transport: hlHttpTransport,
+      },
+      {
+        user: address,
+        startTime: Date.now() - 5000, // last 5 sec
+        endTime: Date.now() + 5000, // next 5 sec to account for any delays
+        reversed: true, //newest first
+      },
+    )
+    const firstFill = fills?.[0]
+    if (!firstFill || firstFill.coin !== positionToClose?.position?.coin) return
+    const trade = formatTradeHistoryItem(firstFill, assetListData)
+    handleOpenPnLCard(trade)
+  }, [address, handleOpenPnLCard, assetListData, positionToClose])
+
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
@@ -298,7 +317,8 @@ export const MarketCloseDialog = ({
                         executeOrders(
                           { orderData },
                           {
-                            onSuccess: () => {
+                            onSuccess: async () => {
+                              await _handleOpenPnlCard()
                               handleOpenChange(false)
                             },
                           },

@@ -12,7 +12,7 @@ export const useFees = ({
 }) => {
   const { data: feeData } = useUserFees({ address })
   const { takerFee, makerFee } = useMemo(() => {
-    if (!feeData || !marketType) return { takerFee: '0', makerFee: '0' }
+    if (!feeData || !marketType) return { takerFee: 0, makerFee: 0 }
     const discount = 1 - Number(feeData.activeReferralDiscount || '0')
     const baseTakerFee =
       marketType === 'perp'

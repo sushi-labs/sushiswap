@@ -39,7 +39,7 @@ const SHARE_URL = 'https://www.sushi.com/perps'
 const getInviteUrl = (referralCode: string) =>
   `https://www.sushi.com/perps/invite/${referralCode.toUpperCase()}`
 
-type AnyTradeType =
+export type AnyTradeType =
   | TradeHistoryItemType
   | BalanceItemType
   | UserPositionsItemType
