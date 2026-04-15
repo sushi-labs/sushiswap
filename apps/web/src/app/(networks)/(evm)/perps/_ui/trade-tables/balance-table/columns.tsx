@@ -2,6 +2,7 @@ import {
   ClipboardCheckIcon,
   ClipboardCopyIcon,
 } from '@heroicons/react-v1/outline'
+import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
 import { useCopyClipboard } from '@sushiswap/hooks'
 import {
   Chip,
@@ -184,7 +185,9 @@ export const USDC_VALUE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
     body: columnBodyMeta,
   },
 }
-export const PNL_COLUMN: ColumnDef<BalanceItemType, unknown> = {
+export const PNL_COLUMN = (
+  openModal: (action: 'share-pnl', balance: BalanceItemType) => void,
+): ColumnDef<BalanceItemType, unknown> => ({
   id: 'pnlRoePc',
   header: 'PNL / (ROE %)',
   accessorFn: (row) => row.pnlRoePc?.pnl,
@@ -202,25 +205,32 @@ export const PNL_COLUMN: ColumnDef<BalanceItemType, unknown> = {
     const roePc = props.row.original.pnlRoePc?.roePc ?? 0
 
     return (
-      <span
-        className={classNames(
-          'font-medium lg:whitespace-nowrap',
-          getTextColorClass(pnl),
-        )}
+      <button
+        onClick={() => openModal('share-pnl', props.row.original)}
+        type="button"
+        className="flex items-center gap-0.5"
       >
-        {hidePnl ? '' : getSignForValue(pnl)}
-        {hidePnl
-          ? '***'
-          : `${currencyFormatter.format(Number.parseFloat(pnl.toString()))} /`}{' '}
-        ({getSignForValue(roePc)}
-        {roePc.toFixed(1)}%)
-      </span>
+        <span
+          className={classNames(
+            'font-medium lg:whitespace-nowrap',
+            getTextColorClass(pnl),
+          )}
+        >
+          {hidePnl ? '' : getSignForValue(pnl)}
+          {hidePnl
+            ? '***'
+            : `${currencyFormatter.format(Number.parseFloat(pnl.toString()))} /`}{' '}
+          ({getSignForValue(roePc)}
+          {roePc.toFixed(1)}%)
+        </span>
+        <ExternalLinkIcon className="h-3.5 w-3.5 text-blue" />
+      </button>
     )
   },
   meta: {
     body: columnBodyMeta,
   },
-}
+})
 
 export const SEND_COLUMN = (
   openModal: (action: 'send', balance: BalanceItemType) => void,

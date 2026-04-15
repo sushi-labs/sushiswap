@@ -11,6 +11,7 @@ import {
   UpdateLeverageDialog,
 } from '../../exchange'
 import { MobileTable } from '../_common'
+import { ShareClosedPnlDialog } from '../_common/share-closed-pnl-dialog'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {
   CLOSE_COLUMN,
@@ -33,6 +34,7 @@ type PositionAction =
   | 'edit-tpsl'
   | 'update-margin'
   | 'update-leverage'
+  | 'share-pnl'
 
 const getPositionColumns = ({
   openModal,
@@ -45,7 +47,7 @@ const getPositionColumns = ({
     return [
       COIN_COLUMN(openModal),
       SIZE_COLUMN,
-      PNL_COLUMN,
+      PNL_COLUMN(openModal),
       ENTRY_PRICE_COLUMN,
       MARK_PRICE_COLUMN,
       LIQUIDATION_PRICE_COLUMN,
@@ -62,7 +64,7 @@ const getPositionColumns = ({
     POSITION_VALUE_COLUMN,
     ENTRY_PRICE_COLUMN,
     MARK_PRICE_COLUMN,
-    PNL_COLUMN,
+    PNL_COLUMN(openModal),
     LIQUIDATION_PRICE_COLUMN,
     MARGIN_COLUMN(openModal),
     FUNDING_COLUMN,
@@ -238,7 +240,7 @@ const SharedPositionModal = ({
             if (!nextOpen) onClose()
           }}
           position={position}
-          trigger={null}
+          trigger={<div />}
         />
       )
 
@@ -252,6 +254,17 @@ const SharedPositionModal = ({
           assetString={position.position.coin}
           currentLeverage={position.position.leverage.value}
           isCross={position.position.leverage.type === 'cross'}
+          trigger={<div />}
+        />
+      )
+    case 'share-pnl':
+      return (
+        <ShareClosedPnlDialog
+          isOpen={open}
+          onOpenChange={(nextOpen) => {
+            if (!nextOpen) onClose()
+          }}
+          trade={position}
           trigger={<div />}
         />
       )

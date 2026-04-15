@@ -60,7 +60,9 @@ function SummaryCard({
           <SkeletonText fontSize="xl" />
         </div>
       ) : (
-        <div className="font-medium text-lg md:text-2xl">{value}</div>
+        <div className="font-medium text-lg md:text-2xl text-ellipsis overflow-hidden">
+          {value}
+        </div>
       )}
       <div className="text-xs text-slate-400">{footer}</div>
     </Card>

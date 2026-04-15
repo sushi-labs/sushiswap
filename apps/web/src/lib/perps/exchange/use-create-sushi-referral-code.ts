@@ -8,18 +8,26 @@ import {
   sushiReferralQueryKeys,
 } from '../sushi-referral'
 
+export const REFERRAL_REGEX = /^[A-Z0-9-]{6,20}$/
+export const REFERRAL_REGEX_FOR_INPUT = REFERRAL_REGEX.source.slice(1, -1) // Remove the starting ^ and ending $ to allow partial matches for input validation
+
 export function useCreateSushiReferralCode() {
   const address = useAccount('evm')
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationKey: sushiReferralQueryKeys.create(address),
-    mutationFn: async () => {
+    mutationFn: async ({ code }: { code: string }) => {
       if (!address) {
         throw new Error('Wallet not connected')
       }
+      if (!REFERRAL_REGEX.test(code)) {
+        throw new Error(
+          'Invalid referral code format. Must be 6-20 characters, uppercase letters, numbers, or hyphens only.',
+        )
+      }
 
-      return createPerpsSushiReferralCode({ address })
+      return createPerpsSushiReferralCode({ address, code })
     },
     onSuccess: async () => {
       const ts = Date.now()

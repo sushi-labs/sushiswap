@@ -16,7 +16,7 @@ import {
 import { useUserSettingsState } from '../../account-management'
 import { useAssetState } from '../../trade-widget'
 import { columnBodyMeta } from '../_common/column-meta'
-import { ShareClosedPnlDialog } from './share-closed-pnl-dialog'
+import { ShareClosedPnlDialog } from '../_common/share-closed-pnl-dialog'
 
 export const TIME_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
   id: 'time',
@@ -48,8 +48,7 @@ export const COIN_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     } = useAssetState()
     const coin = props.row.original.coin
     const perpsDex = props.row.original.perpsDex
-    const symbol =
-      props.row.original.symbol?.split('-')?.[0] || props.row.original.symbol
+    const symbol = props.row.original.token0Symbol
 
     const side = props.row.original.side
 
@@ -236,7 +235,11 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     const {
       state: { hidePnl },
     } = useUserSettingsState()
-    const isCloseTrade = props.row.original.dir.includes('Close')
+    const direction = props.row.original.dir
+    const isCloseTrade =
+      direction.includes('Close') ||
+      direction.includes('Sell') ||
+      direction.includes('>')
     const closedPnl = Number.parseFloat(props.row.original.closedPnl)
     const fees = Number.parseFloat(props.row.original.fee)
     const totalPnl = closedPnl - fees
