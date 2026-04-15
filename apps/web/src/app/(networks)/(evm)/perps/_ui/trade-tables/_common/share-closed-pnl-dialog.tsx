@@ -224,9 +224,7 @@ export function ShareClosedPnlDialog({
 
     setIsSavingImage(true)
     try {
-      console.log('canvas dimensions:', posterNode.width, posterNode.height)
       const blob = await exportPosterBlob(posterNode)
-      console.log('blob:', blob)
       downloadBlob(blob, getShareImageFileName(normalizedTrade))
     } catch (e) {
       console.error('export failed:', e) // <-- was silently swallowing the error
