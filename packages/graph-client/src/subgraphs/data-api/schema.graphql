@@ -74,6 +74,10 @@ type Query {
   perps: PerpsQueries!
 }
 
+type Mutation {
+  perps: PerpsMutations!
+}
+
 type BladePoolToken {
   token: Token!
   liquidity: Float!

@@ -59,14 +59,21 @@ type NormalizedTrade = {
 function normalizeTrade(trade: AnyTradeType): NormalizedTrade {
   // UserPositionsItemType —
   if ('position' in trade) {
+    const entryPrice = Number.parseFloat(trade.position.entryPx)
+    const size = Number.parseFloat(trade.position.szi)
+    const entryNotional = entryPrice * size
+    const leverage = trade.position.leverage.value
+    const pnl = Number.parseFloat(trade.position.unrealizedPnl ?? '0')
+    const roePc = (pnl / entryNotional) * (leverage ?? 1) * 100
     return {
       symbol: trade?.assetSymbol?.split(':')?.[1] || trade?.assetSymbol || '',
       coin: trade.position.coin,
       time: Date.now(),
-      closedPnl: Number.parseFloat(trade.position.unrealizedPnl ?? '0'),
+      closedPnl: pnl,
       side: trade?.side,
-      sz: Math.abs(Number.parseFloat(trade.position.szi)).toString(),
+      sz: Math.abs(size).toString(),
       px: trade.markPrice,
+      roePc,
     }
   }
 
@@ -198,10 +205,10 @@ export function ShareClosedPnlDialog({
   )
 
   useEffect(() => {
-    if (!open) {
+    if (!resolvedOpen) {
       setCopied(false)
     }
-  }, [open])
+  }, [resolvedOpen])
 
   async function handleCopyLink(): Promise<void> {
     try {
@@ -216,6 +223,7 @@ export function ShareClosedPnlDialog({
 
   async function handleSaveImage(): Promise<void> {
     const posterNode = posterRef.current
+
     if (!posterNode) {
       createErrorToast('Unable to find the share image to export.', false)
       return
@@ -591,14 +599,26 @@ function drawPosterBadge(
   const badgeHeight = 51.509
   const horizontalPadding = 12
 
-  context.font = '500 32.778px "Lufga", Inter, sans-serif'
+  context.font = '700 32.778px "Lufga", Inter, sans-serif'
   const badgeWidth =
     context.measureText(badgeText).width + horizontalPadding * 2
 
-  context.fillStyle = isLong ? '#34D399' : '#FB7185'
-  fillRoundedRect(context, badgeX, badgeY, badgeWidth, badgeHeight, 9.365)
+  context.fillStyle = isLong
+    ? 'rgba(52, 211, 153, 0.6)'
+    : 'rgba(251, 113, 133, 0.6)'
+  fillRoundedRect(
+    context,
+    badgeX,
+    badgeY,
+    badgeWidth,
+    badgeHeight,
+    9.365,
+    isLong ? '#34D399' : '#FB7185',
+    2,
+  )
   context.fillStyle = 'white'
   context.textBaseline = 'middle'
+
   context.fillText(
     badgeText,
     badgeX + horizontalPadding,
@@ -700,9 +720,10 @@ function drawPosterHeader(
   }
 
   const img = new Image()
+  img.crossOrigin = 'anonymous'
   img.onload = () => drawText(true, img)
   img.onerror = () => drawText(false)
-  img.src = imageUrl
+  img.src = `/api/proxy-image?url=${encodeURIComponent(imageUrl)}` //need to proxy the image. we need to use anonymous cross-origin requests to avoid tainting the canvas
 }
 
 function drawPosterPercent(
@@ -756,10 +777,17 @@ function fillRoundedRect(
   width: number,
   height: number,
   radius: number,
+  strokeStyle?: string,
+  lineWidth = 1,
 ): void {
   context.beginPath()
   createRoundedRectPath(context, x, y, width, height, radius)
   context.fill()
+  if (strokeStyle) {
+    context.strokeStyle = strokeStyle
+    context.lineWidth = lineWidth
+    context.stroke()
+  }
 }
 
 function createRoundedRectPath(
