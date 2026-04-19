@@ -1129,6 +1129,18 @@ type PerpsDailyFeePoint {
   amount: Float!
 }
 
+type PerpsPointsOverview {
+  address: EvmAddress!
+  totalPoints: Float!
+  points7d: Float!
+  points30d: Float!
+}
+
+type PerpsDailyPoint {
+  date: String!
+  points: Float!
+}
+
 type PerpsClaim {
   root: Bytes!
   distributor: EvmAddress!
@@ -1153,6 +1165,8 @@ type PerpsQueries {
   referralOverview(address: EvmAddress!): PerpsReferralOverview!
   referredUsers(address: EvmAddress!, limit: Int = 50, offset: Int = 0): [PerpsReferredUser!]!
   referralFeeHistory(address: EvmAddress!, from: String, to: String): [PerpsDailyFeePoint!]!
+  pointsOverview(address: EvmAddress!): PerpsPointsOverview!
+  pointsHistory(address: EvmAddress!, from: String, to: String): [PerpsDailyPoint!]!
   isReferralCodeAvailable(code: String!): Boolean!
 }
 

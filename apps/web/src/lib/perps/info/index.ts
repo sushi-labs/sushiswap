@@ -1,5 +1,7 @@
 export * from './use-extra-agents'
 export * from './use-hyper-referral'
+export * from './use-sushi-points-history'
+export * from './use-sushi-points-overview'
 export * from './use-legal-check'
 export * from './use-margin-table'
 export * from './use-perps-claim'
