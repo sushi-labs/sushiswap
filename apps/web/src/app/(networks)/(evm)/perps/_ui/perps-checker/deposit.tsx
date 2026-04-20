@@ -7,12 +7,15 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
+import { useSendableAssets } from 'src/lib/perps'
 import { useUserState } from '~evm/perps/user-provider'
 import {
   DepositDialog,
   PerpSpotTransferDialog,
   useUserSettingsState,
 } from '../account-management'
+import { SwapStablesDialog } from '../account-management/swap-stables-dialog'
+import { useAssetListState } from '../asset-selector'
 import { useAssetState } from '../trade-widget'
 
 export const Deposit: FC<ButtonProps> = ({
@@ -32,6 +35,25 @@ export const Deposit: FC<ButtonProps> = ({
   const {
     state: { isUnifiedAccountModeEnabled, isDexAbstractionEnabled },
   } = useUserSettingsState()
+  const {
+    state: { dexQuoteMap },
+  } = useAssetListState()
+  const { data: sendableAssets } = useSendableAssets('stable')
+
+  const quoteSymbol = useMemo(() => {
+    const dex = asset?.dex
+    const quoteSymbol =
+      dex !== undefined && dexQuoteMap?.has(dex) ? dexQuoteMap.get(dex) : 'USDC'
+    return quoteSymbol || 'USDC'
+  }, [asset, dexQuoteMap])
+
+  const stableBalance = useMemo(() => {
+    if (asset?.marketType === 'spot') return undefined
+
+    const sendableAsset = sendableAssets?.find((a) => a.symbol === quoteSymbol)
+    return sendableAsset ? sendableAsset?.balance : undefined
+  }, [asset, sendableAssets, quoteSymbol])
+
   const availableToTrade = useMemo(() => {
     return tradeSide === 'long' ? availableToLong : availableToShort
   }, [tradeSide, availableToLong, availableToShort])
@@ -105,21 +127,53 @@ export const Deposit: FC<ButtonProps> = ({
       </HoverCard>
     )
   }
+
   if (
     Number(availableToTrade) === 0 &&
     asset?.marketType === 'perp' &&
     !isUnifiedAccountModeEnabled
   ) {
+    if (Number(stableBalance) < 1) {
+      return (
+        <div className="flex flex-col gap-1">
+          <p className="text-xs text-muted-foreground italic">
+            Notice: Your {quoteSymbol} balance is too low. Please swap some of
+            your USDC to {quoteSymbol} before transfering them to the{' '}
+            {asset?.dex ? ` HIP-3 ` : ''} perp dex
+            {asset?.dex ? ` (${asset.dex})` : ''}.
+          </p>
+
+          <SwapStablesDialog
+            trigger={
+              <Button fullWidth={fullWidth} size={size} {...props}>
+                Swap to {quoteSymbol}
+              </Button>
+            }
+            nonSelectableSwapData={{
+              assetSymbolToSend: 'USDC',
+              assetSymbolToBuy: quoteSymbol,
+            }}
+          />
+        </div>
+      )
+    }
     return (
-      <PerpSpotTransferDialog
-        trigger={
-          <Button fullWidth={fullWidth} size={size} {...props}>
-            Transfer to Perps
-          </Button>
-        }
-        defaultDst="perp"
-        defaultDex={asset?.dex}
-      />
+      <div className="flex flex-col gap-1">
+        <p className="text-xs text-muted-foreground italic">
+          Notice: You must transfer your {quoteSymbol} to the{' '}
+          {asset?.dex ? ` HIP-3 ` : ''} perp dex{' '}
+          {asset?.dex ? ` (${asset.dex}) ` : ''} to trade this asset.
+        </p>
+        <PerpSpotTransferDialog
+          trigger={
+            <Button fullWidth={fullWidth} size={size} {...props}>
+              Transfer to Perps {asset?.dex ? `(${asset.dex})` : ''}
+            </Button>
+          }
+          defaultDst="perp"
+          defaultDex={asset?.dex}
+        />
+      </div>
     )
   }
 

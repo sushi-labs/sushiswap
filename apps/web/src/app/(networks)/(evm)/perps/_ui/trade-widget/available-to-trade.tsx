@@ -93,7 +93,7 @@ export const AvailableToTrade = () => {
       />
       {open ? (
         <SwapStablesDialog
-          trigger={<div />}
+          trigger={<div className="hidden" />}
           nonSelectableSwapData={{
             assetSymbolToSend: 'USDC',
             assetSymbolToBuy: quoteSymbol,

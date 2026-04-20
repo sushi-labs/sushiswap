@@ -315,7 +315,7 @@ export const PerpSpotTransferDialog = ({
                       loading={isPending}
                       variant="perps-default"
                     >
-                      {`Transfer to ${dst === 'spot' ? 'Spot' : 'Perps'}`}
+                      {`Transfer to ${dst === 'spot' ? 'Spot' : `Perps ${selectedDex ? `(${selectedDex})` : ''}`}`}
                     </Button>
                   </Checker.Custom>
                 </Checker.Custom>
