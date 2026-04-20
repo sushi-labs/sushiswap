@@ -1,6 +1,7 @@
 import { Card, classNames } from '@sushiswap/ui'
 import { useUserAccountValues } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
+import { useAssetState } from '../trade-widget'
 import { AccountManagementSkeleton } from './account-management-skeleton'
 import { AccountSummary } from './account-summary'
 import { DepositDialog } from './deposit-dialog'
@@ -15,7 +16,9 @@ export const AccountManagement = ({ className }: { className?: string }) => {
   const {
     state: { isUnifiedAccountModeEnabled },
   } = useUserSettingsState()
-
+  const {
+    state: { asset },
+  } = useAssetState()
   return (
     <Card
       className={classNames(
@@ -41,7 +44,10 @@ export const AccountManagement = ({ className }: { className?: string }) => {
           >
             <DepositDialog />
             <div className="flex items-center gap-2">
-              <PerpSpotTransferDialog />
+              <PerpSpotTransferDialog
+                defaultDst="perp"
+                defaultDex={asset?.dex}
+              />
               <WithdrawDialog />
             </div>
           </div>

@@ -62,6 +62,8 @@ export const AvailableToTrade = () => {
                   Available to Trade
                 </button>
               }
+              defaultDst="perp"
+              defaultDex={asset?.dex}
             />
           ) : (
             'Available to Trade'

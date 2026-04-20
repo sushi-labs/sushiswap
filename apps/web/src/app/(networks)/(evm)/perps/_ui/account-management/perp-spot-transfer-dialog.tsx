@@ -11,6 +11,10 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import {
@@ -23,6 +27,7 @@ import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
 import { EvmChainId, EvmToken, USDC } from 'sushi/evm'
 import { useUserState } from '~evm/perps/user-provider'
+import { useAssetListState } from '../asset-selector'
 import { PerpsChecker } from '../perps-checker'
 import { useAssetState } from '../trade-widget'
 import { useUserSettingsState } from './settings-provider'
@@ -36,7 +41,6 @@ export const PerpSpotTransferDialog = ({
   isOpen,
   onOpenChange,
   balanceItem,
-  currencySymbol = 'USDC',
   defaultDex,
 }: {
   trigger?: ReactNode
@@ -44,7 +48,6 @@ export const PerpSpotTransferDialog = ({
   isOpen?: boolean
   onOpenChange?: (open: boolean) => void
   balanceItem?: BalanceItemType
-  currencySymbol?: 'USDC' | 'USDT0' | 'USDH' | 'USDE'
   defaultDex?: string
 }) => {
   const [dst, setDst] = useState<'perp' | 'spot'>(defaultDst ?? 'spot')
@@ -74,6 +77,13 @@ export const PerpSpotTransferDialog = ({
   const {
     state: { isUnifiedAccountModeEnabled },
   } = useUserSettingsState()
+  const {
+    state: { dexQuoteMap, uniqueDexes },
+  } = useAssetListState()
+
+  const [selectedDex, setSelectedDex] = useState<string>(
+    balanceItem?.dex ?? defaultDex ?? asset?.dex ?? '',
+  )
   const isControlled = isOpen !== undefined
   const resolvedOpen = isControlled ? isOpen : open
 
@@ -88,48 +98,38 @@ export const PerpSpotTransferDialog = ({
     [isControlled, onOpenChange],
   )
   const currency = useMemo(() => {
-    if (balanceItem) {
-      const symbol = balanceItem.coin?.split(' ')[0] ?? 'USDC'
-      return new EvmToken({
-        address: USDC[chainId].address,
-        decimals: 6,
-        symbol: symbol,
-        name: symbol,
-        chainId,
-      })
-    }
+    const quoteSymbol =
+      selectedDex !== undefined && dexQuoteMap?.has(selectedDex)
+        ? dexQuoteMap?.get(selectedDex)
+        : 'USDC'
     return new EvmToken({
       address: USDC[chainId].address,
       decimals: 6,
-      symbol: currencySymbol,
-      name: currencySymbol,
+      symbol: quoteSymbol || '',
+      name: quoteSymbol || '',
       chainId,
     })
-  }, [currencySymbol, balanceItem])
-  const _amount = Amount.tryFromHuman(currency, amount)
+  }, [selectedDex, dexQuoteMap])
 
-  const dexName = useMemo(() => {
-    if (balanceItem) {
-      return balanceItem.dex
-    }
-    if (defaultDex !== undefined) {
-      return defaultDex
-    }
-    return asset?.dex || ''
-  }, [asset?.dex, balanceItem, defaultDex])
+  const _amount = Amount.tryFromHuman(currency, amount)
 
   const sendableBalance = useMemo(() => {
     if (dst === 'spot') {
       return clearinghouseStateData?.clearinghouseStates.find(
-        ([dex]) => dex === dexName,
+        ([dex]) => dex === selectedDex,
       )?.[1].withdrawable
     }
 
-    return data?.spotState?.balances?.find((b) => b.coin === currency?.symbol)
-      ?.total
+    const spot = data?.spotState?.balances?.find(
+      (b) => b.coin === currency?.symbol,
+    )
+    const total = Number(spot?.total || 0)
+    const hold = Number(spot?.hold || 0)
+    const balance = total - hold
+    return balance.toString()
   }, [
     dst,
-    dexName,
+    selectedDex,
     clearinghouseStateData,
     data?.spotState?.balances,
     currency,
@@ -151,7 +151,7 @@ export const PerpSpotTransferDialog = ({
   const transferUsdc = useCallback(() => {
     if (!address || !_amount || !assetToSend) return
 
-    const _dexName = dexName ? dexName : ''
+    const _dexName = selectedDex ? selectedDex : ''
     sendAsset(
       {
         amount: _amount.toString(),
@@ -168,7 +168,15 @@ export const PerpSpotTransferDialog = ({
         },
       },
     )
-  }, [address, _amount, dst, dexName, sendAsset, handleOpenChange, assetToSend])
+  }, [
+    address,
+    _amount,
+    dst,
+    selectedDex,
+    sendAsset,
+    handleOpenChange,
+    assetToSend,
+  ])
 
   const handleDstToggle = useCallback(() => {
     setDst((prevDst) => (prevDst === 'spot' ? 'perp' : 'spot'))
@@ -228,19 +236,45 @@ export const PerpSpotTransferDialog = ({
         </DialogHeader>
         <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
           <div className="flex flex-col gap-4">
-            <Button
-              className="mx-auto"
-              variant="secondary"
-              onClick={handleDstToggle}
-            >
-              {dst === 'spot'
-                ? `Perps ${dexName ? `(${dexName})` : ''}`
-                : 'Spot'}{' '}
-              <ArrowsUpDownIcon className="w-3 h-3 rotate-90" />{' '}
-              {dst === 'spot'
-                ? 'Spot'
-                : `Perps ${dexName ? `(${dexName})` : ''}`}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                fullWidth
+                variant="secondary"
+                onClick={handleDstToggle}
+                className="!rounded-lg"
+              >
+                {dst === 'spot'
+                  ? `Perps ${selectedDex ? `(${selectedDex})` : ''}`
+                  : 'Spot'}{' '}
+                <ArrowsUpDownIcon className="w-3 h-3 rotate-90" />{' '}
+                {dst === 'spot'
+                  ? 'Spot'
+                  : `Perps ${selectedDex ? `(${selectedDex})` : ''}`}
+              </Button>
+              <div>
+                <Select
+                  value={selectedDex}
+                  onValueChange={(val: string) => {
+                    setSelectedDex(val === 'hyper' ? '' : val)
+                  }}
+                >
+                  <SelectTrigger className="w-fit text-sm !px-2 !h-[40px] !gap-1 bg-[#FFFFFF0D]">
+                    {selectedDex === '' ? 'hyper' : selectedDex}
+                  </SelectTrigger>
+                  <SelectContent className="w-full">
+                    {['hyper', ...uniqueDexes]?.map((i, idx) => (
+                      <SelectItem
+                        key={`${i}-${idx}`}
+                        value={i}
+                        className="font-medium !text-white gap-4"
+                      >
+                        {i}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
             <TransferInput
               amount={amount}
               setAmount={setAmount}

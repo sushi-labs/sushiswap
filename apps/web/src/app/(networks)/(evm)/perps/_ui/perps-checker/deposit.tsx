@@ -7,7 +7,6 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
-import { useSymbolSplit } from 'src/lib/perps/info/use-symbol-split'
 import { useUserState } from '~evm/perps/user-provider'
 import {
   DepositDialog,
@@ -33,7 +32,6 @@ export const Deposit: FC<ButtonProps> = ({
   const {
     state: { isUnifiedAccountModeEnabled, isDexAbstractionEnabled },
   } = useUserSettingsState()
-  const { quoteSymbol } = useSymbolSplit({ asset })
   const availableToTrade = useMemo(() => {
     return tradeSide === 'long' ? availableToLong : availableToShort
   }, [tradeSide, availableToLong, availableToShort])
@@ -120,7 +118,7 @@ export const Deposit: FC<ButtonProps> = ({
           </Button>
         }
         defaultDst="perp"
-        currencySymbol={quoteSymbol as 'USDC' | 'USDT0' | 'USDH' | 'USDE'}
+        defaultDex={asset?.dex}
       />
     )
   }
