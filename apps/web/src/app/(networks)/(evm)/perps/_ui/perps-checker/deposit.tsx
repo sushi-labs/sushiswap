@@ -133,7 +133,7 @@ export const Deposit: FC<ButtonProps> = ({
     asset?.marketType === 'perp' &&
     !isUnifiedAccountModeEnabled
   ) {
-    if (Number(stableBalance) < 1) {
+    if (Number(stableBalance) < 0.01) {
       return (
         <div className="flex flex-col gap-1">
           <p className="text-xs text-muted-foreground italic">
