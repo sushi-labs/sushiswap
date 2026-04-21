@@ -60,7 +60,8 @@ function normalizeTrade(trade: AnyTradeType): NormalizedTrade {
   // UserPositionsItemType —
   if ('position' in trade) {
     const entryPrice = Number.parseFloat(trade.position.entryPx)
-    const size = Number.parseFloat(trade.position.szi)
+    const side = trade.side === 'A' ? -1 : 1
+    const size = Number.parseFloat(trade.position.szi) * side
     const entryNotional = entryPrice * size
     const leverage = trade.position.leverage.value
     const pnl = Number.parseFloat(trade.position.unrealizedPnl ?? '0')
