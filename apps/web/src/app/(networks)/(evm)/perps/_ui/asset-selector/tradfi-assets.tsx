@@ -9,7 +9,7 @@ import {
 } from '@sushiswap/ui'
 import type { Row, SortingState, TableState } from '@tanstack/react-table'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
-import type { PerpOrSpotAsset } from 'src/lib/perps'
+import { type PerpOrSpotAsset, usePerpCategories } from 'src/lib/perps'
 import { useAssetState } from '../trade-widget'
 import { useAssetListState } from './asset-list-provider'
 import { useAssetSelectorState } from './asset-selector-provider'
@@ -31,15 +31,16 @@ const COLUMNS = [
   OPEN_INTEREST_COLUMN,
 ]
 
-export const HIP3Assets = () => {
+export const TradfiAssets = () => {
   const [selectedTab, setSelectedTab] = useLocalStorage(
-    'sushi.perps.selected-search-asset-hip-3-tab',
+    'sushi.perps.selected-search-asset-tradfi-tab',
     'All',
   )
+  const { data: categoryData, isLoading: isPerpCategoriesLoading } =
+    usePerpCategories()
   const {
     state: {
-      assetListQuery: { data, isLoading },
-      uniqueDexes,
+      assetListQuery: { data, isLoading: isAssetListLoading },
     },
   } = useAssetListState()
   const {
@@ -51,10 +52,28 @@ export const HIP3Assets = () => {
   const {
     mutate: { setActiveAsset },
   } = useAssetState()
+  const isLoading = isAssetListLoading || isPerpCategoriesLoading
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'volume24hUsd', desc: true },
   ])
+
+  const uniqueCategories = useMemo(() => {
+    if (!categoryData) return []
+    return categoryData?.uniqueCategories
+      .filter((category) => category.toLowerCase() !== 'crypto')
+      .map((category) => {
+        if (category === 'fx') return 'FX'
+        if (category === 'preipo') return 'Pre-IPO'
+        return category
+      })
+  }, [categoryData])
+
+  const perpCategoriesMap = useMemo(() => {
+    if (!categoryData) return new Map<string, string[]>()
+    return categoryData?.data
+  }, [categoryData])
+
   const filtered = useMemo(() => {
     if (!data) return []
     const baseData = Array.from(data.values())
@@ -74,9 +93,11 @@ export const HIP3Assets = () => {
       return allData
     }
     return allData.filter((asset) => {
-      return asset?.dex.toLowerCase() === selectedTab.toLowerCase()
+      return perpCategoriesMap
+        .get(selectedTab.toLowerCase()?.replaceAll('-', ''))
+        ?.some((dexAsset) => dexAsset === asset?.name)
     })
-  }, [data, search, selectedTab])
+  }, [data, search, selectedTab, perpCategoriesMap])
 
   const state: Partial<TableState> = useMemo(() => {
     return {
@@ -115,11 +136,11 @@ export const HIP3Assets = () => {
       }}
     >
       <TabsList className="!flex !px-0 !h-8 !max-w-fit bg-secondary">
-        {['All', ...uniqueDexes].map((tab) => (
+        {['All', ...uniqueCategories].map((tab) => (
           <TabsTrigger
             key={tab}
             value={tab}
-            className="flex flex-1 !px-1.5 !max-w-fit !text-xs"
+            className="flex flex-1 !px-1.5 !max-w-fit !text-xs capitalize"
           >
             {tab}
           </TabsTrigger>
