@@ -219,7 +219,8 @@ export const PNL_COLUMN = (
       props.row.original.position.unrealizedPnl ?? '0',
     )
     const entryPrice = Number.parseFloat(props.row.original.position.entryPx)
-    const size = Number.parseFloat(props.row.original.position.szi)
+    const side = props.row.original.side === 'A' ? -1 : 1
+    const size = Number.parseFloat(props.row.original.position.szi) * side
     const entryNotional = entryPrice * size
     const leverage = props.row.original.position.leverage.value
     const roePc = (pnl / entryNotional) * (leverage ?? 1) * 100
