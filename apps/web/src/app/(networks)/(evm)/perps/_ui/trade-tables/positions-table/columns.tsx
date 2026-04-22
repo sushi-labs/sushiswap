@@ -218,8 +218,12 @@ export const PNL_COLUMN = (
     const pnl = Number.parseFloat(
       props.row.original.position.unrealizedPnl ?? '0',
     )
-    const marginUsed = Number.parseFloat(props.row.original.position.marginUsed)
-    const roePc = (pnl / marginUsed) * 100
+    const entryPrice = Number.parseFloat(props.row.original.position.entryPx)
+    const side = props.row.original.side === 'A' ? -1 : 1
+    const size = Number.parseFloat(props.row.original.position.szi) * side
+    const entryNotional = entryPrice * size
+    const leverage = props.row.original.position.leverage.value
+    const roePc = (pnl / entryNotional) * (leverage ?? 1) * 100
 
     return (
       <button
