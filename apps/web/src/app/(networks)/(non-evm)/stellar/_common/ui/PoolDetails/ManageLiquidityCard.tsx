@@ -230,20 +230,16 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     ) / 2n // Use half amount for estimating token0 route
   const zapMutation = useZap()
   // Only run route queries when in zap mode and zap inputs are valid
-  const { route: routeToken0, isPending: _isPendingRouteToken0 } = useBestRoute(
-    {
-      tokenIn: zapTokenIn,
-      tokenOut: pool.token0,
-      amountIn: isZapModeEnabled ? halfZapAmountInBigInt : 0n,
-    },
-  )
-  const { route: routeToken1, isPending: _isPendingRouteToken1 } = useBestRoute(
-    {
-      tokenIn: zapTokenIn,
-      tokenOut: pool.token1,
-      amountIn: isZapModeEnabled ? halfZapAmountInBigInt : 0n,
-    },
-  )
+  const { route: routeToken0, isPending: isPendingRouteToken0 } = useBestRoute({
+    tokenIn: zapTokenIn,
+    tokenOut: pool.token0,
+    amountIn: isZapModeEnabled ? halfZapAmountInBigInt : 0n,
+  })
+  const { route: routeToken1, isPending: isPendingRouteToken1 } = useBestRoute({
+    tokenIn: zapTokenIn,
+    tokenOut: pool.token1,
+    amountIn: isZapModeEnabled ? halfZapAmountInBigInt : 0n,
+  })
   const removeLiquidityMutation = useRemoveLiquidity()
   const selectedPosition = useMemo(
     () =>
@@ -522,20 +518,19 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                             className="w-full"
                             size="lg"
                             disabled={
-                              true
-                              // !zapTokenIn ||
-                              // !zapAmountIn ||
-                              // Number.parseFloat(zapAmountIn) <= 0 ||
-                              // !isTickRangeValid ||
-                              // isLoadingTrustlines ||
-                              // tokensNeedingTrustline.length > 0 ||
-                              // zapMutation.isPending ||
-                              // (isPendingRouteToken0 &&
-                              //   zapTokenIn.contract.toUpperCase() !==
-                              //     pool.token0.contract.toUpperCase()) ||
-                              // (isPendingRouteToken1 &&
-                              //   zapTokenIn.contract.toUpperCase() !==
-                              //     pool.token1.contract.toUpperCase())
+                              !zapTokenIn ||
+                              !zapAmountIn ||
+                              Number.parseFloat(zapAmountIn) <= 0 ||
+                              !isTickRangeValid ||
+                              isLoadingTrustlines ||
+                              tokensNeedingTrustline.length > 0 ||
+                              zapMutation.isPending ||
+                              (isPendingRouteToken0 &&
+                                zapTokenIn.contract.toUpperCase() !==
+                                  pool.token0.contract.toUpperCase()) ||
+                              (isPendingRouteToken1 &&
+                                zapTokenIn.contract.toUpperCase() !==
+                                  pool.token1.contract.toUpperCase())
                             }
                             onClick={async () => {
                               if (
@@ -607,12 +602,11 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                               )
                             }}
                           >
-                            Under Maintence
-                            {/* {zapMutation.isPending
+                            {zapMutation.isPending
                               ? 'Zapping & Adding Liquidity...'
                               : !isTickRangeValid
                                 ? 'Adjust Tick Range'
-                                : 'Zap & Add Liquidity'} */}
+                                : 'Zap & Add Liquidity'}
                           </Button>
                         )}
                     </>
@@ -694,15 +688,13 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                           className="w-full"
                           size="lg"
                           disabled={
-                            true
-                            // !canAddLiquidity ||
-                            // addLiquidityMutation.isPending ||
-                            // isLoadingTrustlines
+                            !canAddLiquidity ||
+                            addLiquidityMutation.isPending ||
+                            isLoadingTrustlines
                           }
                           onClick={handleAddLiquidity}
                         >
-                          Under Maintence
-                          {/* {addLiquidityMutation.isPending
+                          {addLiquidityMutation.isPending
                             ? 'Adding Liquidity...'
                             : isLoadingTrustlines
                               ? 'Checking trustlines...'
@@ -712,7 +704,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                                   ? 'Adjust Tick Range'
                                   : canAddLiquidity
                                     ? 'Add Liquidity'
-                                    : 'Enter Amount'} */}
+                                    : 'Enter Amount'}
                         </Button>
                       )}
                     </>

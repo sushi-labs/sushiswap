@@ -1,4 +1,6 @@
 import type { StellarContractAddress } from 'sushi/stellar'
+import * as StellarSdk from '@stellar/stellar-sdk'
+import { extractErrorMessage } from '../utils/error-helpers'
 import {
   type PoolOracleHints,
   executeWithOracleHints,
@@ -113,6 +115,14 @@ export async function mintPosition({
       throw new Error(
         `Transaction simulation failed: ${simulationError instanceof Error ? simulationError.message : String(simulationError)}`,
       )
+    }
+
+    const simulationResult = assembledTransaction.simulation
+    if (
+      simulationResult &&
+      StellarSdk.rpc.Api.isSimulationError(simulationResult)
+    ) {
+      throw new Error(extractErrorMessage(simulationResult.error))
     }
 
     // Sign auth entries for nested authorization (PM -> Pool -> Token transfers)
@@ -236,6 +246,14 @@ export async function increaseLiquidity({
       throw new Error(
         `Transaction simulation failed: ${simulationError instanceof Error ? simulationError.message : String(simulationError)}`,
       )
+    }
+
+    const simulationResult = assembledTransaction.simulation
+    if (
+      simulationResult &&
+      StellarSdk.rpc.Api.isSimulationError(simulationResult)
+    ) {
+      throw new Error(extractErrorMessage(simulationResult.error))
     }
 
     // Sign auth entries for nested authorization (PM -> Pool -> Token transfers)
@@ -362,6 +380,25 @@ export async function decreaseLiquidity({
           [pool],
           decreaseLiquidityWithHintsOperation,
         )
+
+    const simulationResult = assembledTransaction.simulation
+    if (
+      simulationResult &&
+      StellarSdk.rpc.Api.isSimulationError(simulationResult)
+    ) {
+      const extractedErrorMessage = extractErrorMessage(simulationResult.error)
+      if (
+        isLegacy &&
+        extractedErrorMessage.includes(
+          'HostError: Error(Budget, ExceededLimit)',
+        )
+      ) {
+        throw new Error(
+          'Principal in the legacy pool for the position to be migrated is restricted',
+        )
+      }
+      throw new Error(extractedErrorMessage)
+    }
 
     // Sign auth entries for nested authorization (PM -> Pool)
     const transactionXdr = await signAuthEntriesAndGetXdr(
