@@ -10,6 +10,10 @@ export const PerpsSushiReferralOverviewQuery = graphql(
     query PerpsSushiReferralOverview($address: EvmAddress!) {
       perps {
         referralOverview(address: $address) {
+          activeFeeLevels {
+            level
+            shareBps
+          }
           address
           hasRedeemedReferralCode
           referredUserCount
