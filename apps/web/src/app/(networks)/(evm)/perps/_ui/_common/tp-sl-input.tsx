@@ -116,9 +116,7 @@ export const TpSlInput = ({
         decimals,
       })
 
-      onChangeTpPrice(
-        formatPrice(value, asset?.decimals || 0, asset?.marketType || 'perp'),
-      )
+      onChangeTpPrice(value)
       setGain({ usd: gainUsd, percent: gainPercent })
     },
     [
@@ -186,9 +184,7 @@ export const TpSlInput = ({
         decimals,
       })
 
-      onChangeSlPrice(
-        formatPrice(value, asset?.decimals || 0, asset?.marketType || 'perp'),
-      )
+      onChangeSlPrice(value)
       setLoss({ usd: lossUsd, percent: lossPercent })
     },
     [

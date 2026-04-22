@@ -172,12 +172,40 @@ export function calculateTpFromGain(input: TpFromGainInput): TpFromGainResult {
   const entryPx = parseUnits(entryPrice, decimals)
   const sizeScaled = parseUnits(positionSize, decimals)
 
-  if (entryPx <= 0n) throw new Error('entryPrice must be > 0')
-  if (sizeScaled <= 0n) throw new Error('positionSize must be > 0')
-  if (leverage <= 0n) throw new Error('leverage must be > 0')
+  if (entryPx <= 0n) {
+    console.warn('entryPrice must be > 0')
+    return {
+      tpPrice: '0',
+      gainUsd: '0',
+      gainPercent: '0',
+    }
+  }
+  if (sizeScaled <= 0n) {
+    console.warn('positionSize must be > 0')
+    return {
+      tpPrice: '0',
+      gainUsd: '0',
+      gainPercent: '0',
+    }
+  }
+  if (leverage <= 0n) {
+    console.warn('leverage must be > 0')
+    return {
+      tpPrice: '0',
+      gainUsd: '0',
+      gainPercent: '0',
+    }
+  }
 
   const entryNotionalUsd = (entryPx * sizeScaled) / SCALE
-  if (entryNotionalUsd <= 0n) throw new Error('entryNotionalUsd must be > 0')
+  if (entryNotionalUsd <= 0n) {
+    console.warn('entryNotionalUsd must be > 0')
+    return {
+      tpPrice: '0',
+      gainUsd: '0',
+      gainPercent: '0',
+    }
+  }
 
   const tpFromProfitUsd = (profitUsd: bigint) => {
     const priceDelta = (profitUsd * SCALE) / sizeScaled
@@ -237,10 +265,34 @@ export function calculateGainFromTp(input: GainFromTpInput): GainFromTpResult {
   const tpPx = parseUnits(tpPrice, decimals)
   const sizeScaled = parseUnits(positionSize, decimals)
 
-  if (entryPx <= 0n) throw new Error('entryPrice must be > 0')
-  if (tpPx <= 0n) throw new Error('tpPrice must be > 0')
-  if (sizeScaled <= 0n) throw new Error('positionSize must be > 0')
-  if (leverage <= 0n) throw new Error('leverage must be > 0')
+  if (entryPx <= 0n) {
+    console.warn('entryPrice must be > 0')
+    return {
+      gainUsd: '0',
+      gainPercent: '0',
+    }
+  }
+  if (tpPx <= 0n) {
+    console.warn('tpPrice must be > 0')
+    return {
+      gainUsd: '0',
+      gainPercent: '0',
+    }
+  }
+  if (sizeScaled <= 0n) {
+    console.warn('positionSize must be > 0')
+    return {
+      gainUsd: '0',
+      gainPercent: '0',
+    }
+  }
+  if (leverage <= 0n) {
+    console.warn('leverage must be > 0')
+    return {
+      gainUsd: '0',
+      gainPercent: '0',
+    }
+  }
 
   // priceDiff is positive when TP is profitable
   const priceDiff = side === 'A' ? entryPx - tpPx : tpPx - entryPx
@@ -249,7 +301,13 @@ export function calculateGainFromTp(input: GainFromTpInput): GainFromTpResult {
   const profitUsd = (priceDiff * sizeScaled) / SCALE
 
   const entryNotionalUsd = (entryPx * sizeScaled) / SCALE
-  if (entryNotionalUsd <= 0n) throw new Error('entryNotionalUsd must be > 0')
+  if (entryNotionalUsd <= 0n) {
+    console.warn('entryNotionalUsd must be > 0')
+    return {
+      gainUsd: '0',
+      gainPercent: '0',
+    }
+  }
 
   // ROE% (scaled by 10^decimals)
   const roePercentScaled =
@@ -315,12 +373,40 @@ export function calculateSlFromLoss(input: SlFromLossInput): SlFromLossResult {
   const entryPx = parseUnits(entryPrice, decimals)
   const sizeScaled = parseUnits(positionSize, decimals)
 
-  if (entryPx <= 0n) throw new Error('entryPrice must be > 0')
-  if (sizeScaled <= 0n) throw new Error('positionSize must be > 0')
-  if (leverage <= 0n) throw new Error('leverage must be > 0')
+  if (entryPx <= 0n) {
+    console.warn('entryPrice must be > 0')
+    return {
+      slPrice: '0',
+      lossUsd: '0',
+      lossPercent: '0',
+    }
+  }
+  if (sizeScaled <= 0n) {
+    console.warn('positionSize must be > 0')
+    return {
+      slPrice: '0',
+      lossUsd: '0',
+      lossPercent: '0',
+    }
+  }
+  if (leverage <= 0n) {
+    console.warn('leverage must be > 0')
+    return {
+      slPrice: '0',
+      lossUsd: '0',
+      lossPercent: '0',
+    }
+  }
 
   const entryNotionalUsd = (entryPx * sizeScaled) / SCALE
-  if (entryNotionalUsd <= 0n) throw new Error('entryNotionalUsd must be > 0')
+  if (entryNotionalUsd <= 0n) {
+    console.warn('entryNotionalUsd must be > 0')
+    return {
+      slPrice: '0',
+      lossUsd: '0',
+      lossPercent: '0',
+    }
+  }
 
   // Helper: from lossUsd -> SL price
   // For a SHORT (A), loss occurs when price goes UP => SL above entry
@@ -412,7 +498,13 @@ export function calculateLossFromSl(input: LossFromSlInput): LossFromSlResult {
   const lossUsd = (priceDiff * sizeScaled) / SCALE
 
   const entryNotionalUsd = (entryPx * sizeScaled) / SCALE
-  if (entryNotionalUsd <= 0n) throw new Error('entryNotionalUsd must be > 0')
+  if (entryNotionalUsd <= 0n) {
+    console.warn('entryNotionalUsd must be > 0')
+    return {
+      lossUsd: '0',
+      lossPercent: '0',
+    }
+  }
 
   const roePercentScaled =
     (lossUsd * leverage * 100n * SCALE) / entryNotionalUsd
