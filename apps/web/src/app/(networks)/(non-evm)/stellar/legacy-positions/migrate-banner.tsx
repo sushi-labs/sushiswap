@@ -28,7 +28,7 @@ export const MigrateBanner: FC = () => {
         same position and price range.
       </p>
       <p className="font-bold text-md text-yellow-950">
-        If you are unable to withdrawal your funds, please{' '}
+        If you are unable to withdraw your funds, please{' '}
         <LinkExternal
           href={'https://sushi.com/discord'}
           target="_blank"
