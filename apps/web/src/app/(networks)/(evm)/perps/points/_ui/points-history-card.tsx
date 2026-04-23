@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, classNames } from '@sushiswap/ui'
+import { Button, Card, classNames } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { useMemo, useState } from 'react'
 import { useSushiPointsHistory } from 'src/lib/perps'
@@ -58,19 +58,17 @@ export function PointsHistoryCard() {
         </div>
         <div className="flex gap-2">
           {HISTORY_FILTERS.map((filter) => (
-            <button
+            <Button
               key={filter}
+              size="xs"
+              variant={historyFilter === filter ? 'perps-default' : 'ghost'}
               className={classNames(
-                'rounded-md px-3 py-1.5 text-sm transition-colors',
-                historyFilter === filter
-                  ? 'bg-[#629FFF] text-white'
-                  : 'bg-transparent text-slate-400 hover:text-white',
+                historyFilter !== filter ? 'border border-transparent' : '',
               )}
               onClick={() => setHistoryFilter(filter)}
-              type="button"
             >
               {filter}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

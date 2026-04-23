@@ -24,6 +24,7 @@ export function PointsPage() {
 
   return (
     <div className="flex flex-col gap-2">
+      <h1 className="text-4xl font-medium mb-2">Points</h1>
       <PointsSummaryCards />
       <PointsHistoryCard />
     </div>
