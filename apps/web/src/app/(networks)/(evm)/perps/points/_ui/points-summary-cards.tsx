@@ -1,9 +1,8 @@
 'use client'
 
 import { Card, SkeletonText } from '@sushiswap/ui'
-import { useSushiPointsOverview } from 'src/lib/perps'
+import { perpsNumberFormatter, useSushiPointsOverview } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
-import { formatNumber } from 'sushi'
 
 function SummaryCard({
   label,
@@ -33,13 +32,25 @@ export function PointsSummaryCards() {
   const overview = useSushiPointsOverview({ address })
 
   const currentPoints = overview.data?.totalPoints
-    ? formatNumber(overview.data.totalPoints, 0)
+    ? perpsNumberFormatter({
+        value: overview.data.totalPoints,
+        minFraxDigits: 0,
+        maxFraxDigits: 0,
+      })
     : '0'
   const points7d = overview.data?.points7d
-    ? formatNumber(overview.data.points7d, 0)
+    ? perpsNumberFormatter({
+        value: overview.data.points7d,
+        minFraxDigits: 0,
+        maxFraxDigits: 0,
+      })
     : '0'
   const points30d = overview.data?.points30d
-    ? formatNumber(overview.data.points30d, 0)
+    ? perpsNumberFormatter({
+        value: overview.data.points30d,
+        minFraxDigits: 0,
+        maxFraxDigits: 0,
+      })
     : '0'
 
   return (

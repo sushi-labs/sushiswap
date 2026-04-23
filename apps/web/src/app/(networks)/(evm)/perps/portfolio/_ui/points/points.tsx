@@ -1,9 +1,8 @@
 'use client'
 
 import { Button, Card, LinkInternal, SkeletonText } from '@sushiswap/ui'
-import { useSushiPointsOverview } from 'src/lib/perps'
+import { perpsNumberFormatter, useSushiPointsOverview } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
-import { formatNumber } from 'sushi'
 
 export function Points() {
   const address = useAccount('evm')
@@ -69,7 +68,13 @@ const _Item = ({
         </div>
       ) : (
         <div className="font-medium text-lg md:text-2xl">
-          {value ? formatNumber(value, 0) : '0'}
+          {value
+            ? perpsNumberFormatter({
+                value,
+                minFraxDigits: 0,
+                maxFraxDigits: 0,
+              })
+            : '0'}
         </div>
       )}
     </div>
