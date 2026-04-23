@@ -1,9 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
+import {
+  type StellarContractAddress,
+  normalizeStellarAddress,
+} from 'sushi/stellar'
 import { getTokenByContract } from '../../soroban'
 import { useCustomTokens } from './use-custom-tokens'
 
 interface UseTokenParams {
-  address: string
+  address: StellarContractAddress | undefined
   enabled?: boolean
   keepPreviousData?: boolean
 }
@@ -22,7 +26,7 @@ export function useTokenWithCache({
         throw new Error('Address is required')
       }
 
-      const cachedToken = customTokens[address.toUpperCase()]
+      const cachedToken = customTokens[normalizeStellarAddress(address)]
       if (cachedToken) {
         return cachedToken
       }

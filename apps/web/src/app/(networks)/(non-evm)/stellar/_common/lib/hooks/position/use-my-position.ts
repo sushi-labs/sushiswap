@@ -1,6 +1,7 @@
 import { useQueries } from '@tanstack/react-query'
 import ms from 'ms'
 import { useMemo } from 'react'
+import type { StellarContractAddress } from 'sushi/stellar'
 import {
   type PositionInfo,
   positionService,
@@ -18,7 +19,7 @@ export interface PositionSummary {
   principalToken1: bigint
   feesToken0: bigint
   feesToken1: bigint
-  pool: string
+  pool: StellarContractAddress
   tickLower: number
   tickUpper: number
   fee: number
@@ -35,7 +36,7 @@ const getPositionKey = (position: PositionInfo) => {
 }
 
 type PoolData = {
-  address: string
+  address: StellarContractAddress
   token0: Token
   token1: Token
 }

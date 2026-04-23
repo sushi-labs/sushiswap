@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
+import type { StellarContractAddress } from 'sushi/stellar'
 import {
   calculateActiveLiquidity,
   getCurrentSqrtPrice,
@@ -19,7 +20,7 @@ export function usePositionActiveLiquidity({
   tickLower,
   tickUpper,
 }: {
-  poolAddress: string | null
+  poolAddress: StellarContractAddress | null
   scaledAmount0: bigint
   scaledAmount1: bigint
   tickLower: number

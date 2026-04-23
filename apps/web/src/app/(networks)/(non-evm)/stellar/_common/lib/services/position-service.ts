@@ -4,6 +4,7 @@ import type {
   PositionTuple,
   UserPositionInfo,
 } from '@sushiswap/stellar-contract-binding-position-manager'
+import type { StellarContractAddress } from 'sushi/stellar'
 import {
   getPoolContractClient,
   getPositionManagerContractClient,
@@ -23,8 +24,8 @@ import {
 
 export interface PositionInfo {
   tokenId: number
-  token0: string
-  token1: string
+  token0: StellarContractAddress
+  token1: StellarContractAddress
   tickLower: number
   tickUpper: number
   liquidity: bigint
@@ -38,7 +39,7 @@ export interface CollectParams {
   recipient: string
   amount0Max: bigint
   amount1Max: bigint
-  poolAddress: string
+  poolAddress: StellarContractAddress
 }
 
 export interface CollectResult {

@@ -1,17 +1,17 @@
-type ContractAddress = string
+import type { StellarContractAddress } from 'sushi/stellar'
 
 export type ContractAddresses = {
-  FACTORY: ContractAddress
-  LEGACY_FACTORY?: ContractAddress
-  ROUTER: ContractAddress
-  POSITION_MANAGER: ContractAddress
-  LEGACY_POSITION_MANAGER?: ContractAddress
-  TOKEN_DESCRIPTOR: ContractAddress
-  POOL_LENS: ContractAddress
-  FLASH_EXECUTOR: ContractAddress
-  ZAP_ROUTER: ContractAddress
+  FACTORY: StellarContractAddress
+  LEGACY_FACTORY?: StellarContractAddress
+  ROUTER: StellarContractAddress
+  POSITION_MANAGER: StellarContractAddress
+  LEGACY_POSITION_MANAGER?: StellarContractAddress
+  TOKEN_DESCRIPTOR: StellarContractAddress
+  POOL_LENS: StellarContractAddress
+  FLASH_EXECUTOR: StellarContractAddress
+  ZAP_ROUTER: StellarContractAddress
   POOL_WASM_HASH: string
   TOKENS: {
-    XLM: ContractAddress
+    XLM: StellarContractAddress
   }
 }

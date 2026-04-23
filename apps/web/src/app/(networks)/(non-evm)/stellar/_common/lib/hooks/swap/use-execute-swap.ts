@@ -10,6 +10,7 @@ import { addMinutes } from 'date-fns'
 import { nanoid } from 'nanoid'
 import { toast } from 'react-toastify'
 import { ChainId } from 'sushi'
+import type { StellarContractAddress } from 'sushi/stellar'
 import { formatUnits } from 'viem'
 import { useStellarWallet } from '~stellar/providers'
 import { SwapService } from '../../services/swap-service'
@@ -19,7 +20,7 @@ import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
 
 export interface UseExecuteSwapParams {
   userAddress: string
-  pool: string
+  pool: StellarContractAddress
   tokenIn: Token
   tokenOut: Token
   amountIn: bigint
@@ -138,7 +139,7 @@ export const useExecuteSwap = () => {
 
 export interface UseExecuteMultiHopSwapParams {
   userAddress: string
-  pools: string[]
+  pools: StellarContractAddress[]
   path: string[]
   fees: number[]
   amountIn: bigint

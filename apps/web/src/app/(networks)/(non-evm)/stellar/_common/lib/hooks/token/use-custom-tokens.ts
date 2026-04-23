@@ -1,19 +1,22 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 import { useCallback, useMemo } from 'react'
+import {
+  type StellarContractAddress,
+  normalizeStellarAddress,
+} from 'sushi/stellar'
 import type { Token } from '../../types/token.type'
 
 export const STELLAR_CUSTOM_TOKEN_KEY = 'sushi.stellar.custom-tokens'
 
 export function useCustomTokens() {
-  const [value, setValue] = useLocalStorage<Record<string, Token>>(
-    STELLAR_CUSTOM_TOKEN_KEY,
-    {},
-  )
+  const [value, setValue] = useLocalStorage<
+    Record<StellarContractAddress, Token>
+  >(STELLAR_CUSTOM_TOKEN_KEY, {})
 
-  const hydrate = useCallback((data: Record<string, Token>) => {
-    return Object.entries(data).reduce<Record<string, Token>>(
+  const hydrate = useCallback((data: Record<StellarContractAddress, Token>) => {
+    return Object.entries(data).reduce<Record<StellarContractAddress, Token>>(
       (acc, [k, token]) => {
-        acc[k] = { ...token }
+        acc[k as StellarContractAddress] = { ...token }
         return acc
       },
       {},
@@ -24,7 +27,7 @@ export function useCustomTokens() {
     (token: Token) => {
       setValue((prev) => {
         const updated = { ...prev }
-        updated[token.contract.toUpperCase()] = token
+        updated[normalizeStellarAddress(token.contract)] = token
         return updated
       })
     },
@@ -34,27 +37,26 @@ export function useCustomTokens() {
   const removeCustomToken = useCallback(
     (currency: Token) => {
       setValue((prev) => {
-        return Object.entries(prev).reduce<Record<string, Token>>(
-          (acc, cur) => {
-            if (cur[0].toUpperCase() === `${currency.contract}`.toUpperCase()) {
-              return acc // filter
-            }
-            acc[cur[0]] = cur[1] // add
-            return acc
-          },
-          {},
-        )
+        return Object.entries(prev).reduce<
+          Record<StellarContractAddress, Token>
+        >((acc, cur) => {
+          if (cur[0].toUpperCase() === `${currency.contract}`.toUpperCase()) {
+            return acc // filter
+          }
+          acc[cur[0] as StellarContractAddress] = cur[1] // add
+          return acc
+        }, {})
       })
     },
     [setValue],
   )
 
   const hasToken = useCallback(
-    (currency: Token | string) => {
+    (currency: Token | StellarContractAddress) => {
       if (typeof currency === 'string') {
-        return Boolean(value[currency.toUpperCase()])
+        return Boolean(value[normalizeStellarAddress(currency)])
       }
-      return Boolean(value[currency.contract.toUpperCase()])
+      return Boolean(value[normalizeStellarAddress(currency.contract)])
     },
     [value],
   )

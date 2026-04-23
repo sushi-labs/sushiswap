@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
+import type { StellarContractAddress } from 'sushi/stellar'
 import { QuoteService } from '~stellar/_common/lib/services/quote-service'
 import { getTokenByContract } from '~stellar/_common/lib/soroban/token-helpers'
 import type { Token } from '~stellar/_common/lib/types/token.type'
@@ -13,9 +14,9 @@ interface UseBestRouteParams {
 }
 
 interface CandidateRoute {
-  path: string[]
+  path: StellarContractAddress[]
   fees: number[]
-  pools: string[]
+  pools: StellarContractAddress[]
   vertices: Vertex[]
 }
 
@@ -23,9 +24,9 @@ interface CandidateRoute {
  * Find all candidate routes between two tokens using the pool graph
  */
 function findCandidateRoutes(
-  tokenIn: string,
-  tokenOut: string,
-  tokenGraph: Map<string, string[]>,
+  tokenIn: StellarContractAddress,
+  tokenOut: StellarContractAddress,
+  tokenGraph: Map<StellarContractAddress, StellarContractAddress[]>,
   vertices: Map<string, Vertex[]>,
   maxHops = 3,
 ): CandidateRoute[] {
@@ -33,11 +34,11 @@ function findCandidateRoutes(
 
   // DFS to find all paths
   function dfs(
-    current: string,
-    target: string,
+    current: StellarContractAddress,
+    target: StellarContractAddress,
     visited: Set<string>,
-    path: string[],
-    poolPath: string[],
+    path: StellarContractAddress[],
+    poolPath: StellarContractAddress[],
     feePath: number[],
     vertexPath: Vertex[],
     depth: number,
@@ -161,7 +162,7 @@ export async function getBestRoute({
   amountIn: bigint
   poolGraphData: {
     vertices: Map<string, Vertex[]>
-    tokenGraph: Map<string, string[]>
+    tokenGraph: Map<StellarContractAddress, StellarContractAddress[]>
   }
 }): Promise<RouteWithTokens | null> {
   try {
@@ -315,7 +316,7 @@ export function useBestRoute({
   // Build additional tokens list from swap input/output
   // This ensures the pool graph includes routes for the selected tokens
   const additionalTokens = [tokenIn?.contract, tokenOut?.contract].filter(
-    (t): t is string => !!t,
+    (t): t is NonNullable<typeof t> => Boolean(t),
   )
 
   // Get the pool graph, augmented with input/output tokens
@@ -334,7 +335,7 @@ export function useBestRoute({
     ],
     queryFn: async (): Promise<RouteWithTokens | null> => {
       if (!tokenIn || !tokenOut || !poolGraphData || amountIn === 0n) {
-        return null
+        throw new Error('Invalid parameters for finding best route')
       }
 
       return await getBestRoute({

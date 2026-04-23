@@ -1,18 +1,14 @@
 import type { EvmChainId } from 'sushi/evm'
-import type { StellarChainId } from 'sushi/stellar'
+import type { StellarAccountAddress, StellarChainId } from 'sushi/stellar'
 import type { SvmChainId } from 'sushi/svm'
 
 export type WalletNamespace = 'evm' | 'svm' | 'stellar'
 
-export type AddressFor<
+export type WalletAddressFor<
   TChainId extends EvmChainId | SvmChainId | StellarChainId,
-> = TChainId extends EvmChainId
-  ? `0x${string}`
-  : TChainId extends SvmChainId
-    ? string
-    : TChainId extends StellarChainId
-      ? string
-      : never
+> = TChainId extends StellarChainId
+  ? StellarAccountAddress
+  : AddressFor<TChainId>
 
 export type WalletNamespaceFor<
   TChainId extends EvmChainId | SvmChainId | StellarChainId,

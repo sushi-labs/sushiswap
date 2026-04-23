@@ -1,11 +1,13 @@
 import { getChainById } from 'sushi'
-import { StellarChainId } from 'sushi/stellar'
+import { type StellarAccountAddress, StellarChainId } from 'sushi/stellar'
 import { formatUnits } from 'viem'
 import { getTokenBalance } from '../../soroban'
 import type { TokenWithBalance } from '../../types/token.type'
 import { fetchCommonTokensQueryFn } from './use-common-tokens'
 
-export const getStellarPortfolioWallet = async (address: `G${string}`) => {
+export const getStellarPortfolioWallet = async (
+  address: StellarAccountAddress,
+) => {
   const tokens = await fetchCommonTokensQueryFn()
   const tokensWithBalances: TokenWithBalance[] = []
   for (const token of Object.values(tokens)) {

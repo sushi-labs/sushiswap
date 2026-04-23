@@ -1,3 +1,4 @@
+import type { StellarContractAddress } from 'sushi/stellar'
 import type { Token } from '~stellar/_common/lib/types/token.type'
 
 /**
@@ -5,9 +6,9 @@ import type { Token } from '~stellar/_common/lib/types/token.type'
  */
 export interface Vertex {
   pair: string // "tokenA|||tokenB"
-  poolAddress: string
-  token0: string
-  token1: string
+  poolAddress: StellarContractAddress
+  token0: StellarContractAddress
+  token1: StellarContractAddress
   reserve0: bigint
   reserve1: bigint
   fee: number
@@ -21,7 +22,7 @@ export interface Vertex {
  */
 export interface Route {
   route: string[] // Array of token addresses forming the path
-  pools: string[] // Array of pool addresses used
+  pools: StellarContractAddress[] // Array of pool addresses used
   fees: number[] // Array of fee tiers
   amountOut: bigint
   priceImpact: number

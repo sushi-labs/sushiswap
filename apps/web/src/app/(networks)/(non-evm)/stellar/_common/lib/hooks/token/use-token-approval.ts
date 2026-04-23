@@ -1,12 +1,13 @@
 'use client'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import type { StellarAddress, StellarContractAddress } from 'sushi/stellar'
 import { approveToken } from '../../soroban/token-helpers'
 
 export interface ApproveTokenParams {
-  spender: string
+  spender: StellarAddress
   amount: bigint
-  tokenAddress: string
+  tokenAddress: StellarContractAddress
 }
 
 export const useApproveToken = () => {

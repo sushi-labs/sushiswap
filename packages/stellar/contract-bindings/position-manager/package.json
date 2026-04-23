@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "@stellar/stellar-sdk": "^14.1.1",
-    "buffer": "6.0.3"
+    "buffer": "6.0.3",
+    "sushi": "catalog:web3"
   },
   "devDependencies": {
     "typescript": "catalog:"
