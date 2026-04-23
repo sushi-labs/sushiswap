@@ -29,6 +29,7 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
 import { formatUnits } from 'viem'
 import { PerpsChecker } from '~evm/perps/_ui/perps-checker'
+import { getReferralShareFeePercent } from './referral-share-fee'
 
 const PERPS_CLAIM_TOKEN_DECIMALS = 6
 
@@ -43,6 +44,9 @@ export function ReferralsActionBar() {
   const shareLink = primaryCode
     ? `https://sushi.com/perps/invite/${primaryCode}`
     : undefined
+  const shareFeePercent = getReferralShareFeePercent(
+    overview.data?.activeFeeLevels,
+  )
 
   const claimableRewardsValue = useMemo(() => {
     if (!claim.data) {
@@ -91,7 +95,11 @@ export function ReferralsActionBar() {
           claimableRewardsValue={claimableRewardsValue}
           hasClaimableRewards={hasClaimableRewards}
         />
-        <ShareCodeDialog primaryCode={primaryCode} shareLink={shareLink} />
+        <ShareCodeDialog
+          primaryCode={primaryCode}
+          shareLink={shareLink}
+          shareFeePercent={shareFeePercent}
+        />
       </div>
     </div>
   )
@@ -336,9 +344,11 @@ function ClaimRewardsDialog({
 function ShareCodeDialog({
   primaryCode,
   shareLink,
+  shareFeePercent,
 }: {
   primaryCode?: string
   shareLink: string | undefined
+  shareFeePercent: number
 }) {
   if (!shareLink) {
     return null
@@ -390,7 +400,7 @@ function ShareCodeDialog({
             )}
           </ClipboardController>
           <p className="text-sm text-slate-400">
-            You will receive 20% of referred users&apos; fees.
+            You will receive {shareFeePercent}% of referred users&apos; fees.
           </p>
           <div>
             <div className="bg-accent w-full h-[1px]" />
