@@ -1,5 +1,5 @@
-import type { StellarContractAddress } from 'sushi/stellar'
 import * as StellarSdk from '@stellar/stellar-sdk'
+import type { StellarContractAddress } from 'sushi/stellar'
 import { extractErrorMessage } from '../utils/error-helpers'
 import {
   type PoolOracleHints,
