@@ -53,7 +53,6 @@ export const SimpleSwapExecuteButton = () => {
           }
         : null,
     )
-
   const [, { slippageTolerance }] = useSlippageTolerance(
     SlippageToleranceStorageKey.Swap,
   )
