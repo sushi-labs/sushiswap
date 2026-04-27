@@ -1,5 +1,6 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 import { Button, Card, SkeletonBox, classNames } from '@sushiswap/ui'
+import { SushiSubIcon } from '@sushiswap/ui/icons/SushiSubIcon'
 import { useMemo } from 'react'
 import {
   getSignForValue,
@@ -9,6 +10,7 @@ import {
 } from 'src/lib/perps'
 import { formatPercent } from 'sushi'
 import { FavoriteIcon, OverflowX } from '../_common'
+import { PerpsCard } from '../_common/perps-card'
 import { useAssetListState } from '../asset-selector'
 import { useAssetState } from '../trade-widget'
 
@@ -35,13 +37,13 @@ export const Favorites = () => {
   }, [favorites, data, isLoading])
 
   return (
-    <Card className="px-4 py-1 gap-4 flex items-center !bg-[#0D1421] border border-[#1E2939]">
+    <PerpsCard className="px-4 py-1 gap-4 flex items-center !max-h-fit">
       <div className="flex items-center gap-1">
         <FavoriteIcon className="h-5 w-5" isSelected />
         <span className="text-xs font-medium">Favorites</span>
       </div>
       {favorites?.length ? (
-        <div className="flex items-center bg-secondary rounded-lg p-0.5">
+        <PerpsCard className="flex items-center bg-secondary rounded-lg p-0.5">
           <Button
             size="xs"
             variant={displayType === 'usd' ? 'perps-default' : 'ghost'}
@@ -58,7 +60,7 @@ export const Favorites = () => {
           >
             %
           </Button>
-        </div>
+        </PerpsCard>
       ) : null}
       <OverflowX
         hideScrollBtns={
@@ -87,36 +89,42 @@ export const Favorites = () => {
                     })
                   : formatPercent(Number(changeValue ?? 0))
               return (
-                <Button
-                  key={idx}
-                  size="xs"
-                  variant="ghost"
-                  className="text-sm font-medium whitespace-nowrap !gap-1 tabular-nums focus:bg-transparent hover:!bg-secondary"
-                  onClick={() => setActiveAsset(asset.name)}
-                >
-                  {asset?.symbol}
-                  <div
-                    className={classNames(
-                      getTextColorClass(changeValue ? Number(changeValue) : 0),
-                    )}
+                <div key={idx} className="flex items-center gap-2">
+                  <Button
+                    size="xs"
+                    variant="ghost"
+                    className="text-sm font-medium whitespace-nowrap !gap-1 tabular-nums focus:bg-transparent hover:!bg-secondary"
+                    onClick={() => setActiveAsset(asset.name)}
                   >
-                    {displayType === 'percentage'
-                      ? getSignForValue(Number(changeValue ?? 0))
-                      : null}
-                    {formattedValue}
-                  </div>
-                </Button>
+                    {asset?.symbol}
+                    <div
+                      className={classNames(
+                        getTextColorClass(
+                          changeValue ? Number(changeValue) : 0,
+                        ),
+                      )}
+                    >
+                      {displayType === 'percentage'
+                        ? getSignForValue(Number(changeValue ?? 0))
+                        : null}
+                      {formattedValue}
+                    </div>
+                  </Button>
+                  {idx !== enrichedFavorites.length - 1 ? (
+                    <SushiSubIcon className="!w-3 !h-3 text-perps-muted/20" />
+                  ) : null}
+                </div>
               )
             })}
           </div>
         ) : (
-          <div className="flex text-xs gap-1 text-muted-foreground py-[7px]">
+          <div className="flex text-xs gap-1 text-muted-foreground whitespace-nowrap py-[8px]">
             Click the <FavoriteIcon className="h-4 w-4" /> icon in the selector
             to add assets here for quick access.
           </div>
         )}
       </OverflowX>
-    </Card>
+    </PerpsCard>
   )
 }
 

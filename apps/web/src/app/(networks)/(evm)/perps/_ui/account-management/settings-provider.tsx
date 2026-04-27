@@ -33,6 +33,7 @@ interface State {
     nSigFigs?: number
     mantissa: L2BookParameters['mantissa']
     isDexAbstractionEnabled: boolean
+    orderBookSide: 'base' | 'quote'
   }
   mutate: {
     setQuickCloseReversePositionEnabled: (enabled: boolean) => void
@@ -48,6 +49,7 @@ interface State {
     setNSigFigs: (nSigFigs: number | undefined) => void
     setMantissa: (mantissa: L2BookParameters['mantissa']) => void
     setDexAbstractionEnabled: (enabled: boolean) => void
+    setOrderBookSide: (side: 'base' | 'quote') => void
   }
 }
 
@@ -68,7 +70,7 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
       webData3Query: { data: webData3 },
     },
   } = useUserState()
-
+  const [orderBookSide, setOrderBookSide] = useState<'base' | 'quote'>('quote')
   const [
     quickCloseReversePositionEnabled,
     setQuickCloseReversePositionEnabled,
@@ -192,6 +194,7 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             nSigFigs,
             mantissa,
             isDexAbstractionEnabled,
+            orderBookSide,
           },
           mutate: {
             setQuickCloseReversePositionEnabled,
@@ -207,6 +210,7 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             setNSigFigs,
             setMantissa,
             setDexAbstractionEnabled,
+            setOrderBookSide,
           },
         }
       }, [
@@ -234,6 +238,7 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
         mantissa,
         isDexAbstractionEnabled,
         setDexAbstractionEnabled,
+        orderBookSide,
       ])}
     >
       {children}

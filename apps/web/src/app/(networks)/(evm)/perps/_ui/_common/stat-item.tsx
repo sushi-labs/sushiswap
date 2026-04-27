@@ -10,9 +10,11 @@ export const StatItem = ({
 }) => {
   return (
     <div className="grid grid-cols-2 text-xs font-medium">
-      <div className={classNames('text-[#99A1AF]')}>{title}</div>
+      <div className={classNames('text-perps-muted-50')}>{title}</div>
       <div
-        className={classNames('justify-end text-white flex whitespace-nowrap')}
+        className={classNames(
+          'justify-end text-perps-muted-70 flex whitespace-nowrap',
+        )}
       >
         {value}
       </div>

@@ -74,7 +74,6 @@ export const PlaceOrderButton = ({ onMutate }: { onMutate?: () => void }) => {
       variant={tradeSide === 'long' ? 'perps-long' : 'perps-short'}
       onClick={handleExecuteOrders}
       size="sm"
-      data-glow={'true'}
     >
       {buttonText}
     </Button>

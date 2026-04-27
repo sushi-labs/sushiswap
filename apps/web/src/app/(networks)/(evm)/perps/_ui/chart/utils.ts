@@ -161,7 +161,7 @@ export const createChartWidgetOptions = ({
   theme: resolvedTheme === 'dark' ? 'dark' : 'light',
   overrides: {
     'paneProperties.background':
-      resolvedTheme === 'dark' ? '#0D1421' : '#ffffff',
+      resolvedTheme === 'dark' ? '#161b1f' : '#ffffff',
     'paneProperties.vertGridProperties.color':
       resolvedTheme === 'dark' ? '#2C2C2E' : '#E5E7EB',
     'paneProperties.horzGridProperties.color':
@@ -369,7 +369,7 @@ export const createChartWidgetOptions = ({
         '#505259',
         '#46484e',
         '#3c3e43',
-        '#0D1421',
+        '#161b1f',
         '#323338',
       ],
       color3: [

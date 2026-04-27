@@ -137,7 +137,7 @@ const SlippageDialog = () => {
         </DialogHeader>
         <div className="flex flex-col gap-6 text-sm">
           <div className="flex flex-col gap-4 text-sm">
-            <div className="w-full border rounded-lg px-2 py-0 !text-sm border-[#FFFFFF1A] bg-[#FFFFFF0D]">
+            <div className="w-full border rounded-lg px-2 py-0 !text-sm border-[#FFFFFF1A] bg-transparent">
               <div className="flex items-center justify-between gap-2 max-h-[35px]">
                 <TextField
                   type="number"

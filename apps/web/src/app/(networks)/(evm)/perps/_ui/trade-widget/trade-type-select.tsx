@@ -10,7 +10,9 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
+import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
 import { useMemo } from 'react'
+import { PerpsCard } from '../_common/perps-card'
 import {
   TRADE_TYPES,
   type TradeType,
@@ -47,62 +49,62 @@ export const TradeTypeSelect = () => {
       value={tradeType}
       onValueChange={(value) => setTradeType(value as TradeType)}
     >
-      <TabsList className="grid grid-cols-3 !h-9 !p-0.5 border-none bg-transparent gap-1.5">
-        {REGULAR_TRADE_TYPES.map((_tradeType) => (
-          <TabsTrigger
-            key={_tradeType}
-            className="col-span-1 capitalize text-xs"
-            value={_tradeType}
-            asChild
-          >
-            <Button
-              size="sm"
-              variant={'perps-secondary'}
-              className="!p-0 w-full col-span-1 capitalize !text-xs"
-              data-selected={(tradeType === _tradeType).toString()}
-              aria-label={`Select ${_tradeType} trade type`}
-            >
-              {_tradeType}
-            </Button>
-          </TabsTrigger>
-        ))}
-        <DropdownMenu>
-          <DropdownMenuTrigger>
+      <PerpsCard>
+        <TabsList className="grid grid-cols-3 !h-9 !p-0.5 border-none bg-transparent gap-2">
+          {REGULAR_TRADE_TYPES.map((_tradeType) => (
             <TabsTrigger
-              className="col-span-1 capitalize text-xs w-full"
-              value={isProTrade ? tradeType : 'Pro'}
+              key={_tradeType}
+              className="col-span-1 capitalize text-xs"
+              value={_tradeType}
               asChild
             >
               <Button
                 size="sm"
-                variant={'perps-secondary'}
-                className="!p-0 w-full col-span-1 capitalize !text-xs"
-                data-selected={isProTrade.toString()}
-                asChild
-                aria-label="Select Pro trade types"
+                variant={'ghost'}
+                className="!p-0 w-full col-span-1 capitalize !text-xs dark:data-[state=active]:bg-transparent dark:data-[state=active]:border-0"
+                aria-label={`Select ${_tradeType} trade type`}
               >
-                <div className="flex items-center w-full justify-center">
-                  {isProTrade ? tradeType : 'Pro'}
-                  <ChevronDownIcon className="w-3 h-3" />
-                </div>
+                {_tradeType}
               </Button>
             </TabsTrigger>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="paper">
-            {proTradeType.map((_tradeType) => (
-              <DropdownMenuItem key={_tradeType} className="!p-0">
-                <TabsTrigger
-                  className="w-full capitalize text-xs !justify-start"
-                  value={_tradeType}
-                  aria-label={`Select ${_tradeType} trade type`}
+          ))}
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <TabsTrigger
+                className="col-span-1 capitalize text-xs w-full"
+                value={isProTrade ? tradeType : 'Pro'}
+                asChild
+              >
+                <Button
+                  size="sm"
+                  variant={'ghost'}
+                  className="!p-0 w-full col-span-1 capitalize !text-xs dark:data-[state=active]:bg-transparent dark:data-[state=active]:border-0"
+                  asChild
+                  aria-label="Select Pro trade types"
                 >
-                  {_tradeType}
-                </TabsTrigger>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </TabsList>
+                  <div className="flex items-center w-full justify-center gap-2">
+                    {isProTrade ? tradeType : 'Pro'}
+                    <DownTriangleIcon width={6} height={6} />
+                  </div>
+                </Button>
+              </TabsTrigger>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="!bg-black/10 backdrop-blur-2xl">
+              {proTradeType.map((_tradeType) => (
+                <DropdownMenuItem key={_tradeType} className="!p-0">
+                  <TabsTrigger
+                    className="w-full capitalize text-xs !justify-start"
+                    value={_tradeType}
+                    aria-label={`Select ${_tradeType} trade type`}
+                  >
+                    {_tradeType}
+                  </TabsTrigger>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </TabsList>
+      </PerpsCard>
     </Tabs>
   )
 }

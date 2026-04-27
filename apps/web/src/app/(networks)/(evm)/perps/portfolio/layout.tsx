@@ -7,7 +7,7 @@ export default async function PerpsPortfolioLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="bg-[#0D1421] min-h-[calc(100vh-56px)] relative overflow-hidden">
+    <div className="bg-perps-background min-h-[calc(100vh-56px)] relative overflow-hidden">
       <div className="z-[1] relative">
         <GeoBlockedMessage />
         {children}

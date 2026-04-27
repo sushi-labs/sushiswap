@@ -1,4 +1,3 @@
-import { Bars3Icon } from '@heroicons/react/24/outline'
 import {
   Button,
   HoverCard,
@@ -16,10 +15,17 @@ import {
   navigationElementShowMap,
   navigationMenuTriggerStyle,
 } from '@sushiswap/ui'
+import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
+import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 
 export const EXPLORE_NAVIGATION_LINKS =
   (): NavigationElementDropdown['items'] => {
     return [
+      {
+        title: 'Swap',
+        href: `/`,
+        description: 'Swap any token on Sushi.',
+      },
       {
         title: 'Trade',
         href: `/perps`,
@@ -56,8 +62,9 @@ export const headerElements = (): NavigationElement[] => {
       item: (
         <NavigationMenuItem className={NavigationElementType.Custom}>
           <NavigationMenuPrimitive.Trigger asChild>
-            <Button variant="secondary" className="ml-1">
-              <Bars3Icon className="h-5 w-5" />
+            <Button variant="ghost" className="ml-1">
+              <SushiWithTextIcon width={80} />
+              <DownTriangleIcon width={6} height={6} />
             </Button>
           </NavigationMenuPrimitive.Trigger>
           <NavigationMenuContent>

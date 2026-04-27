@@ -70,18 +70,6 @@ module.exports = {
         'depth-1': '0px 3px 6px rgba(15, 15, 15, 0.5)',
         'hover-card':
           'rgb(101 119 134 / 20%) 0px 0px 15px, rgb(101 119 134 / 15%) 0px 0px 3px 1px',
-        'perps-glow-blue':
-          '0px 4.76px 7.14px -4.76px rgba(43,127,255,0.2), 0px 11.91px 17.86px -3.57px rgba(43,127,255,0.4)',
-        'perps-glow-blue-light':
-          '0px 5.02px 7.53px -5.02px #2B7FFF33, 0px 12.55px 18.83px -3.77px #2B7FFF05',
-        'perps-glow-green': '0px 12.55px 18.83px -3.77px #35D39966',
-        'perps-glow-red': '0px 11px 14.3px 0px #FF575963',
-        'perps-chip-glow-blue':
-          '0px 5.05px 7.58px -5.05px #2B7FFF33, 0px 12.63px 18.94px -3.79px #2B7FFF33',
-        'perps-chip-glow-red':
-          '0px 5.05px 7.58px -5.05px #FF515133, 0px 12.63px 18.94px -3.79px #FF515133',
-        'perps-chip-glow-green':
-          '0px 5.05px 7.58px -5.05px #35D39933, 0px 12.63px 18.94px -3.79px #35D39933',
       },
       colors: {
         blue: {
@@ -106,6 +94,16 @@ module.exports = {
         accent: 'var(--accent)',
         'accent-foreground': 'var(--accent-foreground)',
         background: 'var(--background)',
+        'perps-background': '#0D1217',
+        'perps-blue': '#349BFE',
+        'perps-green': '#52FA8D',
+        'perps-red': '#FB7185',
+        'perps-muted': {
+          DEFAULT: '#EDF0F3',
+          20: '#EDF0F333',
+          50: '#EDF0F380',
+          70: '#EDF0F3B2',
+        },
       },
       animation: {
         ellipsis: 'ellipsis 1.25s infinite',

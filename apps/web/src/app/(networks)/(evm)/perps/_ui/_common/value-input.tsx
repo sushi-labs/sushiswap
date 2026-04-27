@@ -40,7 +40,7 @@ export const ValueInput = ({
   return (
     <div
       className={classNames(
-        'w-full border rounded-lg px-2 py-0 border-[#FFFFFF1A] bg-[#FFFFFF0D]',
+        'w-full border rounded-lg px-2 py-0 border-[#FFFFFF1A] bg-transparent',
         className ?? '',
       )}
     >

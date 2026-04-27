@@ -15,11 +15,13 @@ import { SidebarTrigger } from '../sidebar/sidebar-trigger'
 interface UserPortfolioProps {
   selectedNetwork: ChainId | undefined
   namespace?: WalletNamespace
+  isPerps?: boolean
 }
 
 export function UserPortfolio({
   selectedNetwork,
   namespace,
+  isPerps,
 }: UserPortfolioProps) {
   const wallets = useWallets()
 
@@ -53,12 +55,17 @@ export function UserPortfolio({
   }, [wallets])
 
   if (!address)
-    return <ConnectButton variant="secondary" namespace={namespace} />
+    return (
+      <ConnectButton
+        variant={isPerps ? 'perps-default' : 'secondary'}
+        namespace={namespace}
+      />
+    )
 
   return (
     <SidebarTrigger>
       <Button
-        variant="secondary"
+        variant={isPerps ? 'perps-secondary' : 'secondary'}
         onClick={() => open()}
         className="items-center"
       >

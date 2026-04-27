@@ -336,7 +336,7 @@ export const SwapStablesDialog = ({
                 value={assetToSend?.symbol || ''}
                 onValueChange={handleSelectAssetToSend}
               >
-                <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[41px] !pl-4 !gap-1 !border !border-[#FFFFFF1A] bg-[#FFFFFF0D]">
+                <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[41px] !pl-4 !gap-1 !border !border-[#FFFFFF1A] bg-transparent">
                   {assetToSend
                     ? `${assetToSend?.symbol} ${Number(assetToSend?.balance) > 0 ? ` - ${perpsNumberFormatter({ value: assetToSend?.balance, maxFraxDigits: 2, minFraxDigits: 2 })}` : ''}`
                     : 'Select Asset'}
@@ -386,7 +386,7 @@ export const SwapStablesDialog = ({
                 value={assetToBuy?.symbol || ''}
                 onValueChange={handleSelectAssetToBuy}
               >
-                <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[41px] !pl-4 !gap-1 !border !border-[#FFFFFF1A] bg-[#FFFFFF0D]">
+                <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[41px] !pl-4 !gap-1 !border !border-[#FFFFFF1A] bg-transparent">
                   {assetToBuy
                     ? `${assetToBuy?.symbol} ${Number(assetToBuy?.balance) > 0 ? ` - ${perpsNumberFormatter({ value: assetToBuy?.balance, maxFraxDigits: 2, minFraxDigits: 2 })}` : ''}`
                     : 'Select Asset'}

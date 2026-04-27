@@ -14,7 +14,6 @@ import {
   useUserAccountValues,
 } from 'src/lib/perps'
 import { StatItem, ValueSensitiveText } from '../_common'
-import { SettingsDialog } from './settings-dialog'
 import { useUserSettingsState } from './settings-provider'
 
 export const UnifiedAccountSummary = () => {
@@ -30,17 +29,16 @@ export const UnifiedAccountSummary = () => {
   } = useUserSettingsState()
   return (
     <div className="flex flex-col gap-2">
-      <hr className="my-0.5 border-t border-accent hidden lg:block" />
       <CardContent className="!p-0 !gap-2">
         <CardGroup className="!gap-1">
-          <p className="text-xs font-semibold mb-2 lg:mb-1">
+          <p className="text-xs font-semibold mb-2 lg:mb-1 text-perps-muted-70">
             Unified Account Summary
           </p>
           <StatItem
             title={
               <HoverCard openDelay={0} closeDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
-                  <div className="text-muted-foreground underline">
+                  <div className="text-perps-muted-50 underline">
                     Unified Account Ratio
                   </div>
                 </HoverCardTrigger>
@@ -106,7 +104,7 @@ export const UnifiedAccountSummary = () => {
             title={
               <HoverCard openDelay={0} closeDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
-                  <div className="text-muted-foreground underline whitespace-nowrap">
+                  <div className="text-perps-muted-50 underline whitespace-nowrap">
                     Perps Maintenance Margin
                   </div>
                 </HoverCardTrigger>
@@ -128,7 +126,7 @@ export const UnifiedAccountSummary = () => {
             title={
               <HoverCard openDelay={0} closeDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
-                  <div className="text-muted-foreground underline">
+                  <div className="text-perps-muted-50 underline">
                     Unified Account Leverage
                   </div>
                 </HoverCardTrigger>
@@ -148,9 +146,6 @@ export const UnifiedAccountSummary = () => {
           />
         </CardGroup>
       </CardContent>
-      <div className="self-end mt-2">
-        <SettingsDialog />
-      </div>
     </div>
   )
 }

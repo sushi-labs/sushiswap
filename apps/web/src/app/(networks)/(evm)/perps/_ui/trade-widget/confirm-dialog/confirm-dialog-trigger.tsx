@@ -2,13 +2,9 @@ import { Button, DialogTrigger } from '@sushiswap/ui'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useUserSettingsState } from '../../account-management'
 import { PerpsChecker } from '../../perps-checker'
-import { useAssetState } from '../asset-state-provider'
 import { PlaceOrderButton } from './place-order-button'
 
 export const ConfirmDialogTrigger = () => {
-  const {
-    state: { tradeSide },
-  } = useAssetState()
   const {
     state: { quickConfirmPositionEnabled },
   } = useUserSettingsState()
@@ -23,27 +19,16 @@ export const ConfirmDialogTrigger = () => {
                 <PerpsChecker.HyperReferral size="sm" variant="perps-default">
                   <PerpsChecker.TwapRunningTime
                     size="sm"
-                    variant={
-                      tradeSide === 'long' ? 'perps-long' : 'perps-short'
-                    }
+                    variant="perps-default"
                   >
-                    <PerpsChecker.OrderAmount
-                      size="sm"
-                      variant={
-                        tradeSide === 'long' ? 'perps-long' : 'perps-short'
-                      }
-                    >
+                    <PerpsChecker.OrderAmount size="sm" variant="perps-default">
                       <PerpsChecker.TakeStopTrigger
                         size="sm"
-                        variant={
-                          tradeSide === 'long' ? 'perps-long' : 'perps-short'
-                        }
+                        variant="perps-default"
                       >
                         <PerpsChecker.TwapSuborder
                           size="sm"
-                          variant={
-                            tradeSide === 'long' ? 'perps-long' : 'perps-short'
-                          }
+                          variant="perps-default"
                         >
                           {quickConfirmPositionEnabled ? (
                             <PlaceOrderButton />
@@ -52,12 +37,7 @@ export const ConfirmDialogTrigger = () => {
                               <Button
                                 fullWidth
                                 size="sm"
-                                variant={
-                                  tradeSide === 'long'
-                                    ? 'perps-long'
-                                    : 'perps-short'
-                                }
-                                data-glow="true"
+                                variant="perps-default"
                               >
                                 Place Order
                               </Button>

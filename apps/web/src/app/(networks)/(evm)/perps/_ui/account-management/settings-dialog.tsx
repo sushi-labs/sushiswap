@@ -42,8 +42,8 @@ export const SettingsDialog = () => {
     <Dialog>
       <DialogTrigger asChild>
         <IconButton
-          variant="secondary"
-          size="sm"
+          variant="perps-secondary"
+          className="!rounded-xl"
           icon={Cog6ToothIcon}
           name="settings"
           iconProps={{ className: 'w-4 h-4' }}

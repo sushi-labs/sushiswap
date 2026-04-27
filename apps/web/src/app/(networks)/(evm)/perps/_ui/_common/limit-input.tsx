@@ -41,7 +41,7 @@ export const LimitInput = ({
   return (
     <div
       className={classNames(
-        'w-full border rounded-lg border-[#FFFFFF1A] bg-[#FFFFFF0D]',
+        'w-full border rounded-lg border-[#FFFFFF1A] bg-transparent',
         size === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2',
       )}
     >

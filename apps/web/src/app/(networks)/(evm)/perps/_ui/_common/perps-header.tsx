@@ -7,6 +7,7 @@ import type { FC } from 'react'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
 import type { ChainId } from 'sushi'
 import { useChainId } from 'wagmi'
+import { SettingsDialog } from '../account-management'
 import { headerElements } from './header-elements'
 
 interface HeaderProps {
@@ -26,7 +27,7 @@ export const PerpsHeader: FC<HeaderProps> = ({
       <div className="fixed w-full flex z-20">
         <div
           className={classNames(
-            'hidden lg:flex justify-between items-center px-1 h-14 flex-shrink-0 bg-[#0D1421] border-[#1E2939] border-b',
+            'hidden md:flex justify-between items-center px-1 h-14 flex-shrink-0 bg-perps-background',
           )}
         >
           <LinkInternal
@@ -37,21 +38,20 @@ export const PerpsHeader: FC<HeaderProps> = ({
             <SushiWithTextIcon width={90} />
           </LinkInternal>
         </div>
-        <div className="flex lg:hidden justify-between items-center pl-4 bg-[#0D1421] border-[#1E2939] border-b">
-          <LinkInternal className="!px-2" href={'/swap'}>
-            <SushiIcon width={24} height={24} />
-          </LinkInternal>
-        </div>
         <Navigation
-          className="!pl-0 lg:!pl-4 !z-[unset] !bg-[#0D1421]"
+          className="!pl-0 lg:!pl-4 !z-[unset] !bg-perps-background !border-0"
           hideSushiDropdown
           leftElements={headerElements()}
           rightElement={
-            <WagmiHeaderComponents
-              networks={networks}
-              selectedNetwork={chainId}
-              hideNetworkSelector={true}
-            />
+            <>
+              <WagmiHeaderComponents
+                networks={networks}
+                selectedNetwork={chainId}
+                hideNetworkSelector={true}
+                isPerps={true}
+              />
+              <SettingsDialog />
+            </>
           }
         />
       </div>

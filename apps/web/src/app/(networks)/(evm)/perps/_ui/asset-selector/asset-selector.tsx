@@ -1,5 +1,4 @@
 'use client'
-import { ChevronDownIcon } from '@heroicons/react-v1/outline'
 import {
   Button,
   Chip,
@@ -8,6 +7,7 @@ import {
   DropdownMenuTrigger,
   SkeletonBox,
 } from '@sushiswap/ui'
+import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
 import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
 import { useEffect, useMemo, useState } from 'react'
 import { getHyperliquidCoinIconUrl } from 'src/lib/perps'
@@ -34,25 +34,20 @@ export const AssetSelector = () => {
         ) : (
           <Button
             aria-label="Asset Selector"
-            variant="ghost"
-            className="whitespace-nowrap hover:!bg-transparent !px-0 lg:!rounded-full items-center !h-fit !gap-1"
-            asChild
+            variant="perps-secondary"
+            size="sm"
+            className="whitespace-nowrap hover:!bg-transparent items-center"
           >
-            <span className="block lg:hidden">
-              <TokenIcon />
-            </span>
-            <div className="whitespace-nowrap flex flex-col lg:flex-row lg:items-center lg:gap-2">
+            <div className="whitespace-nowrap flex items-center gap-2">
               <div className="flex items-center gap-1">
-                <span className="hidden lg:block">
-                  <TokenIcon />
-                </span>
+                <TokenIcon />
+
                 <span className="text-lg font-medium">{asset?.symbol}</span>
               </div>
-              <div className="flex items-center gap-1 ">
+              <div className="flex items-center gap-1">
                 <Chip
                   variant="perps-blue"
                   className="!px-1 !py-0 rounded-md ml-1"
-                  data-glow="true"
                 >
                   {asset?.maxLeverage ? `${asset.maxLeverage}x` : 'Spot'}
                 </Chip>
@@ -66,14 +61,7 @@ export const AssetSelector = () => {
                 ) : null}
               </div>
             </div>
-            <Button
-              variant="perps-secondary"
-              size="xs"
-              className="!px-1 ml-2 lg:ml-1 !rounded-lg"
-              aria-label="Asset Selector Chevron"
-            >
-              <ChevronDownIcon width={20} height={20} />
-            </Button>
+            <DownTriangleIcon width={6} height={6} />
           </Button>
         )}
       </DropdownMenuTrigger>
@@ -125,19 +113,20 @@ const TriggerSkeleton = () => {
   return (
     <Button
       variant="secondary"
-      className="whitespace-nowrap lg:!rounded-full !h-fit !gap-1"
+      className="whitespace-nowrap lg:!rounded-xl !gap-1"
+      size="sm"
+      disabled
     >
-      <div className="whitespace-nowrap flex flex-col lg:flex-row lg:items-center gap-1">
+      <div className="whitespace-nowrap flex items-center gap-1">
         <div className="flex items-center gap-1">
-          <SkeletonBox className="w-6 h-6 min-w-[24px] !rounded-full" />
-          <SkeletonBox className="w-24 h-7" />
-          <ChevronDownIcon className="block lg:hidden" width={20} height={20} />
+          <SkeletonBox className="w-6 h-6 min-w-[24px] !rounded-xl" />
+          <SkeletonBox className="w-24 h-6" />
         </div>
         <div className="flex items-center gap-1">
           <SkeletonBox className="w-8 h-4 !rounded-[4px]" />
         </div>
       </div>
-      <ChevronDownIcon className="hidden lg:block" width={20} height={20} />
+      <DownTriangleIcon width={6} height={6} />
     </Button>
   )
 }

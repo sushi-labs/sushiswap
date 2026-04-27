@@ -57,7 +57,7 @@ export const ConfigureAmount = ({
       />
       <div
         className={classNames(
-          'border flex items-center justify-center !rounded-md border-[#FFFFFF1A] bg-[#FFFFFF0D] py-0 px-2 whitespace-nowrap text-sm font-medium text-right',
+          'border flex items-center justify-center !rounded-md border-[#FFFFFF1A] bg-transparent py-0 px-2 whitespace-nowrap text-sm font-medium text-right',
         )}
       >
         <TextField

@@ -1,5 +1,6 @@
 'use client'
 import { Button, classNames } from '@sushiswap/ui'
+import { PerpsCard } from './perps-card'
 type DefaultSide = 'base' | 'quote'
 
 interface SideToggleProps<T extends string = DefaultSide> {
@@ -20,29 +21,29 @@ export const SideToggle = <T extends string = DefaultSide>({
   const resolvedOptions = options ?? (['base', 'quote'] as unknown as [T, T])
   const [left, right] = resolvedOptions
   return (
-    <div className="flex items-centerrounded-lg p-0.5">
+    <PerpsCard className="flex items-center !rounded-none p-0.5">
       <Button
         size="xs"
-        variant={'ghost'}
+        variant={side === left ? 'secondary' : 'ghost'}
         onClick={() => setSide(left)}
         className={classNames(
           'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
-          side === right ? 'text-muted-foreground' : '',
+          side === right ? 'text-perps-muted-50' : '',
         )}
       >
         {baseSymbol}
       </Button>
       <Button
         size="xs"
-        variant={'ghost'}
+        variant={side === right ? 'secondary' : 'ghost'}
         onClick={() => setSide(right)}
         className={classNames(
           'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
-          side === left ? 'text-muted-foreground' : '',
+          side === left ? 'text-perps-muted-50' : '',
         )}
       >
         {quoteSymbol}
       </Button>
-    </div>
+    </PerpsCard>
   )
 }

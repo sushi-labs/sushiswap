@@ -1,4 +1,4 @@
-import { Button, Card, classNames, useBreakpoint } from '@sushiswap/ui'
+import { Button, classNames, useBreakpoint } from '@sushiswap/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
@@ -9,6 +9,7 @@ import {
   useUserPositions,
 } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
+import { PerpsCard } from '../_common/perps-card'
 import { TradeFilter } from './filters'
 import {
   TRADE_TABLES_TABS,
@@ -97,12 +98,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
   }, [balanceCount, positionCount, openOrdersCount, twapOrderCount, TABS])
 
   return (
-    <Card
-      className={classNames(
-        'p-2 !bg-[#0D1421] border border-[#1E2939]',
-        className ?? '',
-      )}
-    >
+    <PerpsCard className={classNames('p-2', className ?? '')}>
       <Tabs
         value={activeTab}
         onValueChange={(val) => setActiveTab(val as TradeTablesTabValue)}
@@ -111,8 +107,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
           <div className="hide-scrollbar overflow-x-auto">
             <TabsList
               className={classNames(
-                '!px-0.5 !h-8 !bg-[#0D1421]',
-                isPortfolio && '!bg-[#18223B]',
+                '!px-0.5 !h-8 !bg-[#EDF0F30D] !rounded-full',
               )}
             >
               {tabNameRewrite?.map((tab) => (
@@ -127,7 +122,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
                     variant={
                       activeTab === tab.value ? 'perps-secondary' : 'ghost'
                     }
-                    className="!p-0 w-full col-span-1 capitalize !text-xs !rounded-md"
+                    className="!p-0 w-full col-span-1 capitalize !text-xs !rounded-full !border-0"
                   >
                     {tab.name}
                   </Button>
@@ -165,6 +160,6 @@ export const TradeTables = ({ className }: { className?: string }) => {
           </TabsContent>
         ))}
       </Tabs>
-    </Card>
+    </PerpsCard>
   )
 }

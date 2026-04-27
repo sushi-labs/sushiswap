@@ -7,7 +7,6 @@ import {
   classNames,
   useBreakpoint,
 } from '@sushiswap/ui'
-import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 import { TradeFilter } from '../filters'
 import {
@@ -18,8 +17,6 @@ import {
 
 export const TwapTables = () => {
   const { isLg } = useBreakpoint('lg')
-  const pathname = usePathname()
-  const isPortfolio = pathname === '/perps/portfolio'
   const {
     state: { activeTwapTab },
     mutate: { setActiveTwapTab },
@@ -35,10 +32,7 @@ export const TwapTables = () => {
       <div className="flex items-center justify-between">
         {!isLg ? <TradeFilter /> : null}
         <TabsList
-          className={classNames(
-            '!px-0.5 !h-8 !bg-[#0D1421]',
-            isPortfolio && '!bg-[#18223B]',
-          )}
+          className={classNames('!px-0.5 !h-8 !bg-[#EDF0F30D] !rounded-full')}
         >
           {TWAP_TABLES_TABS.map((tab) => (
             <TabsTrigger
@@ -52,7 +46,7 @@ export const TwapTables = () => {
                 variant={
                   activeTwapTab === tab.value ? 'perps-secondary' : 'ghost'
                 }
-                className="!p-0 w-full col-span-1 capitalize !text-xs !rounded-md"
+                className="!p-0 w-full col-span-1 capitalize !text-xs !rounded-full !border-0"
               >
                 {tab.name}
               </Button>

@@ -35,7 +35,7 @@ export function InvitePage({ code }: { code: string }) {
   }, [newInvite, router, setPendingInvite])
 
   return (
-    <Card className="flex min-h-[260px] items-center justify-center border-transparent !bg-[#0D1421] p-4 !rounded-md text-center">
+    <Card className="flex min-h-[260px] items-center justify-center border-transparent !bg-perps-background p-4 !rounded-md text-center">
       <p className="text-sm text-slate-400">Redirecting to perps...</p>
     </Card>
   )

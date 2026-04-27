@@ -210,7 +210,7 @@ export const SendDialog = ({
                   setAssetToSend(asset)
                 }}
               >
-                <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[41px] !py-0 !pl-4 !gap-1 !border !border-[#FFFFFF1A] bg-[#FFFFFF0D]">
+                <SelectTrigger className="capitalize whitespace-nowrap text-sm !px-2 !h-[41px] !py-0 !pl-4 !gap-1 !border !border-[#FFFFFF1A] bg-transparent">
                   {assetToSend
                     ? `${assetToSend?.symbol}  ${isUnifiedAccountModeEnabled ? '' : assetToSend?.marketType === 'perp' ? '(Perps)' : '(Spot)'} ${Number(assetToSend?.balance) > 0 ? ` - ${perpsNumberFormatter({ value: assetToSend?.balance })}` : ''}`
                     : 'Select Asset'}

@@ -1,4 +1,6 @@
 import { Button } from '@sushiswap/ui'
+import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
+import { PerpsCard } from '../_common/perps-card'
 import { UpdateLeverageDialog, UpdateMarginModeDialog } from '../exchange'
 import { useAssetState } from './asset-state-provider'
 
@@ -17,28 +19,38 @@ export const Leverage = () => {
 
   if (isLoading || isError) {
     return (
-      <div className="flex items-center gap-1.5 w-full">
-        <Button size="sm" variant="perps-default" fullWidth disabled>
+      <PerpsCard className="flex items-center w-full">
+        <Button
+          size="sm"
+          variant="ghost"
+          fullWidth
+          disabled
+          className="!cursor-not-allowed"
+        >
           Cross
+          <DownTriangleIcon width={6} height={6} />
         </Button>
-        <Button size="sm" variant="perps-secondary" fullWidth disabled>
+        <Button
+          size="sm"
+          variant="ghost"
+          fullWidth
+          disabled
+          className="!cursor-not-allowed"
+        >
           10x
+          <DownTriangleIcon width={6} height={6} />
         </Button>
-      </div>
+      </PerpsCard>
     )
   }
 
   return (
-    <div className="flex items-center gap-1.5 w-full">
+    <PerpsCard className="flex items-center w-full">
       <UpdateMarginModeDialog
         trigger={
-          <Button
-            size="sm"
-            variant="perps-default"
-            fullWidth
-            className="capitalize"
-          >
+          <Button size="sm" variant="ghost" fullWidth className="capitalize">
             {currentLeverageTypeForAsset}
+            <DownTriangleIcon width={6} height={6} />
           </Button>
         }
         assetString={activeAsset}
@@ -47,14 +59,15 @@ export const Leverage = () => {
       />
       <UpdateLeverageDialog
         trigger={
-          <Button size="sm" variant="perps-secondary" fullWidth>
+          <Button size="sm" variant="ghost" fullWidth>
             {currentLeverageForAsset}x
+            <DownTriangleIcon width={6} height={6} />
           </Button>
         }
         assetString={activeAsset}
         currentLeverage={currentLeverageForAsset}
         isCross={currentLeverageTypeForAsset === 'cross'}
       />
-    </div>
+    </PerpsCard>
   )
 }

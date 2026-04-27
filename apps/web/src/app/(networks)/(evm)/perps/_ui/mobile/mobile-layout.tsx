@@ -2,29 +2,39 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 import { AssetSelectorAndStats, GeoBlockedMessage } from '../_common'
 import { AccountManagement } from '../account-management'
+import { Chart } from '../chart'
+import { Favorites } from '../favorites'
+import { OrderBookTradesTabbedView } from '../order-book-trades-tabbed-view'
 import { TradeTables } from '../trade-tables'
 import { TradeWidget } from '../trade-widget'
 import { FooterNav } from './footer-nav'
-import { TabbedView } from './tabbed-view'
 
-export type PerpsMobileViewType = 'markets' | 'trade' | 'account'
+export type PerpsMobileViewType = 'order' | 'charts'
 
 export const MobileLayout = () => {
   const [view, setView] = useLocalStorage<PerpsMobileViewType>(
     'sushi.perps.mobile-layout-tab',
-    'markets',
+    'order',
   )
   return (
-    <div className="pb-[52px] w-full h-full min-h-[calc(100vh-96px)] overflow-x-hidden">
+    <div className="pb-[75px] w-full h-full min-h-[calc(100vh-96px)] overflow-x-hidden px-1">
       <GeoBlockedMessage />
-      <div className="flex flex-col gap-1 pt-2">
-        {view !== 'account' ? <AssetSelectorAndStats /> : null}
-        {view === 'markets' ? <TabbedView /> : null}
-        {view === 'trade' ? <TradeWidget className="min-h-[380px]" /> : null}
-        {view === 'account' ? (
-          <AccountManagement className="min-h-[calc(100dvh-116px)] rounded-b-none justify-between" />
-        ) : null}
-        {view !== 'account' ? <TradeTables className="min-h-[300px]" /> : null}
+      <div className="flex flex-col gap-1">
+        {view === 'order' ? (
+          <>
+            <AssetSelectorAndStats />
+            <TradeWidget />
+            <AccountManagement />
+          </>
+        ) : (
+          <>
+            <Favorites />
+            <AssetSelectorAndStats />
+            <Chart />
+            <OrderBookTradesTabbedView />
+            <TradeTables />
+          </>
+        )}
       </div>
       <FooterNav view={view} setView={setView} />
     </div>

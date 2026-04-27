@@ -37,7 +37,7 @@ export const OverflowX = ({
           <button
             onClick={() => handleButtonClickScroll('left')}
             type="button"
-            className="z-10 flex items-center justify-center absolute top-0 left-0 h-full min-w-[30px] w-[30px] bg-gradient-to-r to-transparent from-white dark:from-background"
+            className="z-10 flex items-center justify-center absolute top-0 left-0 h-full min-w-[30px] w-[30px] bg-gradient-to-r to-transparent from-perps-background dark:from-[#161b1f]"
             aria-label="Scroll Left Horizontally"
           >
             <ChevronLeftIcon className="h-5 w-5" />
@@ -48,7 +48,7 @@ export const OverflowX = ({
           <button
             onClick={() => handleButtonClickScroll('right')}
             type="button"
-            className="flex items-center z-10 justify-center absolute top-0 right-0 h-full min-w-[30px] w-[30px] bg-gradient-to-r from-transparent to-white dark:to-background"
+            className="flex items-center z-10 justify-center absolute top-0 right-0 h-full min-w-[30px] w-[30px] bg-gradient-to-r from-transparent to-perps-background dark:to-[#161b1f]"
             aria-label="Scroll Right Horizontally"
           >
             <ChevronRightIcon className="h-5 w-5" />

@@ -29,13 +29,13 @@ const iconButtonVariants = cva(
         link: 'text-blue hover:text-blue-700 font-semibold !p-0 !h-[unset] !min-h-[unset]',
         blank: '',
         'perps-default':
-          'bg-[#2B7FFF99] hover:bg-[#2B7FFFCC] focus:bg-[#2B7FFFCC] border-[#51A2FF80] border active:bg-[#2B7FFFCC] text-white data-[glow=true]:shadow-perps-glow-blue',
+          'bg-gradient-to-b text-perps-blue from-[#349BFE]/[0.13] to-[#349BFE]/[0.05] border border-[#349BFE]/[0.08] shadow-[inset_0_1px_0_rgba(52,155,254,0.10)] transition-all hover:from-[#349BFE]/[0.18] hover:to-[#349BFE]/[0.08] hover:border-[#349BFE]/[0.15]',
         'perps-secondary':
-          'bg-[#FFFFFF0D] hover:bg-[#FFFFFF1A] border-[#FFFFFF1A] border text-white data-[selected=true]:border-[#51A2FF80] data-[selected=true]:bg-[#FFFFFF1F] data-[selected=true]:shadow-perps-glow-blue-light',
+          'bg-gradient-to-b text-white from-[#EDF1F3]/[0.05] to-[#EDF1F3]/[0.015] border border-white/[0.03] shadow-[inset_0_1px_0_rgba(255,255,255,0.10)] transition-all hover:from-[#EDF1F3]/[0.13] hover:to-[#EDF1F3]/[0.05] hover:border-white/[0.15]',
         'perps-long':
-          'bg-[#35D39999] hover:bg-[#35D399CC] focus:bg-[#35D399CC] border-[#35D39980] border active:bg-[#35D399CC] text-white data-[glow=true]:shadow-perps-glow-green',
+          'bg-gradient-to-b text-perps-green from-[#52FA8D]/[0.13] to-[#52FA8D]/[0.05] border border-[#52FA8D]/[0.08] shadow-[inset_0_1px_0_rgba(82,250,141,0.10)] transition-all hover:from-[#52FA8D]/[0.18] hover:to-[#52FA8D]/[0.08] hover:border-[#52FA8D]/[0.15]',
         'perps-short':
-          'bg-[#FF575999] hover:bg-[#FF5759CC] focus:bg-[#FF5759CC] border-[#FF57594D] border active:bg-[#FF5759CC] text-white data-[glow=true]:shadow-perps-glow-red',
+          'bg-gradient-to-b text-perps-red from-[#FB7185]/[0.13] to-[#FB7185]/[0.05] border border-[#FB7185]/[0.08] shadow-[inset_0_1px_0_rgba(251,113,133,0.10)] transition-all hover:from-[#FB7185]/[0.18] hover:to-[#FB7185]/[0.08] hover:border-[#FB7185]/[0.15]',
       },
       size: {
         xs: 'min-h-[26px] h-[26px] min-w-[26px] w-[26px] text-xs',

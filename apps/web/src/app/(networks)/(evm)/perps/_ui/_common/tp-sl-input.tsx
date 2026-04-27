@@ -223,7 +223,7 @@ export const TpSlInput = ({
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-2">
             <div
-              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-[#FFFFFF0D] ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
+              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-transparent ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
             >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[#8f9399] whitespace-nowrap cursor-default">
@@ -247,7 +247,7 @@ export const TpSlInput = ({
               </div>
             </div>
             <div
-              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-[#FFFFFF0D] ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
+              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-transparent ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
             >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[#8f9399] cursor-default">Gain</p>
@@ -283,7 +283,7 @@ export const TpSlInput = ({
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-2">
             <div
-              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-[#FFFFFF0D] ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
+              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-transparent ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
             >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[#8f9399] whitespace-nowrap cursor-default">
@@ -307,7 +307,7 @@ export const TpSlInput = ({
               </div>
             </div>
             <div
-              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-[#FFFFFF0D] ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
+              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-transparent ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
             >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[#8f9399] cursor-default">Loss</p>

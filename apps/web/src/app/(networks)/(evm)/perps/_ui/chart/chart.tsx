@@ -23,6 +23,7 @@ import {
   useUserPositions,
 } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
+import { PerpsCard } from '../_common/perps-card'
 import { useUserSettingsState } from '../account-management'
 import { useAssetListState } from '../asset-selector'
 import { useAssetState } from '../trade-widget'
@@ -465,7 +466,7 @@ export const Chart = () => {
   ])
 
   return (
-    <Card className="flex flex-col lg:h-[560px] flex-grow p-0 border-0 lg:border lg:p-2 !bg-[#0D1421]">
+    <PerpsCard className="flex flex-col lg:h-[560px] flex-grow p-0 lg:p-2">
       <div className="flex-grow">
         <div
           ref={chartContainerRef}
@@ -494,6 +495,6 @@ export const Chart = () => {
           </div>
         )}
       </div>
-    </Card>
+    </PerpsCard>
   )
 }
