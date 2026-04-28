@@ -86,7 +86,7 @@ export const AssetSelector = () => {
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        sideOffset={isLg ? 8 : -145}
+        sideOffset={isLg ? 8 : -90}
         collisionPadding={isLg ? 8 : 0}
         className="flex flex-col !p-0 lg:!rounded-xl !backdrop-blur-3xl !max-w-[100vw] !bg-white/[0.01] border !border-white/[0.07]"
       >

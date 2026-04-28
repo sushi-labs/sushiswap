@@ -7,7 +7,7 @@ import {
   PerpSpotTransferDialog,
   SendDialog,
 } from '../../account-management'
-import { MobileTable } from '../_common'
+import { MobileTable, tableRowClassName } from '../_common'
 import { ShareClosedPnlDialog } from '../_common/share-closed-pnl-dialog'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {
@@ -138,6 +138,7 @@ export const BalanceTable = () => {
           onSortingChange={setSorting}
           thClassName="!h-8 !px-0"
           hideScrollbar={true}
+          trClassName={tableRowClassName}
         />
       ) : (
         <MobileTable

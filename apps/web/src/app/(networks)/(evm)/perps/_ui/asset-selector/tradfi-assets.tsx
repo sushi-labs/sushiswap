@@ -126,6 +126,9 @@ export const TradfiAssets = () => {
     },
     [setActiveAsset, setOpen],
   )
+  const TABS = useMemo(() => {
+    return ['All', ...uniqueCategories]
+  }, [uniqueCategories])
 
   return (
     <Tabs
@@ -135,20 +138,23 @@ export const TradfiAssets = () => {
         setSelectedTab(val)
       }}
     >
-      <TabsList className="!flex !px-0 !h-8 mx-2 !max-w-fit bg-secondary">
-        {['All', ...uniqueCategories].map((tab) => (
+      <TabsList className="!flex !px-0 !h-8 mx-2 !max-w-fit  bg-transparent border-transparent">
+        {TABS.map((tab, idx) => (
           <TabsTrigger
             key={tab}
             value={tab}
-            className="flex flex-1 !px-1.5 !max-w-fit !text-xs capitalize"
+            className="flex flex-1 !px-1.5 !max-w-fit !text-xs capitalize !bg-transparent !border-transparent"
           >
             {tab}
+            {idx !== TABS.length - 1 ? (
+              <span className="h-[10px] w-px bg-perps-muted-20 ml-3" />
+            ) : null}
           </TabsTrigger>
         ))}
       </TabsList>
       <TabsContent
         value={selectedTab}
-        className="min-h-[calc(100dvh-140px)] max-h-[calc(100dvh-140px)] lg:min-h-[410px] lg:max-h-[410px] overflow-auto hide-scrollbar max-w-[100vw]"
+        className="min-h-[calc(100dvh-140px)] !mt-0 max-h-[calc(100dvh-140px)] lg:min-h-[410px] lg:max-h-[410px] overflow-auto hide-scrollbar max-w-[100vw]"
       >
         <DataTableVirtual
           state={state}

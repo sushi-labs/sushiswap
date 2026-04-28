@@ -65,10 +65,10 @@ export const PercentageSlider = ({
         )}
         trackClassName={classNames(
           variant === 'long'
-            ? '!bg-perps-green/[0.15]'
+            ? '!bg-perps-green/[0.08]'
             : variant === 'short'
-              ? '!bg-perps-red/[0.15]'
-              : '!bg-perps-blue/[0.15]',
+              ? '!bg-perps-red/[0.08]'
+              : '!bg-perps-blue/[0.08]',
         )}
         thumbClassName={classNames(
           'border-[6px] backdrop-blur-lg',

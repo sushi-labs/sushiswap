@@ -2,7 +2,7 @@ import { DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import { type TwapHistoryItemType, useTwapHistory } from 'src/lib/perps'
-import { MobileTable } from '../../_common'
+import { MobileTable, tableRowClassName } from '../../_common'
 import {
   type TradeFilterType,
   useTradeTables,
@@ -99,6 +99,7 @@ export const HistoryTwapTable = () => {
       onSortingChange={setSorting}
       thClassName="!h-8 !px-0"
       hideScrollbar={true}
+      trClassName={tableRowClassName}
     />
   ) : (
     <MobileTable

@@ -10,3 +10,6 @@ export const columnBodyMeta = {
     </>
   ),
 }
+
+export const tableRowClassName =
+  'bg-gradient-to-r from-[#EDF0F3]/[0.05] to-transparent to-[15%] border-b-perps-background'

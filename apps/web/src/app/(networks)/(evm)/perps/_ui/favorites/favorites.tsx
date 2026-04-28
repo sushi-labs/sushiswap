@@ -40,7 +40,7 @@ export const Favorites = () => {
     <PerpsCard className="px-4 py-1 gap-4 flex items-center !max-h-fit">
       <div className="flex items-center gap-1">
         <FavoriteIcon className="h-5 w-5" isSelected />
-        <span className="text-xs font-medium">Favorites</span>
+        <span className="text-xs font-medium">Watchlist</span>
       </div>
       {favorites?.length ? (
         <PerpsCard className="flex items-center bg-secondary rounded-lg p-0.5">

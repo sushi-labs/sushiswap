@@ -50,6 +50,7 @@ interface DataTableVirtualProps<TData, TValue> {
   hideScrollbar?: boolean
   overscan?: number
   estimateSize?: number
+  trClassName?: string
 }
 
 export function DataTableVirtual<TData, TValue>({
@@ -69,6 +70,7 @@ export function DataTableVirtual<TData, TValue>({
   hideScrollbar = false,
   overscan = 20,
   estimateSize = 30,
+  trClassName,
 }: DataTableVirtualProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -182,6 +184,7 @@ export function DataTableVirtual<TData, TValue>({
                       ? testId(row.original, r)
                       : `${testId}-${r}-tr`
                   }
+                  className={classNames(trClassName ?? '')}
                 >
                   {row.getVisibleCells().map((cell, i) =>
                     linkFormatter &&
