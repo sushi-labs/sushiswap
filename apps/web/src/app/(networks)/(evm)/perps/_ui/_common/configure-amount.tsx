@@ -69,7 +69,7 @@ export const ConfigureAmount = ({
           disabled={true}
           wrapperClassName="max-h-[30px]"
         />
-        <p className="text-[#99A1AF]">{coinSymbol}</p>
+        <p className="text-perps-muted-50">{coinSymbol}</p>
       </div>
     </div>
   )

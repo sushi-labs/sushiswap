@@ -2,6 +2,7 @@ import { Button, classNames } from '@sushiswap/ui'
 import { CandleSticksIcon } from '@sushiswap/ui/icons/CandleSticksIcon'
 import { SushiSubIcon } from '@sushiswap/ui/icons/SushiSubIcon'
 import { PerpsCard } from '../_common/perps-card'
+import { useAssetSelectorState } from '../asset-selector'
 import type { PerpsMobileViewType } from './mobile-layout'
 
 const OPTIONS = [
@@ -22,8 +23,12 @@ export const FooterNav = ({
   view: PerpsMobileViewType
   setView: (view: PerpsMobileViewType) => void
 }) => {
+  const {
+    state: { open },
+  } = useAssetSelectorState()
+  if (open) return null
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-10">
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-10 bg-perps-background rounded-full">
       <PerpsCard
         className={classNames('flex !items-center justify-center p-0.5')}
         rounded="full"

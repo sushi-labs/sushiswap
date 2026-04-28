@@ -9,7 +9,7 @@ import {
   useFavoriteAssets,
 } from 'src/lib/perps'
 import { formatPercent } from 'sushi'
-import { FavoriteIcon, OverflowX } from '../_common'
+import { AssetIcon, FavoriteIcon, OverflowX } from '../_common'
 import { PerpsCard } from '../_common/perps-card'
 import { useAssetListState } from '../asset-selector'
 import { useAssetState } from '../trade-widget'
@@ -96,6 +96,7 @@ export const Favorites = () => {
                     className="text-sm font-medium whitespace-nowrap !gap-1 tabular-nums focus:bg-transparent hover:!bg-secondary"
                     onClick={() => setActiveAsset(asset.name)}
                   >
+                    <AssetIcon asset={asset} size="sm" />
                     {asset?.symbol}
                     <div
                       className={classNames(
@@ -110,8 +111,9 @@ export const Favorites = () => {
                       {formattedValue}
                     </div>
                   </Button>
+
                   {idx !== enrichedFavorites.length - 1 ? (
-                    <SushiSubIcon className="!w-3 !h-3 text-perps-muted/20" />
+                    <SushiSubIcon className="!min-w-[12px] !min-h-[12px] !w-[12px] !h-[12px] mx-2 text-perps-muted/20" />
                   ) : null}
                 </div>
               )

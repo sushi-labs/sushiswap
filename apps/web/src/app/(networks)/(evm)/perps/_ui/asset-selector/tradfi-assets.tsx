@@ -135,7 +135,7 @@ export const TradfiAssets = () => {
         setSelectedTab(val)
       }}
     >
-      <TabsList className="!flex !px-0 !h-8 !max-w-fit bg-secondary">
+      <TabsList className="!flex !px-0 !h-8 mx-2 !max-w-fit bg-secondary">
         {['All', ...uniqueCategories].map((tab) => (
           <TabsTrigger
             key={tab}
@@ -148,7 +148,7 @@ export const TradfiAssets = () => {
       </TabsList>
       <TabsContent
         value={selectedTab}
-        className="max-h-[calc(80vh-215px)] lg:min-h-[410px] lg:max-h-[410px] overflow-auto hide-scrollbar max-w-[calc(100vw-30px)]"
+        className="min-h-[calc(100dvh-140px)] max-h-[calc(100dvh-140px)] lg:min-h-[410px] lg:max-h-[410px] overflow-auto hide-scrollbar max-w-[100vw]"
       >
         <DataTableVirtual
           state={state}

@@ -8,6 +8,7 @@ import {
   useUserOpenOrders,
   useUserPositions,
 } from 'src/lib/perps'
+import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useAccount } from 'src/lib/wallet'
 import { PerpsCard } from '../_common/perps-card'
 import { TradeFilter } from './filters'
@@ -98,16 +99,16 @@ export const TradeTables = ({ className }: { className?: string }) => {
   }, [balanceCount, positionCount, openOrdersCount, twapOrderCount, TABS])
 
   return (
-    <PerpsCard className={classNames('p-2', className ?? '')}>
+    <PerpsCard className={classNames('py-2', className ?? '')}>
       <Tabs
         value={activeTab}
         onValueChange={(val) => setActiveTab(val as TradeTablesTabValue)}
       >
         <div className="flex flex-wrap justify-between p-1 gap-2 overflow-x-auto">
-          <div className="hide-scrollbar overflow-x-auto">
+          <PerpsCard className="hide-scrollbar overflow-x-auto" rounded="full">
             <TabsList
               className={classNames(
-                '!px-0.5 !h-8 !bg-[#EDF0F30D] !rounded-full',
+                '!px-0.5 !h-8 !bg-perps-muted/[.02] !rounded-full !border-transparent',
               )}
             >
               {tabNameRewrite?.map((tab) => (
@@ -129,7 +130,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
                 </TabsTrigger>
               ))}
             </TabsList>
-          </div>
+          </PerpsCard>
           <div className="items-center gap-2 whitespace-nowrap flex lg:max-w-fit justify-between w-full">
             {(!isLg && activeTab === 'twap') ||
             activeTab === 'deposits-withdrawals' ? null : (
@@ -146,10 +147,21 @@ export const TradeTables = ({ className }: { className?: string }) => {
           </div>
         </div>
         {TABS.map((tab) => (
-          <TabsContent key={tab.value} value={tab.value}>
+          <TabsContent
+            key={tab.value}
+            value={tab.value}
+            className="relative !mt-0"
+          >
+            {!address ? (
+              <div className="absolute inset-0 backdrop-blur-sm z-10 select-none flex items-center justify-center rounded-md">
+                <div>
+                  <ConnectButton namespace="evm" variant="perps-default" />
+                </div>
+              </div>
+            ) : null}
             <div
               className={classNames(
-                'p-2 !pt-0',
+                'py-2 !pt-0',
                 tab.value !== 'twap'
                   ? 'min-h-[250px] max-h-[380px] hide-scrollbar overflow-y-auto'
                   : '',

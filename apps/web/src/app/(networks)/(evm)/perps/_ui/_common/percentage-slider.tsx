@@ -8,12 +8,14 @@ export const PercentageSlider = ({
   maxValue,
   disabled,
   unit = '%',
+  variant = 'default',
 }: {
   value: number
   onChange: (value: number) => void
   maxValue?: number
   disabled?: boolean
   unit?: string
+  variant?: 'default' | 'long' | 'short'
 }) => {
   const [pending, startTransition] = useTransition()
 
@@ -54,12 +56,32 @@ export const PercentageSlider = ({
           onChange(val[0])
         }}
         disabled={disabled}
-        rangeClassName="!bg-blue"
-        thumbClassName="!border-white"
+        rangeClassName={classNames(
+          variant === 'long'
+            ? '!bg-perps-green'
+            : variant === 'short'
+              ? '!bg-perps-red'
+              : '!bg-perps-blue',
+        )}
+        trackClassName={classNames(
+          variant === 'long'
+            ? '!bg-perps-green/[0.15]'
+            : variant === 'short'
+              ? '!bg-perps-red/[0.15]'
+              : '!bg-perps-blue/[0.15]',
+        )}
+        thumbClassName={classNames(
+          'border-[6px] backdrop-blur-lg',
+          variant === 'long'
+            ? '!border-perps-green !bg-perps-green/20'
+            : variant === 'short'
+              ? '!border-perps-red !bg-perps-red/20'
+              : '!border-perps-blue !bg-perps-blue/20',
+        )}
       />
       <div
         className={classNames(
-          'border max-w-[58px] min-w-[58px] flex items-center justify-center !rounded-md !border-[#FFFFFF1A] !bg-transparent py-0 px-2 whitespace-nowrap text-sm font-medium text-right',
+          'border max-w-[58px] min-w-[58px] flex items-center justify-center !rounded-lg !border-[#FFFFFF1A] !bg-transparent py-0 px-2 whitespace-nowrap text-sm font-medium text-right',
         )}
       >
         <TextField
@@ -68,9 +90,9 @@ export const PercentageSlider = ({
           onValueChange={_onChange}
           value={pending ? localValue : value.toString()}
           maxDecimals={0}
-          wrapperClassName="max-h-[30px]"
+          wrapperClassName="max-h-[25px]"
         />
-        <p className="text-[#99A1AF]">{unit}</p>
+        <p className="text-perps-muted-50">{unit}</p>
       </div>
     </div>
   )

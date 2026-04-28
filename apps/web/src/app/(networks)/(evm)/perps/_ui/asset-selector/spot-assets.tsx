@@ -113,7 +113,7 @@ export const SpotAssets = () => {
         setSelectedTab(val)
       }}
     >
-      <TabsList className="!flex !px-0 !h-8 !max-w-fit bg-secondary">
+      <TabsList className="!flex !px-0 !h-8 mx-2 !max-w-fit bg-secondary">
         {['all', ...spotCollateralTokens].map((tab) => (
           <TabsTrigger
             key={tab}
@@ -126,7 +126,7 @@ export const SpotAssets = () => {
       </TabsList>
       <TabsContent
         value={selectedTab}
-        className="max-h-[calc(80vh-215px)] hide-scrollbar lg:min-h-[410px] lg:max-h-[410px] overflow-auto max-w-[calc(100vw-30px)]"
+        className="min-h-[calc(100dvh-140px)] max-h-[calc(100dvh-140px)] hide-scrollbar lg:min-h-[410px] lg:max-h-[410px] overflow-auto max-w-[100vw]"
       >
         <DataTableVirtual
           state={state}

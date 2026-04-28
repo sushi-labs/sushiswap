@@ -10,6 +10,7 @@ import {
   calculateTpFromGain,
   formatPrice,
 } from 'src/lib/perps'
+import { PerpsCard } from './perps-card'
 
 export const TpSlInput = ({
   asset,
@@ -349,29 +350,31 @@ const TypeToggle = ({
   setType: (type: 'usd' | 'percent') => void
 }) => {
   return (
-    <div className="flex items-center rounded-lg p-0.5">
+    <PerpsCard className="flex items-center p-0.5" rounded="lg">
       <Button
         size="xs"
-        variant={'ghost'}
+        variant={type === 'usd' ? 'perps-secondary' : 'ghost'}
         onClick={() => setType('usd')}
         className={classNames(
           'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
-          type === 'percent' ? 'text-muted-foreground' : '',
+          type === 'percent'
+            ? 'text-perps-muted/40 border border-transparent'
+            : '',
         )}
       >
         $
       </Button>
       <Button
         size="xs"
-        variant={'ghost'}
+        variant={type === 'percent' ? 'perps-secondary' : 'ghost'}
         onClick={() => setType('percent')}
         className={classNames(
           'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
-          type === 'usd' ? 'text-muted-foreground' : '',
+          type === 'usd' ? 'text-perps-muted/40 border border-transparent' : '',
         )}
       >
         %
       </Button>
-    </div>
+    </PerpsCard>
   )
 }

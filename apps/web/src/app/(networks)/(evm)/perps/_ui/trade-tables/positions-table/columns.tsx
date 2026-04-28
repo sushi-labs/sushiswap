@@ -12,6 +12,8 @@ import { useMemo } from 'react'
 import {
   type UserPositionsItemType,
   currencyFormatter,
+  formatPrice,
+  formatSize,
   getExistingPositionTpSlOrders,
   getSignForValue,
   getTextColorClass,
@@ -19,7 +21,7 @@ import {
   perpsNumberFormatter,
   useUserOpenOrders,
 } from 'src/lib/perps'
-import { TableButton } from '../../_common'
+import { AssetIcon, TableButton } from '../../_common'
 import { useUserSettingsState } from '../../account-management'
 import { CloseAllPositionsDialog } from '../../exchange'
 import { MarketQuickClose } from '../../exchange/market-quick-close'
@@ -51,7 +53,8 @@ export const COIN_COLUMN = (
     const side = props.row.original.side
 
     return (
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 mr-4">
+        <AssetIcon asset={props.row.original.fullAsset} size="sm" />
         <button
           onClick={(e) => {
             e.stopPropagation()
@@ -102,6 +105,7 @@ export const SIZE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     const assetSymbol =
       props.row.original.assetSymbol?.split(':')?.[1] ??
       props.row.original.assetSymbol
+    const val = formatSize(size, props.row.original.decimals || 6)
 
     return (
       <span
@@ -110,7 +114,7 @@ export const SIZE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
           getTextColorClass(size),
         )}
       >
-        {perpsNumberFormatter({ value: size })} {assetSymbol}
+        {perpsNumberFormatter({ value: val })} {assetSymbol}
       </span>
     )
   },
@@ -131,7 +135,8 @@ export const POSITION_VALUE_COLUMN: ColumnDef<UserPositionsItemType, unknown> =
       const positionValue = props.row.original.position.positionValue
       return (
         <span className="font-medium lg:whitespace-nowrap">
-          {perpsNumberFormatter({ value: positionValue })} USDC
+          {perpsNumberFormatter({ value: positionValue, maxFraxDigits: 2 })}{' '}
+          USDC
         </span>
       )
     },
@@ -149,9 +154,14 @@ export const ENTRY_PRICE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     Number.parseFloat(rowB.position.entryPx),
   cell: (props) => {
     const entryPrice = props.row.original.position.entryPx
+    const val = formatPrice(
+      entryPrice,
+      props.row.original.decimals || 6,
+      'perp',
+    )
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {perpsNumberFormatter({ value: entryPrice })}
+        {perpsNumberFormatter({ value: val })}
       </span>
     )
   },
@@ -168,9 +178,10 @@ export const MARK_PRICE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     Number.parseFloat(rowA.markPrice) - Number.parseFloat(rowB.markPrice),
   cell: (props) => {
     const markPrice = props.row.original.markPrice
+    const val = formatPrice(markPrice, props.row.original.decimals || 6, 'perp')
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {perpsNumberFormatter({ value: markPrice })}
+        {perpsNumberFormatter({ value: val })}
       </span>
     )
   },
@@ -195,7 +206,7 @@ export const PNL_COLUMN = (
       </HoverCardTrigger>
       <HoverCardContent
         side="top"
-        className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+        className="!px-3 !bg-black/10 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
       >
         <p>
           Mark price is used to estimate unrealized PNL. Only trade prices are
@@ -263,13 +274,18 @@ export const LIQUIDATION_PRICE_COLUMN: ColumnDef<
     Number.parseFloat(rowB.position.liquidationPx ?? '0'),
   cell: (props) => {
     const liquidationPrice = props.row.original.position.liquidationPx
+    const val = formatPrice(
+      liquidationPrice || '0',
+      props.row.original.decimals || 6,
+      'perp',
+    )
     if (!liquidationPrice) {
       return <span className="font-medium lg:whitespace-nowrap">N/A</span>
     }
     return (
       <span className="font-medium lg:whitespace-nowrap">
         {perpsNumberFormatter({
-          value: liquidationPrice,
+          value: val,
         })}
       </span>
     )
@@ -294,7 +310,7 @@ export const MARGIN_COLUMN = (
       <HoverCardContent
         forceMount
         side="top"
-        className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+        className="!px-3 !bg-black/10 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
       >
         <p>For isolated positions, margin includes unrealized pnl.</p>
       </HoverCardContent>
@@ -318,7 +334,7 @@ export const MARGIN_COLUMN = (
     return (
       <button
         type="button"
-        className="flex items-center gap-2"
+        className="flex items-center gap-0.5"
         onClick={() => openModal('update-margin', props.row.original)}
       >
         <span className="font-medium lg:whitespace-nowrap capitalize">
@@ -347,7 +363,7 @@ export const FUNDING_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
       </HoverCardTrigger>
       <HoverCardContent
         side="top"
-        className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+        className="!px-3 !bg-black/10 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
       >
         <p>
           Net funding payments since the position was opened. Hover for all-time
@@ -386,7 +402,7 @@ export const FUNDING_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
         </HoverCardTrigger>
         <HoverCardContent
           side="top"
-          className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+          className="!px-3 !bg-black/10 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
         >
           <p>
             All Time: {getSignForValue(allTime >= 0 ? -1 : 1)}
@@ -421,7 +437,7 @@ export const CLOSE_COLUMN = (
     } = useUserSettingsState()
 
     return (
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         <TableButton onClick={() => openModal('limit-close', position)}>
           Limit
         </TableButton>
@@ -444,7 +460,7 @@ export const CLOSE_COLUMN = (
   },
   meta: {
     body: {
-      className: classNames(columnBodyMeta.className, '!pr-4'),
+      className: '!p-0 !h-[25px] !max-h-[25px] !text-xs',
       skeleton: columnBodyMeta.skeleton,
     },
   },
@@ -459,7 +475,7 @@ export const TP_SL_COLUMN = (
     const position = useMemo(() => props.row.original, [props.row.original])
 
     return (
-      <div className="flex items-center gap-4 lg:whitespace-nowrap">
+      <div className="flex items-center gap-1 lg:whitespace-nowrap">
         <ViewOrders coin={position.position.coin} />
         <TableButton onClick={() => openModal('edit-tpsl', position)}>
           <PencilIcon className="w-4 h-4" />

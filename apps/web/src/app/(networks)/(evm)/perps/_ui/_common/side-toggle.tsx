@@ -21,25 +21,25 @@ export const SideToggle = <T extends string = DefaultSide>({
   const resolvedOptions = options ?? (['base', 'quote'] as unknown as [T, T])
   const [left, right] = resolvedOptions
   return (
-    <PerpsCard className="flex items-center !rounded-none p-0.5">
+    <PerpsCard className="flex items-center p-0.5" rounded="lg">
       <Button
         size="xs"
-        variant={side === left ? 'secondary' : 'ghost'}
+        variant={side === left ? 'perps-secondary' : 'ghost'}
         onClick={() => setSide(left)}
         className={classNames(
           'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
-          side === right ? 'text-perps-muted-50' : '',
+          side === right ? 'text-perps-muted/40 border border-transparent' : '',
         )}
       >
         {baseSymbol}
       </Button>
       <Button
         size="xs"
-        variant={side === right ? 'secondary' : 'ghost'}
+        variant={side === right ? 'perps-secondary' : 'ghost'}
         onClick={() => setSide(right)}
         className={classNames(
           'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
-          side === left ? 'text-perps-muted-50' : '',
+          side === left ? 'text-perps-muted/40 border border-transparent' : '',
         )}
       >
         {quoteSymbol}

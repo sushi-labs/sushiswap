@@ -20,11 +20,11 @@ export const CheckboxSetting = ({
       className="flex items-center w-fit gap-1 whitespace-nowrap text-xs cursor-pointer font-medium"
     >
       <Checkbox
-        className='data-[state="checked"]:!bg-blue text-white !border-[#99A1AF] data-[state="checked"]:!border-blue'
+        className='data-[state="checked"]:!bg-perps-blue text-white !border-perps-muted-50 data-[state="checked"]:!border-perps-blue'
         checked={value}
         aria-label={`${label} Checkbox`}
       />
-      <div className="text-[#99A1AF]">{label}</div>
+      <div className="text-perps-muted-50">{label}</div>
     </div>
   )
 }

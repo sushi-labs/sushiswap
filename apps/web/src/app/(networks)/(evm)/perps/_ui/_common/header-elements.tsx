@@ -174,7 +174,10 @@ export const headerElements = (): NavigationElement[] => {
                 Vaults
               </div>
             </HoverCardTrigger>
-            <HoverCardContent className="text-xs !p-2" side="bottom">
+            <HoverCardContent
+              className="text-xs !p-2 !bg-black/10"
+              side="bottom"
+            >
               <div>Coming Soon</div>
             </HoverCardContent>
           </HoverCard>

@@ -69,7 +69,7 @@ export const DepositsWithdrawalsTable = () => {
       columns={COLUMNS}
       data={tableData}
       onSortingChange={setSorting}
-      thClassName="!h-8"
+      thClassName="!h-8 !px-0"
       hideScrollbar={true}
     />
   ) : (

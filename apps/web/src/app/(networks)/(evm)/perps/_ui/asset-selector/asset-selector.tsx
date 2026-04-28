@@ -1,4 +1,5 @@
 'use client'
+import { useBreakpoint } from '@sushiswap/hooks'
 import {
   Button,
   Chip,
@@ -11,6 +12,8 @@ import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
 import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
 import { useEffect, useMemo, useState } from 'react'
 import { getHyperliquidCoinIconUrl } from 'src/lib/perps'
+// import { ShortcutMenu } from './shortcut-menu'
+import { AssetIcon } from '../_common'
 import { useAssetState } from '../trade-widget'
 import { useAssetSelectorState } from './asset-selector-provider'
 import { AssetTabs } from './asset-tabs'
@@ -25,10 +28,27 @@ export const AssetSelector = () => {
     state: { open },
     mutate: { setOpen },
   } = useAssetSelectorState()
+  const { isLg } = useBreakpoint('lg')
+
+  useEffect(() => {
+    if (!asset) return
+    const toggleSelector = (event: KeyboardEvent) => {
+      //command + k or ctrl + k
+      if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+        event.preventDefault()
+        setOpen(!open)
+      }
+    }
+
+    window.addEventListener('keydown', toggleSelector)
+    return () => {
+      window.removeEventListener('keydown', toggleSelector)
+    }
+  }, [open, setOpen, asset])
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger asChild className="focus:!ring-0">
         {!asset ? (
           <TriggerSkeleton />
         ) : (
@@ -40,7 +60,7 @@ export const AssetSelector = () => {
           >
             <div className="whitespace-nowrap flex items-center gap-2">
               <div className="flex items-center gap-1">
-                <TokenIcon />
+                <AssetIcon asset={asset} />
 
                 <span className="text-lg font-medium">{asset?.symbol}</span>
               </div>
@@ -65,47 +85,17 @@ export const AssetSelector = () => {
           </Button>
         )}
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="flex flex-col gap-2 p-3 !backdrop-blur-2xl !border-2 !max-w-[calc(100vw-15px)] !border-[#7D95A9]">
+      <DropdownMenuContent
+        sideOffset={isLg ? 8 : -145}
+        collisionPadding={isLg ? 8 : 0}
+        className="flex flex-col !p-0 lg:!rounded-xl !backdrop-blur-3xl !max-w-[100vw] !bg-white/[0.01] border !border-white/[0.07]"
+      >
         <SearchBar />
         <AssetTabs />
+        {/* todo: ShortcutMenu */}
+        {/* <ShortcutMenu /> */}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
-}
-
-const TokenIcon = () => {
-  const {
-    state: { asset },
-  } = useAssetState()
-  const [imageErr, setImageErr] = useState(false)
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: reset imageErr on asset change
-  useEffect(() => {
-    setImageErr(false)
-  }, [asset?.symbol])
-
-  const url = useMemo(() => {
-    return getHyperliquidCoinIconUrl(asset)
-  }, [asset])
-
-  return (
-    <>
-      {imageErr ? (
-        <UnknownTokenIcon className="w-6 h-6" />
-      ) : (
-        <img
-          src={url}
-          alt={asset?.symbol}
-          className="w-6 h-6 rounded-full"
-          onLoadStart={() => {
-            setImageErr(false)
-          }}
-          onError={() => {
-            setImageErr(true)
-          }}
-        />
-      )}
-    </>
   )
 }
 

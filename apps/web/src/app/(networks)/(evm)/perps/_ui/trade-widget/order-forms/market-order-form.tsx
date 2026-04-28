@@ -3,7 +3,7 @@ import { useState } from 'react'
 import type { TpSlGainLossType } from 'src/lib/perps'
 import { TpSlInput } from '../../_common'
 import { useAssetState } from '../asset-state-provider'
-import { OrderSizeInput, ReduceOnly, TpSlCheckbox } from './_common'
+import { OrderSizeInput, ReduceOnly, TpSlSwitch } from './_common'
 
 export const MarketOrderForm = () => {
   const {
@@ -22,13 +22,13 @@ export const MarketOrderForm = () => {
   } = useAssetState()
   const [type, setType] = useState<TpSlGainLossType>('percent')
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-2">
       <OrderSizeInput />
       {asset?.marketType === 'perp' ? (
         <>
           <ReduceOnly />
           <div className="flex flex-col gap-2">
-            <TpSlCheckbox />
+            <TpSlSwitch />
             {hasTpSl ? (
               <TpSlInput
                 asset={asset}

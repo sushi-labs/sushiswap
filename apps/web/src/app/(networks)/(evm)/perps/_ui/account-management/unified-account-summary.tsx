@@ -45,7 +45,7 @@ export const UnifiedAccountSummary = () => {
                 <HoverCardContent
                   forceMount
                   side="top"
-                  className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+                  className="!px-3 !py-2 max-w-[320px] !bg-black/10 whitespace-normal text-left text-xs"
                 >
                   <p>
                     Represents the risk of portfolio liquidation. When the value
@@ -111,7 +111,7 @@ export const UnifiedAccountSummary = () => {
                 <HoverCardContent
                   forceMount
                   side="top"
-                  className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+                  className="!px-3 !py-2 !bg-black/10 max-w-[320px] whitespace-normal text-left text-xs"
                 >
                   <p>
                     The minimum portfolio value required to keep your cross
@@ -133,7 +133,7 @@ export const UnifiedAccountSummary = () => {
                 <HoverCardContent
                   forceMount
                   side="top"
-                  className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+                  className="!px-3 !bg-black/10 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
                 >
                   <p>
                     Unified Account Leverage = Total Cross Positions Value /

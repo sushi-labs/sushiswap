@@ -13,10 +13,10 @@ export const ScaleOrderForm = () => {
     state: { asset },
   } = useAssetState()
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-2">
       <OrderSizeInput />
       <ScaleStartEndInput />
-      <div className="flex items-center justify-between gap-1">
+      <div className="flex items-center justify-between gap-2">
         <ScaleTotalOrdersInput />
         <ScaleSizeSkewInput />
       </div>

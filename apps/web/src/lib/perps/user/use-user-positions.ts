@@ -41,6 +41,8 @@ export const useUserPositions = (coin?: string) => {
           assetSymbol:
             asset?.marketType === 'perp' ? pos.position.coin : asset?.symbol,
           marketType: asset?.marketType,
+          decimals: asset?.decimals,
+          fullAsset: asset,
           perpsDex: dexName,
           side,
           markPrice,

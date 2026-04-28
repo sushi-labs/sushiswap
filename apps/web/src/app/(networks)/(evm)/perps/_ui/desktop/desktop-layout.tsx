@@ -13,7 +13,7 @@ export const DesktopLayout = () => {
   return (
     <div className="h-[calc(100vh-60px)] w-full overflow-x-hidden ">
       <GeoBlockedMessage />
-      <div className="flex gap-1 min-w-0 mt-1 px-1">
+      <div className="flex gap-1 min-w-0 mt-1 px-1 pb-20">
         <div className="flex flex-col flex-1 gap-1 min-w-0">
           <div className="flex gap-1 w-full min-w-0">
             <div className="flex flex-col gap-1 flex-1 min-w-0">

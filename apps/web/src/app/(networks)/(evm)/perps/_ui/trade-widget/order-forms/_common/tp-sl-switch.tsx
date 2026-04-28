@@ -1,8 +1,8 @@
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
-import { CheckboxSetting } from '~evm/perps/_ui/_common'
+import { SwitchSetting } from '~evm/perps/_ui/_common'
 import { useAssetState } from '../../asset-state-provider'
 
-export const TpSlCheckbox = () => {
+export const TpSlSwitch = () => {
   const {
     state: { hasTpSl },
     mutate: { setHasTpSl },
@@ -11,7 +11,7 @@ export const TpSlCheckbox = () => {
   return (
     <HoverCard>
       <HoverCardTrigger tabIndex={0}>
-        <CheckboxSetting
+        <SwitchSetting
           label="Take Profit / Stop Loss"
           value={hasTpSl}
           onChange={(val) => setHasTpSl(val)}
@@ -20,7 +20,7 @@ export const TpSlCheckbox = () => {
       <HoverCardContent
         forceMount
         side="top"
-        className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+        className="!px-3 !bg-black/10 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
       >
         <p>
           Places simple market TP/SL orders. For advanced features such as limit

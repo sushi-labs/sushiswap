@@ -61,7 +61,7 @@ export const TradeTypeSelect = () => {
               <Button
                 size="sm"
                 variant={'ghost'}
-                className="!p-0 w-full col-span-1 capitalize !text-xs dark:data-[state=active]:bg-transparent dark:data-[state=active]:border-0"
+                className="!p-0 w-full col-span-1 capitalize !text-sm dark:data-[state=active]:bg-transparent dark:data-[state=active]:border-0"
                 aria-label={`Select ${_tradeType} trade type`}
               >
                 {_tradeType}
@@ -78,7 +78,7 @@ export const TradeTypeSelect = () => {
                 <Button
                   size="sm"
                   variant={'ghost'}
-                  className="!p-0 w-full col-span-1 capitalize !text-xs dark:data-[state=active]:bg-transparent dark:data-[state=active]:border-0"
+                  className="!p-0 w-full col-span-1 capitalize !text-sm dark:data-[state=active]:bg-transparent dark:data-[state=active]:border-0"
                   asChild
                   aria-label="Select Pro trade types"
                 >

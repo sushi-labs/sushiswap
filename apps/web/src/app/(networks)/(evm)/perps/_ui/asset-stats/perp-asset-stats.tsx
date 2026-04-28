@@ -52,7 +52,7 @@ export const PerpAssetStats = () => {
           <HoverCardContent
             forceMount
             side="top"
-            className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+            className="!px-3 !bg-black/10 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
           >
             <p>
               Used for margining, computing unrealized PNL, liquidations, and
@@ -84,7 +84,7 @@ export const PerpAssetStats = () => {
           <HoverCardContent
             forceMount
             side="top"
-            className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+            className="!px-3 !bg-black/10 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
           >
             <p>
               The median of external prices reported by validators, used for
@@ -143,7 +143,7 @@ export const PerpAssetStats = () => {
           <HoverCardContent
             forceMount
             side="top"
-            className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+            className="!px-3 !bg-black/10 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
           >
             <p>
               Two sided-open interest: the sum of long and short positions on
@@ -165,7 +165,7 @@ export const PerpAssetStats = () => {
           <HoverCardContent
             forceMount
             side="top"
-            className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+            className="!px-3 !bg-black/10 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
           >
             <p>
               The hourly rate at which longs pay shorts (if negative, shorts pay
@@ -189,7 +189,7 @@ export const PerpAssetStats = () => {
             <HoverCardContent
               forceMount
               side="top"
-              className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+              className="!px-3 !bg-black/10 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
             >
               <p>
                 Annualized:{' '}

@@ -70,7 +70,7 @@ export const DialogRow = () => {
           <HoverCardContent
             forceMount
             side="top"
-            className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+            className="!px-3 !bg-black/10 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
           >
             <p>
               When unified account is enabled, trading is from a single unified

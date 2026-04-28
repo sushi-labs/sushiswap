@@ -17,6 +17,7 @@ export const OrderSizeInput = () => {
       limitPrice,
       tradeType,
       percentage,
+      tradeSide,
     },
     mutate: { setSizeSide, setSize, setPercentage },
   } = useAssetState()
@@ -111,7 +112,7 @@ export const OrderSizeInput = () => {
   )
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-2">
       <SizeInput
         asset={asset}
         sizeSide={sizeSide}
@@ -120,7 +121,11 @@ export const OrderSizeInput = () => {
         onChange={handleSetSize}
         className="!py-0 text-sm !px-2"
       />
-      <PercentageSlider value={percentage} onChange={handleSetPercent} />
+      <PercentageSlider
+        value={percentage}
+        onChange={handleSetPercent}
+        variant={tradeSide}
+      />
     </div>
   )
 }
