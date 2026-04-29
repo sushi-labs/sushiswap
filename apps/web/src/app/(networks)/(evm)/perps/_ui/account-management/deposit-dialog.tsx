@@ -11,12 +11,13 @@ import {
   PerpsDialogTrigger,
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
-import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
 import { type EvmAddress, EvmChainId, USDC, erc20Abi_transfer } from 'sushi/evm'
 import { usePublicClient, useSimulateContract, useWriteContract } from 'wagmi'
+import { useBalance } from '~evm/_common/ui/balance-provider/use-balance'
+import { InputWithKeyboard } from '../_common'
 import { PerpsChecker } from '../perps-checker'
 
 //@todo add more options
@@ -38,10 +39,16 @@ export const DepositDialog = ({
 }) => {
   const [open, setOpen] = useState<boolean>(false)
   const [amount, setAmount] = useState<string>('')
-  const _amount = Amount.tryFromHuman(usdc, amount)
   const { mutateAsync: writeContractAsync, isPending } = useWriteContract()
   const client = usePublicClient()
   const address = useAccount('evm')
+  const { data: bigIntBalance, isLoading: isBalanceLoading } = useBalance(usdc)
+
+  const balance = useMemo(
+    () => (bigIntBalance ? new Amount(usdc, bigIntBalance) : undefined),
+    [bigIntBalance],
+  )
+  const _amount = useMemo(() => Amount.tryFromHuman(usdc, amount), [amount])
 
   const isControlled = isOpen !== undefined
   const resolvedOpen = isControlled ? isOpen : open
@@ -130,13 +137,14 @@ export const DepositDialog = ({
         </PerpsDialogHeader>
         <PerpsDialogInnerContent>
           <div className="flex flex-col gap-4">
-            <Web3Input.Currency
-              className="w-full border-2 rounded-lg border-[#7D95A9] px-4 py-2 bg-[#1B293EC7] text-[#78869B]"
-              value={amount}
-              onChange={(val) => setAmount(val)}
+            <InputWithKeyboard
+              amount={amount}
+              setAmount={setAmount}
+              balance={balance}
               currency={usdc}
-              chainId={chainId}
-              type="INPUT"
+              error={undefined}
+              isLoading={isBalanceLoading}
+              address={address}
             />
 
             <PerpsChecker.Legal size="default" variant="perps-tertiary">

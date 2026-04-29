@@ -173,7 +173,7 @@ const KeyboardInput = ({
         <button
           key={key}
           onClick={() => handleKeyPress(key)}
-          className="p-2 hover:bg-perps-muted/5 rounded-lg text-3xl"
+          className="p-2 active:bg-perps-muted/5 rounded-lg text-3xl"
           type="button"
         >
           {key}
