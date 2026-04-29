@@ -9,6 +9,7 @@ export const PercentageSlider = ({
   disabled,
   unit = '%',
   variant = 'default',
+  hideInput = false,
 }: {
   value: number
   onChange: (value: number) => void
@@ -16,6 +17,7 @@ export const PercentageSlider = ({
   disabled?: boolean
   unit?: string
   variant?: 'default' | 'long' | 'short' | 'white'
+  hideInput?: boolean
 }) => {
   const [pending, startTransition] = useTransition()
 
@@ -85,21 +87,23 @@ export const PercentageSlider = ({
                 : '!border-perps-blue !bg-perps-blue/20',
         )}
       />
-      <div
-        className={classNames(
-          'border max-w-[58px] min-w-[58px] flex items-center justify-center !rounded-lg !border-[#FFFFFF1A] !bg-transparent py-0 px-2 whitespace-nowrap text-sm font-medium text-right',
-        )}
-      >
-        <TextField
-          type="number"
-          variant="naked"
-          onValueChange={_onChange}
-          value={pending ? localValue : value.toString()}
-          maxDecimals={0}
-          wrapperClassName="max-h-[25px]"
-        />
-        <p className="text-perps-muted-50">{unit}</p>
-      </div>
+      {hideInput ? null : (
+        <div
+          className={classNames(
+            'border max-w-[58px] min-w-[58px] flex items-center justify-center !rounded-lg !border-[#FFFFFF1A] !bg-transparent py-0 px-2 whitespace-nowrap text-sm font-medium text-right',
+          )}
+        >
+          <TextField
+            type="number"
+            variant="naked"
+            onValueChange={_onChange}
+            value={pending ? localValue : value.toString()}
+            maxDecimals={0}
+            wrapperClassName="max-h-[25px]"
+          />
+          <p className="text-perps-muted-50">{unit}</p>
+        </div>
+      )}
     </div>
   )
 }

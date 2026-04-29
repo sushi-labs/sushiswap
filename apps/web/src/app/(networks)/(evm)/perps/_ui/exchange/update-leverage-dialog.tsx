@@ -15,7 +15,7 @@ import {
   useMarginTable,
   useUpdateLeverage,
 } from 'src/lib/perps'
-import { PercentageSlider } from '../_common'
+import { PercentageSlider, PerpsCard } from '../_common'
 import { useAssetListState } from '../asset-selector'
 import { PerpsChecker } from '../perps-checker'
 
@@ -87,6 +87,11 @@ export const UpdateLeverageDialog = ({
     [isControlled, onOpenChange, currentLeverage],
   )
 
+  const percentage = useMemo(() => {
+    if (newLeverage === 0) return 0
+    return ((newLeverage / maxLeverage) * 100).toFixed(0)
+  }, [newLeverage, maxLeverage])
+
   return (
     <PerpsDialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       <PerpsDialogTrigger asChild>{trigger}</PerpsDialogTrigger>
@@ -106,6 +111,12 @@ export const UpdateLeverageDialog = ({
         </PerpsDialogHeader>
         <PerpsDialogInnerContent>
           <div className="flex flex-col gap-4 text-sm">
+            <PerpsCard className="flex flex-col items-center justify-center gap-3 p-6">
+              <p className="text-5xl font-medium text-perps-muted">
+                {newLeverage}x
+              </p>
+              <p className="text-perps-muted-5">{percentage}%</p>
+            </PerpsCard>
             <PercentageSlider
               value={newLeverage}
               onChange={(val) => {
@@ -115,6 +126,7 @@ export const UpdateLeverageDialog = ({
               maxValue={maxLeverage}
               unit="x"
               variant="white"
+              hideInput={true}
             />
             <PerpsChecker.Legal size="default" variant="perps-tertiary">
               <PerpsChecker.EnableTrading
