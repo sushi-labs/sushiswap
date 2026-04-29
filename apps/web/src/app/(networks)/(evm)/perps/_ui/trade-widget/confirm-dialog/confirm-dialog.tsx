@@ -24,13 +24,14 @@ import {
   ScaleStartEndStat,
   SizePerSuborderStat,
 } from '../order-stats'
+import { AssetDisplay } from './asset-display'
 import { ConfirmDialogTrigger } from './confirm-dialog-trigger'
 import { PlaceOrderButton } from './place-order-button'
 
 export const ConfirmDialog = () => {
   const [open, setOpen] = useState(false)
   const {
-    state: { tradeType, asset },
+    state: { tradeType, tradeSide, asset },
   } = useAssetState()
   const {
     state: { quickConfirmPositionEnabled },
@@ -47,12 +48,24 @@ export const ConfirmDialog = () => {
     >
       <ConfirmDialogTrigger />
       <PerpsDialogContent>
+        <div
+          style={{
+            background:
+              tradeSide === 'short'
+                ? 'radial-gradient(50% 45.68% at 50% 0.02%, rgba(251, 113, 133, 0.08) 0%, rgba(251, 113, 133, 0) 100%)'
+                : 'radial-gradient(50% 45.68% at 50% 0.02%, rgba(82, 250, 141, 0.08) 0%, rgba(82, 250, 141, 0) 100%)',
+          }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full z-[-8]"
+        />
         <PerpsDialogHeader>
           <PerpsDialogTitle>Confirm Order</PerpsDialogTitle>
           <PerpsDialogDescription aria-describedby="confirm dialog" />
         </PerpsDialogHeader>
-        <PerpsDialogInnerContent>
-          <div className="flex flex-col gap-6 ">
+        <PerpsDialogInnerContent className="!pt-0 ">
+          <div className="flex flex-col gap-6">
+            <div className="self-center">
+              <AssetDisplay />
+            </div>
             <div className="flex flex-col gap-2">
               {tradeType === 'TWAP' ? (
                 <_TwapOrderStats />
