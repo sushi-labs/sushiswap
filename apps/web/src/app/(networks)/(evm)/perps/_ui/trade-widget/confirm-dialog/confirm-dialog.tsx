@@ -1,10 +1,11 @@
 'use client'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
 } from '@sushiswap/ui'
 import { useState } from 'react'
 import {
@@ -37,7 +38,7 @@ export const ConfirmDialog = () => {
   } = useUserSettingsState()
 
   return (
-    <Dialog
+    <PerpsDialog
       open={open}
       onOpenChange={(state) => {
         if (quickConfirmPositionEnabled && !state) return
@@ -45,42 +46,45 @@ export const ConfirmDialog = () => {
       }}
     >
       <ConfirmDialogTrigger />
-      <DialogContent variant="perps-default">
-        <DialogHeader className="!text-left">
-          <DialogTitle>Confirm Order</DialogTitle>
-          <DialogDescription>
-            You pay no gas. The order will be confirmed within a few seconds.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex flex-col gap-6 ">
-          <div className="flex flex-col gap-2">
-            {tradeType === 'TWAP' ? (
-              <_TwapOrderStats />
-            ) : tradeType === 'scale' ? (
-              <_ScaleOrderStats />
-            ) : (
-              <>
-                <_RegularOrderStats />
-                {asset?.marketType === 'perp' ? (
-                  <LiquidationStat title="Est. Liquidation Price" />
-                ) : null}
-              </>
-            )}
-          </div>
-          <CheckboxSetting
-            value={quickConfirmPositionEnabled}
-            onChange={setQuickConfirmPositionEnabled}
-            label="Dont't show this again"
-          />
+      <PerpsDialogContent>
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Confirm Order</PerpsDialogTitle>
+          <PerpsDialogDescription aria-describedby="confirm dialog" />
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
+          <div className="flex flex-col gap-6 ">
+            <div className="flex flex-col gap-2">
+              {tradeType === 'TWAP' ? (
+                <_TwapOrderStats />
+              ) : tradeType === 'scale' ? (
+                <_ScaleOrderStats />
+              ) : (
+                <>
+                  <_RegularOrderStats />
+                  {asset?.marketType === 'perp' ? (
+                    <LiquidationStat title="Est. Liquidation Price" />
+                  ) : null}
+                </>
+              )}
+            </div>
+            <CheckboxSetting
+              value={quickConfirmPositionEnabled}
+              onChange={setQuickConfirmPositionEnabled}
+              label="Dont't show this again"
+            />
 
-          <PlaceOrderButton
-            onMutate={() => {
-              setOpen(false)
-            }}
-          />
-        </div>
-      </DialogContent>
-    </Dialog>
+            <PlaceOrderButton
+              onMutate={() => {
+                setOpen(false)
+              }}
+            />
+          </div>
+          <p className="pt-3 text-xs text-center text-perps-muted-50">
+            You pay no gas. The order will be confirmed within a few seconds.
+          </p>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }
 

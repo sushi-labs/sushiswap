@@ -5,10 +5,13 @@ import { ArrowDownTrayIcon, LinkIcon } from '@heroicons/react/24/outline'
 import { createErrorToast } from '@sushiswap/notifications'
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
 } from '@sushiswap/ui'
 import { XIcon } from '@sushiswap/ui/icons/XIcon'
 import {
@@ -289,8 +292,8 @@ export function ShareClosedPnlDialog({
   }
 
   return (
-    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
+    <PerpsDialog open={resolvedOpen} onOpenChange={handleOpenChange}>
+      <PerpsDialogTrigger asChild>
         {trigger ? (
           trigger
         ) : (
@@ -305,64 +308,66 @@ export function ShareClosedPnlDialog({
             <ExternalLinkIcon className="h-3.5 w-3.5" />
           </TableButton>
         )}
-      </DialogTrigger>
-      <DialogContent
-        variant="perps-default"
-        className="!inline-grid !w-auto md:!w-auto !min-w-0 !max-h-[calc(100dvh-16px)] !max-w-[calc(100vw-16px)] overflow-y-auto p-4 md:p-5"
-        aria-describedby={undefined}
-      >
-        <DialogTitle className="sr-only">Share Closed Trade</DialogTitle>
+      </PerpsDialogTrigger>
+      <PerpsDialogContent>
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Share Your PnL</PerpsDialogTitle>
+          <PerpsDialogDescription className="capitalize">
+            Share your closed trade with your friends and followers!
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
+          <div className="mx-auto w-fit max-w-full space-y-8">
+            <div className="flex justify-center">
+              <SharePoster
+                posterRef={posterRef}
+                trade={normalizedTrade}
+                totalPnl={totalPnl}
+                referralCode={referralCode}
+                leverage={leverage}
+                imageUrl={imageUrl}
+              />
+            </div>
 
-        <div className="mx-auto w-fit max-w-full space-y-8">
-          <div className="flex justify-center">
-            <SharePoster
-              posterRef={posterRef}
-              trade={normalizedTrade}
-              totalPnl={totalPnl}
-              referralCode={referralCode}
-              leverage={leverage}
-              imageUrl={imageUrl}
-            />
+            <div className="grid w-full gap-3 grid-cols-2">
+              <Button
+                type="button"
+                variant="perps-tertiary"
+                icon={ArrowDownTrayIcon}
+                loading={isSavingImage}
+                onClick={() => {
+                  void handleSaveImage()
+                }}
+              >
+                Save Image
+              </Button>
+              <Button
+                type="button"
+                variant="perps-tertiary"
+                icon={LinkIcon}
+                onClick={() => {
+                  void handleCopyLink()
+                }}
+              >
+                {copied ? 'Copied Link' : 'Copy Link'}
+              </Button>
+              <Button
+                type="button"
+                variant="perps-tertiary"
+                className="col-span-2"
+                icon={XIcon}
+                loading={isSharingImage}
+                onClick={() => {
+                  void handleShareOnX()
+                }}
+              >
+                Share on X
+              </Button>
+            </div>
           </div>
-
-          <div className="grid w-full gap-3 sm:grid-cols-2">
-            <Button
-              type="button"
-              variant="perps-default"
-              icon={ArrowDownTrayIcon}
-              loading={isSavingImage}
-              onClick={() => {
-                void handleSaveImage()
-              }}
-            >
-              Save Image
-            </Button>
-            <Button
-              type="button"
-              variant="perps-default"
-              icon={LinkIcon}
-              onClick={() => {
-                void handleCopyLink()
-              }}
-            >
-              {copied ? 'Copied Link' : 'Copy Link'}
-            </Button>
-            <Button
-              type="button"
-              variant="perps-default"
-              className="sm:col-span-2"
-              icon={XIcon}
-              loading={isSharingImage}
-              onClick={() => {
-                void handleShareOnX()
-              }}
-            >
-              Share on X
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }
 
@@ -462,7 +467,7 @@ function SharePoster({
     <div
       className="w-full select-none"
       style={{
-        width: `min(500px, calc(100vw - 48px), calc((100dvh - 240px) * ${POSTER_ASPECT_RATIO}))`,
+        width: `min(500px, calc(100vw - 48px), calc((100dvh - 300px) * ${POSTER_ASPECT_RATIO}))`,
       }}
     >
       <canvas

@@ -32,6 +32,8 @@ const iconButtonVariants = cva(
           'bg-gradient-to-b text-perps-blue from-[#349BFE]/[0.13] to-[#349BFE]/[0.05] border border-[#349BFE]/[0.08] shadow-[inset_0_1px_0_rgba(52,155,254,0.10)] transition-all hover:from-[#349BFE]/[0.18] hover:to-[#349BFE]/[0.08] hover:border-[#349BFE]/[0.15]',
         'perps-secondary':
           'bg-gradient-to-b text-white from-[#EDF1F3]/[0.05] to-[#EDF1F3]/[0.015] border border-white/[0.03] shadow-[inset_0_1px_0_rgba(255,255,255,0.10)] transition-all hover:from-[#EDF1F3]/[0.13] hover:to-[#EDF1F3]/[0.05] hover:border-white/[0.15]',
+        'perps-tertiary':
+          'bg-gradient-to-b text-white from-white/[0.16] to-white/[0.048] border border-white/[0.01] shadow-[inset_0_0.5px_0.5px_rgba(243,237,239,0.07)] transition-all hover:from-white/[0.22] hover:to-white/[0.1] hover:border-white/[0.05]',
         'perps-long':
           'bg-gradient-to-b text-perps-green from-[#52FA8D]/[0.13] to-[#52FA8D]/[0.05] border border-[#52FA8D]/[0.08] shadow-[inset_0_1px_0_rgba(82,250,141,0.10)] transition-all hover:from-[#52FA8D]/[0.18] hover:to-[#52FA8D]/[0.08] hover:border-[#52FA8D]/[0.15]',
         'perps-short':

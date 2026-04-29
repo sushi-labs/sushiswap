@@ -3,12 +3,13 @@
 import { ArrowsUpDownIcon } from '@heroicons/react/24/outline'
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
   Select,
   SelectContent,
   SelectItem,
@@ -241,13 +242,13 @@ export const EvmCoreTransferDialog = ({
   }, [address, assetToSend, amountToSend])
 
   return (
-    <Dialog
+    <PerpsDialog
       open={resolvedOpen}
       onOpenChange={(val) => {
         handleOpenChange(val)
       }}
     >
-      <DialogTrigger asChild>
+      <PerpsDialogTrigger asChild>
         {trigger ? (
           trigger
         ) : (
@@ -256,15 +257,15 @@ export const EvmCoreTransferDialog = ({
             <ArrowsUpDownIcon className="w-3 h-3 rotate-90" /> Core
           </Button>
         )}
-      </DialogTrigger>
-      <DialogContent variant="perps-default" className="max-w-xl">
-        <DialogHeader className="!text-left">
-          <DialogTitle>EVM Transfer</DialogTitle>
-          <DialogDescription>
+      </PerpsDialogTrigger>
+      <PerpsDialogContent className="max-w-xl">
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>EVM Transfer</PerpsDialogTitle>
+          <PerpsDialogDescription>
             Transfer assets between your HyperEVM and HyperCore Spot balances.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
           <div className="flex flex-col gap-2">
             <Button
               className="mx-auto"
@@ -289,7 +290,7 @@ export const EvmCoreTransferDialog = ({
                   ? `${assetToSend?.symbol} ${Number(assetToSend?.balance) > 0 ? ` - ${perpsNumberFormatter({ value: assetToSend?.balance })}` : ''}`
                   : 'Select Asset'}
               </SelectTrigger>
-              <SelectContent className="w-full">
+              <SelectContent className="w-full !bg-black/10">
                 {assetsToSelect[dst]?.map((i) => (
                   <SelectItem
                     key={i?.token}
@@ -326,16 +327,16 @@ export const EvmCoreTransferDialog = ({
               </Button>
             </div>
             <div className="mt-2">
-              <PerpsChecker.Legal size="default" variant="perps-default">
+              <PerpsChecker.Legal size="default" variant="perps-tertiary">
                 <Checker.Connect
                   size="default"
-                  variant="perps-default"
+                  variant="perps-tertiary"
                   namespace="evm"
                 >
                   <Checker.Network
                     chainId={EvmChainId.HYPEREVM}
                     size="default"
-                    variant="perps-default"
+                    variant="perps-tertiary"
                   >
                     <Checker.Custom
                       size="default"
@@ -343,7 +344,7 @@ export const EvmCoreTransferDialog = ({
                       buttonText={'Select Asset'}
                       onClick={() => {}}
                       disabled={!assetToSend}
-                      variant="perps-default"
+                      variant="perps-tertiary"
                     >
                       <Checker.Custom
                         size="default"
@@ -351,7 +352,7 @@ export const EvmCoreTransferDialog = ({
                         buttonText={'Enter Amount'}
                         onClick={() => {}}
                         disabled={Number(amount) <= 0}
-                        variant="perps-default"
+                        variant="perps-tertiary"
                       >
                         <Checker.Custom
                           size="default"
@@ -359,7 +360,7 @@ export const EvmCoreTransferDialog = ({
                           buttonText={'Insufficient Balance'}
                           onClick={() => {}}
                           disabled={Boolean(insufficientBalance)}
-                          variant="perps-default"
+                          variant="perps-tertiary"
                         >
                           <Checker.ApproveERC20
                             contract={assetToSend?.spender}
@@ -368,7 +369,7 @@ export const EvmCoreTransferDialog = ({
                             }
                             amount={amountToSend}
                             id="evm-core-transfer-approve"
-                            variant="perps-default"
+                            variant="perps-tertiary"
                             size="default"
                           >
                             <Button
@@ -376,7 +377,7 @@ export const EvmCoreTransferDialog = ({
                               className="w-full"
                               onClick={send}
                               loading={isPending}
-                              variant="perps-default"
+                              variant="perps-tertiary"
                             >
                               Confirm
                             </Button>
@@ -389,8 +390,8 @@ export const EvmCoreTransferDialog = ({
               </PerpsChecker.Legal>
             </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }

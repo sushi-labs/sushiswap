@@ -15,7 +15,7 @@ export const PercentageSlider = ({
   maxValue?: number
   disabled?: boolean
   unit?: string
-  variant?: 'default' | 'long' | 'short'
+  variant?: 'default' | 'long' | 'short' | 'white'
 }) => {
   const [pending, startTransition] = useTransition()
 
@@ -61,14 +61,18 @@ export const PercentageSlider = ({
             ? '!bg-perps-green'
             : variant === 'short'
               ? '!bg-perps-red'
-              : '!bg-perps-blue',
+              : variant === 'white'
+                ? '!bg-white'
+                : '!bg-perps-blue',
         )}
         trackClassName={classNames(
           variant === 'long'
             ? '!bg-perps-green/[0.08]'
             : variant === 'short'
               ? '!bg-perps-red/[0.08]'
-              : '!bg-perps-blue/[0.08]',
+              : variant === 'white'
+                ? '!bg-white/[0.08]'
+                : '!bg-perps-blue/[0.08]',
         )}
         thumbClassName={classNames(
           'border-[6px] backdrop-blur-lg',
@@ -76,7 +80,9 @@ export const PercentageSlider = ({
             ? '!border-perps-green !bg-perps-green/20'
             : variant === 'short'
               ? '!border-perps-red !bg-perps-red/20'
-              : '!border-perps-blue !bg-perps-blue/20',
+              : variant === 'white'
+                ? '!border-white !bg-white/20'
+                : '!border-perps-blue !bg-perps-blue/20',
         )}
       />
       <div

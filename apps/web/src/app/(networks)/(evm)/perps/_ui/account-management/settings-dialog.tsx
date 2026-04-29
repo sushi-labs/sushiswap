@@ -1,12 +1,13 @@
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
   IconButton,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
 } from '@sushiswap/ui'
 import { CheckboxSetting } from '../_common'
 import { useUserSettingsState } from './settings-provider'
@@ -39,8 +40,8 @@ export const SettingsDialog = () => {
     },
   } = useUserSettingsState()
   return (
-    <Dialog>
-      <DialogTrigger asChild>
+    <PerpsDialog>
+      <PerpsDialogTrigger asChild>
         <IconButton
           variant="perps-secondary"
           className="!rounded-xl"
@@ -49,13 +50,15 @@ export const SettingsDialog = () => {
           iconProps={{ className: 'w-4 h-4' }}
           aria-label="Open Settings"
         />
-      </DialogTrigger>
-      <DialogContent variant="perps-default">
-        <DialogHeader className="!text-left">
-          <DialogTitle>Settings</DialogTitle>
-          <DialogDescription>Manage your custom settings</DialogDescription>
-        </DialogHeader>
-        <div className="max-h-[calc(100vh-120px)] overflow-y-auto">
+      </PerpsDialogTrigger>
+      <PerpsDialogContent>
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Settings</PerpsDialogTitle>
+          <PerpsDialogDescription>
+            Manage your custom settings
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
           <div className="flex flex-col gap-4 pb-4">
             <CheckboxSetting
               value={quickConfirmPositionEnabled}
@@ -112,8 +115,8 @@ export const SettingsDialog = () => {
               label="Disable Unified Account Mode"
             />
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }

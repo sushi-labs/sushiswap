@@ -2,12 +2,13 @@
 
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
   Select,
   SelectContent,
   SelectItem,
@@ -297,13 +298,13 @@ export const SwapStablesDialog = ({
   )
 
   return (
-    <Dialog
+    <PerpsDialog
       open={resolvedOpen}
       onOpenChange={(val) => {
         handleOpenChange(val)
       }}
     >
-      <DialogTrigger asChild>
+      <PerpsDialogTrigger asChild>
         {trigger ? (
           trigger
         ) : (
@@ -314,22 +315,22 @@ export const SwapStablesDialog = ({
               : 'Stablecoins'}
           </Button>
         )}
-      </DialogTrigger>
-      <DialogContent variant="perps-default" className="max-w-xl">
-        <DialogHeader className="!text-left">
-          <DialogTitle>
+      </PerpsDialogTrigger>
+      <PerpsDialogContent className="max-w-xl">
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>
             Swap{' '}
             {nonSelectableSwapData
               ? `${nonSelectableSwapData?.assetSymbolToSend} for ${nonSelectableSwapData?.assetSymbolToBuy}`
               : 'Stablecoins'}
-          </DialogTitle>
-          <DialogDescription>
+          </PerpsDialogTitle>
+          <PerpsDialogDescription>
             {nonSelectableSwapData
               ? 'Swap between stablecoins.'
               : 'Swap between different stablecoins in your Spot account.'}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
           <div className="flex flex-col gap-2">
             {nonSelectableSwapData ? null : (
               <Select
@@ -341,7 +342,7 @@ export const SwapStablesDialog = ({
                     ? `${assetToSend?.symbol} ${Number(assetToSend?.balance) > 0 ? ` - ${perpsNumberFormatter({ value: assetToSend?.balance, maxFraxDigits: 2, minFraxDigits: 2 })}` : ''}`
                     : 'Select Asset'}
                 </SelectTrigger>
-                <SelectContent className="w-full">
+                <SelectContent className="w-full !bg-black/10">
                   {assetsToSelect['sell']?.map((i) => (
                     <SelectItem
                       key={i?.symbol}
@@ -391,7 +392,7 @@ export const SwapStablesDialog = ({
                     ? `${assetToBuy?.symbol} ${Number(assetToBuy?.balance) > 0 ? ` - ${perpsNumberFormatter({ value: assetToBuy?.balance, maxFraxDigits: 2, minFraxDigits: 2 })}` : ''}`
                     : 'Select Asset'}
                 </SelectTrigger>
-                <SelectContent className="w-full">
+                <SelectContent className="w-full !bg-black/10">
                   {assetsToSelect['buy']?.map((i) => (
                     <SelectItem
                       key={i?.symbol}
@@ -415,16 +416,16 @@ export const SwapStablesDialog = ({
               value={`${perpsNumberFormatter({ value: estimatedFee, minFraxDigits: 2, maxFraxDigits: 2 })} ${assetToBuy?.symbol || ''}`}
             />
             <div className="mt-2">
-              <PerpsChecker.Legal size="default" variant="perps-default">
+              <PerpsChecker.Legal size="default" variant="perps-tertiary">
                 <Checker.Connect
                   size="default"
-                  variant="perps-default"
+                  variant="perps-tertiary"
                   namespace="evm"
                 >
                   <Checker.Network
                     chainId={EvmChainId.HYPEREVM}
                     size="default"
-                    variant="perps-default"
+                    variant="perps-tertiary"
                   >
                     <Checker.Custom
                       size="default"
@@ -432,7 +433,7 @@ export const SwapStablesDialog = ({
                       buttonText={'Select Asset'}
                       onClick={() => {}}
                       disabled={!assetToSend}
-                      variant="perps-default"
+                      variant="perps-tertiary"
                     >
                       <Checker.Custom
                         size="default"
@@ -440,7 +441,7 @@ export const SwapStablesDialog = ({
                         buttonText={'Enter Amount'}
                         onClick={() => {}}
                         disabled={Number(amount) <= 0}
-                        variant="perps-default"
+                        variant="perps-tertiary"
                       >
                         <Checker.Custom
                           size="default"
@@ -448,7 +449,7 @@ export const SwapStablesDialog = ({
                           buttonText={'Value Must Be Greater Than 10'}
                           onClick={() => {}}
                           disabled={Number(amount) <= 10}
-                          variant="perps-default"
+                          variant="perps-tertiary"
                         >
                           <Checker.Custom
                             size="default"
@@ -456,14 +457,14 @@ export const SwapStablesDialog = ({
                             buttonText={'Insufficient Balance'}
                             onClick={() => {}}
                             disabled={Boolean(insufficientBalance)}
-                            variant="perps-default"
+                            variant="perps-tertiary"
                           >
                             <Button
                               size="default"
                               className="w-full"
                               onClick={swapStables}
                               loading={isPending}
-                              variant="perps-default"
+                              variant="perps-tertiary"
                             >
                               Confirm
                             </Button>
@@ -476,8 +477,8 @@ export const SwapStablesDialog = ({
               </PerpsChecker.Legal>
             </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }

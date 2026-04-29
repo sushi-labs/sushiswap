@@ -2,12 +2,13 @@
 
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
   Select,
   SelectContent,
   SelectItem,
@@ -146,13 +147,13 @@ export const SendDialog = ({
   }, [address, assetToSend, amount])
 
   return (
-    <Dialog
+    <PerpsDialog
       open={resolvedOpen}
       onOpenChange={(val) => {
         handleOpenChange(val)
       }}
     >
-      <DialogTrigger asChild>
+      <PerpsDialogTrigger asChild>
         {trigger ? (
           trigger
         ) : (
@@ -160,15 +161,15 @@ export const SendDialog = ({
             Send
           </Button>
         )}
-      </DialogTrigger>
-      <DialogContent variant="perps-default" className="max-w-xl">
-        <DialogHeader className="!text-left">
-          <DialogTitle>Send Tokens</DialogTitle>
-          <DialogDescription>
+      </PerpsDialogTrigger>
+      <PerpsDialogContent className="max-w-xl">
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Send Tokens</PerpsDialogTitle>
+          <PerpsDialogDescription>
             Send tokens to another account on the Hyperliquid L1.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
           <div className="flex flex-col gap-2">
             <ValueInput
               value={dstAddress}
@@ -215,7 +216,7 @@ export const SendDialog = ({
                     ? `${assetToSend?.symbol}  ${isUnifiedAccountModeEnabled ? '' : assetToSend?.marketType === 'perp' ? '(Perps)' : '(Spot)'} ${Number(assetToSend?.balance) > 0 ? ` - ${perpsNumberFormatter({ value: assetToSend?.balance })}` : ''}`
                     : 'Select Asset'}
                 </SelectTrigger>
-                <SelectContent className="w-full">
+                <SelectContent className="w-full !bg-black/10">
                   {sendableAssets?.map((i) => (
                     <SelectItem
                       key={i.token}
@@ -236,9 +237,9 @@ export const SendDialog = ({
               </Select>
             </div>
             <div className="mt-2">
-              <PerpsChecker.Legal size="default" variant="perps-default">
+              <PerpsChecker.Legal size="default" variant="perps-tertiary">
                 <Checker.Connect
-                  variant="perps-default"
+                  variant="perps-tertiary"
                   size="default"
                   namespace="evm"
                 >
@@ -248,7 +249,7 @@ export const SendDialog = ({
                     buttonText={'Select Asset'}
                     onClick={() => {}}
                     disabled={!assetToSend}
-                    variant="perps-default"
+                    variant="perps-tertiary"
                   >
                     <Checker.Custom
                       size="default"
@@ -256,7 +257,7 @@ export const SendDialog = ({
                       buttonText={'Enter Address'}
                       onClick={() => {}}
                       disabled={!isEvmAddress(dstAddress)}
-                      variant="perps-default"
+                      variant="perps-tertiary"
                     >
                       <Checker.Custom
                         size="default"
@@ -264,7 +265,7 @@ export const SendDialog = ({
                         buttonText={'Enter Amount'}
                         onClick={() => {}}
                         disabled={Number(amount) <= 0}
-                        variant="perps-default"
+                        variant="perps-tertiary"
                       >
                         <Checker.Custom
                           size="default"
@@ -272,14 +273,14 @@ export const SendDialog = ({
                           buttonText={'Insufficient Balance'}
                           onClick={() => {}}
                           disabled={Boolean(insufficientBalance)}
-                          variant="perps-default"
+                          variant="perps-tertiary"
                         >
                           <Button
                             size="default"
                             className="w-full"
                             onClick={sendTokens}
                             loading={isPending}
-                            variant="perps-default"
+                            variant="perps-tertiary"
                           >
                             Send
                           </Button>
@@ -291,8 +292,8 @@ export const SendDialog = ({
               </PerpsChecker.Legal>
             </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }

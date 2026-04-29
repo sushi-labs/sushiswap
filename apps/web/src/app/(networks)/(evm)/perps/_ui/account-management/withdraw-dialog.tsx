@@ -7,12 +7,13 @@ import {
 } from '@sushiswap/notifications'
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import {
@@ -147,8 +148,8 @@ export const WithdrawDialog = ({
   }, [walletClient, address, _amount])
 
   return (
-    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
+    <PerpsDialog open={resolvedOpen} onOpenChange={handleOpenChange}>
+      <PerpsDialogTrigger asChild>
         {trigger ? (
           trigger
         ) : (
@@ -156,13 +157,15 @@ export const WithdrawDialog = ({
             Withdraw
           </Button>
         )}
-      </DialogTrigger>
-      <DialogContent variant="perps-default">
-        <DialogHeader className="!text-left">
-          <DialogTitle>Withdraw</DialogTitle>
-          <DialogDescription>Withdraw USDC to Arbitrum.</DialogDescription>
-        </DialogHeader>
-        <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
+      </PerpsDialogTrigger>
+      <PerpsDialogContent>
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Withdraw</PerpsDialogTitle>
+          <PerpsDialogDescription>
+            Withdraw USDC to Arbitrum.
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
           <div className="flex flex-col gap-4">
             <TransferInput
               amount={amount}
@@ -175,16 +178,16 @@ export const WithdrawDialog = ({
               chainId={chainId}
             />
 
-            <PerpsChecker.Legal size="default" variant="perps-default">
+            <PerpsChecker.Legal size="default" variant="perps-tertiary">
               <Checker.Connect
                 size="default"
-                variant="perps-default"
+                variant="perps-tertiary"
                 namespace="evm"
               >
                 <Checker.Network
                   size="default"
                   chainId={chainId}
-                  variant="perps-default"
+                  variant="perps-tertiary"
                 >
                   <Checker.Custom
                     size="default"
@@ -192,7 +195,7 @@ export const WithdrawDialog = ({
                     buttonText={'Enter Amount'}
                     onClick={() => {}}
                     disabled={!amount}
-                    variant="perps-default"
+                    variant="perps-tertiary"
                   >
                     <Checker.Custom
                       size="default"
@@ -200,7 +203,7 @@ export const WithdrawDialog = ({
                       buttonText={'Insufficient Balance'}
                       onClick={() => {}}
                       disabled={Boolean(insufficientBalance)}
-                      variant="perps-default"
+                      variant="perps-tertiary"
                     >
                       <Checker.Custom
                         size="default"
@@ -208,14 +211,14 @@ export const WithdrawDialog = ({
                         buttonText={`Minimum Withdraw ${MIN_WITHDRAW_AMOUNT} USDC`}
                         onClick={() => {}}
                         disabled={Number(amount) < MIN_WITHDRAW_AMOUNT}
-                        variant="perps-default"
+                        variant="perps-tertiary"
                       >
                         <Button
                           size="default"
                           className="w-full"
                           onClick={withdrawUsdc}
                           loading={isPending}
-                          variant="perps-default"
+                          variant="perps-tertiary"
                         >
                           Withdraw
                         </Button>
@@ -236,8 +239,8 @@ export const WithdrawDialog = ({
               </p>
             </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }

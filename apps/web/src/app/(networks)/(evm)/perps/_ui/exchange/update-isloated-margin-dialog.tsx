@@ -1,12 +1,13 @@
 'use client'
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
 } from '@sushiswap/ui'
 import {
   type ReactNode,
@@ -166,17 +167,17 @@ export const UpdateIsolatedMarginDialog = ({
   )
 
   return (
-    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent variant="perps-default">
-        <DialogHeader>
-          <DialogTitle>Adjust Margin</DialogTitle>
-          <DialogDescription>
+    <PerpsDialog open={resolvedOpen} onOpenChange={handleOpenChange}>
+      <PerpsDialogTrigger asChild>{trigger}</PerpsDialogTrigger>
+      <PerpsDialogContent>
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Adjust Margin</PerpsDialogTitle>
+          <PerpsDialogDescription>
             Decrease the chance of liquidation by adding more margin or remove
             excess margin to use for other positions.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="max-h-[calc(100vh-150px)] overflow-y-auto">
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
           <div className="flex flex-col gap-4 text-sm">
             <div className="flex items-center gap-2">
               <IsolatedMarginInput
@@ -215,19 +216,22 @@ export const UpdateIsolatedMarginDialog = ({
                 value={`${perpsNumberFormatter({ value: maxValue ?? '0', minFraxDigits: 2, maxFraxDigits: 2 })} ${token?.name}`}
               />
             </div>
-            <PerpsChecker.Legal size="default" variant="perps-default">
+            <PerpsChecker.Legal size="default" variant="perps-tertiary">
               <PerpsChecker.EnableTrading
                 size="default"
-                variant="perps-default"
+                variant="perps-tertiary"
               >
-                <PerpsChecker.BuilderFee size="default" variant="perps-default">
+                <PerpsChecker.BuilderFee
+                  size="default"
+                  variant="perps-tertiary"
+                >
                   <PerpsChecker.HyperReferral
                     size="default"
-                    variant="perps-default"
+                    variant="perps-tertiary"
                   >
                     <Button
                       size="default"
-                      variant="perps-default"
+                      variant="perps-tertiary"
                       onClick={() => {
                         if (!updateData) return
                         updateIsolatedMargin(updateData, {
@@ -249,9 +253,9 @@ export const UpdateIsolatedMarginDialog = ({
               </PerpsChecker.EnableTrading>
             </PerpsChecker.Legal>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }
 

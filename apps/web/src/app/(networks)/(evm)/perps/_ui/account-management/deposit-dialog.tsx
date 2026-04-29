@@ -2,12 +2,13 @@
 import { createToast } from '@sushiswap/notifications'
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
@@ -110,8 +111,8 @@ export const DepositDialog = ({
   }, [sim, writeContractAsync, client, address, _amount])
 
   return (
-    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
+    <PerpsDialog open={resolvedOpen} onOpenChange={handleOpenChange}>
+      <PerpsDialogTrigger asChild>
         {trigger ? (
           trigger
         ) : (
@@ -119,13 +120,15 @@ export const DepositDialog = ({
             Deposit
           </Button>
         )}
-      </DialogTrigger>
-      <DialogContent variant="perps-default">
-        <DialogHeader className="!text-left">
-          <DialogTitle>Deposit</DialogTitle>
-          <DialogDescription>Deposit USDC from Arbitrum</DialogDescription>
-        </DialogHeader>
-        <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
+      </PerpsDialogTrigger>
+      <PerpsDialogContent>
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Deposit</PerpsDialogTitle>
+          <PerpsDialogDescription>
+            Deposit USDC from Arbitrum
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
           <div className="flex flex-col gap-4">
             <Web3Input.Currency
               className="w-full border-2 rounded-lg border-[#7D95A9] px-4 py-2 bg-[#1B293EC7] text-[#78869B]"
@@ -136,25 +139,25 @@ export const DepositDialog = ({
               type="INPUT"
             />
 
-            <PerpsChecker.Legal size="default" variant="perps-default">
+            <PerpsChecker.Legal size="default" variant="perps-tertiary">
               <Checker.Connect
                 size="default"
-                variant="perps-default"
+                variant="perps-tertiary"
                 namespace="evm"
               >
                 <Checker.Network
                   size="default"
                   chainId={chainId}
-                  variant="perps-default"
+                  variant="perps-tertiary"
                 >
                   <Checker.Amounts
                     size="default"
                     chainId={chainId}
                     amount={_amount}
-                    variant="perps-default"
+                    variant="perps-tertiary"
                   >
                     <Button
-                      variant="perps-default"
+                      variant="perps-tertiary"
                       size="default"
                       disabled={
                         Number(amount) < MIN_DEPOSIT_AMOUNT || !sim?.result
@@ -174,8 +177,8 @@ export const DepositDialog = ({
               </Checker.Connect>
             </PerpsChecker.Legal>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }

@@ -1,12 +1,13 @@
 'use client'
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
   classNames,
 } from '@sushiswap/ui'
 import {
@@ -223,8 +224,8 @@ export const MarketCloseDialog = ({
   }, [positionToClose, midPrice, asset, _sizeToClose])
 
   return (
-    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
+    <PerpsDialog open={resolvedOpen} onOpenChange={handleOpenChange}>
+      <PerpsDialogTrigger asChild>
         {trigger ? (
           trigger
         ) : (
@@ -232,19 +233,16 @@ export const MarketCloseDialog = ({
             Market
           </TableButton>
         )}
-      </DialogTrigger>
+      </PerpsDialogTrigger>
       {/* dont autofocus the size input */}
-      <DialogContent
-        onOpenAutoFocus={(e) => e.preventDefault()}
-        variant="perps-default"
-      >
-        <DialogHeader className="!text-left">
-          <DialogTitle>Market Close</DialogTitle>
-          <DialogDescription>
+      <PerpsDialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Market Close</PerpsDialogTitle>
+          <PerpsDialogDescription>
             Attempts to close the position immediately.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
           <div className="flex flex-col gap-4 text-sm">
             <div className="flex flex-col gap-2 text-sm">
               <StatItem
@@ -280,19 +278,22 @@ export const MarketCloseDialog = ({
               label="Don't show this again"
             />
             {/* connect checker not needed, wont be able to get here unless connected anyway */}
-            <PerpsChecker.Legal size="default" variant="perps-default">
+            <PerpsChecker.Legal size="default" variant="perps-tertiary">
               <PerpsChecker.EnableTrading
                 size="default"
-                variant="perps-default"
+                variant="perps-tertiary"
               >
-                <PerpsChecker.BuilderFee size="default" variant="perps-default">
+                <PerpsChecker.BuilderFee
+                  size="default"
+                  variant="perps-tertiary"
+                >
                   <PerpsChecker.HyperReferral
                     size="default"
-                    variant="perps-default"
+                    variant="perps-tertiary"
                   >
                     <Button
                       size="default"
-                      variant="perps-default"
+                      variant="perps-tertiary"
                       onClick={() => {
                         if (!orderData) return
                         executeOrders(
@@ -318,8 +319,8 @@ export const MarketCloseDialog = ({
               </PerpsChecker.EnableTrading>
             </PerpsChecker.Legal>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }

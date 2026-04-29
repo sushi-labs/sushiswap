@@ -2,15 +2,16 @@
 import { ArrowsUpDownIcon } from '@heroicons/react/24/outline'
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import {
@@ -207,8 +208,8 @@ export const PerpSpotTransferDialog = ({
   }
 
   return (
-    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
+    <PerpsDialog open={resolvedOpen} onOpenChange={handleOpenChange}>
+      <PerpsDialogTrigger asChild>
         {trigger ? (
           trigger
         ) : (
@@ -217,16 +218,16 @@ export const PerpSpotTransferDialog = ({
             <ArrowsUpDownIcon className="w-3 h-3 rotate-90" /> Spot
           </Button>
         )}
-      </DialogTrigger>
+      </PerpsDialogTrigger>
 
-      <DialogContent variant="perps-default">
-        <DialogHeader className="!text-left">
-          <DialogTitle>Transfer {currency.symbol}</DialogTitle>
-          <DialogDescription>
+      <PerpsDialogContent>
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Transfer {currency.symbol}</PerpsDialogTitle>
+          <PerpsDialogDescription>
             Transfer {currency.symbol} between your Perps and Spot balances.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
           <div className="flex flex-col gap-4">
             <Button
               className="mx-auto"
@@ -252,10 +253,10 @@ export const PerpSpotTransferDialog = ({
               chainId={chainId}
             />
 
-            <PerpsChecker.Legal size="default" variant="perps-default">
+            <PerpsChecker.Legal size="default" variant="perps-tertiary">
               <Checker.Connect
                 size="default"
-                variant="perps-default"
+                variant="perps-tertiary"
                 namespace="evm"
               >
                 <Checker.Custom
@@ -264,7 +265,7 @@ export const PerpSpotTransferDialog = ({
                   buttonText={'Enter Amount'}
                   onClick={() => {}}
                   disabled={!amount}
-                  variant="perps-default"
+                  variant="perps-tertiary"
                 >
                   <Checker.Custom
                     size="default"
@@ -272,14 +273,14 @@ export const PerpSpotTransferDialog = ({
                     buttonText={'Insufficient Balance'}
                     onClick={() => {}}
                     disabled={Boolean(insufficientBalance)}
-                    variant="perps-default"
+                    variant="perps-tertiary"
                   >
                     <Button
                       size="default"
                       className="w-full"
                       onClick={transferUsdc}
                       loading={isPending}
-                      variant="perps-default"
+                      variant="perps-tertiary"
                     >
                       {`Transfer to ${dst === 'spot' ? 'Spot' : 'Perps'}`}
                     </Button>
@@ -288,8 +289,8 @@ export const PerpSpotTransferDialog = ({
               </Checker.Connect>
             </PerpsChecker.Legal>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }

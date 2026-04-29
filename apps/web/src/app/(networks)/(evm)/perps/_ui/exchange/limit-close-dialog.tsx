@@ -1,12 +1,13 @@
 'use client'
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
 } from '@sushiswap/ui'
 import {
   type ReactNode,
@@ -240,7 +241,7 @@ export const LimitCloseDialog = ({
   }, [positionToClose, orderData, limitPriceToCloseAt, asset])
 
   return (
-    <Dialog
+    <PerpsDialog
       open={isOpen !== undefined ? isOpen : open}
       onOpenChange={(state) => {
         if (onOpenChange) {
@@ -250,7 +251,7 @@ export const LimitCloseDialog = ({
         }
       }}
     >
-      <DialogTrigger asChild>
+      <PerpsDialogTrigger asChild>
         {trigger ? (
           trigger
         ) : (
@@ -258,19 +259,16 @@ export const LimitCloseDialog = ({
             Limit
           </TableButton>
         )}
-      </DialogTrigger>
+      </PerpsDialogTrigger>
       {/* dont autofocus the size input */}
-      <DialogContent
-        variant="perps-default"
-        onOpenAutoFocus={(e) => e.preventDefault()}
-      >
-        <DialogHeader className="!text-left">
-          <DialogTitle>Limit Close</DialogTitle>
-          <DialogDescription>
+      <PerpsDialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Limit Close</PerpsDialogTitle>
+          <PerpsDialogDescription>
             Send an order to close you position at the limit price.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
           <div className="flex flex-col gap-4 text-sm">
             <LimitInput
               currentMidPrice={currentMidPrice ?? null}
@@ -301,13 +299,22 @@ export const LimitCloseDialog = ({
               </div>
             ) : null}
             {/* connect checker not needed, wont be able to get here unless connected anyway */}
-            <PerpsChecker.Legal size="default">
-              <PerpsChecker.EnableTrading size="default">
-                <PerpsChecker.BuilderFee size="default">
-                  <PerpsChecker.HyperReferral size="default">
+            <PerpsChecker.Legal size="default" variant="perps-tertiary">
+              <PerpsChecker.EnableTrading
+                size="default"
+                variant="perps-tertiary"
+              >
+                <PerpsChecker.BuilderFee
+                  size="default"
+                  variant="perps-tertiary"
+                >
+                  <PerpsChecker.HyperReferral
+                    size="default"
+                    variant="perps-tertiary"
+                  >
                     <Button
                       size="default"
-                      variant="perps-default"
+                      variant="perps-tertiary"
                       onClick={() => {
                         if (!orderData) return
                         executeOrders(
@@ -336,8 +343,8 @@ export const LimitCloseDialog = ({
               </PerpsChecker.EnableTrading>
             </PerpsChecker.Legal>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }

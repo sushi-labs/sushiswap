@@ -1,12 +1,13 @@
 'use client'
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
 } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { useCancelOpenOrders, useUserOpenOrders } from 'src/lib/perps'
@@ -28,53 +29,63 @@ export const CancelAllOpenOrdersDialog = () => {
   const { cancelOrders, isPending } = useCancelOpenOrders()
 
   return (
-    <Dialog
+    <PerpsDialog
       open={open}
       onOpenChange={(open) => {
         setOpen(open)
       }}
     >
-      <DialogTrigger asChild>
+      <PerpsDialogTrigger asChild>
         <TableButton disabled={isPending || allCancelData?.length === 0}>
           Cancel All
         </TableButton>
-      </DialogTrigger>
-      <DialogContent variant="perps-default">
-        <DialogHeader>
-          <DialogTitle>Cancel All Open Orders</DialogTitle>
-          <DialogDescription>Cancel all your open orders.</DialogDescription>
-        </DialogHeader>
-        <div className="flex flex-col mt-6">
-          <PerpsChecker.Legal size="default" variant="perps-default">
-            <PerpsChecker.EnableTrading size="default" variant="perps-default">
-              <PerpsChecker.BuilderFee size="default" variant="perps-default">
-                <PerpsChecker.HyperReferral
+      </PerpsDialogTrigger>
+      <PerpsDialogContent>
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Cancel All Open Orders</PerpsDialogTitle>
+          <PerpsDialogDescription>
+            Cancel all your open orders.
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
+          <div className="flex flex-col mt-6">
+            <PerpsChecker.Legal size="default" variant="perps-tertiary">
+              <PerpsChecker.EnableTrading
+                size="default"
+                variant="perps-tertiary"
+              >
+                <PerpsChecker.BuilderFee
                   size="default"
-                  variant="perps-default"
+                  variant="perps-tertiary"
                 >
-                  <Button
+                  <PerpsChecker.HyperReferral
                     size="default"
-                    variant="perps-default"
-                    onClick={() =>
-                      cancelOrders(
-                        { cancelData: allCancelData },
-                        {
-                          onSuccess: () => {
-                            setOpen(false)
-                          },
-                        },
-                      )
-                    }
-                    loading={isPending}
+                    variant="perps-tertiary"
                   >
-                    Confirm Cancel All
-                  </Button>
-                </PerpsChecker.HyperReferral>
-              </PerpsChecker.BuilderFee>
-            </PerpsChecker.EnableTrading>
-          </PerpsChecker.Legal>
-        </div>
-      </DialogContent>
-    </Dialog>
+                    <Button
+                      size="default"
+                      variant="perps-tertiary"
+                      onClick={() =>
+                        cancelOrders(
+                          { cancelData: allCancelData },
+                          {
+                            onSuccess: () => {
+                              setOpen(false)
+                            },
+                          },
+                        )
+                      }
+                      loading={isPending}
+                    >
+                      Confirm Cancel All
+                    </Button>
+                  </PerpsChecker.HyperReferral>
+                </PerpsChecker.BuilderFee>
+              </PerpsChecker.EnableTrading>
+            </PerpsChecker.Legal>
+          </div>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }
