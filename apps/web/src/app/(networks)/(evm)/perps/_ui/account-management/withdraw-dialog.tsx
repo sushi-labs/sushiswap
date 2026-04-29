@@ -27,9 +27,9 @@ import { Amount } from 'sushi'
 import { EvmChainId, USDC } from 'sushi/evm'
 import { useWalletClient } from 'wagmi'
 import { useUserState } from '~evm/perps/user-provider'
+import { InputWithKeyboard } from '../_common'
 import { PerpsChecker } from '../perps-checker'
 import { useUserSettingsState } from './settings-provider'
-import { TransferInput } from './transfer-input'
 
 //@todo add more options
 const currency = USDC[EvmChainId.ARBITRUM]
@@ -167,7 +167,7 @@ export const WithdrawDialog = ({
         </PerpsDialogHeader>
         <PerpsDialogInnerContent>
           <div className="flex flex-col gap-4">
-            <TransferInput
+            <InputWithKeyboard
               amount={amount}
               setAmount={setAmount}
               balance={balance}
@@ -175,7 +175,6 @@ export const WithdrawDialog = ({
               error={error?.message}
               isLoading={isLoading}
               address={address}
-              chainId={chainId}
             />
 
             <PerpsChecker.Legal size="default" variant="perps-tertiary">
@@ -229,13 +228,11 @@ export const WithdrawDialog = ({
               </Checker.Connect>
             </PerpsChecker.Legal>
             <div>
-              <p className="text-xs text-muted-foreground italic mb-1">
-                A fee of 1 USDC will be deducted from the USDC withdrawn.
-              </p>
-              <p className="text-xs text-muted-foreground italic">
-                If you have USDC in your Spot Balances, transfer it to Perps to
-                make it available to withdraw. Withdrawals should arrive within
-                5 minutes.
+              <p className="text-xs text-perps-muted-50 text-center italic mb-1">
+                A fee of 1 USDC will be deducted from the USDC withdrawn. If you
+                have USDC in your Spot Balances, transfer it to Perps to make it
+                available to withdraw. Withdrawals should arrive within 5
+                minutes.
               </p>
             </div>
           </div>
