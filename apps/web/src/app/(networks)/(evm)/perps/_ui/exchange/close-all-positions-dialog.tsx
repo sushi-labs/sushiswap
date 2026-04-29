@@ -19,7 +19,7 @@ import {
   useUserPositions,
 } from 'src/lib/perps'
 import { formatUnits, parseUnits } from 'viem'
-import { CheckboxSetting, TableButton } from '../_common'
+import { CheckboxSelectItem, TableButton } from '../_common'
 import { useAssetListState } from '../asset-selector'
 import { PerpsChecker } from '../perps-checker'
 
@@ -124,21 +124,22 @@ export const CloseAllPositionsDialog = ({
           </PerpsDialogDescription>
         </PerpsDialogHeader>
         <PerpsDialogInnerContent>
-          <div className="flex flex-col gap-6 text-sm">
-            <div className="flex flex-col gap-4 text-sm">
-              <CheckboxSetting
-                value={closeType === 'market'}
-                onChange={(value) => {
-                  setCloseType(value ? 'market' : 'limit-at-mid')
-                }}
-                label="Market Close"
+          <div className="flex flex-col gap-6 text-sm h-full">
+            <div className="flex lg:flex-row flex-col lg:items-start gap-4 text-sm h-full">
+              <CheckboxSelectItem
+                valueToSet="market"
+                currentValue={closeType}
+                setValue={setCloseType}
+                title="Market Close"
+                description="Close all positions at the current market price."
               />
-              <CheckboxSetting
-                value={closeType === 'limit-at-mid'}
-                onChange={(value) => {
-                  setCloseType(value ? 'limit-at-mid' : 'market')
-                }}
-                label="Limit Close at Mid Price"
+
+              <CheckboxSelectItem
+                valueToSet="limit-at-mid"
+                currentValue={closeType}
+                setValue={setCloseType}
+                title="Limit Close at Mid Price"
+                description="Close all positions at the mid price."
               />
             </div>
             <PerpsChecker.Legal size="default" variant="perps-tertiary">
