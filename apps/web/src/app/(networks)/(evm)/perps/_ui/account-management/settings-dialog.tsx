@@ -25,6 +25,7 @@ export const SettingsDialog = () => {
       hidePnl,
       optOutOfSpotDustCollection,
       isDexAbstractionEnabled,
+      showPnlCardOnMarketClose,
     },
     mutate: {
       setQuickCloseMarketPositionEnabled,
@@ -37,6 +38,7 @@ export const SettingsDialog = () => {
       setHidePnl,
       setOptOutOfSpotDustCollection,
       setDexAbstractionEnabled,
+      setShowPnlCardOnMarketClose,
     },
   } = useUserSettingsState()
   return (
@@ -95,6 +97,11 @@ export const SettingsDialog = () => {
               value={hidePnl}
               onChange={setHidePnl}
               label="Hide PnL"
+            />
+            <CheckboxSetting
+              value={showPnlCardOnMarketClose}
+              onChange={setShowPnlCardOnMarketClose}
+              label="Show Share PnL on Market Close"
             />
             <CheckboxSetting
               value={optOutOfSpotDustCollection}

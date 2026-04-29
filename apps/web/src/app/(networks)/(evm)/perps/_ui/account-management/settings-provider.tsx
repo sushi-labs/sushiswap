@@ -18,6 +18,10 @@ import {
 } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { useUserState } from '~evm/perps/user-provider'
+import {
+  type AnyTradeType,
+  ShareClosedPnlDialog,
+} from '../trade-tables/_common/share-closed-pnl-dialog'
 interface State {
   state: {
     quickCloseReversePositionEnabled: boolean
@@ -34,6 +38,7 @@ interface State {
     mantissa: L2BookParameters['mantissa']
     isDexAbstractionEnabled: boolean
     orderBookSide: 'base' | 'quote'
+    showPnlCardOnMarketClose: boolean
   }
   mutate: {
     setQuickCloseReversePositionEnabled: (enabled: boolean) => void
@@ -50,6 +55,8 @@ interface State {
     setMantissa: (mantissa: L2BookParameters['mantissa']) => void
     setDexAbstractionEnabled: (enabled: boolean) => void
     setOrderBookSide: (side: 'base' | 'quote') => void
+    setShowPnlCardOnMarketClose: (enabled: boolean) => void
+    handleOpenPnLCard: (trade: AnyTradeType) => void
   }
 }
 
@@ -110,10 +117,32 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
     `${BASE_STORAGE_KEY}.hide.pnl`,
     false,
   )
+  const [showPnlCardOnMarketClose, setShowPnlCardOnMarketClose] =
+    useLocalStorage<boolean>(
+      `${BASE_STORAGE_KEY}.show.pnl.card.on.market.close`,
+      true,
+    )
   const { isPending, updateSpotDusting } = useSpotDustToggle()
   const [nSigFigs, setNSigFigs] = useState<number | undefined>(undefined)
   const [mantissa, setMantissa] =
     useState<L2BookParameters['mantissa']>(undefined)
+  const [isOpenPnLCard, setIsOpenPnLCard] = useState(false)
+
+  const [anyTrade, setAnyTrade] = useState<AnyTradeType | null>(null)
+
+  const handleOpenPnLCard = useCallback(
+    (trade: AnyTradeType) => {
+      if (!showPnlCardOnMarketClose) return
+      setAnyTrade(trade)
+      setIsOpenPnLCard(true)
+    },
+    [showPnlCardOnMarketClose],
+  )
+
+  const handleClosePnLCard = useCallback(() => {
+    setAnyTrade(null)
+    setIsOpenPnLCard(false)
+  }, [])
 
   const { data: notification } = useUserNotifications({ address })
 
@@ -195,6 +224,7 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             mantissa,
             isDexAbstractionEnabled,
             orderBookSide,
+            showPnlCardOnMarketClose,
           },
           mutate: {
             setQuickCloseReversePositionEnabled,
@@ -211,6 +241,8 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             setMantissa,
             setDexAbstractionEnabled,
             setOrderBookSide,
+            setShowPnlCardOnMarketClose,
+            handleOpenPnLCard,
           },
         }
       }, [
@@ -239,9 +271,21 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
         isDexAbstractionEnabled,
         setDexAbstractionEnabled,
         orderBookSide,
+        showPnlCardOnMarketClose,
+        setShowPnlCardOnMarketClose,
+        handleOpenPnLCard,
       ])}
     >
-      {children}
+      <>
+        {children}
+        {anyTrade && isOpenPnLCard && showPnlCardOnMarketClose ? (
+          <ShareClosedPnlDialog
+            trade={anyTrade}
+            isOpen={isOpenPnLCard}
+            onOpenChange={handleClosePnLCard}
+          />
+        ) : null}
+      </>
     </UserSettingsContext.Provider>
   )
 }

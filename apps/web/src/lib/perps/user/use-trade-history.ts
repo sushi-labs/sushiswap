@@ -1,8 +1,41 @@
+import type { UserFillsEvent } from '@nktkas/hyperliquid/api/subscription'
 import { useMemo } from 'react'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useUserState } from '~evm/perps/user-provider'
 import { useAccount } from '../../wallet'
 import { SPOT_ASSETS_TO_REWRITE, getPerpsDexAndCoin } from '../utils'
+
+export const formatTradeHistoryItem = (
+  fill: UserFillsEvent['fills'][number],
+  assetList: ReturnType<
+    typeof useAssetListState
+  >['state']['assetListQuery']['data'],
+) => {
+  const coin = fill.coin
+  const { perpsDex, coin: cleanedCoin } = getPerpsDexAndCoin(coin)
+  const asset = assetList?.get(fill.coin)
+  const token0Symbol =
+    asset?.marketType === 'perp'
+      ? asset?.symbol?.split('-')?.[0]
+      : asset?.symbol?.split('/')?.[0]
+  const token1Symbol =
+    asset?.marketType === 'perp'
+      ? asset?.symbol?.split('-')?.[1]
+      : asset?.symbol?.split('/')?.[1]
+  const _feeToken = SPOT_ASSETS_TO_REWRITE?.has(fill.feeToken)
+    ? SPOT_ASSETS_TO_REWRITE?.get(fill.feeToken)
+    : fill.feeToken
+
+  return {
+    ...fill,
+    symbol: asset?.symbol,
+    token0Symbol,
+    token1Symbol,
+    perpsDex,
+    cleanedCoin,
+    feeToken: _feeToken,
+  }
+}
 
 export const useTradeHistory = () => {
   const address = useAccount('evm')
@@ -30,30 +63,7 @@ export const useTradeHistory = () => {
   const formattedData = useMemo(() => {
     if (!data) return []
     return data.fills?.map((fill) => {
-      const coin = fill.coin
-      const { perpsDex, coin: cleanedCoin } = getPerpsDexAndCoin(coin)
-      const asset = assetList?.get(fill.coin)
-      const token0Symbol =
-        asset?.marketType === 'perp'
-          ? asset?.symbol?.split('-')?.[0]
-          : asset?.symbol?.split('/')?.[0]
-      const token1Symbol =
-        asset?.marketType === 'perp'
-          ? asset?.symbol?.split('-')?.[1]
-          : asset?.symbol?.split('/')?.[1]
-      const _feeToken = SPOT_ASSETS_TO_REWRITE?.has(fill.feeToken)
-        ? SPOT_ASSETS_TO_REWRITE?.get(fill.feeToken)
-        : fill.feeToken
-
-      return {
-        ...fill,
-        symbol: asset?.symbol,
-        token0Symbol,
-        token1Symbol,
-        perpsDex,
-        cleanedCoin,
-        feeToken: _feeToken,
-      }
+      return formatTradeHistoryItem(fill, assetList)
     })
   }, [data, assetList])
 
