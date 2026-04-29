@@ -3,6 +3,7 @@
 import { ArrowsUpDownIcon } from '@heroicons/react/24/outline'
 import {
   Button,
+  IconButton,
   PerpsDialog,
   PerpsDialogContent,
   PerpsDialogDescription,
@@ -267,15 +268,21 @@ export const EvmCoreTransferDialog = ({
         </PerpsDialogHeader>
         <PerpsDialogInnerContent>
           <div className="flex flex-col gap-2">
-            <Button
-              className="mx-auto"
-              variant="secondary"
-              onClick={handleDstToggle}
-            >
-              {dst === 'spot' ? `EVM` : 'Spot'}{' '}
-              <ArrowsUpDownIcon className="w-3 h-3 rotate-90" />{' '}
-              {dst === 'spot' ? 'Spot' : `EVM`}
-            </Button>
+            <div className="grid grid-cols-[1fr_auto_1fr] items-center self-center gap-2">
+              <div>{dst === 'spot' ? `EVM` : 'Spot'} </div>
+              <IconButton
+                variant="perps-secondary"
+                onClick={handleDstToggle}
+                className="!rounded-full"
+                name="switch"
+                icon={ArrowsUpDownIcon}
+                iconProps={{
+                  className: 'w-3 h-3 rotate-90 text-perps-blue',
+                }}
+              />
+
+              <div>{dst === 'spot' ? 'Spot' : `EVM`}</div>
+            </div>
 
             <Select
               value={assetToSend?.token || ''}
