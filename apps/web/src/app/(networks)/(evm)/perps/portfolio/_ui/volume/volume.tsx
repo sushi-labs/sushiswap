@@ -34,7 +34,7 @@ export const Volume = () => {
 
   return (
     <PerpsCard
-      className="p-2 gap-2 flex flex-col justify-between"
+      className="p-3 gap-2 flex flex-col justify-between"
       fullWidth
       fullHeight
     >

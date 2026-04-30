@@ -13,9 +13,11 @@ import { useMemo, useState } from 'react'
 import { useSushiReferredUsers } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { formatUSD, shortenAddress } from 'sushi'
+import { PerpsCard } from '~evm/perps/_ui/_common'
 import {
   MobileTable,
   columnBodyMeta,
+  tableRowClassName,
 } from '~evm/perps/_ui/trade-tables/_common'
 
 const REFEREE_COLUMNS = [
@@ -129,7 +131,7 @@ export function RefereesCard() {
   }, [referees.length, sorting])
 
   return (
-    <Card className="border-transparent !bg-[#18223B] p-2 !rounded-md">
+    <PerpsCard className="p-3">
       <div className="flex items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-medium">Referees</h2>
@@ -148,8 +150,9 @@ export function RefereesCard() {
             columns={REFEREE_COLUMNS}
             data={referees}
             onSortingChange={setSorting as OnChangeFn<SortingState>}
-            thClassName="!h-8"
+            thClassName="!h-8 pl-0"
             hideScrollbar={true}
+            trClassName={tableRowClassName}
           />
         ) : (
           <MobileTable
@@ -171,7 +174,7 @@ export function RefereesCard() {
           ) : null}
         </div>
       </div>
-    </Card>
+    </PerpsCard>
   )
 }
 

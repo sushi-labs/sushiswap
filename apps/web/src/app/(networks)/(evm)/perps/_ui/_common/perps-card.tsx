@@ -22,7 +22,7 @@ export const PerpsCard = ({
   className,
   fullHeight = false,
   fullWidth = false,
-  rounded = 'xl',
+  rounded = '2xl',
   backdropBlur = false,
 }: {
   children: React.ReactNode

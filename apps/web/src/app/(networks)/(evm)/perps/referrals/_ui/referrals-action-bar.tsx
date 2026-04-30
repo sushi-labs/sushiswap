@@ -5,12 +5,13 @@ import { useDebounce } from '@sushiswap/hooks'
 import {
   Button,
   ClipboardController,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
 } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import {
@@ -127,73 +128,74 @@ function CreateCodeButton({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="perps-default">Create Code</Button>
-      </DialogTrigger>
-      <DialogContent variant="perps-default" className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>Create code</DialogTitle>
-          <DialogDescription>
+    <PerpsDialog open={open} onOpenChange={setOpen}>
+      <PerpsDialogTrigger asChild>
+        <Button variant="sushi-gradient">Create Code</Button>
+      </PerpsDialogTrigger>
+      <PerpsDialogContent className="lg:max-w-md">
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Create code</PerpsDialogTitle>
+          <PerpsDialogDescription>
             Create a Sushi referral code for this wallet. This flow is separate
             from Hyperliquid&apos;s referral system.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-3">
-          <div className="space-y-1">
-            <input
-              className="h-10 w-full rounded-md border border-slate-700 bg-[#0D1421] px-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-[#629FFF]"
-              placeholder="SUSHI-ROLL"
-              value={userInputCode}
-              onChange={(event) =>
-                setUserInputCode(event.target.value?.toUpperCase())
-              }
-              pattern={REFERRAL_REGEX_FOR_INPUT}
-            />
-            {!isReferralAvailable &&
-            !isLoading &&
-            REFERRAL_REGEX.test(debouncedUserInputCode) ? (
-              <p className="text-xs text-red-500">
-                This referral code already exists.
-              </p>
-            ) : null}
-          </div>
-          <Button
-            variant="perps-default"
-            fullWidth
-            onClick={async () => {
-              await createCode.mutateAsync(
-                { code: userInputCode },
-                {
-                  onSuccess: async () => {
-                    setUserInputCode('')
-                    setOpen(false)
-                    await refetchOverview()
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <input
+                className="h-10 w-full rounded-md border border-[#FFFFFF1A] bg-transparent px-3 text-sm text-white outline-none "
+                placeholder="SUSHI-ROLL"
+                value={userInputCode}
+                onChange={(event) =>
+                  setUserInputCode(event.target.value?.toUpperCase())
+                }
+                pattern={REFERRAL_REGEX_FOR_INPUT}
+              />
+              {!isReferralAvailable &&
+              !isLoading &&
+              REFERRAL_REGEX.test(debouncedUserInputCode) ? (
+                <p className="text-xs text-red-500">
+                  This referral code already exists.
+                </p>
+              ) : null}
+            </div>
+            <Button
+              variant="perps-tertiary"
+              fullWidth
+              onClick={async () => {
+                await createCode.mutateAsync(
+                  { code: userInputCode },
+                  {
+                    onSuccess: async () => {
+                      setUserInputCode('')
+                      setOpen(false)
+                      await refetchOverview()
+                    },
                   },
-                },
-              )
-            }}
-            loading={createCode.isPending}
-            disabled={
-              !REFERRAL_REGEX.test(userInputCode) || !isReferralAvailable
-            }
-          >
-            Create Code
-          </Button>
-          <div>
-            <div className="bg-accent w-full h-[1px]" />
-            <p className="text-xs text-muted-foreground italic mt-2">
-              This code can only be created once and cannot be changed, so
-              choose wisely!
-            </p>
-            <p className="text-xs text-muted-foreground italic mt-2">
-              Code must be 4-20 characters and can only include uppercase
-              letters, numbers, and hyphens.
-            </p>
+                )
+              }}
+              loading={createCode.isPending}
+              disabled={
+                !REFERRAL_REGEX.test(userInputCode) || !isReferralAvailable
+              }
+            >
+              Create Code
+            </Button>
+            <div>
+              <p className="text-xs text-perps-muted-50 italic mt-2">
+                This code can only be created once and cannot be changed, so
+                choose wisely!
+              </p>
+              <p className="text-xs text-perps-muted-50 italic mt-2">
+                Code must be 6-20 characters and can only include uppercase
+                letters, numbers, and hyphens.
+              </p>
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }
 
@@ -221,61 +223,62 @@ function RedeemCodeDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <PerpsDialog open={open} onOpenChange={setOpen}>
+      <PerpsDialogTrigger asChild>
         <Button variant="perps-secondary">Enter Code</Button>
-      </DialogTrigger>
-      <DialogContent variant="perps-default" className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>Enter referral code</DialogTitle>
-          <DialogDescription>
+      </PerpsDialogTrigger>
+      <PerpsDialogContent className="lg:max-w-md">
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Enter referral code</PerpsDialogTitle>
+          <PerpsDialogDescription>
             Redeem a Sushi referral code for this wallet. This flow is separate
             from Hyperliquid&apos;s referral system.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-3">
-          <input
-            className="h-10 w-full rounded-md border border-slate-700 bg-[#0D1421] px-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-[#629FFF]"
-            placeholder="ABC123"
-            value={redeemCode}
-            onChange={(event) =>
-              setRedeemCode(event.target.value.toUpperCase())
-            }
-            pattern={REFERRAL_REGEX_FOR_INPUT}
-          />
-          <PerpsChecker.SimpleDeposit
-            fullWidth
-            variant="perps-default"
-            size="default"
-            disabled={!isValidCode}
-          >
-            <PerpsChecker.EnableTrading
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
+          <div className="space-y-3">
+            <input
+              className="h-10 w-full rounded-md border border-[#FFFFFF1A] bg-transparent px-3 text-sm text-white outline-none "
+              placeholder="ABC123"
+              value={redeemCode}
+              onChange={(event) =>
+                setRedeemCode(event.target.value.toUpperCase())
+              }
+              pattern={REFERRAL_REGEX_FOR_INPUT}
+            />
+            <PerpsChecker.SimpleDeposit
               fullWidth
-              variant="perps-default"
+              variant="perps-tertiary"
               size="default"
               disabled={!isValidCode}
             >
-              <Button
+              <PerpsChecker.EnableTrading
                 fullWidth
-                variant="perps-default"
+                variant="perps-tertiary"
+                size="default"
                 disabled={!isValidCode}
-                loading={redeemCodeMutation.isPending}
-                onClick={() => void handleRedeem()}
               >
-                Redeem Code
-              </Button>
-            </PerpsChecker.EnableTrading>
-          </PerpsChecker.SimpleDeposit>
-          <div>
-            <div className="bg-accent w-full h-[1px]" />
-            <p className="text-xs text-muted-foreground italic mt-2">
-              Before a code can be redeemed, you must deposit funds into your
-              account and enable trading.
-            </p>
+                <Button
+                  fullWidth
+                  variant="perps-tertiary"
+                  disabled={!isValidCode}
+                  loading={redeemCodeMutation.isPending}
+                  onClick={() => void handleRedeem()}
+                >
+                  Redeem Code
+                </Button>
+              </PerpsChecker.EnableTrading>
+            </PerpsChecker.SimpleDeposit>
+            <div>
+              <p className="text-xs text-perps-muted-50 italic mt-2">
+                Before a code can be redeemed, you must deposit funds into your
+                account and enable trading.
+              </p>
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }
 
@@ -298,46 +301,48 @@ function ClaimRewardsDialog({
   })
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <PerpsDialog open={open} onOpenChange={setOpen}>
+      <PerpsDialogTrigger asChild>
         <Button variant="perps-default" disabled={!hasClaimableRewards}>
           Claim Rewards
         </Button>
-      </DialogTrigger>
-      <DialogContent variant="perps-default" className="max-w-md">
-        <DialogHeader>
-          <DialogTitle className="w-full text-center">
+      </PerpsDialogTrigger>
+      <PerpsDialogContent className="lg:max-w-md">
+        <PerpsDialogHeader>
+          <PerpsDialogTitle className="w-full text-center">
             Claim rewards
-          </DialogTitle>
-          <DialogDescription />
-        </DialogHeader>
-        <div className="space-y-4 text-center">
-          <div>
-            <div className="text-sm text-slate-400">Claimable rewards</div>
-            <div className="mt-1 text-2xl font-medium">
-              {claimableRewardsValue}
+          </PerpsDialogTitle>
+          <PerpsDialogDescription />
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
+          <div className="space-y-4 text-center">
+            <div>
+              <div className="text-sm text-slate-400">Claimable rewards</div>
+              <div className="mt-1 text-2xl font-medium">
+                {claimableRewardsValue}
+              </div>
             </div>
-          </div>
-          <Checker.Root>
-            <Checker.Network
-              chainId={PERPS_CLAIM_CHAIN_ID}
-              variant="perps-default"
-              size="default"
-            >
-              <Button
-                fullWidth
-                variant="perps-default"
-                disabled={!claimRewards.isEnabled}
-                loading={claimRewards.isPending}
-                onClick={() => void claimRewards.write?.()}
+            <Checker.Root>
+              <Checker.Network
+                chainId={PERPS_CLAIM_CHAIN_ID}
+                variant="perps-tertiary"
+                size="default"
               >
-                Execute Claim
-              </Button>
-            </Checker.Network>
-          </Checker.Root>
-        </div>
-      </DialogContent>
-    </Dialog>
+                <Button
+                  fullWidth
+                  variant="perps-tertiary"
+                  disabled={!claimRewards.isEnabled}
+                  loading={claimRewards.isPending}
+                  onClick={() => void claimRewards.write?.()}
+                >
+                  Execute Claim
+                </Button>
+              </Checker.Network>
+            </Checker.Root>
+          </div>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }
 
@@ -355,62 +360,66 @@ function ShareCodeDialog({
   }
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
+    <PerpsDialog>
+      <PerpsDialogTrigger asChild>
         <Button variant="perps-secondary">Share Code</Button>
-      </DialogTrigger>
-      <DialogContent variant="perps-default" className="max-w-lg">
-        <DialogHeader>
-          <DialogTitle className="w-full text-center">Share code</DialogTitle>
-          <DialogDescription />
-        </DialogHeader>
-        <div className="space-y-4 text-center">
-          <div>
-            <div className="text-sm text-slate-400">Your code is</div>
-            <div className="mt-1 text-2xl font-medium">{primaryCode}</div>
-          </div>
-          <ClipboardController hideTooltip>
-            {({ setCopied, isCopied }) => (
-              <div className="flex justify-center">
-                <div className="inline-flex max-w-full items-center gap-2 px-3 py-2">
-                  <a
-                    className="max-w-[240px] truncate text-center text-sm text-[#629FFF] underline underline-offset-2 sm:max-w-none"
-                    href={shareLink}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    {shareLink}
-                  </a>
-                  <button
-                    aria-label={
-                      isCopied ? 'Copied invite link' : 'Copy invite link'
-                    }
-                    className="shrink-0 text-slate-400 transition-colors hover:text-white"
-                    onClick={() => setCopied(shareLink)}
-                    type="button"
-                  >
-                    {isCopied ? (
-                      <CheckIcon className="h-4 w-4" />
-                    ) : (
-                      <DocumentDuplicateIcon className="h-4 w-4" />
-                    )}
-                  </button>
+      </PerpsDialogTrigger>
+      <PerpsDialogContent className="max-w-lg">
+        <PerpsDialogHeader>
+          <PerpsDialogTitle className="w-full text-center">
+            Share code
+          </PerpsDialogTitle>
+          <PerpsDialogDescription />
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
+          <div className="space-y-4 text-center">
+            <div>
+              <div className="text-sm text-slate-400">Your code is</div>
+              <div className="mt-1 text-2xl font-medium">{primaryCode}</div>
+            </div>
+            <ClipboardController hideTooltip>
+              {({ setCopied, isCopied }) => (
+                <div className="flex justify-center">
+                  <div className="inline-flex max-w-full items-center gap-2 px-3 py-2">
+                    <a
+                      className="max-w-[240px] truncate text-center text-sm text-[#629FFF] underline underline-offset-2 sm:max-w-none"
+                      href={shareLink}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      {shareLink}
+                    </a>
+                    <button
+                      aria-label={
+                        isCopied ? 'Copied invite link' : 'Copy invite link'
+                      }
+                      className="shrink-0 text-slate-400 transition-colors hover:text-white"
+                      onClick={() => setCopied(shareLink)}
+                      type="button"
+                    >
+                      {isCopied ? (
+                        <CheckIcon className="h-4 w-4" />
+                      ) : (
+                        <DocumentDuplicateIcon className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
-          </ClipboardController>
-          <p className="text-sm text-slate-400">
-            You will receive {shareFeePercent}% of referred users&apos; fees.
-          </p>
-          <div>
-            <div className="bg-accent w-full h-[1px]" />
-            <p className="text-xs text-muted-foreground italic mt-2 text-left">
-              Before a code can be redeemed, the user must have funds deposited
-              into their account and have enabled trading.
+              )}
+            </ClipboardController>
+            <p className="text-sm text-slate-400">
+              You will receive {shareFeePercent}% of referred users&apos; fees.
             </p>
+            <div>
+              <div className="bg-accent w-full h-[1px]" />
+              <p className="text-xs text-muted-foreground italic mt-2 text-left">
+                Before a code can be redeemed, the user must have funds
+                deposited into their account and have enabled trading.
+              </p>
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }

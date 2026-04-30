@@ -1,15 +1,22 @@
 'use client'
 
-import { InformationCircleIcon } from '@heroicons/react-v1/solid'
 import {
-  Card,
+  ClipboardCheckIcon,
+  ClipboardCopyIcon,
+  InformationCircleIcon,
+} from '@heroicons/react-v1/solid'
+import { useCopyClipboard } from '@sushiswap/hooks'
+import {
+  Button,
+  IconButton,
   SkeletonText,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import { useMemo } from 'react'
+
+import { type ReactNode, useMemo } from 'react'
 import {
   currencyFormatter,
   usePerpsClaim,
@@ -17,6 +24,7 @@ import {
 } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { formatUnits } from 'viem'
+import { PerpsCard } from '~evm/perps/_ui/_common'
 
 const PERPS_CLAIM_TOKEN_DECIMALS = 6
 
@@ -26,16 +34,18 @@ function SummaryCard({
   isLoading,
   footer,
   tooltip,
+  actionButton,
 }: {
   label: string
   value: string
   isLoading: boolean
   footer?: string
   tooltip?: string
+  actionButton?: ReactNode
 }) {
   return (
-    <Card className="p-2 !rounded-md gap-2 flex !bg-[#18223B] border-transparent flex-col justify-between w-full">
-      <div className="text-muted-foreground text-xs lg:text-sm">
+    <PerpsCard className="p-3 gap-2 flex flex-col justify-between " fullWidth>
+      <div className="text-perps-muted-50 text-xs lg:text-sm">
         {tooltip ? (
           <TooltipProvider>
             <Tooltip>
@@ -48,7 +58,9 @@ function SummaryCard({
                   <InformationCircleIcon className="h-4 w-4" />
                 </div>
               </TooltipTrigger>
-              <TooltipContent>{tooltip}</TooltipContent>
+              <TooltipContent className="!bg-black/10">
+                {tooltip}
+              </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         ) : (
@@ -60,12 +72,15 @@ function SummaryCard({
           <SkeletonText fontSize="xl" />
         </div>
       ) : (
-        <div className="font-medium text-lg md:text-2xl text-ellipsis overflow-hidden">
-          {value}
+        <div className="flex items-center justify-between flex-wrap gap-1">
+          <div className="font-medium text-lg md:text-2xl text-ellipsis overflow-hidden text-perps-muted">
+            {value}
+          </div>
+          {actionButton ? actionButton : null}
         </div>
       )}
-      <div className="text-xs text-slate-400">{footer}</div>
-    </Card>
+      <div className="text-xs text-perps-muted/40">{footer}</div>
+    </PerpsCard>
   )
 }
 
@@ -73,6 +88,7 @@ export function ReferralsSummaryCards() {
   const address = useAccount('evm')
   const overview = useSushiReferralOverview({ address })
   const claim = usePerpsClaim({ address })
+  const [isCopied, staticCopy] = useCopyClipboard()
 
   const primaryCode = overview.data?.primaryReferralCode?.code
   const shareLink = primaryCode
@@ -114,10 +130,18 @@ export function ReferralsSummaryCards() {
           label="Referral code"
           value={primaryCode ?? 'Not created'}
           isLoading={overview.isLoading}
-          footer={
-            shareLink
-              ? 'Use Share Code to copy your invite link.'
-              : 'Create a code to unlock your invite link.'
+          footer={shareLink ? '' : 'Create a code to unlock your invite link.'}
+          actionButton={
+            shareLink ? (
+              <IconButton
+                name="share"
+                size="sm"
+                icon={isCopied ? ClipboardCheckIcon : ClipboardCopyIcon}
+                onClick={() => staticCopy(shareLink)}
+                variant="perps-tertiary"
+                className="rounded-xl !text-perps-muted-50"
+              />
+            ) : undefined
           }
         />
         <SummaryCard

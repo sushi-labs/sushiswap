@@ -14,7 +14,7 @@ export function Points() {
       <div className=" lg:h-[420px] w-[310px] h-[310px] lg:w-[420px] rounded-full bg-sushi-gradient-full-opacity absolute left-[60%] -translate-x-[60%] opacity-40 top-4 blur-[336px] z-0" />
       <div className="relative z-10">
         <PerpsCard
-          className="p-2 lg:p-4 flex flex-col lg:flex-row gap-6 justify-between"
+          className="p-3 lg:p-4 flex flex-col lg:flex-row gap-6 justify-between"
           fullWidth
           fullHeight
         >

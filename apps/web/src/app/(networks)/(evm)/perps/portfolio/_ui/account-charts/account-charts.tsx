@@ -86,8 +86,8 @@ export const AccountCharts = () => {
   }, [data, time, view])
 
   return (
-    <div className=" w-full lg:!min-w-[50%]">
-      <PerpsCard className="p-2 gap-2 flex flex-col" fullWidth>
+    <div className="w-full lg:!min-w-[50%]">
+      <PerpsCard className="p-3 gap-2 flex flex-col" fullWidth>
         <div className="flex items-center justify-between gap-2 whitespace-nowrap text-xs lg:text-sm">
           <PerpsCard
             className="flex items-center gap-1 hide-scrollbar overflow-x-auto p-1"

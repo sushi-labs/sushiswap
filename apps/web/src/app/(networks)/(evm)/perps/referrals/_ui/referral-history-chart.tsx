@@ -4,17 +4,18 @@ import type { PerpsSushiReferralFeePoint } from '@sushiswap/graph-client/data-ap
 import { SkeletonBox, SkeletonChartLoadingStateMask } from '@sushiswap/ui'
 import type { EChartOption } from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
-import { LineChart } from 'echarts/charts'
+import { BarChart } from 'echarts/charts'
 import { TitleComponent } from 'echarts/components'
 import { GridComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useMemo } from 'react'
 import { formatUSD } from 'sushi'
+import type { HistoryFilter } from './referral-history-card'
 
 echarts.use([
   CanvasRenderer,
-  LineChart,
+  BarChart,
   TooltipComponent,
   GridComponent,
   TitleComponent,
@@ -33,10 +34,27 @@ const getAxisValues = (count: number, start?: Date, end?: Date) => {
   return values
 }
 
+const getTimeFrameString = (filter: HistoryFilter) => {
+  switch (filter) {
+    case '7D':
+      return 'in the last 7 days'
+    case '30D':
+      return 'in the last 30 days'
+    case 'All':
+      return 'yet'
+  }
+}
+
 export function ReferralHistoryChart({
   data,
+  historyFilter,
+  setDataToShow,
 }: {
   data: PerpsSushiReferralFeePoint[]
+  historyFilter: HistoryFilter
+  setDataToShow: React.Dispatch<
+    React.SetStateAction<{ amount: number; date: string }>
+  >
 }) {
   const type = 'day'
 
@@ -60,12 +78,13 @@ export function ReferralHistoryChart({
     return {
       title: [
         {
-          text: 'No daily rewards yet.',
+          text: `No rewards ${getTimeFrameString(historyFilter)}.`,
           show: !hasData,
           left: 'center',
           textStyle: {
             fontSize: 16,
-            color: '#94a3b8',
+            fontWeight: 500,
+            color: '#EDF0F380',
           },
           padding: [130, 0, 0, 0],
         },
@@ -80,15 +99,20 @@ export function ReferralHistoryChart({
         textStyle: {
           color: '#fff',
         },
+
         formatter: (params: any) => {
           const point = Array.isArray(params) ? params[0] : params
           const value = point.value as [string, number]
+          setDataToShow({
+            amount: value[1],
+            date: value[0],
+          })
           return `${value[0].replaceAll('-', '/')}: ${formatUSD(value[1])}`
         },
       },
       grid: {
         top: 10,
-        left: 50,
+        left: 40,
         right: 32,
         bottom: 40,
       },
@@ -140,31 +164,29 @@ export function ReferralHistoryChart({
             value === 0 ? '$0' : formatUSD(value, '$0a'),
         },
         splitLine: {
-          show: true,
-          lineStyle: {
-            opacity: 0.15,
-          },
+          show: false,
         },
         axisLine: { show: false },
         axisTick: { show: false },
       },
       series: [
         {
-          type: 'line',
-          smooth: true,
-          showSymbol: false,
-          lineStyle: {
-            width: 2,
-            color: '#629FFF',
+          type: 'bar',
+          barMaxWidth: 32,
+          itemStyle: {
+            color: '#349BFE',
+            borderRadius: [8, 8, 0, 0],
           },
-          areaStyle: {
-            color: 'rgba(98, 159, 255, 0.12)',
+          emphasis: {
+            itemStyle: {
+              color: '#85B8FF',
+            },
           },
           data: points,
         },
       ],
     }
-  }, [data])
+  }, [data, historyFilter, setDataToShow])
 
   return (
     <ReactEchartsCore
