@@ -386,12 +386,6 @@ export const CANCEL_COLUMN = ({
         isCancelPending={isCancelPending}
       />
     )
-    // return (
-    //   <CancelOpenOrder
-    //     orderId={props.row.original.oid}
-    //     coin={props.row.original.coin}
-    //   />
-    // )
   },
   meta: {
     body: columnBodyMeta,

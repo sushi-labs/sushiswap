@@ -1,13 +1,14 @@
 import {
   Card,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  classNames,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
 } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import {
   type OrderHistoryItemType,
@@ -15,7 +16,7 @@ import {
   getTextColorClass,
   perpsNumberFormatter,
 } from 'src/lib/perps'
-import { TableButton } from '../../_common'
+import { PerpsCard, TableButton } from '../../_common'
 
 function getLetterFromIndex(index: number): string {
   return String.fromCharCode(97 + index).toUpperCase() // 97 = 'A'
@@ -37,19 +38,19 @@ export const ViewTpSlDialog = ({
   }, [tpSlOrders])
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
+    <PerpsDialog>
+      <PerpsDialogTrigger asChild>
         <TableButton>View</TableButton>
-      </DialogTrigger>
-      <DialogContent variant="perps-default" className="!max-w-3xl">
-        <DialogHeader className="!text-left">
-          <DialogTitle>Take Profit/Stop Loss</DialogTitle>
-          <DialogDescription>
+      </PerpsDialogTrigger>
+      <PerpsDialogContent className="!max-w-3xl">
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Take Profit/Stop Loss</PerpsDialogTitle>
+          <PerpsDialogDescription>
             View the take profit and stop loss orders associated with this open
             order.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="max-h-[75vh] overflow-y-auto text-sm">
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent className="text-sm">
           <div>
             <p className="mt-2 text-center mb-4">{orderText}</p>
             <p className="text-muted-foreground text-center mb-2">
@@ -99,9 +100,9 @@ export const ViewTpSlDialog = ({
               )
             })}
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }
 
@@ -117,7 +118,7 @@ const _OrderCard = ({
   price: string
 }) => {
   return (
-    <Card className="!bg-[#0D1421] border border-[#1E2939]">
+    <PerpsCard className="p-3">
       <div className="p-4 flex flex-col gap-2">
         <div className="flex justify-between">
           <span className="text-muted-foreground">Order Type</span>
@@ -154,6 +155,6 @@ const _OrderCard = ({
           </span>
         </div>
       </div>
-    </Card>
+    </PerpsCard>
   )
 }

@@ -2,15 +2,16 @@
 import type { L2BookParameters } from '@nktkas/hyperliquid'
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
   TextField,
   classNames,
 } from '@sushiswap/ui'
@@ -113,51 +114,57 @@ const SlippageDialog = () => {
   )
 
   return (
-    <Dialog
+    <PerpsDialog
       open={open}
       onOpenChange={(open) => {
         setOpen(open)
       }}
     >
-      <DialogTrigger asChild>
+      <PerpsDialogTrigger asChild>
         <TableButton>
           <div className="whitespace-nowrap">
             Est: {estimatedPriceDiff}% / Max: {formattedSlippage}%
           </div>
         </TableButton>
-      </DialogTrigger>
-      <DialogContent variant="perps-default">
-        <DialogHeader className="!text-left">
-          <DialogTitle>Adjust Max Slippage</DialogTitle>
-          <DialogDescription>
+      </PerpsDialogTrigger>
+      <PerpsDialogContent>
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Adjust Max Slippage</PerpsDialogTitle>
+          <PerpsDialogDescription>
             Max slippage only affects market orders placed from the order form.
             Closing positions will use max slippage of 8% and market TP/SL
             orders will use max slippage of 10%.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex flex-col gap-6 text-sm">
-          <div className="flex flex-col gap-4 text-sm">
-            <div className="w-full border rounded-lg px-2 py-0 !text-sm border-[#FFFFFF1A] bg-transparent">
-              <div className="flex items-center justify-between gap-2 max-h-[35px]">
-                <TextField
-                  type="number"
-                  variant="naked"
-                  onValueChange={onChange}
-                  value={localSlippage}
-                  maxDecimals={2}
-                  placeholder="0.0"
-                  className={classNames('font-medium')}
-                  unit="%"
-                />
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
+          <div className="flex flex-col gap-6 text-sm">
+            <div className="flex flex-col gap-4 text-sm">
+              <div className="w-full border rounded-lg px-2 py-0 !text-sm border-[#FFFFFF1A] bg-transparent">
+                <div className="flex items-center justify-between gap-2 max-h-[35px]">
+                  <TextField
+                    type="number"
+                    variant="naked"
+                    onValueChange={onChange}
+                    value={localSlippage}
+                    maxDecimals={2}
+                    placeholder="0.0"
+                    className={classNames('font-medium')}
+                    unit="%"
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          <Button disabled={!isValidSlippage} onClick={onConfirm}>
-            Confirm
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+            <Button
+              disabled={!isValidSlippage}
+              onClick={onConfirm}
+              variant="perps-tertiary"
+            >
+              Confirm
+            </Button>
+          </div>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }
