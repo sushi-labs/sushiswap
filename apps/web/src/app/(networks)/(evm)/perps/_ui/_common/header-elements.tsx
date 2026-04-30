@@ -67,7 +67,7 @@ export const headerElements = (): NavigationElement[] => {
               <DownTriangleIcon width={6} height={6} />
             </Button>
           </NavigationMenuPrimitive.Trigger>
-          <NavigationMenuContent>
+          <NavigationMenuContent className="bg-perps-background">
             <ul className="gap-3 p-4 w-[250px]">
               {EXPLORE_NAVIGATION_LINKS().map((component) => (
                 <NavigationListItem
