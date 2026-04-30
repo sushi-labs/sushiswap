@@ -47,4 +47,15 @@
 
   --tv-color-popup-background: #0f172a;
   --tv-color-popup-element-background-hover: #1e293b;
+
+  .noWrap-l31H9iuA .valuesWrapper-l31H9iuA, .series-l31H9iuA .valuesWrapper-l31H9iuA{
+    background-color: transparent !important;
+  }
+
+  .button-l31H9iuA, .statusesWrapper-l31H9iuA, .titlesWrapper-l31H9iuA, .valueItem-l31H9iuA{
+    background-color: transparent !important;
+  }
+  .inner-BfVZxb4b{
+    background-color: transparent !important;
+  }
 }

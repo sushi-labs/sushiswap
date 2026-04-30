@@ -160,8 +160,6 @@ export const createChartWidgetOptions = ({
   custom_css_url: '/trading-view-chart.css',
   theme: resolvedTheme === 'dark' ? 'dark' : 'light',
   overrides: {
-    'paneProperties.background':
-      resolvedTheme === 'dark' ? '#161b1f' : '#ffffff',
     'paneProperties.vertGridProperties.color':
       resolvedTheme === 'dark' ? '#2C2C2E' : '#E5E7EB',
     'paneProperties.horzGridProperties.color':
@@ -170,6 +168,8 @@ export const createChartWidgetOptions = ({
       resolvedTheme === 'dark' ? '#9CA3AF' : '#374151',
     'scalesProperties.lineColor':
       resolvedTheme === 'dark' ? '#3F3F46' : '#D1D5DB',
+    'paneProperties.background': 'rgba(0,0,0,0)',
+    'paneProperties.backgroundType': 'solid',
     'mainSeriesProperties.candleStyle.upColor': POSITIVE_COLOR,
     'mainSeriesProperties.candleStyle.downColor': NEGATIVE_COLOR,
     'mainSeriesProperties.candleStyle.borderUpColor': POSITIVE_COLOR,
@@ -369,7 +369,7 @@ export const createChartWidgetOptions = ({
         '#505259',
         '#46484e',
         '#3c3e43',
-        '#161b1f',
+        'rgba(255,255,255,0)',
         '#323338',
       ],
       color3: [
