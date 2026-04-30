@@ -135,7 +135,7 @@ export function RefereesCard() {
       <div className="flex items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-medium">Referees</h2>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-perps-muted-50">
             Wallets linked to your Sushi referral code and their lifetime
             rewards.
           </p>

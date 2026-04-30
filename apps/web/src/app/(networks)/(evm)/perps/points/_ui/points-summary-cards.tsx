@@ -1,8 +1,9 @@
 'use client'
 
-import { Card, SkeletonText } from '@sushiswap/ui'
+import { SkeletonText } from '@sushiswap/ui'
 import { perpsNumberFormatter, useSushiPointsOverview } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
+import { PerpsCard } from '~evm/perps/_ui/_common'
 
 function SummaryCard({
   label,
@@ -14,16 +15,18 @@ function SummaryCard({
   isLoading: boolean
 }) {
   return (
-    <Card className="p-2 !rounded-md gap-2 flex !bg-[#18223B] border-transparent flex-col justify-between w-full">
-      <div className="text-muted-foreground text-xs lg:text-sm">{label}</div>
+    <PerpsCard className="p-3 gap-2 flex flex-col justify-between w-full">
+      <div className="text-perps-muted-50 text-xs lg:text-sm">{label}</div>
       {isLoading ? (
         <div className="w-24 h-8">
           <SkeletonText fontSize="xl" />
         </div>
       ) : (
-        <div className="font-medium text-lg md:text-2xl">{value}</div>
+        <div className="font-medium text-lg md:text-2xl text-perps-muted">
+          {value}
+        </div>
       )}
-    </Card>
+    </PerpsCard>
   )
 }
 

@@ -1,7 +1,6 @@
 'use client'
 
 import { useLocalStorage } from '@sushiswap/hooks'
-import { Card } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useRef } from 'react'
 import {
@@ -10,6 +9,7 @@ import {
   createPendingPerpsInvite,
 } from 'src/lib/perps/pending-invite'
 import { normalizePerpsReferralCode } from 'src/lib/perps/referral-code'
+import { PerpsCard } from '~evm/perps/_ui/_common'
 
 export function InvitePage({ code }: { code: string }) {
   const router = useRouter()
@@ -35,8 +35,8 @@ export function InvitePage({ code }: { code: string }) {
   }, [newInvite, router, setPendingInvite])
 
   return (
-    <Card className="flex min-h-[260px] items-center justify-center border-transparent !bg-perps-background p-4 !rounded-md text-center">
-      <p className="text-sm text-slate-400">Redirecting to perps...</p>
-    </Card>
+    <PerpsCard className="flex min-h-[260px] items-center justify-center p-4 text-center">
+      <p className="text-sm text-perps-muted-50">Redirecting to perps...</p>
+    </PerpsCard>
   )
 }

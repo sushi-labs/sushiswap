@@ -5,6 +5,7 @@ import { format } from 'date-fns'
 import { useMemo, useState } from 'react'
 import { useSushiPointsHistory } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
+import { PerpsCard } from '~evm/perps/_ui/_common'
 import {
   PointsHistoryChart,
   PointsHistoryChartSkeleton,
@@ -48,29 +49,35 @@ export function PointsHistoryCard() {
   )
 
   return (
-    <Card className="border-transparent !bg-[#18223B] p-2 !rounded-md">
+    <PerpsCard className="p-3">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-medium">Daily points history</h2>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-perps-muted-50">
             Simple day-by-day Sushi point earnings.
           </p>
         </div>
-        <div className="flex gap-2">
+        <PerpsCard
+          className="flex items-center gap-1 hide-scrollbar overflow-x-auto p-1"
+          rounded="full"
+        >
           {HISTORY_FILTERS.map((filter) => (
             <Button
               key={filter}
               size="xs"
-              variant={historyFilter === filter ? 'perps-default' : 'ghost'}
-              className={classNames(
-                historyFilter !== filter ? 'border border-transparent' : '',
-              )}
+              variant={historyFilter === filter ? 'perps-secondary' : 'ghost'}
               onClick={() => setHistoryFilter(filter)}
+              className={classNames(
+                'w-full capitalize !text-xs !rounded-full  !border-0',
+                historyFilter === filter
+                  ? 'text-white bg-accent'
+                  : 'text-muted-foreground',
+              )}
             >
               {filter}
             </Button>
           ))}
-        </div>
+        </PerpsCard>
       </div>
       <div className="mt-4">
         {history.isLoading ? (
@@ -79,6 +86,6 @@ export function PointsHistoryCard() {
           <PointsHistoryChart data={historyPoints} />
         )}
       </div>
-    </Card>
+    </PerpsCard>
   )
 }

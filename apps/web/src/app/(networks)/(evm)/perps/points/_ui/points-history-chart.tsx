@@ -56,7 +56,8 @@ export function PointsHistoryChart({
           left: 'center',
           textStyle: {
             fontSize: 16,
-            color: '#94a3b8',
+            fontWeight: 500,
+            color: '#EDF0F380',
           },
           padding: [130, 0, 0, 0],
         },
@@ -79,7 +80,7 @@ export function PointsHistoryChart({
       },
       grid: {
         top: 10,
-        left: 50,
+        left: 40,
         right: 32,
         bottom: 40,
       },
@@ -126,10 +127,7 @@ export function PointsHistoryChart({
           formatter: (value: number) => formatNumber(value, 0),
         },
         splitLine: {
-          show: true,
-          lineStyle: {
-            opacity: 0.15,
-          },
+          show: false,
         },
         axisLine: { show: false },
         axisTick: { show: false },
@@ -141,10 +139,10 @@ export function PointsHistoryChart({
           showSymbol: false,
           lineStyle: {
             width: 2,
-            color: '#629FFF',
+            color: '#349BFE',
           },
           areaStyle: {
-            color: 'rgba(98, 159, 255, 0.12)',
+            color: 'rgba(52, 155, 254, 0.12)',
           },
           data: points,
         },
