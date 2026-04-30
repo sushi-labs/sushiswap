@@ -1,8 +1,6 @@
 'use client'
-import { ChevronDownIcon } from '@heroicons/react-v1/solid'
 import type { PortfolioResponse } from '@nktkas/hyperliquid'
 import {
-  Card,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -13,6 +11,7 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
+import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
 import { useMemo, useState } from 'react'
 import {
   currencyFormatter,
@@ -24,7 +23,7 @@ import {
 } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { formatPercent } from 'sushi'
-import { StatItem } from '~evm/perps/_ui/_common'
+import { PerpsCard, StatItem } from '~evm/perps/_ui/_common'
 import { useUserSettingsState } from '~evm/perps/_ui/account-management'
 
 const STAT_VIEWS = ['perps + spot + vaults', 'perps'] as const
@@ -157,19 +156,19 @@ export const PortfolioStats = () => {
   }, [data, statView, time])
 
   return (
-    <Card className="p-2 !rounded-md gap-2 flex !bg-[#18223B] border-transparent flex-col w-full">
+    <PerpsCard className="p-2 gap-2 flex flex-col" fullWidth>
       <div className="flex items-center justify-between gap-2  whitespace-nowrap text-xs lg:text-sm">
         <DropdownMenu open={openStatView} onOpenChange={setOpenStatView}>
           <DropdownMenuTrigger className="capitalize flex items-center">
             {statView}{' '}
-            <ChevronDownIcon
+            <DownTriangleIcon
               className={classNames(
-                'w-4 h-4 min-w-4 ml-1 transition-transform',
+                'w-1.5 h-1.5 min-w-1.5 ml-1 transition-transform',
                 openStatView ? 'rotate-180' : '',
               )}
             />
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="paper !rounded-md !bg-[#18223B]">
+          <DropdownMenuContent className="paper !rounded-md !bg-black/10">
             {STAT_VIEWS.map((view) => (
               <DropdownMenuItem
                 key={view}
@@ -184,16 +183,16 @@ export const PortfolioStats = () => {
           </DropdownMenuContent>
         </DropdownMenu>
         <DropdownMenu open={openTime} onOpenChange={setOpenTime}>
-          <DropdownMenuTrigger className="capitalize flex items-center">
+          <DropdownMenuTrigger className="capitalize flex items-center text-perps-muted-50">
             {time}{' '}
-            <ChevronDownIcon
+            <DownTriangleIcon
               className={classNames(
-                'w-4 h-4 min-w-4 ml-1 transition-transform',
+                'w-1.5 h-1.5 min-w-1.5 ml-1 transition-transform',
                 openTime ? 'rotate-180' : '',
               )}
             />
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="paper !rounded-md !bg-[#18223B]">
+          <DropdownMenuContent className="paper !rounded-md !bg-black/10">
             {TIME.map((t) => (
               <DropdownMenuItem
                 key={t}
@@ -294,6 +293,6 @@ export const PortfolioStats = () => {
           />
         </div>
       )}
-    </Card>
+    </PerpsCard>
   )
 }

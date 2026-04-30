@@ -34,6 +34,8 @@ const buttonVariants = cva(
           'bg-gradient-to-b text-perps-green from-[#52FA8D]/[0.13] to-[#52FA8D]/[0.05] shadow-[inset_1.5px_2px_1px_-2px_rgba(82,250,141,0.3),inset_-1.5px_-1.5px_1px_-2px_rgba(82,250,141,0.225)] transition-all hover:from-[#52FA8D]/[0.18] hover:to-[#52FA8D]/[0.08] hover:border-[#52FA8D]/[0.15]',
         'perps-short':
           'bg-gradient-to-b text-perps-red from-[#FB7185]/[0.13] to-[#FB7185]/[0.05] shadow-[inset_1.5px_2px_1px_-2px_rgba(251,113,133,0.3),inset_-1.5px_-1.5px_1px_-2px_rgba(251,113,133,0.225)] transition-all hover:from-[#FB7185]/[0.18] hover:to-[#FB7185]/[0.08] hover:border-[#FB7185]/[0.15]',
+        'sushi-gradient':
+          'bg-sushi-gradient text-white shadow-[inset_0px_1px_4px_1px_#FFFFFF65] transition-all border-sushi-gradient',
       },
       size: {
         xs: 'min-h-[26px] h-[26px] px-2 text-xs rounded-lg',

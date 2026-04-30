@@ -102,7 +102,7 @@ export const DialogRow = () => {
       <Button variant="perps-secondary" onClick={() => openModal('withdraw')}>
         Withdraw
       </Button>
-      <Button variant="perps-default" onClick={() => openModal('deposit')}>
+      <Button variant="sushi-gradient" onClick={() => openModal('deposit')}>
         Deposit
       </Button>
       <SharedPositionModal activeModal={activeModal} onClose={closeModal} />

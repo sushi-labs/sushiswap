@@ -1,7 +1,6 @@
 'use client'
-import { ChevronDownIcon } from '@heroicons/react-v1/solid'
 import {
-  Card,
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -9,10 +8,12 @@ import {
   SkeletonBox,
   classNames,
 } from '@sushiswap/ui'
-import { type ButtonHTMLAttributes, type FC, useMemo, useState } from 'react'
+import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangle'
+import { useMemo, useState } from 'react'
 import { usePortfolio } from 'src/lib/perps'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useAccount } from 'src/lib/wallet'
+import { PerpsCard } from '~evm/perps/_ui/_common'
 import { DataChart } from './data-chart'
 
 const VIEWS = [
@@ -85,75 +86,71 @@ export const AccountCharts = () => {
   }, [data, time, view])
 
   return (
-    <Card className="p-2 !rounded-md gap-2 flex !bg-[#18223B] border-transparent flex-col w-full lg:min-w-[50%]">
-      <div className="flex items-center justify-between gap-2  whitespace-nowrap text-xs lg:text-sm">
-        <div className="flex items-center gap-4">
-          {VIEWS.map((v) => (
-            <ViewButton
-              key={v.value}
-              data-selected={(view.value === v.value).toString()}
-              onClick={() => setView(v)}
-            >
-              {v.label}
-            </ViewButton>
-          ))}
-        </div>
-        <DropdownMenu open={openTime} onOpenChange={setOpenTime}>
-          <DropdownMenuTrigger className="capitalize flex items-center">
-            {time}{' '}
-            <ChevronDownIcon
-              className={classNames(
-                'w-4 h-4 min-w-4 ml-1 transition-transform',
-                openTime ? 'rotate-180' : '',
-              )}
-            />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="paper !rounded-md !bg-[#18223B]">
-            {TIME.map((t) => (
-              <DropdownMenuItem
-                key={t}
-                className="capitalize"
-                onClick={() => {
-                  setTime(t)
-                }}
+    <div className=" w-full lg:!min-w-[50%]">
+      <PerpsCard className="p-2 gap-2 flex flex-col" fullWidth>
+        <div className="flex items-center justify-between gap-2 whitespace-nowrap text-xs lg:text-sm">
+          <PerpsCard
+            className="flex items-center gap-1 hide-scrollbar overflow-x-auto p-1"
+            rounded="full"
+          >
+            {VIEWS.map((v) => (
+              <Button
+                key={v.value}
+                size="xs"
+                variant={v.value === view.value ? 'perps-secondary' : 'ghost'}
+                onClick={() => setView(v)}
+                className={classNames(
+                  'w-full capitalize !text-xs !rounded-full  !border-0',
+                  v.value === view.value
+                    ? 'text-white bg-accent'
+                    : 'text-muted-foreground',
+                )}
               >
-                {t}
-              </DropdownMenuItem>
+                {v.label}
+              </Button>
             ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      {!address ? (
-        <div className="flex items-center justify-center h-full min-h-[192px]">
-          <ConnectButton namespace="evm" className="mx-auto" />
+          </PerpsCard>
+          <DropdownMenu open={openTime} onOpenChange={setOpenTime}>
+            <DropdownMenuTrigger className="capitalize flex items-center text-perps-muted-50">
+              {time}{' '}
+              <DownTriangleIcon
+                className={classNames(
+                  'w-1.5 h-1.5 min-w-1.5 ml-1 transition-transform',
+                  openTime ? 'rotate-180' : '',
+                )}
+              />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="paper !rounded-md !bg-black/10">
+              {TIME.map((t) => (
+                <DropdownMenuItem
+                  key={t}
+                  className="capitalize"
+                  onClick={() => {
+                    setTime(t)
+                  }}
+                >
+                  {t}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-      ) : isLoading ? (
-        <div>
-          <SkeletonBox className="w-full h-[192px]" />
-        </div>
-      ) : error ? (
-        <div className="text-red-500">Error loading stats</div>
-      ) : (
-        <div>
-          <DataChart data={dataToRender} />
-        </div>
-      )}
-    </Card>
-  )
-}
-
-const ViewButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (props) => {
-  return (
-    <button
-      {...props}
-      className={classNames(
-        'flex gap-1 items-center text-xs lg:text-sm text-muted-foreground',
-        'data-[selected=true]:text-white ',
-        props.className,
-      )}
-      type="button"
-    >
-      {props.children}
-    </button>
+        {!address ? (
+          <div className="flex items-center justify-center h-full min-h-[192px]">
+            <ConnectButton namespace="evm" className="mx-auto" />
+          </div>
+        ) : isLoading ? (
+          <div>
+            <SkeletonBox className="w-full h-[192px]" />
+          </div>
+        ) : error ? (
+          <div className="text-red-500">Error loading stats</div>
+        ) : (
+          <div>
+            <DataChart data={dataToRender} />
+          </div>
+        )}
+      </PerpsCard>
+    </div>
   )
 }

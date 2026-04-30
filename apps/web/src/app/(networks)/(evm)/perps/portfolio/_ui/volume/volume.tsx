@@ -1,19 +1,19 @@
 'use client'
 import {
-  Card,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
   SkeletonText,
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { currencyFormatter, useUserFees } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { formatUSD } from 'sushi'
-import { TableButton } from '~evm/perps/_ui/_common'
+import { PerpsCard, TableButton } from '~evm/perps/_ui/_common'
 
 export const Volume = () => {
   const address = useAccount('evm')
@@ -33,8 +33,12 @@ export const Volume = () => {
   }, [feeData, isLoading, error])
 
   return (
-    <Card className="p-2 !rounded-md gap-2 flex !bg-[#18223B] border-transparent flex-col justify-between w-full">
-      <div className="text-muted-foreground text-xs lg:text-sm">
+    <PerpsCard
+      className="p-2 gap-2 flex flex-col justify-between"
+      fullWidth
+      fullHeight
+    >
+      <div className="text-perps-muted-50 text-xs lg:text-sm">
         14 Day Volume
       </div>
       {isLoading ? (
@@ -48,30 +52,33 @@ export const Volume = () => {
           {formatUSD(total14DayVolume)}
         </div>
       )}
-      <Dialog>
-        <DialogTrigger asChild>
+      <PerpsDialog>
+        <PerpsDialogTrigger asChild>
           <TableButton
+            variant="gradient"
             className="w-fit text-xs lg:text-sm "
             disabled={isLoading || !!error || !address}
           >
             View Volume
           </TableButton>
-        </DialogTrigger>
-        <DialogContent variant="perps-default" className="!max-w-3xl">
-          <DialogHeader>
-            <DialogTitle className="!text-left">
-              Your Volume History
-            </DialogTitle>
-            <DialogDescription />
-          </DialogHeader>
-          <div className="max-h-[calc(100vh-150px)] overflow-y-auto">
+        </PerpsDialogTrigger>
+        <PerpsDialogContent className="!max-w-3xl">
+          <PerpsDialogHeader>
+            <PerpsDialogTitle>Your Volume History</PerpsDialogTitle>
+            <PerpsDialogDescription />
+          </PerpsDialogHeader>
+          <PerpsDialogInnerContent>
             <table className="w-full text-left">
               <thead>
-                <tr className="text-sm text-muted-foreground whitespace-nowrap border-b border-accent">
-                  <th className="pb-2 pr-4">Date</th>
-                  <th className="pb-2 pr-4">Exchange Volume</th>
-                  <th className="pb-2 pr-4">Your Weighted Maker Volume</th>
-                  <th className="pb-2 pr-4">Your Weighted Taker Volume</th>
+                <tr className="text-sm text-perps-muted-50 whitespace-nowrap border-b  border-accent">
+                  <th className="font-medium pb-2 pr-4">Date</th>
+                  <th className="font-medium pb-2 pr-4">Exchange Volume</th>
+                  <th className="font-medium pb-2 pr-4">
+                    Your Weighted Maker Volume
+                  </th>
+                  <th className="font-medium pb-2 pr-4">
+                    Your Weighted Taker Volume
+                  </th>
                 </tr>
               </thead>
 
@@ -95,14 +102,14 @@ export const Volume = () => {
                 ))}
               </tbody>
             </table>
-            <p className="mt-4 text-xs text-muted-foreground">
+            <p className="mt-4 text-xs text-perps-muted-50">
               Dates are based on UTC time zone and do not include the current
               day. Perps and spot volume are counted together to determine your
               fee tier, and spot volume counts double toward your fee tier.
             </p>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </Card>
+          </PerpsDialogInnerContent>
+        </PerpsDialogContent>
+      </PerpsDialog>
+    </PerpsCard>
   )
 }

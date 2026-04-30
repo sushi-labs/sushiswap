@@ -1,7 +1,5 @@
 'use client'
-import { ChevronDownIcon } from '@heroicons/react-v1/solid'
 import {
-  Card,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -9,9 +7,11 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
+import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangle'
 import { useState } from 'react'
 import { formatPerpsPercent, useFees } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
+import { PerpsCard } from '~evm/perps/_ui/_common'
 
 const FEE_TYPES = ['perps', 'spot'] as const
 
@@ -26,20 +26,20 @@ export const Fees = () => {
   const isLoading = takerFee === '0' || makerFee === '0'
 
   return (
-    <Card className="p-2 !rounded-md gap-2 flex !bg-[#18223B] border-transparent justify-between flex-col w-full">
+    <PerpsCard className="p-2 gap-2 flex justify-between flex-col" fullWidth>
       <div className="flex items-start justify-between gap-2 text-xs lg:text-sm">
-        <div className="text-muted-foreground">Fees (Taker / Maker)</div>
+        <div className="text-perps-muted-50">Fees (Taker / Maker)</div>
         <DropdownMenu open={open} onOpenChange={setOpen}>
-          <DropdownMenuTrigger className="capitalize flex items-center">
+          <DropdownMenuTrigger className="capitalize flex items-center text-perps-muted-50">
             {side}{' '}
-            <ChevronDownIcon
+            <DownTriangleIcon
               className={classNames(
-                'w-4 h-4 min-w-4 ml-1 transition-transform',
+                'w-1.5 h-1.5 min-w-1.5 ml-1 transition-transform',
                 open ? 'rotate-180' : '',
               )}
             />
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="paper !rounded-md !bg-[#18223B]">
+          <DropdownMenuContent className="paper !rounded-md !bg-black/10">
             {FEE_TYPES.map((type) => (
               <DropdownMenuItem
                 key={type}
@@ -62,6 +62,6 @@ export const Fees = () => {
         <div className="font-medium text-lg md:text-2xl ">{`${formatPerpsPercent(takerFee, 4)} / ${formatPerpsPercent(makerFee, 4)}`}</div>
       )}
       <div className="h-[16px] lg:h-[20px]" />
-    </Card>
+    </PerpsCard>
   )
 }

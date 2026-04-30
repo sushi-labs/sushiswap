@@ -21,12 +21,14 @@ export const PerpsCard = ({
   children,
   className,
   fullHeight = false,
+  fullWidth = false,
   rounded = 'xl',
   backdropBlur = false,
 }: {
   children: React.ReactNode
   className?: string
   fullHeight?: boolean
+  fullWidth?: boolean
   rounded?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full'
   backdropBlur?: boolean
 }) => {
@@ -36,6 +38,7 @@ export const PerpsCard = ({
         'p-[1px]',
         'bg-[linear-gradient(180deg,rgba(237,241,243,0.05)_0%,rgba(237,241,243,0.015)_100%)]',
         fullHeight ? 'h-full' : '',
+        fullWidth ? 'w-full' : '',
         roundedClass[rounded],
       )}
     >
@@ -43,6 +46,7 @@ export const PerpsCard = ({
         className={classNames(
           'bg-perps-background/[20%] shadow-[inset_1.5px_2px_1px_-2px_rgba(255,255,255,0.2),inset_-1.5px_-1.5px_1px_-2px_rgba(255,255,255,0.125)]',
           fullHeight ? 'h-full' : '',
+          fullWidth ? 'w-full' : '',
           backdropBlur ? 'backdrop-blur-lg' : '',
           roundedToPx[rounded],
           className,

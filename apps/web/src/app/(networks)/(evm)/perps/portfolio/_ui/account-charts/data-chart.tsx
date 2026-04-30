@@ -18,9 +18,8 @@ export const DataChart = ({
         trigger: 'axis',
         padding: 8,
         borderWidth: 1,
-        borderColor: '#629FFF50',
-
-        backgroundColor: '#18223B',
+        borderColor: '#49A1DB',
+        backgroundColor: '#49A1DB65',
         textStyle: {
           color: '#fff',
         },
@@ -82,9 +81,29 @@ export const DataChart = ({
           step: 'end',
           lineStyle: {
             width: 2,
-            color: '#629FFF',
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 1,
+              y2: 0,
+              colorStops: [
+                { offset: 0, color: '#27B0E6' },
+                { offset: 0.034, color: '#49A1DB' },
+                { offset: 0.092, color: '#7D8ACA' },
+                { offset: 0.168, color: '#A279BD' },
+                { offset: 0.231, color: '#BA6FB6' },
+                { offset: 0.293, color: '#C26BB3' },
+                { offset: 0.365, color: '#D563AD' },
+                { offset: 0.453, color: '#E65BA7' },
+                { offset: 0.531, color: '#F156A3' },
+                { offset: 0.642, color: '#F853A1' },
+                { offset: 0.781, color: '#FA52A0' },
+                { offset: 1, color: '#FA52A0' },
+              ],
+              global: false,
+            },
           },
-
           data: data ?? [],
         },
       ],
