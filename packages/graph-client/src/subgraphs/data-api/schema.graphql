@@ -1060,9 +1060,17 @@ type PerpsDailyFeePoint {
 
 type PerpsPointsOverview {
   address: EvmAddress!
+  totalFeesUsd: Float!
   totalPoints: Float!
+  baseMultiplier: Float!
   points7d: Float!
   points30d: Float!
+  pointMultipliers: [PerpsPointMultiplier!]!
+}
+
+type PerpsPointMultiplier {
+  thresholdUsd: Float!
+  multiplier: Float!
 }
 
 type PerpsDailyPoint {
