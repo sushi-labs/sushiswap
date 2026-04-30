@@ -395,6 +395,9 @@ export const CANCEL_COLUMN = ({
   },
   meta: {
     body: columnBodyMeta,
+    header: {
+      className: '!pl-2',
+    },
   },
 })
 

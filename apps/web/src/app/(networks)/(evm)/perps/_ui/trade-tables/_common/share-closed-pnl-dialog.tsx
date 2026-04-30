@@ -313,7 +313,7 @@ export function ShareClosedPnlDialog({
         <PerpsDialogHeader>
           <PerpsDialogTitle>Share Your PnL</PerpsDialogTitle>
           <PerpsDialogDescription className="capitalize">
-            Share your closed trade with your friends and followers!
+            Share your trade with your friends and followers!
           </PerpsDialogDescription>
         </PerpsDialogHeader>
         <PerpsDialogInnerContent>

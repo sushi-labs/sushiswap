@@ -250,6 +250,9 @@ export const SEND_COLUMN = (
   },
   meta: {
     body: columnBodyMeta,
+    header: {
+      className: '!pl-2',
+    },
   },
 })
 
@@ -313,6 +316,9 @@ export const TRANSFER_COLUMN = (
   },
   meta: {
     body: columnBodyMeta,
+    header: {
+      className: '!pl-2',
+    },
   },
 })
 
@@ -349,5 +355,8 @@ export const CONTRACT_COLUMN: ColumnDef<BalanceItemType, unknown> = {
   },
   meta: {
     body: columnBodyMeta,
+    header: {
+      className: '!pl-2',
+    },
   },
 }
