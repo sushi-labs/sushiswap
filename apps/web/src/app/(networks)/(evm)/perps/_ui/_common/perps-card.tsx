@@ -33,7 +33,7 @@ export const PerpsCard = ({
   return (
     <div
       className={classNames(
-        'p-[1px] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]',
+        'p-[1px]',
         'bg-[linear-gradient(180deg,rgba(237,241,243,0.05)_0%,rgba(237,241,243,0.015)_100%)]',
         fullHeight ? 'h-full' : '',
         roundedClass[rounded],
@@ -41,8 +41,7 @@ export const PerpsCard = ({
     >
       <div
         className={classNames(
-          'bg-perps-background/[20%]',
-          'shadow-[inset_0_-1px_0_rgba(255,255,255,0.02)]',
+          'bg-perps-background/[20%] shadow-[inset_1.5px_2px_1px_-2px_rgba(255,255,255,0.2),inset_-1.5px_-1.5px_1px_-2px_rgba(255,255,255,0.125)]',
           fullHeight ? 'h-full' : '',
           backdropBlur ? 'backdrop-blur-lg' : '',
           roundedToPx[rounded],

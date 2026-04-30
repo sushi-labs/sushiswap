@@ -24,7 +24,7 @@ const perpsDialogWrapperVariants = cva('', {
   variants: {
     variant: {
       default:
-        'gap-4 grid bg-gradient-to-b from-[#EDF1F3]/[0.05] to-[#EDF1F3]/[0.015] border border-white/[0.03] shadow-[inset_0_1px_0_rgba(255,255,255,0.10)] rounded-b-none md:rounded-b-[28px] lg:rounded-b-2xl rounded-[28px] lg:rounded-2xl',
+        'gap-4 grid bg-gradient-to-b from-[#EDF1F3]/[0.05] to-[#EDF1F3]/[0.015] rounded-b-none md:rounded-b-[28px] lg:rounded-b-2xl rounded-[28px] lg:rounded-2xl',
     },
   },
   defaultVariants: {
@@ -112,7 +112,12 @@ const PerpsDialogContent = React.forwardRef<
           className={perpsDialogVariants({ variant, className })}
           {...props}
         >
-          <div className={perpsDialogWrapperVariants({ variant })}>
+          <div
+            className={perpsDialogWrapperVariants({ variant })}
+            style={{
+              boxShadow: `inset 1.5px 2px 1px -2px rgba(255, 255, 255, 0.3), inset -1.5px -1.5px 1px -2px rgba(255, 255, 255, 0.225)`,
+            }}
+          >
             {children}
           </div>
 
