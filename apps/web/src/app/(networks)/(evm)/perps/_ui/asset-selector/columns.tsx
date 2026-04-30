@@ -39,7 +39,7 @@ export const SYMBOL_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
       >
         <div className="flex items-center gap-1">
           <FavoriteButton assetString={asset.name} />
-          <AssetIcon asset={asset} size={'sm'} />
+          {/* <AssetIcon asset={asset} size={'sm'} /> */}
           <span>{asset.symbol}</span>
         </div>
         <div className="flex items-center gap-1">
