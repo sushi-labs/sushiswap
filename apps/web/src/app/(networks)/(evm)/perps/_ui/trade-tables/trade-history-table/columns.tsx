@@ -254,7 +254,7 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
           <ShareClosedPnlDialog
             trade={props.row.original}
             trigger={
-              <div className="flex items-center cursor-pointer gap-[0.25ch] ">
+              <div className="flex items-center cursor-pointer gap-[0.25ch]">
                 <span className="font-medium">
                   {hidePnl
                     ? '***'

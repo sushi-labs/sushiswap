@@ -1,3 +1,4 @@
+import ExternalLinkIcon from '@heroicons/react-v1/outline/ExternalLinkIcon'
 import {
   Chip,
   HoverCard,
@@ -245,19 +246,36 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TwapFillHistoryItemType, unknown> = {
       return '-'
     }
     return (
-      <div className="flex items-center gap-0.5">
-        <span className="font-medium lg:whitespace-nowrap">
-          {hidePnl
-            ? '***'
-            : `${perpsNumberFormatter({
-                value: totalPnl,
-                minFraxDigits: 2,
-                maxFraxDigits: 2,
-              })} ${feeToken}`}
-        </span>
+      <div className="flex items-center gap-0.5 lg:whitespace-nowrap">
         {isCloseTrade ? (
-          <ShareClosedPnlDialog trade={props.row.original} />
-        ) : null}
+          <ShareClosedPnlDialog
+            trade={props.row.original}
+            trigger={
+              <div className="flex items-center cursor-pointer gap-[0.25ch]">
+                <span className="font-medium">
+                  {hidePnl
+                    ? '***'
+                    : `${perpsNumberFormatter({
+                        value: totalPnl,
+                        minFraxDigits: 2,
+                        maxFraxDigits: 2,
+                      })} ${feeToken}`}
+                </span>
+                <ExternalLinkIcon className="h-3.5 w-3.5 text-blue" />
+              </div>
+            }
+          />
+        ) : (
+          <span className="font-medium">
+            {hidePnl
+              ? '***'
+              : `${perpsNumberFormatter({
+                  value: totalPnl,
+                  minFraxDigits: 2,
+                  maxFraxDigits: 2,
+                })} ${feeToken}`}
+          </span>
+        )}
       </div>
     )
   },
