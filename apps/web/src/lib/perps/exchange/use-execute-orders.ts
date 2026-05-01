@@ -128,6 +128,7 @@ export const useExecuteOrders = () => {
         timestamp: ts,
         groupTimestamp: ts,
         autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
 
       return { ts, count: data.orderData.orders.length }
@@ -144,6 +145,7 @@ export const useExecuteOrders = () => {
         timestamp: ctx.ts,
         groupTimestamp: ctx.ts,
         autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
     },
 
@@ -162,6 +164,7 @@ export const useExecuteOrders = () => {
         timestamp: ctx?.ts ?? Date.now(),
         groupTimestamp: ctx?.ts ?? Date.now(),
         autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
     },
   })

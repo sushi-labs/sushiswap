@@ -12,6 +12,7 @@ import {
   useState,
 } from 'react'
 import {
+  TOAST_AUTOCLOSE_TIME,
   useSetUserAbstraction,
   useSpotDustToggle,
   useUserNotifications,
@@ -157,7 +158,8 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
         type: 'burn',
         timestamp: ts,
         groupTimestamp: ts,
-        autoClose: 2_000,
+        autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
     }
   }, [notification, address, disableBgFillNotifs])

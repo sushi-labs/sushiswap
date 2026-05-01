@@ -69,6 +69,7 @@ export const useCancelOpenOrders = () => {
         timestamp: ts,
         groupTimestamp: ts,
         autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
 
       return { ts, count: cancelData.length }
@@ -85,6 +86,7 @@ export const useCancelOpenOrders = () => {
         timestamp: ctx.ts,
         groupTimestamp: ctx.ts,
         autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
     },
 
@@ -103,6 +105,7 @@ export const useCancelOpenOrders = () => {
         timestamp: ctx?.ts ?? Date.now(),
         groupTimestamp: ctx?.ts ?? Date.now(),
         autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
     },
   })

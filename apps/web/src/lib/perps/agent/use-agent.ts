@@ -1,13 +1,13 @@
 import { approveAgent } from '@nktkas/hyperliquid/api/exchange'
 import { AbstractWalletError } from '@nktkas/hyperliquid/signing'
-import { useLocalStorage, useSessionStorage } from '@sushiswap/hooks'
+import { useLocalStorage } from '@sushiswap/hooks'
 import {
   createFailedToast,
   createInfoToast,
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 import { zeroAddress } from 'viem'
 import {
   generatePrivateKey,
@@ -85,6 +85,7 @@ export const useAgent = () => {
         timestamp: ts,
         groupTimestamp: ts,
         autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
 
       return { ts, type }
@@ -110,6 +111,7 @@ export const useAgent = () => {
         timestamp: ctx.ts,
         groupTimestamp: ctx.ts,
         autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
     },
 
@@ -131,6 +133,7 @@ export const useAgent = () => {
         timestamp: ctx?.ts ?? Date.now(),
         groupTimestamp: ctx?.ts ?? Date.now(),
         autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
     },
   })

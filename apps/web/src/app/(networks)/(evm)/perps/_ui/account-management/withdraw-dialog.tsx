@@ -114,6 +114,7 @@ export const WithdrawDialog = ({
         groupTimestamp: Date.now(),
         chainId: chainId,
         autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
       await withdraw3(
         {
@@ -133,12 +134,13 @@ export const WithdrawDialog = ({
         groupTimestamp: Date.now(),
         chainId: chainId,
         autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
       setIsPending(false)
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error)
-      createErrorToast(`Withdraw failed: ${errorMessage}`, false)
+      createErrorToast(`Withdraw failed: ${errorMessage}`, false, 'perps')
       setIsPending(false)
     } finally {
       setIsPending(false)

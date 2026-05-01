@@ -108,6 +108,7 @@ export const DepositDialog = ({
         },
         timestamp: ts,
         groupTimestamp: ts,
+        variant: 'perps',
       })
     } catch (error) {
       console.log(error)

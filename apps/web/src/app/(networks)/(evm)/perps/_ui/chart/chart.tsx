@@ -350,6 +350,7 @@ export const Chart = () => {
               timestamp: Date.now(),
               groupTimestamp: Date.now(),
               autoClose: TOAST_AUTOCLOSE_TIME,
+              variant: 'perps',
             })
           }
 
@@ -368,6 +369,7 @@ export const Chart = () => {
               timestamp: Date.now(),
               groupTimestamp: Date.now(),
               autoClose: TOAST_AUTOCLOSE_TIME,
+              variant: 'perps',
             })
           }
           if (
@@ -385,6 +387,7 @@ export const Chart = () => {
               timestamp: Date.now(),
               groupTimestamp: Date.now(),
               autoClose: TOAST_AUTOCLOSE_TIME,
+              variant: 'perps',
             })
           }
 

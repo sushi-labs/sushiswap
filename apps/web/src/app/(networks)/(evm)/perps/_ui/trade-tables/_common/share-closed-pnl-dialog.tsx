@@ -221,7 +221,7 @@ export function ShareClosedPnlDialog({
       )
       setCopied(true)
     } catch {
-      createErrorToast('Failed to copy the current page URL.', false)
+      createErrorToast('Failed to copy the current page URL.', false, 'perps')
     }
   }
 
@@ -229,7 +229,11 @@ export function ShareClosedPnlDialog({
     const posterNode = posterRef.current
 
     if (!posterNode) {
-      createErrorToast('Unable to find the share image to export.', false)
+      createErrorToast(
+        'Unable to find the share image to export.',
+        false,
+        'perps',
+      )
       return
     }
 
@@ -239,7 +243,7 @@ export function ShareClosedPnlDialog({
       downloadBlob(blob, getShareImageFileName(normalizedTrade))
     } catch (e) {
       console.error('export failed:', e) // <-- was silently swallowing the error
-      createErrorToast('Failed to export the share image.', false)
+      createErrorToast('Failed to export the share image.', false, 'perps')
     } finally {
       setIsSavingImage(false)
     }
@@ -248,7 +252,11 @@ export function ShareClosedPnlDialog({
   async function handleShareOnX(): Promise<void> {
     const posterNode = posterRef.current
     if (!posterNode) {
-      createErrorToast('Unable to find the share image to export.', false)
+      createErrorToast(
+        'Unable to find the share image to export.',
+        false,
+        'perps',
+      )
       return
     }
 
@@ -285,7 +293,7 @@ export function ShareClosedPnlDialog({
         return
       }
 
-      createErrorToast('Failed to prepare the share image.', false)
+      createErrorToast('Failed to prepare the share image.', false, 'perps')
     } finally {
       setIsSharingImage(false)
     }
