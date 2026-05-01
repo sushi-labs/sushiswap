@@ -4,6 +4,7 @@ import { SkeletonText } from '@sushiswap/ui'
 import { perpsNumberFormatter, useSushiPointsOverview } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { PerpsCard } from '~evm/perps/_ui/_common'
+import { Multiplier } from './mulitplier'
 import { Overview } from './overview'
 
 function SummaryCard({
@@ -35,13 +36,6 @@ export function PointsSummaryCards() {
   const address = useAccount('evm')
   const overview = useSushiPointsOverview({ address })
 
-  const points7d = overview.data?.points7d
-    ? perpsNumberFormatter({
-        value: overview.data.points7d,
-        minFraxDigits: 0,
-        maxFraxDigits: 0,
-      })
-    : '0'
   const points30d = overview.data?.points30d
     ? perpsNumberFormatter({
         value: overview.data.points30d,
@@ -53,11 +47,7 @@ export function PointsSummaryCards() {
   return (
     <div className="grid w-full gap-2 md:grid-cols-3">
       <Overview />
-      <SummaryCard
-        label="Collected in last 7 days"
-        value={points7d}
-        isLoading={overview.isLoading}
-      />
+      <Multiplier />
       <SummaryCard
         label="Collected in last 30 days"
         value={points30d}
