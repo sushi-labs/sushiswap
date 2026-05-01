@@ -88,7 +88,7 @@ export const AssetSelector = () => {
       <DropdownMenuContent
         sideOffset={isLg ? 8 : -145}
         collisionPadding={isLg ? 8 : 0}
-        className="flex flex-col !p-0 lg:!rounded-xl  !max-w-[100vw] !bg-perps-background/90 border !border-white/[0.07]"
+        className="flex flex-col !p-0 lg:!rounded-xl !max-w-[100vw] !bg-perps-background/90 border !border-white/[0.07]"
       >
         <SearchBar />
         <AssetTabs />

@@ -12,6 +12,7 @@ import { CirclesIcon } from '@sushiswap/ui/icons/CirclesIcon'
 import { ClockIcon } from '@sushiswap/ui/icons/ClockIcon'
 import { InfinityIcon } from '@sushiswap/ui/icons/InfinityIcon'
 import { LightningIcon } from '@sushiswap/ui/icons/LightningIcon'
+import { useEffect } from 'react'
 import { FavoriteIcon } from '../_common'
 import { AllAssets } from './all-assets'
 import { FavoriteAssets } from './favorite-assets'
@@ -37,6 +38,28 @@ export const AssetTabs = () => {
     'sushi.perps.selected-search-asset-tab',
     'all',
   )
+  useEffect(() => {
+    const toggleSelector = (event: KeyboardEvent) => {
+      //select tabs with left and right arrow keys
+      if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+        event.preventDefault()
+        const currentIndex = TABS.findIndex((tab) => tab.value === selectedTab)
+        if (event.key === 'ArrowRight') {
+          const nextIndex = (currentIndex + 1) % TABS.length
+          setSelectedTab(TABS[nextIndex].value)
+        } else {
+          const prevIndex = (currentIndex - 1 + TABS.length) % TABS.length
+          setSelectedTab(TABS[prevIndex].value)
+        }
+      }
+    }
+
+    window.addEventListener('keydown', toggleSelector)
+    return () => {
+      window.removeEventListener('keydown', toggleSelector)
+    }
+  }, [selectedTab, setSelectedTab])
+
   return (
     <Tabs
       className="w-fit"
