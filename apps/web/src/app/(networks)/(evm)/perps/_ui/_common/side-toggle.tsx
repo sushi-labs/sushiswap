@@ -27,8 +27,8 @@ export const SideToggle = <T extends string = DefaultSide>({
         variant={side === left ? 'perps-secondary' : 'ghost'}
         onClick={() => setSide(left)}
         className={classNames(
-          'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
-          side === right ? 'text-perps-muted/40 border border-transparent' : '',
+          'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md  border border-transparent',
+          side === right ? 'text-perps-muted/40' : '',
         )}
       >
         {baseSymbol}
@@ -38,8 +38,8 @@ export const SideToggle = <T extends string = DefaultSide>({
         variant={side === right ? 'perps-secondary' : 'ghost'}
         onClick={() => setSide(right)}
         className={classNames(
-          'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
-          side === left ? 'text-perps-muted/40 border border-transparent' : '',
+          'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md  border border-transparent',
+          side === left ? 'text-perps-muted/40' : '',
         )}
       >
         {quoteSymbol}
