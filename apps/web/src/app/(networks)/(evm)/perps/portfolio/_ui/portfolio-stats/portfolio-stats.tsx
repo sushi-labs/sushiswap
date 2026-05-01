@@ -156,7 +156,7 @@ export const PortfolioStats = () => {
   }, [data, statView, time])
 
   return (
-    <PerpsCard className="p-3 gap-2 flex flex-col" fullWidth>
+    <PerpsCard className="p-3 gap-2 flex flex-col h-full" fullWidth>
       <div className="flex items-center justify-between gap-2  whitespace-nowrap text-xs lg:text-sm">
         <DropdownMenu open={openStatView} onOpenChange={setOpenStatView}>
           <DropdownMenuTrigger className="capitalize flex items-center">

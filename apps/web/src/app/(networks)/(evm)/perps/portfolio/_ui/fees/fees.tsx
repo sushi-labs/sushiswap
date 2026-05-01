@@ -26,7 +26,11 @@ export const Fees = () => {
   const isLoading = takerFee === '0' || makerFee === '0'
 
   return (
-    <PerpsCard className="p-3 gap-2 flex justify-between flex-col" fullWidth>
+    <PerpsCard
+      className="p-3 gap-2 flex justify-between flex-col"
+      fullWidth
+      fullHeight
+    >
       <div className="flex items-start justify-between gap-2 text-xs lg:text-sm">
         <div className="text-perps-muted-50">Fees (Taker / Maker)</div>
         <DropdownMenu open={open} onOpenChange={setOpen}>

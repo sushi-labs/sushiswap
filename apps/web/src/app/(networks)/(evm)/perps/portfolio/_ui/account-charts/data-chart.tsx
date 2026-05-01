@@ -114,7 +114,7 @@ export const DataChart = ({
     <ReactEchartsCore
       option={DEFAULT_OPTION}
       echarts={echarts}
-      className="max-h-[192px] min-h-[192px] h-full"
+      className="lg:max-h-[200px] xl:max-h-[192px] max-h-[192px] min-h-[192px] h-full"
     />
   )
 }
