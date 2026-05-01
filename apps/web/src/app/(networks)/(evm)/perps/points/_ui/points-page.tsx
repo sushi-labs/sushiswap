@@ -3,7 +3,6 @@
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useAccount } from 'src/lib/wallet'
 import { PerpsCard } from '~evm/perps/_ui/_common'
-import { PointsHistoryCard } from './points-history-card'
 import { PointsSummaryCards } from './points-summary-cards'
 
 export function PointsPage() {
@@ -21,7 +20,7 @@ export function PointsPage() {
           namespace="evm"
           className="mx-auto"
           variant="perps-default"
-        />{' '}
+        />
       </PerpsCard>
     )
   }
@@ -30,7 +29,6 @@ export function PointsPage() {
     <div className="flex flex-col gap-2 mb-7">
       <h1 className="text-4xl font-medium mb-2">Points</h1>
       <PointsSummaryCards />
-      {/* <PointsHistoryCard /> */}
     </div>
   )
 }
