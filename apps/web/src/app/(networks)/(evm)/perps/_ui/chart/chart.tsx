@@ -88,16 +88,15 @@ export const Chart = () => {
 
   const tradeLines = useMemo(() => {
     const pos = position?.[0]
-    if (!pos) return undefined
 
     return {
-      entryPrice: pos.position.entryPx,
+      entryPrice: pos?.position?.entryPx,
       markPrice: asset?.markPrice || asset?.midPrice,
-      pnl: pos.position.unrealizedPnl,
-      posSize: pos.position.szi,
-      side: pos.side,
+      pnl: pos?.position?.unrealizedPnl,
+      posSize: pos?.position?.szi,
+      side: pos?.side,
       openOrders: openOrdersForAsset,
-      liquidationPrice: pos.position.liquidationPx,
+      liquidationPrice: pos?.position?.liquidationPx,
     }
   }, [position, openOrdersForAsset, asset?.markPrice, asset?.midPrice])
 
@@ -267,14 +266,7 @@ export const Chart = () => {
     try {
       const widget = tvWidgetRef.current
 
-      if (
-        !isMounted ||
-        !resolvedTheme ||
-        !widget ||
-        !chartReady ||
-        hasNoData ||
-        !tradeLines?.posSize
-      ) {
+      if (!isMounted || !resolvedTheme || !widget || !chartReady || hasNoData) {
         return
       }
 
@@ -283,7 +275,6 @@ export const Chart = () => {
 
       const orders = tradeLines.openOrders ?? []
       const lineMap = ordersPositionLineRefs.current
-
       if (!orders.length) {
         removeAllOrderLines(lineMap)
         ordersPositionLineRefs.current = {}
@@ -311,7 +302,8 @@ export const Chart = () => {
         }
 
         const color = order.side === 'A' ? NEGATIVE_COLOR : POSITIVE_COLOR
-        const quantity = order.sz === '0.0' ? tradeLines.posSize : order.sz
+        const quantity =
+          order.sz === '0.0' ? tradeLines?.posSize || '0' : order.sz
 
         line.setText(
           `${formatTriggerCondition(order.type, order.triggerCondition, order.limitPx)}`,
@@ -455,9 +447,7 @@ export const Chart = () => {
     isMounted,
     cancelOrders,
     isPendingCancelOrders,
-    tradeLines?.openOrders,
-    tradeLines?.posSize,
-    tradeLines?.markPrice,
+    tradeLines,
     szDecimals,
     modifyOrder,
     isPendingModifyOrder,
