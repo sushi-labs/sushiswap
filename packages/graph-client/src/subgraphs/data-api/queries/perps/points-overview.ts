@@ -10,10 +10,16 @@ export const PerpsPointsOverviewQuery = graphql(
     query PerpsPointsOverview($address: EvmAddress!) {
       perps {
         pointsOverview(address: $address) {
-          address
-          totalPoints
-          points7d
-          points30d
+          pointMultipliers {
+              multiplier
+              thresholdUsd
+            }
+            baseMultiplier
+            totalFeesUsd
+            totalPoints
+            points7d
+            points30d
+            address
         }
       }
     }

@@ -4,6 +4,7 @@ import { SkeletonText } from '@sushiswap/ui'
 import { perpsNumberFormatter, useSushiPointsOverview } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { PerpsCard } from '~evm/perps/_ui/_common'
+import { Overview } from './overview'
 
 function SummaryCard({
   label,
@@ -15,7 +16,7 @@ function SummaryCard({
   isLoading: boolean
 }) {
   return (
-    <PerpsCard className="p-3 gap-2 flex flex-col justify-between w-full">
+    <PerpsCard className="p-3 gap-2 flex flex-col h-full w-full">
       <div className="text-perps-muted-50 text-xs lg:text-sm">{label}</div>
       {isLoading ? (
         <div className="w-24 h-8">
@@ -34,13 +35,6 @@ export function PointsSummaryCards() {
   const address = useAccount('evm')
   const overview = useSushiPointsOverview({ address })
 
-  const currentPoints = overview.data?.totalPoints
-    ? perpsNumberFormatter({
-        value: overview.data.totalPoints,
-        minFraxDigits: 0,
-        maxFraxDigits: 0,
-      })
-    : '0'
   const points7d = overview.data?.points7d
     ? perpsNumberFormatter({
         value: overview.data.points7d,
@@ -58,11 +52,7 @@ export function PointsSummaryCards() {
 
   return (
     <div className="grid w-full gap-2 md:grid-cols-3">
-      <SummaryCard
-        label="Current points"
-        value={currentPoints}
-        isLoading={overview.isLoading}
-      />
+      <Overview />
       <SummaryCard
         label="Collected in last 7 days"
         value={points7d}

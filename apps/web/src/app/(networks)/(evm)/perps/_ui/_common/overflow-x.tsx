@@ -59,7 +59,7 @@ export const OverflowX = ({
   )
 }
 
-const useIsOverflow = (ref: React.RefObject<HTMLElement | null>) => {
+export const useIsOverflow = (ref: React.RefObject<HTMLElement | null>) => {
   const [hasOverflowRight, setHasOverflowRight] = useState(false)
   const [hasOverflowLeft, setHasOverflowLeft] = useState(false)
 

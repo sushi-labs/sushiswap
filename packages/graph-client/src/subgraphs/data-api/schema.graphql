@@ -1038,7 +1038,19 @@ type PerpsReferralOverview {
   activeFeeLevels: [PerpsActiveFeeLevel!]!
   hasRedeemedReferralCode: Boolean!
   referredUserCount: Int!
+  referredUserCountsByLevel: [PerpsReferralLevelCount!]!
   totalEarnedFees: Float!
+  earnedFeesByLevel: [PerpsReferralLevelFeeTotal!]!
+}
+
+type PerpsReferralLevelCount {
+  level: Int!
+  userCount: Int!
+}
+
+type PerpsReferralLevelFeeTotal {
+  level: Int!
+  feesEarned: Float!
 }
 
 type PerpsActiveFeeLevel {
@@ -1050,7 +1062,11 @@ type PerpsReferredUser {
   refereeAddress: EvmAddress!
   linkedAt: String!
   lifetimeEarnedFees: Float!
+  downlineEarnedFees: Float!
   lastEarnedAt: String
+  level: Int!
+  shareBps: Int!
+  children: [PerpsReferredUser!]!
 }
 
 type PerpsDailyFeePoint {
@@ -1060,9 +1076,17 @@ type PerpsDailyFeePoint {
 
 type PerpsPointsOverview {
   address: EvmAddress!
+  totalFeesUsd: Float!
   totalPoints: Float!
+  baseMultiplier: Float!
   points7d: Float!
   points30d: Float!
+  pointMultipliers: [PerpsPointMultiplier!]!
+}
+
+type PerpsPointMultiplier {
+  thresholdUsd: Float!
+  multiplier: Float!
 }
 
 type PerpsDailyPoint {
@@ -1092,7 +1116,7 @@ type PerpsReferralRedemptionResult {
 type PerpsQueries {
   claim(address: EvmAddress!): PerpsClaim
   referralOverview(address: EvmAddress!): PerpsReferralOverview!
-  referredUsers(address: EvmAddress!, limit: Int = 50, offset: Int = 0): [PerpsReferredUser!]!
+  referredUsers(address: EvmAddress!): [PerpsReferredUser!]!
   referralFeeHistory(address: EvmAddress!, from: String, to: String): [PerpsDailyFeePoint!]!
   pointsOverview(address: EvmAddress!): PerpsPointsOverview!
   pointsHistory(address: EvmAddress!, from: String, to: String): [PerpsDailyPoint!]!
