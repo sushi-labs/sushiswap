@@ -58,7 +58,21 @@ export const useAgent = () => {
       const pk = generatePrivateKey()
       const pubk = privateKeyToAddress(pk)
       const agent = pubk
-
+      if (!extraAgents?.length && type === 'create') {
+        //need to create standard agent first before we can create the sushi agent
+        const pk1 = generatePrivateKey()
+        const pubk1 = privateKeyToAddress(pk1)
+        const agent1 = pubk1
+        await approveAgent(
+          {
+            wallet: walletClient,
+            transport: hlHttpTransport,
+          },
+          {
+            agentAddress: agent1,
+          },
+        )
+      }
       await approveAgent(
         {
           wallet: walletClient,
