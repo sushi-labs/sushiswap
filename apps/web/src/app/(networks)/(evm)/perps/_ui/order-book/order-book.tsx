@@ -310,7 +310,7 @@ const SigFigSelector = ({
           )}
         />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="paper !rounded-md !bg-[#18223B]">
+      <DropdownMenuContent className="!rounded-md !bg-black/10">
         {[5, 7, 6, 4, 3, 2].map((figs) => (
           <DropdownMenuItem
             key={figs}
