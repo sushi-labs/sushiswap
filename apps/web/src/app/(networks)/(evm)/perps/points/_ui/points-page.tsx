@@ -5,6 +5,7 @@ import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useAccount } from 'src/lib/wallet'
 import { PointsHistoryCard } from './points-history-card'
 import { PointsSummaryCards } from './points-summary-cards'
+import { PointsThresholdProgressCard } from './points-threshold-progress-card'
 
 export function PointsPage() {
   const address = useAccount('evm')
@@ -26,6 +27,7 @@ export function PointsPage() {
     <div className="flex flex-col gap-2">
       <h1 className="text-4xl font-medium mb-2">Points</h1>
       <PointsSummaryCards />
+      <PointsThresholdProgressCard />
       <PointsHistoryCard />
     </div>
   )

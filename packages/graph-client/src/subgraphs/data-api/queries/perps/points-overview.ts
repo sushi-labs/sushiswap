@@ -11,9 +11,15 @@ export const PerpsPointsOverviewQuery = graphql(
       perps {
         pointsOverview(address: $address) {
           address
+          totalFeesUsd
           totalPoints
+          baseMultiplier
           points7d
           points30d
+          pointMultipliers {
+            thresholdUsd
+            multiplier
+          }
         }
       }
     }
