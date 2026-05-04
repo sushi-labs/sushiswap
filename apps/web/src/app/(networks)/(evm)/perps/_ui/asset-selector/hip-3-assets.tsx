@@ -149,6 +149,7 @@ export const HIP3Assets = () => {
           data={filtered}
           thClassName="!h-8 pl-0"
           hideScrollbar={true}
+          overscan={3}
         />
       </TabsContent>
     </Tabs>

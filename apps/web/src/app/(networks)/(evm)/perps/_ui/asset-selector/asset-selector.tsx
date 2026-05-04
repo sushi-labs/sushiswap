@@ -9,9 +9,7 @@ import {
   SkeletonBox,
 } from '@sushiswap/ui'
 import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
-import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
-import { useEffect, useMemo, useState } from 'react'
-import { getHyperliquidCoinIconUrl } from 'src/lib/perps'
+import { useEffect } from 'react'
 // import { ShortcutMenu } from './shortcut-menu'
 import { AssetIcon } from '../_common'
 import { useAssetState } from '../trade-widget'

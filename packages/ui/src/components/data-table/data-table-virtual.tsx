@@ -68,8 +68,8 @@ export function DataTableVirtual<TData, TValue>({
   meta,
   thClassName,
   hideScrollbar = false,
-  overscan = 0,
-  estimateSize = 10,
+  overscan = 20,
+  estimateSize = 30,
   trClassName,
 }: DataTableVirtualProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
