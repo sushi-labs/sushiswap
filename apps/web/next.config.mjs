@@ -142,6 +142,7 @@ const nextConfig = bundleAnalyzer({
   async rewrites() {
     return []
   },
+  allowedDevOrigins: ['192.168.1.89'],
 })
 
 export default nextConfig

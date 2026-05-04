@@ -41,11 +41,11 @@ export const FooterNav = ({
             variant={option.value === view ? 'perps-default' : 'ghost'}
             size="lg"
             className={classNames(
-              'flex !items-center justify-center w-full !gap-1 focus:!bg-transparent !rounded-full',
+              'flex !items-center justify-center w-full !border !border-transparent !gap-1 focus:!bg-transparent !rounded-full',
 
               view === option.value
                 ? '!text-perps-blue'
-                : 'text-perps-muted-50 border border-transparent',
+                : 'text-perps-muted-50',
             )}
           >
             {option.icon}
