@@ -459,15 +459,30 @@ export const SwapStablesDialog = ({
                             disabled={Boolean(insufficientBalance)}
                             variant="perps-tertiary"
                           >
-                            <Button
+                            <PerpsChecker.EnableTrading
                               size="default"
-                              className="w-full"
-                              onClick={swapStables}
-                              loading={isPending}
                               variant="perps-tertiary"
                             >
-                              Confirm
-                            </Button>
+                              <PerpsChecker.BuilderFee
+                                size="default"
+                                variant="perps-tertiary"
+                              >
+                                <PerpsChecker.HyperReferral
+                                  size="default"
+                                  variant="perps-tertiary"
+                                >
+                                  <Button
+                                    size="default"
+                                    className="w-full"
+                                    onClick={swapStables}
+                                    loading={isPending}
+                                    variant="perps-tertiary"
+                                  >
+                                    Confirm
+                                  </Button>
+                                </PerpsChecker.HyperReferral>
+                              </PerpsChecker.BuilderFee>
+                            </PerpsChecker.EnableTrading>
                           </Checker.Custom>
                         </Checker.Custom>
                       </Checker.Custom>
