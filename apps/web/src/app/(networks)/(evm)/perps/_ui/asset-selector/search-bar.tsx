@@ -1,5 +1,6 @@
 import { XIcon } from '@heroicons/react-v1/solid'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import { useBreakpoint } from '@sushiswap/hooks'
 import { IconButton, TextField } from '@sushiswap/ui'
 import { useAssetSelectorState } from './asset-selector-provider'
 
@@ -8,6 +9,7 @@ export const SearchBar = () => {
     state: { search },
     mutate: { setSearch, setOpen },
   } = useAssetSelectorState()
+  const { isLg } = useBreakpoint('lg')
   return (
     <div className="relative border-b border-white/[0.03] mb-2">
       <TextField
@@ -20,7 +22,7 @@ export const SearchBar = () => {
         value={search}
         onValueChange={setSearch}
         className="!bg-transparent mr-10"
-        autoFocus={true}
+        autoFocus={isLg}
       />
       <div className="absolute right-2 top-1/2 -translate-y-1/2 lg:block hidden">
         <CommandK />

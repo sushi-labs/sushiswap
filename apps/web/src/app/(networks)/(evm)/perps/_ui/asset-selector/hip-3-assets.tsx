@@ -116,7 +116,13 @@ export const HIP3Assets = () => {
         setSelectedTab(val)
       }}
     >
-      <TabsList className="!flex !px-0 !h-8 mx-2 !max-w-fit  bg-transparent border-transparent">
+      <TabsList
+        className="!flex w-fit overflow-x-auto !px-0 !mx-2 !h-8 bg-transparent border-transparent !justify-start hide-scrollbar overflow-y-hidden"
+        style={{
+          maxWidth: `calc(100vw - 16px)`,
+        }}
+      >
+        {' '}
         {TABS.map((tab, idx) => (
           <TabsTrigger
             key={tab}

@@ -68,7 +68,12 @@ export const AssetTabs = () => {
         setSelectedTab(val as TabType)
       }}
     >
-      <TabsList className="!flex w-fit !px-0 !mx-2 !h-8 bg-transparent border-transparent">
+      <TabsList
+        className="!flex w-fit overflow-x-auto !px-0 !mx-2 !h-8 bg-transparent border-transparent !justify-start hide-scrollbar overflow-y-hidden"
+        style={{
+          maxWidth: `calc(100vw - 16px)`,
+        }}
+      >
         {TABS.map((tab, idx) => (
           <TabsTrigger
             key={tab.value}
@@ -88,7 +93,7 @@ export const AssetTabs = () => {
           selectedTab !== 'HIP-3' &&
             selectedTab !== 'spot' &&
             selectedTab !== 'Tradfi'
-            ? 'min-h-[88dvh] max-h-[88dvh] hide-scrollbar lg:min-h-[450px] lg:max-h-[450px] overflow-auto max-w-[100vw]'
+            ? 'min-h-[88dvh] max-h-[88dvh] overflow-auto hide-scrollbar lg:min-h-[450px] lg:max-h-[450px] max-w-[100vw]'
             : '',
         )}
       >

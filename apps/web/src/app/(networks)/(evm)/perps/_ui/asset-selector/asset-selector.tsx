@@ -86,9 +86,13 @@ export const AssetSelector = () => {
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        sideOffset={isLg ? 8 : -145}
+        sideOffset={isLg ? 8 : -100}
         collisionPadding={isLg ? 8 : 0}
-        className="flex flex-col !p-0 lg:!rounded-xl !max-w-[100vw] !bg-perps-background/90 border !border-white/[0.07]"
+        className="flex flex-col !p-0 lg:!rounded-xl !max-w-[100vw] !shadow-[inset_1.5px_2px_1px_-2px_rgba(255,255,255,0.2),inset_-1.5px_-1.5px_1px_-2px_rgba(255,255,255,0.125)] !bg-perps-background/90 border !border-white/[0.07]"
+        style={{
+          backgroundImage:
+            'linear-gradient(180deg, rgba(237, 241, 243, 0.1) 0%, rgba(237, 241, 243, 0.03) 100%)',
+        }}
       >
         <SearchBar />
         <AssetTabs />
