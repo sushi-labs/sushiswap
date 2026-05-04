@@ -3,7 +3,7 @@
 import { formatPrice } from '@nktkas/hyperliquid/utils'
 import { useIsMounted } from '@sushiswap/hooks'
 import { createFailedToast } from '@sushiswap/notifications'
-import { Card, classNames } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import { useTheme } from 'next-themes'
 import type {
@@ -102,6 +102,7 @@ export const Chart = () => {
 
   useEffect(() => {
     registerNoDataSetter((nextHasNoData) => {
+      console.log('No data available for chart:', nextHasNoData)
       setHasNoData(nextHasNoData)
     })
   }, [])
@@ -465,28 +466,29 @@ export const Chart = () => {
           ref={chartContainerRef}
           className={classNames(
             'h-[385px] lg:h-full',
-            hasNoData || !chartReady ? 'hidden' : 'flex',
+            !chartReady ? 'hidden' : 'flex',
           )}
         />
-        {!chartReady ? (
-          <div className={classNames('h-[385px] lg:h-full relative')}>
-            <div className="absolute top-[calc(50%-20px)] left-[calc(50%-20px)]">
-              <div className="w-[50px] h-[50px] animate-[bounce_.5s_linear_infinite_0.17s] absolute">
-                <SushiIcon width={50} height={50} />
+        {
+          !chartReady ? (
+            <div className={classNames('h-[385px] lg:h-full relative')}>
+              <div className="absolute top-[calc(50%-20px)] left-[calc(50%-20px)]">
+                <div className="w-[50px] h-[50px] animate-[bounce_.5s_linear_infinite_0.17s] absolute">
+                  <SushiIcon width={50} height={50} />
+                </div>
+                <div className="w-[50px] h-[5px] bg-black opacity-20 absolute top-[51px] left-0 rounded-[50%] animate-shadow" />
               </div>
-              <div className="w-[50px] h-[5px] bg-black opacity-20 absolute top-[51px] left-0 rounded-[50%] animate-shadow" />
             </div>
-          </div>
-        ) : (
-          <div
-            className={classNames(
-              'h-[335px] lg:h-full rounded-xl text-muted-foreground items-center justify-center italic text-sm',
-              hasNoData ? 'flex' : 'hidden',
-            )}
-          >
-            No price chart available
-          </div>
-        )}
+          ) : null
+          // <div
+          //   className={classNames(
+          //     'h-[335px] lg:h-full rounded-xl text-muted-foreground items-center justify-center italic text-sm',
+          //     hasNoData ? 'flex' : 'hidden',
+          //   )}
+          // >
+          //   No price chart available
+          // </div>
+        }
       </div>
     </PerpsCard>
   )
