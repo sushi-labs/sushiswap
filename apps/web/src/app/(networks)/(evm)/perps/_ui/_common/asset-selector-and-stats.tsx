@@ -10,7 +10,7 @@ export const AssetSelectorAndStats = () => {
     state: { asset },
   } = useAssetState()
   return (
-    <PerpsCard className="px-2 py-2 gap-4 lg:gap-8 flex items-center">
+    <PerpsCard className="px-2 py-2 gap-4 lg:gap-8 flex flex-col lg:flex-row lg:items-center">
       <div className="flex items-center gap-2">
         <AssetSelector />
         {!asset?.name ? (

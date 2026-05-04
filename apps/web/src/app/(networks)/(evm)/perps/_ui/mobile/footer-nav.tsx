@@ -7,12 +7,12 @@ import type { PerpsMobileViewType } from './mobile-layout'
 
 const OPTIONS = [
   {
-    value: 'order' as const,
-    icon: <SushiSubIcon className="h-5 w-5" />,
-  },
-  {
     value: 'charts' as const,
     icon: <CandleSticksIcon className="h-5 w-5" />,
+  },
+  {
+    value: 'order' as const,
+    icon: <SushiSubIcon className="h-5 w-5" />,
   },
 ]
 

@@ -14,7 +14,7 @@ export type PerpsMobileViewType = 'order' | 'charts'
 export const MobileLayout = () => {
   const [view, setView] = useLocalStorage<PerpsMobileViewType>(
     'sushi.perps.mobile-layout-tab',
-    'order',
+    'charts',
   )
   return (
     <div className="pb-[75px] w-full h-full min-h-[calc(100vh-96px)] overflow-x-hidden px-1">
@@ -32,6 +32,7 @@ export const MobileLayout = () => {
             <AssetSelectorAndStats />
             <Chart />
             <OrderBookTradesTabbedView />
+            <TradeWidget />
             <TradeTables />
           </>
         )}
