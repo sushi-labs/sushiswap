@@ -124,10 +124,10 @@ export const DAY_CHANGE_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
 export const EIGHT_HOUR_FUNDING_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
   id: 'funding8hPct',
   header: '8H Funding',
-  accessorFn: (row) => row.funding8hPct,
+  accessorFn: (row) => Number(row.funding8hPct || '0'),
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number.parseFloat(rowA.funding8hPct ?? '0') -
-    Number.parseFloat(rowB.funding8hPct ?? '0'),
+    Number.parseFloat(rowA.funding8hPct || '0') -
+    Number.parseFloat(rowB.funding8hPct || '0'),
   cell: (props) => {
     const funding8h = props.row.original.funding8hPct
 
