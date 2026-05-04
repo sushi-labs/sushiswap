@@ -17,8 +17,8 @@ export const Multiplier = () => {
   )
 
   const currentFeeUsd = useMemo(() => {
-    return data?.totalFeesUsd || 0
-  }, [data?.totalFeesUsd])
+    return data?.totalVolumeUsd || 0
+  }, [data?.totalVolumeUsd])
 
   const currentMultiplier = useMemo(() => {
     if (!pointMultipliers.length) return 0

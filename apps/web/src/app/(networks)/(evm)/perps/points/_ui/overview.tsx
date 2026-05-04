@@ -1,14 +1,9 @@
-import {
-  SkeletonBox,
-  SkeletonCircle,
-  SkeletonText,
-  classNames,
-} from '@sushiswap/ui'
-import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import { SkeletonBox, SkeletonCircle } from '@sushiswap/ui'
+import { useId, useMemo } from 'react'
 import { perpsNumberFormatter, useSushiPointsOverview } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { formatPercent } from 'sushi'
-import { PerpsCard, useIsOverflow } from '~evm/perps/_ui/_common'
+import { PerpsCard } from '~evm/perps/_ui/_common'
 import {
   DaimyoIcon,
   LegendIcon,
@@ -27,19 +22,18 @@ export const Overview = () => {
     () => data?.pointMultipliers || [],
     [data?.pointMultipliers],
   )
-
   const currentThresholdUsd = useMemo(() => {
     if (!pointMultipliers.length) return 0
-    const totalFeesUsd = data?.totalFeesUsd || 0
+    const totalVolumeUsd = data?.totalVolumeUsd || 0
     return (
-      pointMultipliers.findLast((i) => i.thresholdUsd <= totalFeesUsd)
+      pointMultipliers.findLast((i) => i.thresholdUsd <= totalVolumeUsd)
         ?.thresholdUsd || 0
     )
-  }, [pointMultipliers, data?.totalFeesUsd])
+  }, [pointMultipliers, data?.totalVolumeUsd])
 
   const percentageCompletedTier = useMemo(() => {
     if (!pointMultipliers.length) return 0
-    const totalFeesUsd = data?.totalFeesUsd || 0
+    const totalVolumeUsd = data?.totalVolumeUsd || 0
     const currentTierIdx = pointMultipliers.findLastIndex(
       (i) => i.thresholdUsd <= currentThresholdUsd,
     )
@@ -48,8 +42,8 @@ export const Overview = () => {
     if (!_nextTier) return 1
     const range = _nextTier.thresholdUsd - currentThresholdUsd
 
-    return (totalFeesUsd - currentThresholdUsd) / range
-  }, [pointMultipliers, currentThresholdUsd, data?.totalFeesUsd])
+    return (totalVolumeUsd - currentThresholdUsd) / range
+  }, [pointMultipliers, currentThresholdUsd, data?.totalVolumeUsd])
 
   const currentPoints = useMemo(
     () =>

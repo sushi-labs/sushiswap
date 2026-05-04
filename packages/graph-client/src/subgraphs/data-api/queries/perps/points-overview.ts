@@ -15,7 +15,7 @@ export const PerpsPointsOverviewQuery = graphql(
               thresholdUsd
             }
             baseMultiplier
-            totalFeesUsd
+            totalVolumeUsd
             totalPoints
             points7d
             points30d

@@ -1076,7 +1076,7 @@ type PerpsDailyFeePoint {
 
 type PerpsPointsOverview {
   address: EvmAddress!
-  totalFeesUsd: Float!
+  totalVolumeUsd: Float!
   totalPoints: Float!
   baseMultiplier: Float!
   points7d: Float!
