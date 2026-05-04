@@ -16,25 +16,25 @@ export const Multiplier = () => {
     [data?.pointMultipliers],
   )
 
-  const currentFeeUsd = useMemo(() => {
+  const totalVolumeUsd = useMemo(() => {
     return data?.totalVolumeUsd || 0
   }, [data?.totalVolumeUsd])
 
   const currentMultiplier = useMemo(() => {
     if (!pointMultipliers.length) return 0
-    const totalFeesUsd = currentFeeUsd
+    const totalFeesUsd = totalVolumeUsd
     const mulitplier =
       pointMultipliers.findLast((i) => i.thresholdUsd <= totalFeesUsd)
         ?.multiplier || 1
     return mulitplier
-  }, [pointMultipliers, currentFeeUsd])
+  }, [pointMultipliers, totalVolumeUsd])
 
   const nextMultiplier = useMemo(() => {
     if (!pointMultipliers.length) return 0
-    const totalFeesUsd = currentFeeUsd
+    const totalFeesUsd = totalVolumeUsd
     const nextTier = pointMultipliers.find((i) => i.thresholdUsd > totalFeesUsd)
     return nextTier?.multiplier || currentMultiplier
-  }, [pointMultipliers, currentFeeUsd, currentMultiplier])
+  }, [pointMultipliers, totalVolumeUsd, currentMultiplier])
 
   const milestones = pointMultipliers?.slice(1)
   const activeIdx = milestones.findIndex(
@@ -85,27 +85,13 @@ export const Multiplier = () => {
             className="flex items-start gap-1 overflow-x-auto overflow-y-visible w-full hide-scrollbar"
           >
             {milestones.map((i, idx) => {
-              const distance = idx - activeIdx
-              let opacity = 1
-              let scale = 1
-
-              if (distance > 0) {
-                const maxDist = milestones.length - 1 - activeIdx || 1
-                const ratio = distance / maxDist
-                opacity = Math.max(0.25, 1 - ratio * 0.65)
-                scale = Math.max(0.85, 1 - ratio * 0.12)
-              }
-
               return (
                 <div
                   ref={activeIdx === idx ? activeRef : undefined}
                   key={i.multiplier}
                   className="flex flex-col h-full gap-2 transition-all duration-300 w-full"
                   style={{
-                    opacity,
-                    transform: `scale(${scale})`,
-                    transformOrigin:
-                      distance <= 0 ? 'right center' : 'left center',
+                    opacity: activeIdx + 1 >= idx ? 1 : 0.5,
                   }}
                 >
                   <ProgressBar
@@ -117,9 +103,9 @@ export const Multiplier = () => {
                     }
                     end={i.thresholdUsd}
                     current={
-                      currentFeeUsd > i.thresholdUsd
+                      totalVolumeUsd > i.thresholdUsd
                         ? i.thresholdUsd
-                        : currentFeeUsd
+                        : totalVolumeUsd
                     }
                   />
                   <div className="px-2 py-1 rounded-lg gap-1 flex items-center justify-center h-full text-xs text-perps-muted bg-[#EDF0F314]">
