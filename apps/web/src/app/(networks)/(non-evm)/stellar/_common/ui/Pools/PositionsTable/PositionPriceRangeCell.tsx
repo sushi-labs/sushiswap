@@ -1,7 +1,7 @@
 import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/react-v1/solid'
-import { FormattedNumber, SkeletonText, classNames } from '@sushiswap/ui'
+import { SkeletonText, classNames } from '@sushiswap/ui'
 import { usePoolInfo } from '~stellar/_common/lib/hooks'
-import { calculatePriceFromTick } from '~stellar/_common/lib/soroban'
+import { formatPriceBound } from '~stellar/_common/lib/soroban'
 import type { IPositionRowData } from './PositionsTable'
 
 export const PositionPriceRangeCell = ({
@@ -30,7 +30,7 @@ export const PositionPriceRangeCell = ({
           )}
         />
         <span className="whitespace-nowrap text-sm flex items-center gap-1 text-gray-900 dark:text-slate-50">
-          <FormattedNumber number={calculatePriceFromTick(tickLower)} />
+          <span>{formatPriceBound(tickLower, 'lower')}</span>
           {token1.code}
           <div className="flex items-center">
             <ArrowSmLeftIcon
@@ -44,7 +44,7 @@ export const PositionPriceRangeCell = ({
               className="text-gray-500 dark:text-slate-500 ml-[-7px]"
             />
           </div>
-          <FormattedNumber number={calculatePriceFromTick(tickUpper)} />
+          <span>{formatPriceBound(tickUpper, 'upper')}</span>
 
           {token1.code}
         </span>
@@ -54,7 +54,7 @@ export const PositionPriceRangeCell = ({
         {isPendingPoolInfo || !poolInfo ? (
           <SkeletonText />
         ) : (
-          <FormattedNumber number={calculatePriceFromTick(poolInfo.tick)} />
+          <span>{formatPriceBound(poolInfo.tick, 'upper')}</span>
         )}
         {token1.code} per {token0.code}{' '}
       </span>
