@@ -110,7 +110,7 @@ export const InputWithKeyboard = ({
             maxDecimals={2}
             data-state={isLoading ? 'inactive' : 'active'}
             className={classNames(
-              'p-0 py-1 !text-5xl font-medium !text-center',
+              'p-0 py-1 !text-5xl font-medium !text-center !text-perps-muted',
             )}
             ref={widthRef}
           />
