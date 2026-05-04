@@ -1,66 +1,68 @@
-export const NoviceIcon = () => {
+import type { IconComponent } from '@sushiswap/ui'
+
+export const NoviceIcon: IconComponent = (props) => {
   return (
     <svg
-      width="77"
-      height="71"
-      viewBox="0 0 77 71"
+      viewBox="0 0 67 67"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      {...props}
     >
-      <g filter="url(#filter0_n_2158_11593)">
-        <g clipPath="url(#clip0_2158_11593)">
+      <g filter="url(#filter0_dn_2465_16307)">
+        <g clipPath="url(#clip0_2465_16307)">
           <rect
-            width="88"
-            height="88"
-            rx="44"
-            fill="url(#paint0_linear_2158_11593)"
+            x="3.33398"
+            width="60"
+            height="60"
+            rx="30"
+            fill="url(#paint0_linear_2465_16307)"
           />
-          <g filter="url(#filter1_iin_2158_11593)">
+          <g filter="url(#filter1_iin_2465_16307)">
             <circle
-              cx="44"
-              cy="44"
-              r="41.8"
-              stroke="url(#paint1_linear_2158_11593)"
-              strokeWidth="4.4"
+              cx="33.334"
+              cy="30"
+              r="28.5"
+              stroke="url(#paint1_linear_2465_16307)"
+              strokeWidth="3"
             />
           </g>
-          <g clipPath="url(#clip1_2158_11593)">
-            <g filter="url(#filter2_di_2158_11593)">
+          <g clipPath="url(#clip1_2465_16307)">
+            <g filter="url(#filter2_di_2465_16307)">
               <path
-                d="M52.7778 30.0584L56.2926 17.8007L45.7355 14.7734L42.2206 27.0312C41.578 29.2722 39.2082 29.8058 39.2082 29.8058L53.8611 34.0074C53.8611 34.0074 52.1352 32.2994 52.7778 30.0584Z"
-                fill="url(#paint2_linear_2158_11593)"
+                d="M39.3167 20.4943L41.7132 12.1368L34.5151 10.0728L32.1186 18.4303C31.6805 19.9583 30.0647 20.3221 30.0647 20.3221L40.0554 23.1869C40.0554 23.1869 38.8786 22.0223 39.3167 20.4943Z"
+                fill="url(#paint2_linear_2465_16307)"
               />
               <path
-                d="M33.4059 57.7717L29.8918 70.0268L40.449 73.054L43.9631 60.799C44.6054 58.5588 46.9745 58.0241 46.9745 58.0241L32.3215 53.8224C32.3215 53.8224 34.0482 55.5317 33.4059 57.7717Z"
-                fill="url(#paint3_linear_2158_11593)"
+                d="M26.1086 39.3898L23.7126 47.7455L30.9107 49.8095L33.3067 41.4538C33.7446 39.9264 35.3599 39.5618 35.3599 39.5618L25.3693 36.6971C25.3693 36.6971 26.5465 37.8625 26.1086 39.3898Z"
+                fill="url(#paint3_linear_2465_16307)"
               />
               <path
-                d="M66.8221 32.7157C68.6076 32.1733 71.449 31.1597 72.9239 28.6131C70.2798 27.3157 67.3551 28.0555 65.5695 28.5977L62.2775 29.5984C60.4916 30.1386 57.6498 31.154 56.1749 33.7007C58.8176 34.9957 61.7434 34.2594 63.5261 33.7163L66.8221 32.7157Z"
-                fill="url(#paint4_linear_2158_11593)"
+                d="M48.8924 22.3061C50.1098 21.9363 52.0471 21.2452 53.0527 19.5089C51.2499 18.6243 49.2558 19.1287 48.0384 19.4984L45.7938 20.1807C44.5761 20.549 42.6385 21.2413 41.6329 22.9777C43.4347 23.8607 45.4296 23.3587 46.6451 22.9883L48.8924 22.3061Z"
+                fill="url(#paint4_linear_2465_16307)"
               />
               <path
-                d="M67.1864 37.0179L64.7599 36.1826C63.4456 35.7308 61.2895 35.0993 59.2857 35.9929C60.3169 37.9297 62.4011 38.763 63.7156 39.2138L66.1422 40.0493C67.4559 40.5028 69.6117 41.1321 71.6162 40.2387C70.5878 38.3028 68.5004 37.4706 67.1864 37.0179Z"
-                fill="url(#paint5_linear_2158_11593)"
+                d="M49.1408 25.2394L47.4863 24.6699C46.5902 24.3618 45.1202 23.9313 43.7539 24.5406C44.457 25.8611 45.878 26.4293 46.7743 26.7367L48.4288 27.3063C49.3245 27.6155 50.7944 28.0446 52.1611 27.4355C51.4599 26.1155 50.0367 25.5481 49.1408 25.2394Z"
+                fill="url(#paint5_linear_2465_16307)"
               />
               <path
-                d="M61.9903 27.0672L63.5413 25.0238C64.3826 23.9143 65.6531 22.0629 65.432 19.8807C63.2696 20.2553 61.828 21.9768 60.9875 23.0835L59.4373 25.1271C58.5969 26.2338 57.3264 28.0852 57.5466 30.2671C59.7082 29.8953 61.1506 28.171 61.9903 27.0672Z"
-                fill="url(#paint6_linear_2158_11593)"
+                d="M45.5979 18.4548L46.6555 17.0617C47.2291 16.3052 48.0953 15.0428 47.9446 13.555C46.4702 13.8104 45.4873 14.9841 44.9143 15.7387L43.8573 17.1321C43.2843 17.8866 42.418 19.149 42.5682 20.6366C44.042 20.3831 45.0255 19.2075 45.5979 18.4548Z"
+                fill="url(#paint6_linear_2465_16307)"
               />
               <path
-                d="M28.8237 41.4439L26.3316 39.2035C24.9839 37.9894 22.7089 36.132 19.843 36.1864C20.0943 39.0398 22.1818 41.1035 23.5321 42.3184L26.0242 44.5557C27.3739 45.7733 29.6503 47.6293 32.5148 47.5764C32.2641 44.7241 30.1749 42.656 28.8237 41.4439Z"
-                fill="url(#paint7_linear_2158_11593)"
+                d="M22.9844 28.2572L21.2852 26.7296C20.3664 25.9018 18.8152 24.6354 16.8612 24.6725C17.0325 26.618 18.4558 28.0251 19.3765 28.8534L21.0756 30.3788C21.9959 31.209 23.548 32.4745 25.501 32.4384C25.3301 30.4937 23.9056 29.0836 22.9844 28.2572Z"
+                fill="url(#paint7_linear_2465_16307)"
               />
               <path
-                d="M30.2595 39.1739C30.5438 40.4968 31.1069 42.6122 32.8567 43.8282C33.9543 41.9979 33.5946 39.8398 33.3112 38.5172L32.7866 36.077C32.5004 34.7535 31.9416 32.6405 30.1875 31.4192C29.0919 33.2531 29.4515 35.411 29.7324 36.7322L30.2595 39.1739Z"
-                fill="url(#paint8_linear_2158_11593)"
+                d="M23.9633 26.7094C24.1572 27.6114 24.5411 29.0537 25.7342 29.8828C26.4825 28.6349 26.2373 27.1635 26.044 26.2617L25.6864 24.5979C25.4912 23.6955 25.1102 22.2548 23.9142 21.4221C23.1673 22.6725 23.4124 24.1439 23.6039 25.0446L23.9633 26.7094Z"
+                fill="url(#paint8_linear_2465_16307)"
               />
               <path
-                d="M24.0597 46.0703L21.5763 45.8074C20.2304 45.6633 18.0447 45.5374 16.3398 46.8212C17.7403 48.4337 19.9015 48.7683 21.248 48.9104L23.7306 49.1761C25.0731 49.3173 27.2556 49.4442 28.9641 48.1615C27.5666 46.5466 25.4044 46.215 24.0597 46.0703Z"
-                fill="url(#paint9_linear_2158_11593)"
+                d="M19.7362 31.4115L18.043 31.2323C17.1253 31.134 15.6351 31.0482 14.4727 31.9235C15.4275 33.023 16.9011 33.2511 17.8191 33.348L19.5118 33.5291C20.4272 33.6254 21.9152 33.7119 23.0801 32.8374C22.1273 31.7363 20.653 31.5102 19.7362 31.4115Z"
+                fill="url(#paint9_linear_2465_16307)"
               />
               <path
-                d="M53.139 36.5259L38.486 32.3242C38.486 32.3242 40.2127 34.0335 39.5704 36.2736L36.0561 48.5295C35.4137 50.7695 33.0437 51.3041 33.0437 51.3041L47.6966 55.5057C47.6966 55.5057 45.9709 53.7967 46.6132 51.5567L50.1276 39.3008C50.7699 37.0607 53.139 36.5259 53.139 36.5259ZM39.5292 49.7552C39.4086 50.1758 38.97 50.4174 38.552 50.2975C38.1314 50.1769 37.8874 49.7396 38.0081 49.319L41.568 36.9041C41.6883 36.4843 42.1269 36.2428 42.5476 36.3634C42.9655 36.4832 43.2095 36.9204 43.0891 37.3403L39.5292 49.7552Z"
-                fill="url(#paint10_linear_2158_11593)"
+                d="M39.563 24.904L29.5723 22.0392C29.5723 22.0392 30.7496 23.2046 30.3117 24.7319L27.9155 33.0882C27.4776 34.6155 25.8616 34.98 25.8616 34.98L35.8523 37.8448C35.8523 37.8448 34.6757 36.6795 35.1136 35.1522L37.5097 26.7959C37.9477 25.2686 39.563 24.904 39.563 24.904ZM30.2836 33.9239C30.2013 34.2107 29.9023 34.3754 29.6173 34.2937C29.3305 34.2115 29.1642 33.9133 29.2464 33.6265L31.6737 25.1618C31.7557 24.8756 32.0548 24.7109 32.3416 24.7932C32.6265 24.8749 32.7929 25.1729 32.7108 25.4592L30.2836 33.9239Z"
+                fill="url(#paint10_linear_2465_16307)"
               />
             </g>
           </g>
@@ -68,15 +70,33 @@ export const NoviceIcon = () => {
       </g>
       <defs>
         <filter
-          id="filter0_n_2158_11593"
-          x="0"
+          id="filter0_dn_2465_16307"
+          x="0.000651121"
           y="0"
-          width="88"
-          height="88"
+          width="66.6667"
+          height="66.6667"
           filterUnits="userSpaceOnUse"
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feColorMatrix
+            in="SourceAlpha"
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+            result="hardAlpha"
+          />
+          <feOffset dy="3.33333" />
+          <feGaussianBlur stdDeviation="1.66667" />
+          <feComposite in2="hardAlpha" operator="out" />
+          <feColorMatrix
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
+          />
+          <feBlend
+            mode="normal"
+            in2="BackgroundImageFix"
+            result="effect1_dropShadow_2465_16307"
+          />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -85,7 +105,7 @@ export const NoviceIcon = () => {
           />
           <feTurbulence
             type="fractalNoise"
-            baseFrequency="3.0303030014038086 3.0303030014038086"
+            baseFrequency="4.4444441795349121 4.4444441795349121"
             stitchTiles="stitch"
             numOctaves="3"
             result="noise"
@@ -115,17 +135,23 @@ export const NoviceIcon = () => {
             in="color1Flood"
             result="color1"
           />
-          <feMerge result="effect1_noise_2158_11593">
+          <feMerge result="effect2_noise_2465_16307">
             <feMergeNode in="shape" />
             <feMergeNode in="color1" />
           </feMerge>
+          <feBlend
+            mode="normal"
+            in="effect2_noise_2465_16307"
+            in2="effect1_dropShadow_2465_16307"
+            result="effect2_noise_2465_16307"
+          />
         </filter>
         <filter
-          id="filter1_iin_2158_11593"
-          x="0"
-          y="-4.4"
-          width="88"
-          height="92.4"
+          id="filter1_iin_2465_16307"
+          x="3.33398"
+          y="-3"
+          width="60"
+          height="63"
           filterUnits="userSpaceOnUse"
           colorInterpolationFilters="sRGB"
         >
@@ -143,7 +169,7 @@ export const NoviceIcon = () => {
             result="hardAlpha"
           />
           <feOffset />
-          <feGaussianBlur stdDeviation="0.55" />
+          <feGaussianBlur stdDeviation="0.375" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
           <feColorMatrix
             type="matrix"
@@ -152,7 +178,7 @@ export const NoviceIcon = () => {
           <feBlend
             mode="normal"
             in2="shape"
-            result="effect1_innerShadow_2158_11593"
+            result="effect1_innerShadow_2465_16307"
           />
           <feColorMatrix
             in="SourceAlpha"
@@ -160,8 +186,8 @@ export const NoviceIcon = () => {
             values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
             result="hardAlpha"
           />
-          <feOffset dy="-4.4" />
-          <feGaussianBlur stdDeviation="2.2" />
+          <feOffset dy="-3" />
+          <feGaussianBlur stdDeviation="1.5" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
           <feColorMatrix
             type="matrix"
@@ -169,12 +195,12 @@ export const NoviceIcon = () => {
           />
           <feBlend
             mode="normal"
-            in2="effect1_innerShadow_2158_11593"
-            result="effect2_innerShadow_2158_11593"
+            in2="effect1_innerShadow_2465_16307"
+            result="effect2_innerShadow_2465_16307"
           />
           <feTurbulence
             type="fractalNoise"
-            baseFrequency="9.0909080505371094 9.0909080505371094"
+            baseFrequency="13.333331108093262 13.333331108093262"
             stitchTiles="stitch"
             numOctaves="3"
             result="noise"
@@ -193,7 +219,7 @@ export const NoviceIcon = () => {
           </feComponentTransfer>
           <feComposite
             operator="in"
-            in2="effect2_innerShadow_2158_11593"
+            in2="effect2_innerShadow_2465_16307"
             in="coloredNoise1"
             result="noise1Clipped"
           />
@@ -204,17 +230,17 @@ export const NoviceIcon = () => {
             in="color1Flood"
             result="color1"
           />
-          <feMerge result="effect3_noise_2158_11593">
-            <feMergeNode in="effect2_innerShadow_2158_11593" />
+          <feMerge result="effect3_noise_2465_16307">
+            <feMergeNode in="effect2_innerShadow_2465_16307" />
             <feMergeNode in="color1" />
           </feMerge>
         </filter>
         <filter
-          id="filter2_di_2158_11593"
-          x="16.3398"
-          y="14.7734"
-          width="57.584"
-          height="59.3808"
+          id="filter2_di_2465_16307"
+          x="14.4727"
+          y="10.0728"
+          width="39.2619"
+          height="40.4868"
           filterUnits="userSpaceOnUse"
           colorInterpolationFilters="sRGB"
         >
@@ -225,7 +251,7 @@ export const NoviceIcon = () => {
             values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
             result="hardAlpha"
           />
-          <feOffset dx="1" dy="1.1" />
+          <feOffset dx="0.681818" dy="0.75" />
           <feComposite in2="hardAlpha" operator="out" />
           <feColorMatrix
             type="matrix"
@@ -234,12 +260,12 @@ export const NoviceIcon = () => {
           <feBlend
             mode="normal"
             in2="BackgroundImageFix"
-            result="effect1_dropShadow_2158_11593"
+            result="effect1_dropShadow_2465_16307"
           />
           <feBlend
             mode="normal"
             in="SourceGraphic"
-            in2="effect1_dropShadow_2158_11593"
+            in2="effect1_dropShadow_2465_16307"
             result="shape"
           />
           <feColorMatrix
@@ -249,7 +275,7 @@ export const NoviceIcon = () => {
             result="hardAlpha"
           />
           <feOffset />
-          <feGaussianBlur stdDeviation="2" />
+          <feGaussianBlur stdDeviation="1.36364" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
           <feColorMatrix
             type="matrix"
@@ -258,15 +284,15 @@ export const NoviceIcon = () => {
           <feBlend
             mode="normal"
             in2="shape"
-            result="effect2_innerShadow_2158_11593"
+            result="effect2_innerShadow_2465_16307"
           />
         </filter>
         <linearGradient
-          id="paint0_linear_2158_11593"
-          x1="0"
+          id="paint0_linear_2465_16307"
+          x1="3.33398"
           y1="0"
-          x2="88"
-          y2="88"
+          x2="63.334"
+          y2="60"
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="#22C55E" />
@@ -274,11 +300,11 @@ export const NoviceIcon = () => {
           <stop offset="1" stopColor="#22C55E" />
         </linearGradient>
         <linearGradient
-          id="paint1_linear_2158_11593"
-          x1="13.75"
-          y1="13.2"
-          x2="75.9"
-          y2="74.25"
+          id="paint1_linear_2465_16307"
+          x1="12.709"
+          y1="9"
+          x2="55.084"
+          y2="50.625"
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="#15803D" />
@@ -286,11 +312,11 @@ export const NoviceIcon = () => {
           <stop offset="1" stopColor="#14532D" />
         </linearGradient>
         <linearGradient
-          id="paint2_linear_2158_11593"
-          x1="24.3826"
-          y1="11.1013"
-          x2="71.5694"
-          y2="73.1102"
+          id="paint2_linear_2465_16307"
+          x1="19.9563"
+          y1="7.56905"
+          x2="52.1292"
+          y2="49.8478"
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="#052E16" />
@@ -298,11 +324,11 @@ export const NoviceIcon = () => {
           <stop offset="1" stopColor="#052E16" />
         </linearGradient>
         <linearGradient
-          id="paint3_linear_2158_11593"
-          x1="24.3826"
-          y1="11.1013"
-          x2="71.5694"
-          y2="73.1102"
+          id="paint3_linear_2465_16307"
+          x1="19.9563"
+          y1="7.56905"
+          x2="52.1292"
+          y2="49.8478"
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="#052E16" />
@@ -310,11 +336,11 @@ export const NoviceIcon = () => {
           <stop offset="1" stopColor="#052E16" />
         </linearGradient>
         <linearGradient
-          id="paint4_linear_2158_11593"
-          x1="24.3826"
-          y1="11.1013"
-          x2="71.5694"
-          y2="73.1102"
+          id="paint4_linear_2465_16307"
+          x1="19.9563"
+          y1="7.56905"
+          x2="52.1292"
+          y2="49.8478"
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="#052E16" />
@@ -322,11 +348,11 @@ export const NoviceIcon = () => {
           <stop offset="1" stopColor="#052E16" />
         </linearGradient>
         <linearGradient
-          id="paint5_linear_2158_11593"
-          x1="24.3826"
-          y1="11.1013"
-          x2="71.5694"
-          y2="73.1102"
+          id="paint5_linear_2465_16307"
+          x1="19.9563"
+          y1="7.56905"
+          x2="52.1292"
+          y2="49.8478"
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="#052E16" />
@@ -334,11 +360,11 @@ export const NoviceIcon = () => {
           <stop offset="1" stopColor="#052E16" />
         </linearGradient>
         <linearGradient
-          id="paint6_linear_2158_11593"
-          x1="24.3826"
-          y1="11.1013"
-          x2="71.5694"
-          y2="73.1102"
+          id="paint6_linear_2465_16307"
+          x1="19.9563"
+          y1="7.56905"
+          x2="52.1292"
+          y2="49.8478"
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="#052E16" />
@@ -346,11 +372,11 @@ export const NoviceIcon = () => {
           <stop offset="1" stopColor="#052E16" />
         </linearGradient>
         <linearGradient
-          id="paint7_linear_2158_11593"
-          x1="24.3826"
-          y1="11.1013"
-          x2="71.5694"
-          y2="73.1102"
+          id="paint7_linear_2465_16307"
+          x1="19.9563"
+          y1="7.56905"
+          x2="52.1292"
+          y2="49.8478"
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="#052E16" />
@@ -358,11 +384,11 @@ export const NoviceIcon = () => {
           <stop offset="1" stopColor="#052E16" />
         </linearGradient>
         <linearGradient
-          id="paint8_linear_2158_11593"
-          x1="24.3826"
-          y1="11.1013"
-          x2="71.5694"
-          y2="73.1102"
+          id="paint8_linear_2465_16307"
+          x1="19.9563"
+          y1="7.56905"
+          x2="52.1292"
+          y2="49.8478"
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="#052E16" />
@@ -370,11 +396,11 @@ export const NoviceIcon = () => {
           <stop offset="1" stopColor="#052E16" />
         </linearGradient>
         <linearGradient
-          id="paint9_linear_2158_11593"
-          x1="24.3826"
-          y1="11.1013"
-          x2="71.5694"
-          y2="73.1102"
+          id="paint9_linear_2465_16307"
+          x1="19.9563"
+          y1="7.56905"
+          x2="52.1292"
+          y2="49.8478"
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="#052E16" />
@@ -382,26 +408,26 @@ export const NoviceIcon = () => {
           <stop offset="1" stopColor="#052E16" />
         </linearGradient>
         <linearGradient
-          id="paint10_linear_2158_11593"
-          x1="24.3826"
-          y1="11.1013"
-          x2="71.5694"
-          y2="73.1102"
+          id="paint10_linear_2465_16307"
+          x1="19.9563"
+          y1="7.56905"
+          x2="52.1292"
+          y2="49.8478"
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="#052E16" />
           <stop offset="0.5" stopColor="#22C55E" />
           <stop offset="1" stopColor="#052E16" />
         </linearGradient>
-        <clipPath id="clip0_2158_11593">
-          <rect width="88" height="88" rx="44" fill="white" />
+        <clipPath id="clip0_2465_16307">
+          <rect x="3.33398" width="60" height="60" rx="30" fill="white" />
         </clipPath>
-        <clipPath id="clip1_2158_11593">
+        <clipPath id="clip1_2465_16307">
           <rect
-            width="58"
-            height="58"
+            width="39.5454"
+            height="39.5454"
             fill="white"
-            transform="translate(24 8) rotate(16)"
+            transform="translate(19.6973 5.45508) rotate(16)"
           />
         </clipPath>
       </defs>

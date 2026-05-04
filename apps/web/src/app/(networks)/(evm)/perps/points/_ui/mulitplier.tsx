@@ -1,6 +1,6 @@
 import { Progress, SkeletonBox, SkeletonText } from '@sushiswap/ui'
 import { useEffect, useMemo, useRef } from 'react'
-import { currencyFormatter, useSushiPointsOverview } from 'src/lib/perps'
+import { useSushiPointsOverview } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { formatUSD } from 'sushi'
 import { PerpsCard } from '~evm/perps/_ui/_common'
@@ -16,20 +16,27 @@ export const Multiplier = () => {
     [data?.pointMultipliers],
   )
 
-  const currentMultiplier = useMemo(() => {
-    if (!pointMultipliers.length) return 0
-    const totalFeesUsd = data?.totalFeesUsd || 0
-    const mulitplier =
-      pointMultipliers.findLast((i) => i.thresholdUsd <= totalFeesUsd)
-        ?.multiplier || 1
-    return mulitplier
-  }, [pointMultipliers, data?.totalFeesUsd])
-
   const currentFeeUsd = useMemo(() => {
     return data?.totalFeesUsd || 0
   }, [data?.totalFeesUsd])
 
-  const milestones = pointMultipliers.slice(1)
+  const currentMultiplier = useMemo(() => {
+    if (!pointMultipliers.length) return 0
+    const totalFeesUsd = currentFeeUsd
+    const mulitplier =
+      pointMultipliers.findLast((i) => i.thresholdUsd <= totalFeesUsd)
+        ?.multiplier || 1
+    return mulitplier
+  }, [pointMultipliers, currentFeeUsd])
+
+  const nextMultiplier = useMemo(() => {
+    if (!pointMultipliers.length) return 0
+    const totalFeesUsd = currentFeeUsd
+    const nextTier = pointMultipliers.find((i) => i.thresholdUsd > totalFeesUsd)
+    return nextTier?.multiplier || currentMultiplier
+  }, [pointMultipliers, currentFeeUsd, currentMultiplier])
+
+  const milestones = pointMultipliers?.slice(1)
   const activeIdx = milestones.findIndex(
     (m) => m.multiplier === currentMultiplier,
   )
@@ -62,12 +69,12 @@ export const Multiplier = () => {
             <SkeletonText fontSize="xl" />
           </div>
         ) : (
-          <div className="font-medium text-lg md:text-2xl text-perps-muted">
-            {currencyFormatter.format(currentFeeUsd)}
+          <div className="bg-gradient-to-r w-fit from-[#27B0E6] from-2% via-[#7D8ACA] via-5% to-[#FA52A0] to-100% text-transparent bg-clip-text text-7xl">
+            {currentMultiplier === 1 ? 1.069 : currentMultiplier}x
           </div>
         )}
       </div>
-      <div className="flex gap-1">
+      <div className="flex gap-1 max-w-[90vw]">
         {isLoading ? (
           <div className="w-full h-[20px]">
             <SkeletonBox className="w-full h-full" />
@@ -75,19 +82,14 @@ export const Multiplier = () => {
         ) : (
           <div
             ref={scrollRef}
-            className="flex items-center gap-1 overflow-x-auto overflow-y-visible w-full hide-scrollbar"
+            className="flex items-start gap-1 overflow-x-auto overflow-y-visible w-full hide-scrollbar"
           >
             {milestones.map((i, idx) => {
               const distance = idx - activeIdx
               let opacity = 1
               let scale = 1
 
-              if (distance < 0) {
-                const maxDist = activeIdx || 1
-                const ratio = Math.abs(distance) / maxDist
-                opacity = Math.max(0.25, 1 - ratio * 0.65)
-                scale = Math.max(0.85, 1 - ratio * 0.12)
-              } else if (distance > 0) {
+              if (distance > 0) {
                 const maxDist = milestones.length - 1 - activeIdx || 1
                 const ratio = distance / maxDist
                 opacity = Math.max(0.25, 1 - ratio * 0.65)
@@ -98,7 +100,7 @@ export const Multiplier = () => {
                 <div
                   ref={activeIdx === idx ? activeRef : undefined}
                   key={i.multiplier}
-                  className="flex flex-col gap-2 transition-all duration-300 w-full"
+                  className="flex flex-col h-full gap-2 transition-all duration-300 w-full"
                   style={{
                     opacity,
                     transform: `scale(${scale})`,
@@ -122,10 +124,10 @@ export const Multiplier = () => {
                   />
                   <div className="px-2 py-1 rounded-lg gap-1 flex items-center justify-center h-full text-xs text-perps-muted bg-[#EDF0F314]">
                     {formatUSD(i.thresholdUsd)?.replace('.00', '')}
-                    {i.multiplier === currentMultiplier ? (
+                    {i.multiplier === nextMultiplier ? (
                       <div className="bg-[#EDF0F314] rounded-lg p-1">
                         <span className="bg-gradient-to-r from-[#27B0E6] from-4% via-[#7D8ACA] via-5% to-[#FA52A0] to-100% text-transparent bg-clip-text">
-                          {i.multiplier}X
+                          {i.multiplier}x
                         </span>
                       </div>
                     ) : null}

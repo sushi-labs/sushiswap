@@ -39,8 +39,8 @@ export const XDEFIWalletIcon: IconComponent = (props) => {
           y2="19.3182"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#4476F2" />
-          <stop offset="1" stop-color="#2041E0" />
+          <stop stopColor="#4476F2" />
+          <stop offset="1" stopColor="#2041E0" />
         </linearGradient>
       </defs>
     </svg>

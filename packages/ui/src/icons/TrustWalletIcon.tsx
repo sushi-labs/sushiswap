@@ -17,7 +17,7 @@ export const TrustWalletIcon: IconComponent = (props) => {
       <path
         d="M512.3 215C615.619 301.288 734.101 295.966 767.953 295.966C760.548 786.707 704.128 689.395 512.3 827C320.472 689.395 264.405 786.707 257 295.966C290.499 295.966 408.981 301.288 512.3 215Z"
         stroke="#3375BB"
-        stroke-width="70"
+        strokeWidth="70"
         stroke-miterlimit="10"
         stroke-linecap="round"
         stroke-linejoin="round"
