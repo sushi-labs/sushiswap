@@ -150,6 +150,7 @@ export const createChartWidgetOptions = ({
   enabled_features: [
     'hide_unresolved_symbols_in_legend',
     'hide_main_series_symbol_from_indicator_legend',
+    'iframe_loading_compatibility_mode',
   ],
   charts_storage_url: widgetProps.charts_storage_url,
   charts_storage_api_version: widgetProps.charts_storage_api_version,
