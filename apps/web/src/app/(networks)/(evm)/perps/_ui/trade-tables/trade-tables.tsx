@@ -104,12 +104,15 @@ export const TradeTables = ({ className }: { className?: string }) => {
         value={activeTab}
         onValueChange={(val) => setActiveTab(val as TradeTablesTabValue)}
       >
-        <div className="flex flex-wrap justify-between p-1 gap-2 hide-scrollbar overflow-x-auto">
-          <PerpsCard className="hide-scrollbar overflow-x-auto" rounded="full">
+        <div className="flex flex-wrap justify-between p-1 gap-2 ">
+          <PerpsCard rounded="full">
             <TabsList
               className={classNames(
-                '!px-0.5 !h-8 !bg-perps-muted/[.02] !rounded-full !border-transparent',
+                '!px-0.5 !h-8 !bg-perps-muted/[.02] !rounded-full !border-transparent hide-scrollbar overflow-x-auto !justify-start',
               )}
+              style={{
+                maxWidth: `calc(100vw - 36px)`,
+              }}
             >
               {tabNameRewrite?.map((tab) => (
                 <TabsTrigger
