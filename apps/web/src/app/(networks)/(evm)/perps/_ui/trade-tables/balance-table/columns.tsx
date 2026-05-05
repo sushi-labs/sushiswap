@@ -280,7 +280,7 @@ export const TRANSFER_COLUMN = (
           <HoverCardTrigger
             asChild
             tabIndex={0}
-            className="opacity-50 cursor-not-allowed"
+            className="opacity-50 cursor-not-allowed  lg:whitespace-nowrap"
           >
             <TableButton>
               Transfer to {isSpotUSDC ? 'Perps' : 'Spot'}

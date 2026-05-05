@@ -108,10 +108,11 @@ export const TradeTables = ({ className }: { className?: string }) => {
           <PerpsCard rounded="full">
             <TabsList
               className={classNames(
-                '!px-0.5 !h-8 !bg-perps-muted/[.02] !rounded-full !border-transparent hide-scrollbar overflow-x-auto !justify-start',
+                '!px-0.5 !h-8 !bg-perps-muted/[.02] !max-w-[calc(100vw-36px)] hide-scrollbar overflow-x-auto overflow-y-hidden !rounded-full !border-transparent !justify-start',
               )}
               style={{
-                maxWidth: `calc(100vw - 36px)`,
+                // @dev: tailwind max-w not working on safari mobile
+                maxWidth: 'calc(100vw - 20px)',
               }}
             >
               {tabNameRewrite?.map((tab) => (
@@ -134,7 +135,8 @@ export const TradeTables = ({ className }: { className?: string }) => {
               ))}
             </TabsList>
           </PerpsCard>
-          <div className="items-center gap-2 whitespace-nowrap flex lg:max-w-fit justify-between w-full">
+
+          <div className="items-center gap-2 whitespace-nowrap flex lg:max-w-fit justify-between w-full px-1">
             {(!isLg && activeTab === 'twap') ||
             activeTab === 'deposits-withdrawals' ? null : (
               <TradeFilter />
