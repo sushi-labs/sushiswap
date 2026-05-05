@@ -12,8 +12,6 @@ import { useMemo } from 'react'
 import {
   type UserPositionsItemType,
   currencyFormatter,
-  formatPrice,
-  formatSize,
   getExistingPositionTpSlOrders,
   getSignForValue,
   getTextColorClass,
@@ -105,7 +103,6 @@ export const SIZE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     const assetSymbol =
       props.row.original.assetSymbol?.split(':')?.[1] ??
       props.row.original.assetSymbol
-    const val = formatSize(size, props.row.original.decimals || 6)
 
     return (
       <span
@@ -114,7 +111,11 @@ export const SIZE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
           getTextColorClass(size),
         )}
       >
-        {perpsNumberFormatter({ value: val })} {assetSymbol}
+        {perpsNumberFormatter({
+          value: size,
+          maxFraxDigits: props.row.original.decimals || 6,
+        })}{' '}
+        {assetSymbol}
       </span>
     )
   },
@@ -154,14 +155,13 @@ export const ENTRY_PRICE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     Number.parseFloat(rowB.position.entryPx),
   cell: (props) => {
     const entryPrice = props.row.original.position.entryPx
-    const val = formatPrice(
-      entryPrice,
-      props.row.original.decimals || 6,
-      'perp',
-    )
+
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {perpsNumberFormatter({ value: val })}
+        {perpsNumberFormatter({
+          value: entryPrice,
+          maxFraxDigits: props.row.original.decimals || 6,
+        })}
       </span>
     )
   },
@@ -178,10 +178,12 @@ export const MARK_PRICE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     Number.parseFloat(rowA.markPrice) - Number.parseFloat(rowB.markPrice),
   cell: (props) => {
     const markPrice = props.row.original.markPrice
-    const val = formatPrice(markPrice, props.row.original.decimals || 6, 'perp')
     return (
       <span className="font-medium lg:whitespace-nowrap">
-        {perpsNumberFormatter({ value: val })}
+        {perpsNumberFormatter({
+          value: markPrice,
+          maxFraxDigits: props.row.original.decimals || 6,
+        })}
       </span>
     )
   },
@@ -274,18 +276,15 @@ export const LIQUIDATION_PRICE_COLUMN: ColumnDef<
     Number.parseFloat(rowB.position.liquidationPx ?? '0'),
   cell: (props) => {
     const liquidationPrice = props.row.original.position.liquidationPx
-    const val = formatPrice(
-      liquidationPrice || '0',
-      props.row.original.decimals || 6,
-      'perp',
-    )
+
     if (!liquidationPrice) {
       return <span className="font-medium lg:whitespace-nowrap">N/A</span>
     }
     return (
       <span className="font-medium lg:whitespace-nowrap">
         {perpsNumberFormatter({
-          value: val,
+          value: liquidationPrice,
+          maxFraxDigits: props.row.original.decimals || 6,
         })}
       </span>
     )
