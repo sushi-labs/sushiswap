@@ -9,14 +9,7 @@ import { useAssetState } from '../asset-state-provider'
 
 export const MarginRequiredStat = () => {
   const {
-    state: {
-      size,
-      asset,
-      markPrice,
-      currentLeverageForAsset,
-      tradeType,
-      limitPrice,
-    },
+    state: { size, asset, markPrice, currentLeverageForAsset, tradeType },
   } = useAssetState()
   const { data: scaleOrderData } = useScaleOrders()
 
@@ -24,7 +17,7 @@ export const MarginRequiredStat = () => {
     if (!asset || !markPrice || !size.base) {
       return null
     }
-    let price = markPrice
+
     if (tradeType === 'scale' && scaleOrderData?.orders) {
       const value = scaleOrderData.totalUsdcValue / currentLeverageForAsset
 
@@ -34,13 +27,10 @@ export const MarginRequiredStat = () => {
         maxFraxDigits: 2,
       })
     }
-    if (tradeType.toLowerCase().includes('limit') && limitPrice) {
-      price = limitPrice
-    }
 
     const res = calculateMarginRequired({
       baseSize: size.base,
-      price,
+      price: markPrice,
       leverage: currentLeverageForAsset,
       decimals: asset.formatParseDecimals,
     })
@@ -56,7 +46,6 @@ export const MarginRequiredStat = () => {
     tradeType,
     size.base,
     markPrice,
-    limitPrice,
     currentLeverageForAsset,
     scaleOrderData,
   ])
