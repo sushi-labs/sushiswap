@@ -93,6 +93,7 @@ interface PerpsDialogContentProps
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
     VariantProps<typeof perpsDialogVariants> {
   hideClose?: boolean
+  wrapperClassName?: string
 }
 
 const PerpsDialogContent = React.forwardRef<
@@ -100,7 +101,14 @@ const PerpsDialogContent = React.forwardRef<
   PerpsDialogContentProps
 >(
   (
-    { className, hideClose: _hideClose = false, variant, children, ...props },
+    {
+      className,
+      hideClose: _hideClose = false,
+      variant,
+      children,
+      wrapperClassName,
+      ...props
+    },
     ref,
   ) => {
     const { isLg } = useBreakpoint('lg')
@@ -113,7 +121,10 @@ const PerpsDialogContent = React.forwardRef<
           {...props}
         >
           <div
-            className={perpsDialogWrapperVariants({ variant })}
+            className={perpsDialogWrapperVariants({
+              variant,
+              className: wrapperClassName ?? '',
+            })}
             style={{
               boxShadow: `inset 1.5px 2px 1px -2px rgba(255, 255, 255, 0.3), inset -1.5px -1.5px 1px -2px rgba(255, 255, 255, 0.225)`,
             }}

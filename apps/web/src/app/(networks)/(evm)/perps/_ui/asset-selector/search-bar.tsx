@@ -27,7 +27,7 @@ export const SearchBar = () => {
       <div className="absolute right-2 top-1/2 -translate-y-1/2 lg:block hidden">
         <CommandK />
       </div>
-      <div className="absolute right-2 top-1/2 -translate-y-1/2 lg:hidden block">
+      <div className="absolute right-0 top-1/2 -translate-y-1/2 lg:hidden block">
         <IconButton
           icon={XIcon}
           name="close assets"

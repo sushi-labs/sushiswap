@@ -117,6 +117,7 @@ export function DataTableVirtual<TData, TValue>({
     getScrollElement: () => parentRef.current,
     estimateSize: () => estimateSize,
     overscan,
+    enabled: true,
   })
 
   return (

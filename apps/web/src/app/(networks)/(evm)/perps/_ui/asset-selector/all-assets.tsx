@@ -102,8 +102,9 @@ export const AllAssets = ({
       columns={COLUMNS}
       data={filtered}
       thClassName="!h-8 pl-0"
+      trClassName="transform-gpu"
       hideScrollbar={true}
-      overscan={3}
+      overscan={2}
     />
   )
 }
