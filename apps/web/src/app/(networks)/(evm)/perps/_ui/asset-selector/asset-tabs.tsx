@@ -42,7 +42,13 @@ export const AssetTabs = () => {
     const toggleSelector = (event: KeyboardEvent) => {
       //select tabs with left and right arrow keys
       if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+        //if asset-search input is focused, do not toggle
+        const activeElement = document.activeElement
+        if (activeElement && activeElement.id === 'asset-search') {
+          return
+        }
         event.preventDefault()
+
         const currentIndex = TABS.findIndex((tab) => tab.value === selectedTab)
         if (event.key === 'ArrowRight') {
           const nextIndex = (currentIndex + 1) % TABS.length

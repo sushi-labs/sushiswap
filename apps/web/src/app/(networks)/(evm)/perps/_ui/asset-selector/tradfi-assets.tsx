@@ -159,7 +159,11 @@ export const TradfiAssets = () => {
       </TabsList>
       <TabsContent
         value={selectedTab}
-        className="min-h-[calc(100dvh-140px)] !mt-0 max-h-[calc(100dvh-140px)] lg:min-h-[410px] lg:max-h-[410px] overflow-auto hide-scrollbar max-w-[100vw]"
+        className="!mt-0 hide-scrollbar lg:!min-h-[410px] lg:!max-h-[410px] overflow-auto max-w-[100vw]"
+        style={{
+          minHeight: 'calc(100dvh - 115px)',
+          maxHeight: 'calc(100dvh - 115px)',
+        }}
       >
         <DataTableVirtual
           state={state}

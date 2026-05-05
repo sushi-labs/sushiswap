@@ -23,6 +23,7 @@ export const SearchBar = () => {
         onValueChange={setSearch}
         className="!bg-transparent mr-10"
         autoFocus={isLg}
+        id="asset-search"
       />
       <div className="absolute right-2 top-1/2 -translate-y-1/2 lg:block hidden">
         <CommandK />
