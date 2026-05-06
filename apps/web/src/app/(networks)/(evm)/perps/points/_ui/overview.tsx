@@ -1,5 +1,5 @@
-import { SkeletonBox, SkeletonCircle } from '@sushiswap/ui'
-import { useId, useMemo } from 'react'
+import { SkeletonBox, SkeletonCircle, classNames } from '@sushiswap/ui'
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { perpsNumberFormatter, useSushiPointsOverview } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { formatPercent } from 'sushi'
@@ -14,6 +14,8 @@ import {
   ShinobiIcon,
   ShogunIcon,
 } from './tier-icons'
+
+const ITEM_HEIGHT = 78 // height of each tier row in px
 
 export const Overview = () => {
   const address = useAccount('evm')
@@ -62,60 +64,150 @@ export const Overview = () => {
     return getTier(currentThresholdUsd)
   }, [currentThresholdUsd])
 
-  const { nextTier, pastTier } = useMemo(() => {
-    const currentIdx = DEFAULT_TIERS.findIndex((t) => t.id === currentTier.id)
-    return {
-      nextTier:
-        currentIdx + 1 < DEFAULT_TIERS.length
-          ? DEFAULT_TIERS[currentIdx + 1]
-          : undefined,
-      pastTier: currentIdx > 0 ? DEFAULT_TIERS[currentIdx - 1] : undefined,
-    }
-  }, [currentTier])
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const currentTierIndex = DEFAULT_TIERS.findIndex(
+    (t) => t.id === currentTier.id,
+  )
+  const [centeredIndex, setCenteredIndex] = useState(currentTierIndex)
+  const visibleTier = DEFAULT_TIERS[centeredIndex] ?? currentTier
+
+  const bringToCurrentTier = useCallback((index: number) => {
+    const el = scrollRef.current
+    if (!el) return
+    el.scrollTop = index * ITEM_HEIGHT
+    setCenteredIndex(index)
+  }, [])
+
+  // biome-ignore: Scroll to current tier on mount
+  useEffect(() => {
+    bringToCurrentTier(currentTierIndex)
+  }, [bringToCurrentTier, currentTierIndex])
+
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const index = Math.round(el.scrollTop / ITEM_HEIGHT)
+    setCenteredIndex(Math.max(0, Math.min(DEFAULT_TIERS.length - 1, index)))
+  }, [])
 
   if (isLoading) {
     return <TierSkeleton />
   }
 
   return (
-    <PerpsCard className=" w-full">
-      <div className="w-full max-h-[234px] min-h-[234px] relative overflow-hidden py-3 px-5 rounded-2xl flex items-center justify-between">
+    <PerpsCard className="w-full">
+      <div className="w-full max-h-[234px] min-h-[234px] relative overflow-hidden rounded-2xl flex items-center justify-between">
         <CircleRows side="top" />
         <CircleRows side="bottom" />
-        <div className="w-full z-[5] h-full absolute left-0 top-0 bg-gradient-to-r from-perps-background to-transparent" />
-        <div
-          className="w-[280px] z-[5] h-[280px] rounded-full absolute -left-[195px] -top-[23px] opacity-60 blur-[96px]"
-          style={{
-            background: currentTier.bgGradient,
-          }}
-        />
-        <div
-          className="w-[492px] z-[5] h-[492px] rounded-full absolute -right-[379px] -top-[78px] opacity-30  blur-[447px]"
-          style={{
-            background: currentTier.bgGradient,
-          }}
-        />
-        <div className="w-full shadow-[inset_1.5px_2px_1px_-2px_rgba(255,255,255,0.4),inset_-1.5px_-1.5px_1px_-2px_rgba(255,255,255,0.325)] z-[6] h-full rounded-2xl absolute top-0 left-0" />
-        {pastTier ? (
-          <div className="absolute top-4 opacity-30 z-[5] left-0 scale-75 blur-[1px]">
-            <TierItem tier={pastTier} type="past" />
-          </div>
-        ) : null}
-        <TierItem
-          tier={currentTier}
-          type="current"
-          percentageCompletedTier={percentageCompletedTier}
-        />
-        {nextTier ? (
-          <div className="absolute bottom-4 opacity-30 z-[5] left-0 scale-75 blur-[1px]">
-            <TierItem tier={nextTier} type="next" />
-          </div>
-        ) : null}
 
-        <div className="flex flex-col z-10">
+        {/* Left gradient overlay */}
+        <div className="w-full z-[5] h-full absolute left-0 top-0 bg-gradient-to-r from-perps-background to-transparent" />
+
+        {/* Left glow blob */}
+        <div
+          className="w-[280px] z-[5] h-[280px] rounded-full absolute -left-[195px] -top-[23px] opacity-60 blur-[96px] pointer-events-none transition-all duration-500"
+          style={{ background: visibleTier.bgGradient }}
+        />
+
+        {/* Right glow blob */}
+        <div
+          className="w-[492px] z-[5] h-[492px] rounded-full absolute -right-[379px] -top-[78px] opacity-30 blur-[447px] pointer-events-none transition-all duration-500"
+          style={{ background: visibleTier.bgGradient }}
+        />
+
+        {/* Inset border sheen */}
+        <div className="w-full shadow-[inset_1.5px_2px_1px_-2px_rgba(255,255,255,0.4),inset_-1.5px_-1.5px_1px_-2px_rgba(255,255,255,0.325)] z-[6] h-full rounded-2xl absolute top-0 left-0 pointer-events-none" />
+
+        {/* Scrollable tier list */}
+        <div
+          ref={scrollRef}
+          className="z-[6] flex flex-col overflow-y-scroll snap-y snap-mandatory scrollbar-hide scroll-smooth"
+          style={{
+            height: `${ITEM_HEIGHT * 3}px`,
+            width: '220px',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+          }}
+          onScroll={handleScroll}
+        >
+          {/* Top padding spacer */}
+          <div style={{ minHeight: ITEM_HEIGHT, flexShrink: 0 }} />
+
+          {DEFAULT_TIERS.map((tier, i) => {
+            const isCurrent = tier.id === currentTier.id
+            const distance = Math.abs(i - centeredIndex)
+            const opacity = distance === 0 ? 1 : distance === 1 ? 0.3 : 0.1
+            const scale = distance === 0 ? 1 : 0.78
+            const blur = distance === 0 ? 0 : 1
+
+            return (
+              <div
+                key={tier.id}
+                className="snap-center flex-shrink-0 flex items-center transition-all duration-300 ml-4 cursor-pointer"
+                style={{
+                  height: ITEM_HEIGHT,
+                  opacity,
+                  transform: `scale(${scale})`,
+                  filter: `blur(${blur}px)`,
+                  transformOrigin: 'left center',
+                }}
+                onClick={() => {
+                  bringToCurrentTier(i)
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    bringToCurrentTier(i)
+                  }
+                }}
+              >
+                <TierItem
+                  tier={tier}
+                  type={
+                    isCurrent
+                      ? 'current'
+                      : i <
+                          DEFAULT_TIERS.findIndex(
+                            (t) => t.id === currentTier.id,
+                          )
+                        ? 'past'
+                        : 'next'
+                  }
+                  percentageCompletedTier={
+                    isCurrent ? percentageCompletedTier : undefined
+                  }
+                />
+              </div>
+            )
+          })}
+
+          {/* Bottom padding spacer */}
+          <div style={{ minHeight: ITEM_HEIGHT, flexShrink: 0 }} />
+        </div>
+
+        {/* Points section */}
+        <div
+          className="flex flex-col z-10 pr-5 cursor-pointer"
+          onClick={() => {
+            bringToCurrentTier(currentTierIndex)
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              bringToCurrentTier(currentTierIndex)
+            }
+          }}
+        >
           <div className="text-xs text-perps-muted-50">Points Accrued</div>
           <div className="text-xl font-medium text-perps-muted">
             {currentPoints}
+          </div>
+
+          <div
+            className={classNames(
+              'text-xs text-perps-muted-50',
+              centeredIndex !== currentTierIndex ? 'opacity-100' : 'opacity-0',
+            )}
+          >
+            View Current
           </div>
         </div>
       </div>
