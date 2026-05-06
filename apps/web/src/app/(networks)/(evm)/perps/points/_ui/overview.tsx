@@ -1,6 +1,6 @@
 import { SkeletonBox, SkeletonCircle, classNames } from '@sushiswap/ui'
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
-import { perpsNumberFormatter, useSushiPointsOverview } from 'src/lib/perps'
+import { usePointsData } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { formatPercent } from 'sushi'
 import { PerpsCard } from '~evm/perps/_ui/_common'
@@ -19,57 +19,14 @@ const ITEM_HEIGHT = 78 // height of each tier row in px
 
 export const Overview = () => {
   const address = useAccount('evm')
-  const { data, isLoading } = useSushiPointsOverview({ address })
-  const pointMultipliers = useMemo(
-    () => data?.pointMultipliers || [],
-    [data?.pointMultipliers],
-  )
-  const currentThresholdUsd = useMemo(() => {
-    if (!pointMultipliers.length) return 0
-    const totalVolumeUsd = data?.totalVolumeUsd || 0
-    return (
-      pointMultipliers.findLast((i) => i.thresholdUsd <= totalVolumeUsd)
-        ?.thresholdUsd || 0
-    )
-  }, [pointMultipliers, data?.totalVolumeUsd])
-
-  const percentageCompletedTier = useMemo(() => {
-    if (!pointMultipliers.length) return 0
-    const totalVolumeUsd = data?.totalVolumeUsd || 0
-    const currentTierIdx = pointMultipliers.findLastIndex(
-      (i) => i.thresholdUsd <= currentThresholdUsd,
-    )
-    const _nextTier = pointMultipliers[currentTierIdx + 1]
-
-    if (!_nextTier) return 1
-    const range = _nextTier.thresholdUsd - currentThresholdUsd
-
-    return (totalVolumeUsd - currentThresholdUsd) / range
-  }, [pointMultipliers, currentThresholdUsd, data?.totalVolumeUsd])
-
-  const currentPoints = useMemo(
-    () =>
-      data?.totalPoints
-        ? perpsNumberFormatter({
-            value: data?.totalPoints,
-            minFraxDigits: 0,
-            maxFraxDigits: 0,
-          })
-        : '0',
-    [data?.totalPoints],
-  )
-
-  const currentTier = useMemo(() => {
-    if (!currentThresholdUsd) return DEFAULT_TIERS[0]
-    return getTier(currentThresholdUsd)
-  }, [currentThresholdUsd])
-
+  const { data, isLoading } = usePointsData({ address })
   const scrollRef = useRef<HTMLDivElement>(null)
-  const currentTierIndex = DEFAULT_TIERS.findIndex(
-    (t) => t.id === currentTier.id,
+  const currentTierIndex = useMemo(
+    () => DEFAULT_TIERS.findIndex((t) => t.id === data?.currentTier.id),
+    [data?.currentTier.id],
   )
   const [centeredIndex, setCenteredIndex] = useState(currentTierIndex)
-  const visibleTier = DEFAULT_TIERS[centeredIndex] ?? currentTier
+  const visibleTier = DEFAULT_TIERS[centeredIndex] ?? data?.currentTier
 
   const bringToCurrentTier = useCallback((index: number) => {
     const el = scrollRef.current
@@ -134,7 +91,7 @@ export const Overview = () => {
           <div style={{ minHeight: ITEM_HEIGHT, flexShrink: 0 }} />
 
           {DEFAULT_TIERS.map((tier, i) => {
-            const isCurrent = tier.id === currentTier.id
+            const isCurrent = tier.id === data?.currentTier?.id
             const distance = Math.abs(i - centeredIndex)
             const opacity = distance === 0 ? 1 : distance === 1 ? 0.3 : 0.1
             const scale = distance === 0 ? 1 : 0.78
@@ -167,13 +124,13 @@ export const Overview = () => {
                       ? 'current'
                       : i <
                           DEFAULT_TIERS.findIndex(
-                            (t) => t.id === currentTier.id,
+                            (t) => t.id === data?.currentTier?.id,
                           )
                         ? 'past'
                         : 'next'
                   }
                   percentageCompletedTier={
-                    isCurrent ? percentageCompletedTier : undefined
+                    isCurrent ? data?.percentageCompletedTier : undefined
                   }
                 />
               </div>
@@ -198,7 +155,7 @@ export const Overview = () => {
         >
           <div className="text-xs text-perps-muted-50">Points Accrued</div>
           <div className="text-xl font-medium text-perps-muted">
-            {currentPoints}
+            {data?.currentPoints}
           </div>
 
           <div
@@ -249,7 +206,7 @@ const TierItem = ({
   }, [tier, type, percentageCompletedTier])
   return (
     <div className="z-10 flex items-center gap-2">
-      <div>{tier.icon}</div>
+      <div className="w-[60px] h-[60px]">{tier.icon}</div>
       <div className="flex flex-col">
         {text}
         <div className="text-xl font-medium text-perps-muted">{tier.label}</div>
@@ -258,7 +215,7 @@ const TierItem = ({
   )
 }
 
-const getTier = (points: number) => {
+export const getTier = (points: number) => {
   for (let i = DEFAULT_TIERS.length - 1; i >= 0; i--) {
     if (points >= DEFAULT_TIERS[i].pointThreshold) {
       return DEFAULT_TIERS[i]
@@ -267,9 +224,9 @@ const getTier = (points: number) => {
   return DEFAULT_TIERS[0]
 }
 
-type Tier = (typeof DEFAULT_TIERS)[number]
+export type Tier = (typeof DEFAULT_TIERS)[number]
 
-const DEFAULT_TIERS = [
+export const DEFAULT_TIERS = [
   {
     id: 'novice',
     label: 'Novice',
@@ -277,7 +234,7 @@ const DEFAULT_TIERS = [
     accentColor: '#52FA8D',
     bgGradient:
       'linear-gradient(135deg, #22C55E 0%, #86EFAC 51.92%, #22C55E 100%)',
-    icon: <NoviceIcon className="w-[60px] h-[60px]" />,
+    icon: <NoviceIcon />,
   },
   {
     id: 'shinobi',
@@ -286,7 +243,7 @@ const DEFAULT_TIERS = [
     accentColor: '#A78BFA',
     bgGradient:
       'linear-gradient(135deg, #8B5CF6 0%, #C4B5FD 51.92%, #8B5CF6 100%)',
-    icon: <ShinobiIcon className="w-[60px] h-[60px]" />,
+    icon: <ShinobiIcon />,
   },
   {
     id: 'ronin',
@@ -295,7 +252,7 @@ const DEFAULT_TIERS = [
     accentColor: '#FFFFFF',
     bgGradient:
       'linear-gradient(135.35deg, #737373 8.46%, #737373 44.65%, #737373 80.85%)',
-    icon: <RoninIcon className="w-[60px] h-[60px]" />,
+    icon: <RoninIcon />,
   },
   {
     id: 'samurai',
@@ -304,7 +261,7 @@ const DEFAULT_TIERS = [
     accentColor: '#FB7185',
     bgGradient:
       'linear-gradient(135.35deg, #7F1D1D 8.46%, #EF4444 44.65%, #7F1D1D 80.85%)',
-    icon: <SamuraiIcon className="w-[60px] h-[60px]" />,
+    icon: <SamuraiIcon />,
   },
   {
     id: 'shogun',
@@ -313,7 +270,7 @@ const DEFAULT_TIERS = [
     accentColor: '#E6B80F',
     bgGradient:
       'linear-gradient(135.35deg, #A16207 8.46%, #EAB308 44.65%, #854D0E 80.85%)',
-    icon: <ShogunIcon className="w-[60px] h-[60px]" />,
+    icon: <ShogunIcon />,
   },
   {
     id: 'daimyo',
@@ -322,7 +279,7 @@ const DEFAULT_TIERS = [
     accentColor: '#60A5FA',
     bgGradient:
       'linear-gradient(135.35deg, #1E3A8A 8.46%, #3B82F6 44.65%, #1E3A8A 80.85%)',
-    icon: <DaimyoIcon className="w-[60px] h-[60px]" />,
+    icon: <DaimyoIcon />,
   },
   {
     id: 'sensei',
@@ -331,7 +288,7 @@ const DEFAULT_TIERS = [
     accentColor: '#F472B6',
     bgGradient:
       'linear-gradient(135.35deg, #EC4899 8.46%, #FBCFE8 44.65%, #EC4899 80.85%)',
-    icon: <SenseiIcon className="w-[60px] h-[60px]" />,
+    icon: <SenseiIcon />,
   },
   {
     id: 'legend',
@@ -340,7 +297,7 @@ const DEFAULT_TIERS = [
     accentColor: '#38BDF8',
     bgGradient:
       'linear-gradient(135.35deg, #38BDF8 8.46%, #BAE6FD 44.65%, #0284C7 80.85%)',
-    icon: <LegendIcon className="w-[60px] h-[60px]" />,
+    icon: <LegendIcon />,
   },
 ] as const
 

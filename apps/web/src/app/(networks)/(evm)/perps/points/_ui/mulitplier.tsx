@@ -1,6 +1,6 @@
 import { Progress, SkeletonBox, SkeletonText } from '@sushiswap/ui'
 import { useEffect, useMemo, useRef } from 'react'
-import { useSushiPointsOverview } from 'src/lib/perps'
+import { usePointsData } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { formatUSD } from 'sushi'
 import { PerpsCard } from '~evm/perps/_ui/_common'
@@ -10,36 +10,11 @@ export const Multiplier = () => {
   const activeRef = useRef<HTMLDivElement>(null)
 
   const address = useAccount('evm')
-  const { data, isLoading } = useSushiPointsOverview({ address })
-  const pointMultipliers = useMemo(
-    () => data?.pointMultipliers || [],
-    [data?.pointMultipliers],
-  )
+  const { data, isLoading } = usePointsData({ address })
 
-  const totalVolumeUsd = useMemo(() => {
-    return data?.totalVolumeUsd || 0
-  }, [data?.totalVolumeUsd])
-
-  const currentMultiplier = useMemo(() => {
-    if (!pointMultipliers.length) return 0
-    const totalFeesUsd = totalVolumeUsd
-    const mulitplier =
-      pointMultipliers.findLast((i) => i.thresholdUsd <= totalFeesUsd)
-        ?.multiplier || 1
-    return mulitplier
-  }, [pointMultipliers, totalVolumeUsd])
-
-  const nextMultiplier = useMemo(() => {
-    if (!pointMultipliers.length) return 0
-    const totalFeesUsd = totalVolumeUsd
-    const nextTier = pointMultipliers.find((i) => i.thresholdUsd > totalFeesUsd)
-    return nextTier?.multiplier || currentMultiplier
-  }, [pointMultipliers, totalVolumeUsd, currentMultiplier])
-
-  const milestones = pointMultipliers?.slice(1)
-  const activeIdx = milestones.findIndex(
-    (m) => m.multiplier === currentMultiplier,
-  )
+  const milestones = data?.pointMultipliers?.slice(1)
+  const activeIdx =
+    milestones?.findIndex((m) => m.multiplier === data?.currentMultiplier) || 0
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: rerun on activeIdx change
   useEffect(() => {
@@ -70,7 +45,7 @@ export const Multiplier = () => {
           </div>
         ) : (
           <div className="bg-gradient-to-r w-fit from-[#27B0E6] from-2% via-[#7D8ACA] via-5% to-[#FA52A0] to-100% text-transparent bg-clip-text text-7xl">
-            {currentMultiplier === 1 ? 1.069 : currentMultiplier}x
+            {data?.currentMultiplier}x
           </div>
         )}
       </div>
@@ -84,7 +59,7 @@ export const Multiplier = () => {
             ref={scrollRef}
             className="flex items-start gap-1 overflow-x-auto overflow-y-visible w-full hide-scrollbar"
           >
-            {milestones.map((i, idx) => {
+            {milestones?.map((i, idx) => {
               return (
                 <div
                   ref={activeIdx === idx ? activeRef : undefined}
@@ -98,19 +73,20 @@ export const Multiplier = () => {
                     start={
                       i.multiplier === 1
                         ? 0
-                        : pointMultipliers[pointMultipliers.indexOf(i) - 1]
-                            .thresholdUsd
+                        : data?.pointMultipliers?.[
+                            data.pointMultipliers.indexOf(i) - 1
+                          ]?.thresholdUsd || 0
                     }
                     end={i.thresholdUsd}
                     current={
-                      totalVolumeUsd > i.thresholdUsd
+                      (data?.totalVolumeUsd || 0) > i.thresholdUsd
                         ? i.thresholdUsd
-                        : totalVolumeUsd
+                        : data?.totalVolumeUsd || 0
                     }
                   />
                   <div className="px-2 py-1 rounded-lg gap-1 flex items-center justify-center h-full text-xs text-perps-muted bg-[#EDF0F314]">
                     {formatUSD(i.thresholdUsd)?.replace('.00', '')}
-                    {i.multiplier === nextMultiplier ? (
+                    {i.multiplier === data?.nextMultiplier ? (
                       <div className="bg-[#EDF0F314] rounded-lg p-1">
                         <span className="bg-gradient-to-r from-[#27B0E6] from-4% via-[#7D8ACA] via-5% to-[#FA52A0] to-100% text-transparent bg-clip-text">
                           {i.multiplier}x

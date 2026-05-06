@@ -57,7 +57,7 @@ export const EXPLORE_NAVIGATION_LINKS =
 export const headerElements = (): NavigationElement[] => {
   return [
     {
-      show: 'mobile',
+      show: 'perps-mobile',
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem className={NavigationElementType.Custom}>
@@ -84,12 +84,12 @@ export const headerElements = (): NavigationElement[] => {
       ),
     },
     {
-      show: 'desktop',
+      show: 'perps-desktop',
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem
           key={`trade:custom`}
-          className={navigationElementShowMap['desktop']}
+          className={navigationElementShowMap['perps-desktop']}
         >
           <NavigationMenuLink
             href={'/perps'}
@@ -104,12 +104,12 @@ export const headerElements = (): NavigationElement[] => {
       ),
     },
     {
-      show: 'desktop',
+      show: 'perps-desktop',
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem
           key={`portfolio:custom`}
-          className={navigationElementShowMap['desktop']}
+          className={navigationElementShowMap['perps-desktop']}
         >
           <NavigationMenuLink
             href={'/perps/portfolio'}
@@ -124,12 +124,12 @@ export const headerElements = (): NavigationElement[] => {
       ),
     },
     {
-      show: 'desktop',
+      show: 'perps-desktop',
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem
           key={`referrals:custom`}
-          className={navigationElementShowMap['desktop']}
+          className={navigationElementShowMap['perps-desktop']}
         >
           <NavigationMenuLink
             href={'/perps/referrals'}
@@ -144,12 +144,12 @@ export const headerElements = (): NavigationElement[] => {
       ),
     },
     {
-      show: 'desktop',
+      show: 'perps-desktop',
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem
           key={`points:custom`}
-          className={navigationElementShowMap['desktop']}
+          className={navigationElementShowMap['perps-desktop']}
         >
           <NavigationMenuLink
             href={'/perps/points'}
@@ -164,7 +164,7 @@ export const headerElements = (): NavigationElement[] => {
       ),
     },
     {
-      show: 'desktop',
+      show: 'perps-desktop',
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem className={NavigationElementType.Custom}>

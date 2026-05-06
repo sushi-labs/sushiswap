@@ -119,6 +119,7 @@ module.exports = {
         'accordion-up': 'accordion-up 0.2s ease-out',
         walk: 'walk 0.5s linear infinite',
         shadow: 'shadow 0.5s linear infinite',
+        float: 'float 4s ease-in-out infinite',
       },
       keyframes: {
         'accordion-down': {
@@ -128,6 +129,11 @@ module.exports = {
         'accordion-up': {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translate(0px, 0px) scale(1)' },
+          '33%': { transform: 'translate(6px, -4px) scale(1.28)' },
+          '66%': { transform: 'translate(-4px, 3px) scale(0.85)' },
         },
         shimmer: {
           '100%': {
