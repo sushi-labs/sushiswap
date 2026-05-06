@@ -119,7 +119,7 @@ module.exports = {
         'accordion-up': 'accordion-up 0.2s ease-out',
         walk: 'walk 0.5s linear infinite',
         shadow: 'shadow 0.5s linear infinite',
-        float: 'float 4s ease-in-out infinite',
+        float: 'float 8s ease-in-out infinite',
       },
       keyframes: {
         'accordion-down': {

@@ -33,7 +33,7 @@ export const PointsCTA = () => {
         className="relative overflow-hidden !px-2"
       >
         <div
-          className="w-[80px] animate-float z-[1] h-[80px] rounded-full absolute -top-5 -left-10 opacity-40 blur-[20px] pointer-events-none"
+          className="w-[80px] animate-float z-[1] h-[80px] rounded-full absolute -top-5 -left-10 opacity-30 blur-[30px] pointer-events-none"
           style={{
             background: tier?.bgGradient,
           }}
