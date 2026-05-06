@@ -104,7 +104,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
         value={activeTab}
         onValueChange={(val) => setActiveTab(val as TradeTablesTabValue)}
       >
-        <div className="flex flex-wrap justify-between p-1 gap-2 ">
+        <div className="flex flex-wrap justify-between p-1 gap-2 pt-0">
           <PerpsCard rounded="full">
             <TabsList
               className={classNames(
@@ -168,7 +168,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
               className={classNames(
                 'py-2 !pt-0',
                 tab.value !== 'twap'
-                  ? 'min-h-[250px] max-h-[380px] hide-scrollbar overflow-y-auto'
+                  ? 'min-h-[275px] max-h-[380px] hide-scrollbar overflow-y-auto'
                   : '',
               )}
             >

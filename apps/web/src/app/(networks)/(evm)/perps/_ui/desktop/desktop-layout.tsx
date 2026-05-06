@@ -32,7 +32,7 @@ export const DesktopLayout = () => {
             </div>
           </div>
 
-          <div className="min-h-[450px]">
+          <div>
             <TradeTables className="h-full" />
           </div>
         </div>
