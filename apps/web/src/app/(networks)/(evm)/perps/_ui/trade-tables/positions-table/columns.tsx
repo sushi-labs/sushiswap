@@ -395,7 +395,7 @@ export const FUNDING_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
               getTextColorClass(sinceOpen >= 0 ? -1 : 1),
             )}
           >
-            {getSignForValue(sinceOpen >= 0 ? -1 : 1)}
+            {sinceOpen >= 0 ? '-' : '+'}
             {currencyFormatter.format(sinceOpen).replaceAll('-', '')}
           </div>
         </HoverCardTrigger>
@@ -404,9 +404,9 @@ export const FUNDING_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
           className="!px-3 !bg-black/10 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
         >
           <p>
-            All Time: {getSignForValue(allTime >= 0 ? -1 : 1)}
+            All Time: {allTime >= 0 ? '-' : '+'}
             {currencyFormatter.format(allTime).replaceAll('-', '')} Since Last
-            Change: {getSignForValue(sinceChange >= 0 ? -1 : 1)}
+            Change: {sinceChange >= 0 ? '-' : '+'}
             {currencyFormatter.format(sinceChange).replaceAll('-', '')}
           </p>
         </HoverCardContent>
