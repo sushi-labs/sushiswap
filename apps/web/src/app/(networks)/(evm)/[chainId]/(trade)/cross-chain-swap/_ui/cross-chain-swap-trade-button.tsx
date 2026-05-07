@@ -5,7 +5,7 @@ import { Button } from '@sushiswap/ui'
 import React, { useEffect, useMemo, useState } from 'react'
 import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
 import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
@@ -24,8 +24,8 @@ import {
 import { useIsCrossChainSwapMaintenance } from './use-is-cross-chain-swap-maintenance'
 
 export function CrossChainSwapTradeButton<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >() {
   const { data: maintenance } = useIsCrossChainSwapMaintenance()
   const {

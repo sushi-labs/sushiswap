@@ -17,7 +17,7 @@ import { PathnameButton } from 'src/app/_ui/pathname-button'
 import {
   isSupportedChainId,
   isTwapSupportedChainId,
-  isXSwapSupportedChainId,
+  isLifiXSwapSupportedChainId,
 } from 'src/config'
 import { getChainById } from 'sushi'
 import { getEvmChainById, isEvmChainId } from 'sushi/evm'
@@ -83,7 +83,7 @@ export const SwapModeButtons = () => {
       </SwapModeButton>
       <HoverCard>
         <SwapModeButton
-          isSupported={isXSwapSupportedChainId(chainId)}
+          isSupported={isLifiXSwapSupportedChainId(chainId)}
           path={`/${getChainById(chainId).key}/cross-chain-swap`}
         >
           <HoverCardTrigger asChild>
@@ -97,7 +97,7 @@ export const SwapModeButtons = () => {
             </span>
           </HoverCardTrigger>
         </SwapModeButton>
-        {isXSwapSupportedChainId(chainId) ? (
+        {isLifiXSwapSupportedChainId(chainId) ? (
           <HoverCardContent className="!p-0 max-w-[320px]">
             <CardHeader>
               <CardTitle>Cross-Chain Swap</CardTitle>

@@ -23,7 +23,7 @@ import { List } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
 import React, { useCallback, useMemo } from 'react'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import { useTokenSecurity } from 'src/lib/hooks/react-query'
 import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
 import { type CurrencyMetadata, getChainById, shortenAddress } from 'sushi'
@@ -40,8 +40,8 @@ import {
 import { useLifiXSwap } from './lifi-xswap-provider'
 
 export function CrossChainSwapTokenNotFoundDialog<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >() {
   const {
     state: { chainId0, chainId1, token0, token1 },

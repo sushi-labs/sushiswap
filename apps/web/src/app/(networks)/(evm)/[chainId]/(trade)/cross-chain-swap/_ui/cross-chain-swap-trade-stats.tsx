@@ -21,7 +21,7 @@ import {
   TraceEvent,
 } from '@sushiswap/telemetry'
 import { GasIcon } from '@sushiswap/ui/icons/GasIcon'
-import { EVM_UI_FEE_PERCENT, type XSwapSupportedChainId } from 'src/config'
+import { EVM_UI_FEE_PERCENT, type LifiXSwapSupportedChainId } from 'src/config'
 import { getCrossChainFeesBreakdown } from 'src/lib/swap/cross-chain'
 import {
   warningSeverity,
@@ -38,8 +38,8 @@ import {
 } from './lifi-xswap-provider'
 
 export function CrossChainSwapTradeStats<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >() {
   const {
     state: { chainId0, chainId1, swapAmountString, recipient },
@@ -219,7 +219,7 @@ export function CrossChainSwapTradeStats<
                 <a
                   target="_blank"
                   href={getChainById(
-                    chainId1 as XSwapSupportedChainId,
+                    chainId1 as LifiXSwapSupportedChainId,
                   ).getAccountUrl(recipient)}
                   className={classNames(
                     address !== recipient

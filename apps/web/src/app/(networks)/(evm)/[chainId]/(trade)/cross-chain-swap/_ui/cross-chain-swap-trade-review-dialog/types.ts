@@ -1,5 +1,5 @@
 import type { Dispatch, RefObject, SetStateAction } from 'react'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import type { UseCrossChainTradeStepReturn } from 'src/lib/hooks/react-query'
 import type { FeesBreakdown } from 'src/lib/swap/cross-chain'
 import type { Percent } from 'sushi'
@@ -7,8 +7,8 @@ import type { StepState } from '../cross-chain-swap-confirmation-dialog'
 import type { UseLifiXSwapSelectedTradeRouteReturn } from '../lifi-xswap-provider'
 
 export type CrossChainSwapTradeReviewBase<
-  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
 > = {
   step: UseCrossChainTradeStepReturn<TChainId0, TChainId1> | undefined
   stepStates: { source: StepState; bridge: StepState; dest: StepState }
@@ -37,8 +37,8 @@ export type CrossChainSwapTradeReviewBase<
 }
 
 export type CrossChainSwapTradeReviewState<
-  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
 > = CrossChainSwapTradeReviewBase<TChainId0, TChainId1> & {
   lifiData:
     | {
@@ -56,8 +56,8 @@ export type CrossChainSwapTradeReviewState<
 }
 
 export type CrossChainSwapTradeReviewWithWarnings<
-  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
 > = CrossChainSwapTradeReviewState<TChainId0, TChainId1> & {
   showPriceImpactWarning: boolean
   showSlippageWarning: boolean

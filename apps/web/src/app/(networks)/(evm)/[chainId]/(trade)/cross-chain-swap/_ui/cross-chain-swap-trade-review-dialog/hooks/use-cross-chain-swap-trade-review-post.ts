@@ -1,7 +1,7 @@
 import { createInfoToast, createToast } from '@sushiswap/notifications'
 import { SwapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { useCallback, useEffect, useMemo } from 'react'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import { nativeFromChainId } from 'src/lib/currency-from-chain-id'
 import { waitForSvmSignature } from 'src/lib/svm/wait-for-svm-signature'
 import {
@@ -25,8 +25,8 @@ import type {
 } from '../types'
 
 export function useCrossChainSwapTradeReviewPost<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >(
   tradeReview: CrossChainSwapTradeReviewBase<TChainId0, TChainId1>,
 ): CrossChainSwapTradeReviewWithWarnings<TChainId0, TChainId1> {
@@ -178,8 +178,8 @@ export function useCrossChainSwapTradeReviewPost<
       chainId: chainId0,
       href: lifiData.lifiExplorerLink,
       summary: `Bridging ${tradeReview.routeRef?.current?.fromToken?.symbol} from ${
-        getChainById(chainId0 as XSwapSupportedChainId).name
-      } to ${getChainById(chainId1 as XSwapSupportedChainId)?.name}`,
+        getChainById(chainId0 as LifiXSwapSupportedChainId).name
+      } to ${getChainById(chainId1 as LifiXSwapSupportedChainId)?.name}`,
       timestamp: new Date().getTime(),
       groupTimestamp: groupTs.current,
     })

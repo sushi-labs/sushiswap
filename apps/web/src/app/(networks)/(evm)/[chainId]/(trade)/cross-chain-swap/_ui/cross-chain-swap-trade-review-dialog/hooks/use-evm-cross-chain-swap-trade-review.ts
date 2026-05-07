@@ -3,7 +3,7 @@
 import { SwapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { DialogType, useDialog } from '@sushiswap/ui'
 import { useEffect, useMemo } from 'react'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
 import { useCrossChainTradeStep } from 'src/lib/hooks/react-query'
 import { logger } from 'src/lib/logger'
@@ -32,8 +32,8 @@ function toBigInt(value: bigint | `0x${string}` | string | undefined) {
 }
 
 export function useEvmCrossChainSwapTradeReview<
-  TChainId0 extends XSwapSupportedChainId & EvmChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId & EvmChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >({
   enabled = true,
 }: {

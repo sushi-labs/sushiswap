@@ -3,7 +3,7 @@ import { Button, Dots, Loader, classNames } from '@sushiswap/ui'
 import { CheckMarkIcon } from '@sushiswap/ui/icons/CheckMarkIcon'
 import { FailedMarkIcon } from '@sushiswap/ui/icons/FailedMarkIcon'
 import { type FC, type ReactNode, type RefObject, useMemo } from 'react'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import { getChainById, shortenAddress } from 'sushi'
 import { getEvmChainById } from 'sushi/evm'
 import type { Hex } from 'viem'
@@ -14,8 +14,8 @@ import {
 } from './lifi-xswap-provider'
 
 interface ConfirmationDialogContent<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 > {
   txHash?: TxHashFor<TChainId0>
   dstTxHash?: TxHashFor<TChainId1>
@@ -28,8 +28,8 @@ interface ConfirmationDialogContent<
 }
 
 export function ConfirmationDialogContent<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >({
   txHash,
   bridgeUrl,
@@ -51,8 +51,8 @@ export function ConfirmationDialogContent<
 
   const [chain0, chain1] = useMemo(
     () => [
-      getChainById(chainId0 as XSwapSupportedChainId),
-      getChainById(chainId1 as XSwapSupportedChainId),
+      getChainById(chainId0 as LifiXSwapSupportedChainId),
+      getChainById(chainId1 as LifiXSwapSupportedChainId),
     ],
     [chainId0, chainId1],
   )

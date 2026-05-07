@@ -1,14 +1,14 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { StepState } from '../../cross-chain-swap-confirmation-dialog'
 import type { UseLifiXSwapSelectedTradeRouteReturn } from '../../lifi-xswap-provider'
 
 export function useCrossChainSwapTradeReviewPre<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >() {
   const [slippagePercent] = useSlippageTolerance()
   const routeRef = useRef<UseLifiXSwapSelectedTradeRouteReturn<

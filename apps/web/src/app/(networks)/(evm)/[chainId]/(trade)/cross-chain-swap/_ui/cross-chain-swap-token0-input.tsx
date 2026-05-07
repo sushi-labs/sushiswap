@@ -1,19 +1,19 @@
 'use client'
 
 import {
-  XSWAP_SUPPORTED_CHAIN_IDS,
-  type XSwapSupportedChainId,
+  LIFI_XSWAP_SUPPORTED_CHAIN_IDS,
+  type LifiXSwapSupportedChainId,
   getSortedChainIds,
 } from 'src/config'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { isWNativeSupported } from 'sushi'
 import { useLifiXSwap } from './lifi-xswap-provider'
 
-const networks = getSortedChainIds(XSWAP_SUPPORTED_CHAIN_IDS)
+const networks = getSortedChainIds(LIFI_XSWAP_SUPPORTED_CHAIN_IDS)
 
 export function CrossChainSwapToken0Input<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >() {
   const {
     state: { swapAmountString, chainId0, token0 },

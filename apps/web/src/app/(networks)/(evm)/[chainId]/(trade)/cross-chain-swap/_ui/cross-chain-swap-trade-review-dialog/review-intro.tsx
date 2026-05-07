@@ -2,15 +2,15 @@
 
 import { Collapsible, Message } from '@sushiswap/ui'
 import type { ReactNode } from 'react'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import { nativeFromChainId } from 'src/lib/currency-from-chain-id'
 import { getChainById } from 'sushi'
 import { stringify } from 'viem'
 import { useLifiXSwap } from '../lifi-xswap-provider'
 
 export function ReviewIntro<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >({
   children,
   estGasError,
@@ -32,10 +32,10 @@ export function ReviewIntro<
         <div className="pt-4">
           <Message size="sm" variant="destructive">
             Insufficient {nativeFromChainId(chainId0).symbol} balance on{' '}
-            {getChainById(chainId0 as XSwapSupportedChainId).name} to cover the
-            network fee. Please lower your input amount or{' '}
+            {getChainById(chainId0 as LifiXSwapSupportedChainId).name} to cover
+            the network fee. Please lower your input amount or{' '}
             <a
-              href={`/${getChainById(chainId0 as XSwapSupportedChainId).key}/swap?token1=NATIVE`}
+              href={`/${getChainById(chainId0 as LifiXSwapSupportedChainId).key}/swap?token1=NATIVE`}
               className="underline decoration-dotted underline-offset-2"
             >
               swap for more {nativeFromChainId(chainId0).symbol}

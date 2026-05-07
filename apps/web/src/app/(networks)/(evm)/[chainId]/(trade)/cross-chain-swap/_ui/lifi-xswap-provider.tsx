@@ -8,7 +8,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'
 import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
@@ -30,8 +30,8 @@ import {
 type NewTokenInput = Parameters<typeof newToken>[0]
 
 interface State<
-  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
 > {
   mutate: XSwapFormMutators<TChainId0, TChainId1> & {
     setSelectedBridge(bridge: string | undefined): void
@@ -186,8 +186,8 @@ const LifiXSwapProvider: FC<
 }
 
 function useLifiXSwap<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >() {
   const Ctx = LifiXSwapContext as unknown as React.Context<
     State<TChainId0, TChainId1>
@@ -204,8 +204,8 @@ function useLifiXSwap<
 }
 
 function useLifiXSwapTradeRoutes<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >() {
   const {
     state: {
@@ -245,8 +245,8 @@ function useLifiXSwapTradeRoutes<
 }
 
 export type UseLifiXSwapSelectedTradeRouteReturn<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 > = NonNullable<
   ReturnType<
     typeof useLifiXSwapSelectedTradeRoute<TChainId0, TChainId1>
@@ -254,8 +254,8 @@ export type UseLifiXSwapSelectedTradeRouteReturn<
 >
 
 function useLifiXSwapSelectedTradeRoute<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >() {
   const routesQuery = useLifiXSwapTradeRoutes<TChainId0, TChainId1>()
 

@@ -6,12 +6,12 @@ import {
   useTrace,
 } from '@sushiswap/telemetry'
 import { Button, Dots } from '@sushiswap/ui'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import { useLifiXSwap } from '../lifi-xswap-provider'
 
 export function ConfirmSwapButton<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >({
   confirm,
   write,

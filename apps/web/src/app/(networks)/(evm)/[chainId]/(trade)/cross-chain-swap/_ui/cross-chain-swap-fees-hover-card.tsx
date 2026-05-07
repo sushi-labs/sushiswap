@@ -9,13 +9,13 @@ import {
   PopoverTrigger,
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import type { FeesBreakdown } from 'src/lib/swap/cross-chain'
 import { formatNumber, formatUSD } from 'sushi'
 
 interface CrossChainSwapFeesHoverCardProps<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 > {
   feesBreakdown: FeesBreakdown
   gasFeesUSD: number
@@ -26,8 +26,8 @@ interface CrossChainSwapFeesHoverCardProps<
 }
 
 export function CrossChainSwapFeesHoverCard<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >({
   feesBreakdown,
   chainId0,

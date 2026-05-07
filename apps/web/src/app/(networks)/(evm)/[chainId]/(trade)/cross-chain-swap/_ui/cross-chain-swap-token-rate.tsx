@@ -1,14 +1,14 @@
 import { Button, SkeletonText } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { Amount, Price, formatUSD } from 'sushi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useLifiXSwap } from './lifi-xswap-provider'
 
 export function CrossChainSwapTokenRate<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >() {
   const [invert, setInvert] = useState(false)
   const {

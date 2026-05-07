@@ -8,7 +8,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useState } from 'react'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import type { UseCrossChainTradeStepReturn } from 'src/lib/hooks/react-query'
 import type { FeesBreakdown } from 'src/lib/swap/cross-chain'
 import { type Percent, ZERO, formatNumber, formatUSD } from 'sushi'
@@ -61,8 +61,8 @@ export function TradeDetails({
 }
 
 function TradeSummaryList<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >({
   executionDuration,
   step,

@@ -7,7 +7,7 @@ import {
 import { nanoid } from 'nanoid'
 import { useCallback, useMemo } from 'react'
 import type { Dispatch, RefObject, SetStateAction } from 'react'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import { sendDrilldownLog } from 'src/lib/drilldown-log'
 import type { UseCrossChainTradeStepReturn } from 'src/lib/hooks/react-query'
 import { logger } from 'src/lib/logger'
@@ -28,8 +28,8 @@ export type CrossChainSwapWriteReceiptInfo = {
 }
 
 export type CrossChainSwapTradeReviewWriteHandlersParams<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
   TReceipt,
 > = {
   routeRef: RefObject<UseLifiXSwapSelectedTradeRouteReturn<
@@ -51,8 +51,8 @@ export type CrossChainSwapTradeReviewWriteHandlersParams<
 }
 
 export function useCrossChainSwapTradeReviewWriteHandlers<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
   TReceipt,
 >({
   routeRef,
@@ -109,7 +109,8 @@ export function useCrossChainSwapTradeReviewWriteHandlers<
 
       groupTs.current = new Date().getTime()
       const destinationChainName = routeRef.current?.toChainId
-        ? getChainById(routeRef.current.toChainId as XSwapSupportedChainId).name
+        ? getChainById(routeRef.current.toChainId as LifiXSwapSupportedChainId)
+            .name
         : 'destination chain'
 
       void createToast({

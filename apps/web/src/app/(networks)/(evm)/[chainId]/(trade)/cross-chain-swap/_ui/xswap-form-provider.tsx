@@ -14,8 +14,8 @@ import {
 } from 'react'
 import {
   type SupportedChainId,
-  type XSwapSupportedChainId,
-  isXSwapSupportedChainId,
+  type LifiXSwapSupportedChainId,
+  isLifiXSwapSupportedChainId,
 } from 'src/config'
 import { replaceNetworkSlug } from 'src/lib/network'
 import { getChainById } from 'sushi'
@@ -27,8 +27,8 @@ import {
 } from '../../_ui/derivedstate-swap-helpers'
 
 interface XSwapFormStateValues<
-  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
 > {
   chainId0: TChainId0
   chainId1: TChainId1
@@ -39,8 +39,8 @@ interface XSwapFormStateValues<
 }
 
 interface XSwapFormMutators<
-  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
 > {
   setTradeId: Dispatch<SetStateAction<string>>
   setChainId0(chainId: TChainId0): void
@@ -56,8 +56,8 @@ interface XSwapFormMutators<
 }
 
 interface XSwapFormState<
-  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
 > extends XSwapFormStateValues<TChainId0, TChainId1>,
     XSwapFormMutators<TChainId0, TChainId1> {}
 
@@ -67,7 +67,7 @@ const XSwapFormContext = createContext<XSwapFormState | null>(
 
 interface XSwapFormProviderProps {
   children: React.ReactNode
-  defaultChainId: XSwapSupportedChainId
+  defaultChainId: LifiXSwapSupportedChainId
 }
 
 const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
@@ -78,9 +78,9 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [tradeId, setTradeId] = useState(nanoid())
-  const [chainId, setChainId] = useState<XSwapSupportedChainId>(defaultChainId)
+  const [chainId, setChainId] = useState<LifiXSwapSupportedChainId>(defaultChainId)
 
-  const chainId0 = isXSwapSupportedChainId(chainId)
+  const chainId0 = isLifiXSwapSupportedChainId(chainId)
     ? chainId
     : EvmChainId.ETHEREUM
   type TChainId0 = typeof chainId0
@@ -111,7 +111,7 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
   // Derive chainId from defaultedParams
   const chainId1 = Number(
     defaultedParams.get('chainId1'),
-  ) as XSwapSupportedChainId
+  ) as LifiXSwapSupportedChainId
   type TChainId1 = typeof chainId1
 
   // Get a new searchParams string by merging the current
@@ -138,7 +138,7 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
     const token0 = params.get('token0')
     const token1 = params.get('token1')
 
-    if (!isXSwapSupportedChainId(chainId1Param)) {
+    if (!isLifiXSwapSupportedChainId(chainId1Param)) {
       console.error('Invalid chainId1:', chainId1Param)
       return
     }
@@ -163,7 +163,7 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
 
   // Update the URL with new from chainId
   const setChainId0 = useCallback(
-    (chainId: XSwapSupportedChainId) => {
+    (chainId: LifiXSwapSupportedChainId) => {
       if (defaultedParams.get('chainId1') === chainId.toString()) {
         switchTokens()
       } else {
@@ -187,7 +187,7 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
 
   // Update the URL with new to chainId
   const setChainId1 = useCallback(
-    (chainId: XSwapSupportedChainId) => {
+    (chainId: LifiXSwapSupportedChainId) => {
       if (chainId0 === chainId) {
         switchTokens()
       } else {
@@ -313,8 +313,8 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
 }
 
 function useXSwapForm<
-  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
 >() {
   const Ctx = XSwapFormContext as unknown as React.Context<
     XSwapFormState<TChainId0, TChainId1>

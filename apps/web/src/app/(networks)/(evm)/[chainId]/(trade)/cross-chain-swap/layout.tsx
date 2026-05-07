@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { XSWAP_SUPPORTED_CHAIN_IDS, isXSwapSupportedChainId } from 'src/config'
+import {
+  LIFI_XSWAP_SUPPORTED_CHAIN_IDS,
+  isLifiXSwapSupportedChainId,
+} from 'src/config'
 import { Header } from '../header'
 import { Providers } from './providers'
 
@@ -18,13 +21,13 @@ export default async function CrossChainSwapLayout(props: {
   const { children } = props
   const chainId = +params.chainId
 
-  if (!isXSwapSupportedChainId(chainId)) {
+  if (!isLifiXSwapSupportedChainId(chainId)) {
     return notFound()
   }
 
   return (
     <Providers chainId={chainId}>
-      <Header chainId={chainId} networks={XSWAP_SUPPORTED_CHAIN_IDS} />
+      <Header chainId={chainId} networks={LIFI_XSWAP_SUPPORTED_CHAIN_IDS} />
       <main className="lg:p-4 mt-16 mb-[86px] h-[clamp(600px,_calc(100vh_-_280px),_800px)]">
         {children}
       </main>

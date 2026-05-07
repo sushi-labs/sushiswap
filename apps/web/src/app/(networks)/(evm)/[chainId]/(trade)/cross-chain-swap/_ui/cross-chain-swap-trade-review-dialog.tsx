@@ -16,7 +16,7 @@ import {
 } from '@sushiswap/ui'
 import type React from 'react'
 import { type ReactNode, type RefObject, useEffect } from 'react'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import {
   ConfirmationDialogContent,
   Divider,
@@ -40,8 +40,8 @@ interface CrossChainSwapTradeReviewDialogProps {
 }
 
 export function CrossChainSwapTradeReviewDialog<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >({ children }: CrossChainSwapTradeReviewDialogProps) {
   return (
     <DialogProvider>
@@ -53,8 +53,8 @@ export function CrossChainSwapTradeReviewDialog<
 }
 
 function CrossChainSwapTradeReviewDialogContent<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >({
   children,
 }: {

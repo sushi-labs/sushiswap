@@ -1,7 +1,7 @@
 import { classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { useMemo } from 'react'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'
 import type { UseCrossChainTradeStepReturn } from 'src/lib/hooks/react-query'
 import { getCrossChainStepBreakdown } from 'src/lib/swap/cross-chain'
@@ -120,7 +120,7 @@ function VerticalDivider({
   )
 }
 
-function SendAction<TChainId extends XSwapSupportedChainId>({
+function SendAction<TChainId extends LifiXSwapSupportedChainId>({
   label,
   amount,
 }: {

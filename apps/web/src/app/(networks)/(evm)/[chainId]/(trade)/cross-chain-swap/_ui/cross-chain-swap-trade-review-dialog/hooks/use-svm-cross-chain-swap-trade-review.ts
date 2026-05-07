@@ -5,7 +5,7 @@ import { useTransactionSigner } from '@solana/connector'
 import { DialogType, useDialog } from '@sushiswap/ui'
 import { useMutation } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import { useCrossChainTradeStep } from 'src/lib/hooks/react-query'
 import { useSvmEstimateGas } from 'src/lib/svm/hooks/useSvmEstimateGas'
 import { waitForSvmSignature } from 'src/lib/svm/wait-for-svm-signature'
@@ -23,8 +23,8 @@ import { useCrossChainSwapTradeReviewWriteHandlers } from './use-cross-chain-swa
 const base64Encoder = getBase64Encoder()
 
 export function useSvmCrossChainSwapTradeReview<
-  TChainId0 extends XSwapSupportedChainId & SvmChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId & SvmChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >({
   enabled = true,
 }: {

@@ -1,6 +1,6 @@
 'use client'
 
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import type { EvmChainId } from 'sushi/evm'
 import { type SvmChainId, isSvmChainId } from 'sushi/svm'
 import { useLifiXSwap } from '../../lifi-xswap-provider'
@@ -13,8 +13,8 @@ import { useEvmCrossChainSwapTradeReview } from './use-evm-cross-chain-swap-trad
 import { useSvmCrossChainSwapTradeReview } from './use-svm-cross-chain-swap-trade-review'
 
 export function useCrossChainSwapTradeReview<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >(): CrossChainSwapTradeReviewWithWarnings<TChainId0, TChainId1> {
   const {
     state: { chainId0 },
