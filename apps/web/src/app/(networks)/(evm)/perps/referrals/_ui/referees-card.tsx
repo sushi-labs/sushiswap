@@ -1,21 +1,21 @@
 'use client'
 
 import type { PerpsSushiReferredUser } from '@sushiswap/graph-client/data-api'
-import { Button, Card, DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
+import { DataTableVirtual, Slot } from '@sushiswap/ui'
 import type {
   ColumnDef,
   OnChangeFn,
+  Row,
   SortingState,
   TableState,
 } from '@tanstack/react-table'
 import { format } from 'date-fns'
-import { useMemo, useState } from 'react'
+import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { useSushiReferredUsers } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { formatUSD, shortenAddress } from 'sushi'
 import { PerpsCard } from '~evm/perps/_ui/_common'
 import {
-  MobileTable,
   columnBodyMeta,
   tableRowClassName,
 } from '~evm/perps/_ui/trade-tables/_common'
@@ -28,7 +28,7 @@ const REFEREE_COLUMNS = [
     sortingFn: 'alphanumeric',
     cell: (props: { row: { original: PerpsSushiReferredUser } }) => {
       return (
-        <span className="font-medium lg:whitespace-nowrap">
+        <span className="font-medium whitespace-nowrap">
           {shortenAddress(props.row.original.refereeAddress)}
         </span>
       )
@@ -49,7 +49,7 @@ const REFEREE_COLUMNS = [
     },
     cell: (props: { row: { original: PerpsSushiReferredUser } }) => {
       return (
-        <span className="font-medium lg:whitespace-nowrap">
+        <span className="font-medium whitespace-nowrap">
           {formatUSD(props.row.original.lifetimeEarnedFees)}
         </span>
       )
@@ -73,7 +73,7 @@ const REFEREE_COLUMNS = [
     },
     cell: (props: { row: { original: PerpsSushiReferredUser } }) => {
       return (
-        <span className="font-medium lg:whitespace-nowrap">
+        <span className="font-medium whitespace-nowrap">
           {formatDateLabel(props.row.original.lastEarnedAt)}
         </span>
       )
@@ -96,7 +96,7 @@ const REFEREE_COLUMNS = [
     },
     cell: (props: { row: { original: PerpsSushiReferredUser } }) => {
       return (
-        <span className="font-medium lg:whitespace-nowrap">
+        <span className="font-medium whitespace-nowrap">
           {formatDateTime(props.row.original.linkedAt)}
         </span>
       )
@@ -109,16 +109,14 @@ const REFEREE_COLUMNS = [
 
 export function RefereesCard() {
   const address = useAccount('evm')
-  const { isLg } = useBreakpoint('lg')
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'lifetimeRewards', desc: true },
   ])
 
-  const referredUsers = useSushiReferredUsers({ address })
-  const referees = useMemo(
-    () => referredUsers.data?.pages.flat() ?? [],
-    [referredUsers.data],
-  )
+  const referredUsers = useSushiReferredUsers({
+    address,
+  })
+  const referees = useMemo(() => referredUsers.data ?? [], [referredUsers.data])
 
   const tableState: Partial<TableState> = useMemo(() => {
     return {
@@ -129,6 +127,50 @@ export function RefereesCard() {
       },
     }
   }, [referees.length, sorting])
+
+  const rowRenderer = useCallback(
+    (row: Row<PerpsSushiReferredUser>, rowNode: ReactNode) => {
+      return (
+        <Slot
+          key={`${row.original.refereeAddress}-${row.original.linkedAt}-slot`}
+        >
+          <>
+            {rowNode}
+            {row?.original?.children?.map((i, idx) => {
+              return (
+                <tr
+                  key={`${i.refereeAddress}-${i.linkedAt}-child-${idx}`}
+                  className="text-xs h-[25px]"
+                >
+                  <td className="relative">
+                    <div
+                      className="absolute left-[8px] bottom-[8px] border-l border-b rounded-bl-[4px] border-gray-700 w-[10px]"
+                      style={{
+                        height: idx === 0 ? '15px' : '30px',
+                      }}
+                    />
+                    <span className="font-medium pl-5 whitespace-nowrap">
+                      {shortenAddress(i.refereeAddress)}
+                    </span>
+                  </td>
+                  <td className="font-medium pl-2 whitespace-nowrap">
+                    {formatUSD(i.lifetimeEarnedFees)}
+                  </td>
+                  <td className="font-medium pl-2 whitespace-nowrap">
+                    {formatDateLabel(i.lastEarnedAt)}
+                  </td>
+                  <td className="font-medium pl-2 whitespace-nowrap">
+                    {formatDateTime(i.linkedAt)}
+                  </td>
+                </tr>
+              )
+            })}
+          </>
+        </Slot>
+      )
+    },
+    [],
+  )
 
   return (
     <PerpsCard className="p-3">
@@ -143,36 +185,17 @@ export function RefereesCard() {
       </div>
 
       <div className="mt-4 rounded-md min-h-[300px]">
-        {isLg ? (
-          <DataTableVirtual
-            state={tableState}
-            loading={referredUsers.isLoading}
-            columns={REFEREE_COLUMNS}
-            data={referees}
-            onSortingChange={setSorting as OnChangeFn<SortingState>}
-            thClassName="!h-8 pl-0"
-            hideScrollbar={true}
-            trClassName={tableRowClassName}
-          />
-        ) : (
-          <MobileTable
-            columns={REFEREE_COLUMNS}
-            data={referees}
-            isLoading={referredUsers.isLoading}
-            sorting={sorting}
-          />
-        )}
-        <div className="mt-4 flex items-center justify-center">
-          {referredUsers.hasNextPage ? (
-            <Button
-              variant="secondary"
-              onClick={() => referredUsers.fetchNextPage()}
-              loading={referredUsers.isFetchingNextPage}
-            >
-              Load More
-            </Button>
-          ) : null}
-        </div>
+        <DataTableVirtual
+          state={tableState}
+          loading={referredUsers.isLoading}
+          columns={REFEREE_COLUMNS}
+          data={referees}
+          onSortingChange={setSorting as OnChangeFn<SortingState>}
+          thClassName="!h-8 pl-0"
+          hideScrollbar={true}
+          trClassName={`${tableRowClassName} `}
+          rowRenderer={rowRenderer}
+        />
       </div>
     </PerpsCard>
   )
