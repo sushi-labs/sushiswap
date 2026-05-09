@@ -3,8 +3,8 @@
 import { useRef, useState } from 'react'
 import type { LifiXSwapSupportedChainId } from 'src/config'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { StepState } from '../../cross-chain-swap-confirmation-dialog'
-import type { UseLifiXSwapSelectedTradeRouteReturn } from '../../lifi-xswap-provider'
+import { StepState } from '../../confirmation-dialog'
+import type { UseLifiXSwapSelectedTradeRouteReturn } from '../../xswap-provider'
 
 export function useCrossChainSwapTradeReviewPre<
   TChainId0 extends LifiXSwapSupportedChainId,

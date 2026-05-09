@@ -1,7 +1,7 @@
 'use client'
 
 import { Message } from '@sushiswap/ui'
-import { useIsCrossChainSwapMaintenance } from './use-is-cross-chain-swap-maintenance'
+import { useIsCrossChainSwapMaintenance } from './use-is-maintenance'
 
 export function CrossChainSwapMaintenanceMessage() {
   const { data: isMaintenance } = useIsCrossChainSwapMaintenance()

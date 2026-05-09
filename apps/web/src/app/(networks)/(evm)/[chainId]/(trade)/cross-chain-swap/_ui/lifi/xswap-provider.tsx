@@ -25,7 +25,7 @@ import {
   type XSwapFormMutators,
   type XSwapFormStateValues,
   useXSwapForm,
-} from './xswap-form-provider'
+} from '../xswap-form-provider'
 
 type NewTokenInput = Parameters<typeof newToken>[0]
 

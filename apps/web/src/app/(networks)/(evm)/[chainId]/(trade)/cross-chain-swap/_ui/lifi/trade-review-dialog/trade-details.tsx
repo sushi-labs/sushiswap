@@ -12,8 +12,8 @@ import type { LifiXSwapSupportedChainId } from 'src/config'
 import type { UseCrossChainTradeStepReturn } from 'src/lib/hooks/react-query'
 import type { FeesBreakdown } from 'src/lib/swap/cross-chain'
 import { type Percent, ZERO, formatNumber, formatUSD } from 'sushi'
-import { CrossChainSwapRouteView } from '../cross-chain-swap-route-view'
-import { useLifiXSwap } from '../lifi-xswap-provider'
+import { CrossChainSwapRouteView } from '../route-view'
+import { useLifiXSwap } from '../xswap-provider'
 
 export function TradeDetails({
   executionDuration,

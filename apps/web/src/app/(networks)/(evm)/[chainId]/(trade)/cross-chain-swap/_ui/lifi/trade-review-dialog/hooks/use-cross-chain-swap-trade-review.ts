@@ -3,7 +3,7 @@
 import type { LifiXSwapSupportedChainId } from 'src/config'
 import type { EvmChainId } from 'sushi/evm'
 import { type SvmChainId, isSvmChainId } from 'sushi/svm'
-import { useLifiXSwap } from '../../lifi-xswap-provider'
+import { useLifiXSwap } from '../../xswap-provider'
 import type {
   CrossChainSwapTradeReviewBase,
   CrossChainSwapTradeReviewWithWarnings,

@@ -3,7 +3,7 @@ import { getCrossChainSwapEdgeConfig } from './get-cross-chain-swap-edge-config'
 import type { LifiXSwapSupportedChainId } from 'src/config'
 import { EdgeProvider } from 'src/providers/edge-config-provider'
 import { XSwapFormProvider } from './_ui/xswap-form-provider'
-import { LifiXSwapProvider } from './_ui/lifi-xswap-provider'
+import { LifiXSwapProvider } from './_ui/lifi/xswap-provider'
 
 export async function Providers({
   children,

@@ -17,8 +17,8 @@ import { isSvmChainId } from 'sushi/svm'
 import { usePublicClient } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
-import { StepState } from '../../cross-chain-swap-confirmation-dialog'
-import { useLifiXSwap } from '../../lifi-xswap-provider'
+import { StepState } from '../../confirmation-dialog'
+import { useLifiXSwap } from '../../xswap-provider'
 import type {
   CrossChainSwapTradeReviewBase,
   CrossChainSwapTradeReviewWithWarnings,

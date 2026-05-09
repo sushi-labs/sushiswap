@@ -11,7 +11,7 @@ import {
   type UseLifiXSwapSelectedTradeRouteReturn,
   useLifiXSwap,
   useLifiXSwapSelectedTradeRoute,
-} from './lifi-xswap-provider'
+} from './xswap-provider'
 
 interface ConfirmationDialogContent<
   TChainId0 extends LifiXSwapSupportedChainId,

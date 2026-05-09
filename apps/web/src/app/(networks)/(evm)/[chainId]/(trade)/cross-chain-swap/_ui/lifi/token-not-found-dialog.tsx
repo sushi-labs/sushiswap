@@ -37,7 +37,7 @@ import {
   svmDefaultCurrency,
   svmDefaultQuoteCurrency,
 } from 'sushi/svm'
-import { useLifiXSwap } from './lifi-xswap-provider'
+import { useLifiXSwap } from './xswap-provider'
 
 export function CrossChainSwapTokenNotFoundDialog<
   TChainId0 extends LifiXSwapSupportedChainId,

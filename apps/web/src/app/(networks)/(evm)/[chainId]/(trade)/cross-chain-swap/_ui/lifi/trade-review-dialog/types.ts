@@ -3,8 +3,8 @@ import type { LifiXSwapSupportedChainId } from 'src/config'
 import type { UseCrossChainTradeStepReturn } from 'src/lib/hooks/react-query'
 import type { FeesBreakdown } from 'src/lib/swap/cross-chain'
 import type { Percent } from 'sushi'
-import type { StepState } from '../cross-chain-swap-confirmation-dialog'
-import type { UseLifiXSwapSelectedTradeRouteReturn } from '../lifi-xswap-provider'
+import type { StepState } from '../confirmation-dialog'
+import type { UseLifiXSwapSelectedTradeRouteReturn } from '../xswap-provider'
 
 export type CrossChainSwapTradeReviewBase<
   TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,

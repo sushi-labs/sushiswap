@@ -24,16 +24,16 @@ import {
   StepState,
   failedState,
   finishedState,
-} from './cross-chain-swap-confirmation-dialog'
-import { ConfirmSwapButton } from './cross-chain-swap-trade-review-dialog/confirm-swap-button'
-import { DialogBody } from './cross-chain-swap-trade-review-dialog/dialog-body'
-import { useCrossChainSwapTradeReview } from './cross-chain-swap-trade-review-dialog/hooks/use-cross-chain-swap-trade-review'
-import { RecipientSection } from './cross-chain-swap-trade-review-dialog/recipient-section'
-import { ReviewIntro } from './cross-chain-swap-trade-review-dialog/review-intro'
-import { TradeDetails } from './cross-chain-swap-trade-review-dialog/trade-details'
-import { TradeHeader } from './cross-chain-swap-trade-review-dialog/trade-header'
-import { TradeWarnings } from './cross-chain-swap-trade-review-dialog/trade-warnings'
-import type { UseLifiXSwapSelectedTradeRouteReturn } from './lifi-xswap-provider'
+} from './confirmation-dialog'
+import { ConfirmSwapButton } from './trade-review-dialog/confirm-swap-button'
+import { DialogBody } from './trade-review-dialog/dialog-body'
+import { useCrossChainSwapTradeReview } from './trade-review-dialog/hooks/use-cross-chain-swap-trade-review'
+import { RecipientSection } from './trade-review-dialog/recipient-section'
+import { ReviewIntro } from './trade-review-dialog/review-intro'
+import { TradeDetails } from './trade-review-dialog/trade-details'
+import { TradeHeader } from './trade-review-dialog/trade-header'
+import { TradeWarnings } from './trade-review-dialog/trade-warnings'
+import type { UseLifiXSwapSelectedTradeRouteReturn } from './xswap-provider'
 
 interface CrossChainSwapTradeReviewDialogProps {
   children: ReactNode

@@ -29,13 +29,13 @@ import {
 } from 'src/lib/swap/warningSeverity'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
 import { useAccount } from 'src/lib/wallet'
-import { useDetailsInteractionTracker } from '../../_ui/details-interaction-tracker-provider'
-import { CrossChainSwapFeesHoverCard } from './cross-chain-swap-fees-hover-card'
-import { CrossChainSwapTokenRate } from './cross-chain-swap-token-rate'
+import { useDetailsInteractionTracker } from '../../../_ui/details-interaction-tracker-provider'
+import { CrossChainSwapFeesHoverCard } from './fees-hover-card'
+import { CrossChainSwapTokenRate } from './token-rate'
 import {
   useLifiXSwap,
   useLifiXSwapSelectedTradeRoute,
-} from './lifi-xswap-provider'
+} from './xswap-provider'
 
 export function CrossChainSwapTradeStats<
   TChainId0 extends LifiXSwapSupportedChainId,

@@ -15,13 +15,13 @@ import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/slippa
 import { useWallet } from 'src/lib/wallet'
 import { getNamespaceForChainId } from 'src/lib/wallet/namespaces/namespace-for-chain-id'
 import { ZERO } from 'sushi'
-import { CrossChainSwapChainUnsupportedMessage } from './cross-chain-swap-chain-unsupported-message'
-import { CrossChainSwapTradeReviewDialog } from './cross-chain-swap-trade-review-dialog'
+import { CrossChainSwapChainUnsupportedMessage } from './chain-unsupported-message'
+import { CrossChainSwapTradeReviewDialog } from './trade-review-dialog'
 import {
   useLifiXSwap,
   useLifiXSwapSelectedTradeRoute,
-} from './lifi-xswap-provider'
-import { useIsCrossChainSwapMaintenance } from './use-is-cross-chain-swap-maintenance'
+} from './xswap-provider'
+import { useIsCrossChainSwapMaintenance } from './use-is-maintenance'
 
 export function CrossChainSwapTradeButton<
   TChainId0 extends LifiXSwapSupportedChainId,

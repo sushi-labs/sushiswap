@@ -4,7 +4,7 @@ import type { LifiXSwapSupportedChainId } from 'src/config'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { Amount, Price, formatUSD } from 'sushi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
-import { useLifiXSwap } from './lifi-xswap-provider'
+import { useLifiXSwap } from './xswap-provider'
 
 export function CrossChainSwapTokenRate<
   TChainId0 extends LifiXSwapSupportedChainId,

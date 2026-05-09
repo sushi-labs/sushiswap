@@ -1,13 +1,13 @@
 import { DetailsInteractionTrackerProvider } from '../../_ui/details-interaction-tracker-provider'
 import { SwapModeButtons } from '../../_ui/swap-mode-buttons'
-import { CrossChainSwapMaintenanceMessage } from './cross-chain-swap-maintenance-message'
+import { CrossChainSwapMaintenanceMessage } from './lifi/maintenance-message'
 import { CrossChainSwapSettingsOverlay } from './cross-chain-swap-settings-overlay'
-import { CrossChainSwapSwitchTokensButton } from './cross-chain-swap-switch-tokens-button'
-import { CrossChainSwapTokenNotFoundDialog } from './cross-chain-swap-token-not-found-dialog'
-import { CrossChainSwapToken0Input } from './cross-chain-swap-token0-input'
-import { CrossChainSwapToken1Input } from './cross-chain-swap-token1-input'
-import { CrossChainSwapTradeButton } from './cross-chain-swap-trade-button'
-import { CrossChainSwapTradeStats } from './cross-chain-swap-trade-stats'
+import { CrossChainSwapSwitchTokensButton } from './lifi/switch-tokens-button'
+import { CrossChainSwapTokenNotFoundDialog } from './lifi/token-not-found-dialog'
+import { CrossChainSwapToken0Input } from './lifi/token0-input'
+import { CrossChainSwapToken1Input } from './lifi/token1-input'
+import { CrossChainSwapTradeButton } from './lifi/trade-button'
+import { CrossChainSwapTradeStats } from './lifi/trade-stats'
 
 export function CrossChainSwapWidget() {
   return (

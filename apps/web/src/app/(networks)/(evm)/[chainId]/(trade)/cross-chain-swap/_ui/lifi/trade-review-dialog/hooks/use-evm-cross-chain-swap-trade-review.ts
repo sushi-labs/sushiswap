@@ -17,11 +17,11 @@ import {
   usePublicClient,
   useSendTransaction,
 } from 'wagmi'
-import { StepState } from '../../cross-chain-swap-confirmation-dialog'
+import { StepState } from '../../confirmation-dialog'
 import {
   useLifiXSwap,
   useLifiXSwapSelectedTradeRoute,
-} from '../../lifi-xswap-provider'
+} from '../../xswap-provider'
 import type { CrossChainSwapTradeReviewBase } from '../types'
 import { useCrossChainSwapTradeReviewPre } from './use-cross-chain-swap-trade-review-pre'
 import { useCrossChainSwapTradeReviewWriteHandlers } from './use-cross-chain-swap-trade-review-write-handlers'

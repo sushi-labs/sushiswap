@@ -7,7 +7,7 @@ import {
 } from '@sushiswap/telemetry'
 import { Button, Dots } from '@sushiswap/ui'
 import type { LifiXSwapSupportedChainId } from 'src/config'
-import { useLifiXSwap } from '../lifi-xswap-provider'
+import { useLifiXSwap } from '../xswap-provider'
 
 export function ConfirmSwapButton<
   TChainId0 extends LifiXSwapSupportedChainId,

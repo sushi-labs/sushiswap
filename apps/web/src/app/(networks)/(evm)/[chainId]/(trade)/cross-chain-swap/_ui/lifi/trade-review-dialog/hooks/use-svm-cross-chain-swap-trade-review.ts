@@ -11,11 +11,11 @@ import { useSvmEstimateGas } from 'src/lib/svm/hooks/useSvmEstimateGas'
 import { waitForSvmSignature } from 'src/lib/svm/wait-for-svm-signature'
 import { useAccount } from 'src/lib/wallet'
 import type { SvmChainId } from 'sushi/svm'
-import { StepState } from '../../cross-chain-swap-confirmation-dialog'
+import { StepState } from '../../confirmation-dialog'
 import {
   useLifiXSwap,
   useLifiXSwapSelectedTradeRoute,
-} from '../../lifi-xswap-provider'
+} from '../../xswap-provider'
 import type { CrossChainSwapTradeReviewBase } from '../types'
 import { useCrossChainSwapTradeReviewPre } from './use-cross-chain-swap-trade-review-pre'
 import { useCrossChainSwapTradeReviewWriteHandlers } from './use-cross-chain-swap-trade-review-write-handlers'

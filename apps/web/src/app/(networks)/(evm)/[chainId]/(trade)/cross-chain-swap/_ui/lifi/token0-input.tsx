@@ -7,7 +7,7 @@ import {
 } from 'src/config'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { isWNativeSupported } from 'sushi'
-import { useLifiXSwap } from './lifi-xswap-provider'
+import { useLifiXSwap } from './xswap-provider'
 
 const networks = getSortedChainIds(LIFI_XSWAP_SUPPORTED_CHAIN_IDS)
 

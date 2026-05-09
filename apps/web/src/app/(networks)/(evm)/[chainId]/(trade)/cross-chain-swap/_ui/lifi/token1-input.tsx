@@ -10,7 +10,7 @@ import { isWNativeSupported } from 'sushi'
 import {
   useLifiXSwap,
   useLifiXSwapSelectedTradeRoute,
-} from './lifi-xswap-provider'
+} from './xswap-provider'
 
 const networks = getSortedChainIds(LIFI_XSWAP_SUPPORTED_CHAIN_IDS)
 

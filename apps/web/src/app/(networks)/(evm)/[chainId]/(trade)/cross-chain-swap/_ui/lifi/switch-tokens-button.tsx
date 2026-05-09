@@ -8,7 +8,7 @@ import {
   TraceEvent,
 } from '@sushiswap/telemetry'
 
-import { useLifiXSwap } from './lifi-xswap-provider'
+import { useLifiXSwap } from './xswap-provider'
 
 export function CrossChainSwapSwitchTokensButton() {
   const {

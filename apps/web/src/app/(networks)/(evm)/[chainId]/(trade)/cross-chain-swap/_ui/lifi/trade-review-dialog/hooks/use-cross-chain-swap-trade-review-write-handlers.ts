@@ -17,11 +17,11 @@ import { Amount, getChainById } from 'sushi'
 import { useDetailsInteractionTracker } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
-import { StepState } from '../../cross-chain-swap-confirmation-dialog'
+import { StepState } from '../../confirmation-dialog'
 import {
   type UseLifiXSwapSelectedTradeRouteReturn,
   useLifiXSwap,
-} from '../../lifi-xswap-provider'
+} from '../../xswap-provider'
 
 export type CrossChainSwapWriteReceiptInfo = {
   status: 'success' | 'failed'

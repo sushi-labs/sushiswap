@@ -8,7 +8,7 @@ import {
 } from '@sushiswap/ui'
 import type { LifiXSwapSupportedChainId } from 'src/config'
 import type { UseCrossChainTradeStepReturn } from 'src/lib/hooks/react-query'
-import { useLifiXSwap } from '../lifi-xswap-provider'
+import { useLifiXSwap } from '../xswap-provider'
 
 export function TradeHeader<
   TChainId0 extends LifiXSwapSupportedChainId,
