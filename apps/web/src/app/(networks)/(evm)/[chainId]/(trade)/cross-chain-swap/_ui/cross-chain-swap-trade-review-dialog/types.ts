@@ -4,7 +4,7 @@ import type { UseCrossChainTradeStepReturn } from 'src/lib/hooks/react-query'
 import type { FeesBreakdown } from 'src/lib/swap/cross-chain'
 import type { Percent } from 'sushi'
 import type { StepState } from '../cross-chain-swap-confirmation-dialog'
-import type { UseSelectedCrossChainTradeRouteReturn } from '../derivedstate-cross-chain-swap-provider'
+import type { UseLifiXSwapSelectedTradeRouteReturn } from '../lifi-xswap-provider'
 
 export type CrossChainSwapTradeReviewBase<
   TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
@@ -13,7 +13,7 @@ export type CrossChainSwapTradeReviewBase<
   step: UseCrossChainTradeStepReturn<TChainId0, TChainId1> | undefined
   stepStates: { source: StepState; bridge: StepState; dest: StepState }
   hash: TxHashFor<TChainId0> | undefined
-  routeRef: RefObject<UseSelectedCrossChainTradeRouteReturn<
+  routeRef: RefObject<UseLifiXSwapSelectedTradeRouteReturn<
     TChainId0,
     TChainId1
   > | null>

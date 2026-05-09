@@ -33,7 +33,7 @@ import { ReviewIntro } from './cross-chain-swap-trade-review-dialog/review-intro
 import { TradeDetails } from './cross-chain-swap-trade-review-dialog/trade-details'
 import { TradeHeader } from './cross-chain-swap-trade-review-dialog/trade-header'
 import { TradeWarnings } from './cross-chain-swap-trade-review-dialog/trade-warnings'
-import type { UseSelectedCrossChainTradeRouteReturn } from './derivedstate-cross-chain-swap-provider'
+import type { UseLifiXSwapSelectedTradeRouteReturn } from './lifi-xswap-provider'
 
 interface CrossChainSwapTradeReviewDialogProps {
   children: ReactNode
@@ -148,7 +148,7 @@ function CrossChainSwapTradeReviewDialogContent<
                   txHash={hash}
                   dstTxHash={lifiData?.receiving?.txHash}
                   routeRef={
-                    routeRef as RefObject<UseSelectedCrossChainTradeRouteReturn<
+                    routeRef as RefObject<UseLifiXSwapSelectedTradeRouteReturn<
                       TChainId0,
                       TChainId1
                     > | null>

@@ -8,9 +8,9 @@ import {
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { isWNativeSupported } from 'sushi'
 import {
-  useDerivedStateCrossChainSwap,
-  useSelectedCrossChainTradeRoute,
-} from './derivedstate-cross-chain-swap-provider'
+  useLifiXSwap,
+  useLifiXSwapSelectedTradeRoute,
+} from './lifi-xswap-provider'
 
 const networks = getSortedChainIds(XSWAP_SUPPORTED_CHAIN_IDS)
 
@@ -22,13 +22,13 @@ export function CrossChainSwapToken1Input<
     state: { chainId1, token1 },
     mutate: { setToken1, setChainId1 },
     isToken1Loading: tokenLoading,
-  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
+  } = useLifiXSwap<TChainId0, TChainId1>()
 
   const {
     isLoading,
     isFetching,
     data: route,
-  } = useSelectedCrossChainTradeRoute()
+  } = useLifiXSwapSelectedTradeRoute()
 
   return (
     <Web3Input.Currency

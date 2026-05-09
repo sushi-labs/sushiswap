@@ -3,7 +3,7 @@
 import type { XSwapSupportedChainId } from 'src/config'
 import type { EvmChainId } from 'sushi/evm'
 import { type SvmChainId, isSvmChainId } from 'sushi/svm'
-import { useDerivedStateCrossChainSwap } from '../../derivedstate-cross-chain-swap-provider'
+import { useLifiXSwap } from '../../lifi-xswap-provider'
 import type {
   CrossChainSwapTradeReviewBase,
   CrossChainSwapTradeReviewWithWarnings,
@@ -18,7 +18,7 @@ export function useCrossChainSwapTradeReview<
 >(): CrossChainSwapTradeReviewWithWarnings<TChainId0, TChainId1> {
   const {
     state: { chainId0 },
-  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
+  } = useLifiXSwap<TChainId0, TChainId1>()
 
   const isSvm = isSvmChainId(chainId0)
 

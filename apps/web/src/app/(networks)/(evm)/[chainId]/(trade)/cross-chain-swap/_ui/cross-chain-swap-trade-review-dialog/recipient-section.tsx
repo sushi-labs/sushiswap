@@ -2,12 +2,12 @@
 
 import { List } from '@sushiswap/ui'
 import { getChainById, shortenAddress } from 'sushi'
-import { useDerivedStateCrossChainSwap } from '../derivedstate-cross-chain-swap-provider'
+import { useLifiXSwap } from '../lifi-xswap-provider'
 
 export function RecipientSection() {
   const {
     state: { chainId1, recipient },
-  } = useDerivedStateCrossChainSwap()
+  } = useLifiXSwap()
 
   if (!recipient) return null
 

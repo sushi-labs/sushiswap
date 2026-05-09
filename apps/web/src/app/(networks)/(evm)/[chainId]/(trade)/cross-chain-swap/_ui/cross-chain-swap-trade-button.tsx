@@ -18,9 +18,9 @@ import { ZERO } from 'sushi'
 import { CrossChainSwapChainUnsupportedMessage } from './cross-chain-swap-chain-unsupported-message'
 import { CrossChainSwapTradeReviewDialog } from './cross-chain-swap-trade-review-dialog'
 import {
-  useDerivedStateCrossChainSwap,
-  useSelectedCrossChainTradeRoute,
-} from './derivedstate-cross-chain-swap-provider'
+  useLifiXSwap,
+  useLifiXSwapSelectedTradeRoute,
+} from './lifi-xswap-provider'
 import { useIsCrossChainSwapMaintenance } from './use-is-cross-chain-swap-maintenance'
 
 export function CrossChainSwapTradeButton<
@@ -30,8 +30,8 @@ export function CrossChainSwapTradeButton<
   const { data: maintenance } = useIsCrossChainSwapMaintenance()
   const {
     state: { swapAmount, swapAmountString, chainId0, chainId1 },
-  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
-  const { data: route, isError } = useSelectedCrossChainTradeRoute()
+  } = useLifiXSwap<TChainId0, TChainId1>()
+  const { data: route, isError } = useLifiXSwapSelectedTradeRoute()
   const [checked, setChecked] = useState(false)
   const [slippagePercent] = useSlippageTolerance()
 

@@ -19,9 +19,9 @@ import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { StepState } from '../../cross-chain-swap-confirmation-dialog'
 import {
-  type UseSelectedCrossChainTradeRouteReturn,
-  useDerivedStateCrossChainSwap,
-} from '../../derivedstate-cross-chain-swap-provider'
+  type UseLifiXSwapSelectedTradeRouteReturn,
+  useLifiXSwap,
+} from '../../lifi-xswap-provider'
 
 export type CrossChainSwapWriteReceiptInfo = {
   status: 'success' | 'failed'
@@ -32,7 +32,7 @@ export type CrossChainSwapTradeReviewWriteHandlersParams<
   TChainId1 extends XSwapSupportedChainId,
   TReceipt,
 > = {
-  routeRef: RefObject<UseSelectedCrossChainTradeRouteReturn<
+  routeRef: RefObject<UseLifiXSwapSelectedTradeRouteReturn<
     TChainId0,
     TChainId1
   > | null>
@@ -70,7 +70,7 @@ export function useCrossChainSwapTradeReviewWriteHandlers<
   const {
     state: { chainId0, chainId1 },
     mutate: { setSwapAmount, setTradeId },
-  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
+  } = useLifiXSwap<TChainId0, TChainId1>()
   const {
     state: { isDetailsCollapsed, wasDetailsTouched },
     mutate: { resetDetailsTrackedState },

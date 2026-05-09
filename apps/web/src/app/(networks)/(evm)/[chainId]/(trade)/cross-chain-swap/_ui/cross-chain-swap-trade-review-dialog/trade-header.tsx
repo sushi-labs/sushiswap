@@ -8,7 +8,7 @@ import {
 } from '@sushiswap/ui'
 import type { XSwapSupportedChainId } from 'src/config'
 import type { UseCrossChainTradeStepReturn } from 'src/lib/hooks/react-query'
-import { useDerivedStateCrossChainSwap } from '../derivedstate-cross-chain-swap-provider'
+import { useLifiXSwap } from '../lifi-xswap-provider'
 
 export function TradeHeader<
   TChainId0 extends XSwapSupportedChainId,
@@ -20,7 +20,7 @@ export function TradeHeader<
 }) {
   const {
     state: { token0, token1, swapAmount },
-  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
+  } = useLifiXSwap<TChainId0, TChainId1>()
 
   return (
     <DialogHeader className="!text-left">

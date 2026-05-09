@@ -37,7 +37,7 @@ import {
   svmDefaultCurrency,
   svmDefaultQuoteCurrency,
 } from 'sushi/svm'
-import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
+import { useLifiXSwap } from './lifi-xswap-provider'
 
 export function CrossChainSwapTokenNotFoundDialog<
   TChainId0 extends XSwapSupportedChainId,
@@ -46,7 +46,7 @@ export function CrossChainSwapTokenNotFoundDialog<
   const {
     state: { chainId0, chainId1, token0, token1 },
     mutate: { setToken0, setToken1, setTokens },
-  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
+  } = useLifiXSwap<TChainId0, TChainId1>()
 
   const { mutate: customTokensMutate, hasToken } = useCustomTokens()
 

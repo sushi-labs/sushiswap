@@ -13,7 +13,7 @@ import type { UseCrossChainTradeStepReturn } from 'src/lib/hooks/react-query'
 import type { FeesBreakdown } from 'src/lib/swap/cross-chain'
 import { type Percent, ZERO, formatNumber, formatUSD } from 'sushi'
 import { CrossChainSwapRouteView } from '../cross-chain-swap-route-view'
-import { useDerivedStateCrossChainSwap } from '../derivedstate-cross-chain-swap-provider'
+import { useLifiXSwap } from '../lifi-xswap-provider'
 
 export function TradeDetails({
   executionDuration,
@@ -86,7 +86,7 @@ function TradeSummaryList<
 }) {
   const {
     state: { chainId0, chainId1 },
-  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
+  } = useLifiXSwap<TChainId0, TChainId1>()
   const [showMore, setShowMore] = useState<boolean>(false)
 
   return (

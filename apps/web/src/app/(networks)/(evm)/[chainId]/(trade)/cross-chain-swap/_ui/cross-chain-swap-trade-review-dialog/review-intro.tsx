@@ -6,7 +6,7 @@ import type { XSwapSupportedChainId } from 'src/config'
 import { nativeFromChainId } from 'src/lib/currency-from-chain-id'
 import { getChainById } from 'sushi'
 import { stringify } from 'viem'
-import { useDerivedStateCrossChainSwap } from '../derivedstate-cross-chain-swap-provider'
+import { useLifiXSwap } from '../lifi-xswap-provider'
 
 export function ReviewIntro<
   TChainId0 extends XSwapSupportedChainId,
@@ -20,7 +20,7 @@ export function ReviewIntro<
 }) {
   const {
     state: { chainId0, swapAmountString },
-  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
+  } = useLifiXSwap<TChainId0, TChainId1>()
   const showInsufficientFunds = Boolean(
     +swapAmountString > 0 &&
       stringify(estGasError).includes('insufficient funds'),

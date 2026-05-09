@@ -19,9 +19,9 @@ import {
 } from 'wagmi'
 import { StepState } from '../../cross-chain-swap-confirmation-dialog'
 import {
-  useDerivedStateCrossChainSwap,
-  useSelectedCrossChainTradeRoute,
-} from '../../derivedstate-cross-chain-swap-provider'
+  useLifiXSwap,
+  useLifiXSwapSelectedTradeRoute,
+} from '../../lifi-xswap-provider'
 import type { CrossChainSwapTradeReviewBase } from '../types'
 import { useCrossChainSwapTradeReviewPre } from './use-cross-chain-swap-trade-review-pre'
 import { useCrossChainSwapTradeReviewWriteHandlers } from './use-cross-chain-swap-trade-review-write-handlers'
@@ -42,7 +42,7 @@ export function useEvmCrossChainSwapTradeReview<
   const { address, chain } = useConnection()
   const {
     state: { chainId0 },
-  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
+  } = useLifiXSwap<TChainId0, TChainId1>()
 
   const client0 = usePublicClient({
     chainId: enabled ? chainId0 : undefined,
@@ -53,7 +53,7 @@ export function useEvmCrossChainSwapTradeReview<
   const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
   const { open: reviewDialogOpen } = useDialog(DialogType.Review)
 
-  const { data: selectedRoute } = useSelectedCrossChainTradeRoute<
+  const { data: selectedRoute } = useLifiXSwapSelectedTradeRoute<
     TChainId0,
     TChainId1
   >()

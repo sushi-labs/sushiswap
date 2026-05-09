@@ -8,10 +8,10 @@ import { getChainById, shortenAddress } from 'sushi'
 import { getEvmChainById } from 'sushi/evm'
 import type { Hex } from 'viem'
 import {
-  type UseSelectedCrossChainTradeRouteReturn,
-  useDerivedStateCrossChainSwap,
-  useSelectedCrossChainTradeRoute,
-} from './derivedstate-cross-chain-swap-provider'
+  type UseLifiXSwapSelectedTradeRouteReturn,
+  useLifiXSwap,
+  useLifiXSwapSelectedTradeRoute,
+} from './lifi-xswap-provider'
 
 interface ConfirmationDialogContent<
   TChainId0 extends XSwapSupportedChainId,
@@ -21,7 +21,7 @@ interface ConfirmationDialogContent<
   dstTxHash?: TxHashFor<TChainId1>
   bridgeUrl?: string
   dialogState: { source: StepState; bridge: StepState; dest: StepState }
-  routeRef: RefObject<UseSelectedCrossChainTradeRouteReturn<
+  routeRef: RefObject<UseLifiXSwapSelectedTradeRouteReturn<
     TChainId0,
     TChainId1
   > | null>
@@ -39,8 +39,8 @@ export function ConfirmationDialogContent<
 }: ConfirmationDialogContent<TChainId0, TChainId1>) {
   const {
     state: { chainId0, chainId1, token0, token1, recipient },
-  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
-  const { data: trade } = useSelectedCrossChainTradeRoute()
+  } = useLifiXSwap<TChainId0, TChainId1>()
+  const { data: trade } = useLifiXSwapSelectedTradeRoute()
 
   const swapOnDest =
     trade?.step &&

@@ -13,9 +13,9 @@ import { useAccount } from 'src/lib/wallet'
 import type { SvmChainId } from 'sushi/svm'
 import { StepState } from '../../cross-chain-swap-confirmation-dialog'
 import {
-  useDerivedStateCrossChainSwap,
-  useSelectedCrossChainTradeRoute,
-} from '../../derivedstate-cross-chain-swap-provider'
+  useLifiXSwap,
+  useLifiXSwapSelectedTradeRoute,
+} from '../../lifi-xswap-provider'
 import type { CrossChainSwapTradeReviewBase } from '../types'
 import { useCrossChainSwapTradeReviewPre } from './use-cross-chain-swap-trade-review-pre'
 import { useCrossChainSwapTradeReviewWriteHandlers } from './use-cross-chain-swap-trade-review-write-handlers'
@@ -32,7 +32,7 @@ export function useSvmCrossChainSwapTradeReview<
 } = {}): CrossChainSwapTradeReviewBase<TChainId0, TChainId1> {
   const {
     state: { chainId0 },
-  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
+  } = useLifiXSwap<TChainId0, TChainId1>()
 
   const address = useAccount(chainId0)
   const { signer } = useTransactionSigner()
@@ -40,7 +40,7 @@ export function useSvmCrossChainSwapTradeReview<
   const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
   const { open: reviewDialogOpen } = useDialog(DialogType.Review)
 
-  const { data: selectedRoute } = useSelectedCrossChainTradeRoute<
+  const { data: selectedRoute } = useLifiXSwapSelectedTradeRoute<
     TChainId0,
     TChainId1
   >()

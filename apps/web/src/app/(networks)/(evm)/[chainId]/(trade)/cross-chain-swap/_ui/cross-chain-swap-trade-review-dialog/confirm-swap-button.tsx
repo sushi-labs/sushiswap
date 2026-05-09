@@ -7,7 +7,7 @@ import {
 } from '@sushiswap/telemetry'
 import { Button, Dots } from '@sushiswap/ui'
 import type { XSwapSupportedChainId } from 'src/config'
-import { useDerivedStateCrossChainSwap } from '../derivedstate-cross-chain-swap-provider'
+import { useLifiXSwap } from '../lifi-xswap-provider'
 
 export function ConfirmSwapButton<
   TChainId0 extends XSwapSupportedChainId,
@@ -33,7 +33,7 @@ export function ConfirmSwapButton<
 
   const {
     state: { swapAmountString, token0, token1 },
-  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
+  } = useLifiXSwap<TChainId0, TChainId1>()
 
   return (
     <TraceEvent

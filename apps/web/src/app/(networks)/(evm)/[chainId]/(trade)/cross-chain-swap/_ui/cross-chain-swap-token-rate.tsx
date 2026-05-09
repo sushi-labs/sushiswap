@@ -4,7 +4,7 @@ import type { XSwapSupportedChainId } from 'src/config'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { Amount, Price, formatUSD } from 'sushi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
-import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
+import { useLifiXSwap } from './lifi-xswap-provider'
 
 export function CrossChainSwapTokenRate<
   TChainId0 extends XSwapSupportedChainId,
@@ -14,7 +14,7 @@ export function CrossChainSwapTokenRate<
   const {
     state: { chainId0, chainId1, token0, token1 },
     isLoading,
-  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
+  } = useLifiXSwap<TChainId0, TChainId1>()
 
   const amounts = useMemo(() => {
     if (!token0 || !token1) return undefined

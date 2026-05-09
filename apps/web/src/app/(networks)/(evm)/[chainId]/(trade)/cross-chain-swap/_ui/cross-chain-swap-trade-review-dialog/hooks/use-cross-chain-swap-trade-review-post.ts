@@ -18,7 +18,7 @@ import { usePublicClient } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { StepState } from '../../cross-chain-swap-confirmation-dialog'
-import { useDerivedStateCrossChainSwap } from '../../derivedstate-cross-chain-swap-provider'
+import { useLifiXSwap } from '../../lifi-xswap-provider'
 import type {
   CrossChainSwapTradeReviewBase,
   CrossChainSwapTradeReviewWithWarnings,
@@ -32,7 +32,7 @@ export function useCrossChainSwapTradeReviewPost<
 ): CrossChainSwapTradeReviewWithWarnings<TChainId0, TChainId1> {
   const {
     state: { token1, chainId0, chainId1, tradeId },
-  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
+  } = useLifiXSwap<TChainId0, TChainId1>()
   const address = useAccount(chainId0)
 
   const { tracking, step } = tradeReview

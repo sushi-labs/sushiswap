@@ -33,9 +33,9 @@ import { useDetailsInteractionTracker } from '../../_ui/details-interaction-trac
 import { CrossChainSwapFeesHoverCard } from './cross-chain-swap-fees-hover-card'
 import { CrossChainSwapTokenRate } from './cross-chain-swap-token-rate'
 import {
-  useDerivedStateCrossChainSwap,
-  useSelectedCrossChainTradeRoute,
-} from './derivedstate-cross-chain-swap-provider'
+  useLifiXSwap,
+  useLifiXSwapSelectedTradeRoute,
+} from './lifi-xswap-provider'
 
 export function CrossChainSwapTradeStats<
   TChainId0 extends XSwapSupportedChainId,
@@ -43,8 +43,8 @@ export function CrossChainSwapTradeStats<
 >() {
   const {
     state: { chainId0, chainId1, swapAmountString, recipient },
-  } = useDerivedStateCrossChainSwap<TChainId0, TChainId1>()
-  const { isLoading, data: trade, isError } = useSelectedCrossChainTradeRoute()
+  } = useLifiXSwap<TChainId0, TChainId1>()
+  const { isLoading, data: trade, isError } = useLifiXSwapSelectedTradeRoute()
   const {
     state: { isDetailsCollapsed },
     mutate: {

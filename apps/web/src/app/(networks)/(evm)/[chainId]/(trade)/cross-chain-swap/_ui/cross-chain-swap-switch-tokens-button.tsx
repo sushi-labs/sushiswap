@@ -8,12 +8,12 @@ import {
   TraceEvent,
 } from '@sushiswap/telemetry'
 
-import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
+import { useLifiXSwap } from './lifi-xswap-provider'
 
 export function CrossChainSwapSwitchTokensButton() {
   const {
     mutate: { switchTokens },
-  } = useDerivedStateCrossChainSwap()
+  } = useLifiXSwap()
 
   return (
     <div className="left-0 right-0 mt-[-26px] mb-[-26px] flex items-center justify-center">
