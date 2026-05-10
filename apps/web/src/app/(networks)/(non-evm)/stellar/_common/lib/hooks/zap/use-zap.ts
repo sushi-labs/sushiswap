@@ -9,6 +9,7 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { addMinutes } from 'date-fns'
 import { ChainId } from 'sushi'
+import type { StellarContractAddress } from 'sushi/stellar'
 import type { RouteWithTokens } from '~stellar/swap/lib/swap-get-route'
 import { calculateAmountOutMinimum } from '../../services/router-service'
 import { DEFAULT_TIMEOUT, contractAddresses } from '../../soroban'
@@ -28,7 +29,7 @@ import {
 import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
 
 export interface UseZapParams {
-  poolAddress: string
+  poolAddress: StellarContractAddress
   tokenIn: Token
   amountIn: string
   tokenInDecimals: number
@@ -173,7 +174,7 @@ export const useZap = () => {
         )
       }
 
-      const poolsTouched = new Set<string>([
+      const poolsTouched = new Set<StellarContractAddress>([
         ...(routeToken0 ? routeToken0.pools : []),
         ...(routeToken1 ? routeToken1.pools : []),
         params.poolAddress,

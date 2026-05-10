@@ -5,6 +5,7 @@ import {
   isTrendingTokensChainId,
 } from '@sushiswap/graph-client/data-api'
 import { useMemo } from 'react'
+import type { WalletAddressFor } from 'src/lib/wallet'
 import { EVM_DEFAULT_BASES, type EvmChainId, isEvmChainId } from 'sushi/evm'
 import { SVM_DEFAULT_BASES, type SvmChainId, isSvmChainId } from 'sushi/svm'
 import { useMyTokens } from './hooks/use-my-tokens'
@@ -19,7 +20,7 @@ import { TokenSelectorTrendingTokens } from './token-lists/token-selector-trendi
 interface TokenSelectorStates<TChainId extends EvmChainId | SvmChainId> {
   selected: CurrencyFor<TChainId> | undefined
   chainId: TChainId
-  account?: AddressFor<TChainId>
+  account?: WalletAddressFor<TChainId>
   onSelect(currency: CurrencyFor<TChainId>): void
   onShowInfo(currency: CurrencyFor<TChainId> | false): void
   currencies?: CurrencyFor<TChainId, { approved?: boolean }>[]

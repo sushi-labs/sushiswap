@@ -10,6 +10,7 @@ import {
   SkeletonText,
   typographyVariants,
 } from '@sushiswap/ui'
+import type { StellarContractAddress } from 'sushi/stellar'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import { formatAddress, formatFee } from '~stellar/_common/lib/utils/format'
 import { usePoolInfo } from '../../lib/hooks/pool/use-pool-info'
@@ -19,7 +20,7 @@ import { TokenIcon } from '../General/TokenIcon'
 interface PoolHeaderProps {
   pool?: PoolInfo | null
   backUrl: string
-  address?: string
+  address?: StellarContractAddress
 }
 
 export const PoolHeader = ({ pool, backUrl, address }: PoolHeaderProps) => {

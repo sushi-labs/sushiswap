@@ -2,6 +2,7 @@ import * as StellarSdk from '@stellar/stellar-sdk'
 import { scValToBigInt } from '@stellar/stellar-sdk'
 import { DEFAULT_TIMEOUT } from '@stellar/stellar-sdk/contract'
 import { sub } from 'date-fns'
+import type { StellarContractAddress } from 'sushi/stellar'
 import { contractAddresses } from '../soroban'
 import { getRouterContractClient } from '../soroban/client'
 import {
@@ -18,7 +19,7 @@ import {
  * Parameters for adding liquidity
  */
 export interface AddLiquidityParams {
-  poolAddress: string
+  poolAddress: StellarContractAddress
   token0Amount: string
   token1Amount: string
   token0Decimals: number
@@ -33,7 +34,7 @@ export interface AddLiquidityParams {
  * Parameters for single-hop swap
  */
 export interface SwapExactInputSingleParams {
-  pool: string
+  pool: StellarContractAddress
   tokenIn: string
   tokenOut: string
   fee: number
@@ -48,7 +49,7 @@ export interface SwapExactInputSingleParams {
  * Parameters for multi-hop swap
  */
 export interface SwapExactInputParams {
-  pools: string[]
+  pools: StellarContractAddress[]
   path: string[]
   fees: number[]
   recipient: string

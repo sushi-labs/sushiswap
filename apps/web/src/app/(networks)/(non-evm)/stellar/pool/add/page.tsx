@@ -5,6 +5,10 @@ import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
+import type {
+  StellarAccountAddress,
+  StellarContractAddress,
+} from 'sushi/stellar'
 import { formatUnits } from 'viem'
 import {
   useGetPool,
@@ -95,24 +99,32 @@ export default function AddPoolPage() {
     isLoading: isLoadingToken0Trustline,
     issuer: token0ResolvedIssuer,
   } = useNeedsTrustline(
-    orderedToken0?.code || '',
-    orderedToken0?.contract || '',
-    orderedToken0?.issuer,
+    orderedToken0
+      ? {
+          code: orderedToken0.code,
+          contract: orderedToken0.contract,
+          issuer: orderedToken0.issuer,
+        }
+      : null,
   )
   const {
     needsTrustline: needsToken1Trustline,
     isLoading: isLoadingToken1Trustline,
     issuer: token1ResolvedIssuer,
   } = useNeedsTrustline(
-    orderedToken1?.code || '',
-    orderedToken1?.contract || '',
-    orderedToken1?.issuer,
+    orderedToken1
+      ? {
+          code: orderedToken1.code,
+          contract: orderedToken1.contract,
+          issuer: orderedToken1.issuer,
+        }
+      : null,
   )
   const isLoadingTrustlines =
     isLoadingToken0Trustline || isLoadingToken1Trustline
   // Use the resolved issuers from the trustline check (looked up from Horizon if not already known)
   const tokensNeedingTrustline = useMemo(() => {
-    const tokens: Array<{ code: string; issuer: string }> = []
+    const tokens: Array<{ code: string; issuer: StellarAccountAddress }> = []
     if (needsToken0Trustline && orderedToken0 && token0ResolvedIssuer) {
       tokens.push({ code: orderedToken0.code, issuer: token0ResolvedIssuer })
     }
@@ -251,7 +263,7 @@ export default function AddPoolPage() {
       }
 
       try {
-        let poolAddress: string
+        let poolAddress: StellarContractAddress
 
         if (existingPoolAddress && poolInitialized === true) {
           poolAddress = existingPoolAddress
