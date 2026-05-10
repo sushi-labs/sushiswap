@@ -1,5 +1,7 @@
 import { Container } from '@sushiswap/ui'
 import { headers } from 'next/headers'
+import { notFound } from 'next/navigation'
+import { isStellarContractAddress } from 'sushi/stellar'
 import { PoolHeader } from '~stellar/_common/ui/PoolDetails/PoolHeader'
 
 export default async function PoolLayout(props: {
@@ -10,6 +12,9 @@ export default async function PoolLayout(props: {
   const params = await props.params
 
   const address = decodeURIComponent(params.address)
+  if (!isStellarContractAddress(address)) {
+    return notFound()
+  }
 
   const headersList = await headers()
   const referer = headersList.get('referer')

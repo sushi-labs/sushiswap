@@ -1,3 +1,4 @@
+import type { StellarContractAddress } from 'sushi/stellar'
 import {
   getOracleErrorMessage,
   isOracleFootprintError,
@@ -17,7 +18,7 @@ import {
  * @returns Result of the transaction
  */
 export async function executeTransactionWithRetry<T>(
-  poolAddresses: string[],
+  poolAddresses: StellarContractAddress[],
   operation: (hints: PoolOracleHints[]) => Promise<T>,
   maxRetries = 2,
 ): Promise<T> {
@@ -43,7 +44,7 @@ export async function executeTransactionWithRetry<T>(
  * @returns Array of results from each transaction
  */
 export async function executeTransactionsSequentially<T>(
-  poolAddresses: string[],
+  poolAddresses: StellarContractAddress[],
   operations: Array<(hints: PoolOracleHints[]) => Promise<T>>,
   maxRetries = 2,
 ): Promise<T[]> {
