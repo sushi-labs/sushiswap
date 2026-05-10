@@ -1,11 +1,12 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import type { StellarContractAddress } from 'sushi/stellar'
 import { getPoolDirectSDK } from '../../soroban/dex-factory-helpers'
 
 export interface GetPoolParams {
-  tokenA: string
-  tokenB: string
+  tokenA: StellarContractAddress
+  tokenB: StellarContractAddress
   fee: number
 }
 

@@ -6,14 +6,18 @@ import type { StellarChainId } from 'sushi/stellar'
 import type { SvmChainId } from 'sushi/svm'
 import { getNamespaceForChainId } from '../namespaces/namespace-for-chain-id'
 import { useWalletContext } from '../provider'
-import type { ChainIdForNamespace, WalletNamespace } from '../types'
+import type {
+  ChainIdForNamespace,
+  WalletAddressFor,
+  WalletNamespace,
+} from '../types'
 
 export function useAccount<TNamespace extends WalletNamespace>(
   namespace?: TNamespace,
-): AddressFor<ChainIdForNamespace<TNamespace>> | undefined
+): WalletAddressFor<ChainIdForNamespace<TNamespace>> | undefined
 export function useAccount<
   TChainId extends EvmChainId | SvmChainId | StellarChainId,
->(chainId: TChainId): AddressFor<TChainId> | undefined
+>(chainId: TChainId): WalletAddressFor<TChainId> | undefined
 export function useAccount(
   filter?: EvmChainId | SvmChainId | StellarChainId | WalletNamespace,
 ) {

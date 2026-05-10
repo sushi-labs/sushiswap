@@ -7,6 +7,7 @@ import { useCustomTokens } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { useMemo } from 'react'
+import type { WalletAddressFor } from 'src/lib/wallet'
 import { type AddressFor, Amount, getNativeAddress } from 'sushi'
 import {
   type EvmAddress,
@@ -28,7 +29,7 @@ import type { Address } from 'viem'
 
 interface UseMyTokens<TChainId extends TokenListChainId> {
   chainId: TChainId | undefined
-  account?: AddressFor<TChainId>
+  account?: WalletAddressFor<TChainId>
   includeNative?: boolean
 }
 

@@ -1,4 +1,5 @@
 import * as StellarSdk from '@stellar/stellar-sdk'
+import type { StellarContractAddress } from 'sushi/stellar'
 import { extractErrorMessage } from '../utils/error-helpers'
 import {
   type PoolOracleHints,
@@ -36,7 +37,7 @@ export async function mintPosition({
   signTransaction,
   signAuthEntry,
 }: {
-  poolAddress: string
+  poolAddress: StellarContractAddress
   recipient: string
   tickLower: number
   tickUpper: number
@@ -186,7 +187,7 @@ export async function increaseLiquidity({
   signTransaction,
   signAuthEntry,
 }: {
-  pool: string
+  pool: StellarContractAddress
   tokenId: number
   amount0Desired: bigint
   amount1Desired: bigint
@@ -313,7 +314,7 @@ export async function decreaseLiquidity({
   signAuthEntry,
   isLegacy = false,
 }: {
-  pool: string
+  pool: StellarContractAddress
   tokenId: number
   liquidity: bigint
   amount0Min: bigint

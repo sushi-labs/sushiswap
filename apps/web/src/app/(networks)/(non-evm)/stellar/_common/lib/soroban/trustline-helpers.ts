@@ -1,5 +1,10 @@
 import * as StellarSdk from '@stellar/stellar-sdk'
 import { Horizon } from '@stellar/stellar-sdk'
+import { isStellarAccountAddress } from 'sushi/stellar'
+import type {
+  StellarAccountAddress,
+  StellarContractAddress,
+} from 'sushi/stellar'
 import { HORIZON_URL, NETWORK_PASSPHRASE } from '../constants'
 
 const horizonServer = new Horizon.Server(HORIZON_URL)
@@ -17,15 +22,15 @@ export interface HorizonAssetInfo {
 /**
  * Cache for asset issuer lookups to avoid repeated API calls
  */
-const assetIssuerCache = new Map<string, string | null>()
+const assetIssuerCache = new Map<string, StellarAccountAddress | null>()
 
 /**
  * Look up asset info from StellarExpert by contract address
  * This is more reliable than looking up by asset code since it uses the exact contract
  */
 async function lookupAssetByContract(
-  contractAddress: string,
-): Promise<{ code: string; issuer: string } | null> {
+  contractAddress: StellarContractAddress,
+): Promise<{ code: string; issuer: StellarAccountAddress } | null> {
   try {
     // StellarExpert has an API to get asset info by contract address
     const response = await fetch(
@@ -46,14 +51,18 @@ async function lookupAssetByContract(
       const assetStr = data.asset
       if (typeof assetStr === 'string' && assetStr.includes('-')) {
         const [code, issuer] = assetStr.split('-')
-        if (code && issuer?.startsWith('G')) {
+        if (code && issuer && isStellarAccountAddress(issuer)) {
           return { code, issuer }
         }
       }
     }
 
     // Alternative: check if there's issuer info directly
-    if (data?.issuer && typeof data.issuer === 'string') {
+    if (
+      data?.issuer &&
+      typeof data.issuer === 'string' &&
+      isStellarAccountAddress(data.issuer)
+    ) {
       return { code: data.code || '', issuer: data.issuer }
     }
 
@@ -69,8 +78,8 @@ async function lookupAssetByContract(
  */
 async function lookupIssuerFromHorizon(
   assetCode: string,
-  contractAddress: string,
-): Promise<string | null> {
+  contractAddress: StellarContractAddress,
+): Promise<StellarAccountAddress | null> {
   try {
     // Query Horizon for assets with this code
     const assets = await horizonServer
@@ -94,7 +103,9 @@ async function lookupIssuerFromHorizon(
 
           // Compare with the contract address we're looking for
           if (sacContractId.toUpperCase() === contractAddress.toUpperCase()) {
-            return asset.asset_issuer
+            if (isStellarAccountAddress(asset.asset_issuer)) {
+              return asset.asset_issuer
+            }
           }
         } catch {}
       }
@@ -120,17 +131,17 @@ async function lookupIssuerFromHorizon(
  * @returns Object with whether trustline is required and the issuer if found
  */
 export async function checkTrustlineRequired(
-  contractAddress: string,
+  contractAddress: StellarContractAddress,
   assetCode: string,
-  assetIssuer?: string,
-): Promise<{ required: boolean; issuer: string | null }> {
+  assetIssuer?: StellarAccountAddress | '',
+): Promise<{ required: boolean; issuer: StellarAccountAddress | null }> {
   // XLM (native) never needs a trustline
   if (assetCode === 'XLM' || assetCode === 'native') {
     return { required: false, issuer: null }
   }
 
   // If we already have an issuer, use it
-  if (assetIssuer?.startsWith('G')) {
+  if (assetIssuer) {
     return { required: true, issuer: assetIssuer }
   }
 
@@ -182,7 +193,7 @@ export async function checkTrustlineRequired(
  */
 export async function getAssetInfo(
   assetCode: string,
-  assetIssuer?: string,
+  assetIssuer?: StellarAccountAddress,
 ): Promise<HorizonAssetInfo | null> {
   try {
     if (!assetIssuer) {
@@ -237,9 +248,9 @@ export async function getAssetInfo(
  * @param assetIssuer - Issuer account (G... address)
  */
 export async function hasTrustline(
-  userAddress: string,
+  userAddress: StellarAccountAddress,
   assetCode: string,
-  assetIssuer: string,
+  assetIssuer: StellarAccountAddress,
 ): Promise<boolean> {
   try {
     // Fetch account details using publicKey
@@ -267,9 +278,9 @@ export async function hasTrustline(
  * This is required before a user can receive or swap native Stellar assets
  */
 export async function createTrustline(
-  userAddress: string,
+  userAddress: StellarAccountAddress,
   assetCode: string,
-  assetIssuer: string,
+  assetIssuer: StellarAccountAddress,
   signTransaction: (xdr: string) => Promise<string>,
   limit?: string,
 ): Promise<{ success: boolean; txHash?: string; error?: string }> {
@@ -402,10 +413,12 @@ export async function createTrustline(
 /**
  * Get all trustlines for a user
  */
-export async function getUserTrustlines(userAddress: string): Promise<
+export async function getUserTrustlines(
+  userAddress: StellarAccountAddress,
+): Promise<
   Array<{
     assetCode: string
-    assetIssuer: string
+    assetIssuer: StellarAccountAddress
     balance: string
     limit: string
   }>
@@ -419,7 +432,12 @@ export async function getUserTrustlines(userAddress: string): Promise<
           b.asset_type !== 'native' && 'asset_code' in b && 'asset_issuer' in b,
       )
       .map((b) => {
-        if ('asset_code' in b && 'asset_issuer' in b && 'limit' in b) {
+        if (
+          'asset_code' in b &&
+          'asset_issuer' in b &&
+          'limit' in b &&
+          isStellarAccountAddress(b.asset_issuer)
+        ) {
           return {
             assetCode: b.asset_code,
             assetIssuer: b.asset_issuer,

@@ -2,23 +2,24 @@
 
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
+import type { StellarContractAddress } from 'sushi/stellar'
 import {
   calculatePriceFromSqrtPrice,
   getCurrentSqrtPrice,
 } from '../../soroban/pool-helpers'
 
-export const usePoolPrice = (address: string | null) => {
+export const usePoolPrice = (poolAddress: StellarContractAddress | null) => {
   return useQuery({
-    queryKey: ['stellar', 'pool', 'price', address],
+    queryKey: ['stellar', 'pool', 'price', poolAddress],
     queryFn: async () => {
-      if (!address) {
-        return null
+      if (!poolAddress) {
+        throw new Error('Pool address is required')
       }
-      const sqrtPriceX96 = await getCurrentSqrtPrice(address)
+      const sqrtPriceX96 = await getCurrentSqrtPrice(poolAddress)
       const price = calculatePriceFromSqrtPrice(sqrtPriceX96)
       return price
     },
-    enabled: Boolean(address),
+    enabled: Boolean(poolAddress),
     staleTime: ms('10s'), // 10 seconds
   })
 }

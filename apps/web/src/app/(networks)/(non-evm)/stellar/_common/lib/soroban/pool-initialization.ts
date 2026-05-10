@@ -1,3 +1,7 @@
+import type {
+  StellarAccountAddress,
+  StellarContractAddress,
+} from 'sushi/stellar'
 import { getPoolContractClient } from './client'
 
 /**
@@ -6,7 +10,9 @@ import { getPoolContractClient } from './client'
  * @returns true if pool is initialized, false otherwise
  * @throws Error if there's an RPC/network error (not a "pool not initialized" error)
  */
-export async function isPoolInitialized(address: string): Promise<boolean> {
+export async function isPoolInitialized(
+  address: StellarContractAddress,
+): Promise<boolean> {
   try {
     const poolContractClient = getPoolContractClient({
       contractId: address,
@@ -47,9 +53,9 @@ export async function isPoolInitialized(address: string): Promise<boolean> {
  * @returns Result of the initialization transaction
  */
 export async function initializePool(
-  poolAddress: string,
+  poolAddress: StellarContractAddress,
   sqrtPriceX96: bigint,
-  publicKey: string,
+  publicKey: StellarAccountAddress,
 ) {
   const poolClient = getPoolContractClient({
     contractId: poolAddress,

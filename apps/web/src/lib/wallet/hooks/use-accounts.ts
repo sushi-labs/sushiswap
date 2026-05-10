@@ -2,7 +2,11 @@
 
 import { useMemo } from 'react'
 import { useWalletContext } from '../provider'
-import type { ChainIdForNamespace, WalletNamespace } from '../types'
+import type {
+  ChainIdForNamespace,
+  WalletAddressFor,
+  WalletNamespace,
+} from '../types'
 
 export function useAccounts() {
   const { connections } = useWalletContext()
@@ -13,7 +17,9 @@ export function useAccounts() {
     ) => {
       for (const c of connections) {
         if (c.namespace !== namespace) continue
-        return c.account as AddressFor<ChainIdForNamespace<typeof namespace>>
+        return c.account as WalletAddressFor<
+          ChainIdForNamespace<typeof namespace>
+        >
       }
       return undefined
     }

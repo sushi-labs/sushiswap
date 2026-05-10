@@ -2,17 +2,18 @@
 
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
+import type { StellarContractAddress } from 'sushi/stellar'
 import { getPoolInfo } from '../../soroban/pool-helpers'
 import type { PoolInfo } from '../../types/pool.type'
 
-export const usePoolInfo = (address: string | null) => {
+export const usePoolInfo = (poolAddress: StellarContractAddress | null) => {
   return useQuery<PoolInfo | null>({
-    queryKey: ['stellar', 'pool', 'info', address],
+    queryKey: ['stellar', 'pool', 'info', poolAddress],
     queryFn: async () => {
-      if (!address) {
+      if (!poolAddress) {
         return null
       }
-      const poolInfo = await getPoolInfo(address)
+      const poolInfo = await getPoolInfo(poolAddress)
       // If getPoolInfo returns null, it might be a transient error
       // Throw to trigger retry logic
       if (!poolInfo) {
@@ -24,7 +25,7 @@ export const usePoolInfo = (address: string | null) => {
         ...poolInfo,
       }
     },
-    enabled: Boolean(address),
+    enabled: Boolean(poolAddress),
     staleTime: ms('10s'),
     retry: 3, // Retry up to 3 times on RPC failures
     retryDelay: (attemptIndex) =>
