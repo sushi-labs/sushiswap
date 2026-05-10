@@ -9,6 +9,7 @@ import {
   LinkInternal,
   SkeletonBox,
 } from '@sushiswap/ui'
+import { notFound } from 'next/navigation'
 import React, { use } from 'react'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {
@@ -33,7 +34,7 @@ export default function PoolPage({ params }: PoolPageProps) {
   const resolvedParams = use(params)
   const address = decodeURIComponent(resolvedParams.address)
   if (!isStellarContractAddress(address)) {
-    throw new Error('Invalid pool address')
+    notFound()
   }
 
   const {

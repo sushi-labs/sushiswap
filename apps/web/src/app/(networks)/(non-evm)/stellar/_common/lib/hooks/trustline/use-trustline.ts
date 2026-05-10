@@ -217,7 +217,7 @@ export function useNeedsTrustlines(tokens: TokenTrustlineInfo[]) {
       'trustlines-batch',
       connectedAddress,
       tokens
-        .map((t) => `${t?.code || ''}:${t?.contract || ''}:${t?.issuer}`)
+        .map((t) => `${t?.code || ''}:${t?.contract || ''}:${t?.issuer || ''}`)
         .join(','),
     ],
     queryFn: async () => {

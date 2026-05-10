@@ -1,11 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import {
-  type StellarAddress,
-  type StellarContractAddress,
-  isStellarContractAddress,
-} from 'sushi/stellar'
+import type { StellarAddress, StellarContractAddress } from 'sushi/stellar'
 import { getTokenAllowance } from '../../soroban/token-helpers'
 
 export const useTokenAllowance = (
@@ -23,11 +19,6 @@ export const useTokenAllowance = (
       }
       return await getTokenAllowance(owner, spender, tokenAddress)
     },
-    enabled: Boolean(
-      owner &&
-        spender &&
-        tokenAddress &&
-        isStellarContractAddress(tokenAddress),
-    ),
+    enabled: Boolean(owner && spender && tokenAddress),
   })
 }

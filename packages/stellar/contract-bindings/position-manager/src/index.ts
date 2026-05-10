@@ -8,7 +8,7 @@ import {
   Result,
   Spec as ContractSpec,
 } from '@stellar/stellar-sdk/contract';
-import { StellarContractAddress } from 'sushi/stellar'
+import type { StellarContractAddress } from 'sushi/stellar'
 import type {
   u32,
   i32,

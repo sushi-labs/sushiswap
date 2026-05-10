@@ -37,10 +37,14 @@ export function useCustomTokens() {
   const removeCustomToken = useCallback(
     (currency: Token) => {
       setValue((prev) => {
+        const normalizedTarget = normalizeStellarAddress(currency.contract)
         return Object.entries(prev).reduce<
           Record<StellarContractAddress, Token>
         >((acc, cur) => {
-          if (cur[0].toUpperCase() === `${currency.contract}`.toUpperCase()) {
+          if (
+            normalizeStellarAddress(cur[0] as StellarContractAddress) ===
+            normalizedTarget
+          ) {
             return acc // filter
           }
           acc[cur[0] as StellarContractAddress] = cur[1] // add
