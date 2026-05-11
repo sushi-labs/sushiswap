@@ -2,24 +2,27 @@
 
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import type { StellarAddress } from 'sushi/stellar'
+import type {
+  StellarAccountAddress,
+  StellarContractAddress,
+} from 'sushi/stellar'
 import { getPoolBalances } from '../../soroban/pool-helpers'
 
 export const usePoolBalances = (
-  address: string | null,
-  connectedAddress: StellarAddress | undefined,
+  poolAddress: StellarContractAddress | null,
+  connectedAddress: StellarAccountAddress | undefined,
 ) => {
   return useQuery({
-    queryKey: ['stellar', 'pool', 'balances', address, connectedAddress],
+    queryKey: ['stellar', 'pool', 'balances', poolAddress, connectedAddress],
     queryFn: async () => {
-      if (!address || !connectedAddress) {
+      if (!poolAddress || !connectedAddress) {
         throw new Error(
           'Address and connected address are required to fetch pool balances',
         )
       }
-      return await getPoolBalances(address, connectedAddress)
+      return await getPoolBalances(poolAddress, connectedAddress)
     },
-    enabled: Boolean(address && connectedAddress),
+    enabled: Boolean(poolAddress && connectedAddress),
     staleTime: ms('10s'),
   })
 }

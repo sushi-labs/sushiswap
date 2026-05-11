@@ -21,6 +21,11 @@ import React, {
 } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
+import {
+  type StellarContractAddress,
+  isStellarContractAddress,
+  normalizeStellarAddress,
+} from 'sushi/stellar'
 import { useCommonTokens } from '~stellar/_common/lib/hooks/token/use-common-tokens'
 import { useCustomTokens } from '~stellar/_common/lib/hooks/token/use-custom-tokens'
 import { useSortedTokenList } from '~stellar/_common/lib/hooks/token/use-sorted-token-list'
@@ -58,22 +63,22 @@ export default function TokenSelector({
   const { data: customTokens, mutate: customTokenMutate } = useCustomTokens()
   const { data: queryToken, isLoading: isLoadingQueryToken } =
     useTokenWithCache({
-      address: query,
-      enabled: StrKey.isValidContract(query),
+      address: isStellarContractAddress(query) ? query : undefined,
+      enabled: isStellarContractAddress(query),
       keepPreviousData: false,
     })
 
   // Merge common tokens (from StellarExpert + hardcoded) into the main token map
   const allTokens = useMemo(() => {
-    const merged = {} as Record<string, Token>
+    const merged = {} as Record<StellarContractAddress, Token>
     if (customTokens) {
       Object.entries(customTokens).forEach(([contract, token]) => {
-        merged[contract] = token
+        merged[contract as StellarContractAddress] = token
       })
     }
     if (commonTokens) {
       Object.entries(commonTokens).forEach(([contract, token]) => {
-        merged[contract] = token
+        merged[contract as StellarContractAddress] = token
       })
     }
     return merged
@@ -81,7 +86,7 @@ export default function TokenSelector({
 
   const { data: tokenBalances } = useTokenBalancesMap(
     connectedAddress,
-    Object.keys(allTokens),
+    Object.keys(allTokens) as StellarContractAddress[],
   )
 
   const { data: sortedTokenList } = useSortedTokenList({
@@ -190,14 +195,15 @@ export default function TokenSelector({
               'data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden',
             )}
           >
-            {queryToken && !allTokens[queryToken.contract.toUpperCase()] && (
-              <TokenSelectorImportRow
-                token={queryToken}
-                onImport={() => {
-                  queryToken && handleImport(queryToken)
-                }}
-              />
-            )}
+            {queryToken &&
+              !allTokens[normalizeStellarAddress(queryToken.contract)] && (
+                <TokenSelectorImportRow
+                  token={queryToken}
+                  onImport={() => {
+                    queryToken && handleImport(queryToken)
+                  }}
+                />
+              )}
             <AutoSizer disableWidth>
               {({ height }: { height: number }) => (
                 <FixedSizeList

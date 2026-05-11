@@ -10,10 +10,11 @@ import {
   HoverCardTrigger,
 } from '@sushiswap/ui'
 import { useState } from 'react'
+import type { StellarAccountAddress } from 'sushi/stellar'
 import { useCreateTrustline } from '~stellar/_common/lib/hooks/trustline/use-trustline'
 
 interface CreateTrustlineButtonProps extends ButtonProps {
-  tokens: Array<{ code: string; issuer: string }>
+  tokens: Array<{ code: string; issuer: StellarAccountAddress }>
 }
 
 export const CreateTrustlineButton = ({

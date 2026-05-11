@@ -4,6 +4,7 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi'
+import type { StellarContractAddress } from 'sushi/stellar'
 import { getPoolDirectSDK } from '../../soroban'
 import { getTokenByContract } from '../../soroban/token-helpers'
 import type { Token } from '../../types/token.type'
@@ -42,8 +43,14 @@ export function useTopPools({ isLegacy = false }: { isLegacy?: boolean } = {}) {
       const topPoolsWithTokens = await Promise.all(
         topPools.map(async (pool) => {
           const [token0, token1] = await Promise.all([
-            getTokenByContract(pool.token0Address, tokens),
-            getTokenByContract(pool.token1Address, tokens),
+            getTokenByContract(
+              pool.token0Address as StellarContractAddress,
+              tokens,
+            ),
+            getTokenByContract(
+              pool.token1Address as StellarContractAddress,
+              tokens,
+            ),
           ])
           return {
             ...pool,
