@@ -18,7 +18,6 @@ import {
   useL2OrderBook,
   useSymbolSplit,
 } from 'src/lib/perps'
-import { SideToggle } from '../_common'
 import { useUserSettingsState } from '../account-management'
 import { useAssetState } from '../trade-widget'
 
@@ -135,17 +134,19 @@ export const OrderBook = ({ className }: { className?: string }) => {
           {isLoading ? (
             <SkeletonOrderBookRow />
           ) : error ? null : (
-            <div className="grid grid-cols-3">
-              <div className="text-left font-normal pl-2 p-0.5 text-xs">
+            <div className="grid grid-cols-3 overflow-hidden">
+              <div className="min-w-0 truncate text-left font-normal pl-2 p-0.5 text-xs">
                 Price
               </div>
-              <div className="font-normal p-0.5 text-xs text-right">
+
+              <div className="min-w-0 truncate font-normal p-0.5 text-right text-xs">
                 Size{' '}
                 {asset
                   ? `(${orderBookSide === 'base' ? baseSymbol : quoteSymbol})`
                   : ''}
               </div>
-              <div className="font-normal p-0.5 pr-2 text-xs text-right">
+
+              <div className="min-w-0 truncate font-normal p-0.5 pr-2 text-right text-xs">
                 Total{' '}
                 {asset
                   ? `(${orderBookSide === 'base' ? baseSymbol : quoteSymbol})`
