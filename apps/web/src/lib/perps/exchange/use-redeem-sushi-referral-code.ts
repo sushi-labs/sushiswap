@@ -94,6 +94,7 @@ export function useRedeemSushiReferralCode({
           groupTimestamp: ts,
           timestamp: ts,
           autoClose: TOAST_AUTOCLOSE_TIME,
+          variant: 'perps',
         })
       }
 
@@ -119,6 +120,7 @@ export function useRedeemSushiReferralCode({
           groupTimestamp: ts,
           timestamp: ts,
           autoClose: TOAST_AUTOCLOSE_TIME,
+          variant: 'perps',
         })
       }
     },

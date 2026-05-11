@@ -1,16 +1,23 @@
 'use client'
-import { ChevronDownIcon } from '@heroicons/react-v1/outline'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import { useBreakpoint } from '@sushiswap/hooks'
 import {
   Button,
   Chip,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
   SkeletonBox,
 } from '@sushiswap/ui'
-import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
-import { useEffect, useMemo, useState } from 'react'
-import { getHyperliquidCoinIconUrl } from 'src/lib/perps'
+import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
+import { useEffect, useMemo } from 'react'
+// import { ShortcutMenu } from './shortcut-menu'
+import { AssetIcon } from '../_common'
 import { useAssetState } from '../trade-widget'
 import { useAssetSelectorState } from './asset-selector-provider'
 import { AssetTabs } from './asset-tabs'
@@ -25,98 +32,128 @@ export const AssetSelector = () => {
     state: { open },
     mutate: { setOpen },
   } = useAssetSelectorState()
+  const { isLg } = useBreakpoint('lg')
+
+  useEffect(() => {
+    if (!asset) return
+    const toggleSelector = (event: KeyboardEvent) => {
+      //command + k or ctrl + k
+      if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+        event.preventDefault()
+        setOpen(!open)
+      }
+    }
+
+    window.addEventListener('keydown', toggleSelector)
+    return () => {
+      window.removeEventListener('keydown', toggleSelector)
+    }
+  }, [open, setOpen, asset])
+
+  const content = useMemo(() => {
+    return (
+      <>
+        <div className="px-2 lg:px-0">
+          <SearchBar />
+        </div>
+        <AssetTabs />
+      </>
+    )
+  }, [])
+
+  if (!isLg) {
+    return (
+      <PerpsDialog open={open} onOpenChange={setOpen}>
+        <PerpsDialogTrigger asChild>
+          {!asset ? (
+            <TriggerSkeleton />
+          ) : (
+            <Button
+              aria-label="Asset Selector"
+              variant="perps-secondary"
+              size="sm"
+              className="whitespace-nowrap hover:!bg-transparent items-center"
+            >
+              <Trigger />
+            </Button>
+          )}
+        </PerpsDialogTrigger>
+        <PerpsDialogContent
+          onOpenAutoFocus={(e) => {
+            e.preventDefault()
+          }}
+          aria-describedby={undefined}
+          hideClose
+          className="!p-0 min-w-[100vw] !rounded-xl focus:!ring-0"
+          wrapperClassName="!rounded-xl"
+        >
+          <VisuallyHidden>
+            <PerpsDialogTitle>Asset Selector</PerpsDialogTitle>
+          </VisuallyHidden>
+          <PerpsDialogInnerContent className="!p-0 !max-h-[100dvh] hide-scrollbar">
+            {content}
+          </PerpsDialogInnerContent>
+        </PerpsDialogContent>
+      </PerpsDialog>
+    )
+  }
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger asChild className="focus:!ring-0">
         {!asset ? (
           <TriggerSkeleton />
         ) : (
           <Button
             aria-label="Asset Selector"
-            variant="ghost"
-            className="whitespace-nowrap hover:!bg-transparent !px-0 lg:!rounded-full items-center !h-fit !gap-1"
-            asChild
+            variant="perps-secondary"
+            size="sm"
+            className="whitespace-nowrap hover:!bg-transparent items-center"
           >
-            <span className="block lg:hidden">
-              <TokenIcon />
-            </span>
-            <div className="whitespace-nowrap flex flex-col lg:flex-row lg:items-center lg:gap-2">
-              <div className="flex items-center gap-1">
-                <span className="hidden lg:block">
-                  <TokenIcon />
-                </span>
-                <span className="text-lg font-medium">{asset?.symbol}</span>
-              </div>
-              <div className="flex items-center gap-1 ">
-                <Chip
-                  variant="perps-blue"
-                  className="!px-1 !py-0 rounded-md ml-1"
-                  data-glow="true"
-                >
-                  {asset?.maxLeverage ? `${asset.maxLeverage}x` : 'Spot'}
-                </Chip>
-                {asset?.dex ? (
-                  <Chip
-                    variant="perps-blue"
-                    className="!px-1 !py-0 rounded-md ml-1"
-                  >
-                    {asset.dex}
-                  </Chip>
-                ) : null}
-              </div>
-            </div>
-            <Button
-              variant="perps-secondary"
-              size="xs"
-              className="!px-1 ml-2 lg:ml-1 !rounded-lg"
-              aria-label="Asset Selector Chevron"
-            >
-              <ChevronDownIcon width={20} height={20} />
-            </Button>
+            <Trigger />
           </Button>
         )}
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="flex flex-col gap-2 p-3 !backdrop-blur-2xl !border-2 !max-w-[calc(100vw-15px)] !border-[#7D95A9]">
-        <SearchBar />
-        <AssetTabs />
+      <DropdownMenuContent
+        className="flex flex-col !p-0 lg:!rounded-xl !max-w-[100vw] !shadow-[inset_1.5px_2px_1px_-2px_rgba(255,255,255,0.2),inset_-1.5px_-1.5px_1px_-2px_rgba(255,255,255,0.125)] !bg-perps-background/90 border !border-white/[0.07]"
+        style={{
+          backgroundImage:
+            'linear-gradient(180deg, rgba(237, 241, 243, 0.1) 0%, rgba(237, 241, 243, 0.03) 100%)',
+        }}
+      >
+        {content}
+        {/* todo: ShortcutMenu */}
+        {/* <ShortcutMenu /> */}
       </DropdownMenuContent>
     </DropdownMenu>
   )
 }
 
-const TokenIcon = () => {
+const Trigger = () => {
   const {
     state: { asset },
   } = useAssetState()
-  const [imageErr, setImageErr] = useState(false)
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: reset imageErr on asset change
-  useEffect(() => {
-    setImageErr(false)
-  }, [asset?.symbol])
-
-  const url = useMemo(() => {
-    return getHyperliquidCoinIconUrl(asset)
-  }, [asset])
 
   return (
     <>
-      {imageErr ? (
-        <UnknownTokenIcon className="w-6 h-6" />
-      ) : (
-        <img
-          src={url}
-          alt={asset?.symbol}
-          className="w-6 h-6 rounded-full"
-          onLoadStart={() => {
-            setImageErr(false)
-          }}
-          onError={() => {
-            setImageErr(true)
-          }}
-        />
-      )}
+      <div className="whitespace-nowrap flex items-center gap-2">
+        <div className="flex items-center gap-1">
+          <AssetIcon asset={asset} />
+
+          <span className="text-lg font-medium">{asset?.symbol}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <Chip variant="perps-blue" className="!px-1 !py-0 rounded-md ml-1">
+            {asset?.maxLeverage ? `${asset.maxLeverage}x` : 'Spot'}
+          </Chip>
+          {asset?.dex ? (
+            <Chip variant="perps-blue" className="!px-1 !py-0 rounded-md ml-1">
+              {asset.dex}
+            </Chip>
+          ) : null}
+        </div>
+      </div>
+      <DownTriangleIcon width={6} height={6} />
     </>
   )
 }
@@ -125,19 +162,20 @@ const TriggerSkeleton = () => {
   return (
     <Button
       variant="secondary"
-      className="whitespace-nowrap lg:!rounded-full !h-fit !gap-1"
+      className="whitespace-nowrap lg:!rounded-xl !gap-1"
+      size="sm"
+      disabled
     >
-      <div className="whitespace-nowrap flex flex-col lg:flex-row lg:items-center gap-1">
+      <div className="whitespace-nowrap flex items-center gap-1">
         <div className="flex items-center gap-1">
-          <SkeletonBox className="w-6 h-6 min-w-[24px] !rounded-full" />
-          <SkeletonBox className="w-24 h-7" />
-          <ChevronDownIcon className="block lg:hidden" width={20} height={20} />
+          <SkeletonBox className="w-6 h-6 min-w-[24px] !rounded-xl" />
+          <SkeletonBox className="w-24 h-6" />
         </div>
         <div className="flex items-center gap-1">
           <SkeletonBox className="w-8 h-4 !rounded-[4px]" />
         </div>
       </div>
-      <ChevronDownIcon className="hidden lg:block" width={20} height={20} />
+      <DownTriangleIcon width={6} height={6} />
     </Button>
   )
 }

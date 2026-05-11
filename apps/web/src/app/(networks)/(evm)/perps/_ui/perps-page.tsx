@@ -11,7 +11,7 @@ export const PerpsPage = () => {
   if (!isMounted) return <Splash />
 
   return (
-    <main className="bg-[#0D1421]">
+    <main className="bg-perps-background">
       {isLg ? <DesktopLayout /> : <MobileLayout />}
     </main>
   )

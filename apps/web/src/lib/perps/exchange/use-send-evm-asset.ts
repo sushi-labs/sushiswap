@@ -94,6 +94,7 @@ export const useSendEvmAsset = () => {
         groupTimestamp: ts,
         autoClose: TOAST_AUTOCLOSE_TIME,
         txHash,
+        variant: 'perps',
       })
 
       return { ts }
@@ -111,6 +112,7 @@ export const useSendEvmAsset = () => {
         groupTimestamp: ctx.ts,
         autoClose: TOAST_AUTOCLOSE_TIME,
         txHash,
+        variant: 'perps',
       })
     },
 
@@ -128,6 +130,7 @@ export const useSendEvmAsset = () => {
         groupTimestamp: ctx?.ts ?? Date.now(),
         autoClose: TOAST_AUTOCLOSE_TIME,
         txHash,
+        variant: 'perps',
       })
     },
   })

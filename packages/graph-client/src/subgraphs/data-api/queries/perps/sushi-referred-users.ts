@@ -7,13 +7,25 @@ import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
 export const PerpsSushiReferredUsersQuery = graphql(
   `
-    query PerpsSushiReferredUsers($address: EvmAddress!, $limit: Int = 50, $offset: Int = 0) {
+   query PerpsSushiReferredUsers($address: EvmAddress!) {
       perps {
-        referredUsers(address: $address, limit: $limit, offset: $offset) {
-          refereeAddress
-          linkedAt
-          lifetimeEarnedFees
+        referredUsers(address: $address) {
+          children {
+            shareBps
+            refereeAddress
+            linkedAt
+            lifetimeEarnedFees
+            level
+            lastEarnedAt
+            downlineEarnedFees
+          }
+          downlineEarnedFees
           lastEarnedAt
+          level
+          lifetimeEarnedFees
+          linkedAt
+          refereeAddress
+          shareBps
         }
       }
     }

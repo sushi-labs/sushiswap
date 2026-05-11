@@ -2,12 +2,13 @@
 import PencilIcon from '@heroicons/react/20/solid/PencilIcon'
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
   classNames,
 } from '@sushiswap/ui'
 import {
@@ -303,8 +304,8 @@ export const EditTpSlPositionDialog = ({
   )
 
   return (
-    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
+    <PerpsDialog open={resolvedOpen} onOpenChange={handleOpenChange}>
+      <PerpsDialogTrigger asChild>
         {trigger ? (
           trigger
         ) : (
@@ -312,213 +313,214 @@ export const EditTpSlPositionDialog = ({
             <PencilIcon className="w-4 h-4" />
           </TableButton>
         )}
-      </DialogTrigger>
+      </PerpsDialogTrigger>
       {/* dont autofocus the input */}
-      <DialogContent
-        onOpenAutoFocus={(e) => e.preventDefault()}
-        variant="perps-default"
-      >
-        <DialogHeader className="!text-left">
-          <DialogTitle>TP/SL for Position</DialogTitle>
-          <DialogDescription>
+      <PerpsDialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>TP/SL for Position</PerpsDialogTitle>
+          <PerpsDialogDescription>
             Edit your take profit and stop loss orders for this position.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
-          <div className="flex flex-col gap-4 text-sm">
-            <div className="flex flex-col gap-2 text-sm">
-              <StatItem title="Coin" value={baseSymbol} />
-              <StatItem
-                title="Size"
-                value={
-                  <p
-                    className={classNames(
-                      getTextColorClass(positionToClose?.side === 'B' ? 1 : -1),
-                    )}
-                  >
-                    {positionSize} {baseSymbol}
-                  </p>
-                }
-              />
-              <StatItem
-                title="Entry Price"
-                value={perpsNumberFormatter({
-                  value: entryPrice,
-                  maxFraxDigits: asset?.formatParseDecimals,
-                })}
-              />
-              <StatItem
-                title="Mark Price"
-                value={perpsNumberFormatter({
-                  value: markPrice,
-                  maxFraxDigits: asset?.formatParseDecimals,
-                })}
-              />
-
-              {existingTpOrder ? (
-                <div className="flex items-center justify-between">
-                  <div className="text-muted-foreground">Take Profit</div>
-                  <div className="flex flex-col items-end">
-                    <div className="flex items-center gap-2">
-                      <div className="font-medium whitespace-nowrap">
-                        <p>{existingTpOrder?.triggerCondition}</p>
-                      </div>
-                      <CancelOpenOrder
-                        orderId={existingTpOrder.oid}
-                        coin={positionToClose.position.coin}
-                      />
-                    </div>
-                    <div className="text-muted-foreground text-xs">
-                      Expected Profit:{' '}
-                      {perpsNumberFormatter({
-                        value: expectedProfitUsdc,
-                        maxFraxDigits: asset?.formatParseDecimals,
-                      })}{' '}
-                      USDC
-                    </div>
-                  </div>
-                </div>
-              ) : null}
-              {existingSlOrder ? (
-                <div className="flex items-center justify-between">
-                  <div className="text-muted-foreground">Stop Loss</div>
-                  <div className="flex flex-col items-end">
-                    <div className="flex items-center gap-2">
-                      <div className="font-medium whitespace-nowrap">
-                        <p>{existingSlOrder?.triggerCondition}</p>
-                      </div>
-                      <CancelOpenOrder
-                        orderId={existingSlOrder.oid}
-                        coin={positionToClose.position.coin}
-                      />
-                    </div>
-                    <div className="text-muted-foreground text-xs">
-                      Expected Loss: -
-                      {perpsNumberFormatter({
-                        value: expectedLossUsdc,
-                        maxFraxDigits: asset?.formatParseDecimals,
-                      })}{' '}
-                      USDC
-                    </div>
-                  </div>
-                </div>
-              ) : null}
-            </div>
-            <TpSlInput
-              asset={asset}
-              tpPrice={tpPrice}
-              onChangeTpPrice={setTpPrice}
-              slPrice={slPrice}
-              onChangeSlPrice={setSlPrice}
-              entryPrice={entryPrice}
-              side={positionToClose?.side}
-              positionSize={configureAmount ? size.toString() : positionSize}
-              positionLeverage={positionToClose?.position.leverage.value}
-              showExpectedProfit={true}
-              hideSl={Boolean(existingSlOrder)}
-              hideTp={Boolean(existingTpOrder)}
-              type={type}
-              setType={setType}
-              inputSize="sm"
-            />
-            {Boolean(existingSlOrder) && Boolean(existingTpOrder) ? null : (
-              <>
-                <div className="flex flex-col gap-2">
-                  <CheckboxSetting
-                    value={configureAmount}
-                    onChange={(val) => {
-                      setConfigureAmount(val)
-                    }}
-                    label="Configure amount"
-                  />
-                  {configureAmount ? (
-                    <ConfigureAmount
-                      maxDecimals={asset?.formatParseDecimals ?? 6}
-                      coinSymbol={baseSymbol}
-                      maxValue={Number.parseFloat(positionSize)}
-                      value={size}
-                      onChange={setSize}
-                      step={1 / 10 ** (asset?.decimals || 6)}
-                    />
-                  ) : null}
-                </div>
-                <div className="flex flex-col gap-2">
-                  <CheckboxSetting
-                    value={hasLimitPrice}
-                    onChange={(val) => {
-                      setHasLimitPrice(val)
-                    }}
-                    label="Limit Price"
-                  />
-                  {hasLimitPrice ? (
-                    <TpSlLimitInput
-                      asset={asset}
-                      tpLimitPrice={tpLimitPrice}
-                      onChangeTpLimitPrice={setTpLimitPrice}
-                      slLimitPrice={slLimitPrice}
-                      onChangeSlLimitPrice={setSlLimitPrice}
-                      className="!text-sm !py-0 !px-2"
-                    />
-                  ) : null}
-                </div>
-                {/* connect checker not needed, wont be able to get here unless connected anyway */}
-                <PerpsChecker.Legal size="default" variant="perps-default">
-                  <PerpsChecker.EnableTrading
-                    size="default"
-                    variant="perps-default"
-                  >
-                    <PerpsChecker.BuilderFee
-                      size="default"
-                      variant="perps-default"
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
+          <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
+            <div className="flex flex-col gap-4 text-sm">
+              <div className="flex flex-col gap-2 text-sm">
+                <StatItem title="Coin" value={baseSymbol} />
+                <StatItem
+                  title="Size"
+                  value={
+                    <p
+                      className={classNames(
+                        getTextColorClass(
+                          positionToClose?.side === 'B' ? 1 : -1,
+                        ),
+                      )}
                     >
-                      <PerpsChecker.HyperReferral
-                        size="default"
-                        variant="perps-default"
-                      >
-                        <Button
-                          size="default"
-                          variant="perps-default"
-                          onClick={() => {
-                            if (!orderData) return
-                            executeOrders(
-                              { orderData },
-                              {
-                                onSuccess: () => {
-                                  handleOpenChange(false)
-                                },
-                              },
-                            )
-                          }}
-                          disabled={isPending || !positionToClose}
-                          loading={isPending}
-                        >
-                          Confirm
-                        </Button>
-                      </PerpsChecker.HyperReferral>
-                    </PerpsChecker.BuilderFee>
-                  </PerpsChecker.EnableTrading>
-                </PerpsChecker.Legal>
+                      {positionSize} {baseSymbol}
+                    </p>
+                  }
+                />
+                <StatItem
+                  title="Entry Price"
+                  value={perpsNumberFormatter({
+                    value: entryPrice,
+                    maxFraxDigits: asset?.formatParseDecimals,
+                  })}
+                />
+                <StatItem
+                  title="Mark Price"
+                  value={perpsNumberFormatter({
+                    value: markPrice,
+                    maxFraxDigits: asset?.formatParseDecimals,
+                  })}
+                />
 
-                <div>
-                  <div className="bg-accent w-full h-[1px]" />
-                  <p className="text-xs text-muted-foreground italic mt-2">
-                    By default take-profit and stop-loss orders apply to the
-                    entire position. Take-profit and stop-loss automatically
-                    cancel after closing the position. A market order is
-                    triggered when the stop loss or take profit price is
-                    reached.
-                  </p>
-                  <p className="text-xs text-muted-foreground italic mt-2">
-                    If the order size is configured above, the TP/SL order will
-                    be for that size no matter how the position changes in the
-                    future.
-                  </p>
-                </div>
-              </>
-            )}
+                {existingTpOrder ? (
+                  <div className="flex items-center justify-between">
+                    <div className="text-muted-foreground">Take Profit</div>
+                    <div className="flex flex-col items-end">
+                      <div className="flex items-center gap-2">
+                        <div className="font-medium whitespace-nowrap">
+                          <p>{existingTpOrder?.triggerCondition}</p>
+                        </div>
+                        <CancelOpenOrder
+                          orderId={existingTpOrder.oid}
+                          coin={positionToClose.position.coin}
+                        />
+                      </div>
+                      <div className="text-muted-foreground text-xs">
+                        Expected Profit:{' '}
+                        {perpsNumberFormatter({
+                          value: expectedProfitUsdc,
+                          maxFraxDigits: asset?.formatParseDecimals,
+                        })}{' '}
+                        USDC
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+                {existingSlOrder ? (
+                  <div className="flex items-center justify-between">
+                    <div className="text-muted-foreground">Stop Loss</div>
+                    <div className="flex flex-col items-end">
+                      <div className="flex items-center gap-2">
+                        <div className="font-medium whitespace-nowrap">
+                          <p>{existingSlOrder?.triggerCondition}</p>
+                        </div>
+                        <CancelOpenOrder
+                          orderId={existingSlOrder.oid}
+                          coin={positionToClose.position.coin}
+                        />
+                      </div>
+                      <div className="text-muted-foreground text-xs">
+                        Expected Loss: -
+                        {perpsNumberFormatter({
+                          value: expectedLossUsdc,
+                          maxFraxDigits: asset?.formatParseDecimals,
+                        })}{' '}
+                        USDC
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+              <TpSlInput
+                asset={asset}
+                tpPrice={tpPrice}
+                onChangeTpPrice={setTpPrice}
+                slPrice={slPrice}
+                onChangeSlPrice={setSlPrice}
+                entryPrice={entryPrice}
+                side={positionToClose?.side}
+                positionSize={configureAmount ? size.toString() : positionSize}
+                positionLeverage={positionToClose?.position.leverage.value}
+                showExpectedProfit={true}
+                hideSl={Boolean(existingSlOrder)}
+                hideTp={Boolean(existingTpOrder)}
+                type={type}
+                setType={setType}
+                inputSize="sm"
+              />
+              {Boolean(existingSlOrder) && Boolean(existingTpOrder) ? null : (
+                <>
+                  <div className="flex flex-col gap-2">
+                    <CheckboxSetting
+                      value={configureAmount}
+                      onChange={(val) => {
+                        setConfigureAmount(val)
+                      }}
+                      label="Configure amount"
+                    />
+                    {configureAmount ? (
+                      <ConfigureAmount
+                        maxDecimals={asset?.formatParseDecimals ?? 6}
+                        coinSymbol={baseSymbol}
+                        maxValue={Number.parseFloat(positionSize)}
+                        value={size}
+                        onChange={setSize}
+                        step={1 / 10 ** (asset?.decimals || 6)}
+                      />
+                    ) : null}
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <CheckboxSetting
+                      value={hasLimitPrice}
+                      onChange={(val) => {
+                        setHasLimitPrice(val)
+                      }}
+                      label="Limit Price"
+                    />
+                    {hasLimitPrice ? (
+                      <TpSlLimitInput
+                        asset={asset}
+                        tpLimitPrice={tpLimitPrice}
+                        onChangeTpLimitPrice={setTpLimitPrice}
+                        slLimitPrice={slLimitPrice}
+                        onChangeSlLimitPrice={setSlLimitPrice}
+                        className="!text-sm !py-0 !px-2"
+                      />
+                    ) : null}
+                  </div>
+                  {/* connect checker not needed, wont be able to get here unless connected anyway */}
+                  <PerpsChecker.Legal size="default" variant="perps-tertiary">
+                    <PerpsChecker.EnableTrading
+                      size="default"
+                      variant="perps-tertiary"
+                    >
+                      <PerpsChecker.BuilderFee
+                        size="default"
+                        variant="perps-tertiary"
+                      >
+                        <PerpsChecker.HyperReferral
+                          size="default"
+                          variant="perps-tertiary"
+                        >
+                          <Button
+                            size="default"
+                            variant="perps-tertiary"
+                            onClick={() => {
+                              if (!orderData) return
+                              executeOrders(
+                                { orderData },
+                                {
+                                  onSuccess: () => {
+                                    handleOpenChange(false)
+                                  },
+                                },
+                              )
+                            }}
+                            disabled={isPending || !positionToClose}
+                            loading={isPending}
+                          >
+                            Confirm
+                          </Button>
+                        </PerpsChecker.HyperReferral>
+                      </PerpsChecker.BuilderFee>
+                    </PerpsChecker.EnableTrading>
+                  </PerpsChecker.Legal>
+
+                  <div>
+                    <div className="bg-accent w-full h-[1px]" />
+                    <p className="text-xs text-muted-foreground italic mt-2">
+                      By default take-profit and stop-loss orders apply to the
+                      entire position. Take-profit and stop-loss automatically
+                      cancel after closing the position. A market order is
+                      triggered when the stop loss or take profit price is
+                      reached.
+                    </p>
+                    <p className="text-xs text-muted-foreground italic mt-2">
+                      If the order size is configured above, the TP/SL order
+                      will be for that size no matter how the position changes
+                      in the future.
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }

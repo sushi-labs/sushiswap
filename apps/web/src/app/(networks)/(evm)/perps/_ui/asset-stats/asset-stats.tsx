@@ -18,7 +18,7 @@ export const AssetStats = () => {
 
   return (
     <OverflowX hideScrollBtns={!asset}>
-      <div className="grid grid-flow-col auto-cols-max gap-8">
+      <div className="grid grid-flow-col auto-cols-max gap-6 md:gap-8 lg:gap-12">
         {asset?.marketType === 'perp' ? <PerpAssetStats /> : <SpotAssetStats />}
       </div>
     </OverflowX>

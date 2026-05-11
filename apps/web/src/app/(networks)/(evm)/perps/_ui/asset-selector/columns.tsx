@@ -10,6 +10,7 @@ import {
   perpsNumberFormatter,
 } from 'src/lib/perps'
 import { formatPercent } from 'sushi'
+import { AssetIcon } from '../_common'
 import { FavoriteButton } from './favorite-button'
 
 const columnBodyMeta = {
@@ -38,14 +39,11 @@ export const SYMBOL_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
       >
         <div className="flex items-center gap-1">
           <FavoriteButton assetString={asset.name} />
+          {/* <AssetIcon asset={asset} size={'sm'} /> */}
           <span>{asset.symbol}</span>
         </div>
         <div className="flex items-center gap-1">
-          <Chip
-            variant="perps-blue"
-            data-glow="true"
-            className="!px-1 !font-medium"
-          >
+          <Chip variant="perps-blue" className="!px-1 !font-medium">
             {asset.maxLeverage ? `${asset.maxLeverage}x` : 'SPOT'}
           </Chip>
           {asset?.dex ? (
@@ -126,10 +124,10 @@ export const DAY_CHANGE_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
 export const EIGHT_HOUR_FUNDING_COLUMN: ColumnDef<PerpOrSpotAsset, unknown> = {
   id: 'funding8hPct',
   header: '8H Funding',
-  accessorFn: (row) => row.funding8hPct,
+  accessorFn: (row) => Number(row.funding8hPct || '0'),
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number.parseFloat(rowA.funding8hPct ?? '0') -
-    Number.parseFloat(rowB.funding8hPct ?? '0'),
+    Number.parseFloat(rowA.funding8hPct || '0') -
+    Number.parseFloat(rowB.funding8hPct || '0'),
   cell: (props) => {
     const funding8h = props.row.original.funding8hPct
 

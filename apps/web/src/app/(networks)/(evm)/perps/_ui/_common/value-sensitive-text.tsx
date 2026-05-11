@@ -50,7 +50,11 @@ export const ValueSensitiveText = ({
   }, [num, flashMs, allowColorChange])
 
   const colorClass =
-    direction === 'up' ? 'text-green' : direction === 'down' ? 'text-red' : ''
+    direction === 'up'
+      ? 'text-perps-green'
+      : direction === 'down'
+        ? 'text-perps-red'
+        : ''
 
   return (
     <span

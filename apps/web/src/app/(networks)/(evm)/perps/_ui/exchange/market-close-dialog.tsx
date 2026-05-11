@@ -1,12 +1,14 @@
 'use client'
+import { userFillsByTime } from '@nktkas/hyperliquid/api/info'
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
   classNames,
 } from '@sushiswap/ui'
 import {
@@ -20,13 +22,16 @@ import {
   BUILDER_FEE_PERPS,
   type UserPositionsItemType,
   formatPrice,
+  formatTradeHistoryItem,
   getSizeAndPercentageFromInput,
   getSizeAndPercentageFromPercentageInput,
   getTextColorClass,
+  hlHttpTransport,
   useExecuteOrders,
   useMidPrice,
   useSymbolSplit,
 } from 'src/lib/perps'
+import { useAccount } from 'src/lib/wallet'
 import { formatUnits, parseUnits } from 'viem'
 import {
   CheckboxSetting,
@@ -55,7 +60,7 @@ export const MarketCloseDialog = ({
   const [percentToClose, setPercentToClose] = useState(100)
   const {
     state: { quickCloseMarketPositionEnabled },
-    mutate: { setQuickCloseMarketPositionEnabled },
+    mutate: { setQuickCloseMarketPositionEnabled, handleOpenPnLCard },
   } = useUserSettingsState()
   const initBase =
     positionToClose?.position?.szi?.split('-')?.[1] ||
@@ -80,6 +85,7 @@ export const MarketCloseDialog = ({
   const { midPrice } = useMidPrice({
     assetString: positionToClose.position.coin,
   })
+  const address = useAccount('evm')
 
   const isControlled = isOpen !== undefined
   const resolvedOpen = isControlled ? isOpen : open
@@ -222,9 +228,28 @@ export const MarketCloseDialog = ({
     }
   }, [positionToClose, midPrice, asset, _sizeToClose])
 
+  const _handleOpenPnlCard = useCallback(async () => {
+    if (!address) return
+    const fills = await userFillsByTime(
+      {
+        transport: hlHttpTransport,
+      },
+      {
+        user: address,
+        startTime: Date.now() - 5000, // last 5 sec
+        endTime: Date.now() + 5000, // next 5 sec to account for any delays
+        reversed: true, //newest first
+      },
+    )
+    const firstFill = fills?.[0]
+    if (!firstFill || firstFill.coin !== positionToClose?.position?.coin) return
+    const trade = formatTradeHistoryItem(firstFill, assetListData)
+    handleOpenPnLCard(trade)
+  }, [address, handleOpenPnLCard, assetListData, positionToClose])
+
   return (
-    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
+    <PerpsDialog open={resolvedOpen} onOpenChange={handleOpenChange}>
+      <PerpsDialogTrigger asChild>
         {trigger ? (
           trigger
         ) : (
@@ -232,19 +257,16 @@ export const MarketCloseDialog = ({
             Market
           </TableButton>
         )}
-      </DialogTrigger>
+      </PerpsDialogTrigger>
       {/* dont autofocus the size input */}
-      <DialogContent
-        onOpenAutoFocus={(e) => e.preventDefault()}
-        variant="perps-default"
-      >
-        <DialogHeader className="!text-left">
-          <DialogTitle>Market Close</DialogTitle>
-          <DialogDescription>
+      <PerpsDialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Market Close</PerpsDialogTitle>
+          <PerpsDialogDescription>
             Attempts to close the position immediately.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
           <div className="flex flex-col gap-4 text-sm">
             <div className="flex flex-col gap-2 text-sm">
               <StatItem
@@ -280,25 +302,29 @@ export const MarketCloseDialog = ({
               label="Don't show this again"
             />
             {/* connect checker not needed, wont be able to get here unless connected anyway */}
-            <PerpsChecker.Legal size="default" variant="perps-default">
+            <PerpsChecker.Legal size="default" variant="perps-tertiary">
               <PerpsChecker.EnableTrading
                 size="default"
-                variant="perps-default"
+                variant="perps-tertiary"
               >
-                <PerpsChecker.BuilderFee size="default" variant="perps-default">
+                <PerpsChecker.BuilderFee
+                  size="default"
+                  variant="perps-tertiary"
+                >
                   <PerpsChecker.HyperReferral
                     size="default"
-                    variant="perps-default"
+                    variant="perps-tertiary"
                   >
                     <Button
                       size="default"
-                      variant="perps-default"
+                      variant="perps-tertiary"
                       onClick={() => {
                         if (!orderData) return
                         executeOrders(
                           { orderData },
                           {
-                            onSuccess: () => {
+                            onSuccess: async () => {
+                              await _handleOpenPnlCard()
                               handleOpenChange(false)
                             },
                           },
@@ -318,8 +344,8 @@ export const MarketCloseDialog = ({
               </PerpsChecker.EnableTrading>
             </PerpsChecker.Legal>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }

@@ -9,7 +9,7 @@ import { useAssetState } from '../asset-state-provider'
 
 export const OrderValueStat = () => {
   const {
-    state: { asset, tradeType, size, markPrice, limitPrice },
+    state: { asset, tradeType, size, markPrice },
   } = useAssetState()
   const { data: scaleOrderData } = useScaleOrders()
 
@@ -24,17 +24,10 @@ export const OrderValueStat = () => {
         maxFraxDigits: 2,
       })
     }
-    let price = markPrice
-    if (
-      tradeType.toLowerCase().includes('limit') &&
-      limitPrice &&
-      asset?.marketType === 'perp'
-    ) {
-      price = limitPrice
-    }
+
     const res = calculateOrderValue({
       baseSize: size.base,
-      price,
+      price: markPrice,
       decimals: asset.formatParseDecimals,
     })
     if (!res) return null
@@ -44,7 +37,7 @@ export const OrderValueStat = () => {
       minFraxDigits: 2,
       maxFraxDigits: 2,
     })
-  }, [asset, tradeType, size.base, markPrice, limitPrice, scaleOrderData])
+  }, [asset, tradeType, size.base, markPrice, scaleOrderData])
 
   return (
     <StatItem

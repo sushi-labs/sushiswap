@@ -44,6 +44,7 @@ export function useCreateSushiReferralCode() {
         groupTimestamp: ts,
         timestamp: ts,
         autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
     },
     onError: (error) => {
@@ -57,6 +58,7 @@ export function useCreateSushiReferralCode() {
         groupTimestamp: ts,
         timestamp: ts,
         autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
     },
   })

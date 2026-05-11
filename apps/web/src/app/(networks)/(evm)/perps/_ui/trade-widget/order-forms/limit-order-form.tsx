@@ -3,12 +3,7 @@ import { useState } from 'react'
 import { type TpSlGainLossType, useMidPrice } from 'src/lib/perps'
 import { LimitInput, TpSlInput } from '../../_common'
 import { useAssetState } from '../asset-state-provider'
-import {
-  OrderSizeInput,
-  ReduceOnly,
-  TifSelector,
-  TpSlCheckbox,
-} from './_common'
+import { OrderSizeInput, ReduceOnly, TifSelector, TpSlSwitch } from './_common'
 
 export const LimitOrderForm = () => {
   const {
@@ -32,7 +27,7 @@ export const LimitOrderForm = () => {
   const [type, setType] = useState<TpSlGainLossType>('percent')
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-2">
         <LimitInput
           value={limitPrice}
           onChange={setLimitPrice}
@@ -46,7 +41,7 @@ export const LimitOrderForm = () => {
         {asset?.marketType === 'perp' ? (
           <div className="flex flex-col gap-2">
             <ReduceOnly />
-            <TpSlCheckbox />
+            <TpSlSwitch />
           </div>
         ) : (
           <div />

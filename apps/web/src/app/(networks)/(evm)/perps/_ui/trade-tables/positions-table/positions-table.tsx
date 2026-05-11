@@ -10,7 +10,7 @@ import {
   UpdateIsolatedMarginDialog,
   UpdateLeverageDialog,
 } from '../../exchange'
-import { MobileTable } from '../_common'
+import { MobileTable, tableRowClassName } from '../_common'
 import { ShareClosedPnlDialog } from '../_common/share-closed-pnl-dialog'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {
@@ -68,8 +68,8 @@ const getPositionColumns = ({
     LIQUIDATION_PRICE_COLUMN,
     MARGIN_COLUMN(openModal),
     FUNDING_COLUMN,
-    TP_SL_COLUMN(openModal),
     CLOSE_COLUMN(openModal),
+    TP_SL_COLUMN(openModal),
   ]
 }
 
@@ -149,8 +149,9 @@ export const PositionsTable = () => {
           columns={columns}
           data={tableData}
           onSortingChange={setSorting}
-          thClassName="!h-8"
+          thClassName="!h-8 !px-0"
           hideScrollbar={true}
+          trClassName={tableRowClassName}
         />
       ) : (
         <MobileTable

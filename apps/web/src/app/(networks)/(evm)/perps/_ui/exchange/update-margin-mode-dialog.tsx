@@ -1,17 +1,17 @@
 'use client'
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  classNames,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
 } from '@sushiswap/ui'
 import { type ReactNode, useMemo, useState } from 'react'
 import { useUpdateLeverage } from 'src/lib/perps'
-import { CheckboxSetting } from '../_common'
+import { CheckboxSelectItem } from '../_common'
 import { useAssetListState } from '../asset-selector'
 import { PerpsChecker } from '../perps-checker'
 
@@ -39,92 +39,65 @@ export const UpdateMarginModeDialog = ({
   const asset = useMemo(() => data?.get?.(assetString), [data, assetString])
 
   return (
-    <Dialog
+    <PerpsDialog
       open={open}
       onOpenChange={(open) => {
         setOpen(open)
       }}
     >
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent variant="perps-default">
-        <DialogHeader>
-          <DialogTitle>Adjust Margin Mode</DialogTitle>
-          <DialogDescription className="capitalize">
+      <PerpsDialogTrigger asChild>{trigger}</PerpsDialogTrigger>
+      <PerpsDialogContent>
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Adjust Margin Mode</PerpsDialogTitle>
+          <PerpsDialogDescription className="capitalize">
             Adjust your {asset?.symbol} margin mode. Currently set to{' '}
-            {currentLeverageType}.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="max-h-[calc(100vh-150px)] overflow-y-auto">
-          <div className="flex flex-col gap-4 text-sm">
-            <div
-              onKeyDown={() => {
-                setNewLeverageType('cross')
-              }}
-              onClick={() => {
-                setNewLeverageType('cross')
-              }}
-              className={classNames(
-                'p-2 flex text-left flex-col transition-colors gap-2 border border-accent cursor-pointer rounded',
-                newLeverageType === 'cross' ? 'bg-white dark:bg-slate-700' : '',
-              )}
-            >
-              <CheckboxSetting
-                label="Cross Margin"
-                value={newLeverageType === 'cross'}
-                onChange={(value) =>
-                  setNewLeverageType(value ? 'cross' : 'isolated')
-                }
+            <span className="font-medium text-white">
+              {currentLeverageType}.
+            </span>
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
+          <div className="flex flex-col gap-4 text-sm h-full">
+            <div className="flex lg:flex-row flex-col lg:items-start gap-4 text-sm h-full">
+              <CheckboxSelectItem
+                valueToSet="cross"
+                currentValue={newLeverageType}
+                setValue={setNewLeverageType}
+                title="Cross Margin"
+                description="All cross positions share the same cross margin as collateral.
+                  In the event of liquidation, your cross margin balance and any
+                  remaining open positions under assets in this mode may be
+                  forfeited."
               />
-              <p className="text-xs text-muted-foreground">
-                All cross positions share the same cross margin as collateral.
-                In the event of liquidation, your cross margin balance and any
-                remaining open positions under assets in this mode may be
-                forfeited.
-              </p>
-            </div>
-            <div
-              onKeyDown={() => {
-                setNewLeverageType('isolated')
-              }}
-              onClick={() => {
-                setNewLeverageType('isolated')
-              }}
-              className={classNames(
-                'p-2 flex text-left flex-col transition-colors gap-2 border border-accent cursor-pointer rounded',
-                newLeverageType === 'isolated'
-                  ? 'bg-white dark:bg-slate-700'
-                  : '',
-              )}
-            >
-              <CheckboxSetting
-                label="Isolated Margin"
-                value={newLeverageType === 'isolated'}
-                onChange={(value) =>
-                  setNewLeverageType(value ? 'isolated' : 'cross')
-                }
+              <CheckboxSelectItem
+                valueToSet="isolated"
+                currentValue={newLeverageType}
+                setValue={setNewLeverageType}
+                title="Isolated Margin"
+                description="Manage your risk on individual positions by restricting the
+                  amount of margin allocated to each. If the margin ratio of an
+                  isolated position reaches 100%, the position will be
+                  liquidated. Margin can be added or removed to individual
+                  positions in this mode."
               />
-              <p className="text-xs text-muted-foreground">
-                Manage your risk on individual positions by restricting the
-                amount of margin allocated to each. If the margin ratio of an
-                isolated position reaches 100%, the position will be liquidated.
-                Margin can be added or removed to individual positions in this
-                mode.
-              </p>
             </div>
 
-            <PerpsChecker.Legal size="default" variant="perps-default">
+            <PerpsChecker.Legal size="default" variant="perps-tertiary">
               <PerpsChecker.EnableTrading
                 size="default"
-                variant="perps-default"
+                variant="perps-tertiary"
               >
-                <PerpsChecker.BuilderFee size="default" variant="perps-default">
+                <PerpsChecker.BuilderFee
+                  size="default"
+                  variant="perps-tertiary"
+                >
                   <PerpsChecker.HyperReferral
                     size="default"
-                    variant="perps-default"
+                    variant="perps-tertiary"
                   >
                     <Button
                       size="default"
-                      variant="perps-default"
+                      variant="perps-tertiary"
                       onClick={() => {
                         updateLeverage(
                           {
@@ -154,8 +127,8 @@ export const UpdateMarginModeDialog = ({
               </PerpsChecker.EnableTrading>
             </PerpsChecker.Legal>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }

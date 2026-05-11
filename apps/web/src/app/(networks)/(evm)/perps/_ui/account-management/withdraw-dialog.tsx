@@ -7,12 +7,13 @@ import {
 } from '@sushiswap/notifications'
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import {
@@ -26,9 +27,9 @@ import { Amount } from 'sushi'
 import { EvmChainId, USDC } from 'sushi/evm'
 import { useWalletClient } from 'wagmi'
 import { useUserState } from '~evm/perps/user-provider'
+import { InputWithKeyboard } from '../_common'
 import { PerpsChecker } from '../perps-checker'
 import { useUserSettingsState } from './settings-provider'
-import { TransferInput } from './transfer-input'
 
 //@todo add more options
 const currency = USDC[EvmChainId.ARBITRUM]
@@ -113,6 +114,7 @@ export const WithdrawDialog = ({
         groupTimestamp: Date.now(),
         chainId: chainId,
         autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
       await withdraw3(
         {
@@ -132,12 +134,13 @@ export const WithdrawDialog = ({
         groupTimestamp: Date.now(),
         chainId: chainId,
         autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
       setIsPending(false)
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error)
-      createErrorToast(`Withdraw failed: ${errorMessage}`, false)
+      createErrorToast(`Withdraw failed: ${errorMessage}`, false, 'perps')
       setIsPending(false)
     } finally {
       setIsPending(false)
@@ -147,8 +150,8 @@ export const WithdrawDialog = ({
   }, [walletClient, address, _amount])
 
   return (
-    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
+    <PerpsDialog open={resolvedOpen} onOpenChange={handleOpenChange}>
+      <PerpsDialogTrigger asChild>
         {trigger ? (
           trigger
         ) : (
@@ -156,15 +159,17 @@ export const WithdrawDialog = ({
             Withdraw
           </Button>
         )}
-      </DialogTrigger>
-      <DialogContent variant="perps-default">
-        <DialogHeader className="!text-left">
-          <DialogTitle>Withdraw</DialogTitle>
-          <DialogDescription>Withdraw USDC to Arbitrum.</DialogDescription>
-        </DialogHeader>
-        <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
+      </PerpsDialogTrigger>
+      <PerpsDialogContent>
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Withdraw</PerpsDialogTitle>
+          <PerpsDialogDescription>
+            Withdraw USDC to Arbitrum.
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
           <div className="flex flex-col gap-4">
-            <TransferInput
+            <InputWithKeyboard
               amount={amount}
               setAmount={setAmount}
               balance={balance}
@@ -172,19 +177,18 @@ export const WithdrawDialog = ({
               error={error?.message}
               isLoading={isLoading}
               address={address}
-              chainId={chainId}
             />
 
-            <PerpsChecker.Legal size="default" variant="perps-default">
+            <PerpsChecker.Legal size="default" variant="perps-tertiary">
               <Checker.Connect
                 size="default"
-                variant="perps-default"
+                variant="perps-tertiary"
                 namespace="evm"
               >
                 <Checker.Network
                   size="default"
                   chainId={chainId}
-                  variant="perps-default"
+                  variant="perps-tertiary"
                 >
                   <Checker.Custom
                     size="default"
@@ -192,7 +196,7 @@ export const WithdrawDialog = ({
                     buttonText={'Enter Amount'}
                     onClick={() => {}}
                     disabled={!amount}
-                    variant="perps-default"
+                    variant="perps-tertiary"
                   >
                     <Checker.Custom
                       size="default"
@@ -200,7 +204,7 @@ export const WithdrawDialog = ({
                       buttonText={'Insufficient Balance'}
                       onClick={() => {}}
                       disabled={Boolean(insufficientBalance)}
-                      variant="perps-default"
+                      variant="perps-tertiary"
                     >
                       <Checker.Custom
                         size="default"
@@ -208,14 +212,14 @@ export const WithdrawDialog = ({
                         buttonText={`Minimum Withdraw ${MIN_WITHDRAW_AMOUNT} USDC`}
                         onClick={() => {}}
                         disabled={Number(amount) < MIN_WITHDRAW_AMOUNT}
-                        variant="perps-default"
+                        variant="perps-tertiary"
                       >
                         <Button
                           size="default"
                           className="w-full"
                           onClick={withdrawUsdc}
                           loading={isPending}
-                          variant="perps-default"
+                          variant="perps-tertiary"
                         >
                           Withdraw
                         </Button>
@@ -226,18 +230,16 @@ export const WithdrawDialog = ({
               </Checker.Connect>
             </PerpsChecker.Legal>
             <div>
-              <p className="text-xs text-muted-foreground italic mb-1">
-                A fee of 1 USDC will be deducted from the USDC withdrawn.
-              </p>
-              <p className="text-xs text-muted-foreground italic">
-                If you have USDC in your Spot Balances, transfer it to Perps to
-                make it available to withdraw. Withdrawals should arrive within
-                5 minutes.
+              <p className="text-xs text-perps-muted-50 text-center italic mb-1">
+                A fee of 1 USDC will be deducted from the USDC withdrawn. If you
+                have USDC in your Spot Balances, transfer it to Perps to make it
+                available to withdraw. Withdrawals should arrive within 5
+                minutes.
               </p>
             </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }

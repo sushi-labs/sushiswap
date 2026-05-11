@@ -2,7 +2,7 @@ import { DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import { type OrderHistoryItemType, useOrderHistory } from 'src/lib/perps'
-import { MobileTable } from '../_common'
+import { MobileTable, tableRowClassName } from '../_common'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {
   COIN_COLUMN,
@@ -99,8 +99,9 @@ export const OrderHistoryTable = () => {
       columns={COLUMNS}
       data={tableData}
       onSortingChange={setSorting}
-      thClassName="!h-8"
+      thClassName="!h-8 !px-0"
       hideScrollbar={true}
+      trClassName={tableRowClassName}
     />
   ) : (
     <MobileTable

@@ -10,7 +10,7 @@ import {
   useModifyOrder,
   useUserOpenOrders,
 } from 'src/lib/perps'
-import { MobileTable } from '../_common'
+import { MobileTable, tableRowClassName } from '../_common'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {
   CANCEL_COLUMN,
@@ -194,8 +194,9 @@ export const OpenOrdersTable = () => {
           columns={columns}
           data={tableData}
           onSortingChange={setSorting}
-          thClassName="!h-8"
+          thClassName="!h-8 !px-0"
           hideScrollbar={true}
+          trClassName={tableRowClassName}
         />
       ) : (
         <MobileTable

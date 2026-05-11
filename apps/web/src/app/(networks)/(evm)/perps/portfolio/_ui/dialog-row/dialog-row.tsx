@@ -70,7 +70,7 @@ export const DialogRow = () => {
           <HoverCardContent
             forceMount
             side="top"
-            className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+            className="!px-3 !bg-black/10 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
           >
             <p>
               When unified account is enabled, trading is from a single unified
@@ -102,7 +102,7 @@ export const DialogRow = () => {
       <Button variant="perps-secondary" onClick={() => openModal('withdraw')}>
         Withdraw
       </Button>
-      <Button variant="perps-default" onClick={() => openModal('deposit')}>
+      <Button variant="sushi-gradient" onClick={() => openModal('deposit')}>
         Deposit
       </Button>
       <SharedPositionModal activeModal={activeModal} onClose={closeModal} />

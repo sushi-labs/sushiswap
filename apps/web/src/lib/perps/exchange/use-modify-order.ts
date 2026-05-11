@@ -98,6 +98,7 @@ export const useModifyOrder = () => {
         timestamp: ts,
         groupTimestamp: ts,
         autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
 
       return { ts }
@@ -114,6 +115,7 @@ export const useModifyOrder = () => {
         timestamp: ctx.ts,
         groupTimestamp: ctx.ts,
         autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
     },
 
@@ -134,6 +136,7 @@ export const useModifyOrder = () => {
         timestamp: ctx?.ts ?? Date.now(),
         groupTimestamp: ctx?.ts ?? Date.now(),
         autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
     },
   })

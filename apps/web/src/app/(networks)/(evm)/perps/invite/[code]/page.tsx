@@ -8,7 +8,7 @@ export default async function PerpsInvitePage({
   const { code } = await params
 
   return (
-    <main className="bg-[#0D1421] min-h-[calc(100vh-56px)]">
+    <main className="bg-perps-background min-h-[calc(100vh-56px)]">
       <InvitePage code={code} />
     </main>
   )

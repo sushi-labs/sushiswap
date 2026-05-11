@@ -10,6 +10,7 @@ import {
   calculateTpFromGain,
   formatPrice,
 } from 'src/lib/perps'
+import { PerpsCard } from './perps-card'
 
 export const TpSlInput = ({
   asset,
@@ -223,7 +224,7 @@ export const TpSlInput = ({
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-2">
             <div
-              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-[#FFFFFF0D] ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
+              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-transparent ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
             >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[#8f9399] whitespace-nowrap cursor-default">
@@ -247,7 +248,7 @@ export const TpSlInput = ({
               </div>
             </div>
             <div
-              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-[#FFFFFF0D] ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
+              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-transparent ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
             >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[#8f9399] cursor-default">Gain</p>
@@ -283,7 +284,7 @@ export const TpSlInput = ({
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-2">
             <div
-              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-[#FFFFFF0D] ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
+              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-transparent ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
             >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[#8f9399] whitespace-nowrap cursor-default">
@@ -307,7 +308,7 @@ export const TpSlInput = ({
               </div>
             </div>
             <div
-              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-[#FFFFFF0D] ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
+              className={`w-full border rounded-lg border-[#FFFFFF1A] bg-transparent ${inputSize === 'sm' ? 'text-sm py-0 px-2' : 'px-4 py-2'}`}
             >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[#8f9399] cursor-default">Loss</p>
@@ -349,29 +350,31 @@ const TypeToggle = ({
   setType: (type: 'usd' | 'percent') => void
 }) => {
   return (
-    <div className="flex items-center rounded-lg p-0.5">
+    <PerpsCard className="flex items-center p-0.5" rounded="lg">
       <Button
         size="xs"
-        variant={'ghost'}
+        variant={type === 'usd' ? 'perps-secondary' : 'ghost'}
         onClick={() => setType('usd')}
         className={classNames(
           'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
-          type === 'percent' ? 'text-muted-foreground' : '',
+          type === 'percent'
+            ? 'text-perps-muted/40 border border-transparent'
+            : '',
         )}
       >
         $
       </Button>
       <Button
         size="xs"
-        variant={'ghost'}
+        variant={type === 'percent' ? 'perps-secondary' : 'ghost'}
         onClick={() => setType('percent')}
         className={classNames(
           'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md',
-          type === 'usd' ? 'text-muted-foreground' : '',
+          type === 'usd' ? 'text-perps-muted/40 border border-transparent' : '',
         )}
       >
         %
       </Button>
-    </div>
+    </PerpsCard>
   )
 }

@@ -17,11 +17,11 @@ export const GeoBlockedMessage = () => {
   return (
     <div
       data-blocked={isBlocked}
-      className="hidden data-[blocked=true]:block data-[blocked=true]:animate-slide  w-screen top-[56px] z-[11] flexitems-center justify-center bg-background"
+      className="hidden data-[blocked=true]:block data-[blocked=true]:animate-slide  w-screen top-[56px] z-[11] flexitems-center justify-center bg-perps-background"
     >
       <Message
         variant="destructive"
-        className="!p-3 !text-xs !rounded-md !text-red-200 border border-red/50 mx-1"
+        className="!p-3 !text-xs !rounded-md !text-red-100 border border-red/50 mx-1"
       >
         You are accessing our products and services from a restricted
         jurisdiction. We do not allow access from certain jurisdictions
@@ -29,7 +29,7 @@ export const GeoBlockedMessage = () => {
         jurisdictions where our services are ineligible for use. For more
         information, see our{' '}
         <LinkExternal href="/legal/terms-of-service">
-          <span className="!text-red-200 underline">Terms of Use</span>
+          <span className="!text-red-100 underline">Terms of Use</span>
         </LinkExternal>
         . If you think this is an error, try refreshing the page or opening a
         support ticket.

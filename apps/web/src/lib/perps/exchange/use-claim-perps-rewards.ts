@@ -124,6 +124,7 @@ export function useClaimPerpsRewards({
         },
         groupTimestamp: ts,
         timestamp: ts,
+        variant: 'perps',
       })
     },
     [address, client, onClaimSuccess, queryClient],
@@ -138,7 +139,7 @@ export function useClaimPerpsRewards({
       location: 'useClaimPerpsRewards',
       action: 'mutationError',
     })
-    createErrorToast(error.message, true)
+    createErrorToast(error.message, true, 'perps')
   }, [])
 
   const { mutateAsync: writeContractAsync, ...rest } = useWriteContract({

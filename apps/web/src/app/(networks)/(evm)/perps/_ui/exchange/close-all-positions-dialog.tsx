@@ -1,12 +1,13 @@
 'use client'
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
 } from '@sushiswap/ui'
 import { type ReactNode, useMemo, useState } from 'react'
 import {
@@ -18,7 +19,7 @@ import {
   useUserPositions,
 } from 'src/lib/perps'
 import { formatUnits, parseUnits } from 'viem'
-import { CheckboxSetting, TableButton } from '../_common'
+import { CheckboxSelectItem, TableButton } from '../_common'
 import { useAssetListState } from '../asset-selector'
 import { PerpsChecker } from '../perps-checker'
 
@@ -100,13 +101,13 @@ export const CloseAllPositionsDialog = ({
   }, [closeType, userPositions, allMidsData?.mids, assetListData, isLoading])
 
   return (
-    <Dialog
+    <PerpsDialog
       open={open}
       onOpenChange={(open) => {
         setOpen(open)
       }}
     >
-      <DialogTrigger asChild>
+      <PerpsDialogTrigger asChild>
         {trigger ? (
           trigger
         ) : (
@@ -114,65 +115,74 @@ export const CloseAllPositionsDialog = ({
             Close All
           </TableButton>
         )}
-      </DialogTrigger>
-      <DialogContent variant="perps-default">
-        <DialogHeader>
-          <DialogTitle>Close All Positions</DialogTitle>
-          <DialogDescription>
+      </PerpsDialogTrigger>
+      <PerpsDialogContent>
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Close All Positions</PerpsDialogTitle>
+          <PerpsDialogDescription>
             Close all your positions and cancel their associated TP/SL orders.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex flex-col gap-6 text-sm">
-          <div className="flex flex-col gap-4 text-sm">
-            <CheckboxSetting
-              value={closeType === 'market'}
-              onChange={(value) => {
-                setCloseType(value ? 'market' : 'limit-at-mid')
-              }}
-              label="Market Close"
-            />
-            <CheckboxSetting
-              value={closeType === 'limit-at-mid'}
-              onChange={(value) => {
-                setCloseType(value ? 'limit-at-mid' : 'market')
-              }}
-              label="Limit Close at Mid Price"
-            />
-          </div>
-          <PerpsChecker.Legal size="default" variant="perps-default">
-            <PerpsChecker.EnableTrading size="default" variant="perps-default">
-              <PerpsChecker.BuilderFee size="default" variant="perps-default">
-                <PerpsChecker.HyperReferral
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
+          <div className="flex flex-col gap-6 text-sm h-full">
+            <div className="flex lg:flex-row flex-col lg:items-start gap-4 text-sm h-full">
+              <CheckboxSelectItem
+                valueToSet="market"
+                currentValue={closeType}
+                setValue={setCloseType}
+                title="Market Close"
+                description="Close all positions at the current market price."
+              />
+
+              <CheckboxSelectItem
+                valueToSet="limit-at-mid"
+                currentValue={closeType}
+                setValue={setCloseType}
+                title="Limit Close at Mid Price"
+                description="Close all positions at the mid price."
+              />
+            </div>
+            <PerpsChecker.Legal size="default" variant="perps-tertiary">
+              <PerpsChecker.EnableTrading
+                size="default"
+                variant="perps-tertiary"
+              >
+                <PerpsChecker.BuilderFee
                   size="default"
-                  variant="perps-default"
+                  variant="perps-tertiary"
                 >
-                  <Button
+                  <PerpsChecker.HyperReferral
                     size="default"
-                    variant="perps-default"
-                    onClick={() => {
-                      if (!orderData) return
-                      executeOrders(
-                        { orderData },
-                        {
-                          onSuccess: () => {
-                            setOpen(false)
-                          },
-                        },
-                      )
-                    }}
-                    loading={isPending}
+                    variant="perps-tertiary"
                   >
-                    Confirm{' '}
-                    {closeType === 'market'
-                      ? 'Market Close'
-                      : 'Limit Close at Mid'}
-                  </Button>
-                </PerpsChecker.HyperReferral>
-              </PerpsChecker.BuilderFee>
-            </PerpsChecker.EnableTrading>
-          </PerpsChecker.Legal>
-        </div>
-      </DialogContent>
-    </Dialog>
+                    <Button
+                      size="default"
+                      variant="perps-tertiary"
+                      onClick={() => {
+                        if (!orderData) return
+                        executeOrders(
+                          { orderData },
+                          {
+                            onSuccess: () => {
+                              setOpen(false)
+                            },
+                          },
+                        )
+                      }}
+                      loading={isPending}
+                    >
+                      Confirm{' '}
+                      {closeType === 'market'
+                        ? 'Market Close'
+                        : 'Limit Close at Mid'}
+                    </Button>
+                  </PerpsChecker.HyperReferral>
+                </PerpsChecker.BuilderFee>
+              </PerpsChecker.EnableTrading>
+            </PerpsChecker.Legal>
+          </div>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }

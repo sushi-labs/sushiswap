@@ -7,8 +7,10 @@ import classNames from 'classnames'
 
 const Switch = React.forwardRef<
   React.ElementRef<typeof SwitchPrimitives.Root>,
-  React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>
->(({ className, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root> & {
+    thumbClassName?: string
+  }
+>(({ className, thumbClassName, ...props }, ref) => (
   <SwitchPrimitives.Root
     className={classNames(
       'peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full border-2 focus:border-2 border-transparent ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-blue disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-blue',
@@ -26,6 +28,7 @@ const Switch = React.forwardRef<
         'data-[state=unchecked]:bg-gray-50 data-[state=checked]:bg-white',
         'dark:data-[state=unchecked]:bg-slate-900 dark:data-[state=checked]:bg-white',
         'black:data-[state=unchecked]:bg-black black:data-[state=checked]:bg-white',
+        thumbClassName ?? '',
       )}
     />
   </SwitchPrimitives.Root>

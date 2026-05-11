@@ -12,7 +12,7 @@ export const TakeStopLimitForm = () => {
     assetString: activeAsset,
   })
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-2">
       <TriggerPriceInput
         value={triggerPrice}
         onChange={setTriggerPrice}

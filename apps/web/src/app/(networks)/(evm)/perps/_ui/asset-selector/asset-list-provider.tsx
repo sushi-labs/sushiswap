@@ -9,6 +9,7 @@ interface State {
     uniqueDexes: string[]
     spotCollateralTokens: string[]
     symbolConverter: SymbolConverter | undefined
+    dexQuoteMap: Map<string, string>
   }
 }
 
@@ -33,6 +34,17 @@ const AssetListProvider: FC<AssetListProviderProps> = ({ children }) => {
     return Array.from(dexSet)
   }, [assetListQuery.data])
 
+  const dexQuoteMap = useMemo(() => {
+    const map = new Map<string, string>()
+    assetListQuery.data?.forEach((asset) => {
+      if (asset.marketType === 'perp' && asset.tokens) {
+        const quoteToken = asset?.tokens?.[0]?.name
+        map.set(asset.dex, quoteToken)
+      }
+    })
+    return map
+  }, [assetListQuery.data])
+
   const spotCollateralTokens = useMemo(() => {
     if (!assetListQuery.data) return []
     const tokensSet = new Set<string>()
@@ -54,9 +66,16 @@ const AssetListProvider: FC<AssetListProviderProps> = ({ children }) => {
             uniqueDexes,
             spotCollateralTokens,
             symbolConverter,
+            dexQuoteMap,
           },
         }
-      }, [assetListQuery, uniqueDexes, spotCollateralTokens, symbolConverter])}
+      }, [
+        assetListQuery,
+        uniqueDexes,
+        spotCollateralTokens,
+        symbolConverter,
+        dexQuoteMap,
+      ])}
     >
       {children}
     </AssetListContext.Provider>

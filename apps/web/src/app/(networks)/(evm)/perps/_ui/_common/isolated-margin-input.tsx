@@ -30,7 +30,7 @@ export const IsolatedMarginInput = ({
   return (
     <div
       className={classNames(
-        'w-full border rounded-lg px-4 py-2 border-[#FFFFFF1A] bg-[#FFFFFF0D]',
+        'w-full border rounded-lg px-4 py-2 border-[#FFFFFF1A] bg-transparent',
         className ?? '',
       )}
     >

@@ -13,7 +13,6 @@ import {
   useUserAccountValues,
 } from 'src/lib/perps'
 import { StatItem, ValueSensitiveText } from '../_common'
-import { SettingsDialog } from './settings-dialog'
 import { useUserSettingsState } from './settings-provider'
 
 export const AccountSummary = () => {
@@ -31,10 +30,11 @@ export const AccountSummary = () => {
   } = useUserSettingsState()
   return (
     <div className="flex flex-col gap-2">
-      <hr className="my-0.5 border-t border-accent hidden lg:block" />
       <CardContent className="!p-0 !gap-2">
         <CardGroup className="!gap-1">
-          <p className="text-xs font-semibold mb-2 lg:mb-1">Account Equity</p>
+          <p className="text-xs font-semibold mb-2 lg:mb-1 text-perps-muted-70">
+            Account Equity
+          </p>
           <StatItem
             title="Spot"
             value={
@@ -53,12 +53,12 @@ export const AccountSummary = () => {
             title={
               <HoverCard openDelay={0} closeDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
-                  <div className="text-muted-foreground underline">Perps</div>
+                  <div className="text-perps-muted-50 underline">Perps</div>
                 </HoverCardTrigger>
                 <HoverCardContent
                   forceMount
                   side="top"
-                  className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+                  className="!px-3 !py-2 max-w-[320px] whitespace-normal !bg-black/10 text-left text-xs"
                 >
                   <p>
                     Balance + Unrealized PNL (approximate account value if all
@@ -82,17 +82,19 @@ export const AccountSummary = () => {
         </CardGroup>
         <hr className="border-t border-accent block lg:hidden" />
         <CardGroup className="!gap-1">
-          <p className="text-xs font-semibold mb-2 lg:mb-1">Perps Overview</p>
+          <p className="text-xs font-semibold mb-2 lg:mb-1 text-perps-muted-70">
+            Perps Overview
+          </p>
           <StatItem
             title={
               <HoverCard openDelay={0} closeDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
-                  <div className="text-muted-foreground underline">Balance</div>
+                  <div className="text-perps-muted-50 underline">Balance</div>
                 </HoverCardTrigger>
                 <HoverCardContent
                   forceMount
                   side="top"
-                  className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+                  className="!px-3 !py-2 !bg-black/10 max-w-[320px] whitespace-normal text-left text-xs"
                 >
                   <p>
                     Total Net Transfers + Total Realized Profit + Total Net
@@ -119,14 +121,14 @@ export const AccountSummary = () => {
             title={
               <HoverCard openDelay={0} closeDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
-                  <div className="text-muted-foreground underline">
+                  <div className="text-perps-muted-50 underline">
                     Cross Margin Ratio
                   </div>
                 </HoverCardTrigger>
                 <HoverCardContent
                   forceMount
                   side="top"
-                  className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+                  className="!px-3 !py-2 !bg-black/10 max-w-[320px] whitespace-normal text-left text-xs"
                 >
                   <p>
                     Maintenance Margin / Portfolio Value. Your cross positions
@@ -156,14 +158,14 @@ export const AccountSummary = () => {
             title={
               <HoverCard openDelay={0} closeDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
-                  <div className="text-muted-foreground underline">
+                  <div className="text-perps-muted-50 underline">
                     Maintenance Margin
                   </div>
                 </HoverCardTrigger>
                 <HoverCardContent
                   forceMount
                   side="top"
-                  className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+                  className="!px-3 !py-2 !bg-black/10 max-w-[320px] whitespace-normal text-left text-xs"
                 >
                   <p>
                     The minimum portfolio value required to keep your cross
@@ -178,14 +180,14 @@ export const AccountSummary = () => {
             title={
               <HoverCard openDelay={0} closeDelay={0}>
                 <HoverCardTrigger asChild tabIndex={0}>
-                  <div className="text-muted-foreground underline">
+                  <div className="text-perps-muted-50 underline">
                     Cross Account Leverage
                   </div>
                 </HoverCardTrigger>
                 <HoverCardContent
                   forceMount
                   side="top"
-                  className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+                  className="!px-3 !bg-black/10 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
                 >
                   <p>
                     Cross Account Leverage = Total Cross Positions Value / Cross
@@ -202,9 +204,6 @@ export const AccountSummary = () => {
           />
         </CardGroup>
       </CardContent>
-      <div className="self-end mt-2">
-        <SettingsDialog />
-      </div>
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { Button, Card, classNames, useBreakpoint } from '@sushiswap/ui'
+import { Button, classNames, useBreakpoint } from '@sushiswap/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
@@ -8,7 +8,9 @@ import {
   useUserOpenOrders,
   useUserPositions,
 } from 'src/lib/perps'
+import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useAccount } from 'src/lib/wallet'
+import { PerpsCard } from '../_common/perps-card'
 import { TradeFilter } from './filters'
 import {
   TRADE_TABLES_TABS,
@@ -97,23 +99,21 @@ export const TradeTables = ({ className }: { className?: string }) => {
   }, [balanceCount, positionCount, openOrdersCount, twapOrderCount, TABS])
 
   return (
-    <Card
-      className={classNames(
-        'p-2 !bg-[#0D1421] border border-[#1E2939]',
-        className ?? '',
-      )}
-    >
+    <PerpsCard className={classNames('py-2', className ?? '')}>
       <Tabs
         value={activeTab}
         onValueChange={(val) => setActiveTab(val as TradeTablesTabValue)}
       >
-        <div className="flex flex-wrap justify-between p-1 gap-2 overflow-x-auto">
-          <div className="hide-scrollbar overflow-x-auto">
+        <div className="flex flex-wrap justify-between p-1 gap-2 pt-0">
+          <PerpsCard rounded="full">
             <TabsList
               className={classNames(
-                '!px-0.5 !h-8 !bg-[#0D1421]',
-                isPortfolio && '!bg-[#18223B]',
+                '!px-0.5 !h-8 !bg-perps-muted/[.02] !max-w-[calc(100vw-36px)] hide-scrollbar overflow-x-auto overflow-y-hidden !rounded-full !border-transparent !justify-start',
               )}
+              style={{
+                // @dev: tailwind max-w not working on safari mobile
+                maxWidth: 'calc(100vw - 20px)',
+              }}
             >
               {tabNameRewrite?.map((tab) => (
                 <TabsTrigger
@@ -127,15 +127,16 @@ export const TradeTables = ({ className }: { className?: string }) => {
                     variant={
                       activeTab === tab.value ? 'perps-secondary' : 'ghost'
                     }
-                    className="!p-0 w-full col-span-1 capitalize !text-xs !rounded-md"
+                    className="!p-0 w-full col-span-1 capitalize !text-xs !rounded-full !border-0"
                   >
                     {tab.name}
                   </Button>
                 </TabsTrigger>
               ))}
             </TabsList>
-          </div>
-          <div className="items-center gap-2 whitespace-nowrap flex lg:max-w-fit justify-between w-full">
+          </PerpsCard>
+
+          <div className="items-center gap-2 whitespace-nowrap flex lg:max-w-fit justify-between w-full px-1">
             {(!isLg && activeTab === 'twap') ||
             activeTab === 'deposits-withdrawals' ? null : (
               <TradeFilter />
@@ -151,12 +152,23 @@ export const TradeTables = ({ className }: { className?: string }) => {
           </div>
         </div>
         {TABS.map((tab) => (
-          <TabsContent key={tab.value} value={tab.value}>
+          <TabsContent
+            key={tab.value}
+            value={tab.value}
+            className="relative !mt-0"
+          >
+            {!address ? (
+              <div className="absolute inset-0 backdrop-blur-sm z-10 select-none flex items-center justify-center rounded-md">
+                <div>
+                  <ConnectButton namespace="evm" variant="perps-default" />
+                </div>
+              </div>
+            ) : null}
             <div
               className={classNames(
-                'p-2 !pt-0',
+                'py-2 !pt-0',
                 tab.value !== 'twap'
-                  ? 'min-h-[250px] max-h-[380px] hide-scrollbar overflow-y-auto'
+                  ? 'min-h-[275px] max-h-[380px] hide-scrollbar overflow-y-auto'
                   : '',
               )}
             >
@@ -165,6 +177,6 @@ export const TradeTables = ({ className }: { className?: string }) => {
           </TabsContent>
         ))}
       </Tabs>
-    </Card>
+    </PerpsCard>
   )
 }

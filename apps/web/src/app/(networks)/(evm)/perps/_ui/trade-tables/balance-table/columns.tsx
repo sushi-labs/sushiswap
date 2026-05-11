@@ -147,7 +147,7 @@ export const AVAILABLE_BALANCE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
         <HoverCardContent
           forceMount
           side="top"
-          className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+          className="!px-3 !bg-black/10 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
         >
           <p>
             Available balance to open positions ignoring open orders.{' '}
@@ -250,6 +250,9 @@ export const SEND_COLUMN = (
   },
   meta: {
     body: columnBodyMeta,
+    header: {
+      className: '!pl-2',
+    },
   },
 })
 
@@ -277,7 +280,7 @@ export const TRANSFER_COLUMN = (
           <HoverCardTrigger
             asChild
             tabIndex={0}
-            className="opacity-50 cursor-not-allowed"
+            className="opacity-50 cursor-not-allowed  lg:whitespace-nowrap"
           >
             <TableButton>
               Transfer to {isSpotUSDC ? 'Perps' : 'Spot'}
@@ -286,7 +289,7 @@ export const TRANSFER_COLUMN = (
           <HoverCardContent
             forceMount
             side="top"
-            className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+            className="!px-3 !bg-black/10 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
           >
             <p>
               When unified account is enabled, trading is from a single unified
@@ -313,6 +316,9 @@ export const TRANSFER_COLUMN = (
   },
   meta: {
     body: columnBodyMeta,
+    header: {
+      className: '!pl-2',
+    },
   },
 })
 
@@ -349,5 +355,8 @@ export const CONTRACT_COLUMN: ColumnDef<BalanceItemType, unknown> = {
   },
   meta: {
     body: columnBodyMeta,
+    header: {
+      className: '!pl-2',
+    },
   },
 }

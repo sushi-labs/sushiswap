@@ -83,7 +83,7 @@ export function DataTableColumnHeader<TData, TValue>({
   }
 
   return (
-    <div className={classNames('flex items-center space-x-2', className)}>
+    <div className={classNames('flex items-center', className)}>
       {description ? (
         <Button onClick={onClick} variant="ghost" size="xs">
           <TooltipProvider>
@@ -105,7 +105,7 @@ export function DataTableColumnHeader<TData, TValue>({
           </TooltipProvider>
         </Button>
       ) : (
-        <Button onClick={onClick} variant="ghost" size="xs">
+        <Button onClick={onClick} variant="ghost" size="xs" className="!gap-0">
           {Title}
           {header.column.getIsSorted() === 'desc' ? (
             <CaretDownIcon className="ml-2 h-4 w-4" />

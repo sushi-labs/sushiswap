@@ -17,9 +17,9 @@ export const Trades = () => {
   const { data: assetName } = useAssetName({ assetString: activeAsset })
 
   return (
-    <div className="max-h-[400px] px-2 lg:px-0 lg:max-h-[672px] relative overflow-y-auto hide-scrollbar">
+    <div className="max-h-[396px] px-0 lg:px-0 lg:max-h-[672px] relative overflow-y-auto hide-scrollbar">
       <div className="w-full">
-        <div className="sticky top-0 dark:bg-[#0D1421] text-muted-foreground">
+        <div className="sticky top-0 dark:bg-transparent backdrop-blur-xl text-muted-foreground">
           <div className="grid grid-cols-3">
             <div className="text-left font-normal p-0.5 text-xs">Price</div>
             <div className="font-normal p-0.5 text-xs text-right">
@@ -86,16 +86,16 @@ export const Trades = () => {
 
 const SkeletonTradeRow = () => {
   return (
-    <tr>
-      <td className="px-0.5 py-1">
+    <div className="grid grid-cols-3">
+      <div className="px-0.5 py-1">
         <SkeletonBox className="w-16 h-4" />
-      </td>
-      <td className="px-0.5 py-1 ">
+      </div>
+      <div className="px-0.5 py-1 ">
         <SkeletonBox className="ml-auto w-16 h-4" />
-      </td>
-      <td className="px-0.5 py-1">
+      </div>
+      <div className="px-0.5 py-1">
         <SkeletonBox className="w-16 ml-auto h-4" />
-      </td>
-    </tr>
+      </div>
+    </div>
   )
 }

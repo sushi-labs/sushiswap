@@ -2,19 +2,27 @@
 import { ArrowsUpDownIcon } from '@heroicons/react/24/outline'
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
+  IconButton,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  classNames,
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import {
   type BalanceItemType,
+  perpsNumberFormatter,
   useSendAsset,
   useSendableAssets,
 } from 'src/lib/perps'
@@ -23,10 +31,11 @@ import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
 import { EvmChainId, EvmToken, USDC } from 'sushi/evm'
 import { useUserState } from '~evm/perps/user-provider'
+import { ValueInput } from '../_common'
+import { useAssetListState } from '../asset-selector'
 import { PerpsChecker } from '../perps-checker'
 import { useAssetState } from '../trade-widget'
 import { useUserSettingsState } from './settings-provider'
-import { TransferInput } from './transfer-input'
 
 const chainId = EvmChainId.ARBITRUM
 
@@ -36,7 +45,6 @@ export const PerpSpotTransferDialog = ({
   isOpen,
   onOpenChange,
   balanceItem,
-  currencySymbol = 'USDC',
   defaultDex,
 }: {
   trigger?: ReactNode
@@ -44,7 +52,6 @@ export const PerpSpotTransferDialog = ({
   isOpen?: boolean
   onOpenChange?: (open: boolean) => void
   balanceItem?: BalanceItemType
-  currencySymbol?: 'USDC' | 'USDT0' | 'USDH' | 'USDE'
   defaultDex?: string
 }) => {
   const [dst, setDst] = useState<'perp' | 'spot'>(defaultDst ?? 'spot')
@@ -56,24 +63,31 @@ export const PerpSpotTransferDialog = ({
     state: {
       webData2Query: {
         data,
-        isLoading: isWebData2Loading,
-        error: webData2Error,
+        // isLoading: isWebData2Loading,
+        // error: webData2Error,
       },
       allDexClearinghouseStateQuery: {
         data: clearinghouseStateData,
-        isLoading: isClearinghouseStateLoading,
-        error: clearinghouseStateError,
+        // isLoading: isClearinghouseStateLoading,
+        // error: clearinghouseStateError,
       },
     },
   } = useUserState()
-  const isLoading = isWebData2Loading || isClearinghouseStateLoading
-  const error = webData2Error || clearinghouseStateError
+  // const isLoading = isWebData2Loading || isClearinghouseStateLoading
+  // const error = webData2Error || clearinghouseStateError
   const {
     state: { asset },
   } = useAssetState()
   const {
     state: { isUnifiedAccountModeEnabled },
   } = useUserSettingsState()
+  const {
+    state: { dexQuoteMap, uniqueDexes },
+  } = useAssetListState()
+
+  const [selectedDex, setSelectedDex] = useState<string>(
+    balanceItem?.dex ?? defaultDex ?? asset?.dex ?? '',
+  )
   const isControlled = isOpen !== undefined
   const resolvedOpen = isControlled ? isOpen : open
 
@@ -88,48 +102,38 @@ export const PerpSpotTransferDialog = ({
     [isControlled, onOpenChange],
   )
   const currency = useMemo(() => {
-    if (balanceItem) {
-      const symbol = balanceItem.coin?.split(' ')[0] ?? 'USDC'
-      return new EvmToken({
-        address: USDC[chainId].address,
-        decimals: 6,
-        symbol: symbol,
-        name: symbol,
-        chainId,
-      })
-    }
+    const quoteSymbol =
+      selectedDex !== undefined && dexQuoteMap?.has(selectedDex)
+        ? dexQuoteMap?.get(selectedDex)
+        : 'USDC'
     return new EvmToken({
       address: USDC[chainId].address,
       decimals: 6,
-      symbol: currencySymbol,
-      name: currencySymbol,
+      symbol: quoteSymbol || '',
+      name: quoteSymbol || '',
       chainId,
     })
-  }, [currencySymbol, balanceItem])
-  const _amount = Amount.tryFromHuman(currency, amount)
+  }, [selectedDex, dexQuoteMap])
 
-  const dexName = useMemo(() => {
-    if (balanceItem) {
-      return balanceItem.dex
-    }
-    if (defaultDex !== undefined) {
-      return defaultDex
-    }
-    return asset?.dex || ''
-  }, [asset?.dex, balanceItem, defaultDex])
+  const _amount = Amount.tryFromHuman(currency, amount)
 
   const sendableBalance = useMemo(() => {
     if (dst === 'spot') {
       return clearinghouseStateData?.clearinghouseStates.find(
-        ([dex]) => dex === dexName,
+        ([dex]) => dex === selectedDex,
       )?.[1].withdrawable
     }
 
-    return data?.spotState?.balances?.find((b) => b.coin === currency?.symbol)
-      ?.total
+    const spot = data?.spotState?.balances?.find(
+      (b) => b.coin === currency?.symbol,
+    )
+    const total = Number(spot?.total || 0)
+    const hold = Number(spot?.hold || 0)
+    const balance = total - hold
+    return balance.toString()
   }, [
     dst,
-    dexName,
+    selectedDex,
     clearinghouseStateData,
     data?.spotState?.balances,
     currency,
@@ -151,7 +155,7 @@ export const PerpSpotTransferDialog = ({
   const transferUsdc = useCallback(() => {
     if (!address || !_amount || !assetToSend) return
 
-    const _dexName = dexName ? dexName : ''
+    const _dexName = selectedDex ? selectedDex : ''
     sendAsset(
       {
         amount: _amount.toString(),
@@ -168,12 +172,25 @@ export const PerpSpotTransferDialog = ({
         },
       },
     )
-  }, [address, _amount, dst, dexName, sendAsset, handleOpenChange, assetToSend])
+  }, [
+    address,
+    _amount,
+    dst,
+    selectedDex,
+    sendAsset,
+    handleOpenChange,
+    assetToSend,
+  ])
 
   const handleDstToggle = useCallback(() => {
     setDst((prevDst) => (prevDst === 'spot' ? 'perp' : 'spot'))
     setAmount('')
   }, [])
+
+  const handleMaxAmount = useCallback(() => {
+    if (!balance) return
+    setAmount(balance.toString())
+  }, [balance])
 
   if (isUnifiedAccountModeEnabled) {
     return (
@@ -207,8 +224,8 @@ export const PerpSpotTransferDialog = ({
   }
 
   return (
-    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
+    <PerpsDialog open={resolvedOpen} onOpenChange={handleOpenChange}>
+      <PerpsDialogTrigger asChild>
         {trigger ? (
           trigger
         ) : (
@@ -217,45 +234,105 @@ export const PerpSpotTransferDialog = ({
             <ArrowsUpDownIcon className="w-3 h-3 rotate-90" /> Spot
           </Button>
         )}
-      </DialogTrigger>
+      </PerpsDialogTrigger>
 
-      <DialogContent variant="perps-default">
-        <DialogHeader className="!text-left">
-          <DialogTitle>Transfer {currency.symbol}</DialogTitle>
-          <DialogDescription>
+      <PerpsDialogContent>
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Transfer {currency.symbol}</PerpsDialogTitle>
+          <PerpsDialogDescription>
             Transfer {currency.symbol} between your Perps and Spot balances.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="max-h-[calc(100vh-130px)] overflow-y-auto">
-          <div className="flex flex-col gap-4">
-            <Button
-              className="mx-auto"
-              variant="secondary"
-              onClick={handleDstToggle}
-            >
-              {dst === 'spot'
-                ? `Perps ${dexName ? `(${dexName})` : ''}`
-                : 'Spot'}{' '}
-              <ArrowsUpDownIcon className="w-3 h-3 rotate-90" />{' '}
-              {dst === 'spot'
-                ? 'Spot'
-                : `Perps ${dexName ? `(${dexName})` : ''}`}
-            </Button>
-            <TransferInput
-              amount={amount}
-              setAmount={setAmount}
-              balance={balance}
-              currency={currency}
-              error={error?.message}
-              isLoading={isLoading}
-              address={address}
-              chainId={chainId}
-            />
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
+          <div className="flex flex-col gap-2">
+            <div className="grid grid-cols-[1fr_auto_1fr] items-center self-center gap-2">
+              <div className="text-right">
+                {dst === 'spot'
+                  ? `Perps ${selectedDex ? `(${selectedDex})` : ''}`
+                  : 'Spot'}{' '}
+              </div>
+              <IconButton
+                variant="perps-secondary"
+                onClick={handleDstToggle}
+                className="!rounded-full"
+                name="switch"
+                icon={ArrowsUpDownIcon}
+                iconProps={{
+                  className: 'w-3 h-3 rotate-90 text-perps-blue',
+                }}
+              />
+              <div>
+                {dst === 'spot'
+                  ? 'Spot'
+                  : `Perps ${selectedDex ? `(${selectedDex})` : ''}`}
+              </div>
+            </div>
 
-            <PerpsChecker.Legal size="default" variant="perps-default">
+            <Select
+              value={selectedDex}
+              onValueChange={(val: string) => {
+                setSelectedDex(val === 'hyper' ? '' : val)
+              }}
+            >
+              <SelectTrigger className="w-full text-sm !px-2 !h-[40px] !gap-1 !border-[#FFFFFF1A] bg-transparent !border">
+                <div className="flex items-center gap-1 pl-2">
+                  <span className="text-perps-muted-50">
+                    Selected Perps Dex:{' '}
+                  </span>
+                  {selectedDex === '' ? 'hyper' : selectedDex}
+                  {dexQuoteMap?.has(selectedDex)
+                    ? ` - ${dexQuoteMap.get(selectedDex)}`
+                    : ' - USDC'}
+                </div>
+              </SelectTrigger>
+              <SelectContent className="w-full !bg-black/10">
+                {['hyper', ...uniqueDexes]?.map((i, idx) => (
+                  <SelectItem
+                    key={`${i}-${idx}`}
+                    value={i}
+                    className="font-medium !text-white gap-4"
+                  >
+                    {i}{' '}
+                    {dexQuoteMap?.has(i) ? `- ${dexQuoteMap.get(i)}` : '- USDC'}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <div className="relative flex w-full">
+              <ValueInput
+                value={amount}
+                onChange={setAmount}
+                label=""
+                type="number"
+                placeholder="Amount"
+                inputClassName="!text-left !text-sm placeholder:text-[#8f9399] pr-10"
+                maxDecimals={currency?.decimals ?? 6}
+                className="!px-2 !py-0.5 !text-sm"
+              />
+              <Button
+                size="xs"
+                variant={'perps-secondary'}
+                onClick={handleMaxAmount}
+                className={classNames(
+                  'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md absolute top-1/2 -translate-y-1/2 right-2',
+                )}
+              >
+                Max:{' '}
+                {balance
+                  ? perpsNumberFormatter({
+                      value: balance?.toString() || '0',
+                      maxFraxDigits: 6,
+                    })
+                  : '0'}{' '}
+                {currency.symbol}
+              </Button>
+            </div>
+
+            <PerpsChecker.Legal size="default" variant="perps-tertiary">
               <Checker.Connect
                 size="default"
-                variant="perps-default"
+                variant="perps-tertiary"
                 namespace="evm"
               >
                 <Checker.Custom
@@ -264,7 +341,7 @@ export const PerpSpotTransferDialog = ({
                   buttonText={'Enter Amount'}
                   onClick={() => {}}
                   disabled={!amount}
-                  variant="perps-default"
+                  variant="perps-tertiary"
                 >
                   <Checker.Custom
                     size="default"
@@ -272,24 +349,24 @@ export const PerpSpotTransferDialog = ({
                     buttonText={'Insufficient Balance'}
                     onClick={() => {}}
                     disabled={Boolean(insufficientBalance)}
-                    variant="perps-default"
+                    variant="perps-tertiary"
                   >
                     <Button
                       size="default"
                       className="w-full"
                       onClick={transferUsdc}
                       loading={isPending}
-                      variant="perps-default"
+                      variant="perps-tertiary"
                     >
-                      {`Transfer to ${dst === 'spot' ? 'Spot' : 'Perps'}`}
+                      {`Transfer to ${dst === 'spot' ? 'Spot' : `Perps ${selectedDex ? `(${selectedDex})` : ''}`}`}
                     </Button>
                   </Checker.Custom>
                 </Checker.Custom>
               </Checker.Connect>
             </PerpsChecker.Legal>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }

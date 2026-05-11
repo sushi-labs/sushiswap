@@ -113,6 +113,11 @@ const nextConfig = bundleAnalyzer({
         destination: 'https://twitter.com/sushiswap',
       },
       {
+        source: '/telegram{/}?',
+        permanent: true,
+        destination: 'https://t.me/sushiswaphq',
+      },
+      {
         source: '/instagram{/}?',
         permanent: true,
         destination: 'https://instagram.com/instasushiswap',

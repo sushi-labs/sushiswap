@@ -1,5 +1,5 @@
 import { EvmChainId } from 'sushi/evm'
-import { PerpsHeader } from './_ui/_common/perps-header'
+import { PerpsFooter, PerpsHeader } from './_ui/_common'
 import { Providers } from './providers'
 
 export default async function PerpsLayout({
@@ -11,6 +11,7 @@ export default async function PerpsLayout({
     <Providers>
       <PerpsHeader chainId={EvmChainId.ARBITRUM} />
       {children}
+      <PerpsFooter />
     </Providers>
   )
 }

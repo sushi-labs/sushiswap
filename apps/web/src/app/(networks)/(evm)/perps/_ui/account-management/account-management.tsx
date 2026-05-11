@@ -1,6 +1,7 @@
-import { Card, classNames } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { useUserAccountValues } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
+import { PerpsCard } from '../_common/perps-card'
 import { AccountManagementSkeleton } from './account-management-skeleton'
 import { AccountSummary } from './account-summary'
 import { DepositDialog } from './deposit-dialog'
@@ -17,11 +18,9 @@ export const AccountManagement = ({ className }: { className?: string }) => {
   } = useUserSettingsState()
 
   return (
-    <Card
-      className={classNames(
-        'p-2 flex flex-col-reverse lg:flex-col gap-2 !bg-[#0D1421] border border-[#1E2939]',
-        className ?? '',
-      )}
+    <PerpsCard
+      fullHeight
+      className={classNames('p-2 flex flex-col gap-2', className ?? '')}
     >
       {error ? (
         <>
@@ -52,6 +51,6 @@ export const AccountManagement = ({ className }: { className?: string }) => {
           )}
         </>
       )}
-    </Card>
+    </PerpsCard>
   )
 }

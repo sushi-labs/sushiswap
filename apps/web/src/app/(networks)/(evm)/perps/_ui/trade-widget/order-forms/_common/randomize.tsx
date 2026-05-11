@@ -1,5 +1,5 @@
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
-import { CheckboxSetting } from '~evm/perps/_ui/_common'
+import { SwitchSetting } from '~evm/perps/_ui/_common'
 import { useAssetState } from '../../asset-state-provider'
 
 export const Randomize = () => {
@@ -11,7 +11,7 @@ export const Randomize = () => {
   return (
     <HoverCard>
       <HoverCardTrigger tabIndex={0}>
-        <CheckboxSetting
+        <SwitchSetting
           label="Randomize"
           value={twapRandomize}
           onChange={setTwapRandomize}
@@ -20,7 +20,7 @@ export const Randomize = () => {
       <HoverCardContent
         forceMount
         side="top"
-        className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+        className="!px-3 !bg-black/10 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
       >
         <p>
           If Randomize is enabled, the size of each sub-trade will be

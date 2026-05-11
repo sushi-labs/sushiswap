@@ -1,4 +1,3 @@
-import { Bars3Icon } from '@heroicons/react/24/outline'
 import {
   Button,
   HoverCard,
@@ -16,10 +15,17 @@ import {
   navigationElementShowMap,
   navigationMenuTriggerStyle,
 } from '@sushiswap/ui'
+import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
+import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 
 export const EXPLORE_NAVIGATION_LINKS =
   (): NavigationElementDropdown['items'] => {
     return [
+      {
+        title: 'Swap',
+        href: `/`,
+        description: 'Swap any token on Sushi.',
+      },
       {
         title: 'Trade',
         href: `/perps`,
@@ -51,16 +57,17 @@ export const EXPLORE_NAVIGATION_LINKS =
 export const headerElements = (): NavigationElement[] => {
   return [
     {
-      show: 'mobile',
+      show: 'perps-mobile',
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem className={NavigationElementType.Custom}>
           <NavigationMenuPrimitive.Trigger asChild>
-            <Button variant="secondary" className="ml-1">
-              <Bars3Icon className="h-5 w-5" />
+            <Button variant="ghost" className="ml-1">
+              <SushiWithTextIcon width={80} />
+              <DownTriangleIcon width={6} height={6} />
             </Button>
           </NavigationMenuPrimitive.Trigger>
-          <NavigationMenuContent>
+          <NavigationMenuContent className="bg-perps-background">
             <ul className="gap-3 p-4 w-[250px]">
               {EXPLORE_NAVIGATION_LINKS().map((component) => (
                 <NavigationListItem
@@ -77,12 +84,12 @@ export const headerElements = (): NavigationElement[] => {
       ),
     },
     {
-      show: 'desktop',
+      show: 'perps-desktop',
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem
           key={`trade:custom`}
-          className={navigationElementShowMap['desktop']}
+          className={navigationElementShowMap['perps-desktop']}
         >
           <NavigationMenuLink
             href={'/perps'}
@@ -97,12 +104,12 @@ export const headerElements = (): NavigationElement[] => {
       ),
     },
     {
-      show: 'desktop',
+      show: 'perps-desktop',
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem
           key={`portfolio:custom`}
-          className={navigationElementShowMap['desktop']}
+          className={navigationElementShowMap['perps-desktop']}
         >
           <NavigationMenuLink
             href={'/perps/portfolio'}
@@ -117,12 +124,12 @@ export const headerElements = (): NavigationElement[] => {
       ),
     },
     {
-      show: 'desktop',
+      show: 'perps-desktop',
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem
           key={`referrals:custom`}
-          className={navigationElementShowMap['desktop']}
+          className={navigationElementShowMap['perps-desktop']}
         >
           <NavigationMenuLink
             href={'/perps/referrals'}
@@ -137,12 +144,12 @@ export const headerElements = (): NavigationElement[] => {
       ),
     },
     {
-      show: 'desktop',
+      show: 'perps-desktop',
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem
           key={`points:custom`}
-          className={navigationElementShowMap['desktop']}
+          className={navigationElementShowMap['perps-desktop']}
         >
           <NavigationMenuLink
             href={'/perps/points'}
@@ -157,7 +164,7 @@ export const headerElements = (): NavigationElement[] => {
       ),
     },
     {
-      show: 'desktop',
+      show: 'perps-desktop',
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem className={NavigationElementType.Custom}>
@@ -167,7 +174,10 @@ export const headerElements = (): NavigationElement[] => {
                 Vaults
               </div>
             </HoverCardTrigger>
-            <HoverCardContent className="text-xs !p-2" side="bottom">
+            <HoverCardContent
+              className="text-xs !p-2 !bg-black/10"
+              side="bottom"
+            >
               <div>Coming Soon</div>
             </HoverCardContent>
           </HoverCard>

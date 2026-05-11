@@ -6,15 +6,15 @@ import type { EvmAddress } from 'sushi/evm'
 import type { PerpOrSpotAsset } from './subscription/use-asset-list'
 
 export const getTextColorClass = (value: number) => {
-  if (value >= 0) return 'text-green dark:text-green-500'
-  if (value < 0) return 'text-red dark:text-red-500'
+  if (value >= 0) return 'text-perps-green dark:text-perps-green'
+  if (value < 0) return 'text-perps-red dark:text-perps-red'
   return ''
 }
 export const getTextColorClassForHover = (value: number) => {
   if (value >= 0)
-    return 'text-green-300 hover:text-green dark:text-green-200 hover:dark:text-green-500'
+    return 'text-perps-green/[50%] hover:text-perps-green dark:text-perps-green/[50%] hover:dark:text-perps-green'
   if (value < 0)
-    return 'text-red-300 hover:text-red dark:text-red-200 hover:dark:text-red-500'
+    return 'text-perps-red/[50%] hover:text-perps-red dark:text-perps-red/[50%] hover:dark:text-perps-red'
   return ''
 }
 

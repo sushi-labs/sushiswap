@@ -32,7 +32,7 @@ const COLUMNS = [
 export const SpotAssets = () => {
   const [selectedTab, setSelectedTab] = useLocalStorage(
     'sushi.perps.selected-search-asset-spot-tab',
-    'all',
+    'All',
   )
   const {
     state: {
@@ -67,7 +67,7 @@ export const SpotAssets = () => {
       }
       return true
     })
-    if (selectedTab === 'all') {
+    if (selectedTab === 'All') {
       return allData
     }
     return allData.filter((asset) => {
@@ -105,6 +105,9 @@ export const SpotAssets = () => {
     [setActiveAsset, setOpen],
   )
 
+  const TABS = useMemo(() => {
+    return ['All', ...spotCollateralTokens]
+  }, [spotCollateralTokens])
   return (
     <Tabs
       className="w-full"
@@ -113,20 +116,32 @@ export const SpotAssets = () => {
         setSelectedTab(val)
       }}
     >
-      <TabsList className="!flex !px-0 !h-8 !max-w-fit bg-secondary">
-        {['all', ...spotCollateralTokens].map((tab) => (
+      <TabsList
+        className="!flex w-fit overflow-x-auto !px-0 !mx-2 !h-8 bg-transparent border-transparent !justify-start hide-scrollbar overflow-y-hidden"
+        style={{
+          maxWidth: `calc(100vw - 16px)`,
+        }}
+      >
+        {TABS.map((tab, idx) => (
           <TabsTrigger
             key={tab}
             value={tab}
-            className="flex flex-1 !px-1.5 !max-w-fit !text-xs capitalize"
+            className="flex flex-1 !px-1.5 !max-w-fit !text-xs capitalize !bg-transparent !border-transparent"
           >
             {tab}
+            {idx !== TABS.length - 1 ? (
+              <span className="h-[10px] w-px bg-perps-muted-20 ml-3" />
+            ) : null}
           </TabsTrigger>
         ))}
       </TabsList>
       <TabsContent
         value={selectedTab}
-        className="max-h-[calc(80vh-215px)] hide-scrollbar lg:min-h-[410px] lg:max-h-[410px] overflow-auto max-w-[calc(100vw-30px)]"
+        className="!mt-0 hide-scrollbar lg:!min-h-[410px] lg:!max-h-[410px] overflow-auto max-w-[100vw]"
+        style={{
+          minHeight: 'calc(100dvh - 115px)',
+          maxHeight: 'calc(100dvh - 115px)',
+        }}
       >
         <DataTableVirtual
           state={state}
@@ -137,6 +152,7 @@ export const SpotAssets = () => {
           data={filtered}
           thClassName="!h-8 pl-0"
           hideScrollbar={true}
+          overscan={3}
         />
       </TabsContent>
     </Tabs>

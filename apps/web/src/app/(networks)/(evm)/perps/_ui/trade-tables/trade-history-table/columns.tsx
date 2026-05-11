@@ -1,3 +1,4 @@
+import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
 import {
   Chip,
   HoverCard,
@@ -211,7 +212,7 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
         <HoverCardContent
           forceMount
           side="top"
-          className="!px-3 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
+          className="!px-3 !bg-black/10 !py-2 max-w-[320px] whitespace-normal text-left text-xs"
         >
           <p>Closed PnL includes fees and rebates</p>
         </HoverCardContent>
@@ -249,18 +250,35 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     }
     return (
       <div className="flex items-center gap-[0.25ch] lg:whitespace-nowrap">
-        <span className="font-medium">
-          {hidePnl
-            ? '***'
-            : `${perpsNumberFormatter({
-                value: totalPnl,
-                minFraxDigits: 2,
-                maxFraxDigits: 2,
-              })} USDC`}{' '}
-        </span>
         {isCloseTrade ? (
-          <ShareClosedPnlDialog trade={props.row.original} />
-        ) : null}
+          <ShareClosedPnlDialog
+            trade={props.row.original}
+            trigger={
+              <div className="flex items-center cursor-pointer gap-[0.25ch]">
+                <span className="font-medium">
+                  {hidePnl
+                    ? '***'
+                    : `${perpsNumberFormatter({
+                        value: totalPnl,
+                        minFraxDigits: 2,
+                        maxFraxDigits: 2,
+                      })} USDC`}{' '}
+                </span>
+                <ExternalLinkIcon className="h-3.5 w-3.5 text-blue" />
+              </div>
+            }
+          />
+        ) : (
+          <span className="font-medium">
+            {hidePnl
+              ? '***'
+              : `${perpsNumberFormatter({
+                  value: totalPnl,
+                  minFraxDigits: 2,
+                  maxFraxDigits: 2,
+                })} USDC`}{' '}
+          </span>
+        )}
       </div>
     )
   },

@@ -1,13 +1,13 @@
 'use client'
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Message,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
+  PerpsDialogTrigger,
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import {
@@ -15,7 +15,7 @@ import {
   useMarginTable,
   useUpdateLeverage,
 } from 'src/lib/perps'
-import { PercentageSlider } from '../_common'
+import { PercentageSlider, PerpsCard } from '../_common'
 import { useAssetListState } from '../asset-selector'
 import { PerpsChecker } from '../perps-checker'
 
@@ -87,27 +87,36 @@ export const UpdateLeverageDialog = ({
     [isControlled, onOpenChange, currentLeverage],
   )
 
+  const percentage = useMemo(() => {
+    if (newLeverage === 0) return 0
+    return ((newLeverage / maxLeverage) * 100).toFixed(0)
+  }, [newLeverage, maxLeverage])
+
   return (
-    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent variant="perps-default">
-        <DialogHeader>
-          <DialogTitle>Adjust Leverage</DialogTitle>
-          <DialogDescription>
+    <PerpsDialog open={resolvedOpen} onOpenChange={handleOpenChange}>
+      <PerpsDialogTrigger asChild>{trigger}</PerpsDialogTrigger>
+      <PerpsDialogContent>
+        <PerpsDialogHeader>
+          <PerpsDialogTitle>Adjust Leverage</PerpsDialogTitle>
+          <PerpsDialogDescription>
             Adjust your leverage for {asset?.name} positions. The maximum
-            leverage is {maxLeverage}x.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="max-h-[calc(100vh-150px)] overflow-y-auto">
+            leverage is {maxLeverage}x. Max position size decreases the higher
+            your leverage.{' '}
+            {lastTier &&
+            newLeverage > lastTier?.maxLeverage &&
+            Number(lastTier.lowerBound) > 0
+              ? `The max position size for ${newLeverage}x leverage on ${asset?.name} is ${currencyFormatter.format(Number(lastTier.lowerBound))}.`
+              : ''}
+          </PerpsDialogDescription>
+        </PerpsDialogHeader>
+        <PerpsDialogInnerContent>
           <div className="flex flex-col gap-4 text-sm">
-            <p>
-              Max position size decreases the higher your leverage.{' '}
-              {lastTier &&
-              newLeverage > lastTier?.maxLeverage &&
-              Number(lastTier.lowerBound) > 0
-                ? `The max position size for ${newLeverage}x leverage on ${asset?.name} is ${currencyFormatter.format(Number(lastTier.lowerBound))}.`
-                : ''}
-            </p>
+            <PerpsCard className="flex flex-col items-center justify-center gap-3 p-6">
+              <p className="text-5xl font-medium text-perps-muted">
+                {newLeverage}x
+              </p>
+              <p className="text-perps-muted-5">{percentage}%</p>
+            </PerpsCard>
             <PercentageSlider
               value={newLeverage}
               onChange={(val) => {
@@ -116,20 +125,25 @@ export const UpdateLeverageDialog = ({
               disabled={isLoading || isError || isPending}
               maxValue={maxLeverage}
               unit="x"
+              variant="white"
+              hideInput={true}
             />
-            <PerpsChecker.Legal size="default" variant="perps-default">
+            <PerpsChecker.Legal size="default" variant="perps-tertiary">
               <PerpsChecker.EnableTrading
                 size="default"
-                variant="perps-default"
+                variant="perps-tertiary"
               >
-                <PerpsChecker.BuilderFee size="default" variant="perps-default">
+                <PerpsChecker.BuilderFee
+                  size="default"
+                  variant="perps-tertiary"
+                >
                   <PerpsChecker.HyperReferral
                     size="default"
-                    variant="perps-default"
+                    variant="perps-tertiary"
                   >
                     <Button
                       size="default"
-                      variant="perps-default"
+                      variant="perps-tertiary"
                       onClick={() =>
                         updateLeverage(
                           { assetString, isCross, newLeverage },
@@ -150,13 +164,12 @@ export const UpdateLeverageDialog = ({
                 </PerpsChecker.BuilderFee>
               </PerpsChecker.EnableTrading>
             </PerpsChecker.Legal>
-            <div className="bg-accent w-full h-[1px]" />
-            <Message variant="warning" size="xs" className="!p-3 text-center">
+            <p className="text-center text-xs text-perps-muted-50">
               Setting a higher leverage increases the risk of liquidation.
-            </Message>
+            </p>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </PerpsDialogInnerContent>
+      </PerpsDialogContent>
+    </PerpsDialog>
   )
 }

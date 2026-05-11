@@ -7,10 +7,10 @@
 
 :root {
   --tv-color-popup-element-text-active: #ffffff;
-  --tv-color-popup-element-background-active: #3b82f6;
+  --tv-color-popup-element-background-active: #349bfe;
 
-  --themed-color-background-selected: #3b82f6;
-  --themed-color-background-special-secondary: #3b82f6;
+  --themed-color-background-selected: #349bfe;
+  --themed-color-background-special-secondary: #349bfe;
 
   --tv-color-toolbar-button-text: #535263;
   --tv-color-popup-background: white;
@@ -23,14 +23,14 @@
   .button-GwQQdU8S.isInteractive-GwQQdU8S.isActive-GwQQdU8S {
     color: var(
       --tv-color-toolbar-button-text-active,
-      var(--themed-color-toolbar-button-text-active, #3b82f6)
+      var(--themed-color-toolbar-button-text-active, #349bfe)
     );
   }
 
   .button-GwQQdU8S.isInteractive-GwQQdU8S.isActive-GwQQdU8S:hover {
     color: var(
       --tv-color-toolbar-button-text-active-hover,
-      var(--themed-color-toolbar-button-text-active-hover, #3b82f6)
+      var(--themed-color-toolbar-button-text-active-hover, #349bfe)
     );
     background-color: var(--tv-color-toolbar-button-background-active-hover);
   }
@@ -38,13 +38,28 @@
 
 .theme-dark:root {
   --tv-color-popup-element-text-active: #ffffff;
-  --tv-color-popup-element-background-active: #3b82f6;
+  --tv-color-popup-element-background-active: #349bfe;
 
-  --themed-color-background-selected: #3b82f6;
-  --themed-color-background-special-secondary: #3b82f6;
+  --themed-color-background-selected: #349bfe;
+  --themed-color-background-special-secondary: #349bfe;
 
   --tv-color-toolbar-button-text: #fff5fa;
 
-  --tv-color-popup-background: #0f172a;
-  --tv-color-popup-element-background-hover: #1e293b;
+  --tv-color-popup-background: #0d1217;
+  --tv-color-popup-element-background-hover: #1c242d;
+
+  .noWrap-l31H9iuA .valuesWrapper-l31H9iuA,
+  .series-l31H9iuA .valuesWrapper-l31H9iuA {
+    background-color: transparent !important;
+  }
+
+  .button-l31H9iuA,
+  .statusesWrapper-l31H9iuA,
+  .titlesWrapper-l31H9iuA,
+  .valueItem-l31H9iuA {
+    background-color: transparent !important;
+  }
+  .inner-BfVZxb4b {
+    background-color: transparent !important;
+  }
 }

@@ -7,8 +7,8 @@ import {
   classNames,
   useBreakpoint,
 } from '@sushiswap/ui'
-import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
+import { PerpsCard } from '../../_common'
 import { TradeFilter } from '../filters'
 import {
   TWAP_TABLES_TABS,
@@ -18,8 +18,6 @@ import {
 
 export const TwapTables = () => {
   const { isLg } = useBreakpoint('lg')
-  const pathname = usePathname()
-  const isPortfolio = pathname === '/perps/portfolio'
   const {
     state: { activeTwapTab },
     mutate: { setActiveTwapTab },
@@ -32,33 +30,34 @@ export const TwapTables = () => {
       value={activeTwapTab}
       onValueChange={(val) => setActiveTwapTab(val as TwapTableTabValue)}
     >
-      <div className="flex items-center justify-between">
+      <div className="flex items-center mx-1 justify-between lg:mt-1">
         {!isLg ? <TradeFilter /> : null}
-        <TabsList
-          className={classNames(
-            '!px-0.5 !h-8 !bg-[#0D1421]',
-            isPortfolio && '!bg-[#18223B]',
-          )}
-        >
-          {TWAP_TABLES_TABS.map((tab) => (
-            <TabsTrigger
-              key={tab.value}
-              value={tab.value}
-              className="!px-1.5 !py-.5 !text-xs"
-              asChild
-            >
-              <Button
-                size="xs"
-                variant={
-                  activeTwapTab === tab.value ? 'perps-secondary' : 'ghost'
-                }
-                className="!p-0 w-full col-span-1 capitalize !text-xs !rounded-md"
+        <PerpsCard className="hide-scrollbar overflow-x-auto" rounded="full">
+          <TabsList
+            className={classNames(
+              '!px-0.5 !h-8 !bg-perps-muted/[.02] !rounded-full !border-transparent',
+            )}
+          >
+            {TWAP_TABLES_TABS.map((tab) => (
+              <TabsTrigger
+                key={tab.value}
+                value={tab.value}
+                className="!px-1.5 !py-.5 !text-xs"
+                asChild
               >
-                {tab.name}
-              </Button>
-            </TabsTrigger>
-          ))}
-        </TabsList>
+                <Button
+                  size="xs"
+                  variant={
+                    activeTwapTab === tab.value ? 'perps-secondary' : 'ghost'
+                  }
+                  className="!p-0 w-full col-span-1 capitalize !text-xs !rounded-full !border-0"
+                >
+                  {tab.name}
+                </Button>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </PerpsCard>
       </div>
 
       {TWAP_TABLES_TABS.map((tab) => (

@@ -45,12 +45,12 @@ export const SizeInput = ({
   return (
     <div
       className={classNames(
-        'w-full border rounded-lg px-4 py-2 border-[#FFFFFF1A] bg-[#FFFFFF0D]',
+        'w-full border rounded-lg px-4 py-2 border-[#FFFFFF1A] ',
         className ?? '',
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <p className="text-[#8f9399]">Size</p>
+        <p className="text-perps-muted-50">Size</p>
         <div className="flex items-center gap-1 max-h-[35px]">
           <TextField
             type="number"
@@ -60,7 +60,9 @@ export const SizeInput = ({
             value={pending ? localValue : _value}
             readOnly={!asset}
             maxDecimals={sizeSide === 'base' ? asset?.formatParseDecimals : 2}
-            className={classNames('!text-lg font-medium text-right')}
+            className={classNames(
+              '!text-lg font-medium text-right !text-perps-muted',
+            )}
           />
           <SideToggle
             side={sizeSide}

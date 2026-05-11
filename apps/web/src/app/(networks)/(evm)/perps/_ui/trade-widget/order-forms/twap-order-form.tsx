@@ -11,7 +11,7 @@ export const TwapOrderForm = () => {
     state: { asset },
   } = useAssetState()
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-2">
       <OrderSizeInput />
       <TwapRunningTimeInput />
       <Randomize />

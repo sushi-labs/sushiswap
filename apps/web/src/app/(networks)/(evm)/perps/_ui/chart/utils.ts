@@ -150,6 +150,7 @@ export const createChartWidgetOptions = ({
   enabled_features: [
     'hide_unresolved_symbols_in_legend',
     'hide_main_series_symbol_from_indicator_legend',
+    'iframe_loading_compatibility_mode',
   ],
   charts_storage_url: widgetProps.charts_storage_url,
   charts_storage_api_version: widgetProps.charts_storage_api_version,
@@ -160,8 +161,6 @@ export const createChartWidgetOptions = ({
   custom_css_url: '/trading-view-chart.css',
   theme: resolvedTheme === 'dark' ? 'dark' : 'light',
   overrides: {
-    'paneProperties.background':
-      resolvedTheme === 'dark' ? '#0D1421' : '#ffffff',
     'paneProperties.vertGridProperties.color':
       resolvedTheme === 'dark' ? '#2C2C2E' : '#E5E7EB',
     'paneProperties.horzGridProperties.color':
@@ -170,6 +169,8 @@ export const createChartWidgetOptions = ({
       resolvedTheme === 'dark' ? '#9CA3AF' : '#374151',
     'scalesProperties.lineColor':
       resolvedTheme === 'dark' ? '#3F3F46' : '#D1D5DB',
+    'paneProperties.background': 'rgba(0,0,0,0)',
+    'paneProperties.backgroundType': 'solid',
     'mainSeriesProperties.candleStyle.upColor': POSITIVE_COLOR,
     'mainSeriesProperties.candleStyle.downColor': NEGATIVE_COLOR,
     'mainSeriesProperties.candleStyle.borderUpColor': POSITIVE_COLOR,
@@ -369,7 +370,7 @@ export const createChartWidgetOptions = ({
         '#505259',
         '#46484e',
         '#3c3e43',
-        '#0D1421',
+        'rgba(255,255,255,0)',
         '#323338',
       ],
       color3: [
