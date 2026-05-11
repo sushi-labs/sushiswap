@@ -1,3 +1,4 @@
+'use client'
 import { approveAgent } from '@nktkas/hyperliquid/api/exchange'
 import { AbstractWalletError } from '@nktkas/hyperliquid/signing'
 import { useLocalStorage } from '@sushiswap/hooks'
@@ -7,7 +8,7 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { zeroAddress } from 'viem'
 import {
   generatePrivateKey,
@@ -45,6 +46,14 @@ export const useAgent = () => {
     | undefined
   >(`sushi.perps.agent.${address}`, undefined)
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: only run after agents loaded
+  useEffect(() => {
+    if (!sushiAgent && storedValue && !isLoading) {
+      // if the agent was removed externally, clear the stored value
+      removeValue()
+    }
+  }, [isLoading])
+
   const agentAccount = useMemo(() => {
     if (!storedValue || !address) return undefined
     return privateKeyToAccount(storedValue.privateKey)
@@ -58,21 +67,6 @@ export const useAgent = () => {
       const pk = generatePrivateKey()
       const pubk = privateKeyToAddress(pk)
       const agent = pubk
-      if (!extraAgents?.length && type === 'create') {
-        //need to create standard agent first before we can create the sushi agent
-        const pk1 = generatePrivateKey()
-        const pubk1 = privateKeyToAddress(pk1)
-        const agent1 = pubk1
-        await approveAgent(
-          {
-            wallet: walletClient,
-            transport: hlHttpTransport,
-          },
-          {
-            agentAddress: agent1,
-          },
-        )
-      }
       await approveAgent(
         {
           wallet: walletClient,
