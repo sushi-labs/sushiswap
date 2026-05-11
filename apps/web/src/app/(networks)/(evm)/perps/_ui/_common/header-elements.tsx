@@ -48,8 +48,8 @@ export const EXPLORE_NAVIGATION_LINKS =
       },
       {
         title: 'Vaults',
-        href: `#`,
-        description: 'Coming Soon',
+        href: `/perps/vaults`,
+        description: 'View and manage your vault positions.',
       },
     ]
   }
@@ -167,20 +167,19 @@ export const headerElements = (): NavigationElement[] => {
       show: 'perps-desktop',
       type: NavigationElementType.Custom,
       item: (
-        <NavigationMenuItem className={NavigationElementType.Custom}>
-          <HoverCard openDelay={0} closeDelay={0}>
-            <HoverCardTrigger tabIndex={0} asChild>
-              <div className="opacity-50 text-sm font-medium cursor-not-allowed py-2.5 px-4 rounded-xl focus:bg-accent hover:bg-secondary">
-                Vaults
-              </div>
-            </HoverCardTrigger>
-            <HoverCardContent
-              className="text-xs !p-2 !bg-black/10"
-              side="bottom"
-            >
-              <div>Coming Soon</div>
-            </HoverCardContent>
-          </HoverCard>
+        <NavigationMenuItem
+          key={`vaults:custom`}
+          className={navigationElementShowMap['perps-desktop']}
+        >
+          <NavigationMenuLink
+            href={'/perps/vaults'}
+            className={classNames(
+              navigationMenuTriggerStyle,
+              'focus:bg-transparent hover:!bg-secondary',
+            )}
+          >
+            Vaults
+          </NavigationMenuLink>
         </NavigationMenuItem>
       ),
     },
