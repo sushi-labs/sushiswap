@@ -74,7 +74,10 @@ export const Multiplier = () => {
                       i.multiplier === 1
                         ? 0
                         : data?.pointMultipliers?.[
-                            data.pointMultipliers.indexOf(i) - 1
+                            data.pointMultipliers.indexOf(i) ===
+                            data.pointMultipliers.length - 1
+                              ? idx - 1
+                              : idx
                           ]?.thresholdUsd || 0
                     }
                     end={i.thresholdUsd}

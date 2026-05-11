@@ -25,6 +25,10 @@ export function usePointsData({
         (i) => i.thresholdUsd <= totalVolumeUsd,
       )
       const currentThresholdUsd = current?.thresholdUsd || 0
+
+      const currentTier = !currentThresholdUsd
+        ? DEFAULT_TIERS[0]
+        : getTier(currentThresholdUsd)
       let currentMultiplier = current?.multiplier || 1
       if (currentMultiplier === 1) {
         currentMultiplier = 1.069
@@ -33,16 +37,25 @@ export function usePointsData({
       const currentTierIdx = pointMultipliers.findLastIndex(
         (i) => i.thresholdUsd <= currentThresholdUsd,
       )
-      const _nextTier = pointMultipliers[currentTierIdx + 1]
+      let _nextTier = pointMultipliers[currentTierIdx + 1]
       let percentageCompletedTier = 1
       let nextMultiplier = _nextTier?.multiplier
       if (!_nextTier) {
         percentageCompletedTier = 1
         nextMultiplier = currentMultiplier
+        _nextTier = {
+          multiplier: 2,
+          thresholdUsd: Number.POSITIVE_INFINITY,
+        }
       }
-      const range = _nextTier?.thresholdUsd - currentThresholdUsd || 1
 
-      percentageCompletedTier = (totalVolumeUsd - currentThresholdUsd) / range
+      percentageCompletedTier = totalVolumeUsd / _nextTier?.thresholdUsd
+      if (
+        totalVolumeUsd >= currentThresholdUsd &&
+        currentTier.id === 'legend'
+      ) {
+        percentageCompletedTier = 1
+      }
 
       const currentPoints = data?.totalPoints
         ? perpsNumberFormatter({
@@ -51,10 +64,6 @@ export function usePointsData({
             maxFraxDigits: 0,
           })
         : '0'
-
-      const currentTier = !currentThresholdUsd
-        ? DEFAULT_TIERS[0]
-        : getTier(currentThresholdUsd)
 
       return {
         currentThresholdUsd,

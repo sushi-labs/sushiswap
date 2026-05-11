@@ -27,7 +27,6 @@ export const Overview = () => {
   )
   const [centeredIndex, setCenteredIndex] = useState(currentTierIndex)
   const visibleTier = DEFAULT_TIERS[centeredIndex] ?? data?.currentTier
-
   const bringToCurrentTier = useCallback((index: number) => {
     const el = scrollRef.current
     if (!el) return
