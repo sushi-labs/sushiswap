@@ -27,7 +27,7 @@ export const Trades = () => {
   return (
     <div className="max-h-[396px] px-0 lg:px-0 lg:max-h-[665px] relative overflow-y-auto hide-scrollbar">
       <div className="w-full">
-        <div className="sticky top-0 dark:bg-transparent backdrop-blur-xl text-muted-foreground">
+        <div className="sticky top-0 dark:bg-transparent backdrop-blur-xl text-perps-muted-50">
           <div className="grid grid-cols-3">
             <div className="text-left font-normal p-0.5 text-xs">Price</div>
             <div className="font-normal p-0.5 text-xs text-right">

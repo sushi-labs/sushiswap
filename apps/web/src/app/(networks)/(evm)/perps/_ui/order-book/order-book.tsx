@@ -131,7 +131,7 @@ export const OrderBook = ({ className }: { className?: string }) => {
   return (
     <div className={classNames('flex flex-col', className ?? '')}>
       <div className="w-full">
-        <div className="text-muted-foreground">
+        <div className="text-perps-muted-50">
           {isLoading ? (
             <SkeletonOrderBookRow />
           ) : error ? null : (
