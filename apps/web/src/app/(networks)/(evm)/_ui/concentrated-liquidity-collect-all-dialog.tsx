@@ -166,12 +166,10 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
 
     if (positionsToCollect.length === 0) return
 
-    const { calldata, value } = NonfungiblePositionManager.collectCallParameters(
-      positionsToCollect,
-      {
+    const { calldata, value } =
+      NonfungiblePositionManager.collectCallParameters(positionsToCollect, {
         minimumAmountTolerance: new Fraction(1),
-      },
-    )
+      })
 
     return {
       to: SUSHISWAP_V3_POSITION_MANAGER[chainId],
