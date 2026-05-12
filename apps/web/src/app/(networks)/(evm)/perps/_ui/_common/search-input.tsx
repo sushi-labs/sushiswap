@@ -58,6 +58,7 @@ export const SearchInput = ({
                   className="!bg-transparent mr-6"
                   id="asset-search"
                   wrapperClassName="!h-[34px]"
+                  autoFocus
                 />
 
                 <div

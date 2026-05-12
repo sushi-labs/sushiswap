@@ -23,6 +23,13 @@ export const USER_VAULTS_PNL_TIMEFRAMES = ['24H', '7D', '30D', 'All'] as const
 export type UserVaultsPnLTimeframeType =
   (typeof USER_VAULTS_PNL_TIMEFRAMES)[number]
 
+export const TIMEFRAME_TO_PNL_KEY = {
+  '24H': 'day' as const,
+  '7D': 'week' as const,
+  '30D': 'month' as const,
+  All: 'allTime' as const,
+}
+
 const UserVaultsStateContext = createContext<State>({} as State)
 
 interface UserVaultsStateProviderProps {

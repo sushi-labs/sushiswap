@@ -22,6 +22,7 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual'
 import classNames from 'classnames'
 import { default as React, type ReactNode } from 'react'
+import { DataTableVirtualPagination } from '../..'
 import {
   Table,
   TableBody,
@@ -51,6 +52,7 @@ interface DataTableVirtualProps<TData, TValue> {
   overscan?: number
   estimateSize?: number
   trClassName?: string
+  pagination?: boolean
 }
 
 export function DataTableVirtual<TData, TValue>({
@@ -71,6 +73,7 @@ export function DataTableVirtual<TData, TValue>({
   overscan = 20,
   estimateSize = 30,
   trClassName,
+  pagination = false,
 }: DataTableVirtualProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -236,6 +239,11 @@ export function DataTableVirtual<TData, TValue>({
           )}
         </TableBody>
       </Table>
+      {pagination ? (
+        <div>
+          <DataTableVirtualPagination table={table} />
+        </div>
+      ) : null}
     </div>
   )
 }

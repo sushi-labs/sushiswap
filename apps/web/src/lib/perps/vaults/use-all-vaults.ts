@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
+import { useAccount } from 'src/lib/wallet'
 import z from 'zod'
+import { useLeadingVaults, useUserVaultEquities } from '../info'
 
 const PnlPeriodSchema = z.enum(['day', 'week', 'month', 'allTime'])
 const RelationshipTypeSchema = z.enum(['parent', 'normal', 'child'])
@@ -28,12 +30,17 @@ export const VaultSchema = z.object({
 
 export const VaultsResponseSchema = z.array(VaultSchema)
 
-export type Vault = z.infer<typeof VaultSchema>
-export type VaultsResponse = z.infer<typeof VaultsResponseSchema>
+export type PerpsVaultsResponse = z.infer<typeof VaultsResponseSchema>
 
 export const useAllVaults = () => {
-  return useQuery({
-    queryKey: ['all-perps-vaults'],
+  const address = useAccount('evm')
+  const { data: userVaultEquities, isLoading: isLoadingUserVaultEquities } =
+    useUserVaultEquities({ address })
+  const { data: leadingVaults, isLoading: isLoadingLeaders } = useLeadingVaults(
+    { address },
+  )
+  const query = useQuery({
+    queryKey: ['all-perps-vaults', address, userVaultEquities, leadingVaults],
     queryFn: async () => {
       const response = await fetch(
         'https://stats-data.hyperliquid.xyz/Mainnet/vaults',
@@ -47,7 +54,35 @@ export const useAllVaults = () => {
         console.error('Failed to parse vaults response', parsed.error)
         throw new Error('Failed to parse vaults response')
       }
-      return parsed.data
+      const rawVaults = parsed.data
+      return rawVaults.map((vault) => {
+        const depositAmount =
+          userVaultEquities?.find(
+            (equity) =>
+              equity?.vaultAddress?.toLowerCase() ===
+              vault?.summary?.vaultAddress?.toLowerCase(),
+          )?.equity || '0'
+        const isVaultLeader =
+          leadingVaults?.some(
+            (leaderVault) =>
+              leaderVault?.address?.toLowerCase() ===
+              vault?.summary?.vaultAddress?.toLowerCase(),
+          ) ?? false
+        return {
+          ...vault,
+          depositAmount,
+          isVaultLeader,
+        }
+      })
     },
   })
+  return {
+    ...query,
+    isLoading:
+      query.isLoading || isLoadingUserVaultEquities || isLoadingLeaders,
+  }
 }
+
+export type PerpsVault = NonNullable<
+  Awaited<ReturnType<typeof useAllVaults>>['data']
+>[number]
