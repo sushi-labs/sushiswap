@@ -23,7 +23,7 @@ import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { logger } from 'src/lib/logger'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
-import { Amount } from 'sushi'
+import { Amount, Fraction } from 'sushi'
 import {
   type EvmChainId,
   type EvmCurrency,
@@ -166,8 +166,12 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
 
     if (positionsToCollect.length === 0) return
 
-    const { calldata, value } =
-      NonfungiblePositionManager.collectCallParameters(positionsToCollect)
+    const { calldata, value } = NonfungiblePositionManager.collectCallParameters(
+      positionsToCollect,
+      {
+        minimumAmountTolerance: new Fraction(1),
+      },
+    )
 
     return {
       to: SUSHISWAP_V3_POSITION_MANAGER[chainId],
