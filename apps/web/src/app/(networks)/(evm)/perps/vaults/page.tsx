@@ -1,6 +1,7 @@
 import { Container } from '@sushiswap/ui'
 import { GeoBlockedMessage } from '../_ui/_common'
 import { TVL } from './_ui'
+import { UserVaultsStateProvider, UserVaultsTable } from './_ui/user-vaults'
 
 export default function VaultsMainPage() {
   return (
@@ -10,6 +11,9 @@ export default function VaultsMainPage() {
         <div className="flex flex-col gap-2 mb-7">
           <h1 className="text-4xl font-medium">Vaults</h1>
           <TVL />
+          <UserVaultsStateProvider>
+            <UserVaultsTable />
+          </UserVaultsStateProvider>
         </div>
       </Container>
     </div>
