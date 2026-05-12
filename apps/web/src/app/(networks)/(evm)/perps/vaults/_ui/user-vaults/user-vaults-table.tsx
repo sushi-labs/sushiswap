@@ -1,8 +1,8 @@
 'use client'
 import { DataTableVirtual } from '@sushiswap/ui'
 import type { PaginationState, TableState } from '@tanstack/react-table'
-import { useMemo, useState } from 'react'
-import { useAllVaults } from 'src/lib/perps'
+import { useCallback, useMemo, useState } from 'react'
+import { type PerpsVault, useAllVaults } from 'src/lib/perps'
 import { PerpsCard } from '~evm/perps/_ui/_common'
 import {
   AGE_COLUMN,
@@ -89,6 +89,10 @@ export const UserVaultsTable = () => {
     }
   }, [sorting, paginationState])
 
+  const rowLink = useCallback((row: PerpsVault) => {
+    return `/perps/vaults/${row.summary.vaultAddress.toLowerCase()}`
+  }, [])
+
   return (
     <PerpsCard className="p-3 gap-4 flex flex-col">
       <div className="flex justify-between flex-wrap gap-2">
@@ -105,6 +109,7 @@ export const UserVaultsTable = () => {
         hideScrollbar={true}
         onPaginationChange={setPaginationState}
         pagination={true}
+        linkFormatter={rowLink}
       />
     </PerpsCard>
   )
