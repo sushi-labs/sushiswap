@@ -10,10 +10,12 @@ import {
 } from '@sushiswap/ui'
 import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
 import { useMemo, useState } from 'react'
-import { usePortfolio } from 'src/lib/perps'
+import { useVaultDetails } from 'src/lib/perps/info/use-vault-details'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useAccount } from 'src/lib/wallet'
+import type { EvmAddress } from 'sushi/evm'
 import { DataChart, PerpsCard } from '~evm/perps/_ui/_common'
+import { TIMEFRAMES, type Timeframe } from './vault-page'
 
 const VIEWS = [
   {
@@ -24,65 +26,44 @@ const VIEWS = [
     label: 'PNL',
     value: 'pnl' as const,
   },
-  {
-    label: 'Perps PNL',
-    value: 'perpsPnl' as const,
-  },
 ]
-const TIME = ['24h', '7D', '30D', 'All-time'] as const
 
-const getKey = (
-  time: (typeof TIME)[number],
-  view: (typeof VIEWS)[number]['value'],
-) => {
-  if (view === 'perpsPnl') {
-    switch (time) {
-      case '24h':
-        return 'perpDay' as const
-      case '7D':
-        return 'perpWeek' as const
-      case '30D':
-        return 'perpMonth' as const
-      case 'All-time':
-        return 'perpAllTime' as const
-    }
-  } else {
-    switch (time) {
-      case '24h':
-        return 'day' as const
-      case '7D':
-        return 'week' as const
-      case '30D':
-        return 'month' as const
-      case 'All-time':
-        return 'allTime' as const
-    }
+const getKey = (time: Timeframe) => {
+  switch (time) {
+    case '24h':
+      return 'day' as const
+    case '7D':
+      return 'week' as const
+    case '30D':
+      return 'month' as const
+    case 'All-time':
+      return 'allTime' as const
   }
 }
 
-export const AccountCharts = () => {
+export const VaultCharts = ({
+  vaultAddress,
+  timeframe,
+  setTimeframe,
+}: {
+  vaultAddress: EvmAddress
+  timeframe: Timeframe
+  setTimeframe: (timeframe: Timeframe) => void
+}) => {
   const [openTime, setOpenTime] = useState(false)
   const [view, setView] = useState<(typeof VIEWS)[number]>(VIEWS[1])
-  const [time, setTime] = useState<(typeof TIME)[number]>(TIME[0])
   const address = useAccount('evm')
-  const {
-    data,
-    isLoading: isLoadingPortfolio,
-    error: portfolioError,
-  } = usePortfolio({ address })
-
-  const isLoading = isLoadingPortfolio
-  const error = portfolioError
+  const { data, isLoading, error } = useVaultDetails({ vaultAddress })
 
   const dataToRender = useMemo(() => {
     if (!data) return []
-    const key = getKey(time, view.value)
-    const dataForKey = data?.find(([d, _data]) => d === key)?.[1]
-    if (view.value === 'perpsPnl' || view.value === 'pnl') {
+    const key = getKey(timeframe)
+    const dataForKey = data?.portfolio?.find(([d, _data]) => d === key)?.[1]
+    if (view.value === 'pnl') {
       return dataForKey?.pnlHistory
     }
     return dataForKey?.accountValueHistory
-  }, [data, time, view])
+  }, [data, timeframe, view])
 
   return (
     <div className="w-full lg:!min-w-[50%]">
@@ -111,7 +92,7 @@ export const AccountCharts = () => {
           </PerpsCard>
           <DropdownMenu open={openTime} onOpenChange={setOpenTime}>
             <DropdownMenuTrigger className="capitalize flex items-center text-perps-muted-50">
-              {time}{' '}
+              {timeframe}{' '}
               <DownTriangleIcon
                 className={classNames(
                   'w-1.5 h-1.5 min-w-1.5 ml-1 transition-transform',
@@ -120,12 +101,12 @@ export const AccountCharts = () => {
               />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="paper !rounded-md !bg-black/10">
-              {TIME.map((t) => (
+              {TIMEFRAMES.map((t) => (
                 <DropdownMenuItem
                   key={t}
                   className="capitalize"
                   onClick={() => {
-                    setTime(t)
+                    setTimeframe(t)
                   }}
                 >
                   {t}

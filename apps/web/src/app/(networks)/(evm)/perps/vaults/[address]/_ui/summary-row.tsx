@@ -79,8 +79,12 @@ export const SummaryRow = ({ vaultAddress }: { vaultAddress: EvmAddress }) => {
       <SummaryCard
         label="All-time Earned"
         value={
-          <div className={classNames(getTextColorClass(earned))}>
-            {currencyFormatter.format(earned)}
+          <div
+            className={classNames(
+              earned !== 0 ? getTextColorClass(earned) : '',
+            )}
+          >
+            {earned !== 0 ? currencyFormatter.format(earned) : '-'}
           </div>
         }
         isLoading={isLoading}
