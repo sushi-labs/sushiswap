@@ -7,6 +7,7 @@ import { Button, IconButton, SkeletonBox } from '@sushiswap/ui'
 import { useVaultDetails } from 'src/lib/perps/info/use-vault-details'
 import { truncateString } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
+import { DepositDialog } from './deposit-dialog'
 
 export const VaultHeader = ({ vaultAddress }: { vaultAddress: EvmAddress }) => {
   const [isCopied, staticCopy] = useCopyClipboard()
@@ -34,7 +35,7 @@ export const VaultHeader = ({ vaultAddress }: { vaultAddress: EvmAddress }) => {
       </div>
       <div className="flex items-center gap-1">
         <Button variant="perps-secondary">Withdraw</Button>
-        <Button variant="perps-secondary">Deposit</Button>
+        <DepositDialog vaultAddress={vaultAddress} />
       </div>
     </div>
   )

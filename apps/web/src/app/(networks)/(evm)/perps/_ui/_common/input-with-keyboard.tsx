@@ -15,6 +15,7 @@ export const InputWithKeyboard = ({
   currency,
   isLoading,
   address,
+  maxDecimals,
 }: {
   amount: string
   setAmount: (value: string) => void
@@ -23,6 +24,7 @@ export const InputWithKeyboard = ({
   error: string | undefined
   isLoading: boolean
   address: EvmAddress | undefined
+  maxDecimals?: number
 }) => {
   const widthRef = useRef<HTMLInputElement | null>(null)
   const { isLg } = useBreakpoint('lg')
@@ -107,7 +109,7 @@ export const InputWithKeyboard = ({
             onValueChange={setAmount}
             value={amount}
             readOnly={isLoading || !address}
-            maxDecimals={2}
+            maxDecimals={maxDecimals || 2}
             data-state={isLoading ? 'inactive' : 'active'}
             className={classNames(
               'p-0 py-1 !text-5xl font-medium !text-center !text-perps-muted',
