@@ -165,6 +165,16 @@ export const SPOT_ASSETS_TO_REWRITE = new Map<string, string>([
   ['XAUT0', 'XAUT'],
 ])
 
+export const DEX_NAME_TO_COIN: Map<string, string> = new Map([
+  ['', 'USDC (Perps)'],
+  ['xyz', 'USDC (Perps)'],
+  ['cash', 'USDT0 (Perps)'],
+  ['flx', 'USDH (Perps)'],
+  ['hyna', 'USDE (Perps)'],
+  ['km', 'USDH (Perps)'],
+  ['vntl', 'USDH (Perps)'],
+])
+
 export const toFixedTrim = (x: number, maxDp = 10) => {
   // stable display, no trailing zeros
   const s = x.toFixed(maxDp)

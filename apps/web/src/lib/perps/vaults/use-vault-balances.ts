@@ -1,27 +1,27 @@
 import { useMemo } from 'react'
-import { useUserSettingsState } from '~evm/perps/_ui/account-management'
+import type { EvmAddress } from 'sushi/evm'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
-import { useUserState } from '~evm/perps/user-provider'
-import { useAccount } from '../../wallet'
 import { useSpotClearinghouseState } from '../info'
+import {
+  useAllDexClearinghouseState,
+  useWebData2,
+  useWebData3,
+} from '../subscription'
 import { DEX_NAME_TO_COIN, SPOT_ASSETS_TO_REWRITE } from '../utils'
 
-export const useBalances = () => {
-  const address = useAccount('evm')
+export const useVaultBalances = (vaultAddress: EvmAddress) => {
   const {
-    state: {
-      allDexClearinghouseStateQuery: {
-        data,
-        isLoading: isLoadingAllDexClearinghouse,
-        isError: isErrorAllDexClearinghouse,
-      },
-      webData2Query: {
-        data: webData2Data,
-        isLoading: isWebData2Loading,
-        isError: isWebData2Error,
-      },
-    },
-  } = useUserState()
+    data: webData2Data,
+    isLoading: isWebData2Loading,
+    isError: isWebData2Error,
+  } = useWebData2({
+    address: vaultAddress,
+  })
+  const {
+    data,
+    isLoading: isLoadingAllDexClearinghouse,
+    isError: isErrorAllDexClearinghouse,
+  } = useAllDexClearinghouseState({ address: vaultAddress })
   const {
     state: {
       assetListQuery: {
@@ -32,24 +32,39 @@ export const useBalances = () => {
     },
   } = useAssetListState()
   const {
-    state: { isUnifiedAccountModeEnabled, isDexAbstractionEnabled },
-  } = useUserSettingsState()
-  const {
     data: spotClearinghouseState,
     isLoading: isLoadingSpotClearinghouse,
     error: errorSpotClearinghouse,
-  } = useSpotClearinghouseState({ address })
+  } = useSpotClearinghouseState({ address: vaultAddress })
+
+  const {
+    data: webData3,
+    isLoading: isWebData3Loading,
+    isError: isWebData3Error,
+  } = useWebData3({
+    address: vaultAddress,
+  })
+
+  const isUnifiedAccountModeEnabled = useMemo(() => {
+    return webData3?.userState?.abstraction === 'unifiedAccount'
+  }, [webData3?.userState?.abstraction])
+
+  const isDexAbstractionEnabled = useMemo(() => {
+    return webData3?.userState?.dexAbstractionEnabled || false
+  }, [webData3])
 
   const isLoading =
     isLoadingAllDexClearinghouse ||
     isAssetListLoading ||
     isWebData2Loading ||
-    isLoadingSpotClearinghouse
+    isLoadingSpotClearinghouse ||
+    isWebData3Loading
   const isError =
     isErrorAllDexClearinghouse ||
     isAssetListError ||
     isWebData2Error ||
-    errorSpotClearinghouse
+    errorSpotClearinghouse ||
+    isWebData3Error
 
   const formattedData = useMemo(() => {
     if (!data) return []
@@ -220,7 +235,7 @@ export const useBalances = () => {
   ])
 
   return useMemo(() => {
-    if (!address) {
+    if (!vaultAddress) {
       return {
         data: [],
         isLoading: false,
@@ -232,14 +247,5 @@ export const useBalances = () => {
       isLoading,
       isError,
     }
-  }, [isLoading, isError, formattedData, address])
-}
-
-export type BalanceItemType = ReturnType<typeof useBalances>['data'][number]
-
-export const useBalance = ({ assetString }: { assetString: string }) => {
-  const { data: balances } = useBalances()
-  return useMemo(() => {
-    return balances?.find((b) => b.assetName === assetString)
-  }, [balances, assetString])
+  }, [isLoading, isError, formattedData, vaultAddress])
 }

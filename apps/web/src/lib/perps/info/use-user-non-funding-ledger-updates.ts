@@ -140,6 +140,7 @@ function parseHyperliquidTx(
   hyperunitOps: Map<string, HyperunitOperation>,
   hlTransfers: Map<string, HyperliquidTransfer>,
   subAccounts: SubAccounts2Response,
+  isVault: boolean,
 ) {
   const d = tx.delta
   const me = myAddress.toLowerCase()
@@ -285,28 +286,34 @@ function parseHyperliquidTx(
 
     // ── vault deposit ─────────────────────────────────────────────────────
     //  UI: Action "Vault Deposit", Source: Perps, Dest: Perps, negative
-    case 'vaultDeposit':
+    case 'vaultDeposit': {
+      const value = isVault ? Number(d.usdc) : -Number(d.usdc)
       return {
         action: 'Vault Deposit',
         source: 'Perps',
         destination: 'Perps',
         feeAmount: 0,
-        accountValueChange: `-${perpsNumberFormatter({ value: d.usdc })} USDC`,
-        accValChange: Number(-d.usdc),
+        accountValueChange: `${perpsNumberFormatter({ value })} USDC`,
+        accValChange: value,
       }
+    }
 
     // ── vault withdrawal ──────────────────────────────────────────────────
     //  UI: Action "Vault Withdrawal", Source: Perps, Dest: Perps, positive
     //  Use netWithdrawnUsd for the value shown.
-    case 'vaultWithdraw':
+    case 'vaultWithdraw': {
+      const value = isVault
+        ? -Number(d.netWithdrawnUsd)
+        : Number(d.netWithdrawnUsd)
       return {
-        action: 'Vault Withdrawal',
+        action: `Vault Withdrawal ${String(isVault)}`,
         source: 'Perps',
         destination: 'Perps',
         feeAmount: 0,
-        accountValueChange: `${perpsNumberFormatter({ value: d.netWithdrawnUsd })} USDC`,
-        accValChange: Number(d.netWithdrawnUsd),
+        accountValueChange: `${perpsNumberFormatter({ value })} USDC`,
+        accValChange: value,
       }
+    }
 
     // ── spot genesis (airdrop / genesis distribution) ─────────────────────
     //  UI: Action "Genesis Distribution", Source: Spot, Dest: Spot, positive
@@ -453,6 +460,7 @@ const formatNonFundingLedgerUpdates = (
   hyperunitOps: Map<string, HyperunitOperation>,
   hlTransfers: Map<string, HyperliquidTransfer>,
   subAccounts: SubAccounts2Response,
+  isVault: boolean,
 ) => {
   return data.map((item) => {
     return {
@@ -464,6 +472,7 @@ const formatNonFundingLedgerUpdates = (
         hyperunitOps,
         hlTransfers,
         subAccounts,
+        isVault,
       ),
     }
   })
@@ -473,13 +482,21 @@ export const useUserNonFundingLedgerUpdates = ({
   address,
   startTime,
   endTime,
+  isVault = false,
 }: {
   address: EvmAddress | undefined
   startTime?: number
   endTime?: number
+  isVault?: boolean
 }) => {
   return useQuery({
-    queryKey: ['useUserNonFundingLedgerUpdates', address, startTime, endTime],
+    queryKey: [
+      'useUserNonFundingLedgerUpdates',
+      address,
+      startTime,
+      endTime,
+      isVault,
+    ],
     queryFn: async () => {
       if (!address) {
         throw new Error('address is undefined')
@@ -512,6 +529,7 @@ export const useUserNonFundingLedgerUpdates = ({
         hyperunitOps,
         hlTransfers,
         subAccounts,
+        isVault,
       )
     },
     enabled: !!address,

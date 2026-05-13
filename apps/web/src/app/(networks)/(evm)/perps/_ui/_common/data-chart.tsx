@@ -74,7 +74,7 @@ export const DataChart = ({
           },
           axisLabel: {
             color: '#999',
-            formatter: (value: number) => value.toFixed(2), // adjust as needed
+            formatter: (value: number) => formatUSD(value),
           },
         },
       ],

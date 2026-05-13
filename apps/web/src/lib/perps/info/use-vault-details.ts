@@ -29,3 +29,7 @@ export const useVaultDetails = ({
     enabled: !!vaultAddress,
   })
 }
+
+export type DepositorType = NonNullable<
+  ReturnType<typeof useVaultDetails>['data']
+>['followers'][number]

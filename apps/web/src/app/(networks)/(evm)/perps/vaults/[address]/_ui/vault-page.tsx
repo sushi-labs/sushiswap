@@ -5,14 +5,15 @@ import { SummaryRow } from './summary-row'
 import { VaultCharts } from './vault-charts'
 import { VaultDetails } from './vault-details'
 import { VaultHeader } from './vault-header'
+import { VaultTables } from './vault-tables'
 
 export const TIMEFRAMES = ['24h', '7D', '30D', 'All-time'] as const
 export type Timeframe = (typeof TIMEFRAMES)[number]
 
 export const VaultPage = ({ vaultAddress }: { vaultAddress: string }) => {
-  const [timeframe, setTimeframe] = useState<Timeframe>('7D')
+  const [timeframe, setTimeframe] = useState<Timeframe>('All-time')
   return (
-    <div className="flex flex-col gap-1 mb-7">
+    <div className="flex flex-col gap-1 mb-14">
       <VaultHeader vaultAddress={vaultAddress as EvmAddress} />
       <div className="mt-2">
         <SummaryRow vaultAddress={vaultAddress as EvmAddress} />
@@ -27,6 +28,9 @@ export const VaultPage = ({ vaultAddress }: { vaultAddress: string }) => {
           timeframe={timeframe}
           setTimeframe={setTimeframe}
         />
+      </div>
+      <div className="min-h-[300px]">
+        <VaultTables vaultAddress={vaultAddress as EvmAddress} />
       </div>
     </div>
   )

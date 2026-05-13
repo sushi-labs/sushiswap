@@ -1,52 +1,51 @@
 import { DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
-import { type TradeHistoryItemType, useTradeHistory } from 'src/lib/perps'
-import { MobileTable, tableRowClassName } from '../_common'
-import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {
-  CLOSED_PNL_COLUMN,
+  type FundingHistoryItemType,
+  useVaultFundingHistory,
+} from 'src/lib/perps'
+import {
+  MobileTable,
+  tableRowClassName,
+} from '~evm/perps/_ui/trade-tables/_common'
+import {
   COIN_COLUMN,
-  DIRECTION_COLUMN,
-  FEE_COLUMN,
-  PRICE_COLUMN,
+  PAYMENT_COLUMN,
+  RATE_COLUMN,
+  SIDE_COLUMN,
   SIZE_COLUMN,
   TIME_COLUMN,
-  TRADE_VALUE_COLUMN,
-} from './columns'
+} from '~evm/perps/_ui/trade-tables/funding-history-table/columns'
+import { type VaultFilterType, useVaultTables } from './vault-tables-provider'
 
 const COLUMNS = [
   TIME_COLUMN,
   COIN_COLUMN,
-  DIRECTION_COLUMN,
-  PRICE_COLUMN,
   SIZE_COLUMN,
-  TRADE_VALUE_COLUMN,
-  FEE_COLUMN,
-  CLOSED_PNL_COLUMN(true),
-] as ColumnDef<TradeHistoryItemType, unknown>[]
+  SIDE_COLUMN,
+  PAYMENT_COLUMN,
+  RATE_COLUMN,
+] as ColumnDef<FundingHistoryItemType, unknown>[]
 
 const MOBILE_COLUMNS = [
   COIN_COLUMN,
   TIME_COLUMN,
   SIZE_COLUMN,
-  DIRECTION_COLUMN,
-  PRICE_COLUMN,
-  TRADE_VALUE_COLUMN,
-  FEE_COLUMN,
-  CLOSED_PNL_COLUMN(true),
-] as ColumnDef<TradeHistoryItemType, unknown>[]
+  SIDE_COLUMN,
+  PAYMENT_COLUMN,
+  RATE_COLUMN,
+] as ColumnDef<FundingHistoryItemType, unknown>[]
 
-export const TradeHistoryTable = () => {
+export const FundingHistoryTable = () => {
   const { isLg } = useBreakpoint('lg')
-  const { data, isLoading, isError } = useTradeHistory()
-  const [sorting, setSorting] = useState([{ id: 'time', desc: true }])
   const {
-    state: { tradeFilter, expandAll },
-  } = useTradeTables()
-
-  const filterValue = tradeFilter?.['trade-history']?.split(':')?.[1] as
-    | TradeFilterType
+    state: { vaultAddress, vaultFilter },
+  } = useVaultTables()
+  const { data, isLoading, isError } = useVaultFundingHistory(vaultAddress)
+  const [sorting, setSorting] = useState([{ id: 'timestamp', desc: true }])
+  const filterValue = vaultFilter?.['funding-history']?.split(':')?.[1] as
+    | VaultFilterType
     | undefined
 
   const tableData = useMemo(() => {
@@ -56,17 +55,13 @@ export const TradeHistoryTable = () => {
     if (filterValue) {
       //filterValue all do nothing
       if (filterValue === 'long') {
-        _data = data.filter((item) => item.side === 'B')
+        _data = data.filter((item) => item.side === 'long')
       }
       if (filterValue === 'short') {
-        _data = data.filter((item) => item.side === 'A')
+        _data = data.filter((item) => item.side === 'short')
       }
       if (filterValue === 'active') {
-        //fills in the same date as today
-        _data = data.filter(
-          (item) =>
-            new Date(item.time).toDateString() === new Date().toDateString(),
-        )
+        _data = []
       }
     }
 
@@ -99,7 +94,6 @@ export const TradeHistoryTable = () => {
       data={tableData}
       isLoading={isLoading}
       sorting={sorting}
-      isExpandedOverride={expandAll ?? undefined}
     />
   )
 }

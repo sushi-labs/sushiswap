@@ -194,6 +194,7 @@ export const MARK_PRICE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
 
 export const PNL_COLUMN = (
   openModal: (action: 'share-pnl', position: UserPositionsItemType) => void,
+  hideIcon?: boolean,
 ): ColumnDef<UserPositionsItemType, unknown> => ({
   id: 'pnlRoePc',
 
@@ -255,7 +256,9 @@ export const PNL_COLUMN = (
           {getSignForValue(roePc)}
           {roePc.toFixed(1)}%)
         </span>
-        <ExternalLinkIcon className="h-3.5 w-3.5 text-blue" />
+        {hideIcon ? null : (
+          <ExternalLinkIcon className="h-3.5 w-3.5 text-blue" />
+        )}
       </button>
     )
   },

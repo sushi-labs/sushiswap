@@ -1,9 +1,11 @@
 import { DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
-import { type TradeHistoryItemType, useTradeHistory } from 'src/lib/perps'
-import { MobileTable, tableRowClassName } from '../_common'
-import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
+import { type TradeHistoryItemType, useVaultTradeHistory } from 'src/lib/perps'
+import {
+  MobileTable,
+  tableRowClassName,
+} from '~evm/perps/_ui/trade-tables/_common'
 import {
   CLOSED_PNL_COLUMN,
   COIN_COLUMN,
@@ -13,7 +15,8 @@ import {
   SIZE_COLUMN,
   TIME_COLUMN,
   TRADE_VALUE_COLUMN,
-} from './columns'
+} from '~evm/perps/_ui/trade-tables/trade-history-table/columns'
+import { type VaultFilterType, useVaultTables } from './vault-tables-provider'
 
 const COLUMNS = [
   TIME_COLUMN,
@@ -23,7 +26,7 @@ const COLUMNS = [
   SIZE_COLUMN,
   TRADE_VALUE_COLUMN,
   FEE_COLUMN,
-  CLOSED_PNL_COLUMN(true),
+  CLOSED_PNL_COLUMN(false),
 ] as ColumnDef<TradeHistoryItemType, unknown>[]
 
 const MOBILE_COLUMNS = [
@@ -34,19 +37,27 @@ const MOBILE_COLUMNS = [
   PRICE_COLUMN,
   TRADE_VALUE_COLUMN,
   FEE_COLUMN,
-  CLOSED_PNL_COLUMN(true),
+  CLOSED_PNL_COLUMN(false),
 ] as ColumnDef<TradeHistoryItemType, unknown>[]
 
 export const TradeHistoryTable = () => {
   const { isLg } = useBreakpoint('lg')
-  const { data, isLoading, isError } = useTradeHistory()
-  const [sorting, setSorting] = useState([{ id: 'time', desc: true }])
   const {
-    state: { tradeFilter, expandAll },
-  } = useTradeTables()
+    state: {
+      vaultFilter,
+      vaultAddress,
+      shouldAggregateTradeHistory,
+      expandAll,
+    },
+  } = useVaultTables()
+  const { data, isLoading, isError } = useVaultTradeHistory(
+    vaultAddress,
+    shouldAggregateTradeHistory,
+  )
+  const [sorting, setSorting] = useState([{ id: 'time', desc: true }])
 
-  const filterValue = tradeFilter?.['trade-history']?.split(':')?.[1] as
-    | TradeFilterType
+  const filterValue = vaultFilter?.['trade-history']?.split(':')?.[1] as
+    | VaultFilterType
     | undefined
 
   const tableData = useMemo(() => {
