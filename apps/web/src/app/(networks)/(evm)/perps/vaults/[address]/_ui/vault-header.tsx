@@ -3,11 +3,12 @@ import {
   ClipboardCopyIcon,
 } from '@heroicons/react-v1/solid'
 import { useCopyClipboard } from '@sushiswap/hooks'
-import { Button, IconButton, SkeletonBox } from '@sushiswap/ui'
+import { IconButton, SkeletonBox } from '@sushiswap/ui'
 import { useVaultDetails } from 'src/lib/perps/info/use-vault-details'
 import { truncateString } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
 import { DepositDialog } from './deposit-dialog'
+import { WithdrawDialog } from './withdraw-dialog'
 
 export const VaultHeader = ({ vaultAddress }: { vaultAddress: EvmAddress }) => {
   const [isCopied, staticCopy] = useCopyClipboard()
@@ -34,7 +35,7 @@ export const VaultHeader = ({ vaultAddress }: { vaultAddress: EvmAddress }) => {
         </div>
       </div>
       <div className="flex items-center gap-1">
-        <Button variant="perps-secondary">Withdraw</Button>
+        <WithdrawDialog vaultAddress={vaultAddress} />
         <DepositDialog vaultAddress={vaultAddress} />
       </div>
     </div>
