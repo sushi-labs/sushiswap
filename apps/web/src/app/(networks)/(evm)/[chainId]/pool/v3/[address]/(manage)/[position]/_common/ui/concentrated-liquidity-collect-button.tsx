@@ -10,7 +10,7 @@ import { type FC, type ReactElement, useCallback, useMemo } from 'react'
 import { logger } from 'src/lib/logger'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
-import { Amount } from 'sushi'
+import { Amount, Fraction } from 'sushi'
 import {
   type EvmCurrency,
   NonfungiblePositionManager,
@@ -77,12 +77,17 @@ export const ConcentratedLiquidityCollectButton: FC<
         : undefined
 
       const { calldata, value } =
-        NonfungiblePositionManager.collectCallParameters({
-          tokenId: positionDetails.tokenId.toString(),
-          expectedCurrencyOwed0: feeValue0 ?? new Amount(token0, 0),
-          expectedCurrencyOwed1: feeValue1 ?? new Amount(token1, 0),
-          recipient: account,
-        })
+        NonfungiblePositionManager.collectCallParameters(
+          {
+            tokenId: positionDetails.tokenId.toString(),
+            expectedCurrencyOwed0: feeValue0 ?? new Amount(token0, 0),
+            expectedCurrencyOwed1: feeValue1 ?? new Amount(token1, 0),
+            recipient: account,
+          },
+          {
+            minimumAmountTolerance: new Fraction(1),
+          },
+        )
 
       return {
         to: SUSHISWAP_V3_POSITION_MANAGER[chainId],
