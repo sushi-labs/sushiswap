@@ -4,7 +4,7 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { IconButton, TextField, classNames } from '@sushiswap/ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
-import { PerpsCard } from '~evm/perps/_ui/_common'
+import { PerpsCard } from './perps-card'
 
 export const SearchInput = ({
   value,
