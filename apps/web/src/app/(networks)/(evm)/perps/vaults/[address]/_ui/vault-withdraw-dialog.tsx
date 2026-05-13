@@ -10,7 +10,6 @@ import {
   PerpsDialogTrigger,
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
-import { useSpotClearinghouseState } from 'src/lib/perps'
 import { useVaultDetails } from 'src/lib/perps/info/use-vault-details'
 import { useVaultTransfer } from 'src/lib/perps/vaults/use-vault-transfer'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
@@ -18,15 +17,12 @@ import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
 import { type EvmAddress, EvmChainId, USDC } from 'sushi/evm'
 import { InputWithKeyboard } from '~evm/perps/_ui/_common'
-import { useUserSettingsState } from '~evm/perps/_ui/account-management'
 import { PerpsChecker } from '~evm/perps/_ui/perps-checker'
-import { useUserState } from '~evm/perps/user-provider'
 
 const currency = USDC[EvmChainId.ARBITRUM]
 const chainId = EvmChainId.ARBITRUM
-const MIN_DEPOSIT_AMOUNT = 5 //5.000000 usdc
 
-export const DepositDialog = ({
+export const VaultWithdrawDialog = ({
   trigger,
   isOpen,
   onOpenChange,
@@ -38,46 +34,26 @@ export const DepositDialog = ({
   vaultAddress: EvmAddress
 }) => {
   const { updateVaultTransferAsync, isPending } = useVaultTransfer()
-  const { data: vaultDetails } = useVaultDetails({
+  const {
+    data: vaultDetails,
+    isLoading,
+    error,
+    refetch,
+  } = useVaultDetails({
     vaultAddress,
   })
   const [open, setOpen] = useState<boolean>(false)
   const [amount, setAmount] = useState<string>('')
   const _amount = Amount.tryFromHuman(currency, amount)
-  const {
-    state: {
-      webData2Query: {
-        data,
-        isLoading: isLoadingWebData2,
-        error: errorWebData2,
-      },
-    },
-  } = useUserState()
-  const {
-    state: { isUnifiedAccountModeEnabled },
-  } = useUserSettingsState()
+
   const address = useAccount('evm')
-  const {
-    data: spotClearinghouseState,
-    isLoading: isLoadingSpotClearinghouse,
-    error: errorSpotClearinghouse,
-  } = useSpotClearinghouseState({ address })
-  const isLoading = isLoadingWebData2 || isLoadingSpotClearinghouse
-  const error = errorWebData2 || errorSpotClearinghouse
 
-  const depositableBalance = useMemo(() => {
-    if (isUnifiedAccountModeEnabled) {
-      const usdc = spotClearinghouseState?.balances?.find(
-        (b) => b.coin === 'USDC',
-      )
-      const total = usdc?.total || '0'
-      const hold = usdc?.hold || '0'
-      return Number(total) - Number(hold)
-    }
-    return data?.clearinghouseState.withdrawable
-  }, [data, isUnifiedAccountModeEnabled, spotClearinghouseState])
+  const withdrawableBalance = useMemo(() => {
+    if (!vaultDetails?.followerState || !address) return '0'
+    return vaultDetails?.followerState?.vaultEquity
+  }, [vaultDetails?.followerState, address])
 
-  const balance = Amount.tryFromHuman(currency, depositableBalance ?? '0')
+  const balance = Amount.tryFromHuman(currency, withdrawableBalance ?? '0')
 
   const isControlled = isOpen !== undefined
   const resolvedOpen = isControlled ? isOpen : open
@@ -94,31 +70,60 @@ export const DepositDialog = ({
   )
 
   const insufficientBalance =
-    address && depositableBalance && _amount && balance?.lt(_amount)
+    address &&
+    withdrawableBalance &&
+    _amount &&
+    (balance?.lt(_amount) || balance?.eq('0'))
 
-  const depositUsdc = useCallback(async () => {
+  const withdrawUsdc = useCallback(async () => {
     if (!address || !_amount) return
 
     await updateVaultTransferAsync({
-      type: 'deposit',
+      type: 'withdraw',
       usdAmount: _amount.amount.toString(),
       vaultAddress,
     })
+    await refetch()
     setAmount('')
     setOpen(false)
-  }, [address, _amount, vaultAddress, updateVaultTransferAsync])
+  }, [address, _amount, vaultAddress, updateVaultTransferAsync, refetch])
+
+  const { canWithdraw, unlockDate } = useMemo(() => {
+    if (!vaultDetails?.followerState)
+      return { canWithdraw: false, unlockDate: null }
+
+    const unlockTime = vaultDetails?.followerState?.lockupUntil
+    const canWithdraw = Date.now() >= unlockTime
+    const unlockDate = new Date(unlockTime)
+
+    return { canWithdraw, unlockDate }
+  }, [vaultDetails?.followerState])
+
+  const percentageOfVault = useMemo(() => {
+    const amountInVault =
+      vaultDetails?.portfolio?.[7]?.[1]?.accountValueHistory?.[
+        vaultDetails?.portfolio?.[7]?.[1]?.accountValueHistory?.length - 1
+      ]?.[1]
+    if (!amountInVault || !_amount) return '0'
+    const vaultAmount = Amount.fromHuman(currency, amountInVault)
+    const percentage = _amount.divToFraction(vaultAmount)?.mul('100')
+    return percentage.toString({ fixed: 2 })
+  }, [_amount, vaultDetails?.portfolio])
 
   return (
     <PerpsDialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       <PerpsDialogTrigger asChild>
-        {trigger ? trigger : <Button variant="perps-secondary">Deposit</Button>}
+        {trigger ? (
+          trigger
+        ) : (
+          <Button variant="perps-secondary">Withdraw</Button>
+        )}
       </PerpsDialogTrigger>
       <PerpsDialogContent>
         <PerpsDialogHeader>
-          <PerpsDialogTitle>Deposit</PerpsDialogTitle>
+          <PerpsDialogTitle>Withdraw</PerpsDialogTitle>
           <PerpsDialogDescription>
-            Deposit funds to {vaultDetails?.name}. The deposit lock-up period is
-            1 day.
+            Withdraw funds from {vaultDetails?.name}.
           </PerpsDialogDescription>
         </PerpsDialogHeader>
         <PerpsDialogInnerContent>
@@ -147,67 +152,77 @@ export const DepositDialog = ({
                 >
                   <Checker.Custom
                     size="default"
-                    showChildren={vaultDetails?.allowDeposits}
-                    buttonText={'This vault does not accept deposits'}
+                    showChildren={Boolean(amount)}
+                    buttonText={'Enter Amount'}
                     onClick={() => {}}
-                    disabled={!vaultDetails?.allowDeposits}
+                    disabled={!amount}
                     variant="perps-tertiary"
                   >
                     <Checker.Custom
                       size="default"
-                      showChildren={Boolean(amount)}
-                      buttonText={'Enter Amount'}
+                      showChildren={!insufficientBalance}
+                      buttonText={'Insufficient Balance'}
                       onClick={() => {}}
-                      disabled={!amount}
+                      disabled={Boolean(insufficientBalance)}
                       variant="perps-tertiary"
                     >
                       <Checker.Custom
                         size="default"
-                        showChildren={!insufficientBalance}
-                        buttonText={'Insufficient Balance'}
+                        showChildren={canWithdraw}
+                        buttonText={`Lockup period active`}
                         onClick={() => {}}
-                        disabled={Boolean(insufficientBalance)}
+                        disabled={!canWithdraw}
                         variant="perps-tertiary"
                       >
-                        <Checker.Custom
+                        <PerpsChecker.EnableTrading
                           size="default"
-                          showChildren={Number(amount) >= MIN_DEPOSIT_AMOUNT}
-                          buttonText={`Minimum Deposit ${MIN_DEPOSIT_AMOUNT} USDC`}
-                          onClick={() => {}}
-                          disabled={Number(amount) < MIN_DEPOSIT_AMOUNT}
                           variant="perps-tertiary"
                         >
-                          <PerpsChecker.EnableTrading
+                          <PerpsChecker.BuilderFee
                             size="default"
                             variant="perps-tertiary"
                           >
-                            <PerpsChecker.BuilderFee
+                            <PerpsChecker.HyperReferral
                               size="default"
                               variant="perps-tertiary"
                             >
-                              <PerpsChecker.HyperReferral
+                              <Button
                                 size="default"
+                                className="w-full"
+                                onClick={withdrawUsdc}
+                                loading={isPending}
                                 variant="perps-tertiary"
                               >
-                                <Button
-                                  size="default"
-                                  className="w-full"
-                                  onClick={depositUsdc}
-                                  loading={isPending}
-                                  variant="perps-tertiary"
-                                >
-                                  Deposit
-                                </Button>
-                              </PerpsChecker.HyperReferral>
-                            </PerpsChecker.BuilderFee>
-                          </PerpsChecker.EnableTrading>
-                        </Checker.Custom>
+                                Withdraw
+                              </Button>
+                            </PerpsChecker.HyperReferral>
+                          </PerpsChecker.BuilderFee>
+                        </PerpsChecker.EnableTrading>
                       </Checker.Custom>
                     </Checker.Custom>
                   </Checker.Custom>
                 </Checker.Network>
               </Checker.Connect>
             </PerpsChecker.Legal>
+            {!canWithdraw && unlockDate ? (
+              <div>
+                <p className="text-xs text-red-400 text-center italic mb-1">
+                  Withdrawals are disabled for a lockup period after each of
+                  your deposits. You can withdraw after{' '}
+                  {unlockDate.toLocaleString()}.
+                </p>
+              </div>
+            ) : _amount?.gt('0') && !insufficientBalance ? (
+              <div>
+                <p className="text-xs text-perps-muted-50 text-center italic mb-1">
+                  To withdraw {_amount?.toString()} USDC, which represents{' '}
+                  {percentageOfVault}% of the vault, A percentage of each
+                  position of the vault may be closed at market price if
+                  necessary to free up margin. Due to slippage, the final amount
+                  may differ from the amount originally entered.
+                </p>
+              </div>
+            ) : null}
           </div>
         </PerpsDialogInnerContent>
       </PerpsDialogContent>

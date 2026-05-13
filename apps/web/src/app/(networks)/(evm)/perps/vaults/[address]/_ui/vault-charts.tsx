@@ -11,8 +11,6 @@ import {
 import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
 import { useMemo, useState } from 'react'
 import { useVaultDetails } from 'src/lib/perps/info/use-vault-details'
-import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
-import { useAccount } from 'src/lib/wallet'
 import type { EvmAddress } from 'sushi/evm'
 import { DataChart, PerpsCard } from '~evm/perps/_ui/_common'
 import { TIMEFRAMES, type Timeframe } from './vault-page'
@@ -52,7 +50,6 @@ export const VaultCharts = ({
 }) => {
   const [openTime, setOpenTime] = useState(false)
   const [view, setView] = useState<(typeof VIEWS)[number]>(VIEWS[1])
-  const address = useAccount('evm')
   const { data, isLoading, error } = useVaultDetails({ vaultAddress })
 
   const dataToRender = useMemo(() => {
@@ -115,11 +112,7 @@ export const VaultCharts = ({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        {!address ? (
-          <div className="flex items-center justify-center h-full min-h-[192px]">
-            <ConnectButton namespace="evm" className="mx-auto" />
-          </div>
-        ) : isLoading ? (
+        {isLoading ? (
           <div>
             <SkeletonBox className="w-full h-[192px]" />
           </div>

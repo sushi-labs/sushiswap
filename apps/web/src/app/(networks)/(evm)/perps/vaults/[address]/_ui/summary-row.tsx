@@ -4,7 +4,6 @@ import {
   currencyFormatter,
   formatPerpsPercent,
   getTextColorClass,
-  useUserVaultEquities,
 } from 'src/lib/perps'
 import { useVaultDetails } from 'src/lib/perps/info/use-vault-details'
 import { useAccount } from 'src/lib/wallet'
@@ -12,21 +11,13 @@ import type { EvmAddress } from 'sushi/evm'
 import { SummaryCard } from '~evm/perps/_ui/_common'
 
 export const SummaryRow = ({ vaultAddress }: { vaultAddress: EvmAddress }) => {
-  const { data, isLoading: isLoadingVaultDetails } = useVaultDetails({
+  const { data, isLoading } = useVaultDetails({
     vaultAddress,
   })
   const address = useAccount('evm')
-  const { data: userVaultEquities, isLoading: isLoadingUserVaultEquities } =
-    useUserVaultEquities({ address })
-  const isLoading = isLoadingVaultDetails || isLoadingUserVaultEquities
   const depositAmount = useMemo(() => {
-    return (
-      userVaultEquities?.find(
-        (equity) =>
-          equity.vaultAddress.toLowerCase() === vaultAddress.toLowerCase(),
-      )?.equity || '0'
-    )
-  }, [userVaultEquities, vaultAddress])
+    return data?.followerState?.vaultEquity || '0'
+  }, [data?.followerState?.vaultEquity])
   const tvl = useMemo(() => {
     return (
       data?.portfolio?.[7]?.[1]?.accountValueHistory?.[
