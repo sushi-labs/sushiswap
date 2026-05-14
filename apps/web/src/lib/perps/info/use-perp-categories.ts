@@ -10,10 +10,12 @@ export const usePerpCategories = () => {
         transport: hlHttpTransport,
       })
       const uniqueCategories = new Set<string>()
-      data.forEach((category) => uniqueCategories.add(category[1]))
+      data.forEach((category) =>
+        uniqueCategories.add(category[1]?.toLowerCase()),
+      )
       const categoryMap = new Map<string, string[]>()
       data.forEach((category) => {
-        const categoryName = category[1]
+        const categoryName = category[1]?.toLowerCase()
         const dexAsset = category[0]
         if (categoryMap.has(categoryName)) {
           categoryMap.get(categoryName)?.push(dexAsset)

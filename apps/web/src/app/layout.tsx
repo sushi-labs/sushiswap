@@ -50,6 +50,9 @@ export const metadata: Metadata = {
       },
     ],
   },
+  other: {
+    'base:app_id': '6a0391a02be96789d34cef6d',
+  },
 }
 
 export default function RootLayout({
