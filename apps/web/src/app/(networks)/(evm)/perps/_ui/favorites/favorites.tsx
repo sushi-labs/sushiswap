@@ -43,7 +43,10 @@ export const Favorites = () => {
         <span className="text-xs font-medium">Watchlist</span>
       </div>
       {favorites?.length ? (
-        <PerpsCard className="flex items-center bg-secondary rounded-lg p-0.5">
+        <PerpsCard
+          className="flex items-center bg-secondary p-0.5"
+          rounded="xl"
+        >
           <Button
             size="xs"
             variant={displayType === 'usd' ? 'perps-default' : 'ghost'}
