@@ -7,6 +7,7 @@ import {
   currencyFormatter,
   getTextColorClass,
 } from 'src/lib/perps'
+import { useAccount } from 'src/lib/wallet'
 import { formatPercent, truncateString } from 'sushi'
 import { columnBodyMeta } from '~evm/perps/_ui/trade-tables/_common/column-meta'
 import {
@@ -50,9 +51,12 @@ export const LEADER_COLUMN: ColumnDef<PerpsVault, unknown> = {
   sortingFn: 'alphanumeric',
   cell: (props) => {
     const leader = props.row.original.summary.leader
+    const address = useAccount('evm')
     return (
       <div className={classNames('font-medium flex items-center gap-1')}>
-        {truncateString(leader, 10, 'middle')}
+        {address?.toLowerCase() === leader.toLowerCase()
+          ? 'You'
+          : truncateString(leader, 10, 'middle')}
       </div>
     )
   },
