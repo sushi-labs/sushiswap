@@ -24,13 +24,6 @@ export const Trades = () => {
     )
   }, [data])
 
-  const trades = useMemo(() => {
-    if (!data) return []
-    return data.sort(
-      (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime(),
-    )
-  }, [data])
-
   return (
     <div className="max-h-[396px] px-0 lg:px-0 lg:max-h-[665px] relative overflow-y-auto hide-scrollbar">
       <div className="w-full">
