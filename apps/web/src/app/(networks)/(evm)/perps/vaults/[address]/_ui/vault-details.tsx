@@ -2,7 +2,10 @@ import {
   ClipboardCheckIcon,
   ClipboardCopyIcon,
 } from '@heroicons/react-v1/solid'
-import type { PortfolioResponse } from '@nktkas/hyperliquid'
+import type {
+  PortfolioResponse,
+  VaultDetailsResponse,
+} from '@nktkas/hyperliquid'
 import { useCopyClipboard } from '@sushiswap/hooks'
 import { Button, IconButton, SkeletonBox, classNames } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
@@ -21,32 +24,109 @@ import type { Timeframe } from './vault-page'
 const OPTIONS = ['about', 'vault-performance', 'your-performance'] as const
 
 const calculateMaxDrawdown = (data: PortfolioResponse[1][1]) => {
-  if (!data) return '0%'
+  if (!data?.pnlHistory?.length || !data?.accountValueHistory?.length) {
+    return '0.00%'
+  }
 
-  const pnl = data.pnlHistory.map(([_, value]) => Number(value))
+  const pnlHistory = data.pnlHistory
+  const accountValueHistory = data.accountValueHistory
 
-  const acv = data.accountValueHistory.map(([_, value]) => Number(value))
+  let peakPnl = Number(pnlHistory[0]?.[1] ?? 0)
+  let peakAccountValue = Number(accountValueHistory[0]?.[1] ?? 0)
 
   let maxDrawdown = 0
 
-  for (let start = 0; start < pnl.length; start++) {
-    if (acv[start] < 100) continue
+  for (let i = 0; i < pnlHistory.length; i++) {
+    const pnl = Number(pnlHistory[i]?.[1] ?? 0)
+    const accountValue = Number(accountValueHistory[i]?.[1] ?? 0)
 
-    for (let end = start + 1; end < pnl.length; end++) {
-      const drawdown = (pnl[end] - pnl[start]) / acv[start]
+    // Ignore invalid starting denominators.
+    if (!Number.isFinite(pnl) || !Number.isFinite(accountValue)) continue
 
-      if (drawdown < maxDrawdown) {
-        maxDrawdown = drawdown
-      }
+    // Update the running peak PnL.
+    // This is the "start" point for future drawdown checks.
+    if (pnl > peakPnl && accountValue > 0) {
+      peakPnl = pnl
+      peakAccountValue = accountValue
+    }
+
+    if (peakAccountValue <= 0) continue
+
+    const drawdown = (pnl - peakPnl) / peakAccountValue
+
+    if (drawdown < maxDrawdown) {
+      maxDrawdown = drawdown
     }
   }
 
-  return formatPercent(
-    Math.abs(maxDrawdown) === Number.POSITIVE_INFINITY
-      ? 0
-      : Math.abs(maxDrawdown),
-  )
+  return formatPercent(Math.abs(maxDrawdown))
 }
+
+const calculateEstimatedUserMaxDrawdown = (
+  portfolio: PortfolioResponse[1][1],
+  user: VaultDetailsResponse['followerState'],
+) => {
+  const latestVaultAccountValue = Number(
+    portfolio.accountValueHistory.at(-1)?.[1] ?? 0,
+  )
+
+  const currentUserVaultEquity = Number(user?.vaultEquity || 0)
+
+  if (
+    !Number.isFinite(latestVaultAccountValue) ||
+    !Number.isFinite(currentUserVaultEquity) ||
+    latestVaultAccountValue <= 0 ||
+    currentUserVaultEquity <= 0 ||
+    !user
+  ) {
+    return '0.00%'
+  }
+
+  const userShare = currentUserVaultEquity / latestVaultAccountValue
+
+  const points = portfolio.pnlHistory
+    .map(([time, vaultPnl], i) => {
+      const vaultAccountValue = Number(portfolio.accountValueHistory[i]?.[1])
+
+      return {
+        time,
+        userPnl: Number(vaultPnl) * userShare,
+        userAccountValue: vaultAccountValue * userShare,
+      }
+    })
+    .filter((point) => {
+      return (
+        point.time >= user?.vaultEntryTime &&
+        Number.isFinite(point.userPnl) &&
+        Number.isFinite(point.userAccountValue) &&
+        point.userAccountValue > 0
+      )
+    })
+
+  if (points.length < 2) {
+    return '0.00%'
+  }
+
+  let peakPnl = points[0].userPnl
+  let peakAccountValue = points[0].userAccountValue
+  let maxDrawdown = 0
+
+  for (const point of points) {
+    if (point.userPnl > peakPnl) {
+      peakPnl = point.userPnl
+      peakAccountValue = point.userAccountValue
+    }
+
+    const drawdown = (point.userPnl - peakPnl) / peakAccountValue
+
+    if (drawdown < maxDrawdown) {
+      maxDrawdown = drawdown
+    }
+  }
+
+  return formatPercent(Math.abs(maxDrawdown))
+}
+
 const getKey = (time: Timeframe) => {
   switch (time) {
     case '24h':
@@ -84,14 +164,11 @@ export const VaultDetails = ({
 
   const userDrawdown = useMemo(() => {
     if (!data || !address) return null
-    const pnlAllTime = Number(data?.followerState?.allTimePnl || 0)
-    const pnlCurrent = Number(data?.followerState?.pnl || 0)
-    const acv = Number(data?.followerState?.vaultEquity || 0)
-    const drawdown = (pnlCurrent - pnlAllTime) / acv || 0
-    return formatPercent(
-      Math.abs(drawdown) === Number.POSITIVE_INFINITY ? 0 : Math.abs(drawdown),
-    )
-  }, [data, address])
+    const key = getKey(timeframe)
+    const dataForKey = data?.portfolio.find(([d, _data]) => d === key)?.[1]
+    if (!dataForKey) return null
+    return calculateEstimatedUserMaxDrawdown(dataForKey, data.followerState)
+  }, [data, address, timeframe])
 
   const content = useMemo(() => {
     switch (view) {
@@ -168,14 +245,14 @@ export const VaultDetails = ({
               <p className="text-perps-muted-50">All-time PNL</p>
               <p
                 className={classNames(
-                  !address
+                  !address || !data?.followerState
                     ? ''
                     : getTextColorClass(
                         Number(data?.followerState?.allTimePnl || 0),
                       ),
                 )}
               >
-                {!address
+                {!address || !data?.followerState
                   ? 'N/A'
                   : currencyFormatter.format(
                       Number(data?.followerState?.allTimePnl || 0),
@@ -186,12 +263,12 @@ export const VaultDetails = ({
               <p className="text-perps-muted-50">Unrealized PNL</p>
               <p
                 className={classNames(
-                  !address
+                  !address || !data?.followerState
                     ? ''
                     : getTextColorClass(Number(data?.followerState?.pnl || 0)),
                 )}
               >
-                {!address
+                {!address || !data?.followerState
                   ? 'N/A'
                   : currencyFormatter.format(
                       Number(data?.followerState?.pnl || 0),
@@ -201,7 +278,7 @@ export const VaultDetails = ({
             <div className="flex justify-between items-center gap-2">
               <p className="text-perps-muted-50">Max Drawdown</p>
               <p className="text-perps-muted">
-                {!address
+                {!address || !data?.followerState
                   ? vaultPerformanceData?.maxDrawdown || '0%'
                   : userDrawdown || '0%'}
               </p>
