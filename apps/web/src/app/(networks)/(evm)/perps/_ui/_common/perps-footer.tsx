@@ -27,7 +27,7 @@ export const PerpsFooter = () => {
             <XIcon width={14} height={14} />
             <div>X (Twitter)</div>
           </_Item>
-          <_Item href={'https://sushi.com/github'}>
+          <_Item href={'https://sushi.com/discord'}>
             <DiscordIcon width={14} height={14} />
             <div>Discord</div>
           </_Item>

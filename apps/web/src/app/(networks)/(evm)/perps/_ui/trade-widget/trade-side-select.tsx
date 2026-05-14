@@ -14,9 +14,8 @@ export const TradeSideSelect = () => {
         size="sm"
         variant={tradeSide === 'long' ? 'perps-long' : 'ghost'}
         className={classNames(
-          tradeSide === 'short'
-            ? 'text-muted-foreground border border-transparent'
-            : '',
+          'border border-transparent',
+          tradeSide === 'short' ? 'text-muted-foreground' : '',
         )}
         fullWidth
         onClick={() => setTradeSide('long')}
@@ -27,9 +26,8 @@ export const TradeSideSelect = () => {
         size="sm"
         variant={tradeSide === 'short' ? 'perps-short' : 'ghost'}
         className={classNames(
-          tradeSide === 'long'
-            ? 'text-muted-foreground border border-transparent'
-            : '',
+          'border border-transparent',
+          tradeSide === 'long' ? 'text-muted-foreground' : '',
         )}
         fullWidth
         onClick={() => setTradeSide('short')}

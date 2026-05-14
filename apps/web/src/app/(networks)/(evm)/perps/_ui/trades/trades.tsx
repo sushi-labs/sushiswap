@@ -1,31 +1,45 @@
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
 import { LinkExternal, SkeletonBox, classNames } from '@sushiswap/ui'
+import { useMemo } from 'react'
 import {
   getHyperliquidExplorerUrl,
   getTextColorClass,
   perpsNumberFormatter,
-  useAssetName,
+  useSymbolSplit,
   useTrades,
 } from 'src/lib/perps'
 import { useAssetState } from '../trade-widget'
 
 export const Trades = () => {
   const {
-    state: { activeAsset },
+    state: { activeAsset, asset },
   } = useAssetState()
   const { data, isLoading, error } = useTrades({ assetString: activeAsset })
-  const { data: assetName } = useAssetName({ assetString: activeAsset })
+  const { baseSymbol } = useSymbolSplit({ asset })
+
+  const trades = useMemo(() => {
+    if (!data) return []
+    return data.sort(
+      (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime(),
+    )
+  }, [data])
 
   return (
-    <div className="max-h-[396px] px-0 lg:px-0 lg:max-h-[672px] relative overflow-y-auto hide-scrollbar">
+    <div className="max-h-[396px] px-0 lg:px-0 lg:max-h-[665px] relative overflow-y-auto hide-scrollbar">
       <div className="w-full">
-        <div className="sticky top-0 dark:bg-transparent backdrop-blur-xl text-muted-foreground">
-          <div className="grid grid-cols-3">
-            <div className="text-left font-normal p-0.5 text-xs">Price</div>
-            <div className="font-normal p-0.5 text-xs text-right">
-              Size {assetName ? `(${assetName})` : ''}
+        <div className="sticky top-0 dark:bg-transparent backdrop-blur-xl text-perps-muted-50">
+          <div className="grid grid-cols-3 overflow-hidden">
+            <div className="min-w-0 truncate text-left font-normal p-0.5 text-xs">
+              Price
             </div>
-            <div className="font-normal p-0.5 text-xs text-right">Time</div>
+
+            <div className="min-w-0 truncate font-normal p-0.5 text-right text-xs">
+              Size {baseSymbol ? `(${baseSymbol})` : ''}
+            </div>
+
+            <div className="min-w-0 truncate font-normal p-0.5 text-right text-xs">
+              Time
+            </div>
           </div>
         </div>
         <div>
@@ -39,8 +53,8 @@ export const Trades = () => {
                 Error loading trades. {error?.message}
               </div>
             </div>
-          ) : data && data.length > 0 ? (
-            data.map((trade, index) => (
+          ) : trades && trades.length > 0 ? (
+            trades.map((trade, index) => (
               <div key={index} className="font-medium grid grid-cols-3">
                 <div
                   className={classNames(

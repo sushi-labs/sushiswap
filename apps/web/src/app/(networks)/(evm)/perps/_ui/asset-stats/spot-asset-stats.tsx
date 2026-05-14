@@ -46,7 +46,7 @@ export const SpotAssetStats = () => {
       <div className="flex flex-col">
         <HoverCard openDelay={0} closeDelay={0}>
           <HoverCardTrigger asChild tabIndex={0}>
-            <div className="text-xs text-muted-foreground underline cursor-pointer">
+            <div className="text-xs text-perps-muted-50 underline cursor-pointer">
               Price
             </div>
           </HoverCardTrigger>
@@ -69,7 +69,7 @@ export const SpotAssetStats = () => {
         />
       </div>
       <div className="flex flex-col">
-        <div className="text-xs text-muted-foreground">24H Change</div>
+        <div className="text-xs text-perps-muted-50">24H Change</div>
 
         <p
           className={classNames(
@@ -88,7 +88,7 @@ export const SpotAssetStats = () => {
         </p>
       </div>
       <div className="flex flex-col">
-        <div className="text-xs text-muted-foreground">24H Volume</div>
+        <div className="text-xs text-perps-muted-50">24H Volume</div>
 
         <p className={classNames('text-xs  font-medium tabular-nums')}>
           {perpsNumberFormatter({
@@ -100,7 +100,7 @@ export const SpotAssetStats = () => {
         </p>
       </div>
       <div className="flex flex-col">
-        <div className="text-xs text-muted-foreground">Market Cap</div>
+        <div className="text-xs text-perps-muted-50">Market Cap</div>
 
         <p className={classNames('text-xs  font-medium tabular-nums')}>
           {perpsNumberFormatter({
@@ -112,7 +112,7 @@ export const SpotAssetStats = () => {
         </p>
       </div>
       <div className="flex flex-col">
-        <div className="text-xs text-muted-foreground">Contract</div>
+        <div className="text-xs text-perps-muted-50">Contract</div>
 
         <LinkExternal
           className={classNames('font-medium')}

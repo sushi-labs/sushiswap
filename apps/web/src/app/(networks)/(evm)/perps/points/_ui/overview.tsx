@@ -1,4 +1,5 @@
 import { SkeletonBox, SkeletonCircle, classNames } from '@sushiswap/ui'
+import { motion } from 'framer-motion'
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { usePointsData } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
@@ -30,7 +31,10 @@ export const Overview = () => {
   const bringToCurrentTier = useCallback((index: number) => {
     const el = scrollRef.current
     if (!el) return
-    el.scrollTop = index * ITEM_HEIGHT
+    el?.scrollTo({
+      top: index * ITEM_HEIGHT,
+      behavior: 'smooth',
+    })
     setCenteredIndex(index)
   }, [])
 
@@ -43,6 +47,7 @@ export const Overview = () => {
     const el = scrollRef.current
     if (!el) return
     const index = Math.round(el.scrollTop / ITEM_HEIGHT)
+
     setCenteredIndex(Math.max(0, Math.min(DEFAULT_TIERS.length - 1, index)))
   }, [])
 
@@ -59,25 +64,34 @@ export const Overview = () => {
         {/* Left gradient overlay */}
         <div className="w-full z-[5] h-full absolute left-0 top-0 bg-gradient-to-r from-perps-background to-transparent" />
 
-        {/* Left glow blob */}
-        <div
-          className="w-[280px] z-[5] h-[280px] rounded-full absolute -left-[195px] -top-[23px] opacity-60 blur-[96px] pointer-events-none transition-all duration-500"
-          style={{ background: visibleTier.bgGradient }}
+        <motion.div
+          className="w-[280px] z-[5] h-[280px] rounded-full absolute -left-[195px] -top-[23px] opacity-60 blur-[96px] pointer-events-none"
+          animate={{
+            background: visibleTier.bgGradient,
+          }}
+          transition={{
+            duration: 0.6,
+            ease: [0.22, 1, 0.36, 1],
+          }}
         />
 
-        {/* Right glow blob */}
-        <div
-          className="w-[492px] z-[5] h-[492px] rounded-full absolute -right-[379px] -top-[78px] opacity-30 blur-[447px] pointer-events-none transition-all duration-500"
-          style={{ background: visibleTier.bgGradient }}
+        <motion.div
+          className="w-[492px] z-[5] h-[492px] rounded-full absolute -right-[379px] -top-[78px] opacity-30 blur-[447px] pointer-events-none"
+          animate={{
+            background: visibleTier.bgGradient,
+          }}
+          transition={{
+            duration: 0.75,
+            ease: [0.22, 1, 0.36, 1],
+          }}
         />
-
         {/* Inset border sheen */}
         <div className="w-full shadow-[inset_1.5px_2px_1px_-2px_rgba(255,255,255,0.4),inset_-1.5px_-1.5px_1px_-2px_rgba(255,255,255,0.325)] z-[6] h-full rounded-2xl absolute top-0 left-0 pointer-events-none" />
 
         {/* Scrollable tier list */}
         <div
           ref={scrollRef}
-          className="z-[6] flex flex-col overflow-y-scroll snap-y snap-mandatory scrollbar-hide scroll-smooth"
+          className="z-[6] flex flex-col overflow-y-scroll snap-y snap-mandatory scrollbar-hide scroll-smooth overscroll-contain"
           style={{
             height: `${ITEM_HEIGHT * 3}px`,
             width: '220px',
@@ -97,19 +111,23 @@ export const Overview = () => {
             const blur = distance === 0 ? 0 : 1
 
             return (
-              <div
+              <motion.div
                 key={tier.id}
-                className="snap-center flex-shrink-0 flex items-center transition-all duration-300 ml-4 cursor-pointer"
+                className="snap-center flex-shrink-0 flex items-center ml-4 cursor-pointer"
+                animate={{
+                  opacity,
+                  scale,
+                  filter: `blur(${blur}px)`,
+                }}
+                transition={{
+                  duration: 0.35,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
                 style={{
                   height: ITEM_HEIGHT,
-                  opacity,
-                  transform: `scale(${scale})`,
-                  filter: `blur(${blur}px)`,
                   transformOrigin: 'left center',
                 }}
-                onClick={() => {
-                  bringToCurrentTier(i)
-                }}
+                onClick={() => bringToCurrentTier(i)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     bringToCurrentTier(i)
@@ -132,7 +150,7 @@ export const Overview = () => {
                     isCurrent ? data?.percentageCompletedTier : undefined
                   }
                 />
-              </div>
+              </motion.div>
             )
           })}
 
@@ -159,7 +177,7 @@ export const Overview = () => {
 
           <div
             className={classNames(
-              'text-xs text-perps-muted-50',
+              'text-xs text-perps-muted-50 transition-opacity delay-150',
               centeredIndex !== currentTierIndex ? 'opacity-100' : 'opacity-0',
             )}
           >
@@ -204,7 +222,7 @@ const TierItem = ({
     }
   }, [tier, type, percentageCompletedTier])
   return (
-    <div className="z-10 flex items-center gap-2">
+    <div className="z-10 flex items-center gap-2 select-none">
       <div className="w-[60px] h-[60px]">{tier.icon}</div>
       <div className="flex flex-col">
         {text}
