@@ -15,7 +15,6 @@ export const useVaultTradeHistory = (
   } = useUserFills({
     address: vaultAddress,
     aggregateByTime: aggregateFillsByTime,
-    uniqueOrderIds: aggregateFillsByTime,
   })
   const {
     state: {

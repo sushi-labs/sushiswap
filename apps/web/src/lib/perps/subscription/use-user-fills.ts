@@ -11,11 +11,9 @@ import { hlWebSocketTransport } from '../transports'
 export const useUserFills = ({
   address,
   aggregateByTime,
-  uniqueOrderIds = true,
 }: {
   address?: EvmAddress
   aggregateByTime?: boolean
-  uniqueOrderIds?: boolean
 }) => {
   const queryClient = useQueryClient()
   const query = useQuery<UserFillsEvent>({
@@ -37,13 +35,12 @@ export const useUserFills = ({
             (prevUserFillsEvent: UserFillsEvent | undefined) => {
               const fills = userFillsEvent.fills
               const prevFills = prevUserFillsEvent?.fills ?? []
-              const combinedFills = uniqueOrderIds
-                ? Array.from(
-                    new Map(
-                      [...fills, ...prevFills].map((fill) => [fill.oid, fill]),
-                    ).values(),
-                  )
-                : [...fills, ...prevFills]
+              const combinedFills = Array.from(
+                new Map(
+                  [...fills, ...prevFills].map((fill) => [fill.tid, fill]),
+                ).values(),
+              )
+
               return {
                 user: userFillsEvent.user,
                 fills: combinedFills,
@@ -60,7 +57,7 @@ export const useUserFills = ({
     return () => {
       void unsubscribe?.()
     }
-  }, [queryClient, address, aggregateByTime, uniqueOrderIds])
+  }, [queryClient, address, aggregateByTime])
 
   const isReady = Boolean(query.data)
 
