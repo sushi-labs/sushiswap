@@ -79,7 +79,7 @@ export const Chart = () => {
 
   const { decimals, szDecimals, marketType } = useMemo(
     () => ({
-      decimals: asset?.decimals || 6,
+      decimals: (asset?.decimals === 1 ? 4 : asset?.decimals || 5) + 1,
       szDecimals: asset?.decimals,
       marketType: asset?.marketType,
     }),
