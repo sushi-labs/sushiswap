@@ -102,7 +102,6 @@ export const useUserAccountValues = () => {
 
   const spotEquity = useMemo(() => {
     if (!webData2?.spotState?.balances || !assetList) return 0
-
     return (
       webData2?.spotState?.balances?.reduce((acc, asset) => {
         const balance = Number(asset?.total) ?? 0
@@ -113,6 +112,9 @@ export const useUserAccountValues = () => {
         const spot = Array.from(assetList?.entries() ?? []).find(([, v]) =>
           v?.tokens?.find((t) => t?.index === tokenIndex),
         )?.[1]
+        if (!spot) {
+          return acc
+        }
         const price = Number(spot?.lastPrice) ?? 0
         const val = balance * price
         return acc + val
@@ -160,23 +162,33 @@ export const useUserAccountValues = () => {
     )
   }, [allDexClearinghouseState])
 
+  const crossPortfolioValue = useMemo(() => {
+    if (!allDexClearinghouseState) return 0
+
+    return allDexClearinghouseState.clearinghouseStates.reduce(
+      (acc, [_dex, state]) => {
+        return acc + Number(state.crossMarginSummary?.accountValue ?? 0)
+      },
+      0,
+    )
+  }, [allDexClearinghouseState])
+
   const totalCrossMarginRatio = useMemo(() => {
-    if (!perpsEquity) return 0
-    return (maintenanceMargin / (perpsEquity || 1)) * 100
-  }, [maintenanceMargin, perpsEquity])
+    return (maintenanceMargin / (crossPortfolioValue || 1)) * 100
+  }, [maintenanceMargin, crossPortfolioValue])
 
   const crossAccountLeverage = useMemo(() => {
-    if (!perpsEquity || !allDexClearinghouseState) return 0
+    if (!crossPortfolioValue || !allDexClearinghouseState) return 0
     const totalNtlPos =
       allDexClearinghouseState?.clearinghouseStates.reduce(
         (posAcc, [_dex, pos]) => {
-          return Number(pos.marginSummary?.totalNtlPos ?? 0) + posAcc
+          return Number(pos.crossMarginSummary?.totalNtlPos ?? 0) + posAcc
         },
         0,
       ) || 0
 
-    return totalNtlPos / (perpsEquity || 1)
-  }, [perpsEquity, allDexClearinghouseState])
+    return totalNtlPos / (crossPortfolioValue || 1)
+  }, [crossPortfolioValue, allDexClearinghouseState])
 
   const withdrawableBalance = useMemo(() => {
     if (!allDexClearinghouseState) return 0

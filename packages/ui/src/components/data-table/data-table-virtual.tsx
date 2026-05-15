@@ -21,7 +21,9 @@ import {
 } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import classNames from 'classnames'
+import Link from 'next/link'
 import { default as React, type ReactNode } from 'react'
+import { DataTableVirtualPagination } from '../..'
 import {
   Table,
   TableBody,
@@ -51,6 +53,7 @@ interface DataTableVirtualProps<TData, TValue> {
   overscan?: number
   estimateSize?: number
   trClassName?: string
+  pagination?: boolean
 }
 
 export function DataTableVirtual<TData, TValue>({
@@ -71,6 +74,7 @@ export function DataTableVirtual<TData, TValue>({
   overscan = 20,
   estimateSize = 30,
   trClassName,
+  pagination = false,
 }: DataTableVirtualProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -190,19 +194,28 @@ export function DataTableVirtual<TData, TValue>({
                   {row.getVisibleCells().map((cell, i) =>
                     linkFormatter &&
                     !cell.column.columnDef.meta?.disableLink ? (
-                      <TableCellAsLink
+                      <td
+                        className="!p-0"
                         style={{ width: cell.column.getSize() }}
-                        href={linkFormatter(row.original)}
-                        external={externalLink}
                         key={cell.id}
-                        className={cell.column.columnDef.meta?.body?.className}
                         testdata-id={`${testId}-${r}-${i}-td`}
                       >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCellAsLink>
+                        <Link
+                          scroll={false}
+                          shallow={true}
+                          href={linkFormatter(row.original)}
+                          target={externalLink ? '_blank' : '_self'}
+                          className={classNames(
+                            'flex items-center text-sm font-medium p-4 align-middle [&:has([role=checkbox])]:pr-0',
+                            cell.column.columnDef.meta?.body?.className,
+                          )}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </Link>
+                      </td>
                     ) : (
                       <TableCell
                         style={{ width: cell.column.getSize() }}
@@ -236,6 +249,11 @@ export function DataTableVirtual<TData, TValue>({
           )}
         </TableBody>
       </Table>
+      {pagination ? (
+        <div>
+          <DataTableVirtualPagination table={table} />
+        </div>
+      ) : null}
     </div>
   )
 }

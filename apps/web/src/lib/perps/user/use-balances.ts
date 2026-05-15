@@ -4,17 +4,7 @@ import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useUserState } from '~evm/perps/user-provider'
 import { useAccount } from '../../wallet'
 import { useSpotClearinghouseState } from '../info'
-import { SPOT_ASSETS_TO_REWRITE } from '../utils'
-
-const DEX_NAME_TO_COIN: Map<string, string> = new Map([
-  ['', 'USDC (Perps)'],
-  ['xyz', 'USDC (Perps)'],
-  ['cash', 'USDT0 (Perps)'],
-  ['flx', 'USDH (Perps)'],
-  ['hyna', 'USDE (Perps)'],
-  ['km', 'USDH (Perps)'],
-  ['vntl', 'USDH (Perps)'],
-])
+import { DEX_NAME_TO_COIN, SPOT_ASSETS_TO_REWRITE } from '../utils'
 
 export const useBalances = () => {
   const address = useAccount('evm')
@@ -136,38 +126,55 @@ export const useBalances = () => {
         ?.filter((b) => b !== null) ?? []
 
     if (isDexAbstractionEnabled) {
-      const totals = perpsUsdcs.reduce(
-        (acc, b) => {
-          const hasSpot = spotBalances.find(
-            (s) =>
-              s.coin.includes('Spot + Perps') &&
-              s.coin.split?.(' ')?.[0] === b.coin.split?.(' ')?.[0],
-          )
-          if (hasSpot) {
-            return acc
-          }
-          return {
-            totalBalance: acc.totalBalance + Number(b.totalBalance),
-            availableBalance: acc.availableBalance + Number(b.availableBalance),
-            usdcValue: acc.usdcValue + Number(b.usdcValue),
-          }
-        },
-        { totalBalance: 0, availableBalance: 0, usdcValue: 0 },
-      )
+      const getBaseCoin = (coin: string) => coin.split(' ')[0]
 
-      perpsUsdcs = [
-        {
-          coin: 'USDC (Perps)',
-          totalBalance: totals.totalBalance.toString(),
-          availableBalance: totals.availableBalance.toString(),
-          usdcValue: totals.usdcValue.toString(),
-          pnlRoePc: null,
-          token: null,
-          marketType: 'perp' as const,
-          assetName: null,
-          dex: '',
-        },
-      ]
+      const totalsByStable = perpsUsdcs.reduce<
+        Record<
+          string,
+          {
+            coin: string
+            totalBalance: number
+            availableBalance: number
+            usdcValue: number
+          }
+        >
+      >((acc, b) => {
+        const baseCoin = getBaseCoin(b.coin)
+
+        const hasSpot = spotBalances.some(
+          (s) =>
+            s.coin.includes('Spot + Perps') && getBaseCoin(s.coin) === baseCoin,
+        )
+
+        if (hasSpot) {
+          return acc
+        }
+
+        acc[baseCoin] ??= {
+          coin: baseCoin,
+          totalBalance: 0,
+          availableBalance: 0,
+          usdcValue: 0,
+        }
+
+        acc[baseCoin].totalBalance += Number(b.totalBalance)
+        acc[baseCoin].availableBalance += Number(b.availableBalance)
+        acc[baseCoin].usdcValue += Number(b.usdcValue)
+
+        return acc
+      }, {})
+      const totalsByStableArray = Object.values(totalsByStable)
+      perpsUsdcs = totalsByStableArray.map((t) => ({
+        coin: `${t.coin} (Perps)`,
+        totalBalance: t.totalBalance.toString(),
+        availableBalance: t.availableBalance.toString(),
+        usdcValue: t.usdcValue.toString(),
+        pnlRoePc: null,
+        token: null,
+        marketType: 'perp' as const,
+        assetName: null,
+        dex: '',
+      }))
     }
 
     const allBalances = [...perpsUsdcs, ...spotBalances]

@@ -23,7 +23,7 @@ export const Fees = () => {
     address,
     marketType: side === 'perps' ? 'perp' : 'spot',
   })
-  const isLoading = takerFee === '0' || makerFee === '0'
+  const isLoading = address && (takerFee === '0' || makerFee === '0')
 
   return (
     <PerpsCard
@@ -63,7 +63,9 @@ export const Fees = () => {
           <SkeletonText fontSize="xl" />
         </div>
       ) : (
-        <div className="font-medium text-lg md:text-2xl ">{`${formatPerpsPercent(takerFee, 4)} / ${formatPerpsPercent(makerFee, 4)}`}</div>
+        <div className="font-medium text-lg md:text-2xl ">
+          {`${formatPerpsPercent(!address ? '.0004' : takerFee, 4)} / ${formatPerpsPercent(!address ? '0.00012' : makerFee, 4)}`}
+        </div>
       )}
       <div className="h-[16px] lg:h-[20px]" />
     </PerpsCard>

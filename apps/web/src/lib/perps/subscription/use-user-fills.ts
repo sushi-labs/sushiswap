@@ -11,7 +11,10 @@ import { hlWebSocketTransport } from '../transports'
 export const useUserFills = ({
   address,
   aggregateByTime,
-}: { address?: EvmAddress; aggregateByTime?: boolean }) => {
+}: {
+  address?: EvmAddress
+  aggregateByTime?: boolean
+}) => {
   const queryClient = useQueryClient()
   const query = useQuery<UserFillsEvent>({
     queryKey: ['useUserFills', address, aggregateByTime],
@@ -25,7 +28,7 @@ export const useUserFills = ({
     ;(async () => {
       const sub = await userFills(
         { transport: hlWebSocketTransport },
-        { user: address, aggregateByTime: aggregateByTime ?? false },
+        { user: address, aggregateByTime: aggregateByTime },
         (userFillsEvent) => {
           queryClient.setQueryData(
             ['useUserFills', address, aggregateByTime],
@@ -34,9 +37,10 @@ export const useUserFills = ({
               const prevFills = prevUserFillsEvent?.fills ?? []
               const combinedFills = Array.from(
                 new Map(
-                  [...fills, ...prevFills].map((fill) => [fill.oid, fill]),
+                  [...fills, ...prevFills].map((fill) => [fill.tid, fill]),
                 ).values(),
               )
+
               return {
                 user: userFillsEvent.user,
                 fills: combinedFills,

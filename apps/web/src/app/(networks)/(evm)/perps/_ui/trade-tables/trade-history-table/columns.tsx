@@ -201,7 +201,9 @@ export const FEE_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     body: columnBodyMeta,
   },
 }
-export const CLOSED_PNL_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
+export const CLOSED_PNL_COLUMN = (
+  showPnLDialog = true,
+): ColumnDef<TradeHistoryItemType, unknown> => ({
   id: 'closedPnl',
   header: () => {
     return (
@@ -250,7 +252,7 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
     }
     return (
       <div className="flex items-center gap-[0.25ch] lg:whitespace-nowrap">
-        {isCloseTrade ? (
+        {isCloseTrade && showPnLDialog ? (
           <ShareClosedPnlDialog
             trade={props.row.original}
             trigger={
@@ -285,4 +287,4 @@ export const CLOSED_PNL_COLUMN: ColumnDef<TradeHistoryItemType, unknown> = {
   meta: {
     body: columnBodyMeta,
   },
-}
+})
