@@ -50,7 +50,6 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
   const webData3Query = useWebData3({
     address,
   })
-
   const userFundingsQuery = useUserFundings({
     address,
   })

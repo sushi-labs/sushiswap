@@ -86,7 +86,8 @@ export const PortfolioStats = () => {
     STAT_VIEWS[0],
   )
   const [time, setTime] = useState<(typeof TIME)[number]>(TIME[0])
-  const address = useAccount('evm')
+  // const address = useAccount('evm')
+  const address = '0x288ed4efc8fbd1e42a06fe083ea942d20c90b336'
 
   const {
     data,
