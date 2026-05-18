@@ -16,10 +16,11 @@ import {
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { getChainById } from 'sushi'
 import { type EvmAddress, EvmChainId, EvmToken, USDC } from 'sushi/evm'
+import { AnyTokenDeposit } from './any-token-deposit'
 import { HyperunitOptions } from './hyperunit-options'
 import { USDCOptions } from './usdc-options'
 
-const HYPEREVM_USDC = new EvmToken({
+export const HYPEREVM_USDC = new EvmToken({
   chainId: EvmChainId.HYPEREVM,
   address: '0xb88339CB7199b77E23DB6E890353E22632Ba630f' as EvmAddress,
   decimals: 6,
@@ -41,6 +42,18 @@ const DEPOSIT_OPTIONS = [
     asset: HYPEREVM_USDC,
     depositBridge: '0x6B9E773128f453f5c2C60935Ee2DE2CBc5390A24' as EvmAddress,
     type: 'token' as const,
+  },
+  {
+    label: 'Any Token (Arbitrum)',
+    value: 'any-arb' as const,
+    chainId: EvmChainId.ARBITRUM,
+    type: 'any-token' as const,
+  },
+  {
+    label: 'Any Token (HyperEVM)',
+    value: 'any-hyperevm' as const,
+    chainId: EvmChainId.HYPEREVM,
+    type: 'any-token' as const,
   },
   {
     label: 'Fiat',
@@ -168,6 +181,10 @@ const DEPOSIT_OPTIONS = [
 
 type DepositOption = (typeof DEPOSIT_OPTIONS)[number]
 
+export type AnyTokenDepositOption = Extract<
+  DepositOption,
+  { type: 'any-token' }
+>
 export type TokenDepositOption = Extract<DepositOption, { type: 'token' }>
 export type HyperunitDepositOption = Extract<
   DepositOption,
@@ -220,6 +237,13 @@ export const DepositDialog = ({
             setOpen={handleOpenChange}
           />
         )
+      case 'any-token':
+        return (
+          <AnyTokenDeposit
+            depositOption={depositOption}
+            setOpen={handleOpenChange}
+          />
+        )
       default:
         return null
     }
@@ -233,6 +257,8 @@ export const DepositDialog = ({
         return 'Deposit Fiat'
       case 'hyperunit':
         return `Deposit ${depositOption.label} via Unit`
+      case 'any-token':
+        return `Swap to Deposit USDC from ${getChainById(depositOption.chainId).name}`
       default:
         return null
     }
