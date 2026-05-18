@@ -16,6 +16,7 @@ import {
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { getChainById } from 'sushi'
 import { type EvmAddress, EvmChainId, EvmToken, USDC } from 'sushi/evm'
+import { HyperunitOptions } from './hyperunit-options'
 import { USDCOptions } from './usdc-options'
 
 const HYPEREVM_USDC = new EvmToken({
@@ -49,13 +50,129 @@ const DEPOSIT_OPTIONS = [
   {
     label: 'ETH (Ethereum Mainnet)',
     value: 'eth' as const,
+    chainName: 'ethereum' as const,
+    token: 'eth',
+    tokenType: 'ethereum' as const,
     type: 'hyperunit' as const,
+    minDeposit: '0.007',
+  },
+  {
+    label: 'BTC (Bitcoin)',
+    value: 'btc' as const,
+    chainName: 'bitcoin' as const,
+    token: 'btc',
+    tokenType: 'bitcoin' as const,
+    type: 'hyperunit' as const,
+    minDeposit: '0.0003',
+  },
+  {
+    label: 'SOL (Solana)',
+    value: 'sol' as const,
+    chainName: 'solana' as const,
+    token: 'sol',
+    tokenType: 'solana' as const,
+    type: 'hyperunit' as const,
+    minDeposit: '0.12',
+  },
+  {
+    label: 'AVAX (Avalanche)',
+    value: 'avax' as const,
+    chainName: 'avalanche' as const,
+    token: 'avax',
+    tokenType: 'avalanche' as const,
+    type: 'hyperunit' as const,
+    minDeposit: '1.5',
+  },
+  {
+    label: 'BONK (Solana)',
+    value: 'bonk' as const,
+    chainName: 'solana' as const,
+    token: 'bonk',
+    tokenType: 'spl' as const,
+    type: 'hyperunit' as const,
+    minDeposit: '1800000',
+  },
+  {
+    label: 'FARTCOIN (Solana)',
+    value: 'fartcoin' as const,
+    chainName: 'solana' as const,
+    token: 'fart',
+    tokenType: 'spl' as const,
+    type: 'hyperunit' as const,
+    minDeposit: '55',
+  },
+  {
+    label: 'PUMP (Solana)',
+    value: 'pump' as const,
+    chainName: 'solana' as const,
+    token: 'pump',
+    tokenType: 'spl' as const,
+    type: 'hyperunit' as const,
+    minDeposit: '5500',
+  },
+  {
+    label: 'SPX (Solana)',
+    value: 'spx' as const,
+    chainName: 'solana' as const,
+    token: 'spxs',
+    tokenType: 'spl' as const,
+    type: 'hyperunit' as const,
+    minDeposit: '32',
+  },
+  {
+    label: '2Z (Solana)',
+    value: '2z' as const,
+    chainName: 'solana' as const,
+    token: '2z',
+    tokenType: 'spl' as const,
+    type: 'hyperunit' as const,
+    minDeposit: '150',
+  },
+  {
+    label: 'VIRTUAL (Base)',
+    value: 'virtual' as const,
+    chainName: 'base' as const,
+    token: 'virtual',
+    tokenType: 'base' as const,
+    type: 'hyperunit' as const,
+    minDeposit: '25',
+  },
+  {
+    label: 'MON (Monad)',
+    value: 'mon' as const,
+    chainName: 'monad' as const,
+    token: 'mon',
+    tokenType: 'monad' as const,
+    type: 'hyperunit' as const,
+    minDeposit: '450',
+  },
+  {
+    label: 'XPL (Plasma)',
+    value: 'xpl' as const,
+    chainName: 'plasma' as const,
+    token: 'xpl',
+    tokenType: 'plasma' as const,
+    type: 'hyperunit' as const,
+    minDeposit: '60',
+  },
+  {
+    label: 'ZEC (Zcash)',
+    value: 'zec' as const,
+    chainName: 'zcash' as const,
+    token: 'zec',
+    tokenType: 'zcash' as const,
+    type: 'hyperunit' as const,
+    minDeposit: '0.07',
   },
 ]
 
 type DepositOption = (typeof DEPOSIT_OPTIONS)[number]
 
 export type TokenDepositOption = Extract<DepositOption, { type: 'token' }>
+export type HyperunitDepositOption = Extract<
+  DepositOption,
+  { type: 'hyperunit' }
+>
 
 export const DepositDialog = ({
   trigger,
@@ -97,7 +214,12 @@ export const DepositDialog = ({
       case 'fiat':
         return <div>Todo: Fiat on ramp options</div>
       case 'hyperunit':
-        return <div>Todo: Hyperunit options</div>
+        return (
+          <HyperunitOptions
+            depositOption={depositOption}
+            setOpen={handleOpenChange}
+          />
+        )
       default:
         return null
     }
@@ -127,7 +249,7 @@ export const DepositDialog = ({
           </Button>
         )}
       </PerpsDialogTrigger>
-      <PerpsDialogContent>
+      <PerpsDialogContent className="!max-w-xl">
         <PerpsDialogHeader>
           <PerpsDialogTitle>Deposit</PerpsDialogTitle>
           <PerpsDialogDescription>{description}</PerpsDialogDescription>
