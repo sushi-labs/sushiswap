@@ -109,7 +109,7 @@ export const InputWithKeyboard = ({
             onValueChange={setAmount}
             value={amount}
             readOnly={isLoading || !address}
-            maxDecimals={maxDecimals || 2}
+            maxDecimals={maxDecimals ?? currency?.decimals ?? 2}
             data-state={isLoading ? 'inactive' : 'active'}
             className={classNames(
               'p-0 py-1 !text-5xl font-medium !text-center !text-perps-muted',
