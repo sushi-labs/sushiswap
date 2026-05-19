@@ -241,7 +241,7 @@ export const AnyTokenDeposit = ({
     depositOption.chainId,
   ])
 
-  const transferUSDCAmount = useMemo(() => {
+  const transferSwapAmount = useMemo(() => {
     if (!tradeRef.current?.amountOut || step === 0) return undefined
     const feeAmount = tradeRef.current.fee?.replace('$', '')
     const fee = Amount.fromHuman(
@@ -252,13 +252,13 @@ export const AnyTokenDeposit = ({
   }, [step])
 
   const depositArgs = useMemo(() => {
-    if (!tradeRef.current?.amountOut || step === 0 || !transferUSDCAmount)
+    if (!tradeRef.current?.amountOut || step === 0 || !transferSwapAmount)
       return undefined
     return getUSDCArgs({
       chainId: depositOption.chainId,
-      amount: transferUSDCAmount?.amount,
+      amount: transferSwapAmount?.amount,
     })
-  }, [depositOption.chainId, step, transferUSDCAmount])
+  }, [depositOption.chainId, step, transferSwapAmount])
 
   const { data: sim } = useSimulateContract({
     abi: depositArgs?.abi,
@@ -288,9 +288,9 @@ export const AnyTokenDeposit = ({
         txHash: hash,
         promise,
         summary: {
-          pending: `Depositing ${transferUSDCAmount?.toSignificant(6)} ${usdc.symbol}`,
-          completed: `Deposited ${transferUSDCAmount?.toSignificant(6)} ${usdc.symbol}. Balances will update shortly.`,
-          failed: `Something went wrong depositing ${transferUSDCAmount?.toSignificant(6)} ${
+          pending: `Depositing ${transferSwapAmount?.toSignificant(6)} ${usdc.symbol}`,
+          completed: `Deposited ${transferSwapAmount?.toSignificant(6)} ${usdc.symbol}. Balances will update shortly.`,
+          failed: `Something went wrong depositing ${transferSwapAmount?.toSignificant(6)} ${
             usdc.symbol
           }`,
         },
@@ -317,7 +317,7 @@ export const AnyTokenDeposit = ({
     client,
     address,
     setOpen,
-    transferUSDCAmount,
+    transferSwapAmount,
   ])
 
   return (
