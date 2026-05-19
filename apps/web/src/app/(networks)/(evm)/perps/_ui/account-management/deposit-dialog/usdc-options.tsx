@@ -4,18 +4,59 @@ import { useCallback, useMemo, useState } from 'react'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
-import { EvmChainId, erc20Abi_transfer } from 'sushi/evm'
+import { EvmChainId, USDC, erc20Abi_transfer } from 'sushi/evm'
 import { parseAbi } from 'viem'
 import { usePublicClient, useWriteContract } from 'wagmi'
 import { useSimulateContract } from 'wagmi'
 import { useBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { InputWithKeyboard } from '../../_common'
 import { PerpsChecker } from '../../perps-checker'
-import type { TokenDepositOption } from './deposit-dialog'
+import {
+  type TokenDepositOption,
+  USDC_ARB_DEPOSIT_BRIDGE,
+  USDC_HYPEREVM_DEPOSIT_BRIDGE,
+} from './deposit-dialog'
 
 const hyperEvmDepositAbi = parseAbi([
   'function deposit(uint256 amount, uint32 destinationDex)',
 ])
+
+export const getMinDepositAmount = (chainId: EvmChainId) => {
+  switch (chainId) {
+    case EvmChainId.ARBITRUM:
+      return 5 //5.000000 usdc
+    case EvmChainId.HYPEREVM:
+      return 0
+    default:
+      throw new Error('Unsupported chainId')
+  }
+}
+
+export const getUSDCArgs = ({
+  chainId,
+  amount,
+}: { chainId: EvmChainId; amount: bigint }) => {
+  switch (chainId) {
+    case EvmChainId.HYPEREVM:
+      return {
+        address: USDC_HYPEREVM_DEPOSIT_BRIDGE,
+        abi: hyperEvmDepositAbi,
+        functionName: 'deposit' as const,
+        args: [amount, 0] as const,
+        chainId,
+      }
+    case EvmChainId.ARBITRUM:
+      return {
+        address: USDC[EvmChainId.ARBITRUM].address,
+        abi: erc20Abi_transfer,
+        functionName: 'transfer' as const,
+        args: [USDC_ARB_DEPOSIT_BRIDGE, amount] as const,
+        chainId,
+      }
+    default:
+      return undefined
+  }
+}
 
 export const USDCOptions = ({
   depositOption,
@@ -25,7 +66,6 @@ export const USDCOptions = ({
   setOpen: (open: boolean) => void
 }) => {
   const usdc = depositOption.asset
-  const MIN_DEPOSIT_AMOUNT = usdc.chainId === EvmChainId.ARBITRUM ? 5 : 0 //5.000000 usdc
   const [amount, setAmount] = useState<string>('')
   const { mutateAsync: writeContractAsync, isPending } = useWriteContract()
   const client = usePublicClient()
@@ -40,37 +80,24 @@ export const USDCOptions = ({
     () => Amount.tryFromHuman(usdc, amount),
     [amount, usdc],
   )
+  const minDepositAmount = useMemo(
+    () => getMinDepositAmount(usdc.chainId),
+    [usdc.chainId],
+  )
 
   const args = useMemo(() => {
-    switch (depositOption.value) {
-      case 'usdc-hyperevm': {
-        return {
-          address: depositOption.depositBridge,
-          abi: hyperEvmDepositAbi,
-          functionName: 'deposit' as const,
-          args: [_amount?.amount || 0n, 0] as const,
-          chainId: usdc.chainId,
-        }
-      }
-      case 'usdc-arb':
-        return {
-          address: usdc.address,
-          abi: erc20Abi_transfer,
-          functionName: 'transfer' as const,
-          args: [depositOption.depositBridge, _amount?.amount || 0n] as const,
-          chainId: usdc.chainId,
-        }
-      default:
-        throw new Error('Unsupported deposit option')
-    }
-  }, [_amount, depositOption, usdc])
+    return getUSDCArgs({
+      chainId: usdc.chainId,
+      amount: _amount?.amount || 0n,
+    })
+  }, [_amount, usdc])
 
   const { data: sim } = useSimulateContract({
-    abi: args.abi,
-    chainId: args.chainId,
-    functionName: args.functionName,
-    args: args.args,
-    address: args.address,
+    abi: args?.abi,
+    chainId: args?.chainId,
+    functionName: args?.functionName,
+    args: args?.args,
+    address: args?.address,
     query: {
       enabled: Boolean(_amount?.amount),
     },
@@ -152,14 +179,14 @@ export const USDCOptions = ({
                     variant="perps-tertiary"
                     size="default"
                     disabled={
-                      Number(amount) < MIN_DEPOSIT_AMOUNT || !sim?.request
+                      Number(amount) < minDepositAmount || !sim?.request
                     }
                     className="w-full"
                     onClick={transferUsdc}
                     loading={isPending}
                   >
-                    {amount && Number(amount) < MIN_DEPOSIT_AMOUNT
-                      ? `Minimum Deposit ${MIN_DEPOSIT_AMOUNT} USDC`
+                    {amount && Number(amount) < minDepositAmount
+                      ? `Minimum Deposit ${minDepositAmount} USDC`
                       : !sim?.request
                         ? 'Simulation failed'
                         : 'Deposit'}

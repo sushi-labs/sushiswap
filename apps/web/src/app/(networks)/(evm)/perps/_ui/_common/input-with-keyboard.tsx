@@ -69,6 +69,17 @@ export const InputWithKeyboard = ({
       const canvas = document.createElement('canvas')
       const context = canvas.getContext('2d')
       if (!context) return 0
+      const inputEl = document.getElementById('input-with-keyboard')
+      if (inputEl) {
+        if (amount.length > 11) {
+          const fontSize = Number.parseFloat(getComputedStyle(inputEl).fontSize)
+          let newFontSize = fontSize * 0.9 ** (amount.length - 11)
+          if (newFontSize < 24) newFontSize = 24
+          inputEl.style.fontSize = `${newFontSize}px`
+        } else {
+          inputEl.style.fontSize = `48px`
+        }
+      }
       const style = getComputedStyle(widthRef.current)
       const font = `${style.fontSize} ${style.fontFamily}`
       context.font = font
@@ -112,9 +123,10 @@ export const InputWithKeyboard = ({
             maxDecimals={maxDecimals ?? currency?.decimals ?? 2}
             data-state={isLoading ? 'inactive' : 'active'}
             className={classNames(
-              'p-0 py-1 !text-5xl font-medium !text-center !text-perps-muted',
+              'p-0 py-1  font-medium !text-center !text-perps-muted',
             )}
             ref={widthRef}
+            id={'input-with-keyboard'}
           />
         </div>
         <p className="text-perps-muted-50 text-xs">

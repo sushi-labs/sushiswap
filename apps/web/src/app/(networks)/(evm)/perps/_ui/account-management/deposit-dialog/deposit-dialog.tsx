@@ -28,21 +28,12 @@ export const HYPEREVM_USDC = new EvmToken({
   name: 'USDC',
 })
 
+export const USDC_ARB_DEPOSIT_BRIDGE =
+  '0x2Df1c51E09aECF9cacB7bc98cB1742757f163dF7' as EvmAddress
+export const USDC_HYPEREVM_DEPOSIT_BRIDGE =
+  '0x6B9E773128f453f5c2C60935Ee2DE2CBc5390A24' as EvmAddress
+
 const DEPOSIT_OPTIONS = [
-  {
-    label: 'USDC (Arbitrum)',
-    value: 'usdc-arb' as const,
-    asset: USDC[EvmChainId.ARBITRUM],
-    depositBridge: '0x2Df1c51E09aECF9cacB7bc98cB1742757f163dF7' as EvmAddress,
-    type: 'token' as const,
-  },
-  {
-    label: 'USDC (HyperEVM)',
-    value: 'usdc-hyperevm' as const,
-    asset: HYPEREVM_USDC,
-    depositBridge: '0x6B9E773128f453f5c2C60935Ee2DE2CBc5390A24' as EvmAddress,
-    type: 'token' as const,
-  },
   {
     label: 'Any Token (Arbitrum)',
     value: 'any-arb' as const,
@@ -50,16 +41,24 @@ const DEPOSIT_OPTIONS = [
     type: 'any-token' as const,
   },
   {
-    label: 'Any Token (HyperEVM)',
-    value: 'any-hyperevm' as const,
-    chainId: EvmChainId.HYPEREVM,
-    type: 'any-token' as const,
+    label: 'USDC (Arbitrum)',
+    value: 'usdc-arb' as const,
+    asset: USDC[EvmChainId.ARBITRUM],
+    depositBridge: USDC_ARB_DEPOSIT_BRIDGE,
+    type: 'token' as const,
   },
   {
-    label: 'Fiat',
-    value: 'fiat' as const,
-    type: 'fiat' as const,
+    label: 'USDC (HyperEVM)',
+    value: 'usdc-hyperevm' as const,
+    asset: HYPEREVM_USDC,
+    depositBridge: USDC_HYPEREVM_DEPOSIT_BRIDGE,
+    type: 'token' as const,
   },
+  // {
+  //   label: 'Fiat',
+  //   value: 'fiat' as const,
+  //   type: 'fiat' as const,
+  // },
   {
     label: 'ETH (Ethereum Mainnet)',
     value: 'eth' as const,
@@ -228,8 +227,8 @@ export const DepositDialog = ({
             setOpen={handleOpenChange}
           />
         )
-      case 'fiat':
-        return <div>Todo: Fiat on ramp options</div>
+      // case 'fiat':
+      //   return <div>Todo: Fiat on ramp options</div>
       case 'hyperunit':
         return (
           <HyperunitOptions
@@ -253,8 +252,8 @@ export const DepositDialog = ({
     switch (depositOption.type) {
       case 'token':
         return `Deposit ${depositOption.asset.symbol} from ${getChainById(depositOption.asset.chainId).name}`
-      case 'fiat':
-        return 'Deposit Fiat'
+      // case 'fiat':
+      //   return 'Deposit Fiat'
       case 'hyperunit':
         return `Deposit ${depositOption.label} via Unit`
       case 'any-token':
