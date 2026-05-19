@@ -22,8 +22,8 @@ import { FixedSizeList } from 'react-window'
 import { useAmountBalances } from 'src/app/(networks)/(evm)/_common/ui/balance-provider/use-balances'
 import { TokenSelectorChipBar } from 'src/lib/wagmi/components/token-selector/token-lists/token-selector-chip-bar'
 import {
-  type StellarContractAddress,
   StellarChainId,
+  type StellarContractAddress,
   type StellarToken,
   isStellarContractAddress,
 } from 'sushi/stellar'
@@ -201,16 +201,14 @@ export default function TokenSelector({
               'data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden',
             )}
           >
-            {!currencies &&
-              queryToken &&
-              !allTokens[queryToken.address] && (
-                <TokenSelectorImportRow
-                  token={queryToken}
-                  onImport={() => {
-                    queryToken && handleImport(queryToken)
-                  }}
-                />
-              )}
+            {!currencies && queryToken && !allTokens[queryToken.address] && (
+              <TokenSelectorImportRow
+                token={queryToken}
+                onImport={() => {
+                  queryToken && handleImport(queryToken)
+                }}
+              />
+            )}
             <AutoSizer disableWidth>
               {({ height }: { height: number }) => (
                 <FixedSizeList
@@ -244,4 +242,3 @@ export default function TokenSelector({
     </Dialog>
   )
 }
-

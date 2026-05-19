@@ -3,26 +3,25 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { type Amount, type IDFor, ZERO } from 'sushi'
-import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
 import type { EvmChainId } from 'sushi/evm'
+import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
 import { useAmountBalances } from '~evm/_common/ui/balance-provider/use-balances'
 
-type AmountsProps<
-  TChainId extends BalanceChainId = EvmChainId,
-> = ButtonProps & {
-  chainId: TChainId | undefined
-} & (
-    | {
-        amounts: (Amount<CurrencyFor<TChainId>> | undefined)[]
-        amount?: undefined
-      }
-    | {
-        amounts?: undefined
-        amount: Amount<CurrencyFor<TChainId>> | undefined
-      }
-  )
+type AmountsProps<TChainId extends BalanceChainId = EvmChainId> =
+  ButtonProps & {
+    chainId: TChainId | undefined
+  } & (
+      | {
+          amounts: (Amount<CurrencyFor<TChainId>> | undefined)[]
+          amount?: undefined
+        }
+      | {
+          amounts?: undefined
+          amount: Amount<CurrencyFor<TChainId>> | undefined
+        }
+    )
 
- function Amounts<TChainId extends BalanceChainId>({
+function Amounts<TChainId extends BalanceChainId>({
   type: _type,
   amounts: _amounts,
   amount,

@@ -1,4 +1,5 @@
 import { addMinutes } from 'date-fns'
+import type { StellarToken } from 'sushi/stellar'
 import {
   DEFAULT_TIMEOUT,
   getSqrtPriceLimitForSwap,
@@ -7,7 +8,6 @@ import {
   getFees,
   getPoolDirectSDK,
 } from '~stellar/_common/lib/soroban/dex-factory-helpers'
-import type { StellarToken } from 'sushi/stellar'
 import type { PoolBasicInfo } from '~stellar/_common/lib/soroban/pool-helpers'
 import { contractAddresses } from '../soroban'
 import { getRouterContractClient } from '../soroban/client'

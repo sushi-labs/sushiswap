@@ -8,12 +8,12 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { addMinutes } from 'date-fns'
 import { ChainId, MAX_UINT128 } from 'sushi'
+import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
 import { formatUnits } from 'viem'
 import { decreaseLiquidity } from '~stellar/_common/lib/soroban/position-manager-helpers'
 import { getStellarTxnLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
 import { useStellarWallet } from '~stellar/providers'
 import { waitForTransaction } from '../../soroban/transaction-helpers'
-import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
 import { useCollectFees } from '../position/use-positions'
 
 export interface RemovePoolLiquidityParams {

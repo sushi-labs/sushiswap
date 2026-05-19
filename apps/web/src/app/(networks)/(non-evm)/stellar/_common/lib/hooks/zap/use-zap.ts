@@ -9,6 +9,7 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { addMinutes } from 'date-fns'
 import { ChainId } from 'sushi'
+import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
 import type { RouteWithTokens } from '~stellar/swap/lib/swap-get-route'
 import { calculateAmountOutMinimum } from '../../services/router-service'
 import { DEFAULT_TIMEOUT, contractAddresses } from '../../soroban'
@@ -19,7 +20,6 @@ import {
   submitViaRawRPC,
   waitForTransaction,
 } from '../../soroban/rpc-transaction-helpers'
-import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
 import { extractErrorMessage } from '../../utils/error-helpers'
 import {
   type PoolOracleHints,

@@ -1,10 +1,10 @@
 import React from 'react'
+import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/Currency'
 import { formatUnits } from 'viem'
 import {
   useSimpleSwapActions,
   useSimpleSwapState,
 } from '~stellar/_common/ui/Swap/simple/simple-swap-provider/simple-swap-provider'
-import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/Currency'
 
 export const SimpleSwapToken1Input = () => {
   const { token1, outputAmount, isPriceFetching } = useSimpleSwapState()

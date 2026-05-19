@@ -15,6 +15,7 @@ import {
 } from '@sushiswap/ui'
 import type React from 'react'
 import { useEffect, useMemo, useState } from 'react'
+import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/Currency'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
 import type { StellarAccountAddress, StellarToken } from 'sushi/stellar'
@@ -39,7 +40,6 @@ import { useStellarWallet } from '~stellar/providers'
 import { useBestRoute } from '~stellar/swap/lib/hooks/use-best-route'
 import { TickRangeSelector } from '../TickRangeSelector/TickRangeSelector'
 import { CreateTrustlineButton } from '../Trustline/CreateTrustlineButton'
-import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/Currency'
 import TokenSelector from '../token-selector/token-selector'
 import { LiquidityDepthWidget } from './LiquidityDepthWidget'
 
@@ -867,14 +867,14 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                           <div className="grid grid-cols-2 gap-3 text-xs text-muted-foreground">
                             <div>
                               <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                                {(estimatedToken0?.toString() ?? '0')}{' '}
+                                {estimatedToken0?.toString() ?? '0'}{' '}
                                 {pool.token0.symbol}
                               </div>
                               <p>Est. {pool.token0.symbol} principal</p>
                             </div>
                             <div>
                               <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                                {(estimatedToken1?.toString() ?? '0')}{' '}
+                                {estimatedToken1?.toString() ?? '0'}{' '}
                                 {pool.token1.symbol}
                               </div>
                               <p>Est. {pool.token1.symbol} principal</p>

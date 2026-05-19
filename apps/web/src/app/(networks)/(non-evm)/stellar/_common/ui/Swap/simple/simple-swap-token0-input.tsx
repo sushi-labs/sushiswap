@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo } from 'react'
 import { useBestRoute } from '~stellar/swap/lib/hooks'
 
+import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/Currency'
 import {
   useSimpleSwapActions,
   useSimpleSwapState,
 } from '~stellar/_common/ui/Swap/simple/simple-swap-provider/simple-swap-provider'
-import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/Currency'
 
 export const SimpleSwapToken0Input = () => {
   const { amount, token0, token1 } = useSimpleSwapState()

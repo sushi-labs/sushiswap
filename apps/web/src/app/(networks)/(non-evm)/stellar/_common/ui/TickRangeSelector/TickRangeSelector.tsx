@@ -3,12 +3,12 @@
 import { Button } from '@sushiswap/ui'
 import type React from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import type { StellarToken } from 'sushi/stellar'
 import type { TickRangeSelectorState } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
 import {
   calculatePriceFromTick,
   calculateTickFromPrice,
 } from '~stellar/_common/lib/soroban'
-import type { StellarToken } from 'sushi/stellar'
 import {
   MAX_TICK_RANGE,
   alignTick,
