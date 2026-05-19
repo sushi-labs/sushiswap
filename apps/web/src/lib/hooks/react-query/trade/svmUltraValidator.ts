@@ -27,7 +27,7 @@ export type SvmOrder = {
   signatureFeeLamports: number
   prioritizationFeeLamports: number
   rentFeeLamports: number
-  router: 'iris' | 'jupiterz' | 'dflow' | 'okx'
+  router: 'iris' | 'jupiterz' | 'dflow' | 'okx' | 'metis'
   transaction?: string | null
   gasless: boolean
   requestId: string
@@ -70,7 +70,7 @@ const svmOrderSchema: z.ZodType<SvmOrder> = z
     signatureFeeLamports: z.coerce.number(),
     prioritizationFeeLamports: z.coerce.number(),
     rentFeeLamports: z.coerce.number(),
-    router: z.enum(['iris', 'jupiterz', 'dflow', 'okx']),
+    router: z.enum(['iris', 'jupiterz', 'dflow', 'okx', 'metis']),
     transaction: z.string().nullable().optional(),
     gasless: z.boolean(),
     requestId: z.string(),
