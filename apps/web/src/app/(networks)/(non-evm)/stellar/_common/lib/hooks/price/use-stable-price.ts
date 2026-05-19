@@ -1,19 +1,21 @@
 import { useQueries } from '@tanstack/react-query'
 import ms from 'ms'
+import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
 import { formatUnits } from 'viem'
-import type { Token } from '~stellar/_common/lib/types/token.type'
 import { getBestRoute } from '~stellar/swap/lib/hooks/use-best-route'
 import { usePoolGraph } from '~stellar/swap/lib/swap-get-route'
 import { getStableTokens } from '../../soroban'
 
-export const useStablePrice = ({ token }: { token: Token | undefined }) => {
+export const useStablePrice = ({
+  token,
+}: { token: StellarToken | undefined }) => {
   // Build additional tokens list from swap input/output
   // This ensures the pool graph includes routes for the selected tokens
   const stableTokens = getStableTokens()
   const additionalTokens = [
-    token?.contract,
-    ...stableTokens.map((t) => t.contract),
-  ].filter((t): t is NonNullable<typeof t> => Boolean(t))
+    token?.address,
+    ...stableTokens.map((t) => t.address),
+  ].filter((t): t is StellarContractAddress => !!t)
 
   // Get the pool graph, augmented with input/output tokens
   const { data: poolGraphData } = usePoolGraph({
@@ -26,10 +28,10 @@ export const useStablePrice = ({ token }: { token: Token | undefined }) => {
         queryKey: [
           'stellar',
           'useStablePrice',
-          token?.contract,
-          stableToken.contract,
+          token?.address,
+          stableToken.address,
         ],
-        queryFn: async (): Promise<string | null> => {
+        queryFn: async (): Promise<string> => {
           if (!token || !poolGraphData) {
             throw new Error('Token and pool graph data are required')
           }

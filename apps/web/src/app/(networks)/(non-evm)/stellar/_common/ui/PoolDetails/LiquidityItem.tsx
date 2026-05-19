@@ -1,11 +1,11 @@
 import { CardItem } from '@sushiswap/ui'
 import { formatUSD } from 'sushi'
-import type { Token } from '../../lib/types/token.type'
+import type { StellarToken } from 'sushi/stellar'
 import { TokenIcon } from '../General/TokenIcon'
 
 interface LiquidityItemProps {
   isLoading: boolean
-  token: Token
+  token: StellarToken
   amount: string
   usdAmount?: string
 }
@@ -25,7 +25,7 @@ export const LiquidityItem = ({
       title={
         <div className="font-medium flex items-center gap-2 text-muted-foreground">
           <TokenIcon currency={token} width={18} height={18} />
-          {token.code}
+          {token.symbol}
         </div>
       }
     >

@@ -1,6 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import ms from 'ms'
-import type { StellarContractAddress } from 'sushi/stellar'
+import type {
+  StellarAccountAddress,
+  StellarContractAddress,
+} from 'sushi/stellar'
 import { positionService } from '../../services/position-service'
 import { waitForTransaction } from '../../soroban/transaction-helpers'
 
@@ -12,7 +15,7 @@ export function useUserPositions({
   excludeDust = false,
   isLegacy = false,
 }: {
-  userAddress?: string
+  userAddress?: StellarAccountAddress
   excludeDust?: boolean
   isLegacy?: boolean
 }) {

@@ -3,16 +3,13 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { ZERO } from 'sushi'
+import type { StellarToken } from 'sushi/stellar'
 import { useTokenBalances } from '~stellar/_common/lib/hooks/token/use-token-balance'
-import type {
-  Token,
-  TokenWithBalance,
-} from '~stellar/_common/lib/types/token.type'
 import { useStellarWallet } from '~stellar/providers'
 
 interface AmountsProps extends ButtonProps {
   amounts: {
-    token: Token
+    token: StellarToken
     amount: number
   }[]
 }
@@ -43,7 +40,7 @@ const Amounts: FC<AmountsProps> = ({
 
     return amounts.every((amount) => {
       const balance = tokensWithBalances.find(
-        (token: TokenWithBalance) => token.code === amount.token.code,
+        (entry) => entry.token.address === amount.token.address,
       )?.balance
       if (typeof balance !== 'bigint') return true
 

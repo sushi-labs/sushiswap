@@ -16,15 +16,17 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import { Amount, type Percent, getChainById } from 'sushi'
 import type { EvmChainId } from 'sushi/evm'
+import { isStellarChainId } from 'sushi/stellar'
 import type { SvmChainId } from 'sushi/svm'
 import { useConnection } from 'wagmi'
+import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { TokenSelector } from '../../token-selector/token-selector'
 import { BalancePanel } from './balance-panel'
 import { PricePanel } from './price-panel'
 
-interface CurrencyInputProps<TChainId extends EvmChainId | SvmChainId> {
+interface CurrencyInputProps<TChainId extends BalanceChainId> {
   id?: string
   disabled?: boolean
   value: string
@@ -49,12 +51,12 @@ interface CurrencyInputProps<TChainId extends EvmChainId | SvmChainId> {
   hidePricing?: boolean
   hideIcon?: boolean
   label?: string
-  networks?: readonly (EvmChainId | SvmChainId)[]
-  selectedNetwork?: EvmChainId | SvmChainId
+  networks?: readonly BalanceChainId[]
+  selectedNetwork?: BalanceChainId
   onNetworkChange?: (network: number) => void
 }
 
-function CurrencyInput<TChainId extends EvmChainId | SvmChainId>({
+function CurrencyInput<TChainId extends BalanceChainId>({
   id,
   disabled,
   value,
@@ -92,9 +94,16 @@ function CurrencyInput<TChainId extends EvmChainId | SvmChainId>({
   const { data: balance, isLoading: isBalanceLoading } =
     useAmountBalance(currency)
 
+  // Stellar isn't covered by the EVM/SVM price provider; pass undefined to
+  // make usePrice a no-op for Stellar currencies.
+  const priceCurrency =
+    currency && isStellarChainId(currency.chainId)
+      ? undefined
+      : (currency as CurrencyFor<EvmChainId | SvmChainId> | undefined)
+
   const { data: price, isLoading: isPriceLoading } = usePrice({
-    chainId: currency?.chainId,
-    address: currency?.wrap().address,
+    chainId: priceCurrency?.chainId,
+    address: priceCurrency?.wrap().address,
     enabled: !hidePricing,
   })
 
@@ -150,10 +159,11 @@ function CurrencyInput<TChainId extends EvmChainId | SvmChainId>({
 
     return (
       <TokenSelector
-        currencies={currencies}
-        selected={currency}
+        id={id}
         chainId={chainId}
+        selected={currency}
         onSelect={onSelect}
+        currencies={currencies}
         includeNative={allowNative}
         hidePinnedTokens={hidePinnedTokens}
         hideSearch={hideSearch}

@@ -43,8 +43,8 @@ export const LegacyPositionPrincipalCell = ({
 
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex items-center whitespace-nowrap text-sm text-gray-900 dark:text-slate-50">{`${formatUnits(originalPrincipal0, token0.decimals)} ${token0.code}`}</div>
-      <div className="flex items-center whitespace-nowrap text-sm text-gray-900 dark:text-slate-50">{`${formatUnits(originalPrincipal1, token1.decimals)} ${token1.code}`}</div>
+      <div className="flex items-center whitespace-nowrap text-sm text-gray-900 dark:text-slate-50">{`${formatUnits(originalPrincipal0, token0.decimals)} ${token0.symbol}`}</div>
+      <div className="flex items-center whitespace-nowrap text-sm text-gray-900 dark:text-slate-50">{`${formatUnits(originalPrincipal1, token1.decimals)} ${token1.symbol}`}</div>
       {statusText && (
         <span className="text-xs flex items-center gap-1 text-gray-900 dark:text-slate-500">
           Status: {statusText}

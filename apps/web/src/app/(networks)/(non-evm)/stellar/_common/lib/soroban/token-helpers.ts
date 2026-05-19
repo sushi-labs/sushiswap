@@ -1,41 +1,37 @@
 import type { AssembledTransaction } from '@stellar/stellar-sdk/contract'
 import {
   type StellarAddress,
+  StellarChainId,
   type StellarContractAddress,
-  isStellarContractAddress,
+  StellarToken,
   normalizeStellarAddress,
 } from 'sushi/stellar'
 import { staticTokens } from '../assets/token-assets'
-import type { Token } from '../types/token.type'
 import { formatAddress } from '../utils/format'
 import { getTokenContractClient } from './client'
 import { DEFAULT_TIMEOUT } from './constants'
 
 /**
  * Gets the tokens without any alteration
- * @returns An array of Tokens
  */
-export function getBaseTokens(): Token[] {
-  const baseTokens: Token[] = staticTokens
-  return baseTokens
+export function getBaseTokens() {
+  return staticTokens
 }
 
 /**
  * Gets the stable tokens without any alteration
- * @returns An array of Tokens
  */
-export function getStableTokens(): Token[] {
-  const stableTokens: Token[] = staticTokens.filter((token) => token.isStable)
-  return stableTokens
+export function getStableTokens() {
+  return staticTokens.filter((token) => token.metadata?.isStable)
 }
 
 /**
  * Helper to find a token by contract address (case-insensitive) in a token map.
  */
 function findTokenInMap(
-  tokenMap: Record<string, Token>,
+  tokenMap: Record<string, StellarToken>,
   contract: string,
-): Token | undefined {
+): StellarToken | undefined {
   // Direct lookup first (most common case)
   if (tokenMap[contract]) {
     return tokenMap[contract]
@@ -62,12 +58,11 @@ function findTokenInMap(
  *
  * @param contract - The contract address of the token
  * @param dynamicTokens - Optional dynamic token map to check first (e.g., from useCommonTokens)
- * @returns A Token object
  */
 export async function getTokenByContract(
   contract: StellarContractAddress,
-  dynamicTokens?: Record<string, Token>,
-): Promise<Token> {
+  dynamicTokens?: Record<string, StellarToken>,
+): Promise<StellarToken> {
   // Check dynamic tokens first (includes StellarExpert tokens)
   if (dynamicTokens) {
     const dynamicToken = findTokenInMap(dynamicTokens, contract)
@@ -79,7 +74,7 @@ export async function getTokenByContract(
   // Check static tokens (case-insensitive)
   const contractLower = contract.toLowerCase()
   const tokenFromList = staticTokens.find(
-    (token) => token.contract.toLowerCase() === contractLower,
+    (token) => token.address.toLowerCase() === contractLower,
   )
   if (tokenFromList) {
     return tokenFromList
@@ -87,30 +82,29 @@ export async function getTokenByContract(
 
   // Fallback: fetch from chain
   const canonicalContract = normalizeStellarAddress(contract)
-
   try {
-    const metadata = await getTokenMetadata(canonicalContract)
-    return {
-      contract: canonicalContract,
-      code: metadata.symbol || formatAddress(canonicalContract),
+    const onChainMetadata = await getTokenMetadata(canonicalContract)
+    return new StellarToken({
+      chainId: StellarChainId.STELLAR,
+      address: canonicalContract,
+      symbol: onChainMetadata.symbol || formatAddress(canonicalContract),
       name:
-        metadata.name || metadata.symbol || formatAddress(canonicalContract),
-      decimals: metadata.decimals,
-      issuer: '',
-      org: 'unknown',
-      isStable: false,
-    }
+        onChainMetadata.name ||
+        onChainMetadata.symbol ||
+        formatAddress(canonicalContract),
+      decimals: onChainMetadata.decimals,
+      origin: 'unknown',
+    })
   } catch (error) {
     console.warn(`Failed to fetch metadata for token ${contract}:`, error)
-    return {
-      contract: canonicalContract,
-      code: formatAddress(canonicalContract),
+    return new StellarToken({
+      chainId: StellarChainId.STELLAR,
+      address: canonicalContract,
+      symbol: formatAddress(canonicalContract),
       name: formatAddress(canonicalContract),
       decimals: 7,
-      issuer: '',
-      org: 'unknown',
-      isStable: false,
-    }
+      origin: 'unknown',
+    })
   }
 }
 
@@ -157,9 +151,9 @@ export async function getTokenBalance(
  */
 export async function getTokenBalanceFromToken(
   address: StellarAddress,
-  token: Token,
+  token: StellarToken,
 ): Promise<bigint> {
-  return getTokenBalance(address, token.contract)
+  return getTokenBalance(address, token.address)
 }
 
 /**

@@ -1,16 +1,17 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import {
-  type StellarAccountAddress,
-  type StellarContractAddress,
-  isStellarContractAddress,
+import type {
+  StellarAccountAddress,
+  StellarContractAddress,
+  StellarToken,
 } from 'sushi/stellar'
 import {
   getTokenBalance,
   getTokenBalanceFromToken,
 } from '../../soroban/token-helpers'
-import type { Token, TokenWithBalance } from '../../types/token.type'
+
+export type TokenWithBalance = { token: StellarToken; balance: bigint }
 
 export const useTokenBalance = (
   address: StellarAccountAddress | undefined,
@@ -30,16 +31,10 @@ export const useTokenBalance = (
 
 export const useTokenBalanceFromToken = (
   address: StellarAccountAddress | null,
-  token: Token | null,
+  token: StellarToken | null,
 ) => {
   return useQuery({
-    queryKey: [
-      'stellar',
-      'token',
-      'balanceFromToken',
-      address,
-      token?.contract,
-    ],
+    queryKey: ['stellar', 'token', 'balanceFromToken', address, token?.address],
     queryFn: async () => {
       if (!address || !token) {
         throw new Error('Address and token are required')
@@ -58,7 +53,7 @@ export const useTokenBalanceFromToken = (
  */
 export const useTokenBalances = (
   address: StellarAccountAddress | undefined,
-  tokens: Token[],
+  tokens: StellarToken[],
 ) => {
   return useQuery({
     queryKey: ['stellar', 'token', 'balances', tokens, address],
@@ -68,16 +63,13 @@ export const useTokenBalances = (
       }
       const tokensWithBalances: TokenWithBalance[] = []
       for (const token of tokens) {
-        if (!token.contract) continue
+        if (!token.address) continue
         try {
-          const balance = await getTokenBalance(address, token.contract)
-          tokensWithBalances.push({
-            ...token,
-            balance,
-          })
+          const balance = await getTokenBalance(address, token.address)
+          tokensWithBalances.push({ token, balance })
         } catch (error) {
           console.error(
-            `Failed to get ${token.contract} token balance for ${address}`,
+            `Failed to get ${token.address} token balance for ${address}`,
             error,
           )
         }
@@ -103,16 +95,16 @@ export const useTokenBalancesMap = (
     queryKey: ['stellar', 'token', 'balancesMap', address, contracts],
     queryFn: async () => {
       if (!address || contracts.length === 0) {
-        return contracts.reduce<Record<StellarContractAddress, string>>(
+        return contracts.reduce(
           (acc, contract) => {
             acc[contract] = '0'
             return acc
           },
-          {},
+          {} as Record<StellarContractAddress, string>,
         )
       }
 
-      const balanceMap: Record<string, string> = {}
+      const balanceMap = {} as Record<StellarContractAddress, string>
 
       for (const contract of contracts) {
         try {

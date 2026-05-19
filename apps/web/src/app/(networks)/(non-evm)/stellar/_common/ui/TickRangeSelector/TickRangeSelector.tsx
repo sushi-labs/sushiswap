@@ -8,7 +8,7 @@ import {
   calculatePriceFromTick,
   calculateTickFromPrice,
 } from '~stellar/_common/lib/soroban'
-import type { Token } from '~stellar/_common/lib/types/token.type'
+import type { StellarToken } from 'sushi/stellar'
 import {
   MAX_TICK_RANGE,
   alignTick,
@@ -17,8 +17,8 @@ import {
 
 interface TickRangeSelectorProps {
   params: TickRangeSelectorState
-  token0?: Token
-  token1?: Token
+  token0?: StellarToken
+  token1?: StellarToken
 }
 
 type PriceRangePreset = {
@@ -210,7 +210,8 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
     setTickUpper((prev) => alignTick(prev + tickSpacing, tickSpacing))
   }, [setIsDynamic, setTickUpper, tickSpacing])
 
-  const priceUnit = token0 && token1 ? `${token1.code} per ${token0.code}` : ''
+  const priceUnit =
+    token0 && token1 ? `${token1.symbol} per ${token0.symbol}` : ''
 
   return (
     <div className="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-800">
@@ -339,7 +340,7 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
               <div className="font-mono font-semibold">
                 {formatPriceDisplay(tickLower, tickSpacing, 'lower')} -{' '}
                 {formatPriceDisplay(tickUpper, tickSpacing, 'upper')}{' '}
-                {token1.code}/{token0.code}
+                {token1.symbol}/{token0.symbol}
               </div>
             )}
             <div className="text-xs text-muted-foreground">

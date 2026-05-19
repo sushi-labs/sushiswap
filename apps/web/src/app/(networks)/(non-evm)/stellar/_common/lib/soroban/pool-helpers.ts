@@ -1,10 +1,9 @@
-import {
-  type StellarAccountAddress,
-  type StellarContractAddress,
-  isStellarContractAddress,
+import type {
+  StellarAccountAddress,
+  StellarContractAddress,
+  StellarToken,
 } from 'sushi/stellar'
 import type { PoolInfo, PoolLiquidity, PoolReserves } from '../types/pool.type'
-import type { Token } from '../types/token.type'
 import { MAX_TICK_RANGE } from '../utils/ticks'
 import { getPoolLensContractClient } from './client'
 import { contractAddresses } from './contracts'
@@ -12,14 +11,14 @@ import { getTokenBalance, getTokenByContract } from './token-helpers'
 
 export interface PoolBasicInfo {
   address: StellarContractAddress
-  tokenA: Token
-  tokenB: Token
+  tokenA: StellarToken
+  tokenB: StellarToken
   fee: number
 }
 
 export interface ContractPoolData {
-  token0: Token
-  token1: Token
+  token0: StellarToken
+  token1: StellarToken
   fee: number
   description?: string
   reserve0: bigint
@@ -76,7 +75,7 @@ export async function getPoolInfoFromContract(
       token0,
       token1,
       fee,
-      description: `${token0.code}-${token1.code} (${fee / 10000}% fee)`,
+      description: `${token0.symbol}-${token1.symbol} (${fee / 10000}% fee)`,
       reserve0,
       reserve1,
       liquidity,
@@ -114,17 +113,17 @@ export async function getPoolInfo(
 
     const reserves: PoolReserves = {
       token0: {
-        code: contractPoolInfo.token0.code,
+        code: contractPoolInfo.token0.symbol,
         amount: contractPoolInfo.reserve0.toString(),
       },
       token1: {
-        code: contractPoolInfo.token1.code,
+        code: contractPoolInfo.token1.symbol,
         amount: contractPoolInfo.reserve1.toString(),
       },
     }
 
     return {
-      name: `${contractPoolInfo.token0.code}/${contractPoolInfo.token1.code}`,
+      name: `${contractPoolInfo.token0.symbol}/${contractPoolInfo.token1.symbol}`,
       address: address,
       token0: contractPoolInfo.token0,
       token1: contractPoolInfo.token1,
@@ -159,17 +158,17 @@ export async function getPoolBalances(
   }
 
   const [balance0, balance1] = await Promise.all([
-    getTokenBalance(connectedAddress, config.token0.contract),
-    getTokenBalance(connectedAddress, config.token1.contract),
+    getTokenBalance(connectedAddress, config.token0.address),
+    getTokenBalance(connectedAddress, config.token1.address),
   ])
 
   return {
     token0: {
-      code: config.token0.code,
+      code: config.token0.symbol,
       amount: balance0.toString(),
     },
     token1: {
-      code: config.token1.code,
+      code: config.token1.symbol,
       amount: balance1.toString(),
     },
   }

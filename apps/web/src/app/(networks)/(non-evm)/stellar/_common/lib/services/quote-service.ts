@@ -7,8 +7,8 @@ import {
   getFees,
   getPoolDirectSDK,
 } from '~stellar/_common/lib/soroban/dex-factory-helpers'
+import type { StellarToken } from 'sushi/stellar'
 import type { PoolBasicInfo } from '~stellar/_common/lib/soroban/pool-helpers'
-import type { Token } from '~stellar/_common/lib/types/token.type'
 import { contractAddresses } from '../soroban'
 import { getRouterContractClient } from '../soroban/client'
 import type { SwapQuote } from './swap-service'
@@ -154,8 +154,8 @@ export class QuoteService {
    * Find all available pools between two tokens
    */
   async findPoolsBetween(
-    tokenA: Token,
-    tokenB: Token,
+    tokenA: StellarToken,
+    tokenB: StellarToken,
   ): Promise<PoolBasicInfo[]> {
     const pools: PoolBasicInfo[] = []
     const feeTiers = getFees()
@@ -164,8 +164,8 @@ export class QuoteService {
     for (const fee of feeTiers) {
       try {
         const pool = await getPoolDirectSDK({
-          tokenA: tokenA.contract,
-          tokenB: tokenB.contract,
+          tokenA: tokenA.address,
+          tokenB: tokenB.address,
           fee,
         })
         if (pool) {

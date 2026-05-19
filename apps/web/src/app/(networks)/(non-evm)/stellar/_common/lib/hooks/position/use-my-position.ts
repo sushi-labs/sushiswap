@@ -1,19 +1,22 @@
 import { useQueries } from '@tanstack/react-query'
 import ms from 'ms'
 import { useMemo } from 'react'
-import type { StellarContractAddress } from 'sushi/stellar'
+import type {
+  StellarAccountAddress,
+  StellarContractAddress,
+  StellarToken,
+} from 'sushi/stellar'
 import {
   type PositionInfo,
   positionService,
 } from '../../services/position-service'
 import { getPoolDirectSDK, getTokenByContract } from '../../soroban'
-import type { Token } from '../../types/token.type'
 import { useUserPositions } from './use-positions'
 
 export interface PositionSummary {
   tokenId: number
-  token0: Token
-  token1: Token
+  token0: StellarToken
+  token1: StellarToken
   liquidity: string
   principalToken0: bigint
   principalToken1: bigint
@@ -37,8 +40,8 @@ const getPositionKey = (position: PositionInfo) => {
 
 type PoolData = {
   address: StellarContractAddress
-  token0: Token
-  token1: Token
+  token0: StellarToken
+  token1: StellarToken
 }
 
 /**
@@ -50,8 +53,8 @@ export function useMyPosition({
   excludeDust = false,
   isLegacy = false,
 }: {
-  userAddress?: string
-  poolAddress?: string
+  userAddress?: StellarAccountAddress
+  poolAddress?: StellarContractAddress
   excludeDust?: boolean
   isLegacy?: boolean
 }): MyPositionData {

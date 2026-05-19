@@ -54,11 +54,11 @@ export const PoolsTable = () => {
     }
     return pools.filter((pool) => {
       const poolSearchTermsCaseInsensitive = [
-        pool.token0.code.toLowerCase(),
-        pool.token1.code.toLowerCase(),
+        pool.token0.symbol.toLowerCase(),
+        pool.token1.symbol.toLowerCase(),
         pool.address.toLowerCase(),
-        pool.token0.contract.toLowerCase(),
-        pool.token1.contract.toLowerCase(),
+        pool.token0.address.toLowerCase(),
+        pool.token1.address.toLowerCase(),
       ]
       return tokenSymbols.every((symbol) => {
         return poolSearchTermsCaseInsensitive.some((term) =>

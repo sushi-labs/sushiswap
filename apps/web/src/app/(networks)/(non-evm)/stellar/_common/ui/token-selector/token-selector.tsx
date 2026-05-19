@@ -1,7 +1,5 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import { StrKey } from '@stellar/stellar-sdk'
 import {
-  Button,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -21,19 +19,19 @@ import React, {
 } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
+import { TokenSelectorChipBar } from 'src/lib/wagmi/components/token-selector/token-lists/token-selector-chip-bar'
 import {
   type StellarContractAddress,
+  StellarChainId,
+  type StellarToken,
   isStellarContractAddress,
-  normalizeStellarAddress,
 } from 'sushi/stellar'
 import { useCommonTokens } from '~stellar/_common/lib/hooks/token/use-common-tokens'
 import { useCustomTokens } from '~stellar/_common/lib/hooks/token/use-custom-tokens'
 import { useSortedTokenList } from '~stellar/_common/lib/hooks/token/use-sorted-token-list'
 import { useTokenBalancesMap } from '~stellar/_common/lib/hooks/token/use-token-balance'
 import { useTokenWithCache } from '~stellar/_common/lib/hooks/token/use-token-with-cache'
-import type { Token } from '~stellar/_common/lib/types/token.type'
 import { useStellarWallet } from '~stellar/providers'
-import { TokenIcon } from '../General/TokenIcon'
 import { TokenSelectorImportRow } from './token-selector-import-row'
 import { TokenListItem } from './token-selector-list-item'
 
@@ -44,9 +42,13 @@ type RowCallback = (row: {
 
 interface PropType {
   id: string
-  selected: Token | undefined
-  onSelect: (token: Token) => void
+  selected: StellarToken | undefined
+  onSelect?: (token: StellarToken) => void
   children: ReactNode
+  // When provided, replaces the default common+custom token list with the
+  // caller-supplied currencies. Custom-token import flow is also disabled
+  // because it doesn't make sense against an externally curated list.
+  currencies?: Record<string, StellarToken>
 }
 
 export default function TokenSelector({
@@ -54,6 +56,7 @@ export default function TokenSelector({
   selected,
   children,
   onSelect,
+  currencies,
 }: PropType) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -70,7 +73,9 @@ export default function TokenSelector({
 
   // Merge common tokens (from StellarExpert + hardcoded) into the main token map
   const allTokens = useMemo(() => {
-    const merged = {} as Record<StellarContractAddress, Token>
+    if (currencies) return currencies
+
+    const merged = {} as Record<StellarContractAddress, StellarToken>
     if (customTokens) {
       Object.entries(customTokens).forEach(([contract, token]) => {
         merged[contract as StellarContractAddress] = token
@@ -82,7 +87,7 @@ export default function TokenSelector({
       })
     }
     return merged
-  }, [customTokens, commonTokens])
+  }, [currencies, customTokens, commonTokens])
 
   const { data: tokenBalances } = useTokenBalancesMap(
     connectedAddress,
@@ -96,16 +101,16 @@ export default function TokenSelector({
   })
 
   const handleImport = useCallback(
-    (currency: Token) => {
+    (currency: StellarToken) => {
       customTokenMutate('add', currency)
-      onSelect(currency)
+      onSelect?.(currency)
     },
     [onSelect, customTokenMutate],
   )
 
   const _onSelect = useCallback(
-    (token: Token) => {
-      onSelect(token)
+    (token: StellarToken) => {
+      onSelect?.(token)
       setOpen(false)
     },
     [onSelect],
@@ -113,19 +118,20 @@ export default function TokenSelector({
 
   const Row = useCallback<RowCallback>(
     ({ index, style }) => {
+      const token = sortedTokenList ? sortedTokenList[index] : undefined
+      if (!token) return <div style={style} />
       return (
-        <>
-          <TokenListItem
-            style={style}
-            token={sortedTokenList ? sortedTokenList[index] : ({} as Token)}
-            selected={selected?.contract === sortedTokenList?.[index]?.contract}
-            onSelect={_onSelect}
-            id={id}
-          />
-        </>
+        <TokenListItem
+          style={style}
+          token={token}
+          balance={tokenBalances?.[token.address]}
+          selected={selected?.address === token.address}
+          onSelect={_onSelect}
+          id={id}
+        />
       )
     },
-    [selected, sortedTokenList, _onSelect, id],
+    [selected, sortedTokenList, tokenBalances, _onSelect, id],
   )
 
   return (
@@ -149,13 +155,13 @@ export default function TokenSelector({
             onValueChange={setQuery}
           />
         </div>
-        <div className="flex flex-wrap gap-2">
-          {Object.values(commonTokens ?? {})
-            ?.slice(0, 10)
-            ?.map((token, idx) => (
-              <CommonTokenButton key={idx} token={token} onSelect={_onSelect} />
-            ))}
-        </div>
+        {currencies ? null : (
+          <TokenSelectorChipBar
+            chainId={StellarChainId.STELLAR}
+            onSelect={_onSelect as (currency: StellarToken) => void}
+            includeNative={false}
+          />
+        )}
         <List.Control className="relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 min-h-[128px]">
           <div
             data-state={
@@ -195,8 +201,9 @@ export default function TokenSelector({
               'data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden',
             )}
           >
-            {queryToken &&
-              !allTokens[normalizeStellarAddress(queryToken.contract)] && (
+            {!currencies &&
+              queryToken &&
+              !allTokens[queryToken.address] && (
                 <TokenSelectorImportRow
                   token={queryToken}
                   onImport={() => {
@@ -238,25 +245,3 @@ export default function TokenSelector({
   )
 }
 
-const CommonTokenButton = ({
-  token,
-  onSelect,
-}: { token: Token; onSelect: (token: Token) => void }) => {
-  return (
-    <Button
-      onClick={() => onSelect(token)}
-      key={token.contract}
-      size="sm"
-      className="flex items-center justify-between w-fit"
-      variant="secondary"
-    >
-      <div className="flex items-center gap-2 w-full ">
-        <div className="w-6 h-6">
-          <TokenIcon currency={token} width={24} height={24} />
-        </div>
-
-        <p>{token.code}</p>
-      </div>
-    </Button>
-  )
-}

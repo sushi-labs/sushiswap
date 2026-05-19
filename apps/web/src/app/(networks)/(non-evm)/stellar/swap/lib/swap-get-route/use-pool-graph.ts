@@ -63,12 +63,12 @@ const getPoolsByTokenPairsBatched = async (
         }
         const [poolData] = poolResult.result.values
         batchedPoolsInfo.push({
-          token0: poolData.token0,
-          token1: poolData.token1,
+          token0: poolData.token0 as StellarContractAddress,
+          token1: poolData.token1 as StellarContractAddress,
           tick: poolData.tick,
           sqrtPriceX96: poolData.sqrt_price_x96,
           liquidity: poolData.liquidity,
-          poolAddress: poolResult.pool,
+          poolAddress: poolResult.pool as StellarContractAddress,
           fee: poolData.fee,
         })
       }
@@ -177,9 +177,9 @@ function useBasePoolGraph() {
   // 3. Only query active/liquid pools
   const baseTokenSymbols = ['XLM', 'USDC', 'EURC', 'PYUSD']
   const baseTokens = staticTokens.filter((token) =>
-    baseTokenSymbols.includes(token.code),
+    baseTokenSymbols.includes(token.symbol),
   )
-  const baseTokenAddresses = baseTokens.map((token) => token.contract)
+  const baseTokenAddresses = baseTokens.map((token) => token.address)
 
   return useQuery<PoolGraphData>({
     queryKey: [

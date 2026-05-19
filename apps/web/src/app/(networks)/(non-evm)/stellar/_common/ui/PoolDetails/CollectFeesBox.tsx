@@ -130,11 +130,11 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
 
         let summary = 'Fees collected successfully'
         if (totalCollected.token0 > 0n && totalCollected.token1 > 0n) {
-          summary = `Collected ${token0Amount} ${pool.token0.code} and ${token1Amount} ${pool.token1.code}`
+          summary = `Collected ${token0Amount} ${pool.token0.symbol} and ${token1Amount} ${pool.token1.symbol}`
         } else if (totalCollected.token0 > 0n) {
-          summary = `Collected ${token0Amount} ${pool.token0.code}`
+          summary = `Collected ${token0Amount} ${pool.token0.symbol}`
         } else if (totalCollected.token1 > 0n) {
-          summary = `Collected ${token1Amount} ${pool.token1.code}`
+          summary = `Collected ${token1Amount} ${pool.token1.symbol}`
         }
 
         const timestamp = Date.now()

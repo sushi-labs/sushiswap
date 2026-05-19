@@ -5,7 +5,10 @@ import Image from 'next/image'
 import * as React from 'react'
 
 import classNames from 'classnames'
-import { cloudinaryLogoImageLoader } from '../cloudinary'
+import {
+  cloudinaryLogoFetchLoader,
+  cloudinaryLogoImageLoader,
+} from '../cloudinary'
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
@@ -33,20 +36,24 @@ const AvatarImage = React.forwardRef<
 >(({ className, width, src }, ref) => {
   const _width = Number(width) ?? 40
 
-  const useCloudinary =
+  const isAbsoluteUrl = /^https?:\/\//.test(src)
+  const isCloudinaryUploadPath =
     src.startsWith('native-currency') || src.startsWith('tokens')
+  const loader = isAbsoluteUrl
+    ? cloudinaryLogoFetchLoader
+    : isCloudinaryUploadPath
+      ? cloudinaryLogoImageLoader
+      : undefined
 
   return (
     <AvatarPrimitive.Image
-      src={
-        useCloudinary ? cloudinaryLogoImageLoader({ src, width: _width }) : src
-      }
+      src={loader ? loader({ src, width: _width }) : src}
       asChild
       ref={ref}
       className={classNames('aspect-square h-full w-full', className)}
     >
       <Image
-        loader={useCloudinary ? cloudinaryLogoImageLoader : undefined}
+        loader={loader}
         alt="avatar"
         src={src}
         width={_width}

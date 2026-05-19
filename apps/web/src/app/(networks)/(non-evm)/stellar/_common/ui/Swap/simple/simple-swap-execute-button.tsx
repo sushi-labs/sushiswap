@@ -9,6 +9,7 @@ import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
+import type { StellarAccountAddress } from 'sushi/stellar'
 import {
   useExecuteMultiHopSwap,
   useExecuteSwap,
@@ -47,9 +48,9 @@ export const SimpleSwapExecuteButton = () => {
     useNeedsTrustline(
       token1
         ? {
-            code: token1.code,
-            contract: token1.contract,
-            issuer: token1.issuer,
+            code: token1.symbol,
+            contract: token1.address,
+            issuer: token1.issuer ?? '',
           }
         : null,
     )
@@ -254,7 +255,7 @@ export const SimpleSwapExecuteButton = () => {
         <Checker.Connect namespace="stellar" fullWidth size="xl">
           {needsToken1Trustline && token1 && token1ResolvedIssuer ? (
             <CreateTrustlineButton
-              tokens={[{ code: token1.code, issuer: token1ResolvedIssuer }]}
+              tokens={[{ code: token1.symbol, issuer: token1ResolvedIssuer }]}
               size="xl"
               fullWidth
             />

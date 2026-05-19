@@ -41,11 +41,11 @@ export const PositionCollectFeesCell = ({
 
       let summary = 'Fees collected successfully'
       if (result.amount0 > 0n && result.amount1 > 0n) {
-        summary = `Collected ${token0Amount} ${token0.code} and ${token1Amount} ${token1.code}`
+        summary = `Collected ${token0Amount} ${token0.symbol} and ${token1Amount} ${token1.symbol}`
       } else if (result.amount0 > 0n) {
-        summary = `Collected ${token0Amount} ${token0.code}`
+        summary = `Collected ${token0Amount} ${token0.symbol}`
       } else if (result.amount1 > 0n) {
-        summary = `Collected ${token1Amount} ${token1.code}`
+        summary = `Collected ${token1Amount} ${token1.symbol}`
       }
 
       const timestamp = Date.now()

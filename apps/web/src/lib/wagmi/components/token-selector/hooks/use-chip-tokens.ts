@@ -1,8 +1,14 @@
 import { useMemo } from 'react'
 import { EVM_DEFAULT_BASES, type EvmChainId, isEvmChainId } from 'sushi/evm'
+import {
+  STELLAR_DEFAULT_BASES,
+  type StellarChainId,
+  isStellarChainId,
+} from 'sushi/stellar'
 import { SVM_DEFAULT_BASES, type SvmChainId, isSvmChainId } from 'sushi/svm'
+import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
 
-interface UseChipTokens<TChainId extends EvmChainId | SvmChainId> {
+interface UseChipTokens<TChainId extends BalanceChainId> {
   chainId: TChainId
   includeNative?: boolean
   showPinnedTokens?: boolean
@@ -10,7 +16,7 @@ interface UseChipTokens<TChainId extends EvmChainId | SvmChainId> {
 
 // TODO: Add pinned tokens
 
-export function useChipTokens<TChainId extends EvmChainId | SvmChainId>({
+export function useChipTokens<TChainId extends BalanceChainId>({
   chainId,
   includeNative = true,
   // showPinnedTokens = true,
@@ -21,6 +27,9 @@ export function useChipTokens<TChainId extends EvmChainId | SvmChainId>({
     }
     if (isSvmChainId(chainId)) {
       return SVM_DEFAULT_BASES[chainId]
+    }
+    if (isStellarChainId(chainId)) {
+      return STELLAR_DEFAULT_BASES[chainId]
     }
 
     throw new Error('Unsupported chainId')

@@ -10,13 +10,13 @@ import {
   List,
 } from '@sushiswap/ui'
 import React, { type FC, useCallback, useState } from 'react'
-import type { Token } from '~stellar/_common/lib/types/token.type'
+import type { StellarToken } from 'sushi/stellar'
 import { formatAddress } from '~stellar/_common/lib/utils/format'
 import { getStellarContractLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
 import { TokenIcon } from '../General/TokenIcon'
 
 interface TokenSelectorImportRow {
-  token: Token
+  token: StellarToken
   onImport(): void
 }
 
@@ -44,7 +44,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
             </div>
             <div className="flex flex-col items-start">
               <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 dark:group-hover:text-white">
-                {token.code}
+                {token.symbol}
               </span>
               <span className="max-w-[200px] truncate text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100 text-ellipsis overflow-clip">
                 {token.name}
@@ -74,15 +74,15 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
                 <TokenIcon currency={token} width={40} height={40} />
                 <div className="flex flex-col gap-1">
                   <span className="truncate font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 group-hover:dark:text-white">
-                    {token.code}
+                    {token.symbol}
                   </span>
                   <a
                     target="_blank"
-                    href={getStellarContractLink(token.contract)}
+                    href={getStellarContractLink(token.address)}
                     className="flex gap-1 text-sm text-blue font-medium"
                     rel="noreferrer"
                   >
-                    {formatAddress(token.contract)}
+                    {formatAddress(token.address)}
                   </a>
                 </div>
               </div>

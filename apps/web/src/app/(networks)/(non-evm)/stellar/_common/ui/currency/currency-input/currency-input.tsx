@@ -1,8 +1,8 @@
 import { Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
 import React, { useCallback, useEffect, useState } from 'react'
+import type { StellarToken } from 'sushi/stellar'
 import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
 import { useTokenBalance } from '~stellar/_common/lib/hooks/token/use-token-balance'
-import type { Token } from '~stellar/_common/lib/types/token.type'
 import TokenSelector from '~stellar/_common/ui/token-selector/token-selector'
 
 import { useStellarWallet } from '~stellar/providers'
@@ -13,10 +13,10 @@ import { CurrencyInputPricePanel } from './currency-input-price-panel'
 type CurrencyInput = {
   id: string
   type: 'INPUT' | 'OUTPUT'
-  token: Token
+  token: StellarToken
   value: string
   onChange?: (value: string) => void
-  onSelect?: (token: Token) => void
+  onSelect?: (token: StellarToken) => void
   disabled?: boolean
   className?: string
   fetching?: boolean
@@ -42,7 +42,7 @@ export function CurrencyInput({
 
   const { data: balance, isLoading: isBalanceLoading } = useTokenBalance(
     connectedAddress,
-    token.contract,
+    token.address,
   )
 
   const onUserInput = useCallback(
@@ -136,7 +136,7 @@ export function CurrencyInput({
                   <span className="w-[28px] h-[28px] mr-0.5">
                     <TokenIcon currency={token} height={28} width={28} />
                   </span>
-                  {token.code}
+                  {token.symbol}
                   <SelectIcon />
                 </>
               ) : (
@@ -156,7 +156,7 @@ export function CurrencyInput({
                 <span className="w-[28px] h-[28px] mr-0.5">
                   <TokenIcon currency={token} height={28} width={28} />
                 </span>
-                {token.code}
+                {token.symbol}
               </>
             ) : (
               <span className="text-gray-400 dark:text-slate-500">
