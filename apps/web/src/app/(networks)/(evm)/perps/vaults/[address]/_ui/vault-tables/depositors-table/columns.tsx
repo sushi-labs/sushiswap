@@ -14,13 +14,19 @@ export const DEPOSITOR_COLUMN: ColumnDef<DepositorType, unknown> = {
   cell: (props) => {
     const depositor = props.row.original.user
     const address = useAccount('evm')
+
+    const isLeader = depositor === 'Leader'
+    const isYou = address?.toLowerCase() === depositor.toLowerCase()
+
+    const displayDepositor = isLeader
+      ? depositor
+      : isYou
+        ? 'You'
+        : truncateString(depositor, 10, 'middle')
+
     return (
       <div className={classNames('font-medium flex items-center gap-1')}>
-        {depositor !== 'Leader'
-          ? address?.toLowerCase() === depositor.toLowerCase()
-            ? 'You'
-            : truncateString(depositor, 10, 'middle')
-          : depositor}
+        {displayDepositor}
       </div>
     )
   },
