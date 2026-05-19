@@ -21,10 +21,10 @@ type BalancePanel<TChainId extends BalanceChainId> = Pick<
   type: 'INPUT' | 'OUTPUT'
 }
 
-const MIN_NATIVE_CURRENCY_FOR_GAS = 10n ** 16n // .01 ETH
-// Stellar uses 7 decimals; reserve 1 XLM to cover the base account reserve
-// and ample buffer for txn fees + new trustlines.
-const MIN_XLM_FOR_RESERVE = 10n ** 7n // 1 XLM
+const MIN_NATIVE_CURRENCY_FOR_GAS = 2n * 10n ** 15n // .002 ETH
+// Stellar uses 7 decimals; reserve 2 XLM to cover the base account reserve
+// (1 XLM) plus headroom for a couple of trustlines and txn fees.
+const MIN_XLM_FOR_RESERVE = 2n * 10n ** 7n // 2 XLM
 
 export function BalancePanel<TChainId extends BalanceChainId>({
   id,
