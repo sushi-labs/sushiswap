@@ -1,15 +1,15 @@
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import { Badge, classNames } from '@sushiswap/ui'
 import React, { type CSSProperties } from 'react'
+import type { Amount } from 'sushi'
 import type { StellarToken } from 'sushi/stellar'
-import { formatUnits } from 'viem'
 import { TokenIcon } from '../General/TokenIcon'
 
 type TokenListItem = {
   id: string
   style: CSSProperties
   token: StellarToken<{ icon?: string; domain?: string }>
-  balance?: string
+  balance?: Amount<StellarToken>
   selected: boolean
   onSelect: (token: StellarToken) => void
 }
@@ -21,9 +21,7 @@ export function TokenListItem({
   selected,
   onSelect,
 }: TokenListItem) {
-  const tokenBalance = Number.parseFloat(
-    formatUnits(BigInt(balance ?? 0n), token.decimals),
-  )
+  const tokenBalance = balance ? Number(balance.toString()) : 0
   return (
     <div className="py-0.5 h-[64px]" style={style}>
       <button

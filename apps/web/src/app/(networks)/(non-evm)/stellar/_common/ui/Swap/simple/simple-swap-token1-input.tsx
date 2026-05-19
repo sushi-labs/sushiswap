@@ -4,7 +4,7 @@ import {
   useSimpleSwapActions,
   useSimpleSwapState,
 } from '~stellar/_common/ui/Swap/simple/simple-swap-provider/simple-swap-provider'
-import { CurrencyInput } from '~stellar/_common/ui/currency/currency-input/currency-input'
+import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/Currency'
 
 export const SimpleSwapToken1Input = () => {
   const { token1, outputAmount, isPriceFetching } = useSimpleSwapState()
@@ -16,9 +16,10 @@ export const SimpleSwapToken1Input = () => {
 
   return (
     <CurrencyInput
+      chainId={token1.chainId}
       id="swap-to"
       onSelect={setToken1}
-      token={token1}
+      currency={token1}
       fetching={isPriceFetching}
       disabled={true}
       type="OUTPUT"

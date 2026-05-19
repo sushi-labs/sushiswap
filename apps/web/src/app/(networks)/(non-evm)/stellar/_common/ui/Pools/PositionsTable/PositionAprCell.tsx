@@ -25,8 +25,8 @@ export const PositionAprCell = ({ data }: { data: IPositionRowData }) => {
     pairAddress: pool,
     token0,
     token1,
-    reserve0: principalToken0,
-    reserve1: principalToken1,
+    reserve0: principalToken0.amount,
+    reserve1: principalToken1.amount,
   })
   const {
     data: poolInfo,
@@ -39,8 +39,8 @@ export const PositionAprCell = ({ data }: { data: IPositionRowData }) => {
     isPending: isPendingPositionActiveLiquidityOwned,
   } = usePositionActiveLiquidity({
     poolAddress: pool,
-    scaledAmount0: principalToken0,
-    scaledAmount1: principalToken1,
+    scaledAmount0: principalToken0.amount,
+    scaledAmount1: principalToken1.amount,
     tickLower,
     tickUpper,
   })

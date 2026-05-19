@@ -49,8 +49,8 @@ export function useMyUnmigratedLegacyPositions({
       })
       return (
         BigInt(position.liquidity || '0') >= MINIMUM_DUST_LIQUIDITY ||
-        position.feesToken0 >= MINIMUM_DUST_LIQUIDITY ||
-        position.feesToken1 >= MINIMUM_DUST_LIQUIDITY ||
+        position.feesToken0.amount >= MINIMUM_DUST_LIQUIDITY ||
+        position.feesToken1.amount >= MINIMUM_DUST_LIQUIDITY ||
         (isPendingMigration && !isMigrated)
       )
     })

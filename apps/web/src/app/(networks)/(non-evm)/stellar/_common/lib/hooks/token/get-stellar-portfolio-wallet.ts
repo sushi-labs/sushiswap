@@ -1,16 +1,15 @@
-import { getChainById } from 'sushi'
+import { Amount, getChainById } from 'sushi'
 import {
   type StellarAccountAddress,
   StellarChainId,
   type StellarToken,
 } from 'sushi/stellar'
-import { formatUnits } from 'viem'
 import { getTokenBalance } from '../../soroban'
 import { fetchCommonTokensQueryFn } from './use-common-tokens'
 
 type PortfolioEntry = {
   token: StellarToken<{ icon?: string }>
-  balance: bigint
+  balance: Amount<StellarToken<{ icon?: string }>>
 }
 
 export const getStellarPortfolioWallet = async (
@@ -23,7 +22,7 @@ export const getStellarPortfolioWallet = async (
     try {
       const balance = await getTokenBalance(address, token.address)
       if (balance && balance > 0n) {
-        tokensWithBalances.push({ token, balance })
+        tokensWithBalances.push({ token, balance: new Amount(token, balance) })
       }
     } catch (error) {
       console.error(
@@ -54,8 +53,7 @@ const transformToPortfolioWallet = (entries: PortfolioEntry[]) => {
       isCore: false,
       isWallet: false,
       timeAt: Date.now(),
-      amount: Number.parseFloat(formatUnits(balance, token.decimals)),
-      rawAmount: Number(balance),
+      balance,
       amountUSD: 0,
     }
   })

@@ -19,6 +19,7 @@ import React, {
 } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
+import { useAmountBalances } from 'src/app/(networks)/(evm)/_common/ui/balance-provider/use-balances'
 import { TokenSelectorChipBar } from 'src/lib/wagmi/components/token-selector/token-lists/token-selector-chip-bar'
 import {
   type StellarContractAddress,
@@ -29,9 +30,7 @@ import {
 import { useCommonTokens } from '~stellar/_common/lib/hooks/token/use-common-tokens'
 import { useCustomTokens } from '~stellar/_common/lib/hooks/token/use-custom-tokens'
 import { useSortedTokenList } from '~stellar/_common/lib/hooks/token/use-sorted-token-list'
-import { useTokenBalancesMap } from '~stellar/_common/lib/hooks/token/use-token-balance'
 import { useTokenWithCache } from '~stellar/_common/lib/hooks/token/use-token-with-cache'
-import { useStellarWallet } from '~stellar/providers'
 import { TokenSelectorImportRow } from './token-selector-import-row'
 import { TokenListItem } from './token-selector-list-item'
 
@@ -61,7 +60,6 @@ export default function TokenSelector({
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
 
-  const { connectedAddress } = useStellarWallet()
   const { data: commonTokens } = useCommonTokens()
   const { data: customTokens, mutate: customTokenMutate } = useCustomTokens()
   const { data: queryToken, isLoading: isLoadingQueryToken } =
@@ -89,9 +87,11 @@ export default function TokenSelector({
     return merged
   }, [currencies, customTokens, commonTokens])
 
-  const { data: tokenBalances } = useTokenBalancesMap(
-    connectedAddress,
-    Object.keys(allTokens) as StellarContractAddress[],
+  const tokenList = useMemo(() => Object.values(allTokens), [allTokens])
+
+  const { data: tokenBalances } = useAmountBalances(
+    StellarChainId.STELLAR,
+    tokenList,
   )
 
   const { data: sortedTokenList } = useSortedTokenList({
@@ -124,7 +124,7 @@ export default function TokenSelector({
         <TokenListItem
           style={style}
           token={token}
-          balance={tokenBalances?.[token.address]}
+          balance={tokenBalances?.get(token.id)}
           selected={selected?.address === token.address}
           onSelect={_onSelect}
           id={id}

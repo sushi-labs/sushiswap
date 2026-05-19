@@ -9,8 +9,8 @@ export const PositionSizeCell = ({ data }: { data: IPositionRowData }) => {
     pairAddress: pool,
     token0: data.token0,
     token1: data.token1,
-    reserve0: data.principalToken0,
-    reserve1: data.principalToken1,
+    reserve0: data.principalToken0.amount,
+    reserve1: data.principalToken1.amount,
   })
 
   if (isLoading || ownership === undefined) {

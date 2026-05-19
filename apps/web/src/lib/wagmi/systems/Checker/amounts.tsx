@@ -3,12 +3,12 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { type Amount, type IDFor, ZERO } from 'sushi'
+import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
 import type { EvmChainId } from 'sushi/evm'
-import type { SvmChainId } from 'sushi/svm'
 import { useAmountBalances } from '~evm/_common/ui/balance-provider/use-balances'
 
 type AmountsProps<
-  TChainId extends EvmChainId | SvmChainId = EvmChainId | SvmChainId,
+  TChainId extends BalanceChainId = EvmChainId,
 > = ButtonProps & {
   chainId: TChainId | undefined
 } & (
@@ -22,7 +22,7 @@ type AmountsProps<
       }
   )
 
-function Amounts<TChainId extends EvmChainId | SvmChainId>({
+ function Amounts<TChainId extends BalanceChainId>({
   type: _type,
   amounts: _amounts,
   amount,

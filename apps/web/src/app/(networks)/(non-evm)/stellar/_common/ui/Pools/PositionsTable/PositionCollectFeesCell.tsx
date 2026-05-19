@@ -16,7 +16,7 @@ export const PositionCollectFeesCell = ({
     useStellarWallet()
   const collectFeesMutation = useCollectFees()
 
-  const hasFees = feesToken0 > 0n || feesToken1 > 0n
+  const hasFees = feesToken0.gt(0n) || feesToken1.gt(0n)
 
   // Handle collect fees
   const handleCollectFees = async () => {

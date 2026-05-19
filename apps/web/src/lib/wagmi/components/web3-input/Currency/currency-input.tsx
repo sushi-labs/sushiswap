@@ -14,14 +14,11 @@ import { Currency } from '@sushiswap/ui'
 import { SkeletonBox } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
+import { useAccount } from 'src/lib/wallet'
 import { Amount, type Percent, getChainById } from 'sushi'
-import type { EvmChainId } from 'sushi/evm'
-import { isStellarChainId } from 'sushi/stellar'
-import type { SvmChainId } from 'sushi/svm'
-import { useConnection } from 'wagmi'
 import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
-import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
+import { useCurrencyPrice } from '~evm/_common/ui/price-provider/price-provider/use-currency-price'
 import { TokenSelector } from '../../token-selector/token-selector'
 import { BalancePanel } from './balance-panel'
 import { PricePanel } from './price-panel'
@@ -88,22 +85,14 @@ function CurrencyInput<TChainId extends BalanceChainId>({
   const isMounted = useIsMounted()
 
   const [localValue, setLocalValue] = useState<string>('')
-  const { address } = useConnection()
+  const address = useAccount(chainId)
   const [pending, startTransition] = useTransition()
 
   const { data: balance, isLoading: isBalanceLoading } =
     useAmountBalance(currency)
 
-  // Stellar isn't covered by the EVM/SVM price provider; pass undefined to
-  // make usePrice a no-op for Stellar currencies.
-  const priceCurrency =
-    currency && isStellarChainId(currency.chainId)
-      ? undefined
-      : (currency as CurrencyFor<EvmChainId | SvmChainId> | undefined)
-
-  const { data: price, isLoading: isPriceLoading } = usePrice({
-    chainId: priceCurrency?.chainId,
-    address: priceCurrency?.wrap().address,
+  const { data: price, isLoading: isPriceLoading } = useCurrencyPrice({
+    currency,
     enabled: !hidePricing,
   })
 

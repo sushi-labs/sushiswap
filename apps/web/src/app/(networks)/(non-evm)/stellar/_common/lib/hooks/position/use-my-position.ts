@@ -1,6 +1,7 @@
 import { useQueries } from '@tanstack/react-query'
 import ms from 'ms'
 import { useMemo } from 'react'
+import { Amount } from 'sushi'
 import type {
   StellarAccountAddress,
   StellarContractAddress,
@@ -18,10 +19,10 @@ export interface PositionSummary {
   token0: StellarToken
   token1: StellarToken
   liquidity: string
-  principalToken0: bigint
-  principalToken1: bigint
-  feesToken0: bigint
-  feesToken1: bigint
+  principalToken0: Amount<StellarToken>
+  principalToken1: Amount<StellarToken>
+  feesToken0: Amount<StellarToken>
+  feesToken1: Amount<StellarToken>
   pool: StellarContractAddress
   tickLower: number
   tickUpper: number
@@ -231,10 +232,10 @@ export function useMyPosition({
       positionSummaries.push({
         tokenId: position.tokenId,
         liquidity: position.liquidity.toString(),
-        principalToken0: principalData.amount0,
-        principalToken1: principalData.amount1,
-        feesToken0: position.tokensOwed0,
-        feesToken1: position.tokensOwed1,
+        principalToken0: new Amount(poolData.token0, principalData.amount0),
+        principalToken1: new Amount(poolData.token1, principalData.amount1),
+        feesToken0: new Amount(poolData.token0, position.tokensOwed0),
+        feesToken1: new Amount(poolData.token1, position.tokensOwed1),
         token0: poolData.token0,
         token1: poolData.token1,
         pool: poolData.address,

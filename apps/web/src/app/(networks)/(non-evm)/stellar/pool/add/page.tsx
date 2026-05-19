@@ -3,6 +3,7 @@
 import { Button, FormSection, SelectIcon, TextField } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
+import { useAmountBalance } from 'src/app/(networks)/(evm)/_common/ui/balance-provider/use-balance'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
 import type {
@@ -11,11 +12,7 @@ import type {
   StellarToken,
 } from 'sushi/stellar'
 import { formatUnits } from 'viem'
-import {
-  useGetPool,
-  usePoolInfo,
-  useTokenBalance,
-} from '~stellar/_common/lib/hooks'
+import { useGetPool, usePoolInfo } from '~stellar/_common/lib/hooks'
 import { useCreateAndInitializePool } from '~stellar/_common/lib/hooks/factory/use-create-and-initialize-pool'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/liquidity/use-add-liquidity'
 import { useCalculatePairedAmount } from '~stellar/_common/lib/hooks/pool/use-calculate-paired-amount'
@@ -84,14 +81,8 @@ export default function AddPoolPage() {
     ? [token1, token0]
     : [token0, token1]
 
-  const { data: orderedToken0Balance } = useTokenBalance(
-    connectedAddress,
-    orderedToken0?.address || null,
-  )
-  const { data: orderedToken1Balance } = useTokenBalance(
-    connectedAddress,
-    orderedToken1?.address || null,
-  )
+  const { data: orderedToken0Balance } = useAmountBalance(orderedToken0)
+  const { data: orderedToken1Balance } = useAmountBalance(orderedToken1)
 
   // Check trustlines for both pool tokens
   const {
@@ -220,12 +211,12 @@ export default function AddPoolPage() {
   const maxOrderedToken0Amount =
     existingPoolAddress && poolInitialized === true
       ? BigInt(maxPairedAmountData?.maxToken0Amount ?? '0')
-      : (orderedToken0Balance ?? 0n)
+      : (orderedToken0Balance?.amount ?? 0n)
 
   const maxOrderedToken1Amount =
     existingPoolAddress && poolInitialized === true
       ? BigInt(maxPairedAmountData?.maxToken1Amount ?? '0')
-      : (orderedToken1Balance ?? 0n)
+      : (orderedToken1Balance?.amount ?? 0n)
 
   const pairedAmountStatus = pairedAmountData?.status || 'idle'
 
@@ -476,13 +467,11 @@ export default function AddPoolPage() {
                   {orderedToken0.symbol}
                 </span>
               )}
-              {orderedToken0 &&
-                orderedToken0Balance !== null &&
-                orderedToken0Balance !== undefined && (
-                  <span className="text-xs text-muted-foreground">
-                    {formatUnits(orderedToken0Balance, orderedToken0.decimals)}
-                  </span>
-                )}
+              {orderedToken0Balance !== undefined && (
+                <span className="text-xs text-muted-foreground">
+                  {orderedToken0Balance.toString()}
+                </span>
+              )}
             </div>
             <div className="flex flex-row gap-2">
               <TextField
@@ -561,16 +550,11 @@ export default function AddPoolPage() {
                     {orderedToken1.symbol}
                   </span>
                 )}
-                {orderedToken1 &&
-                  orderedToken1Balance !== null &&
-                  orderedToken1Balance !== undefined && (
-                    <span className="text-xs text-muted-foreground">
-                      {formatUnits(
-                        orderedToken1Balance,
-                        orderedToken1.decimals,
-                      )}
-                    </span>
-                  )}
+                {orderedToken1Balance !== undefined && (
+                  <span className="text-xs text-muted-foreground">
+                    {orderedToken1Balance.toString()}
+                  </span>
+                )}
               </div>
               <div className="flex flex-row gap-2">
                 <TextField

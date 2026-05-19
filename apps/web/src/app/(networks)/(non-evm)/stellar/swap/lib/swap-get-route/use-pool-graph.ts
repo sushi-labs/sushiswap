@@ -33,11 +33,6 @@ interface PoolGraphData {
   tokenGraph: Map<StellarContractAddress, StellarContractAddress[]>
 }
 
-interface UsePoolGraphParams {
-  /** Additional token addresses to include in the graph (e.g., swap input/output tokens) */
-  additionalTokens?: StellarContractAddress[]
-}
-
 const getPoolsByTokenPairsBatched = async (
   params: GetPoolsByTokenPairsBatchedParams,
 ): Promise<PoolData[]> => {
@@ -169,7 +164,7 @@ function addVertexToGraph(
 /**
  * Hook to get the base pool graph of hard-coded static tokens (cached, long-lived)
  */
-function useBasePoolGraph() {
+function useBasePoolGraph(enabled = true) {
   // For performance, we'll query a subset of known token pairs
   // In production, you'd want to:
   // 1. Query all pools from the factory
@@ -253,6 +248,7 @@ function useBasePoolGraph() {
         }
       }
     },
+    enabled,
     staleTime: ms('5m'),
     gcTime: ms('10m'),
     retry: 3, // Retry up to 3 times on RPC failures
@@ -350,6 +346,12 @@ async function augmentPoolGraph({
   return { vertices, tokenGraph }
 }
 
+interface UsePoolGraphParams {
+  /** Additional token addresses to include in the graph (e.g., swap input/output tokens) */
+  additionalTokens?: StellarContractAddress[]
+  enabled?: boolean
+}
+
 /**
  * Build a graph of available pools for routing
  *
@@ -363,13 +365,14 @@ async function augmentPoolGraph({
  */
 export function usePoolGraph({
   additionalTokens = [],
+  enabled = true,
 }: UsePoolGraphParams = {}) {
   const {
     data: baseGraph,
     isPending: isPendingBase,
     isError: isErrorBase,
     error: baseGraphError,
-  } = useBasePoolGraph()
+  } = useBasePoolGraph(enabled)
 
   // Filter additional tokens to only those not already in base
   const newTokens = useMemo(() => {
@@ -385,7 +388,7 @@ export function usePoolGraph({
   }, [baseGraph, additionalTokens])
 
   // Augment the base graph with additional tokens (only if needed)
-  const isAugmentEnabled = Boolean(baseGraph) && newTokens.length > 0
+  const isAugmentEnabled = enabled && Boolean(baseGraph) && newTokens.length > 0
   const augmentedQuery = useQuery({
     queryKey: [
       'stellar',
@@ -417,7 +420,11 @@ export function usePoolGraph({
   })
 
   // Return base graph if no additional tokens, otherwise return augmented
-  const data = newTokens.length === 0 ? baseGraph : augmentedQuery.data
+  const data = enabled
+    ? newTokens.length === 0
+      ? baseGraph
+      : augmentedQuery.data
+    : undefined
   const isPending =
     isPendingBase || (isAugmentEnabled && augmentedQuery.isPending)
 

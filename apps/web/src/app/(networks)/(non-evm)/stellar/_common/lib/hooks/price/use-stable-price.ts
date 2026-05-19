@@ -1,5 +1,6 @@
 import { useQueries } from '@tanstack/react-query'
 import ms from 'ms'
+import { useMemo } from 'react'
 import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
 import { formatUnits } from 'viem'
 import { getBestRoute } from '~stellar/swap/lib/hooks/use-best-route'
@@ -8,18 +9,26 @@ import { getStableTokens } from '../../soroban'
 
 export const useStablePrice = ({
   token,
-}: { token: StellarToken | undefined }) => {
+  enabled = true,
+}: {
+  token: StellarToken | undefined
+  enabled?: boolean
+}) => {
   // Build additional tokens list from swap input/output
   // This ensures the pool graph includes routes for the selected tokens
   const stableTokens = getStableTokens()
-  const additionalTokens = [
-    token?.address,
-    ...stableTokens.map((t) => t.address),
-  ].filter((t): t is StellarContractAddress => !!t)
+  const additionalTokens = useMemo(
+    () =>
+      [token?.address, ...stableTokens.map((t) => t.address)].filter(
+        (t): t is StellarContractAddress => !!t,
+      ),
+    [stableTokens, token?.address],
+  )
 
   // Get the pool graph, augmented with input/output tokens
   const { data: poolGraphData } = usePoolGraph({
     additionalTokens,
+    enabled,
   })
 
   const stableTokenPriceQueries = useQueries({
@@ -47,7 +56,7 @@ export const useStablePrice = ({
           )
           return tokenPrice
         },
-        enabled: Boolean(token && poolGraphData),
+        enabled: Boolean(enabled && token && poolGraphData),
         refetchOnMount: false,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
