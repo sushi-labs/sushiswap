@@ -112,6 +112,7 @@ export const AnyTokenDeposit = ({
   const { data: tradeQuote, isLoading: isLoadingTradeQuote } = useEvmTradeQuote(
     !token?.currency ? undefined : tradeArgs,
   )
+
   const { data: tradeData, isLoading: isLoadingTrade } = useEvmTrade({
     ...tradeArgs,
     enabled: Boolean(
@@ -221,7 +222,6 @@ export const AnyTokenDeposit = ({
         variant: 'perps',
       })
       const receipt = await promise
-      console.log(receipt)
       if (receipt.status === 'success') {
         refetchBalances(depositOption.chainId)
         setStep(1)
@@ -241,13 +241,24 @@ export const AnyTokenDeposit = ({
     depositOption.chainId,
   ])
 
+  const transferUSDCAmount = useMemo(() => {
+    if (!tradeRef.current?.amountOut || step === 0) return undefined
+    const feeAmount = tradeRef.current.fee?.replace('$', '')
+    const fee = Amount.fromHuman(
+      tradeRef.current.amountOut.currency,
+      feeAmount || '0',
+    ).addHuman('0.01') // add a small buffer to the fee
+    return tradeRef.current.amountOut.sub(fee)
+  }, [step])
+
   const depositArgs = useMemo(() => {
-    if (!tradeRef.current?.minAmountOut || step === 0) return undefined
+    if (!tradeRef.current?.amountOut || step === 0 || !transferUSDCAmount)
+      return undefined
     return getUSDCArgs({
       chainId: depositOption.chainId,
-      amount: tradeRef.current.minAmountOut.amount,
+      amount: transferUSDCAmount?.amount,
     })
-  }, [depositOption.chainId, step])
+  }, [depositOption.chainId, step, transferUSDCAmount])
 
   const { data: sim } = useSimulateContract({
     abi: depositArgs?.abi,
@@ -261,14 +272,15 @@ export const AnyTokenDeposit = ({
   })
 
   const transferUsdc = useCallback(async () => {
-    if (!sim?.request || !tradeRef.current?.minAmountOut) return
+    if (!sim?.request || !tradeRef.current?.amountOut) return
     try {
       const hash = await writeContractAsync(sim.request)
       const promise = client.waitForTransactionReceipt({
         hash,
       })
       const ts = new Date().getTime()
-      const usdc = tradeRef.current?.minAmountOut.currency
+      const usdc = tradeRef.current?.amountOut.currency
+
       void createToast({
         account: address,
         type: 'send',
@@ -276,9 +288,9 @@ export const AnyTokenDeposit = ({
         txHash: hash,
         promise,
         summary: {
-          pending: `Depositing ${tradeRef.current.minAmountOut?.toSignificant(6)} ${usdc.symbol}`,
-          completed: `Deposited ${tradeRef.current.minAmountOut?.toSignificant(6)} ${usdc.symbol}. Balances will update shortly.`,
-          failed: `Something went wrong depositing ${tradeRef.current.minAmountOut?.toSignificant(6)} ${
+          pending: `Depositing ${transferUSDCAmount?.toSignificant(6)} ${usdc.symbol}`,
+          completed: `Deposited ${transferUSDCAmount?.toSignificant(6)} ${usdc.symbol}. Balances will update shortly.`,
+          failed: `Something went wrong depositing ${transferUSDCAmount?.toSignificant(6)} ${
             usdc.symbol
           }`,
         },
@@ -305,6 +317,7 @@ export const AnyTokenDeposit = ({
     client,
     address,
     setOpen,
+    transferUSDCAmount,
   ])
 
   return (
@@ -530,10 +543,6 @@ export const AnyTokenDeposit = ({
           // </Checker.ApproveERC20>
         )}
       </PerpsChecker.Legal>
-      <p className="text-xs text-perps-muted-50 text-center italic">
-        USDC received greater than the quoted minimum received amount will
-        remain as USDC in your wallet.
-      </p>
     </div>
   )
 }
