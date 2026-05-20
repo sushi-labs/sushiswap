@@ -22,7 +22,7 @@ export const useActiveAssetData = ({
   useEffect(() => {
     if (!address) return
     if (!assetString) return
-    if (assetString.startsWith('@')) return
+    if (assetString.startsWith('@') || assetString === 'PURR/USDC') return
     let unsubscribe: undefined | (() => Promise<void>) = undefined
     ;(async () => {
       const sub = await activeAssetData(

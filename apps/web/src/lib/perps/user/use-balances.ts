@@ -254,9 +254,14 @@ export const useBalances = () => {
 
 export type BalanceItemType = ReturnType<typeof useBalances>['data'][number]
 
-export const useBalance = ({ assetString }: { assetString: string }) => {
+export const useBalance = ({
+  assetString,
+  coin,
+}: { assetString: string; coin?: string }) => {
   const { data: balances } = useBalances()
   return useMemo(() => {
-    return balances?.find((b) => b.assetName === assetString)
-  }, [balances, assetString])
+    return balances?.find(
+      (b) => b.assetName === assetString && (!coin || b.coin === coin),
+    )
+  }, [balances, assetString, coin])
 }

@@ -82,7 +82,7 @@ export const useActiveAsset = ({ assetString }: { assetString: string }) => {
 
   useEffect(() => {
     let unsubscribe: undefined | (() => Promise<void>) = undefined
-    if (assetString.includes('@')) {
+    if (assetString.includes('@') || assetString === 'PURR/USDC') {
       //ex: @1, @2
       //spot
       ;(async () => {

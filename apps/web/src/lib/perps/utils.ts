@@ -83,6 +83,9 @@ export const formatSize = (price: string | number, decimals: number) => {
 }
 
 export const getPerpsDexAndCoin = (coinString: string) => {
+  if (coinString === 'PURR/USDC') {
+    return { perpsDex: null, coin: 'PURR/USDC', type: 'spot' as const }
+  }
   if (coinString.includes('@')) {
     return { perpsDex: null, coin: coinString, type: 'spot' as const }
   }
