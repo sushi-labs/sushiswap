@@ -64,8 +64,7 @@ export const AccountCharts = () => {
   const [openTime, setOpenTime] = useState(false)
   const [view, setView] = useState<(typeof VIEWS)[number]>(VIEWS[1])
   const [time, setTime] = useState<(typeof TIME)[number]>(TIME[0])
-  // const address = useAccount('evm')
-  const address = '0x288ed4efc8fbd1e42a06fe083ea942d20c90b336'
+  const address = useAccount('evm')
   const {
     data,
     isLoading: isLoadingPortfolio,
