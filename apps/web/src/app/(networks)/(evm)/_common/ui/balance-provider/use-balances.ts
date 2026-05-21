@@ -1,12 +1,18 @@
 import { useMemo } from 'react'
 import { Amount, type IDFor, LowercaseMap, getNativeAddress } from 'sushi'
 import { type EvmChainId, isEvmChainId } from 'sushi/evm'
+import {
+  type StellarChainId,
+  type StellarContractAddress,
+  isStellarChainId,
+} from 'sushi/stellar'
 import { type SvmChainId, isSvmChainId } from 'sushi/svm'
-import type { UseBalancesReturn } from './types'
+import type { BalanceChainId, UseBalancesReturn } from './types'
 import { useEvmBalances } from './use-evm-balances'
+import { useStellarBalances } from './use-stellar-balances'
 import { useSvmBalances } from './use-svm-balances'
 
-export function useBalances<TChainId extends EvmChainId | SvmChainId>(
+export function useBalances<TChainId extends BalanceChainId>(
   chainId: TChainId | undefined,
   tokenAddresses: AddressFor<TChainId>[] | undefined,
 ): UseBalancesReturn<TChainId> {
@@ -23,6 +29,17 @@ export function useBalances<TChainId extends EvmChainId | SvmChainId>(
     : undefined
 
   const svmBalances = useSvmBalances(svmChainId, svmTokenAddresses)
+
+  const stellarChainId =
+    chainId && isStellarChainId(chainId) ? chainId : undefined
+  const stellarTokenAddresses = stellarChainId
+    ? (tokenAddresses as StellarContractAddress[])
+    : undefined
+
+  const stellarBalances = useStellarBalances(
+    stellarChainId,
+    stellarTokenAddresses,
+  )
 
   if (!chainId) {
     return {
@@ -41,10 +58,14 @@ export function useBalances<TChainId extends EvmChainId | SvmChainId>(
     return svmBalances as UseBalancesReturn<TChainId>
   }
 
+  if (stellarChainId) {
+    return stellarBalances as UseBalancesReturn<TChainId>
+  }
+
   throw new Error('Unsupported chainId')
 }
 
-export function useAmountBalances<TChainId extends EvmChainId | SvmChainId>(
+export function useAmountBalances<TChainId extends BalanceChainId>(
   chainId: TChainId | undefined,
   _currencies: (CurrencyFor<TChainId> | undefined)[] | undefined,
 ) {
@@ -93,10 +114,8 @@ export function useAmountBalances<TChainId extends EvmChainId | SvmChainId>(
 
     if (isEvmChainId(chainId)) {
       amountMap = new LowercaseMap()
-    } else if (isSvmChainId(chainId)) {
-      amountMap = new Map()
     } else {
-      throw new Error('Unsupported chainId')
+      amountMap = new Map()
     }
 
     currencies.forEach((currency) => {

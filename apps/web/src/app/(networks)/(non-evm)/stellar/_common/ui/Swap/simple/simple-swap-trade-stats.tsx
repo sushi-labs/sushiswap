@@ -83,7 +83,7 @@ export const SimpleSwapTradeStats = () => {
             {loading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : outputSwapTokenAmount ? (
-              `${outputSwapTokenAmount} ${token1.code}`
+              `${outputSwapTokenAmount} ${token1.symbol}`
             ) : (
               '0.00'
             )}
@@ -97,7 +97,7 @@ export const SimpleSwapTradeStats = () => {
             {loading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : minReceivedAmount ? (
-              `${minReceivedAmount} ${token1.code}`
+              `${minReceivedAmount} ${token1.symbol}`
             ) : (
               '0.00'
             )}

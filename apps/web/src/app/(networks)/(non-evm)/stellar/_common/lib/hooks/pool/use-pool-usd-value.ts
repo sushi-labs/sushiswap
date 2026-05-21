@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
+import type { StellarToken } from 'sushi/stellar'
 import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
-import type { Token } from '~stellar/_common/lib/types/token.type'
 
 export const useLPUsdValue = ({
   token0,
@@ -8,8 +8,8 @@ export const useLPUsdValue = ({
   reserve0,
   reserve1,
 }: {
-  token0: Token
-  token1: Token
+  token0: StellarToken
+  token1: StellarToken
   reserve0: bigint
   reserve1: bigint
 }) => {

@@ -2,13 +2,16 @@ import { SkeletonText, classNames } from '@sushiswap/ui'
 import { WalletIcon } from '@sushiswap/ui/icons/WalletIcon'
 import { type FC, memo, useCallback } from 'react'
 import { Amount } from 'sushi'
-import { type EvmChainId, EvmNative, isEvmChainId } from 'sushi/evm'
+import { EvmNative, isEvmChainId } from 'sushi/evm'
+import { isStellarChainId } from 'sushi/stellar'
 
 import { useIsMounted } from '@sushiswap/hooks'
-import { type SvmChainId, SvmNative } from 'sushi/svm'
+import { SvmNative } from 'sushi/svm'
+import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
+import { contractAddresses } from '~stellar/_common/lib/soroban/contracts'
 import type { CurrencyInputProps } from './currency-input'
 
-type BalancePanel<TChainId extends EvmChainId | SvmChainId> = Pick<
+type BalancePanel<TChainId extends BalanceChainId> = Pick<
   CurrencyInputProps<TChainId>,
   'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'loading'
 > & {
@@ -18,9 +21,12 @@ type BalancePanel<TChainId extends EvmChainId | SvmChainId> = Pick<
   type: 'INPUT' | 'OUTPUT'
 }
 
-const MIN_NATIVE_CURRENCY_FOR_GAS = 10n ** 16n // .01 ETH
+const MIN_NATIVE_CURRENCY_FOR_GAS = 2n * 10n ** 15n // .002 ETH
+// Stellar uses 7 decimals; reserve 2 XLM to cover the base account reserve
+// (1 XLM) plus headroom for a couple of trustlines and txn fees.
+const MIN_XLM_FOR_RESERVE = 2n * 10n ** 7n // 2 XLM
 
-export function BalancePanel<TChainId extends EvmChainId | SvmChainId>({
+export function BalancePanel<TChainId extends BalanceChainId>({
   id,
   balance,
   onChange,
@@ -35,22 +41,38 @@ export function BalancePanel<TChainId extends EvmChainId | SvmChainId>({
   ).split('.')
 
   const onClick = useCallback(() => {
-    if (onChange && balance?.gt(0n)) {
-      if (
-        balance.currency.type === 'native' &&
-        balance.gt(MIN_NATIVE_CURRENCY_FOR_GAS)
-      ) {
-        const hundred = new Amount(
-          isEvmChainId(balance.currency.chainId)
-            ? EvmNative.fromChainId(balance.currency.chainId)
-            : SvmNative.fromChainId(balance.currency.chainId),
-          MIN_NATIVE_CURRENCY_FOR_GAS,
-        )
-        onChange(balance.sub(hundred).toString())
-      } else {
-        onChange(balance?.gt(0n) ? balance.toString() : '')
-      }
+    if (!onChange || !balance?.gt(0n)) return
+
+    // EVM/SVM native carve-out: subtract a small gas reserve.
+    if (
+      balance.currency.type === 'native' &&
+      balance.gt(MIN_NATIVE_CURRENCY_FOR_GAS)
+    ) {
+      const reserve = new Amount(
+        isEvmChainId(balance.currency.chainId)
+          ? EvmNative.fromChainId(balance.currency.chainId)
+          : SvmNative.fromChainId(balance.currency.chainId),
+        MIN_NATIVE_CURRENCY_FOR_GAS,
+      )
+      onChange(balance.sub(reserve).toString())
+      return
     }
+
+    // Stellar's XLM is modeled as a regular token (no `native` discriminant),
+    // so guard on the contract address. Reserve covers Stellar's base
+    // account reserve + fees so the wallet stays usable after a max swap.
+    if (
+      isStellarChainId(balance.currency.chainId) &&
+      'address' in balance.currency &&
+      balance.currency.address === contractAddresses.TOKENS.XLM &&
+      balance.gt(MIN_XLM_FOR_RESERVE)
+    ) {
+      const reserve = new Amount(balance.currency, MIN_XLM_FOR_RESERVE)
+      onChange(balance.sub(reserve).toString())
+      return
+    }
+
+    onChange(balance.toString())
   }, [balance, onChange])
 
   if (loading || !isMounted) {

@@ -23,11 +23,11 @@ export const PositionNameCell = ({ data }: { data: IPositionRowData }) => {
       </div>
       <div className="flex flex-col gap-0.5">
         <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50">
-          {token0.code}
+          {token0.symbol}
           <span className="font-normal text-gray-900 dark:text-slate-500">
             /
           </span>
-          {token1.code}
+          {token1.symbol}
           <div
             className={classNames(
               'text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1',

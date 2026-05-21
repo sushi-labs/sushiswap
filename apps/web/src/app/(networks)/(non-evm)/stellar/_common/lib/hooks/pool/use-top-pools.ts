@@ -4,13 +4,15 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi'
-import type { StellarContractAddress } from 'sushi/stellar'
+import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
 import { getPoolDirectSDK } from '../../soroban'
 import { getTokenByContract } from '../../soroban/token-helpers'
-import type { Token } from '../../types/token.type'
 import { useCommonTokens } from '../token'
 
-export type TopPool = TopNonEvmPools[number] & { token0: Token; token1: Token }
+export type TopPool = TopNonEvmPools[number] & {
+  token0: StellarToken
+  token1: StellarToken
+}
 
 export function useTopPools({ isLegacy = false }: { isLegacy?: boolean } = {}) {
   const {
@@ -74,8 +76,8 @@ export function useTopPools({ isLegacy = false }: { isLegacy?: boolean } = {}) {
         isLegacy: boolean
       }> => {
         const legacyPoolAddress = await getPoolDirectSDK({
-          tokenA: topPool.token0.contract,
-          tokenB: topPool.token1.contract,
+          tokenA: topPool.token0.address,
+          tokenB: topPool.token1.address,
           fee: topPool.swapFee * 1000000,
           isLegacy: true,
         })

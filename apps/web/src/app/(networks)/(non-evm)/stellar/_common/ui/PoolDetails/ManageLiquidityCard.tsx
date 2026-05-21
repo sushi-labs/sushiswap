@@ -15,9 +15,10 @@ import {
 } from '@sushiswap/ui'
 import type React from 'react'
 import { useEffect, useMemo, useState } from 'react'
+import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/Currency'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
-import type { StellarAccountAddress } from 'sushi/stellar'
+import type { StellarAccountAddress, StellarToken } from 'sushi/stellar'
 import { formatUnits } from 'viem'
 import { ToggleZapCard } from '~evm/[chainId]/pool/_ui/toggle-zap-card'
 import { useRemoveLiquidity } from '~stellar/_common/lib/hooks/liquidity/use-remove-liquidity'
@@ -34,13 +35,11 @@ import {
   formatPriceBound,
 } from '~stellar/_common/lib/soroban/pool-helpers'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
-import type { Token } from '~stellar/_common/lib/types/token.type'
 import { alignTick, isTickAligned } from '~stellar/_common/lib/utils/ticks'
 import { useStellarWallet } from '~stellar/providers'
 import { useBestRoute } from '~stellar/swap/lib/hooks/use-best-route'
 import { TickRangeSelector } from '../TickRangeSelector/TickRangeSelector'
 import { CreateTrustlineButton } from '../Trustline/CreateTrustlineButton'
-import { CurrencyInput } from '../currency/currency-input/currency-input'
 import TokenSelector from '../token-selector/token-selector'
 import { LiquidityDepthWidget } from './LiquidityDepthWidget'
 
@@ -60,8 +59,6 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     excludeDust: true,
   })
 
-  const token0Decimals = pool.token0.decimals
-  const token1Decimals = pool.token1.decimals
   const [tab, setTab] = useState<string>('add')
   const [independentField, setIndependentField] = useState<'token0' | 'token1'>(
     'token0',
@@ -72,7 +69,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   )
   const [removePercent, setRemovePercent] = useState<number>(100)
   const [isZapModeEnabled, setIsZapModeEnabled] = useState<boolean>(false)
-  const [zapTokenIn, setZapTokenIn] = useState<Token | null>(null)
+  const [zapTokenIn, setZapTokenIn] = useState<StellarToken | null>(null)
   const [zapAmountIn, setZapAmountIn] = useState<string>('')
 
   const currentPrice = calculatePriceFromSqrtPrice(pool.sqrtPriceX96)
@@ -87,18 +84,18 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     isLoading: isLoadingToken0Trustline,
     issuer: token0ResolvedIssuer,
   } = useNeedsTrustline({
-    code: pool.token0.code,
-    contract: pool.token0.contract,
-    issuer: pool.token0.issuer,
+    code: pool.token0.symbol,
+    contract: pool.token0.address,
+    issuer: pool.token0.issuer ?? '',
   })
   const {
     needsTrustline: needsToken1Trustline,
     isLoading: isLoadingToken1Trustline,
     issuer: token1ResolvedIssuer,
   } = useNeedsTrustline({
-    code: pool.token1.code,
-    contract: pool.token1.contract,
-    issuer: pool.token1.issuer,
+    code: pool.token1.symbol,
+    contract: pool.token1.address,
+    issuer: pool.token1.issuer ?? '',
   })
   const isLoadingTrustlines =
     isLoadingToken0Trustline || isLoadingToken1Trustline
@@ -106,10 +103,10 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   const tokensNeedingTrustline = useMemo(() => {
     const tokens: Array<{ code: string; issuer: StellarAccountAddress }> = []
     if (needsToken0Trustline && token0ResolvedIssuer) {
-      tokens.push({ code: pool.token0.code, issuer: token0ResolvedIssuer })
+      tokens.push({ code: pool.token0.symbol, issuer: token0ResolvedIssuer })
     }
     if (needsToken1Trustline && token1ResolvedIssuer) {
-      tokens.push({ code: pool.token1.code, issuer: token1ResolvedIssuer })
+      tokens.push({ code: pool.token1.symbol, issuer: token1ResolvedIssuer })
     }
     return tokens
   }, [
@@ -117,8 +114,8 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     needsToken1Trustline,
     token0ResolvedIssuer,
     token1ResolvedIssuer,
-    pool.token0.code,
-    pool.token1.code,
+    pool.token0.symbol,
+    pool.token1.symbol,
   ])
 
   const {
@@ -207,8 +204,8 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     tickUpper,
     independentToken.decimals,
     dependentToken.decimals,
-    independentToken.code,
-    dependentToken.code,
+    independentToken.symbol,
+    dependentToken.symbol,
   )
 
   // Calculate dependent amount (only used in normal mode, not zap mode)
@@ -285,14 +282,12 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     Number.parseFloat(effectiveTypedValue) > 0
   const hasRemoveAmount = removePercent > 0
   const percentBigInt = BigInt(Math.round(removePercent))
-  const estimatedToken0 =
-    selectedPosition != null
-      ? (selectedPosition.principalToken0 * percentBigInt) / 100n
-      : 0n
-  const estimatedToken1 =
-    selectedPosition != null
-      ? (selectedPosition.principalToken1 * percentBigInt) / 100n
-      : 0n
+  const estimatedToken0 = selectedPosition?.principalToken0
+    .mul(percentBigInt)
+    .div(100)
+  const estimatedToken1 = selectedPosition?.principalToken1
+    .mul(percentBigInt)
+    .div(100)
 
   // Prevent adding liquidity when dependent amount calculation errors occur
   const isDependentAmountError = dependentAmountData?.status === 'error'
@@ -432,7 +427,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                 <CardDescription>
                   {isZapModeEnabled
                     ? 'Deposit with any token of your choice. Zap mode will handle the swap and token ratio split.'
-                    : `Enter ${pool.token0.code} amount - ${pool.token1.code} amount will be calculated automatically.`}
+                    : `Enter ${pool.token0.symbol} amount - ${pool.token1.symbol} amount will be calculated automatically.`}
                 </CardDescription>
               </div>
             </div>
@@ -477,7 +472,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                             <div className="flex items-center gap-2">
                               {zapTokenIn ? (
                                 <>
-                                  <span>{zapTokenIn.code}</span>
+                                  <span>{zapTokenIn.symbol}</span>
                                 </>
                               ) : (
                                 <span>Select a token</span>
@@ -489,16 +484,17 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                       {zapTokenIn && (
                         <div className="space-y-2">
                           <CurrencyInput
+                            chainId={zapTokenIn.chainId}
                             id="zap-amount-input"
                             type="INPUT"
                             className="p-3 bg-white border border-accent dark:bg-slate-800 rounded-xl"
-                            token={zapTokenIn}
+                            currency={zapTokenIn}
                             value={zapAmountIn}
                             onChange={setZapAmountIn}
                           />
                           <p className="text-xs text-muted-foreground">
-                            {zapTokenIn.contract === pool.token0.contract ||
-                            zapTokenIn.contract === pool.token1.contract
+                            {zapTokenIn.address === pool.token0.address ||
+                            zapTokenIn.address === pool.token1.address
                               ? 'Zap will swap 50% to get the other pool token and add liquidity'
                               : 'Zap will swap to get both pool tokens (50/50) and add liquidity'}
                           </p>
@@ -526,11 +522,9 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                               tokensNeedingTrustline.length > 0 ||
                               zapMutation.isPending ||
                               (isPendingRouteToken0 &&
-                                zapTokenIn.contract.toUpperCase() !==
-                                  pool.token0.contract.toUpperCase()) ||
+                                zapTokenIn.address !== pool.token0.address) ||
                               (isPendingRouteToken1 &&
-                                zapTokenIn.contract.toUpperCase() !==
-                                  pool.token1.contract.toUpperCase())
+                                zapTokenIn.address !== pool.token1.address)
                             }
                             onClick={async () => {
                               if (
@@ -616,12 +610,13 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                       {/* Token 0 Input */}
                       <div className="space-y-2">
                         <CurrencyInput
+                          chainId={pool.token0.chainId}
                           id="add-token0-liquidity-amount-input"
                           type={
                             independentField === 'token0' ? 'INPUT' : 'OUTPUT'
                           }
                           className="p-3 bg-white border border-accent dark:bg-slate-800 rounded-xl"
-                          token={pool.token0}
+                          currency={pool.token0}
                           value={amount0}
                           onChange={(value) => {
                             setIndependentField('token0')
@@ -640,12 +635,13 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                       {/* Token 1 Input (Auto-calculated) */}
                       <div className="space-y-2">
                         <CurrencyInput
+                          chainId={pool.token1.chainId}
                           id="add-token1-liquidity-amount-input"
                           type={
                             independentField === 'token1' ? 'INPUT' : 'OUTPUT'
                           }
                           className="p-3 bg-white border border-accent dark:bg-slate-800 rounded-xl"
-                          token={pool.token1}
+                          currency={pool.token1}
                           value={amount1}
                           onChange={(value) => {
                             setIndependentField('token1')
@@ -735,22 +731,10 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                       {myPositions.map((position) => {
                         const isSelected =
                           position.tokenId === selectedPositionId
-                        const principal0 = formatUnits(
-                          position.principalToken0,
-                          token0Decimals,
-                        )
-                        const principal1 = formatUnits(
-                          position.principalToken1,
-                          token1Decimals,
-                        )
-                        const fees0 = formatUnits(
-                          position.feesToken0,
-                          token0Decimals,
-                        )
-                        const fees1 = formatUnits(
-                          position.feesToken1,
-                          token1Decimals,
-                        )
+                        const principal0 = position.principalToken0.toString()
+                        const principal1 = position.principalToken1.toString()
+                        const fees0 = position.feesToken0.toString()
+                        const fees1 = position.feesToken1.toString()
 
                         return (
                           <button
@@ -785,30 +769,30 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                                     position.tickUpper,
                                     'upper',
                                   )}{' '}
-                                  {pool.token1.code}/{pool.token0.code}
+                                  {pool.token1.symbol}/{pool.token0.symbol}
                                 </div>
                               </div>
                               <div className="text-right text-xs text-muted-foreground space-y-2">
                                 <div>
                                   Principal:{' '}
                                   <span className="text-slate-900 dark:text-slate-100">
-                                    {principal0} {pool.token0.code}
+                                    {principal0} {pool.token0.symbol}
                                   </span>
                                 </div>
                                 <div>
                                   Principal:{' '}
                                   <span className="text-slate-900 dark:text-slate-100">
-                                    {principal1} {pool.token1.code}
+                                    {principal1} {pool.token1.symbol}
                                   </span>
                                 </div>
                                 <div className="text-[11px]">
                                   Fees:{' '}
                                   <span className="text-slate-900 dark:text-slate-100">
-                                    {fees0} {pool.token0.code}
+                                    {fees0} {pool.token0.symbol}
                                   </span>{' '}
                                   /{' '}
                                   <span className="text-slate-900 dark:text-slate-100">
-                                    {fees1} {pool.token1.code}
+                                    {fees1} {pool.token1.symbol}
                                   </span>
                                 </div>
                               </div>
@@ -883,17 +867,17 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                           <div className="grid grid-cols-2 gap-3 text-xs text-muted-foreground">
                             <div>
                               <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                                {formatUnits(estimatedToken0, token0Decimals)}{' '}
-                                {pool.token0.code}
+                                {estimatedToken0?.toString() ?? '0'}{' '}
+                                {pool.token0.symbol}
                               </div>
-                              <p>Est. {pool.token0.code} principal</p>
+                              <p>Est. {pool.token0.symbol} principal</p>
                             </div>
                             <div>
                               <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                                {formatUnits(estimatedToken1, token1Decimals)}{' '}
-                                {pool.token1.code}
+                                {estimatedToken1?.toString() ?? '0'}{' '}
+                                {pool.token1.symbol}
                               </div>
-                              <p>Est. {pool.token1.code} principal</p>
+                              <p>Est. {pool.token1.symbol} principal</p>
                             </div>
                           </div>
                           <p className="text-[11px] leading-4 text-muted-foreground">

@@ -9,7 +9,7 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { addMinutes } from 'date-fns'
 import { ChainId } from 'sushi'
-import type { StellarContractAddress } from 'sushi/stellar'
+import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
 import type { RouteWithTokens } from '~stellar/swap/lib/swap-get-route'
 import { calculateAmountOutMinimum } from '../../services/router-service'
 import { DEFAULT_TIMEOUT, contractAddresses } from '../../soroban'
@@ -20,7 +20,6 @@ import {
   submitViaRawRPC,
   waitForTransaction,
 } from '../../soroban/rpc-transaction-helpers'
-import type { Token } from '../../types/token.type'
 import { extractErrorMessage } from '../../utils/error-helpers'
 import {
   type PoolOracleHints,
@@ -30,11 +29,11 @@ import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
 
 export interface UseZapParams {
   poolAddress: StellarContractAddress
-  tokenIn: Token
+  tokenIn: StellarToken
   amountIn: string
   tokenInDecimals: number
-  token0: Token
-  token1: Token
+  token0: StellarToken
+  token1: StellarToken
   tickLower: number
   tickUpper: number
   slippage?: number
@@ -79,16 +78,14 @@ export const useZap = () => {
         token1,
       } = params
 
-      const isZapTokenToken0 =
-        tokenIn.contract.toUpperCase() === token0.contract.toUpperCase()
-      const isZapTokenToken1 =
-        tokenIn.contract.toUpperCase() === token1.contract.toUpperCase()
+      const isZapTokenToken0 = tokenIn.address === token0.address
+      const isZapTokenToken1 = tokenIn.address === token1.address
 
       if (!routeToken0 && !isZapTokenToken0) {
-        throw new Error(`No route from ${tokenIn.code} to ${token0.code}`)
+        throw new Error(`No route from ${tokenIn.symbol} to ${token0.symbol}`)
       }
       if (!routeToken1 && !isZapTokenToken1) {
-        throw new Error(`No route from ${tokenIn.code} to ${token1.code}`)
+        throw new Error(`No route from ${tokenIn.symbol} to ${token1.symbol}`)
       }
 
       const amountInBigInt = BigInt(
@@ -107,7 +104,7 @@ export const useZap = () => {
             fees_to_token0: routeToken0?.fees ?? [],
             fees_to_token1: routeToken1?.fees ?? [],
             pool: poolAddress,
-            token_in: tokenIn.contract,
+            token_in: tokenIn.address,
             path_to_token0: routeToken0?.route ?? [],
             path_to_token1: routeToken1?.route ?? [],
             tick_lower: tickLower,
@@ -162,7 +159,7 @@ export const useZap = () => {
               swap_to_token1_min_out: 0n,
               tick_lower: tickLower,
               tick_upper: tickUpper,
-              token_in: tokenIn.contract,
+              token_in: tokenIn.address,
             },
             pool_hints: hints,
           },

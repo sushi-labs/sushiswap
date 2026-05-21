@@ -44,12 +44,12 @@ export const LegacyPositionMigrateCell = ({
   } = data
   const [isMigrating, setIsMigrating] = useState(false)
   const isLegacyPositionActive =
-    BigInt(liquidity || '0') > 0n || feesToken0 > 0n || feesToken1 > 0n
+    BigInt(liquidity || '0') > 0n || feesToken0.gt(0n) || feesToken1.gt(0n)
 
   const createAndInitializePoolMutation = useCreateAndInitializePool()
   const { data: existingNewPoolAddress } = useGetPool({
-    tokenA: token0.contract,
-    tokenB: token1.contract,
+    tokenA: token0.address,
+    tokenB: token1.address,
     fee,
   })
   const { data: isExistingNewPoolInitialized } = usePoolInitialized(
@@ -69,8 +69,8 @@ export const LegacyPositionMigrateCell = ({
       const migrationParameters = hasPendingMigration
         ? pendingMigrations[tokenId]
         : {
-            principal0: principalToken0.toString(),
-            principal1: principalToken1.toString(),
+            principal0: principalToken0.amount.toString(),
+            principal1: principalToken1.amount.toString(),
           }
 
       if (isLegacyPositionActive) {
@@ -101,8 +101,8 @@ export const LegacyPositionMigrateCell = ({
           return
         }
         const { result } = await createAndInitializePoolMutation.mutateAsync({
-          tokenA: token0.contract,
-          tokenB: token1.contract,
+          tokenA: token0.address,
+          tokenB: token1.address,
           fee,
           sqrtPriceX96: legacyPoolInfo.sqrtPriceX96,
           userAddress: connectedAddress,

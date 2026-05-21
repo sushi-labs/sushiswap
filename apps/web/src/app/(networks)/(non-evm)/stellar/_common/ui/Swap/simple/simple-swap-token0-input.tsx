@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo } from 'react'
 import { useBestRoute } from '~stellar/swap/lib/hooks'
 
+import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/Currency'
 import {
   useSimpleSwapActions,
   useSimpleSwapState,
 } from '~stellar/_common/ui/Swap/simple/simple-swap-provider/simple-swap-provider'
-import { CurrencyInput } from '~stellar/_common/ui/currency/currency-input/currency-input'
 
 export const SimpleSwapToken0Input = () => {
   const { amount, token0, token1 } = useSimpleSwapState()
@@ -96,10 +96,11 @@ export const SimpleSwapToken0Input = () => {
 
   return (
     <CurrencyInput
+      chainId={token0.chainId}
       id="swap-from"
       type="INPUT"
       onSelect={setToken0}
-      token={token0}
+      currency={token0}
       value={String(amount)}
       onChange={setAmount}
       className="p-3 bg-white border border-accent dark:bg-slate-800 rounded-xl"

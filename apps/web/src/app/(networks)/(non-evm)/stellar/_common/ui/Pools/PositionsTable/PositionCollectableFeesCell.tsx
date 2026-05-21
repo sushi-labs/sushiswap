@@ -1,4 +1,3 @@
-import { formatUnits } from 'viem'
 import type { IPositionRowData } from './PositionsTable'
 
 export const PositionCollectableFeesCell = ({
@@ -8,8 +7,8 @@ export const PositionCollectableFeesCell = ({
 
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex items-center whitespace-nowrap text-sm text-gray-900 dark:text-slate-50">{`${formatUnits(feesToken0, token0.decimals)} ${token0.code}`}</div>
-      <div className="flex items-center whitespace-nowrap text-sm text-gray-900 dark:text-slate-50">{`${formatUnits(feesToken1, token1.decimals)} ${token1.code}`}</div>
+      <div className="flex items-center whitespace-nowrap text-sm text-gray-900 dark:text-slate-50">{`${feesToken0.toString()} ${token0.symbol}`}</div>
+      <div className="flex items-center whitespace-nowrap text-sm text-gray-900 dark:text-slate-50">{`${feesToken1.toString()} ${token1.symbol}`}</div>
     </div>
   )
 }

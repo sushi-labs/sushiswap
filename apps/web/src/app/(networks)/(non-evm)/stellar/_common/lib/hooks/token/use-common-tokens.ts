@@ -2,14 +2,15 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import {
   type StellarAccountAddress,
+  StellarChainId,
   type StellarContractAddress,
+  StellarToken,
   isStellarAccountAddress,
   isStellarContractAddress,
   normalizeStellarAddress,
 } from 'sushi/stellar'
 import { z } from 'zod'
 import { staticTokens } from '~stellar/_common/lib/assets/token-assets'
-import type { Token } from '~stellar/_common/lib/types/token.type'
 
 const stellarExpertAssetSchema = z.object({
   code: z.string(),
@@ -53,9 +54,7 @@ const OUTDATED_TOKENS = new Set([
   'USD|stablecoin.anchorusd.com',
 ])
 
-const getStellarExpertAssets = async (): Promise<
-  z.infer<typeof stellarExpertAssetSchema>[]
-> => {
+const getStellarExpertAssets = async () => {
   if (!stellarExpertTopTokensApiUrl) {
     return []
   }
@@ -78,28 +77,39 @@ const getStellarExpertAssets = async (): Promise<
   }
 
   const assets = parsed.data.assets
-  return assets.filter(
-    (i) => i.domain && !OUTDATED_TOKENS.has(`${i.code}|${i.domain}`),
-  )
+  return assets
+    .filter((i) => i.domain && !OUTDATED_TOKENS.has(`${i.code}|${i.domain}`))
+    .map(
+      (asset) =>
+        new StellarToken({
+          chainId: StellarChainId.STELLAR,
+          address: asset.contract,
+          symbol: asset.code,
+          name: asset.name,
+          decimals: asset.decimals,
+          issuer: asset.issuer,
+          origin: asset.org,
+          metadata: { icon: asset.icon, domain: asset.domain },
+        }),
+    )
 }
 
 export const fetchCommonTokensQueryFn = async (): Promise<
-  Record<string, Token>
+  Record<string, StellarToken>
 > => {
-  const result: Record<string, Token> = {}
+  const result: Record<string, StellarToken> = {}
 
-  // Always include hardcoded tokens
-  // Use uppercase keys for consistency (Stellar addresses are case-insensitive)
+  // Always include hardcoded tokens. Use the StellarToken's normalized
+  // (uppercase) address as the key for case-insensitive lookups.
   staticTokens.forEach((token) => {
-    result[token.contract.toUpperCase()] = token
+    result[token.address] = token
   })
 
   // Try to add StellarExpert tokens
   try {
     const assets = await getStellarExpertAssets()
     assets.forEach((token) => {
-      // Use uppercase keys for consistency
-      result[token.contract.toUpperCase()] = token
+      result[token.address] = token
     })
   } catch (error) {
     console.warn(

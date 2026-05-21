@@ -3,18 +3,16 @@
 import { Button, FormSection, SelectIcon, TextField } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
+import { useAmountBalance } from 'src/app/(networks)/(evm)/_common/ui/balance-provider/use-balance'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
 import type {
   StellarAccountAddress,
   StellarContractAddress,
+  StellarToken,
 } from 'sushi/stellar'
 import { formatUnits } from 'viem'
-import {
-  useGetPool,
-  usePoolInfo,
-  useTokenBalance,
-} from '~stellar/_common/lib/hooks'
+import { useGetPool, usePoolInfo } from '~stellar/_common/lib/hooks'
 import { useCreateAndInitializePool } from '~stellar/_common/lib/hooks/factory/use-create-and-initialize-pool'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/liquidity/use-add-liquidity'
 import { useCalculatePairedAmount } from '~stellar/_common/lib/hooks/pool/use-calculate-paired-amount'
@@ -28,7 +26,6 @@ import {
   encodePriceSqrt,
   isAddressLower,
 } from '~stellar/_common/lib/soroban'
-import type { Token } from '~stellar/_common/lib/types/token.type'
 import { FEE_TIERS } from '~stellar/_common/lib/utils/ticks'
 import { TickRangeSelector } from '~stellar/_common/ui/TickRangeSelector/TickRangeSelector'
 import { CreateTrustlineButton } from '~stellar/_common/ui/Trustline/CreateTrustlineButton'
@@ -42,8 +39,8 @@ export default function AddPoolPage() {
   const createAndInitializePoolMutation = useCreateAndInitializePool()
   const addLiquidityMutation = useAddLiquidity()
 
-  const [token0, setToken0] = useState<Token | undefined>(undefined)
-  const [token1, setToken1] = useState<Token | undefined>(undefined)
+  const [token0, setToken0] = useState<StellarToken | undefined>(undefined)
+  const [token1, setToken1] = useState<StellarToken | undefined>(undefined)
   const [selectedFee, setSelectedFee] = useState<number>(3000)
   const [orderedToken0Amount, setOrderedToken0Amount] = useState<string>('')
   const [manualOrderedToken1Amount, setManualOrderedToken1Amount] =
@@ -56,8 +53,8 @@ export default function AddPoolPage() {
   const { data: existingPoolAddress } = useGetPool(
     token0 && token1
       ? {
-          tokenA: token0.contract,
-          tokenB: token1.contract,
+          tokenA: token0.address,
+          tokenB: token1.address,
           fee: selectedFee,
         }
       : null,
@@ -73,25 +70,19 @@ export default function AddPoolPage() {
       return false
     }
     if (poolInfo) {
-      return poolInfo.token0.contract !== token0.contract
+      return poolInfo.token0.address !== token0.address
     }
     // Check if user-selected token0 should actually be token1 in pool ordering
     // Pool tokens are ordered by decoded bytes, not string comparison
-    return !isAddressLower(token0.contract, token1.contract)
+    return !isAddressLower(token0.address, token1.address)
   }, [token0, token1, poolInfo])
 
   const [orderedToken0, orderedToken1] = reversedPoolTokenOrder
     ? [token1, token0]
     : [token0, token1]
 
-  const { data: orderedToken0Balance } = useTokenBalance(
-    connectedAddress,
-    orderedToken0?.contract || null,
-  )
-  const { data: orderedToken1Balance } = useTokenBalance(
-    connectedAddress,
-    orderedToken1?.contract || null,
-  )
+  const { data: orderedToken0Balance } = useAmountBalance(orderedToken0)
+  const { data: orderedToken1Balance } = useAmountBalance(orderedToken1)
 
   // Check trustlines for both pool tokens
   const {
@@ -101,9 +92,9 @@ export default function AddPoolPage() {
   } = useNeedsTrustline(
     orderedToken0
       ? {
-          code: orderedToken0.code,
-          contract: orderedToken0.contract,
-          issuer: orderedToken0.issuer,
+          code: orderedToken0.symbol,
+          contract: orderedToken0.address,
+          issuer: orderedToken0.issuer ?? '',
         }
       : null,
   )
@@ -114,9 +105,9 @@ export default function AddPoolPage() {
   } = useNeedsTrustline(
     orderedToken1
       ? {
-          code: orderedToken1.code,
-          contract: orderedToken1.contract,
-          issuer: orderedToken1.issuer,
+          code: orderedToken1.symbol,
+          contract: orderedToken1.address,
+          issuer: orderedToken1.issuer ?? '',
         }
       : null,
   )
@@ -126,10 +117,10 @@ export default function AddPoolPage() {
   const tokensNeedingTrustline = useMemo(() => {
     const tokens: Array<{ code: string; issuer: StellarAccountAddress }> = []
     if (needsToken0Trustline && orderedToken0 && token0ResolvedIssuer) {
-      tokens.push({ code: orderedToken0.code, issuer: token0ResolvedIssuer })
+      tokens.push({ code: orderedToken0.symbol, issuer: token0ResolvedIssuer })
     }
     if (needsToken1Trustline && orderedToken1 && token1ResolvedIssuer) {
-      tokens.push({ code: orderedToken1.code, issuer: token1ResolvedIssuer })
+      tokens.push({ code: orderedToken1.symbol, issuer: token1ResolvedIssuer })
     }
     return tokens
   }, [
@@ -189,7 +180,7 @@ export default function AddPoolPage() {
     tickLower,
     tickUpper,
     orderedToken0?.decimals ?? 7,
-    orderedToken0?.code,
+    orderedToken0?.symbol,
   )
 
   const { data: poolBalanceData } = usePoolBalances(
@@ -220,12 +211,12 @@ export default function AddPoolPage() {
   const maxOrderedToken0Amount =
     existingPoolAddress && poolInitialized === true
       ? BigInt(maxPairedAmountData?.maxToken0Amount ?? '0')
-      : (orderedToken0Balance ?? 0n)
+      : (orderedToken0Balance?.amount ?? 0n)
 
   const maxOrderedToken1Amount =
     existingPoolAddress && poolInitialized === true
       ? BigInt(maxPairedAmountData?.maxToken1Amount ?? '0')
-      : (orderedToken1Balance ?? 0n)
+      : (orderedToken1Balance?.amount ?? 0n)
 
   const pairedAmountStatus = pairedAmountData?.status || 'idle'
 
@@ -274,8 +265,8 @@ export default function AddPoolPage() {
           }
           setCreatePoolState('creating')
           const { result } = await createAndInitializePoolMutation.mutateAsync({
-            tokenA: orderedToken0.contract,
-            tokenB: orderedToken1.contract,
+            tokenA: orderedToken0.address,
+            tokenB: orderedToken1.address,
             fee: selectedFee,
             sqrtPriceX96: initSqrtPriceX96,
             userAddress: connectedAddress,
@@ -335,7 +326,7 @@ export default function AddPoolPage() {
   const canCreate =
     token0 &&
     token1 &&
-    token0.contract !== token1.contract &&
+    token0.address !== token1.address &&
     hasValidAmounts &&
     !isAboveRange
 
@@ -372,7 +363,7 @@ export default function AddPoolPage() {
 
   return (
     <>
-      {/* Token Selection */}
+      {/* StellarToken Selection */}
       <FormSection
         title="Tokens"
         description="Select the token pair. If a pool exists, liquidity will be added to it."
@@ -387,7 +378,7 @@ export default function AddPoolPage() {
             }}
           >
             <Button variant="secondary" className="w-full">
-              <span>{token0?.code ?? 'Select Token'}</span>
+              <span>{token0?.symbol ?? 'Select StellarToken'}</span>
               <div>
                 <SelectIcon />
               </div>
@@ -402,14 +393,14 @@ export default function AddPoolPage() {
             }}
           >
             <Button variant="secondary" className="w-full">
-              <span>{token1?.code ?? 'Select Token'}</span>
+              <span>{token1?.symbol ?? 'Select StellarToken'}</span>
               <div>
                 <SelectIcon />
               </div>
             </Button>
           </TokenSelector>
         </div>
-        {token0 && token1 && token0.contract === token1.contract && (
+        {token0 && token1 && token0.address === token1.address && (
           <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg mt-3">
             <p className="text-sm text-yellow-600 dark:text-yellow-400">
               Please select two different tokens
@@ -462,7 +453,7 @@ export default function AddPoolPage() {
         title="Initial Liquidity"
         description={
           existingPoolAddress && poolInitialized === true
-            ? `Enter ${orderedToken0?.code || 'token0'} amount - ${orderedToken1?.code || 'token1'} amount will be calculated automatically.`
+            ? `Enter ${orderedToken0?.symbol || 'token0'} amount - ${orderedToken1?.symbol || 'token1'} amount will be calculated automatically.`
             : existingPoolAddress && poolInitialized === false
               ? 'This pool exists but is not initialized. Enter both token amounts to set the initial price ratio.'
               : 'Add liquidity to your pool. Both amounts are required.'
@@ -473,21 +464,19 @@ export default function AddPoolPage() {
             <div className="flex justify-between items-center">
               {orderedToken0 && (
                 <span className="text-sm font-medium">
-                  {orderedToken0.code}
+                  {orderedToken0.symbol}
                 </span>
               )}
-              {orderedToken0 &&
-                orderedToken0Balance !== null &&
-                orderedToken0Balance !== undefined && (
-                  <span className="text-xs text-muted-foreground">
-                    {formatUnits(orderedToken0Balance, orderedToken0.decimals)}
-                  </span>
-                )}
+              {orderedToken0Balance !== undefined && (
+                <span className="text-xs text-muted-foreground">
+                  {orderedToken0Balance.toString()}
+                </span>
+              )}
             </div>
             <div className="flex flex-row gap-2">
               <TextField
                 type="number"
-                label={orderedToken0?.code || 'Token 1'}
+                label={orderedToken0?.symbol || 'Token 1'}
                 placeholder="0.0"
                 value={orderedToken0Amount}
                 onValueChange={(value) => {
@@ -558,19 +547,14 @@ export default function AddPoolPage() {
               <div className="flex justify-between items-center">
                 {orderedToken1 && (
                   <span className="text-sm font-medium">
-                    {orderedToken1.code}
+                    {orderedToken1.symbol}
                   </span>
                 )}
-                {orderedToken1 &&
-                  orderedToken1Balance !== null &&
-                  orderedToken1Balance !== undefined && (
-                    <span className="text-xs text-muted-foreground">
-                      {formatUnits(
-                        orderedToken1Balance,
-                        orderedToken1.decimals,
-                      )}
-                    </span>
-                  )}
+                {orderedToken1Balance !== undefined && (
+                  <span className="text-xs text-muted-foreground">
+                    {orderedToken1Balance.toString()}
+                  </span>
+                )}
               </div>
               <div className="flex flex-row gap-2">
                 <TextField
@@ -579,7 +563,7 @@ export default function AddPoolPage() {
                       ? 'text'
                       : 'number'
                   }
-                  label={orderedToken1?.code || 'Token 2'}
+                  label={orderedToken1?.symbol || 'Token 2'}
                   placeholder={
                     existingPoolAddress && poolInitialized === true
                       ? 'Auto-calculated'
@@ -679,7 +663,7 @@ export default function AddPoolPage() {
           <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
             <p className="text-sm text-blue-600 dark:text-blue-400">
               {existingPoolAddress && poolInitialized === true
-                ? `Enter ${token0.code} amount to add liquidity`
+                ? `Enter ${token0.symbol} amount to add liquidity`
                 : existingPoolAddress && poolInitialized === false
                   ? 'Both token amounts are required to initialize the pool and add liquidity'
                   : 'Both token amounts are required to create a pool'}

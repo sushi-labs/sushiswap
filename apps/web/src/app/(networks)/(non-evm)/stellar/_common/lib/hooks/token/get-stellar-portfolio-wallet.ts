@@ -1,28 +1,32 @@
-import { getChainById } from 'sushi'
-import { type StellarAccountAddress, StellarChainId } from 'sushi/stellar'
-import { formatUnits } from 'viem'
+import { Amount, getChainById } from 'sushi'
+import {
+  type StellarAccountAddress,
+  StellarChainId,
+  type StellarToken,
+} from 'sushi/stellar'
 import { getTokenBalance } from '../../soroban'
-import type { TokenWithBalance } from '../../types/token.type'
 import { fetchCommonTokensQueryFn } from './use-common-tokens'
+
+type PortfolioEntry = {
+  token: StellarToken<{ icon?: string }>
+  balance: Amount<StellarToken<{ icon?: string }>>
+}
 
 export const getStellarPortfolioWallet = async (
   address: StellarAccountAddress,
 ) => {
   const tokens = await fetchCommonTokensQueryFn()
-  const tokensWithBalances: TokenWithBalance[] = []
+  const tokensWithBalances: PortfolioEntry[] = []
   for (const token of Object.values(tokens)) {
-    if (!token.contract) continue
+    if (!token.address) continue
     try {
-      const balance = await getTokenBalance(address, token.contract)
+      const balance = await getTokenBalance(address, token.address)
       if (balance && balance > 0n) {
-        tokensWithBalances.push({
-          ...token,
-          balance,
-        })
+        tokensWithBalances.push({ token, balance: new Amount(token, balance) })
       }
     } catch (error) {
       console.error(
-        `Failed to get ${token.contract} token balance for ${address}`,
+        `Failed to get ${token.address} token balance for ${address}`,
         error,
       )
     }
@@ -31,25 +35,26 @@ export const getStellarPortfolioWallet = async (
 }
 
 const chain = getChainById(StellarChainId.STELLAR)
-const transformToPortfolioWallet = (tokens: TokenWithBalance[]) => {
-  return tokens.map((token) => ({
-    token: token,
-    id: token.contract,
-    chain: chain.key,
-    chainId: chain.chainId,
-    name: token.code,
-    symbol: token.name,
-    decimals: token.decimals,
-    logoUrl: token.icon ?? '',
-    protocolId: 'stellar',
-    price: 0,
-    price24hChange: 0,
-    isVerified: true,
-    isCore: false,
-    isWallet: false,
-    timeAt: Date.now(),
-    amount: Number.parseFloat(formatUnits(token.balance, token.decimals)),
-    rawAmount: Number(token.balance),
-    amountUSD: 0,
-  }))
+const transformToPortfolioWallet = (entries: PortfolioEntry[]) => {
+  return entries.map(({ token, balance }) => {
+    return {
+      token,
+      id: token.address,
+      chain: chain.key,
+      chainId: chain.chainId,
+      name: token.symbol,
+      symbol: token.name,
+      decimals: token.decimals,
+      logoUrl: token.metadata?.icon ?? '',
+      protocolId: 'stellar',
+      price: 0,
+      price24hChange: 0,
+      isVerified: true,
+      isCore: false,
+      isWallet: false,
+      timeAt: Date.now(),
+      balance,
+      amountUSD: 0,
+    }
+  })
 }

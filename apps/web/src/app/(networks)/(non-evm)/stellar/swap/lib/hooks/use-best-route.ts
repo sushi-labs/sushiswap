@@ -1,15 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import type { StellarContractAddress } from 'sushi/stellar'
+import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
 import { QuoteService } from '~stellar/_common/lib/services/quote-service'
 import { getTokenByContract } from '~stellar/_common/lib/soroban/token-helpers'
-import type { Token } from '~stellar/_common/lib/types/token.type'
 import type { RouteWithTokens, Vertex } from '../swap-get-route'
 import { usePoolGraph } from '../swap-get-route'
 
 interface UseBestRouteParams {
-  tokenIn: Token | null
-  tokenOut: Token | null
+  tokenIn: StellarToken | null
+  tokenOut: StellarToken | null
   amountIn: bigint
 }
 
@@ -36,7 +35,7 @@ function findCandidateRoutes(
   function dfs(
     current: StellarContractAddress,
     target: StellarContractAddress,
-    visited: Set<string>,
+    visited: Set<StellarContractAddress>,
     path: StellarContractAddress[],
     poolPath: StellarContractAddress[],
     feePath: number[],
@@ -92,7 +91,7 @@ function findCandidateRoutes(
     }
   }
 
-  const visited = new Set<string>([tokenIn])
+  const visited = new Set<StellarContractAddress>([tokenIn])
   dfs(tokenIn, tokenOut, visited, [tokenIn], [], [], [], 0)
 
   return routes
@@ -157,8 +156,8 @@ export async function getBestRoute({
   amountIn,
   poolGraphData,
 }: {
-  tokenIn: Token
-  tokenOut: Token
+  tokenIn: StellarToken
+  tokenOut: StellarToken
   amountIn: bigint
   poolGraphData: {
     vertices: Map<string, Vertex[]>
@@ -169,17 +168,14 @@ export async function getBestRoute({
     const { vertices, tokenGraph } = poolGraphData
 
     // Check if tokens exist in the graph
-    if (
-      !tokenGraph.has(tokenIn.contract) ||
-      !tokenGraph.has(tokenOut.contract)
-    ) {
+    if (!tokenGraph.has(tokenIn.address) || !tokenGraph.has(tokenOut.address)) {
       return null
     }
 
     // Find all candidate routes
     const candidateRoutes = findCandidateRoutes(
-      tokenIn.contract,
-      tokenOut.contract,
+      tokenIn.address,
+      tokenOut.address,
       tokenGraph,
       vertices,
       3, // max 3 hops
@@ -266,7 +262,7 @@ export async function getBestRoute({
     const bestQuotedRoute = quotedRoutes[0]
 
     // Convert route addresses to Token objects
-    const tokenPromises: Promise<Token | null>[] =
+    const tokenPromises: Promise<StellarToken | null>[] =
       bestQuotedRoute.route.path.map(async (address) => {
         try {
           return await getTokenByContract(address)
@@ -277,7 +273,7 @@ export async function getBestRoute({
       })
 
     const tokens = (await Promise.all(tokenPromises)).filter(
-      (token): token is Token => token !== null,
+      (token): token is StellarToken => token !== null,
     )
 
     if (tokens.length !== bestQuotedRoute.route.path.length) {
@@ -315,8 +311,8 @@ export function useBestRoute({
 }: UseBestRouteParams) {
   // Build additional tokens list from swap input/output
   // This ensures the pool graph includes routes for the selected tokens
-  const additionalTokens = [tokenIn?.contract, tokenOut?.contract].filter(
-    (t): t is NonNullable<typeof t> => Boolean(t),
+  const additionalTokens = [tokenIn?.address, tokenOut?.address].filter(
+    (t): t is StellarContractAddress => !!t,
   )
 
   // Get the pool graph, augmented with input/output tokens
@@ -329,8 +325,8 @@ export function useBestRoute({
     queryKey: [
       'stellar',
       'best-route-onchain',
-      tokenIn?.contract,
-      tokenOut?.contract,
+      tokenIn?.address,
+      tokenOut?.address,
       amountIn.toString(),
     ],
     queryFn: async (): Promise<RouteWithTokens | null> => {
@@ -350,7 +346,7 @@ export function useBestRoute({
         tokenOut &&
         poolGraphData &&
         amountIn > 0n &&
-        tokenIn.contract !== tokenOut.contract,
+        tokenIn.address !== tokenOut.address,
     ),
     staleTime: ms('10s'),
     gcTime: ms('30s'),

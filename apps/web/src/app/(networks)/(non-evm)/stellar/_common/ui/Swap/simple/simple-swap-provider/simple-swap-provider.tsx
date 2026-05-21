@@ -9,16 +9,16 @@ import {
   useMemo,
   useReducer,
 } from 'react'
+import type { StellarToken } from 'sushi/stellar'
 import { getBaseTokens } from '~stellar/_common/lib/soroban/token-helpers'
-import type { Token } from '~stellar/_common/lib/types/token.type'
 
 interface SimpleSwapProvider {
   children: ReactNode
 }
 
 type State = {
-  token0: Token
-  token1: Token
+  token0: StellarToken
+  token1: StellarToken
   amount: string | null
   slippageAmount: number
   outputAmount: bigint
@@ -30,8 +30,8 @@ type State = {
 }
 
 type SwapApi = {
-  setToken0(token: Token): void
-  setToken1(token: Token): void
+  setToken0(token: StellarToken): void
+  setToken1(token: StellarToken): void
   swapTokens(): void
   setAmount(amount: string): void
   setSlippageAmount(amount: number): void
@@ -47,8 +47,8 @@ export const SimpleSwapStateContext = createContext<State>({} as State)
 export const SimpleSwapActionsContext = createContext<SwapApi>({} as SwapApi)
 
 type Actions =
-  | { type: 'setToken0'; value: Token }
-  | { type: 'setToken1'; value: Token }
+  | { type: 'setToken0'; value: StellarToken }
+  | { type: 'setToken1'; value: StellarToken }
   | { type: 'swapTokens' }
   | { type: 'setAmount'; value: string }
   | { type: 'setSlippageAmount'; value: number }
@@ -117,22 +117,22 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
   }, [internalState])
 
   const setToken0 = useCallback(
-    (token0: Token) => {
-      if (state.token1.contract === token0.contract) {
+    (token0: StellarToken) => {
+      if (state.token1.address === token0.address) {
         dispatch({ type: 'swapTokens' })
       } else {
-        dispatch({ type: 'setToken0', value: token0 as Token })
+        dispatch({ type: 'setToken0', value: token0 })
       }
     },
     [state.token1],
   )
 
   const setToken1 = useCallback(
-    (token1: Token) => {
-      if (state.token0.contract === token1.contract) {
+    (token1: StellarToken) => {
+      if (state.token0.address === token1.address) {
         dispatch({ type: 'swapTokens' })
       } else {
-        dispatch({ type: 'setToken1', value: token1 as Token })
+        dispatch({ type: 'setToken1', value: token1 })
       }
     },
     [state.token0],

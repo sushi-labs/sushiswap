@@ -1,28 +1,27 @@
 import { useMemo } from 'react'
-import { Amount, type Currency, getNativeAddress } from 'sushi'
-import { type EvmChainId, type EvmCurrency, EvmNative } from 'sushi/evm'
-import type { SvmChainId, SvmCurrency } from 'sushi/svm'
+import { Amount, getNativeAddress } from 'sushi'
+import type { BalanceChainId } from './types'
 import { useBalances } from './use-balances'
 
-type Args<TChainId extends EvmChainId | SvmChainId> =
+type Args<TChainId extends BalanceChainId> =
   | [CurrencyFor<TChainId> | undefined]
   | [TChainId | undefined, AddressFor<TChainId> | undefined]
-type Return<TChainId extends EvmChainId | SvmChainId> = Omit<
+type Return<TChainId extends BalanceChainId> = Omit<
   ReturnType<typeof useBalances<TChainId>>,
   'data'
 > & {
   data: bigint | undefined
 }
 
-export function useBalance<TChainId extends EvmChainId | SvmChainId>(
+export function useBalance<TChainId extends BalanceChainId>(
   currency: CurrencyFor<TChainId> | undefined,
 ): Return<TChainId>
-export function useBalance<TChainId extends EvmChainId | SvmChainId>(
+export function useBalance<TChainId extends BalanceChainId>(
   chainId: TChainId | undefined,
   tokenAddress: AddressFor<TChainId> | undefined,
 ): Return<TChainId>
 
-export function useBalance<TChainId extends EvmChainId | SvmChainId>(
+export function useBalance<TChainId extends BalanceChainId>(
   arg1: Args<TChainId>[0],
   arg2?: Args<TChainId>[1],
 ) {
@@ -55,14 +54,12 @@ export function useBalance<TChainId extends EvmChainId | SvmChainId>(
   }, [tokenAddress, result])
 }
 
-type UseAmountBalanceReturn<TCurrency extends SvmCurrency | EvmCurrency> = Omit<
-  ReturnType<typeof useBalance<TCurrency['chainId']>>,
-  'data'
-> & {
-  data: Amount<TCurrency> | undefined
-}
+type UseAmountBalanceReturn<TCurrency extends CurrencyFor<BalanceChainId>> =
+  Omit<ReturnType<typeof useBalance<TCurrency['chainId']>>, 'data'> & {
+    data: Amount<TCurrency> | undefined
+  }
 
-export function useAmountBalance<TCurrency extends SvmCurrency | EvmCurrency>(
+export function useAmountBalance<TCurrency extends CurrencyFor<BalanceChainId>>(
   currency: TCurrency | undefined,
 ): UseAmountBalanceReturn<TCurrency> {
   const result = useBalance(currency)

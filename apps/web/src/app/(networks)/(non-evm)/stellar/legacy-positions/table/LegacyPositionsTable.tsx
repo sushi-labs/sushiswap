@@ -45,10 +45,10 @@ export const LegacyPositionsTable = () => {
     const searchResults = positions.filter((position) => {
       const positionValues = [
         position.pool,
-        position.token0.contract,
-        position.token1.contract,
-        position.token0.code,
-        position.token1.code,
+        position.token0.address,
+        position.token1.address,
+        position.token0.symbol,
+        position.token1.symbol,
         position.token0.name,
         position.token1.name,
       ]

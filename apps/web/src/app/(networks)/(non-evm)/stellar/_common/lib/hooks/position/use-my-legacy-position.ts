@@ -1,5 +1,6 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 import { useMemo } from 'react'
+import type { StellarAccountAddress } from 'sushi/stellar'
 import type { PendingMigration } from '~stellar/legacy-positions/types'
 import { MINIMUM_DUST_LIQUIDITY } from '../../services/position-service'
 import { type PositionSummary, useMyPosition } from './use-my-position'
@@ -16,7 +17,7 @@ type MyLegacyPositionData = {
 export function useMyUnmigratedLegacyPositions({
   userAddress,
 }: {
-  userAddress?: string
+  userAddress?: StellarAccountAddress
 }): MyLegacyPositionData {
   const [pendingMigrations] = useLocalStorage<
     Record<PositionSummary['tokenId'], PendingMigration>
@@ -39,8 +40,8 @@ export function useMyUnmigratedLegacyPositions({
       const isPendingMigration = Boolean(pendingMigrations[position.tokenId])
       const isMigrated = nonLegacyPositions.some((nonLegacyPosition) => {
         return (
-          nonLegacyPosition.token0.contract === position.token0.contract &&
-          nonLegacyPosition.token1.contract === position.token1.contract &&
+          nonLegacyPosition.token0.address === position.token0.address &&
+          nonLegacyPosition.token1.address === position.token1.address &&
           nonLegacyPosition.fee === position.fee &&
           nonLegacyPosition.tickLower === position.tickLower &&
           nonLegacyPosition.tickUpper === position.tickUpper
@@ -48,8 +49,8 @@ export function useMyUnmigratedLegacyPositions({
       })
       return (
         BigInt(position.liquidity || '0') >= MINIMUM_DUST_LIQUIDITY ||
-        position.feesToken0 >= MINIMUM_DUST_LIQUIDITY ||
-        position.feesToken1 >= MINIMUM_DUST_LIQUIDITY ||
+        position.feesToken0.amount >= MINIMUM_DUST_LIQUIDITY ||
+        position.feesToken1.amount >= MINIMUM_DUST_LIQUIDITY ||
         (isPendingMigration && !isMigrated)
       )
     })
