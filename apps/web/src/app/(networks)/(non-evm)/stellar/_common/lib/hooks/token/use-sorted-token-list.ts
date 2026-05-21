@@ -1,6 +1,7 @@
 import { useDebounce } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
-import type { Token } from '~stellar/_common/lib/types/token.type'
+import type { Amount } from 'sushi'
+import type { StellarToken } from 'sushi/stellar'
 import {
   filterTokens,
   getSortedTokensByQuery,
@@ -8,8 +9,8 @@ import {
 
 interface Params {
   query: string
-  tokenMap?: Record<string, Token>
-  balanceMap?: Record<string, string>
+  tokenMap?: Record<string, StellarToken>
+  balanceMap?: ReadonlyMap<string, Amount<StellarToken>>
 }
 
 export const useSortedTokenList = ({ query, tokenMap, balanceMap }: Params) => {
@@ -26,35 +27,22 @@ export const useSortedTokenList = ({ query, tokenMap, balanceMap }: Params) => {
     ],
     queryFn: async () => {
       const tokenMapValues = tokenMap ? Object.values(tokenMap) : []
-      const filteredTokens: Token[] = filterTokens(
-        tokenMapValues,
-        debouncedQuery,
-      )
-      const filteredSortedTokens = getSortedTokensByQuery(
-        filteredTokens,
-        debouncedQuery,
-      )
+      const filtered = filterTokens(tokenMapValues, debouncedQuery)
+      const sorted = getSortedTokensByQuery(filtered, debouncedQuery)
 
-      // Sort by balance if provided (convert to BigInt for comparison, store as string)
-      if (balanceMap) {
-        const tokensWithBalance = filteredSortedTokens.map((token) => {
-          return {
-            ...token,
-            balance: balanceMap[token.contract] || '0',
-          }
-        })
-        const sortedTokensWithBalance = tokensWithBalance.sort((a, b) => {
-          const aBalance = BigInt(a.balance || '0')
-          const bBalance = BigInt(b.balance || '0')
-          if (aBalance === bBalance) {
-            return 0
-          }
-          return aBalance > bBalance ? -1 : 1
-        })
-        return sortedTokensWithBalance
-      }
+      if (!balanceMap) return sorted
 
-      return filteredSortedTokens
+      // Stable sort by balance descending. Compare raw quotients so two
+      // tokens with different decimals still order correctly relative
+      // to each other (a higher raw bigint with more decimals can be
+      // worth less than a smaller bigint with fewer decimals, but the
+      // selector has always sorted on raw units — keep that behavior).
+      return sorted.toSorted((a, b) => {
+        const aBalance = balanceMap.get(a.id)?.amount ?? 0n
+        const bBalance = balanceMap.get(b.id)?.amount ?? 0n
+        if (aBalance === bBalance) return 0
+        return aBalance > bBalance ? -1 : 1
+      })
     },
   })
 }

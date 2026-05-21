@@ -9,6 +9,8 @@ import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
+import { Amount } from 'sushi'
+import { StellarChainId } from 'sushi/stellar'
 import {
   useExecuteMultiHopSwap,
   useExecuteSwap,
@@ -17,7 +19,6 @@ import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trus
 import { parseSlippageTolerance } from '~stellar/_common/lib/utils/error-helpers'
 import { requiresPriceImpactConfirmation } from '~stellar/_common/lib/utils/warning-severity'
 import { CreateTrustlineButton } from '~stellar/_common/ui/Trustline/CreateTrustlineButton'
-import { Checker as StellarChecker } from '~stellar/_common/ui/checker'
 import { useBestRoute } from '~stellar/swap/lib/hooks'
 import {
   useSimpleSwapActions,
@@ -47,9 +48,9 @@ export const SimpleSwapExecuteButton = () => {
     useNeedsTrustline(
       token1
         ? {
-            code: token1.code,
-            contract: token1.contract,
-            issuer: token1.issuer,
+            code: token1.symbol,
+            contract: token1.address,
+            issuer: token1.issuer ?? '',
           }
         : null,
     )
@@ -176,12 +177,8 @@ export const SimpleSwapExecuteButton = () => {
   }
 
   const checkerAmount = useMemo(() => {
-    return [
-      {
-        token: token0,
-        amount: Number(amountIn),
-      },
-    ]
+    if (!token0) return []
+    return [new Amount(token0, amountIn)]
   }, [amountIn, token0])
 
   // Check if we have a route but output is 0 (likely due to amount being too small)
@@ -254,12 +251,13 @@ export const SimpleSwapExecuteButton = () => {
         <Checker.Connect namespace="stellar" fullWidth size="xl">
           {needsToken1Trustline && token1 && token1ResolvedIssuer ? (
             <CreateTrustlineButton
-              tokens={[{ code: token1.code, issuer: token1ResolvedIssuer }]}
+              tokens={[{ code: token1.symbol, issuer: token1ResolvedIssuer }]}
               size="xl"
               fullWidth
             />
           ) : (
-            <StellarChecker.Amounts
+            <Checker.Amounts
+              chainId={StellarChainId.STELLAR}
               amounts={checkerAmount}
               disabled={isDisabled}
               fullWidth
@@ -277,7 +275,7 @@ export const SimpleSwapExecuteButton = () => {
               >
                 {buttonText}
               </Button>
-            </StellarChecker.Amounts>
+            </Checker.Amounts>
           )}
         </Checker.Connect>
       </div>

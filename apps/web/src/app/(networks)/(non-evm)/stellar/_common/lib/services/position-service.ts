@@ -53,8 +53,8 @@ const formatPositionInfo = (
 ): PositionInfo => {
   return {
     tokenId: contractPositionInfo.token_id,
-    token0: contractPositionInfo.token0,
-    token1: contractPositionInfo.token1,
+    token0: contractPositionInfo.token0 as StellarContractAddress,
+    token1: contractPositionInfo.token1 as StellarContractAddress,
     tickLower: contractPositionInfo.tick_lower,
     tickUpper: contractPositionInfo.tick_upper,
     liquidity: contractPositionInfo.liquidity,
@@ -185,8 +185,8 @@ export class PositionService {
 
       return {
         tokenId,
-        token0,
-        token1,
+        token0: token0 as StellarContractAddress,
+        token1: token1 as StellarContractAddress,
         tickLower,
         tickUpper,
         liquidity,

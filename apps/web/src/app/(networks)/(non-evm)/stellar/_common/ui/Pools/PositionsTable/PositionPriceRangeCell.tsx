@@ -31,7 +31,7 @@ export const PositionPriceRangeCell = ({
         />
         <span className="whitespace-nowrap text-sm flex items-center gap-1 text-gray-900 dark:text-slate-50">
           <FormattedNumber number={calculatePriceFromTick(tickLower)} />
-          {token1.code}
+          {token1.symbol}
           <div className="flex items-center">
             <ArrowSmLeftIcon
               width={16}
@@ -46,7 +46,7 @@ export const PositionPriceRangeCell = ({
           </div>
           <FormattedNumber number={calculatePriceFromTick(tickUpper)} />
 
-          {token1.code}
+          {token1.symbol}
         </span>
       </div>
       <span className="text-xs flex items-center gap-1 text-gray-900 dark:text-slate-500">
@@ -56,7 +56,7 @@ export const PositionPriceRangeCell = ({
         ) : (
           <FormattedNumber number={calculatePriceFromTick(poolInfo.tick)} />
         )}
-        {token1.code} per {token0.code}{' '}
+        {token1.symbol} per {token0.symbol}{' '}
       </span>
     </div>
   )

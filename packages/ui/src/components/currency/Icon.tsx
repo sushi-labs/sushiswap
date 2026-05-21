@@ -129,7 +129,9 @@ export const Icon: FC<IconProps> = ({
   const src =
     currency.type === 'native'
       ? `native-currency/${LOGO[currency.chainId]}`
-      : `tokens/${currency.chainId}/${currency.wrap().address}.jpg`
+      : typeof currency.metadata?.icon === 'string'
+        ? currency.metadata.icon
+        : `tokens/${currency.chainId}/${currency.wrap().address}.jpg`
 
   const avatar = (
     <Avatar style={{ width: rest.width, height: rest.height }}>

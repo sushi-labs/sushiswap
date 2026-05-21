@@ -12,8 +12,8 @@ export const PositionValueCell = ({ data }: { data: IPositionRowData }) => {
   } = useLPUsdValue({
     token0,
     token1,
-    reserve0: principalToken0,
-    reserve1: principalToken1,
+    reserve0: principalToken0.amount,
+    reserve1: principalToken1.amount,
   })
 
   if (isLoading || isPending || Number.isNaN(totalLPUsdValue)) {

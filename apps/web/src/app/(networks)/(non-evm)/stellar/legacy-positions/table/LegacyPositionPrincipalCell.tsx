@@ -1,6 +1,6 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 import { useMemo } from 'react'
-import { formatUnits } from 'viem'
+import { Amount } from 'sushi'
 import type { PositionSummary } from '~stellar/_common/lib/hooks/position/use-my-position'
 import type { IPositionRowData } from '~stellar/_common/ui/Pools/PositionsTable/PositionsTable'
 import type { PendingMigration } from '../types'
@@ -24,15 +24,15 @@ export const LegacyPositionPrincipalCell = ({
   const pendingMigration = pendingMigrations[tokenId]
 
   const originalPrincipal0 = pendingMigration
-    ? BigInt(pendingMigration.principal0)
+    ? new Amount(token0, pendingMigration.principal0)
     : principalToken0
   const originalPrincipal1 = pendingMigration
-    ? BigInt(pendingMigration.principal1)
+    ? new Amount(token1, pendingMigration.principal1)
     : principalToken1
 
   const statusText = useMemo(() => {
-    if (principalToken0 === 0n && principalToken1 === 0n) {
-      if (feesToken0 === 0n && feesToken1 === 0n) {
+    if (principalToken0.eq(0n) && principalToken1.eq(0n)) {
+      if (feesToken0.eq(0n) && feesToken1.eq(0n)) {
         return 'Collected'
       } else {
         return 'Pending Collection'
@@ -43,8 +43,8 @@ export const LegacyPositionPrincipalCell = ({
 
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex items-center whitespace-nowrap text-sm text-gray-900 dark:text-slate-50">{`${formatUnits(originalPrincipal0, token0.decimals)} ${token0.code}`}</div>
-      <div className="flex items-center whitespace-nowrap text-sm text-gray-900 dark:text-slate-50">{`${formatUnits(originalPrincipal1, token1.decimals)} ${token1.code}`}</div>
+      <div className="flex items-center whitespace-nowrap text-sm text-gray-900 dark:text-slate-50">{`${originalPrincipal0.toString()} ${token0.symbol}`}</div>
+      <div className="flex items-center whitespace-nowrap text-sm text-gray-900 dark:text-slate-50">{`${originalPrincipal1.toString()} ${token1.symbol}`}</div>
       {statusText && (
         <span className="text-xs flex items-center gap-1 text-gray-900 dark:text-slate-500">
           Status: {statusText}

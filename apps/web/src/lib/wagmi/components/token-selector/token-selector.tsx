@@ -26,29 +26,66 @@ import React, {
   useState,
 } from 'react'
 import { useAccount } from 'src/lib/wallet'
-import type { EvmChainId, EvmCurrency } from 'sushi/evm'
+import type { EvmChainId } from 'sushi/evm'
+import { type StellarChainId, isStellarChainId } from 'sushi/stellar'
 import type { SvmChainId } from 'sushi/svm'
-import { useConnection } from 'wagmi'
+import StellarTokenSelector from '~stellar/_common/ui/token-selector/token-selector'
 import { CurrencyInfo } from './currency-info'
 import { DesktopNetworkSelector } from './desktop-network-selector'
 import { MobileNetworkSelector } from './mobile-network-selector'
 import { TokenSelectorStates } from './token-selector-states'
 
-interface TokenSelectorProps<TChainId extends EvmChainId | SvmChainId> {
+type TokenSelectorChainId = EvmChainId | SvmChainId | StellarChainId
+
+interface TokenSelectorProps<TChainId extends TokenSelectorChainId> {
+  id?: string
   selected: CurrencyFor<TChainId> | undefined
   chainId: TChainId
-  onSelect(currency: CurrencyFor<TChainId>): void
+  onSelect?(currency: CurrencyFor<TChainId>): void
   children: ReactNode
-  currencies?: Record<string, CurrencyFor<TChainId, { approved?: boolean }>>
+  currencies?: Record<string, CurrencyFor<TChainId>>
   includeNative?: boolean
   hidePinnedTokens?: boolean
   hideSearch?: boolean
-  networks?: readonly (EvmChainId | SvmChainId)[]
-  selectedNetwork?: EvmChainId | SvmChainId
+  networks?: readonly TokenSelectorChainId[]
+  selectedNetwork?: TokenSelectorChainId
   onNetworkSelect?: (network: number) => void
 }
 
-export function TokenSelector<TChainId extends EvmChainId | SvmChainId>({
+export function TokenSelector<TChainId extends TokenSelectorChainId>(
+  props: TokenSelectorProps<TChainId>,
+) {
+  if (isStellarChainId(props.chainId)) {
+    const stellar = props as TokenSelectorProps<StellarChainId>
+    return (
+      <StellarTokenSelector
+        id={stellar.id ?? 'token-selector'}
+        selected={stellar.selected}
+        onSelect={stellar.onSelect}
+        currencies={stellar.currencies}
+      >
+        {stellar.children}
+      </StellarTokenSelector>
+    )
+  }
+  return (
+    <EvmSvmTokenSelector
+      {...(props as EvmSvmTokenSelectorProps<EvmChainId | SvmChainId>)}
+    />
+  )
+}
+
+interface EvmSvmTokenSelectorProps<TChainId extends EvmChainId | SvmChainId>
+  extends Omit<
+    TokenSelectorProps<TChainId>,
+    'currencies' | 'id' | 'networks' | 'selectedNetwork'
+  > {
+  currencies?: Record<string, CurrencyFor<TChainId, { approved?: boolean }>>
+  networks?: readonly (EvmChainId | SvmChainId)[]
+  selectedNetwork?: EvmChainId | SvmChainId
+}
+
+function EvmSvmTokenSelector<TChainId extends EvmChainId | SvmChainId>({
   includeNative = true,
   selected,
   onSelect,
@@ -60,7 +97,7 @@ export function TokenSelector<TChainId extends EvmChainId | SvmChainId>({
   networks,
   selectedNetwork,
   onNetworkSelect,
-}: TokenSelectorProps<TChainId>) {
+}: EvmSvmTokenSelectorProps<TChainId>) {
   const address = useAccount(chainId)
 
   const [query, setQuery] = useState('')

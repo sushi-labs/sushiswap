@@ -8,13 +8,12 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { addMinutes } from 'date-fns'
 import { ChainId, MAX_UINT128 } from 'sushi'
-import type { StellarContractAddress } from 'sushi/stellar'
+import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
 import { formatUnits } from 'viem'
 import { decreaseLiquidity } from '~stellar/_common/lib/soroban/position-manager-helpers'
 import { getStellarTxnLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
 import { useStellarWallet } from '~stellar/providers'
 import { waitForTransaction } from '../../soroban/transaction-helpers'
-import type { Token } from '../../types/token.type'
 import { useCollectFees } from '../position/use-positions'
 
 export interface RemovePoolLiquidityParams {
@@ -22,8 +21,8 @@ export interface RemovePoolLiquidityParams {
   liquidity: bigint
   amount0Min: bigint
   amount1Min: bigint
-  token0: Token
-  token1: Token
+  token0: StellarToken
+  token1: StellarToken
   poolAddress: StellarContractAddress
 }
 
@@ -146,8 +145,8 @@ export const useRemoveLiquidity = ({
       amount1Max: bigint
       signTransaction: (xdr: string) => Promise<string>
       signAuthEntry: (entryPreimageXdr: string) => Promise<string>
-      token0: Token
-      token1: Token
+      token0: StellarToken
+      token1: StellarToken
     }) => {
       const collectResult = await collectFeesMutation.mutateAsync(params)
       return { collectResult }
@@ -164,11 +163,11 @@ export const useRemoveLiquidity = ({
 
       let summary = 'Liquidity collected successfully'
       if (collectResult.amount0 > 0n && collectResult.amount1 > 0n) {
-        summary = `Collected ${token0Amount} ${variables.token0.code} and ${token1Amount} ${variables.token1.code}`
+        summary = `Collected ${token0Amount} ${variables.token0.symbol} and ${token1Amount} ${variables.token1.symbol}`
       } else if (collectResult.amount0 > 0n) {
-        summary = `Collected ${token0Amount} ${variables.token0.code}`
+        summary = `Collected ${token0Amount} ${variables.token0.symbol}`
       } else if (collectResult.amount1 > 0n) {
-        summary = `Collected ${token1Amount} ${variables.token1.code}`
+        summary = `Collected ${token1Amount} ${variables.token1.symbol}`
       }
       const timestamp = Date.now()
       createSuccessToast({

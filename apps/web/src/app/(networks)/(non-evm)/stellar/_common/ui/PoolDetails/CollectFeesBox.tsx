@@ -2,7 +2,7 @@ import { createErrorToast, createSuccessToast } from '@sushiswap/notifications'
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
 import type React from 'react'
 import { useState } from 'react'
-import { ChainId, MAX_UINT128 } from 'sushi'
+import { Amount, ChainId, MAX_UINT128 } from 'sushi'
 import { formatUnits } from 'viem'
 import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
@@ -38,13 +38,16 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
   // Calculate total fees across all positions
   const totalFees = positions.reduce(
     (acc, position) => ({
-      token0: acc.token0 + position.feesToken0,
-      token1: acc.token1 + position.feesToken1,
+      token0: acc.token0.add(position.feesToken0),
+      token1: acc.token1.add(position.feesToken1),
     }),
-    { token0: 0n, token1: 0n },
+    {
+      token0: new Amount(pool.token0, 0n),
+      token1: new Amount(pool.token1, 0n),
+    },
   )
 
-  const hasFees = totalFees.token0 > 0n || totalFees.token1 > 0n
+  const hasFees = totalFees.token0.gt(0n) || totalFees.token1.gt(0n)
 
   // Handle collect fees
   const handleCollectFees = async () => {
@@ -63,7 +66,7 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
 
       // Count positions with fees
       const positionsWithFees = positions.filter(
-        (p) => p.feesToken0 > 0n || p.feesToken1 > 0n,
+        (p) => p.feesToken0.gt(0n) || p.feesToken1.gt(0n),
       )
 
       if (positionsWithFees.length === 0) {
@@ -130,11 +133,11 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
 
         let summary = 'Fees collected successfully'
         if (totalCollected.token0 > 0n && totalCollected.token1 > 0n) {
-          summary = `Collected ${token0Amount} ${pool.token0.code} and ${token1Amount} ${pool.token1.code}`
+          summary = `Collected ${token0Amount} ${pool.token0.symbol} and ${token1Amount} ${pool.token1.symbol}`
         } else if (totalCollected.token0 > 0n) {
-          summary = `Collected ${token0Amount} ${pool.token0.code}`
+          summary = `Collected ${token0Amount} ${pool.token0.symbol}`
         } else if (totalCollected.token1 > 0n) {
-          summary = `Collected ${token1Amount} ${pool.token1.code}`
+          summary = `Collected ${token1Amount} ${pool.token1.symbol}`
         }
 
         const timestamp = Date.now()
@@ -190,19 +193,17 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
           <LiquidityItem
             isLoading={isLoading}
             token={pool.token0}
-            amount={formatUnits(totalFees.token0, pool.token0.decimals)}
+            amount={totalFees.token0.toString()}
             usdAmount={(
-              Number(formatUnits(totalFees.token0, pool.token0.decimals)) *
-              Number(priceToken0 ?? 0)
+              Number(totalFees.token0.toString()) * Number(priceToken0 ?? 0)
             ).toFixed(2)}
           />
           <LiquidityItem
             isLoading={isLoading}
             token={pool.token1}
-            amount={formatUnits(totalFees.token1, pool.token1.decimals)}
+            amount={totalFees.token1.toString()}
             usdAmount={(
-              Number(formatUnits(totalFees.token1, pool.token1.decimals)) *
-              Number(priceToken1 ?? 0)
+              Number(totalFees.token1.toString()) * Number(priceToken1 ?? 0)
             ).toFixed(2)}
           />
         </div>

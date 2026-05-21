@@ -1,11 +1,11 @@
+import type { StellarToken } from 'sushi/stellar'
 import type { PoolBasicInfo } from '../soroban/pool-helpers'
-import type { Token } from '../types/token.type'
 
 /**
  * Swap route information
  */
 export interface SwapRoute {
-  path: Token[]
+  path: StellarToken[]
   pools: PoolBasicInfo[]
   fees: number[]
   amountIn: bigint
@@ -18,9 +18,9 @@ export interface SwapRoute {
  */
 export function formatRouteForUser(route: SwapRoute): string {
   if (route.path.length === 2) {
-    return `${route.path[0].code} → ${route.path[1].code}`
+    return `${route.path[0].symbol} → ${route.path[1].symbol}`
   } else {
-    return route.path.map((t) => t.code).join(' → ')
+    return route.path.map((t) => t.symbol).join(' → ')
   }
 }
 

@@ -1,5 +1,6 @@
 import type { LowercaseMap } from 'sushi'
 import type { EvmChainId, EvmID } from 'sushi/evm'
+import type { StellarChainId } from 'sushi/stellar'
 import type { SvmChainId } from 'sushi/svm'
 import type { Address } from 'viem'
 
@@ -63,7 +64,9 @@ export type ProviderActions =
   | ProviderActionUpdateAccount
   | ProviderActionRefresh
 
-export type UseBalancesReturn<TChainId extends EvmChainId | SvmChainId> =
+export type BalanceChainId = EvmChainId | SvmChainId | StellarChainId
+
+export type UseBalancesReturn<TChainId extends BalanceChainId> =
   | {
       data: undefined
       isError: boolean

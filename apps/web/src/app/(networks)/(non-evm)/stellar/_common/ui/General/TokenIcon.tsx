@@ -1,9 +1,9 @@
 import { cloudinaryLogoFetchLoader } from '@sushiswap/ui'
 import Image from 'next/image'
-import type { Token } from '~stellar/_common/lib/types/token.type'
+import type { StellarToken } from 'sushi/stellar'
 
 type IconProps = {
-  currency: Token | undefined
+  currency: StellarToken<{ icon?: string }> | undefined
   height?: number
   width?: number
 }
@@ -19,17 +19,19 @@ const hashStringToColor = (str: string): string => {
 }
 
 export const TokenIcon = ({ currency, height = 40, width = 40 }: IconProps) => {
+  const icon = currency?.metadata.icon
+
   return (
     <>
-      {currency?.icon ? (
+      {icon ? (
         <div
           style={{ width, height, minWidth: width, minHeight: height }}
           className="relative flex shrink-0 overflow-hidden rounded-full"
         >
           <Image
             loader={cloudinaryLogoFetchLoader}
-            src={currency.icon}
-            alt={currency.code}
+            src={icon}
+            alt={currency?.symbol ?? ''}
             height={height}
             width={width}
             className="object-cover rounded-full"
@@ -45,11 +47,11 @@ export const TokenIcon = ({ currency, height = 40, width = 40 }: IconProps) => {
             minWidth: `${width}px`,
             minHeight: `${height}px`,
             background: hashStringToColor(
-              currency ? `${currency.code} ${currency.name}` : '??',
+              currency ? `${currency.symbol} ${currency.name}` : '??',
             ),
           }}
         >
-          {currency?.code?.slice(0, 2) ?? '??'}
+          {currency?.symbol?.slice(0, 2) ?? '??'}
         </div>
       )}
     </>

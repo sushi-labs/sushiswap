@@ -10,19 +10,18 @@ import { addMinutes } from 'date-fns'
 import { nanoid } from 'nanoid'
 import { toast } from 'react-toastify'
 import { ChainId } from 'sushi'
-import type { StellarContractAddress } from 'sushi/stellar'
+import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
 import { formatUnits } from 'viem'
 import { useStellarWallet } from '~stellar/providers'
 import { SwapService } from '../../services/swap-service'
-import type { Token } from '../../types/token.type'
 import { extractErrorMessage } from '../../utils/error-helpers'
 import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
 
 export interface UseExecuteSwapParams {
   userAddress: string
   pool: StellarContractAddress
-  tokenIn: Token
-  tokenOut: Token
+  tokenIn: StellarToken
+  tokenOut: StellarToken
   amountIn: bigint
   amountOutMinimum: bigint
   recipient: string
@@ -47,7 +46,7 @@ export const useExecuteSwap = () => {
       )
 
       createInfoToast({
-        summary: `Swapping ${amountInFormatted} ${params.tokenIn.code} for ${params.tokenOut.code}...`,
+        summary: `Swapping ${amountInFormatted} ${params.tokenIn.symbol} for ${params.tokenOut.symbol}...`,
         type: 'swap',
         account: params.userAddress,
         chainId: ChainId.STELLAR,
@@ -65,8 +64,8 @@ export const useExecuteSwap = () => {
         params.userAddress,
         {
           pool: params.pool,
-          tokenIn: params.tokenIn.contract,
-          tokenOut: params.tokenOut.contract,
+          tokenIn: params.tokenIn.address,
+          tokenOut: params.tokenOut.address,
           fee: params.fee,
           recipient: params.recipient,
           amountIn: params.amountIn,
@@ -100,7 +99,7 @@ export const useExecuteSwap = () => {
 
       const timestamp = Date.now()
       createSuccessToast({
-        summary: `Swapped ${amountInFormatted} ${params.tokenIn.code} for ${amountOutFormatted} ${params.tokenOut.code}`,
+        summary: `Swapped ${amountInFormatted} ${params.tokenIn.symbol} for ${amountOutFormatted} ${params.tokenOut.symbol}`,
         type: 'swap',
         account: params.userAddress,
         chainId: ChainId.STELLAR,
@@ -140,14 +139,14 @@ export const useExecuteSwap = () => {
 export interface UseExecuteMultiHopSwapParams {
   userAddress: string
   pools: StellarContractAddress[]
-  path: string[]
+  path: StellarContractAddress[]
   fees: number[]
   amountIn: bigint
   amountOutMinimum: bigint
   recipient: string
   deadline?: number
-  tokenIn?: Token
-  tokenOut?: Token
+  tokenIn?: StellarToken
+  tokenOut?: StellarToken
 }
 
 export const useExecuteMultiHopSwap = () => {
@@ -164,7 +163,7 @@ export const useExecuteMultiHopSwap = () => {
       const amountInFormatted = formatUnits(params.amountIn, tokenInDecimals)
 
       createInfoToast({
-        summary: `Swapping ${amountInFormatted} ${params.tokenIn?.code || 'tokens'} for ${params.tokenOut?.code || 'tokens'}...`,
+        summary: `Swapping ${amountInFormatted} ${params.tokenIn?.symbol || 'tokens'} for ${params.tokenOut?.symbol || 'tokens'}...`,
         type: 'swap',
         account: params.userAddress,
         chainId: ChainId.STELLAR,
@@ -211,7 +210,7 @@ export const useExecuteMultiHopSwap = () => {
 
       const timestamp = Date.now()
       createSuccessToast({
-        summary: `Swapped ${amountInFormatted} ${params.tokenIn?.code || 'tokens'} for ${amountOutFormatted} ${params.tokenOut?.code || 'tokens'}`,
+        summary: `Swapped ${amountInFormatted} ${params.tokenIn?.symbol || 'tokens'} for ${amountOutFormatted} ${params.tokenOut?.symbol || 'tokens'}`,
         type: 'swap',
         account: params.userAddress,
         chainId: ChainId.STELLAR,

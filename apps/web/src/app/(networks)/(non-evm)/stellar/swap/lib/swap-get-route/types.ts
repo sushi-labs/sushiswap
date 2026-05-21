@@ -1,5 +1,4 @@
-import type { StellarContractAddress } from 'sushi/stellar'
-import type { Token } from '~stellar/_common/lib/types/token.type'
+import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
 
 /**
  * Represents a pool/liquidity vertex in the token graph
@@ -21,7 +20,7 @@ export interface Vertex {
  * Represents a complete swap route
  */
 export interface Route {
-  route: string[] // Array of token addresses forming the path
+  route: StellarContractAddress[] // Array of token addresses forming the path
   pools: StellarContractAddress[] // Array of pool addresses used
   fees: number[] // Array of fee tiers
   amountOut: bigint
@@ -33,5 +32,5 @@ export interface Route {
  * Route with token objects
  */
 export interface RouteWithTokens extends Route {
-  tokens: Token[]
+  tokens: StellarToken[]
 }

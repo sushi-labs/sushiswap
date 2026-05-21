@@ -4,12 +4,13 @@ import { createContext, useContext } from 'react'
 import { useAccount } from 'src/lib/wallet'
 import { stellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
 import { useStellarWallets } from 'src/lib/wallet/namespaces/stellar/provider/use-stellar-wallets'
+import type { StellarAccountAddress } from 'sushi/stellar'
 import { NETWORK_PASSPHRASE } from './_common/lib/constants'
 
 interface StellarWalletContextType {
   isLoading: boolean
   isConnected: boolean
-  connectedAddress: `G${string}` | undefined
+  connectedAddress: StellarAccountAddress | undefined
   signTransaction: (xdr: string) => Promise<string>
   signAuthEntry: (entryPreimageXdr: string) => Promise<string>
 }
