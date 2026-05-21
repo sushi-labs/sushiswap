@@ -6,17 +6,16 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import type { ReactNode } from 'react'
 import { type EvmChainId, getEvmChainById, isEvmChainId } from 'sushi/evm'
-import type { SvmChainId } from 'sushi/svm'
 import { useConnection, useSwitchChain } from 'wagmi'
+import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
 
-interface NetworkProps<TChainId extends EvmChainId | SvmChainId>
-  extends ButtonProps {
+interface NetworkProps<TChainId extends BalanceChainId> extends ButtonProps {
   chainId: TChainId | undefined
   hoverCardContent?: ReactNode | undefined
   hideChainName?: boolean
 }
 
-function Network<TChainId extends EvmChainId | SvmChainId>(
+function Network<TChainId extends BalanceChainId>(
   props: NetworkProps<TChainId>,
 ) {
   const { chainId, children } = props

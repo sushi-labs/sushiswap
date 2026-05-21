@@ -32,10 +32,7 @@ import { useAccount } from 'src/lib/wallet'
 import { useDetailsInteractionTracker } from '../../../_ui/details-interaction-tracker-provider'
 import { CrossChainSwapFeesHoverCard } from './fees-hover-card'
 import { CrossChainSwapTokenRate } from './token-rate'
-import {
-  useLifiXSwap,
-  useLifiXSwapSelectedTradeRoute,
-} from './xswap-provider'
+import { useLifiXSwap, useLifiXSwapSelectedTradeRoute } from './xswap-provider'
 
 export function CrossChainSwapTradeStats<
   TChainId0 extends LifiXSwapSupportedChainId,

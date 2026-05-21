@@ -3,12 +3,17 @@
 import {
   type FC,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
   useState,
 } from 'react'
-import type { LifiXSwapSupportedChainId } from 'src/config'
+import {
+  type LifiXSwapSupportedChainId,
+  type SupportedChainId,
+  isLifiXSwapSupportedChainId,
+} from 'src/config'
 import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'
 import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
@@ -19,8 +24,13 @@ import type {
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { useAccount } from 'src/lib/wallet'
 import { Amount, Percent, getNativeAddress } from 'sushi'
-import type { EvmAddress } from 'sushi/evm'
+import { type EvmAddress, EvmChainId } from 'sushi/evm'
 import type { SvmAddress } from 'sushi/svm'
+import {
+  getDefaultCurrency,
+  getQuoteCurrency,
+  getTokenAsString,
+} from '../../../_ui/derivedstate-swap-helpers'
 import {
   type XSwapFormMutators,
   type XSwapFormStateValues,
@@ -33,14 +43,24 @@ interface State<
   TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
   TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
 > {
-  mutate: XSwapFormMutators<TChainId0, TChainId1> & {
+  mutate: Omit<
+    XSwapFormMutators<TChainId0, TChainId1>,
+    'setToken0Param' | 'setToken1Param' | 'setTokenParams'
+  > & {
+    setToken0(token0: CurrencyFor<TChainId0> | string): void
+    setToken1(token1: CurrencyFor<TChainId1> | string): void
+    setTokens(
+      token0: CurrencyFor<TChainId0> | string,
+      token1: CurrencyFor<TChainId1> | string,
+    ): void
     setSelectedBridge(bridge: string | undefined): void
     setRouteOrder(order: CrossChainRouteOrder): void
   }
   state: Omit<
     XSwapFormStateValues<TChainId0, TChainId1>,
-    'token0Param' | 'token1Param'
+    'token0Param' | 'token1Param' | 'chainId1'
   > & {
+    chainId1: TChainId1
     token0: CurrencyFor<TChainId0> | undefined
     token1: CurrencyFor<TChainId1> | undefined
     swapAmount: Amount<CurrencyFor<TChainId0>> | undefined
@@ -59,31 +79,85 @@ interface LifiXSwapProviderProps {
   children: React.ReactNode
 }
 
-/* Parses the URL and provides the chainId, token0, and token1 globally.
- * URL example:
- * /swap?chainId1=2token0=NATIVE&token1=0x6b3595068778dd592e39a122f4f5a5cf09c90fe2
- *
- * If no chainId is provided, it defaults to current connected chainId or Ethereum if wallet is not connected.
+const defaultChainId1For = (
+  chainId0: LifiXSwapSupportedChainId,
+): LifiXSwapSupportedChainId =>
+  chainId0 === EvmChainId.ARBITRUM ? EvmChainId.ETHEREUM : EvmChainId.ARBITRUM
+
+/* Layers LiFi-specific concerns (token resolution, bridge selection, route
+ * order, chainId1/token defaulting) on top of the chain-agnostic
+ * XSwapFormProvider.
  */
-const LifiXSwapProvider: FC<
-  LifiXSwapProviderProps
-> = ({ children }) => {
-  const {
-    chainId0,
-    chainId1,
-    token0Param,
-    token1Param,
-    swapAmountString,
-    tradeId,
-    setTradeId,
-    setChainId0,
-    setChainId1,
-    setToken0,
-    setToken1,
-    setTokens,
-    setSwapAmount,
-    switchTokens,
-  } = useXSwapForm()
+const LifiXSwapProvider: FC<LifiXSwapProviderProps> = ({ children }) => {
+  const form = useXSwapForm()
+
+  const chainId0 = form.chainId0 as LifiXSwapSupportedChainId
+  const chainId1: LifiXSwapSupportedChainId =
+    form.chainId1 && isLifiXSwapSupportedChainId(form.chainId1)
+      ? form.chainId1
+      : defaultChainId1For(chainId0)
+
+  const token0Param = form.token0Param ?? getDefaultCurrency(chainId0)
+  const token1Param = form.token1Param ?? getQuoteCurrency(chainId1)
+
+  // Persist the synchronously-resolved defaults back to the URL so the URL
+  // stays consistent with what consumers see.
+  useEffect(() => {
+    if (!form.chainId1) {
+      form.setChainId1(defaultChainId1For(chainId0))
+    }
+  }, [form.chainId1, form.setChainId1, chainId0])
+
+  useEffect(() => {
+    if (form.token0Param === undefined) {
+      form.setToken0Param(getDefaultCurrency(chainId0))
+    }
+  }, [form.token0Param, form.setToken0Param, chainId0])
+
+  useEffect(() => {
+    if (
+      form.token1Param === undefined &&
+      form.chainId1 &&
+      isLifiXSwapSupportedChainId(form.chainId1)
+    ) {
+      form.setToken1Param(getQuoteCurrency(form.chainId1))
+    }
+  }, [form.token1Param, form.chainId1, form.setToken1Param])
+
+  const setToken0 = useCallback(
+    (token: CurrencyFor<LifiXSwapSupportedChainId> | string) => {
+      form.setToken0Param(
+        typeof token === 'string' ? token : getTokenAsString(chainId0, token),
+      )
+    },
+    [form.setToken0Param, chainId0],
+  )
+
+  const setToken1 = useCallback(
+    (token: CurrencyFor<LifiXSwapSupportedChainId> | string) => {
+      form.setToken1Param(
+        typeof token === 'string' ? token : getTokenAsString(chainId1, token),
+      )
+    },
+    [form.setToken1Param, chainId1],
+  )
+
+  const setTokens = useCallback(
+    (
+      token0: CurrencyFor<LifiXSwapSupportedChainId> | string,
+      token1: CurrencyFor<LifiXSwapSupportedChainId> | string,
+    ) => {
+      form.setTokenParams(
+        typeof token0 === 'string'
+          ? token0
+          : getTokenAsString(chainId0, token0),
+        typeof token1 === 'string'
+          ? token1
+          : getTokenAsString(chainId1, token1),
+      )
+    },
+    [form.setTokenParams, chainId0, chainId1],
+  )
 
   const [selectedBridge, setSelectedBridge] = useState<string | undefined>(
     undefined,
@@ -114,8 +188,8 @@ const LifiXSwapProvider: FC<
 
   const swapAmount = useMemo(
     () =>
-      _token0 ? Amount.tryFromHuman(_token0, swapAmountString) : undefined,
-    [_token0, swapAmountString],
+      _token0 ? Amount.tryFromHuman(_token0, form.swapAmountString) : undefined,
+    [_token0, form.swapAmountString],
   )
 
   const recipient = useAccount(chainId1)
@@ -130,23 +204,23 @@ const LifiXSwapProvider: FC<
       value={useMemo(() => {
         return {
           mutate: {
-            setChainId0,
-            setChainId1,
+            setChainId0: form.setChainId0,
+            setChainId1: form.setChainId1,
             setToken0,
             setToken1,
             setTokens,
-            setTradeId,
-            switchTokens,
-            setSwapAmount,
+            setTradeId: form.setTradeId,
+            switchTokens: form.switchTokens,
+            setSwapAmount: form.setSwapAmount,
             setSelectedBridge,
             setRouteOrder,
           },
           state: {
-            tradeId,
+            tradeId: form.tradeId,
             recipient,
             chainId0,
             chainId1,
-            swapAmountString,
+            swapAmountString: form.swapAmountString,
             swapAmount,
             token0: _token0,
             token1: _token1,
@@ -160,21 +234,21 @@ const LifiXSwapProvider: FC<
       }, [
         chainId0,
         chainId1,
-        setChainId0,
-        setChainId1,
-        setSwapAmount,
+        form.setChainId0,
+        form.setChainId1,
+        form.setSwapAmount,
         setToken0,
         setToken1,
         setTokens,
-        setTradeId,
-        switchTokens,
+        form.switchTokens,
         swapAmount,
-        swapAmountString,
+        form.swapAmountString,
         _token0,
         token0Loading,
         _token1,
         token1Loading,
-        tradeId,
+        form.tradeId,
+        form.setTradeId,
         selectedBridge,
         routeOrder,
         recipient,

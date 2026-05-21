@@ -17,11 +17,8 @@ import { getNamespaceForChainId } from 'src/lib/wallet/namespaces/namespace-for-
 import { ZERO } from 'sushi'
 import { CrossChainSwapChainUnsupportedMessage } from './chain-unsupported-message'
 import { CrossChainSwapTradeReviewDialog } from './trade-review-dialog'
-import {
-  useLifiXSwap,
-  useLifiXSwapSelectedTradeRoute,
-} from './xswap-provider'
 import { useIsCrossChainSwapMaintenance } from './use-is-maintenance'
+import { useLifiXSwap, useLifiXSwapSelectedTradeRoute } from './xswap-provider'
 
 export function CrossChainSwapTradeButton<
   TChainId0 extends LifiXSwapSupportedChainId,

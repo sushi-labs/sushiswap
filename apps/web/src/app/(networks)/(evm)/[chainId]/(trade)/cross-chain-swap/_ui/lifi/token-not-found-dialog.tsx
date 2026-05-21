@@ -97,13 +97,7 @@ export function CrossChainSwapTokenNotFoundDialog<
   }, [chainId1]) as TokenFor<TChainId1>
 
   const reset = useCallback(() => {
-    setTokens(
-      defaultCurrency as unknown as CurrencyFor<TChainId0, CurrencyMetadata>,
-      defaultQuoteCurrency as unknown as CurrencyFor<
-        TChainId1,
-        CurrencyMetadata
-      >,
-    )
+    setTokens(defaultCurrency, defaultQuoteCurrency)
   }, [defaultCurrency, defaultQuoteCurrency, setTokens])
 
   const { data: token0SecurityResponse, isLoading: isToken0SecurityLoading } =

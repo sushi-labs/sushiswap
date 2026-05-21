@@ -5,21 +5,20 @@ import {
   type LifiXSwapSupportedChainId,
   getSortedChainIds,
 } from 'src/config'
-import { Web3Input } from 'src/lib/wagmi/components/web3-input'
+import { isNearIntentsChainId } from 'src/lib/swap/near-intents'
 import { isWNativeSupported } from 'sushi'
-import {
-  useLifiXSwap,
-  useLifiXSwapSelectedTradeRoute,
-} from './xswap-provider'
+import { StellarChainId } from 'sushi/stellar'
+import { XSwapCurrencyInput } from '../xswap-currency-input'
+import { useLifiXSwap, useLifiXSwapSelectedTradeRoute } from './xswap-provider'
 
-const networks = getSortedChainIds(LIFI_XSWAP_SUPPORTED_CHAIN_IDS)
+const lifiNetworks = getSortedChainIds(LIFI_XSWAP_SUPPORTED_CHAIN_IDS)
 
 export function CrossChainSwapToken1Input<
   TChainId0 extends LifiXSwapSupportedChainId,
   TChainId1 extends LifiXSwapSupportedChainId,
 >() {
   const {
-    state: { chainId1, token1 },
+    state: { chainId0, chainId1, token1 },
     mutate: { setToken1, setChainId1 },
     isToken1Loading: tokenLoading,
   } = useLifiXSwap<TChainId0, TChainId1>()
@@ -30,12 +29,15 @@ export function CrossChainSwapToken1Input<
     data: route,
   } = useLifiXSwapSelectedTradeRoute()
 
+  const networks = isNearIntentsChainId(chainId0)
+    ? [...lifiNetworks, StellarChainId.STELLAR]
+    : lifiNetworks
+
   return (
-    <Web3Input.Currency
+    <XSwapCurrencyInput
       id="swap-to"
       type="OUTPUT"
       disabled
-      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
       value={route?.amountOut?.toSignificant() ?? ''}
       chainId={chainId1}
       onSelect={setToken1}

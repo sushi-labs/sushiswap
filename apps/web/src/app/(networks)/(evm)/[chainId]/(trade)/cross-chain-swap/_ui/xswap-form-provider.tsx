@@ -13,237 +13,199 @@ import {
   useState,
 } from 'react'
 import {
-  type SupportedChainId,
   type LifiXSwapSupportedChainId,
   isLifiXSwapSupportedChainId,
 } from 'src/config'
 import { replaceNetworkSlug } from 'src/lib/network'
-import { getChainById } from 'sushi'
-import { EvmChainId } from 'sushi/evm'
 import {
-  getDefaultCurrency,
-  getQuoteCurrency,
-  getTokenAsString,
-} from '../../_ui/derivedstate-swap-helpers'
+  type NearIntentsSupportedChainId,
+  isNearIntentsChainId,
+} from 'src/lib/swap/near-intents'
+import { EvmChainId } from 'sushi/evm'
+
+type XSwapChainId = LifiXSwapSupportedChainId | NearIntentsSupportedChainId
+
+const isXSwapChainId = (chainId: number): chainId is XSwapChainId =>
+  isLifiXSwapSupportedChainId(chainId) || isNearIntentsChainId(chainId)
+
+// Two chains share a `providers.tsx` branch when both their LiFi and Near
+// support flags match. Crossing branches (e.g. EVM-only ↔ Stellar) requires a
+// real Next navigation so the server-rendered Providers re-mounts the right
+// domain provider.
+const sameXSwapBranch = (a: XSwapChainId, b: XSwapChainId) =>
+  isLifiXSwapSupportedChainId(a) === isLifiXSwapSupportedChainId(b) &&
+  isNearIntentsChainId(a) === isNearIntentsChainId(b)
 
 interface XSwapFormStateValues<
-  TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
-  TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
+  TChainId0 extends XSwapChainId = XSwapChainId,
+  TChainId1 extends XSwapChainId = XSwapChainId,
 > {
   chainId0: TChainId0
-  chainId1: TChainId1
-  token0Param: string
-  token1Param: string
+  chainId1: TChainId1 | undefined
+  token0Param: string | undefined
+  token1Param: string | undefined
   swapAmountString: string
   tradeId: string
 }
 
 interface XSwapFormMutators<
-  TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
-  TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
+  TChainId0 extends XSwapChainId = XSwapChainId,
+  TChainId1 extends XSwapChainId = XSwapChainId,
 > {
   setTradeId: Dispatch<SetStateAction<string>>
   setChainId0(chainId: TChainId0): void
   setChainId1(chainId: TChainId1): void
-  setToken0(token0: CurrencyFor<TChainId0> | string): void
-  setToken1(token1: CurrencyFor<TChainId1> | string): void
-  setTokens(
-    token0: CurrencyFor<TChainId0> | string,
-    token1: CurrencyFor<TChainId1> | string,
-  ): void
+  setToken0Param(value: string | null): void
+  setToken1Param(value: string | null): void
+  setTokenParams(token0: string | null, token1: string | null): void
   setSwapAmount(swapAmount: string): void
   switchTokens(): void
 }
 
 interface XSwapFormState<
-  TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
-  TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
+  TChainId0 extends XSwapChainId = XSwapChainId,
+  TChainId1 extends XSwapChainId = XSwapChainId,
 > extends XSwapFormStateValues<TChainId0, TChainId1>,
     XSwapFormMutators<TChainId0, TChainId1> {}
 
-const XSwapFormContext = createContext<XSwapFormState | null>(
-  null,
-)
+const XSwapFormContext = createContext<XSwapFormState | null>(null)
 
 interface XSwapFormProviderProps {
   children: React.ReactNode
-  defaultChainId: LifiXSwapSupportedChainId
+  defaultChainId: XSwapChainId
 }
 
+/* Holds the URL/path-derived form layer for the cross-chain swap route:
+ * chainId0 (path), chainId1/token0/token1/swapAmount (query). Chain-agnostic
+ * — domain providers (LiFi, Near Intents) layer their own token resolution
+ * and default-filling on top of this hook.
+ *
+ * URL example:
+ * /ethereum/cross-chain-swap?chainId1=42161&token0=NATIVE&token1=0x6b35...
+ */
 const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
   children,
   defaultChainId,
 }) => {
-  const { push } = useRouter()
+  const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [tradeId, setTradeId] = useState(nanoid())
-  const [chainId, setChainId] = useState<LifiXSwapSupportedChainId>(defaultChainId)
+  const [chainId0State, setChainId0State] =
+    useState<XSwapChainId>(defaultChainId)
 
-  const chainId0 = isLifiXSwapSupportedChainId(chainId)
-    ? chainId
+  const chainId0 = isXSwapChainId(chainId0State)
+    ? chainId0State
     : EvmChainId.ETHEREUM
-  type TChainId0 = typeof chainId0
 
-  // Get the searchParams and complete with defaults.
-  // This handles the case where some params might not be provided by the user
-  const defaultedParams = useMemo(() => {
-    const params = new URLSearchParams(Array.from(searchParams.entries()))
+  const chainId1Raw = Number(searchParams.get('chainId1') ?? Number.NaN)
+  const chainId1 = isXSwapChainId(chainId1Raw) ? chainId1Raw : undefined
 
-    if (!params.has('chainId1'))
-      params.set(
-        'chainId1',
-        chainId0 === EvmChainId.ARBITRUM
-          ? EvmChainId.ETHEREUM.toString()
-          : EvmChainId.ARBITRUM.toString(),
-      )
-    if (!params.has('token0'))
-      params.set('token0', getDefaultCurrency(chainId0 as SupportedChainId))
-    if (!params.has('token1'))
-      params.set(
-        'token1',
-        getQuoteCurrency(Number(params.get('chainId1')) as SupportedChainId),
-      )
+  const token0Param = searchParams.get('token0') ?? undefined
+  const token1Param = searchParams.get('token1') ?? undefined
+  const swapAmountString = searchParams.get('swapAmount') ?? ''
 
-    return params
-  }, [chainId0, searchParams])
-
-  // Derive chainId from defaultedParams
-  const chainId1 = Number(
-    defaultedParams.get('chainId1'),
-  ) as LifiXSwapSupportedChainId
-  type TChainId1 = typeof chainId1
-
-  // Get a new searchParams string by merging the current
-  // searchParams with a provided key/value pair
   const createQueryString = useCallback(
     (values: { name: string; value: string | null }[]) => {
-      const params = new URLSearchParams(defaultedParams)
-      values.forEach(({ name, value }) => {
+      const params = new URLSearchParams(searchParams.toString())
+      for (const { name, value } of values) {
         if (value === null) {
           params.delete(name)
         } else {
           params.set(name, value)
         }
-      })
+      }
       return params.toString()
     },
-    [defaultedParams],
+    [searchParams],
   )
 
-  // Switch token0 and token1
   const switchTokens = useCallback(() => {
-    const params = new URLSearchParams(defaultedParams)
-    const chainId1Param = +(params.get('chainId1') || 0)
+    if (!chainId1) return
+    const params = new URLSearchParams(searchParams.toString())
     const token0 = params.get('token0')
     const token1 = params.get('token1')
 
-    if (!isLifiXSwapSupportedChainId(chainId1Param)) {
-      console.error('Invalid chainId1:', chainId1Param)
-      return
+    const url = `${replaceNetworkSlug(chainId1, pathname)}?${createQueryString([
+      { name: 'swapAmount', value: null },
+      { name: 'token0', value: token1 },
+      { name: 'token1', value: token0 },
+      { name: 'chainId1', value: chainId0.toString() },
+    ])}`
+
+    if (sameXSwapBranch(chainId0, chainId1)) {
+      history.pushState(null, '', url)
+      setChainId0State(chainId1)
+    } else {
+      router.push(url, { scroll: false })
     }
+  }, [chainId0, chainId1, pathname, searchParams, createQueryString, router])
 
-    const pathSegments = pathname.split('/')
-    pathSegments[1] = getChainById(chainId1Param).key
-
-    // Can safely cast as defaultedParams are always defined
-    history.pushState(
-      null,
-      '',
-      `${replaceNetworkSlug(chainId1Param, pathname)}?${createQueryString([
-        { name: 'swapAmount', value: null },
-        { name: 'token0', value: token1 as string },
-        { name: 'token1', value: token0 as string },
-        { name: 'chainId1', value: chainId0.toString() },
-      ])}`,
-    )
-
-    setChainId(chainId1Param)
-  }, [pathname, defaultedParams, chainId0, createQueryString])
-
-  // Update the URL with new from chainId
   const setChainId0 = useCallback(
-    (chainId: LifiXSwapSupportedChainId) => {
-      if (defaultedParams.get('chainId1') === chainId.toString()) {
+    (newChainId: XSwapChainId) => {
+      if (chainId1 === newChainId) {
         switchTokens()
-      } else {
-        history.pushState(
-          null,
-          '',
-          `${replaceNetworkSlug(chainId, pathname)}?${createQueryString([
-            { name: 'swapAmount', value: null },
-            {
-              name: 'token0',
-              value: getDefaultCurrency(chainId0 as SupportedChainId),
-            },
-          ])}`,
-        )
+        return
+      }
 
-        setChainId(chainId)
+      const url = `${replaceNetworkSlug(newChainId, pathname)}?${createQueryString(
+        [
+          { name: 'swapAmount', value: null },
+          { name: 'token0', value: null },
+        ],
+      )}`
+
+      if (sameXSwapBranch(chainId0, newChainId)) {
+        history.pushState(null, '', url)
+        setChainId0State(newChainId)
+      } else {
+        router.push(url, { scroll: false })
       }
     },
-    [createQueryString, defaultedParams, pathname, switchTokens, chainId0],
+    [chainId0, chainId1, pathname, createQueryString, router, switchTokens],
   )
 
-  // Update the URL with new to chainId
   const setChainId1 = useCallback(
-    (chainId: LifiXSwapSupportedChainId) => {
-      if (chainId0 === chainId) {
+    (newChainId: XSwapChainId) => {
+      if (chainId0 === newChainId) {
         switchTokens()
-      } else {
-        push(
-          `${pathname}?${createQueryString([
-            { name: 'swapAmount', value: null },
-            { name: 'chainId1', value: chainId.toString() },
-            {
-              name: 'token1',
-              value: getQuoteCurrency(chainId as SupportedChainId),
-            },
-          ])}`,
-          { scroll: false },
-        )
+        return
       }
-    },
-    [createQueryString, pathname, push, switchTokens, chainId0],
-  )
-
-  // Update the URL with a new token0
-  const setToken0 = useCallback(
-    (_token0: string | CurrencyFor<TChainId0>) => {
-      // If entity is provided, parse it to a string
-      const token0 = getTokenAsString(chainId0 as SupportedChainId, _token0)
-      push(
-        `${pathname}?${createQueryString([{ name: 'token0', value: token0 }])}`,
+      router.push(
+        `${pathname}?${createQueryString([
+          { name: 'swapAmount', value: null },
+          { name: 'chainId1', value: newChainId.toString() },
+          { name: 'token1', value: null },
+        ])}`,
         { scroll: false },
       )
     },
-    [chainId0, createQueryString, pathname, push],
+    [chainId0, pathname, createQueryString, router, switchTokens],
   )
 
-  // Update the URL with a new token1
-  const setToken1 = useCallback(
-    (_token1: string | CurrencyFor<TChainId1>) => {
-      // If entity is provided, parse it to a string
-      const token1 = getTokenAsString(chainId1 as SupportedChainId, _token1)
-      push(
-        `${pathname}?${createQueryString([{ name: 'token1', value: token1 }])}`,
+  const setToken0Param = useCallback(
+    (value: string | null) => {
+      router.push(
+        `${pathname}?${createQueryString([{ name: 'token0', value }])}`,
         { scroll: false },
       )
     },
-    [chainId1, createQueryString, pathname, push],
+    [pathname, createQueryString, router],
   )
 
-  // Update the URL with both tokens
-  const setTokens = useCallback(
-    (
-      _token0: string | CurrencyFor<TChainId0>,
-      _token1: string | CurrencyFor<TChainId1>,
-    ) => {
-      // If entity is provided, parse it to a string
-      const token0 = getTokenAsString(chainId0 as SupportedChainId, _token0)
-      const token1 = getTokenAsString(chainId1 as SupportedChainId, _token1)
+  const setToken1Param = useCallback(
+    (value: string | null) => {
+      router.push(
+        `${pathname}?${createQueryString([{ name: 'token1', value }])}`,
+        { scroll: false },
+      )
+    },
+    [pathname, createQueryString, router],
+  )
 
-      push(
+  const setTokenParams = useCallback(
+    (token0: string | null, token1: string | null) => {
+      router.push(
         `${pathname}?${createQueryString([
           { name: 'token0', value: token0 },
           { name: 'token1', value: token1 },
@@ -251,25 +213,20 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
         { scroll: false },
       )
     },
-    [chainId0, chainId1, createQueryString, pathname, push],
+    [pathname, createQueryString, router],
   )
 
-  // Update the URL with a new swapAmount
   const setSwapAmount = useCallback(
     (swapAmount: string) => {
-      push(
+      router.push(
         `${pathname}?${createQueryString([
-          { name: 'swapAmount', value: swapAmount },
+          { name: 'swapAmount', value: swapAmount || null },
         ])}`,
         { scroll: false },
       )
     },
-    [createQueryString, pathname, push],
+    [pathname, createQueryString, router],
   )
-
-  const token0Param = defaultedParams.get('token0') as string
-  const token1Param = defaultedParams.get('token1') as string
-  const swapAmountString = defaultedParams.get('swapAmount') || ''
 
   const value = useMemo<XSwapFormState>(
     () => ({
@@ -282,9 +239,9 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
       setTradeId,
       setChainId0,
       setChainId1,
-      setToken0,
-      setToken1,
-      setTokens,
+      setToken0Param,
+      setToken1Param,
+      setTokenParams,
       setSwapAmount,
       switchTokens,
     }),
@@ -297,9 +254,9 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
       tradeId,
       setChainId0,
       setChainId1,
-      setToken0,
-      setToken1,
-      setTokens,
+      setToken0Param,
+      setToken1Param,
+      setTokenParams,
       setSwapAmount,
       switchTokens,
     ],
@@ -313,8 +270,8 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
 }
 
 function useXSwapForm<
-  TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
-  TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
+  TChainId0 extends XSwapChainId = XSwapChainId,
+  TChainId1 extends XSwapChainId = XSwapChainId,
 >() {
   const Ctx = XSwapFormContext as unknown as React.Context<
     XSwapFormState<TChainId0, TChainId1>
@@ -322,9 +279,7 @@ function useXSwapForm<
 
   const context = useContext(Ctx)
   if (!context) {
-    throw new Error(
-      'useXSwapForm can only be used inside XSwapFormProvider',
-    )
+    throw new Error('useXSwapForm can only be used inside XSwapFormProvider')
   }
 
   return context
@@ -336,4 +291,5 @@ export {
   type XSwapFormState,
   type XSwapFormStateValues,
   type XSwapFormMutators,
+  type XSwapChainId,
 }

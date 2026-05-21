@@ -8,8 +8,8 @@ import {
 import { zeroAddress } from 'viem'
 
 import type {
-  SupportedChainId,
   LifiXSwapSupportedChainId,
+  SupportedChainId,
 } from '../../src/config'
 
 type InputType = 'INPUT' | 'OUTPUT'

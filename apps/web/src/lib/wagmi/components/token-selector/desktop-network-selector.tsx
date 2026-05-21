@@ -11,28 +11,36 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { type FC, useCallback } from 'react'
+import { useCallback } from 'react'
 import { getNetworkName } from 'src/lib/network'
 import { useChainIds } from 'src/lib/wallet'
 import type { EvmChainId } from 'sushi/evm'
+import type { StellarChainId } from 'sushi/stellar'
 import type { SvmChainId } from 'sushi/svm'
 
-interface DesktopNetworkSelector {
-  networks: readonly (EvmChainId | SvmChainId)[]
-  onSelect: (chainId: number) => void
-  selectedNetwork: EvmChainId | SvmChainId
+interface DesktopNetworkSelector<
+  TChainId extends EvmChainId | SvmChainId | StellarChainId,
+> {
+  networks: readonly TChainId[]
+  onSelect: (chainId: TChainId) => void
+  selectedNetwork: TChainId
 }
 
-export const DesktopNetworkSelector: FC<DesktopNetworkSelector> = ({
-  networks,
-  selectedNetwork,
-  onSelect,
-}) => {
+export function DesktopNetworkSelector<
+  TChainId extends EvmChainId | SvmChainId | StellarChainId,
+>({ networks, selectedNetwork, onSelect }: DesktopNetworkSelector<TChainId>) {
   const chainIds = useChainIds()
 
   const _onSelect = useCallback(
-    (value: string) => onSelect(+value.split('__')[1]),
-    [onSelect],
+    (value: string) => {
+      const chainId = Number(value.split('__')[1])
+      const network = networks.find((network) => network === chainId)
+
+      if (network) {
+        onSelect(network)
+      }
+    },
+    [networks, onSelect],
   )
 
   return (

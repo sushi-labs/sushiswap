@@ -15,12 +15,14 @@ import { useParams } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { PathnameButton } from 'src/app/_ui/pathname-button'
 import {
+  isLifiXSwapSupportedChainId,
   isSupportedChainId,
   isTwapSupportedChainId,
-  isLifiXSwapSupportedChainId,
 } from 'src/config'
-import { getChainById } from 'sushi'
-import { getEvmChainById, isEvmChainId } from 'sushi/evm'
+import { isNearIntentsChainId } from 'src/lib/swap/near-intents'
+import { type ChainId, getChainById } from 'sushi'
+import { isEvmChainId } from 'sushi/evm'
+import { isStellarChainId } from 'sushi/stellar'
 import { isSvmChainId } from 'sushi/svm'
 
 const SwapModeButton = ({
@@ -53,38 +55,53 @@ const SwapModeButton = ({
   )
 }
 
-export const SwapModeButtons = () => {
-  const { chainId: _chainId } = useParams()
-  const chainId = +_chainId!
+function isSwapModeChainId(chainId: number): chainId is ChainId {
+  return (
+    isSupportedChainId(chainId) ||
+    isStellarChainId(chainId) ||
+    isLifiXSwapSupportedChainId(chainId) ||
+    isNearIntentsChainId(chainId)
+  )
+}
 
-  if (!isEvmChainId(chainId) && !isSvmChainId(chainId)) {
+export const SwapModeButtons = ({
+  chainId: chainIdProp,
+}: { chainId?: number }) => {
+  const { chainId: paramsChainId } = useParams<{ chainId?: string }>()
+  const chainId = chainIdProp ?? Number(paramsChainId)
+
+  if (!isSwapModeChainId(chainId)) {
     return null
   }
+
+  const supportsCrossChain =
+    isLifiXSwapSupportedChainId(chainId) || isNearIntentsChainId(chainId)
+  const chain = getChainById(chainId)
 
   return (
     <div className="flex gap-1 md:gap-2 flex-wrap">
       <SwapModeButton
-        isSupported={isSupportedChainId(chainId)}
-        path={`/${getChainById(chainId).key}/swap`}
+        isSupported={isSupportedChainId(chainId) || isStellarChainId(chainId)}
+        path={`/${chain.key}/swap`}
       >
         Swap
       </SwapModeButton>
       <SwapModeButton
         isSupported={isTwapSupportedChainId(chainId)}
-        path={`/${getChainById(chainId).key}/limit`}
+        path={`/${chain.key}/limit`}
       >
         Limit
       </SwapModeButton>
       <SwapModeButton
         isSupported={isTwapSupportedChainId(chainId)}
-        path={`/${getChainById(chainId).key}/dca`}
+        path={`/${chain.key}/dca`}
       >
         DCA
       </SwapModeButton>
       <HoverCard>
         <SwapModeButton
-          isSupported={isLifiXSwapSupportedChainId(chainId)}
-          path={`/${getChainById(chainId).key}/cross-chain-swap`}
+          isSupported={supportsCrossChain}
+          path={`/${chain.key}/cross-chain-swap`}
         >
           <HoverCardTrigger asChild>
             <span className="saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
@@ -97,7 +114,7 @@ export const SwapModeButtons = () => {
             </span>
           </HoverCardTrigger>
         </SwapModeButton>
-        {isLifiXSwapSupportedChainId(chainId) ? (
+        {supportsCrossChain ? (
           <HoverCardContent className="!p-0 max-w-[320px]">
             <CardHeader>
               <CardTitle>Cross-Chain Swap</CardTitle>

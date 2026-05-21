@@ -5,7 +5,7 @@ import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
 import Link from 'next/link'
 import type { FC, ReactNode } from 'react'
 import { PathnameButton } from 'src/app/_ui/pathname-button'
-import { isTwapSupportedChainId, isLifiXSwapSupportedChainId } from 'src/config'
+import { isLifiXSwapSupportedChainId, isTwapSupportedChainId } from 'src/config'
 import { type EvmToken, getEvmChainById } from 'sushi/evm'
 
 interface SwapModeButtonProps {

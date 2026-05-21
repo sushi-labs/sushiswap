@@ -11,23 +11,24 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { type FC, useState } from 'react'
+import { useState } from 'react'
 import { getNetworkName } from 'src/lib/network'
 import { useChainIds } from 'src/lib/wallet'
 import type { EvmChainId } from 'sushi/evm'
+import type { StellarChainId } from 'sushi/stellar'
 import type { SvmChainId } from 'sushi/svm'
 
-interface MobileNetworkSelector {
-  networks: readonly (EvmChainId | SvmChainId)[]
-  onSelect: (chainId: number) => void
-  selectedNetwork: EvmChainId | SvmChainId
+interface MobileNetworkSelector<
+  TChainId extends EvmChainId | SvmChainId | StellarChainId,
+> {
+  networks: readonly TChainId[]
+  onSelect: (chainId: TChainId) => void
+  selectedNetwork: TChainId
 }
 
-export const MobileNetworkSelector: FC<MobileNetworkSelector> = ({
-  networks,
-  selectedNetwork,
-  onSelect,
-}) => {
+export function MobileNetworkSelector<
+  TChainId extends EvmChainId | SvmChainId | StellarChainId,
+>({ networks, selectedNetwork, onSelect }: MobileNetworkSelector<TChainId>) {
   const [open, setOpen] = useState(false)
 
   const chainIds = useChainIds()
