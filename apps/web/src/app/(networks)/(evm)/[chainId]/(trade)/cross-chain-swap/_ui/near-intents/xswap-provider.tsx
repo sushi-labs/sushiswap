@@ -104,9 +104,14 @@ export interface NearIntentsXSwapProviderProps {
 function getOppositeDefaultChainId(
   sourceChainId: NearIntentsSupportedChainId,
 ): NearIntentsSupportedChainId {
-  return sourceChainId === StellarChainId.STELLAR
-    ? EvmChainId.ETHEREUM
-    : StellarChainId.STELLAR
+  if (
+    sourceChainId === StellarChainId.STELLAR ||
+    sourceChainId === EvmChainId.ARBITRUM
+  ) {
+    return EvmChainId.ETHEREUM
+  }
+
+  return EvmChainId.ARBITRUM
 }
 
 export function NearIntentsXSwapProvider({
@@ -135,6 +140,8 @@ export function NearIntentsXSwapProvider({
     form.chainId1 && isNearIntentsChainId(form.chainId1)
       ? form.chainId1
       : getOppositeDefaultChainId(chainId0)
+  const isNearIntentsPair =
+    chainId0 === StellarChainId.STELLAR || chainId1 === StellarChainId.STELLAR
 
   const token0Entry = getCurrencyEntry(chainId0, token0Param)
   const token1Entry = getCurrencyEntry(chainId1, token1Param)
@@ -159,13 +166,16 @@ export function NearIntentsXSwapProvider({
 
   // Persist the synchronously-resolved default chainId1 back to the URL.
   useEffect(() => {
+    if (!isNearIntentsPair) return
+
     if (!form.chainId1 || !isNearIntentsChainId(form.chainId1)) {
       form.setChainId1(getOppositeDefaultChainId(chainId0))
     }
-  }, [form.chainId1, form.setChainId1, chainId0])
+  }, [form.chainId1, form.setChainId1, chainId0, isNearIntentsPair])
 
   // Fill default tokens from the catalog once it loads.
   useEffect(() => {
+    if (!isNearIntentsPair) return
     if (currencyEntries.length === 0) return
     if (!form.chainId1 || !isNearIntentsChainId(form.chainId1)) return
     if (token0Param && token1Param) return
@@ -184,6 +194,7 @@ export function NearIntentsXSwapProvider({
     token1Param,
     form.setTokenParams,
     getDefaultTokenParams,
+    isNearIntentsPair,
   ])
 
   // Any change to the swap inputs invalidates an in-flight deposit.

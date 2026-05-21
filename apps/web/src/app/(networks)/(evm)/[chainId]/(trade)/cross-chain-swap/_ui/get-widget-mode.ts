@@ -5,7 +5,7 @@ import { StellarChainId } from 'sushi/stellar'
 export type WidgetMode = 'near-intents' | 'lifi' | 'unsupported'
 
 export function getWidgetMode(chainId0: number, chainId1: number): WidgetMode {
-  const hasDestination = Number.isFinite(chainId1)
+  const hasDestination = Number.isFinite(chainId1) && chainId1 > 0
   const stellarSource = chainId0 === StellarChainId.STELLAR
   const stellarDestination = chainId1 === StellarChainId.STELLAR
 

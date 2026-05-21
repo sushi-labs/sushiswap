@@ -120,6 +120,13 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
     [searchParams],
   )
 
+  const updateSearchParams = useCallback(
+    (values: { name: string; value: string | null }[]) => {
+      history.pushState(null, '', `${pathname}?${createQueryString(values)}`)
+    },
+    [pathname, createQueryString],
+  )
+
   const switchTokens = useCallback(() => {
     if (!chainId1) return
     const params = new URLSearchParams(searchParams.toString())
@@ -185,47 +192,33 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
 
   const setToken0Param = useCallback(
     (value: string | null) => {
-      router.push(
-        `${pathname}?${createQueryString([{ name: 'token0', value }])}`,
-        { scroll: false },
-      )
+      updateSearchParams([{ name: 'token0', value }])
     },
-    [pathname, createQueryString, router],
+    [updateSearchParams],
   )
 
   const setToken1Param = useCallback(
     (value: string | null) => {
-      router.push(
-        `${pathname}?${createQueryString([{ name: 'token1', value }])}`,
-        { scroll: false },
-      )
+      updateSearchParams([{ name: 'token1', value }])
     },
-    [pathname, createQueryString, router],
+    [updateSearchParams],
   )
 
   const setTokenParams = useCallback(
     (token0: string | null, token1: string | null) => {
-      router.push(
-        `${pathname}?${createQueryString([
-          { name: 'token0', value: token0 },
-          { name: 'token1', value: token1 },
-        ])}`,
-        { scroll: false },
-      )
+      updateSearchParams([
+        { name: 'token0', value: token0 },
+        { name: 'token1', value: token1 },
+      ])
     },
-    [pathname, createQueryString, router],
+    [updateSearchParams],
   )
 
   const setSwapAmount = useCallback(
     (swapAmount: string) => {
-      router.push(
-        `${pathname}?${createQueryString([
-          { name: 'swapAmount', value: swapAmount || null },
-        ])}`,
-        { scroll: false },
-      )
+      updateSearchParams([{ name: 'swapAmount', value: swapAmount || null }])
     },
-    [pathname, createQueryString, router],
+    [updateSearchParams],
   )
 
   const value = useMemo<XSwapFormState>(

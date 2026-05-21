@@ -67,6 +67,10 @@ export function TokenSelector<
         selected={stellar.selected}
         onSelect={stellar.onSelect}
         currencies={stellar.currencies}
+        hideSearch={stellar.hideSearch}
+        networks={stellar.networks}
+        selectedNetwork={stellar.selectedNetwork}
+        onNetworkSelect={stellar.onNetworkSelect}
       >
         {stellar.children}
       </StellarTokenSelector>
