@@ -85,18 +85,20 @@ export function NearIntentsCrossChainSwapTradeButton() {
             namespace={getNamespaceForChainId(chainId1)}
           >
             <Checker.Network fullWidth chainId={chainId0}>
-              <StellarChecker.Trustline token={token1Stellar}>
-                <DialogTrigger asChild>
-                  <Button
-                    size="xl"
-                    disabled={isDisabled}
-                    fullWidth
-                    testId="swap"
-                  >
-                    {getButtonText()}
-                  </Button>
-                </DialogTrigger>
-              </StellarChecker.Trustline>
+              <Checker.Amounts fullWidth chainId={chainId0} amount={swapAmount}>
+                <StellarChecker.Trustline token={token1Stellar}>
+                  <DialogTrigger asChild>
+                    <Button
+                      size="xl"
+                      disabled={isDisabled}
+                      fullWidth
+                      testId="swap"
+                    >
+                      {getButtonText()}
+                    </Button>
+                  </DialogTrigger>
+                </StellarChecker.Trustline>
+              </Checker.Amounts>
             </Checker.Network>
           </Checker.Connect>
         </Checker.Connect>
