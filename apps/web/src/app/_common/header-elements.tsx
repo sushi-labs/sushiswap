@@ -16,6 +16,7 @@ import {
   NavigationMenuTrigger,
   OnramperButton,
   Separator,
+  SwappedButton,
 } from '@sushiswap/ui'
 import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import { GithubIcon } from '@sushiswap/ui/icons/GithubIcon'
@@ -219,11 +220,11 @@ export const headerElements = ({
                 The easiest way to trade.
               </NavigationListItem>
               {includeOnramper ? (
-                <OnramperButton>
+                <SwappedButton>
                   <NavigationListItem title={'Buy Crypto'}>
                     Onramp with fiat.
                   </NavigationListItem>
-                </OnramperButton>
+                </SwappedButton>
               ) : null}
             </ul>
           </NavigationMenuContent>

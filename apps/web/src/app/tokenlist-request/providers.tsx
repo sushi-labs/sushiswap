@@ -1,7 +1,7 @@
 'use client'
 
 import { BaseProviders } from '@sushiswap/ui'
-import { OnramperProvider } from 'src/lib/onramper/components/onramper-provider'
+import { SwappedProvider } from 'src/lib/swapped/components/swapped-provider'
 import { WalletProvider } from 'src/lib/wallet'
 import { SidebarProvider } from '../(networks)/_ui/sidebar'
 import { QueryClientProvider } from '../../providers/query-client-provider'
@@ -16,7 +16,7 @@ export function Providers({
         <WalletProvider>
           <SidebarProvider>
             <WagmiProvider cookie={cookie}>
-              <OnramperProvider>{children}</OnramperProvider>
+              <SwappedProvider defaultAsset="ETH">{children}</SwappedProvider>
             </WagmiProvider>
           </SidebarProvider>
         </WalletProvider>
