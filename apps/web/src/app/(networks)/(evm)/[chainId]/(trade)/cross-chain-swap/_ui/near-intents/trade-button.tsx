@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, DialogTrigger } from '@sushiswap/ui'
+import { Button, DialogTrigger, Dots } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
@@ -62,7 +62,7 @@ export function NearIntentsCrossChainSwapTradeButton() {
       case 'connect-destination':
         return 'Connect destination wallet'
       case 'loading':
-        return 'Loading quote...'
+        return <Dots>Loading quote</Dots>
       case 'quote-error':
         return 'Quote unavailable'
       case 'no-quote':

@@ -6,7 +6,7 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { NETWORK_PASSPHRASE } from 'src/app/(networks)/(non-evm)/stellar/_common/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { TOAST_AUTOCLOSE_TIME } from 'src/lib/perps/config'
@@ -18,7 +18,8 @@ import {
   type NearIntentsSupportedChainId,
   getNearIntentsAssetId,
   isNearIntentsEvmChainId,
-  submitNearIntentsStellarPayment,
+  signNearIntentsStellarPayment,
+  submitSignedNearIntentsStellarPayment,
 } from 'src/lib/swap/near-intents'
 import { useAccount } from 'src/lib/wallet'
 import { stellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
@@ -35,6 +36,17 @@ import { usePublicClient, useSendTransaction, useWriteContract } from 'wagmi'
 import type { NearIntentsQuoteResponse } from '~evm/api/cross-chain/near-intents/schemas'
 import { useRefetchBalances } from '../../../../../../_common/ui/balance-provider/use-refetch-balances'
 import { fetchNearIntentsQuote } from './use-near-intents-quote'
+
+type NearIntentsSourceDeposit<TChainId extends NearIntentsSupportedChainId> = {
+  depositAddress: NearIntentsDepositAddressFor<TChainId>
+  signedXdr?: string
+  txHash: TxHashFor<TChainId>
+}
+
+type NearIntentsSourceExecution<TChainId extends NearIntentsSupportedChainId> =
+  NearIntentsActiveExecution<TChainId> & {
+    signedXdr?: string
+  }
 
 async function submitDeposit(payload: {
   depositAddress: NearIntentsDepositAddress
@@ -112,6 +124,59 @@ export function useNearIntentsExecute({
   const token0AssetId = getNearIntentsAssetId(currencyEntries, token0)
   const token1AssetId = getNearIntentsAssetId(currencyEntries, token1)
 
+  const confirmSourceDeposit = useCallback(
+    async (result: NearIntentsSourceExecution<typeof chainId0>) => {
+      try {
+        if (isStellarChainId(chainId0) && result.signedXdr) {
+          await submitSignedNearIntentsStellarPayment({
+            signedXdr: result.signedXdr,
+          })
+        }
+
+        if (isNearIntentsEvmChainId(chainId0)) {
+          await publicClient.waitForTransactionReceipt({
+            hash: result.txHash as Hex,
+          })
+        }
+        refetchBalances(chainId0)
+
+        await submitDeposit({
+          depositAddress: result.depositAddress,
+          memo: result.depositMemo,
+          txHash: result.txHash,
+        })
+
+        createSuccessToast({
+          summary: 'Deposit submitted to NEAR Intents',
+          type: 'swap',
+          account: refundTo,
+          chainId: chainId0,
+          txHash: result.txHash,
+          href: getChainById(chainId0).getTransactionUrl(result.txHash),
+          groupTimestamp: Date.now(),
+          timestamp: Date.now(),
+          autoClose: TOAST_AUTOCLOSE_TIME,
+        })
+      } catch (error) {
+        createFailedToast({
+          summary:
+            error instanceof Error
+              ? error.message
+              : 'Failed to submit deposit transaction',
+          type: 'swap',
+          account: refundTo,
+          chainId: chainId0,
+          groupTimestamp: Date.now(),
+          timestamp: Date.now(),
+          autoClose: TOAST_AUTOCLOSE_TIME,
+        })
+
+        throw error
+      }
+    },
+    [chainId0, publicClient, refetchBalances, refundTo],
+  )
+
   async function executeStellarDeposit({
     amountIn,
     depositAddress,
@@ -120,7 +185,10 @@ export function useNearIntentsExecute({
     amountIn: string
     depositAddress: StellarAccountAddress
     depositMemo?: string
-  }): Promise<TxHashFor<typeof chainId0>> {
+  }): Promise<{
+    signedXdr: string
+    txHash: TxHashFor<typeof chainId0>
+  }> {
     if (!stellarWalletKit || !stellarAccount) {
       throw new Error('Connect your Stellar wallet')
     }
@@ -137,15 +205,18 @@ export function useNearIntentsExecute({
     }
     const stellarAmountIn = new Amount(token0 as StellarToken, amountIn)
 
-    return (
-      await submitNearIntentsStellarPayment({
-        amount: stellarAmountIn,
-        destination: depositAddress,
-        memo: depositMemo,
-        signTransaction,
-        sourceAddress: stellarAccount,
-      })
-    ).txHash as TxHashFor<typeof chainId0>
+    const result = await signNearIntentsStellarPayment({
+      amount: stellarAmountIn,
+      destination: depositAddress,
+      memo: depositMemo,
+      signTransaction,
+      sourceAddress: stellarAccount,
+    })
+
+    return {
+      signedXdr: result.signedXdr,
+      txHash: result.txHash as TxHashFor<typeof chainId0>,
+    }
   }
 
   async function executeEvmDeposit({
@@ -182,7 +253,7 @@ export function useNearIntentsExecute({
     })()) as TxHashFor<typeof chainId0>
   }
 
-  return useMutation({
+  const mutation = useMutation({
     mutationKey: [
       'near-intents',
       'execute',
@@ -236,54 +307,46 @@ export function useNearIntentsExecute({
 
       const { depositMemo, amountIn } = quote.quote
 
-      const sourceDeposit = await (async () => {
-        if (isStellarChainId(chainId0)) {
-          if (!isStellarAccountAddress(depositAddress)) {
-            throw new Error(
-              'Executable quote returned an invalid Stellar address',
-            )
-          }
+      const sourceDeposit: NearIntentsSourceDeposit<typeof chainId0> =
+        await (async () => {
+          if (isStellarChainId(chainId0)) {
+            if (!isStellarAccountAddress(depositAddress)) {
+              throw new Error(
+                'Executable quote returned an invalid Stellar address',
+              )
+            }
 
-          return {
-            depositAddress,
-            txHash: await executeStellarDeposit({
+            const stellarDeposit = await executeStellarDeposit({
               amountIn,
               depositAddress,
               depositMemo,
+            })
+
+            return {
+              depositAddress,
+              signedXdr: stellarDeposit.signedXdr,
+              txHash: stellarDeposit.txHash,
+            }
+          }
+
+          const sourceDepositAddress = getAddress(depositAddress)
+
+          return {
+            depositAddress: sourceDepositAddress,
+            txHash: await executeEvmDeposit({
+              amountIn,
+              depositAddress: sourceDepositAddress,
             }),
           }
-        }
-
-        const sourceDepositAddress = getAddress(depositAddress)
-
-        return {
-          depositAddress: sourceDepositAddress,
-          txHash: await executeEvmDeposit({
-            amountIn,
-            depositAddress: sourceDepositAddress,
-          }),
-        }
-      })()
-
-      if (isNearIntentsEvmChainId(chainId0)) {
-        await publicClient.waitForTransactionReceipt({
-          hash: sourceDeposit.txHash as Hex,
-        })
-      }
-      refetchBalances(chainId0)
-
-      await submitDeposit({
-        depositAddress: sourceDeposit.depositAddress,
-        memo: depositMemo,
-        txHash: sourceDeposit.txHash,
-      })
+        })()
 
       return {
         chainId0,
         depositAddress: sourceDeposit.depositAddress,
         depositMemo,
+        signedXdr: sourceDeposit.signedXdr,
         txHash: sourceDeposit.txHash,
-      } satisfies NearIntentsActiveExecution<typeof chainId0>
+      } satisfies NearIntentsSourceExecution<typeof chainId0>
     },
     onMutate: () => {
       const timestamp = Date.now()
@@ -300,19 +363,6 @@ export function useNearIntentsExecute({
 
       return { timestamp }
     },
-    onSuccess: (result, _vars, context) => {
-      createSuccessToast({
-        summary: 'Deposit submitted to NEAR Intents',
-        type: 'swap',
-        account: refundTo,
-        chainId: chainId0,
-        txHash: result.txHash,
-        href: getChainById(chainId0).getTransactionUrl(result.txHash),
-        groupTimestamp: context?.timestamp ?? Date.now(),
-        timestamp: context?.timestamp ?? Date.now(),
-        autoClose: TOAST_AUTOCLOSE_TIME,
-      })
-    },
     onError: (error, _vars, context) => {
       createFailedToast({
         summary:
@@ -328,4 +378,6 @@ export function useNearIntentsExecute({
       })
     },
   })
+
+  return { confirmSourceDeposit, submitSourceTransaction: mutation }
 }

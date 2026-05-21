@@ -48,6 +48,30 @@ export async function submitNearIntentsStellarPayment({
   signTransaction: (xdr: string) => Promise<string>
   sourceAddress: StellarAccountAddress
 }): Promise<{ txHash: StellarTxHash }> {
+  const { signedXdr } = await signNearIntentsStellarPayment({
+    amount,
+    destination,
+    memo,
+    signTransaction,
+    sourceAddress,
+  })
+
+  return submitSignedNearIntentsStellarPayment({ signedXdr })
+}
+
+export async function signNearIntentsStellarPayment({
+  amount,
+  destination,
+  memo,
+  signTransaction,
+  sourceAddress,
+}: {
+  amount: Amount<StellarToken>
+  destination: StellarAccountAddress
+  memo?: string
+  signTransaction: (xdr: string) => Promise<string>
+  sourceAddress: StellarAccountAddress
+}): Promise<{ signedXdr: string; txHash: StellarTxHash }> {
   const account = await horizonServer.loadAccount(sourceAddress)
   const transaction = new StellarSdk.TransactionBuilder(account, {
     fee: StellarSdk.BASE_FEE,
@@ -65,6 +89,22 @@ export async function submitNearIntentsStellarPayment({
     .build()
 
   const signedXdr = await signTransaction(transaction.toXDR())
+  const signedTx = StellarSdk.TransactionBuilder.fromXDR(
+    signedXdr,
+    NETWORK_PASSPHRASE,
+  )
+
+  return {
+    signedXdr,
+    txHash: signedTx.hash().toString('hex') as StellarTxHash,
+  }
+}
+
+export async function submitSignedNearIntentsStellarPayment({
+  signedXdr,
+}: {
+  signedXdr: string
+}): Promise<{ txHash: StellarTxHash }> {
   const signedTx = StellarSdk.TransactionBuilder.fromXDR(
     signedXdr,
     NETWORK_PASSPHRASE,

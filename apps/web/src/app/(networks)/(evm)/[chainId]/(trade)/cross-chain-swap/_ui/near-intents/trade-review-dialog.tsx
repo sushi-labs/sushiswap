@@ -17,10 +17,11 @@ import {
   SelectIcon,
   SkeletonText,
   classNames,
+  useDialog,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import type { ReactNode } from 'react'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import {
   NEAR_INTENTS_UI_FEE_DECIMAL,
@@ -45,10 +46,12 @@ import {
 } from 'sushi/stellar'
 import type { NearIntentsQuoteResponse } from '~evm/api/cross-chain/near-intents/schemas'
 import { getStellarAddressLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
+import { StepState } from '../lifi/confirmation-dialog'
 import {
   NearIntentsConfirmationDialogContent,
   NearIntentsConfirmationDialogFooter,
   NearIntentsConfirmationDialogSteps,
+  getNearIntentsStatusStepState,
 } from './confirmation-dialog'
 import { useNearIntentsExecute } from './hooks/use-near-intents-execute'
 import { useNearIntentsSourceNetworkFee } from './hooks/use-near-intents-source-network-fee'
@@ -78,23 +81,30 @@ function NearIntentsTradeReviewDialogContent({
   const {
     currencyEntries,
     mutate: { clearActiveExecution, setActiveExecution, setSwapAmount },
+    executionStatus,
     previewQuote,
     state: { chainId0, chainId1, swapAmount, token0, token1 },
   } = useNearIntentsXSwap()
   const [slippagePercent] = useSlippageTolerance()
   const recipient = useAccount(chainId1)
 
-  const execute = useNearIntentsExecute({
-    chainId0,
-    chainId1,
-    swapAmount,
-    token0,
-    token1,
-    currencyEntries,
-  })
+  const { confirmSourceDeposit, submitSourceTransaction } =
+    useNearIntentsExecute({
+      chainId0,
+      chainId1,
+      swapAmount,
+      token0,
+      token1,
+      currencyEntries,
+    })
 
   const quote = previewQuote.data
   const quoteRef = useRef<NearIntentsQuoteResponse | null>(null)
+  const [stepStates, setStepStates] = useState({
+    source: StepState.NotStarted,
+    execution: StepState.NotStarted,
+  })
+  const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
 
   const outputAmount =
     token1 && quote?.quote.amountOut
@@ -142,17 +152,69 @@ function NearIntentsTradeReviewDialogContent({
       quoteRef.current = quote
       const reviewedQuote = quoteRef.current
       clearActiveExecution()
-      confirm()
-      void execute
+      setStepStates({
+        source: StepState.Pending,
+        execution: StepState.NotStarted,
+      })
+      void submitSourceTransaction
         .mutateAsync({ previewQuote: reviewedQuote })
         .then((result) => {
           setSwapAmount('')
-          setActiveExecution(result)
+          confirm()
+          void confirmSourceDeposit(result)
+            .then(() => {
+              setActiveExecution(result)
+              setStepStates(
+                getNearIntentsStatusStepState({ status: undefined }),
+              )
+            })
+            .catch(() => {
+              setStepStates({
+                source: StepState.Failed,
+                execution: StepState.NotStarted,
+              })
+            })
         })
-        .catch(() => undefined)
+        .catch(() => {
+          setStepStates({
+            source: StepState.Failed,
+            execution: StepState.NotStarted,
+          })
+        })
     },
-    [clearActiveExecution, execute, quote, setActiveExecution, setSwapAmount],
+    [
+      clearActiveExecution,
+      confirmSourceDeposit,
+      quote,
+      setActiveExecution,
+      setSwapAmount,
+      submitSourceTransaction,
+    ],
   )
+
+  useEffect(() => {
+    const status = executionStatus.data?.status
+    if (!status) return
+
+    setStepStates(getNearIntentsStatusStepState({ status }))
+  }, [executionStatus.data?.status])
+
+  useEffect(() => {
+    if (!confirmDialogOpen) {
+      setStepStates({
+        source: StepState.NotStarted,
+        execution: StepState.NotStarted,
+      })
+    }
+  }, [confirmDialogOpen])
+
+  const handleClearExecution = useCallback(() => {
+    clearActiveExecution()
+    setStepStates({
+      source: StepState.NotStarted,
+      execution: StepState.NotStarted,
+    })
+  }, [clearActiveExecution])
 
   return (
     <>
@@ -199,11 +261,11 @@ function NearIntentsTradeReviewDialogContent({
                 <Button
                   fullWidth
                   size="xl"
-                  disabled={execute.isPending || !quote}
+                  disabled={submitSourceTransaction.isPending || !quote}
                   onClick={() => handleConfirm(confirm)}
                   testId="confirm-swap"
                 >
-                  {execute.isPending ? (
+                  {submitSourceTransaction.isPending ? (
                     <Dots>Confirm Swap</Dots>
                   ) : (
                     `Swap ${token0?.symbol} for ${token1?.symbol}`
@@ -221,25 +283,21 @@ function NearIntentsTradeReviewDialogContent({
             <DialogDescription asChild>
               <div>
                 <NearIntentsConfirmationDialogContent
-                  executionError={execute.error}
-                  executionPending={execute.isPending}
+                  executionError={submitSourceTransaction.error}
+                  executionPending={submitSourceTransaction.isPending}
                 />
               </div>
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col items-center justify-center gap-4">
-            <NearIntentsConfirmationDialogSteps
-              executionError={execute.error}
-              executionPending={execute.isPending}
-            />
+            <NearIntentsConfirmationDialogSteps dialogState={stepStates} />
           </div>
           <DialogFooter>
             <DialogClose asChild>
               <div className="w-full">
                 <NearIntentsConfirmationDialogFooter
-                  clearActiveExecution={clearActiveExecution}
-                  executionError={execute.error}
-                  executionPending={execute.isPending}
+                  clearActiveExecution={handleClearExecution}
+                  dialogState={stepStates}
                 />
               </div>
             </DialogClose>

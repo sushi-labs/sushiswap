@@ -1,87 +1,54 @@
 'use client'
 
 import { Button } from '@sushiswap/ui'
-import { useMemo } from 'react'
 import { useAccount } from 'src/lib/wallet'
 import { Amount, getChainById, shortenAddress } from 'sushi'
 import {
   Divider,
   GetStateComponent,
   StepState,
-  failedState,
-  finishedState,
 } from '../lifi/confirmation-dialog'
 import { useNearIntentsXSwap } from './xswap-provider'
 
-export function getNearIntentsDialogState({
-  executionError,
-  executionPending,
-  sourceTxHash,
+export type NearIntentsDialogState = {
+  source: StepState
+  execution: StepState
+}
+
+export function getNearIntentsStatusStepState({
   status,
 }: {
-  executionError: unknown
-  executionPending: boolean
-  sourceTxHash?: string
   status?: string
-}) {
-  if (executionError) {
-    return {
-      source: StepState.Failed,
-      bridge: StepState.NotStarted,
-      dest: StepState.NotStarted,
-    }
-  }
-
-  if (executionPending && !sourceTxHash) {
-    return {
-      source: StepState.Pending,
-      bridge: StepState.NotStarted,
-      dest: StepState.NotStarted,
-    }
-  }
-
-  if (!sourceTxHash) {
-    return {
-      source: StepState.NotStarted,
-      bridge: StepState.NotStarted,
-      dest: StepState.NotStarted,
-    }
-  }
-
+}): NearIntentsDialogState {
   switch (status) {
     case 'PENDING_DEPOSIT':
     case 'KNOWN_DEPOSIT_TX':
     case undefined:
       return {
         source: StepState.Success,
-        bridge: StepState.Pending,
-        dest: StepState.NotStarted,
+        execution: StepState.Pending,
       }
     case 'PROCESSING':
       return {
         source: StepState.Success,
-        bridge: StepState.Pending,
-        dest: StepState.Pending,
+        execution: StepState.Pending,
       }
     case 'SUCCESS':
       return {
         source: StepState.Success,
-        bridge: StepState.Success,
-        dest: StepState.Success,
+        execution: StepState.Success,
       }
     case 'INCOMPLETE_DEPOSIT':
     case 'REFUNDED':
     case 'FAILED':
       return {
         source: StepState.Success,
-        bridge: StepState.Failed,
-        dest: StepState.Failed,
+        execution: StepState.Failed,
       }
     default:
       return {
         source: StepState.Success,
-        bridge: StepState.Pending,
-        dest: StepState.NotStarted,
+        execution: StepState.Pending,
       }
   }
 }
@@ -181,38 +148,16 @@ export function NearIntentsConfirmationDialogContent({
 }
 
 export function NearIntentsConfirmationDialogSteps({
-  executionError,
-  executionPending,
+  dialogState,
 }: {
-  executionError: unknown
-  executionPending: boolean
+  dialogState: NearIntentsDialogState
 }) {
-  const {
-    executionStatus,
-    state: { sourceTxHash },
-  } = useNearIntentsXSwap()
-
-  const status = executionStatus.data?.status
-
-  const dialogState = useMemo(
-    () =>
-      getNearIntentsDialogState({
-        executionError,
-        executionPending,
-        sourceTxHash,
-        status,
-      }),
-    [executionError, executionPending, sourceTxHash, status],
-  )
-
   return (
     <div className="py-5">
       <div className="relative flex gap-3">
         <GetStateComponent index={1} state={dialogState.source} />
         <Divider />
-        <GetStateComponent index={2} state={dialogState.bridge} />
-        <Divider />
-        <GetStateComponent index={3} state={dialogState.dest} />
+        <GetStateComponent index={2} state={dialogState.execution} />
       </div>
     </div>
   )
@@ -220,28 +165,16 @@ export function NearIntentsConfirmationDialogSteps({
 
 export function NearIntentsConfirmationDialogFooter({
   clearActiveExecution,
-  executionError,
-  executionPending,
+  dialogState,
 }: {
   clearActiveExecution: () => void
-  executionError: unknown
-  executionPending: boolean
+  dialogState: NearIntentsDialogState
 }) {
-  const {
-    executionStatus,
-    state: { sourceTxHash },
-  } = useNearIntentsXSwap()
-
-  const status = executionStatus.data?.status
-
-  const dialogState = getNearIntentsDialogState({
-    executionError,
-    executionPending,
-    sourceTxHash,
-    status,
-  })
-
-  const shouldClear = failedState(dialogState) || finishedState(dialogState)
+  const failed =
+    dialogState.source === StepState.Failed ||
+    dialogState.execution === StepState.Failed
+  const finished = dialogState.execution === StepState.Success
+  const shouldClear = failed || finished
 
   return (
     <Button
@@ -249,11 +182,7 @@ export function NearIntentsConfirmationDialogFooter({
       fullWidth
       onClick={shouldClear ? clearActiveExecution : undefined}
     >
-      {failedState(dialogState)
-        ? 'Try again'
-        : finishedState(dialogState)
-          ? 'Make another swap'
-          : 'Close'}
+      {failed ? 'Try again' : finished ? 'Make another swap' : 'Close'}
     </Button>
   )
 }
