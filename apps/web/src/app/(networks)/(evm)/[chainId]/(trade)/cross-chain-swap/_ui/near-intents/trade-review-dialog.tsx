@@ -77,7 +77,7 @@ function NearIntentsTradeReviewDialogContent({
 }) {
   const {
     currencyEntries,
-    mutate: { clearActiveExecution, setActiveExecution },
+    mutate: { clearActiveExecution, setActiveExecution, setSwapAmount },
     previewQuote,
     state: { chainId0, chainId1, swapAmount, token0, token1 },
   } = useNearIntentsXSwap()
@@ -146,11 +146,12 @@ function NearIntentsTradeReviewDialogContent({
       void execute
         .mutateAsync({ previewQuote: reviewedQuote })
         .then((result) => {
+          setSwapAmount('')
           setActiveExecution(result)
         })
         .catch(() => undefined)
     },
-    [clearActiveExecution, execute, quote, setActiveExecution],
+    [clearActiveExecution, execute, quote, setActiveExecution, setSwapAmount],
   )
 
   return (
