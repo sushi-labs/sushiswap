@@ -40,11 +40,7 @@ export const VAULT_AMOUNT_COLUMN: ColumnDef<DepositorType, unknown> = {
   header: 'Vault Amount',
   accessorFn: (row) => Number(row.vaultEquity),
   sortingFn: (rowA, rowB) => {
-    const a = Number(rowA.original.vaultEquity)
-    const b = Number(rowB.original.vaultEquity)
-    if (a > b) return 1
-    if (a < b) return -1
-    return 0
+    return Number(rowA.original.vaultEquity) - Number(rowB.original.vaultEquity)
   },
   cell: (props) => {
     const amount = Number(props.row.original.vaultEquity)
@@ -64,11 +60,7 @@ export const UNREALIZED_PNL_COLUMN: ColumnDef<DepositorType, unknown> = {
   header: 'Unrealized PnL',
   accessorFn: (row) => Number(row.pnl),
   sortingFn: (rowA, rowB) => {
-    const a = Number(rowA.original.pnl)
-    const b = Number(rowB.original.pnl)
-    if (a > b) return 1
-    if (a < b) return -1
-    return 0
+    return Number(rowA.original.pnl) - Number(rowB.original.pnl)
   },
   cell: (props) => {
     const amount = Number(props.row.original.pnl)
@@ -88,11 +80,7 @@ export const ALL_TIME_PNL_COLUMN: ColumnDef<DepositorType, unknown> = {
   header: 'All-time PnL',
   accessorFn: (row) => Number(row.allTimePnl),
   sortingFn: (rowA, rowB) => {
-    const a = Number(rowA.original.allTimePnl)
-    const b = Number(rowB.original.allTimePnl)
-    if (a > b) return 1
-    if (a < b) return -1
-    return 0
+    return Number(rowA.original.allTimePnl) - Number(rowB.original.allTimePnl)
   },
   cell: (props) => {
     const amount = Number(props.row.original.allTimePnl)
