@@ -2,7 +2,7 @@ import { vaultDetails } from '@nktkas/hyperliquid/api/info'
 import { Container } from '@sushiswap/ui'
 import { redirect } from 'next/navigation'
 import { hlHttpTransport } from 'src/lib/perps'
-import { isEvmAddress } from 'sushi/evm'
+import { type EvmAddress, isEvmAddress } from 'sushi/evm'
 import { GeoBlockedMessage } from '~evm/perps/_ui/_common'
 import { VaultPage } from './_ui/vault-page'
 import { VaultTablesProvider } from './_ui/vault-tables'
@@ -10,7 +10,7 @@ import { VaultTablesProvider } from './_ui/vault-tables'
 export default async function PerpVaultViewPage({
   params,
 }: {
-  params: Promise<{ address: string }>
+  params: Promise<{ address: EvmAddress }>
 }) {
   const { address } = await params
 
