@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
+import { isEvmAddress } from 'sushi/evm'
 import z from 'zod'
 import { useLeadingVaults, useUserVaultEquities } from '../info'
 
@@ -10,9 +11,13 @@ const VaultRelationshipSchema = z.object({
   type: RelationshipTypeSchema,
 })
 
+const EvmAddressSchema = z.string().refine((val) => {
+  return isEvmAddress(val)
+}, 'Invalid EVM address')
+
 const VaultSummarySchema = z.object({
   name: z.string(),
-  vaultAddress: z.string(),
+  vaultAddress: EvmAddressSchema,
   leader: z.string(),
   tvl: z.string(),
   isClosed: z.boolean(),
