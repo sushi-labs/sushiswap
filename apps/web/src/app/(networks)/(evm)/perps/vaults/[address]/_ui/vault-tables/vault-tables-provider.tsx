@@ -28,7 +28,9 @@ interface State {
   }
   state: {
     activeTab: VaultTablesTabValue
-    vaultFilter: Record<VaultTablesTabValue, VaultFilterValueString> | null
+    vaultFilter: Partial<
+      Record<VaultTablesTabValue, VaultFilterValueString>
+    > | null
     shouldAggregateTradeHistory: boolean
     expandAll: boolean
     vaultAddress: EvmAddress
@@ -91,9 +93,8 @@ const VaultTablesProvider: FC<VaultTablesProviderProps> = ({ children }) => {
   const [activeTab, setActiveTab] = useState<VaultTablesTabValue>(
     VAULT_TABLES_TABS[0].value,
   )
-  const [vaultFilter, setVaultFilter] = useState<Record<
-    VaultTablesTabValue,
-    VaultFilterValueString
+  const [vaultFilter, setVaultFilter] = useState<Partial<
+    Record<VaultTablesTabValue, VaultFilterValueString>
   > | null>(null)
   const [shouldAggregateTradeHistory, setShouldAggregateTradeHistory] =
     useState<boolean>(false)
@@ -101,9 +102,7 @@ const VaultTablesProvider: FC<VaultTablesProviderProps> = ({ children }) => {
 
   const handleSetVaultFilter = useCallback(
     (filter: Partial<Record<VaultTablesTabValue, VaultFilterValueString>>) => {
-      setVaultFilter(
-        filter as Record<VaultTablesTabValue, VaultFilterValueString>,
-      )
+      setVaultFilter(filter)
     },
     [],
   )
