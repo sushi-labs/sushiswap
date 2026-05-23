@@ -1,5 +1,8 @@
 import type { NextRequest } from 'next/server'
-import { type XSwapSupportedChainId, isXSwapSupportedChainId } from 'src/config'
+import {
+  type LifiXSwapSupportedChainId,
+  isLifiXSwapSupportedChainId,
+} from 'src/config'
 import { stringify } from 'viem'
 import * as z from 'zod'
 import { stepSchema, sushiChainIdSchema } from '../schemas'
@@ -21,13 +24,13 @@ function parseStepInput(params: Record<string, string>) {
 }
 
 export type CrossChainStepInput<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 > = z.input<ReturnType<typeof stepSchema<TChainId0, TChainId1, 'sushi'>>>
 
 export type CrossChainStepResponse<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 > = z.output<ReturnType<typeof stepSchema<TChainId0, TChainId1, 'lifi'>>>
 
 export async function POST(request: NextRequest) {

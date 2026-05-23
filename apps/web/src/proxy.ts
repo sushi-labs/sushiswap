@@ -144,7 +144,12 @@ async function _proxy(req: NextRequest) {
       }
     }
 
-    if (chain.type === 'evm' || chain.type === 'svm') {
+    // Stellar only piggybacks on the EVM trade layout for cross-chain-swap.
+    if (
+      chain.type === 'evm' ||
+      chain.type === 'svm' ||
+      (chain.type === 'stellar' && page === 'cross-chain-swap')
+    ) {
       url.pathname = pathname.replace(chain.key, chain.chainId.toString())
     }
 

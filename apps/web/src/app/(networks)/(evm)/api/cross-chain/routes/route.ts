@@ -1,5 +1,5 @@
 import type { NextRequest } from 'next/server'
-import { EVM_UI_FEE_DECIMAL, type XSwapSupportedChainId } from 'src/config'
+import { EVM_UI_FEE_DECIMAL, type LifiXSwapSupportedChainId } from 'src/config'
 import { isEvmChainId } from 'sushi/evm'
 import * as z from 'zod'
 import {
@@ -20,8 +20,8 @@ const routesBaseInputSchema = z.object({
 })
 
 function routesInputSchema<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >(fromChainId: TChainId0, toChainId: TChainId1) {
   return z.object({
     fromChainId: sushiChainIdSchema(fromChainId).transform(sushiToLifiChainId),
@@ -42,8 +42,8 @@ function parseRoutesInput(params: Record<string, string>) {
 }
 
 export type CrossChainRoutesInput<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 > = z.input<ReturnType<typeof routesInputSchema<TChainId0, TChainId1>>>
 
 function routesOutputSchema<

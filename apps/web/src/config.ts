@@ -261,7 +261,7 @@ export const isZapSupportedChainId = (
 ): chainId is ZapSupportedChainId =>
   ZAP_SUPPORTED_CHAIN_IDS.includes(chainId as ZapSupportedChainId)
 
-export const XSWAP_SUPPORTED_CHAIN_IDS = [
+export const LIFI_XSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.APE,
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
@@ -298,9 +298,10 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.SOLANA,
 ] as const
 
-export type XSwapSupportedChainId = (typeof XSWAP_SUPPORTED_CHAIN_IDS)[number]
+export type LifiXSwapSupportedChainId =
+  (typeof LIFI_XSWAP_SUPPORTED_CHAIN_IDS)[number]
 
-export const isXSwapSupportedChainId = (
+export const isLifiXSwapSupportedChainId = (
   chainId: number,
-): chainId is XSwapSupportedChainId =>
-  XSWAP_SUPPORTED_CHAIN_IDS.includes(chainId as any)
+): chainId is LifiXSwapSupportedChainId =>
+  LIFI_XSWAP_SUPPORTED_CHAIN_IDS.includes(chainId as any)

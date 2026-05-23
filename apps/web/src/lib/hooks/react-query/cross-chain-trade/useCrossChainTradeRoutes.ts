@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import type { WalletAddressFor } from 'src/lib/wallet'
 import { type Amount, type Percent, getNativeAddress } from 'sushi'
 import type { CrossChainRoutesResponse } from '~evm/api/cross-chain/routes/route'
 
 export interface UseCrossChainTradeRoutesParms<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 > {
   fromAmount?: Amount<CurrencyFor<TChainId0>>
   toToken?: CurrencyFor<TChainId1>
@@ -18,8 +18,8 @@ export interface UseCrossChainTradeRoutesParms<
 }
 
 export function useCrossChainTradeRoutes<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >(params: UseCrossChainTradeRoutesParms<TChainId0, TChainId1>) {
   return useQuery({
     queryKey: ['cross-chain/routes', params],

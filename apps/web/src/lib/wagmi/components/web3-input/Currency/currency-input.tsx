@@ -23,7 +23,10 @@ import { TokenSelector } from '../../token-selector/token-selector'
 import { BalancePanel } from './balance-panel'
 import { PricePanel } from './price-panel'
 
-interface CurrencyInputProps<TChainId extends BalanceChainId> {
+interface CurrencyInputProps<
+  TChainId extends BalanceChainId,
+  TNetwork extends BalanceChainId = TChainId,
+> {
   id?: string
   disabled?: boolean
   value: string
@@ -48,12 +51,15 @@ interface CurrencyInputProps<TChainId extends BalanceChainId> {
   hidePricing?: boolean
   hideIcon?: boolean
   label?: string
-  networks?: readonly BalanceChainId[]
-  selectedNetwork?: BalanceChainId
-  onNetworkChange?: (network: number) => void
+  networks?: readonly TNetwork[]
+  selectedNetwork?: TNetwork
+  onNetworkChange?: (network: TNetwork) => void
 }
 
-function CurrencyInput<TChainId extends BalanceChainId>({
+function CurrencyInput<
+  TChainId extends BalanceChainId,
+  TNetwork extends BalanceChainId = TChainId,
+>({
   id,
   disabled,
   value,
@@ -81,7 +87,7 @@ function CurrencyInput<TChainId extends BalanceChainId>({
   networks,
   selectedNetwork,
   onNetworkChange,
-}: CurrencyInputProps<TChainId>) {
+}: CurrencyInputProps<TChainId, TNetwork>) {
   const isMounted = useIsMounted()
 
   const [localValue, setLocalValue] = useState<string>('')

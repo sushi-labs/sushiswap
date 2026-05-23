@@ -37,7 +37,10 @@ import { TokenSelectorStates } from './token-selector-states'
 
 type TokenSelectorChainId = EvmChainId | SvmChainId | StellarChainId
 
-interface TokenSelectorProps<TChainId extends TokenSelectorChainId> {
+interface TokenSelectorProps<
+  TChainId extends TokenSelectorChainId,
+  TNetwork extends TokenSelectorChainId = TChainId,
+> {
   id?: string
   selected: CurrencyFor<TChainId> | undefined
   chainId: TChainId
@@ -47,22 +50,27 @@ interface TokenSelectorProps<TChainId extends TokenSelectorChainId> {
   includeNative?: boolean
   hidePinnedTokens?: boolean
   hideSearch?: boolean
-  networks?: readonly TokenSelectorChainId[]
-  selectedNetwork?: TokenSelectorChainId
-  onNetworkSelect?: (network: number) => void
+  networks?: readonly TNetwork[]
+  selectedNetwork?: TNetwork
+  onNetworkSelect?: (network: TNetwork) => void
 }
 
-export function TokenSelector<TChainId extends TokenSelectorChainId>(
-  props: TokenSelectorProps<TChainId>,
-) {
+export function TokenSelector<
+  TChainId extends TokenSelectorChainId,
+  TNetwork extends TokenSelectorChainId = TChainId,
+>(props: TokenSelectorProps<TChainId, TNetwork>) {
   if (isStellarChainId(props.chainId)) {
-    const stellar = props as TokenSelectorProps<StellarChainId>
+    const stellar = props as TokenSelectorProps<StellarChainId, TNetwork>
     return (
       <StellarTokenSelector
         id={stellar.id ?? 'token-selector'}
         selected={stellar.selected}
         onSelect={stellar.onSelect}
         currencies={stellar.currencies}
+        hideSearch={stellar.hideSearch}
+        networks={stellar.networks}
+        selectedNetwork={stellar.selectedNetwork}
+        onNetworkSelect={stellar.onNetworkSelect}
       >
         {stellar.children}
       </StellarTokenSelector>
@@ -75,17 +83,22 @@ export function TokenSelector<TChainId extends TokenSelectorChainId>(
   )
 }
 
-interface EvmSvmTokenSelectorProps<TChainId extends EvmChainId | SvmChainId>
-  extends Omit<
-    TokenSelectorProps<TChainId>,
+interface EvmSvmTokenSelectorProps<
+  TChainId extends EvmChainId | SvmChainId,
+  TNetwork extends TokenSelectorChainId = TChainId,
+> extends Omit<
+    TokenSelectorProps<TChainId, TNetwork>,
     'currencies' | 'id' | 'networks' | 'selectedNetwork'
   > {
   currencies?: Record<string, CurrencyFor<TChainId, { approved?: boolean }>>
-  networks?: readonly (EvmChainId | SvmChainId)[]
-  selectedNetwork?: EvmChainId | SvmChainId
+  networks?: readonly TNetwork[]
+  selectedNetwork?: TNetwork
 }
 
-function EvmSvmTokenSelector<TChainId extends EvmChainId | SvmChainId>({
+function EvmSvmTokenSelector<
+  TChainId extends EvmChainId | SvmChainId,
+  TNetwork extends TokenSelectorChainId = TChainId,
+>({
   includeNative = true,
   selected,
   onSelect,
@@ -97,7 +110,7 @@ function EvmSvmTokenSelector<TChainId extends EvmChainId | SvmChainId>({
   networks,
   selectedNetwork,
   onNetworkSelect,
-}: EvmSvmTokenSelectorProps<TChainId>) {
+}: EvmSvmTokenSelectorProps<TChainId, TNetwork>) {
   const address = useAccount(chainId)
 
   const [query, setQuery] = useState('')
@@ -137,7 +150,7 @@ function EvmSvmTokenSelector<TChainId extends EvmChainId | SvmChainId>({
   )
 
   const _onNetworkSelect = useCallback(
-    (network: number) => {
+    (network: TNetwork) => {
       if (currencyInfo) {
         showCurrencyInfo(false)
       }
