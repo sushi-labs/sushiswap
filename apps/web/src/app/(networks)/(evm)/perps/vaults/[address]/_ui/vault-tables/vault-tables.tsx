@@ -34,15 +34,10 @@ export const VaultTables = ({
   const { data: vaultPositions } = useVaultPositions(vaultAddress)
   const { data: vaultData } = useVaultDetails({ vaultAddress })
 
-  const balanceCount = useMemo(() => balances?.length ?? 0, [balances?.length])
-  const positionCount = useMemo(
-    () => vaultPositions?.length ?? 0,
-    [vaultPositions?.length],
-  )
-  const depositorsCount = useMemo(
-    () => vaultData?.followers?.length || 0,
-    [vaultData?.followers],
-  )
+  const balanceCount = balances?.length || 0
+  const positionCount = vaultPositions?.length || 0
+
+  const depositorsCount = vaultData?.followers?.length || 0
 
   const tabNameRewrite = useMemo(() => {
     return VAULT_TABLES_TABS.map((tab) => {
