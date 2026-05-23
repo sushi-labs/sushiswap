@@ -1,26 +1,26 @@
 import type { CrossChainStepResponse as CrossChainStepSchemaResponse } from 'src/app/(networks)/(evm)/api/cross-chain/step/route'
 import {} from 'src/app/(networks)/(evm)/api/cross-chain/step/route'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 
 type CrossChainType = 'swap' | 'cross' | 'lifi' | 'protocol'
 type CrossChainRouteOrder = 'CHEAPEST' | 'FASTEST'
 
 type StepSchema<
-  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
 > = CrossChainStepSchemaResponse<TChainId0, TChainId1>
 
-type AnyStep = StepSchema<XSwapSupportedChainId, XSwapSupportedChainId>
+type AnyStep = StepSchema<LifiXSwapSupportedChainId, LifiXSwapSupportedChainId>
 
 type CrossChainToken<
-  TChainId extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
 > = Omit<StepSchema<TChainId, TChainId>['action']['fromToken'], 'chainId'> & {
   chainId: TChainId
 }
 
 type CrossChainAction<
-  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
 > = Omit<
   StepSchema<TChainId0, TChainId1>['action'],
   | 'fromChainId'
@@ -42,24 +42,24 @@ type CrossChainEstimate = Omit<
   AnyStep['estimate'],
   'approvalAddress' | 'feeCosts' | 'gasCosts'
 > & {
-  approvalAddress: CrossChainToken<XSwapSupportedChainId>['address']
+  approvalAddress: CrossChainToken<LifiXSwapSupportedChainId>['address']
   feeCosts: (Omit<AnyStep['estimate']['feeCosts'][number], 'token'> & {
-    token: CrossChainToken<XSwapSupportedChainId>
+    token: CrossChainToken<LifiXSwapSupportedChainId>
   })[]
   gasCosts: (Omit<AnyStep['estimate']['gasCosts'][number], 'token'> & {
-    token: CrossChainToken<XSwapSupportedChainId>
+    token: CrossChainToken<LifiXSwapSupportedChainId>
   })[]
 }
 
 type CrossChainToolDetails = AnyStep['toolDetails']
 
 type CrossChainTransactionRequest<
-  TChainId extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
 > = NonNullable<StepSchema<TChainId, TChainId>['transactionRequest']>
 
 type CrossChainStep<
-  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
 > = Omit<
   StepSchema<TChainId0, TChainId1>,
   'type' | 'action' | 'estimate' | 'transactionRequest' | 'includedSteps'
@@ -73,8 +73,8 @@ type CrossChainStep<
 }
 
 type CrossChainRoute<
-  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
 > = {
   id: string
   fromChainId: TChainId0
@@ -91,15 +91,15 @@ type CrossChainRoute<
 }
 
 type CrossChainRoutesResponse<
-  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
 > = {
   routes: CrossChainRoute<TChainId0, TChainId1>[]
 }
 
 type CrossChainStepResponse<
-  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
 > = CrossChainStep<TChainId0, TChainId1>
 
 export type {
