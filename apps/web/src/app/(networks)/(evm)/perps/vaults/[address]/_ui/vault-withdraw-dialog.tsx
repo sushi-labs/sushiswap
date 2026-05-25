@@ -136,7 +136,6 @@ export const VaultWithdrawDialog = ({
               error={error?.message}
               isLoading={isLoading}
               address={address}
-              maxDecimals={6}
             />
 
             <PerpsChecker.Legal size="default" variant="perps-tertiary">

@@ -15,7 +15,6 @@ export const InputWithKeyboard = ({
   currency,
   isLoading,
   address,
-  maxDecimals,
 }: {
   amount: string
   setAmount: (value: string) => void
@@ -24,7 +23,6 @@ export const InputWithKeyboard = ({
   error: string | undefined
   isLoading: boolean
   address: EvmAddress | undefined
-  maxDecimals?: number
 }) => {
   const widthRef = useRef<HTMLInputElement | null>(null)
   const { isLg } = useBreakpoint('lg')
