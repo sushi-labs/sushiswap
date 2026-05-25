@@ -8,6 +8,7 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { hlWebSocketTransport } from '../transports'
+import { isSpotCoinString } from '../utils'
 
 const formatPerpCtxs = (activeAssetCtxEvent: ActiveAssetCtxEvent) => {
   const ctx = activeAssetCtxEvent.ctx
@@ -82,7 +83,7 @@ export const useActiveAsset = ({ assetString }: { assetString: string }) => {
 
   useEffect(() => {
     let unsubscribe: undefined | (() => Promise<void>) = undefined
-    if (assetString.includes('@') || assetString === 'PURR/USDC') {
+    if (isSpotCoinString(assetString)) {
       //ex: @1, @2
       //spot
       ;(async () => {
