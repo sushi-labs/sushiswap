@@ -306,7 +306,7 @@ function parseHyperliquidTx(
         ? -Number(d.netWithdrawnUsd)
         : Number(d.netWithdrawnUsd)
       return {
-        action: `Vault Withdrawal ${String(isVault)}`,
+        action: `Vault Withdrawal`,
         source: 'Perps',
         destination: 'Perps',
         feeAmount: 0,
