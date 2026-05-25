@@ -198,12 +198,6 @@ export const SwapStablesDialog = ({
       assetToBuy?.assetName === 'PURR/USDC' ? '1' : midPrice,
       assetToBuy?.decimals,
     )
-    console.log(
-      'midPrice',
-      midPrice,
-      _midPrice.toString(),
-      assetToBuy.assetName,
-    )
     const side =
       assetToSend?.symbol === 'USDC' ? ('long' as const) : ('short' as const)
     const adjustedPrice =
