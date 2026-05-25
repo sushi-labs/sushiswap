@@ -12,48 +12,21 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import {
   type OrderbookRow,
-  getTextColorClass,
-  perpsNumberFormatter,
   toFixedTrim,
   useL2OrderBook,
   useSymbolSplit,
 } from 'src/lib/perps'
 import { useUserSettingsState } from '../account-management'
 import { useAssetState } from '../trade-widget'
+import { OrderBookRow } from './order-book-row'
 
-const getTotal = (o: OrderbookRow, orderBookSide: 'base' | 'quote') => {
+export const getTotal = (o: OrderbookRow, orderBookSide: 'base' | 'quote') => {
   return orderBookSide === 'base' ? o.totalBase : o.totalQuote
 }
 
-const depthRowStyle = (
-  pct: number,
-  orderBookSide: 'bid' | 'ask',
-): React.CSSProperties => {
-  const clamped = Math.max(0, Math.min(100, pct)).toFixed(6)
-  return orderBookSide === 'bid'
-    ? {
-        backgroundImage:
-          'linear-gradient(90deg, rgba(82, 250, 141, 0) 0%, rgba(82, 250, 141, 0.07) 50%)',
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: `${clamped}% 100%`,
-        backgroundPosition: 'left center',
-        borderRadius: '0 4px 4px 0',
-      }
-    : {
-        backgroundImage:
-          'linear-gradient(90deg, rgba(251, 113, 133, 0) 0%, rgba(251, 113, 133, 0.07) 50%)',
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: `${clamped}% 100%`,
-        backgroundPosition: 'left center',
-        borderRadius: '0 4px 4px 0',
-      }
-}
-
 function formatTick(tick: number): string {
-  // Avoid floating point ugliness
   if (tick >= 1)
     return tick.toLocaleString('en-US', { maximumFractionDigits: 0 })
-  // Count needed decimal places
   const decimals = Math.max(0, -Math.floor(Math.log10(tick)))
   return tick?.toFixed(decimals || 0) || '1'
 }
@@ -73,26 +46,18 @@ function tickSizeForPreset(
 
 export const OrderBook = ({ className }: { className?: string }) => {
   const {
-    state: { nSigFigs, mantissa, orderBookSide },
+    state: { nSigFigs, mantissa, orderBookSide, orderBookAnimationDisabled },
   } = useUserSettingsState()
   const [priceSnapshot, setPriceSnapshot] = useState<string | null>(null)
   const [open, setOpen] = useState(false)
   const {
     state: { activeAsset, asset },
   } = useAssetState()
-  const {
-    data,
-    isLoading: isLoadingOrderBook,
-    error,
-  } = useL2OrderBook({
+  const { data, isLoading, error } = useL2OrderBook({
     assetString: activeAsset,
     nSigFigs: nSigFigs as L2BookParameters['nSigFigs'],
     mantissa,
   })
-  const {
-    state: { orderBookAnimationDisabled },
-  } = useUserSettingsState()
-  const isLoading = isLoadingOrderBook
   const { isLg } = useBreakpoint('lg')
   const itemCount = isLg ? 9 : 7
 
@@ -101,31 +66,34 @@ export const OrderBook = ({ className }: { className?: string }) => {
     setPriceSnapshot(asset?.midPrice || asset?.markPrice || null)
   }, [priceSnapshot, asset?.name])
 
-  const bids = useMemo(() => data?.bids, [data?.bids])
-  const asks = useMemo(() => data?.asks, [data?.asks])
-
-  const { baseSymbol, quoteSymbol } = useSymbolSplit({ asset })
-
   const visibleAsks = useMemo(
-    () => asks?.slice(-itemCount) ?? [],
-    [asks, itemCount],
+    () => data?.asks?.slice(-itemCount) ?? [],
+    [data?.asks, itemCount],
   )
   const visibleBids = useMemo(
-    () => bids?.slice(0, itemCount) ?? [],
-    [bids, itemCount],
+    () => data?.bids?.slice(0, itemCount) ?? [],
+    [data?.bids, itemCount],
   )
 
-  const asksMaxTotal = useMemo(() => {
-    let max = 0
-    for (const o of visibleAsks) max = Math.max(max, getTotal(o, orderBookSide))
-    return max || 1
-  }, [visibleAsks, orderBookSide])
+  const asksMaxTotal = useMemo(
+    () => Math.max(1, ...visibleAsks.map((o) => getTotal(o, orderBookSide))),
+    [visibleAsks, orderBookSide],
+  )
+  const bidsMaxTotal = useMemo(
+    () => Math.max(1, ...visibleBids.map((o) => getTotal(o, orderBookSide))),
+    [visibleBids, orderBookSide],
+  )
 
-  const bidsMaxTotal = useMemo(() => {
-    let max = 0
-    for (const o of visibleBids) max = Math.max(max, getTotal(o, orderBookSide))
-    return max || 1
-  }, [visibleBids, orderBookSide])
+  const { baseSymbol, quoteSymbol } = useSymbolSplit({ asset })
+  const sideSymbol = orderBookSide === 'base' ? baseSymbol : quoteSymbol
+
+  const rowProps = useMemo(
+    () => ({
+      orderBookSide,
+      animationDisabled: orderBookAnimationDisabled,
+    }),
+    [orderBookSide, orderBookAnimationDisabled],
+  )
 
   return (
     <div className={classNames('flex flex-col', className ?? '')}>
@@ -138,23 +106,16 @@ export const OrderBook = ({ className }: { className?: string }) => {
               <div className="min-w-0 truncate text-left font-normal pl-2 p-0.5 text-xs">
                 Price
               </div>
-
               <div className="min-w-0 truncate font-normal p-0.5 text-right text-xs">
-                Size{' '}
-                {asset
-                  ? `(${orderBookSide === 'base' ? baseSymbol : quoteSymbol})`
-                  : ''}
+                Size {asset ? `(${sideSymbol})` : ''}
               </div>
-
               <div className="min-w-0 truncate font-normal p-0.5 pr-2 text-right text-xs">
-                Total{' '}
-                {asset
-                  ? `(${orderBookSide === 'base' ? baseSymbol : quoteSymbol})`
-                  : ''}
+                Total {asset ? `(${sideSymbol})` : ''}
               </div>
             </div>
           )}
         </div>
+
         <div>
           {isLoading ? (
             Array.from({ length: itemCount * 2 + (isLg ? 2 : 1) }).map(
@@ -166,119 +127,47 @@ export const OrderBook = ({ className }: { className?: string }) => {
                 Error loading trades. {error?.message}
               </div>
             </div>
-          ) : data && data?.bids?.length > 0 && data?.asks?.length > 0 ? (
+          ) : data && data.bids?.length > 0 && data.asks?.length > 0 ? (
             <>
-              {visibleAsks?.map((order, index) => {
-                const pct =
-                  (getTotal(order, orderBookSide) / asksMaxTotal) * 100
-                return (
-                  <div
-                    key={index}
-                    className={classNames(
-                      'font-medium relative lg:border-y-[1px] grid grid-cols-3 border-y-[.5px] border-transparent',
-                      orderBookAnimationDisabled
-                        ? ''
-                        : 'transition-[background-size] duration-150',
-                    )}
-                    style={depthRowStyle(pct, 'ask')}
-                  >
-                    <div
-                      className={classNames(
-                        'px-0.5 py-1 lg:py-[4.4px] text-xs text-left pl-2',
-                        getTextColorClass(-1),
-                      )}
-                    >
-                      {perpsNumberFormatter({
-                        value: order.price,
-                        maxFraxDigits: 8,
-                      })}
-                    </div>
-                    <div className="px-0.5 py-1 lg:py-[4.4px] text-xs text-right">
-                      {perpsNumberFormatter({
-                        value:
-                          orderBookSide === 'base'
-                            ? order.sizeBase
-                            : order.sizeQuote,
-                        maxFraxDigits: orderBookSide === 'base' ? 8 : 0,
-                      })}
-                    </div>
-                    <div className="px-0.5 py-1 lg:py-[4.4px] text-xs text-right pr-2">
-                      {perpsNumberFormatter({
-                        value:
-                          orderBookSide === 'base'
-                            ? order.totalBase
-                            : order.totalQuote,
-                        maxFraxDigits: orderBookSide === 'base' ? 8 : 0,
-                      })}
-                    </div>
-                  </div>
-                )
-              })}
+              {visibleAsks?.map((order) => (
+                <OrderBookRow
+                  key={`ask-${order.price}`}
+                  order={order}
+                  side="ask"
+                  maxTotal={asksMaxTotal}
+                  {...rowProps}
+                />
+              ))}
+
               <div className="flex px-2 py-1 lg:py-[4.4px] items-center justify-between border-y-[1px] border-transparent bg-[#EDF0F30D]">
                 <SigFigSelector
                   open={open}
                   setOpen={setOpen}
                   priceSnapshot={priceSnapshot}
                 />
-                <div className=" text-xs  text-center font-medium tabular-nums flex items-center gap-4">
+                <div className="text-xs text-center font-medium tabular-nums flex items-center gap-4">
                   <div>Spread</div>
                   <div>{data?.spreadAbs}</div>
                   <div>{toFixedTrim(Number(data?.spreadPct) * 100, 6)}%</div>
                 </div>
               </div>
-              {visibleBids?.map((order, index) => {
-                const pct =
-                  (getTotal(order, orderBookSide) / bidsMaxTotal) * 100
-                return (
-                  <div
-                    key={index}
-                    className={classNames(
-                      'font-medium grid grid-cols-3 relative lg:border-y-[1px] border-y-[.5px] border-transparent',
-                      orderBookAnimationDisabled
-                        ? ''
-                        : 'transition-[background-size] duration-150',
-                    )}
-                    style={depthRowStyle(pct, 'bid')}
-                  >
-                    <div
-                      className={classNames(
-                        'px-0.5 py-1 lg:py-[4.4px] text-xs text-left pl-2',
-                        getTextColorClass(1),
-                      )}
-                    >
-                      {perpsNumberFormatter({
-                        value: order.price,
-                        maxFraxDigits: 8,
-                      })}
-                    </div>
-                    <div className="px-0.5 py-1 lg:py-[4.4px] text-xs text-right">
-                      {perpsNumberFormatter({
-                        value:
-                          orderBookSide === 'base'
-                            ? order.sizeBase
-                            : order.sizeQuote,
-                        maxFraxDigits: orderBookSide === 'base' ? 8 : 0,
-                      })}
-                    </div>
-                    <div className="px-0.5 py-1 lg:py-[4.4px] text-xs text-right pr-2">
-                      {perpsNumberFormatter({
-                        value:
-                          orderBookSide === 'base'
-                            ? order.totalBase
-                            : order.totalQuote,
-                        maxFraxDigits: orderBookSide === 'base' ? 8 : 0,
-                      })}
-                    </div>
-                  </div>
-                )
-              })}
+
+              {visibleBids?.map((order) => (
+                <OrderBookRow
+                  key={`bid-${order.price}`}
+                  order={order}
+                  side="bid"
+                  maxTotal={bidsMaxTotal}
+                  {...rowProps}
+                />
+              ))}
             </>
           ) : (
-            <tr>
-              <td colSpan={3} className="p-2 text-center">
+            <div className="grid grid-cols-3">
+              <div className="p-2 h-20 text-xs italic text-red-500/70 text-center col-span-3">
                 No trades available.
-              </td>
-            </tr>
+              </div>
+            </div>
           )}
         </div>
       </div>
@@ -299,6 +188,7 @@ const SigFigSelector = ({
     state: { nSigFigs, mantissa },
     mutate: { setNSigFigs, setMantissa },
   } = useUserSettingsState()
+
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger className="capitalize flex items-center text-xs">
@@ -322,7 +212,6 @@ const SigFigSelector = ({
                 setNSigFigs(5)
                 return
               }
-
               setNSigFigs(figs)
               setMantissa(undefined)
             }}
@@ -339,18 +228,16 @@ const SigFigSelector = ({
   )
 }
 
-const SkeletonOrderBookRow = () => {
-  return (
-    <div className="grid grid-cols-3">
-      <div className="px-0.5 py-1 lg:py-[4.4px]">
-        <SkeletonBox className="w-16 h-4" />
-      </div>
-      <div className="px-0.5 py-1 lg:py-[4.4px] ">
-        <SkeletonBox className="ml-auto w-16 h-4" />
-      </div>
-      <div className="px-0.5 py-1 lg:py-[4.4px]">
-        <SkeletonBox className="w-16 ml-auto h-4" />
-      </div>
+const SkeletonOrderBookRow = () => (
+  <div className="grid grid-cols-3">
+    <div className="px-0.5 py-1 lg:py-[4.4px]">
+      <SkeletonBox className="w-16 h-4" />
     </div>
-  )
-}
+    <div className="px-0.5 py-1 lg:py-[4.4px]">
+      <SkeletonBox className="ml-auto w-16 h-4" />
+    </div>
+    <div className="px-0.5 py-1 lg:py-[4.4px]">
+      <SkeletonBox className="w-16 ml-auto h-4" />
+    </div>
+  </div>
+)

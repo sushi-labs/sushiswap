@@ -17,7 +17,9 @@ export function usePointsData({
         throw new Error('address is required')
       }
 
-      const data = await getPerpsPointsOverview({ address })
+      const data = await getPerpsPointsOverview({
+        address,
+      })
 
       const totalVolumeUsd = data?.totalVolumeUsd || 0
       const pointMultipliers = data?.pointMultipliers
@@ -49,7 +51,18 @@ export function usePointsData({
         }
       }
 
-      percentageCompletedTier = totalVolumeUsd / _nextTier?.thresholdUsd
+      const nextThresholdUsd = _nextTier?.thresholdUsd
+      percentageCompletedTier =
+        nextThresholdUsd && Number.isFinite(nextThresholdUsd)
+          ? Math.min(
+              1,
+              Math.max(
+                0,
+                (totalVolumeUsd - currentThresholdUsd) /
+                  (nextThresholdUsd - currentThresholdUsd),
+              ),
+            )
+          : 1
       if (
         totalVolumeUsd >= currentThresholdUsd &&
         currentTier.id === 'legend'

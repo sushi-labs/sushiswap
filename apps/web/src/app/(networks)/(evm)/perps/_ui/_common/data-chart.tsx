@@ -1,3 +1,5 @@
+'use client'
+import { classNames } from '@sushiswap/ui'
 import type { EChartOption } from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import { LineChart } from 'echarts/charts'
@@ -11,7 +13,11 @@ echarts.use([CanvasRenderer, LineChart, TooltipComponent, GridComponent])
 
 export const DataChart = ({
   data,
-}: { data: [timestamp: number, value: string][] | undefined }) => {
+  className,
+}: {
+  data: [timestamp: number, value: string][] | undefined
+  className?: string
+}) => {
   const DEFAULT_OPTION = useMemo<EChartOption>(
     () => ({
       tooltip: {
@@ -68,7 +74,7 @@ export const DataChart = ({
           },
           axisLabel: {
             color: '#999',
-            formatter: (value: number) => value.toFixed(2), // adjust as needed
+            formatter: (value: number) => formatUSD(value),
           },
         },
       ],
@@ -114,7 +120,10 @@ export const DataChart = ({
     <ReactEchartsCore
       option={DEFAULT_OPTION}
       echarts={echarts}
-      className="lg:max-h-[200px] xl:max-h-[192px] max-h-[192px] min-h-[192px] h-full"
+      className={classNames(
+        'lg:max-h-[200px] xl:max-h-[192px] max-h-[192px] min-h-[192px] h-full',
+        className ?? '',
+      )}
     />
   )
 }

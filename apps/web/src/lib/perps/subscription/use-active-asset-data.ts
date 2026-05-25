@@ -7,6 +7,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import type { EvmAddress } from 'sushi/evm'
 import { hlWebSocketTransport } from '../transports'
+import { isSpotCoinString } from '../utils'
 
 export const useActiveAssetData = ({
   address,
@@ -22,7 +23,7 @@ export const useActiveAssetData = ({
   useEffect(() => {
     if (!address) return
     if (!assetString) return
-    if (assetString.startsWith('@')) return
+    if (isSpotCoinString(assetString)) return
     let unsubscribe: undefined | (() => Promise<void>) = undefined
     ;(async () => {
       const sub = await activeAssetData(

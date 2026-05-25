@@ -187,6 +187,7 @@ export const USDC_VALUE_COLUMN: ColumnDef<BalanceItemType, unknown> = {
 }
 export const PNL_COLUMN = (
   openModal: (action: 'share-pnl', balance: BalanceItemType) => void,
+  hideIcon?: boolean,
 ): ColumnDef<BalanceItemType, unknown> => ({
   id: 'pnlRoePc',
   header: 'PNL / (ROE %)',
@@ -223,7 +224,9 @@ export const PNL_COLUMN = (
           ({getSignForValue(roePc)}
           {roePc.toFixed(1)}%)
         </span>
-        <ExternalLinkIcon className="h-3.5 w-3.5 text-blue" />
+        {hideIcon ? null : (
+          <ExternalLinkIcon className="h-3.5 w-3.5 text-blue" />
+        )}
       </button>
     )
   },

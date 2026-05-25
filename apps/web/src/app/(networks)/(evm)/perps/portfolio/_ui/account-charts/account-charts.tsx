@@ -13,8 +13,7 @@ import { useMemo, useState } from 'react'
 import { usePortfolio } from 'src/lib/perps'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useAccount } from 'src/lib/wallet'
-import { PerpsCard } from '~evm/perps/_ui/_common'
-import { DataChart } from './data-chart'
+import { DataChart, PerpsCard } from '~evm/perps/_ui/_common'
 
 const VIEWS = [
   {
@@ -137,7 +136,11 @@ export const AccountCharts = () => {
         </div>
         {!address ? (
           <div className="flex items-center justify-center h-full min-h-[192px]">
-            <ConnectButton namespace="evm" className="mx-auto" />
+            <ConnectButton
+              namespace="evm"
+              className="mx-auto"
+              variant="perps-default"
+            />
           </div>
         ) : isLoading ? (
           <div>

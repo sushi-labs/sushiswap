@@ -187,7 +187,10 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     assetString: activeAsset,
   })
   const { data: openPosition } = useUserPositions(activeAsset)
-  const spotBalance = useBalance({ assetString: activeAsset })
+  const spotBalance = useBalance({
+    assetString: activeAsset,
+    coin: activeAsset === 'PURR/USDC' ? 'PURR' : undefined,
+  })
   const spotUsdcBalance = useBalance({ assetString: 'PURR/USDC' })
   const totalRunningTimeInMinutes = useMemo(() => {
     const hours = Number.parseInt(twapRunningTime.hours) || 0

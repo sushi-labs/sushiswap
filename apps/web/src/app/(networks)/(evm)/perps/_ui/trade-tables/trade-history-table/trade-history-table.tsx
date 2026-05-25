@@ -23,7 +23,7 @@ const COLUMNS = [
   SIZE_COLUMN,
   TRADE_VALUE_COLUMN,
   FEE_COLUMN,
-  CLOSED_PNL_COLUMN,
+  CLOSED_PNL_COLUMN(true),
 ] as ColumnDef<TradeHistoryItemType, unknown>[]
 
 const MOBILE_COLUMNS = [
@@ -34,7 +34,7 @@ const MOBILE_COLUMNS = [
   PRICE_COLUMN,
   TRADE_VALUE_COLUMN,
   FEE_COLUMN,
-  CLOSED_PNL_COLUMN,
+  CLOSED_PNL_COLUMN(true),
 ] as ColumnDef<TradeHistoryItemType, unknown>[]
 
 export const TradeHistoryTable = () => {
