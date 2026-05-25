@@ -216,7 +216,7 @@ export const VaultWithdrawDialog = ({
               <div>
                 <p className="text-xs text-perps-muted-50 text-center italic mb-1">
                   To withdraw {_amount?.toString()} USDC, which represents{' '}
-                  {percentageOfVault}% of the vault, A percentage of each
+                  {percentageOfVault}% of the vault, a percentage of each
                   position of the vault may be closed at market price if
                   necessary to free up margin. Due to slippage, the final amount
                   may differ from the amount originally entered.
