@@ -8,6 +8,7 @@ import {
 } from 'sushi/evm'
 import type { Hex } from 'viem'
 import type { Address } from 'viem/accounts'
+import { merklFetcher } from './fetcher'
 import { merklRewardsValidator } from './validator'
 
 interface UseClaimableRewardsParams {
@@ -42,8 +43,7 @@ export const useClaimableRewards = ({
           const _url = new URL(url)
           _url.searchParams.set('chainId', `${chainId}`)
 
-          const res = await fetch(_url)
-          const json = await res.json()
+          const json = await merklFetcher(_url.toString())
           return merklRewardsValidator.parse(json)
         }),
       )

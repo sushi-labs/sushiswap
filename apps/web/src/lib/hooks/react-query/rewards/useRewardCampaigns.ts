@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { type EvmAddress, type EvmChainId, EvmToken } from 'sushi/evm'
 import { getAddress } from 'viem/utils'
 import type * as z from 'zod'
+import { merklFetcher } from './fetcher'
 import { merklCampaignsValidator } from './validator'
 
 interface UseRewardCampaignsParams {
@@ -39,8 +40,7 @@ export function useRewardCampaigns({
       )
       url.searchParams.set('test', `${false}`)
 
-      const res = await fetch(url)
-      const json = await res.json()
+      const json = await merklFetcher(url.toString())
       const parsed = merklCampaignsValidator.parse(json)
 
       const now = Date.now() / 1000
