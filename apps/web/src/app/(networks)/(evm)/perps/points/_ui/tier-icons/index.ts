@@ -1,3 +1,4 @@
+export * from './deshi'
 export * from './novice'
 export * from './shogun'
 export * from './sensei'
