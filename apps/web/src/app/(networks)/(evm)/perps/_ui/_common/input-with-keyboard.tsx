@@ -140,7 +140,13 @@ export const InputWithKeyboard = ({
           currency.symbol
         }{' '}
       </button>
-      {isLg ? null : <KeyboardInput amount={amount} setAmount={setAmount} />}
+      {isLg ? null : (
+        <KeyboardInput
+          amount={amount}
+          setAmount={setAmount}
+          maxDecimals={currency?.decimals || 2}
+        />
+      )}
     </div>
   )
 }
