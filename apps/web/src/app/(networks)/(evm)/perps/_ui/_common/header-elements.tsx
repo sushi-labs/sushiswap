@@ -51,6 +51,11 @@ export const EXPLORE_NAVIGATION_LINKS =
         href: `/perps/vaults`,
         description: 'View and manage your vault positions.',
       },
+      {
+        title: 'Leaderboard',
+        href: `/perps/leaderboard`,
+        description: 'View the leaderboard and track top traders.',
+      },
     ]
   }
 
@@ -179,6 +184,26 @@ export const headerElements = (): NavigationElement[] => {
             )}
           >
             Vaults
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      ),
+    },
+    {
+      show: 'perps-desktop',
+      type: NavigationElementType.Custom,
+      item: (
+        <NavigationMenuItem
+          key={`leaderboard:custom`}
+          className={navigationElementShowMap['perps-desktop']}
+        >
+          <NavigationMenuLink
+            href={'/perps/leaderboard'}
+            className={classNames(
+              navigationMenuTriggerStyle,
+              'focus:bg-transparent hover:!bg-secondary',
+            )}
+          >
+            Leaderboard
           </NavigationMenuLink>
         </NavigationMenuItem>
       ),
