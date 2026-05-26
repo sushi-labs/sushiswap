@@ -18,7 +18,7 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { getChainById } from 'sushi'
 import { type EvmAddress, EvmChainId, EvmToken, USDC } from 'sushi/evm'
 import { AnyTokenDeposit } from './any-token-deposit'
-import { FiatDeposit } from './fiat-deposit'
+// import { FiatDeposit } from './fiat-deposit'
 import { HyperunitOptions } from './hyperunit-options'
 import { USDCOptions } from './usdc-options'
 
@@ -56,11 +56,11 @@ const DEPOSIT_OPTIONS = [
     depositBridge: USDC_HYPEREVM_DEPOSIT_BRIDGE,
     type: 'token' as const,
   },
-  {
-    label: 'Fiat',
-    value: 'fiat' as const,
-    type: 'fiat' as const,
-  },
+  // {
+  //   label: 'Fiat',
+  //   value: 'fiat' as const,
+  //   type: 'fiat' as const,
+  // },
   {
     label: 'ETH (Ethereum Mainnet)',
     value: 'eth' as const,
@@ -229,8 +229,8 @@ export const DepositDialog = ({
             setOpen={handleOpenChange}
           />
         )
-      case 'fiat':
-        return <FiatDeposit />
+      // case 'fiat':
+      //   return <FiatDeposit />
       case 'hyperunit':
         return (
           <HyperunitOptions
@@ -254,8 +254,8 @@ export const DepositDialog = ({
     switch (depositOption.type) {
       case 'token':
         return `Deposit ${depositOption.asset.symbol} from ${getChainById(depositOption.asset.chainId).name}`
-      case 'fiat':
-        return 'Deposit Fiat'
+      // case 'fiat':
+      //   return 'Deposit Fiat'
       case 'hyperunit':
         return `Deposit ${depositOption.label} via Unit`
       case 'any-token':
@@ -278,7 +278,8 @@ export const DepositDialog = ({
       </PerpsDialogTrigger>
       <PerpsDialogContent
         className={classNames(
-          depositOption.type === 'fiat' ? 'max-w-[400px]' : '!max-w-xl',
+          // depositOption.type === 'fiat' ? 'max-w-[400px]' :
+          '!max-w-xl',
         )}
       >
         <PerpsDialogHeader>
