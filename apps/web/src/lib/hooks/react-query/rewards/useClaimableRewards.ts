@@ -8,7 +8,6 @@ import {
 } from 'sushi/evm'
 import type { Hex } from 'viem'
 import type { Address } from 'viem/accounts'
-import { merklFetcher } from './fetcher'
 import { merklRewardsValidator } from './validator'
 
 interface UseClaimableRewardsParams {
@@ -35,15 +34,19 @@ export const useClaimableRewards = ({
   return useQuery({
     queryKey: ['claimableMerklRewards', { account }],
     queryFn: async () => {
-      const url = new URL(`https://api.merkl.xyz/v4/users/${account}/rewards`)
+      if (!account)
+        throw new Error('Account is required to fetch claimable rewards')
+      const url = new URL(`${window.location.origin}/api/merkl/user-rewards`)
       url.searchParams.set('test', `${false}`)
+      url.searchParams.set('account', account)
 
       const res = await Promise.allSettled(
         chainIds.map(async (chainId) => {
           const _url = new URL(url)
           _url.searchParams.set('chainId', `${chainId}`)
 
-          const json = await merklFetcher(_url.toString())
+          const res = await fetch(_url.toString())
+          const json = await res.json()
           return merklRewardsValidator.parse(json)
         }),
       )
