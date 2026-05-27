@@ -16,6 +16,17 @@ import {
   ShinobiIcon,
   ShogunIcon,
 } from './tier-icons'
+import {
+  DaimyoSimpleIcon,
+  DeshiSimpleIcon,
+  LegendSimpleIcon,
+  NoviceSimpleIcon,
+  RoninSimpleIcon,
+  SamuraiSimpleIcon,
+  SenseiSimpleIcon,
+  ShinobiSimpleIcon,
+  ShogunSimpleIcon,
+} from './tier-icons/simple'
 
 const ITEM_HEIGHT = 78 // height of each tier row in px
 
@@ -253,6 +264,7 @@ export const DEFAULT_TIERS = [
     bgGradient:
       'linear-gradient(135deg, #78350F 0%, #D69A4A 51.92%, #78350F 100%)',
     icon: <DeshiIcon />,
+    simpleIcon: <DeshiSimpleIcon />,
   },
   {
     id: 'novice',
@@ -262,6 +274,7 @@ export const DEFAULT_TIERS = [
     bgGradient:
       'linear-gradient(135deg, #22C55E 0%, #86EFAC 51.92%, #22C55E 100%)',
     icon: <NoviceIcon />,
+    simpleIcon: <NoviceSimpleIcon />,
   },
   {
     id: 'shinobi',
@@ -271,6 +284,7 @@ export const DEFAULT_TIERS = [
     bgGradient:
       'linear-gradient(135deg, #8B5CF6 0%, #C4B5FD 51.92%, #8B5CF6 100%)',
     icon: <ShinobiIcon />,
+    simpleIcon: <ShinobiSimpleIcon />,
   },
   {
     id: 'ronin',
@@ -280,6 +294,7 @@ export const DEFAULT_TIERS = [
     bgGradient:
       'linear-gradient(135.35deg, #737373 8.46%, #737373 44.65%, #737373 80.85%)',
     icon: <RoninIcon />,
+    simpleIcon: <RoninSimpleIcon />,
   },
   {
     id: 'samurai',
@@ -289,6 +304,7 @@ export const DEFAULT_TIERS = [
     bgGradient:
       'linear-gradient(135.35deg, #7F1D1D 8.46%, #EF4444 44.65%, #7F1D1D 80.85%)',
     icon: <SamuraiIcon />,
+    simpleIcon: <SamuraiSimpleIcon />,
   },
   {
     id: 'shogun',
@@ -298,6 +314,7 @@ export const DEFAULT_TIERS = [
     bgGradient:
       'linear-gradient(135.35deg, #A16207 8.46%, #EAB308 44.65%, #854D0E 80.85%)',
     icon: <ShogunIcon />,
+    simpleIcon: <ShogunSimpleIcon />,
   },
   {
     id: 'daimyo',
@@ -307,6 +324,7 @@ export const DEFAULT_TIERS = [
     bgGradient:
       'linear-gradient(135.35deg, #1E3A8A 8.46%, #3B82F6 44.65%, #1E3A8A 80.85%)',
     icon: <DaimyoIcon />,
+    simpleIcon: <DaimyoSimpleIcon />,
   },
   {
     id: 'sensei',
@@ -316,6 +334,7 @@ export const DEFAULT_TIERS = [
     bgGradient:
       'linear-gradient(135.35deg, #EC4899 8.46%, #FBCFE8 44.65%, #EC4899 80.85%)',
     icon: <SenseiIcon />,
+    simpleIcon: <SenseiSimpleIcon />,
   },
   {
     id: 'legend',
@@ -325,6 +344,7 @@ export const DEFAULT_TIERS = [
     bgGradient:
       'linear-gradient(135.35deg, #38BDF8 8.46%, #BAE6FD 44.65%, #0284C7 80.85%)',
     icon: <LegendIcon />,
+    simpleIcon: <LegendSimpleIcon />,
   },
 ] as const
 

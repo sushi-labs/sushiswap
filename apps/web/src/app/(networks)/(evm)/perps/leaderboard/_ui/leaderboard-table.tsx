@@ -43,7 +43,12 @@ const LeaderboardRow = forwardRef<HTMLDivElement, LeaderboardRowProps>(
           </span>
         </div>
         <div className="py-2 text-right px-2">
-          {getTier(entry.volumeUsd).label}
+          <div className="text-perps-muted flex items-center justify-end gap-1">
+            {getTier(entry?.volumeUsd)?.label}
+            <div className="w-3 h-3">
+              {getTier(entry?.volumeUsd)?.simpleIcon}
+            </div>
+          </div>
         </div>
         <div
           className={classNames(
