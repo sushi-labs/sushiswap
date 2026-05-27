@@ -20,7 +20,7 @@ type Place = 1 | 2 | 3
 type PlaceCardProps = {
   place: Place
   isLoading: boolean
-  entry: PerpsLeaderboardEntry
+  entry: PerpsLeaderboardEntry | undefined
 }
 
 type StatItemProps = {
@@ -72,7 +72,7 @@ export const LeaderboardLeaders = () => {
       first: data?.entries?.[0],
       second: data?.entries?.[1],
       third: data?.entries?.[2],
-    } as Record<'first' | 'second' | 'third', PerpsLeaderboardEntry>
+    }
   }, [data?.entries])
 
   return (
@@ -143,11 +143,15 @@ const PlaceHeader = ({ place, isLoading, entry }: PlaceCardProps) => {
         ) : (
           <>
             <p className="text-lg font-medium">
-              {truncateString(entry?.address, 10, 'middle')}
+              {entry?.address
+                ? truncateString(entry?.address, 10, 'middle')
+                : 'N/A'}
             </p>
             <div className="flex items-center gap-1">
               <p className="text-perps-muted-50">Volume</p>
-              <p className="text-white">{formatUSD(entry?.volumeUsd)}</p>
+              <p className="text-white">
+                {entry?.volumeUsd ? formatUSD(entry?.volumeUsd) : 'N/A'}
+              </p>
             </div>
           </>
         )}
@@ -180,8 +184,8 @@ const PlaceStats = ({ place, isLoading, entry }: PlaceCardProps) => {
         <StatItem
           label="PNL"
           value={
-            <div className={classNames(getTextColorClass(entry?.pnl))}>
-              {entry?.pnl?.toFixed(1)}%
+            <div className={classNames(getTextColorClass(entry?.pnl || 0))}>
+              {entry?.pnl?.toFixed(1) ?? 'N/A'}%
             </div>
           }
           isLoading={isLoading}
@@ -195,12 +199,16 @@ const PlaceStats = ({ place, isLoading, entry }: PlaceCardProps) => {
         <StatItem
           label="Tier"
           value={
-            <div className="text-perps-muted flex items-center gap-1">
-              <div className="w-3 h-3">
-                {getTier(entry?.volumeUsd)?.simpleIcon}
+            entry?.volumeUsd ? (
+              <div className="text-perps-muted flex items-center gap-1">
+                <div className="w-3 h-3">
+                  {getTier(entry?.volumeUsd)?.simpleIcon}
+                </div>
+                {getTier(entry?.volumeUsd)?.label}
               </div>
-              {getTier(entry?.volumeUsd)?.label}
-            </div>
+            ) : (
+              'N/A'
+            )
           }
           isLoading={isLoading}
         />
@@ -209,12 +217,16 @@ const PlaceStats = ({ place, isLoading, entry }: PlaceCardProps) => {
         <StatItem
           label="Points"
           value={
-            <span className="bg-gradient-to-r from-[#27B0E6] from-2% via-[#7D8ACA] via-5% to-[#FA52A0] to-100% text-transparent bg-clip-text">
-              {perpsNumberFormatter({
-                value: entry?.points,
-                maxFraxDigits: 0,
-              })}
-            </span>
+            entry?.points ? (
+              <span className="bg-gradient-to-r from-[#27B0E6] from-2% via-[#7D8ACA] via-5% to-[#FA52A0] to-100% text-transparent bg-clip-text">
+                {perpsNumberFormatter({
+                  value: entry?.points,
+                  maxFraxDigits: 0,
+                })}
+              </span>
+            ) : (
+              'N/A'
+            )
           }
           isLoading={isLoading}
         />

@@ -195,23 +195,29 @@ export const LeaderboardTable = () => {
             </div>
           </div>
 
-          {isLoading
-            ? Array(10)
-                .fill(null)
-                .map((_, idx) => <SkeletonRow key={idx} />)
-            : leaderboardData?.map((entry) => {
-                const isYou =
-                  address?.toLowerCase() === entry.address?.toLowerCase()
+          {isLoading ? (
+            Array(10)
+              .fill(null)
+              .map((_, idx) => <SkeletonRow key={idx} />)
+          ) : !leaderboardData?.length ? (
+            <div className="py-4 text-center text-sm italic text-perps-muted-50 h-[200px] flex items-center justify-center">
+              No data for the selected timeframe
+            </div>
+          ) : (
+            leaderboardData?.map((entry) => {
+              const isYou =
+                address?.toLowerCase() === entry.address?.toLowerCase()
 
-                return (
-                  <LeaderboardRow
-                    key={entry.address}
-                    ref={isYou ? connectedUserSentinelRef : undefined}
-                    entry={entry}
-                    isYou={isYou}
-                  />
-                )
-              })}
+              return (
+                <LeaderboardRow
+                  key={entry.address}
+                  ref={isYou ? connectedUserSentinelRef : undefined}
+                  entry={entry}
+                  isYou={isYou}
+                />
+              )
+            })
+          )}
         </div>
       </PerpsCard>
       <div className="mt-2 min-h-[44px]">
