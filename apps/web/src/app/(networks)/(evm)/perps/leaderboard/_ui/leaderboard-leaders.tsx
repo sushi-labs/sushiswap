@@ -1,4 +1,4 @@
-import { classNames } from '@sushiswap/ui'
+import { SkeletonBox, SkeletonText, classNames } from '@sushiswap/ui'
 import { type ReactNode, useId } from 'react'
 import { formatUSD } from 'sushi'
 import { FirstPlaceHat } from './first-place-hat'
@@ -13,35 +13,36 @@ type PlaceCardProps = {
 type StatItemProps = {
   label: string
   value: ReactNode
+  isLoading?: boolean
 }
 
 type Side = 'left' | 'right'
 
 const PLACE_CARD_CLASS_NAMES: Record<Place, string> = {
-  1: [
+  1: classNames(
     'text-[#EAB308]',
     'bg-[linear-gradient(180deg,rgba(234,179,8,0.05)_0%,rgba(234,179,8,0.015)_100%)]',
     'border',
     '[border-image-source:radial-gradient(50%_50%_at_50%_0%,rgba(234,179,8,0.5)_0%,rgba(234,179,8,0)_100%)]',
     '[border-image-slice:1]',
     'items-center',
-  ].join(' '),
-  2: [
+  ),
+  2: classNames(
     'text-[#94A3B8]',
     'bg-[linear-gradient(180deg,rgba(148,163,184,0.05)_0%,rgba(148,163,184,0.015)_100%)]',
     'border',
     '[border-image-source:radial-gradient(50%_50%_at_50%_0%,rgba(148,163,184,0.5)_0%,rgba(148,163,184,0)_100%)]',
     '[border-image-slice:1]',
     'items-start',
-  ].join(' '),
-  3: [
+  ),
+  3: classNames(
     'text-[#CD7F32]',
     'bg-[linear-gradient(180deg,rgba(205,127,50,0.05)_0%,rgba(205,127,50,0.015)_100%)]',
     'border',
     '[border-image-source:radial-gradient(50%_50%_at_50%_0%,rgba(205,127,50,0.5)_0%,rgba(205,127,50,0)_100%)]',
     '[border-image-slice:1]',
     'items-start',
-  ].join(' '),
+  ),
 }
 
 export const LeaderboardLeaders = () => {
@@ -85,6 +86,7 @@ const PlaceCard = ({ place }: PlaceCardProps) => {
 }
 
 const PlaceHeader = ({ place }: PlaceCardProps) => {
+  const isLoading = false
   return (
     <div
       className={classNames(
@@ -102,11 +104,23 @@ const PlaceHeader = ({ place }: PlaceCardProps) => {
           place === 1 ? 'items-center' : 'items-start',
         )}
       >
-        <p className="text-lg font-medium">name</p>
-        <div className="flex items-center gap-1">
-          <p className="text-perps-muted-50">Volume</p>
-          <p className="text-white">{formatUSD(1234233)}</p>
-        </div>
+        {isLoading ? (
+          <>
+            <SkeletonBox className="w-[120px] h-7" />
+            <div className="flex items-center gap-1">
+              <p className="text-perps-muted-50">Volume</p>
+              <SkeletonBox className="w-[50px] h-4 rounded-md" />
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="text-lg font-medium">name</p>
+            <div className="flex items-center gap-1">
+              <p className="text-perps-muted-50">Volume</p>
+              <p className="text-white">{formatUSD(1234233)}</p>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
@@ -125,7 +139,7 @@ const PlaceMedal = ({ place }: PlaceCardProps) => {
 
 const PlaceStats = ({ place }: PlaceCardProps) => {
   const isFirstPlace = place === 1
-
+  const isLoading = false
   return (
     <div
       className={classNames(
@@ -134,17 +148,21 @@ const PlaceStats = ({ place }: PlaceCardProps) => {
       )}
     >
       <div className={classNames(!isFirstPlace ? 'order-2 lg:order-none' : '')}>
-        <StatItem label="PNL" value={formatUSD(1234233)} />
+        <StatItem
+          label="PNL"
+          value={formatUSD(1234233)}
+          isLoading={isLoading}
+        />
       </div>
       <div
         className={classNames(
           !isFirstPlace ? 'order-1 lg:order-none col-span-2 lg:col-span-1' : '',
         )}
       >
-        <StatItem label="Tier" value="sym legend" />
+        <StatItem label="Tier" value="sym legend" isLoading={isLoading} />
       </div>
       <div className={classNames(!isFirstPlace ? 'order-3 lg:order-none' : '')}>
-        <StatItem label="Points" value={123} />
+        <StatItem label="Points" value={123} isLoading={isLoading} />
       </div>
     </div>
   )
@@ -184,11 +202,15 @@ const PlaceBackgroundGlow = ({ place }: PlaceCardProps) => {
   }
 }
 
-const StatItem = ({ label, value }: StatItemProps) => {
+const StatItem = ({ label, value, isLoading }: StatItemProps) => {
   return (
     <div className="flex flex-col rounded-xl p-3 bg-[#EDF1F30D]">
       <p className="text-perps-muted-50 text-xs">{label}</p>
-      <div className="text-sm font-medium">{value}</div>
+      {isLoading ? (
+        <SkeletonBox className="w-[50px] h-5 rounded-md" />
+      ) : (
+        <div className="text-sm font-medium">{value}</div>
+      )}
     </div>
   )
 }

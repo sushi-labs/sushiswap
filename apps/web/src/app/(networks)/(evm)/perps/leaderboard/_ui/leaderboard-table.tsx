@@ -1,4 +1,4 @@
-import { classNames } from '@sushiswap/ui'
+import { SkeletonBox, classNames } from '@sushiswap/ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { PerpsCard } from '~evm/perps/_ui/_common'
@@ -69,6 +69,7 @@ export const LeaderboardTable = () => {
   const {
     state: { sortBy },
   } = useLeaderboardState()
+  const isLoading = false
 
   const isYou = (rank: number) => rank === CONNECTED_USER_RANK
 
@@ -135,21 +136,25 @@ export const LeaderboardTable = () => {
             </div>
           </div>
 
-          {Array(50)
-            .fill(null)
-            .map((_, idx) => {
-              const rank = idx + 1
-              const connectedUser = isYou(rank)
+          {isLoading
+            ? Array(10)
+                .fill(null)
+                .map((_, idx) => <SkeletonRow key={idx} />)
+            : Array(50)
+                .fill(null)
+                .map((_, idx) => {
+                  const rank = idx + 1
+                  const connectedUser = isYou(rank)
 
-              return (
-                <LeaderboardRow
-                  key={rank}
-                  ref={connectedUser ? connectedUserSentinelRef : undefined}
-                  rank={rank}
-                  isYou={connectedUser}
-                />
-              )
-            })}
+                  return (
+                    <LeaderboardRow
+                      key={rank}
+                      ref={connectedUser ? connectedUserSentinelRef : undefined}
+                      rank={rank}
+                      isYou={connectedUser}
+                    />
+                  )
+                })}
         </div>
       </PerpsCard>
       <div className="mt-2 min-h-[44px]">
@@ -167,12 +172,33 @@ export const LeaderboardTable = () => {
                 rounded="xl"
                 className="py-0.5 overflow-x-auto hide-scrollbar"
               >
-                <LeaderboardRow rank={CONNECTED_USER_RANK} isYou isCard />
+                {isLoading ? (
+                  <SkeletonRow />
+                ) : (
+                  <LeaderboardRow rank={CONNECTED_USER_RANK} isYou isCard />
+                )}
               </PerpsCard>
             </motion.div>
           ) : null}
         </AnimatePresence>
       </div>
+    </div>
+  )
+}
+
+const SkeletonRow = () => {
+  return (
+    <div
+      className={classNames(
+        leaderboardGridCols,
+        'animate-pulse bg-perps-muted/[3%] rounded-md  py-2',
+      )}
+    >
+      <SkeletonBox className="w-[120px] h-5 ml-4" />
+      <SkeletonBox className="w-[80px] h-5 mx-auto" />
+      <SkeletonBox className="w-[60px] h-5 mx-auto" />
+      <SkeletonBox className="w-[60px] h-5 mx-auto" />
+      <SkeletonBox className="w-[60px] h-5 mx-auto" />
     </div>
   )
 }
