@@ -76,12 +76,12 @@ export const LeaderboardLeaders = () => {
   }, [data?.entries])
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 items-end mt-10 lg:mt-0">
+    <div className="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-3 gap-2 items-end mt-10 lg:mt-0">
       <div className="order-2 lg:order-1 w-full lg:h-[186px] min-h-[196px]">
         <PlaceCard place={2} isLoading={isLoading} entry={second} />
       </div>
 
-      <div className="order-1 lg:order-2 w-full lg:h-[240px] h-[220px] col-span-2 lg:col-span-1 relative">
+      <div className="order-1 lg:order-2 w-full lg:h-[240px] h-[220px] sm:col-span-2 lg:col-span-1 relative">
         <div className="absolute -top-[55px] left-1/2 z-[0] -translate-x-1/2">
           <FirstPlaceHat />
         </div>
@@ -142,7 +142,7 @@ const PlaceHeader = ({ place, isLoading, entry }: PlaceCardProps) => {
           </>
         ) : (
           <>
-            <p className="text-lg font-medium">
+            <p className="md:text-lg font-medium">
               {entry?.address
                 ? truncateString(entry?.address, 10, 'middle')
                 : 'N/A'}
