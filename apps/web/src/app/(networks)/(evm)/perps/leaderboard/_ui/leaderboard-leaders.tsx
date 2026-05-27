@@ -1,13 +1,26 @@
-import { SkeletonBox, SkeletonText, classNames } from '@sushiswap/ui'
-import { type ReactNode, useId } from 'react'
-import { formatUSD } from 'sushi'
+import type { PerpsLeaderboardEntry } from '@sushiswap/graph-client/data-api'
+import { SkeletonBox, classNames } from '@sushiswap/ui'
+import { type ReactNode, useId, useMemo } from 'react'
+import {
+  getTextColorClass,
+  perpsNumberFormatter,
+  useLeaderboard,
+} from 'src/lib/perps'
+import { formatUSD, truncateString } from 'sushi'
+import { getTier } from '~evm/perps/points/_ui/overview'
 import { FirstPlaceHat } from './first-place-hat'
 import { FirstPlace, SecondPlace, ThirdPlace } from './leaderboard-medals'
+import {
+  TimeframeToPerpsTimeframe,
+  useLeaderboardState,
+} from './leaderboard-provider'
 
 type Place = 1 | 2 | 3
 
 type PlaceCardProps = {
   place: Place
+  isLoading: boolean
+  entry: PerpsLeaderboardEntry
 }
 
 type StatItemProps = {
@@ -46,27 +59,43 @@ const PLACE_CARD_CLASS_NAMES: Record<Place, string> = {
 }
 
 export const LeaderboardLeaders = () => {
+  const {
+    state: { sortBy, timeframe },
+  } = useLeaderboardState()
+  const { data, isLoading } = useLeaderboard({
+    timeframe: TimeframeToPerpsTimeframe[timeframe],
+    sortBy,
+  })
+
+  const { first, second, third } = useMemo(() => {
+    return {
+      first: data?.entries?.[0],
+      second: data?.entries?.[1],
+      third: data?.entries?.[2],
+    } as Record<'first' | 'second' | 'third', PerpsLeaderboardEntry>
+  }, [data?.entries])
+
   return (
     <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 items-end mt-10 lg:mt-0">
       <div className="order-2 lg:order-1 w-full lg:h-[186px] min-h-[196px]">
-        <PlaceCard place={2} />
+        <PlaceCard place={2} isLoading={isLoading} entry={second} />
       </div>
 
       <div className="order-1 lg:order-2 w-full lg:h-[240px] h-[220px] col-span-2 lg:col-span-1 relative">
         <div className="absolute -top-[55px] left-1/2 z-[0] -translate-x-1/2">
           <FirstPlaceHat />
         </div>
-        <PlaceCard place={1} />
+        <PlaceCard place={1} isLoading={isLoading} entry={first} />
       </div>
 
       <div className="order-3 lg:order-3 w-full lg:h-[186px] min-h-[196px]">
-        <PlaceCard place={3} />
+        <PlaceCard place={3} isLoading={isLoading} entry={third} />
       </div>
     </div>
   )
 }
 
-const PlaceCard = ({ place }: PlaceCardProps) => {
+const PlaceCard = ({ place, isLoading, entry }: PlaceCardProps) => {
   return (
     <div className="relative h-full w-full rounded-xl overflow-hidden bg-perps-background">
       <PlaceBackgroundCircles place={place} />
@@ -78,15 +107,14 @@ const PlaceCard = ({ place }: PlaceCardProps) => {
           PLACE_CARD_CLASS_NAMES[place],
         )}
       >
-        <PlaceHeader place={place} />
-        <PlaceStats place={place} />
+        <PlaceHeader place={place} isLoading={isLoading} entry={entry} />
+        <PlaceStats place={place} isLoading={isLoading} entry={entry} />
       </div>
     </div>
   )
 }
 
-const PlaceHeader = ({ place }: PlaceCardProps) => {
-  const isLoading = false
+const PlaceHeader = ({ place, isLoading, entry }: PlaceCardProps) => {
   return (
     <div
       className={classNames(
@@ -114,10 +142,12 @@ const PlaceHeader = ({ place }: PlaceCardProps) => {
           </>
         ) : (
           <>
-            <p className="text-lg font-medium">name</p>
+            <p className="text-lg font-medium">
+              {truncateString(entry?.address, 10, 'middle')}
+            </p>
             <div className="flex items-center gap-1">
               <p className="text-perps-muted-50">Volume</p>
-              <p className="text-white">{formatUSD(1234233)}</p>
+              <p className="text-white">{formatUSD(entry?.volumeUsd)}</p>
             </div>
           </>
         )}
@@ -126,7 +156,7 @@ const PlaceHeader = ({ place }: PlaceCardProps) => {
   )
 }
 
-const PlaceMedal = ({ place }: PlaceCardProps) => {
+const PlaceMedal = ({ place }: { place: Place }) => {
   switch (place) {
     case 1:
       return <FirstPlace />
@@ -137,9 +167,8 @@ const PlaceMedal = ({ place }: PlaceCardProps) => {
   }
 }
 
-const PlaceStats = ({ place }: PlaceCardProps) => {
+const PlaceStats = ({ place, isLoading, entry }: PlaceCardProps) => {
   const isFirstPlace = place === 1
-  const isLoading = false
   return (
     <div
       className={classNames(
@@ -150,7 +179,11 @@ const PlaceStats = ({ place }: PlaceCardProps) => {
       <div className={classNames(!isFirstPlace ? 'order-2 lg:order-none' : '')}>
         <StatItem
           label="PNL"
-          value={formatUSD(1234233)}
+          value={
+            <div className={classNames(getTextColorClass(entry?.pnl))}>
+              {entry?.pnl?.toFixed(1)}%
+            </div>
+          }
           isLoading={isLoading}
         />
       </div>
@@ -159,16 +192,35 @@ const PlaceStats = ({ place }: PlaceCardProps) => {
           !isFirstPlace ? 'order-1 lg:order-none col-span-2 lg:col-span-1' : '',
         )}
       >
-        <StatItem label="Tier" value="sym legend" isLoading={isLoading} />
+        <StatItem
+          label="Tier"
+          value={
+            <div className="text-perps-muted">
+              {getTier(entry?.volumeUsd)?.label}
+            </div>
+          }
+          isLoading={isLoading}
+        />
       </div>
       <div className={classNames(!isFirstPlace ? 'order-3 lg:order-none' : '')}>
-        <StatItem label="Points" value={123} isLoading={isLoading} />
+        <StatItem
+          label="Points"
+          value={
+            <span className="bg-gradient-to-r from-[#27B0E6] from-2% via-[#7D8ACA] via-5% to-[#FA52A0] to-100% text-transparent bg-clip-text">
+              {perpsNumberFormatter({
+                value: entry?.points,
+                maxFraxDigits: 0,
+              })}
+            </span>
+          }
+          isLoading={isLoading}
+        />
       </div>
     </div>
   )
 }
 
-const PlaceBackgroundCircles = ({ place }: PlaceCardProps) => {
+const PlaceBackgroundCircles = ({ place }: { place: Place }) => {
   if (place === 1) {
     return (
       <div>
@@ -185,7 +237,7 @@ const PlaceBackgroundCircles = ({ place }: PlaceCardProps) => {
   )
 }
 
-const PlaceBackgroundGlow = ({ place }: PlaceCardProps) => {
+const PlaceBackgroundGlow = ({ place }: { place: Place }) => {
   switch (place) {
     case 1:
       return (
@@ -209,7 +261,7 @@ const StatItem = ({ label, value, isLoading }: StatItemProps) => {
       {isLoading ? (
         <SkeletonBox className="w-[50px] h-5 rounded-md" />
       ) : (
-        <div className="text-sm font-medium">{value}</div>
+        <div className="text-xs font-medium">{value}</div>
       )}
     </div>
   )

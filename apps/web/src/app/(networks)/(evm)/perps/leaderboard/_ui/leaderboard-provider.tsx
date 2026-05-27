@@ -1,4 +1,5 @@
 'use client'
+import type { PerpsLeaderboardTimeframe } from '@sushiswap/graph-client/data-api'
 import { type FC, createContext, useContext, useMemo, useState } from 'react'
 interface State {
   mutate: {
@@ -15,6 +16,15 @@ export type LeaderboardSortType = (typeof LEADERBOARD_SORT_BY)[number]
 
 export const LEADERBOARD_TIMEFRAMES = ['24h', '7d', 'season'] as const
 export type LeaderboardTimeframeType = (typeof LEADERBOARD_TIMEFRAMES)[number]
+
+export const TimeframeToPerpsTimeframe: Record<
+  LeaderboardTimeframeType,
+  PerpsLeaderboardTimeframe
+> = {
+  '24h': 'DAY',
+  '7d': 'WEEK',
+  season: 'SEASON',
+}
 
 const LeaderboardStateContext = createContext<State>({} as State)
 

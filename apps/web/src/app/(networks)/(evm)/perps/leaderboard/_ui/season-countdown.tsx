@@ -37,7 +37,7 @@ export const SeasonCountdown = () => {
   return (
     <div className="flex flex-col items-end gap-1">
       <p className="text-xs text-perps-muted-50">Season 1 ends in</p>
-      <p className="text-2xl tabular-nums font-medium bg-gradient-to-r w-fit from-[#27B0E6] from-2% via-[#7D8ACA] via-5% to-[#FA52A0] to-100% text-transparent bg-clip-text ">
+      <p className="text-2xl tabular-nums font-medium bg-gradient-to-r w-fit from-[#27B0E6] from-2% via-[#7D8ACA] via-5% to-[#FA52A0] to-100% text-transparent bg-clip-text">
         {timeLeft}
       </p>
     </div>

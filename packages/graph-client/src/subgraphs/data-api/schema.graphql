@@ -1094,6 +1094,38 @@ type PerpsDailyPoint {
   points: Float!
 }
 
+enum PerpsLeaderboardTimeframe {
+  DAY
+  WEEK
+  SEASON
+}
+
+type PerpsLeaderboardEntry {
+  address: EvmAddress!
+  points: Float!
+  seasonPoints: Float!
+  volumeUsd: Float!
+  pnl: Float!
+}
+
+type PerpsLeaderboard {
+  timeframe: PerpsLeaderboardTimeframe!
+  updatedAt: String
+  entries: [PerpsLeaderboardEntry!]!
+}
+
+type PerpsLeaderboardUser {
+  address: EvmAddress!
+  timeframe: PerpsLeaderboardTimeframe!
+
+  """null if the user has no points in the selected timeframe."""
+  rank: Int
+  points: Float!
+  seasonPoints: Float!
+  volumeUsd: Float!
+  pnl: Float!
+}
+
 type PerpsClaim {
   root: Bytes!
   distributor: EvmAddress!
@@ -1120,6 +1152,8 @@ type PerpsQueries {
   referralFeeHistory(address: EvmAddress!, from: String, to: String): [PerpsDailyFeePoint!]!
   pointsOverview(address: EvmAddress!): PerpsPointsOverview!
   pointsHistory(address: EvmAddress!, from: String, to: String): [PerpsDailyPoint!]!
+  leaderboard(timeframe: PerpsLeaderboardTimeframe! = SEASON): PerpsLeaderboard!
+  leaderboardUser(address: EvmAddress!, timeframe: PerpsLeaderboardTimeframe! = SEASON): PerpsLeaderboardUser!
   isReferralCodeAvailable(code: String!): Boolean!
 }
 
