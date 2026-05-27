@@ -244,9 +244,9 @@ const TierItem = ({
   )
 }
 
-export const getTier = (points: number) => {
+export const getTier = (volumeUsd: number) => {
   for (let i = DEFAULT_TIERS.length - 1; i >= 0; i--) {
-    if (points >= DEFAULT_TIERS[i].pointThreshold) {
+    if (volumeUsd >= DEFAULT_TIERS[i].volumeUsdThreshold) {
       return DEFAULT_TIERS[i]
     }
   }
@@ -259,7 +259,7 @@ export const DEFAULT_TIERS = [
   {
     id: 'deshi',
     label: 'Deshi',
-    pointThreshold: 0,
+    volumeUsdThreshold: 0,
     accentColor: '#D69A4A',
     bgGradient:
       'linear-gradient(135deg, #78350F 0%, #D69A4A 51.92%, #78350F 100%)',
@@ -269,7 +269,7 @@ export const DEFAULT_TIERS = [
   {
     id: 'novice',
     label: 'Novice',
-    pointThreshold: 1000,
+    volumeUsdThreshold: 1000,
     accentColor: '#52FA8D',
     bgGradient:
       'linear-gradient(135deg, #22C55E 0%, #86EFAC 51.92%, #22C55E 100%)',
@@ -279,7 +279,7 @@ export const DEFAULT_TIERS = [
   {
     id: 'shinobi',
     label: 'Shinobi',
-    pointThreshold: 10_000,
+    volumeUsdThreshold: 10_000,
     accentColor: '#A78BFA',
     bgGradient:
       'linear-gradient(135deg, #8B5CF6 0%, #C4B5FD 51.92%, #8B5CF6 100%)',
@@ -289,7 +289,7 @@ export const DEFAULT_TIERS = [
   {
     id: 'ronin',
     label: 'Ronin',
-    pointThreshold: 50_000,
+    volumeUsdThreshold: 50_000,
     accentColor: '#FFFFFF',
     bgGradient:
       'linear-gradient(135.35deg, #737373 8.46%, #737373 44.65%, #737373 80.85%)',
@@ -299,7 +299,7 @@ export const DEFAULT_TIERS = [
   {
     id: 'samurai',
     label: 'Samurai',
-    pointThreshold: 100_000,
+    volumeUsdThreshold: 100_000,
     accentColor: '#FB7185',
     bgGradient:
       'linear-gradient(135.35deg, #7F1D1D 8.46%, #EF4444 44.65%, #7F1D1D 80.85%)',
@@ -309,7 +309,7 @@ export const DEFAULT_TIERS = [
   {
     id: 'shogun',
     label: 'Shogun',
-    pointThreshold: 250_000,
+    volumeUsdThreshold: 250_000,
     accentColor: '#E6B80F',
     bgGradient:
       'linear-gradient(135.35deg, #A16207 8.46%, #EAB308 44.65%, #854D0E 80.85%)',
@@ -319,7 +319,7 @@ export const DEFAULT_TIERS = [
   {
     id: 'daimyo',
     label: 'Daimyo',
-    pointThreshold: 500_000,
+    volumeUsdThreshold: 500_000,
     accentColor: '#60A5FA',
     bgGradient:
       'linear-gradient(135.35deg, #1E3A8A 8.46%, #3B82F6 44.65%, #1E3A8A 80.85%)',
@@ -329,7 +329,7 @@ export const DEFAULT_TIERS = [
   {
     id: 'sensei',
     label: 'Sensei',
-    pointThreshold: 1_000_000,
+    volumeUsdThreshold: 1_000_000,
     accentColor: '#F472B6',
     bgGradient:
       'linear-gradient(135.35deg, #EC4899 8.46%, #FBCFE8 44.65%, #EC4899 80.85%)',
@@ -339,7 +339,7 @@ export const DEFAULT_TIERS = [
   {
     id: 'legend',
     label: 'Legend',
-    pointThreshold: 5_000_000,
+    volumeUsdThreshold: 5_000_000,
     accentColor: '#38BDF8',
     bgGradient:
       'linear-gradient(135.35deg, #38BDF8 8.46%, #BAE6FD 44.65%, #0284C7 80.85%)',
