@@ -199,12 +199,12 @@ const PlaceStats = ({ place, isLoading, entry }: PlaceCardProps) => {
         <StatItem
           label="Tier"
           value={
-            entry?.volumeUsd ? (
+            entry?.seasonVolumeUsd ? (
               <div className="text-perps-muted flex items-center gap-1">
                 <div className="w-3 h-3">
-                  {getTier(entry?.volumeUsd)?.simpleIcon}
+                  {getTier(entry?.seasonVolumeUsd)?.simpleIcon}
                 </div>
-                {getTier(entry?.volumeUsd)?.label}
+                {getTier(entry?.seasonVolumeUsd)?.label}
               </div>
             ) : (
               'N/A'

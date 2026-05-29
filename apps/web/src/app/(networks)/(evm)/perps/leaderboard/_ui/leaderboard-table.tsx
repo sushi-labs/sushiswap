@@ -44,9 +44,9 @@ const LeaderboardRow = forwardRef<HTMLDivElement, LeaderboardRowProps>(
         </div>
         <div className="py-2 text-right px-2">
           <div className="text-perps-muted flex items-center justify-end gap-1">
-            {getTier(entry?.volumeUsd)?.label}
+            {getTier(entry?.seasonVolumeUsd)?.label}
             <div className="w-3 h-3">
-              {getTier(entry?.volumeUsd)?.simpleIcon}
+              {getTier(entry?.seasonVolumeUsd)?.simpleIcon}
             </div>
           </div>
         </div>

@@ -1105,6 +1105,7 @@ type PerpsLeaderboardEntry {
   points: Float!
   seasonPoints: Float!
   volumeUsd: Float!
+  seasonVolumeUsd: Float!
   pnl: Float!
 }
 
@@ -1123,6 +1124,7 @@ type PerpsLeaderboardUser {
   points: Float!
   seasonPoints: Float!
   volumeUsd: Float!
+  seasonVolumeUsd: Float!
   pnl: Float!
 }
 

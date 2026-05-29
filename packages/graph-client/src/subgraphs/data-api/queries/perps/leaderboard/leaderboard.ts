@@ -15,6 +15,7 @@ export const PerpsLeaderboardQuery = graphql(
           entries {
             volumeUsd
             seasonPoints
+            seasonVolumeUsd
             points
             pnl
             address

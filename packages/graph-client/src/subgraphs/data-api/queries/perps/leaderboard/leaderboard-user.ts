@@ -12,6 +12,7 @@ export const PerpsLeaderboardUserQuery = graphql(
       leaderboardUser(address: $address, timeframe: $timeframe) {
         volumeUsd
         seasonPoints
+        seasonVolumeUsd
         rank
         points
         pnl
