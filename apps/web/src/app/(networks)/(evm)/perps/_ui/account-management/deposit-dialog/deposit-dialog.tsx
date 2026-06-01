@@ -17,6 +17,7 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
+import { useSidebar } from 'src/app/(networks)/_ui/sidebar'
 import { getChainById } from 'sushi'
 import { type EvmAddress, EvmChainId, EvmNative, EvmToken } from 'sushi/evm'
 import { SvmChainId, SvmNative, SvmToken, svmAddress } from 'sushi/svm'
@@ -264,6 +265,7 @@ export const DepositDialog = ({
   isOpen?: boolean
   onOpenChange?: (open: boolean) => void
 }) => {
+  const { isOpen: isSidebarOpen } = useSidebar()
   const [selectedChain, setSelectedChain] = useState<DepositChainOption>(
     DEPOSIT_CHAIN_OPTIONS[0],
   )
@@ -277,13 +279,14 @@ export const DepositDialog = ({
 
   const handleOpenChange = useCallback(
     (nextOpen: boolean) => {
+      if (isSidebarOpen) return
       if (isControlled) {
         onOpenChange?.(nextOpen)
       } else {
         setOpen(nextOpen)
       }
     },
-    [isControlled, onOpenChange],
+    [isControlled, onOpenChange, isSidebarOpen],
   )
 
   const content = useMemo(() => {
