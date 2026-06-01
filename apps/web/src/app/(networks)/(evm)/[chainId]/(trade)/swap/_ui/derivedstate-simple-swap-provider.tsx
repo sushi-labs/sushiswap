@@ -1,11 +1,6 @@
 'use client'
 
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from 'next/navigation'
+import { useParams, usePathname, useSearchParams } from 'next/navigation'
 import {
   type FC,
   createContext,
@@ -74,7 +69,6 @@ interface DerivedStateSimpleSwapProviderProps {
 function DerivedstateSimpleSwapProvider({
   children,
 }: DerivedStateSimpleSwapProviderProps) {
-  const { push } = useRouter()
   const { chainId: _chainId } = useParams()
   const { address } = useConnection()
   const svmAddress = useAccount('svm')
@@ -139,15 +133,12 @@ function DerivedstateSimpleSwapProvider({
     //   token0: defaultedParams.get('token1'),
     //   token1: defaultedParams.get('token0'),
     // })
-    push(
-      `${pathname}?${createQueryString([
-        { name: 'swapAmount', value: null },
-        { name: 'token0', value: defaultedParams.get('token1') as string },
-        { name: 'token1', value: defaultedParams.get('token0') as string },
-      ])}`,
-      { scroll: false },
-    )
-  }, [createQueryString, defaultedParams, pathname, push])
+    updateSearchParams([
+      { name: 'swapAmount', value: null },
+      { name: 'token0', value: defaultedParams.get('token1') as string },
+      { name: 'token1', value: defaultedParams.get('token0') as string },
+    ])
+  }, [defaultedParams, updateSearchParams])
 
   // Update the URL with a new token0
   const setToken0 = useCallback<
@@ -171,22 +162,15 @@ function DerivedstateSimpleSwapProvider({
 
       // Push new route
       else {
-        push(
-          `${pathname}?${createQueryString([
-            { name: 'token0', value: token0 },
-          ])}`,
-          { scroll: false },
-        )
+        updateSearchParams([{ name: 'token0', value: token0 }])
       }
     },
     [
       chainId,
-      createQueryString,
       defaultedParams,
       localTokenCache,
-      pathname,
-      push,
       switchTokens,
+      updateSearchParams,
     ],
   )
 
@@ -212,22 +196,15 @@ function DerivedstateSimpleSwapProvider({
 
       // Push new route
       else {
-        push(
-          `${pathname}?${createQueryString([
-            { name: 'token1', value: token1 },
-          ])}`,
-          { scroll: false },
-        )
+        updateSearchParams([{ name: 'token1', value: token1 }])
       }
     },
     [
       chainId,
-      createQueryString,
       defaultedParams,
       localTokenCache,
-      pathname,
-      push,
       switchTokens,
+      updateSearchParams,
     ],
   )
 
@@ -243,15 +220,12 @@ function DerivedstateSimpleSwapProvider({
       const token0 = getTokenAsString(chainId, _token0)
       const token1 = getTokenAsString(chainId, _token1)
 
-      push(
-        `${pathname}?${createQueryString([
-          { name: 'token0', value: token0 },
-          { name: 'token1', value: token1 },
-        ])}`,
-        { scroll: false },
-      )
+      updateSearchParams([
+        { name: 'token0', value: token0 },
+        { name: 'token1', value: token1 },
+      ])
     },
-    [chainId, createQueryString, pathname, push],
+    [chainId, updateSearchParams],
   )
 
   // Update the URL with a new swapAmount
