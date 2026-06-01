@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { currencyFormatter } from 'src/lib/perps'
 import { Amount } from 'sushi'
 import type { EvmAddress, EvmCurrency } from 'sushi/evm'
+import type { SvmCurrency } from 'sushi/svm'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { PerpsCard } from './perps-card'
 
@@ -18,8 +19,8 @@ export const InputWithKeyboard = ({
 }: {
   amount: string
   setAmount: (value: string) => void
-  balance: Amount<EvmCurrency> | undefined
-  currency: EvmCurrency
+  balance: Amount<EvmCurrency | SvmCurrency> | undefined
+  currency: EvmCurrency | SvmCurrency
   error: string | undefined
   isLoading: boolean
   address: EvmAddress | undefined
@@ -32,12 +33,23 @@ export const InputWithKeyboard = ({
     address: currency?.wrap().address,
   })
 
-  // If currency changes, trim input to decimals
   useEffect(() => {
-    if (currency && setAmount && amount?.includes('.')) {
-      const [, decimals] = amount.split('.')
-      if (decimals.length > currency.decimals) {
-        setAmount(Number(amount).toFixed(currency.decimals))
+    if (currency && setAmount && amount) {
+      let trimmed = amount
+
+      // Strip extra leading zeros before the decimal or integer part
+      // Allows "0.02" but rejects "00.01" or "00000.12"
+      trimmed = trimmed.replace(/^0+(\d)/, (_, d) => (d === '.' ? '0.' : d))
+
+      if (trimmed.includes('.')) {
+        const [, decimals] = trimmed.split('.')
+        if (decimals.length > currency.decimals) {
+          trimmed = Number(trimmed).toFixed(currency.decimals)
+        }
+      }
+
+      if (trimmed !== amount) {
+        setAmount(trimmed)
       }
     }
   }, [amount, setAmount, currency])
@@ -92,7 +104,7 @@ export const InputWithKeyboard = ({
   }, [amount])
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1 w-full">
       <PerpsCard className="flex flex-col items-center justify-center gap-3 py-12 lg:py-6 p-6 overflow-hidden">
         <div className="w-[28px] h-[28px] block lg:hidden">
           <Currency.Icon

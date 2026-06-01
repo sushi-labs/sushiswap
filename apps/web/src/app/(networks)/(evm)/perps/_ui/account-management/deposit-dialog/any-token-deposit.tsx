@@ -44,7 +44,7 @@ import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-pri
 import { InputWithKeyboard } from '../../_common'
 import { PerpsChecker } from '../../perps-checker'
 import type { AnyTokenDepositOption } from './deposit-dialog'
-import { getMinDepositAmount, getUSDCArgs } from './usdc-options'
+import { USDCOptions, getMinDepositAmount, getUSDCArgs } from './usdc-options'
 
 type TokenToSwap = {
   currency: EvmCurrency<{
@@ -64,8 +64,6 @@ const toToken = (chainId: AnyTokenDepositOption['chainId']) => {
   switch (chainId) {
     case EvmChainId.ARBITRUM:
       return USDC[EvmChainId.ARBITRUM]
-    // case EvmChainId.HYPEREVM:
-    //   return HYPEREVM_USDC
     default:
       return undefined
   }
@@ -137,23 +135,21 @@ export const AnyTokenDeposit = ({
   const currencies = useMemo(() => {
     if (!tokenData) return []
     const balancesMap = tokenData.balanceMap
-    return tokenData?.tokens
-      ?.filter((i) => i.symbol?.toLowerCase() !== 'usdc')
-      ?.map((currency) => {
-        const balance = balancesMap?.get(
-          currency.type === 'native'
-            ? getNativeAddress(currency.chainId)
-            : currency.address,
-        )
-        const price = pricesMap?.getFraction(currency.wrap().address)
-        const usd = balance?.mul(price || 0n)?.toString({ fixed: 2 })
-        return {
-          currency,
-          balance,
-          price,
-          usd,
-        }
-      })
+    return tokenData?.tokens?.map((currency) => {
+      const balance = balancesMap?.get(
+        currency.type === 'native'
+          ? getNativeAddress(currency.chainId)
+          : currency.address,
+      )
+      const price = pricesMap?.getFraction(currency.wrap().address)
+      const usd = balance?.mul(price || 0n)?.toString({ fixed: 2 })
+      return {
+        currency,
+        balance,
+        price,
+        usd,
+      }
+    })
   }, [tokenData, pricesMap])
 
   useEffect(() => {
@@ -335,7 +331,13 @@ export const AnyTokenDeposit = ({
       >
         <SelectTrigger className="w-full text-sm !px-2 !h-[40px] !gap-1 !border-[#FFFFFF1A] bg-transparent !border">
           {token ? (
-            <div>
+            <div className="flex items-center gap-1">
+              <Currency.Icon
+                disableLink
+                currency={token.currency}
+                width={20}
+                height={20}
+              />
               {token.currency.name} ({token.currency.symbol})
             </div>
           ) : (
@@ -350,7 +352,13 @@ export const AnyTokenDeposit = ({
               className="font-medium !text-white gap-4 !block"
             >
               <div className="flex items-center justify-between w-full">
-                <div>
+                <div className="flex items-center gap-1">
+                  <Currency.Icon
+                    disableLink
+                    currency={i.currency}
+                    width={20}
+                    height={20}
+                  />
                   {i.currency.name} ({i.currency.symbol})
                 </div>
                 <div>
@@ -362,187 +370,179 @@ export const AnyTokenDeposit = ({
           ))}
         </SelectContent>
       </Select>
-      <div className="grid grid-cols-2 gap-2">
-        <div>
-          <p className="text-xs text-perps-muted-70">Step 1 (Swap)</p>
+      {token?.currency.symbol === 'USDC' ? (
+        <USDCOptions depositChainId={EvmChainId.ARBITRUM} setOpen={setOpen} />
+      ) : (
+        <>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <p className="text-xs text-perps-muted-70">Step 1 (Swap)</p>
 
-          <div className="h-1 w-full overflow-hidden rounded-full bg-perps-muted-20">
-            <motion.div
-              className="h-full w-full origin-left rounded-full bg-perps-blue"
-              initial={false}
-              animate={{ scaleX: step > 0 ? 1 : 0 }}
-              transition={{ duration: 0.35, ease: 'easeOut' }}
-            />
+              <div className="h-1 w-full overflow-hidden rounded-full bg-perps-muted-20">
+                <motion.div
+                  className="h-full w-full origin-left rounded-full bg-perps-blue"
+                  initial={false}
+                  animate={{ scaleX: step > 0 ? 1 : 0 }}
+                  transition={{ duration: 0.35, ease: 'easeOut' }}
+                />
+              </div>
+            </div>
+
+            <div>
+              <p className="text-xs text-perps-muted-70">Step 2 (Deposit)</p>
+
+              <div className="h-1 w-full overflow-hidden rounded-full bg-perps-muted-20">
+                <motion.div
+                  className="h-full w-full origin-left rounded-full bg-perps-blue"
+                  initial={false}
+                  animate={{ scaleX: step > 1 ? 1 : 0 }}
+                  transition={{ duration: 0.45, ease: 'easeInOut' }}
+                />
+              </div>
+            </div>
           </div>
-        </div>
-
-        <div>
-          <p className="text-xs text-perps-muted-70">Step 2 (Deposit)</p>
-
-          <div className="h-1 w-full overflow-hidden rounded-full bg-perps-muted-20">
-            <motion.div
-              className="h-full w-full origin-left rounded-full bg-perps-blue"
-              initial={false}
-              animate={{ scaleX: step > 1 ? 1 : 0 }}
-              transition={{ duration: 0.45, ease: 'easeInOut' }}
-            />
-          </div>
-        </div>
-      </div>
-      <AnimatePresence mode="wait">
-        {step === 0 ? (
-          <motion.div
-            key="swap"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-          >
-            <InputWithKeyboard
-              amount={swapAmount}
-              setAmount={!token?.currency ? () => {} : setSwapAmount}
-              balance={token?.balance}
-              currency={
-                token?.currency ||
-                (toToken(depositOption.chainId) as EvmCurrency)
-              }
-              error={undefined}
-              isLoading={isMyTokensLoading}
-              address={address}
-            />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="success"
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="flex flex-col my-4 items-center"
-          >
-            <Currency.Icon
-              disableLink
-              currency={
-                token?.currency ||
-                (toToken(depositOption.chainId) as EvmCurrency)
-              }
-              width={28}
-              height={28}
-            />
-            <p className="font-medium">Swap Successful</p>
-            <p className="text-perps-muted-50 text-sm">
-              Continue to Deposit USDC into your Perps Account
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <div className="flex flex-col gap-1">
-        <StatItem
-          label="Max. Received"
-          value={`${tradeQuote?.amountOut?.toSignificant(6) || '0.00'} ${toToken(depositOption.chainId)?.symbol || ''}`}
-          isLoading={isLoadingTradeQuote}
-        />
-        <StatItem
-          label="Min. Received"
-          value={`${tradeQuote?.minAmountOut?.toSignificant(6) || '0.00'} ${toToken(depositOption.chainId)?.symbol || ''}`}
-          isLoading={isLoadingTradeQuote}
-        />
-      </div>
-      <PerpsChecker.Legal size="default" variant="perps-tertiary">
-        {step === 0 ? (
-          <Checker.PartialRoute
-            size="default"
-            variant="perps-tertiary"
-            trade={tradeQuote}
-            setSwapAmount={setSwapAmount}
-          >
-            <Checker.Connect
-              size="default"
-              variant="perps-tertiary"
-              namespace="evm"
-            >
-              <Checker.Network
-                size="default"
-                chainId={depositOption.chainId}
-                variant="perps-tertiary"
+          <AnimatePresence mode="wait">
+            {step === 0 ? (
+              <motion.div
+                key="swap"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
               >
-                <Checker.Amounts
+                <InputWithKeyboard
+                  amount={swapAmount}
+                  setAmount={!token?.currency ? () => {} : setSwapAmount}
+                  balance={token?.balance}
+                  currency={
+                    token?.currency ||
+                    (toToken(depositOption.chainId) as EvmCurrency)
+                  }
+                  error={undefined}
+                  isLoading={isMyTokensLoading}
+                  address={address}
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="success"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+                className="flex flex-col my-4 items-center"
+              >
+                <Currency.Icon
+                  disableLink
+                  currency={
+                    token?.currency ||
+                    (toToken(depositOption.chainId) as EvmCurrency)
+                  }
+                  width={28}
+                  height={28}
+                />
+                <p className="font-medium">Swap Successful</p>
+                <p className="text-perps-muted-50 text-sm">
+                  Continue to Deposit USDC into your Perps Account
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <div className="flex flex-col gap-1">
+            <StatItem
+              label="Max. Received"
+              value={`${tradeQuote?.amountOut?.toSignificant(6) || '0.00'} ${toToken(depositOption.chainId)?.symbol || ''}`}
+              isLoading={isLoadingTradeQuote}
+            />
+            <StatItem
+              label="Min. Received"
+              value={`${tradeQuote?.minAmountOut?.toSignificant(6) || '0.00'} ${toToken(depositOption.chainId)?.symbol || ''}`}
+              isLoading={isLoadingTradeQuote}
+            />
+          </div>
+          <PerpsChecker.Legal size="default" variant="perps-tertiary">
+            {step === 0 ? (
+              <Checker.PartialRoute
+                size="default"
+                variant="perps-tertiary"
+                trade={tradeQuote}
+                setSwapAmount={setSwapAmount}
+              >
+                <Checker.Connect
                   size="default"
-                  chainId={depositOption.chainId}
-                  amount={_amount}
                   variant="perps-tertiary"
+                  namespace="evm"
                 >
-                  <Checker.Custom
+                  <Checker.Network
                     size="default"
-                    showChildren={Boolean(
-                      // depositOption.chainId === EvmChainId.HYPEREVM ||
-                      Number(tradeQuote?.amountOut?.toString()) >=
-                        getMinDepositAmount(depositOption.chainId),
-                    )}
-                    buttonText={`Minimum Deposit is ${getMinDepositAmount(depositOption.chainId)} USDC`}
+                    chainId={depositOption.chainId}
                     variant="perps-tertiary"
-                    onClick={() => {}}
-                    disabled={
-                      !tradeQuote ||
-                      Number(tradeQuote?.amountOut?.toString()) <
-                        getMinDepositAmount(depositOption.chainId)
-                    }
                   >
-                    <Checker.ApproveERC20
+                    <Checker.Amounts
                       size="default"
-                      id="approve-erc20"
-                      variant="perps-tertiary"
+                      chainId={depositOption.chainId}
                       amount={_amount}
-                      contract={
-                        isRedSnwapperChainId(depositOption.chainId)
-                          ? RED_SNWAPPER_ADDRESS[depositOption.chainId]
-                          : undefined
-                      }
+                      variant="perps-tertiary"
                     >
-                      <Checker.Success tag="approve-erc20">
-                        <Button
-                          variant="perps-tertiary"
+                      <Checker.Custom
+                        size="default"
+                        showChildren={Boolean(
+                          Number(tradeQuote?.amountOut?.toString()) >=
+                            getMinDepositAmount(depositOption.chainId),
+                        )}
+                        buttonText={`Minimum Deposit is ${getMinDepositAmount(depositOption.chainId)} USDC`}
+                        variant="perps-tertiary"
+                        onClick={() => {}}
+                        disabled={
+                          !tradeQuote ||
+                          Number(tradeQuote?.amountOut?.toString()) <
+                            getMinDepositAmount(depositOption.chainId)
+                        }
+                      >
+                        <Checker.ApproveERC20
                           size="default"
-                          disabled={!tradeData}
-                          className="w-full"
-                          onClick={swap}
-                          loading={isSwapPending || isLoadingTrade}
+                          id="approve-erc20"
+                          variant="perps-tertiary"
+                          amount={_amount}
+                          contract={
+                            isRedSnwapperChainId(depositOption.chainId)
+                              ? RED_SNWAPPER_ADDRESS[depositOption.chainId]
+                              : undefined
+                          }
                         >
-                          Swap
-                        </Button>
-                      </Checker.Success>
-                    </Checker.ApproveERC20>
-                  </Checker.Custom>
-                </Checker.Amounts>
-              </Checker.Network>
-            </Checker.Connect>
-          </Checker.PartialRoute>
-        ) : (
-          // <Checker.ApproveERC20
-          //   size="default"
-          //   amount={tradeRef.current?.amountOut}
-          //   variant="perps-tertiary"
-          //   contract={depositOption.depositBridge}
-          //   id={`${depositOption.chainId}-approve-deposit-${depositOption.depositBridge}`}
-          //   enabled={depositOption.chainId === EvmChainId.HYPEREVM}
-          // >
-          //   <Checker.Success
-          //     tag={`${depositOption.chainId}-approve-deposit-${depositOption.depositBridge}`}
-          //   >
-          <Button
-            variant="perps-tertiary"
-            size="default"
-            disabled={!sim?.request}
-            className="w-full"
-            onClick={transferUsdc}
-            loading={isWriteContractPending}
-          >
-            Deposit
-          </Button>
-          //   </Checker.Success>
-          // </Checker.ApproveERC20>
-        )}
-      </PerpsChecker.Legal>
+                          <Checker.Success tag="approve-erc20">
+                            <Button
+                              variant="perps-tertiary"
+                              size="default"
+                              disabled={!tradeData}
+                              className="w-full"
+                              onClick={swap}
+                              loading={isSwapPending || isLoadingTrade}
+                            >
+                              Swap
+                            </Button>
+                          </Checker.Success>
+                        </Checker.ApproveERC20>
+                      </Checker.Custom>
+                    </Checker.Amounts>
+                  </Checker.Network>
+                </Checker.Connect>
+              </Checker.PartialRoute>
+            ) : (
+              <Button
+                variant="perps-tertiary"
+                size="default"
+                disabled={!sim?.request}
+                className="w-full"
+                onClick={transferUsdc}
+                loading={isWriteContractPending}
+              >
+                Deposit
+              </Button>
+            )}
+          </PerpsChecker.Legal>
+        </>
+      )}
     </div>
   )
 }

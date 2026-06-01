@@ -1,6 +1,7 @@
 'use client'
 import {
   Button,
+  Currency,
   PerpsDialog,
   PerpsDialogContent,
   PerpsDialogDescription,
@@ -14,9 +15,11 @@ import {
   SelectTrigger,
   classNames,
 } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { getChainById } from 'sushi'
-import { type EvmAddress, EvmChainId, EvmToken, USDC } from 'sushi/evm'
+import { type EvmAddress, EvmChainId, EvmNative, EvmToken } from 'sushi/evm'
+import { SvmChainId, SvmNative, SvmToken, svmAddress } from 'sushi/svm'
 import { AnyTokenDeposit } from './any-token-deposit'
 // import { FiatDeposit } from './fiat-deposit'
 import { HyperunitOptions } from './hyperunit-options'
@@ -37,24 +40,18 @@ export const USDC_HYPEREVM_DEPOSIT_BRIDGE =
 
 const DEPOSIT_OPTIONS = [
   {
-    label: 'Any Token (Arbitrum)',
-    value: 'any-arb' as const,
-    chainId: EvmChainId.ARBITRUM,
-    type: 'any-token' as const,
-  },
-  {
-    label: 'USDC (Arbitrum)',
-    value: 'usdc-arb' as const,
-    asset: USDC[EvmChainId.ARBITRUM],
-    depositBridge: USDC_ARB_DEPOSIT_BRIDGE,
-    type: 'token' as const,
-  },
-  {
     label: 'USDC (HyperEVM)',
     value: 'usdc-hyperevm' as const,
     asset: HYPEREVM_USDC,
     depositBridge: USDC_HYPEREVM_DEPOSIT_BRIDGE,
     type: 'token' as const,
+    chainId: EvmChainId.HYPEREVM,
+  },
+  {
+    label: 'Any Token (Arbitrum)',
+    value: 'any-arb' as const,
+    chainId: EvmChainId.ARBITRUM,
+    type: 'any-token' as const,
   },
   // {
   //   label: 'Fiat',
@@ -69,6 +66,8 @@ const DEPOSIT_OPTIONS = [
     tokenType: 'ethereum' as const,
     type: 'hyperunit' as const,
     minDeposit: '0.007',
+    chainId: EvmChainId.ETHEREUM,
+    asset: EvmNative.fromChainId(EvmChainId.ETHEREUM),
   },
   {
     label: 'BTC (Bitcoin)',
@@ -78,15 +77,18 @@ const DEPOSIT_OPTIONS = [
     tokenType: 'bitcoin' as const,
     type: 'hyperunit' as const,
     minDeposit: '0.0003',
+    chainId: 'Bitcoin' as const,
   },
   {
-    label: 'SOL (Solana)',
+    label: 'SOL',
     value: 'sol' as const,
     chainName: 'solana' as const,
     token: 'sol',
     tokenType: 'solana' as const,
     type: 'hyperunit' as const,
     minDeposit: '0.12',
+    chainId: SvmChainId.SOLANA,
+    asset: SvmNative.fromChainId(SvmChainId.SOLANA),
   },
   {
     label: 'AVAX (Avalanche)',
@@ -96,60 +98,110 @@ const DEPOSIT_OPTIONS = [
     tokenType: 'avalanche' as const,
     type: 'hyperunit' as const,
     minDeposit: '1.5',
+    chainId: EvmChainId.AVALANCHE,
+    asset: EvmNative.fromChainId(EvmChainId.AVALANCHE),
   },
   {
-    label: 'BONK (Solana)',
+    label: 'BONK',
     value: 'bonk' as const,
     chainName: 'solana' as const,
     token: 'bonk',
     tokenType: 'spl' as const,
     type: 'hyperunit' as const,
     minDeposit: '1800000',
+    chainId: SvmChainId.SOLANA,
+    asset: new SvmToken({
+      chainId: SvmChainId.SOLANA,
+      address: svmAddress('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
+      decimals: 5,
+      symbol: 'BONK',
+      name: 'Bonk',
+    }),
   },
   {
-    label: 'FARTCOIN (Solana)',
+    label: 'FARTCOIN',
     value: 'fartcoin' as const,
     chainName: 'solana' as const,
     token: 'fart',
     tokenType: 'spl' as const,
     type: 'hyperunit' as const,
     minDeposit: '55',
+    chainId: SvmChainId.SOLANA,
+    asset: new SvmToken({
+      chainId: SvmChainId.SOLANA,
+      address: svmAddress('9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump'),
+      decimals: 6,
+      symbol: 'FARTCOIN',
+      name: 'Fartcoin',
+    }),
   },
   {
-    label: 'PUMP (Solana)',
+    label: 'PUMP',
     value: 'pump' as const,
     chainName: 'solana' as const,
     token: 'pump',
     tokenType: 'spl' as const,
     type: 'hyperunit' as const,
     minDeposit: '5500',
+    chainId: SvmChainId.SOLANA,
+    asset: new SvmToken({
+      chainId: SvmChainId.SOLANA,
+      address: svmAddress('pumpCmXqMfrsAkQ5r49WcJnRayYRqmXz6ae8H7H9Dfn'),
+      decimals: 6,
+      symbol: 'PUMP',
+      name: 'Pump',
+    }),
   },
   {
-    label: 'SPX (Solana)',
+    label: 'SPX',
     value: 'spx' as const,
     chainName: 'solana' as const,
     token: 'spxs',
     tokenType: 'spl' as const,
     type: 'hyperunit' as const,
     minDeposit: '32',
+    chainId: SvmChainId.SOLANA,
+    asset: new SvmToken({
+      chainId: SvmChainId.SOLANA,
+      address: svmAddress('J3NKxxXZcnNiMjKw9hYb2K4LUxgwB6t1FtPtQVsv3KFr'),
+      decimals: 8,
+      symbol: 'SPX',
+      name: 'SPX6900',
+    }),
   },
   {
-    label: '2Z (Solana)',
+    label: '2Z',
     value: '2z' as const,
     chainName: 'solana' as const,
     token: '2z',
     tokenType: 'spl' as const,
     type: 'hyperunit' as const,
     minDeposit: '150',
+    chainId: SvmChainId.SOLANA,
+    asset: new SvmToken({
+      chainId: SvmChainId.SOLANA,
+      address: svmAddress('J6pQQ3FAcJQeWPPGppWRb4nM8jU3wLyYbRrLh7feMfvd'),
+      decimals: 8,
+      symbol: '2Z',
+      name: 'DoubleZero',
+    }),
   },
   {
-    label: 'VIRTUAL (Base)',
+    label: 'VIRTUAL',
     value: 'virtual' as const,
     chainName: 'base' as const,
     token: 'virtual',
     tokenType: 'base' as const,
     type: 'hyperunit' as const,
     minDeposit: '25',
+    chainId: EvmChainId.BASE,
+    asset: new EvmToken({
+      chainId: EvmChainId.BASE,
+      address: '0x0b3e328455c4059EEb9e3f84b5543F74E24e7E1b',
+      decimals: 18,
+      symbol: 'VIRTUAL',
+      name: 'Virtual Protocol',
+    }),
   },
   {
     label: 'MON (Monad)',
@@ -159,6 +211,8 @@ const DEPOSIT_OPTIONS = [
     tokenType: 'monad' as const,
     type: 'hyperunit' as const,
     minDeposit: '450',
+    chainId: EvmChainId.MONAD,
+    asset: EvmNative.fromChainId(EvmChainId.MONAD),
   },
   {
     label: 'XPL (Plasma)',
@@ -168,6 +222,8 @@ const DEPOSIT_OPTIONS = [
     tokenType: 'plasma' as const,
     type: 'hyperunit' as const,
     minDeposit: '60',
+    chainId: EvmChainId.PLASMA,
+    asset: EvmNative.fromChainId(EvmChainId.PLASMA),
   },
   {
     label: 'ZEC (Zcash)',
@@ -177,8 +233,15 @@ const DEPOSIT_OPTIONS = [
     tokenType: 'zcash' as const,
     type: 'hyperunit' as const,
     minDeposit: '0.07',
+    chainId: 'Zcash' as const,
   },
 ]
+
+const DEPOSIT_CHAIN_OPTIONS = Array.from(
+  new Set(DEPOSIT_OPTIONS.map((option) => option.chainId)),
+)
+
+type DepositChainOption = (typeof DEPOSIT_CHAIN_OPTIONS)[number]
 
 type DepositOption = (typeof DEPOSIT_OPTIONS)[number]
 
@@ -201,6 +264,9 @@ export const DepositDialog = ({
   isOpen?: boolean
   onOpenChange?: (open: boolean) => void
 }) => {
+  const [selectedChain, setSelectedChain] = useState<DepositChainOption>(
+    DEPOSIT_CHAIN_OPTIONS[0],
+  )
   const [depositOption, setDepositOption] = useState<DepositOption>(
     DEPOSIT_OPTIONS[0],
   )
@@ -225,7 +291,7 @@ export const DepositDialog = ({
       case 'token':
         return (
           <USDCOptions
-            depositOption={depositOption}
+            depositChainId={depositOption.chainId}
             setOpen={handleOpenChange}
           />
         )
@@ -265,6 +331,10 @@ export const DepositDialog = ({
     }
   }, [depositOption])
 
+  const optionsBySelectedChain = useMemo(() => {
+    return DEPOSIT_OPTIONS.filter((option) => option.chainId === selectedChain)
+  }, [selectedChain])
+
   return (
     <PerpsDialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       <PerpsDialogTrigger asChild>
@@ -288,30 +358,117 @@ export const DepositDialog = ({
         </PerpsDialogHeader>
         <PerpsDialogInnerContent className="!pt-0">
           <Select
-            value={depositOption.value}
-            onValueChange={(val: string) => {
-              const option = DEPOSIT_OPTIONS.find((o) => o.value === val)
-              if (option) setDepositOption(option)
+            value={selectedChain.toString()}
+            onValueChange={(val: string | number) => {
+              const chain = DEPOSIT_CHAIN_OPTIONS.find(
+                (c) => c.toString() === val,
+              )
+              if (chain) {
+                setSelectedChain(chain)
+                const option = DEPOSIT_OPTIONS.find((o) => o.chainId === chain)
+                if (option) setDepositOption(option)
+              }
             }}
           >
             <SelectTrigger className="w-full text-sm !px-2 !h-[40px] !gap-1 !border-[#FFFFFF1A] bg-transparent !border">
-              {depositOption.label}
+              <div className="flex items-center gap-1">
+                <_NetworkIcon chainId={selectedChain} />
+                {typeof selectedChain === 'number'
+                  ? getChainById(selectedChain)?.name
+                  : selectedChain}
+              </div>
             </SelectTrigger>
             <SelectContent className="w-full !bg-black/10">
-              {DEPOSIT_OPTIONS?.map((i, idx) => (
+              {DEPOSIT_CHAIN_OPTIONS?.map((i, idx) => (
                 <SelectItem
-                  key={`${i.value}-${idx}`}
-                  value={i.value}
+                  key={`${i}-${idx}`}
+                  value={i.toString()}
                   className="font-medium !text-white gap-4"
                 >
-                  {i.label}{' '}
+                  <div className="flex items-center gap-1">
+                    <_NetworkIcon chainId={i} />
+                    {typeof i === 'number' ? getChainById(i)?.name : i}
+                  </div>
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-          <div className="mt-4">{content}</div>
+          {optionsBySelectedChain.length > 1 ? (
+            <Select
+              value={depositOption.value}
+              onValueChange={(val: string) => {
+                const option = optionsBySelectedChain.find(
+                  (o) => o.value === val,
+                )
+                if (option) setDepositOption(option)
+              }}
+            >
+              <SelectTrigger className="w-full text-sm !px-2 mt-2 !h-[40px] !gap-1 !border-[#FFFFFF1A] bg-transparent !border">
+                <div className="flex items-center gap-1">
+                  {depositOption.asset ? (
+                    <Currency.Icon
+                      disableLink
+                      currency={depositOption.asset}
+                      width={20}
+                      height={20}
+                    />
+                  ) : null}
+                  {depositOption.label}
+                </div>
+              </SelectTrigger>
+              <SelectContent className="w-full !bg-black/10">
+                {optionsBySelectedChain?.map((i, idx) => (
+                  <SelectItem
+                    key={`${i.value}-${idx}`}
+                    value={i.value}
+                    className="font-medium !text-white gap-4"
+                  >
+                    <div className="flex items-center gap-1">
+                      {i.asset ? (
+                        <Currency.Icon
+                          disableLink
+                          currency={i.asset}
+                          width={20}
+                          height={20}
+                        />
+                      ) : null}
+                      {i.label}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : null}
+          <div className="mt-2">{content}</div>
         </PerpsDialogInnerContent>
       </PerpsDialogContent>
     </PerpsDialog>
+  )
+}
+
+const _NetworkIcon = ({ chainId }: { chainId: DepositChainOption }) => {
+  const value = useMemo(() => {
+    if (typeof chainId === 'number') {
+      return null
+    }
+    switch (chainId) {
+      case 'Bitcoin':
+        return 'BTC'
+      case 'Zcash':
+        return 'ZEC'
+      default:
+        return null
+    }
+  }, [chainId])
+
+  if (typeof chainId === 'number') {
+    return <NetworkIcon chainId={chainId} width={20} height={20} />
+  }
+  return (
+    <img
+      src={`https://app.hyperliquid.xyz/coins/${value}.svg`}
+      alt={chainId}
+      className={classNames('rounded-full w-5 h-5')}
+    />
   )
 }

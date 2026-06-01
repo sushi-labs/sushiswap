@@ -12,7 +12,7 @@ import { useBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { InputWithKeyboard } from '../../_common'
 import { PerpsChecker } from '../../perps-checker'
 import {
-  type TokenDepositOption,
+  HYPEREVM_USDC,
   USDC_ARB_DEPOSIT_BRIDGE,
   USDC_HYPEREVM_DEPOSIT_BRIDGE,
 } from './deposit-dialog'
@@ -58,14 +58,35 @@ export const getUSDCArgs = ({
   }
 }
 
+const getAsset = (chainId: EvmChainId) => {
+  switch (chainId) {
+    case EvmChainId.ARBITRUM:
+      return USDC[EvmChainId.ARBITRUM]
+    case EvmChainId.HYPEREVM:
+      return HYPEREVM_USDC
+    default:
+      throw new Error('Unsupported chainId')
+  }
+}
+const getDepositBridge = (chainId: EvmChainId) => {
+  switch (chainId) {
+    case EvmChainId.ARBITRUM:
+      return USDC_ARB_DEPOSIT_BRIDGE
+    case EvmChainId.HYPEREVM:
+      return USDC_HYPEREVM_DEPOSIT_BRIDGE
+    default:
+      throw new Error('Unsupported chainId')
+  }
+}
+
 export const USDCOptions = ({
-  depositOption,
+  depositChainId,
   setOpen,
 }: {
-  depositOption: TokenDepositOption
+  depositChainId: 42161 | 999
   setOpen: (open: boolean) => void
 }) => {
-  const usdc = depositOption.asset
+  const usdc = useMemo(() => getAsset(depositChainId), [depositChainId])
   const [amount, setAmount] = useState<string>('')
   const { mutateAsync: writeContractAsync, isPending } = useWriteContract()
   const client = usePublicClient()
@@ -168,7 +189,7 @@ export const USDCOptions = ({
                 size="default"
                 amount={_amount}
                 variant="perps-tertiary"
-                contract={depositOption.depositBridge}
+                contract={getDepositBridge(depositChainId)}
                 id={`${usdc.chainId}-approve-deposit-${usdc.address}`}
                 enabled={usdc.chainId === EvmChainId.HYPEREVM}
               >
