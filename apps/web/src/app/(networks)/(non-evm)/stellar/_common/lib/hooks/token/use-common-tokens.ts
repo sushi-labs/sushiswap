@@ -54,6 +54,33 @@ const OUTDATED_TOKENS = new Set([
   'USD|stablecoin.anchorusd.com',
 ])
 
+const whitelistedTokens = [
+  new StellarToken({
+    chainId: StellarChainId.STELLAR,
+    address: 'CC64WBDGS6QQP22QTTIACYIXT3WF7BBQEYOQPLTP7GTKYY7PZ74QYGSL',
+    symbol: 'deJAAA',
+    name: 'deJAAA',
+    origin: 'centrifuge',
+    decimals: 18,
+    metadata: {
+      domain: 'centrifuge.io',
+      icon: 'https://cdn.sushi.com/image/upload/v1780067232/tokens/-4/CC64WBDGS6QQP22QTTIACYIXT3WF7BBQEYOQPLTP7GTKYY7PZ74QYGSL.png',
+    },
+  }),
+  new StellarToken({
+    chainId: StellarChainId.STELLAR,
+    address: 'CBI7UCH5KGSVQRO5H4SUCZUTZABCITZLRHQQZTWL2TK4RZ72TAR6IHRV',
+    symbol: 'deJTRSY',
+    name: 'deJTRSY',
+    origin: 'centrifuge',
+    decimals: 18,
+    metadata: {
+      domain: 'centrifuge.io',
+      icon: 'https://cdn.sushi.com/image/upload/v1780067208/tokens/-4/CBI7UCH5KGSVQRO5H4SUCZUTZABCITZLRHQQZTWL2TK4RZ72TAR6IHRV.png',
+    },
+  }),
+]
+
 const getStellarExpertAssets = async () => {
   if (!stellarExpertTopTokensApiUrl) {
     return []
@@ -101,9 +128,9 @@ export const fetchCommonTokensQueryFn = async (): Promise<
 
   // Always include hardcoded tokens. Use the StellarToken's normalized
   // (uppercase) address as the key for case-insensitive lookups.
-  staticTokens.forEach((token) => {
+  for (const token of [...staticTokens, ...whitelistedTokens]) {
     result[token.address] = token
-  })
+  }
 
   // Try to add StellarExpert tokens
   try {
@@ -113,7 +140,7 @@ export const fetchCommonTokensQueryFn = async (): Promise<
     })
   } catch (error) {
     console.warn(
-      `[useCommonTokens] StellarExpert failed, using ${staticTokens.length} hardcoded tokens only:`,
+      `[useCommonTokens] StellarExpert failed, using ${staticTokens.length + whitelistedTokens.length} hardcoded tokens only:`,
       error,
     )
   }

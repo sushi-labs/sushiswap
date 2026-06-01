@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import {
   type Dispatch,
   type FC,
@@ -78,15 +78,15 @@ export const useAcademySearch = () => {
 }
 
 export const useSetAcademySearch = () => {
-  const { push } = useRouter()
+  const pathname = usePathname()
   const urlFilters = useTypedSearchParams(academySearchSchema)
 
   const setFilters: Dispatch<SetStateAction<typeof urlFilters>> = (filters) => {
-    if (typeof filters === 'function') {
-      void push(parseArgs(filters(urlFilters)), { scroll: false })
-    } else {
-      void push(parseArgs(filters), { scroll: false })
-    }
+    const resolved =
+      typeof filters === 'function' ? filters(urlFilters) : filters
+    // Update the URL without a router navigation (which would trigger a full
+    // page reload in Next 16); useSearchParams stays in sync.
+    history.pushState(null, '', `${pathname}${parseArgs(resolved)}`)
   }
 
   return setFilters
