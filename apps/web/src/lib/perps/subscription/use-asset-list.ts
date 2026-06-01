@@ -55,6 +55,8 @@ const formatSpotCtxs = (
   return universe.reduce((acc, u) => {
     const ctx = ctxs[u.index] ?? {}
     const tokens = u.tokens.map((tokenIndex) => _tokens[tokenIndex])
+    //if u.token index is missing, skip
+    if (tokens.some((t) => !t)) return acc
     const markPrice = Number.parseFloat(ctx.markPx)
     const last = ctx.midPx ? Number.parseFloat(ctx.midPx) : markPrice
     const prev = Number.parseFloat(ctx.prevDayPx)
