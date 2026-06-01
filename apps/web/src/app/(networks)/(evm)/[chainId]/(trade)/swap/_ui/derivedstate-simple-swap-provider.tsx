@@ -126,6 +126,13 @@ function DerivedstateSimpleSwapProvider({
     [defaultedParams],
   )
 
+  const updateSearchParams = useCallback(
+    (values: { name: string; value: string | null }[]) => {
+      history.pushState(null, '', `${pathname}?${createQueryString(values)}`)
+    },
+    [createQueryString, pathname],
+  )
+
   // Switch token0 and token1
   const switchTokens = useCallback(() => {
     // console.log('switchTokens', {
@@ -250,14 +257,9 @@ function DerivedstateSimpleSwapProvider({
   // Update the URL with a new swapAmount
   const setSwapAmount = useCallback<(value: string) => void>(
     (value) => {
-      push(
-        `${pathname}?${createQueryString([
-          { name: 'swapAmount', value: value },
-        ])}`,
-        { scroll: false },
-      )
+      updateSearchParams([{ name: 'swapAmount', value: value || null }])
     },
-    [createQueryString, pathname, push],
+    [updateSearchParams],
   )
 
   const token0Param = defaultedParams.get('token0') as string
