@@ -178,16 +178,13 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
         switchTokens()
         return
       }
-      router.push(
-        `${pathname}?${createQueryString([
-          { name: 'swapAmount', value: null },
-          { name: 'chainId1', value: newChainId.toString() },
-          { name: 'token1', value: null },
-        ])}`,
-        { scroll: false },
-      )
+      updateSearchParams([
+        { name: 'swapAmount', value: null },
+        { name: 'chainId1', value: newChainId.toString() },
+        { name: 'token1', value: null },
+      ])
     },
-    [chainId0, pathname, createQueryString, router, switchTokens],
+    [chainId0, updateSearchParams, switchTokens],
   )
 
   const setToken0Param = useCallback(
