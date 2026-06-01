@@ -376,7 +376,9 @@ export const AnyTokenDeposit = ({
         <>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <p className="text-xs text-perps-muted-70">Step 1 (Swap)</p>
+              <p className="text-xs text-perps-muted-70 pb-[2px]">
+                Step 1 (Swap)
+              </p>
 
               <div className="h-1 w-full overflow-hidden rounded-full bg-perps-muted-20">
                 <motion.div
@@ -389,7 +391,9 @@ export const AnyTokenDeposit = ({
             </div>
 
             <div>
-              <p className="text-xs text-perps-muted-70">Step 2 (Deposit)</p>
+              <p className="text-xs text-perps-muted-70 pb-[2px]">
+                Step 2 (Deposit)
+              </p>
 
               <div className="h-1 w-full overflow-hidden rounded-full bg-perps-muted-20">
                 <motion.div
