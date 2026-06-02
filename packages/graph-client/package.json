@@ -64,7 +64,7 @@
     "@tsconfig/node20": "catalog:tsconfig",
     "@tsconfig/strictest": "catalog:tsconfig",
     "@types/json-bigint": "1.0.4",
-    "@types/node": "20",
+    "@types/node": "20.14.14",
     "tsc-alias": "1.8.10",
     "tsx": "4.19.0",
     "typescript": "catalog:"
