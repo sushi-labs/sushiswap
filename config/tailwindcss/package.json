@@ -25,7 +25,8 @@
   },
   "devDependencies": {
     "@types/node": "20.14.14",
-    "tailwindcss": "catalog:ui"
+    "tailwindcss": "catalog:ui",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "tailwindcss": "catalog:ui"
