@@ -28,16 +28,16 @@ import { USDCOptions } from './usdc-options'
 
 export const HYPEREVM_USDC = new EvmToken({
   chainId: EvmChainId.HYPEREVM,
-  address: '0xb88339CB7199b77E23DB6E890353E22632Ba630f' as EvmAddress,
+  address: '0xb88339CB7199b77E23DB6E890353E22632Ba630f',
   decimals: 6,
   symbol: 'USDC',
   name: 'USDC',
 })
 
 export const USDC_ARB_DEPOSIT_BRIDGE =
-  '0x2Df1c51E09aECF9cacB7bc98cB1742757f163dF7' as EvmAddress
+  '0x2Df1c51E09aECF9cacB7bc98cB1742757f163dF7' as const
 export const USDC_HYPEREVM_DEPOSIT_BRIDGE =
-  '0x6B9E773128f453f5c2C60935Ee2DE2CBc5390A24' as EvmAddress
+  '0x6B9E773128f453f5c2C60935Ee2DE2CBc5390A24' as const
 
 const DEPOSIT_OPTIONS = [
   {

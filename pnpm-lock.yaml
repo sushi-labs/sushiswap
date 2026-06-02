@@ -34,8 +34,8 @@ catalogs:
       specifier: 3.2.2
       version: 3.2.2
     sushi:
-      specifier: 6.6.4
-      version: 6.6.4
+      specifier: 6.6.7
+      version: 6.6.7
     wagmi:
       specifier: 3.3.2
       version: 3.3.2
@@ -128,7 +128,7 @@ importers:
         version: 19.2.4(react@19.2.4)
       sushi:
         specifier: catalog:web3
-        version: 6.6.4(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 6.6.7(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
     devDependencies:
       '@storybook/addon-a11y':
         specifier: 8.4.7
@@ -219,7 +219,7 @@ importers:
         version: 4.3.7(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11)
       '@creit.tech/stellar-wallets-kit':
         specifier: 2.2.0
-        version: 2.2.0(7e75377ef3178f2756d6dd36935ea09b)
+        version: 2.2.0(2df95f208bbc2681c5d353cda2282eb7)
       '@defuse-protocol/one-click-sdk-typescript':
         specifier: 0.1.17
         version: 0.1.17
@@ -585,7 +585,7 @@ importers:
         version: 2.3.3
       sushi:
         specifier: catalog:web3
-        version: 6.6.4(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 6.6.7(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       tiny-invariant:
         specifier: 1.3.1
         version: 1.3.1
@@ -767,7 +767,7 @@ importers:
         version: 1.0.0
       sushi:
         specifier: catalog:web3
-        version: 6.6.4(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 6.6.7(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       viem:
         specifier: 2.44.4
         version: 2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11)
@@ -829,10 +829,10 @@ importers:
         version: 19.2.4(react@19.2.4)
       sushi:
         specifier: catalog:web3
-        version: 6.6.4(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 6.6.7(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       tailwindcss:
         specifier: catalog:ui
-        version: 3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.8.3))
+        version: 3.3.2(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.8.3))
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -875,7 +875,7 @@ importers:
         version: 19.2.3(@types/react@19.2.14)
       sushi:
         specifier: catalog:web3
-        version: 6.6.4(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 6.6.7(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -929,7 +929,7 @@ importers:
         version: 6.0.3
       sushi:
         specifier: catalog:web3
-        version: 6.6.4(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 6.6.7(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
     devDependencies:
       typescript:
         specifier: 5.8.3
@@ -945,7 +945,7 @@ importers:
         version: 6.0.3
       sushi:
         specifier: catalog:web3
-        version: 6.6.4(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 6.6.7(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
     devDependencies:
       typescript:
         specifier: 5.8.3
@@ -1113,13 +1113,13 @@ importers:
         version: link:../telemetry
       '@tailwindcss/aspect-ratio':
         specifier: 0.4.2
-        version: 0.4.2(tailwindcss@3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.8.3)))
+        version: 0.4.2(tailwindcss@3.3.2(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.8.3)))
       '@tailwindcss/forms':
         specifier: 0.5.3
-        version: 0.5.3(tailwindcss@3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.8.3)))
+        version: 0.5.3(tailwindcss@3.3.2(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.8.3)))
       '@tailwindcss/typography':
         specifier: 0.5.9
-        version: 0.5.9(tailwindcss@3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.8.3)))
+        version: 0.5.9(tailwindcss@3.3.2(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.8.3)))
       '@tanstack/react-table':
         specifier: 8.9.1
         version: 8.9.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -1173,7 +1173,7 @@ importers:
         version: 1.8.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       tailwindcss-animate:
         specifier: 1.0.7
-        version: 1.0.7(tailwindcss@3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.8.3)))
+        version: 1.0.7(tailwindcss@3.3.2(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.8.3)))
       use-resize-observer:
         specifier: 9.1.0
         version: 9.1.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -1210,10 +1210,10 @@ importers:
         version: 19.2.4(react@19.2.4)
       sushi:
         specifier: catalog:web3
-        version: 6.6.4(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 6.6.7(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       tailwindcss:
         specifier: catalog:ui
-        version: 3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.8.3))
+        version: 3.3.2(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.8.3))
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -1279,12 +1279,12 @@ packages:
   '@aptos-labs/aptos-client@0.1.0':
     resolution: {integrity: sha512-q3s6pPq8H2buGp+tPuIRInWsYOuhSEwuNJPwd2YnsiID3YSLihn2ug39ktDJAcSOprUcp7Nid8WK7hKqnUmSdA==}
     engines: {node: '>=15.10.0'}
-    deprecated: <1.0.0 is no longer supported please upgrade to the latest version
+    deprecated: This version is deprecated.  Please upgrade to version 2.1.0 or later.
 
   '@aptos-labs/ts-sdk@1.27.0':
     resolution: {integrity: sha512-LsQpkrVEXGLaDFSLXvvU0+1X27kTlGBiy1rZqfcaW2hARN9m/Bc/AjztxXKeEXS/D7QmEJAeB6RS7CLM8aqC3w==}
     engines: {node: '>=11.0.0'}
-    deprecated: <1.30.0 is no longer supported please upgrade to the latest version
+    deprecated: This version is deprecated, please upgrade to 5.2.1, or the latest version
 
   '@aptos-labs/wallet-adapter-core@0.1.7':
     resolution: {integrity: sha512-g3HvX31kuFT5HqEe9Vh0ZgV1u0Otsfx54yeAwL7RO8CioBVBjYELhMsOYz0BOjecmAKhQ14G60VU8MqDyzYkIA==}
@@ -5489,6 +5489,7 @@ packages:
 
   '@safe-global/safe-gateway-typescript-sdk@3.9.0':
     resolution: {integrity: sha512-DxRM/sBBQhv955dPtdo0z2Bf2fXxrzoRUnGyTa3+4Z0RAhcyiqnffRP1Bt3tyuvlyfZnFL0RsvkqDcAIKzq3RQ==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   '@scure/base@1.1.9':
     resolution: {integrity: sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg==}
@@ -5732,6 +5733,7 @@ packages:
   '@snyk/github-codeowners@1.1.0':
     resolution: {integrity: sha512-lGFf08pbkEac0NYgVf4hdANpAgApRjNByLXB+WBip3qj1iendOIyAwP2GKkKbQMNVy2r1xxDf0ssfWscoiC+Vw==}
     engines: {node: '>=8.10'}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
     hasBin: true
 
   '@socket.io/component-emitter@3.1.0':
@@ -12660,6 +12662,7 @@ packages:
 
   petra-plugin-wallet-adapter@0.4.5:
     resolution: {integrity: sha512-x2S2xRAIz/5ytbB2wHCTJhqLBDsgWPEVmj7X2aril1BUplIGPJHTstgo8hqOngb2rtYbBY+wviyS9Di4IDCGRA==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
     peerDependencies:
       '@aptos-labs/ts-sdk': ^1.3.0
       aptos: ^1.21.0
@@ -14001,8 +14004,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  sushi@6.6.4:
-    resolution: {integrity: sha512-I4Sj4jen687w/YHP77VP7GoLXs1XDq6UW1CN+0m194Rem2MWlUWtodUjSVQ1q7cpNcsmsG4u6HQNLim9UTCRAA==}
+  sushi@6.6.7:
+    resolution: {integrity: sha512-ENtaachQhAEHIrF1wNHjyQdwzlIS5mBF6iDHxUjDAHy4qP3t7UGgYRoe2u/AyCnGkwSEz+gofQY4KD5LYLDX0w==}
     peerDependencies:
       '@solana/addresses': 6.0.1
       typescript: 5.8.3
@@ -14596,10 +14599,12 @@ packages:
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   uuid@9.0.1:
     resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   uvu@0.5.6:
@@ -16759,7 +16764,7 @@ snapshots:
     dependencies:
       '@bufbuild/protobuf': 2.2.3
 
-  '@creit.tech/stellar-wallets-kit@2.2.0(7e75377ef3178f2756d6dd36935ea09b)':
+  '@creit.tech/stellar-wallets-kit@2.2.0(2df95f208bbc2681c5d353cda2282eb7)':
     dependencies:
       '@albedo-link/intent': 0.12.0
       '@creit.tech/xbull-wallet-connect': 0.4.0
@@ -23170,19 +23175,10 @@ snapshots:
     dependencies:
       tailwindcss: 3.3.2(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.8.3))
 
-  '@tailwindcss/aspect-ratio@0.4.2(tailwindcss@3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.8.3)))':
-    dependencies:
-      tailwindcss: 3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.8.3))
-
   '@tailwindcss/forms@0.5.3(tailwindcss@3.3.2(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.8.3)))':
     dependencies:
       mini-svg-data-uri: 1.4.4
       tailwindcss: 3.3.2(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.8.3))
-
-  '@tailwindcss/forms@0.5.3(tailwindcss@3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.8.3)))':
-    dependencies:
-      mini-svg-data-uri: 1.4.4
-      tailwindcss: 3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.8.3))
 
   '@tailwindcss/typography@0.5.9(tailwindcss@3.3.2(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.8.3)))':
     dependencies:
@@ -23191,14 +23187,6 @@ snapshots:
       lodash.merge: 4.6.2
       postcss-selector-parser: 6.0.10
       tailwindcss: 3.3.2(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.8.3))
-
-  '@tailwindcss/typography@0.5.9(tailwindcss@3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.8.3)))':
-    dependencies:
-      lodash.castarray: 4.4.0
-      lodash.isplainobject: 4.0.6
-      lodash.merge: 4.6.2
-      postcss-selector-parser: 6.0.10
-      tailwindcss: 3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.8.3))
 
   '@tanstack/query-core@5.62.8': {}
 
@@ -32640,7 +32628,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  sushi@6.6.4(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11):
+  sushi@6.6.7(@solana/addresses@6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3))(typescript@5.8.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11):
     dependencies:
       '@uniswap/token-lists': 1.0.0-beta.33
       tiny-invariant: 1.3.3
@@ -32691,10 +32679,6 @@ snapshots:
   tailwindcss-animate@1.0.7(tailwindcss@3.3.2(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.8.3))):
     dependencies:
       tailwindcss: 3.3.2(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.8.3))
-
-  tailwindcss-animate@1.0.7(tailwindcss@3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.8.3))):
-    dependencies:
-      tailwindcss: 3.3.2(ts-node@10.9.2(@types/node@22.10.6)(typescript@5.8.3))
 
   tailwindcss@3.3.2(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.8.3)):
     dependencies:

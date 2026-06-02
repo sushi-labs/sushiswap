@@ -3,7 +3,6 @@ import {
   ClipboardCopyIcon,
 } from '@heroicons/react-v1/solid'
 import { useCopyClipboard } from '@sushiswap/hooks'
-import { createToast } from '@sushiswap/notifications'
 import {
   Button,
   IconButton,
@@ -11,10 +10,8 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDepositAddress, useHUEstimateFees } from 'src/lib/perps'
-import { useTransferSol } from 'src/lib/svm/hooks/use-transfer-sol'
-import { useTransferSplToken } from 'src/lib/svm/hooks/use-transfer-spl-token'
 import { useMyTokens } from 'src/lib/wagmi/components/token-selector/hooks/use-my-tokens'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
@@ -25,7 +22,6 @@ import {
   EvmToken,
   WBTC,
   WETH9,
-  erc20Abi_transfer,
   isEvmChainId,
 } from 'sushi/evm'
 import {
@@ -35,11 +31,16 @@ import {
   isSvmChainId,
   svmNativeAddress,
 } from 'sushi/svm'
-import { usePublicClient, useSendTransaction, useWriteContract } from 'wagmi'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { InputWithKeyboard, PerpsCard } from '../../_common'
 import { PerpsChecker } from '../../perps-checker'
 import type { HyperunitDepositOption } from './deposit-dialog'
+import {
+  EvmNativeSendButton,
+  EvmTokenSendButton,
+  SvmNativeSendButton,
+  SvmTokenSendButton,
+} from './hyperunit-send-buttons'
 
 const ChainToToken = {
   bitcoin: WBTC[EvmChainId.ETHEREUM],
@@ -96,27 +97,8 @@ export const HyperunitOptions = ({
     chainId: ChainToToken[depositOption.chainName].chainId,
     address: ChainToToken[depositOption.chainName].address,
   })
-  const client = usePublicClient()
   const address = useAccount('evm')
   const svmAddress = useAccount('svm')
-  const { mutateAsync: sendTransactionAsync, isPending: isSendPending } =
-    useSendTransaction()
-  const { mutateAsync: writeContractAsync, isPending: isWriteContractPending } =
-    useWriteContract()
-  const { transferSolAsync, isPending: isSendingSol } = useTransferSol({
-    onSuccess: () => {
-      setOpen(false)
-    },
-  })
-  const { transferSplTokenAsync, isPending: isSendingSplToken } =
-    useTransferSplToken({
-      onSuccess: () => {
-        setOpen(false)
-      },
-    })
-
-  const isTxPending =
-    isSendPending || isWriteContractPending || isSendingSol || isSendingSplToken
   const { data: depositData, isLoading: isLoadingDepositData } =
     useDepositAddress({
       address,
@@ -218,99 +200,74 @@ export const HyperunitOptions = ({
     )
   }, [fee, eta, depositOption.chainName])
 
-  const sendTokensToHyperunit = useCallback(async () => {
-    if (!depositData?.address || !_amount?.amount) return
-    switch (depositOption.asset?.type) {
-      case 'native': {
-        if (isEvmChainId(depositOption.asset.chainId)) {
-          const hash = await sendTransactionAsync({
-            to: depositData?.address as EvmAddress,
-            value: _amount?.amount,
-          })
-          const promise = client.waitForTransactionReceipt({
-            hash,
-          })
-          const ts = new Date().getTime()
-          void createToast({
-            account: address,
-            type: 'send',
-            chainId: depositOption.asset.chainId,
-            txHash: hash,
-            promise,
-            summary: {
-              pending: `Depositing ${_amount?.toSignificant(6)} ${depositOption.asset.symbol}`,
-              completed: `Deposited ${_amount?.toSignificant(6)} ${depositOption.asset.symbol}`,
-              failed: `Something went wrong depositing ${_amount?.toSignificant(6)} ${
-                depositOption.asset.symbol
-              }`,
-            },
-            timestamp: ts,
-            groupTimestamp: ts,
-            variant: 'perps',
-          })
-          setOpen(false)
-          return
-        } else if (isSvmChainId(depositOption.asset.chainId)) {
-          await transferSolAsync({
-            destination: depositData?.address,
-            amount: _amount.amount,
-          })
-        }
-        return
-      }
-      case 'token': {
-        if (isEvmChainId(depositOption.asset.chainId)) {
-          const hash = await writeContractAsync({
-            address: depositOption.asset.address as EvmAddress,
-            abi: erc20Abi_transfer,
-            functionName: 'transfer',
-            args: [depositData?.address as EvmAddress, _amount?.amount],
-          })
-          const promise = client.waitForTransactionReceipt({
-            hash,
-          })
-          const ts = new Date().getTime()
-          void createToast({
-            account: address,
-            type: 'send',
-            chainId: depositOption.asset.chainId,
-            txHash: hash,
-            promise,
-            summary: {
-              pending: `Depositing ${_amount?.toSignificant(6)} ${depositOption.asset.symbol}`,
-              completed: `Deposited ${_amount?.toSignificant(6)} ${depositOption.asset.symbol}`,
-              failed: `Something went wrong depositing ${_amount?.toSignificant(6)} ${
-                depositOption.asset.symbol
-              }`,
-            },
-            timestamp: ts,
-            groupTimestamp: ts,
-            variant: 'perps',
-          })
-          setOpen(false)
-          return
-        } else if (isSvmChainId(depositOption.asset.chainId)) {
-          await transferSplTokenAsync({
-            amount: _amount.amount,
-            destination: depositData?.address,
-            tokenToSend: depositOption.asset as SvmToken,
-          })
-        }
-        return
-      }
+  // The actual send action is delegated to a per-(namespace, asset-type) leaf
+  // component so that the heavy wagmi mutate generics are never co-resolved in
+  // a single closure (see hyperunit-send-buttons.tsx).
+  const sendButton = useMemo(() => {
+    const asset = depositOption.asset
+    const depositAddress = depositData?.address
+    if (!asset || !_amount?.amount || !depositAddress) {
+      return (
+        <Button
+          variant="perps-tertiary"
+          size="default"
+          className="w-full"
+          disabled
+        >
+          Send
+        </Button>
+      )
     }
-  }, [
-    setOpen,
-    depositData?.address,
-    _amount,
-    address,
-    depositOption.asset,
-    writeContractAsync,
-    sendTransactionAsync,
-    transferSolAsync,
-    transferSplTokenAsync,
-    client,
-  ])
+
+    const amount = _amount.amount
+    const amountText = _amount.toSignificant(6)
+
+    if (asset.type === 'native') {
+      if (isEvmChainId(asset.chainId)) {
+        return (
+          <EvmNativeSendButton
+            chainId={asset.chainId}
+            symbol={asset.symbol}
+            amount={amount}
+            amountText={amountText}
+            depositAddress={depositAddress}
+            setOpen={setOpen}
+          />
+        )
+      }
+      return (
+        <SvmNativeSendButton
+          amount={amount}
+          amountText={amountText}
+          depositAddress={depositAddress}
+          setOpen={setOpen}
+        />
+      )
+    }
+
+    if (isEvmChainId(asset.chainId)) {
+      return (
+        <EvmTokenSendButton
+          chainId={asset.chainId}
+          tokenAddress={asset.address as EvmAddress}
+          symbol={asset.symbol}
+          amount={amount}
+          amountText={amountText}
+          depositAddress={depositAddress}
+          setOpen={setOpen}
+        />
+      )
+    }
+    return (
+      <SvmTokenSendButton
+        token={asset as SvmToken}
+        amount={amount}
+        amountText={amountText}
+        depositAddress={depositAddress}
+        setOpen={setOpen}
+      />
+    )
+  }, [depositOption.asset, depositData?.address, _amount, setOpen])
 
   return (
     <div className="flex flex-col gap-4 items-center">
@@ -390,15 +347,7 @@ export const HyperunitOptions = ({
                       ),
                     )}
                   >
-                    <Button
-                      variant="perps-tertiary"
-                      size="default"
-                      className="w-full"
-                      onClick={sendTokensToHyperunit}
-                      loading={isTxPending}
-                    >
-                      Send
-                    </Button>
+                    {sendButton}
                   </Checker.Custom>
                 </Checker.Amounts>
               </Checker.Network>
