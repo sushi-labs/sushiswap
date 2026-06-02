@@ -9,6 +9,7 @@ const genResponseSchema = z.object({
   address: z.union([
     sz.evm.address(),
     z.custom<SvmAddress>((val) => typeof val === 'string' && isSvmAddress(val)),
+    z.string(), //could be bitcoin or zcash address
   ]),
   status: z.string(),
   signatures: z.object({

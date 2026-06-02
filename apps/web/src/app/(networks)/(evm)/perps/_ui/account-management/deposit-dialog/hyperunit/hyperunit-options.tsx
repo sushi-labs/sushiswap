@@ -128,7 +128,11 @@ export const HyperunitOptions = ({
       {transferType === 'connected-wallet' && depositOption.asset ? (
         <HyperunitTransferTypeWallet
           depositOption={depositOption}
-          depositAddress={depositData?.address}
+          depositAddress={
+            depositData?.address as AddressFor<
+              typeof depositOption.asset.chainId
+            >
+          }
           depositInfo={DepositInfo}
           setOpen={setOpen}
         />
