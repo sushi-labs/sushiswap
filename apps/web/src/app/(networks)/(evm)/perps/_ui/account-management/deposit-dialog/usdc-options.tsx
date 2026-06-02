@@ -83,7 +83,7 @@ export const USDCOptions = ({
   depositChainId,
   setOpen,
 }: {
-  depositChainId: EvmChainId.ARBITRUM | EvmChainId.HYPEREVM
+  depositChainId: typeof EvmChainId.ARBITRUM | typeof EvmChainId.HYPEREVM
   setOpen: (open: boolean) => void
 }) => {
   const usdc = useMemo(() => getAsset(depositChainId), [depositChainId])
