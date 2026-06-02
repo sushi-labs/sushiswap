@@ -12,6 +12,7 @@ import { useKitTransactionSigner } from '@solana/connector'
 import {
   appendTransactionMessageInstructions,
   assertIsTransactionWithBlockhashLifetime,
+  createSolanaRpc,
   createSolanaRpcSubscriptions,
   createTransactionMessage,
   getSignatureFromTransaction,
@@ -31,7 +32,6 @@ import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
 import { type SvmAddress, SvmChainId, type SvmToken } from 'sushi/svm'
 import { SVM_RPC_URL } from '../config'
-import { getSvmRpc } from '../rpc'
 import { getRpcSubscriptionsUrl } from '../utils'
 
 type TransferSplTokenArgs = {
@@ -74,7 +74,7 @@ export const useTransferSplToken = (params?: {
         throw new Error('Transfer amount must be greater than zero')
       }
 
-      const rpc = getSvmRpc()
+      const rpc = createSolanaRpc(SVM_RPC_URL)
 
       const rpcSubscriptions = createSolanaRpcSubscriptions(
         getRpcSubscriptionsUrl(SVM_RPC_URL),
