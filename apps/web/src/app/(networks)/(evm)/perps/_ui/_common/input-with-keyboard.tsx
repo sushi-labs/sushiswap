@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { currencyFormatter } from 'src/lib/perps'
 import { Amount } from 'sushi'
 import type { EvmAddress, EvmCurrency } from 'sushi/evm'
-import type { SvmCurrency } from 'sushi/svm'
+import type { SvmAddress, SvmCurrency } from 'sushi/svm'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { PerpsCard } from './perps-card'
 
@@ -21,9 +21,9 @@ export const InputWithKeyboard = ({
   setAmount: (value: string) => void
   balance: Amount<EvmCurrency | SvmCurrency> | undefined
   currency: EvmCurrency | SvmCurrency
-  error: string | undefined
+  error?: string | undefined
   isLoading: boolean
-  address: EvmAddress | undefined
+  address: EvmAddress | SvmAddress | undefined
 }) => {
   const widthRef = useRef<HTMLInputElement | null>(null)
   const { isLg } = useBreakpoint('lg')

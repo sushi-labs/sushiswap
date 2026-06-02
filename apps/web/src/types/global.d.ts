@@ -2,6 +2,7 @@ import type {
   CurrencyMetadata,
   AddressFor as _AddressFor,
   CurrencyFor as _CurrencyFor,
+  NativeFor as _NativeFor,
   TokenFor as _TokenFor,
   TxHashFor as _TxHashFor,
 } from 'sushi'
@@ -19,6 +20,11 @@ export declare global {
 
   type AddressFor<TChainId extends EvmChainId | SvmChainId | StellarChainId> =
     _AddressFor<TChainId>
+
+  type NativeFor<
+    TChainId extends EvmChainId | SvmChainId,
+    Metadata extends CurrencyMetadata = CurrencyMetadata,
+  > = _NativeFor<TChainId, Metadata>
 
   type TokenFor<
     TChainId extends EvmChainId | SvmChainId | StellarChainId,

@@ -1,10 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
+import { sz } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
+import { type SvmAddress, isSvmAddress } from 'sushi/svm'
 import { z } from 'zod'
 import { HYPERUNIT_BASE_URL } from './hyper-unit-base-url'
 
 const genResponseSchema = z.object({
-  address: z.string(),
+  address: z.union([
+    sz.evm.address(),
+    z.custom<SvmAddress>((val) => typeof val === 'string' && isSvmAddress(val)),
+  ]),
   status: z.string(),
   signatures: z.object({
     'field-node': z.string(),

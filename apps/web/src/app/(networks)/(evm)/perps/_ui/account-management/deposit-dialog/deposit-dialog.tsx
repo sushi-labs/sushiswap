@@ -23,7 +23,7 @@ import { type EvmAddress, EvmChainId, EvmNative, EvmToken } from 'sushi/evm'
 import { SvmChainId, SvmNative, SvmToken, svmAddress } from 'sushi/svm'
 import { AnyTokenDeposit } from './any-token-deposit'
 // import { FiatDeposit } from './fiat-deposit'
-import { HyperunitOptions } from './hyperunit-options'
+import { HyperunitOptions } from './hyperunit/hyperunit-options'
 import { USDCOptions } from './usdc-options'
 
 export const HYPEREVM_USDC = new EvmToken({

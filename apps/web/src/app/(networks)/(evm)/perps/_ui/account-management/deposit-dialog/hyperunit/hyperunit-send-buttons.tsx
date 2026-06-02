@@ -4,12 +4,8 @@ import { useCallback } from 'react'
 import { useTransferSol } from 'src/lib/svm/hooks/use-transfer-sol'
 import { useTransferSplToken } from 'src/lib/svm/hooks/use-transfer-spl-token'
 import { useAccount } from 'src/lib/wallet'
-import {
-  type EvmAddress,
-  type EvmChainId,
-  erc20Abi_transfer,
-} from 'sushi/evm'
-import type { SvmToken } from 'sushi/svm'
+import { type EvmAddress, type EvmChainId, erc20Abi_transfer } from 'sushi/evm'
+import type { SvmChainId, SvmToken } from 'sushi/svm'
 import { usePublicClient, useSendTransaction, useWriteContract } from 'wagmi'
 
 /**
@@ -20,32 +16,34 @@ import { usePublicClient, useSendTransaction, useWriteContract } from 'wagmi'
  * `SendTransactionMutateAsync` and `WriteContractMutateAsync` on every check.
  */
 
-type SendButtonProps = {
+type SendButtonProps<TChainId extends EvmChainId | SvmChainId> = {
   amount: bigint
   amountText: string
-  depositAddress: string
+  depositAddress: AddressFor<TChainId>
   setOpen: (open: boolean) => void
 }
 
-const SendButton = ({
+function SendButton({
   onClick,
   loading,
 }: {
   onClick: () => void
   loading: boolean
-}) => (
-  <Button
-    variant="perps-tertiary"
-    size="default"
-    className="w-full"
-    onClick={onClick}
-    loading={loading}
-  >
-    Send
-  </Button>
-)
+}) {
+  return (
+    <Button
+      variant="perps-tertiary"
+      size="default"
+      className="w-full"
+      onClick={onClick}
+      loading={loading}
+    >
+      Send
+    </Button>
+  )
+}
 
-const emitEvmSendToast = ({
+function emitEvmSendToast({
   account,
   chainId,
   hash,
@@ -59,7 +57,7 @@ const emitEvmSendToast = ({
   promise: Promise<unknown>
   amountText: string
   symbol: string
-}) => {
+}) {
   const ts = new Date().getTime()
   void createToast({
     account,
@@ -78,14 +76,14 @@ const emitEvmSendToast = ({
   })
 }
 
-export const EvmNativeSendButton = ({
+export function EvmNativeSendButton({
   amount,
   amountText,
   depositAddress,
   chainId,
   symbol,
   setOpen,
-}: SendButtonProps & { chainId: EvmChainId; symbol: string }) => {
+}: SendButtonProps<EvmChainId> & { chainId: EvmChainId; symbol: string }) {
   const account = useAccount('evm')
   const client = usePublicClient()
   const { mutateAsync: sendTransactionAsync, isPending } = useSendTransaction()
@@ -120,7 +118,7 @@ export const EvmNativeSendButton = ({
   return <SendButton onClick={onClick} loading={isPending} />
 }
 
-export const EvmTokenSendButton = ({
+export function EvmTokenSendButton({
   amount,
   amountText,
   depositAddress,
@@ -128,11 +126,11 @@ export const EvmTokenSendButton = ({
   tokenAddress,
   symbol,
   setOpen,
-}: SendButtonProps & {
+}: SendButtonProps<EvmChainId> & {
   chainId: EvmChainId
   tokenAddress: EvmAddress
   symbol: string
-}) => {
+}) {
   const account = useAccount('evm')
   const client = usePublicClient()
   const { mutateAsync: writeContractAsync, isPending } = useWriteContract()
@@ -170,11 +168,11 @@ export const EvmTokenSendButton = ({
   return <SendButton onClick={onClick} loading={isPending} />
 }
 
-export const SvmNativeSendButton = ({
+export function SvmNativeSendButton({
   amount,
   depositAddress,
   setOpen,
-}: SendButtonProps) => {
+}: SendButtonProps<SvmChainId>) {
   const { transferSolAsync, isPending } = useTransferSol({
     onSuccess: () => setOpen(false),
   })
@@ -186,12 +184,12 @@ export const SvmNativeSendButton = ({
   return <SendButton onClick={onClick} loading={isPending} />
 }
 
-export const SvmTokenSendButton = ({
+export function SvmTokenSendButton({
   amount,
   depositAddress,
   token,
   setOpen,
-}: SendButtonProps & { token: SvmToken }) => {
+}: SendButtonProps<SvmChainId> & { token: SvmToken }) {
   const { transferSplTokenAsync, isPending } = useTransferSplToken({
     onSuccess: () => setOpen(false),
   })

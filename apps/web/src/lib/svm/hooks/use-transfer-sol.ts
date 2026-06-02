@@ -33,7 +33,7 @@ Amount in lamports.
 1 SOL = 1_000_000_000 lamports.
 */
   amount: bigint
-  destination: string | SvmAddress
+  destination: SvmAddress
 }
 
 export const useTransferSol = (params?: {

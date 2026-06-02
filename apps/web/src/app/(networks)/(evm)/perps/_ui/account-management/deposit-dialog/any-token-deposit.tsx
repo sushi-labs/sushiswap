@@ -47,9 +47,7 @@ import type { AnyTokenDepositOption } from './deposit-dialog'
 import { USDCOptions, getMinDepositAmount, getUSDCArgs } from './usdc-options'
 
 type TokenToSwap = {
-  currency: EvmCurrency<{
-    approved: boolean
-  }>
+  currency: EvmCurrency
   balance: Amount<EvmCurrency> | undefined
   price: Fraction | undefined
   usd: string | undefined
