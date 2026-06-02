@@ -30,7 +30,7 @@ import {
 import { useMutation } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
-import { type SvmAddress, type SvmToken, svmAddress } from 'sushi/svm'
+import { type SvmAddress, SvmChainId, type SvmToken } from 'sushi/svm'
 import { SVM_RPC_URL } from '../config'
 import { getRpcSubscriptionsUrl } from '../utils'
 
@@ -47,7 +47,7 @@ type TransferSplTokenArgs = {
    * Wallet address receiving the token.
    * Do not pass the recipient token account.
    */
-  destination: string | SvmAddress
+  destination: SvmAddress
 
   tokenToSend: SvmToken
 }
@@ -81,7 +81,6 @@ export const useTransferSplToken = (params?: {
       )
 
       const mintAddress = tokenToSend.address
-      const destinationOwner = svmAddress(destination)
 
       const { value: mintAccount } = await rpc
         .getAccountInfo(mintAddress, {
@@ -113,7 +112,7 @@ export const useTransferSplToken = (params?: {
 
       const [destinationTokenAccount] = await findAssociatedTokenPda({
         mint: mintAddress,
-        owner: destinationOwner,
+        owner: destination,
         tokenProgram: tokenProgramAddress,
       })
 
@@ -121,7 +120,7 @@ export const useTransferSplToken = (params?: {
         getCreateAssociatedTokenIdempotentInstruction({
           payer: signer,
           ata: destinationTokenAccount,
-          owner: destinationOwner,
+          owner: destination,
           mint: mintAddress,
           tokenProgram: tokenProgramAddress,
         })
@@ -178,7 +177,7 @@ export const useTransferSplToken = (params?: {
       createInfoToast({
         summary: `Transferring ${formattedAmount} ${formattedSymbol}`,
         account: address,
-        chainId: -5,
+        chainId: SvmChainId.SOLANA,
         type: 'send',
         timestamp: ts,
         groupTimestamp: ts,
@@ -200,7 +199,7 @@ export const useTransferSplToken = (params?: {
       createSuccessToast({
         summary: `Transferred ${ctx.formattedAmount} ${ctx.formattedSymbol} successfully`,
         account: address,
-        chainId: -5,
+        chainId: SvmChainId.SOLANA,
         type: 'send',
         timestamp: ctx.ts,
         groupTimestamp: ctx.ts,
@@ -222,7 +221,7 @@ export const useTransferSplToken = (params?: {
                 ctx?.formattedSymbol ?? 'token'
               }`,
         account: address,
-        chainId: -5,
+        chainId: SvmChainId.SOLANA,
         type: 'send',
         timestamp,
         groupTimestamp: timestamp,

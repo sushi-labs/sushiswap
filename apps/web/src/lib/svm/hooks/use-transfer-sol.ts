@@ -22,7 +22,7 @@ import {
 import { useMutation } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
-import { type SvmAddress, SvmNative, svmAddress } from 'sushi/svm'
+import { type SvmAddress, SvmChainId, SvmNative, svmAddress } from 'sushi/svm'
 import { SVM_RPC_URL } from '../config'
 import { getRpcSubscriptionsUrl } from '../utils'
 
@@ -96,7 +96,7 @@ export const useTransferSol = (params?: {
     onMutate: (data) => {
       const rawAmount = data.amount
       const formattedAmount = new Amount(
-        SvmNative.fromChainId(-5),
+        SvmNative.fromChainId(SvmChainId.SOLANA),
         rawAmount.toString(),
       ).toSignificant(6)
       const ts = Date.now()
@@ -104,7 +104,7 @@ export const useTransferSol = (params?: {
       createInfoToast({
         summary: `Transferring ${formattedAmount} SOL`,
         account: address,
-        chainId: -5,
+        chainId: SvmChainId.SOLANA,
         type: 'send',
         timestamp: ts,
         groupTimestamp: ts,
@@ -122,7 +122,7 @@ export const useTransferSol = (params?: {
       createSuccessToast({
         summary: `Transferred ${ctx.formattedAmount} SOL successfully`,
         account: address,
-        chainId: -5,
+        chainId: SvmChainId.SOLANA,
         type: 'send',
         timestamp: ctx.ts,
         groupTimestamp: ctx.ts,
@@ -140,7 +140,7 @@ export const useTransferSol = (params?: {
             ? error.message
             : `Failed to transfer ${ctx?.formattedAmount ?? ''} SOL`,
         account: address,
-        chainId: -5,
+        chainId: SvmChainId.SOLANA,
         type: 'send',
         timestamp,
         groupTimestamp: timestamp,

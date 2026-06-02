@@ -7,6 +7,7 @@ import {
   Button,
   IconButton,
   LinkExternal,
+  SkeletonBox,
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
@@ -148,9 +149,9 @@ export const HyperunitOptions = ({
           {DepositInfo}
           {address ? (
             <PerpsCard className="p-2" fullWidth rounded="xl">
-              <div className=" gap-2 w-full flex items-center justify-center">
+              <div className="gap-2 w-full flex items-center justify-center">
                 {isLoadingDepositData ? (
-                  <SkeletonText className="w-full" />
+                  <SkeletonBox className="md:!w-4/5 h-5" />
                 ) : (
                   <div className="text-xs break-all">
                     {depositData?.address}
