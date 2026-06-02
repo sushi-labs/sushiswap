@@ -24,7 +24,7 @@
     "tailwindcss-animate": "1.0.7"
   },
   "devDependencies": {
-    "@types/node": "20",
+    "@types/node": "20.14.14",
     "tailwindcss": "catalog:ui"
   },
   "peerDependencies": {
