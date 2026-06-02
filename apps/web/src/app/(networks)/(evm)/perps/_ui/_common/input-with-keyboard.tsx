@@ -37,9 +37,9 @@ export const InputWithKeyboard = ({
     if (currency && setAmount && amount) {
       let trimmed = amount
 
-      // Strip extra leading zeros before the decimal or integer part
-      // Allows "0.02" but rejects "00.01" or "00000.12"
-      trimmed = trimmed.replace(/^0+(\d)/, (_, d) => (d === '.' ? '0.' : d))
+      // Strip extra leading zeros while keeping a single leading zero.
+      // Leaves "0.02" untouched but collapses "00.01" -> "0.01", "012" -> "12".
+      trimmed = trimmed.replace(/^0+(\d)/, '$1')
 
       if (trimmed.includes('.')) {
         const [, decimals] = trimmed.split('.')
@@ -79,7 +79,7 @@ export const InputWithKeyboard = ({
       const canvas = document.createElement('canvas')
       const context = canvas.getContext('2d')
       if (!context) return 0
-      const inputEl = document.getElementById('input-with-keyboard')
+      const inputEl = widthRef.current
       if (inputEl) {
         if (amount.length > 11) {
           const fontSize = Number.parseFloat(getComputedStyle(inputEl).fontSize)
@@ -136,7 +136,6 @@ export const InputWithKeyboard = ({
               'p-0 py-1  font-medium !text-center !text-perps-muted',
             )}
             ref={widthRef}
-            id={'input-with-keyboard'}
           />
         </div>
         <p className="text-perps-muted-50 text-xs">

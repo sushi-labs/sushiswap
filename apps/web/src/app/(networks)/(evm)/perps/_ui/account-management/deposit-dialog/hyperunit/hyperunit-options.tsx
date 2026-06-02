@@ -55,14 +55,10 @@ export const HyperunitOptions = ({
     return _estimateData[depositOption.tokenType]
   }, [_estimateData, isLoadingEstimates, depositOption.tokenType])
 
-  const eta = useMemo(
-    () =>
-      String(estimateData?.[`${depositOption.tokenType}-depositEta`])?.replace(
-        'm',
-        '',
-      ),
-    [estimateData, depositOption.tokenType],
-  )
+  const eta = useMemo(() => {
+    const raw = estimateData?.[`${depositOption.tokenType}-depositEta`]
+    return raw ? String(raw).replace('m', '') : undefined
+  }, [estimateData, depositOption.tokenType])
   const fee = useMemo(() => {
     const feeInUnits = Number(
       estimateData?.[`${depositOption.tokenType}-deposit-fee-in-units`] || 0,

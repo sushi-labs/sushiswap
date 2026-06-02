@@ -235,14 +235,12 @@ export const AnyTokenDeposit = ({
     depositOption.chainId,
   ])
 
+  // minAmountOut is the on-chain slippage floor, already net of the UI fee, so
+  // it's always <= the USDC actually received: safe to deposit as-is (no fee or
+  // buffer fudge), and guaranteed >= the bridge minimum once the gate passes.
   const transferSwapAmount = useMemo(() => {
-    if (!tradeRef.current?.amountOut || step === 0) return undefined
-    const feeAmount = tradeRef.current.fee?.replace('$', '')
-    const fee = Amount.fromHuman(
-      tradeRef.current.amountOut.currency,
-      feeAmount || '0',
-    ).addHuman('0.01') // add a small buffer to the fee
-    return tradeRef.current.amountOut.sub(fee)
+    if (step === 0) return undefined
+    return tradeRef.current?.minAmountOut
   }, [step])
 
   const depositArgs = useMemo(() => {
@@ -299,6 +297,8 @@ export const AnyTokenDeposit = ({
         setOpen(false)
         setSwapAmount('')
         setStep(0)
+      } else {
+        setStep(1)
       }
     } catch (error) {
       console.log(error)
@@ -489,7 +489,7 @@ export const AnyTokenDeposit = ({
                       <Checker.Custom
                         size="default"
                         showChildren={Boolean(
-                          Number(tradeQuote?.amountOut?.toString()) >=
+                          Number(tradeQuote?.minAmountOut?.toString()) >=
                             getMinDepositAmount(depositOption.chainId),
                         )}
                         buttonText={`Minimum Deposit is ${getMinDepositAmount(depositOption.chainId)} USDC`}
@@ -497,7 +497,7 @@ export const AnyTokenDeposit = ({
                         onClick={() => {}}
                         disabled={
                           !tradeQuote ||
-                          Number(tradeQuote?.amountOut?.toString()) <
+                          Number(tradeQuote?.minAmountOut?.toString()) <
                             getMinDepositAmount(depositOption.chainId)
                         }
                       >
@@ -534,7 +534,12 @@ export const AnyTokenDeposit = ({
               <Button
                 variant="perps-tertiary"
                 size="default"
-                disabled={!sim?.request}
+                disabled={
+                  !sim?.request ||
+                  !transferSwapAmount ||
+                  Number(transferSwapAmount.toString()) <
+                    getMinDepositAmount(depositOption.chainId)
+                }
                 className="w-full"
                 onClick={transferUsdc}
                 loading={isWriteContractPending}
