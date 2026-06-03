@@ -16,6 +16,7 @@ export const InputWithKeyboard = ({
   currency,
   isLoading,
   address,
+  maxDecimals,
 }: {
   amount: string
   setAmount: (value: string) => void
@@ -24,9 +25,11 @@ export const InputWithKeyboard = ({
   error?: string | undefined
   isLoading: boolean
   address: EvmAddress | SvmAddress | undefined
+  maxDecimals?: number
 }) => {
   const widthRef = useRef<HTMLInputElement | null>(null)
   const { isLg } = useBreakpoint('lg')
+  const inputMaxDecimals = maxDecimals ?? currency.decimals ?? 2
 
   const { data: price } = usePrice({
     chainId: currency?.chainId,
@@ -130,7 +133,7 @@ export const InputWithKeyboard = ({
             onValueChange={setAmount}
             value={amount}
             readOnly={isLoading || !address}
-            maxDecimals={maxDecimals ?? currency?.decimals ?? 2}
+            maxDecimals={inputMaxDecimals}
             data-state={isLoading ? 'inactive' : 'active'}
             className={classNames(
               'p-0 py-1  font-medium !text-center !text-perps-muted',
@@ -155,7 +158,7 @@ export const InputWithKeyboard = ({
         <KeyboardInput
           amount={amount}
           setAmount={setAmount}
-          maxDecimals={currency?.decimals || 2}
+          maxDecimals={inputMaxDecimals}
         />
       )}
     </div>
