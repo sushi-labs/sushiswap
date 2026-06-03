@@ -3,6 +3,7 @@ import { SkeletonBox, classNames } from '@sushiswap/ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import {
+  currencyFormatter,
   getTextColorClass,
   perpsNumberFormatter,
   useLeaderboard,
@@ -65,9 +66,7 @@ const LeaderboardRow = forwardRef<HTMLDivElement, LeaderboardRowProps>(
             getTextColorClass(entry.pnl),
           )}
         >
-          {perpsNumberFormatter({ value: entry.pnl, maxFraxDigits: 1 }) ??
-            'N/A'}
-          %
+          {currencyFormatter.format(entry?.pnl || 0)}
         </div>
         <div
           className={classNames(

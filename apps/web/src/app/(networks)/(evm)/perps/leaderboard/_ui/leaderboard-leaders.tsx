@@ -2,6 +2,7 @@ import type { PerpsLeaderboardEntry } from '@sushiswap/graph-client/data-api'
 import { SkeletonBox, classNames } from '@sushiswap/ui'
 import { type ReactNode, useId, useMemo } from 'react'
 import {
+  currencyFormatter,
   getTextColorClass,
   perpsNumberFormatter,
   useLeaderboard,
@@ -185,11 +186,7 @@ const PlaceStats = ({ place, isLoading, entry }: PlaceCardProps) => {
           label="PNL"
           value={
             <div className={classNames(getTextColorClass(entry?.pnl || 0))}>
-              {perpsNumberFormatter({
-                value: entry?.pnl || '0',
-                maxFraxDigits: 1,
-              }) ?? 'N/A'}
-              %
+              {currencyFormatter.format(entry?.pnl || 0)}
             </div>
           }
           isLoading={isLoading}
