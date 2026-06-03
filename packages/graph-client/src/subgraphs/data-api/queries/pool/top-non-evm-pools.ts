@@ -12,29 +12,18 @@ export const TopNonEvmPoolsQuery = graphql(
       chainId
       name
       address
-      createdAt
       swapFee
       protocol
-      token0Price
-      token1Price
       token0Address
       token1Address
-      token0PriceUSD
-      token1PriceUSD
       liquidityUSD
-      txCount1h
       txCount1d
-      feeUSD1h
       feeUSD1d
-      volumeUSD1h
       volumeUSD1d
-      feeApr1d
       totalApr1d
       incentiveApr
-      isSmartPool
       isIncentivized
       wasIncentivized
-      source
     }
   }
 `,
