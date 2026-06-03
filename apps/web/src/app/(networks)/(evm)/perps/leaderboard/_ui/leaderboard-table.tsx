@@ -65,7 +65,9 @@ const LeaderboardRow = forwardRef<HTMLDivElement, LeaderboardRowProps>(
             getTextColorClass(entry.pnl),
           )}
         >
-          {entry.pnl?.toFixed(1)}%
+          {perpsNumberFormatter({ value: entry.pnl, maxFraxDigits: 1 }) ??
+            'N/A'}
+          %
         </div>
         <div
           className={classNames(

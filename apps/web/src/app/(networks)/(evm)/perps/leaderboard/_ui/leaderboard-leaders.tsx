@@ -185,7 +185,11 @@ const PlaceStats = ({ place, isLoading, entry }: PlaceCardProps) => {
           label="PNL"
           value={
             <div className={classNames(getTextColorClass(entry?.pnl || 0))}>
-              {entry?.pnl?.toFixed(1) ?? 'N/A'}%
+              {perpsNumberFormatter({
+                value: entry?.pnl || '0',
+                maxFraxDigits: 1,
+              }) ?? 'N/A'}
+              %
             </div>
           }
           isLoading={isLoading}
