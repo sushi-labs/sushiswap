@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { currencyFormatter } from 'src/lib/perps'
 import { Amount } from 'sushi'
 import type { EvmAddress, EvmCurrency } from 'sushi/evm'
+import type { SvmAddress, SvmCurrency } from 'sushi/svm'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { PerpsCard } from './perps-card'
 
@@ -19,27 +20,39 @@ export const InputWithKeyboard = ({
 }: {
   amount: string
   setAmount: (value: string) => void
-  balance: Amount<EvmCurrency> | undefined
-  currency: EvmCurrency
-  error: string | undefined
+  balance: Amount<EvmCurrency | SvmCurrency> | undefined
+  currency: EvmCurrency | SvmCurrency
+  error?: string | undefined
   isLoading: boolean
-  address: EvmAddress | undefined
+  address: EvmAddress | SvmAddress | undefined
   maxDecimals?: number
 }) => {
   const widthRef = useRef<HTMLInputElement | null>(null)
   const { isLg } = useBreakpoint('lg')
+  const inputMaxDecimals = maxDecimals ?? currency.decimals ?? 2
 
   const { data: price } = usePrice({
     chainId: currency?.chainId,
     address: currency?.wrap().address,
   })
 
-  // If currency changes, trim input to decimals
   useEffect(() => {
-    if (currency && setAmount && amount?.includes('.')) {
-      const [, decimals] = amount.split('.')
-      if (decimals.length > currency.decimals) {
-        setAmount(Number(amount).toFixed(currency.decimals))
+    if (currency && setAmount && amount) {
+      let trimmed = amount
+
+      // Strip extra leading zeros while keeping a single leading zero.
+      // Leaves "0.02" untouched but collapses "00.01" -> "0.01", "012" -> "12".
+      trimmed = trimmed.replace(/^0+(\d)/, '$1')
+
+      if (trimmed.includes('.')) {
+        const [, decimals] = trimmed.split('.')
+        if (decimals.length > currency.decimals) {
+          trimmed = Number(trimmed).toFixed(currency.decimals)
+        }
+      }
+
+      if (trimmed !== amount) {
+        setAmount(trimmed)
       }
     }
   }, [amount, setAmount, currency])
@@ -69,6 +82,17 @@ export const InputWithKeyboard = ({
       const canvas = document.createElement('canvas')
       const context = canvas.getContext('2d')
       if (!context) return 0
+      const inputEl = widthRef.current
+      if (inputEl) {
+        if (amount.length > 11) {
+          const fontSize = Number.parseFloat(getComputedStyle(inputEl).fontSize)
+          let newFontSize = fontSize * 0.9 ** (amount.length - 11)
+          if (newFontSize < 24) newFontSize = 24
+          inputEl.style.fontSize = `${newFontSize}px`
+        } else {
+          inputEl.style.fontSize = `48px`
+        }
+      }
       const style = getComputedStyle(widthRef.current)
       const font = `${style.fontSize} ${style.fontFamily}`
       context.font = font
@@ -83,7 +107,7 @@ export const InputWithKeyboard = ({
   }, [amount])
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1 w-full">
       <PerpsCard className="flex flex-col items-center justify-center gap-3 py-12 lg:py-6 p-6 overflow-hidden">
         <div className="w-[28px] h-[28px] block lg:hidden">
           <Currency.Icon
@@ -109,10 +133,10 @@ export const InputWithKeyboard = ({
             onValueChange={setAmount}
             value={amount}
             readOnly={isLoading || !address}
-            maxDecimals={maxDecimals || 2}
+            maxDecimals={inputMaxDecimals}
             data-state={isLoading ? 'inactive' : 'active'}
             className={classNames(
-              'p-0 py-1 !text-5xl font-medium !text-center !text-perps-muted',
+              'p-0 py-1  font-medium !text-center !text-perps-muted',
             )}
             ref={widthRef}
           />
@@ -130,7 +154,13 @@ export const InputWithKeyboard = ({
           currency.symbol
         }{' '}
       </button>
-      {isLg ? null : <KeyboardInput amount={amount} setAmount={setAmount} />}
+      {isLg ? null : (
+        <KeyboardInput
+          amount={amount}
+          setAmount={setAmount}
+          maxDecimals={inputMaxDecimals}
+        />
+      )}
     </div>
   )
 }

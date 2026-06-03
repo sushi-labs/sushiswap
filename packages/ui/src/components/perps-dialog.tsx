@@ -46,7 +46,7 @@ const perpsDialogOverlayVariants = cva(
   },
 )
 
-const perpsDialogCloseVariants = cva('', {
+export const perpsDialogCloseVariants = cva('', {
   variants: {
     variant: {
       default: 'absolute top-4 right-4 lg:top-1 lg:right-1 text-perps-muted/50',
