@@ -20,7 +20,7 @@ const FAQ_ITEMS = [
   {
     title: 'How do I earn points?',
     value: '2',
-    content: `Points are earned through trading volume on Sushi Perps. Every trade you make contributes to your points balance. Both opens and closes count. There's no cap on weekly point distribution — points are calculated based on your total volume traded.`,
+    content: `Points are earned through trading volume on Sushi Perps. Every trade you make contributes to your points balance. Both opens and closes count. There's no cap on point distribution — points are calculated based on your total volume traded.`,
   },
   {
     title: 'What are tiers?',
@@ -55,14 +55,14 @@ const FAQ_ITEMS = [
       <div className="flex flex-col gap-2">
         <p>
           Your multiplier locks in once you hit a tier and stays locked for all
-          of Season 1. At the end of the season, your total accrued points are
-          multiplied by your final tier multiplier to determine your airdrop
-          allocation.
+          of Season 1. Your points are multiplied by your tier multiplier live
+          as you earn them, so climbing tiers early in the season maximizes your
+          points growth.
         </p>
         <p>
-          Example: You earn 100,000 points during Season 1 and end the season at
-          Samurai tier (1.6x). Your final balance for airdrop calculation is
-          160,000 points.
+          Example: You earn 100,000 points during Season 1 (not including the
+          multiplier) and end the season at Samurai tier (1.6x). Your final
+          balance for airdrop calculation is 160,000 points.
         </p>
       </div>
     ),
@@ -86,7 +86,7 @@ const FAQ_ITEMS = [
     value: '6',
     content: (
       <p>
-        No. Referrals earn you fee share — 40% of your traders' fees, paid in
+        No. Referrals earn you fee share — 20% of your traders' fees, paid in
         USDC in real time. Trading volume is the only thing that earns points
         and climbs tiers. Referrals and points are two separate earning systems
         that run in parallel.
@@ -100,7 +100,7 @@ const FAQ_ITEMS = [
       <div className="flex flex-col gap-2">
         <p>
           Points convert directly into SUSHI tokens at the end of Season 1 (July
-          30, 2026). The higher your tier, the bigger your multiplier on total
+          31, 2026). The higher your tier, the bigger your multiplier on total
           points. Traders who climb tiers early have the entire season's accrual
           multiplied at their locked-in rate.
         </p>
@@ -142,14 +142,14 @@ const FAQ_ITEMS = [
   {
     title: 'When does Season 1 end?',
     value: '10',
-    content: <p>Season 1 will end on July 30, 2026.</p>,
+    content: <p>Season 1 will end on July 31, 2026.</p>,
   },
   {
     title: 'When and how do I claim my SUSHI?',
     value: '11',
     content: (
       <p>
-        You will be able to claim your SUSHI rewards on July 30th. The claim
+        You will be able to claim your SUSHI rewards on July 31st. The claim
         window will be live for 30 days.
       </p>
     ),
@@ -160,7 +160,7 @@ const FAQ_ITEMS = [
     content: (
       <p>
         Points earned in Season 1 are valid for the Season 1 airdrop only. They
-        do not expire before July 30, 2026, but they do not roll over into any
+        do not expire before July 31, 2026, but they do not roll over into any
         future season. If new seasons launch after this one, they start with
         fresh point balances.
       </p>
@@ -183,8 +183,8 @@ const FAQ_ITEMS = [
     value: '14',
     content: (
       <p>
-        No. You start earning points on your first trade. The Novice tier is
-        your entry level; any trade, any size, gets you started.
+        No. You start earning points on your first trade. The Deshi tier is your
+        entry level; any trade, any size, gets you started.
       </p>
     ),
   },
