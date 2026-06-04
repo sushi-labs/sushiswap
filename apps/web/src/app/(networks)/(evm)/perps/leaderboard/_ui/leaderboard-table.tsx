@@ -92,7 +92,6 @@ export const LeaderboardTable = () => {
   const { data: _userData, isLoading: isLoadingUser } = useLeaderboardUser({
     address: address,
     timeframe: TimeframeToPerpsTimeframe[timeframe],
-    sortBy,
   })
 
   const leaderboardData = useMemo(() => {

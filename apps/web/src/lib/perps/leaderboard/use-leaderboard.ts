@@ -19,9 +19,7 @@ export const useLeaderboard = ({
         timeframe,
       })
       const sortedData = data.entries.sort((a, b) => {
-        if (sortBy === 'volume') {
-          return b.volumeUsd - a.volumeUsd
-        } else if (sortBy === 'PNL') {
+        if (sortBy === 'PNL') {
           return b.pnl - a.pnl
         } else {
           return b.points - a.points
