@@ -1,8 +1,5 @@
-import {
-  type ISupportedWallet,
-  Networks,
-  StellarWalletsKit,
-} from '@creit.tech/stellar-wallets-kit'
+import { Networks, StellarWalletsKit } from '@creit.tech/stellar-wallets-kit'
+import { HotWalletModule } from '@creit.tech/stellar-wallets-kit/modules/hotwallet'
 import { defaultModules } from '@creit.tech/stellar-wallets-kit/modules/utils'
 import {
   WalletConnectModule,
@@ -30,6 +27,7 @@ StellarWalletsKit.init({
   network: Networks.PUBLIC,
   modules: [
     ...defaultModules(),
+    new HotWalletModule(),
     new WalletConnectModule({
       projectId: '04fe42b39cc40b3dd24d3a5ede232dfa',
       metadata: {
