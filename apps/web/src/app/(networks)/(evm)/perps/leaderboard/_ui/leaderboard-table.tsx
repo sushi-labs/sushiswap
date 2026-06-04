@@ -51,12 +51,7 @@ const LeaderboardRow = forwardRef<HTMLDivElement, LeaderboardRowProps>(
             </div>
           </div>
         </div>
-        <div
-          className={classNames(
-            'py-2 text-right px-2 tabular-nums',
-            sortBy === 'volume' && !isCard ? 'bg-perps-muted/[3%]' : '',
-          )}
-        >
+        <div className={classNames('py-2 text-right px-2 tabular-nums')}>
           {formatUSD(entry.volumeUsd)}
         </div>
         <div
@@ -170,12 +165,7 @@ export const LeaderboardTable = () => {
           >
             <div className="py-2 pl-4 font-normal px-2">User</div>
             <div className="py-2 text-right font-normal px-2">Tier</div>
-            <div
-              className={classNames(
-                'py-2 text-right font-normal px-2',
-                sortBy === 'volume' ? 'bg-perps-muted/[3%]' : '',
-              )}
-            >
+            <div className={classNames('py-2 text-right font-normal px-2')}>
               Volume
             </div>
             <div
