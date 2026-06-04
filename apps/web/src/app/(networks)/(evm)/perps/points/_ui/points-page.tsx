@@ -3,6 +3,7 @@
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useAccount } from 'src/lib/wallet'
 import { PerpsCard } from '~evm/perps/_ui/_common'
+import { FaqSection } from './faq-section'
 import { PointsSummaryCards } from './points-summary-cards'
 
 export function PointsPage() {
@@ -26,9 +27,12 @@ export function PointsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-2 mb-7">
+    <div className="flex flex-col gap-2 mb-14">
       <h1 className="text-4xl font-medium mb-2">Points</h1>
       <PointsSummaryCards />
+      <div className="mt-4 lg:mt-8">
+        <FaqSection />
+      </div>
     </div>
   )
 }
