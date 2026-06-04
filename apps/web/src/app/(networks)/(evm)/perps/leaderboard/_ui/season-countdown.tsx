@@ -1,5 +1,10 @@
 'use client'
 import { useEffect, useState } from 'react'
+import {
+  secondsInDay,
+  secondsInHour,
+  secondsInMinute,
+} from 'date-fns/constants'
 
 // july 31, 2026 at 11:59:59 PM UTC
 const SEASON_1_END_DATE = new Date('2026-07-31T23:59:59Z') //todo: get from DB
@@ -23,12 +28,10 @@ export const SeasonCountdown = () => {
       return 'Season 1 has ended'
     }
 
-    const days = Math.floor(difference / (1000 * 60 * 60 * 24))
-    const hours = Math.floor(
-      (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-    )
-    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
-    const seconds = Math.floor((difference % (1000 * 60)) / 1000)
+    const days = Math.floor(difference / secondsInDay)
+    const hours = Math.floor((difference % secondsInDay) / secondsInHour)
+    const minutes = Math.floor((difference % secondsInHour) / secondsInMinute)
+    const seconds = Math.floor((difference % secondsInMinute) / 1000)
 
     const format = (value: number) => String(value).padStart(2, '0')
 
