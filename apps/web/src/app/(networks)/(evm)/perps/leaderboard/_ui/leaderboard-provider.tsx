@@ -11,7 +11,7 @@ interface State {
     timeframe: LeaderboardTimeframeType
   }
 }
-export const LEADERBOARD_SORT_BY = ['volume', 'PNL', 'points'] as const
+export const LEADERBOARD_SORT_BY = ['PNL', 'points'] as const
 export type LeaderboardSortType = (typeof LEADERBOARD_SORT_BY)[number]
 
 export const LEADERBOARD_TIMEFRAMES = ['24h', '7d', 'season'] as const
