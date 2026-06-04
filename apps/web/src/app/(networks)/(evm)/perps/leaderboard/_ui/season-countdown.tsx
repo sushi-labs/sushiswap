@@ -22,7 +22,7 @@ export const SeasonCountdown = () => {
 
   function getTimeLeft() {
     const now = new Date()
-    const difference = SEASON_1_END_DATE.getTime() - now.getTime()
+    const difference = SEASON_1_END_DATE.getTime() / 1000 - now.getTime() / 1000
 
     if (difference <= 0) {
       return 'Season 1 has ended'
@@ -31,7 +31,7 @@ export const SeasonCountdown = () => {
     const days = Math.floor(difference / secondsInDay)
     const hours = Math.floor((difference % secondsInDay) / secondsInHour)
     const minutes = Math.floor((difference % secondsInHour) / secondsInMinute)
-    const seconds = Math.floor((difference % secondsInMinute) / 1000)
+    const seconds = Math.floor(difference % secondsInMinute)
 
     const format = (value: number) => String(value).padStart(2, '0')
 
