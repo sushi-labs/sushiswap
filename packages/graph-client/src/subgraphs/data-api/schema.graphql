@@ -55,8 +55,8 @@ type Query {
   vaults(chainId: SmartPoolChainId!, poolAddress: Bytes!): [Vault!]!
   sushiBarStats: SushiBarStats!
   sushiBarHistory: SushiBarHistory!
-  tokenList(chainId: TokenListChainId!, first: Int = 50, skip: Int, search: String, customTokens: [Address!]): [TokenListEntry!]!
-  tokenListBalances(chainId: TokenListChainId!, account: Address!, includeNative: Boolean = true, customTokens: [Address!]): [TokenListWithBalanceEntry!]!
+  tokenList(chainId: TokenListChainId!, first: Int = 50, skip: Int, search: String, customTokens: [ContractAddress!]): [TokenListEntry!]!
+  tokenListBalances(chainId: TokenListChainId!, account: Address!, includeNative: Boolean = true, customTokens: [ContractAddress!]): [TokenListWithBalanceEntry!]!
   tokenAnalysis(chainId: Int!, address: Bytes!): TokenAnalysis!
   pendingTokens: [PendingToken!]!
   approvedCommunityTokens: [ApprovedToken!]!
@@ -422,29 +422,18 @@ type TopPool {
   chainId: ChainId!
   name: String!
   address: String!
-  createdAt: String!
   swapFee: Float!
   protocol: String!
-  token0Price: Float!
-  token1Price: Float!
   token0Address: String!
   token1Address: String!
-  token0PriceUSD: Float!
-  token1PriceUSD: Float!
   liquidityUSD: Float!
-  txCount1h: Int!
   txCount1d: Int!
-  feeUSD1h: Float!
   feeUSD1d: Float!
-  volumeUSD1h: Float!
   volumeUSD1d: Float!
-  feeApr1d: Float!
   totalApr1d: Float!
   incentiveApr: Float!
-  isSmartPool: Boolean!
   isIncentivized: Boolean!
   wasIncentivized: Boolean!
-  source: String!
 }
 
 type Pool {
@@ -654,14 +643,20 @@ type PortfolioTransaction {
   gasFeeUSD: Float!
 }
 
-"""A field whose value is an EVM (0x) or SVM (base58) address"""
+"""A field whose value is an EVM (0x), SVM (base58), or Stellar (StrKey) address"""
 scalar Address
+
+"""A field whose value is an EVM address, SVM address, or Stellar contract address"""
+scalar ContractAddress
 
 """A field whose value is a Solana address"""
 scalar SvmAddress
 
 """A field whose value is an EVM address"""
 scalar EvmAddress
+
+"""A field whose value is a Stellar account address (G...)"""
+scalar StellarAccountAddress
 
 """
 A field whose value is a byte string: https://en.wikipedia.org/wiki/Byte_string
@@ -816,21 +811,28 @@ type SushiBarHistory {
   weekSnapshots: [SushiBarBucket!]!
 }
 
+type StellarTokenMetadata {
+  issuer: StellarAccountAddress!
+  domain: String!
+}
+
 type TokenListEntry {
-  address: Address!
+  address: ContractAddress!
   symbol: String!
   name: String!
   decimals: Int!
   approved: Boolean!
+  stellarMetadata: StellarTokenMetadata
 }
 
 type TokenListWithBalanceEntry {
-  address: Address!
+  address: ContractAddress!
   symbol: String!
   name: String!
   decimals: Int!
   balance: BigInt!
   approved: Boolean!
+  stellarMetadata: StellarTokenMetadata
 }
 
 type TokenValidationMetrics {

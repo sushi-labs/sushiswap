@@ -10,7 +10,7 @@ import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
 export const TokenListQuery = graphql(
   `
-  query TokenList($chainId: TokenListChainId!, $first: Int = 50,  $skip: Int, $search: String, $customTokens: [Address!]) {
+  query TokenList($chainId: TokenListChainId!, $first: Int = 50,  $skip: Int, $search: String, $customTokens: [ContractAddress!]) {
     tokenList(chainId: $chainId, first: $first, skip: $skip, search: $search, customTokens: $customTokens) {
       address
       symbol
@@ -44,12 +44,16 @@ export async function getTokenList<TChainId extends TokenListChainId>(
   )
 
   if (result) {
-    return result.tokenList.map((token) => ({
-      ...token,
-      id: getIdFromChainIdAddress(variables.chainId, token.address),
-      chainId: variables.chainId,
-      address: token.address as AddressFor<TChainId>,
-    }))
+    return result.tokenList.map((token) => {
+      const address = token.address as AddressFor<TChainId>
+
+      return {
+        ...token,
+        id: getIdFromChainIdAddress(variables.chainId, address),
+        chainId: variables.chainId,
+        address,
+      }
+    })
   }
 
   throw new Error('No tokens found')
