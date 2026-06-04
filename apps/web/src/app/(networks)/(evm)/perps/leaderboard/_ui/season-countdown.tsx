@@ -1,10 +1,10 @@
 'use client'
-import { useEffect, useState } from 'react'
 import {
   secondsInDay,
   secondsInHour,
   secondsInMinute,
 } from 'date-fns/constants'
+import { useEffect, useState } from 'react'
 
 // july 31, 2026 at 11:59:59 PM UTC
 const SEASON_1_END_DATE = new Date('2026-07-31T23:59:59Z') //todo: get from DB
