@@ -152,10 +152,10 @@ export const TwapCancelOrderButton = ({
       onClick={() => write?.()}
       disabled={Boolean(
         isEstGasError ||
-        isWritePending ||
-        isRefetchingOrders ||
-        isTxLoading ||
-        Boolean(!sendTransactionAsync),
+          isWritePending ||
+          isRefetchingOrders ||
+          isTxLoading ||
+          Boolean(!sendTransactionAsync),
       )}
       testId="cancel-order"
     >

@@ -40,10 +40,11 @@ function LabelWithTooltip({
 // Allows optional leading minus, digits, optional decimal part (e.g. -5, -2.5, 10.25)
 const signedDecimalRegex = /^-?\d*(?:\.\d*)?$/
 
-export interface TwapPercentageInputProps extends Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  'value' | 'onChange' | 'size'
-> {
+export interface TwapPercentageInputProps
+  extends Omit<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    'value' | 'onChange' | 'size'
+  > {
   value: string
   onValueChange?: (value: string) => void
   maxDecimals?: number
