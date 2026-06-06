@@ -1,8 +1,8 @@
 import {
-  getConfig,
-  Order,
+  type Order,
   REPERMIT_ABI,
   TWAP_ABI,
+  getConfig,
   useOrderHistoryPanel,
   useRefetchUntilStatusSynced,
 } from '@orbs-network/spot-react'
@@ -12,6 +12,7 @@ import { useCallback, useMemo } from 'react'
 
 import { logger } from 'src/lib/logger'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
+import type { EvmChainId } from 'sushi/evm'
 import {
   type Address,
   type SendTransactionReturnType,
@@ -25,7 +26,6 @@ import {
   useWaitForTransactionReceipt,
 } from 'wagmi'
 import { getTwapConfig, getTwapOrderTitle } from './helper'
-import { EvmChainId } from 'sushi/evm'
 
 export const TwapCancelOrderButton = ({
   chainId,

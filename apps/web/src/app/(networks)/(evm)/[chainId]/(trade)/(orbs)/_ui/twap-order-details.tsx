@@ -1,15 +1,15 @@
-import { fillDelayText, OrderType, Token } from '@orbs-network/spot-react'
+import { OrderType, type Token, fillDelayText } from '@orbs-network/spot-react'
 import {
   Button,
-  classNames,
   FormattedNumber,
   List,
   SkeletonText,
+  classNames,
 } from '@sushiswap/ui'
 import { format, formatDistanceStrict } from 'date-fns'
 import { formatUSD, shortenAddress } from 'sushi'
-import { EvmChainId, getEvmChainById } from 'sushi/evm'
-import { Address } from 'viem'
+import { type EvmChainId, getEvmChainById } from 'sushi/evm'
+import type { Address } from 'viem'
 
 const PriceRateRow = ({
   price,
@@ -108,7 +108,7 @@ const NumberOfOrders = ({
   )
 }
 
-const Date = ({ date }: { date?: number }) => {
+const FormattedDate = ({ date }: { date?: number }) => {
   if (!date) return <SkeletonText />
   return <>{format(date, "MMMM d, yyyy 'at' h:mm a")}</>
 }
@@ -123,7 +123,7 @@ const StartDate = ({
   return (
     <List.KeyValue title="Start Date" className="!p-0">
       <span className={valueClassName}>
-        <Date date={startDate} />
+        <FormattedDate date={startDate} />
       </span>
     </List.KeyValue>
   )
@@ -139,7 +139,7 @@ const EndDate = ({
   return (
     <List.KeyValue title="Est. End Date" className="!p-0">
       <span className={valueClassName}>
-        <Date date={endDate} />
+        <FormattedDate date={endDate} />
       </span>
     </List.KeyValue>
   )
@@ -278,5 +278,5 @@ export const TwapOrderDetails = {
   TriggerPrice,
   DcaChunksRow,
   PriceRateRow,
-  Date,
+  Date: FormattedDate,
 }

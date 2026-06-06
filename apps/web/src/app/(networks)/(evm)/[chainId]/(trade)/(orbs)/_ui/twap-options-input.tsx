@@ -1,25 +1,25 @@
-import * as React from 'react'
 import { Radio, RadioGroup } from '@headlessui/react'
 import { ArrowsUpDownIcon } from '@heroicons/react/24/outline'
 import {
+  type TimeUnit,
   formatDecimals,
-  TimeUnit,
   useDurationPanel,
   useInvertTradePanel,
   useLimitPricePanel,
   useTriggerPricePanel,
 } from '@orbs-network/spot-react'
 import {
-  classNames,
   Explainer,
   IconButton,
   Switch,
   TextField,
-  textFieldVariants,
   Toggle,
+  classNames,
+  textFieldVariants,
 } from '@sushiswap/ui'
-import { formatUSD } from 'sushi'
+import * as React from 'react'
 import { useMemo } from 'react'
+import { formatUSD } from 'sushi'
 
 // ============ Small UI / helpers ============
 function LabelWithTooltip({
@@ -242,7 +242,7 @@ function PriceConfigSection({
             {' '}
             {formatUSD(usd)}
           </p>
-          <div className="w-[100px]"></div>
+          <div className="w-[100px]" />
         </div>
       </div>
     </div>
@@ -258,6 +258,7 @@ const ResetButton = ({
 }) => {
   return (
     <button
+      type="button"
       onClick={onReset}
       name="Reset"
       className="text-[13px] font-medium text-muted-foreground hover:text-accent-foreground"
@@ -372,25 +373,6 @@ export const TwapPriceConfigPanel = ({
     </div>
   )
 }
-
-const LIMIT_EXPIRATION_OPTIONS = [
-  {
-    label: '1 day',
-    value: TimeUnit.Days,
-  },
-  {
-    label: '1 week',
-    value: TimeUnit.Weeks,
-  },
-  {
-    label: '1 month',
-    value: TimeUnit.Months,
-  },
-  {
-    label: '1 year',
-    value: TimeUnit.Years,
-  },
-]
 
 export const TwapExpiryInput = ({
   options,

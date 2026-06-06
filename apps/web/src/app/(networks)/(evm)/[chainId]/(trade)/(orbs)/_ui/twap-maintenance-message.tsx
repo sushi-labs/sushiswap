@@ -1,9 +1,9 @@
 'use client'
 
-import { Message } from '@sushiswap/ui'
-import { useIsTwapMaintenance } from './use-is-twap-maintenance'
 import { Module } from '@orbs-network/spot-react'
+import { Message } from '@sushiswap/ui'
 import { useMemo } from 'react'
+import { useIsTwapMaintenance } from './use-is-twap-maintenance'
 
 export const TwapMaintenanceMessage = ({ module }: { module: Module }) => {
   const { data: isMaintenance } = useIsTwapMaintenance(module)

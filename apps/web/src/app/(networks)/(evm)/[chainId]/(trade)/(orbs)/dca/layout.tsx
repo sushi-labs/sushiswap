@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
-import { Providers } from './providers'
 import { TwapLayout } from '../_ui/twap-layout'
+import { Providers } from './providers'
 
 export const metadata: Metadata = {
   title: 'DCA',

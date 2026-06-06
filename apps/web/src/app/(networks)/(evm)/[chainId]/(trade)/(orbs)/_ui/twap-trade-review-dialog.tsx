@@ -1,6 +1,13 @@
 'use client'
 
 import {
+  Module,
+  submitOrder,
+  useOrderDisplay,
+  useOrderHistoryPanel,
+  useRePermitOrderData,
+} from '@orbs-network/spot-react'
+import {
   createErrorToast,
   createInfoToast,
   createSuccessToast,
@@ -19,24 +26,17 @@ import {
   List,
   Switch,
 } from '@sushiswap/ui'
-import {
-  useOrderHistoryPanel,
-  useOrderDisplay,
-  Module,
-  useRePermitOrderData,
-  submitOrder,
-} from '@orbs-network/spot-react'
+import { useMutation } from '@tanstack/react-query'
 import React, { type FC, type ReactNode, useMemo, useState } from 'react'
 import { logger } from 'src/lib/logger'
+import { ORBS_EXPLORER_URL } from 'src/lib/swap/twap'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
-import { EvmChainId, getEvmChainById } from 'sushi/evm'
+import { type EvmChainId, getEvmChainById } from 'sushi/evm'
+import { type Address, numberToHex, parseSignature } from 'viem'
 import { useConnection, useSignTypedData } from 'wagmi'
 import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
-import { Address, numberToHex, parseSignature } from 'viem'
 import { getTwapOrderTitle, isLimitPriceOrder } from './helper'
 import { TwapOrderDetails } from './twap-order-details'
-import { useMutation } from '@tanstack/react-query'
-import { ORBS_EXPLORER_URL } from 'src/lib/swap/twap'
 
 const useSignAndSendMutation = () => {
   const { address } = useConnection()
@@ -134,9 +134,6 @@ export const TwapTradeReviewDialog: FC<{
   )
 
   const isDca = module === Module.TWAP
-  const isLimit = module === Module.LIMIT
-  const isStopLoss = module === Module.STOP_LOSS
-  const isTakeProfit = module === Module.TAKE_PROFIT
 
   return (
     <DialogProvider>

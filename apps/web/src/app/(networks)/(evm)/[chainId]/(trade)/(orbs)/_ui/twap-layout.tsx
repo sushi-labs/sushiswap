@@ -1,13 +1,13 @@
 'use client'
 
-import { TWAP_SUPPORTED_CHAIN_IDS } from 'src/lib/swap/twap'
-import { EvmChainId } from 'sushi/evm'
-import { Header } from '../../header'
-import { isTwapSupportedChainId } from './helper'
 import { notFound } from 'next/navigation'
-import { DerivedStateSwapWidgetProvider } from '~evm/[chainId]/token/[address]/_ui/derivedstate-swap-widget-provider'
 import { SupportedChainId } from 'src/config'
+import { TWAP_SUPPORTED_CHAIN_IDS } from 'src/lib/swap/twap'
+import type { EvmChainId } from 'sushi/evm'
+import { DerivedStateSwapWidgetProvider } from '~evm/[chainId]/token/[address]/_ui/derivedstate-swap-widget-provider'
+import { Header } from '../../header'
 import { DerivedstateSimpleSwapProvider } from '../../swap/_ui/derivedstate-simple-swap-provider'
+import { isTwapSupportedChainId } from './helper'
 
 export const TwapLayout = ({
   children,

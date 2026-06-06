@@ -1,9 +1,9 @@
 'use client'
 
-import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { EvmChainId, isEvmWNativeSupported } from 'sushi/evm'
-import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
 import { formatDecimals, useDstTokenPanel } from '@orbs-network/spot-react'
+import { Web3Input } from 'src/lib/wagmi/components/web3-input'
+import { type EvmChainId, isEvmWNativeSupported } from 'sushi/evm'
+import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
 
 export const TwapToken1Input = () => {
   const { value } = useDstTokenPanel()

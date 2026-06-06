@@ -1,6 +1,6 @@
-import { DCAOptionsInput } from './dca-options-input'
 import { Module } from '@orbs-network/spot-react'
 import { TwapForm } from '../../_ui/twap-form'
+import { DCAOptionsInput } from './dca-options-input'
 
 const module = Module.TWAP
 

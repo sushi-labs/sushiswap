@@ -1,10 +1,10 @@
 import {
   Partners,
-  getPartnerChains,
-  TimeDuration,
+  type TimeDuration,
   TimeUnit,
+  getPartnerChains,
 } from '@orbs-network/spot-react'
-import { EvmChainId } from 'sushi/evm'
+import type { EvmChainId } from 'sushi/evm'
 
 export const TWAP_MIN_FILL_DELAY = {
   value: 5,

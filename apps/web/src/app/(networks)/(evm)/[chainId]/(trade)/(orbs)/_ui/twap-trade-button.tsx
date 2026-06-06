@@ -1,6 +1,11 @@
 'use client'
 
 import {
+  type Module,
+  useAddresses,
+  useInputErrors,
+} from '@orbs-network/spot-react'
+import {
   type ButtonProps,
   DialogTrigger,
   Message,
@@ -13,10 +18,9 @@ import { useWrapNative } from 'src/lib/wagmi/hooks/wnative/useWrapNative'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import type { Amount } from 'sushi'
 import type { EvmCurrency } from 'sushi/evm'
+import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
 import { TwapTradeReviewDialog } from './twap-trade-review-dialog'
 import { useIsTwapMaintenance } from './use-is-twap-maintenance'
-import { useInputErrors, useAddresses, Module } from '@orbs-network/spot-react'
-import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
 
 type WrapNativeCheckerProps = ButtonProps & {
   amount: Amount<EvmCurrency> | undefined

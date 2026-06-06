@@ -1,6 +1,6 @@
-import { getConfig, OrderType, Partners } from '@orbs-network/spot-react'
+import { OrderType, Partners, getConfig } from '@orbs-network/spot-react'
 import { TWAP_SUPPORTED_CHAIN_IDS } from 'src/lib/swap/twap'
-import { EvmChainId } from 'sushi/evm'
+import type { EvmChainId } from 'sushi/evm'
 
 export const isTwapSupportedChainId = (chainId: number): chainId is number =>
   TWAP_SUPPORTED_CHAIN_IDS.includes(chainId as EvmChainId)

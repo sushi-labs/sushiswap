@@ -1,5 +1,11 @@
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import {
+  InputErrors,
+  TimeUnit,
+  useFillDelayPanel,
+  useTradesPanel,
+} from '@orbs-network/spot-react'
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -14,12 +20,6 @@ import {
 import { useCallback, useMemo } from 'react'
 import { TWAP_MAX_FILL_DELAY, TWAP_MIN_FILL_DELAY } from 'src/lib/swap/twap'
 import { formatUSD } from 'sushi'
-import {
-  InputErrors,
-  TimeUnit,
-  useFillDelayPanel,
-  useTradesPanel,
-} from '@orbs-network/spot-react'
 import { useTwapMinTradeSize } from '../../_ui/hooks'
 
 export const DCAOptionsInput = () => {

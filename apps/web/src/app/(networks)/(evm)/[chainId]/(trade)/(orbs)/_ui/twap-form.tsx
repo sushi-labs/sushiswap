@@ -1,51 +1,51 @@
 'use client'
 
+import { InformationCircleIcon } from '@heroicons/react-v1/solid'
+import { Module, Partners, SpotProvider } from '@orbs-network/spot-react'
+import type {
+  ButtonProps,
+  Token,
+  TokenLogoProps,
+  TooltipProps,
+  Translations,
+} from '@orbs-network/spot-react'
+import { usePriceProtection } from '@sushiswap/hooks'
 // ============ Imports ============
 import {
   Button,
+  Currency,
   Tooltip,
   TooltipContent,
-  TooltipTrigger,
-  Currency,
   TooltipProvider,
+  TooltipTrigger,
 } from '@sushiswap/ui'
 import { Loader } from '@sushiswap/ui'
-import { useCallback, useMemo, type FC, type ReactNode } from 'react'
 import { useParams } from 'next/navigation'
-import { SpotProvider, Module, Partners } from '@orbs-network/spot-react'
-import type {
-  ButtonProps,
-  TooltipProps,
-  TokenLogoProps,
-  Token,
-  Translations,
-} from '@orbs-network/spot-react'
+import { type FC, type ReactNode, useCallback, useMemo } from 'react'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
-import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
+import type { CurrencyMetadata } from 'sushi'
+import { type EvmChainId, type EvmCurrency, EvmNative } from 'sushi/evm'
+import type { SvmCurrency } from 'sushi/svm'
+import { type Address, zeroAddress } from 'viem'
 import { useConnection, useWalletClient } from 'wagmi'
-import { type CurrencyMetadata } from 'sushi'
+import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
+import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
+import { SwapModeButtons } from '../../_ui/swap-mode-buttons'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
 } from '../../swap/_ui/derivedstate-simple-swap-provider'
-import { EvmChainId, EvmNative, type EvmCurrency } from 'sushi/evm'
-import { SvmCurrency } from 'sushi/svm'
-import { usePriceProtection } from '@sushiswap/hooks'
-import { Address, zeroAddress } from 'viem'
-import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
-import { InformationCircleIcon } from '@heroicons/react-v1/solid'
-import { SwapModeButtons } from '../../_ui/swap-mode-buttons'
+import { SimpleSwapTokenNotFoundDialog } from '../../swap/_ui/simple-swap-token-not-found-dialog'
+import { useTwapMinTradeSize } from './hooks'
+import { OrbsBanner } from './orbs-banner'
 import { SpotSettingsOverlay } from './spot-settings-overlay'
 import { TwapMaintenanceMessage } from './twap-maintenance-message'
 import { TwapOrdersDialogTriggerButton } from './twap-orders-dialog'
-import { OrbsBanner } from './orbs-banner'
-import { SimpleSwapTokenNotFoundDialog } from '../../swap/_ui/simple-swap-token-not-found-dialog'
-import { TwapToken0Input } from './twap-token0-input'
 import { TwapSwitchTokensButton } from './twap-switch-tokens-button'
+import { TwapToken0Input } from './twap-token0-input'
 import { TwapToken1Input } from './twap-token1-input'
 import { TwapTradeButton } from './twap-trade-button'
-import { useTwapMinTradeSize } from './hooks'
 
 const CUSTOM_TRANSLATIONS: Partial<Translations> = {
   maxChunksError: 'Inadequate Trade Size, {maxChunks} is max',

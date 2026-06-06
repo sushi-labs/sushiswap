@@ -1,7 +1,16 @@
 'use client'
 
+import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { ArrowRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { ArrowLeftIcon } from '@heroicons/react/24/solid'
+import {
+  type Order,
+  OrderStatus,
+  OrderType,
+  type SelectedOrder,
+  getExplorerUrl,
+  useOrderHistoryPanel,
+} from '@orbs-network/spot-react'
 import {
   Accordion,
   AccordionContent,
@@ -36,26 +45,17 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { EvmChainId, EvmNative, EvmToken, shortenHash } from 'sushi/evm'
-import { zeroAddress, type Address, type Hex } from 'viem'
-import { useConnection } from 'wagmi'
-import { TwapCancelOrderButton } from './twap-cancel-order-button'
-import {
-  getExplorerUrl,
-  Order,
-  OrderStatus,
-  OrderType,
-  SelectedOrder,
-  useOrderHistoryPanel,
-} from '@orbs-network/spot-react'
-import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
-import { TwapOrderDetails } from './twap-order-details'
-import { getTwapOrderTitle, isLimitPriceOrder } from './helper'
 import { ORBS_EXPLORER_URL } from 'src/lib/swap/twap'
-import { ChevronRightIcon } from '@heroicons/react-v1/solid'
+import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { CurrencyMetadata } from 'sushi'
+import { type EvmChainId, EvmNative, EvmToken, shortenHash } from 'sushi/evm'
 import { SvmToken } from 'sushi/svm'
+import { type Address, type Hex, zeroAddress } from 'viem'
+import { useConnection } from 'wagmi'
+import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
+import { getTwapOrderTitle, isLimitPriceOrder } from './helper'
+import { TwapCancelOrderButton } from './twap-cancel-order-button'
+import { TwapOrderDetails } from './twap-order-details'
 
 const MinDstAmountRow = ({
   totalTrades,
@@ -116,7 +116,7 @@ const _TwapOrdersDialog: FC<{
       setShowOrderFills(false)
       onDisplayOrder(undefined)
     }
-  }, [open])
+  }, [onDisplayOrder, open])
 
   const onBack = useCallback(() => {
     if (showOrderFills) {
@@ -169,7 +169,7 @@ const _TwapOrdersDialog: FC<{
                         <div className="text-sm text-center">Loading...</div>
                       </List.Control>
                     ) : selectedOrders.length ? (
-                      selectedOrders.map((order, i) => (
+                      selectedOrders.map((order) => (
                         <button
                           type="button"
                           key={order.id}

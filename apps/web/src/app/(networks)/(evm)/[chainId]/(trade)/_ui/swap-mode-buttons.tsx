@@ -7,10 +7,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  classNames,
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
+  classNames,
 } from '@sushiswap/ui'
 import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
 import Link from 'next/link'
