@@ -54,15 +54,21 @@ const SwapModeButton = ({
   children: ReactNode
   className?: string
 }) => {
-  const buttonClass = classNames('w-full justify-start', className)
+  if (isSupported) {
+    return (
+      <Link href={path} className="block w-full">
+        <PathnameButton
+          pathname={path}
+          size="sm"
+          className={classNames('w-full justify-start', className)}
+        >
+          {children}
+        </PathnameButton>
+      </Link>
+    )
+  }
 
-  return isSupported ? (
-    <Link href={path} className="block w-full">
-      <PathnameButton pathname={path} size="sm" className={buttonClass}>
-        {children}
-      </PathnameButton>
-    </Link>
-  ) : (
+  return (
     <HoverCard>
       <HoverCardTrigger asChild>
         <PathnameButton

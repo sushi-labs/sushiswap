@@ -2,6 +2,7 @@
 
 import { InputErrors, useInputErrors } from '@orbs-network/spot-react'
 import { classNames } from '@sushiswap/ui'
+import type { SupportedChainId } from 'src/config'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { type EvmChainId, isEvmWNativeSupported } from 'sushi/evm'
 import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
@@ -11,7 +12,7 @@ export const TwapToken0Input = () => {
     state: { swapAmountString, chainId, token0 },
     mutate: { setSwapAmount, setToken0 },
     isToken0Loading: isLoading,
-  } = useDerivedStateSimpleSwap()
+  } = useDerivedStateSimpleSwap<SupportedChainId & EvmChainId>()
 
   const minTradeSizeError =
     useInputErrors()?.type === InputErrors.MIN_TRADE_SIZE
@@ -30,7 +31,7 @@ export const TwapToken0Input = () => {
       onChange={setSwapAmount}
       currency={token0}
       currencyLoading={isLoading}
-      allowNative={isEvmWNativeSupported(chainId as EvmChainId)}
+      allowNative={isEvmWNativeSupported(chainId)}
       label="You're selling"
     />
   )

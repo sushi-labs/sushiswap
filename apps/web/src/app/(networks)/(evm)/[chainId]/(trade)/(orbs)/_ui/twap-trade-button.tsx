@@ -5,12 +5,7 @@ import {
   useAddresses,
   useInputErrors,
 } from '@orbs-network/spot-react'
-import {
-  type ButtonProps,
-  DialogTrigger,
-  Message,
-  classNames,
-} from '@sushiswap/ui'
+import { type ButtonProps, DialogTrigger, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import React, { type FC } from 'react'
 import { APPROVE_TAG_SWAP } from 'src/lib/constants'
@@ -20,7 +15,6 @@ import type { Amount } from 'sushi'
 import type { EvmCurrency } from 'sushi/evm'
 import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
 import { TwapTradeReviewDialog } from './twap-trade-review-dialog'
-import { useIsTwapMaintenance } from './use-is-twap-maintenance'
 
 type WrapNativeCheckerProps = ButtonProps & {
   amount: Amount<EvmCurrency> | undefined
@@ -56,13 +50,8 @@ const WrapNativeChecker: FC<WrapNativeCheckerProps> = ({
   )
 }
 
-type TwapTradeCheckerProps = ButtonProps & {
-  chainId: number
-}
-
-const TwapTradeChecker: FC<TwapTradeCheckerProps> = ({
+const TwapTradeChecker: FC<ButtonProps> = ({
   id,
-  chainId,
   children,
   className,
   fullWidth = true,
@@ -89,8 +78,6 @@ const TwapTradeChecker: FC<TwapTradeCheckerProps> = ({
 }
 
 export const TwapTradeButton = ({ module }: { module: Module }) => {
-  const { data: maintenance } = useIsTwapMaintenance(module)
-
   const {
     state: { swapAmount, chainId },
   } = useDerivedStateSimpleSwap()
@@ -100,39 +87,34 @@ export const TwapTradeButton = ({ module }: { module: Module }) => {
 
   return (
     <TwapTradeReviewDialog module={module}>
-      <Checker.Guard
-        guardWhen={maintenance}
-        guardText="Maintenance in progress"
-      >
-        <Checker.Connect>
-          <Checker.Network chainId={chainId}>
-            <TwapTradeChecker chainId={chainId}>
-              <Checker.Amounts chainId={chainId} amount={swapAmount}>
-                <WrapNativeChecker amount={swapAmount as Amount<EvmCurrency>}>
-                  <Checker.ApproveERC20
-                    id="approve-erc20"
-                    amount={swapAmount?.wrap()}
-                    contract={spender}
-                  >
-                    <Checker.Success tag={APPROVE_TAG_SWAP}>
-                      <DialogTrigger asChild>
-                        <Button
-                          size="xl"
-                          disabled={!!errors}
-                          fullWidth
-                          testId="swap"
-                        >
-                          Place order
-                        </Button>
-                      </DialogTrigger>
-                    </Checker.Success>
-                  </Checker.ApproveERC20>
-                </WrapNativeChecker>
-              </Checker.Amounts>
-            </TwapTradeChecker>
-          </Checker.Network>
-        </Checker.Connect>
-      </Checker.Guard>
+      <Checker.Connect>
+        <Checker.Network chainId={chainId}>
+          <TwapTradeChecker>
+            <Checker.Amounts chainId={chainId} amount={swapAmount}>
+              <WrapNativeChecker amount={swapAmount as Amount<EvmCurrency>}>
+                <Checker.ApproveERC20
+                  id="approve-erc20"
+                  amount={swapAmount?.wrap()}
+                  contract={spender}
+                >
+                  <Checker.Success tag={APPROVE_TAG_SWAP}>
+                    <DialogTrigger asChild>
+                      <Button
+                        size="xl"
+                        disabled={!!errors}
+                        fullWidth
+                        testId="swap"
+                      >
+                        Place order
+                      </Button>
+                    </DialogTrigger>
+                  </Checker.Success>
+                </Checker.ApproveERC20>
+              </WrapNativeChecker>
+            </Checker.Amounts>
+          </TwapTradeChecker>
+        </Checker.Network>
+      </Checker.Connect>
     </TwapTradeReviewDialog>
   )
 }

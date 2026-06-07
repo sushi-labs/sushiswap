@@ -40,7 +40,7 @@ import { TwapOrderDetails } from './twap-order-details'
 
 const useSignAndSendMutation = () => {
   const { address } = useConnection()
-  const { signTypedDataAsync } = useSignTypedData()
+  const { mutateAsync: signTypedDataAsync } = useSignTypedData()
   const rePermitData = useRePermitOrderData()
   const { refetchOrders } = useOrderHistoryPanel()
   const {
@@ -59,11 +59,11 @@ const useSignAndSendMutation = () => {
       const { order: rePermitOrder, domain, types, primaryType } = rePermitData
       const signedTimestamp = new Date().getTime()
       const signatureStr = await signTypedDataAsync({
-        domain: domain as Record<string, any>,
+        domain,
         types,
         primaryType,
         message: rePermitOrder as Record<string, any>,
-        account: address as `0x${string}`,
+        account: address,
       })
 
       if (!signatureStr) {

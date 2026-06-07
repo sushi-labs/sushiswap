@@ -20,3 +20,7 @@ export const TWAP_SUPPORTED_CHAIN_IDS = getPartnerChains(
   Partners.Sushiswap,
 ) as EvmChainId[]
 export const ORBS_EXPLORER_URL = 'https://orbs-explorer.vercel.app'
+
+// Minimum per-trade (chunk) size in USD. Currently uniform across all
+// supported chains.
+export const TWAP_MIN_CHUNK_SIZE_USD = 5

@@ -1,7 +1,5 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
 import { TwapLayout } from '../_ui/twap-layout'
-import { Providers } from './providers'
 
 export const metadata: Metadata = {
   title: 'Take Profit',
@@ -15,11 +13,6 @@ export default async function SwapTakeProfitLayout(props: {
   const params = await props.params
   const { children } = props
   const chainId = Number(params.chainId)
-  if (!Number.isFinite(chainId)) notFound()
 
-  return (
-    <Providers>
-      <TwapLayout chainId={chainId}>{children}</TwapLayout>
-    </Providers>
-  )
+  return <TwapLayout chainId={chainId}>{children}</TwapLayout>
 }

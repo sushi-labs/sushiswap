@@ -15,13 +15,13 @@ import {
   TextField,
   Toggle,
   classNames,
-  textFieldVariants,
 } from '@sushiswap/ui'
-import * as React from 'react'
+import type * as React from 'react'
 import { useMemo } from 'react'
 import { formatUSD } from 'sushi'
 
 // ============ Small UI / helpers ============
+
 function LabelWithTooltip({
   label,
   tooltip,
@@ -36,105 +36,6 @@ function LabelWithTooltip({
     </div>
   )
 }
-
-// Allows optional leading minus, digits, optional decimal part (e.g. -5, -2.5, 10.25)
-const signedDecimalRegex = /^-?\d*(?:\.\d*)?$/
-
-export interface TwapPercentageInputProps
-  extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    'value' | 'onChange' | 'size'
-  > {
-  value: string
-  onValueChange?: (value: string) => void
-  maxDecimals?: number
-  unit?: string
-  variant?: 'default' | 'naked' | 'outline'
-  size?: 'sm' | 'default'
-  isError?: boolean
-  className?: string
-}
-
-export const TwapPercentageInput = React.forwardRef<
-  HTMLInputElement,
-  TwapPercentageInputProps
->(
-  (
-    {
-      value,
-      onValueChange,
-      maxDecimals,
-      unit = '%',
-      variant = 'default',
-      size = 'default',
-      isError = false,
-      className,
-      disabled,
-      ...props
-    },
-    ref,
-  ) => {
-    const _onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-      const next = e.target.value.replace(/,/g, '.').replace(/%/g, '')
-      if (onValueChange && (next === '' || next === '-')) {
-        onValueChange(next)
-        return
-      }
-      if (signedDecimalRegex.test(next)) {
-        if (maxDecimals != null && next.includes('.')) {
-          const [, decimals] = next.split('.')
-          if (decimals.length <= maxDecimals) {
-            onValueChange?.(next)
-          }
-        } else {
-          onValueChange?.(next)
-        }
-      }
-    }
-
-    return (
-      <div className="group relative flex items-center justify-between w-full">
-        <input
-          ref={ref}
-          value={value}
-          onChange={_onChange}
-          disabled={disabled}
-          placeholder="0"
-          inputMode="decimal"
-          autoCorrect="off"
-          autoCapitalize="none"
-          spellCheck={false}
-          autoComplete="off"
-          className={textFieldVariants({
-            isError: isError ? 'yes' : 'no',
-            variant,
-            hasIcon: 'no',
-            hasUnit: unit ? 'yes' : 'no',
-            size,
-            className: classNames(
-              'flex-grow flex-1 !outline-none !ring-0',
-              className,
-            ),
-          })}
-          {...props}
-        />
-        {unit ? (
-          <div
-            className={textFieldVariants({
-              isError: isError ? 'yes' : 'no',
-              variant,
-              size,
-              className:
-                'text-muted-foreground rounded-l-none !w-[unset] flex items-center',
-            })}
-          >
-            {unit}
-          </div>
-        ) : null}
-      </div>
-    )
-  },
-)
 
 const TwapPriceConfigHeader = ({
   isTriggerPrice,
@@ -221,8 +122,11 @@ function PriceConfigSection({
                 error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
               )}
             >
-              <TwapPercentageInput
+              <TextField
                 type="number"
+                allowNegative
+                unit="%"
+                placeholder="0"
                 variant="naked"
                 disabled={false}
                 onValueChange={onPercentageChange}

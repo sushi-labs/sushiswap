@@ -2,8 +2,6 @@ import {
   type Order,
   REPERMIT_ABI,
   TWAP_ABI,
-  getConfig,
-  useOrderHistoryPanel,
   useRefetchUntilStatusSynced,
 } from '@orbs-network/spot-react'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
@@ -95,7 +93,9 @@ export const TwapCancelOrderButton = ({
           groupTimestamp: ts,
         })
       } catch (e) {
-        console.log(e)
+        logger.error(e, {
+          location: 'TwapCancelOrderButton',
+        })
       }
     },
     [tx, client, address, title],

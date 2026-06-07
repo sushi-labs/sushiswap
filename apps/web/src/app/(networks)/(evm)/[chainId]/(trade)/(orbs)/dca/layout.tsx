@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { TwapLayout } from '../_ui/twap-layout'
-import { Providers } from './providers'
 
 export const metadata: Metadata = {
   title: 'DCA',
@@ -16,9 +15,5 @@ export default async function SwapDCALayout(props: {
   const { children } = props
   const chainId = +params.chainId
 
-  return (
-    <Providers>
-      <TwapLayout chainId={chainId}>{children}</TwapLayout>
-    </Providers>
-  )
+  return <TwapLayout chainId={chainId}>{children}</TwapLayout>
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { formatDecimals, useDstTokenPanel } from '@orbs-network/spot-react'
+import type { SupportedChainId } from 'src/config'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { type EvmChainId, isEvmWNativeSupported } from 'sushi/evm'
 import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
@@ -12,7 +13,7 @@ export const TwapToken1Input = () => {
     state: { chainId, token1 },
     mutate: { setToken1 },
     isToken1Loading: isLoading,
-  } = useDerivedStateSimpleSwap()
+  } = useDerivedStateSimpleSwap<SupportedChainId & EvmChainId>()
 
   return (
     <Web3Input.Currency
@@ -26,7 +27,7 @@ export const TwapToken1Input = () => {
       currency={token1}
       disableMaxButton
       currencyLoading={isLoading}
-      allowNative={isEvmWNativeSupported(chainId as EvmChainId)}
+      allowNative={isEvmWNativeSupported(chainId)}
       label="You're buying"
     />
   )

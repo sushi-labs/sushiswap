@@ -18,9 +18,12 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { useCallback, useMemo } from 'react'
-import { TWAP_MAX_FILL_DELAY, TWAP_MIN_FILL_DELAY } from 'src/lib/swap/twap'
+import {
+  TWAP_MAX_FILL_DELAY,
+  TWAP_MIN_CHUNK_SIZE_USD,
+  TWAP_MIN_FILL_DELAY,
+} from 'src/lib/swap/twap'
 import { formatUSD } from 'sushi'
-import { useTwapMinTradeSize } from '../../_ui/hooks'
 
 export const DCAOptionsInput = () => {
   return (
@@ -40,7 +43,6 @@ const DCATradesInput = () => {
     amountPerTradeUsd,
     amountPerTrade,
   } = useTradesPanel()
-  const minTradeSize = useTwapMinTradeSize()
 
   const onChange = useCallback(
     (value: string) => {
@@ -85,7 +87,7 @@ const DCATradesInput = () => {
         {amountPerTrade ? <FormattedNumber number={amountPerTrade} /> : '0'}{' '}
         {fromToken?.symbol} per trade (
         {amountPerTradeUsd ? formatUSD(amountPerTradeUsd) : '$0'}
-        {error ? ` - min $${minTradeSize}` : ''})
+        {error ? ` - min $${TWAP_MIN_CHUNK_SIZE_USD}` : ''})
       </span>
     </div>
   )

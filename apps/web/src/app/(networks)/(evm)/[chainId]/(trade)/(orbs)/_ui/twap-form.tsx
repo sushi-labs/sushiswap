@@ -4,16 +4,13 @@ import { InformationCircleIcon } from '@heroicons/react-v1/solid'
 import { Module, Partners, SpotProvider } from '@orbs-network/spot-react'
 import type {
   ButtonProps,
-  Token,
-  TokenLogoProps,
+  Token as OrbsToken,
   TooltipProps,
   Translations,
 } from '@orbs-network/spot-react'
-import { usePriceProtection } from '@sushiswap/hooks'
 // ============ Imports ============
 import {
   Button,
-  Currency,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -22,11 +19,17 @@ import {
 import { Loader } from '@sushiswap/ui'
 import { useParams } from 'next/navigation'
 import { type FC, type ReactNode, useCallback, useMemo } from 'react'
+import { TWAP_MIN_CHUNK_SIZE_USD } from 'src/lib/swap/twap'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import type { CurrencyMetadata } from 'sushi'
-import { type EvmChainId, type EvmCurrency, EvmNative } from 'sushi/evm'
+import {
+  type EvmAddress,
+  type EvmChainId,
+  type EvmCurrency,
+  EvmNative,
+} from 'sushi/evm'
 import type { SvmCurrency } from 'sushi/svm'
-import { type Address, zeroAddress } from 'viem'
+import { zeroAddress } from 'viem'
 import { useConnection, useWalletClient } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
@@ -37,15 +40,17 @@ import {
   useSimpleSwapTradeQuote,
 } from '../../swap/_ui/derivedstate-simple-swap-provider'
 import { SimpleSwapTokenNotFoundDialog } from '../../swap/_ui/simple-swap-token-not-found-dialog'
-import { useTwapMinTradeSize } from './hooks'
 import { OrbsBanner } from './orbs-banner'
 import { SpotSettingsOverlay } from './spot-settings-overlay'
-import { TwapMaintenanceMessage } from './twap-maintenance-message'
 import { TwapOrdersDialogTriggerButton } from './twap-orders-dialog'
 import { TwapSwitchTokensButton } from './twap-switch-tokens-button'
 import { TwapToken0Input } from './twap-token0-input'
 import { TwapToken1Input } from './twap-token1-input'
 import { TwapTradeButton } from './twap-trade-button'
+import {
+  DEFAULT_PRICE_PROTECTION_PERCENT,
+  usePriceProtection,
+} from './use-price-protection'
 
 const CUSTOM_TRANSLATIONS: Partial<Translations> = {
   maxChunksError: 'Inadequate Trade Size, {maxChunks} is max',
@@ -88,12 +93,14 @@ const SpotTooltip: FC<TooltipProps> = ({ children, tooltipText }) => (
 function useSpotToken(address: string | undefined) {
   const params = useParams()
   const chainId = params?.chainId ? +(params.chainId as string) : undefined
+
   const { data } = useTokenWithCache({
     chainId: chainId as EvmChainId,
-    address: address as Address,
+    address: address as EvmAddress | undefined,
     enabled: Boolean(chainId && address && address !== zeroAddress),
   })
-  return useMemo((): Token | undefined => {
+
+  return useMemo((): OrbsToken | undefined => {
     if (address === zeroAddress) {
       const native = EvmNative.fromChainId(chainId as EvmChainId)
       return {
@@ -103,17 +110,13 @@ function useSpotToken(address: string | undefined) {
         logoUrl: '',
       }
     }
+
     if (!address || !data) return undefined
-    const c = data as {
-      address: string
-      symbol: string
-      decimals: number
-      logoURI?: string
-    }
+
     return {
-      address: c.address,
-      symbol: c.symbol,
-      decimals: c.decimals,
+      address: data.address,
+      symbol: data.symbol,
+      decimals: data.decimals,
       logoUrl: '',
     }
   }, [address, data, chainId])
@@ -126,7 +129,7 @@ const toSpotToken = (
     | EvmCurrency<CurrencyMetadata>
     | SvmCurrency<CurrencyMetadata>
     | undefined,
-): Token | undefined => {
+): OrbsToken | undefined => {
   if (!token) return undefined
   return {
     address: token.isNative ? zeroAddress : token.wrap().address,
@@ -149,6 +152,9 @@ export function TwapForm({
   const { data: walletClient } = useWalletClient({ chainId })
   const { refetchChain } = useRefetchBalances()
   const [priceProtection] = usePriceProtection()
+  const priceProtectionValue = Number.isFinite(Number(priceProtection))
+    ? Number(priceProtection)
+    : DEFAULT_PRICE_PROTECTION_PERCENT
 
   const {
     state: { token0, token1, swapAmountString, chainId: stateChainId },
@@ -218,8 +224,8 @@ export function TwapForm({
     <SpotProvider
       partner={Partners.Sushiswap}
       module={module}
-      priceProtection={Number(priceProtection) || 3}
-      minChunkSizeUsd={useTwapMinTradeSize()}
+      priceProtection={priceProtectionValue}
+      minChunkSizeUsd={TWAP_MIN_CHUNK_SIZE_USD}
       typedInputAmount={typedInputAmount}
       resetTypedInputAmount={resetTypedInputAmount}
       marketReferencePrice={marketReferencePrice}
@@ -239,8 +245,6 @@ export function TwapForm({
       overrides={overrides}
     >
       <div className="flex flex-col gap-4 p-4 md:p-6 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(25,32,49,0.8)] rounded-3xl backdrop-blur-2xl">
-        <TwapMaintenanceMessage module={module} />
-
         <div className="flex items-center justify-between">
           <SwapModeButtons />
           <SpotSettingsOverlay />

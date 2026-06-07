@@ -18,7 +18,7 @@ const PriceRateRow = ({
   toSymbol,
   className,
 }: {
-  price?: string
+  price?: string | number
   usd?: string
   fromSymbol?: string
   toSymbol?: string
@@ -52,7 +52,7 @@ const LimitPrice = ({
   toSymbol,
   valueClassName,
 }: {
-  limitPrice?: string
+  limitPrice?: string | number
   token0PriceUSD?: string
   fromSymbol?: string
   toSymbol?: string
@@ -81,7 +81,7 @@ const SellTotal = ({
   inputSymbol,
   valueClassName,
 }: {
-  inputAmount?: string
+  inputAmount?: string | number
   inputSymbol?: string
   valueClassName?: string
 }) => {
@@ -151,7 +151,7 @@ const SellPerOrder = ({
   title,
   valueClassName,
 }: {
-  amountInPerChunk?: string
+  amountInPerChunk?: string | number
   inputSymbol?: string
   title?: string
   valueClassName?: string
@@ -191,8 +191,8 @@ const Recipient = ({
   chainId,
   valueClassName,
 }: {
-  recipient?: Address
-  chainId?: number
+  recipient: Address
+  chainId: number
   valueClassName?: string
 }) => {
   return (
@@ -202,11 +202,11 @@ const Recipient = ({
           <a
             target="_blank"
             href={getEvmChainById(chainId as EvmChainId).getAccountUrl(
-              recipient as Address,
+              recipient,
             )}
             rel="noreferrer"
           >
-            {shortenAddress(recipient as Address)}
+            {shortenAddress(recipient)}
           </a>
         </Button>
       </span>
@@ -221,7 +221,7 @@ const TriggerPrice = ({
   token0PriceUSD,
   valueClassName,
 }: {
-  triggerPrice?: string
+  triggerPrice?: string | number
   fromToken?: Token
   toToken?: Token
   token0PriceUSD?: string

@@ -1,25 +1,32 @@
+'use client'
+
 import { RadioGroup } from '@headlessui/react'
 import { InformationCircleIcon } from '@heroicons/react/20/solid'
-import { usePriceProtection } from '@sushiswap/hooks'
-import classNames from 'classnames'
-import React, { type FC, useCallback } from 'react'
-
-import { Collapsible } from '../animation'
-import { CardDescription, CardHeader, CardTitle } from '../card'
 import {
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Collapsible,
   HoverCard,
   HoverCardContent,
   HoverCardPrimitive,
   HoverCardTrigger,
-} from '../hover-card'
-import { Label } from '../label'
-import { Separator } from '../separator'
-import { Switch } from '../switch'
-import { TextField } from '../text-field'
-import { Toggle } from '../toggle'
-import { typographyVariants } from '../typography'
+  Label,
+  Separator,
+  Switch,
+  TextField,
+  Toggle,
+  classNames,
+  typographyVariants,
+} from '@sushiswap/ui'
+import React, { type FC, useCallback } from 'react'
+import {
+  AUTO_PRICE_PROTECTION,
+  DEFAULT_PRICE_PROTECTION_PERCENT,
+  usePriceProtection,
+} from './use-price-protection'
 
-const DEFAULT_PRICE_PROTECTION = '3'
+const DEFAULT_PRICE_PROTECTION = String(DEFAULT_PRICE_PROTECTION_PERCENT)
 const TABS = ['1', '3', '5']
 
 export const PriceProtection: FC<{
@@ -45,7 +52,7 @@ export const PriceProtection: FC<{
     [setPriceProtection],
   )
 
-  const isAuto = priceProtection === 'AUTO'
+  const isAuto = priceProtection === AUTO_PRICE_PROTECTION
 
   return (
     <HoverCard openDelay={0} closeDelay={0}>
@@ -69,7 +76,7 @@ export const PriceProtection: FC<{
                 checked={isAuto}
                 onCheckedChange={(checked) =>
                   setPriceProtection(
-                    checked ? 'AUTO' : DEFAULT_PRICE_PROTECTION,
+                    checked ? AUTO_PRICE_PROTECTION : DEFAULT_PRICE_PROTECTION,
                   )
                 }
               />
@@ -140,5 +147,3 @@ export const PriceProtection: FC<{
     </HoverCard>
   )
 }
-
-export const DEFAULT_PRICE_PROTECTION_VALUE = DEFAULT_PRICE_PROTECTION

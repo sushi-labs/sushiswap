@@ -6,7 +6,6 @@ import { ArrowLeftIcon } from '@heroicons/react/24/solid'
 import {
   type Order,
   OrderStatus,
-  OrderType,
   type SelectedOrder,
   getExplorerUrl,
   useOrderHistoryPanel,
@@ -45,15 +44,19 @@ import {
   useMemo,
   useState,
 } from 'react'
+import type { SupportedChainId } from 'src/config'
 import { ORBS_EXPLORER_URL } from 'src/lib/swap/twap'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { CurrencyMetadata } from 'sushi'
-import { type EvmChainId, EvmNative, EvmToken, shortenHash } from 'sushi/evm'
-import { SvmToken } from 'sushi/svm'
+import {
+  type EvmAddress,
+  type EvmChainId,
+  EvmNative,
+  shortenHash,
+} from 'sushi/evm'
 import { type Address, type Hex, zeroAddress } from 'viem'
 import { useConnection } from 'wagmi'
 import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
-import { getTwapOrderTitle, isLimitPriceOrder } from './helper'
+import { getTwapOrderTitle } from './helper'
 import { TwapCancelOrderButton } from './twap-cancel-order-button'
 import { TwapOrderDetails } from './twap-order-details'
 
@@ -64,7 +67,7 @@ const MinDstAmountRow = ({
   valueClassName,
 }: {
   totalTrades?: number
-  minDestAmountPerTrade?: string
+  minDestAmountPerTrade?: string | number
   tokenSymbol?: string
   valueClassName?: string
 }) => {
@@ -199,13 +202,13 @@ const _TwapOrdersDialog: FC<{
   )
 }
 
-const useOrderTokens = (order?: Order) => {
+const useOrderTokens = (order: Order) => {
   const {
     state: { chainId },
-  } = useDerivedStateSimpleSwap()
+  } = useDerivedStateSimpleSwap<SupportedChainId & EvmChainId>()
 
-  const srcTokenAddress = order?.srcTokenAddress as Address
-  const dstTokenAddress = order?.dstTokenAddress as Address
+  const srcTokenAddress = order.srcTokenAddress as EvmAddress
+  const dstTokenAddress = order.dstTokenAddress as EvmAddress
 
   const { data: token0 } = useTokenWithCache({
     chainId,
@@ -221,7 +224,7 @@ const useOrderTokens = (order?: Order) => {
   const token1 = useMemo(
     () =>
       dstTokenAddress === zeroAddress
-        ? EvmNative.fromChainId(chainId as EvmChainId)
+        ? EvmNative.fromChainId(chainId)
         : _token1,
     [dstTokenAddress, chainId, _token1],
   )
@@ -236,26 +239,27 @@ const TwapOrderDialogContent = ({
   onShowOrderFills,
 }: {
   onBack: () => void
-  selectedOrder?: SelectedOrder
+  selectedOrder: SelectedOrder
   showOrderFills: boolean
   onShowOrderFills: () => void
 }) => {
   const {
     state: { chainId },
-  } = useDerivedStateSimpleSwap()
+  } = useDerivedStateSimpleSwap<SupportedChainId & EvmChainId>()
 
   const orderTitle = useMemo(() => {
-    const title = getTwapOrderTitle(selectedOrder?.orderType)
+    const title = getTwapOrderTitle(selectedOrder.orderType)
     if (showOrderFills) {
       return `${title} Order fills`
     }
     return `${title} Order`
-  }, [selectedOrder?.orderType, showOrderFills])
+  }, [selectedOrder.orderType, showOrderFills])
 
-  const { token0, token1 } = useOrderTokens(selectedOrder?.original)
-  const totalChunks = selectedOrder?.totalTrades.value as number
-  const txHash = selectedOrder?.original.txHash || selectedOrder?.original.hash
-  const isV1 = selectedOrder?.original.version === 1
+  const { token0, token1 } = useOrderTokens(selectedOrder.original)
+  const totalChunks = Number(selectedOrder.totalTrades.value)
+  const tradeIntervalMs = Number(selectedOrder.tradeInterval.value)
+  const txHash = selectedOrder.original.txHash || selectedOrder.original.hash
+  const isV1 = selectedOrder.original.version === 1
 
   return (
     <>
@@ -294,9 +298,9 @@ const TwapOrderDialogContent = ({
               {totalChunks > 1 && (
                 <span className="text-muted-foreground text-sm">
                   <TwapOrderDetails.DcaChunksRow
-                    orderType={selectedOrder?.orderType}
-                    fillDelay={selectedOrder?.tradeInterval.value as number}
-                    totalTrades={selectedOrder?.totalTrades.value as number}
+                    orderType={selectedOrder.orderType}
+                    fillDelay={tradeIntervalMs}
+                    totalTrades={totalChunks}
                   />
                 </span>
               )}
@@ -321,13 +325,13 @@ const TwapOrderDialogContent = ({
                   <List className="!gap-2">
                     <List.KeyValue className="!p-0" title="Status">
                       <span className="capitalize text-muted-foreground">
-                        {selectedOrder?.original.status.toLowerCase()}
+                        {selectedOrder.original.status.toLowerCase()}
                       </span>
                     </List.KeyValue>
                     <List.KeyValue className="!p-0" title="Amount sent">
                       <span className="text-muted-foreground">
                         <FormattedNumber
-                          number={selectedOrder?.amountInFilled.value}
+                          number={selectedOrder.amountInFilled.value}
                         />{' '}
                         {token0?.symbol}
                       </span>
@@ -335,7 +339,7 @@ const TwapOrderDialogContent = ({
                     <List.KeyValue className="!p-0" title="Amount received">
                       <span className="text-muted-foreground">
                         <FormattedNumber
-                          number={selectedOrder?.amountOutFilled.value}
+                          number={selectedOrder.amountOutFilled.value}
                         />{' '}
                         {token1?.symbol}
                       </span>
@@ -345,7 +349,7 @@ const TwapOrderDialogContent = ({
                       title="Final execution price"
                     >
                       <TwapOrderDetails.PriceRateRow
-                        price={selectedOrder?.executionPrice.value as string}
+                        price={selectedOrder.executionPrice.value}
                         usd=""
                         fromSymbol={token0?.symbol}
                         toSymbol={token1?.symbol}
@@ -364,21 +368,21 @@ const TwapOrderDialogContent = ({
                 <AccordionContent>
                   <List className="!gap-2">
                     <TwapOrderDetails.LimitPrice
-                      limitPrice={selectedOrder?.limitPrice.value as string}
+                      limitPrice={selectedOrder.limitPrice.value}
                       fromSymbol={token0?.symbol}
                       toSymbol={token1?.symbol}
                       valueClassName="text-muted-foreground"
                     />
                     <TwapOrderDetails.StartDate
-                      startDate={selectedOrder?.original.createdAt}
+                      startDate={selectedOrder.original.createdAt}
                       valueClassName="text-muted-foreground"
                     />
                     <TwapOrderDetails.EndDate
-                      endDate={selectedOrder?.original.deadline}
+                      endDate={selectedOrder.original.deadline}
                       valueClassName="text-muted-foreground"
                     />
                     <TwapOrderDetails.SellTotal
-                      inputAmount={selectedOrder?.srcAmount.value as string}
+                      inputAmount={selectedOrder.srcAmount.value}
                       inputSymbol={token0?.symbol}
                       valueClassName="text-muted-foreground"
                     />
@@ -386,9 +390,7 @@ const TwapOrderDialogContent = ({
                     {totalChunks > 1 && (
                       <TwapOrderDetails.SellPerOrder
                         title="Individual trade size"
-                        amountInPerChunk={
-                          selectedOrder?.sizePerTrade.value as string
-                        }
+                        amountInPerChunk={selectedOrder.sizePerTrade.value}
                         inputSymbol={token0?.symbol}
                         valueClassName="text-muted-foreground"
                       />
@@ -396,7 +398,7 @@ const TwapOrderDialogContent = ({
 
                     {totalChunks > 1 && (
                       <TwapOrderDetails.TradeInterval
-                        fillDelay={selectedOrder?.tradeInterval.value as number}
+                        fillDelay={tradeIntervalMs}
                         valueClassName="text-muted-foreground"
                       />
                     )}
@@ -408,15 +410,15 @@ const TwapOrderDialogContent = ({
                     )}
 
                     <MinDstAmountRow
-                      totalTrades={selectedOrder?.totalTrades.value as number}
+                      totalTrades={totalChunks}
                       minDestAmountPerTrade={
-                        selectedOrder?.minDestAmountPerTrade.value as string
+                        selectedOrder.minDestAmountPerTrade.value
                       }
                       tokenSymbol={token1?.symbol}
                       valueClassName="text-muted-foreground"
                     />
                     <TwapOrderDetails.Recipient
-                      recipient={selectedOrder?.recipient.value as Address}
+                      recipient={selectedOrder.recipient.value as Address}
                       chainId={chainId}
                       valueClassName="text-muted-foreground hover:underline"
                     />
@@ -428,20 +430,20 @@ const TwapOrderDialogContent = ({
                         <a
                           href={
                             isV1
-                              ? `${getExplorerUrl(txHash!, chainId)}/tx/${txHash}`
+                              ? `${getExplorerUrl(txHash, chainId)}/tx/${txHash}`
                               : `${ORBS_EXPLORER_URL}/twap/order/${txHash}`
                           }
                           className="text-muted-foreground hover:underline"
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          {txHash?.startsWith('0x')
+                          {txHash.startsWith('0x')
                             ? shortenHash(txHash as Hex)
                             : txHash}
                         </a>
                       ) : (
                         <span className="text-muted-foreground">
-                          {txHash?.startsWith('0x')
+                          {txHash.startsWith('0x')
                             ? shortenHash(txHash as Hex)
                             : txHash}
                         </span>
@@ -457,13 +459,13 @@ const TwapOrderDialogContent = ({
             variant="secondary"
             className="flex items-center justify-between"
           >
-            <span>View Order Fills ({selectedOrder?.fills?.length})</span>
+            <span>View Order Fills ({selectedOrder.fills?.length})</span>
             <ChevronRightIcon width={18} height={18} />
           </Button>
-          {selectedOrder?.original.status === OrderStatus.Open ? (
+          {selectedOrder.original.status === OrderStatus.Open ? (
             <TwapCancelOrderButton
-              chainId={chainId as EvmChainId}
-              order={selectedOrder?.original}
+              chainId={chainId}
+              order={selectedOrder.original}
             />
           ) : null}
         </div>
@@ -472,8 +474,8 @@ const TwapOrderDialogContent = ({
   )
 }
 
-const OrderFills = ({ order }: { order?: SelectedOrder }) => {
-  const { token0, token1 } = useOrderTokens(order?.original)
+const OrderFills = ({ order }: { order: SelectedOrder }) => {
+  const { token0, token1 } = useOrderTokens(order.original)
 
   return (
     <div className="flex flex-col gap-2">
@@ -486,14 +488,14 @@ const OrderFills = ({ order }: { order?: SelectedOrder }) => {
           {token0?.symbol} / {token1?.symbol}
         </span>
       </div>
-      {!order?.fills?.length ? (
+      {!order.fills?.length ? (
         <List.Control className="p-4 flex flex-col gap-2 hover:opacity-80">
           <div className="text-md text-muted-foreground text-center mt-5 mb-5">
             No order fills found
           </div>
         </List.Control>
       ) : (
-        order?.fills?.map((fill, index) => {
+        order.fills.map((fill, index) => {
           return (
             <List.Control
               className="p-4 flex flex-col gap-2 hover:opacity-80"
@@ -539,7 +541,7 @@ const OrderFills = ({ order }: { order?: SelectedOrder }) => {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      {fill.txHash?.startsWith('0x')
+                      {fill.txHash.startsWith('0x')
                         ? shortenHash(fill.txHash as Hex)
                         : fill.txHash}
                     </a>
