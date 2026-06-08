@@ -48,19 +48,23 @@ const SwapModeButton = ({
   path,
   children,
   className,
+  fullWidth = false,
 }: {
   isSupported: boolean
   path: string
   children: ReactNode
   className?: string
+  fullWidth?: boolean
 }) => {
+  const widthClassName = fullWidth ? 'w-full' : 'w-auto'
+
   if (isSupported) {
     return (
-      <Link href={path} className="block w-full">
+      <Link href={path} className={classNames('block', widthClassName)}>
         <PathnameButton
           pathname={path}
           size="sm"
-          className={classNames('w-full justify-start', className)}
+          className={classNames(widthClassName, 'justify-start', className)}
         >
           {children}
         </PathnameButton>
@@ -76,7 +80,8 @@ const SwapModeButton = ({
           size="sm"
           disabled
           className={classNames(
-            'cursor-not-allowed w-full justify-start',
+            'cursor-not-allowed justify-start',
+            widthClassName,
             className,
           )}
         >
@@ -161,24 +166,28 @@ export const SwapModeButtons = ({
                 isSupported={twapSupported}
                 path={`${basePath}/limit`}
                 className="justify-start"
+                fullWidth
               >
                 Limit
               </SwapModeButton>
               <SwapModeButton
                 isSupported={twapSupported}
                 path={`${basePath}/dca`}
+                fullWidth
               >
                 DCA
               </SwapModeButton>
               <SwapModeButton
                 isSupported={twapSupported}
                 path={`${basePath}/stop-loss`}
+                fullWidth
               >
                 Stop Loss
               </SwapModeButton>
               <SwapModeButton
                 isSupported={twapSupported}
                 path={`${basePath}/take-profit`}
+                fullWidth
               >
                 Take Profit
               </SwapModeButton>

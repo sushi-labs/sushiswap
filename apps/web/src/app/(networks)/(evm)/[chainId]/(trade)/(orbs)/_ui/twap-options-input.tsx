@@ -46,7 +46,7 @@ const TwapPriceConfigHeader = ({
     useInvertTradePanel()
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between h-[30px]">
       <p className="text-sm text-muted-foreground font-medium">
         {!isInverted
           ? `Sell ${fromToken?.symbol} `
