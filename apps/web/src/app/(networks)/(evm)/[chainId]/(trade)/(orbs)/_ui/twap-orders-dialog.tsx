@@ -4,10 +4,11 @@ import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { ArrowRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { ArrowLeftIcon } from '@heroicons/react/24/solid'
 import {
+  type Token as OrbsToken,
   type Order,
   OrderStatus,
-  type SelectedOrder,
   getExplorerUrl,
+  useDerivedHistoryOrder,
   useOrderHistoryPanel,
 } from '@orbs-network/spot-react'
 import {
@@ -50,6 +51,7 @@ import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import {
   type EvmAddress,
   type EvmChainId,
+  type EvmCurrency,
   EvmNative,
   shortenHash,
 } from 'sushi/evm'
@@ -59,6 +61,17 @@ import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-sw
 import { getTwapOrderTitle } from './helper'
 import { TwapCancelOrderButton } from './twap-cancel-order-button'
 import { TwapOrderDetails } from './twap-order-details'
+
+const ORDER_FILTERS = [
+  { value: 'all', text: 'All orders' },
+  { value: 'open', text: 'Open orders' },
+  { value: 'completed', text: 'Completed orders' },
+  { value: 'cancelled', text: 'Cancelled orders' },
+  { value: 'expired', text: 'Expired orders' },
+] as const
+
+type OrderFilterValue = (typeof ORDER_FILTERS)[number]['value']
+type SelectedOrder = NonNullable<ReturnType<typeof useDerivedHistoryOrder>>
 
 const MinDstAmountRow = ({
   totalTrades,
@@ -105,29 +118,45 @@ const _TwapOrdersDialog: FC<{
 
   const {
     isLoading: isOrdersLoading,
-    onSelectOrderFilter,
-    onDisplayOrder,
-    orderFilters,
-    selectedOrder,
-    selectedOrderFilter,
-    selectedOrders,
+    isRefetching: isOrdersRefetching,
+    orders,
   } = useOrderHistoryPanel()
+  const [selectedOrderId, setSelectedOrderId] = useState<string>()
+  const [selectedOrderFilterValue, setSelectedOrderFilterValue] =
+    useState<OrderFilterValue>('all')
   const [showOrderFills, setShowOrderFills] = useState(false)
+
+  const selectedOrderFilter = useMemo(
+    () =>
+      ORDER_FILTERS.find(
+        (filter) => filter.value === selectedOrderFilterValue,
+      ) ?? ORDER_FILTERS[0],
+    [selectedOrderFilterValue],
+  )
+  const selectedOrders = orders[selectedOrderFilterValue]
+  const selectedOrder = useMemo(
+    () =>
+      orders.all.find(
+        (order) =>
+          order.id === selectedOrderId || order.hash === selectedOrderId,
+      ),
+    [orders.all, selectedOrderId],
+  )
 
   useEffect(() => {
     if (!open) {
       setShowOrderFills(false)
-      onDisplayOrder(undefined)
+      setSelectedOrderId(undefined)
     }
-  }, [onDisplayOrder, open])
+  }, [open])
 
   const onBack = useCallback(() => {
     if (showOrderFills) {
       setShowOrderFills(false)
     } else {
-      onDisplayOrder(undefined)
+      setSelectedOrderId(undefined)
     }
-  }, [onDisplayOrder, showOrderFills])
+  }, [showOrderFills])
 
   return (
     <DialogReview>
@@ -152,10 +181,12 @@ const _TwapOrdersDialog: FC<{
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
                       <DropdownMenuGroup>
-                        {orderFilters.map((filter) => (
+                        {ORDER_FILTERS.map((filter) => (
                           <DropdownMenuItem
                             key={filter.value}
-                            onClick={() => onSelectOrderFilter(filter.value)}
+                            onClick={() =>
+                              setSelectedOrderFilterValue(filter.value)
+                            }
                             className="cursor-pointer"
                           >
                             {filter.text}
@@ -167,7 +198,7 @@ const _TwapOrdersDialog: FC<{
                 </DialogTitle>
                 <List className="min-h-[420px] max-h-[75vh] overflow-y-auto">
                   <div className="flex flex-col gap-4">
-                    {isOrdersLoading ? (
+                    {isOrdersLoading || isOrdersRefetching ? (
                       <List.Control className="px-4 py-3">
                         <div className="text-sm text-center">Loading...</div>
                       </List.Control>
@@ -176,7 +207,7 @@ const _TwapOrdersDialog: FC<{
                         <button
                           type="button"
                           key={order.id}
-                          onClick={() => onDisplayOrder(order.id)}
+                          onClick={() => setSelectedOrderId(order.id)}
                         >
                           <TwapOrderCard
                             order={order}
@@ -232,14 +263,25 @@ const useOrderTokens = (order: Order) => {
   return { token0, token1 }
 }
 
+function toOrbsToken(currency?: EvmCurrency): OrbsToken | undefined {
+  if (!currency) return undefined
+
+  return {
+    address: currency.isNative ? zeroAddress : currency.wrap().address,
+    symbol: currency.symbol,
+    decimals: currency.decimals,
+    logoUrl: '',
+  }
+}
+
 const TwapOrderDialogContent = ({
   onBack,
-  selectedOrder,
+  selectedOrder: order,
   showOrderFills,
   onShowOrderFills,
 }: {
   onBack: () => void
-  selectedOrder: SelectedOrder
+  selectedOrder: Order
   showOrderFills: boolean
   onShowOrderFills: () => void
 }) => {
@@ -247,17 +289,24 @@ const TwapOrderDialogContent = ({
     state: { chainId },
   } = useDerivedStateSimpleSwap<SupportedChainId & EvmChainId>()
 
+  const { token0, token1 } = useOrderTokens(order)
+  const selectedOrder = useDerivedHistoryOrder(
+    order,
+    toOrbsToken(token0),
+    toOrbsToken(token1),
+  )
   const orderTitle = useMemo(() => {
-    const title = getTwapOrderTitle(selectedOrder.orderType)
+    const title = getTwapOrderTitle(selectedOrder?.orderType)
     if (showOrderFills) {
       return `${title} Order fills`
     }
     return `${title} Order`
-  }, [selectedOrder.orderType, showOrderFills])
+  }, [selectedOrder?.orderType, showOrderFills])
 
-  const { token0, token1 } = useOrderTokens(selectedOrder.original)
-  const totalChunks = Number(selectedOrder.totalTrades.value)
-  const tradeIntervalMs = Number(selectedOrder.tradeInterval.value)
+  if (!selectedOrder) return null
+
+  const totalChunks = Number(selectedOrder.totalTrades)
+  const tradeIntervalMs = Number(selectedOrder.tradeInterval)
   const txHash = selectedOrder.original.txHash || selectedOrder.original.hash
   const isV1 = selectedOrder.original.version === 1
 
@@ -331,7 +380,7 @@ const TwapOrderDialogContent = ({
                     <List.KeyValue className="!p-0" title="Amount sent">
                       <span className="text-muted-foreground">
                         <FormattedNumber
-                          number={selectedOrder.amountInFilled.value}
+                          number={selectedOrder.amountInFilledUI}
                         />{' '}
                         {token0?.symbol}
                       </span>
@@ -339,7 +388,7 @@ const TwapOrderDialogContent = ({
                     <List.KeyValue className="!p-0" title="Amount received">
                       <span className="text-muted-foreground">
                         <FormattedNumber
-                          number={selectedOrder.amountOutFilled.value}
+                          number={selectedOrder.amountOutFilledUI}
                         />{' '}
                         {token1?.symbol}
                       </span>
@@ -349,7 +398,7 @@ const TwapOrderDialogContent = ({
                       title="Final execution price"
                     >
                       <TwapOrderDetails.PriceRateRow
-                        price={selectedOrder.executionPrice.value}
+                        price={selectedOrder.executionPriceUI}
                         usd=""
                         fromSymbol={token0?.symbol}
                         toSymbol={token1?.symbol}
@@ -368,7 +417,7 @@ const TwapOrderDialogContent = ({
                 <AccordionContent>
                   <List className="!gap-2">
                     <TwapOrderDetails.LimitPrice
-                      limitPrice={selectedOrder.limitPrice.value}
+                      limitPrice={selectedOrder.limitPriceUI}
                       fromSymbol={token0?.symbol}
                       toSymbol={token1?.symbol}
                       valueClassName="text-muted-foreground"
@@ -382,7 +431,7 @@ const TwapOrderDialogContent = ({
                       valueClassName="text-muted-foreground"
                     />
                     <TwapOrderDetails.SellTotal
-                      inputAmount={selectedOrder.srcAmount.value}
+                      inputAmount={selectedOrder.srcAmountUI}
                       inputSymbol={token0?.symbol}
                       valueClassName="text-muted-foreground"
                     />
@@ -390,7 +439,7 @@ const TwapOrderDialogContent = ({
                     {totalChunks > 1 && (
                       <TwapOrderDetails.SellPerOrder
                         title="Individual trade size"
-                        amountInPerChunk={selectedOrder.sizePerTrade.value}
+                        amountInPerChunk={selectedOrder.sizePerTradeUI}
                         inputSymbol={token0?.symbol}
                         valueClassName="text-muted-foreground"
                       />
@@ -412,13 +461,13 @@ const TwapOrderDialogContent = ({
                     <MinDstAmountRow
                       totalTrades={totalChunks}
                       minDestAmountPerTrade={
-                        selectedOrder.minDestAmountPerTrade.value
+                        selectedOrder.minDestAmountPerTradeUI
                       }
                       tokenSymbol={token1?.symbol}
                       valueClassName="text-muted-foreground"
                     />
                     <TwapOrderDetails.Recipient
-                      recipient={selectedOrder.recipient.value as Address}
+                      recipient={selectedOrder.recipient as Address}
                       chainId={chainId}
                       valueClassName="text-muted-foreground hover:underline"
                     />

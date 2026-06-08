@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  InputErrors,
   type Module,
   useAddresses,
   useInputErrors,
@@ -15,6 +16,43 @@ import type { Amount } from 'sushi'
 import type { EvmCurrency } from 'sushi/evm'
 import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
 import { TwapTradeReviewDialog } from './twap-trade-review-dialog'
+
+function getInputErrorMessage(error: ReturnType<typeof useInputErrors>) {
+  if (!error) return undefined
+
+  switch (error.type) {
+    case InputErrors.EMPTY_LIMIT_PRICE:
+      return 'Enter a limit price'
+    case InputErrors.MAX_CHUNKS:
+      return `Inadequate Trade Size, ${error.value} is max`
+    case InputErrors.MAX_FILL_DELAY:
+      return 'Trade interval above limit'
+    case InputErrors.MAX_ORDER_DURATION:
+      return 'Order duration above limit'
+    case InputErrors.MAX_ORDER_SIZE:
+      return 'Order size above limit'
+    case InputErrors.MIN_CHUNKS:
+      return 'Place order'
+    case InputErrors.MIN_ORDER_DURATION:
+      return 'Order duration below limit'
+    case InputErrors.MIN_FILL_DELAY:
+      return 'Trade Interval Below Limit'
+    case InputErrors.MIN_TRADE_SIZE:
+      return 'Trade size below minimum'
+    case InputErrors.MISSING_LIMIT_PRICE:
+      return 'Set a limit price'
+    case InputErrors.INSUFFICIENT_BALANCE:
+      return 'Insufficient balance'
+    case InputErrors.STOP_LOSS_TRIGGER_PRICE_GREATER_THAN_MARKET_PRICE:
+      return 'Trigger price must be lower than market price'
+    case InputErrors.TAKE_PROFIT_TRIGGER_PRICE_LESS_THAN_MARKET_PRICE:
+      return 'Trigger price must be higher than market price'
+    case InputErrors.TRIGGER_LIMIT_PRICE_GREATER_THAN_TRIGGER_PRICE:
+      return 'Limit price must be lower than the trigger price'
+    case InputErrors.EMPTY_TRIGGER_PRICE:
+      return 'Enter a trigger price'
+  }
+}
 
 type WrapNativeCheckerProps = ButtonProps & {
   amount: Amount<EvmCurrency> | undefined
@@ -60,8 +98,9 @@ const TwapTradeChecker: FC<ButtonProps> = ({
   ...props
 }) => {
   const errors = useInputErrors()
+  const errorMessage = getInputErrorMessage(errors)
 
-  return errors ? (
+  return errorMessage ? (
     <Button
       disabled={true}
       className={className}
@@ -70,7 +109,7 @@ const TwapTradeChecker: FC<ButtonProps> = ({
       testId={id}
       {...props}
     >
-      {errors.message}
+      {errorMessage}
     </Button>
   ) : (
     <>{children}</>

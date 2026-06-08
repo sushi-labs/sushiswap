@@ -37,3 +37,11 @@ export const isLimitPriceOrder = (orderType?: OrderType) => {
 export const getTwapConfig = (chainId: number) => {
   return getConfig(Partners.Sushiswap, chainId)
 }
+
+export function formatDecimals(value: string | number, maxDecimals: number) {
+  const [integer, decimals] = value.toString().split('.')
+
+  if (!decimals) return integer
+
+  return `${integer}.${decimals.slice(0, maxDecimals)}`
+}

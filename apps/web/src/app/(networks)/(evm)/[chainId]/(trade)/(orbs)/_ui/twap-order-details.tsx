@@ -1,4 +1,4 @@
-import { OrderType, type Token, fillDelayText } from '@orbs-network/spot-react'
+import { OrderType, type Token } from '@orbs-network/spot-react'
 import {
   Button,
   FormattedNumber,
@@ -10,6 +10,14 @@ import { format, formatDistanceStrict } from 'date-fns'
 import { formatUSD, shortenAddress } from 'sushi'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 import type { Address } from 'viem'
+
+function fillDelayText(fillDelay?: number) {
+  if (!fillDelay) return ''
+
+  return formatDistanceStrict(0, fillDelay, {
+    roundingMethod: 'floor',
+  })
+}
 
 const PriceRateRow = ({
   price,

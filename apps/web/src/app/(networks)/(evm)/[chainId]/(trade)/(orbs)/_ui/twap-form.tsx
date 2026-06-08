@@ -1,38 +1,16 @@
 'use client'
 
-import { InformationCircleIcon } from '@heroicons/react-v1/solid'
 import { Module, Partners, SpotProvider } from '@orbs-network/spot-react'
-import type {
-  ButtonProps,
-  Token as OrbsToken,
-  TooltipProps,
-  Translations,
-} from '@orbs-network/spot-react'
-// ============ Imports ============
-import {
-  Button,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@sushiswap/ui'
-import { Loader } from '@sushiswap/ui'
+import type { Token as OrbsToken } from '@orbs-network/spot-react'
 import { useParams } from 'next/navigation'
-import { type FC, type ReactNode, useCallback, useMemo } from 'react'
+import { type ReactNode, useMemo } from 'react'
 import { TWAP_MIN_CHUNK_SIZE_USD } from 'src/lib/swap/twap'
-import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import type { CurrencyMetadata } from 'sushi'
-import {
-  type EvmAddress,
-  type EvmChainId,
-  type EvmCurrency,
-  EvmNative,
-} from 'sushi/evm'
+import type { EvmCurrency } from 'sushi/evm'
 import type { SvmCurrency } from 'sushi/svm'
 import { zeroAddress } from 'viem'
 import { useConnection, useWalletClient } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
-import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { SwapModeButtons } from '../../_ui/swap-mode-buttons'
 import {
@@ -51,76 +29,6 @@ import {
   DEFAULT_PRICE_PROTECTION_PERCENT,
   usePriceProtection,
 } from './use-price-protection'
-
-const CUSTOM_TRANSLATIONS: Partial<Translations> = {
-  maxChunksError: 'Inadequate Trade Size, {maxChunks} is max',
-  minChunksError: 'Place order',
-  minFillDelayError: 'Trade Interval Below Limit',
-  triggerLimitPriceError: 'Limit price must be lower than the trigger price',
-  StopLossTriggerPriceError: 'Trigger price must be lower than market price',
-}
-
-// ============ SpotProvider component wrappers (DEX styles) ============
-const SpotButton: FC<ButtonProps> = ({
-  children,
-  onClick,
-  disabled,
-  loading,
-}) => (
-  <Button
-    onClick={onClick}
-    disabled={disabled}
-    loading={loading}
-    size="xl"
-    fullWidth
-  >
-    {children}
-  </Button>
-)
-
-const SpotTooltip: FC<TooltipProps> = ({ children, tooltipText }) => (
-  <TooltipProvider>
-    <Tooltip>
-      <TooltipTrigger asChild>
-        {children ?? <InformationCircleIcon width={16} height={16} />}
-      </TooltipTrigger>
-      <TooltipContent>{tooltipText ?? ''}</TooltipContent>
-    </Tooltip>
-  </TooltipProvider>
-)
-
-// ============ useToken by address (for SpotProvider) ============
-function useSpotToken(address: string | undefined) {
-  const params = useParams()
-  const chainId = params?.chainId ? +(params.chainId as string) : undefined
-
-  const { data } = useTokenWithCache({
-    chainId: chainId as EvmChainId,
-    address: address as EvmAddress | undefined,
-    enabled: Boolean(chainId && address && address !== zeroAddress),
-  })
-
-  return useMemo((): OrbsToken | undefined => {
-    if (address === zeroAddress) {
-      const native = EvmNative.fromChainId(chainId as EvmChainId)
-      return {
-        address: zeroAddress,
-        symbol: native.symbol,
-        decimals: native.decimals,
-        logoUrl: '',
-      }
-    }
-
-    if (!address || !data) return undefined
-
-    return {
-      address: data.address,
-      symbol: data.symbol,
-      decimals: data.decimals,
-      logoUrl: '',
-    }
-  }, [address, data, chainId])
-}
 
 // ============ Main export ============
 
@@ -150,7 +58,6 @@ export function TwapForm({
   const chainId = _chainId ? +_chainId : undefined
   const { address } = useConnection() as { address?: string }
   const { data: walletClient } = useWalletClient({ chainId })
-  const { refetchChain } = useRefetchBalances()
   const [priceProtection] = usePriceProtection()
   const priceProtectionValue = Number.isFinite(Number(priceProtection))
     ? Number(priceProtection)
@@ -158,17 +65,12 @@ export function TwapForm({
 
   const {
     state: { token0, token1, swapAmountString, chainId: stateChainId },
-    mutate: { setSwapAmount },
   } = useDerivedStateSimpleSwap()
 
   const { data: quote, isInitialLoading: quoteLoading } =
     useSimpleSwapTradeQuote()
 
   const typedInputAmount = swapAmountString
-  const resetTypedInputAmount = useCallback(
-    () => setSwapAmount(''),
-    [setSwapAmount],
-  )
 
   const marketReferencePrice = useMemo(
     () => ({
@@ -184,19 +86,6 @@ export function TwapForm({
   const outputBalance = useAmountBalance(token1)
   const srcBalance = inputBalance?.data?.amount?.toString() ?? '0'
   const dstBalance = outputBalance?.data?.amount?.toString() ?? '0'
-
-  const refetchBalances = useCallback(() => {
-    if (stateChainId) refetchChain(stateChainId)
-  }, [refetchChain, stateChainId])
-
-  const components = useMemo(
-    () => ({
-      Button: SpotButton,
-      Tooltip: SpotTooltip,
-      Spinner: <Loader className="h-5 w-5 animate-spin" />,
-    }),
-    [],
-  )
 
   const { data: srcUsd1Token } = usePrice({
     chainId: token0?.chainId,
@@ -227,9 +116,7 @@ export function TwapForm({
       priceProtection={priceProtectionValue}
       minChunkSizeUsd={TWAP_MIN_CHUNK_SIZE_USD}
       typedInputAmount={typedInputAmount}
-      resetTypedInputAmount={resetTypedInputAmount}
       marketReferencePrice={marketReferencePrice}
-      components={components}
       srcToken={srcToken}
       dstToken={dstToken}
       srcBalance={srcBalance}
@@ -239,9 +126,6 @@ export function TwapForm({
       chainId={stateChainId}
       account={address ?? undefined}
       provider={walletClient?.transport}
-      useToken={useSpotToken}
-      refetchBalances={refetchBalances}
-      translations={CUSTOM_TRANSLATIONS}
       overrides={overrides}
     >
       <div className="flex flex-col gap-4 p-4 md:p-6 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(25,32,49,0.8)] rounded-3xl backdrop-blur-2xl">

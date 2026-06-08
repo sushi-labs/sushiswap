@@ -2,7 +2,6 @@ import { Radio, RadioGroup } from '@headlessui/react'
 import { ArrowsUpDownIcon } from '@heroicons/react/24/outline'
 import {
   type TimeUnit,
-  formatDecimals,
   useDurationPanel,
   useInvertTradePanel,
   useLimitPricePanel,
@@ -19,6 +18,7 @@ import {
 import type * as React from 'react'
 import { useMemo } from 'react'
 import { formatUSD } from 'sushi'
+import { formatDecimals } from './helper'
 
 // ============ Small UI / helpers ============
 
@@ -180,8 +180,6 @@ export const TwapLimitPriceConfigSection = ({
   const {
     isLimitPrice,
     toggleLimitPrice,
-    label,
-    tooltip,
     price,
     percentage,
     toToken,
@@ -197,7 +195,7 @@ export const TwapLimitPriceConfigSection = ({
   const header = (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <LabelWithTooltip label={label} tooltip={tooltip} />
+        <LabelWithTooltip label="Limit price" />
         {!isLimitModule && (
           <Switch checked={isLimitPrice} onCheckedChange={toggleLimitPrice} />
         )}
@@ -227,8 +225,6 @@ export const TwapLimitPriceConfigSection = ({
 
 export const TwapTriggerPriceConfigSection = () => {
   const {
-    label,
-    tooltip,
     price,
     percentage,
     toToken,
@@ -243,7 +239,7 @@ export const TwapTriggerPriceConfigSection = () => {
 
   const header = (
     <div className="flex items-center justify-between">
-      <LabelWithTooltip label={label} tooltip={tooltip} />
+      <LabelWithTooltip label="Trigger price" />
       <ResetButton onReset={onReset} text="Set to default" />
     </div>
   )

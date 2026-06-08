@@ -317,8 +317,8 @@ importers:
         specifier: 1.37.0
         version: 1.37.0
       '@orbs-network/spot-react':
-        specifier: 1.0.1
-        version: 1.0.1(@types/react@19.2.14)(bufferutil@4.0.8)(immer@9.0.21)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.8.3)(use-sync-external-store@1.6.0(react@19.2.4))(utf-8-validate@6.0.3)(zod@4.1.11)
+        specifier: 1.1.11
+        version: 1.1.11(@types/react@19.2.14)(bufferutil@4.0.8)(immer@9.0.21)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.8.3)(use-sync-external-store@1.6.0(react@19.2.4))(utf-8-validate@6.0.3)(zod@4.1.11)
       '@pontem/wallet-adapter-plugin':
         specifier: 0.2.1
         version: 0.2.1
@@ -4227,22 +4227,19 @@ packages:
     resolution: {integrity: sha512-JD6DerIKdJGmRp4jQyX5FlrQjA4tjOw1cvfsPAZXfOOEErMUHjPcPSICS+6WnM0nB0efSFARh0KAZss+bvExOA==}
     engines: {node: '>=14'}
 
-  '@orbs-network/spot-react@1.0.1':
-    resolution: {integrity: sha512-z8xOtlpegOIyjHlPZvuB3kwntjdf9VFH6IDSEdZhMQsCjQx4lrXCAbvJ7KaTc32CAl00NpatFBcPB9Lt08xGBQ==}
+  '@orbs-network/spot-react@1.1.11':
+    resolution: {integrity: sha512-MJlzre8bq+jy092Rp7UMK9HSDo96G4KyhqkqnRmCtQdYbqaf8tPI1yMXR/2L2hsOASxpdWoblwwIT7UPhzwpMQ==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
 
-  '@orbs-network/spot-ui@1.0.1':
-    resolution: {integrity: sha512-cj7Qy7XA5+g4bkGQRbcwvumv+RU0oZHR7Hfj6CJt9yLIhW/qUKKH+iX5lWiqHinW+099wDcgNPyBpmW3Fs30Wg==}
+  '@orbs-network/spot-ui@1.0.4':
+    resolution: {integrity: sha512-RJVzAv6QxOhdw1GxxL7E/iByOaWXoDJifcymq5I3WoAGBfHqbsV/87/EZO0l0O6oqNdOa2yxZIq+NuL49SgN2w==}
     peerDependencies:
       bignumber.js: ^9.0.0
 
-  '@orbs-network/swap-ui@0.0.61':
-    resolution: {integrity: sha512-GCPAXf69usNQulQbMNGpGW+cgvoeu/R6T8xKiL7pSMMYs6L2sMP8b2YBeHn53lO8/LRaFrFDf28EB7Gh7xzgiQ==}
-    peerDependencies:
-      react: '*'
-      react-dom: '*'
+  '@orbs-network/spot@2.6.0':
+    resolution: {integrity: sha512-FgrTEPScdpWgwRLl6FXCNGy6BVXXo9dV/gaxLKjkU72DZGR3eypcSoPQUlGTQQARXpeZBsvkKDmPZtifqqavBg==}
 
   '@orbs-network/twap@2.7.29':
     resolution: {integrity: sha512-6Va1LQZc3o5F5a0FyHozRoBJNacX4K4BfjMevlAmmnx5Sgb6YEhTYMYiIpMwzBpcRB4vMlCIEbKtzPLTcxwUsw==}
@@ -5149,11 +5146,6 @@ packages:
     resolution: {integrity: sha512-LdYnCL22pFI+LTs85Fi2OQHSKWkzIuHFgv8lA+wwuaPxLOEhWR5bzJ21iygUH9X4meeLVRZKEbfpYi3OWWD4GQ==}
     peerDependencies:
       react: '>=16.8'
-
-  '@react-icons/all-files@4.1.0':
-    resolution: {integrity: sha512-hxBI2UOuVaI3O/BhQfhtb4kcGn9ft12RWAFVMUeNjqqhLsHvFtzIkFaptBJpFDANTKoDfdVoHTKZDlwKCACbMQ==}
-    peerDependencies:
-      react: '*'
 
   '@react-native-community/cli-clean@12.3.6':
     resolution: {integrity: sha512-gUU29ep8xM0BbnZjwz9MyID74KKwutq9x5iv4BCr2im6nly4UMf1B1D+V225wR7VcDGzbgWjaezsJShLLhC5ig==}
@@ -12159,9 +12151,6 @@ packages:
   module-details-from-path@1.0.4:
     resolution: {integrity: sha512-EGWKgxALGMgzvxYF1UyGTy0HXX/2vHLkw6+NvDKW2jypWbHpjQuj4UMcqQWXHERJhVGKikolT06G3bcKe4fi7w==}
 
-  moment@2.30.1:
-    resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
-
   motion-dom@11.14.3:
     resolution: {integrity: sha512-lW+D2wBy5vxLJi6aCP0xyxTxlTfiu+b+zcpVbGVFUxotwThqhdpPRSmX8xztAgtZMPMeU0WGVn/k1w4I+TbPqA==}
 
@@ -13148,12 +13137,6 @@ packages:
     peerDependencies:
       react: 18.2.0
 
-  react-number-format@5.4.4:
-    resolution: {integrity: sha512-wOmoNZoOpvMminhifQYiYSTCLUDOiUbBunrMrMjA+dV52sY+vck1S4UhR6PkgnoCquvvMSeJjErXZ4qSaWCliA==}
-    peerDependencies:
-      react: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      react-dom: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-
   react-reconciler@0.20.4:
     resolution: {integrity: sha512-kxERc4H32zV2lXMg/iMiwQHOtyqf15qojvkcZ5Ja2CPkjVohHw9k70pdDBwrnQhLVetUJBSYyqU3yqrlVTOajA==}
     engines: {node: '>=0.10.0'}
@@ -13237,12 +13220,6 @@ packages:
     peerDependencies:
       react: ^15.3.0 || ^16.0.0-alpha || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^15.3.0 || ^16.0.0-alpha || ^17.0.0 || ^18.0.0 || ^19.0.0
-
-  react-virtuoso@4.18.1:
-    resolution: {integrity: sha512-KF474cDwaSb9+SJ380xruBB4P+yGWcVkcu26HtMqYNMTYlYbrNy8vqMkE+GpAApPPufJqgOLMoWMFG/3pJMXUA==}
-    peerDependencies:
-      react: '>=16 || >=17 || >= 18 || >= 19'
-      react-dom: '>=16 || >=17 || >= 18 || >=19'
 
   react-window@1.8.11:
     resolution: {integrity: sha512-+SRbUVT2scadgFSWx+R1P754xHPEqvcfSfVX10QYg6POOz+WNgkN48pS+BtZNIMGiL1HYrSEiCkwsMS15QogEQ==}
@@ -19227,19 +19204,14 @@ snapshots:
 
   '@opentelemetry/semantic-conventions@1.37.0': {}
 
-  '@orbs-network/spot-react@1.0.1(@types/react@19.2.14)(bufferutil@4.0.8)(immer@9.0.21)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.8.3)(use-sync-external-store@1.6.0(react@19.2.4))(utf-8-validate@6.0.3)(zod@4.1.11)':
+  '@orbs-network/spot-react@1.1.11(@types/react@19.2.14)(bufferutil@4.0.8)(immer@9.0.21)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.8.3)(use-sync-external-store@1.6.0(react@19.2.4))(utf-8-validate@6.0.3)(zod@4.1.11)':
     dependencies:
-      '@orbs-network/spot-ui': 1.0.1(bignumber.js@9.3.1)
-      '@orbs-network/swap-ui': 0.0.61(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-icons/all-files': 4.1.0(react@19.2.4)
+      '@orbs-network/spot-ui': 1.0.4(bignumber.js@9.3.1)
       '@tanstack/react-query': 5.90.21(react@19.2.4)
       bignumber.js: 9.3.1
-      moment: 2.30.1
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
       react-error-boundary: 6.1.1(react@19.2.4)
-      react-number-format: 5.4.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react-virtuoso: 4.18.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       viem: 2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11)
       zustand: 5.0.14(@types/react@19.2.14)(immer@9.0.21)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))
     transitivePeerDependencies:
@@ -19251,15 +19223,13 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@orbs-network/spot-ui@1.0.1(bignumber.js@9.3.1)':
+  '@orbs-network/spot-ui@1.0.4(bignumber.js@9.3.1)':
     dependencies:
+      '@orbs-network/spot': 2.6.0
       '@orbs-network/twap': 2.7.29
       bignumber.js: 9.3.1
 
-  '@orbs-network/swap-ui@0.0.61(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
-    dependencies:
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+  '@orbs-network/spot@2.6.0': {}
 
   '@orbs-network/twap@2.7.29': {}
 
@@ -20135,10 +20105,6 @@ snapshots:
     dependencies:
       '@react-hook/event': 1.2.6(react@19.2.4)
       '@react-hook/throttle': 2.2.0(react@19.2.4)
-      react: 19.2.4
-
-  '@react-icons/all-files@4.1.0(react@19.2.4)':
-    dependencies:
       react: 19.2.4
 
   '@react-native-community/cli-clean@12.3.6(encoding@0.1.13)':
@@ -30524,8 +30490,6 @@ snapshots:
 
   module-details-from-path@1.0.4: {}
 
-  moment@2.30.1: {}
-
   motion-dom@11.14.3: {}
 
   motion-utils@11.14.3: {}
@@ -31669,11 +31633,6 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  react-number-format@5.4.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
-    dependencies:
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
-
   react-reconciler@0.20.4(react@19.2.4):
     dependencies:
       loose-envify: 1.4.0
@@ -31763,11 +31722,6 @@ snapshots:
       react-dom: 19.2.4(react@19.2.4)
 
   react-virtualized-auto-sizer@1.0.25(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
-    dependencies:
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
-
-  react-virtuoso@4.18.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
     dependencies:
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)

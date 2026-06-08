@@ -3,9 +3,8 @@
 import {
   Module,
   submitOrder,
-  useOrderDisplay,
+  useDerivedOrder,
   useOrderHistoryPanel,
-  useRePermitOrderData,
 } from '@orbs-network/spot-react'
 import {
   createErrorToast,
@@ -31,8 +30,8 @@ import React, { type FC, type ReactNode, useMemo, useState } from 'react'
 import { logger } from 'src/lib/logger'
 import { ORBS_EXPLORER_URL } from 'src/lib/swap/twap'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
-import { type EvmChainId, getEvmChainById } from 'sushi/evm'
-import { type Address, numberToHex, parseSignature } from 'viem'
+import { type EvmAddress, type EvmChainId, getEvmChainById } from 'sushi/evm'
+import { numberToHex, parseSignature } from 'viem'
 import { useConnection, useSignTypedData } from 'wagmi'
 import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
 import { getTwapOrderTitle, isLimitPriceOrder } from './helper'
@@ -41,7 +40,7 @@ import { TwapOrderDetails } from './twap-order-details'
 const useSignAndSendMutation = () => {
   const { address } = useConnection()
   const { mutateAsync: signTypedDataAsync } = useSignTypedData()
-  const rePermitData = useRePermitOrderData()
+  const { rePermitData } = useDerivedOrder()
   const { refetchOrders } = useOrderHistoryPanel()
   const {
     state: { chainId },
@@ -126,7 +125,7 @@ export const TwapTradeReviewDialog: FC<{
 
   const { mutate: signAndSendOrder, isPending: isSignAndSendPending } =
     useSignAndSendMutation()
-  const order = useOrderDisplay()
+  const order = useDerivedOrder()
   const isLimitPrice = isLimitPriceOrder(order.orderType)
   const orderTitle = useMemo(
     () => getTwapOrderTitle(order.orderType),
@@ -150,17 +149,15 @@ export const TwapTradeReviewDialog: FC<{
                   {isLimitPrice && (
                     <>
                       Receive at least{' '}
-                      <FormattedNumber
-                        number={order.minDestAmountPerTrade.value}
-                      />{' '}
+                      <FormattedNumber number={order.minDestAmountPerTradeUI} />{' '}
                       {order.dstToken?.symbol}{' '}
-                      {order.totalTrades.value > 1 ? 'per trade' : ''}
+                      {order.totalTrades > 1 ? 'per trade' : ''}
                     </>
                   )}
                   <TwapOrderDetails.DcaChunksRow
                     orderType={order.orderType}
-                    fillDelay={order.tradeInterval.value}
-                    totalTrades={order.totalTrades.value}
+                    fillDelay={order.tradeInterval}
+                    totalTrades={order.totalTrades}
                   />
                 </DialogDescription>
               </DialogHeader>
@@ -174,48 +171,46 @@ export const TwapTradeReviewDialog: FC<{
                       </List.KeyValue>
                       {isDca && (
                         <TwapOrderDetails.SellTotal
-                          inputAmount={order.srcAmount.value}
+                          inputAmount={order.srcAmountUI}
                           inputSymbol={order.srcToken?.symbol}
                         />
                       )}
                       <TwapOrderDetails.LimitPrice
-                        limitPrice={order.limitPrice.value}
-                        token0PriceUSD={order.limitPrice.usd}
+                        limitPrice={order.limitPriceUI}
+                        token0PriceUSD={order.limitPriceUsd}
                         fromSymbol={order.srcToken?.symbol}
                         toSymbol={order.dstToken?.symbol}
                       />
                       <TwapOrderDetails.TriggerPrice
-                        triggerPrice={order.triggerPrice.value}
+                        triggerPrice={order.triggerPriceUI}
                         fromToken={order.srcToken}
                         toToken={order.dstToken}
-                        token0PriceUSD={order.triggerPrice.usd}
+                        token0PriceUSD={order.triggerPriceUsd}
                       />
 
                       {isDca && (
                         <>
                           <TwapOrderDetails.NumberOfOrders
-                            totalChunks={order.totalTrades.value}
+                            totalChunks={order.totalTrades}
                           />
                           <TwapOrderDetails.SellPerOrder
-                            amountInPerChunk={order.sizePerTrade.value}
+                            amountInPerChunk={order.sizePerTradeUI}
                             inputSymbol={order.srcToken?.symbol}
                           />
 
                           <TwapOrderDetails.TradeInterval
-                            fillDelay={order.tradeInterval.value}
+                            fillDelay={order.tradeInterval}
                           />
                           <TwapOrderDetails.StartDate
-                            startDate={order.createdAt.value}
+                            startDate={order.createdAt}
                           />
                         </>
                       )}
 
-                      <TwapOrderDetails.EndDate
-                        endDate={order.deadline.value}
-                      />
+                      <TwapOrderDetails.EndDate endDate={order.deadline} />
 
                       <TwapOrderDetails.Recipient
-                        recipient={order.recipient.value as Address}
+                        recipient={order.recipient as EvmAddress}
                         chainId={chainId}
                       />
                     </div>

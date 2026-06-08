@@ -2,7 +2,7 @@ import {
   type Order,
   REPERMIT_ABI,
   TWAP_ABI,
-  useRefetchUntilStatusSynced,
+  useCancelOrderRefetchUntilStatusSynced,
 } from '@orbs-network/spot-react'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { Button, Dots } from '@sushiswap/ui'
@@ -36,7 +36,7 @@ export const TwapCancelOrderButton = ({
 
   const { address } = useConnection()
   const { mutate: refetchOrders, isPending: isRefetchingOrders } =
-    useRefetchUntilStatusSynced()
+    useCancelOrderRefetchUntilStatusSynced()
 
   const tx = useMemo(() => {
     if (order.version === 1) {
