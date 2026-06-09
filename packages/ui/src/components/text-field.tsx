@@ -70,6 +70,7 @@ interface TextFieldBaseProps
   icon?: IconComponent
   iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
   unit?: string
+  wrapperClassName?: string
 }
 
 interface TextFieldDynamicProps<T extends InputType> {
@@ -102,6 +103,7 @@ const Component = <T extends InputType>(
     size,
     onValueChange,
     isError,
+    wrapperClassName,
     ...props
   }: TextFieldProps<T>,
   ref: React.ForwardedRef<HTMLInputElement>,
@@ -119,7 +121,7 @@ const Component = <T extends InputType>(
       if (onValueChange && val === '') onValueChange('')
 
       if (inputRegex.test(escapeRegExp(val))) {
-        if (maxDecimals && val?.includes('.')) {
+        if (maxDecimals !== undefined && val?.includes('.')) {
           const [, decimals] = val.split('.')
           if (onValueChange && decimals.length <= maxDecimals) {
             onValueChange(val)
@@ -146,7 +148,12 @@ const Component = <T extends InputType>(
   }
 
   return (
-    <div className="group relative flex items-center justify-between w-full">
+    <div
+      className={classNames(
+        'group relative flex items-center justify-between w-full',
+        wrapperClassName ?? '',
+      )}
+    >
       {Icon ? (
         <Icon
           {...iconProps}

@@ -109,8 +109,8 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
         txHash: hash,
         promise: receipt,
         summary: {
-          pending: `Removing liquidity from the ${token0.symbol}/${token1.symbol} smart pool`,
-          completed: `Successfully removed liquidity from the ${token0.symbol}/${token1.symbol} smart pool`,
+          pending: `Removing liquidity from the ${token0.symbol}/${token1.symbol} Liquidity Vault`,
+          completed: `Successfully removed liquidity from the ${token0.symbol}/${token1.symbol} Liquidity Vault`,
           failed: 'Something went wrong when removing liquidity',
         },
         timestamp: ts,

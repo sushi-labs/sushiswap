@@ -11,9 +11,10 @@ export const useRewardTokens = ({ chainId }: UseAngleRewardTokensParams) => {
   return useQuery({
     queryKey: ['merklRewardTokens', { chainId }],
     queryFn: async () => {
-      const url = new URL(`https://api.merkl.xyz/v4/tokens/reward/${chainId}`)
+      const url = new URL(`${window.location.origin}/api/merkl/reward-tokens`)
+      url.searchParams.set('chainId', `${chainId}`)
 
-      const res = await fetch(url)
+      const res = await fetch(url.toString())
       const json = await res.json()
 
       const parsed = merklRewardsTokensValidator.parse(json)

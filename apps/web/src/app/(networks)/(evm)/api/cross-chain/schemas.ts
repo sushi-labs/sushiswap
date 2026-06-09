@@ -1,4 +1,7 @@
-import { type XSwapSupportedChainId, isXSwapSupportedChainId } from 'src/config'
+import {
+  type LifiXSwapSupportedChainId,
+  isLifiXSwapSupportedChainId,
+} from 'src/config'
 import { type EvmChainId, isEvmAddress, isEvmChainId } from 'sushi/evm'
 import {
   SvmChainId,
@@ -18,7 +21,7 @@ type SchemaFlavor = 'sushi' | 'lifi'
 function chainIdSchema<TChainId extends number>({
   coerce = false,
   isChainId,
-  message = 'chainId must exist in XSwapSupportedChainId',
+  message = 'chainId must exist in LifiXSwapSupportedChainId',
 }: {
   coerce?: boolean
   isChainId: ChainIdGuard<TChainId>
@@ -35,27 +38,28 @@ function chainIdSchema<TChainId extends number>({
 
 export const LIFI_SOLANA_CHAIN_ID = 1151111081099710 as const
 
-type LifiChainId = XSwapSupportedChainId | typeof LIFI_SOLANA_CHAIN_ID
-type SushiEvmChainId = XSwapSupportedChainId & EvmChainId
-type SushiSvmChainId = XSwapSupportedChainId & SvmChainIdType
+type LifiChainId = LifiXSwapSupportedChainId | typeof LIFI_SOLANA_CHAIN_ID
+type SushiEvmChainId = LifiXSwapSupportedChainId & EvmChainId
+type SushiSvmChainId = LifiXSwapSupportedChainId & SvmChainIdType
 
 type ChainIdForFlavor<TFlavor extends SchemaFlavor> = TFlavor extends 'sushi'
-  ? XSwapSupportedChainId
+  ? LifiXSwapSupportedChainId
   : LifiChainId
 
-type SushiToLifiChainId<TChainId extends LifiChainId | XSwapSupportedChainId> =
-  TChainId extends SushiSvmChainId ? typeof LIFI_SOLANA_CHAIN_ID : TChainId
+type SushiToLifiChainId<
+  TChainId extends LifiChainId | LifiXSwapSupportedChainId,
+> = TChainId extends SushiSvmChainId ? typeof LIFI_SOLANA_CHAIN_ID : TChainId
 
-export function sushiToLifiChainId<TChainId extends XSwapSupportedChainId>(
+export function sushiToLifiChainId<TChainId extends LifiXSwapSupportedChainId>(
   chainId: TChainId,
 ): SushiToLifiChainId<TChainId> {
   if (isSvmChainId(chainId)) {
     return LIFI_SOLANA_CHAIN_ID as SushiToLifiChainId<TChainId>
   }
-  if (isXSwapSupportedChainId(chainId)) {
+  if (isLifiXSwapSupportedChainId(chainId)) {
     return chainId as SushiToLifiChainId<TChainId>
   }
-  throw new Error('chainId not supported in XSwapSupportedChainId')
+  throw new Error('chainId not supported in LifiXSwapSupportedChainId')
 }
 
 type LifiToSushiChainId<TChainId extends LifiChainId> =
@@ -67,14 +71,16 @@ export function lifiToSushiChainId<TChainId extends LifiChainId>(
   if (chainId === LIFI_SOLANA_CHAIN_ID) {
     return SvmChainId.SOLANA
   }
-  if (isXSwapSupportedChainId(chainId)) {
+  if (isLifiXSwapSupportedChainId(chainId)) {
     return chainId
   }
-  throw new Error('chainId not supported in XSwapSupportedChainId')
+  throw new Error('chainId not supported in LifiXSwapSupportedChainId')
 }
 
 function isLifiChainId(chainId: number): chainId is LifiChainId {
-  return chainId === LIFI_SOLANA_CHAIN_ID || isXSwapSupportedChainId(chainId)
+  return (
+    chainId === LIFI_SOLANA_CHAIN_ID || isLifiXSwapSupportedChainId(chainId)
+  )
 }
 
 function isLifiSvmChainId(
@@ -85,35 +91,36 @@ function isLifiSvmChainId(
 
 const _sushiChainIdSchema = chainIdSchema({
   coerce: true,
-  isChainId: isXSwapSupportedChainId,
+  isChainId: isLifiXSwapSupportedChainId,
 })
 
 const _sushiEvmChainIdSchema = chainIdSchema({
   coerce: true,
   isChainId: (chainId): chainId is SushiEvmChainId =>
-    isXSwapSupportedChainId(chainId) && isEvmChainId(chainId),
+    isLifiXSwapSupportedChainId(chainId) && isEvmChainId(chainId),
 })
 
 const _sushiSvmChainIdSchema = chainIdSchema({
   coerce: true,
   isChainId: (chainId): chainId is SushiSvmChainId =>
-    isXSwapSupportedChainId(chainId) && isSvmChainId(chainId),
+    isLifiXSwapSupportedChainId(chainId) && isSvmChainId(chainId),
 })
 
-type SushiChainIdSchema<TChainId extends XSwapSupportedChainId | undefined> =
-  TChainId extends undefined
-    ? typeof _sushiChainIdSchema
-    : TChainId extends SvmChainId
-      ? typeof _sushiSvmChainIdSchema
-      : typeof _sushiEvmChainIdSchema
+type SushiChainIdSchema<
+  TChainId extends LifiXSwapSupportedChainId | undefined,
+> = TChainId extends undefined
+  ? typeof _sushiChainIdSchema
+  : TChainId extends SvmChainId
+    ? typeof _sushiSvmChainIdSchema
+    : typeof _sushiEvmChainIdSchema
 
-function sushiChainIdSchema<TChainId extends XSwapSupportedChainId | undefined>(
-  chainId?: TChainId,
-): SushiChainIdSchema<TChainId> {
+function sushiChainIdSchema<
+  TChainId extends LifiXSwapSupportedChainId | undefined,
+>(chainId?: TChainId): SushiChainIdSchema<TChainId> {
   if (!chainId) {
     return chainIdSchema({
       coerce: true,
-      isChainId: isXSwapSupportedChainId,
+      isChainId: isLifiXSwapSupportedChainId,
     }) as SushiChainIdSchema<TChainId>
   }
 
@@ -169,7 +176,9 @@ function getAddressValidator(
   return isSvmChainIdFn(chainId) ? isSvmAddress : isEvmAddress
 }
 
-function getAddressSchema<TChainId extends XSwapSupportedChainId | LifiChainId>(
+function getAddressSchema<
+  TChainId extends LifiXSwapSupportedChainId | LifiChainId,
+>(
   chainId: TChainId,
   {
     isSvmChainIdFn = isSvmChainId,
@@ -189,7 +198,7 @@ type NormalizedChainIdForFlavor<
   TChainId extends ChainIdForFlavor<TFlavor>,
   TFlavor extends SchemaFlavor,
 > = TFlavor extends 'sushi'
-  ? SushiToLifiChainId<TChainId & XSwapSupportedChainId>
+  ? SushiToLifiChainId<TChainId & LifiXSwapSupportedChainId>
   : LifiToSushiChainId<TChainId & LifiChainId>
 
 type FlavorConfig<
@@ -197,12 +206,12 @@ type FlavorConfig<
   TFlavor extends SchemaFlavor,
 > = {
   chainIdSchema: TFlavor extends 'sushi'
-    ? SushiChainIdSchema<TChainId & XSwapSupportedChainId>
+    ? SushiChainIdSchema<TChainId & LifiXSwapSupportedChainId>
     : LifiChainIdSchema<TChainId & LifiChainId>
   isSvmChainIdFn: (chainId: number) => boolean
   normalizeChainId: TFlavor extends 'sushi'
     ? (
-        chainId: XSwapSupportedChainId,
+        chainId: LifiXSwapSupportedChainId,
       ) => NormalizedChainIdForFlavor<TChainId, TFlavor>
     : (chainId: LifiChainId) => NormalizedChainIdForFlavor<TChainId, TFlavor>
 }
@@ -212,7 +221,7 @@ function getFlavorConfig<
   TFlavor extends SchemaFlavor,
 >(chainId: TChainId, flavor: TFlavor): FlavorConfig<TChainId, TFlavor> {
   if (flavor === 'sushi') {
-    const _chainId = chainId as TChainId & XSwapSupportedChainId
+    const _chainId = chainId as TChainId & LifiXSwapSupportedChainId
     return {
       chainIdSchema: sushiChainIdSchema(_chainId) as FlavorConfig<
         TChainId,
@@ -479,6 +488,9 @@ function actionSchema<
     slippage: z.number().optional(),
     fromAddress: getAddressSchema(fromChainId, {
       isSvmChainIdFn: fromConfig.isSvmChainIdFn,
+    }).optional(),
+    toAddress: getAddressSchema(toChainId, {
+      isSvmChainIdFn: toConfig.isSvmChainIdFn,
     }).optional(),
   })
 }

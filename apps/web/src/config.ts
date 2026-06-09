@@ -3,7 +3,7 @@ import { ChainId } from 'sushi'
 import {
   AGGREGATOR_ONLY_CHAIN_IDS,
   BLADE_SUPPORTED_CHAIN_IDS,
-  EvmChainId,
+  type EvmChainId,
   type EvmTestnetChainId,
   SUSHISWAP_SUPPORTED_CHAIN_IDS,
   SWAP_API_SUPPORTED_CHAIN_IDS,
@@ -80,40 +80,35 @@ export const BLADE_SUPPORTED_NETWORKS = BLADE_SUPPORTED_CHAIN_IDS.filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
 
-export const NEW_CHAIN_IDS = [
-  SvmChainId.SOLANA,
-  StellarChainId.STELLAR,
-  EvmChainId.MEGAETH,
-  EvmChainId.XLAYER,
-] as const
+export const NEW_CHAIN_IDS = [] as const
 
 export const PREFERRED_CHAINID_ORDER = [
   ChainId.ETHEREUM,
-  ...NEW_CHAIN_IDS,
-  ChainId.SOLANA,
-  ChainId.BASE,
   ChainId.BSC,
+  ChainId.BASE,
   ChainId.ARBITRUM,
+  SvmChainId.SOLANA,
+  StellarChainId.STELLAR,
   ChainId.POLYGON,
-  ChainId.OPTIMISM,
   ChainId.KATANA,
-  ChainId.HEMI,
-  ChainId.LINEA,
+  ChainId.OPTIMISM,
+  ChainId.AVALANCHE,
   ChainId.FILECOIN,
+  ChainId.HEMI,
   ChainId.ROOTSTOCK,
-  ChainId.FANTOM,
   ChainId.GNOSIS,
-  ChainId.SKALE_EUROPA,
-  ChainId.CELO,
+  ChainId.ARBITRUM_NOVA,
+  ChainId.FANTOM,
   ChainId.HAQQ,
   ChainId.SCROLL,
-  ChainId.THUNDERCORE,
-  ChainId.ARBITRUM_NOVA,
-  ChainId.APTOS,
-  ChainId.AVALANCHE,
+  ChainId.LINEA,
+  ChainId.CELO,
   ChainId.SONIC,
-  ChainId.CORE,
+  ChainId.SKALE_EUROPA,
   ChainId.BLAST,
+  ChainId.THUNDERCORE,
+  ChainId.APTOS,
+  ChainId.CORE,
   ChainId.ZETACHAIN,
   ChainId.BOBA,
   ChainId.MANTLE,
@@ -261,7 +256,7 @@ export const isZapSupportedChainId = (
 ): chainId is ZapSupportedChainId =>
   ZAP_SUPPORTED_CHAIN_IDS.includes(chainId as ZapSupportedChainId)
 
-export const XSWAP_SUPPORTED_CHAIN_IDS = [
+export const LIFI_XSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.APE,
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
@@ -298,9 +293,10 @@ export const XSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.SOLANA,
 ] as const
 
-export type XSwapSupportedChainId = (typeof XSWAP_SUPPORTED_CHAIN_IDS)[number]
+export type LifiXSwapSupportedChainId =
+  (typeof LIFI_XSWAP_SUPPORTED_CHAIN_IDS)[number]
 
-export const isXSwapSupportedChainId = (
+export const isLifiXSwapSupportedChainId = (
   chainId: number,
-): chainId is XSwapSupportedChainId =>
-  XSWAP_SUPPORTED_CHAIN_IDS.includes(chainId as any)
+): chainId is LifiXSwapSupportedChainId =>
+  LIFI_XSWAP_SUPPORTED_CHAIN_IDS.includes(chainId as any)

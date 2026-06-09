@@ -8,14 +8,14 @@ import { useQuery } from '@tanstack/react-query'
 import { Fragment, useMemo } from 'react'
 import { useAccount } from 'src/lib/wallet'
 import { formatPercent, formatUSD } from 'sushi'
-import type { StellarAddress, StellarChainId } from 'sushi/stellar'
+import type { StellarAccountAddress } from 'sushi/stellar'
 import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
 import { getStellarPortfolioWallet } from '~stellar/_common/lib/hooks/token/get-stellar-portfolio-wallet'
 import { TokenIcon } from '~stellar/_common/ui/General/TokenIcon'
 import { PortfolioInfoRow } from '../portfolio-info-row'
 
 function usePortfolioStellarWallet(
-  address: StellarAddress | undefined,
+  address: StellarAccountAddress | undefined,
   refetchInterval?: 600_000,
 ) {
   return useQuery({
@@ -86,9 +86,9 @@ const _TokenRow = ({ token }: { token: PortfolioStellarWalletToken }) => {
   //not ideal, currently no price api for stellar
   const { data: tokenPrice } = useStablePrice({ token: token.token })
 
-  const _amountUsd = useMemo(() => {
-    return tokenPrice ? token.amount * tokenPrice : 0
-  }, [token.amount, tokenPrice])
+  const amountUsd = tokenPrice
+    ? Number(token.balance.toString()) * tokenPrice
+    : 0
 
   return (
     <PortfolioInfoRow
@@ -101,14 +101,14 @@ const _TokenRow = ({ token }: { token: PortfolioStellarWalletToken }) => {
             {token.name ?? token.symbol}
           </div>
           <div className="text-xs text-muted-foreground overflow-hidden overflow-ellipsis">
-            <FormattedNumber number={token.amount.toString()} /> {token.symbol}
+            <FormattedNumber number={token.balance.toString()} /> {token.symbol}
           </div>
         </Fragment>
       }
       rightContent={
         <Fragment>
           <div className="text-sm font-medium overflow-hidden overflow-ellipsis">
-            {formatUSD(_amountUsd)}
+            {formatUSD(amountUsd)}
           </div>
           <div
             className={classNames(

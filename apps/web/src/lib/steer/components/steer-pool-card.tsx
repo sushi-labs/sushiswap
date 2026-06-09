@@ -1,5 +1,6 @@
 import type { VaultV1 } from '@sushiswap/graph-client/data-api'
 import {
+  Button,
   Card,
   CardContent,
   CardDescription,
@@ -39,18 +40,21 @@ export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
           'max-w-[400px] hover:border-blue-300 hover:shadow-md',
         )}
       >
-        <CardHeader>
+        <CardHeader className="pb-4">
           <CardTitle>{vault.strategy}</CardTitle>
           <CardDescription>{vault.description}</CardDescription>
+          <Button className="mt-2 border border-accent" variant="secondary">
+            Deposit
+          </Button>
         </CardHeader>
         <Separator />
         <CardContent className="pt-6">
           <Stat className="!p-0">
-            <StatLabel size="sm">Weekly APR</StatLabel>
+            <StatLabel size="sm">24H APR</StatLabel>
             <StatValue size="sm">
-              <APRHoverCard pool={pool} smartPoolAPR={vault.apr}>
+              <APRHoverCard pool={pool} smartPoolAPR={vault.apr1d}>
                 <span className="underline decoration-dotted underline-offset-2">
-                  {formatPercent(vault.apr + pool.incentiveApr)}
+                  {formatPercent(vault.apr1d + pool.incentiveApr)}
                 </span>
               </APRHoverCard>
             </StatValue>

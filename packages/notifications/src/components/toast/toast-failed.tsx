@@ -15,6 +15,7 @@ export const ToastFailed: FC<ToastFailed> = ({
   txHash,
   onDismiss: _onDismiss,
   summary,
+  variant = 'default',
 }) => {
   const txUrl = href
     ? href
@@ -23,7 +24,7 @@ export const ToastFailed: FC<ToastFailed> = ({
       : ''
   return (
     <>
-      <ToastContent href={txUrl} summary={summary} />
+      <ToastContent href={txUrl} summary={summary} variant={variant} />
     </>
   )
 }

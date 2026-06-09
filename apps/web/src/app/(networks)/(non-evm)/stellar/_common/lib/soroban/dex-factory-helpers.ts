@@ -1,7 +1,11 @@
 import { Address } from '@stellar/stellar-sdk'
 import ms from 'ms'
+import type {
+  StellarAccountAddress,
+  StellarContractAddress,
+} from 'sushi/stellar'
 import { FEE_TIERS } from '../utils/ticks'
-import { getFactoryContractClient } from './client'
+import { getFactoryContractClient, getFactoryContractId } from './client'
 import { DEFAULT_TIMEOUT, isAddressLower } from './constants'
 import { contractAddresses } from './contracts'
 import { isPoolInitialized } from './pool-initialization'
@@ -25,13 +29,13 @@ export async function createAndInitializePool({
   sourceAccount,
   signTransaction,
 }: {
-  tokenA: string
-  tokenB: string
+  tokenA: StellarContractAddress
+  tokenB: StellarContractAddress
   fee: number
   sqrtPriceX96: bigint
-  sourceAccount: string
+  sourceAccount: StellarAccountAddress
   signTransaction: (xdr: string) => Promise<string>
-}): Promise<{ poolAddress: string; txHash?: string }> {
+}): Promise<{ poolAddress: StellarContractAddress; txHash?: string }> {
   try {
     // Validate inputs
     if (!tokenA || !tokenB) {
@@ -110,7 +114,9 @@ export async function createAndInitializePool({
 
     if (txResult.status === 'SUCCESS' && txResult.returnValue !== undefined) {
       // Extract pool address from result
-      const poolAddress = Address.fromScVal(txResult.returnValue).toString()
+      const poolAddress = Address.fromScVal(
+        txResult.returnValue,
+      ).toString() as StellarContractAddress
 
       return {
         poolAddress,
@@ -188,11 +194,13 @@ export async function getPoolDirectSDK({
   tokenA,
   tokenB,
   fee,
+  isLegacy = false,
 }: {
-  tokenA: string
-  tokenB: string
+  tokenA: StellarContractAddress
+  tokenB: StellarContractAddress
   fee: number
-}): Promise<string | null> {
+  isLegacy?: boolean
+}): Promise<StellarContractAddress | null> {
   try {
     // Order tokens by decoded bytes - EXACTLY like the router and getPoolTransactionBuilder does
     // Note: Must compare decoded bytes, not base32 strings (base32 doesn't preserve byte ordering)
@@ -201,8 +209,12 @@ export async function getPoolDirectSDK({
       : [tokenB, tokenA]
 
     // Create contract instance using direct SDK approach
+    const factoryContractId = getFactoryContractId(isLegacy)
+    if (!factoryContractId) {
+      throw new Error('Factory contract not found')
+    }
     const factoryContractClient = getFactoryContractClient({
-      contractId: contractAddresses.FACTORY,
+      contractId: factoryContractId,
       // No publicKey needed for read-only factory queries
     })
     const assembledTransaction = await factoryContractClient.get_pool({
@@ -210,7 +222,9 @@ export async function getPoolDirectSDK({
       token_b: token1,
       fee: fee,
     })
-    const result = assembledTransaction.result
+    const result = assembledTransaction.result as
+      | StellarContractAddress
+      | undefined
 
     // Handle the result - it should be an Option<string>
     // where Option<T> is defined as T | undefined
@@ -218,30 +232,6 @@ export async function getPoolDirectSDK({
   } catch (error) {
     console.warn('Direct SDK getPool error:', error)
     return null
-  }
-}
-
-/**
- * Check if a pool exists for the given token pair and fee
- * @param tokenA - Address of the first token
- * @param tokenB - Address of the second token
- * @param fee - Fee tier
- * @returns True if pool exists, false otherwise
- */
-export async function poolExists({
-  tokenA,
-  tokenB,
-  fee,
-}: {
-  tokenA: string
-  tokenB: string
-  fee: number
-}): Promise<boolean> {
-  try {
-    const poolAddress = await getPoolDirectSDK({ tokenA, tokenB, fee })
-    return poolAddress !== null
-  } catch {
-    return false
   }
 }
 

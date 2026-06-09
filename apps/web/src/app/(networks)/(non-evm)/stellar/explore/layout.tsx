@@ -1,8 +1,6 @@
 import { Container } from '@sushiswap/ui'
 import type { Metadata } from 'next'
-import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { ChainId } from 'sushi'
-import { Header } from '~stellar/header'
 import { ExploreHero } from '../../_ui/explore-hero'
 import { Providers } from './providers'
 
@@ -15,7 +13,6 @@ export default function ExplorePoolsLayout({
 }: { children: React.ReactNode }) {
   return (
     <>
-      <Header networks={POOL_SUPPORTED_NETWORKS} />
       <main className="flex flex-col h-full flex-1 animate-slide">
         <Container maxWidth="7xl" className="px-4 py-10 md:py-16">
           <ExploreHero chainId={ChainId.STELLAR} />

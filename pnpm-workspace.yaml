@@ -5,6 +5,10 @@ packages:
   - 'packages/*'
   - 'packages/stellar/contract-bindings/*'
 
+minimumReleaseAge: 1440
+minimumReleaseAgeExclude:
+  - sushi
+
 catalog:
   "typescript": 5.8.3
   "utf-8-validate": 6.0.3
@@ -17,14 +21,14 @@ catalogs:
     "@wagmi/core": 3.2.2
     "viem": 2.44.4
     "@solana/addresses": 6.0.1
-    "sushi": 6.5.4
+    "sushi": 6.6.11
 
   react:
-    "next": 15.5.9
-    "react": 19.0.1
-    "@types/react": 19.0.1
-    "react-dom": 19.0.1
-    "@types/react-dom": 19.0.2
+    "next": 16.2.6
+    "react": 19.2.4
+    "@types/react": 19.2.14
+    "react-dom": 19.2.4
+    "@types/react-dom": 19.2.3
   
   ui:
     "tailwindcss": 3.3.2

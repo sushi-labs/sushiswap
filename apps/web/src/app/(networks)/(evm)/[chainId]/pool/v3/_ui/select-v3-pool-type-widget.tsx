@@ -30,7 +30,7 @@ export const SelectV3PoolTypeWidget: FC<SelectV3PoolTypeWidgetProps> = ({
       title="Deposit Option"
       description={
         <>
-          Smart Pool option lets you choose from a variety of different
+          Liquidity Vault option lets you choose from a variety of different
           strategies; positions will automatically adhere to the chosen
           strategy, rebalancing when necessary.
           <br />
@@ -56,7 +56,7 @@ export const SelectV3PoolTypeWidget: FC<SelectV3PoolTypeWidgetProps> = ({
             >
               <Card className={!isSmartPoolSupported ? 'opacity-40' : ''}>
                 <CardHeader>
-                  <CardTitle>Smart Pool</CardTitle>
+                  <CardTitle>Liquidity Vault</CardTitle>
                   <CardDescription>Apply automated strategy</CardDescription>
                 </CardHeader>
               </Card>

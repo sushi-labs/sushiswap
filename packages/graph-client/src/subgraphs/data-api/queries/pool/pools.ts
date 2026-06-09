@@ -79,6 +79,7 @@ export async function getPools(variables: GetPools, options?: RequestOptions) {
         count: result.pools.count,
         data: result.pools.data.map((pool) => ({
           ...pool,
+          address: pool.address as EvmAddress,
           token0Address: pool.token0Address as EvmAddress,
           token1Address: pool.token1Address as EvmAddress,
           chainId: variables.chainId,

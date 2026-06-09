@@ -131,8 +131,8 @@ export const SteerPositionAddReviewModal: FC<
         txHash: hash,
         promise: receipt,
         summary: {
-          pending: `Adding liquidity to the ${currencies.CURRENCY_A?.symbol}/${currencies.CURRENCY_B?.symbol} smart pool`,
-          completed: `Successfully added liquidity to the ${currencies.CURRENCY_A?.symbol}/${currencies.CURRENCY_B?.symbol} smart pool`,
+          pending: `Adding liquidity to the ${currencies.CURRENCY_A?.symbol}/${currencies.CURRENCY_B?.symbol} Liquidity Vault`,
+          completed: `Successfully added liquidity to the ${currencies.CURRENCY_A?.symbol}/${currencies.CURRENCY_B?.symbol} Liquidity Vault`,
           failed: 'Something went wrong when adding liquidity',
         },
         timestamp: ts,

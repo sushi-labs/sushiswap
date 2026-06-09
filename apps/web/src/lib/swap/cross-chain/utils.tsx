@@ -1,4 +1,4 @@
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'
 import type { UseCrossChainTradeStepReturn } from 'src/lib/hooks/react-query'
 import { Amount, getNativeAddress } from 'sushi'
@@ -36,14 +36,14 @@ export function getCrossChainStepBreakdown(
 }
 
 interface FeeBreakdown {
-  amount: Amount<CurrencyFor<XSwapSupportedChainId>>
+  amount: Amount<CurrencyFor<LifiXSwapSupportedChainId>>
   amountUSD: number
 }
 
 export interface FeesBreakdown {
-  gas: Map<XSwapSupportedChainId, FeeBreakdown>
-  protocol: Map<XSwapSupportedChainId, FeeBreakdown>
-  ui: Map<XSwapSupportedChainId, FeeBreakdown>
+  gas: Map<LifiXSwapSupportedChainId, FeeBreakdown>
+  protocol: Map<LifiXSwapSupportedChainId, FeeBreakdown>
+  ui: Map<LifiXSwapSupportedChainId, FeeBreakdown>
 }
 
 enum FeeType {
@@ -55,7 +55,7 @@ enum FeeType {
 const UI_FEE_NAME = 'LIFI Shared Fee'
 
 export function getCrossChainFeesBreakdown(
-  step: Step<XSwapSupportedChainId, XSwapSupportedChainId, 'lifi'>,
+  step: Step<LifiXSwapSupportedChainId, LifiXSwapSupportedChainId, 'lifi'>,
 ) {
   const steps = [step]
   const gasFeesBreakdown = getFeesBreakdown(steps, FeeType.GAS)
@@ -90,7 +90,7 @@ export function getCrossChainFeesBreakdown(
 }
 
 function getFeesBreakdown(
-  steps: Step<XSwapSupportedChainId, XSwapSupportedChainId, 'lifi'>[],
+  steps: Step<LifiXSwapSupportedChainId, LifiXSwapSupportedChainId, 'lifi'>[],
   feeType: FeeType,
 ) {
   return steps.reduce((feesByChainId, step) => {
@@ -120,14 +120,14 @@ function getFeesBreakdown(
     )
 
     const feeByChainId = feesByChainId.get(
-      amount.currency.chainId as XSwapSupportedChainId,
+      amount.currency.chainId as LifiXSwapSupportedChainId,
     )
 
-    feesByChainId.set(amount.currency.chainId as XSwapSupportedChainId, {
+    feesByChainId.set(amount.currency.chainId as LifiXSwapSupportedChainId, {
       amount: feeByChainId ? feeByChainId.amount.add(amount) : amount,
       amountUSD: feeByChainId ? feeByChainId.amountUSD + amountUSD : amountUSD,
     })
 
     return feesByChainId
-  }, new Map<XSwapSupportedChainId, FeeBreakdown>())
+  }, new Map<LifiXSwapSupportedChainId, FeeBreakdown>())
 }

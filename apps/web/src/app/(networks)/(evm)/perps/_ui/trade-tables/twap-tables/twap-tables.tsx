@@ -1,0 +1,72 @@
+import {
+  Button,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  classNames,
+  useBreakpoint,
+} from '@sushiswap/ui'
+import { useMemo } from 'react'
+import { PerpsCard } from '../../_common'
+import { TradeFilter } from '../filters'
+import {
+  TWAP_TABLES_TABS,
+  type TwapTableTabValue,
+  useTradeTables,
+} from '../trade-tables-provider'
+
+export const TwapTables = () => {
+  const { isLg } = useBreakpoint('lg')
+  const {
+    state: { activeTwapTab },
+    mutate: { setActiveTwapTab },
+  } = useTradeTables()
+  const ActiveContent = useMemo(() => {
+    return TWAP_TABLES_TABS.find((t) => t.value === activeTwapTab)?.content
+  }, [activeTwapTab])
+  return (
+    <Tabs
+      value={activeTwapTab}
+      onValueChange={(val) => setActiveTwapTab(val as TwapTableTabValue)}
+    >
+      <div className="flex items-center mx-1 justify-between lg:mt-1">
+        {!isLg ? <TradeFilter /> : null}
+        <PerpsCard className="hide-scrollbar overflow-x-auto" rounded="full">
+          <TabsList
+            className={classNames(
+              '!px-0.5 !h-8 !bg-perps-muted/[.02] !rounded-full !border-transparent',
+            )}
+          >
+            {TWAP_TABLES_TABS.map((tab) => (
+              <TabsTrigger
+                key={tab.value}
+                value={tab.value}
+                className="!px-1.5 !py-.5 !text-xs"
+                asChild
+              >
+                <Button
+                  size="xs"
+                  variant={
+                    activeTwapTab === tab.value ? 'perps-secondary' : 'ghost'
+                  }
+                  className="!p-0 w-full col-span-1 capitalize !text-xs !rounded-full !border-0"
+                >
+                  {tab.name}
+                </Button>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </PerpsCard>
+      </div>
+
+      {TWAP_TABLES_TABS.map((tab) => (
+        <TabsContent key={tab.value} value={tab.value}>
+          <div className="p-2 !pt-0 min-h-[205px] max-h-[335px] hide-scrollbar overflow-y-auto">
+            <div>{ActiveContent ? <ActiveContent /> : null}</div>
+          </div>
+        </TabsContent>
+      ))}
+    </Tabs>
+  )
+}

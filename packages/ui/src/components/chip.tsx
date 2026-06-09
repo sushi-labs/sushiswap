@@ -21,6 +21,10 @@ const chipVariants = cva(
         pink: 'bg-pink/10 text-pink',
         blue: 'bg-blue/10 text-blue',
         green: 'bg-green/10 text-green',
+        red: 'bg-red/10 text-red',
+        'perps-blue': 'bg-perps-blue/10 text-perps-blue',
+        'perps-red': 'bg-perps-red/10 text-perps-red',
+        'perps-green': 'bg-perps-green/10 text-perps-green',
       },
       hasRemove: {
         yes: 'pr-0.5',

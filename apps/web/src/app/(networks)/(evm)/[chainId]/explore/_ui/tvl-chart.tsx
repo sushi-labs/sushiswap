@@ -260,7 +260,7 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
                 id="hoveredTVLDate"
                 className="text-sm text-gray-500 dark:text-slate-500 min-h-[40px]"
               >
-                {isMounted
+                {isMounted && currentDate
                   ? format(new Date(currentDate), 'dd MMM yyyy\nhh:mm aa')
                   : ''}
               </div>

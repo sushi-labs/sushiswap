@@ -6,11 +6,10 @@ import {
   warningSeverityClassName,
 } from 'src/lib/swap/warningSeverity'
 import { Amount, ZERO } from 'sushi'
-import type { EvmChainId } from 'sushi/evm'
-import type { SvmChainId } from 'sushi/svm'
+import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
 import type { CurrencyInputProps } from './currency-input'
 
-type PricePanel<TChainId extends EvmChainId | SvmChainId> = Pick<
+type PricePanel<TChainId extends BalanceChainId> = Pick<
   CurrencyInputProps<TChainId>,
   'loading' | 'currency' | 'value' | 'priceImpact' | 'className'
 > & {
@@ -18,7 +17,7 @@ type PricePanel<TChainId extends EvmChainId | SvmChainId> = Pick<
   price: number | undefined
 }
 
-export function PricePanel<TChainId extends EvmChainId | SvmChainId>({
+export function PricePanel<TChainId extends BalanceChainId>({
   loading,
   price,
   currency,

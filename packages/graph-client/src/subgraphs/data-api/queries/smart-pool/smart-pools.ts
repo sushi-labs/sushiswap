@@ -76,6 +76,7 @@ export async function getSmartPools(
   if (result) {
     return result.smartPools.map((pool) => ({
       ...pool,
+      stakedAndIncentiveApr1d: pool.stakedAndIncentiveApr1d,
       chainId: pool.chainId as EvmChainId,
       id: pool.id as EvmID,
       strategy: pool.strategy,
@@ -98,7 +99,7 @@ export async function getSmartPools(
     }))
   }
 
-  throw new Error('No smart pools found')
+  throw new Error('No Liquidity Vaults found')
 }
 
 export type SmartPoolsV1 = Awaited<ReturnType<typeof getSmartPools>>

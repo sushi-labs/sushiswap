@@ -1,13 +1,29 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import ms from 'ms'
+import {
+  type StellarAccountAddress,
+  StellarChainId,
+  type StellarContractAddress,
+  StellarToken,
+  isStellarAccountAddress,
+  isStellarContractAddress,
+  normalizeStellarAddress,
+} from 'sushi/stellar'
 import { z } from 'zod'
 import { staticTokens } from '~stellar/_common/lib/assets/token-assets'
-import type { Token } from '~stellar/_common/lib/types/token.type'
 
 const stellarExpertAssetSchema = z.object({
   code: z.string(),
-  issuer: z.string(),
-  contract: z.string(),
+  issuer: z
+    .custom<StellarAccountAddress>((val) =>
+      isStellarAccountAddress(val as string),
+    )
+    .transform(normalizeStellarAddress),
+  contract: z
+    .custom<StellarContractAddress>((val) =>
+      isStellarContractAddress(val as string),
+    )
+    .transform(normalizeStellarAddress),
   name: z.string(),
   org: z.string(),
   decimals: z.number(),
@@ -38,9 +54,34 @@ const OUTDATED_TOKENS = new Set([
   'USD|stablecoin.anchorusd.com',
 ])
 
-const getStellarExpertAssets = async (): Promise<
-  z.infer<typeof stellarExpertAssetSchema>[]
-> => {
+const whitelistedTokens = [
+  new StellarToken({
+    chainId: StellarChainId.STELLAR,
+    address: 'CC64WBDGS6QQP22QTTIACYIXT3WF7BBQEYOQPLTP7GTKYY7PZ74QYGSL',
+    symbol: 'deJAAA',
+    name: 'deJAAA',
+    origin: 'centrifuge',
+    decimals: 18,
+    metadata: {
+      domain: 'centrifuge.io',
+      icon: 'https://cdn.sushi.com/image/upload/v1780067232/tokens/-4/CC64WBDGS6QQP22QTTIACYIXT3WF7BBQEYOQPLTP7GTKYY7PZ74QYGSL.png',
+    },
+  }),
+  new StellarToken({
+    chainId: StellarChainId.STELLAR,
+    address: 'CBI7UCH5KGSVQRO5H4SUCZUTZABCITZLRHQQZTWL2TK4RZ72TAR6IHRV',
+    symbol: 'deJTRSY',
+    name: 'deJTRSY',
+    origin: 'centrifuge',
+    decimals: 18,
+    metadata: {
+      domain: 'centrifuge.io',
+      icon: 'https://cdn.sushi.com/image/upload/v1780067208/tokens/-4/CBI7UCH5KGSVQRO5H4SUCZUTZABCITZLRHQQZTWL2TK4RZ72TAR6IHRV.png',
+    },
+  }),
+]
+
+const getStellarExpertAssets = async () => {
   if (!stellarExpertTopTokensApiUrl) {
     return []
   }
@@ -63,32 +104,43 @@ const getStellarExpertAssets = async (): Promise<
   }
 
   const assets = parsed.data.assets
-  return assets.filter(
-    (i) => i.domain && !OUTDATED_TOKENS.has(`${i.code}|${i.domain}`),
-  )
+  return assets
+    .filter((i) => i.domain && !OUTDATED_TOKENS.has(`${i.code}|${i.domain}`))
+    .map(
+      (asset) =>
+        new StellarToken({
+          chainId: StellarChainId.STELLAR,
+          address: asset.contract,
+          symbol: asset.code,
+          name: asset.name,
+          decimals: asset.decimals,
+          issuer: asset.issuer,
+          origin: asset.org,
+          metadata: { icon: asset.icon, domain: asset.domain },
+        }),
+    )
 }
 
 export const fetchCommonTokensQueryFn = async (): Promise<
-  Record<string, Token>
+  Record<string, StellarToken>
 > => {
-  const result: Record<string, Token> = {}
+  const result: Record<string, StellarToken> = {}
 
-  // Always include hardcoded tokens
-  // Use uppercase keys for consistency (Stellar addresses are case-insensitive)
-  staticTokens.forEach((token) => {
-    result[token.contract.toUpperCase()] = token
-  })
+  // Always include hardcoded tokens. Use the StellarToken's normalized
+  // (uppercase) address as the key for case-insensitive lookups.
+  for (const token of [...staticTokens, ...whitelistedTokens]) {
+    result[token.address] = token
+  }
 
   // Try to add StellarExpert tokens
   try {
     const assets = await getStellarExpertAssets()
     assets.forEach((token) => {
-      // Use uppercase keys for consistency
-      result[token.contract.toUpperCase()] = token
+      result[token.address] = token
     })
   } catch (error) {
     console.warn(
-      `[useCommonTokens] StellarExpert failed, using ${staticTokens.length} hardcoded tokens only:`,
+      `[useCommonTokens] StellarExpert failed, using ${staticTokens.length + whitelistedTokens.length} hardcoded tokens only:`,
       error,
     )
   }

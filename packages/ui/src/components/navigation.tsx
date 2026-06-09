@@ -92,8 +92,12 @@ export type NavigationElementShow =
   | 'desktop'
   | 'everywhere'
   | 'never'
+  | 'perps-mobile'
+  | 'perps-desktop'
 
-const navigationElementShowMap: Record<NavigationElementShow, string> = {
+export const navigationElementShowMap: Record<NavigationElementShow, string> = {
+  'perps-mobile': 'lg:hidden block',
+  'perps-desktop': 'lg:block hidden',
   mobile: 'md:hidden block',
   desktop: 'md:block hidden',
   everywhere: '',

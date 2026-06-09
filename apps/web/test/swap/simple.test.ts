@@ -1,3 +1,4 @@
+import { expect } from '@playwright/test'
 import { test } from 'next/experimental/testmode/playwright.js'
 import { EvmNative, USDC, USDT, WBTC } from 'sushi/evm'
 import { chainId, nativeAmount } from 'test/constants'
@@ -70,6 +71,40 @@ test('Wrap and unwrap', async ({ page }) => {
   await swapPage.wrap(native, wnative, nativeAmount)
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-unwrap.json`)
   await swapPage.wrap(wnative, native, 'max')
+})
+
+test('clearing swap input does not refresh the page', async ({ page }) => {
+  const url = BASE_URL.concat(`/${chainId}/swap`)
+  const swapPage = new SwapPage(page, chainId)
+  await swapPage.goTo(url)
+
+  const input = page.locator('[testdata-id=swap-from-input]')
+  await expect(input).toBeVisible()
+  await expect(input).toBeEnabled()
+
+  await input.fill('1')
+  await expect(page).toHaveURL(/[?&]swapAmount=1(?:&|$)/)
+
+  await page.evaluate(() => {
+    const pageWindow = window as Window & { __swapInputClearMarker?: string }
+    pageWindow.__swapInputClearMarker = 'alive'
+  })
+
+  await input.press('Backspace')
+
+  await expect(input).toHaveValue('')
+  await expect
+    .poll(() => new URL(page.url()).searchParams.has('swapAmount'))
+    .toBe(false)
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (window as Window & { __swapInputClearMarker?: string })
+            .__swapInputClearMarker,
+      ),
+    )
+    .toBe('alive')
 })
 
 test('swap Native to USDC, then USDC to NATIVE', async ({ page }) => {

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import * as z from 'zod'
 
 const LiFiStatusResponseSchema = z.object({
@@ -19,16 +19,16 @@ const LiFiStatusResponseSchema = z.object({
 type LiFiStatusResponseType = z.infer<typeof LiFiStatusResponseSchema>
 
 type LiFiStatusResponse<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 > = Omit<LiFiStatusResponseType, 'sending' | 'receiving'> & {
   sending: { txHash: TxHashFor<TChainId0> }
   receiving?: { txHash: TxHashFor<TChainId1> }
 }
 
 async function getLiFiStatus<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >(
   txHash: TxHashFor<TChainId0>,
 ): Promise<LiFiStatusResponse<TChainId0, TChainId1>> {
@@ -50,15 +50,15 @@ async function getLiFiStatus<
   }
 }
 
-interface UseLiFiStatusParams<TChainId0 extends XSwapSupportedChainId> {
+interface UseLiFiStatusParams<TChainId0 extends LifiXSwapSupportedChainId> {
   txHash: TxHashFor<TChainId0> | undefined
   tradeId: string
   enabled?: boolean
 }
 
 export function useLiFiStatus<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >({ txHash, tradeId, enabled = true }: UseLiFiStatusParams<TChainId0>) {
   return useQuery({
     queryKey: ['lifiStatus', { tradeId }],

@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
 import React from 'react'
-import { formatUSD } from 'sushi'
-import { formatUnits } from 'viem'
+import { Amount, formatUSD } from 'sushi'
 import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import { useStellarWallet } from '~stellar/providers'
@@ -38,23 +37,22 @@ export const MyPosition: React.FC<MyPositionProps> = ({ pool }) => {
   // Extract principal token amounts from aggregated positions
   const actualAmounts = React.useMemo(() => {
     return positions.reduce(
-      (acc, cur) => {
-        return {
-          token0: acc.token0 + cur.principalToken0,
-          token1: acc.token1 + cur.principalToken1,
-        }
+      (acc, cur) => ({
+        token0: acc.token0.add(cur.principalToken0),
+        token1: acc.token1.add(cur.principalToken1),
+      }),
+      {
+        token0: new Amount(pool.token0, 0n),
+        token1: new Amount(pool.token1, 0n),
       },
-      { token0: 0n, token1: 0n },
     )
-  }, [positions])
+  }, [positions, pool.token0, pool.token1])
 
   const token0UsdValue =
-    Number(formatUnits(actualAmounts.token0, pool.token0.decimals)) *
-    Number(priceToken0 ?? 0)
+    Number(actualAmounts.token0.toString()) * Number(priceToken0 ?? 0)
 
   const token1UsdValue =
-    Number(formatUnits(actualAmounts.token1, pool.token1.decimals)) *
-    Number(priceToken1 ?? 0)
+    Number(actualAmounts.token1.toString()) * Number(priceToken1 ?? 0)
 
   // If no positions found, show empty state
   if (!isLoading && positions.length === 0) {
@@ -110,13 +108,13 @@ export const MyPosition: React.FC<MyPositionProps> = ({ pool }) => {
             <LiquidityItem
               isLoading={isLoading}
               token={pool.token0}
-              amount={formatUnits(actualAmounts.token0, pool.token0.decimals)}
+              amount={actualAmounts.token0.toString()}
               usdAmount={token0UsdValue.toFixed(2)}
             />
             <LiquidityItem
               isLoading={isLoading}
               token={pool.token1}
-              amount={formatUnits(actualAmounts.token1, pool.token1.decimals)}
+              amount={actualAmounts.token1.toString()}
               usdAmount={token1UsdValue.toFixed(2)}
             />
           </div>

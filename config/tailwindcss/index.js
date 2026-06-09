@@ -54,6 +54,7 @@ module.exports = {
         sans: ['var(--font-inter)'],
         mono: ['var(--font-roboto-mono)'],
         orbitron: ['var(--font-orbitron)'],
+        lufga: ['var(--font-lufga)'],
       },
       backgroundImage: () => ({
         'gradient-radial': 'radial-gradient(#13213E, #111829)',
@@ -93,6 +94,16 @@ module.exports = {
         accent: 'var(--accent)',
         'accent-foreground': 'var(--accent-foreground)',
         background: 'var(--background)',
+        'perps-background': '#0D1217',
+        'perps-blue': '#349BFE',
+        'perps-green': '#52FA8D',
+        'perps-red': '#FB7185',
+        'perps-muted': {
+          DEFAULT: '#EDF0F3',
+          20: '#EDF0F333',
+          50: '#EDF0F380',
+          70: '#EDF0F3B2',
+        },
       },
       animation: {
         ellipsis: 'ellipsis 1.25s infinite',
@@ -108,6 +119,7 @@ module.exports = {
         'accordion-up': 'accordion-up 0.2s ease-out',
         walk: 'walk 0.5s linear infinite',
         shadow: 'shadow 0.5s linear infinite',
+        float: 'float 8s ease-in-out infinite',
       },
       keyframes: {
         'accordion-down': {
@@ -117,6 +129,11 @@ module.exports = {
         'accordion-up': {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translate(0px, 0px) scale(1)' },
+          '33%': { transform: 'translate(6px, -4px) scale(1.28)' },
+          '66%': { transform: 'translate(-4px, 3px) scale(0.85)' },
         },
         shimmer: {
           '100%': {

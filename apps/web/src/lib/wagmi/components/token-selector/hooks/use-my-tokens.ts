@@ -7,37 +7,27 @@ import { useCustomTokens } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { useMemo } from 'react'
-import { type AddressFor, Amount, getNativeAddress } from 'sushi'
+import type { WalletAddressFor } from 'src/lib/wallet'
 import {
-  type EvmAddress,
-  type EvmChainId,
-  type EvmCurrency,
-  EvmNative,
-  EvmToken,
-  isEvmChainId,
-} from 'sushi/evm'
-import {
-  type SvmAddress,
-  type SvmChainId,
-  type SvmCurrency,
-  SvmNative,
-  SvmToken,
-  isSvmChainId,
-} from 'sushi/svm'
-import type { Address } from 'viem'
+  type AddressFor,
+  Amount,
+  getNativeAddress,
+  getNativeFor,
+  getTokenFor,
+} from 'sushi'
 
 interface UseMyTokens<TChainId extends TokenListChainId> {
   chainId: TChainId | undefined
-  account?: AddressFor<TChainId>
+  account?: WalletAddressFor<TChainId>
   includeNative?: boolean
 }
 
-type UseMyTokensDataReturn<TChainId extends TokenListChainId> =
-  TChainId extends EvmChainId
-    ? ReturnType<typeof processEvmTokens>
-    : TChainId extends SvmChainId
-      ? ReturnType<typeof processSvmTokens>
-      : never
+type UseMyTokensDataReturn<TChainId extends TokenListChainId> = {
+  tokens: CurrencyFor<TChainId>[]
+  balanceMap:
+    | Map<AddressFor<TChainId>, Amount<CurrencyFor<TChainId>>>
+    | undefined
+}
 
 export function useMyTokens<TChainId extends TokenListChainId>({
   chainId,
@@ -73,8 +63,6 @@ export function useMyTokens<TChainId extends TokenListChainId>({
   })
 
   return useMemo(() => {
-    let data
-
     if (!query.data || !chainId) {
       return {
         ...query,
@@ -85,79 +73,41 @@ export function useMyTokens<TChainId extends TokenListChainId>({
       }
     }
 
-    if (isEvmChainId(chainId)) {
-      data = processEvmTokens(
-        query.data as TokenListBalances<TokenListChainId & EvmChainId>,
-        chainId,
-      )
-    } else if (isSvmChainId(chainId)) {
-      data = processSvmTokens(
-        query.data as TokenListBalances<TokenListChainId & SvmChainId>,
-        chainId,
-      )
-    }
-
     return {
       ...query,
-      data: data as UseMyTokensDataReturn<TChainId>,
+      data: processTokens(query.data, chainId),
     }
   }, [chainId, query])
 }
 
-function processEvmTokens(
-  tokens: TokenListBalances<TokenListChainId & EvmChainId>,
-  chainId: TokenListChainId & EvmChainId,
-) {
-  const _tokens: EvmCurrency<{ approved: boolean }>[] | undefined = []
-  const balanceMap: Map<Address, Amount<EvmCurrency>> | undefined = new Map()
+function processTokens<TChainId extends TokenListChainId>(
+  tokens: TokenListBalances<TChainId>,
+  chainId: TChainId,
+): UseMyTokensDataReturn<TChainId> {
+  const _tokens: CurrencyFor<TChainId, { approved: boolean }>[] | undefined = []
+  const balanceMap:
+    | Map<AddressFor<TChainId>, Amount<CurrencyFor<TChainId>>>
+    | undefined = new Map()
 
   const nativeAddress = getNativeAddress(chainId)
 
   tokens.forEach((token) => {
-    let _token: EvmCurrency<{ approved: boolean }>
-    let address: EvmAddress
+    let _token: CurrencyFor<TChainId, { approved: boolean }>
+    let address: AddressFor<TChainId>
 
     if (token.address === nativeAddress) {
-      _token = EvmNative.fromChainId(chainId)
+      _token = getNativeFor(chainId, {
+        approved: true,
+      })
       address = nativeAddress
     } else {
-      _token = new EvmToken({
+      _token = getTokenFor(chainId, {
         ...token,
         metadata: { approved: token.approved },
       })
-      address = _token.address
+      address = token.address
     }
 
-    _tokens.push(_token)
-    balanceMap.set(address, new Amount(_token, token.balance))
-  })
-
-  return { tokens: _tokens, balanceMap }
-}
-
-function processSvmTokens(
-  tokens: TokenListBalances<TokenListChainId & SvmChainId>,
-  chainId: TokenListChainId & SvmChainId,
-) {
-  const _tokens: SvmCurrency<{ approved: boolean }>[] | undefined = []
-  const balanceMap: Map<SvmAddress, Amount<SvmCurrency>> | undefined = new Map()
-
-  const nativeAddress = getNativeAddress(chainId)
-
-  tokens.forEach((token) => {
-    let _token: SvmCurrency<{ approved: boolean }>
-    let address: SvmAddress
-
-    if (token.address === nativeAddress) {
-      _token = SvmNative.fromChainId(chainId)
-      address = nativeAddress
-    } else {
-      _token = new SvmToken({
-        ...token,
-        metadata: { approved: token.approved },
-      })
-      address = _token.address
-    }
     _tokens.push(_token)
     balanceMap.set(address, new Amount(_token, token.balance))
   })

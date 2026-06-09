@@ -2,7 +2,11 @@ import { nanoid } from 'nanoid'
 import { type ToastOptions, toast } from 'react-toastify'
 
 import { addNotification } from '../../functions/addNotification'
-import type { PromiseNotification, ResolvedNotification } from '../../types'
+import type {
+  NotificationVariant,
+  PromiseNotification,
+  ResolvedNotification,
+} from '../../types'
 import { ToastButtons } from './toast-buttons'
 import { ToastCompleted } from './toast-completed'
 import { ToastContent } from './toast-content'
@@ -83,6 +87,7 @@ export const createToast = (props: PromiseNotification) => {
 export const createErrorToast = (
   message: string | undefined,
   code: boolean,
+  variant?: NotificationVariant,
 ) => {
   if (!message) return
 
@@ -90,7 +95,11 @@ export const createErrorToast = (
   toast(
     () => (
       <>
-        <ToastContent summary={message} code={code} />
+        <ToastContent
+          summary={message}
+          code={code}
+          variant={variant || 'default'}
+        />
         <ToastButtons onDismiss={() => toast.dismiss(toastId)} />
       </>
     ),
@@ -109,7 +118,7 @@ export const createSuccessToast = (props: ResolvedNotification) => {
     {
       ...TOAST_OPTIONS,
       toastId,
-      autoClose: 8000,
+      autoClose: props?.autoClose ?? 8000,
     },
   )
 
@@ -121,7 +130,7 @@ export const createFailedToast = (props: ResolvedNotification) => {
   toast(<ToastFailed {...props} onDismiss={() => toast.dismiss(toastId)} />, {
     ...TOAST_OPTIONS,
     toastId,
-    autoClose: 8000,
+    autoClose: props?.autoClose ?? 8000,
   })
 
   return addNotification(props)
@@ -132,7 +141,7 @@ export const createInfoToast = (props: ResolvedNotification) => {
   toast(<ToastInfo {...props} onDismiss={() => toast.dismiss(toastId)} />, {
     ...TOAST_OPTIONS,
     toastId,
-    autoClose: 8000,
+    autoClose: props?.autoClose ?? 8000,
   })
 
   return addNotification(props)

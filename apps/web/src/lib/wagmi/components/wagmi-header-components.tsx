@@ -17,12 +17,16 @@ interface WagmiHeaderComponentsProps {
   networks: readonly ChainId[] | undefined
   selectedNetwork?: ChainId
   onChange?(chainId: EvmChainId): void
+  hideNetworkSelector?: boolean
+  isPerps?: boolean
 }
 
 export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
   networks,
   selectedNetwork,
   onChange,
+  hideNetworkSelector,
+  isPerps,
 }) => {
   const { chainId, address, connector } = useConnection()
   const previousConnectedChainId = usePrevious(chainId)
@@ -43,13 +47,15 @@ export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
 
   return (
     <Suspense>
-      <HeaderNetworkSelector
-        networks={networks}
-        selectedNetwork={selectedNetwork}
-        onChange={onChange}
-        className="flex"
-      />
-      <UserPortfolio selectedNetwork={selectedNetwork} />
+      {hideNetworkSelector ? null : (
+        <HeaderNetworkSelector
+          networks={networks}
+          selectedNetwork={selectedNetwork}
+          onChange={onChange}
+          className="flex"
+        />
+      )}
+      <UserPortfolio isPerps={isPerps} selectedNetwork={selectedNetwork} />
     </Suspense>
   )
 }

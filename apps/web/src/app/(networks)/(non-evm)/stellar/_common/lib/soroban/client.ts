@@ -8,6 +8,7 @@ import { Client as RouterContractClient } from '@sushiswap/stellar-contract-bind
 import { Client as TokenContractClient } from '@sushiswap/stellar-contract-binding-token'
 import { Client as ZapRouterContractClient } from '@sushiswap/stellar-contract-binding-zap-router'
 import { NETWORK_PASSPHRASE, RPC_URL } from '../constants'
+import { contractAddresses } from './contracts'
 
 // Initialize Soroban RPC server
 // See https://developers.stellar.org/docs/data/apis/api-providers#publicly-accessible-apis
@@ -20,6 +21,13 @@ export const HorizonClient = new Horizon.Server(RPC_URL, { allowHttp: true })
 type ContractClientParams = {
   contractId: string
   publicKey?: string
+}
+
+export const getFactoryContractId = (isLegacy: boolean) => {
+  if (isLegacy) {
+    return contractAddresses.LEGACY_FACTORY
+  }
+  return contractAddresses.FACTORY
 }
 
 export const getFactoryContractClient = ({
@@ -76,6 +84,13 @@ export const getTokenContractClient = ({
     rpcUrl: RPC_URL,
     publicKey: publicKey,
   })
+
+export const getPositionManagerContractId = (isLegacy: boolean) => {
+  if (isLegacy) {
+    return contractAddresses.LEGACY_POSITION_MANAGER
+  }
+  return contractAddresses.POSITION_MANAGER
+}
 
 export const getPositionManagerContractClient = ({
   contractId,

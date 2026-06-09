@@ -8,12 +8,12 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { addMinutes } from 'date-fns'
 import { ChainId, MAX_UINT128 } from 'sushi'
+import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
 import { formatUnits } from 'viem'
 import { decreaseLiquidity } from '~stellar/_common/lib/soroban/position-manager-helpers'
 import { getStellarTxnLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
 import { useStellarWallet } from '~stellar/providers'
 import { waitForTransaction } from '../../soroban/transaction-helpers'
-import type { Token } from '../../types/token.type'
 import { useCollectFees } from '../position/use-positions'
 
 export interface RemovePoolLiquidityParams {
@@ -21,16 +21,18 @@ export interface RemovePoolLiquidityParams {
   liquidity: bigint
   amount0Min: bigint
   amount1Min: bigint
-  token0: Token
-  token1: Token
-  poolAddress: string
+  token0: StellarToken
+  token1: StellarToken
+  poolAddress: StellarContractAddress
 }
 
-export const useRemoveLiquidity = () => {
+export const useRemoveLiquidity = ({
+  isLegacy = false,
+}: { isLegacy?: boolean } = {}) => {
   const { signTransaction, signAuthEntry, connectedAddress } =
     useStellarWallet()
   const queryClient = useQueryClient()
-  const collectFeesMutation = useCollectFees()
+  const collectFeesMutation = useCollectFees({ isLegacy })
 
   // This just decreases the pool liquidity
   // The rest of the useRemoveLiquidity below handles
@@ -60,6 +62,7 @@ export const useRemoveLiquidity = () => {
         Math.floor(addMinutes(new Date(), 5).valueOf() / 1000),
       )
       const decreaseResult = await decreaseLiquidity({
+        pool: params.poolAddress,
         tokenId: params.tokenId,
         liquidity: params.liquidity,
         amount0Min: params.amount0Min,
@@ -69,6 +72,7 @@ export const useRemoveLiquidity = () => {
         sourceAccount: connectedAddress,
         signTransaction,
         signAuthEntry,
+        isLegacy,
       })
 
       await waitForTransaction(decreaseResult.hash)
@@ -100,7 +104,13 @@ export const useRemoveLiquidity = () => {
         queryKey: ['stellar', 'position-principals-batch'],
       })
       queryClient.invalidateQueries({
-        queryKey: ['stellar', 'positions', 'token', variables.tokenId],
+        queryKey: [
+          'stellar',
+          'positions',
+          'single',
+          isLegacy,
+          variables.tokenId,
+        ],
       })
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'position-principal', variables.tokenId],
@@ -128,14 +138,15 @@ export const useRemoveLiquidity = () => {
       }
     },
     mutationFn: async (params: {
+      poolAddress: StellarContractAddress
       tokenId: number
       recipient: string
       amount0Max: bigint
       amount1Max: bigint
       signTransaction: (xdr: string) => Promise<string>
       signAuthEntry: (entryPreimageXdr: string) => Promise<string>
-      token0: Token
-      token1: Token
+      token0: StellarToken
+      token1: StellarToken
     }) => {
       const collectResult = await collectFeesMutation.mutateAsync(params)
       return { collectResult }
@@ -152,11 +163,11 @@ export const useRemoveLiquidity = () => {
 
       let summary = 'Liquidity collected successfully'
       if (collectResult.amount0 > 0n && collectResult.amount1 > 0n) {
-        summary = `Collected ${token0Amount} ${variables.token0.code} and ${token1Amount} ${variables.token1.code}`
+        summary = `Collected ${token0Amount} ${variables.token0.symbol} and ${token1Amount} ${variables.token1.symbol}`
       } else if (collectResult.amount0 > 0n) {
-        summary = `Collected ${token0Amount} ${variables.token0.code}`
+        summary = `Collected ${token0Amount} ${variables.token0.symbol}`
       } else if (collectResult.amount1 > 0n) {
-        summary = `Collected ${token1Amount} ${variables.token1.code}`
+        summary = `Collected ${token1Amount} ${variables.token1.symbol}`
       }
       const timestamp = Date.now()
       createSuccessToast({
@@ -186,6 +197,7 @@ export const useRemoveLiquidity = () => {
       }
       const { collectResult } =
         await collectFeesMutationToastWrapper.mutateAsync({
+          poolAddress: params.poolAddress,
           tokenId: params.tokenId,
           recipient: connectedAddress,
           amount0Max: MAX_UINT128,

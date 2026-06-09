@@ -4,14 +4,18 @@ import type { ISupportedWallet } from '@creit.tech/stellar-wallets-kit'
 import { useEffect, useMemo, useState } from 'react'
 import { useRecentWallets } from 'src/lib/wallet/hooks/use-recent-wallets'
 import type { WalletWithState } from '../../../types'
-import { StellarAdapterId, stellarWalletKit } from '../config'
+import {
+  StellarAdapterId,
+  getStellarWalletId,
+  stellarWalletKit,
+} from '../config'
 
 const _useStellarWallets = () => {
   const [wallets, setWallets] = useState<ISupportedWallet[]>([])
 
   useEffect(() => {
     const fetchWallets = async () => {
-      const supportedWallets = await stellarWalletKit.getSupportedWallets()
+      const supportedWallets = await stellarWalletKit.refreshSupportedWallets()
       setWallets(supportedWallets)
     }
 
@@ -28,7 +32,7 @@ export function useStellarWallets() {
   return useMemo(() => {
     const map = new Map<string, WalletWithState>()
     for (const wallet of wallets) {
-      const walletId = `stellar:${wallet.id.toLowerCase()}`
+      const walletId = getStellarWalletId(wallet.id)
 
       map.set(walletId, {
         id: walletId,

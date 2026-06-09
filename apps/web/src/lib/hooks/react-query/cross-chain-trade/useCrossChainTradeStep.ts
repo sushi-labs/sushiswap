@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import type { XSwapSupportedChainId } from 'src/config'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'
 import { Amount, Percent, getNativeAddress } from 'sushi'
 import { stringify } from 'viem/utils'
@@ -10,8 +10,8 @@ import type { CrossChainStepResponse } from '~evm/api/cross-chain/step/route'
 type NewTokenInput = Parameters<typeof newToken>[0]
 
 export type UseCrossChainTradeStepReturn<
-  TChainId0 extends XSwapSupportedChainId = XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId = XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
 > = NonNullable<
   ReturnType<typeof useCrossChainTradeStep<TChainId0, TChainId1>>['data']
 >
@@ -19,16 +19,16 @@ export type UseCrossChainTradeStepReturn<
 // export type
 
 export interface UseCrossChainTradeStepParams<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 > {
   step: Step<TChainId0, TChainId1, 'lifi'> | undefined
   enabled?: boolean
 }
 
 export function useCrossChainTradeStep<
-  TChainId0 extends XSwapSupportedChainId,
-  TChainId1 extends XSwapSupportedChainId,
+  TChainId0 extends LifiXSwapSupportedChainId,
+  TChainId1 extends LifiXSwapSupportedChainId,
 >({
   step,
   enabled = true,

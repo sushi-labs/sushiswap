@@ -3,6 +3,7 @@ import React from 'react'
 import type { IconComponent } from '../types'
 
 export const SushiWithTextIcon: IconComponent = (props) => {
+  const id = React.useId()
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -11,7 +12,7 @@ export const SushiWithTextIcon: IconComponent = (props) => {
       viewBox="0 0 116 28"
     >
       <path
-        fill="url(#paint0_linear_12919_18029)"
+        fill={`url(#sushi-with-text-${id})`}
         fillRule="evenodd"
         d="M29.642 18.15l-5.905 8.256c-.86 1.204-2.537 1.734-4.673 1.562-2.967-.258-6.909-1.834-10.679-4.543a29.824 29.824 0 01-3.474-2.886C2.914 18.6 1.446 16.581.66 14.781c-.86-1.978-.888-3.726-.028-4.93l5.92-8.257C7.41.39 9.072-.14 11.222.032c2.968.243 6.895 1.834 10.679 4.53 3.77 2.708 6.537 5.933 7.712 8.657.101.234.191.464.27.69.584 1.693.517 3.179-.242 4.24z"
         clipRule="evenodd"
@@ -28,7 +29,7 @@ export const SushiWithTextIcon: IconComponent = (props) => {
       />
       <defs>
         <linearGradient
-          id="paint0_linear_12919_18029"
+          id={`sushi-with-text-${id}`}
           x1="39.25"
           x2="42.065"
           y1="-0.338"

@@ -15,7 +15,7 @@ import {
 
 const faroConfig = {
   url: 'https://faro.analytics-fe.sushi.com/collect',
-  samplingRate: process.env.NODE_ENV === 'development' ? 1.0 : 0.1,
+  samplingRate: 1,
 }
 
 const ignoreUrls = [
@@ -32,7 +32,7 @@ const ignoreUrls = [
 
 const ignoreLogStacks: RegExp[] = [/-extension:\/\//]
 
-if (!faro.api && !process.env.CI) {
+if (!faro.api && !process.env.CI && process.env.NODE_ENV !== 'development') {
   try {
     initializeFaro({
       app: {

@@ -2,6 +2,11 @@
 
 import { useQuery } from '@tanstack/react-query'
 import {
+  type StellarAddress,
+  type StellarContractAddress,
+  isStellarContractAddress,
+} from 'sushi/stellar'
+import {
   getMultipleTokenAllowances,
   getMultipleTokenBalances,
   hasSufficientAllowance,
@@ -9,8 +14,8 @@ import {
 } from '../../soroban/token-helpers'
 
 export const useHasSufficientBalance = (
-  address: string | null,
-  tokenAddress: string | null,
+  address: StellarAddress | null,
+  tokenAddress: StellarContractAddress | null,
   amount: bigint | null,
 ) => {
   return useQuery({
@@ -33,9 +38,9 @@ export const useHasSufficientBalance = (
 }
 
 export const useHasSufficientAllowance = (
-  owner: string | null,
-  spender: string | null,
-  tokenAddress: string | null,
+  owner: StellarAddress | null,
+  spender: StellarAddress | null,
+  tokenAddress: StellarContractAddress | null,
   amount: bigint | null,
 ) => {
   return useQuery({
@@ -49,24 +54,36 @@ export const useHasSufficientAllowance = (
       amount,
     ],
     queryFn: async () => {
-      if (!owner || !spender || !tokenAddress || amount === null) {
+      if (
+        !owner ||
+        !spender ||
+        !tokenAddress ||
+        !isStellarContractAddress(tokenAddress) ||
+        amount === null
+      ) {
         return null
       }
       return await hasSufficientAllowance(owner, spender, tokenAddress, amount)
     },
-    enabled: Boolean(owner && spender && tokenAddress && amount !== null),
+    enabled: Boolean(
+      owner &&
+        spender &&
+        tokenAddress &&
+        isStellarContractAddress(tokenAddress) &&
+        amount !== null,
+    ),
   })
 }
 
 export const useMultipleTokenBalances = (
-  address: string | null,
-  tokenAddresses: string[],
+  address: StellarAddress | null,
+  tokenAddresses: StellarContractAddress[],
 ) => {
   return useQuery({
     queryKey: ['stellar', 'token', 'multipleBalances', address, tokenAddresses],
     queryFn: async () => {
       if (!address || tokenAddresses.length === 0) {
-        return null
+        throw new Error('Address and token addresses are required')
       }
       return await getMultipleTokenBalances(address, tokenAddresses)
     },
@@ -75,9 +92,9 @@ export const useMultipleTokenBalances = (
 }
 
 export const useMultipleTokenAllowances = (
-  owner: string | null,
-  spender: string | null,
-  tokenAddresses: string[],
+  owner: StellarAddress | null,
+  spender: StellarAddress | null,
+  tokenAddresses: StellarContractAddress[],
 ) => {
   return useQuery({
     queryKey: [
@@ -90,7 +107,7 @@ export const useMultipleTokenAllowances = (
     ],
     queryFn: async () => {
       if (!owner || !spender || tokenAddresses.length === 0) {
-        return null
+        throw new Error('Owner, spender, and token addresses are required')
       }
       return await getMultipleTokenAllowances(owner, spender, tokenAddresses)
     },

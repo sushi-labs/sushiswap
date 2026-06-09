@@ -1,21 +1,24 @@
+import type {
+  StellarAccountAddress,
+  StellarContractAddress,
+  StellarToken,
+} from 'sushi/stellar'
 import type { PoolInfo, PoolLiquidity, PoolReserves } from '../types/pool.type'
-import type { Token } from '../types/token.type'
-import { type OracleHints, fetchOracleHints } from '../utils/slot-hint-helpers'
 import { MAX_TICK_RANGE } from '../utils/ticks'
 import { getPoolLensContractClient } from './client'
 import { contractAddresses } from './contracts'
 import { getTokenBalance, getTokenByContract } from './token-helpers'
 
 export interface PoolBasicInfo {
-  address: string
-  tokenA: Token
-  tokenB: Token
+  address: StellarContractAddress
+  tokenA: StellarToken
+  tokenB: StellarToken
   fee: number
 }
 
 export interface ContractPoolData {
-  token0: Token
-  token1: Token
+  token0: StellarToken
+  token1: StellarToken
   fee: number
   description?: string
   reserve0: bigint
@@ -31,7 +34,7 @@ export interface ContractPoolData {
  * @param address - The pool contract address
  */
 export async function getPoolInfoFromContract(
-  address: string,
+  address: StellarContractAddress,
 ): Promise<ContractPoolData | null> {
   try {
     const poolLensContractClient = getPoolLensContractClient({
@@ -64,15 +67,15 @@ export async function getPoolInfoFromContract(
     } = poolData.state
 
     const [token0, token1] = await Promise.all([
-      getTokenByContract(token0Address),
-      getTokenByContract(token1Address),
+      getTokenByContract(token0Address as StellarContractAddress),
+      getTokenByContract(token1Address as StellarContractAddress),
     ])
 
     return {
       token0,
       token1,
       fee,
-      description: `${token0.code}-${token1.code} (${fee / 10000}% fee)`,
+      description: `${token0.symbol}-${token1.symbol} (${fee / 10000}% fee)`,
       reserve0,
       reserve1,
       liquidity,
@@ -91,7 +94,9 @@ export async function getPoolInfoFromContract(
  * @param address - The pool contract address
  * @returns Complete pool information with all fields populated
  */
-export async function getPoolInfo(address: string): Promise<PoolInfo | null> {
+export async function getPoolInfo(
+  address: StellarContractAddress,
+): Promise<PoolInfo | null> {
   try {
     const contractPoolInfo = await getPoolInfoFromContract(address)
 
@@ -108,17 +113,17 @@ export async function getPoolInfo(address: string): Promise<PoolInfo | null> {
 
     const reserves: PoolReserves = {
       token0: {
-        code: contractPoolInfo.token0.code,
+        code: contractPoolInfo.token0.symbol,
         amount: contractPoolInfo.reserve0.toString(),
       },
       token1: {
-        code: contractPoolInfo.token1.code,
+        code: contractPoolInfo.token1.symbol,
         amount: contractPoolInfo.reserve1.toString(),
       },
     }
 
     return {
-      name: `${contractPoolInfo.token0.code}/${contractPoolInfo.token1.code}`,
+      name: `${contractPoolInfo.token0.symbol}/${contractPoolInfo.token1.symbol}`,
       address: address,
       token0: contractPoolInfo.token0,
       token1: contractPoolInfo.token1,
@@ -143,8 +148,8 @@ export async function getPoolInfo(address: string): Promise<PoolInfo | null> {
  * @returns The balances for each token in the pool for the connected address
  */
 export async function getPoolBalances(
-  address: string,
-  connectedAddress: string,
+  address: StellarContractAddress,
+  connectedAddress: StellarAccountAddress,
 ): Promise<PoolReserves> {
   const config = await getPoolInfoFromContract(address)
 
@@ -153,17 +158,17 @@ export async function getPoolBalances(
   }
 
   const [balance0, balance1] = await Promise.all([
-    getTokenBalance(connectedAddress, config.token0.contract),
-    getTokenBalance(connectedAddress, config.token1.contract),
+    getTokenBalance(connectedAddress, config.token0.address),
+    getTokenBalance(connectedAddress, config.token1.address),
   ])
 
   return {
     token0: {
-      code: config.token0.code,
+      code: config.token0.symbol,
       amount: balance0.toString(),
     },
     token1: {
-      code: config.token1.code,
+      code: config.token1.symbol,
       amount: balance1.toString(),
     },
   }
@@ -227,7 +232,7 @@ export const formatPriceBound = (tick: number, bound: 'lower' | 'upper') => {
  * @returns Current sqrt price as BigInt
  */
 export async function getCurrentSqrtPrice(
-  poolAddress: string,
+  poolAddress: StellarContractAddress,
 ): Promise<bigint> {
   const poolLensContractClient = getPoolLensContractClient({
     contractId: contractAddresses.POOL_LENS,
@@ -400,16 +405,4 @@ export function calculateAmountsFromLiquidity(
   }
 
   return { amount0, amount1 }
-}
-
-/**
- * Get oracle hints from pool
- * Required before any pool write operation (mint, burn, swap)
- * @param poolAddress - The pool contract address
- * @returns Object with slot and checkpoint hints
- */
-export async function getOracleHints(
-  poolAddress: string,
-): Promise<OracleHints> {
-  return await fetchOracleHints(poolAddress)
 }

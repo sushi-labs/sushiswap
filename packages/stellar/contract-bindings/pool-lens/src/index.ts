@@ -21,6 +21,7 @@ import type {
   Typepoint,
   Duration,
 } from '@stellar/stellar-sdk/contract';
+import type { StellarContractAddress } from "sushi/stellar";
 export * from '@stellar/stellar-sdk'
 export * as contract from '@stellar/stellar-sdk/contract'
 export * as rpc from '@stellar/stellar-sdk/rpc'
@@ -37,7 +38,7 @@ if (typeof window !== 'undefined') {
 export const networks = {
   unknown: {
     networkPassphrase: "Public Global Stellar Network ; September 2015",
-    contractId: "CDFGDFKEN7EVMI3DKIEQ6BKDAKEPHTEPWC6G2ZTDY7ATVCLD24AAU2IN",
+    contractId: "CASKWJSINHFW7BF7RUOA4E2FP6B2TYRKFX2UOPWLCPOOPUR6UU3G2RWC",
   }
 } as const
 
@@ -70,11 +71,11 @@ tick_spacing: i32;
   /**
  * First token in the pair (lower address)
  */
-token0: string;
+token0: StellarContractAddress;
   /**
  * Second token in the pair (higher address)
  */
-token1: string;
+token1: StellarContractAddress;
 }
 
 
@@ -117,7 +118,7 @@ export interface PoolData {
   /**
  * The pool contract address
  */
-pool: string;
+pool: StellarContractAddress;
   /**
  * Pool state result - Found(state) if initialized, NotFound otherwise
  */
@@ -134,7 +135,7 @@ export interface PoolDataWithBalances {
   /**
  * The pool contract address
  */
-pool: string;
+pool: StellarContractAddress;
   /**
  * Pool state result with reserves
  */
@@ -337,6 +338,16 @@ tick: i32;
 weight: u128;
 }
 
+
+/**
+ * Oracle hints for deterministic footprint (must match pool's OracleHints)
+ */
+export interface OracleHints {
+  checkpoint: u32;
+  checkpoint_min: u32;
+  slot: u128;
+}
+
 /**
  * Error codes for the periphery base contract
  */
@@ -425,14 +436,6 @@ export const PeripheryBaseErrors = {
    * Position must have zero liquidity and no owed tokens before burning
    */
   1021: {message:"PositionNotCleared"}
-}
-
-/**
- * Combined error codes for backwards compatibility
- */
-export const Errors = {
-  ...PeripheryLibraryErrors,
-  ...PeripheryBaseErrors,
 }
 
 /**
@@ -582,7 +585,7 @@ export interface Client {
    * # Returns
    * PoolData struct with all pool information
    */
-  get_pool_data: ({pool}: {pool: string}, options?: {
+  get_pool_data: ({pool}: {pool: StellarContractAddress}, options?: {
     /**
      * The fee to pay for the transaction. Default: BASE_FEE
      */
@@ -641,7 +644,7 @@ export interface Client {
    * # Returns
    * PoolDataWithBalances struct with pool state and reserves
    */
-  get_pool_data_with_bal: ({pool}: {pool: string}, options?: {
+  get_pool_data_with_bal: ({pool}: {pool: StellarContractAddress}, options?: {
     /**
      * The fee to pay for the transaction. Default: BASE_FEE
      */
@@ -910,7 +913,7 @@ export interface Client {
    * 3. For each populated bit, calculates the actual tick and fetches its data
    * 4. Returns results in reverse order (matching Solidity's behavior)
    */
-  get_populated_ticks_in_word: ({pool, tick_bitmap_index}: {pool: string, tick_bitmap_index: i32}, options?: {
+  get_populated_ticks_in_word: ({pool, tick_bitmap_index}: {pool: StellarContractAddress, tick_bitmap_index: i32}, options?: {
     /**
      * The fee to pay for the transaction. Default: BASE_FEE
      */
@@ -956,7 +959,7 @@ export interface Client {
    * - `start_word` was near i32::MAX causing range reduction
    * - More than MAX_TICKS_BATCH (2
    */
-  get_populated_ticks_in_range: ({pool, start_word, count}: {pool: string, start_word: i32, count: u32}, options?: {
+  get_populated_ticks_in_range: ({pool, start_word, count}: {pool: StellarContractAddress, start_word: i32, count: u32}, options?: {
     /**
      * The fee to pay for the transaction. Default: BASE_FEE
      */
@@ -1033,6 +1036,7 @@ export class Client extends ContractClient {
         "AAAABAAAACdFcnJvciBjb2RlcyBmb3IgdGhlIHBlcmlwaGVyeSBsaWJyYXJpZXMAAAAAAAAAAAVFcnJvcgAAAAAAAAQAAAA+SGV4IHN0cmluZyBsZW5ndGggaXMgaW5zdWZmaWNpZW50IGZvciB0aGUgcmVxdWVzdGVkIGNvbnZlcnNpb24AAAAAABVIZXhMZW5ndGhJbnN1ZmZpY2llbnQAAAAAAAfRAAAAMW11bF9kaXYgb3BlcmF0aW9uIGZhaWxlZCBpbiBsaXF1aWRpdHkgY2FsY3VsYXRpb24AAAAAAAAMTXVsRGl2RmFpbGVkAAAH0gAAACZJbnZhbGlkIHByaWNlIHJhbmdlIChkaXZpc2lvbiBieSB6ZXJvKQAAAAAAEUludmFsaWRQcmljZVJhbmdlAAAAAAAH0wAAAClVMjU2IHRvIHUxMjggY29udmVyc2lvbiBmYWlsZWQgKG92ZXJmbG93KQAAAAAAABpVMjU2VG9VMTI4Q29udmVyc2lvbkZhaWxlZAAAAAAH1A==",
         "AAAAAQAAAFdQYXJhbWV0ZXJzIHJlcXVpcmVkIHRvIGNvbnN0cnVjdCBhIHRva2VuIFVSSSAoc2VlIG9yaWdpbmFsIFNvbGlkaXR5IGNvZGUgZm9yIHNlbWFudGljcykAAAAAAAAAABdDb25zdHJ1Y3RUb2tlblVSSVBhcmFtcwAAAAAOAAAAAAAAABJiYXNlX3Rva2VuX2FkZHJlc3MAAAAAABMAAAAAAAAAE2Jhc2VfdG9rZW5fZGVjaW1hbHMAAAAABAAAAAAAAAARYmFzZV90b2tlbl9zeW1ib2wAAAAAAAAQAAAAAAAAAANmZWUAAAAABAAAAAAAAAAKZmxpcF9yYXRpbwAAAAAAAQAAAAAAAAAMcG9vbF9hZGRyZXNzAAAAEwAAAAAAAAATcXVvdGVfdG9rZW5fYWRkcmVzcwAAAAATAAAAAAAAABRxdW90ZV90b2tlbl9kZWNpbWFscwAAAAQAAAAAAAAAEnF1b3RlX3Rva2VuX3N5bWJvbAAAAAAAEAAAAAAAAAAMdGlja19jdXJyZW50AAAABQAAAAAAAAAKdGlja19sb3dlcgAAAAAABQAAAAAAAAAMdGlja19zcGFjaW5nAAAABQAAAAAAAAAKdGlja191cHBlcgAAAAAABQAAAAAAAAAIdG9rZW5faWQAAAAG",
         "AAAAAQAAAEJEYXRhIHN0cnVjdHVyZSBmb3Igd2VpZ2h0ZWQgdGljayBhZ2dyZWdhdGlvbiBhY3Jvc3MgbXVsdGlwbGUgcG9vbHMAAAAAAAAAAAAQV2VpZ2h0ZWRUaWNrRGF0YQAAAAIAAAAWVGljayB2YWx1ZSBmcm9tIGEgcG9vbAAAAAAABHRpY2sAAAAFAAAANFdlaWdodCBmb3IgdGhpcyB0aWNrICh0eXBpY2FsbHkgbGlxdWlkaXR5IG9yIHZvbHVtZSkAAAAGd2VpZ2h0AAAAAAAK",
+        "AAAAAQAAAEhPcmFjbGUgaGludHMgZm9yIGRldGVybWluaXN0aWMgZm9vdHByaW50IChtdXN0IG1hdGNoIHBvb2wncyBPcmFjbGVIaW50cykAAAAAAAAAC09yYWNsZUhpbnRzAAAAAAMAAAAAAAAACmNoZWNrcG9pbnQAAAAAAAQAAAAAAAAADmNoZWNrcG9pbnRfbWluAAAAAAAEAAAAAAAAAARzbG90AAAACg==",
         "AAAABAAAACtFcnJvciBjb2RlcyBmb3IgdGhlIHBlcmlwaGVyeSBiYXNlIGNvbnRyYWN0AAAAAAAAAAAFRXJyb3IAAAAAAAAVAAAAJVRyYW5zYWN0aW9uIGhhcyBleGNlZWRlZCB0aGUgZGVhZGxpbmUAAAAAAAARVHJhbnNhY3Rpb25Ub29PbGQAAAAAAAPpAAAAJUNvbnRyYWN0IGhhcyBhbHJlYWR5IGJlZW4gaW5pdGlhbGl6ZWQAAAAAAAASQWxyZWFkeUluaXRpYWxpemVkAAAAAAPqAAAAKEZhY3RvcnkgYWRkcmVzcyBoYXMgbm90IGJlZW4gaW5pdGlhbGl6ZWQAAAAVRmFjdG9yeU5vdEluaXRpYWxpemVkAAAAAAAD6wAAACRYTE0gYWRkcmVzcyBoYXMgbm90IGJlZW4gaW5pdGlhbGl6ZWQAAAAYWGxtQWRkcmVzc05vdEluaXRpYWxpemVkAAAD7AAAABRUb2tlbiBkb2VzIG5vdCBleGlzdAAAABFUb2tlbkRvZXNOb3RFeGlzdAAAAAAAA+0AAAAaTm90IHRoZSBvd25lciBvZiB0aGUgdG9rZW4AAAAAAA1Ob3RUb2tlbk93bmVyAAAAAAAD7gAAABZVbmF1dGhvcml6ZWQgb3BlcmF0aW9uAAAAAAAMVW5hdXRob3JpemVkAAAD7wAAAChJbnN1ZmZpY2llbnQgdG9rZW4gYmFsYW5jZSBmb3Igb3BlcmF0aW9uAAAAE0luc3VmZmljaWVudEJhbGFuY2UAAAAD8AAAACZUaWNrIHJhbmdlIGlzIGludmFsaWQgKGxvd2VyID49IHVwcGVyKQAAAAAAEEludmFsaWRUaWNrUmFuZ2UAAAPxAAAAMFRpY2sgdmFsdWVzIGFyZSBub3QgYWxpZ25lZCB0byBwb29sIHRpY2sgc3BhY2luZwAAAA5UaWNrTm90QWxpZ25lZAAAAAAD8gAAAB9UaWNrIGlzIG91dCBvZiBhbGxvd2FibGUgYm91bmRzAAAAAA9UaWNrT3V0T2ZCb3VuZHMAAAAD8wAAACdFeHBlY3RlZCBwb29sIG5vdCBmb3VuZCBvciBpbmFjY2Vzc2libGUAAAAADFBvb2xOb3RGb3VuZAAAA/QAAAArTWF0aGVtYXRpY2FsIG9wZXJhdGlvbiByZXN1bHRlZCBpbiBvdmVyZmxvdwAAAAAMTWF0aE92ZXJmbG93AAAD9QAAADtQcmljZSBzbGlwcGFnZSBjaGVjayBmYWlsZWQgKGFtb3VudCByZWNlaXZlZCBiZWxvdyBtaW5pbXVtKQAAAAASUHJpY2VTbGlwcGFnZUNoZWNrAAAAAAP2AAAAQE5vIHRva2VucyB0byBjb2xsZWN0IChib3RoIGFtb3VudDBfbWF4IGFuZCBhbW91bnQxX21heCBhcmUgemVybykAAAAQTm90aGluZ1RvQ29sbGVjdAAAA/cAAAASVG9rZW5zIE5vdCBPcmRlcmVkAAAAAAAQVG9rZW5zTm90T3JkZXJlZAAAA/gAAAAcTGlxdWlkaXR5IGNhbGN1bGF0aW9uIGZhaWxlZAAAABpMaXF1aWRpdHlDYWxjdWxhdGlvbkZhaWxlZAAAAAAD+QAAAC5Qb29sIGtleSBkYXRhIGlzIG1pc3NpbmcgZm9yIHRoZSBnaXZlbiBwb29sIElEAAAAAAAOUG9vbEtleU1pc3NpbmcAAAAAA/oAAAAsVG9rZW4gZGVzY3JpcHRvciBjb250cmFjdCBhZGRyZXNzIGlzIG5vdCBzZXQAAAAVVG9rZW5EZXNjcmlwdG9yTm90U2V0AAAAAAAD+wAAACdObyBhcHByb3ZlZCBhZGRyZXNzIGZvciB0aGUgZ2l2ZW4gdG9rZW4AAAAAEU5vQXBwcm92ZWRBZGRyZXNzAAAAAAAD/AAAAENQb3NpdGlvbiBtdXN0IGhhdmUgemVybyBsaXF1aWRpdHkgYW5kIG5vIG93ZWQgdG9rZW5zIGJlZm9yZSBidXJuaW5nAAAAABJQb3NpdGlvbk5vdENsZWFyZWQAAAAAA/0=",
         "AAAAAgAAADFLZXlzIHVuZGVyIHdoaWNoIHdlJ2xsIHN0b3JlIHRoZSBpbW11dGFibGUgZmllbGRzAAAAAAAAAAAAAAdEYXRhS2V5AAAAAAIAAAAAAAAAAAAAAAdGYWN0b3J5AAAAAAAAAAAAAAAAClhsbUFkZHJlc3MAAA==",
         "AAAAAQAAALpRMTI4LjEyOCBmaXhlZC1wb2ludCBudW1iZXIKClJlcHJlc2VudHMgYSBudW1iZXIgYXM6IHZhbHVlIC8gMl4xMjgKClVzZWQgZXhjbHVzaXZlbHkgZm9yIGZlZSBncm93dGggdHJhY2tpbmcgaW4gVW5pc3dhcCBWMyBhcmNoaXRlY3R1cmUuCkZvciBwcmljZSBjYWxjdWxhdGlvbnMsIHVzZSBGaXhlZFBvaW50OTYgaW5zdGVhZC4AAAAAAAAAAAANRml4ZWRQb2ludDEyOAAAAAAAAAEAAAAAAAAAATAAAAAAAAAM",

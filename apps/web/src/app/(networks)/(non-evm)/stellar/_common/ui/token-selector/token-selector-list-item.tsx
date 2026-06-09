@@ -1,27 +1,27 @@
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import { Badge, classNames } from '@sushiswap/ui'
 import React, { type CSSProperties } from 'react'
-import { formatUnits } from 'viem'
-import type { Token } from '~stellar/_common/lib/types/token.type'
+import type { Amount } from 'sushi'
+import type { StellarToken } from 'sushi/stellar'
 import { TokenIcon } from '../General/TokenIcon'
 
 type TokenListItem = {
   id: string
   style: CSSProperties
-  token: Token & { balance?: string }
+  token: StellarToken<{ icon?: string; domain?: string }>
+  balance?: Amount<StellarToken>
   selected: boolean
-  onSelect: (token: Token) => void
+  onSelect: (token: StellarToken) => void
 }
 
 export function TokenListItem({
   style,
   token,
+  balance,
   selected,
   onSelect,
 }: TokenListItem) {
-  const tokenBalance = Number.parseFloat(
-    formatUnits(BigInt(token.balance ?? 0n), token.decimals),
-  )
+  const tokenBalance = balance ? Number(balance.toString()) : 0
   return (
     <div className="py-0.5 h-[64px]" style={style}>
       <button
@@ -60,10 +60,11 @@ export function TokenListItem({
             )}
             <div className="flex flex-col items-start">
               <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 group-hover:dark:text-white">
-                {token.code}
+                {token.symbol}
               </span>
               <span className="max-w-[200px] truncate text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100">
-                {token.name} {token.domain ? `- ${token.domain}` : ''}
+                {token.name}{' '}
+                {token.metadata.domain ? `- ${token.metadata.domain}` : ''}
               </span>
             </div>
           </div>

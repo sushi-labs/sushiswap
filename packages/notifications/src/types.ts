@@ -28,7 +28,10 @@ interface BaseNotification {
   timestamp: number
   href?: string
   txHash?: string | `0x${string}`
+  variant?: NotificationVariant
 }
+
+export type NotificationVariant = 'perps' | 'default'
 
 export interface PromiseNotification extends BaseNotification {
   promise: Promise<any>
@@ -42,6 +45,7 @@ export interface PromiseNotification extends BaseNotification {
 
 export type ResolvedNotification = BaseNotification & {
   summary: string
+  autoClose?: number
 }
 
 export type Notification = PromiseNotification | ResolvedNotification

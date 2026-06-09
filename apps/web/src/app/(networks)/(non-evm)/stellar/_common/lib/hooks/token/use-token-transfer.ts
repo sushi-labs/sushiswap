@@ -1,19 +1,20 @@
 'use client'
 
 import { useMutation } from '@tanstack/react-query'
+import type { StellarAddress, StellarContractAddress } from 'sushi/stellar'
 import { transferFromToken, transferToken } from '../../soroban/token-helpers'
 
 export interface TransferTokenParams {
-  to: string
+  to: StellarAddress
   amount: bigint
-  tokenAddress: string
+  tokenAddress: StellarContractAddress
 }
 
 export interface TransferFromTokenParams {
-  from: string
-  to: string
+  from: StellarAddress
+  to: StellarAddress
   amount: bigint
-  tokenAddress: string
+  tokenAddress: StellarContractAddress
 }
 
 export const useTransferToken = () => {

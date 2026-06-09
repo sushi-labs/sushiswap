@@ -1,13 +1,13 @@
-import type { Token } from '~stellar/_common/lib/types/token.type'
+import type { StellarToken } from 'sushi/stellar'
 
 const alwaysTrue = () => true
 
-export function createTokenFilterFunction<T extends Token>(
-  search: string,
-): (tokens: T) => boolean {
+export function createTokenFilterFunction<
+  T extends StellarToken<{ domain?: string }>,
+>(search: string): (tokens: T) => boolean {
   // Check if searching by Stellar contract address (starts with C and is 56 chars)
   if (search.startsWith('C') && search.length >= 10) {
-    return (t: T) => search.toUpperCase() === t.contract.toUpperCase()
+    return (t: T) => search.toUpperCase() === t.address
   }
 
   const lowerSearchParts = search
@@ -32,11 +32,13 @@ export function createTokenFilterFunction<T extends Token>(
     )
   }
 
-  return ({ name, code, domain }: T): boolean =>
-    matchesSearch(code) || matchesSearch(name) || matchesSearch(domain)
+  return (t: T): boolean =>
+    matchesSearch(t.symbol) ||
+    matchesSearch(t.name) ||
+    matchesSearch(t.metadata?.domain)
 }
 
-export function filterTokens<T extends Token>(
+export function filterTokens<T extends StellarToken>(
   tokens: T[],
   search: string,
 ): T[] {
@@ -44,19 +46,19 @@ export function filterTokens<T extends Token>(
 }
 
 export const tokenComparator = () => {
-  return (tokenA: Token, tokenB: Token): number => {
-    if (tokenA.code && tokenB.code) {
-      return tokenA.code.toLowerCase() < tokenB.code.toLowerCase() ? -1 : 1
+  return (tokenA: StellarToken, tokenB: StellarToken): number => {
+    if (tokenA.symbol && tokenB.symbol) {
+      return tokenA.symbol.toLowerCase() < tokenB.symbol.toLowerCase() ? -1 : 1
     } else {
-      return tokenA.code ? -1 : tokenB.code ? -1 : 0
+      return tokenA.symbol ? -1 : tokenB.symbol ? -1 : 0
     }
   }
 }
 
 export function getSortedTokensByQuery(
-  tokens: Token[] | undefined,
+  tokens: StellarToken[] | undefined,
   searchQuery: string,
-): Token[] {
+): StellarToken[] {
   const sortedTokens = tokens ? tokens.toSorted(tokenComparator()) : []
 
   const symbolMatch = searchQuery
@@ -68,15 +70,15 @@ export function getSortedTokensByQuery(
     return sortedTokens
   }
 
-  const exactMatches: Token[] = []
-  const symbolSubstrings: Token[] = []
-  const rest: Token[] = []
+  const exactMatches: StellarToken[] = []
+  const symbolSubstrings: StellarToken[] = []
+  const rest: StellarToken[] = []
 
-  // sort tokens by exact match -> substring on code match -> rest
+  // sort tokens by exact match -> substring on symbol match -> rest
   for (const token of sortedTokens) {
-    if (token.code?.toLowerCase() === symbolMatch[0]) {
+    if (token.symbol?.toLowerCase() === symbolMatch[0]) {
       exactMatches.push(token)
-    } else if (token.code?.toLowerCase().startsWith(symbolMatch[0])) {
+    } else if (token.symbol?.toLowerCase().startsWith(symbolMatch[0]!)) {
       symbolSubstrings.push(token)
     } else {
       rest.push(token)

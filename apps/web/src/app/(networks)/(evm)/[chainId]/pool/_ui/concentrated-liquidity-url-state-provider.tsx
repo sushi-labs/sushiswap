@@ -1,10 +1,11 @@
 'use client'
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import React, {
   type FC,
   type ReactNode,
   createContext,
+  useCallback,
   useContext,
   useMemo,
 } from 'react'
@@ -89,9 +90,17 @@ export const ConcentratedLiquidityURLStateProvider: FC<
   chainId,
   supportedNetworks = SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
 }) => {
-  const { push } = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()!
+
+  // Update the URL search params without a router navigation (which would
+  // trigger a full page reload in Next 16); useSearchParams stays in sync.
+  const updateSearchParams = useCallback(
+    (params: URLSearchParams) => {
+      history.pushState(null, '', `${pathname}?${params.toString()}`)
+    },
+    [pathname],
+  )
 
   const { fromCurrency, toCurrency, feeAmount, tokenId } =
     queryParamsSchema.parse({
@@ -155,7 +164,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<
           toCurrency === _fromCurrency || same ? fromCurrency : toCurrency,
         )
       }
-      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
+      updateSearchParams(_searchParams)
     }
     const setToken1 = (currency: EvmCurrency) => {
       const same = currency.wrap().address === token0?.wrap().address
@@ -171,14 +180,14 @@ export const ConcentratedLiquidityURLStateProvider: FC<
           fromCurrency === _toCurrency || same ? toCurrency : fromCurrency,
         )
       }
-      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
+      updateSearchParams(_searchParams)
     }
     const setFeeAmount = (feeAmount: SushiSwapV3FeeAmount) => {
       const _searchParams = new URLSearchParams(
         Array.from(searchParams.entries()),
       )
       _searchParams.set('feeAmount', feeAmount.toString())
-      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
+      updateSearchParams(_searchParams)
     }
     const switchTokens = () => {
       const _searchParams = new URLSearchParams(
@@ -192,7 +201,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<
         'toCurrency',
         !token0 || token0.type === 'native' ? 'NATIVE' : token0.wrap().address,
       )
-      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
+      updateSearchParams(_searchParams)
     }
 
     return {
@@ -218,8 +227,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<
     tokenId,
     feeAmount,
     searchParams,
-    push,
-    pathname,
+    updateSearchParams,
   ])
 
   return (

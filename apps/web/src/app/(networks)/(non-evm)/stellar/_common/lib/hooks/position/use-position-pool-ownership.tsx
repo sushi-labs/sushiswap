@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
-import type { Token } from '../../types/token.type'
+import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
 import { usePoolInfo } from '../pool'
 import { useLPUsdValue } from '../pool/use-pool-usd-value'
 
 type UsePoolOwnershipProps = {
-  pairAddress: string | undefined | null
-  token0: Token
-  token1: Token
+  pairAddress: StellarContractAddress | undefined | null
+  token0: StellarToken
+  token1: StellarToken
   reserve0: bigint
   reserve1: bigint
 }

@@ -74,7 +74,7 @@ const createItems = (chainId: SushiSwapChainId | BladeChainId) => {
             disabled: !isSmartPoolChainId(chainId),
             children: (
               <div className="flex items-center gap-2">
-                <span>💡</span> <span>Smart Pool</span>
+                <span>🏦</span> <span>Liquidity Vault</span>
               </div>
             ),
           },

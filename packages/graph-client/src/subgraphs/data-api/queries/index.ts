@@ -1,5 +1,6 @@
 export * from './analytics/index.js'
 export * from './blade/index.js'
+export * from './perps/index.js'
 export * from './pool/index.js'
 export * from './portfolio/index.js'
 export * from './smart-pool/index.js'

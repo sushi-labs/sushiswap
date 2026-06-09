@@ -1,5 +1,4 @@
 'use client'
-
 import { WalletProvider } from 'src/lib/wallet'
 import { SidebarProvider } from '../_ui/sidebar'
 import { BalanceProvider } from './_common/ui/balance-provider/balance-provider'

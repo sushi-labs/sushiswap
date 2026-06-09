@@ -8,18 +8,19 @@ import {
 } from '@sushiswap/telemetry'
 import { Button, Currency, IconButton, buttonIconVariants } from '@sushiswap/ui'
 import { NativeAddress } from 'src/lib/constants'
-import type { EvmChainId } from 'sushi/evm'
-import type { SvmChainId } from 'sushi/svm'
+import { type EvmCurrency, isEvmChainId } from 'sushi/evm'
+import { type SvmCurrency, isSvmChainId } from 'sushi/svm'
+import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
 import { useChipTokens } from '../hooks/use-chip-tokens'
 
-interface TokenSelectorChipBar<TChainId extends EvmChainId | SvmChainId> {
+interface TokenSelectorChipBar<TChainId extends BalanceChainId> {
   chainId: TChainId
   onSelect(currency: CurrencyFor<TChainId>): void
   includeNative?: boolean
   showPinnedTokens?: boolean
 }
 
-export function TokenSelectorChipBar<TChainId extends EvmChainId | SvmChainId>({
+export function TokenSelectorChipBar<TChainId extends BalanceChainId>({
   chainId,
   onSelect,
   includeNative,
@@ -27,7 +28,10 @@ export function TokenSelectorChipBar<TChainId extends EvmChainId | SvmChainId>({
 }: TokenSelectorChipBar<TChainId>) {
   const tokens = useChipTokens({ chainId, includeNative, showPinnedTokens })
 
-  const { mutate } = usePinnedTokens()
+  const isPinnable = (
+    t: CurrencyFor<TChainId>,
+  ): t is CurrencyFor<TChainId> & (EvmCurrency | SvmCurrency) =>
+    isEvmChainId(t.chainId) || isSvmChainId(t.chainId)
 
   return (
     <div className="flex flex-wrap gap-2">
@@ -66,24 +70,31 @@ export function TokenSelectorChipBar<TChainId extends EvmChainId | SvmChainId>({
                 disableLink
               />
               {token.symbol}
-              {!isDefault && (
-                <IconButton
-                  size="xs"
-                  name="remove"
-                  icon={XMarkIcon}
-                  variant="ghost"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    // Native tokens should always be default
-                    if (token.type === 'native') return
-                    mutate('remove', token.id)
-                  }}
-                />
+              {!isDefault && isPinnable(token) && (
+                <PinRemoveButton token={token} />
               )}
             </Button>
           </div>
         </TraceEvent>
       ))}
     </div>
+  )
+}
+
+function PinRemoveButton({ token }: { token: EvmCurrency | SvmCurrency }) {
+  const { mutate } = usePinnedTokens()
+  return (
+    <IconButton
+      size="xs"
+      name="remove"
+      icon={XMarkIcon}
+      variant="ghost"
+      onClick={(e) => {
+        e.stopPropagation()
+        // Native tokens should always be default
+        if (token.type === 'native') return
+        mutate('remove', token.id)
+      }}
+    />
   )
 }

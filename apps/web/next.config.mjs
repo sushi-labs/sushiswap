@@ -35,19 +35,8 @@ const nextConfig = bundleAnalyzer({
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
-    domains: ['cdn.sushi.com'],
-  },
-  eslint: {
-    dirs: [
-      'app',
-      'components',
-      'functions',
-      'lib',
-      'pages',
-      'providers',
-      'types',
-      'ui',
-    ],
+    qualities: [100, 75],
+    remotePatterns: [new URL('https://cdn.sushi.com')],
   },
   webpack: (config, { webpack }) => {
     if (config.plugins) {
@@ -122,6 +111,11 @@ const nextConfig = bundleAnalyzer({
         source: '/twitter{/}?',
         permanent: true,
         destination: 'https://twitter.com/sushiswap',
+      },
+      {
+        source: '/telegram{/}?',
+        permanent: true,
+        destination: 'https://t.me/sushiswaphq',
       },
       {
         source: '/instagram{/}?',

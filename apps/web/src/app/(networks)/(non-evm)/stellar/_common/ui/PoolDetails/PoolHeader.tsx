@@ -10,6 +10,7 @@ import {
   SkeletonText,
   typographyVariants,
 } from '@sushiswap/ui'
+import type { StellarContractAddress } from 'sushi/stellar'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import { formatAddress, formatFee } from '~stellar/_common/lib/utils/format'
 import { usePoolInfo } from '../../lib/hooks/pool/use-pool-info'
@@ -19,7 +20,7 @@ import { TokenIcon } from '../General/TokenIcon'
 interface PoolHeaderProps {
   pool?: PoolInfo | null
   backUrl: string
-  address?: string
+  address?: StellarContractAddress
 }
 
 export const PoolHeader = ({ pool, backUrl, address }: PoolHeaderProps) => {
@@ -67,7 +68,7 @@ export const PoolHeader = ({ pool, backUrl, address }: PoolHeaderProps) => {
               })}
             >
               <LinkExternal href={getStellarContractLink(actualPool.address)}>
-                {actualPool.token0.code}/{actualPool.token1.code}
+                {actualPool.token0.symbol}/{actualPool.token1.symbol}
               </LinkExternal>
             </Button>
           </div>
@@ -97,11 +98,11 @@ export const PoolHeader = ({ pool, backUrl, address }: PoolHeaderProps) => {
           <>
             <div className="flex items-center gap-1.5">
               <span className="tracking-tighter font-semibold">
-                {actualPool.token0.code}
+                {actualPool.token0.symbol}
               </span>
               <LinkExternal
                 target="_blank"
-                href={getStellarContractLink(actualPool.token0.contract)}
+                href={getStellarContractLink(actualPool.token0.address)}
               >
                 <Button
                   asChild
@@ -109,18 +110,18 @@ export const PoolHeader = ({ pool, backUrl, address }: PoolHeaderProps) => {
                   size="sm"
                   className="!font-medium !text-secondary-foreground"
                 >
-                  {formatAddress(actualPool.token0.contract)}
+                  {formatAddress(actualPool.token0.address)}
                   <ArrowTopRightOnSquareIcon className="w-3 h-3" />
                 </Button>
               </LinkExternal>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="tracking-tighter font-semibold">
-                {actualPool.token1.code}
+                {actualPool.token1.symbol}
               </span>
               <LinkExternal
                 target="_blank"
-                href={getStellarContractLink(actualPool.token1.contract)}
+                href={getStellarContractLink(actualPool.token1.address)}
               >
                 <Button
                   asChild
@@ -128,7 +129,7 @@ export const PoolHeader = ({ pool, backUrl, address }: PoolHeaderProps) => {
                   size="sm"
                   className="!font-medium !text-secondary-foreground"
                 >
-                  {formatAddress(actualPool.token1.contract)}
+                  {formatAddress(actualPool.token1.address)}
                   <ArrowTopRightOnSquareIcon className="w-3 h-3" />
                 </Button>
               </LinkExternal>

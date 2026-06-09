@@ -11,7 +11,7 @@
     "enable-remote-caching": "turbo link",
     "format": "pnpm sort && biome format . --write",
     "generate": "dotenv -- turbo run generate --no-cache --parallel --continue",
-    "preinstall": "pnpx only-allow pnpm",
+    "preinstall": "node scripts/require-trading-view-gh-read-token.js && pnpx only-allow pnpm",
     "postinstall": "node scripts/validate-deps.js",
     "lint": "biome check .",
     "lint:fix": "biome check . --apply",
@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.5-nightly.81fdedb",
-    "@types/node": "20",
+    "@types/node": "20.14.14",
     "dotenv-cli": "6.0.0",
     "eslint": "9.18.0",
     "eslint-config-turbo": "2.3.3",
@@ -33,10 +33,10 @@
     "turbo": "2.0.5",
     "typescript": "catalog:"
   },
-  "packageManager": "pnpm@10.4.1",
+  "packageManager": "pnpm@10.27.0",
   "engines": {
     "node": ">=20.x",
-    "pnpm": "10.4.1"
+    "pnpm": "10.27.0"
   },
   "pnpm": {
     "overrides": {

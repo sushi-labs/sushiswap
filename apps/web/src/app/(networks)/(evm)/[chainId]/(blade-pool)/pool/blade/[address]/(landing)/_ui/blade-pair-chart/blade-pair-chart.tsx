@@ -191,7 +191,6 @@ export function BladePoolPairsChart({
         )}
       </div>
       {tooltipOpen && (
-        // @ts-expect-error https://github.com/airbnb/visx/issues/1906
         <TooltipWithBounds
           style={tooltipStyles}
           top={tooltipTop + 10}

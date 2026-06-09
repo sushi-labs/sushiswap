@@ -1,14 +1,11 @@
-import type { ComponentType, FC } from 'react'
+import type { FC } from 'react'
 
-import { Amounts, type AmountsProps } from './amounts'
-import { Guard, type GuardProps } from './guard'
+import { Trustline, type TrustlineProps } from './trustline'
 
 type CheckerProps = {
-  Amounts: ComponentType<AmountsProps>
-  Guard: FC<GuardProps>
+  Trustline: FC<TrustlineProps>
 }
 
 export const Checker: CheckerProps = {
-  Amounts,
-  Guard,
+  Trustline,
 }

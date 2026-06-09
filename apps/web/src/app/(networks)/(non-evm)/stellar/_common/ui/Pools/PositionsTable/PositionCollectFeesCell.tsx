@@ -10,13 +10,13 @@ import type { IPositionRowData } from './PositionsTable'
 export const PositionCollectFeesCell = ({
   data,
 }: { data: IPositionRowData }) => {
-  const { feesToken0, feesToken1, token0, token1, tokenId } = data
+  const { pool, feesToken0, feesToken1, token0, token1, tokenId } = data
 
   const { connectedAddress, signTransaction, signAuthEntry } =
     useStellarWallet()
   const collectFeesMutation = useCollectFees()
 
-  const hasFees = feesToken0 > 0n || feesToken1 > 0n
+  const hasFees = feesToken0.gt(0n) || feesToken1.gt(0n)
 
   // Handle collect fees
   const handleCollectFees = async () => {
@@ -27,6 +27,7 @@ export const PositionCollectFeesCell = ({
 
     try {
       const result = await collectFeesMutation.mutateAsync({
+        poolAddress: pool,
         tokenId: tokenId,
         recipient: connectedAddress,
         amount0Max: MAX_UINT128,
@@ -40,11 +41,11 @@ export const PositionCollectFeesCell = ({
 
       let summary = 'Fees collected successfully'
       if (result.amount0 > 0n && result.amount1 > 0n) {
-        summary = `Collected ${token0Amount} ${token0.code} and ${token1Amount} ${token1.code}`
+        summary = `Collected ${token0Amount} ${token0.symbol} and ${token1Amount} ${token1.symbol}`
       } else if (result.amount0 > 0n) {
-        summary = `Collected ${token0Amount} ${token0.code}`
+        summary = `Collected ${token0Amount} ${token0.symbol}`
       } else if (result.amount1 > 0n) {
-        summary = `Collected ${token1Amount} ${token1.code}`
+        summary = `Collected ${token1Amount} ${token1.symbol}`
       }
 
       const timestamp = Date.now()

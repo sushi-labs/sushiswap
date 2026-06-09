@@ -1,7 +1,12 @@
 import type { Metadata } from 'next'
 import type React from 'react'
+import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { WalletProvider } from 'src/lib/wallet'
+import { BalanceProvider } from '~evm/_common/ui/balance-provider/balance-provider'
+import { PriceProvider } from '~evm/_common/ui/price-provider/price-provider/price-provider'
 import { SidebarProvider } from '../../_ui/sidebar'
+import { Header } from './header'
+import { MigrateBanner } from './legacy-positions/migrate-banner'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
@@ -20,7 +25,17 @@ export default function RootLayout({
     <WalletProvider>
       <Providers>
         <SidebarProvider>
-          <div className="flex flex-col h-full w-full">{children}</div>
+          <BalanceProvider>
+            <PriceProvider>
+              <div className="flex flex-col h-full w-full">
+                <div className="flex flex-col sticky top-0 h-full w-full z-50">
+                  <MigrateBanner />
+                  <Header networks={POOL_SUPPORTED_NETWORKS} />
+                </div>
+                {children}
+              </div>
+            </PriceProvider>
+          </BalanceProvider>
         </SidebarProvider>
       </Providers>
     </WalletProvider>

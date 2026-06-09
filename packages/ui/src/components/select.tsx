@@ -6,6 +6,7 @@ import classNames from 'classnames'
 import * as React from 'react'
 import type { FC } from 'react'
 
+import { ChevronUpIcon } from 'lucide-react'
 import { textFieldVariants } from './text-field'
 
 const Select = SelectPrimitive.Root
@@ -89,7 +90,14 @@ const SelectContent = React.forwardRef<
         position={position}
         {...props}
       >
-        <SelectPrimitive.ScrollUpButton>Test</SelectPrimitive.ScrollUpButton>
+        <SelectPrimitive.ScrollUpButton>
+          <ChevronUpIcon
+            strokeWidth={2}
+            width={16}
+            height={16}
+            className="mx-auto"
+          />
+        </SelectPrimitive.ScrollUpButton>
         <SelectPrimitive.Viewport
           className={classNames(
             'p-1',
@@ -100,7 +108,12 @@ const SelectContent = React.forwardRef<
           {children}
         </SelectPrimitive.Viewport>
         <SelectPrimitive.ScrollDownButton>
-          Test
+          <ChevronUpIcon
+            strokeWidth={2}
+            width={16}
+            height={16}
+            className="rotate-180 mx-auto"
+          />
         </SelectPrimitive.ScrollDownButton>
       </SelectPrimitive.Content>
     </SelectPrimitive.Portal>

@@ -1,4 +1,4 @@
-import type { Token } from './token.type'
+import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
 
 export interface PoolLiquidity {
   amount: string
@@ -20,9 +20,9 @@ export interface PoolBalances {
 
 export interface PoolInfo {
   name: string
-  address: string
-  token0: Token
-  token1: Token
+  address: StellarContractAddress
+  token0: StellarToken
+  token1: StellarToken
   fee: number
   tickSpacing: number
   liquidity: PoolLiquidity

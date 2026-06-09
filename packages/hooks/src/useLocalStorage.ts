@@ -11,7 +11,7 @@ import {
 export const useLocalStorage = <T>(
   key: string,
   initialValue: T,
-): [T, Dispatch<SetStateAction<T>>] => {
+): [T, Dispatch<SetStateAction<T>>, () => void] => {
   const readValue = useCallback((): T => {
     if (typeof window === 'undefined') {
       return initialValue
@@ -55,6 +55,18 @@ export const useLocalStorage = <T>(
     [key, storedValue],
   )
 
+  const removeItem = useCallback(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        window.localStorage.removeItem(key)
+        setStoredValue(initialValue)
+        window.dispatchEvent(new Event(key))
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }, [initialValue, key])
+
   // To trigger rerenders globally
   useEffect(() => {
     const listener = () => {
@@ -66,5 +78,5 @@ export const useLocalStorage = <T>(
     return () => window.removeEventListener(key, listener)
   }, [key])
 
-  return [storedValue, setValue]
+  return [storedValue, setValue, removeItem]
 }

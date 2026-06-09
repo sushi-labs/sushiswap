@@ -1,0 +1,99 @@
+'use client'
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  Button,
+  LinkInternal,
+} from '@sushiswap/ui'
+import type { FC } from 'react'
+import { useAccount } from 'src/lib/wallet/hooks'
+import { useMyUnmigratedLegacyPositions } from '~stellar/_common/lib/hooks/position/use-my-legacy-position'
+
+export const Hero: FC = () => {
+  const address = useAccount('stellar')
+  const { positions, isLoading } = useMyUnmigratedLegacyPositions({
+    userAddress: address,
+  })
+  return (
+    <section className="flex flex-col gap-6">
+      <span className="text-5xl font-bold">Migrate Legacy Positions</span>
+      <Accordion type="multiple">
+        <AccordionItem value="item-1">
+          <AccordionTrigger> What is this migration about?</AccordionTrigger>
+          <AccordionContent>
+            <div className="flex flex-col gap-2 pb-2">
+              <p className="text-md w-full text-muted-foreground">
+                We've released an upgrade across our pools. If you have existing
+                positions, we recommend migrating soon. Unmigrated positions
+                risk having your principal become restricted.
+              </p>
+              <p className="text-md w-full text-muted-foreground">
+                Migrating allows you to collect any earned fees and continue
+                with the same amounts and price range.
+              </p>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-2">
+          <AccordionTrigger>
+            How do I migrate my legacy positions?
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="flex flex-col gap-2 pb-2">
+              <p className="text-md w-full text-muted-foreground">
+                Simply connect your wallet and click the "Migrate" button for
+                each of your legacy positions below.
+              </p>
+              <p className="text-md w-full text-muted-foreground">
+                This will prompt the following on-chain transactions:
+              </p>
+              <ol className="list-decimal list-outside flex flex-col gap-1 pl-5">
+                <li className="text-md w-full text-muted-foreground">
+                  Request withdrawal of the position principal
+                </li>
+                <li className="text-md w-full text-muted-foreground">
+                  Withdraw the position principal and accrued fees from the
+                  legacy position
+                </li>
+                <li className="text-md w-full text-muted-foreground">
+                  If no new pool exists corresponding to the pool of the legacy
+                  position, the migration process will also include a
+                  transaction to migrate the legacy pool to a new pool by
+                  creating and initializing a new pool with the same parameters
+                  (i.e., token pair and fee rate) as the legacy pool with the
+                  current legacy pool price
+                </li>
+                <li className="text-md w-full text-muted-foreground">
+                  Create a position with the new fixed implementation of the
+                  position manager using the withdrawn liquidity and the same
+                  price range as the legacy position
+                </li>
+              </ol>
+              <p className="text-md w-full text-muted-foreground">
+                While the process will remember your legacy position parameters
+                during the migration to facilitate the creation of the new
+                position with the same parameters, it is recommended that you
+                take note of your legacy position parameters (i.e., token pair,
+                fee rate, principal amounts, and price range) before initiating
+                the migration as a back-up.
+              </p>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+      {address && !isLoading && positions.length === 0 && (
+        <>
+          <div>Thank you for migrating all of your legacy positions!</div>
+          <Button className="self-start">
+            <LinkInternal href="/stellar/pool">
+              See Current Positions
+            </LinkInternal>
+          </Button>
+        </>
+      )}
+    </section>
+  )
+}

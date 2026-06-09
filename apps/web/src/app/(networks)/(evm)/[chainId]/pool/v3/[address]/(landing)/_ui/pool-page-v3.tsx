@@ -24,11 +24,15 @@ import {
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
+import {
+  useConcentratedLiquidityPoolStats,
+  useRewardCampaigns,
+} from 'src/lib/hooks/react-query'
 import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPoolReserves'
 import { formatUSD } from 'sushi'
-import { getEvmChainById } from 'sushi/evm'
+import { getEvmChainById, isMerklChainId } from 'sushi/evm'
 import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
+import { KatanaStakingMessage } from '../../_ui/katana-staking-message'
 import { PoolRewardDistributionsCard } from './pool-reward-distributions-card'
 import { PoolTransactionsV3 } from './pool-transactions-v3'
 import { StatisticsChartsV3 } from './statistics-chart-v3'
@@ -50,6 +54,11 @@ const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
     chainId,
     address,
   })
+  const { data: rewardsData, isLoading: rewardsLoading } = useRewardCampaigns({
+    pool: address,
+    chainId,
+    enabled: isMerklChainId(chainId),
+  })
 
   const { data: reserves, isLoading: isReservesLoading } =
     useConcentratedLiquidityPoolReserves({
@@ -67,7 +76,7 @@ const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
           className="mb-4 flex flex-col md:flex-row items-center gap-4 justify-between"
         >
           <p>
-            {`This pool has been activated to leverage our smart pool feature. Smart pools are designed to optimize the
+            {`This pool has been activated to leverage our liquidity vault feature. Liquidity Vaults are designed to optimize the
         allocation of liquidity within customized price ranges, thereby improving trading efficiency. They achieve
         this by enhancing liquidity depth around the current price, which results in higher fee earnings for liquidity
         providers (LPs) and allows the market to dictate the distribution of LPs' positions based on rational
@@ -79,7 +88,7 @@ const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
             className="w-full md:w-fit"
           >
             <Button className="w-full md:w-fit">
-              Create Smart Pool Position
+              Create Liquidity Vault Position
             </Button>
           </LinkInternal>
         </Message>
@@ -170,7 +179,12 @@ const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
       <div className="py-4">
         <Separator />
       </div>
-      <PoolRewardDistributionsCard pool={pool} />
+      <KatanaStakingMessage pool={address} chainId={chainId} />
+      <PoolRewardDistributionsCard
+        pool={pool}
+        isLoading={rewardsLoading}
+        rewardsData={rewardsData}
+      />
       <PoolTransactionsV3 pool={pool} poolAddress={address} />
     </Container>
   )

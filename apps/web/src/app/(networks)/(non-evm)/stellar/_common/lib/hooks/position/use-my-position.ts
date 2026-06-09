@@ -1,24 +1,29 @@
 import { useQueries } from '@tanstack/react-query'
 import ms from 'ms'
 import { useMemo } from 'react'
+import { Amount } from 'sushi'
+import type {
+  StellarAccountAddress,
+  StellarContractAddress,
+  StellarToken,
+} from 'sushi/stellar'
 import {
   type PositionInfo,
   positionService,
 } from '../../services/position-service'
 import { getPoolDirectSDK, getTokenByContract } from '../../soroban'
-import type { Token } from '../../types/token.type'
 import { useUserPositions } from './use-positions'
 
 export interface PositionSummary {
   tokenId: number
-  token0: Token
-  token1: Token
+  token0: StellarToken
+  token1: StellarToken
   liquidity: string
-  principalToken0: bigint
-  principalToken1: bigint
-  feesToken0: bigint
-  feesToken1: bigint
-  pool: string
+  principalToken0: Amount<StellarToken>
+  principalToken1: Amount<StellarToken>
+  feesToken0: Amount<StellarToken>
+  feesToken1: Amount<StellarToken>
+  pool: StellarContractAddress
   tickLower: number
   tickUpper: number
   fee: number
@@ -35,9 +40,9 @@ const getPositionKey = (position: PositionInfo) => {
 }
 
 type PoolData = {
-  address: string
-  token0: Token
-  token1: Token
+  address: StellarContractAddress
+  token0: StellarToken
+  token1: StellarToken
 }
 
 /**
@@ -47,32 +52,29 @@ export function useMyPosition({
   userAddress,
   poolAddress,
   excludeDust = false,
+  isLegacy = false,
 }: {
-  userAddress?: string
-  poolAddress?: string
+  userAddress?: StellarAccountAddress
+  poolAddress?: StellarContractAddress
   excludeDust?: boolean
+  isLegacy?: boolean
 }): MyPositionData {
   const {
     data: positions = [],
     isLoading: positionsLoading,
     error: positionsError,
-  } = useUserPositions({ userAddress, excludeDust })
+  } = useUserPositions({ userAddress, excludeDust, isLegacy })
 
   const positionToPoolQueries = useQueries({
     queries: positions.map((position) => ({
-      queryKey: [
-        'stellar',
-        'position-pool',
-        position.token0,
-        position.token1,
-        position.fee,
-      ],
+      queryKey: ['stellar', 'position-pool', isLegacy, position.tokenId],
       queryFn: async (): Promise<[string, PoolData | null]> => {
         try {
           const poolAddress = await getPoolDirectSDK({
             tokenA: position.token0,
             tokenB: position.token1,
             fee: position.fee,
+            isLegacy,
           })
           if (!poolAddress) {
             throw new Error('Pool not found')
@@ -141,6 +143,7 @@ export function useMyPosition({
       queryKey: [
         'stellar',
         'position-principals-batch',
+        isLegacy,
         pool,
         positions.map((p) => p.tokenId).sort(),
       ],
@@ -150,6 +153,7 @@ export function useMyPosition({
           const results = await positionService.getPositionsPrincipalBatch({
             tokenIds,
             poolAddress: pool,
+            isLegacy,
           })
 
           // Convert Map to tokenId mapping (each position has unique tokenId)
@@ -228,10 +232,10 @@ export function useMyPosition({
       positionSummaries.push({
         tokenId: position.tokenId,
         liquidity: position.liquidity.toString(),
-        principalToken0: principalData.amount0,
-        principalToken1: principalData.amount1,
-        feesToken0: position.tokensOwed0,
-        feesToken1: position.tokensOwed1,
+        principalToken0: new Amount(poolData.token0, principalData.amount0),
+        principalToken1: new Amount(poolData.token1, principalData.amount1),
+        feesToken0: new Amount(poolData.token0, position.tokensOwed0),
+        feesToken1: new Amount(poolData.token1, position.tokensOwed1),
         token0: poolData.token0,
         token1: poolData.token1,
         pool: poolData.address,
