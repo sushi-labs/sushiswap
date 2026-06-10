@@ -1,6 +1,8 @@
 'use client'
 
+import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import {
+  Button,
   CardContent,
   CardDescription,
   CardHeader,
@@ -8,42 +10,80 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
+  classNames,
 } from '@sushiswap/ui'
 import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import { useParams, usePathname } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { PathnameButton } from 'src/app/_ui/pathname-button'
-import {
-  isLifiXSwapSupportedChainId,
-  isSupportedChainId,
-  isTwapSupportedChainId,
-} from 'src/config'
+import { isLifiXSwapSupportedChainId, isSupportedChainId } from 'src/config'
 import { isNearIntentsChainId } from 'src/lib/swap/near-intents'
 import { type ChainId, getChainById } from 'sushi'
-import { isEvmChainId } from 'sushi/evm'
 import { isStellarChainId } from 'sushi/stellar'
-import { isSvmChainId } from 'sushi/svm'
+import { isTwapSupportedChainId } from '../(orbs)/_ui/helper'
+
+const ADVANCED_SEGMENTS = ['limit', 'dca', 'stop-loss', 'take-profit'] as const
+
+const ADVANCED_LABELS: Record<(typeof ADVANCED_SEGMENTS)[number], string> = {
+  limit: 'Limit',
+  dca: 'DCA',
+  'stop-loss': 'Stop Loss',
+  'take-profit': 'Take Profit',
+}
+
+function isAdvancedPath(pathname: string): boolean {
+  return ADVANCED_SEGMENTS.some((seg) => pathname.includes(`/${seg}`))
+}
+
+function getAdvancedTriggerLabel(pathname: string): string {
+  for (const seg of ADVANCED_SEGMENTS) {
+    if (pathname.includes(`/${seg}`)) return ADVANCED_LABELS[seg]
+  }
+  return 'Advanced'
+}
 
 const SwapModeButton = ({
   isSupported,
   path,
   children,
-}: { isSupported: boolean; path: string; children: ReactNode }) => {
-  return isSupported ? (
-    <Link href={path}>
-      <PathnameButton pathname={path} size="sm">
-        {children}
-      </PathnameButton>
-    </Link>
-  ) : (
+  className,
+  fullWidth = false,
+}: {
+  isSupported: boolean
+  path: string
+  children: ReactNode
+  className?: string
+  fullWidth?: boolean
+}) => {
+  const widthClassName = fullWidth ? 'w-full' : 'w-auto'
+
+  if (isSupported) {
+    return (
+      <Link href={path} className={classNames('block', widthClassName)}>
+        <PathnameButton
+          pathname={path}
+          size="sm"
+          className={classNames(widthClassName, 'justify-start', className)}
+        >
+          {children}
+        </PathnameButton>
+      </Link>
+    )
+  }
+
+  return (
     <HoverCard>
-      <HoverCardTrigger>
+      <HoverCardTrigger asChild>
         <PathnameButton
           pathname={path}
           size="sm"
           disabled
-          className="cursor-not-allowed"
+          className={classNames(
+            'cursor-not-allowed justify-start',
+            widthClassName,
+            className,
+          )}
         >
           {children}
         </PathnameButton>
@@ -69,6 +109,7 @@ export const SwapModeButtons = ({
 }: { chainId?: number }) => {
   const { chainId: paramsChainId } = useParams<{ chainId?: string }>()
   const chainId = chainIdProp ?? Number(paramsChainId)
+  const pathname = usePathname()
 
   if (!isSwapModeChainId(chainId)) {
     return null
@@ -76,32 +117,93 @@ export const SwapModeButtons = ({
 
   const supportsCrossChain =
     isLifiXSwapSupportedChainId(chainId) || isNearIntentsChainId(chainId)
+  const twapSupported = isTwapSupportedChainId(chainId)
   const chain = getChainById(chainId)
+  const basePath = `/${chain.key}`
 
   return (
     <div className="flex gap-1 md:gap-2 flex-wrap">
       <SwapModeButton
         isSupported={isSupportedChainId(chainId) || isStellarChainId(chainId)}
-        path={`/${chain.key}/swap`}
+        path={`${basePath}/swap`}
       >
         Swap
       </SwapModeButton>
-      <SwapModeButton
-        isSupported={isTwapSupportedChainId(chainId)}
-        path={`/${chain.key}/limit`}
-      >
-        Limit
-      </SwapModeButton>
-      <SwapModeButton
-        isSupported={isTwapSupportedChainId(chainId)}
-        path={`/${chain.key}/dca`}
-      >
-        DCA
-      </SwapModeButton>
+
+      <HoverCard openDelay={150} closeDelay={100}>
+        <HoverCardTrigger asChild>
+          {twapSupported ? (
+            <Button
+              size="sm"
+              variant={isAdvancedPath(pathname) ? 'secondary' : 'ghost'}
+              className="flex items-center gap-1"
+            >
+              {getAdvancedTriggerLabel(pathname)}
+              <ChevronDownIcon className="w-4 h-4" />
+            </Button>
+          ) : (
+            <span className="inline-flex">
+              <Button
+                size="sm"
+                variant={isAdvancedPath(pathname) ? 'secondary' : 'ghost'}
+                disabled
+                className="flex items-center gap-1"
+              >
+                {getAdvancedTriggerLabel(pathname)}
+                <ChevronDownIcon className="w-4 h-4" />
+              </Button>
+            </span>
+          )}
+        </HoverCardTrigger>
+        {twapSupported ? (
+          <HoverCardContent
+            sideOffset={4}
+            className="!p-2 text-left"
+            align="start"
+          >
+            <div className="flex flex-col gap-0.5">
+              <SwapModeButton
+                isSupported={twapSupported}
+                path={`${basePath}/limit`}
+                className="justify-start"
+                fullWidth
+              >
+                Limit
+              </SwapModeButton>
+              <SwapModeButton
+                isSupported={twapSupported}
+                path={`${basePath}/dca`}
+                fullWidth
+              >
+                DCA
+              </SwapModeButton>
+              <SwapModeButton
+                isSupported={twapSupported}
+                path={`${basePath}/stop-loss`}
+                fullWidth
+              >
+                Stop Loss
+              </SwapModeButton>
+              <SwapModeButton
+                isSupported={twapSupported}
+                path={`${basePath}/take-profit`}
+                fullWidth
+              >
+                Take Profit
+              </SwapModeButton>
+            </div>
+          </HoverCardContent>
+        ) : (
+          <HoverCardContent className="!px-3 !py-1.5 text-xs">
+            Not supported on this network
+          </HoverCardContent>
+        )}
+      </HoverCard>
+
       <HoverCard>
         <SwapModeButton
           isSupported={supportsCrossChain}
-          path={`/${chain.key}/cross-chain-swap`}
+          path={`${basePath}/cross-chain-swap`}
         >
           <HoverCardTrigger asChild>
             <span className="saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">

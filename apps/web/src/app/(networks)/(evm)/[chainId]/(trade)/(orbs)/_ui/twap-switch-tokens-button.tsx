@@ -7,13 +7,12 @@ import {
   SwapEventName,
   TraceEvent,
 } from '@sushiswap/telemetry'
-
-import { useDerivedStateTwap } from './derivedstate-twap-provider'
+import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
 
 export const TwapSwitchTokensButton = () => {
   const {
     mutate: { switchTokens },
-  } = useDerivedStateTwap()
+  } = useDerivedStateSimpleSwap()
 
   return (
     <div className="left-0 right-0 mt-[-26px] mb-[-26px] flex items-center justify-center">

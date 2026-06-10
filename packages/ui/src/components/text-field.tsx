@@ -6,6 +6,7 @@ import type { IconComponent } from '../types'
 import { buttonIconVariants } from './button'
 
 const inputRegex = /^\d*(?:\\[.])?\d*$/ // match escaped "." characters via in a non-capturing group
+const signedInputRegex = /^-?\d*(?:\\[.])?\d*$/ // as above, but allows a leading minus
 const escapeRegExp = (string: string) =>
   string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
 
@@ -71,6 +72,8 @@ interface TextFieldBaseProps
   iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
   unit?: string
   wrapperClassName?: string
+  /** Allow a leading minus for negative values (only applies to `type="number"`). */
+  allowNegative?: boolean
 }
 
 interface TextFieldDynamicProps<T extends InputType> {
@@ -104,6 +107,7 @@ const Component = <T extends InputType>(
     onValueChange,
     isError,
     wrapperClassName,
+    allowNegative,
     ...props
   }: TextFieldProps<T>,
   ref: React.ForwardedRef<HTMLInputElement>,
@@ -120,7 +124,8 @@ const Component = <T extends InputType>(
       const val = `${nextUserInput}`.replace(/,/g, '.')
       if (onValueChange && val === '') onValueChange('')
 
-      if (inputRegex.test(escapeRegExp(val))) {
+      const regex = allowNegative ? signedInputRegex : inputRegex
+      if (regex.test(escapeRegExp(val))) {
         if (maxDecimals !== undefined && val?.includes('.')) {
           const [, decimals] = val.split('.')
           if (onValueChange && decimals.length <= maxDecimals) {

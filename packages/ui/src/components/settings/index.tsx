@@ -66,6 +66,11 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
   const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(
     options?.slippageTolerance?.storageKey,
   )
+
+  const showSlippageBadge =
+    modules.includes(SettingsModule.SlippageTolerance) &&
+    Number(slippageTolerance) > 0.5
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -79,8 +84,7 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
             icon={Cog6ToothIcon}
             onClick={() => setOpen(true)}
           >
-            {Number(slippageTolerance) > 0.5 &&
-            modules.includes(SettingsModule.SlippageTolerance) ? (
+            {showSlippageBadge ? (
               <TooltipProvider>
                 <Tooltip delayDuration={150}>
                   <TooltipTrigger asChild>
@@ -119,7 +123,7 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
             Adjust to your personal preferences.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 overflow-y-auto max-h-[min(70vh,600px)]">
           {modules.includes(SettingsModule.SlippageTolerance) && (
             <List className="!pt-0">
               <List.Control>

@@ -14,6 +14,7 @@ import {
   useSimulateContract,
   useWriteContract,
 } from 'wagmi'
+import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 
 interface UseWrapNativeParams {
   amount: Amount<EvmCurrency> | undefined
@@ -26,6 +27,7 @@ export const useWrapNative = ({
 }: UseWrapNativeParams) => {
   const { address } = useConnection()
   const client = usePublicClient()
+  const { refetchChain } = useRefetchBalances()
 
   const onError = useCallback((e: Error) => {
     if (isUserRejectedError(e)) {
@@ -70,6 +72,7 @@ export const useWrapNative = ({
         })
 
         await receiptPromise
+        refetchChain(amount.currency.chainId)
       } catch (error) {
         logger.error(error, {
           location: 'useWrapNative',
@@ -77,7 +80,7 @@ export const useWrapNative = ({
         })
       }
     },
-    [client, amount, address],
+    [client, amount, address, refetchChain],
   )
 
   const { data: simulation } = useSimulateContract({

@@ -1,21 +1,21 @@
 'use client'
 
+import { InputErrors, useInputErrors } from '@orbs-network/spot-react'
 import { classNames } from '@sushiswap/ui'
+import type { SupportedChainId } from 'src/config'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { isEvmWNativeSupported } from 'sushi/evm'
-import {
-  useDerivedStateTwap,
-  useTwapTradeErrors,
-} from './derivedstate-twap-provider'
+import { type EvmChainId, isEvmWNativeSupported } from 'sushi/evm'
+import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
 
 export const TwapToken0Input = () => {
   const {
     state: { swapAmountString, chainId, token0 },
     mutate: { setSwapAmount, setToken0 },
     isToken0Loading: isLoading,
-  } = useDerivedStateTwap()
+  } = useDerivedStateSimpleSwap<SupportedChainId & EvmChainId>()
 
-  const { minTradeSizeError } = useTwapTradeErrors()
+  const minTradeSizeError =
+    useInputErrors()?.type === InputErrors.MIN_TRADE_SIZE
 
   return (
     <Web3Input.Currency
