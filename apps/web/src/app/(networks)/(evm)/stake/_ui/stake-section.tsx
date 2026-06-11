@@ -4,14 +4,15 @@ import { Button, Dots } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { APPROVE_TAG_STAKE } from 'src/lib/constants'
 import { useBarDeposit } from 'src/lib/wagmi/hooks/bar/useBarDeposit'
+import { useQuoteBarDeposit } from 'src/lib/wagmi/hooks/bar/useQuoteBarDeposit'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {
   useApproved,
   withCheckerRoot,
 } from 'src/lib/wagmi/systems/Checker/provider'
 import { Amount } from 'sushi'
-import { EvmChainId, SUSHI, XSUSHI_ADDRESS } from 'sushi/evm'
-import { StakeSectionWidget } from './stake-section-widget'
+import { EvmChainId, RED_SNWAPPER_ADDRESS, SUSHI, XSUSHI } from 'sushi/evm'
+import { BarWidget } from './bar-widget'
 
 export const StakeSection = withCheckerRoot(() => {
   const { approved } = useApproved(APPROVE_TAG_STAKE)
@@ -24,16 +25,23 @@ export const StakeSection = withCheckerRoot(() => {
       : undefined
   }, [input])
 
-  const { write, isPending: isWritePending } = useBarDeposit({
+  const { data: amountOut } = useQuoteBarDeposit({
     amount: parsedInput,
-    enabled: Boolean(approved && parsedInput?.gt(0n)),
+  })
+
+  const { write, isPending: isWritePending } = useBarDeposit({
+    amountIn: parsedInput,
+    amountOut,
+    enabled: approved,
   })
 
   return (
-    <StakeSectionWidget
+    <BarWidget
       input={input}
-      parsedInput={parsedInput}
+      amountOut={amountOut}
       onInput={setInput}
+      inputToken={SUSHI[EvmChainId.ETHEREUM]}
+      outputToken={XSUSHI[EvmChainId.ETHEREUM]}
     >
       <Checker.Connect size="xl" fullWidth>
         <Checker.Network
@@ -59,7 +67,7 @@ export const StakeSection = withCheckerRoot(() => {
               className="whitespace-nowrap"
               fullWidth
               amount={parsedInput}
-              contract={XSUSHI_ADDRESS[EvmChainId.ETHEREUM]}
+              contract={RED_SNWAPPER_ADDRESS[EvmChainId.ETHEREUM]}
             >
               <Checker.Success tag={APPROVE_TAG_STAKE}>
                 <Button
@@ -76,6 +84,6 @@ export const StakeSection = withCheckerRoot(() => {
           </Checker.Amounts>
         </Checker.Network>
       </Checker.Connect>
-    </StakeSectionWidget>
+    </BarWidget>
   )
 })

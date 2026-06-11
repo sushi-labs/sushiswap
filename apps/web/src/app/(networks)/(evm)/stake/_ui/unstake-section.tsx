@@ -2,14 +2,21 @@
 
 import { Button, Dots } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
+import { APPROVE_TAG_UNSTAKE } from 'src/lib/constants'
 import { useBarWithdraw } from 'src/lib/wagmi/hooks/bar/useBarWithdraw'
+import { useQuoteBarWithdraw } from 'src/lib/wagmi/hooks/bar/useQuoteBarWithdraw'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { withCheckerRoot } from 'src/lib/wagmi/systems/Checker/provider'
+import {
+  useApproved,
+  withCheckerRoot,
+} from 'src/lib/wagmi/systems/Checker/provider'
 import { Amount } from 'sushi'
-import { EvmChainId, XSUSHI } from 'sushi/evm'
-import { UnstakeSectionWidget } from './unstake-section-widget'
+import { EvmChainId, RED_SNWAPPER_ADDRESS, SUSHI, XSUSHI } from 'sushi/evm'
+import { BarWidget } from './bar-widget'
 
 export const UnstakeSection = withCheckerRoot(() => {
+  const { approved } = useApproved(APPROVE_TAG_UNSTAKE)
+
   const [input, setInput] = useState('')
 
   const parsedInput = useMemo(() => {
@@ -18,16 +25,23 @@ export const UnstakeSection = withCheckerRoot(() => {
       : undefined
   }, [input])
 
-  const { write, isPending: isWritePending } = useBarWithdraw({
+  const { data: amountOut } = useQuoteBarWithdraw({
     amount: parsedInput,
-    enabled: Boolean(parsedInput?.gt(0n)),
+  })
+
+  const { write, isPending: isWritePending } = useBarWithdraw({
+    amountIn: parsedInput,
+    amountOut,
+    enabled: approved,
   })
 
   return (
-    <UnstakeSectionWidget
+    <BarWidget
       input={input}
-      parsedInput={parsedInput}
+      amountOut={amountOut}
       onInput={setInput}
+      inputToken={XSUSHI[EvmChainId.ETHEREUM]}
+      outputToken={SUSHI[EvmChainId.ETHEREUM]}
     >
       <Checker.Connect size="xl" fullWidth>
         <Checker.Network
@@ -47,18 +61,33 @@ export const UnstakeSection = withCheckerRoot(() => {
             chainId={EvmChainId.ETHEREUM}
             amount={parsedInput}
           >
-            <Button
+            <Checker.ApproveERC20
               size="xl"
-              onClick={() => write?.().then(() => setInput(''))}
+              id="approve-xsushi"
+              className="whitespace-nowrap"
               fullWidth
-              disabled={isWritePending || !write}
-              testId="unstake-sushi"
+              amount={parsedInput}
+              contract={RED_SNWAPPER_ADDRESS[EvmChainId.ETHEREUM]}
             >
-              {isWritePending ? <Dots>Confirm transaction</Dots> : 'Unstake'}
-            </Button>
+              <Checker.Success tag={APPROVE_TAG_UNSTAKE}>
+                <Button
+                  size="xl"
+                  onClick={() => write?.().then(() => setInput(''))}
+                  fullWidth
+                  disabled={isWritePending || !approved || !write}
+                  testId="unstake-sushi"
+                >
+                  {isWritePending ? (
+                    <Dots>Confirm transaction</Dots>
+                  ) : (
+                    'Unstake'
+                  )}
+                </Button>
+              </Checker.Success>
+            </Checker.ApproveERC20>
           </Checker.Amounts>
         </Checker.Network>
       </Checker.Connect>
-    </UnstakeSectionWidget>
+    </BarWidget>
   )
 })
