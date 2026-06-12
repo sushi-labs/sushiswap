@@ -6,7 +6,8 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
 import { getNamespaceForChainId } from 'src/lib/wallet/namespaces/namespace-for-chain-id'
 import { Amount, getNativeAddress } from 'sushi'
-import { isEvmChainId } from 'sushi/evm'
+import { type EvmChainId, isEvmChainId } from 'sushi/evm'
+import type { SvmChainId } from 'sushi/svm'
 import { InputWithKeyboard } from '../../../_common'
 import { PerpsChecker } from '../../../perps-checker'
 import type { HyperunitDepositOption } from '../deposit-dialog'
@@ -17,12 +18,19 @@ import {
   SvmTokenSendButton,
 } from './hyperunit-send-buttons'
 
-type DepositOption<TChainId extends TokenListChainId> = Omit<
+type HyperunitTokenListChainId = Extract<
+  TokenListChainId,
+  EvmChainId | SvmChainId
+>
+
+type DepositOption<TChainId extends HyperunitTokenListChainId> = Omit<
   HyperunitDepositOption,
   'chainId' | 'asset'
 > & { chainId: TChainId; asset: CurrencyFor<TChainId> }
 
-export function HyperunitTransferTypeWallet<TChainId extends TokenListChainId>({
+export function HyperunitTransferTypeWallet<
+  TChainId extends HyperunitTokenListChainId,
+>({
   depositOption,
   depositAddress,
   depositInfo,

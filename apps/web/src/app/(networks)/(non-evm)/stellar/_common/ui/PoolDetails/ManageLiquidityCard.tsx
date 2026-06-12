@@ -15,10 +15,15 @@ import {
 } from '@sushiswap/ui'
 import type React from 'react'
 import { useEffect, useMemo, useState } from 'react'
+import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/Currency'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
-import type { StellarAccountAddress, StellarToken } from 'sushi/stellar'
+import {
+  type StellarAccountAddress,
+  StellarChainId,
+  type StellarToken,
+} from 'sushi/stellar'
 import { formatUnits } from 'viem'
 import { ToggleZapCard } from '~evm/[chainId]/pool/_ui/toggle-zap-card'
 import { useRemoveLiquidity } from '~stellar/_common/lib/hooks/liquidity/use-remove-liquidity'
@@ -40,7 +45,6 @@ import { useStellarWallet } from '~stellar/providers'
 import { useBestRoute } from '~stellar/swap/lib/hooks/use-best-route'
 import { TickRangeSelector } from '../TickRangeSelector/TickRangeSelector'
 import { CreateTrustlineButton } from '../Trustline/CreateTrustlineButton'
-import TokenSelector from '../token-selector/token-selector'
 import { LiquidityDepthWidget } from './LiquidityDepthWidget'
 
 interface ManageLiquidityCardProps {
@@ -459,6 +463,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                         </div>
                         <TokenSelector
                           id="zap-token-selector"
+                          chainId={StellarChainId.STELLAR}
                           selected={zapTokenIn ?? undefined}
                           onSelect={(token) => {
                             setZapTokenIn(token)

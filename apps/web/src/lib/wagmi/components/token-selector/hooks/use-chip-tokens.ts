@@ -1,14 +1,10 @@
 import { useMemo } from 'react'
-import { EVM_DEFAULT_BASES, type EvmChainId, isEvmChainId } from 'sushi/evm'
-import {
-  STELLAR_DEFAULT_BASES,
-  type StellarChainId,
-  isStellarChainId,
-} from 'sushi/stellar'
-import { SVM_DEFAULT_BASES, type SvmChainId, isSvmChainId } from 'sushi/svm'
-import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
+import { EVM_DEFAULT_BASES, isEvmChainId } from 'sushi/evm'
+import { STELLAR_DEFAULT_BASES, isStellarChainId } from 'sushi/stellar'
+import { SVM_DEFAULT_BASES, isSvmChainId } from 'sushi/svm'
+import type { TokenSelectorChainId } from '../config'
 
-interface UseChipTokens<TChainId extends BalanceChainId> {
+interface UseChipTokens<TChainId extends TokenSelectorChainId> {
   chainId: TChainId
   includeNative?: boolean
   showPinnedTokens?: boolean
@@ -16,7 +12,7 @@ interface UseChipTokens<TChainId extends BalanceChainId> {
 
 // TODO: Add pinned tokens
 
-export function useChipTokens<TChainId extends BalanceChainId>({
+export function useChipTokens<TChainId extends TokenSelectorChainId>({
   chainId,
   includeNative = true,
   // showPinnedTokens = true,
@@ -33,7 +29,7 @@ export function useChipTokens<TChainId extends BalanceChainId>({
     }
 
     throw new Error('Unsupported chainId')
-  }, [chainId])
+  }, [chainId]) as Readonly<CurrencyFor<TChainId>[]>
 
   // const {} = usePinnedTokens()
 
@@ -43,7 +39,7 @@ export function useChipTokens<TChainId extends BalanceChainId>({
 
       return {
         default: true,
-        token: base as CurrencyFor<TChainId>,
+        token: base,
       }
     })
   }, [includeNative, defaultBases])

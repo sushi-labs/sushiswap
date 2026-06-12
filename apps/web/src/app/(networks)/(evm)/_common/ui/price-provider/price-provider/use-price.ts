@@ -1,12 +1,10 @@
 'use client'
 
 import { useMemo } from 'react'
-import type { EvmChainId } from 'sushi/evm'
-import type { SvmChainId } from 'sushi/svm'
-import type { Address } from 'viem'
+import type { PriceChainId } from './types'
 import { usePrices } from './use-prices'
 
-export function usePrice<TChainId extends EvmChainId | SvmChainId>({
+export function usePrice<TChainId extends PriceChainId>({
   chainId,
   address,
   enabled: _enabled = true,

@@ -295,7 +295,7 @@ function CurrencyInput<
         </div>
 
         {selector}
-        {!onSelect ? (
+        {!selector ? (
           <div
             id={`${id}-button`}
             className={classNames(

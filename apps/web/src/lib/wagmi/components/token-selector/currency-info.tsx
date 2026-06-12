@@ -5,6 +5,7 @@ import {
   ShieldCheckIcon,
 } from '@heroicons/react/24/outline'
 import { XMarkIcon } from '@heroicons/react/24/solid'
+import type { TokenSelectorChainId } from '@sushiswap/graph-client/data-api'
 import {
   ClipboardController,
   DialogHeader,
@@ -24,30 +25,26 @@ import {
   useTokenSecurity,
 } from 'src/lib/hooks/react-query'
 import { formatNumber, formatUSD, getChainById, shortenAddress } from 'sushi'
-import type { EvmAddress, EvmChainId } from 'sushi/evm'
-import type { SvmChainId } from 'sushi/svm'
+import type { EvmToken } from 'sushi/evm'
+import { type StellarToken, isStellarChainId } from 'sushi/stellar'
+import type { SvmToken } from 'sushi/svm'
 import { TokenSecurityView } from '../token-security-view'
 
-interface CurrencyInfoProps<TChainId extends EvmChainId | SvmChainId> {
+interface CurrencyInfoProps<TChainId extends TokenSelectorChainId> {
   currency: CurrencyFor<TChainId>
   onBack: () => void
 }
 
-export function CurrencyInfo<TChainId extends EvmChainId | SvmChainId>({
+export function CurrencyInfo<TChainId extends TokenSelectorChainId>({
   currency,
   onBack,
 }: CurrencyInfoProps<TChainId>) {
-  const { data: tokenSecurity, isLoading: isTokenSecurityLoading } =
-    useTokenSecurity({
-      currency: currency.wrap(),
-    })
+  const token = currency.wrap() as EvmToken | SvmToken | StellarToken
 
   const { data: coinGeckoInfo, isLoading: isCoinGeckoInfoLoading } =
     useCoinGeckoTokenInfo({
-      token: currency.wrap(),
+      token,
     })
-
-  console.log(tokenSecurity, coinGeckoInfo)
 
   return (
     <div className="absolute inset-0 z-20 py-6 bg-gray-100 dark:bg-slate-800 rounded-2xl">
@@ -202,8 +199,8 @@ export function CurrencyInfo<TChainId extends EvmChainId | SvmChainId>({
                 <LinkExternal
                   className="font-medium"
                   href={getChainById(currency.chainId).getTokenUrl(
-                    // Ugly cast should be fine
-                    currency.wrap().address as EvmAddress,
+                    // Chain-specific address types collapse under the union here.
+                    currency.wrap().address as never,
                   )}
                 >
                   {shortenAddress(currency.wrap().address)}
@@ -227,21 +224,73 @@ export function CurrencyInfo<TChainId extends EvmChainId | SvmChainId>({
                 </ClipboardController>
               </span>
             </div>
+            <CurrencyInfoIssuerDomain currency={currency} />
           </div>
-          <Separator className="my-6" />
-          <div className="flex flex-col">
-            <div className="flex gap-1 items-center py-2">
-              <ShieldCheckIcon className="h-4 w-4" />
-              <span className="font-medium">Security Info</span>
-            </div>
-            <TokenSecurityView
-              token={currency.wrap()}
-              isTokenSecurityLoading={isTokenSecurityLoading}
-              tokenSecurity={tokenSecurity}
-            />
-          </div>
+          <CurrencySecurity currency={currency} />
         </div>
       </div>
     </div>
+  )
+}
+
+function CurrencyInfoIssuerDomain<TChainId extends TokenSelectorChainId>({
+  currency,
+}: {
+  currency: CurrencyFor<TChainId>
+}) {
+  const isStellarCurrency = isStellarChainId(currency.chainId)
+  const stellarToken = isStellarCurrency
+    ? (currency.wrap() as StellarToken<{ domain?: string }>)
+    : undefined
+
+  if (!stellarToken) return null
+
+  return (
+    <>
+      <div className="flex justify-between">
+        <span className="text-muted-foreground text-sm">Issuer</span>
+        <span className="text-sm">
+          {stellarToken.issuer ? shortenAddress(stellarToken.issuer) : '-'}
+        </span>
+      </div>
+      <div className="flex justify-between">
+        <span className="text-muted-foreground text-sm">Domain</span>
+        <span className="text-sm">{stellarToken.metadata.domain ?? '-'}</span>
+      </div>
+    </>
+  )
+}
+
+function CurrencySecurity<TChainId extends TokenSelectorChainId>({
+  currency,
+}: {
+  currency: CurrencyFor<TChainId>
+}) {
+  const token = isStellarChainId(currency.chainId)
+    ? undefined
+    : (currency.wrap() as TokenFor<typeof currency.chainId>)
+
+  const { data: tokenSecurity, isLoading: isTokenSecurityLoading } =
+    useTokenSecurity({
+      currency: token,
+    })
+
+  if (!token) return null
+
+  return (
+    <>
+      <Separator className="my-6" />
+      <div className="flex flex-col">
+        <div className="flex gap-1 items-center py-2">
+          <ShieldCheckIcon className="h-4 w-4" />
+          <span className="font-medium">Security Info</span>
+        </div>
+        <TokenSecurityView
+          token={token}
+          isTokenSecurityLoading={isTokenSecurityLoading}
+          tokenSecurity={tokenSecurity}
+        />
+      </div>
+    </>
   )
 }

@@ -1,13 +1,14 @@
 import {
-  type TokenList,
   type TokenListChainId,
   getTokenList,
 } from '@sushiswap/graph-client/data-api'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { type EvmChainId, EvmToken, isEvmChainId } from 'sushi/evm'
-import { type SvmChainId, SvmToken, isSvmChainId } from 'sushi/svm'
+import {
+  type TokenListTokenMetadata,
+  createTokenListToken,
+} from './token-list-token'
 
 type UseSearchTokens<TChainId extends TokenListChainId> = {
   chainId: TChainId | undefined
@@ -19,12 +20,10 @@ type UseSearchTokens<TChainId extends TokenListChainId> = {
   }
 }
 
-type UseSearchTokensDataReturn<TChainId extends TokenListChainId> =
-  TChainId extends EvmChainId
-    ? EvmToken[]
-    : TChainId extends SvmChainId
-      ? SvmToken[]
-      : never
+type UseSearchTokensDataReturn<TChainId extends TokenListChainId> = TokenFor<
+  TChainId,
+  TokenListTokenMetadata
+>[]
 
 export function useSearchTokens<TChainId extends TokenListChainId>({
   chainId,
@@ -34,7 +33,7 @@ export function useSearchTokens<TChainId extends TokenListChainId>({
 }: UseSearchTokens<TChainId>) {
   const pagination = _pagination || { pageSize: 50, initialPage: 0 }
 
-  const { data: _customTokens } = useCustomTokens()
+  const { data: _customTokens } = useCustomTokens({ chainId })
   const customTokens = useMemo(() => {
     if (!includeCustomTokens) return undefined
 
@@ -70,25 +69,9 @@ export function useSearchTokens<TChainId extends TokenListChainId>({
   const data = useMemo(() => {
     if (!query.data || !chainId) return undefined
 
-    if (isEvmChainId(chainId)) {
-      const tokens = query.data.pages.flat() as TokenList<
-        TokenListChainId & EvmChainId
-      >
-      return tokens.map(
-        (token) =>
-          new EvmToken({ ...token, metadata: { approved: token.approved } }),
-      )
-    }
-
-    if (isSvmChainId(chainId)) {
-      const tokens = query.data.pages.flat() as TokenList<
-        TokenListChainId & SvmChainId
-      >
-      return tokens.map(
-        (token) =>
-          new SvmToken({ ...token, metadata: { approved: token.approved } }),
-      )
-    }
+    return query.data.pages
+      .flat()
+      .map((token) => createTokenListToken(chainId, token))
   }, [chainId, query.data]) as UseSearchTokensDataReturn<TChainId> | undefined
 
   return useMemo(

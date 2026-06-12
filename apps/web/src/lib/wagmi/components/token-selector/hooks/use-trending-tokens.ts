@@ -1,23 +1,14 @@
 import {
-  type TrendingTokens,
   type TrendingTokensChainId,
   getTrendingTokens,
 } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { type EvmChainId, EvmToken, isEvmChainId } from 'sushi/evm'
-import { type SvmChainId, SvmToken, isSvmChainId } from 'sushi/svm'
+import { createTokenListToken } from './token-list-token'
 
 type UseTrendingTokens<TChainId extends TrendingTokensChainId> = {
   chainId: TChainId | undefined
 }
-
-type UseTrendingTokensDataReturn<TChainId extends TrendingTokensChainId> =
-  TChainId extends EvmChainId
-    ? EvmToken[]
-    : TChainId extends SvmChainId
-      ? SvmToken[]
-      : never
 
 export function useTrendingTokens<TChainId extends TrendingTokensChainId>({
   chainId,
@@ -37,33 +28,13 @@ export function useTrendingTokens<TChainId extends TrendingTokensChainId>({
   })
 
   return useMemo(() => {
-    if (!query.data || !chainId) return { ...query, data: undefined }
-
-    let _tokens: (EvmToken | SvmToken)[] = []
-
-    if (isEvmChainId(chainId)) {
-      const tokens = query.data as TrendingTokens<
-        TrendingTokensChainId & EvmChainId
-      >
-
-      _tokens = tokens.map(
-        (token) =>
-          new EvmToken({ ...token, metadata: { approved: token.approved } }),
-      )
-    } else if (isSvmChainId(chainId)) {
-      const tokens = query.data as TrendingTokens<
-        TrendingTokensChainId & SvmChainId
-      >
-
-      _tokens = tokens.map(
-        (token) =>
-          new SvmToken({ ...token, metadata: { approved: token.approved } }),
-      )
+    if (!query.data || !chainId) {
+      return { ...query, data: undefined }
     }
 
     return {
       ...query,
-      data: _tokens as UseTrendingTokensDataReturn<TChainId>,
+      data: query.data.map((token) => createTokenListToken(chainId, token)),
     }
   }, [query, chainId])
 }
