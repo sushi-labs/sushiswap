@@ -44,14 +44,14 @@ export function CrossChainSwapTokenRate<
     if (!token0 || !token1) return '0.00'
 
     const token0PriceFraction = prices0?.getFraction(
-      token0.wrap().address as AddressFor<TChainId0>,
+      token0.wrap().address as ContractAddressFor<TChainId0>,
     )
     const token0Price = token0PriceFraction
       ? Amount.tryFromHuman(token0, '1')?.mul(token0PriceFraction)
       : undefined
 
     const token1PriceFraction = prices1?.getFraction(
-      token1.wrap().address as AddressFor<TChainId1>,
+      token1.wrap().address as ContractAddressFor<TChainId1>,
     )
     const token1Price = token1PriceFraction
       ? Amount.tryFromHuman(token1, '1')?.mul(token1PriceFraction)

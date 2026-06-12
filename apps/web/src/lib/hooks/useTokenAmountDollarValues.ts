@@ -20,7 +20,8 @@ export function useTokenAmountDollarValues<
     if (!amounts) return []
 
     return amounts.map((amount) => {
-      const address = amount?.currency.wrap().address as AddressFor<TChainId>
+      const address = amount?.currency.wrap()
+        .address as ContractAddressFor<TChainId>
 
       if (!amount?.gt(ZERO) || !prices?.has(address)) return 0
       const price = Number(

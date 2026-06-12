@@ -10,7 +10,7 @@ export function usePrice<TChainId extends PriceChainId>({
   enabled: _enabled = true,
 }: {
   chainId: TChainId | undefined
-  address: AddressFor<TChainId> | undefined
+  address: ContractAddressFor<TChainId> | undefined
   enabled?: boolean
 }) {
   const enabled = chainId && address && _enabled

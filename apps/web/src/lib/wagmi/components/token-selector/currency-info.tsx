@@ -5,7 +5,6 @@ import {
   ShieldCheckIcon,
 } from '@heroicons/react/24/outline'
 import { XMarkIcon } from '@heroicons/react/24/solid'
-import type { TokenSelectorChainId } from '@sushiswap/graph-client/data-api'
 import {
   ClipboardController,
   DialogHeader,
@@ -29,6 +28,7 @@ import type { EvmToken } from 'sushi/evm'
 import { type StellarToken, isStellarChainId } from 'sushi/stellar'
 import type { SvmToken } from 'sushi/svm'
 import { TokenSecurityView } from '../token-security-view'
+import type { TokenSelectorChainId } from './config'
 
 interface CurrencyInfoProps<TChainId extends TokenSelectorChainId> {
   currency: CurrencyFor<TChainId>

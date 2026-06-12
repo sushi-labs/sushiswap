@@ -138,7 +138,7 @@ export function PriceProvider({ children }: PriceProviderContextProps) {
   const requestPrices = useCallback(
     (
       chainId: PriceWorkerRequestChainId,
-      addresses: PriceWorkerRequestAddress[],
+      addresses: ContractAddressFor<PriceWorkerChainId>[],
     ) => {
       if (worker) {
         worker.postMessage({
