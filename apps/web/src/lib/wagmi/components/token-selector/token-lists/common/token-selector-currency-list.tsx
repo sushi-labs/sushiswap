@@ -1,15 +1,12 @@
-import React, { type FC, memo, useMemo } from 'react'
+import { memo, useMemo } from 'react'
 import { type Amount, getNativeAddress } from 'sushi'
-import type { EvmChainId, EvmToken } from 'sushi/evm'
-import { useConnection } from 'wagmi'
-
-import type { SvmChainId } from 'sushi/svm'
 import type { PriceMap } from '~evm/_common/ui/price-provider/price-provider/use-prices'
+import type { TokenSelectorChainId } from '../../config'
 import { TokenSelectorImportRow } from './token-selector-import-row'
 import { TokenSelectorRow, TokenSelectorRowLoading } from './token-selector-row'
 
 interface TokenSelectorCurrencyListGenericProps<
-  TChainId extends EvmChainId | SvmChainId,
+  TChainId extends TokenSelectorChainId,
 > {
   id: string
   currencies: Readonly<
@@ -33,9 +30,7 @@ interface TokenSelectorCurrencyListGenericProps<
   onShowInfo(currency: CurrencyFor<TChainId> | false): void
 }
 
-export const TokenSelectorCurrencyList: FC<
-  TokenSelectorCurrencyListGenericProps<EvmChainId | SvmChainId>
-> = memo(function TokenSelectorCurrencyList({
+function TokenSelectorCurrencyListBase<TChainId extends TokenSelectorChainId>({
   onSelect,
   currencies,
   selected,
@@ -45,20 +40,20 @@ export const TokenSelectorCurrencyList: FC<
   isBalanceLoading,
   importConfig,
   onShowInfo,
-}) {
-  const { address } = useConnection()
-  const rowData = useMemo<TokenSelectorRow<EvmChainId | SvmChainId>[]>(() => {
+}: TokenSelectorCurrencyListGenericProps<TChainId>) {
+  const rowData = useMemo<TokenSelectorRow<TChainId>[]>(() => {
     if (!currencies) return []
 
     return currencies.map((currency) => ({
-      account: address,
       currency,
       balance: balancesMap?.get(
         currency.type === 'native'
           ? getNativeAddress(currency.chainId)
           : currency.address,
       ),
-      price: pricesMap?.getFraction(currency.wrap().address),
+      price: pricesMap?.getFraction(
+        currency.wrap().address as ContractAddressFor<TChainId>,
+      ),
       showWarning:
         currency.type === 'token' && currency.metadata.approved === false,
       onSelect: () => onSelect(currency),
@@ -79,7 +74,6 @@ export const TokenSelectorCurrencyList: FC<
     }))
   }, [
     isBalanceLoading,
-    address,
     balancesMap,
     currencies,
     onSelect,
@@ -98,22 +92,29 @@ export const TokenSelectorCurrencyList: FC<
   const { onImport, importableSet } = importConfig
 
   return rowData.map((rowData) => {
-    if (
-      rowData.currency.type === 'token' &&
-      importableSet?.has(rowData.currency.address)
-    ) {
+    if (rowData.currency.type === 'token') {
+      const token = rowData.currency as TokenFor<TChainId>
+
+      if (!importableSet?.has(token.address as AddressFor<TChainId>)) {
+        return <TokenSelectorRow key={rowData.currency.id} {...rowData} />
+      }
+
       return (
         <TokenSelectorImportRow
-          key={rowData.currency.id}
-          currency={rowData.currency}
-          onImport={() => onImport(rowData.currency as EvmToken)}
+          key={token.id}
+          currency={token}
+          onImport={() => onImport(token)}
         />
       )
     }
 
     return <TokenSelectorRow key={rowData.currency.id} {...rowData} />
   })
-})
+}
+
+export const TokenSelectorCurrencyList = memo(
+  TokenSelectorCurrencyListBase,
+) as unknown as typeof TokenSelectorCurrencyListBase
 
 interface TokenSelectorCurrencyListLoading {
   count: number

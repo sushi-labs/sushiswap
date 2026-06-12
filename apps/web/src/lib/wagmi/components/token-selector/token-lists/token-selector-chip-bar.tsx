@@ -10,17 +10,17 @@ import { Button, Currency, IconButton, buttonIconVariants } from '@sushiswap/ui'
 import { NativeAddress } from 'src/lib/constants'
 import { type EvmCurrency, isEvmChainId } from 'sushi/evm'
 import { type SvmCurrency, isSvmChainId } from 'sushi/svm'
-import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
+import type { TokenSelectorChainId } from '../config'
 import { useChipTokens } from '../hooks/use-chip-tokens'
 
-interface TokenSelectorChipBar<TChainId extends BalanceChainId> {
+interface TokenSelectorChipBar<TChainId extends TokenSelectorChainId> {
   chainId: TChainId
   onSelect(currency: CurrencyFor<TChainId>): void
   includeNative?: boolean
   showPinnedTokens?: boolean
 }
 
-export function TokenSelectorChipBar<TChainId extends BalanceChainId>({
+export function TokenSelectorChipBar<TChainId extends TokenSelectorChainId>({
   chainId,
   onSelect,
   includeNative,

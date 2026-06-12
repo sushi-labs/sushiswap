@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { ChainId, type Token } from 'sushi'
+import { StellarChainId } from 'sushi/stellar'
 import * as z from 'zod'
 
 const COINGECKO_CHAIN_ID_BY_NAME = {
@@ -42,12 +43,21 @@ const COINGECKO_CHAIN_ID_BY_NAME = {
   [ChainId.APE]: 'apechain',
 
   [ChainId.SOLANA]: 'solana',
+  [StellarChainId.STELLAR]: 'stellar',
 } as const
 
 type CoinGeckoChainId = keyof typeof COINGECKO_CHAIN_ID_BY_NAME
 
 const isCoinGeckoChainId = (chainId: ChainId): chainId is CoinGeckoChainId =>
   Object.keys(COINGECKO_CHAIN_ID_BY_NAME).includes(chainId.toString())
+
+export function getCoinGeckoTokenInfoUrl(token?: Token) {
+  if (!token || !isCoinGeckoChainId(token.chainId)) return undefined
+
+  return `https://api.coingecko.com/api/v3/coins/${
+    COINGECKO_CHAIN_ID_BY_NAME[token.chainId]
+  }/contract/${encodeURIComponent(token.address)}`
+}
 
 const coinGeckoSchema = z.object({
   market_cap_rank: z.number().nullable(),
@@ -73,14 +83,10 @@ const coinGeckoSchema = z.object({
 })
 
 const fetchCoinGeckoTokenInfoQueryFn = async (token?: Token) => {
-  if (!token || !isCoinGeckoChainId(token.chainId))
-    throw new Error('Invalid token')
+  const url = getCoinGeckoTokenInfoUrl(token)
+  if (!url) throw new Error('Invalid token')
 
-  const response = await fetch(
-    `https://api.coingecko.com/api/v3/coins/${
-      COINGECKO_CHAIN_ID_BY_NAME[token.chainId]
-    }/contract/${token.address}`,
-  )
+  const response = await fetch(url)
 
   const data = await response.json()
 
@@ -105,10 +111,12 @@ export const useCoinGeckoTokenInfo = ({
   enabled?: boolean
   token?: Token
 }) => {
+  const url = getCoinGeckoTokenInfoUrl(token)
+
   return useQuery({
     queryKey: ['useCoinGeckoTokenInfo', token?.id],
     queryFn: () => fetchCoinGeckoTokenInfoQueryFn(token),
-    enabled: !!token && enabled,
+    enabled: Boolean(url && enabled),
     placeholderData: keepPreviousData,
     staleTime: 900000, // 15 mins
     gcTime: 86400000, // 24hs
