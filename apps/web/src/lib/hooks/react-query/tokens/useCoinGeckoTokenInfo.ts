@@ -82,11 +82,35 @@ const coinGeckoSchema = z.object({
   }),
 })
 
+class CoinGeckoTokenInfoHttpError extends Error {
+  constructor(
+    readonly status: number,
+    statusText: string,
+  ) {
+    super(`CoinGecko token info request failed: ${status} ${statusText}`)
+  }
+}
+
+function shouldRetryCoinGeckoTokenInfoQuery(
+  failureCount: number,
+  error: Error,
+) {
+  if (error instanceof CoinGeckoTokenInfoHttpError && error.status === 404) {
+    return false
+  }
+
+  return failureCount < 3
+}
+
 const fetchCoinGeckoTokenInfoQueryFn = async (token?: Token) => {
   const url = getCoinGeckoTokenInfoUrl(token)
   if (!url) throw new Error('Invalid token')
 
   const response = await fetch(url)
+
+  if (response.status === 404) {
+    throw new CoinGeckoTokenInfoHttpError(response.status, response.statusText)
+  }
 
   const data = await response.json()
 
@@ -120,5 +144,6 @@ export const useCoinGeckoTokenInfo = ({
     placeholderData: keepPreviousData,
     staleTime: 900000, // 15 mins
     gcTime: 86400000, // 24hs
+    retry: shouldRetryCoinGeckoTokenInfoQuery,
   })
 }
