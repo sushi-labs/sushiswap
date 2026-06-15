@@ -7,15 +7,11 @@ import type { TokenSelectorChainId } from '../config'
 interface UseChipTokens<TChainId extends TokenSelectorChainId> {
   chainId: TChainId
   includeNative?: boolean
-  showPinnedTokens?: boolean
 }
-
-// TODO: Add pinned tokens
 
 export function useChipTokens<TChainId extends TokenSelectorChainId>({
   chainId,
   includeNative = true,
-  // showPinnedTokens = true,
 }: UseChipTokens<TChainId>) {
   const defaultBases = useMemo(() => {
     if (isEvmChainId(chainId)) {
@@ -30,8 +26,6 @@ export function useChipTokens<TChainId extends TokenSelectorChainId>({
 
     throw new Error('Unsupported chainId')
   }, [chainId]) as Readonly<CurrencyFor<TChainId>[]>
-
-  // const {} = usePinnedTokens()
 
   return useMemo(() => {
     return defaultBases.flatMap((base) => {

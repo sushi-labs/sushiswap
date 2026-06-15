@@ -17,16 +17,14 @@ interface TokenSelectorChipBar<TChainId extends TokenSelectorChainId> {
   chainId: TChainId
   onSelect(currency: CurrencyFor<TChainId>): void
   includeNative?: boolean
-  showPinnedTokens?: boolean
 }
 
 export function TokenSelectorChipBar<TChainId extends TokenSelectorChainId>({
   chainId,
   onSelect,
   includeNative,
-  showPinnedTokens = true,
 }: TokenSelectorChipBar<TChainId>) {
-  const tokens = useChipTokens({ chainId, includeNative, showPinnedTokens })
+  const tokens = useChipTokens({ chainId, includeNative })
 
   const isPinnable = (
     t: CurrencyFor<TChainId>,

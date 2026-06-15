@@ -28,7 +28,6 @@ interface TokenSelectorStates<TChainId extends TokenSelectorChainId> {
   onShowInfo(currency: CurrencyFor<TChainId> | false): void
   currencies?: CurrencyFor<TChainId, { approved?: boolean }>[]
   includeNative?: boolean
-  hidePinnedTokens?: boolean
   search?: string
 }
 
@@ -40,7 +39,6 @@ export function TokenSelectorStates<TChainId extends TokenSelectorChainId>({
   onShowInfo,
   currencies,
   includeNative,
-  hidePinnedTokens,
   search,
 }: TokenSelectorStates<TChainId>) {
   // Ensure that the user's tokens are loaded
@@ -112,7 +110,6 @@ export function TokenSelectorStates<TChainId extends TokenSelectorChainId>({
           chainId={chainId}
           onSelect={onSelect}
           includeNative={includeNative}
-          showPinnedTokens={!hidePinnedTokens}
         />
 
         {account ? (
@@ -146,7 +143,6 @@ export function TokenSelectorStates<TChainId extends TokenSelectorChainId>({
           chainId={chainId}
           onSelect={onSelect}
           includeNative={includeNative}
-          showPinnedTokens={!hidePinnedTokens}
         />
 
         {account ? (

@@ -43,7 +43,6 @@ interface TokenSelectorProps<
   children: ReactNode
   currencies?: Record<string, CurrencyFor<TChainId, { approved?: boolean }>>
   includeNative?: boolean
-  hidePinnedTokens?: boolean
   hideSearch?: boolean
   networks?: readonly TNetwork[]
   selectedNetwork?: TNetwork
@@ -60,7 +59,6 @@ export function TokenSelector<
   chainId,
   children,
   currencies: _currencies,
-  hidePinnedTokens,
   hideSearch,
   networks,
   selectedNetwork,
@@ -184,7 +182,6 @@ export function TokenSelector<
                 onSelect={_onSelect}
                 currencies={currencies}
                 includeNative={includeNative}
-                hidePinnedTokens={hidePinnedTokens}
                 search={query}
                 onShowInfo={showCurrencyInfo}
               />
