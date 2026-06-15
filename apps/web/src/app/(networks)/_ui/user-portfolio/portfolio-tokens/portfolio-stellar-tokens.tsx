@@ -9,7 +9,7 @@ import { Fragment, useMemo } from 'react'
 import { useAccount } from 'src/lib/wallet'
 import { formatPercent, formatUSD } from 'sushi'
 import type { StellarAccountAddress } from 'sushi/stellar'
-import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { getStellarPortfolioWallet } from '~stellar/_common/lib/hooks/token/get-stellar-portfolio-wallet'
 import { TokenIcon } from '~stellar/_common/ui/General/TokenIcon'
 import { PortfolioInfoRow } from '../portfolio-info-row'
@@ -83,8 +83,10 @@ export const PortfolioStellarTokens = () => {
 }
 
 const _TokenRow = ({ token }: { token: PortfolioStellarWalletToken }) => {
-  //not ideal, currently no price api for stellar
-  const { data: tokenPrice } = useStablePrice({ token: token.token })
+  const { data: tokenPrice } = usePrice({
+    chainId: token.token.chainId,
+    address: token.token.address,
+  })
 
   const amountUsd = tokenPrice
     ? Number(token.balance.toString()) * tokenPrice

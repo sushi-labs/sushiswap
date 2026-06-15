@@ -19,13 +19,6 @@ export function getBaseTokens() {
 }
 
 /**
- * Gets the stable tokens without any alteration
- */
-export function getStableTokens() {
-  return staticTokens.filter((token) => token.metadata?.isStable)
-}
-
-/**
  * Helper to find a token by contract address (case-insensitive) in a token map.
  */
 function findTokenInMap(
