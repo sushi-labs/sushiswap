@@ -456,6 +456,8 @@ function tokenSchema<
     logoURI: z.string().optional(),
     coinKey: z.string().optional(),
     tags: z.array(z.string()).optional(),
+    verificationStatus: z.string(),
+    verificationStatusBreakdown: z.array(z.unknown()),
   })
 }
 
