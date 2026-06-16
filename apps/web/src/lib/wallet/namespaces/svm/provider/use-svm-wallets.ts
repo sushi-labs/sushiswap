@@ -1,20 +1,10 @@
 'use client'
 
-import { useStandardWallets } from '@privy-io/react-auth/solana'
 import { useWalletInfo } from '@solana/connector'
-import { useConnectorClient } from '@solana/connector/react'
-import { useMemo, useRef } from 'react'
-import { useEffect } from 'react'
+import { useMemo } from 'react'
 import { useRecentWallets } from 'src/lib/wallet/hooks/use-recent-wallets'
 import type { WalletWithState } from '../../../types'
 import { SVM_WALLETS, SvmAdapterId } from '../config'
-
-import type {
-  Wallet,
-  WalletEventsWindow,
-  WindowRegisterWalletEvent,
-  WindowRegisterWalletEventCallback,
-} from '@wallet-standard/base'
 
 const PrivyName = 'Email'
 const PrivyIcon =
@@ -23,32 +13,9 @@ const PrivyId = 'wallet-standard:privy'
 
 const isPrivy = (connectorId: string) => connectorId === PrivyId
 
-function refreshSvmWallets(client: unknown): void {
-  ;(
-    client as { walletDetector?: { refreshWallets?: () => void } }
-  ).walletDetector?.refreshWallets?.()
-}
-
 export function useSvmWallets() {
   const { wallets } = useWalletInfo()
   const { isRecentWallet } = useRecentWallets()
-  const { ready, wallets: standardWallets } = useStandardWallets()
-  const hasRanRef = useRef(false)
-  const client = useConnectorClient()
-
-  useEffect(() => {
-    if (hasRanRef.current || !ready) return
-
-    const privyWallet = standardWallets.find(
-      (wallet) => wallet.name === 'Privy' && 'privy:' in wallet.features,
-    )
-
-    if (!privyWallet) return
-
-    hasRanRef.current = true
-    registerWallet(privyWallet)
-    refreshSvmWallets(client)
-  }, [ready, standardWallets, client])
 
   return useMemo(() => {
     const map = new Map<string, WalletWithState>()
@@ -84,66 +51,4 @@ export function useSvmWallets() {
 
     return Array.from(map.values())
   }, [wallets, isRecentWallet])
-}
-
-class RegisterWalletEvent
-  extends CustomEvent<WindowRegisterWalletEventCallback>
-  implements WindowRegisterWalletEvent
-{
-  readonly #detail: WindowRegisterWalletEventCallback
-
-  get detail() {
-    return this.#detail
-  }
-
-  get type() {
-    return 'wallet-standard:register-wallet' as const
-  }
-
-  constructor(callback: WindowRegisterWalletEventCallback) {
-    super('wallet-standard:register-wallet', {
-      bubbles: false,
-      cancelable: false,
-      detail: callback,
-    })
-    this.#detail = callback
-  }
-
-  preventDefault(): never {
-    throw new Error('preventDefault is not supported')
-  }
-
-  stopPropagation(): never {
-    throw new Error('stopPropagation is not supported')
-  }
-
-  stopImmediatePropagation(): never {
-    throw new Error('stopImmediatePropagation is not supported')
-  }
-}
-
-function registerWallet(wallet: Wallet): void {
-  const callback: WindowRegisterWalletEventCallback = ({ register }) =>
-    register(wallet)
-  try {
-    ;(window as WalletEventsWindow).dispatchEvent(
-      new RegisterWalletEvent(callback),
-    )
-  } catch (error) {
-    console.error(
-      'wallet-standard:register-wallet event could not be dispatched\n',
-      error,
-    )
-  }
-  try {
-    ;(window as WalletEventsWindow).addEventListener(
-      'wallet-standard:app-ready',
-      ({ detail: api }) => callback(api),
-    )
-  } catch (error) {
-    console.error(
-      'wallet-standard:app-ready event listener could not be added\n',
-      error,
-    )
-  }
 }
