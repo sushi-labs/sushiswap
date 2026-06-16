@@ -13,7 +13,12 @@ export function useEvmWallets() {
   const { isRecentWallet } = useRecentWallets()
 
   const injectedConnectors = useMemo(
-    () => connectors.filter(isInjectedConnector),
+    () =>
+      connectors.filter(
+        (connector) =>
+          //we are providing our own privy instance, so we remove the dup here
+          isInjectedConnector(connector) && connector.name !== 'Privy Wallet',
+      ),
     [connectors],
   )
 
@@ -59,7 +64,8 @@ export function useEvmWallets() {
         wallet.adapterId === EvmAdapterId.Porto ||
         wallet.adapterId === EvmAdapterId.CoinbaseWallet ||
         wallet.adapterId === EvmAdapterId.MetaMask ||
-        wallet.id === EvmAdapterId.Injected
+        wallet.id === EvmAdapterId.Injected ||
+        wallet.adapterId === EvmAdapterId.Privy
       ) {
         map.set(wallet.id, {
           ...wallet,
