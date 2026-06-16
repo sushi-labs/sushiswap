@@ -487,6 +487,9 @@ importers:
       '@wagmi/core':
         specifier: catalog:web3
         version: 3.2.2(@tanstack/query-core@5.90.20)(@types/react@19.2.14)(immer@9.0.21)(ox@0.11.3(typescript@5.8.3)(zod@4.1.11))(react@19.2.4)(typescript@5.8.3)(use-sync-external-store@1.4.0(react@19.2.4))(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))
+      '@wallet-standard/base':
+        specifier: 1.1.1
+        version: 1.1.1
       '@walletconnect/ethereum-provider':
         specifier: 2.21.10
         version: 2.21.10(@types/react@19.2.14)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.2.4)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11)
@@ -8433,13 +8436,13 @@ packages:
       typescript:
         optional: true
 
-  '@wallet-standard/app@1.1.0':
-    resolution: {integrity: sha512-3CijvrO9utx598kjr45hTbbeeykQrQfKmSnxeWOgU25TOEpvcipD/bYDQWIqUv1Oc6KK4YStokSMu/FBNecGUQ==}
-    engines: {node: '>=16'}
+  '@wallet-standard/app@1.1.1':
+    resolution: {integrity: sha512-WDGwoByhP5gwHH01r5EaLgQdLVkACPCdOMQhmhn8rsm10h/siSgTorShzBxrn0ExSPof+Lu+C3TfgqBrPa1xoQ==}
+    engines: {node: '>=22'}
 
-  '@wallet-standard/base@1.1.0':
-    resolution: {integrity: sha512-DJDQhjKmSNVLKWItoKThJS+CsJQjR9AOBOirBVT1F9YpRyC9oYHE+ZnSf8y8bxUphtKqdQMPVQ2mHohYdRvDVQ==}
-    engines: {node: '>=16'}
+  '@wallet-standard/base@1.1.1':
+    resolution: {integrity: sha512-gggIHTtxicF9XFMQ12DkfS6NAG92Ak795JeSA7f2whAQ6Y3AkMWWuCMxSZXG2NIPN42kEaZSNVjqMsJRaJRxMQ==}
+    engines: {node: '>=22'}
 
   '@wallet-standard/core@1.0.3':
     resolution: {integrity: sha512-Jb33IIjC1wM1HoKkYD7xQ6d6PZ8EmMZvyc8R7dFgX66n/xkvksVTW04g9yLvQXrLFbcIjHrCxW6TXMhvpsAAzg==}
@@ -20165,7 +20168,7 @@ snapshots:
       '@scure/base': 1.2.6
       '@simplewebauthn/browser': 13.3.0
       '@tanstack/react-virtual': 3.13.23(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@wallet-standard/app': 1.1.0
+      '@wallet-standard/app': 1.1.1
       '@walletconnect/ethereum-provider': 2.22.4(@types/react@19.2.14)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.2.4)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11)
       '@walletconnect/universal-provider': 2.22.4(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11)
       eventemitter3: 5.0.1
@@ -22770,7 +22773,7 @@ snapshots:
       '@solana-mobile/mobile-wallet-adapter-protocol': 2.2.5(@solana/wallet-adapter-base@0.9.27(@solana/web3.js@1.98.4(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3)))(@solana/web3.js@1.98.4(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3))(bs58@5.0.0)(fastestsmallesttextencoderdecoder@1.0.22)(react-native@0.73.7(@babel/core@7.26.0)(@babel/preset-env@7.24.4(@babel/core@7.26.0))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.2.4)(utf-8-validate@6.0.3))(react@19.2.4)(typescript@5.8.3)
       '@solana/wallet-standard-chains': 1.1.1
       '@solana/wallet-standard-features': 1.3.0
-      '@wallet-standard/base': 1.1.0
+      '@wallet-standard/base': 1.1.1
       '@wallet-standard/features': 1.1.0
       bs58: 5.0.0
       js-base64: 3.7.7
@@ -23108,8 +23111,8 @@ snapshots:
       '@solana/transaction-messages': 5.5.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3)
       '@solana/transactions': 5.5.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3)
       '@solana/webcrypto-ed25519-polyfill': 4.0.0(typescript@5.8.3)
-      '@wallet-standard/app': 1.1.0
-      '@wallet-standard/base': 1.1.0
+      '@wallet-standard/app': 1.1.1
+      '@wallet-standard/base': 1.1.1
       '@wallet-standard/features': 1.1.0
       '@wallet-ui/core': 2.2.2(@solana/kit@5.5.1(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3)(utf-8-validate@6.0.3))
       zod: 4.1.11
@@ -24305,13 +24308,13 @@ snapshots:
     dependencies:
       '@solana/wallet-standard-features': 1.3.0
       '@solana/web3.js': 1.98.4(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3)
-      '@wallet-standard/base': 1.1.0
+      '@wallet-standard/base': 1.1.1
       '@wallet-standard/features': 1.1.0
       eventemitter3: 5.0.1
 
   '@solana/wallet-standard-chains@1.1.1':
     dependencies:
-      '@wallet-standard/base': 1.1.0
+      '@wallet-standard/base': 1.1.1
 
   '@solana/wallet-standard-core@1.1.2':
     dependencies:
@@ -24321,7 +24324,7 @@ snapshots:
 
   '@solana/wallet-standard-features@1.3.0':
     dependencies:
-      '@wallet-standard/base': 1.1.0
+      '@wallet-standard/base': 1.1.1
       '@wallet-standard/features': 1.1.0
 
   '@solana/wallet-standard-util@1.1.2':
@@ -24337,8 +24340,8 @@ snapshots:
       '@solana/wallet-standard-features': 1.3.0
       '@solana/wallet-standard-util': 1.1.2
       '@solana/web3.js': 1.98.4(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3)
-      '@wallet-standard/app': 1.1.0
-      '@wallet-standard/base': 1.1.0
+      '@wallet-standard/app': 1.1.1
+      '@wallet-standard/base': 1.1.1
       '@wallet-standard/features': 1.1.0
       '@wallet-standard/wallet': 1.1.0
       bs58: 5.0.0
@@ -24347,8 +24350,8 @@ snapshots:
     dependencies:
       '@solana/wallet-adapter-base': 0.9.27(@solana/web3.js@1.98.4(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3))
       '@solana/wallet-standard-wallet-adapter-base': 1.1.4(@solana/web3.js@1.98.4(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@6.0.3))(bs58@5.0.0)
-      '@wallet-standard/app': 1.1.0
-      '@wallet-standard/base': 1.1.0
+      '@wallet-standard/app': 1.1.1
+      '@wallet-standard/base': 1.1.1
       react: 19.2.4
     transitivePeerDependencies:
       - '@solana/web3.js'
@@ -26123,30 +26126,30 @@ snapshots:
       - react
       - use-sync-external-store
 
-  '@wallet-standard/app@1.1.0':
+  '@wallet-standard/app@1.1.1':
     dependencies:
-      '@wallet-standard/base': 1.1.0
+      '@wallet-standard/base': 1.1.1
 
-  '@wallet-standard/base@1.1.0': {}
+  '@wallet-standard/base@1.1.1': {}
 
   '@wallet-standard/core@1.0.3':
     dependencies:
-      '@wallet-standard/app': 1.1.0
-      '@wallet-standard/base': 1.1.0
+      '@wallet-standard/app': 1.1.1
+      '@wallet-standard/base': 1.1.1
       '@wallet-standard/features': 1.1.0
       '@wallet-standard/wallet': 1.0.1
 
   '@wallet-standard/features@1.1.0':
     dependencies:
-      '@wallet-standard/base': 1.1.0
+      '@wallet-standard/base': 1.1.1
 
   '@wallet-standard/wallet@1.0.1':
     dependencies:
-      '@wallet-standard/base': 1.1.0
+      '@wallet-standard/base': 1.1.1
 
   '@wallet-standard/wallet@1.1.0':
     dependencies:
-      '@wallet-standard/base': 1.1.0
+      '@wallet-standard/base': 1.1.1
 
   '@wallet-ui/core@2.2.2(@solana/kit@5.5.1(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3)(utf-8-validate@6.0.3))':
     dependencies:
@@ -36527,8 +36530,8 @@ snapshots:
       '@solana/kit': 5.5.1(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3)(utf-8-validate@6.0.3)
       '@solana/transaction-confirmation': 5.5.1(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3)(utf-8-validate@6.0.3)
       '@solana/wallet-standard-features': 1.3.0
-      '@wallet-standard/app': 1.1.0
-      '@wallet-standard/base': 1.1.0
+      '@wallet-standard/app': 1.1.1
+      '@wallet-standard/base': 1.1.1
       '@wallet-standard/features': 1.1.0
       viem: 2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11)
       wagmi: 2.19.5(@tanstack/query-core@5.90.20)(@tanstack/react-query@5.62.8(react@19.2.4))(@types/react@19.2.14)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(immer@9.0.21)(react-native@0.73.7(@babel/core@7.26.0)(@babel/preset-env@7.24.4(@babel/core@7.26.0))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.2.4)(utf-8-validate@6.0.3))(react@19.2.4)(typescript@5.8.3)(utf-8-validate@6.0.3)(viem@2.44.4(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)

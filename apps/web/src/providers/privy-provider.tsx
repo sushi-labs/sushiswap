@@ -1,6 +1,14 @@
 import { PrivyProvider as PrivyIoProvider } from '@privy-io/react-auth'
+import { toSolanaWalletConnectors } from '@privy-io/react-auth/solana'
+import { createSolanaRpc, createSolanaRpcSubscriptions } from '@solana/kit'
 import { useTheme } from 'next-themes'
 import type { ReactNode } from 'react'
+
+import {
+  SVM_RPC_HEADERS,
+  SVM_RPC_URL,
+  SVM_WS_RPC_URL,
+} from 'src/lib/svm/config'
 import {
   apeChain,
   arbitrum,
@@ -83,12 +91,32 @@ export const PrivyProvider = ({ children }: { children: ReactNode }) => {
         defaultChain: mainnet,
         appearance: {
           theme: resolvedTheme === 'dark' ? 'dark' : 'light',
-          walletChainType: 'ethereum-only',
+          walletChainType: 'ethereum-and-solana',
         },
         loginMethods: ['email'],
         embeddedWallets: {
           ethereum: {
             createOnLogin: 'users-without-wallets',
+          },
+          solana: {
+            createOnLogin: 'users-without-wallets',
+          },
+        },
+        externalWallets: {
+          solana: {
+            connectors: toSolanaWalletConnectors({
+              shouldAutoConnect: true,
+            }),
+          },
+        },
+        solana: {
+          rpcs: {
+            'solana:mainnet': {
+              rpc: createSolanaRpc(SVM_RPC_URL, {
+                headers: SVM_RPC_HEADERS,
+              }),
+              rpcSubscriptions: createSolanaRpcSubscriptions(SVM_WS_RPC_URL),
+            },
           },
         },
       }}

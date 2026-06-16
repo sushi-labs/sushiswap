@@ -1,5 +1,6 @@
 'use client'
 
+import { useLogin } from '@privy-io/react-auth'
 import {
   AppProvider as SvmConnectorProvider,
   useConnector,
@@ -15,6 +16,7 @@ import {
   useMemo,
 } from 'react'
 import { getConnectorConfig } from 'src/app/(networks)/(non-evm)/solana/_common/config/connector'
+import { usePrivyEmbeddedWallet } from 'src/lib/wallet'
 import {
   addWalletConnection,
   clearWalletConnections,
@@ -22,6 +24,7 @@ import {
 import type { Wallet } from 'src/lib/wallet/types'
 import { SvmChainId } from 'sushi/svm'
 import type { WalletNamespaceContext } from '../../types'
+import { SvmAdapterId } from '../config'
 
 function useInSvmContext(): boolean {
   const client = useConnectorClient()
@@ -57,14 +60,28 @@ export default function SvmWalletProvider({
 
 function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
   const client = useConnectorClient()
-
+  const privyEmbeddedWallet = usePrivyEmbeddedWallet('svm')
   const walletInfo = useWalletInfo()
-
   const {
     disconnectWallet: svmDisconnect,
     connectWallet,
     wallet: _connector,
   } = useConnector()
+
+  const { login } = useLogin({
+    onComplete: async () => {
+      if (!client) return
+      const { connectors } = client.getSnapshot()
+      const connectorId = connectors.find(
+        (connector) => connector.name === 'Privy',
+      )?.id
+      if (!connectorId) {
+        console.warn('Privy SVM connector not found on login')
+        return
+      }
+      await connectWallet(connectorId)
+    },
+  })
 
   const isConnected = _connector.status === 'connected'
   const connector =
@@ -73,6 +90,25 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
   const connect = useCallback(
     async (wallet: Wallet, onSuccess?: (address: string) => void) => {
       if (!client) throw new Error('SVM client not found')
+      if (wallet.adapterId === SvmAdapterId.Privy && !privyEmbeddedWallet) {
+        login({ walletChainType: 'solana-only' })
+
+        return Promise.resolve()
+      } else if (
+        wallet.adapterId === SvmAdapterId.Privy &&
+        privyEmbeddedWallet
+      ) {
+        const { connectors } = client.getSnapshot()
+        const connectorId = connectors.find(
+          (connector) => connector.name === 'Privy',
+        )?.id
+
+        if (!connectorId) throw new Error('Privy SVM connector not found')
+
+        await connectWallet(connectorId)
+        onSuccess?.(privyEmbeddedWallet.address)
+        return Promise.resolve()
+      }
 
       const { connectors, wallet: connectedWallet } = client.getSnapshot()
 
@@ -81,7 +117,6 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
       )?.id
 
       if (!connectorId) throw new Error('SVM connector not found')
-
       if (
         connectedWallet.status === 'connected' &&
         connectedWallet.session.connectorId === connectorId
@@ -112,7 +147,7 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
         })
       }
     },
-    [client, connectWallet],
+    [client, connectWallet, privyEmbeddedWallet, login],
   )
 
   const disconnect = useCallback(async () => {

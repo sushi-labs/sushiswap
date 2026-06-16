@@ -1,18 +1,13 @@
 'use client'
-import { useWallets } from '@privy-io/react-auth'
 import { useSetActiveWallet } from '@privy-io/wagmi'
-import { useMemo } from 'react'
-import { getEmbeddedPrivyWallet } from 'src/lib/wallet/privy'
+import { usePrivyEmbeddedWallet } from 'src/lib/wallet'
 import { useSwitchChain as useWagmiSwitchChain } from 'wagmi'
 
 export const useSwitchChain = (
   params?: Parameters<typeof useWagmiSwitchChain>[number],
 ) => {
-  const { wallets } = useWallets()
   const { setActiveWallet } = useSetActiveWallet()
-  const privyEmbeddedWallet = useMemo(() => {
-    return getEmbeddedPrivyWallet(wallets)
-  }, [wallets])
+  const privyEmbeddedWallet = usePrivyEmbeddedWallet('evm')
 
   const switchChain = useWagmiSwitchChain(params)
 

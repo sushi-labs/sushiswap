@@ -1,10 +1,6 @@
-import {
-  useConnectOrCreateWallet,
-  useWallets as usePrivyWallets,
-} from '@privy-io/react-auth'
+import { useConnectOrCreateWallet } from '@privy-io/react-auth'
 import { useSetActiveWallet } from '@privy-io/wagmi'
 import { WagmiProvider } from '@privy-io/wagmi'
-import { createErrorToast } from '@sushiswap/notifications'
 import {
   connect as wagmiConnect,
   disconnect as wagmiDisconnect,
@@ -18,7 +14,7 @@ import {
   useMemo,
 } from 'react'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
-import { getEmbeddedPrivyWallet } from 'src/lib/wallet/privy'
+import { usePrivyEmbeddedWallet } from 'src/lib/wallet'
 import {
   addWalletConnection,
   clearWalletConnections,
@@ -65,10 +61,7 @@ export default function EvmWalletProvider({
 function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
   const { isConnected, address, connector, chainId } = useConnection()
   const { setActiveWallet } = useSetActiveWallet()
-  const { wallets } = usePrivyWallets()
-  const privyEmbeddedWallet = useMemo(() => {
-    return getEmbeddedPrivyWallet(wallets)
-  }, [wallets])
+  const privyEmbeddedWallet = usePrivyEmbeddedWallet('evm')
 
   const { connectOrCreateWallet } = useConnectOrCreateWallet({
     onSuccess: async (data) => {
