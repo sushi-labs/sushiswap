@@ -58,6 +58,9 @@ patchedDependencies:
   '@msafe/aptos-wallet-adapter@1.1.3':
     hash: 3441fe0a565aaa3e4bce5e858abc4325c7ba3e72bc9ca247a335e16d7485b145
     path: patches/@msafe__aptos-wallet-adapter@1.1.3.patch
+  '@privy-io/wagmi@4.0.12':
+    hash: 68018e812fa0f2c86139b340d5e0b76a67ba03051d97d04d726b9c51725abcbf
+    path: patches/@privy-io__wagmi@4.0.12.patch
   '@solana/connector':
     hash: aae317953f9e26a90cd5572a6799437ce390c43526f398a1e91dd99fa2da208b
     path: patches/@solana__connector.patch
