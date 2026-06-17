@@ -46,6 +46,7 @@ function isPrivySvmWallet(wallet: Wallet): boolean {
   return wallet.name === 'Privy' && 'privy:' in wallet.features
 }
 
+//https://docs.privy.io/recipes/solana/standard-wallets#registering-the-privy-embedded-wallet
 class RegisterWalletEvent
   extends CustomEvent<WindowRegisterWalletEventCallback>
   implements WindowRegisterWalletEvent
