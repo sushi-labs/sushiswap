@@ -20,15 +20,15 @@ export function useRegisterPrivySvmWallet(
   client: ConnectorClient | null,
 ): void {
   const { ready, wallets } = useStandardWallets()
-  const registeredWalletRef = useRef<Wallet | null>(null)
+  const registeredWalletRef = useRef<boolean>(false)
 
   useEffect(() => {
     if (!ready) return
 
     const privyWallet = wallets.find(isPrivySvmWallet)
-    if (!privyWallet || registeredWalletRef.current === privyWallet) return
+    if (!privyWallet || registeredWalletRef.current) return
 
-    registeredWalletRef.current = privyWallet
+    registeredWalletRef.current = true
     registerWallet(privyWallet)
 
     const connectorClient = client as unknown as ConnectorClientInternals | null
