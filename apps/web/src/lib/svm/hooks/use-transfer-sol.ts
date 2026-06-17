@@ -2,18 +2,12 @@ import { getTransferSolInstruction } from '@solana-program/system'
 import { useKitTransactionSigner } from '@solana/connector'
 import {
   appendTransactionMessageInstructions,
-  assertIsSendableTransaction,
-  assertIsTransactionWithBlockhashLifetime,
   compileTransaction,
   createSolanaRpc,
-  createSolanaRpcSubscriptions,
   createTransactionMessage,
-  getSignatureFromTransaction,
-  getTransactionDecoder,
   getTransactionEncoder,
   lamports,
   pipe,
-  sendAndConfirmTransactionFactory,
   setTransactionMessageFeePayerSigner,
   setTransactionMessageLifetimeUsingBlockhash,
 } from '@solana/kit'
@@ -27,8 +21,8 @@ import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
 import { type SvmAddress, SvmChainId, SvmNative, svmAddress } from 'sushi/svm'
 import { SVM_RPC_URL } from '../config'
-import { getRpcSubscriptionsUrl } from '../utils'
-import { useSvmSignTransaction } from './use-svm-sign-transaction'
+import { waitForSvmSignature } from '../wait-for-svm-signature'
+import { useSvmSignAndSendTransaction } from './use-svm-sign-and-send-transaction'
 
 type TransferSolArgs = {
   /**
@@ -45,7 +39,7 @@ export const useTransferSol = (params?: {
 }) => {
   const address = useAccount('svm')
   const { signer } = useKitTransactionSigner()
-  const { signTransaction } = useSvmSignTransaction()
+  const { signAndSendTransaction } = useSvmSignAndSendTransaction()
   const mutation = useMutation({
     mutationKey: ['use-transfer-sol', address],
 
@@ -59,10 +53,6 @@ export const useTransferSol = (params?: {
       }
 
       const rpc = createSolanaRpc(SVM_RPC_URL)
-
-      const rpcSubscriptions = createSolanaRpcSubscriptions(
-        getRpcSubscriptionsUrl(SVM_RPC_URL),
-      )
 
       const { value: latestBlockhash } = await rpc
         .getLatestBlockhash({ commitment: 'confirmed' })
@@ -85,23 +75,12 @@ export const useTransferSol = (params?: {
       const encodedTransaction =
         getTransactionEncoder().encode(transactionMessage)
 
-      const { base64SignedTx } = await signTransaction(encodedTransaction)
-      const signedTransactionBytes = Buffer.from(base64SignedTx, 'base64')
-      const signedTransaction = getTransactionDecoder().decode(
-        new Uint8Array(signedTransactionBytes),
-      )
+      const { base58TxSig: signature } =
+        await signAndSendTransaction(encodedTransaction)
+      if (!signature) throw new Error('Failed to obtain transaction signature')
+      await waitForSvmSignature(signature.toString())
 
-      assertIsSendableTransaction(signedTransaction)
-
-      assertIsTransactionWithBlockhashLifetime(signedTransaction)
-      await sendAndConfirmTransactionFactory({
-        rpc,
-        rpcSubscriptions,
-      })(signedTransaction, {
-        commitment: 'confirmed',
-      })
-
-      return getSignatureFromTransaction(signedTransaction)
+      return signature
     },
 
     onMutate: (data) => {
