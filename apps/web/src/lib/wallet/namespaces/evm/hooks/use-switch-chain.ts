@@ -1,6 +1,6 @@
 'use client'
 import { useSetActiveWallet } from '@privy-io/wagmi'
-import { usePrivyEmbeddedWallet } from 'src/lib/wallet'
+import { useAccount, usePrivyEmbeddedWallet } from 'src/lib/wallet'
 import { useSwitchChain as useWagmiSwitchChain } from 'wagmi'
 
 export const useSwitchChain = (
@@ -8,7 +8,7 @@ export const useSwitchChain = (
 ) => {
   const { setActiveWallet } = useSetActiveWallet()
   const privyEmbeddedWallet = usePrivyEmbeddedWallet('evm')
-
+  const address = useAccount('evm')
   const switchChain = useWagmiSwitchChain(params)
 
   const switchChainAsync = async (
@@ -19,9 +19,13 @@ export const useSwitchChain = (
       : never,
   ) => {
     const { chainId } = params
+
     await switchChain.mutateAsync(params)
-    await privyEmbeddedWallet?.switchChain?.(chainId)
-    if (privyEmbeddedWallet) {
+    if (
+      privyEmbeddedWallet &&
+      privyEmbeddedWallet.address.toLowerCase() === address?.toLowerCase()
+    ) {
+      await privyEmbeddedWallet?.switchChain?.(chainId)
       setActiveWallet(privyEmbeddedWallet)
     }
   }
@@ -34,11 +38,14 @@ export const useSwitchChain = (
   ) => {
     const { chainId } = params
     switchChain.mutate(params)
-    privyEmbeddedWallet?.switchChain?.(chainId)?.then(() => {
-      if (privyEmbeddedWallet) {
+    if (
+      privyEmbeddedWallet &&
+      privyEmbeddedWallet.address.toLowerCase() === address?.toLowerCase()
+    ) {
+      privyEmbeddedWallet?.switchChain?.(chainId)?.then(() => {
         setActiveWallet(privyEmbeddedWallet)
-      }
-    })
+      })
+    }
   }
 
   return {
