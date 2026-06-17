@@ -2,17 +2,20 @@ import { getTransferSolInstruction } from '@solana-program/system'
 import { useKitTransactionSigner } from '@solana/connector'
 import {
   appendTransactionMessageInstructions,
+  assertIsSendableTransaction,
   assertIsTransactionWithBlockhashLifetime,
+  compileTransaction,
   createSolanaRpc,
   createSolanaRpcSubscriptions,
   createTransactionMessage,
   getSignatureFromTransaction,
+  getTransactionDecoder,
+  getTransactionEncoder,
   lamports,
   pipe,
   sendAndConfirmTransactionFactory,
   setTransactionMessageFeePayerSigner,
   setTransactionMessageLifetimeUsingBlockhash,
-  signTransactionMessageWithSigners,
 } from '@solana/kit'
 import {
   createFailedToast,
@@ -25,6 +28,7 @@ import { Amount } from 'sushi'
 import { type SvmAddress, SvmChainId, SvmNative, svmAddress } from 'sushi/svm'
 import { SVM_RPC_URL } from '../config'
 import { getRpcSubscriptionsUrl } from '../utils'
+import { useSvmSignTransaction } from './use-svm-sign-transaction'
 
 type TransferSolArgs = {
   /**
@@ -41,7 +45,7 @@ export const useTransferSol = (params?: {
 }) => {
   const address = useAccount('svm')
   const { signer } = useKitTransactionSigner()
-
+  const { signTransaction } = useSvmSignTransaction()
   const mutation = useMutation({
     mutationKey: ['use-transfer-sol', address],
 
@@ -76,13 +80,20 @@ export const useTransferSol = (params?: {
         (tx) =>
           setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, tx),
         (tx) => appendTransactionMessageInstructions([transferInstruction], tx),
+        (tx) => compileTransaction(tx),
+      )
+      const encodedTransaction =
+        getTransactionEncoder().encode(transactionMessage)
+
+      const { base64SignedTx } = await signTransaction(encodedTransaction)
+      const signedTransactionBytes = Buffer.from(base64SignedTx, 'base64')
+      const signedTransaction = getTransactionDecoder().decode(
+        new Uint8Array(signedTransactionBytes),
       )
 
-      const signedTransaction =
-        await signTransactionMessageWithSigners(transactionMessage)
+      assertIsSendableTransaction(signedTransaction)
 
       assertIsTransactionWithBlockhashLifetime(signedTransaction)
-
       await sendAndConfirmTransactionFactory({
         rpc,
         rpcSubscriptions,
