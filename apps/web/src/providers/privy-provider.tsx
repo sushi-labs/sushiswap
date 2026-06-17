@@ -83,9 +83,12 @@ const supportChains = [
 
 export const PrivyProvider = ({ children }: { children: ReactNode }) => {
   const { resolvedTheme } = useTheme()
+  if (!process.env.NEXT_PUBLIC_PRIVY_APP_ID) {
+    throw new Error('NEXT_PUBLIC_PRIVY_APP_ID is not set')
+  }
   return (
     <PrivyIoProvider
-      appId="cmq14gqpd00lb0cl52zln4q4z"
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID}
       config={{
         supportedChains: supportChains,
         defaultChain: mainnet,
