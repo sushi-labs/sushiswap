@@ -1,5 +1,9 @@
 import { useTransactionSigner } from '@solana/connector'
-import type { ReadonlyUint8Array } from '@solana/kit'
+import {
+  type ReadonlyUint8Array,
+  getSignatureFromTransaction,
+  getTransactionDecoder,
+} from '@solana/kit'
 import { useMutation } from '@tanstack/react-query'
 import { isSvmChainId } from 'sushi/svm'
 import { useWrapUnwrapTrade } from '~evm/[chainId]/(trade)/swap/_ui/common'
@@ -9,7 +13,7 @@ export function useSvmTradeExecute(variables: UseSvmTradeParams) {
   const { fromToken, toToken, order, chainId, requestId, unsignedBytes } =
     variables
   const resolvedRequestId = requestId ?? order?.requestId
-  const isWrapUnwrap = useWrapUnwrapTrade(fromToken, toToken)
+  const { isWrapUnwrap } = useWrapUnwrapTrade(fromToken, toToken)
   const { signer } = useTransactionSigner()
 
   const mutation = useMutation({
@@ -50,16 +54,19 @@ export function useSvmTradeExecute(variables: UseSvmTradeParams) {
       if (!resolvedRequestId) {
         throw new Error('Missing requestId for SVM trade execute')
       }
-      const resolvedSignedTransaction = await signer?.signTransaction(
-        resolvedUnsignedBytes,
+      const tx = await signer?.signTransaction(resolvedUnsignedBytes)
+      const base58TxSig = getSignatureFromTransaction(
+        getTransactionDecoder().decode(tx as Uint8Array),
       )
-      if (!resolvedSignedTransaction) {
+      const base64SignedTx = Buffer.from(tx as Uint8Array).toString('base64')
+
+      if (!base64SignedTx) {
         throw new Error('Failed to sign SVM transaction')
       }
 
       const body: Record<string, unknown> = {
         requestId: resolvedRequestId,
-        signedTransaction: resolvedSignedTransaction?.toString(),
+        signedTransaction: base64SignedTx,
       }
 
       const res = await fetch(`/api/jupiter/ultra/execute`, {
@@ -77,7 +84,7 @@ export function useSvmTradeExecute(variables: UseSvmTradeParams) {
       // const json = await res.json()
       // const parsed = svmExecuteValidator.parse(json)
 
-      return resolvedSignedTransaction
+      return base58TxSig
     },
     retry: false,
   })
