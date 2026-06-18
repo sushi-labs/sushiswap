@@ -9,10 +9,16 @@ import {
   SVM_RPC_URL,
   SVM_WS_RPC_URL,
 } from 'src/lib/svm/config'
+import { testChains } from 'src/lib/wagmi/config/test/constants'
 import { publicChains } from 'src/lib/wagmi/config/viem'
 import { mainnet } from 'viem/chains'
 
-const supportedChains = [...publicChains]
+const supportedChains =
+  process.env.NEXT_PUBLIC_APP_ENV === 'test'
+    ? [...testChains]
+    : [...publicChains]
+const defaultChain =
+  process.env.NEXT_PUBLIC_APP_ENV === 'test' ? undefined : mainnet
 
 export const PrivyProvider = ({ children }: { children: ReactNode }) => {
   const { resolvedTheme } = useTheme()
@@ -24,7 +30,7 @@ export const PrivyProvider = ({ children }: { children: ReactNode }) => {
       appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID}
       config={{
         supportedChains,
-        defaultChain: mainnet,
+        defaultChain,
         appearance: {
           theme: resolvedTheme === 'dark' ? 'dark' : 'light',
           walletChainType: 'ethereum-and-solana',
