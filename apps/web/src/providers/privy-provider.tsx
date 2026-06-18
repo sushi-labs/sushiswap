@@ -9,77 +9,10 @@ import {
   SVM_RPC_URL,
   SVM_WS_RPC_URL,
 } from 'src/lib/svm/config'
-import {
-  apeChain,
-  arbitrum,
-  arbitrumNova,
-  avalanche,
-  base,
-  berachain,
-  blast,
-  boba,
-  bsc,
-  celo,
-  cronos,
-  fantom,
-  filecoin,
-  gnosis,
-  hemi,
-  hyperEvm,
-  katana,
-  linea,
-  mainnet,
-  manta,
-  mantle,
-  mode,
-  monad,
-  optimism,
-  plasma,
-  polygon,
-  rootstock,
-  scroll,
-  skaleEuropa,
-  taiko,
-  xLayer,
-  zkLinkNova,
-  zksync,
-} from 'viem/chains'
+import { publicChains } from 'src/lib/wagmi/config/viem'
+import { mainnet } from 'viem/chains'
 
-const supportChains = [
-  apeChain,
-  arbitrum,
-  arbitrumNova,
-  avalanche,
-  base,
-  berachain,
-  blast,
-  boba,
-  bsc,
-  celo,
-  cronos,
-  fantom,
-  filecoin,
-  gnosis,
-  hemi,
-  hyperEvm,
-  katana,
-  linea,
-  mainnet,
-  manta,
-  mantle,
-  mode,
-  monad,
-  optimism,
-  plasma,
-  polygon,
-  rootstock,
-  scroll,
-  skaleEuropa,
-  taiko,
-  xLayer,
-  zkLinkNova,
-  zksync,
-]
+const supportedChains = [...publicChains]
 
 export const PrivyProvider = ({ children }: { children: ReactNode }) => {
   const { resolvedTheme } = useTheme()
@@ -90,7 +23,7 @@ export const PrivyProvider = ({ children }: { children: ReactNode }) => {
     <PrivyIoProvider
       appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID}
       config={{
-        supportedChains: supportChains,
+        supportedChains,
         defaultChain: mainnet,
         appearance: {
           theme: resolvedTheme === 'dark' ? 'dark' : 'light',
