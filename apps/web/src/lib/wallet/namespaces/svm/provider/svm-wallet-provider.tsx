@@ -1,6 +1,6 @@
 'use client'
 
-import { useLogin } from '@privy-io/react-auth'
+import { useLogin, usePrivy } from '@privy-io/react-auth'
 import {
   AppProvider as SvmConnectorProvider,
   useConnector,
@@ -69,6 +69,7 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
     connectWallet,
     wallet: _connector,
   } = useConnector()
+  const { logout } = usePrivy()
 
   const { login } = useLogin({
     onComplete: async () => {
@@ -154,7 +155,10 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
 
   const disconnect = useCallback(async () => {
     await svmDisconnect()
-  }, [svmDisconnect])
+    if (privyEmbeddedWallet) {
+      await logout()
+    }
+  }, [svmDisconnect, logout, privyEmbeddedWallet])
 
   const value = useMemo(
     () => ({

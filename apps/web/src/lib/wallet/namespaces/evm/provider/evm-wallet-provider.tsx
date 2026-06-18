@@ -1,6 +1,5 @@
-import { useConnectOrCreateWallet } from '@privy-io/react-auth'
-import { useSetActiveWallet } from '@privy-io/wagmi'
-import { WagmiProvider } from '@privy-io/wagmi'
+import { useConnectOrCreateWallet, usePrivy } from '@privy-io/react-auth'
+import { WagmiProvider, useSetActiveWallet } from '@privy-io/wagmi'
 import {
   connect as wagmiConnect,
   disconnect as wagmiDisconnect,
@@ -62,6 +61,7 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
   const { isConnected, address, connector, chainId } = useConnection()
   const { setActiveWallet } = useSetActiveWallet()
   const privyEmbeddedWallet = usePrivyEmbeddedWallet('evm')
+  const { logout } = usePrivy()
 
   const { connectOrCreateWallet } = useConnectOrCreateWallet({
     onSuccess: async (data) => {
@@ -115,7 +115,10 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
 
   const disconnect = useCallback(async () => {
     await wagmiDisconnect(getWagmiConfig())
-  }, [])
+    if (privyEmbeddedWallet) {
+      await logout()
+    }
+  }, [logout, privyEmbeddedWallet])
 
   const value = useMemo(
     () => ({
