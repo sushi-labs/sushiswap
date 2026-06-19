@@ -171,7 +171,7 @@ export function createContentSecurityPolicy({
       // per-request nonces and dynamic rendering.
       "'unsafe-inline'",
       "'wasm-unsafe-eval'",
-      ...(isDevelopment ? ["'unsafe-eval'"] : []),
+      'unsafe-eval',
       'https://challenges.cloudflare.com',
       'https://hcaptcha.com',
       'https://*.hcaptcha.com',
