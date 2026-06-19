@@ -36,8 +36,15 @@ const additionalConnectSources = [
 const contentSecurityPolicy = createContentSecurityPolicy({
   additionalConnectSources,
   isDevelopment: process.env.NODE_ENV === 'development',
-  isTest: process.env.NODE_ENV === 'test',
+  isTest:
+    process.env.NODE_ENV === 'test' ||
+    process.env.NEXT_PUBLIC_APP_ENV === 'test',
 })
+
+const contentSecurityPolicyHeader =
+  process.env.NEXT_PUBLIC_APP_ENV === 'test'
+    ? 'Content-Security-Policy-Report-Only'
+    : 'Content-Security-Policy'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = bundleAnalyzer({
@@ -99,7 +106,7 @@ const nextConfig = bundleAnalyzer({
         source: '/:path*',
         headers: [
           {
-            key: 'Content-Security-Policy',
+            key: contentSecurityPolicyHeader,
             value: contentSecurityPolicy,
           },
           {
