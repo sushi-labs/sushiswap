@@ -39,12 +39,6 @@ const contentSecurityPolicy = createContentSecurityPolicy({
   isTest: process.env.NODE_ENV === 'test',
 })
 
-const shouldEnforceContentSecurityPolicy = Number(process.env.CSP_ENFORCE) === 1
-
-const contentSecurityPolicyHeader = shouldEnforceContentSecurityPolicy
-  ? 'Content-Security-Policy'
-  : 'Content-Security-Policy-Report-Only'
-
 /** @type {import('next').NextConfig} */
 const nextConfig = bundleAnalyzer({
   reactStrictMode: true,
@@ -105,7 +99,7 @@ const nextConfig = bundleAnalyzer({
         source: '/:path*',
         headers: [
           {
-            key: contentSecurityPolicyHeader,
+            key: 'Content-Security-Policy',
             value: contentSecurityPolicy,
           },
           {
