@@ -40,7 +40,7 @@ const contentSecurityPolicy = createContentSecurityPolicy({
 })
 
 const contentSecurityPolicyHeader =
-  process.env.CSP_ENFORCE === 'true'
+  Number(process.env.CSP_ENFORCE) === 1
     ? 'Content-Security-Policy'
     : 'Content-Security-Policy-Report-Only'
 
