@@ -5,9 +5,8 @@ import { createErrorToast } from '@sushiswap/notifications'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import type { ReactNode } from 'react'
-import { useSwitchChain } from 'src/lib/wallet'
 import { type EvmChainId, getEvmChainById, isEvmChainId } from 'sushi/evm'
-import { useConnection } from 'wagmi'
+import { useConnection, useSwitchChain } from 'wagmi'
 import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
 
 interface NetworkProps<TChainId extends BalanceChainId> extends ButtonProps {

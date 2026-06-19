@@ -1,10 +1,10 @@
 'use client'
 
-import { createConfig } from '@privy-io/wagmi'
 import { mock } from '@wagmi/connectors'
 import type { EvmChainId } from 'sushi/evm'
 import { http, type HttpTransport } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
+import { createConfig } from 'wagmi'
 import { accounts, testChains } from './constants'
 
 const anvilPort = String(

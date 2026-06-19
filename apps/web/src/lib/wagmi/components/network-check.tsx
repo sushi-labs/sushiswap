@@ -4,9 +4,8 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
 import { type FC, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
-import { useSwitchChain } from 'src/lib/wallet'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
-import { useConnection } from 'wagmi'
+import { useConnection, useSwitchChain } from 'wagmi'
 
 export const NetworkCheck: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
   const [open, setOpen] = useState(false)

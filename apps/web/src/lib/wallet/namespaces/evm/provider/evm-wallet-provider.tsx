@@ -1,5 +1,3 @@
-import { useConnectOrCreateWallet, usePrivy } from '@privy-io/react-auth'
-import { WagmiProvider, useSetActiveWallet } from '@privy-io/wagmi'
 import {
   connect as wagmiConnect,
   disconnect as wagmiDisconnect,
@@ -13,16 +11,15 @@ import {
   useMemo,
 } from 'react'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
-import { usePrivyEmbeddedWallet } from 'src/lib/wallet'
 import {
   addWalletConnection,
   clearWalletConnections,
 } from 'src/lib/wallet/provider/store'
 import type { Wallet } from 'src/lib/wallet/types'
 import { EvmChainId, isEvmChainId } from 'sushi/evm'
-import { WagmiContext, useConnection } from 'wagmi'
+import { WagmiContext, WagmiProvider, useConnection } from 'wagmi'
 import type { WalletNamespaceContext } from '../../types'
-import { EvmAdapterConfig, EvmAdapterId } from '../config'
+import { EvmAdapterConfig } from '../config'
 import { isEvmWallet } from '../types'
 
 function useInEvmContext(): boolean {
@@ -59,34 +56,11 @@ export default function EvmWalletProvider({
 
 function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
   const { isConnected, address, connector, chainId } = useConnection()
-  const { setActiveWallet } = useSetActiveWallet()
-  const privyEmbeddedWallet = usePrivyEmbeddedWallet('evm')
-  const { logout } = usePrivy()
-
-  const { connectOrCreateWallet } = useConnectOrCreateWallet({
-    onSuccess: async (data) => {
-      if (privyEmbeddedWallet?.address === data.wallet.address) {
-        await setActiveWallet(privyEmbeddedWallet)
-        return
-      }
-    },
-  })
 
   const connect = useCallback(
     async (wallet: Wallet, onSuccess?: (address: string) => void) => {
       if (!isEvmWallet(wallet)) {
         throw new Error(`Invalid namespace for ${wallet.name}`)
-      }
-      if (wallet.adapterId === EvmAdapterId.Privy && privyEmbeddedWallet) {
-        await setActiveWallet(privyEmbeddedWallet)
-        onSuccess?.(privyEmbeddedWallet.address)
-        return
-      } else if (
-        wallet.adapterId === EvmAdapterId.Privy &&
-        !privyEmbeddedWallet
-      ) {
-        connectOrCreateWallet()
-        return
       }
 
       if (
@@ -104,21 +78,12 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
         onSuccess?.(accounts[0])
       }
     },
-    [
-      connector?.id,
-      address,
-      privyEmbeddedWallet,
-      setActiveWallet,
-      connectOrCreateWallet,
-    ],
+    [connector?.id, address],
   )
 
   const disconnect = useCallback(async () => {
     await wagmiDisconnect(getWagmiConfig())
-    if (privyEmbeddedWallet) {
-      await logout()
-    }
-  }, [logout, privyEmbeddedWallet])
+  }, [])
 
   const value = useMemo(
     () => ({
