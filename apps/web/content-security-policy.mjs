@@ -129,6 +129,7 @@ const FRAME_SOURCES = [
   'https://www.googletagmanager.com',
   'https://id.porto.sh',
   'https://stg.id.porto.sh',
+  'https://vercel.live',
 ]
 
 const FRAME_ANCESTORS = [
@@ -181,6 +182,7 @@ export function createContentSecurityPolicy({
       'https://va.vercel-scripts.com',
       'https://tag.adrsbl.io',
       'https://cdn.id5-sync.com',
+      'https://vercel.live',
     ]),
     createDirective('style-src', [
       "'self'",

@@ -36,13 +36,14 @@ const additionalConnectSources = [
 const contentSecurityPolicy = createContentSecurityPolicy({
   additionalConnectSources,
   isDevelopment: process.env.NODE_ENV === 'development',
-  isTest: process.env.NEXT_PUBLIC_APP_ENV === 'test',
+  isTest: process.env.NODE_ENV === 'test',
 })
 
-const contentSecurityPolicyHeader =
-  Number(process.env.CSP_ENFORCE) === 1
-    ? 'Content-Security-Policy'
-    : 'Content-Security-Policy-Report-Only'
+const shouldEnforceContentSecurityPolicy = Number(process.env.CSP_ENFORCE) === 1
+
+const contentSecurityPolicyHeader = shouldEnforceContentSecurityPolicy
+  ? 'Content-Security-Policy'
+  : 'Content-Security-Policy-Report-Only'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = bundleAnalyzer({
