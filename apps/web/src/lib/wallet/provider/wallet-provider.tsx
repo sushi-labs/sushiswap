@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useMemo } from 'react'
+import { PrivyProvider } from 'src/providers/privy-provider'
 import type { EvmChainId } from 'sushi/evm'
 import type { StellarChainId } from 'sushi/stellar'
 import type { SvmChainId } from 'sushi/svm'
@@ -24,9 +25,11 @@ export function useWalletContext() {
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   return (
-    <WalletStateProvider>
-      <_WalletProvider>{children}</_WalletProvider>
-    </WalletStateProvider>
+    <PrivyProvider>
+      <WalletStateProvider>
+        <_WalletProvider>{children}</_WalletProvider>
+      </WalletStateProvider>
+    </PrivyProvider>
   )
 }
 

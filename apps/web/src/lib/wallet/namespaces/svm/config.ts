@@ -1,7 +1,8 @@
-import type { Wallet, WalletConnectorConfig } from '../../types'
+import type { Wallet } from '../../types'
 
 export enum SvmAdapterId {
   Standard = 'svm-standard',
+  Privy = 'svm-privy',
 }
 
 export const SVM_WALLETS: Wallet[] = [

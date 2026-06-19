@@ -1,11 +1,12 @@
 'use client'
 
 import { faro } from '@grafana/faro-web-sdk'
+import { WagmiProvider as _WagmiProvider } from '@privy-io/wagmi'
 import { type FC, type ReactNode, useEffect } from 'react'
 import { WagmiStoreVersionCheck } from 'src/lib/wagmi/components/wagmi-store-version-check'
 import { getWagmiConfig, getWagmiInitialState } from 'src/lib/wagmi/config'
-import { WalletProvider } from 'src/lib/wallet'
-import { WagmiProvider as _WagmiProvider, useConnection } from 'wagmi'
+import { useConnection } from 'wagmi'
+import { QueryClientProvider } from './query-client-provider'
 
 const WagmiTrackers = () => {
   const { address, chainId } = useConnection()
@@ -30,13 +31,15 @@ export const WagmiProvider: FC<{
   const initialState = getWagmiInitialState(cookie)
 
   return (
-    <_WagmiProvider config={getWagmiConfig()} initialState={initialState}>
-      <div className="h-full w-full [&>div]:h-full">
-        <WagmiStoreVersionCheck>
-          <WagmiTrackers />
-          {children}
-        </WagmiStoreVersionCheck>
-      </div>
-    </_WagmiProvider>
+    <QueryClientProvider>
+      <_WagmiProvider config={getWagmiConfig()} initialState={initialState}>
+        <div className="h-full w-full [&>div]:h-full">
+          <WagmiStoreVersionCheck>
+            <WagmiTrackers />
+            {children}
+          </WagmiStoreVersionCheck>
+        </div>
+      </_WagmiProvider>
+    </QueryClientProvider>
   )
 }
