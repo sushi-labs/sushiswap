@@ -8,15 +8,10 @@ export const StellarPoolsQuery = graphql(
   `
   query StellarPools($chainId: ChainId!) {
     stellarPools(chainId: $chainId) {
-      id
-      chainId
       name
       address
       swapFee
-      protocol
       token0 {
-        id
-        chainId
         address
         name
         symbol
@@ -28,8 +23,6 @@ export const StellarPoolsQuery = graphql(
         }
       }
       token1 {
-        id
-        chainId
         address
         name
         symbol

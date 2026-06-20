@@ -3,10 +3,7 @@ import ms from 'ms'
 import { useMemo } from 'react'
 import type { StellarContractAddress } from 'sushi/stellar'
 import { getFees } from '~stellar/_common/lib/soroban'
-import {
-  getFactoryContractClient,
-  getPoolLensContractClient,
-} from '~stellar/_common/lib/soroban/client'
+import { getPoolLensContractClient } from '~stellar/_common/lib/soroban/client'
 import { isAddressLower } from '~stellar/_common/lib/soroban/constants'
 import { contractAddresses } from '~stellar/_common/lib/soroban/contracts'
 import { BASE_POOL_GRAPH_TOKEN_ADDRESSES } from './config'
@@ -187,16 +184,6 @@ function useBasePoolGraph(enabled = true) {
       >()
 
       try {
-        // Get factory client to discover pools
-        const factoryClient = getFactoryContractClient({
-          contractId: contractAddresses.FACTORY,
-        })
-
-        if (!factoryClient) {
-          console.error('Failed to create factory client')
-          return { vertices, tokenGraph }
-        }
-
         const feeTiers = getFees()
 
         // Query all possible pool combinations
@@ -283,14 +270,6 @@ async function augmentPoolGraph({
   }
   for (const [key, value] of tokenGraph) {
     tokenGraph.set(key, [...value])
-  }
-
-  const factoryClient = getFactoryContractClient({
-    contractId: contractAddresses.FACTORY,
-  })
-
-  if (!factoryClient) {
-    return { vertices, tokenGraph }
   }
 
   const feeTiers = getFees()
