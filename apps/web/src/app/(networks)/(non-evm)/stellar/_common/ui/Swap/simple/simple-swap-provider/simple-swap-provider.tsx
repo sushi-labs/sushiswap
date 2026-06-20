@@ -9,8 +9,11 @@ import {
   useMemo,
   useReducer,
 } from 'react'
-import type { StellarToken } from 'sushi/stellar'
-import { getBaseTokens } from '~stellar/_common/lib/soroban/token-helpers'
+import {
+  STELLAR_DEFAULT_BASES,
+  StellarChainId,
+  type StellarToken,
+} from 'sushi/stellar'
 
 interface SimpleSwapProvider {
   children: ReactNode
@@ -60,7 +63,7 @@ type Actions =
   | { type: 'setIsTransactionPending'; value: boolean }
 
 export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
-  const baseTokens = getBaseTokens()
+  const baseTokens = STELLAR_DEFAULT_BASES[StellarChainId.STELLAR]
 
   const reducer = (state: State, action: Actions): State => {
     switch (action.type) {

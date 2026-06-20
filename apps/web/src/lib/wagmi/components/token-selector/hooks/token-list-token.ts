@@ -15,8 +15,8 @@ export type TokenListTokenMetadata = {
 }
 
 type StellarMetadata = {
-  issuer: StellarAccountAddress
-  domain: string
+  issuer?: StellarAccountAddress | null
+  domain?: string | null
 }
 
 export type TokenListTokenData<TChainId extends TokenListChainId> = {
@@ -47,10 +47,10 @@ export function createTokenListToken<TChainId extends TokenListChainId>(
     return new StellarToken({
       ..._token,
       address: token.address as StellarContractAddress,
-      issuer: token.stellarMetadata?.issuer,
+      issuer: token.stellarMetadata?.issuer ?? undefined,
       metadata: {
         approved: token.approved,
-        domain: token.stellarMetadata?.domain,
+        domain: token.stellarMetadata?.domain ?? undefined,
       },
     }) as TokenFor<TChainId, TokenListTokenMetadata>
   }

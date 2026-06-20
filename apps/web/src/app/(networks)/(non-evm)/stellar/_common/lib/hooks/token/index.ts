@@ -5,7 +5,6 @@
  * including balance queries, approvals, transfers, and metadata.
  */
 
-export * from './use-common-tokens'
 export * from './use-token-allowance'
 export * from './use-token-approval'
 export * from './use-token-transfer'

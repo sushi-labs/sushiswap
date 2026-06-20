@@ -1,46 +1,33 @@
 import {
+  Currency,
   FormattedNumber,
   SkeletonCircle,
   SkeletonText,
-  classNames,
 } from '@sushiswap/ui'
-import { useQuery } from '@tanstack/react-query'
 import { Fragment, useMemo } from 'react'
+import { useMyTokens } from 'src/lib/wagmi/components/token-selector/hooks/use-my-tokens'
 import { useAccount } from 'src/lib/wallet'
-import { formatPercent, formatUSD } from 'sushi'
-import type { StellarAccountAddress } from 'sushi/stellar'
-import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
-import { getStellarPortfolioWallet } from '~stellar/_common/lib/hooks/token/get-stellar-portfolio-wallet'
-import { TokenIcon } from '~stellar/_common/ui/General/TokenIcon'
+import { type Amount, formatPercent, formatUSD } from 'sushi'
+import { StellarChainId, type StellarToken } from 'sushi/stellar'
+import { useCurrencyPrice } from '~evm/_common/ui/price-provider/price-provider/use-currency-price'
 import { PortfolioInfoRow } from '../portfolio-info-row'
-
-function usePortfolioStellarWallet(
-  address: StellarAccountAddress | undefined,
-  refetchInterval?: 600_000,
-) {
-  return useQuery({
-    queryKey: ['portfolio-wallet-stellar', address],
-    queryFn: async () => {
-      if (!address) {
-        throw new Error('Address is required to fetch Stellar portfolio wallet')
-      }
-      const data = await getStellarPortfolioWallet(address)
-      return data
-    },
-    enabled: Boolean(address),
-    refetchInterval,
-  })
-}
-
-type PortfolioStellarWalletToken = NonNullable<
-  ReturnType<typeof usePortfolioStellarWallet>['data']
->[number]
 
 export const PortfolioStellarTokens = () => {
   const account = useAccount('stellar')
+  const { data, isLoading, isError } = useMyTokens({
+    chainId: StellarChainId.STELLAR,
+    account,
+  })
 
-  const { data, isLoading, isError } = usePortfolioStellarWallet(account)
-  //need StellarToken and amountUSD support to use PortfolioTokensList
+  const tokens = useMemo(() => {
+    return data.tokens.flatMap((token) => {
+      const balance = data.balanceMap?.get(token.address)
+      if (!balance || !balance.gt(0n)) return []
+
+      return balance as Amount<StellarToken>
+    })
+  }, [data])
+
   return (
     <div className="flex flex-col h-[calc(100%-50px)] overflow-hidden">
       {!account ? (
@@ -66,11 +53,11 @@ export const PortfolioStellarTokens = () => {
             </div>
           ))}
         </div>
-      ) : data?.length ? (
-        data?.map((token, idx) => (
+      ) : tokens.length ? (
+        tokens.map((amount, idx) => (
           <_TokenRow
-            key={`${token.chainId}:${token.id}:${idx}`}
-            token={token}
+            key={`${amount.currency.chainId}:${amount.currency.address}:${idx}`}
+            amount={amount}
           />
         ))
       ) : (
@@ -82,28 +69,28 @@ export const PortfolioStellarTokens = () => {
   )
 }
 
-const _TokenRow = ({ token }: { token: PortfolioStellarWalletToken }) => {
-  const { data: tokenPrice } = usePrice({
-    chainId: token.token.chainId,
-    address: token.token.address,
+const _TokenRow = ({ amount }: { amount: Amount<StellarToken> }) => {
+  const token = amount.currency
+  const { data: tokenPrice } = useCurrencyPrice({
+    currency: token,
   })
 
-  const amountUsd = tokenPrice
-    ? Number(token.balance.toString()) * tokenPrice
-    : 0
+  const amountUsd = tokenPrice ? Number(amount.toString()) * tokenPrice : 0
 
   return (
     <PortfolioInfoRow
-      key={`${token.chainId}:${token.id}`}
+      key={`${token.chainId}:${token.address}`}
       chainId={token.chainId}
-      icon={<TokenIcon width={28} height={28} currency={token.token} />}
+      icon={
+        <Currency.Icon disableLink width={28} height={28} currency={token} />
+      }
       leftContent={
         <Fragment>
           <div className="text-sm font-medium overflow-hidden overflow-ellipsis">
-            {token.name ?? token.symbol}
+            {token.symbol}
           </div>
           <div className="text-xs text-muted-foreground overflow-hidden overflow-ellipsis">
-            <FormattedNumber number={token.balance.toString()} /> {token.symbol}
+            <FormattedNumber number={amount.toString()} /> {token.symbol}
           </div>
         </Fragment>
       }
@@ -111,20 +98,6 @@ const _TokenRow = ({ token }: { token: PortfolioStellarWalletToken }) => {
         <Fragment>
           <div className="text-sm font-medium overflow-hidden overflow-ellipsis">
             {formatUSD(amountUsd)}
-          </div>
-          <div
-            className={classNames(
-              'text-xs',
-              token.price24hChange > 0
-                ? 'text-green'
-                : token.price24hChange < 0
-                  ? 'text-red'
-                  : 'text-muted-foreground',
-            )}
-          >
-            {`${token.price24hChange > 0 ? '+' : ''}${formatPercent(
-              token.price24hChange,
-            )}`}
           </div>
         </Fragment>
       }

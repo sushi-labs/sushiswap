@@ -1,4 +1,6 @@
 import type { AssembledTransaction } from '@stellar/stellar-sdk/contract'
+import { getTokenList } from '@sushiswap/graph-client/data-api'
+import { createTokenListToken } from 'src/lib/wagmi/components/token-selector/hooks/token-list-token'
 import {
   type StellarAddress,
   StellarChainId,
@@ -6,42 +8,42 @@ import {
   StellarToken,
   normalizeStellarAddress,
 } from 'sushi/stellar'
-import { staticTokens } from '../assets/token-assets'
 import { formatAddress } from '../utils/format'
 import { getTokenContractClient } from './client'
 import { DEFAULT_TIMEOUT } from './constants'
 
-/**
- * Gets the tokens without any alteration
- */
-export function getBaseTokens() {
-  return staticTokens
-}
+const tokenListLookupCache = new Map<
+  StellarContractAddress,
+  Promise<StellarToken | undefined>
+>()
 
-/**
- * Helper to find a token by contract address (case-insensitive) in a token map.
- */
-function findTokenInMap(
-  tokenMap: Record<string, StellarToken>,
-  contract: string,
-): StellarToken | undefined {
-  // Direct lookup first (most common case)
-  if (tokenMap[contract]) {
-    return tokenMap[contract]
+async function getTokenFromTokenList(
+  contract: StellarContractAddress,
+): Promise<StellarToken | undefined> {
+  const canonicalContract = normalizeStellarAddress(contract)
+  const cached = tokenListLookupCache.get(canonicalContract)
+  if (cached) {
+    return cached
   }
-  // Try uppercase (Stellar convention)
-  const upperAddress = contract.toUpperCase()
-  if (tokenMap[upperAddress]) {
-    return tokenMap[upperAddress]
-  }
-  // Fallback: case-insensitive search
-  const lowerAddress = contract.toLowerCase()
-  for (const [key, token] of Object.entries(tokenMap)) {
-    if (key.toLowerCase() === lowerAddress) {
+
+  const lookup = getTokenList({
+    chainId: StellarChainId.STELLAR,
+    customTokens: [canonicalContract],
+    first: 1,
+  })
+    .then((tokens) => {
+      const [token] = tokens
       return token
-    }
-  }
-  return undefined
+        ? createTokenListToken(StellarChainId.STELLAR, token)
+        : undefined
+    })
+    .catch(() => {
+      tokenListLookupCache.delete(canonicalContract)
+      return undefined
+    })
+
+  tokenListLookupCache.set(canonicalContract, lookup)
+  return lookup
 }
 
 /**
@@ -50,25 +52,11 @@ function findTokenInMap(
  * or returned in different cases by different systems.
  *
  * @param contract - The contract address of the token
- * @param dynamicTokens - Optional dynamic token map to check first (e.g., from useCommonTokens)
  */
 export async function getTokenByContract(
   contract: StellarContractAddress,
-  dynamicTokens?: Record<string, StellarToken>,
 ): Promise<StellarToken> {
-  // Check dynamic tokens first (includes StellarExpert tokens)
-  if (dynamicTokens) {
-    const dynamicToken = findTokenInMap(dynamicTokens, contract)
-    if (dynamicToken) {
-      return dynamicToken
-    }
-  }
-
-  // Check static tokens (case-insensitive)
-  const contractLower = contract.toLowerCase()
-  const tokenFromList = staticTokens.find(
-    (token) => token.address.toLowerCase() === contractLower,
-  )
+  const tokenFromList = await getTokenFromTokenList(contract)
   if (tokenFromList) {
     return tokenFromList
   }

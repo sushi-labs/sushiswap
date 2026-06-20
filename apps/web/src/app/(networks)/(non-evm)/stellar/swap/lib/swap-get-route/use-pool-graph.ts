@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { useMemo } from 'react'
 import type { StellarContractAddress } from 'sushi/stellar'
-import { staticTokens } from '~stellar/_common/lib/assets/token-assets'
 import { getFees } from '~stellar/_common/lib/soroban'
 import {
   getFactoryContractClient,
@@ -10,6 +9,7 @@ import {
 } from '~stellar/_common/lib/soroban/client'
 import { isAddressLower } from '~stellar/_common/lib/soroban/constants'
 import { contractAddresses } from '~stellar/_common/lib/soroban/contracts'
+import { BASE_POOL_GRAPH_TOKEN_ADDRESSES } from './config'
 import type { Vertex } from './types'
 
 type GetPoolsByTokenPairsBatchedParams = Array<{
@@ -162,7 +162,7 @@ function addVertexToGraph(
 }
 
 /**
- * Hook to get the base pool graph of hard-coded static tokens (cached, long-lived)
+ * Hook to get the base pool graph for common route-base tokens (cached, long-lived)
  */
 function useBasePoolGraph(enabled = true) {
   // For performance, we'll query a subset of known token pairs
@@ -170,11 +170,7 @@ function useBasePoolGraph(enabled = true) {
   // 1. Query all pools from the factory
   // 2. Cache results
   // 3. Only query active/liquid pools
-  const baseTokenSymbols = ['XLM', 'USDC', 'EURC', 'PYUSD']
-  const baseTokens = staticTokens.filter((token) =>
-    baseTokenSymbols.includes(token.symbol),
-  )
-  const baseTokenAddresses = baseTokens.map((token) => token.address)
+  const baseTokenAddresses = BASE_POOL_GRAPH_TOKEN_ADDRESSES
 
   return useQuery<PoolGraphData>({
     queryKey: [
