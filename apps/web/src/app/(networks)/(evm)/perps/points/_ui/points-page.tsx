@@ -11,18 +11,23 @@ export function PointsPage() {
 
   if (!address) {
     return (
-      <PerpsCard className="flex min-h-[420px] flex-col items-center justify-center gap-4 p-4 text-center">
-        <h1 className="text-3xl font-medium">Points</h1>
-        <p className="max-w-md text-sm text-perps-muted-50">
-          Connect your wallet to view your perps points, see your current
-          multiplier, and track your progress.
-        </p>
-        <ConnectButton
-          namespace="evm"
-          className="mx-auto"
-          variant="perps-default"
-        />
-      </PerpsCard>
+      <>
+        <PerpsCard className="flex min-h-[420px] flex-col items-center justify-center gap-4 p-4 text-center">
+          <h1 className="text-3xl font-medium">Points</h1>
+          <p className="max-w-md text-sm text-perps-muted-50">
+            Connect your wallet to view your perps points, see your current
+            multiplier, and track your progress.
+          </p>
+          <ConnectButton
+            namespace="evm"
+            className="mx-auto"
+            variant="perps-default"
+          />
+        </PerpsCard>
+        <div className="mt-4 lg:mt-8">
+          <FaqSection />
+        </div>
+      </>
     )
   }
 
