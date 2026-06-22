@@ -1,0 +1,121 @@
+import { createVault } from '@nktkas/hyperliquid/api/exchange'
+import { AbstractWalletError } from '@nktkas/hyperliquid/signing'
+import {
+  createFailedToast,
+  createInfoToast,
+  createSuccessToast,
+} from '@sushiswap/notifications'
+import { useMutation } from '@tanstack/react-query'
+import { useAccount } from 'src/lib/wallet'
+import {
+  TOAST_AUTOCLOSE_TIME,
+  hlHttpTransport,
+  useAgent,
+  useLegalCheck,
+} from '../..'
+
+type CreateData = {
+  name: string
+  description: string
+  initialUsdcAmount: number
+}
+
+export const useCreateVault = () => {
+  const { agentAccount } = useAgent()
+  const address = useAccount('evm')
+  const { data: legalCheck } = useLegalCheck({ address })
+
+  const mutation = useMutation({
+    mutationKey: ['create-vault', agentAccount?.address, legalCheck],
+    mutationFn: async ({ createData }: { createData: CreateData }) => {
+      if (!agentAccount || !createData) {
+        return
+      }
+      if (!legalCheck?.ipAllowed || !legalCheck?.userAllowed) {
+        throw new Error('Legal check failed. Cannot cancel twap order.')
+      }
+      if (createData.name.length < 3 || createData.name.length > 50) {
+        throw new Error('Vault name must be between 3 and 50 characters')
+      }
+      if (
+        createData.description.length < 10 ||
+        createData.description.length > 250
+      ) {
+        throw new Error(
+          'Vault description must be between 10 and 250 characters',
+        )
+      }
+      if (createData.initialUsdcAmount < 100) {
+        throw new Error('Initial deposit must be at least 100 USDC')
+      }
+
+      return createVault(
+        {
+          wallet: agentAccount,
+          transport: hlHttpTransport,
+        },
+        {
+          name: createData.name,
+          description: createData.description,
+          initialUsd: createData.initialUsdcAmount,
+          nonce: Date.now(),
+        },
+      )
+    },
+
+    onMutate: () => {
+      if (!agentAccount) return
+      const ts = Date.now()
+
+      createInfoToast({
+        summary: `Creating Vault...`,
+        account: agentAccount.address,
+        chainId: 1,
+        type: 'burn',
+        timestamp: ts,
+        groupTimestamp: ts,
+        autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
+      })
+
+      return { ts }
+    },
+
+    onSuccess: (_res, _vars, ctx) => {
+      if (!agentAccount || !ctx) return
+
+      createSuccessToast({
+        summary: `Vault Created Successfully`,
+        account: agentAccount.address,
+        chainId: 1,
+        type: 'burn',
+        timestamp: ctx.ts,
+        groupTimestamp: ctx.ts,
+        autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
+      })
+    },
+
+    onError: (error, _vars, ctx) => {
+      let message = ''
+      if (error instanceof AbstractWalletError || error instanceof Error) {
+        message = error.message
+      }
+      createFailedToast({
+        summary: message || `Failed to Create Vault`,
+        account: agentAccount?.address,
+        chainId: 1,
+        type: 'burn',
+        timestamp: ctx?.ts ?? Date.now(),
+        groupTimestamp: ctx?.ts ?? Date.now(),
+        autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
+      })
+    },
+  })
+
+  return {
+    createVaultAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+  }
+}
