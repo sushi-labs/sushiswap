@@ -34,7 +34,10 @@ export const PlaceOrderButton = ({ onMutate }: { onMutate?: () => void }) => {
       if (!twapOrderData) return
       try {
         // console.log('Executing orders with data:', twapOrderData)
-        await executeTwapOrderAsync(twapOrderData)
+        await executeTwapOrderAsync({
+          orderData: twapOrderData,
+          vaultAddress: undefined,
+        })
         onMutate?.()
       } catch (error) {
         console.log(error)
