@@ -7,6 +7,7 @@ import {
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
+import type { EvmAddress } from 'sushi/evm'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useAgent } from '../agent'
 import { TOAST_AUTOCLOSE_TIME } from '../config'
@@ -29,7 +30,10 @@ export const useCancelOpenOrders = () => {
 
   const mutation = useMutation({
     mutationKey: ['cancel-open-orders', agentAccount?.address, legalCheck],
-    mutationFn: async ({ cancelData }: { cancelData: CancelData[] }) => {
+    mutationFn: async ({
+      cancelData,
+      vaultAddress,
+    }: { cancelData: CancelData[]; vaultAddress?: EvmAddress }) => {
       if (!agentAccount || cancelData.length === 0) {
         return
       }
@@ -53,6 +57,7 @@ export const useCancelOpenOrders = () => {
           transport: hlHttpTransport,
         },
         { cancels },
+        vaultAddress ? { vaultAddress } : undefined,
       )
     },
 

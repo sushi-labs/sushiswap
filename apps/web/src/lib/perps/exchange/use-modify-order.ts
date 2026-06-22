@@ -12,6 +12,7 @@ import {
 import { useMutation } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useAccount } from 'src/lib/wallet'
+import type { EvmAddress } from 'sushi/evm'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useAgent } from '../agent'
 import { TOAST_AUTOCLOSE_TIME } from '../config'
@@ -29,6 +30,7 @@ type ModifyOrderData = {
   price: string
   reduceOnly: boolean
   orderType: OrderType
+  vaultAddress?: EvmAddress
 }
 
 export const useModifyOrder = () => {
@@ -83,6 +85,9 @@ export const useModifyOrder = () => {
           oid: modifyOrderData.orderId,
           order,
         },
+        modifyOrderData.vaultAddress
+          ? { vaultAddress: modifyOrderData.vaultAddress }
+          : undefined,
       )
     },
 

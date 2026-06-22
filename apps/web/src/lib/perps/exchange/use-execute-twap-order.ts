@@ -9,6 +9,7 @@ import {
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
+import type { EvmAddress } from 'sushi/evm'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useAgent } from '../agent'
 import { TOAST_AUTOCLOSE_TIME } from '../config'
@@ -38,7 +39,10 @@ export const useExecuteTwapOrder = () => {
 
   const mutation = useMutation({
     mutationKey: ['execute-twap-order', agentAccount?.address, legalCheck],
-    mutationFn: async (orderData: TwapOrder) => {
+    mutationFn: async ({
+      orderData,
+      vaultAddress,
+    }: { orderData: TwapOrder; vaultAddress?: EvmAddress }) => {
       if (!agentAccount || !orderData) {
         return
       }
@@ -66,6 +70,7 @@ export const useExecuteTwapOrder = () => {
       return twapOrder(
         { wallet: agentAccount, transport: hlHttpTransport },
         twapOrderData,
+        vaultAddress ? { vaultAddress } : undefined,
       )
     },
 

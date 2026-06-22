@@ -6,6 +6,7 @@ import {
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
+import type { EvmAddress } from 'sushi/evm'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useAgent } from '../agent'
 import { BUILDER_FEE_RECEIVER, TOAST_AUTOCLOSE_TIME } from '../config'
@@ -51,6 +52,7 @@ export type OrderData = {
   builder: {
     builderFee: number //Builder fee in 0.1bps (1 = 0.0001%). Max 100 for perps (0.1%), 1000 for spot (1%).
   }
+  vaultAddress?: EvmAddress
 }
 
 export const useExecuteOrders = () => {
@@ -108,6 +110,9 @@ export const useExecuteOrders = () => {
           f: orderData.builder.builderFee,
         },
         ...(orderData.grouping ? { grouping: orderData.grouping } : {}),
+        ...(orderData.vaultAddress
+          ? { vaultAddress: orderData.vaultAddress }
+          : {}),
       }
       // console.log('_orderData', _orderData)
       return order(
