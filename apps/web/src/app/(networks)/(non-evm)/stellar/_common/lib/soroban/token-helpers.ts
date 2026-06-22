@@ -28,7 +28,7 @@ async function getTokenFromTokenList(
 
   const lookup = getTokenList({
     chainId: StellarChainId.STELLAR,
-    customTokens: [canonicalContract],
+    search: canonicalContract,
     first: 1,
   })
     .then((tokens) => {
@@ -180,6 +180,8 @@ async function getTokenMetadata(tokenAddress: StellarContractAddress): Promise<{
           },
         ),
     ])
+
+    console.log(nameResult, symbolResult, decimalsResult)
 
     return {
       name: nameResult || '',

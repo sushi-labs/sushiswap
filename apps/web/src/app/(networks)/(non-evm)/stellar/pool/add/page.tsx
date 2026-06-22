@@ -380,7 +380,7 @@ export default function AddPoolPage() {
             }}
           >
             <Button variant="secondary" className="w-full">
-              <span>{token0?.symbol ?? 'Select StellarToken'}</span>
+              <span>{token0?.symbol ?? 'Select Token'}</span>
               <div>
                 <SelectIcon />
               </div>
@@ -396,7 +396,7 @@ export default function AddPoolPage() {
             }}
           >
             <Button variant="secondary" className="w-full">
-              <span>{token1?.symbol ?? 'Select StellarToken'}</span>
+              <span>{token1?.symbol ?? 'Select Token'}</span>
               <div>
                 <SelectIcon />
               </div>

@@ -10,7 +10,8 @@ import {
   useReducer,
 } from 'react'
 import {
-  STELLAR_DEFAULT_BASES,
+  STELLAR_USDC,
+  STELLAR_XLM,
   StellarChainId,
   type StellarToken,
 } from 'sushi/stellar'
@@ -63,8 +64,6 @@ type Actions =
   | { type: 'setIsTransactionPending'; value: boolean }
 
 export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
-  const baseTokens = STELLAR_DEFAULT_BASES[StellarChainId.STELLAR]
-
   const reducer = (state: State, action: Actions): State => {
     switch (action.type) {
       case 'setToken0':
@@ -103,8 +102,8 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
   }
 
   const [internalState, dispatch] = useReducer(reducer, {
-    token0: baseTokens[0],
-    token1: baseTokens[1],
+    token0: STELLAR_XLM[StellarChainId.STELLAR],
+    token1: STELLAR_USDC[StellarChainId.STELLAR],
     amount: '',
     slippageAmount: 0,
     outputAmount: 0n,
