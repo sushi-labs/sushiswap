@@ -13,3 +13,5 @@ export const BUILDER_FEE_SPOT_BPS = BUILDER_FEE_SPOT_PERCENTAGE / 100
 export const TOAST_AUTOCLOSE_TIME = 1000
 
 // https://hyperliquid.gitbook.io/hyperliquid-docs/trading/builder-codes#api-for-builders
+
+export const IS_PERPS_TESTNET = true
