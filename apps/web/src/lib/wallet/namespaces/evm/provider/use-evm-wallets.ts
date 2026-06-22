@@ -17,7 +17,9 @@ export function useEvmWallets() {
       connectors.filter(
         (connector) =>
           //we are providing our own privy instance, so we remove the dup here
-          isInjectedConnector(connector) && connector.name !== 'Privy Wallet',
+          isInjectedConnector(connector) &&
+          connector.name !== 'Privy Wallet' &&
+          connector.name !== 'MetaMask Wallet',
       ),
     [connectors],
   )
