@@ -1,15 +1,16 @@
-import { type SvmAddress, type SvmChainId, isSvmChainId } from 'sushi/svm'
 import {
-  type EvmOrSvmChainId,
+  type PriceWorkerChainId,
   type PriceWorkerReceiveMessage,
   PriceWorkerReceiveMessageType,
+  type PriceWorkerRequestAddress,
+  type PriceWorkerRequestChainId,
   type WorkerChainState,
 } from './types'
 
 type SolanaWorkerDeps = {
   dataApiHost: string
-  sendMessage: (message: PriceWorkerReceiveMessage<EvmOrSvmChainId>) => void
-  updatePriceData: <TKey extends bigint | SvmAddress>(
+  sendMessage: (message: PriceWorkerReceiveMessage<PriceWorkerChainId>) => void
+  updatePriceData: <TKey extends PriceWorkerRequestAddress>(
     oldPriceData: Map<TKey, number>,
     newPriceMap: Map<TKey, number>,
   ) => void
@@ -19,22 +20,18 @@ const SOLANA_REQUEST_IP_LIMIT = 10
 const SOLANA_REQUEST_WINDOW_MS = 60_000
 const SOLANA_REQUEST_MAX_ADDRESSES = 60
 
-export function isSvmChainState(
-  chainState: WorkerChainState<EvmOrSvmChainId>,
-): chainState is WorkerChainState<SvmChainId> {
-  return isSvmChainId(chainState.chainId)
+export function isPriceRequestChainState(
+  chainState: WorkerChainState<PriceWorkerChainId>,
+): chainState is WorkerChainState<PriceWorkerRequestChainId> {
+  return 'request' in chainState
 }
 
 export function createSolanaRequestHandlers(deps: SolanaWorkerDeps) {
   function queueSolanaRequests(
-    chainState: WorkerChainState<SvmChainId>,
-    addresses: SvmAddress[],
+    chainState: WorkerChainState<PriceWorkerRequestChainId>,
+    addresses: PriceWorkerRequestAddress[],
   ) {
-    chainState.svmRequest ??= {
-      pending: new Set<SvmAddress>(),
-      processing: false,
-      timestamps: [],
-    }
+    const request = getRequestState(chainState)
 
     // Filter out addresses we already have prices for
     const missing = addresses.filter(
@@ -42,24 +39,20 @@ export function createSolanaRequestHandlers(deps: SolanaWorkerDeps) {
     )
     if (missing.length === 0) return
 
-    const pending = chainState.svmRequest.pending
+    const pending = request.pending
     missing.forEach((addr) => pending.add(addr))
 
-    if (!chainState.svmRequest.processing) {
+    if (!request.processing) {
       void processPendingSolanaRequests(chainState)
     }
   }
 
   async function processPendingSolanaRequests(
-    chainState: WorkerChainState<SvmChainId>,
+    chainState: WorkerChainState<PriceWorkerRequestChainId>,
   ) {
-    chainState.svmRequest ??= {
-      pending: new Set<SvmAddress>(),
-      processing: false,
-      timestamps: [],
-    }
+    const request = getRequestState(chainState)
 
-    chainState.svmRequest.processing = true
+    request.processing = true
     chainState.isUpdating = true
     deps.sendMessage({
       type: PriceWorkerReceiveMessageType.ChainState,
@@ -71,7 +64,7 @@ export function createSolanaRequestHandlers(deps: SolanaWorkerDeps) {
 
     try {
       while (true) {
-        const pending = chainState.svmRequest.pending
+        const pending = request.pending
         if (pending.size === 0) break
 
         const batch = Array.from(pending).slice(0, SOLANA_REQUEST_MAX_ADDRESSES)
@@ -94,13 +87,13 @@ export function createSolanaRequestHandlers(deps: SolanaWorkerDeps) {
           isLoading: chainState.isLoading,
         },
       })
-      chainState.svmRequest.processing = false
+      request.processing = false
     }
   }
 
   async function requestAndApplySolanaPrices(
-    chainState: WorkerChainState<SvmChainId>,
-    addresses: SvmAddress[],
+    chainState: WorkerChainState<PriceWorkerRequestChainId>,
+    addresses: PriceWorkerRequestAddress[],
   ) {
     try {
       const response = await fetch(
@@ -135,25 +128,17 @@ export function createSolanaRequestHandlers(deps: SolanaWorkerDeps) {
         },
       })
     } catch (error) {
-      console.error(
-        'Failed to request Solana prices',
-        chainState.chainId,
-        error,
-      )
+      console.error('Failed to request prices', chainState.chainId, error)
       chainState.isError = true
     }
   }
 
   async function respectSolanaRateLimit(
-    chainState: WorkerChainState<SvmChainId>,
+    chainState: WorkerChainState<PriceWorkerRequestChainId>,
   ) {
-    chainState.svmRequest ??= {
-      pending: new Set<SvmAddress>(),
-      processing: false,
-      timestamps: [],
-    }
+    const request = getRequestState(chainState)
 
-    const timestamps = chainState.svmRequest.timestamps
+    const timestamps = request.timestamps
     const now = Date.now()
     const windowStart = now - SOLANA_REQUEST_WINDOW_MS
     const recent = timestamps.filter((t) => t >= windowStart)
@@ -164,17 +149,34 @@ export function createSolanaRequestHandlers(deps: SolanaWorkerDeps) {
       await new Promise((resolve) => setTimeout(resolve, waitMs))
     }
 
-    chainState.svmRequest.timestamps = [...recent, Date.now()]
+    request.timestamps = [...recent, Date.now()]
   }
 
   return { queueSolanaRequests }
 }
 
+function getRequestState(
+  chainState: WorkerChainState<PriceWorkerRequestChainId>,
+) {
+  if (!chainState.request) {
+    chainState.request = {
+      pending: new Set<PriceWorkerRequestAddress>(),
+      processing: false,
+      timestamps: [],
+    }
+  }
+
+  return chainState.request
+}
+
 async function parseSolanaResponse(response: Response) {
-  const data = (await response.json()) as Record<SvmAddress, number>
-  const solPriceMap = new Map<SvmAddress, number>()
+  const data = (await response.json()) as Record<
+    PriceWorkerRequestAddress,
+    number
+  >
+  const solPriceMap = new Map<PriceWorkerRequestAddress, number>()
   for (const [address, price] of Object.entries(data)) {
-    solPriceMap.set(address as SvmAddress, price)
+    solPriceMap.set(address as PriceWorkerRequestAddress, price)
   }
 
   return solPriceMap

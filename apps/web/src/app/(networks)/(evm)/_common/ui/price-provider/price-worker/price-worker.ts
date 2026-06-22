@@ -1,11 +1,11 @@
 import { SUSHI_DATA_API_HOST } from 'src/lib/constants'
 import { isEvmChainId } from 'sushi/evm'
-import type { SvmAddress } from 'sushi/svm'
 import { UPDATE_INTERVAL } from '../config'
 import { createChainState } from './chain-state'
-import { createSolanaRequestHandlers, isSvmChainState } from './solana'
+import { createSolanaRequestHandlers, isPriceRequestChainState } from './solana'
 import {
-  type EvmOrSvmChainId,
+  type PriceWorkerAddress,
+  type PriceWorkerChainId,
   type PriceWorkerPostMessage,
   PriceWorkerPostMessageType,
   type PriceWorkerReceiveMessage,
@@ -15,13 +15,13 @@ import {
 
 {
   const state = {
-    chains: new Map<EvmOrSvmChainId, WorkerChainState<EvmOrSvmChainId>>(),
-    intervals: new Map<EvmOrSvmChainId, NodeJS.Timeout>(),
+    chains: new Map<PriceWorkerChainId, WorkerChainState<PriceWorkerChainId>>(),
+    intervals: new Map<PriceWorkerChainId, NodeJS.Timeout>(),
     enabled: true,
     canUseSharedArrayBuffer: false,
   }
 
-  function sendMessage(message: PriceWorkerReceiveMessage<EvmOrSvmChainId>) {
+  function sendMessage(message: PriceWorkerReceiveMessage<PriceWorkerChainId>) {
     self.postMessage(message)
   }
 
@@ -34,8 +34,8 @@ import {
   self.onmessage = async ({
     data: _data,
   }: MessageEvent<
-    | PriceWorkerPostMessage<EvmOrSvmChainId>
-    | PriceWorkerPostMessage<EvmOrSvmChainId>[]
+    | PriceWorkerPostMessage<PriceWorkerChainId>
+    | PriceWorkerPostMessage<PriceWorkerChainId>[]
   >) => {
     const data = Array.isArray(_data) ? _data : [_data]
 
@@ -74,7 +74,7 @@ import {
         case PriceWorkerPostMessageType.RequestPrices: {
           const { chainId, addresses } = message
           const chainState = state.chains.get(chainId)
-          if (chainState && isSvmChainState(chainState)) {
+          if (chainState && isPriceRequestChainState(chainState)) {
             queueSolanaRequests(chainState, addresses)
           }
           break
@@ -98,7 +98,7 @@ import {
     }
   }
 
-  function incrementChainId(chainId: EvmOrSvmChainId) {
+  function incrementChainId(chainId: PriceWorkerChainId) {
     const chainState = state.chains.get(chainId)
     if (chainState) {
       chainState.listenerCount++
@@ -121,7 +121,7 @@ import {
     return true
   }
 
-  function decrementChainId(chainId: EvmOrSvmChainId) {
+  function decrementChainId(chainId: PriceWorkerChainId) {
     const chainState = state.chains.get(chainId)
     if (chainState && chainState.listenerCount > 0) {
       chainState.listenerCount--
@@ -157,7 +157,7 @@ import {
     }
   }
 
-  async function updateChainId(chainId: EvmOrSvmChainId) {
+  async function updateChainId(chainId: PriceWorkerChainId) {
     const chainState = state.chains.get(chainId)
     if (!chainState) return
 
@@ -204,7 +204,7 @@ import {
 
   const normalizeResponse = async (
     response: Response,
-    chainId: EvmOrSvmChainId,
+    chainId: PriceWorkerChainId,
   ) => {
     if (isEvmChainId(chainId)) {
       const buffer = Buffer.from(await response.arrayBuffer())
@@ -223,10 +223,10 @@ import {
       return priceMap
     }
 
-    const data = (await response.json()) as Record<SvmAddress, number>
-    const solPriceMap = new Map<SvmAddress, number>()
+    const data = (await response.json()) as Record<PriceWorkerAddress, number>
+    const solPriceMap = new Map<PriceWorkerAddress, number>()
     for (const [address, price] of Object.entries(data)) {
-      solPriceMap.set(address as SvmAddress, price)
+      solPriceMap.set(address as PriceWorkerAddress, price)
     }
 
     return solPriceMap
@@ -235,7 +235,7 @@ import {
   async function fetchPriceData({
     chainId,
     lastModified,
-  }: WorkerChainState<EvmOrSvmChainId>) {
+  }: WorkerChainState<PriceWorkerChainId>) {
     let url = `${SUSHI_DATA_API_HOST}/price/v1/${chainId}?referer=sushi`
     if (lastModified) {
       url += `&onlyPricesUpdateSince=${lastModified}`
@@ -243,7 +243,7 @@ import {
 
     const response = await fetch(url, {
       headers: {
-        // EVM supports buffer format, Solana does not.
+        // EVM supports buffer format; Solana and Stellar do not.
         Accept: isEvmChainId(chainId)
           ? 'application/octet-stream'
           : 'application/json',
@@ -262,7 +262,7 @@ import {
     }
   }
 
-  function updatePriceData<TKey extends bigint | string>(
+  function updatePriceData<TKey extends bigint | PriceWorkerAddress>(
     oldPriceData: Map<TKey, number>,
     newPriceMap: Map<TKey, number>,
   ) {
@@ -275,7 +275,7 @@ import {
     }
   }
 
-  function isActive(chain: WorkerChainState<EvmOrSvmChainId>) {
+  function isActive(chain: WorkerChainState<PriceWorkerChainId>) {
     return chain.listenerCount > 0 && state.enabled
   }
 }

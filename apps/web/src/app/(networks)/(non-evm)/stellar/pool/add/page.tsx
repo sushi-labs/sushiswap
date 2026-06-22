@@ -4,12 +4,14 @@ import { Button, FormSection, SelectIcon, TextField } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { useAmountBalance } from 'src/app/(networks)/(evm)/_common/ui/balance-provider/use-balance'
+import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
-import type {
-  StellarAccountAddress,
-  StellarContractAddress,
-  StellarToken,
+import {
+  type StellarAccountAddress,
+  StellarChainId,
+  type StellarContractAddress,
+  type StellarToken,
 } from 'sushi/stellar'
 import { formatUnits } from 'viem'
 import { useGetPool, usePoolInfo } from '~stellar/_common/lib/hooks'
@@ -29,7 +31,6 @@ import {
 import { FEE_TIERS } from '~stellar/_common/lib/utils/ticks'
 import { TickRangeSelector } from '~stellar/_common/ui/TickRangeSelector/TickRangeSelector'
 import { CreateTrustlineButton } from '~stellar/_common/ui/Trustline/CreateTrustlineButton'
-import TokenSelector from '~stellar/_common/ui/token-selector/token-selector'
 import { useStellarWallet } from '~stellar/providers'
 
 export default function AddPoolPage() {
@@ -371,6 +372,7 @@ export default function AddPoolPage() {
         <div className="flex gap-3">
           <TokenSelector
             id="token0-selector"
+            chainId={StellarChainId.STELLAR}
             selected={token0}
             onSelect={(token) => {
               setToken0(token)
@@ -378,7 +380,7 @@ export default function AddPoolPage() {
             }}
           >
             <Button variant="secondary" className="w-full">
-              <span>{token0?.symbol ?? 'Select StellarToken'}</span>
+              <span>{token0?.symbol ?? 'Select Token'}</span>
               <div>
                 <SelectIcon />
               </div>
@@ -386,6 +388,7 @@ export default function AddPoolPage() {
           </TokenSelector>
           <TokenSelector
             id="token1-selector"
+            chainId={StellarChainId.STELLAR}
             selected={token1}
             onSelect={(token) => {
               setToken1(token)
@@ -393,7 +396,7 @@ export default function AddPoolPage() {
             }}
           >
             <Button variant="secondary" className="w-full">
-              <span>{token1?.symbol ?? 'Select StellarToken'}</span>
+              <span>{token1?.symbol ?? 'Select Token'}</span>
               <div>
                 <SelectIcon />
               </div>

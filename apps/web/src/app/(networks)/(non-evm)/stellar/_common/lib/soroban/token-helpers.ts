@@ -1,4 +1,6 @@
 import type { AssembledTransaction } from '@stellar/stellar-sdk/contract'
+import { getTokenList } from '@sushiswap/graph-client/data-api'
+import { createTokenListToken } from 'src/lib/wagmi/components/token-selector/hooks/token-list-token'
 import {
   type StellarAddress,
   StellarChainId,
@@ -6,49 +8,42 @@ import {
   StellarToken,
   normalizeStellarAddress,
 } from 'sushi/stellar'
-import { staticTokens } from '../assets/token-assets'
 import { formatAddress } from '../utils/format'
 import { getTokenContractClient } from './client'
 import { DEFAULT_TIMEOUT } from './constants'
 
-/**
- * Gets the tokens without any alteration
- */
-export function getBaseTokens() {
-  return staticTokens
-}
+const tokenListLookupCache = new Map<
+  StellarContractAddress,
+  Promise<StellarToken | undefined>
+>()
 
-/**
- * Gets the stable tokens without any alteration
- */
-export function getStableTokens() {
-  return staticTokens.filter((token) => token.metadata?.isStable)
-}
+async function getTokenFromTokenList(
+  contract: StellarContractAddress,
+): Promise<StellarToken | undefined> {
+  const canonicalContract = normalizeStellarAddress(contract)
+  const cached = tokenListLookupCache.get(canonicalContract)
+  if (cached) {
+    return cached
+  }
 
-/**
- * Helper to find a token by contract address (case-insensitive) in a token map.
- */
-function findTokenInMap(
-  tokenMap: Record<string, StellarToken>,
-  contract: string,
-): StellarToken | undefined {
-  // Direct lookup first (most common case)
-  if (tokenMap[contract]) {
-    return tokenMap[contract]
-  }
-  // Try uppercase (Stellar convention)
-  const upperAddress = contract.toUpperCase()
-  if (tokenMap[upperAddress]) {
-    return tokenMap[upperAddress]
-  }
-  // Fallback: case-insensitive search
-  const lowerAddress = contract.toLowerCase()
-  for (const [key, token] of Object.entries(tokenMap)) {
-    if (key.toLowerCase() === lowerAddress) {
+  const lookup = getTokenList({
+    chainId: StellarChainId.STELLAR,
+    search: canonicalContract,
+    first: 1,
+  })
+    .then((tokens) => {
+      const [token] = tokens
       return token
-    }
-  }
-  return undefined
+        ? createTokenListToken(StellarChainId.STELLAR, token)
+        : undefined
+    })
+    .catch(() => {
+      tokenListLookupCache.delete(canonicalContract)
+      return undefined
+    })
+
+  tokenListLookupCache.set(canonicalContract, lookup)
+  return lookup
 }
 
 /**
@@ -57,25 +52,11 @@ function findTokenInMap(
  * or returned in different cases by different systems.
  *
  * @param contract - The contract address of the token
- * @param dynamicTokens - Optional dynamic token map to check first (e.g., from useCommonTokens)
  */
 export async function getTokenByContract(
   contract: StellarContractAddress,
-  dynamicTokens?: Record<string, StellarToken>,
 ): Promise<StellarToken> {
-  // Check dynamic tokens first (includes StellarExpert tokens)
-  if (dynamicTokens) {
-    const dynamicToken = findTokenInMap(dynamicTokens, contract)
-    if (dynamicToken) {
-      return dynamicToken
-    }
-  }
-
-  // Check static tokens (case-insensitive)
-  const contractLower = contract.toLowerCase()
-  const tokenFromList = staticTokens.find(
-    (token) => token.address.toLowerCase() === contractLower,
-  )
+  const tokenFromList = await getTokenFromTokenList(contract)
   if (tokenFromList) {
     return tokenFromList
   }
@@ -144,165 +125,6 @@ export async function getTokenBalance(
 }
 
 /**
- * Get the balance of a token for an address using Token object
- * @param address - The address to get the balance of
- * @param token - The token object
- * @returns The balance of the address
- */
-export async function getTokenBalanceFromToken(
-  address: StellarAddress,
-  token: StellarToken,
-): Promise<bigint> {
-  return getTokenBalance(address, token.address)
-}
-
-/**
- * Get the allowance for a token
- * @param owner - The owner address
- * @param spender - The spender address
- * @param tokenAddress - The token contract address
- * @returns The allowance amount
- */
-export async function getTokenAllowance(
-  owner: StellarAddress,
-  spender: StellarAddress,
-  tokenAddress: StellarContractAddress,
-): Promise<bigint> {
-  try {
-    const tokenContractClient = getTokenContractClient({
-      contractId: tokenAddress,
-      // No publicKey needed for read-only allowance queries
-    })
-    const { result } = await tokenContractClient.allowance(
-      {
-        from: owner,
-        spender: spender,
-      },
-      {
-        timeoutInSeconds: DEFAULT_TIMEOUT,
-        fee: 100,
-      },
-    )
-    return result
-  } catch (error) {
-    console.error('Error fetching token allowance:', error)
-    return 0n
-  }
-}
-
-/**
- * Approve a spender to spend tokens
- * @param spender - The spender address
- * @param amount - The amount to approve
- * @param tokenAddress - The token contract address
- * @returns The approval result
- */
-export async function approveToken(
-  spender: StellarAddress,
-  amount: bigint,
-  tokenAddress: StellarContractAddress,
-): Promise<AssembledTransaction<null>> {
-  try {
-    const tokenContractClient = getTokenContractClient({
-      contractId: tokenAddress,
-    })
-    const assembledTransaction = await tokenContractClient.approve(
-      {
-        from: spender,
-        spender: spender,
-        amount: amount,
-        expiration_ledger: 535680, // ~30 days in ledgers
-      },
-      {
-        timeoutInSeconds: DEFAULT_TIMEOUT,
-        fee: 100,
-      },
-    )
-
-    // For write operations, we return the transaction to be submitted
-    return assembledTransaction
-  } catch (error) {
-    console.error('Error creating approve transaction:', error)
-    throw error
-  }
-}
-
-/**
- * Transfer tokens to another address
- * @param to - The recipient address
- * @param amount - The amount to transfer
- * @param tokenAddress - The token contract address
- * @returns The transfer result
- */
-export async function transferToken(
-  to: StellarAddress,
-  amount: bigint,
-  tokenAddress: StellarContractAddress,
-): Promise<AssembledTransaction<null>> {
-  try {
-    const tokenContractClient = getTokenContractClient({
-      contractId: tokenAddress,
-    })
-    const assembledTransaction = await tokenContractClient.transfer(
-      {
-        from: to,
-        to: to,
-        amount: amount,
-      },
-      {
-        timeoutInSeconds: DEFAULT_TIMEOUT,
-        fee: 100,
-      },
-    )
-
-    // For write operations, we return the transaction to be submitted
-    return assembledTransaction
-  } catch (error) {
-    console.error('Error creating transfer transaction:', error)
-    throw error
-  }
-}
-
-/**
- * Transfer tokens from one address to another (requires allowance)
- * @param from - The sender address
- * @param to - The recipient address
- * @param amount - The amount to transfer
- * @param tokenAddress - The token contract address
- * @returns The transfer result
- */
-export async function transferFromToken(
-  from: StellarAddress,
-  to: StellarAddress,
-  amount: bigint,
-  tokenAddress: StellarContractAddress,
-): Promise<AssembledTransaction<null>> {
-  try {
-    const tokenContractClient = getTokenContractClient({
-      contractId: tokenAddress,
-    })
-    const assembledTransaction = await tokenContractClient.transfer_from(
-      {
-        from: from,
-        spender: from, // This would need to be the actual spender address
-        to: to,
-        amount: amount,
-      },
-      {
-        timeoutInSeconds: DEFAULT_TIMEOUT,
-        fee: 100,
-      },
-    )
-
-    // For write operations, we return the transaction to be submitted
-    return assembledTransaction
-  } catch (error) {
-    console.error('Error creating transferFrom transaction:', error)
-    throw error
-  }
-}
-
-/**
  * Get token metadata
  * @param tokenAddress - The token contract address
  * @returns Token metadata
@@ -359,6 +181,8 @@ async function getTokenMetadata(tokenAddress: StellarContractAddress): Promise<{
         ),
     ])
 
+    console.log(nameResult, symbolResult, decimalsResult)
+
     return {
       name: nameResult || '',
       symbol: symbolResult || '',
@@ -372,108 +196,4 @@ async function getTokenMetadata(tokenAddress: StellarContractAddress): Promise<{
       decimals: 0,
     }
   }
-}
-
-/**
- * Check if an address has sufficient token balance
- * @param address - The address to check
- * @param tokenAddress - The token contract address
- * @param requiredAmount - The required amount
- * @returns True if balance is sufficient, false otherwise
- */
-export async function hasSufficientBalance(
-  address: StellarAddress,
-  tokenAddress: StellarContractAddress,
-  requiredAmount: bigint,
-): Promise<boolean> {
-  const balance = await getTokenBalance(address, tokenAddress)
-  return balance >= requiredAmount
-}
-
-/**
- * Check if an address has sufficient allowance
- * @param owner - The owner address
- * @param spender - The spender address
- * @param tokenAddress - The token contract address
- * @param requiredAmount - The required amount
- * @returns True if allowance is sufficient, false otherwise
- */
-export async function hasSufficientAllowance(
-  owner: StellarAddress,
-  spender: StellarAddress,
-  tokenAddress: StellarContractAddress,
-  requiredAmount: bigint,
-): Promise<boolean> {
-  const allowance = await getTokenAllowance(owner, spender, tokenAddress)
-  return allowance >= requiredAmount
-}
-
-/**
- * Get multiple token balances for an address
- * @param address - The address to get balances for
- * @param tokenAddresses - Array of token contract addresses
- * @returns Object mapping token addresses to balances
- */
-export async function getMultipleTokenBalances(
-  address: StellarAddress,
-  tokenAddresses: StellarContractAddress[],
-): Promise<Record<StellarContractAddress, bigint>> {
-  const balancePromises = tokenAddresses.map(async (tokenAddress) => {
-    const balance = await getTokenBalance(address, tokenAddress)
-    return { tokenAddress, balance }
-  })
-
-  const results = await Promise.all(balancePromises)
-
-  return results.reduce(
-    (acc, { tokenAddress, balance }) => {
-      acc[tokenAddress] = balance
-      return acc
-    },
-    {} as Record<StellarContractAddress, bigint>,
-  )
-}
-
-/**
- * Get multiple token allowances for an address
- * @param owner - The owner address
- * @param spender - The spender address
- * @param tokenAddresses - Array of token contract addresses
- * @returns Object mapping token addresses to allowances
- */
-export async function getMultipleTokenAllowances(
-  owner: StellarAddress,
-  spender: StellarAddress,
-  tokenAddresses: StellarContractAddress[],
-): Promise<Record<StellarContractAddress, bigint>> {
-  const allowancePromises = tokenAddresses.map(async (tokenAddress) => {
-    const allowance = await getTokenAllowance(owner, spender, tokenAddress)
-    return { tokenAddress, allowance }
-  })
-
-  const results = await Promise.all(allowancePromises)
-
-  return results.reduce(
-    (acc, { tokenAddress, allowance }) => {
-      acc[tokenAddress] = allowance
-      return acc
-    },
-    {} as Record<StellarContractAddress, bigint>,
-  )
-}
-
-/**
- * Parse token amount from string
- * @param amountStr - The amount as a string
- * @param decimals - The number of decimals
- * @returns Amount in smallest units
- */
-export function parseTokenAmount(amountStr: string, decimals: number): bigint {
-  const [wholePart, fractionalPart = ''] = amountStr.split('.')
-  const paddedFractional = fractionalPart
-    .padEnd(decimals, '0')
-    .slice(0, decimals)
-  const multiplier = BigInt(10 ** decimals)
-
-  return BigInt(wholePart) * multiplier + BigInt(paddedFractional)
 }

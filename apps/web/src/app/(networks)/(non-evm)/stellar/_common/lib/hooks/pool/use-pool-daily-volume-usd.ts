@@ -1,22 +1,22 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import { useTopPools } from './use-top-pools'
+import { useStellarPools } from './use-stellar-pools'
 
 export const useDayVolumeUSD = ({ pairAddress }: { pairAddress?: string }) => {
-  const { data: topPools, isLoading, isPending } = useTopPools()
+  const { data: stellarPools, isLoading, isPending } = useStellarPools()
   return useQuery({
     queryKey: ['stellar', 'useDayVolumeUSD', pairAddress],
     queryFn: async () => {
-      if (!pairAddress || !topPools) {
+      if (!pairAddress || !stellarPools) {
         return '0'
       }
-      const topPool = topPools.find(
+      const stellarPool = stellarPools.find(
         (pool) => pool.address.toLowerCase() === pairAddress.toLowerCase(),
       )
-      return topPool?.volumeUSD1d?.toString() ?? '0'
+      return stellarPool?.volumeUSD1d?.toString() ?? '0'
     },
     placeholderData: keepPreviousData,
-    enabled: Boolean(pairAddress && topPools && !isLoading && !isPending),
+    enabled: Boolean(pairAddress && stellarPools && !isLoading && !isPending),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,

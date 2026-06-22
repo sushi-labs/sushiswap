@@ -1,28 +1,33 @@
 import {
-  type TopNonEvmPools,
-  getTopNonEvmPools,
+  type StellarPools,
+  getStellarPools,
 } from '@sushiswap/graph-client/data-api'
 import { useQueries, useQuery } from '@tanstack/react-query'
-import { ChainId } from 'sushi'
-import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
+import { StellarChainId, StellarToken } from 'sushi/stellar'
 import { getPoolDirectSDK } from '../../soroban'
-import { getTokenByContract } from '../../soroban/token-helpers'
-import { useCommonTokens } from '../token'
 
-export type TopPool = TopNonEvmPools[number] & {
-  token0: StellarToken
-  token1: StellarToken
+type StellarPoolToken = StellarPools[number]['token0']
+
+function createStellarPoolToken(token: StellarPoolToken): StellarToken {
+  return new StellarToken({
+    chainId: StellarChainId.STELLAR,
+    address: token.address,
+    symbol: token.symbol,
+    name: token.name,
+    decimals: token.decimals,
+    issuer: token.stellarMetadata.issuer ?? undefined,
+    metadata: {
+      approved: token.approved,
+      domain: token.stellarMetadata.domain ?? undefined,
+    },
+  })
 }
 
-export function useTopPools({ isLegacy = false }: { isLegacy?: boolean } = {}) {
-  const {
-    data: tokens,
-    isLoading: isLoadingTokens,
-    isPending: isPendingTokens,
-  } = useCommonTokens()
-  const tokenKey = tokens
-    ? Object.keys(tokens).toSorted().join(',')
-    : 'no-tokens'
+export type StellarPool = ReturnType<typeof useStellarPools>['data'][number]
+
+export function useStellarPools({
+  isLegacy = false,
+}: { isLegacy?: boolean } = {}) {
   const {
     data: topPools = [],
     isLoading: topPoolsLoading,
@@ -30,42 +35,25 @@ export function useTopPools({ isLegacy = false }: { isLegacy?: boolean } = {}) {
     isFetching: topPoolsFetching,
     error: topPoolsError,
     refetch: refetchTopPools,
-  } = useQuery<TopPool[]>({
-    queryKey: ['stellar', 'top-pools', 'with-token-data', tokenKey],
+  } = useQuery({
+    queryKey: ['stellar', 'top-pools'],
     queryFn: async () => {
-      if (!tokens) {
-        return []
-      }
-      const topPools = await getTopNonEvmPools({
-        chainId: ChainId.STELLAR,
+      const topPools = await getStellarPools({
+        chainId: StellarChainId.STELLAR,
       })
 
-      // Fetch token info for all pools
-      // getTokenByContract checks dynamic tokens first, then static, then chain
-      const topPoolsWithTokens = await Promise.all(
-        topPools.map(async (pool) => {
-          const [token0, token1] = await Promise.all([
-            getTokenByContract(
-              pool.token0Address as StellarContractAddress,
-              tokens,
-            ),
-            getTokenByContract(
-              pool.token1Address as StellarContractAddress,
-              tokens,
-            ),
-          ])
-          return {
-            ...pool,
-            address: pool.address.toUpperCase(),
-            token0,
-            token1,
-          }
-        }),
-      )
+      return topPools.map((pool) => {
+        const token0 = createStellarPoolToken(pool.token0)
+        const token1 = createStellarPoolToken(pool.token1)
 
-      return topPoolsWithTokens as TopPool[]
+        return {
+          ...pool,
+          token0,
+          token1,
+          isIncentivized: pool.incentiveApr > 0,
+        }
+      })
     },
-    enabled: Boolean(tokens && !isLoadingTokens && !isPendingTokens),
   })
 
   const topPoolIsLegacyQueries = useQueries({

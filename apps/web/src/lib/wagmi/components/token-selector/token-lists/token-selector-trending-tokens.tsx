@@ -1,6 +1,5 @@
 import type { TrendingTokensChainId } from '@sushiswap/graph-client/data-api'
 import { List } from '@sushiswap/ui'
-import type { EvmCurrency } from 'sushi/evm'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useTrendingTokens } from '../hooks/use-trending-tokens'
 import {
@@ -36,7 +35,9 @@ export function TokenSelectorTrendingTokens<
   onShowInfo,
   selected,
 }: TokenSelectorTrendingTokens<TChainId>) {
-  const { data, isError, isLoading } = useTrendingTokens({ chainId })
+  const { data, isError, isLoading } = useTrendingTokens({
+    chainId,
+  })
 
   const { data: pricesMap } = usePrices({ chainId })
 

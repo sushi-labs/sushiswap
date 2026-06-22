@@ -1,15 +1,16 @@
-import { isTokenListChainId } from '@sushiswap/graph-client/data-api'
+import {
+  type TokenListChainId,
+  isTokenListChainId,
+} from '@sushiswap/graph-client/data-api'
 import { List } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import type { WalletAddressFor } from 'src/lib/wallet'
-import type { EvmAddress, EvmCurrency, EvmNative } from 'sushi/evm'
-import type { EvmChainId } from 'sushi/evm'
-import type { SvmChainId } from 'sushi/svm'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
+import type { TokenSelectorChainId } from '../config'
 import { useMyTokens } from '../hooks/use-my-tokens'
 import { TokenSelectorCurrencyList } from './common/token-selector-currency-list'
 
-interface TokenSelectorCustomList<TChainId extends EvmChainId | SvmChainId> {
+interface TokenSelectorCustomList<TChainId extends TokenSelectorChainId> {
   currencies: Readonly<CurrencyFor<TChainId, { approved?: boolean }>[]>
   chainId: TChainId
   account?: WalletAddressFor<TChainId>
@@ -20,9 +21,7 @@ interface TokenSelectorCustomList<TChainId extends EvmChainId | SvmChainId> {
   onShowInfo(currency: CurrencyFor<TChainId> | false): void
 }
 
-export function TokenSelectorCustomList<
-  TChainId extends EvmChainId | SvmChainId,
->({
+export function TokenSelectorCustomList<TChainId extends TokenSelectorChainId>({
   currencies,
   chainId,
   account,
@@ -35,7 +34,7 @@ export function TokenSelectorCustomList<
   const {
     data: { balanceMap },
     isLoading,
-  } = useMyTokens({
+  } = useMyTokens<TokenListChainId & TChainId>({
     chainId: isTokenListChainId(chainId) ? chainId : undefined,
     account,
     includeNative,

@@ -27,29 +27,37 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
-import { type FC, useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useTokenSecurity } from 'src/lib/hooks/react-query'
 import { getChainById, shortenAddress } from 'sushi'
-import type { EvmAddress, EvmToken } from 'sushi/evm'
+import type { EvmToken } from 'sushi/evm'
+import { isStellarChainId } from 'sushi/stellar'
 import type { SvmToken } from 'sushi/svm'
 import { TokenSecurityView } from '../../../token-security-view'
+import type { TokenSelectorChainId } from '../../config'
 
-interface TokenSelectorImportRow {
-  currency: EvmToken | SvmToken
+interface TokenSelectorImportRow<TChainId extends TokenSelectorChainId> {
+  currency: TokenFor<TChainId>
   onImport(): void
 }
 
-export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
+export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
   currency,
   onImport,
-}) => {
+}: TokenSelectorImportRow<TChainId>) {
   const [open, setOpen] = useState(false)
 
+  const securityCurrency = isStellarChainId(currency.chainId)
+    ? undefined
+    : (currency as EvmToken | SvmToken)
   const { data: tokenSecurity, isLoading: isTokenSecurityLoading } =
     useTokenSecurity({
-      currency,
+      currency: securityCurrency,
       enabled: open,
     })
+  const hasSecurityRisk = Boolean(
+    tokenSecurity?.isHoneypot || tokenSecurity?.isFoT || tokenSecurity?.isRisky,
+  )
 
   const onClick = useCallback(() => {
     onImport()
@@ -98,9 +106,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
                 'inline-flex items-center px-2 py-1.5 gap-1 rounded-full',
                 isTokenSecurityLoading
                   ? 'bg-muted'
-                  : tokenSecurity?.isHoneypot ||
-                      tokenSecurity?.isFoT ||
-                      tokenSecurity?.isRisky
+                  : hasSecurityRisk
                     ? 'bg-red/20 text-red'
                     : 'bg-yellow/20 text-yellow',
               )}
@@ -109,9 +115,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
                 <div className="w-7 h-7 flex justify-center items-center">
                   <Loader width={28} height={28} />
                 </div>
-              ) : tokenSecurity?.isHoneypot ||
-                tokenSecurity?.isFoT ||
-                tokenSecurity?.isRisky ? (
+              ) : hasSecurityRisk ? (
                 <ExclamationTriangleIcon width={28} height={28} />
               ) : (
                 <ExclamationCircleIcon width={28} height={28} />
@@ -166,8 +170,8 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
               <LinkExternal
                 target="_blank"
                 href={getChainById(currency.chainId).getTokenUrl(
-                  // Ugly cast to satisfy both EvmToken and SvmToken
-                  currency.address as EvmAddress,
+                  // Chain-specific address types collapse under the union here.
+                  currency.address as never,
                 )}
                 className="font-medium"
               >
@@ -176,29 +180,25 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
             </div>
           </List.Control>
         </List>
-        <List className="!pt-0 overflow-hidden">
-          <List.Control className="!overflow-y-auto flex flex-col gap-3 p-4">
-            <div className="flex items-center">
-              <span className="text-sm font-medium text-muted-foreground">
-                Token Security Scan
-              </span>
-            </div>
-            <TokenSecurityView
-              token={currency}
-              tokenSecurity={tokenSecurity}
-              isTokenSecurityLoading={isTokenSecurityLoading}
-            />
-          </List.Control>
-        </List>
+        {securityCurrency ? (
+          <List className="!pt-0 overflow-hidden">
+            <List.Control className="!overflow-y-auto flex flex-col gap-3 p-4">
+              <div className="flex items-center">
+                <span className="text-sm font-medium text-muted-foreground">
+                  Token Security Scan
+                </span>
+              </div>
+              <TokenSecurityView
+                token={securityCurrency}
+                tokenSecurity={tokenSecurity}
+                isTokenSecurityLoading={isTokenSecurityLoading}
+              />
+            </List.Control>
+          </List>
+        ) : null}
         <Message
           size="sm"
-          variant={
-            tokenSecurity?.isHoneypot ||
-            tokenSecurity?.isFoT ||
-            tokenSecurity?.isRisky
-              ? 'destructive'
-              : 'warning'
-          }
+          variant={hasSecurityRisk ? 'destructive' : 'warning'}
         >
           {tokenSecurity?.isHoneypot
             ? 'Honeypot tokens restrict selling. Sushi does not support this token type.'
@@ -228,15 +228,9 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
                   fullWidth
                   size="xl"
                   onClick={onClick}
-                  variant={
-                    tokenSecurity?.isFoT || tokenSecurity?.isRisky
-                      ? 'destructive'
-                      : 'default'
-                  }
+                  variant={hasSecurityRisk ? 'destructive' : 'default'}
                 >
-                  {tokenSecurity?.isFoT || tokenSecurity?.isRisky
-                    ? 'Import Anyways'
-                    : 'Confirm Import'}
+                  {hasSecurityRisk ? 'Import Anyways' : 'Confirm Import'}
                 </Button>
               </TraceEvent>
               <Button
