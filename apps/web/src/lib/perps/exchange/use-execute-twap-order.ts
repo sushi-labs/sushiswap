@@ -9,7 +9,6 @@ import {
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
-import type { EvmAddress } from 'sushi/evm'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useAgent } from '../agent'
