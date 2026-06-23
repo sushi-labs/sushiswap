@@ -17,7 +17,6 @@ import {
   useSpotDustToggle,
   useUserNotifications,
 } from 'src/lib/perps'
-import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserState } from '~evm/perps/user-provider'
 import {

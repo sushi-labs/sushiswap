@@ -26,11 +26,11 @@ import { useLeadingVaults } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { truncateString } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
-import { useActiveAccountState } from '~evm/perps/active-account-provider'
+import { useActiveAccountState } from '../../active-account-provider'
 import {
   type AccountType,
   reconcileActiveAccountWithLeaderVaults,
-} from '~evm/perps/active-account-state'
+} from '../../active-account-state'
 
 type AccountOption = {
   label: string

@@ -22,6 +22,7 @@ export const BuilderFee: FC<ButtonProps> = ({
       console.log(error)
     }
   }, [approveBuilderFeeAsync])
+
   if (IS_PERPS_TESTNET) {
     return <>{children}</>
   }

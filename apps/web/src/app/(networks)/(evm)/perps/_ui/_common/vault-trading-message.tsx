@@ -2,7 +2,7 @@
 import { Message, classNames } from '@sushiswap/ui'
 import { useLegalCheck } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
-import { useActiveAccountState } from '~evm/perps/active-account-provider'
+import { useActiveAccountState } from '../../active-account-provider'
 
 export const VaultTradingMessage = () => {
   const address = useAccount('evm')
@@ -17,7 +17,7 @@ export const VaultTradingMessage = () => {
     <div
       data-vault-trading={activeAccount?.type === 'vault'}
       className={classNames(
-        'hidden data-[vault-trading=true]:block data-[vault-trading=true]:animate-slide w-screen z-[11] flex items-center justify-center bg-perps-background',
+        'hidden data-[vault-trading=true]:block data-[vault-trading=true]:animate-slide w-screen z-[11] items-center justify-center bg-perps-background',
         isBlocked && activeAccount?.type === 'vault'
           ? 'top-[112px]'
           : !isBlocked && activeAccount?.type === 'vault'
