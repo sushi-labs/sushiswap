@@ -176,7 +176,7 @@ export function useCrossChainSwapTradeReviewWriteHandlers<
             const token0Usd =
               prices?.get(
                 trade?.amountIn?.currency.wrap()
-                  .address as AddressFor<TChainId0>,
+                  .address as ContractAddressFor<TChainId0>,
               ) ?? 0
             const swapAmountUsd = Amount.tryFromHuman(
               trade?.amountIn?.currency,

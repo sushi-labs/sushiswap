@@ -7,7 +7,6 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { formatFee } from '~stellar/_common/lib/utils/format'
-import { TokenIcon } from '~stellar/_common/ui/General/TokenIcon'
 import type { IPositionRowData } from './PositionsTable'
 
 export const PositionNameCell = ({ data }: { data: IPositionRowData }) => {
@@ -17,8 +16,8 @@ export const PositionNameCell = ({ data }: { data: IPositionRowData }) => {
     <div className="flex items-center gap-1">
       <div className="flex min-w-[54px]">
         <Currency.IconList iconWidth={26} iconHeight={26}>
-          <TokenIcon currency={token0} />
-          <TokenIcon currency={token1} />
+          <Currency.Icon disableLink currency={token0} />
+          <Currency.Icon disableLink currency={token1} />
         </Currency.IconList>
       </div>
       <div className="flex flex-col gap-0.5">

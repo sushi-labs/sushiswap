@@ -4,7 +4,7 @@ import type React from 'react'
 import { useState } from 'react'
 import { Amount, ChainId, MAX_UINT128 } from 'sushi'
 import { formatUnits } from 'viem'
-import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import { useStellarWallet } from '~stellar/providers'
 import { useMyPosition } from '../../lib/hooks/position/use-my-position'
@@ -26,12 +26,14 @@ export const CollectFeesBox: React.FC<CollectFeesBoxProps> = ({ pool }) => {
   })
   const collectFeesMutation = useCollectFees()
   const [isCollecting, setIsCollecting] = useState(false)
-  const { data: priceToken0, isLoading: isLoadingPriceToken0 } = useStablePrice(
-    { token: pool.token0 },
-  )
-  const { data: priceToken1, isLoading: isLoadingPriceToken1 } = useStablePrice(
-    { token: pool.token1 },
-  )
+  const { data: priceToken0, isLoading: isLoadingPriceToken0 } = usePrice({
+    chainId: pool.token0.chainId,
+    address: pool.token0.address,
+  })
+  const { data: priceToken1, isLoading: isLoadingPriceToken1 } = usePrice({
+    chainId: pool.token1.chainId,
+    address: pool.token1.address,
+  })
   const isLoading =
     isPositionsLoading || isLoadingPriceToken0 || isLoadingPriceToken1
 

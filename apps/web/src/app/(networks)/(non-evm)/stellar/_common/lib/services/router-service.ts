@@ -1,29 +1,3 @@
-import type { StellarToken } from 'sushi/stellar'
-import type { PoolBasicInfo } from '../soroban/pool-helpers'
-
-/**
- * Swap route information
- */
-export interface SwapRoute {
-  path: StellarToken[]
-  pools: PoolBasicInfo[]
-  fees: number[]
-  amountIn: bigint
-  amountOut: bigint
-  routeType: 'direct' | 'multihop'
-}
-
-/**
- * Format route for user display
- */
-export function formatRouteForUser(route: SwapRoute): string {
-  if (route.path.length === 2) {
-    return `${route.path[0].symbol} → ${route.path[1].symbol}`
-  } else {
-    return route.path.map((t) => t.symbol).join(' → ')
-  }
-}
-
 /**
  * Calculate minimum amount out with slippage protection
  */

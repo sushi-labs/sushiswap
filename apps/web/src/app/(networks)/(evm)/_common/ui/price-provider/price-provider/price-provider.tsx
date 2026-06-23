@@ -10,21 +10,21 @@ import {
   useState,
 } from 'react'
 
-import { isEvmChainId } from 'sushi/evm'
-import type { SvmAddress } from 'sushi/svm'
 import {
-  type EvmOrSvmChainId,
   type PriceWorker,
+  type PriceWorkerChainId,
   PriceWorkerPostMessageType,
   type PriceWorkerReceiveMessage,
   PriceWorkerReceiveMessageType,
+  type PriceWorkerRequestAddress,
+  type PriceWorkerRequestChainId,
 } from '../price-worker/types'
 import type { Provider, ProviderActions, ProviderState } from './types'
 
 function reducer(
-  state: ProviderState<EvmOrSvmChainId>,
-  action: ProviderActions<EvmOrSvmChainId>,
-): ProviderState<EvmOrSvmChainId> {
+  state: ProviderState<PriceWorkerChainId>,
+  action: ProviderActions<PriceWorkerChainId>,
+): ProviderState<PriceWorkerChainId> {
   switch (action.type) {
     case 'UPDATE_CHAIN_STATE': {
       const currentChain = state.chains.get(action.payload.chainId)
@@ -66,8 +66,8 @@ function reducer(
   }
 }
 
-const PriceProviderContext = createContext<Provider<EvmOrSvmChainId>>(
-  {} as Provider<EvmOrSvmChainId>,
+const PriceProviderContext = createContext<Provider<PriceWorkerChainId>>(
+  {} as Provider<PriceWorkerChainId>,
 )
 
 interface PriceProviderContextProps {
@@ -75,11 +75,11 @@ interface PriceProviderContextProps {
 }
 
 export function PriceProvider({ children }: PriceProviderContextProps) {
-  const [worker, setWorker] = useState<PriceWorker<EvmOrSvmChainId>>()
+  const [worker, setWorker] = useState<PriceWorker<PriceWorkerChainId>>()
   const [state, dispatch] = useReducer(reducer, {
     chains: new Map(),
     ready: false,
-  } satisfies ProviderState<EvmOrSvmChainId>)
+  } satisfies ProviderState<PriceWorkerChainId>)
 
   useEffect(() => {
     const worker = new Worker(
@@ -92,7 +92,7 @@ export function PriceProvider({ children }: PriceProviderContextProps) {
     })
 
     worker.onmessage = (
-      event: MessageEvent<PriceWorkerReceiveMessage<EvmOrSvmChainId>>,
+      event: MessageEvent<PriceWorkerReceiveMessage<PriceWorkerChainId>>,
     ) => {
       switch (event.data.type) {
         case PriceWorkerReceiveMessageType.ChainState:
@@ -104,7 +104,7 @@ export function PriceProvider({ children }: PriceProviderContextProps) {
       }
     }
 
-    setWorker(worker as unknown as PriceWorker<EvmOrSvmChainId>)
+    setWorker(worker as unknown as PriceWorker<PriceWorkerChainId>)
 
     return () => {
       worker.terminate()
@@ -112,7 +112,7 @@ export function PriceProvider({ children }: PriceProviderContextProps) {
   }, [])
 
   const incrementChainId = useCallback(
-    (chainId: EvmOrSvmChainId) => {
+    (chainId: PriceWorkerChainId) => {
       if (worker) {
         worker.postMessage({
           type: PriceWorkerPostMessageType.IncrementChainId,
@@ -124,7 +124,7 @@ export function PriceProvider({ children }: PriceProviderContextProps) {
   )
 
   const decrementChainId = useCallback(
-    (chainId: EvmOrSvmChainId) => {
+    (chainId: PriceWorkerChainId) => {
       if (worker) {
         worker.postMessage({
           type: PriceWorkerPostMessageType.DecrementChainId,
@@ -136,8 +136,11 @@ export function PriceProvider({ children }: PriceProviderContextProps) {
   )
 
   const requestPrices = useCallback(
-    (chainId: EvmOrSvmChainId, addresses: SvmAddress[]) => {
-      if (worker && !isEvmChainId(chainId)) {
+    (
+      chainId: PriceWorkerRequestChainId,
+      addresses: ContractAddressFor<PriceWorkerChainId>[],
+    ) => {
+      if (worker) {
         worker.postMessage({
           type: PriceWorkerPostMessageType.RequestPrices,
           chainId,

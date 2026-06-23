@@ -17,6 +17,10 @@ export const TokenListQuery = graphql(
       name
       decimals
       approved
+      stellarMetadata {
+        issuer
+        domain
+      }
     }
   }
 `,

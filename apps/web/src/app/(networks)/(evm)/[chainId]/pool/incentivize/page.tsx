@@ -308,7 +308,6 @@ const Incentivize = withCheckerRoot(() => {
             loading={angleRewardTokensLoading}
             currencyLoading={angleRewardTokensLoading}
             allowNative={false}
-            hidePinnedTokens={true}
             hideSearch={true}
             {...(numHours &&
               rewardToken &&

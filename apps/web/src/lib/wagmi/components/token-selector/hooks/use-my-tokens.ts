@@ -8,13 +8,11 @@ import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { useMemo } from 'react'
 import type { WalletAddressFor } from 'src/lib/wallet'
+import { Amount } from 'sushi'
 import {
-  type AddressFor,
-  Amount,
-  getNativeAddress,
-  getNativeFor,
-  getTokenFor,
-} from 'sushi'
+  type TokenListTokenMetadata,
+  createTokenListCurrency,
+} from './token-list-token'
 
 interface UseMyTokens<TChainId extends TokenListChainId> {
   chainId: TChainId | undefined
@@ -23,7 +21,7 @@ interface UseMyTokens<TChainId extends TokenListChainId> {
 }
 
 type UseMyTokensDataReturn<TChainId extends TokenListChainId> = {
-  tokens: CurrencyFor<TChainId>[]
+  tokens: CurrencyFor<TChainId, TokenListTokenMetadata>[]
   balanceMap:
     | Map<AddressFor<TChainId>, Amount<CurrencyFor<TChainId>>>
     | undefined
@@ -34,7 +32,7 @@ export function useMyTokens<TChainId extends TokenListChainId>({
   account,
   includeNative,
 }: UseMyTokens<TChainId>) {
-  const { data } = useCustomTokens()
+  const { data } = useCustomTokens({ chainId })
 
   const customTokens = useMemo(() => {
     return Object.values(data)
@@ -84,32 +82,17 @@ function processTokens<TChainId extends TokenListChainId>(
   tokens: TokenListBalances<TChainId>,
   chainId: TChainId,
 ): UseMyTokensDataReturn<TChainId> {
-  const _tokens: CurrencyFor<TChainId, { approved: boolean }>[] | undefined = []
+  const _tokens: CurrencyFor<TChainId, TokenListTokenMetadata>[] | undefined =
+    []
   const balanceMap:
     | Map<AddressFor<TChainId>, Amount<CurrencyFor<TChainId>>>
     | undefined = new Map()
 
-  const nativeAddress = getNativeAddress(chainId)
-
   tokens.forEach((token) => {
-    let _token: CurrencyFor<TChainId, { approved: boolean }>
-    let address: AddressFor<TChainId>
-
-    if (token.address === nativeAddress) {
-      _token = getNativeFor(chainId, {
-        approved: true,
-      })
-      address = nativeAddress
-    } else {
-      _token = getTokenFor(chainId, {
-        ...token,
-        metadata: { approved: token.approved },
-      })
-      address = token.address
-    }
+    const _token = createTokenListCurrency(chainId, token)
 
     _tokens.push(_token)
-    balanceMap.set(address, new Amount(_token, token.balance))
+    balanceMap.set(token.address, new Amount(_token, token.balance))
   })
 
   return { tokens: _tokens, balanceMap }

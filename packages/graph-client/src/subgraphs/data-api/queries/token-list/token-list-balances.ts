@@ -18,6 +18,10 @@ export const TokenListBalancesQuery = graphql(
       decimals
       balance
       approved
+      stellarMetadata {
+        issuer
+        domain
+      }
     }
   }
 `,

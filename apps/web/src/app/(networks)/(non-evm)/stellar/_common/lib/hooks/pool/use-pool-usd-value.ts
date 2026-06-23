@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import type { StellarToken } from 'sushi/stellar'
-import { useStablePrice } from '~stellar/_common/lib/hooks/price/use-stable-price'
+import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 
 export const useLPUsdValue = ({
   token0,
@@ -13,8 +13,15 @@ export const useLPUsdValue = ({
   reserve0: bigint
   reserve1: bigint
 }) => {
-  const { data: token0Price } = useStablePrice({ token: token0 })
-  const { data: token1Price } = useStablePrice({ token: token1 })
+  const { data: token0Price } = usePrice({
+    chainId: token0.chainId,
+    address: token0.address,
+  })
+  const { data: token1Price } = usePrice({
+    chainId: token1.chainId,
+    address: token1.address,
+  })
+
   return useQuery({
     queryKey: [
       'stellar',

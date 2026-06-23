@@ -26,16 +26,11 @@ import React, {
   useState,
 } from 'react'
 import { useAccount } from 'src/lib/wallet'
-import type { EvmChainId } from 'sushi/evm'
-import { type StellarChainId, isStellarChainId } from 'sushi/stellar'
-import type { SvmChainId } from 'sushi/svm'
-import StellarTokenSelector from '~stellar/_common/ui/token-selector/token-selector'
+import type { TokenSelectorChainId } from './config'
 import { CurrencyInfo } from './currency-info'
 import { DesktopNetworkSelector } from './desktop-network-selector'
 import { MobileNetworkSelector } from './mobile-network-selector'
 import { TokenSelectorStates } from './token-selector-states'
-
-type TokenSelectorChainId = EvmChainId | SvmChainId | StellarChainId
 
 interface TokenSelectorProps<
   TChainId extends TokenSelectorChainId,
@@ -46,9 +41,8 @@ interface TokenSelectorProps<
   chainId: TChainId
   onSelect?(currency: CurrencyFor<TChainId>): void
   children: ReactNode
-  currencies?: Record<string, CurrencyFor<TChainId>>
+  currencies?: Record<string, CurrencyFor<TChainId, { approved?: boolean }>>
   includeNative?: boolean
-  hidePinnedTokens?: boolean
   hideSearch?: boolean
   networks?: readonly TNetwork[]
   selectedNetwork?: TNetwork
@@ -58,46 +52,6 @@ interface TokenSelectorProps<
 export function TokenSelector<
   TChainId extends TokenSelectorChainId,
   TNetwork extends TokenSelectorChainId = TChainId,
->(props: TokenSelectorProps<TChainId, TNetwork>) {
-  if (isStellarChainId(props.chainId)) {
-    const stellar = props as TokenSelectorProps<StellarChainId, TNetwork>
-    return (
-      <StellarTokenSelector
-        id={stellar.id ?? 'token-selector'}
-        selected={stellar.selected}
-        onSelect={stellar.onSelect}
-        currencies={stellar.currencies}
-        hideSearch={stellar.hideSearch}
-        networks={stellar.networks}
-        selectedNetwork={stellar.selectedNetwork}
-        onNetworkSelect={stellar.onNetworkSelect}
-      >
-        {stellar.children}
-      </StellarTokenSelector>
-    )
-  }
-  return (
-    <EvmSvmTokenSelector
-      {...(props as EvmSvmTokenSelectorProps<EvmChainId | SvmChainId>)}
-    />
-  )
-}
-
-interface EvmSvmTokenSelectorProps<
-  TChainId extends EvmChainId | SvmChainId,
-  TNetwork extends TokenSelectorChainId = TChainId,
-> extends Omit<
-    TokenSelectorProps<TChainId, TNetwork>,
-    'currencies' | 'id' | 'networks' | 'selectedNetwork'
-  > {
-  currencies?: Record<string, CurrencyFor<TChainId, { approved?: boolean }>>
-  networks?: readonly TNetwork[]
-  selectedNetwork?: TNetwork
-}
-
-function EvmSvmTokenSelector<
-  TChainId extends EvmChainId | SvmChainId,
-  TNetwork extends TokenSelectorChainId = TChainId,
 >({
   includeNative = true,
   selected,
@@ -105,12 +59,11 @@ function EvmSvmTokenSelector<
   chainId,
   children,
   currencies: _currencies,
-  hidePinnedTokens,
   hideSearch,
   networks,
   selectedNetwork,
   onNetworkSelect,
-}: EvmSvmTokenSelectorProps<TChainId, TNetwork>) {
+}: TokenSelectorProps<TChainId, TNetwork>) {
   const address = useAccount(chainId)
 
   const [query, setQuery] = useState('')
@@ -229,7 +182,6 @@ function EvmSvmTokenSelector<
                 onSelect={_onSelect}
                 currencies={currencies}
                 includeNative={includeNative}
-                hidePinnedTokens={hidePinnedTokens}
                 search={query}
                 onShowInfo={showCurrencyInfo}
               />

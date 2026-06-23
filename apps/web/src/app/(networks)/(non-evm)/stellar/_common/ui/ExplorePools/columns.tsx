@@ -1,5 +1,6 @@
 import {
   Badge,
+  Currency,
   SkeletonCircle,
   SkeletonText,
   Tooltip,
@@ -10,11 +11,9 @@ import {
 import { StellarCircle } from '@sushiswap/ui/icons/network/circle/StellarCircle'
 import type { ColumnDef } from '@tanstack/react-table'
 import { formatPercent, formatUSD } from 'sushi'
-import type { TopPool } from '~stellar/_common/lib/hooks/pool/use-top-pools'
-import { TokenIcon } from '../General/TokenIcon'
-import { CurrencyIconList } from '../currency/currency-icon-list'
+import type { StellarPool } from '~stellar/_common/lib/hooks/pool/use-stellar-pools'
 
-export const NAME_COLUMN: ColumnDef<TopPool, unknown> = {
+export const NAME_COLUMN: ColumnDef<StellarPool, unknown> = {
   id: 'name',
   header: 'Name',
   cell: (props) => {
@@ -27,10 +26,10 @@ export const NAME_COLUMN: ColumnDef<TopPool, unknown> = {
             position="bottom-right"
             badgeContent={<StellarCircle width={14} height={14} />}
           >
-            <CurrencyIconList iconWidth={26} iconHeight={26}>
-              <TokenIcon currency={row.token0} />
-              <TokenIcon currency={row.token1} />
-            </CurrencyIconList>
+            <Currency.IconList iconWidth={26} iconHeight={26}>
+              <Currency.Icon disableLink currency={row.token0} />
+              <Currency.Icon disableLink currency={row.token1} />
+            </Currency.IconList>
           </Badge>
         </div>
         <div className="flex flex-col gap-0.5">
@@ -86,7 +85,7 @@ export const NAME_COLUMN: ColumnDef<TopPool, unknown> = {
   },
 }
 
-export const TVL_COLUMN: ColumnDef<TopPool, unknown> = {
+export const TVL_COLUMN: ColumnDef<StellarPool, unknown> = {
   id: 'liquidityUSD',
   header: 'TVL',
   accessorFn: (row) => row.liquidityUSD,
@@ -104,7 +103,7 @@ export const TVL_COLUMN: ColumnDef<TopPool, unknown> = {
   },
 }
 
-export const VOLUME_1D_COLUMN: ColumnDef<TopPool, unknown> = {
+export const VOLUME_1D_COLUMN: ColumnDef<StellarPool, unknown> = {
   id: 'volumeUSD1d',
   header: 'Volume (24h)',
   accessorFn: (row) => row.volumeUSD1d,
@@ -122,7 +121,7 @@ export const VOLUME_1D_COLUMN: ColumnDef<TopPool, unknown> = {
   },
 }
 
-export const FEES_1D_COLUMN: ColumnDef<TopPool, unknown> = {
+export const FEES_1D_COLUMN: ColumnDef<StellarPool, unknown> = {
   id: 'feeUSD1d',
   header: 'Fees (24h)',
   accessorFn: (row) => row.feeUSD1d,
@@ -140,7 +139,7 @@ export const FEES_1D_COLUMN: ColumnDef<TopPool, unknown> = {
   },
 }
 
-export const TRANSACTIONS_1D_COLUMN: ColumnDef<TopPool, unknown> = {
+export const TRANSACTIONS_1D_COLUMN: ColumnDef<StellarPool, unknown> = {
   id: 'txCount1d',
   header: 'Transactions (24h)',
   accessorFn: (row) => row.txCount1d,
@@ -154,7 +153,7 @@ export const TRANSACTIONS_1D_COLUMN: ColumnDef<TopPool, unknown> = {
   },
 }
 
-export const APR_COLUMN: ColumnDef<TopPool, unknown> = {
+export const APR_COLUMN: ColumnDef<StellarPool, unknown> = {
   id: 'totalApr1d',
   header: 'APR',
   accessorFn: (row) => row.totalApr1d,
