@@ -1,7 +1,6 @@
-import { CardItem } from '@sushiswap/ui'
+import { CardItem, Currency } from '@sushiswap/ui'
 import { formatUSD } from 'sushi'
 import type { StellarToken } from 'sushi/stellar'
-import { TokenIcon } from '../General/TokenIcon'
 
 interface LiquidityItemProps {
   isLoading: boolean
@@ -24,7 +23,7 @@ export const LiquidityItem = ({
     <CardItem
       title={
         <div className="font-medium flex items-center gap-2 text-muted-foreground">
-          <TokenIcon currency={token} width={18} height={18} />
+          <Currency.Icon disableLink currency={token} width={18} height={18} />
           {token.symbol}
         </div>
       }

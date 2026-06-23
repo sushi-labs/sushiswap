@@ -1,13 +1,16 @@
 'use client'
 
 import {
+  type TrendingTokensChainId,
   isTokenListChainId,
   isTrendingTokensChainId,
 } from '@sushiswap/graph-client/data-api'
 import { useMemo } from 'react'
 import type { WalletAddressFor } from 'src/lib/wallet'
-import { EVM_DEFAULT_BASES, type EvmChainId, isEvmChainId } from 'sushi/evm'
-import { SVM_DEFAULT_BASES, type SvmChainId, isSvmChainId } from 'sushi/svm'
+import { EVM_DEFAULT_BASES, isEvmChainId } from 'sushi/evm'
+import { STELLAR_DEFAULT_BASES, isStellarChainId } from 'sushi/stellar'
+import { SVM_DEFAULT_BASES, isSvmChainId } from 'sushi/svm'
+import type { TokenSelectorChainId } from './config'
 import { useMyTokens } from './hooks/use-my-tokens'
 import { useSearchTokens } from './hooks/use-search-tokens'
 import { useTrendingTokens } from './hooks/use-trending-tokens'
@@ -17,7 +20,7 @@ import { TokenSelectorMyTokens } from './token-lists/token-selector-my-tokens'
 import { TokenSelectorSearch } from './token-lists/token-selector-search'
 import { TokenSelectorTrendingTokens } from './token-lists/token-selector-trending-tokens'
 
-interface TokenSelectorStates<TChainId extends EvmChainId | SvmChainId> {
+interface TokenSelectorStates<TChainId extends TokenSelectorChainId> {
   selected: CurrencyFor<TChainId> | undefined
   chainId: TChainId
   account?: WalletAddressFor<TChainId>
@@ -25,11 +28,10 @@ interface TokenSelectorStates<TChainId extends EvmChainId | SvmChainId> {
   onShowInfo(currency: CurrencyFor<TChainId> | false): void
   currencies?: CurrencyFor<TChainId, { approved?: boolean }>[]
   includeNative?: boolean
-  hidePinnedTokens?: boolean
   search?: string
 }
 
-export function TokenSelectorStates<TChainId extends EvmChainId | SvmChainId>({
+export function TokenSelectorStates<TChainId extends TokenSelectorChainId>({
   selected,
   chainId,
   account,
@@ -37,7 +39,6 @@ export function TokenSelectorStates<TChainId extends EvmChainId | SvmChainId>({
   onShowInfo,
   currencies,
   includeNative,
-  hidePinnedTokens,
   search,
 }: TokenSelectorStates<TChainId>) {
   // Ensure that the user's tokens are loaded
@@ -64,12 +65,16 @@ export function TokenSelectorStates<TChainId extends EvmChainId | SvmChainId>({
   const defaultBases = useMemo(() => {
     if (isEvmChainId(chainId)) {
       return EVM_DEFAULT_BASES[chainId]
-    } else if (isSvmChainId(chainId)) {
+    }
+    if (isSvmChainId(chainId)) {
       return SVM_DEFAULT_BASES[chainId]
+    }
+    if (isStellarChainId(chainId)) {
+      return STELLAR_DEFAULT_BASES[chainId]
     }
 
     throw new Error('Unsupported chainId')
-  }, [chainId]) as Readonly<CurrencyFor<TChainId>[]>
+  }, [chainId]) as unknown as Readonly<CurrencyFor<TChainId>[]>
 
   if (currencies) {
     return (
@@ -98,25 +103,6 @@ export function TokenSelectorStates<TChainId extends EvmChainId | SvmChainId>({
     )
   }
 
-  if (!isTokenListChainId(chainId) && isTrendingTokensChainId(chainId)) {
-    return (
-      <>
-        <TokenSelectorChipBar
-          chainId={chainId}
-          onSelect={onSelect}
-          includeNative={includeNative}
-          showPinnedTokens={!hidePinnedTokens}
-        />
-        <TokenSelectorTrendingTokens
-          chainId={chainId}
-          onSelect={onSelect}
-          onShowInfo={onShowInfo}
-          selected={selected}
-        />
-      </>
-    )
-  }
-
   if (isTokenListChainId(chainId) && !isTrendingTokensChainId(chainId)) {
     return (
       <>
@@ -124,7 +110,6 @@ export function TokenSelectorStates<TChainId extends EvmChainId | SvmChainId>({
           chainId={chainId}
           onSelect={onSelect}
           includeNative={includeNative}
-          showPinnedTokens={!hidePinnedTokens}
         />
 
         {account ? (
@@ -133,6 +118,7 @@ export function TokenSelectorStates<TChainId extends EvmChainId | SvmChainId>({
             onSelect={onSelect}
             onShowInfo={onShowInfo}
             selected={selected}
+            includeNative={includeNative}
           />
         ) : null}
 
@@ -147,14 +133,16 @@ export function TokenSelectorStates<TChainId extends EvmChainId | SvmChainId>({
     )
   }
 
-  if (isTokenListChainId(chainId) && isTrendingTokensChainId(chainId)) {
+  if (isTrendingTokensChainId(chainId)) {
+    type TTrendingChainId = Extract<TChainId, TrendingTokensChainId>
+    const trendingChainId = chainId as TTrendingChainId
+
     return (
       <>
         <TokenSelectorChipBar
           chainId={chainId}
           onSelect={onSelect}
           includeNative={includeNative}
-          showPinnedTokens={!hidePinnedTokens}
         />
 
         {account ? (
@@ -168,10 +156,16 @@ export function TokenSelectorStates<TChainId extends EvmChainId | SvmChainId>({
         ) : null}
 
         <TokenSelectorTrendingTokens
-          chainId={chainId}
-          onSelect={onSelect}
-          onShowInfo={onShowInfo}
-          selected={selected}
+          chainId={trendingChainId}
+          onSelect={
+            onSelect as (currency: CurrencyFor<TTrendingChainId>) => void
+          }
+          onShowInfo={
+            onShowInfo as (
+              currency: CurrencyFor<TTrendingChainId> | false,
+            ) => void
+          }
+          selected={selected as CurrencyFor<TTrendingChainId> | undefined}
         />
       </>
     )

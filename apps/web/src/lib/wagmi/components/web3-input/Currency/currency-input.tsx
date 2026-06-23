@@ -45,7 +45,6 @@ interface CurrencyInputProps<
   currencies?: Record<string, CurrencyFor<TChainId>>
   allowNative?: boolean
   error?: string
-  hidePinnedTokens?: boolean
   disableInsufficientBalanceError?: boolean
   hideSearch?: boolean
   hidePricing?: boolean
@@ -78,7 +77,6 @@ function CurrencyInput<
   currencies,
   allowNative = true,
   error,
-  hidePinnedTokens = false,
   disableInsufficientBalanceError = false,
   hideSearch = false,
   hidePricing = false,
@@ -160,7 +158,6 @@ function CurrencyInput<
         onSelect={onSelect}
         currencies={currencies}
         includeNative={allowNative}
-        hidePinnedTokens={hidePinnedTokens}
         hideSearch={hideSearch}
         networks={networks}
         selectedNetwork={selectedNetwork}
@@ -241,7 +238,6 @@ function CurrencyInput<
     currency,
     chainId,
     allowNative,
-    hidePinnedTokens,
     hideSearch,
     networks,
     selectedNetwork,
@@ -295,7 +291,7 @@ function CurrencyInput<
         </div>
 
         {selector}
-        {!onSelect ? (
+        {!selector ? (
           <div
             id={`${id}-button`}
             className={classNames(

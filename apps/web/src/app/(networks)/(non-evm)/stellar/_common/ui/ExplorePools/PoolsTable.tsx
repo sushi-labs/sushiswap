@@ -13,9 +13,9 @@ import type { SortingState, TableState } from '@tanstack/react-table'
 import { useCallback, useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
 import {
-  type TopPool,
-  useTopPools,
-} from '~stellar/_common/lib/hooks/pool/use-top-pools'
+  type StellarPool,
+  useStellarPools,
+} from '~stellar/_common/lib/hooks/pool/use-stellar-pools'
 import {
   APR_COLUMN,
   FEES_1D_COLUMN,
@@ -27,7 +27,7 @@ import {
 
 export const PoolsTable = () => {
   // Dynamic page links
-  const rowLink = useCallback((row: TopPool) => {
+  const rowLink = useCallback((row: StellarPool) => {
     return `/stellar/pool/${row.address}`
   }, [])
 
@@ -43,11 +43,11 @@ export const PoolsTable = () => {
     isFetching,
     error,
     refetch,
-  } = useTopPools()
+  } = useStellarPools()
 
   const { tokenSymbols } = usePoolFilters()
 
-  const filteredMergedPools: TopPool[] = useMemo(() => {
+  const filteredMergedPools: StellarPool[] = useMemo(() => {
     const pools = topPools ?? []
     if (tokenSymbols.length === 0) {
       return pools

@@ -7,7 +7,11 @@ import type {
   TxHashFor as _TxHashFor,
 } from 'sushi'
 import type { EvmChainId, EvmCurrency, EvmToken } from 'sushi/evm'
-import type { StellarAccountAddress, StellarChainId } from 'sushi/stellar'
+import type {
+  StellarAccountAddress,
+  StellarChainId,
+  StellarContractAddress,
+} from 'sushi/stellar'
 import type { SvmChainId, SvmCurrency, SvmToken } from 'sushi/svm'
 import type { Address } from 'viem'
 
@@ -16,6 +20,12 @@ export declare global {
     TChainId extends EvmChainId | SvmChainId | StellarChainId,
   > = TChainId extends StellarChainId
     ? StellarAccountAddress
+    : _AddressFor<TChainId>
+
+  type ContractAddressFor<
+    TChainId extends EvmChainId | SvmChainId | StellarChainId,
+  > = TChainId extends StellarChainId
+    ? StellarContractAddress
     : _AddressFor<TChainId>
 
   type AddressFor<TChainId extends EvmChainId | SvmChainId | StellarChainId> =

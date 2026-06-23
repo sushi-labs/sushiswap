@@ -47,9 +47,11 @@ export function TokenSelectorSearch<TChainId extends TokenListChainId>({
     },
   })
 
-  const { data: pricesMap } = usePrices({ chainId })
+  const { data: pricesMap } = usePrices({
+    chainId,
+  })
 
-  const { data: _customTokens, mutate } = useCustomTokens()
+  const { data: _customTokens, mutate } = useCustomTokens({ chainId })
   const customTokens = useMemo(
     () =>
       Object.values(_customTokens)

@@ -3,17 +3,19 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { Fraction, withoutScientificNotation } from 'sushi'
 import { type EvmAddress, type EvmChainId, isEvmChainId } from 'sushi/evm'
+import type { StellarChainId, StellarContractAddress } from 'sushi/stellar'
 import { type SvmAddress, type SvmChainId, isSvmChainId } from 'sushi/svm'
 import { parseUnits } from 'viem'
 import { usePriceProvider } from './price-provider'
+import type { PriceChainId, PriceRequestChainId } from './types'
 
-export type PriceMap<TChainId extends EvmChainId | SvmChainId = EvmChainId> = {
-  has: (address: AddressFor<TChainId>) => boolean
-  get: (address: AddressFor<TChainId>) => number | undefined
-  getFraction: (address: AddressFor<TChainId>) => Fraction | undefined
+export type PriceMap<TChainId extends PriceChainId = EvmChainId> = {
+  has: (address: ContractAddressFor<TChainId>) => boolean
+  get: (address: ContractAddressFor<TChainId>) => number | undefined
+  getFraction: (address: ContractAddressFor<TChainId>) => Fraction | undefined
 }
 
-type UsePricesResult<TChainId extends EvmChainId | SvmChainId> = {
+type UsePricesResult<TChainId extends PriceChainId = EvmChainId> = {
   data: PriceMap<TChainId> | undefined
   lastModified: number
   isLoading: boolean
@@ -29,20 +31,20 @@ const disabledData = {
   isError: false,
 }
 
-function translateAddress<TChainId extends EvmChainId | SvmChainId>(
+function translateAddress<TChainId extends PriceChainId>(
   chainId: TChainId,
-  address: AddressFor<TChainId>,
-): TChainId extends SvmChainId ? SvmAddress : bigint {
-  if (isSvmChainId(chainId)) {
-    // Solana addresses are strings, the API returns only JSON for SVM chains
-    return address as any
-  } else {
-    // EVM addresses are bigints, the API returns binary data for EVM chains
-    return BigInt(address) as any
+  address: ContractAddressFor<TChainId>,
+): TChainId extends EvmChainId ? bigint : ContractAddressFor<TChainId> {
+  if (isEvmChainId(chainId)) {
+    // EVM prices use binary payloads keyed by bigint-encoded addresses.
+    return BigInt(address as EvmAddress) as any
   }
+
+  // Non-EVM prices use JSON payloads keyed by string addresses.
+  return address as any
 }
 
-export function usePrices<TChainId extends EvmChainId | SvmChainId>({
+export function usePrices<TChainId extends PriceChainId>({
   chainId,
   enabled = true,
 }: {
@@ -52,7 +54,7 @@ export function usePrices<TChainId extends EvmChainId | SvmChainId>({
   // Important to use state, not state.chains directly, as the reference to state.chains won't be changing and the component won't re-render
   // It's not best practice, but it's controlled here in the hook and not exposed
   const { state, mutate } = usePriceProvider()
-  const requestedRef = useRef<Set<SvmAddress>>(new Set())
+  const requestedRef = useRef<Set<ContractAddressFor<TChainId>>>(new Set())
 
   useEffect(() => {
     if (state.ready && chainId && enabled) {
@@ -100,35 +102,23 @@ export function usePrices<TChainId extends EvmChainId | SvmChainId>({
       }
 
     const data: PriceMap<TChainId> = {
-      has: (_address: AddressFor<TChainId>) => {
+      has: (_address: ContractAddressFor<TChainId>) => {
         const address = translateAddress(chainId, _address)
 
         const hasPrice = chain.priceMap!.has(address)
-        if (!hasPrice && isSvmChainId(chainId)) {
-          const svmAddress = _address as SvmAddress
-          if (!requestedRef.current.has(svmAddress)) {
-            requestedRef.current.add(svmAddress)
-            mutate.requestPrices(chainId, [svmAddress])
-          }
-        }
+        if (!hasPrice) requestMissingPrice(chainId, _address)
 
         return hasPrice
       },
-      get: (_address: AddressFor<TChainId>) => {
+      get: (_address: ContractAddressFor<TChainId>) => {
         const address = translateAddress(chainId, _address)
 
         const price = chain.priceMap!.get(address)
-        if (price === undefined && isSvmChainId(chainId)) {
-          const svmAddress = _address as SvmAddress
-          if (!requestedRef.current.has(svmAddress)) {
-            requestedRef.current.add(svmAddress)
-            mutate.requestPrices(chainId, [svmAddress])
-          }
-        }
+        if (price === undefined) requestMissingPrice(chainId, _address)
         return price
       },
 
-      getFraction: (_address: AddressFor<TChainId>) => {
+      getFraction: (_address: ContractAddressFor<TChainId>) => {
         const address = translateAddress(chainId, _address)
 
         const price = chain.priceMap!.get(address)
@@ -141,15 +131,22 @@ export function usePrices<TChainId extends EvmChainId | SvmChainId>({
             denominator: parseUnits('1', 18).toString(),
           })
         }
-        if (isSvmChainId(chainId)) {
-          const svmAddress = _address as SvmAddress
-          if (!requestedRef.current.has(svmAddress)) {
-            requestedRef.current.add(svmAddress)
-            mutate.requestPrices(chainId, [svmAddress])
-          }
-        }
+        requestMissingPrice(chainId, _address)
         return undefined
       },
+    }
+
+    function requestMissingPrice(
+      chainId: TChainId,
+      address: ContractAddressFor<TChainId>,
+    ) {
+      if (!isSvmChainId(chainId)) return
+
+      const requestAddress = address as ContractAddressFor<TChainId>
+      if (requestedRef.current.has(requestAddress)) return
+
+      requestedRef.current.add(requestAddress)
+      mutate.requestPrices(chainId as PriceRequestChainId, [requestAddress])
     }
 
     return {

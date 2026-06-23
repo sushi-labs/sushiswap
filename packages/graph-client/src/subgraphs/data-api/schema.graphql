@@ -38,6 +38,7 @@ type Query {
   pools(chainId: PoolChainId!, page: Int = 1, search: [String], protocols: [Protocol], onlyIncentivized: Boolean = false, onlySmartPools: Boolean = false, orderBy: PoolsOrderBy = liquidityUSD, orderDirection: OrderDirection = desc): Pools!
   poolAddresses(chainId: PoolChainId!, protocols: [Protocol]): [Bytes!]!
   topPools(chainId: ChainId!): [TopPool!]!
+  stellarPools(chainId: ChainId!): [StellarPool!]!
   v2Pool(address: Bytes!, chainId: SushiSwapV2ChainId!): V2Pool!
   v3Pool(address: Bytes!, chainId: SushiSwapV3ChainId!): V3Pool!
   v2PoolBuckets(address: Bytes!, chainId: SushiSwapV2ChainId!): PoolBuckets!
@@ -436,6 +437,34 @@ type TopPool {
   wasIncentivized: Boolean!
 }
 
+type StellarPoolToken {
+  id: ID!
+  chainId: ChainId!
+  address: ContractAddress!
+  name: String!
+  symbol: String!
+  decimals: Int!
+  approved: Boolean!
+  stellarMetadata: StellarTokenMetadata!
+}
+
+type StellarPool {
+  id: ID!
+  chainId: ChainId!
+  name: String!
+  address: ContractAddress!
+  swapFee: Float!
+  protocol: String!
+  token0: StellarPoolToken!
+  token1: StellarPoolToken!
+  liquidityUSD: Float!
+  txCount1d: Int!
+  feeUSD1d: Float!
+  volumeUSD1d: Float!
+  totalApr1d: Float!
+  incentiveApr: Float!
+}
+
 type Pool {
   id: ID!
   chainId: Int!
@@ -812,8 +841,8 @@ type SushiBarHistory {
 }
 
 type StellarTokenMetadata {
-  issuer: StellarAccountAddress!
-  domain: String!
+  issuer: StellarAccountAddress
+  domain: String
 }
 
 type TokenListEntry {

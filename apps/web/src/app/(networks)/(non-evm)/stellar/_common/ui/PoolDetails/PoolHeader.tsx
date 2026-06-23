@@ -15,7 +15,6 @@ import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import { formatAddress, formatFee } from '~stellar/_common/lib/utils/format'
 import { usePoolInfo } from '../../lib/hooks/pool/use-pool-info'
 import { getStellarContractLink } from '../../lib/utils/stellarchain-helpers'
-import { TokenIcon } from '../General/TokenIcon'
 
 interface PoolHeaderProps {
   pool?: PoolInfo | null
@@ -55,8 +54,8 @@ export const PoolHeader = ({ pool, backUrl, address }: PoolHeaderProps) => {
         ) : actualPool ? (
           <div className="relative flex items-center gap-3 max-w-[100vh]">
             <Currency.IconList iconWidth={36} iconHeight={36}>
-              <TokenIcon currency={actualPool.token0} />
-              <TokenIcon currency={actualPool.token1} />
+              <Currency.Icon disableLink currency={actualPool.token0} />
+              <Currency.Icon disableLink currency={actualPool.token1} />
             </Currency.IconList>
             <Button
               asChild
