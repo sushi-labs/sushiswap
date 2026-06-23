@@ -1,3 +1,4 @@
+import { truncateString } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
 
 export type AccountType = 'vault' | 'master'
@@ -25,6 +26,7 @@ function getMasterAccount(address: EvmAddress): ActiveAccount {
     address,
     type: 'master',
     walletAddress: address,
+    name: truncateString(address, 10, 'middle'),
   }
 }
 
