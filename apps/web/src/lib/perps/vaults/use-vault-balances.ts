@@ -93,6 +93,9 @@ export const useVaultBalances = (vaultAddress: EvmAddress) => {
           const spot = Array.from(assetList?.entries() ?? []).find(([, v]) =>
             v?.tokens?.find((t) => t?.index === tokenIndex),
           )?.[1]
+          if (!spot) {
+            return null
+          }
           const price = i.coin === 'USDC' ? 1 : (Number(spot?.markPrice) ?? 0)
           let total = Number(i.total || 0)
 
