@@ -1,6 +1,7 @@
 import { classNames } from '@sushiswap/ui'
 import { useUserAccountValues } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
+import { useActiveAccountState } from '../../active-account-provider'
 import { PerpsCard } from '../_common/perps-card'
 import { AccountManagementSkeleton } from './account-management-skeleton'
 import { AccountSummary } from './account-summary'
@@ -16,7 +17,9 @@ export const AccountManagement = ({ className }: { className?: string }) => {
   const {
     state: { isUnifiedAccountModeEnabled },
   } = useUserSettingsState()
-
+  const {
+    state: { activeAccount },
+  } = useActiveAccountState()
   return (
     <PerpsCard
       fullHeight
@@ -35,7 +38,9 @@ export const AccountManagement = ({ className }: { className?: string }) => {
           <div
             className={classNames(
               'flex flex-col gap-2',
-              !address ? 'opacity-50 pointer-events-none' : '',
+              !address || activeAccount?.type === 'vault'
+                ? 'opacity-50 pointer-events-none'
+                : '',
             )}
           >
             <DepositDialog />
