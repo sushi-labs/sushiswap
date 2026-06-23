@@ -9,6 +9,7 @@ import {
   PerpsDialogTitle,
   PerpsDialogTrigger,
 } from '@sushiswap/ui'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { CheckboxSetting } from '../_common'
 import { useUserSettingsState } from './settings-provider'
 
@@ -41,6 +42,9 @@ export const SettingsDialog = () => {
       setShowPnlCardOnMarketClose,
     },
   } = useUserSettingsState()
+  const {
+    state: { activeAccount },
+  } = useActiveAccountState()
   return (
     <PerpsDialog>
       <PerpsDialogTrigger asChild>
@@ -103,24 +107,30 @@ export const SettingsDialog = () => {
               onChange={setShowPnlCardOnMarketClose}
               label="Show Share PnL on Market Close"
             />
-            <CheckboxSetting
-              value={optOutOfSpotDustCollection}
-              onChange={setOptOutOfSpotDustCollection}
-              label="Opt Out of Spot Dust Collection"
-            />
+            {activeAccount?.type === 'vault' ? null : (
+              <CheckboxSetting
+                value={optOutOfSpotDustCollection}
+                onChange={setOptOutOfSpotDustCollection}
+                label="Opt Out of Spot Dust Collection"
+              />
+            )}
             {/* todo: sound effects on click? */}
             {/* todo: sound effects on on fill */}
-            <div className="bg-accent w-full h-[1px]" />
-            <CheckboxSetting
-              value={!isDexAbstractionEnabled}
-              onChange={setDexAbstractionEnabled}
-              label="Disable HIP-3 Dex Abstraction"
-            />
-            <CheckboxSetting
-              value={!isUnifiedAccountModeEnabled}
-              onChange={setUnifiedAccountModeEnabled}
-              label="Disable Unified Account Mode"
-            />
+            {activeAccount?.type === 'vault' ? null : (
+              <>
+                <div className="bg-accent w-full h-[1px]" />
+                <CheckboxSetting
+                  value={!isDexAbstractionEnabled}
+                  onChange={setDexAbstractionEnabled}
+                  label="Disable HIP-3 Dex Abstraction"
+                />
+                <CheckboxSetting
+                  value={!isUnifiedAccountModeEnabled}
+                  onChange={setUnifiedAccountModeEnabled}
+                  label="Disable Unified Account Mode"
+                />
+              </>
+            )}
           </div>
         </PerpsDialogInnerContent>
       </PerpsDialogContent>

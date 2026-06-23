@@ -1,8 +1,8 @@
 import type { UserFillsEvent } from '@nktkas/hyperliquid/api/subscription'
 import { useMemo } from 'react'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserState } from '~evm/perps/user-provider'
-import { useAccount } from '../../wallet'
 import { SPOT_ASSETS_TO_REWRITE, getPerpsDexAndCoin } from '../utils'
 
 export const formatTradeHistoryItem = (
@@ -38,7 +38,10 @@ export const formatTradeHistoryItem = (
 }
 
 export const useTradeHistory = () => {
-  const address = useAccount('evm')
+  const {
+    state: { activeAddress },
+  } = useActiveAccountState()
+  const address = activeAddress
   const {
     state: {
       userFillsQuery: {

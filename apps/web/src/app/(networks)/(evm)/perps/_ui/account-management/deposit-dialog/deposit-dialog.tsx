@@ -21,6 +21,7 @@ import { useSidebar } from 'src/app/(networks)/_ui/sidebar'
 import { getChainById } from 'sushi'
 import { type EvmAddress, EvmChainId, EvmNative, EvmToken } from 'sushi/evm'
 import { SvmChainId, SvmNative, SvmToken, svmAddress } from 'sushi/svm'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { AnyTokenDeposit } from './any-token-deposit'
 // import { FiatDeposit } from './fiat-deposit'
 import { HyperunitOptions } from './hyperunit/hyperunit-options'
@@ -265,6 +266,9 @@ export const DepositDialog = ({
   isOpen?: boolean
   onOpenChange?: (open: boolean) => void
 }) => {
+  const {
+    state: { activeAccount },
+  } = useActiveAccountState()
   const { isOpen: isSidebarOpen } = useSidebar()
   const [selectedChain, setSelectedChain] = useState<DepositChainOption>(
     DEPOSIT_CHAIN_OPTIONS[0],
@@ -340,7 +344,7 @@ export const DepositDialog = ({
 
   return (
     <PerpsDialog open={resolvedOpen} onOpenChange={handleOpenChange}>
-      <PerpsDialogTrigger asChild>
+      <PerpsDialogTrigger asChild disabled={activeAccount?.type === 'vault'}>
         {trigger ? (
           trigger
         ) : (

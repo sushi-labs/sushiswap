@@ -10,15 +10,18 @@ import {
 import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
 import { useState } from 'react'
 import { formatPerpsPercent, useFees } from 'src/lib/perps'
-import { useAccount } from 'src/lib/wallet'
 import { PerpsCard } from '~evm/perps/_ui/_common'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 
 const FEE_TYPES = ['perps', 'spot'] as const
 
 export const Fees = () => {
   const [open, setOpen] = useState(false)
   const [side, setSide] = useState<(typeof FEE_TYPES)[number]>('perps')
-  const address = useAccount('evm')
+  const {
+    state: { activeAddress },
+  } = useActiveAccountState()
+  const address = activeAddress
   const { takerFee, makerFee } = useFees({
     address,
     marketType: side === 'perps' ? 'perp' : 'spot',

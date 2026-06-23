@@ -1,11 +1,14 @@
 import { useMemo } from 'react'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
-import { useAccount } from '../../wallet'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserActiveTwap } from '../subscription/use-user-active-twap'
 import { formatDuration } from '../utils'
 
 export const useActiveTwap = () => {
-  const address = useAccount('evm')
+  const {
+    state: { activeAddress },
+  } = useActiveAccountState()
+  const address = activeAddress
   const {
     data,
     isLoading: isLoadingActiveTwap,

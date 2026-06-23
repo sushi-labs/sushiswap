@@ -1,10 +1,13 @@
 import { useMemo } from 'react'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserState } from '~evm/perps/user-provider'
-import { useAccount } from '../../wallet'
 
 export const useUserOpenOrders = ({ coin }: { coin?: string }) => {
-  const address = useAccount('evm')
+  const {
+    state: { activeAddress },
+  } = useActiveAccountState()
+  const address = activeAddress
   const {
     state: {
       openOrdersQuery: {

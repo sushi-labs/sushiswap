@@ -5,7 +5,7 @@ import {
   createInfoToast,
   createSuccessToast,
 } from '@sushiswap/notifications'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
 import {
   TOAST_AUTOCLOSE_TIME,
@@ -13,6 +13,7 @@ import {
   useAgent,
   useLegalCheck,
 } from '../..'
+import { getLeadingVaultsQueryKey } from '../../info/use-leading-vaults'
 
 type CreateData = {
   name: string
@@ -21,6 +22,7 @@ type CreateData = {
 }
 
 export const useCreateVault = () => {
+  const queryClient = useQueryClient()
   const { agentAccount } = useAgent()
   const address = useAccount('evm')
   const { data: legalCheck } = useLegalCheck({ address })
@@ -81,7 +83,7 @@ export const useCreateVault = () => {
       return { ts }
     },
 
-    onSuccess: (_res, _vars, ctx) => {
+    onSuccess: async (_res, _vars, ctx) => {
       if (!agentAccount || !ctx) return
 
       createSuccessToast({
@@ -93,6 +95,10 @@ export const useCreateVault = () => {
         groupTimestamp: ctx.ts,
         autoClose: TOAST_AUTOCLOSE_TIME,
         variant: 'perps',
+      })
+
+      await queryClient.invalidateQueries({
+        queryKey: getLeadingVaultsQueryKey(address),
       })
     },
 

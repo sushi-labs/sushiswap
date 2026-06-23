@@ -18,6 +18,7 @@ import {
   useUserNotifications,
 } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserState } from '~evm/perps/user-provider'
 import {
   type AnyTradeType,
@@ -72,7 +73,10 @@ interface UserSettingsProviderProps {
 const BASE_STORAGE_KEY = 'sushi.perps.user-settings'
 
 const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
-  const address = useAccount('evm')
+  const {
+    state: { activeAddress },
+  } = useActiveAccountState()
+  const address = activeAddress
   const {
     state: {
       webData3Query: { data: webData3 },

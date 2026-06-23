@@ -1,5 +1,9 @@
 import { useBreakpoint } from '@sushiswap/hooks'
-import { AssetSelectorAndStats, GeoBlockedMessage } from '../_common'
+import {
+  AssetSelectorAndStats,
+  GeoBlockedMessage,
+  VaultTradingMessage,
+} from '../_common'
 import { AccountManagement } from '../account-management'
 import { Chart } from '../chart'
 import { Favorites } from '../favorites'
@@ -13,6 +17,7 @@ export const DesktopLayout = () => {
   return (
     <div className="h-[calc(100vh-60px)] w-full overflow-x-hidden ">
       <GeoBlockedMessage />
+      <VaultTradingMessage />
       <div className="flex gap-1 min-w-0 mt-1 px-1 pb-20">
         <div className="flex flex-col flex-1 gap-1 min-w-0">
           <div className="flex gap-1 w-full min-w-0">

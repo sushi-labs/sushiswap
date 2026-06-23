@@ -8,8 +8,13 @@ import { useMutation } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
 import type { EvmAddress } from 'sushi/evm'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useAgent } from '../agent'
-import { BUILDER_FEE_RECEIVER, TOAST_AUTOCLOSE_TIME } from '../config'
+import {
+  BUILDER_FEE_RECEIVER,
+  IS_PERPS_TESTNET,
+  TOAST_AUTOCLOSE_TIME,
+} from '../config'
 import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
 import { getAssetIdForConverter } from '../utils'
@@ -52,7 +57,6 @@ export type OrderData = {
   builder: {
     builderFee: number //Builder fee in 0.1bps (1 = 0.0001%). Max 100 for perps (0.1%), 1000 for spot (1%).
   }
-  vaultAddress?: EvmAddress
 }
 
 export const useExecuteOrders = () => {
@@ -65,9 +69,16 @@ export const useExecuteOrders = () => {
   } = useAssetListState()
   const address = useAccount('evm')
   const { data: legalCheck } = useLegalCheck({ address })
-
+  const {
+    state: { activeAccount },
+  } = useActiveAccountState()
   const mutation = useMutation({
-    mutationKey: ['execute-orders', agentAccount?.address, legalCheck],
+    mutationKey: [
+      'execute-orders',
+      agentAccount?.address,
+      legalCheck,
+      activeAccount?.address,
+    ],
     mutationFn: async ({ orderData }: { orderData: OrderData }) => {
       if (!agentAccount || orderData.orders.length === 0) {
         return
@@ -105,19 +116,23 @@ export const useExecuteOrders = () => {
       // console.log(orders)
       const _orderData: OrderParameters = {
         orders,
-        builder: {
-          b: BUILDER_FEE_RECEIVER,
-          f: orderData.builder.builderFee,
-        },
+        ...(IS_PERPS_TESTNET
+          ? {}
+          : {
+              builder: {
+                b: BUILDER_FEE_RECEIVER,
+                f: orderData.builder.builderFee,
+              },
+            }),
         ...(orderData.grouping ? { grouping: orderData.grouping } : {}),
-        ...(orderData.vaultAddress
-          ? { vaultAddress: orderData.vaultAddress }
-          : {}),
       }
-      // console.log('_orderData', _orderData)
       return order(
         { wallet: agentAccount, transport: hlHttpTransport },
         _orderData,
+        {
+          vaultAddress:
+            activeAccount?.type === 'vault' ? activeAccount.address : undefined,
+        },
       )
     },
 

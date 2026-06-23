@@ -5,7 +5,7 @@ import {
   type UserNonFundingLedgerUpdatesItemType,
   useUserNonFundingLedgerUpdates,
 } from 'src/lib/perps'
-import { useAccount } from 'src/lib/wallet'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { MobileTable, tableRowClassName } from '../_common'
 import {
   ACC_VAL_CHANGE_COLUMN,
@@ -39,7 +39,10 @@ const MOBILE_COLUMNS = [
 
 export const DepositsWithdrawalsTable = () => {
   const { isLg } = useBreakpoint('lg')
-  const address = useAccount('evm')
+  const {
+    state: { activeAddress },
+  } = useActiveAccountState()
+  const address = activeAddress
   const { data, isLoading, isError } = useUserNonFundingLedgerUpdates({
     address,
   })

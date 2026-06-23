@@ -1,6 +1,6 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useCallback } from 'react'
-import { useApproveBuilderFee } from 'src/lib/perps'
+import { IS_PERPS_TESTNET, useApproveBuilderFee } from 'src/lib/perps'
 
 export const BuilderFee: FC<ButtonProps> = ({
   children,
@@ -22,6 +22,9 @@ export const BuilderFee: FC<ButtonProps> = ({
       console.log(error)
     }
   }, [approveBuilderFeeAsync])
+  if (IS_PERPS_TESTNET) {
+    return <>{children}</>
+  }
 
   if (!hasApprovedBuilder) {
     return (

@@ -1,12 +1,18 @@
 import { DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useCallback, useMemo, useState } from 'react'
-import { type UserPositionsItemType, useVaultPositions } from 'src/lib/perps'
+import {
+  type UserPositionsItemType,
+  useVaultDetails,
+  useVaultPositions,
+} from 'src/lib/perps'
+import { useAccount } from 'src/lib/wallet'
 import {
   MobileTable,
   tableRowClassName,
 } from '~evm/perps/_ui/trade-tables/_common'
 import {
+  CLOSE_COLUMN,
   COIN_COLUMN,
   ENTRY_PRICE_COLUMN,
   FUNDING_COLUMN,
@@ -16,7 +22,9 @@ import {
   PNL_COLUMN,
   POSITION_VALUE_COLUMN,
   SIZE_COLUMN,
+  TP_SL_COLUMN,
 } from '~evm/perps/_ui/trade-tables/positions-table/columns'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { type VaultFilterType, useVaultTables } from './vault-tables-provider'
 
 type PositionAction =
@@ -31,9 +39,11 @@ type PositionAction =
 const getPositionColumns = ({
   openModal,
   isMobile,
+  isVaultLeaderAndActiveAccountIsVault,
 }: {
   openModal: (action: PositionAction, position: UserPositionsItemType) => void
   isMobile: boolean
+  isVaultLeaderAndActiveAccountIsVault: boolean
 }): ColumnDef<UserPositionsItemType, unknown>[] => {
   if (isMobile) {
     return [
@@ -46,6 +56,12 @@ const getPositionColumns = ({
       POSITION_VALUE_COLUMN,
       MARGIN_COLUMN(openModal),
       FUNDING_COLUMN,
+      ...(isVaultLeaderAndActiveAccountIsVault
+        ? [TP_SL_COLUMN(openModal)]
+        : []),
+      ...(isVaultLeaderAndActiveAccountIsVault
+        ? [CLOSE_COLUMN(openModal)]
+        : []),
     ]
   }
   return [
@@ -58,6 +74,8 @@ const getPositionColumns = ({
     LIQUIDATION_PRICE_COLUMN,
     MARGIN_COLUMN(openModal),
     FUNDING_COLUMN,
+    ...(isVaultLeaderAndActiveAccountIsVault ? [CLOSE_COLUMN(openModal)] : []),
+    ...(isVaultLeaderAndActiveAccountIsVault ? [TP_SL_COLUMN(openModal)] : []),
   ]
 }
 
@@ -68,15 +86,38 @@ export const PositionsTable = () => {
   const { data, isLoading, isError } = useVaultPositions(vaultAddress)
   const [sorting, setSorting] = useState([{ id: 'posValue', desc: true }])
   const { isLg } = useBreakpoint('lg')
+  const { data: vaultDetails, isLoading: isVaultDetailsLoading } =
+    useVaultDetails({ vaultAddress })
+  const address = useAccount('evm')
+  const {
+    state: { activeAddress },
+  } = useActiveAccountState()
 
   const openModal = useCallback(
     (_action: PositionAction, _position: UserPositionsItemType) => {},
     [],
   )
+  const isVaultLeaderAndActiveAccountIsVault = useMemo(() => {
+    if (isVaultDetailsLoading || !vaultDetails || !address) return false
+    const isLeader = address.toLowerCase() === vaultDetails.leader.toLowerCase()
+    return (
+      isLeader && activeAddress?.toLowerCase() === vaultAddress.toLowerCase()
+    )
+  }, [
+    vaultDetails,
+    isVaultDetailsLoading,
+    address,
+    vaultAddress,
+    activeAddress,
+  ])
 
   const columns = useMemo(() => {
-    return getPositionColumns({ openModal, isMobile: !isLg })
-  }, [openModal, isLg])
+    return getPositionColumns({
+      openModal,
+      isMobile: !isLg,
+      isVaultLeaderAndActiveAccountIsVault,
+    })
+  }, [openModal, isLg, isVaultLeaderAndActiveAccountIsVault])
 
   const filterValue = vaultFilter?.['positions']?.split(':')?.[1] as
     | VaultFilterType

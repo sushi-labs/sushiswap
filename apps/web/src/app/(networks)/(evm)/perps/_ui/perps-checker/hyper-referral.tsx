@@ -1,6 +1,6 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useCallback } from 'react'
-import { useSetHyperReferrer } from 'src/lib/perps'
+import { IS_PERPS_TESTNET, useSetHyperReferrer } from 'src/lib/perps'
 
 export const HyperReferral: FC<ButtonProps> = ({
   children,
@@ -22,6 +22,10 @@ export const HyperReferral: FC<ButtonProps> = ({
       console.log(error)
     }
   }, [setHyperReferrerCodeAsync])
+
+  if (IS_PERPS_TESTNET) {
+    return <>{children}</>
+  }
 
   if (!hasAcceptedHyperReferral) {
     return (

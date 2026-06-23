@@ -30,6 +30,7 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
 import { EvmChainId, EvmToken, USDC } from 'sushi/evm'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserState } from '~evm/perps/user-provider'
 import { ValueInput } from '../_common'
 import { useAssetListState } from '../asset-selector'
@@ -59,6 +60,9 @@ export const PerpSpotTransferDialog = ({
   const [amount, setAmount] = useState<string>('')
   const { data: sendableAssets } = useSendableAssets('stable')
   const { sendAsset, isPending } = useSendAsset()
+  const {
+    state: { activeAccount },
+  } = useActiveAccountState()
   const {
     state: {
       webData2Query: {
@@ -225,7 +229,7 @@ export const PerpSpotTransferDialog = ({
 
   return (
     <PerpsDialog open={resolvedOpen} onOpenChange={handleOpenChange}>
-      <PerpsDialogTrigger asChild>
+      <PerpsDialogTrigger asChild disabled={activeAccount?.type === 'vault'}>
         {trigger ? (
           trigger
         ) : (

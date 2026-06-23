@@ -12,6 +12,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
 import { parseUnits } from 'viem'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useAgent } from '../agent'
 import { TOAST_AUTOCLOSE_TIME } from '../config'
 import { useLegalCheck } from '../info/use-legal-check'
@@ -28,9 +29,16 @@ export const useUpdateIsolatedMargin = () => {
   } = useAssetListState()
   const address = useAccount('evm')
   const { data: legalCheck } = useLegalCheck({ address })
-
+  const {
+    state: { activeAccount },
+  } = useActiveAccountState()
   const mutation = useMutation({
-    mutationKey: ['update-isolated-margin', agentAccount?.address, legalCheck],
+    mutationKey: [
+      'update-isolated-margin',
+      agentAccount?.address,
+      legalCheck,
+      activeAccount?.address,
+    ],
     mutationFn: async ({
       assetString,
       side,
@@ -67,6 +75,10 @@ export const useUpdateIsolatedMargin = () => {
           transport: hlHttpTransport,
         },
         { asset: assetId, isBuy: side === 'long', ntli: amountToAddOrRemove },
+        {
+          vaultAddress:
+            activeAccount?.type === 'vault' ? activeAccount.address : undefined,
+        },
       )
     },
 

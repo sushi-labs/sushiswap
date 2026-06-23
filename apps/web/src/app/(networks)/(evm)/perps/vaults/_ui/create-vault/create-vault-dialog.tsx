@@ -16,6 +16,7 @@ import { useCreateVault, useUserAccountValues } from 'src/lib/perps'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { parseUnits } from 'viem'
 import { PerpsChecker } from '~evm/perps/_ui/perps-checker'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 
 export const CreateVaultDialog = ({
   trigger,
@@ -36,7 +37,9 @@ export const CreateVaultDialog = ({
   const { perpsBalance } = useUserAccountValues()
   const isControlled = isOpen !== undefined
   const resolvedOpen = isControlled ? isOpen : open
-
+  const {
+    mutate: { setActiveAccount },
+  } = useActiveAccountState()
   const handleOpenChange = useCallback(
     (nextOpen: boolean) => {
       if (isControlled) {
@@ -50,13 +53,17 @@ export const CreateVaultDialog = ({
 
   const createVault = useCallback(async () => {
     try {
-      await createVaultAsync({
+      const res = await createVaultAsync({
         createData: {
           name: vaultName,
           description: vaultDescription,
           initialUsdcAmount: Number(parseUnits(depositAmount, 6)),
         },
       })
+      const createdVaultAddress = res?.response.data
+      if (createdVaultAddress) {
+        setActiveAccount(createdVaultAddress, 'vault', vaultName)
+      }
       onSuccess()
       handleOpenChange(false)
     } catch (e) {
@@ -69,6 +76,7 @@ export const CreateVaultDialog = ({
     onSuccess,
     createVaultAsync,
     handleOpenChange,
+    setActiveAccount,
   ])
 
   const insufficientBalance = Number(depositAmount) + 10_000 > perpsBalance

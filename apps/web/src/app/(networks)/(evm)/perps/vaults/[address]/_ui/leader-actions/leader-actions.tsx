@@ -12,6 +12,7 @@ import { type MouseEvent, useCallback, useState } from 'react'
 import { useVaultDetails, useVaultModify } from 'src/lib/perps'
 import type { EvmAddress } from 'sushi/evm'
 import { PerpsChecker } from '~evm/perps/_ui/perps-checker'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { CloseVaultDialog } from './close-vault-dialog'
 import { DistributeVaultDialog } from './distribute-vault-dialog'
 
@@ -23,7 +24,9 @@ export const LeaderActions = ({
   const { modifyVaultAsync, isPending } = useVaultModify()
   const [isCloseVaultOpen, setIsCloseVaultOpen] = useState(false)
   const [isDistributeOpen, setIsDistributeOpen] = useState(false)
-
+  const {
+    mutate: { setActiveAccount },
+  } = useActiveAccountState()
   const handleToggleDeposits = useCallback(
     async (e: MouseEvent<HTMLButtonElement>) => {
       if (!vaultAddress) return
@@ -77,6 +80,9 @@ export const LeaderActions = ({
             <LinkInternal
               href={`/perps`}
               className="flex flex-col !items-start gap-1 !text-xs cursor-pointer"
+              onClick={() => {
+                setActiveAccount(vaultAddress, 'vault', data?.name || '')
+              }}
             >
               Trade for Vault
             </LinkInternal>

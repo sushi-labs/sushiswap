@@ -49,7 +49,7 @@ export const ReversePositionDialog = ({
   const { executeOrders, isPending } = useExecuteOrders()
   const {
     state: {
-      assetListQuery: { data: assetListData },
+      assetListQuery: { data: assetListData, isLoading: assetListLoading },
     },
   } = useAssetListState()
   const { midPrice } = useMidPrice({
@@ -58,7 +58,7 @@ export const ReversePositionDialog = ({
   const { perpsEquity } = useUserAccountValues()
 
   const asset = useMemo(() => {
-    if (!positionToClose) return undefined
+    if (!positionToClose || assetListLoading) return undefined
     const _asset = assetListData?.get?.(positionToClose.position.coin)
     if (!_asset) {
       throw new Error(
@@ -66,7 +66,7 @@ export const ReversePositionDialog = ({
       )
     }
     return _asset
-  }, [assetListData, positionToClose])
+  }, [assetListData, positionToClose, assetListLoading])
 
   const { baseSymbol } = useSymbolSplit({ asset })
 

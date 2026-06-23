@@ -11,12 +11,15 @@ import {
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { currencyFormatter, useUserFees } from 'src/lib/perps'
-import { useAccount } from 'src/lib/wallet'
 import { formatUSD } from 'sushi'
 import { PerpsCard, TableButton } from '~evm/perps/_ui/_common'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 
 export const Volume = () => {
-  const address = useAccount('evm')
+  const {
+    state: { activeAddress },
+  } = useActiveAccountState()
+  const address = activeAddress
   const { data: feeData, isLoading, error } = useUserFees({ address })
   const total14DayVolume = useMemo(() => {
     if (isLoading || error || !feeData) return '0'

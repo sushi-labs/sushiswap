@@ -12,8 +12,8 @@ import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
 import { useMemo, useState } from 'react'
 import { usePortfolio } from 'src/lib/perps'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
-import { useAccount } from 'src/lib/wallet'
 import { DataChart, PerpsCard } from '~evm/perps/_ui/_common'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 
 const VIEWS = [
   {
@@ -64,7 +64,10 @@ export const AccountCharts = () => {
   const [openTime, setOpenTime] = useState(false)
   const [view, setView] = useState<(typeof VIEWS)[number]>(VIEWS[1])
   const [time, setTime] = useState<(typeof TIME)[number]>(TIME[0])
-  const address = useAccount('evm')
+  const {
+    state: { activeAddress },
+  } = useActiveAccountState()
+  const address = activeAddress
   const {
     data,
     isLoading: isLoadingPortfolio,

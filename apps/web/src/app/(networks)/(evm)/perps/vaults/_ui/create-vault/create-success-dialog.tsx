@@ -47,8 +47,8 @@ export const CreateSuccessDialog = ({
           <div className="flex flex-col gap-4 !text-xs">
             <p>Start trading from your new vault.</p>
             <p>
-              In the future, trade on behalf of your vault by using the address
-              selector in settings in the nav bar.
+              In the future, trade on behalf of your vault by using the account
+              selector in the nav bar.
             </p>
 
             <Button

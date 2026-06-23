@@ -390,15 +390,18 @@ function parseHyperliquidTx(
         accValChange: Number(d.amount) * (incoming ? 1 : -1),
       }
     }
-    case 'vaultCreate':
+    case 'vaultCreate': {
+      const isVault = me.toLowerCase() === d.vault.toLowerCase()
+
       return {
         action: 'Vault Create',
         source: 'Perps',
         destination: 'Perps',
-        feeAmount: 0,
-        accountValueChange: `-${perpsNumberFormatter({ value: d.usdc })} USDC`,
-        accValChange: Number(-d.usdc),
+        feeAmount: isVault ? 0 : 10_000,
+        accountValueChange: `${isVault ? '' : '-'}${perpsNumberFormatter({ value: d.usdc })} USDC`,
+        accValChange: Number(d.usdc) * (isVault ? 1 : -1),
       }
+    }
 
     case 'vaultDistribution': {
       const amount = Number(d.usdc ?? '0')
