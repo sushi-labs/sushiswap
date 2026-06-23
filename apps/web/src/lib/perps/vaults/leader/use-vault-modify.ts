@@ -8,12 +8,10 @@ import {
 import { useMutation } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
 import type { EvmAddress } from 'sushi/evm'
-import {
-  TOAST_AUTOCLOSE_TIME,
-  hlHttpTransport,
-  useAgent,
-  useLegalCheck,
-} from '../..'
+import { useAgent } from '../../agent'
+import { TOAST_AUTOCLOSE_TIME } from '../../config'
+import { useLegalCheck } from '../../info'
+import { hlHttpTransport } from '../../transports'
 
 export const useVaultModify = () => {
   const { agentAccount } = useAgent()

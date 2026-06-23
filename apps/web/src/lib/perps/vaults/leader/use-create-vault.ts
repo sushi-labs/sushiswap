@@ -7,13 +7,11 @@ import {
 } from '@sushiswap/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
-import {
-  TOAST_AUTOCLOSE_TIME,
-  hlHttpTransport,
-  useAgent,
-  useLegalCheck,
-} from '../..'
+import { useAgent } from '../../agent'
+import { TOAST_AUTOCLOSE_TIME } from '../../config'
+import { useLegalCheck } from '../../info'
 import { getLeadingVaultsQueryKey } from '../../info/use-leading-vaults'
+import { hlHttpTransport } from '../../transports'
 
 type CreateData = {
   name: string
