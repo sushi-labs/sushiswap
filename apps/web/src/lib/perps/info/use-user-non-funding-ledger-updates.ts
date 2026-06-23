@@ -410,8 +410,8 @@ function parseHyperliquidTx(
         source: 'Perps',
         destination: 'Perps',
         feeAmount: 0,
-        accountValueChange: `${amount >= 0 ? '' : '-'}${perpsNumberFormatter({ value: Math.abs(amount).toString() })} USDC`,
-        accValChange: amount,
+        accountValueChange: `-${perpsNumberFormatter({ value: Math.abs(amount).toString() })} USDC`,
+        accValChange: amount * -1,
       }
     }
 
