@@ -156,7 +156,7 @@ export const CreateVaultDialog = ({
               <p className="text-perps-muted-70">
                 Available balance in account:
               </p>
-              <p className="font-medium">{perpsBalance} USDC</p>
+              <p className="font-medium">{perpsBalance.toFixed(2)} USDC</p>
             </div>
             <p className="text-perps-muted-70">
               Leaders receive a 10% profit share. Note: the name and description

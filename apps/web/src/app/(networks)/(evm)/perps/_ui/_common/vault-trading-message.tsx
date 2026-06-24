@@ -1,6 +1,6 @@
 'use client'
 import { Message, classNames } from '@sushiswap/ui'
-import { useLegalCheck } from 'src/lib/perps'
+import { useLegalCheck } from 'src/lib/perps/info/use-legal-check'
 import { useAccount } from 'src/lib/wallet'
 import { useActiveAccountState } from '../../active-account-provider'
 

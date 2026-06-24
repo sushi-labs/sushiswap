@@ -22,7 +22,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { useLeadingVaults } from 'src/lib/perps'
+import { useLeadingVaults } from 'src/lib/perps/info/use-leading-vaults'
 import { useAccount } from 'src/lib/wallet'
 import { truncateString } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
