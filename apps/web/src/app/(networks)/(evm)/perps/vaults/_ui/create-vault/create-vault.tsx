@@ -11,7 +11,6 @@ export const CreateVault = () => {
       <CreateVaultDialog
         onSuccess={() => {
           setIsCreated(true)
-          console.log('todo: set current trading account to new vault')
         }}
       />
       {isCreated ? <CreateSuccessDialog /> : null}
