@@ -31,19 +31,23 @@ export const useOrderHistory = () => {
 
   const formattedData = useMemo(() => {
     if (!data) return []
-    return data.orderHistory.map((i) => {
-      const asset = assetList?.get(i.order.coin)
-      return {
-        status: i.status,
-        statusTimestamp: i.statusTimestamp,
-        order: {
-          ...i.order,
-          assetSymbol:
-            asset?.marketType === 'perp' ? i.order.coin : asset?.symbol,
-          marketType: asset?.marketType,
-        },
-      }
-    })
+    return data.orderHistory
+      .map((i) => {
+        //HL outcomes (their prediection market) has a coin name that starts with a #, which is not a valid asset in our system. We will filter these out for now.
+        if (i.order.coin?.startsWith('#')) return undefined
+        const asset = assetList?.get(i.order.coin)
+        return {
+          status: i.status,
+          statusTimestamp: i.statusTimestamp,
+          order: {
+            ...i.order,
+            assetSymbol:
+              asset?.marketType === 'perp' ? i.order.coin : asset?.symbol,
+            marketType: asset?.marketType,
+          },
+        }
+      })
+      ?.filter((i) => i !== undefined)
   }, [data, assetList])
 
   return useMemo(() => {

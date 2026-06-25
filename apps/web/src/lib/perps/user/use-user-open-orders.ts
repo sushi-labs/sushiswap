@@ -31,23 +31,27 @@ export const useUserOpenOrders = ({ coin }: { coin?: string }) => {
 
   const formattedData = useMemo(() => {
     if (!data) return []
-    const orders = data.orders.map((i) => {
-      const asset = assetList?.get(i.coin)
-      return {
-        ...i,
-        assetSymbol: asset?.marketType === 'perp' ? i.coin : asset?.symbol,
-        marketType: asset?.marketType,
-        perpsDex: asset?.dex,
-        szDecimals: asset?.decimals,
-        type: i.orderType.toLowerCase().includes('take')
-          ? ('tp' as const)
-          : i.orderType.toLowerCase().includes('stop')
-            ? ('sl' as const)
-            : i.orderType === 'Market'
-              ? ('market' as const)
-              : ('limit' as const),
-      }
-    })
+    const orders = data.orders
+      .map((i) => {
+        //HL outcomes (their prediection market) has a coin name that starts with a #, which is not a valid asset in our system. We will filter these out for now.
+        if (i.coin?.startsWith('#')) return undefined
+        const asset = assetList?.get(i.coin)
+        return {
+          ...i,
+          assetSymbol: asset?.marketType === 'perp' ? i.coin : asset?.symbol,
+          marketType: asset?.marketType,
+          perpsDex: asset?.dex,
+          szDecimals: asset?.decimals,
+          type: i.orderType.toLowerCase().includes('take')
+            ? ('tp' as const)
+            : i.orderType.toLowerCase().includes('stop')
+              ? ('sl' as const)
+              : i.orderType === 'Market'
+                ? ('market' as const)
+                : ('limit' as const),
+        }
+      })
+      ?.filter((i) => i !== undefined)
     if (coin) {
       return orders?.filter((o) => o?.coin === coin)
     }

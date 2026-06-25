@@ -65,9 +65,13 @@ export const useTradeHistory = () => {
 
   const formattedData = useMemo(() => {
     if (!data) return []
-    return data.fills?.map((fill) => {
-      return formatTradeHistoryItem(fill, assetList)
-    })
+    return data.fills
+      ?.map((fill) => {
+        //HL outcomes (their prediection market) has a coin name that starts with a #, which is not a valid asset in our system. We will filter these out for now.
+        if (fill?.coin?.startsWith('#')) return undefined
+        return formatTradeHistoryItem(fill, assetList)
+      })
+      ?.filter((i) => i !== undefined)
   }, [data, assetList])
 
   return useMemo(() => {
