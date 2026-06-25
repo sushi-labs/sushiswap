@@ -86,6 +86,7 @@ function normalizeTrade(trade: AnyTradeType): NormalizedTrade {
     const closedPnl = Number.parseFloat(trade.closedPnl)
     const fees = Number.parseFloat(trade.fee)
     const totalPnl = closedPnl - fees
+
     return {
       symbol: trade?.assetSymbol?.split('/')?.[0] || trade.assetSymbol || '',
       coin: trade.coin,
@@ -317,7 +318,7 @@ export function ShareClosedPnlDialog({
           </TableButton>
         )}
       </PerpsDialogTrigger>
-      <PerpsDialogContent>
+      <PerpsDialogContent className="md:!max-w-2xl">
         <PerpsDialogHeader>
           <PerpsDialogTitle>Share Your PnL</PerpsDialogTitle>
           <PerpsDialogDescription className="capitalize">
@@ -379,9 +380,11 @@ export function ShareClosedPnlDialog({
   )
 }
 
-const POSTER_WIDTH = 1080
-const POSTER_HEIGHT = 1450
-const POSTER_ASPECT_RATIO = POSTER_WIDTH / POSTER_HEIGHT
+const POSTER_WIDTH = 975
+const POSTER_HEIGHT = 530
+const POSTER_SCALE = 1
+const POSTER_CANVAS_WIDTH = POSTER_WIDTH * POSTER_SCALE
+const POSTER_CANVAS_HEIGHT = POSTER_HEIGHT * POSTER_SCALE
 
 type SharePosterProps = {
   posterRef: RefObject<HTMLCanvasElement | null>
@@ -400,9 +403,9 @@ function SharePoster({
   leverage,
   imageUrl,
 }: SharePosterProps): JSX.Element {
-  const symbol = trade.symbol
+  const symbol = trade.symbol || trade.coin || 'Asset'
   const leverageMultiplier = leverage
-  const direction = trade.side === 'A' ? 'SHORT' : 'LONG'
+  const direction = trade.side === 'A' ? 'Short' : 'Long'
   const closePrice = Number.parseFloat(trade.px)
   const size = Number.parseFloat(trade.sz)
   const realizedPnl = trade.closedPnl
@@ -416,15 +419,19 @@ function SharePoster({
       : entryNotional === 0
         ? 0
         : (totalPnl / entryNotional) * (leverageMultiplier ?? 1) * 100
-  const isPositive = pnlPercent >= 0
+  const normalizedPnlPercent = Number.isFinite(pnlPercent) ? pnlPercent : 0
+  const isPositive = normalizedPnlPercent >= 0
   const largeValue = `${isPositive ? '+' : ''}${perpsNumberFormatter({
-    value: pnlPercent,
+    value: normalizedPnlPercent,
     minFraxDigits: 1,
     maxFraxDigits: 1,
   })}%`
-  const badgeText = leverageMultiplier
-    ? `${direction} ${leverageMultiplier}x`
-    : 'SPOT'
+  const leverageLabel = leverageMultiplier
+    ? `${leverageMultiplier}x ${direction}`
+    : 'Spot'
+  const entryPriceLabel = formatPosterPrice(entryPrice)
+  const exitPriceLabel = formatPosterPrice(closePrice)
+  const referralLabel = referralCode?.toUpperCase() ?? '--'
 
   useEffect(() => {
     let cancelled = false
@@ -437,21 +444,27 @@ function SharePoster({
         await document.fonts.ready
       }
 
-      const sushiIcon = await getSushiIconImage()
+      const [sushiIcon, tokenIcon, artImages] = await Promise.all([
+        getSushiIconImage(),
+        getOptionalPosterImage(imageUrl),
+        getPosterArtImages(),
+      ])
       if (cancelled) return
 
       const context = canvas.getContext('2d')
       if (!context) return
 
       drawPosterCanvas(context, {
-        badgeText,
+        artImages,
+        entryPriceLabel,
+        exitPriceLabel,
         isPositive,
-        isLong: direction === 'LONG' || badgeText === 'SPOT',
         largeValue,
+        leverageLabel,
+        referralLabel,
         symbol,
         sushiIcon,
-        referralCode,
-        imageUrl,
+        tokenIcon,
       })
     }
 
@@ -461,28 +474,29 @@ function SharePoster({
       cancelled = true
     }
   }, [
-    badgeText,
+    entryPriceLabel,
+    exitPriceLabel,
     isPositive,
-    largeValue,
-    posterRef,
-    symbol,
-    referralCode,
-    direction,
     imageUrl,
+    largeValue,
+    leverageLabel,
+    posterRef,
+    referralLabel,
+    symbol,
   ])
 
   return (
     <div
       className="w-full select-none"
       style={{
-        width: `min(500px, calc(100vw - 48px), calc((100dvh - 300px) * ${POSTER_ASPECT_RATIO}))`,
+        width: 'min(680px, calc(100vw - 48px))',
       }}
     >
       <canvas
         ref={posterRef}
-        width={POSTER_WIDTH}
-        height={POSTER_HEIGHT}
-        className="block h-auto w-full rounded-[20px] shadow-[0_24px_80px_rgba(0,0,0,0.45)]"
+        width={POSTER_CANVAS_WIDTH}
+        height={POSTER_CANVAS_HEIGHT}
+        className="block h-auto w-full rounded-[12px] shadow-[0_24px_80px_rgba(0,0,0,0.45)]"
       />
     </div>
   )
@@ -533,6 +547,7 @@ function getShareImageFileName(trade: NormalizedTrade): string {
 }
 
 let sushiIconPromise: Promise<HTMLImageElement> | null = null
+let posterArtImagesPromise: Promise<PosterArtImages> | null = null
 
 function getSushiIconImage(): Promise<HTMLImageElement> {
   if (!sushiIconPromise) {
@@ -547,241 +562,989 @@ function getSushiIconImage(): Promise<HTMLImageElement> {
   return sushiIconPromise
 }
 
+function getPosterImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const image = new Image()
+    image.onload = () => resolve(image)
+    image.onerror = () => reject(new Error(`Image failed to load: ${src}`))
+    image.src = src
+  })
+}
+
+function getPosterArtImages(): Promise<PosterArtImages> {
+  if (!posterArtImagesPromise) {
+    posterArtImagesPromise = Promise.all([
+      getPosterImage('/perps/bamboo.png'),
+      getPosterImage('/perps/chopsticks.png'),
+      getPosterImage('/perps/pnl-card-header.png'),
+      getPosterImage('/perps/pnl-card-neg-corner.png'),
+      getPosterImage('/perps/pnl-card-pos-corner.png'),
+      getPosterImage('/perps/sake.png'),
+    ]).then(
+      ([
+        bamboo,
+        chopsticks,
+        pnlCardHeader,
+        pnlCardNegCorner,
+        pnlCardPosCorner,
+        sake,
+      ]) => ({
+        bamboo,
+        chopsticks,
+        pnlCardHeader,
+        pnlCardNegCorner,
+        pnlCardPosCorner,
+        sake,
+      }),
+    )
+  }
+
+  return posterArtImagesPromise
+}
+
+function getOptionalPosterImage(
+  src: string,
+): Promise<HTMLImageElement | undefined> {
+  if (!src) {
+    return Promise.resolve(undefined)
+  }
+
+  return new Promise((resolve) => {
+    const image = new Image()
+    image.crossOrigin = 'anonymous'
+    image.onload = () => resolve(image)
+    image.onerror = () => resolve(undefined)
+    image.src = `/api/proxy-image?url=${encodeURIComponent(src)}`
+  })
+}
+
+function formatPosterPrice(price: number): string {
+  if (!Number.isFinite(price)) {
+    return '--'
+  }
+
+  const maxFraxDigits = Math.abs(price) >= 1 ? 2 : 6
+
+  return `$${perpsNumberFormatter({
+    value: price,
+    maxFraxDigits,
+  })}`
+}
+
+type PosterArtImages = {
+  bamboo: HTMLImageElement
+  chopsticks: HTMLImageElement
+  pnlCardHeader: HTMLImageElement
+  pnlCardNegCorner: HTMLImageElement
+  pnlCardPosCorner: HTMLImageElement
+  sake: HTMLImageElement
+}
+
 type PosterCanvasData = {
-  badgeText: string
+  artImages: PosterArtImages
+  entryPriceLabel: string
+  exitPriceLabel: string
   isPositive: boolean
+  leverageLabel: string
   largeValue: string
+  referralLabel: string
   symbol: string
   sushiIcon: HTMLImageElement
-  referralCode?: string
-  isLong: boolean
-  imageUrl: string
+  tokenIcon?: HTMLImageElement
+}
+
+type PosterTheme = {
+  accent: string
+  accentDeep: string
+  accentMuted: string
+  backgroundTintEnd: string
+  backgroundTintStart: string
+  badgeFill: string
+  badgeStroke: string
+  panelBorderWidth: number
+  panelDropShadowBlur: number
+  panelDropShadowColor: string
+  panelDropShadowOffsetY: number
+  panelEnd: string
+  panelGlowBlur: number
+  panelGlowColor: string
+  panelInsetShadowBlur: number
+  panelInsetShadowColor: string
+  panelInsetShadowOffsetY: number
+  panelStart: string
+  panelStroke: string
+  percentGradientEnd: string
+  percentGradientStart: string
+}
+
+const POSITIVE_POSTER_THEME: PosterTheme = {
+  accent: '#3AF58C',
+  accentDeep: '#0C4B32',
+  accentMuted: 'rgba(58, 245, 140, 0.18)',
+  backgroundTintEnd: 'rgba(82, 250, 141, 0.016)',
+  backgroundTintStart: 'rgba(82, 250, 141, 0.16)',
+  badgeFill: 'rgba(58, 245, 140, 0.16)',
+  badgeStroke: 'rgba(89, 255, 164, 0.34)',
+  panelBorderWidth: 0.5,
+  panelDropShadowBlur: 38.86,
+  panelDropShadowColor: '#0000001F',
+  panelDropShadowOffsetY: 24,
+  panelEnd: 'rgba(82, 250, 141, 0.24)',
+  panelGlowBlur: 12,
+  panelGlowColor: '#52FA8D40',
+  panelInsetShadowBlur: 6.48,
+  panelInsetShadowColor: '#FFFFFF80',
+  panelInsetShadowOffsetY: 6.48,
+  panelStart: 'rgba(82, 250, 141, 0.024)',
+  panelStroke: '#EDF1F380',
+  percentGradientEnd: 'rgba(82, 250, 141, 0.85)',
+  percentGradientStart: '#52FA8D',
+}
+const NEGATIVE_POSTER_THEME: PosterTheme = {
+  accent: '#FF6F88',
+  accentDeep: '#65303C',
+  accentMuted: 'rgba(255, 111, 136, 0.18)',
+  backgroundTintEnd: 'rgba(251, 113, 133, 0.016)',
+  backgroundTintStart: 'rgba(251, 113, 133, 0.16)',
+  badgeFill: 'rgba(255, 111, 136, 0.16)',
+  badgeStroke: 'rgba(255, 137, 159, 0.34)',
+  panelBorderWidth: 0.5,
+  panelDropShadowBlur: 38.86,
+  panelDropShadowColor: '#0000001F',
+  panelDropShadowOffsetY: 24,
+  panelEnd: 'rgba(251, 113, 133, 0.24)',
+  panelGlowBlur: 12,
+  panelGlowColor: '#FB718540',
+  panelInsetShadowBlur: 6.48,
+  panelInsetShadowColor: '#FFFFFF80',
+  panelInsetShadowOffsetY: 6.48,
+  panelStart: 'rgba(251, 113, 133, 0.024)',
+  panelStroke: '#EDF1F380',
+  percentGradientEnd: 'rgba(251, 113, 133, 0.85)',
+  percentGradientStart: '#FB7185',
 }
 
 function drawPosterCanvas(
   context: CanvasRenderingContext2D,
   data: PosterCanvasData,
 ): void {
-  context.clearRect(0, 0, POSTER_WIDTH, POSTER_HEIGHT)
+  context.clearRect(0, 0, POSTER_CANVAS_WIDTH, POSTER_CANVAS_HEIGHT)
   context.save()
+  context.scale(POSTER_SCALE, POSTER_SCALE)
+  context.imageSmoothingEnabled = true
+  context.imageSmoothingQuality = 'high'
 
   context.beginPath()
-  createRoundedRectPath(context, 0, 0, POSTER_WIDTH, POSTER_HEIGHT, 20)
+  createRoundedRectPath(context, 0, 0, POSTER_WIDTH, POSTER_HEIGHT, 24)
   context.clip()
 
-  context.fillStyle = '#101728'
-  context.fillRect(0, 0, POSTER_WIDTH, POSTER_HEIGHT)
+  const theme = getPosterTheme(data.isPositive)
 
-  const backgroundGradient = context.createLinearGradient(
-    0,
-    0,
-    POSTER_WIDTH,
-    POSTER_HEIGHT,
-  )
-  backgroundGradient.addColorStop(
-    0.17,
-    data.isPositive ? 'rgba(52, 211, 153, 0.2)' : 'rgba(251, 113, 133, 0.2)',
-  )
-  backgroundGradient.addColorStop(
-    0.76,
-    data.isPositive ? 'rgba(30, 30, 30, 0.2)' : 'rgba(30, 20, 22, 0.2)',
-  )
-  backgroundGradient.addColorStop(
-    1,
-    data.isPositive ? 'rgba(16, 23, 40, 0.2)' : 'rgba(40, 16, 20, 0.2)',
-  )
-  context.fillStyle = backgroundGradient
-  context.fillRect(0, 0, POSTER_WIDTH, POSTER_HEIGHT)
-
-  drawPosterBadge(context, data.badgeText, data.isLong)
-  drawPosterGlowSquares(context, data.isPositive)
-  drawPosterHeader(context, data.symbol, data.imageUrl)
-  drawPosterPercent(context, data.largeValue, data.isPositive)
-  drawPosterLink(context, data.referralCode)
-  drawPosterBrand(context, data.sushiIcon)
+  drawPosterBackground(context, theme)
+  drawPosterHeaderImage(context, data.artImages.pnlCardHeader)
+  drawPosterHeader(context, data.sushiIcon)
+  drawPosterStats(context, data)
+  drawPosterPnlPanel(context, data, theme)
+  drawPosterArt(context, data.artImages, data.isPositive)
 
   context.restore()
 }
 
-function drawPosterBadge(
+function getPosterTheme(isPositive: boolean): PosterTheme {
+  return isPositive ? POSITIVE_POSTER_THEME : NEGATIVE_POSTER_THEME
+}
+
+function drawPosterBackground(
   context: CanvasRenderingContext2D,
-  badgeText: string,
-  isLong: boolean,
+  theme: PosterTheme,
+): void {
+  context.fillStyle = '#0D1217'
+  context.fillRect(0, 0, POSTER_WIDTH, POSTER_HEIGHT)
+
+  const tintGradient = context.createLinearGradient(0, POSTER_HEIGHT, 0, 0)
+  tintGradient.addColorStop(0, theme.backgroundTintStart)
+  tintGradient.addColorStop(1, theme.backgroundTintEnd)
+  context.fillStyle = tintGradient
+  context.fillRect(0, 0, POSTER_WIDTH, POSTER_HEIGHT)
+}
+
+function drawPosterHeaderImage(
+  context: CanvasRenderingContext2D,
+  image: HTMLImageElement,
 ): void {
   context.save()
-  const badgeX = 132.025
-  const badgeY = 593.555
-  const badgeHeight = 51.509
-  const horizontalPadding = 12
-
-  context.font = '700 32.778px "Lufga", Inter, sans-serif'
-  const badgeWidth =
-    context.measureText(badgeText).width + horizontalPadding * 2
-
-  context.fillStyle = isLong
-    ? 'rgba(52, 211, 153, 0.6)'
-    : 'rgba(251, 113, 133, 0.6)'
-  fillRoundedRect(
-    context,
-    badgeX,
-    badgeY,
-    badgeWidth,
-    badgeHeight,
-    9.365,
-    isLong ? '#34D399' : '#FB7185',
-    2,
-  )
-  context.fillStyle = 'white'
-  context.textBaseline = 'middle'
-
-  context.fillText(
-    badgeText,
-    badgeX + horizontalPadding,
-    badgeY + badgeHeight / 2 + 4,
-  )
+  context.globalAlpha = 0.72
+  context.drawImage(image, 0, 0, POSTER_WIDTH, 143)
   context.restore()
 }
 
-function drawPosterGlowSquares(
+function drawPosterArt(
   context: CanvasRenderingContext2D,
+  artImages: PosterArtImages,
   isPositive: boolean,
 ): void {
-  const baseColor = isPositive ? '#34D399' : '#FB7185'
-  const glowOriginX = 717.893
-  const glowOriginY = 331.555
-  const squareSize = 72.667
-  const squares: ReadonlyArray<{ left: number; top: number; alpha: number }> = [
-    { left: 109, top: 0, alpha: 1 },
-    { left: 48.444, top: squareSize, alpha: 1 },
-    { left: 0, top: squareSize * 2, alpha: 0.1 },
-    { left: 218, top: squareSize * 2, alpha: 1 },
-    { left: 169.556, top: squareSize, alpha: 0.4 },
-  ]
-
-  const maxTop = squareSize * 2
-
-  for (const square of squares) {
-    const top = isPositive ? square.top : maxTop - square.top
-    drawGlowSquare(
-      context,
-      glowOriginX + square.left - 10,
-      glowOriginY + top,
-      baseColor,
-      square.alpha,
-    )
+  if (isPositive) {
+    drawPositivePosterArt(context, artImages)
+  } else {
+    drawNegativePosterArt(context, artImages)
   }
 }
 
-function drawGlowSquare(
+function drawPosterHeader(
+  context: CanvasRenderingContext2D,
+  sushiIcon: HTMLImageElement,
+): void {
+  context.save()
+  context.drawImage(sushiIcon, 42, 35, 40, 34)
+  context.fillStyle = '#FFFFFF'
+  context.font = '700 35px Inter, sans-serif'
+  context.textBaseline = 'middle'
+  context.fillText('Sushi', 94, 53)
+  context.restore()
+}
+
+function drawPosterStats(
+  context: CanvasRenderingContext2D,
+  data: PosterCanvasData,
+): void {
+  const statY = 105
+  drawPosterStat(context, 'Entry price', data.entryPriceLabel, 44, statY)
+  drawPosterStat(context, 'Mark price', data.exitPriceLabel, 168, statY)
+  drawPosterStat(context, 'Referral code', data.referralLabel, 292, statY)
+}
+
+function drawPosterStat(
+  context: CanvasRenderingContext2D,
+  label: string,
+  value: string,
+  x: number,
+  y: number,
+): void {
+  context.save()
+  context.textBaseline = 'top'
+  context.fillStyle = 'rgba(255, 255, 255, 0.52)'
+  context.font = '500 18px Inter, sans-serif'
+  context.fillText(label, x, y)
+  context.fillStyle = '#FFFFFF'
+  context.font = '700 20px Inter, sans-serif'
+  context.fillText(value, x, y + 31)
+  context.restore()
+}
+
+function drawPosterPnlPanel(
+  context: CanvasRenderingContext2D,
+  data: PosterCanvasData,
+  theme: PosterTheme,
+): void {
+  const x = 44
+  const y = 200
+  const width = 445
+  const height = 280
+  const radius = 56
+  const panelGradient = context.createLinearGradient(0, y + height, 0, y)
+
+  panelGradient.addColorStop(0, theme.panelStart)
+  panelGradient.addColorStop(1, theme.panelEnd)
+
+  context.save()
+
+  drawPanelOuterShadow(
+    context,
+    x,
+    y,
+    width,
+    height,
+    radius,
+    theme.panelDropShadowColor,
+    theme.panelDropShadowBlur,
+    theme.panelDropShadowOffsetY,
+  )
+  drawPanelOuterShadow(
+    context,
+    x,
+    y,
+    width,
+    height,
+    radius,
+    theme.panelGlowColor,
+    theme.panelGlowBlur,
+    0,
+  )
+
+  context.fillStyle = panelGradient
+  fillRoundedRect(context, x, y, width, height, radius)
+
+  drawPanelCornerImage(
+    context,
+    data.isPositive
+      ? data.artImages.pnlCardPosCorner
+      : data.artImages.pnlCardNegCorner,
+    x - 135,
+    y - 120,
+    x,
+    y,
+    width * 1.6,
+    height * 1.6,
+    width,
+    height,
+    radius,
+  )
+  drawPanelInsetShadow(context, x, y, width, height, radius, theme)
+  drawPanelInsetEdgeShadows(context, x, y, width, height, radius)
+  drawPanelBorder(context, x, y, width, height, radius, theme)
+
+  const tokenBadgeWidth = drawTokenBadge(
+    context,
+    data.symbol,
+    data.tokenIcon,
+    x + 44,
+    y + 44,
+    theme,
+  )
+  drawLeverageBadge(
+    context,
+    data.leverageLabel,
+    x + 44 + tokenBadgeWidth + 12,
+    y + 44,
+    theme,
+  )
+
+  drawPosterPercent(context, data.largeValue, x + 44, y + 126, 358, theme)
+  context.restore()
+}
+
+function drawPanelCornerImage(
+  context: CanvasRenderingContext2D,
+  image: HTMLImageElement,
+  x: number,
+  y: number,
+  realX: number,
+  realY: number,
+  width: number,
+  height: number,
+  realWidth: number,
+  realHeight: number,
+  radius: number,
+): void {
+  const intrinsicWidth = image.naturalWidth || image.width
+  const intrinsicHeight = image.naturalHeight || image.height
+  const imageWidth = width * 0.98
+  const imageHeight = imageWidth * (intrinsicHeight / intrinsicWidth)
+  const imageX = x - imageWidth * 0.04
+  const imageY = y + height - imageHeight * 0.47
+
+  context.save()
+  context.beginPath()
+  createRoundedRectPath(context, realX, realY, realWidth, realHeight, radius)
+  context.clip()
+  context.drawImage(image, imageX, imageY, imageWidth, imageHeight)
+  context.restore()
+}
+function drawPanelBorder(
   context: CanvasRenderingContext2D,
   x: number,
   y: number,
-  color: string,
-  alpha: number,
+  width: number,
+  height: number,
+  radius: number,
+  theme: PosterTheme,
 ): void {
   context.save()
-  context.globalAlpha = alpha
-  context.shadowColor = color
-  context.shadowBlur = 80
-  context.fillStyle = color
-  fillRoundedRect(context, x, y, 72.667, 72.667, 24)
+  context.shadowColor = 'rgba(0, 0, 0, 0)'
+  context.shadowBlur = 0
+  context.strokeStyle = theme.panelStroke
+  context.lineWidth = theme.panelBorderWidth
+  context.beginPath()
+  createRoundedRectPath(
+    context,
+    x + theme.panelBorderWidth / 2,
+    y + theme.panelBorderWidth / 2,
+    width - theme.panelBorderWidth,
+    height - theme.panelBorderWidth,
+    radius - theme.panelBorderWidth / 2,
+  )
+  context.stroke()
   context.restore()
 }
-function drawPosterHeader(
+function drawPanelOuterShadow(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number,
+  color: string,
+  blur: number,
+  offsetY: number,
+): void {
+  if (blur === 0) return
+
+  const padding = blur * 3 + Math.abs(offsetY)
+  const shadowCanvas = document.createElement('canvas')
+  shadowCanvas.width = Math.ceil((width + padding * 2) * POSTER_SCALE)
+  shadowCanvas.height = Math.ceil((height + padding * 2) * POSTER_SCALE)
+
+  const shadowContext = shadowCanvas.getContext('2d')
+  if (!shadowContext) return
+
+  shadowContext.scale(POSTER_SCALE, POSTER_SCALE)
+  shadowContext.shadowColor = color
+  shadowContext.shadowBlur = blur
+  shadowContext.shadowOffsetY = offsetY
+  shadowContext.fillStyle = '#000000'
+  fillRoundedRect(shadowContext, padding, padding, width, height, radius)
+
+  shadowContext.globalCompositeOperation = 'destination-out'
+  shadowContext.shadowColor = 'rgba(0, 0, 0, 0)'
+  shadowContext.shadowBlur = 0
+  shadowContext.shadowOffsetY = 0
+  shadowContext.fillStyle = '#000000'
+  fillRoundedRect(shadowContext, padding, padding, width, height, radius)
+
+  context.drawImage(
+    shadowCanvas,
+    x - padding,
+    y - padding,
+    width + padding * 2,
+    height + padding * 2,
+  )
+}
+
+function drawPanelInsetShadow(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number,
+  theme: PosterTheme,
+): void {
+  if (theme.panelInsetShadowBlur === 0) return
+
+  context.save()
+  context.beginPath()
+  createRoundedRectPath(context, x, y, width, height, radius)
+  context.clip()
+
+  const insetShadowBlur = theme.panelInsetShadowBlur * 5
+  const insetShadowOffsetY = theme.panelInsetShadowOffsetY * 3
+  const insetHighlightHeight = Math.max(18, theme.panelInsetShadowBlur * 2.75)
+
+  context.shadowColor = theme.panelInsetShadowColor
+  context.shadowBlur = insetShadowBlur
+  context.shadowOffsetY = insetShadowOffsetY
+  context.fillStyle = theme.panelInsetShadowColor
+  context.fillRect(
+    x,
+    y - insetShadowOffsetY - insetHighlightHeight,
+    width,
+    insetHighlightHeight,
+  )
+  context.restore()
+}
+
+function drawPanelInsetEdgeShadows(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number,
+): void {
+  const topLeftColor = 'rgba(255, 255, 255, 0.2)'
+  const bottomRightColor = 'rgba(255, 255, 255, 0.125)'
+  const edgeSize = 6
+
+  context.save()
+  context.beginPath()
+  createRoundedRectPath(context, x, y, width, height, radius)
+  context.clip()
+  context.filter = 'blur(1px)'
+
+  const topGradient = context.createLinearGradient(0, y, 0, y + edgeSize)
+  topGradient.addColorStop(0, topLeftColor)
+  topGradient.addColorStop(0.34, 'rgba(255, 255, 255, 0.08)')
+  topGradient.addColorStop(1, 'rgba(255, 255, 255, 0)')
+  context.fillStyle = topGradient
+  context.fillRect(x, y, width, edgeSize)
+
+  const leftGradient = context.createLinearGradient(x, 0, x + edgeSize, 0)
+  leftGradient.addColorStop(0, topLeftColor)
+  leftGradient.addColorStop(0.34, 'rgba(255, 255, 255, 0.08)')
+  leftGradient.addColorStop(1, 'rgba(255, 255, 255, 0)')
+  context.fillStyle = leftGradient
+  context.fillRect(x, y, edgeSize, height)
+
+  const bottomGradient = context.createLinearGradient(
+    0,
+    y + height - edgeSize,
+    0,
+    y + height,
+  )
+  bottomGradient.addColorStop(0, 'rgba(255, 255, 255, 0)')
+  bottomGradient.addColorStop(0.66, 'rgba(255, 255, 255, 0.05)')
+  bottomGradient.addColorStop(1, bottomRightColor)
+  context.fillStyle = bottomGradient
+  context.fillRect(x, y + height - edgeSize, width, edgeSize)
+
+  const rightGradient = context.createLinearGradient(
+    x + width - edgeSize,
+    0,
+    x + width,
+    0,
+  )
+  rightGradient.addColorStop(0, 'rgba(255, 255, 255, 0)')
+  rightGradient.addColorStop(0.66, 'rgba(255, 255, 255, 0.05)')
+  rightGradient.addColorStop(1, bottomRightColor)
+  context.fillStyle = rightGradient
+  context.fillRect(x + width - edgeSize, y, edgeSize, height)
+
+  context.restore()
+}
+
+function drawTokenBadge(
   context: CanvasRenderingContext2D,
   symbol: string,
-  imageUrl: string,
-): void {
-  const middleSquareCenterX = 717.893 + 109 - 10 + 72.667 / 2
-  const y = 640
-  const imageSize = 62
-  const gap = 16
+  tokenIcon: HTMLImageElement | undefined,
+  x: number,
+  y: number,
+  theme: PosterTheme,
+): number {
+  const height = 45
+  const iconSize = 29
+  const label = symbol.length > 10 ? `${symbol.slice(0, 10)}...` : symbol
 
-  const drawText = (includeImage: boolean, img?: HTMLImageElement) => {
+  context.save()
+  context.font = '700 20px Inter, sans-serif'
+  const width = 15 + iconSize + 10 + context.measureText(label).width + 17
+  drawTokenBadgeRect(context, x, y, width, height, height / 2, theme)
+
+  if (tokenIcon) {
     context.save()
-    context.fillStyle = '#FFFFFF'
-    context.textBaseline = 'alphabetic'
-    context.font = '700 62px Inter, sans-serif'
-
-    const symbolWidth = context.measureText(symbol).width
-
-    if (includeImage && img) {
-      const totalWidth = imageSize + gap + symbolWidth
-      const startX = middleSquareCenterX - totalWidth / 2
-      const imgX = startX
-      const imgY = y - imageSize + 8
-
-      // Draw circular clipped image
-      context.save()
-      context.beginPath()
-      context.arc(
-        imgX + imageSize / 2,
-        imgY + imageSize / 2,
-        imageSize / 2,
-        0,
-        Math.PI * 2,
-      )
-      context.closePath()
-      context.clip()
-      context.drawImage(img, imgX, imgY, imageSize, imageSize)
-      context.restore()
-
-      context.fillText(symbol, startX + imageSize + gap, y)
-    } else {
-      context.fillText(symbol, middleSquareCenterX - symbolWidth / 2, y)
-    }
-
+    context.beginPath()
+    context.arc(
+      x + 15 + iconSize / 2,
+      y + height / 2,
+      iconSize / 2,
+      0,
+      Math.PI * 2,
+    )
+    context.closePath()
+    context.clip()
+    context.drawImage(
+      tokenIcon,
+      x + 15,
+      y + (height - iconSize) / 2,
+      iconSize,
+      iconSize,
+    )
     context.restore()
+  } else {
+    const iconGradient = context.createLinearGradient(
+      x + 15,
+      y,
+      x + 44,
+      y + height,
+    )
+    iconGradient.addColorStop(0, '#FFB84D')
+    iconGradient.addColorStop(1, '#F7931A')
+    context.fillStyle = iconGradient
+    context.beginPath()
+    context.arc(
+      x + 15 + iconSize / 2,
+      y + height / 2,
+      iconSize / 2,
+      0,
+      Math.PI * 2,
+    )
+    context.fill()
   }
 
-  const img = new Image()
-  img.crossOrigin = 'anonymous'
-  img.onload = () => drawText(true, img)
-  img.onerror = () => drawText(false)
-  img.src = `/api/proxy-image?url=${encodeURIComponent(imageUrl)}` //need to proxy the image. we need to use anonymous cross-origin requests to avoid tainting the canvas
+  context.fillStyle = '#FFFFFF'
+  context.textBaseline = 'middle'
+  context.fillText(label, x + 15 + iconSize + 10, y + height / 2 + 1)
+  context.restore()
+
+  return width
+}
+
+function drawTokenBadgeRect(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number,
+  theme: PosterTheme,
+): void {
+  drawPanelOuterShadow(
+    context,
+    x,
+    y,
+    width,
+    height,
+    radius,
+    theme.panelDropShadowColor,
+    theme.panelDropShadowBlur,
+    theme.panelDropShadowOffsetY,
+  )
+  drawPanelOuterShadow(
+    context,
+    x,
+    y,
+    width,
+    height,
+    radius,
+    theme.panelGlowColor,
+    theme.panelGlowBlur,
+    0,
+  )
+
+  const backgroundGradient = context.createLinearGradient(0, y, 0, y + height)
+  backgroundGradient.addColorStop(0, 'rgba(237, 241, 243, 0.05)')
+  backgroundGradient.addColorStop(1, 'rgba(237, 241, 243, 0.015)')
+
+  context.save()
+  context.fillStyle = backgroundGradient
+  fillRoundedRect(context, x, y, width, height, radius)
+  context.restore()
+
+  drawPanelInsetShadow(context, x, y, width, height, radius, theme)
+  drawPanelInsetEdgeShadows(context, x, y, width, height, radius)
+  drawPanelBorder(context, x, y, width, height, radius, theme)
+}
+
+function drawLeverageBadge(
+  context: CanvasRenderingContext2D,
+  label: string,
+  x: number,
+  y: number,
+  theme: PosterTheme,
+): number {
+  const height = 45
+  const paddingX = 18
+
+  context.save()
+  context.font = '700 20px Inter, sans-serif'
+  const width = context.measureText(label).width + paddingX * 2
+  drawLeverageBadgeRect(context, x, y, width, height, height / 2, theme)
+  context.fillStyle = theme.accent
+  context.textBaseline = 'middle'
+  context.fillText(label, x + paddingX, y + height / 2 + 1)
+  context.restore()
+
+  return width
+}
+
+function drawLeverageBadgeRect(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number,
+  theme: PosterTheme,
+): void {
+  const panelGradient = context.createLinearGradient(0, y + height, 0, y)
+
+  panelGradient.addColorStop(0, theme.panelStart)
+  panelGradient.addColorStop(1, theme.panelEnd)
+
+  drawPanelOuterShadow(
+    context,
+    x,
+    y,
+    width,
+    height,
+    radius,
+    theme.panelDropShadowColor,
+    theme.panelDropShadowBlur,
+    theme.panelDropShadowOffsetY,
+  )
+  drawPanelOuterShadow(
+    context,
+    x,
+    y,
+    width,
+    height,
+    radius,
+    theme.panelGlowColor,
+    theme.panelGlowBlur,
+    0,
+  )
+
+  context.fillStyle = panelGradient
+  fillRoundedRect(context, x, y, width, height, radius)
+
+  drawPanelInsetShadow(context, x, y, width, height, radius, theme)
+  drawPanelInsetEdgeShadows(context, x, y, width, height, radius)
+  drawPanelBorder(context, x, y, width, height, radius, theme)
 }
 
 function drawPosterPercent(
   context: CanvasRenderingContext2D,
   largeValue: string,
-  isPositive: boolean,
+  x: number,
+  y: number,
+  maxWidth: number,
+  theme: PosterTheme,
 ): void {
   context.save()
-  context.fillStyle = isPositive ? '#34D399' : '#FB7185'
-  context.font = '800 242px "Lufga", Inter, sans-serif'
-  context.textBaseline = 'top'
-  context.fillText(largeValue, 108.893, 680)
-  context.restore()
-}
+  let fontSize = 145
+  context.font = `800 ${fontSize}px "Lufga", Inter, sans-serif`
+  while (context.measureText(largeValue).width > maxWidth && fontSize > 86) {
+    fontSize -= 4
+    context.font = `800 ${fontSize}px "Lufga", Inter, sans-serif`
+  }
 
-function drawPosterLink(
-  context: CanvasRenderingContext2D,
-  referralCode?: string,
-): void {
-  context.save()
-  context.textBaseline = 'top'
-  context.fillStyle = '#97A3B7'
-  context.font = '400 37px Inter, sans-serif'
-  context.fillText(
-    referralCode ? 'Referral code:' : 'Trade on:',
-    referralCode ? 88 : 86,
-    977.555,
+  const font = context.font
+  const textWidth = context.measureText(largeValue).width
+  const textHeight = fontSize * 1.12
+  const padding = 36
+  const textCanvas = document.createElement('canvas')
+
+  textCanvas.width = Math.ceil((textWidth + padding * 2) * POSTER_SCALE)
+  textCanvas.height = Math.ceil((textHeight + padding * 2) * POSTER_SCALE)
+
+  const textContext = textCanvas.getContext('2d')
+  if (!textContext) {
+    context.restore()
+    return
+  }
+
+  textContext.scale(POSTER_SCALE, POSTER_SCALE)
+  textContext.font = font
+  textContext.textBaseline = 'top'
+
+  const textX = padding
+  const textY = padding
+  const percentGradient = textContext.createLinearGradient(
+    0,
+    textY,
+    0,
+    textY + textHeight,
   )
-  context.fillStyle = '#FFFFFF'
-  context.fillText(referralCode ?? SHARE_URL, 88.893, 1030.555)
+
+  percentGradient.addColorStop(0.25, theme.percentGradientStart)
+  percentGradient.addColorStop(1, theme.percentGradientEnd)
+
+  textContext.shadowColor = '#00000014'
+  textContext.shadowBlur = 12.14
+  textContext.shadowOffsetY = 3.03
+  textContext.fillStyle = percentGradient
+  textContext.fillText(largeValue, textX, textY)
+
+  drawTextInsetShadow(
+    textContext,
+    largeValue,
+    font,
+    textX,
+    textY,
+    textCanvas.width / POSTER_SCALE,
+    textCanvas.height / POSTER_SCALE,
+    '#FFFFFFB3',
+    0.76,
+    0.76,
+  )
+  drawTextInsetShadow(
+    textContext,
+    largeValue,
+    font,
+    textX,
+    textY,
+    textCanvas.width / POSTER_SCALE,
+    textCanvas.height / POSTER_SCALE,
+    '#FFFFFFA0',
+    2.87,
+    2.87,
+  )
+
+  context.drawImage(
+    textCanvas,
+    x - padding,
+    y - padding,
+    textWidth + padding * 2,
+    textHeight + padding * 2,
+  )
   context.restore()
 }
 
-function drawPosterBrand(
+function drawTextInsetShadow(
   context: CanvasRenderingContext2D,
-  sushiIcon: HTMLImageElement,
+  text: string,
+  font: string,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  color: string,
+  blur: number,
+  offsetY: number,
+): void {
+  const shadowCanvas = document.createElement('canvas')
+  shadowCanvas.width = Math.ceil(width * POSTER_SCALE)
+  shadowCanvas.height = Math.ceil(height * POSTER_SCALE)
+
+  const shadowContext = shadowCanvas.getContext('2d')
+  if (!shadowContext) return
+
+  shadowContext.scale(POSTER_SCALE, POSTER_SCALE)
+  shadowContext.font = font
+  shadowContext.textBaseline = 'top'
+  shadowContext.shadowColor = color
+  shadowContext.shadowBlur = blur
+  shadowContext.shadowOffsetY = offsetY
+  shadowContext.fillStyle = color
+  shadowContext.fillText(text, x, y)
+
+  shadowContext.globalCompositeOperation = 'destination-out'
+  shadowContext.shadowColor = 'rgba(0, 0, 0, 0)'
+  shadowContext.shadowBlur = 0
+  shadowContext.shadowOffsetY = 0
+  shadowContext.fillStyle = '#000000'
+  shadowContext.fillText(text, x, y)
+
+  context.save()
+  context.globalCompositeOperation = 'source-atop'
+  context.drawImage(shadowCanvas, 0, 0, width, height)
+  context.restore()
+}
+
+function drawPositivePosterArt(
+  context: CanvasRenderingContext2D,
+  artImages: PosterArtImages,
 ): void {
   context.save()
-  context.drawImage(sushiIcon, 88.893, 1258, 76, 64)
-  context.fillStyle = '#FFFFFF'
-  context.font = '700 76px Inter, sans-serif'
-  context.textBaseline = 'middle'
-  context.fillText('Sushi', 182, 1298)
+
+  drawPosterImage(context, artImages.chopsticks, -145, 225, 433, 370, {
+    alpha: 1,
+    overlayBlur: 1,
+    overlayColor: '#52FA8D',
+    rotation: -0.08,
+    shadowBlur: 24,
+    shadowColor: 'rgba(42, 243, 138, 0.18)',
+    overlayOpacity: 1,
+  })
+  drawPosterImage(context, artImages.bamboo, 440, -85, 680, 878, {
+    overlayBlur: 14,
+    overlayColor: '#52FA8D',
+    shadowBlur: 5,
+    shadowColor: 'rgba(58, 245, 140, 0.2)',
+    overlayOpacity: 1,
+  })
+
+  context.restore()
+}
+
+function drawNegativePosterArt(
+  context: CanvasRenderingContext2D,
+  artImages: PosterArtImages,
+): void {
+  context.save()
+
+  drawPosterImage(context, artImages.chopsticks, -145, 225, 433, 370, {
+    alpha: 1,
+    overlayBlur: 1,
+    overlayColor: '#FB7185',
+    rotation: -0.08,
+    shadowBlur: 24,
+    shadowColor: 'rgba(255, 111, 136, 0.18)',
+    overlayOpacity: 1,
+  })
+  drawPosterImage(context, artImages.sake, 355, -190, 812, 966, {
+    overlayBlur: 14,
+    overlayColor: '#FB7185',
+    shadowBlur: 46,
+    shadowColor: 'rgba(255, 111, 136, 0.23)',
+    overlayOpacity: 1,
+  })
+
+  context.restore()
+}
+
+type PosterImageOptions = {
+  alpha?: number
+  overlayBlur?: number
+  overlayColor?: string
+  overlayOpacity?: number
+  rotation?: number
+  shadowBlur?: number
+  shadowColor?: string
+}
+
+function drawPosterImage(
+  context: CanvasRenderingContext2D,
+  image: HTMLImageElement,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  options: PosterImageOptions = {},
+): void {
+  context.save()
+  context.globalAlpha = options.alpha ?? 1
+  context.shadowColor = options.shadowColor ?? 'rgba(0, 0, 0, 0)'
+  context.shadowBlur = options.shadowBlur ?? 0
+  context.translate(x + width / 2, y + height / 2)
+  context.rotate(options.rotation ?? 0)
+  context.drawImage(image, -width / 2, -height / 2, width, height)
+
+  if (options.overlayColor) {
+    drawBlurredImageOverlay(
+      context,
+      image,
+      -width / 2,
+      -height / 2,
+      width,
+      height,
+      options.overlayColor,
+      options.overlayOpacity ?? 0.25,
+      options.overlayBlur ?? 5,
+    )
+  }
+
+  context.restore()
+}
+
+function drawBlurredImageOverlay(
+  context: CanvasRenderingContext2D,
+  image: HTMLImageElement,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  color: string,
+  opacity: number,
+  blur: number,
+): void {
+  const padding = blur * 3
+  const overlayCanvas = document.createElement('canvas')
+  overlayCanvas.width = Math.ceil((width + padding * 2) * POSTER_SCALE)
+  overlayCanvas.height = Math.ceil((height + padding * 2) * POSTER_SCALE)
+
+  const overlayContext = overlayCanvas.getContext('2d')
+  if (!overlayContext) return
+
+  overlayContext.scale(POSTER_SCALE, POSTER_SCALE)
+  overlayContext.drawImage(image, padding, padding, width, height)
+  overlayContext.globalCompositeOperation = 'source-in'
+  overlayContext.globalAlpha = opacity
+  overlayContext.fillStyle = color
+  overlayContext.fillRect(padding, padding, width, height)
+
+  context.save()
+  context.globalAlpha = 1
+  context.globalCompositeOperation = 'darken'
+  context.shadowBlur = 0
+  context.shadowColor = 'rgba(0, 0, 0, 0)'
+  context.filter = `blur(${blur}px)`
+  context.drawImage(
+    overlayCanvas,
+    x - padding,
+    y - padding,
+    width + padding * 2,
+    height + padding * 2,
+  )
   context.restore()
 }
 
