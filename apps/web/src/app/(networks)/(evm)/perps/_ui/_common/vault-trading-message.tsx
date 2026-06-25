@@ -1,28 +1,17 @@
 'use client'
 import { Message, classNames } from '@sushiswap/ui'
-import { useLegalCheck } from 'src/lib/perps/info/use-legal-check'
-import { useAccount } from 'src/lib/wallet'
 import { useActiveAccountState } from '../../active-account-provider'
 
 export const VaultTradingMessage = () => {
-  const address = useAccount('evm')
-  const { data, isLoading, error } = useLegalCheck({ address })
   const {
     state: { activeAccount },
   } = useActiveAccountState()
-
-  const isBlocked = data?.ipAllowed === false && !isLoading && !error
 
   return (
     <div
       data-vault-trading={activeAccount?.type === 'vault'}
       className={classNames(
-        'hidden data-[vault-trading=true]:block data-[vault-trading=true]:animate-slide w-screen z-[11] items-center justify-center bg-perps-background',
-        isBlocked && activeAccount?.type === 'vault'
-          ? 'top-[112px]'
-          : !isBlocked && activeAccount?.type === 'vault'
-            ? 'top-[56px]'
-            : 'top-[56px]',
+        'hidden top-[56px] data-[vault-trading=true]:block data-[vault-trading=true]:animate-slide w-screen z-[11] items-center justify-center bg-perps-background',
       )}
     >
       <Message
