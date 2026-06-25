@@ -49,6 +49,7 @@ export type AnyTradeType =
   | TwapFillHistoryItemType
 
 type NormalizedTrade = {
+  entryPx?: number
   symbol: string
   coin: string
   closedPnl: number
@@ -70,6 +71,7 @@ function normalizeTrade(trade: AnyTradeType): NormalizedTrade {
     const pnl = Number.parseFloat(trade.position.unrealizedPnl ?? '0')
     const roePc = (pnl / entryNotional) * (leverage ?? 1) * 100
     return {
+      entryPx: entryPrice,
       symbol: trade?.assetSymbol?.split(':')?.[1] || trade?.assetSymbol || '',
       coin: trade.position.coin,
       time: Date.now(),
@@ -429,7 +431,9 @@ function SharePoster({
   const leverageLabel = leverageMultiplier
     ? `${leverageMultiplier}x ${direction}`
     : 'Spot'
-  const entryPriceLabel = formatPosterPrice(entryPrice)
+
+  const entryPx = trade?.entryPx || closePrice - trade.closedPnl / size
+  const entryPriceLabel = formatPosterPrice(entryPx)
   const exitPriceLabel = formatPosterPrice(closePrice)
   const referralLabel = referralCode?.toUpperCase() ?? '--'
 
@@ -623,7 +627,8 @@ function formatPosterPrice(price: number): string {
     return '--'
   }
 
-  const maxFraxDigits = Math.abs(price) >= 1 ? 2 : 6
+  const maxFraxDigits =
+    Math.abs(price) >= 100 ? 0 : Math.abs(price) >= 1 ? 2 : 6
 
   return `$${perpsNumberFormatter({
     value: price,
@@ -809,7 +814,7 @@ function drawPosterStats(
 ): void {
   const statY = 105
   drawPosterStat(context, 'Entry price', data.entryPriceLabel, 44, statY)
-  drawPosterStat(context, 'Mark price', data.exitPriceLabel, 168, statY)
+  drawPosterStat(context, 'Exit price', data.exitPriceLabel, 168, statY)
   drawPosterStat(context, 'Referral code', data.referralLabel, 292, statY)
 }
 
@@ -1228,9 +1233,7 @@ function drawLeverageBadge(
   context.font = '700 20px Inter, sans-serif'
   const width = context.measureText(label).width + paddingX * 2
   drawLeverageBadgeRect(context, x, y, width, height, height / 2, theme)
-  context.fillStyle = theme.accent
-  context.textBaseline = 'middle'
-  context.fillText(label, x + paddingX, y + height / 2 + 1)
+  drawLeverageBadgeText(context, label, x + paddingX, y, height, theme)
   context.restore()
 
   return width
@@ -1279,6 +1282,91 @@ function drawLeverageBadgeRect(
   drawPanelInsetShadow(context, x, y, width, height, radius, theme)
   drawPanelInsetEdgeShadows(context, x, y, width, height, radius)
   drawPanelBorder(context, x, y, width, height, radius, theme)
+}
+
+function drawLeverageBadgeText(
+  context: CanvasRenderingContext2D,
+  label: string,
+  x: number,
+  y: number,
+  badgeHeight: number,
+  theme: PosterTheme,
+): void {
+  context.save()
+
+  const fontSize = 20
+  const font = `700 ${fontSize}px Inter, sans-serif`
+  const textHeight = fontSize * 1.15
+  const padding = 12
+
+  context.font = font
+  const textWidth = context.measureText(label).width
+
+  const textCanvas = document.createElement('canvas')
+  textCanvas.width = Math.ceil((textWidth + padding * 2) * POSTER_SCALE)
+  textCanvas.height = Math.ceil((textHeight + padding * 2) * POSTER_SCALE)
+
+  const textContext = textCanvas.getContext('2d')
+  if (!textContext) {
+    context.restore()
+    return
+  }
+
+  textContext.scale(POSTER_SCALE, POSTER_SCALE)
+  textContext.font = font
+  textContext.textBaseline = 'top'
+
+  const textX = padding
+  const textY = padding
+  const textGradient = textContext.createLinearGradient(
+    0,
+    textY,
+    0,
+    textY + textHeight,
+  )
+
+  textGradient.addColorStop(0.25, theme.percentGradientStart)
+  textGradient.addColorStop(1, theme.percentGradientEnd)
+
+  textContext.shadowColor = '#00000014'
+  textContext.shadowBlur = 12.14
+  textContext.shadowOffsetY = 3.03
+  textContext.fillStyle = textGradient
+  textContext.fillText(label, textX, textY)
+
+  drawTextInsetShadow(
+    textContext,
+    label,
+    font,
+    textX,
+    textY,
+    textCanvas.width / POSTER_SCALE,
+    textCanvas.height / POSTER_SCALE,
+    '#FFFFFFB3',
+    0.76,
+    0.76,
+  )
+  drawTextInsetShadow(
+    textContext,
+    label,
+    font,
+    textX,
+    textY,
+    textCanvas.width / POSTER_SCALE,
+    textCanvas.height / POSTER_SCALE,
+    '#FFFFFFA0',
+    2.87,
+    2.87,
+  )
+
+  context.drawImage(
+    textCanvas,
+    x - padding,
+    y + (badgeHeight - textHeight) / 2 + 1 - padding,
+    textWidth + padding * 2,
+    textHeight + padding * 2,
+  )
+  context.restore()
 }
 
 function drawPosterPercent(
