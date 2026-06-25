@@ -49,7 +49,7 @@ export type AnyTradeType =
   | TwapFillHistoryItemType
 
 type NormalizedTrade = {
-  entryPx?: number
+  entryPx: number
   symbol: string
   coin: string
   closedPnl: number
@@ -88,8 +88,12 @@ function normalizeTrade(trade: AnyTradeType): NormalizedTrade {
     const closedPnl = Number.parseFloat(trade.closedPnl)
     const fees = Number.parseFloat(trade.fee)
     const totalPnl = closedPnl - fees
-
+    const exitPrice = Number.parseFloat(trade.px)
+    const size = Number.parseFloat(trade.sz)
+    const quotient = closedPnl / size
+    const entryPx = exitPrice - quotient
     return {
+      entryPx: entryPx,
       symbol: trade?.assetSymbol?.split('/')?.[0] || trade.assetSymbol || '',
       coin: trade.coin,
       time: trade.time,
@@ -102,15 +106,19 @@ function normalizeTrade(trade: AnyTradeType): NormalizedTrade {
 
   // BalanceItemType — no pnl fields
   if ('totalBalance' in trade && 'coin' in trade) {
-    const price =
-      Number.parseFloat(trade.usdcValue) / Number.parseFloat(trade.totalBalance)
+    const size = Number.parseFloat(trade.totalBalance || '0')
+    const price = Number.parseFloat(trade.usdcValue) / size
+    const closedPnl = trade?.pnlRoePc?.pnl ?? 0
+    const quotient = closedPnl / size
+    const entryPx = price - quotient
     return {
+      entryPx: entryPx,
       symbol: trade.coin,
       coin: trade.assetName || '',
       time: Date.now(),
-      closedPnl: trade?.pnlRoePc?.pnl ?? 0,
+      closedPnl: closedPnl,
       side: 'B', //can hardcode B here, only spot balances shown here so this has no effect
-      sz: trade.totalBalance,
+      sz: size.toString(),
       px: price.toString(),
       roePc: trade?.pnlRoePc?.roePc ?? 0,
     }
@@ -121,7 +129,13 @@ function normalizeTrade(trade: AnyTradeType): NormalizedTrade {
     const closedPnl = Number.parseFloat(trade.closedPnl)
     const fees = Number.parseFloat(trade.fee)
     const totalPnl = closedPnl - fees
+    const exitPrice = Number.parseFloat(trade.px)
+    const size = Number.parseFloat(trade.sz)
+    const quotient = closedPnl / size
+    const entryPx = exitPrice - quotient
+
     return {
+      entryPx: entryPx,
       symbol: trade?.token0Symbol ?? '',
       coin: trade.coin,
       closedPnl: totalPnl,
@@ -133,6 +147,7 @@ function normalizeTrade(trade: AnyTradeType): NormalizedTrade {
   }
 
   return {
+    entryPx: 0,
     symbol: '',
     coin: '',
     closedPnl: 0,
@@ -410,10 +425,7 @@ function SharePoster({
   const direction = trade.side === 'A' ? 'Short' : 'Long'
   const closePrice = Number.parseFloat(trade.px)
   const size = Number.parseFloat(trade.sz)
-  const realizedPnl = trade.closedPnl
-  const floatSide = trade.side === 'B' ? 1 : -1
-  const entryPrice =
-    size === 0 ? closePrice : closePrice + (floatSide * realizedPnl) / size
+  const entryPrice = trade.entryPx
   const entryNotional = entryPrice * size
   const pnlPercent =
     'roePc' in trade
@@ -435,7 +447,7 @@ function SharePoster({
   const entryPx = trade?.entryPx || closePrice - trade.closedPnl / size
   const entryPriceLabel = formatPosterPrice(entryPx)
   const exitPriceLabel = formatPosterPrice(closePrice)
-  const referralLabel = referralCode?.toUpperCase() ?? '--'
+  const referralLabel = referralCode?.toUpperCase() || undefined
 
   useEffect(() => {
     let cancelled = false
@@ -628,11 +640,14 @@ function formatPosterPrice(price: number): string {
   }
 
   const maxFraxDigits =
-    Math.abs(price) >= 100 ? 0 : Math.abs(price) >= 1 ? 2 : 6
+    Math.abs(price) >= 10000 ? 0 : Math.abs(price) >= 1 ? 2 : 6
+  const minFraxDigits =
+    Math.abs(price) >= 10000 ? 0 : Math.abs(price) >= 1 ? 2 : 2
 
   return `$${perpsNumberFormatter({
     value: price,
     maxFraxDigits,
+    minFraxDigits,
   })}`
 }
 
@@ -652,7 +667,7 @@ type PosterCanvasData = {
   isPositive: boolean
   leverageLabel: string
   largeValue: string
-  referralLabel: string
+  referralLabel: string | undefined
   symbol: string
   sushiIcon: HTMLImageElement
   tokenIcon?: HTMLImageElement
@@ -748,9 +763,9 @@ function drawPosterCanvas(
   drawPosterBackground(context, theme)
   drawPosterHeaderImage(context, data.artImages.pnlCardHeader)
   drawPosterHeader(context, data.sushiIcon)
-  drawPosterStats(context, data)
   drawPosterPnlPanel(context, data, theme)
   drawPosterArt(context, data.artImages, data.isPositive)
+  drawPosterStats(context, data)
 
   context.restore()
 }
@@ -815,7 +830,9 @@ function drawPosterStats(
   const statY = 105
   drawPosterStat(context, 'Entry price', data.entryPriceLabel, 44, statY)
   drawPosterStat(context, 'Exit price', data.exitPriceLabel, 168, statY)
-  drawPosterStat(context, 'Referral code', data.referralLabel, 292, statY)
+  if (data.referralLabel) {
+    drawPosterStat(context, 'Referral code', data.referralLabel, 292, statY)
+  }
 }
 
 function drawPosterStat(
