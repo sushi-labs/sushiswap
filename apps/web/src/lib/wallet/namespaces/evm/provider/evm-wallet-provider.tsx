@@ -1,4 +1,7 @@
+import { useConnectOrCreateWallet, usePrivy } from '@privy-io/react-auth'
+import { WagmiProvider, useSetActiveWallet } from '@privy-io/wagmi'
 import {
+  getConnections,
   connect as wagmiConnect,
   disconnect as wagmiDisconnect,
 } from '@wagmi/core'
@@ -11,15 +14,16 @@ import {
   useMemo,
 } from 'react'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
+import { usePrivyEmbeddedWallet } from 'src/lib/wallet'
 import {
   addWalletConnection,
   clearWalletConnections,
 } from 'src/lib/wallet/provider/store'
 import type { Wallet } from 'src/lib/wallet/types'
 import { EvmChainId, isEvmChainId } from 'sushi/evm'
-import { WagmiContext, WagmiProvider, useConnection } from 'wagmi'
+import { WagmiContext, useConnection, useDisconnect } from 'wagmi'
 import type { WalletNamespaceContext } from '../../types'
-import { EvmAdapterConfig } from '../config'
+import { EvmAdapterConfig, EvmAdapterId } from '../config'
 import { isEvmWallet } from '../types'
 
 function useInEvmContext(): boolean {
@@ -55,12 +59,52 @@ export default function EvmWalletProvider({
 }
 
 function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
-  const { isConnected, address, connector, chainId } = useConnection()
+  const {
+    isConnected,
+    address,
+    connector,
+    chainId,
+    isConnecting,
+    isReconnecting,
+  } = useConnection()
+  const { isPending } = useDisconnect()
+  const { setActiveWallet } = useSetActiveWallet()
+  const privyEmbeddedWallet = usePrivyEmbeddedWallet('evm')
+  const { logout } = usePrivy()
+
+  const { connectOrCreateWallet } = useConnectOrCreateWallet({
+    onSuccess: async (data) => {
+      if (privyEmbeddedWallet?.address === data.wallet.address) {
+        await setActiveWallet(privyEmbeddedWallet)
+        return
+      }
+    },
+  })
 
   const connect = useCallback(
     async (wallet: Wallet, onSuccess?: (address: string) => void) => {
       if (!isEvmWallet(wallet)) {
         throw new Error(`Invalid namespace for ${wallet.name}`)
+      }
+      const config = getWagmiConfig()
+      const connections = getConnections(config)
+      for (const connection of connections) {
+        if (connection.connector.uid !== wallet.uid) {
+          await wagmiDisconnect(config, {
+            connector: connection.connector,
+          })
+        }
+      }
+      if (wallet.adapterId === EvmAdapterId.Privy && privyEmbeddedWallet) {
+        await setActiveWallet(privyEmbeddedWallet)
+        onSuccess?.(privyEmbeddedWallet.address)
+        return
+      } else if (
+        wallet.adapterId === EvmAdapterId.Privy &&
+        !privyEmbeddedWallet
+      ) {
+        connectOrCreateWallet()
+        return
       }
 
       if (
@@ -75,15 +119,31 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
             uid: wallet.uid,
           }),
         })
+
         onSuccess?.(accounts[0])
       }
     },
-    [connector?.id, address],
+    [
+      connector?.id,
+      address,
+      privyEmbeddedWallet,
+      setActiveWallet,
+      connectOrCreateWallet,
+    ],
   )
 
   const disconnect = useCallback(async () => {
-    await wagmiDisconnect(getWagmiConfig())
-  }, [])
+    const config = getWagmiConfig()
+    const connections = getConnections(config)
+    for (const connection of connections) {
+      await wagmiDisconnect(config, {
+        connector: connection.connector,
+      })
+    }
+    if (privyEmbeddedWallet) {
+      await logout()
+    }
+  }, [logout, privyEmbeddedWallet])
 
   const value = useMemo(
     () => ({
@@ -96,6 +156,7 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
   )
 
   useEffect(() => {
+    if (isConnecting || isReconnecting || isPending) return
     if (!isConnected || !connector?.id || !address || !chainId) {
       clearWalletConnections('evm')
       return
@@ -116,6 +177,9 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
     connector?.icon,
     address,
     chainId,
+    isConnecting,
+    isReconnecting,
+    isPending,
   ])
 
   return (

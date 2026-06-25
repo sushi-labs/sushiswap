@@ -192,6 +192,7 @@ function _useSvmSimpleSwapTradeReview({
         await confirmationPromise
           .then(() => {
             setStatus('success')
+            setSwapAmount('')
             sendAnalyticsEvent(SwapEventName.SWAP_TRANSACTION_COMPLETED, {
               txHash: signature,
               chain_id: chainId,
@@ -252,7 +253,6 @@ function _useSvmSimpleSwapTradeReview({
         setStatus('error')
         onSwapError(error)
       } finally {
-        setSwapAmount('')
         refetchChain(chainId)
         setIsSigning(false)
         resetDetailsTrackedState()

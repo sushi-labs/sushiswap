@@ -41,6 +41,27 @@
         "noUnusedVariables": "error",
         "useExhaustiveDependencies": "error"
       },
+      "nursery": {
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "@wagmi/core": {
+                "importNames": ["switchChain"],
+                "message": "Use useSwitchChain from src/lib/wallet instead so Privy embedded wallets stay in sync."
+              },
+              "wagmi": {
+                "importNames": ["useSwitchChain"],
+                "message": "Use useSwitchChain from src/lib/wallet instead so Privy embedded wallets stay in sync."
+              },
+              "wagmi/actions": {
+                "importNames": ["switchChain"],
+                "message": "Use useSwitchChain from src/lib/wallet instead so Privy embedded wallets stay in sync."
+              }
+            }
+          }
+        }
+      },
       "performance": {
         "noDelete": "off"
       },

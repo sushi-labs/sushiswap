@@ -23,6 +23,7 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { useSwitchChain } from 'src/lib/wallet'
 import { formatNumber, formatUSD } from 'sushi'
 import {
   type EvmAddress,
@@ -32,11 +33,7 @@ import {
   getEvmChainById,
   sushiSwapV3PoolAbi_setFeeProtocol,
 } from 'sushi/evm'
-import {
-  useSwitchChain,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from 'wagmi'
+import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 import { ProtocolBadge } from '~evm/[chainId]/_ui/protocol-badge'
 
 type V3Pool = Omit<V3BasePool, 'token0' | 'token1'> & {
