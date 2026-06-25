@@ -3,13 +3,14 @@
 import { createErrorToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import React, { type FC, Suspense, useCallback } from 'react'
+import { type FC, Suspense, useCallback } from 'react'
 import { getNetworkName } from 'src/lib/network'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
+import { useSwitchChain } from 'src/lib/wallet'
 import type { ChainId } from 'sushi'
 import { isEvmChainId } from 'sushi/evm'
 import { ProviderRpcError } from 'viem'
-import { useChainId, useSwitchChain } from 'wagmi'
+import { useChainId } from 'wagmi'
 import {
   NetworkSelector,
   type NetworkSelectorOnSelectCallback,

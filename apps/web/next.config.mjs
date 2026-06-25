@@ -1,6 +1,7 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import withBundleAnalyzer from '@next/bundle-analyzer'
+import { createContentSecurityPolicy } from './content-security-policy.mjs'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -8,6 +9,42 @@ const __dirname = path.dirname(__filename)
 const bundleAnalyzer = withBundleAnalyzer({
   enabled: false && process.env.NODE_ENV !== 'development',
 })
+
+function getSourceOrigin(value) {
+  if (!value) return undefined
+
+  try {
+    const url = new URL(value)
+    if (!['http:', 'https:', 'ws:', 'wss:'].includes(url.protocol)) {
+      return undefined
+    }
+    return url.origin
+  } catch {
+    return undefined
+  }
+}
+
+const additionalConnectSources = [
+  process.env.NEXT_PUBLIC_SUSHI_DATA_API_HOST,
+  process.env.NEXT_PUBLIC_API_BASE_URL,
+  process.env.NEXT_PUBLIC_BLADE_API_HOST,
+  process.env.NEXT_PUBLIC_STYRO_BACKEND_URL,
+]
+  .map(getSourceOrigin)
+  .filter(Boolean)
+
+const contentSecurityPolicy = createContentSecurityPolicy({
+  additionalConnectSources,
+  isDevelopment: process.env.NODE_ENV === 'development',
+  isTest:
+    process.env.NODE_ENV === 'test' ||
+    process.env.NEXT_PUBLIC_APP_ENV === 'test',
+})
+
+const contentSecurityPolicyHeader =
+  process.env.NEXT_PUBLIC_APP_ENV === 'test'
+    ? 'Content-Security-Policy-Report-Only'
+    : 'Content-Security-Policy'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = bundleAnalyzer({
@@ -46,6 +83,11 @@ const nextConfig = bundleAnalyzer({
         }),
       )
     }
+    config.externals['@solana/kit'] = 'commonjs @solana/kit'
+    config.externals['@solana-program/memo'] = 'commonjs @solana-program/memo'
+    config.externals['@solana-program/system'] =
+      'commonjs @solana-program/system'
+    config.externals['@solana-program/token'] = 'commonjs @solana-program/token'
     config.ignoreWarnings = [
       {
         module: /node_modules\/@graphql-mesh\/utils\/esm\/defaultImportFn\.js/,
@@ -57,6 +99,23 @@ const nextConfig = bundleAnalyzer({
       { file: /node_modules\/@whatwg-node\/fetch\/dist\/node-ponyfill\.js/ },
     ]
     return config
+  },
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: contentSecurityPolicyHeader,
+            value: contentSecurityPolicy,
+          },
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin-allow-popups',
+          },
+        ],
+      },
+    ]
   },
   async redirects() {
     return [

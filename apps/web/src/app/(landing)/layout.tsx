@@ -1,7 +1,7 @@
 import { classNames } from '@sushiswap/ui'
 import type React from 'react'
 import { WalletProvider } from 'src/lib/wallet'
-import { QueryClientProvider } from 'src/providers/query-client-provider'
+import { PrivyProvider } from 'src/providers/privy-provider'
 import { WagmiProvider } from 'src/providers/wagmi-provider'
 import { BalanceProvider } from '~evm/_common/ui/balance-provider/balance-provider'
 import { PriceProvider } from '~evm/_common/ui/price-provider/price-provider/price-provider'
@@ -11,7 +11,7 @@ export default function LandingLayout({
   children,
 }: { children: React.ReactNode }) {
   return (
-    <QueryClientProvider>
+    <PrivyProvider>
       <WalletProvider>
         <WagmiProvider>
           <PriceProvider>
@@ -25,6 +25,6 @@ export default function LandingLayout({
           </PriceProvider>
         </WagmiProvider>
       </WalletProvider>
-    </QueryClientProvider>
+    </PrivyProvider>
   )
 }

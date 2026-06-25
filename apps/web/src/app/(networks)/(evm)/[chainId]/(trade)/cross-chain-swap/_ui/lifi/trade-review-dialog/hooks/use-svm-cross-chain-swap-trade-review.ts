@@ -7,6 +7,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import type { LifiXSwapSupportedChainId } from 'src/config'
 import { useCrossChainTradeStep } from 'src/lib/hooks/react-query'
+import { useSvmSignAndSendTransaction } from 'src/lib/svm/hooks/use-svm-sign-and-send-transaction'
 import { useSvmEstimateGas } from 'src/lib/svm/hooks/useSvmEstimateGas'
 import { waitForSvmSignature } from 'src/lib/svm/wait-for-svm-signature'
 import { useAccount } from 'src/lib/wallet'
@@ -36,6 +37,7 @@ export function useSvmCrossChainSwapTradeReview<
 
   const address = useAccount(chainId0)
   const { signer } = useTransactionSigner()
+  const { signAndSendTransaction } = useSvmSignAndSendTransaction()
 
   const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
   const { open: reviewDialogOpen } = useDialog(DialogType.Review)
@@ -95,7 +97,8 @@ export function useSvmCrossChainSwapTradeReview<
 
       const unsignedBytes = base64Encoder.encode(unsignedTransaction)
 
-      const signature = await signer.signAndSendTransaction(unsignedBytes)
+      const { base58TxSig: signature } =
+        await signAndSendTransaction(unsignedBytes)
 
       return signature as unknown as TxHashFor<TChainId0>
     },

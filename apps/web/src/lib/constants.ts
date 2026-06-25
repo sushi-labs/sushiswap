@@ -21,15 +21,18 @@ export const PROTOCOL_MAP: Record<SushiSwapProtocol, string> = {
   BLADE: 'Blade',
 } as const
 
-export enum Bound {
-  LOWER = 'LOWER',
-  UPPER = 'UPPER',
-}
+export const Bound = {
+  LOWER: 'LOWER',
+  UPPER: 'UPPER',
+} as const
 
-export enum Field {
-  CURRENCY_A = 'CURRENCY_A',
-  CURRENCY_B = 'CURRENCY_B',
-}
+export type Bound = (typeof Bound)[keyof typeof Bound]
+
+export const Field = {
+  CURRENCY_A: 'CURRENCY_A',
+  CURRENCY_B: 'CURRENCY_B',
+} as const
+export type Field = (typeof Field)[keyof typeof Field]
 
 export const APPROVE_TAG_ADD_LEGACY = 'APPROVE_TAG_ADD_LEGACY'
 export const APPROVE_TAG_ADD_STEER = 'APPROVE_TAG_ADD_STEER'

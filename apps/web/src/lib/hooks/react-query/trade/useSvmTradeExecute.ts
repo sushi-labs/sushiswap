@@ -5,6 +5,8 @@ import {
   getTransactionDecoder,
 } from '@solana/kit'
 import { useMutation } from '@tanstack/react-query'
+import { useSvmSignAndSendTransaction } from 'src/lib/svm/hooks/use-svm-sign-and-send-transaction'
+import { useSvmSignTransaction } from 'src/lib/svm/hooks/use-svm-sign-transaction'
 import { isSvmChainId } from 'sushi/svm'
 import { useWrapUnwrapTrade } from '~evm/[chainId]/(trade)/swap/_ui/common'
 import type { UseSvmTradeParams } from './types'
@@ -15,6 +17,8 @@ export function useSvmTradeExecute(variables: UseSvmTradeParams) {
   const resolvedRequestId = requestId ?? order?.requestId
   const { isWrapUnwrap } = useWrapUnwrapTrade(fromToken, toToken)
   const { signer } = useTransactionSigner()
+  const { signTransaction } = useSvmSignTransaction()
+  const { signAndSendTransaction } = useSvmSignAndSendTransaction()
 
   const mutation = useMutation({
     mutationKey: [
@@ -41,7 +45,7 @@ export function useSvmTradeExecute(variables: UseSvmTradeParams) {
       }
 
       if (isWrapUnwrap) {
-        const signature = await signer?.signAndSendTransaction(
+        const { base58TxSig: signature } = await signAndSendTransaction(
           resolvedUnsignedBytes,
         )
 
@@ -54,14 +58,15 @@ export function useSvmTradeExecute(variables: UseSvmTradeParams) {
       if (!resolvedRequestId) {
         throw new Error('Missing requestId for SVM trade execute')
       }
-      const tx = await signer?.signTransaction(resolvedUnsignedBytes)
-      const base58TxSig = getSignatureFromTransaction(
-        getTransactionDecoder().decode(tx as Uint8Array),
+      const { base58TxSig, base64SignedTx } = await signTransaction(
+        resolvedUnsignedBytes,
       )
-      const base64SignedTx = Buffer.from(tx as Uint8Array).toString('base64')
 
+      if (!base58TxSig) {
+        throw new Error('Failed to obtain transaction signature')
+      }
       if (!base64SignedTx) {
-        throw new Error('Failed to sign SVM transaction')
+        throw new Error('Failed to obtain signed transaction')
       }
 
       const body: Record<string, unknown> = {

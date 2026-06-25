@@ -60,6 +60,7 @@ jobs:
           BOTID_JWT_KEY: HLQsCXPJ6gEZaLVGnigDE2yv8hBOih53JWeknsEKG0A
           # Data API
           NEXT_PUBLIC_SUSHI_DATA_API_HOST: https://production.data-gcp.sushi.com
+          NEXT_PUBLIC_PRIVY_APP_ID: cmq14gqpd00lb0cl52zln4q4z
 
       - name: Upload test results
         if: always()
