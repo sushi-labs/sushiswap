@@ -400,8 +400,8 @@ export function ShareClosedPnlDialog({
 const POSTER_WIDTH = 975
 const POSTER_HEIGHT = 530
 const POSTER_SCALE = 1
-const POSTER_CANVAS_WIDTH = POSTER_WIDTH * POSTER_SCALE
-const POSTER_CANVAS_HEIGHT = POSTER_HEIGHT * POSTER_SCALE
+const POSTER_CANVAS_WIDTH = POSTER_WIDTH
+const POSTER_CANVAS_HEIGHT = POSTER_HEIGHT
 
 type SharePosterProps = {
   posterRef: RefObject<HTMLCanvasElement | null>
@@ -477,6 +477,7 @@ function SharePoster({
         isPositive,
         largeValue,
         leverageLabel,
+        normalizedPnlPercent,
         referralLabel,
         symbol,
         sushiIcon,
@@ -496,6 +497,7 @@ function SharePoster({
     imageUrl,
     largeValue,
     leverageLabel,
+    normalizedPnlPercent,
     posterRef,
     referralLabel,
     symbol,
@@ -667,6 +669,7 @@ type PosterCanvasData = {
   isPositive: boolean
   leverageLabel: string
   largeValue: string
+  normalizedPnlPercent: number
   referralLabel: string | undefined
   symbol: string
   sushiIcon: HTMLImageElement
@@ -752,6 +755,9 @@ const PNL_PANEL_DROP_SHADOW_OFFSET_Y = 12.95
 const PNL_PANEL_INSET_SHADOW_BLUR = 6.48
 const PNL_PANEL_INSET_SHADOW_COLOR = '#FFFFFF1F'
 const PNL_PANEL_INSET_SHADOW_OFFSET_Y = 6.48
+const PNL_PANEL_BASE_WIDTH = 445
+const PNL_PANEL_WIDE_EXTRA_WIDTH = 55
+const PNL_PANEL_WIDE_PNL_PERCENT_THRESHOLD = 999.99
 
 type PosterVerticalShadow = {
   blur: number
@@ -905,7 +911,11 @@ function drawPosterPnlPanel(
 ): void {
   const x = 44
   const y = 200
-  const width = 445
+  const panelExtraWidth =
+    Math.abs(data.normalizedPnlPercent) > PNL_PANEL_WIDE_PNL_PERCENT_THRESHOLD
+      ? PNL_PANEL_WIDE_EXTRA_WIDTH
+      : 0
+  const width = PNL_PANEL_BASE_WIDTH + panelExtraWidth
   const height = 280
   const radius = 56
   const panelGradient = context.createLinearGradient(0, y + height, 0, y)
@@ -975,7 +985,14 @@ function drawPosterPnlPanel(
     theme,
   )
 
-  drawPosterPercent(context, data.largeValue, x + 44, y + 126, 358, theme)
+  drawPosterPercent(
+    context,
+    data.largeValue,
+    x + 44,
+    y + 126,
+    358 + panelExtraWidth,
+    theme,
+  )
   context.restore()
 }
 
