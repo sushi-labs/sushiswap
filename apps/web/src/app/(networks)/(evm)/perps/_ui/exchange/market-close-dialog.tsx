@@ -31,8 +31,8 @@ import {
   useMidPrice,
   useSymbolSplit,
 } from 'src/lib/perps'
-import { useAccount } from 'src/lib/wallet'
 import { formatUnits, parseUnits } from 'viem'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import {
   CheckboxSetting,
   PercentageSlider,
@@ -85,7 +85,9 @@ export const MarketCloseDialog = ({
   const { midPrice } = useMidPrice({
     assetString: positionToClose.position.coin,
   })
-  const address = useAccount('evm')
+  const {
+    state: { activeAddress: address },
+  } = useActiveAccountState()
 
   const isControlled = isOpen !== undefined
   const resolvedOpen = isControlled ? isOpen : open

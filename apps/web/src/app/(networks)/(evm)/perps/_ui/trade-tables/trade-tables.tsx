@@ -10,6 +10,7 @@ import {
 } from 'src/lib/perps'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useAccount } from 'src/lib/wallet'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { PerpsCard } from '../_common/perps-card'
 import { TradeFilter } from './filters'
 import {
@@ -50,7 +51,10 @@ export const TradeTables = ({ className }: { className?: string }) => {
     return TABS.find((t) => t.value === activeTab)?.content
   }, [activeTab, TABS])
   const address = useAccount('evm')
-  const { data: twapOrders } = useUserActiveTwap({ address })
+  const {
+    state: { activeAddress },
+  } = useActiveAccountState()
+  const { data: twapOrders } = useUserActiveTwap({ address: activeAddress })
   const { data: balances } = useBalances()
   const { data: userPositions } = useUserPositions()
   const { data: openOrders } = useUserOpenOrders({})

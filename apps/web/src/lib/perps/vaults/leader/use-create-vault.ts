@@ -32,7 +32,7 @@ export const useCreateVault = () => {
         return
       }
       if (!legalCheck?.ipAllowed || !legalCheck?.userAllowed) {
-        throw new Error('Legal check failed. Cannot cancel twap order.')
+        throw new Error('Legal check failed. Cannot create vault.')
       }
       if (createData.name.length < 3 || createData.name.length > 50) {
         throw new Error('Vault name must be between 3 and 50 characters')
@@ -45,7 +45,8 @@ export const useCreateVault = () => {
           'Vault description must be between 10 and 250 characters',
         )
       }
-      if (createData.initialUsdcAmount < 100) {
+      // initialUsdcAmount is in micro-USDC (float * 1e6), per the createVault SDK.
+      if (createData.initialUsdcAmount < 100 * 1e6) {
         throw new Error('Initial deposit must be at least 100 USDC')
       }
 

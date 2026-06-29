@@ -5,7 +5,7 @@ import {
   type UserBorrowLendInterestItemType,
   useUserBorrowLendInterest,
 } from 'src/lib/perps'
-import { useAccount } from 'src/lib/wallet'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { MobileTable, tableRowClassName } from '../_common'
 import {
   EARNED_COLUMN,
@@ -32,9 +32,11 @@ const startTime = Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 30 // 30 days a
 
 export const InterestTable = () => {
   const { isLg } = useBreakpoint('lg')
-  const address = useAccount('evm')
+  const {
+    state: { activeAddress },
+  } = useActiveAccountState()
   const { data, isLoading, isError } = useUserBorrowLendInterest({
-    address,
+    address: activeAddress,
     startTime,
   })
   const [sorting, setSorting] = useState([{ id: 'timestamp', desc: true }])
