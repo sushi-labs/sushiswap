@@ -4,10 +4,12 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
+  LinkInternal,
   classNames,
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
 import { useSendableAssets } from 'src/lib/perps'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserState } from '~evm/perps/user-provider'
 import {
   DepositDialog,
@@ -38,6 +40,9 @@ export const Deposit: FC<ButtonProps> = ({
   const {
     state: { dexQuoteMap },
   } = useAssetListState()
+  const {
+    state: { activeAccount },
+  } = useActiveAccountState()
   const { data: sendableAssets } = useSendableAssets('stable')
 
   const quoteSymbol = useMemo(() => {
@@ -77,6 +82,34 @@ export const Deposit: FC<ButtonProps> = ({
       <Button fullWidth={fullWidth} size={size} {...props}>
         {error?.message || 'Error Loading User'}
       </Button>
+    )
+  }
+
+  if (
+    activeAccount?.type === 'vault' &&
+    Number(availableToTrade) === 0 &&
+    asset?.marketType === 'perp'
+  ) {
+    return (
+      <div className="flex flex-col gap-1">
+        <p className="text-xs text-muted-foreground italic">
+          Notice: This vault needs funds before trading. Deposit to the vault
+          from the vault page.
+        </p>
+        <LinkInternal
+          href={`/perps/vaults/${activeAccount.address.toLowerCase()}`}
+          className="w-full"
+        >
+          <Button
+            fullWidth={fullWidth}
+            size={size}
+            variant={props.variant}
+            className={props.className}
+          >
+            Fund Vault
+          </Button>
+        </LinkInternal>
+      </div>
     )
   }
 
