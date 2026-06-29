@@ -61,16 +61,55 @@ type NormalizedTrade = {
   roePc?: number
 }
 
+type FillWithPnl = {
+  closedPnl: string
+  px: string
+  side: 'A' | 'B'
+  startPosition: string
+  sz: string
+}
+
+function parseFiniteNumber(value: number | string | null | undefined): number {
+  const parsed =
+    typeof value === 'number' ? value : Number.parseFloat(value ?? '0')
+
+  return Number.isFinite(parsed) ? parsed : 0
+}
+
+function getFillPositionSide(trade: FillWithPnl): 'A' | 'B' {
+  const startPosition = parseFiniteNumber(trade.startPosition)
+
+  if (startPosition < 0) return 'A'
+  if (startPosition > 0) return 'B'
+
+  return trade.side
+}
+
+function getFillEntryPx(trade: FillWithPnl): number {
+  const closedPnl = parseFiniteNumber(trade.closedPnl)
+  const exitPrice = parseFiniteNumber(trade.px)
+  const size = parseFiniteNumber(trade.sz)
+
+  if (size === 0) return exitPrice
+
+  const quotient = closedPnl / size
+
+  return getFillPositionSide(trade) === 'A'
+    ? exitPrice + quotient
+    : exitPrice - quotient
+}
+
 function normalizeTrade(trade: AnyTradeType): NormalizedTrade {
   // UserPositionsItemType —
   if ('position' in trade) {
-    const entryPrice = Number.parseFloat(trade.position.entryPx)
+    const entryPrice = parseFiniteNumber(trade.position.entryPx)
     const side = trade.side === 'A' ? -1 : 1
-    const size = Number.parseFloat(trade.position.szi) * side
+    const size = parseFiniteNumber(trade.position.szi) * side
     const entryNotional = entryPrice * size
     const leverage = trade.position.leverage.value
-    const pnl = Number.parseFloat(trade.position.unrealizedPnl ?? '0')
-    const roePc = (pnl / entryNotional) * (leverage ?? 1) * 100
+    const pnl = parseFiniteNumber(trade.position.unrealizedPnl)
+    const roePc =
+      entryNotional === 0 ? 0 : (pnl / entryNotional) * (leverage ?? 1) * 100
     return {
       entryPx: entryPrice,
       symbol: trade?.assetSymbol?.split(':')?.[1] || trade?.assetSymbol || '',
@@ -85,21 +124,23 @@ function normalizeTrade(trade: AnyTradeType): NormalizedTrade {
   }
 
   // TwapFillHistoryItemType — uses assetSymbol
-  if ('twapId' in trade && !!trade?.twapId && 'assetSymbol' in trade) {
-    const closedPnl = Number.parseFloat(trade.closedPnl)
-    const fees = Number.parseFloat(trade.fee)
+  if (
+    'twapId' in trade &&
+    trade.twapId !== null &&
+    trade.twapId !== undefined &&
+    'assetSymbol' in trade
+  ) {
+    const closedPnl = parseFiniteNumber(trade.closedPnl)
+    const fees = parseFiniteNumber(trade.fee)
     const totalPnl = closedPnl - fees
-    const exitPrice = Number.parseFloat(trade.px)
-    const size = Number.parseFloat(trade.sz)
-    const quotient = closedPnl / size
-    const entryPx = exitPrice - quotient
+    const entryPx = getFillEntryPx(trade)
     return {
       entryPx: entryPx,
       symbol: trade?.assetSymbol?.split('/')?.[0] || trade.assetSymbol || '',
       coin: trade.coin,
       time: trade.time,
       closedPnl: totalPnl,
-      side: trade?.side,
+      side: getFillPositionSide(trade),
       sz: trade.sz,
       px: trade.px,
     }
@@ -107,10 +148,10 @@ function normalizeTrade(trade: AnyTradeType): NormalizedTrade {
 
   // BalanceItemType — no pnl fields
   if ('totalBalance' in trade && 'coin' in trade) {
-    const size = Number.parseFloat(trade.totalBalance || '0')
-    const price = Number.parseFloat(trade.usdcValue) / size
-    const closedPnl = trade?.pnlRoePc?.pnl ?? 0
-    const quotient = closedPnl / size
+    const size = parseFiniteNumber(trade.totalBalance)
+    const price = size === 0 ? 0 : parseFiniteNumber(trade.usdcValue) / size
+    const closedPnl = parseFiniteNumber(trade?.pnlRoePc?.pnl)
+    const quotient = size === 0 ? 0 : closedPnl / size
     const entryPx = price - quotient
     return {
       entryPx: entryPx,
@@ -121,19 +162,16 @@ function normalizeTrade(trade: AnyTradeType): NormalizedTrade {
       side: 'B', //can hardcode B here, only spot balances shown here so this has no effect
       sz: size.toString(),
       px: price.toString(),
-      roePc: trade?.pnlRoePc?.roePc ?? 0,
+      roePc: parseFiniteNumber(trade?.pnlRoePc?.roePc),
     }
   }
 
   // TradeHistoryItemType — full data
   if ('token0Symbol' in trade) {
-    const closedPnl = Number.parseFloat(trade.closedPnl)
-    const fees = Number.parseFloat(trade.fee)
+    const closedPnl = parseFiniteNumber(trade.closedPnl)
+    const fees = parseFiniteNumber(trade.fee)
     const totalPnl = closedPnl - fees
-    const exitPrice = Number.parseFloat(trade.px)
-    const size = Number.parseFloat(trade.sz)
-    const quotient = closedPnl / size
-    const entryPx = exitPrice - quotient
+    const entryPx = getFillEntryPx(trade)
 
     return {
       entryPx: entryPx,
@@ -141,7 +179,7 @@ function normalizeTrade(trade: AnyTradeType): NormalizedTrade {
       coin: trade.coin,
       closedPnl: totalPnl,
       time: trade.time,
-      side: trade?.side === 'A' ? 'B' : 'A',
+      side: getFillPositionSide(trade),
       sz: trade.sz,
       px: trade.px,
     }
@@ -428,9 +466,12 @@ function SharePoster({
   const leverageMultiplier = leverage
   const direction = trade.side === 'A' ? 'Short' : 'Long'
   const closePrice = Number.parseFloat(trade.px)
-  const size = Number.parseFloat(trade.sz)
-  const entryPrice = trade.entryPx
-  const entryNotional = entryPrice * size
+  const size = parseFiniteNumber(trade.sz)
+  const entryPx =
+    Number.isFinite(trade.entryPx) && trade.entryPx > 0
+      ? trade.entryPx
+      : closePrice
+  const entryNotional = entryPx * size
   const pnlPercent =
     'roePc' in trade
       ? Number(trade.roePc)
@@ -448,7 +489,6 @@ function SharePoster({
     ? `${leverageMultiplier}x ${direction}`
     : 'Spot'
 
-  const entryPx = trade?.entryPx || closePrice - trade.closedPnl / size
   const entryPriceLabel = formatPosterPrice(entryPx)
   const exitPriceLabel = formatPosterPrice(closePrice)
   const referralLabel = referralCode?.toUpperCase() || undefined
