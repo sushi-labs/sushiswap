@@ -110,6 +110,7 @@ export const UserVaultsTable = () => {
         onPaginationChange={setPaginationState}
         pagination={true}
         linkFormatter={rowLink}
+        skeletonRowCount={10}
       />
     </PerpsCard>
   )

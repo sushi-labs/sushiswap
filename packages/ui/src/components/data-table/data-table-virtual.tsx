@@ -54,6 +54,7 @@ interface DataTableVirtualProps<TData, TValue> {
   estimateSize?: number
   trClassName?: string
   pagination?: boolean
+  skeletonRowCount?: number
 }
 
 export function DataTableVirtual<TData, TValue>({
@@ -75,6 +76,7 @@ export function DataTableVirtual<TData, TValue>({
   estimateSize = 30,
   trClassName,
   pagination = false,
+  skeletonRowCount = 3,
 }: DataTableVirtualProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -160,7 +162,7 @@ export function DataTableVirtual<TData, TValue>({
 
         <TableBody>
           {loading ? (
-            Array.from({ length: 3 })
+            Array.from({ length: skeletonRowCount })
               .fill(null)
               .map((_, i) => (
                 <TableRow key={i} testdata-id="table-rows-loading">
