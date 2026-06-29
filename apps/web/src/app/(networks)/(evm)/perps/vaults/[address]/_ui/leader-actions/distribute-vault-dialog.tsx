@@ -36,7 +36,7 @@ export const DistributeVaultDialog = ({
   const resolvedOpen = isControlled ? isOpen : open
   const { vaultDistributeAsync, isPending } = useVaultDistribute()
   const [amount, setAmount] = useState<string>('')
-  const _amount = Amount.tryFromHuman(currency, amount)
+  const _amount = useMemo(() => Amount.tryFromHuman(currency, amount), [amount])
   const {
     data: vaultDetails,
     isLoading,
@@ -52,7 +52,10 @@ export const DistributeVaultDialog = ({
     return String(vaultDetails?.maxDistributable)
   }, [vaultDetails, address])
 
-  const balance = Amount.tryFromHuman(currency, withdrawableBalance ?? '0')
+  const balance = useMemo(
+    () => Amount.tryFromHuman(currency, withdrawableBalance ?? '0'),
+    [withdrawableBalance],
+  )
 
   const handleOpenChange = useCallback(
     (nextOpen: boolean) => {
