@@ -441,9 +441,9 @@ export function ShareClosedPnlDialog({
 
 const POSTER_WIDTH = 975
 const POSTER_HEIGHT = 530
-const POSTER_SCALE = 1
-const POSTER_CANVAS_WIDTH = POSTER_WIDTH
-const POSTER_CANVAS_HEIGHT = POSTER_HEIGHT
+const POSTER_SCALE = 2
+const POSTER_CANVAS_WIDTH = POSTER_WIDTH * POSTER_SCALE
+const POSTER_CANVAS_HEIGHT = POSTER_HEIGHT * POSTER_SCALE
 
 type SharePosterProps = {
   posterRef: RefObject<HTMLCanvasElement | null>
