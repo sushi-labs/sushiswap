@@ -6,20 +6,16 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
-import { useAccount } from 'src/lib/wallet'
 import type { EvmAddress } from 'sushi/evm'
 import { useAgent } from '../../agent'
 import { TOAST_AUTOCLOSE_TIME } from '../../config'
-import { useLegalCheck } from '../../info'
 import { hlHttpTransport } from '../../transports'
 
 export const useVaultModify = () => {
   const { agentAccount } = useAgent()
-  const address = useAccount('evm')
-  const { data: legalCheck } = useLegalCheck({ address })
 
   const mutation = useMutation({
-    mutationKey: ['vault-modify', agentAccount?.address, legalCheck],
+    mutationKey: ['vault-modify', agentAccount?.address],
     mutationFn: async ({
       vaultAddress,
       allowDeposits,
