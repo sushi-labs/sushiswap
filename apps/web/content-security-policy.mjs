@@ -130,6 +130,7 @@ const FRAME_SOURCES = [
   'https://id.porto.sh',
   'https://stg.id.porto.sh',
   'https://vercel.live',
+  'https://privy.sushi.com',
 ]
 
 const FRAME_ANCESTORS = [
