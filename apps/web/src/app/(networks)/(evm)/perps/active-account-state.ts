@@ -21,7 +21,7 @@ function areAddressesEqual(
   return Boolean(left && right && left.toLowerCase() === right.toLowerCase())
 }
 
-function getMasterAccount(address: EvmAddress): ActiveAccount {
+export function getMasterAccount(address: EvmAddress): ActiveAccount {
   return {
     address,
     type: 'master',

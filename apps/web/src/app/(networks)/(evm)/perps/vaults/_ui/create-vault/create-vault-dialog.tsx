@@ -16,9 +16,11 @@ import {
 import { type ReactNode, useCallback, useState } from 'react'
 import { useCreateVault, useUserAccountValues } from 'src/lib/perps'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { useAccount } from 'src/lib/wallet'
 import { parseUnits } from 'viem'
 import { PerpsChecker } from '~evm/perps/_ui/perps-checker'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
+import { getMasterAccount } from '~evm/perps/active-account-state'
 
 type CreateVaultFormValues = {
   vaultName: string
@@ -37,6 +39,7 @@ export const CreateVaultDialog = ({
   isOpen?: boolean
   onOpenChange?: (open: boolean) => void
 }) => {
+  const address = useAccount('evm')
   const [open, setOpen] = useState<boolean>(false)
   const form = useForm<CreateVaultFormValues>({
     defaultValues: {
@@ -50,6 +53,7 @@ export const CreateVaultDialog = ({
   const isControlled = isOpen !== undefined
   const resolvedOpen = isControlled ? isOpen : open
   const {
+    state: { activeAccount },
     mutate: { setActiveAccount },
   } = useActiveAccountState()
   const handleOpenChange = useCallback(
@@ -213,76 +217,92 @@ export const CreateVaultDialog = ({
               >
                 <Checker.Custom
                   size="default"
-                  showChildren={vaultName.length >= 3 && vaultName.length <= 50}
-                  buttonText={'Enter Name'}
-                  onClick={() => {}}
-                  disabled={!(vaultName.length >= 3 && vaultName.length <= 50)}
+                  showChildren={activeAccount?.type === 'master'}
+                  buttonText={'Switch To Master Account'}
+                  onClick={() => {
+                    if (!address) return
+                    const master = getMasterAccount(address)
+                    setActiveAccount(master.address, master.type, master.name)
+                  }}
                   variant="perps-tertiary"
                 >
                   <Checker.Custom
                     size="default"
                     showChildren={
-                      vaultDescription.length >= 10 &&
-                      vaultDescription.length <= 250
+                      vaultName.length >= 3 && vaultName.length <= 50
                     }
-                    buttonText={'Enter Description'}
+                    buttonText={'Enter Name'}
                     onClick={() => {}}
                     disabled={
-                      !(
-                        vaultDescription.length >= 10 &&
-                        vaultDescription.length <= 250
-                      )
+                      !(vaultName.length >= 3 && vaultName.length <= 50)
                     }
                     variant="perps-tertiary"
                   >
                     <Checker.Custom
                       size="default"
-                      showChildren={Boolean(depositAmount)}
-                      buttonText={'Enter Amount'}
+                      showChildren={
+                        vaultDescription.length >= 10 &&
+                        vaultDescription.length <= 250
+                      }
+                      buttonText={'Enter Description'}
                       onClick={() => {}}
-                      disabled={!depositAmount}
+                      disabled={
+                        !(
+                          vaultDescription.length >= 10 &&
+                          vaultDescription.length <= 250
+                        )
+                      }
                       variant="perps-tertiary"
                     >
                       <Checker.Custom
                         size="default"
-                        showChildren={Number(depositAmount) >= 100}
-                        buttonText={'Minimum 100 USDC Deposit Required'}
+                        showChildren={Boolean(depositAmount)}
+                        buttonText={'Enter Amount'}
                         onClick={() => {}}
-                        disabled={Number(depositAmount) < 100}
+                        disabled={!depositAmount}
                         variant="perps-tertiary"
                       >
                         <Checker.Custom
                           size="default"
-                          showChildren={!insufficientBalance}
-                          buttonText={'Insufficient Balance'}
+                          showChildren={Number(depositAmount) >= 100}
+                          buttonText={'Minimum 100 USDC Deposit Required'}
                           onClick={() => {}}
-                          disabled={Boolean(insufficientBalance)}
+                          disabled={Number(depositAmount) < 100}
                           variant="perps-tertiary"
                         >
-                          <PerpsChecker.EnableTrading
+                          <Checker.Custom
                             size="default"
+                            showChildren={!insufficientBalance}
+                            buttonText={'Insufficient Balance'}
+                            onClick={() => {}}
+                            disabled={Boolean(insufficientBalance)}
                             variant="perps-tertiary"
                           >
-                            <PerpsChecker.BuilderFee
+                            <PerpsChecker.EnableTrading
                               size="default"
                               variant="perps-tertiary"
                             >
-                              <PerpsChecker.HyperReferral
+                              <PerpsChecker.BuilderFee
                                 size="default"
                                 variant="perps-tertiary"
                               >
-                                <Button
+                                <PerpsChecker.HyperReferral
                                   size="default"
-                                  className="w-full"
-                                  onClick={form.handleSubmit(createVault)}
-                                  loading={isPending}
                                   variant="perps-tertiary"
                                 >
-                                  Create Vault
-                                </Button>
-                              </PerpsChecker.HyperReferral>
-                            </PerpsChecker.BuilderFee>
-                          </PerpsChecker.EnableTrading>
+                                  <Button
+                                    size="default"
+                                    className="w-full"
+                                    onClick={form.handleSubmit(createVault)}
+                                    loading={isPending}
+                                    variant="perps-tertiary"
+                                  >
+                                    Create Vault
+                                  </Button>
+                                </PerpsChecker.HyperReferral>
+                              </PerpsChecker.BuilderFee>
+                            </PerpsChecker.EnableTrading>
+                          </Checker.Custom>
                         </Checker.Custom>
                       </Checker.Custom>
                     </Checker.Custom>
