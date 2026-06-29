@@ -18,7 +18,6 @@ import { InputWithKeyboard } from '~evm/perps/_ui/_common'
 import { PerpsChecker } from '~evm/perps/_ui/perps-checker'
 
 const currency = USDC[EvmChainId.ARBITRUM]
-const chainId = EvmChainId.ARBITRUM
 
 export const DistributeVaultDialog = ({
   trigger,
@@ -123,54 +122,48 @@ export const DistributeVaultDialog = ({
                 variant="perps-tertiary"
                 namespace="evm"
               >
-                <Checker.Network
+                <Checker.Custom
                   size="default"
-                  chainId={chainId}
+                  showChildren={Boolean(amount)}
+                  buttonText={'Enter Amount'}
+                  onClick={() => {}}
+                  disabled={!amount}
                   variant="perps-tertiary"
                 >
                   <Checker.Custom
                     size="default"
-                    showChildren={Boolean(amount)}
-                    buttonText={'Enter Amount'}
+                    showChildren={!insufficientBalance}
+                    buttonText={'Insufficient Balance'}
                     onClick={() => {}}
-                    disabled={!amount}
+                    disabled={Boolean(insufficientBalance)}
                     variant="perps-tertiary"
                   >
-                    <Checker.Custom
+                    <PerpsChecker.EnableTrading
                       size="default"
-                      showChildren={!insufficientBalance}
-                      buttonText={'Insufficient Balance'}
-                      onClick={() => {}}
-                      disabled={Boolean(insufficientBalance)}
                       variant="perps-tertiary"
                     >
-                      <PerpsChecker.EnableTrading
+                      <PerpsChecker.BuilderFee
                         size="default"
                         variant="perps-tertiary"
                       >
-                        <PerpsChecker.BuilderFee
+                        <PerpsChecker.HyperReferral
                           size="default"
                           variant="perps-tertiary"
                         >
-                          <PerpsChecker.HyperReferral
+                          <Button
                             size="default"
+                            className="w-full"
+                            onClick={distributeVault}
+                            loading={isPending}
                             variant="perps-tertiary"
                           >
-                            <Button
-                              size="default"
-                              className="w-full"
-                              onClick={distributeVault}
-                              loading={isPending}
-                              variant="perps-tertiary"
-                            >
-                              Distribute
-                            </Button>
-                          </PerpsChecker.HyperReferral>
-                        </PerpsChecker.BuilderFee>
-                      </PerpsChecker.EnableTrading>
-                    </Checker.Custom>
+                            Distribute
+                          </Button>
+                        </PerpsChecker.HyperReferral>
+                      </PerpsChecker.BuilderFee>
+                    </PerpsChecker.EnableTrading>
                   </Checker.Custom>
-                </Checker.Network>
+                </Checker.Custom>
               </Checker.Connect>
             </PerpsChecker.Legal>
           </div>

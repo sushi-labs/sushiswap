@@ -40,11 +40,12 @@ const MOBILE_COLUMNS = [
 export const DepositsWithdrawalsTable = () => {
   const { isLg } = useBreakpoint('lg')
   const {
-    state: { activeAddress },
+    state: { activeAddress, activeAccount },
   } = useActiveAccountState()
   const address = activeAddress
   const { data, isLoading, isError } = useUserNonFundingLedgerUpdates({
     address,
+    isVault: activeAccount?.type === 'vault',
   })
 
   const [sorting, setSorting] = useState([{ id: 'timestamp', desc: true }])
