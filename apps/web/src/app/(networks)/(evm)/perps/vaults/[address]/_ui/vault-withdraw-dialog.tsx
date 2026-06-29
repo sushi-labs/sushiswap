@@ -49,9 +49,9 @@ export const VaultWithdrawDialog = ({
   const address = useAccount('evm')
 
   const withdrawableBalance = useMemo(() => {
-    if (!vaultDetails?.followerState || !address) return '0'
-    return vaultDetails?.followerState?.vaultEquity
-  }, [vaultDetails?.followerState, address])
+    if (!vaultDetails?.maxWithdrawable || !address) return '0'
+    return vaultDetails?.maxWithdrawable
+  }, [vaultDetails, address])
 
   const balance = Amount.tryFromHuman(currency, withdrawableBalance ?? '0')
 
@@ -137,7 +137,12 @@ export const VaultWithdrawDialog = ({
               isLoading={isLoading}
               address={address}
             />
-
+            {vaultDetails?.leader?.toLowerCase() === address?.toLowerCase() ? (
+              <p className="text-xs text-perps-muted-50 text-center italic mb-1">
+                As the leader you must maintain greater than 5% of the shares in
+                the vault and a minimum of 100 USDC in liquidity.
+              </p>
+            ) : null}
             <PerpsChecker.Legal size="default" variant="perps-tertiary">
               <Checker.Connect
                 size="default"

@@ -35,6 +35,7 @@ import {
   useSushiReferralOverview,
 } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { TableButton } from '../../_common'
 import { useAssetListState } from '../../asset-selector'
 
@@ -176,6 +177,9 @@ export function ShareClosedPnlDialog({
   const [isSharingImage, setIsSharingImage] = useState(false)
   const posterRef = useRef<HTMLCanvasElement | null>(null)
   const address = useAccount('evm')
+  const {
+    state: { activeAddress },
+  } = useActiveAccountState()
   const { data: overview } = useSushiReferralOverview({ address })
   const normalizedTrade = useMemo(() => normalizeTrade(trade), [trade])
   const {
@@ -188,7 +192,7 @@ export function ShareClosedPnlDialog({
   }, [assetList, normalizedTrade.coin])
 
   const { data: assetData } = useActiveAssetData({
-    address,
+    address: activeAddress,
     assetString: normalizedTrade.coin,
   })
   const imageUrl = useMemo(() => {

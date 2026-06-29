@@ -21,10 +21,10 @@ import {
   useUserAccountValues,
   useUserVaultEquities,
 } from 'src/lib/perps'
-import { useAccount } from 'src/lib/wallet'
 import { formatPercent } from 'sushi'
 import { PerpsCard, StatItem } from '~evm/perps/_ui/_common'
 import { useUserSettingsState } from '~evm/perps/_ui/account-management'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 
 const STAT_VIEWS = ['perps + spot + vaults', 'perps'] as const
 const TIME = ['24h', '7D', '30D', 'All-time'] as const
@@ -86,7 +86,10 @@ export const PortfolioStats = () => {
     STAT_VIEWS[0],
   )
   const [time, setTime] = useState<(typeof TIME)[number]>(TIME[0])
-  const address = useAccount('evm')
+  const {
+    state: { activeAddress, activeAccount },
+  } = useActiveAccountState()
+  const address = activeAddress
 
   const {
     data,
@@ -283,14 +286,18 @@ export const PortfolioStats = () => {
               />
             </>
           )}
-          <StatItem
-            title="Vault Equity"
-            value={currencyFormatter.format(Number(vaultEquity || 0))}
-          />
-          <StatItem
-            title="Earn Balance"
-            value={currencyFormatter.format(Number(earnBalance || 0))}
-          />
+          {activeAccount?.type === 'vault' ? null : (
+            <>
+              <StatItem
+                title="Vault Equity"
+                value={currencyFormatter.format(Number(vaultEquity || 0))}
+              />
+              <StatItem
+                title="Earn Balance"
+                value={currencyFormatter.format(Number(earnBalance || 0))}
+              />
+            </>
+          )}
         </div>
       )}
     </PerpsCard>

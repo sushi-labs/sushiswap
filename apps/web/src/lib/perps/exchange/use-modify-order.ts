@@ -12,7 +12,9 @@ import {
 import { useMutation } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useAccount } from 'src/lib/wallet'
+import type { EvmAddress } from 'sushi/evm'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useAgent } from '../agent'
 import { TOAST_AUTOCLOSE_TIME } from '../config'
 import { useLegalCheck } from '../info/use-legal-check'
@@ -41,9 +43,16 @@ export const useModifyOrder = () => {
   } = useAssetListState()
   const address = useAccount('evm')
   const { data: legalCheck } = useLegalCheck({ address })
-
+  const {
+    state: { activeAccount },
+  } = useActiveAccountState()
   const mutation = useMutation({
-    mutationKey: ['modify-order', agentAccount?.address, legalCheck],
+    mutationKey: [
+      'modify-order',
+      agentAccount?.address,
+      legalCheck,
+      activeAccount?.address,
+    ],
     mutationFn: async (modifyOrderData: ModifyOrderData) => {
       if (!agentAccount || !modifyOrderData) {
         return
@@ -82,6 +91,10 @@ export const useModifyOrder = () => {
         {
           oid: modifyOrderData.orderId,
           order,
+        },
+        {
+          vaultAddress:
+            activeAccount?.type === 'vault' ? activeAccount.address : undefined,
         },
       )
     },

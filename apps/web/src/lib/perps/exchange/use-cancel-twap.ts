@@ -7,7 +7,9 @@ import {
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
+import type { EvmAddress } from 'sushi/evm'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useAgent } from '../agent'
 import { TOAST_AUTOCLOSE_TIME } from '../config'
 import { useLegalCheck } from '../info/use-legal-check'
@@ -26,9 +28,16 @@ export const useCancelTwap = () => {
   } = useAssetListState()
   const address = useAccount('evm')
   const { data: legalCheck } = useLegalCheck({ address })
-
+  const {
+    state: { activeAccount },
+  } = useActiveAccountState()
   const mutation = useMutation({
-    mutationKey: ['cancel-twap-order', agentAccount?.address, legalCheck],
+    mutationKey: [
+      'cancel-twap-order',
+      agentAccount?.address,
+      legalCheck,
+      activeAccount?.address,
+    ],
     mutationFn: async ({ cancelData }: { cancelData: CancelData }) => {
       if (!agentAccount || !cancelData) {
         return
@@ -50,6 +59,10 @@ export const useCancelTwap = () => {
           transport: hlHttpTransport,
         },
         { a: assetId, t: cancelData.twapId },
+        {
+          vaultAddress:
+            activeAccount?.type === 'vault' ? activeAccount.address : undefined,
+        },
       )
     },
 

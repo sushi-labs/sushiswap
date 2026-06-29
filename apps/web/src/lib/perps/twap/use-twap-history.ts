@@ -1,10 +1,13 @@
 import { useMemo } from 'react'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
-import { useAccount } from '../../wallet'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserTwapHistory } from '../subscription/use-user-twap-history'
 
 export const useTwapHistory = () => {
-  const address = useAccount('evm')
+  const {
+    state: { activeAddress },
+  } = useActiveAccountState()
+  const address = activeAddress
   const {
     data,
     isLoading: isLoadingTwapHistory,

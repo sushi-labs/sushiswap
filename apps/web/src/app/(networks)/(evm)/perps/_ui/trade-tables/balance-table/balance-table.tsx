@@ -2,6 +2,7 @@ import { DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useCallback, useMemo, useState } from 'react'
 import { type BalanceItemType, useBalances } from 'src/lib/perps'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import {
   EvmCoreTransferDialog,
   PerpSpotTransferDialog,
@@ -25,9 +26,11 @@ type BalanceAction = 'send' | 'transfer' | 'evm-core-transfer' | 'share-pnl'
 const getBalanceColumns = ({
   openModal,
   isMobile,
+  isVaultAccount,
 }: {
   openModal: (action: BalanceAction, balance: BalanceItemType) => void
   isMobile: boolean
+  isVaultAccount: boolean
 }): ColumnDef<BalanceItemType, unknown>[] => {
   if (isMobile) {
     return [
@@ -36,8 +39,8 @@ const getBalanceColumns = ({
       AVAILABLE_BALANCE_COLUMN,
       USDC_VALUE_COLUMN,
       PNL_COLUMN(openModal),
-      SEND_COLUMN(openModal),
-      TRANSFER_COLUMN(openModal),
+      ...(isVaultAccount ? [] : [SEND_COLUMN(openModal)]),
+      ...(isVaultAccount ? [] : [TRANSFER_COLUMN(openModal)]),
       CONTRACT_COLUMN,
     ]
   }
@@ -47,8 +50,8 @@ const getBalanceColumns = ({
     TOTAL_BALANCE_COLUMN,
     AVAILABLE_BALANCE_COLUMN,
     PNL_COLUMN(openModal),
-    SEND_COLUMN(openModal),
-    TRANSFER_COLUMN(openModal),
+    ...(isVaultAccount ? [] : [SEND_COLUMN(openModal)]),
+    ...(isVaultAccount ? [] : [TRANSFER_COLUMN(openModal)]),
     CONTRACT_COLUMN,
   ]
 }
@@ -60,6 +63,9 @@ export const BalanceTable = () => {
   const {
     state: { hideSmallBalances, tradeFilter },
   } = useTradeTables()
+  const {
+    state: { activeAccount },
+  } = useActiveAccountState()
   const filterValue = tradeFilter?.balances?.split(':')?.[1] as
     | TradeFilterType
     | undefined
@@ -89,8 +95,12 @@ export const BalanceTable = () => {
   }, [])
 
   const columns = useMemo(() => {
-    return getBalanceColumns({ openModal, isMobile: !isLg })
-  }, [openModal, isLg])
+    return getBalanceColumns({
+      openModal,
+      isMobile: !isLg,
+      isVaultAccount: activeAccount?.type === 'vault',
+    })
+  }, [openModal, isLg, activeAccount?.type])
 
   const tableData = useMemo(() => {
     if (isError || !data) return []

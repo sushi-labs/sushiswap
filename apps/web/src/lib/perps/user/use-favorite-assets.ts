@@ -1,9 +1,13 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 import { useCallback, useMemo } from 'react'
+import { IS_PERPS_TESTNET } from '../config'
 
+const FAVORITES_STORAGE_KEY = IS_PERPS_TESTNET
+  ? `sushi.perps.favorites.testnet`
+  : `sushi.perps.favorites`
 export const useFavoriteAssets = () => {
   const [favorites, setFavorites] = useLocalStorage<string[]>(
-    'sushi.perps.favorites',
+    FAVORITES_STORAGE_KEY,
     [],
   )
 

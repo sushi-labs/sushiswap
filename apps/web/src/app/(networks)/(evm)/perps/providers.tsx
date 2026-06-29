@@ -9,24 +9,27 @@ import {
 } from './_ui/asset-selector'
 import { TradeTablesProvider } from './_ui/trade-tables'
 import { AssetStateProvider } from './_ui/trade-widget'
+import { ActiveAccountProvider } from './active-account-provider'
 import { UserProvider } from './user-provider'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <CheckerProvider>
-      <AssetListProvider>
-        <AssetSelectorStateProvider>
-          <TradeTablesProvider>
-            <UserProvider>
-              <AutoApplyInvite />
-              <AutoDarkMode />
-              <UserSettingsProvider>
-                <AssetStateProvider>{children}</AssetStateProvider>
-              </UserSettingsProvider>
-            </UserProvider>
-          </TradeTablesProvider>
-        </AssetSelectorStateProvider>
-      </AssetListProvider>
+      <ActiveAccountProvider>
+        <AssetListProvider>
+          <AssetSelectorStateProvider>
+            <TradeTablesProvider>
+              <UserProvider>
+                <AutoApplyInvite />
+                <AutoDarkMode />
+                <UserSettingsProvider>
+                  <AssetStateProvider>{children}</AssetStateProvider>
+                </UserSettingsProvider>
+              </UserProvider>
+            </TradeTablesProvider>
+          </AssetSelectorStateProvider>
+        </AssetListProvider>
+      </ActiveAccountProvider>
     </CheckerProvider>
   )
 }

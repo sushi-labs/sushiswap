@@ -31,8 +31,8 @@ import {
   useMidPrice,
   useSymbolSplit,
 } from 'src/lib/perps'
-import { useAccount } from 'src/lib/wallet'
 import { formatUnits, parseUnits } from 'viem'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import {
   CheckboxSetting,
   PercentageSlider,
@@ -79,13 +79,15 @@ export const MarketCloseDialog = ({
   const { executeOrders, isPending } = useExecuteOrders()
   const {
     state: {
-      assetListQuery: { data: assetListData },
+      assetListQuery: { data: assetListData, isLoading: assetListLoading },
     },
   } = useAssetListState()
   const { midPrice } = useMidPrice({
     assetString: positionToClose.position.coin,
   })
-  const address = useAccount('evm')
+  const {
+    state: { activeAddress: address },
+  } = useActiveAccountState()
 
   const isControlled = isOpen !== undefined
   const resolvedOpen = isControlled ? isOpen : open
@@ -102,7 +104,7 @@ export const MarketCloseDialog = ({
   )
 
   const asset = useMemo(() => {
-    if (!positionToClose) return undefined
+    if (!positionToClose || assetListLoading) return undefined
     const _asset = assetListData?.get?.(positionToClose.position.coin)
     if (!_asset) {
       throw new Error(
@@ -110,7 +112,7 @@ export const MarketCloseDialog = ({
       )
     }
     return _asset
-  }, [assetListData, positionToClose])
+  }, [assetListData, positionToClose, assetListLoading])
 
   const { baseSymbol } = useSymbolSplit({ asset })
 

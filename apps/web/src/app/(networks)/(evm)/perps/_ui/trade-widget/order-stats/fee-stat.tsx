@@ -1,16 +1,18 @@
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
 import { formatPerpsPercent, useFees } from 'src/lib/perps'
-import { useAccount } from 'src/lib/wallet'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { StatItem } from '../../_common'
 import { useAssetState } from '../asset-state-provider'
 
 export const FeeStat = () => {
-  const address = useAccount('evm')
+  const {
+    state: { activeAddress },
+  } = useActiveAccountState()
   const {
     state: { asset },
   } = useAssetState()
   const { takerFee, makerFee } = useFees({
-    address,
+    address: activeAddress,
     marketType: asset?.marketType,
   })
 

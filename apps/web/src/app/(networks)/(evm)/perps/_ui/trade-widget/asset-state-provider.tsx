@@ -17,7 +17,7 @@ import {
   useBalance,
   useUserPositions,
 } from 'src/lib/perps'
-import { useAccount } from 'src/lib/wallet'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useAssetListState } from '../asset-selector'
 interface State {
   mutate: {
@@ -137,7 +137,10 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
   }>({ hours: '', minutes: '30' })
   const [twapRandomize, setTwapRandomize] = useState<boolean>(false)
 
-  const address = useAccount('evm')
+  const {
+    state: { activeAddress },
+  } = useActiveAccountState()
+  const address = activeAddress
 
   const {
     state: {
