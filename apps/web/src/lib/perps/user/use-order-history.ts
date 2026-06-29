@@ -33,7 +33,7 @@ export const useOrderHistory = () => {
     if (!data) return []
     return data.orderHistory
       .map((i) => {
-        //HL outcomes (their prediection market) has a coin name that starts with a #, which is not a valid asset in our system. We will filter these out for now.
+        //HL outcomes (their prediction market) has a coin name that starts with a #, which is not a valid asset in our system. We will filter these out for now.
         if (i.order.coin?.startsWith('#')) return undefined
         const asset = assetList?.get(i.order.coin)
         return {
