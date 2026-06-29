@@ -16,6 +16,7 @@ import {
   useUserSettingsState,
 } from '~evm/perps/_ui/account-management'
 import { SwapStablesDialog } from '~evm/perps/_ui/account-management/swap-stables-dialog'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 
 type DialogAction =
   | 'send'
@@ -26,6 +27,9 @@ type DialogAction =
   | 'swap-stables'
 
 export const DialogRow = () => {
+  const {
+    state: { activeAccount },
+  } = useActiveAccountState()
   const [activeModal, setActiveModal] = useState<ActiveModalState>({
     open: false,
     action: null,
@@ -47,6 +51,10 @@ export const DialogRow = () => {
   const {
     state: { isUnifiedAccountModeEnabled },
   } = useUserSettingsState()
+
+  if (activeAccount?.type === 'vault') {
+    return null
+  }
   return (
     <div className="flex items-center gap-2 flex-wrap">
       <Button

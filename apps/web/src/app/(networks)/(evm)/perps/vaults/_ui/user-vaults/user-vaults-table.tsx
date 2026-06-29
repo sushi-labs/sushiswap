@@ -40,7 +40,7 @@ const PROTOCOL_VAULTS = new Set([
 
 export const UserVaultsTable = () => {
   const { data, isLoading, isError } = useAllVaults()
-  const [sorting, setSorting] = useState([{ id: 'tvl', desc: true }])
+  const [sorting, setSorting] = useState([{ id: 'deposit', desc: true }])
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -110,6 +110,7 @@ export const UserVaultsTable = () => {
         onPaginationChange={setPaginationState}
         pagination={true}
         linkFormatter={rowLink}
+        skeletonRowCount={10}
       />
     </PerpsCard>
   )

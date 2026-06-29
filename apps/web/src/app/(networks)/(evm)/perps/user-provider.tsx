@@ -10,7 +10,7 @@ import {
   useWebData2,
   useWebData3,
 } from 'src/lib/perps'
-import { useAccount } from 'src/lib/wallet'
+import { useActiveAccountState } from './active-account-provider'
 
 interface State {
   state: {
@@ -39,7 +39,10 @@ interface UserProviderProps {
 
 const UserProvider: FC<UserProviderProps> = ({ children }) => {
   const [aggregateFillsByTime, setAggregateFillsByTime] = useState(false)
-  const address = useAccount('evm')
+  const {
+    state: { activeAddress },
+  } = useActiveAccountState()
+  const address = activeAddress
 
   const userHistoricalOrdersQuery = useUserHistoricalOrders({
     address,

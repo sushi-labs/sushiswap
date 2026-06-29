@@ -19,17 +19,17 @@ export const MarketQuickClose = ({
   })
   const {
     state: {
-      assetListQuery: { data: assetListData },
+      assetListQuery: { data: assetListData, isLoading: assetListLoading },
     },
   } = useAssetListState()
   const asset = useMemo(() => {
-    if (!position) return undefined
+    if (!position || assetListLoading) return undefined
     const _asset = assetListData?.get?.(position.position.coin)
     if (!_asset) {
       throw new Error(`Asset data not available for ${position.position.coin}`)
     }
     return _asset
-  }, [assetListData, position])
+  }, [assetListData, position, assetListLoading])
 
   const orderData = useMemo(() => {
     if (!position || !asset) return null

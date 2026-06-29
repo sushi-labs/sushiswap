@@ -1,3 +1,5 @@
+export const IS_PERPS_TESTNET = false
+
 // builder must have at least 100 USDC in perps account value.
 export const BUILDER_FEE_RECEIVER = '0x12EE177DB3cEafedc639D023A29CC8588DB3A4b9' //sushi ledger
 

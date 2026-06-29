@@ -10,6 +10,7 @@ import {
 import { useMutation } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useAgent } from '../agent'
 import { TOAST_AUTOCLOSE_TIME } from '../config'
 import { useLegalCheck } from '../info/use-legal-check'
@@ -35,10 +36,17 @@ export const useExecuteTwapOrder = () => {
   } = useAssetListState()
   const address = useAccount('evm')
   const { data: legalCheck } = useLegalCheck({ address })
-
+  const {
+    state: { activeAccount },
+  } = useActiveAccountState()
   const mutation = useMutation({
-    mutationKey: ['execute-twap-order', agentAccount?.address, legalCheck],
-    mutationFn: async (orderData: TwapOrder) => {
+    mutationKey: [
+      'execute-twap-order',
+      agentAccount?.address,
+      legalCheck,
+      activeAccount?.address,
+    ],
+    mutationFn: async ({ orderData }: { orderData: TwapOrder }) => {
       if (!agentAccount || !orderData) {
         return
       }
@@ -66,6 +74,10 @@ export const useExecuteTwapOrder = () => {
       return twapOrder(
         { wallet: agentAccount, transport: hlHttpTransport },
         twapOrderData,
+        {
+          vaultAddress:
+            activeAccount?.type === 'vault' ? activeAccount.address : undefined,
+        },
       )
     },
 

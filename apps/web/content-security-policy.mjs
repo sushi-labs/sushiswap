@@ -172,7 +172,9 @@ export function createContentSecurityPolicy({
       // per-request nonces and dynamic rendering.
       "'unsafe-inline'",
       "'wasm-unsafe-eval'",
-      'unsafe-eval',
+      // React development mode uses eval for debugging features like callstack
+      // reconstruction.
+      ...(isLocalEnvironment ? ["'unsafe-eval'"] : []),
       'https://challenges.cloudflare.com',
       'https://hcaptcha.com',
       'https://*.hcaptcha.com',

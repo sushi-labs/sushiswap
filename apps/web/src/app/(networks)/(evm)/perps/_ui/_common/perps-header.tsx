@@ -8,6 +8,7 @@ import type { ChainId } from 'sushi'
 import { useChainId } from 'wagmi'
 import { PointsCTA } from '~evm/perps/points/_ui/points-cta'
 import { SettingsDialog } from '../account-management'
+import { ActiveAccountSelector } from './active-account-selector'
 import { headerElements } from './header-elements'
 
 interface HeaderProps {
@@ -39,7 +40,7 @@ export const PerpsHeader: FC<HeaderProps> = ({
           </LinkInternal>
         </div>
         <Navigation
-          className="!pl-0 lg:!pl-4 !z-[unset] !bg-perps-background !border-0"
+          className="!pl-0 lg:!pl-0 !z-[unset] !bg-perps-background !border-0"
           hideSushiDropdown
           leftElements={headerElements()}
           rightElement={
@@ -51,6 +52,7 @@ export const PerpsHeader: FC<HeaderProps> = ({
                 hideNetworkSelector={true}
                 isPerps={true}
               />
+              <ActiveAccountSelector />
               <SettingsDialog />
             </>
           }

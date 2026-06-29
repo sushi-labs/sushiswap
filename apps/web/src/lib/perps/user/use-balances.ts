@@ -1,13 +1,16 @@
 import { useMemo } from 'react'
 import { useUserSettingsState } from '~evm/perps/_ui/account-management'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserState } from '~evm/perps/user-provider'
-import { useAccount } from '../../wallet'
 import { useSpotClearinghouseState } from '../info'
 import { DEX_NAME_TO_COIN, SPOT_ASSETS_TO_REWRITE } from '../utils'
 
 export const useBalances = () => {
-  const address = useAccount('evm')
+  const {
+    state: { activeAddress },
+  } = useActiveAccountState()
+  const address = activeAddress
   const {
     state: {
       allDexClearinghouseStateQuery: {
@@ -38,7 +41,7 @@ export const useBalances = () => {
     data: spotClearinghouseState,
     isLoading: isLoadingSpotClearinghouse,
     error: errorSpotClearinghouse,
-  } = useSpotClearinghouseState({ address })
+  } = useSpotClearinghouseState({ address: activeAddress })
 
   const isLoading =
     isLoadingAllDexClearinghouse ||
@@ -78,6 +81,9 @@ export const useBalances = () => {
           const spot = Array.from(assetList?.entries() ?? []).find(([, v]) =>
             v?.tokens?.find((t) => t?.index === tokenIndex),
           )?.[1]
+          if (!spot) {
+            return null
+          }
           const price = i.coin === 'USDC' ? 1 : (Number(spot?.markPrice) ?? 0)
           let total = Number(i.total || 0)
 
@@ -87,7 +93,6 @@ export const useBalances = () => {
           if (isDexAbstractionEnabled && perpBalance && i.coin !== 'USDC') {
             total += Number(perpBalance.totalBalance)
           }
-
           const usdcValue = total * price
           const entry =
             isDexAbstractionEnabled && perpBalance

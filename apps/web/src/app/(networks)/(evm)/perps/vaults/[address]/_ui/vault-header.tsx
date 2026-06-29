@@ -4,15 +4,18 @@ import {
 } from '@heroicons/react-v1/solid'
 import { useCopyClipboard } from '@sushiswap/hooks'
 import { IconButton, SkeletonBox } from '@sushiswap/ui'
-import { useVaultDetails } from 'src/lib/perps/info/use-vault-details'
+import { useVaultDetails } from 'src/lib/perps'
+import { useAccount } from 'src/lib/wallet'
 import { truncateString } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
+import { LeaderActions } from './leader-actions'
 import { VaultDepositDialog } from './vault-deposit-dialog'
 import { VaultWithdrawDialog } from './vault-withdraw-dialog'
 
 export const VaultHeader = ({ vaultAddress }: { vaultAddress: EvmAddress }) => {
   const [isCopied, staticCopy] = useCopyClipboard()
   const { data, isLoading } = useVaultDetails({ vaultAddress })
+  const address = useAccount('evm')
   return (
     <div className="flex flex-wrap items-start gap-2 justify-between">
       <div className="flex flex-col gap-1">
@@ -37,6 +40,9 @@ export const VaultHeader = ({ vaultAddress }: { vaultAddress: EvmAddress }) => {
       <div className="flex items-center gap-1">
         <VaultWithdrawDialog vaultAddress={vaultAddress} />
         <VaultDepositDialog vaultAddress={vaultAddress} />
+        {address?.toLowerCase() === data?.leader?.toLowerCase() ? (
+          <LeaderActions vaultAddress={vaultAddress} />
+        ) : null}
       </div>
     </div>
   )

@@ -10,6 +10,9 @@ export const PerpsFooter = () => {
       <div className="flex items-center justify-between h-full border-t border-[#0D1217] px-2 bg-[#EDF0F30D] backdrop-blur-2xl">
         <HlApiStatus />
         <div className="flex items-center h-full mr-[65px] text-xs">
+          <_Item href={'https://sushi.com/perps/points'}>
+            <div>Points FAQs</div>
+          </_Item>
           <_Item href={'https://docs.sushi.com/what-is-sushi'}>
             <div>Docs</div>
           </_Item>

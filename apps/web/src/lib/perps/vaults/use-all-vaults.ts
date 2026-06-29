@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
 import { isEvmAddress } from 'sushi/evm'
 import z from 'zod'
+import { IS_PERPS_TESTNET } from '../config'
 import { useLeadingVaults, useUserVaultEquities } from '../info'
 
 const PnlPeriodSchema = z.enum(['day', 'week', 'month', 'allTime'])
@@ -48,7 +49,7 @@ export const useAllVaults = () => {
     queryKey: ['all-perps-vaults', address, userVaultEquities, leadingVaults],
     queryFn: async () => {
       const response = await fetch(
-        'https://stats-data.hyperliquid.xyz/Mainnet/vaults',
+        `https://stats-data.hyperliquid.xyz/${IS_PERPS_TESTNET ? 'Testnet' : 'Mainnet'}/vaults`,
       )
       if (!response.ok) {
         throw new Error('Failed to fetch vaults')

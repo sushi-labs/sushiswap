@@ -1,8 +1,8 @@
 import type { UserFillsEvent } from '@nktkas/hyperliquid/api/subscription'
 import { useMemo } from 'react'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserState } from '~evm/perps/user-provider'
-import { useAccount } from '../../wallet'
 import { SPOT_ASSETS_TO_REWRITE, getPerpsDexAndCoin } from '../utils'
 
 export const formatTradeHistoryItem = (
@@ -38,7 +38,10 @@ export const formatTradeHistoryItem = (
 }
 
 export const useTradeHistory = () => {
-  const address = useAccount('evm')
+  const {
+    state: { activeAddress },
+  } = useActiveAccountState()
+  const address = activeAddress
   const {
     state: {
       userFillsQuery: {
@@ -62,9 +65,13 @@ export const useTradeHistory = () => {
 
   const formattedData = useMemo(() => {
     if (!data) return []
-    return data.fills?.map((fill) => {
-      return formatTradeHistoryItem(fill, assetList)
-    })
+    return data.fills
+      ?.map((fill) => {
+        //HL outcomes (their prediction market) has a coin name that starts with a #, which is not a valid asset in our system. We will filter these out for now.
+        if (fill?.coin?.startsWith('#')) return undefined
+        return formatTradeHistoryItem(fill, assetList)
+      })
+      ?.filter((i) => i !== undefined)
   }, [data, assetList])
 
   return useMemo(() => {

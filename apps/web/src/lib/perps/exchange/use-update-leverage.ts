@@ -11,6 +11,7 @@ import {
 import { useMutation } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useAgent } from '../agent'
 import { TOAST_AUTOCLOSE_TIME } from '../config'
 import { useLegalCheck } from '../info/use-legal-check'
@@ -27,9 +28,17 @@ export const useUpdateLeverage = () => {
   } = useAssetListState()
   const address = useAccount('evm')
   const { data: legalCheck } = useLegalCheck({ address })
+  const {
+    state: { activeAccount },
+  } = useActiveAccountState()
 
   const mutation = useMutation({
-    mutationKey: ['update-leverage', agentAccount?.address, legalCheck],
+    mutationKey: [
+      'update-leverage',
+      agentAccount?.address,
+      legalCheck,
+      activeAccount?.address,
+    ],
     mutationFn: async ({
       assetString,
       isCross,
@@ -56,6 +65,10 @@ export const useUpdateLeverage = () => {
           transport: hlHttpTransport,
         },
         { asset: assetId, isCross, leverage: newLeverage },
+        {
+          vaultAddress:
+            activeAccount?.type === 'vault' ? activeAccount.address : undefined,
+        },
       )
     },
 
