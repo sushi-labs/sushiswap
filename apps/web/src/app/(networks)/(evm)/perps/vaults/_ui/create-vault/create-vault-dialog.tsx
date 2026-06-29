@@ -1,6 +1,7 @@
 'use client'
 import {
   Button,
+  FormField,
   Message,
   PerpsDialog,
   PerpsDialogContent,
@@ -10,6 +11,7 @@ import {
   PerpsDialogTrigger,
   TextField,
   classNames,
+  useForm,
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useState } from 'react'
 import { useCreateVault, useUserAccountValues } from 'src/lib/perps'
@@ -17,6 +19,12 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { parseUnits } from 'viem'
 import { PerpsChecker } from '~evm/perps/_ui/perps-checker'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
+
+type CreateVaultFormValues = {
+  vaultName: string
+  vaultDescription: string
+  depositAmount: string
+}
 
 export const CreateVaultDialog = ({
   trigger,
@@ -30,9 +38,13 @@ export const CreateVaultDialog = ({
   onOpenChange?: (open: boolean) => void
 }) => {
   const [open, setOpen] = useState<boolean>(false)
-  const [depositAmount, setDepositAmount] = useState<string>('')
-  const [vaultName, setVaultName] = useState<string>('')
-  const [vaultDescription, setVaultDescription] = useState<string>('')
+  const form = useForm<CreateVaultFormValues>({
+    defaultValues: {
+      depositAmount: '',
+      vaultDescription: '',
+      vaultName: '',
+    },
+  })
   const { isPending, createVaultAsync } = useCreateVault()
   const { perpsBalance } = useUserAccountValues()
   const isControlled = isOpen !== undefined
@@ -51,34 +63,36 @@ export const CreateVaultDialog = ({
     [isControlled, onOpenChange],
   )
 
-  const createVault = useCallback(async () => {
-    try {
-      const res = await createVaultAsync({
-        createData: {
-          name: vaultName,
-          description: vaultDescription,
-          initialUsdcAmount: Number(parseUnits(depositAmount, 6)),
-        },
-      })
-      const createdVaultAddress = res?.response.data
-      if (createdVaultAddress) {
-        setActiveAccount(createdVaultAddress, 'vault', vaultName)
+  const createVault = useCallback(
+    async ({
+      depositAmount,
+      vaultDescription,
+      vaultName,
+    }: CreateVaultFormValues) => {
+      try {
+        const res = await createVaultAsync({
+          createData: {
+            name: vaultName,
+            description: vaultDescription,
+            initialUsdcAmount: Number(parseUnits(depositAmount, 6)),
+          },
+        })
+        const createdVaultAddress = res?.response.data
+        if (createdVaultAddress) {
+          setActiveAccount(createdVaultAddress, 'vault', vaultName)
+        }
+        onSuccess()
+        handleOpenChange(false)
+      } catch (e) {
+        console.error('failed to create vault', e)
       }
-      onSuccess()
-      handleOpenChange(false)
-    } catch (e) {
-      console.error('failed to create vault', e)
-    }
-  }, [
-    vaultName,
-    vaultDescription,
-    depositAmount,
-    onSuccess,
-    createVaultAsync,
-    handleOpenChange,
-    setActiveAccount,
-  ])
+    },
+    [onSuccess, createVaultAsync, handleOpenChange, setActiveAccount],
+  )
 
+  const vaultName = form.watch('vaultName')
+  const vaultDescription = form.watch('vaultDescription')
+  const depositAmount = form.watch('depositAmount')
   const insufficientBalance = Number(depositAmount) + 10_000 > perpsBalance
 
   return (
@@ -100,18 +114,25 @@ export const CreateVaultDialog = ({
               <label htmlFor="vault-name" className="text-perps-muted-70">
                 Enter a name for your vault (3-50 characters)
               </label>
-              <TextField
-                id="vault-name"
-                type="text"
-                placeholder="Vault Name"
-                onValueChange={setVaultName}
-                value={vaultName}
-                data-state={'active'}
-                className={classNames(
-                  'rounded-md font-medium !border-perps-muted-50 !border !text-perps-muted',
+              <FormField
+                control={form.control}
+                name="vaultName"
+                render={({ field: { onBlur, onChange, value } }) => (
+                  <TextField
+                    id="vault-name"
+                    type="text"
+                    placeholder="Vault Name"
+                    onBlur={onBlur}
+                    onValueChange={onChange}
+                    value={value}
+                    data-state={'active'}
+                    className={classNames(
+                      'rounded-md font-medium !border-perps-muted-50 !border !text-perps-muted',
+                    )}
+                    minLength={3}
+                    maxLength={50}
+                  />
                 )}
-                minLength={3}
-                maxLength={50}
               />
             </div>
             <div className="flex flex-col gap-0.5">
@@ -121,18 +142,25 @@ export const CreateVaultDialog = ({
               >
                 Enter a description for your vault (10-250 characters)
               </label>
-              <textarea
-                id="vault-description"
-                onChange={(e) => setVaultDescription(e.target.value)}
-                value={vaultDescription}
-                data-state={'active'}
-                placeholder="Vault Description"
-                className={classNames(
-                  'p-3 bg-secondary !ring-0 !outline-none text-xs hover:bg-muted focus:!outline-none focus:!ring-0 font-medium focus:border-perps-muted-50 !text-perps-muted rounded-lg',
+              <FormField
+                control={form.control}
+                name="vaultDescription"
+                render={({ field: { onBlur, onChange, value } }) => (
+                  <textarea
+                    id="vault-description"
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    value={value}
+                    data-state={'active'}
+                    placeholder="Vault Description"
+                    className={classNames(
+                      'p-3 bg-secondary !ring-0 !outline-none text-xs hover:bg-muted focus:!outline-none focus:!ring-0 font-medium focus:border-perps-muted-50 !text-perps-muted rounded-lg',
+                    )}
+                    rows={3}
+                    minLength={10}
+                    maxLength={250}
+                  />
                 )}
-                rows={3}
-                minLength={10}
-                maxLength={250}
               />
             </div>
             <div className="flex flex-col gap-0.5">
@@ -140,16 +168,23 @@ export const CreateVaultDialog = ({
                 Deposit a minimum of 100 USDC from your account. As the leader,
                 you must maintain greater than 5% of the liquidity in the vault.
               </label>
-              <TextField
-                id="vault-amount"
-                type="number"
-                onValueChange={setDepositAmount}
-                value={depositAmount}
-                data-state={'active'}
-                className={classNames(
-                  'rounded-md font-medium !border-perps-muted-50 !border !text-perps-muted',
+              <FormField
+                control={form.control}
+                name="depositAmount"
+                render={({ field: { onBlur, onChange, value } }) => (
+                  <TextField
+                    id="vault-amount"
+                    type="number"
+                    onBlur={onBlur}
+                    onValueChange={onChange}
+                    value={value}
+                    data-state={'active'}
+                    className={classNames(
+                      'rounded-md font-medium !border-perps-muted-50 !border !text-perps-muted',
+                    )}
+                    placeholder="0"
+                  />
                 )}
-                placeholder="0"
               />
             </div>
             <div className="flex items-center gap-1 justify-between">
@@ -239,7 +274,7 @@ export const CreateVaultDialog = ({
                                 <Button
                                   size="default"
                                   className="w-full"
-                                  onClick={createVault}
+                                  onClick={form.handleSubmit(createVault)}
                                   loading={isPending}
                                   variant="perps-tertiary"
                                 >
