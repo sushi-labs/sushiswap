@@ -67,7 +67,7 @@ export const useTradeHistory = () => {
     if (!data) return []
     return data.fills
       ?.map((fill) => {
-        //HL outcomes (their prediection market) has a coin name that starts with a #, which is not a valid asset in our system. We will filter these out for now.
+        //HL outcomes (their prediction market) has a coin name that starts with a #, which is not a valid asset in our system. We will filter these out for now.
         if (fill?.coin?.startsWith('#')) return undefined
         return formatTradeHistoryItem(fill, assetList)
       })
