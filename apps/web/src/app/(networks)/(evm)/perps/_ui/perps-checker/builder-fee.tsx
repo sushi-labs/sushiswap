@@ -1,6 +1,7 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useCallback } from 'react'
 import { IS_PERPS_TESTNET, useApproveBuilderFee } from 'src/lib/perps'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 
 export const BuilderFee: FC<ButtonProps> = ({
   children,
@@ -14,6 +15,9 @@ export const BuilderFee: FC<ButtonProps> = ({
     hasApprovedBuilder,
     isLoadingApprovedBuilders,
   } = useApproveBuilderFee()
+  const {
+    state: { activeAccount },
+  } = useActiveAccountState()
 
   const handleApproveBuilderFee = useCallback(async () => {
     try {
@@ -23,7 +27,7 @@ export const BuilderFee: FC<ButtonProps> = ({
     }
   }, [approveBuilderFeeAsync])
 
-  if (IS_PERPS_TESTNET) {
+  if (IS_PERPS_TESTNET || activeAccount?.type === 'vault') {
     return <>{children}</>
   }
 
