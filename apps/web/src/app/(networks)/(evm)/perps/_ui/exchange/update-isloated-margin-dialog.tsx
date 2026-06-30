@@ -18,6 +18,7 @@ import {
 } from 'react'
 import {
   DEX_COLLATERAL_TOKENS,
+  type TokenBalance,
   type UserPositionsItemType,
   formatSize,
   perpsNumberFormatter,
@@ -307,13 +308,7 @@ function maxAddableIsolatedMargin({
   isUnifiedAccount: boolean
   perpsDex: string
   perpsWithdrawable: string | undefined
-  spotBalances:
-    | {
-        hold: string
-        token: number
-        total: string
-      }[]
-    | undefined
+  spotBalances: TokenBalance[] | undefined
 }) {
   if (collateralTokenId === undefined) return '0'
 
@@ -331,13 +326,7 @@ function maxAddableIsolatedMargin({
 }
 
 function getAvailableSpotBalance(
-  spotBalances:
-    | {
-        hold: string
-        token: number
-        total: string
-      }[]
-    | undefined,
+  spotBalances: TokenBalance[] | undefined,
   tokenId: number,
 ) {
   const balance = spotBalances?.find((entry) => entry.token === tokenId)

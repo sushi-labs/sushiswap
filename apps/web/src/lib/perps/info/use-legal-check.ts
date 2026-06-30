@@ -5,14 +5,6 @@ import type { EvmAddress } from 'sushi/evm'
 import { zeroAddress } from 'viem'
 import { hlHttpTransport } from '../transports'
 
-type LegalCheckResponse = Awaited<ReturnType<typeof legalCheck>>
-type LegalCheckResponseWithRestrictions = Omit<
-  LegalCheckResponse,
-  'ipAllowed'
-> & {
-  restrictions: 'n' | 'a' | 'o'
-}
-
 export const useLegalCheck = ({
   address,
 }: {
@@ -21,23 +13,18 @@ export const useLegalCheck = ({
   return useQuery({
     queryKey: ['useLegalCheck', address],
     queryFn: async () => {
-      const response = (await legalCheck(
+      const response = await legalCheck(
         {
           transport: hlHttpTransport,
         },
         {
           user: !address ? zeroAddress : address,
         },
-      )) as LegalCheckResponse | LegalCheckResponseWithRestrictions
-
-      if ('ipAllowed' in response) {
-        return response
-      }
+      )
 
       return {
         ...response,
-        ipAllowed:
-          response.restrictions === 'n' || response.restrictions === 'o',
+        ipAllowed: response.restrictions === 'n',
       }
     },
     refetchInterval: ms('10000'),
