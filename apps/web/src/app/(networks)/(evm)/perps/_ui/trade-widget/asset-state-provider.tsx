@@ -18,17 +18,26 @@ import {
   useUserPositions,
 } from 'src/lib/perps'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
-import { useAssetListState } from '../asset-selector'
+import { type BasisTradeAsset, useAssetListState } from '../asset-selector'
+
+type OrderSize = { base: string; quote: string }
+
 interface State {
   mutate: {
     setActiveAsset: (asset: string) => void
+    setActiveBasisTradeAsset: (basisTradeAsset: BasisTradeAsset) => void
     setTradeType: (tradeType: TradeType) => void
     setTradeSide: (tradeSide: TradeSideType) => void
     setReduceOnly: (reduceOnly: boolean) => void
-    setSize: (size: { base: string; quote: string }) => void
+    setSize: (size: OrderSize) => void
+    setBasisTradeSize: (leg: BasisTradeSizeKey, size: OrderSize) => void
     setLimitPrice: (limitPrice: string) => void
     setTimeInForce: (timeInForce: TimeInForceType) => void
     setSizeSide: (sizeSide: 'base' | 'quote') => void
+    setBasisTradeSizeSide: (
+      leg: BasisTradeSizeKey,
+      sizeSide: 'base' | 'quote',
+    ) => void
     setPercentage: (percentage: number) => void
     setTpPrice: (tpPrice: string) => void
     setSlPrice: (slPrice: string) => void
@@ -48,13 +57,18 @@ interface State {
     tradeType: TradeType
     tradeSide: TradeSideType
     reduceOnly: boolean
-    size: { base: string; quote: string }
+    size: OrderSize
+    basisTradeSize: BasisTradeSize
     limitPrice: string
     timeInForce: TimeInForceType
     sizeSide: 'base' | 'quote'
+    basisTradeSizeSide: BasisTradeSizeSide
     asset: PerpOrSpotAsset | undefined
+    basisTradeAsset: BasisTradeAsset | undefined
     percentage: number
     maxTradeSize: string
+    maxTradeSizeLong: string
+    maxTradeSizeShort: string
     availableToLong: string
     availableToShort: string
     markPrice: string
@@ -88,9 +102,21 @@ export type ScaleStartEnd = {
   end: string
 }
 
+export type BasisTradeSizeKey = 'spot' | 'perp'
+
+export type BasisTradeSize = Record<BasisTradeSizeKey, OrderSize>
+
+export type BasisTradeSizeSide = Record<BasisTradeSizeKey, 'base' | 'quote'>
+
+type BasisTradeAssetKeys = {
+  spotAsset: string
+  perpAsset: string
+}
+
 export const TRADE_TYPES = [
   'market',
   'limit',
+  'basis trade',
   'scale',
   'stop limit',
   'stop market',
@@ -113,11 +139,22 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
   const [lastUsedLeverages, setLastUsedLeverages] = useLocalStorage<
     Record<string, number>
   >('hyperliquid.last_used_leverage', {})
-  const [tradeType, setTradeType] = useState<TradeType>('market')
+  const [tradeType, _setTradeType] = useState<TradeType>('market')
   const [tradeSide, setTradeSide] = useState<TradeSideType>('long')
   const [reduceOnly, _setReduceOnly] = useState(false)
   const [size, setSize] = useState({ base: '', quote: '' })
+  const [basisTradeAssetKeys, setBasisTradeAssetKeys] =
+    useState<BasisTradeAssetKeys>()
+  const [basisTradeSize, setBasisTradeSizeState] = useState<BasisTradeSize>({
+    spot: { base: '', quote: '' },
+    perp: { base: '', quote: '' },
+  })
   const [sizeSide, setSizeSide] = useState<'base' | 'quote'>('base')
+  const [basisTradeSizeSide, setBasisTradeSizeSideState] =
+    useState<BasisTradeSizeSide>({
+      spot: 'base',
+      perp: 'base',
+    })
   const [limitPrice, setLimitPrice] = useState('')
   const [timeInForce, setTimeInForce] = useState<TimeInForceType>('Gtc')
   const [percentage, setPercentage] = useState(0)
@@ -145,6 +182,7 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
   const {
     state: {
       assetListQuery: { data: assetList },
+      basisTradeAssets,
     },
   } = useAssetListState()
   const pathname = usePathname()
@@ -154,12 +192,16 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
   const setActiveAsset = useCallback(
     (asset: string) => {
       _setActiveAsset(asset)
+      setBasisTradeAssetKeys(undefined)
+      if (tradeType === 'basis trade') {
+        _setTradeType('market')
+      }
       reset()
       if (!isTradePage) {
         push('/perps')
       }
     },
-    [_setActiveAsset, push, isTradePage],
+    [_setActiveAsset, push, isTradePage, tradeType],
   )
 
   const reset = useCallback(() => {
@@ -172,6 +214,14 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     setReduceOnly(false)
     setTimeInForce('Gtc')
     setSize({ base: '', quote: '' })
+    setBasisTradeSizeState({
+      spot: { base: '', quote: '' },
+      perp: { base: '', quote: '' },
+    })
+    setBasisTradeSizeSideState({
+      spot: 'base',
+      perp: 'base',
+    })
     setScaleStartEnd({ start: '', end: '' })
     setTotalOrders('2')
     setSizeSkew('1')
@@ -184,6 +234,83 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     if (!assetList) return _activeAsset
     return assetList.has(_activeAsset) ? _activeAsset : 'BTC'
   }, [_activeAsset, assetList])
+
+  const basisTradeAsset = useMemo(() => {
+    if (!basisTradeAssets.length) return undefined
+
+    if (basisTradeAssetKeys) {
+      return basisTradeAssets.find(
+        (asset) =>
+          asset.spotAsset.name === basisTradeAssetKeys.spotAsset &&
+          asset.perpAsset.name === basisTradeAssetKeys.perpAsset,
+      )
+    }
+
+    return basisTradeAssets.find(
+      (asset) =>
+        asset.perpAsset.name === activeAsset ||
+        asset.spotAsset.name === activeAsset,
+    )
+  }, [activeAsset, basisTradeAssetKeys, basisTradeAssets])
+
+  const setActiveBasisTradeAsset = useCallback(
+    (_basisTradeAsset: BasisTradeAsset) => {
+      _setActiveAsset(_basisTradeAsset.perpAsset.name)
+      setBasisTradeAssetKeys({
+        spotAsset: _basisTradeAsset.spotAsset.name,
+        perpAsset: _basisTradeAsset.perpAsset.name,
+      })
+      reset()
+      _setTradeType('basis trade')
+      if (!isTradePage) {
+        push('/perps')
+      }
+    },
+    [_setActiveAsset, push, isTradePage, reset],
+  )
+
+  const setTradeType = useCallback(
+    (_tradeType: TradeType) => {
+      if (_tradeType === 'basis trade') {
+        if (basisTradeAsset) {
+          setBasisTradeAssetKeys({
+            spotAsset: basisTradeAsset.spotAsset.name,
+            perpAsset: basisTradeAsset.perpAsset.name,
+          })
+          _setActiveAsset(basisTradeAsset.perpAsset.name)
+        }
+        _setReduceOnly(false)
+        _setHasTpSl(false)
+        _setTradeType(_tradeType)
+        return
+      }
+
+      if (tradeType === 'basis trade') {
+        setBasisTradeAssetKeys(undefined)
+        setBasisTradeSizeState({
+          spot: { base: '', quote: '' },
+          perp: { base: '', quote: '' },
+        })
+      }
+
+      _setTradeType(_tradeType)
+    },
+    [_setActiveAsset, basisTradeAsset, tradeType],
+  )
+
+  const setBasisTradeSize = useCallback(
+    (leg: BasisTradeSizeKey, _size: OrderSize) => {
+      setBasisTradeSizeState((prev) => ({ ...prev, [leg]: _size }))
+    },
+    [],
+  )
+
+  const setBasisTradeSizeSide = useCallback(
+    (leg: BasisTradeSizeKey, _sizeSide: 'base' | 'quote') => {
+      setBasisTradeSizeSideState((prev) => ({ ...prev, [leg]: _sizeSide }))
+    },
+    [],
+  )
 
   const activeAssetDataQuery = useActiveAssetData({
     address,
@@ -351,13 +478,16 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
         return {
           mutate: {
             setActiveAsset,
+            setActiveBasisTradeAsset,
             setTradeType,
             setTradeSide,
             setReduceOnly,
             setSize,
+            setBasisTradeSize,
             setLimitPrice,
             setTimeInForce,
             setSizeSide,
+            setBasisTradeSizeSide,
             setPercentage,
             setTpPrice,
             setSlPrice,
@@ -375,12 +505,17 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
             tradeSide,
             reduceOnly,
             size,
+            basisTradeSize,
             limitPrice,
             timeInForce,
             sizeSide,
+            basisTradeSizeSide,
             asset,
+            basisTradeAsset,
             percentage,
             maxTradeSize,
+            maxTradeSizeLong,
+            maxTradeSizeShort,
             availableToLong,
             availableToShort,
             markPrice,
@@ -405,16 +540,23 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
       }, [
         activeAsset,
         setActiveAsset,
+        setActiveBasisTradeAsset,
+        setTradeType,
         tradeType,
         tradeSide,
         reduceOnly,
         size,
+        basisTradeSize,
         limitPrice,
         timeInForce,
         sizeSide,
+        basisTradeSizeSide,
         asset,
+        basisTradeAsset,
         percentage,
         maxTradeSize,
+        maxTradeSizeLong,
+        maxTradeSizeShort,
         availableToLong,
         availableToShort,
         markPrice,
@@ -436,6 +578,8 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
         twapRandomize,
         totalRunningTimeInMinutes,
         isLimitOrder,
+        setBasisTradeSize,
+        setBasisTradeSizeSide,
       ])}
     >
       {children}

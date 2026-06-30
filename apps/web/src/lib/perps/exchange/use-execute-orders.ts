@@ -126,6 +126,7 @@ export const useExecuteOrders = () => {
             }),
         ...(orderData.grouping ? { grouping: orderData.grouping } : {}),
       }
+      console.log(_orderData)
       return order(
         { wallet: agentAccount, transport: hlHttpTransport },
         _orderData,

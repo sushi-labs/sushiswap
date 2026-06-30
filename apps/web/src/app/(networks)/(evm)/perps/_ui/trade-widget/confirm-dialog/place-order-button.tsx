@@ -4,6 +4,7 @@ import {
   BUILDER_FEE_PERPS,
   BUILDER_FEE_SPOT,
   type OrderData,
+  type PerpOrSpotAsset,
   type TwapOrder,
   formatPrice,
   formatSize,
@@ -44,8 +45,16 @@ export const PlaceOrderButton = ({ onMutate }: { onMutate?: () => void }) => {
     } else {
       if (!orderData || orderData.orders.length === 0) return
       try {
-        // console.log('Executing orders with data:', orderData)
-        await executeOrdersAsync({ orderData })
+        if (tradeType === 'basis trade') {
+          const singleLegOrders = getBasisTradeSingleLegOrderData(orderData)
+
+          for (const singleLegOrderData of singleLegOrders) {
+            await executeOrdersAsync({ orderData: singleLegOrderData })
+          }
+        } else {
+          // console.log('Executing orders with data:', orderData)
+          await executeOrdersAsync({ orderData })
+        }
         onMutate?.()
       } catch (error) {
         console.log(error)
@@ -64,11 +73,14 @@ export const PlaceOrderButton = ({ onMutate }: { onMutate?: () => void }) => {
     if (quickConfirmPositionEnabled && !onMutate) {
       return 'Place Order'
     }
+    if (tradeType === 'basis trade') {
+      return tradeSide === 'long' ? 'Buy / Short' : 'Sell / Long'
+    }
     if (asset?.marketType === 'spot') {
       return tradeSide === 'long' ? 'Buy' : 'Sell'
     }
     return tradeSide === 'long' ? 'Buy / Long' : 'Sell / Short'
-  }, [quickConfirmPositionEnabled, onMutate, tradeSide, asset])
+  }, [quickConfirmPositionEnabled, onMutate, tradeType, tradeSide, asset])
 
   return (
     <Button
@@ -80,6 +92,20 @@ export const PlaceOrderButton = ({ onMutate }: { onMutate?: () => void }) => {
       {buttonText}
     </Button>
   )
+}
+
+function getBasisTradeSingleLegOrderData(orderData: OrderData): OrderData[] {
+  return orderData.orders.map((order) => ({
+    orders: [order],
+    grouping: 'na' as const,
+    builder: {
+      // https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/asset-ids#perps
+      builderFee:
+        Number(order.asset) >= 10_000 && Number(order.asset) < 100_000
+          ? BUILDER_FEE_SPOT
+          : BUILDER_FEE_PERPS,
+    },
+  }))
 }
 
 const _useTwapOrderData = () => {
@@ -133,9 +159,21 @@ const _useOrderData = () => {
       limitPrice,
       timeInForce,
       triggerPrice,
+      basisTradeAsset,
+      basisTradeSize,
     },
   } = useAssetState()
   const marketPrice = _useMarketPrice()
+  const basisSpotMarketPrice = _useMarketPriceForAsset({
+    assetString: basisTradeAsset?.spotAsset.name,
+    asset: basisTradeAsset?.spotAsset,
+    tradeSide: tradeSide === 'long' ? 'long' : 'short',
+  })
+  const basisPerpMarketPrice = _useMarketPriceForAsset({
+    assetString: basisTradeAsset?.perpAsset.name,
+    asset: basisTradeAsset?.perpAsset,
+    tradeSide: tradeSide === 'long' ? 'short' : 'long',
+  })
   const { tpOrder, slOrder } = _useTpSlOrder()
   const builderFee = _useBuilderFee()
   const { data: scaleOrderData } = useScaleOrders()
@@ -192,6 +230,55 @@ const _useOrderData = () => {
           ],
           grouping:
             tpOrder || slOrder ? ('normalTpsl' as const) : ('na' as const),
+          builder: {
+            builderFee: builderFee,
+          },
+        }
+      }
+      case 'basis trade': {
+        if (
+          !basisTradeAsset ||
+          !basisSpotMarketPrice ||
+          !basisPerpMarketPrice
+        ) {
+          return undefined
+        }
+
+        const spotSize = formatSize(
+          basisTradeSize.spot.base,
+          basisTradeAsset.spotAsset.decimals,
+        )
+        const perpSize = formatSize(
+          basisTradeSize.perp.base,
+          basisTradeAsset.perpAsset.decimals,
+        )
+
+        return {
+          orders: [
+            {
+              asset: basisTradeAsset.spotAsset.name,
+              side:
+                tradeSide === 'long' ? ('long' as const) : ('short' as const),
+              price: basisSpotMarketPrice,
+              size: spotSize,
+              reduceOnly: false,
+              orderType: {
+                limit: { timeInForce: 'FrontendMarket' as const },
+              },
+            },
+            {
+              asset: basisTradeAsset.perpAsset.name,
+              side:
+                tradeSide === 'long' ? ('short' as const) : ('long' as const),
+              price: basisPerpMarketPrice,
+              size: perpSize,
+              reduceOnly: false,
+              orderType: {
+                limit: { timeInForce: 'FrontendMarket' as const },
+              },
+            },
+          ],
+          grouping: 'na' as const,
           builder: {
             builderFee: builderFee,
           },
@@ -368,51 +455,91 @@ const _useOrderData = () => {
     builderFee,
     triggerPrice,
     scaleOrderData,
+    basisTradeAsset,
+    basisTradeSize,
+    basisSpotMarketPrice,
+    basisPerpMarketPrice,
   ])
 }
 
 const _useBuilderFee = () => {
   const {
-    state: { asset },
+    state: { asset, tradeType },
   } = useAssetState()
 
   return useMemo(() => {
+    if (tradeType === 'basis trade') return BUILDER_FEE_PERPS
     if (!asset) return BUILDER_FEE_PERPS
     return asset?.marketType === 'perp' ? BUILDER_FEE_PERPS : BUILDER_FEE_SPOT
-  }, [asset])
+  }, [asset, tradeType])
 }
 
 const _useMarketPrice = () => {
   const {
     state: { activeAsset, asset, tradeSide },
   } = useAssetState()
-  const { midPrice } = useMidPrice({
+  return _useMarketPriceForAsset({
     assetString: activeAsset,
+    asset,
+    tradeSide,
+  })
+}
+
+const _useMarketPriceForAsset = ({
+  assetString,
+  asset,
+  tradeSide,
+}: {
+  assetString: string | undefined
+  asset: PerpOrSpotAsset | undefined
+  tradeSide: 'long' | 'short'
+}) => {
+  const { midPrice } = useMidPrice({
+    assetString,
   })
   const {
     state: { marketOrderSlippage },
   } = useUserSettingsState()
 
   return useMemo(() => {
-    if (!midPrice || !asset) return undefined
-    const _midPrice = parseUnits(midPrice ?? '0', asset?.formatParseDecimals)
-    // console.log(asset, midPrice, _midPrice)
-    const slippage =
-      tradeSide === 'long'
-        ? Number(marketOrderSlippage) + 10_000
-        : 10_000 - Number(marketOrderSlippage)
-    const adjustedPrice = (_midPrice * BigInt(slippage)) / BigInt(10_000) // 8% lower for buy orders
-
-    try {
-      return formatPrice(
-        formatUnits(adjustedPrice, asset?.formatParseDecimals),
-        asset?.decimals,
-        asset?.marketType,
-      )
-    } catch {
-      return undefined
-    }
+    return getMarketPrice({
+      midPrice,
+      marketOrderSlippage,
+      asset,
+      tradeSide,
+    })
   }, [midPrice, marketOrderSlippage, asset, tradeSide])
+}
+
+function getMarketPrice({
+  midPrice,
+  marketOrderSlippage,
+  asset,
+  tradeSide,
+}: {
+  midPrice: string | null
+  marketOrderSlippage: number
+  asset: PerpOrSpotAsset | undefined
+  tradeSide: 'long' | 'short'
+}): string | undefined {
+  if (!midPrice || !asset) return undefined
+
+  const parsedMidPrice = parseUnits(midPrice, asset.formatParseDecimals)
+  const slippage =
+    tradeSide === 'long'
+      ? Number(marketOrderSlippage) + 10_000
+      : 10_000 - Number(marketOrderSlippage)
+  const adjustedPrice = (parsedMidPrice * BigInt(slippage)) / BigInt(10_000)
+
+  try {
+    return formatPrice(
+      formatUnits(adjustedPrice, asset.formatParseDecimals),
+      asset.decimals,
+      asset.marketType,
+    )
+  } catch {
+    return undefined
+  }
 }
 
 const _useTpSlOrder = () => {

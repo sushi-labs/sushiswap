@@ -4,9 +4,18 @@ import { useAssetState } from './asset-state-provider'
 
 export const TradeSideSelect = () => {
   const {
-    state: { tradeSide, asset },
+    state: { tradeSide, asset, tradeType },
     mutate: { setTradeSide },
   } = useAssetState()
+
+  const longLabel =
+    tradeType === 'basis trade'
+      ? 'Buy / Short'
+      : `Buy${asset?.marketType === 'perp' ? ' / Long' : ''}`
+  const shortLabel =
+    tradeType === 'basis trade'
+      ? 'Sell / Long'
+      : `Sell${asset?.marketType === 'perp' ? ' / Short' : ''}`
 
   return (
     <PerpsCard className="flex items-center w-full">
@@ -20,7 +29,7 @@ export const TradeSideSelect = () => {
         fullWidth
         onClick={() => setTradeSide('long')}
       >
-        Buy{asset?.marketType === 'perp' ? ' / Long' : ''}
+        {longLabel}
       </Button>
       <Button
         size="sm"
@@ -32,7 +41,7 @@ export const TradeSideSelect = () => {
         fullWidth
         onClick={() => setTradeSide('short')}
       >
-        Sell{asset?.marketType === 'perp' ? ' / Short' : ''}
+        {shortLabel}
       </Button>
     </PerpsCard>
   )

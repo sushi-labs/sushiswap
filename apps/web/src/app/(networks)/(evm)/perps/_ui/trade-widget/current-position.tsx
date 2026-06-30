@@ -11,7 +11,7 @@ import { useAssetState } from './asset-state-provider'
 
 export const CurrentPosition = () => {
   const {
-    state: { activeAsset, asset },
+    state: { activeAsset, asset, tradeType },
   } = useAssetState()
   const { data } = useUserPositions(activeAsset)
   const { baseSymbol } = useSymbolSplit({ asset })
@@ -28,7 +28,11 @@ export const CurrentPosition = () => {
 
   return (
     <StatItem
-      title="Current Position"
+      title={
+        tradeType === 'basis trade'
+          ? 'Current Perp Position'
+          : 'Current Position'
+      }
       value={
         <div
           className={classNames(

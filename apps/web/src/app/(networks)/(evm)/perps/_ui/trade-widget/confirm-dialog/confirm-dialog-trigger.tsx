@@ -2,12 +2,20 @@ import { Button, DialogTrigger } from '@sushiswap/ui'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useUserSettingsState } from '../../account-management'
 import { PerpsChecker } from '../../perps-checker'
+import { useAssetState } from '../asset-state-provider'
 import { PlaceOrderButton } from './place-order-button'
 
 export const ConfirmDialogTrigger = () => {
   const {
     state: { quickConfirmPositionEnabled },
   } = useUserSettingsState()
+  const {
+    state: { tradeType },
+  } = useAssetState()
+  const AmountChecker =
+    tradeType === 'basis trade'
+      ? PerpsChecker.BasisTradeAmount
+      : PerpsChecker.OrderAmount
 
   return (
     <Checker.Connect size="sm" namespace="evm" variant="perps-default">
@@ -21,7 +29,7 @@ export const ConfirmDialogTrigger = () => {
                     size="sm"
                     variant="perps-default"
                   >
-                    <PerpsChecker.OrderAmount size="sm" variant="perps-default">
+                    <AmountChecker size="sm" variant="perps-default">
                       <PerpsChecker.TakeStopTrigger
                         size="sm"
                         variant="perps-default"
@@ -45,7 +53,7 @@ export const ConfirmDialogTrigger = () => {
                           )}
                         </PerpsChecker.TwapSuborder>
                       </PerpsChecker.TakeStopTrigger>
-                    </PerpsChecker.OrderAmount>
+                    </AmountChecker>
                   </PerpsChecker.TwapRunningTime>
                 </PerpsChecker.HyperReferral>
               </PerpsChecker.BuilderFee>

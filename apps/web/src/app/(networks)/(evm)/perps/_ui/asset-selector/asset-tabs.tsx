@@ -10,16 +10,17 @@ import {
 import { BankIcon } from '@sushiswap/ui/icons/BankIcon'
 import { CirclesIcon } from '@sushiswap/ui/icons/CirclesIcon'
 import { ClockIcon } from '@sushiswap/ui/icons/ClockIcon'
+import { FireIcon } from '@sushiswap/ui/icons/FireIcon'
 import { InfinityIcon } from '@sushiswap/ui/icons/InfinityIcon'
 import { LightningIcon } from '@sushiswap/ui/icons/LightningIcon'
 import { useEffect } from 'react'
 import { FavoriteIcon } from '../_common'
 import { AllAssets } from './all-assets'
+import { BasisTradeAssets } from './basis-trade-assets'
 import { FavoriteAssets } from './favorite-assets'
 import { HIP3Assets } from './hip-3-assets'
 import { SpotAssets } from './spot-assets'
 import { TradfiAssets } from './tradfi-assets'
-// import { FireIcon } from '@sushiswap/ui/icons/FireIcon';
 
 const TABS = [
   { value: 'all', icon: <ClockIcon className="w-3 h-3" /> },
@@ -29,6 +30,7 @@ const TABS = [
   { value: 'Tradfi', icon: <BankIcon className="w-3 h-3" /> },
   { value: 'HIP-3', icon: <LightningIcon className="w-3 h-3" /> },
   // { value: 'trending', icon: <FireIcon className="w-3 h-3" /> },
+  { value: 'basis trade', icon: <FireIcon className="w-3 h-3" /> },
   { value: 'watchlist', icon: <FavoriteIcon className="w-3 h-3" /> },
 ] as const
 type TabType = (typeof TABS)[number]['value']
@@ -117,6 +119,9 @@ export const AssetTabs = () => {
         </TabsContent>
         <TabsContent value="HIP-3" className="!mt-0">
           <HIP3Assets />
+        </TabsContent>
+        <TabsContent value="basis trade" className="!mt-0">
+          <BasisTradeAssets />
         </TabsContent>
         <TabsContent value="watchlist" className="!mt-0">
           <FavoriteAssets />

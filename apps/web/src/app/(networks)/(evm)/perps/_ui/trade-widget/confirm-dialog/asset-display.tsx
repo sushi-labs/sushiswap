@@ -1,10 +1,53 @@
+import type { PerpOrSpotAsset } from 'src/lib/perps'
 import { AssetIcon } from '../../_common'
 import { type TradeSideType, useAssetState } from '../asset-state-provider'
 
 export const AssetDisplay = () => {
   const {
-    state: { tradeSide, asset, currentLeverageForAsset },
+    state: {
+      tradeSide,
+      asset,
+      currentLeverageForAsset,
+      basisTradeAsset,
+      tradeType,
+    },
   } = useAssetState()
+
+  if (tradeType === 'basis trade') {
+    return (
+      <div className="flex flex-row gap-4">
+        <_Display
+          tradeSide={tradeSide}
+          asset={basisTradeAsset?.spotAsset}
+          currentLeverageForAsset={currentLeverageForAsset}
+        />
+        <_Display
+          tradeSide={tradeSide === 'long' ? 'short' : 'long'}
+          asset={basisTradeAsset?.perpAsset}
+          currentLeverageForAsset={currentLeverageForAsset}
+        />
+      </div>
+    )
+  }
+
+  return (
+    <_Display
+      tradeSide={tradeSide}
+      asset={asset}
+      currentLeverageForAsset={currentLeverageForAsset}
+    />
+  )
+}
+
+const _Display = ({
+  tradeSide,
+  asset,
+  currentLeverageForAsset,
+}: {
+  tradeSide: TradeSideType
+  asset: PerpOrSpotAsset | undefined
+  currentLeverageForAsset: number | undefined
+}) => {
   return (
     <div className="relative">
       <Circles tradeSide={tradeSide} />

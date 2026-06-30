@@ -13,14 +13,25 @@ import {
 import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
 import { useMemo } from 'react'
 import { PerpsCard } from '../_common/perps-card'
-import {
-  TRADE_TYPES,
-  type TradeType,
-  useAssetState,
-} from './asset-state-provider'
+import { type TradeType, useAssetState } from './asset-state-provider'
 
-const REGULAR_TRADE_TYPES = TRADE_TYPES.slice(0, 2)
-const PRO_TRADE_TYPES = TRADE_TYPES.slice(2)
+const REGULAR_TRADE_TYPES = [
+  'market',
+  'limit',
+] as const satisfies readonly TradeType[]
+const PRO_TRADE_TYPES = [
+  'basis trade',
+  'scale',
+  'stop limit',
+  'stop market',
+  'take limit',
+  'take market',
+  'TWAP',
+] as const satisfies readonly TradeType[]
+const SPOT_PRO_TRADE_TYPES = [
+  'scale',
+  'TWAP',
+] as const satisfies readonly TradeType[]
 
 export const TradeTypeSelect = () => {
   const {
@@ -35,13 +46,13 @@ export const TradeTypeSelect = () => {
 
   const proTradeType = useMemo(() => {
     if (assetType === 'spot') {
-      return ['scale', 'TWAP']
+      return SPOT_PRO_TRADE_TYPES
     }
-    return TRADE_TYPES.slice(2)
+    return PRO_TRADE_TYPES
   }, [assetType])
 
   const isProTrade = useMemo(() => {
-    return PRO_TRADE_TYPES.includes(tradeType)
+    return (PRO_TRADE_TYPES as readonly TradeType[]).includes(tradeType)
   }, [tradeType])
 
   return (
