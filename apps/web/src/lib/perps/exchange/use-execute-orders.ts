@@ -116,7 +116,7 @@ export const useExecuteOrders = () => {
       // console.log(orders)
       const _orderData: OrderParameters = {
         orders,
-        ...(IS_PERPS_TESTNET
+        ...(IS_PERPS_TESTNET || activeAccount?.type === 'vault'
           ? {}
           : {
               builder: {
