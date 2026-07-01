@@ -17,11 +17,12 @@ import {
   useState,
 } from 'react'
 import {
-  DEX_COLLATERAL_TOKENS,
   type TokenBalance,
   type UserPositionsItemType,
   formatSize,
+  getCollateralTokenForDex,
   perpsNumberFormatter,
+  useAllPerpMetas,
   useSpotMeta,
   useUpdateIsolatedMargin,
 } from 'src/lib/perps'
@@ -67,12 +68,11 @@ export const UpdateIsolatedMarginDialog = ({
       assetListQuery: { data: assetList },
     },
   } = useAssetListState()
+  const { data: allPerpMetas } = useAllPerpMetas()
   const { data: spotMeta } = useSpotMeta()
   const collateralTokenId = useMemo(() => {
-    return DEX_COLLATERAL_TOKENS[
-      position.perpsDex as keyof typeof DEX_COLLATERAL_TOKENS
-    ]?.collateralToken
-  }, [position.perpsDex])
+    return getCollateralTokenForDex(allPerpMetas, position.perpsDex)
+  }, [allPerpMetas, position.perpsDex])
   const token = useMemo(() => {
     return spotMeta?.tokens.find((t) => t.index === collateralTokenId)
   }, [collateralTokenId, spotMeta])
