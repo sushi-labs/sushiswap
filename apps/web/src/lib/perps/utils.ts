@@ -1,9 +1,14 @@
+import type { SpotClearinghouseStateResponse } from '@nktkas/hyperliquid'
 import {
   formatPrice as formatPriceHl,
   formatSize as formatSizeHl,
 } from '@nktkas/hyperliquid/utils'
 import type { EvmAddress } from 'sushi/evm'
 import type { PerpOrSpotAsset } from './subscription/use-asset-list'
+
+type Balance = SpotClearinghouseStateResponse['balances'][number]
+
+export type TokenBalance = Extract<Balance, { token: number }>
 
 export const getTextColorClass = (value: number) => {
   if (value >= 0) return 'text-perps-green dark:text-perps-green'
@@ -204,4 +209,8 @@ export const getEvmDestinationAddress = (tokenIndex: number): EvmAddress => {
   // Format: 0x20 + zero-padded token index (big-endian, 19 bytes = 38 hex chars)
   const hexIndex = tokenIndex.toString(16).padStart(38, '0')
   return `0x20${hexIndex}`
+}
+
+export function isTokenBalance(balance: Balance): balance is TokenBalance {
+  return 'token' in balance
 }

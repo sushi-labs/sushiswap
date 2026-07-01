@@ -7,10 +7,17 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import type { EvmAddress } from 'sushi/evm'
 import { hlWebSocketTransport } from '../transports'
+import { type TokenBalance, isTokenBalance } from '../utils'
+
+type WebData2EventWithTokenBalances = Omit<WebData2Event, 'spotState'> & {
+  spotState?: Omit<NonNullable<WebData2Event['spotState']>, 'balances'> & {
+    balances: TokenBalance[]
+  }
+}
 
 export const useWebData2 = ({ address }: { address?: EvmAddress }) => {
   const queryClient = useQueryClient()
-  const query = useQuery<WebData2Event>({
+  const query = useQuery<WebData2EventWithTokenBalances>({
     queryKey: ['useWebData2', address],
     staleTime: Number.POSITIVE_INFINITY,
     enabled: false,
@@ -24,10 +31,22 @@ export const useWebData2 = ({ address }: { address?: EvmAddress }) => {
         { transport: hlWebSocketTransport },
         { user: address },
         (webData2Event) => {
-          queryClient.setQueryData(
+          queryClient.setQueryData<WebData2EventWithTokenBalances>(
             ['useWebData2', address],
-            (_prevWebData2Event: WebData2Event | undefined) => {
-              return webData2Event
+            (_prevWebData2Event) => {
+              const { spotState, ...event } = webData2Event
+
+              return {
+                ...event,
+                ...(spotState
+                  ? {
+                      spotState: {
+                        ...spotState,
+                        balances: spotState.balances.filter(isTokenBalance),
+                      },
+                    }
+                  : {}),
+              }
             },
           )
         },

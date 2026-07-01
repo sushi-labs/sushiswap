@@ -2,43 +2,11 @@ import { useMemo } from 'react'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserState } from '~evm/perps/user-provider'
-import { useSpotClearinghouseState } from '../info'
-
-//todo: pull from api
-export const DEX_COLLATERAL_TOKENS = {
-  '': {
-    index: 0,
-    collateralToken: 0,
-  },
-  abcd: {
-    index: 1,
-    collateralToken: 0,
-  },
-  cash: {
-    index: 2,
-    collateralToken: 268,
-  },
-  flx: {
-    index: 3,
-    collateralToken: 360,
-  },
-  hyna: {
-    index: 4,
-    collateralToken: 235,
-  },
-  km: {
-    index: 5,
-    collateralToken: 360,
-  },
-  vntl: {
-    index: 6,
-    collateralToken: 360,
-  },
-  xyz: {
-    index: 7,
-    collateralToken: 0,
-  },
-}
+import {
+  getCollateralTokenForDex,
+  useAllPerpMetas,
+  useSpotClearinghouseState,
+} from '../info'
 
 export const useUserAccountValues = () => {
   const {
@@ -73,6 +41,11 @@ export const useUserAccountValues = () => {
     isLoading: isLoadingSpotClearingHouse,
     error: errorSpotClearingHouse,
   } = useSpotClearinghouseState({ address })
+  const {
+    data: allPerpMetas,
+    isLoading: isLoadingAllPerpMetas,
+    error: errorAllPerpMetas,
+  } = useAllPerpMetas()
 
   const isLoading = useMemo(() => {
     if (!address) return false
@@ -80,7 +53,8 @@ export const useUserAccountValues = () => {
       isLoadingWebData2 ||
       allDexLoading ||
       assetListLoading ||
-      isLoadingSpotClearingHouse
+      isLoadingSpotClearingHouse ||
+      isLoadingAllPerpMetas
     )
   }, [
     address,
@@ -88,12 +62,17 @@ export const useUserAccountValues = () => {
     allDexLoading,
     assetListLoading,
     isLoadingSpotClearingHouse,
+    isLoadingAllPerpMetas,
   ])
 
   const error = useMemo(() => {
     if (!address) return null
     return (
-      errorWebData2 || allDexError || assetListError || errorSpotClearingHouse
+      errorWebData2 ||
+      allDexError ||
+      assetListError ||
+      errorSpotClearingHouse ||
+      errorAllPerpMetas
     )
   }, [
     address,
@@ -101,6 +80,7 @@ export const useUserAccountValues = () => {
     allDexError,
     assetListError,
     errorSpotClearingHouse,
+    errorAllPerpMetas,
   ])
 
   const spotEquity = useMemo(() => {
@@ -210,7 +190,13 @@ export const useUserAccountValues = () => {
   }, [perpsEquity, spotEquity])
 
   const clearhouseStateTotal = useMemo(() => {
-    if (!spotClearingHouseState?.balances || !assetList) return 0
+    if (!spotClearingHouseState?.balances || !assetList || !allPerpMetas) {
+      return 0
+    }
+
+    const collateralTokens = new Set(
+      allPerpMetas.map((meta) => meta.collateralToken),
+    )
 
     return (
       spotClearingHouseState?.balances?.reduce((acc, asset) => {
@@ -219,12 +205,7 @@ export const useUserAccountValues = () => {
           return acc + balance
         }
         const tokenIndex = asset?.token
-        //if tokenIndex not in DEX_COLLATERAL_TOKENS, skip
-        if (
-          !Object.values(DEX_COLLATERAL_TOKENS).find(
-            (meta) => meta.collateralToken === tokenIndex,
-          )
-        ) {
+        if (!collateralTokens.has(tokenIndex)) {
           return acc
         }
         const spot = Array.from(assetList?.entries() ?? []).find(([, v]) =>
@@ -235,7 +216,7 @@ export const useUserAccountValues = () => {
         return acc + val
       }, 0) ?? 0
     )
-  }, [spotClearingHouseState?.balances, assetList])
+  }, [spotClearingHouseState?.balances, assetList, allPerpMetas])
 
   const unifiedAccountLeverage = useMemo(() => {
     if (!allDexClearinghouseState) return 0
@@ -262,22 +243,13 @@ export const useUserAccountValues = () => {
 
   const unifiedAccountRatio = useMemo(() => {
     // https://hyperliquid.gitbook.io/hyperliquid-docs/trading/account-abstraction-modes#unified-account-ratio
+    if (!allDexClearinghouseState || !allPerpMetas) return 0
+
     const crossMarginByToken: Record<number, number> = {}
     const isolatedMarginByToken: Record<number, number> = {}
-    const indexToCollateralToken: Record<number, number> = {}
-    for (const meta of Object.values(DEX_COLLATERAL_TOKENS)) {
-      indexToCollateralToken[meta.index] = meta.collateralToken
-    }
-    const perpDexStates =
-      allDexClearinghouseState?.clearinghouseStates?.flatMap(
-        ([_dexName, clearinghouseState]) => {
-          return clearinghouseState
-        },
-      ) ?? []
-    // console.log('perpDexStates', perpDexStates)
-    for (let index = 0; index < perpDexStates.length; index++) {
-      const dex = perpDexStates[index]
-      const token = indexToCollateralToken[index]
+
+    for (const [dexName, dex] of allDexClearinghouseState.clearinghouseStates) {
+      const token = getCollateralTokenForDex(allPerpMetas, dexName)
 
       if (dex === undefined || token === undefined) continue
 
@@ -306,7 +278,7 @@ export const useUserAccountValues = () => {
     }
 
     return maxRatio * 100
-  }, [allDexClearinghouseState, spotClearingHouseState?.balances])
+  }, [allDexClearinghouseState, allPerpMetas, spotClearingHouseState?.balances])
 
   return {
     isLoading,

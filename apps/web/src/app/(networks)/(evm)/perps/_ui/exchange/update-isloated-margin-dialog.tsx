@@ -17,10 +17,12 @@ import {
   useState,
 } from 'react'
 import {
-  DEX_COLLATERAL_TOKENS,
+  type TokenBalance,
   type UserPositionsItemType,
   formatSize,
+  getCollateralTokenForDex,
   perpsNumberFormatter,
+  useAllPerpMetas,
   useSpotMeta,
   useUpdateIsolatedMargin,
 } from 'src/lib/perps'
@@ -29,6 +31,10 @@ import { IsolatedMarginInput, SideToggle, StatItem } from '../_common'
 import { useUserSettingsState } from '../account-management'
 import { useAssetListState } from '../asset-selector'
 import { PerpsChecker } from '../perps-checker'
+import {
+  getMarginRequiredFromLeverage,
+  maxRemovableIsolatedMargin,
+} from './isolated-margin-utils'
 
 export const UpdateIsolatedMarginDialog = ({
   trigger,
@@ -62,12 +68,11 @@ export const UpdateIsolatedMarginDialog = ({
       assetListQuery: { data: assetList },
     },
   } = useAssetListState()
+  const { data: allPerpMetas } = useAllPerpMetas()
   const { data: spotMeta } = useSpotMeta()
   const collateralTokenId = useMemo(() => {
-    return DEX_COLLATERAL_TOKENS[
-      position.perpsDex as keyof typeof DEX_COLLATERAL_TOKENS
-    ]?.collateralToken
-  }, [position.perpsDex])
+    return getCollateralTokenForDex(allPerpMetas, position.perpsDex)
+  }, [allPerpMetas, position.perpsDex])
   const token = useMemo(() => {
     return spotMeta?.tokens.find((t) => t.index === collateralTokenId)
   }, [collateralTokenId, spotMeta])
@@ -75,18 +80,12 @@ export const UpdateIsolatedMarginDialog = ({
     return assetList?.get(position.position.coin)
   }, [assetList, position.position.coin])
   const isStrictIsolated = asset?.marginMode === 'strictIsolated'
-  const initialMarginRequired = useMemo(() => {
-    if (position.position.leverage.type === 'isolated') {
-      return position.position.leverage.rawUsd
-    }
-
-    const positionValue = Number(position.position.positionValue ?? 0)
-    const leverage = position.position.leverage.value
-
-    if (!Number.isFinite(positionValue) || leverage <= 0) return '0'
-
-    return (positionValue / leverage).toString()
-  }, [position.position.leverage, position.position.positionValue])
+  const marginRequired = useMemo(() => {
+    return getMarginRequiredFromLeverage({
+      leverage: position.position.leverage.value,
+      positionValue: position.position.positionValue,
+    })
+  }, [position.position.leverage.value, position.position.positionValue])
 
   useEffect(() => {
     if (!isStrictIsolated || type === 'add') return
@@ -111,16 +110,16 @@ export const UpdateIsolatedMarginDialog = ({
 
     return maxRemovableIsolatedMargin({
       canRemove: !isStrictIsolated,
-      initialMarginRequired,
+      marginRequired,
       marginUsed: currentMargin,
       positionValue: position.position.positionValue,
     })
   }, [
     currentMargin,
-    initialMarginRequired,
     isDexAbstractionEnabled,
     isStrictIsolated,
     isUnifiedAccountModeEnabled,
+    marginRequired,
     position.clearingHouseDataForDex?.withdrawable,
     position.perpsDex,
     type,
@@ -259,39 +258,6 @@ export const UpdateIsolatedMarginDialog = ({
   )
 }
 
-function maxRemovableIsolatedMargin({
-  canRemove = true,
-  initialMarginRequired,
-  marginUsed,
-  positionValue,
-  decimals = 6,
-}: {
-  canRemove?: boolean
-  initialMarginRequired: string
-  marginUsed: string
-  positionValue: string
-  decimals?: number
-}) {
-  if (!canRemove) return '0'
-
-  const initial = Number(initialMarginRequired)
-  const m = Number(marginUsed)
-  const total = Number(positionValue)
-
-  if (
-    !Number.isFinite(initial) ||
-    !Number.isFinite(m) ||
-    !Number.isFinite(total)
-  )
-    return '0'
-
-  const minKeep = Math.max(initial, 0.1 * total)
-  const raw = Math.max(0, m - minKeep)
-  const factor = 10 ** decimals
-
-  return (Math.floor(raw * factor) / factor).toString()
-}
-
 function maxAddableIsolatedMargin({
   collateralTokenId,
   dexWithdrawable,
@@ -307,13 +273,7 @@ function maxAddableIsolatedMargin({
   isUnifiedAccount: boolean
   perpsDex: string
   perpsWithdrawable: string | undefined
-  spotBalances:
-    | {
-        hold: string
-        token: number
-        total: string
-      }[]
-    | undefined
+  spotBalances: TokenBalance[] | undefined
 }) {
   if (collateralTokenId === undefined) return '0'
 
@@ -331,13 +291,7 @@ function maxAddableIsolatedMargin({
 }
 
 function getAvailableSpotBalance(
-  spotBalances:
-    | {
-        hold: string
-        token: number
-        total: string
-      }[]
-    | undefined,
+  spotBalances: TokenBalance[] | undefined,
   tokenId: number,
 ) {
   const balance = spotBalances?.find((entry) => entry.token === tokenId)
