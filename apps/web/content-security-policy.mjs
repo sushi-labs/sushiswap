@@ -85,8 +85,8 @@ const PRODUCT_CONNECT_SOURCES = [
   'https://saveload.tradingview.com',
   'https://chat.mava.app',
   'https://order-sink-v2.orbs.network',
-  "https://hub.orbs.network",
-  "https://bi.orbs.network"
+  'https://hub.orbs.network',
+  'https://bi.orbs.network',
 ]
 
 const NON_EVM_CONNECT_SOURCES = [
