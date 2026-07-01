@@ -59,7 +59,6 @@ export const useCreateVault = () => {
           name: createData.name,
           description: createData.description,
           initialUsd: createData.initialUsdcAmount,
-          nonce: Date.now(),
         },
       )
     },

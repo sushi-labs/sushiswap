@@ -71,9 +71,13 @@ const PRODUCT_CONNECT_SOURCES = [
   'https://li.quest',
   'https://h20qtjygwppc.statuspage.io',
   'https://api.hyperliquid.xyz',
+  'https://api.hyperliquid-testnet.xyz',
   'wss://api.hyperliquid.xyz',
+  'wss://api.hyperliquid-testnet.xyz',
   'https://rpc.hyperliquid.xyz',
+  'https://rpc.hyperliquid-testnet.xyz',
   'wss://rpc.hyperliquid.xyz',
+  'wss://rpc.hyperliquid-testnet.xyz',
   'https://stats-data.hyperliquid.xyz',
   'https://api.hyperunit.xyz',
   'https://indexer.api.across.to',
@@ -81,8 +85,8 @@ const PRODUCT_CONNECT_SOURCES = [
   'https://saveload.tradingview.com',
   'https://chat.mava.app',
   'https://order-sink-v2.orbs.network',
-  "https://hub.orbs.network",
-  "https://bi.orbs.network"
+  'https://hub.orbs.network',
+  'https://bi.orbs.network',
 ]
 
 const NON_EVM_CONNECT_SOURCES = [

@@ -7,10 +7,17 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import type { EvmAddress } from 'sushi/evm'
 import { hlWebSocketTransport } from '../transports'
+import { type TokenBalance, isTokenBalance } from '../utils'
+
+type SpotStateEventWithTokenBalances = Omit<SpotStateEvent, 'spotState'> & {
+  spotState?: Omit<NonNullable<SpotStateEvent['spotState']>, 'balances'> & {
+    balances: TokenBalance[]
+  }
+}
 
 export const useSpotState = ({ address }: { address?: EvmAddress }) => {
   const queryClient = useQueryClient()
-  const query = useQuery<SpotStateEvent>({
+  const query = useQuery<SpotStateEventWithTokenBalances>({
     queryKey: ['useSpotState', address],
     staleTime: Number.POSITIVE_INFINITY,
     enabled: false,
@@ -27,7 +34,14 @@ export const useSpotState = ({ address }: { address?: EvmAddress }) => {
           queryClient.setQueryData(
             ['useSpotState', address],
             (_prevSpotStateEvent: SpotStateEvent | undefined) => {
-              return spotStateEvent
+              return {
+                user: spotStateEvent.user,
+                spotState: {
+                  ...spotStateEvent.spotState,
+                  balances:
+                    spotStateEvent?.spotState?.balances?.filter(isTokenBalance),
+                },
+              }
             },
           )
         },

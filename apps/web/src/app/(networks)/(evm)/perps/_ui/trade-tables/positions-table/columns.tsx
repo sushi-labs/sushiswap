@@ -12,6 +12,7 @@ import { useMemo } from 'react'
 import {
   type UserPositionsItemType,
   currencyFormatter,
+  formatPrice,
   getExistingPositionTpSlOrders,
   getSignForValue,
   getTextColorClass,
@@ -136,7 +137,11 @@ export const POSITION_VALUE_COLUMN: ColumnDef<UserPositionsItemType, unknown> =
       const positionValue = props.row.original.position.positionValue
       return (
         <span className="font-medium lg:whitespace-nowrap">
-          {perpsNumberFormatter({ value: positionValue, maxFraxDigits: 2 })}{' '}
+          {perpsNumberFormatter({
+            value: positionValue,
+            maxFraxDigits: 2,
+            minFraxDigits: 2,
+          })}{' '}
           USDC
         </span>
       )
@@ -159,8 +164,11 @@ export const ENTRY_PRICE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     return (
       <span className="font-medium lg:whitespace-nowrap">
         {perpsNumberFormatter({
-          value: entryPrice,
-          maxFraxDigits: props.row.original.decimals || 6,
+          value: formatPrice(
+            entryPrice,
+            props.row.original.decimals || 2,
+            props.row.original.marketType,
+          ),
         })}
       </span>
     )
@@ -181,8 +189,11 @@ export const MARK_PRICE_COLUMN: ColumnDef<UserPositionsItemType, unknown> = {
     return (
       <span className="font-medium lg:whitespace-nowrap">
         {perpsNumberFormatter({
-          value: markPrice,
-          maxFraxDigits: props.row.original.decimals || 6,
+          value: formatPrice(
+            markPrice,
+            props.row.original.decimals || 2,
+            props.row.original.marketType,
+          ),
         })}
       </span>
     )
@@ -286,8 +297,11 @@ export const LIQUIDATION_PRICE_COLUMN: ColumnDef<
     return (
       <span className="font-medium lg:whitespace-nowrap">
         {perpsNumberFormatter({
-          value: liquidationPrice,
-          maxFraxDigits: props.row.original.decimals || 6,
+          value: formatPrice(
+            liquidationPrice,
+            props.row.original.decimals || 2,
+            props.row.original.marketType,
+          ),
         })}
       </span>
     )
