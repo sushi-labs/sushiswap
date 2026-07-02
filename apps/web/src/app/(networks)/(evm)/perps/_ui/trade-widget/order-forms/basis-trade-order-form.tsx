@@ -102,6 +102,8 @@ export const BasisTradeOrderForm = () => {
       <BasisTradeLeg
         leg="spot"
         asset={basisTradeAsset.spotAsset}
+        //not a lot of spot tokens have icons, so we use the perp asset for the icon instead
+        assetForIcon={basisTradeAsset.perpAsset}
         action={tradeSide === 'long' ? 'Buy Spot' : 'Sell Spot'}
         actionType={tradeSide === 'long' ? 'long' : 'short'}
         size={basisTradeSize.spot}
@@ -168,6 +170,7 @@ const BasisTradeInfo = () => {
 const BasisTradeLeg = ({
   leg,
   asset,
+  assetForIcon,
   action,
   actionType,
   size,
@@ -180,6 +183,7 @@ const BasisTradeLeg = ({
 }: {
   leg: BasisTradeSizeKey
   asset: PerpOrSpotAsset
+  assetForIcon?: PerpOrSpotAsset
   action: string
   actionType: 'long' | 'short'
   size: { base: string; quote: string }
@@ -261,7 +265,7 @@ const BasisTradeLeg = ({
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between text-xs">
         <div className="flex items-center gap-1.5 text-perps-muted-70">
-          <AssetIcon asset={asset} size="sm" />
+          <AssetIcon asset={assetForIcon || asset} size="sm" />
           <span>{asset.symbol}</span>
           <Chip variant="perps-blue" className="!px-1 !font-medium">
             {asset.marketType === 'perp'
