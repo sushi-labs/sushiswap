@@ -95,15 +95,12 @@ export const PlaceOrderButton = ({ onMutate }: { onMutate?: () => void }) => {
 }
 
 function getBasisTradeSingleLegOrderData(orderData: OrderData): OrderData[] {
-  return orderData.orders.map((order) => ({
+  return orderData.orders.map((order, index) => ({
     orders: [order],
     grouping: 'na' as const,
     builder: {
-      // https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/asset-ids#perps
-      builderFee:
-        Number(order.asset) >= 10_000 && Number(order.asset) < 100_000
-          ? BUILDER_FEE_SPOT
-          : BUILDER_FEE_PERPS,
+      // spot at index 0, perp at index 1
+      builderFee: index === 0 ? BUILDER_FEE_SPOT : BUILDER_FEE_PERPS,
     },
   }))
 }
