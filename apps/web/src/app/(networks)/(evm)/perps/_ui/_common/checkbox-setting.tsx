@@ -1,4 +1,5 @@
 import { Checkbox } from '@sushiswap/ui'
+import type { ReactNode } from 'react'
 
 export const CheckboxSetting = ({
   value,
@@ -7,7 +8,7 @@ export const CheckboxSetting = ({
 }: {
   value: boolean
   onChange: (value: boolean) => void
-  label: string
+  label: string | ReactNode
 }) => {
   return (
     <div
