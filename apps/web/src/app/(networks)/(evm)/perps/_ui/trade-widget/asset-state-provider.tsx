@@ -239,17 +239,21 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     if (!basisTradeAssets.length) return undefined
 
     if (basisTradeAssetKeys) {
-      return basisTradeAssets.find(
+      const matchingBasisTradeAsset = basisTradeAssets.find(
         (asset) =>
           asset.spotAsset.name === basisTradeAssetKeys.spotAsset &&
           asset.perpAsset.name === basisTradeAssetKeys.perpAsset,
       )
+
+      if (matchingBasisTradeAsset) return matchingBasisTradeAsset
     }
 
-    return basisTradeAssets.find(
-      (asset) =>
-        asset.perpAsset.name === activeAsset ||
-        asset.spotAsset.name === activeAsset,
+    return (
+      basisTradeAssets.find(
+        (asset) =>
+          asset.perpAsset.name === activeAsset ||
+          asset.spotAsset.name === activeAsset,
+      ) ?? basisTradeAssets.find((asset) => asset.perpAsset.name === 'BTC') //fallback to BTC if no matching basis trade asset is found
     )
   }, [activeAsset, basisTradeAssetKeys, basisTradeAssets])
 

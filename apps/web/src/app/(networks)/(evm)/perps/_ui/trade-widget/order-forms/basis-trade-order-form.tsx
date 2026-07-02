@@ -89,11 +89,7 @@ export const BasisTradeOrderForm = () => {
   )
 
   if (!basisTradeAsset) {
-    return (
-      <div className="text-xs text-perps-muted-50">
-        Select a basis trade asset to configure both legs.
-      </div>
-    )
+    return null
   }
 
   return (
