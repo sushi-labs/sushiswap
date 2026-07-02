@@ -29,6 +29,7 @@ const PRO_TRADE_TYPES = [
   'TWAP',
 ] as const satisfies readonly TradeType[]
 const SPOT_PRO_TRADE_TYPES = [
+  'basis trade',
   'scale',
   'TWAP',
 ] as const satisfies readonly TradeType[]
