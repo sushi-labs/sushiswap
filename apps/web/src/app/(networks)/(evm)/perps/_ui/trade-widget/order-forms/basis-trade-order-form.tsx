@@ -7,23 +7,86 @@ import {
   HoverCardTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { useCallback } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import {
   type PerpOrSpotAsset,
   getSizeAndPercentageFromInput,
+  getSizeAndPercentageFromPercentageInput,
 } from 'src/lib/perps'
-import { AssetIcon, SizeInput } from '../../_common'
+import { AssetIcon, PercentageSlider, SizeInput } from '../../_common'
 import {
   type BasisTradeSizeKey,
   type BasisTradeSizeSide,
   useAssetState,
 } from '../asset-state-provider'
+import { useBasisTradeAccountBalances } from '../basis-trade-spot-availability'
+
+type BasisTradePercentage = Record<BasisTradeSizeKey, number>
 
 export const BasisTradeOrderForm = () => {
   const {
-    state: { basisTradeAsset, basisTradeSize, basisTradeSizeSide, tradeSide },
+    state: {
+      basisTradeAsset,
+      basisTradeSize,
+      basisTradeSizeSide,
+      maxTradeSizeLong,
+      maxTradeSizeShort,
+      tradeSide,
+    },
     mutate: { setBasisTradeSize, setBasisTradeSizeSide },
   } = useAssetState()
+  const { spotBaseBalance, spotQuoteBalance } = useBasisTradeAccountBalances({
+    basisTradeAsset,
+  })
+  const [basisTradePercentage, setBasisTradePercentage] =
+    useState<BasisTradePercentage>({
+      spot: 0,
+      perp: 0,
+    })
+
+  const spotMaxSize = useMemo(() => {
+    if (!basisTradeAsset) return '0'
+
+    if (tradeSide === 'short') {
+      return spotBaseBalance?.availableBalance ?? '0'
+    }
+
+    const price =
+      basisTradeAsset.spotAsset.markPrice ||
+      basisTradeAsset.spotAsset.midPrice ||
+      basisTradeAsset.spotAsset.lastPrice ||
+      '0'
+    const quoteBalance = Number(spotQuoteBalance?.availableBalance ?? 0)
+    const spotPrice = Number(price)
+
+    if (
+      !Number.isFinite(quoteBalance) ||
+      !Number.isFinite(spotPrice) ||
+      spotPrice <= 0
+    ) {
+      return '0'
+    }
+
+    return (quoteBalance / spotPrice).toString()
+  }, [
+    basisTradeAsset,
+    spotBaseBalance?.availableBalance,
+    spotQuoteBalance?.availableBalance,
+    tradeSide,
+  ])
+
+  const perpMaxSize =
+    tradeSide === 'long' ? maxTradeSizeShort : maxTradeSizeLong
+
+  const handlePercentageChange = useCallback(
+    (leg: BasisTradeSizeKey, percentage: number) => {
+      setBasisTradePercentage((prev) => ({
+        ...prev,
+        [leg]: percentage,
+      }))
+    },
+    [],
+  )
 
   if (!basisTradeAsset) {
     return (
@@ -36,10 +99,6 @@ export const BasisTradeOrderForm = () => {
   return (
     <div className="flex flex-col gap-2">
       <BasisTradeInfo />
-      <div className="flex items-center justify-between text-xs text-perps-muted-50">
-        <span>Order</span>
-        <span className="text-perps-muted-70">Market</span>
-      </div>
       <BasisTradeLeg
         leg="spot"
         asset={basisTradeAsset.spotAsset}
@@ -47,8 +106,15 @@ export const BasisTradeOrderForm = () => {
         actionType={tradeSide === 'long' ? 'long' : 'short'}
         size={basisTradeSize.spot}
         sizeSide={basisTradeSizeSide.spot}
+        maxSize={spotMaxSize}
+        percentage={
+          basisTradeSize.spot.base || basisTradeSize.spot.quote
+            ? basisTradePercentage.spot
+            : 0
+        }
         onSizeChange={setBasisTradeSize}
         onSizeSideChange={setBasisTradeSizeSide}
+        onPercentageChange={handlePercentageChange}
       />
       <BasisTradeLeg
         leg="perp"
@@ -57,8 +123,15 @@ export const BasisTradeOrderForm = () => {
         actionType={tradeSide === 'long' ? 'short' : 'long'}
         size={basisTradeSize.perp}
         sizeSide={basisTradeSizeSide.perp}
+        maxSize={perpMaxSize}
+        percentage={
+          basisTradeSize.perp.base || basisTradeSize.perp.quote
+            ? basisTradePercentage.perp
+            : 0
+        }
         onSizeChange={setBasisTradeSize}
         onSizeSideChange={setBasisTradeSizeSide}
+        onPercentageChange={handlePercentageChange}
       />
     </div>
   )
@@ -84,7 +157,8 @@ const BasisTradeInfo = () => {
         <p>
           A basis trade pairs a spot trade with the opposite perp trade on the
           same asset, aiming to capture the spread or funding difference while
-          reducing directional exposure.
+          reducing directional exposure. It is recommended that users enable
+          Unified Account Mode in settings for a better experience.
         </p>
       </HoverCardContent>
     </HoverCard>
@@ -98,8 +172,11 @@ const BasisTradeLeg = ({
   actionType,
   size,
   sizeSide,
+  maxSize,
+  percentage,
   onSizeChange,
   onSizeSideChange,
+  onPercentageChange,
 }: {
   leg: BasisTradeSizeKey
   asset: PerpOrSpotAsset
@@ -107,6 +184,8 @@ const BasisTradeLeg = ({
   actionType: 'long' | 'short'
   size: { base: string; quote: string }
   sizeSide: BasisTradeSizeSide[BasisTradeSizeKey]
+  maxSize: string
+  percentage: number
   onSizeChange: (
     leg: BasisTradeSizeKey,
     size: { base: string; quote: string },
@@ -115,19 +194,22 @@ const BasisTradeLeg = ({
     leg: BasisTradeSizeKey,
     sizeSide: BasisTradeSizeSide[BasisTradeSizeKey],
   ) => void
+  onPercentageChange: (leg: BasisTradeSizeKey, percentage: number) => void
 }) => {
   const handleSetSize = useCallback(
     (value: string) => {
       const price = asset.markPrice || asset.midPrice || asset.lastPrice || '0'
 
       try {
-        const { baseSize, quoteSize } = getSizeAndPercentageFromInput({
-          inputValue: value,
-          sizeSide,
-          maxSize: '0',
-          priceUsd: price,
-          decimals: asset.formatParseDecimals,
-        })
+        const { baseSize, quoteSize, percentage } =
+          getSizeAndPercentageFromInput({
+            inputValue: value,
+            sizeSide,
+            maxSize,
+            priceUsd: price,
+            decimals: asset.formatParseDecimals,
+          })
+        onPercentageChange(leg, percentage)
 
         onSizeChange(leg, {
           base: sizeSide === 'base' ? value : baseSize,
@@ -141,7 +223,31 @@ const BasisTradeLeg = ({
         })
       }
     },
-    [asset, leg, onSizeChange, sizeSide],
+    [asset, leg, maxSize, onPercentageChange, onSizeChange, sizeSide],
+  )
+
+  const handleSetPercentage = useCallback(
+    (value: number) => {
+      const price = asset.markPrice || asset.midPrice || asset.lastPrice || '0'
+
+      try {
+        const { baseSize, quoteSize, percentage } =
+          getSizeAndPercentageFromPercentageInput({
+            percentageInput: value,
+            maxSize,
+            priceUsd: price,
+            decimals: asset.formatParseDecimals,
+          })
+
+        onSizeChange(leg, { base: baseSize, quote: quoteSize })
+        onPercentageChange(leg, percentage)
+      } catch (error) {
+        console.error('Error formatting basis trade size:', error)
+        onSizeChange(leg, { base: '0', quote: '0' })
+        onPercentageChange(leg, value)
+      }
+    },
+    [asset, leg, maxSize, onPercentageChange, onSizeChange],
   )
 
   const handleSetSizeSide = useCallback(
@@ -183,6 +289,11 @@ const BasisTradeLeg = ({
         value={size}
         onChange={handleSetSize}
         className="!py-0 text-sm !px-2"
+      />
+      <PercentageSlider
+        value={percentage}
+        onChange={handleSetPercentage}
+        variant={actionType}
       />
     </div>
   )

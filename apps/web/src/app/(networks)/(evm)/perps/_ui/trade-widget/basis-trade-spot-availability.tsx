@@ -1,15 +1,15 @@
 'use client'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import {
   type BalanceItemType,
-  currencyFormatter,
   perpsNumberFormatter,
   useBalances,
   useSymbolSplit,
   useUserAccountValues,
 } from 'src/lib/perps'
 import { useUserState } from '~evm/perps/user-provider'
-import { StatItem } from '../_common'
+import { StatItem, TableButton } from '../_common'
+import { SwapStablesDialog } from '../account-management/swap-stables-dialog'
 import type { BasisTradeAsset } from '../asset-selector'
 import { useAssetState } from './asset-state-provider'
 
@@ -101,21 +101,45 @@ export const BasisTradePerpAvailability = () => {
   const { quoteSymbol } = useSymbolSplit({
     asset: basisTradeAsset?.perpAsset,
   })
+  const [open, setOpen] = useState(false)
 
   if (!basisTradeAsset) return null
 
   const availablePerp =
     tradeSide === 'long' ? availableToShort : availableToLong
 
+  const buttonText = `${perpsNumberFormatter({
+    value: availablePerp,
+    minFraxDigits: 2,
+    maxFraxDigits: 2,
+  })} ${quoteSymbol}`
+
   return (
-    <StatItem
-      title="Available Perp"
-      value={`${perpsNumberFormatter({
-        value: availablePerp,
-        minFraxDigits: 2,
-        maxFraxDigits: 2,
-      })} ${quoteSymbol}`}
-    />
+    <>
+      <StatItem
+        title="Available Perp Trade"
+        value={
+          basisTradeAsset?.perpAsset?.dex !== '' && quoteSymbol !== 'USDC' ? (
+            <TableButton onClick={() => setOpen(true)}>
+              {buttonText}
+            </TableButton>
+          ) : (
+            <>{buttonText}</>
+          )
+        }
+      />
+      {open ? (
+        <SwapStablesDialog
+          trigger={<div />}
+          nonSelectableSwapData={{
+            assetSymbolToSend: 'USDC',
+            assetSymbolToBuy: quoteSymbol,
+          }}
+          isOpen={open}
+          onOpenChange={setOpen}
+        />
+      ) : null}
+    </>
   )
 }
 
@@ -123,28 +147,32 @@ export const BasisTradeSpotAvailability = () => {
   const {
     state: { basisTradeAsset, tradeSide },
   } = useAssetState()
-  const { spotBaseBalance, spotBaseSymbol, spotEquity } =
+  const { spotBaseBalance, spotBaseSymbol, spotQuoteBalance, spotQuoteSymbol } =
     useBasisTradeAccountBalances({ basisTradeAsset })
 
   if (!basisTradeAsset) return null
 
   const availableSpot =
     tradeSide === 'long'
-      ? spotEquity.toString()
-      : spotBaseBalance?.availableBalance
+      ? (spotQuoteBalance?.availableBalance ?? '0')
+      : (spotBaseBalance?.availableBalance ?? '0')
 
   return (
     <StatItem
-      title="Available Spot"
+      title="Available Spot Trade"
       value={
         availableSpot
           ? tradeSide === 'long'
-            ? currencyFormatter.format(Number(availableSpot))
+            ? `${perpsNumberFormatter({
+                value: availableSpot,
+                minFraxDigits: 2,
+                maxFraxDigits: 2,
+              })} ${spotQuoteSymbol}`
             : `${perpsNumberFormatter({
                 value: availableSpot,
                 maxFraxDigits: basisTradeAsset.spotAsset.formatParseDecimals,
               })} ${spotBaseSymbol}`
-          : 'N/A'
+          : '0'
       }
     />
   )

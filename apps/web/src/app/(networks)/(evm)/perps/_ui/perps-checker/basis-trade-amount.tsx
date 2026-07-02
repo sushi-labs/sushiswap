@@ -1,5 +1,6 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
+import { parseUnits } from 'viem'
 import { useAssetState, useBasisTradeAccountBalances } from '../trade-widget'
 
 export const BasisTradeAmount: FC<ButtonProps> = ({
@@ -9,15 +10,20 @@ export const BasisTradeAmount: FC<ButtonProps> = ({
   ...props
 }) => {
   const {
-    state: { basisTradeAsset, basisTradeSize, tradeSide },
+    state: {
+      basisTradeAsset,
+      basisTradeSize,
+      maxTradeSizeLong,
+      maxTradeSizeShort,
+      tradeSide,
+    },
   } = useAssetState()
   const {
     isLoading,
-    perpsBalance,
-    perpQuoteSymbol,
     spotBaseBalance,
     spotBaseSymbol,
-    spotEquity,
+    spotQuoteBalance,
+    spotQuoteSymbol,
   } = useBasisTradeAccountBalances({ basisTradeAsset })
 
   const { isSizeValid, buttonText } = useMemo(() => {
@@ -45,10 +51,11 @@ export const BasisTradeAmount: FC<ButtonProps> = ({
     }
 
     if (tradeSide === 'long') {
-      if (Number(basisTradeSize.spot.quote) > spotEquity) {
+      const availableQuote = Number(spotQuoteBalance?.availableBalance ?? 0)
+      if (Number(basisTradeSize.spot.quote) > availableQuote) {
         return {
           isSizeValid: false,
-          buttonText: 'Insufficient Spot Equity',
+          buttonText: `Insufficient ${spotQuoteSymbol}`,
         }
       }
     } else {
@@ -61,11 +68,14 @@ export const BasisTradeAmount: FC<ButtonProps> = ({
       }
     }
 
-    if (Number(basisTradeSize.perp.quote) > Number(perpsBalance ?? 0)) {
-      return {
-        isSizeValid: false,
-        buttonText: `Insufficient ${perpQuoteSymbol} Perp Balance`,
-      }
+    const maxPerpTradeSize =
+      tradeSide === 'long' ? maxTradeSizeShort : maxTradeSizeLong
+
+    const parsedPerpSize = parseUnits(basisTradeSize.perp.base, 18)
+    const parsedMaxPerpTradeSize = parseUnits(maxPerpTradeSize, 18)
+
+    if (parsedPerpSize > parsedMaxPerpTradeSize) {
+      return { isSizeValid: false, buttonText: 'Invalid Perp Size' }
     }
 
     return { isSizeValid: true, buttonText: '' }
@@ -73,11 +83,12 @@ export const BasisTradeAmount: FC<ButtonProps> = ({
     basisTradeAsset,
     basisTradeSize,
     isLoading,
-    perpsBalance,
-    perpQuoteSymbol,
+    maxTradeSizeLong,
+    maxTradeSizeShort,
     spotBaseBalance,
     spotBaseSymbol,
-    spotEquity,
+    spotQuoteBalance,
+    spotQuoteSymbol,
     tradeSide,
   ])
 

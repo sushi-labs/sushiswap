@@ -140,7 +140,7 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
     Record<string, number>
   >('hyperliquid.last_used_leverage', {})
   const [tradeType, _setTradeType] = useState<TradeType>('market')
-  const [tradeSide, setTradeSide] = useState<TradeSideType>('long')
+  const [tradeSide, _setTradeSide] = useState<TradeSideType>('long')
   const [reduceOnly, _setReduceOnly] = useState(false)
   const [size, setSize] = useState({ base: '', quote: '' })
   const [basisTradeAssetKeys, setBasisTradeAssetKeys] =
@@ -267,6 +267,20 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
       }
     },
     [_setActiveAsset, push, isTradePage, reset],
+  )
+
+  const setTradeSide = useCallback(
+    (_tradeSide: TradeSideType) => {
+      if (tradeType === 'basis trade' && _tradeSide !== tradeSide) {
+        setBasisTradeSizeState({
+          spot: { base: '', quote: '' },
+          perp: { base: '', quote: '' },
+        })
+      }
+
+      _setTradeSide(_tradeSide)
+    },
+    [tradeSide, tradeType],
   )
 
   const setTradeType = useCallback(
@@ -542,6 +556,7 @@ const AssetStateProvider: FC<AssetStateProviderProps> = ({ children }) => {
         setActiveAsset,
         setActiveBasisTradeAsset,
         setTradeType,
+        setTradeSide,
         tradeType,
         tradeSide,
         reduceOnly,
