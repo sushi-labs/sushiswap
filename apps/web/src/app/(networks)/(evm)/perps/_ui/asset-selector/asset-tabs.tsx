@@ -1,5 +1,6 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 import {
+  Chip,
   Tabs,
   TabsContent,
   TabsList,
@@ -30,7 +31,7 @@ const TABS = [
   { value: 'Tradfi', icon: <BankIcon className="w-3 h-3" /> },
   { value: 'HIP-3', icon: <LightningIcon className="w-3 h-3" /> },
   // { value: 'trending', icon: <FireIcon className="w-3 h-3" /> },
-  { value: 'basis trade', icon: <FireIcon className="w-3 h-3" /> },
+  { value: 'basis trade', icon: <FireIcon className="w-3 h-3" />, isNew: true },
   { value: 'watchlist', icon: <FavoriteIcon className="w-3 h-3" /> },
 ] as const
 type TabType = (typeof TABS)[number]['value']
@@ -90,6 +91,11 @@ export const AssetTabs = () => {
           >
             {<span className="mr-1">{tab.icon}</span>}
             {tab.value}
+            {'isNew' in tab && tab.isNew ? (
+              <Chip variant="perps-green" className="!px-1 !text-[10px] ml-1">
+                New
+              </Chip>
+            ) : null}
             {idx !== TABS.length - 1 ? (
               <span className="h-[10px] w-px bg-perps-muted-20 ml-3" />
             ) : null}
