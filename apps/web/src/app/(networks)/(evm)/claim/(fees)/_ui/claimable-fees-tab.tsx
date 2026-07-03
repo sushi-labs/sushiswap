@@ -41,6 +41,7 @@ const COLUMNS = [
 
 export const ClaimableFeesTab: FC = () => {
   const { address, isConnecting } = useConnection()
+
   const { data: _data, isInitialLoading: isPositionsLoading } =
     useConcentratedLiquidityPositions({
       account: address,
@@ -64,6 +65,12 @@ export const ClaimableFeesTab: FC = () => {
     const positionsByChain = _data.reduce(
       (accum, cur) => {
         accum[cur.chainId] = accum[cur.chainId] || []
+        if (
+          cur.chainId === 1 &&
+          cur.address.toLowerCase() ===
+            '0x94faab05cd5b148ddff4354dc4e979642df062c4'.toLowerCase()
+        )
+          return accum
         accum[cur.chainId].push(cur)
         return accum
       },
@@ -80,49 +87,40 @@ export const ClaimableFeesTab: FC = () => {
         const chainId = +_chainId as SushiSwapV3ChainId
 
         const feeAmounts = {} as Record<string, Amount<EvmCurrency>>
-
-        positions
-          ?.filter(
-            (i) =>
-              !(
-                i.chainId === 1 &&
-                i.address.toLowerCase() ===
-                  '0x94faab05cd5b148ddff4354dc4e979642df062c4'
-              ),
+        console.log(positions)
+        positions.forEach((position) => {
+          if (
+            !position.fees ||
+            (position.fees[0] === 0n && position.fees[1] === 0n)
           )
-          .forEach((position) => {
-            if (
-              !position.fees ||
-              (position.fees[0] === 0n && position.fees[1] === 0n)
+            return
+
+          const fees0 = position.fees[0]
+          const fees1 = position.fees[1]
+
+          const currentValue0 = feeAmounts[position.token0.id]
+          const currentValue1 = feeAmounts[position.token1.id]
+
+          if (currentValue0) {
+            const amount = currentValue0.add(
+              new Amount(currentValue0.currency, fees0),
             )
-              return
+            feeAmounts[position.token0.id] = amount
+          } else {
+            const amount = new Amount(position.pool.token0, fees0)
+            feeAmounts[position.token0.id] = amount
+          }
 
-            const fees0 = position.fees[0]
-            const fees1 = position.fees[1]
-
-            const currentValue0 = feeAmounts[position.token0.id]
-            const currentValue1 = feeAmounts[position.token1.id]
-
-            if (currentValue0) {
-              const amount = currentValue0.add(
-                new Amount(currentValue0.currency, fees0),
-              )
-              feeAmounts[position.token0.id] = amount
-            } else {
-              const amount = new Amount(position.pool.token0, fees0)
-              feeAmounts[position.token0.id] = amount
-            }
-
-            if (currentValue1) {
-              const amount = currentValue1.add(
-                new Amount(currentValue1.currency, fees1),
-              )
-              feeAmounts[position.token1.id] = amount
-            } else {
-              const amount = new Amount(position.pool.token1, fees1)
-              feeAmounts[position.token1.id] = amount
-            }
-          })
+          if (currentValue1) {
+            const amount = currentValue1.add(
+              new Amount(currentValue1.currency, fees1),
+            )
+            feeAmounts[position.token1.id] = amount
+          } else {
+            const amount = new Amount(position.pool.token1, fees1)
+            feeAmounts[position.token1.id] = amount
+          }
+        })
 
         if (Object.keys(feeAmounts).length === 0) return accum
 
@@ -172,6 +170,7 @@ export const ClaimableFeesTab: FC = () => {
     return Object.values(feesByChain)
   }, [_data, prices])
 
+  console.log(data)
   return (
     <Container maxWidth="7xl" className="px-4 mx-auto">
       <Card>
