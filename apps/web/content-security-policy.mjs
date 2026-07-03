@@ -59,6 +59,7 @@ const SUSHI_CONNECT_SOURCES = [
   'https://sepolia-rollup.arbitrum.io',
   'https://rpc.tatara.katanarpc.com',
   'https://rpc-bokuto.katanarpc.com',
+  'https://migration-claim-api-production.up.railway.app',
 ]
 
 const PRODUCT_CONNECT_SOURCES = [

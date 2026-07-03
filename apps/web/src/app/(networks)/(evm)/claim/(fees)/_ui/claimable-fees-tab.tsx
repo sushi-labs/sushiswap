@@ -81,39 +81,48 @@ export const ClaimableFeesTab: FC = () => {
 
         const feeAmounts = {} as Record<string, Amount<EvmCurrency>>
 
-        positions.forEach((position) => {
-          if (
-            !position.fees ||
-            (position.fees[0] === 0n && position.fees[1] === 0n)
+        positions
+          ?.filter(
+            (i) =>
+              !(
+                i.chainId === 1 &&
+                i.address.toLowerCase() ===
+                  '0x94faab05cd5b148ddff4354dc4e979642df062c4'
+              ),
           )
-            return
-
-          const fees0 = position.fees[0]
-          const fees1 = position.fees[1]
-
-          const currentValue0 = feeAmounts[position.token0.id]
-          const currentValue1 = feeAmounts[position.token1.id]
-
-          if (currentValue0) {
-            const amount = currentValue0.add(
-              new Amount(currentValue0.currency, fees0),
+          .forEach((position) => {
+            if (
+              !position.fees ||
+              (position.fees[0] === 0n && position.fees[1] === 0n)
             )
-            feeAmounts[position.token0.id] = amount
-          } else {
-            const amount = new Amount(position.pool.token0, fees0)
-            feeAmounts[position.token0.id] = amount
-          }
+              return
 
-          if (currentValue1) {
-            const amount = currentValue1.add(
-              new Amount(currentValue1.currency, fees1),
-            )
-            feeAmounts[position.token1.id] = amount
-          } else {
-            const amount = new Amount(position.pool.token1, fees1)
-            feeAmounts[position.token1.id] = amount
-          }
-        })
+            const fees0 = position.fees[0]
+            const fees1 = position.fees[1]
+
+            const currentValue0 = feeAmounts[position.token0.id]
+            const currentValue1 = feeAmounts[position.token1.id]
+
+            if (currentValue0) {
+              const amount = currentValue0.add(
+                new Amount(currentValue0.currency, fees0),
+              )
+              feeAmounts[position.token0.id] = amount
+            } else {
+              const amount = new Amount(position.pool.token0, fees0)
+              feeAmounts[position.token0.id] = amount
+            }
+
+            if (currentValue1) {
+              const amount = currentValue1.add(
+                new Amount(currentValue1.currency, fees1),
+              )
+              feeAmounts[position.token1.id] = amount
+            } else {
+              const amount = new Amount(position.pool.token1, fees1)
+              feeAmounts[position.token1.id] = amount
+            }
+          })
 
         if (Object.keys(feeAmounts).length === 0) return accum
 
