@@ -114,10 +114,13 @@ export const Deposit: FC<ButtonProps> = ({
   }
 
   if (
-    Number(data?.clearinghouseState?.withdrawable) === 0 &&
-    spotUSDCBalance === 0 &&
-    asset?.dex === '' &&
-    !isUnifiedAccountModeEnabled
+    shouldShowInitialDepositDialog({
+      availableToTrade,
+      assetDex: asset?.dex,
+      isUnifiedAccountModeEnabled,
+      spotUSDCBalance,
+      withdrawable: data?.clearinghouseState?.withdrawable,
+    })
   ) {
     return (
       <DepositDialog
@@ -223,4 +226,28 @@ export const Deposit: FC<ButtonProps> = ({
   }
 
   return <>{children}</>
+}
+
+interface ShouldShowInitialDepositDialogArgs {
+  availableToTrade: string
+  assetDex: string | undefined
+  isUnifiedAccountModeEnabled: boolean
+  spotUSDCBalance: number
+  withdrawable: string | undefined
+}
+
+function shouldShowInitialDepositDialog({
+  availableToTrade,
+  assetDex,
+  isUnifiedAccountModeEnabled,
+  spotUSDCBalance,
+  withdrawable,
+}: ShouldShowInitialDepositDialogArgs): boolean {
+  return (
+    Number(withdrawable) === 0 &&
+    spotUSDCBalance === 0 &&
+    assetDex === '' &&
+    !isUnifiedAccountModeEnabled &&
+    Number(availableToTrade) === 0
+  )
 }
