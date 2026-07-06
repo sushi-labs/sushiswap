@@ -21,6 +21,7 @@ import { useSearchParams } from 'next/navigation'
 import { SteerSmartPositionsTable } from 'src/lib/steer/components/steer-smart-positions-table'
 import {
   type BladeChainId,
+  EvmChainId,
   type SushiSwapChainId,
   SushiSwapProtocol,
   getEvmChainById,
@@ -29,6 +30,7 @@ import {
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
+import { ArbNovaNotice } from '~evm/[chainId]/_ui/arb-nova-notice'
 import { BladeSunsetNotice } from '~evm/[chainId]/_ui/blade-sunset-notice'
 import { V2MigrationNotice } from '~evm/[chainId]/_ui/v2-migration-notice'
 import { ConcentratedPositionsTable } from '~evm/[chainId]/pool/_ui/ConcentratedPositionsTable/concentrated-positions-table'
@@ -129,9 +131,10 @@ export const PositionsTab: FC<{
     <div className="flex flex-col gap-4">
       {tab === 'v2' ? (
         <V2MigrationNotice />
-      ) : (
+      ) : tab === 'blade' ? (
         <BladeSunsetNotice includeCtaBtn={false} />
-      )}
+      ) : null}
+      {chainId === EvmChainId.ARBITRUM_NOVA ? <ArbNovaNotice /> : null}
 
       <Tabs value={tab} onValueChange={setTab} defaultValue={defaultTab}>
         <div className="flex justify-between mb-4">
