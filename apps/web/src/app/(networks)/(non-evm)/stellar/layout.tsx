@@ -24,9 +24,9 @@ export default function RootLayout({
   return (
     <WalletProvider>
       <Providers>
-        <SidebarProvider>
-          <BalanceProvider>
-            <PriceProvider>
+        <PriceProvider>
+          <SidebarProvider>
+            <BalanceProvider>
               <div className="flex flex-col h-full w-full">
                 <div className="flex flex-col sticky top-0 h-full w-full z-50">
                   <MigrateBanner />
@@ -34,9 +34,9 @@ export default function RootLayout({
                 </div>
                 {children}
               </div>
-            </PriceProvider>
-          </BalanceProvider>
-        </SidebarProvider>
+            </BalanceProvider>
+          </SidebarProvider>
+        </PriceProvider>
       </Providers>
     </WalletProvider>
   )
