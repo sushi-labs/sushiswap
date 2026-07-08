@@ -5,10 +5,10 @@ import { PriceProvider } from './_common/ui/price-provider/price-provider/price-
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarProvider>
-      <PriceProvider>
+    <PriceProvider>
+      <SidebarProvider>
         <BalanceProvider>{children}</BalanceProvider>
-      </PriceProvider>
-    </SidebarProvider>
+      </SidebarProvider>
+    </PriceProvider>
   )
 }
