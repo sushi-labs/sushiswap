@@ -14,7 +14,7 @@ import {
   useScaleOrders,
   useSymbolSplit,
 } from 'src/lib/perps'
-import { CheckboxSetting, StatItem } from '../../_common'
+import { AssetIcon, CheckboxSetting, StatItem } from '../../_common'
 import { useUserSettingsState } from '../../account-management'
 import { useAssetState } from '../asset-state-provider'
 import {
@@ -67,7 +67,9 @@ export const ConfirmDialog = () => {
               <AssetDisplay />
             </div>
             <div className="flex flex-col gap-2">
-              {tradeType === 'TWAP' ? (
+              {tradeType === 'basis trade' ? (
+                <_BasisTradeOrderStats />
+              ) : tradeType === 'TWAP' ? (
                 <_TwapOrderStats />
               ) : tradeType === 'scale' ? (
                 <_ScaleOrderStats />
@@ -142,6 +144,51 @@ const _RegularOrderStats = () => {
           </div>
         }
       />
+    </>
+  )
+}
+
+const _BasisTradeOrderStats = () => {
+  const {
+    state: { basisTradeAsset, basisTradeSize, tradeSide },
+  } = useAssetState()
+  const { baseSymbol: spotBaseSymbol } = useSymbolSplit({
+    asset: basisTradeAsset?.spotAsset,
+  })
+  const { baseSymbol: perpBaseSymbol } = useSymbolSplit({
+    asset: basisTradeAsset?.perpAsset,
+  })
+
+  if (!basisTradeAsset) return null
+
+  return (
+    <>
+      <StatItem
+        title="Spot Action"
+        value={
+          <div className={getTextColorClass(tradeSide === 'long' ? 1 : -1)}>
+            {tradeSide === 'long' ? 'Buy' : 'Sell'}
+          </div>
+        }
+      />
+      <StatItem
+        title="Spot Size"
+        value={`${basisTradeSize.spot.base || '0'} ${spotBaseSymbol}`}
+      />
+      <StatItem
+        title="Perp Action"
+        value={
+          <div className={getTextColorClass(tradeSide === 'long' ? -1 : 1)}>
+            {tradeSide === 'long' ? 'Short' : 'Long'}
+          </div>
+        }
+      />
+      <StatItem
+        title="Perp Size"
+        value={`${basisTradeSize.perp.base || '0'} ${perpBaseSymbol}`}
+      />
+      <StatItem title="Price" value="Market" />
+      <StatItem title="Time in Force" value="FrontendMarket" />
     </>
   )
 }

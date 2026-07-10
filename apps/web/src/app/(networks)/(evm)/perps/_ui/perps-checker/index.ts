@@ -1,5 +1,6 @@
 import type { ButtonProps } from '@headlessui/react'
 import type { ComponentType } from 'react'
+import { BasisTradeAmount } from './basis-trade-amount'
 import { BuilderFee } from './builder-fee'
 import { Deposit } from './deposit'
 import { EnableTrading } from './enable-trading'
@@ -18,6 +19,7 @@ export type PerpsCheckerProps = {
   Deposit: ComponentType<ButtonProps>
   BuilderFee: ComponentType<ButtonProps>
   OrderAmount: ComponentType<ButtonProps>
+  BasisTradeAmount: ComponentType<ButtonProps>
   TwapRunningTime: ComponentType<ButtonProps>
   TwapSuborder: ComponentType<ButtonProps>
   TakeStopTrigger: ComponentType<ButtonProps>
@@ -32,6 +34,7 @@ export const PerpsChecker = {
   Deposit,
   BuilderFee,
   OrderAmount,
+  BasisTradeAmount,
   TwapRunningTime,
   TwapSuborder,
   TakeStopTrigger,

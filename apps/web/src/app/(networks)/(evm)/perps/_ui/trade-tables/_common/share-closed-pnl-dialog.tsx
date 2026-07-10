@@ -1626,7 +1626,7 @@ function drawTextTopHighlight(
     0,
     y,
     0,
-    y + textHeight * 0,
+    y + textHeight * 0.55,
   )
 
   highlightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.38)')

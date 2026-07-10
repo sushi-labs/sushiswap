@@ -5,10 +5,21 @@ import { StatItem, TableButton } from '../_common'
 import { PerpSpotTransferDialog } from '../account-management'
 import { SwapStablesDialog } from '../account-management/swap-stables-dialog'
 import { useAssetState } from './asset-state-provider'
+import {
+  BasisTradePerpAvailability,
+  BasisTradeSpotAvailability,
+} from './basis-trade-spot-availability'
 
 export const AvailableToTrade = () => {
   const {
-    state: { tradeSide, availableToLong, availableToShort, asset, markPrice },
+    state: {
+      tradeSide,
+      tradeType,
+      availableToLong,
+      availableToShort,
+      asset,
+      markPrice,
+    },
   } = useAssetState()
   const { baseSymbol, quoteSymbol } = useSymbolSplit({ asset })
   const [open, setOpen] = useState(false)
@@ -47,6 +58,15 @@ export const AvailableToTrade = () => {
   const buttonText = useMemo(() => {
     return `${tradeSide === 'long' ? availToLong : availToShort} ${quoteSymbol}`
   }, [tradeSide, availToLong, availToShort, quoteSymbol])
+
+  if (tradeType === 'basis trade') {
+    return (
+      <>
+        <BasisTradePerpAvailability />
+        <BasisTradeSpotAvailability />
+      </>
+    )
+  }
 
   if (asset?.marketType === 'spot') {
     return (

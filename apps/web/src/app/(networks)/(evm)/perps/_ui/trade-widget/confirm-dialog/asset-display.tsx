@@ -1,16 +1,62 @@
+import type { PerpOrSpotAsset } from 'src/lib/perps'
 import { AssetIcon } from '../../_common'
 import { type TradeSideType, useAssetState } from '../asset-state-provider'
 
 export const AssetDisplay = () => {
   const {
-    state: { tradeSide, asset, currentLeverageForAsset },
+    state: {
+      tradeSide,
+      asset,
+      currentLeverageForAsset,
+      basisTradeAsset,
+      tradeType,
+    },
   } = useAssetState()
+
+  if (tradeType === 'basis trade') {
+    return (
+      <div className="flex flex-row gap-4">
+        <_Display
+          tradeSide={tradeSide}
+          asset={basisTradeAsset?.spotAsset}
+          assetForIcon={basisTradeAsset?.perpAsset}
+          currentLeverageForAsset={currentLeverageForAsset}
+        />
+        <_Display
+          tradeSide={tradeSide === 'long' ? 'short' : 'long'}
+          asset={basisTradeAsset?.perpAsset}
+          currentLeverageForAsset={currentLeverageForAsset}
+        />
+      </div>
+    )
+  }
+
+  return (
+    <_Display
+      tradeSide={tradeSide}
+      asset={asset}
+      currentLeverageForAsset={currentLeverageForAsset}
+    />
+  )
+}
+
+const _Display = ({
+  tradeSide,
+  asset,
+  assetForIcon,
+  currentLeverageForAsset,
+}: {
+  tradeSide: TradeSideType
+  asset: PerpOrSpotAsset | undefined
+  assetForIcon?: PerpOrSpotAsset
+  currentLeverageForAsset: number | undefined
+}) => {
   return (
     <div className="relative">
       <Circles tradeSide={tradeSide} />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="relative border rounded-full border-perps-muted-50">
-          <AssetIcon asset={asset} size="xl" />
+          <AssetIcon asset={assetForIcon || asset} size="xl" />
           <div
             className="absolute left-1/2 -translate-x-1/2 -bottom-2.5 rounded-full text-white text-xs px-2 py-px backdrop-blur-[1px] font-semibold"
             style={{

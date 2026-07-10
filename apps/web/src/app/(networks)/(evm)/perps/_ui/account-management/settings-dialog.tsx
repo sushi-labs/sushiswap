@@ -25,7 +25,6 @@ export const SettingsDialog = () => {
       disableBgFillNotifs,
       hidePnl,
       optOutOfSpotDustCollection,
-      isDexAbstractionEnabled,
       showPnlCardOnMarketClose,
     },
     mutate: {
@@ -38,7 +37,6 @@ export const SettingsDialog = () => {
       setDisableBgFillNotifs,
       setHidePnl,
       setOptOutOfSpotDustCollection,
-      setDexAbstractionEnabled,
       setShowPnlCardOnMarketClose,
     },
   } = useUserSettingsState()
@@ -119,16 +117,43 @@ export const SettingsDialog = () => {
             {activeAccount?.type === 'vault' ? null : (
               <>
                 <div className="bg-accent w-full h-[1px]" />
-                <CheckboxSetting
-                  value={!isDexAbstractionEnabled}
-                  onChange={setDexAbstractionEnabled}
-                  label="Disable HIP-3 Dex Abstraction"
-                />
-                <CheckboxSetting
-                  value={!isUnifiedAccountModeEnabled}
-                  onChange={setUnifiedAccountModeEnabled}
-                  label="Disable Unified Account Mode"
-                />
+                <div className="flex flex-col gap-1">
+                  <h4 className="font-semibold">Account Mode</h4>
+                  <div className="flex flex-col gap-4">
+                    <CheckboxSetting
+                      value={!isUnifiedAccountModeEnabled}
+                      onChange={setUnifiedAccountModeEnabled}
+                      label={
+                        <div className="flex flex-col gap-0.5">
+                          <p className="font-medium text-perps-muted">Manual</p>
+                          <div className="!whitespace-normal">
+                            Only recommended for automated traders. All DEXs
+                            have separate balances and cross margin applies
+                            separately within each DEX.
+                          </div>
+                        </div>
+                      }
+                    />
+                    <CheckboxSetting
+                      value={isUnifiedAccountModeEnabled}
+                      onChange={(val) => setUnifiedAccountModeEnabled(!val)}
+                      label={
+                        <div className="flex flex-col gap-0.5">
+                          <p className="font-medium text-perps-muted">
+                            Unified Account (Recommended)
+                          </p>
+                          <div className="!whitespace-normal">
+                            The default account setting where each collateral
+                            asset has a separate balance. Perps can only use the
+                            settlement asset as collateral, and margining is
+                            only shared across cross margin assets with the same
+                            collateral asset.
+                          </div>
+                        </div>
+                      }
+                    />
+                  </div>
+                </div>
               </>
             )}
           </div>

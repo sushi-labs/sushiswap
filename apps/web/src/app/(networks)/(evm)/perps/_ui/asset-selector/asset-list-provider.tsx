@@ -1,13 +1,49 @@
 'use client'
 import type { SymbolConverter } from '@nktkas/hyperliquid/utils'
 import { type FC, createContext, useContext, useMemo } from 'react'
-import { useAssetList, useSymbolConverter } from 'src/lib/perps'
+import {
+  type PerpOrSpotAsset,
+  useAssetList,
+  useSymbolConverter,
+} from 'src/lib/perps'
+
+type SpotBasisAsset = PerpOrSpotAsset & { marketType: 'spot' }
+type PerpBasisAsset = PerpOrSpotAsset & { marketType: 'perp' }
+
+export type BasisTradeAsset = {
+  spotAsset: SpotBasisAsset
+  perpAsset: PerpBasisAsset
+}
+
+function getBasisAssetKey(
+  symbol: string,
+  separator: '/' | '-',
+): string | undefined {
+  const separatorIndex = symbol.lastIndexOf(separator)
+
+  if (separatorIndex === -1) return undefined
+
+  const base = symbol.slice(0, separatorIndex)
+
+  if (!base) return undefined
+
+  return base.toLowerCase()
+}
+
+function isSpotBasisAsset(asset: PerpOrSpotAsset): asset is SpotBasisAsset {
+  return asset.marketType === 'spot'
+}
+
+function isPerpBasisAsset(asset: PerpOrSpotAsset): asset is PerpBasisAsset {
+  return asset.marketType === 'perp'
+}
 
 interface State {
   state: {
     assetListQuery: ReturnType<typeof useAssetList>
     uniqueDexes: string[]
     spotCollateralTokens: string[]
+    basisTradeAssets: BasisTradeAsset[]
     symbolConverter: SymbolConverter | undefined
     dexQuoteMap: Map<string, string>
   }
@@ -57,6 +93,44 @@ const AssetListProvider: FC<AssetListProviderProps> = ({ children }) => {
     return Array.from(tokensSet)
   }, [assetListQuery.data])
 
+  const basisTradeAssets = useMemo(() => {
+    if (!assetListQuery.data) return []
+
+    const perpsByAsset = new Map<string, PerpBasisAsset[]>()
+
+    assetListQuery.data.forEach((asset) => {
+      if (!isPerpBasisAsset(asset)) return
+
+      const assetKey = getBasisAssetKey(asset.symbol, '-')
+      if (!assetKey) return
+
+      const perpAssets = perpsByAsset.get(assetKey)
+      if (perpAssets) {
+        perpAssets.push(asset)
+      } else {
+        perpsByAsset.set(assetKey, [asset])
+      }
+    })
+
+    const pairs: BasisTradeAsset[] = []
+
+    assetListQuery.data.forEach((asset) => {
+      if (!isSpotBasisAsset(asset)) return
+
+      const assetKey = getBasisAssetKey(asset.symbol, '/')
+      if (!assetKey) return
+
+      const perpAssets = perpsByAsset.get(assetKey)
+      if (!perpAssets) return
+
+      perpAssets.forEach((perpAsset) => {
+        pairs.push({ spotAsset: asset, perpAsset })
+      })
+    })
+
+    return pairs
+  }, [assetListQuery.data])
+
   return (
     <AssetListContext.Provider
       value={useMemo(() => {
@@ -65,6 +139,7 @@ const AssetListProvider: FC<AssetListProviderProps> = ({ children }) => {
             assetListQuery,
             uniqueDexes,
             spotCollateralTokens,
+            basisTradeAssets,
             symbolConverter,
             dexQuoteMap,
           },
@@ -73,6 +148,7 @@ const AssetListProvider: FC<AssetListProviderProps> = ({ children }) => {
         assetListQuery,
         uniqueDexes,
         spotCollateralTokens,
+        basisTradeAssets,
         symbolConverter,
         dexQuoteMap,
       ])}

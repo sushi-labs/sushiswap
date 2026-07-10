@@ -1,5 +1,6 @@
 'use client'
 
+import { ArrowLeftIcon } from '@heroicons/react-v1/solid'
 import {
   ArrowLeftOnRectangleIcon,
   ChevronDownIcon,
@@ -70,7 +71,7 @@ export const PortfolioHeader = () => {
 const ConnectedWalletInfo = ({
   wallet,
 }: { wallet: WalletConnection | undefined }) => {
-  const { setView } = useSidebar()
+  const { setView, close } = useSidebar()
 
   const { data: ensName, isLoading: isENSNameLoading } = useEnsName({
     chainId: EvmChainId.ETHEREUM,
@@ -94,7 +95,14 @@ const ConnectedWalletInfo = ({
 
   return (
     <div className="flex justify-between w-full">
-      <div className="flex gap-2.5">
+      <div className="flex gap-2.5 items-center">
+        <IconButton
+          size="xs"
+          onClick={close}
+          icon={ArrowLeftIcon}
+          className="block sm:hidden"
+          name="Back"
+        />
         <div className="shrink-0">
           {wallet ? (
             <Badge

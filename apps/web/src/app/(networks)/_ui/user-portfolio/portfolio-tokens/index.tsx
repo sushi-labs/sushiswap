@@ -16,7 +16,7 @@ export const PortfolioTokens = () => {
         className="w-full space-y-4 h-full"
       >
         <div className="flex px-5 gap-x-2">
-          <TabsList className="w-full h-8">
+          <TabsList className="w-full h-8 !rounded-[10px] !px-px">
             {TABS.map((_tab) => (
               <TabsTrigger
                 key={_tab}
