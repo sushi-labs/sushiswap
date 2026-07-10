@@ -8,7 +8,7 @@ export const CheckboxSetting = ({
 }: {
   value: boolean
   onChange: (value: boolean) => void
-  label: string | ReactNode
+  label: ReactNode
 }) => {
   return (
     <div
