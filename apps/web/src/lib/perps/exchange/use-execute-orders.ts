@@ -113,7 +113,6 @@ export const useExecuteOrders = () => {
           ...(c.clientOrderId ? { c: c.clientOrderId } : {}),
         } satisfies OrderParameters['orders'][number]
       })
-      // console.log(orders)
       const _orderData: OrderParameters = {
         orders,
         ...(IS_PERPS_TESTNET || activeAccount?.type === 'vault'
@@ -126,7 +125,6 @@ export const useExecuteOrders = () => {
             }),
         ...(orderData.grouping ? { grouping: orderData.grouping } : {}),
       }
-      console.log(_orderData)
       return order(
         { wallet: agentAccount, transport: hlHttpTransport },
         _orderData,
