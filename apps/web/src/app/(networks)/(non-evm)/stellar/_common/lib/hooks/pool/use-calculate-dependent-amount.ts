@@ -26,6 +26,7 @@ export function useCalculateDependentAmount(
   tickUpper: number | null,
   independentToken: StellarToken | undefined,
   dependentToken: StellarToken | undefined,
+  proposedSqrtPriceX96?: bigint,
 ) {
   const { data: initialized } = usePoolInitialized(poolAddress)
 
@@ -41,6 +42,7 @@ export function useCalculateDependentAmount(
       tickUpper,
       independentToken?.id,
       dependentToken?.id,
+      proposedSqrtPriceX96?.toString(),
     ],
     queryFn: async (): Promise<{
       amount: string
@@ -48,8 +50,8 @@ export function useCalculateDependentAmount(
       error?: string
     }> => {
       if (
-        !poolAddress ||
-        !initialized ||
+        (!poolAddress && proposedSqrtPriceX96 === undefined) ||
+        (proposedSqrtPriceX96 === undefined && !initialized) ||
         tickLower === null ||
         tickUpper === null ||
         !independentToken ||
@@ -62,8 +64,16 @@ export function useCalculateDependentAmount(
       }
 
       try {
-        // Get current sqrt price from pool
-        const currentSqrtPriceX96 = await getCurrentSqrtPrice(poolAddress)
+        const currentSqrtPriceX96 =
+          proposedSqrtPriceX96 ??
+          (poolAddress ? await getCurrentSqrtPrice(poolAddress) : undefined)
+
+        if (currentSqrtPriceX96 === undefined) {
+          return {
+            amount: '',
+            status: 'idle',
+          }
+        }
 
         // Calculate sqrt prices at boundaries
         const sqrtPriceLowerX96 = tickToSqrtPrice(tickLower)
@@ -178,8 +188,7 @@ export function useCalculateDependentAmount(
       }
     },
     enabled: Boolean(
-      poolAddress &&
-        initialized &&
+      (proposedSqrtPriceX96 !== undefined || (poolAddress && initialized)) &&
         tickLower !== null &&
         tickUpper !== null &&
         independentToken &&

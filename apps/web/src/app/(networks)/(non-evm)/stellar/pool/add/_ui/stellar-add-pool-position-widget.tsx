@@ -28,7 +28,6 @@ export function StellarAddPoolPositionWidget({
   selectedFee,
 }: StellarAddPoolPositionWidgetProps): ReactElement {
   const [token0Amount, setToken0Amount] = useState('')
-  const [manualToken1Amount, setManualToken1Amount] = useState('')
   const [startPrice, setStartPrice] = useState('')
   const [priceInverted, setPriceInverted] = useState(false)
 
@@ -114,15 +113,9 @@ export function StellarAddPoolPositionWidget({
     tickRange.tickUpper,
     orderedToken0,
     orderedToken1,
+    poolInitialized === true ? undefined : initSqrtPriceX96,
   ).data
-  const isInitializedPool = Boolean(
-    existingPoolAddress && poolInitialized === true,
-  )
-  const token1Amount = isInitializedPool
-    ? token0Amount
-      ? (pairedAmount?.amount ?? '')
-      : ''
-    : manualToken1Amount
+  const token1Amount = token0Amount ? (pairedAmount?.amount ?? '') : ''
 
   function handlePriceInvertedChange(inverted: boolean): void {
     if (inverted === priceInverted) {
@@ -168,7 +161,6 @@ export function StellarAddPoolPositionWidget({
         tickUpper={tickRange.tickUpper}
         pairedAmount={pairedAmount}
         onToken0AmountChange={setToken0Amount}
-        onToken1AmountChange={setManualToken1Amount}
       >
         <StellarAddPoolSubmitWidget
           orderedToken0={orderedToken0}

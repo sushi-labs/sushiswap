@@ -26,7 +26,6 @@ interface StellarPoolLiquidityWidgetProps {
   pairedAmount: PairedAmountData
   children: ReactNode
   onToken0AmountChange(value: string): void
-  onToken1AmountChange(value: string): void
 }
 
 export function StellarPoolLiquidityWidget({
@@ -41,7 +40,6 @@ export function StellarPoolLiquidityWidget({
   pairedAmount,
   children,
   onToken0AmountChange,
-  onToken1AmountChange,
 }: StellarPoolLiquidityWidgetProps): ReactElement {
   const connectedAddress = useAccount('stellar')
   const chainId = token0?.chainId ?? token1?.chainId
@@ -94,13 +92,6 @@ export function StellarPoolLiquidityWidget({
     }
   }
 
-  function handleToken1AmountChange(value: string): void {
-    const clamped = clampAmount(value, token1, maximumAmounts?.maxToken1Amount)
-    if (clamped !== undefined) {
-      onToken1AmountChange(clamped)
-    }
-  }
-
   return (
     <FormSection
       title="Liquidity"
@@ -143,17 +134,14 @@ export function StellarPoolLiquidityWidget({
             <CurrencyInput
               chainId={chainId}
               id="stellar-add-liquidity-token1"
-              type={isInitializedPool ? 'OUTPUT' : 'INPUT'}
+              type="OUTPUT"
               className="rounded-xl border border-accent bg-white p-3 dark:bg-secondary"
               value={token1Amount}
-              onChange={
-                isInitializedPool ? undefined : handleToken1AmountChange
-              }
               currency={token1}
-              disabled={isInitializedPool}
+              disabled
             />
 
-            {isInitializedPool && pairedAmount?.error ? (
+            {pairedAmount?.error ? (
               <p
                 className={
                   pairedAmount.status === 'error'

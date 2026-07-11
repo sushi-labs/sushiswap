@@ -64,12 +64,8 @@ export function StellarAddPoolSubmitWidget({
   const [createPoolState, setCreatePoolState] =
     useState<CreatePoolState>('idle')
   const isAboveRange = pairedAmountStatus === 'above-range'
-  const isInitializedPool = Boolean(
-    existingPoolAddress && poolInitialized === true,
-  )
-  const hasInitializedPairedAmount = Boolean(
-    !isInitializedPool ||
-      pairedAmountStatus === 'below-range' ||
+  const hasPairedAmount = Boolean(
+    pairedAmountStatus === 'below-range' ||
       (pairedAmountStatus === 'within-range' &&
         orderedToken1Amount &&
         Number.parseFloat(orderedToken1Amount) > 0),
@@ -88,9 +84,8 @@ export function StellarAddPoolSubmitWidget({
     ]
 
     if (
-      !isInitializedPool ||
-      (pairedAmountStatus === 'within-range' &&
-        Number.parseFloat(orderedToken1Amount) > 0)
+      pairedAmountStatus === 'within-range' &&
+      Number.parseFloat(orderedToken1Amount) > 0
     ) {
       amounts.push(
         orderedToken1
@@ -101,7 +96,6 @@ export function StellarAddPoolSubmitWidget({
 
     return amounts
   }, [
-    isInitializedPool,
     orderedToken0,
     orderedToken0Amount,
     orderedToken1,
@@ -144,9 +138,7 @@ export function StellarAddPoolSubmitWidget({
       if (
         !orderedToken0Amount ||
         Number.parseFloat(orderedToken0Amount) <= 0 ||
-        (isInitializedPool
-          ? !hasInitializedPairedAmount
-          : !orderedToken1Amount || Number.parseFloat(orderedToken1Amount) <= 0)
+        !hasPairedAmount
       ) {
         console.error('Liquidity amounts are required')
         return
@@ -246,9 +238,7 @@ export function StellarAddPoolSubmitWidget({
                       size="xl"
                     >
                       <Checker.Guard
-                        guardWhen={
-                          isInitializedPool && !hasInitializedPairedAmount
-                        }
+                        guardWhen={!hasPairedAmount}
                         guardText={
                           pairedAmountStatus === 'error'
                             ? 'Invalid Amount'
