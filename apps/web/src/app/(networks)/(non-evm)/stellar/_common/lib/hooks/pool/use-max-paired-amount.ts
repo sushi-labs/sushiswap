@@ -2,9 +2,9 @@
 
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import type { StellarContractAddress } from 'sushi/stellar'
-import { formatUnits } from 'viem'
-import { useCalculatePairedAmount } from './use-calculate-paired-amount'
+import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
+import { formatUnits, parseUnits } from 'viem'
+import { useCalculateDependentAmount } from './use-calculate-dependent-amount'
 import { usePoolInitialized } from './use-pool-initialized'
 
 /**
@@ -16,23 +16,22 @@ export function useMaxPairedAmount(
   token1Balance: string,
   tickLower: number | null,
   tickUpper: number | null,
-  token0Decimals: number,
-  token1Decimals: number,
+  token0: StellarToken | undefined,
+  token1: StellarToken | undefined,
 ) {
   const { data: initialized } = usePoolInitialized(poolAddress)
-  const { data: pairedAmountData } = useCalculatePairedAmount(
+  const { data: pairedAmountData } = useCalculateDependentAmount(
     poolAddress,
-    formatUnits(BigInt(token0Balance), token0Decimals),
+    token0 ? formatUnits(BigInt(token0Balance), token0.decimals) : '0',
+    'token0',
     tickLower,
     tickUpper,
-    token0Decimals,
+    token0,
+    token1,
   )
-  const rawPairedToken1Amount = BigInt(
-    Math.floor(
-      Number.parseFloat(pairedAmountData?.token1Amount || '0') *
-        10 ** token1Decimals,
-    ),
-  )
+  const rawPairedToken1Amount = token1
+    ? parseUnits(pairedAmountData?.amount || '0', token1.decimals)
+    : 0n
   return useQuery({
     queryKey: [
       'stellar',
@@ -43,8 +42,8 @@ export function useMaxPairedAmount(
       token1Balance,
       tickLower,
       tickUpper,
-      token0Decimals,
-      token1Decimals,
+      token0?.id,
+      token1?.id,
     ],
     queryFn: async () => {
       if (
@@ -52,6 +51,8 @@ export function useMaxPairedAmount(
         !token0Balance ||
         !token1Balance ||
         !initialized ||
+        !token0 ||
+        !token1 ||
         tickLower === null ||
         tickUpper === null ||
         !pairedAmountData ||
@@ -95,6 +96,8 @@ export function useMaxPairedAmount(
         token1Balance &&
         pairedAmountData &&
         initialized &&
+        token0 &&
+        token1 &&
         tickLower !== null &&
         tickUpper !== null,
     ),

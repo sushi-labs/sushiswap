@@ -145,8 +145,8 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     balances?.token1.amount ?? '0',
     tickLower,
     tickUpper,
-    pool.token0.decimals,
-    pool.token1.decimals,
+    pool.token0,
+    pool.token1,
   )
 
   // Calculate max amount that can be entered based on balances
@@ -198,10 +198,8 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     independentField,
     tickLower,
     tickUpper,
-    independentToken.decimals,
-    dependentToken.decimals,
-    independentToken.symbol,
-    dependentToken.symbol,
+    independentToken,
+    dependentToken,
   )
 
   // Calculate dependent amount (only used in normal mode, not zap mode)

@@ -2,8 +2,8 @@
 
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import type { StellarContractAddress } from 'sushi/stellar'
-import { formatUnits } from 'viem'
+import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
+import { formatUnits, parseUnits } from 'viem'
 import {
   calculateAmountsFromLiquidity,
   calculateLiquidityFromAmount0,
@@ -22,12 +22,10 @@ export function useCalculateDependentAmount(
   poolAddress: StellarContractAddress | null,
   amount: string,
   independentField: Field,
-  tickLower: number,
-  tickUpper: number,
-  independentDecimals: number,
-  dependentDecimals: number,
-  independentTokenCode?: string,
-  dependentTokenCode?: string,
+  tickLower: number | null,
+  tickUpper: number | null,
+  independentToken: StellarToken | undefined,
+  dependentToken: StellarToken | undefined,
 ) {
   const { data: initialized } = usePoolInitialized(poolAddress)
 
@@ -41,13 +39,22 @@ export function useCalculateDependentAmount(
       independentField,
       tickLower,
       tickUpper,
+      independentToken?.id,
+      dependentToken?.id,
     ],
     queryFn: async (): Promise<{
       amount: string
       status: 'idle' | 'below-range' | 'above-range' | 'within-range' | 'error'
       error?: string
     }> => {
-      if (!poolAddress || !initialized) {
+      if (
+        !poolAddress ||
+        !initialized ||
+        tickLower === null ||
+        tickUpper === null ||
+        !independentToken ||
+        !dependentToken
+      ) {
         return {
           amount: '',
           status: 'idle',
@@ -70,7 +77,7 @@ export function useCalculateDependentAmount(
             return {
               amount: '0',
               status: 'below-range',
-              error: `Price below range - only ${independentTokenCode} needed`,
+              error: `Price below range - only ${independentToken.symbol} needed`,
             }
           } else {
             // User input token1, but we need token0.
@@ -82,7 +89,7 @@ export function useCalculateDependentAmount(
             return {
               amount: '0',
               status: 'below-range',
-              error: `Price below range - cannot provide liquidity with ${independentTokenCode} (need ${dependentTokenCode})`,
+              error: `Price below range - cannot provide liquidity with ${independentToken.symbol} (need ${dependentToken.symbol})`,
             }
           }
         }
@@ -95,22 +102,22 @@ export function useCalculateDependentAmount(
             return {
               amount: '0',
               status: 'above-range',
-              error: `Price above range - only ${independentTokenCode} needed`,
+              error: `Price above range - only ${independentToken.symbol} needed`,
             }
           } else {
             // User input token0, but we need token1.
             return {
               amount: '0',
               status: 'above-range',
-              error: `Price above range - cannot provide liquidity with ${independentTokenCode} (need ${dependentTokenCode})`,
+              error: `Price above range - cannot provide liquidity with ${independentToken.symbol} (need ${dependentToken.symbol})`,
             }
           }
         }
 
         // Price is within range - calculate dependent amount
-        const inputAmount = Number.parseFloat(amount || '0')
-        const scaledAmount = BigInt(
-          Math.floor(inputAmount * 10 ** independentDecimals),
+        const scaledAmount = parseUnits(
+          amount || '0',
+          independentToken.decimals,
         )
 
         let liquidity = 0n
@@ -145,7 +152,7 @@ export function useCalculateDependentAmount(
         // Convert dependent amount back to token units
         const dependentAmountStr = formatUnits(
           dependentAmountBigInt,
-          dependentDecimals,
+          dependentToken.decimals,
         )
 
         // Check for invalid results
@@ -170,7 +177,14 @@ export function useCalculateDependentAmount(
         }
       }
     },
-    enabled: Boolean(poolAddress && initialized),
+    enabled: Boolean(
+      poolAddress &&
+        initialized &&
+        tickLower !== null &&
+        tickUpper !== null &&
+        independentToken &&
+        dependentToken,
+    ),
     staleTime: ms('10s'),
   })
 }
