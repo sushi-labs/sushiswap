@@ -109,10 +109,10 @@ export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
       if (!spotToken) continue
       const price =
         spotBalance.coin === 'USDC' ? 1 : (Number(spotAsset?.markPrice) ?? 0)
-      const usdcValue = Number(spotBalance.total || 0) * price
       const total = Number(spotBalance.total || 0)
       const hold = Number(spotBalance.hold || 0)
       const balance = total - hold
+      const usdcValue = Number(balance || 0) * price
       assets.push({
         token: `${spotToken?.name}:${spotToken?.tokenId}`,
         symbol: spotToken?.name || '',
