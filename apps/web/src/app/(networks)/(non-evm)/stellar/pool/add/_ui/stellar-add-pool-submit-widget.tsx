@@ -1,7 +1,17 @@
 'use client'
 
-import { Button } from '@sushiswap/ui'
-import { useRouter } from 'next/navigation'
+import {
+  Button,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  LinkInternal,
+} from '@sushiswap/ui'
+import { CheckMarkIcon } from '@sushiswap/ui/icons/CheckMarkIcon'
 import { type ReactElement, useMemo, useState } from 'react'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
@@ -13,6 +23,7 @@ import {
 } from 'sushi/stellar'
 import { useCreateAndInitializePool } from '~stellar/_common/lib/hooks/factory/use-create-and-initialize-pool'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/liquidity/use-add-liquidity'
+import { getStellarTxnLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
 import { Trustlines } from '~stellar/_common/ui/checker/trustline'
 import { useStellarWallet } from '~stellar/providers'
 
@@ -39,6 +50,12 @@ interface StellarAddPoolSubmitWidgetProps {
   tickLower: number
   tickUpper: number
   ticksAligned: boolean
+  onLiquidityAdded(): void
+}
+
+interface SuccessfulAdd {
+  poolAddress: StellarContractAddress
+  txHash: string
 }
 
 export function StellarAddPoolSubmitWidget({
@@ -55,14 +72,15 @@ export function StellarAddPoolSubmitWidget({
   tickLower,
   tickUpper,
   ticksAligned,
+  onLiquidityAdded,
 }: StellarAddPoolSubmitWidgetProps): ReactElement {
   const connectedAddress = useAccount('stellar')
   const { signTransaction, signAuthEntry } = useStellarWallet()
-  const router = useRouter()
   const createAndInitializePoolMutation = useCreateAndInitializePool()
   const addLiquidityMutation = useAddLiquidity()
   const [createPoolState, setCreatePoolState] =
     useState<CreatePoolState>('idle')
+  const [successfulAdd, setSuccessfulAdd] = useState<SuccessfulAdd>()
   const isAboveRange = pairedAmountStatus === 'above-range'
   const hasPairedAmount = Boolean(
     pairedAmountStatus === 'below-range' ||
@@ -168,7 +186,7 @@ export function StellarAddPoolSubmitWidget({
         }
 
         setCreatePoolState('adding_liquidity')
-        await addLiquidityMutation.mutateAsync({
+        const { result } = await addLiquidityMutation.mutateAsync({
           poolAddress,
           userAddress: connectedAddress,
           token0Amount: orderedToken0Amount,
@@ -182,7 +200,8 @@ export function StellarAddPoolSubmitWidget({
           signAuthEntry,
         })
 
-        router.push(`/stellar/pool/${poolAddress}`)
+        onLiquidityAdded()
+        setSuccessfulAdd({ poolAddress, txHash: result.txHash })
       } catch (error) {
         console.error(
           'Failed to create/initialize pool or add liquidity:',
@@ -277,6 +296,51 @@ export function StellarAddPoolSubmitWidget({
           </Checker.Guard>
         </Checker.Guard>
       </Checker.Connect>
+      <Dialog
+        open={successfulAdd !== undefined}
+        onOpenChange={(open) => {
+          if (!open) setSuccessfulAdd(undefined)
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Success!</DialogTitle>
+            <DialogDescription className="font-medium">
+              <a
+                target="_blank"
+                href={
+                  successfulAdd
+                    ? getStellarTxnLink(successfulAdd.txHash)
+                    : undefined
+                }
+                className="cursor-pointer text-blue hover:underline"
+                rel="noreferrer"
+              >
+                You successfully added liquidity to the {orderedToken0?.symbol}/
+                {orderedToken1?.symbol} pair
+              </a>
+            </DialogDescription>
+            <div className="flex justify-center py-6">
+              <CheckMarkIcon width={132} height={132} />
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button asChild fullWidth size="xl">
+                  <LinkInternal
+                    href={
+                      successfulAdd
+                        ? `/stellar/pool/${successfulAdd.poolAddress}`
+                        : '/stellar/explore/pools'
+                    }
+                  >
+                    View your position
+                  </LinkInternal>
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

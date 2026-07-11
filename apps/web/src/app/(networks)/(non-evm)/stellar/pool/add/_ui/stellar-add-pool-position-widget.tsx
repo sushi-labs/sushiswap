@@ -176,6 +176,7 @@ export function StellarAddPoolPositionWidget({
           tickLower={tickRange.tickLower}
           tickUpper={tickRange.tickUpper}
           ticksAligned={tickRange.ticksAligned}
+          onLiquidityAdded={() => setToken0Amount('')}
         />
       </StellarPoolLiquidityWidget>
     </>
