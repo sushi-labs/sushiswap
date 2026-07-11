@@ -8,7 +8,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
-import { useSendableAssets } from 'src/lib/perps'
+import { getClearinghouseStateForDex, useSendableAssets } from 'src/lib/perps'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserState } from '~evm/perps/user-provider'
 import {
@@ -28,7 +28,16 @@ export const Deposit: FC<ButtonProps> = ({
 }) => {
   const {
     state: {
-      webData2Query: { data, isLoading, error },
+      allDexClearinghouseStateQuery: {
+        data: allDexClearinghouseState,
+        isLoading: isClearinghouseStateLoading,
+        error: clearinghouseStateError,
+      },
+      spotStateQuery: {
+        data: spotState,
+        isLoading: isSpotStateLoading,
+        error: spotStateError,
+      },
     },
   } = useUserState()
   const {
@@ -44,6 +53,8 @@ export const Deposit: FC<ButtonProps> = ({
     state: { activeAccount },
   } = useActiveAccountState()
   const { data: sendableAssets } = useSendableAssets('stable')
+  const isLoading = isClearinghouseStateLoading || isSpotStateLoading
+  const error = clearinghouseStateError || spotStateError
 
   const quoteSymbol = useMemo(() => {
     const dex = asset?.dex
@@ -65,9 +76,17 @@ export const Deposit: FC<ButtonProps> = ({
 
   const spotUSDCBalance = useMemo(() => {
     return Number(
-      data?.spotState?.balances?.find((b) => b?.coin === 'USDC')?.total ?? 0,
+      spotState?.spotState?.balances?.find((b) => b.coin === 'USDC')?.total ??
+        0,
     )
-  }, [data])
+  }, [spotState?.spotState?.balances])
+
+  const clearinghouseState = useMemo(() => {
+    return getClearinghouseStateForDex(
+      allDexClearinghouseState?.clearinghouseStates,
+      asset?.dex ?? '',
+    )
+  }, [allDexClearinghouseState, asset?.dex])
 
   if (isLoading) {
     return (
@@ -119,7 +138,7 @@ export const Deposit: FC<ButtonProps> = ({
       assetDex: asset?.dex,
       isUnifiedAccountModeEnabled,
       spotUSDCBalance,
-      withdrawable: data?.clearinghouseState?.withdrawable,
+      withdrawable: clearinghouseState?.withdrawable,
     })
   ) {
     return (

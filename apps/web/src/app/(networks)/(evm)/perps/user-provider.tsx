@@ -7,14 +7,12 @@ import {
   useUserFills,
   useUserFundings,
   useUserHistoricalOrders,
-  useWebData2,
   useWebData3,
 } from 'src/lib/perps'
 import { useActiveAccountState } from './active-account-provider'
 
 interface State {
   state: {
-    webData2Query: ReturnType<typeof useWebData2>
     webData3Query: ReturnType<typeof useWebData3>
     userHistoricalOrdersQuery: ReturnType<typeof useUserHistoricalOrders>
     userFundingsQuery: ReturnType<typeof useUserFundings>
@@ -47,9 +45,6 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
   const userHistoricalOrdersQuery = useUserHistoricalOrders({
     address,
   })
-  const webData2Query = useWebData2({
-    address,
-  })
   const webData3Query = useWebData3({
     address,
   })
@@ -70,7 +65,6 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
       value={useMemo(() => {
         return {
           state: {
-            webData2Query,
             webData3Query,
             userHistoricalOrdersQuery,
             userFundingsQuery,
@@ -85,7 +79,6 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
           },
         }
       }, [
-        webData2Query,
         userHistoricalOrdersQuery,
         userFundingsQuery,
         allDexClearinghouseStateQuery,

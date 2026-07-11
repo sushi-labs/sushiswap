@@ -6,6 +6,7 @@ import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useUserState } from '~evm/perps/user-provider'
 import { useAccount } from '../../wallet'
 import { useSpotClearinghouseState } from '../info'
+import { getClearinghouseStateForDex } from '../subscription'
 import { getEvmDestinationAddress } from '../utils'
 
 const STABLE_OPTIONS = ['USDC', 'USDT0', 'USDH', 'USDE']
@@ -21,10 +22,15 @@ export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
   const address = useAccount('evm')
   const {
     state: {
-      webData2Query: {
-        data: webData2Data,
-        isLoading: isWebData2Loading,
-        isError: isWebData2Error,
+      allDexClearinghouseStateQuery: {
+        data: allDexClearinghouseState,
+        isLoading: isAllDexClearinghouseStateLoading,
+        isError: isAllDexClearinghouseStateError,
+      },
+      spotStateQuery: {
+        data: spotState,
+        isLoading: isSpotStateLoading,
+        isError: isSpotStateError,
       },
     },
   } = useUserState()
@@ -42,21 +48,31 @@ export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
   } = useUserSettingsState()
   const {
     data: spotClearinghouseState,
-    isLoading: isLoadingSpotClearinghouse,
-    error: errorSpotClearinghouse,
+    isLoading: isSpotClearinghouseStateLoading,
+    isError: isSpotClearinghouseStateError,
   } = useSpotClearinghouseState({ address })
-
   const isLoading =
-    isAssetListLoading || isWebData2Loading || isLoadingSpotClearinghouse
-  const isError = isAssetListError || isWebData2Error || errorSpotClearinghouse
+    isAssetListLoading ||
+    isAllDexClearinghouseStateLoading ||
+    isSpotStateLoading ||
+    isSpotClearinghouseStateLoading
+  const isError =
+    isAssetListError ||
+    isAllDexClearinghouseStateError ||
+    isSpotStateError ||
+    isSpotClearinghouseStateError
   const sendableAssets = useMemo(() => {
     const assets = []
+    const mainClearinghouseState = getClearinghouseStateForDex(
+      allDexClearinghouseState?.clearinghouseStates,
+      '',
+    )
     const usdcPerp = {
       token: 'USDC',
-      balance: webData2Data?.clearinghouseState.withdrawable || '0',
+      balance: mainClearinghouseState?.withdrawable || '0',
       decimals: 2,
       marketType: 'perp' as const,
-      usdcValue: webData2Data?.clearinghouseState.withdrawable || '0',
+      usdcValue: mainClearinghouseState?.withdrawable || '0',
       symbol: 'USDC',
       tokenId: null,
       destinationAddress: null,
@@ -68,9 +84,11 @@ export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
     if (!isUnifiedAccountModeEnabled) {
       assets.push(usdcPerp)
     }
-    const balanceArr = isUnifiedAccountModeEnabled
-      ? spotClearinghouseState?.balances || []
-      : webData2Data?.spotState?.balances || []
+    const balanceArr = [
+      ...(isUnifiedAccountModeEnabled
+        ? (spotClearinghouseState?.balances ?? [])
+        : (spotState?.spotState?.balances ?? [])),
+    ]
     const missingStables = STABLES.filter(
       (stable) =>
         !balanceArr.find((b) => b.coin === stable.coin) &&
@@ -91,10 +109,10 @@ export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
       if (!spotToken) continue
       const price =
         spotBalance.coin === 'USDC' ? 1 : (Number(spotAsset?.markPrice) ?? 0)
-      const usdcValue = Number(spotBalance.total || 0) * price
       const total = Number(spotBalance.total || 0)
       const hold = Number(spotBalance.hold || 0)
       const balance = total - hold
+      const usdcValue = Number(balance || 0) * price
       assets.push({
         token: `${spotToken?.name}:${spotToken?.tokenId}`,
         symbol: spotToken?.name || '',
@@ -152,11 +170,12 @@ export const useSendableAssets = (filter?: 'perp' | 'spot' | 'stable') => {
     }
     return assets
   }, [
-    webData2Data,
+    allDexClearinghouseState,
     assetList,
     isUnifiedAccountModeEnabled,
     filter,
-    spotClearinghouseState,
+    spotClearinghouseState?.balances,
+    spotState?.spotState?.balances,
   ])
 
   return useMemo(() => {
