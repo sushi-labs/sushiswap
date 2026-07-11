@@ -1,318 +1,174 @@
 'use client'
 
-import { Button, FormSection, TextField } from '@sushiswap/ui'
-import type { ReactElement } from 'react'
-import { useAmountBalance } from 'src/app/(networks)/(evm)/_common/ui/balance-provider/use-balance'
+import { PlusIcon } from '@heroicons/react-v1/solid'
+import { FormSection, Message } from '@sushiswap/ui'
+import type { ReactElement, ReactNode } from 'react'
+import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/Currency'
 import { useAccount } from 'src/lib/wallet'
+import { Amount } from 'sushi'
 import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
 import { formatUnits } from 'viem'
-import type { useCalculatePairedAmount } from '~stellar/_common/lib/hooks/pool/use-calculate-paired-amount'
+import type { useCalculateDependentAmount } from '~stellar/_common/lib/hooks/pool/use-calculate-dependent-amount'
 import { useMaxPairedAmount } from '~stellar/_common/lib/hooks/pool/use-max-paired-amount'
 import { usePoolBalances } from '~stellar/_common/lib/hooks/pool/use-pool-balances'
-import type { TickRangeSelectorState } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
-import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
-import { TickRangeSelector } from '~stellar/_common/ui/TickRangeSelector/TickRangeSelector'
 
-type PairedAmountData = ReturnType<typeof useCalculatePairedAmount>['data']
+type PairedAmountData = ReturnType<typeof useCalculateDependentAmount>['data']
 
 interface StellarPoolLiquidityWidgetProps {
-  orderedToken0: StellarToken | undefined
-  orderedToken1: StellarToken | undefined
-  orderedToken0Amount: string
-  orderedToken1Amount: string
-  setOrderedToken0Amount(value: string): void
-  setManualOrderedToken1Amount(value: string): void
+  token0: StellarToken | undefined
+  token1: StellarToken | undefined
+  token0Amount: string
+  token1Amount: string
   existingPoolAddress: StellarContractAddress | null | undefined
   poolInitialized: boolean | undefined
-  poolInfo: PoolInfo | null | undefined
-  tickRangeSelectorState: TickRangeSelectorState
-  pairedAmountData: PairedAmountData
+  tickLower: number
+  tickUpper: number
+  pairedAmount: PairedAmountData
+  children: ReactNode
+  onToken0AmountChange(value: string): void
+  onToken1AmountChange(value: string): void
 }
 
 export function StellarPoolLiquidityWidget({
-  orderedToken0,
-  orderedToken1,
-  orderedToken0Amount,
-  orderedToken1Amount,
-  setOrderedToken0Amount,
-  setManualOrderedToken1Amount,
+  token0,
+  token1,
+  token0Amount,
+  token1Amount,
   existingPoolAddress,
   poolInitialized,
-  poolInfo,
-  tickRangeSelectorState,
-  pairedAmountData,
+  tickLower,
+  tickUpper,
+  pairedAmount,
+  children,
+  onToken0AmountChange,
+  onToken1AmountChange,
 }: StellarPoolLiquidityWidgetProps): ReactElement {
   const connectedAddress = useAccount('stellar')
-  const { tickLower, tickUpper } = tickRangeSelectorState
-  const { data: orderedToken0Balance } = useAmountBalance(orderedToken0)
-  const { data: orderedToken1Balance } = useAmountBalance(orderedToken1)
-  const { data: poolBalanceData } = usePoolBalances(
+  const chainId = token0?.chainId ?? token1?.chainId
+  const isInitializedPool = Boolean(
+    existingPoolAddress && poolInitialized === true,
+  )
+
+  const { data: poolBalances } = usePoolBalances(
     existingPoolAddress || null,
     connectedAddress,
   )
-  const { data: maxPairedAmountData } = useMaxPairedAmount(
+  const { data: maximumAmounts } = useMaxPairedAmount(
     existingPoolAddress || null,
-    poolBalanceData?.token0.amount || '0',
-    poolBalanceData?.token1.amount || '0',
+    poolBalances?.token0.amount || '0',
+    poolBalances?.token1.amount || '0',
     tickLower,
     tickUpper,
-    poolInfo?.token0.decimals ?? 7,
-    poolInfo?.token1.decimals ?? 7,
-  )
-  const maxOrderedToken0Amount =
-    existingPoolAddress && poolInitialized === true
-      ? BigInt(maxPairedAmountData?.maxToken0Amount ?? '0')
-      : (orderedToken0Balance?.amount ?? 0n)
-  const maxOrderedToken1Amount =
-    existingPoolAddress && poolInitialized === true
-      ? BigInt(maxPairedAmountData?.maxToken1Amount ?? '0')
-      : (orderedToken1Balance?.amount ?? 0n)
-  const pairedAmountStatus = pairedAmountData?.status ?? 'idle'
-  const hasOrderedToken0Amount = Boolean(
-    orderedToken0Amount &&
-      orderedToken0Amount !== '0' &&
-      Number.parseFloat(orderedToken0Amount) > 0,
-  )
-  const hasValidAmounts = Boolean(
-    existingPoolAddress && poolInitialized === true
-      ? hasOrderedToken0Amount
-      : hasOrderedToken0Amount &&
-          orderedToken1Amount &&
-          Number.parseFloat(orderedToken1Amount) > 0,
+    token0,
+    token1,
   )
 
-  function handleOrderedToken0AmountChange(value: string): void {
+  function clampAmount(
+    value: string,
+    token: StellarToken | undefined,
+    maximumRawAmount: string | undefined,
+  ): string | undefined {
     if (value === '') {
-      setOrderedToken0Amount('')
-      return
+      return ''
     }
 
-    if (
-      !orderedToken0 ||
-      (existingPoolAddress && poolInitialized === true && !maxPairedAmountData)
-    ) {
-      return
+    if (!token || (isInitializedPool && !maximumAmounts)) {
+      return undefined
     }
 
-    const rawAmountValue = BigInt(
-      Math.floor(Number.parseFloat(value) * 10 ** orderedToken0.decimals),
-    )
+    const rawAmount = Amount.tryFromHuman(token, value)?.amount
+    if (rawAmount === undefined) {
+      return undefined
+    }
 
-    if (rawAmountValue >= maxOrderedToken0Amount) {
-      setOrderedToken0Amount(
-        formatUnits(maxOrderedToken0Amount, orderedToken0.decimals),
-      )
-    } else {
-      setOrderedToken0Amount(value)
+    const maximum = BigInt(maximumRawAmount ?? '0')
+    return maximum > 0n && rawAmount >= maximum
+      ? formatUnits(maximum, token.decimals)
+      : value
+  }
+
+  function handleToken0AmountChange(value: string): void {
+    const clamped = clampAmount(value, token0, maximumAmounts?.maxToken0Amount)
+    if (clamped !== undefined) {
+      onToken0AmountChange(clamped)
     }
   }
 
-  function handleOrderedToken1AmountChange(value: string): void {
-    if (value === '') {
-      setManualOrderedToken1Amount('')
-      return
-    }
-
-    if (
-      !orderedToken1 ||
-      (existingPoolAddress && poolInitialized === true && !maxPairedAmountData)
-    ) {
-      return
-    }
-
-    const rawAmountValue = BigInt(
-      Math.floor(Number.parseFloat(value) * 10 ** orderedToken1.decimals),
-    )
-
-    if (rawAmountValue >= maxOrderedToken1Amount) {
-      setManualOrderedToken1Amount(
-        formatUnits(maxOrderedToken1Amount, orderedToken1.decimals),
-      )
-    } else {
-      setManualOrderedToken1Amount(value)
+  function handleToken1AmountChange(value: string): void {
+    const clamped = clampAmount(value, token1, maximumAmounts?.maxToken1Amount)
+    if (clamped !== undefined) {
+      onToken1AmountChange(clamped)
     }
   }
 
   return (
     <FormSection
-      title="Initial Liquidity"
+      title="Liquidity"
       description={
-        existingPoolAddress && poolInitialized === true
-          ? `Enter ${orderedToken0?.symbol || 'token0'} amount - ${orderedToken1?.symbol || 'token1'} amount will be calculated automatically.`
-          : existingPoolAddress && poolInitialized === false
-            ? 'This pool exists but is not initialized. Enter both token amounts to set the initial price ratio.'
-            : 'Add liquidity to your pool. Both amounts are required.'
+        <span>
+          Depending on your range, the supplied tokens for this position will
+          not always be a 50:50 ratio.
+        </span>
       }
     >
-      <section className="flex flex-col gap-4">
-        <div>
-          <div className="flex justify-between items-center">
-            {orderedToken0 && (
-              <span className="text-sm font-medium">
-                {orderedToken0.symbol}
-              </span>
-            )}
-            {orderedToken0Balance !== undefined && (
-              <span className="text-xs text-muted-foreground">
-                {orderedToken0Balance.toString()}
-              </span>
-            )}
-          </div>
-          <div className="flex flex-row gap-2">
-            <TextField
-              type="number"
-              label={orderedToken0?.symbol || 'Token 1'}
-              placeholder="0.0"
-              value={orderedToken0Amount}
-              onValueChange={handleOrderedToken0AmountChange}
-              required
+      <div className="flex flex-col gap-4">
+        {isInitializedPool ? (
+          <Message size="sm" variant="muted" className="text-center">
+            This pool already exists. Your liquidity will be added to it.
+          </Message>
+        ) : null}
+
+        {chainId ? (
+          <div className="flex flex-col gap-4">
+            <CurrencyInput
+              chainId={chainId}
+              id="stellar-add-liquidity-token0"
+              type="INPUT"
+              className="rounded-xl border border-accent bg-white p-3 dark:bg-secondary"
+              value={token0Amount}
+              onChange={handleToken0AmountChange}
+              currency={token0}
             />
-            <Button
-              type="button"
-              size="sm"
-              variant={
-                orderedToken0 &&
-                formatUnits(maxOrderedToken0Amount, orderedToken0.decimals) ===
-                  orderedToken0Amount
-                  ? 'default'
-                  : 'secondary'
+
+            <div className="z-10 my-[-24px] flex items-center justify-center">
+              <div className="rounded-full border border-accent bg-white p-1 dark:bg-slate-900">
+                <PlusIcon
+                  width={16}
+                  height={16}
+                  className="text-muted-foreground"
+                />
+              </div>
+            </div>
+
+            <CurrencyInput
+              chainId={chainId}
+              id="stellar-add-liquidity-token1"
+              type={isInitializedPool ? 'OUTPUT' : 'INPUT'}
+              className="rounded-xl border border-accent bg-white p-3 dark:bg-secondary"
+              value={token1Amount}
+              onChange={
+                isInitializedPool ? undefined : handleToken1AmountChange
               }
-              disabled={!orderedToken0}
-              onClick={() => {
-                if (!orderedToken0) {
-                  return
-                }
+              currency={token1}
+              disabled={isInitializedPool}
+            />
 
-                setOrderedToken0Amount(
-                  formatUnits(maxOrderedToken0Amount, orderedToken0.decimals),
-                )
-              }}
-              className="px-2"
-            >
-              Max
-            </Button>
-          </div>
-        </div>
-        <div className="flex items-center justify-center -my-2">
-          <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
-            <span className="text-lg">+</span>
-          </div>
-        </div>
-        <div className="space-y-2">
-          <div>
-            <div className="flex justify-between items-center">
-              {orderedToken1 && (
-                <span className="text-sm font-medium">
-                  {orderedToken1.symbol}
-                </span>
-              )}
-              {orderedToken1Balance !== undefined && (
-                <span className="text-xs text-muted-foreground">
-                  {orderedToken1Balance.toString()}
-                </span>
-              )}
-            </div>
-            <div className="flex flex-row gap-2">
-              <TextField
-                type={
-                  existingPoolAddress && poolInitialized === true
-                    ? 'text'
-                    : 'number'
+            {isInitializedPool && pairedAmount?.error ? (
+              <p
+                className={
+                  pairedAmount.status === 'error'
+                    ? 'text-xs text-red-600 dark:text-red-400'
+                    : 'text-xs text-muted-foreground'
                 }
-                label={orderedToken1?.symbol || 'Token 2'}
-                placeholder={
-                  existingPoolAddress && poolInitialized === true
-                    ? 'Auto-calculated'
-                    : '0.0'
-                }
-                value={orderedToken1Amount}
-                onValueChange={
-                  existingPoolAddress && poolInitialized === true
-                    ? undefined
-                    : handleOrderedToken1AmountChange
-                }
-                disabled={!!existingPoolAddress && poolInitialized === true}
-                required={!existingPoolAddress || poolInitialized === false}
-              />
-              {(!existingPoolAddress || poolInitialized === false) && (
-                <Button
-                  type="button"
-                  size="sm"
-                  variant={
-                    orderedToken1 &&
-                    formatUnits(
-                      maxOrderedToken1Amount,
-                      orderedToken1.decimals,
-                    ) === orderedToken1Amount
-                      ? 'default'
-                      : 'secondary'
-                  }
-                  disabled={!orderedToken1}
-                  onClick={() => {
-                    if (!orderedToken1) {
-                      return
-                    }
-
-                    setManualOrderedToken1Amount(
-                      formatUnits(
-                        maxOrderedToken1Amount,
-                        orderedToken1.decimals,
-                      ),
-                    )
-                  }}
-                  className="px-2"
-                >
-                  Max
-                </Button>
-              )}
-            </div>
-          </div>
-          {existingPoolAddress &&
-            poolInitialized === true &&
-            pairedAmountData?.error &&
-            ((pairedAmountStatus === 'error' && (
-              <p className="text-xs text-red-600 dark:text-red-400">
-                {pairedAmountData.error}
+              >
+                {pairedAmount.error}
               </p>
-            )) || (
-              <p className="text-xs text-muted-foreground">
-                {pairedAmountData.error}
-              </p>
-            ))}
-        </div>
-        <TickRangeSelector
-          params={tickRangeSelectorState}
-          token0={orderedToken0}
-          token1={orderedToken1}
-        />
-      </section>
+            ) : null}
+          </div>
+        ) : null}
 
-      {orderedToken0 && orderedToken1 && !hasValidAmounts && (
-        <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-          <p className="text-sm text-blue-600 dark:text-blue-400">
-            {existingPoolAddress && poolInitialized === true
-              ? `Enter ${orderedToken0.symbol} amount to add liquidity`
-              : existingPoolAddress && poolInitialized === false
-                ? 'Both token amounts are required to initialize the pool and add liquidity'
-                : 'Both token amounts are required to create a pool'}
-          </p>
-        </div>
-      )}
-      {existingPoolAddress && poolInitialized === true && (
-        <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
-          <p className="text-sm text-green-600 dark:text-green-400">
-            Pool already exists - liquidity will be added to existing pool
-          </p>
-        </div>
-      )}
-      {existingPoolAddress && poolInitialized === false && (
-        <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-          <p className="text-sm text-yellow-600 dark:text-yellow-400">
-            Warning: Pool exists but is not initialized. Enter both token
-            amounts to set the initial price, then add liquidity.
-          </p>
-        </div>
-      )}
+        {children}
+      </div>
     </FormSection>
   )
 }

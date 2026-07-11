@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, FormSection } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import { type ReactElement, useMemo, useState } from 'react'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
@@ -64,6 +64,16 @@ export function StellarAddPoolSubmitWidget({
   const [createPoolState, setCreatePoolState] =
     useState<CreatePoolState>('idle')
   const isAboveRange = pairedAmountStatus === 'above-range'
+  const isInitializedPool = Boolean(
+    existingPoolAddress && poolInitialized === true,
+  )
+  const hasInitializedPairedAmount = Boolean(
+    !isInitializedPool ||
+      pairedAmountStatus === 'below-range' ||
+      (pairedAmountStatus === 'within-range' &&
+        orderedToken1Amount &&
+        Number.parseFloat(orderedToken1Amount) > 0),
+  )
   const sameTokenSelected = Boolean(
     orderedToken0 &&
       orderedToken1 &&
@@ -71,13 +81,17 @@ export function StellarAddPoolSubmitWidget({
   )
 
   const checkerAmounts = useMemo(() => {
-    const amounts: Array<Amount<StellarToken> | undefined> = []
+    const amounts = [
+      orderedToken0
+        ? Amount.tryFromHuman(orderedToken0, orderedToken0Amount)
+        : undefined,
+    ]
 
-    if (orderedToken0) {
-      amounts.push(Amount.tryFromHuman(orderedToken0, orderedToken0Amount))
-    }
-
-    if (!existingPoolAddress || poolInitialized === false) {
+    if (
+      !isInitializedPool ||
+      (pairedAmountStatus === 'within-range' &&
+        Number.parseFloat(orderedToken1Amount) > 0)
+    ) {
       amounts.push(
         orderedToken1
           ? Amount.tryFromHuman(orderedToken1, orderedToken1Amount)
@@ -87,12 +101,12 @@ export function StellarAddPoolSubmitWidget({
 
     return amounts
   }, [
-    existingPoolAddress,
+    isInitializedPool,
     orderedToken0,
     orderedToken0Amount,
     orderedToken1,
     orderedToken1Amount,
-    poolInitialized,
+    pairedAmountStatus,
   ])
 
   const pendingText = useMemo((): string => {
@@ -129,9 +143,10 @@ export function StellarAddPoolSubmitWidget({
 
       if (
         !orderedToken0Amount ||
-        !orderedToken1Amount ||
         Number.parseFloat(orderedToken0Amount) <= 0 ||
-        Number.parseFloat(orderedToken1Amount) < 0
+        (isInitializedPool
+          ? !hasInitializedPairedAmount
+          : !orderedToken1Amount || Number.parseFloat(orderedToken1Amount) <= 0)
       ) {
         console.error('Liquidity amounts are required')
         return
@@ -188,62 +203,90 @@ export function StellarAddPoolSubmitWidget({
   }
 
   return (
-    <FormSection title="" description="">
-      <div className="flex w-full flex-col gap-4">
-        <Checker.Connect namespace="stellar" fullWidth size="xl">
+    <div className="flex w-full flex-col gap-4">
+      <Checker.Connect namespace="stellar" fullWidth size="xl">
+        <Checker.Guard
+          guardWhen={!orderedToken0 || !orderedToken1}
+          guardText="Select Tokens"
+          fullWidth
+          size="xl"
+        >
           <Checker.Guard
-            guardWhen={!orderedToken0 || !orderedToken1}
-            guardText="Select Tokens"
+            guardWhen={sameTokenSelected}
+            guardText="Select Different Tokens"
             fullWidth
             size="xl"
           >
-            <Checker.Guard
-              guardWhen={sameTokenSelected}
-              guardText="Select Different Tokens"
+            <Checker.Amounts
+              chainId={StellarChainId.STELLAR}
+              amounts={checkerAmounts}
               fullWidth
               size="xl"
             >
-              <Checker.Amounts
-                chainId={StellarChainId.STELLAR}
-                amounts={checkerAmounts}
-                fullWidth
-                size="xl"
-              >
-                <Trustlines tokens={orderedTokens} fullWidth size="xl">
+              <Trustlines tokens={orderedTokens} fullWidth size="xl">
+                <Checker.Guard
+                  guardWhen={
+                    (!existingPoolAddress || poolInitialized === false) &&
+                    !initSqrtPriceX96
+                  }
+                  guardText="Set Start Price"
+                  fullWidth
+                  size="xl"
+                >
                   <Checker.Guard
-                    guardWhen={isAboveRange}
-                    guardText="Price Above Range"
+                    guardWhen={!isTickRangeValid}
+                    guardText="Invalid Price Range"
                     fullWidth
                     size="xl"
                   >
                     <Checker.Guard
-                      guardWhen={!ticksAligned}
-                      guardText="Align Ticks & Continue"
+                      guardWhen={isAboveRange}
+                      guardText="Price Above Range"
                       fullWidth
                       size="xl"
                     >
                       <Checker.Guard
-                        guardWhen={createPoolState !== 'idle'}
-                        guardText={pendingText}
+                        guardWhen={
+                          isInitializedPool && !hasInitializedPairedAmount
+                        }
+                        guardText={
+                          pairedAmountStatus === 'error'
+                            ? 'Invalid Amount'
+                            : 'Calculating Amount'
+                        }
                         fullWidth
                         size="xl"
                       >
-                        <Button
+                        <Checker.Guard
+                          guardWhen={!ticksAligned}
+                          guardText="Align Ticks & Continue"
                           fullWidth
                           size="xl"
-                          onClick={() => void handleCreatePool()}
                         >
-                          Continue
-                        </Button>
+                          <Checker.Guard
+                            guardWhen={createPoolState !== 'idle'}
+                            guardText={pendingText}
+                            fullWidth
+                            size="xl"
+                          >
+                            <Button
+                              fullWidth
+                              size="xl"
+                              onClick={() => void handleCreatePool()}
+                            >
+                              Continue
+                            </Button>
+                          </Checker.Guard>
+                        </Checker.Guard>
                       </Checker.Guard>
                     </Checker.Guard>
                   </Checker.Guard>
-                </Trustlines>
-              </Checker.Amounts>
-            </Checker.Guard>
+                </Checker.Guard>
+              </Trustlines>
+            </Checker.Amounts>
           </Checker.Guard>
-        </Checker.Connect>
-      </div>
-    </FormSection>
+        </Checker.Guard>
+      </Checker.Connect>
+    </div>
   )
 }

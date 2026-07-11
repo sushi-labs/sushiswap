@@ -1,9 +1,10 @@
 'use client'
 
-import { type ReactElement, useEffect, useMemo, useState } from 'react'
+import { type ReactElement, useMemo, useState } from 'react'
+import { Price } from 'sushi'
 import type { StellarToken } from 'sushi/stellar'
 import { useGetPool, usePoolInfo } from '~stellar/_common/lib/hooks'
-import { useCalculatePairedAmount } from '~stellar/_common/lib/hooks/pool/use-calculate-paired-amount'
+import { useCalculateDependentAmount } from '~stellar/_common/lib/hooks/pool/use-calculate-dependent-amount'
 import { usePoolInitialized } from '~stellar/_common/lib/hooks/pool/use-pool-initialized'
 import { useTickRangeSelector } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
 import {
@@ -13,6 +14,7 @@ import {
 } from '~stellar/_common/lib/soroban'
 import { StellarAddPoolSubmitWidget } from './stellar-add-pool-submit-widget'
 import { StellarPoolLiquidityWidget } from './stellar-pool-liquidity-widget'
+import { StellarSelectPricesWidget } from './stellar-select-prices-widget'
 
 interface StellarAddPoolPositionWidgetProps {
   token0: StellarToken | undefined
@@ -20,47 +22,15 @@ interface StellarAddPoolPositionWidgetProps {
   selectedFee: number
 }
 
-interface LiquidityFormState {
-  selectionId: string
-  orderedToken0Amount: string
-  manualOrderedToken1Amount: string
-}
-
 export function StellarAddPoolPositionWidget({
   token0,
   token1,
   selectedFee,
 }: StellarAddPoolPositionWidgetProps): ReactElement {
-  const selectionId = `${token0?.address ?? ''}:${token1?.address ?? ''}:${selectedFee}`
-  const [liquidityForm, setLiquidityForm] = useState<LiquidityFormState>(
-    () => ({
-      selectionId,
-      orderedToken0Amount: '',
-      manualOrderedToken1Amount: '',
-    }),
-  )
-  const orderedToken0Amount =
-    liquidityForm.selectionId === selectionId
-      ? liquidityForm.orderedToken0Amount
-      : ''
-  const manualOrderedToken1Amount =
-    liquidityForm.selectionId === selectionId
-      ? liquidityForm.manualOrderedToken1Amount
-      : ''
-
-  useEffect(() => {
-    setLiquidityForm((previous) => {
-      if (previous.selectionId === selectionId) {
-        return previous
-      }
-
-      return {
-        selectionId,
-        orderedToken0Amount: '',
-        manualOrderedToken1Amount: '',
-      }
-    })
-  }, [selectionId])
+  const [token0Amount, setToken0Amount] = useState('')
+  const [manualToken1Amount, setManualToken1Amount] = useState('')
+  const [startPrice, setStartPrice] = useState('')
+  const [priceInverted, setPriceInverted] = useState(false)
 
   const { data: existingPoolAddress } = useGetPool(
     token0 && token1
@@ -74,7 +44,7 @@ export function StellarAddPoolPositionWidget({
   const { data: poolInitialized } = usePoolInitialized(existingPoolAddress)
   const { data: poolInfo } = usePoolInfo(existingPoolAddress ?? null)
 
-  const reversedPoolTokenOrder = useMemo(() => {
+  const poolOrderInverted = useMemo(() => {
     if (!token0 || !token1) {
       return false
     }
@@ -83,137 +53,139 @@ export function StellarAddPoolPositionWidget({
       return poolInfo.token0.address !== token0.address
     }
 
-    // Stellar pool tokens are ordered by decoded bytes, not string comparison.
     return !isAddressLower(token0.address, token1.address)
   }, [poolInfo, token0, token1])
 
-  const [orderedToken0, orderedToken1] = reversedPoolTokenOrder
+  const [orderedToken0, orderedToken1] = poolOrderInverted
     ? [token1, token0]
     : [token0, token1]
 
-  const currentPrice = poolInfo
-    ? calculatePriceFromSqrtPrice(poolInfo.sqrtPriceX96)
-    : undefined
-
-  const initSqrtPriceX96 = useMemo(() => {
+  const canonicalStartPrice = useMemo(() => {
     if (!orderedToken0 || !orderedToken1) {
       return undefined
     }
 
-    const orderedToken0AmountRaw = BigInt(
-      Math.floor(Number(orderedToken0Amount) * 10 ** orderedToken0.decimals),
-    )
-    const orderedToken1AmountRaw = BigInt(
-      Math.floor(
-        Number(manualOrderedToken1Amount) * 10 ** orderedToken1.decimals,
-      ),
+    const parsedPrice = Price.tryFromHuman(
+      priceInverted ? orderedToken1 : orderedToken0,
+      priceInverted ? orderedToken0 : orderedToken1,
+      startPrice,
     )
 
-    if (orderedToken0AmountRaw === 0n || orderedToken1AmountRaw === 0n) {
+    return priceInverted ? parsedPrice?.invert() : parsedPrice
+  }, [orderedToken0, orderedToken1, priceInverted, startPrice])
+
+  const rawStartPrice = useMemo(() => {
+    if (!canonicalStartPrice) {
       return undefined
     }
 
-    return encodePriceSqrt(orderedToken1AmountRaw, orderedToken0AmountRaw)
-  }, [
-    manualOrderedToken1Amount,
-    orderedToken0,
-    orderedToken0Amount,
-    orderedToken1,
-  ])
+    const numericPrice = canonicalStartPrice.asFraction.toNumber()
 
-  const initPrice =
-    initSqrtPriceX96 !== undefined
-      ? calculatePriceFromSqrtPrice(initSqrtPriceX96)
+    return Number.isFinite(numericPrice) && numericPrice > 0
+      ? numericPrice
       : undefined
+  }, [canonicalStartPrice])
 
-  const tickRangeSelectorState = useTickRangeSelector(
-    selectedFee,
-    (existingPoolAddress && poolInitialized === true
-      ? currentPrice
-      : initPrice) ?? 1,
-  )
-  const { tickLower, tickUpper, isTickRangeValid, ticksAligned } =
-    tickRangeSelectorState
+  const initSqrtPriceX96 = useMemo(() => {
+    if (!canonicalStartPrice) {
+      return undefined
+    }
 
-  const { data: pairedAmountData } = useCalculatePairedAmount(
+    return encodePriceSqrt(
+      canonicalStartPrice.numerator,
+      canonicalStartPrice.denominator,
+    )
+  }, [canonicalStartPrice])
+
+  const currentPrice = useMemo(() => {
+    if (existingPoolAddress && poolInitialized === true) {
+      return poolInfo ? calculatePriceFromSqrtPrice(poolInfo.sqrtPriceX96) : 1
+    }
+
+    return rawStartPrice ?? 1
+  }, [existingPoolAddress, poolInfo, poolInitialized, rawStartPrice])
+
+  const tickRange = useTickRangeSelector(selectedFee, currentPrice)
+  const pairedAmount = useCalculateDependentAmount(
     existingPoolAddress || null,
-    orderedToken0Amount,
-    tickLower,
-    tickUpper,
-    orderedToken0?.decimals ?? 7,
-    orderedToken0?.symbol,
+    token0Amount,
+    'token0',
+    tickRange.tickLower,
+    tickRange.tickUpper,
+    orderedToken0,
+    orderedToken1,
+  ).data
+  const isInitializedPool = Boolean(
+    existingPoolAddress && poolInitialized === true,
   )
+  const token1Amount = isInitializedPool
+    ? token0Amount
+      ? (pairedAmount?.amount ?? '')
+      : ''
+    : manualToken1Amount
 
-  const orderedToken1Amount = useMemo(() => {
-    if (manualOrderedToken1Amount) {
-      return manualOrderedToken1Amount
+  function handlePriceInvertedChange(inverted: boolean): void {
+    if (inverted === priceInverted) {
+      return
     }
 
-    if (pairedAmountData && orderedToken0Amount) {
-      return pairedAmountData.token1Amount
+    if (orderedToken0 && orderedToken1) {
+      const parsedPrice = Price.tryFromHuman(
+        priceInverted ? orderedToken1 : orderedToken0,
+        priceInverted ? orderedToken0 : orderedToken1,
+        startPrice,
+      )
+      const invertedPrice = parsedPrice?.invert()
+
+      if (invertedPrice) {
+        setStartPrice(invertedPrice.toString({ maxFixed: 18 }))
+      }
     }
 
-    return ''
-  }, [manualOrderedToken1Amount, orderedToken0Amount, pairedAmountData])
-
-  function setOrderedToken0Amount(value: string): void {
-    setLiquidityForm((previous) => {
-      const previousManualOrderedToken1Amount =
-        previous.selectionId === selectionId
-          ? previous.manualOrderedToken1Amount
-          : ''
-
-      return {
-        selectionId,
-        orderedToken0Amount: value,
-        manualOrderedToken1Amount: previousManualOrderedToken1Amount,
-      }
-    })
-  }
-
-  function setManualOrderedToken1Amount(value: string): void {
-    setLiquidityForm((previous) => {
-      const previousOrderedToken0Amount =
-        previous.selectionId === selectionId ? previous.orderedToken0Amount : ''
-
-      return {
-        selectionId,
-        orderedToken0Amount: previousOrderedToken0Amount,
-        manualOrderedToken1Amount: value,
-      }
-    })
+    setPriceInverted(inverted)
   }
 
   return (
     <>
+      <StellarSelectPricesWidget
+        token0={orderedToken0}
+        token1={orderedToken1}
+        noLiquidity={!existingPoolAddress || poolInitialized === false}
+        startPrice={startPrice}
+        inverted={priceInverted}
+        tickRange={tickRange}
+        onStartPriceChange={setStartPrice}
+        onInvertedChange={handlePriceInvertedChange}
+      />
       <StellarPoolLiquidityWidget
-        orderedToken0={orderedToken0}
-        orderedToken1={orderedToken1}
-        orderedToken0Amount={orderedToken0Amount}
-        orderedToken1Amount={orderedToken1Amount}
-        setOrderedToken0Amount={setOrderedToken0Amount}
-        setManualOrderedToken1Amount={setManualOrderedToken1Amount}
+        token0={orderedToken0}
+        token1={orderedToken1}
+        token0Amount={token0Amount}
+        token1Amount={token1Amount}
         existingPoolAddress={existingPoolAddress}
         poolInitialized={poolInitialized}
-        poolInfo={poolInfo}
-        tickRangeSelectorState={tickRangeSelectorState}
-        pairedAmountData={pairedAmountData}
-      />
-      <StellarAddPoolSubmitWidget
-        orderedToken0={orderedToken0}
-        orderedToken1={orderedToken1}
-        selectedFee={selectedFee}
-        existingPoolAddress={existingPoolAddress}
-        poolInitialized={poolInitialized}
-        orderedToken0Amount={orderedToken0Amount}
-        orderedToken1Amount={orderedToken1Amount}
-        pairedAmountStatus={pairedAmountData?.status ?? 'idle'}
-        initSqrtPriceX96={initSqrtPriceX96}
-        isTickRangeValid={isTickRangeValid}
-        tickLower={tickLower}
-        tickUpper={tickUpper}
-        ticksAligned={ticksAligned}
-      />
+        tickLower={tickRange.tickLower}
+        tickUpper={tickRange.tickUpper}
+        pairedAmount={pairedAmount}
+        onToken0AmountChange={setToken0Amount}
+        onToken1AmountChange={setManualToken1Amount}
+      >
+        <StellarAddPoolSubmitWidget
+          orderedToken0={orderedToken0}
+          orderedToken1={orderedToken1}
+          selectedFee={selectedFee}
+          existingPoolAddress={existingPoolAddress}
+          poolInitialized={poolInitialized}
+          orderedToken0Amount={token0Amount}
+          orderedToken1Amount={token1Amount}
+          pairedAmountStatus={pairedAmount?.status ?? 'idle'}
+          initSqrtPriceX96={initSqrtPriceX96}
+          isTickRangeValid={tickRange.isTickRangeValid}
+          tickLower={tickRange.tickLower}
+          tickUpper={tickRange.tickUpper}
+          ticksAligned={tickRange.ticksAligned}
+        />
+      </StellarPoolLiquidityWidget>
     </>
   )
 }

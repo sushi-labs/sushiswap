@@ -35,6 +35,7 @@ export default function AddPoolPage(): ReactElement {
         setSelectedFee={setSelectedFee}
       />
       <StellarAddPoolPositionWidget
+        key={`${token0?.address ?? ''}:${token1?.address ?? ''}:${selectedFee}`}
         token0={token0}
         token1={token1}
         selectedFee={selectedFee}
