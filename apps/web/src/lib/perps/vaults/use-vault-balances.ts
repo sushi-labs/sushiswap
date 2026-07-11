@@ -1,22 +1,14 @@
 import { useMemo } from 'react'
 import type { EvmAddress } from 'sushi/evm'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
-import { useSpotClearinghouseState } from '../info'
 import {
   useAllDexClearinghouseState,
-  useWebData2,
+  useSpotState,
   useWebData3,
 } from '../subscription'
 import { DEX_NAME_TO_COIN, SPOT_ASSETS_TO_REWRITE } from '../utils'
 
 export const useVaultBalances = (vaultAddress: EvmAddress) => {
-  const {
-    data: webData2Data,
-    isLoading: isWebData2Loading,
-    isError: isWebData2Error,
-  } = useWebData2({
-    address: vaultAddress,
-  })
   const {
     data,
     isLoading: isLoadingAllDexClearinghouse,
@@ -32,10 +24,10 @@ export const useVaultBalances = (vaultAddress: EvmAddress) => {
     },
   } = useAssetListState()
   const {
-    data: spotClearinghouseState,
-    isLoading: isLoadingSpotClearinghouse,
-    error: errorSpotClearinghouse,
-  } = useSpotClearinghouseState({ address: vaultAddress })
+    data: spotState,
+    isLoading: isSpotStateLoading,
+    isError: isSpotStateError,
+  } = useSpotState({ address: vaultAddress })
 
   const {
     data: webData3,
@@ -56,14 +48,12 @@ export const useVaultBalances = (vaultAddress: EvmAddress) => {
   const isLoading =
     isLoadingAllDexClearinghouse ||
     isAssetListLoading ||
-    isWebData2Loading ||
-    isLoadingSpotClearinghouse ||
+    isSpotStateLoading ||
     isWebData3Loading
   const isError =
     isErrorAllDexClearinghouse ||
     isAssetListError ||
-    isWebData2Error ||
-    errorSpotClearinghouse ||
+    isSpotStateError ||
     isWebData3Error
 
   const formattedData = useMemo(() => {
@@ -86,7 +76,7 @@ export const useVaultBalances = (vaultAddress: EvmAddress) => {
       .filter((b) => Number(b.usdcValue) > 0)
 
     const spotBalances =
-      webData2Data?.spotState?.balances
+      spotState?.spotState?.balances
         ?.map((i) => {
           if (i.total === '0.0') return null
           const tokenIndex = i.token
@@ -210,7 +200,7 @@ export const useVaultBalances = (vaultAddress: EvmAddress) => {
           }
         })
         ?.filter((b) => !b.coin.includes('Perps')) ?? []
-    const usdcBalance = spotClearinghouseState?.balances?.find(
+    const usdcBalance = spotState?.spotState?.balances?.find(
       (b) => b.coin === 'USDC',
     )
 
@@ -231,10 +221,9 @@ export const useVaultBalances = (vaultAddress: EvmAddress) => {
   }, [
     data,
     assetList,
-    webData2Data,
+    spotState?.spotState?.balances,
     isUnifiedAccountModeEnabled,
     isDexAbstractionEnabled,
-    spotClearinghouseState,
   ])
 
   return useMemo(() => {

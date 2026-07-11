@@ -3,7 +3,6 @@ import { useUserSettingsState } from '~evm/perps/_ui/account-management'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserState } from '~evm/perps/user-provider'
-import { useSpotClearinghouseState } from '../info'
 import { DEX_NAME_TO_COIN, SPOT_ASSETS_TO_REWRITE } from '../utils'
 
 export const useBalances = () => {
@@ -18,10 +17,10 @@ export const useBalances = () => {
         isLoading: isLoadingAllDexClearinghouse,
         isError: isErrorAllDexClearinghouse,
       },
-      webData2Query: {
-        data: webData2Data,
-        isLoading: isWebData2Loading,
-        isError: isWebData2Error,
+      spotStateQuery: {
+        data: spotState,
+        isLoading: isSpotStateLoading,
+        isError: isSpotStateError,
       },
     },
   } = useUserState()
@@ -37,22 +36,10 @@ export const useBalances = () => {
   const {
     state: { isUnifiedAccountModeEnabled, isDexAbstractionEnabled },
   } = useUserSettingsState()
-  const {
-    data: spotClearinghouseState,
-    isLoading: isLoadingSpotClearinghouse,
-    error: errorSpotClearinghouse,
-  } = useSpotClearinghouseState({ address: activeAddress })
-
   const isLoading =
-    isLoadingAllDexClearinghouse ||
-    isAssetListLoading ||
-    isWebData2Loading ||
-    isLoadingSpotClearinghouse
+    isLoadingAllDexClearinghouse || isAssetListLoading || isSpotStateLoading
   const isError =
-    isErrorAllDexClearinghouse ||
-    isAssetListError ||
-    isWebData2Error ||
-    errorSpotClearinghouse
+    isErrorAllDexClearinghouse || isAssetListError || isSpotStateError
 
   const formattedData = useMemo(() => {
     if (!data) return []
@@ -74,7 +61,7 @@ export const useBalances = () => {
       .filter((b) => Number(b.usdcValue) > 0)
 
     const spotBalances =
-      webData2Data?.spotState?.balances
+      spotState?.spotState?.balances
         ?.map((i) => {
           if (i.total === '0.0') return null
           const tokenIndex = i.token
@@ -214,7 +201,7 @@ export const useBalances = () => {
           }
         })
         ?.filter((b) => !b.coin.includes('Perps')) ?? []
-    const usdcBalance = spotClearinghouseState?.balances?.find(
+    const usdcBalance = spotState?.spotState?.balances?.find(
       (b) => b.coin === 'USDC',
     )
 
@@ -235,10 +222,9 @@ export const useBalances = () => {
   }, [
     data,
     assetList,
-    webData2Data,
+    spotState?.spotState?.balances,
     isUnifiedAccountModeEnabled,
     isDexAbstractionEnabled,
-    spotClearinghouseState,
   ])
 
   return useMemo(() => {

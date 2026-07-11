@@ -1,5 +1,6 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
+import { getClearinghouseStateForDex } from 'src/lib/perps'
 import { useUserState } from '~evm/perps/user-provider'
 import { DepositDialog } from '../account-management'
 
@@ -11,15 +12,34 @@ export const SimpleDeposit: FC<ButtonProps> = ({
 }) => {
   const {
     state: {
-      webData2Query: { data, isLoading, error },
+      allDexClearinghouseStateQuery: {
+        data: allDexClearinghouseState,
+        isLoading: isClearinghouseStateLoading,
+        error: clearinghouseStateError,
+      },
+      spotStateQuery: {
+        data: spotState,
+        isLoading: isSpotStateLoading,
+        error: spotStateError,
+      },
     },
   } = useUserState()
+  const isLoading = isClearinghouseStateLoading || isSpotStateLoading
+  const error = clearinghouseStateError || spotStateError
 
   const spotUSDCBalance = useMemo(() => {
     return Number(
-      data?.spotState?.balances?.find((b) => b?.coin === 'USDC')?.total ?? 0,
+      spotState?.spotState?.balances?.find((b) => b.coin === 'USDC')?.total ??
+        0,
     )
-  }, [data])
+  }, [spotState?.spotState?.balances])
+
+  const mainClearinghouseState = useMemo(() => {
+    return getClearinghouseStateForDex(
+      allDexClearinghouseState?.clearinghouseStates,
+      '',
+    )
+  }, [allDexClearinghouseState])
 
   if (isLoading) {
     return (
@@ -38,7 +58,7 @@ export const SimpleDeposit: FC<ButtonProps> = ({
   }
 
   if (
-    Number(data?.clearinghouseState?.withdrawable) === 0 &&
+    Number(mainClearinghouseState?.withdrawable) === 0 &&
     spotUSDCBalance === 0
   ) {
     return (
