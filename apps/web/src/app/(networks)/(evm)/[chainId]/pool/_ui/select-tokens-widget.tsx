@@ -4,26 +4,29 @@ import { Currency } from '@sushiswap/ui'
 import { SelectIcon } from '@sushiswap/ui'
 import React, { type FC } from 'react'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
-import type { EvmChainId, EvmCurrency } from 'sushi/evm'
+import type { EvmChainId } from 'sushi/evm'
+import type { StellarChainId } from 'sushi/stellar'
 
-interface SelectTokensWidget {
-  chainId: EvmChainId
-  token0: EvmCurrency | undefined
-  token1: EvmCurrency | undefined
-  setToken0(token: EvmCurrency): void
-  setToken1(token: EvmCurrency): void
+interface SelectTokensWidget<TChainId extends EvmChainId | StellarChainId> {
+  chainId: TChainId
+  token0: CurrencyFor<TChainId> | undefined
+  token1: CurrencyFor<TChainId> | undefined
+  setToken0(token: CurrencyFor<TChainId>): void
+  setToken1(token: CurrencyFor<TChainId>): void
   title?: string
   includeNative?: boolean
 }
 
-export const SelectTokensWidget: FC<SelectTokensWidget> = ({
+export function SelectTokensWidget<
+  TChainId extends EvmChainId | StellarChainId,
+>({
   chainId,
   token0,
   token1,
   setToken0,
   setToken1,
   includeNative,
-}) => {
+}: SelectTokensWidget<TChainId>) {
   return (
     <FormSection
       title="Tokens"

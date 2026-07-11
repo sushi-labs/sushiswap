@@ -32,7 +32,7 @@ export default async function PoolLayout(props: {
         />
       </Container>
       <section className="flex flex-col flex-1 mt-2">
-        <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent py-6 h-full">
+        <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-10 h-full">
           {children}
         </div>
       </section>

@@ -1,6 +1,17 @@
 'use client'
 
-import { Button, FormSection, SelectIcon, TextField } from '@sushiswap/ui'
+import { RadioGroup } from '@headlessui/react'
+import {
+  Button,
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  FormSection,
+  SelectIcon,
+  TextField,
+  Toggle,
+} from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { useAmountBalance } from 'src/app/(networks)/(evm)/_common/ui/balance-provider/use-balance'
@@ -8,12 +19,15 @@ import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-sel
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
 import {
+  STELLAR_USDC,
+  STELLAR_XLM,
   type StellarAccountAddress,
   StellarChainId,
   type StellarContractAddress,
   type StellarToken,
 } from 'sushi/stellar'
 import { formatUnits } from 'viem'
+import { SelectTokensWidget } from '~evm/[chainId]/pool/_ui/select-tokens-widget'
 import { useGetPool, usePoolInfo } from '~stellar/_common/lib/hooks'
 import { useCreateAndInitializePool } from '~stellar/_common/lib/hooks/factory/use-create-and-initialize-pool'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/liquidity/use-add-liquidity'
@@ -40,8 +54,12 @@ export default function AddPoolPage() {
   const createAndInitializePoolMutation = useCreateAndInitializePool()
   const addLiquidityMutation = useAddLiquidity()
 
-  const [token0, setToken0] = useState<StellarToken | undefined>(undefined)
-  const [token1, setToken1] = useState<StellarToken | undefined>(undefined)
+  const [token0, setToken0] = useState<StellarToken | undefined>(
+    STELLAR_XLM[StellarChainId.STELLAR],
+  )
+  const [token1, setToken1] = useState<StellarToken | undefined>(
+    STELLAR_USDC[StellarChainId.STELLAR],
+  )
   const [selectedFee, setSelectedFee] = useState<number>(3000)
   const [orderedToken0Amount, setOrderedToken0Amount] = useState<string>('')
   const [manualOrderedToken1Amount, setManualOrderedToken1Amount] =
@@ -364,90 +382,57 @@ export default function AddPoolPage() {
 
   return (
     <>
-      {/* StellarToken Selection */}
-      <FormSection
-        title="Tokens"
-        description="Select the token pair. If a pool exists, liquidity will be added to it."
-      >
-        <div className="flex gap-3">
-          <TokenSelector
-            id="token0-selector"
-            chainId={StellarChainId.STELLAR}
-            selected={token0}
-            onSelect={(token) => {
-              setToken0(token)
-              resetLiquidityForm()
-            }}
-          >
-            <Button variant="secondary" className="w-full">
-              <span>{token0?.symbol ?? 'Select Token'}</span>
-              <div>
-                <SelectIcon />
-              </div>
-            </Button>
-          </TokenSelector>
-          <TokenSelector
-            id="token1-selector"
-            chainId={StellarChainId.STELLAR}
-            selected={token1}
-            onSelect={(token) => {
-              setToken1(token)
-              resetLiquidityForm()
-            }}
-          >
-            <Button variant="secondary" className="w-full">
-              <span>{token1?.symbol ?? 'Select Token'}</span>
-              <div>
-                <SelectIcon />
-              </div>
-            </Button>
-          </TokenSelector>
-        </div>
-        {token0 && token1 && token0.address === token1.address && (
-          <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg mt-3">
-            <p className="text-sm text-yellow-600 dark:text-yellow-400">
-              Please select two different tokens
-            </p>
-          </div>
-        )}
-      </FormSection>
+      <SelectTokensWidget
+        chainId={StellarChainId.STELLAR}
+        token0={token0}
+        token1={token1}
+        setToken0={(token) => {
+          setToken0(token)
+          resetLiquidityForm()
+        }}
+        setToken1={(token) => {
+          setToken1(token)
+          resetLiquidityForm()
+        }}
+      />
 
       {/* Fee Tier Selection */}
       <FormSection
         title="Fee Tier"
-        description="Select the trading fee percentage for this pool"
+        description="Some fee tiers work better than others depending on the volatility of your pair. Lower fee tiers generally work better when pairing stable coins. Higher fee tiers generally work better when pairing exotic coins."
       >
         <div className="grid gap-2">
-          {FEE_TIERS.map((tier) => (
-            <button
-              key={tier.value}
-              type="button"
-              onClick={() => {
-                setSelectedFee(tier.value)
-                resetLiquidityForm()
-              }}
-              className={`
-                p-4 rounded-xl border-2 text-left transition-all
-                ${
-                  selectedFee === tier.value
-                    ? 'border-blue-500 bg-blue-500/10'
-                    : 'border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'
-                }
-              `}
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="font-semibold">{tier.label}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {tier.description}
-                  </div>
-                </div>
-                {selectedFee === tier.value && (
-                  <div className="w-3 h-3 rounded-full bg-blue-500" />
-                )}
-              </div>
-            </button>
-          ))}
+          <RadioGroup
+            value={selectedFee}
+            onChange={(fee) => {
+              setSelectedFee(fee)
+              resetLiquidityForm()
+            }}
+            className="grid grid-cols-2 gap-4"
+            disabled={!token0 || !token1}
+          >
+            {FEE_TIERS.map((tier) => (
+              <Toggle
+                pressed={selectedFee === tier.value}
+                onClick={() => setSelectedFee(tier.value)}
+                asChild
+                key={tier.value}
+                testdata-id={`fee-option-${tier.value}`}
+                className="!h-[unset] !w-[unset] !p-0 !text-left !justify-start cursor-pointer dark:data-[state=on]:bg-secondary"
+              >
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      <span className="flex flex-wrap items-center gap-2">
+                        <span>{tier.value / 10000}% Fees</span>
+                      </span>
+                    </CardTitle>
+                    <CardDescription>{tier.description}</CardDescription>
+                  </CardHeader>
+                </Card>
+              </Toggle>
+            ))}
+          </RadioGroup>
         </div>
       </FormSection>
 

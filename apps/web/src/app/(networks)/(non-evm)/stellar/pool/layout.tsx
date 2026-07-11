@@ -14,7 +14,7 @@ export default function SwapLayout({
 }: { children: React.ReactNode }) {
   return (
     <>
-      <main className="lg:p-4 mb-[86px] animate-slide">{children}</main>
+      <main className="animate-slide">{children}</main>
     </>
   )
 }
