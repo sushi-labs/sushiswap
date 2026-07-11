@@ -1,8 +1,16 @@
 'use client'
 
-import { Button } from '@sushiswap/ui'
-import type React from 'react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Radio, RadioGroup } from '@headlessui/react'
+import { Toggle } from '@sushiswap/ui'
+import {
+  type Dispatch,
+  type ReactElement,
+  type SetStateAction,
+  useCallback,
+  useMemo,
+} from 'react'
+import { PriceBlock } from 'src/lib/components/price-block'
+import { Price } from 'sushi'
 import type { StellarToken } from 'sushi/stellar'
 import type { TickRangeSelectorState } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
 import {
@@ -14,86 +22,31 @@ import {
   alignTick,
   clampTickRange,
 } from '~stellar/_common/lib/utils/ticks'
+import { DefaultTickRangeSelector } from './default-tick-range-selector'
 
 interface TickRangeSelectorProps {
   params: TickRangeSelectorState
   token0?: StellarToken
   token1?: StellarToken
+  inverted?: boolean
+  variant?: 'default' | 'cards'
 }
 
-type PriceRangePreset = {
+export interface PriceRangePreset {
   label: string
   lower: number
   upper: number
-}[]
-
-/**
- * Format price for display, handling edge cases for min/max bounds
- */
-function formatPriceDisplay(
-  tick: number,
-  tickSpacing: number,
-  bound: 'lower' | 'upper',
-): string {
-  // Check if tick is at or beyond extremes
-  if (
-    bound === 'lower' &&
-    tick <= alignTick(MAX_TICK_RANGE.lower, tickSpacing)
-  ) {
-    return '0'
-  }
-  if (
-    bound === 'upper' &&
-    tick >= alignTick(MAX_TICK_RANGE.upper, tickSpacing)
-  ) {
-    return '∞'
-  }
-
-  const price = calculatePriceFromTick(tick)
-
-  if (!Number.isFinite(price) || price <= 0) {
-    return bound === 'lower' ? '0' : '∞'
-  }
-
-  // Format based on price magnitude
-  if (price >= 1_000_000) {
-    return price.toExponential(4)
-  }
-  if (price < 0.0001) {
-    return price.toExponential(4)
-  }
-
-  // Use appropriate precision
-  if (price >= 1000) {
-    return price.toFixed(2)
-  }
-  if (price >= 1) {
-    return price.toFixed(4)
-  }
-  return price.toFixed(6)
 }
 
-/**
- * Parse price input and convert to tick, clamped to valid range
- */
-function priceToClampedTick(
-  priceStr: string,
-  tickSpacing: number,
-): number | null {
-  const price = Number.parseFloat(priceStr)
-  if (Number.isNaN(price) || price <= 0) {
-    return null
-  }
+export type PriceRangeBound = 'min' | 'max'
 
-  const tick = calculateTickFromPrice(price)
-  return alignTick(tick, tickSpacing)
-}
-
-export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
+export function TickRangeSelector({
   params,
   token0,
   token1,
-}) => {
+  inverted = false,
+  variant = 'default',
+}: TickRangeSelectorProps): ReactElement {
   const {
     currentTick,
     tickLower,
@@ -108,256 +61,231 @@ export const TickRangeSelector: React.FC<TickRangeSelectorProps> = ({
     dynamicOffsets,
   } = params
 
-  const maxTickRange = clampTickRange(
-    MAX_TICK_RANGE.lower,
-    MAX_TICK_RANGE.upper,
-    tickSpacing,
+  const maxTickRange = useMemo(
+    () =>
+      clampTickRange(MAX_TICK_RANGE.lower, MAX_TICK_RANGE.upper, tickSpacing),
+    [tickSpacing],
   )
 
-  // Local state for price inputs (allows user to type freely)
-  const [minPriceRawInput, setMinPriceRawInput] = useState(
-    formatPriceDisplay(tickLower, tickSpacing, 'lower'),
-  )
-  const [maxPriceRawInput, setMaxPriceRawInput] = useState(
-    formatPriceDisplay(tickUpper, tickSpacing, 'upper'),
-  )
-
-  // percentFraction represents the decimal form (e.g. 0.1 for 10%).
   const createPercentPreset = useCallback(
-    (label: string, percentFraction: number) => {
-      const upperMultiplier = 1 + percentFraction
-      const lowerMultiplier = 1 / upperMultiplier
-      const { lower, upper } = clampTickRange(
-        currentTick + calculateTickFromPrice(lowerMultiplier),
-        currentTick + calculateTickFromPrice(upperMultiplier),
+    (label: string, fraction: number): PriceRangePreset => {
+      const multiplier = 1 + fraction
+      const range = clampTickRange(
+        currentTick + calculateTickFromPrice(1 / multiplier),
+        currentTick + calculateTickFromPrice(multiplier),
         tickSpacing,
       )
 
-      return {
-        label,
-        lower,
-        upper,
-      }
+      return { label, ...range }
     },
     [currentTick, tickSpacing],
   )
 
-  const priceRangePresets: PriceRangePreset = useMemo(
+  const presets = useMemo<PriceRangePreset[]>(
     () => [
-      {
-        label: 'Full Range',
-        lower: maxTickRange.lower,
-        upper: maxTickRange.upper,
-      },
-      createPercentPreset('×÷2', 1), // 2x / 0.5x
-      createPercentPreset('×÷1.2', 0.2), // 1.2x / 0.833x
-      createPercentPreset('×÷1.01', 0.01), // 1.01x / 0.99x
+      { label: 'Full Range', ...maxTickRange },
+      createPercentPreset('×÷2', 1),
+      createPercentPreset('×÷1.2', 0.2),
+      createPercentPreset('×÷1.01', 0.01),
     ],
-    [maxTickRange.lower, maxTickRange.upper, createPercentPreset],
+    [createPercentPreset, maxTickRange],
   )
 
-  // Sync local inputs when ticks change externally
-  useEffect(() => {
-    setMinPriceRawInput(formatPriceDisplay(tickLower, tickSpacing, 'lower'))
-  }, [tickLower, tickSpacing])
+  const activePreset = presets.find(
+    (preset) =>
+      isDynamic &&
+      dynamicOffsets?.lower === preset.lower - currentTick &&
+      dynamicOffsets.upper === preset.upper - currentTick,
+  )
 
-  useEffect(() => {
-    setMaxPriceRawInput(formatPriceDisplay(tickUpper, tickSpacing, 'upper'))
-  }, [tickUpper, tickSpacing])
+  const displayTick = useCallback(
+    (bound: PriceRangeBound): number => {
+      if (bound === 'min') {
+        return inverted ? tickUpper : tickLower
+      }
 
-  // Handle min price input change
-  const handleMinPriceBlur = useCallback(() => {
-    const newTick = priceToClampedTick(minPriceRawInput, tickSpacing)
-    if (newTick !== null) {
+      return inverted ? tickLower : tickUpper
+    },
+    [inverted, tickLower, tickUpper],
+  )
+
+  const formatTick = useCallback(
+    (tick: number, bound: PriceRangeBound): string => {
+      if (!token0 || !token1) {
+        return ''
+      }
+
+      const minTick = alignTick(MAX_TICK_RANGE.lower, tickSpacing)
+      const maxTick = alignTick(MAX_TICK_RANGE.upper, tickSpacing)
+      const isAtLimit = inverted
+        ? (bound === 'min' && tick >= maxTick) ||
+          (bound === 'max' && tick <= minTick)
+        : (bound === 'min' && tick <= minTick) ||
+          (bound === 'max' && tick >= maxTick)
+
+      if (isAtLimit) {
+        return bound === 'min' ? '0' : '∞'
+      }
+
+      const rawPrice = calculatePriceFromTick(tick)
+      const humanPrice = rawPrice * 10 ** (token0.decimals - token1.decimals)
+      const displayPrice = inverted ? 1 / humanPrice : humanPrice
+
+      return Number.isFinite(displayPrice) && displayPrice > 0
+        ? Number.parseFloat(displayPrice.toPrecision(5)).toString()
+        : bound === 'min'
+          ? '0'
+          : '∞'
+    },
+    [inverted, tickSpacing, token0, token1],
+  )
+
+  const displayPrice = useCallback(
+    (bound: PriceRangeBound): string => formatTick(displayTick(bound), bound),
+    [displayTick, formatTick],
+  )
+
+  const setDisplayTick = useCallback(
+    (bound: PriceRangeBound, value: SetStateAction<number>): void => {
+      const setter: Dispatch<SetStateAction<number>> =
+        (bound === 'min') === inverted ? setTickUpper : setTickLower
+      setter(value)
+    },
+    [inverted, setTickLower, setTickUpper],
+  )
+
+  const commitPrice = useCallback(
+    (bound: PriceRangeBound, value: string): void => {
+      if (!token0 || !token1) {
+        return
+      }
+
+      const trimmed = value.trim()
+      const minTick = alignTick(MAX_TICK_RANGE.lower, tickSpacing)
+      const maxTick = alignTick(MAX_TICK_RANGE.upper, tickSpacing)
+      const parsedPrice = Price.tryFromHuman(
+        inverted ? token1 : token0,
+        inverted ? token0 : token1,
+        trimmed,
+      )
+      const canonicalPrice = inverted ? parsedPrice?.invert() : parsedPrice
+      const rawPrice = canonicalPrice?.asFraction.toNumber()
+      const tick =
+        trimmed === '0'
+          ? inverted
+            ? maxTick
+            : minTick
+          : trimmed === '∞' || trimmed === 'Infinity'
+            ? inverted
+              ? minTick
+              : maxTick
+            : rawPrice && Number.isFinite(rawPrice) && rawPrice > 0
+              ? alignTick(calculateTickFromPrice(rawPrice), tickSpacing)
+              : undefined
+
+      if (tick !== undefined) {
+        setIsDynamic(false)
+        setDisplayTick(bound, tick)
+      }
+    },
+    [inverted, setDisplayTick, setIsDynamic, tickSpacing, token0, token1],
+  )
+
+  const stepPrice = useCallback(
+    (bound: PriceRangeBound, direction: -1 | 1): void => {
       setIsDynamic(false)
-      setTickLower(newTick)
-    } else {
-      // Reset to current value if invalid
-      setMinPriceRawInput(formatPriceDisplay(tickLower, tickSpacing, 'lower'))
-    }
-  }, [minPriceRawInput, tickSpacing, setIsDynamic, setTickLower, tickLower])
-
-  // Handle max price input change
-  const handleMaxPriceBlur = useCallback(() => {
-    const newTick = priceToClampedTick(maxPriceRawInput, tickSpacing)
-    if (newTick !== null) {
-      setIsDynamic(false)
-      setTickUpper(newTick)
-    } else {
-      // Reset to current value if invalid
-      setMaxPriceRawInput(formatPriceDisplay(tickUpper, tickSpacing, 'upper'))
-    }
-  }, [maxPriceRawInput, tickSpacing, setIsDynamic, setTickUpper, tickUpper])
-
-  // Decrement/increment handlers for price (moves by one tick spacing)
-  const decrementMinPrice = useCallback(() => {
-    setIsDynamic(false)
-    setTickLower((prev) => alignTick(prev - tickSpacing, tickSpacing))
-  }, [setIsDynamic, setTickLower, tickSpacing])
-
-  const incrementMinPrice = useCallback(() => {
-    setIsDynamic(false)
-    setTickLower((prev) => alignTick(prev + tickSpacing, tickSpacing))
-  }, [setIsDynamic, setTickLower, tickSpacing])
-
-  const decrementMaxPrice = useCallback(() => {
-    setIsDynamic(false)
-    setTickUpper((prev) => alignTick(prev - tickSpacing, tickSpacing))
-  }, [setIsDynamic, setTickUpper, tickSpacing])
-
-  const incrementMaxPrice = useCallback(() => {
-    setIsDynamic(false)
-    setTickUpper((prev) => alignTick(prev + tickSpacing, tickSpacing))
-  }, [setIsDynamic, setTickUpper, tickSpacing])
+      const tickDelta = direction * tickSpacing * (inverted ? -1 : 1)
+      setDisplayTick(bound, (tick) => alignTick(tick + tickDelta, tickSpacing))
+    },
+    [inverted, setDisplayTick, setIsDynamic, tickSpacing],
+  )
 
   const priceUnit =
-    token0 && token1 ? `${token1.symbol} per ${token0.symbol}` : ''
+    token0 && token1
+      ? inverted
+        ? `${token0.symbol} per ${token1.symbol}`
+        : `${token1.symbol} per ${token0.symbol}`
+      : ''
+
+  if (variant === 'cards') {
+    return (
+      <div className="flex flex-col gap-3">
+        <PresetSelector
+          presets={presets}
+          activePreset={activePreset}
+          onSelect={(preset) => applyPresetRange(preset.lower, preset.upper)}
+        />
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <PriceBlock
+            id="min-price"
+            label="Min Price"
+            unit={priceUnit}
+            value={displayPrice('min')}
+            onUserInput={(value) => commitPrice('min', value)}
+            decrement={() => stepPrice('min', -1)}
+            increment={() => stepPrice('min', 1)}
+          />
+          <PriceBlock
+            id="max-price"
+            label="Max Price"
+            unit={priceUnit}
+            value={displayPrice('max')}
+            onUserInput={(value) => commitPrice('max', value)}
+            decrement={() => stepPrice('max', -1)}
+            increment={() => stepPrice('max', 1)}
+          />
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-800">
-      <div className="flex items-center justify-between text-sm">
-        <span className="font-medium">Price Range</span>
-        {token0 && token1 && (
-          <span className="text-xs text-muted-foreground">
-            {calculatePriceFromTick(currentTick).toPrecision(4)} {priceUnit}
-          </span>
-        )}
-      </div>
+    <DefaultTickRangeSelector
+      tickLower={tickLower}
+      tickUpper={tickUpper}
+      isTickRangeValid={isTickRangeValid}
+      currentPrice={formatTick(currentTick, 'min')}
+      priceUnit={priceUnit}
+      presets={presets}
+      activePreset={activePreset}
+      displayPrice={displayPrice}
+      commitPrice={commitPrice}
+      stepPrice={stepPrice}
+      applyPresetRange={applyPresetRange}
+    />
+  )
+}
 
-      <div className="grid grid-cols-4 gap-2">
-        {priceRangePresets.map((preset) => (
-          <Button
-            key={preset.label}
-            type="button"
-            size="sm"
-            variant={
-              isDynamic &&
-              dynamicOffsets !== null &&
-              dynamicOffsets.lower === preset.lower - currentTick &&
-              dynamicOffsets.upper === preset.upper - currentTick
-                ? 'default'
-                : 'secondary'
-            }
-            onClick={() => {
-              applyPresetRange(preset.lower, preset.upper)
-            }}
-          >
-            {preset.label}
-          </Button>
-        ))}
-      </div>
+interface PresetSelectorProps {
+  presets: PriceRangePreset[]
+  activePreset: PriceRangePreset | undefined
+  onSelect(preset: PriceRangePreset): void
+}
 
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-2">
-          <div className="text-xs text-muted-foreground">Min Price</div>
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              size="sm"
-              variant="secondary"
-              onClick={decrementMinPrice}
-              className="w-10 px-0"
-            >
-              -
-            </Button>
-            <input
-              type="text"
-              inputMode="decimal"
-              value={minPriceRawInput}
-              onChange={(e) => setMinPriceRawInput(e.target.value)}
-              onBlur={handleMinPriceBlur}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleMinPriceBlur()
-                  e.currentTarget.blur()
-                }
-              }}
-              placeholder="0.0"
-              className="w-full text-center font-mono !outline-none !ring-0 border-0 flex items-center px-3 rounded-lg font-medium bg-secondary group-hover:bg-muted group-focus:bg-accent"
-            />
-            <Button
-              type="button"
-              size="sm"
-              variant="secondary"
-              onClick={incrementMinPrice}
-              className="w-10 px-0"
-            >
-              +
-            </Button>
-          </div>
-        </div>
-        <div className="space-y-2">
-          <div className="text-xs text-muted-foreground">Max Price</div>
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              size="sm"
-              variant="secondary"
-              onClick={decrementMaxPrice}
-              className="w-10 px-0"
-            >
-              -
-            </Button>
-            <input
-              type="text"
-              inputMode="decimal"
-              value={maxPriceRawInput}
-              onChange={(e) => setMaxPriceRawInput(e.target.value)}
-              onBlur={handleMaxPriceBlur}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleMaxPriceBlur()
-                  e.currentTarget.blur()
-                }
-              }}
-              placeholder="0.0"
-              className="w-full text-center font-mono !outline-none !ring-0 border-0 flex items-center px-3 rounded-lg font-medium bg-secondary group-hover:bg-muted group-focus:bg-accent"
-            />
-            <Button
-              type="button"
-              size="sm"
-              variant="secondary"
-              onClick={incrementMaxPrice}
-              className="w-10 px-0"
-            >
-              +
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      <div
-        className={`p-3 border rounded-lg ${
-          isTickRangeValid
-            ? 'bg-blue-500/5 border-blue-500/20'
-            : 'bg-yellow-500/10 border-yellow-500/20'
-        }`}
-      >
-        <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Selected Range:</span>
-          <div className="flex flex-col justify-end text-end">
-            {token0 && token1 && (
-              <div className="font-mono font-semibold">
-                {formatPriceDisplay(tickLower, tickSpacing, 'lower')} -{' '}
-                {formatPriceDisplay(tickUpper, tickSpacing, 'upper')}{' '}
-                {token1.symbol}/{token0.symbol}
-              </div>
-            )}
-            <div className="text-xs text-muted-foreground">
-              Ticks: {tickLower} to {tickUpper}
-            </div>
-          </div>
-        </div>
-        {!isTickRangeValid && (
-          <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-2 font-medium">
-            ⚠️ Min price must be less than max price.
-          </p>
-        )}
-        <p className="text-xs text-muted-foreground mt-2">
-          Enter your desired price range. Prices are automatically adjusted to
-          valid tick boundaries.
-        </p>
-      </div>
-    </div>
+function PresetSelector({
+  presets,
+  activePreset,
+  onSelect,
+}: PresetSelectorProps): ReactElement {
+  return (
+    <RadioGroup
+      value={activePreset?.label ?? ''}
+      className="flex flex-wrap gap-2"
+    >
+      {presets.map((preset) => (
+        <Radio
+          key={preset.label}
+          value={preset.label}
+          as={Toggle}
+          size="sm"
+          variant="outline"
+          className="whitespace-nowrap"
+          pressed={activePreset?.label === preset.label}
+          onClick={() => onSelect(preset)}
+        >
+          {preset.label}
+        </Radio>
+      ))}
+    </RadioGroup>
   )
 }
