@@ -14,6 +14,7 @@ import { useWalletContext } from '../provider'
 import type { WalletNamespace } from '../types'
 
 interface SelectWalletButtonProps extends Omit<ButtonProps, 'children'> {
+  children?: React.ReactNode
   namespace?: WalletNamespace
 }
 

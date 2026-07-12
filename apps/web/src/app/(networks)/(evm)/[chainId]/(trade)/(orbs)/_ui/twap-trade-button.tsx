@@ -95,7 +95,6 @@ const TwapTradeChecker: FC<ButtonProps> = ({
   className,
   fullWidth = true,
   size = 'xl',
-  enabled = true,
   ...props
 }) => {
   const errors = useInputErrors()
