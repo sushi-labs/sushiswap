@@ -63,7 +63,9 @@ export const useUserAccountValues = () => {
     if (!spotState?.spotState?.balances || !assetList) return 0
     return (
       spotState.spotState.balances.reduce((acc, asset) => {
-        const balance = Number(asset?.total) ?? 0
+        const hold = Number(asset?.hold) ?? 0
+        const total = Number(asset?.total) ?? 0
+        const balance = total - hold
         if (asset.coin === 'USDC') {
           return acc + balance
         }
@@ -176,7 +178,9 @@ export const useUserAccountValues = () => {
 
     return (
       spotState.spotState.balances.reduce((acc, asset) => {
-        const balance = Number(asset?.total) ?? 0
+        const hold = Number(asset?.hold) ?? 0
+        const total = Number(asset?.total) ?? 0
+        const balance = total - hold
         if (asset.coin === 'USDC') {
           return acc + balance
         }
