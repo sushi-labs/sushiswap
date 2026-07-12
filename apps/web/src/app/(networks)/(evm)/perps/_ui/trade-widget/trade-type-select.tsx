@@ -20,7 +20,7 @@ const REGULAR_TRADE_TYPES = [
   'limit',
 ] as const satisfies readonly TradeType[]
 const PRO_TRADE_TYPES = [
-  'basis trade',
+  // 'basis trade',
   'scale',
   'stop limit',
   'stop market',
@@ -29,7 +29,7 @@ const PRO_TRADE_TYPES = [
   'TWAP',
 ] as const satisfies readonly TradeType[]
 const SPOT_PRO_TRADE_TYPES = [
-  'basis trade',
+  // 'basis trade',
   'scale',
   'TWAP',
 ] as const satisfies readonly TradeType[]
