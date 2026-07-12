@@ -7,7 +7,8 @@ import {
   TraceEvent,
 } from '@sushiswap/telemetry'
 import { Button, type ButtonProps } from '@sushiswap/ui'
-import React, { type FC } from 'react'
+import type React from 'react'
+import type { FC } from 'react'
 import { useSidebar } from 'src/app/(networks)/_ui/sidebar'
 import { SidebarTrigger } from 'src/app/(networks)/_ui/sidebar/sidebar-trigger'
 import { useWalletContext } from '../provider'
