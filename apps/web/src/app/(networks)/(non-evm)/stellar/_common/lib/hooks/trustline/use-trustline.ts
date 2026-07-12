@@ -197,11 +197,8 @@ export function useCreateTrustline() {
  * Takes an array of tokens and returns an array of trustline needs for each token.
  * Now uses dynamic Horizon lookup for tokens without known issuers.
  */
-export function useNeedsTrustlines(tokens: (StellarToken | undefined)[]) {
+export function useNeedsTrustlines(tokens: StellarToken[]) {
   const { connectedAddress } = useStellarWallet()
-  const hasTokens = tokens.some((token) =>
-    Boolean(token?.symbol && token.address),
-  )
 
   const trustlineQueries = useQuery({
     queryKey: [
@@ -209,7 +206,9 @@ export function useNeedsTrustlines(tokens: (StellarToken | undefined)[]) {
       'trustlines-batch',
       connectedAddress,
       tokens
-        .map((t) => `${t?.symbol || ''}:${t?.address || ''}:${t?.issuer || ''}`)
+        .map(
+          (token) => `${token.symbol}:${token.address}:${token.issuer || ''}`,
+        )
         .join(','),
     ],
     queryFn: async () => {
@@ -219,9 +218,6 @@ export function useNeedsTrustlines(tokens: (StellarToken | undefined)[]) {
 
       return await Promise.all(
         tokens.map(async (token) => {
-          if (!token?.symbol || !token?.address) {
-            return NO_TRUSTLINE_NEEDED
-          }
           return await checkTokenTrustline(
             connectedAddress,
             token.symbol,
@@ -233,7 +229,7 @@ export function useNeedsTrustlines(tokens: (StellarToken | undefined)[]) {
         }),
       )
     },
-    enabled: Boolean(connectedAddress && hasTokens),
+    enabled: Boolean(connectedAddress && tokens.length > 0),
     staleTime: ms('30s'),
   })
 

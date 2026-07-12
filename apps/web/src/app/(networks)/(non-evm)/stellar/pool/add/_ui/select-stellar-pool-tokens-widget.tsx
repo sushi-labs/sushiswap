@@ -17,21 +17,13 @@ export function SelectStellarPoolTokensWidget({
   setToken0,
   setToken1,
 }: SelectStellarPoolTokensWidgetProps): ReactElement {
-  function handleToken0Select(token: StellarToken): void {
-    setToken0(token)
-  }
-
-  function handleToken1Select(token: StellarToken): void {
-    setToken1(token)
-  }
-
   return (
     <SelectTokensWidget
       chainId={StellarChainId.STELLAR}
       token0={token0}
       token1={token1}
-      setToken0={handleToken0Select}
-      setToken1={handleToken1Select}
+      setToken0={setToken0}
+      setToken1={setToken1}
     />
   )
 }

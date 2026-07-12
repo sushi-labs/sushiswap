@@ -170,18 +170,14 @@ export function TickRangeSelector({
       )
       const canonicalPrice = inverted ? parsedPrice?.invert() : parsedPrice
       const rawPrice = canonicalPrice?.asFraction.toNumber()
-      const tick =
-        trimmed === '0'
-          ? inverted
-            ? maxTick
-            : minTick
-          : trimmed === '∞' || trimmed === 'Infinity'
-            ? inverted
-              ? minTick
-              : maxTick
-            : rawPrice && Number.isFinite(rawPrice) && rawPrice > 0
-              ? alignTick(calculateTickFromPrice(rawPrice), tickSpacing)
-              : undefined
+      let tick: number | undefined
+      if (trimmed === '0') {
+        tick = inverted ? maxTick : minTick
+      } else if (trimmed === '∞' || trimmed === 'Infinity') {
+        tick = inverted ? minTick : maxTick
+      } else if (rawPrice && Number.isFinite(rawPrice) && rawPrice > 0) {
+        tick = alignTick(calculateTickFromPrice(rawPrice), tickSpacing)
+      }
 
       if (tick !== undefined) {
         setIsDynamic(false)

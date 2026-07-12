@@ -26,10 +26,6 @@ export function SelectStellarPoolFeeWidget({
   selectedFee,
   setSelectedFee,
 }: SelectStellarPoolFeeWidgetProps): ReactElement {
-  function handleFeeChange(fee: number): void {
-    setSelectedFee(fee)
-  }
-
   return (
     <FormSection
       title="Fee Tier"
@@ -38,14 +34,14 @@ export function SelectStellarPoolFeeWidget({
       <div className="grid gap-2">
         <RadioGroup
           value={selectedFee}
-          onChange={handleFeeChange}
+          onChange={setSelectedFee}
           className="grid grid-cols-2 gap-4"
           disabled={!token0 || !token1}
         >
           {FEE_TIERS.map((tier) => (
             <Toggle
               pressed={selectedFee === tier.value}
-              onClick={() => handleFeeChange(tier.value)}
+              onClick={() => setSelectedFee(tier.value)}
               asChild
               key={tier.value}
               testdata-id={`fee-option-${tier.value}`}

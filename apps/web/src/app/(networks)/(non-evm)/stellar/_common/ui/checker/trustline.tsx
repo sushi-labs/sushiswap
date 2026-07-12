@@ -69,7 +69,11 @@ const Trustlines: FC<TrustlinesProps> = ({
   size = 'xl',
   ...props
 }) => {
-  const { results, isLoading, needsAnyTrustline } = useNeedsTrustlines(tokens)
+  const definedTokens = tokens.filter(
+    (token): token is StellarToken => token !== undefined,
+  )
+  const { results, isLoading, needsAnyTrustline } =
+    useNeedsTrustlines(definedTokens)
 
   const tokensNeedingTrustline = useMemo(() => {
     const tokensNeedingTrustline: Array<{
@@ -78,9 +82,9 @@ const Trustlines: FC<TrustlinesProps> = ({
     }> = []
 
     results.forEach((result, index) => {
-      const token = tokens[index]
+      const token = definedTokens[index]
 
-      if (result.needsTrustline && token && result.issuer) {
+      if (result.needsTrustline && result.issuer) {
         tokensNeedingTrustline.push({
           code: token.symbol,
           issuer: result.issuer,
@@ -89,7 +93,7 @@ const Trustlines: FC<TrustlinesProps> = ({
     })
 
     return tokensNeedingTrustline
-  }, [results, tokens])
+  }, [definedTokens, results])
 
   if (isLoading) {
     return (
