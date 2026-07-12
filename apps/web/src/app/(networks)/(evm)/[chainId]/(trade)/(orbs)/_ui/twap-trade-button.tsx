@@ -56,6 +56,7 @@ function getInputErrorMessage(error: ReturnType<typeof useInputErrors>) {
 
 type WrapNativeCheckerProps = ButtonProps & {
   amount: Amount<EvmCurrency> | undefined
+  enabled?: boolean
 }
 
 const WrapNativeChecker: FC<WrapNativeCheckerProps> = ({
