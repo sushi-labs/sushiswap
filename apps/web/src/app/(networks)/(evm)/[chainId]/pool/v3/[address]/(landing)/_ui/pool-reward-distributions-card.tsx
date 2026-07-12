@@ -36,9 +36,20 @@ interface PoolRewardDistributionsCardParams {
 export const PoolRewardDistributionsCard: FC<
   PoolRewardDistributionsCardParams
 > = ({ pool, isLoading, rewardsData }) => {
-  if (!pool) return null
-  if (!isMerklChainId(pool.chainId)) return null
+  if (!pool || !isMerklChainId(pool.chainId)) return null
 
+  return (
+    <MerklPoolRewardDistributionsCard
+      pool={pool}
+      isLoading={isLoading}
+      rewardsData={rewardsData}
+    />
+  )
+}
+
+const MerklPoolRewardDistributionsCard: FC<
+  PoolRewardDistributionsCardParams
+> = ({ pool, isLoading, rewardsData }) => {
   const {
     data: katanaRewardCampaigns,
     isLoading: isKatanaRewardCampaignsLoading,

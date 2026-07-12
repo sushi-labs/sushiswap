@@ -34,9 +34,9 @@ export const GoogleAnalytics = ({ enabled }: { enabled: boolean }) => {
 }
 
 export const GoogleTagManager = ({ enabled }: { enabled: boolean }) => {
-  if (!enabled) return null
-
   useEffect(() => {
+    if (!enabled) return
+
     // Dynamically add <noscript> to the body
     const noscript = document.createElement('noscript')
     noscript.innerHTML = `
@@ -54,7 +54,9 @@ export const GoogleTagManager = ({ enabled }: { enabled: boolean }) => {
       // Cleanup to prevent duplicate noscript elements
       document.body.removeChild(noscript)
     }
-  }, [])
+  }, [enabled])
+
+  if (!enabled) return null
 
   return (
     <Script

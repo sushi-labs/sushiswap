@@ -9,6 +9,7 @@ import {
   DialogReview,
 } from '@sushiswap/ui'
 import React, { type FC, type ReactNode } from 'react'
+import { isSvmChainId } from 'sushi/svm'
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 import { ConfirmSwapButton } from './simple-swap-trade-review-dialog/confirm-swap-button'
 import { DialogBody } from './simple-swap-trade-review-dialog/dialog-body'
@@ -17,27 +18,82 @@ import { ReviewIntro } from './simple-swap-trade-review-dialog/review-intro'
 import { TradeDetails } from './simple-swap-trade-review-dialog/trade-details'
 import { TradeHeader } from './simple-swap-trade-review-dialog/trade-header'
 import { TradeWarnings } from './simple-swap-trade-review-dialog/trade-warnings'
-import { useSimpleSwapTradeReview } from './simple-swap-trade-review-dialog/use-simple-swap-trade-review'
+import { useEvmSimpleSwapTradeReview } from './simple-swap-trade-review-dialog/use-evm-simple-swap-trade-review'
+import { getSimpleSwapTradeReview } from './simple-swap-trade-review-dialog/use-simple-swap-trade-review'
+import { useSvmSimpleSwapTradeReview } from './simple-swap-trade-review-dialog/use-svm-simple-swap-trade-review'
 
-export const SimpleSwapTradeReviewDialog: FC<{
+type SimpleSwapTradeReviewDialogProps = {
   children({
     error,
     isSuccess,
   }: { error: Error | null; isSuccess: boolean }): ReactNode
-}> = ({ children }) => {
+}
+
+type SimpleSwapTradeReview = ReturnType<typeof getSimpleSwapTradeReview>
+
+export const SimpleSwapTradeReviewDialog: FC<
+  SimpleSwapTradeReviewDialogProps
+> = ({ children }) => {
   return (
     <DialogProvider>
-      <_SimpleSwapTradeReviewDialog>{children}</_SimpleSwapTradeReviewDialog>
+      <SimpleSwapTradeReviewDialogRouter>
+        {children}
+      </SimpleSwapTradeReviewDialogRouter>
     </DialogProvider>
   )
 }
 
-const _SimpleSwapTradeReviewDialog: FC<{
-  children({
-    error,
-    isSuccess,
-  }: { error: Error | null; isSuccess: boolean }): ReactNode
-}> = ({ children }) => {
+const SimpleSwapTradeReviewDialogRouter: FC<
+  SimpleSwapTradeReviewDialogProps
+> = ({ children }) => {
+  const {
+    state: { chainId },
+  } = useDerivedStateSimpleSwap()
+
+  if (isSvmChainId(chainId)) {
+    return (
+      <SvmSimpleSwapTradeReviewDialog>
+        {children}
+      </SvmSimpleSwapTradeReviewDialog>
+    )
+  }
+
+  return (
+    <EvmSimpleSwapTradeReviewDialog>{children}</EvmSimpleSwapTradeReviewDialog>
+  )
+}
+
+const EvmSimpleSwapTradeReviewDialog: FC<SimpleSwapTradeReviewDialogProps> = ({
+  children,
+}) => {
+  const baseTradeReview = useEvmSimpleSwapTradeReview()
+  const tradeReview = getSimpleSwapTradeReview(baseTradeReview)
+
+  return (
+    <SimpleSwapTradeReviewDialogContent tradeReview={tradeReview}>
+      {children}
+    </SimpleSwapTradeReviewDialogContent>
+  )
+}
+
+const SvmSimpleSwapTradeReviewDialog: FC<SimpleSwapTradeReviewDialogProps> = ({
+  children,
+}) => {
+  const baseTradeReview = useSvmSimpleSwapTradeReview()
+  const tradeReview = getSimpleSwapTradeReview(baseTradeReview)
+
+  return (
+    <SimpleSwapTradeReviewDialogContent tradeReview={tradeReview}>
+      {children}
+    </SimpleSwapTradeReviewDialogContent>
+  )
+}
+
+const SimpleSwapTradeReviewDialogContent: FC<
+  SimpleSwapTradeReviewDialogProps & {
+    tradeReview: SimpleSwapTradeReview
+  }
+> = ({ children, tradeReview }) => {
   const {
     state: { token0, token1, chainId, swapAmount, recipient },
   } = useDerivedStateSimpleSwap()
@@ -62,7 +118,7 @@ const _SimpleSwapTradeReviewDialog: FC<{
     isWritePending,
     txHash,
     status,
-  } = useSimpleSwapTradeReview()
+  } = tradeReview
 
   return (
     <Trace modal={InterfaceModalName.CONFIRM_SWAP}>

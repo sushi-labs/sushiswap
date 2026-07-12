@@ -48,6 +48,7 @@ import {
   type EvmCurrency,
   SUSHISWAP_V2_ROUTER_ADDRESS,
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
+  type SushiSwapV2ChainId,
   type SushiSwapV2Pool,
   defaultCurrency,
   defaultQuoteCurrency,
@@ -78,9 +79,10 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
     return notFound()
   }
 
-  const [isZapModeEnabled, setIsZapModeEnabled] = useState(false)
+  return <V2PoolPage chainId={chainId} />
+}
 
-  const router = useRouter()
+function V2PoolPage({ chainId }: { chainId: SushiSwapV2ChainId }) {
   const [token0, setToken0] = useState<EvmCurrency | undefined>(
     defaultCurrency[chainId as keyof typeof defaultCurrency],
   )
@@ -94,18 +96,6 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
       defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency],
     )
   }, [chainId])
-
-  const networks = useMemo(
-    () =>
-      SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.filter(
-        (chainId) =>
-          !isEvmTestnetChainId(chainId) &&
-          !DISABLED_CHAIN_IDS.includes(
-            chainId as (typeof DISABLED_CHAIN_IDS)[number],
-          ),
-      ),
-    [],
-  )
 
   const [{ input0, input1 }, setTypedAmounts] = useState<{
     input0: string
@@ -147,93 +137,145 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
         </PoolFinder.Components>
       }
     >
-      {({ pool: [poolState, pool] }) => {
-        useEffect(() => {
-          if (
-            isZapSupportedChainId(chainId) &&
-            poolState === SushiSwapV2PoolState.EXISTS
-          ) {
-            setIsZapModeEnabled(true)
-          } else {
-            setIsZapModeEnabled(false)
-          }
-        }, [poolState])
-
-        const title =
-          !token0 || !token1 ? (
-            'Select Tokens'
-          ) : [SushiSwapV2PoolState.LOADING].includes(
-              poolState as SushiSwapV2PoolState,
-            ) ? (
-            <div className="h-[20px] flex items-center justify-center">
-              <Loader width={14} />
-            </div>
-          ) : [SushiSwapV2PoolState.EXISTS].includes(
-              poolState as SushiSwapV2PoolState,
-            ) ? (
-            'Add Liquidity'
-          ) : (
-            'Create Pool'
-          )
-
-        return (
-          <>
-            <SelectNetworkWidget
-              networks={networks}
-              selectedNetwork={chainId}
-              onSelect={(chainId) => {
-                if (!isSushiSwapV2ChainId(chainId)) return
-                router.push(`/${getEvmChainById(chainId).key}/pool/v2/add`)
-              }}
-            />
-            <SelectTokensWidget
-              chainId={chainId}
-              token0={token0}
-              token1={token1}
-              setToken0={_setToken0}
-              setToken1={_setToken1}
-              includeNative={isEvmWNativeSupported(chainId)}
-            />
-            <FormSection
-              title="Deposit"
-              description="Select the amount of tokens you want to deposit"
-            >
-              {isZapSupportedChainId(chainId) &&
-              poolState === SushiSwapV2PoolState.EXISTS ? (
-                <ToggleZapCard
-                  checked={isZapModeEnabled}
-                  onCheckedChange={setIsZapModeEnabled}
-                />
-              ) : null}
-              {isZapModeEnabled ? (
-                <ZapWidget
-                  chainId={chainId}
-                  pool={pool}
-                  poolState={poolState}
-                  title={title}
-                />
-              ) : (
-                <AddLiquidityWidget
-                  chainId={chainId}
-                  pool={pool}
-                  poolState={poolState}
-                  title={title}
-                  token0={token0}
-                  token1={token1}
-                  setToken0={_setToken0}
-                  setToken1={_setToken1}
-                  input0={input0}
-                  input1={input1}
-                  setTypedAmounts={setTypedAmounts}
-                  independendField={independendField}
-                  setIndependendField={setIndependendField}
-                />
-              )}
-            </FormSection>
-          </>
-        )
-      }}
+      {({ pool: [poolState, pool] }) => (
+        <PoolForm
+          chainId={chainId}
+          pool={pool}
+          poolState={poolState}
+          token0={token0}
+          token1={token1}
+          setToken0={_setToken0}
+          setToken1={_setToken1}
+          input0={input0}
+          input1={input1}
+          setTypedAmounts={setTypedAmounts}
+          independendField={independendField}
+          setIndependendField={setIndependendField}
+        />
+      )}
     </PoolFinder>
+  )
+}
+
+interface PoolFormProps {
+  chainId: SushiSwapV2ChainId
+  pool: SushiSwapV2Pool | null
+  poolState: SushiSwapV2PoolState
+  token0: EvmCurrency | undefined
+  token1: EvmCurrency | undefined
+  setToken0(token: EvmCurrency | undefined): void
+  setToken1(token: EvmCurrency | undefined): void
+  input0: string
+  input1: string
+  setTypedAmounts: Dispatch<SetStateAction<{ input0: string; input1: string }>>
+  independendField: number
+  setIndependendField: Dispatch<SetStateAction<number>>
+}
+
+function PoolForm({
+  chainId,
+  pool,
+  poolState,
+  token0,
+  token1,
+  setToken0,
+  setToken1,
+  input0,
+  input1,
+  setTypedAmounts,
+  independendField,
+  setIndependendField,
+}: PoolFormProps) {
+  const router = useRouter()
+  const [isZapModeEnabled, setIsZapModeEnabled] = useState(false)
+
+  const networks = useMemo(
+    () =>
+      SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.filter(
+        (chainId) =>
+          !isEvmTestnetChainId(chainId) &&
+          !DISABLED_CHAIN_IDS.includes(
+            chainId as (typeof DISABLED_CHAIN_IDS)[number],
+          ),
+      ),
+    [],
+  )
+
+  useEffect(() => {
+    setIsZapModeEnabled(
+      isZapSupportedChainId(chainId) &&
+        poolState === SushiSwapV2PoolState.EXISTS,
+    )
+  }, [chainId, poolState])
+
+  const title =
+    !token0 || !token1 ? (
+      'Select Tokens'
+    ) : poolState === SushiSwapV2PoolState.LOADING ? (
+      <div className="h-[20px] flex items-center justify-center">
+        <Loader width={14} />
+      </div>
+    ) : poolState === SushiSwapV2PoolState.EXISTS ? (
+      'Add Liquidity'
+    ) : (
+      'Create Pool'
+    )
+
+  return (
+    <>
+      <SelectNetworkWidget
+        networks={networks}
+        selectedNetwork={chainId}
+        onSelect={(chainId) => {
+          if (!isSushiSwapV2ChainId(chainId)) return
+          router.push(`/${getEvmChainById(chainId).key}/pool/v2/add`)
+        }}
+      />
+      <SelectTokensWidget
+        chainId={chainId}
+        token0={token0}
+        token1={token1}
+        setToken0={setToken0}
+        setToken1={setToken1}
+        includeNative={isEvmWNativeSupported(chainId)}
+      />
+      <FormSection
+        title="Deposit"
+        description="Select the amount of tokens you want to deposit"
+      >
+        {isZapSupportedChainId(chainId) &&
+        poolState === SushiSwapV2PoolState.EXISTS ? (
+          <ToggleZapCard
+            checked={isZapModeEnabled}
+            onCheckedChange={setIsZapModeEnabled}
+          />
+        ) : null}
+        {isZapModeEnabled ? (
+          <ZapWidget
+            chainId={chainId}
+            pool={pool}
+            poolState={poolState}
+            title={title}
+          />
+        ) : (
+          <AddLiquidityWidget
+            chainId={chainId}
+            pool={pool}
+            poolState={poolState}
+            title={title}
+            token0={token0}
+            token1={token1}
+            setToken0={setToken0}
+            setToken1={setToken1}
+            input0={input0}
+            input1={input1}
+            setTypedAmounts={setTypedAmounts}
+            independendField={independendField}
+            setIndependendField={setIndependendField}
+          />
+        )}
+      </FormSection>
+    </>
   )
 }
 
