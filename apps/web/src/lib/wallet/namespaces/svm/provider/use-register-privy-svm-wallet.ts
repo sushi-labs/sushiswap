@@ -8,7 +8,7 @@ import type {
   WindowRegisterWalletEvent,
   WindowRegisterWalletEventCallback,
 } from '@wallet-standard/base'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 type ConnectorClientInternals = {
   walletDetector?: { refreshWallets?: () => void }
@@ -18,9 +18,10 @@ type ConnectorClientInternals = {
 
 export function useRegisterPrivySvmWallet(
   client: ConnectorClient | null,
-): void {
+): boolean {
   const { ready, wallets } = useStandardWallets()
   const registeredWalletRef = useRef<boolean>(false)
+  const [isRestored, setIsRestored] = useState(false)
 
   useEffect(() => {
     if (!ready) return
@@ -33,13 +34,35 @@ export function useRegisterPrivySvmWallet(
 
     const connectorClient = client as unknown as ConnectorClientInternals | null
     connectorClient?.walletDetector?.refreshWallets?.()
-
-    if (connectorClient?.getSnapshot().wallet.status === 'connected') return
-
-    connectorClient?.autoConnector?.attemptAutoConnect?.().catch((error) => {
-      console.warn('Privy SVM auto-connect failed', error)
-    })
   }, [ready, wallets, client])
+
+  useEffect(() => {
+    if (!ready || !client) return
+
+    let cancelled = false
+
+    async function restoreConnection() {
+      const connectorClient = client as unknown as ConnectorClientInternals
+
+      try {
+        if (connectorClient.getSnapshot().wallet.status !== 'connected') {
+          await connectorClient.autoConnector?.attemptAutoConnect?.()
+        }
+      } catch (error) {
+        console.warn('SVM wallet auto-connect failed', error)
+      } finally {
+        if (!cancelled) setIsRestored(true)
+      }
+    }
+
+    restoreConnection()
+
+    return () => {
+      cancelled = true
+    }
+  }, [client, ready])
+
+  return isRestored
 }
 
 function isPrivySvmWallet(wallet: Wallet): boolean {

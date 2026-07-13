@@ -98,3 +98,23 @@ export const EvmAdapterConfig: Record<
   [EvmAdapterId.WalletConnect]: () => getWalletConnectConnector(),
   [EvmAdapterId.CoinbaseWallet]: () => getCoinbaseWalletConnector(),
 }
+
+const EVM_CONNECTOR_ADAPTER_IDS: Record<string, EvmAdapterId> = {
+  coinbaseWalletSDK: EvmAdapterId.CoinbaseWallet,
+  metaMaskSDK: EvmAdapterId.MetaMask,
+  safe: EvmAdapterId.Safe,
+  walletConnect: EvmAdapterId.WalletConnect,
+  'xyz.ithaca.porto': EvmAdapterId.Porto,
+}
+
+export function getEvmAdapterIdForConnector(
+  connectorId: string,
+  connectorType: string,
+): EvmAdapterId | undefined {
+  return (
+    EVM_CONNECTOR_ADAPTER_IDS[connectorId] ??
+    (connectorId === 'injected' && connectorType === 'injected'
+      ? EvmAdapterId.Injected
+      : undefined)
+  )
+}

@@ -7,6 +7,7 @@ import {
   type WalletNamespace,
   getNameFromNamespace,
   useAccount,
+  useIsWalletRestoring,
   useWalletContext,
 } from 'src/lib/wallet'
 import { ConnectButton } from '../../components/connect-button'
@@ -26,6 +27,7 @@ function Connect({
 
   const { isPending, isConnected } = useWalletContext()
   const isNamespaceConnected = Boolean(useAccount(namespace))
+  const isNamespaceRestoring = useIsWalletRestoring(namespace ?? 'evm')
   const requiresNamespaceConnection = Boolean(
     namespace && !isNamespaceConnected,
   )
@@ -36,6 +38,14 @@ function Connect({
         <div className="h-[1ch]" />
       </Button>
     )
+
+  if (isNamespaceRestoring) {
+    return (
+      <Button fullWidth={fullWidth} size={size} disabled {...props}>
+        <Dots>Restoring Wallet</Dots>
+      </Button>
+    )
+  }
 
   if (isPending) {
     return (

@@ -16,6 +16,7 @@ import { HeaderNetworkSelector } from './header-network-selector'
 interface WagmiHeaderComponentsProps {
   networks: readonly ChainId[] | undefined
   selectedNetwork?: ChainId
+  isNetworkLoading?: boolean
   onChange?(chainId: EvmChainId): void
   hideNetworkSelector?: boolean
   isPerps?: boolean
@@ -24,6 +25,7 @@ interface WagmiHeaderComponentsProps {
 export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
   networks,
   selectedNetwork,
+  isNetworkLoading,
   onChange,
   hideNetworkSelector,
   isPerps,
@@ -51,6 +53,7 @@ export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
         <HeaderNetworkSelector
           networks={networks}
           selectedNetwork={selectedNetwork}
+          isLoading={isNetworkLoading}
           onChange={onChange}
           className="flex"
         />
