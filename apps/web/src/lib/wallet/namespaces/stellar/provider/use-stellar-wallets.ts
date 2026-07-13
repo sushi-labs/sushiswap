@@ -10,24 +10,18 @@ import {
   stellarWalletKit,
 } from '../config'
 
-const _useStellarWallets = () => {
+export function useStellarWallets() {
   const [wallets, setWallets] = useState<ISupportedWallet[]>([])
+  const { isRecentWallet } = useRecentWallets()
 
   useEffect(() => {
-    const fetchWallets = async () => {
+    async function fetchWallets() {
       const supportedWallets = await stellarWalletKit.refreshSupportedWallets()
       setWallets(supportedWallets)
     }
 
     fetchWallets()
   }, [])
-
-  return { wallets }
-}
-
-export function useStellarWallets() {
-  const { isRecentWallet } = useRecentWallets()
-  const { wallets } = _useStellarWallets()
 
   return useMemo(() => {
     const map = new Map<string, WalletWithState>()

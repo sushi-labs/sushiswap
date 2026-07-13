@@ -10,7 +10,10 @@ import {
   PerpsDialogTrigger,
 } from '@sushiswap/ui'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
-import { useSpotClearinghouseState } from 'src/lib/perps'
+import {
+  getClearinghouseStateForDex,
+  useSpotClearinghouseState,
+} from 'src/lib/perps'
 import { useVaultDetails } from 'src/lib/perps/info/use-vault-details'
 import { useVaultTransfer } from 'src/lib/perps/vaults/use-vault-transfer'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
@@ -46,11 +49,12 @@ export const VaultDepositDialog = ({
   const _amount = Amount.tryFromHuman(currency, amount)
   const {
     state: {
-      webData2Query: {
-        data,
-        isLoading: isLoadingWebData2,
-        error: errorWebData2,
+      allDexClearinghouseStateQuery: {
+        data: allDexClearinghouseState,
+        isLoading: isClearinghouseStateLoading,
+        error: clearinghouseStateError,
       },
+      spotStateQuery: { isLoading: isSpotStateLoading, error: spotStateError },
     },
   } = useUserState()
   const {
@@ -59,11 +63,15 @@ export const VaultDepositDialog = ({
   const address = useAccount('evm')
   const {
     data: spotClearinghouseState,
-    isLoading: isLoadingSpotClearinghouse,
-    error: errorSpotClearinghouse,
+    isLoading: isSpotClearinghouseStateLoading,
+    error: spotClearinghouseStateError,
   } = useSpotClearinghouseState({ address })
-  const isLoading = isLoadingWebData2 || isLoadingSpotClearinghouse
-  const error = errorWebData2 || errorSpotClearinghouse
+  const isLoading =
+    isClearinghouseStateLoading ||
+    isSpotStateLoading ||
+    isSpotClearinghouseStateLoading
+  const error =
+    clearinghouseStateError || spotStateError || spotClearinghouseStateError
 
   const depositableBalance = useMemo(() => {
     if (isUnifiedAccountModeEnabled) {
@@ -74,8 +82,15 @@ export const VaultDepositDialog = ({
       const hold = usdc?.hold || '0'
       return Number(total) - Number(hold)
     }
-    return data?.clearinghouseState.withdrawable
-  }, [data, isUnifiedAccountModeEnabled, spotClearinghouseState])
+    return getClearinghouseStateForDex(
+      allDexClearinghouseState?.clearinghouseStates,
+      '',
+    )?.withdrawable
+  }, [
+    allDexClearinghouseState,
+    isUnifiedAccountModeEnabled,
+    spotClearinghouseState,
+  ])
 
   const balance = Amount.tryFromHuman(currency, depositableBalance ?? '0')
 

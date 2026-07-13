@@ -2,11 +2,7 @@ import { useMemo } from 'react'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserState } from '~evm/perps/user-provider'
-import {
-  getCollateralTokenForDex,
-  useAllPerpMetas,
-  useSpotClearinghouseState,
-} from '../info'
+import { getCollateralTokenForDex, useAllPerpMetas } from '../info'
 
 export const useUserAccountValues = () => {
   const {
@@ -15,10 +11,10 @@ export const useUserAccountValues = () => {
   const address = activeAddress
   const {
     state: {
-      webData2Query: {
-        data: webData2,
-        isLoading: isLoadingWebData2,
-        error: errorWebData2,
+      spotStateQuery: {
+        data: spotState,
+        isLoading: isLoadingSpotState,
+        error: errorSpotState,
       },
       allDexClearinghouseStateQuery: {
         data: allDexClearinghouseState,
@@ -37,11 +33,6 @@ export const useUserAccountValues = () => {
     },
   } = useAssetListState()
   const {
-    data: spotClearingHouseState,
-    isLoading: isLoadingSpotClearingHouse,
-    error: errorSpotClearingHouse,
-  } = useSpotClearinghouseState({ address })
-  const {
     data: allPerpMetas,
     isLoading: isLoadingAllPerpMetas,
     error: errorAllPerpMetas,
@@ -50,44 +41,31 @@ export const useUserAccountValues = () => {
   const isLoading = useMemo(() => {
     if (!address) return false
     return (
-      isLoadingWebData2 ||
+      isLoadingSpotState ||
       allDexLoading ||
       assetListLoading ||
-      isLoadingSpotClearingHouse ||
       isLoadingAllPerpMetas
     )
   }, [
     address,
-    isLoadingWebData2,
+    isLoadingSpotState,
     allDexLoading,
     assetListLoading,
-    isLoadingSpotClearingHouse,
     isLoadingAllPerpMetas,
   ])
 
   const error = useMemo(() => {
     if (!address) return null
-    return (
-      errorWebData2 ||
-      allDexError ||
-      assetListError ||
-      errorSpotClearingHouse ||
-      errorAllPerpMetas
-    )
-  }, [
-    address,
-    errorWebData2,
-    allDexError,
-    assetListError,
-    errorSpotClearingHouse,
-    errorAllPerpMetas,
-  ])
+    return errorSpotState || allDexError || assetListError || errorAllPerpMetas
+  }, [address, errorSpotState, allDexError, assetListError, errorAllPerpMetas])
 
   const spotEquity = useMemo(() => {
-    if (!webData2?.spotState?.balances || !assetList) return 0
+    if (!spotState?.spotState?.balances || !assetList) return 0
     return (
-      webData2?.spotState?.balances?.reduce((acc, asset) => {
-        const balance = Number(asset?.total) ?? 0
+      spotState.spotState.balances.reduce((acc, asset) => {
+        const hold = Number(asset?.hold) ?? 0
+        const total = Number(asset?.total) ?? 0
+        const balance = total - hold
         if (asset.coin === 'USDC') {
           return acc + balance
         }
@@ -103,7 +81,7 @@ export const useUserAccountValues = () => {
         return acc + val
       }, 0) ?? 0
     )
-  }, [webData2?.spotState?.balances, assetList])
+  }, [spotState?.spotState?.balances, assetList])
 
   const unrelaizedPnL = useMemo(() => {
     if (!allDexClearinghouseState) return 0
@@ -190,7 +168,7 @@ export const useUserAccountValues = () => {
   }, [perpsEquity, spotEquity])
 
   const clearhouseStateTotal = useMemo(() => {
-    if (!spotClearingHouseState?.balances || !assetList || !allPerpMetas) {
+    if (!spotState?.spotState?.balances || !assetList || !allPerpMetas) {
       return 0
     }
 
@@ -199,8 +177,10 @@ export const useUserAccountValues = () => {
     )
 
     return (
-      spotClearingHouseState?.balances?.reduce((acc, asset) => {
-        const balance = Number(asset?.total) ?? 0
+      spotState.spotState.balances.reduce((acc, asset) => {
+        const hold = Number(asset?.hold) ?? 0
+        const total = Number(asset?.total) ?? 0
+        const balance = total - hold
         if (asset.coin === 'USDC') {
           return acc + balance
         }
@@ -216,7 +196,7 @@ export const useUserAccountValues = () => {
         return acc + val
       }, 0) ?? 0
     )
-  }, [spotClearingHouseState?.balances, assetList, allPerpMetas])
+  }, [spotState?.spotState?.balances, assetList, allPerpMetas])
 
   const unifiedAccountLeverage = useMemo(() => {
     if (!allDexClearinghouseState) return 0
@@ -268,8 +248,8 @@ export const useUserAccountValues = () => {
     for (const [tokenStr, crossMargin] of Object.entries(crossMarginByToken)) {
       const token = Number(tokenStr)
       const spotTotal =
-        spotClearingHouseState?.balances?.find((b) => b.token === token)
-          ?.total ?? 0
+        spotState?.spotState?.balances?.find((b) => b.token === token)?.total ??
+        0
       const isolatedMargin = isolatedMarginByToken[token] ?? 0
       const available = Number(spotTotal) - isolatedMargin
       if (available > 0) {
@@ -278,7 +258,7 @@ export const useUserAccountValues = () => {
     }
 
     return maxRatio * 100
-  }, [allDexClearinghouseState, allPerpMetas, spotClearingHouseState?.balances])
+  }, [allDexClearinghouseState, allPerpMetas, spotState?.spotState?.balances])
 
   return {
     isLoading,

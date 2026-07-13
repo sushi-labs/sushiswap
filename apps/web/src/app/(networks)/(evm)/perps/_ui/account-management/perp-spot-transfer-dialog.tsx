@@ -22,6 +22,7 @@ import {
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import {
   type BalanceItemType,
+  getClearinghouseStateForDex,
   perpsNumberFormatter,
   useSendAsset,
   useSendableAssets,
@@ -61,11 +62,7 @@ export const PerpSpotTransferDialog = ({
   const { sendAsset, isPending } = useSendAsset()
   const {
     state: {
-      webData2Query: {
-        data,
-        // isLoading: isWebData2Loading,
-        // error: webData2Error,
-      },
+      spotStateQuery: { data: spotState },
       allDexClearinghouseStateQuery: {
         data: clearinghouseStateData,
         // isLoading: isClearinghouseStateLoading,
@@ -73,8 +70,6 @@ export const PerpSpotTransferDialog = ({
       },
     },
   } = useUserState()
-  // const isLoading = isWebData2Loading || isClearinghouseStateLoading
-  // const error = webData2Error || clearinghouseStateError
   const {
     state: { asset },
   } = useAssetState()
@@ -119,12 +114,13 @@ export const PerpSpotTransferDialog = ({
 
   const sendableBalance = useMemo(() => {
     if (dst === 'spot') {
-      return clearinghouseStateData?.clearinghouseStates.find(
-        ([dex]) => dex === selectedDex,
-      )?.[1].withdrawable
+      return getClearinghouseStateForDex(
+        clearinghouseStateData?.clearinghouseStates,
+        selectedDex,
+      )?.withdrawable
     }
 
-    const spot = data?.spotState?.balances?.find(
+    const spot = spotState?.spotState?.balances?.find(
       (b) => b.coin === currency?.symbol,
     )
     const total = Number(spot?.total || 0)
@@ -135,7 +131,7 @@ export const PerpSpotTransferDialog = ({
     dst,
     selectedDex,
     clearinghouseStateData,
-    data?.spotState?.balances,
+    spotState?.spotState?.balances,
     currency,
   ])
 

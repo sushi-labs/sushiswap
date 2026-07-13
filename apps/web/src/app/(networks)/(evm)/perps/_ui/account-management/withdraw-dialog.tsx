@@ -18,6 +18,7 @@ import {
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import {
   TOAST_AUTOCLOSE_TIME,
+  getClearinghouseStateForDex,
   hlHttpTransport,
   useSpotClearinghouseState,
 } from 'src/lib/perps'
@@ -51,11 +52,12 @@ export const WithdrawDialog = ({
   const { data: walletClient } = useWalletClient()
   const {
     state: {
-      webData2Query: {
-        data,
-        isLoading: isLoadingWebData2,
-        error: errorWebData2,
+      allDexClearinghouseStateQuery: {
+        data: allDexClearinghouseState,
+        isLoading: isClearinghouseStateLoading,
+        error: clearinghouseStateError,
       },
+      spotStateQuery: { isLoading: isSpotStateLoading, error: spotStateError },
     },
   } = useUserState()
   const {
@@ -64,11 +66,15 @@ export const WithdrawDialog = ({
   const address = useAccount('evm')
   const {
     data: spotClearinghouseState,
-    isLoading: isLoadingSpotClearinghouse,
-    error: errorSpotClearinghouse,
+    isLoading: isSpotClearinghouseStateLoading,
+    error: spotClearinghouseStateError,
   } = useSpotClearinghouseState({ address })
-  const isLoading = isLoadingWebData2 || isLoadingSpotClearinghouse
-  const error = errorWebData2 || errorSpotClearinghouse
+  const isLoading =
+    isClearinghouseStateLoading ||
+    isSpotStateLoading ||
+    isSpotClearinghouseStateLoading
+  const error =
+    clearinghouseStateError || spotStateError || spotClearinghouseStateError
 
   const withdrawableBalance = useMemo(() => {
     if (isUnifiedAccountModeEnabled) {
@@ -79,8 +85,15 @@ export const WithdrawDialog = ({
       const hold = usdc?.hold || '0'
       return Number(total) - Number(hold)
     }
-    return data?.clearinghouseState.withdrawable
-  }, [data, isUnifiedAccountModeEnabled, spotClearinghouseState])
+    return getClearinghouseStateForDex(
+      allDexClearinghouseState?.clearinghouseStates,
+      '',
+    )?.withdrawable
+  }, [
+    allDexClearinghouseState,
+    isUnifiedAccountModeEnabled,
+    spotClearinghouseState,
+  ])
   const balance = Amount.tryFromHuman(currency, withdrawableBalance ?? '0')
 
   const [isPending, setIsPending] = useState<boolean>(false)

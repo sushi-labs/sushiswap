@@ -20,6 +20,7 @@ import {
   type TokenBalance,
   type UserPositionsItemType,
   formatSize,
+  getClearinghouseStateForDex,
   getCollateralTokenForDex,
   perpsNumberFormatter,
   useAllPerpMetas,
@@ -59,7 +60,7 @@ export const UpdateIsolatedMarginDialog = ({
   }, [position])
   const {
     state: {
-      webData2Query: { data: webData2 },
+      allDexClearinghouseStateQuery: { data: allDexClearinghouseState },
       spotStateQuery: { data: spotState },
     },
   } = useUserState()
@@ -80,6 +81,12 @@ export const UpdateIsolatedMarginDialog = ({
     return assetList?.get(position.position.coin)
   }, [assetList, position.position.coin])
   const isStrictIsolated = asset?.marginMode === 'strictIsolated'
+  const mainClearinghouseState = useMemo(() => {
+    return getClearinghouseStateForDex(
+      allDexClearinghouseState?.clearinghouseStates,
+      '',
+    )
+  }, [allDexClearinghouseState])
   const marginRequired = useMemo(() => {
     return getMarginRequiredFromLeverage({
       leverage: position.position.leverage.value,
@@ -102,9 +109,8 @@ export const UpdateIsolatedMarginDialog = ({
         isDexAbstractionEnabled,
         isUnifiedAccount: isUnifiedAccountModeEnabled,
         perpsDex: position.perpsDex,
-        perpsWithdrawable: webData2?.clearinghouseState?.withdrawable,
-        spotBalances:
-          spotState?.spotState?.balances ?? webData2?.spotState?.balances,
+        perpsWithdrawable: mainClearinghouseState?.withdrawable,
+        spotBalances: spotState?.spotState?.balances,
       })
     }
 
@@ -125,8 +131,7 @@ export const UpdateIsolatedMarginDialog = ({
     type,
     collateralTokenId,
     spotState?.spotState?.balances,
-    webData2?.clearinghouseState?.withdrawable,
-    webData2?.spotState?.balances,
+    mainClearinghouseState?.withdrawable,
     position.position.positionValue,
   ])
 

@@ -48,6 +48,7 @@ const contentSecurityPolicyHeader =
 
 /** @type {import('next').NextConfig} */
 const nextConfig = bundleAnalyzer({
+  reactCompiler: process.env.REACT_COMPILER !== 'false',
   reactStrictMode: true,
   productionBrowserSourceMaps: true,
   poweredByHeader: false,
