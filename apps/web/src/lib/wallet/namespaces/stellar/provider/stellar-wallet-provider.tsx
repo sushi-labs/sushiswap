@@ -1,13 +1,5 @@
 'use client'
 
-import {
-  type ISupportedWallet,
-  KitEventType,
-} from '@creit.tech/stellar-wallets-kit'
-import {
-  activeAddress,
-  selectedModuleId,
-} from '@creit.tech/stellar-wallets-kit/state'
 import type React from 'react'
 import {
   createContext,
@@ -16,6 +8,7 @@ import {
   useEffect,
   useLayoutEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 import {
@@ -26,11 +19,21 @@ import type { Wallet } from 'src/lib/wallet/types'
 import { type StellarAddress, StellarChainId } from 'sushi/stellar'
 import type { WalletNamespaceContext } from '../../types'
 import {
+  STELLAR_SELECTED_MODULE_STORAGE_KEY,
   StellarAdapterId,
   getStellarModuleId,
   getStellarWalletId,
-  stellarWalletKit,
-} from '../config'
+} from '../adapter'
+import type { StellarWalletConnection } from '../runtime'
+
+type StellarWalletRuntime = typeof import('../runtime')
+
+let stellarWalletRuntimePromise: Promise<StellarWalletRuntime> | undefined
+
+function loadStellarWalletRuntime(): Promise<StellarWalletRuntime> {
+  stellarWalletRuntimePromise ??= import('../runtime')
+  return stellarWalletRuntimePromise
+}
 
 const StellarWalletContext = createContext<WalletNamespaceContext | null>(null)
 
@@ -56,79 +59,97 @@ function _StellarWalletProvider({ children }: { children: React.ReactNode }) {
   )
   const [wallet, setWallet] = useState<Wallet | null>(initialConnection.wallet)
   const [isHydrated, setIsHydrated] = useState(initialConnection.isHydrated)
+  const unsubscribeRuntimeRef = useRef<(() => void) | undefined>(undefined)
 
   const syncConnection = useCallback(async () => {
-    const moduleId = selectedModuleId.value
-
-    if (!moduleId) {
-      setAccount(undefined)
-      setWallet(null)
-      setIsHydrated(true)
-      return
-    }
+    const { disconnectStellarWallet, getStellarWalletConnection } =
+      await loadStellarWalletRuntime()
 
     try {
-      const [{ address }, supportedWallets] = await Promise.all([
-        stellarWalletKit.getAddress(),
-        stellarWalletKit.refreshSupportedWallets(),
-      ])
+      const connection = await getStellarWalletConnection()
+      if (!connection) {
+        setAccount(undefined)
+        setWallet(null)
+        return
+      }
 
-      const supportedWallet = supportedWallets.find(
-        (wallet) => wallet.id === moduleId,
-      )
-
-      setAccount(address as StellarAddress)
-      setWallet(toWallet(moduleId, supportedWallet))
+      setAccount(connection.account)
+      setWallet(toWallet(connection.moduleId, connection.wallet))
     } catch {
       setAccount(undefined)
       setWallet(null)
-      await stellarWalletKit.disconnect().catch(() => undefined)
+      await disconnectStellarWallet().catch(() => undefined)
     } finally {
       setIsHydrated(true)
     }
   }, [])
 
-  useEffect(() => {
-    syncConnection()
+  const ensureRuntimeSubscription = useCallback(async () => {
+    if (unsubscribeRuntimeRef.current) return
 
-    const unsubscribeStateUpdated = stellarWalletKit.on(
-      KitEventType.STATE_UPDATED,
-      () => {
-        syncConnection()
+    const { subscribeToStellarWallet } = await loadStellarWalletRuntime()
+    if (unsubscribeRuntimeRef.current) return
+
+    const unsubscribe = subscribeToStellarWallet({
+      onStateUpdated: () => {
+        void syncConnection()
       },
-    )
-    const unsubscribeDisconnected = stellarWalletKit.on(
-      KitEventType.DISCONNECT,
-      () => {
+      onDisconnected: () => {
         setAccount(undefined)
         setWallet(null)
         setIsHydrated(true)
       },
-    )
+    })
 
-    return () => {
-      unsubscribeStateUpdated()
-      unsubscribeDisconnected()
+    unsubscribeRuntimeRef.current = () => {
+      unsubscribe()
+      unsubscribeRuntimeRef.current = undefined
     }
   }, [syncConnection])
+
+  useEffect(() => {
+    if (!hasPersistedStellarConnection()) return
+
+    let cancelled = false
+
+    async function restoreConnection(): Promise<void> {
+      await loadStellarWalletRuntime()
+      if (cancelled) return
+
+      await ensureRuntimeSubscription()
+      await syncConnection()
+    }
+
+    void restoreConnection()
+
+    return () => {
+      cancelled = true
+    }
+  }, [ensureRuntimeSubscription, syncConnection])
+
+  useEffect(() => {
+    return () => unsubscribeRuntimeRef.current?.()
+  }, [])
 
   const connect = useCallback(
     async (wallet: Wallet, onSuccess?: (address: StellarAddress) => void) => {
       const moduleId = getStellarModuleId(wallet.id)
       if (!moduleId) throw new Error('Invalid wallet id')
-      stellarWalletKit.setWallet(moduleId)
+
+      const { connectStellarWallet } = await loadStellarWalletRuntime()
+      await ensureRuntimeSubscription()
       setWallet(wallet)
-      const address = (await stellarWalletKit.fetchAddress())
-        .address as StellarAddress
+      const address = await connectStellarWallet(moduleId)
       setAccount(address)
       setIsHydrated(true)
       onSuccess?.(address)
     },
-    [],
+    [ensureRuntimeSubscription],
   )
 
   const disconnect = useCallback(async () => {
-    await stellarWalletKit.disconnect()
+    const { disconnectStellarWallet } = await loadStellarWalletRuntime()
+    await disconnectStellarWallet()
     setAccount(undefined)
     setWallet(null)
   }, [])
@@ -174,23 +195,22 @@ function getInitialConnection(): {
   wallet: Wallet | null
   isHydrated: boolean
 } {
-  const moduleId = selectedModuleId.value
-  const account = activeAddress.value as StellarAddress | undefined
-
-  if (!moduleId || !account) {
-    return { account: undefined, wallet: null, isHydrated: true }
-  }
-
   return {
-    account,
-    wallet: toWallet(moduleId),
-    isHydrated: true,
+    account: undefined,
+    wallet: null,
+    isHydrated: !hasPersistedStellarConnection(),
   }
+}
+
+function hasPersistedStellarConnection(): boolean {
+  return Boolean(
+    globalThis.localStorage?.getItem(STELLAR_SELECTED_MODULE_STORAGE_KEY),
+  )
 }
 
 function toWallet(
   moduleId: string,
-  supportedWallet?: ISupportedWallet,
+  supportedWallet?: StellarWalletConnection['wallet'],
 ): Wallet {
   return {
     id: getStellarWalletId(moduleId),

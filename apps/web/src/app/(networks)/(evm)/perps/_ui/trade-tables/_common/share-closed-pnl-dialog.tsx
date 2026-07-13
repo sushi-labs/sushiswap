@@ -500,15 +500,12 @@ function SharePoster({
       const canvas = posterRef.current
       if (!canvas) return
 
-      if ('fonts' in document) {
-        await document.fonts.ready
-      }
-
       const {
         drawPosterCanvas,
         getOptionalPosterImage,
         getPosterArtImages,
         getSushiIconImage,
+        loadPosterFont,
       } = await import('./share-closed-pnl-image')
       if (cancelled) return
 
@@ -516,6 +513,7 @@ function SharePoster({
         getSushiIconImage(),
         getOptionalPosterImage(imageUrl),
         getPosterArtImages(),
+        loadPosterFont(),
       ])
       if (cancelled) return
 

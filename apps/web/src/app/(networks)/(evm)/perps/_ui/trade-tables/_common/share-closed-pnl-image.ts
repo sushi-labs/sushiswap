@@ -6,6 +6,33 @@ const POSTER_CANVAS_HEIGHT = POSTER_HEIGHT * POSTER_SCALE
 
 let sushiIconPromise: Promise<HTMLImageElement> | null = null
 let posterArtImagesPromise: Promise<PosterArtImages> | null = null
+let posterFontPromise: Promise<void> | null = null
+
+export function loadPosterFont(): Promise<void> {
+  if (
+    typeof document === 'undefined' ||
+    typeof FontFace === 'undefined' ||
+    !('fonts' in document)
+  ) {
+    return Promise.resolve()
+  }
+
+  if (!posterFontPromise) {
+    const font = new FontFace(
+      'Lufga',
+      'url("/fonts/LufgaRegular.ttf") format("truetype")',
+    )
+
+    posterFontPromise = font
+      .load()
+      .then((loadedFont) => {
+        document.fonts.add(loadedFont)
+      })
+      .catch(() => undefined)
+  }
+
+  return posterFontPromise
+}
 
 export function getSushiIconImage(): Promise<HTMLImageElement> {
   if (!sushiIconPromise) {

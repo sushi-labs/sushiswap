@@ -1,10 +1,6 @@
-import {
-  Partners,
-  type TimeDuration,
-  TimeUnit,
-  getPartnerChains,
-} from '@orbs-network/spot-react'
-import type { EvmChainId } from 'sushi/evm'
+import { type TimeDuration, TimeUnit } from '@orbs-network/spot-react'
+
+export { TWAP_SUPPORTED_CHAIN_IDS } from './supported-chain-ids'
 
 export const TWAP_MIN_FILL_DELAY = {
   value: 5,
@@ -16,9 +12,6 @@ export const TWAP_MAX_FILL_DELAY = {
   unit: TimeUnit.Days,
 } as const satisfies TimeDuration
 
-export const TWAP_SUPPORTED_CHAIN_IDS = getPartnerChains(
-  Partners.Sushiswap,
-) as EvmChainId[]
 export const ORBS_EXPLORER_URL = 'https://orbs-explorer.vercel.app'
 
 // Minimum per-trade (chunk) size in USD. Currently uniform across all

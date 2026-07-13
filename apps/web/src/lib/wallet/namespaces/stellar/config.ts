@@ -5,23 +5,11 @@ import {
   WalletConnectModule,
   WalletConnectTargetChain,
 } from '@creit.tech/stellar-wallets-kit/modules/wallet-connect'
-
-export enum StellarAdapterId {
-  Standard = 'stellar-standard',
-}
-
-const STELLAR_WALLET_ID_PREFIX = 'stellar:'
-
-export function getStellarWalletId(moduleId: string) {
-  return `${STELLAR_WALLET_ID_PREFIX}${moduleId.toLowerCase()}`
-}
-
-export function getStellarModuleId(walletId: string) {
-  if (!walletId.startsWith(STELLAR_WALLET_ID_PREFIX)) return undefined
-
-  const moduleId = walletId.slice(STELLAR_WALLET_ID_PREFIX.length)
-  return moduleId || undefined
-}
+export {
+  StellarAdapterId,
+  getStellarModuleId,
+  getStellarWalletId,
+} from './adapter'
 
 StellarWalletsKit.init({
   network: Networks.PUBLIC,

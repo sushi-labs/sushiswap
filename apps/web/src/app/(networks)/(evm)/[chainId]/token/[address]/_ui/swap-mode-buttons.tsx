@@ -6,8 +6,8 @@ import Link from 'next/link'
 import type { FC, ReactNode } from 'react'
 import { PathnameButton } from 'src/app/_ui/pathname-button'
 import { isLifiXSwapSupportedChainId } from 'src/config'
+import { isTwapSupportedChainId } from 'src/lib/swap/twap/supported-chain-ids'
 import { type EvmToken, getEvmChainById } from 'sushi/evm'
-import { isTwapSupportedChainId } from '~evm/[chainId]/(trade)/(orbs)/_ui/helper'
 
 interface SwapModeButtonProps {
   href?: string

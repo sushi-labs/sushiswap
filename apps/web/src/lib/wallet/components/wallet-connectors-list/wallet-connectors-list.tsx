@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import { EvmAdapterId } from '../../namespaces/evm/config'
-import { StellarAdapterId } from '../../namespaces/stellar/config'
+import { StellarAdapterId } from '../../namespaces/stellar/adapter'
 import { SvmAdapterId } from '../../namespaces/svm/config'
 import type { WalletNamespace, WalletWithState } from '../../types'
 import { useWalletsList } from './use-wallets-list'
