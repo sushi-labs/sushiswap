@@ -4,6 +4,7 @@ import type { EvmChainId } from 'sushi/evm'
 import type { StellarChainId } from 'sushi/stellar'
 import type { SvmChainId } from 'sushi/svm'
 import type { Wallet, WalletConnection } from '../types'
+import type { WalletNamespace } from '../types'
 
 export type WalletContext<
   TChainId extends EvmChainId | SvmChainId | StellarChainId,
@@ -11,6 +12,8 @@ export type WalletContext<
   connections: WalletConnection<TChainId>[]
   isPending: boolean
   isConnected: boolean
+  isRestoring: boolean
+  restoringNamespaces: WalletNamespace[]
 }
 
 export type WalletState = {

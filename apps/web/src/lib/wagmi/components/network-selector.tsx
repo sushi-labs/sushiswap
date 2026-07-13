@@ -28,12 +28,14 @@ export interface NetworkSelectorProps<T extends ChainId = ChainId> {
   networks: readonly T[]
   selected: T
   onSelect: NetworkSelectorOnSelectCallback<T>
+  isLoading?: boolean
   children: ReactNode
 }
 
 const NetworkSelector = <T extends ChainId = ChainId>({
   onSelect,
   networks = SUPPORTED_NETWORKS as T[],
+  isLoading = false,
   children,
 }: Omit<NetworkSelectorProps<T>, 'variant' | 'networks'> & {
   networks: readonly T[] | undefined
@@ -60,7 +62,11 @@ const NetworkSelector = <T extends ChainId = ChainId>({
   )
 
   return (
-    <Popover modal={true} open={open} onOpenChange={setOpen}>
+    <Popover
+      modal={true}
+      open={isLoading ? false : open}
+      onOpenChange={isLoading ? undefined : setOpen}
+    >
       <PopoverPrimitive.Trigger asChild>{children}</PopoverPrimitive.Trigger>
       <PopoverContent className="!w-60 !p-0 !overflow-x-hidden !overflow-y-scroll scroll">
         <Command>

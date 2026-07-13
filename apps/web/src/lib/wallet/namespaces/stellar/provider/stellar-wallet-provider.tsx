@@ -11,6 +11,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { useMarkWalletNamespaceRestored } from 'src/lib/wallet/provider'
 import {
   addWalletConnection,
   clearWalletConnections,
@@ -58,6 +59,7 @@ export default function StellarWalletProvider({
 }
 
 function _StellarWalletProvider({ children }: { children: React.ReactNode }) {
+  const markNamespaceRestored = useMarkWalletNamespaceRestored()
   const initialConnection = getInitialConnection()
   const [account, setAccount] = useState<StellarAddress | undefined>(
     initialConnection.account,
@@ -187,6 +189,10 @@ function _StellarWalletProvider({ children }: { children: React.ReactNode }) {
       icon: _wallet.icon ?? undefined,
     })
   }, [account, isHydrated, wallet])
+
+  useLayoutEffect(() => {
+    if (isHydrated) markNamespaceRestored('stellar')
+  }, [isHydrated, markNamespaceRestored])
 
   return (
     <StellarWalletContext.Provider value={value}>
