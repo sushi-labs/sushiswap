@@ -47,10 +47,10 @@ export function useSvmSimpleSwapTradeReview(): UseSimpleSwapTradeReviewBaseRetur
         token1: undefined,
       }
 
-  return _useSvmSimpleSwapTradeReview(state)
+  return useSvmSimpleSwapTradeReviewForState(state)
 }
 
-function _useSvmSimpleSwapTradeReview({
+function useSvmSimpleSwapTradeReviewForState({
   chainId,
   recipient,
   token0,

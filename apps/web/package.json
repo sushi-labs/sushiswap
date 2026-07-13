@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
+    "build": "NODE_OPTIONS=--max-old-space-size=8192 next build",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc",
     "copy-trading-view-files": "sh scripts/trading-view/copy_charting_library_files.sh",
@@ -178,6 +178,7 @@
     "@types/ungap__structured-clone": "1.2.0",
     "@viem/anvil": "0.0.10",
     "autoprefixer": "10.4.14",
+    "babel-plugin-react-compiler": "^1.0.0",
     "core-js": "3.38.1",
     "eslint": "9.18.0",
     "eslint-config-next": "15.1.4",

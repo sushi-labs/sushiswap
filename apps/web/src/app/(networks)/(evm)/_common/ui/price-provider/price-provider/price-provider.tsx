@@ -27,10 +27,11 @@ function reducer(
 ): ProviderState<PriceWorkerChainId> {
   switch (action.type) {
     case 'UPDATE_CHAIN_STATE': {
-      const currentChain = state.chains.get(action.payload.chainId)
+      const chains = new Map(state.chains)
+      const currentChain = chains.get(action.payload.chainId)
 
       if (currentChain) {
-        state.chains.set(action.payload.chainId, {
+        chains.set(action.payload.chainId, {
           ...currentChain,
           ...action.payload,
           priceMap: action.payload.priceMap || currentChain.priceMap,
@@ -47,7 +48,7 @@ function reducer(
           throw new Error('Invalid initial chain state')
         }
 
-        state.chains.set(action.payload.chainId, {
+        chains.set(action.payload.chainId, {
           chainId: action.payload.chainId,
           isError,
           isLoading,
@@ -59,6 +60,7 @@ function reducer(
 
       return {
         ...state,
+        chains,
       }
     }
     default:
