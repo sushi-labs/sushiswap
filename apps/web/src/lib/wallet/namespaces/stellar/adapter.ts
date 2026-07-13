@@ -6,6 +6,8 @@ const STELLAR_WALLET_ID_PREFIX = 'stellar:'
 
 export const STELLAR_SELECTED_MODULE_STORAGE_KEY =
   '@StellarWalletsKit/selectedModuleId'
+export const STELLAR_ACTIVE_ADDRESS_STORAGE_KEY =
+  '@StellarWalletsKit/activeAddress'
 
 export function getStellarWalletId(moduleId: string): string {
   return `${STELLAR_WALLET_ID_PREFIX}${moduleId.toLowerCase()}`

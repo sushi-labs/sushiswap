@@ -16,9 +16,14 @@ import {
   clearWalletConnections,
 } from 'src/lib/wallet/provider/store'
 import type { Wallet } from 'src/lib/wallet/types'
-import { type StellarAddress, StellarChainId } from 'sushi/stellar'
+import {
+  type StellarAddress,
+  StellarChainId,
+  isStellarAccountAddress,
+} from 'sushi/stellar'
 import type { WalletNamespaceContext } from '../../types'
 import {
+  STELLAR_ACTIVE_ADDRESS_STORAGE_KEY,
   STELLAR_SELECTED_MODULE_STORAGE_KEY,
   StellarAdapterId,
   getStellarModuleId,
@@ -195,10 +200,29 @@ function getInitialConnection(): {
   wallet: Wallet | null
   isHydrated: boolean
 } {
+  const moduleId = globalThis.localStorage?.getItem(
+    STELLAR_SELECTED_MODULE_STORAGE_KEY,
+  )
+  const storedAccount = globalThis.localStorage?.getItem(
+    STELLAR_ACTIVE_ADDRESS_STORAGE_KEY,
+  )
+  const account =
+    storedAccount && isStellarAccountAddress(storedAccount)
+      ? storedAccount
+      : undefined
+
+  if (moduleId && account) {
+    return {
+      account,
+      wallet: toWallet(moduleId),
+      isHydrated: true,
+    }
+  }
+
   return {
     account: undefined,
     wallet: null,
-    isHydrated: !hasPersistedStellarConnection(),
+    isHydrated: !moduleId,
   }
 }
 
