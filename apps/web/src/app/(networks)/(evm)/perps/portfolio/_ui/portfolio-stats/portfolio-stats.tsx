@@ -99,6 +99,7 @@ export const PortfolioStats = () => {
   const {
     spotEquity,
     perpsEquity,
+    portfolioValue,
     isLoading: isLoadingAccountValues,
     error: accountValuesError,
   } = useUserAccountValues()
@@ -270,9 +271,7 @@ export const PortfolioStats = () => {
                   </HoverCardContent>
                 </HoverCard>
               }
-              value={currencyFormatter.format(
-                Number(perpsEquity || 0) + Number(spotEquity || 0),
-              )}
+              value={currencyFormatter.format(portfolioValue)}
             />
           ) : (
             <>
