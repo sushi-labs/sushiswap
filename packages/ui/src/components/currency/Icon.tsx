@@ -97,6 +97,7 @@ const LOGO: Record<number, string> = {
   [ChainId.MEGAETH]: EthereumLogo,
   [ChainId.XLAYER]: OkbLogo,
   [ChainId.SOLANA]: SolanaLogo,
+  [ChainId.ROBINHOOD]: EthereumLogo,
 }
 // function djb2(str: string) {
 //   let hash = 5381
