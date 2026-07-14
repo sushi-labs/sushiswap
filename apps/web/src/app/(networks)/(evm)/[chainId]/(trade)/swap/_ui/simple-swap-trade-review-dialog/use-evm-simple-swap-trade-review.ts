@@ -318,7 +318,8 @@ function useEvmSimpleSwapTradeReviewForState({
   })
 
   const write = useMemo(() => {
-    if (!trade?.tx || address !== trade.tx.from) return undefined
+    if (!trade?.tx || address?.toLowerCase() !== trade.tx.from.toLowerCase())
+      return undefined
 
     const { to, gas, data, value } = trade.tx
 
