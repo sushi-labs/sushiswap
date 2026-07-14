@@ -9,6 +9,7 @@ import { ChainId } from 'sushi'
 import {
   type StellarAccountAddress,
   type StellarContractAddress,
+  type StellarToken,
   isStellarAccountAddress,
 } from 'sushi/stellar'
 import { useStellarWallet } from '~stellar/providers'
@@ -191,24 +192,12 @@ export function useCreateTrustline() {
 }
 
 /**
- * Token info for trustline checking
- */
-type TokenTrustlineInfo =
-  | {
-      code: string
-      contract: StellarContractAddress
-      issuer: StellarAccountAddress | ''
-    }
-  | null
-  | undefined
-
-/**
  * Hook to check if multiple tokens need trustlines
  *
  * Takes an array of tokens and returns an array of trustline needs for each token.
  * Now uses dynamic Horizon lookup for tokens without known issuers.
  */
-export function useNeedsTrustlines(tokens: TokenTrustlineInfo[]) {
+export function useNeedsTrustlines(tokens: StellarToken[]) {
   const { connectedAddress } = useStellarWallet()
 
   const trustlineQueries = useQuery({
@@ -217,7 +206,9 @@ export function useNeedsTrustlines(tokens: TokenTrustlineInfo[]) {
       'trustlines-batch',
       connectedAddress,
       tokens
-        .map((t) => `${t?.code || ''}:${t?.contract || ''}:${t?.issuer || ''}`)
+        .map(
+          (token) => `${token.symbol}:${token.address}:${token.issuer || ''}`,
+        )
         .join(','),
     ],
     queryFn: async () => {
@@ -227,13 +218,10 @@ export function useNeedsTrustlines(tokens: TokenTrustlineInfo[]) {
 
       return await Promise.all(
         tokens.map(async (token) => {
-          if (!token?.code || !token?.contract) {
-            return NO_TRUSTLINE_NEEDED
-          }
           return await checkTokenTrustline(
             connectedAddress,
-            token.code,
-            token.contract,
+            token.symbol,
+            token.address,
             token.issuer && isStellarAccountAddress(token.issuer)
               ? token.issuer
               : '',
@@ -241,7 +229,7 @@ export function useNeedsTrustlines(tokens: TokenTrustlineInfo[]) {
         }),
       )
     },
-    enabled: Boolean(connectedAddress),
+    enabled: Boolean(connectedAddress && tokens.length > 0),
     staleTime: ms('30s'),
   })
 
@@ -261,14 +249,8 @@ export function useNeedsTrustlines(tokens: TokenTrustlineInfo[]) {
  * Now dynamically looks up asset info from Horizon if issuer is not known.
  * Works with SAC-wrapped classic assets even if issuer wasn't pre-populated.
  */
-export function useNeedsTrustline(
-  params: {
-    code: string
-    contract: StellarContractAddress
-    issuer: StellarAccountAddress | ''
-  } | null,
-) {
-  const { results, isLoading } = useNeedsTrustlines([params])
+export function useNeedsTrustline(token: StellarToken | undefined) {
+  const { results, isLoading } = useNeedsTrustlines(token ? [token] : [])
   const result = results[0] || NO_TRUSTLINE_NEEDED
 
   return {

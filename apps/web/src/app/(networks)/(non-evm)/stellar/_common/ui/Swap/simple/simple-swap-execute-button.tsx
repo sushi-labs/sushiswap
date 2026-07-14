@@ -45,15 +45,7 @@ export const SimpleSwapExecuteButton = () => {
   // Check if output token needs trustline (for native assets)
   // Note: Input token (token0) doesn't need trustline check - user must already have it to swap FROM it
   const { needsTrustline: needsToken1Trustline, issuer: token1ResolvedIssuer } =
-    useNeedsTrustline(
-      token1
-        ? {
-            code: token1.symbol,
-            contract: token1.address,
-            issuer: token1.issuer ?? '',
-          }
-        : null,
-    )
+    useNeedsTrustline(token1)
   const [, { slippageTolerance }] = useSlippageTolerance(
     SlippageToleranceStorageKey.Swap,
   )

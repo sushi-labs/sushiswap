@@ -87,20 +87,12 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     needsTrustline: needsToken0Trustline,
     isLoading: isLoadingToken0Trustline,
     issuer: token0ResolvedIssuer,
-  } = useNeedsTrustline({
-    code: pool.token0.symbol,
-    contract: pool.token0.address,
-    issuer: pool.token0.issuer ?? '',
-  })
+  } = useNeedsTrustline(pool.token0)
   const {
     needsTrustline: needsToken1Trustline,
     isLoading: isLoadingToken1Trustline,
     issuer: token1ResolvedIssuer,
-  } = useNeedsTrustline({
-    code: pool.token1.symbol,
-    contract: pool.token1.address,
-    issuer: pool.token1.issuer ?? '',
-  })
+  } = useNeedsTrustline(pool.token1)
   const isLoadingTrustlines =
     isLoadingToken0Trustline || isLoadingToken1Trustline
   // Use the resolved issuers from the trustline check (looked up from Horizon if not already known)
@@ -153,8 +145,8 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     balances?.token1.amount ?? '0',
     tickLower,
     tickUpper,
-    pool.token0.decimals,
-    pool.token1.decimals,
+    pool.token0,
+    pool.token1,
   )
 
   // Calculate max amount that can be entered based on balances
@@ -206,10 +198,8 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     independentField,
     tickLower,
     tickUpper,
-    independentToken.decimals,
-    dependentToken.decimals,
-    independentToken.symbol,
-    dependentToken.symbol,
+    independentToken,
+    dependentToken,
   )
 
   // Calculate dependent amount (only used in normal mode, not zap mode)

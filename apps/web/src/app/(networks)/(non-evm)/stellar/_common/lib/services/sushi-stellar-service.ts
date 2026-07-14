@@ -1,4 +1,5 @@
 import { addMinutes } from 'date-fns'
+import { parseUnits } from 'viem'
 import { getPoolInfoFromContract } from '../soroban/pool-helpers'
 import {
   increaseLiquidity,
@@ -22,17 +23,8 @@ export class SushiStellarService {
     signTransaction: (xdr: string) => Promise<string>,
     signAuthEntry: (entryPreimageXdr: string) => Promise<string>,
   ): Promise<{ txHash: string; tokenId: number; liquidity: bigint }> {
-    // Convert string amounts to bigint
-    const amount0 = BigInt(
-      Math.floor(
-        Number.parseFloat(params.token0Amount) * 10 ** params.token0Decimals,
-      ),
-    )
-    const amount1 = BigInt(
-      Math.floor(
-        Number.parseFloat(params.token1Amount) * 10 ** params.token1Decimals,
-      ),
-    )
+    const amount0 = parseUnits(params.token0Amount, params.token0Decimals)
+    const amount1 = parseUnits(params.token1Amount, params.token1Decimals)
 
     const deadline = BigInt(
       params.deadline || Math.floor(addMinutes(new Date(), 5).valueOf() / 1000),

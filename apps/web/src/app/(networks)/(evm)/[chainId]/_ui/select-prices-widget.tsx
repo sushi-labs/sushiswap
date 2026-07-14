@@ -1,19 +1,13 @@
 'use client'
 
-import {
-  MinusIcon,
-  PlusIcon,
-  SwitchHorizontalIcon,
-} from '@heroicons/react-v1/solid'
+import { SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { useIsMounted } from '@sushiswap/hooks'
 import {
   Button,
   Card,
-  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
   Explainer,
   FormSection,
   Label,
@@ -37,6 +31,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import { PriceBlock } from 'src/lib/components/price-block'
 import { Bound, Field } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import {
@@ -870,128 +865,5 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
         </div>
       </div>
     </FormSection>
-  )
-}
-
-interface PriceBlockProps {
-  id?: string
-  token0: EvmCurrency | undefined
-  token1: EvmCurrency | undefined
-  label: string
-  value: string
-  decrement(): string
-  increment(): string
-  onUserInput(val: string): void
-  decrementDisabled?: boolean
-  incrementDisabled?: boolean
-  locked?: boolean
-  focus?: boolean
-}
-
-export const PriceBlock: FC<PriceBlockProps> = ({
-  id,
-  locked,
-  onUserInput,
-  decrement,
-  increment,
-  decrementDisabled,
-  incrementDisabled,
-  token0,
-  token1,
-  label,
-  value,
-  focus = false,
-}) => {
-  // let user type value and only update parent value on blur
-  const [localValue, setLocalValue] = useState('')
-  const [useLocalValue, setUseLocalValue] = useState(false)
-
-  const handleOnFocus = () => {
-    setUseLocalValue(true)
-  }
-
-  const handleOnBlur = useCallback(() => {
-    setUseLocalValue(false)
-    onUserInput(localValue) // trigger update on parent value
-  }, [localValue, onUserInput])
-
-  // for button clicks
-  const handleDecrement = useCallback(() => {
-    setUseLocalValue(false)
-    onUserInput(decrement())
-  }, [decrement, onUserInput])
-
-  const handleIncrement = useCallback(() => {
-    setUseLocalValue(false)
-    onUserInput(increment())
-  }, [increment, onUserInput])
-
-  useEffect(() => {
-    if (localValue !== value && !useLocalValue) {
-      setTimeout(() => {
-        setLocalValue(value) // reset local value to match parent
-      }, 0)
-    }
-  }, [localValue, useLocalValue, value])
-
-  return (
-    <Card
-      className="bg-transparent shadow-none"
-      onBlur={handleOnBlur}
-      onFocus={handleOnFocus}
-    >
-      <CardHeader>
-        <CardTitle>{label}</CardTitle>
-        <CardDescription>
-          {token1?.symbol} per {token0?.symbol}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-center justify-between">
-          <TextField
-            autoFocus={focus}
-            variant="naked"
-            testdata-id={`${id}-input`}
-            type="number"
-            value={localValue}
-            onValueChange={setLocalValue}
-            disabled={locked}
-            tabIndex={0}
-            className="text-3xl font-medium pt-1 pb-2"
-          />
-          <div className="flex gap-1">
-            <button
-              type="button"
-              disabled={decrementDisabled}
-              onClick={handleDecrement}
-              className={classNames(
-                decrementDisabled
-                  ? 'opacity-40'
-                  : 'hover:bg-gray-300 dark:hover:bg-slate-600',
-                'flex items-center justify-center w-5 h-5 bg-gray-200 dark:bg-slate-700 rounded-full',
-              )}
-              tabIndex={-1}
-            >
-              <MinusIcon width={12} height={12} />
-            </button>
-            <button
-              type="button"
-              disabled={incrementDisabled}
-              onClick={handleIncrement}
-              onKeyDown={handleIncrement}
-              className={classNames(
-                incrementDisabled
-                  ? 'opacity-40'
-                  : 'hover:bg-gray-300 dark:hover:bg-slate-600',
-                'flex items-center justify-center w-5 h-5 bg-gray-200 dark:bg-slate-700 rounded-full',
-              )}
-              tabIndex={-1}
-            >
-              <PlusIcon width={12} height={12} />
-            </button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
   )
 }

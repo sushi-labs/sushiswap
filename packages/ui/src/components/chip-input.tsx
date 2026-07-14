@@ -33,7 +33,7 @@ const ChipInputRoot = React.forwardRef<HTMLDivElement, ChipInputRootProps>(
 ChipInputRoot.displayName = 'ChipInputRoot'
 
 interface ChipInputProps
-  extends Omit<React.HTMLAttributes<HTMLInputElement>, 'size'>,
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
     Omit<VariantProps<typeof chipVariants>, 'variant'>,
     VariantProps<typeof textFieldVariants> {
   icon?: IconComponent

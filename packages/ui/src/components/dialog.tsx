@@ -15,9 +15,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { type ChainId, getChainById } from 'sushi'
-
-import type { EvmChainId } from 'sushi/evm'
+import { type ChainId, type TxHashFor, getChainById } from 'sushi'
 import { CheckMarkIcon } from '../icons/CheckMarkIcon'
 import { FailedMarkIcon } from '../icons/FailedMarkIcon'
 import {
@@ -235,7 +233,7 @@ interface DialogConfirmProps<TChainId extends ChainId>
   successMessage: ReactNode
   buttonLink?: string
   buttonText?: string
-  txHash: (TChainId extends EvmChainId ? `0x${string}` : string) | undefined
+  txHash: TxHashFor<TChainId> | undefined
   status: 'pending' | 'success' | 'error'
 }
 
@@ -252,7 +250,7 @@ function DialogConfirm<TChainId extends ChainId>({
   const { open, setOpen } = useDialog(DialogType.Confirm)
   const txHashUrl = useMemo(() => {
     if (!txHash) return ''
-    return getChainById(chainId).getTransactionUrl(txHash as `0x${string}`)
+    return getChainById(chainId).getTransactionUrl(txHash)
   }, [chainId, txHash])
 
   return (

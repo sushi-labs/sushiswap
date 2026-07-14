@@ -52,32 +52,6 @@ export function getTickToPrice(
   return tickToPrice(baseToken, quoteToken, tick)
 }
 
-export function tryParsePrice(
-  baseToken?: EvmToken,
-  quoteToken?: EvmToken,
-  value?: string,
-) {
-  if (!baseToken || !quoteToken || !value) {
-    return undefined
-  }
-
-  if (!value.match(/^\d*\.?\d+$/)) {
-    return undefined
-  }
-
-  const [whole, fraction] = value.split('.')
-
-  const decimals = fraction?.length ?? 0
-  const withoutDecimals = BigInt((whole ?? '') + (fraction ?? ''))
-
-  return new Price({
-    base: baseToken,
-    quote: quoteToken,
-    numerator: withoutDecimals * BigInt(10 ** quoteToken.decimals),
-    denominator: BigInt(10 ** decimals) * BigInt(10 ** baseToken.decimals),
-  })
-}
-
 export function tryParseTick(
   baseToken?: EvmToken,
   quoteToken?: EvmToken,
@@ -88,7 +62,7 @@ export function tryParseTick(
     return undefined
   }
 
-  const price = tryParsePrice(baseToken, quoteToken, value)
+  const price = Price.tryFromHuman(baseToken, quoteToken, value)
 
   if (!price) {
     return undefined

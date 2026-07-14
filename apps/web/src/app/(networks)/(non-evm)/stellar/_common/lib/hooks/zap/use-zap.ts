@@ -10,6 +10,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { addMinutes } from 'date-fns'
 import { ChainId } from 'sushi'
 import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
+import { parseUnits } from 'viem'
 import type { RouteWithTokens } from '~stellar/swap/lib/swap-get-route'
 import { calculateAmountOutMinimum } from '../../services/router-service'
 import { DEFAULT_TIMEOUT, contractAddresses } from '../../soroban'
@@ -88,9 +89,7 @@ export const useZap = () => {
         throw new Error(`No route from ${tokenIn.symbol} to ${token1.symbol}`)
       }
 
-      const amountInBigInt = BigInt(
-        Math.floor(Number.parseFloat(amountIn) * 10 ** tokenInDecimals),
-      )
+      const amountInBigInt = parseUnits(amountIn, tokenInDecimals)
 
       const zapRouterClient = getZapRouterContractClient({
         contractId: contractAddresses.ZAP_ROUTER,
