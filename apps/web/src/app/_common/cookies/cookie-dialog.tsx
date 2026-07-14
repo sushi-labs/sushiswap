@@ -46,7 +46,6 @@ function BaseCookieDialog({
             variant="link"
             size="sm"
             onClick={() => setIsExpanded(!isExpanded)}
-            as="span"
             className={'ml-1 float-right clear-both'}
           >
             <span className="pl-0.5">More</span>

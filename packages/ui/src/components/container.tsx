@@ -14,6 +14,7 @@ const containerVariants = cva('w-full mx-auto', {
       'screen-2xl': 'max-w-screen-2xl',
       'screen-3xl': 'max-w-[1792px]',
       'screen-4xl': 'max-w-[2048px]',
+      '8xl': 'max-w-[88rem]',
       '7xl': 'max-w-7xl',
       '6xl': 'max-w-6xl',
       '5xl': 'max-w-5xl',
