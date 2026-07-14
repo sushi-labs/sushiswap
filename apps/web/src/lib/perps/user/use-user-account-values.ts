@@ -3,6 +3,7 @@ import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserState } from '~evm/perps/user-provider'
 import { getCollateralTokenForDex, useAllPerpMetas } from '../info'
+import { getPortfolioValue } from './get-portfolio-value'
 
 export const useUserAccountValues = () => {
   const {
@@ -15,6 +16,11 @@ export const useUserAccountValues = () => {
         data: spotState,
         isLoading: isLoadingSpotState,
         error: errorSpotState,
+      },
+      webData3Query: {
+        data: webData3,
+        isLoading: isLoadingWebData3,
+        error: errorWebData3,
       },
       allDexClearinghouseStateQuery: {
         data: allDexClearinghouseState,
@@ -42,6 +48,7 @@ export const useUserAccountValues = () => {
     if (!address) return false
     return (
       isLoadingSpotState ||
+      isLoadingWebData3 ||
       allDexLoading ||
       assetListLoading ||
       isLoadingAllPerpMetas
@@ -49,6 +56,7 @@ export const useUserAccountValues = () => {
   }, [
     address,
     isLoadingSpotState,
+    isLoadingWebData3,
     allDexLoading,
     assetListLoading,
     isLoadingAllPerpMetas,
@@ -56,16 +64,27 @@ export const useUserAccountValues = () => {
 
   const error = useMemo(() => {
     if (!address) return null
-    return errorSpotState || allDexError || assetListError || errorAllPerpMetas
-  }, [address, errorSpotState, allDexError, assetListError, errorAllPerpMetas])
+    return (
+      errorSpotState ||
+      errorWebData3 ||
+      allDexError ||
+      assetListError ||
+      errorAllPerpMetas
+    )
+  }, [
+    address,
+    errorSpotState,
+    errorWebData3,
+    allDexError,
+    assetListError,
+    errorAllPerpMetas,
+  ])
 
   const spotEquity = useMemo(() => {
     if (!spotState?.spotState?.balances || !assetList) return 0
     return (
       spotState.spotState.balances.reduce((acc, asset) => {
-        const hold = Number(asset?.hold) ?? 0
-        const total = Number(asset?.total) ?? 0
-        const balance = total - hold
+        const balance = Number(asset?.total) ?? 0
         if (asset.coin === 'USDC') {
           return acc + balance
         }
@@ -164,8 +183,12 @@ export const useUserAccountValues = () => {
   }, [allDexClearinghouseState])
 
   const portfolioValue = useMemo(() => {
-    return perpsEquity + spotEquity
-  }, [perpsEquity, spotEquity])
+    return getPortfolioValue({
+      isUnifiedAccount: webData3?.userState?.abstraction === 'unifiedAccount',
+      perpsEquity,
+      spotEquity,
+    })
+  }, [perpsEquity, spotEquity, webData3?.userState?.abstraction])
 
   const clearhouseStateTotal = useMemo(() => {
     if (!spotState?.spotState?.balances || !assetList || !allPerpMetas) {
@@ -178,9 +201,7 @@ export const useUserAccountValues = () => {
 
     return (
       spotState.spotState.balances.reduce((acc, asset) => {
-        const hold = Number(asset?.hold) ?? 0
-        const total = Number(asset?.total) ?? 0
-        const balance = total - hold
+        const balance = Number(asset?.total) ?? 0
         if (asset.coin === 'USDC') {
           return acc + balance
         }
