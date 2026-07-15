@@ -22,6 +22,7 @@ import { type Hex, stringify, zeroAddress } from 'viem'
 import { useConnection } from 'wagmi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { apiAdapter02To01 } from './apiAdapter'
+import { EVM_TRADE_GAS_MARGIN_PERCENT } from './evm-trade-gas-margin'
 import type { UseEvmTradeParams, UseEvmTradeQuerySelect } from './types'
 import { tradeValidator02 } from './validator02'
 
@@ -219,7 +220,11 @@ export const useEvmTrade = (variables: UseEvmTradeParams) => {
         const gasSpent = gasPrice
           ? new Amount(
               EvmNative.fromChainId(chainId),
-              gasPrice * addGasMargin(BigInt(Math.floor(data.route.gasSpent))),
+              gasPrice *
+                addGasMargin(
+                  BigInt(Math.floor(data.route.gasSpent)),
+                  EVM_TRADE_GAS_MARGIN_PERCENT,
+                ),
             )
           : undefined
 

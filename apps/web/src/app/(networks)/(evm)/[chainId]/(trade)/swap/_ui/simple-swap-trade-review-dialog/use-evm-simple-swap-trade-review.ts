@@ -11,7 +11,10 @@ import { useCallback, useMemo, useRef } from 'react'
 import type { SupportedChainId } from 'src/config'
 import { APPROVE_TAG_SWAP, NativeAddress } from 'src/lib/constants'
 import { sendDrilldownLog } from 'src/lib/drilldown-log'
-import type { UseEvmTradeReturn } from 'src/lib/hooks/react-query'
+import {
+  EVM_TRADE_GAS_MARGIN_PERCENT,
+  type UseEvmTradeReturn,
+} from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { logger } from 'src/lib/logger'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
@@ -329,7 +332,9 @@ function useEvmSimpleSwapTradeReviewForState({
           to,
           data,
           value,
-          gas: gas ? addGasMargin(BigInt(gas)) : undefined,
+          gas: gas
+            ? addGasMargin(BigInt(gas), EVM_TRADE_GAS_MARGIN_PERCENT)
+            : undefined,
         })
         confirm()
       } catch {}

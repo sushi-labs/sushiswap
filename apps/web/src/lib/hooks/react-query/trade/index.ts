@@ -1,4 +1,5 @@
 export * from './apiAdapter'
+export * from './evm-trade-gas-margin'
 export * from './svmUltraValidator'
 export * from './types'
 export * from './useEvmTrade'
