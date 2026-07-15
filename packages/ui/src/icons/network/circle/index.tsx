@@ -37,6 +37,7 @@ import { OptimismCircle } from './OptimismCircle'
 import { PlasmaCircle } from './PlasmaCircle'
 import { PolygonCircle } from './PolygonCircle'
 import { PolygonZKCircle } from './PolygonZKCircle'
+import { RobinhoodCircle } from './RobinhoodCircle'
 import { RootstockCircle } from './RootstockCircle'
 import { ScrollCircle } from './ScrollCircle'
 import { SkaleCircle } from './SkaleCircle'
@@ -93,6 +94,7 @@ export * from './PalmCircle'
 export * from './PlasmaCircle'
 export * from './PolygonCircle'
 export * from './PolygonZKCircle'
+export * from './RobinhoodCircle'
 export * from './RootstockCircle'
 export * from './ScrollCircle'
 export * from './SkaleCircle'
@@ -158,4 +160,5 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.APTOS]: AptosCircle,
   [ChainId.STELLAR]: StellarCircle,
   [ChainId.SOLANA]: SolanaCircle,
+  [ChainId.ROBINHOOD]: RobinhoodCircle,
 }

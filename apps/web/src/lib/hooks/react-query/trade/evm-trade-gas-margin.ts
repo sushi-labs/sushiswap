@@ -1,0 +1,1 @@
+export const EVM_TRADE_GAS_MARGIN_PERCENT = 80

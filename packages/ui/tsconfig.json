@@ -6,6 +6,7 @@
     "jsx": "react-jsx",
     "lib": ["ESNext", "DOM"],
     "module": "ESNext",
+    "moduleResolution": "Bundler",
     "target": "esnext",
     "resolveJsonModule": true,
     "rootDir": "./src",

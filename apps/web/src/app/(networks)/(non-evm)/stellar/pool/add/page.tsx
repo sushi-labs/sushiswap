@@ -479,7 +479,7 @@ export default function AddPoolPage() {
             <div className="flex flex-row gap-2">
               <TextField
                 type="number"
-                label={orderedToken0?.symbol || 'Token 1'}
+                aria-label={orderedToken0?.symbol || 'Token 1'}
                 placeholder="0.0"
                 value={orderedToken0Amount}
                 onValueChange={(value) => {
@@ -566,7 +566,7 @@ export default function AddPoolPage() {
                       ? 'text'
                       : 'number'
                   }
-                  label={orderedToken1?.symbol || 'Token 2'}
+                  aria-label={orderedToken1?.symbol || 'Token 2'}
                   placeholder={
                     existingPoolAddress && poolInitialized === true
                       ? 'Auto-calculated'

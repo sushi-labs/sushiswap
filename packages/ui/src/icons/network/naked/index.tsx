@@ -38,6 +38,7 @@ import { OptimismNaked } from './OptimismNaked'
 import { PlasmaNaked } from './PlasmaNaked'
 import { PolygonNaked } from './PolygonNaked'
 import { PolygonZKNaked } from './PolygonZKNaked'
+import { RobinhoodNaked } from './RobinhoodNaked'
 import { RootstockNaked } from './RootstockNaked'
 import { ScrollNaked } from './ScrollNaked'
 import { SkaleNaked } from './SkaleNaked'
@@ -94,6 +95,7 @@ export * from './PalmNaked'
 export * from './PlasmaNaked'
 export * from './PolygonNaked'
 export * from './PolygonZKNaked'
+export * from './RobinhoodNaked'
 export * from './RootstockNaked'
 export * from './ScrollNaked'
 export * from './SkaleNaked'
@@ -158,4 +160,5 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.APTOS]: AptosNaked,
   [ChainId.STELLAR]: StellarNaked,
   [ChainId.SOLANA]: SolanaNaked,
+  [ChainId.ROBINHOOD]: RobinhoodNaked,
 }

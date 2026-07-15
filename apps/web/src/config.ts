@@ -80,9 +80,10 @@ export const BLADE_SUPPORTED_NETWORKS = BLADE_SUPPORTED_CHAIN_IDS.filter(
   (c) => !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
 
-export const NEW_CHAIN_IDS = [] as const
+export const NEW_CHAIN_IDS = [ChainId.ROBINHOOD] as const
 
 export const PREFERRED_CHAINID_ORDER = [
+  ...NEW_CHAIN_IDS,
   ChainId.ETHEREUM,
   ChainId.BSC,
   ChainId.BASE,
@@ -271,6 +272,7 @@ export const LIFI_XSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.PLASMA,
   ChainId.POLYGON,
   // ChainId.POLYGON_ZKEVM,
+  ChainId.ROBINHOOD,
   ChainId.ROOTSTOCK,
   ChainId.SCROLL,
   ChainId.SONIC,
