@@ -5,8 +5,8 @@ import { useRecentWallets } from 'src/lib/wallet/hooks/use-recent-wallets'
 import { useConnectors } from 'wagmi'
 import type { WalletWithState } from '../../../types'
 import { isInjectedConnector } from '../adapters/injected'
+import { isSafeAppAvailable } from '../adapters/safe'
 import { EVM_WALLETS, EvmAdapterId } from '../config'
-import { isSafeAppAvailable } from '../utils/is-safe-app-available'
 
 export function useEvmWallets() {
   const connectors = useConnectors()
