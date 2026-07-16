@@ -17,6 +17,7 @@ import {
 } from 'react'
 import { getConnectorConfig } from 'src/app/(networks)/(non-evm)/solana/_common/config/connector'
 import { usePrivyEmbeddedWallet } from 'src/lib/wallet'
+import { useMarkWalletNamespaceRestored } from 'src/lib/wallet/provider'
 import {
   addWalletConnection,
   clearWalletConnections,
@@ -61,7 +62,8 @@ export default function SvmWalletProvider({
 
 function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
   const client = useConnectorClient()
-  useRegisterPrivySvmWallet(client)
+  const isRestored = useRegisterPrivySvmWallet(client)
+  const markNamespaceRestored = useMarkWalletNamespaceRestored()
   const privyEmbeddedWallet = usePrivyEmbeddedWallet('svm')
   const walletInfo = useWalletInfo()
   const {
@@ -187,6 +189,10 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
       icon: walletInfo.icon ?? undefined,
     })
   }, [isConnected, connector, walletInfo.name, walletInfo.icon])
+
+  useEffect(() => {
+    if (isRestored) markNamespaceRestored('svm')
+  }, [isRestored, markNamespaceRestored])
 
   return (
     <SvmWalletContext.Provider value={value}>

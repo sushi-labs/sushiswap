@@ -4,8 +4,8 @@ import { LinkInternal, Navigation, classNames } from '@sushiswap/ui'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import type { FC } from 'react'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
+import { useResolvedChainId } from 'src/lib/wagmi/hooks/wallet/use-resolved-chain-id'
 import type { ChainId } from 'sushi'
-import { useChainId } from 'wagmi'
 import { PointsCTA } from '~evm/perps/points/_ui/points-cta'
 import { SettingsDialog } from '../account-management'
 import { ActiveAccountSelector } from './active-account-selector'
@@ -20,8 +20,7 @@ export const PerpsHeader: FC<HeaderProps> = ({
   chainId: _chainId,
   networks,
 }) => {
-  const connectedChainId = useChainId()
-  const chainId = _chainId ?? connectedChainId
+  const { chainId } = useResolvedChainId(_chainId)
 
   return (
     <div className="w-full h-[56px] z-20">

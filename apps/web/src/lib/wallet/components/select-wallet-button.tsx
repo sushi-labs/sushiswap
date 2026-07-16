@@ -11,6 +11,7 @@ import type React from 'react'
 import type { FC } from 'react'
 import { useSidebar } from 'src/app/(networks)/_ui/sidebar'
 import { SidebarTrigger } from 'src/app/(networks)/_ui/sidebar/sidebar-trigger'
+import { useIsWalletRestoring } from '../hooks'
 import { useWalletContext } from '../provider'
 import type { WalletNamespace } from '../types'
 
@@ -27,6 +28,15 @@ export const SelectWalletButton: FC<SelectWalletButtonProps> = ({
   const { open } = useSidebar()
 
   const { isPending } = useWalletContext()
+  const isNamespaceRestoring = useIsWalletRestoring(namespace ?? 'evm')
+
+  if (isNamespaceRestoring) {
+    return (
+      <Button loading disabled {...props}>
+        Restoring Wallet
+      </Button>
+    )
+  }
 
   // Pending confirmation state
   // Awaiting wallet confirmation

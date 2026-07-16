@@ -32,9 +32,6 @@ export const getWagmiConfig = () => {
   return wagmiConfigSingleton
 }
 
-export const getWagmiInitialState = (
-  cookieHeaders: string | null | undefined,
-) => {
-  const initialState = cookieToInitialState(getWagmiConfig(), cookieHeaders)
-  return initialState
+export function getWagmiInitialState(cookie: string | null | undefined) {
+  return cookieToInitialState(getWagmiConfig(), cookie)
 }
