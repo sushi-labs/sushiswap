@@ -1,13 +1,5 @@
 import type { Connector, CreateConnectorFn } from 'wagmi'
 import type { Wallet } from '../../types'
-import {
-  getCoinbaseWalletConnector,
-  getInjectedConnector,
-  getMetaMaskConnector,
-  getPortoConnector,
-  getSafeConnector,
-  getWalletConnectConnector,
-} from './adapters'
 
 export const EvmAdapterId = {
   Injected: 'evm-injected',
@@ -91,10 +83,32 @@ export const EvmAdapterConfig: Record<
   EvmAdapterId,
   (ctx?: { uid: string | undefined }) => Promise<Connector | CreateConnectorFn>
 > = {
-  [EvmAdapterId.Injected]: (ctx) => getInjectedConnector(ctx),
-  [EvmAdapterId.MetaMask]: () => getMetaMaskConnector(),
-  [EvmAdapterId.Porto]: () => getPortoConnector(),
-  [EvmAdapterId.Safe]: () => getSafeConnector(),
-  [EvmAdapterId.WalletConnect]: () => getWalletConnectConnector(),
-  [EvmAdapterId.CoinbaseWallet]: () => getCoinbaseWalletConnector(),
+  [EvmAdapterId.Injected]: async (ctx) => {
+    const { getInjectedConnector } = await import('./adapters/injected')
+    return getInjectedConnector(ctx)
+  },
+  [EvmAdapterId.MetaMask]: async () => {
+    const { getMetaMaskConnector } = await import('./adapters/metamask')
+    return getMetaMaskConnector()
+  },
+  [EvmAdapterId.Porto]: async () => {
+    const { getPortoConnector } = await import('./adapters/porto')
+    return getPortoConnector()
+  },
+  [EvmAdapterId.Safe]: async () => {
+    const { getSafeConnector } = await import('./adapters/safe')
+    return getSafeConnector()
+  },
+  [EvmAdapterId.WalletConnect]: async () => {
+    const { getWalletConnectConnector } = await import(
+      './adapters/walletconnect'
+    )
+    return getWalletConnectConnector()
+  },
+  [EvmAdapterId.CoinbaseWallet]: async () => {
+    const { getCoinbaseWalletConnector } = await import(
+      './adapters/coinbase-wallet'
+    )
+    return getCoinbaseWalletConnector()
+  },
 }
