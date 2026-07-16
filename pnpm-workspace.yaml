@@ -10,7 +10,7 @@ minimumReleaseAgeExclude:
   - sushi
 
 catalog:
-  "typescript": 5.8.3
+  "typescript": 5.9.3
   "utf-8-validate": 6.0.3
   "zod": 4.1.11
 
@@ -24,16 +24,16 @@ catalogs:
     "sushi": 7.2.1
 
   react:
-    "next": 16.2.6
-    "react": 19.2.4
-    "@types/react": 19.2.14
-    "react-dom": 19.2.4
+    "next": 16.2.9
+    "react": 19.2.7
+    "@types/react": 19.2.17
+    "react-dom": 19.2.7
     "@types/react-dom": 19.2.3
   
   ui:
-    "tailwindcss": 3.3.2
+    "tailwindcss": 3.4.19
 
   tsconfig:
     "@tsconfig/next": 2.0.1
-    "@tsconfig/node20": 20.1.4
+    "@tsconfig/node24": 24.0.4
     "@tsconfig/strictest": 2.0.2

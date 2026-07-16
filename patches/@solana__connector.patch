@@ -1,7 +1,7 @@
-diff --git a/dist/chunk-DFKGCW7K.mjs b/dist/chunk-DFKGCW7K.mjs
+diff --git a/dist/chunk-KE3IEBN2.mjs b/dist/chunk-KE3IEBN2.mjs
 index 2d410ee018fb344a539668218f1fad264a4f9e73..dc231b5b14f0bea1a6e4c3e98f73f8752a5f3dfd 100644
---- a/dist/chunk-DFKGCW7K.mjs
-+++ b/dist/chunk-DFKGCW7K.mjs
+--- a/dist/chunk-KE3IEBN2.mjs
++++ b/dist/chunk-KE3IEBN2.mjs
 @@ -1997,8 +1997,7 @@ var logger5 = createLogger("ConnectorClient"), ConnectorClient = class {
        } catch (error) {
          this.config.debug && logger5.warn("Error unregistering WalletConnect wallet", { error });
@@ -12,10 +12,10 @@ index 2d410ee018fb344a539668218f1fad264a4f9e73..dc231b5b14f0bea1a6e4c3e98f73f875
    }
  };
  var logger6 = createLogger("Polyfills"), installed = false;
-diff --git a/dist/chunk-ULEPN4NL.js b/dist/chunk-ULEPN4NL.js
+diff --git a/dist/chunk-POESNTBI.js b/dist/chunk-POESNTBI.js
 index 86bb0125edb5711e4aabc07ee65a4fa9f1037d24..69b82a8e903078936eabcab221eea3a302d48495 100644
---- a/dist/chunk-ULEPN4NL.js
-+++ b/dist/chunk-ULEPN4NL.js
+--- a/dist/chunk-POESNTBI.js
++++ b/dist/chunk-POESNTBI.js
 @@ -1999,8 +1999,7 @@ var logger5 = chunkBF67LVVM_js.createLogger("ConnectorClient"), ConnectorClient
        } catch (error) {
          this.config.debug && logger5.warn("Error unregistering WalletConnect wallet", { error });
