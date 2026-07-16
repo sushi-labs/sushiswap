@@ -14,4 +14,4 @@ runs:
     - name: Set up pnpm
       uses: sushi-labs/actions/.github/actions/pnpm@pnpm-10
       with:
-        pnpm-version: 10.27.0
+        pnpm-version: 10.34.5

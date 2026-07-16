@@ -23,20 +23,20 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.5-nightly.81fdedb",
-    "@types/node": "20.14.14",
+    "@types/node": "24.13.3",
     "dotenv-cli": "6.0.0",
-    "eslint": "9.18.0",
-    "eslint-config-turbo": "2.3.3",
+    "eslint": "9.39.5",
+    "eslint-config-turbo": "2.10.4",
     "just-pnpm": "1.0.2",
     "sort-package-json": "2.6.0",
-    "tsx": "4.19.0",
-    "turbo": "2.0.5",
+    "tsx": "4.23.0",
+    "turbo": "2.10.4",
     "typescript": "catalog:"
   },
-  "packageManager": "pnpm@10.27.0",
+  "packageManager": "pnpm@10.34.5",
   "engines": {
-    "node": ">=20.x",
-    "pnpm": "10.27.0"
+    "node": ">=24.x",
+    "pnpm": "10.34.5"
   },
   "pnpm": {
     "overrides": {

@@ -16,7 +16,7 @@ safety, and minimal, reviewable diffs.
 - When rules conflict, the closest (deepest) `AGENTS.md` wins.
 
 ## Repository Overview
-- Package manager: `pnpm` (`pnpm@10.4.1`)
+- Package manager: `pnpm` (`pnpm@10.34.5`)
 - Task runner: `turbo`
 - Formatter/linter: `biome`
 - Main workspaces: `apps/*`, `packages/*`, `config/*`

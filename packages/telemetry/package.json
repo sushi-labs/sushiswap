@@ -30,7 +30,7 @@
     "dev": "tsc --watch"
   },
   "devDependencies": {
-    "@tsconfig/node20": "catalog:tsconfig",
+    "@tsconfig/node24": "catalog:tsconfig",
     "@tsconfig/strictest": "catalog:tsconfig",
     "@types/gtag.js": "0.0.19",
     "@types/react": "catalog:react",

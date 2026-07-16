@@ -1,8 +1,7 @@
 {
-  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node20/tsconfig"],
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node24/tsconfig"],
   "include": ["src"],
   "exclude": ["node_modules", "dist", ".turbo"],
-  "types": ["@types/gtag.js"],
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
@@ -11,6 +10,7 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "target": "ESNext",
+    "types": ["@types/gtag.js"],
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true

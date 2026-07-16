@@ -42,7 +42,7 @@
     "react-toastify": "11.0.1"
   },
   "devDependencies": {
-    "@tsconfig/node20": "catalog:tsconfig",
+    "@tsconfig/node24": "catalog:tsconfig",
     "@tsconfig/strictest": "catalog:tsconfig",
     "@types/react": "catalog:react",
     "@types/react-dom": "catalog:react",
