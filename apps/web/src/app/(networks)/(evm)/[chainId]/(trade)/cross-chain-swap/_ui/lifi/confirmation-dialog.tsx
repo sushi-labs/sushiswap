@@ -13,6 +13,33 @@ import {
   useLifiXSwapSelectedTradeRoute,
 } from './xswap-provider'
 
+interface SourceTransactionLinkProps {
+  href: string | undefined
+  state: 'pending' | 'failed'
+  chainName: string
+}
+
+function SourceTransactionLink({
+  href,
+  state,
+  chainName,
+}: SourceTransactionLinkProps) {
+  if (!href) return <>transaction</>
+
+  return (
+    <Button asChild size="sm" variant="link">
+      <a
+        target="_blank"
+        rel="noreferrer noopener"
+        href={href}
+        aria-label={`View ${state} source transaction on ${chainName}`}
+      >
+        transaction
+      </a>
+    </Button>
+  )
+}
+
 interface ConfirmationDialogContent<
   TChainId0 extends LifiXSwapSupportedChainId,
   TChainId1 extends LifiXSwapSupportedChainId,
@@ -65,15 +92,11 @@ export function ConfirmationDialogContent<
     return (
       <>
         Waiting for your{' '}
-        <Button asChild size="sm" variant="link">
-          <a
-            target="_blank"
-            rel="noreferrer noopener noreferer"
-            href={txHash ? chain0.getTransactionUrl(txHash) : ''}
-          >
-            transaction
-          </a>
-        </Button>{' '}
+        <SourceTransactionLink
+          href={txHash ? chain0.getTransactionUrl(txHash) : undefined}
+          state="pending"
+          chainName={chain0.name}
+        />{' '}
         to be confirmed on {chain0.name}
       </>
     )
@@ -83,9 +106,11 @@ export function ConfirmationDialogContent<
     return (
       <>
         <span className="text-red">Oops!</span> Your{' '}
-        <span className="text-blue hover:underline cursor-pointer">
-          transaction
-        </span>{' '}
+        <SourceTransactionLink
+          href={txHash ? chain0.getTransactionUrl(txHash) : undefined}
+          state="failed"
+          chainName={chain0.name}
+        />{' '}
         failed
       </>
     )
