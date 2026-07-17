@@ -15,6 +15,33 @@ export type NearIntentsDialogState = {
   execution: StepState
 }
 
+type NearIntentsConfirmationState =
+  | 'failed'
+  | 'incomplete-deposit'
+  | 'preparing'
+  | 'processing'
+  | 'refunded'
+  | 'status-error'
+  | 'success'
+
+export function getNearIntentsConfirmationState({
+  hasSourceTxHash,
+  hasStatusError,
+  status,
+}: {
+  hasSourceTxHash: boolean
+  hasStatusError: boolean
+  status: string | undefined
+}): NearIntentsConfirmationState {
+  if (status === 'INCOMPLETE_DEPOSIT') return 'incomplete-deposit'
+  if (status === 'REFUNDED') return 'refunded'
+  if (status === 'FAILED') return 'failed'
+  if (status === 'SUCCESS') return 'success'
+  if (hasStatusError) return 'status-error'
+  if (hasSourceTxHash) return 'processing'
+  return 'preparing'
+}
+
 export function getNearIntentsStatusStepState({
   status,
 }: {
@@ -63,7 +90,7 @@ export function NearIntentsConfirmationDialogContent({
   const {
     executionStatus,
     previewQuote,
-    state: { chainId0, chainId1, sourceTxHash, token1 },
+    state: { chainId0, chainId1, depositAddress, sourceTxHash, token1 },
   } = useNearIntentsXSwap()
 
   const recipient = useAccount(chainId1)
@@ -75,6 +102,39 @@ export function NearIntentsConfirmationDialogContent({
     token1 && previewQuote.data?.quote.amountOut
       ? new Amount(token1, previewQuote.data.quote.amountOut).toSignificant(6)
       : undefined
+  const confirmationState = getNearIntentsConfirmationState({
+    hasSourceTxHash: Boolean(sourceTxHash),
+    hasStatusError: Boolean(executionStatus.error),
+    status,
+  })
+  const trackingLinks = sourceTxHash ? (
+    <>
+      <Button asChild size="sm" variant="link">
+        <a
+          target="_blank"
+          rel="noreferrer noopener"
+          href={chain0.getTransactionUrl(sourceTxHash)}
+        >
+          View source transaction
+        </a>
+      </Button>
+      {depositAddress ? (
+        <>
+          {' and '}
+          <Button asChild size="sm" variant="link">
+            <a
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`https://explorer.near-intents.org/transactions/${encodeURIComponent(depositAddress)}`}
+            >
+              view NEAR Intents status
+            </a>
+          </Button>
+        </>
+      ) : null}
+      .
+    </>
+  ) : null
 
   if (executionError) {
     return (
@@ -86,25 +146,33 @@ export function NearIntentsConfirmationDialogContent({
     return <>Confirm the source-chain deposit in your wallet.</>
   }
 
-  if (sourceTxHash && status !== 'SUCCESS') {
+  if (confirmationState === 'incomplete-deposit') {
     return (
       <>
-        Waiting for your{' '}
-        <Button asChild size="sm" variant="link">
-          <a
-            target="_blank"
-            rel="noreferrer noopener noreferer"
-            href={chain0.getTransactionUrl(sourceTxHash)}
-          >
-            transaction
-          </a>
-        </Button>{' '}
-        to be processed by NEAR Intents.
+        The deposit was smaller than required. 1Click marked the swap as
+        incomplete. {trackingLinks}
       </>
     )
   }
 
-  if (status === 'SUCCESS') {
+  if (confirmationState === 'refunded') {
+    return <>The swap was refunded after deposit submission. {trackingLinks}</>
+  }
+
+  if (confirmationState === 'failed') {
+    return <>The swap failed after deposit submission. {trackingLinks}</>
+  }
+
+  if (confirmationState === 'status-error') {
+    return (
+      <>
+        The source transaction was submitted, but its 1Click status could not be
+        refreshed. {trackingLinks}
+      </>
+    )
+  }
+
+  if (confirmationState === 'success') {
     return (
       <>
         Sent{' '}
@@ -126,20 +194,20 @@ export function NearIntentsConfirmationDialogContent({
     )
   }
 
-  if (status === 'INCOMPLETE_DEPOSIT') {
+  if (confirmationState === 'processing' && sourceTxHash) {
     return (
       <>
-        The deposit was smaller than required. 1Click marked the swap as
-        incomplete.
-      </>
-    )
-  }
-
-  if (status === 'REFUNDED' || status === 'FAILED') {
-    return (
-      <>
-        The swap failed after deposit submission. Check the source transaction
-        and 1Click status details.
+        Waiting for your{' '}
+        <Button asChild size="sm" variant="link">
+          <a
+            target="_blank"
+            rel="noreferrer noopener"
+            href={chain0.getTransactionUrl(sourceTxHash)}
+          >
+            transaction
+          </a>
+        </Button>{' '}
+        to be processed by NEAR Intents.
       </>
     )
   }

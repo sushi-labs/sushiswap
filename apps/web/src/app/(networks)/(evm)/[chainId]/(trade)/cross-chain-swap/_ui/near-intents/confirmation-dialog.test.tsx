@@ -14,7 +14,39 @@ vi.mock('../lifi/confirmation-dialog', () => ({
 }))
 
 import { StepState } from '../lifi/confirmation-dialog'
-import { getNearIntentsStatusStepState } from './confirmation-dialog'
+import {
+  getNearIntentsConfirmationState,
+  getNearIntentsStatusStepState,
+} from './confirmation-dialog'
+
+describe('getNearIntentsConfirmationState', () => {
+  it.each([
+    ['INCOMPLETE_DEPOSIT', 'incomplete-deposit'],
+    ['REFUNDED', 'refunded'],
+    ['FAILED', 'failed'],
+  ] as const)(
+    'renders terminal status %s before waiting',
+    (status, expected) => {
+      expect(
+        getNearIntentsConfirmationState({
+          hasSourceTxHash: true,
+          hasStatusError: false,
+          status,
+        }),
+      ).toBe(expected)
+    },
+  )
+
+  it('distinguishes status-query failure from provider processing', () => {
+    expect(
+      getNearIntentsConfirmationState({
+        hasSourceTxHash: true,
+        hasStatusError: true,
+        status: undefined,
+      }),
+    ).toBe('status-error')
+  })
+})
 
 describe('getNearIntentsStatusStepState', () => {
   it('keeps the destination step idle while NEAR Intents is processing', () => {
