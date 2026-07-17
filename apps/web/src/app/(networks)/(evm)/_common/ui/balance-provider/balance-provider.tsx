@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useReducer,
 } from 'react'
@@ -103,13 +104,23 @@ function reducer(state: ProviderState, action: ProviderActions): ProviderState {
       }
     }
     case 'UPDATE_ACCOUNT': {
-      state.chains.forEach((chain) => {
-        chain.balanceMap.clear()
-      })
+      if (state.account === action.payload) return state
 
       return {
-        ...state,
         account: action.payload,
+        chains: new Map(
+          Array.from(state.chains, ([chainId, chain]) => [
+            chainId,
+            {
+              ...chain,
+              isFetching: false,
+              failureCount: 0,
+              lastError: null,
+              activeTokens: new LowercaseMap(chain.activeTokens),
+              balanceMap: new LowercaseMap<Address, Balance>(),
+            },
+          ]),
+        ),
       }
     }
     case 'REFRESH': {
@@ -250,7 +261,7 @@ export function BalanceProvider({ children }: BalanceProviderContextProps) {
     [state, config],
   )
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     dispatch({
       type: 'UPDATE_ACCOUNT',
       payload: account,
