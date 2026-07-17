@@ -35,6 +35,7 @@ export const PrivyProvider = ({ children }: { children: ReactNode }) => {
         appearance: {
           theme: resolvedTheme === 'dark' ? 'dark' : 'light',
           walletChainType: 'ethereum-and-solana',
+          walletList: [],
         },
         loginMethods: ['email'],
         embeddedWallets: {
@@ -46,6 +47,9 @@ export const PrivyProvider = ({ children }: { children: ReactNode }) => {
           },
         },
         externalWallets: {
+          walletConnect: {
+            enabled: false,
+          },
           solana: {
             connectors: toSolanaWalletConnectors({
               shouldAutoConnect: true,
