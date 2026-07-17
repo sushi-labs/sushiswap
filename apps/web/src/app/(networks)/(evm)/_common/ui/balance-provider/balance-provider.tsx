@@ -5,9 +5,9 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useReducer,
+  useRef,
 } from 'react'
 
 import ms from 'ms'
@@ -22,6 +22,10 @@ import {
 import type { Address } from 'viem'
 import { multicall } from 'viem/actions'
 import { useConfig, useConnection } from 'wagmi'
+import {
+  type BalanceAccountIdentity,
+  isBalanceResponseCurrent,
+} from './balance-request'
 import { shouldRetryBalanceFetch } from './balance-retry'
 import type {
   Balance,
@@ -104,23 +108,13 @@ function reducer(state: ProviderState, action: ProviderActions): ProviderState {
       }
     }
     case 'UPDATE_ACCOUNT': {
-      if (state.account === action.payload) return state
+      state.chains.forEach((chain) => {
+        chain.balanceMap.clear()
+      })
 
       return {
+        ...state,
         account: action.payload,
-        chains: new Map(
-          Array.from(state.chains, ([chainId, chain]) => [
-            chainId,
-            {
-              ...chain,
-              isFetching: false,
-              failureCount: 0,
-              lastError: null,
-              activeTokens: new LowercaseMap(chain.activeTokens),
-              balanceMap: new LowercaseMap<Address, Balance>(),
-            },
-          ]),
-        ),
       }
     }
     case 'REFRESH': {
@@ -139,6 +133,16 @@ interface BalanceProviderContextProps {
 
 export function BalanceProvider({ children }: BalanceProviderContextProps) {
   const { address: account } = useConnection()
+  const accountIdentityRef = useRef<BalanceAccountIdentity>({
+    account,
+    generation: 0,
+  })
+  if (accountIdentityRef.current.account !== account) {
+    accountIdentityRef.current = {
+      account,
+      generation: accountIdentityRef.current.generation + 1,
+    }
+  }
   const [state, dispatch] = useReducer(reducer, {
     account,
     chains: new Map(),
@@ -174,6 +178,10 @@ export function BalanceProvider({ children }: BalanceProviderContextProps) {
       )
         return
       chain.isFetching = true
+      const requestIdentity = {
+        account: state.account,
+        generation: accountIdentityRef.current.generation,
+      }
 
       try {
         // Remove the native address from the active tokens, it will be fetched separately
@@ -210,6 +218,10 @@ export function BalanceProvider({ children }: BalanceProviderContextProps) {
           contracts,
           allowFailure: true,
         })
+        if (
+          !isBalanceResponseCurrent(requestIdentity, accountIdentityRef.current)
+        )
+          return
 
         results.forEach((result, index) => {
           // Should always be set, except for the last one, which we know is the native balance
@@ -245,6 +257,10 @@ export function BalanceProvider({ children }: BalanceProviderContextProps) {
         chain.failureCount = 0
         chain.lastError = null
       } catch (error) {
+        if (
+          !isBalanceResponseCurrent(requestIdentity, accountIdentityRef.current)
+        )
+          return
         chain.failureCount += 1
         chain.lastError = {
           message: error instanceof Error ? error.message : String(error),
@@ -261,7 +277,7 @@ export function BalanceProvider({ children }: BalanceProviderContextProps) {
     [state, config],
   )
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     dispatch({
       type: 'UPDATE_ACCOUNT',
       payload: account,
