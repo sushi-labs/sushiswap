@@ -3,6 +3,7 @@ import {
   type SushiSwapV3ChainId,
 } from 'sushi/evm'
 import { useReadContract } from 'wagmi'
+import { parsePositionTokenId } from '../position-token-id'
 
 export const useConcentratedPositionOwner = ({
   chainId,
@@ -11,6 +12,8 @@ export const useConcentratedPositionOwner = ({
   chainId: SushiSwapV3ChainId
   tokenId: number | string | undefined
 }) => {
+  const parsedTokenId = parsePositionTokenId(tokenId)
+
   const query = useReadContract({
     chainId,
     address: SUSHISWAP_V3_POSITION_MANAGER[chainId],
@@ -36,9 +39,9 @@ export const useConcentratedPositionOwner = ({
       },
     ] as const,
     functionName: 'ownerOf',
-    args: [BigInt(tokenId ? tokenId : 0)],
+    args: parsedTokenId ? [parsedTokenId] : undefined,
     query: {
-      enabled: Boolean(chainId && tokenId),
+      enabled: Boolean(chainId && parsedTokenId),
     },
   } as const)
 
