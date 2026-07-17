@@ -6,6 +6,7 @@ import {
   getV3PoolBuckets,
 } from '@sushiswap/graph-client/data-api'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import {
   type BladeChainId,
   type EvmAddress,
@@ -75,7 +76,7 @@ export const usePoolGraphData = ({
     },
     placeholderData: keepPreviousData,
     staleTime: 0,
-    gcTime: 3600, // 1hr
+    gcTime: ms('1h'),
     enabled: Boolean(poolAddress && chainId && enabled),
   })
 }

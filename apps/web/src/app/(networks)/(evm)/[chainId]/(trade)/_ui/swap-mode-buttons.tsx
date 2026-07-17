@@ -19,9 +19,9 @@ import type { ReactNode } from 'react'
 import { PathnameButton } from 'src/app/_ui/pathname-button'
 import { isLifiXSwapSupportedChainId, isSupportedChainId } from 'src/config'
 import { isNearIntentsChainId } from 'src/lib/swap/near-intents'
+import { isTwapSupportedChainId } from 'src/lib/swap/twap/supported-chain-ids'
 import { type ChainId, getChainById } from 'sushi'
 import { isStellarChainId } from 'sushi/stellar'
-import { isTwapSupportedChainId } from '../(orbs)/_ui/helper'
 
 const ADVANCED_SEGMENTS = ['limit', 'dca', 'stop-loss', 'take-profit'] as const
 

@@ -24,6 +24,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.5-nightly.81fdedb",
     "@types/node": "24.13.3",
+    "@types/react": "catalog:react",
     "dotenv-cli": "6.0.0",
     "eslint": "9.39.5",
     "eslint-config-turbo": "2.10.4",

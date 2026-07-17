@@ -7,6 +7,7 @@ import {
 } from '@sushiswap/graph-client/strapi'
 import { Loader } from '@sushiswap/ui'
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
+import ms from 'ms'
 import { useEffect, useMemo } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { ArticleCard } from '../article-card/article-card'
@@ -66,8 +67,8 @@ export function ArticleListClient({
     },
     initialPageParam: 0,
     getNextPageParam: (_, pages) => pageSize * pages.length,
-    staleTime: 3600,
-    gcTime: 3600,
+    staleTime: ms('1h'),
+    gcTime: ms('1h'),
     initialData: isEmptySearch ? initialData : undefined,
   })
 

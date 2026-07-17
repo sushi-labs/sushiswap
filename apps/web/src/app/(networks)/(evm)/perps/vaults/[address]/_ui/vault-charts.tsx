@@ -12,7 +12,8 @@ import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
 import { useMemo, useState } from 'react'
 import { useVaultDetails } from 'src/lib/perps/info/use-vault-details'
 import type { EvmAddress } from 'sushi/evm'
-import { DataChart, PerpsCard } from '~evm/perps/_ui/_common'
+import { PerpsCard } from '~evm/perps/_ui/_common'
+import { DataChart } from '~evm/perps/_ui/_common/data-chart'
 import { TIMEFRAMES, type Timeframe } from './vault-page'
 
 const VIEWS = [

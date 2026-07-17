@@ -12,7 +12,8 @@ import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
 import { useMemo, useState } from 'react'
 import { usePortfolio } from 'src/lib/perps'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
-import { DataChart, PerpsCard } from '~evm/perps/_ui/_common'
+import { PerpsCard } from '~evm/perps/_ui/_common'
+import { DataChart } from '~evm/perps/_ui/_common/data-chart'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
 
 const VIEWS = [

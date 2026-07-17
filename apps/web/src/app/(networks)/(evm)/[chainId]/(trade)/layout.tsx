@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { ChainId } from 'sushi'
 import { Providers } from './providers'
 
@@ -17,29 +16,9 @@ export default async function TradeLayout(props: {
   )
 }
 
-const KatanaBackground = () => {
+function KatanaBackground() {
   return (
-    <div className="fixed inset-0 -z-10">
-      <Image
-        src="/katana-bg-light.jpg"
-        alt=""
-        fill
-        priority
-        quality={100}
-        unoptimized
-        sizes="100vw"
-        className="object-cover object-left dark:hidden"
-      />
-      <Image
-        src="/katana-bg-dark.jpg"
-        alt=""
-        fill
-        priority
-        quality={100}
-        unoptimized
-        sizes="100vw"
-        className="object-cover object-left hidden dark:block"
-      />
+    <div className="fixed inset-0 -z-10 bg-[url('/katana-bg-light.webp')] dark:bg-[url('/katana-bg-dark.webp')] bg-cover bg-left">
       <div
         className={`
           absolute inset-0

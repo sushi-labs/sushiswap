@@ -5,9 +5,10 @@ import type {
   PoolChainId,
   TokenInfo as TokenInfoType,
 } from '@sushiswap/graph-client/data-api'
-import { useIsMounted } from '@sushiswap/hooks'
+import { useIsMounted, useMediaQuery } from '@sushiswap/hooks'
 import { Button, Container, LinkInternal } from '@sushiswap/ui'
 import { AnimatePresence, motion } from 'framer-motion'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { type FC, useMemo } from 'react'
@@ -26,8 +27,11 @@ import { TableFiltersFarmsOnly } from '~evm/[chainId]/_ui/table-filters-farms-on
 import { TableFiltersPoolType } from '~evm/[chainId]/_ui/table-filters-pool-type'
 import { TableFiltersResetButton } from '~evm/[chainId]/_ui/table-filters-reset-button'
 import { TokenChart } from './charts/token-chart'
-import { SwapWidget } from './swap-widget'
 import { TokenInfo } from './token-info'
+
+const SwapWidget = dynamic(() =>
+  import('./swap-widget').then((module) => module.SwapWidget),
+)
 
 interface TokenPageProps {
   token: SerializedEvmToken
@@ -40,6 +44,7 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
   const router = useRouter()
 
   const isMounted = useIsMounted()
+  const isDesktop = useMediaQuery({ query: '(min-width: 854px)' })
 
   return (
     <>
@@ -97,7 +102,7 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
                 </div>
                 <div className="min-[854px]:w-[420px] max-[854px]:hidden">
                   <AnimatePresence>
-                    {isMounted ? (
+                    {isMounted && isDesktop ? (
                       <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
