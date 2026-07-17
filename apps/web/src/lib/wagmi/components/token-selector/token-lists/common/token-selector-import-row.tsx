@@ -3,12 +3,6 @@ import {
   ExclamationTriangleIcon,
 } from '@heroicons/react/24/solid'
 import {
-  BrowserEvent,
-  InterfaceElementName,
-  InterfaceEventName,
-  TraceEvent,
-} from '@sushiswap/telemetry'
-import {
   Badge,
   Button,
   Currency,
@@ -33,6 +27,8 @@ import { getChainById, shortenAddress } from 'sushi'
 import type { EvmToken } from 'sushi/evm'
 import { isStellarChainId } from 'sushi/stellar'
 import type { SvmToken } from 'sushi/svm'
+import { TokenSecurityImportActions } from '../../../token-security-import-actions'
+import { getTokenSecurityImportState } from '../../../token-security-import-state'
 import { TokenSecurityView } from '../../../token-security-view'
 import type { TokenSelectorChainId } from '../../config'
 
@@ -50,11 +46,24 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
   const securityCurrency = isStellarChainId(currency.chainId)
     ? undefined
     : (currency as EvmToken | SvmToken)
-  const { data: tokenSecurity, isLoading: isTokenSecurityLoading } =
-    useTokenSecurity({
-      currency: securityCurrency,
-      enabled: open,
-    })
+  const {
+    data: tokenSecurity,
+    isError: isTokenSecurityError,
+    isFetching: isTokenSecurityFetching,
+    isLoading: isTokenSecurityLoading,
+    refetch: refetchTokenSecurity,
+  } = useTokenSecurity({
+    currency: securityCurrency,
+    enabled: open,
+  })
+  const tokenSecurityImportState = getTokenSecurityImportState({
+    required: Boolean(securityCurrency),
+    isLoading: isTokenSecurityLoading,
+    isFetching: isTokenSecurityFetching,
+    isError: isTokenSecurityError,
+    isAvailable: tokenSecurity?.isAvailable,
+  })
+  const isTokenSecurityScanning = tokenSecurityImportState === 'scanning'
   const hasSecurityRisk = Boolean(
     tokenSecurity?.isHoneypot || tokenSecurity?.isFoT || tokenSecurity?.isRisky,
   )
@@ -104,14 +113,14 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
             <div
               className={classNames(
                 'inline-flex items-center px-2 py-1.5 gap-1 rounded-full',
-                isTokenSecurityLoading
+                isTokenSecurityScanning
                   ? 'bg-muted'
                   : hasSecurityRisk
                     ? 'bg-red/20 text-red'
                     : 'bg-yellow/20 text-yellow',
               )}
             >
-              {isTokenSecurityLoading ? (
+              {isTokenSecurityScanning ? (
                 <div className="w-7 h-7 flex justify-center items-center">
                   <Loader width={28} height={28} />
                 </div>
@@ -122,7 +131,7 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
               )}
             </div>
           </DialogTitle>
-          {isTokenSecurityLoading ? (
+          {isTokenSecurityScanning ? (
             <span className="w-52">
               <SkeletonText fontSize="xl" />
             </span>
@@ -188,11 +197,17 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
                   Token Security Scan
                 </span>
               </div>
-              <TokenSecurityView
-                token={securityCurrency}
-                tokenSecurity={tokenSecurity}
-                isTokenSecurityLoading={isTokenSecurityLoading}
-              />
+              {tokenSecurityImportState === 'unavailable' ? (
+                <span className="text-sm text-muted-foreground">
+                  Security providers did not return results for this token.
+                </span>
+              ) : (
+                <TokenSecurityView
+                  token={securityCurrency}
+                  tokenSecurity={tokenSecurity}
+                  isTokenSecurityLoading={isTokenSecurityScanning}
+                />
+              )}
             </List.Control>
           </List>
         ) : null}
@@ -202,11 +217,13 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
         >
           {tokenSecurity?.isHoneypot
             ? 'Honeypot tokens restrict selling. Sushi does not support this token type.'
-            : tokenSecurity?.isFoT
-              ? 'This token charges a tax fee on transfer. Tax tokens are not supported in V3. You might not be able to trade, transfer, or withdraw liquidity of this token.'
-              : tokenSecurity?.isRisky
-                ? 'Our security scan has identified risks associated with this token. Proceeding may result in the loss of your funds. Please exercise caution and review the details before continuing.'
-                : 'Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects. If you purchase this token, you may not be able to sell it back.'}
+            : tokenSecurityImportState === 'unavailable'
+              ? 'The token security scan is unavailable. Retry the scan or explicitly import without security results.'
+              : tokenSecurity?.isFoT
+                ? 'This token charges a tax fee on transfer. Tax tokens are not supported in V3. You might not be able to trade, transfer, or withdraw liquidity of this token.'
+                : tokenSecurity?.isRisky
+                  ? 'Our security scan has identified risks associated with this token. Proceeding may result in the loss of your funds. Please exercise caution and review the details before continuing.'
+                  : 'Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects. If you purchase this token, you may not be able to sell it back.'}
         </Message>
         <DialogFooter>
           {tokenSecurity?.isHoneypot ? (
@@ -214,34 +231,17 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
               Close
             </Button>
           ) : (
-            <div className="flex flex-col sm:flex-row gap-3 w-full">
-              <TraceEvent
-                events={[BrowserEvent.onClick, BrowserEvent.onKeyPress]}
-                name={InterfaceEventName.TOKEN_IMPORTED}
-                properties={{
-                  token_symbol: currency?.symbol,
-                  token_address: currency?.address,
-                }}
-                element={InterfaceElementName.IMPORT_TOKEN_BUTTON}
-              >
-                <Button
-                  fullWidth
-                  size="xl"
-                  onClick={onClick}
-                  variant={hasSecurityRisk ? 'destructive' : 'default'}
-                >
-                  {hasSecurityRisk ? 'Import Anyways' : 'Confirm Import'}
-                </Button>
-              </TraceEvent>
-              <Button
-                fullWidth
-                size="xl"
-                onClick={() => setOpen(false)}
-                variant="secondary"
-              >
-                Cancel
-              </Button>
-            </div>
+            <TokenSecurityImportActions
+              state={tokenSecurityImportState}
+              hasSecurityRisk={hasSecurityRisk}
+              onImport={onClick}
+              onRetry={() => void refetchTokenSecurity()}
+              onCancel={() => setOpen(false)}
+              telemetry={{
+                tokenSymbol: currency.symbol,
+                tokenAddress: currency.address,
+              }}
+            />
           )}
         </DialogFooter>
       </DialogContent>

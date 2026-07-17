@@ -25,6 +25,11 @@ import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
 import React, { useCallback, useMemo } from 'react'
 import type { LifiXSwapSupportedChainId } from 'src/config'
 import { useTokenSecurity } from 'src/lib/hooks/react-query'
+import { TokenSecurityImportActions } from 'src/lib/wagmi/components/token-security-import-actions'
+import {
+  combineTokenSecurityImportStates,
+  getTokenSecurityImportState,
+} from 'src/lib/wagmi/components/token-security-import-state'
 import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
 import { type CurrencyMetadata, getChainById, shortenAddress } from 'sushi'
 import {
@@ -100,22 +105,48 @@ export function CrossChainSwapTokenNotFoundDialog<
     setTokens(defaultCurrency, defaultQuoteCurrency)
   }, [defaultCurrency, defaultQuoteCurrency, setTokens])
 
-  const { data: token0SecurityResponse, isLoading: isToken0SecurityLoading } =
-    useTokenSecurity({
-      currency:
-        token0NotInList && token0?.type === 'token' ? token0 : undefined,
-      enabled: Boolean(token0NotInList && token0?.type === 'token'),
-    })
+  const {
+    data: token0SecurityResponse,
+    isError: isToken0SecurityError,
+    isFetching: isToken0SecurityFetching,
+    isLoading: isToken0SecurityLoading,
+    refetch: refetchToken0Security,
+  } = useTokenSecurity({
+    currency: token0NotInList && token0?.type === 'token' ? token0 : undefined,
+    enabled: Boolean(token0NotInList && token0?.type === 'token'),
+  })
 
-  const { data: token1SecurityResponse, isLoading: isToken1SecurityLoading } =
-    useTokenSecurity({
-      currency:
-        token1NotInList && token1?.type === 'token' ? token1 : undefined,
-      enabled: Boolean(token1NotInList && token1?.type === 'token'),
-    })
+  const {
+    data: token1SecurityResponse,
+    isError: isToken1SecurityError,
+    isFetching: isToken1SecurityFetching,
+    isLoading: isToken1SecurityLoading,
+    refetch: refetchToken1Security,
+  } = useTokenSecurity({
+    currency: token1NotInList && token1?.type === 'token' ? token1 : undefined,
+    enabled: Boolean(token1NotInList && token1?.type === 'token'),
+  })
 
-  const isTokenSecurityLoading =
-    isToken0SecurityLoading || isToken1SecurityLoading
+  const token0SecurityState = getTokenSecurityImportState({
+    required: Boolean(token0NotInList && token0?.type === 'token'),
+    isLoading: isToken0SecurityLoading,
+    isFetching: isToken0SecurityFetching,
+    isError: isToken0SecurityError,
+    isAvailable: token0SecurityResponse?.isAvailable,
+  })
+  const token1SecurityState = getTokenSecurityImportState({
+    required: Boolean(token1NotInList && token1?.type === 'token'),
+    isLoading: isToken1SecurityLoading,
+    isFetching: isToken1SecurityFetching,
+    isError: isToken1SecurityError,
+    isAvailable: token1SecurityResponse?.isAvailable,
+  })
+  const tokenSecurityImportState = combineTokenSecurityImportStates([
+    token0SecurityState,
+    token1SecurityState,
+  ])
+
+  const isTokenSecurityLoading = tokenSecurityImportState === 'scanning'
 
   const isHoneypot =
     token0SecurityResponse?.isHoneypot || token1SecurityResponse?.isHoneypot
@@ -243,11 +274,20 @@ export function CrossChainSwapTokenNotFoundDialog<
                         Token Security Scan
                       </span>
                     </div>
-                    <TokenSecurityView
-                      token={token0}
-                      tokenSecurity={token0SecurityResponse}
-                      isTokenSecurityLoading={isToken0SecurityLoading}
-                    />
+                    {token0SecurityState === 'unavailable' ? (
+                      <span className="text-sm text-muted-foreground">
+                        Security providers did not return results for this
+                        token.
+                      </span>
+                    ) : (
+                      <TokenSecurityView
+                        token={token0}
+                        tokenSecurity={token0SecurityResponse}
+                        isTokenSecurityLoading={
+                          token0SecurityState === 'scanning'
+                        }
+                      />
+                    )}
                   </List.Control>
                 </List>
               )}
@@ -327,11 +367,20 @@ export function CrossChainSwapTokenNotFoundDialog<
                         Token Security Scan
                       </span>
                     </div>
-                    <TokenSecurityView
-                      token={token1}
-                      tokenSecurity={token1SecurityResponse}
-                      isTokenSecurityLoading={isToken1SecurityLoading}
-                    />
+                    {token1SecurityState === 'unavailable' ? (
+                      <span className="text-sm text-muted-foreground">
+                        Security providers did not return results for this
+                        token.
+                      </span>
+                    ) : (
+                      <TokenSecurityView
+                        token={token1}
+                        tokenSecurity={token1SecurityResponse}
+                        isTokenSecurityLoading={
+                          token1SecurityState === 'scanning'
+                        }
+                      />
+                    )}
                   </List.Control>
                 </List>
               )}
@@ -344,11 +393,13 @@ export function CrossChainSwapTokenNotFoundDialog<
         >
           {isHoneypot
             ? 'Honeypot tokens restrict selling. Sushi does not support this token type.'
-            : isFoT
-              ? 'This token charges a tax fee on transfer. Tax tokens are not supported in V3. You might not be able to trade, transfer, or withdraw liquidity of this token.'
-              : isRisky
-                ? 'Our security scan has identified risks associated with this token. Proceeding may result in the loss of your funds. Please exercise caution and review the details before continuing.'
-                : 'Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects. If you purchase this token, you may not be able to sell it back.'}
+            : tokenSecurityImportState === 'unavailable'
+              ? 'The token security scan is unavailable. Retry the scan or explicitly import without security results.'
+              : isFoT
+                ? 'This token charges a tax fee on transfer. Tax tokens are not supported in V3. You might not be able to trade, transfer, or withdraw liquidity of this token.'
+                : isRisky
+                  ? 'Our security scan has identified risks associated with this token. Proceeding may result in the loss of your funds. Please exercise caution and review the details before continuing.'
+                  : 'Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects. If you purchase this token, you may not be able to sell it back.'}
         </Message>
         <DialogFooter>
           {isHoneypot ? (
@@ -356,28 +407,29 @@ export function CrossChainSwapTokenNotFoundDialog<
               Close
             </Button>
           ) : (
-            <div className="flex flex-col sm:flex-row gap-3 w-full">
-              <Button
-                fullWidth
-                size="xl"
-                onClick={() =>
-                  onImport([
-                    token0?.type === 'token'
-                      ? (token0 as unknown as TokenFor<TChainId0>)
-                      : undefined,
-                    token1?.type === 'token'
-                      ? (token1 as unknown as TokenFor<TChainId1>)
-                      : undefined,
-                  ])
+            <TokenSecurityImportActions
+              state={tokenSecurityImportState}
+              hasSecurityRisk={Boolean(isFoT || isRisky)}
+              onImport={() =>
+                onImport([
+                  token0?.type === 'token'
+                    ? (token0 as unknown as TokenFor<TChainId0>)
+                    : undefined,
+                  token1?.type === 'token'
+                    ? (token1 as unknown as TokenFor<TChainId1>)
+                    : undefined,
+                ])
+              }
+              onRetry={() => {
+                if (token0SecurityState === 'unavailable') {
+                  void refetchToken0Security()
                 }
-                variant={isFoT || isRisky ? 'destructive' : 'default'}
-              >
-                {isFoT || isRisky ? 'Import Anyways' : 'Confirm Import'}
-              </Button>
-              <Button fullWidth size="xl" onClick={reset} variant="secondary">
-                Cancel
-              </Button>
-            </div>
+                if (token1SecurityState === 'unavailable') {
+                  void refetchToken1Security()
+                }
+              }}
+              onCancel={reset}
+            />
           )}
         </DialogFooter>
       </DialogContent>

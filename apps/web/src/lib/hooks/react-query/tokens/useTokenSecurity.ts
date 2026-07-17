@@ -2,7 +2,7 @@ import {
   type TokenScannerResponse,
   isTokenScannerChainId,
 } from '@sushiswap/graph-client/de.fi'
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { type EvmToken, isTokenSecurityChainId } from 'sushi/evm'
 import { type SvmToken, isSvmChainId } from 'sushi/svm'
 import * as z from 'zod'
@@ -380,7 +380,11 @@ const fetchTokenSecurityQueryFn = async (
       ? deFiResponseResult.value
       : undefined
 
-  const data = Object.keys(goPlusResponse ?? {}).reduce(
+  const responseKeys = new Set([
+    ...Object.keys(goPlusResponse ?? {}),
+    ...Object.keys(deFiResponse ?? {}),
+  ])
+  const data = Array.from(responseKeys).reduce(
     (acc, key) => {
       type SecurityKey = keyof TokenSecurity
       const field = key as SecurityKey
@@ -396,6 +400,7 @@ const fetchTokenSecurityQueryFn = async (
 
   return {
     data,
+    isAvailable: Boolean(goPlusResponse || deFiResponse),
     isHoneypot: data?.is_honeypot?.goPlus || data?.is_honeypot?.deFi,
     isFoT:
       data?.buy_tax?.goPlus ||
@@ -430,7 +435,6 @@ export const useTokenSecurity = ({
     queryKey: ['useTokenSecurity', currency?.id],
     queryFn: () => fetchTokenSecurityQueryFn(currency),
     enabled: Boolean(enabled && currency),
-    placeholderData: keepPreviousData,
     staleTime: 900000, // 15 mins
     gcTime: 86400000, // 24hs
   })
