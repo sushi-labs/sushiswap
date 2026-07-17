@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { isEvmChainId } from 'sushi/evm'
 import { isStellarChainId } from 'sushi/stellar'
-import { type SvmChainId, isSvmChainId } from 'sushi/svm'
+import { isSvmChainId } from 'sushi/svm'
 import { useBalanceProvider } from './balance-provider'
 import type { BalanceChainId } from './types'
 
@@ -26,7 +26,7 @@ export function useRefetchBalances() {
             type: 'active',
           })
         } else if (isEvmChainId(chainId)) {
-          refetchChain(chainId)
+          refetchChain(chainId, { force: true })
         }
       },
     }
