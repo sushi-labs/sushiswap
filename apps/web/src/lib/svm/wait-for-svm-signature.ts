@@ -4,6 +4,13 @@ import { getSvmRpc } from './rpc'
 const CONFIRMATION_POLL_MS = 2_000
 const CONFIRMATION_TIMEOUT_MS = 90_000
 
+export class SvmTransactionFailedError extends Error {
+  constructor() {
+    super('Solana transaction failed')
+    this.name = 'SvmTransactionFailedError'
+  }
+}
+
 export async function waitForSvmSignature(
   signature: string,
   {
@@ -27,7 +34,7 @@ export async function waitForSvmSignature(
     const status = value[0]
     if (status) {
       if (status.err) {
-        throw new Error('Solana transaction failed')
+        throw new SvmTransactionFailedError()
       }
 
       if (

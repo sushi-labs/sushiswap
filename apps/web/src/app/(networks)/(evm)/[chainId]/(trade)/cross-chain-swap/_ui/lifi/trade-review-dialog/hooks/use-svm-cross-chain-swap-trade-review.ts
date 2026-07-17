@@ -77,9 +77,6 @@ export function useSvmCrossChainSwapTradeReview<
       groupTs: pre.groupTs,
       setStepStates: pre.setStepStates,
       waitForReceipt: (hash) => waitForSvmSignature(hash),
-      getReceiptInfo: (receipt) => ({
-        status: receipt.err ? 'failed' : 'success',
-      }),
       step,
       shouldIgnoreWriteError: () => {
         return false
