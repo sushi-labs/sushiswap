@@ -20,6 +20,7 @@ import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { useCurrencyPrice } from '~evm/_common/ui/price-provider/price-provider/use-currency-price'
 import { TokenSelector } from '../../token-selector/token-selector'
+import { truncateAmountToDecimals } from './amount-decimals'
 import { BalancePanel } from './balance-panel'
 import { PricePanel } from './price-panel'
 
@@ -42,6 +43,9 @@ interface CurrencyInputProps<
   type: 'INPUT' | 'OUTPUT'
   fetching?: boolean
   currencyLoading?: boolean
+  currencyError?: string
+  currencyRetrying?: boolean
+  onCurrencyRetry?: () => void
   currencies?: Record<string, CurrencyFor<TChainId>>
   allowNative?: boolean
   error?: string
@@ -74,6 +78,9 @@ function CurrencyInput<
   type,
   fetching,
   currencyLoading,
+  currencyError,
+  currencyRetrying,
+  onCurrencyRetry,
   currencies,
   allowNative = true,
   error,
@@ -114,20 +121,22 @@ function CurrencyInput<
 
   // If currency changes, trim input to decimals
   useEffect(() => {
-    if (currency && onChange && value && value.includes('.')) {
-      const [, decimals] = value.split('.')
-      if (decimals.length > currency.decimals) {
-        onChange(Number(value).toFixed(currency.decimals))
-      }
+    if (!currency || !onChange || !value.includes('.')) return
+
+    const truncatedValue = truncateAmountToDecimals(value, currency.decimals)
+    if (truncatedValue !== undefined && truncatedValue !== value) {
+      onChange(truncatedValue)
     }
   }, [onChange, currency, value])
 
   const isLoading = !isMounted || loading || currencyLoading || isBalanceLoading
-  const _error = error
-    ? error
-    : insufficientBalance
-      ? 'Exceeds Balance'
-      : undefined
+  const _error = currencyError
+    ? currencyError
+    : error
+      ? error
+      : insufficientBalance
+        ? 'Exceeds Balance'
+        : undefined
 
   const _onChange = useCallback(
     (value: string) => {
@@ -325,14 +334,27 @@ function CurrencyInput<
         {hidePricing ? (
           <div />
         ) : (
-          <PricePanel
-            value={value}
-            currency={currency}
-            priceImpact={priceImpact}
-            error={_error}
-            loading={isPriceLoading}
-            price={price}
-          />
+          <div className="flex items-center gap-2">
+            <PricePanel
+              value={value}
+              currency={currency}
+              priceImpact={priceImpact}
+              error={_error}
+              loading={isPriceLoading}
+              price={price}
+            />
+            {currencyError && onCurrencyRetry ? (
+              <Button
+                type="button"
+                variant="link"
+                size="xs"
+                loading={currencyRetrying}
+                onClick={onCurrencyRetry}
+              >
+                Retry
+              </Button>
+            ) : null}
+          </div>
         )}
         <BalancePanel
           id={id}
