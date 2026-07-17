@@ -62,7 +62,10 @@ function getOrCreateChain(state: ProviderState, chainId: EvmChainId) {
   that the references of sets and maps inside of the state do not change, only the
   state object itself.
 */
-function reducer(state: ProviderState, action: ProviderActions): ProviderState {
+export function balanceReducer(
+  state: ProviderState,
+  action: ProviderActions,
+): ProviderState {
   switch (action.type) {
     case 'INCREMENT_TOKEN': {
       const tokenIds = getTokenIds(action.payload)
@@ -97,6 +100,7 @@ function reducer(state: ProviderState, action: ProviderActions): ProviderState {
         if (currentListenerCount === 0) return
 
         if (currentListenerCount === 1) {
+          chain.activeTokens.delete(address)
           chain.balanceMap.delete(address)
         } else {
           chain.activeTokens.set(address, currentListenerCount - 1)
@@ -143,7 +147,7 @@ export function BalanceProvider({ children }: BalanceProviderContextProps) {
       generation: accountIdentityRef.current.generation + 1,
     }
   }
-  const [state, dispatch] = useReducer(reducer, {
+  const [state, dispatch] = useReducer(balanceReducer, {
     account,
     chains: new Map(),
   })
