@@ -83,7 +83,7 @@ function useEvmSimpleSwapTradeReviewForState({
     mutate: { resetDetailsTrackedState },
   } = useDetailsInteractionTracker()
 
-  const { address } = useConnection()
+  const { address, chainId: activeChainId } = useConnection()
 
   const client = usePublicClient({ chainId })
 
@@ -326,7 +326,11 @@ function useEvmSimpleSwapTradeReviewForState({
   })
 
   const write = useMemo(() => {
-    if (!trade?.tx || address?.toLowerCase() !== trade.tx.from.toLowerCase())
+    if (
+      !trade?.tx ||
+      activeChainId !== chainId ||
+      address?.toLowerCase() !== trade.tx.from.toLowerCase()
+    )
       return undefined
 
     const { to, gas, data, value } = trade.tx
@@ -334,6 +338,7 @@ function useEvmSimpleSwapTradeReviewForState({
     return async (confirm: () => void) => {
       try {
         await sendTransactionAsync({
+          chainId,
           to,
           data,
           value,
@@ -344,7 +349,7 @@ function useEvmSimpleSwapTradeReviewForState({
         confirm()
       } catch {}
     }
-  }, [address, trade?.tx, sendTransactionAsync])
+  }, [activeChainId, address, chainId, trade?.tx, sendTransactionAsync])
 
   return {
     trade,
