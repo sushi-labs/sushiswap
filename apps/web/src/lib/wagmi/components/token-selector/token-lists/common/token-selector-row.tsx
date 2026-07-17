@@ -24,9 +24,9 @@ import { Badge } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import type React from 'react'
 import { type CSSProperties, memo, useCallback } from 'react'
-import { NativeAddress } from 'src/lib/constants'
 import { type Amount, type Fraction, ZERO, getChainById } from 'sushi'
 import { zeroAddress } from 'viem'
+import { NativeAddress } from '../../../../../constants'
 import type { TokenSelectorChainId } from '../../config'
 
 export interface TokenSelectorRow<TChainId extends TokenSelectorChainId> {
@@ -69,7 +69,7 @@ function TokenSelectorRowBase<TChainId extends TokenSelectorChainId>({
   }, [currency, onSelect])
 
   const onPin = useCallback(
-    (e: React.MouseEvent | React.KeyboardEvent) => {
+    (e: React.MouseEvent) => {
       e.stopPropagation()
       pin?.onPin()
     },
@@ -77,7 +77,7 @@ function TokenSelectorRowBase<TChainId extends TokenSelectorChainId>({
   )
 
   const showInfo = useCallback(
-    (e: React.MouseEvent | React.KeyboardEvent) => {
+    (e: React.MouseEvent) => {
       e.stopPropagation()
       onShowInfo()
     },
@@ -98,20 +98,26 @@ function TokenSelectorRowBase<TChainId extends TokenSelectorChainId>({
     >
       <div className="relative py-0.5 h-[64px]" style={style}>
         <div
-          testdata-id={`token-selector-row-${
-            currency.type === 'native'
-              ? zeroAddress
-              : currency.wrap().address.toLowerCase()
-          }`}
-          onClick={onClick}
-          onKeyDown={onClick}
           className={classNames(
-            className,
             selected ? 'bg-secondary' : '',
-            `group flex items-center w-full hover:bg-muted focus:bg-accent h-full rounded-lg px-3 token-${currency?.symbol}`,
+            'group flex items-center w-full hover:bg-muted focus-within:bg-accent h-full rounded-lg',
           )}
         >
-          <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
+          <button
+            type="button"
+            aria-label={`Select ${currency.symbol ?? currency.name ?? 'token'}`}
+            aria-pressed={selected}
+            testdata-id={`token-selector-row-${
+              currency.type === 'native'
+                ? zeroAddress
+                : currency.wrap().address.toLowerCase()
+            }`}
+            onClick={onClick}
+            className={classNames(
+              className,
+              `flex items-center justify-between flex-grow gap-2 h-full rounded-lg pl-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring token-${currency?.symbol}`,
+            )}
+          >
             <div className="flex flex-row items-center flex-grow gap-4">
               {selected ? (
                 <Badge
@@ -226,27 +232,33 @@ function TokenSelectorRowBase<TChainId extends TokenSelectorChainId>({
                   </div>
                 )
               )}
-              {pin && (
-                <IconButton
-                  size="xs"
-                  icon="⭐"
-                  variant="ghost"
-                  name="pin"
-                  onClick={onPin}
-                  className={classNames(
-                    pin.isPinned ? '' : 'grayscale opacity-50',
-                    'z-50',
-                  )}
-                />
-              )}
+            </div>
+          </button>
+          <div className="flex items-center gap-1 pr-3">
+            {pin && (
               <IconButton
                 size="xs"
-                icon={InformationCircleIcon}
+                icon="⭐"
                 variant="ghost"
-                name="info"
-                onClick={showInfo}
+                name="pin"
+                onClick={onPin}
+                onKeyDown={(event) => event.stopPropagation()}
+                onKeyPress={(event) => event.stopPropagation()}
+                className={classNames(
+                  pin.isPinned ? '' : 'grayscale opacity-50',
+                  'z-50',
+                )}
               />
-            </div>
+            )}
+            <IconButton
+              size="xs"
+              icon={InformationCircleIcon}
+              variant="ghost"
+              name="info"
+              onClick={showInfo}
+              onKeyDown={(event) => event.stopPropagation()}
+              onKeyPress={(event) => event.stopPropagation()}
+            />
           </div>
         </div>
       </div>
