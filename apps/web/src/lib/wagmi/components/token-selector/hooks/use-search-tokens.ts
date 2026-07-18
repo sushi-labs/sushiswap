@@ -10,6 +10,14 @@ import {
   createTokenListToken,
 } from './token-list-token'
 
+type TokenSearchApprovalStatus = 'APPROVED' | 'PERMISSIONLESS'
+
+export function getTokenListApprovalStatuses(
+  search?: string,
+): TokenSearchApprovalStatus[] | undefined {
+  return search ? ['APPROVED', 'PERMISSIONLESS'] : undefined
+}
+
 type UseSearchTokens<TChainId extends TokenListChainId> = {
   chainId: TChainId | undefined
   search?: string
@@ -41,11 +49,18 @@ export function useSearchTokens<TChainId extends TokenListChainId>({
       .filter((t) => t.chainId === chainId)
       .map((t) => t.address)
   }, [_customTokens, chainId, includeCustomTokens])
+  const approvalStatuses = getTokenListApprovalStatuses(search)
 
   const query = useInfiniteQuery({
     queryKey: [
       'data-api-token-list',
-      { chainId, symbol: search, pageSize: pagination.pageSize, customTokens },
+      {
+        chainId,
+        symbol: search,
+        pageSize: pagination.pageSize,
+        customTokens,
+        approvalStatuses,
+      },
     ],
     queryFn: async ({ pageParam }) => {
       if (!chainId) throw new Error('chainId is required')
@@ -56,6 +71,7 @@ export function useSearchTokens<TChainId extends TokenListChainId>({
         skip: pageParam * pagination.pageSize,
         search,
         customTokens,
+        approvalStatuses,
       })
       return result
     },

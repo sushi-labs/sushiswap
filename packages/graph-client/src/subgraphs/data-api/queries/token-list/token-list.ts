@@ -10,8 +10,8 @@ import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
 export const TokenListQuery = graphql(
   `
-  query TokenList($chainId: TokenListChainId!, $first: Int = 50,  $skip: Int, $search: String, $customTokens: [ContractAddress!]) {
-    tokenList(chainId: $chainId, first: $first, skip: $skip, search: $search, customTokens: $customTokens) {
+  query TokenList($chainId: TokenListChainId!, $first: Int = 50,  $skip: Int, $search: String, $customTokens: [ContractAddress!], $approvalStatuses: [TokenApprovalStatus!]) {
+    tokenList(chainId: $chainId, first: $first, skip: $skip, search: $search, customTokens: $customTokens, approvalStatuses: $approvalStatuses) {
       address
       symbol
       name

@@ -56,7 +56,7 @@ type Query {
   vaults(chainId: SmartPoolChainId!, poolAddress: Bytes!): [Vault!]!
   sushiBarStats: SushiBarStats!
   sushiBarHistory: SushiBarHistory!
-  tokenList(chainId: TokenListChainId!, first: Int = 50, skip: Int, search: String, customTokens: [ContractAddress!]): [TokenListEntry!]!
+  tokenList(chainId: TokenListChainId!, first: Int = 50, skip: Int, search: String, customTokens: [ContractAddress!], approvalStatuses: [TokenApprovalStatus!] = [APPROVED]): [TokenListEntry!]!
   tokenListBalances(chainId: TokenListChainId!, account: Address!, includeNative: Boolean = true, customTokens: [ContractAddress!]): [TokenListWithBalanceEntry!]!
   tokenAnalysis(chainId: Int!, address: Bytes!): TokenAnalysis!
   pendingTokens: [PendingToken!]!
@@ -843,6 +843,13 @@ type SushiBarHistory {
 type StellarTokenMetadata {
   issuer: StellarAccountAddress
   domain: String
+}
+
+enum TokenApprovalStatus {
+  UNKNOWN
+  APPROVED
+  PERMISSIONLESS
+  DISAPPROVED
 }
 
 type TokenListEntry {
