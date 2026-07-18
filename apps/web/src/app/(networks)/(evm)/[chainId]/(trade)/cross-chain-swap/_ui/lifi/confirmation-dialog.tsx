@@ -2,15 +2,15 @@ import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
 import { Button, Dots, Loader, classNames } from '@sushiswap/ui'
 import { CheckMarkIcon } from '@sushiswap/ui/icons/CheckMarkIcon'
 import { FailedMarkIcon } from '@sushiswap/ui/icons/FailedMarkIcon'
-import { type FC, type ReactNode, type RefObject, useMemo } from 'react'
+import { type FC, type ReactNode, useMemo } from 'react'
 import type { LifiXSwapSupportedChainId } from 'src/config'
 import { getChainById, shortenAddress } from 'sushi'
 import { getEvmChainById } from 'sushi/evm'
 import type { Hex } from 'viem'
+import { StepState } from './trade-review-dialog/cross-chain-swap-execution'
 import {
   type UseLifiXSwapSelectedTradeRouteReturn,
   useLifiXSwap,
-  useLifiXSwapSelectedTradeRoute,
 } from './xswap-provider'
 
 interface SourceTransactionLinkProps {
@@ -47,11 +47,9 @@ interface ConfirmationDialogContent<
   txHash?: TxHashFor<TChainId0>
   dstTxHash?: TxHashFor<TChainId1>
   bridgeUrl?: string
+  onRetrySourceReceipt?: () => void
   dialogState: { source: StepState; bridge: StepState; dest: StepState }
-  routeRef: RefObject<UseLifiXSwapSelectedTradeRouteReturn<
-    TChainId0,
-    TChainId1
-  > | null>
+  route: UseLifiXSwapSelectedTradeRouteReturn<TChainId0, TChainId1> | undefined
 }
 
 export function ConfirmationDialogContent<
@@ -61,19 +59,18 @@ export function ConfirmationDialogContent<
   txHash,
   bridgeUrl,
   dstTxHash,
+  onRetrySourceReceipt,
   dialogState,
-  routeRef,
+  route,
 }: ConfirmationDialogContent<TChainId0, TChainId1>) {
   const {
     state: { chainId0, chainId1, token0, token1, recipient },
   } = useLifiXSwap<TChainId0, TChainId1>()
-  const { data: trade } = useLifiXSwapSelectedTradeRoute()
-
   const swapOnDest =
-    trade?.step &&
+    route?.step &&
     [
-      trade.step.includedStepsWithoutFees?.[1]?.type,
-      trade.step.includedStepsWithoutFees?.[2]?.type,
+      route.step.includedStepsWithoutFees?.[1]?.type,
+      route.step.includedStepsWithoutFees?.[2]?.type,
     ].includes('swap')
 
   const [chain0, chain1] = useMemo(
@@ -116,6 +113,29 @@ export function ConfirmationDialogContent<
     )
   }
 
+  if (dialogState.source === StepState.Unknown) {
+    return (
+      <>
+        Status unavailable. View the{' '}
+        <SourceTransactionLink
+          href={txHash ? chain0.getTransactionUrl(txHash) : undefined}
+          state="pending"
+          chainName={chain0.name}
+        />{' '}
+        or{' '}
+        <Button
+          size="sm"
+          variant="link"
+          onClick={onRetrySourceReceipt}
+          disabled={!onRetrySourceReceipt}
+        >
+          retry
+        </Button>
+        .
+      </>
+    )
+  }
+
   if (dialogState.bridge === StepState.Pending) {
     return (
       <>
@@ -140,13 +160,10 @@ export function ConfirmationDialogContent<
 
   if (dialogState.dest === StepState.PartialSuccess) {
     const fromTokenSymbol =
-      routeRef?.current?.step?.includedStepsWithoutFees?.[1]?.type === 'swap'
-        ? routeRef?.current?.step?.includedStepsWithoutFees?.[1]?.action
-            ?.fromToken?.symbol
-        : routeRef?.current?.step?.includedStepsWithoutFees?.[2]?.type ===
-            'swap'
-          ? routeRef?.current?.step?.includedStepsWithoutFees?.[2]?.action
-              ?.fromToken?.symbol
+      route?.step?.includedStepsWithoutFees?.[1]?.type === 'swap'
+        ? route.step.includedStepsWithoutFees[1]?.action.fromToken?.symbol
+        : route?.step?.includedStepsWithoutFees?.[2]?.type === 'swap'
+          ? route.step.includedStepsWithoutFees[2]?.action.fromToken?.symbol
           : undefined
 
     return (
@@ -181,7 +198,7 @@ export function ConfirmationDialogContent<
               rel="noreferrer noopener noreferer"
               href={txHash ? chain0.getTransactionUrl(txHash) : ''}
             >
-              {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
+              {route?.amountIn.toSignificant(6)} {token0?.symbol}
             </a>
           </Button>{' '}
           for{' '}
@@ -191,7 +208,7 @@ export function ConfirmationDialogContent<
               rel="noreferrer noopener noreferer"
               href={dstTxHash ? chain1.getTransactionUrl(dstTxHash) : ''}
             >
-              {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
+              {route?.amountOut.toSignificant(6)} {token1?.symbol}
             </a>
           </Button>
         </>
@@ -206,7 +223,7 @@ export function ConfirmationDialogContent<
               rel="noreferrer noopener noreferer"
               href={dstTxHash ? chain1.getTransactionUrl(dstTxHash) : ''}
             >
-              {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
+              {route?.amountOut.toSignificant(6)} {token1?.symbol}
             </a>
           </Button>{' '}
           to {recipient ? shortenAddress(recipient) : 'recipient'}
@@ -218,14 +235,7 @@ export function ConfirmationDialogContent<
   return <span />
 }
 
-export enum StepState {
-  Sign = 0,
-  NotStarted = 1,
-  Pending = 2,
-  PartialSuccess = 3,
-  Success = 4,
-  Failed = 5,
-}
+export { StepState } from './trade-review-dialog/cross-chain-swap-execution'
 
 export const initState = (state: {
   source: StepState
@@ -319,6 +329,7 @@ export const GetStateComponent = ({
   if (state === StepState.NotStarted) return <Pending>{index}</Pending>
   if (state === StepState.Sign) return <Loading />
   if (state === StepState.Pending) return <Loading />
+  if (state === StepState.Unknown) return <Loading />
   if (state === StepState.Success) return <Completed partial={false} />
   if (state === StepState.Failed) return <Failed />
   return <Completed partial={true} />

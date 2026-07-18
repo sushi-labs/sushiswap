@@ -1,11 +1,24 @@
 /** @vitest-environment jsdom */
 
-import { type PropsWithChildren, act } from 'react'
+import { type ButtonHTMLAttributes, type PropsWithChildren, act } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('@sushiswap/ui', () => ({
-  Button: ({ children }: PropsWithChildren) => children,
+  Button: ({
+    asChild,
+    children,
+    ...props
+  }: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>> & {
+    asChild?: boolean
+  }) =>
+    asChild ? (
+      children
+    ) : (
+      <button type="button" {...props}>
+        {children}
+      </button>
+    ),
   Dots: ({ children }: PropsWithChildren) => children,
   Loader: () => null,
   classNames: (...values: unknown[]) => values.filter(Boolean).join(' '),
@@ -39,8 +52,6 @@ Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
 const txHash =
   '0x1111111111111111111111111111111111111111111111111111111111111111'
 
-const routeRef = { current: null }
-
 describe('LiFi source transaction failure', () => {
   let container: HTMLDivElement
   let root: Root
@@ -66,7 +77,7 @@ describe('LiFi source transaction failure', () => {
             bridge: StepState.NotStarted,
             dest: StepState.NotStarted,
           }}
-          routeRef={routeRef}
+          route={undefined}
         />,
       )
     })
@@ -87,12 +98,36 @@ describe('LiFi source transaction failure', () => {
             bridge: StepState.NotStarted,
             dest: StepState.NotStarted,
           }}
-          routeRef={routeRef}
+          route={undefined}
         />,
       )
     })
 
     expect(container.querySelector('a')).toBeNull()
     expect(container.textContent).toContain('Your transaction failed')
+  })
+
+  it('keeps an observer failure retryable without losing the explorer link', () => {
+    const onRetrySourceReceipt = vi.fn()
+    act(() => {
+      root.render(
+        <ConfirmationDialogContent
+          txHash={txHash}
+          onRetrySourceReceipt={onRetrySourceReceipt}
+          dialogState={{
+            source: StepState.Unknown,
+            bridge: StepState.NotStarted,
+            dest: StepState.NotStarted,
+          }}
+          route={undefined}
+        />,
+      )
+    })
+
+    expect(container.querySelector('a')?.href).toContain(txHash)
+    act(() => {
+      container.querySelector<HTMLButtonElement>('button')?.click()
+    })
+    expect(onRetrySourceReceipt).toHaveBeenCalledOnce()
   })
 })

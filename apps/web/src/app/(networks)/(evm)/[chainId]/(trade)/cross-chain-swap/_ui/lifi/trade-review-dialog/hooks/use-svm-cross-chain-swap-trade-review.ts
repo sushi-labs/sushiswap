@@ -12,14 +12,12 @@ import { useSvmEstimateGas } from 'src/lib/svm/hooks/useSvmEstimateGas'
 import { waitForSvmSignature } from 'src/lib/svm/wait-for-svm-signature'
 import { useAccount } from 'src/lib/wallet'
 import type { SvmChainId } from 'sushi/svm'
-import { StepState } from '../../confirmation-dialog'
 import {
   useLifiXSwap,
   useLifiXSwapSelectedTradeRoute,
 } from '../../xswap-provider'
 import type { CrossChainSwapTradeReviewBase } from '../types'
-import { useCrossChainSwapTradeReviewPre } from './use-cross-chain-swap-trade-review-pre'
-import { useCrossChainSwapTradeReviewWriteHandlers } from './use-cross-chain-swap-trade-review-write-handlers'
+import { useCrossChainSwapExecution } from './use-cross-chain-swap-execution'
 
 const base64Encoder = getBase64Encoder()
 
@@ -54,8 +52,6 @@ export function useSvmCrossChainSwapTradeReview<
     ),
   })
 
-  const pre = useCrossChainSwapTradeReviewPre<TChainId0, TChainId1>()
-
   const {
     data: estGas,
     error: estGasError,
@@ -71,92 +67,65 @@ export function useSvmCrossChainSwapTradeReview<
       : undefined
   }, [step?.transactionRequest, estGas])
 
-  const { onWriteSuccess, onWriteError } =
-    useCrossChainSwapTradeReviewWriteHandlers({
-      routeRef: pre.routeRef,
-      groupTs: pre.groupTs,
-      setStepStates: pre.setStepStates,
+  const execution = useCrossChainSwapExecution<TChainId0, TChainId1>({
+    source: {
       waitForReceipt: (hash) => waitForSvmSignature(hash),
-      step,
-      shouldIgnoreWriteError: () => {
-        return false
+      shouldIgnoreWriteError: () => false,
+    },
+    step,
+  })
+
+  const { mutateAsync: sendTransactionAsync, isPending: isWritePending } =
+    useMutation({
+      mutationFn: async (unsignedTransaction: string) => {
+        if (!signer) throw new Error('No signer available')
+
+        const unsignedBytes = base64Encoder.encode(unsignedTransaction)
+
+        const { base58TxSig: signature } =
+          await signAndSendTransaction(unsignedBytes)
+
+        return signature as unknown as TxHashFor<TChainId0>
       },
     })
 
-  const {
-    mutateAsync: sendTransactionAsync,
-    isPending: isWritePending,
-    data: hash,
-    reset,
-  } = useMutation({
-    mutationFn: async (unsignedTransaction: string) => {
-      if (!signer) throw new Error('No signer available')
+  const write =
+    preparedTx && selectedRoute
+      ? async (confirm: () => void) => {
+          execution.startSigning()
 
-      const unsignedBytes = base64Encoder.encode(unsignedTransaction)
-
-      const { base58TxSig: signature } =
-        await signAndSendTransaction(unsignedBytes)
-
-      return signature as unknown as TxHashFor<TChainId0>
-    },
-    onSuccess: onWriteSuccess,
-    onError: onWriteError,
-  })
-
-  const write = useMemo(() => {
-    if (!preparedTx) return undefined
-
-    return async (confirm: () => void) => {
-      pre.setStepStates({
-        source: StepState.Sign,
-        bridge: StepState.NotStarted,
-        dest: StepState.NotStarted,
-      })
-
-      try {
-        await sendTransactionAsync(preparedTx.data as string)
-        confirm()
-      } catch (e) {
-        console.log(e)
-      }
-    }
-  }, [pre, sendTransactionAsync, preparedTx])
-
-  if (!enabled) {
-    return {
-      step: undefined,
-      stepStates: pre.stepStates,
-      hash: undefined,
-      routeRef: pre.routeRef,
-      tracking: {
-        groupTs: pre.groupTs,
-        reset: () => {},
-        setStepStates: pre.setStepStates,
-      },
-      slippagePercent: pre.slippagePercent,
-      isWritePending: false,
-      write: undefined,
-      isEstGasError: false,
-      estGasError: null,
-      isStepQueryError: false,
-    }
-  }
+          try {
+            const hash = await sendTransactionAsync(preparedTx.data as string)
+            execution.onBroadcast(hash, selectedRoute)
+            confirm()
+          } catch (error) {
+            execution.onWriteError(
+              error instanceof Error
+                ? error
+                : new Error('Failed to send transaction'),
+            )
+          }
+        }
+      : undefined
 
   return {
-    step,
-    stepStates: pre.stepStates,
-    hash,
-    routeRef: pre.routeRef,
+    step: enabled ? step : undefined,
+    execution: execution.execution,
+    submission: execution.submission,
+    stepStates: execution.stepStates,
+    hash: execution.submission?.hash,
+    route: execution.submission?.route,
     tracking: {
-      groupTs: pre.groupTs,
-      reset,
-      setStepStates: pre.setStepStates,
+      completeLifi: execution.completeLifi,
     },
-    slippagePercent: pre.slippagePercent,
-    isWritePending,
-    write,
-    isEstGasError,
-    estGasError,
-    isStepQueryError,
+    slippagePercent: execution.slippagePercent,
+    isWritePending: enabled ? isWritePending : false,
+    write: enabled ? write : undefined,
+    retryReceiptObservation: enabled
+      ? execution.retryReceiptObservation
+      : () => {},
+    isEstGasError: enabled ? isEstGasError : false,
+    estGasError: enabled ? estGasError : null,
+    isStepQueryError: enabled ? isStepQueryError : false,
   }
 }

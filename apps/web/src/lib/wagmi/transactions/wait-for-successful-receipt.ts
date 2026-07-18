@@ -36,6 +36,15 @@ export class TransactionReplacedError extends Error {
   }
 }
 
+export function isTerminalReceiptObservationError(
+  error: unknown,
+): error is TransactionReceiptRevertedError | TransactionReplacedError {
+  return (
+    error instanceof TransactionReceiptRevertedError ||
+    error instanceof TransactionReplacedError
+  )
+}
+
 export async function waitForSuccessfulReceipt<TClient extends ReceiptClient>(
   client: TClient,
   hash: Hash,

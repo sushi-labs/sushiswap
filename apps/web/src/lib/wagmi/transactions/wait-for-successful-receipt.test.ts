@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   TransactionReceiptRevertedError,
   TransactionReplacedError,
+  isTerminalReceiptObservationError,
   waitForSuccessfulReceipt,
 } from './wait-for-successful-receipt'
 
@@ -73,4 +74,18 @@ describe('waitForSuccessfulReceipt', () => {
       ).rejects.toBeInstanceOf(TransactionReplacedError)
     },
   )
+
+  it.each([
+    new TransactionReceiptRevertedError('0xdead'),
+    new TransactionReplacedError('cancelled'),
+    new TransactionReplacedError('replaced'),
+  ])('classifies a terminal receipt outcome', (error) => {
+    expect(isTerminalReceiptObservationError(error)).toBe(true)
+  })
+
+  it('keeps generic RPC errors retryable', () => {
+    expect(
+      isTerminalReceiptObservationError(new Error('RPC unavailable')),
+    ).toBe(false)
+  })
 })
