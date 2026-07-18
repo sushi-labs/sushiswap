@@ -3,7 +3,7 @@ import type { FC } from 'react'
 import { ChainId, type Currency, getChainById } from 'sushi'
 
 import type { EvmAddress } from 'sushi/evm'
-import { Avatar, AvatarImage } from '../avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '../avatar'
 import { LinkExternal } from '../link'
 
 const AvaxLogo = 'avax.svg'
@@ -99,23 +99,16 @@ const LOGO: Record<number, string> = {
   [ChainId.SOLANA]: SolanaLogo,
   [ChainId.ROBINHOOD]: EthereumLogo,
 }
-// function djb2(str: string) {
-//   let hash = 5381
-//   for (let i = 0; i < str.length; i++) {
-//     hash = (hash << 5) + hash + str.charCodeAt(i) /* hash * 33 + c */
-//   }
-//   return hash
-// }
+function hashAddressToColor(address: string): string {
+  let hash = 5381
 
-// function hashStringToColor(str: string) {
-//   const hash = djb2(str)
-//   const r = (hash & 0xff0000) >> 16
-//   const g = (hash & 0x00ff00) >> 8
-//   const b = hash & 0x0000ff
-//   return `#${`0${r.toString(16)}`.substr(-2)}${`0${g.toString(16)}`.substr(
-//     -2,
-//   )}${`0${b.toString(16)}`.substr(-2)}`
-// }
+  for (let index = 0; index < address.length; index++) {
+    hash = (hash << 5) + hash + address.charCodeAt(index)
+  }
+
+  const hue = (hash >>> 0) % 360
+  return `hsl(${hue}, 65%, 45%)`
+}
 
 export interface IconProps extends Omit<ImageProps, 'src' | 'alt'> {
   currency: Currency
@@ -127,26 +120,23 @@ export const Icon: FC<IconProps> = ({
   disableLink = true,
   ...rest
 }) => {
+  const address = currency.wrap().address
   const src =
     currency.type === 'native'
       ? `native-currency/${LOGO[currency.chainId]}`
       : typeof currency.metadata?.icon === 'string'
         ? currency.metadata.icon
-        : `tokens/${currency.chainId}/${currency.wrap().address}.jpg`
+        : `tokens/${currency.chainId}/${address}.jpg`
 
   const avatar = (
     <Avatar style={{ width: rest.width, height: rest.height }}>
       <AvatarImage width={Number(rest.width) ?? 20} src={src} />
-      {/* <AvatarFallback
-        style={{
-          background: hashStringToColor(
-            `${currency.symbol} ${currency.name}` ?? '??',
-          ),
-        }}
-        className="text-white"
+      <AvatarFallback
+        style={{ backgroundColor: hashAddressToColor(address.toLowerCase()) }}
+        className="font-bold text-white"
       >
-        {currency.symbol?.substring(0, 2)}
-      </AvatarFallback> */}
+        {currency.symbol.charAt(0).toUpperCase() || '?'}
+      </AvatarFallback>
     </Avatar>
   )
 
