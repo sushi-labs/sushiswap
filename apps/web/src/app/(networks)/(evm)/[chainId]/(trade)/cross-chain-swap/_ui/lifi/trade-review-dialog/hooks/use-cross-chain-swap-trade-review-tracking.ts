@@ -1,6 +1,6 @@
 import { createInfoToast, createToast } from '@sushiswap/notifications'
 import { SwapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import type { LifiXSwapSupportedChainId } from 'src/config'
 import { waitForSvmSignature } from 'src/lib/svm/wait-for-svm-signature'
 import { useLiFiStatus } from 'src/lib/swap/cross-chain'
@@ -19,6 +19,7 @@ export function useCrossChainSwapTradeReviewTracking<
 >(tradeReview: CrossChainSwapTradeReviewBase<TChainId0, TChainId1>) {
   const { submission } = tradeReview
   const { completeLifi } = tradeReview.tracking
+  const trackedDestinationTransactions = useRef(new Set<string>())
 
   const { data: lifiData } = useLiFiStatus<TChainId0, TChainId1>({
     chainId: submission?.sourceChainId,
@@ -58,6 +59,11 @@ export function useCrossChainSwapTradeReviewTracking<
   useEffect(() => {
     const txHash = lifiData?.receiving?.txHash
     if (!submission || !txHash) return
+
+    // Balance refetches can rerun this effect, so observe each destination tx once.
+    const transactionKey = `${submission.id}:${txHash}`
+    if (trackedDestinationTransactions.current.has(transactionKey)) return
+    trackedDestinationTransactions.current.add(transactionKey)
 
     const { destinationChainId, route } = submission
     const destinationChainName =
