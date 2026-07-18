@@ -1,12 +1,12 @@
 import { classNames } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
+import { Amount, ZERO } from 'sushi'
+import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
 import {
   warningSeverity,
   warningSeverityClassName,
-} from 'src/lib/swap/warningSeverity'
-import { Amount, ZERO } from 'sushi'
-import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
+} from '../../../../swap/warningSeverity'
 import type { CurrencyInputProps } from './currency-input'
 
 type PricePanel<TChainId extends BalanceChainId> = Pick<
@@ -30,8 +30,9 @@ export function PricePanel<TChainId extends BalanceChainId>({
     () => (currency ? Amount.tryFromHuman(currency, value) : undefined),
     [currency, value],
   )
+  const isPriceUnavailable = price === undefined || price === 0
   const [big, portion] = (
-    parsedValue && price
+    parsedValue && !isPriceUnavailable
       ? `${(
           (price * Number(parsedValue.amount)) /
             10 ** parsedValue.currency.decimals
@@ -59,14 +60,19 @@ export function PricePanel<TChainId extends BalanceChainId>({
         className,
       )}
     >
-      {!loading && price === 0 ? (
-        <span className="text-sm flex items-center">Price not available</span>
+      {isPriceUnavailable ? (
+        <span
+          aria-label="USD estimate unavailable"
+          title="USD estimate unavailable"
+        >
+          $ —
+        </span>
       ) : (
         <>
           $ {big}.<span className="text-sm font-semibold">{portion}</span>
         </>
       )}
-      {!(!loading && price === 0) && priceImpact && (
+      {!isPriceUnavailable && priceImpact && (
         <span
           className={classNames(
             'text-sm pl-1',
