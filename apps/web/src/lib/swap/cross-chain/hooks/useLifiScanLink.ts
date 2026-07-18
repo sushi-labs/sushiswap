@@ -51,17 +51,17 @@ async function getLiFiStatus<
 }
 
 interface UseLiFiStatusParams<TChainId0 extends LifiXSwapSupportedChainId> {
+  chainId: TChainId0 | undefined
   txHash: TxHashFor<TChainId0> | undefined
-  tradeId: string
   enabled?: boolean
 }
 
 export function useLiFiStatus<
   TChainId0 extends LifiXSwapSupportedChainId,
   TChainId1 extends LifiXSwapSupportedChainId,
->({ txHash, tradeId, enabled = true }: UseLiFiStatusParams<TChainId0>) {
+>({ chainId, txHash, enabled = true }: UseLiFiStatusParams<TChainId0>) {
   return useQuery({
-    queryKey: ['lifiStatus', { tradeId }],
+    queryKey: ['lifiStatus', { chainId, txHash }],
     queryFn: async () => {
       if (!txHash) throw new Error('txHash is required')
 

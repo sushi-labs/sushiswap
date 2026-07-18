@@ -45,7 +45,7 @@ interface State<
 > {
   mutate: Omit<
     XSwapFormMutators<TChainId0, TChainId1>,
-    'setToken0Param' | 'setToken1Param' | 'setTokenParams'
+    'setToken0Param' | 'setToken1Param' | 'setTokenParams' | 'setTradeId'
   > & {
     setToken0(token0: CurrencyFor<TChainId0> | string): void
     setToken1(token1: CurrencyFor<TChainId1> | string): void
@@ -58,7 +58,7 @@ interface State<
   }
   state: Omit<
     XSwapFormStateValues<TChainId0, TChainId1>,
-    'token0Param' | 'token1Param' | 'chainId1'
+    'token0Param' | 'token1Param' | 'chainId1' | 'tradeId'
   > & {
     chainId1: TChainId1
     token0: CurrencyFor<TChainId0> | undefined
@@ -209,14 +209,12 @@ const LifiXSwapProvider: FC<LifiXSwapProviderProps> = ({ children }) => {
             setToken0,
             setToken1,
             setTokens,
-            setTradeId: form.setTradeId,
             switchTokens: form.switchTokens,
             setSwapAmount: form.setSwapAmount,
             setSelectedBridge,
             setRouteOrder,
           },
           state: {
-            tradeId: form.tradeId,
             recipient,
             chainId0,
             chainId1,
@@ -247,8 +245,6 @@ const LifiXSwapProvider: FC<LifiXSwapProviderProps> = ({ children }) => {
         token0Loading,
         _token1,
         token1Loading,
-        form.tradeId,
-        form.setTradeId,
         selectedBridge,
         routeOrder,
         recipient,

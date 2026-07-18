@@ -1,36 +1,31 @@
-import type { Dispatch, RefObject, SetStateAction } from 'react'
 import type { LifiXSwapSupportedChainId } from 'src/config'
 import type { UseCrossChainTradeStepReturn } from 'src/lib/hooks/react-query'
 import type { FeesBreakdown } from 'src/lib/swap/cross-chain'
 import type { Percent } from 'sushi'
-import type { StepState } from '../confirmation-dialog'
 import type { UseLifiXSwapSelectedTradeRouteReturn } from '../xswap-provider'
+import type {
+  CrossChainSwapExecutionState,
+  CrossChainSwapSubmission,
+  StepState,
+} from './cross-chain-swap-execution'
 
 export type CrossChainSwapTradeReviewBase<
   TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
   TChainId1 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
 > = {
   step: UseCrossChainTradeStepReturn<TChainId0, TChainId1> | undefined
+  execution: CrossChainSwapExecutionState<TChainId0, TChainId1>
+  submission: CrossChainSwapSubmission<TChainId0, TChainId1> | undefined
   stepStates: { source: StepState; bridge: StepState; dest: StepState }
   hash: TxHashFor<TChainId0> | undefined
-  routeRef: RefObject<UseLifiXSwapSelectedTradeRouteReturn<
-    TChainId0,
-    TChainId1
-  > | null>
+  route: UseLifiXSwapSelectedTradeRouteReturn<TChainId0, TChainId1> | undefined
   tracking: {
-    groupTs: RefObject<number | undefined>
-    reset: () => void
-    setStepStates: Dispatch<
-      SetStateAction<{
-        source: StepState
-        bridge: StepState
-        dest: StepState
-      }>
-    >
+    completeLifi(submissionId: string, partial: boolean): void
   }
   slippagePercent: Percent
   isWritePending: boolean
   write: ((confirm: () => void) => Promise<void>) | undefined
+  retryReceiptObservation: () => void
   isEstGasError: boolean
   estGasError: Error | null
   isStepQueryError: boolean

@@ -15,7 +15,8 @@ export type UseSimpleSwapTradeReviewBaseReturn = {
   write: ((confirm: () => void) => Promise<void>) | undefined
   isWritePending: boolean
   txHash: string | undefined
-  status: 'pending' | 'success' | 'error'
+  status: 'pending' | 'success' | 'error' | 'unknown'
+  retryReceipt?: () => void
   slippagePercent: Percent
   isSwapQueryFetching: boolean
   isSwapQuerySuccess: boolean

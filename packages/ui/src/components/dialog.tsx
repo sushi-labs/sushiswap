@@ -236,7 +236,8 @@ interface DialogConfirmProps<TChainId extends ChainId>
   buttonLink?: string
   buttonText?: string
   txHash: TxHashFor<TChainId> | undefined
-  status: 'pending' | 'success' | 'error'
+  status: 'pending' | 'success' | 'error' | 'unknown'
+  onRetry?: () => void
 }
 
 function DialogConfirm<TChainId extends ChainId>({
@@ -247,6 +248,7 @@ function DialogConfirm<TChainId extends ChainId>({
   buttonLink,
   status,
   txHash,
+  onRetry,
   ...props
 }: DialogConfirmProps<TChainId>) {
   const { open, setOpen } = useDialog(DialogType.Confirm)
@@ -264,6 +266,8 @@ function DialogConfirm<TChainId extends ChainId>({
               <Dots>Confirming</Dots>
             ) : status === 'success' ? (
               'Success!'
+            ) : status === 'unknown' ? (
+              'Status unavailable'
             ) : (
               'Oops!'
             )}
@@ -281,6 +285,23 @@ function DialogConfirm<TChainId extends ChainId>({
                   transaction
                 </a>{' '}
                 to be confirmed on the blockchain.
+              </>
+            ) : status === 'unknown' ? (
+              <>
+                We could not refresh the receipt. Your{' '}
+                {txHash ? (
+                  <a
+                    target="_blank"
+                    href={txHashUrl}
+                    className="cursor-pointer text-blue hover:underline"
+                    rel="noreferrer"
+                  >
+                    transaction
+                  </a>
+                ) : (
+                  'transaction'
+                )}{' '}
+                may still be pending.
               </>
             ) : status === 'success' ? (
               <a
@@ -303,7 +324,7 @@ function DialogConfirm<TChainId extends ChainId>({
             )}
           </DialogDescription>
           <div className="py-6 flex justify-center">
-            {status === 'pending' ? (
+            {status === 'pending' || status === 'unknown' ? (
               <Loader size={132} strokeWidth={1} className="!text-blue" />
             ) : status === 'success' ? (
               <CheckMarkIcon width={132} height={132} />
@@ -312,6 +333,11 @@ function DialogConfirm<TChainId extends ChainId>({
             )}
           </div>
           <DialogFooter>
+            {status === 'unknown' && onRetry ? (
+              <Button fullWidth size="xl" onClick={onRetry}>
+                Retry status
+              </Button>
+            ) : null}
             <DialogClose asChild>
               <Button
                 testId={testId}

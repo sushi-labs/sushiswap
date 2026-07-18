@@ -5,6 +5,7 @@ import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { useCallback, useMemo } from 'react'
 import { logger } from 'src/lib/logger'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
+import { waitForSuccessfulReceipt } from 'src/lib/wagmi/transactions/wait-for-successful-receipt'
 import type { Amount } from 'sushi'
 import { type EvmCurrency, weth9Abi_deposit } from 'sushi/evm'
 import type { SendTransactionReturnType } from 'viem'
@@ -52,9 +53,7 @@ export const useWrapNative = ({
       })
       try {
         const ts = new Date().getTime()
-        const receiptPromise = client.waitForTransactionReceipt({
-          hash: data,
-        })
+        const receiptPromise = waitForSuccessfulReceipt(client, data)
 
         void createToast({
           account: address,

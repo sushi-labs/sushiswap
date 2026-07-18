@@ -7,9 +7,10 @@ import {
   useTrace,
 } from '@sushiswap/telemetry'
 import { DialogType, useDialog } from '@sushiswap/ui'
-import { useCallback, useMemo, useRef } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { SupportedChainId } from 'src/config'
-import { APPROVE_TAG_SWAP, NativeAddress } from 'src/lib/constants'
+import { APPROVE_TAG_SWAP } from 'src/lib/constants'
 import { sendDrilldownLog } from 'src/lib/drilldown-log'
 import {
   EVM_TRADE_GAS_MARGIN_PERCENT,
@@ -17,25 +18,27 @@ import {
 } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { logger } from 'src/lib/logger'
+import {
+  fetchTransactionReceipt,
+  refetchTransactionReceipt,
+} from 'src/lib/transactions/transaction-receipt-query'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
-import { Amount } from 'sushi'
+import {
+  isTerminalReceiptObservationError,
+  waitForSuccessfulReceipt,
+} from 'src/lib/wagmi/transactions/wait-for-successful-receipt'
+import { Amount, getNativeAddress } from 'sushi'
 import {
   type EvmAddress,
   type EvmChainId,
   type EvmCurrency,
   addGasMargin,
-  evmNativeAddress,
   getEvmCurrencyAddress,
   isEvmChainId,
 } from 'sushi/evm'
 import { type SendTransactionReturnType, stringify } from 'viem'
-import {
-  useConnection,
-  usePublicClient,
-  useSendTransaction,
-  useWaitForTransactionReceipt,
-} from 'wagmi'
+import { useConnection, usePublicClient, useSendTransaction } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useDetailsInteractionTracker } from '../../../_ui/details-interaction-tracker-provider'
@@ -106,119 +109,101 @@ function useEvmSimpleSwapTradeReviewForState({
   } = useEvmSimpleSwapTrade(enabled)
 
   const { refetchChain: refetchBalances } = useRefetchBalances()
+  const queryClient = useQueryClient()
 
   const trace = useTrace()
   const { data: prices } = usePrices({ chainId })
 
   const tradeRef = useRef<UseEvmTradeReturn | null>(null)
+  const currentHashRef = useRef<SendTransactionReturnType | null>(null)
+  const [status, setStatus] = useState<
+    'pending' | 'success' | 'error' | 'unknown'
+  >('pending')
 
   const isWrap = isWrapTrade(token0, token1)
   const isUnwrap = isUnwrapTrade(token0, token1)
 
-  const onSwapSuccess = useCallback(
-    async (hash: SendTransactionReturnType) => {
-      if (!trade || !chainId) return
+  useEffect(() => {
+    if (!confirmDialogOpen) currentHashRef.current = null
+  }, [confirmDialogOpen])
 
-      try {
-        const ts = new Date().getTime()
-        const promise = client.waitForTransactionReceipt({
-          hash,
-        })
+  const observeReceipt = useCallback(
+    (hash: SendTransactionReturnType, submittedTrade: UseEvmTradeReturn) => {
+      if (!chainId) return
 
-        sendAnalyticsEvent(SwapEventName.SWAP_SIGNED, {
-          ...(trace as Record<string, unknown>),
-          txHash: hash,
-          chainId: chainId,
-          token0:
-            tradeRef?.current?.amountIn?.currency?.type === 'token'
-              ? tradeRef?.current?.amountIn?.currency?.address
-              : evmNativeAddress,
-          token1:
-            tradeRef?.current?.amountOut?.currency?.type === 'token'
-              ? tradeRef?.current?.amountOut?.currency?.address
-              : evmNativeAddress,
-          amountIn: tradeRef?.current?.amountIn?.amount,
-          amountOut: tradeRef?.current?.amountOut?.amount,
-          amountOutMin: tradeRef?.current?.minAmountOut?.amount,
-        })
+      const receiptPromise = fetchTransactionReceipt({
+        queryClient,
+        chainId,
+        hash,
+        isTerminalError: isTerminalReceiptObservationError,
+        queryFn: () => waitForSuccessfulReceipt(client, hash),
+        onAttempt: () => {
+          if (currentHashRef.current === hash) setStatus('pending')
+        },
+        onRetry: (error) => {
+          if (currentHashRef.current === hash) setStatus('unknown')
+          logger.error(error, {
+            location: 'SimpleSwapTradeReviewDialog',
+            action: 'observeReceipt',
+            txHash: hash,
+          })
+        },
+      })
 
-        void createToast({
-          account: address,
-          type: 'swap',
-          chainId: chainId,
-          txHash: hash,
-          promise,
-          summary: {
-            pending: `${
-              isWrap ? 'Wrapping' : isUnwrap ? 'Unwrapping' : 'Swapping'
-            } ${trade.amountIn?.toSignificant(6)} ${
-              trade.amountIn?.currency.symbol
-            } ${
-              isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-            } ${trade.amountOut?.toSignificant(6)} ${
-              trade.amountOut?.currency.symbol
-            }`,
-            completed: `${
-              isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'
-            } ${trade.amountIn?.toSignificant(6)} ${
-              trade.amountIn?.currency.symbol
-            } ${
-              isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-            } ${trade.amountOut?.toSignificant(6)} ${
-              trade.amountOut?.currency.symbol
-            }`,
-            failed: `Something went wrong when trying to ${
-              isWrap ? 'wrap' : isUnwrap ? 'unwrap' : 'swap'
-            } ${trade.amountIn?.currency.symbol} ${
-              isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-            } ${trade.amountOut?.currency.symbol}`,
-          },
-          timestamp: ts,
-          groupTimestamp: ts,
-        })
+      void receiptPromise.then(
+        async (receipt) => {
+          refetchBalances(chainId)
 
-        const receipt = await promise
-        {
-          const trade = tradeRef.current
-          if (receipt.status === 'success') {
-            sendAnalyticsEvent(SwapEventName.SWAP_TRANSACTION_COMPLETED, {
-              txHash: hash,
-              from: receipt.from,
-              chain_id: chainId,
-              tx: stringify(trade?.tx),
-            })
-            if (trade?.amountIn?.currency && trade?.amountOut?.currency) {
-              const token0Usd =
-                prices?.get(trade?.amountIn?.currency.wrap().address) ?? 0
-              const swapAmountUsd = Amount.tryFromHuman(
-                trade?.amountIn?.currency,
-                trade?.amountIn?.toString(),
-              )?.mulHuman(token0Usd)
-              const swapDetails = {
-                location: '_SimpleSwapTradeReviewDialog',
-                action: 'onSwapSuccess',
-                chainId: String(chainId),
-                token0:
-                  trade?.amountIn?.currency.type === 'native'
-                    ? 'native'
-                    : trade?.amountIn?.currency.address,
-                token0Symbol: trade?.amountIn?.currency.symbol ?? 'N/A',
-                token1:
-                  trade?.amountOut?.currency.type === 'native'
-                    ? 'native'
-                    : trade?.amountOut?.currency.address,
-                token1Symbol: trade?.amountOut?.currency.symbol ?? 'N/A',
-                swapAmount: trade?.amountIn?.toString(),
-                swapAmountUsd:
-                  swapAmountUsd && token0Usd
-                    ? swapAmountUsd?.toString()
-                    : 'N/A',
-                feeUsd: trade?.fee ? trade.fee?.replaceAll('$', '') : 'N/A',
-                recipient: recipient ? recipient : 'N/A',
-                timestamp: Date.now().toString(),
-                detailsCollapsedState: isDetailsCollapsed ? 'closed' : 'open',
-                wasDetailsTouched: wasDetailsTouched ? 'yes' : 'no',
-              }
+          if (currentHashRef.current === hash) {
+            setStatus('success')
+            setSwapAmount('')
+            resetDetailsTrackedState()
+          }
+
+          sendAnalyticsEvent(SwapEventName.SWAP_TRANSACTION_COMPLETED, {
+            txHash: hash,
+            from: receipt.from,
+            chain_id: chainId,
+            tx: stringify(submittedTrade.tx),
+          })
+
+          if (
+            submittedTrade.amountIn?.currency &&
+            submittedTrade.amountOut?.currency
+          ) {
+            const token0Usd =
+              prices?.get(submittedTrade.amountIn.currency.wrap().address) ?? 0
+            const swapAmountUsd = Amount.tryFromHuman(
+              submittedTrade.amountIn.currency,
+              submittedTrade.amountIn.toString(),
+            )?.mulHuman(token0Usd)
+            const swapDetails = {
+              location: '_SimpleSwapTradeReviewDialog',
+              action: 'onSwapSuccess',
+              chainId: String(chainId),
+              token0:
+                submittedTrade.amountIn.currency.type === 'native'
+                  ? 'native'
+                  : submittedTrade.amountIn.currency.address,
+              token0Symbol: submittedTrade.amountIn.currency.symbol ?? 'N/A',
+              token1:
+                submittedTrade.amountOut.currency.type === 'native'
+                  ? 'native'
+                  : submittedTrade.amountOut.currency.address,
+              token1Symbol: submittedTrade.amountOut.currency.symbol ?? 'N/A',
+              swapAmount: submittedTrade.amountIn.toString(),
+              swapAmountUsd:
+                swapAmountUsd && token0Usd ? swapAmountUsd.toString() : 'N/A',
+              feeUsd: submittedTrade.fee
+                ? submittedTrade.fee.replaceAll('$', '')
+                : 'N/A',
+              recipient: recipient ?? 'N/A',
+              timestamp: Date.now().toString(),
+              detailsCollapsedState: isDetailsCollapsed ? 'closed' : 'open',
+              wasDetailsTouched: wasDetailsTouched ? 'yes' : 'no',
+            }
+
+            try {
               await sendDrilldownLog({
                 dataForLog: swapDetails,
                 extraFields: {
@@ -230,46 +215,114 @@ function useEvmSimpleSwapTradeReviewForState({
                 },
                 logLevel: 'info',
               })
+            } catch (error) {
+              logger.error(error, {
+                location: 'SimpleSwapTradeReviewDialog',
+                action: 'sendDrilldownLog',
+                txHash: hash,
+              })
             }
-          } else {
-            sendAnalyticsEvent(SwapEventName.SWAP_TRANSACTION_FAILED, {
-              txHash: hash,
-              from: receipt.from,
-              chain_id: chainId,
-              token_from:
-                trade?.amountIn?.currency.type === 'token'
-                  ? trade?.amountIn?.currency.address
-                  : NativeAddress,
-              token_to:
-                trade?.amountOut?.currency.type === 'token'
-                  ? trade?.amountOut?.currency.address
-                  : NativeAddress,
-              tx: stringify(trade?.tx),
-            })
           }
-        }
-      } finally {
-        setSwapAmount('')
-        refetchBalances(chainId)
-        resetDetailsTrackedState()
-      }
+        },
+        (error: unknown) => {
+          if (!isTerminalReceiptObservationError(error)) return
+
+          if (currentHashRef.current === hash) setStatus('error')
+
+          const nativeAddress = getNativeAddress(chainId)
+          sendAnalyticsEvent(SwapEventName.SWAP_TRANSACTION_FAILED, {
+            txHash: hash,
+            chain_id: chainId,
+            token_from:
+              submittedTrade.amountIn?.currency.type === 'token'
+                ? submittedTrade.amountIn.currency.address
+                : nativeAddress,
+            token_to:
+              submittedTrade.amountOut?.currency.type === 'token'
+                ? submittedTrade.amountOut.currency.address
+                : nativeAddress,
+            tx: stringify(submittedTrade.tx),
+          })
+          refetchBalances(chainId)
+        },
+      )
+
+      return receiptPromise
     },
     [
-      setSwapAmount,
-      trade,
       chainId,
       client,
-      address,
-      isWrap,
-      isUnwrap,
-      refetchBalances,
-      trace,
-      prices,
-      recipient,
-      resetDetailsTrackedState,
       isDetailsCollapsed,
+      prices,
+      queryClient,
+      recipient,
+      refetchBalances,
+      resetDetailsTrackedState,
+      setSwapAmount,
       wasDetailsTouched,
     ],
+  )
+
+  const onSwapSuccess = useCallback(
+    (hash: SendTransactionReturnType) => {
+      const submittedTrade = tradeRef.current
+      if (!submittedTrade || !chainId) return
+
+      currentHashRef.current = hash
+      const receiptPromise = observeReceipt(hash, submittedTrade)
+      if (!receiptPromise) return
+      const ts = Date.now()
+      const nativeAddress = getNativeAddress(chainId)
+
+      sendAnalyticsEvent(SwapEventName.SWAP_SIGNED, {
+        ...(trace as Record<string, unknown>),
+        txHash: hash,
+        chainId,
+        token0:
+          submittedTrade.amountIn?.currency?.type === 'token'
+            ? submittedTrade.amountIn.currency.address
+            : nativeAddress,
+        token1:
+          submittedTrade.amountOut?.currency?.type === 'token'
+            ? submittedTrade.amountOut.currency.address
+            : nativeAddress,
+        amountIn: submittedTrade.amountIn?.amount,
+        amountOut: submittedTrade.amountOut?.amount,
+        amountOutMin: submittedTrade.minAmountOut?.amount,
+      })
+
+      void createToast({
+        account: address,
+        type: 'swap',
+        chainId,
+        txHash: hash,
+        promise: receiptPromise,
+        summary: {
+          pending: `${
+            isWrap ? 'Wrapping' : isUnwrap ? 'Unwrapping' : 'Swapping'
+          } ${submittedTrade.amountIn?.toSignificant(6)} ${
+            submittedTrade.amountIn?.currency.symbol
+          } ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'} ${submittedTrade.amountOut?.toSignificant(
+            6,
+          )} ${submittedTrade.amountOut?.currency.symbol}`,
+          completed: `${isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'} ${submittedTrade.amountIn?.toSignificant(
+            6,
+          )} ${submittedTrade.amountIn?.currency.symbol} ${
+            isWrap ? 'to' : isUnwrap ? 'to' : 'for'
+          } ${submittedTrade.amountOut?.toSignificant(6)} ${
+            submittedTrade.amountOut?.currency.symbol
+          }`,
+          failed: `Something went wrong when trying to ${
+            isWrap ? 'wrap' : isUnwrap ? 'unwrap' : 'swap'
+          } ${submittedTrade.amountIn?.currency.symbol} ${
+            isWrap ? 'to' : isUnwrap ? 'to' : 'for'
+          } ${submittedTrade.amountOut?.currency.symbol}`,
+        },
+        timestamp: ts,
+        groupTimestamp: ts,
+      })
+    },
+    [address, chainId, isUnwrap, isWrap, observeReceipt, trace],
   )
 
   const onSwapError = useCallback(
@@ -320,6 +373,12 @@ function useEvmSimpleSwapTradeReviewForState({
     },
   })
 
+  const retryReceipt = useCallback(() => {
+    const hash = currentHashRef.current
+    if (!hash || !chainId) return
+    void refetchTransactionReceipt(queryClient, chainId, hash)
+  }, [chainId, queryClient])
+
   const write = useMemo(() => {
     if (!trade?.tx || address?.toLowerCase() !== trade.tx.from.toLowerCase())
       return undefined
@@ -341,11 +400,6 @@ function useEvmSimpleSwapTradeReviewForState({
     }
   }, [address, trade?.tx, sendTransactionAsync])
 
-  const { status } = useWaitForTransactionReceipt({
-    chainId: chainId,
-    hash: txHash,
-  })
-
   return {
     trade,
     tradeRef: tradeRef,
@@ -353,6 +407,7 @@ function useEvmSimpleSwapTradeReviewForState({
     isWritePending,
     txHash,
     status,
+    retryReceipt,
     slippagePercent,
     isSwapQueryFetching,
     isSwapQuerySuccess,

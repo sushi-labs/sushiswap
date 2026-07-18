@@ -118,6 +118,7 @@ const SimpleSwapTradeReviewDialogContent: FC<
     isWritePending,
     txHash,
     status,
+    retryReceipt,
   } = tradeReview
 
   return (
@@ -174,8 +175,9 @@ const SimpleSwapTradeReviewDialogContent: FC<
         chainId={chainId}
         status={status}
         testId="make-another-swap"
-        buttonText="Make another swap"
+        buttonText={status === 'unknown' ? 'Close' : 'Make another swap'}
         txHash={txHash}
+        onRetry={retryReceipt}
         successMessage={`You ${
           isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'
         } ${tradeRef.current?.amountIn?.toSignificant(6)} ${token0?.symbol} ${

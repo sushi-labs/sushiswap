@@ -10,21 +10,20 @@ import { logger } from 'src/lib/logger'
 import { getCrossChainFeesBreakdown } from 'src/lib/swap/cross-chain'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
-import type { EvmAddress, EvmChainId } from 'sushi/evm'
+import { waitForSuccessfulReceipt } from 'src/lib/wagmi/transactions/wait-for-successful-receipt'
+import type { EvmChainId } from 'sushi/evm'
 import {
   useConnection,
   useEstimateGas,
   usePublicClient,
   useSendTransaction,
 } from 'wagmi'
-import { StepState } from '../../confirmation-dialog'
 import {
   useLifiXSwap,
   useLifiXSwapSelectedTradeRoute,
 } from '../../xswap-provider'
 import type { CrossChainSwapTradeReviewBase } from '../types'
-import { useCrossChainSwapTradeReviewPre } from './use-cross-chain-swap-trade-review-pre'
-import { useCrossChainSwapTradeReviewWriteHandlers } from './use-cross-chain-swap-trade-review-write-handlers'
+import { useCrossChainSwapExecution } from './use-cross-chain-swap-execution'
 
 function toBigInt(value: bigint | `0x${string}` | string | undefined) {
   if (value == null) return undefined
@@ -64,8 +63,6 @@ export function useEvmCrossChainSwapTradeReview<
       enabled && approved && address && (confirmDialogOpen || reviewDialogOpen),
     ),
   })
-
-  const pre = useCrossChainSwapTradeReviewPre<TChainId0, TChainId1>()
 
   const {
     data: estGas,
@@ -110,100 +107,56 @@ export function useEvmCrossChainSwapTradeReview<
     }
   }, [estGasError])
 
-  const { onWriteSuccess, onWriteError } =
-    useCrossChainSwapTradeReviewWriteHandlers<
-      TChainId0,
-      TChainId1,
-      {
-        status: 'success' | 'reverted'
-      }
-    >({
-      routeRef: pre.routeRef,
-      groupTs: pre.groupTs,
-      setStepStates: pre.setStepStates,
-      waitForReceipt: (hash) => client0.waitForTransactionReceipt({ hash }),
-      getReceiptInfo: (receipt) => ({
-        status: receipt.status === 'success' ? 'success' : 'failed',
-      }),
-      step,
+  const execution = useCrossChainSwapExecution<TChainId0, TChainId1>({
+    source: {
+      waitForReceipt: (hash) => waitForSuccessfulReceipt(client0, hash),
       shouldIgnoreWriteError: isUserRejectedError,
-    })
-
-  const {
-    mutateAsync: sendTransactionAsync,
-    isPending: isWritePending,
-    data: _hash,
-    reset,
-  } = useSendTransaction({
-    mutation: {
-      onSuccess: (hash) => onWriteSuccess(hash as TxHashFor<TChainId0>),
-      onError: onWriteError,
-      onMutate: () => {
-        if (pre.routeRef && selectedRoute) {
-          pre.routeRef.current = selectedRoute
-        }
-      },
     },
+    step,
   })
 
-  const hash = _hash as TxHashFor<TChainId0> | undefined
+  const { mutateAsync: sendTransactionAsync, isPending: isWritePending } =
+    useSendTransaction()
 
-  const write = useMemo(() => {
-    if (!preparedTx) return undefined
+  const write =
+    preparedTx && selectedRoute
+      ? async (confirm: () => void) => {
+          execution.startSigning()
 
-    return async (confirm: () => void) => {
-      pre.setStepStates({
-        source: StepState.Sign,
-        bridge: StepState.NotStarted,
-        dest: StepState.NotStarted,
-      })
-
-      try {
-        await sendTransactionAsync(
-          preparedTx as Parameters<typeof sendTransactionAsync>[0],
-        )
-        confirm()
-      } catch (e) {
-        console.log(e)
-      }
-    }
-  }, [pre, sendTransactionAsync, preparedTx])
-
-  if (!enabled) {
-    return {
-      step: undefined,
-      stepStates: pre.stepStates,
-      hash: undefined,
-      routeRef: pre.routeRef,
-      tracking: {
-        groupTs: pre.groupTs,
-        reset: () => {},
-        setStepStates: pre.setStepStates,
-      },
-      slippagePercent: pre.slippagePercent,
-      isWritePending: false,
-      write: undefined,
-      isEstGasError: false,
-      estGasError: null,
-      isStepQueryError: false,
-    }
-  }
+          try {
+            const hash = await sendTransactionAsync(
+              preparedTx as Parameters<typeof sendTransactionAsync>[0],
+            )
+            execution.onBroadcast(hash as TxHashFor<TChainId0>, selectedRoute)
+            confirm()
+          } catch (error) {
+            execution.onWriteError(
+              error instanceof Error
+                ? error
+                : new Error('Failed to send transaction'),
+            )
+          }
+        }
+      : undefined
 
   return {
-    step,
-    stepStates: pre.stepStates,
-    hash,
-    routeRef: pre.routeRef,
+    step: enabled ? step : undefined,
+    execution: execution.execution,
+    submission: execution.submission,
+    stepStates: execution.stepStates,
+    hash: execution.submission?.hash,
+    route: execution.submission?.route,
     tracking: {
-      groupTs: pre.groupTs,
-      reset,
-      setStepStates: pre.setStepStates,
+      completeLifi: execution.completeLifi,
     },
-    slippagePercent: pre.slippagePercent,
-    isWritePending,
-    write,
-    isEstGasError,
-    estGasError,
-    isStepQueryError,
+    slippagePercent: execution.slippagePercent,
+    isWritePending: enabled ? isWritePending : false,
+    write: enabled ? write : undefined,
+    retryReceiptObservation: enabled
+      ? execution.retryReceiptObservation
+      : () => {},
+    isEstGasError: enabled ? isEstGasError : false,
+    estGasError: enabled ? estGasError : null,
+    isStepQueryError: enabled ? isStepQueryError : false,
   }
 }

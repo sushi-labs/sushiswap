@@ -12,16 +12,14 @@ import {
   DialogReview,
   DialogTitle,
   DialogType,
-  useDialog,
 } from '@sushiswap/ui'
 import type React from 'react'
-import { type ReactNode, type RefObject, useEffect } from 'react'
+import type { ReactNode } from 'react'
 import type { LifiXSwapSupportedChainId } from 'src/config'
 import {
   ConfirmationDialogContent,
   Divider,
   GetStateComponent,
-  StepState,
   failedState,
   finishedState,
 } from './confirmation-dialog'
@@ -33,7 +31,6 @@ import { ReviewIntro } from './trade-review-dialog/review-intro'
 import { TradeDetails } from './trade-review-dialog/trade-details'
 import { TradeHeader } from './trade-review-dialog/trade-header'
 import { TradeWarnings } from './trade-review-dialog/trade-warnings'
-import type { UseLifiXSwapSelectedTradeRouteReturn } from './xswap-provider'
 
 interface CrossChainSwapTradeReviewDialogProps {
   children: ReactNode
@@ -65,7 +62,7 @@ function CrossChainSwapTradeReviewDialogContent<
     stepStates,
     lifiData,
     hash,
-    routeRef,
+    route,
     executionDuration,
     feesBreakdown,
     totalFeesUSD,
@@ -76,24 +73,13 @@ function CrossChainSwapTradeReviewDialogContent<
     slippagePercent,
     isWritePending,
     write,
+    retryReceiptObservation,
     isEstGasError,
     estGasError,
     isStepQueryError,
     showPriceImpactWarning,
     showSlippageWarning,
-    tracking: { setStepStates },
   } = useCrossChainSwapTradeReview<TChainId0, TChainId1>()
-
-  const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
-  useEffect(() => {
-    if (!confirmDialogOpen) {
-      setStepStates({
-        source: StepState.NotStarted,
-        bridge: StepState.NotStarted,
-        dest: StepState.NotStarted,
-      })
-    }
-  }, [confirmDialogOpen, setStepStates])
 
   return (
     <>
@@ -147,12 +133,8 @@ function CrossChainSwapTradeReviewDialogContent<
                   bridgeUrl={lifiData?.lifiExplorerLink}
                   txHash={hash}
                   dstTxHash={lifiData?.receiving?.txHash}
-                  routeRef={
-                    routeRef as RefObject<UseLifiXSwapSelectedTradeRouteReturn<
-                      TChainId0,
-                      TChainId1
-                    > | null>
-                  }
+                  onRetrySourceReceipt={retryReceiptObservation}
+                  route={route}
                 />
               </div>
             </DialogDescription>

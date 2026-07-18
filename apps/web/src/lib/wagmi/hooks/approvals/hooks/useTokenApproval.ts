@@ -5,6 +5,7 @@ import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { useCallback, useMemo, useState } from 'react'
 import { logger } from 'src/lib/logger'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
+import { waitForSuccessfulReceipt } from 'src/lib/wagmi/transactions/wait-for-successful-receipt'
 import type { Amount } from 'sushi'
 import { type EvmAddress, type EvmCurrency, erc20Abi_approve } from 'sushi/evm'
 import {
@@ -129,9 +130,7 @@ export const useTokenApproval = ({
       setPending(true)
       try {
         const ts = new Date().getTime()
-        const receiptPromise = client.waitForTransactionReceipt({
-          hash: data,
-        })
+        const receiptPromise = waitForSuccessfulReceipt(client, data)
 
         void createToast({
           account: address,
