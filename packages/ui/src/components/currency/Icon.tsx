@@ -3,8 +3,8 @@ import type { FC } from 'react'
 import { ChainId, type Currency, getChainById } from 'sushi'
 
 import type { EvmAddress } from 'sushi/evm'
-import { Avatar, AvatarFallback, AvatarImage } from '../avatar'
 import { LinkExternal } from '../link'
+import { CurrencyAvatar } from './currency-avatar'
 
 const AvaxLogo = 'avax.svg'
 const BnbLogo = 'bnb.svg'
@@ -129,15 +129,13 @@ export const Icon: FC<IconProps> = ({
         : `tokens/${currency.chainId}/${address}.jpg`
 
   const avatar = (
-    <Avatar style={{ width: rest.width, height: rest.height }}>
-      <AvatarImage width={Number(rest.width) ?? 20} src={src} />
-      <AvatarFallback
-        style={{ backgroundColor: hashAddressToColor(address.toLowerCase()) }}
-        className="font-bold text-white"
-      >
-        {currency.symbol.charAt(0).toUpperCase() || '?'}
-      </AvatarFallback>
-    </Avatar>
+    <CurrencyAvatar
+      src={src}
+      width={rest.width}
+      height={rest.height}
+      fallback={currency.symbol.charAt(0).toUpperCase() || '?'}
+      fallbackColor={hashAddressToColor(address.toLowerCase())}
+    />
   )
 
   if (disableLink) {

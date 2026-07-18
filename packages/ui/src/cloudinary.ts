@@ -37,7 +37,7 @@ export function cloudinaryLogoFetchLoader({
   ]
   return `https://cdn.sushi.com/image/fetch/${params.join(
     ',',
-  )}/d_unknown.png/${normalizeSrc(src)}`
+  )}/${normalizeSrc(src)}`
 }
 
 export function cloudinaryLogoImageLoader({
@@ -53,7 +53,7 @@ export function cloudinaryLogoImageLoader({
   ]
   return `https://cdn.sushi.com/image/upload/${params.join(
     ',',
-  )}/d_unknown.png/${normalizeSrc(src)}`
+  )}/${normalizeSrc(src)}`
 }
 
 // from next/image

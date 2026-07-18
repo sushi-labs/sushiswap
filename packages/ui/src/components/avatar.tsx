@@ -33,7 +33,7 @@ interface AvatarImageProps
 const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
   AvatarImageProps
->(({ className, width, src }, ref) => {
+>(({ className, width, src, onLoadingStatusChange }, ref) => {
   const _width = Number(width) ?? 40
 
   const isAbsoluteUrl = /^https?:\/\//.test(src)
@@ -51,6 +51,7 @@ const AvatarImage = React.forwardRef<
       asChild
       ref={ref}
       className={classNames('aspect-square h-full w-full', className)}
+      onLoadingStatusChange={onLoadingStatusChange}
     >
       <Image
         loader={loader}
