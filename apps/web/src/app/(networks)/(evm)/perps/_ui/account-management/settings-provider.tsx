@@ -36,6 +36,7 @@ interface State {
     disableBgFillNotifs: boolean
     hidePnl: boolean
     fillChimeEnabled: boolean
+    clickSoundEnabled: boolean
     optOutOfSpotDustCollection: boolean
     nSigFigs?: number
     mantissa: L2BookParameters['mantissa']
@@ -54,6 +55,7 @@ interface State {
     setDisableBgFillNotifs: (disabled: boolean) => void
     setHidePnl: (hide: boolean) => void
     setFillChimeEnabled: (enabled: boolean) => void
+    setClickSoundEnabled: (enabled: boolean) => void
     setOptOutOfSpotDustCollection: () => void
     setNSigFigs: (nSigFigs: number | undefined) => void
     setMantissa: (mantissa: L2BookParameters['mantissa']) => void
@@ -73,6 +75,7 @@ interface UserSettingsProviderProps {
 }
 
 const BASE_STORAGE_KEY = 'sushi.perps.user-settings'
+const CLICK_SOUND_SRC = '/audio/app_click.mp3'
 const FILL_CHIME_SRC = '/audio/short_chime.mp3'
 
 const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
@@ -130,6 +133,10 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
     `${BASE_STORAGE_KEY}.fill.chime.enabled`,
     true,
   )
+  const [clickSoundEnabled, setClickSoundEnabled] = useLocalStorage<boolean>(
+    `${BASE_STORAGE_KEY}.click.sound.enabled`,
+    false,
+  )
   const [showPnlCardOnMarketClose, setShowPnlCardOnMarketClose] =
     useLocalStorage<boolean>(
       `${BASE_STORAGE_KEY}.show.pnl.card.on.market.close`,
@@ -140,6 +147,7 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
   const [mantissa, setMantissa] =
     useState<L2BookParameters['mantissa']>(undefined)
   const [isOpenPnLCard, setIsOpenPnLCard] = useState(false)
+  const clickSoundAudioRef = useRef<HTMLAudioElement | null>(null)
   const fillChimeAudioRef = useRef<HTMLAudioElement | null>(null)
   const knownFillIdsRef = useRef<Set<string>>(new Set())
   const hasSeededKnownFillIdsRef = useRef(false)
@@ -161,6 +169,28 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
   }, [])
 
   const { data: notification } = useUserNotifications({ address })
+
+  useEffect(() => {
+    if (!clickSoundEnabled || typeof document === 'undefined') return
+
+    function handleDocumentClick(event: MouseEvent): void {
+      if (event.button !== 0 || typeof Audio === 'undefined') {
+        return
+      }
+
+      const audio = clickSoundAudioRef.current ?? new Audio(CLICK_SOUND_SRC)
+      audio.preload = 'auto'
+      clickSoundAudioRef.current = audio
+      audio.currentTime = 0
+      void audio.play().catch(() => undefined)
+    }
+
+    document.addEventListener('click', handleDocumentClick)
+
+    return () => {
+      document.removeEventListener('click', handleDocumentClick)
+    }
+  }, [clickSoundEnabled])
 
   useEffect(() => {
     if (notification && !disableBgFillNotifs) {
@@ -280,6 +310,7 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             disableBgFillNotifs,
             hidePnl,
             fillChimeEnabled,
+            clickSoundEnabled,
             optOutOfSpotDustCollection,
             nSigFigs,
             mantissa,
@@ -298,6 +329,7 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             setDisableBgFillNotifs,
             setHidePnl,
             setFillChimeEnabled,
+            setClickSoundEnabled,
             setOptOutOfSpotDustCollection,
             setNSigFigs,
             setMantissa,
@@ -328,6 +360,8 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
         setHidePnl,
         fillChimeEnabled,
         setFillChimeEnabled,
+        clickSoundEnabled,
+        setClickSoundEnabled,
         optOutOfSpotDustCollection,
         setOptOutOfSpotDustCollection,
         nSigFigs,

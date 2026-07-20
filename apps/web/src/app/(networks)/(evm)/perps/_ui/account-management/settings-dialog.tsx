@@ -25,6 +25,7 @@ export const SettingsDialog = () => {
       disableBgFillNotifs,
       hidePnl,
       fillChimeEnabled,
+      clickSoundEnabled,
       optOutOfSpotDustCollection,
       showPnlCardOnMarketClose,
     },
@@ -38,6 +39,7 @@ export const SettingsDialog = () => {
       setDisableBgFillNotifs,
       setHidePnl,
       setFillChimeEnabled,
+      setClickSoundEnabled,
       setOptOutOfSpotDustCollection,
       setShowPnlCardOnMarketClose,
     },
@@ -95,7 +97,12 @@ export const SettingsDialog = () => {
             <CheckboxSetting
               value={fillChimeEnabled}
               onChange={setFillChimeEnabled}
-              label="Play Fill Sound"
+              label="Enable Fill Sound"
+            />
+            <CheckboxSetting
+              value={clickSoundEnabled}
+              onChange={setClickSoundEnabled}
+              label="Enable Click Sound"
             />
             <CheckboxSetting
               value={showBuySellInChart}
