@@ -9,6 +9,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 import {
@@ -34,6 +35,7 @@ interface State {
     showBuySellInChart: boolean
     disableBgFillNotifs: boolean
     hidePnl: boolean
+    fillChimeEnabled: boolean
     optOutOfSpotDustCollection: boolean
     nSigFigs?: number
     mantissa: L2BookParameters['mantissa']
@@ -51,6 +53,7 @@ interface State {
     setShowBuySellInChart: (enabled: boolean) => void
     setDisableBgFillNotifs: (disabled: boolean) => void
     setHidePnl: (hide: boolean) => void
+    setFillChimeEnabled: (enabled: boolean) => void
     setOptOutOfSpotDustCollection: () => void
     setNSigFigs: (nSigFigs: number | undefined) => void
     setMantissa: (mantissa: L2BookParameters['mantissa']) => void
@@ -70,6 +73,7 @@ interface UserSettingsProviderProps {
 }
 
 const BASE_STORAGE_KEY = 'sushi.perps.user-settings'
+const FILL_CHIME_SRC = '/audio/short_chime.mp3'
 
 const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
   const {
@@ -79,6 +83,7 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
   const {
     state: {
       webData3Query: { data: webData3 },
+      userFillsQuery: { data: userFillsData },
     },
   } = useUserState()
   const [orderBookSide, setOrderBookSide] = useState<'base' | 'quote'>('quote')
@@ -121,6 +126,10 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
     `${BASE_STORAGE_KEY}.hide.pnl`,
     false,
   )
+  const [fillChimeEnabled, setFillChimeEnabled] = useLocalStorage<boolean>(
+    `${BASE_STORAGE_KEY}.fill.chime.enabled`,
+    true,
+  )
   const [showPnlCardOnMarketClose, setShowPnlCardOnMarketClose] =
     useLocalStorage<boolean>(
       `${BASE_STORAGE_KEY}.show.pnl.card.on.market.close`,
@@ -131,6 +140,9 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
   const [mantissa, setMantissa] =
     useState<L2BookParameters['mantissa']>(undefined)
   const [isOpenPnLCard, setIsOpenPnLCard] = useState(false)
+  const fillChimeAudioRef = useRef<HTMLAudioElement | null>(null)
+  const knownFillIdsRef = useRef<Set<string>>(new Set())
+  const hasSeededKnownFillIdsRef = useRef(false)
 
   const [anyTrade, setAnyTrade] = useState<AnyTradeType | null>(null)
 
@@ -166,6 +178,49 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
       })
     }
   }, [notification, address, disableBgFillNotifs])
+
+  useEffect(() => {
+    if (!address) {
+      fillChimeAudioRef.current?.pause()
+    }
+    knownFillIdsRef.current = new Set()
+    hasSeededKnownFillIdsRef.current = false
+  }, [address])
+
+  useEffect(() => {
+    const fills = userFillsData?.fills
+    if (!fills) return
+
+    const fillIds = fills.map((fill) => fill.tid.toString())
+    const knownFillIds = knownFillIdsRef.current
+
+    if (!hasSeededKnownFillIdsRef.current || userFillsData.isSnapshot) {
+      knownFillIds.clear()
+      for (const fillId of fillIds) {
+        knownFillIds.add(fillId)
+      }
+      hasSeededKnownFillIdsRef.current = true
+      return
+    }
+
+    let hasNewFill = false
+    for (const fillId of fillIds) {
+      if (!knownFillIds.has(fillId)) {
+        hasNewFill = true
+        knownFillIds.add(fillId)
+      }
+    }
+
+    if (!hasNewFill || !fillChimeEnabled || typeof Audio === 'undefined') {
+      return
+    }
+
+    const audio = fillChimeAudioRef.current ?? new Audio(FILL_CHIME_SRC)
+    audio.preload = 'auto'
+    fillChimeAudioRef.current = audio
+    audio.currentTime = 0
+    void audio.play().catch(() => undefined)
+  }, [fillChimeEnabled, userFillsData])
 
   const { setUserAbstraction, isPending: isUserAbstractionPending } =
     useSetUserAbstraction()
@@ -224,6 +279,7 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             showBuySellInChart,
             disableBgFillNotifs,
             hidePnl,
+            fillChimeEnabled,
             optOutOfSpotDustCollection,
             nSigFigs,
             mantissa,
@@ -241,6 +297,7 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
             setShowBuySellInChart,
             setDisableBgFillNotifs,
             setHidePnl,
+            setFillChimeEnabled,
             setOptOutOfSpotDustCollection,
             setNSigFigs,
             setMantissa,
@@ -269,6 +326,8 @@ const UserSettingsProvider: FC<UserSettingsProviderProps> = ({ children }) => {
         setDisableBgFillNotifs,
         hidePnl,
         setHidePnl,
+        fillChimeEnabled,
+        setFillChimeEnabled,
         optOutOfSpotDustCollection,
         setOptOutOfSpotDustCollection,
         nSigFigs,
