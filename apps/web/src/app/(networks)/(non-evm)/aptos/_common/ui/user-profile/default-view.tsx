@@ -6,7 +6,6 @@ import {
 } from '@heroicons/react/24/outline'
 import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline'
 import { ClipboardController, IconButton, SkeletonText } from '@sushiswap/ui'
-import { LinkExternal } from '@sushiswap/ui'
 import React, { type Dispatch, type SetStateAction } from 'react'
 import { formatUSD } from 'sushi'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
@@ -52,18 +51,23 @@ export const DefaultView = ({ balance, setView }: Props) => {
             )}
           </ClipboardController>
 
-          <LinkExternal
-            href={`https://explorer.aptoslabs.com/account/${
-              account?.address
-            }?network=${networkNameToNetwork(network)}`}
+          <IconButton
+            asChild
+            size="sm"
+            icon={LinkIcon}
+            description="View on Explorer"
+            name="View on Explorer"
           >
-            <IconButton
-              size="sm"
-              icon={LinkIcon}
-              description="View on Explorer"
-              name="View on Explorer"
-            />
-          </LinkExternal>
+            <a
+              href={`https://explorer.aptoslabs.com/account/${
+                account?.address
+              }?network=${networkNameToNetwork(network)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="sr-only">View on Explorer</span>
+            </a>
+          </IconButton>
 
           <IconButton
             size="sm"

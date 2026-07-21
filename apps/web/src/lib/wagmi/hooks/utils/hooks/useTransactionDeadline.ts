@@ -16,6 +16,13 @@ interface UseTransactionDeadline {
   storageKey: TTLStorageKey
 }
 
+export function getTransactionDeadlineQueryKey(
+  chainId: EvmChainId,
+  ttl: number,
+) {
+  return ['useTransactionDeadline', chainId, ttl] as const
+}
+
 export const useTransactionDeadline = ({
   chainId,
   enabled = true,
@@ -31,7 +38,7 @@ export const useTransactionDeadline = ({
   // currentBlockTimestampQuery is excluded from the dependencies array by design,
   // deadline should be updated every 60s, not on every block
   return useQuery({
-    queryKey: ['useTransactionDeadline', _ttl],
+    queryKey: getTransactionDeadlineQueryKey(chainId, _ttl),
     queryFn: () => {
       const blockTimestamp = currentBlockTimestampQuery
       let data = undefined

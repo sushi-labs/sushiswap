@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { parsePositionTokenId } from 'src/lib/wagmi/hooks/positions/position-token-id'
 import { isEvmAddress, isSushiSwapV3ChainId } from 'sushi/evm'
 import { V3PositionView } from './_common/ui/v3-position-view'
 
@@ -15,6 +16,10 @@ export default async function V3PositionsPage(props: {
   }
 
   if (!isEvmAddress(address)) {
+    return notFound()
+  }
+
+  if (!parsePositionTokenId(position)) {
     return notFound()
   }
 

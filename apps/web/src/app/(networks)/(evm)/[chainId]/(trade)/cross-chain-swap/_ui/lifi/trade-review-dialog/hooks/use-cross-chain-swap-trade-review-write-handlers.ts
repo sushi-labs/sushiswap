@@ -11,7 +11,12 @@ import type { LifiXSwapSupportedChainId } from 'src/config'
 import { sendDrilldownLog } from 'src/lib/drilldown-log'
 import type { UseCrossChainTradeStepReturn } from 'src/lib/hooks/react-query'
 import { logger } from 'src/lib/logger'
+import { SvmTransactionFailedError } from 'src/lib/svm/wait-for-svm-signature'
 import { getCrossChainFeesBreakdown } from 'src/lib/swap/cross-chain'
+import {
+  TransactionReceiptRevertedError,
+  TransactionReplacedError,
+} from 'src/lib/wagmi/transactions/wait-for-successful-receipt'
 import { useAccount } from 'src/lib/wallet'
 import { Amount, getChainById } from 'sushi'
 import { useDetailsInteractionTracker } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
@@ -23,14 +28,9 @@ import {
   useLifiXSwap,
 } from '../../xswap-provider'
 
-export type CrossChainSwapWriteReceiptInfo = {
-  status: 'success' | 'failed'
-}
-
 export type CrossChainSwapTradeReviewWriteHandlersParams<
   TChainId0 extends LifiXSwapSupportedChainId,
   TChainId1 extends LifiXSwapSupportedChainId,
-  TReceipt,
 > = {
   routeRef: RefObject<UseLifiXSwapSelectedTradeRouteReturn<
     TChainId0,
@@ -44,8 +44,7 @@ export type CrossChainSwapTradeReviewWriteHandlersParams<
       dest: StepState
     }>
   >
-  waitForReceipt: (hash: TxHashFor<TChainId0>) => Promise<TReceipt>
-  getReceiptInfo: (receipt: TReceipt) => CrossChainSwapWriteReceiptInfo
+  waitForReceipt: (hash: TxHashFor<TChainId0>) => Promise<unknown>
   step: UseCrossChainTradeStepReturn<TChainId0, TChainId1> | undefined
   shouldIgnoreWriteError?: (error: Error) => boolean
 }
@@ -53,20 +52,14 @@ export type CrossChainSwapTradeReviewWriteHandlersParams<
 export function useCrossChainSwapTradeReviewWriteHandlers<
   TChainId0 extends LifiXSwapSupportedChainId,
   TChainId1 extends LifiXSwapSupportedChainId,
-  TReceipt,
 >({
   routeRef,
   groupTs,
   setStepStates,
   waitForReceipt,
-  getReceiptInfo,
   step,
   shouldIgnoreWriteError,
-}: CrossChainSwapTradeReviewWriteHandlersParams<
-  TChainId0,
-  TChainId1,
-  TReceipt
->) {
+}: CrossChainSwapTradeReviewWriteHandlersParams<TChainId0, TChainId1>) {
   const {
     state: { chainId0, chainId1 },
     mutate: { setSwapAmount, setTradeId },
@@ -161,77 +154,58 @@ export function useCrossChainSwapTradeReviewWriteHandlers<
       })
 
       try {
-        const receipt = await receiptPromise
+        await receiptPromise
         const trade = routeRef.current
-        const receiptInfo = getReceiptInfo(receipt)
-
-        if (receiptInfo.status === 'success') {
-          sendAnalyticsEvent(SwapEventName.XSWAP_SRC_TRANSACTION_COMPLETED, {
-            txHash: hash,
-            address,
-            src_chain_id: trade?.amountIn?.currency?.chainId,
-            dst_chain_id: trade?.amountOut?.currency?.chainId,
-          })
-          if (trade?.amountIn?.currency && trade?.amountOut?.currency) {
-            const token0Usd =
-              prices?.get(
-                trade?.amountIn?.currency.wrap()
-                  .address as ContractAddressFor<TChainId0>,
-              ) ?? 0
-            const swapAmountUsd = Amount.tryFromHuman(
-              trade?.amountIn?.currency,
-              trade?.amountIn?.toString(),
-            )?.mulHuman(token0Usd)
-            const swapDetails = {
-              location: '_CrossChainSwapTradeReviewDialog',
-              action: 'onWriteSuccess',
-              chainId: String(chainId0),
-              chainId1: String(chainId1),
-              token0:
-                trade?.amountIn?.currency.type === 'native'
-                  ? 'native'
-                  : trade?.amountIn?.currency.address,
-              token0Symbol: trade?.amountIn?.currency.symbol ?? 'N/A',
-              token1:
-                trade?.amountOut?.currency.type === 'native'
-                  ? 'native'
-                  : trade?.amountOut?.currency.address,
-              token1Symbol: trade?.amountOut?.currency.symbol ?? 'N/A',
-              swapAmount: trade?.amountIn?.toString(),
-              swapAmountUsd:
-                swapAmountUsd && token0Usd ? swapAmountUsd?.toString() : 'N/A',
-              feeUsd: feeData?.uiFeesUSD
-                ? feeData?.uiFeesUSD.toString()
-                : 'N/A',
-              recipient: address ? address : 'N/A',
-              timestamp: Date.now().toString(),
-              detailsCollapsedState: isDetailsCollapsed ? 'closed' : 'open',
-              wasDetailsTouched: wasDetailsTouched ? 'yes' : 'no',
-            }
-            await sendDrilldownLog({
-              dataForLog: swapDetails,
-              extraFields: {
-                detailsCollapsedState: swapDetails.detailsCollapsedState,
-                feeUsd: swapDetails.feeUsd,
-                chainId: swapDetails.chainId,
-                wasDetailsTouched: swapDetails.wasDetailsTouched,
-                recipient: swapDetails.recipient,
-              },
-              logLevel: 'info',
-            })
+        sendAnalyticsEvent(SwapEventName.XSWAP_SRC_TRANSACTION_COMPLETED, {
+          txHash: hash,
+          address,
+          src_chain_id: trade?.amountIn?.currency?.chainId,
+          dst_chain_id: trade?.amountOut?.currency?.chainId,
+        })
+        if (trade?.amountIn?.currency && trade?.amountOut?.currency) {
+          const token0Usd =
+            prices?.get(
+              trade?.amountIn?.currency.wrap()
+                .address as ContractAddressFor<TChainId0>,
+            ) ?? 0
+          const swapAmountUsd = Amount.tryFromHuman(
+            trade?.amountIn?.currency,
+            trade?.amountIn?.toString(),
+          )?.mulHuman(token0Usd)
+          const swapDetails = {
+            location: '_CrossChainSwapTradeReviewDialog',
+            action: 'onWriteSuccess',
+            chainId: String(chainId0),
+            chainId1: String(chainId1),
+            token0:
+              trade?.amountIn?.currency.type === 'native'
+                ? 'native'
+                : trade?.amountIn?.currency.address,
+            token0Symbol: trade?.amountIn?.currency.symbol ?? 'N/A',
+            token1:
+              trade?.amountOut?.currency.type === 'native'
+                ? 'native'
+                : trade?.amountOut?.currency.address,
+            token1Symbol: trade?.amountOut?.currency.symbol ?? 'N/A',
+            swapAmount: trade?.amountIn?.toString(),
+            swapAmountUsd:
+              swapAmountUsd && token0Usd ? swapAmountUsd?.toString() : 'N/A',
+            feeUsd: feeData?.uiFeesUSD ? feeData?.uiFeesUSD.toString() : 'N/A',
+            recipient: address ? address : 'N/A',
+            timestamp: Date.now().toString(),
+            detailsCollapsedState: isDetailsCollapsed ? 'closed' : 'open',
+            wasDetailsTouched: wasDetailsTouched ? 'yes' : 'no',
           }
-        } else {
-          sendAnalyticsEvent(SwapEventName.XSWAP_SRC_TRANSACTION_FAILED, {
-            txHash: hash,
-            address,
-            src_chain_id: trade?.amountIn?.currency?.chainId,
-            dst_chain_id: trade?.amountOut?.currency?.chainId,
-          })
-
-          setStepStates({
-            source: StepState.Failed,
-            bridge: StepState.NotStarted,
-            dest: StepState.NotStarted,
+          await sendDrilldownLog({
+            dataForLog: swapDetails,
+            extraFields: {
+              detailsCollapsedState: swapDetails.detailsCollapsedState,
+              feeUsd: swapDetails.feeUsd,
+              chainId: swapDetails.chainId,
+              wasDetailsTouched: swapDetails.wasDetailsTouched,
+              recipient: swapDetails.recipient,
+            },
+            logLevel: 'info',
           })
         }
 
@@ -241,6 +215,20 @@ export function useCrossChainSwapTradeReviewWriteHandlers<
           dest: StepState.NotStarted,
         })
       } catch (error) {
+        if (
+          error instanceof SvmTransactionFailedError ||
+          error instanceof TransactionReceiptRevertedError ||
+          error instanceof TransactionReplacedError
+        ) {
+          const trade = routeRef.current
+          sendAnalyticsEvent(SwapEventName.XSWAP_SRC_TRANSACTION_FAILED, {
+            txHash: hash,
+            address,
+            src_chain_id: trade?.amountIn?.currency?.chainId,
+            dst_chain_id: trade?.amountOut?.currency?.chainId,
+          })
+        }
+
         logger.error(error, {
           location: 'CrossChainSwapTradeReviewDialog',
           action: 'waitForReceipt',
@@ -267,7 +255,6 @@ export function useCrossChainSwapTradeReviewWriteHandlers<
       routeRef,
       groupTs,
       waitForReceipt,
-      getReceiptInfo,
       refetchBalances,
       setTradeId,
       resetDetailsTrackedState,

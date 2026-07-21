@@ -26,6 +26,7 @@ import { EvmChainId, type EvmCurrency } from 'sushi/evm'
 import { type SvmChainId, isSvmChainId } from 'sushi/svm'
 import type { Address } from 'viem'
 import { useBytecode, useConnection } from 'wagmi'
+import { getTokenPermitId } from '../../hooks/approvals/hooks/token-permit-id'
 import {
   ApprovalState,
   useTokenApproval,
@@ -110,7 +111,12 @@ function _ApproveERC20WithPermit({
     if (bytecode) setApprovalType(ApprovalType.Approve)
   }, [bytecode])
 
-  const { setSignature } = useApprovedActions(tag)
+  const permitId = getTokenPermitId(
+    tag,
+    amount?.currency.chainId,
+    amount?.currency.wrap().address,
+  )
+  const { setSignature } = useApprovedActions(permitId)
 
   const [approvalState, { write: onApprove }] = useTokenApproval({
     amount,

@@ -5,7 +5,7 @@ import { createErrorToast } from '@sushiswap/notifications'
 import { useCallback, useMemo, useState } from 'react'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { Amount } from 'sushi'
-import { type EvmChainId, type EvmCurrency, eip2612Abi_nonces } from 'sushi/evm'
+import { EvmChainId, type EvmCurrency, eip2612Abi_nonces } from 'sushi/evm'
 import { type Address, hexToSignature } from 'viem'
 import { useConnection, useReadContract, useSignTypedData } from 'wagmi'
 import {
@@ -13,6 +13,7 @@ import {
   useSignature,
 } from '../../../systems/Checker/provider'
 import { useTransactionDeadline } from '../../utils/hooks/useTransactionDeadline'
+import { getTokenPermitId, isTokenPermitChainValid } from './token-permit-id'
 import { ApprovalState } from './useTokenApproval'
 
 export enum PermitType {
@@ -74,23 +75,27 @@ export const useTokenPermit = ({
   tag,
 }: UseTokenPermitParams) => {
   const { address, chainId } = useConnection()
+  const targetChainId = amount?.currency.chainId
+  const tokenAddress = amount?.currency.wrap().address
+  const permitId = getTokenPermitId(tag, targetChainId, tokenAddress)
 
   const [pending, setPending] = useState(false)
 
-  const { signature } = useSignature(tag)
+  const { signature } = useSignature(permitId)
 
-  const { setSignature } = useApprovedActions(tag)
+  const { setSignature } = useApprovedActions(permitId)
 
   const { signTypedDataAsync } = useSignTypedData()
 
   const { data: transactionDeadline } = useTransactionDeadline({
-    chainId: chainId as EvmChainId,
+    chainId: targetChainId ?? EvmChainId.ETHEREUM,
     storageKey: ttlStorageKey,
-    enabled,
+    enabled: Boolean(enabled && targetChainId),
   })
 
   const { data: nonce, isLoading: isNonceLoading } = useReadContract({
-    address: amount?.currency.wrap().address,
+    chainId: targetChainId,
+    address: tokenAddress,
     abi: eip2612Abi_nonces,
     functionName: 'nonces',
     args: address ? [address] : undefined,
@@ -100,7 +105,16 @@ export const useTokenPermit = ({
   })
 
   const onPermit = useCallback(async () => {
-    if (!amount || !transactionDeadline || !chainId) return
+    if (
+      !amount ||
+      !transactionDeadline ||
+      !targetChainId ||
+      chainId !== targetChainId ||
+      !address ||
+      !spender ||
+      nonce === undefined
+    )
+      return
 
     setPending(true)
 
@@ -115,13 +129,13 @@ export const useTokenPermit = ({
       ? {
           name: permitInfo.name,
           version: permitInfo.version,
-          chainId: chainId,
-          verifyingContract: amount.currency.wrap().address,
+          chainId: targetChainId,
+          verifyingContract: tokenAddress,
         }
       : ({
           name: permitInfo.name,
-          chainId: chainId,
-          verifyingContract: amount.currency.wrap().address,
+          chainId: targetChainId,
+          verifyingContract: tokenAddress,
         } as any)
     const message = allowed
       ? {
@@ -163,6 +177,8 @@ export const useTokenPermit = ({
     transactionDeadline,
     permitInfo,
     chainId,
+    targetChainId,
+    tokenAddress,
     spender,
     address,
     signTypedDataAsync,
@@ -173,7 +189,12 @@ export const useTokenPermit = ({
   const isSignatureDataValid =
     transactionDeadline &&
     amount &&
-    signature?.domain?.verifyingContract === amount.currency.wrap().address &&
+    isTokenPermitChainValid({
+      activeChainId: chainId,
+      signatureChainId: signature?.domain?.chainId,
+      targetChainId,
+    }) &&
+    signature?.domain?.verifyingContract === tokenAddress &&
     signature?.message &&
     signature.message.owner === address &&
     signature.message.nonce === nonce &&

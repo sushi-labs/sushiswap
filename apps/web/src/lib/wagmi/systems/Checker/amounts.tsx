@@ -1,11 +1,12 @@
 'use client'
 
-import { Button, type ButtonProps } from '@sushiswap/ui'
+import { Button, type ButtonProps, Dots } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { type Amount, type IDFor, ZERO } from 'sushi'
 import type { EvmChainId } from 'sushi/evm'
 import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
 import { useAmountBalances } from '~evm/_common/ui/balance-provider/use-balances'
+import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 
 type AmountsProps<TChainId extends BalanceChainId = EvmChainId> =
   ButtonProps & {
@@ -45,14 +46,17 @@ function Amounts<TChainId extends BalanceChainId>({
     [amounts],
   )
 
-  const { data: balances } = useAmountBalances(chainId, currencies)
+  const { data: balances, isError } = useAmountBalances(chainId, currencies)
+  const { refetchChain } = useRefetchBalances()
+  const balanceState = isError ? 'unavailable' : balances ? 'known' : 'loading'
 
   const sufficientBalance = useMemo(() => {
-    return amounts?.every((amount) => {
+    return amounts.every((amount) => {
       if (!amount) return true
-      return !balances
-        ?.get(amount.currency.id as IDFor<TChainId, true>)
-        ?.lt(amount)
+
+      const balance = balances?.get(amount.currency.id as IDFor<TChainId, true>)
+
+      return balance !== undefined && !balance.lt(amount)
     })
   }, [amounts, balances])
 
@@ -66,6 +70,35 @@ function Amounts<TChainId extends BalanceChainId>({
         {...props}
       >
         Enter Amount
+      </Button>
+    )
+
+  if (balanceState === 'loading')
+    return (
+      <Button
+        id="amount-checker"
+        disabled={true}
+        fullWidth={fullWidth}
+        size={size}
+        {...props}
+      >
+        Checking Balance
+        <Dots />
+      </Button>
+    )
+
+  if (balanceState === 'unavailable')
+    return (
+      <Button
+        id="amount-checker"
+        fullWidth={fullWidth}
+        size={size}
+        {...props}
+        onClick={() => {
+          if (chainId) refetchChain(chainId)
+        }}
+      >
+        Balance unavailable — Retry
       </Button>
     )
 

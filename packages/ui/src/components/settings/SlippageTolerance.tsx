@@ -2,10 +2,11 @@ import { RadioGroup } from '@headlessui/react'
 import { InformationCircleIcon } from '@heroicons/react/20/solid'
 import {
   type SlippageToleranceStorageKey,
+  normalizeSlippageTolerance,
   useSlippageTolerance,
 } from '@sushiswap/hooks'
 import classNames from 'classnames'
-import React, { type FC, useCallback } from 'react'
+import React, { type FC, useCallback, useEffect, useState } from 'react'
 
 import { DEFAULT_SLIPPAGE } from 'sushi/evm'
 import { Collapsible } from '../animation'
@@ -38,16 +39,23 @@ export const SlippageTolerance: FC<{
     options?.storageKey,
     options?.defaultValue,
   )
+  const [customValue, setCustomValue] = useState(
+    slippageTolerance === 'AUTO' ? DEFAULT_SLIPPAGE : slippageTolerance,
+  )
+
+  useEffect(() => {
+    if (slippageTolerance !== 'AUTO') {
+      setCustomValue(slippageTolerance)
+    }
+  }, [slippageTolerance])
 
   const onChange = useCallback(
     (value: string) => {
-      const numValue = Number(value)
-      // Cap slippage at 50% maximum - 100% slippage would accept any output amount
-      if (!Number.isNaN(numValue) && numValue > 50) {
-        setSlippageTolerance('50')
-        return
+      setCustomValue(value)
+      const validValue = normalizeSlippageTolerance(value)
+      if (validValue) {
+        setSlippageTolerance(validValue)
       }
-      setSlippageTolerance(value)
     },
     [setSlippageTolerance],
   )
@@ -159,8 +167,20 @@ export const SlippageTolerance: FC<{
             <Separator orientation="vertical" className="min-h-[36px]" />
             <TextField
               type="number"
-              value={slippageTolerance}
+              value={customValue}
               onValueChange={onChange}
+              onBlur={() => {
+                if (!normalizeSlippageTolerance(customValue)) {
+                  setCustomValue(
+                    slippageTolerance === 'AUTO'
+                      ? DEFAULT_SLIPPAGE
+                      : slippageTolerance,
+                  )
+                }
+              }}
+              isError={Boolean(
+                customValue && !normalizeSlippageTolerance(customValue),
+              )}
               placeholder="Custom"
               id="slippage-tolerance"
               maxDecimals={2}

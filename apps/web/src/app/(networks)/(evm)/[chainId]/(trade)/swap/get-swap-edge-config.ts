@@ -1,11 +1,33 @@
 import { get } from '@vercel/edge-config'
+import * as z from 'zod'
 
-interface SwapEdgeConfig {
-  maintenance: boolean
+const swapEdgeConfigSchema = z.object({
+  maintenance: z.boolean(),
+})
+
+type SwapEdgeConfig = z.infer<typeof swapEdgeConfigSchema>
+
+const defaultSwapEdgeConfig: SwapEdgeConfig = {
+  maintenance: false,
 }
 
-const getSwapEdgeConfig = async () => {
-  return get<SwapEdgeConfig>('swap')
+function parseSwapEdgeConfig(value: unknown): SwapEdgeConfig {
+  const result = swapEdgeConfigSchema.safeParse(value)
+  return result.success ? result.data : defaultSwapEdgeConfig
 }
 
-export { type SwapEdgeConfig, getSwapEdgeConfig }
+async function getSwapEdgeConfig(): Promise<SwapEdgeConfig> {
+  try {
+    return parseSwapEdgeConfig(await get('swap'))
+  } catch {
+    return defaultSwapEdgeConfig
+  }
+}
+
+export {
+  type SwapEdgeConfig,
+  defaultSwapEdgeConfig,
+  getSwapEdgeConfig,
+  parseSwapEdgeConfig,
+  swapEdgeConfigSchema,
+}

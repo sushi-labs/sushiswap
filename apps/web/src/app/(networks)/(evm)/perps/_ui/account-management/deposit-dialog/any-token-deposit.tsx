@@ -464,55 +464,61 @@ export const AnyTokenDeposit = ({
           </div>
           <PerpsChecker.Legal size="default" variant="perps-tertiary">
             {step === 0 ? (
-              <Checker.PartialRoute
+              <Checker.Connect
                 size="default"
                 variant="perps-tertiary"
-                trade={tradeQuote}
-                setSwapAmount={setSwapAmount}
+                namespace="evm"
               >
-                <Checker.Connect
+                <Checker.Network
                   size="default"
+                  chainId={depositOption.chainId}
                   variant="perps-tertiary"
-                  namespace="evm"
                 >
-                  <Checker.Network
+                  <Checker.Amounts
                     size="default"
                     chainId={depositOption.chainId}
+                    amount={_amount}
                     variant="perps-tertiary"
                   >
-                    <Checker.Amounts
+                    <Checker.Custom
                       size="default"
-                      chainId={depositOption.chainId}
-                      amount={_amount}
+                      showChildren={Boolean(
+                        Number(tradeQuote?.minAmountOut?.toString()) >=
+                          getMinDepositAmount(depositOption.chainId),
+                      )}
+                      buttonText={`Minimum Deposit is ${getMinDepositAmount(depositOption.chainId)} USDC`}
                       variant="perps-tertiary"
+                      onClick={() => {}}
+                      disabled={
+                        !tradeQuote ||
+                        Number(tradeQuote?.minAmountOut?.toString()) <
+                          getMinDepositAmount(depositOption.chainId)
+                      }
                     >
-                      <Checker.Custom
+                      <Checker.ApproveERC20
                         size="default"
-                        showChildren={Boolean(
-                          Number(tradeQuote?.minAmountOut?.toString()) >=
-                            getMinDepositAmount(depositOption.chainId),
-                        )}
-                        buttonText={`Minimum Deposit is ${getMinDepositAmount(depositOption.chainId)} USDC`}
+                        id="approve-erc20"
                         variant="perps-tertiary"
-                        onClick={() => {}}
-                        disabled={
-                          !tradeQuote ||
-                          Number(tradeQuote?.minAmountOut?.toString()) <
-                            getMinDepositAmount(depositOption.chainId)
+                        amount={_amount}
+                        contract={
+                          isRedSnwapperChainId(depositOption.chainId)
+                            ? RED_SNWAPPER_ADDRESS[depositOption.chainId]
+                            : undefined
                         }
                       >
-                        <Checker.ApproveERC20
-                          size="default"
-                          id="approve-erc20"
-                          variant="perps-tertiary"
-                          amount={_amount}
-                          contract={
-                            isRedSnwapperChainId(depositOption.chainId)
-                              ? RED_SNWAPPER_ADDRESS[depositOption.chainId]
-                              : undefined
-                          }
-                        >
-                          <Checker.Success tag="approve-erc20">
+                        <Checker.Success tag="approve-erc20">
+                          <Checker.PartialRoute
+                            size="default"
+                            variant="perps-tertiary"
+                            trade={tradeQuote}
+                            setSwapAmount={setSwapAmount}
+                            canContinue={
+                              tradeData?.status === 'Success' &&
+                              tradeData.amountIn?.toString() ===
+                                tradeQuote?.amountIn?.toString()
+                            }
+                            onAccepted={swap}
+                          >
                             <Button
                               variant="perps-tertiary"
                               size="default"
@@ -523,13 +529,13 @@ export const AnyTokenDeposit = ({
                             >
                               Swap
                             </Button>
-                          </Checker.Success>
-                        </Checker.ApproveERC20>
-                      </Checker.Custom>
-                    </Checker.Amounts>
-                  </Checker.Network>
-                </Checker.Connect>
-              </Checker.PartialRoute>
+                          </Checker.PartialRoute>
+                        </Checker.Success>
+                      </Checker.ApproveERC20>
+                    </Checker.Custom>
+                  </Checker.Amounts>
+                </Checker.Network>
+              </Checker.Connect>
             ) : (
               <Button
                 variant="perps-tertiary"

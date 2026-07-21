@@ -14,7 +14,9 @@ function isWalletConnectionEqual(a: WalletConnection, b: WalletConnection) {
     a.id === b.id &&
     a.name === b.name &&
     a.namespace === b.namespace &&
-    a.account === b.account
+    a.account === b.account &&
+    a.chainId === b.chainId &&
+    a.icon === b.icon
   )
 }
 

@@ -15,6 +15,11 @@ export interface ProviderChainState {
   chainId: EvmChainId
 
   isFetching: boolean
+  failureCount: number
+  lastError: {
+    message: string
+    timestamp: number
+  } | null
 
   activeTokens: LowercaseMap<Address, ListenerCount>
   balanceMap: LowercaseMap<Address, Balance>
@@ -31,7 +36,10 @@ export interface ProviderMutations {
   incrementToken: (tokenId: TokenId | TokenId[]) => void
   decrementToken: (tokenId: TokenId | TokenId[]) => void
 
-  refetchChain: (chainId: EvmChainId) => void
+  refetchChain: (
+    chainId: EvmChainId,
+    options?: { force?: boolean },
+  ) => Promise<void>
 }
 
 export interface Provider {

@@ -298,7 +298,7 @@ export function CookieDialog({
 
   return (
     <Dialog open={open && isMounted} onOpenChange={setOpen}>
-      <DialogTrigger onClick={() => setPage('manage')}>
+      <DialogTrigger asChild onClick={() => setPage('manage')}>
         {children}
       </DialogTrigger>
 

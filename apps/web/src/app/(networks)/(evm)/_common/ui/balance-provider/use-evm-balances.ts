@@ -66,7 +66,7 @@ export function useEvmBalances(
     if (balanceMap.size !== tokenAddresses.length) {
       return {
         data: undefined,
-        isError: false,
+        isError: chain.lastError !== null,
         isLoading: chain.isFetching,
         isFetching: chain.isFetching,
       }

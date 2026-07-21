@@ -33,6 +33,7 @@ import { type SendTransactionReturnType, encodeFunctionData } from 'viem'
 import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import { logger } from 'src/lib/logger'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
+import { getTokenPermitId } from 'src/lib/wagmi/hooks/approvals/hooks/token-permit-id'
 import {
   type PermitInfo,
   PermitType,
@@ -74,7 +75,13 @@ interface RemoveSectionLegacyProps {
 export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
   withCheckerRoot(({ pool: _pool }) => {
     const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
-    const { signature } = useSignature(APPROVE_TAG_REMOVE_LEGACY)
+    const { signature } = useSignature(
+      getTokenPermitId(
+        APPROVE_TAG_REMOVE_LEGACY,
+        _pool.chainId,
+        liquidityToken?.wrap().address,
+      ),
+    )
     const { approved } = useApproved(APPROVE_TAG_REMOVE_LEGACY)
     const isMounted = useIsMounted()
     const client = usePublicClient()

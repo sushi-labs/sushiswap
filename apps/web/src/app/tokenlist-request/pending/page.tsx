@@ -113,6 +113,7 @@ const getTokenSecurity = (security: PendingTokens[number]['security']) => {
 
   return {
     data,
+    isAvailable: true,
     isHoneypot: data?.is_honeypot?.goPlus,
     isFoT: data?.buy_tax?.goPlus || data?.sell_tax?.goPlus,
     isRisky: Object.entries(data || {}).some(([_key, value]) => {
