@@ -3,6 +3,7 @@ import type { SymbolConverter } from '@nktkas/hyperliquid/utils'
 import { type FC, createContext, useContext, useMemo } from 'react'
 import {
   type PerpOrSpotAsset,
+  isStrictSpotAsset,
   useAssetList,
   useSymbolConverter,
 } from 'src/lib/perps'
@@ -99,7 +100,7 @@ const AssetListProvider: FC<AssetListProviderProps> = ({ children }) => {
     const perpsByAsset = new Map<string, PerpBasisAsset[]>()
 
     assetListQuery.data.forEach((asset) => {
-      if (!isPerpBasisAsset(asset)) return
+      if (!isPerpBasisAsset(asset) || !isStrictSpotAsset(asset)) return
 
       const assetKey = getBasisAssetKey(asset.symbol, '-')
       if (!assetKey) return
@@ -115,7 +116,7 @@ const AssetListProvider: FC<AssetListProviderProps> = ({ children }) => {
     const pairs: BasisTradeAsset[] = []
 
     assetListQuery.data.forEach((asset) => {
-      if (!isSpotBasisAsset(asset)) return
+      if (!isSpotBasisAsset(asset) || !isStrictSpotAsset(asset)) return
 
       const assetKey = getBasisAssetKey(asset.symbol, '/')
       if (!assetKey) return
