@@ -1,7 +1,11 @@
 import { DataTableVirtual, Slot } from '@sushiswap/ui'
 import type { Row, SortingState, TableState } from '@tanstack/react-table'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
-import { type PerpOrSpotAsset, useFavoriteAssets } from 'src/lib/perps'
+import {
+  type PerpOrSpotAsset,
+  isStrictSpotAsset,
+  useFavoriteAssets,
+} from 'src/lib/perps'
 import { useAssetState } from '../trade-widget'
 import { useAssetListState } from './asset-list-provider'
 import { useAssetSelectorState } from './asset-selector-provider'
@@ -33,7 +37,7 @@ export const FavoriteAssets = () => {
     mutate: { setOpen },
   } = useAssetSelectorState()
   const {
-    state: { search },
+    state: { search, listMode },
   } = useAssetSelectorState()
   const {
     mutate: { setActiveAsset },
@@ -49,6 +53,8 @@ export const FavoriteAssets = () => {
       favoriteSet.has(asset.name),
     )
     return baseData.filter((asset) => {
+      if (listMode === 'strict' && !isStrictSpotAsset(asset)) return false
+
       if (search) {
         return (
           asset.symbol.toLowerCase().includes(search.toLowerCase()) ||
@@ -57,7 +63,7 @@ export const FavoriteAssets = () => {
       }
       return true
     })
-  }, [data, search, favoriteSet])
+  }, [data, search, favoriteSet, listMode])
 
   const state: Partial<TableState> = useMemo(() => {
     return {

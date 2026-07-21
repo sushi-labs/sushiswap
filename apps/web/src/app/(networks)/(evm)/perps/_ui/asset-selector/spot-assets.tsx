@@ -9,7 +9,7 @@ import {
 } from '@sushiswap/ui'
 import type { Row, SortingState, TableState } from '@tanstack/react-table'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
-import type { PerpOrSpotAsset } from 'src/lib/perps'
+import { type PerpOrSpotAsset, isStrictSpotAsset } from 'src/lib/perps'
 import { useAssetState } from '../trade-widget'
 import { useAssetListState } from './asset-list-provider'
 import { useAssetSelectorState } from './asset-selector-provider'
@@ -44,7 +44,7 @@ export const SpotAssets = () => {
     mutate: { setOpen },
   } = useAssetSelectorState()
   const {
-    state: { search },
+    state: { search, listMode },
   } = useAssetSelectorState()
   const {
     mutate: { setActiveAsset },
@@ -52,6 +52,22 @@ export const SpotAssets = () => {
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'volume24hUsd', desc: true },
   ])
+  const TABS = useMemo(() => {
+    if (!data || listMode === 'all') return ['All', ...spotCollateralTokens]
+
+    const tokens = new Set<string>()
+    data.forEach((asset) => {
+      if (asset.marketType !== 'spot') return
+      if (!isStrictSpotAsset(asset)) return
+
+      const token = asset.tokens?.[1]?.name
+      if (token) tokens.add(token)
+    })
+
+    return ['All', ...tokens]
+  }, [data, listMode, spotCollateralTokens])
+  const activeTab = TABS.includes(selectedTab) ? selectedTab : 'All'
+
   const filtered = useMemo(() => {
     if (!data) return []
     const baseData = Array.from(data.values()).filter(
@@ -59,6 +75,8 @@ export const SpotAssets = () => {
     )
 
     const allData = baseData.filter((asset) => {
+      if (listMode === 'strict' && !isStrictSpotAsset(asset)) return false
+
       if (search) {
         return (
           asset.symbol.toLowerCase().includes(search.toLowerCase()) ||
@@ -67,15 +85,15 @@ export const SpotAssets = () => {
       }
       return true
     })
-    if (selectedTab === 'All') {
+    if (activeTab === 'All') {
       return allData
     }
     return allData.filter((asset) => {
       return asset?.tokens?.some(
-        (token) => token.name.toLowerCase() === selectedTab.toLowerCase(),
+        (token) => token.name.toLowerCase() === activeTab.toLowerCase(),
       )
     })
-  }, [data, search, selectedTab])
+  }, [data, search, activeTab, listMode])
 
   const state: Partial<TableState> = useMemo(() => {
     return {
@@ -105,13 +123,10 @@ export const SpotAssets = () => {
     [setActiveAsset, setOpen],
   )
 
-  const TABS = useMemo(() => {
-    return ['All', ...spotCollateralTokens]
-  }, [spotCollateralTokens])
   return (
     <Tabs
       className="w-full"
-      value={selectedTab}
+      value={activeTab}
       onValueChange={(val) => {
         setSelectedTab(val)
       }}
@@ -136,7 +151,7 @@ export const SpotAssets = () => {
         ))}
       </TabsList>
       <TabsContent
-        value={selectedTab}
+        value={activeTab}
         className="!mt-0 hide-scrollbar lg:!min-h-[410px] lg:!max-h-[410px] overflow-auto max-w-[100vw]"
         style={{
           minHeight: 'calc(100dvh - 115px)',
