@@ -15,6 +15,52 @@ export const OverflowX = ({
   const containerRef = useRef<HTMLDivElement>(null)
   const { hasOverflowRight, hasOverflowLeft } = useIsOverflow(containerRef)
 
+  useEffect(() => {
+    const element = containerRef.current
+
+    if (!element) return
+    const scrollElement = element
+
+    function handleWheelScroll(event: WheelEvent) {
+      if (scrollElement.scrollWidth <= scrollElement.clientWidth) return
+      if (event.ctrlKey) return
+
+      const horizontalDelta = normalizeWheelDelta(
+        event,
+        Math.abs(event.deltaX) > Math.abs(event.deltaY)
+          ? event.deltaX
+          : event.deltaY,
+        scrollElement,
+      )
+
+      if (horizontalDelta === 0) return
+
+      const maxScrollLeft =
+        scrollElement.scrollWidth - scrollElement.clientWidth
+      const nextScrollLeft = scrollElement.scrollLeft + horizontalDelta
+      const canScrollLeft = horizontalDelta < 0 && scrollElement.scrollLeft > 0
+      const canScrollRight =
+        horizontalDelta > 0 && scrollElement.scrollLeft < maxScrollLeft
+
+      if (!canScrollLeft && !canScrollRight) return
+
+      event.preventDefault()
+      event.stopPropagation()
+      scrollElement.scrollLeft = Math.max(
+        0,
+        Math.min(nextScrollLeft, maxScrollLeft),
+      )
+    }
+
+    scrollElement.addEventListener('wheel', handleWheelScroll, {
+      passive: false,
+    })
+
+    return () => {
+      scrollElement.removeEventListener('wheel', handleWheelScroll)
+    }
+  }, [])
+
   const handleButtonClickScroll = (direction: 'left' | 'right') => {
     if (containerRef.current) {
       const scrollAmount = containerRef.current.clientWidth / 1.75
@@ -93,4 +139,19 @@ export const useIsOverflow = (ref: React.RefObject<HTMLElement | null>) => {
   }, [ref])
 
   return { hasOverflowRight, hasOverflowLeft }
+}
+
+function normalizeWheelDelta(
+  event: WheelEvent,
+  delta: number,
+  element: HTMLElement,
+): number {
+  switch (event.deltaMode) {
+    case WheelEvent.DOM_DELTA_LINE:
+      return delta * 16
+    case WheelEvent.DOM_DELTA_PAGE:
+      return delta * element.clientWidth
+    default:
+      return delta
+  }
 }
