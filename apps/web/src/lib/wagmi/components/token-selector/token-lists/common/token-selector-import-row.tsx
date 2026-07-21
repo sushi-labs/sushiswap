@@ -70,9 +70,9 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <div className="relative py-0.5 h-[64px]">
-        <div className="flex items-center w-full hover:bg-muted focus:bg-accent h-full rounded-lg px-3">
-          <div className="flex flex-row items-center flex-grow gap-4">
-            <div className="w-10 h-10">
+        <div className="flex items-center max-w-full hover:bg-muted focus:bg-accent h-full rounded-lg px-3">
+          <div className="flex min-w-0 flex-1 flex-row items-center gap-4">
+            <div className="w-10 h-10 shrink-0">
               <Currency.Icon
                 disableLink
                 currency={currency}
@@ -80,16 +80,16 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
                 height={40}
               />
             </div>
-            <div className="flex flex-col items-start">
+            <div className="flex min-w-0 flex-col items-start">
               <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 dark:group-hover:text-white">
                 {currency.symbol}
               </span>
-              <span className="text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100">
+              <span className="max-w-full truncate text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100">
                 {currency.name}
               </span>
             </div>
           </div>
-          <div className="flex flex-col">
+          <div className="flex shrink-0 flex-col">
             <DialogTrigger asChild>
               <Button size="xs" onClick={() => setOpen(true)}>
                 Import
