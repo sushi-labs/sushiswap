@@ -10,13 +10,20 @@ import {
 } from '../contracts/multicall3'
 
 // TODO: Readd direct export, not sure why it's not working
+export function getCurrentBlockTimestampReadConfig(chainId: Multicall3ChainId) {
+  return {
+    chainId,
+    address: MULTICALL_3_ADDRESS[chainId],
+  } as const
+}
+
 export const useCurrentBlockTimestamp = (
   chainId: Multicall3ChainId,
   enabled = true,
 ) => {
   const queryClient = useQueryClient()
   const query = useReadContract({
-    address: MULTICALL_3_ADDRESS[chainId],
+    ...getCurrentBlockTimestampReadConfig(chainId),
     abi: multicall3Abi_getCurrentBlockTimestamp,
     functionName: 'getCurrentBlockTimestamp',
     query: {

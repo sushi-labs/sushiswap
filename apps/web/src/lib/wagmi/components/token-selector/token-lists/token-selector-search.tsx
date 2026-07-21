@@ -22,7 +22,7 @@ function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-1 flex-col">
       <List.Control className="flex flex-1">
-        <div className="flex-1 block">{children}</div>
+        <div className="flex-1 block max-w-full">{children}</div>
       </List.Control>
     </div>
   )

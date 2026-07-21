@@ -8,6 +8,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '@sushiswap/ui'
+import { useEffect, useState } from 'react'
 import type {
   UseEvmTradeReturn,
   UseSvmTradeReturn,
@@ -18,16 +19,47 @@ type PartialRouteProps = ButtonProps & {
     | Pick<UseEvmTradeReturn | UseSvmTradeReturn, 'status' | 'amountIn'>
     | undefined
   setSwapAmount: (swapAmount: string) => void
+  canContinue?: boolean
+  onAccepted: () => void
 }
 
 function PartialRoute({
   trade,
   setSwapAmount,
+  canContinue = true,
+  onAccepted,
   fullWidth = true,
   size = 'xl',
   children,
   ...props
 }: PartialRouteProps) {
+  const [acceptedAmount, setAcceptedAmount] = useState<string>()
+
+  useEffect(() => {
+    if (!acceptedAmount || !trade) return
+
+    const amountIn = trade.amountIn?.toString()
+
+    if (trade.status === 'Partial') {
+      if (amountIn !== acceptedAmount) setAcceptedAmount(undefined)
+      return
+    }
+
+    if (
+      trade.status === 'Success' &&
+      amountIn === acceptedAmount &&
+      canContinue
+    ) {
+      setAcceptedAmount(undefined)
+      onAccepted()
+      return
+    }
+
+    if (trade.status !== 'Success' || amountIn !== acceptedAmount) {
+      setAcceptedAmount(undefined)
+    }
+  }, [acceptedAmount, canContinue, onAccepted, trade])
+
   return trade?.status === 'Partial' ? (
     <HoverCard openDelay={0} closeDelay={0}>
       <Button
@@ -35,9 +67,13 @@ function PartialRoute({
         fullWidth={fullWidth}
         size={size}
         {...props}
-        onClick={() =>
-          trade.amountIn && setSwapAmount(trade.amountIn?.toString())
-        }
+        onClick={() => {
+          if (!trade.amountIn) return
+
+          const amountIn = trade.amountIn.toString()
+          setAcceptedAmount(amountIn)
+          setSwapAmount(amountIn)
+        }}
       >
         Accept New Input and Swap
         <HoverCardTrigger>

@@ -1,6 +1,6 @@
 'use client'
 
-import { DialogTrigger, Message } from '@sushiswap/ui'
+import { DialogTrigger, DialogType, Message, useDialog } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import type React from 'react'
 import { type FC, useEffect, useMemo, useState } from 'react'
@@ -51,6 +51,7 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
   const { data: maintenance } = useIsSwapMaintenance()
   const { isSlippageError } = usePersistedSlippageError({ isSuccess, error })
   const { data: quote } = useSimpleSwapTradeQuote()
+  const { setOpen: setReviewOpen } = useDialog(DialogType.Review)
   const [checked, setChecked] = useState(false)
 
   const {
@@ -96,24 +97,28 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
           guardWhen={maintenance}
           guardText="Maintenance in progress"
         >
-          <Checker.PartialRoute trade={quote} setSwapAmount={setSwapAmount}>
-            <Checker.Connect namespace={walletNamespace}>
-              <Checker.Network chainId={chainId}>
-                <Checker.Amounts chainId={chainId} amount={swapAmount}>
-                  <Checker.Slippage
-                    text="Swap With High Slippage"
-                    slippageTolerance={slippagePercent}
+          <Checker.Connect namespace={walletNamespace}>
+            <Checker.Network chainId={chainId}>
+              <Checker.Amounts chainId={chainId} amount={swapAmount}>
+                <Checker.Slippage
+                  text="Swap With High Slippage"
+                  slippageTolerance={slippagePercent}
+                >
+                  <Checker.ApproveERC20
+                    id="approve-erc20"
+                    amount={swapAmount}
+                    contract={
+                      isRedSnwapperChainId(chainId)
+                        ? RED_SNWAPPER_ADDRESS[chainId]
+                        : undefined
+                    }
                   >
-                    <Checker.ApproveERC20
-                      id="approve-erc20"
-                      amount={swapAmount}
-                      contract={
-                        isRedSnwapperChainId(chainId)
-                          ? RED_SNWAPPER_ADDRESS[chainId]
-                          : undefined
-                      }
-                    >
-                      <Checker.Success tag={APPROVE_TAG_SWAP}>
+                    <Checker.Success tag={APPROVE_TAG_SWAP}>
+                      <Checker.PartialRoute
+                        trade={quote}
+                        setSwapAmount={setSwapAmount}
+                        onAccepted={() => setReviewOpen(true)}
+                      >
                         <DialogTrigger asChild>
                           <Button
                             size="xl"
@@ -144,13 +149,13 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
                                     : 'Swap'}
                           </Button>
                         </DialogTrigger>
-                      </Checker.Success>
-                    </Checker.ApproveERC20>
-                  </Checker.Slippage>
-                </Checker.Amounts>
-              </Checker.Network>
-            </Checker.Connect>
-          </Checker.PartialRoute>
+                      </Checker.PartialRoute>
+                    </Checker.Success>
+                  </Checker.ApproveERC20>
+                </Checker.Slippage>
+              </Checker.Amounts>
+            </Checker.Network>
+          </Checker.Connect>
         </Checker.Guard>
       </div>
       {showSlippageWarning && <SlippageWarning className="mt-4" />}

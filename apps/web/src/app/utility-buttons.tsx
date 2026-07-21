@@ -32,7 +32,7 @@ export const UtilityButtons = () => {
         />
       </CookieDialogContainer>
       <Popover>
-        <PopoverTrigger>
+        <PopoverTrigger asChild>
           <IconButton
             size="xs"
             variant="ghost"

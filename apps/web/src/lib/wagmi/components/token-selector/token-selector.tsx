@@ -78,10 +78,11 @@ export function TokenSelector<
     if (debouncedQuery) gtagEvent('token-search', { query: debouncedQuery })
   }, [debouncedQuery])
 
-  // Clear the query when the dialog is closed
+  // Reset transient selector navigation when the dialog is closed.
   useEffect(() => {
     if (!open) {
       setQuery('')
+      showCurrencyInfo(false)
     }
   }, [open])
 

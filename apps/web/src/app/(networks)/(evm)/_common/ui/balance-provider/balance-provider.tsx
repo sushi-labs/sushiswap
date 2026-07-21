@@ -7,6 +7,7 @@ import {
   useEffect,
   useMemo,
   useReducer,
+  useRef,
 } from 'react'
 
 import ms from 'ms'
@@ -21,6 +22,11 @@ import {
 import type { Address } from 'viem'
 import { multicall } from 'viem/actions'
 import { useConfig, useConnection } from 'wagmi'
+import {
+  type BalanceAccountIdentity,
+  isBalanceResponseCurrent,
+} from './balance-request'
+import { shouldRetryBalanceFetch } from './balance-retry'
 import type {
   Balance,
   Provider,
@@ -38,6 +44,8 @@ function getOrCreateChain(state: ProviderState, chainId: EvmChainId) {
     const newChain = {
       chainId,
       isFetching: false,
+      failureCount: 0,
+      lastError: null,
       activeTokens: new LowercaseMap<Address, number>(),
       balanceMap: new LowercaseMap<Address, Balance>(),
     }
@@ -54,7 +62,10 @@ function getOrCreateChain(state: ProviderState, chainId: EvmChainId) {
   that the references of sets and maps inside of the state do not change, only the
   state object itself.
 */
-function reducer(state: ProviderState, action: ProviderActions): ProviderState {
+export function balanceReducer(
+  state: ProviderState,
+  action: ProviderActions,
+): ProviderState {
   switch (action.type) {
     case 'INCREMENT_TOKEN': {
       const tokenIds = getTokenIds(action.payload)
@@ -89,6 +100,7 @@ function reducer(state: ProviderState, action: ProviderActions): ProviderState {
         if (currentListenerCount === 0) return
 
         if (currentListenerCount === 1) {
+          chain.activeTokens.delete(address)
           chain.balanceMap.delete(address)
         } else {
           chain.activeTokens.set(address, currentListenerCount - 1)
@@ -125,7 +137,17 @@ interface BalanceProviderContextProps {
 
 export function BalanceProvider({ children }: BalanceProviderContextProps) {
   const { address: account } = useConnection()
-  const [state, dispatch] = useReducer(reducer, {
+  const accountIdentityRef = useRef<BalanceAccountIdentity>({
+    account,
+    generation: 0,
+  })
+  if (accountIdentityRef.current.account !== account) {
+    accountIdentityRef.current = {
+      account,
+      generation: accountIdentityRef.current.generation + 1,
+    }
+  }
+  const [state, dispatch] = useReducer(balanceReducer, {
     account,
     chains: new Map(),
   })
@@ -147,82 +169,114 @@ export function BalanceProvider({ children }: BalanceProviderContextProps) {
   }, [])
 
   const refetchChain = useCallback(
-    async (chainId: EvmChainId) => {
+    async (chainId: EvmChainId, options?: { force?: boolean }) => {
       const chain = getOrCreateChain(state, chainId)
       if (chain.isFetching || !state.account) return
-      chain.isFetching = true
-
-      // Remove the native address from the active tokens, it will be fetched separately
-      const activeTokens = Array.from(chain.activeTokens.keys()).filter(
-        (address) => address !== NativeAddress,
-      )
-
-      const client = config.getClient({ chainId })
-
-      const contracts = activeTokens.map((address) => ({
-        address,
-        functionName: 'balanceOf',
-        args: [state.account],
-        abi: erc20Abi_balanceOf as
-          | typeof erc20Abi_balanceOf
-          | typeof multicall3Abi_getEthBalance,
-      }))
-
-      // Multicall should be available everywhere
-      // Worse case the native balance doesn't show up
-      const multicallAddress =
-        getEvmChainById(chainId).viemChain.contracts.multicall3.address
-
-      if (multicallAddress) {
-        contracts.push({
-          address: multicallAddress,
-          functionName: 'getEthBalance',
-          args: [state.account],
-          abi: multicall3Abi_getEthBalance,
+      if (
+        !shouldRetryBalanceFetch({
+          failureCount: chain.failureCount,
+          force: options?.force ?? false,
+          lastErrorAt: chain.lastError?.timestamp,
+          now: Date.now(),
         })
+      )
+        return
+      chain.isFetching = true
+      const requestIdentity = {
+        account: state.account,
+        generation: accountIdentityRef.current.generation,
       }
 
-      const results = await multicall(client, {
-        contracts,
-        allowFailure: true,
-      })
+      try {
+        // Remove the native address from the active tokens, it will be fetched separately
+        const activeTokens = Array.from(chain.activeTokens.keys()).filter(
+          (address) => address !== NativeAddress,
+        )
 
-      results.forEach((result, index) => {
-        // Should always be set, except for the last one, which we know is the native balance
-        let address = activeTokens[index]
-        if (!address) {
-          address = NativeAddress
+        const client = config.getClient({ chainId })
+
+        const contracts = activeTokens.map((address) => ({
+          address,
+          functionName: 'balanceOf',
+          args: [state.account],
+          abi: erc20Abi_balanceOf as
+            | typeof erc20Abi_balanceOf
+            | typeof multicall3Abi_getEthBalance,
+        }))
+
+        // Multicall should be available everywhere
+        // Worse case the native balance doesn't show up
+        const multicallAddress =
+          getEvmChainById(chainId).viemChain.contracts.multicall3.address
+
+        if (multicallAddress) {
+          contracts.push({
+            address: multicallAddress,
+            functionName: 'getEthBalance',
+            args: [state.account],
+            abi: multicall3Abi_getEthBalance,
+          })
         }
 
-        if (result.status === 'failure') {
-          console.warn(
-            `Failed to fetch balance for ${address} on chain ${chainId}`,
-          )
-
-          const existingBalance = chain.balanceMap.get(address)
-
-          // Keep the stale balance if it exists
-          // To prevent constant refetching
-          if (!existingBalance || isBalanceStale(existingBalance)) {
-            chain.balanceMap.set(address, {
-              amount: BigInt(-1),
-              lastUpdated: Date.now(),
-            })
-          }
-          return
-        }
-
-        chain.balanceMap.set(address, {
-          amount: result.result,
-          lastUpdated: Date.now(),
+        const results = await multicall(client, {
+          contracts,
+          allowFailure: true,
         })
-      })
+        if (
+          !isBalanceResponseCurrent(requestIdentity, accountIdentityRef.current)
+        )
+          return
 
-      chain.isFetching = false
+        results.forEach((result, index) => {
+          // Should always be set, except for the last one, which we know is the native balance
+          let address = activeTokens[index]
+          if (!address) {
+            address = NativeAddress
+          }
 
-      dispatch({
-        type: 'REFRESH',
-      })
+          if (result.status === 'failure') {
+            console.warn(
+              `Failed to fetch balance for ${address} on chain ${chainId}`,
+            )
+
+            const existingBalance = chain.balanceMap.get(address)
+
+            // Keep the stale balance if it exists
+            // To prevent constant refetching
+            if (!existingBalance || isBalanceStale(existingBalance)) {
+              chain.balanceMap.set(address, {
+                amount: BigInt(-1),
+                lastUpdated: Date.now(),
+              })
+            }
+            return
+          }
+
+          chain.balanceMap.set(address, {
+            amount: result.result,
+            lastUpdated: Date.now(),
+          })
+        })
+
+        chain.failureCount = 0
+        chain.lastError = null
+      } catch (error) {
+        if (
+          !isBalanceResponseCurrent(requestIdentity, accountIdentityRef.current)
+        )
+          return
+        chain.failureCount += 1
+        chain.lastError = {
+          message: error instanceof Error ? error.message : String(error),
+          timestamp: Date.now(),
+        }
+        console.warn(`Failed to fetch balances on chain ${chainId}`, error)
+      } finally {
+        chain.isFetching = false
+        dispatch({
+          type: 'REFRESH',
+        })
+      }
     },
     [state, config],
   )

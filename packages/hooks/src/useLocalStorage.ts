@@ -5,8 +5,12 @@ import {
   type SetStateAction,
   useCallback,
   useEffect,
-  useState,
+  useReducer,
 } from 'react'
+import {
+  type LocalStorageState,
+  localStorageReducer,
+} from './local-storage-reducer'
 
 export const useLocalStorage = <T>(
   key: string,
@@ -27,56 +31,51 @@ export const useLocalStorage = <T>(
     }
   }, [initialValue, key])
 
-  // State to store our value
-  // Pass initial state function to useState so logic is only executed once
-  const [storedValue, setStoredValue] = useState<T>(readValue)
+  const [state, dispatch] = useReducer(
+    localStorageReducer<T>,
+    undefined,
+    (): LocalStorageState<T> => ({
+      value: readValue(),
+      persistence: 'none',
+      revision: 0,
+    }),
+  )
 
   // Return a wrapped version of useState's setter function that ...
   // ... persists the new value to localStorage.
-  const setValue: Dispatch<SetStateAction<T>> = useCallback(
-    (value) => {
-      try {
-        // Allow value to be a function so we have same API as useState
-        const valueToStore =
-          value instanceof Function ? value(storedValue) : value
-        // Save state
-        setStoredValue(valueToStore)
-        // Save to local storage
-        if (typeof window !== 'undefined') {
-          window.localStorage.setItem(key, JSON.stringify(valueToStore))
-        }
-
-        window.dispatchEvent(new Event(key))
-      } catch (error) {
-        // A more advanced implementation would handle the error case
-        console.log(error)
-      }
-    },
-    [key, storedValue],
-  )
+  const setValue: Dispatch<SetStateAction<T>> = useCallback((value) => {
+    dispatch({ type: 'set', value })
+  }, [])
 
   const removeItem = useCallback(() => {
+    dispatch({ type: 'remove', initialValue })
+  }, [initialValue])
+
+  useEffect(() => {
+    if (state.persistence === 'none' || typeof window === 'undefined') return
+
     try {
-      if (typeof window !== 'undefined') {
+      if (state.persistence === 'remove') {
         window.localStorage.removeItem(key)
-        setStoredValue(initialValue)
-        window.dispatchEvent(new Event(key))
+      } else {
+        window.localStorage.setItem(key, JSON.stringify(state.value))
       }
+
+      window.dispatchEvent(new Event(key))
     } catch (error) {
       console.log(error)
     }
-  }, [initialValue, key])
+  }, [key, state])
 
   // To trigger rerenders globally
   useEffect(() => {
     const listener = () => {
-      const item = window.localStorage.getItem(key)
-      if (item) setStoredValue(JSON.parse(item))
+      dispatch({ type: 'sync', value: readValue() })
     }
     window.addEventListener(key, listener)
 
     return () => window.removeEventListener(key, listener)
-  }, [key])
+  }, [key, readValue])
 
-  return [storedValue, setValue, removeItem]
+  return [state.value, setValue, removeItem]
 }

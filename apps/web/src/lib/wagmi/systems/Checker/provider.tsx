@@ -1,6 +1,6 @@
 'use client'
 
-import { watchAccount } from '@wagmi/core'
+import { watchAccount, watchChainId } from '@wagmi/core'
 import type React from 'react'
 import {
   type FC,
@@ -76,9 +76,13 @@ function CheckerProvider({ children }: ProviderProps) {
     const unwatchAccountListener = watchAccount(config, {
       onChange: () => setState(initialState),
     })
+    const unwatchChainIdListener = watchChainId(config, {
+      onChange: () => setState(initialState),
+    })
 
     return () => {
       unwatchAccountListener()
+      unwatchChainIdListener()
     }
   }, [config])
 

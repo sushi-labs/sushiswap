@@ -1,4 +1,4 @@
-import { Slot } from '@radix-ui/react-slot'
+import { Slot, Slottable } from '@radix-ui/react-slot'
 import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
 
@@ -79,16 +79,20 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
       description,
       size,
       variant = 'secondary',
-      name: _name,
+      name,
+      type,
+      testId,
       ...props
     },
     ref,
   ) => {
-    const Comp = asChild ? Slot : 'span'
+    const Comp = asChild ? Slot : 'button'
 
     const button = (
       <Comp
-        role="button"
+        {...(asChild ? {} : { type: type ?? 'button' })}
+        aria-label={name}
+        testdata-id={testId}
         className={iconButtonVariants({ variant, size, className })}
         ref={ref}
         {...props}
@@ -111,7 +115,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
             })}
           />
         )}
-        {children ? children : null}
+        {asChild ? <Slottable>{children}</Slottable> : children}
       </Comp>
     )
 
@@ -131,6 +135,6 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
     return button
   },
 )
-IconButton.displayName = 'ButtonNew'
+IconButton.displayName = 'IconButton'
 
 export { IconButton, iconButtonVariants }

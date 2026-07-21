@@ -1,15 +1,9 @@
 'use client'
 
-import { QuestionMarkCircleIcon } from '@heroicons/react/24/solid'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import Link from 'next/link'
-import type React from 'react'
-import { type FC, useMemo } from 'react'
-import type {
-  UseEvmTradeReturn,
-  UseSvmTradeReturn,
-} from 'src/lib/hooks/react-query'
+import { useRouter } from 'next/navigation'
+import { useMemo } from 'react'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { ZERO, getChainById } from 'sushi'
@@ -21,49 +15,14 @@ import {
   useSwapWidgetTradeQuote,
 } from './derivedstate-swap-widget-provider'
 
-interface PartialRouteCheckerProps {
-  children: React.ReactNode
-  trade?: UseEvmTradeReturn | UseSvmTradeReturn
-}
-
-const PartialRouteChecker: FC<PartialRouteCheckerProps> = ({
-  children,
-  trade,
-}) => {
-  const {
-    mutate: { setSwapAmount },
-  } = useDerivedStateSwapWidget()
-
-  return trade?.status === 'Partial' ? (
-    <HoverCard openDelay={0} closeDelay={0}>
-      <Button
-        size="xl"
-        fullWidth
-        onClick={() =>
-          trade.amountIn && setSwapAmount(trade.amountIn?.toString())
-        }
-      >
-        Accept New Input and Swap
-        <HoverCardTrigger>
-          <QuestionMarkCircleIcon width={16} height={16} />
-        </HoverCardTrigger>
-      </Button>
-      <HoverCardContent className="max-w-[320px] text-xs">
-        {`The route for the full input amount cannot be made so we've adjusted
-        the input to the maximum amount that can be completed.`}
-      </HoverCardContent>
-    </HoverCard>
-  ) : (
-    <>{children}</>
-  )
-}
-
 export const SwapWidgetTradeButton = () => {
+  const router = useRouter()
   const { data: maintenance } = useIsSwapMaintenance()
   const { data: quote, error } = useSwapWidgetTradeQuote()
 
   const {
     state: { swapAmountString, chainId, token0, token1 },
+    mutate: { setSwapAmount },
   } = useDerivedStateSwapWidget()
 
   const { isUnwrap, isWrap } = useWrapUnwrapTrade(token0, token1)
@@ -92,7 +51,11 @@ export const SwapWidgetTradeButton = () => {
 
   return (
     <Checker.Guard guardWhen={maintenance} guardText="Maintenance in progress">
-      <PartialRouteChecker trade={quote}>
+      <Checker.PartialRoute
+        trade={quote}
+        setSwapAmount={setSwapAmount}
+        onAccepted={() => router.push(url)}
+      >
         <Link href={url}>
           <Button
             size="xl"
@@ -118,7 +81,7 @@ export const SwapWidgetTradeButton = () => {
                     : 'Swap'}
           </Button>
         </Link>
-      </PartialRouteChecker>
+      </Checker.PartialRoute>
     </Checker.Guard>
   )
 }

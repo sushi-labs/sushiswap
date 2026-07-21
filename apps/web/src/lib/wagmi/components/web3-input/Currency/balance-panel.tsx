@@ -2,14 +2,18 @@ import { SkeletonText, classNames } from '@sushiswap/ui'
 import { WalletIcon } from '@sushiswap/ui/icons/WalletIcon'
 import { type FC, memo, useCallback } from 'react'
 import { Amount } from 'sushi'
-import { EvmNative, isEvmChainId } from 'sushi/evm'
+import { isEvmChainId } from 'sushi/evm'
 import { isStellarChainId } from 'sushi/stellar'
 
 import { useIsMounted } from '@sushiswap/hooks'
-import { SvmNative } from 'sushi/svm'
+import { isSvmChainId } from 'sushi/svm'
 import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
 import { contractAddresses } from '~stellar/_common/lib/soroban/contracts'
 import type { CurrencyInputProps } from './currency-input'
+import {
+  getNativeBalanceReserve,
+  getSpendableNativeBalance,
+} from './native-balance-reserve'
 
 type BalancePanel<TChainId extends BalanceChainId> = Pick<
   CurrencyInputProps<TChainId>,
@@ -21,7 +25,6 @@ type BalancePanel<TChainId extends BalanceChainId> = Pick<
   type: 'INPUT' | 'OUTPUT'
 }
 
-const MIN_NATIVE_CURRENCY_FOR_GAS = 2n * 10n ** 15n // .002 ETH
 // Stellar uses 7 decimals; reserve 2 XLM to cover the base account reserve
 // (1 XLM) plus headroom for a couple of trustlines and txn fees.
 const MIN_XLM_FOR_RESERVE = 2n * 10n ** 7n // 2 XLM
@@ -43,18 +46,18 @@ export function BalancePanel<TChainId extends BalanceChainId>({
   const onClick = useCallback(() => {
     if (!onChange || !balance?.gt(0n)) return
 
-    // EVM/SVM native carve-out: subtract a small gas reserve.
+    // EVM/SVM native carve-out: subtract a reserve in chain-native base units.
     if (
       balance.currency.type === 'native' &&
-      balance.gt(MIN_NATIVE_CURRENCY_FOR_GAS)
+      (isEvmChainId(balance.currency.chainId) ||
+        isSvmChainId(balance.currency.chainId))
     ) {
-      const reserve = new Amount(
-        isEvmChainId(balance.currency.chainId)
-          ? EvmNative.fromChainId(balance.currency.chainId)
-          : SvmNative.fromChainId(balance.currency.chainId),
-        MIN_NATIVE_CURRENCY_FOR_GAS,
+      const reserve = getNativeBalanceReserve(balance.currency.chainId)
+      const spendableBalance = new Amount(
+        balance.currency,
+        getSpendableNativeBalance(balance.amount, reserve),
       )
-      onChange(balance.sub(reserve).toString())
+      onChange(spendableBalance.toString())
       return
     }
 

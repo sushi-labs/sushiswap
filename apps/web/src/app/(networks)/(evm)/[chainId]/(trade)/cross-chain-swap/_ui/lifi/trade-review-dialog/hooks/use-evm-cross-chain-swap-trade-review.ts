@@ -10,6 +10,7 @@ import { logger } from 'src/lib/logger'
 import { getCrossChainFeesBreakdown } from 'src/lib/swap/cross-chain'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
+import { waitForSuccessfulReceipt } from 'src/lib/wagmi/transactions/wait-for-successful-receipt'
 import type { EvmAddress, EvmChainId } from 'sushi/evm'
 import {
   useConnection,
@@ -111,20 +112,11 @@ export function useEvmCrossChainSwapTradeReview<
   }, [estGasError])
 
   const { onWriteSuccess, onWriteError } =
-    useCrossChainSwapTradeReviewWriteHandlers<
-      TChainId0,
-      TChainId1,
-      {
-        status: 'success' | 'reverted'
-      }
-    >({
+    useCrossChainSwapTradeReviewWriteHandlers<TChainId0, TChainId1>({
       routeRef: pre.routeRef,
       groupTs: pre.groupTs,
       setStepStates: pre.setStepStates,
-      waitForReceipt: (hash) => client0.waitForTransactionReceipt({ hash }),
-      getReceiptInfo: (receipt) => ({
-        status: receipt.status === 'success' ? 'success' : 'failed',
-      }),
+      waitForReceipt: (hash) => waitForSuccessfulReceipt(client0, hash),
       step,
       shouldIgnoreWriteError: isUserRejectedError,
     })
