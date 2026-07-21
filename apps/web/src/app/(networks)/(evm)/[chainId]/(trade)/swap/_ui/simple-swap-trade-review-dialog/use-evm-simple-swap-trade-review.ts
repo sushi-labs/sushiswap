@@ -181,7 +181,7 @@ function useEvmSimpleSwapTradeReviewForState({
 
         const receipt = await promise
         setStatus('success')
-        {
+        try {
           const trade = tradeRef.current
           sendAnalyticsEvent(SwapEventName.SWAP_TRANSACTION_COMPLETED, {
             txHash: hash,
@@ -231,6 +231,8 @@ function useEvmSimpleSwapTradeReviewForState({
               logLevel: 'info',
             })
           }
+        } catch (error) {
+          console.warn('Failed to record successful swap telemetry', error)
         }
       } catch (error) {
         setStatus('error')
