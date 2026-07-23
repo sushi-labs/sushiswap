@@ -54,6 +54,12 @@ const DEPOSIT_OPTIONS = [
     chainId: EvmChainId.ARBITRUM,
     type: 'any-token' as const,
   },
+  {
+    label: 'Any Token (Robinhood)',
+    value: 'any-robinhood' as const,
+    chainId: EvmChainId.ROBINHOOD,
+    type: 'any-token-any-chain' as const,
+  },
   // {
   //   label: 'Fiat',
   //   value: 'fiat' as const,
@@ -248,7 +254,7 @@ type DepositOption = (typeof DEPOSIT_OPTIONS)[number]
 
 export type AnyTokenDepositOption = Extract<
   DepositOption,
-  { type: 'any-token' }
+  { type: 'any-token' | 'any-token-any-chain' }
 >
 export type TokenDepositOption = Extract<DepositOption, { type: 'token' }>
 export type HyperunitDepositOption = Extract<
@@ -308,6 +314,7 @@ export const DepositDialog = ({
           />
         )
       case 'any-token':
+      case 'any-token-any-chain':
         return (
           <AnyTokenDeposit
             depositOption={depositOption}
@@ -328,6 +335,7 @@ export const DepositDialog = ({
       case 'hyperunit':
         return `Deposit ${depositOption.label} via Unit`
       case 'any-token':
+      case 'any-token-any-chain':
         return `Swap to Deposit USDC from ${getChainById(depositOption.chainId).name}`
       default:
         return null
