@@ -1,27 +1,24 @@
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import { useRef } from 'react'
+
+const clientCommit = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA
 
 export const useAppVersion = () => {
-  const commitRef = useRef<string | null>(null)
-
   return useQuery({
     queryKey: ['app-version'],
     queryFn: async () => {
-      const resp = await fetch('/api/config/version')
+      const resp = await fetch('/api/config/version', { cache: 'no-store' })
       const { success, data } = await resp.json()
 
       if (!success || !data.commit)
         throw new Error('Failed to fetch /api/config/version')
 
-      if (commitRef.current === null) commitRef.current = data.commit
-
       return {
         server: data.commit,
-        client: commitRef.current as string,
+        client: clientCommit,
       }
     },
     refetchInterval: ms('5m'),
-    enabled: Boolean(process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA),
+    enabled: Boolean(clientCommit),
   })
 }
