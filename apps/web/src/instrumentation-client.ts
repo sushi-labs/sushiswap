@@ -13,6 +13,8 @@ import {
   type TransportItem,
 } from '@grafana/faro-web-sdk'
 
+const isFaroEnabled = false
+
 const faroConfig = {
   url: 'https://faro.analytics-fe.sushi.com/collect',
   samplingRate: 1,
@@ -32,7 +34,12 @@ const ignoreUrls = [
 
 const ignoreLogStacks: RegExp[] = [/-extension:\/\//]
 
-if (!faro.api && !process.env.CI && process.env.NODE_ENV !== 'development') {
+if (
+  isFaroEnabled &&
+  !faro.api &&
+  !process.env.CI &&
+  process.env.NODE_ENV !== 'development'
+) {
   try {
     initializeFaro({
       app: {
