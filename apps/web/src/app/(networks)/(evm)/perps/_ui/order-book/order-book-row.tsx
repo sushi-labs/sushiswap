@@ -5,6 +5,7 @@ import {
   getTextColorClass,
   perpsNumberFormatter,
 } from 'src/lib/perps'
+import { useAssetState } from '../trade-widget'
 import { getTotal } from './order-book'
 
 const depthRowStyle = (
@@ -38,6 +39,10 @@ export const OrderBookRow = ({
   maxTotal,
   animationDisabled,
 }: OrderBookRowProps) => {
+  const {
+    state: { tradeType },
+    mutate: { setLimitPrice, setTradeType },
+  } = useAssetState()
   const pct = useMemo(
     () => (getTotal(order, orderBookSide) / maxTotal) * 100,
     [order, orderBookSide, maxTotal],
@@ -69,10 +74,20 @@ export const OrderBookRow = ({
     return () => clearTimeout(id)
   }, [animationDisabled, order.price, order.sizeBase, order.n])
 
+  const handleSelectLimitPrice = () => {
+    setLimitPrice(order.price)
+
+    if (!tradeType.includes('limit')) {
+      setTradeType('limit')
+    }
+  }
+
   return (
-    <div
+    <button
+      type="button"
+      onClick={handleSelectLimitPrice}
       className={classNames(
-        'font-medium relative lg:border-y-[1px] grid grid-cols-3 border-y-[.5px] border-transparent',
+        'font-medium relative lg:border-y-[1px] grid grid-cols-3 border-y-[.5px] border-transparent w-full cursor-pointer text-left bg-transparent hover:bg-perps-muted/[0.04] focus-visible:outline-none focus-visible:bg-perps-muted/[0.06]',
         animationDisabled ? '' : 'transition-all duration-150',
         flash
           ? side === 'bid'
@@ -81,6 +96,7 @@ export const OrderBookRow = ({
           : '',
       )}
       style={depthRowStyle(pct, side)}
+      aria-label={`Set limit price to ${order.price} USDC`}
     >
       <div
         className={classNames(
@@ -102,6 +118,6 @@ export const OrderBookRow = ({
           maxFraxDigits: isBase ? 8 : 0,
         })}
       </div>
-    </div>
+    </button>
   )
 }

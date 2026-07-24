@@ -208,6 +208,8 @@ const PNL_PANEL_INSET_SHADOW_OFFSET_Y = 6.48
 const PNL_PANEL_BASE_WIDTH = 445
 const PNL_PANEL_WIDE_EXTRA_WIDTH = 55
 const PNL_PANEL_WIDE_PNL_PERCENT_THRESHOLD = 999.99
+const PNL_PANEL_WIDE_VALUE_LENGTH_THRESHOLD = 7
+const PNL_VALUE_MIN_FONT_SIZE = 56
 
 type PosterVerticalShadow = {
   blur: number
@@ -362,7 +364,9 @@ function drawPosterPnlPanel(
   const x = 44
   const y = 200
   const panelExtraWidth =
-    Math.abs(data.normalizedPnlPercent) > PNL_PANEL_WIDE_PNL_PERCENT_THRESHOLD
+    Math.abs(data.normalizedPnlPercent) >
+      PNL_PANEL_WIDE_PNL_PERCENT_THRESHOLD ||
+    data.largeValue.length > PNL_PANEL_WIDE_VALUE_LENGTH_THRESHOLD
       ? PNL_PANEL_WIDE_EXTRA_WIDTH
       : 0
   const width = PNL_PANEL_BASE_WIDTH + panelExtraWidth
@@ -942,7 +946,10 @@ function drawPosterPercent(
   context.save()
   let fontSize = 145
   context.font = `800 ${fontSize}px "Lufga", Inter, sans-serif`
-  while (context.measureText(largeValue).width > maxWidth && fontSize > 86) {
+  while (
+    context.measureText(largeValue).width > maxWidth &&
+    fontSize > PNL_VALUE_MIN_FONT_SIZE
+  ) {
     fontSize -= 4
     context.font = `800 ${fontSize}px "Lufga", Inter, sans-serif`
   }

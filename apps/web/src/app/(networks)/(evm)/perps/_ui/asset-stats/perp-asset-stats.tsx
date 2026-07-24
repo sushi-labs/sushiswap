@@ -19,6 +19,7 @@ import { ValueSensitiveText } from '../_common'
 import { useAssetListState } from '../asset-selector'
 import { useAssetState } from '../trade-widget'
 import { AssetStatsSkeleton } from './asset-stats-skeleton'
+import { FundingHistory } from './funding-history'
 
 export const PerpAssetStats = () => {
   const {
@@ -155,6 +156,7 @@ export const PerpAssetStats = () => {
           {currencyFormatter.format(Number(assetData?.openInterestUsd ?? 0))}
         </p>
       </div>
+
       <div className="flex flex-col">
         <HoverCard openDelay={0} closeDelay={0}>
           <HoverCardTrigger asChild tabIndex={0}>
@@ -200,6 +202,10 @@ export const PerpAssetStats = () => {
           <Countdown />
         </div>
       </div>
+      <FundingHistory
+        currentFunding1year={assetData?.funding1year}
+        currentFundingPct={assetData?.fundingPct}
+      />
     </>
   )
 }

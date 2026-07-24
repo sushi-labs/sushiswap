@@ -241,6 +241,45 @@ function createVolumeColumn<TRow extends AssetSelectorColumnRow>(): ColumnDef<
   }
 }
 
+function createBasisVolumeColumn(
+  leg: 'perp' | 'spot',
+): ColumnDef<BasisTradeAsset, unknown> {
+  const id = leg === 'perp' ? 'perpVolume24hUsd' : 'spotVolume24hUsd'
+
+  return {
+    id,
+    header: leg === 'perp' ? 'Perp Volume' : 'Spot Volume',
+    accessorFn: (row) =>
+      leg === 'perp' ? row.perpAsset.volume24hUsd : row.spotAsset.volume24hUsd,
+    sortingFn: ({ original: rowA }, { original: rowB }) => {
+      const a = leg === 'perp' ? rowA.perpAsset : rowA.spotAsset
+      const b = leg === 'perp' ? rowB.perpAsset : rowB.spotAsset
+
+      return (
+        Number.parseFloat(a.volume24hUsd ?? '0') -
+        Number.parseFloat(b.volume24hUsd ?? '0')
+      )
+    },
+    cell: (props) => {
+      const asset =
+        leg === 'perp'
+          ? props.row.original.perpAsset
+          : props.row.original.spotAsset
+
+      return (
+        <div className="tabular-nums">
+          {currencyFormatter.format(
+            Number.parseFloat(asset.volume24hUsd ?? '0'),
+          )}
+        </div>
+      )
+    },
+    meta: {
+      body: columnBodyMeta,
+    },
+  }
+}
+
 function createOpenInterestColumn<
   TRow extends AssetSelectorColumnRow,
 >(): ColumnDef<TRow, unknown> {
@@ -269,12 +308,12 @@ function createOpenInterestColumn<
   }
 }
 
-function createMarketCapColumn<
-  TRow extends AssetSelectorColumnRow,
->(): ColumnDef<TRow, unknown> {
+function createMarketCapColumn<TRow extends AssetSelectorColumnRow>(
+  header = 'Market Cap',
+): ColumnDef<TRow, unknown> {
   return {
     id: 'marketCap',
-    header: 'Market Cap',
+    header,
     accessorFn: (row) => getMarketCapAsset(row).marketCap,
     sortingFn: ({ original: rowA }, { original: rowB }) =>
       Number.parseFloat(getMarketCapAsset(rowA).marketCap ?? '0') -
@@ -318,6 +357,9 @@ export const BASIS_DAY_CHANGE_COLUMN = createDayChangeColumn<BasisTradeAsset>()
 export const BASIS_EIGHT_HOUR_FUNDING_COLUMN =
   createEightHourFundingColumn<BasisTradeAsset>()
 export const BASIS_VOLUME_COLUMN = createVolumeColumn<BasisTradeAsset>()
+export const BASIS_PERP_VOLUME_COLUMN = createBasisVolumeColumn('perp')
+export const BASIS_SPOT_VOLUME_COLUMN = createBasisVolumeColumn('spot')
 export const BASIS_OPEN_INTEREST_COLUMN =
   createOpenInterestColumn<BasisTradeAsset>()
-export const BASIS_MARKET_CAP_COLUMN = createMarketCapColumn<BasisTradeAsset>()
+export const BASIS_MARKET_CAP_COLUMN =
+  createMarketCapColumn<BasisTradeAsset>('Spot Market Cap')

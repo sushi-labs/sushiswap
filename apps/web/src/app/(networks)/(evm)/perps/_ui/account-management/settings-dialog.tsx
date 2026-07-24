@@ -24,6 +24,8 @@ export const SettingsDialog = () => {
       showBuySellInChart,
       disableBgFillNotifs,
       hidePnl,
+      fillChimeEnabled,
+      clickSoundEnabled,
       optOutOfSpotDustCollection,
       showPnlCardOnMarketClose,
     },
@@ -36,6 +38,8 @@ export const SettingsDialog = () => {
       setShowBuySellInChart,
       setDisableBgFillNotifs,
       setHidePnl,
+      setFillChimeEnabled,
+      setClickSoundEnabled,
       setOptOutOfSpotDustCollection,
       setShowPnlCardOnMarketClose,
     },
@@ -91,6 +95,16 @@ export const SettingsDialog = () => {
               label="Disable Background Fill Notifications"
             />
             <CheckboxSetting
+              value={fillChimeEnabled}
+              onChange={setFillChimeEnabled}
+              label="Enable Fill Sound"
+            />
+            <CheckboxSetting
+              value={clickSoundEnabled}
+              onChange={setClickSoundEnabled}
+              label="Enable Click Sound"
+            />
+            <CheckboxSetting
               value={showBuySellInChart}
               onChange={setShowBuySellInChart}
               label="Show Buys/Sells on Chart"
@@ -113,7 +127,6 @@ export const SettingsDialog = () => {
               />
             )}
             {/* todo: sound effects on click? */}
-            {/* todo: sound effects on on fill */}
             {activeAccount?.type === 'vault' ? null : (
               <>
                 <div className="bg-accent w-full h-[1px]" />

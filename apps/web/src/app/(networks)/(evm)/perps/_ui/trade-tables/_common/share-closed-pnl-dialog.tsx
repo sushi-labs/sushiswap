@@ -1,7 +1,11 @@
 'use client'
 
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
-import { ArrowDownTrayIcon, LinkIcon } from '@heroicons/react/24/outline'
+import {
+  ArrowDownTrayIcon,
+  ArrowsRightLeftIcon,
+  LinkIcon,
+} from '@heroicons/react/24/outline'
 import { createErrorToast } from '@sushiswap/notifications'
 import {
   Button,
@@ -68,6 +72,8 @@ type FillWithPnl = {
   startPosition: string
   sz: string
 }
+
+type PnlDisplayMode = 'percent' | 'usd'
 
 function parseFiniteNumber(value: number | string | null | undefined): number {
   const parsed =
@@ -213,6 +219,8 @@ export function ShareClosedPnlDialog({
   const [copied, setCopied] = useState(false)
   const [isSavingImage, setIsSavingImage] = useState(false)
   const [isSharingImage, setIsSharingImage] = useState(false)
+  const [pnlDisplayMode, setPnlDisplayMode] =
+    useState<PnlDisplayMode>('percent')
   const posterRef = useRef<HTMLCanvasElement | null>(null)
   const address = useAccount('evm')
   const {
@@ -283,6 +291,10 @@ export function ShareClosedPnlDialog({
     } catch {
       createErrorToast('Failed to copy the current page URL.', false, 'perps')
     }
+  }
+
+  function handleTogglePnlDisplayMode(): void {
+    setPnlDisplayMode((current) => (current === 'percent' ? 'usd' : 'percent'))
   }
 
   async function handleSaveImage(): Promise<void> {
@@ -394,10 +406,29 @@ export function ShareClosedPnlDialog({
                 referralCode={referralCode}
                 leverage={leverage}
                 imageUrl={imageUrl}
+                pnlDisplayMode={pnlDisplayMode}
               />
             </div>
 
-            <div className="grid w-full gap-3 grid-cols-2">
+            <div className="grid w-full gap-3 grid-cols-3">
+              <Button
+                type="button"
+                variant="perps-tertiary"
+                icon={ArrowsRightLeftIcon}
+                aria-label={
+                  pnlDisplayMode === 'percent'
+                    ? 'Show PnL as USD amount'
+                    : 'Show PnL as percent'
+                }
+                title={
+                  pnlDisplayMode === 'percent'
+                    ? 'Show PnL as USD amount'
+                    : 'Show PnL as percent'
+                }
+                onClick={handleTogglePnlDisplayMode}
+              >
+                {pnlDisplayMode === 'percent' ? 'Show USD' : 'Show %'}
+              </Button>
               <Button
                 type="button"
                 variant="perps-tertiary"
@@ -422,7 +453,7 @@ export function ShareClosedPnlDialog({
               <Button
                 type="button"
                 variant="perps-tertiary"
-                className="col-span-2"
+                className="col-span-3"
                 icon={XIcon}
                 loading={isSharingImage}
                 onClick={() => {
@@ -452,6 +483,7 @@ type SharePosterProps = {
   referralCode?: string
   leverage?: number
   imageUrl: string
+  pnlDisplayMode: PnlDisplayMode
 }
 
 function SharePoster({
@@ -461,6 +493,7 @@ function SharePoster({
   referralCode,
   leverage,
   imageUrl,
+  pnlDisplayMode,
 }: SharePosterProps): JSX.Element {
   const symbol = trade.symbol || trade.coin || 'Asset'
   const leverageMultiplier = leverage
@@ -480,11 +513,10 @@ function SharePoster({
         : (totalPnl / entryNotional) * (leverageMultiplier ?? 1) * 100
   const normalizedPnlPercent = Number.isFinite(pnlPercent) ? pnlPercent : 0
   const isPositive = normalizedPnlPercent >= 0
-  const largeValue = `${isPositive ? '+' : ''}${perpsNumberFormatter({
-    value: normalizedPnlPercent,
-    minFraxDigits: 1,
-    maxFraxDigits: 1,
-  })}%`
+  const largeValue =
+    pnlDisplayMode === 'percent'
+      ? formatPosterPnlPercent(normalizedPnlPercent)
+      : formatPosterPnlUsdAmount(totalPnl)
   const leverageLabel = leverageMultiplier
     ? `${leverageMultiplier}x ${direction}`
     : 'Spot'
@@ -612,6 +644,26 @@ function downloadBlob(blob: Blob, fileName: string): void {
 
 function getShareImageFileName(trade: NormalizedTrade): string {
   return `sushi-perps-${trade.symbol.toLowerCase()}-${trade.time}.png`
+}
+
+function formatPosterPnlPercent(pnlPercent: number): string {
+  const isPositive = pnlPercent >= 0
+
+  return `${isPositive ? '+' : ''}${perpsNumberFormatter({
+    value: pnlPercent,
+    minFraxDigits: 1,
+    maxFraxDigits: 1,
+  })}%`
+}
+
+function formatPosterPnlUsdAmount(totalPnl: number): string {
+  const normalizedTotalPnl = Number.isFinite(totalPnl) ? totalPnl : 0
+
+  return `${normalizedTotalPnl >= 0 ? '+' : '-'}$${perpsNumberFormatter({
+    value: Math.abs(normalizedTotalPnl),
+    minFraxDigits: 2,
+    maxFraxDigits: 2,
+  })}`
 }
 
 function formatPosterPrice(price: number): string {

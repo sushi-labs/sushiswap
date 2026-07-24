@@ -1,4 +1,5 @@
 export * from './get-clearinghouse-state-for-dex'
+export * from './spot-asset-metadata'
 export * from './use-active-asset'
 export * from './use-active-asset-data'
 export * from './use-all-dex-clearinghouse-state'

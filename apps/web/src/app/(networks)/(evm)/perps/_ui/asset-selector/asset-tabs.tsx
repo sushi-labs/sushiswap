@@ -31,7 +31,7 @@ const TABS = [
   { value: 'Tradfi', icon: <BankIcon className="w-3 h-3" /> },
   { value: 'HIP-3', icon: <LightningIcon className="w-3 h-3" /> },
   // { value: 'trending', icon: <FireIcon className="w-3 h-3" /> },
-  // { value: 'basis trade', icon: <FireIcon className="w-3 h-3" />, isNew: true },
+  { value: 'basis trade', icon: <FireIcon className="w-3 h-3" />, isNew: true },
   { value: 'watchlist', icon: <FavoriteIcon className="w-3 h-3" /> },
 ] as const
 type TabType = (typeof TABS)[number]['value']
@@ -126,9 +126,9 @@ export const AssetTabs = () => {
         <TabsContent value="HIP-3" className="!mt-0">
           <HIP3Assets />
         </TabsContent>
-        {/* <TabsContent value="basis trade" className="!mt-0">
+        <TabsContent value="basis trade" className="!mt-0">
           <BasisTradeAssets />
-        </TabsContent> */}
+        </TabsContent>
         <TabsContent value="watchlist" className="!mt-0">
           <FavoriteAssets />
         </TabsContent>
