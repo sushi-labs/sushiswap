@@ -1,4 +1,4 @@
-import { Button, classNames, useBreakpoint } from '@sushiswap/ui'
+import { Button, LinkInternal, classNames, useBreakpoint } from '@sushiswap/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
@@ -11,18 +11,21 @@ import {
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useAccount } from 'src/lib/wallet'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
+import { TableButton } from '../_common'
 import { PerpsCard } from '../_common/perps-card'
+import { ExportCsvButton } from './export-csv-button'
 import { TradeFilter } from './filters'
 import {
   TRADE_TABLES_TABS,
   type TradeTablesTabValue,
+  getViewAllHref,
   useTradeTables,
 } from './trade-tables-provider'
 
 export const TradeTables = ({ className }: { className?: string }) => {
   const { isLg } = useBreakpoint('lg')
   const {
-    state: { activeTab },
+    state: { activeTab, activeTwapTab },
     mutate: { setActiveTab },
   } = useTradeTables()
   const pathname = usePathname()
@@ -101,6 +104,10 @@ export const TradeTables = ({ className }: { className?: string }) => {
       return tab
     })
   }, [balanceCount, positionCount, openOrdersCount, twapOrderCount, TABS])
+
+  const viewAll = useMemo(() => {
+    return getViewAllHref(activeTab === 'twap' ? activeTwapTab : activeTab)
+  }, [activeTab, activeTwapTab])
 
   return (
     <PerpsCard className={classNames('py-2', className ?? '')}>
@@ -181,6 +188,18 @@ export const TradeTables = ({ className }: { className?: string }) => {
           </TabsContent>
         ))}
       </Tabs>
+      {viewAll && activeAddress ? (
+        <div className="flex items-center gap-4 pl-2">
+          <LinkInternal href={`${viewAll}/${activeAddress}`}>
+            <TableButton className="text-xs">View All</TableButton>
+          </LinkInternal>
+          <ExportCsvButton
+            address={activeAddress}
+            className="text-xs"
+            href={viewAll}
+          />
+        </div>
+      ) : null}
     </PerpsCard>
   )
 }

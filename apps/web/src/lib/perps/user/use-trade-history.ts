@@ -1,12 +1,14 @@
-import type { UserFillsEvent } from '@nktkas/hyperliquid/api/subscription'
-import { useMemo } from 'react'
+import { type UserFillsResponse, userFills } from '@nktkas/hyperliquid/api/info'
+import { useQuery } from '@tanstack/react-query'
+import { useCallback, useMemo } from 'react'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserState } from '~evm/perps/user-provider'
+import { hlHttpTransport } from '../transports'
 import { SPOT_ASSETS_TO_REWRITE, getPerpsDexAndCoin } from '../utils'
 
 export const formatTradeHistoryItem = (
-  fill: UserFillsEvent['fills'][number],
+  fill: UserFillsResponse[number],
   assetList: ReturnType<
     typeof useAssetListState
   >['state']['assetListQuery']['data'],
@@ -37,7 +39,17 @@ export const formatTradeHistoryItem = (
   }
 }
 
-export const useTradeHistory = () => {
+function isDefined<T>(value: T | undefined): value is T {
+  return value !== undefined
+}
+
+export const useTradeHistory = ({
+  isViewAll,
+  enabled = true,
+}: {
+  isViewAll: boolean
+  enabled?: boolean
+}) => {
   const {
     state: { activeAddress },
   } = useActiveAccountState()
@@ -49,6 +61,7 @@ export const useTradeHistory = () => {
         isLoading: isLoadingFills,
         isError: isErrorFills,
       },
+      aggregateFillsByTime,
     },
   } = useUserState()
   const {
@@ -60,19 +73,55 @@ export const useTradeHistory = () => {
       },
     },
   } = useAssetListState()
-  const isLoading = isLoadingFills || isAssetListLoading
-  const isError = isErrorFills || isAssetListError
+  const allFillsQuery = useQuery({
+    queryKey: ['useTradeHistory', 'all', address, aggregateFillsByTime],
+    queryFn: async ({ signal }) => {
+      if (!address) {
+        throw new Error('address is undefined')
+      }
+
+      return await userFills(
+        { transport: hlHttpTransport },
+        { user: address, aggregateByTime: aggregateFillsByTime },
+        signal,
+      )
+    },
+    enabled: Boolean(address && isViewAll && enabled),
+  })
+
+  const fills = isViewAll ? allFillsQuery.data : data?.fills
+  const isLoading = isViewAll
+    ? allFillsQuery.isLoading || isAssetListLoading
+    : isLoadingFills || isAssetListLoading
+  const isError = isViewAll
+    ? allFillsQuery.isError || isAssetListError
+    : isErrorFills || isAssetListError
 
   const formattedData = useMemo(() => {
-    if (!data) return []
-    return data.fills
+    if (!fills) return []
+    return fills
       ?.map((fill) => {
         //HL outcomes (their prediction market) has a coin name that starts with a #, which is not a valid asset in our system. We will filter these out for now.
         if (fill?.coin?.startsWith('#')) return undefined
         return formatTradeHistoryItem(fill, assetList)
       })
-      ?.filter((i) => i !== undefined)
-  }, [data, assetList])
+      ?.filter(isDefined)
+  }, [fills, assetList])
+
+  const refetch = useCallback(async () => {
+    if (!address) return []
+
+    const result = await allFillsQuery.refetch()
+    if (!result.data) return []
+
+    return result.data
+      .map((fill) => {
+        //HL outcomes (their prediction market) has a coin name that starts with a #, which is not a valid asset in our system. We will filter these out for now.
+        if (fill?.coin?.startsWith('#')) return undefined
+        return formatTradeHistoryItem(fill, assetList)
+      })
+      .filter(isDefined)
+  }, [address, allFillsQuery.refetch, assetList])
 
   return useMemo(() => {
     if (!address) {
@@ -80,14 +129,16 @@ export const useTradeHistory = () => {
         data: [],
         isLoading: false,
         isError: false,
+        refetch,
       }
     }
     return {
       data: formattedData,
       isLoading,
       isError,
+      refetch,
     }
-  }, [isLoading, isError, formattedData, address])
+  }, [isLoading, isError, formattedData, address, refetch])
 }
 
 export type TradeHistoryItemType = ReturnType<

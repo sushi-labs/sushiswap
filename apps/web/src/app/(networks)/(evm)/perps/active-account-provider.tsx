@@ -1,5 +1,6 @@
 'use client'
 import { useLocalStorage } from '@sushiswap/hooks'
+import { usePathname } from 'next/navigation'
 import {
   type FC,
   createContext,
@@ -11,6 +12,7 @@ import {
 
 import { useAccount } from 'src/lib/wallet'
 import type { EvmAddress } from 'sushi/evm'
+import { getViewAllRouteFromPathname } from './[...viewAll]/view-all-hrefs'
 import {
   type AccountType,
   type ActiveAccount,
@@ -41,10 +43,15 @@ const ActiveAccountProvider: FC<ActiveAccountProviderProps> = ({
   children,
 }) => {
   const address = useAccount('evm')
+  const pathname = usePathname()
+  const viewAllRoute = useMemo(
+    () => getViewAllRouteFromPathname(pathname),
+    [pathname],
+  )
   // select between master account and vault accounts for trading, default to master account
   const [activeAccount, _setActiveAccount] =
     useLocalStorage<ActiveAccount | null>('sushi.perps.active-account', null)
-  const activeAddress = activeAccount?.address || undefined
+  const activeAddress = viewAllRoute?.address ?? activeAccount?.address
 
   const setActiveAccount = useCallback(
     (account: EvmAddress | null, accountType: AccountType, name: string) => {

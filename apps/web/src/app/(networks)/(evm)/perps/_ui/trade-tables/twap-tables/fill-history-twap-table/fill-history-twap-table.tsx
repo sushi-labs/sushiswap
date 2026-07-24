@@ -1,5 +1,9 @@
 import { DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
-import type { ColumnDef, TableState } from '@tanstack/react-table'
+import type {
+  ColumnDef,
+  PaginationState,
+  TableState,
+} from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import { type TwapFillHistoryItemType, useTwapFillHistory } from 'src/lib/perps'
 import { MobileTable, tableRowClassName } from '../../_common'
@@ -40,10 +44,16 @@ const MOBILE_COLUMNS = [
   CLOSED_PNL_COLUMN,
 ] as ColumnDef<TwapFillHistoryItemType, unknown>[]
 
-export const FillHistoryTwapTable = () => {
+export const FillHistoryTwapTable = ({
+  isViewAll = false,
+}: { isViewAll?: boolean }) => {
   const { isLg } = useBreakpoint('lg')
-  const { data, isLoading, isError } = useTwapFillHistory()
+  const { data, isLoading, isError } = useTwapFillHistory({ isViewAll })
   const [sorting, setSorting] = useState([{ id: 'timestamp', desc: true }])
+  const [paginationState, setPaginationState] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 25,
+  })
   const {
     state: { tradeFilter },
   } = useTradeTables()
@@ -77,6 +87,12 @@ export const FillHistoryTwapTable = () => {
   }, [data, isError, filterValue])
 
   const state: Partial<TableState> = useMemo(() => {
+    if (isViewAll) {
+      return {
+        sorting,
+        pagination: paginationState,
+      }
+    }
     return {
       sorting,
       pagination: {
@@ -84,9 +100,9 @@ export const FillHistoryTwapTable = () => {
         pageSize: tableData.length,
       },
     }
-  }, [tableData, sorting])
+  }, [tableData, sorting, isViewAll, paginationState])
 
-  return isLg ? (
+  return isLg || isViewAll ? (
     <DataTableVirtual
       state={state}
       loading={isLoading}
@@ -96,6 +112,9 @@ export const FillHistoryTwapTable = () => {
       thClassName="!h-8 !px-0"
       hideScrollbar={true}
       trClassName={tableRowClassName}
+      pagination={isViewAll}
+      onPaginationChange={isViewAll ? setPaginationState : undefined}
+      skeletonRowCount={isViewAll ? 25 : 10}
     />
   ) : (
     <MobileTable
