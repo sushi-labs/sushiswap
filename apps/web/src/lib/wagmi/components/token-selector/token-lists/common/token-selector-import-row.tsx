@@ -107,8 +107,8 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
           </div>
         </div>
       </div>
-      <DialogContent className="!flex flex-col max-h-[80vh]" hideClose>
-        <DialogHeader className="!text-left !space-y-3">
+      <DialogContent className="!flex max-h-[calc(100dvh-16px)] flex-col overflow-hidden md:max-h-[80vh]">
+        <DialogHeader className="!text-left !space-y-3 shrink-0">
           <DialogTitle>
             <div
               className={classNames(
@@ -147,70 +147,74 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
             </span>
           )}
         </DialogHeader>
-        <List>
-          <List.Control className="!p-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-4">
-                <Badge
-                  position="bottom-right"
-                  badgeContent={
-                    <div className="bg-white rounded-full dark:bg-slate-800">
-                      <NetworkIcon
-                        width={20}
-                        height={20}
-                        chainId={currency.chainId}
-                      />
+        <div className="min-h-0 overflow-y-auto">
+          <div className="flex flex-col gap-4">
+            <List>
+              <List.Control className="!p-4">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-4">
+                    <Badge
+                      position="bottom-right"
+                      badgeContent={
+                        <div className="bg-white rounded-full dark:bg-slate-800">
+                          <NetworkIcon
+                            width={20}
+                            height={20}
+                            chainId={currency.chainId}
+                          />
+                        </div>
+                      }
+                    >
+                      <div className="w-10 h-10">
+                        <UnknownTokenIcon width={40} height={40} />
+                      </div>
+                    </Badge>
+                    <div className="flex flex-col">
+                      <span className="text-2xl font-medium">
+                        {currency.symbol ?? '-'}
+                      </span>
+                      <span className="font-medium text-muted-foreground">
+                        {currency.name ?? '-'}
+                      </span>
                     </div>
-                  }
-                >
-                  <div className="w-10 h-10">
-                    <UnknownTokenIcon width={40} height={40} />
                   </div>
-                </Badge>
-                <div className="flex flex-col">
-                  <span className="text-2xl font-medium">
-                    {currency.symbol ?? '-'}
-                  </span>
-                  <span className="font-medium text-muted-foreground">
-                    {currency.name ?? '-'}
-                  </span>
+                  <LinkExternal
+                    target="_blank"
+                    href={getChainById(currency.chainId).getTokenUrl(
+                      // Chain-specific address types collapse under the union here.
+                      currency.address as never,
+                    )}
+                    className="font-medium"
+                  >
+                    {shortenAddress(currency.address)}{' '}
+                  </LinkExternal>
                 </div>
-              </div>
-              <LinkExternal
-                target="_blank"
-                href={getChainById(currency.chainId).getTokenUrl(
-                  // Chain-specific address types collapse under the union here.
-                  currency.address as never,
-                )}
-                className="font-medium"
-              >
-                {shortenAddress(currency.address)}{' '}
-              </LinkExternal>
-            </div>
-          </List.Control>
-        </List>
-        {securityCurrency ? (
-          <List className="!pt-0 overflow-hidden">
-            <List.Control className="!overflow-y-auto flex flex-col gap-3 p-4">
-              <div className="flex items-center">
-                <span className="text-sm font-medium text-muted-foreground">
-                  Token Security Scan
-                </span>
-              </div>
-              {tokenSecurityImportState === 'unavailable' ? (
-                <span className="text-sm text-muted-foreground">
-                  Security providers did not return results for this token.
-                </span>
-              ) : (
-                <TokenSecurityView
-                  token={securityCurrency}
-                  tokenSecurity={tokenSecurity}
-                  isTokenSecurityLoading={isTokenSecurityScanning}
-                />
-              )}
-            </List.Control>
-          </List>
-        ) : null}
+              </List.Control>
+            </List>
+            {securityCurrency ? (
+              <List className="!pt-0 overflow-hidden">
+                <List.Control className="!overflow-y-auto flex flex-col gap-3 p-4">
+                  <div className="flex items-center">
+                    <span className="text-sm font-medium text-muted-foreground">
+                      Token Security Scan
+                    </span>
+                  </div>
+                  {tokenSecurityImportState === 'unavailable' ? (
+                    <span className="text-sm text-muted-foreground">
+                      Security providers did not return results for this token.
+                    </span>
+                  ) : (
+                    <TokenSecurityView
+                      token={securityCurrency}
+                      tokenSecurity={tokenSecurity}
+                      isTokenSecurityLoading={isTokenSecurityScanning}
+                    />
+                  )}
+                </List.Control>
+              </List>
+            ) : null}
+          </div>
+        </div>
         <Message
           size="sm"
           variant={hasSecurityRisk ? 'destructive' : 'warning'}

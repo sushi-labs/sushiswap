@@ -193,6 +193,10 @@ export const isTokenSecurityIssue = {
   (value: TokenSecurity[keyof TokenSecurity]) => boolean
 >
 
+export function isTokenSecurityKey(key: string): key is keyof TokenSecurity {
+  return Object.hasOwn(isTokenSecurityIssue, key)
+}
+
 export const TokenSecurityMessage: Record<keyof TokenSecurity, string> = {
   //Contract Security
   is_open_source:
@@ -330,8 +334,6 @@ const fetchDeFiResponse = async (currency: EvmToken) => {
     gas_abuse: issues[DeFiScannerIssue.GAS_ABUSE].issues.length > 0,
     buy_tax: issues[DeFiScannerIssue.TRANSFER_FEES].issues.length > 0,
     sell_tax: issues[DeFiScannerIssue.TRANSFER_FEES].issues.length > 0,
-    cannot_buy: issues[DeFiScannerIssue.TRANSFER_LIMITS].issues.length > 0,
-    cannot_sell_all: issues[DeFiScannerIssue.TRANSFER_LIMITS].issues.length > 0,
     transfer_pausable:
       issues[DeFiScannerIssue.TRANSFER_PAUSABLE].issues.length > 0,
     is_blacklisted: issues[DeFiScannerIssue.HAS_BLACKLIST].issues.length > 0,
@@ -346,7 +348,7 @@ const fetchDeFiResponse = async (currency: EvmToken) => {
     is_honeypot: undefined,
     is_anti_whale: undefined,
     trust_list: undefined,
-  } as TokenSecurity
+  } satisfies TokenSecurity
 }
 
 const fetchTokenSecurityQueryFn = async (
@@ -380,18 +382,15 @@ const fetchTokenSecurityQueryFn = async (
       ? deFiResponseResult.value
       : undefined
 
-  const responseKeys = new Set([
-    ...Object.keys(goPlusResponse ?? {}),
-    ...Object.keys(deFiResponse ?? {}),
+  const responseKeys = new Set<keyof TokenSecurity>([
+    ...Object.keys(goPlusResponse ?? {}).filter(isTokenSecurityKey),
+    ...Object.keys(deFiResponse ?? {}).filter(isTokenSecurityKey),
   ])
   const data = Array.from(responseKeys).reduce(
     (acc, key) => {
-      type SecurityKey = keyof TokenSecurity
-      const field = key as SecurityKey
-
-      acc[field] = {
-        goPlus: goPlusResponse?.[field],
-        deFi: deFiResponse?.[field],
+      acc[key] = {
+        goPlus: goPlusResponse?.[key],
+        deFi: deFiResponse?.[key],
       }
       return acc
     },
@@ -408,11 +407,10 @@ const fetchTokenSecurityQueryFn = async (
       data?.sell_tax?.goPlus ||
       data?.buy_tax?.deFi,
     isRisky: Object.entries(data || {}).some(([_key, value]) => {
-      const key = _key as keyof TokenSecurity
       if (
-        key in isTokenSecurityIssue &&
-        (isTokenSecurityIssue[key](value.deFi) ||
-          isTokenSecurityIssue[key](value.goPlus))
+        isTokenSecurityKey(_key) &&
+        (isTokenSecurityIssue[_key](value.deFi) ||
+          isTokenSecurityIssue[_key](value.goPlus))
       ) {
         return true
       }
