@@ -4,7 +4,7 @@ import {
   InterfaceEventName,
   TraceEvent,
 } from '@sushiswap/telemetry'
-import { Button } from '@sushiswap/ui'
+import { Button, classNames } from '@sushiswap/ui'
 import type { ReactElement } from 'react'
 import type { TokenSecurityImportState } from './token-security-import-state'
 
@@ -51,6 +51,7 @@ export function TokenSecurityImportActions({
   onCancel,
   telemetry,
 }: TokenSecurityImportActionsProps) {
+  const hasScanActions = state === 'scanning' || state === 'unavailable'
   const importWithoutScan = withImportTelemetry(
     <Button fullWidth size="xl" onClick={onImport} variant="warning">
       Force import without scan
@@ -59,7 +60,12 @@ export function TokenSecurityImportActions({
   )
 
   return (
-    <div className="flex flex-col sm:flex-row gap-3 w-full">
+    <div
+      className={classNames(
+        'flex w-full flex-col gap-3',
+        !hasScanActions && 'sm:flex-row',
+      )}
+    >
       {state === 'scanning' ? (
         <>
           <Button fullWidth size="xl" loading disabled>
