@@ -15,6 +15,9 @@
     "lint:fix": "TIMING=1 next lint --fix",
     "start": "next start",
     "test": "npx playwright test -c test/playwright.config.ts",
+    "test:agentic": "playwright test -c test/agentic/playwright.config.ts",
+    "test:agentic:integration": "AGENTIC_RUN_PROXY_INTEGRATION=true vitest --watch=false test/agentic/rpc-chaos-proxy.test.ts test/agentic/swap-api-proxy.test.ts",
+    "test:agentic:unit": "vitest --watch=false test/agentic --exclude 'test/agentic/e2e/**'",
     "test:unit": "vitest --watch=false src"
   },
   "dependencies": {

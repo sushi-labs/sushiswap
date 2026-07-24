@@ -1,0 +1,112 @@
+name: Web Agentic EVM
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/agentic-web.yml"
+      - "apps/web/src/**"
+      - "apps/web/test/agentic/**"
+  schedule:
+    - cron: "17 2 * * *"
+  workflow_dispatch:
+    inputs:
+      tier:
+        description: Scenario tier
+        required: true
+        default: smoke
+        type: choice
+        options:
+          - smoke
+          - matrix
+          - quirk
+          - discovery
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_OPTIONS: --max-old-space-size=8192
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+
+jobs:
+  foundation:
+    name: Harness unit and contract checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        uses: ./.github/actions/install
+        env:
+          TRADING_VIEW_GH_READ_TOKEN: ${{ secrets.TRADING_VIEW_GH_READ_TOKEN }}
+
+      - name: Test harness
+        run: pnpm --filter web test:agentic:unit
+
+      - name: Type check harness
+        run: pnpm --filter web exec tsc -p test/agentic/tsconfig.json --pretty false
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Compile synthetic token fixtures
+        run: forge build --root apps/web/test/agentic/contracts
+
+  smoke:
+    name: Seven-chain fork smoke
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    needs: foundation
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        uses: ./.github/actions/install
+        env:
+          TRADING_VIEW_GH_READ_TOKEN: ${{ secrets.TRADING_VIEW_GH_READ_TOKEN }}
+
+      - name: Install Chromium
+        run: pnpm --dir apps/web exec playwright install --with-deps chromium
+
+      - name: Build web app for isolated forks
+        run: pnpm exec turbo run build --filter web
+        env:
+          EDGE_CONFIG: ${{ secrets.EDGE_CONFIG }}
+          NEXT_PUBLIC_AGENTIC_TEST: "true"
+          NEXT_PUBLIC_ANVIL_PORT: "9545"
+          NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:9650
+          NEXT_PUBLIC_APP_ENV: test
+          NEXT_PUBLIC_PRIVY_APP_ID: cmq14gqpd00lb0cl52zln4q4z
+          NEXT_PUBLIC_SUSHI_DATA_API_HOST: https://production.data-gcp.sushi.com
+          NEXT_TELEMETRY_DISABLED: "1"
+
+      - name: Run current-state smoke matrix
+        run: pnpm --dir apps/web test:agentic --grep "wrapped-native/stable"
+        env:
+          AGENTIC_FORK_BACKEND: tenderly
+          AGENTIC_GOPLUS_ACCESS_TOKEN: ${{ secrets.GOPLUS_ACCESS_TOKEN }}
+          AGENTIC_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+          AGENTIC_RUN_MUTATING: "true"
+          AGENTIC_SEED: ${{ github.run_number }}
+          EDGE_CONFIG: ${{ secrets.EDGE_CONFIG }}
+          TENDERLY_ACCESS_KEY: ${{ secrets.TENDERLY_ACCESS_KEY }}
+          TENDERLY_ACCOUNT_SLUG: ${{ secrets.TENDERLY_ACCOUNT_SLUG }}
+          TENDERLY_PROJECT_SLUG: ${{ secrets.TENDERLY_PROJECT_SLUG }}
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentic-evidence-${{ github.run_id }}
+          path: apps/web/test-results/agentic
+          retention-days: 30

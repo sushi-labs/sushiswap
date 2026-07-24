@@ -1,0 +1,10 @@
+{
+  "code": 1,
+  "message": "OK",
+  "result": {
+    "0xa7de087329bfcda5639247f96140f9dabe3deed1": {
+      "buy_tax": 0.01,
+      "is_honeypot": "maybe"
+    }
+  }
+}
