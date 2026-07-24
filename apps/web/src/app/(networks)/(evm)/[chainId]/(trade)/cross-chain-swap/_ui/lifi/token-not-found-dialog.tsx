@@ -159,8 +159,8 @@ export function CrossChainSwapTokenNotFoundDialog<
       open={Boolean(token0NotInList || token1NotInList)}
       onOpenChange={(open) => !open && reset()}
     >
-      <DialogContent className="!max-h-screen overflow-y-auto">
-        <DialogHeader className="!text-left !space-y-3">
+      <DialogContent className="!flex max-h-[calc(100dvh-16px)] flex-col overflow-hidden md:max-h-[80vh]">
+        <DialogHeader className="!text-left !space-y-3 shrink-0">
           <DialogTitle>
             <div
               className={classNames(
@@ -199,193 +199,195 @@ export function CrossChainSwapTokenNotFoundDialog<
             </span>
           )}
         </DialogHeader>
-        <div className="flex flex-col gap-4">
-          {token0 && token0NotInList && token0?.type === 'native' && (
-            <List>
-              {token1NotInList ? <List.Label>Token 1</List.Label> : null}
-              <List.Control>
-                <p className="p-3 text-sm text-gray-900 dark:text-slate-50">
-                  Could not retrieve token info for{' '}
-                  <a
-                    target="_blank"
-                    href={getChainById(token0.chainId)?.getTokenUrl(
-                      token0.wrap().address,
-                    )}
-                    className="text-blue font-medium"
-                    rel="noreferrer"
-                  >
-                    {shortenAddress(token0.wrap().address)}
-                  </a>{' '}
-                  are you sure this token is on{' '}
-                  {getChainById(token0.chainId)?.name}?
-                </p>
-              </List.Control>
-            </List>
-          )}
-          {token0NotInList && token0?.type === 'token' && (
-            <>
+        <div className="min-h-0 overflow-y-auto">
+          <div className="flex flex-col gap-4">
+            {token0 && token0NotInList && token0?.type === 'native' && (
               <List>
                 {token1NotInList ? <List.Label>Token 1</List.Label> : null}
-                <List.Control className="!p-4">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-4">
-                      <Badge
-                        position="bottom-right"
-                        badgeContent={
-                          <div className="bg-white rounded-full dark:bg-slate-800">
-                            <NetworkIcon
-                              width={20}
-                              height={20}
-                              chainId={token0.chainId}
-                            />
-                          </div>
-                        }
-                      >
-                        <div className="w-10 h-10">
-                          <UnknownTokenIcon width={40} height={40} />
-                        </div>
-                      </Badge>
-                      <div className="flex flex-col">
-                        <span className="text-2xl font-medium">
-                          {token0.symbol ?? '-'}
-                        </span>
-                        <span className="font-medium text-muted-foreground">
-                          {token0.name ?? '-'}
-                        </span>
-                      </div>
-                    </div>
-                    <LinkExternal
+                <List.Control>
+                  <p className="p-3 text-sm text-gray-900 dark:text-slate-50">
+                    Could not retrieve token info for{' '}
+                    <a
                       target="_blank"
                       href={getChainById(token0.chainId)?.getTokenUrl(
-                        token0.address,
+                        token0.wrap().address,
                       )}
-                      className="font-medium"
+                      className="text-blue font-medium"
+                      rel="noreferrer"
                     >
-                      {shortenAddress(token0.address)}{' '}
-                    </LinkExternal>
-                  </div>
+                      {shortenAddress(token0.wrap().address)}
+                    </a>{' '}
+                    are you sure this token is on{' '}
+                    {getChainById(token0.chainId)?.name}?
+                  </p>
                 </List.Control>
               </List>
-              {isTokenSecurityChainId(token0.chainId) && (
-                <List className="!pt-0 max-h-64">
-                  <List.Control className="!overflow-y-auto flex flex-col gap-3 p-4">
-                    <div className="flex items-center">
-                      <span className="text-sm font-medium text-muted-foreground">
-                        Token Security Scan
-                      </span>
+            )}
+            {token0NotInList && token0?.type === 'token' && (
+              <>
+                <List>
+                  {token1NotInList ? <List.Label>Token 1</List.Label> : null}
+                  <List.Control className="!p-4">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-4">
+                        <Badge
+                          position="bottom-right"
+                          badgeContent={
+                            <div className="bg-white rounded-full dark:bg-slate-800">
+                              <NetworkIcon
+                                width={20}
+                                height={20}
+                                chainId={token0.chainId}
+                              />
+                            </div>
+                          }
+                        >
+                          <div className="w-10 h-10">
+                            <UnknownTokenIcon width={40} height={40} />
+                          </div>
+                        </Badge>
+                        <div className="flex flex-col">
+                          <span className="text-2xl font-medium">
+                            {token0.symbol ?? '-'}
+                          </span>
+                          <span className="font-medium text-muted-foreground">
+                            {token0.name ?? '-'}
+                          </span>
+                        </div>
+                      </div>
+                      <LinkExternal
+                        target="_blank"
+                        href={getChainById(token0.chainId)?.getTokenUrl(
+                          token0.address,
+                        )}
+                        className="font-medium"
+                      >
+                        {shortenAddress(token0.address)}{' '}
+                      </LinkExternal>
                     </div>
-                    {token0SecurityState === 'unavailable' ? (
-                      <span className="text-sm text-muted-foreground">
-                        Security providers did not return results for this
-                        token.
-                      </span>
-                    ) : (
-                      <TokenSecurityView
-                        token={token0}
-                        tokenSecurity={token0SecurityResponse}
-                        isTokenSecurityLoading={
-                          token0SecurityState === 'scanning'
-                        }
-                      />
-                    )}
                   </List.Control>
                 </List>
-              )}
-            </>
-          )}
-          {token1 && token1NotInList && token1.type === 'native' && (
-            <List>
-              {token0NotInList ? <List.Label>Token 2</List.Label> : null}
-              <List.Control>
-                <p className="p-3 text-sm text-gray-900 dark:text-slate-50">
-                  Could not retrieve token info for{' '}
-                  <a
-                    target="_blank"
-                    href={getChainById(token1.chainId)?.getTokenUrl(
-                      token1.wrap().address,
-                    )}
-                    className="text-blue font-medium"
-                    rel="noreferrer"
-                  >
-                    {shortenAddress(token1.wrap().address)}
-                  </a>{' '}
-                  are you sure this token is on{' '}
-                  {getChainById(token1.chainId)?.name}?
-                </p>
-              </List.Control>
-            </List>
-          )}
-          {token1NotInList && token1?.type === 'token' && (
-            <>
-              <List>
-                {token0NotInList ? <List.Label>Token 2</List.Label> : null}
-                <List.Control className="!p-4">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-4">
-                      <Badge
-                        position="bottom-right"
-                        badgeContent={
-                          <div className="bg-white rounded-full dark:bg-slate-800">
-                            <NetworkIcon
-                              width={20}
-                              height={20}
-                              chainId={token1.chainId}
-                            />
-                          </div>
-                        }
-                      >
-                        <div className="w-10 h-10">
-                          <UnknownTokenIcon width={40} height={40} />
-                        </div>
-                      </Badge>
-                      <div className="flex flex-col">
-                        <span className="text-2xl font-medium">
-                          {token1.symbol ?? '-'}
-                        </span>
-                        <span className="font-medium text-muted-foreground">
-                          {token1.name ?? '-'}
+                {isTokenSecurityChainId(token0.chainId) && (
+                  <List className="!pt-0 overflow-hidden">
+                    <List.Control className="!overflow-y-auto flex flex-col gap-3 p-4">
+                      <div className="flex items-center">
+                        <span className="text-sm font-medium text-muted-foreground">
+                          Token Security Scan
                         </span>
                       </div>
-                    </div>
-                    <LinkExternal
+                      {token0SecurityState === 'unavailable' ? (
+                        <span className="text-sm text-muted-foreground">
+                          Security providers did not return results for this
+                          token.
+                        </span>
+                      ) : (
+                        <TokenSecurityView
+                          token={token0}
+                          tokenSecurity={token0SecurityResponse}
+                          isTokenSecurityLoading={
+                            token0SecurityState === 'scanning'
+                          }
+                        />
+                      )}
+                    </List.Control>
+                  </List>
+                )}
+              </>
+            )}
+            {token1 && token1NotInList && token1.type === 'native' && (
+              <List>
+                {token0NotInList ? <List.Label>Token 2</List.Label> : null}
+                <List.Control>
+                  <p className="p-3 text-sm text-gray-900 dark:text-slate-50">
+                    Could not retrieve token info for{' '}
+                    <a
                       target="_blank"
                       href={getChainById(token1.chainId)?.getTokenUrl(
-                        token1.address,
+                        token1.wrap().address,
                       )}
-                      className="font-medium"
+                      className="text-blue font-medium"
+                      rel="noreferrer"
                     >
-                      {shortenAddress(token1.address)}{' '}
-                    </LinkExternal>
-                  </div>
+                      {shortenAddress(token1.wrap().address)}
+                    </a>{' '}
+                    are you sure this token is on{' '}
+                    {getChainById(token1.chainId)?.name}?
+                  </p>
                 </List.Control>
               </List>
-              {isTokenSecurityChainId(token1.chainId) && (
-                <List className="!pt-0 max-h-64">
-                  <List.Control className="!overflow-y-auto flex flex-col gap-3 p-4">
-                    <div className="flex items-center">
-                      <span className="text-sm font-medium text-muted-foreground">
-                        Token Security Scan
-                      </span>
+            )}
+            {token1NotInList && token1?.type === 'token' && (
+              <>
+                <List>
+                  {token0NotInList ? <List.Label>Token 2</List.Label> : null}
+                  <List.Control className="!p-4">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-4">
+                        <Badge
+                          position="bottom-right"
+                          badgeContent={
+                            <div className="bg-white rounded-full dark:bg-slate-800">
+                              <NetworkIcon
+                                width={20}
+                                height={20}
+                                chainId={token1.chainId}
+                              />
+                            </div>
+                          }
+                        >
+                          <div className="w-10 h-10">
+                            <UnknownTokenIcon width={40} height={40} />
+                          </div>
+                        </Badge>
+                        <div className="flex flex-col">
+                          <span className="text-2xl font-medium">
+                            {token1.symbol ?? '-'}
+                          </span>
+                          <span className="font-medium text-muted-foreground">
+                            {token1.name ?? '-'}
+                          </span>
+                        </div>
+                      </div>
+                      <LinkExternal
+                        target="_blank"
+                        href={getChainById(token1.chainId)?.getTokenUrl(
+                          token1.address,
+                        )}
+                        className="font-medium"
+                      >
+                        {shortenAddress(token1.address)}{' '}
+                      </LinkExternal>
                     </div>
-                    {token1SecurityState === 'unavailable' ? (
-                      <span className="text-sm text-muted-foreground">
-                        Security providers did not return results for this
-                        token.
-                      </span>
-                    ) : (
-                      <TokenSecurityView
-                        token={token1}
-                        tokenSecurity={token1SecurityResponse}
-                        isTokenSecurityLoading={
-                          token1SecurityState === 'scanning'
-                        }
-                      />
-                    )}
                   </List.Control>
                 </List>
-              )}
-            </>
-          )}
+                {isTokenSecurityChainId(token1.chainId) && (
+                  <List className="!pt-0 overflow-hidden">
+                    <List.Control className="!overflow-y-auto flex flex-col gap-3 p-4">
+                      <div className="flex items-center">
+                        <span className="text-sm font-medium text-muted-foreground">
+                          Token Security Scan
+                        </span>
+                      </div>
+                      {token1SecurityState === 'unavailable' ? (
+                        <span className="text-sm text-muted-foreground">
+                          Security providers did not return results for this
+                          token.
+                        </span>
+                      ) : (
+                        <TokenSecurityView
+                          token={token1}
+                          tokenSecurity={token1SecurityResponse}
+                          isTokenSecurityLoading={
+                            token1SecurityState === 'scanning'
+                          }
+                        />
+                      )}
+                    </List.Control>
+                  </List>
+                )}
+              </>
+            )}
+          </div>
         </div>
         <Message
           size="sm"
@@ -401,7 +403,8 @@ export function CrossChainSwapTokenNotFoundDialog<
                   ? 'Our security scan has identified risks associated with this token. Proceeding may result in the loss of your funds. Please exercise caution and review the details before continuing.'
                   : 'Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects. If you purchase this token, you may not be able to sell it back.'}
         </Message>
-        <DialogFooter>
+
+        <DialogFooter className="shrink-0">
           {isHoneypot ? (
             <Button fullWidth size="xl" onClick={reset}>
               Close
