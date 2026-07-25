@@ -36,9 +36,9 @@ import {
 } from 'sushi/evm'
 import { type SendTransactionReturnType, stringify } from 'viem'
 import { useConnection, usePublicClient, useSendTransaction } from 'wagmi'
+import { useDetailsInteractionTracker } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
-import { useDetailsInteractionTracker } from '../../../_ui/details-interaction-tracker-provider'
 import { isUnwrapTrade, isWrapTrade } from '../common'
 import {
   useDerivedStateSimpleSwap,

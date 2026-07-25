@@ -166,6 +166,8 @@ export const LaunchpadTradesQuery = graphql(`
   query LaunchpadTrades($input: LaunchpadTradesInput!) {
     launchpad {
       trades(input: $input) {
+        streamCursor
+        totalCount
         edges {
           cursor
           node {
@@ -197,7 +199,6 @@ export const LaunchpadTradesQuery = graphql(`
           endCursor
           hasNextPage
         }
-        hiddenSmallTradeCount
       }
     }
   }
@@ -207,13 +208,16 @@ export const LaunchpadCandlesQuery = graphql(`
   query LaunchpadCandles($input: LaunchpadCandlesInput!) {
     launchpad {
       candles(input: $input) {
-        timestamp
-        open
-        high
-        low
-        close
-        volumeUsd
-        tradeCount
+        streamCursor
+        nodes {
+          timestamp
+          open
+          high
+          low
+          close
+          volumeUsd
+          tradeCount
+        }
       }
     }
   }
@@ -359,7 +363,8 @@ export interface LaunchpadTrade {
 export interface LaunchpadTradeConnection {
   edges: Array<{ cursor: string; node: LaunchpadTrade }>
   pageInfo: LaunchpadPageInfo
-  hiddenSmallTradeCount: number
+  streamCursor: string
+  totalCount: number
 }
 
 export interface LaunchpadCandle {
@@ -370,6 +375,11 @@ export interface LaunchpadCandle {
   close: number
   volumeUsd: number
   tradeCount: number
+}
+
+export interface LaunchpadCandleSnapshot {
+  streamCursor: string
+  nodes: LaunchpadCandle[]
 }
 
 export async function getLaunchpadQuoteTokenList(
@@ -458,7 +468,7 @@ export async function getLaunchpadTrades(
 export async function getLaunchpadCandles(
   variables: GetLaunchpadCandles,
   options?: RequestOptions,
-): Promise<LaunchpadCandle[]> {
+): Promise<LaunchpadCandleSnapshot> {
   const result = await request(
     {
       url: `${SUSHI_DATA_API_HOST}/graphql`,

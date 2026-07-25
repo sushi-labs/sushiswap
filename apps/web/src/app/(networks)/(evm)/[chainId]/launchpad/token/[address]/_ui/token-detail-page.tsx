@@ -4,29 +4,36 @@ import {
   ArrowLeftIcon,
   ArrowTopRightOnSquareIcon,
   BeakerIcon,
-  CheckBadgeIcon,
+  DocumentDuplicateIcon,
   LinkIcon,
   LockClosedIcon,
 } from '@heroicons/react/24/outline'
-import { Button, Container, classNames } from '@sushiswap/ui'
+import {
+  Button,
+  ClipboardController,
+  Container,
+  LinkExternal,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+  classNames,
+} from '@sushiswap/ui'
 import Link from 'next/link'
-import { useMemo } from 'react'
 import type { EvmAddress } from 'sushi/evm'
 import { getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import {
-  formatPercent,
   formatRawAmount,
   formatUsd,
+  formatUsdChange,
+  liquidityChange24hUsd,
   shortenAddress,
 } from '../../../_ui/format'
 import { StatusPill } from '../../../_ui/status-pill'
 import { TokenAvatar } from '../../../_ui/token-avatar'
 import type { LaunchpadChainId } from '../../../constants'
-import {
-  useLaunchpadCandles,
-  useLaunchpadToken,
-} from '../../../hooks/use-launchpad-data'
+import { useLaunchpadToken } from '../../../hooks/use-launchpad-data'
 import { PriceChart } from './price-chart'
 import { SwapPanel } from './swap-panel'
 import { TradeHistory } from './trade-history'
@@ -38,24 +45,14 @@ export function TokenDetailPage({
   chainId: LaunchpadChainId
   address: EvmAddress
 }) {
-  const chainKey = getEvmChainById(chainId).key
+  const chain = getEvmChainById(chainId)
+  const chainKey = chain.key
   const {
     data: token,
     isError: isTokenError,
     isPending: isTokenPending,
     refetch: refetchToken,
   } = useLaunchpadToken(chainId, address)
-  const candleInput = useMemo(() => {
-    const to = Math.floor(Date.now() / 1_000)
-    return {
-      chainId,
-      tokenAddress: address,
-      interval: 'ONE_HOUR' as const,
-      from: to - 7 * 24 * 60 * 60,
-      to,
-    }
-  }, [address, chainId])
-  const { data: candles } = useLaunchpadCandles(candleInput)
 
   if (isTokenPending) {
     return (
@@ -117,10 +114,16 @@ export function TokenDetailPage({
   }
 
   const metrics = token.metrics
+  const tvlChangePercent = metrics?.tvlChangePercent.h24
+  const tvlChangeUsd = liquidityChange24hUsd({
+    currentTvlUsd: metrics?.currentTvlUsd ?? null,
+    tvlChangePercent24h: tvlChangePercent ?? null,
+    launchedAt: new Date(token.createdAt),
+  })
   const marketStats = [
     {
       label: 'Price',
-      value: formatUsd(metrics?.priceUsd),
+      value: `$${metrics?.priceUsd != null ? metrics.priceUsd.toPrecision(5) : '$-'}`,
       detail: metrics?.isStale ? 'Data delayed' : 'Live pool price',
     },
     {
@@ -131,7 +134,7 @@ export function TokenDetailPage({
     {
       label: 'Liquidity',
       value: formatUsd(metrics?.currentTvlUsd),
-      detail: 'Permanently locked',
+      detail: 'Launch pool liquidity',
     },
     {
       label: '24h volume',
@@ -140,14 +143,14 @@ export function TokenDetailPage({
     },
     {
       label: '24h liquidity',
-      value: formatPercent(metrics?.tvlChangePercent.h24),
+      value: formatUsdChange(tvlChangeUsd),
       detail: 'TVL change',
-      change: metrics?.tvlChangePercent.h24,
+      change: tvlChangeUsd,
     },
   ]
 
   return (
-    <Container maxWidth="7xl" className="w-full px-4 pb-14 pt-6 sm:pt-8">
+    <Container maxWidth="8xl" className="w-full px-4 pb-14 pt-6 sm:pt-8">
       <div className="mb-5 flex items-center gap-2 text-xs text-perps-muted-50">
         <Link
           href={`/${chainKey}/launchpad`}
@@ -167,27 +170,66 @@ export function TokenDetailPage({
               <h1 className="truncate text-2xl font-semibold tracking-tight text-perps-muted sm:text-3xl">
                 {token.name}
               </h1>
-              <span className="text-lg font-medium text-perps-muted-50">
+              <span className="text-lg font-medium text-perps-muted-50 mt-0.5">
                 ${token.symbol}
               </span>
               <StatusPill status={token.indexingStatus} />
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-perps-muted-50">
-              <span>Launched by</span>
-              <Link
-                href={`/${chainKey}/launchpad/creator/${token.creator}`}
-                className="font-medium text-perps-blue hover:underline"
-              >
-                {shortenAddress(token.creator, 5)}
-              </Link>
+              <div className="flex items-center gap-1">
+                <span>Launched by</span>
+                <ClipboardController hideTooltip>
+                  {({ setCopied }) => (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <DocumentDuplicateIcon
+                            className="mb-[1px] h-3.5 w-3.5 cursor-pointer text-perps-blue"
+                            onClick={() => setCopied(token.creator)}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom">
+                          <p>Copy address</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                </ClipboardController>
+                <LinkExternal
+                  href={chain.getAccountUrl(token.creator)}
+                  aria-label="View creator address on block explorer"
+                  className="text-perps-muted-50 transition hover:text-perps-blue"
+                >
+                  {shortenAddress(token.creator, 5)}
+                </LinkExternal>
+              </div>
               <span>·</span>
-              <span>{shortenAddress(token.address, 6)}</span>
-              <button
-                type="button"
-                className="transition hover:text-perps-blue"
-              >
-                Copy
-              </button>
+              <div className="flex items-center gap-1">
+                <span>Token</span>
+                <ClipboardController hideTooltip>
+                  {({ setCopied }) => (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <DocumentDuplicateIcon
+                            className="mb-[1px] h-3.5 w-3.5 cursor-pointer text-perps-blue"
+                            onClick={() => setCopied(token.address)}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom">
+                          <p>Copy address</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                </ClipboardController>
+                <LinkExternal
+                  href={chain.getTokenUrl(token.address)}
+                  className="font-medium text-perps-blue hover:underline"
+                >
+                  {shortenAddress(token.address, 6)}
+                </LinkExternal>
+              </div>
             </div>
           </div>
         </div>
@@ -205,58 +247,61 @@ export function TokenDetailPage({
               </a>
             </Button>
           ))}
-          <Button variant="perps-secondary" size="sm">
-            Explorer
-            <ArrowTopRightOnSquareIcon className="h-4 w-4" />
-          </Button>
         </div>
       </div>
 
-      <PerpsCard className="mt-6 overflow-hidden" fullWidth>
-        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5">
-          {marketStats.map((stat, index) => (
-            <div
-              key={stat.label}
-              className={classNames(
-                'px-4 py-4 sm:px-5',
-                index > 0 && 'border-l border-white/[0.06]',
-                index > 1 && 'border-t border-white/[0.06] sm:border-t-0',
-                index > 2 && 'sm:border-t lg:border-t-0',
-              )}
-            >
-              <div className="text-[11px] font-medium uppercase tracking-wide text-perps-muted-50">
-                {stat.label}
-              </div>
+      <div className="mt-6">
+        <PerpsCard className="overflow-hidden" fullWidth>
+          <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5">
+            {marketStats.map((stat, index) => (
               <div
+                key={stat.label}
                 className={classNames(
-                  'mt-1.5 text-lg font-semibold text-perps-muted',
-                  stat.change !== undefined &&
-                    stat.change !== null &&
-                    stat.change >= 0 &&
-                    'text-emerald-400',
-                  stat.change !== undefined &&
-                    stat.change !== null &&
-                    stat.change < 0 &&
-                    'text-red',
+                  'px-4 py-4 sm:px-5',
+                  index > 0 && 'border-l border-white/[0.06]',
+                  index > 1 && 'border-t border-white/[0.06] sm:border-t-0',
+                  index > 2 && 'sm:border-t lg:border-t-0',
                 )}
               >
-                {stat.value}
+                <div className="text-[11px] font-medium uppercase tracking-wide text-perps-muted-50">
+                  {stat.label}
+                </div>
+                <div
+                  className={classNames(
+                    'mt-1.5 text-lg font-semibold text-perps-muted',
+                    stat.change !== undefined &&
+                      stat.change !== null &&
+                      stat.change > 0 &&
+                      '!text-emerald-400',
+                    stat.change !== undefined &&
+                      stat.change !== null &&
+                      stat.change < 0 &&
+                      '!text-red',
+                  )}
+                >
+                  {stat.value}
+                </div>
+                <div className="mt-1 text-[11px] text-perps-muted-50">
+                  {stat.detail}
+                </div>
               </div>
-              <div className="mt-1 text-[11px] text-perps-muted-50">
-                {stat.detail}
-              </div>
-            </div>
-          ))}
-        </div>
-      </PerpsCard>
+            ))}
+          </div>
+        </PerpsCard>
+      </div>
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_480px]">
         <div className="min-w-0 space-y-4">
-          <PriceChart candles={candles} symbol={token.symbol} />
+          <PriceChart
+            chainId={chainId}
+            tokenAddress={address}
+            symbol={token.symbol}
+            price={token.metrics?.priceUsd}
+          />
           <TradeHistory token={token} />
         </div>
 
-        <aside className="min-w-0 space-y-4 lg:sticky lg:top-[72px] lg:max-h-[calc(100vh-88px)] lg:overflow-y-auto lg:overscroll-contain lg:pr-1">
+        <aside className="min-w-0 space-y-4 lg:sticky lg:top-[72px]">
           <SwapPanel token={token} />
 
           <PerpsCard className="p-5" fullWidth>
@@ -291,10 +336,6 @@ export function TokenDetailPage({
               <h2 className="text-lg font-semibold text-perps-muted">
                 Launch details
               </h2>
-              <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-400">
-                <LockClosedIcon className="h-4 w-4" />
-                LP locked
-              </span>
             </div>
             <div className="mt-5 space-y-4">
               {[
@@ -309,10 +350,6 @@ export function TokenDetailPage({
                     ? `${token.curvePreset.id} · ${token.curvePreset.version}`
                     : 'Custom ranges',
                 ],
-                [
-                  'LP fees',
-                  `${token.feeSplit.sushiFeeBps / 100}% Sushi · ${token.feeSplit.creatorFeeBps / 100}% creator`,
-                ],
               ].map(([label, value]) => (
                 <div
                   key={label}
@@ -325,14 +362,10 @@ export function TokenDetailPage({
                 </div>
               ))}
             </div>
-            <div className="mt-5 rounded-xl bg-emerald-500/[0.07] p-3 text-xs leading-5 text-emerald-300">
-              V3 position NFTs and their principal are permanently locked.
-            </div>
           </PerpsCard>
 
           <PerpsCard className="overflow-hidden" fullWidth>
             <div className="flex items-center gap-2 border-b border-white/[0.06] p-5">
-              <CheckBadgeIcon className="h-5 w-5 text-perps-blue" />
               <h2 className="font-semibold text-perps-muted">
                 Locked positions
               </h2>
@@ -348,7 +381,7 @@ export function TokenDetailPage({
                   </div>
                   <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
                     <div>
-                      <div className="text-perps-muted-50">Price range</div>
+                      <div className="text-perps-muted-50">Tick range</div>
                       <div className="mt-1 text-perps-muted">
                         {position.tickLower.toLocaleString()} →{' '}
                         {position.tickUpper.toLocaleString()}

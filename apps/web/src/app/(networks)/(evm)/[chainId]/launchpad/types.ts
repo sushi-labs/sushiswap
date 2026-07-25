@@ -1,6 +1,7 @@
 export type {
   LaunchpadCandle,
   LaunchpadCandleInterval,
+  LaunchpadCandleSnapshot,
   LaunchpadCandlesInput,
   LaunchpadCreator,
   LaunchpadIndexingStatus,

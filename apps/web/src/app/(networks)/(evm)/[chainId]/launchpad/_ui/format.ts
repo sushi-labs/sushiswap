@@ -1,50 +1,70 @@
+import { format } from 'date-fns'
+import {
+  formatPercent as formatPercentValue,
+  formatUSD,
+  shortenAddress,
+} from 'sushi'
+import { formatUnits } from 'viem'
 import type { LaunchpadToken, LaunchpadTokenSortField } from '../types'
 
-export function shortenAddress(address: string, size = 4): string {
-  return `${address.slice(0, size + 2)}…${address.slice(-size)}`
+export { shortenAddress }
+
+export function formatUsd(
+  value: number | null | undefined,
+  inputString?: string,
+): string {
+  return value === null || value === undefined
+    ? '—'
+    : formatUSD(value, inputString)
 }
 
-export function formatUsd(value: number | null | undefined): string {
+export function formatUsdChange(value: number | null | undefined): string {
   if (value === null || value === undefined) return '—'
+  return `${value > 0 ? '+' : ''}${formatUsd(value)}`
+}
 
-  if (Math.abs(value) < 0.01) {
-    return `$${value.toLocaleString('en-US', { maximumFractionDigits: 8 })}`
+export function liquidityChange24hUsd({
+  currentTvlUsd,
+  tvlChangePercent24h,
+  launchedAt,
+}: {
+  currentTvlUsd: number | null
+  tvlChangePercent24h: number | null
+  launchedAt: Date
+}): number | null {
+  if (currentTvlUsd === null) return null
+
+  if (tvlChangePercent24h !== null) {
+    const previousTvl = currentTvlUsd / (1 + tvlChangePercent24h / 100)
+    return currentTvlUsd - previousTvl
   }
 
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    notation: Math.abs(value) >= 10_000 ? 'compact' : 'standard',
-    maximumFractionDigits: Math.abs(value) >= 10_000 ? 2 : 2,
-  }).format(value)
+  const isNew = Date.now() - launchedAt.getTime() < 24 * 60 * 60 * 1000
+  return isNew ? currentTvlUsd : null
 }
 
 export function formatPercent(value: number | null | undefined): string {
   if (value === null || value === undefined) return '—'
-  return `${value > 0 ? '+' : ''}${value.toFixed(2)}%`
-}
-
-export function formatCompact(value: number | null | undefined): string {
-  if (value === null || value === undefined) return '—'
-  return new Intl.NumberFormat('en-US', {
-    notation: 'compact',
-    maximumFractionDigits: 2,
-  }).format(value)
+  return `${value > 0 ? '+' : ''}${formatPercentValue(value / 100)}`
 }
 
 export function formatRawAmount(
-  value: string,
+  value: string | bigint,
   decimals: number,
   maximumFractionDigits = 3,
 ): string {
-  const padded = value.padStart(decimals + 1, '0')
-  const whole = padded.slice(0, -decimals)
-  const fraction = padded
-    .slice(-decimals)
-    .slice(0, maximumFractionDigits)
+  const [whole, fraction] = formatUnits(
+    typeof value === 'bigint' ? value : BigInt(value),
+    decimals,
+  ).split('.')
+  const formattedFraction = fraction
+    ?.slice(0, maximumFractionDigits)
     .replace(/0+$/, '')
-  const formattedWhole = Number(whole).toLocaleString('en-US')
-  return fraction ? `${formattedWhole}.${fraction}` : formattedWhole
+  const formattedWhole = new Intl.NumberFormat('en-US').format(BigInt(whole))
+
+  return formattedFraction
+    ? `${formattedWhole}.${formattedFraction}`
+    : formattedWhole
 }
 
 export function getSelectedMetric(
@@ -91,10 +111,7 @@ export function getSelectedMetric(
     case 'CREATED_AT':
       return {
         label: 'Launched',
-        value: new Intl.DateTimeFormat('en-US', {
-          month: 'short',
-          day: 'numeric',
-        }).format(new Date(token.createdAt)),
+        value: format(new Date(token.createdAt), 'MMM d'),
       }
   }
 

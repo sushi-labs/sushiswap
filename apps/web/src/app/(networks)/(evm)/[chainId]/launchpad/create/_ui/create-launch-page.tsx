@@ -34,6 +34,7 @@ import {
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
+import { getUnixTime } from 'date-fns'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
@@ -41,7 +42,11 @@ import { type FieldError, type Resolver, useForm } from 'react-hook-form'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { formatUSD, withoutScientificNotation } from 'sushi'
+import {
+  formatPercent as formatPercentValue,
+  formatUSD,
+  withoutScientificNotation,
+} from 'sushi'
 import { type EvmAddress, EvmToken, WNATIVE, getEvmChainById } from 'sushi/evm'
 import { formatEther, formatUnits, parseEventLogs, parseUnits } from 'viem'
 import {
@@ -53,6 +58,7 @@ import {
 import * as z from 'zod'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
+import { formatRawAmount } from '../../_ui/format'
 import { PageHeading } from '../../_ui/page-heading'
 import type { LaunchpadChainId } from '../../constants'
 import { useLaunchpadQuoteTokens } from '../../hooks/use-launchpad-data'
@@ -185,7 +191,7 @@ const STEPS: Array<{ id: CreateStep; label: string }> = [
 ]
 
 function formatBps(value: number | undefined): string {
-  return value === undefined ? 'Loading…' : `${value / 100}%`
+  return value === undefined ? 'Loading…' : formatPercentValue(value / 10_000)
 }
 
 interface LaunchPricing {
@@ -251,14 +257,8 @@ function deriveLaunchPricing({
   }
 }
 
-function formatRawAmount(amount: bigint, decimals: number): string {
-  return Number(formatUnits(amount, decimals)).toLocaleString('en-US', {
-    maximumFractionDigits: Math.min(decimals, 6),
-  })
-}
-
 function formatUsdRaw(amount: bigint): string {
-  return formatUSD(Number(formatUnits(amount, USD_PRICE_DECIMALS)))
+  return formatUSD(formatUnits(amount, USD_PRICE_DECIMALS))
 }
 
 function formatStartingTokenPrice(initialFdvUsd: number): string {
@@ -541,7 +541,7 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
           Number(currentReserveBps),
         ),
       })
-      const deadline = BigInt(Math.floor(Date.now() / 1_000) + 15 * 60)
+      const deadline = BigInt(getUnixTime(new Date()) + 15 * 60)
       const launchParameters = {
         address: LAUNCHPAD_ADDRESS,
         abi: LAUNCHPAD_ABI,
@@ -988,6 +988,7 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
                             {formatRawAmount(
                               launchPricing.requestedFdvQuoteRaw,
                               selectedQuoteToken.decimals,
+                              6,
                             )}{' '}
                             {selectedQuoteToken.symbol}
                           </div>
@@ -1137,6 +1138,7 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
                         ? `${formatUsdRaw(launchPricing.realizedFdvUsdRaw)} · ${formatRawAmount(
                             launchPricing.realizedFdvQuoteRaw,
                             selectedQuoteToken.decimals,
+                            6,
                           )} ${selectedQuoteToken.symbol}`
                         : 'Unavailable',
                     ],

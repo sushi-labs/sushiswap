@@ -1217,7 +1217,7 @@ type LaunchpadQueries {
   token(chainId: LaunchpadChainId!, address: EvmAddress!): LaunchpadToken
   creator(chainId: LaunchpadChainId!, address: EvmAddress!): LaunchpadCreator!
   trades(input: LaunchpadTradesInput!): LaunchpadTradeConnection!
-  candles(input: LaunchpadCandlesInput!): [LaunchpadCandle!]!
+  candles(input: LaunchpadCandlesInput!): LaunchpadCandleSnapshot!
 }
 
 type LaunchpadMutations {
@@ -1405,7 +1405,8 @@ input LaunchpadTradesInput {
 type LaunchpadTradeConnection {
   edges: [LaunchpadTradeEdge!]!
   pageInfo: LaunchpadPageInfo!
-  hiddenSmallTradeCount: Int!
+  streamCursor: BigInt!
+  totalCount: Int!
 }
 
 type LaunchpadTradeEdge {
@@ -1428,6 +1429,12 @@ input LaunchpadCandlesInput {
   interval: LaunchpadCandleInterval!
   from: Int!
   to: Int!
+  fresh: Boolean = false
+}
+
+type LaunchpadCandleSnapshot {
+  streamCursor: BigInt!
+  nodes: [LaunchpadCandle!]!
 }
 
 type LaunchpadCandle {

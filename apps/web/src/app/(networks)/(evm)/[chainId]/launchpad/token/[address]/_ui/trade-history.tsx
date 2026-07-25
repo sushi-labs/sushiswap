@@ -2,31 +2,64 @@
 
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
 import { SignalIcon } from '@heroicons/react/24/outline'
-import { Button, Switch, classNames } from '@sushiswap/ui'
-import { useEffect, useMemo, useState } from 'react'
+import { Button, Dots, SkeletonBox, Switch, classNames } from '@sushiswap/ui'
+import { differenceInMinutes, differenceInSeconds, format } from 'date-fns'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatRawAmount, formatUsd, shortenAddress } from '../../../_ui/format'
 import { useLaunchpadLiveTrades } from '../../../hooks/use-launchpad-data'
 import type { LaunchpadToken } from '../../../types'
 
+const TRADE_GRID_CLASS_NAME =
+  'grid min-w-[680px] grid-cols-[52px_minmax(180px,1fr)_minmax(110px,auto)_minmax(140px,auto)_minmax(90px,auto)] gap-4'
+
 function formatRelativeTime(timestamp: string, now: number) {
-  const elapsedSeconds = Math.max(
-    0,
-    Math.floor((now - new Date(timestamp).getTime()) / 1_000),
-  )
+  const timestampDate = new Date(timestamp)
+  const elapsedSeconds = Math.max(0, differenceInSeconds(now, timestampDate))
 
   if (elapsedSeconds < 5) return 'now'
   if (elapsedSeconds < 60) return `${elapsedSeconds}s`
-  if (elapsedSeconds < 3_600) return `${Math.floor(elapsedSeconds / 60)}m`
+  if (elapsedSeconds < 3_600) {
+    return `${differenceInMinutes(now, timestampDate)}m`
+  }
 
-  return new Intl.DateTimeFormat('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-  }).format(new Date(timestamp))
+  return format(timestampDate, 'h:mm a')
+}
+
+function formatTradePrice(priceUsd: number | null | undefined) {
+  return priceUsd === null || priceUsd === undefined
+    ? '—'
+    : `$${priceUsd.toPrecision(4)}`
+}
+
+function TradeRowSkeleton() {
+  return (
+    <div
+      className={classNames(TRADE_GRID_CLASS_NAME, 'items-center px-4 py-3')}
+      aria-hidden="true"
+    >
+      <SkeletonBox className="h-4 w-8" />
+      <div className="space-y-2">
+        <SkeletonBox className="h-3 w-24" />
+        <SkeletonBox className="h-2.5 w-20" />
+      </div>
+      <SkeletonBox className="h-3 w-14" />
+      <div className="flex flex-col items-end gap-2">
+        <SkeletonBox className="h-3 w-14" />
+        <SkeletonBox className="h-2.5 w-20" />
+      </div>
+      <div className="flex items-center justify-end gap-2">
+        <SkeletonBox className="h-3 w-8" />
+        <SkeletonBox className="h-7 w-7 rounded-lg" />
+      </div>
+    </div>
+  )
 }
 
 export function TradeHistory({ token }: { token: LaunchpadToken }) {
   const [includeSmallTrades, setIncludeSmallTrades] = useState(false)
+  const [isTableScrolled, setIsTableScrolled] = useState(false)
   const [now, setNow] = useState(0)
   const input = useMemo(
     () => ({
@@ -37,7 +70,35 @@ export function TradeHistory({ token }: { token: LaunchpadToken }) {
     }),
     [includeSmallTrades, token.address, token.chainId],
   )
-  const { data, streamStatus, lastEventAt } = useLaunchpadLiveTrades(input)
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isPending,
+    streamStatus,
+    lastEventAt,
+  } = useLaunchpadLiveTrades(input)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const loadMoreRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const root = scrollRef.current
+    const target = loadMoreRef.current
+    if (!root || !target || !hasNextPage) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting && !isFetchingNextPage) {
+          void fetchNextPage()
+        }
+      },
+      { root, rootMargin: '160px' },
+    )
+    observer.observe(target)
+
+    return () => observer.disconnect()
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage])
 
   useEffect(() => {
     setNow(Date.now())
@@ -54,7 +115,7 @@ export function TradeHistory({ token }: { token: LaunchpadToken }) {
       >
         <div className="border-b border-white/[0.06] p-4">
           <div className="flex items-start justify-between gap-3">
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h2 className="font-semibold text-perps-muted">
                   Recent trades
@@ -63,104 +124,171 @@ export function TradeHistory({ token }: { token: LaunchpadToken }) {
                   <span
                     className={classNames(
                       'h-1.5 w-1.5 rounded-full bg-emerald-400',
-                      streamStatus === 'live' && 'animate-pulse',
+                      streamStatus !== 'live' && 'animate-pulse',
                     )}
                   />
-                  {streamStatus === 'live' ? 'Live' : 'Connecting'}
+                  {streamStatus === 'live'
+                    ? 'Live'
+                    : streamStatus === 'reconnecting'
+                      ? 'Reconnecting'
+                      : 'Connecting'}
                 </span>
               </div>
-              <p className="mt-1 text-xs text-perps-muted-50">
-                Newest launch-pool swaps appear automatically
-              </p>
             </div>
-            <SignalIcon className="h-5 w-5 shrink-0 text-perps-blue" />
-          </div>
-          <div className="mt-4 flex items-center justify-between border-t border-white/[0.06] pt-3">
-            <label
-              htmlFor="launchpad-small-trades"
-              className="flex items-center gap-2 text-xs text-perps-muted-50"
-            >
-              <Switch
-                id="launchpad-small-trades"
-                checked={includeSmallTrades}
-                onCheckedChange={setIncludeSmallTrades}
-              />
-              Include trades under $1
-            </label>
-            <span className="text-[11px] text-perps-muted-50">
-              {lastEventAt ? 'Just updated' : `${data.edges.length} trades`}
-            </span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-[52px_minmax(0,1fr)_auto] gap-2 border-b border-white/[0.06] px-4 py-2 text-[10px] uppercase tracking-wide text-perps-muted-50">
-          <span>Side</span>
-          <span>Trade</span>
-          <span className="text-right">Value / time</span>
-        </div>
-
-        {data.edges.length > 0 ? (
-          <div className="min-h-0 flex-1 divide-y divide-white/[0.06] overflow-y-scroll overscroll-contain">
-            {data.edges.map(({ node: trade }, index) => (
-              <div
-                key={trade.id}
-                className={classNames(
-                  'group grid grid-cols-[52px_minmax(0,1fr)_auto] items-center gap-2 px-4 py-3 text-xs transition hover:bg-white/[0.025]',
-                  index === 0 &&
-                    lastEventAt === trade.timestamp &&
-                    'bg-white/[0.03]',
-                )}
+            <div className="flex shrink-0 items-center gap-3">
+              <span className="text-[11px] text-perps-muted-50">
+                {data.totalCount} trades
+              </span>
+              <div aria-hidden="true" className="h-4 w-px bg-white/[0.06]" />
+              <label
+                htmlFor="launchpad-small-trades"
+                className="flex items-center gap-2 text-[11px] text-perps-muted-50"
               >
-                <span
-                  className={classNames(
-                    'font-semibold',
-                    trade.direction === 'BUY' ? 'text-emerald-400' : 'text-red',
-                  )}
-                >
-                  {trade.direction === 'BUY' ? 'Buy' : 'Sell'}
+                <Switch
+                  id="launchpad-small-trades"
+                  checked={includeSmallTrades}
+                  onCheckedChange={setIncludeSmallTrades}
+                />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  Include &lt;$1
                 </span>
-                <div className="min-w-0">
-                  <div className="truncate font-medium text-perps-muted">
-                    {formatRawAmount(trade.tokenAmount, token.decimals)}{' '}
-                    {token.symbol}
-                  </div>
-                  <div className="mt-1 flex items-center gap-1.5 truncate text-[11px] text-perps-muted-50">
-                    <span>
-                      {trade.trader ? shortenAddress(trade.trader) : 'Unknown'}
-                    </span>
-                    <span>·</span>
-                    <span>{trade.isLaunchPool ? 'Launch' : 'V3'}</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-end gap-1 text-right">
-                  <div>
-                    <div className="font-medium text-perps-muted">
-                      {formatUsd(trade.amountUsd)}
-                    </div>
-                    <div className="mt-1 text-[11px] text-perps-muted-50">
-                      {formatRelativeTime(trade.timestamp, now)}
-                    </div>
-                  </div>
-                  <Button
-                    variant="perps-secondary"
-                    size="xs"
-                    className="ml-1 h-7 w-7 !p-0 opacity-0 transition group-hover:opacity-100"
-                    aria-label="View transaction"
-                  >
-                    <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid flex-1 place-items-center p-6 text-center text-sm text-perps-muted-50">
-            <div>
-              <SignalIcon className="mx-auto mb-3 h-6 w-6" />
-              The first swap will appear here live.
+              </label>
             </div>
           </div>
-        )}
+        </div>
+
+        <div className="min-h-0 flex-1 overflow-x-auto overscroll-contain">
+          <div
+            ref={scrollRef}
+            onScroll={(event) =>
+              setIsTableScrolled(event.currentTarget.scrollTop > 0)
+            }
+            className="flex h-full min-w-[680px] flex-col overflow-y-scroll overscroll-contain"
+          >
+            <div
+              className={classNames(
+                TRADE_GRID_CLASS_NAME,
+                'sticky top-0 z-10 border-b border-white/[0.06] px-4 py-2 text-[10px] uppercase tracking-wide text-perps-muted-50',
+                isTableScrolled && 'bg-[#161b1f]/95 backdrop-blur-xl',
+              )}
+            >
+              <span>Side</span>
+              <span>Trade</span>
+              <span className="justify-self-end text-right">Price</span>
+              <span className="justify-self-end text-right">Total</span>
+              <span className="grid grid-cols-[1fr_28px] gap-2 text-right">
+                <span>Time</span>
+              </span>
+            </div>
+
+            {isPending ? (
+              <div className="min-h-0 flex-1 divide-y divide-white/[0.06]">
+                {Array.from({ length: 7 }, (_, index) => (
+                  <TradeRowSkeleton key={index} />
+                ))}
+              </div>
+            ) : data.edges.length > 0 ? (
+              <div className="min-h-0 flex-1 divide-y divide-white/[0.06]">
+                {data.edges.map(({ node: trade }, index) => (
+                  <div
+                    key={trade.id}
+                    className={classNames(
+                      TRADE_GRID_CLASS_NAME,
+                      'items-center px-4 py-3 text-xs transition hover:bg-white/[0.025]',
+                      index === 0 &&
+                        lastEventAt === trade.timestamp &&
+                        'bg-white/[0.03]',
+                    )}
+                  >
+                    <span
+                      className={classNames(
+                        'font-semibold',
+                        trade.direction === 'BUY'
+                          ? 'text-emerald-400'
+                          : 'text-red',
+                      )}
+                    >
+                      {trade.direction === 'BUY' ? 'Buy' : 'Sell'}
+                    </span>
+                    <div className="min-w-0">
+                      <div className="truncate font-medium text-perps-muted">
+                        {formatRawAmount(trade.tokenAmount, token.decimals)}{' '}
+                        {token.symbol}
+                      </div>
+                      <div className="mt-1 flex items-center gap-1.5 truncate text-[11px] text-perps-muted-50">
+                        <span>
+                          {trade.trader
+                            ? shortenAddress(trade.trader)
+                            : 'Unknown'}
+                        </span>
+                        <span>·</span>
+                        <span>{trade.isLaunchPool ? 'Launch Pool' : 'V3'}</span>
+                      </div>
+                    </div>
+                    <div className="justify-self-end whitespace-nowrap text-right font-medium tabular-nums text-perps-muted">
+                      {formatTradePrice(trade.priceUsd)}
+                    </div>
+                    <div className="min-w-0 justify-self-end text-right tabular-nums">
+                      <div className="font-medium text-perps-muted">
+                        {formatUsd(trade.amountUsd)}
+                      </div>
+                      <div className="mt-1 truncate text-[11px] text-perps-muted-50">
+                        {formatRawAmount(
+                          trade.quoteAmount,
+                          trade.quoteToken.decimals,
+                          6,
+                        )}{' '}
+                        {trade.quoteToken.symbol}
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-[1fr_28px] items-center gap-2 justify-self-end text-right">
+                      <span className="whitespace-nowrap tabular-nums text-perps-muted-50">
+                        {formatRelativeTime(trade.timestamp, now)}
+                      </span>
+                      <Button
+                        asChild
+                        variant="perps-secondary"
+                        size="xs"
+                        className="h-7 w-7 !p-0 opacity-50 transition-opacity hover:opacity-100"
+                      >
+                        <a
+                          href={getEvmChainById(
+                            trade.chainId,
+                          ).getTransactionUrl(trade.transactionHash)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label="View transaction in block explorer"
+                        >
+                          <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" />
+                        </a>
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+                {(hasNextPage || isFetchingNextPage) && (
+                  <div
+                    ref={loadMoreRef}
+                    className="flex min-h-8 items-center justify-center text-[11px] text-perps-muted-50"
+                  >
+                    {isFetchingNextPage ? (
+                      <>
+                        Loading more trades
+                        <Dots />
+                      </>
+                    ) : null}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="grid flex-1 place-items-center p-6 text-center text-sm text-perps-muted-50">
+                <div>
+                  <SignalIcon className="mx-auto mb-3 h-6 w-6" />
+                  The first swap will appear here live.
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </PerpsCard>
     </div>
   )
