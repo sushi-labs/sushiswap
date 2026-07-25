@@ -28,6 +28,7 @@ import Link from 'next/link'
 import type { EvmAddress } from 'sushi/evm'
 import { getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
+import { formatLaunchpadPriceUsd } from '../../../_lib/launchpad-seo'
 import {
   formatRawAmount,
   formatUsd,
@@ -253,7 +254,7 @@ export function TokenDetailPage({
   const marketStats = [
     {
       label: 'Price',
-      value: `$${metrics?.priceUsd != null ? metrics.priceUsd.toPrecision(5) : '$-'}`,
+      value: formatLaunchpadPriceUsd(metrics?.priceUsd),
       detail: metrics?.isStale ? 'Data delayed' : 'Live pool price',
     },
     {

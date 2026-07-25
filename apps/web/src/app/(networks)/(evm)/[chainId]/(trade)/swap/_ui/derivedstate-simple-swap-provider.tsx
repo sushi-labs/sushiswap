@@ -50,6 +50,7 @@ interface State<TChainId extends SupportedChainId = SupportedChainId> {
     swapAmount: Amount<CurrencyFor<TChainId>> | undefined
     recipient: AddressFor<TChainId> | undefined
     tokenTax: Percent | false | undefined
+    fee: number | undefined
   }
   isLoading: boolean
   isToken0Loading: boolean
@@ -67,6 +68,7 @@ interface DerivedStateSimpleSwapProviderProps<
   token1?: CurrencyFor<TChainId>
   initialSwapAmount?: string
   persistToUrl?: boolean
+  fee?: number
 }
 
 /* Provides chain, token, and amount state from the URL by default.
@@ -81,6 +83,7 @@ function DerivedstateSimpleSwapProvider<
   token1: initialToken1,
   initialSwapAmount,
   persistToUrl = true,
+  fee,
 }: DerivedStateSimpleSwapProviderProps<TChainId>) {
   const { chainId: routeChainId } = useParams()
   const { address } = useConnection()
@@ -365,6 +368,7 @@ function DerivedstateSimpleSwapProvider<
             token0: _token0,
             token1: _token1,
             tokenTax,
+            fee,
           },
           isLoading: token0Loading || token1Loading,
           isToken0Loading: token0Loading,
@@ -374,6 +378,7 @@ function DerivedstateSimpleSwapProvider<
         address,
         chainId,
         defaultedParams,
+        fee,
         setSwapAmount,
         setToken0,
         setToken1,
@@ -411,7 +416,7 @@ function useDerivedStateSimpleSwap<TChainId extends SupportedChainId>() {
 
 function useEvmSimpleSwapTrade(enabled = true) {
   const {
-    state: { token0, chainId, swapAmount, token1, recipient },
+    state: { token0, chainId, swapAmount, token1, recipient, fee },
   } = useDerivedStateSimpleSwap<EvmChainId & SupportedChainId>()
 
   const [slippagePercent] = useSlippageTolerance()
@@ -431,6 +436,7 @@ function useEvmSimpleSwapTrade(enabled = true) {
     amount: swapAmount,
     slippagePercentage: slippagePercent.toString({ fixed: 2 }),
     gasPrice,
+    fee,
     recipient,
     enabled: Boolean(enabled && swapAmount?.gt(ZERO)),
     carbonOffset,
@@ -459,6 +465,7 @@ function useEvmSimpleSwapTradeQuote() {
         amount: _state.swapAmount,
         slippagePercentage: slippagePercent.toString({ fixed: 2 }),
         gasPrice,
+        fee: _state.fee,
         recipient: _state.recipient,
         enabled: Boolean(_state.swapAmount?.gt(ZERO)),
         carbonOffset,

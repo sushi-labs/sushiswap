@@ -32,6 +32,20 @@ import type { LaunchpadToken } from '../../../types'
 
 type SwapSide = 'BUY' | 'SELL'
 
+const LOW_LIQUIDITY_THRESHOLD_USD = 100_000
+const LOW_LIQUIDITY_SWAP_FEE = 0.01
+
+function getLaunchpadSwapFee(
+  liquidityUsd: number | null | undefined,
+): number | undefined {
+  return liquidityUsd !== null &&
+    liquidityUsd !== undefined &&
+    Number.isFinite(liquidityUsd) &&
+    liquidityUsd < LOW_LIQUIDITY_THRESHOLD_USD
+    ? LOW_LIQUIDITY_SWAP_FEE
+    : undefined
+}
+
 const BUY_PRESET_VALUES = [
   { value: 1n, decimals: 1 },
   { value: 25n, decimals: 2 },
@@ -91,6 +105,7 @@ export function SwapPanel({ token }: { token: LaunchpadToken }) {
           token1={launchToken}
           initialSwapAmount="0.1"
           persistToUrl={false}
+          fee={getLaunchpadSwapFee(token.metrics?.currentTvlUsd)}
         >
           <DetailsInteractionTrackerProvider>
             <SwapPanelContent token={token} launchToken={launchToken} />
