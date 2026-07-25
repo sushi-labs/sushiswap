@@ -225,7 +225,10 @@ function SwapPanelContent({
             With the best route chosen by our aggregator
           </div>
         </div>
-        <SettingsOverlay modules={[SettingsModule.SlippageTolerance]}>
+        <SettingsOverlay
+          modules={[SettingsModule.SlippageTolerance]}
+          theme="perps"
+        >
           <Button
             variant="perps-secondary"
             size="sm"

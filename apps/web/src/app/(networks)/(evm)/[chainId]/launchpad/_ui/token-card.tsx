@@ -1,5 +1,5 @@
 import { ArrowUpRightIcon } from '@heroicons/react/20/solid'
-import { classNames } from '@sushiswap/ui'
+import { SkeletonBox, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import Link from 'next/link'
 import { getEvmChainById } from 'sushi/evm'
@@ -13,6 +13,44 @@ import {
   shortenAddress,
 } from './format'
 import { TokenAvatar } from './token-avatar'
+
+export function TokenCardSkeleton() {
+  return (
+    <PerpsCard className="h-full overflow-hidden" fullHeight fullWidth>
+      <div className="h-px bg-gradient-to-r from-transparent via-perps-blue/20 to-transparent" />
+      <div className="p-4">
+        <div className="flex items-center gap-3">
+          <SkeletonBox className="h-14 w-14 shrink-0 rounded-full" />
+          <div className="min-w-0 flex-1">
+            <SkeletonBox className="h-5 w-3/5 rounded-md" />
+            <SkeletonBox className="mt-2 h-3 w-24 rounded-sm" />
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <SkeletonBox className="h-3 w-8 rounded-sm" />
+          <SkeletonBox className="mt-2 h-6 w-24 rounded-md" />
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-3 border-t border-white/[0.06] pt-3">
+          <div>
+            <SkeletonBox className="h-3 w-10 rounded-sm" />
+            <SkeletonBox className="mt-2 h-4 w-16 rounded-sm" />
+          </div>
+          <div className="flex flex-col items-end">
+            <SkeletonBox className="h-3 w-16 rounded-sm" />
+            <SkeletonBox className="mt-2 h-4 w-20 rounded-sm" />
+          </div>
+        </div>
+
+        <div className="mt-3 flex items-center justify-between gap-3">
+          <SkeletonBox className="h-3 w-24 rounded-sm" />
+          <SkeletonBox className="h-3 w-28 rounded-sm" />
+        </div>
+      </div>
+    </PerpsCard>
+  )
+}
 
 export function TokenCard({
   token,

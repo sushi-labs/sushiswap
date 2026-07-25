@@ -157,14 +157,14 @@ export function TradeHistory({ token }: { token: LaunchpadToken }) {
           </div>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-x-auto overscroll-contain">
-          <div
-            ref={scrollRef}
-            onScroll={(event) =>
-              setIsTableScrolled(event.currentTarget.scrollTop > 0)
-            }
-            className="flex h-full min-w-[680px] flex-col overflow-y-scroll overscroll-contain"
-          >
+        <div
+          ref={scrollRef}
+          onScroll={(event) =>
+            setIsTableScrolled(event.currentTarget.scrollTop > 0)
+          }
+          className="min-h-0 min-w-0 flex-1 overflow-auto overscroll-contain"
+        >
+          <div className="flex min-h-full min-w-[680px] flex-col">
             <div
               className={classNames(
                 TRADE_GRID_CLASS_NAME,

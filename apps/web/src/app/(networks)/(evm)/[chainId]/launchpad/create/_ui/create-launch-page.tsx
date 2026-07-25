@@ -48,7 +48,13 @@ import {
   withoutScientificNotation,
 } from 'sushi'
 import { type EvmAddress, EvmToken, WNATIVE, getEvmChainById } from 'sushi/evm'
-import { formatEther, formatUnits, parseEventLogs, parseUnits } from 'viem'
+import {
+  formatEther,
+  formatUnits,
+  isAddressEqual,
+  parseEventLogs,
+  parseUnits,
+} from 'viem'
 import {
   useConnection,
   usePublicClient,
@@ -60,7 +66,10 @@ import * as z from 'zod'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import type { PreparedLaunchpadLogoFile } from '../../_lib/launchpad-logo'
-import { saveLaunchpadMetadata } from '../../_lib/launchpad-metadata'
+import {
+  launchpadMetadataDescriptionSchema,
+  saveLaunchpadMetadata,
+} from '../../_lib/launchpad-metadata'
 import { formatRawAmount } from '../../_ui/format'
 import { LaunchpadLogoInput } from '../../_ui/launchpad-logo-input'
 import { PageHeading } from '../../_ui/page-heading'
@@ -110,7 +119,7 @@ const createLaunchSchema = z.object({
       (value) => new TextEncoder().encode(value).length <= 16,
       'Symbol must be 16 UTF-8 bytes or fewer',
     ),
-  description: z.string().max(500).default(''),
+  description: launchpadMetadataDescriptionSchema.default(''),
   homepage: optionalHttpsUrl,
   x: z.union([z.literal(''), z.string().url().startsWith('https://x.com/')]),
   telegram: z.union([
@@ -586,16 +595,24 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
       })
 
       const receipt = await receiptPromise
-      const [launchEvent] = parseEventLogs({
+      const launchEvents = parseEventLogs({
         abi: LAUNCHPAD_ABI,
         eventName: 'TokenLaunched',
-        logs: receipt.logs,
+        logs: receipt.logs.filter((log) =>
+          isAddressEqual(log.address, LAUNCHPAD_ADDRESS),
+        ),
         strict: true,
       })
+      const launchEvent = launchEvents.find(
+        (event) =>
+          isAddressEqual(event.args.creator, account) &&
+          event.args.name === formValues.name &&
+          event.args.symbol === formValues.symbol,
+      )
 
       if (!launchEvent) {
         throw new Error(
-          'The launch was confirmed, but its TokenLaunched event was not found.',
+          'The launch was confirmed, but its matching TokenLaunched event was not found.',
         )
       }
 
@@ -605,6 +622,15 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
 
       const token = await waitForLaunchpadIndexing(chainId, tokenAddress)
       if (token) {
+        if (
+          !isAddressEqual(token.address, tokenAddress) ||
+          token.creationTransactionHash.toLowerCase() !== hash.toLowerCase()
+        ) {
+          throw new Error(
+            'The launch catalog returned a token that does not match this transaction.',
+          )
+        }
+
         await saveLaunchpadMetadata({
           chainId,
           factoryAddress: token.factoryAddress,
@@ -731,7 +757,7 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
                     )}
                   />
                 </div>
-                <div className="grid gap-3 rounded-xl bg-white/[0.04] p-4 shadow-[inset_1px_1px_0_rgba(255,255,255,0.05)] sm:grid-cols-2">
+                <div className="grid gap-3 rounded-xl bg-white/[0.04] p-4 shadow-[inset_1px_1px_0_rgba(255,255,255,0.05)] grid-cols-2">
                   <div>
                     <div className="text-xs text-perps-muted-50">
                       Total supply

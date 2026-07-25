@@ -18,7 +18,7 @@ import { useLaunchpadTokens } from '../hooks/use-launchpad-data'
 import type { LaunchpadTokenSortField } from '../types'
 import { formatUsd } from './format'
 import { PageHeading } from './page-heading'
-import { TokenGrid } from './token-grid'
+import { TokenGrid, TokenGridSkeleton } from './token-grid'
 import {
   TokenSortControls,
   parseLaunchpadTokenSortField,
@@ -121,7 +121,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
               ].map((stat, index) => (
                 <div
                   key={stat.label}
-                  className={`${index > 0 ? 'border-l border-white/[0.06]' : ''} px-5 py-4`}
+                  className={`${index > 0 ? 'border-l border-white/[0.06]' : ''} px-3 md:px-5 py-4`}
                 >
                   <div className="text-[11px] uppercase tracking-wide text-perps-muted-50">
                     {stat.label}
@@ -131,7 +131,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
                   </div>
                 </div>
               ))}
-              <div className="flex items-center gap-3 border-l border-white/[0.06] px-5 py-4">
+              <div className="flex items-center gap-3 border-l border-white/[0.06] px-3 md:px-5 py-4">
                 <span className="grid h-9 w-9 place-items-center rounded-full bg-emerald-500/10 text-emerald-400">
                   <SignalIcon className="h-5 w-5" />
                 </span>
@@ -194,12 +194,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
 
           <div className="mt-6">
             {isPending ? (
-              <PerpsCard
-                className="grid min-h-64 place-items-center p-8 text-center text-sm text-perps-muted-50"
-                fullWidth
-              >
-                Loading launches…
-              </PerpsCard>
+              <TokenGridSkeleton />
             ) : isError ? (
               <PerpsCard
                 className="grid min-h-64 place-items-center p-8 text-center"
@@ -219,7 +214,11 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
                 </div>
               </PerpsCard>
             ) : (
-              <TokenGrid tokens={tokens} sortBy={sortBy} />
+              <TokenGrid
+                tokens={tokens}
+                sortBy={sortBy}
+                isFetchingNextPage={isFetchingNextPage}
+              />
             )}
           </div>
           {data.pageInfo.hasNextPage ? (

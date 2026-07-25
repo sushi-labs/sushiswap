@@ -1,8 +1,25 @@
 import { updateLaunchpadMetadata } from '@sushiswap/graph-client/data-api'
 import type { EvmAddress } from 'sushi/evm'
 import { type Hex, sha256, zeroHash } from 'viem'
+import { z } from 'zod'
 import type { LaunchpadChainId } from '../constants'
 import { prepareLaunchpadLogoFile } from './launchpad-logo'
+
+export const LAUNCHPAD_METADATA_DESCRIPTION_MAX_BYTES = 4_000
+
+export const launchpadMetadataDescriptionSchema = z
+  .string()
+  .trim()
+  .max(
+    LAUNCHPAD_METADATA_DESCRIPTION_MAX_BYTES,
+    'Description must be 4,000 UTF-8 bytes or fewer',
+  )
+  .refine(
+    (description) =>
+      new TextEncoder().encode(description).byteLength <=
+      LAUNCHPAD_METADATA_DESCRIPTION_MAX_BYTES,
+    'Description must be 4,000 UTF-8 bytes or fewer',
+  )
 
 interface LaunchpadMetadataLink {
   kind: string

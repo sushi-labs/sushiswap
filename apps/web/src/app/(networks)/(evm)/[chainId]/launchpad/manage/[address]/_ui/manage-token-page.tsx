@@ -49,7 +49,10 @@ import { TokenAvatar } from '../../../_ui/token-avatar'
 import type { LaunchpadChainId } from '../../../constants'
 import { useLaunchpadToken } from '../../../hooks/use-launchpad-data'
 import { LAUNCHPAD_ABI, LAUNCHPAD_ADDRESS } from '../../../launchpad-contract'
-import { saveLaunchpadMetadata } from './metadata-signature'
+import {
+  launchpadMetadataDescriptionSchema,
+  saveLaunchpadMetadata,
+} from './metadata-signature'
 
 const optionalHttpsUrl = z.union([
   z.literal(''),
@@ -57,7 +60,7 @@ const optionalHttpsUrl = z.union([
 ])
 
 const metadataSchema = z.object({
-  description: z.string().max(500),
+  description: launchpadMetadataDescriptionSchema,
   homepage: optionalHttpsUrl,
   x: z.union([z.literal(''), z.string().url().startsWith('https://x.com/')]),
   telegram: z.union([

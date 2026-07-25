@@ -402,6 +402,7 @@ export function TokenDetailPage({
                 </div>
               </div>
             ))}
+            <div className="block border-t sm:hidden border-white/[0.06]" />
           </div>
         </PerpsCard>
       </div>
