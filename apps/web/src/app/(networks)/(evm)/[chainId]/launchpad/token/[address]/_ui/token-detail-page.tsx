@@ -28,8 +28,8 @@ import Link from 'next/link'
 import type { EvmAddress } from 'sushi/evm'
 import { getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
-import { formatLaunchpadPriceUsd } from '../../../_lib/launchpad-seo'
 import {
+  formatLaunchpadPriceUsd,
   formatRawAmount,
   formatUsd,
   formatUsdChange,

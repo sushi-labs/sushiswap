@@ -9,6 +9,20 @@ import type { LaunchpadToken, LaunchpadTokenSortField } from '../types'
 
 export { shortenAddress }
 
+const priceFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  maximumSignificantDigits: 6,
+})
+
+export function formatLaunchpadPriceUsd(
+  value: number | null | undefined,
+): string {
+  return value === null || value === undefined || !Number.isFinite(value)
+    ? '—'
+    : priceFormatter.format(value)
+}
+
 export function formatUsd(
   value: number | null | undefined,
   inputString?: string,
