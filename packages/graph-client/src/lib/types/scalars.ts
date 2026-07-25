@@ -1,4 +1,5 @@
 import type { BladeChainId } from 'src/subgraphs/data-api/types/BladeChainId.js'
+import type { LaunchpadChainId } from 'src/subgraphs/data-api/types/LaunchpadChainId.js'
 import type { PoolChainId } from 'src/subgraphs/data-api/types/PoolChainId.js'
 import type { SmartPoolChainId } from 'src/subgraphs/data-api/types/SmartPoolChainId.js'
 import type { SushiSwapChainId } from 'src/subgraphs/data-api/types/SushiSwapChainId.js'
@@ -34,6 +35,7 @@ export type Scalars = {
 
   BigInt: string
   BigDecimal: string
+  Base64: string
   Bytes: `0x${string}`
   DateTime: string
   JSON: JSONObject
@@ -51,4 +53,5 @@ export type Scalars = {
 
   TokenListChainId: TokenListChainId
   TrendingTokensChainId: TrendingTokensChainId
+  LaunchpadChainId: LaunchpadChainId
 }

@@ -1,10 +1,11 @@
 import type { TokenListChainId } from '@sushiswap/graph-client/data-api'
 import { useCustomTokens } from '@sushiswap/hooks'
-import { List } from '@sushiswap/ui'
+import { List, classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useSearchTokens } from '../hooks/use-search-tokens'
+import { useTokenSelectorTheme } from '../token-selector-theme'
 import {
   TokenSelectorCurrencyList,
   TokenSelectorCurrencyListLoading,
@@ -19,10 +20,18 @@ interface TokenSelectorSearch<TChainId extends TokenListChainId> {
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
+  const theme = useTokenSelectorTheme()
+
   return (
     <div className="flex flex-1 flex-col">
-      <List.Control className="flex flex-1">
-        <div className="flex-1 block max-w-full">{children}</div>
+      <List.Control
+        className={classNames(
+          'flex flex-1',
+          theme === 'perps' &&
+            '!border-white/[0.06] !bg-white/[0.02] shadow-none',
+        )}
+      >
+        <div className="block max-w-full flex-1">{children}</div>
       </List.Control>
     </div>
   )

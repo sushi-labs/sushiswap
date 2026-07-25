@@ -48,6 +48,11 @@ export const EXPLORE_NAVIGATION_LINKS = (
       description: 'Trade perpetual contracts.',
     },
     {
+      title: 'Launchpad',
+      href: `/${getChainById(ChainId.ROBINHOOD).key}/launchpad`,
+      description: 'Discover and launch tokens with locked Sushi liquidity.',
+    },
+    {
       title: 'Pool',
       href: `/${getChainById(isPoolChainId ? chainId : ChainId.ETHEREUM).key}/pool`,
       description: 'Earn fees by providing liquidity.',
@@ -233,6 +238,12 @@ export const headerElements = ({
     {
       title: 'Perps',
       href: `/perps`,
+      show: 'desktop',
+      type: NavigationElementType.Single,
+    },
+    {
+      title: 'Launchpad',
+      href: `/${getChainById(ChainId.ROBINHOOD).key}/launchpad`,
       show: 'desktop',
       type: NavigationElementType.Single,
     },

@@ -2,12 +2,13 @@ import {
   type TokenListChainId,
   isTokenListChainId,
 } from '@sushiswap/graph-client/data-api'
-import { List } from '@sushiswap/ui'
+import { List, classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import type { WalletAddressFor } from 'src/lib/wallet'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import type { TokenSelectorChainId } from '../config'
 import { useMyTokens } from '../hooks/use-my-tokens'
+import { useTokenSelectorTheme } from '../token-selector-theme'
 import { TokenSelectorCurrencyList } from './common/token-selector-currency-list'
 
 interface TokenSelectorCustomList<TChainId extends TokenSelectorChainId> {
@@ -31,6 +32,7 @@ export function TokenSelectorCustomList<TChainId extends TokenSelectorChainId>({
   includeNative,
   onShowInfo,
 }: TokenSelectorCustomList<TChainId>) {
+  const theme = useTokenSelectorTheme()
   const {
     data: { balanceMap },
     isLoading,
@@ -61,7 +63,13 @@ export function TokenSelectorCustomList<TChainId extends TokenSelectorChainId>({
 
   return (
     <div className="flex flex-1 flex-col">
-      <List.Control className="flex flex-1">
+      <List.Control
+        className={classNames(
+          'flex flex-1',
+          theme === 'perps' &&
+            '!border-white/[0.06] !bg-white/[0.02] shadow-none',
+        )}
+      >
         <div className="flex-1 block">
           <TokenSelectorCurrencyList
             id="trending"

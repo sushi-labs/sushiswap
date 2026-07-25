@@ -1,8 +1,9 @@
 import type { TokenListChainId } from '@sushiswap/graph-client/data-api'
-import { List } from '@sushiswap/ui'
+import { List, classNames } from '@sushiswap/ui'
 import { useAccount } from 'src/lib/wallet'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useMyTokens } from '../hooks/use-my-tokens'
+import { useTokenSelectorTheme } from '../token-selector-theme'
 import {
   TokenSelectorCurrencyList,
   TokenSelectorCurrencyListLoading,
@@ -17,10 +18,18 @@ interface TokenSelectorMyTokens<TChainId extends TokenListChainId> {
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
+  const theme = useTokenSelectorTheme()
+
   return (
     <div className="flex flex-col space-y-2">
       <div className="text-sm">My Tokens</div>
-      <List.Control className="flex flex-1">
+      <List.Control
+        className={classNames(
+          'flex flex-1',
+          theme === 'perps' &&
+            '!border-white/[0.06] !bg-white/[0.02] shadow-none',
+        )}
+      >
         <div className="flex-1 block">{children}</div>
       </List.Control>
     </div>
