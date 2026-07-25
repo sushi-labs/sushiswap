@@ -5,7 +5,6 @@ import {
   ArrowRightIcon,
   ArrowTopRightOnSquareIcon,
   CheckIcon,
-  CloudArrowUpIcon,
   InformationCircleIcon,
   LockClosedIcon,
   SparklesIcon,
@@ -17,6 +16,7 @@ import {
   Button,
   Container,
   Currency,
+  Dots,
   Form,
   FormControl,
   FormField,
@@ -53,12 +53,16 @@ import {
   useConnection,
   usePublicClient,
   useReadContracts,
+  useSignTypedData,
   useWriteContract,
 } from 'wagmi'
 import * as z from 'zod'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
+import type { PreparedLaunchpadLogoFile } from '../../_lib/launchpad-logo'
+import { saveLaunchpadMetadata } from '../../_lib/launchpad-metadata'
 import { formatRawAmount } from '../../_ui/format'
+import { LaunchpadLogoInput } from '../../_ui/launchpad-logo-input'
 import { PageHeading } from '../../_ui/page-heading'
 import type { LaunchpadChainId } from '../../constants'
 import { useLaunchpadQuoteTokens } from '../../hooks/use-launchpad-data'
@@ -109,6 +113,10 @@ const createLaunchSchema = z.object({
   description: z.string().max(500).default(''),
   homepage: optionalHttpsUrl,
   x: z.union([z.literal(''), z.string().url().startsWith('https://x.com/')]),
+  telegram: z.union([
+    z.literal(''),
+    z.string().url().startsWith('https://t.me/'),
+  ]),
   initialFdvUsd: z
     .number()
     .int()
@@ -133,6 +141,7 @@ const createLaunchDetailsSchema = createLaunchSchema.pick({
   description: true,
   homepage: true,
   x: true,
+  telegram: true,
 })
 
 type CreateLaunchForm = z.infer<typeof createLaunchSchema>
@@ -174,6 +183,7 @@ const DETAIL_FIELDS: Array<keyof z.infer<typeof createLaunchDetailsSchema>> = [
   'description',
   'homepage',
   'x',
+  'telegram',
 ]
 
 const INDEXING_ATTEMPTS = 10
@@ -189,10 +199,6 @@ const STEPS: Array<{ id: CreateStep; label: string }> = [
   { id: 'curve', label: 'Launch pool' },
   { id: 'review', label: 'Review' },
 ]
-
-function formatBps(value: number | undefined): string {
-  return value === undefined ? 'Loading…' : formatPercentValue(value / 10_000)
-}
 
 interface LaunchPricing {
   quotePriceUsdRaw: bigint
@@ -343,11 +349,11 @@ function wait(milliseconds: number): Promise<void> {
 async function waitForLaunchpadIndexing(
   chainId: LaunchpadChainId,
   tokenAddress: EvmAddress,
-): Promise<boolean> {
+): ReturnType<typeof getLaunchpadToken> {
   for (let attempt = 0; attempt < INDEXING_ATTEMPTS; attempt++) {
     try {
       const token = await getLaunchpadToken({ chainId, address: tokenAddress })
-      if (token) return true
+      if (token) return token
     } catch {
       // A confirmed launch is independent of temporary catalog availability.
     }
@@ -355,7 +361,7 @@ async function waitForLaunchpadIndexing(
     await wait(INDEXING_RETRY_DELAY)
   }
 
-  return false
+  return null
 }
 
 export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
@@ -363,9 +369,11 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
   const router = useRouter()
   const { address: account } = useConnection()
   const publicClient = usePublicClient({ chainId })
+  const { mutateAsync: signTypedDataAsync } = useSignTypedData()
   const { mutateAsync: writeContractAsync } = useWriteContract()
   const [step, setStep] = useState<CreateStep>('details')
-  const [logoName, setLogoName] = useState<string | null>(null)
+  const [logo, setLogo] = useState<PreparedLaunchpadLogoFile | null>(null)
+  const [isLogoProcessing, setIsLogoProcessing] = useState(false)
   const [isLaunching, setIsLaunching] = useState(false)
   const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false)
   const [launchedTokenAddress, setLaunchedTokenAddress] = useState<EvmAddress>()
@@ -416,6 +424,7 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
       description: '',
       homepage: '',
       x: '',
+      telegram: '',
       initialFdvUsd: DEFAULT_STARTING_FDV_USD,
       curvePresetId: 'classic',
     },
@@ -464,9 +473,7 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
       refetchInterval: 15_000,
     },
   })
-  const [launchFee, , sushiFeeBps] = factoryTerms ?? []
-  const creatorFeeBps =
-    sushiFeeBps === undefined ? undefined : 10_000 - sushiFeeBps
+  const [launchFee] = factoryTerms ?? []
   const selectedCurve =
     CURVE_PRESETS.find((curve) => curve.id === values.curvePresetId) ??
     CURVE_PRESETS[0]
@@ -596,8 +603,17 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
       setLaunchedTokenAddress(tokenAddress)
       setIsWaitingForIndexing(true)
 
-      const isIndexed = await waitForLaunchpadIndexing(chainId, tokenAddress)
-      if (isIndexed) {
+      const token = await waitForLaunchpadIndexing(chainId, tokenAddress)
+      if (token) {
+        await saveLaunchpadMetadata({
+          chainId,
+          factoryAddress: token.factoryAddress,
+          tokenAddress,
+          expectedRevision: token.metadata.revision,
+          values: formValues,
+          logoFile: logo?.file,
+          signTypedData: (typedData) => signTypedDataAsync(typedData),
+        })
         router.push(`/${chain.key}/launchpad/token/${tokenAddress}`)
       }
     } catch (error) {
@@ -691,7 +707,6 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
                             {...field}
                           />
                         </FormControl>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -712,7 +727,6 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
                             }
                           />
                         </FormControl>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -737,31 +751,13 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
                 title="Project details"
                 description="This metadata can be edited later by the immutable creator wallet."
               >
-                <div>
-                  <label
-                    htmlFor="launch-logo"
-                    className="flex min-h-28 cursor-pointer items-center justify-center rounded-xl border border-dashed border-white/[0.08] bg-white/[0.03] p-5 text-center transition hover:border-perps-blue/40 hover:bg-perps-blue/5"
-                  >
-                    <input
-                      id="launch-logo"
-                      type="file"
-                      accept="image/png,image/jpeg,image/webp"
-                      className="sr-only"
-                      onChange={(event) =>
-                        setLogoName(event.target.files?.[0]?.name ?? null)
-                      }
-                    />
-                    <span>
-                      <CloudArrowUpIcon className="mx-auto h-6 w-6 text-perps-blue" />
-                      <span className="mt-2 block text-sm font-medium">
-                        {logoName ?? 'Choose a token logo'}
-                      </span>
-                      <span className="mt-1 block text-xs text-perps-muted-50">
-                        PNG, JPEG, or WebP. Uploaded after deployment.
-                      </span>
-                    </span>
-                  </label>
-                </div>
+                <LaunchpadLogoInput
+                  id="launch-logo"
+                  prompt="Choose a token logo"
+                  value={logo}
+                  onChange={setLogo}
+                  onProcessingChange={setIsLogoProcessing}
+                />
                 <FormField
                   control={methods.control}
                   name="description"
@@ -776,7 +772,6 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
                           className="w-full resize-none rounded-lg border border-white/[0.06] bg-white/[0.04] px-3 py-2 text-sm text-perps-muted outline-none transition focus:border-perps-blue"
                         />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -795,7 +790,6 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
                             {...field}
                           />
                         </FormControl>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -813,7 +807,23 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
                             {...field}
                           />
                         </FormControl>
-                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={methods.control}
+                    name="telegram"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Telegram</FormLabel>
+                        <FormControl>
+                          <TextField
+                            type="text"
+                            placeholder="https://t.me/project"
+                            className="!bg-white/[0.04] !text-perps-muted"
+                            {...field}
+                          />
+                        </FormControl>
                       </FormItem>
                     )}
                   />
@@ -1151,12 +1161,6 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
                     //     : `${formatBps(protocolReserveBps)} · locked 365 days`,
                     // ],
                     [
-                      'LP fee split',
-                      sushiFeeBps === undefined || creatorFeeBps === undefined
-                        ? 'Loading…'
-                        : `${formatBps(sushiFeeBps)} Sushi · ${formatBps(creatorFeeBps)} creator`,
-                    ],
-                    [
                       'Launch fee',
                       launchFee === undefined
                         ? 'Loading…'
@@ -1244,6 +1248,7 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
                           variant="perps-default"
                           disabled={
                             isLaunching ||
+                            isLogoProcessing ||
                             isFactoryTermsPending ||
                             isFactoryTermsError ||
                             !selectedQuoteToken ||
@@ -1251,11 +1256,16 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
                             !launchPricing
                           }
                         >
-                          {isWaitingForIndexing
-                            ? 'Waiting for indexing…'
-                            : isLaunching
-                              ? 'Creating token…'
-                              : 'Create token'}
+                          {isWaitingForIndexing ? (
+                            <>
+                              Waiting for indexing
+                              <Dots />
+                            </>
+                          ) : isLaunching ? (
+                            'Creating token…'
+                          ) : (
+                            'Create token'
+                          )}
                         </Button>
                       </Checker.Network>
                     </Checker.Connect>

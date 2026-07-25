@@ -2,20 +2,21 @@
 
 import {
   ArrowTopRightOnSquareIcon,
-  CheckBadgeIcon,
   DocumentDuplicateIcon,
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline'
 import { Button, Container, TextField } from '@sushiswap/ui'
-import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import type { EvmAddress } from 'sushi/evm'
-import { getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatUsd, shortenAddress } from '../../../_ui/format'
 import { MetricCard } from '../../../_ui/metric-card'
 import { PageHeading } from '../../../_ui/page-heading'
 import { TokenGrid } from '../../../_ui/token-grid'
+import {
+  DEFAULT_LAUNCHPAD_TOKEN_SORT,
+  TokenSortControls,
+} from '../../../_ui/token-sort-controls'
 import type { LaunchpadChainId } from '../../../constants'
 import { useLaunchpadCreator } from '../../../hooks/use-launchpad-data'
 import type { LaunchpadTokenSortField } from '../../../types'
@@ -27,9 +28,10 @@ export function CreatorPage({
   chainId: LaunchpadChainId
   address: EvmAddress
 }) {
-  const chainKey = getEvmChainById(chainId).key
   const [search, setSearch] = useState('')
-  const [sortBy, setSortBy] = useState<LaunchpadTokenSortField>('VOLUME_24H')
+  const [sortBy, setSortBy] = useState<LaunchpadTokenSortField>(
+    DEFAULT_LAUNCHPAD_TOKEN_SORT,
+  )
   const filters = useMemo(
     () => ({
       search: search || undefined,
@@ -79,32 +81,6 @@ export function CreatorPage({
           }
         />
 
-        <div className="mt-8">
-          <PerpsCard className="overflow-hidden" fullWidth>
-            <div className="flex flex-col gap-5 bg-gradient-to-r from-perps-blue/[0.08] to-violet-500/[0.04] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-7">
-              <div className="flex min-w-0 items-center gap-4">
-                <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-perps-blue text-lg font-bold text-white shadow-sm">
-                  {address.slice(2, 4).toUpperCase()}
-                </span>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 font-semibold text-perps-muted">
-                    Onchain creator
-                    <CheckBadgeIcon className="h-5 w-5 text-perps-blue" />
-                  </div>
-                  <div className="mt-1 truncate font-mono text-xs text-perps-muted-50 sm:text-sm">
-                    {address}
-                  </div>
-                </div>
-              </div>
-              <Button asChild variant="perps-secondary">
-                <Link href={`/${chainKey}/launchpad/manage`}>
-                  View creator dashboard
-                </Link>
-              </Button>
-            </div>
-          </PerpsCard>
-        </div>
-
         <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-3">
           <MetricCard
             label="Confirmed launches"
@@ -114,7 +90,6 @@ export function CreatorPage({
           <MetricCard
             label="Combined 24h volume"
             value={formatUsd(allTimeVolume)}
-            detail="Across displayed launches"
           />
         </div>
       </Container>
@@ -130,7 +105,7 @@ export function CreatorPage({
                 Confirmed launches created by this address.
               </p>
             </div>
-            <div className="grid gap-3 sm:grid-cols-[260px_180px]">
+            <div className="grid gap-3 sm:grid-cols-[260px_auto]">
               <TextField
                 type="text"
                 value={search}
@@ -140,19 +115,11 @@ export function CreatorPage({
                 aria-label="Search creator launches"
                 className="!bg-white/[0.04] !text-perps-muted"
               />
-              <select
-                value={sortBy}
-                onChange={(event) =>
-                  setSortBy(event.target.value as LaunchpadTokenSortField)
-                }
-                aria-label="Sort creator launches"
-                className="h-10 rounded-lg border border-white/[0.06] bg-white/[0.04] px-3 text-sm font-medium text-perps-muted outline-none focus:border-perps-blue"
-              >
-                <option value="VOLUME_24H">24h volume</option>
-                <option value="CURRENT_TVL">Current TVL</option>
-                <option value="TVL_CHANGE_24H">24h TVL change</option>
-                <option value="CREATED_AT">Newest</option>
-              </select>
+              <TokenSortControls
+                sortBy={sortBy}
+                onSortByChange={setSortBy}
+                ariaLabel="Sort creator launches by"
+              />
             </div>
           </div>
           <div className="mt-6">

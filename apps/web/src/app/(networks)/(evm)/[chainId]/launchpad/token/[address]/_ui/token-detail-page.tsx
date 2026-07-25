@@ -2,11 +2,11 @@
 
 import {
   ArrowLeftIcon,
-  ArrowTopRightOnSquareIcon,
   BeakerIcon,
+  BookOpenIcon,
   DocumentDuplicateIcon,
+  HomeIcon,
   LinkIcon,
-  LockClosedIcon,
 } from '@heroicons/react/24/outline'
 import {
   Button,
@@ -19,6 +19,11 @@ import {
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
+import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
+import { GithubIcon } from '@sushiswap/ui/icons/GithubIcon'
+import { MediumIcon } from '@sushiswap/ui/icons/MediumIcon'
+import { TelegramIcon } from '@sushiswap/ui/icons/TelegramIcon'
+import { XIcon } from '@sushiswap/ui/icons/XIcon'
 import Link from 'next/link'
 import type { EvmAddress } from 'sushi/evm'
 import { getEvmChainById } from 'sushi/evm'
@@ -36,7 +41,141 @@ import type { LaunchpadChainId } from '../../../constants'
 import { useLaunchpadToken } from '../../../hooks/use-launchpad-data'
 import { PriceChart } from './price-chart'
 import { SwapPanel } from './swap-panel'
+import { TokenDetailSkeleton } from './token-detail-skeleton'
 import { TradeHistory } from './trade-history'
+
+interface MetadataLink {
+  kind: string
+  url: string
+  label: string | null
+}
+
+function metadataLinkLabel(link: MetadataLink): string {
+  if (link.label?.trim()) return link.label.trim()
+
+  switch (link.kind.trim().toLowerCase()) {
+    case 'homepage':
+    case 'site':
+    case 'website':
+      return 'Website'
+    case 'x':
+    case 'twitter':
+      return 'X'
+    case 'docs':
+    case 'documentation':
+      return 'Docs'
+    case 'discord':
+      return 'Discord'
+    case 'github':
+      return 'GitHub'
+    case 'medium':
+      return 'Medium'
+    case 'telegram':
+      return 'Telegram'
+    default:
+      return link.kind
+        .replaceAll(/[-_]+/g, ' ')
+        .replace(/\b\w/g, (character) => character.toUpperCase())
+  }
+}
+
+function MetadataLinkIcon({
+  kind,
+  className,
+}: {
+  kind: string
+  className?: string
+}) {
+  switch (kind.trim().toLowerCase()) {
+    case 'homepage':
+    case 'site':
+    case 'website':
+      return <HomeIcon className={className} />
+    case 'x':
+    case 'twitter':
+      return <XIcon className={className} />
+    case 'discord':
+      return <DiscordIcon className={className} />
+    case 'github':
+      return <GithubIcon className={className} />
+    case 'medium':
+      return <MediumIcon className={className} />
+    case 'telegram':
+      return <TelegramIcon className={className} />
+    case 'docs':
+    case 'documentation':
+      return <BookOpenIcon className={className} />
+    default:
+      return <LinkIcon className={className} />
+  }
+}
+
+function MetadataLinks({
+  links,
+  placement,
+}: {
+  links: MetadataLink[]
+  placement: 'header' | 'about'
+}) {
+  if (links.length === 0) return null
+
+  if (placement === 'header') {
+    return (
+      <div className="flex flex-wrap gap-2">
+        {links.map((item) => {
+          const label = metadataLinkLabel(item)
+
+          return (
+            <Button
+              key={`${item.kind}:${item.url}`}
+              asChild
+              variant="perps-secondary"
+              size="sm"
+              className="!w-9 !min-w-9 !px-0 [&>div]:items-center [&>div]:justify-center"
+            >
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={label}
+                title={label}
+              >
+                <MetadataLinkIcon kind={item.kind} className="h-4 w-4" />
+                <span className="sr-only">{label}</span>
+              </a>
+            </Button>
+          )
+        })}
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-5 flex flex-wrap gap-2 border-t border-white/[0.06] pt-4">
+      {links.map((item) => {
+        const label = metadataLinkLabel(item)
+
+        return (
+          <a
+            key={`${item.kind}:${item.url}`}
+            href={item.url}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={label}
+            title={label}
+            className="grid h-9 w-9 place-items-center rounded-lg border border-white/[0.06] bg-white/[0.03] text-perps-muted transition hover:border-perps-blue/30 hover:bg-perps-blue/10 hover:text-perps-blue"
+          >
+            <MetadataLinkIcon
+              kind={item.kind}
+              className="h-4 w-4 shrink-0 text-perps-blue"
+            />
+            <span className="sr-only">{label}</span>
+          </a>
+        )
+      })}
+    </div>
+  )
+}
 
 export function TokenDetailPage({
   chainId,
@@ -55,16 +194,7 @@ export function TokenDetailPage({
   } = useLaunchpadToken(chainId, address)
 
   if (isTokenPending) {
-    return (
-      <Container maxWidth="lg" className="w-full px-4 py-20">
-        <PerpsCard className="p-8 text-center" fullWidth>
-          <BeakerIcon className="mx-auto h-10 w-10 animate-pulse text-perps-muted-50" />
-          <h1 className="mt-4 text-xl font-semibold text-perps-muted">
-            Loading launch
-          </h1>
-        </PerpsCard>
-      </Container>
-    )
+    return <TokenDetailSkeleton />
   }
 
   if (isTokenError) {
@@ -164,7 +294,7 @@ export function TokenDetailPage({
 
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex min-w-0 items-center gap-4">
-          <TokenAvatar symbol={token.symbol} size="lg" />
+          <TokenAvatar token={token} size="lg" />
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2.5">
               <h1 className="truncate text-2xl font-semibold tracking-tight text-perps-muted sm:text-3xl">
@@ -233,21 +363,7 @@ export function TokenDetailPage({
             </div>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {token.metadata.links.map((item) => (
-            <Button
-              key={`${item.kind}:${item.url}`}
-              asChild
-              variant="perps-secondary"
-              size="sm"
-            >
-              <a href={item.url} target="_blank" rel="noreferrer">
-                <LinkIcon className="h-4 w-4" />
-                {item.label ?? item.kind}
-              </a>
-            </Button>
-          ))}
-        </div>
+        <MetadataLinks links={token.metadata.links} placement="header" />
       </div>
 
       <div className="mt-6">
@@ -312,8 +428,9 @@ export function TokenDetailPage({
               {token.metadata.description ??
                 'This creator has not added a description yet.'}
             </p>
+            <MetadataLinks links={token.metadata.links} placement="about" />
             <div className="mt-5 flex items-center gap-3 rounded-xl bg-white/[0.04] p-3">
-              <TokenAvatar symbol={token.symbol} size="sm" />
+              <TokenAvatar token={token} size="sm" />
               <div className="min-w-0 flex-1">
                 <div className="text-xs text-perps-muted-50">Created by</div>
                 <Link
@@ -377,7 +494,6 @@ export function TokenDetailPage({
                     <span className="font-medium text-perps-muted">
                       Position #{position.positionId}
                     </span>
-                    <span className="text-xs text-emerald-400">Locked</span>
                   </div>
                   <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
                     <div>

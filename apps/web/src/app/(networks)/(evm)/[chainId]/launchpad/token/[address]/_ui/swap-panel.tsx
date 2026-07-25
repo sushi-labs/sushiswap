@@ -190,7 +190,7 @@ function SwapPanelContent({
       </button>
     ) : (
       <div className={tokenPillClassName}>
-        <TokenAvatar symbol={token.symbol} size="sm" />
+        <TokenAvatar token={token} size="sm" />
         {token.symbol}
       </div>
     )
@@ -209,7 +209,7 @@ function SwapPanelContent({
       </button>
     ) : (
       <div className={tokenPillClassName}>
-        <TokenAvatar symbol={token.symbol} size="sm" />
+        <TokenAvatar token={token} size="sm" />
         {token.symbol}
       </div>
     )

@@ -112,9 +112,6 @@ export function ManageLaunchesPage({ chainId }: { chainId: LaunchpadChainId }) {
                 Select a launch to update its public profile or distribute fees.
               </p>
             </div>
-            <span className="hidden h-10 w-10 place-items-center rounded-xl bg-emerald-500/10 text-emerald-600 sm:grid">
-              <BanknotesIcon className="h-5 w-5" />
-            </span>
           </div>
           <div className="mt-6">
             {address && isPending ? (

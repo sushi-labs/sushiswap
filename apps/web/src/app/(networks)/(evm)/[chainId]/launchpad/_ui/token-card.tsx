@@ -47,7 +47,7 @@ export function TokenCard({
       <div className="p-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 items-center gap-3">
-            <TokenAvatar symbol={token.symbol} size="lg" />
+            <TokenAvatar token={token} size="lg" />
             <div className="min-w-0">
               <Link
                 href={href}

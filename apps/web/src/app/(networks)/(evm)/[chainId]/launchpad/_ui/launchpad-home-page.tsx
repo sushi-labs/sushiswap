@@ -6,17 +6,7 @@ import {
   MagnifyingGlassIcon,
   SignalIcon,
 } from '@heroicons/react/24/outline'
-import {
-  Button,
-  Container,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  TextField,
-  classNames,
-} from '@sushiswap/ui'
+import { Button, Container, TextField } from '@sushiswap/ui'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -29,42 +19,10 @@ import type { LaunchpadTokenSortField } from '../types'
 import { formatUsd } from './format'
 import { PageHeading } from './page-heading'
 import { TokenGrid } from './token-grid'
-
-type SortMetric = 'VOLUME' | 'CURRENT_TVL' | 'CREATED_AT'
-type VolumePeriod = '1H' | '6H' | '12H' | '24H'
-
-const SORT_METRICS: Array<{ value: SortMetric; label: string }> = [
-  { value: 'VOLUME', label: 'Volume' },
-  { value: 'CURRENT_TVL', label: 'Liquidity' },
-  { value: 'CREATED_AT', label: 'Newest' },
-]
-
-const VOLUME_PERIODS: VolumePeriod[] = ['1H', '6H', '12H', '24H']
-
-const VOLUME_SORT_FIELDS = {
-  '1H': 'VOLUME_1H',
-  '6H': 'VOLUME_6H',
-  '12H': 'VOLUME_12H',
-  '24H': 'VOLUME_24H',
-} as const satisfies Record<VolumePeriod, LaunchpadTokenSortField>
-
-const SORT_FIELDS = new Set<LaunchpadTokenSortField>([
-  ...Object.values(VOLUME_SORT_FIELDS),
-  'CURRENT_TVL',
-  'CREATED_AT',
-])
-
-function getSortMetric(sortBy: LaunchpadTokenSortField): SortMetric {
-  if (sortBy === 'CURRENT_TVL' || sortBy === 'CREATED_AT') return sortBy
-  return 'VOLUME'
-}
-
-function getVolumePeriod(sortBy: LaunchpadTokenSortField): VolumePeriod {
-  const period = VOLUME_PERIODS.find(
-    (candidate) => VOLUME_SORT_FIELDS[candidate] === sortBy,
-  )
-  return period ?? '24H'
-}
+import {
+  TokenSortControls,
+  parseLaunchpadTokenSortField,
+} from './token-sort-controls'
 
 export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
   const chainKey = getEvmChainById(chainId).key
@@ -73,10 +31,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
   const searchParams = useSearchParams()
   const urlSearch = searchParams.get('search') ?? ''
   const urlCreator = searchParams.get('creator') ?? ''
-  const requestedSort = searchParams.get('sortBy') as LaunchpadTokenSortField
-  const sortBy = SORT_FIELDS.has(requestedSort) ? requestedSort : 'VOLUME_24H'
-  const sortMetric = getSortMetric(sortBy)
-  const volumePeriod = getVolumePeriod(sortBy)
+  const sortBy = parseLaunchpadTokenSortField(searchParams.get('sortBy'))
   const [search, setSearch] = useState(urlSearch)
   const [creator, setCreator] = useState(urlCreator)
 
@@ -225,72 +180,15 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
                 className="!bg-white/[0.04] !text-perps-muted"
                 wrapperClassName="hidden"
               />
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <Select
-                  value={sortMetric}
-                  onValueChange={(value) => {
-                    const metric = value as SortMetric
-                    updateParams({
-                      sortBy:
-                        metric === 'VOLUME'
-                          ? VOLUME_SORT_FIELDS[volumePeriod]
-                          : metric,
-                      sortDirection: undefined,
-                    })
-                  }}
-                >
-                  <SelectTrigger
-                    aria-label="Sort launches by"
-                    className="w-full sm:w-[150px] !border !border-white/[0.06] !bg-white/[0.04] !text-perps-muted focus:!border-perps-blue"
-                  >
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="!bg-black/10 backdrop-blur-2xl">
-                    {SORT_METRICS.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div
-                  role="radiogroup"
-                  aria-label="Volume period"
-                  aria-disabled={sortMetric !== 'VOLUME'}
-                  className={classNames(
-                    'flex h-10 shrink-0 items-center rounded-lg border border-white/[0.06] bg-white/[0.04] p-1 transition-opacity',
-                    sortMetric !== 'VOLUME' && 'opacity-40',
-                  )}
-                >
-                  {VOLUME_PERIODS.map((period) => {
-                    const selected =
-                      sortMetric === 'VOLUME' && volumePeriod === period
-                    return (
-                      <button
-                        key={period}
-                        type="button"
-                        role="radio"
-                        aria-checked={selected}
-                        disabled={sortMetric !== 'VOLUME'}
-                        onClick={() =>
-                          updateParams({
-                            sortBy: VOLUME_SORT_FIELDS[period],
-                            sortDirection: undefined,
-                          })
-                        }
-                        className={classNames(
-                          'h-8 min-w-10 rounded-md px-2 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-perps-blue/50 disabled:cursor-not-allowed',
-                          selected
-                            ? 'bg-white/[0.09] text-perps-muted shadow-sm'
-                            : 'text-perps-muted-50 hover:text-perps-muted disabled:hover:text-perps-muted-50',
-                        )}
-                      >
-                        {period}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
+              <TokenSortControls
+                sortBy={sortBy}
+                onSortByChange={(nextSortBy) =>
+                  updateParams({
+                    sortBy: nextSortBy,
+                    sortDirection: undefined,
+                  })
+                }
+              />
             </div>
           </PerpsCard>
 
@@ -333,10 +231,6 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
               >
                 {isFetchingNextPage ? 'Loading…' : 'Load more'}
               </Button>
-            </div>
-          ) : tokens.length > 0 ? (
-            <div className="mt-8 text-center text-sm text-perps-muted-50">
-              You&apos;re all caught up.
             </div>
           ) : null}
         </Container>
