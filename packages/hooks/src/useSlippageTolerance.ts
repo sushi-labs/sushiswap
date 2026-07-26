@@ -13,6 +13,7 @@ import { useLocalStorage } from './useLocalStorage'
 
 export enum SlippageToleranceStorageKey {
   Swap = 'slippage-swap',
+  LaunchpadTokenSwap = 'slippage-launchpad-token-swap',
   AddLiquidity = 'slippage-add-liquidity',
   RemoveLiquidity = 'slippage-remove-liquidity',
 }

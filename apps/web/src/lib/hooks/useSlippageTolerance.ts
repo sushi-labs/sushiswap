@@ -11,9 +11,12 @@ import { DEFAULT_SLIPPAGE } from 'sushi/evm'
 
 export const useSlippageTolerance = (
   key: SlippageToleranceStorageKey = SlippageToleranceStorageKey.Swap,
+  defaultValue?: string,
 ) => {
-  const [slippageTolerance, setSlippageTolerance] =
-    useStoredSlippageTolerance(key)
+  const [slippageTolerance, setSlippageTolerance] = useStoredSlippageTolerance(
+    key,
+    defaultValue,
+  )
   const basisPoints =
     getSlippageToleranceBasisPoints(slippageTolerance) ??
     getSlippageToleranceBasisPoints(DEFAULT_SLIPPAGE)!

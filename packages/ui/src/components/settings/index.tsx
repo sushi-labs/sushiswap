@@ -68,6 +68,7 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
   const [_open, setOpen] = useState(false)
   const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(
     options?.slippageTolerance?.storageKey,
+    options?.slippageTolerance?.defaultValue,
   )
 
   const showSlippageBadge =
@@ -94,7 +95,10 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
                     <Button
                       onClick={(e) => {
                         e.stopPropagation()
-                        setSlippageTolerance(DEFAULT_SLIPPAGE)
+                        setSlippageTolerance(
+                          options?.slippageTolerance?.defaultValue ??
+                            DEFAULT_SLIPPAGE,
+                        )
                       }}
                       className="!rounded-full -mr-1.5 !bg-opacity-50"
                       iconPosition="end"

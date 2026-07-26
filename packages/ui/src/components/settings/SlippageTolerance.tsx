@@ -37,12 +37,13 @@ export const SlippageTolerance: FC<{
   theme?: 'default' | 'perps'
 }> = ({ options, className, showAutoSelector = true, theme = 'default' }) => {
   const isPerps = theme === 'perps'
+  const defaultSlippage = options?.defaultValue ?? DEFAULT_SLIPPAGE
   const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(
     options?.storageKey,
     options?.defaultValue,
   )
   const [customValue, setCustomValue] = useState(
-    slippageTolerance === 'AUTO' ? DEFAULT_SLIPPAGE : slippageTolerance,
+    slippageTolerance === 'AUTO' ? defaultSlippage : slippageTolerance,
   )
 
   useEffect(() => {
@@ -94,7 +95,7 @@ export const SlippageTolerance: FC<{
               <Switch
                 checked={slippageTolerance === 'AUTO'}
                 onCheckedChange={(checked) =>
-                  setSlippageTolerance(checked ? 'AUTO' : DEFAULT_SLIPPAGE)
+                  setSlippageTolerance(checked ? 'AUTO' : defaultSlippage)
                 }
                 className={classNames(
                   isPerps &&

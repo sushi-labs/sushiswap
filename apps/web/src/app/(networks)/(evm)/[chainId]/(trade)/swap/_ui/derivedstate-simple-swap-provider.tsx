@@ -1,5 +1,6 @@
 'use client'
 
+import type { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { useParams, usePathname, useSearchParams } from 'next/navigation'
 import {
   type FC,
@@ -36,6 +37,11 @@ import {
   getTokenAsString,
 } from '../../_ui/derivedstate-swap-helpers'
 
+interface SlippageToleranceOptions {
+  storageKey?: SlippageToleranceStorageKey
+  defaultValue?: string
+}
+
 interface State<TChainId extends SupportedChainId = SupportedChainId> {
   mutate: {
     setToken0(token0: CurrencyFor<TChainId> | string): void
@@ -58,6 +64,7 @@ interface State<TChainId extends SupportedChainId = SupportedChainId> {
     tokenTax: Percent | false | undefined
     fee: number | undefined
     directPool: DirectPool | undefined
+    slippageToleranceOptions: SlippageToleranceOptions | undefined
   }
   isLoading: boolean
   isToken0Loading: boolean
@@ -77,6 +84,7 @@ interface DerivedStateSimpleSwapProviderProps<
   persistToUrl?: boolean
   fee?: number
   directPool?: DirectPool
+  slippageToleranceOptions?: SlippageToleranceOptions
 }
 
 /* Provides chain, token, and amount state from the URL by default.
@@ -93,6 +101,7 @@ function DerivedstateSimpleSwapProvider<
   persistToUrl = true,
   fee,
   directPool,
+  slippageToleranceOptions,
 }: DerivedStateSimpleSwapProviderProps<TChainId>) {
   const { chainId: routeChainId } = useParams()
   const { address } = useConnection()
@@ -379,6 +388,7 @@ function DerivedstateSimpleSwapProvider<
             tokenTax,
             fee,
             directPool,
+            slippageToleranceOptions,
           },
           isLoading: token0Loading || token1Loading,
           isToken0Loading: token0Loading,
@@ -390,6 +400,7 @@ function DerivedstateSimpleSwapProvider<
         defaultedParams,
         directPool,
         fee,
+        slippageToleranceOptions,
         setSwapAmount,
         setToken0,
         setToken1,
@@ -427,10 +438,22 @@ function useDerivedStateSimpleSwap<TChainId extends SupportedChainId>() {
 
 function useEvmSimpleSwapTrade(enabled = true) {
   const {
-    state: { token0, chainId, swapAmount, token1, recipient, fee, directPool },
+    state: {
+      token0,
+      chainId,
+      swapAmount,
+      token1,
+      recipient,
+      fee,
+      directPool,
+      slippageToleranceOptions,
+    },
   } = useDerivedStateSimpleSwap<EvmChainId & SupportedChainId>()
 
-  const [slippagePercent] = useSlippageTolerance()
+  const [slippagePercent] = useSlippageTolerance(
+    slippageToleranceOptions?.storageKey,
+    slippageToleranceOptions?.defaultValue,
+  )
   const [carbonOffset] = useCarbonOffset()
 
   const evmChainId = isEvmChainId(chainId) ? chainId : undefined
@@ -466,7 +489,10 @@ function useEvmSimpleSwapTrade(enabled = true) {
 function useEvmSimpleSwapTradeQuote() {
   const { state } = useDerivedStateSimpleSwap()
 
-  const [slippagePercent] = useSlippageTolerance()
+  const [slippagePercent] = useSlippageTolerance(
+    state.slippageToleranceOptions?.storageKey,
+    state.slippageToleranceOptions?.defaultValue,
+  )
   const [carbonOffset] = useCarbonOffset()
 
   const evmChainId = isEvmChainId(state.chainId) ? state.chainId : undefined
@@ -507,7 +533,10 @@ function useEvmSimpleSwapTradeQuote() {
 function useSvmSimpleSwapTradeQuote() {
   const { state } = useDerivedStateSimpleSwap()
 
-  const [slippagePercent] = useSlippageTolerance()
+  const [slippagePercent] = useSlippageTolerance(
+    state.slippageToleranceOptions?.storageKey,
+    state.slippageToleranceOptions?.defaultValue,
+  )
 
   const params = useMemo(() => {
     if (isSvmChainId(state.chainId)) {

@@ -1,6 +1,7 @@
 'use client'
 
 import { ChevronDownIcon, Cog6ToothIcon } from '@heroicons/react/24/outline'
+import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import {
   Button,
   Currency,
@@ -34,6 +35,10 @@ type SwapSide = 'BUY' | 'SELL'
 
 const LOW_LIQUIDITY_THRESHOLD_USD = 100_000
 const LOW_LIQUIDITY_SWAP_FEE = 0.01
+const LAUNCHPAD_SLIPPAGE_TOLERANCE_OPTIONS = {
+  storageKey: SlippageToleranceStorageKey.LaunchpadTokenSwap,
+  defaultValue: '1',
+} as const
 
 function getLaunchpadSwapFee(
   liquidityUsd: number | null | undefined,
@@ -107,6 +112,7 @@ export function SwapPanel({ token }: { token: LaunchpadToken }) {
           initialSwapAmount="0.1"
           persistToUrl={false}
           fee={getLaunchpadSwapFee(token.metrics?.currentTvlUsd)}
+          slippageToleranceOptions={LAUNCHPAD_SLIPPAGE_TOLERANCE_OPTIONS}
           directPool={{
             address: token.pool.address,
             quoteTokenAddress: quoteToken.address,
@@ -249,6 +255,9 @@ function SwapPanelContent({
         </div>
         <SettingsOverlay
           modules={[SettingsModule.SlippageTolerance]}
+          options={{
+            slippageTolerance: LAUNCHPAD_SLIPPAGE_TOLERANCE_OPTIONS,
+          }}
           theme="perps"
         >
           <Button
