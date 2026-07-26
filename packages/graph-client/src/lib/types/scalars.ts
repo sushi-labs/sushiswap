@@ -29,6 +29,8 @@ export type Scalars = {
   Address: EvmAddress | SvmAddress | StellarAddress
   ContractAddress: EvmAddress | SvmAddress | StellarContractAddress
   EvmAddress: EvmAddress
+  PortfolioChainId: ChainId
+  PortfolioTokenId: string
   StellarAccountAddress: StellarAccountAddress
   SvmAddress: SvmAddress
 

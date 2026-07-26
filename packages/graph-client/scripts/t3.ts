@@ -1,7 +1,7 @@
 import { getPortfolioWallet } from '../src/subgraphs/data-api'
 
 const portfolio = await getPortfolioWallet({
-  ids: ['0x3808699baf43ba988d1e9acd64237dea36c61593'],
+  evmAddress: '0x3808699baf43ba988d1e9acd64237dea36c61593',
 })
 
 const isPortfolioWalletValid = portfolio.totalUSD > 0
