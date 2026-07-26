@@ -121,7 +121,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
               ].map((stat, index) => (
                 <div
                   key={stat.label}
-                  className={`${index > 0 ? 'border-l border-white/[0.06]' : ''} px-3 md:px-5 py-4`}
+                  className={`${index > 0 ? 'border-l border-white/[0.06]' : ''} px-5 py-4`}
                 >
                   <div className="text-[11px] uppercase tracking-wide text-perps-muted-50">
                     {stat.label}
@@ -131,8 +131,8 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
                   </div>
                 </div>
               ))}
-              <div className="flex items-center gap-3 border-l border-white/[0.06] px-3 md:px-5 py-4">
-                <span className="grid h-9 w-9 place-items-center rounded-full bg-emerald-500/10 text-emerald-400">
+              <div className="flex items-center gap-3 border-l border-white/[0.06] px-5 py-4">
+                <span className="hidden sm:grid h-9 w-9 place-items-center rounded-full bg-emerald-500/10 text-emerald-400">
                   <SignalIcon className="h-5 w-5" />
                 </span>
                 <div>

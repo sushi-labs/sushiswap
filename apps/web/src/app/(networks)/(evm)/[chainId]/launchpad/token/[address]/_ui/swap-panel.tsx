@@ -13,7 +13,7 @@ import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-sel
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
 import { EdgeProvider } from 'src/providers/edge-config-provider'
 import { formatUSD, isWNativeSupported } from 'sushi'
-import { EvmToken } from 'sushi/evm'
+import { EvmToken, unwrapEvmToken } from 'sushi/evm'
 import { formatUnits } from 'viem'
 import { DetailsInteractionTrackerProvider } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
 import {
@@ -94,6 +94,7 @@ export function SwapPanel({ token }: { token: LaunchpadToken }) {
       }),
     [token.chainId, token.pool.quoteToken],
   )
+  const defaultQuoteCurrency = unwrapEvmToken(quoteToken)
 
   return (
     <EdgeProvider config={defaultSwapEdgeConfig}>
@@ -101,11 +102,17 @@ export function SwapPanel({ token }: { token: LaunchpadToken }) {
         <DerivedstateSimpleSwapProvider
           key={token.address}
           chainId={token.chainId}
-          token0={quoteToken}
+          token0={defaultQuoteCurrency}
           token1={launchToken}
           initialSwapAmount="0.1"
           persistToUrl={false}
           fee={getLaunchpadSwapFee(token.metrics?.currentTvlUsd)}
+          directPool={{
+            address: token.pool.address,
+            quoteTokenAddress: quoteToken.address,
+            launchTokenAddress: launchToken.address,
+            feeTier: token.pool.feeTier,
+          }}
         >
           <DetailsInteractionTrackerProvider>
             <SwapPanelContent token={token} launchToken={launchToken} />
@@ -237,7 +244,7 @@ function SwapPanelContent({
             Trade {token.symbol}
           </div>
           <div className="mt-0.5 text-xs text-perps-muted-50">
-            With the best route chosen by our aggregator
+            Best price from the aggregator or launch pool
           </div>
         </div>
         <SettingsOverlay

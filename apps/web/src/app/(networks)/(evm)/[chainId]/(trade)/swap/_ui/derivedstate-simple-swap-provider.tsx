@@ -16,6 +16,12 @@ import {
   useSvmTradeQuote,
 } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import {
+  type DirectPool,
+  combineEvmTradeQueries,
+  useDirectPoolTrade,
+  useDirectPoolTradeQuote,
+} from 'src/lib/swap/direct-pool'
 import { useCarbonOffset } from 'src/lib/swap/useCarbonOffset'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { useAccount } from 'src/lib/wallet'
@@ -51,6 +57,7 @@ interface State<TChainId extends SupportedChainId = SupportedChainId> {
     recipient: AddressFor<TChainId> | undefined
     tokenTax: Percent | false | undefined
     fee: number | undefined
+    directPool: DirectPool | undefined
   }
   isLoading: boolean
   isToken0Loading: boolean
@@ -69,6 +76,7 @@ interface DerivedStateSimpleSwapProviderProps<
   initialSwapAmount?: string
   persistToUrl?: boolean
   fee?: number
+  directPool?: DirectPool
 }
 
 /* Provides chain, token, and amount state from the URL by default.
@@ -84,6 +92,7 @@ function DerivedstateSimpleSwapProvider<
   initialSwapAmount,
   persistToUrl = true,
   fee,
+  directPool,
 }: DerivedStateSimpleSwapProviderProps<TChainId>) {
   const { chainId: routeChainId } = useParams()
   const { address } = useConnection()
@@ -369,6 +378,7 @@ function DerivedstateSimpleSwapProvider<
             token1: _token1,
             tokenTax,
             fee,
+            directPool,
           },
           isLoading: token0Loading || token1Loading,
           isToken0Loading: token0Loading,
@@ -378,6 +388,7 @@ function DerivedstateSimpleSwapProvider<
         address,
         chainId,
         defaultedParams,
+        directPool,
         fee,
         setSwapAmount,
         setToken0,
@@ -416,7 +427,7 @@ function useDerivedStateSimpleSwap<TChainId extends SupportedChainId>() {
 
 function useEvmSimpleSwapTrade(enabled = true) {
   const {
-    state: { token0, chainId, swapAmount, token1, recipient, fee },
+    state: { token0, chainId, swapAmount, token1, recipient, fee, directPool },
   } = useDerivedStateSimpleSwap<EvmChainId & SupportedChainId>()
 
   const [slippagePercent] = useSlippageTolerance()
@@ -429,7 +440,7 @@ function useEvmSimpleSwapTrade(enabled = true) {
     throw new Error('useEvmSimpleSwapTrade is EVM-only')
   }
 
-  const trade = useEvmTrade({
+  const params = {
     chainId: evmChainId,
     fromToken: token0,
     toToken: token1,
@@ -440,9 +451,16 @@ function useEvmSimpleSwapTrade(enabled = true) {
     recipient,
     enabled: Boolean(enabled && swapAmount?.gt(ZERO)),
     carbonOffset,
-  })
+    directPool,
+  }
+  const aggregatorTrade = useEvmTrade(params)
+  const directPoolTrade = useDirectPoolTrade(params)
 
-  return trade
+  return combineEvmTradeQueries(
+    aggregatorTrade,
+    directPoolTrade,
+    Boolean(directPool),
+  )
 }
 
 function useEvmSimpleSwapTradeQuote() {
@@ -469,13 +487,21 @@ function useEvmSimpleSwapTradeQuote() {
         recipient: _state.recipient,
         enabled: Boolean(_state.swapAmount?.gt(ZERO)),
         carbonOffset,
+        directPool: _state.directPool,
       }
     }
 
     return undefined
   }, [state, slippagePercent, gasPrice, carbonOffset])
 
-  return useEvmTradeQuote(params)
+  const aggregatorQuote = useEvmTradeQuote(params)
+  const directPoolQuote = useDirectPoolTradeQuote(params)
+
+  return combineEvmTradeQueries(
+    aggregatorQuote,
+    directPoolQuote,
+    Boolean(params?.directPool),
+  )
 }
 
 function useSvmSimpleSwapTradeQuote() {
