@@ -45,7 +45,7 @@ type Query {
   v3PoolBuckets(address: Bytes!, chainId: SushiSwapV3ChainId!): PoolBuckets!
   v3PoolsByTokens(token0: Bytes!, token1: Bytes!, chainId: SushiSwapV3ChainId!): [V3BasePool!]!
   v3Pools(chainId: SushiSwapV3ChainId!): [V3BasePool!]!
-  portfolioWallet(ids: [ID!]!): PortfolioWallet!
+  portfolioWallet(evmAddress: EvmAddress, svmAddress: SvmAddress, stellarAddress: StellarAccountAddress, chainIds: [PortfolioChainId!], customTokens: [PortfolioTokenId!]): PortfolioWallet!
   portfolioLiquidityPositions(id: ID!): PortfolioPositions!
   portfolioClaimables(id: ID!): PortfolioClaimables!
   portfolioHistory(id: ID!): [PortfolioTransaction!]!
@@ -522,23 +522,19 @@ type SimpleToken {
 }
 
 type PortfolioToken {
-  id: String!
-  chain: String!
-  chainId: Int!
+  id: PortfolioTokenId!
+  chainId: PortfolioChainId!
+  address: ContractAddress!
   name: String!
-  symbol: String
+  symbol: String!
   decimals: Int!
-  logoUrl: String
-  protocolId: String!
-  price: Float!
+  price: Float
   price24hChange: Float
-  isVerified: Boolean!
-  isCore: Boolean!
-  isWallet: Boolean!
-  timeAt: Int
-  amount: Float!
-  rawAmount: Float!
-  amountUSD: Float!
+  amountUSD24Change: Float
+  balance: BigInt!
+  amountUSD: Float
+  approved: Boolean!
+  stellarMetadata: StellarTokenMetadata
 }
 
 type V2PortfolioPosition {
@@ -626,9 +622,16 @@ type FuroClaim {
 
 type PortfolioWallet {
   totalUSD: Float!
-  amountUSD24Change: Float!
-  percentageChange24h: Float!
+  amountUSD24Change: Float
+  percentageChange24h: Float
   tokens: [PortfolioToken]!
+  status: PortfolioWalletStatus!
+  failedChainIds: [PortfolioChainId!]!
+}
+
+enum PortfolioWalletStatus {
+  SUCCESS
+  PARTIAL
 }
 
 enum TransactionTokenType {
@@ -686,6 +689,12 @@ scalar EvmAddress
 
 """A field whose value is a Stellar account address (G...)"""
 scalar StellarAccountAddress
+
+"""A field whose value is a portfolio-supported chain ID"""
+scalar PortfolioChainId
+
+"""A field whose value is a portfolio token ID"""
+scalar PortfolioTokenId
 
 """
 A field whose value is a byte string: https://en.wikipedia.org/wiki/Byte_string

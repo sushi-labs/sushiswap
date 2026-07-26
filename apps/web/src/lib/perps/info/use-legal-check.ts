@@ -6,12 +6,12 @@ import { zeroAddress } from 'viem'
 import { IS_PERPS_TESTNET } from '../config'
 import { hlHttpTransport } from '../transports'
 
-type LegalRestriction = 'n' | 'a' | 'o'
+type LegalRestriction = 'n' | 'a' | 'o' | 'u'
 
 function isIpAllowedRestriction(
   restriction: LegalRestriction | undefined,
 ): boolean {
-  return restriction === 'n' || restriction === 'o'
+  return restriction === 'n' || restriction === 'o' || restriction === 'u'
 }
 
 export const useLegalCheck = ({

@@ -1,7 +1,7 @@
 import type { PortfolioWalletToken } from '@sushiswap/graph-client/data-api'
 import { Currency, FormattedNumber, classNames } from '@sushiswap/ui'
-import React, { useMemo, type FC } from 'react'
-import { formatPercent, formatUSD } from 'sushi'
+import React, { useMemo } from 'react'
+import { formatPercent, formatUSD, getNativeAddress } from 'sushi'
 import {
   type EvmChainId,
   EvmNative,
@@ -16,8 +16,8 @@ import {
   SvmToken,
   isSvmChainId,
   svmAddress,
-  svmNativeAddress,
 } from 'sushi/svm'
+import { formatUnits } from 'viem'
 import { PortfolioInfoRow } from '../portfolio-info-row'
 
 interface PortfolioTokensListProps {
@@ -25,29 +25,31 @@ interface PortfolioTokensListProps {
 }
 const getCurrency = (token: PortfolioWalletToken) => {
   if (isEvmChainId(token.chainId)) {
-    if (!isEvmAddress(token.id)) {
+    if (token.address === getNativeAddress(token.chainId)) {
       return EvmNative.fromChainId(token.chainId)
-    } else {
-      return new EvmToken({
-        chainId: token.chainId,
-        address: token.id,
-        decimals: token.decimals,
-        symbol: token.symbol,
-        name: token.name,
-      })
     }
+
+    if (!isEvmAddress(token.address)) return null
+
+    return new EvmToken({
+      chainId: token.chainId,
+      address: token.address,
+      decimals: token.decimals,
+      symbol: token.symbol,
+      name: token.name,
+    })
   } else if (isSvmChainId(token.chainId)) {
-    if (token.id === svmNativeAddress) {
+    if (token.address === getNativeAddress(token.chainId)) {
       return SvmNative.fromChainId(token.chainId as SvmChainId)
-    } else {
-      return new SvmToken({
-        chainId: token.chainId as SvmChainId,
-        address: svmAddress(token.id),
-        decimals: token.decimals,
-        symbol: token.symbol,
-        name: token.name,
-      })
     }
+
+    return new SvmToken({
+      chainId: token.chainId as SvmChainId,
+      address: svmAddress(token.address),
+      decimals: token.decimals,
+      symbol: token.symbol,
+      name: token.name,
+    })
   } else {
     //stellar token goes here
     return null
@@ -93,7 +95,9 @@ export function PortfolioTokensList({
                   {token.name ?? token.symbol}
                 </div>
                 <div className="text-xs text-muted-foreground overflow-hidden overflow-ellipsis">
-                  <FormattedNumber number={token.amount.toString()} />{' '}
+                  <FormattedNumber
+                    number={formatUnits(BigInt(token.balance), token.decimals)}
+                  />{' '}
                   {token.symbol}
                 </div>
               </React.Fragment>
@@ -101,20 +105,20 @@ export function PortfolioTokensList({
             rightContent={
               <React.Fragment>
                 <div className="text-sm font-medium overflow-hidden overflow-ellipsis">
-                  {formatUSD(token.amountUSD)}
+                  {formatUSD(token.amountUSD ?? 0)}
                 </div>
                 <div
                   className={classNames(
                     'text-xs',
-                    token.price24hChange > 0
+                    (token.price24hChange ?? 0) > 0
                       ? 'text-green'
-                      : token.price24hChange < 0
+                      : (token.price24hChange ?? 0) < 0
                         ? 'text-red'
                         : 'text-muted-foreground',
                   )}
                 >
-                  {`${token.price24hChange > 0 ? '+' : ''}${formatPercent(
-                    token.price24hChange,
+                  {`${(token.price24hChange ?? 0) > 0 ? '+' : ''}${formatPercent(
+                    token.price24hChange ?? 0,
                   )}`}
                 </div>
               </React.Fragment>

@@ -1,10 +1,5 @@
 import { getPortfolioWallet } from '@sushiswap/graph-client/data-api'
-import {
-  Message,
-  SkeletonCircle,
-  SkeletonText,
-  classNames,
-} from '@sushiswap/ui'
+import { SkeletonCircle, SkeletonText, classNames } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import React, { useMemo } from 'react'
 import { useAccounts } from 'src/lib/wallet'
@@ -12,18 +7,20 @@ import { formatPercent, formatUSD } from 'sushi'
 import { PortfolioTokensList } from './portfolio-tokens-list'
 
 function usePortfolioWallet(
-  addresses: (string | undefined)[],
+  addresses: {
+    evmAddress: ReturnType<typeof useAccounts>['evm']['address']
+    svmAddress: ReturnType<typeof useAccounts>['svm']['address']
+  },
   refetchInterval?: 600_000,
 ) {
   return useQuery({
     queryKey: ['portfolio-wallet', addresses],
     queryFn: async () => {
-      const ids = addresses.filter((a): a is string => !!a)
-      if (ids.length === 0) return null
-      const data = await getPortfolioWallet({ ids })
+      if (!addresses.evmAddress && !addresses.svmAddress) return null
+      const data = await getPortfolioWallet(addresses)
       return data
     },
-    enabled: addresses.length > 0,
+    enabled: !!addresses.evmAddress || !!addresses.svmAddress,
     refetchInterval,
   })
 }
@@ -32,7 +29,7 @@ export const PortfolioEvmSvmTokens = () => {
   const { evm, svm } = useAccounts()
 
   const addresses = useMemo(
-    () => [...new Set([evm.address, svm.address])] as string[],
+    () => ({ evmAddress: evm.address, svmAddress: svm.address }),
     [evm.address, svm.address],
   )
 
@@ -73,7 +70,7 @@ export const PortfolioEvmSvmTokens = () => {
                   >
                     {`${(data?.amountUSD24Change ?? 0) > 0 ? '+' : ''}${formatUSD(
                       data?.amountUSD24Change ?? 0,
-                    )} (${formatPercent(data?.percentageChange24h)})`}
+                    )} (${formatPercent(data?.percentageChange24h ?? 0)})`}
                   </div>
                 )}
               </>
