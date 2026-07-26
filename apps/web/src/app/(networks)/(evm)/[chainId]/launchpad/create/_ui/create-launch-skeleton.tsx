@@ -1,4 +1,5 @@
 import { Container, SkeletonBox } from '@sushiswap/ui'
+import type { ReactNode } from 'react'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 
 const STEP_SKELETONS = ['details', 'pool', 'review'] as const
@@ -6,17 +7,68 @@ const STEP_SKELETONS = ['details', 'pool', 'review'] as const
 function FieldSkeleton({ className }: { className?: string }) {
   return (
     <div className={className}>
-      <SkeletonBox className="h-4 w-24 rounded-sm" />
+      <SkeletonBox className="h-3.5 w-24 rounded-sm" />
       <SkeletonBox className="mt-2 h-10 w-full rounded-lg" />
     </div>
   )
 }
 
-function SectionHeadingSkeleton() {
+function DescriptionLineSkeleton({
+  className,
+  widthClassName,
+}: {
+  className?: string
+  widthClassName: string
+}) {
   return (
-    <div>
-      <SkeletonBox className="h-6 w-36 rounded-md" />
-      <SkeletonBox className="mt-2 h-4 w-full max-w-md rounded-sm" />
+    <div className={`flex h-5 items-center ${className ?? ''}`}>
+      <SkeletonBox className={`h-3.5 rounded-sm ${widthClassName}`} />
+    </div>
+  )
+}
+
+function SectionHeadingSkeleton({
+  variant,
+}: {
+  variant: 'identity' | 'project'
+}) {
+  return (
+    <div className="flex flex-col space-y-1.5">
+      <SkeletonBox className="h-[18px] w-36 rounded-md" />
+      <div>
+        <DescriptionLineSkeleton widthClassName="w-full" />
+        {variant === 'identity' ? (
+          <DescriptionLineSkeleton
+            className="hidden md:flex"
+            widthClassName="w-3/4"
+          />
+        ) : (
+          <>
+            <DescriptionLineSkeleton widthClassName="w-4/5" />
+            <DescriptionLineSkeleton
+              className="hidden md:flex lg:hidden"
+              widthClassName="w-2/3"
+            />
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function FormSectionSkeleton({
+  children,
+  variant,
+}: {
+  children: ReactNode
+  variant: 'identity' | 'project'
+}) {
+  return (
+    <div className="grid grid-cols-3 gap-x-10 py-2 lg:gap-x-[56px]">
+      <div className="col-span-3 py-4 md:col-span-1">
+        <SectionHeadingSkeleton variant={variant} />
+      </div>
+      <div className="col-span-3 space-y-6 py-4 md:col-span-2">{children}</div>
     </div>
   )
 }
@@ -33,9 +85,16 @@ export function CreateLaunchSkeleton() {
 
       <div className="max-w-2xl">
         <SkeletonBox className="h-9 w-64 rounded-lg sm:h-10 sm:w-80" />
-        <div className="mt-3 space-y-2">
-          <SkeletonBox className="h-4 w-full rounded-sm" />
-          <SkeletonBox className="h-4 w-5/6 rounded-sm" />
+        <div className="mt-3 h-[84px] sm:h-14">
+          <div className="flex h-7 items-center">
+            <SkeletonBox className="h-4 w-full rounded-sm" />
+          </div>
+          <div className="flex h-7 items-center">
+            <SkeletonBox className="h-4 w-11/12 rounded-sm" />
+          </div>
+          <div className="flex h-7 items-center sm:hidden">
+            <SkeletonBox className="h-4 w-2/3 rounded-sm" />
+          </div>
         </div>
       </div>
 
@@ -55,36 +114,32 @@ export function CreateLaunchSkeleton() {
 
       <div className="mt-6">
         <PerpsCard className="p-5 sm:p-7" fullWidth>
-          <div className="space-y-5">
-            <SectionHeadingSkeleton />
-
+          <FormSectionSkeleton variant="identity">
             <div className="grid gap-5 sm:grid-cols-2">
               <FieldSkeleton />
               <FieldSkeleton />
             </div>
 
-            <div className="grid gap-3 rounded-xl bg-white/[0.04] p-4 sm:grid-cols-2">
+            <div className="grid h-[76px] grid-cols-2 gap-3 rounded-xl bg-white/[0.04] p-4">
               <div>
-                <SkeletonBox className="h-3 w-20 rounded-sm" />
-                <SkeletonBox className="mt-2 h-5 w-10 rounded-sm" />
+                <SkeletonBox className="h-4 w-20 rounded-sm" />
+                <SkeletonBox className="mt-1 h-6 w-10 rounded-sm" />
               </div>
               <div>
-                <SkeletonBox className="h-3 w-16 rounded-sm" />
-                <SkeletonBox className="mt-2 h-5 w-8 rounded-sm" />
+                <SkeletonBox className="h-4 w-16 rounded-sm" />
+                <SkeletonBox className="mt-1 h-6 w-8 rounded-sm" />
               </div>
             </div>
-          </div>
+          </FormSectionSkeleton>
 
-          <div className="my-8 border-t border-white/[0.06]" />
+          <div className="my-3 border-t border-white/[0.06]" />
 
-          <div className="space-y-5">
-            <SectionHeadingSkeleton />
+          <FormSectionSkeleton variant="project">
+            <SkeletonBox className="h-[130px] w-full rounded-xl lg:h-[114px]" />
 
-            <SkeletonBox className="h-28 w-full rounded-xl" />
-
-            <div>
-              <SkeletonBox className="h-4 w-24 rounded-sm" />
-              <SkeletonBox className="mt-2 h-24 w-full rounded-lg" />
+            <div className="h-[126px]">
+              <SkeletonBox className="h-3.5 w-24 rounded-sm" />
+              <SkeletonBox className="mt-2 h-[98px] w-full rounded-lg" />
             </div>
 
             <div className="grid gap-5 sm:grid-cols-2">
@@ -92,10 +147,10 @@ export function CreateLaunchSkeleton() {
               <FieldSkeleton />
               <FieldSkeleton />
             </div>
-          </div>
+          </FormSectionSkeleton>
 
           <div className="mt-7 flex justify-end">
-            <SkeletonBox className="h-11 w-52 rounded-xl" />
+            <SkeletonBox className="h-11 w-[209px] rounded-xl" />
           </div>
         </PerpsCard>
       </div>
