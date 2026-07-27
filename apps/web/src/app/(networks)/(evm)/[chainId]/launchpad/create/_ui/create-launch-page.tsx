@@ -37,7 +37,7 @@ import {
 import { getUnixTime } from 'date-fns'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { type FieldError, type Resolver, useForm } from 'react-hook-form'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
@@ -393,6 +393,12 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
     isError: isQuoteTokenListError,
     isPending: isQuoteTokenListPending,
   } = useLaunchpadQuoteTokens(chainId)
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scroll to the top of the form everytime step changes
+  useEffect(() => {
+    window.scrollTo({ top: 185, behavior: 'smooth' })
+  }, [step])
+
   const quoteTokens = useMemo(
     () =>
       quoteTokenRefs.map(
