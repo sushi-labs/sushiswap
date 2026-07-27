@@ -8,7 +8,8 @@ import {
 import { useCopyClipboard } from '@sushiswap/hooks'
 import { Button, Container, LinkExternal, TextField } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
-import { type EvmAddress, getEvmChainById } from 'sushi/evm'
+import { type EvmAddress, EvmChainId, getEvmChainById } from 'sushi/evm'
+import { useEnsName } from 'wagmi'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatUsd, shortenAddress } from '../../../_ui/format'
 import { MetricCard } from '../../../_ui/metric-card'
@@ -33,6 +34,10 @@ export function CreatorPage({
   const [sortBy, setSortBy] = useState<LaunchpadTokenSortField>(
     DEFAULT_LAUNCHPAD_TOKEN_SORT,
   )
+  const { data: ensName, isLoading: isENSNameLoading } = useEnsName({
+    chainId: EvmChainId.ETHEREUM,
+    address: address,
+  })
   const [isCopied, staticCopy] = useCopyClipboard()
   const filters = useMemo(
     () => ({
@@ -59,11 +64,17 @@ export function CreatorPage({
     0,
   )
 
+  const title = useMemo(() => {
+    if (isENSNameLoading) return 'Loading...'
+    if (ensName) return ensName
+    return shortenAddress(address, 7)
+  }, [address, ensName, isENSNameLoading])
+
   return (
     <>
       <Container maxWidth="7xl" className="w-full px-4 py-10 sm:py-14">
         <PageHeading
-          title={shortenAddress(address, 7)}
+          title={title}
           description="Every launch below is tied to this immutable onchain creator address."
           action={
             <div className="flex gap-2">
