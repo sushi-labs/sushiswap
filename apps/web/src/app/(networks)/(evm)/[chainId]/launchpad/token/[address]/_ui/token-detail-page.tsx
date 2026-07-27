@@ -393,7 +393,7 @@ export function TokenDetailPage({
                 </div>
                 <div
                   className={classNames(
-                    'mt-1.5 text-lg font-semibold text-perps-muted flex gap-1 items-end',
+                    'mt-1.5 text-lg font-semibold text-perps-muted flex gap-1 items-end flex-wrap',
                   )}
                 >
                   {stat.value}
