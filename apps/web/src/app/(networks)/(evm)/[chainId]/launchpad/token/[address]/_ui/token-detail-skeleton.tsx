@@ -1,13 +1,7 @@
-import { Container, SkeletonBox } from '@sushiswap/ui'
+import { Container, SkeletonBox, classNames } from '@sushiswap/ui'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 
-const MARKET_STAT_SKELETONS = [
-  'price',
-  'fdv',
-  'liquidity',
-  'volume',
-  'liquidity-change',
-] as const
+const MARKET_STAT_SKELETONS = ['price', 'fdv', 'liquidity', 'volume'] as const
 
 const TRADE_ROW_SKELETONS = ['first', 'second', 'third', 'fourth'] as const
 const LOCKED_POSITION_SKELETONS = [
@@ -62,11 +56,16 @@ export function TokenDetailSkeleton() {
 
       <div className="mt-6">
         <PerpsCard className="overflow-hidden" fullWidth>
-          <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5">
-            {MARKET_STAT_SKELETONS.map((stat) => (
+          <div className="grid grid-cols-2 lg:grid-cols-4">
+            {MARKET_STAT_SKELETONS.map((stat, index) => (
               <div
                 key={stat}
-                className="min-h-[104px] border-white/[0.06] px-4 py-4 last:min-h-[103px] sm:min-h-[103px] sm:px-5 [&:not(:first-child)]:border-l"
+                className={classNames(
+                  'min-h-[104px] border-white/[0.06] px-4 py-4 sm:min-h-[103px] sm:px-5',
+                  index % 2 === 1 && 'border-l',
+                  index > 1 && 'border-t lg:border-t-0',
+                  index > 0 && 'lg:border-l',
+                )}
               >
                 <SkeletonBox className="h-3 w-16 rounded-sm" />
                 <SkeletonBox className="mt-2 h-6 w-24 rounded-md" />

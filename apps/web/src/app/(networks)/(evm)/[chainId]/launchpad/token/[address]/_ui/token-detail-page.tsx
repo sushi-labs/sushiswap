@@ -266,17 +266,14 @@ export function TokenDetailPage({
       label: 'Liquidity',
       value: formatUsd(metrics?.currentTvlUsd),
       detail: 'Launch pool liquidity',
+      changeDetail: formatUsdChange(tvlChangeUsd),
+      changeValue: tvlChangeUsd,
+      changeLabel: '24H',
     },
     {
       label: '24h volume',
       value: formatUsd(metrics?.volumeUsd.h24),
       detail: 'Launch pool volume',
-    },
-    {
-      label: '24h liquidity',
-      value: formatUsdChange(tvlChangeUsd),
-      detail: 'TVL change',
-      change: tvlChangeUsd,
     },
   ]
 
@@ -369,15 +366,15 @@ export function TokenDetailPage({
 
       <div className="mt-6">
         <PerpsCard className="overflow-hidden" fullWidth>
-          <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5">
+          <div className="grid grid-cols-2 lg:grid-cols-4">
             {marketStats.map((stat, index) => (
               <div
                 key={stat.label}
                 className={classNames(
-                  'px-4 py-4 sm:px-5',
-                  index > 0 && 'border-l border-white/[0.06]',
-                  index > 1 && 'border-t border-white/[0.06] sm:border-t-0',
-                  index > 2 && 'sm:border-t lg:border-t-0',
+                  'border-white/[0.06] px-4 py-4 sm:px-5',
+                  index % 2 === 1 && 'border-l',
+                  index > 1 && 'border-t lg:border-t-0',
+                  index > 0 && 'lg:border-l',
                 )}
               >
                 <div className="text-[11px] font-medium uppercase tracking-wide text-perps-muted-50">
@@ -385,25 +382,36 @@ export function TokenDetailPage({
                 </div>
                 <div
                   className={classNames(
-                    'mt-1.5 text-lg font-semibold text-perps-muted',
-                    stat.change !== undefined &&
-                      stat.change !== null &&
-                      stat.change > 0 &&
-                      '!text-emerald-400',
-                    stat.change !== undefined &&
-                      stat.change !== null &&
-                      stat.change < 0 &&
-                      '!text-red',
+                    'mt-1.5 text-lg font-semibold text-perps-muted flex gap-1 items-end',
                   )}
                 >
                   {stat.value}
+                  {stat.changeDetail && stat.changeValue ? (
+                    <span
+                      className={classNames(
+                        'text-xs mb-1',
+                        stat.changeValue !== undefined &&
+                          stat.changeValue !== null &&
+                          stat.changeValue > 0 &&
+                          '!text-emerald-400',
+                        stat.changeValue !== undefined &&
+                          stat.changeValue !== null &&
+                          stat.changeValue < 0 &&
+                          '!text-red',
+                      )}
+                    >
+                      {stat.changeDetail}{' '}
+                      <span className="text-perps-muted-50 font-normal">
+                        ({stat.changeLabel})
+                      </span>
+                    </span>
+                  ) : null}
                 </div>
                 <div className="mt-1 text-[11px] text-perps-muted-50">
                   {stat.detail}
                 </div>
               </div>
             ))}
-            <div className="block border-t sm:hidden border-white/[0.06]" />
           </div>
         </PerpsCard>
       </div>
