@@ -6,28 +6,20 @@ import { graphql } from '../../graphql.js'
 
 export const PortfolioWalletQuery = graphql(
   `
-  query PortfolioWallet($ids: [ID!]!) {
-    portfolioWallet(ids: $ids) {
+  query PortfolioWallet($evmAddress: EvmAddress, $svmAddress: SvmAddress) {
+    portfolioWallet(evmAddress: $evmAddress, svmAddress: $svmAddress) {
       totalUSD
       amountUSD24Change
       percentageChange24h
       tokens {
         id
-        chain
         chainId
+        address
         name
         symbol
         decimals
-        logoUrl
-        protocolId
-        price
         price24hChange
-        isVerified
-        isCore
-        isWallet
-        timeAt
-        amount
-        rawAmount
+        balance
         amountUSD
       }
     }

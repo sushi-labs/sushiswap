@@ -15,6 +15,7 @@ import {
 } from 'src/lib/hooks/react-query'
 import type { EvmToken } from 'sushi/evm'
 import type { SvmToken } from 'sushi/svm'
+import { getTokenSecurityRows } from './token-security-rows'
 
 export const TokenSecurityView = ({
   token,
@@ -25,30 +26,10 @@ export const TokenSecurityView = ({
   tokenSecurity: TokenSecurityResponse | undefined
   isTokenSecurityLoading: boolean
 }) => {
-  const { rows, issueCount } = useMemo(() => {
-    const issues: (keyof TokenSecurity)[] = []
-    const nonIssues: (keyof TokenSecurity)[] = []
-
-    for (const [_key, value] of Object.entries(tokenSecurity?.data || {})) {
-      const key = _key as keyof TokenSecurity
-      if (
-        key in isTokenSecurityIssue &&
-        (isTokenSecurityIssue[key](value.deFi) ||
-          isTokenSecurityIssue[key](value.goPlus))
-      ) {
-        issues.push(key)
-      } else {
-        nonIssues.push(key)
-      }
-    }
-    return {
-      rows: [
-        ...issues.map((key) => ({ key, isIssue: true })),
-        ...nonIssues.map((key) => ({ key, isIssue: false })),
-      ],
-      issueCount: issues.length,
-    }
-  }, [tokenSecurity])
+  const { rows, issueCount } = useMemo(
+    () => getTokenSecurityRows(tokenSecurity?.data, isTokenSecurityIssue),
+    [tokenSecurity],
+  )
 
   return (
     <div className="w-full overflow-x-auto">
