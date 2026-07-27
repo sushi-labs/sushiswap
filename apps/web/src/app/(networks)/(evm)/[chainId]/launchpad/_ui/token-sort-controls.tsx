@@ -82,7 +82,7 @@ export function TokenSortControls({
       >
         <SelectTrigger
           aria-label={ariaLabel}
-          className="w-full !border !border-white/[0.06] !bg-white/[0.04] !text-perps-muted focus:!border-perps-blue sm:w-[150px]"
+          className="w-full !border !border-white/[0.06] !bg-white/[0.04] !text-perps-muted focus:!border-perps-blue md:w-[150px]"
         >
           <SelectValue />
         </SelectTrigger>
@@ -99,7 +99,7 @@ export function TokenSortControls({
         aria-label="Volume period"
         aria-disabled={sortMetric !== 'VOLUME'}
         className={classNames(
-          'flex h-10 shrink-0 items-center rounded-lg border border-white/[0.06] bg-white/[0.04] p-1 transition-opacity',
+          'flex h-10 shrink-0 items-center rounded-lg border border-white/[0.06] bg-white/[0.04] p-1 transition-opacity justify-between md:justify-start',
           sortMetric !== 'VOLUME' && 'opacity-40',
         )}
       >
@@ -114,7 +114,7 @@ export function TokenSortControls({
               disabled={sortMetric !== 'VOLUME'}
               onClick={() => onSortByChange(VOLUME_SORT_FIELDS[period])}
               className={classNames(
-                'h-8 min-w-10 rounded-md px-2 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-perps-blue/50 disabled:cursor-not-allowed',
+                'h-8 min-w-10 w-full rounded-md px-2 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-perps-blue/50 disabled:cursor-not-allowed',
                 selected
                   ? 'bg-white/[0.09] text-perps-muted shadow-sm'
                   : 'text-perps-muted-50 hover:text-perps-muted disabled:hover:text-perps-muted-50',
