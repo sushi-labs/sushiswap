@@ -49,7 +49,7 @@ function launchpadHeaderElements(chainKey: string): NavigationElement[] {
   const desktopItems = [
     { title: 'Discover', href: root },
     { title: 'Create', href: `${root}/create` },
-    { title: 'My launches', href: `${root}/manage` },
+    { title: 'My Launches', href: `${root}/manage` },
   ]
 
   return [
