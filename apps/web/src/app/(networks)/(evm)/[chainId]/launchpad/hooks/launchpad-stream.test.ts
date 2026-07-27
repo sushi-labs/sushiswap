@@ -71,7 +71,7 @@ describe('launchpad stream', () => {
       }),
     )
 
-    expect(url.pathname).toBe('/graphql/launchpad/events')
+    expect(url.pathname).toBe('/stream/launchpad/events')
     expect(url.searchParams.get('chainId')).toBe(String(CHAIN_ID))
     expect(url.searchParams.get('tokenAddress')).toBe(TOKEN_ADDRESS)
     expect(url.searchParams.get('after')).toBe('9007199254740993123456789')

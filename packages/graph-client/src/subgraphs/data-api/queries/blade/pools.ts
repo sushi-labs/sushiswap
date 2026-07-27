@@ -1,6 +1,6 @@
 import type { ResultOf, VariablesOf } from 'gql.tada'
 import { type RequestOptions, request } from 'src/lib/request.js'
-import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
+import { SUSHI_DATA_API_GRAPHQL_URL } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 import type { BladeChainId } from '../../types/BladeChainId.js'
@@ -138,7 +138,7 @@ export async function getBladePools(
   variables: GetBladePools,
   options?: RequestOptions,
 ) {
-  const url = `${SUSHI_DATA_API_HOST}/graphql`
+  const url = SUSHI_DATA_API_GRAPHQL_URL
   try {
     const result = await request(
       {
@@ -164,7 +164,7 @@ export async function getBladePool(
   variables: GetBladePool,
   options?: RequestOptions,
 ) {
-  const url = `${SUSHI_DATA_API_HOST}/graphql`
+  const url = SUSHI_DATA_API_GRAPHQL_URL
   const result = await request(
     {
       url,
@@ -184,7 +184,7 @@ export async function getBladePoolPairsChart(
   variables: GetBladePoolPairsChart,
   options?: RequestOptions,
 ) {
-  const url = `${SUSHI_DATA_API_HOST}/graphql`
+  const url = SUSHI_DATA_API_GRAPHQL_URL
   try {
     const result = await request(
       {
@@ -208,7 +208,7 @@ export async function getBladePoolTxSourcesChart(
   variables: GetBladePoolTxSourcesChart,
   options?: RequestOptions,
 ) {
-  const url = `${SUSHI_DATA_API_HOST}/graphql`
+  const url = SUSHI_DATA_API_GRAPHQL_URL
   try {
     const result = await request(
       {

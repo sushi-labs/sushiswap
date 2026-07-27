@@ -2,7 +2,7 @@ import type { VariablesOf } from 'gql.tada'
 import { type RequestOptions, request } from 'src/lib/request.js'
 import type { LaunchpadChainId } from 'src/subgraphs/data-api/types/LaunchpadChainId.js'
 import type { EvmAddress } from 'sushi/evm'
-import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
+import { SUSHI_DATA_API_GRAPHQL_URL } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
@@ -388,7 +388,7 @@ export async function getLaunchpadQuoteTokenList(
 ): Promise<LaunchpadTokenRef[]> {
   const result = await request(
     {
-      url: `${SUSHI_DATA_API_HOST}/graphql`,
+      url: SUSHI_DATA_API_GRAPHQL_URL,
       document: LaunchpadQuoteTokenListQuery,
       variables,
       requestHeaders: SUSHI_REQUEST_HEADERS,
@@ -404,7 +404,7 @@ export async function getLaunchpadTokens(
 ): Promise<LaunchpadTokenConnection> {
   const result = await request(
     {
-      url: `${SUSHI_DATA_API_HOST}/graphql`,
+      url: SUSHI_DATA_API_GRAPHQL_URL,
       document: LaunchpadTokensQuery,
       variables,
       requestHeaders: SUSHI_REQUEST_HEADERS,
@@ -420,7 +420,7 @@ export async function getLaunchpadToken(
 ): Promise<LaunchpadToken | null> {
   const result = await request(
     {
-      url: `${SUSHI_DATA_API_HOST}/graphql`,
+      url: SUSHI_DATA_API_GRAPHQL_URL,
       document: LaunchpadTokenQuery,
       variables,
       requestHeaders: SUSHI_REQUEST_HEADERS,
@@ -436,7 +436,7 @@ export async function getLaunchpadCreator(
 ): Promise<LaunchpadCreator> {
   const result = await request(
     {
-      url: `${SUSHI_DATA_API_HOST}/graphql`,
+      url: SUSHI_DATA_API_GRAPHQL_URL,
       document: LaunchpadCreatorQuery,
       variables,
       requestHeaders: SUSHI_REQUEST_HEADERS,
@@ -455,7 +455,7 @@ export async function getLaunchpadTrades(
 ): Promise<LaunchpadTradeConnection> {
   const result = await request(
     {
-      url: `${SUSHI_DATA_API_HOST}/graphql`,
+      url: SUSHI_DATA_API_GRAPHQL_URL,
       document: LaunchpadTradesQuery,
       variables,
       requestHeaders: SUSHI_REQUEST_HEADERS,
@@ -471,7 +471,7 @@ export async function getLaunchpadCandles(
 ): Promise<LaunchpadCandleSnapshot> {
   const result = await request(
     {
-      url: `${SUSHI_DATA_API_HOST}/graphql`,
+      url: SUSHI_DATA_API_GRAPHQL_URL,
       document: LaunchpadCandlesQuery,
       variables,
       requestHeaders: SUSHI_REQUEST_HEADERS,

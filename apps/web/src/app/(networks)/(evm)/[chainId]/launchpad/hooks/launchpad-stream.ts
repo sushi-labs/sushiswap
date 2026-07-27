@@ -251,7 +251,7 @@ export function launchpadEventsUrl(input: {
   tokenAddress: string
   streamCursor: string
 }): string {
-  const url = new URL('/graphql/launchpad/events', input.apiBaseUrl)
+  const url = new URL('/stream/launchpad/events', input.apiBaseUrl)
   url.searchParams.set('chainId', String(input.chainId))
   url.searchParams.set('tokenAddress', input.tokenAddress)
   url.searchParams.set('after', input.streamCursor)

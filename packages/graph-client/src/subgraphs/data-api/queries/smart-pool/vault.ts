@@ -2,7 +2,7 @@ import type { VariablesOf } from 'gql.tada'
 import { type RequestOptions, request } from 'src/lib/request.js'
 import type { EvmID } from 'sushi/evm'
 import type { Address } from 'viem'
-import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
+import { SUSHI_DATA_API_GRAPHQL_URL } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 import type { SmartPoolChainId } from '../../types/SmartPoolChainId.js'
@@ -69,7 +69,7 @@ export const VaultQuery = graphql(
 export type GetVault = VariablesOf<typeof VaultQuery>
 
 export async function getVault(variables: GetVault, options?: RequestOptions) {
-  const url = `${SUSHI_DATA_API_HOST}/graphql`
+  const url = SUSHI_DATA_API_GRAPHQL_URL
   try {
     const result = await request(
       {
