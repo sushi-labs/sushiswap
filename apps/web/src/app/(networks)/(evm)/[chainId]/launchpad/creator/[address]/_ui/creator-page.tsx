@@ -5,9 +5,9 @@ import {
   DocumentDuplicateIcon,
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline'
-import { Button, Container, TextField } from '@sushiswap/ui'
+import { Button, Container, LinkExternal, TextField } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
-import type { EvmAddress } from 'sushi/evm'
+import { type EvmAddress, getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatUsd, shortenAddress } from '../../../_ui/format'
 import { MetricCard } from '../../../_ui/metric-card'
@@ -73,10 +73,14 @@ export function CreatorPage({
                 <DocumentDuplicateIcon className="h-4 w-4" />
                 Copy
               </Button>
-              <Button variant="perps-secondary" size="sm">
-                Explorer
-                <ArrowTopRightOnSquareIcon className="h-4 w-4" />
-              </Button>
+              <LinkExternal
+                href={getEvmChainById(chainId).getAccountUrl(address)}
+              >
+                <Button variant="perps-secondary" size="sm" asChild>
+                  Explorer
+                  <ArrowTopRightOnSquareIcon className="h-4 w-4" />
+                </Button>
+              </LinkExternal>
             </div>
           }
         />
