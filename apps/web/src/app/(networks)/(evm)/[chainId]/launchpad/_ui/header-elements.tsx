@@ -24,7 +24,7 @@ function getLaunchpadNavigationLinks(
     {
       title: 'Swap',
       href: `/${chainKey}/swap`,
-      description: 'Return to Sushi Swap.',
+      description: 'Return to SushiSwap.',
     },
     {
       title: 'Discover',
@@ -37,7 +37,7 @@ function getLaunchpadNavigationLinks(
       description: 'Launch a token with locked Sushi liquidity.',
     },
     {
-      title: 'My launches',
+      title: 'My Launches',
       href: `${root}/manage`,
       description: 'Manage metadata and distribute fees.',
     },
@@ -59,9 +59,8 @@ function launchpadHeaderElements(chainKey: string): NavigationElement[] {
       item: (
         <NavigationMenuItem className={NavigationElementType.Custom}>
           <NavigationMenuPrimitive.Trigger asChild>
-            <Button variant="ghost" className="ml-1 !text-perps-muted">
+            <Button variant="ghost" className="ml-1">
               <SushiWithTextIcon width={80} />
-              <span className="text-xs font-semibold">Launchpad</span>
               <DownTriangleIcon width={6} height={6} />
             </Button>
           </NavigationMenuPrimitive.Trigger>
@@ -93,7 +92,7 @@ function launchpadHeaderElements(chainKey: string): NavigationElement[] {
             href={item.href}
             className={classNames(
               navigationMenuTriggerStyle,
-              '!text-perps-muted-70 focus:bg-transparent hover:!bg-secondary hover:!text-perps-muted',
+              'focus:bg-transparent hover:!bg-secondary',
             )}
           >
             {item.title}
