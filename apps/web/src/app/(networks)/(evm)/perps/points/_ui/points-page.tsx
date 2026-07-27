@@ -3,6 +3,7 @@
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useAccount } from 'src/lib/wallet'
 import { PerpsCard } from '~evm/perps/_ui/_common'
+import { ClaimSushi } from './claim-sushi'
 import { FaqSection } from './faq-section'
 import { PointsSummaryCards } from './points-summary-cards'
 
@@ -33,7 +34,10 @@ export function PointsPage() {
 
   return (
     <div className="flex flex-col gap-2 mb-14">
-      <h1 className="text-4xl font-medium mb-2">Points</h1>
+      <div className="flex items-start gap-2 justify-between">
+        <h1 className="text-4xl font-medium mb-2">Points</h1>
+        <ClaimSushi />
+      </div>
       <PointsSummaryCards />
       <div className="mt-4 lg:mt-8">
         <FaqSection />

@@ -5,44 +5,81 @@ import {
   secondsInMinute,
 } from 'date-fns/constants'
 import { useEffect, useState } from 'react'
+import {
+  PERPS_LEADERBOARD_SEASON_1_END_DATE,
+  PERPS_LEADERBOARD_SEASON_2_END_DATE,
+  PERPS_LEADERBOARD_SEASON_2_START_DATE,
+} from '../season-constants'
 
-// july 31, 2026 at 11:59:59 PM UTC
-const SEASON_1_END_DATE = new Date('2026-07-31T23:59:59Z') //todo: get from DB
+interface Countdown {
+  label: string
+  timeLeft: string
+}
 
 export const SeasonCountdown = () => {
-  const [timeLeft, setTimeLeft] = useState(getTimeLeft())
+  const [countdown, setCountdown] = useState(() => getCountdown())
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft(getTimeLeft())
+      setCountdown(getCountdown())
     }, 1000)
 
     return () => clearInterval(timer)
   }, [])
 
-  function getTimeLeft() {
-    const now = new Date()
-    const difference = SEASON_1_END_DATE.getTime() / 1000 - now.getTime() / 1000
-
-    if (difference <= 0) {
-      return 'Season 1 has ended'
-    }
-
-    const days = Math.floor(difference / secondsInDay)
-    const hours = Math.floor((difference % secondsInDay) / secondsInHour)
-    const minutes = Math.floor((difference % secondsInHour) / secondsInMinute)
-    const seconds = Math.floor(difference % secondsInMinute)
-
-    const format = (value: number) => String(value).padStart(2, '0')
-
-    return `${format(days)}:${format(hours)}:${format(minutes)}:${format(seconds)}`
-  }
   return (
     <div className="flex flex-col items-end gap-1">
-      <p className="text-xs text-perps-muted-50">Season 1 ends in</p>
+      <p className="text-xs text-perps-muted-50">{countdown.label}</p>
       <p className="text-base md:text-2xl tabular-nums font-medium bg-gradient-to-r w-fit from-[#27B0E6] from-2% via-[#7D8ACA] via-5% to-[#FA52A0] to-100% text-transparent bg-clip-text">
-        {timeLeft}
+        {countdown.timeLeft}
       </p>
     </div>
   )
+}
+
+function getCountdown(): Countdown {
+  const now = new Date()
+  const nowTime = now.getTime()
+
+  if (nowTime < PERPS_LEADERBOARD_SEASON_1_END_DATE.getTime()) {
+    return {
+      label: 'Season 1 ends in',
+      timeLeft: getTimeLeft(PERPS_LEADERBOARD_SEASON_1_END_DATE, now),
+    }
+  }
+
+  if (nowTime < PERPS_LEADERBOARD_SEASON_2_START_DATE.getTime()) {
+    return {
+      label: 'Season 2 starts in',
+      timeLeft: getTimeLeft(PERPS_LEADERBOARD_SEASON_2_START_DATE, now),
+    }
+  }
+
+  if (nowTime < PERPS_LEADERBOARD_SEASON_2_END_DATE.getTime()) {
+    return {
+      label: 'Season 2 ends in',
+      timeLeft: getTimeLeft(PERPS_LEADERBOARD_SEASON_2_END_DATE, now),
+    }
+  }
+
+  return {
+    label: 'Season 2 has ended',
+    timeLeft: '00:00:00:00',
+  }
+}
+
+function getTimeLeft(targetDate: Date, now: Date): string {
+  const difference = Math.max(
+    0,
+    Math.floor((targetDate.getTime() - now.getTime()) / 1000),
+  )
+
+  const days = Math.floor(difference / secondsInDay)
+  const hours = Math.floor((difference % secondsInDay) / secondsInHour)
+  const minutes = Math.floor((difference % secondsInHour) / secondsInMinute)
+  const seconds = Math.floor(difference % secondsInMinute)
+
+  const format = (value: number) => String(value).padStart(2, '0')
+
+  return `${format(days)}:${format(hours)}:${format(minutes)}:${format(seconds)}`
 }

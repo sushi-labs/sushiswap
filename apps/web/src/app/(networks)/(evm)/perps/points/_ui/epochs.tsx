@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { perpsNumberFormatter, useSushiPointsOverview } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { PerpsCard } from '~evm/perps/_ui/_common'
+import { getSeasonText } from '~evm/perps/leaderboard/season-constants'
 
 export const Epochs = () => {
   const address = useAccount('evm')
@@ -27,7 +28,7 @@ export const Epochs = () => {
               Epoch 1
             </div>
           </PerpsCard>
-          <div className="text-perps-muted-50 text-sm">Season One</div>
+          <div className="text-perps-muted-50 text-sm">{getSeasonText()}</div>
         </div>
         <div className="text-perps-muted-50 text-xs lg:text-sm">
           Total Epoch Points

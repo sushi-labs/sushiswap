@@ -1,5 +1,6 @@
 'use client'
 
+import { getSeasonText } from '../season-constants'
 import { LeaderboardLeaders } from './leaderboard-leaders'
 import { LeaderboardSortBy } from './leaderboard-sort-by'
 import { LeaderboardTable } from './leaderboard-table'
@@ -13,7 +14,7 @@ export function LeaderboardPage() {
         <div>
           <h1 className="text-3xl md:text-4xl font-medium mb-2">Leaderboard</h1>
           <p className="text-perps-muted-50">
-            Compete for Season 1 rewards. Top traders earn{' '}
+            Compete for {getSeasonText()} rewards. Top traders earn{' '}
             <span className="text-white font-medium">exclusive perks.</span>
           </p>
         </div>
