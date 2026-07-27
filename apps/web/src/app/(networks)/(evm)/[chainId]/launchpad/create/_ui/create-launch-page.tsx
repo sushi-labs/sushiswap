@@ -755,7 +755,7 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
                             className="!bg-white/[0.04] !text-perps-muted"
                             {...field}
                             onChange={(event) =>
-                              field.onChange(event.target.value)
+                              field.onChange(event.target.value.toUpperCase())
                             }
                           />
                         </FormControl>
