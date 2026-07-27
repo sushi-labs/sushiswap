@@ -2,11 +2,10 @@
 
 import {
   ArrowRightIcon,
-  BoltIcon,
   MagnifyingGlassIcon,
   SignalIcon,
 } from '@heroicons/react/24/outline'
-import { Button, Container, TextField } from '@sushiswap/ui'
+import { Button, Container, TextField, classNames } from '@sushiswap/ui'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -15,9 +14,7 @@ import { isAddress } from 'viem'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import type { LaunchpadChainId } from '../constants'
 import { useLaunchpadTokens } from '../hooks/use-launchpad-data'
-import type { LaunchpadTokenSortField } from '../types'
 import { formatUsd } from './format'
-import { PageHeading } from './page-heading'
 import { TokenGrid, TokenGridSkeleton } from './token-grid'
 import {
   TokenSortControls,
@@ -121,7 +118,12 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
               ].map((stat, index) => (
                 <div
                   key={stat.label}
-                  className={`${index > 0 ? 'border-l border-white/[0.06]' : ''} px-5 py-4`}
+                  className={classNames(
+                    'border-white/[0.06] px-4 py-4 sm:px-5',
+                    index % 2 === 1 && 'border-l',
+                    index > 1 && 'border-t lg:border-t-0',
+                    index > 0 && 'lg:border-l',
+                  )}
                 >
                   <div className="text-[11px] uppercase tracking-wide text-perps-muted-50">
                     {stat.label}
@@ -131,7 +133,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
                   </div>
                 </div>
               ))}
-              <div className="flex items-center gap-3 border-l border-white/[0.06] px-5 py-4">
+              <div className="flex items-center gap-3 border-l border-white/[0.06] border-t lg:border-t-0 px-5 py-4">
                 <span className="hidden sm:grid h-9 w-9 place-items-center rounded-full bg-emerald-500/10 text-emerald-400">
                   <SignalIcon className="h-5 w-5" />
                 </span>
