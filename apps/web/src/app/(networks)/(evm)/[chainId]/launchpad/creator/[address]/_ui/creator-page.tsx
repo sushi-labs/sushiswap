@@ -5,6 +5,7 @@ import {
   DocumentDuplicateIcon,
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline'
+import { useCopyClipboard } from '@sushiswap/hooks'
 import { Button, Container, LinkExternal, TextField } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { type EvmAddress, getEvmChainById } from 'sushi/evm'
@@ -32,6 +33,7 @@ export function CreatorPage({
   const [sortBy, setSortBy] = useState<LaunchpadTokenSortField>(
     DEFAULT_LAUNCHPAD_TOKEN_SORT,
   )
+  const [isCopied, staticCopy] = useCopyClipboard()
   const filters = useMemo(
     () => ({
       search: search || undefined,
@@ -69,9 +71,10 @@ export function CreatorPage({
                 variant="perps-secondary"
                 size="sm"
                 aria-label="Copy creator address"
+                onClick={() => staticCopy(address)}
               >
                 <DocumentDuplicateIcon className="h-4 w-4" />
-                Copy
+                {isCopied ? 'Copied' : 'Copy'}
               </Button>
               <LinkExternal
                 href={getEvmChainById(chainId).getAccountUrl(address)}
