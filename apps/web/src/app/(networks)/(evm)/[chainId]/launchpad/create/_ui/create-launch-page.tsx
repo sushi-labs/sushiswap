@@ -661,6 +661,11 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
     }
   }
 
+  const previewImageUrl = useMemo(() => {
+    if (!logo?.file) return undefined
+    return URL.createObjectURL(logo.file)
+  }, [logo?.file])
+
   return (
     <Container maxWidth="5xl" className="w-full px-4 py-10 sm:py-14">
       <PageHeading
@@ -1148,9 +1153,20 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
             <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px]">
               <PerpsCard className="p-5 sm:p-7" fullWidth>
                 <div className="flex items-start gap-4">
-                  <span className="grid h-12 w-12 place-items-center rounded-2xl bg-perps-blue/10 text-perps-blue">
-                    <SparklesIcon className="h-6 w-6" />
-                  </span>
+                  {previewImageUrl ? (
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/[0.08] bg-black/20">
+                      <img
+                        src={previewImageUrl}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </span>
+                  ) : (
+                    <span className="grid h-12 w-12 place-items-center rounded-2xl bg-perps-blue/10 text-perps-blue">
+                      <SparklesIcon className="h-6 w-6" />
+                    </span>
+                  )}
+
                   <div>
                     <div className="text-xl font-semibold text-perps-muted">
                       {values.name || 'Untitled token'}
