@@ -9,7 +9,7 @@ import {
   SettingsOverlay,
   classNames,
 } from '@sushiswap/ui'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
 import { EdgeProvider } from 'src/providers/edge-config-provider'
@@ -201,6 +201,18 @@ function SwapPanelContent({
     setSwapAmount(token0Balance.mul(BigInt(percentage)).div(100n).toString())
   }
 
+  const handleMaxAmount = useCallback(() => {
+    if (!token0Balance) return
+    if (token0Balance.currency.type === 'native') {
+      const token0BalanceMinusGas = token0Balance
+        .subHuman('0.000004')
+        .toString()
+      setSwapAmount(token0BalanceMinusGas)
+      return
+    }
+    setSwapAmount(token0Balance.toString())
+  }, [setSwapAmount, token0Balance])
+
   const tokenPillClassName =
     'flex items-center gap-2 rounded-full bg-white/[0.06] px-3 py-2 text-sm font-semibold text-perps-muted shadow-sm'
   const inputTokenPill =
@@ -293,7 +305,9 @@ function SwapPanelContent({
       <div className="mt-5 rounded-2xl bg-white/[0.04] p-4 shadow-[inset_1px_1px_0_rgba(255,255,255,0.05)]">
         <div className="flex items-center justify-between text-xs text-perps-muted-50">
           <span>You pay</span>
-          <span>Balance: {token0Balance?.toSignificant(6) ?? '0'}</span>
+          <button type="button" onClick={handleMaxAmount}>
+            Balance: {token0Balance?.toSignificant(6) ?? '0'}
+          </button>
         </div>
         <div className="mt-4 flex items-center gap-3">
           <input
@@ -302,6 +316,7 @@ function SwapPanelContent({
             onChange={(event) => setSwapAmount(event.target.value)}
             aria-label="Swap input amount"
             className="min-w-0 flex-1 bg-transparent text-3xl font-medium tracking-tight text-perps-muted outline-none"
+            placeholder="0.0"
           />
           {side === 'BUY' ? (
             <TokenSelector
@@ -349,8 +364,13 @@ function SwapPanelContent({
           <span>Balance: {token1Balance?.toSignificant(6) ?? '0'}</span>
         </div>
         <div className="mt-4 flex items-center gap-3">
-          <div className="min-w-0 flex-1 truncate text-3xl font-medium tracking-tight text-perps-muted">
-            {output}
+          <div
+            className={classNames(
+              'min-w-0 flex-1 truncate text-3xl font-medium tracking-tight text-perps-muted',
+              !output && 'text-perps-muted-50',
+            )}
+          >
+            {output || '0.0'}
           </div>
           {side === 'SELL' ? (
             <TokenSelector
