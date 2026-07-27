@@ -148,6 +148,7 @@ export function TradeHistory({ token }: { token: LaunchpadToken }) {
                   id="launchpad-small-trades"
                   checked={includeSmallTrades}
                   onCheckedChange={setIncludeSmallTrades}
+                  thumbClassName="dark:data-[state=unchecked]:!bg-perps-muted/[0.5]"
                 />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                   Include &lt;$1
@@ -162,7 +163,7 @@ export function TradeHistory({ token }: { token: LaunchpadToken }) {
           onScroll={(event) =>
             setIsTableScrolled(event.currentTarget.scrollTop > 0)
           }
-          className="min-h-0 min-w-0 flex-1 overflow-auto overscroll-contain"
+          className="min-h-0 min-w-0 flex-1 overflow-auto overscroll-contain hide-scrollbar"
         >
           <div className="flex min-h-full min-w-[680px] flex-col">
             <div
