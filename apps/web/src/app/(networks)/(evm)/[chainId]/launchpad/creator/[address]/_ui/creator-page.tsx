@@ -103,7 +103,7 @@ export function CreatorPage({
 
       <section className="border-t border-white/[0.04] py-10">
         <Container maxWidth="7xl" className="w-full px-4">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <h2 className="text-2xl font-semibold tracking-tight text-perps-muted">
                 Launched tokens
@@ -112,7 +112,7 @@ export function CreatorPage({
                 Confirmed launches created by this address.
               </p>
             </div>
-            <div className="grid gap-3 sm:grid-cols-[260px_auto]">
+            <div className="grid gap-3 md:grid-cols-[260px_auto]">
               <TextField
                 type="text"
                 value={search}
