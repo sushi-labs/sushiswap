@@ -64,14 +64,14 @@ export function PriceChart({
 
     localStorage.setItem(
       'tradingview.IntervalWidget.quicks',
-      JSON.stringify(['5', '60', '1D']),
+      JSON.stringify(['1', '5', '15', '60']),
     )
     localStorage.setItem('tradingview.current_theme.name', resolvedTheme)
 
     const options: ChartingLibraryWidgetOptions = {
       symbol: `${tokenAddress}:${symbol}`,
       datafeed,
-      interval: '60' as ResolutionString,
+      interval: '1' as ResolutionString,
       container: chartContainerRef.current,
       library_path: '/trading-view/charting_library/',
       locale: 'en' as LanguageCode,
