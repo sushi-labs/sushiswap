@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { AutoDarkMode } from 'src/lib/perps'
 import { getEvmChainById } from 'sushi/evm'
 import { LaunchpadHeader } from './_ui/launchpad-header'
 import { LAUNCHPAD_SUPPORTED_CHAIN_IDS, isLaunchpadChainId } from './constants'
@@ -30,6 +31,7 @@ export default async function LaunchpadLayout({
         chainKey={chainKey}
         networks={LAUNCHPAD_SUPPORTED_CHAIN_IDS}
       />
+      <AutoDarkMode />
       <div className="relative min-h-[calc(100vh-56px)] overflow-x-hidden bg-perps-background text-perps-muted">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] overflow-hidden">
           <div className="absolute left-[5%] top-0 h-72 w-72 rounded-full bg-perps-blue/[0.08] blur-3xl" />
