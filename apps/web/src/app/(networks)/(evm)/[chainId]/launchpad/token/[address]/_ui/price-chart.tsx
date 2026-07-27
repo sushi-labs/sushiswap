@@ -432,7 +432,7 @@ export function PriceChart({
   }, [datafeed, isMounted, resolvedTheme, symbol, tokenAddress])
 
   return (
-    <PerpsCard className="h-[540px] overflow-hidden p-2" fullWidth>
+    <PerpsCard className="h-[385px] lg:h-[540px] overflow-hidden p-2" fullWidth>
       <div className="relative h-full">
         <div
           ref={chartContainerRef}
