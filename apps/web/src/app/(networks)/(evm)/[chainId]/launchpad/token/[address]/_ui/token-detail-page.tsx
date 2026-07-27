@@ -13,11 +13,18 @@ import {
   ClipboardController,
   Container,
   LinkExternal,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
   classNames,
+  useBreakpoint,
 } from '@sushiswap/ui'
 import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import { GithubIcon } from '@sushiswap/ui/icons/GithubIcon'
@@ -193,6 +200,7 @@ export function TokenDetailPage({
     isPending: isTokenPending,
     refetch: refetchToken,
   } = useLaunchpadToken(chainId, address)
+  const { isLg } = useBreakpoint('lg')
 
   if (isTokenPending) {
     return <TokenDetailSkeleton />
@@ -278,7 +286,10 @@ export function TokenDetailPage({
   ]
 
   return (
-    <Container maxWidth="8xl" className="w-full px-4 pb-14 pt-6 sm:pt-8">
+    <Container
+      maxWidth="8xl"
+      className="w-full px-4 pb-20 lg:pb-14 pt-6 sm:pt-8"
+    >
       <div className="mb-5 flex items-center gap-2 text-xs text-perps-muted-50">
         <Link
           href={`/${chainKey}/launchpad`}
@@ -428,7 +439,32 @@ export function TokenDetailPage({
         </div>
 
         <aside className="min-w-0 space-y-4 lg:sticky lg:top-[72px]">
-          <SwapPanel token={token} />
+          {isLg ? (
+            <SwapPanel token={token} />
+          ) : (
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button
+                  type="button"
+                  className="fixed inset-x-4 bottom-6 z-40 h-14 rounded-full text-base font-semibold"
+                >
+                  Trade {token.symbol}
+                </Button>
+              </SheetTrigger>
+              <SheetContent
+                side="bottom"
+                className="max-h-[100svh] overflow-y-auto rounded-t-2xl border-border p-0 pb-6 !bg-perps-background"
+              >
+                <SheetHeader className="pr-8 !text-left !space-y-0">
+                  <SheetTitle>Buy/Sell {token.symbol}</SheetTitle>
+                  <SheetDescription aria-describedby={undefined} />
+                </SheetHeader>
+                <div className="mt-4">
+                  <SwapPanel token={token} />
+                </div>
+              </SheetContent>
+            </Sheet>
+          )}
 
           <PerpsCard className="p-5" fullWidth>
             <h2 className="text-lg font-semibold text-perps-muted">
