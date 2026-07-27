@@ -1,17 +1,11 @@
 import { ArrowUpRightIcon } from '@heroicons/react/20/solid'
-import { SkeletonBox, classNames } from '@sushiswap/ui'
+import { SkeletonBox } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import Link from 'next/link'
 import { getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import type { LaunchpadToken, LaunchpadTokenSortField } from '../types'
-import {
-  formatUsd,
-  formatUsdChange,
-  getSelectedMetric,
-  liquidityChange24hUsd,
-  shortenAddress,
-} from './format'
+import { formatUsd, getSelectedMetric, shortenAddress } from './format'
 import { TokenAvatar } from './token-avatar'
 
 export function TokenCardSkeleton() {
@@ -66,11 +60,6 @@ export function TokenCard({
     token,
     sortBy.startsWith('VOLUME_') ? sortBy : 'VOLUME_24H',
   )
-  const tvlChangeUsd = liquidityChange24hUsd({
-    currentTvlUsd: token.metrics?.currentTvlUsd ?? null,
-    tvlChangePercent24h: token.metrics?.tvlChangePercent.h24 ?? null,
-    launchedAt: new Date(token.createdAt),
-  })
   const href = manage
     ? `/${chainKey}/launchpad/manage/${token.address}`
     : `/${chainKey}/launchpad/token/${token.address}`
@@ -107,7 +96,7 @@ export function TokenCard({
 
         <div className="mt-4">
           <div className="text-[11px] font-medium uppercase tracking-wide text-perps-muted-50">
-            FDV
+            MC
           </div>
           <div className="mt-1 text-xl font-semibold tracking-tight text-perps-muted">
             {formatUsd(token.metrics?.fullyDilutedValuationUsd)}
@@ -141,14 +130,8 @@ export function TokenCard({
           >
             by {shortenAddress(token.creator)}
           </Link>
-          <span
-            className={classNames(
-              'font-medium text-perps-muted',
-              tvlChangeUsd !== null && tvlChangeUsd > 0 && '!text-emerald-400',
-              tvlChangeUsd !== null && tvlChangeUsd < 0 && '!text-red',
-            )}
-          >
-            {formatUsdChange(tvlChangeUsd)} TVL · 24h
+          <span className="font-medium text-perps-muted">
+            {formatUsd(token.metrics?.currentTvlUsd)} Liq
           </span>
         </div>
       </div>
