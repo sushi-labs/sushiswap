@@ -54,7 +54,7 @@ export const LaunchpadTokenFragment = graphql(`
     metrics {
       version
       priceUsd
-      marketcap
+      marketCapitalizationUsd
       fullyDilutedValuationUsd
       currentTvlUsd
       volumeUsd {
@@ -259,7 +259,7 @@ export interface LaunchpadNullableWindowValues {
 export interface LaunchpadMetrics {
   version: string
   priceUsd: number | null
-  marketcap: number | null
+  marketCapitalizationUsd: number | null
   fullyDilutedValuationUsd: number | null
   currentTvlUsd: number | null
   volumeUsd: LaunchpadNullableWindowValues
