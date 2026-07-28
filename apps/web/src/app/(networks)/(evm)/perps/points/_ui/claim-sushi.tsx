@@ -216,8 +216,12 @@ export const ClaimSushi = () => {
   return (
     <PerpsDialog open={open} onOpenChange={setOpen}>
       <PerpsDialogTrigger asChild>
-        <Button variant="perps-default" disabled={isClaimStatusLoading}>
-          Claim SUSHI
+        <Button
+          variant="perps-default"
+          disabled={isClaimStatusLoading}
+          className="!gap-0.5"
+        >
+          Claim <Currency.Icon width={22} height={22} currency={SUSHI[1]} />
         </Button>
       </PerpsDialogTrigger>
       <PerpsDialogContent className="lg:max-w-md">
