@@ -31,7 +31,7 @@ import {
 import type { SendTransactionReturnType } from 'wagmi/actions'
 
 const CLAIM_CONTRACT_ADDRESS =
-  '0x98CC8a636ed813C0Aaa56f44C9F66bE1A1e12Ac7' satisfies EvmAddress
+  '0xeabe255649297FFB86F7651Ee81D943ad28452BF' satisfies EvmAddress
 
 export const ClaimSushi = () => {
   const [open, setOpen] = useState(false)
