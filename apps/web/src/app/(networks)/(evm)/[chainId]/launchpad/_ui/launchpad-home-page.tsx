@@ -71,7 +71,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
     isFetchingNextPage,
     isPending,
     refetch,
-  } = useLaunchpadTokens(input)
+  } = useLaunchpadTokens(input, true)
   const tokens = data.edges.map((edge) => edge.node)
   const totalVolume = tokens.reduce(
     (total, token) => total + (token.metrics?.volumeUsd.h24 ?? 0),
@@ -114,7 +114,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
               {[
                 { label: 'Tokens launched', value: `${data.totalCount}` },
                 { label: '24h volume', value: formatUsd(totalVolume) },
-                { label: 'Locked liquidity', value: formatUsd(totalLiquidity) },
+                { label: 'Liquidity', value: formatUsd(totalLiquidity) },
               ].map((stat, index) => (
                 <div
                   key={stat.label}

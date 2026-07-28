@@ -180,7 +180,7 @@ export function useLaunchpadQuoteTokens(chainId: LaunchpadChainId) {
   return { ...query, data: query.data ?? EMPTY_QUOTE_TOKEN_LIST }
 }
 
-export function useLaunchpadTokens(input: LaunchpadTokensInput) {
+export function useLaunchpadTokens(input: LaunchpadTokensInput, live = false) {
   const query = useInfiniteQuery({
     queryKey: ['launchpad', 'tokens', input],
     queryFn: ({ pageParam }) => {
@@ -195,6 +195,7 @@ export function useLaunchpadTokens(input: LaunchpadTokensInput) {
         ? (lastPage.pageInfo.endCursor ?? undefined)
         : undefined,
     staleTime: 10_000,
+    refetchInterval: live ? 10_000 : false,
   })
 
   const data = useMemo<LaunchpadTokenConnection>(() => {

@@ -44,6 +44,7 @@ import {
   liquidityChange24hUsd,
   shortenAddress,
 } from '../../../_ui/format'
+import { PriceSensitiveText } from '../../../_ui/price-sensitive-text'
 import { StatusPill } from '../../../_ui/status-pill'
 import { TokenAvatar } from '../../../_ui/token-avatar'
 import type { LaunchpadChainId } from '../../../constants'
@@ -398,7 +399,13 @@ export function TokenDetailPage({
                     'mt-1.5 text-lg font-semibold text-perps-muted flex gap-1 items-end flex-wrap',
                   )}
                 >
-                  {stat.value}
+                  {stat.label === 'Price' ? (
+                    <PriceSensitiveText price={metrics?.priceUsd}>
+                      {stat.value}
+                    </PriceSensitiveText>
+                  ) : (
+                    stat.value
+                  )}
                   {stat.changeDetail && stat.changeValue ? (
                     <span
                       className={classNames(

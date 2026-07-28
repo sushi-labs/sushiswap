@@ -19,7 +19,7 @@ type VolumePeriod = '1H' | '6H' | '12H' | '24H'
 
 const SORT_METRICS: Array<{ value: SortMetric; label: string }> = [
   { value: 'VOLUME', label: 'Volume' },
-  { value: 'MARKET_CAPITALIZATION', label: 'Market cap' },
+  { value: 'MARKET_CAPITALIZATION', label: 'Marketcap' },
   { value: 'CURRENT_TVL', label: 'Liquidity' },
   { value: 'CREATED_AT', label: 'Newest' },
 ]

@@ -90,7 +90,7 @@ export function getSelectedMetric(
   switch (sortBy) {
     case 'MARKET_CAPITALIZATION':
       return {
-        label: 'Market cap',
+        label: 'Marketcap',
         value: formatUsd(metrics?.marketCapitalizationUsd),
       }
     case 'VOLUME_1H':

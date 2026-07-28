@@ -6,6 +6,7 @@ import { getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import type { LaunchpadToken, LaunchpadTokenSortField } from '../types'
 import { formatUsd, getSelectedMetric, shortenAddress } from './format'
+import { PriceSensitiveText } from './price-sensitive-text'
 import { TokenAvatar } from './token-avatar'
 
 export function TokenCardSkeleton() {
@@ -107,10 +108,12 @@ export function TokenCard({
           <div>
             <div className="text-xs text-perps-muted-50">Price</div>
             <div className="mt-1 text-sm font-medium text-perps-muted">
-              {token.metrics?.priceUsd === null ||
-              token.metrics?.priceUsd === undefined
-                ? '—'
-                : `$${token.metrics.priceUsd.toPrecision(4)}`}
+              <PriceSensitiveText price={token.metrics?.priceUsd}>
+                {token.metrics?.priceUsd === null ||
+                token.metrics?.priceUsd === undefined
+                  ? '—'
+                  : `$${token.metrics.priceUsd.toPrecision(4)}`}
+              </PriceSensitiveText>
             </div>
           </div>
           <div className="text-right">
