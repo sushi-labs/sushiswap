@@ -65,17 +65,6 @@ import {
 import * as z from 'zod'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
-import type { PreparedLaunchpadLogoFile } from '../../_lib/launchpad-logo'
-import {
-  launchpadMetadataDescriptionSchema,
-  saveLaunchpadMetadata,
-} from '../../_lib/launchpad-metadata'
-import { formatRawAmount } from '../../_ui/format'
-import { LaunchpadLogoInput } from '../../_ui/launchpad-logo-input'
-import { PageHeading } from '../../_ui/page-heading'
-import type { LaunchpadChainId } from '../../constants'
-import { useLaunchpadQuoteTokens } from '../../hooks/use-launchpad-data'
-import { LAUNCHPAD_ABI, LAUNCHPAD_ADDRESS } from '../../launchpad-contract'
 import {
   ALLOCATION_DENOMINATOR_BPS,
   CURVE_PRESETS,
@@ -88,7 +77,18 @@ import {
   quoteRawToUsdRaw,
   realizedInitialFdvQuoteRaw,
   usdFdvToQuoteRaw,
-} from './curve-presets'
+} from '../../_lib/curve-presets'
+import type { PreparedLaunchpadLogoFile } from '../../_lib/launchpad-logo'
+import {
+  launchpadMetadataDescriptionSchema,
+  saveLaunchpadMetadata,
+} from '../../_lib/launchpad-metadata'
+import { formatRawAmount } from '../../_ui/format'
+import { LaunchpadLogoInput } from '../../_ui/launchpad-logo-input'
+import { PageHeading } from '../../_ui/page-heading'
+import type { LaunchpadChainId } from '../../constants'
+import { useLaunchpadQuoteTokens } from '../../hooks/use-launchpad-data'
+import { LAUNCHPAD_ABI, LAUNCHPAD_ADDRESS } from '../../launchpad-contract'
 
 const MIN_STARTING_FDV_USD = 1_000
 const MAX_STARTING_FDV_USD = 100_000

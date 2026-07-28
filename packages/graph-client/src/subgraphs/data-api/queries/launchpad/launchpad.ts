@@ -21,10 +21,6 @@ export const LaunchpadTokenFragment = graphql(`
       sushiFeeBps
       creatorFeeBps
     }
-    curvePreset {
-      id
-      version
-    }
     indexingStatus
     pool {
       address
@@ -58,6 +54,7 @@ export const LaunchpadTokenFragment = graphql(`
     metrics {
       version
       priceUsd
+      marketcap
       fullyDilutedValuationUsd
       currentTvlUsd
       volumeUsd {
@@ -262,6 +259,7 @@ export interface LaunchpadNullableWindowValues {
 export interface LaunchpadMetrics {
   version: string
   priceUsd: number | null
+  marketcap: number | null
   fullyDilutedValuationUsd: number | null
   currentTvlUsd: number | null
   volumeUsd: LaunchpadNullableWindowValues
@@ -308,7 +306,6 @@ export interface LaunchpadToken {
     sushiFeeBps: number
     creatorFeeBps: number
   }
-  curvePreset: { id: string; version: string } | null
   indexingStatus: LaunchpadIndexingStatus
   pool: {
     address: EvmAddress

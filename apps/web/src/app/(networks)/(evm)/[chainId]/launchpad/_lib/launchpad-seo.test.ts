@@ -23,7 +23,6 @@ const token: LaunchpadToken = {
     sushiFeeBps: 50,
     creatorFeeBps: 50,
   },
-  curvePreset: null,
   indexingStatus: 'CONFIRMED',
   pool: {
     address: '0x4444444444444444444444444444444444444444',
@@ -51,6 +50,7 @@ const token: LaunchpadToken = {
   metrics: {
     version: '1',
     priceUsd: 0.004218,
+    marketcap: 4_218_000,
     fullyDilutedValuationUsd: 4_218_000,
     currentTvlUsd: 842_100,
     volumeUsd: {

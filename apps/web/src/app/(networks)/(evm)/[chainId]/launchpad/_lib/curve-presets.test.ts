@@ -14,6 +14,35 @@ import {
 const USD = 10n ** 18n
 
 describe('launchpad curve presets', () => {
+  it('matches the canonical v1 curve definitions', () => {
+    expect(
+      CURVE_PRESETS.map(({ id, ranges }) => ({ id, ranges })),
+    ).toStrictEqual([
+      {
+        id: 'classic',
+        ranges: [{ startOffset: 0, endOffset: null, allocationBps: 10_000 }],
+      },
+      {
+        id: 'steady-price-discovery',
+        ranges: [
+          { startOffset: 0, endOffset: 13_800, allocationBps: 6_000 },
+          { startOffset: 13_800, endOffset: 27_600, allocationBps: 2_500 },
+          { startOffset: 27_600, endOffset: 46_000, allocationBps: 1_000 },
+          { startOffset: 46_000, endOffset: null, allocationBps: 500 },
+        ],
+      },
+      {
+        id: 'fast-price-discovery',
+        ranges: [
+          { startOffset: 0, endOffset: 13_800, allocationBps: 2_500 },
+          { startOffset: 13_800, endOffset: 27_600, allocationBps: 2_500 },
+          { startOffset: 27_600, endOffset: 46_000, allocationBps: 2_500 },
+          { startOffset: 46_000, endOffset: null, allocationBps: 2_500 },
+        ],
+      },
+    ])
+  })
+
   it('converts a USD FDV to quote-token units across token decimals', () => {
     expect(
       usdFdvToQuoteRaw({

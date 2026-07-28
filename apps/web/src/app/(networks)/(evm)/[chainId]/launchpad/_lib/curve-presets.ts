@@ -60,10 +60,10 @@ export const CURVE_PRESETS: CurvePreset[] = [
     description:
       'The price rises quickly from the first buys, smaller purchases can cause sharper price moves.',
     ranges: [
-      { startOffset: 0, endOffset: 13_800, allocationBps: 1_500 },
-      { startOffset: 13_800, endOffset: 27_600, allocationBps: 2_000 },
-      { startOffset: 27_600, endOffset: 46_000, allocationBps: 3_000 },
-      { startOffset: 46_000, endOffset: null, allocationBps: 3_500 },
+      { startOffset: 0, endOffset: 13_800, allocationBps: 2_500 },
+      { startOffset: 13_800, endOffset: 27_600, allocationBps: 2_500 },
+      { startOffset: 27_600, endOffset: 46_000, allocationBps: 2_500 },
+      { startOffset: 46_000, endOffset: null, allocationBps: 2_500 },
     ],
   },
 ]

@@ -132,6 +132,7 @@ const nullableWindowValuesSchema = z.object({
 })
 const metricsSchema = z.object({
   priceUsd: z.number().nonnegative().nullable(),
+  marketcap: z.number().nonnegative().nullable(),
   fullyDilutedValuationUsd: z.number().nonnegative().nullable(),
   currentTvlUsd: z.number().nonnegative().nullable(),
   volumeUsd: nullableWindowValuesSchema,

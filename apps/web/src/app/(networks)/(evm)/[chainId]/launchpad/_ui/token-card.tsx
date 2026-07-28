@@ -99,7 +99,7 @@ export function TokenCard({
             MC
           </div>
           <div className="mt-1 text-xl font-semibold tracking-tight text-perps-muted">
-            {formatUsd(token.metrics?.fullyDilutedValuationUsd)}
+            {formatUsd(token.metrics?.marketcap)}
           </div>
         </div>
 

@@ -1260,7 +1260,6 @@ type LaunchpadToken {
   decimals: Int!
   initialSupply: BigInt!
   feeSplit: LaunchpadFeeSplit!
-  curvePreset: LaunchpadCurvePresetRef
   indexingStatus: LaunchpadIndexingStatus!
   pool: LaunchpadPool!
   positions: [LaunchpadPosition!]!
@@ -1279,11 +1278,6 @@ type LaunchpadPool {
 type LaunchpadFeeSplit {
   sushiFeeBps: Int!
   creatorFeeBps: Int!
-}
-
-type LaunchpadCurvePresetRef {
-  id: String!
-  version: String!
 }
 
 type LaunchpadPosition {
@@ -1362,6 +1356,7 @@ type LaunchpadPageInfo {
 type LaunchpadMetrics {
   version: BigInt!
   priceUsd: Float
+  marketcap: Float
   fullyDilutedValuationUsd: Float
   currentTvlUsd: Float
   volumeUsd: LaunchpadNullableWindowValues!

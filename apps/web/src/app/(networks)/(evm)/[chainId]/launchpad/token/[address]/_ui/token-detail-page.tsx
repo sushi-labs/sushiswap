@@ -35,6 +35,7 @@ import Link from 'next/link'
 import type { EvmAddress } from 'sushi/evm'
 import { getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
+import { detectCurvePreset } from '../../../_lib/detect-curve-preset'
 import {
   formatLaunchpadPriceUsd,
   formatRawAmount,
@@ -252,6 +253,7 @@ export function TokenDetailPage({
     )
   }
 
+  const detectedCurvePreset = detectCurvePreset(token)
   const metrics = token.metrics
   const tvlChangePercent = metrics?.tvlChangePercent.h24
   const tvlChangeUsd = liquidityChange24hUsd({
@@ -507,12 +509,7 @@ export function TokenDetailPage({
                   `${formatRawAmount(token.initialSupply, token.decimals, 0)} ${token.symbol}`,
                 ],
                 ['Pool fee', `${token.pool.feeTier / 10_000}%`],
-                [
-                  'Curve',
-                  token.curvePreset
-                    ? `${token.curvePreset.id} · ${token.curvePreset.version}`
-                    : 'Custom ranges',
-                ],
+                ['Curve', detectedCurvePreset?.name ?? 'Custom'],
               ].map(([label, value]) => (
                 <div
                   key={label}
