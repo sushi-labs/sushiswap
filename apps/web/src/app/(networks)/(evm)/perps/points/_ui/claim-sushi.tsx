@@ -1,6 +1,8 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
   Button,
+  Currency,
+  Dots,
   PerpsDialog,
   PerpsDialogContent,
   PerpsDialogDescription,
@@ -11,12 +13,14 @@ import {
 } from '@sushiswap/ui'
 import { useCallback, useMemo, useState } from 'react'
 import { logger } from 'src/lib/logger'
-import { PERPS_CLAIM_CHAIN_ID } from 'src/lib/perps'
+import { PERPS_CLAIM_CHAIN_ID, usePointClaimProof } from 'src/lib/perps'
+import { extractGraphQLErrorMessage } from 'src/lib/perps/sushi-referral'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { useAccount } from 'src/lib/wallet'
-import type { EvmAddress } from 'sushi/evm'
-import { type Hex, formatUnits, zeroAddress } from 'viem'
+import { formatNumber } from 'sushi'
+import { type EvmAddress, SUSHI } from 'sushi/evm'
+import { zeroAddress } from 'viem'
 import {
   useConnection,
   usePublicClient,
@@ -27,20 +31,7 @@ import {
 import type { SendTransactionReturnType } from 'wagmi/actions'
 
 const CLAIM_CONTRACT_ADDRESS =
-  '0xE156D33dE305026D8B74BC00373bE5AbDD01325c' satisfies EvmAddress
-
-const CLAIM_PROOF = [
-  '0x3430cdd41a49ca09e7cb22202438f8e76482327ce1f7d4a4de77dc3eba693286',
-  '0xbe4bc311b0c9abbe7ac4e0f63d44cafc9a693349d49bcee3946c2e4f3e61d5e7',
-  '0x5dde247742925a471b55911b1270d57182984a6a51f7288cc80a227a65dfe7c6',
-  '0x46564d618650d169ad556d11d6a0fbb5c6182d89cd2fd3d6c5584308fed561c0',
-  '0xa959d4adabdcf2260deac2023c459677df9977b1194f74178160d34e5934c00f',
-  '0xc3435f0c69a1be615ed2709ee9bf24a435229a6e377f35271bbbfa82f6715515',
-  '0xcad9f9ad8c4f93f2e649f9a904abceece95bb3556819ec65ec7e03ebfc5403b4',
-] as const satisfies readonly Hex[]
-
-const CLAIM_AMOUNT = 31_206_759_036_261_103_062n
-const CLAIM_AMOUNT_FORMATTED = formatUnits(CLAIM_AMOUNT, 18)
+  '0x98CC8a636ed813C0Aaa56f44C9F66bE1A1e12Ac7' satisfies EvmAddress
 
 export const ClaimSushi = () => {
   const [open, setOpen] = useState(false)
@@ -48,6 +39,14 @@ export const ClaimSushi = () => {
   const address = useAccount('evm')
   const { chainId } = useConnection()
   const client = usePublicClient()
+  const {
+    data: claimProofData,
+    isLoading: isClaimProofLoading,
+    error,
+  } = usePointClaimProof({
+    season: 'SEASON_1',
+    address,
+  })
   const {
     data: contractData,
     isLoading: isClaimStatusLoading,
@@ -93,13 +92,17 @@ export const ClaimSushi = () => {
       abi,
       chainId: PERPS_CLAIM_CHAIN_ID,
       functionName: 'claim',
-      args: [CLAIM_AMOUNT, CLAIM_PROOF],
+      args: [
+        BigInt(claimProofData?.amount || '0'),
+        claimProofData?.proof || [],
+      ],
       query: {
         enabled: Boolean(
           address &&
             chainId === PERPS_CLAIM_CHAIN_ID &&
             isClaimWindowOpen &&
-            !hasClaimed,
+            !hasClaimed &&
+            Boolean(claimProofData?.amount && claimProofData?.proof?.length),
         ),
       },
     })
@@ -137,16 +140,16 @@ export const ClaimSushi = () => {
         txHash: hash,
         promise: receipt,
         summary: {
-          pending: `Claiming ${CLAIM_AMOUNT_FORMATTED} SUSHI`,
-          completed: `Successfully claimed ${CLAIM_AMOUNT_FORMATTED} SUSHI`,
-          failed: `Something went wrong claiming ${CLAIM_AMOUNT_FORMATTED} SUSHI`,
+          pending: `Claiming ${claimProofData?.displayAmount} SUSHI`,
+          completed: `Successfully claimed ${claimProofData?.displayAmount} SUSHI`,
+          failed: `Something went wrong claiming ${claimProofData?.displayAmount} SUSHI`,
         },
         groupTimestamp: timestamp,
         timestamp,
         variant: 'perps',
       })
     },
-    [address, client, refetchClaimStatus],
+    [address, client, refetchClaimStatus, claimProofData?.displayAmount],
   )
 
   const handleClaimError = useCallback((error: Error) => {
@@ -188,21 +191,32 @@ export const ClaimSushi = () => {
     return `${endDate.toLocaleDateString()} ${endDate.toLocaleTimeString()}`
   }, [claimEndDate])
 
+  const claimEnded = useMemo(() => {
+    if (claimEndDate === 0n) {
+      return false
+    }
+
+    return Date.now() / 1000 > Number(claimEndDate)
+  }, [claimEndDate])
+
   const isClaimPending = isWritePending || isReceiptPending
   const isClaimButtonLoading = isSimulationLoading || isClaimPending
 
-  if (!isClaimStatusLoading && !isClaimWindowOpen) {
-    return null
-  }
+  const parsedGraphqlError = useMemo(() => {
+    if (!error) {
+      return null
+    }
+    if (error instanceof Error) {
+      return extractGraphQLErrorMessage(error.message)
+    }
+
+    return 'Something went wrong fetching claim details'
+  }, [error])
 
   return (
     <PerpsDialog open={open} onOpenChange={setOpen}>
       <PerpsDialogTrigger asChild>
-        <Button
-          variant="perps-default"
-          disabled={isClaimStatusLoading}
-          loading={isClaimStatusLoading}
-        >
+        <Button variant="perps-default" disabled={isClaimStatusLoading}>
           Claim SUSHI
         </Button>
       </PerpsDialogTrigger>
@@ -211,32 +225,50 @@ export const ClaimSushi = () => {
           <PerpsDialogTitle className="w-full text-center">
             Claim SUSHI
           </PerpsDialogTitle>
-          <PerpsDialogDescription />
+          <PerpsDialogDescription>
+            Claim your SUSHI from points earned in Season 1.
+          </PerpsDialogDescription>
         </PerpsDialogHeader>
         <PerpsDialogInnerContent>
           <div className="space-y-4 text-center">
-            {isClaimStatusLoading ? (
-              <div className="py-4 text-sm text-slate-400">
-                Loading claim details...
+            {isClaimStatusLoading || isClaimProofLoading ? (
+              <div className="pb-4 text-sm text-slate-400">
+                <Dots>Loading claim details</Dots>
+              </div>
+            ) : claimEndDate === 0n ? (
+              <div className="pb-4 text-sm text-slate-400">
+                Claim window has not opened yet. Claiming will open August 1,
+                2026.
+              </div>
+            ) : claimEnded ? (
+              <div className="pb-4 text-sm text-slate-400">
+                Claim window has ended. Continue trading Perps to earn points
+                for the next season!
+              </div>
+            ) : parsedGraphqlError ? (
+              <div className="pb-4 text-sm text-slate-400">
+                {parsedGraphqlError}
               </div>
             ) : (
               <>
                 <div>
-                  <div className="text-sm text-slate-400">
-                    Claimable SUSHI from points earned in Season 1
+                  <div className="flex items-center justify-center">
+                    <Currency.Icon width={42} height={42} currency={SUSHI[1]} />
                   </div>
                   {hasClaimed ? (
                     <div className="mt-1 text-lg font-medium">
-                      Already claimed {CLAIM_AMOUNT_FORMATTED} SUSHI
+                      Already claimed{' '}
+                      {formatNumber(claimProofData?.displayAmount || '0', 6)}{' '}
+                      SUSHI
                     </div>
                   ) : (
                     <div className="mt-1 text-2xl font-medium">
-                      {CLAIM_AMOUNT_FORMATTED} SUSHI
+                      {formatNumber(claimProofData?.displayAmount || '0', 6)}{' '}
+                      SUSHI
                     </div>
                   )}
                   <p className="text-xs text-slate-400">
-                    There is a 30 day claim window. After {endDateString}, you
-                    will no longer be able to claim your SUSHI.
+                    Season 1 claim window ends {endDateString}.
                   </p>
                 </div>
                 <Checker.Root>

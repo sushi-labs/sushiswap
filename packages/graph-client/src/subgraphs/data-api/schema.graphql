@@ -72,6 +72,7 @@ type Query {
   v3Mints(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Mint!]!
   v3Collects(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Collect!]!
   v3Transactions(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Transaction!]!
+  launchpad: LaunchpadQueries!
   perps: PerpsQueries!
 }
 
@@ -528,10 +529,20 @@ type PortfolioToken {
   name: String!
   symbol: String!
   decimals: Int!
+
+  """
+  USD price. Null when no provider or price source has a price for this token —
+  distinct from a real zero price.
+  """
   price: Float
   price24hChange: Float
   amountUSD24Change: Float
   balance: BigInt!
+
+  """
+  USD value of the balance. Null when the token has no available valuation —
+  distinct from a real zero value. Unpriced tokens do not contribute to totalUSD.
+  """
   amountUSD: Float
   approved: Boolean!
   stellarMetadata: StellarTokenMetadata
@@ -620,18 +631,18 @@ type FuroClaim {
   token: SimpleToken!
 }
 
+enum PortfolioWalletStatus {
+  SUCCESS
+  PARTIAL
+}
+
 type PortfolioWallet {
   totalUSD: Float!
   amountUSD24Change: Float
   percentageChange24h: Float
-  tokens: [PortfolioToken]!
+  tokens: [PortfolioToken!]!
   status: PortfolioWalletStatus!
   failedChainIds: [PortfolioChainId!]!
-}
-
-enum PortfolioWalletStatus {
-  SUCCESS
-  PARTIAL
 }
 
 enum TransactionTokenType {
@@ -675,10 +686,14 @@ type PortfolioTransaction {
   gasFeeUSD: Float!
 }
 
-"""A field whose value is an EVM (0x), SVM (base58), or Stellar (StrKey) address"""
+"""
+A field whose value is an EVM (0x), SVM (base58), or Stellar (StrKey) address
+"""
 scalar Address
 
-"""A field whose value is an EVM address, SVM address, or Stellar contract address"""
+"""
+A field whose value is an EVM address, SVM address, or Stellar contract address
+"""
 scalar ContractAddress
 
 """A field whose value is a Solana address"""
@@ -687,19 +702,16 @@ scalar SvmAddress
 """A field whose value is an EVM address"""
 scalar EvmAddress
 
-"""A field whose value is a Stellar account address (G...)"""
+"""A field whose value is a Stellar account address (G…)"""
 scalar StellarAccountAddress
-
-"""A field whose value is a portfolio-supported chain ID"""
-scalar PortfolioChainId
-
-"""A field whose value is a portfolio token ID"""
-scalar PortfolioTokenId
 
 """
 A field whose value is a byte string: https://en.wikipedia.org/wiki/Byte_string
 """
 scalar Bytes
+
+"""A field whose value is a canonical RFC 4648 base64 string"""
+scalar Base64
 
 """A field whose value is a bigint"""
 scalar BigInt
@@ -725,6 +737,12 @@ scalar BladeChainId
 """A field whose value is a smart pool chain ID"""
 scalar SmartPoolChainId
 
+"""A field whose value is a portfolio chain ID"""
+scalar PortfolioChainId
+
+"""A field whose value is a portfolio token ID in chainId:address format"""
+scalar PortfolioTokenId
+
 """A field whose value is a token list chain ID"""
 scalar TokenListChainId
 
@@ -738,6 +756,7 @@ enum ChainIdFeature {
   PoolChainId
   BladeChainId
   SmartPoolChainId
+  PortfolioChainId
   TokenListChainId
   TrendingTokensChainId
 }
@@ -867,6 +886,7 @@ type TokenListEntry {
   name: String!
   decimals: Int!
   approved: Boolean!
+  approvalStatus: TokenApprovalStatus!
   stellarMetadata: StellarTokenMetadata
 }
 
@@ -877,6 +897,7 @@ type TokenListWithBalanceEntry {
   decimals: Int!
   balance: BigInt!
   approved: Boolean!
+  approvalStatus: TokenApprovalStatus!
   stellarMetadata: StellarTokenMetadata
 }
 
@@ -1071,6 +1092,267 @@ type V3Transaction {
   mints: [V3Mint]
 }
 
+"""A chain ID configured for the Sushi launchpad"""
+scalar LaunchpadChainId
+
+type LaunchpadQueries {
+  quoteTokenList(chainId: LaunchpadChainId!): [LaunchpadTokenRef!]!
+  tokens(input: LaunchpadTokensInput!): LaunchpadTokenConnection!
+  token(chainId: LaunchpadChainId!, address: EvmAddress!): LaunchpadToken
+  creator(chainId: LaunchpadChainId!, address: EvmAddress!): LaunchpadCreator!
+  trades(input: LaunchpadTradesInput!): LaunchpadTradeConnection!
+  candles(input: LaunchpadCandlesInput!): LaunchpadCandleConnection!
+}
+
+type LaunchpadMutations {
+  updateMetadata(input: LaunchpadUpdateMetadataInput!, signature: Bytes!): LaunchpadMetadata!
+}
+
+type LaunchpadTokenRef {
+  address: EvmAddress!
+  symbol: String!
+  name: String!
+  decimals: Int!
+}
+
+enum LaunchpadIndexingStatus {
+  PROVISIONAL
+  CONFIRMED
+  ORPHANED
+}
+
+type LaunchpadToken {
+  id: ID!
+  chainId: LaunchpadChainId!
+  address: EvmAddress!
+  creator: EvmAddress!
+  factoryAddress: EvmAddress!
+  name: String!
+  symbol: String!
+  decimals: Int!
+  initialSupply: BigInt!
+  feeSplit: LaunchpadFeeSplit!
+  curvePreset: LaunchpadCurvePresetRef
+  indexingStatus: LaunchpadIndexingStatus!
+  pool: LaunchpadPool!
+  positions: [LaunchpadPosition!]!
+  metadata: LaunchpadMetadata!
+  metrics: LaunchpadMetrics
+  creationTransactionHash: Bytes!
+  createdAt: String!
+}
+
+type LaunchpadPool {
+  address: EvmAddress!
+  feeTier: Int!
+  quoteToken: LaunchpadTokenRef!
+}
+
+type LaunchpadFeeSplit {
+  sushiFeeBps: Int!
+  creatorFeeBps: Int!
+}
+
+type LaunchpadCurvePresetRef {
+  id: String!
+  version: String!
+}
+
+type LaunchpadPosition {
+  positionIndex: Int!
+  positionId: BigInt!
+  tickLower: Int!
+  tickUpper: Int!
+  desiredAmount: BigInt!
+  usedAmount: BigInt!
+  liquidity: BigInt!
+}
+
+type LaunchpadMetadata {
+  description: String
+  links: [LaunchpadMetadataLink!]!
+  revision: Int!
+  updatedAt: String
+}
+
+type LaunchpadMetadataLink {
+  kind: String!
+  url: String!
+  label: String
+}
+
+type LaunchpadCreator {
+  chainId: LaunchpadChainId!
+  address: EvmAddress!
+  launchCount: Int!
+}
+
+input LaunchpadTokensInput {
+  chainId: LaunchpadChainId!
+  creator: EvmAddress
+  search: String
+  first: Int = 20
+  after: String
+  sortBy: LaunchpadTokenSortField = CREATED_AT
+  sortDirection: LaunchpadSortDirection = DESC
+}
+
+enum LaunchpadTokenSortField {
+  CREATED_AT
+  VOLUME_1H
+  VOLUME_6H
+  VOLUME_12H
+  VOLUME_24H
+  CURRENT_TVL
+  TVL_CHANGE_1H
+  TVL_CHANGE_6H
+  TVL_CHANGE_12H
+  TVL_CHANGE_24H
+}
+
+enum LaunchpadSortDirection {
+  ASC
+  DESC
+}
+
+type LaunchpadTokenConnection {
+  edges: [LaunchpadTokenEdge!]!
+  pageInfo: LaunchpadPageInfo!
+  totalCount: Int!
+}
+
+type LaunchpadTokenEdge {
+  cursor: String!
+  node: LaunchpadToken!
+}
+
+type LaunchpadPageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+}
+
+type LaunchpadMetrics {
+  version: BigInt!
+  priceUsd: Float
+  fullyDilutedValuationUsd: Float
+  currentTvlUsd: Float
+  volumeUsd: LaunchpadNullableWindowValues!
+  tvlChangePercent: LaunchpadNullableWindowValues!
+  asOf: String!
+  source: String!
+  isStale: Boolean!
+}
+
+type LaunchpadNullableWindowValues {
+  h1: Float
+  h6: Float
+  h12: Float
+  h24: Float
+}
+
+enum LaunchpadTradeDirection {
+  BUY
+  SELL
+}
+
+type LaunchpadTrade {
+  id: ID!
+  chainId: LaunchpadChainId!
+  tokenAddress: EvmAddress!
+  poolAddress: EvmAddress!
+  feeTier: Int!
+  isLaunchPool: Boolean!
+  transactionHash: Bytes!
+  logIndex: Int!
+  blockNumber: BigInt!
+  timestamp: String!
+  trader: EvmAddress
+  direction: LaunchpadTradeDirection!
+  tokenAmount: BigInt!
+  quoteToken: LaunchpadTokenRef!
+  quoteAmount: BigInt!
+  priceUsd: Float
+  amountUsd: Float
+}
+
+input LaunchpadTradesInput {
+  chainId: LaunchpadChainId!
+  tokenAddress: EvmAddress!
+  includeSmallTrades: Boolean = false
+  first: Int = 50
+  after: String
+}
+
+type LaunchpadTradeConnection {
+  edges: [LaunchpadTradeEdge!]!
+  pageInfo: LaunchpadPageInfo!
+  totalCount: Int!
+  streamCursor: BigInt!
+}
+
+type LaunchpadTradeEdge {
+  cursor: String!
+  node: LaunchpadTrade!
+}
+
+enum LaunchpadCandleInterval {
+  ONE_MINUTE
+  FIVE_MINUTES
+  FIFTEEN_MINUTES
+  ONE_HOUR
+  FOUR_HOURS
+  ONE_DAY
+}
+
+input LaunchpadCandlesInput {
+  chainId: LaunchpadChainId!
+  tokenAddress: EvmAddress!
+  interval: LaunchpadCandleInterval!
+  from: Int!
+  to: Int!
+  fresh: Boolean = false
+}
+
+type LaunchpadCandleConnection {
+  nodes: [LaunchpadCandle!]!
+  streamCursor: BigInt!
+}
+
+type LaunchpadCandle {
+  timestamp: Int!
+  open: Float!
+  high: Float!
+  low: Float!
+  close: Float!
+  volumeUsd: Float!
+  tradeCount: Int!
+}
+
+input LaunchpadMetadataDocumentInput {
+  description: String
+  links: [LaunchpadMetadataLinkInput!]! = []
+}
+
+input LaunchpadMetadataLinkInput {
+  kind: String!
+  url: String!
+  label: String
+}
+
+input LaunchpadUpdateMetadataInput {
+  chainId: LaunchpadChainId!
+  tokenAddress: EvmAddress!
+  expectedRevision: Int!
+  metadata: LaunchpadMetadataDocumentInput!
+  image: Base64
+  deadline: BigInt!
+}
+
+type Mutation {
+  launchpad: LaunchpadMutations!
+  perps: PerpsMutations!
+}
+
 type PerpsReferralCode {
   id: ID!
   code: String!
@@ -1147,6 +1429,12 @@ enum PerpsLeaderboardTimeframe {
   SEASON
 }
 
+enum PerpsPointsSeason {
+  CURRENT
+  SEASON_1
+  SEASON_2
+}
+
 type PerpsLeaderboardEntry {
   address: EvmAddress!
   points: Float!
@@ -1194,23 +1482,28 @@ type PerpsReferralRedemptionResult {
   linkedAt: String!
 }
 
+type ClaimProofResult {
+  account: EvmAddress!
+  amount: String!
+  displayAmount: String!
+  proof: [Bytes!]!
+  leaf: Bytes!
+}
+
 type PerpsQueries {
   claim(address: EvmAddress!): PerpsClaim
   referralOverview(address: EvmAddress!): PerpsReferralOverview!
   referredUsers(address: EvmAddress!): [PerpsReferredUser!]!
   referralFeeHistory(address: EvmAddress!, from: String, to: String): [PerpsDailyFeePoint!]!
-  pointsOverview(address: EvmAddress!): PerpsPointsOverview!
-  pointsHistory(address: EvmAddress!, from: String, to: String): [PerpsDailyPoint!]!
-  leaderboard(timeframe: PerpsLeaderboardTimeframe! = SEASON): PerpsLeaderboard!
-  leaderboardUser(address: EvmAddress!, timeframe: PerpsLeaderboardTimeframe! = SEASON): PerpsLeaderboardUser!
+  pointsOverview(address: EvmAddress!, season: PerpsPointsSeason! = CURRENT): PerpsPointsOverview!
+  pointsHistory(address: EvmAddress!, from: String, to: String, season: PerpsPointsSeason! = CURRENT): [PerpsDailyPoint!]!
+  leaderboard(timeframe: PerpsLeaderboardTimeframe! = SEASON, season: PerpsPointsSeason! = CURRENT): PerpsLeaderboard!
+  leaderboardUser(address: EvmAddress!, timeframe: PerpsLeaderboardTimeframe! = SEASON, season: PerpsPointsSeason! = CURRENT): PerpsLeaderboardUser!
   isReferralCodeAvailable(code: String!): Boolean!
+  pointClaimProof(season: PerpsPointsSeason! = SEASON_1, address: EvmAddress!): ClaimProofResult!
 }
 
 type PerpsMutations {
   createReferralCode(address: EvmAddress!, code: String): PerpsReferralCode!
   redeemReferralCode(address: EvmAddress!, code: String!, expiresAt: String!, signature: String!): PerpsReferralRedemptionResult!
-}
-
-type Mutation {
-  perps: PerpsMutations!
 }
