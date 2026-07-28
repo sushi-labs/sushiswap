@@ -61,11 +61,12 @@ const PLACE_CARD_CLASS_NAMES: Record<Place, string> = {
 
 export const LeaderboardLeaders = () => {
   const {
-    state: { sortBy, timeframe },
+    state: { sortBy, timeframe, seasonToView },
   } = useLeaderboardState()
   const { data, isLoading } = useLeaderboard({
     timeframe: TimeframeToPerpsTimeframe[timeframe],
     sortBy,
+    season: seasonToView,
   })
 
   const { first, second, third } = useMemo(() => {

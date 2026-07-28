@@ -1,7 +1,7 @@
 'use client'
-
 import { getSeasonText } from '../season-constants'
 import { LeaderboardLeaders } from './leaderboard-leaders'
+import { LeaderboardSeasonOptions } from './leaderboard-season-options'
 import { LeaderboardSortBy } from './leaderboard-sort-by'
 import { LeaderboardTable } from './leaderboard-table'
 import { LeaderboardTimeframe } from './leaderboard-timeframe'
@@ -20,9 +20,12 @@ export function LeaderboardPage() {
         </div>
         <SeasonCountdown />
       </div>
-      <div className="flex items-center gap-2 justify-between mt-2">
+      <div className="flex items-start gap-2 justify-between mt-2">
         <LeaderboardSortBy />
-        <LeaderboardTimeframe />
+        <div className="flex flex-col gap-2">
+          <LeaderboardSeasonOptions />
+          <LeaderboardTimeframe />
+        </div>
       </div>
       <LeaderboardLeaders />
       <LeaderboardTable />

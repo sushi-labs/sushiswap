@@ -7,9 +7,9 @@ import { SUSHI_REQUEST_HEADERS } from '../../../request-headers.js'
 
 export const PerpsLeaderboardQuery = graphql(
   `
-    query PerpsLeaderboard($timeframe: PerpsLeaderboardTimeframe!) {
+    query PerpsLeaderboard($timeframe: PerpsLeaderboardTimeframe!, $season: PerpsPointsSeason!) {
       perps {
-        leaderboard(timeframe: $timeframe) {
+        leaderboard(timeframe: $timeframe, season: $season) {
           updatedAt
           timeframe
           entries {

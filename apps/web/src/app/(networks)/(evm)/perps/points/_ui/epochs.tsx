@@ -1,13 +1,22 @@
+import type { PerpsPointsSeason } from '@sushiswap/graph-client/data-api'
 import { SkeletonBox, SkeletonText } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { perpsNumberFormatter, useSushiPointsOverview } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
-import { PerpsCard } from '~evm/perps/_ui/_common'
-import { getSeasonText } from '~evm/perps/leaderboard/season-constants'
+import { PerpsCard, SideToggle } from '~evm/perps/_ui/_common'
 
-export const Epochs = () => {
+export const Epochs = ({
+  season,
+  setSeason,
+}: {
+  season: PerpsPointsSeason
+  setSeason: (season: PerpsPointsSeason) => void
+}) => {
   const address = useAccount('evm')
-  const { data, isLoading } = useSushiPointsOverview({ address })
+  const { data, isLoading } = useSushiPointsOverview({
+    address,
+    season,
+  })
   const currentPoints = useMemo(
     () =>
       data?.totalPoints
@@ -28,7 +37,13 @@ export const Epochs = () => {
               Epoch 1
             </div>
           </PerpsCard>
-          <div className="text-perps-muted-50 text-sm">{getSeasonText()}</div>
+          <SideToggle
+            side={season}
+            setSide={setSeason}
+            options={['SEASON_1', 'SEASON_2']}
+            baseSymbol={'Season 1'}
+            quoteSymbol={'Season 2'}
+          />
         </div>
         <div className="text-perps-muted-50 text-xs lg:text-sm">
           Total Epoch Points

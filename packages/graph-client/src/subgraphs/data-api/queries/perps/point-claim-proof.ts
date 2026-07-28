@@ -47,3 +47,4 @@ export async function getPointClaimProof(
 }
 
 export type PointClaimProof = Awaited<ReturnType<typeof getPointClaimProof>>
+export type PerpsPointsSeason = GetPointClaimProof['season']

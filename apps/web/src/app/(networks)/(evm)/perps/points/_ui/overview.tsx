@@ -1,3 +1,4 @@
+import type { PerpsPointsSeason } from '@sushiswap/graph-client/data-api'
 import { SkeletonBox, SkeletonCircle, classNames } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
@@ -30,9 +31,12 @@ import {
 
 const ITEM_HEIGHT = 78 // height of each tier row in px
 
-export const Overview = () => {
+export const Overview = ({ season }: { season: PerpsPointsSeason }) => {
   const address = useAccount('evm')
-  const { data, isLoading } = usePointsData({ address })
+  const { data, isLoading } = usePointsData({
+    address,
+    season,
+  })
   const scrollRef = useRef<HTMLDivElement>(null)
   const currentTierIndex = useMemo(
     () => DEFAULT_TIERS.findIndex((t) => t.id === data?.currentTier.id),

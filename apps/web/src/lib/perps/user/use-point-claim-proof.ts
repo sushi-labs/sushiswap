@@ -1,4 +1,7 @@
-import { getPointClaimProof } from '@sushiswap/graph-client/data-api'
+import {
+  type PerpsPointsSeason,
+  getPointClaimProof,
+} from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import type { EvmAddress } from 'sushi/evm'
 import { getAddress } from 'viem'
@@ -7,7 +10,7 @@ export const usePointClaimProof = ({
   season = 'SEASON_1',
   address,
 }: {
-  season: 'SEASON_1' | 'SEASON_2' | 'CURRENT' //todo: get from schema
+  season: PerpsPointsSeason
   address: EvmAddress | undefined
 }) => {
   return useQuery({

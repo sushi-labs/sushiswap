@@ -7,9 +7,9 @@ import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
 export const PerpsPointsHistoryQuery = graphql(
   `
-    query PerpsPointsHistory($address: EvmAddress!, $from: String, $to: String) {
+    query PerpsPointsHistory($address: EvmAddress!, $from: String, $to: String, $season: PerpsPointsSeason!) {
       perps {
-        pointsHistory(address: $address, from: $from, to: $to) {
+        pointsHistory(address: $address, from: $from, to: $to, season: $season) {
           date
           points
         }

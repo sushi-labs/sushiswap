@@ -4,11 +4,17 @@ import { Button, LinkInternal, SkeletonText } from '@sushiswap/ui'
 import { perpsNumberFormatter, useSushiPointsOverview } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
 import { PerpsCard } from '~evm/perps/_ui/_common'
-import { getSeasonText } from '~evm/perps/leaderboard/season-constants'
+import {
+  getCurrentSeason,
+  getSeasonText,
+} from '~evm/perps/leaderboard/season-constants'
 
 export function Points() {
   const address = useAccount('evm')
-  const { data, isLoading, error } = useSushiPointsOverview({ address })
+  const { data, isLoading, error } = useSushiPointsOverview({
+    address,
+    season: getCurrentSeason(),
+  })
 
   return (
     <div className="relative overflow-hidden">

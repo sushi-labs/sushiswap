@@ -7,9 +7,9 @@ import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
 export const PerpsPointsOverviewQuery = graphql(
   `
-    query PerpsPointsOverview($address: EvmAddress!) {
+    query PerpsPointsOverview($address: EvmAddress!, $season: PerpsPointsSeason!) {
       perps {
-        pointsOverview(address: $address) {
+        pointsOverview(address: $address, season: $season) {
           pointMultipliers {
               multiplier
               thresholdUsd

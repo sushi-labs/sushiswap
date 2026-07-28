@@ -1,14 +1,20 @@
 'use client'
-import type { PerpsLeaderboardTimeframe } from '@sushiswap/graph-client/data-api'
+import type {
+  PerpsLeaderboardTimeframe,
+  PerpsPointsSeason,
+} from '@sushiswap/graph-client/data-api'
 import { type FC, createContext, useContext, useMemo, useState } from 'react'
+import { getCurrentSeason } from '../season-constants'
 interface State {
   mutate: {
     setSortBy: (sortBy: LeaderboardSortType) => void
     setTimeframe: (timeframe: LeaderboardTimeframeType) => void
+    setSeasonToView: (season: PerpsPointsSeason) => void
   }
   state: {
     sortBy: LeaderboardSortType
     timeframe: LeaderboardTimeframeType
+    seasonToView: PerpsPointsSeason
   }
 }
 export const LEADERBOARD_SORT_BY = ['PNL', 'points'] as const
@@ -32,25 +38,31 @@ interface LeaderboardStateProviderProps {
   children: React.ReactNode
 }
 
+const currentSeason = getCurrentSeason()
+
 const LeaderboardStateProvider: FC<LeaderboardStateProviderProps> = ({
   children,
 }) => {
   const [sortBy, setSortBy] = useState<LeaderboardSortType>('points')
   const [timeframe, setTimeframe] = useState<LeaderboardTimeframeType>('season')
+  const [seasonToView, setSeasonToView] =
+    useState<PerpsPointsSeason>(currentSeason)
   return (
     <LeaderboardStateContext.Provider
       value={useMemo(() => {
         return {
           mutate: {
+            setSeasonToView,
             setSortBy,
             setTimeframe,
           },
           state: {
+            seasonToView,
             sortBy,
             timeframe,
           },
         }
-      }, [sortBy, timeframe])}
+      }, [sortBy, timeframe, seasonToView])}
     >
       {children}
     </LeaderboardStateContext.Provider>
