@@ -88,6 +88,11 @@ export function getSelectedMetric(
   const metrics = token.metrics
 
   switch (sortBy) {
+    case 'MARKET_CAPITALIZATION':
+      return {
+        label: 'Market cap',
+        value: formatUsd(metrics?.marketCapitalizationUsd),
+      }
     case 'VOLUME_1H':
       return { label: '1h volume', value: formatUsd(metrics?.volumeUsd.h1) }
     case 'VOLUME_6H':

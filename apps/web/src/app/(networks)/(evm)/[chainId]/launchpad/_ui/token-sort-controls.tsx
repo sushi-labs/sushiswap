@@ -10,11 +10,16 @@ import {
 } from '@sushiswap/ui'
 import type { LaunchpadTokenSortField } from '../types'
 
-type SortMetric = 'VOLUME' | 'CURRENT_TVL' | 'CREATED_AT'
+type SortMetric =
+  | 'VOLUME'
+  | 'MARKET_CAPITALIZATION'
+  | 'CURRENT_TVL'
+  | 'CREATED_AT'
 type VolumePeriod = '1H' | '6H' | '12H' | '24H'
 
 const SORT_METRICS: Array<{ value: SortMetric; label: string }> = [
   { value: 'VOLUME', label: 'Volume' },
+  { value: 'MARKET_CAPITALIZATION', label: 'Market cap' },
   { value: 'CURRENT_TVL', label: 'Liquidity' },
   { value: 'CREATED_AT', label: 'Newest' },
 ]
@@ -30,11 +35,12 @@ const VOLUME_SORT_FIELDS = {
 
 const SORT_FIELDS = new Set<LaunchpadTokenSortField>([
   ...Object.values(VOLUME_SORT_FIELDS),
+  'MARKET_CAPITALIZATION',
   'CURRENT_TVL',
   'CREATED_AT',
 ])
 
-export const DEFAULT_LAUNCHPAD_TOKEN_SORT = 'VOLUME_24H' as const
+export const DEFAULT_LAUNCHPAD_TOKEN_SORT = 'MARKET_CAPITALIZATION' as const
 
 export function parseLaunchpadTokenSortField(
   value: string | null,
@@ -46,7 +52,13 @@ export function parseLaunchpadTokenSortField(
 }
 
 function getSortMetric(sortBy: LaunchpadTokenSortField): SortMetric {
-  if (sortBy === 'CURRENT_TVL' || sortBy === 'CREATED_AT') return sortBy
+  if (
+    sortBy === 'MARKET_CAPITALIZATION' ||
+    sortBy === 'CURRENT_TVL' ||
+    sortBy === 'CREATED_AT'
+  ) {
+    return sortBy
+  }
   return 'VOLUME'
 }
 

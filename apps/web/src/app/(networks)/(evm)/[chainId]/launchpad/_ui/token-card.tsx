@@ -130,9 +130,12 @@ export function TokenCard({
           >
             by {shortenAddress(token.creator)}
           </Link>
-          <span className="font-medium text-perps-muted">
-            {formatUsd(token.metrics?.currentTvlUsd)} Liq
-          </span>
+          <div className="flex items-center gap-1">
+            <span className="text-perps-muted">
+              {formatUsd(token.metrics?.currentTvlUsd)}
+            </span>
+            <span className="text-perps-muted-50">of Liquidity</span>
+          </div>
         </div>
       </div>
     </PerpsCard>

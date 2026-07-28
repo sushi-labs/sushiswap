@@ -40,7 +40,7 @@ const getCachedLaunchpadTokens = unstable_cache(
       input: {
         chainId,
         first: 20,
-        sortBy: 'VOLUME_24H',
+        sortBy: 'MARKET_CAPITALIZATION',
         sortDirection: 'DESC',
       },
     }),
