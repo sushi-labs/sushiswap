@@ -19,13 +19,20 @@ import {
 } from '@sushiswap/ui'
 import type { FC } from 'react'
 import { usePersistedSlippageError } from 'src/lib/hooks'
+import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
 export const SimpleSwapErrorMessage: FC<{
   isSuccess: boolean
   error: Error | null
   isLoading: boolean
 }> = ({ isSuccess, error, isLoading }) => {
-  const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance()
+  const {
+    state: { slippageToleranceOptions },
+  } = useDerivedStateSimpleSwap()
+  const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(
+    slippageToleranceOptions?.storageKey,
+    slippageToleranceOptions?.defaultValue,
+  )
   const { isSlippageError, setShow, show } = usePersistedSlippageError({
     isSuccess,
     error,

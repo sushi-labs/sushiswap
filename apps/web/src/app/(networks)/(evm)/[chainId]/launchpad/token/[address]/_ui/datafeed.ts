@@ -196,6 +196,7 @@ export function createLaunchpadDatafeed({
         pricescale,
         has_intraday: true,
         has_daily: true,
+        has_empty_bars: true,
         supported_resolutions: SUPPORTED_RESOLUTIONS,
         volume_precision: 2,
         data_status: 'streaming',

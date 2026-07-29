@@ -59,8 +59,6 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
   isSuccess,
   variant,
 }: SimpleSwapTradeButtonProps) {
-  const [slippagePercent] = useSlippageTolerance()
-
   const { data: maintenance } = useIsSwapMaintenance()
   const { isSlippageError } = usePersistedSlippageError({ isSuccess, error })
   const { data: quote } = useSimpleSwapTradeQuote()
@@ -68,9 +66,20 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
   const [checked, setChecked] = useState(false)
 
   const {
-    state: { swapAmount, swapAmountString, chainId, token0, token1 },
+    state: {
+      swapAmount,
+      swapAmountString,
+      chainId,
+      token0,
+      token1,
+      slippageToleranceOptions,
+    },
     mutate: { setSwapAmount },
   } = useDerivedStateSimpleSwap<TChainId>()
+  const [slippagePercent] = useSlippageTolerance(
+    slippageToleranceOptions?.storageKey,
+    slippageToleranceOptions?.defaultValue,
+  )
   const walletNamespace = isSvmChainId(chainId) ? 'svm' : 'evm'
   const buttonVariant = variant === 'perps' ? 'perps-default' : 'default'
 

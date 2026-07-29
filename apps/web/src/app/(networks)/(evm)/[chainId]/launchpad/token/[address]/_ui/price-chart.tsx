@@ -71,7 +71,7 @@ export function PriceChart({
     const options: ChartingLibraryWidgetOptions = {
       symbol: `${tokenAddress}:${symbol}`,
       datafeed,
-      interval: '1' as ResolutionString,
+      interval: '5' as ResolutionString,
       container: chartContainerRef.current,
       library_path: '/trading-view/charting_library/',
       locale: 'en' as LanguageCode,
