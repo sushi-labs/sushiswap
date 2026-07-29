@@ -149,19 +149,21 @@ export function TokenDetailSkeleton() {
             </PerpsCard>
           </div>
 
-          <div className="h-[182px]">
+          <div className="h-[218px]">
             <PerpsCard className="p-5" fullHeight fullWidth>
               <SkeletonBox className="h-7 w-32 rounded-md" />
               <div className="mt-5 space-y-4">
-                {['supply', 'pool-fee', 'curve'].map((detail) => (
-                  <div
-                    key={detail}
-                    className="flex items-center justify-between gap-4"
-                  >
-                    <SkeletonBox className="h-3.5 w-20 rounded-sm" />
-                    <SkeletonBox className="h-3.5 w-32 rounded-sm" />
-                  </div>
-                ))}
+                {['supply', 'pool-fee', 'starting-fdv', 'liquidity'].map(
+                  (detail) => (
+                    <div
+                      key={detail}
+                      className="flex items-center justify-between gap-4"
+                    >
+                      <SkeletonBox className="h-3.5 w-20 rounded-sm" />
+                      <SkeletonBox className="h-3.5 w-32 rounded-sm" />
+                    </div>
+                  ),
+                )}
               </div>
             </PerpsCard>
           </div>
