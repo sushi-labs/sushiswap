@@ -5,8 +5,13 @@ import {
   MagnifyingGlassIcon,
   SignalIcon,
 } from '@heroicons/react/24/outline'
-import { Button, Container, TextField, classNames } from '@sushiswap/ui'
-import Link from 'next/link'
+import {
+  Button,
+  Container,
+  LinkInternal,
+  TextField,
+  classNames,
+} from '@sushiswap/ui'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { getEvmChainById } from 'sushi/evm'
@@ -96,15 +101,17 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
             </p>
           </div>
           <div className="flex shrink-0 flex-wrap gap-3">
-            <Button
-              asChild
-              size="lg"
-              variant="perps-default"
-              icon={ArrowRightIcon}
-              iconPosition="end"
-            >
-              <Link href={`/${chainKey}/launchpad/create`}>Create token</Link>
-            </Button>
+            <LinkInternal href={`/${chainKey}/launchpad/create`}>
+              <Button
+                asChild
+                size="lg"
+                variant="perps-default"
+                icon={ArrowRightIcon}
+                iconPosition="end"
+              >
+                Create token
+              </Button>
+            </LinkInternal>
           </div>
         </div>
 

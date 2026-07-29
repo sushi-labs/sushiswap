@@ -21,10 +21,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  LinkInternal,
   Message,
   TextField,
 } from '@sushiswap/ui'
-import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
@@ -44,7 +44,6 @@ import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import type { PreparedLaunchpadLogoFile } from '../../../_lib/launchpad-logo'
 import { formatRawAmount, shortenAddress } from '../../../_ui/format'
 import { LaunchpadLogoInput } from '../../../_ui/launchpad-logo-input'
-import { StatusPill } from '../../../_ui/status-pill'
 import { TokenAvatar } from '../../../_ui/token-avatar'
 import type { LaunchpadChainId } from '../../../constants'
 import { useLaunchpadToken } from '../../../hooks/use-launchpad-data'
@@ -292,16 +291,16 @@ export function ManageTokenPage({
           <p className="mt-2 text-sm text-perps-muted-50">
             This token is not present in the launchpad catalog.
           </p>
-          <Button
-            asChild
-            variant="perps-secondary"
-            className="mt-6"
-            icon={ArrowLeftIcon}
-          >
-            <Link href={`/${chainKey}/launchpad/manage`}>
+          <LinkInternal href={`/${chainKey}/launchpad/manage`}>
+            <Button
+              asChild
+              variant="perps-secondary"
+              className="mt-6"
+              icon={ArrowLeftIcon}
+            >
               Back to dashboard
-            </Link>
-          </Button>
+            </Button>
+          </LinkInternal>
         </PerpsCard>
       </Container>
     )
@@ -310,13 +309,13 @@ export function ManageTokenPage({
   return (
     <Container maxWidth="6xl" className="w-full px-4 py-10 sm:py-14">
       <div className="flex items-center gap-2 text-sm text-perps-muted-50">
-        <Link
+        <LinkInternal
           href={`/${chainKey}/launchpad/manage`}
           className="flex items-center gap-1.5 transition hover:text-perps-blue"
         >
           <ArrowLeftIcon className="h-4 w-4" />
           My launches
-        </Link>
+        </LinkInternal>
         <span>/</span>
         <span>{token.symbol}</span>
       </div>
@@ -335,15 +334,15 @@ export function ManageTokenPage({
             </div>
           </div>
         </div>
-        <Button asChild variant="perps-secondary">
-          <Link
-            href={`/${chainKey}/launchpad/token/${token.address}`}
-            className="flex items-center gap-2 flex-row"
-          >
+        <LinkInternal
+          href={`/${chainKey}/launchpad/token/${token.address}`}
+          className="flex items-center gap-2 flex-row"
+        >
+          <Button asChild variant="perps-secondary">
             View token page
             <ArrowTopRightOnSquareIcon className="h-4 w-4" />
-          </Link>
-        </Button>
+          </Button>
+        </LinkInternal>
       </div>
 
       <div className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
