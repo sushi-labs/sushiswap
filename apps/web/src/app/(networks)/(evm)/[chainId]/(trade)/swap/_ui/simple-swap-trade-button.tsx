@@ -24,14 +24,25 @@ import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
 } from './derivedstate-simple-swap-provider'
-import { SimpleSwapTradeReviewDialog } from './simple-swap-trade-review-dialog'
+import {
+  SimpleSwapTradeReviewDialog,
+  type SimpleSwapTradeReviewDialogVariant,
+} from './simple-swap-trade-review-dialog'
 import { useIsSwapMaintenance } from './use-is-swap-maintenance'
 
-export function SimpleSwapTradeButton() {
+export function SimpleSwapTradeButton({
+  variant = 'default',
+}: {
+  variant?: SimpleSwapTradeReviewDialogVariant
+}) {
   return (
-    <SimpleSwapTradeReviewDialog>
+    <SimpleSwapTradeReviewDialog variant={variant}>
       {({ error, isSuccess }) => (
-        <_SimpleSwapTradeButton error={error} isSuccess={isSuccess} />
+        <_SimpleSwapTradeButton
+          error={error}
+          isSuccess={isSuccess}
+          variant={variant}
+        />
       )}
     </SimpleSwapTradeReviewDialog>
   )
@@ -40,14 +51,14 @@ export function SimpleSwapTradeButton() {
 interface SimpleSwapTradeButtonProps {
   error: Error | null
   isSuccess: boolean
+  variant: SimpleSwapTradeReviewDialogVariant
 }
 
 function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
   error,
   isSuccess,
+  variant,
 }: SimpleSwapTradeButtonProps) {
-  const [slippagePercent] = useSlippageTolerance()
-
   const { data: maintenance } = useIsSwapMaintenance()
   const { isSlippageError } = usePersistedSlippageError({ isSuccess, error })
   const { data: quote } = useSimpleSwapTradeQuote()
@@ -55,10 +66,22 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
   const [checked, setChecked] = useState(false)
 
   const {
-    state: { swapAmount, swapAmountString, chainId, token0, token1 },
+    state: {
+      swapAmount,
+      swapAmountString,
+      chainId,
+      token0,
+      token1,
+      slippageToleranceOptions,
+    },
     mutate: { setSwapAmount },
   } = useDerivedStateSimpleSwap<TChainId>()
+  const [slippagePercent] = useSlippageTolerance(
+    slippageToleranceOptions?.storageKey,
+    slippageToleranceOptions?.defaultValue,
+  )
   const walletNamespace = isSvmChainId(chainId) ? 'svm' : 'evm'
+  const buttonVariant = variant === 'perps' ? 'perps-default' : 'default'
 
   const [isWrap, isUnwrap] = useMemo(() => {
     const wrappedAddress = isSvmChainId(chainId)
@@ -96,10 +119,15 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
         <Checker.Guard
           guardWhen={maintenance}
           guardText="Maintenance in progress"
+          variant={buttonVariant}
         >
-          <Checker.Connect namespace={walletNamespace}>
-            <Checker.Network chainId={chainId}>
-              <Checker.Amounts chainId={chainId} amount={swapAmount}>
+          <Checker.Connect namespace={walletNamespace} variant={buttonVariant}>
+            <Checker.Network chainId={chainId} variant={buttonVariant}>
+              <Checker.Amounts
+                chainId={chainId}
+                amount={swapAmount}
+                variant={buttonVariant}
+              >
                 <Checker.Slippage
                   text="Swap With High Slippage"
                   slippageTolerance={slippagePercent}
@@ -107,6 +135,7 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
                   <Checker.ApproveERC20
                     id="approve-erc20"
                     amount={swapAmount}
+                    variant={buttonVariant}
                     contract={
                       isRedSnwapperChainId(chainId)
                         ? RED_SNWAPPER_ADDRESS[chainId]
@@ -118,10 +147,12 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
                         trade={quote}
                         setSwapAmount={setSwapAmount}
                         onAccepted={() => setReviewOpen(true)}
+                        variant={buttonVariant}
                       >
                         <DialogTrigger asChild>
                           <Button
                             size="xl"
+                            variant={buttonVariant}
                             disabled={Boolean(
                               isSlippageError ||
                                 error ||

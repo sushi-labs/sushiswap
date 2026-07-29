@@ -6,6 +6,7 @@ import {
   type TTLStorageKey,
   useSlippageTolerance,
 } from '@sushiswap/hooks'
+import classNames from 'classnames'
 import React, { type FC, type ReactNode, useState } from 'react'
 
 import { DEFAULT_SLIPPAGE } from 'sushi/evm'
@@ -42,6 +43,7 @@ interface SettingsOverlayProps {
   children?: ReactNode
   modules: SettingsModule[]
   externalModules?: FC[]
+  theme?: 'default' | 'perps'
   options?: {
     slippageTolerance?: {
       storageKey?: SlippageToleranceStorageKey
@@ -61,10 +63,12 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
   externalModules,
   children,
   options,
+  theme = 'default',
 }) => {
   const [_open, setOpen] = useState(false)
   const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(
     options?.slippageTolerance?.storageKey,
+    options?.slippageTolerance?.defaultValue,
   )
 
   const showSlippageBadge =
@@ -91,7 +95,10 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
                     <Button
                       onClick={(e) => {
                         e.stopPropagation()
-                        setSlippageTolerance(DEFAULT_SLIPPAGE)
+                        setSlippageTolerance(
+                          options?.slippageTolerance?.defaultValue ??
+                            DEFAULT_SLIPPAGE,
+                        )
                       }}
                       className="!rounded-full -mr-1.5 !bg-opacity-50"
                       iconPosition="end"
@@ -116,18 +123,36 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent
+        className={classNames(
+          theme === 'perps' &&
+            '!max-w-md !border !border-white/[0.07] !bg-perps-background/95 !text-perps-muted shadow-[inset_1.5px_2px_1px_-2px_rgba(255,255,255,0.2),inset_-1.5px_-1.5px_1px_-2px_rgba(255,255,255,0.125)] backdrop-blur-2xl',
+        )}
+      >
         <DialogHeader>
-          <DialogTitle>Settings</DialogTitle>
-          <DialogDescription>
+          <DialogTitle
+            className={classNames(theme === 'perps' && '!text-perps-muted')}
+          >
+            Settings
+          </DialogTitle>
+          <DialogDescription
+            className={classNames(theme === 'perps' && '!text-perps-muted-50')}
+          >
             Adjust to your personal preferences.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4 overflow-y-auto max-h-[min(70vh,600px)]">
           {modules.includes(SettingsModule.SlippageTolerance) && (
             <List className="!pt-0">
-              <List.Control>
-                <SlippageTolerance options={options?.slippageTolerance} />
+              <List.Control
+                className={classNames(
+                  theme === 'perps' && '!border-white/[0.06] !bg-white/[0.025]',
+                )}
+              >
+                <SlippageTolerance
+                  options={options?.slippageTolerance}
+                  theme={theme}
+                />
               </List.Control>
             </List>
           )}
@@ -135,7 +160,11 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
             modules.includes(SettingsModule.TransactionDeadline) ||
             modules.includes(SettingsModule.CarbonOffset)) && (
             <List className="!pt-0">
-              <List.Control>
+              <List.Control
+                className={classNames(
+                  theme === 'perps' && '!border-white/[0.06] !bg-white/[0.025]',
+                )}
+              >
                 {modules.includes(SettingsModule.ExpertMode) && <ExpertMode />}
                 {modules.includes(SettingsModule.CarbonOffset) && (
                   <CarbonOffset />
@@ -151,7 +180,11 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
           )}
           {externalModules?.map((Module, index) => (
             <List className="!pt-0" key={index}>
-              <List.Control>
+              <List.Control
+                className={classNames(
+                  theme === 'perps' && '!border-white/[0.06] !bg-white/[0.025]',
+                )}
+              >
                 <Module />
               </List.Control>
             </List>

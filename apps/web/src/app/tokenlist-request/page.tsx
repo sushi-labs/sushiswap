@@ -291,7 +291,7 @@ export default function TokenListing() {
   >({
     mutationFn: async (values) => {
       const response = await fetch(
-        `${SUSHI_DATA_API_HOST}/common/token-list/submit-token/v1`,
+        `${SUSHI_DATA_API_HOST}/api/token-list/submit-token/v1`,
         {
           method: 'POST',
           headers: {

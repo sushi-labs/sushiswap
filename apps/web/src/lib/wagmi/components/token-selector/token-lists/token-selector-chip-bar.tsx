@@ -12,6 +12,7 @@ import { type EvmCurrency, isEvmChainId } from 'sushi/evm'
 import { type SvmCurrency, isSvmChainId } from 'sushi/svm'
 import type { TokenSelectorChainId } from '../config'
 import { useChipTokens } from '../hooks/use-chip-tokens'
+import { useTokenSelectorTheme } from '../token-selector-theme'
 
 interface TokenSelectorChipBar<TChainId extends TokenSelectorChainId> {
   chainId: TChainId
@@ -24,6 +25,7 @@ export function TokenSelectorChipBar<TChainId extends TokenSelectorChainId>({
   onSelect,
   includeNative,
 }: TokenSelectorChipBar<TChainId>) {
+  const theme = useTokenSelectorTheme()
   const tokens = useChipTokens({ chainId, includeNative })
 
   const isPinnable = (
@@ -55,7 +57,7 @@ export function TokenSelectorChipBar<TChainId extends TokenSelectorChainId>({
           >
             <Button
               size="sm"
-              variant="secondary"
+              variant={theme === 'perps' ? 'perps-secondary' : 'secondary'}
               className="group"
               key={token.id}
               onClick={() => onSelect(token)}
@@ -80,6 +82,7 @@ export function TokenSelectorChipBar<TChainId extends TokenSelectorChainId>({
 }
 
 function PinRemoveButton({ token }: { token: EvmCurrency | SvmCurrency }) {
+  const theme = useTokenSelectorTheme()
   const { mutate } = usePinnedTokens()
   return (
     <IconButton
@@ -87,6 +90,11 @@ function PinRemoveButton({ token }: { token: EvmCurrency | SvmCurrency }) {
       name="remove"
       icon={XMarkIcon}
       variant="ghost"
+      className={
+        theme === 'perps'
+          ? 'text-perps-muted-50 hover:bg-white/[0.06] hover:text-perps-muted'
+          : undefined
+      }
       onClick={(e) => {
         e.stopPropagation()
         // Native tokens should always be default

@@ -17,6 +17,7 @@ import { useChainIds } from 'src/lib/wallet'
 import type { EvmChainId } from 'sushi/evm'
 import type { StellarChainId } from 'sushi/stellar'
 import type { SvmChainId } from 'sushi/svm'
+import { useTokenSelectorTheme } from './token-selector-theme'
 
 interface DesktopNetworkSelector<
   TChainId extends EvmChainId | SvmChainId | StellarChainId,
@@ -29,6 +30,7 @@ interface DesktopNetworkSelector<
 export function DesktopNetworkSelector<
   TChainId extends EvmChainId | SvmChainId | StellarChainId,
 >({ networks, selectedNetwork, onSelect }: DesktopNetworkSelector<TChainId>) {
+  const theme = useTokenSelectorTheme()
   const chainIds = useChainIds()
 
   const _onSelect = useCallback(
@@ -44,8 +46,20 @@ export function DesktopNetworkSelector<
   )
 
   return (
-    <Command className="!w-56 flex-none pt-3 bg-white dark:!bg-secondary rounded-r-none rounded-l-2xl">
-      <div className="mx-3 bg-secondary rounded-lg">
+    <Command
+      className={classNames(
+        '!w-56 flex-none rounded-l-2xl rounded-r-none pt-3',
+        theme === 'perps'
+          ? '!bg-white/[0.025] text-perps-muted'
+          : 'bg-white dark:!bg-secondary',
+      )}
+    >
+      <div
+        className={classNames(
+          'mx-3 rounded-lg',
+          theme === 'perps' ? 'bg-white/[0.04]' : 'bg-secondary',
+        )}
+      >
         <CommandInput
           testdata-id="network-selector-input"
           placeholder="Search network"
@@ -66,7 +80,15 @@ export function DesktopNetworkSelector<
               <Button
                 className={'flex items-center !justify-normal gap-2'}
                 fullWidth
-                variant={selectedNetwork === network ? 'secondary' : 'ghost'}
+                variant={
+                  theme === 'perps'
+                    ? selectedNetwork === network
+                      ? 'perps-secondary'
+                      : 'ghost'
+                    : selectedNetwork === network
+                      ? 'secondary'
+                      : 'ghost'
+                }
               >
                 <Badge
                   position="bottom-right"

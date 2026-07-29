@@ -29,13 +29,22 @@ import {
   classNames,
 } from '../index'
 
+const dialogContentLayout =
+  'rounded-b-none md:rounded-b-2xl bottom-0 md:bottom-[unset] fixed left-[50%] md:top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] md:translate-y-[-50%] gap-4 p-6 rounded-2xl md:w-full data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-bottom-[48%] md:data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-bottom-[48%] md:data-[state=open]:slide-in-from-top-[48%]'
+
 const dialogVariants = cva(
   'duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
   {
     variants: {
       variant: {
-        default:
-          'rounded-b-none md:rounded-b-2xl bottom-0 md:bottom-[unset] fixed left-[50%] md:top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] md:translate-y-[-50%] gap-4 bg-gray-100 dark:bg-slate-800 black:bg-secondary p-6 shadow-lg rounded-2xl md:w-full data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-bottom-[48%] md:data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-bottom-[48%] md:data-[state=open]:slide-in-from-top-[48%]',
+        default: [
+          dialogContentLayout,
+          'bg-gray-100 dark:bg-slate-800 black:bg-secondary shadow-lg',
+        ],
+        perps: [
+          dialogContentLayout,
+          'border border-white/[0.07] bg-perps-background/95 text-perps-muted shadow-[inset_1.5px_2px_1px_-2px_rgba(255,255,255,0.2),inset_-1.5px_-1.5px_1px_-2px_rgba(255,255,255,0.125)] backdrop-blur-2xl',
+        ],
         opaque: 'px-4 fixed z-50 top-4 grid w-full max-w-xl',
       },
     },
@@ -51,6 +60,7 @@ const dialogOverlayVariants = cva(
     variants: {
       variant: {
         default: 'bg-black/10 backdrop-blur-sm',
+        perps: 'bg-black/10 backdrop-blur-sm',
         opaque: 'bg-gray-100 dark:bg-slate-900',
       },
     },
@@ -64,6 +74,7 @@ const dialogCloseVariants = cva('', {
   variants: {
     variant: {
       default: 'absolute top-6 right-6',
+      perps: 'absolute top-6 right-6',
       opaque: 'hidden',
     },
   },
@@ -131,7 +142,11 @@ const DialogContent = React.forwardRef<
             asChild
             className={dialogCloseVariants({ variant })}
           >
-            <IconButton icon={XMarkIcon} name="Close" />
+            <IconButton
+              icon={XMarkIcon}
+              name="Close"
+              variant={variant === 'perps' ? 'perps-secondary' : undefined}
+            />
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Content>
@@ -247,7 +262,8 @@ function DialogConfirm<TChainId extends ChainId>({
   buttonLink,
   status,
   txHash,
-  ...props
+  variant,
+  ...contentProps
 }: DialogConfirmProps<TChainId>) {
   const { open, setOpen } = useDialog(DialogType.Confirm)
   const txHashUrl = useMemo(() => {
@@ -256,10 +272,19 @@ function DialogConfirm<TChainId extends ChainId>({
   }, [chainId, txHash])
 
   return (
-    <Dialog {...props} open={open} onOpenChange={setOpen}>
-      <DialogContent>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent
+        variant={variant}
+        {...contentProps}
+        className={classNames(
+          variant === 'perps' && 'max-w-md',
+          contentProps.className,
+        )}
+      >
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle
+            className={classNames(variant === 'perps' && '!text-perps-muted')}
+          >
             {status === 'pending' ? (
               <Dots>Confirming</Dots>
             ) : status === 'success' ? (
@@ -268,7 +293,12 @@ function DialogConfirm<TChainId extends ChainId>({
               'Oops!'
             )}
           </DialogTitle>
-          <DialogDescription className="font-medium">
+          <DialogDescription
+            className={classNames(
+              'font-medium',
+              variant === 'perps' && '!text-perps-muted-50',
+            )}
+          >
             {status === 'pending' ? (
               <>
                 Waiting for your{' '}
@@ -318,6 +348,7 @@ function DialogConfirm<TChainId extends ChainId>({
                 asChild={!!buttonLink}
                 fullWidth
                 size="xl"
+                variant={variant === 'perps' ? 'perps-default' : undefined}
               >
                 {buttonLink ? (
                   <LinkInternal href={buttonLink}>{buttonText}</LinkInternal>

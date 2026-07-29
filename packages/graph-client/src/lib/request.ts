@@ -14,6 +14,28 @@ function delayWithError(ms: number) {
   )
 }
 
+function getErrorMessage(error: unknown): string {
+  if (error && typeof error === 'object') {
+    const response = (error as { response?: unknown }).response
+    if (response && typeof response === 'object') {
+      const errors = (response as { errors?: unknown }).errors
+      if (Array.isArray(errors)) {
+        const messages = errors.flatMap((item: unknown) => {
+          if (!item || typeof item !== 'object') return []
+          const message = (item as { message?: unknown }).message
+          return typeof message === 'string' ? [message] : []
+        })
+        if (messages.length > 0) return messages.join(' ')
+      }
+    }
+
+    if (error instanceof Error && error.message) return error.message
+  }
+
+  if (typeof error === 'string' && error) return error
+  return 'Request failed'
+}
+
 async function requestWithTimeout<T, V extends object = object>(
   options: RequestExtendedOptions<V, T>,
   timeout: number,
@@ -32,7 +54,7 @@ export async function request<T, V extends object = object>(
   options: RequestOptions = {},
 ): Promise<T> {
   let remainingRetries = options.retries ?? 1
-  let errorMessage = ''
+  let lastError: unknown
   while (remainingRetries > 0) {
     try {
       if (options.timeout) {
@@ -40,11 +62,11 @@ export async function request<T, V extends object = object>(
       } else {
         return await _request(params)
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       remainingRetries--
-      errorMessage = err.message
+      lastError = err
     }
   }
 
-  throw new Error(`Retries exceeded. Last error: ${errorMessage}`)
+  throw new Error(getErrorMessage(lastError), { cause: lastError })
 }

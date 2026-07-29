@@ -1,7 +1,7 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
-import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
+import { SUSHI_DATA_API_GRAPHQL_URL } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
 
 export const SushiV3BurnsQuery = graphql(`
@@ -30,7 +30,7 @@ export async function getSushiV3Burns(
   { ...variables }: GetSushiV3Burns,
   options?: RequestOptions,
 ) {
-  const url = `${SUSHI_DATA_API_HOST}/graphql`
+  const url = SUSHI_DATA_API_GRAPHQL_URL
 
   const result = await request(
     { url, document: SushiV3BurnsQuery, variables },
