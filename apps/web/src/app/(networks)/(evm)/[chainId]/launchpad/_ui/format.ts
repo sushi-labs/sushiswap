@@ -12,7 +12,7 @@ export { shortenAddress }
 const priceFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
-  maximumSignificantDigits: 6,
+  maximumSignificantDigits: 5,
 })
 
 export function formatLaunchpadPriceUsd(

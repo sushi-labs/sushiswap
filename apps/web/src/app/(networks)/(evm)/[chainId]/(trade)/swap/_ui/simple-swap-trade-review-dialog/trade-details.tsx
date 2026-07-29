@@ -58,14 +58,14 @@ export function TradeDetails<TChainId extends SupportedChainId>({
             >
               {isSwapQueryFetching ? (
                 <SkeletonBox className="h-4 py-0.5 w-[60px] rounded-md" />
-              ) : trade ? (
+              ) : trade?.priceImpact ? (
                 `${
-                  trade.priceImpact?.lt(ZERO)
+                  trade.priceImpact.lt(ZERO)
                     ? '+'
-                    : trade.priceImpact?.gt(ZERO)
+                    : trade.priceImpact.gt(ZERO)
                       ? '-'
                       : ''
-                }${Math.abs(Number(trade.priceImpact?.toString({ fixed: 2 })))}%`
+                }${Math.abs(Number(trade.priceImpact.toString({ fixed: 2 })))}%`
               ) : (
                 '-'
               )}

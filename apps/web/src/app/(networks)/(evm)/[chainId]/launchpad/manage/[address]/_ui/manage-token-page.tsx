@@ -577,7 +577,7 @@ export function ManageTokenPage({
                   </p>
                 </div>
               </div>
-              <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+              <div className="mt-5 grid grid-cols-2 gap-3">
                 <div className="rounded-xl bg-white/[0.04] p-4">
                   <div className="text-xs text-perps-muted-50">
                     Launch token

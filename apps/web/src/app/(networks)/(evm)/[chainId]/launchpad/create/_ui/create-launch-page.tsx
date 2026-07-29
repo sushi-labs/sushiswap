@@ -1048,15 +1048,6 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
                 )}
               />
 
-              {values.initialBuyUsd > 0 ? (
-                <Message variant="warning" size="sm" className="mt-6">
-                  Your purchase executes before anyone else can trade and may
-                  move the token price. If the buy cannot consume the full input
-                  or meet the simulated minimum output, the entire launch
-                  reverts.
-                </Message>
-              ) : null}
-
               <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
                 <Button
                   type="button"
