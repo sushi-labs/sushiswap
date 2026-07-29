@@ -17,6 +17,7 @@ import {
 } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { logger } from 'src/lib/logger'
+import { TOAST_AUTOCLOSE_TIME } from 'src/lib/perps'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
 import {
@@ -44,9 +45,14 @@ import {
   useDerivedStateSimpleSwap,
   useEvmSimpleSwapTrade,
 } from '../derivedstate-simple-swap-provider'
+import type { SimpleSwapTradeReviewDialogVariant } from '../simple-swap-trade-review-dialog'
 import type { UseSimpleSwapTradeReviewBaseReturn } from './use-simple-swap-trade-review'
 
-export function useEvmSimpleSwapTradeReview(): UseSimpleSwapTradeReviewBaseReturn {
+export function useEvmSimpleSwapTradeReview({
+  variant,
+}: {
+  variant: SimpleSwapTradeReviewDialogVariant | undefined
+}): UseSimpleSwapTradeReviewBaseReturn {
   const { state: _state } = useDerivedStateSimpleSwap<
     EvmChainId & SupportedChainId
   >()
@@ -60,7 +66,7 @@ export function useEvmSimpleSwapTradeReview(): UseSimpleSwapTradeReviewBaseRetur
         token1: undefined,
       }
 
-  return useEvmSimpleSwapTradeReviewForState(state)
+  return useEvmSimpleSwapTradeReviewForState({ ...state, variant })
 }
 
 function useEvmSimpleSwapTradeReviewForState({
@@ -68,11 +74,13 @@ function useEvmSimpleSwapTradeReviewForState({
   recipient,
   token0,
   token1,
+  variant = 'default',
 }: {
   chainId: (EvmChainId & SupportedChainId) | undefined
   recipient: EvmAddress | undefined
   token0: EvmCurrency | undefined
   token1: EvmCurrency | undefined
+  variant: SimpleSwapTradeReviewDialogVariant | undefined
 }): UseSimpleSwapTradeReviewBaseReturn {
   const {
     mutate: { setSwapAmount },
@@ -177,6 +185,8 @@ function useEvmSimpleSwapTradeReviewForState({
           },
           timestamp: ts,
           groupTimestamp: ts,
+          autoClose: variant === 'perps' ? TOAST_AUTOCLOSE_TIME : undefined,
+          variant: variant,
         })
 
         const receipt = await promise
@@ -276,6 +286,7 @@ function useEvmSimpleSwapTradeReviewForState({
       resetDetailsTrackedState,
       isDetailsCollapsed,
       wasDetailsTouched,
+      variant,
     ],
   )
 
@@ -305,9 +316,9 @@ function useEvmSimpleSwapTradeReviewForState({
         tx,
         error: e instanceof Error ? e.message : undefined,
       })
-      createErrorToast(e.message, false)
+      createErrorToast(e.message, false, variant)
     },
-    [trade?.amountIn?.currency, trade?.amountOut?.currency, trade?.tx],
+    [trade?.amountIn?.currency, trade?.amountOut?.currency, trade?.tx, variant],
   )
 
   const {

@@ -72,7 +72,7 @@ const EvmSimpleSwapTradeReviewDialog: FC<SimpleSwapTradeReviewDialogProps> = ({
   children,
   variant,
 }) => {
-  const baseTradeReview = useEvmSimpleSwapTradeReview()
+  const baseTradeReview = useEvmSimpleSwapTradeReview({ variant })
   const tradeReview = getSimpleSwapTradeReview(baseTradeReview)
 
   return (

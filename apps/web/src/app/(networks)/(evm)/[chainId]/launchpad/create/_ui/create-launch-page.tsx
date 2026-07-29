@@ -34,6 +34,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { type FieldError, type Resolver, useForm } from 'react-hook-form'
+import { TOAST_AUTOCLOSE_TIME } from 'src/lib/perps'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
@@ -590,6 +591,8 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
         },
         timestamp,
         groupTimestamp: timestamp,
+        autoClose: TOAST_AUTOCLOSE_TIME,
+        variant: 'perps',
       })
 
       const receipt = await receiptPromise
