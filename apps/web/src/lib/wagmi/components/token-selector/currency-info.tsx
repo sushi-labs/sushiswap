@@ -18,6 +18,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
+  classNames,
 } from '@sushiswap/ui'
 import {
   useCoinGeckoTokenInfo,
@@ -29,6 +30,7 @@ import { type StellarToken, isStellarChainId } from 'sushi/stellar'
 import type { SvmToken } from 'sushi/svm'
 import { TokenSecurityView } from '../token-security-view'
 import type { TokenSelectorChainId } from './config'
+import { useTokenSelectorTheme } from './token-selector-theme'
 
 interface CurrencyInfoProps<TChainId extends TokenSelectorChainId> {
   currency: CurrencyFor<TChainId>
@@ -39,6 +41,8 @@ export function CurrencyInfo<TChainId extends TokenSelectorChainId>({
   currency,
   onBack,
 }: CurrencyInfoProps<TChainId>) {
+  const theme = useTokenSelectorTheme()
+  const isPerps = theme === 'perps'
   const token = currency.wrap() as EvmToken | SvmToken | StellarToken
 
   const { data: coinGeckoInfo, isLoading: isCoinGeckoInfoLoading } =
@@ -47,9 +51,20 @@ export function CurrencyInfo<TChainId extends TokenSelectorChainId>({
     })
 
   return (
-    <div className="absolute inset-0 z-20 py-6 bg-gray-100 dark:bg-slate-800 rounded-2xl">
+    <div
+      className={classNames(
+        'absolute inset-0 z-20 rounded-2xl py-6',
+        isPerps
+          ? 'bg-perps-background text-perps-muted [&_.text-muted-foreground]:!text-perps-muted-50'
+          : 'bg-gray-100 dark:bg-slate-800',
+      )}
+    >
       <DialogPrimitive.Close asChild className="absolute top-6 right-6">
-        <IconButton icon={XMarkIcon} name="Close" />
+        <IconButton
+          icon={XMarkIcon}
+          name="Close"
+          variant={isPerps ? 'perps-secondary' : 'secondary'}
+        />
       </DialogPrimitive.Close>
       <div className="flex flex-col gap-4 h-full">
         <DialogHeader className="px-6">
@@ -60,6 +75,10 @@ export function CurrencyInfo<TChainId extends TokenSelectorChainId>({
               icon={ArrowLeftIcon}
               name="Back"
               variant="ghost"
+              className={classNames(
+                isPerps &&
+                  'text-perps-muted-50 hover:bg-white/[0.06] hover:text-perps-muted',
+              )}
             />
             <div className="flex gap-1 items-center">
               <span className="text-xl font-medium">{currency.symbol}</span>
@@ -266,6 +285,8 @@ function CurrencySecurity<TChainId extends TokenSelectorChainId>({
 }: {
   currency: CurrencyFor<TChainId>
 }) {
+  const theme = useTokenSelectorTheme()
+  const isPerps = theme === 'perps'
   const token = isStellarChainId(currency.chainId)
     ? undefined
     : (currency.wrap() as TokenFor<typeof currency.chainId>)
@@ -279,7 +300,9 @@ function CurrencySecurity<TChainId extends TokenSelectorChainId>({
 
   return (
     <>
-      <Separator className="my-6" />
+      <Separator
+        className={classNames('my-6', isPerps && '!bg-white/[0.06]')}
+      />
       <div className="flex flex-col">
         <div className="flex gap-1 items-center py-2">
           <ShieldCheckIcon className="h-4 w-4" />

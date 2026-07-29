@@ -41,6 +41,7 @@ export interface PromiseNotification extends BaseNotification {
     failed: string
     info?: string
   }
+  autoClose?: number
 }
 
 export type ResolvedNotification = BaseNotification & {

@@ -10,7 +10,7 @@ import {
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
 import type { Address } from 'viem'
-import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
+import { SUSHI_DATA_API_GRAPHQL_URL } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
 
 export const V3PoolsByTokensQuery = graphql(
@@ -67,7 +67,7 @@ export async function getV3BasePoolsByToken(
   variables: GetV3BasePoolsByTokens,
   options?: RequestOptions,
 ): Promise<PoolV3<PoolBase>[]> {
-  const url = `${SUSHI_DATA_API_HOST}/graphql`
+  const url = SUSHI_DATA_API_GRAPHQL_URL
   const chainId = variables.chainId
 
   if (!isSushiSwapV3ChainId(chainId)) {

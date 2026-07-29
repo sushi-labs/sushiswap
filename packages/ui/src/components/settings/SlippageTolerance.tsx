@@ -34,13 +34,16 @@ export const SlippageTolerance: FC<{
   }
   className?: string
   showAutoSelector?: boolean
-}> = ({ options, className, showAutoSelector = true }) => {
+  theme?: 'default' | 'perps'
+}> = ({ options, className, showAutoSelector = true, theme = 'default' }) => {
+  const isPerps = theme === 'perps'
+  const defaultSlippage = options?.defaultValue ?? DEFAULT_SLIPPAGE
   const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(
     options?.storageKey,
     options?.defaultValue,
   )
   const [customValue, setCustomValue] = useState(
-    slippageTolerance === 'AUTO' ? DEFAULT_SLIPPAGE : slippageTolerance,
+    slippageTolerance === 'AUTO' ? defaultSlippage : slippageTolerance,
   )
 
   useEffect(() => {
@@ -73,11 +76,16 @@ export const SlippageTolerance: FC<{
           <>
             <div className="flex justify-between items-center gap-4">
               <div className="flex flex-col gap-2">
-                <Label>Automatic Slippage Tolerance</Label>
+                <Label className={classNames(isPerps && 'text-perps-muted')}>
+                  Automatic Slippage Tolerance
+                </Label>
                 <span
                   className={typographyVariants({
                     variant: 'muted',
-                    className: 'text-sm',
+                    className: classNames(
+                      'text-sm',
+                      isPerps && '!text-perps-muted-50',
+                    ),
                   })}
                 >
                   Turn off automatic slippage tolerance <br /> to adjust the
@@ -87,25 +95,53 @@ export const SlippageTolerance: FC<{
               <Switch
                 checked={slippageTolerance === 'AUTO'}
                 onCheckedChange={(checked) =>
-                  setSlippageTolerance(checked ? 'AUTO' : DEFAULT_SLIPPAGE)
+                  setSlippageTolerance(checked ? 'AUTO' : defaultSlippage)
                 }
+                className={classNames(
+                  isPerps &&
+                    'data-[state=checked]:!bg-perps-blue data-[state=unchecked]:!bg-white/[0.08] focus-visible:!ring-perps-blue',
+                )}
+                thumbClassName={classNames(
+                  isPerps && 'data-[state=unchecked]:!bg-perps-muted-50',
+                )}
               />
             </div>
-            <div className="my-4 h-px w-full dark:bg-slate-200/5 bg-gray-900/5" />
+            <div
+              className={classNames(
+                'my-4 h-px w-full dark:bg-slate-200/5 bg-gray-900/5',
+                isPerps && '!bg-white/[0.06]',
+              )}
+            />
           </>
         ) : null}
         <div className="flex justify-between gap-[60px]">
           <div className="flex flex-col gap-2">
-            <Label className="flex items-center gap-1">
+            <Label
+              className={classNames(
+                'flex items-center gap-1',
+                isPerps && 'text-perps-muted',
+              )}
+            >
               {options?.title || 'Slippage'}{' '}
               <HoverCardTrigger>
                 <InformationCircleIcon width={16} height={16} />
               </HoverCardTrigger>
               <HoverCardPrimitive.Portal>
-                <HoverCardContent className="!p-0 max-w-[320px] z-[1080]">
+                <HoverCardContent
+                  className={classNames(
+                    '!p-0 max-w-[320px] z-[1080]',
+                    isPerps &&
+                      '!border-white/[0.07] !bg-perps-background/95 !text-perps-muted backdrop-blur-2xl',
+                  )}
+                >
                   <CardHeader>
                     <CardTitle>Slippage</CardTitle>
-                    <CardDescription className="prose">
+                    <CardDescription
+                      className={classNames(
+                        'prose',
+                        isPerps && '!text-perps-muted-50',
+                      )}
+                    >
                       <p>
                         Slippage is the difference between the expected value of
                         output from a trade and the actual value due to asset
@@ -137,6 +173,7 @@ export const SlippageTolerance: FC<{
           <span
             className={classNames(
               isDangerous ? '!text-red' : 'dark:text-slate-400 text-gray-600',
+              isPerps && !isDangerous && '!text-perps-muted-50',
               'text-sm font-semibold',
             )}
           >
@@ -146,12 +183,21 @@ export const SlippageTolerance: FC<{
           </span>
         </div>
         <Collapsible open={slippageTolerance !== 'AUTO'}>
-          <div className="flex gap-1 items-center border border-accent rounded-xl bg-secondary p-0.5">
+          <div
+            className={classNames(
+              'flex gap-1 items-center border border-accent rounded-xl bg-secondary p-0.5',
+              isPerps && '!border-white/[0.06] !bg-white/[0.04]',
+            )}
+          >
             <RadioGroup value={slippageTolerance} onChange={onChange}>
               <div className="flex gap-1 items-center">
                 {TABS.map((tab, i) => (
                   <RadioGroup.Option
-                    className="h-[40px]"
+                    className={classNames(
+                      'h-[40px]',
+                      isPerps &&
+                        '!text-perps-muted-50 hover:!bg-white/[0.05] data-[state=on]:!bg-perps-blue/15 data-[state=on]:!text-perps-blue',
+                    )}
                     key={i}
                     value={tab}
                     as={Toggle}
@@ -164,7 +210,13 @@ export const SlippageTolerance: FC<{
               </div>
             </RadioGroup>
 
-            <Separator orientation="vertical" className="min-h-[36px]" />
+            <Separator
+              orientation="vertical"
+              className={classNames(
+                'min-h-[36px]',
+                isPerps && '!bg-white/[0.06]',
+              )}
+            />
             <TextField
               type="number"
               value={customValue}
@@ -185,6 +237,14 @@ export const SlippageTolerance: FC<{
               id="slippage-tolerance"
               maxDecimals={2}
               unit="%"
+              className={classNames(
+                isPerps &&
+                  '!bg-transparent !text-perps-muted placeholder:!text-perps-muted-50',
+              )}
+              wrapperClassName={classNames(
+                isPerps &&
+                  '[&>div]:!bg-transparent [&>div]:!text-perps-muted-50',
+              )}
             />
           </div>
         </Collapsible>

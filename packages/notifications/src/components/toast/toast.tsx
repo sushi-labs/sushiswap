@@ -16,7 +16,7 @@ import { ToastPending } from './toast-pending'
 
 export const TOAST_OPTIONS: ToastOptions = {
   position: 'top-right',
-  autoClose: false,
+  autoClose: 3000,
   hideProgressBar: true,
   closeOnClick: false,
   pauseOnHover: true,
@@ -27,11 +27,12 @@ export const TOAST_OPTIONS: ToastOptions = {
 
 export const createToast = (props: PromiseNotification) => {
   const onDismiss = () => toast.dismiss(props.txHash)
+  const _autoClose = props.autoClose
 
   // Spawn new toasts based on promise result
   props.promise
     .then(() => {
-      setTimeout(onDismiss, 3000)
+      setTimeout(onDismiss, _autoClose || 3000)
 
       // Spawn success notification
       const toastId = `completed:${props.txHash}`
@@ -44,14 +45,14 @@ export const createToast = (props: PromiseNotification) => {
         {
           ...TOAST_OPTIONS,
           toastId,
-          autoClose: 8000,
+          autoClose: _autoClose || TOAST_OPTIONS.autoClose,
         },
       )
     })
     .catch((e) => {
       console.error(e)
 
-      setTimeout(onDismiss, 3000)
+      setTimeout(onDismiss, _autoClose || 3000)
 
       // Spawn error notification
       const toastId = `failed:${props.txHash}`
@@ -64,7 +65,7 @@ export const createToast = (props: PromiseNotification) => {
         {
           ...TOAST_OPTIONS,
           toastId,
-          autoClose: 8000,
+          autoClose: _autoClose || TOAST_OPTIONS.autoClose,
         },
       )
     })
@@ -77,6 +78,7 @@ export const createToast = (props: PromiseNotification) => {
     />,
     {
       ...TOAST_OPTIONS,
+      autoClose: _autoClose || TOAST_OPTIONS.autoClose,
       toastId: props.txHash,
     },
   )

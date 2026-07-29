@@ -48,6 +48,11 @@ export const EXPLORE_NAVIGATION_LINKS = (
       description: 'Trade perpetual contracts.',
     },
     {
+      title: 'Launchpad',
+      href: `/${getChainById(ChainId.ROBINHOOD).key}/launchpad`,
+      description: 'Discover and launch tokens with locked Sushi liquidity.',
+    },
+    {
       title: 'Pool',
       href: `/${getChainById(isPoolChainId ? chainId : ChainId.ETHEREUM).key}/pool`,
       description: 'Earn fees by providing liquidity.',
@@ -101,6 +106,11 @@ export const SUPPORT_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
     title: 'Terms of Service',
     href: '/legal/terms-of-service',
     description: 'Our terms and conditions for using Sushi.',
+  },
+  {
+    title: 'Launchpad Terms of Service',
+    href: '/legal/sushi-launchpad-terms-of-use',
+    description: 'Our terms and conditions for using Sushi Launchpad.',
   },
 ]
 
@@ -233,6 +243,12 @@ export const headerElements = ({
     {
       title: 'Perps',
       href: `/perps`,
+      show: 'desktop',
+      type: NavigationElementType.Single,
+    },
+    {
+      title: 'Launchpad',
+      href: `/${getChainById(ChainId.ROBINHOOD).key}/launchpad`,
       show: 'desktop',
       type: NavigationElementType.Single,
     },

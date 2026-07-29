@@ -1,7 +1,8 @@
 import type { TrendingTokensChainId } from '@sushiswap/graph-client/data-api'
-import { List } from '@sushiswap/ui'
+import { List, classNames } from '@sushiswap/ui'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useTrendingTokens } from '../hooks/use-trending-tokens'
+import { useTokenSelectorTheme } from '../token-selector-theme'
 import {
   TokenSelectorCurrencyList,
   TokenSelectorCurrencyListLoading,
@@ -15,10 +16,18 @@ interface TokenSelectorTrendingTokens<TChainId extends TrendingTokensChainId> {
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
+  const theme = useTokenSelectorTheme()
+
   return (
     <div className="flex flex-1 flex-col space-y-2">
       <div className="text-sm">Trending Tokens</div>
-      <List.Control className="flex flex-1">
+      <List.Control
+        className={classNames(
+          'flex flex-1',
+          theme === 'perps' &&
+            '!border-white/[0.06] !bg-white/[0.02] shadow-none',
+        )}
+      >
         <div className="flex-1 block">{children}</div>
       </List.Control>
     </div>

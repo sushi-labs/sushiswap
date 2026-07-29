@@ -14,6 +14,7 @@ import type {
   UseSvmTradeReturn,
 } from 'src/lib/hooks/react-query'
 import { type Amount, ZERO } from 'sushi'
+import type { SimpleSwapTradeReviewDialogVariant } from '../simple-swap-trade-review-dialog'
 
 export const ConfirmSwapButton: FC<{
   confirm: () => void
@@ -29,6 +30,7 @@ export const ConfirmSwapButton: FC<{
   showSlippageWarning: boolean
   write?: (confirm: () => void) => Promise<void>
   trace: object
+  variant: SimpleSwapTradeReviewDialogVariant
 }> = ({
   confirm,
   trade,
@@ -43,6 +45,7 @@ export const ConfirmSwapButton: FC<{
   showSlippageWarning,
   write,
   trace,
+  variant,
 }) => {
   const disabled = Boolean(
     isWritePending ||
@@ -74,6 +77,7 @@ export const ConfirmSwapButton: FC<{
           loading={!write && !isSwapQueryError}
           onClick={() => write?.(confirm)}
           disabled={disabled}
+          variant={variant === 'perps' ? 'perps-default' : 'default'}
           color={
             isSwapQueryError || showPriceImpactWarning || showSlippageWarning
               ? 'red'

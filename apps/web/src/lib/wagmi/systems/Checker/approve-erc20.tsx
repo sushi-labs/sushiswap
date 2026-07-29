@@ -71,6 +71,7 @@ function _ApproveERC20({
     spender: contract,
     enabled,
     approveMax: max,
+    variant: props?.variant?.includes('perps') ? 'perps' : undefined,
   })
 
   if (state === ApprovalState.APPROVED || !enabled) {

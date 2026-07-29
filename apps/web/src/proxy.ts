@@ -22,6 +22,7 @@ export const config = {
     '/:chainId/explore/:path*',
     '/:chainId/pool/:path*',
     '/:chainId/token/:path*',
+    '/:chainId/launchpad/:path*',
     '/:chainId/positions/:path*',
     '/:chainId/migrate',
     '/:chainId/rewards',
@@ -78,7 +79,7 @@ async function _proxy(req: NextRequest) {
   }
 
   const networkNameMatch = pathname.match(
-    /([\w-]+)(?=\/swap|\/limit|\/dca|\/stop-loss|\/take-profit|\/cross-chain-swap|\/explore|\/pool|\/token|\/positions|\/rewards|\/migrate)/,
+    /([\w-]+)(?=\/swap|\/limit|\/dca|\/stop-loss|\/take-profit|\/cross-chain-swap|\/explore|\/pool|\/token|\/launchpad|\/positions|\/rewards|\/migrate)/,
   )
   if (networkNameMatch?.length) {
     let chain

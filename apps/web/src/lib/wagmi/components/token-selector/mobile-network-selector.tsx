@@ -17,6 +17,7 @@ import { useChainIds } from 'src/lib/wallet'
 import type { EvmChainId } from 'sushi/evm'
 import type { StellarChainId } from 'sushi/stellar'
 import type { SvmChainId } from 'sushi/svm'
+import { useTokenSelectorTheme } from './token-selector-theme'
 
 interface MobileNetworkSelector<
   TChainId extends EvmChainId | SvmChainId | StellarChainId,
@@ -29,6 +30,7 @@ interface MobileNetworkSelector<
 export function MobileNetworkSelector<
   TChainId extends EvmChainId | SvmChainId | StellarChainId,
 >({ networks, selectedNetwork, onSelect }: MobileNetworkSelector<TChainId>) {
+  const theme = useTokenSelectorTheme()
   const [open, setOpen] = useState(false)
 
   const chainIds = useChainIds()
@@ -45,7 +47,7 @@ export function MobileNetworkSelector<
                 : 'border-transparent',
               'border !w-12 !h-12',
             )}
-            variant="secondary"
+            variant={theme === 'perps' ? 'perps-secondary' : 'secondary'}
             onClick={() => onSelect(network)}
           >
             <Badge
@@ -65,16 +67,27 @@ export function MobileNetworkSelector<
         ))}
         <Button
           className="!w-12 !h-12"
-          variant="secondary"
+          variant={theme === 'perps' ? 'perps-secondary' : 'secondary'}
           onClick={() => setOpen(true)}
         >
           +{networks.length - 10}
         </Button>
       </div>
       {open ? (
-        <div className="absolute inset-0 z-20 p-6 bg-gray-100 dark:bg-slate-800 rounded-t-2xl">
+        <div
+          className={classNames(
+            'absolute inset-0 z-20 rounded-t-2xl p-6',
+            theme === 'perps'
+              ? 'bg-perps-background text-perps-muted'
+              : 'bg-gray-100 dark:bg-slate-800',
+          )}
+        >
           <DialogPrimitive.Close asChild className="absolute top-6 right-6">
-            <IconButton icon={XMarkIcon} name="Close" />
+            <IconButton
+              icon={XMarkIcon}
+              name="Close"
+              variant={theme === 'perps' ? 'perps-secondary' : 'secondary'}
+            />
           </DialogPrimitive.Close>
           <div className="flex flex-col gap-4 h-full">
             <DialogHeader>

@@ -81,7 +81,7 @@ export function UserPortfolio({
         ) : (
           <JazzIcon diameter={20} address={address} />
         )}
-        <span className="hidden sm:block">{shortenAddress(address)}</span>
+        <span className="hidden lg:block">{shortenAddress(address)}</span>
         {walletCount > 1 ? (
           <div className="w-4 h-4 rounded-full bg-blue text-white font-medium text-[10px] flex items-center justify-center">
             +{walletCount - 1}

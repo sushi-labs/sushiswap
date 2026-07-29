@@ -28,6 +28,7 @@ import { type Amount, type Fraction, ZERO, getChainById } from 'sushi'
 import { zeroAddress } from 'viem'
 import { NativeAddress } from '../../../../../constants'
 import type { TokenSelectorChainId } from '../../config'
+import { useTokenSelectorTheme } from '../../token-selector-theme'
 
 export interface TokenSelectorRow<TChainId extends TokenSelectorChainId> {
   currency: CurrencyFor<TChainId>
@@ -59,6 +60,8 @@ function TokenSelectorRowBase<TChainId extends TokenSelectorChainId>({
   showWarning,
   onShowInfo,
 }: TokenSelectorRow<TChainId>) {
+  const theme = useTokenSelectorTheme()
+  const isPerps = theme === 'perps'
   const domain =
     typeof currency.metadata.domain === 'string'
       ? currency.metadata.domain
@@ -99,8 +102,11 @@ function TokenSelectorRowBase<TChainId extends TokenSelectorChainId>({
       <div className="relative py-0.5 h-[64px]" style={style}>
         <div
           className={classNames(
-            selected ? 'bg-secondary' : '',
-            'group flex items-center w-full hover:bg-muted focus-within:bg-accent h-full rounded-lg',
+            selected ? (isPerps ? 'bg-perps-blue/[0.08]' : 'bg-secondary') : '',
+            isPerps
+              ? 'hover:bg-white/[0.05] focus-within:bg-white/[0.07]'
+              : 'hover:bg-muted focus-within:bg-accent',
+            'group flex h-full w-full items-center rounded-lg',
           )}
         >
           <button
@@ -123,11 +129,21 @@ function TokenSelectorRowBase<TChainId extends TokenSelectorChainId>({
                 <Badge
                   position="bottom-right"
                   badgeContent={
-                    <div className="bg-white rounded-full dark:bg-slate-800 black:bg-gray-900">
+                    <div
+                      className={classNames(
+                        'rounded-full',
+                        isPerps
+                          ? 'bg-perps-background'
+                          : 'bg-white dark:bg-slate-800 black:bg-gray-900',
+                      )}
+                    >
                       <CheckCircleIcon
                         width={20}
                         height={20}
-                        className="rounded-full text-blue"
+                        className={classNames(
+                          'rounded-full',
+                          isPerps ? 'text-perps-blue' : 'text-blue',
+                        )}
                       />
                     </div>
                   }
@@ -153,7 +169,12 @@ function TokenSelectorRowBase<TChainId extends TokenSelectorChainId>({
               )}
               <div className="flex flex-col items-start">
                 <div className="flex gap-1">
-                  <span className="font-semibold text-primary">
+                  <span
+                    className={classNames(
+                      'font-semibold',
+                      isPerps ? 'text-perps-muted' : 'text-primary',
+                    )}
+                  >
                     {currency.symbol}
                   </span>
                   {showWarning ? (
@@ -176,7 +197,14 @@ function TokenSelectorRowBase<TChainId extends TokenSelectorChainId>({
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <span className="text-sm text-muted-foreground hover:underline">
+                      <span
+                        className={classNames(
+                          'text-sm hover:underline',
+                          isPerps
+                            ? 'text-perps-muted-50'
+                            : 'text-muted-foreground',
+                        )}
+                      >
                         {currency.name ?? currency.symbol}
                         {domain ? ` - ${domain}` : ''}
                       </span>
@@ -219,12 +247,22 @@ function TokenSelectorRowBase<TChainId extends TokenSelectorChainId>({
                     <span
                       className={classNames(
                         selected ? 'font-semibold' : 'font-medium',
-                        'text-right text-gray-900 dark:text-slate-50 truncate black:text-slate-50',
+                        'truncate text-right',
+                        isPerps
+                          ? 'text-perps-muted'
+                          : 'text-gray-900 dark:text-slate-50 black:text-slate-50',
                       )}
                     >
                       {balance?.toSignificant(6)}
                     </span>
-                    <span className="text-sm font-medium text-right text-gray-500 dark:text-slate-400">
+                    <span
+                      className={classNames(
+                        'text-right text-sm font-medium',
+                        isPerps
+                          ? 'text-perps-muted-50'
+                          : 'text-gray-500 dark:text-slate-400',
+                      )}
+                    >
                       {price
                         ? `$${balance?.mul(price).toString({ fixed: 2 })}`
                         : '-'}
@@ -247,6 +285,8 @@ function TokenSelectorRowBase<TChainId extends TokenSelectorChainId>({
                 className={classNames(
                   pin.isPinned ? '' : 'grayscale opacity-50',
                   'z-50',
+                  isPerps &&
+                    'text-perps-muted-50 hover:bg-white/[0.06] hover:text-perps-muted',
                 )}
               />
             )}
@@ -258,6 +298,10 @@ function TokenSelectorRowBase<TChainId extends TokenSelectorChainId>({
               onClick={showInfo}
               onKeyDown={(event) => event.stopPropagation()}
               onKeyPress={(event) => event.stopPropagation()}
+              className={classNames(
+                isPerps &&
+                  'text-perps-muted-50 hover:bg-white/[0.06] hover:text-perps-muted',
+              )}
             />
           </div>
         </div>

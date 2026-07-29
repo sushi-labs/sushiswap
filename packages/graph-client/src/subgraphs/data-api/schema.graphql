@@ -3,23 +3,262 @@ Indicates exactly one field must be supplied and this field must not be `null`.
 """
 directive @oneOf on INPUT_OBJECT
 
-type Bucket {
-  id: ID!
-  date: Int!
-  volumeUSD: Float!
-  volumeUSDUntracked: Float!
-  liquidityUSD: Float!
-  feesUSD: Float!
-  txCount: Int!
+"""A chain ID configured for the Sushi launchpad"""
+scalar LaunchpadChainId
+
+type LaunchpadQueries {
+  quoteTokenList(chainId: LaunchpadChainId!): [LaunchpadTokenRef!]!
+  tokens(input: LaunchpadTokensInput!): LaunchpadTokenConnection!
+  token(chainId: LaunchpadChainId!, address: EvmAddress!): LaunchpadToken
+  creator(chainId: LaunchpadChainId!, address: EvmAddress!): LaunchpadCreator!
+  trades(input: LaunchpadTradesInput!): LaunchpadTradeConnection!
+  candles(input: LaunchpadCandlesInput!): LaunchpadCandleConnection!
 }
 
-type SushiDayBuckets {
-  v2: [Bucket!]!
-  v3: [Bucket!]!
-  blade: [Bucket!]
+type LaunchpadMutations {
+  updateMetadata(input: LaunchpadUpdateMetadataInput!, signature: Bytes!): LaunchpadMetadata!
+}
+
+type LaunchpadTokenRef {
+  address: EvmAddress!
+  symbol: String!
+  name: String!
+  decimals: Int!
+}
+
+enum LaunchpadIndexingStatus {
+  PROVISIONAL
+  CONFIRMED
+  ORPHANED
+}
+
+type LaunchpadToken {
+  id: ID!
+  chainId: LaunchpadChainId!
+  address: EvmAddress!
+  creator: EvmAddress!
+  factoryAddress: EvmAddress!
+  name: String!
+  symbol: String!
+  decimals: Int!
+  initialSupply: BigInt!
+  feeSplit: LaunchpadFeeSplit!
+  indexingStatus: LaunchpadIndexingStatus!
+  pool: LaunchpadPool!
+  positions: [LaunchpadPosition!]!
+  metadata: LaunchpadMetadata!
+  metrics: LaunchpadMetrics
+  creationTransactionHash: Bytes!
+  createdAt: String!
+}
+
+type LaunchpadPool {
+  address: EvmAddress!
+  feeTier: Int!
+  quoteToken: LaunchpadTokenRef!
+}
+
+type LaunchpadFeeSplit {
+  sushiFeeBps: Int!
+  creatorFeeBps: Int!
+}
+
+type LaunchpadPosition {
+  positionIndex: Int!
+  positionId: BigInt!
+  tickLower: Int!
+  tickUpper: Int!
+  desiredAmount: BigInt!
+  usedAmount: BigInt!
+  liquidity: BigInt!
+}
+
+type LaunchpadMetadata {
+  description: String
+  links: [LaunchpadMetadataLink!]!
+  revision: Int!
+  updatedAt: String
+}
+
+type LaunchpadMetadataLink {
+  kind: String!
+  url: String!
+  label: String
+}
+
+type LaunchpadCreator {
+  chainId: LaunchpadChainId!
+  address: EvmAddress!
+  launchCount: Int!
+}
+
+input LaunchpadTokensInput {
+  chainId: LaunchpadChainId!
+  creator: EvmAddress
+  search: String
+  first: Int = 20
+  after: String
+  sortBy: LaunchpadTokenSortField = MARKET_CAPITALIZATION
+  sortDirection: LaunchpadSortDirection = DESC
+}
+
+enum LaunchpadTokenSortField {
+  CREATED_AT
+  MARKET_CAPITALIZATION
+  VOLUME_1H
+  VOLUME_6H
+  VOLUME_12H
+  VOLUME_24H
+  CURRENT_TVL
+  TVL_CHANGE_1H
+  TVL_CHANGE_6H
+  TVL_CHANGE_12H
+  TVL_CHANGE_24H
+}
+
+enum LaunchpadSortDirection {
+  ASC
+  DESC
+}
+
+type LaunchpadTokenConnection {
+  edges: [LaunchpadTokenEdge!]!
+  pageInfo: LaunchpadPageInfo!
+  totalCount: Int!
+}
+
+type LaunchpadTokenEdge {
+  cursor: String!
+  node: LaunchpadToken!
+}
+
+type LaunchpadPageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+}
+
+type LaunchpadMetrics {
+  version: BigInt!
+  priceUsd: Float
+  circulatingSupply: BigInt!
+  marketCapitalizationUsd: Float
+  fullyDilutedValuationUsd: Float
+  currentTvlUsd: Float
+  volumeUsd: LaunchpadNullableWindowValues!
+  tvlChangePercent: LaunchpadNullableWindowValues!
+  asOf: String!
+  source: String!
+  isStale: Boolean!
+}
+
+type LaunchpadNullableWindowValues {
+  h1: Float
+  h6: Float
+  h12: Float
+  h24: Float
+}
+
+enum LaunchpadTradeDirection {
+  BUY
+  SELL
+}
+
+type LaunchpadTrade {
+  id: ID!
+  chainId: LaunchpadChainId!
+  tokenAddress: EvmAddress!
+  poolAddress: EvmAddress!
+  feeTier: Int!
+  isLaunchPool: Boolean!
+  transactionHash: Bytes!
+  logIndex: Int!
+  blockNumber: BigInt!
+  timestamp: String!
+  trader: EvmAddress
+  direction: LaunchpadTradeDirection!
+  tokenAmount: BigInt!
+  quoteToken: LaunchpadTokenRef!
+  quoteAmount: BigInt!
+  priceUsd: Float
+  amountUsd: Float
+}
+
+input LaunchpadTradesInput {
+  chainId: LaunchpadChainId!
+  tokenAddress: EvmAddress!
+  includeSmallTrades: Boolean = false
+  first: Int = 50
+  after: String
+}
+
+type LaunchpadTradeConnection {
+  edges: [LaunchpadTradeEdge!]!
+  pageInfo: LaunchpadPageInfo!
+  totalCount: Int!
+  streamCursor: BigInt!
+}
+
+type LaunchpadTradeEdge {
+  cursor: String!
+  node: LaunchpadTrade!
+}
+
+enum LaunchpadCandleInterval {
+  ONE_MINUTE
+  FIVE_MINUTES
+  FIFTEEN_MINUTES
+  ONE_HOUR
+  FOUR_HOURS
+  ONE_DAY
+}
+
+input LaunchpadCandlesInput {
+  chainId: LaunchpadChainId!
+  tokenAddress: EvmAddress!
+  interval: LaunchpadCandleInterval!
+  from: Int!
+  to: Int!
+  fresh: Boolean = false
+}
+
+type LaunchpadCandleConnection {
+  nodes: [LaunchpadCandle!]!
+  streamCursor: BigInt!
+}
+
+type LaunchpadCandle {
+  timestamp: Int!
+  open: Float!
+  high: Float!
+  low: Float!
+  close: Float!
+  volumeUsd: Float!
+  tradeCount: Int!
+}
+
+input LaunchpadMetadataDocumentInput {
+  description: String
+  links: [LaunchpadMetadataLinkInput!]! = []
+}
+
+input LaunchpadMetadataLinkInput {
+  kind: String!
+  url: String!
+  label: String
+}
+
+input LaunchpadUpdateMetadataInput {
+  chainId: LaunchpadChainId!
+  tokenAddress: EvmAddress!
+  expectedRevision: Int!
+  metadata: LaunchpadMetadataDocumentInput!
+  image: Base64
+  deadline: BigInt!
 }
 
 type Query {
+  launchpad: LaunchpadQueries!
+  perps: PerpsQueries!
   sushiDayBuckets(chainId: SushiSwapChainId!): SushiDayBuckets!
   bladePools(chainId: BladeChainId!): [BladePool!]!
   bladePool(address: Bytes!, chainId: BladeChainId!): BladePool!
@@ -72,8 +311,182 @@ type Query {
   v3Mints(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Mint!]!
   v3Collects(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Collect!]!
   v3Transactions(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Transaction!]!
-  launchpad: LaunchpadQueries!
-  perps: PerpsQueries!
+}
+
+type Mutation {
+  launchpad: LaunchpadMutations!
+  perps: PerpsMutations!
+}
+
+type PerpsReferralCode {
+  id: ID!
+  code: String!
+  ownerAddress: EvmAddress!
+  isAutoGenerated: Boolean!
+  createdAt: String!
+}
+
+type PerpsReferralOverview {
+  address: EvmAddress!
+  primaryReferralCode: PerpsReferralCode
+  activeFeeLevels: [PerpsActiveFeeLevel!]!
+  hasRedeemedReferralCode: Boolean!
+  referredUserCount: Int!
+  referredUserCountsByLevel: [PerpsReferralLevelCount!]!
+  totalEarnedFees: Float!
+  earnedFeesByLevel: [PerpsReferralLevelFeeTotal!]!
+}
+
+type PerpsReferralLevelCount {
+  level: Int!
+  userCount: Int!
+}
+
+type PerpsReferralLevelFeeTotal {
+  level: Int!
+  feesEarned: Float!
+}
+
+type PerpsActiveFeeLevel {
+  level: Int!
+  shareBps: Int!
+}
+
+type PerpsReferredUser {
+  refereeAddress: EvmAddress!
+  linkedAt: String!
+  lifetimeEarnedFees: Float!
+  downlineEarnedFees: Float!
+  lastEarnedAt: String
+  level: Int!
+  shareBps: Int!
+  children: [PerpsReferredUser!]!
+}
+
+type PerpsDailyFeePoint {
+  date: String!
+  amount: Float!
+}
+
+type PerpsPointsOverview {
+  address: EvmAddress!
+  totalVolumeUsd: Float!
+  totalPoints: Float!
+  baseMultiplier: Float!
+  points7d: Float!
+  points30d: Float!
+  pointMultipliers: [PerpsPointMultiplier!]!
+}
+
+type PerpsPointMultiplier {
+  thresholdUsd: Float!
+  multiplier: Float!
+}
+
+type PerpsDailyPoint {
+  date: String!
+  points: Float!
+}
+
+enum PerpsLeaderboardTimeframe {
+  DAY
+  WEEK
+  SEASON
+}
+
+enum PerpsPointsSeason {
+  CURRENT
+  SEASON_1
+  SEASON_2
+}
+
+type PerpsLeaderboardEntry {
+  address: EvmAddress!
+  points: Float!
+  seasonPoints: Float!
+  volumeUsd: Float!
+  seasonVolumeUsd: Float!
+  pnl: Float!
+}
+
+type PerpsLeaderboard {
+  timeframe: PerpsLeaderboardTimeframe!
+  updatedAt: String
+  entries: [PerpsLeaderboardEntry!]!
+}
+
+type PerpsLeaderboardUser {
+  address: EvmAddress!
+  timeframe: PerpsLeaderboardTimeframe!
+
+  """null if the user has no points in the selected timeframe."""
+  rank: Int
+  points: Float!
+  seasonPoints: Float!
+  volumeUsd: Float!
+  seasonVolumeUsd: Float!
+  pnl: Float!
+}
+
+type PerpsClaim {
+  root: Bytes!
+  distributor: EvmAddress!
+  token: EvmAddress!
+  cumulativeAmount: BigInt!
+  alreadyClaimedAmount: BigInt!
+  claimableAmount: BigInt!
+  proof: [Bytes!]!
+  updatedAt: String!
+}
+
+type PerpsReferralRedemptionResult {
+  id: ID!
+  refereeAddress: EvmAddress!
+  referrerAddress: EvmAddress!
+  referralCode: String!
+  linkedAt: String!
+}
+
+type ClaimProofResult {
+  account: EvmAddress!
+  amount: String!
+  displayAmount: String!
+  proof: [Bytes!]!
+  leaf: Bytes!
+}
+
+type PerpsQueries {
+  claim(address: EvmAddress!): PerpsClaim
+  referralOverview(address: EvmAddress!): PerpsReferralOverview!
+  referredUsers(address: EvmAddress!): [PerpsReferredUser!]!
+  referralFeeHistory(address: EvmAddress!, from: String, to: String): [PerpsDailyFeePoint!]!
+  pointsOverview(address: EvmAddress!, season: PerpsPointsSeason! = CURRENT): PerpsPointsOverview!
+  pointsHistory(address: EvmAddress!, from: String, to: String, season: PerpsPointsSeason! = CURRENT): [PerpsDailyPoint!]!
+  leaderboard(timeframe: PerpsLeaderboardTimeframe! = SEASON, season: PerpsPointsSeason! = CURRENT): PerpsLeaderboard!
+  leaderboardUser(address: EvmAddress!, timeframe: PerpsLeaderboardTimeframe! = SEASON, season: PerpsPointsSeason! = CURRENT): PerpsLeaderboardUser!
+  isReferralCodeAvailable(code: String!): Boolean!
+  pointClaimProof(season: PerpsPointsSeason! = SEASON_1, address: EvmAddress!): ClaimProofResult!
+}
+
+type PerpsMutations {
+  createReferralCode(address: EvmAddress!, code: String): PerpsReferralCode!
+  redeemReferralCode(address: EvmAddress!, code: String!, expiresAt: String!, signature: String!): PerpsReferralRedemptionResult!
+}
+
+type Bucket {
+  id: ID!
+  date: Int!
+  volumeUSD: Float!
+  volumeUSDUntracked: Float!
+  liquidityUSD: Float!
+  feesUSD: Float!
+  txCount: Int!
+}
+
+type SushiDayBuckets {
+  v2: [Bucket!]!
+  v3: [Bucket!]!
+  blade: [Bucket!]
 }
 
 type BladePoolToken {
@@ -1090,420 +1503,4 @@ type V3Transaction {
   swaps: [V3Swap]
   burns: [V3Burn]
   mints: [V3Mint]
-}
-
-"""A chain ID configured for the Sushi launchpad"""
-scalar LaunchpadChainId
-
-type LaunchpadQueries {
-  quoteTokenList(chainId: LaunchpadChainId!): [LaunchpadTokenRef!]!
-  tokens(input: LaunchpadTokensInput!): LaunchpadTokenConnection!
-  token(chainId: LaunchpadChainId!, address: EvmAddress!): LaunchpadToken
-  creator(chainId: LaunchpadChainId!, address: EvmAddress!): LaunchpadCreator!
-  trades(input: LaunchpadTradesInput!): LaunchpadTradeConnection!
-  candles(input: LaunchpadCandlesInput!): LaunchpadCandleConnection!
-}
-
-type LaunchpadMutations {
-  updateMetadata(input: LaunchpadUpdateMetadataInput!, signature: Bytes!): LaunchpadMetadata!
-}
-
-type LaunchpadTokenRef {
-  address: EvmAddress!
-  symbol: String!
-  name: String!
-  decimals: Int!
-}
-
-enum LaunchpadIndexingStatus {
-  PROVISIONAL
-  CONFIRMED
-  ORPHANED
-}
-
-type LaunchpadToken {
-  id: ID!
-  chainId: LaunchpadChainId!
-  address: EvmAddress!
-  creator: EvmAddress!
-  factoryAddress: EvmAddress!
-  name: String!
-  symbol: String!
-  decimals: Int!
-  initialSupply: BigInt!
-  feeSplit: LaunchpadFeeSplit!
-  curvePreset: LaunchpadCurvePresetRef
-  indexingStatus: LaunchpadIndexingStatus!
-  pool: LaunchpadPool!
-  positions: [LaunchpadPosition!]!
-  metadata: LaunchpadMetadata!
-  metrics: LaunchpadMetrics
-  creationTransactionHash: Bytes!
-  createdAt: String!
-}
-
-type LaunchpadPool {
-  address: EvmAddress!
-  feeTier: Int!
-  quoteToken: LaunchpadTokenRef!
-}
-
-type LaunchpadFeeSplit {
-  sushiFeeBps: Int!
-  creatorFeeBps: Int!
-}
-
-type LaunchpadCurvePresetRef {
-  id: String!
-  version: String!
-}
-
-type LaunchpadPosition {
-  positionIndex: Int!
-  positionId: BigInt!
-  tickLower: Int!
-  tickUpper: Int!
-  desiredAmount: BigInt!
-  usedAmount: BigInt!
-  liquidity: BigInt!
-}
-
-type LaunchpadMetadata {
-  description: String
-  links: [LaunchpadMetadataLink!]!
-  revision: Int!
-  updatedAt: String
-}
-
-type LaunchpadMetadataLink {
-  kind: String!
-  url: String!
-  label: String
-}
-
-type LaunchpadCreator {
-  chainId: LaunchpadChainId!
-  address: EvmAddress!
-  launchCount: Int!
-}
-
-input LaunchpadTokensInput {
-  chainId: LaunchpadChainId!
-  creator: EvmAddress
-  search: String
-  first: Int = 20
-  after: String
-  sortBy: LaunchpadTokenSortField = CREATED_AT
-  sortDirection: LaunchpadSortDirection = DESC
-}
-
-enum LaunchpadTokenSortField {
-  CREATED_AT
-  VOLUME_1H
-  VOLUME_6H
-  VOLUME_12H
-  VOLUME_24H
-  CURRENT_TVL
-  TVL_CHANGE_1H
-  TVL_CHANGE_6H
-  TVL_CHANGE_12H
-  TVL_CHANGE_24H
-}
-
-enum LaunchpadSortDirection {
-  ASC
-  DESC
-}
-
-type LaunchpadTokenConnection {
-  edges: [LaunchpadTokenEdge!]!
-  pageInfo: LaunchpadPageInfo!
-  totalCount: Int!
-}
-
-type LaunchpadTokenEdge {
-  cursor: String!
-  node: LaunchpadToken!
-}
-
-type LaunchpadPageInfo {
-  endCursor: String
-  hasNextPage: Boolean!
-}
-
-type LaunchpadMetrics {
-  version: BigInt!
-  priceUsd: Float
-  fullyDilutedValuationUsd: Float
-  currentTvlUsd: Float
-  volumeUsd: LaunchpadNullableWindowValues!
-  tvlChangePercent: LaunchpadNullableWindowValues!
-  asOf: String!
-  source: String!
-  isStale: Boolean!
-}
-
-type LaunchpadNullableWindowValues {
-  h1: Float
-  h6: Float
-  h12: Float
-  h24: Float
-}
-
-enum LaunchpadTradeDirection {
-  BUY
-  SELL
-}
-
-type LaunchpadTrade {
-  id: ID!
-  chainId: LaunchpadChainId!
-  tokenAddress: EvmAddress!
-  poolAddress: EvmAddress!
-  feeTier: Int!
-  isLaunchPool: Boolean!
-  transactionHash: Bytes!
-  logIndex: Int!
-  blockNumber: BigInt!
-  timestamp: String!
-  trader: EvmAddress
-  direction: LaunchpadTradeDirection!
-  tokenAmount: BigInt!
-  quoteToken: LaunchpadTokenRef!
-  quoteAmount: BigInt!
-  priceUsd: Float
-  amountUsd: Float
-}
-
-input LaunchpadTradesInput {
-  chainId: LaunchpadChainId!
-  tokenAddress: EvmAddress!
-  includeSmallTrades: Boolean = false
-  first: Int = 50
-  after: String
-}
-
-type LaunchpadTradeConnection {
-  edges: [LaunchpadTradeEdge!]!
-  pageInfo: LaunchpadPageInfo!
-  totalCount: Int!
-  streamCursor: BigInt!
-}
-
-type LaunchpadTradeEdge {
-  cursor: String!
-  node: LaunchpadTrade!
-}
-
-enum LaunchpadCandleInterval {
-  ONE_MINUTE
-  FIVE_MINUTES
-  FIFTEEN_MINUTES
-  ONE_HOUR
-  FOUR_HOURS
-  ONE_DAY
-}
-
-input LaunchpadCandlesInput {
-  chainId: LaunchpadChainId!
-  tokenAddress: EvmAddress!
-  interval: LaunchpadCandleInterval!
-  from: Int!
-  to: Int!
-  fresh: Boolean = false
-}
-
-type LaunchpadCandleConnection {
-  nodes: [LaunchpadCandle!]!
-  streamCursor: BigInt!
-}
-
-type LaunchpadCandle {
-  timestamp: Int!
-  open: Float!
-  high: Float!
-  low: Float!
-  close: Float!
-  volumeUsd: Float!
-  tradeCount: Int!
-}
-
-input LaunchpadMetadataDocumentInput {
-  description: String
-  links: [LaunchpadMetadataLinkInput!]! = []
-}
-
-input LaunchpadMetadataLinkInput {
-  kind: String!
-  url: String!
-  label: String
-}
-
-input LaunchpadUpdateMetadataInput {
-  chainId: LaunchpadChainId!
-  tokenAddress: EvmAddress!
-  expectedRevision: Int!
-  metadata: LaunchpadMetadataDocumentInput!
-  image: Base64
-  deadline: BigInt!
-}
-
-type Mutation {
-  launchpad: LaunchpadMutations!
-  perps: PerpsMutations!
-}
-
-type PerpsReferralCode {
-  id: ID!
-  code: String!
-  ownerAddress: EvmAddress!
-  isAutoGenerated: Boolean!
-  createdAt: String!
-}
-
-type PerpsReferralOverview {
-  address: EvmAddress!
-  primaryReferralCode: PerpsReferralCode
-  activeFeeLevels: [PerpsActiveFeeLevel!]!
-  hasRedeemedReferralCode: Boolean!
-  referredUserCount: Int!
-  referredUserCountsByLevel: [PerpsReferralLevelCount!]!
-  totalEarnedFees: Float!
-  earnedFeesByLevel: [PerpsReferralLevelFeeTotal!]!
-}
-
-type PerpsReferralLevelCount {
-  level: Int!
-  userCount: Int!
-}
-
-type PerpsReferralLevelFeeTotal {
-  level: Int!
-  feesEarned: Float!
-}
-
-type PerpsActiveFeeLevel {
-  level: Int!
-  shareBps: Int!
-}
-
-type PerpsReferredUser {
-  refereeAddress: EvmAddress!
-  linkedAt: String!
-  lifetimeEarnedFees: Float!
-  downlineEarnedFees: Float!
-  lastEarnedAt: String
-  level: Int!
-  shareBps: Int!
-  children: [PerpsReferredUser!]!
-}
-
-type PerpsDailyFeePoint {
-  date: String!
-  amount: Float!
-}
-
-type PerpsPointsOverview {
-  address: EvmAddress!
-  totalVolumeUsd: Float!
-  totalPoints: Float!
-  baseMultiplier: Float!
-  points7d: Float!
-  points30d: Float!
-  pointMultipliers: [PerpsPointMultiplier!]!
-}
-
-type PerpsPointMultiplier {
-  thresholdUsd: Float!
-  multiplier: Float!
-}
-
-type PerpsDailyPoint {
-  date: String!
-  points: Float!
-}
-
-enum PerpsLeaderboardTimeframe {
-  DAY
-  WEEK
-  SEASON
-}
-
-enum PerpsPointsSeason {
-  CURRENT
-  SEASON_1
-  SEASON_2
-}
-
-type PerpsLeaderboardEntry {
-  address: EvmAddress!
-  points: Float!
-  seasonPoints: Float!
-  volumeUsd: Float!
-  seasonVolumeUsd: Float!
-  pnl: Float!
-}
-
-type PerpsLeaderboard {
-  timeframe: PerpsLeaderboardTimeframe!
-  updatedAt: String
-  entries: [PerpsLeaderboardEntry!]!
-}
-
-type PerpsLeaderboardUser {
-  address: EvmAddress!
-  timeframe: PerpsLeaderboardTimeframe!
-
-  """null if the user has no points in the selected timeframe."""
-  rank: Int
-  points: Float!
-  seasonPoints: Float!
-  volumeUsd: Float!
-  seasonVolumeUsd: Float!
-  pnl: Float!
-}
-
-type PerpsClaim {
-  root: Bytes!
-  distributor: EvmAddress!
-  token: EvmAddress!
-  cumulativeAmount: BigInt!
-  alreadyClaimedAmount: BigInt!
-  claimableAmount: BigInt!
-  proof: [Bytes!]!
-  updatedAt: String!
-}
-
-type PerpsReferralRedemptionResult {
-  id: ID!
-  refereeAddress: EvmAddress!
-  referrerAddress: EvmAddress!
-  referralCode: String!
-  linkedAt: String!
-}
-
-type ClaimProofResult {
-  account: EvmAddress!
-  amount: String!
-  displayAmount: String!
-  proof: [Bytes!]!
-  leaf: Bytes!
-}
-
-type PerpsQueries {
-  claim(address: EvmAddress!): PerpsClaim
-  referralOverview(address: EvmAddress!): PerpsReferralOverview!
-  referredUsers(address: EvmAddress!): [PerpsReferredUser!]!
-  referralFeeHistory(address: EvmAddress!, from: String, to: String): [PerpsDailyFeePoint!]!
-  pointsOverview(address: EvmAddress!, season: PerpsPointsSeason! = CURRENT): PerpsPointsOverview!
-  pointsHistory(address: EvmAddress!, from: String, to: String, season: PerpsPointsSeason! = CURRENT): [PerpsDailyPoint!]!
-  leaderboard(timeframe: PerpsLeaderboardTimeframe! = SEASON, season: PerpsPointsSeason! = CURRENT): PerpsLeaderboard!
-  leaderboardUser(address: EvmAddress!, timeframe: PerpsLeaderboardTimeframe! = SEASON, season: PerpsPointsSeason! = CURRENT): PerpsLeaderboardUser!
-  isReferralCodeAvailable(code: String!): Boolean!
-  pointClaimProof(season: PerpsPointsSeason! = SEASON_1, address: EvmAddress!): ClaimProofResult!
-}
-
-type PerpsMutations {
-  createReferralCode(address: EvmAddress!, code: String): PerpsReferralCode!
-  redeemReferralCode(address: EvmAddress!, code: String!, expiresAt: String!, signature: String!): PerpsReferralRedemptionResult!
 }

@@ -144,6 +144,7 @@ export const useEvmTradeQuote = (variables: UseEvmTradeParams | undefined) => {
     // carbonOffset,
     gasPrice,
     tokenTax,
+    fee = EVM_UI_FEE_DECIMAL,
   } = variables || {}
   const { data: prices } = usePrices({
     chainId,
@@ -194,7 +195,7 @@ export const useEvmTradeQuote = (variables: UseEvmTradeParams | undefined) => {
           : subtractSlippage(
               subtractSlippage(
                 new Amount(toToken, data.route.amountOutBI),
-                EVM_UI_FEE_DECIMAL,
+                fee,
               ),
               new Percent({
                 numerator: Math.floor(+slippagePercentage * 100),
@@ -255,6 +256,7 @@ export const useEvmTradeQuote = (variables: UseEvmTradeParams | undefined) => {
             toToken,
             tokenOutPrice,
             minAmountOut,
+            fee,
           }),
           route: data.route,
           status: data.route.status,
@@ -285,6 +287,7 @@ export const useEvmTradeQuote = (variables: UseEvmTradeParams | undefined) => {
       amount,
       chainId,
       fromToken,
+      fee,
       nativePrice,
       tokenOutPrice,
       slippagePercentage,
