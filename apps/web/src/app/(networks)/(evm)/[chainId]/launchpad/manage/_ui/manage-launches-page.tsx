@@ -2,15 +2,13 @@
 
 import {
   ArrowRightIcon,
-  BanknotesIcon,
   PlusIcon,
   WalletIcon,
 } from '@heroicons/react/24/outline'
-import { Button, Container, Message } from '@sushiswap/ui'
-import Link from 'next/link'
+import { Button, Container, LinkInternal, Message } from '@sushiswap/ui'
 import { useMemo } from 'react'
+import { useAccount } from 'src/lib/wallet'
 import { getEvmChainById } from 'sushi/evm'
-import { useAccount } from 'wagmi'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatUsd, shortenAddress } from '../../_ui/format'
 import { MetricCard } from '../../_ui/metric-card'
@@ -21,7 +19,7 @@ import { useLaunchpadCreator } from '../../hooks/use-launchpad-data'
 
 export function ManageLaunchesPage({ chainId }: { chainId: LaunchpadChainId }) {
   const chainKey = getEvmChainById(chainId).key
-  const { address } = useAccount()
+  const address = useAccount('evm')
   const filters = useMemo(
     () => ({
       first: 20,
@@ -36,10 +34,17 @@ export function ManageLaunchesPage({ chainId }: { chainId: LaunchpadChainId }) {
     isPending,
     refetch,
   } = useLaunchpadCreator(chainId, address, filters)
-  const tokens = creator?.launches.edges.map((edge) => edge.node) ?? []
-  const combinedTvl = tokens.reduce(
-    (total, token) => total + (token.metrics?.currentTvlUsd ?? 0),
-    0,
+  const tokens = useMemo(
+    () => creator?.launches.edges.map((edge) => edge.node) ?? [],
+    [creator?.launches.edges],
+  )
+  const combinedTvl = useMemo(
+    () =>
+      tokens.reduce(
+        (total, token) => total + (token.metrics?.currentTvlUsd ?? 0),
+        0,
+      ),
+    [tokens],
   )
 
   return (
@@ -49,9 +54,11 @@ export function ManageLaunchesPage({ chainId }: { chainId: LaunchpadChainId }) {
           title="My launches"
           description="Manage editable metadata, replace logos, and distribute accrued V3 fees for your launches."
           action={
-            <Button asChild size="lg" variant="perps-default" icon={PlusIcon}>
-              <Link href={`/${chainKey}/launchpad/create`}>Create token</Link>
-            </Button>
+            <LinkInternal href={`/${chainKey}/launchpad/create`}>
+              <Button asChild size="lg" variant="perps-default" icon={PlusIcon}>
+                Create token
+              </Button>
+            </LinkInternal>
           }
         />
 
@@ -80,17 +87,17 @@ export function ManageLaunchesPage({ chainId }: { chainId: LaunchpadChainId }) {
                   </div>
                 </div>
               </div>
-              <Button
-                asChild
-                variant="perps-secondary"
-                size="sm"
-                icon={ArrowRightIcon}
-                iconPosition="end"
-              >
-                <Link href={`/${chainKey}/launchpad/creator/${address}`}>
+              <LinkInternal href={`/${chainKey}/launchpad/creator/${address}`}>
+                <Button
+                  asChild
+                  variant="perps-secondary"
+                  size="sm"
+                  icon={ArrowRightIcon}
+                  iconPosition="end"
+                >
                   Public profile
-                </Link>
-              </Button>
+                </Button>
+              </LinkInternal>
             </PerpsCard>
           </div>
         ) : null}
