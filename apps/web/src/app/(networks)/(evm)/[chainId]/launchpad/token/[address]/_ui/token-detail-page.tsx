@@ -1,5 +1,6 @@
 'use client'
 
+import { CheckIcon } from '@heroicons/react-v1/solid'
 import {
   ArrowLeftIcon,
   BeakerIcon,
@@ -319,14 +320,18 @@ export function TokenDetailPage({
               <div className="flex items-center gap-1">
                 <span>Launched by</span>
                 <ClipboardController hideTooltip>
-                  {({ setCopied }) => (
+                  {({ setCopied, isCopied }) => (
                     <TooltipProvider>
                       <Tooltip>
-                        <TooltipTrigger asChild>
-                          <DocumentDuplicateIcon
-                            className="mb-[1px] h-3.5 w-3.5 cursor-pointer text-perps-blue"
-                            onClick={() => setCopied(token.creator)}
-                          />
+                        <TooltipTrigger
+                          asChild
+                          onClick={() => setCopied(token.creator)}
+                        >
+                          {isCopied ? (
+                            <CheckIcon className="mb-[1px] h-3.5 w-3.5 cursor-pointer text-emerald-400" />
+                          ) : (
+                            <DocumentDuplicateIcon className="mb-[1px] h-3.5 w-3.5 cursor-pointer text-perps-blue" />
+                          )}
                         </TooltipTrigger>
                         <TooltipContent side="bottom">
                           <p>Copy address</p>
@@ -347,14 +352,18 @@ export function TokenDetailPage({
               <div className="flex items-center gap-1">
                 <span>Token</span>
                 <ClipboardController hideTooltip>
-                  {({ setCopied }) => (
+                  {({ setCopied, isCopied }) => (
                     <TooltipProvider>
                       <Tooltip>
-                        <TooltipTrigger asChild>
-                          <DocumentDuplicateIcon
-                            className="mb-[1px] h-3.5 w-3.5 cursor-pointer text-perps-blue"
-                            onClick={() => setCopied(token.address)}
-                          />
+                        <TooltipTrigger
+                          asChild
+                          onClick={() => setCopied(token.address)}
+                        >
+                          {isCopied ? (
+                            <CheckIcon className="mb-[1px] h-3.5 w-3.5 cursor-pointer text-emerald-400" />
+                          ) : (
+                            <DocumentDuplicateIcon className="mb-[1px] h-3.5 w-3.5 cursor-pointer text-perps-blue" />
+                          )}
                         </TooltipTrigger>
                         <TooltipContent side="bottom">
                           <p>Copy address</p>
