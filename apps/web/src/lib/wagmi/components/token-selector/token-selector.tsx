@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  PerpsDialogContent,
   TextField,
   classNames,
   gtagEvent,
@@ -31,6 +32,10 @@ import { CurrencyInfo } from './currency-info'
 import { DesktopNetworkSelector } from './desktop-network-selector'
 import { MobileNetworkSelector } from './mobile-network-selector'
 import { TokenSelectorStates } from './token-selector-states'
+import {
+  type TokenSelectorTheme,
+  TokenSelectorThemeProvider,
+} from './token-selector-theme'
 
 interface TokenSelectorProps<
   TChainId extends TokenSelectorChainId,
@@ -47,6 +52,7 @@ interface TokenSelectorProps<
   networks?: readonly TNetwork[]
   selectedNetwork?: TNetwork
   onNetworkSelect?: (network: TNetwork) => void
+  theme?: TokenSelectorTheme
 }
 
 export function TokenSelector<
@@ -63,6 +69,7 @@ export function TokenSelector<
   networks,
   selectedNetwork,
   onNetworkSelect,
+  theme = 'default',
 }: TokenSelectorProps<TChainId, TNetwork>) {
   const address = useAccount(chainId)
 
@@ -118,78 +125,116 @@ export function TokenSelector<
 
   const { isMd } = useBreakpoint('md')
 
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent
+  const content = (
+    <Trace
+      name={InterfaceEventName.TOKEN_SELECTOR_OPENED}
+      modal={InterfaceModalName.TOKEN_SELECTOR}
+      shouldLogImpression
+    >
+      {networks && selectedNetwork && onNetworkSelect && isMd ? (
+        <DesktopNetworkSelector
+          networks={networks}
+          selectedNetwork={selectedNetwork}
+          onSelect={_onNetworkSelect}
+        />
+      ) : null}
+      <div
         className={classNames(
-          'h-[80vh] !flex !flex-col md:!flex-row w-fit !p-0',
-          networks ? 'md:min-w-[720px]' : 'md:min-w-[600px]',
+          'relative flex flex-col gap-4 overflow-y-auto p-6',
+          theme === 'perps' && 'min-h-0 flex-1',
         )}
       >
-        <Trace
-          name={InterfaceEventName.TOKEN_SELECTOR_OPENED}
-          modal={InterfaceModalName.TOKEN_SELECTOR}
-          shouldLogImpression
-        >
-          {networks && selectedNetwork && onNetworkSelect && isMd ? (
-            <DesktopNetworkSelector
-              networks={networks}
-              selectedNetwork={selectedNetwork}
-              onSelect={_onNetworkSelect}
+        {currencyInfo ? (
+          <CurrencyInfo
+            currency={currencyInfo}
+            onBack={() => showCurrencyInfo(false)}
+          />
+        ) : null}
+        <DialogHeader className="!text-left">
+          <DialogTitle
+            className={classNames(theme === 'perps' && '!text-perps-muted')}
+          >
+            Select a token
+          </DialogTitle>
+          <DialogDescription
+            className={classNames(theme === 'perps' && '!text-perps-muted-50')}
+          >
+            Select a token from our default list or search for a token by symbol
+            or address.
+          </DialogDescription>
+        </DialogHeader>
+        {networks && selectedNetwork && onNetworkSelect && !isMd ? (
+          <MobileNetworkSelector
+            networks={networks}
+            selectedNetwork={selectedNetwork}
+            onSelect={_onNetworkSelect}
+          />
+        ) : null}
+        {!hideSearch ? (
+          <div className="flex gap-2">
+            <TextField
+              placeholder="Search by token or address"
+              icon={MagnifyingGlassIcon}
+              iconProps={{
+                className: classNames(
+                  theme === 'perps' && '!text-perps-muted-50',
+                ),
+              }}
+              type="text"
+              testdata-id={`token-selector-address-input`}
+              value={query}
+              onValueChange={setQuery}
+              className={classNames(
+                theme === 'perps' &&
+                  '!border !border-white/[0.06] !bg-white/[0.04] !text-perps-muted placeholder:!text-perps-muted-50 focus:!border-perps-blue',
+              )}
             />
-          ) : null}
-          <div className="flex flex-col gap-4 overflow-y-auto relative p-6">
-            {currencyInfo ? (
-              <CurrencyInfo
-                currency={currencyInfo}
-                onBack={() => showCurrencyInfo(false)}
-              />
-            ) : null}
-            <DialogHeader className="!text-left">
-              <DialogTitle>Select a token</DialogTitle>
-              <DialogDescription>
-                Select a token from our default list or search for a token by
-                symbol or address.
-              </DialogDescription>
-            </DialogHeader>
-            {networks && selectedNetwork && onNetworkSelect && !isMd ? (
-              <MobileNetworkSelector
-                networks={networks}
-                selectedNetwork={selectedNetwork}
-                onSelect={_onNetworkSelect}
-              />
-            ) : null}
-            {!hideSearch ? (
-              <div className="flex gap-2">
-                <TextField
-                  placeholder="Search by token or address"
-                  icon={MagnifyingGlassIcon}
-                  type="text"
-                  testdata-id={`token-selector-address-input`}
-                  value={query}
-                  onValueChange={setQuery}
-                />
-              </div>
-            ) : null}
-            <div
-              id="token-list-container"
-              className="space-y-2 flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 overflow-y-scroll md:pr-4 pr-2"
-            >
-              <TokenSelectorStates
-                selected={selected}
-                chainId={chainId}
-                account={address}
-                onSelect={_onSelect}
-                currencies={currencies}
-                includeNative={includeNative}
-                search={query}
-                onShowInfo={showCurrencyInfo}
-              />
-            </div>
           </div>
-        </Trace>
-      </DialogContent>
-    </Dialog>
+        ) : null}
+        <div
+          id="token-list-container"
+          className="flex flex-1 flex-grow flex-col gap-3 space-y-2 overflow-y-scroll px-1 py-0.5 pr-2 md:pr-4"
+        >
+          <TokenSelectorStates
+            selected={selected}
+            chainId={chainId}
+            account={address}
+            onSelect={_onSelect}
+            currencies={currencies}
+            includeNative={includeNative}
+            search={query}
+            onShowInfo={showCurrencyInfo}
+          />
+        </div>
+      </div>
+    </Trace>
+  )
+
+  return (
+    <TokenSelectorThemeProvider theme={theme}>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>{children}</DialogTrigger>
+        {theme === 'perps' ? (
+          <PerpsDialogContent
+            className={classNames(
+              'h-[80vh] !w-full !p-0 md:!w-fit',
+              networks ? 'md:min-w-[720px]' : 'md:min-w-[600px]',
+            )}
+            wrapperClassName="!flex h-full min-h-0 !flex-col overflow-hidden md:!flex-row"
+          >
+            {content}
+          </PerpsDialogContent>
+        ) : (
+          <DialogContent
+            className={classNames(
+              'h-[80vh] !flex !flex-col md:!flex-row w-fit !p-0',
+              networks ? 'md:min-w-[720px]' : 'md:min-w-[600px]',
+            )}
+          >
+            {content}
+          </DialogContent>
+        )}
+      </Dialog>
+    </TokenSelectorThemeProvider>
   )
 }

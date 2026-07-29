@@ -31,6 +31,7 @@ import { TokenSecurityImportActions } from '../../../token-security-import-actio
 import { getTokenSecurityImportState } from '../../../token-security-import-state'
 import { TokenSecurityView } from '../../../token-security-view'
 import type { TokenSelectorChainId } from '../../config'
+import { useTokenSelectorTheme } from '../../token-selector-theme'
 
 interface TokenSelectorImportRow<TChainId extends TokenSelectorChainId> {
   currency: TokenFor<TChainId>
@@ -41,6 +42,8 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
   currency,
   onImport,
 }: TokenSelectorImportRow<TChainId>) {
+  const theme = useTokenSelectorTheme()
+  const isPerps = theme === 'perps'
   const [open, setOpen] = useState(false)
 
   const securityCurrency = isStellarChainId(currency.chainId)
@@ -79,7 +82,14 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <div className="relative py-0.5 h-[64px]">
-        <div className="flex items-center max-w-full hover:bg-muted focus:bg-accent h-full rounded-lg px-3">
+        <div
+          className={classNames(
+            'flex h-full max-w-full items-center rounded-lg px-3',
+            isPerps
+              ? 'hover:bg-white/[0.05] focus:bg-white/[0.07]'
+              : 'hover:bg-muted focus:bg-accent',
+          )}
+        >
           <div className="flex min-w-0 flex-1 flex-row items-center gap-4">
             <div className="w-10 h-10 shrink-0">
               <Currency.Icon
@@ -90,24 +100,48 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
               />
             </div>
             <div className="flex min-w-0 flex-col items-start">
-              <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 dark:group-hover:text-white">
+              <span
+                className={classNames(
+                  'font-semibold',
+                  isPerps
+                    ? 'text-perps-muted'
+                    : 'text-gray-900 group-hover:text-gray-900 dark:text-slate-50 dark:group-hover:text-white',
+                )}
+              >
                 {currency.symbol}
               </span>
-              <span className="max-w-full truncate text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100">
+              <span
+                className={classNames(
+                  'max-w-full truncate text-sm',
+                  isPerps
+                    ? 'text-perps-muted-50'
+                    : 'text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100',
+                )}
+              >
                 {currency.name}
               </span>
             </div>
           </div>
           <div className="flex shrink-0 flex-col">
             <DialogTrigger asChild>
-              <Button size="xs" onClick={() => setOpen(true)}>
+              <Button
+                size="xs"
+                variant={isPerps ? 'perps-default' : 'default'}
+                onClick={() => setOpen(true)}
+              >
                 Import
               </Button>
             </DialogTrigger>
           </div>
         </div>
       </div>
-      <DialogContent className="!flex max-h-[calc(100dvh-16px)] flex-col overflow-hidden md:max-h-[80vh]">
+      <DialogContent
+        className={classNames(
+          '!flex max-h-[calc(100dvh-16px)] flex-col overflow-hidden md:max-h-[80vh]',
+          isPerps &&
+            '!border !border-white/[0.07] !bg-perps-background !text-perps-muted',
+        )}
+      >
         <DialogHeader className="!text-left !space-y-3 shrink-0">
           <DialogTitle>
             <div
@@ -150,7 +184,13 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
         <div className="min-h-0 overflow-y-auto">
           <div className="flex flex-col gap-4">
             <List>
-              <List.Control className="!p-4">
+              <List.Control
+                className={classNames(
+                  '!p-4',
+                  isPerps &&
+                    '!border-white/[0.06] !bg-white/[0.02] shadow-none',
+                )}
+              >
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-4">
                     <Badge
@@ -193,7 +233,13 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
             </List>
             {securityCurrency ? (
               <List className="!pt-0 overflow-hidden">
-                <List.Control className="!overflow-y-auto flex flex-col gap-3 p-4">
+                <List.Control
+                  className={classNames(
+                    '!flex !flex-col !gap-3 !overflow-y-auto !p-4',
+                    isPerps &&
+                      '!border-white/[0.06] !bg-white/[0.02] shadow-none',
+                  )}
+                >
                   <div className="flex items-center">
                     <span className="text-sm font-medium text-muted-foreground">
                       Token Security Scan
@@ -231,7 +277,12 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
         </Message>
         <DialogFooter>
           {tokenSecurity?.isHoneypot ? (
-            <Button fullWidth size="xl" onClick={() => setOpen(false)}>
+            <Button
+              fullWidth
+              size="xl"
+              variant={isPerps ? 'perps-default' : 'default'}
+              onClick={() => setOpen(false)}
+            >
               Close
             </Button>
           ) : (

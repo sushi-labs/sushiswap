@@ -7,6 +7,7 @@ import {
 import { Button, classNames } from '@sushiswap/ui'
 import type { ReactElement } from 'react'
 import type { TokenSecurityImportState } from './token-security-import-state'
+import { useTokenSelectorTheme } from './token-selector/token-selector-theme'
 
 interface ImportTelemetry {
   tokenSymbol: string | undefined
@@ -51,9 +52,16 @@ export function TokenSecurityImportActions({
   onCancel,
   telemetry,
 }: TokenSecurityImportActionsProps) {
+  const theme = useTokenSelectorTheme()
+  const isPerps = theme === 'perps'
   const hasScanActions = state === 'scanning' || state === 'unavailable'
   const importWithoutScan = withImportTelemetry(
-    <Button fullWidth size="xl" onClick={onImport} variant="warning">
+    <Button
+      fullWidth
+      size="xl"
+      onClick={onImport}
+      variant={isPerps ? 'perps-short' : 'warning'}
+    >
       Force import without scan
     </Button>,
     telemetry,
@@ -68,14 +76,25 @@ export function TokenSecurityImportActions({
     >
       {state === 'scanning' ? (
         <>
-          <Button fullWidth size="xl" loading disabled>
+          <Button
+            fullWidth
+            size="xl"
+            loading
+            disabled
+            variant={isPerps ? 'perps-default' : 'default'}
+          >
             Checking token security
           </Button>
           {importWithoutScan}
         </>
       ) : state === 'unavailable' ? (
         <>
-          <Button fullWidth size="xl" onClick={onRetry}>
+          <Button
+            fullWidth
+            size="xl"
+            onClick={onRetry}
+            variant={isPerps ? 'perps-default' : 'default'}
+          >
             Retry security scan
           </Button>
           {importWithoutScan}
@@ -86,14 +105,27 @@ export function TokenSecurityImportActions({
             fullWidth
             size="xl"
             onClick={onImport}
-            variant={hasSecurityRisk ? 'destructive' : 'default'}
+            variant={
+              isPerps
+                ? hasSecurityRisk
+                  ? 'perps-short'
+                  : 'perps-default'
+                : hasSecurityRisk
+                  ? 'destructive'
+                  : 'default'
+            }
           >
             {hasSecurityRisk ? 'Import Anyway' : 'Confirm Import'}
           </Button>,
           telemetry,
         )
       )}
-      <Button fullWidth size="xl" onClick={onCancel} variant="secondary">
+      <Button
+        fullWidth
+        size="xl"
+        onClick={onCancel}
+        variant={isPerps ? 'perps-secondary' : 'secondary'}
+      >
         Cancel
       </Button>
     </div>

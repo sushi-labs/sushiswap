@@ -2,7 +2,7 @@ import type { VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
 import { type EvmChainId, isBladeChainId } from 'sushi/evm'
-import { SUSHI_DATA_API_HOST } from '../../data-api-host.js'
+import { SUSHI_DATA_API_GRAPHQL_URL } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
 
 export const BladePoolBucketsQuery = graphql(
@@ -36,7 +36,7 @@ export async function getBladePoolBuckets(
   variables: GetBladePoolBuckets,
   options?: RequestOptions,
 ) {
-  const url = `${SUSHI_DATA_API_HOST}/graphql`
+  const url = SUSHI_DATA_API_GRAPHQL_URL
   const chainId = Number(variables.chainId) as EvmChainId
 
   if (!isBladeChainId(chainId)) {

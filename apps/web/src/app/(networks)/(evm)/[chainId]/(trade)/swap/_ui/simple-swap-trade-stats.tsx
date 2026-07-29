@@ -33,7 +33,7 @@ import {
   isSvmAddress,
   isSvmChainId,
 } from 'sushi/svm'
-import { useDetailsInteractionTracker } from '../../_ui/details-interaction-tracker-provider'
+import { useDetailsInteractionTracker } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,

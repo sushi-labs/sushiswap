@@ -4,6 +4,7 @@ import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { useCallback, useMemo, useState } from 'react'
 import { logger } from 'src/lib/logger'
+import { TOAST_AUTOCLOSE_TIME } from 'src/lib/perps'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { waitForSuccessfulReceipt } from 'src/lib/wagmi/transactions/wait-for-successful-receipt'
 import type { Amount } from 'sushi'
@@ -40,6 +41,7 @@ interface UseTokenApprovalParams {
   amount: Amount<EvmCurrency> | undefined
   approveMax?: boolean
   enabled?: boolean
+  variant?: 'perps' | 'default'
 }
 
 export const useTokenApproval = ({
@@ -47,6 +49,7 @@ export const useTokenApproval = ({
   spender,
   enabled = true,
   approveMax,
+  variant = 'default',
 }: UseTokenApprovalParams) => {
   const { address } = useConnection()
   const [pending, setPending] = useState(false)
@@ -145,6 +148,8 @@ export const useTokenApproval = ({
           },
           groupTimestamp: ts,
           timestamp: ts,
+          autoClose: variant === 'perps' ? TOAST_AUTOCLOSE_TIME : undefined,
+          variant: variant,
         })
 
         await receiptPromise
@@ -153,7 +158,7 @@ export const useTokenApproval = ({
         setPending(false)
       }
     },
-    [refetch, client, amount, address],
+    [refetch, client, amount, address, variant],
   )
 
   const onError = useCallback((e: Error) => {
