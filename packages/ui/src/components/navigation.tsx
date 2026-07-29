@@ -36,6 +36,11 @@ const PROTOCOL_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
     description:
       'As a Sushi holder, you can vote on proposals to shape the future of SushiSwap.',
   },
+  {
+    title: 'Docs',
+    href: 'https://docs.sushi.com/what-is-sushi',
+    description: 'Learn more about Sushi, its products, and how to use them.',
+  },
 ]
 
 const PARTNER_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [

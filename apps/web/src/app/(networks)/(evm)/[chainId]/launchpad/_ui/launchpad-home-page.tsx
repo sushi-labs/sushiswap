@@ -2,13 +2,20 @@
 
 import {
   ArrowRightIcon,
+  ArrowUpIcon,
   MagnifyingGlassIcon,
   SignalIcon,
 } from '@heroicons/react/24/outline'
-import { Button, Container, TextField, classNames } from '@sushiswap/ui'
-import Link from 'next/link'
+import {
+  Button,
+  Container,
+  LinkInternal,
+  TextField,
+  classNames,
+} from '@sushiswap/ui'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import InfiniteScroll from 'react-infinite-scroll-component'
 import { getEvmChainById } from 'sushi/evm'
 import { isAddress } from 'viem'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
@@ -31,9 +38,20 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
   const sortBy = parseLaunchpadTokenSortField(searchParams.get('sortBy'))
   const [search, setSearch] = useState(urlSearch)
   const [creator, setCreator] = useState(urlCreator)
+  const [showScrollToTop, setShowScrollToTop] = useState(false)
 
   useEffect(() => setSearch(urlSearch), [urlSearch])
   useEffect(() => setCreator(urlCreator), [urlCreator])
+  useEffect(() => {
+    function handleScroll() {
+      setShowScrollToTop(window.scrollY >= 1_000)
+    }
+
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const updateParams = useCallback(
     (updates: Record<string, string | undefined>) => {
@@ -96,15 +114,17 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
             </p>
           </div>
           <div className="flex shrink-0 flex-wrap gap-3">
-            <Button
-              asChild
-              size="lg"
-              variant="perps-default"
-              icon={ArrowRightIcon}
-              iconPosition="end"
-            >
-              <Link href={`/${chainKey}/launchpad/create`}>Create token</Link>
-            </Button>
+            <LinkInternal href={`/${chainKey}/launchpad/create`}>
+              <Button
+                asChild
+                size="lg"
+                variant="perps-default"
+                icon={ArrowRightIcon}
+                iconPosition="end"
+              >
+                Create token
+              </Button>
+            </LinkInternal>
           </div>
         </div>
 
@@ -216,26 +236,35 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
                 </div>
               </PerpsCard>
             ) : (
-              <TokenGrid
-                tokens={tokens}
-                sortBy={sortBy}
-                isFetchingNextPage={isFetchingNextPage}
-              />
+              <InfiniteScroll
+                dataLength={tokens.length}
+                next={fetchNextPage}
+                hasMore={data.pageInfo.hasNextPage}
+                loader={null}
+                className="!overflow-visible"
+              >
+                <TokenGrid
+                  tokens={tokens}
+                  sortBy={sortBy}
+                  isFetchingNextPage={isFetchingNextPage}
+                />
+              </InfiniteScroll>
             )}
           </div>
-          {data.pageInfo.hasNextPage ? (
-            <div className="mt-8 text-center">
-              <Button
-                variant="perps-secondary"
-                disabled={isFetchingNextPage}
-                onClick={() => fetchNextPage()}
-              >
-                {isFetchingNextPage ? 'Loading…' : 'Load more'}
-              </Button>
-            </div>
-          ) : null}
         </Container>
       </section>
+      {showScrollToTop ? (
+        <Button
+          type="button"
+          variant="perps-secondary"
+          className="fixed bottom-6 right-6 z-50 h-11 w-11 rounded-full !p-0 shadow-lg"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label="Back to top"
+          title="Back to top"
+        >
+          <ArrowUpIcon className="h-5 w-5" />
+        </Button>
+      ) : null}
     </>
   )
 }
