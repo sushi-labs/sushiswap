@@ -13,6 +13,7 @@ import { getLaunchpadToken } from '@sushiswap/graph-client/data-api'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
   Button,
+  Checkbox,
   Container,
   Currency,
   Dots,
@@ -24,6 +25,12 @@ import {
   FormMessage,
   FormSection,
   Message,
+  PerpsDialog,
+  PerpsDialogContent,
+  PerpsDialogDescription,
+  PerpsDialogHeader,
+  PerpsDialogInnerContent,
+  PerpsDialogTitle,
   SelectIcon,
   Slider,
   TextField,
@@ -252,6 +259,8 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
   const [isLogoProcessing, setIsLogoProcessing] = useState(false)
   const [isLaunching, setIsLaunching] = useState(false)
   const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false)
+  const [isLegalDialogOpen, setIsLegalDialogOpen] = useState(false)
+  const [hasAcceptedLegalNotice, setHasAcceptedLegalNotice] = useState(false)
   const [launchedTokenAddress, setLaunchedTokenAddress] = useState<EvmAddress>()
   const [selectedQuoteTokenAddress, setSelectedQuoteTokenAddress] =
     useState<EvmAddress>()
@@ -656,6 +665,18 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
     }
   }
 
+  function handleLegalDialogOpenChange(open: boolean): void {
+    setIsLegalDialogOpen(open)
+    if (!open) setHasAcceptedLegalNotice(false)
+  }
+
+  function submitAcceptedLaunch(): void {
+    if (!hasAcceptedLegalNotice) return
+
+    handleLegalDialogOpenChange(false)
+    void methods.handleSubmit(createLaunch)()
+  }
+
   const previewImageUrl = useMemo(() => {
     if (!logo?.file) return undefined
     return URL.createObjectURL(logo.file)
@@ -717,7 +738,7 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
       </div>
 
       <Form {...methods}>
-        <form className="mt-6" onSubmit={methods.handleSubmit(createLaunch)}>
+        <form className="mt-6" onSubmit={(event) => event.preventDefault()}>
           {step === 'details' ? (
             <PerpsCard className="p-5 sm:p-7" fullWidth>
               <FormSection
@@ -1272,7 +1293,7 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
                           }
                         >
                           <Button
-                            type="submit"
+                            type="button"
                             fullWidth
                             size="xl"
                             variant="perps-default"
@@ -1284,6 +1305,7 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
                               !selectedQuoteToken ||
                               initialBuyAmountRaw === undefined
                             }
+                            onClick={() => setIsLegalDialogOpen(true)}
                           >
                             {isWaitingForIndexing ? (
                               <>
@@ -1318,6 +1340,68 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
           ) : null}
         </form>
       </Form>
+
+      <PerpsDialog
+        open={isLegalDialogOpen}
+        onOpenChange={handleLegalDialogOpenChange}
+      >
+        <PerpsDialogContent>
+          <PerpsDialogHeader>
+            <PerpsDialogTitle>Legal Acknowledgment</PerpsDialogTitle>
+            <PerpsDialogDescription className="sr-only">
+              Review and accept the token creation terms.
+            </PerpsDialogDescription>
+          </PerpsDialogHeader>
+          <PerpsDialogInnerContent>
+            <div className="space-y-5 text-sm leading-6 text-perps-muted-50">
+              <div className="space-y-3">
+                <p className="font-medium text-perps-muted">I accept that:</p>
+                <ul className="list-disc space-y-3 pl-5">
+                  <li>The token is not being offered as an investment.</li>
+                  <li>
+                    The token does not represent equity, debt, profit-sharing,
+                    or other ownership rights.
+                  </li>
+                  <li>
+                    The creator is responsible for compliance with all
+                    applicable laws and regulations, including securities laws.
+                  </li>
+                  <li>
+                    The creator will not market the token using promises of
+                    appreciation or investment returns.
+                  </li>
+                </ul>
+              </div>
+
+              <label
+                htmlFor="launch-legal-acceptance"
+                className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/[0.06] bg-white/[0.04] p-4 text-perps-muted"
+              >
+                <Checkbox
+                  id="launch-legal-acceptance"
+                  checked={hasAcceptedLegalNotice}
+                  onCheckedChange={(checked) =>
+                    setHasAcceptedLegalNotice(checked === true)
+                  }
+                  className='mt-0.5 !rounded-md !border-perps-muted-50 text-black data-[state="checked"]:!border-perps-muted data-[state="checked"]:!bg-perps-muted'
+                />
+                <span>I have read and accept the statements above.</span>
+              </label>
+
+              <Button
+                type="button"
+                fullWidth
+                size="xl"
+                variant="perps-default"
+                disabled={!hasAcceptedLegalNotice}
+                onClick={submitAcceptedLaunch}
+              >
+                Agree &amp; Create token
+              </Button>
+            </div>
+          </PerpsDialogInnerContent>
+        </PerpsDialogContent>
+      </PerpsDialog>
     </Container>
   )
 }
