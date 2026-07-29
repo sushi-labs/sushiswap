@@ -136,24 +136,24 @@ function MetadataLinks({
           const label = metadataLinkLabel(item)
 
           return (
-            <Button
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={label}
+              title={label}
               key={`${item.kind}:${item.url}`}
-              asChild
-              variant="perps-secondary"
-              size="sm"
-              className="!w-9 !min-w-9 !px-0 [&>div]:items-center [&>div]:justify-center"
             >
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={label}
-                title={label}
+              <Button
+                asChild
+                variant="perps-secondary"
+                size="sm"
+                className="!w-9 !min-w-9 !px-0 [&>div]:items-center [&>div]:justify-center"
               >
                 <MetadataLinkIcon kind={item.kind} className="h-4 w-4" />
                 <span className="sr-only">{label}</span>
-              </a>
-            </Button>
+              </Button>
+            </a>
           )
         })}
       </div>
