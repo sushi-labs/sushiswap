@@ -50,6 +50,20 @@ function createSnapshot(
 }
 
 describe('launchpad TradingView datafeed', () => {
+  it('fills intervals without trades to preserve elapsed time', async () => {
+    const datafeed = createLaunchpadDatafeed({
+      chainId: CHAIN_ID,
+      tokenAddress: TOKEN_ADDRESS,
+      symbol: 'TEST',
+      pricescale: 100,
+    })
+    const symbolInfo = await new Promise<LibrarySymbolInfo>((resolve) => {
+      datafeed.resolveSymbol('TEST', resolve, vi.fn())
+    })
+
+    expect(symbolInfo.has_empty_bars).toBe(true)
+  })
+
   it('filters candle intervals, removes locally, and uses fresh snapshots only for resets', async () => {
     const to = Math.floor(Date.now() / 1_000)
     const from = to - 10 * 60 * 60

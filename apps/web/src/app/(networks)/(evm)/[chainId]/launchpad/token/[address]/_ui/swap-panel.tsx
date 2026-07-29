@@ -1,7 +1,10 @@
 'use client'
 
 import { ChevronDownIcon, Cog6ToothIcon } from '@heroicons/react/24/outline'
-import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
+import {
+  SlippageToleranceStorageKey,
+  useSlippageTolerance,
+} from '@sushiswap/hooks'
 import {
   Button,
   Currency,
@@ -14,7 +17,7 @@ import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-sel
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
 import { EdgeProvider } from 'src/providers/edge-config-provider'
 import { formatUSD, isWNativeSupported } from 'sushi'
-import { EvmToken, unwrapEvmToken } from 'sushi/evm'
+import { DEFAULT_SLIPPAGE, EvmToken, unwrapEvmToken } from 'sushi/evm'
 import { formatUnits } from 'viem'
 import { DetailsInteractionTrackerProvider } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
 import {
@@ -37,7 +40,7 @@ const LOW_LIQUIDITY_THRESHOLD_USD = 100_000
 const LOW_LIQUIDITY_SWAP_FEE = 0.01
 const LAUNCHPAD_SLIPPAGE_TOLERANCE_OPTIONS = {
   storageKey: SlippageToleranceStorageKey.LaunchpadTokenSwap,
-  defaultValue: '1',
+  defaultValue: '10',
 } as const
 
 function getLaunchpadSwapFee(
@@ -137,6 +140,12 @@ function SwapPanelContent({
   launchToken: EvmToken
 }) {
   const [side, setSide] = useState<SwapSide>('BUY')
+  const [slippageTolerance] = useSlippageTolerance(
+    LAUNCHPAD_SLIPPAGE_TOLERANCE_OPTIONS.storageKey,
+    LAUNCHPAD_SLIPPAGE_TOLERANCE_OPTIONS.defaultValue,
+  )
+  const displayedSlippage =
+    slippageTolerance === 'AUTO' ? DEFAULT_SLIPPAGE : slippageTolerance
   const {
     mutate: { setSwapAmount, setToken0, setToken1, switchTokens },
     state: { chainId, swapAmountString, token0, token1 },
@@ -277,6 +286,9 @@ function SwapPanelContent({
             size="sm"
             aria-label="Swap settings"
           >
+            <span className="text-xs font-semibold tabular-nums">
+              {displayedSlippage}%
+            </span>
             <Cog6ToothIcon className="h-5 w-5" />
           </Button>
         </SettingsOverlay>

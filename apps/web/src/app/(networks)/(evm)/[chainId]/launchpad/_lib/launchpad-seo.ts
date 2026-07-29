@@ -81,7 +81,7 @@ export function getLaunchpadTokenLogoUrl(
   token: Pick<LaunchpadToken, 'address' | 'chainId'>,
   width = 256,
 ): string {
-  return `https://cdn.sushi.com/image/upload/c_limit,w_${width},q_auto/tokens/${token.chainId}/${token.address}.jpg`
+  return `https://cdn.sushi.com/image/upload/c_limit,w_${width},q_auto/tokens/${token.chainId}/${token.address}`
 }
 
 export function getLaunchpadTokenDescription(token: LaunchpadToken): string {

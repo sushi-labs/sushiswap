@@ -84,6 +84,7 @@ function useEvmSimpleSwapTradeReviewForState({
 }): UseSimpleSwapTradeReviewBaseReturn {
   const {
     mutate: { setSwapAmount },
+    state: { slippageToleranceOptions },
   } = useDerivedStateSimpleSwap<EvmChainId & SupportedChainId>()
 
   const {
@@ -99,7 +100,10 @@ function useEvmSimpleSwapTradeReviewForState({
   const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
   const { open: reviewDialogOpen } = useDialog(DialogType.Review)
 
-  const [slippagePercent] = useSlippageTolerance()
+  const [slippagePercent] = useSlippageTolerance(
+    slippageToleranceOptions?.storageKey,
+    slippageToleranceOptions?.defaultValue,
+  )
 
   const enabled = Boolean(
     chainId && approved && address && (confirmDialogOpen || reviewDialogOpen),

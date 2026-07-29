@@ -107,6 +107,11 @@ export const SUPPORT_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
     href: '/legal/terms-of-service',
     description: 'Our terms and conditions for using Sushi.',
   },
+  {
+    title: 'Launchpad Terms of Service',
+    href: '/legal/sushi-launchpad-terms-of-use',
+    description: 'Our terms and conditions for using Sushi Launchpad.',
+  },
 ]
 
 interface HeaderElements {

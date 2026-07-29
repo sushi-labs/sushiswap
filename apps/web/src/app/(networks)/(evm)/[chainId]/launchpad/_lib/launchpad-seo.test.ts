@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest'
 import {
   getLaunchpadDiscoverJsonLd,
   getLaunchpadTokenJsonLd,
+  getLaunchpadTokenLogoUrl,
   serializeLaunchpadJsonLd,
 } from './launchpad-seo'
 
@@ -75,6 +76,12 @@ const token: LaunchpadToken = {
 }
 
 describe('launchpad JSON-LD', () => {
+  it('uses the extensionless CDN public ID for token logos', () => {
+    expect(getLaunchpadTokenLogoUrl(token, 56)).toBe(
+      'https://cdn.sushi.com/image/upload/c_limit,w_56,q_auto/tokens/4663/0x1111111111111111111111111111111111111111',
+    )
+  })
+
   it('describes a token page and its live market dataset', () => {
     const jsonLd = getLaunchpadTokenJsonLd(token)
 
