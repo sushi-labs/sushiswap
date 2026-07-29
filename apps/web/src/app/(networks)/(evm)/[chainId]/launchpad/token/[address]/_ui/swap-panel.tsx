@@ -36,23 +36,23 @@ import type { LaunchpadToken } from '../../../types'
 
 type SwapSide = 'BUY' | 'SELL'
 
-const LOW_LIQUIDITY_THRESHOLD_USD = 100_000
+// const LOW_LIQUIDITY_THRESHOLD_USD = 100_000
 const LOW_LIQUIDITY_SWAP_FEE = 0.01
 const LAUNCHPAD_SLIPPAGE_TOLERANCE_OPTIONS = {
   storageKey: SlippageToleranceStorageKey.LaunchpadTokenSwap,
   defaultValue: '10',
 } as const
 
-function getLaunchpadSwapFee(
-  liquidityUsd: number | null | undefined,
-): number | undefined {
-  return liquidityUsd !== null &&
-    liquidityUsd !== undefined &&
-    Number.isFinite(liquidityUsd) &&
-    liquidityUsd < LOW_LIQUIDITY_THRESHOLD_USD
-    ? LOW_LIQUIDITY_SWAP_FEE
-    : undefined
-}
+// function getLaunchpadSwapFee(
+//   liquidityUsd: number | null | undefined,
+// ): number | undefined {
+//   return liquidityUsd !== null &&
+//     liquidityUsd !== undefined &&
+//     Number.isFinite(liquidityUsd) &&
+//     liquidityUsd < LOW_LIQUIDITY_THRESHOLD_USD
+//     ? LOW_LIQUIDITY_SWAP_FEE
+//     : undefined
+// }
 
 const BUY_PRESET_VALUES = [
   { value: 1n, decimals: 1 },
@@ -114,7 +114,7 @@ export function SwapPanel({ token }: { token: LaunchpadToken }) {
           token1={launchToken}
           initialSwapAmount="0.1"
           persistToUrl={false}
-          fee={getLaunchpadSwapFee(token.metrics?.currentTvlUsd)}
+          fee={LOW_LIQUIDITY_SWAP_FEE}
           slippageToleranceOptions={LAUNCHPAD_SLIPPAGE_TOLERANCE_OPTIONS}
           directPool={{
             address: token.pool.address,
