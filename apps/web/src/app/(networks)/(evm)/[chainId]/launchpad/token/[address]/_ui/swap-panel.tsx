@@ -389,7 +389,7 @@ function SwapPanelContent({
       </div>
 
       <div className="mt-4">
-        <SimpleSwapTradeButton />
+        <SimpleSwapTradeButton variant="perps" />
       </div>
     </PerpsCard>
   )

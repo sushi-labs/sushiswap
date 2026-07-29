@@ -14,6 +14,7 @@ import {
 import { ChainId, type Percent, ZERO, getChainById } from 'sushi'
 import { EvmNative } from 'sushi/evm'
 import { SvmNative, isSvmChainId } from 'sushi/svm'
+import type { SimpleSwapTradeReviewDialogVariant } from '../simple-swap-trade-review-dialog'
 
 export function TradeDetails<TChainId extends SupportedChainId>({
   chainId,
@@ -23,6 +24,7 @@ export function TradeDetails<TChainId extends SupportedChainId>({
   isSwap,
   priceImpactSeverity,
   isSwapQueryFetching,
+  variant,
 }: {
   chainId: TChainId
   trade: UseEvmTradeReturn | UseSvmTradeReturn | undefined
@@ -31,6 +33,7 @@ export function TradeDetails<TChainId extends SupportedChainId>({
   isSwap: boolean
   priceImpactSeverity: ReturnType<typeof warningSeverity>
   isSwapQueryFetching: boolean
+  variant: SimpleSwapTradeReviewDialogVariant
 }) {
   const nativeSymbol = useMemo(() => {
     if (isSvmChainId(chainId)) {
@@ -41,7 +44,11 @@ export function TradeDetails<TChainId extends SupportedChainId>({
 
   return (
     <List className="!pt-0">
-      <List.Control>
+      <List.Control
+        className={classNames(
+          variant === 'perps' && '!border-white/[0.06] !bg-white/[0.025]',
+        )}
+      >
         <List.KeyValue title="Network">
           {getChainById(chainId as SupportedChainId).name}
         </List.KeyValue>

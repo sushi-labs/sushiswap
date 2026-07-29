@@ -27,16 +27,19 @@ type SimpleSwapTradeReviewDialogProps = {
     error,
     isSuccess,
   }: { error: Error | null; isSuccess: boolean }): ReactNode
+  variant?: SimpleSwapTradeReviewDialogVariant
 }
+
+export type SimpleSwapTradeReviewDialogVariant = 'default' | 'perps'
 
 type SimpleSwapTradeReview = ReturnType<typeof getSimpleSwapTradeReview>
 
 export const SimpleSwapTradeReviewDialog: FC<
   SimpleSwapTradeReviewDialogProps
-> = ({ children }) => {
+> = ({ children, variant = 'default' }) => {
   return (
     <DialogProvider>
-      <SimpleSwapTradeReviewDialogRouter>
+      <SimpleSwapTradeReviewDialogRouter variant={variant}>
         {children}
       </SimpleSwapTradeReviewDialogRouter>
     </DialogProvider>
@@ -45,32 +48,38 @@ export const SimpleSwapTradeReviewDialog: FC<
 
 const SimpleSwapTradeReviewDialogRouter: FC<
   SimpleSwapTradeReviewDialogProps
-> = ({ children }) => {
+> = ({ children, variant }) => {
   const {
     state: { chainId },
   } = useDerivedStateSimpleSwap()
 
   if (isSvmChainId(chainId)) {
     return (
-      <SvmSimpleSwapTradeReviewDialog>
+      <SvmSimpleSwapTradeReviewDialog variant={variant}>
         {children}
       </SvmSimpleSwapTradeReviewDialog>
     )
   }
 
   return (
-    <EvmSimpleSwapTradeReviewDialog>{children}</EvmSimpleSwapTradeReviewDialog>
+    <EvmSimpleSwapTradeReviewDialog variant={variant}>
+      {children}
+    </EvmSimpleSwapTradeReviewDialog>
   )
 }
 
 const EvmSimpleSwapTradeReviewDialog: FC<SimpleSwapTradeReviewDialogProps> = ({
   children,
+  variant,
 }) => {
   const baseTradeReview = useEvmSimpleSwapTradeReview()
   const tradeReview = getSimpleSwapTradeReview(baseTradeReview)
 
   return (
-    <SimpleSwapTradeReviewDialogContent tradeReview={tradeReview}>
+    <SimpleSwapTradeReviewDialogContent
+      tradeReview={tradeReview}
+      variant={variant}
+    >
       {children}
     </SimpleSwapTradeReviewDialogContent>
   )
@@ -78,12 +87,16 @@ const EvmSimpleSwapTradeReviewDialog: FC<SimpleSwapTradeReviewDialogProps> = ({
 
 const SvmSimpleSwapTradeReviewDialog: FC<SimpleSwapTradeReviewDialogProps> = ({
   children,
+  variant,
 }) => {
   const baseTradeReview = useSvmSimpleSwapTradeReview()
   const tradeReview = getSimpleSwapTradeReview(baseTradeReview)
 
   return (
-    <SimpleSwapTradeReviewDialogContent tradeReview={tradeReview}>
+    <SimpleSwapTradeReviewDialogContent
+      tradeReview={tradeReview}
+      variant={variant}
+    >
       {children}
     </SimpleSwapTradeReviewDialogContent>
   )
@@ -93,7 +106,7 @@ const SimpleSwapTradeReviewDialogContent: FC<
   SimpleSwapTradeReviewDialogProps & {
     tradeReview: SimpleSwapTradeReview
   }
-> = ({ children, tradeReview }) => {
+> = ({ children, tradeReview, variant = 'default' }) => {
   const {
     state: { token0, token1, chainId, swapAmount, recipient },
   } = useDerivedStateSimpleSwap()
@@ -131,8 +144,13 @@ const SimpleSwapTradeReviewDialogContent: FC<
               isSwapQuerySuccess={isSwapQuerySuccess}
               isSwapQueryFetching={isSwapQueryFetching}
             />
-            <DialogContent className="max-h-[80vh]">
-              <TradeHeader trade={trade} isWrap={isWrap} isUnwrap={isUnwrap} />
+            <DialogContent variant={variant} className="max-h-[80vh]">
+              <TradeHeader
+                trade={trade}
+                isWrap={isWrap}
+                isUnwrap={isUnwrap}
+                variant={variant}
+              />
               <DialogBody>
                 <TradeWarnings
                   showSlippageWarning={showSlippageWarning}
@@ -146,8 +164,13 @@ const SimpleSwapTradeReviewDialogContent: FC<
                   isSwap={isSwap}
                   priceImpactSeverity={priceImpactSeverity}
                   isSwapQueryFetching={isSwapQueryFetching}
+                  variant={variant}
                 />
-                <RecipientSection chainId={chainId} recipient={recipient} />
+                <RecipientSection
+                  chainId={chainId}
+                  recipient={recipient}
+                  variant={variant}
+                />
               </DialogBody>
               <DialogFooter>
                 <ConfirmSwapButton
@@ -164,6 +187,7 @@ const SimpleSwapTradeReviewDialogContent: FC<
                   showSlippageWarning={showSlippageWarning}
                   write={write}
                   trace={trace}
+                  variant={variant}
                 />
               </DialogFooter>
             </DialogContent>
@@ -171,6 +195,7 @@ const SimpleSwapTradeReviewDialogContent: FC<
         )}
       </DialogReview>
       <DialogConfirm
+        variant={variant}
         chainId={chainId}
         status={status}
         testId="make-another-swap"
