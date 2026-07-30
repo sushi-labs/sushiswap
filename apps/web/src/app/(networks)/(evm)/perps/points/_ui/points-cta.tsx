@@ -8,13 +8,17 @@ import {
 import { useMemo } from 'react'
 import { usePointsData } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet/hooks'
+import { getCurrentSeason } from '~evm/perps/leaderboard/season-constants'
 import { DEFAULT_TIERS } from './overview'
 
 const FALLBACK_TIER = DEFAULT_TIERS[0]
 
 export const PointsCTA = () => {
   const address = useAccount('evm')
-  const { data, isLoading } = usePointsData({ address })
+  const { data, isLoading } = usePointsData({
+    address,
+    season: getCurrentSeason(),
+  })
 
   const tier = useMemo(() => {
     if (!address) return FALLBACK_TIER

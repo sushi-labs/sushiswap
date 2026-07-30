@@ -82,16 +82,18 @@ export const LeaderboardTable = () => {
   const connectedUserSentinelRef = useRef<HTMLDivElement>(null)
   const [isConnectedUserVisible, setIsConnectedUserVisible] = useState(false)
   const {
-    state: { sortBy, timeframe },
+    state: { sortBy, timeframe, seasonToView },
   } = useLeaderboardState()
   const address = useAccount('evm')
   const { data, isLoading } = useLeaderboard({
     timeframe: TimeframeToPerpsTimeframe[timeframe],
     sortBy,
+    season: seasonToView,
   })
   const { data: _userData, isLoading: isLoadingUser } = useLeaderboardUser({
     address: address,
     timeframe: TimeframeToPerpsTimeframe[timeframe],
+    season: seasonToView,
   })
 
   const leaderboardData = useMemo(() => {

@@ -1,3 +1,4 @@
+import type { PerpsPointsSeason } from '@sushiswap/graph-client/data-api'
 import { Progress, SkeletonBox, SkeletonText } from '@sushiswap/ui'
 import { useEffect, useMemo, useRef } from 'react'
 import { usePointsData } from 'src/lib/perps'
@@ -5,12 +6,15 @@ import { useAccount } from 'src/lib/wallet'
 import { formatUSD } from 'sushi'
 import { PerpsCard } from '~evm/perps/_ui/_common'
 
-export const Multiplier = () => {
+export const Multiplier = ({ season }: { season: PerpsPointsSeason }) => {
   const scrollRef = useRef<HTMLDivElement>(null)
   const activeRef = useRef<HTMLDivElement>(null)
 
   const address = useAccount('evm')
-  const { data, isLoading } = usePointsData({ address })
+  const { data, isLoading } = usePointsData({
+    address,
+    season,
+  })
 
   const milestones = data?.pointMultipliers?.slice(1)
   const activeIdx =

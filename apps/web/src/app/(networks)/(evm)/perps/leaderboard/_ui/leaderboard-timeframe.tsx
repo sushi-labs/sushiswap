@@ -26,7 +26,7 @@ export const LeaderboardTimeframe = () => {
               : 'text-muted-foreground',
           )}
         >
-          {v === 'season' ? 'Season 1' : v}
+          {v}
         </Button>
       ))}
     </div>

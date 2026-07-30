@@ -394,6 +394,12 @@ enum PerpsLeaderboardTimeframe {
   SEASON
 }
 
+enum PerpsPointsSeason {
+  CURRENT
+  SEASON_1
+  SEASON_2
+}
+
 type PerpsLeaderboardEntry {
   address: EvmAddress!
   points: Float!
@@ -441,16 +447,25 @@ type PerpsReferralRedemptionResult {
   linkedAt: String!
 }
 
+type ClaimProofResult {
+  account: EvmAddress!
+  amount: String!
+  displayAmount: String!
+  proof: [Bytes!]!
+  leaf: Bytes!
+}
+
 type PerpsQueries {
   claim(address: EvmAddress!): PerpsClaim
   referralOverview(address: EvmAddress!): PerpsReferralOverview!
   referredUsers(address: EvmAddress!): [PerpsReferredUser!]!
   referralFeeHistory(address: EvmAddress!, from: String, to: String): [PerpsDailyFeePoint!]!
-  pointsOverview(address: EvmAddress!): PerpsPointsOverview!
-  pointsHistory(address: EvmAddress!, from: String, to: String): [PerpsDailyPoint!]!
-  leaderboard(timeframe: PerpsLeaderboardTimeframe! = SEASON): PerpsLeaderboard!
-  leaderboardUser(address: EvmAddress!, timeframe: PerpsLeaderboardTimeframe! = SEASON): PerpsLeaderboardUser!
+  pointsOverview(address: EvmAddress!, season: PerpsPointsSeason! = CURRENT): PerpsPointsOverview!
+  pointsHistory(address: EvmAddress!, from: String, to: String, season: PerpsPointsSeason! = CURRENT): [PerpsDailyPoint!]!
+  leaderboard(timeframe: PerpsLeaderboardTimeframe! = SEASON, season: PerpsPointsSeason! = CURRENT): PerpsLeaderboard!
+  leaderboardUser(address: EvmAddress!, timeframe: PerpsLeaderboardTimeframe! = SEASON, season: PerpsPointsSeason! = CURRENT): PerpsLeaderboardUser!
   isReferralCodeAvailable(code: String!): Boolean!
+  pointClaimProof(season: PerpsPointsSeason! = SEASON_1, address: EvmAddress!): ClaimProofResult!
 }
 
 type PerpsMutations {

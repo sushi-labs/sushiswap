@@ -1,5 +1,8 @@
 'use client'
-import { getPerpsPointsOverview } from '@sushiswap/graph-client/data-api'
+import {
+  type PerpsPointsSeason,
+  getPerpsPointsOverview,
+} from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import type { EvmAddress } from 'sushi/evm'
 import { DEFAULT_TIERS, getTier } from '~evm/perps/points/_ui/overview'
@@ -7,11 +10,13 @@ import { perpsNumberFormatter } from '../utils'
 
 export function usePointsData({
   address,
+  season,
 }: {
   address: EvmAddress | undefined
+  season: PerpsPointsSeason
 }) {
   return useQuery({
-    queryKey: ['usePointsData', address],
+    queryKey: ['usePointsData', address, season],
     queryFn: async () => {
       if (!address) {
         throw new Error('address is required')
@@ -19,6 +24,7 @@ export function usePointsData({
 
       const data = await getPerpsPointsOverview({
         address,
+        season,
       })
 
       const totalVolumeUsd = data?.totalVolumeUsd || 0
