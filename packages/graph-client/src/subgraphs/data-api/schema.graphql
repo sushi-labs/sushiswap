@@ -8,6 +8,7 @@ scalar LaunchpadChainId
 
 type LaunchpadQueries {
   quoteTokenList(chainId: LaunchpadChainId!): [LaunchpadTokenRef!]!
+  stats(chainId: LaunchpadChainId!): LaunchpadStats!
   tokens(input: LaunchpadTokensInput!): LaunchpadTokenConnection!
   token(chainId: LaunchpadChainId!, address: EvmAddress!): LaunchpadToken
   creator(chainId: LaunchpadChainId!, address: EvmAddress!): LaunchpadCreator!
@@ -90,6 +91,12 @@ type LaunchpadCreator {
   chainId: LaunchpadChainId!
   address: EvmAddress!
   launchCount: Int!
+}
+
+type LaunchpadStats {
+  totalTokensLaunched: Int!
+  totalVolumeUsd24h: Float!
+  totalLiquidityUsd: Float!
 }
 
 input LaunchpadTokensInput {
