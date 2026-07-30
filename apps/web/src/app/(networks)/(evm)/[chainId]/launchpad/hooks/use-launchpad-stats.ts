@@ -10,7 +10,7 @@ export function useLaunchpadStats({ chainId }: { chainId: LaunchpadChainId }) {
     queryFn: () => {
       return getLaunchpadStats({ chainId })
     },
-    staleTime: 10_000,
-    refetchInterval: 10_000,
+    staleTime: 60_000,
+    refetchInterval: 60_000,
   })
 }
