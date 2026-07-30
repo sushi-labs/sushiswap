@@ -10,6 +10,7 @@ import {
   Button,
   Container,
   LinkInternal,
+  SkeletonBox,
   TextField,
   classNames,
 } from '@sushiswap/ui'
@@ -21,6 +22,7 @@ import { isAddress } from 'viem'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import type { LaunchpadChainId } from '../constants'
 import { useLaunchpadTokens } from '../hooks/use-launchpad-data'
+import { useLaunchpadStats } from '../hooks/use-launchpad-stats'
 import { formatUsd } from './format'
 import { TokenGrid, TokenGridSkeleton } from './token-grid'
 import {
@@ -91,14 +93,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
     refetch,
   } = useLaunchpadTokens(input, true)
   const tokens = data.edges.map((edge) => edge.node)
-  const totalVolume = tokens.reduce(
-    (total, token) => total + (token.metrics?.volumeUsd.h24 ?? 0),
-    0,
-  )
-  const totalLiquidity = tokens.reduce(
-    (total, token) => total + (token.metrics?.currentTvlUsd ?? 0),
-    0,
-  )
+  const { data: stats, isLoading } = useLaunchpadStats({ chainId })
 
   return (
     <>
@@ -132,9 +127,18 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
           <PerpsCard className="overflow-hidden" fullWidth>
             <div className="grid grid-cols-2 lg:grid-cols-4">
               {[
-                { label: 'Tokens launched', value: `${data.totalCount}` },
-                { label: '24h volume', value: formatUsd(totalVolume) },
-                { label: 'Liquidity', value: formatUsd(totalLiquidity) },
+                {
+                  label: 'Tokens launched',
+                  value: `${stats?.totalTokensLaunched}`,
+                },
+                {
+                  label: '24h volume',
+                  value: formatUsd(stats?.totalVolumeUsd24h),
+                },
+                {
+                  label: 'Liquidity',
+                  value: formatUsd(stats?.totalLiquidityUsd),
+                },
               ].map((stat, index) => (
                 <div
                   key={stat.label}
@@ -148,9 +152,13 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
                   <div className="text-[11px] uppercase tracking-wide text-perps-muted-50">
                     {stat.label}
                   </div>
-                  <div className="mt-1 text-lg font-semibold text-perps-muted">
-                    {stat.value}
-                  </div>
+                  {isLoading ? (
+                    <SkeletonBox className="mt-1 h-7 w-20 rounded-md" />
+                  ) : (
+                    <div className="mt-1 text-lg font-semibold text-perps-muted">
+                      {stat.value}
+                    </div>
+                  )}
                 </div>
               ))}
               <div className="flex items-center gap-3 border-l border-white/[0.06] border-t lg:border-t-0 px-5 py-4">
