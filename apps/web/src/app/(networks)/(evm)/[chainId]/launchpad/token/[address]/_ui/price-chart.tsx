@@ -77,10 +77,6 @@ export const PriceChart = memo(function PriceChart({
   const chartContainerRef = useRef<HTMLDivElement>(null)
   const tvWidgetRef = useRef<IChartingLibraryWidget | null>(null)
   const [chartReady, setChartReady] = useState(false)
-  const chartRefreshIdRef = useRef(0)
-  const chartRefreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  )
   const { resolvedTheme } = useTheme()
   const isMounted = useIsMounted()
   const marketCapMultiplier = useMemo(
@@ -119,13 +115,7 @@ export const PriceChart = memo(function PriceChart({
     [dataRef],
   )
   const resetChartData = useCallback((): void => {
-    const tvWidget = tvWidgetRef.current
-    if (!tvWidget) return
-
-    if (chartRefreshTimeoutRef.current) {
-      clearTimeout(chartRefreshTimeoutRef.current)
-      chartRefreshTimeoutRef.current = null
-    }
+    tvWidgetRef.current?.activeChart().resetData()
   }, [])
   const datafeed = useMemo(
     () =>
@@ -546,11 +536,6 @@ export const PriceChart = memo(function PriceChart({
     tvWidget.onChartReady(() => setChartReady(true))
 
     return () => {
-      chartRefreshIdRef.current += 1
-      if (chartRefreshTimeoutRef.current) {
-        clearTimeout(chartRefreshTimeoutRef.current)
-        chartRefreshTimeoutRef.current = null
-      }
       isDisposed = true
       tvWidget.remove()
       tvWidgetRef.current = null
