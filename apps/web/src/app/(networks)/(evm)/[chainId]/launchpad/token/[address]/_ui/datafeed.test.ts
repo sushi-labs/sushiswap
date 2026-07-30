@@ -50,7 +50,7 @@ function createSnapshot(
 }
 
 describe('launchpad TradingView datafeed', () => {
-  it('fills intervals without trades to preserve elapsed time', async () => {
+  it('does not synthesize candles for no-trade intervals', async () => {
     const datafeed = createLaunchpadDatafeed({
       chainId: CHAIN_ID,
       tokenAddress: TOKEN_ADDRESS,
@@ -61,7 +61,60 @@ describe('launchpad TradingView datafeed', () => {
       datafeed.resolveSymbol('TEST', resolve, vi.fn())
     })
 
-    expect(symbolInfo.has_empty_bars).toBe(true)
+    expect(symbolInfo.has_empty_bars).toBe(false)
+  })
+
+  it('skips zero-volume candles and connects traded candles', async () => {
+    const to = Math.floor(Date.now() / 1_000)
+    const from = to - 3 * 60 * 60
+    const firstCandle = createSnapshot('40', from + 60 * 60).nodes[0]!
+    const zeroVolumeCandle = {
+      ...firstCandle,
+      timestamp: from + 90 * 60,
+      open: 3,
+      high: 3,
+      low: 3,
+      close: 3,
+      volumeUsd: 0,
+      tradeCount: 1,
+    }
+    const secondCandle = {
+      ...firstCandle,
+      timestamp: from + 2 * 60 * 60,
+      open: 4,
+      high: 5,
+      low: 4,
+      close: 4.5,
+      tradeCount: 1,
+    }
+    mocks.getLaunchpadCandles.mockReset().mockResolvedValueOnce({
+      streamCursor: '40',
+      nodes: [firstCandle, zeroVolumeCandle, secondCandle],
+    })
+    const datafeed = createLaunchpadDatafeed({
+      chainId: CHAIN_ID,
+      tokenAddress: TOKEN_ADDRESS,
+      symbol: 'TEST',
+      pricescale: 100,
+    })
+
+    const bars = await new Promise<Bar[]>((resolve, reject) => {
+      datafeed.getBars(
+        SYMBOL_INFO,
+        RESOLUTION,
+        { from, to, countBack: 3, firstDataRequest: true },
+        (result) => resolve(result),
+        reject,
+      )
+    })
+
+    expect(bars).toHaveLength(2)
+    expect(bars[1]).toMatchObject({
+      open: firstCandle.close,
+      high: 5,
+      low: firstCandle.close,
+      close: secondCandle.close,
+    })
   })
 
   it('filters candle intervals, removes locally, and uses fresh snapshots only for resets', async () => {

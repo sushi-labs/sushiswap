@@ -108,21 +108,47 @@ function getResolutionConfig(resolution: ResolutionString) {
   return config
 }
 
-function toBar(candle: LaunchpadCandle): Bar {
+function toBar(candle: LaunchpadCandle, previousClose?: number): Bar {
+  const open = previousClose ?? candle.open
+
   return {
     time: candle.timestamp * 1_000,
-    open: candle.open,
-    high: candle.high,
-    low: candle.low,
+    open,
+    high: Math.max(candle.high, open),
+    low: Math.min(candle.low, open),
     close: candle.close,
     volume: candle.volumeUsd,
   }
 }
 
 function sortBars(candles: LaunchpadCandle[]): Bar[] {
-  return candles
-    .map(toBar)
-    .sort((left, right) => Number(left.time) - Number(right.time))
+  const sortedCandles = candles
+    .filter((candle) => candle.tradeCount > 0 && candle.volumeUsd > 0)
+    .sort((left, right) => left.timestamp - right.timestamp)
+
+  return sortedCandles.map((candle, index) =>
+    toBar(candle, sortedCandles[index - 1]?.close),
+  )
+}
+
+function getPreviousClose(
+  candles: LaunchpadCandle[],
+  timestamp: number,
+): number | undefined {
+  let previousCandle: LaunchpadCandle | undefined
+
+  for (const candle of candles) {
+    if (
+      candle.tradeCount > 0 &&
+      candle.volumeUsd > 0 &&
+      candle.timestamp < timestamp &&
+      (!previousCandle || candle.timestamp > previousCandle.timestamp)
+    ) {
+      previousCandle = candle
+    }
+  }
+
+  return previousCandle?.close
 }
 
 export function createLaunchpadDatafeed({
@@ -196,7 +222,7 @@ export function createLaunchpadDatafeed({
         pricescale,
         has_intraday: true,
         has_daily: true,
-        has_empty_bars: true,
+        has_empty_bars: false,
         supported_resolutions: SUPPORTED_RESOLUTIONS,
         volume_precision: 2,
         data_status: 'streaming',
@@ -266,6 +292,9 @@ export function createLaunchpadDatafeed({
         unsubscribe: subscribeToLaunchpadCandleStream(streamIdentity, {
           onUpdate(update) {
             if (update.interval !== streamInterval) return
+            if (update.candle.tradeCount <= 0 || update.candle.volumeUsd <= 0) {
+              return
+            }
 
             const state = snapshots.get(resolution)
             if (state) {
@@ -282,7 +311,15 @@ export function createLaunchpadDatafeed({
                 to: Math.max(state.to, update.candle.timestamp + seconds),
               })
             }
-            onTick(toBar(update.candle))
+            onTick(
+              toBar(
+                update.candle,
+                getPreviousClose(
+                  state?.snapshot.nodes ?? [],
+                  update.candle.timestamp,
+                ),
+              ),
+            )
           },
           onRemove(removal) {
             if (removal.interval !== streamInterval) return
