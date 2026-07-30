@@ -22,12 +22,34 @@ import {
   publishLaunchpadCandleUpdate,
   refetchLaunchpadCandleSnapshotsWithRetry,
 } from '../../../hooks/launchpad-stream'
-import { createLaunchpadDatafeed } from './datafeed'
+import { createLaunchpadDatafeed, getLaunchpadChartSymbol } from './datafeed'
 
 const CHAIN_ID = 4663
 const TOKEN_ADDRESS = '0x1111111111111111111111111111111111111111'
 const RESOLUTION = '60' as ResolutionString
-const SYMBOL_INFO = {} as LibrarySymbolInfo
+const MARKET_CAP_MULTIPLIER = 1_000
+const PRICESCALES = {
+  'market-cap': 100,
+  price: 10_000,
+}
+const DATAFEED_OPTIONS = {
+  chainId: CHAIN_ID,
+  getPriceMultiplier: (chartMode: 'market-cap' | 'price') =>
+    chartMode === 'market-cap' ? MARKET_CAP_MULTIPLIER : 1,
+  getPricescale: (chartMode: 'market-cap' | 'price') => PRICESCALES[chartMode],
+  tokenAddress: TOKEN_ADDRESS,
+  symbol: 'TEST',
+} as const
+const PRICE_SYMBOL = getLaunchpadChartSymbol(TOKEN_ADDRESS, 'TEST', 'price')
+const MARKET_CAP_SYMBOL = getLaunchpadChartSymbol(
+  TOKEN_ADDRESS,
+  'TEST',
+  'market-cap',
+)
+const SYMBOL_INFO = { ticker: PRICE_SYMBOL } as LibrarySymbolInfo
+const MARKET_CAP_SYMBOL_INFO = {
+  ticker: MARKET_CAP_SYMBOL,
+} as LibrarySymbolInfo
 
 function createSnapshot(
   streamCursor: string,
@@ -51,20 +73,20 @@ function createSnapshot(
 
 describe('launchpad TradingView datafeed', () => {
   it('does not synthesize candles for no-trade intervals', async () => {
-    const datafeed = createLaunchpadDatafeed({
-      chainId: CHAIN_ID,
-      tokenAddress: TOKEN_ADDRESS,
-      symbol: 'TEST',
-      pricescale: 100,
-    })
+    const datafeed = createLaunchpadDatafeed(DATAFEED_OPTIONS)
     const symbolInfo = await new Promise<LibrarySymbolInfo>((resolve) => {
-      datafeed.resolveSymbol('TEST', resolve, vi.fn())
+      datafeed.resolveSymbol(MARKET_CAP_SYMBOL, resolve, vi.fn())
     })
 
     expect(symbolInfo.has_empty_bars).toBe(false)
+    expect(symbolInfo).toMatchObject({
+      format: 'volume',
+      name: 'TEST / USD (Market Cap)',
+      pricescale: PRICESCALES['market-cap'],
+    })
   })
 
-  it('skips zero-volume candles and connects traded candles', async () => {
+  it('skips zero-volume candles and transforms price and market cap', async () => {
     const to = Math.floor(Date.now() / 1_000)
     const from = to - 3 * 60 * 60
     const firstCandle = createSnapshot('40', from + 60 * 60).nodes[0]!
@@ -87,26 +109,26 @@ describe('launchpad TradingView datafeed', () => {
       close: 4.5,
       tradeCount: 1,
     }
-    mocks.getLaunchpadCandles.mockReset().mockResolvedValueOnce({
+    mocks.getLaunchpadCandles.mockReset().mockResolvedValue({
       streamCursor: '40',
       nodes: [firstCandle, zeroVolumeCandle, secondCandle],
     })
-    const datafeed = createLaunchpadDatafeed({
-      chainId: CHAIN_ID,
-      tokenAddress: TOKEN_ADDRESS,
-      symbol: 'TEST',
-      pricescale: 100,
-    })
+    const datafeed = createLaunchpadDatafeed(DATAFEED_OPTIONS)
 
-    const bars = await new Promise<Bar[]>((resolve, reject) => {
-      datafeed.getBars(
-        SYMBOL_INFO,
-        RESOLUTION,
-        { from, to, countBack: 3, firstDataRequest: true },
-        (result) => resolve(result),
-        reject,
-      )
-    })
+    async function getBars(symbolInfo: LibrarySymbolInfo): Promise<Bar[]> {
+      return new Promise((resolve, reject) => {
+        datafeed.getBars(
+          symbolInfo,
+          RESOLUTION,
+          { from, to, countBack: 3, firstDataRequest: true },
+          (result) => resolve(result),
+          reject,
+        )
+      })
+    }
+
+    const bars = await getBars(SYMBOL_INFO)
+    const marketCapBars = await getBars(MARKET_CAP_SYMBOL_INFO)
 
     expect(bars).toHaveLength(2)
     expect(bars[1]).toMatchObject({
@@ -114,6 +136,15 @@ describe('launchpad TradingView datafeed', () => {
       high: 5,
       low: firstCandle.close,
       close: secondCandle.close,
+      volume: secondCandle.volumeUsd,
+    })
+    expect(marketCapBars).toHaveLength(2)
+    expect(marketCapBars[1]).toMatchObject({
+      open: firstCandle.close * MARKET_CAP_MULTIPLIER,
+      high: 5 * MARKET_CAP_MULTIPLIER,
+      low: firstCandle.close * MARKET_CAP_MULTIPLIER,
+      close: secondCandle.close * MARKET_CAP_MULTIPLIER,
+      volume: secondCandle.volumeUsd,
     })
   })
 
@@ -133,11 +164,8 @@ describe('launchpad TradingView datafeed', () => {
       .mockResolvedValueOnce(resetSnapshot)
     const onResetData = vi.fn()
     const datafeed = createLaunchpadDatafeed({
-      chainId: CHAIN_ID,
+      ...DATAFEED_OPTIONS,
       onResetData,
-      tokenAddress: TOKEN_ADDRESS,
-      symbol: 'TEST',
-      pricescale: 100,
     })
 
     async function getBars(

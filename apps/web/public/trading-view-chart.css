@@ -5,6 +5,71 @@
   background-color: var(--background-color) !important;
 }
 
+[data-name="custom-tradingview-styled-button"][data-tooltip="Toggle price and market cap"] {
+  border-left: 1px solid rgb(19 23 34 / 25%);
+  border-radius: 0;
+  border-right: 1px solid rgb(19 23 34 / 25%);
+  height: 28px;
+  padding: 0 14px;
+}
+
+[data-name="custom-tradingview-styled-button"][data-tooltip="Toggle price and market cap"]
+  .js-button-text {
+  color: #131722;
+  font-size: 15px;
+  line-height: 20px;
+}
+
+[data-name="custom-tradingview-styled-button"][data-tooltip="Toggle price and market cap"]
+  .js-button-text::before,
+[data-name="custom-tradingview-styled-button"][data-tooltip="Toggle price and market cap"]
+  .js-button-text::after {
+  font-size: 15px;
+  line-height: 20px;
+}
+
+[data-name="custom-tradingview-styled-button"][data-tooltip="Toggle price and market cap"]
+  .js-button-text::before {
+  color: #131722;
+  content: "Price";
+  font-weight: 400;
+  margin-right: 4px;
+}
+
+[data-name="custom-tradingview-styled-button"][data-tooltip="Toggle price and market cap"]
+  .js-button-text::after {
+  color: #4777ff;
+  content: "Mcap";
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+html:has([aria-label*=":PRICE,"])
+  [data-name="custom-tradingview-styled-button"][data-tooltip="Toggle price and market cap"]
+  .js-button-text::before {
+  color: #4777ff;
+  font-weight: 600;
+}
+
+html:has([aria-label*=":PRICE,"])
+  [data-name="custom-tradingview-styled-button"][data-tooltip="Toggle price and market cap"]
+  .js-button-text::after {
+  color: #131722;
+  font-weight: 400;
+}
+
+.theme-dark
+  [data-name="custom-tradingview-styled-button"][data-tooltip="Toggle price and market cap"]
+  .js-button-text,
+.theme-dark
+  [data-name="custom-tradingview-styled-button"][data-tooltip="Toggle price and market cap"]
+  .js-button-text::before,
+.theme-dark:has([aria-label*=":PRICE,"])
+  [data-name="custom-tradingview-styled-button"][data-tooltip="Toggle price and market cap"]
+  .js-button-text::after {
+  color: #d1d4dc;
+}
+
 :root {
   --tv-color-popup-element-text-active: #ffffff;
   --tv-color-popup-element-background-active: #349bfe;
