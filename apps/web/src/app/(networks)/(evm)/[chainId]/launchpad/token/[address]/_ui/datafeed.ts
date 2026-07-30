@@ -33,6 +33,8 @@ const SUPPORTED_RESOLUTIONS = [
   '1D',
 ] as ResolutionString[]
 
+const MAX_CANDLES_PER_REQUEST = 2_000
+
 const RESOLUTION_CONFIG = new Map<
   ResolutionString,
   {
@@ -80,12 +82,17 @@ const CONFIGURATION: DatafeedConfiguration = {
   symbols_types: [{ name: 'Crypto', value: 'crypto' }],
 }
 
+export type LaunchpadChartMode = 'market-cap' | 'price'
+
+export const DEFAULT_LAUNCHPAD_CHART_MODE: LaunchpadChartMode = 'market-cap'
+
 interface LaunchpadDatafeedOptions {
   chainId: LaunchpadChainId
+  getPriceMultiplier: (chartMode: LaunchpadChartMode) => number
+  getPricescale: (chartMode: LaunchpadChartMode) => number
   onResetData?: () => void
   tokenAddress: EvmAddress
   symbol: string
-  pricescale: number
 }
 
 interface Subscription {
@@ -108,29 +115,83 @@ function getResolutionConfig(resolution: ResolutionString) {
   return config
 }
 
-function toBar(candle: LaunchpadCandle): Bar {
+export function getLaunchpadChartSymbol(
+  tokenAddress: EvmAddress,
+  symbol: string,
+  chartMode: LaunchpadChartMode,
+): string {
+  return `${tokenAddress}:${symbol}:${chartMode}`
+}
+
+function getChartMode(symbolName: string | undefined): LaunchpadChartMode {
+  return symbolName?.endsWith(':market-cap') ? 'market-cap' : 'price'
+}
+
+function toBar(
+  candle: LaunchpadCandle,
+  priceMultiplier: number,
+  previousClose?: number,
+): Bar {
+  const open = previousClose ?? candle.open
+
   return {
     time: candle.timestamp * 1_000,
-    open: candle.open,
-    high: candle.high,
-    low: candle.low,
-    close: candle.close,
+    open: open * priceMultiplier,
+    high: Math.max(candle.high, open) * priceMultiplier,
+    low: Math.min(candle.low, open) * priceMultiplier,
+    close: candle.close * priceMultiplier,
     volume: candle.volumeUsd,
   }
 }
 
-function sortBars(candles: LaunchpadCandle[]): Bar[] {
-  return candles
-    .map(toBar)
-    .sort((left, right) => Number(left.time) - Number(right.time))
+function sortBars(candles: LaunchpadCandle[], priceMultiplier: number): Bar[] {
+  const sortedCandles = candles
+    .filter((candle) => candle.tradeCount > 0 && candle.volumeUsd > 0)
+    .sort((left, right) => left.timestamp - right.timestamp)
+
+  return sortedCandles.map((candle, index) =>
+    toBar(candle, priceMultiplier, sortedCandles[index - 1]?.close),
+  )
+}
+
+function getBarsInRange(
+  candles: LaunchpadCandle[],
+  priceMultiplier: number,
+  from: number,
+  to: number,
+): Bar[] {
+  return sortBars(candles, priceMultiplier).filter(
+    (bar) => Number(bar.time) >= from * 1_000 && Number(bar.time) < to * 1_000,
+  )
+}
+
+function getPreviousClose(
+  candles: LaunchpadCandle[],
+  timestamp: number,
+): number | undefined {
+  let previousCandle: LaunchpadCandle | undefined
+
+  for (const candle of candles) {
+    if (
+      candle.tradeCount > 0 &&
+      candle.volumeUsd > 0 &&
+      candle.timestamp < timestamp &&
+      (!previousCandle || candle.timestamp > previousCandle.timestamp)
+    ) {
+      previousCandle = candle
+    }
+  }
+
+  return previousCandle?.close
 }
 
 export function createLaunchpadDatafeed({
   chainId,
+  getPriceMultiplier,
+  getPricescale,
   onResetData,
   tokenAddress,
   symbol,
-  pricescale,
 }: LaunchpadDatafeedOptions): IBasicDataFeed {
   const subscriptions = new Map<string, Subscription>()
   const snapshots = new Map<ResolutionString, CandleSnapshotState>()
@@ -182,25 +243,30 @@ export function createLaunchpadDatafeed({
       onResult([])
     },
 
-    resolveSymbol(_symbolName, onResolve) {
+    resolveSymbol(symbolName, onResolve) {
+      const chartMode = getChartMode(symbolName)
+      const name =
+        chartMode === 'market-cap'
+          ? `${symbol} / USD (Market Cap)`
+          : `${symbol} / USD`
       const symbolInfo: LibrarySymbolInfo = {
-        ticker: `${tokenAddress}:${symbol}`,
-        name: `${symbol} / USD`,
-        description: `${symbol} / USD`,
+        ticker: symbolName,
+        name,
+        description: name,
         type: 'crypto',
         session: '24x7',
         timezone: 'Etc/UTC',
         exchange: 'Sushi Launchpad',
         listed_exchange: 'Sushi Launchpad',
         minmov: 1,
-        pricescale,
+        pricescale: getPricescale(chartMode),
         has_intraday: true,
         has_daily: true,
-        has_empty_bars: true,
+        has_empty_bars: false,
         supported_resolutions: SUPPORTED_RESOLUTIONS,
         volume_precision: 2,
         data_status: 'streaming',
-        format: 'price',
+        format: chartMode === 'market-cap' ? 'volume' : 'price',
         currency_code: 'USD',
       }
 
@@ -215,6 +281,8 @@ export function createLaunchpadDatafeed({
       onError,
     ) {
       try {
+        const chartMode = getChartMode(_symbolInfo.ticker ?? _symbolInfo.name)
+        const priceMultiplier = getPriceMultiplier(chartMode)
         const { seconds } = getResolutionConfig(resolution)
         const currentTime = getUnixTime(new Date())
         const requestedTo = Math.min(to, currentTime)
@@ -241,11 +309,31 @@ export function createLaunchpadDatafeed({
         if (!canUseCachedSnapshot) {
           cachedSnapshotReads.delete(resolution)
         }
-        const bars = sortBars(snapshot.nodes).filter(
-          (bar) =>
-            Number(bar.time) >= requestedFrom * 1_000 &&
-            Number(bar.time) < requestedTo * 1_000,
+        let bars = getBarsInRange(
+          snapshot.nodes,
+          priceMultiplier,
+          requestedFrom,
+          requestedTo,
         )
+
+        const backfillFrom = requestedTo - seconds * MAX_CANDLES_PER_REQUEST
+        if (
+          !canUseCachedSnapshot &&
+          bars.length === 0 &&
+          requestedFrom > backfillFrom
+        ) {
+          const backfillSnapshot = await fetchCandleSnapshot({
+            resolution,
+            from: backfillFrom,
+            to: requestedTo,
+          })
+          bars = getBarsInRange(
+            backfillSnapshot.nodes,
+            priceMultiplier,
+            backfillFrom,
+            requestedTo,
+          )
+        }
 
         onResult(bars, { noData: bars.length === 0 })
       } catch (error: unknown) {
@@ -260,12 +348,16 @@ export function createLaunchpadDatafeed({
       listenerGuid,
       onResetCacheNeededCallback,
     ) {
+      const chartMode = getChartMode(_symbolInfo.ticker ?? _symbolInfo.name)
       const { seconds, streamInterval } = getResolutionConfig(resolution)
       subscriptions.get(listenerGuid)?.unsubscribe()
       subscriptions.set(listenerGuid, {
         unsubscribe: subscribeToLaunchpadCandleStream(streamIdentity, {
           onUpdate(update) {
             if (update.interval !== streamInterval) return
+            if (update.candle.tradeCount <= 0 || update.candle.volumeUsd <= 0) {
+              return
+            }
 
             const state = snapshots.get(resolution)
             if (state) {
@@ -282,7 +374,16 @@ export function createLaunchpadDatafeed({
                 to: Math.max(state.to, update.candle.timestamp + seconds),
               })
             }
-            onTick(toBar(update.candle))
+            onTick(
+              toBar(
+                update.candle,
+                getPriceMultiplier(chartMode),
+                getPreviousClose(
+                  state?.snapshot.nodes ?? [],
+                  update.candle.timestamp,
+                ),
+              ),
+            )
           },
           onRemove(removal) {
             if (removal.interval !== streamInterval) return
