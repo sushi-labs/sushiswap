@@ -33,6 +33,8 @@ const SUPPORTED_RESOLUTIONS = [
   '1D',
 ] as ResolutionString[]
 
+const MAX_CANDLES_PER_REQUEST = 2_000
+
 const RESOLUTION_CONFIG = new Map<
   ResolutionString,
   {
@@ -149,6 +151,17 @@ function sortBars(candles: LaunchpadCandle[], priceMultiplier: number): Bar[] {
 
   return sortedCandles.map((candle, index) =>
     toBar(candle, priceMultiplier, sortedCandles[index - 1]?.close),
+  )
+}
+
+function getBarsInRange(
+  candles: LaunchpadCandle[],
+  priceMultiplier: number,
+  from: number,
+  to: number,
+): Bar[] {
+  return sortBars(candles, priceMultiplier).filter(
+    (bar) => Number(bar.time) >= from * 1_000 && Number(bar.time) < to * 1_000,
   )
 }
 
@@ -296,11 +309,31 @@ export function createLaunchpadDatafeed({
         if (!canUseCachedSnapshot) {
           cachedSnapshotReads.delete(resolution)
         }
-        const bars = sortBars(snapshot.nodes, priceMultiplier).filter(
-          (bar) =>
-            Number(bar.time) >= requestedFrom * 1_000 &&
-            Number(bar.time) < requestedTo * 1_000,
+        let bars = getBarsInRange(
+          snapshot.nodes,
+          priceMultiplier,
+          requestedFrom,
+          requestedTo,
         )
+
+        const backfillFrom = requestedTo - seconds * MAX_CANDLES_PER_REQUEST
+        if (
+          !canUseCachedSnapshot &&
+          bars.length === 0 &&
+          requestedFrom > backfillFrom
+        ) {
+          const backfillSnapshot = await fetchCandleSnapshot({
+            resolution,
+            from: backfillFrom,
+            to: requestedTo,
+          })
+          bars = getBarsInRange(
+            backfillSnapshot.nodes,
+            priceMultiplier,
+            backfillFrom,
+            requestedTo,
+          )
+        }
 
         onResult(bars, { noData: bars.length === 0 })
       } catch (error: unknown) {
