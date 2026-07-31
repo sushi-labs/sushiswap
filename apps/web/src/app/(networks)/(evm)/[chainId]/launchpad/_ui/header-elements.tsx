@@ -41,6 +41,11 @@ function getLaunchpadNavigationLinks(
       href: `${root}/manage`,
       description: 'Manage metadata and distribute fees.',
     },
+    {
+      title: 'Portfolio',
+      href: `${root}/portfolio`,
+      description: 'Track your launchpad holdings and performance.',
+    },
   ]
 }
 
@@ -50,6 +55,7 @@ function launchpadHeaderElements(chainKey: string): NavigationElement[] {
     { title: 'Discover', href: root },
     { title: 'Create', href: `${root}/create` },
     { title: 'My Launches', href: `${root}/manage` },
+    { title: 'Portfolio', href: `${root}/portfolio` },
   ]
 
   return [

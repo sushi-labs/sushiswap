@@ -51,7 +51,7 @@ export function ManageLaunchesPage({ chainId }: { chainId: LaunchpadChainId }) {
     <>
       <Container maxWidth="7xl" className="w-full px-4 py-10 sm:py-14">
         <PageHeading
-          title="My launches"
+          title="My Launches"
           description="Manage editable metadata, replace logos, and distribute accrued V3 fees for your launches."
           action={
             <LinkInternal href={`/${chainKey}/launchpad/create`}>
