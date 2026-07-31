@@ -9,6 +9,8 @@ scalar LaunchpadChainId
 type LaunchpadQueries {
   quoteTokenList(chainId: LaunchpadChainId!): [LaunchpadTokenRef!]!
   stats(chainId: LaunchpadChainId!): LaunchpadStats!
+  userStats(chainId: LaunchpadChainId!, address: EvmAddress!): LaunchpadUserStats!
+  userHoldings(input: LaunchpadUserHoldingsInput!): LaunchpadUserHoldingConnection!
   tokens(input: LaunchpadTokensInput!): LaunchpadTokenConnection!
   token(chainId: LaunchpadChainId!, address: EvmAddress!): LaunchpadToken
   creator(chainId: LaunchpadChainId!, address: EvmAddress!): LaunchpadCreator!
@@ -97,6 +99,72 @@ type LaunchpadStats {
   totalTokensLaunched: Int!
   totalVolumeUsd24h: Float!
   totalLiquidityUsd: Float!
+}
+
+type LaunchpadUserStats {
+  totalTokensHeld: Int!
+
+  """
+  Current holdings value plus indexed sell proceeds, minus indexed buy cost
+  across both open and fully exited launchpad positions.
+  """
+  totalPnlUsd: Float!
+
+  """
+  Total PnL divided by gross indexed buy cost across both open and fully exited
+  launchpad positions. Returns zero without USD cost.
+  """
+  totalPnlPercent: Float!
+  totalHoldingsUsd: Float!
+}
+
+type LaunchpadUserHolding {
+  token: LaunchpadUserHoldingToken!
+  isCreator: Boolean!
+  tokenAmount: BigInt!
+  amountUsd: Float!
+
+  """
+  Current holding value plus indexed sell proceeds, minus indexed buy cost.
+  """
+  pnlUsd: Float!
+
+  """
+  Token PnL divided by gross indexed buy cost. Returns zero without USD cost.
+  """
+  pnlPercent: Float!
+}
+
+type LaunchpadUserHoldingToken {
+  address: EvmAddress!
+  chainId: LaunchpadChainId!
+  createdAt: String!
+  creator: EvmAddress!
+  decimals: Int!
+  initialSupply: BigInt!
+  name: String!
+  symbol: String!
+  quoteToken: LaunchpadTokenRef!
+}
+
+input LaunchpadUserHoldingsInput {
+  chainId: LaunchpadChainId!
+  address: EvmAddress!
+
+  """Holdings are ordered by current USD value descending."""
+  first: Int = 20
+  after: String
+}
+
+type LaunchpadUserHoldingConnection {
+  edges: [LaunchpadUserHoldingEdge!]!
+  pageInfo: LaunchpadPageInfo!
+  totalCount: Int!
+}
+
+type LaunchpadUserHoldingEdge {
+  cursor: String!
+  node: LaunchpadUserHolding!
 }
 
 input LaunchpadTokensInput {

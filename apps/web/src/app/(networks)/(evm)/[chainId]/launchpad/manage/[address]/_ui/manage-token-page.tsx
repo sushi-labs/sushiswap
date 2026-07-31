@@ -314,7 +314,7 @@ export function ManageTokenPage({
           className="flex items-center gap-1.5 transition hover:text-perps-blue"
         >
           <ArrowLeftIcon className="h-4 w-4" />
-          My launches
+          My Launches
         </LinkInternal>
         <span>/</span>
         <span>{token.symbol}</span>

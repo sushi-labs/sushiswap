@@ -475,10 +475,11 @@ export function TokenDetailPage({
             <SwapPanel token={token} />
           ) : (
             <Sheet>
-              <SheetTrigger asChild>
+              <SheetTrigger asChild className="bg-perps-background">
                 <Button
                   type="button"
                   className="fixed inset-x-4 bottom-6 z-40 h-14 rounded-full text-base font-semibold"
+                  variant="perps-long"
                 >
                   Trade {token.symbol}
                 </Button>

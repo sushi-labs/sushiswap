@@ -3,6 +3,12 @@ import {
   ExclamationTriangleIcon,
 } from '@heroicons/react/24/solid'
 import {
+  BrowserEvent,
+  InterfaceElementName,
+  InterfaceEventName,
+  TraceEvent,
+} from '@sushiswap/telemetry'
+import {
   Badge,
   Button,
   Currency,
@@ -31,10 +37,12 @@ import { TokenSecurityImportActions } from '../../../token-security-import-actio
 import { getTokenSecurityImportState } from '../../../token-security-import-state'
 import { TokenSecurityView } from '../../../token-security-view'
 import type { TokenSelectorChainId } from '../../config'
+import type { TokenApprovalStatus } from '../../hooks/token-list-token'
 import { useTokenSelectorTheme } from '../../token-selector-theme'
+import { shouldBypassTokenSecurityCheck } from './token-security-import-policy'
 
 interface TokenSelectorImportRow<TChainId extends TokenSelectorChainId> {
-  currency: TokenFor<TChainId>
+  currency: TokenFor<TChainId, { approvalStatus?: TokenApprovalStatus }>
   onImport(): void
 }
 
@@ -45,7 +53,11 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
   const theme = useTokenSelectorTheme()
   const isPerps = theme === 'perps'
   const [open, setOpen] = useState(false)
-
+  const bypassTokenSecurityCheck = shouldBypassTokenSecurityCheck({
+    chainId: currency.chainId,
+    approvalStatus: currency.metadata.approvalStatus,
+  })
+  console.log(currency, bypassTokenSecurityCheck, 'bypassTokenSecurityCheck')
   const securityCurrency = isStellarChainId(currency.chainId)
     ? undefined
     : (currency as EvmToken | SvmToken)
@@ -57,7 +69,7 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
     refetch: refetchTokenSecurity,
   } = useTokenSecurity({
     currency: securityCurrency,
-    enabled: open,
+    enabled: open && !bypassTokenSecurityCheck,
   })
   const tokenSecurityImportState = getTokenSecurityImportState({
     required: Boolean(securityCurrency),
@@ -123,15 +135,35 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
             </div>
           </div>
           <div className="flex shrink-0 flex-col">
-            <DialogTrigger asChild>
-              <Button
-                size="xs"
-                variant={isPerps ? 'perps-default' : 'default'}
-                onClick={() => setOpen(true)}
+            {bypassTokenSecurityCheck ? (
+              <TraceEvent
+                events={[BrowserEvent.onClick, BrowserEvent.onKeyPress]}
+                name={InterfaceEventName.TOKEN_IMPORTED}
+                properties={{
+                  token_symbol: currency.symbol,
+                  token_address: currency.address,
+                }}
+                element={InterfaceElementName.IMPORT_TOKEN_BUTTON}
               >
-                Import
-              </Button>
-            </DialogTrigger>
+                <Button
+                  size="xs"
+                  variant={isPerps ? 'perps-default' : 'default'}
+                  onClick={onClick}
+                >
+                  Import
+                </Button>
+              </TraceEvent>
+            ) : (
+              <DialogTrigger asChild>
+                <Button
+                  size="xs"
+                  variant={isPerps ? 'perps-default' : 'default'}
+                  onClick={() => setOpen(true)}
+                >
+                  Import
+                </Button>
+              </DialogTrigger>
+            )}
           </div>
         </div>
       </div>

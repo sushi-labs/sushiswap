@@ -12,9 +12,16 @@ describe('createTokenListToken', () => {
       name: 'USDC',
       decimals: 6,
       approved: false,
-    }) as EvmToken<{ approved: boolean }>
+      approvalStatus: 'PERMISSIONLESS',
+    }) as EvmToken<{
+      approved: boolean
+      approvalStatus: 'PERMISSIONLESS'
+    }>
 
-    expect(token.metadata).toEqual({ approved: false })
+    expect(token.metadata).toEqual({
+      approved: false,
+      approvalStatus: 'PERMISSIONLESS',
+    })
   })
 
   it('hydrates Stellar issued token issuer and domain metadata', () => {

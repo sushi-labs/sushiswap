@@ -9,8 +9,15 @@ import {
 } from 'sushi/stellar'
 import { isSvmChainId } from 'sushi/svm'
 
+export type TokenApprovalStatus =
+  | 'UNKNOWN'
+  | 'APPROVED'
+  | 'PERMISSIONLESS'
+  | 'DISAPPROVED'
+
 export type TokenListTokenMetadata = {
   approved: boolean
+  approvalStatus?: TokenApprovalStatus
   domain?: string
 }
 
@@ -26,6 +33,7 @@ export type TokenListTokenData<TChainId extends TokenListChainId> = {
   name: string
   decimals: number
   approved: boolean
+  approvalStatus?: TokenApprovalStatus
   stellarMetadata?: StellarMetadata | null
 }
 
@@ -38,6 +46,9 @@ export function createTokenListToken<TChainId extends TokenListChainId>(
       ...token,
       metadata: {
         approved: token.approved,
+        ...(token.approvalStatus
+          ? { approvalStatus: token.approvalStatus }
+          : {}),
       },
     })
   }
@@ -50,6 +61,9 @@ export function createTokenListToken<TChainId extends TokenListChainId>(
       issuer: token.stellarMetadata?.issuer ?? undefined,
       metadata: {
         approved: token.approved,
+        ...(token.approvalStatus
+          ? { approvalStatus: token.approvalStatus }
+          : {}),
         domain: token.stellarMetadata?.domain ?? undefined,
       },
     }) as TokenFor<TChainId, TokenListTokenMetadata>
