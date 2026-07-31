@@ -6,11 +6,11 @@ export const PERPS_LEADERBOARD_SEASON_1_END_DATE = new Date(
 )
 
 export const PERPS_LEADERBOARD_SEASON_2_START_DATE = new Date(
-  '2026-08-08T00:00:00Z',
+  '2026-08-01T00:00:00Z',
 )
 
 export const PERPS_LEADERBOARD_SEASON_2_END_DATE = new Date(
-  '2026-11-08T23:59:59Z',
+  '2026-11-01T23:59:59Z',
 )
 
 export const SEASON_1_CLAIM_WINDOW_END_DATE = new Date(
