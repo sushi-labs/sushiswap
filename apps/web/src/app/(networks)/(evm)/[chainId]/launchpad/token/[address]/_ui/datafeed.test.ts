@@ -157,6 +157,7 @@ describe('launchpad TradingView datafeed', () => {
       .mockReset()
       .mockResolvedValueOnce({ streamCursor: '40', nodes: [] })
       .mockResolvedValueOnce(olderSnapshot)
+      .mockResolvedValueOnce({ streamCursor: '41', nodes: [] })
     const datafeed = createLaunchpadDatafeed(DATAFEED_OPTIONS)
 
     const bars = await new Promise<Bar[]>((resolve, reject) => {
@@ -176,6 +177,106 @@ describe('launchpad TradingView datafeed', () => {
         interval: 'ONE_MINUTE',
         from: to - 2_000 * 60,
         to,
+      }),
+    })
+  })
+
+  it('connects the first one-minute bar to a prior history page', async () => {
+    const to = Math.floor(Date.now() / 1_000)
+    const from = to - 5 * 60
+    const currentCandle = {
+      ...createSnapshot('42', to - 60).nodes[0]!,
+      open: 4,
+      high: 5,
+      low: 4,
+      close: 4.5,
+    }
+    const previousCandle = {
+      ...currentCandle,
+      timestamp: currentCandle.timestamp - 12 * 60 * 60,
+      close: 3,
+    }
+    mocks.getLaunchpadCandles
+      .mockReset()
+      .mockResolvedValueOnce({
+        streamCursor: '42',
+        nodes: [currentCandle],
+      })
+      .mockResolvedValueOnce({
+        streamCursor: '42',
+        nodes: [previousCandle],
+      })
+    const datafeed = createLaunchpadDatafeed(DATAFEED_OPTIONS)
+
+    const bars = await new Promise<Bar[]>((resolve, reject) => {
+      datafeed.getBars(
+        SYMBOL_INFO,
+        ONE_MINUTE_RESOLUTION,
+        { from, to, countBack: 5, firstDataRequest: true },
+        resolve,
+        reject,
+      )
+    })
+
+    expect(bars).toHaveLength(1)
+    expect(bars[0]).toMatchObject({
+      open: previousCandle.close,
+      high: currentCandle.high,
+      low: previousCandle.close,
+      close: currentCandle.close,
+    })
+    expect(mocks.getLaunchpadCandles).toHaveBeenNthCalledWith(2, {
+      input: expect.objectContaining({
+        interval: 'ONE_MINUTE',
+        from: currentCandle.timestamp - 2_000 * 60,
+        to: currentCandle.timestamp,
+      }),
+    })
+  })
+
+  it('finds one-minute bars beyond the maximum minute backfill window', async () => {
+    const to = Math.floor(Date.now() / 1_000)
+    const from = to - 5 * 60 * 60
+    const activeDay =
+      Math.floor((to - 3 * 24 * 60 * 60) / (24 * 60 * 60)) * (24 * 60 * 60)
+    const dailyCandle = createSnapshot('43', activeDay).nodes[0]!
+    const minuteSnapshot = createSnapshot('43', activeDay + 60)
+    mocks.getLaunchpadCandles
+      .mockReset()
+      .mockResolvedValueOnce({ streamCursor: '43', nodes: [] })
+      .mockResolvedValueOnce({ streamCursor: '43', nodes: [] })
+      .mockResolvedValueOnce({
+        streamCursor: '43',
+        nodes: [dailyCandle],
+      })
+      .mockResolvedValueOnce(minuteSnapshot)
+      .mockResolvedValueOnce({ streamCursor: '43', nodes: [] })
+    const datafeed = createLaunchpadDatafeed(DATAFEED_OPTIONS)
+
+    const bars = await new Promise<Bar[]>((resolve, reject) => {
+      datafeed.getBars(
+        SYMBOL_INFO,
+        ONE_MINUTE_RESOLUTION,
+        { from, to, countBack: 300, firstDataRequest: true },
+        resolve,
+        reject,
+      )
+    })
+
+    expect(bars).toHaveLength(1)
+    expect(bars[0]?.time).toBe(minuteSnapshot.nodes[0]?.timestamp * 1_000)
+    expect(mocks.getLaunchpadCandles).toHaveBeenNthCalledWith(3, {
+      input: expect.objectContaining({
+        interval: 'ONE_DAY',
+        from: to - 2_000 * 24 * 60 * 60,
+        to,
+      }),
+    })
+    expect(mocks.getLaunchpadCandles).toHaveBeenNthCalledWith(4, {
+      input: expect.objectContaining({
+        interval: 'ONE_MINUTE',
+        from: activeDay,
+        to: activeDay + 24 * 60 * 60,
       }),
     })
   })

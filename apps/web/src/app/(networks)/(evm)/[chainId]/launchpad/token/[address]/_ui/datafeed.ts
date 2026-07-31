@@ -34,6 +34,7 @@ const SUPPORTED_RESOLUTIONS = [
 ] as ResolutionString[]
 
 const MAX_CANDLES_PER_REQUEST = 2_000
+const ONE_DAY_SECONDS = 24 * 60 * 60
 
 const RESOLUTION_CONFIG = new Map<
   ResolutionString,
@@ -144,13 +145,21 @@ function toBar(
   }
 }
 
-function sortBars(candles: LaunchpadCandle[], priceMultiplier: number): Bar[] {
+function sortBars(
+  candles: LaunchpadCandle[],
+  priceMultiplier: number,
+  previousClose?: number,
+): Bar[] {
   const sortedCandles = candles
     .filter((candle) => candle.tradeCount > 0 && candle.volumeUsd > 0)
     .sort((left, right) => left.timestamp - right.timestamp)
 
   return sortedCandles.map((candle, index) =>
-    toBar(candle, priceMultiplier, sortedCandles[index - 1]?.close),
+    toBar(
+      candle,
+      priceMultiplier,
+      sortedCandles[index - 1]?.close ?? previousClose,
+    ),
   )
 }
 
@@ -159,16 +168,17 @@ function getBarsInRange(
   priceMultiplier: number,
   from: number,
   to: number,
+  previousClose?: number,
 ): Bar[] {
-  return sortBars(candles, priceMultiplier).filter(
+  return sortBars(candles, priceMultiplier, previousClose).filter(
     (bar) => Number(bar.time) >= from * 1_000 && Number(bar.time) < to * 1_000,
   )
 }
 
-function getPreviousClose(
+function getLatestCandleBefore(
   candles: LaunchpadCandle[],
   timestamp: number,
-): number | undefined {
+): LaunchpadCandle | undefined {
   let previousCandle: LaunchpadCandle | undefined
 
   for (const candle of candles) {
@@ -182,7 +192,14 @@ function getPreviousClose(
     }
   }
 
-  return previousCandle?.close
+  return previousCandle
+}
+
+function getPreviousClose(
+  candles: LaunchpadCandle[],
+  timestamp: number,
+): number | undefined {
+  return getLatestCandleBefore(candles, timestamp)?.close
 }
 
 export function createLaunchpadDatafeed({
@@ -232,6 +249,76 @@ export function createLaunchpadDatafeed({
     }
     publishLaunchpadCandleSnapshot(streamIdentity, snapshot.streamCursor)
     return snapshot
+  }
+
+  async function getSnapshotBars({
+    snapshot,
+    resolution,
+    priceMultiplier,
+    from,
+    to,
+  }: {
+    snapshot: LaunchpadCandleSnapshot
+    resolution: ResolutionString
+    priceMultiplier: number
+    from: number
+    to: number
+  }): Promise<Bar[]> {
+    const bars = getBarsInRange(snapshot.nodes, priceMultiplier, from, to)
+    const firstBar = bars[0]
+    if (resolution !== '1' || !firstBar) return bars
+
+    const firstTimestamp = Number(firstBar.time) / 1_000
+    if (getPreviousClose(snapshot.nodes, firstTimestamp) !== undefined) {
+      return bars
+    }
+
+    const { seconds } = getResolutionConfig(resolution)
+    const previousSnapshot = await fetchCandleSnapshot({
+      resolution,
+      from: firstTimestamp - seconds * MAX_CANDLES_PER_REQUEST,
+      to: firstTimestamp,
+    })
+    const previousClose = getPreviousClose(
+      previousSnapshot.nodes,
+      firstTimestamp,
+    )
+
+    return previousClose === undefined
+      ? bars
+      : getBarsInRange(snapshot.nodes, priceMultiplier, from, to, previousClose)
+  }
+
+  async function getLatestOneMinuteBars({
+    priceMultiplier,
+    to,
+  }: {
+    priceMultiplier: number
+    to: number
+  }): Promise<Bar[]> {
+    const dailySnapshot = await fetchCandleSnapshot({
+      resolution: '1D' as ResolutionString,
+      from: to - ONE_DAY_SECONDS * MAX_CANDLES_PER_REQUEST,
+      to,
+    })
+    const latestActiveDay = getLatestCandleBefore(dailySnapshot.nodes, to)
+    if (!latestActiveDay) return []
+
+    const from = latestActiveDay.timestamp
+    const minuteTo = Math.min(to, from + ONE_DAY_SECONDS)
+    const minuteSnapshot = await fetchCandleSnapshot({
+      resolution: '1' as ResolutionString,
+      from,
+      to: minuteTo,
+    })
+
+    return getSnapshotBars({
+      snapshot: minuteSnapshot,
+      resolution: '1' as ResolutionString,
+      priceMultiplier,
+      from,
+      to: minuteTo,
+    })
   }
 
   return {
@@ -309,12 +396,13 @@ export function createLaunchpadDatafeed({
         if (!canUseCachedSnapshot) {
           cachedSnapshotReads.delete(resolution)
         }
-        let bars = getBarsInRange(
-          snapshot.nodes,
+        let bars = await getSnapshotBars({
+          snapshot,
+          resolution,
           priceMultiplier,
-          requestedFrom,
-          requestedTo,
-        )
+          from: requestedFrom,
+          to: requestedTo,
+        })
 
         const backfillFrom = requestedTo - seconds * MAX_CANDLES_PER_REQUEST
         if (
@@ -327,12 +415,20 @@ export function createLaunchpadDatafeed({
             from: backfillFrom,
             to: requestedTo,
           })
-          bars = getBarsInRange(
-            backfillSnapshot.nodes,
+          bars = await getSnapshotBars({
+            snapshot: backfillSnapshot,
+            resolution,
             priceMultiplier,
-            backfillFrom,
-            requestedTo,
-          )
+            from: backfillFrom,
+            to: requestedTo,
+          })
+        }
+
+        if (resolution === '1' && bars.length === 0) {
+          bars = await getLatestOneMinuteBars({
+            priceMultiplier,
+            to: requestedTo,
+          })
         }
 
         onResult(bars, { noData: bars.length === 0 })
