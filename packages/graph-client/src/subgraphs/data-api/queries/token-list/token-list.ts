@@ -17,6 +17,7 @@ export const TokenListQuery = graphql(
       name
       decimals
       approved
+      approvalStatus
       stellarMetadata {
         issuer
         domain
@@ -46,7 +47,7 @@ export async function getTokenList<TChainId extends TokenListChainId>(
     },
     options,
   )
-
+  console.log
   if (result) {
     return result.tokenList.map((token) => {
       const address = token.address as AddressFor<TChainId>
