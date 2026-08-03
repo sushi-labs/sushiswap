@@ -561,7 +561,7 @@ type Bucket {
 type SushiDayBuckets {
   v2: [Bucket!]!
   v3: [Bucket!]!
-  blade: [Bucket!]
+  blade: [Bucket!]!
 }
 
 type BladePoolToken {
@@ -1072,7 +1072,7 @@ type V3PortfolioPosition {
   range: RangeStatus!
   token0: SimpleToken!
   token1: SimpleToken!
-  fees: [SimpleToken]!
+  fees: [SimpleToken!]!
   amountUSD: Float!
   updatedAt: Int
 }
@@ -1093,15 +1093,15 @@ type FuroPosition {
 
 type PortfolioPositions {
   totalUSD: Float!
-  v2Positions: [V2PortfolioPosition]!
-  v3Positions: [V3PortfolioPosition]!
+  v2Positions: [V2PortfolioPosition!]!
+  v3Positions: [V3PortfolioPosition!]!
 }
 
 type PortfolioClaimables {
   totalUSD: Float!
-  v2PositionClaimables: [V2PoolClaim]!
-  v3PositionClaimables: [V3PoolClaim]!
-  furoClaimables: [FuroClaim]!
+  v2PositionClaimables: [V2PoolClaim!]!
+  v3PositionClaimables: [V3PoolClaim!]!
+  furoClaimables: [FuroClaim!]!
 }
 
 type V2PoolClaim {
@@ -1167,8 +1167,8 @@ type PortfolioTransaction {
   projectName: String
   protocolLogo: String
   category: PortfolioTransactionCategory!
-  receives: [PortfolioTransactionToken]!
-  sends: [PortfolioTransactionToken]!
+  receives: [PortfolioTransactionToken!]!
+  sends: [PortfolioTransactionToken!]!
   approve: PortfolioTransactionToken
   gasFeeNative: Float!
   gasFeeUSD: Float!
@@ -1515,9 +1515,9 @@ type V2Swap {
 }
 
 type V2Transaction {
-  swaps: [V2Swap]
-  burns: [V2Burn]
-  mints: [V2Mint]
+  swaps: [V2Swap!]
+  burns: [V2Burn!]
+  mints: [V2Mint!]
   createdAtBlock: String!
   createdAtTimestamp: String!
   id: ID!
@@ -1574,8 +1574,8 @@ type V3Transaction {
   id: ID!
   blockNumber: String!
   timestamp: String!
-  collects: [V3Collect]
-  swaps: [V3Swap]
-  burns: [V3Burn]
-  mints: [V3Mint]
+  collects: [V3Collect!]
+  swaps: [V3Swap!]
+  burns: [V3Burn!]
+  mints: [V3Mint!]
 }

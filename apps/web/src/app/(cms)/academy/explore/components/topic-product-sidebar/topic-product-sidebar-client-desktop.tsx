@@ -14,12 +14,14 @@ export function TopicProductBarClientDesktop({
     ({
       category,
     }: { category: TopicProductBarClientGeneric['categories'][number] }) => {
-      const isSelected = selectedValue === category.slug
+      if (!category.slug) return null
+      const slug = category.slug
+      const isSelected = selectedValue === slug
 
       return (
         <div
-          onClick={() => setValue(category.slug)}
-          onKeyDown={() => setValue(category.slug)}
+          onClick={() => setValue(slug)}
+          onKeyDown={() => setValue(slug)}
           className={classNames(
             'text-sm w-full cursor-pointer rounded-xl hover:bg-blue hover:bg-opacity-70 px-4 py-2',
             isSelected && 'bg-blue bg-opacity-80',

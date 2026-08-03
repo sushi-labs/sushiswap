@@ -38,15 +38,13 @@ export function StrapiBannerContent({
     [banner, hiddenBannerIds],
   )
 
-  if (hiddenBannerIds.includes(banner.id)) {
-    return <></>
-  }
+  if (hiddenBannerIds.includes(banner.id) || !banner.image) return null
 
   const image = banner.image.attributes
 
   return (
     <a
-      href={banner.link}
+      href={banner.link ?? undefined}
       target="_blank"
       rel="noopener noreferrer"
       className="text-white"
@@ -66,8 +64,8 @@ export function StrapiBannerContent({
         <Image
           src={getOptimizedMedia({
             metadata: image.provider_metadata,
-            width: image.width,
-            height: image.height,
+            width: image.width ?? undefined,
+            height: image.height ?? undefined,
           })}
           alt={image.alternativeText || ''}
           layout="fill"

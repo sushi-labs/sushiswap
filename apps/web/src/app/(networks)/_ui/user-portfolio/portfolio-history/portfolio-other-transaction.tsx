@@ -19,7 +19,7 @@ export const PortfolioOtherTransaction: FC<{ tx: PortfolioTransaction }> = ({
       )}
       externalLink
       icon={
-        tx.projectName.toLowerCase().includes('sushi') ? (
+        tx.projectName?.toLowerCase().includes('sushi') ? (
           <div className="p-1.5 bg-gradient-to-r from-[rgba(12,116,183,0.3)] to-[rgba(174,46,141,0.3)] rounded-full w-7 h-7">
             <SushiLiteIcon className="text-white" />
           </div>

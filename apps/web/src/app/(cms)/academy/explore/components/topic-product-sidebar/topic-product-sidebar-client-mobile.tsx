@@ -12,16 +12,19 @@ interface SidebarEntry {
 }
 
 function SidebarEntry({ category, setValue, selectedValue }: SidebarEntry) {
+  if (!category.slug) return null
+  const slug = category.slug
+
   return (
     <div
       className={classNames(
         'font-medium w-[160px] max-w-fit',
-        category.slug === selectedValue
+        slug === selectedValue
           ? 'dark:text-gray-100'
           : 'dark:text-gray-400 text-[#7F7F7F] dark:hover:text-gray-300',
       )}
-      onClick={() => setValue(category.slug)}
-      onKeyUp={() => setValue(category.slug)}
+      onClick={() => setValue(slug)}
+      onKeyUp={() => setValue(slug)}
     >
       {category.name}
     </div>

@@ -29,7 +29,7 @@ export function DifficultyFilterDropdownClient({
     (slug: string | undefined) => {
       if (!slug) return undefined
 
-      return difficulties.find((d) => d.slug === slug)!.name
+      return difficulties.find((d) => d.slug === slug)?.name ?? undefined
     },
     [difficulties],
   )
@@ -38,7 +38,7 @@ export function DifficultyFilterDropdownClient({
     (name: string | undefined) => {
       if (!name) return undefined
 
-      return difficulties.find((d) => d.name === name)!.slug
+      return difficulties.find((d) => d.name === name)?.slug ?? undefined
     },
     [difficulties],
   )
@@ -76,16 +76,18 @@ export function DifficultyFilterDropdownClient({
           </span>
         </SelectTrigger>
         <SelectContent>
-          {difficulties.map((difficulty) => (
-            <SelectItem
-              key={difficulty.slug}
-              value={difficulty.name}
-              title={difficulty.name}
-              className="px-4 text-base"
-            >
-              {difficulty.name}
-            </SelectItem>
-          ))}
+          {difficulties.map((difficulty) =>
+            difficulty.name && difficulty.slug ? (
+              <SelectItem
+                key={difficulty.slug}
+                value={difficulty.name}
+                title={difficulty.name}
+                className="px-4 text-base"
+              >
+                {difficulty.name}
+              </SelectItem>
+            ) : null,
+          )}
         </SelectContent>
       </Select>
       <div
