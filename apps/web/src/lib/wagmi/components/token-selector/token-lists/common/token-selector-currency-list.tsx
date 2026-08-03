@@ -2,6 +2,7 @@ import { memo, useMemo } from 'react'
 import { type Amount, getNativeAddress } from 'sushi'
 import type { PriceMap } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import type { TokenSelectorChainId } from '../../config'
+import type { TokenApprovalStatus } from '../../hooks/token-list-token'
 import { TokenSelectorImportRow } from './token-selector-import-row'
 import { TokenSelectorRow, TokenSelectorRowLoading } from './token-selector-row'
 
@@ -10,7 +11,11 @@ interface TokenSelectorCurrencyListGenericProps<
 > {
   id: string
   currencies: Readonly<
-    CurrencyFor<TChainId, { approved?: boolean }>[] | undefined
+    | CurrencyFor<
+        TChainId,
+        { approved?: boolean; approvalStatus?: TokenApprovalStatus }
+      >[]
+    | undefined
   >
 
   chainId: TChainId
@@ -55,7 +60,10 @@ function TokenSelectorCurrencyListBase<TChainId extends TokenSelectorChainId>({
         currency.wrap().address as ContractAddressFor<TChainId>,
       ),
       showWarning:
-        currency.type === 'token' && currency.metadata.approved === false,
+        currency.type === 'token' &&
+        currency.metadata.approved === false &&
+        currency.metadata.approvalStatus !== 'PERMISSIONLESS' &&
+        currency.metadata.approvalStatus !== 'APPROVED',
       onSelect: () => onSelect(currency),
       pin: pin
         ? {
@@ -93,7 +101,10 @@ function TokenSelectorCurrencyListBase<TChainId extends TokenSelectorChainId>({
 
   return rowData.map((rowData) => {
     if (rowData.currency.type === 'token') {
-      const token = rowData.currency as TokenFor<TChainId>
+      const token = rowData.currency as TokenFor<
+        TChainId,
+        { approved?: boolean; approvalStatus?: TokenApprovalStatus }
+      >
 
       if (!importableSet?.has(token.address as AddressFor<TChainId>)) {
         return <TokenSelectorRow key={rowData.currency.id} {...rowData} />

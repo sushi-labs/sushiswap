@@ -195,7 +195,7 @@ export function TradeHistory({ token }: { token: LaunchpadToken }) {
                     key={trade.id}
                     className={classNames(
                       TRADE_GRID_CLASS_NAME,
-                      'items-center px-4 py-3 text-xs transition hover:bg-white/[0.025]',
+                      'items-center px-4 py-3 text-xs transition-[background-color] hover:bg-white/[0.025]',
                       index === 0 &&
                         lastEventAt === trade.timestamp &&
                         'bg-white/[0.03]',

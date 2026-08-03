@@ -1,30 +1,27 @@
 import {
-  type PerpsLeaderboardTimeframe,
   type PerpsPointsSeason,
-  getPerpsLeaderboardUser,
+  getPointClaimProof,
 } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import type { EvmAddress } from 'sushi/evm'
+import { getAddress } from 'viem'
 
-export const useLeaderboardUser = ({
-  timeframe = 'SEASON',
+export const usePointClaimProof = ({
+  season = 'SEASON_1',
   address,
-  season = 'CURRENT',
 }: {
-  timeframe: PerpsLeaderboardTimeframe
+  season: PerpsPointsSeason
   address: EvmAddress | undefined
-  season?: PerpsPointsSeason
 }) => {
   return useQuery({
-    queryKey: ['useLeaderboardUser', timeframe, address, season],
+    queryKey: ['usePointClaimProof', season, address],
     queryFn: async () => {
       if (!address) {
         throw new Error('address is undefined')
       }
-      return getPerpsLeaderboardUser({
-        timeframe,
-        address,
+      return getPointClaimProof({
         season,
+        address: getAddress(address),
       })
     },
     enabled: Boolean(address),

@@ -33,6 +33,7 @@ import { MediumIcon } from '@sushiswap/ui/icons/MediumIcon'
 import { TelegramIcon } from '@sushiswap/ui/icons/TelegramIcon'
 import { XIcon } from '@sushiswap/ui/icons/XIcon'
 import Link from 'next/link'
+import { useRef } from 'react'
 import type { EvmAddress } from 'sushi/evm'
 import { getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
@@ -49,7 +50,7 @@ import { StatusPill } from '../../../_ui/status-pill'
 import { TokenAvatar } from '../../../_ui/token-avatar'
 import type { LaunchpadChainId } from '../../../constants'
 import { useLaunchpadToken } from '../../../hooks/use-launchpad-data'
-import { PriceChart } from './price-chart'
+import { PriceChart, type PriceChartData } from './price-chart'
 import { SwapPanel } from './swap-panel'
 import { TokenDetailSkeleton } from './token-detail-skeleton'
 import { TradeHistory } from './trade-history'
@@ -203,6 +204,14 @@ export function TokenDetailPage({
     refetch: refetchToken,
   } = useLaunchpadToken(chainId, address)
   const { isLg } = useBreakpoint('lg')
+  const priceChartDataRef = useRef<PriceChartData>({
+    chainId,
+    decimals: token?.decimals ?? 0,
+    initialSupply: token?.initialSupply ?? '0',
+    tokenAddress: address,
+    symbol: token?.symbol ?? '',
+    price: token?.metrics?.priceUsd,
+  })
 
   if (isTokenPending) {
     return <TokenDetailSkeleton />
@@ -252,6 +261,15 @@ export function TokenDetailPage({
         </PerpsCard>
       </Container>
     )
+  }
+
+  priceChartDataRef.current = {
+    chainId,
+    decimals: token.decimals,
+    initialSupply: token.initialSupply,
+    tokenAddress: address,
+    symbol: token.symbol,
+    price: token.metrics?.priceUsd,
   }
 
   const metrics = token.metrics
@@ -446,10 +464,8 @@ export function TokenDetailPage({
       <div className="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_480px]">
         <div className="min-w-0 space-y-4">
           <PriceChart
-            chainId={chainId}
-            tokenAddress={address}
-            symbol={token.symbol}
-            price={token.metrics?.priceUsd}
+            key={`${chainId}:${address}`}
+            dataRef={priceChartDataRef}
           />
           <TradeHistory token={token} />
         </div>
@@ -459,10 +475,11 @@ export function TokenDetailPage({
             <SwapPanel token={token} />
           ) : (
             <Sheet>
-              <SheetTrigger asChild>
+              <SheetTrigger asChild className="bg-perps-background">
                 <Button
                   type="button"
                   className="fixed inset-x-4 bottom-6 z-40 h-14 rounded-full text-base font-semibold"
+                  variant="perps-long"
                 >
                   Trade {token.symbol}
                 </Button>

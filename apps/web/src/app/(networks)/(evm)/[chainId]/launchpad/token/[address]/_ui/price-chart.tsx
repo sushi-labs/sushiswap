@@ -10,14 +10,39 @@ import type {
   ResolutionString,
 } from 'public/trading-view/charting_library/charting_library'
 import { widget } from 'public/trading-view/charting_library/charting_library.esm.js'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  type RefObject,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import type { EvmAddress } from 'sushi/evm'
+import { formatUnits } from 'viem'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import type { LaunchpadChainId } from '../../../constants'
-import { createLaunchpadDatafeed } from './datafeed'
+import {
+  DEFAULT_LAUNCHPAD_CHART_MODE,
+  type LaunchpadChartMode,
+  createLaunchpadDatafeed,
+  getLaunchpadChartSymbol,
+} from './datafeed'
 
 const POSITIVE_COLOR = '#1ca67d'
 const NEGATIVE_COLOR = '#de5852'
+const CHART_MODES: LaunchpadChartMode[] = ['market-cap', 'price']
+const PRICE_CHART_MODE: LaunchpadChartMode[] = ['price']
+
+export interface PriceChartData {
+  chainId: LaunchpadChainId
+  decimals: number
+  initialSupply: string
+  tokenAddress: EvmAddress
+  symbol: string
+  price: number | null | undefined
+}
 
 function getPricescale(price: number | null | undefined): number {
   if (!price || price <= 0 || price >= 1) return 100
@@ -27,35 +52,89 @@ function getPricescale(price: number | null | undefined): number {
   return 10 ** precision
 }
 
-export function PriceChart({
-  chainId,
-  tokenAddress,
-  symbol,
-  price,
+function getTokenSupply(
+  initialSupply: string,
+  decimals: number,
+): number | null {
+  if (!Number.isInteger(decimals) || decimals < 0) return null
+
+  try {
+    const supply = Number(formatUnits(BigInt(initialSupply), decimals))
+    return Number.isFinite(supply) && supply > 0 ? supply : null
+  } catch {
+    return null
+  }
+}
+
+export const PriceChart = memo(function PriceChart({
+  dataRef,
 }: {
-  chainId: LaunchpadChainId
-  tokenAddress: EvmAddress
-  symbol: string
-  price: number | null | undefined
+  dataRef: RefObject<PriceChartData>
 }) {
+  const initialDataRef = useRef(dataRef.current)
+  const { chainId, decimals, initialSupply, tokenAddress, symbol } =
+    initialDataRef.current
   const chartContainerRef = useRef<HTMLDivElement>(null)
   const tvWidgetRef = useRef<IChartingLibraryWidget | null>(null)
   const [chartReady, setChartReady] = useState(false)
   const { resolvedTheme } = useTheme()
   const isMounted = useIsMounted()
-  const pricescale = getPricescale(price)
+  const marketCapMultiplier = useMemo(
+    () => getTokenSupply(initialSupply, decimals),
+    [decimals, initialSupply],
+  )
+  const defaultChartMode: LaunchpadChartMode = marketCapMultiplier
+    ? DEFAULT_LAUNCHPAD_CHART_MODE
+    : 'price'
+  const chartModes = marketCapMultiplier ? CHART_MODES : PRICE_CHART_MODE
+  const getPriceMultiplier = useCallback(
+    (chartMode: LaunchpadChartMode): number => {
+      if (chartMode === 'price') return 1
+
+      const { initialSupply: currentSupply, decimals: currentDecimals } =
+        dataRef.current
+      return getTokenSupply(currentSupply, currentDecimals) ?? 1
+    },
+    [dataRef],
+  )
+  const getChartPricescale = useCallback(
+    (chartMode: LaunchpadChartMode): number => {
+      const {
+        decimals: currentDecimals,
+        initialSupply: currentSupply,
+        price: currentPrice,
+      } = dataRef.current
+      const multiplier = getTokenSupply(currentSupply, currentDecimals)
+      const chartPrice =
+        chartMode === 'market-cap' && currentPrice && multiplier
+          ? currentPrice * multiplier
+          : currentPrice
+
+      return getPricescale(chartPrice)
+    },
+    [dataRef],
+  )
+  const resetChartData = useCallback((): void => {
+    tvWidgetRef.current?.activeChart().resetData()
+  }, [])
   const datafeed = useMemo(
     () =>
       createLaunchpadDatafeed({
         chainId,
-        onResetData() {
-          tvWidgetRef.current?.activeChart().resetData()
-        },
+        getPriceMultiplier,
+        getPricescale: getChartPricescale,
+        onResetData: resetChartData,
         tokenAddress,
         symbol,
-        pricescale,
       }),
-    [chainId, pricescale, symbol, tokenAddress],
+    [
+      chainId,
+      getChartPricescale,
+      getPriceMultiplier,
+      resetChartData,
+      symbol,
+      tokenAddress,
+    ],
   )
 
   useEffect(() => {
@@ -69,7 +148,7 @@ export function PriceChart({
     localStorage.setItem('tradingview.current_theme.name', resolvedTheme)
 
     const options: ChartingLibraryWidgetOptions = {
-      symbol: `${tokenAddress}:${symbol}`,
+      symbol: getLaunchpadChartSymbol(tokenAddress, symbol, defaultChartMode),
       datafeed,
       interval: '5' as ResolutionString,
       container: chartContainerRef.current,
@@ -421,15 +500,56 @@ export function PriceChart({
     }
 
     const tvWidget = new widget(options)
+    let isDisposed = false
+    let activeChartMode = defaultChartMode
+
+    function selectChartMode(chartMode: LaunchpadChartMode) {
+      if (isDisposed || chartMode === activeChartMode) return
+
+      activeChartMode = chartMode
+      tvWidget
+        .activeChart()
+        .setSymbol(getLaunchpadChartSymbol(tokenAddress, symbol, chartMode))
+    }
+
+    if (chartModes.length > 1) {
+      void tvWidget
+        .headerReady()
+        .then(() => {
+          if (isDisposed) return
+
+          tvWidget.createButton({
+            align: 'left',
+            useTradingViewStyle: true,
+            text: '/',
+            title: 'Toggle price and market cap',
+            onClick: () =>
+              selectChartMode(
+                activeChartMode === 'price' ? 'market-cap' : 'price',
+              ),
+          })
+        })
+        .catch(() => undefined)
+    }
+
     tvWidgetRef.current = tvWidget
     tvWidget.onChartReady(() => setChartReady(true))
 
     return () => {
+      isDisposed = true
       tvWidget.remove()
       tvWidgetRef.current = null
       setChartReady(false)
     }
-  }, [datafeed, isMounted, resolvedTheme, symbol, tokenAddress])
+  }, [
+    chartModes,
+    datafeed,
+    defaultChartMode,
+    isMounted,
+    resolvedTheme,
+    symbol,
+    tokenAddress,
+  ])
 
   return (
     <PerpsCard className="h-[385px] lg:h-[540px] overflow-hidden p-2" fullWidth>
@@ -437,7 +557,7 @@ export function PriceChart({
         <div
           ref={chartContainerRef}
           className={chartReady ? 'flex h-full' : 'hidden'}
-          aria-label={`${symbol} price chart`}
+          aria-label={`${symbol} market cap and price chart`}
         />
         {!chartReady ? (
           <div className="absolute inset-0 grid place-items-center">
@@ -452,4 +572,4 @@ export function PriceChart({
       </div>
     </PerpsCard>
   )
-}
+})
