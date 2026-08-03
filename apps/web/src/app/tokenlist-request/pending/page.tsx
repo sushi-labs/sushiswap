@@ -39,9 +39,11 @@ import {
 import { NavigationItems } from '../navigation-items'
 
 const getTokenSecurity = (security: PendingTokens[number]['security']) => {
+  if (!security) return undefined
+
   const data = {
     is_buyable: {
-      goPlus: security.isBuyable,
+      goPlus: security.isBuyable ?? undefined,
     },
     is_open_source: {
       goPlus: security.isOpenSource,
@@ -71,10 +73,10 @@ const getTokenSecurity = (security: PendingTokens[number]['security']) => {
       goPlus: security.gasAbuse,
     },
     buy_tax: {
-      goPlus: security.buyTax,
+      goPlus: security.buyTax ?? undefined,
     },
     sell_tax: {
-      goPlus: security.sellTax,
+      goPlus: security.sellTax ?? undefined,
     },
     is_sell_limit: {
       goPlus: security.cannotSellAll,
@@ -114,8 +116,8 @@ const getTokenSecurity = (security: PendingTokens[number]['security']) => {
   return {
     data,
     isAvailable: true,
-    isHoneypot: data?.is_honeypot?.goPlus,
-    isFoT: data?.buy_tax?.goPlus || data?.sell_tax?.goPlus,
+    isHoneypot: data.is_honeypot.goPlus,
+    isFoT: data.buy_tax.goPlus || data.sell_tax.goPlus || undefined,
     isRisky: Object.entries(data || {}).some(([_key, value]) => {
       const key = _key as keyof TokenSecurity
       if (

@@ -16,13 +16,15 @@ export function TopicProductBarClient({ categories }: TopicProductBarClient) {
   const { category: selectedCategory } = useAcademySearch()
   const setFilters = useSetAcademySearch()
 
-  const [value, setValue] = useState<string | undefined>(selectedCategory)
+  const [value, setValue] = useState<string | undefined>(
+    selectedCategory ?? undefined,
+  )
 
   const FilterButton = ({ category }: { category: Topic | Product }) => {
     const isSelected = value === category.slug
 
     const onClick = useCallback(() => {
-      const newCategory = isSelected ? undefined : category.slug
+      const newCategory = isSelected ? undefined : (category.slug ?? undefined)
 
       setValue(newCategory)
 

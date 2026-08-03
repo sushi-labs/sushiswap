@@ -113,7 +113,8 @@ export const LeaderboardTable = () => {
 
   const userData = useMemo(() => {
     if (!_userData) return null
-    if (_userData.rank <= 3) return null
+    const rank = _userData.rank
+    if (rank === null || rank <= 3) return null
     const userInLeaderboard = leaderboardData?.find(
       (entry) =>
         entry.address.toLowerCase() === _userData.address.toLowerCase(),
@@ -122,7 +123,7 @@ export const LeaderboardTable = () => {
     if (userInLeaderboard) {
       return userInLeaderboard
     }
-    return _userData
+    return { ..._userData, rank }
   }, [_userData, leaderboardData])
 
   useEffect(() => {

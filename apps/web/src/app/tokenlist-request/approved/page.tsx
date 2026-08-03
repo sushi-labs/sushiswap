@@ -46,7 +46,7 @@ const COLUMNS: ColumnDef<ApprovedCommunityTokens[number], unknown>[] = [
         >
           <div className="h-8 w-8 rounded-full overflow-hidden border-2 ring-gray-50 dark:ring-slate-950">
             <img
-              src={props.row.original.logoUrl}
+              src={props.row.original.logoUrl ?? undefined}
               width={32}
               height={32}
               alt={props.row.original.symbol}

@@ -52,13 +52,18 @@ export async function Header() {
     },
     {
       title: 'Learn',
-      items: difficulties?.map(({ shortDescription, slug }) => {
+      items: difficulties?.flatMap(({ shortDescription, slug }) => {
+        if (!shortDescription) return []
         const isTechnical = slug === 'technical'
-        return {
-          title: shortDescription,
-          href: isTechnical ? DOCS_URL : `/academy/explore?difficulty=${slug}`,
-          description: '',
-        }
+        return [
+          {
+            title: shortDescription,
+            href: isTechnical
+              ? DOCS_URL
+              : `/academy/explore?difficulty=${slug}`,
+            description: '',
+          },
+        ]
       }),
       show: 'desktop',
       type: NavigationElementType.Dropdown,
