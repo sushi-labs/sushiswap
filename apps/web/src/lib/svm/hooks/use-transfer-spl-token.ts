@@ -53,6 +53,7 @@ type TransferSplTokenArgs = {
 }
 
 export const useTransferSplToken = (params?: {
+  notifications?: boolean
   onSuccess?: (signature: string) => void
   uiOptions?: SendTransactionModalUIOptions
   variant?: NotificationVariant
@@ -168,6 +169,8 @@ export const useTransferSplToken = (params?: {
     },
 
     onMutate: ({ amount, tokenToSend }) => {
+      if (params?.notifications === false) return
+
       const formattedAmount = new Amount(tokenToSend, amount).toSignificant(6)
       const formattedSymbol = tokenToSend.symbol ?? ''
       const ts = Date.now()
@@ -191,8 +194,8 @@ export const useTransferSplToken = (params?: {
     },
 
     onSuccess: (signature, _vars, ctx) => {
-      if (!address || !ctx) return
       params?.onSuccess?.(signature)
+      if (params?.notifications === false || !address || !ctx) return
 
       createSuccessToast({
         summary: `Transferred ${ctx.formattedAmount} ${ctx.formattedSymbol} successfully`,
@@ -207,6 +210,8 @@ export const useTransferSplToken = (params?: {
     },
 
     onError: (error, _vars, ctx) => {
+      if (params?.notifications === false) return
+
       const timestamp = ctx?.ts ?? Date.now()
 
       console.error(error)

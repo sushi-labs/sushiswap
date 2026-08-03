@@ -9,20 +9,18 @@ import {
 import React, { useCallback, useMemo, useState } from 'react'
 import { useWallets } from 'src/lib/wallet'
 import { formatPercent, formatUSD, getNativeAddress } from 'sushi'
+import { EvmNative, EvmToken, isEvmAddress, isEvmChainId } from 'sushi/evm'
 import {
-  type EvmChainId,
-  EvmNative,
-  EvmToken,
-  isEvmAddress,
-  isEvmChainId,
-} from 'sushi/evm'
-import type { StellarChainId } from 'sushi/stellar'
+  StellarToken,
+  isStellarChainId,
+  isStellarContractAddress,
+} from 'sushi/stellar'
 import {
   type SvmChainId,
   SvmNative,
   SvmToken,
+  isSvmAddress,
   isSvmChainId,
-  svmAddress,
 } from 'sushi/svm'
 import { formatUnits } from 'viem'
 import { BalanceProvider } from '~evm/_common/ui/balance-provider/balance-provider'
@@ -34,12 +32,10 @@ interface PortfolioTokensListProps {
   onTransferConfirmed(): Promise<void>
 }
 const getCurrency = (token: PortfolioWalletToken) => {
-  if (isEvmChainId(token.chainId)) {
+  if (isEvmChainId(token.chainId) && isEvmAddress(token.address)) {
     if (token.address === getNativeAddress(token.chainId)) {
       return EvmNative.fromChainId(token.chainId)
     }
-
-    if (!isEvmAddress(token.address)) return null
 
     return new EvmToken({
       chainId: token.chainId,
@@ -48,28 +44,29 @@ const getCurrency = (token: PortfolioWalletToken) => {
       symbol: token.symbol,
       name: token.name,
     })
-  } else if (isSvmChainId(token.chainId)) {
+  } else if (isSvmChainId(token.chainId) && isSvmAddress(token.address)) {
     if (token.address === getNativeAddress(token.chainId)) {
       return SvmNative.fromChainId(token.chainId as SvmChainId)
     }
 
     return new SvmToken({
-      chainId: token.chainId as SvmChainId,
-      address: svmAddress(token.address),
+      chainId: token.chainId,
+      address: token.address,
       decimals: token.decimals,
       symbol: token.symbol,
       name: token.name,
     })
-  } else {
-    //stellar token goes here
-    return null
-    // return new StellarToken({
-    //   chainId: token.chainId as StellarChainId,
-    //   address: svmAddress(token.id),
-    //   decimals: token.decimals,
-    //   symbol: token.symbol,
-    //   name: token.name,
-    // })
+  } else if (
+    isStellarChainId(token.chainId) &&
+    isStellarContractAddress(token.address)
+  ) {
+    return new StellarToken({
+      chainId: token.chainId,
+      address: token.address,
+      decimals: token.decimals,
+      symbol: token.symbol,
+      name: token.name,
+    })
   }
 }
 
@@ -81,28 +78,23 @@ export function PortfolioTokensList({
   const [selectedCurrency, setSelectedCurrency] = useState<NonNullable<
     ReturnType<typeof getCurrency>
   > | null>(null)
-  const handleSelectCurrency = useCallback(
-    (currency: NonNullable<ReturnType<typeof getCurrency>>) => {
-      setSelectedCurrency(currency)
-    },
-    [],
-  )
   const handleDialogOpenChange = useCallback((nextOpen: boolean) => {
     if (!nextOpen) setSelectedCurrency(null)
   }, [])
 
   const tokens = useMemo(
     () =>
-      _tokens.map((token) => {
+      _tokens.flatMap((token) => {
         const currency = getCurrency(token)
+        if (!currency) return []
 
         return {
           currency,
-          onSend: currency ? () => handleSelectCurrency(currency) : undefined,
+          onSend: () => setSelectedCurrency(currency),
           token,
         }
       }),
-    [_tokens, handleSelectCurrency],
+    [_tokens],
   )
 
   return (
@@ -110,23 +102,17 @@ export function PortfolioTokensList({
       <div className="overflow-y-auto h-full cursor-default">
         {tokens.map(({ currency, onSend, token }) => {
           const canSend = Boolean(
-            currency &&
-              ((isEvmChainId(currency.chainId) && wallets.evm?.account) ||
-                (isSvmChainId(currency.chainId) && wallets.svm?.account)),
+            (isEvmChainId(currency.chainId) && wallets.evm?.account) ||
+              (isSvmChainId(currency.chainId) && wallets.svm?.account) ||
+              (isStellarChainId(currency.chainId) && wallets.stellar?.account),
           )
 
           return (
             <PortfolioInfoRow
               key={`${token.chainId}:${token.id}`}
-              chainId={
-                token.chainId as EvmChainId | SvmChainId | StellarChainId
-              }
+              chainId={token.chainId}
               icon={
-                currency ? (
-                  <Currency.Icon currency={currency} width={28} height={28} />
-                ) : (
-                  <></>
-                )
+                <Currency.Icon currency={currency} width={28} height={28} />
               }
               leftContent={
                 <React.Fragment>
@@ -165,7 +151,7 @@ export function PortfolioTokensList({
                       )}`}
                     </div>
                   </div>
-                  {canSend && currency ? (
+                  {canSend ? (
                     <IconButton
                       size="xs"
                       variant="ghost"

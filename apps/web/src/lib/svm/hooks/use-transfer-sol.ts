@@ -37,6 +37,7 @@ Amount in lamports.
 }
 
 export const useTransferSol = (params?: {
+  notifications?: boolean
   onSuccess?: (signature: string) => void
   uiOptions?: SendTransactionModalUIOptions
   variant?: NotificationVariant
@@ -92,6 +93,8 @@ export const useTransferSol = (params?: {
     },
 
     onMutate: (data) => {
+      if (params?.notifications === false) return
+
       const rawAmount = data.amount
       const formattedAmount = new Amount(
         SvmNative.fromChainId(SvmChainId.SOLANA),
@@ -114,8 +117,8 @@ export const useTransferSol = (params?: {
     },
 
     onSuccess: (signature, _vars, ctx) => {
-      if (!address || !ctx) return
       params?.onSuccess?.(signature)
+      if (params?.notifications === false || !address || !ctx) return
 
       createSuccessToast({
         summary: `Transferred ${ctx.formattedAmount} SOL successfully`,
@@ -130,6 +133,8 @@ export const useTransferSol = (params?: {
     },
 
     onError: (error, _vars, ctx) => {
+      if (params?.notifications === false) return
+
       const timestamp = ctx?.ts ?? Date.now()
       console.log(error)
       createFailedToast({
