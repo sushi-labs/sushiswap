@@ -26,14 +26,16 @@ import {
   formatUsd,
   formatUsdChange,
   shortenAddress,
-} from '../../_ui/format'
+} from '../../_lib/format'
+import { MetricStrip, MetricStripItem } from '../../_ui/metric-strip'
 import { PageHeading } from '../../_ui/page-heading'
+import { CollectionStateCard } from '../../_ui/state-card'
 import { TokenAvatar } from '../../_ui/token-avatar'
 import type { LaunchpadChainId } from '../../constants'
 import {
   useLaunchpadUserHoldings,
   useLaunchpadUserStats,
-} from '../../hooks/use-launchpad-portfolio'
+} from '../_lib/use-launchpad-portfolio'
 
 type LaunchpadUserHolding = LaunchpadUserHoldingsType['edges'][number]['node']
 
@@ -78,24 +80,17 @@ function PnlValue({
 
 function PortfolioStatsSkeleton() {
   return (
-    <PerpsCard className="overflow-hidden" fullWidth>
-      <div className="grid sm:grid-cols-3">
-        {['Holdings USD', 'Tokens held', 'PnL'].map((label, index) => (
-          <div
-            key={label}
-            className={classNames(
-              'border-white/[0.06] px-4 py-4 sm:px-5',
-              index > 0 && 'border-t sm:border-l sm:border-t-0',
-            )}
-          >
-            <div className="text-[11px] font-medium uppercase tracking-wide text-perps-muted-50">
-              {label}
-            </div>
-            <SkeletonBox className="mt-2 h-6 w-24 rounded-md" />
-          </div>
-        ))}
-      </div>
-    </PerpsCard>
+    <MetricStrip columns={3}>
+      {['Holdings USD', 'Tokens held', 'PnL'].map((label, index) => (
+        <MetricStripItem
+          key={label}
+          columns={3}
+          index={index}
+          label={label}
+          value={<SkeletonBox className="h-6 w-24 rounded-md" />}
+        />
+      ))}
+    </MetricStrip>
   )
 }
 
@@ -152,6 +147,68 @@ function HoldingsTableSkeleton() {
   )
 }
 
+function HoldingRow({
+  holding,
+  onOpen,
+}: {
+  holding: LaunchpadUserHolding
+  onOpen: (address: EvmAddress) => void
+}) {
+  function handleKeyDown(event: KeyboardEvent<HTMLTableRowElement>) {
+    if (event.key !== 'Enter' && event.key !== ' ') return
+
+    event.preventDefault()
+    onOpen(holding.token.address)
+  }
+
+  return (
+    <tr
+      role="link"
+      tabIndex={0}
+      aria-label={`View ${holding.token.name}`}
+      onClick={() => onOpen(holding.token.address)}
+      onKeyDown={handleKeyDown}
+      className="group cursor-pointer border-b border-white/[0.06] transition last:border-b-0 hover:bg-white/[0.035] focus-visible:bg-white/[0.035] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-perps-blue/50"
+    >
+      <td className="h-[84px] px-5">
+        <div className="flex min-w-0 items-center gap-3">
+          <TokenAvatar token={holding.token} size="md" />
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="truncate font-semibold text-perps-muted transition group-hover:text-perps-blue">
+                {holding.token.name}
+              </span>
+              {holding.isCreator ? (
+                <span className="shrink-0 rounded-full bg-perps-blue/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-perps-blue">
+                  Creator
+                </span>
+              ) : null}
+            </div>
+            <div className="mt-1 flex items-center gap-1.5 text-xs text-perps-muted-50">
+              <span>{holding.token.symbol}</span>
+              <span>·</span>
+              <span>{shortenAddress(holding.token.address)}</span>
+            </div>
+          </div>
+        </div>
+      </td>
+      <td className="h-[84px] px-5 text-right">
+        <div className="font-semibold text-perps-muted">
+          {formatUsd(holding.amountUsd)}
+        </div>
+        <div className="mt-1 text-xs text-perps-muted-50">
+          {formatRawAmount(holding.tokenAmount, holding.token.decimals, 4)}
+        </div>
+      </td>
+      <td className="h-[84px] px-5">
+        <div className="flex justify-end">
+          <PnlValue pnlUsd={holding.pnlUsd} pnlPercent={holding.pnlPercent} />
+        </div>
+      </td>
+    </tr>
+  )
+}
+
 function HoldingsTable({
   chainId,
   holdings,
@@ -166,16 +223,6 @@ function HoldingsTable({
 
   function openToken(address: EvmAddress) {
     router.push(`/${chainKey}/launchpad/token/${address}`)
-  }
-
-  function handleRowKeyDown(
-    event: KeyboardEvent<HTMLTableRowElement>,
-    address: EvmAddress,
-  ) {
-    if (event.key !== 'Enter' && event.key !== ' ') return
-
-    event.preventDefault()
-    openToken(address)
   }
 
   return (
@@ -197,60 +244,11 @@ function HoldingsTable({
           </thead>
           <tbody>
             {holdings.map((holding) => (
-              <tr
+              <HoldingRow
                 key={holding.token.address}
-                role="link"
-                tabIndex={0}
-                aria-label={`View ${holding.token.name}`}
-                onClick={() => openToken(holding.token.address)}
-                onKeyDown={(event) =>
-                  handleRowKeyDown(event, holding.token.address)
-                }
-                className="group cursor-pointer border-b border-white/[0.06] transition last:border-b-0 hover:bg-white/[0.035] focus-visible:bg-white/[0.035] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-perps-blue/50"
-              >
-                <td className="h-[84px] px-5">
-                  <div className="flex min-w-0 items-center gap-3">
-                    <TokenAvatar token={holding.token} size="md" />
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="truncate font-semibold text-perps-muted transition group-hover:text-perps-blue">
-                          {holding.token.name}
-                        </span>
-                        {holding.isCreator ? (
-                          <span className="shrink-0 rounded-full bg-perps-blue/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-perps-blue">
-                            Creator
-                          </span>
-                        ) : null}
-                      </div>
-                      <div className="mt-1 flex items-center gap-1.5 text-xs text-perps-muted-50">
-                        <span>{holding.token.symbol}</span>
-                        <span>·</span>
-                        <span>{shortenAddress(holding.token.address)}</span>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-                <td className="h-[84px] px-5 text-right">
-                  <div className="font-semibold text-perps-muted">
-                    {formatUsd(holding.amountUsd)}
-                  </div>
-                  <div className="mt-1 text-xs text-perps-muted-50">
-                    {formatRawAmount(
-                      holding.tokenAmount,
-                      holding.token.decimals,
-                      4,
-                    )}
-                  </div>
-                </td>
-                <td className="h-[84px] px-5">
-                  <div className="flex justify-end">
-                    <PnlValue
-                      pnlUsd={holding.pnlUsd}
-                      pnlPercent={holding.pnlPercent}
-                    />
-                  </div>
-                </td>
-              </tr>
+                holding={holding}
+                onOpen={openToken}
+              />
             ))}
           </tbody>
         </table>
@@ -298,78 +296,64 @@ export function PortfolioPage({ chainId }: { chainId: LaunchpadChainId }) {
         />
 
         {!address ? (
-          <PerpsCard
-            className="grid min-h-72 place-items-center p-8 text-center"
-            fullWidth
-          >
-            <div>
+          <CollectionStateCard
+            size="large"
+            icon={
               <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-perps-blue/10 text-perps-blue">
                 <WalletIcon className="h-5 w-5" />
               </span>
-              <h2 className="mt-4 text-lg font-semibold text-perps-muted">
-                Connect your wallet
-              </h2>
-              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-perps-muted-50">
-                Connect an EVM wallet to view its launchpad holdings and PnL.
-              </p>
-              <ConnectButton
-                namespace="evm"
-                variant="perps-default"
-                className="mt-5"
-              />
-            </div>
-          </PerpsCard>
+            }
+            title="Connect your wallet"
+            titleClassName="text-lg"
+            description="Connect an EVM wallet to view its launchpad holdings and PnL."
+            descriptionClassName="mx-auto max-w-md"
+            action={<ConnectButton namespace="evm" variant="perps-default" />}
+          />
         ) : (
           <div className="mt-7">
             {isStatsPending ? (
               <PortfolioStatsSkeleton />
             ) : isStatsError || !stats ? (
-              <PerpsCard className="p-6 text-center" fullWidth>
-                <p className="text-sm text-perps-muted-50">
-                  Portfolio stats could not be loaded.
-                </p>
-                <Button
-                  variant="perps-secondary"
-                  size="sm"
-                  className="mt-4"
-                  onClick={() => refetchStats()}
-                >
-                  Try again
-                </Button>
-              </PerpsCard>
+              <CollectionStateCard
+                size="compact"
+                description="Portfolio stats could not be loaded."
+                action={
+                  <Button
+                    variant="perps-secondary"
+                    size="sm"
+                    onClick={() => refetchStats()}
+                  >
+                    Try again
+                  </Button>
+                }
+              />
             ) : (
-              <PerpsCard className="overflow-hidden" fullWidth>
-                <div className="grid sm:grid-cols-3">
-                  <div className="border-white/[0.06] px-4 py-4 sm:px-5">
-                    <div className="text-[11px] font-medium uppercase tracking-wide text-perps-muted-50">
-                      Total Holdings
-                    </div>
-                    <div className="mt-1.5 text-lg font-semibold text-perps-muted">
-                      {formatUsd(stats.totalHoldingsUsd)}
-                    </div>
-                  </div>
-                  <div className="border-t border-white/[0.06] px-4 py-4 sm:border-l sm:border-t-0 sm:px-5">
-                    <div className="text-[11px] font-medium uppercase tracking-wide text-perps-muted-50">
-                      Tokens Held
-                    </div>
-                    <div className="mt-1.5 text-lg font-semibold text-perps-muted">
-                      {stats.totalTokensHeld.toLocaleString()}
-                    </div>
-                  </div>
-                  <div className="border-t border-white/[0.06] px-4 py-4 sm:border-l sm:border-t-0 sm:px-5">
-                    <div className="text-[11px] font-medium uppercase tracking-wide text-perps-muted-50">
-                      PnL
-                    </div>
-                    <div className="mt-1.5">
-                      <PnlValue
-                        pnlUsd={stats.totalPnlUsd}
-                        pnlPercent={stats.totalPnlPercent}
-                        large
-                      />
-                    </div>
-                  </div>
-                </div>
-              </PerpsCard>
+              <MetricStrip columns={3}>
+                <MetricStripItem
+                  columns={3}
+                  index={0}
+                  label="Total Holdings"
+                  value={formatUsd(stats.totalHoldingsUsd)}
+                />
+                <MetricStripItem
+                  columns={3}
+                  index={1}
+                  label="Tokens Held"
+                  value={stats.totalTokensHeld.toLocaleString()}
+                />
+                <MetricStripItem
+                  columns={3}
+                  index={2}
+                  label="PnL"
+                  value={
+                    <PnlValue
+                      pnlUsd={stats.totalPnlUsd}
+                      pnlPercent={stats.totalPnlPercent}
+                      large
+                    />
+                  }
+                />
+              </MetricStrip>
             )}
           </div>
         )}
@@ -399,51 +383,39 @@ export function PortfolioPage({ chainId }: { chainId: LaunchpadChainId }) {
               {isHoldingsPending ? (
                 <HoldingsTableSkeleton />
               ) : isHoldingsError ? (
-                <PerpsCard
-                  className="grid min-h-64 place-items-center p-8 text-center"
-                  fullWidth
-                >
-                  <div>
-                    <p className="text-sm text-perps-muted-50">
-                      Your holdings could not be loaded.
-                    </p>
+                <CollectionStateCard
+                  description="Your holdings could not be loaded."
+                  action={
                     <Button
                       variant="perps-secondary"
-                      className="mt-4"
                       onClick={() => refetchHoldings()}
                     >
                       Try again
                     </Button>
-                  </div>
-                </PerpsCard>
+                  }
+                />
               ) : rows.length === 0 ? (
-                <PerpsCard
-                  className="grid min-h-64 place-items-center p-8 text-center"
-                  fullWidth
-                >
-                  <div>
+                <CollectionStateCard
+                  icon={
                     <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-white/[0.05] text-perps-muted-50">
                       <ChartPieIcon className="h-5 w-5" />
                     </span>
-                    <h3 className="mt-4 font-semibold text-perps-muted">
-                      No launchpad holdings yet
-                    </h3>
-                    <p className="mt-1 text-sm text-perps-muted-50">
-                      Tokens held by this wallet will appear here.
-                    </p>
+                  }
+                  title="No launchpad holdings yet"
+                  description="Tokens held by this wallet will appear here."
+                  action={
                     <LinkInternal href={`/${chainKey}/launchpad`}>
                       <Button
                         asChild
                         variant="perps-secondary"
-                        className="mt-5"
                         icon={ArrowRightIcon}
                         iconPosition="end"
                       >
                         Discover tokens
                       </Button>
                     </LinkInternal>
-                  </div>
-                </PerpsCard>
+                  }
+                />
               ) : (
                 <InfiniteScroll
                   dataLength={rows.length}

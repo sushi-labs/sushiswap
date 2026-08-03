@@ -1,5 +1,6 @@
-import { Container, SkeletonBox, classNames } from '@sushiswap/ui'
+import { Container, SkeletonBox } from '@sushiswap/ui'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
+import { MetricStrip, MetricStripItem } from '../../../_ui/metric-strip'
 
 const MARKET_STAT_SKELETONS = ['price', 'fdv', 'liquidity', 'volume'] as const
 
@@ -55,25 +56,18 @@ export function TokenDetailSkeleton() {
       </div>
 
       <div className="mt-6">
-        <PerpsCard className="overflow-hidden" fullWidth>
-          <div className="grid grid-cols-2 lg:grid-cols-4">
-            {MARKET_STAT_SKELETONS.map((stat, index) => (
-              <div
-                key={stat}
-                className={classNames(
-                  'min-h-[104px] border-white/[0.06] px-4 py-4 sm:min-h-[103px] sm:px-5',
-                  index % 2 === 1 && 'border-l',
-                  index > 1 && 'border-t lg:border-t-0',
-                  index > 0 && 'lg:border-l',
-                )}
-              >
-                <SkeletonBox className="h-3 w-16 rounded-sm" />
-                <SkeletonBox className="mt-2 h-6 w-24 rounded-md" />
-                <SkeletonBox className="mt-2 h-3 w-20 rounded-sm" />
-              </div>
-            ))}
-          </div>
-        </PerpsCard>
+        <MetricStrip>
+          {MARKET_STAT_SKELETONS.map((stat, index) => (
+            <MetricStripItem
+              key={stat}
+              index={index}
+              className="min-h-[104px] sm:min-h-[103px]"
+              label={<SkeletonBox className="h-3 w-16 rounded-sm" />}
+              value={<SkeletonBox className="h-6 w-24 rounded-md" />}
+              detail={<SkeletonBox className="h-3 w-20 rounded-sm" />}
+            />
+          ))}
+        </MetricStrip>
       </div>
 
       <div className="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_480px]">

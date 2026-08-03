@@ -1,12 +1,12 @@
 import { hashTypedData } from 'viem'
 import { describe, expect, it } from 'vitest'
-import type { LaunchpadChainId } from '../../../constants'
+import type { LaunchpadChainId } from '../constants'
 import {
   LAUNCHPAD_METADATA_DESCRIPTION_MAX_BYTES,
   buildLaunchpadMetadataDocument,
   buildUpdateMetadataTypedData,
   launchpadMetadataDescriptionSchema,
-} from './metadata-signature'
+} from './launchpad-metadata'
 
 describe('launchpad metadata signature', () => {
   it('matches the data API UTF-8 description limit', () => {

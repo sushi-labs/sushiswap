@@ -4,8 +4,9 @@ import type {
   LaunchpadTrade,
   LaunchpadTradeConnection,
 } from '@sushiswap/graph-client/data-api'
-import type { EvmAddress } from 'sushi/evm'
-import type { LaunchpadChainId } from '../constants'
+import ms from 'ms'
+import { type EvmAddress, type EvmTxHash, normalizeEvmAddress } from 'sushi/evm'
+import type { LaunchpadChainId } from '../../../constants'
 
 export const EMPTY_TRADE_CONNECTION: LaunchpadTradeConnection = {
   edges: [],
@@ -19,7 +20,7 @@ export type LaunchpadTradeMutation =
   | {
       eventId: string
       type: 'remove'
-      transactionHash: `0x${string}`
+      transactionHash: EvmTxHash
       logIndex: number
     }
 
@@ -77,7 +78,7 @@ function getStreamIdentityKey(
   chainId: LaunchpadChainId,
   tokenAddress: EvmAddress,
 ): string {
-  return `${chainId}:${tokenAddress.toLowerCase()}`
+  return `${chainId}:${normalizeEvmAddress(tokenAddress)}`
 }
 
 function recordCandleMutation(
@@ -113,7 +114,7 @@ function shouldIncludeTrade(
 }
 
 export function getLaunchpadTradeKey(trade: {
-  transactionHash: `0x${string}`
+  transactionHash: EvmTxHash
   logIndex: number
 }): string {
   return `${trade.transactionHash.toLowerCase()}:${trade.logIndex}`
@@ -373,7 +374,7 @@ export async function refetchLaunchpadCandleSnapshots(
   return result.streamCursor
 }
 
-export async function refetchLaunchpadCandleSnapshotsWithStatus(
+async function refetchLaunchpadCandleSnapshotsWithStatus(
   input: {
     chainId: LaunchpadChainId
     tokenAddress: EvmAddress
@@ -423,7 +424,7 @@ export async function refetchLaunchpadCandleSnapshotsWithRetry(
   options: { attempts?: number; retryDelayMs?: number } = {},
 ): Promise<LaunchpadCandleSnapshotRefreshResult> {
   const attempts = options.attempts ?? 3
-  const retryDelayMs = options.retryDelayMs ?? 500
+  const retryDelayMs = options.retryDelayMs ?? ms('500ms')
   let result: LaunchpadCandleSnapshotRefreshResult = {
     failedSubscriberCount: 0,
     streamCursor: null,
