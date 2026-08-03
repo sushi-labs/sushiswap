@@ -1,3 +1,4 @@
+import type { SendTransactionModalUIOptions } from '@privy-io/react-auth'
 import {
   TOKEN_PROGRAM_ADDRESS,
   findAssociatedTokenPda,
@@ -20,6 +21,7 @@ import {
   setTransactionMessageLifetimeUsingBlockhash,
 } from '@solana/kit'
 import {
+  type NotificationVariant,
   createFailedToast,
   createInfoToast,
   createSuccessToast,
@@ -52,6 +54,8 @@ type TransferSplTokenArgs = {
 
 export const useTransferSplToken = (params?: {
   onSuccess?: (signature: string) => void
+  uiOptions?: SendTransactionModalUIOptions
+  variant?: NotificationVariant
 }) => {
   const address = useAccount('svm')
   const { signer } = useKitTransactionSigner()
@@ -151,8 +155,12 @@ export const useTransferSplToken = (params?: {
       const encodedTransaction =
         getTransactionEncoder().encode(transactionMessage)
 
-      const { base58TxSig: signature } =
-        await signAndSendTransaction(encodedTransaction)
+      const { base58TxSig: signature } = await signAndSendTransaction(
+        encodedTransaction,
+        {
+          uiOptions: params?.uiOptions,
+        },
+      )
       if (!signature) throw new Error('Failed to obtain transaction signature')
       await waitForSvmSignature(signature.toString())
 
@@ -172,7 +180,7 @@ export const useTransferSplToken = (params?: {
         timestamp: ts,
         groupTimestamp: ts,
         autoClose: 1000,
-        variant: 'perps',
+        variant: params?.variant ?? 'perps',
       })
 
       return {
@@ -194,7 +202,7 @@ export const useTransferSplToken = (params?: {
         timestamp: ctx.ts,
         groupTimestamp: ctx.ts,
         autoClose: 1000,
-        variant: 'perps',
+        variant: params?.variant ?? 'perps',
       })
     },
 
@@ -216,7 +224,7 @@ export const useTransferSplToken = (params?: {
         timestamp,
         groupTimestamp: timestamp,
         autoClose: 1000,
-        variant: 'perps',
+        variant: params?.variant ?? 'perps',
       })
     },
   })
