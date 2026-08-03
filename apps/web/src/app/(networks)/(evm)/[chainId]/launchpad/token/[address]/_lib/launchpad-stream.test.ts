@@ -2,6 +2,7 @@ import type {
   LaunchpadTrade,
   LaunchpadTradeConnection,
 } from '@sushiswap/graph-client/data-api'
+import type { EvmTxHash } from 'sushi/evm'
 import { describe, expect, it, vi } from 'vitest'
 import {
   applyLaunchpadCandleStreamMutations,
@@ -18,7 +19,7 @@ import {
 
 const CHAIN_ID = 4663
 const TOKEN_ADDRESS = '0x1111111111111111111111111111111111111111'
-const TRANSACTION_HASH: `0x${string}` =
+const TRANSACTION_HASH: EvmTxHash =
   '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 
 function createTrade(overrides: Partial<LaunchpadTrade> = {}): LaunchpadTrade {

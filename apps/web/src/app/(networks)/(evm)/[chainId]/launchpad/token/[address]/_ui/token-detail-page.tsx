@@ -44,12 +44,15 @@ import {
   formatUsdChange,
   liquidityChange24hUsd,
   shortenAddress,
-} from '../../../_ui/format'
+} from '../../../_lib/format'
+import { useLaunchpadToken } from '../../../_lib/use-launchpad-token'
+import { DetailList } from '../../../_ui/detail-list'
+import { MetricStrip, MetricStripItem } from '../../../_ui/metric-strip'
 import { PriceSensitiveText } from '../../../_ui/price-sensitive-text'
+import { PageState } from '../../../_ui/state-card'
 import { StatusPill } from '../../../_ui/status-pill'
 import { TokenAvatar } from '../../../_ui/token-avatar'
 import type { LaunchpadChainId } from '../../../constants'
-import { useLaunchpadToken } from '../../../hooks/use-launchpad-data'
 import { PriceChart, type PriceChartData } from './price-chart'
 import { SwapPanel } from './swap-panel'
 import { TokenDetailSkeleton } from './token-detail-skeleton'
@@ -119,6 +122,51 @@ function MetadataLinkIcon({
     default:
       return <LinkIcon className={className} />
   }
+}
+
+function CopyableExplorerAddress({
+  label,
+  address,
+  href,
+  visibleCharacters,
+  linkClassName = 'font-medium text-perps-blue hover:underline',
+}: {
+  label: string
+  address: EvmAddress
+  href: string
+  visibleCharacters: number
+  linkClassName?: string
+}) {
+  return (
+    <div className="flex items-center gap-1">
+      <span>{label}</span>
+      <ClipboardController hideTooltip>
+        {({ setCopied, isCopied }) => (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild onClick={() => setCopied(address)}>
+                {isCopied ? (
+                  <CheckIcon className="mb-[1px] h-3.5 w-3.5 cursor-pointer text-emerald-400" />
+                ) : (
+                  <DocumentDuplicateIcon className="mb-[1px] h-3.5 w-3.5 cursor-pointer text-perps-blue" />
+                )}
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>Copy address</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+      </ClipboardController>
+      <LinkExternal
+        href={href}
+        aria-label={`View ${label.toLowerCase()} address on block explorer`}
+        className={linkClassName}
+      >
+        {shortenAddress(address, visibleCharacters)}
+      </LinkExternal>
+    </div>
+  )
 }
 
 function MetadataLinks({
@@ -219,47 +267,30 @@ export function TokenDetailPage({
 
   if (isTokenError) {
     return (
-      <Container maxWidth="lg" className="w-full px-4 py-20">
-        <PerpsCard className="p-8 text-center" fullWidth>
-          <h1 className="text-2xl font-semibold text-perps-muted">
-            Could not load this launch
-          </h1>
-          <p className="mt-2 text-sm text-perps-muted-50">
-            The launchpad API did not return a usable response.
-          </p>
-          <Button
-            variant="perps-secondary"
-            className="mt-6"
-            onClick={() => refetchToken()}
-          >
+      <PageState
+        title="Could not load this launch"
+        description="The launchpad API did not return a usable response."
+        action={
+          <Button variant="perps-secondary" onClick={() => refetchToken()}>
             Try again
           </Button>
-        </PerpsCard>
-      </Container>
+        }
+      />
     )
   }
 
   if (!token) {
     return (
-      <Container maxWidth="lg" className="w-full px-4 py-20">
-        <PerpsCard className="p-8 text-center" fullWidth>
-          <BeakerIcon className="mx-auto h-10 w-10 text-perps-muted-50" />
-          <h1 className="mt-4 text-2xl font-semibold text-perps-muted">
-            Launch not found
-          </h1>
-          <p className="mt-2 text-sm text-perps-muted-50">
-            This token is not present in the launchpad catalog.
-          </p>
-          <Button
-            asChild
-            variant="perps-secondary"
-            className="mt-6"
-            icon={ArrowLeftIcon}
-          >
+      <PageState
+        icon={<BeakerIcon className="mx-auto h-10 w-10 text-perps-muted-50" />}
+        title="Launch not found"
+        description="This token is not present in the launchpad catalog."
+        action={
+          <Button asChild variant="perps-secondary" icon={ArrowLeftIcon}>
             <Link href={`/${chainKey}/launchpad`}>Back to launchpad</Link>
           </Button>
-        </PerpsCard>
-      </Container>
+        }
+      />
     )
   }
 
@@ -335,68 +366,20 @@ export function TokenDetailPage({
               <StatusPill status={token.indexingStatus} />
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-perps-muted-50">
-              <div className="flex items-center gap-1">
-                <span>Launched by</span>
-                <ClipboardController hideTooltip>
-                  {({ setCopied, isCopied }) => (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger
-                          asChild
-                          onClick={() => setCopied(token.creator)}
-                        >
-                          {isCopied ? (
-                            <CheckIcon className="mb-[1px] h-3.5 w-3.5 cursor-pointer text-emerald-400" />
-                          ) : (
-                            <DocumentDuplicateIcon className="mb-[1px] h-3.5 w-3.5 cursor-pointer text-perps-blue" />
-                          )}
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom">
-                          <p>Copy address</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  )}
-                </ClipboardController>
-                <LinkExternal
-                  href={chain.getAccountUrl(token.creator)}
-                  aria-label="View creator address on block explorer"
-                  className="text-perps-muted-50 transition hover:text-perps-blue"
-                >
-                  {shortenAddress(token.creator, 5)}
-                </LinkExternal>
-              </div>
+              <CopyableExplorerAddress
+                label="Launched by"
+                address={token.creator}
+                href={chain.getAccountUrl(token.creator)}
+                visibleCharacters={5}
+                linkClassName="text-perps-muted-50 transition hover:text-perps-blue"
+              />
               <span>·</span>
-              <div className="flex items-center gap-1">
-                <span>Token</span>
-                <ClipboardController hideTooltip>
-                  {({ setCopied, isCopied }) => (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger
-                          asChild
-                          onClick={() => setCopied(token.address)}
-                        >
-                          {isCopied ? (
-                            <CheckIcon className="mb-[1px] h-3.5 w-3.5 cursor-pointer text-emerald-400" />
-                          ) : (
-                            <DocumentDuplicateIcon className="mb-[1px] h-3.5 w-3.5 cursor-pointer text-perps-blue" />
-                          )}
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom">
-                          <p>Copy address</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  )}
-                </ClipboardController>
-                <LinkExternal
-                  href={chain.getTokenUrl(token.address)}
-                  className="font-medium text-perps-blue hover:underline"
-                >
-                  {shortenAddress(token.address, 6)}
-                </LinkExternal>
-              </div>
+              <CopyableExplorerAddress
+                label="Token"
+                address={token.address}
+                href={chain.getTokenUrl(token.address)}
+                visibleCharacters={6}
+              />
             </div>
           </div>
         </div>
@@ -404,26 +387,15 @@ export function TokenDetailPage({
       </div>
 
       <div className="mt-6">
-        <PerpsCard className="overflow-hidden" fullWidth>
-          <div className="grid grid-cols-2 lg:grid-cols-4">
-            {marketStats.map((stat, index) => (
-              <div
-                key={stat.label}
-                className={classNames(
-                  'border-white/[0.06] px-4 py-4 sm:px-5',
-                  index % 2 === 1 && 'border-l',
-                  index > 1 && 'border-t lg:border-t-0',
-                  index > 0 && 'lg:border-l',
-                )}
-              >
-                <div className="text-[11px] font-medium uppercase tracking-wide text-perps-muted-50">
-                  {stat.label}
-                </div>
-                <div
-                  className={classNames(
-                    'mt-1.5 text-lg font-semibold text-perps-muted flex gap-1 items-end flex-wrap',
-                  )}
-                >
+        <MetricStrip>
+          {marketStats.map((stat, index) => (
+            <MetricStripItem
+              key={stat.label}
+              index={index}
+              label={stat.label}
+              valueClassName="flex flex-wrap items-end gap-1"
+              value={
+                <>
                   {stat.label === 'Price' ? (
                     <PriceSensitiveText price={metrics?.priceUsd}>
                       {stat.value}
@@ -451,14 +423,12 @@ export function TokenDetailPage({
                       </span>
                     </span>
                   ) : null}
-                </div>
-                <div className="mt-1 text-[11px] text-perps-muted-50">
-                  {stat.detail}
-                </div>
-              </div>
-            ))}
-          </div>
-        </PerpsCard>
+                </>
+              }
+              detail={stat.detail}
+            />
+          ))}
+        </MetricStrip>
       </div>
 
       <div className="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_480px]">
@@ -533,8 +503,10 @@ export function TokenDetailPage({
                 Launch details
               </h2>
             </div>
-            <div className="mt-5 space-y-4">
-              {[
+            <DetailList
+              className="mt-5"
+              valueClassName="max-w-[68%]"
+              items={[
                 [
                   'Supply',
                   `${formatRawAmount(token.initialSupply, token.decimals, 0)} ${token.symbol}`,
@@ -542,18 +514,8 @@ export function TokenDetailPage({
                 ['Pool fee', `${token.pool.feeTier / 10_000}%`],
                 ['Starting FDV', '$5,000'],
                 ['Liquidity', 'Single maximum-bound position'],
-              ].map(([label, value]) => (
-                <div
-                  key={label}
-                  className="flex items-start justify-between gap-4 text-sm"
-                >
-                  <span className="text-perps-muted-50">{label}</span>
-                  <span className="max-w-[68%] text-right font-medium text-perps-muted">
-                    {value}
-                  </span>
-                </div>
-              ))}
-            </div>
+              ].map(([label, value]) => ({ label, value }))}
+            />
           </PerpsCard>
 
           <PerpsCard className="overflow-hidden" fullWidth>

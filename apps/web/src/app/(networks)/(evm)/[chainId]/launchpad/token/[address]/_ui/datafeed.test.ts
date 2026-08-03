@@ -21,7 +21,7 @@ import {
   publishLaunchpadCandleRemove,
   publishLaunchpadCandleUpdate,
   refetchLaunchpadCandleSnapshotsWithRetry,
-} from '../../../hooks/launchpad-stream'
+} from '../_lib/launchpad-stream'
 import { createLaunchpadDatafeed, getLaunchpadChartSymbol } from './datafeed'
 
 const CHAIN_ID = 4663

@@ -19,7 +19,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         (article) =>
           ({
             url: `https://www.sushi.com/blog/${article.slug}`,
-            lastModified: new Date(article.updatedAt),
+            ...(article.updatedAt
+              ? { lastModified: new Date(article.updatedAt) }
+              : {}),
             changeFrequency: 'weekly',
           }) as const,
       ),

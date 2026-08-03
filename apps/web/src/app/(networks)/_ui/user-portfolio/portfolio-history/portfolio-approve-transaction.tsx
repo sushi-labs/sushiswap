@@ -11,6 +11,8 @@ import { PortfolioInfoRow } from '../portfolio-info-row'
 export const PortfolioApproveTransaction: FC<{ tx: PortfolioTransaction }> = ({
   tx,
 }) => {
+  if (!tx.approve) return null
+
   return (
     <PortfolioInfoRow
       chainId={tx.chainId as EvmChainId}

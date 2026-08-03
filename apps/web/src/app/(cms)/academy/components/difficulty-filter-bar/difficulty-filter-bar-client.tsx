@@ -20,12 +20,16 @@ export function DifficultyFilterBarClient({
   const setFilters = useSetAcademySearch()
 
   // Only allow one difficulty to be selected at a time
-  const [value, setValue] = useState<string | undefined>(selectedDifficulty)
+  const [value, setValue] = useState<string | undefined>(
+    selectedDifficulty ?? undefined,
+  )
 
   const onSelect = useCallback(
     (difficulty: Difficulty) => {
       const newDifficulty =
-        difficulty.slug === value ? undefined : difficulty.slug
+        difficulty.slug && difficulty.slug !== value
+          ? difficulty.slug
+          : undefined
 
       setValue(newDifficulty)
 

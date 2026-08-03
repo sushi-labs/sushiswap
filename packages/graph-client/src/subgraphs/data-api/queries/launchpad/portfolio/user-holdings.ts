@@ -1,4 +1,4 @@
-import type { VariablesOf } from 'gql.tada'
+import type { ResultOf, VariablesOf } from 'gql.tada'
 import { type RequestOptions, request } from 'src/lib/request.js'
 import { SUSHI_DATA_API_GRAPHQL_URL } from '../../../data-api-host.js'
 import { graphql } from '../../../graphql.js'
@@ -47,11 +47,14 @@ export const LaunchpadUserHoldingsQuery = graphql(`
 export type GetLaunchpadUserHoldings = VariablesOf<
   typeof LaunchpadUserHoldingsQuery
 >
+export type LaunchpadUserHoldingsType = ResultOf<
+  typeof LaunchpadUserHoldingsQuery
+>['launchpad']['userHoldings']
 
 export async function getLaunchpadUserHoldings(
   variables: GetLaunchpadUserHoldings,
   options?: RequestOptions,
-) {
+): Promise<LaunchpadUserHoldingsType> {
   const result = await request(
     {
       url: SUSHI_DATA_API_GRAPHQL_URL,
@@ -61,12 +64,5 @@ export async function getLaunchpadUserHoldings(
     },
     options,
   )
-  if (result) {
-    return result.launchpad.userHoldings
-  }
-  throw new Error('No launchpad user holdings data')
+  return result.launchpad.userHoldings
 }
-
-export type LaunchpadUserHoldingsType = Awaited<
-  ReturnType<typeof getLaunchpadUserHoldings>
->

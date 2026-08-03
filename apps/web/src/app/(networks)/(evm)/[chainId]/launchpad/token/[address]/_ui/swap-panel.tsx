@@ -17,7 +17,7 @@ import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-sel
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
 import { EdgeProvider } from 'src/providers/edge-config-provider'
 import { formatUSD, isWNativeSupported } from 'sushi'
-import { DEFAULT_SLIPPAGE, EvmToken, unwrapEvmToken } from 'sushi/evm'
+import { DEFAULT_SLIPPAGE, type EvmToken, unwrapEvmToken } from 'sushi/evm'
 import { formatUnits } from 'viem'
 import { DetailsInteractionTrackerProvider } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
 import {
@@ -30,9 +30,9 @@ import { defaultSwapEdgeConfig } from '~evm/[chainId]/(trade)/swap/get-swap-edge
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { useCurrencyPrice } from '~evm/_common/ui/price-provider/price-provider/use-currency-price'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
+import type { LaunchpadTokenWithCurrencies } from '../../../_lib/use-launchpad-token'
 import { TokenAvatar } from '../../../_ui/token-avatar'
 import type { LaunchpadChainId } from '../../../constants'
-import type { LaunchpadToken } from '../../../types'
 
 type SwapSide = 'BUY' | 'SELL'
 
@@ -82,27 +82,8 @@ function getBuyPresetAmounts(price: number | undefined): string[] {
   })
 }
 
-export function SwapPanel({ token }: { token: LaunchpadToken }) {
-  const launchToken = useMemo(
-    () =>
-      new EvmToken({
-        chainId: token.chainId,
-        address: token.address,
-        decimals: token.decimals,
-        symbol: token.symbol,
-        name: token.name,
-      }),
-    [token.address, token.chainId, token.decimals, token.name, token.symbol],
-  )
-  const quoteToken = useMemo(
-    () =>
-      new EvmToken({
-        chainId: token.chainId,
-        ...token.pool.quoteToken,
-      }),
-    [token.chainId, token.pool.quoteToken],
-  )
-  const defaultQuoteCurrency = unwrapEvmToken(quoteToken)
+export function SwapPanel({ token }: { token: LaunchpadTokenWithCurrencies }) {
+  const defaultQuoteCurrency = unwrapEvmToken(token.quoteCurrency)
 
   return (
     <EdgeProvider config={defaultSwapEdgeConfig}>
@@ -111,20 +92,20 @@ export function SwapPanel({ token }: { token: LaunchpadToken }) {
           key={token.address}
           chainId={token.chainId}
           token0={defaultQuoteCurrency}
-          token1={launchToken}
+          token1={token.currency}
           initialSwapAmount="0.1"
           persistToUrl={false}
           fee={LOW_LIQUIDITY_SWAP_FEE}
           slippageToleranceOptions={LAUNCHPAD_SLIPPAGE_TOLERANCE_OPTIONS}
           directPool={{
             address: token.pool.address,
-            quoteTokenAddress: quoteToken.address,
-            launchTokenAddress: launchToken.address,
+            quoteTokenAddress: token.quoteCurrency.address,
+            launchTokenAddress: token.currency.address,
             feeTier: token.pool.feeTier,
           }}
         >
           <DetailsInteractionTrackerProvider>
-            <SwapPanelContent token={token} launchToken={launchToken} />
+            <SwapPanelContent token={token} launchToken={token.currency} />
           </DetailsInteractionTrackerProvider>
         </DerivedstateSimpleSwapProvider>
       </CheckerProvider>
@@ -136,7 +117,7 @@ function SwapPanelContent({
   token,
   launchToken,
 }: {
-  token: LaunchpadToken
+  token: LaunchpadTokenWithCurrencies
   launchToken: EvmToken
 }) {
   const [side, setSide] = useState<SwapSide>('BUY')

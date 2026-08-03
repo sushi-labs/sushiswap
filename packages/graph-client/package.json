@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@solana/addresses": "catalog:web3",
-    "gql.tada": "1.7.5",
+    "gql.tada": "1.11.3",
     "graphql": "16.6.0",
     "graphql-request": "7.1.0",
     "json-bigint": "1.0.0",
@@ -60,7 +60,7 @@
     "viem": "catalog:web3"
   },
   "devDependencies": {
-    "@0no-co/graphqlsp": "1.12.3",
+    "@0no-co/graphqlsp": "1.17.3",
     "@tsconfig/node24": "catalog:tsconfig",
     "@tsconfig/strictest": "catalog:tsconfig",
     "@types/json-bigint": "1.0.4",

@@ -182,7 +182,7 @@
     "core-js": "3.38.1",
     "eslint": "9.39.5",
     "eslint-config-next": "16.2.9",
-    "knip": "5.30.6",
+    "knip": "6.31.0",
     "postcss": "8.4.23",
     "prool": "0.0.16",
     "schema-dts": "1.1.2",

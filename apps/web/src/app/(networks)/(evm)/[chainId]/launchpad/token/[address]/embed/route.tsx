@@ -2,12 +2,12 @@ import { ImageResponse } from 'next/og'
 import { getEvmChainById } from 'sushi/evm'
 import type { EvmAddress } from 'sushi/evm'
 import { isAddress } from 'viem'
-import { LaunchpadEmbed } from '../../../_lib/launchpad-embed'
+import { formatLaunchpadPriceUsd, formatUsd } from '../../../_lib/format'
 import {
   getLaunchpadTokenForSeo,
   getLaunchpadTokenLogoUrl,
 } from '../../../_lib/launchpad-seo'
-import { formatLaunchpadPriceUsd, formatUsd } from '../../../_ui/format'
+import { LaunchpadEmbed } from '../../../_ui/launchpad-embed'
 import { isLaunchpadChainId } from '../../../constants'
 
 const IMAGE_SIZE = {
