@@ -251,7 +251,7 @@ export function SendTokenDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
-        className="max-w-lg"
+        className="max-w-lg "
         onEscapeKeyDown={preventDismissWhilePending}
         onInteractOutside={preventDismissWhilePending}
       >
@@ -262,7 +262,7 @@ export function SendTokenDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col gap-5 py-2 !max-h-[60vh] overflow-y-auto">
+        <div className="flex flex-col gap-5 max-h-[calc(100dvh-175px)] overflow-y-auto py-2">
           <CurrencyInput
             id="send-token-amount"
             chainId={currency.chainId}
@@ -273,7 +273,7 @@ export function SendTokenDialog({
             disabled={isPending}
             error={nativeReserveError ?? undefined}
             label="Send Amount"
-            className="rounded-xl bg-secondary p-4"
+            className="rounded-xl bg-secondary p-4 min-h-[144px]"
           />
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium" htmlFor="send-token-address">
