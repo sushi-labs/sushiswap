@@ -1,8 +1,7 @@
-import {
-  type LaunchpadChainId,
-  getLaunchpadStats,
-} from '@sushiswap/graph-client/data-api'
+import { getLaunchpadStats } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
+import type { LaunchpadChainId } from '../constants'
 
 export function useLaunchpadStats({ chainId }: { chainId: LaunchpadChainId }) {
   return useQuery({
@@ -10,7 +9,7 @@ export function useLaunchpadStats({ chainId }: { chainId: LaunchpadChainId }) {
     queryFn: () => {
       return getLaunchpadStats({ chainId })
     },
-    staleTime: 60_000,
-    refetchInterval: 60_000,
+    staleTime: ms('1m'),
+    refetchInterval: ms('1m'),
   })
 }

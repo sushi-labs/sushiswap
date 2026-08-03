@@ -4,12 +4,17 @@ import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
 import { SignalIcon } from '@heroicons/react/24/outline'
 import { Button, Dots, SkeletonBox, Switch, classNames } from '@sushiswap/ui'
 import { differenceInMinutes, differenceInSeconds, format } from 'date-fns'
+import ms from 'ms'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
-import { formatRawAmount, formatUsd, shortenAddress } from '../../../_ui/format'
-import { useLaunchpadLiveTrades } from '../../../hooks/use-launchpad-data'
-import type { LaunchpadToken } from '../../../types'
+import {
+  formatRawAmount,
+  formatUsd,
+  shortenAddress,
+} from '../../../_lib/format'
+import type { LaunchpadToken, LaunchpadTrade } from '../../../types'
+import { useLaunchpadLiveTrades } from '../_lib/use-launchpad-live-trades'
 
 const TRADE_GRID_CLASS_NAME =
   'grid min-w-[680px] grid-cols-[52px_minmax(180px,1fr)_minmax(110px,auto)_minmax(140px,auto)_minmax(90px,auto)] gap-4'
@@ -52,6 +57,81 @@ function TradeRowSkeleton() {
       <div className="flex items-center justify-end gap-2">
         <SkeletonBox className="h-3 w-8" />
         <SkeletonBox className="h-7 w-7 rounded-lg" />
+      </div>
+    </div>
+  )
+}
+
+function TradeRow({
+  trade,
+  token,
+  now,
+  isLatest,
+}: {
+  trade: LaunchpadTrade
+  token: LaunchpadToken
+  now: number
+  isLatest: boolean
+}) {
+  return (
+    <div
+      className={classNames(
+        TRADE_GRID_CLASS_NAME,
+        'items-center px-4 py-3 text-xs transition-[background-color] hover:bg-white/[0.025]',
+        isLatest && 'bg-white/[0.03]',
+      )}
+    >
+      <span
+        className={classNames(
+          'font-semibold',
+          trade.direction === 'BUY' ? 'text-emerald-400' : 'text-red',
+        )}
+      >
+        {trade.direction === 'BUY' ? 'Buy' : 'Sell'}
+      </span>
+      <div className="min-w-0">
+        <div className="truncate font-medium text-perps-muted">
+          {formatRawAmount(trade.tokenAmount, token.decimals)} {token.symbol}
+        </div>
+        <div className="mt-1 flex items-center gap-1.5 truncate text-[11px] text-perps-muted-50">
+          <span>{trade.trader ? shortenAddress(trade.trader) : 'Unknown'}</span>
+          <span>·</span>
+          <span>{trade.isLaunchPool ? 'Launch Pool' : 'V3'}</span>
+        </div>
+      </div>
+      <div className="justify-self-end whitespace-nowrap text-right font-medium tabular-nums text-perps-muted">
+        {formatTradePrice(trade.priceUsd)}
+      </div>
+      <div className="min-w-0 justify-self-end text-right tabular-nums">
+        <div className="font-medium text-perps-muted">
+          {formatUsd(trade.amountUsd)}
+        </div>
+        <div className="mt-1 truncate text-[11px] text-perps-muted-50">
+          {formatRawAmount(trade.quoteAmount, trade.quoteToken.decimals, 6)}{' '}
+          {trade.quoteToken.symbol}
+        </div>
+      </div>
+      <div className="grid grid-cols-[1fr_28px] items-center gap-2 justify-self-end text-right">
+        <span className="whitespace-nowrap tabular-nums text-perps-muted-50">
+          {formatRelativeTime(trade.timestamp, now)}
+        </span>
+        <Button
+          asChild
+          variant="perps-secondary"
+          size="xs"
+          className="h-7 w-7 !p-0 opacity-50 transition-opacity hover:opacity-100"
+        >
+          <a
+            href={getEvmChainById(trade.chainId).getTransactionUrl(
+              trade.transactionHash,
+            )}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="View transaction in block explorer"
+          >
+            <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" />
+          </a>
+        </Button>
       </div>
     </div>
   )
@@ -102,7 +182,7 @@ export function TradeHistory({ token }: { token: LaunchpadToken }) {
 
   useEffect(() => {
     setNow(Date.now())
-    const timer = window.setInterval(() => setNow(Date.now()), 1_000)
+    const timer = window.setInterval(() => setNow(Date.now()), ms('1s'))
     return () => window.clearInterval(timer)
   }, [])
 
@@ -191,80 +271,13 @@ export function TradeHistory({ token }: { token: LaunchpadToken }) {
             ) : data.edges.length > 0 ? (
               <div className="min-h-0 flex-1 divide-y divide-white/[0.06]">
                 {data.edges.map(({ node: trade }, index) => (
-                  <div
+                  <TradeRow
                     key={trade.id}
-                    className={classNames(
-                      TRADE_GRID_CLASS_NAME,
-                      'items-center px-4 py-3 text-xs transition-[background-color] hover:bg-white/[0.025]',
-                      index === 0 &&
-                        lastEventAt === trade.timestamp &&
-                        'bg-white/[0.03]',
-                    )}
-                  >
-                    <span
-                      className={classNames(
-                        'font-semibold',
-                        trade.direction === 'BUY'
-                          ? 'text-emerald-400'
-                          : 'text-red',
-                      )}
-                    >
-                      {trade.direction === 'BUY' ? 'Buy' : 'Sell'}
-                    </span>
-                    <div className="min-w-0">
-                      <div className="truncate font-medium text-perps-muted">
-                        {formatRawAmount(trade.tokenAmount, token.decimals)}{' '}
-                        {token.symbol}
-                      </div>
-                      <div className="mt-1 flex items-center gap-1.5 truncate text-[11px] text-perps-muted-50">
-                        <span>
-                          {trade.trader
-                            ? shortenAddress(trade.trader)
-                            : 'Unknown'}
-                        </span>
-                        <span>·</span>
-                        <span>{trade.isLaunchPool ? 'Launch Pool' : 'V3'}</span>
-                      </div>
-                    </div>
-                    <div className="justify-self-end whitespace-nowrap text-right font-medium tabular-nums text-perps-muted">
-                      {formatTradePrice(trade.priceUsd)}
-                    </div>
-                    <div className="min-w-0 justify-self-end text-right tabular-nums">
-                      <div className="font-medium text-perps-muted">
-                        {formatUsd(trade.amountUsd)}
-                      </div>
-                      <div className="mt-1 truncate text-[11px] text-perps-muted-50">
-                        {formatRawAmount(
-                          trade.quoteAmount,
-                          trade.quoteToken.decimals,
-                          6,
-                        )}{' '}
-                        {trade.quoteToken.symbol}
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-[1fr_28px] items-center gap-2 justify-self-end text-right">
-                      <span className="whitespace-nowrap tabular-nums text-perps-muted-50">
-                        {formatRelativeTime(trade.timestamp, now)}
-                      </span>
-                      <Button
-                        asChild
-                        variant="perps-secondary"
-                        size="xs"
-                        className="h-7 w-7 !p-0 opacity-50 transition-opacity hover:opacity-100"
-                      >
-                        <a
-                          href={getEvmChainById(
-                            trade.chainId,
-                          ).getTransactionUrl(trade.transactionHash)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label="View transaction in block explorer"
-                        >
-                          <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" />
-                        </a>
-                      </Button>
-                    </div>
-                  </div>
+                    trade={trade}
+                    token={token}
+                    now={now}
+                    isLatest={index === 0 && lastEventAt === trade.timestamp}
+                  />
                 ))}
                 {(hasNextPage || isFetchingNextPage) && (
                   <div

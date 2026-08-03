@@ -3,35 +3,21 @@
 import {
   type LaunchpadCandle,
   type LaunchpadCandleSnapshot,
-  type LaunchpadCreator,
   type LaunchpadMetrics,
   type LaunchpadToken,
-  type LaunchpadTokenConnection,
-  type LaunchpadTokenRef,
   type LaunchpadTradeConnection,
   getLaunchpadCandles,
-  getLaunchpadCreator,
-  getLaunchpadQuoteTokenList,
-  getLaunchpadToken,
-  getLaunchpadTokens,
   getLaunchpadTrades,
 } from '@sushiswap/graph-client/data-api'
-import {
-  useInfiniteQuery,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query'
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
+import ms from 'ms'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { SUSHI_DATA_API_HOST } from 'src/lib/constants'
-import type { EvmAddress } from 'sushi/evm'
-import { isAddress } from 'viem'
+import { type EvmAddress, type EvmTxHash, szevm } from 'sushi/evm'
+import { isAddressEqual, isHash } from 'viem'
 import { z } from 'zod'
-import { type LaunchpadChainId, isLaunchpadChainId } from '../constants'
-import type {
-  LaunchpadCandlesInput,
-  LaunchpadTokensInput,
-  LaunchpadTradesInput,
-} from '../types'
+import { type LaunchpadChainId, isLaunchpadChainId } from '../../../constants'
+import type { LaunchpadTradesInput } from '../../../types'
 import {
   EMPTY_TRADE_CONNECTION,
   type LaunchpadTradeMutation,
@@ -47,33 +33,21 @@ import {
   subscribeToLaunchpadCandleSnapshot,
 } from './launchpad-stream'
 
-const EMPTY_TOKEN_CONNECTION: LaunchpadTokenConnection = {
-  edges: [],
-  pageInfo: { endCursor: null, hasNextPage: false },
-  totalCount: 0,
-}
-
-const EMPTY_QUOTE_TOKEN_LIST: LaunchpadTokenRef[] = []
-const EMPTY_CANDLE_SNAPSHOT: LaunchpadCandleSnapshot = {
-  streamCursor: '0',
-  nodes: [],
-}
-
-const evmAddressSchema = z
-  .string()
-  .refine((value) => isAddress(value, { strict: false }))
-  .transform((value) => value as EvmAddress)
-const transactionHashSchema = z
-  .string()
-  .regex(/^0x[0-9a-fA-F]{64}$/)
-  .transform((value) => value as `0x${string}`)
+const evmAddressSchema = szevm.address()
+const transactionHashSchema = z.custom<EvmTxHash>(
+  (value) => typeof value === 'string' && isHash(value),
+  'Invalid transaction hash',
+)
+const launchpadChainIdSchema = z.custom<LaunchpadChainId>(
+  (value) =>
+    typeof value === 'number' &&
+    Number.isInteger(value) &&
+    isLaunchpadChainId(value),
+  'Invalid launchpad chain ID',
+)
 const unsignedIntegerSchema = z.string().regex(/^(0|[1-9][0-9]*)$/)
 const streamIdentitySchema = z.object({
-  chainId: z
-    .number()
-    .int()
-    .refine(isLaunchpadChainId)
-    .transform((value) => value as LaunchpadChainId),
+  chainId: launchpadChainIdSchema,
   tokenAddress: evmAddressSchema,
   eventId: unsignedIntegerSchema,
 })
@@ -166,106 +140,11 @@ function isExpectedStream(
 ): boolean {
   return (
     event.chainId === chainId &&
-    event.tokenAddress.toLowerCase() === tokenAddress.toLowerCase()
+    isAddressEqual(event.tokenAddress, tokenAddress)
   )
 }
 
-export function useLaunchpadQuoteTokens(chainId: LaunchpadChainId) {
-  const query = useQuery({
-    queryKey: ['launchpad', 'quote-token-list', chainId],
-    queryFn: () => getLaunchpadQuoteTokenList({ chainId }),
-    staleTime: 60_000,
-  })
-
-  return { ...query, data: query.data ?? EMPTY_QUOTE_TOKEN_LIST }
-}
-
-export function useLaunchpadTokens(input: LaunchpadTokensInput, live = false) {
-  const query = useInfiniteQuery({
-    queryKey: ['launchpad', 'tokens', input],
-    queryFn: ({ pageParam }) => {
-      const { after: _after, ...baseInput } = input
-      return getLaunchpadTokens({
-        input: pageParam ? { ...baseInput, after: pageParam } : baseInput,
-      })
-    },
-    initialPageParam: input.after ?? null,
-    getNextPageParam: (lastPage) =>
-      lastPage.pageInfo.hasNextPage
-        ? (lastPage.pageInfo.endCursor ?? undefined)
-        : undefined,
-    staleTime: 10_000,
-    refetchInterval: live ? 10_000 : false,
-  })
-
-  const data = useMemo<LaunchpadTokenConnection>(() => {
-    const pages = query.data?.pages
-    const firstPage = pages?.[0]
-    const lastPage = pages?.at(-1)
-    if (!pages || !firstPage || !lastPage) return EMPTY_TOKEN_CONNECTION
-
-    return {
-      edges: pages.flatMap((page) => page.edges),
-      pageInfo: lastPage.pageInfo,
-      totalCount: firstPage.totalCount,
-    }
-  }, [query.data?.pages])
-
-  return { ...query, data }
-}
-
-export function useLaunchpadToken(
-  chainId: LaunchpadChainId,
-  address: EvmAddress,
-) {
-  return useQuery({
-    queryKey: ['launchpad', 'token', { chainId, address }],
-    queryFn: () => getLaunchpadToken({ chainId, address }),
-    retry: 3,
-    retryDelay: (attempt) => Math.min(1_000 * 2 ** attempt, 5_000),
-    staleTime: 10_000,
-  })
-}
-
-export function useLaunchpadCreator(
-  chainId: LaunchpadChainId,
-  address: EvmAddress | undefined,
-  filters: Omit<LaunchpadTokensInput, 'chainId' | 'creator'> = {},
-) {
-  const query = useQuery({
-    queryKey: ['launchpad', 'creator', { chainId, address, filters }],
-    queryFn: () => {
-      if (!address) throw new Error('A creator address is required')
-      return getLaunchpadCreator({
-        chainId,
-        address,
-        input: {
-          ...filters,
-          chainId,
-          creator: address,
-        },
-      })
-    },
-    enabled: Boolean(address),
-    staleTime: 10_000,
-  })
-
-  const fallback: LaunchpadCreator | undefined = address
-    ? {
-        chainId,
-        address,
-        launchCount: 0,
-        launches: EMPTY_TOKEN_CONNECTION,
-      }
-    : undefined
-
-  return { ...query, data: query.data ?? fallback }
-}
-
-export function useLaunchpadTrades(
-  input: LaunchpadTradesInput,
-  enabled = true,
-) {
+function useLaunchpadTrades(input: LaunchpadTradesInput, enabled = true) {
   const query = useInfiniteQuery({
     queryKey: ['launchpad', 'trades', input],
     queryFn: ({ pageParam }) => {
@@ -280,7 +159,7 @@ export function useLaunchpadTrades(
         ? (lastPage.pageInfo.endCursor ?? undefined)
         : undefined,
     enabled,
-    staleTime: 5_000,
+    staleTime: ms('5s'),
   })
 
   const data = useMemo(
@@ -502,7 +381,7 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
         { queryKey: tokenQueryKey },
         (token) =>
           token?.chainId === input.chainId &&
-          token.address.toLowerCase() === input.tokenAddress.toLowerCase()
+          isAddressEqual(token.address, input.tokenAddress)
             ? { ...token, metrics }
             : token,
       )
@@ -578,7 +457,7 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       snapshotRetryTimer = setTimeout(() => {
         snapshotRetryTimer = undefined
         void refetchSnapshotAndReconnect(false, true)
-      }, 2_000)
+      }, ms('2s'))
     }
 
     async function refreshActiveCandleSnapshots(): Promise<{
@@ -728,14 +607,4 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
     streamStatus,
     lastEventAt,
   }
-}
-
-export function useLaunchpadCandles(input: LaunchpadCandlesInput) {
-  const query = useQuery({
-    queryKey: ['launchpad', 'candles', input],
-    queryFn: () => getLaunchpadCandles({ input }),
-    staleTime: 10_000,
-  })
-
-  return { ...query, data: query.data ?? EMPTY_CANDLE_SNAPSHOT }
 }

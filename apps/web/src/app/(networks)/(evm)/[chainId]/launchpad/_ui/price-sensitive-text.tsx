@@ -1,6 +1,7 @@
 'use client'
 
 import { classNames } from '@sushiswap/ui'
+import ms from 'ms'
 import { useEffect, useRef, useState } from 'react'
 
 export function PriceSensitiveText({
@@ -28,7 +29,7 @@ export function PriceSensitiveText({
       setDirection(price > previous ? 'up' : 'down')
 
       if (timeout.current) clearTimeout(timeout.current)
-      timeout.current = setTimeout(() => setDirection(null), 650)
+      timeout.current = setTimeout(() => setDirection(null), ms('650ms'))
     }
 
     previousPrice.current = price

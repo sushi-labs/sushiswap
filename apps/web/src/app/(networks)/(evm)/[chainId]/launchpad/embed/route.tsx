@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 import { getEvmChainById } from 'sushi/evm'
-import { LaunchpadEmbed } from '../_lib/launchpad-embed'
 import { getLaunchpadTokensForSeo } from '../_lib/launchpad-seo'
+import { LaunchpadEmbed } from '../_ui/launchpad-embed'
 import { isLaunchpadChainId } from '../constants'
 
 const IMAGE_SIZE = {

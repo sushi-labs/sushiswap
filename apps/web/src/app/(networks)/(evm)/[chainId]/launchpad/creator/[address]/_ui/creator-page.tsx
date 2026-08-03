@@ -10,17 +10,17 @@ import { Button, Container, LinkExternal, TextField } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { type EvmAddress, EvmChainId, getEvmChainById } from 'sushi/evm'
 import { useEnsName } from 'wagmi'
-import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
-import { formatUsd, shortenAddress } from '../../../_ui/format'
+import { formatUsd, shortenAddress } from '../../../_lib/format'
+import { useLaunchpadCreator } from '../../../_lib/use-launchpad-creator'
 import { MetricCard } from '../../../_ui/metric-card'
 import { PageHeading } from '../../../_ui/page-heading'
+import { CollectionStateCard } from '../../../_ui/state-card'
 import { TokenGrid } from '../../../_ui/token-grid'
 import {
   DEFAULT_LAUNCHPAD_TOKEN_SORT,
   TokenSortControls,
 } from '../../../_ui/token-sort-controls'
 import type { LaunchpadChainId } from '../../../constants'
-import { useLaunchpadCreator } from '../../../hooks/use-launchpad-data'
 import type { LaunchpadTokenSortField } from '../../../types'
 
 export function CreatorPage({
@@ -142,30 +142,18 @@ export function CreatorPage({
           </div>
           <div className="mt-6">
             {isPending ? (
-              <PerpsCard
-                className="grid min-h-64 place-items-center p-8 text-center text-sm text-perps-muted-50"
-                fullWidth
-              >
+              <CollectionStateCard className="text-sm text-perps-muted-50">
                 Loading launches…
-              </PerpsCard>
+              </CollectionStateCard>
             ) : isError ? (
-              <PerpsCard
-                className="grid min-h-64 place-items-center p-8 text-center"
-                fullWidth
-              >
-                <div>
-                  <p className="text-sm text-perps-muted-50">
-                    This creator&apos;s launches could not be loaded.
-                  </p>
-                  <Button
-                    variant="perps-secondary"
-                    className="mt-4"
-                    onClick={() => refetch()}
-                  >
+              <CollectionStateCard
+                description="This creator's launches could not be loaded."
+                action={
+                  <Button variant="perps-secondary" onClick={() => refetch()}>
                     Try again
                   </Button>
-                </div>
-              </PerpsCard>
+                }
+              />
             ) : (
               <TokenGrid tokens={tokens} sortBy={sortBy} />
             )}
