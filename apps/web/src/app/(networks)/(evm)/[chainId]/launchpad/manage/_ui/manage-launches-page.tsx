@@ -10,12 +10,13 @@ import { useMemo } from 'react'
 import { useAccount } from 'src/lib/wallet'
 import { getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
-import { formatUsd, shortenAddress } from '../../_ui/format'
+import { formatUsd, shortenAddress } from '../../_lib/format'
+import { useLaunchpadCreator } from '../../_lib/use-launchpad-creator'
 import { MetricCard } from '../../_ui/metric-card'
 import { PageHeading } from '../../_ui/page-heading'
+import { CollectionStateCard } from '../../_ui/state-card'
 import { TokenGrid } from '../../_ui/token-grid'
 import type { LaunchpadChainId } from '../../constants'
-import { useLaunchpadCreator } from '../../hooks/use-launchpad-data'
 
 export function ManageLaunchesPage({ chainId }: { chainId: LaunchpadChainId }) {
   const chainKey = getEvmChainById(chainId).key
@@ -122,30 +123,18 @@ export function ManageLaunchesPage({ chainId }: { chainId: LaunchpadChainId }) {
           </div>
           <div className="mt-6">
             {address && isPending ? (
-              <PerpsCard
-                className="grid min-h-64 place-items-center p-8 text-center text-sm text-perps-muted-50"
-                fullWidth
-              >
+              <CollectionStateCard className="text-sm text-perps-muted-50">
                 Loading your launches…
-              </PerpsCard>
+              </CollectionStateCard>
             ) : address && isError ? (
-              <PerpsCard
-                className="grid min-h-64 place-items-center p-8 text-center"
-                fullWidth
-              >
-                <div>
-                  <p className="text-sm text-perps-muted-50">
-                    Your launches could not be loaded.
-                  </p>
-                  <Button
-                    variant="perps-secondary"
-                    className="mt-4"
-                    onClick={() => refetch()}
-                  >
+              <CollectionStateCard
+                description="Your launches could not be loaded."
+                action={
+                  <Button variant="perps-secondary" onClick={() => refetch()}>
                     Try again
                   </Button>
-                </div>
-              </PerpsCard>
+                }
+              />
             ) : (
               <TokenGrid tokens={tokens} sortBy="CREATED_AT" manage />
             )}

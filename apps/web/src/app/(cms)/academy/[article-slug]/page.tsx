@@ -48,13 +48,13 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     openGraph: {
       type: 'article',
       ...media,
-      publishedTime: article.publishedAt,
-      modifiedTime: article.updatedAt,
+      publishedTime: article.publishedAt ?? undefined,
+      modifiedTime: article.updatedAt ?? undefined,
       authors: article.authors.map((author) => author.name),
       tags: [...article.topics, ...article.products]
         .flat()
         .reduce<string[]>((acc, el) => {
-          acc.push(el.name)
+          if (el.name) acc.push(el.name)
           return acc
         }, []),
     },
@@ -85,6 +85,7 @@ export default async function Page(props: Props) {
     })
 
     article = (await articleP).articles[0]
+    if (!article.ghostSlug) return notFound()
     body = await getGhostBody(article.ghostSlug).then(({ html }) => html)
     moreArticles = (await moreArticlesP).articles
   } catch {
@@ -102,8 +103,8 @@ export default async function Page(props: Props) {
       email,
       url: `https://twitter.com/${handle}`,
     })),
-    datePublished: article.publishedAt,
-    dateModified: article.updatedAt,
+    datePublished: article.publishedAt ?? undefined,
+    dateModified: article.updatedAt ?? undefined,
     image: {
       '@type': 'ImageObject',
       url: article.cover.url,

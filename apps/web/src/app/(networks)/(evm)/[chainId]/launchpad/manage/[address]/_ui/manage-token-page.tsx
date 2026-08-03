@@ -25,6 +25,7 @@ import {
   Message,
   TextField,
 } from '@sushiswap/ui'
+import ms from 'ms'
 import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
@@ -32,6 +33,7 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { formatPercent } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
 import { getEvmChainById } from 'sushi/evm'
+import { isAddressEqual } from 'viem'
 import {
   useConnection,
   usePublicClient,
@@ -41,17 +43,22 @@ import {
 } from 'wagmi'
 import * as z from 'zod'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
+import { formatRawAmount, shortenAddress } from '../../../_lib/format'
+import {
+  LAUNCHPAD_ABI,
+  LAUNCHPAD_ADDRESS,
+} from '../../../_lib/launchpad-contract'
 import type { PreparedLaunchpadLogoFile } from '../../../_lib/launchpad-logo'
-import { formatRawAmount, shortenAddress } from '../../../_ui/format'
-import { LaunchpadLogoInput } from '../../../_ui/launchpad-logo-input'
-import { TokenAvatar } from '../../../_ui/token-avatar'
-import type { LaunchpadChainId } from '../../../constants'
-import { useLaunchpadToken } from '../../../hooks/use-launchpad-data'
-import { LAUNCHPAD_ABI, LAUNCHPAD_ADDRESS } from '../../../launchpad-contract'
 import {
   launchpadMetadataDescriptionSchema,
   saveLaunchpadMetadata,
-} from './metadata-signature'
+} from '../../../_lib/launchpad-metadata'
+import { useLaunchpadToken } from '../../../_lib/use-launchpad-token'
+import { DetailList } from '../../../_ui/detail-list'
+import { LaunchpadLogoInput } from '../../../_ui/launchpad-logo-input'
+import { PageState } from '../../../_ui/state-card'
+import { TokenAvatar } from '../../../_ui/token-avatar'
+import type { LaunchpadChainId } from '../../../constants'
 
 const optionalHttpsUrl = z.union([
   z.literal(''),
@@ -70,7 +77,7 @@ const metadataSchema = z.object({
 
 type MetadataForm = z.infer<typeof metadataSchema>
 
-const SAVED_STATUS_DURATION_MS = 3_000
+const SAVED_STATUS_DURATION_MS = ms('3s')
 
 export function ManageTokenPage({
   chainId,
@@ -104,7 +111,7 @@ export function ManageTokenPage({
     query: {
       enabled: Boolean(token),
       retry: false,
-      refetchInterval: 60_000,
+      refetchInterval: ms('1m'),
       refetchOnWindowFocus: true,
     },
   })
@@ -158,7 +165,7 @@ export function ManageTokenPage({
     try {
       if (!token) throw new Error('Launch token is no longer available')
       if (!connectedAddress) throw new Error('Connect the creator wallet first')
-      if (connectedAddress.toLowerCase() !== token.creator.toLowerCase()) {
+      if (!isAddressEqual(connectedAddress, token.creator)) {
         throw new Error('Connect the creator wallet first')
       }
       if (connectedChainId !== chainId) {
@@ -254,55 +261,43 @@ export function ManageTokenPage({
 
   if (isPending) {
     return (
-      <Container maxWidth="lg" className="w-full px-4 py-20">
-        <PerpsCard className="p-8 text-center" fullWidth>
+      <PageState
+        icon={
           <ArrowPathIcon className="mx-auto h-8 w-8 animate-spin text-perps-muted-50" />
-          <h1 className="mt-4 text-xl font-semibold">Loading launch</h1>
-        </PerpsCard>
-      </Container>
+        }
+        title="Loading launch"
+        titleClassName="text-xl"
+      />
     )
   }
 
   if (isError) {
     return (
-      <Container maxWidth="lg" className="w-full px-4 py-20">
-        <PerpsCard className="p-8 text-center" fullWidth>
-          <h1 className="text-2xl font-semibold">Could not load launch</h1>
-          <p className="mt-2 text-sm text-perps-muted-50">
-            The launchpad API did not return a usable response.
-          </p>
-          <Button
-            variant="perps-secondary"
-            className="mt-6"
-            onClick={() => refetch()}
-          >
+      <PageState
+        title="Could not load launch"
+        description="The launchpad API did not return a usable response."
+        action={
+          <Button variant="perps-secondary" onClick={() => refetch()}>
             Try again
           </Button>
-        </PerpsCard>
-      </Container>
+        }
+      />
     )
   }
 
   if (!token) {
     return (
-      <Container maxWidth="lg" className="w-full px-4 py-20">
-        <PerpsCard className="p-8 text-center" fullWidth>
-          <h1 className="text-2xl font-semibold">Launch not found</h1>
-          <p className="mt-2 text-sm text-perps-muted-50">
-            This token is not present in the launchpad catalog.
-          </p>
+      <PageState
+        title="Launch not found"
+        description="This token is not present in the launchpad catalog."
+        action={
           <LinkInternal href={`/${chainKey}/launchpad/manage`}>
-            <Button
-              asChild
-              variant="perps-secondary"
-              className="mt-6"
-              icon={ArrowLeftIcon}
-            >
+            <Button asChild variant="perps-secondary" icon={ArrowLeftIcon}>
               Back to dashboard
             </Button>
           </LinkInternal>
-        </PerpsCard>
-      </Container>
+        }
+      />
     )
   }
 
@@ -481,8 +476,8 @@ export function ManageTokenPage({
                   >
                     <Checker.Guard
                       guardWhen={
-                        connectedAddress?.toLowerCase() !==
-                        token.creator.toLowerCase()
+                        !connectedAddress ||
+                        !isAddressEqual(connectedAddress, token.creator)
                       }
                       guardText="Connect creator wallet"
                       fullWidth={false}
@@ -518,8 +513,9 @@ export function ManageTokenPage({
                 Immutable facts
               </h2>
             </div>
-            <div className="mt-5 space-y-4 text-sm">
-              {[
+            <DetailList
+              className="mt-5"
+              items={[
                 ['Name', token.name],
                 ['Symbol', token.symbol],
                 [
@@ -529,16 +525,8 @@ export function ManageTokenPage({
                 ['Decimals', `${token.decimals}`],
                 ['Pool tier', `${token.pool.feeTier / 10_000}%`],
                 ['Positions', `${token.positions.length}`],
-              ].map(([label, value]) => (
-                <div
-                  key={label}
-                  className="flex items-start justify-between gap-4"
-                >
-                  <span className="text-perps-muted-50">{label}</span>
-                  <span className="text-right font-medium">{value}</span>
-                </div>
-              ))}
-            </div>
+              ].map(([label, value]) => ({ label, value }))}
+            />
           </PerpsCard>
 
           <PerpsCard className="p-5" fullWidth>
@@ -609,18 +597,19 @@ export function ManageTokenPage({
               </p>
             </div>
             <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-5">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-perps-muted-50">Sushi recipient</span>
-                <span className="font-medium">
-                  {formatPercent(token.feeSplit.sushiFeeBps / 10_000)}
-                </span>
-              </div>
-              <div className="mt-3 flex items-center justify-between text-sm">
-                <span className="text-perps-muted-50">Creator recipient</span>
-                <span className="font-medium">
-                  {formatPercent(token.feeSplit.creatorFeeBps / 10_000)}
-                </span>
-              </div>
+              <DetailList
+                className="space-y-3"
+                items={[
+                  {
+                    label: 'Sushi recipient',
+                    value: formatPercent(token.feeSplit.sushiFeeBps / 10_000),
+                  },
+                  {
+                    label: 'Creator recipient',
+                    value: formatPercent(token.feeSplit.creatorFeeBps / 10_000),
+                  },
+                ]}
+              />
               <Checker.Connect
                 namespace="evm"
                 fullWidth

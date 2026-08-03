@@ -1,4 +1,5 @@
 import { format } from 'date-fns'
+import ms from 'ms'
 import {
   formatPercent as formatPercentValue,
   formatUSD,
@@ -53,7 +54,7 @@ export function liquidityChange24hUsd({
     return currentTvlUsd - previousTvl
   }
 
-  const isNew = Date.now() - launchedAt.getTime() < 24 * 60 * 60 * 1000
+  const isNew = Date.now() - launchedAt.getTime() < ms('1d')
   return isNew ? currentTvlUsd : null
 }
 

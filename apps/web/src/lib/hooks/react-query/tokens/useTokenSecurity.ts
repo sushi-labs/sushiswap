@@ -310,39 +310,52 @@ const fetchDeFiResponse = async (currency: EvmToken) => {
 
   const json = (await response.json()) as TokenScannerResponse
 
-  const issues = [...json.coreIssues, ...json.generalIssues].reduce(
+  type IssueGroup = NonNullable<
+    NonNullable<TokenScannerResponse['generalIssues']>[number]
+  >
+
+  const issues = [
+    ...(json.coreIssues ?? []),
+    ...(json.generalIssues ?? []),
+  ].reduce(
     (accum, cur) => {
-      accum[cur.scwId] = cur
+      if (cur?.scwId) accum[cur.scwId] = cur
       return accum
     },
-    {} as Record<string, TokenScannerResponse['generalIssues'][number]>,
+    {} as Record<string, IssueGroup>,
   )
+
+  function hasIssue(id: DeFiScannerIssue): boolean | undefined {
+    const issueList = issues[id]?.issues
+    return issueList ? issueList.length > 0 : undefined
+  }
+
+  const hasVerifiedContractIssue = hasIssue(DeFiScannerIssue.VERIFIED_CONTRACT)
+  const hasTransferLimitIssue = hasIssue(DeFiScannerIssue.TRANSFER_LIMITS)
 
   return {
     is_open_source:
-      issues[DeFiScannerIssue.VERIFIED_CONTRACT].issues.length === 0,
-    is_proxy: issues[DeFiScannerIssue.UPGRADABLE_CONTRACT].issues.length > 0,
-    is_mintable: issues[DeFiScannerIssue.IS_MINTABLE].issues.length > 0,
-    can_take_back_ownership:
-      issues[DeFiScannerIssue.VULNERABLE_OWNERSHIP].issues.length > 0,
-    owner_change_balance:
-      issues[DeFiScannerIssue.HAS_BALANCE_CONTROLS].issues.length > 0,
-    hidden_owner: issues[DeFiScannerIssue.HIDDEN_OWNERSHIP].issues.length > 0,
-    selfdestruct: issues[DeFiScannerIssue.SELF_DESTRUCT].issues.length > 0,
-    external_call:
-      issues[DeFiScannerIssue.HAS_EXTERNAL_CALLS].issues.length > 0,
-    gas_abuse: issues[DeFiScannerIssue.GAS_ABUSE].issues.length > 0,
-    buy_tax: issues[DeFiScannerIssue.TRANSFER_FEES].issues.length > 0,
-    sell_tax: issues[DeFiScannerIssue.TRANSFER_FEES].issues.length > 0,
-    transfer_pausable:
-      issues[DeFiScannerIssue.TRANSFER_PAUSABLE].issues.length > 0,
-    is_blacklisted: issues[DeFiScannerIssue.HAS_BLACKLIST].issues.length > 0,
-    is_whitelisted: issues[DeFiScannerIssue.HAS_WHITELIST].issues.length > 0,
-    trading_cooldown:
-      issues[DeFiScannerIssue.TRANSFER_COOLDOWN].issues.length > 0,
-    is_airdrop_scam: issues[DeFiScannerIssue.AIRDROP].issues.length > 0,
-    is_buyable: issues[DeFiScannerIssue.TRANSFER_LIMITS].issues.length === 0,
-    is_sell_limit: issues[DeFiScannerIssue.TRANSFER_LIMITS].issues.length > 0,
+      hasVerifiedContractIssue === undefined
+        ? undefined
+        : !hasVerifiedContractIssue,
+    is_proxy: hasIssue(DeFiScannerIssue.UPGRADABLE_CONTRACT),
+    is_mintable: hasIssue(DeFiScannerIssue.IS_MINTABLE),
+    can_take_back_ownership: hasIssue(DeFiScannerIssue.VULNERABLE_OWNERSHIP),
+    owner_change_balance: hasIssue(DeFiScannerIssue.HAS_BALANCE_CONTROLS),
+    hidden_owner: hasIssue(DeFiScannerIssue.HIDDEN_OWNERSHIP),
+    selfdestruct: hasIssue(DeFiScannerIssue.SELF_DESTRUCT),
+    external_call: hasIssue(DeFiScannerIssue.HAS_EXTERNAL_CALLS),
+    gas_abuse: hasIssue(DeFiScannerIssue.GAS_ABUSE),
+    buy_tax: hasIssue(DeFiScannerIssue.TRANSFER_FEES) ?? false,
+    sell_tax: hasIssue(DeFiScannerIssue.TRANSFER_FEES) ?? false,
+    transfer_pausable: hasIssue(DeFiScannerIssue.TRANSFER_PAUSABLE),
+    is_blacklisted: hasIssue(DeFiScannerIssue.HAS_BLACKLIST),
+    is_whitelisted: hasIssue(DeFiScannerIssue.HAS_WHITELIST),
+    trading_cooldown: hasIssue(DeFiScannerIssue.TRANSFER_COOLDOWN),
+    is_airdrop_scam: hasIssue(DeFiScannerIssue.AIRDROP),
+    is_buyable:
+      hasTransferLimitIssue === undefined ? undefined : !hasTransferLimitIssue,
+    is_sell_limit: hasTransferLimitIssue,
     is_fake_token: undefined,
     slippage_modifiable: undefined,
     is_honeypot: undefined,

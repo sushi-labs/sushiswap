@@ -1,4 +1,4 @@
-import type { VariablesOf } from 'gql.tada'
+import type { ResultOf, VariablesOf } from 'gql.tada'
 
 import { type RequestOptions, request } from 'src/lib/request.js'
 import { SUSHI_DATA_API_GRAPHQL_URL } from '../../data-api-host.js'
@@ -27,11 +27,14 @@ export const UpdateLaunchpadMetadataMutation = graphql(
 export type UpdateLaunchpadMetadata = VariablesOf<
   typeof UpdateLaunchpadMetadataMutation
 >
+export type UpdatedLaunchpadMetadata = ResultOf<
+  typeof UpdateLaunchpadMetadataMutation
+>['launchpad']['updateMetadata']
 
 export async function updateLaunchpadMetadata(
   variables: UpdateLaunchpadMetadata,
   options?: RequestOptions,
-) {
+): Promise<UpdatedLaunchpadMetadata> {
   const result = await request(
     {
       url: SUSHI_DATA_API_GRAPHQL_URL,
@@ -42,11 +45,5 @@ export async function updateLaunchpadMetadata(
     options,
   )
 
-  if (result) return result.launchpad.updateMetadata
-
-  throw new Error('No updated launchpad metadata')
+  return result.launchpad.updateMetadata
 }
-
-export type UpdatedLaunchpadMetadata = Awaited<
-  ReturnType<typeof updateLaunchpadMetadata>
->

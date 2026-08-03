@@ -12,7 +12,6 @@ import {
   LinkInternal,
   SkeletonBox,
   TextField,
-  classNames,
 } from '@sushiswap/ui'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -20,10 +19,12 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { getEvmChainById } from 'sushi/evm'
 import { isAddress } from 'viem'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
+import { formatUsd } from '../_lib/format'
+import { useLaunchpadStats } from '../_lib/use-launchpad-stats'
+import { useLaunchpadTokens } from '../_lib/use-launchpad-tokens'
 import type { LaunchpadChainId } from '../constants'
-import { useLaunchpadTokens } from '../hooks/use-launchpad-data'
-import { useLaunchpadStats } from '../hooks/use-launchpad-stats'
-import { formatUsd } from './format'
+import { MetricStrip, MetricStripItem } from './metric-strip'
+import { CollectionStateCard } from './state-card'
 import { TokenGrid, TokenGridSkeleton } from './token-grid'
 import {
   TokenSortControls,
@@ -124,59 +125,49 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
         </div>
 
         <div className="mt-7">
-          <PerpsCard className="overflow-hidden" fullWidth>
-            <div className="grid grid-cols-2 lg:grid-cols-4">
-              {[
-                {
-                  label: 'Tokens launched',
-                  value: `${stats?.totalTokensLaunched}`,
-                },
-                {
-                  label: '24h volume',
-                  value: formatUsd(stats?.totalVolumeUsd24h),
-                },
-                {
-                  label: 'Liquidity',
-                  value: formatUsd(stats?.totalLiquidityUsd),
-                },
-              ].map((stat, index) => (
-                <div
-                  key={stat.label}
-                  className={classNames(
-                    'border-white/[0.06] px-4 py-4 sm:px-5',
-                    index % 2 === 1 && 'border-l',
-                    index > 1 && 'border-t lg:border-t-0',
-                    index > 0 && 'lg:border-l',
-                  )}
-                >
-                  <div className="text-[11px] uppercase tracking-wide text-perps-muted-50">
-                    {stat.label}
-                  </div>
-                  {isLoading ? (
-                    <SkeletonBox className="mt-1 h-7 w-20 rounded-md" />
+          <MetricStrip>
+            {[
+              {
+                label: 'Tokens launched',
+                value: `${stats?.totalTokensLaunched}`,
+              },
+              {
+                label: '24h volume',
+                value: formatUsd(stats?.totalVolumeUsd24h),
+              },
+              {
+                label: 'Liquidity',
+                value: formatUsd(stats?.totalLiquidityUsd),
+              },
+            ].map((stat, index) => (
+              <MetricStripItem
+                key={stat.label}
+                index={index}
+                label={stat.label}
+                value={
+                  isLoading ? (
+                    <SkeletonBox className="h-7 w-20 rounded-md" />
                   ) : (
-                    <div className="mt-1 text-lg font-semibold text-perps-muted">
-                      {stat.value}
-                    </div>
-                  )}
+                    stat.value
+                  )
+                }
+              />
+            ))}
+            <div className="flex items-center gap-3 border-l border-white/[0.06] border-t lg:border-t-0 px-5 py-4">
+              <span className="hidden sm:grid h-9 w-9 place-items-center rounded-full bg-emerald-500/10 text-emerald-400">
+                <SignalIcon className="h-5 w-5" />
+              </span>
+              <div>
+                <div className="text-[11px] uppercase tracking-wide text-perps-muted-50">
+                  Market feeds
                 </div>
-              ))}
-              <div className="flex items-center gap-3 border-l border-white/[0.06] border-t lg:border-t-0 px-5 py-4">
-                <span className="hidden sm:grid h-9 w-9 place-items-center rounded-full bg-emerald-500/10 text-emerald-400">
-                  <SignalIcon className="h-5 w-5" />
-                </span>
-                <div>
-                  <div className="text-[11px] uppercase tracking-wide text-perps-muted-50">
-                    Market feeds
-                  </div>
-                  <div className="mt-1 flex items-center gap-2 text-sm font-semibold text-emerald-400">
-                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-                    Live
-                  </div>
+                <div className="mt-1 flex items-center gap-2 text-sm font-semibold text-emerald-400">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+                  Live
                 </div>
               </div>
             </div>
-          </PerpsCard>
+          </MetricStrip>
         </div>
       </Container>
 
@@ -226,23 +217,14 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
             {isPending ? (
               <TokenGridSkeleton />
             ) : isError ? (
-              <PerpsCard
-                className="grid min-h-64 place-items-center p-8 text-center"
-                fullWidth
-              >
-                <div>
-                  <p className="text-sm text-perps-muted-50">
-                    Launches could not be loaded.
-                  </p>
-                  <Button
-                    variant="perps-secondary"
-                    className="mt-4"
-                    onClick={() => refetch()}
-                  >
+              <CollectionStateCard
+                description="Launches could not be loaded."
+                action={
+                  <Button variant="perps-secondary" onClick={() => refetch()}>
                     Try again
                   </Button>
-                </div>
-              </PerpsCard>
+                }
+              />
             ) : (
               <InfiniteScroll
                 dataLength={tokens.length}

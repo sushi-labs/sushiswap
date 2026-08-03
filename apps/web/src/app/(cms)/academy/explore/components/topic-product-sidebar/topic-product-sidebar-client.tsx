@@ -26,7 +26,9 @@ export function TopicProductSidebarClient({
   const { category: selectedCategory } = useAcademySearch()
   const setFilters = useSetAcademySearch()
 
-  const [value, setValue] = useState<string | undefined>(selectedCategory)
+  const [value, setValue] = useState<string | undefined>(
+    selectedCategory ?? undefined,
+  )
 
   const onSelect = useCallback(
     (categorySlug: string) => {

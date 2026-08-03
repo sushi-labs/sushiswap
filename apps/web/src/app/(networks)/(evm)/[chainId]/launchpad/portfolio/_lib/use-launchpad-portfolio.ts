@@ -6,9 +6,10 @@ import {
   getLaunchpadUserStats,
 } from '@sushiswap/graph-client/data-api'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { useMemo } from 'react'
 import type { EvmAddress } from 'sushi/evm'
-import type { LaunchpadChainId } from '../constants'
+import type { LaunchpadChainId } from '../../constants'
 
 const EMPTY_USER_HOLDINGS: LaunchpadUserHoldingsType = {
   edges: [],
@@ -36,7 +37,7 @@ export function useLaunchpadUserStats({
       return getLaunchpadUserStats({ chainId, address })
     },
     enabled: Boolean(address),
-    staleTime: 30_000,
+    staleTime: ms('30s'),
   })
 }
 
@@ -64,7 +65,7 @@ export function useLaunchpadUserHoldings({
       lastPage.pageInfo.hasNextPage
         ? (lastPage.pageInfo.endCursor ?? undefined)
         : undefined,
-    staleTime: 30_000,
+    staleTime: ms('30s'),
   })
 
   const data = useMemo<LaunchpadUserHoldingsType>(() => {

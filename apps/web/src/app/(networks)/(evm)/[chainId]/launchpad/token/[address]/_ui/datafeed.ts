@@ -22,7 +22,7 @@ import {
   removeLaunchpadCandle,
   subscribeToLaunchpadCandleStream,
   upsertLaunchpadCandle,
-} from '../../../hooks/launchpad-stream'
+} from '../_lib/launchpad-stream'
 
 const SUPPORTED_RESOLUTIONS = [
   '1',

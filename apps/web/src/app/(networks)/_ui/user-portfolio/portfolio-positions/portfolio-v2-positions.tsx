@@ -33,13 +33,13 @@ export const PortfolioV2Positions: FC<PortfolioV2PositionssProps> = ({
             <Currency.IconList iconWidth={24} iconHeight={24}>
               <img
                 className="rounded-full"
-                src={position.token0.logoUrl}
-                alt={position.token0.symbol}
+                src={position.token0.logoUrl ?? undefined}
+                alt={position.token0.symbol ?? undefined}
               />
               <img
                 className="rounded-full"
-                src={position.token1.logoUrl}
-                alt={position.token1.symbol}
+                src={position.token1.logoUrl ?? undefined}
+                alt={position.token1.symbol ?? undefined}
               />
             </Currency.IconList>
           }
