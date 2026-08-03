@@ -7,7 +7,7 @@ import { Container, Form } from '@sushiswap/ui'
 import { getUnixTime } from 'date-fns'
 import ms from 'ms'
 import { useRouter } from 'next/navigation'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { type FieldError, type Resolver, useForm } from 'react-hook-form'
 import { TOAST_AUTOCLOSE_TIME } from 'src/lib/perps'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
@@ -220,6 +220,7 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
   const { mutateAsync: signTypedDataAsync } = useSignTypedData()
   const { mutateAsync: writeContractAsync } = useWriteContract()
   const [step, setStep] = useState<CreateStep>('details')
+  const previousStepRef = useRef(step)
   const [logo, setLogo] = useState<PreparedLaunchpadLogoFile | null>(null)
   const [isLogoProcessing, setIsLogoProcessing] = useState(false)
   const [isLaunching, setIsLaunching] = useState(false)
@@ -237,8 +238,10 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
     isPending: isQuoteTokenListPending,
   } = useLaunchpadQuoteTokens(chainId)
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: scroll to the top of the form everytime step changes
   useEffect(() => {
+    if (previousStepRef.current === step) return
+
+    previousStepRef.current = step
     window.scrollTo({ top: 185, behavior: 'smooth' })
   }, [step])
 
