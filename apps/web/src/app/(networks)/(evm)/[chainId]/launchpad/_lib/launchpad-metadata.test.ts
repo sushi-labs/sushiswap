@@ -5,6 +5,7 @@ import {
   LAUNCHPAD_METADATA_DESCRIPTION_MAX_BYTES,
   buildLaunchpadMetadataDocument,
   buildUpdateMetadataTypedData,
+  canSubmitLaunchpadMetadataSignature,
   launchpadMetadataDescriptionSchema,
 } from './launchpad-metadata'
 
@@ -61,5 +62,36 @@ describe('launchpad metadata signature', () => {
         }),
       ),
     ).toBe('0xfd81f1275045fa6ac852a1715497231403a4032c663aa6d3d3b7c85987f3f0e8')
+  })
+
+  it('allows the creator or a signer for a deployed contract creator', () => {
+    const creatorAddress = '0x1111111111111111111111111111111111111111'
+    const connectedAddress = '0x2222222222222222222222222222222222222222'
+
+    expect(
+      canSubmitLaunchpadMetadataSignature({
+        connectedAddress: creatorAddress,
+        creatorAddress,
+      }),
+    ).toBe(true)
+    expect(
+      canSubmitLaunchpadMetadataSignature({
+        connectedAddress,
+        creatorAddress,
+      }),
+    ).toBe(false)
+    expect(
+      canSubmitLaunchpadMetadataSignature({
+        connectedAddress,
+        creatorAddress,
+        creatorBytecode: '0x6000',
+      }),
+    ).toBe(true)
+    expect(
+      canSubmitLaunchpadMetadataSignature({
+        creatorAddress,
+        creatorBytecode: '0x6000',
+      }),
+    ).toBe(false)
   })
 })

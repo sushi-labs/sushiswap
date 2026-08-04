@@ -33,8 +33,8 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { formatPercent } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
 import { getEvmChainById } from 'sushi/evm'
-import { isAddressEqual } from 'viem'
 import {
+  useBytecode,
   useConnection,
   usePublicClient,
   useSignTypedData,
@@ -50,6 +50,7 @@ import {
 } from '../../../_lib/launchpad-contract'
 import type { PreparedLaunchpadLogoFile } from '../../../_lib/launchpad-logo'
 import {
+  canSubmitLaunchpadMetadataSignature,
   launchpadMetadataDescriptionSchema,
   saveLaunchpadMetadata,
 } from '../../../_lib/launchpad-metadata'
@@ -79,6 +80,21 @@ type MetadataForm = z.infer<typeof metadataSchema>
 
 const SAVED_STATUS_DURATION_MS = ms('3s')
 
+const METADATA_GUARD_TEXT = {
+  pending: 'Checking creator',
+  unknown: 'Creator check failed',
+  contract: 'Connect authorized wallet',
+  eoa: 'Connect creator wallet',
+} as const
+
+const METADATA_SIGNER_ERROR = {
+  pending: 'Still checking the creator address, try again in a moment',
+  unknown:
+    'Could not check whether the creator is a contract, reload and try again',
+  contract: 'Connect a wallet authorized by the creator contract first',
+  eoa: 'Connect the creator wallet first',
+} as const
+
 export function ManageTokenPage({
   chainId,
   address,
@@ -98,6 +114,32 @@ export function ManageTokenPage({
     isPending,
     refetch,
   } = useLaunchpadToken(chainId, address)
+  const {
+    data: creatorBytecode,
+    isLoading: isCreatorBytecodeLoading,
+    isError: isCreatorBytecodeError,
+  } = useBytecode({
+    address: token?.creator,
+    chainId,
+    query: {
+      enabled: Boolean(token),
+    },
+  })
+  const canSubmitMetadataSignature = token
+    ? canSubmitLaunchpadMetadataSignature({
+        connectedAddress,
+        creatorAddress: token.creator,
+        creatorBytecode,
+      })
+    : false
+  const isContractCreator = Boolean(creatorBytecode && creatorBytecode !== '0x')
+  const creatorKind = isCreatorBytecodeLoading
+    ? 'pending'
+    : isCreatorBytecodeError
+      ? 'unknown'
+      : isContractCreator
+        ? 'contract'
+        : 'eoa'
   const {
     data: distributionSimulation,
     isError: isDistributionSimulationError,
@@ -164,9 +206,8 @@ export function ManageTokenPage({
 
     try {
       if (!token) throw new Error('Launch token is no longer available')
-      if (!connectedAddress) throw new Error('Connect the creator wallet first')
-      if (!isAddressEqual(connectedAddress, token.creator)) {
-        throw new Error('Connect the creator wallet first')
+      if (!connectedAddress || !canSubmitMetadataSignature) {
+        throw new Error(METADATA_SIGNER_ERROR[creatorKind])
       }
       if (connectedChainId !== chainId) {
         throw new Error(
@@ -181,7 +222,8 @@ export function ManageTokenPage({
         expectedRevision: token.metadata.revision,
         values,
         logoFile: logo?.file,
-        signTypedData: (typedData) => signTypedDataAsync(typedData),
+        signTypedData: (typedData) =>
+          signTypedDataAsync({ ...typedData, account: connectedAddress }),
       })
       await refetch()
       setSaved(true)
@@ -475,11 +517,8 @@ export function ManageTokenPage({
                     hideChainName
                   >
                     <Checker.Guard
-                      guardWhen={
-                        !connectedAddress ||
-                        !isAddressEqual(connectedAddress, token.creator)
-                      }
-                      guardText="Connect creator wallet"
+                      guardWhen={!canSubmitMetadataSignature}
+                      guardText={METADATA_GUARD_TEXT[creatorKind]}
                       fullWidth={false}
                       size="lg"
                       type="button"
@@ -541,7 +580,10 @@ export function ManageTokenPage({
             </p>
             <p className="mt-3 text-xs leading-5 text-perps-muted-50">
               The backend verifies this immutable address independently for
-              every metadata and logo signature.
+              every metadata and logo signature
+              {isContractCreator
+                ? ', including EIP-1271 signatures if this contract supports them.'
+                : '.'}
             </p>
           </PerpsCard>
         </div>

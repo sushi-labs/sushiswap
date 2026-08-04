@@ -1,6 +1,6 @@
 import { updateLaunchpadMetadata } from '@sushiswap/graph-client/data-api'
 import type { EvmAddress } from 'sushi/evm'
-import { type Hex, sha256, zeroHash } from 'viem'
+import { type Hex, isAddressEqual, sha256, zeroHash } from 'viem'
 import { z } from 'zod'
 import type { LaunchpadChainId } from '../constants'
 import { prepareLaunchpadLogoFile } from './launchpad-logo'
@@ -37,6 +37,19 @@ export interface LaunchpadMetadataFormValues {
   homepage: string
   x: string
   telegram: string
+}
+
+export function canSubmitLaunchpadMetadataSignature(input: {
+  connectedAddress?: EvmAddress
+  creatorAddress: EvmAddress
+  creatorBytecode?: Hex
+}): boolean {
+  if (!input.connectedAddress) return false
+
+  return (
+    isAddressEqual(input.connectedAddress, input.creatorAddress) ||
+    Boolean(input.creatorBytecode && input.creatorBytecode !== '0x')
+  )
 }
 
 const metadataTypes = {
