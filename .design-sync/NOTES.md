@@ -225,6 +225,15 @@ index, plus the 3 extra TextField stories the cap would have dropped.
   makes *every* component vanish at once. Probe it by loading `_vendor/react.js`,
   `_vendor/react-dom.js` and `_ds_bundle.js` in a page and checking
   `Object.keys(window.SushiswapUi).length` (expect ~244).
+- **`.design-sync/overrides` is in `biome.json`'s `files.ignore` — keep it there.**
+  Without it the repo's CI actively damages the fork: the `Lint` job runs
+  `biome check . --apply`, which cannot fix the 3 style violations it reports in the
+  vendored code (all are flagged "Unsafe fix", and `--apply` only applies safe ones), so
+  the job **fails**; and the `Format` job runs `biome format --write` and
+  **auto-commits the result**, which rewrote the file by 456/268 lines on the first PR.
+  That cosmetic rewrite is the real damage — it destroys the byte-level correspondence to
+  the bundled `lib/dts.mjs` that the diff-and-merge step below depends on. The four
+  design-sync `.mjs` files we authored ourselves are NOT ignored and lint clean.
 - **`.design-sync/overrides/dts.mjs` is a fork** — diff it against the bundled
   `.ds-sync/lib/dts.mjs` on each re-sync and merge upstream changes. It can be deleted
   outright the day `packages/ui/package.json` grows a top-level
