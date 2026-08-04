@@ -1,0 +1,35 @@
+{
+  "projectId": "f6c69bc8-5fa2-48c8-83b1-ba8192b43f13",
+  "shape": "storybook",
+  "pkg": "@sushiswap/ui",
+  "storybookConfigDir": "apps/storybook/.storybook",
+  "storybookStatic": ".design-sync/sb-reference",
+  "buildCmd": "pnpm -F \"@sushiswap/ui...\" build",
+  "readmeHeader": ".design-sync/conventions.md",
+  "cssEntry": "./dist/design-sync.css",
+  "extraEntries": [
+    "../../.design-sync/ds-runtime-shim.mjs",
+    "../../.design-sync/ds-story-globals.mjs"
+  ],
+  "storyImports": {
+    "shim": ["/node_modules/sushi/_esm/"]
+  },
+  "extraFonts": [
+    "./node_modules/@fontsource-variable/inter/index.css",
+    "./node_modules/@fontsource-variable/orbitron/index.css"
+  ],
+  "provider": {
+    "component": "BaseProviders",
+    "props": { "forcedTheme": "light" }
+  },
+  "titleMap": {
+    "CurrencyIcon": "Currency",
+    "External": "LinkExternal",
+    "Internal": "LinkInternal",
+    "Circle": "SkeletonCircle",
+    "Text": "SkeletonText"
+  },
+  "libOverrides": {
+    "dts.mjs": "@sushiswap/ui declares its .d.ts entry only under exports['.'].types (no top-level types/typings), which the bundled resolver doesn't read — without the fork every component drops out"
+  }
+}
