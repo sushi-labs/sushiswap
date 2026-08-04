@@ -929,7 +929,7 @@ type TopPool {
 type StellarPoolToken {
   id: ID!
   chainId: ChainId!
-  address: ContractAddress!
+  address: StellarContractAddress!
   name: String!
   symbol: String!
   decimals: Int!
@@ -941,7 +941,7 @@ type StellarPool {
   id: ID!
   chainId: ChainId!
   name: String!
-  address: ContractAddress!
+  address: StellarContractAddress!
   swapFee: Float!
   protocol: String!
   token0: StellarPoolToken!
@@ -1192,6 +1192,9 @@ scalar EvmAddress
 
 """A field whose value is a Stellar account address (G…)"""
 scalar StellarAccountAddress
+
+"""A field whose value is a Stellar contract address (C…)"""
+scalar StellarContractAddress
 
 """
 A field whose value is a byte string: https://en.wikipedia.org/wiki/Byte_string

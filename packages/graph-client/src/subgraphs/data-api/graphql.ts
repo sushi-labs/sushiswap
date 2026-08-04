@@ -10,6 +10,7 @@ export const graphql = initGraphQLTada<{
   scalars: Scalars & {
     Address: EvmAddress | Address | StellarAddress
     ContractAddress: EvmAddress | Address | StellarContractAddress
+    StellarContractAddress: StellarContractAddress
     SvmAddress: Address
   }
 }>()
