@@ -276,8 +276,14 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       })
     }
 
-    function handleReady() {
+    function handleReady(currentSource: EventSource): void {
+      if (disposed || source !== currentSource) return
       setStreamStatus('live')
+    }
+
+    function handleStreamError(currentSource: EventSource): void {
+      if (disposed || source !== currentSource) return
+      setStreamStatus('reconnecting')
     }
 
     function handleTradeUpsert(event: Event) {
@@ -362,8 +368,31 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       )
       if (!payload || !isExpected(payload)) return
 
-      source?.close()
-      void refetchSnapshotAndReconnect(false, true)
+      const currentSource = source
+      const currentSynchronization = synchronization.current
+      if (!currentSource) return
+
+      void refreshActiveCandleSnapshots()
+        .then(({ synchronized }) => {
+          if (
+            synchronized ||
+            disposed ||
+            source !== currentSource ||
+            synchronization.current !== currentSynchronization
+          ) {
+            return
+          }
+          void refetchSnapshotAndReconnect(false, true)
+        })
+        .catch(() => {
+          if (
+            !disposed &&
+            source === currentSource &&
+            synchronization.current === currentSynchronization
+          ) {
+            void refetchSnapshotAndReconnect(false, true)
+          }
+        })
     }
 
     function handleMetricsUpdate(event: Event) {
@@ -416,9 +445,9 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       source = nextSource
       sourceAfterCursor = streamCursor
 
-      nextSource.onopen = () => setStreamStatus('live')
-      nextSource.onerror = () => setStreamStatus('reconnecting')
-      nextSource.addEventListener('stream.ready', handleReady)
+      nextSource.onopen = () => handleReady(nextSource)
+      nextSource.onerror = () => handleStreamError(nextSource)
+      nextSource.addEventListener('stream.ready', () => handleReady(nextSource))
       nextSource.addEventListener('trade.upsert', handleTradeUpsert)
       nextSource.addEventListener('trade.remove', handleTradeRemove)
       nextSource.addEventListener('candle.update', handleCandleUpdate)
