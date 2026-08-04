@@ -139,6 +139,18 @@ export function getLaunchpadTokenUrl(token: LaunchpadToken): string {
   return `${getLaunchpadUrl(token.chainId)}/token/${token.address}`
 }
 
+/**
+ * Relative on purpose: Next resolves it against metadataBase, which keeps the
+ * card pointing at the deployment that rendered it (localhost, preview, prod).
+ */
+export function getLaunchpadTokenCardPath(
+  token: LaunchpadToken,
+  version: string,
+): string {
+  const chainKey = getEvmChainById(token.chainId).key
+  return `/${chainKey}/launchpad/token/${token.address}/card.png?v=${version}`
+}
+
 export function getLaunchpadCreateUrl(chainId: LaunchpadChainId): string {
   return `${getLaunchpadUrl(chainId)}/create`
 }
