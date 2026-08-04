@@ -14,6 +14,9 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  // Resolves file-convention images (opengraph-image) and any relative URL to
+  // the canonical host instead of the request origin.
+  metadataBase: new URL('https://www.sushi.com'),
   title: {
     default: 'Sushi 🍣',
     template: '%s | Sushi 🍣',

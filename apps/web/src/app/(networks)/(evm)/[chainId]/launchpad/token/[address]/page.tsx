@@ -39,10 +39,10 @@ export async function generateMetadata({
 
   const { token } = result
   const url = getLaunchpadTokenUrl(token)
-  const imageUrl = `${url}/embed`
   const title = `${token.name} (${token.symbol})`
   const description = getLaunchpadTokenDescription(token)
 
+  // Images come from the opengraph-image file convention.
   return {
     title,
     description,
@@ -53,20 +53,11 @@ export async function generateMetadata({
       siteName: 'Sushi',
       title,
       description,
-      images: [
-        {
-          url: imageUrl,
-          width: 1200,
-          height: 630,
-          alt: `${token.name} (${token.symbol}) market overview`,
-        },
-      ],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [imageUrl],
     },
   }
 }
