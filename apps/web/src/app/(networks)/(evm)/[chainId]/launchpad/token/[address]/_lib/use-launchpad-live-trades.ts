@@ -46,6 +46,7 @@ const launchpadChainIdSchema = z.custom<LaunchpadChainId>(
   'Invalid launchpad chain ID',
 )
 const unsignedIntegerSchema = z.string().regex(/^(0|[1-9][0-9]*)$/)
+const closedStreamRetryDelay = ms('2s')
 const streamIdentitySchema = z.object({
   chainId: launchpadChainIdSchema,
   tokenAddress: evmAddressSchema,
@@ -242,6 +243,7 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
     let source: EventSource | undefined
     let sourceAfterCursor: string | undefined
     let snapshotRetryTimer: ReturnType<typeof setTimeout> | undefined
+    let closedStreamRetryTimer: ReturnType<typeof setTimeout> | undefined
     let candleSnapshotCursor: string | undefined
     let tradeSnapshotCursor: string | undefined
 
@@ -276,8 +278,46 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       })
     }
 
-    function handleReady() {
+    function clearClosedStreamRetry(): void {
+      if (closedStreamRetryTimer === undefined) return
+      clearTimeout(closedStreamRetryTimer)
+      closedStreamRetryTimer = undefined
+    }
+
+    function handleReady(currentSource: EventSource): void {
+      if (disposed || source !== currentSource) return
+      clearClosedStreamRetry()
       setStreamStatus('live')
+    }
+
+    function handleStreamError(
+      currentSource: EventSource,
+      hasOpened: boolean,
+      streamCursor: string,
+      currentSynchronization: number,
+    ): void {
+      if (disposed || source !== currentSource) return
+      if (hasOpened) {
+        setStreamStatus('reconnecting')
+      }
+      if (closedStreamRetryTimer !== undefined) return
+
+      closedStreamRetryTimer = setTimeout(() => {
+        closedStreamRetryTimer = undefined
+        if (
+          disposed ||
+          source !== currentSource ||
+          currentSynchronization !== synchronization.current ||
+          currentSource.readyState !== EventSource.CLOSED
+        ) {
+          return
+        }
+
+        currentSource.close()
+        source = undefined
+        sourceAfterCursor = undefined
+        openStream(streamCursor, currentSynchronization)
+      }, closedStreamRetryDelay)
     }
 
     function handleTradeUpsert(event: Event) {
@@ -362,8 +402,31 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       )
       if (!payload || !isExpected(payload)) return
 
-      source?.close()
-      void refetchSnapshotAndReconnect(false, true)
+      const currentSource = source
+      const currentSynchronization = synchronization.current
+      if (!currentSource) return
+
+      void refreshActiveCandleSnapshots()
+        .then(({ synchronized }) => {
+          if (
+            synchronized ||
+            disposed ||
+            source !== currentSource ||
+            synchronization.current !== currentSynchronization
+          ) {
+            return
+          }
+          void refetchSnapshotAndReconnect(false, true)
+        })
+        .catch(() => {
+          if (
+            !disposed &&
+            source === currentSource &&
+            synchronization.current === currentSynchronization
+          ) {
+            void refetchSnapshotAndReconnect(false, true)
+          }
+        })
     }
 
     function handleMetricsUpdate(event: Event) {
@@ -405,6 +468,7 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
         return
       }
 
+      clearClosedStreamRetry()
       const nextSource = new EventSource(
         launchpadEventsUrl({
           apiBaseUrl: SUSHI_DATA_API_HOST,
@@ -416,9 +480,20 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       source = nextSource
       sourceAfterCursor = streamCursor
 
-      nextSource.onopen = () => setStreamStatus('live')
-      nextSource.onerror = () => setStreamStatus('reconnecting')
-      nextSource.addEventListener('stream.ready', handleReady)
+      let hasOpened = false
+      const markReady = () => {
+        hasOpened = true
+        handleReady(nextSource)
+      }
+      nextSource.onopen = markReady
+      nextSource.onerror = () =>
+        handleStreamError(
+          nextSource,
+          hasOpened,
+          streamCursor,
+          currentSynchronization,
+        )
+      nextSource.addEventListener('stream.ready', markReady)
       nextSource.addEventListener('trade.upsert', handleTradeUpsert)
       nextSource.addEventListener('trade.remove', handleTradeRemove)
       nextSource.addEventListener('candle.update', handleCandleUpdate)
@@ -446,6 +521,7 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
         source.close()
         source = undefined
         sourceAfterCursor = undefined
+        clearClosedStreamRetry()
       }
 
       openStream(streamCursor, currentSynchronization)
@@ -488,6 +564,7 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       source?.close()
       source = undefined
       sourceAfterCursor = undefined
+      clearClosedStreamRetry()
       tradeSnapshotCursor = undefined
       if (refetchCandles) {
         candleSnapshotCursor = undefined
@@ -596,6 +673,7 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       if (snapshotRetryTimer !== undefined) {
         clearTimeout(snapshotRetryTimer)
       }
+      clearClosedStreamRetry()
       unsubscribeCandleSnapshot()
       source?.close()
     }
