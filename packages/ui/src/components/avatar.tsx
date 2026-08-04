@@ -35,28 +35,53 @@ const AvatarImage = React.forwardRef<
   AvatarImageProps
 >(({ className, width, src, onLoadingStatusChange }, ref) => {
   const _width = Number(width) ?? 40
+  const [directCdnFallbackSrc, setDirectCdnFallbackSrc] = React.useState<
+    string | null
+  >(null)
 
   const isAbsoluteUrl = /^https?:\/\//.test(src)
   const isCloudinaryUploadPath =
     src.startsWith('native-currency') || src.startsWith('tokens')
-  const loader = isAbsoluteUrl
-    ? cloudinaryLogoFetchLoader
-    : isCloudinaryUploadPath
-      ? cloudinaryLogoImageLoader
-      : undefined
+  const isUsingDirectCdnFallback = directCdnFallbackSrc === src
+  const imageSrc = isUsingDirectCdnFallback
+    ? `https://cdn.sushi.com/${src}`
+    : src
+  const loader = isUsingDirectCdnFallback
+    ? undefined
+    : isAbsoluteUrl
+      ? cloudinaryLogoFetchLoader
+      : isCloudinaryUploadPath
+        ? cloudinaryLogoImageLoader
+        : undefined
+
+  function handleLoadingStatusChange(
+    status: 'idle' | 'loading' | 'loaded' | 'error',
+  ) {
+    if (
+      status === 'error' &&
+      isCloudinaryUploadPath &&
+      !isUsingDirectCdnFallback
+    ) {
+      setDirectCdnFallbackSrc(src)
+      return
+    }
+
+    onLoadingStatusChange?.(status)
+  }
 
   return (
     <AvatarPrimitive.Image
-      src={loader ? loader({ src, width: _width }) : src}
+      src={loader ? loader({ src: imageSrc, width: _width }) : imageSrc}
       asChild
       ref={ref}
       className={classNames('aspect-square h-full w-full', className)}
-      onLoadingStatusChange={onLoadingStatusChange}
+      onLoadingStatusChange={handleLoadingStatusChange}
     >
       <Image
         loader={loader}
+        unoptimized={isUsingDirectCdnFallback}
         alt="avatar"
-        src={src}
+        src={imageSrc}
         width={_width}
         height={_width}
       />
