@@ -36,6 +36,20 @@ const SUPPORTED_RESOLUTIONS = [
 const MAX_CANDLES_PER_REQUEST = 2_000
 const ONE_DAY_SECONDS = 24 * 60 * 60
 
+function getCandleRequestFrom(
+  from: number,
+  to: number,
+  intervalSeconds: number,
+): number {
+  const alignedFrom = Math.floor(from / intervalSeconds) * intervalSeconds
+  const earliestAllowedFrom =
+    Math.ceil(
+      (to - intervalSeconds * MAX_CANDLES_PER_REQUEST) / intervalSeconds,
+    ) * intervalSeconds
+
+  return Math.max(alignedFrom, earliestAllowedFrom)
+}
+
 const RESOLUTION_CONFIG = new Map<
   ResolutionString,
   {
@@ -226,13 +240,15 @@ export function createLaunchpadDatafeed({
     from: number
     to: number
   }): Promise<LaunchpadCandleSnapshot> {
-    const { interval, streamInterval } = getResolutionConfig(resolution)
+    const { interval, seconds, streamInterval } =
+      getResolutionConfig(resolution)
+    const requestFrom = getCandleRequestFrom(from, to, seconds)
     const response = await getLaunchpadCandles({
       input: {
         chainId,
         tokenAddress,
         interval,
-        from,
+        from: requestFrom,
         to,
         ...(fresh ? { fresh: true } : {}),
       },
@@ -245,7 +261,7 @@ export function createLaunchpadDatafeed({
 
     const currentSnapshot = snapshots.get(resolution)
     if (!currentSnapshot || to >= currentSnapshot.to) {
-      snapshots.set(resolution, { from, snapshot, to })
+      snapshots.set(resolution, { from: requestFrom, snapshot, to })
     }
     publishLaunchpadCandleSnapshot(streamIdentity, snapshot.streamCursor)
     return snapshot
